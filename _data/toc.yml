@@ -5,9 +5,9 @@
       url: "docs/getting-started"
       children:
         - title: Introduction
-          url: "index"
+          url: "/"
         - title: Administration
-          url: "docs/administration"
+          url: "administration"
         - title: Customization
           url: "docs/getting-started#customization"
     - title: Versioning
