@@ -3,7 +3,6 @@ layout: page
 title: Docsy Jekyll Theme
 permalink: /
 ---
-j0rge | 2024-07-12 23:33:43 UTC | #1
 
 # bluefin
 
