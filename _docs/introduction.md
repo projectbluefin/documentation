@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Introduction to Bluefin
-permalink: /
+permalink: introduction
 ---
 
 # Welcome to Bluefin
