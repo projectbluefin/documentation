@@ -2,7 +2,7 @@
   url: docs
   links:
     - title: "Introduction"
-      url: "https://castrojo.github.io/"
+      url: "introduction"
     - title: "Administration"
       url: "administration"      
     - title: "Developers"
