@@ -1,13 +1,5 @@
 - title: Documentation
   url: docs
   links:
-    - title: "Getting Started"
-      url: "docs/getting-started"
-      children:
-        - title: Introduction
-          url: "/"
-        - title: Administration
-          url: "administration"
-        - title: Customization
-          url: "docs/getting-started#customization"
-          
+    - title: "Administration"
+      url: "administration"      
