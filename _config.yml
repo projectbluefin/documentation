@@ -32,7 +32,7 @@ url: "https://vsoch.github.io" # the base hostname & protocol for your site
 repo: "https://github.com/ublue-os/bluefin"
 github_user: "castrojo"
 github_repo: "bluefin"
-github_branch: "master"
+github_branch: "main"
 
 # Optional
 twitter: castrojo
