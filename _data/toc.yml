@@ -2,7 +2,7 @@
   url: docs
   links:
     - title: "Introduction"
-      url: "introduction"
+      url: "/"
     - title: "Administration"
       url: "administration"      
     - title: "Developers"
