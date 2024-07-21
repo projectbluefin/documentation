@@ -1,4 +1,8 @@
-j0rge | 2024-07-16 22:39:11 UTC | #1
+---
+layout: page
+title: Administrator's Guide
+permalink: /administration
+---
 
 <div data-theme-toc="true"> </div>
 
