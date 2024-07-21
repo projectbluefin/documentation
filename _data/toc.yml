@@ -1,5 +1,9 @@
 - title: Documentation
   url: docs
   links:
+    - title: "Introduction"
+      url: "/"
     - title: "Administration"
       url: "administration"      
+    - title: "Developers"
+      url: "bluefin-dx"
