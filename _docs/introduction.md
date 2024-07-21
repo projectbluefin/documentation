@@ -8,15 +8,11 @@ permalink: /
 
 - [projectbluefin.io](https://projectbluefin.io)
 - [Announcement Blog Post](https://www.ypsidanger.com/announcing-project-bluefin/)
-- https://universal-blue.discourse.group/t/bluefin-administration-guide/40
 
 A custom image of Fedora Silverblue, offering a familiar(ish) Ubuntu-style desktop. It strives to cover these two use cases. For end users it provides a system as reliable as a Chromebook with near-zero maintainance, with the power of Ubuntu and Fedora fused together. For gamers we strive to deliver a world-class Flathub gaming experience
 
-- Developers, check out [Bluefin DX](https://universal-blue.discourse.group/docs?topic=39) for developer focused images! 
-
-![image|690x431](upload://nL18oR2sH45yxVzRCUICR5gdjto.jpeg)
-
 > "Evolution is a process of constant branching and expansion." - Stephen Jay Gould
+
 ## Introductory Video
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/Nz-yyDwTfRM&autoplay=1" srcdoc="<style>*{padding:0;margin:0;overflow:hidden}html,body{height:100%}img,span{position:absolute;width:100%;top:0;bottom:0;margin:auto}span{height:1.5em;text-align:center;font:48px/1.5 sans-serif;color:white;text-shadow:0 0 0.5em black}</style><a href=https://www.youtube.com/embed/3_yyyUMecwo?autoplay=1><img src=https://img.youtube.com/vi/Nz-yyDwTfRM/hqdefault.jpg alt=\'Bluefin Linux introduction\'><span>▶</span></a>" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen title="Bluefin Linux introduction"></iframe>
