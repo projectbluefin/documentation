@@ -10,16 +10,4 @@
           url: "administration"
         - title: Customization
           url: "docs/getting-started#customization"
-    - title: Versioning
-      url: "docs/versioning"
-    - title: "About"
-      url: "about"
-    - title: "News"
-      url: "news"
-- title: "Extras"
-  url: "docs/extras"
-  links:
-    - title: Quizzes
-      url: "docs/extras/example-quiz"
-    - title: Tags Page
-      url: "tags"
+          
