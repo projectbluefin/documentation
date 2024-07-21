@@ -18,7 +18,7 @@ See the [introductory blog post](https://www.ypsidanger.com/announcing-project-b
 
 ## Prerequisites
 
-Bluefin, like all Universal Blue images, is a next generation Linux desktop, generally speaking we trend towards progressive improvement, and move away from legacy technologies as soon as possible.
+Bluefin, like all [Universal Blue](https://universal-blue.org) images, is a next generation Linux desktop, generally speaking we trend towards progressive improvement, and move away from legacy technologies as soon as possible. If legacy applications and techniques are important to you then Bluefin may not be for you. 
 
 Bluefin is:
 
@@ -27,7 +27,7 @@ Bluefin is:
 - Container first - For developers, the intended user experience is for a container experience.
 - Doesn't support dual booting, it is strongly recommended to give Bluefin an entire disk, and manage booting into other operating systems from within your device's BIOS boot menu. 
 
-If your requirements are outside of this scope, then Bluefin might not be the best fit for you. We recognize that in order to make a better Linux desktop that we have to leave a bunch of legacy applications and use cases behind. Considering the amount of Linux distributions in the world, we're fine with that. :smile: 
+If your requirements are outside of this scope, then Bluefin might not be the best fit for you. We recognize that in order to make a better Linux desktop that we have to leave a bunch of legacy applications and use cases behind. Considering the amount of Linux distributions in the world, we're fine with that.: 
 
 ## Features
 
