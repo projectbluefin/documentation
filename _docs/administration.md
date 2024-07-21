@@ -4,17 +4,17 @@ title: Administrator's Guide
 permalink: /administration
 ---
 
-<div data-theme-toc="true"> </div>
+# Bluefin Administrator's Guide
 
 ## Day to Day Operation
 
-Bluefin and Aurora are designed to be installed for the life of the hardware without reinstallation. Unlike traditional operating systems the image is always pristine and "clean", making upgrades less problematic. Updates are automatic and silent by default. 
+Bluefin is designed to be installed for the life of the hardware without reinstallation. Unlike traditional operating systems the image is always pristine and "clean", making upgrades less problematic. Updates are automatic and silent by default. 
 
 ## Secure Boot
 
 Secure Boot is supported by default on our systems, providing an additional layer of security. After the first installation, you will be prompted to enroll the secure boot key in the BIOS.
 
-Enter the password `ublue-os` when prompted to enroll our key.
+Enter the password `universalblue` when prompted to enroll our key.
 
 If this step is not completed during the initial setup, you can manually enroll the key by running the following command in the terminal:
 
@@ -26,9 +26,6 @@ Secure boot is supported with our custom key. The pub key can be found in the ro
 sudo mokutil --timeout -1
 sudo mokutil --import secure_boot.der
 ```
-
-### Note:
-If you encounter an issue with a password being recognized as incorrect, try using the `-` key on the numpad instead.
 
 ## Installing Applications
 
