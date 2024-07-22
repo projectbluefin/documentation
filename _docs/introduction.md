@@ -17,7 +17,7 @@ Bluefin is:
 
 If your requirements are outside of this scope, then **Bluefin might not be the best fit for you**. We recognize that in order to make a better desktop that many parts of the traditional Linux desktop experience will not be coming with us. If this appeals to you, then Bluefin is for you.
 
-![image](https://github.com/user-attachments/assets/3f83b3a8-7d8d-492d-bb00-bee259d16592)
+![image](https://github.com/user-attachments/assets/21208dd6-9ce5-41ba-9c21-d2bb97f7c1e8)
 
 # Features
 

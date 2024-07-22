@@ -9,7 +9,9 @@ permalink: /administration
 
 Bluefin is designed to be installed for the life of the hardware without reinstallation. Unlike traditional operating systems the image is always pristine and "clean", making upgrades less problematic. Updates are automatic and silent by default. 
 
-This usually means you can set it up as part of the setup process and then likely not have to come back here. 🙂
+This usually means you can set it up as part of the setup process and then likely not have to come back here. 🙂 
+
+![image](https://github.com/user-attachments/assets/3f83b3a8-7d8d-492d-bb00-bee259d16592)
 
 ## Secure Boot
 

@@ -10,8 +10,6 @@ The Bluefin Developer Experience (`bluefin-dx`) is a dedicated developer image w
 - Endeavors to be the world's most powerful [cloud native developer environment](https://landscape.cncf.io/)
 - Full virtualization support
 
-![image](https://github.com/user-attachments/assets/21208dd6-9ce5-41ba-9c21-d2bb97f7c1e8)
-
 # The Cloud Native Development Approach
 
 Bluefin goes "all in" on cloud native development and is used differently than a traditional distribution such as Ubuntu:
