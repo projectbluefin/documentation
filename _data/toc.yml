@@ -7,3 +7,5 @@
       url: "administration"      
     - title: "Developers"
       url: "bluefin-dx"
+    - title: "FAQ"
+      url: "FAQ"
