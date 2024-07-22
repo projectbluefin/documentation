@@ -10,6 +10,8 @@
     - title: "FAQ"
       url: "FAQ"
 - title: Contributing
+  url: contributing
+  links:
     - title: "Building Locally"
       url: local
     - title: "Contributor's Guide"
