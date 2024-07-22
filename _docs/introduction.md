@@ -10,10 +10,10 @@ Bluefin, like all [Universal Blue](https://universal-blue.org) images, is a next
 
 Bluefin is:
 
-- Flatpak first. Applications that are not well maintained on Flathub generally won't work well. We always optimize for apps that take advantage of the next generation model.
-- Optimized for the 90%, not the 4% - Bluefin takes the "stronger together" approach from cloud native, the value we provide is sharing a common model. You can always do what you want, but the value is to share best practices, we don't spend a lot of time on edge cases.
-- Container first - For developers, the intended user experience is for a container experience.
-- Doesn't support dual booting, it is strongly recommended to give Bluefin an entire disk, and manage booting into other operating systems from within your device's BIOS boot menu. 
+- Flatpak first - Applications that are not well maintained on Flathub generally won't work well. We always optimize for apps that take advantage of the next generation model.
+- Cloud Native - The intended developer experience is focused around containers.
+- Optimized for the 90%, not the 4% - Bluefin takes a "stronger together" approach towards features. You can always do what you want, but the value is to share best practices, the team doesn't spend much time on edge cases.
+- Purposely invisible - Bluefin is not a distribution. Your relationship is with Flathub, homebrew, and whatever you put in your containers. 
 
 If your requirements are outside of this scope, then **Bluefin might not be the best fit for you**. We recognize that in order to make a better Linux desktop that we have to leave a bunch of legacy applications and use cases behind. If this appeals to you, then Bluefin is for you.
 
