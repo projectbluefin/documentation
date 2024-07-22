@@ -5,10 +5,11 @@ permalink: /administration
 ---
 
 # Bluefin Administrator's Guide
-
-## Day to Day Operation
+#### Day to Day Operation
 
 Bluefin is designed to be installed for the life of the hardware without reinstallation. Unlike traditional operating systems the image is always pristine and "clean", making upgrades less problematic. Updates are automatic and silent by default. 
+
+This usually means you can set it up as part of the setup process and then likely not have to come back here. 🙂
 
 ## Secure Boot
 
