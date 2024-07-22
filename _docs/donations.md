@@ -1,3 +1,9 @@
+---
+layout: page
+title: Donations
+permalink: donations
+---
+
 # Donations
 
 ## Universal Blue Team
