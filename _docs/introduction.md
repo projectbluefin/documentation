@@ -62,7 +62,8 @@ management along with `libratbagd`
 
 Review the [Fedora Silverblue installation instructions](https://docs.fedoraproject.org/en-US/fedora-silverblue/installation/). Some points to consider:
 
+- Use [Ventoy](https://www.ventoy.net/en/index.html) or the [Fedora Media Writer](https://flathub.org/apps/org.fedoraproject.MediaWriter) to create installation media. Other creation methods may not work properly.
 - Dual booting off of the same disk is *unsupported*, use a dedicated driver for another operating system and use your BIOS to choose another OS to boot off of.
-- We strongly recommend using automated partitioning during installation, there are [known issues](https://docs.fedoraproject.org/en-US/fedora-silverblue/installation/) with manual partition on Atomic systems and is  unnecesary to set up unless you are on a multi-disk system. 
+- We strongly recommend using automated partitioning during installation, there are [known issues](https://docs.fedoraproject.org/en-US/fedora-silverblue/installation/) with manual partition on Atomic systems and is unnecesary to set up unless you are on a multi-disk system. 
 
 [Open an issue]({{ site.repo }}/issues)
