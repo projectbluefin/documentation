@@ -67,4 +67,21 @@ Review the [Fedora Silverblue installation instructions](https://docs.fedoraproj
 - Dual booting off of the same disk is *unsupported*, use a dedicated drive for another operating system and use your BIOS to choose another OS to boot off of. (This is how you should probably always do it anyway)
 - We strongly recommend using automated partitioning during installation, there are [known issues](https://docs.fedoraproject.org/en-US/fedora-silverblue/installation/) with manual partition on Atomic systems and is unnecesary to set up unless you are on a multi-disk system. 
 
+## Secure Boot
+
+Secure Boot is supported by default providing an additional layer of security. After the first installation, you will be prompted to enroll the secure boot key in the BIOS.
+
+Enter the password `universalblue` when prompted to enroll our key.
+
+If this step is not completed during the initial setup, you can manually enroll the key by running the following command in the terminal:
+
+    ujust enroll-secure-boot-key
+
+Secure boot is supported with our custom key. The pub key can be found in the root of the bazzite repository [here](https://github.com/ublue-os/bazzite/blob/main/secure_boot.der). If you'd like to enroll this key prior to installation or rebase, download the key and run the following:
+
+```bash
+sudo mokutil --timeout -1
+sudo mokutil --import secure_boot.der
+```
+
 [Open an issue]({{ site.repo }}/issues)
