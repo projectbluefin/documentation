@@ -13,6 +13,9 @@ This means that tooling is not installed on the host, and is instead containeriz
 - Full virtualization support
 - Provide fleet management of Bluefin and other Linux systems via [Cockpit](https://cockpit-project.org/) (Incomplete, needs a volunteer!)
 
+![image](https://github.com/user-attachments/assets/21208dd6-9ce5-41ba-9c21-d2bb97f7c1e8)
+
+
 ## The Cloud Native Approach
 
 Bluefin and Aurora go "all in" on cloud native development and are used differently than a traditional distribution such as Ubuntu:
