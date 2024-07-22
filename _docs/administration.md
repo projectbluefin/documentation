@@ -92,7 +92,7 @@ Use the `ujust rebase-helper` command to select rebase and select a specific cha
 
 Or select `date` and choose an older image. 
 
-![image](https://github.com/user-attachments/assets/c47cc858-d924-4e04-b737-10f102788d13)
+![image](https://github.com/user-attachments/assets/567061da-036d-4779-873e-154a5a833e67)
 
 
 #### Switching between tags manually
