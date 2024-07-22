@@ -153,17 +153,6 @@ For example, the Distrobox configuration is in `/usr/etc/distrobox/distrobox.ini
 
 Check the [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html) for more information on configuration options, in particular `~/.local` and `~/.config`. 
 
-## Power Management
-
-By default Bluefin will switch the power profile depending on if you're on AC or battery. You can adjust this setting by going to the logo menu -> extensions manager, and then selecting what you want.
-
-![image|564x500](upload://8A27h2nogJfwsudfvwWdeSQzcyS.png)
-
-You can also turn off the extensions entirely with this command:
-
-- To turn it off: `ujust configure-auto-power-profile disable`
-- To turn it on: `ujust configure-auto-power-profile enable`
-
 ## Remote Management
 
 ### Note
