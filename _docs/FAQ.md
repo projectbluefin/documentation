@@ -4,6 +4,8 @@ title: Frequently Asked Questions
 permalink: FAQ
 ---
 
+The [general FAQ](https://projectbluefin.io/#scene-faq) on the website covers some of the most common questions. This section containers more specific questions: 
+
 #  What about codecs?
 
 Everything you need is included.
