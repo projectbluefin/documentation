@@ -1,6 +1,6 @@
 # Bluefin Docs
 
-These docs are pretty sparse on purpose as Bluefin's intended to be invisible. 
+These docs are pretty sparse on purpose as Bluefin's intended to be invisible. Ideally the docs should be able to be consumed in one sitting.  
 
 ## Guidelines 
 
