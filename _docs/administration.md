@@ -168,29 +168,3 @@ These images are signed with sigstore's [cosign](https://docs.sigstore.dev/cosig
 ```bash
 cosign verify --key cosign.pub ghcr.io/ublue-os/bluefin
 ```
-
-## Building Locally (Bluefin Example)
-
-1. Clone this repository and `cd` into the working directory
-
-    ```bash
-    git clone https://github.com/ublue-os/bluefin.git
-    cd bluefin
-    ```
-
-2. Make modifications if desired
-
-3. Build the image (Note that this will download and the entire image)
-
-    ```bash
-    podman build . -t bluefin
-    ```
-
-4. [Podman push](https://docs.podman.io/en/latest/markdown/podman-push.1.html) to a registry of your choice.
-
-5. Rebase to your image to wherever you pushed it:
-
-    ```bash
-    sudo rpm-ostree rebase ostree-image-signed:docker://whatever/bluefin:latest
-    ```
-
