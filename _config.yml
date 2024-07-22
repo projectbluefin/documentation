@@ -44,7 +44,7 @@ linkedin: jorge-castro2112
 # google-analytics: UA-XXXXXXXXXX
 # Image and (square) dimension for logo (don't start with /)
 # If commented, will use material hat theme
-# logo: "assets/img/logo/SRCC-square-red.png"
+logo: "assets/img/logo.png"
 logo_pixels: 34
 color: "#403F4C"
 # color: "#8c1515" # primary color for header, buttons
