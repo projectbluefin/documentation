@@ -71,7 +71,7 @@ Bluefin publishes images for the current and last stable version of Fedora. This
 
 - `gts`: This is the default image and is always aliased to the previous stable version of Fedora. It targets the majority of users. 
 - `stable`: This is for enthusiasts who want the latest version of the GNOME and Fedora. It is always aliased to the current version of Fedora but follows the Fedora CoreOS release schedule and not the Fedora Silverblue release schedule.
-- `latest`: For users who want the very latest Fedora has to offer, upstream Fedora kernel, daily updates, full open throttle. 🔥  
+- `latest`: For users who want the very latest Fedora has to offer, ungated upstream kernel, daily updates, full open throttle. 🔥  
 
 The major difference between `latest` and `stable` is when they update. `latest` will upgrade to the next major Fedora release as soon as it is available and it builds daily. `stable` will upgrade when CoreOS does it's userpace upgrade, which is usually a few weeks afterwards, and only builds weekly. 
 
