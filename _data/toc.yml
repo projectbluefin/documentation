@@ -4,9 +4,11 @@
     - title: "Introduction"
       url: "introduction"
     - title: "Administration"
-      url: "administration"      
+      url: "administration"
+    - title: "AI and Machine Learning"
+      url: ai      
     - title: "Developers"
-      url: "bluefin-dx"
+      url: "bluefin-dx"      
     - title: "FAQ"
       url: "FAQ"
 - title: Contributing
