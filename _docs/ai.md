@@ -34,7 +34,8 @@ To cross-check if the containers are launched correctly, you can use `podman ps 
 
 You can also `start`, `stop`, and `disable` and `enable` the service unit. Open `localhost:8080` in your browser, then make yourself an account:
 
-![image|539x500](upload://jfLCKBHQB7JX23NrXzscZqjWPZi.png)
+![image](https://github.com/user-attachments/assets/a9db5693-99d0-4cdc-b342-8f09610f2b66)
+
 
 ### Running ollama 
 
@@ -49,31 +50,33 @@ You can also `start`, `stop`, and `disable` and `enable` the service unit.
 
 [Install alpaca](https://flathub.org/apps/com.jeffser.Alpaca) to use a native desktop application. 
 
-![image|670x500](upload://l7vg1QKA0BUolxWvQhJEmcJNEnM.png)
+![image](https://github.com/user-attachments/assets/9fd38164-e2a9-4da1-9bcd-29e0e7add071)
 
-Se the server as `http://localhost:11434` in the settings to connect to your local setup: 
+Browse to `http://localhost:11434` in the settings to connect to your local setup: 
 
-![image|670x500](upload://fxsQolGDIqaWuajIRDMOawLD4aU.png)
+![image](https://github.com/user-attachments/assets/01a34931-1154-4272-b509-e78b6788ddc6)
+
 
 ### Terminal Integration
 
 We recommend using [mods](https://github.com/charmbracelet/mods) to use  the provided ollama instance as an interface to your command line: 
 
-![image|690x356](upload://aBT7XLxCYYUKcQu8zHTB7wvEzR8.png)
+![image](https://github.com/user-attachments/assets/639323cc-5e72-42bd-b8c7-7bccedf91bf2)
 
 - Install mods: `brew install mods`
 - Open the config file for mods: `mods --settings`
 - Modify the config file with the model you've pulled with ollama:
 
-![image|690x85](upload://n98BUDEuj0HGyf9uSNHQqVpOXXQ.png)
+![image](https://github.com/user-attachments/assets/0ee1f56d-1dd3-4075-bf90-5a551239e338)
 
 and then make sure the ollama section in the config file matches the same thing:
 
-![image|690x231](upload://99fwELCEzilratywCDaNIDJLFca.png)
+![image](https://github.com/user-attachments/assets/dee94d87-522c-4e0e-b9b5-56da675f5219)
 
 Save the file and then try it: 
 
-![image|690x314](upload://7fAOqqvgxpL2WRj46qjaOoj5fqJ.jpeg)
+![image](https://github.com/user-attachments/assets/784ad450-3754-4e2b-9b3e-4efd1f5621e3)
+
 
 ## Pytorch
 
