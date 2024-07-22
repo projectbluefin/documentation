@@ -5,33 +5,26 @@ permalink: /bluefin-dx
 
 # Developer Mode (`bluefin-dx`)
 
-The Bluefin Developer Experience (`bluefin-dx`) is a dedicated developer image with bundled tools. Unlike traditional Linux systems, the operating system and developer environment are explicitly and purposely separated. 
-
-This means that tooling is not installed on the host, and is instead containerized, in a virtual machine, or scoped to the user's home directory. It is designed to meet the following use cases:
+The Bluefin Developer Experience (`bluefin-dx`) is a dedicated developer image with bundled tools. Unlike traditional Linux systems, the operating system and developer environment are explicitly and purposely separated. This means that tooling is not installed on the host, and is instead containerized, in a virtual machine, or scoped to the user's home directory. It is designed to meet the following use cases:
 
 - Endeavors to be the world's most powerful [cloud native developer environment](https://landscape.cncf.io/)
 - Full virtualization support
-- Provide fleet management of Bluefin and other Linux systems via [Cockpit](https://cockpit-project.org/) (Incomplete, needs a volunteer!)
 
 ![image](https://github.com/user-attachments/assets/21208dd6-9ce5-41ba-9c21-d2bb97f7c1e8)
 
+# The Cloud Native Development Approach
 
-## The Cloud Native Approach
+Bluefin goes "all in" on cloud native development and is used differently than a traditional distribution such as Ubuntu:
 
-Bluefin and Aurora go "all in" on cloud native development and are used differently than a traditional distribution such as Ubuntu:
-
-- GUI apps are installed via Flatpak
 - Development is done in [devcontainers](https://containers.dev/)
 - Command line applications are installed using [homebrew](https://brew.sh)
 - Preconfigured ad-hoc containers for Ubuntu, Fedora, Wolfi, and a custom `bluefin-cli` container. Use whichever distribution you want. 
-
-We strive to remove host level package management completely and consider these components as seperate layers. Communication between components is typically done via Flatpak Portals or via the container runtime. 
 
 > This differs from apt, snap, and dnf where one packaging system handles both the graphical applications AND the command line applications.  This decoupling is what provides greater system reliability, near unlimited choice of software, and "distributed by default" development.  
 
 In short, we picked it because this pattern is how servers are deployed in modern infrastructure. And the developers deploying those systems are already using homebrew and we want to leverage as much of that success as possible for the Linux desktop.
 
-## Introduction
+![image](https://github.com/user-attachments/assets/51415b6c-b7fe-45e9-af74-c01694b26fbe)
 
 The pattern in `bluefin-dx` (and `aurora-dx`) are centered around container focused development using [devcontainers](https://containers.dev).  Since development is not dependent on the operating system image, you can use whatever you want, you do not need to use everything in here in order to be productive -- think of them as prepaved paths that you can choose to use.  
 
@@ -48,7 +41,7 @@ You can rebase to the dx image by using the following command:
 ### Step 1 of 2
 `ujust devmode` to enable or disable the dx mode, then reboot:
 
-![image|587x231](upload://7QIynueGfdPL9TzPqaNfjvMxIup.png)
+![image](https://github.com/user-attachments/assets/76df5201-da02-42d0-bec9-fad259df9b0d)
 
 ### Step 2 of 2 (Don't forget me!) 
 `ujust dx-group` - to add your user account to the right groups. Then log out and back in. This step only needs to be done once. 
