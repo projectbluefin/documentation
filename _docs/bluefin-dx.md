@@ -58,7 +58,7 @@ Like all Universal Blue images, switching is atomic, allowing for clean switchin
 - [Dev Containers Specification](https://containers.dev/) 
 - [Beginner's Series to: Dev Containers](https://www.youtube.com/watch?v=b1RavPr_878) - great introductory tutorial from the [VS Code YouTube channel](https://www.youtube.com/@code/videos)
 
-<iframe width="720" height="405" src="https://www.youtube.com/embed/?listType=playlist&list=PLj6YeMhvp2S5MwL7nPmMWk_lTbZsk_AmZ" frameborder="0" allowfullscreen>
+<iframe src="https://www.youtube.com/embed/?listType=playlist&list=PLj6YeMhvp2S5MwL7nPmMWk_lTbZsk_AmZ" frameborder="0" allowfullscreen>
 
 The most current [Docker Engine](https://docs.docker.com/engine/) is included by default and is set up to be the default container runtime for vscode. [DevPod](https://devpod.sh/docs/what-is-devpod) is included to use devcontainer functionality across clouds and self-hosted setups. 
 
