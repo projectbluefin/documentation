@@ -4,8 +4,7 @@ title: Introduction to Bluefin
 permalink: introduction
 ---
 
-
-## Prerequisites
+# Prerequisites
 
 Bluefin, like all [Universal Blue](https://universal-blue.org) images, is a next generation Linux desktop, generally speaking we trend towards progressive improvement, and move away from legacy technologies as soon as possible. If legacy applications and techniques are important to you then Bluefin may not be for you. 
 
@@ -18,13 +17,9 @@ Bluefin is:
 
 If your requirements are outside of this scope, then Bluefin might not be the best fit for you. We recognize that in order to make a better Linux desktop that we have to leave a bunch of legacy applications and use cases behind. Considering the amount of Linux distributions in the world, we're fine with that.: 
 
-## Features
-
-**This image heavily utilizes _cloud-native concepts_.**
+# Features
 
 System updates are image-based and automatic. Applications are logically separated from the system by using Flatpaks for graphical applications and `brew` for command line applications. Workloads for development are containerized. 
-
-## For Users
 
 - Ubuntu-like GNOME layout.
   - Includes the following GNOME Extensions:
@@ -55,7 +50,7 @@ management along with `libratbagd`
     - If you've never used an image-based Linux before just use your computer normally
     - Don't overthink it, just shut your computer off when you're not using it
 
-### Applications
+# Applications
 
 - Mozilla Firefox, Mozilla Thunderbird, Extension Manager, DejaDup, FontDownloader, Flatseal, and the Clapper Media Player.
 - Core GNOME Applications installed from Flathub:
