@@ -6,7 +6,7 @@ permalink: introduction
 
 # Prerequisites
 
-Bluefin, like all [Universal Blue](https://universal-blue.org) images, is a next generation Linux desktop, generally speaking we trend towards progressive improvement, and move away from legacy technologies as soon as possible. If legacy applications and techniques are important to you then Bluefin may not be for you. 
+Bluefin, like all [Universal Blue](https://universal-blue.org) images, is a next generation Linux desktop, generally speaking it trends towards progressive improvement; the team rigorously and aggressively moves away from legacy technologies as soon as possible.
 
 Bluefin is:
 
