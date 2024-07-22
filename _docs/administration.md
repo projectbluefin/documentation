@@ -11,6 +11,8 @@ Bluefin is designed to be installed for the life of the hardware without reinsta
 
 This usually means you can set it up as part of the setup process and then likely not have to come back here. 🙂 
 
+> I want that "defaults lifestyle" --<a href="https://www.softwaredefinedtalk.com/hosts/matt">Matt Ray</a>
+
 ![image](https://github.com/user-attachments/assets/3f83b3a8-7d8d-492d-bb00-bee259d16592)
 
 ## Secure Boot
