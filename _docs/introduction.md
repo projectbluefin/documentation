@@ -15,7 +15,7 @@ Bluefin is:
 - Container first - For developers, the intended user experience is for a container experience.
 - Doesn't support dual booting, it is strongly recommended to give Bluefin an entire disk, and manage booting into other operating systems from within your device's BIOS boot menu. 
 
-If your requirements are outside of this scope, then **Bluefin might not be the best fit for you**. We recognize that in order to make a better Linux desktop that we have to leave a bunch of legacy applications and use cases behind.
+If your requirements are outside of this scope, then **Bluefin might not be the best fit for you**. We recognize that in order to make a better Linux desktop that we have to leave a bunch of legacy applications and use cases behind. If this appeals to you, then Bluefin is for you.
 
 ![image](https://github.com/user-attachments/assets/3f83b3a8-7d8d-492d-bb00-bee259d16592)
 
