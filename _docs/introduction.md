@@ -21,7 +21,7 @@ If your requirements are outside of this scope, then **Bluefin might not be the 
 
 # Features
 
-System updates are image-based and automatic. Applications are logically separated from the system by using Flatpaks for graphical applications and `brew` for command line applications. Workloads for development are containerized. 
+System updates are image-based and automatic. Applications are logically separated from the system by using Flatpaks for graphical applications and `brew` for command line applications.
 
 - Ubuntu-like GNOME layout.
   - Includes the following GNOME Extensions:
@@ -30,6 +30,7 @@ System updates are image-based and automatic. Applications are logically separat
     - GSConnect - Integrate your mobile device with your desktop    
     - Blur my Shell - for that bling
     - [Tailscale GNOME QS](https://extensions.gnome.org/extension/6139/tailscale-qs/) for [tailscale integration](https://universal-blue.discourse.group/t/tailscale-vpn/290)
+- [Developer Mode](bluefin-dx) - Dedicated developer mode that transforms Bluefin into a powerful cloud native developer workstation.
 - [Ptyxis terminal](https://universal-blue.discourse.group/docs?topic=300) for container-focused workflows
   - [Boxbuddy](https://flathub.org/apps/io.github.dvlv.boxbuddyrs) for container management
 - [Tailscale](https://tailscale.com) - included for VPN along with `wireguard-tools`
