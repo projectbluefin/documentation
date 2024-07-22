@@ -34,32 +34,23 @@ Homebrew can also be used for installation of development tools.
 
 >**Note**: This is an opinionated developer workflow that [differs from Fedora's use of toolbox](https://docs.fedoraproject.org/en-US/fedora-silverblue/toolbox/).  Toolbox is included for people who prefer the upstream approach. 
 
-### Enabling Developer Mode on an existing Bluefin/Aurora installation 
+# Enabling Developer Mode
 
 You can rebase to the dx image by using the following command:
 
-### Step 1 of 2
+## Step 1: Turn it on
 `ujust devmode` to enable or disable the dx mode, then reboot:
 
 ![image](https://github.com/user-attachments/assets/76df5201-da02-42d0-bec9-fad259df9b0d)
 
-### Step 2 of 2 (Don't forget me!) 
+## Step 2: Add yourself to the right groups 
 `ujust dx-group` - to add your user account to the right groups. Then log out and back in. This step only needs to be done once. 
 
 Like all Universal Blue images, switching is atomic, allowing for clean switching between modes depending on the use case.
 
-## Features
+# Features
 
-### Quality of Life Improvements
-
-- [Cockpit](https://cockpit-project.org/) for local and remote management
-- A collection of well curated monospace fonts
-- [Tailscale](https://universal-blue.discourse.group/docs?topic=290) for VPN
-- [Just](https://github.com/casey/just) task runner for post-install automation tasks. Check out [our documentation](https://universal-blue.org/guide/just/) for more information on using and customizing just.
-- `fish` and `zsh` available as optional shells: use `ujust configure-shell` to select the shell you want to use
-- ROCm included
-
-### Visual Studio Code with Docker
+## Visual Studio Code with Docker
 
 [Visual Studio Code](https://code.visualstudio.com/) is included on the image as the default IDE. It comes with the [devcontainers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) already installed. It's the recommended developer experience, start here if you're new to containerized development! 
 
@@ -70,6 +61,15 @@ Like all Universal Blue images, switching is atomic, allowing for clean switchin
 The most current [Docker Engine](https://docs.docker.com/engine/) is included by default and is set up to be the default container runtime for vscode. [DevPod](https://devpod.sh/docs/what-is-devpod) is included to use devcontainer functionality across clouds and self-hosted setups. 
 
 - Follow [Quickstart VS Code](https://devpod.sh/docs/getting-started/quickstart-vscode) to set up the environment.
+
+## Quality of Life Improvements
+
+- [Cockpit](https://cockpit-project.org/) for local and remote management
+- A collection of well curated monospace fonts
+- [Tailscale](https://universal-blue.discourse.group/docs?topic=290) for VPN
+- [Just](https://github.com/casey/just) task runner for post-install automation tasks. Check out [our documentation](https://universal-blue.org/guide/just/) for more information on using and customizing just.
+- `fish` and `zsh` available as optional shells: use `ujust configure-shell` to select the shell you want to use
+- ROCm included
   
 ## Command Line Experience
 
@@ -105,10 +105,9 @@ Note: The initial setup will take some time depending on network connectivity. T
 
 ![image](https://github.com/user-attachments/assets/265b9a3d-5aad-4516-a6dd-937ea7cbc697)
 
+# Other Tooling
 
-## Other Tooling
-
-### JetBrains
+## JetBrains
 
 `ujust jetbrains-toolbox` will fetch and install the [JetBrains Toolbox](https://www.jetbrains.com/toolbox-app) application, which will manage the installation of the JetBrains set of tools. This application will handle installation, removal, and upgrade of the JetBrains products, and is handled completely in your home directory, independent of the operating system image.
 
@@ -116,25 +115,25 @@ Check the [Jetbrains documentation](https://www.jetbrains.com/help/idea/podman.h
 
 - [Uninstallation instructions](https://toolbox-support.jetbrains.com/hc/en-us/articles/115001313270-How-to-uninstall-Toolbox-App-)
 
-### Kubernetes and other Cloud Native Tooling
+## Kubernetes and other Cloud Native Tooling
 
 - [kind](https://kind.sigs.k8s.io/) - Run a Kubernetes cluster on your machine. Run `kind create cluster` on the host to get started!
   - [kubectl](https://kubernetes.io/docs/reference/kubectl/) - Administer Kubernetes Clusters
   - helm, ko, flux, minio-client -- if it's an incubated project we intend to add it where appropriate
 
-### AI and Machine Learning
+## AI and Machine Learning
 
 `ujust ollama` to get started.
 
 See also: https://universal-blue.discourse.group/docs?topic=705
 
-### Virtualization and Container Runtimes
+## Virtualization and Container Runtimes
 
 - [virt-manager](https://virt-manager.org/) and associated tooling (KVM, qemu)
 - [Incus](https://linuxcontainers.org/incus/) provides system containers
   - [LXC](https://linuxcontainers.org/) and [LXD](https://ubuntu.com/lxd) are also provided for compatability reasons 
 
-### Podman Development
+## Podman Development
 
 All the upstream `podman` tools are included. This is the default system container runtime, and is the recommended developer configuration that Fedora ships with. 
 
