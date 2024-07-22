@@ -33,8 +33,7 @@ sudo mokutil --import secure_boot.der
 
 Use the GNOME Software Center or KDE Discover applications to [install applications from Flathub](https://flathub.org/). Unlike stock Fedora, system updates and upgrades are not handled by this application, it's scope has been reduced to only install Flatpaks from Flathub. The [Warehouse](https://flathub.org/apps/io.github.flattool.Warehouse) tool is included for management.
 
-![GNOME Software Center](upload://fsykftNe5xGcslvq4pETWwlVIA1.png)
-![Discover|659x500](upload://ktGkdD7dmJEDfOipPNWaGQLSUAE.png)
+![86e06ae4-0aec-46ef-9709-936c3e938f70](https://github.com/user-attachments/assets/65b6cae5-9ed4-4d28-93b4-b6dfe9adf463)
 
 ### Command Line Applications
 
@@ -52,7 +51,7 @@ See [configuration of updates](https://universal-blue.discourse.group/docs?topic
 
 Machine firmware updates are provided through the standard Software Center:
 
-![Firmware updates](upload://cFCaYQvGAZGsNbKZDJeq6maBDFW.png)
+![b6706ae4-d519-4508-b350-defce27aa8e4](https://github.com/user-attachments/assets/98256d26-87ff-458f-a5f1-ecfa31a4639c)
 
 - See also: https://universal-blue.discourse.group/docs?topic=513
 
@@ -87,11 +86,12 @@ Asus and Surface devices use their own dedicated images and only follow the `:la
 
 Use the `ujust rebase-helper` command to select rebase and select a specific channel: 
 
-![image|690x308, 50%](upload://6V1oxfZ0qfB7VPaMFeqzckZFMc6.jpeg)
+![image](https://github.com/user-attachments/assets/72308e84-cd28-4fd1-a568-38fb889203fe)
+
 
 Or select `date` and choose an older image. 
 
-![image|690x415, 50%](upload://tSQTtHoKh8wKNRiWgUTftYh61Xm.png)
+![image](https://github.com/user-attachments/assets/c47cc858-d924-4e04-b737-10f102788d13)
 
 
 #### Switching between tags manually
