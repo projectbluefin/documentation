@@ -84,15 +84,15 @@ The most current [Docker Engine](https://docs.docker.com/engine/) is included by
 
 Long running processes should be kept in a pet container. Manage these via the included [BoxBuddy](https://github.com/Dvlv/BoxBuddyRS) application, available via the logomenu in the top left corner of your desktop under "Containers": 
 
-![image|331x394](upload://8z22G7wEwQtSC4aLKYajrUImLx.png)
+![image](https://github.com/user-attachments/assets/bdab71b0-c04a-4562-a73d-396d4b907060)
 
 Use BoxBuddy's interface to create your own pet containers from whichever distribution is on the list:
 
-![image|690x481](upload://ertH4vJS79coxkUJ7fLJf7bcU8u.jpeg)
+![image](https://github.com/user-attachments/assets/79570148-98f9-458f-b46e-2a87cfaa00ed)
 
 For CLI warriors you can manage your containers with Ptyxis's built in container support: 
 
-![image|537x375](upload://8zQ13uWjjidPRtjflQ3CoSZCCUu.png)
+![image](https://github.com/user-attachments/assets/2a4dc4b5-f1a8-4781-80a4-92ea4dfeeb97)
 
 [Ptyxis](https://universal-blue.discourse.group/docs?topic=300) also includes a host terminal so that you can quickly switch between containers and the host. 
 
@@ -110,7 +110,7 @@ Designed for quick usage and "I need a test terminal now!" use cases, Preconfigu
 
 Note: The initial setup will take some time depending on network connectivity. These containers are managed via a Podman Quadlet and **will be destroyed and updated regularly**.  
 
-![image|690x433](upload://9inEmsXDyz1PWi476xhxaQ55ZTU.jpeg)
+![image](https://github.com/user-attachments/assets/265b9a3d-5aad-4516-a6dd-937ea7cbc697)
 
 
 ## Other Tooling
