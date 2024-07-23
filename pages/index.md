@@ -6,7 +6,9 @@ permalink: /
 
 # Welcome to Bluefin
 
-A custom image of Fedora Silverblue, offering a familiar(ish) Ubuntu-style desktop. For end users it provides a system as reliable as a Chromebook with near-zero maintainance while providing developers with a powerful [cloud-native development mode](bluefin-dx).
+A custom image of Fedora Silverblue, offering a familiar(ish) Ubuntu-style desktop. 
+
+For end users it provides a system as reliable as a Chromebook with near-zero maintainance while providing developers with a powerful [cloud-native development mode](bluefin-dx). Built with next generation tech, for people who need their machines to get work done. 
 
 [Get Started with Bluefin](introduction)
 
