@@ -29,7 +29,7 @@ baseurl: "/" # the subpath of your site, e.g. /blog
 url: "https://docs.projectbluefin.io" # the base hostname & protocol for your site
 
 # Social (First three Required)
-repo: "https://github.com/ublue-os/bluefin-docs"
+repo: "https://github.com/ublue-os/bluefin"
 github_user: "castrojo"
 github_repo: "bluefin"
 github_branch: "main"
