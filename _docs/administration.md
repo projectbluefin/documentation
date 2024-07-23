@@ -84,7 +84,7 @@ Or select `date` and choose an older image.
 
 #### Switching between tags manually
 <summary>Here are the manual commands with rpm-ostree, we recommend becoming familiar with them if you find yourself rebasing often:</summary>
-<details>
+
 Before changing a channel it is recommended to remove any locally layered packages: 
 
 ```bash
@@ -131,7 +131,6 @@ rpm-ostree rebase ostree-image-signed:docker://ghcr.io/ublue-os/bluefin-nvidia:s
 ```
 
 Check the [Fedora Silverblue User Guide](https://docs.fedoraproject.org/en-US/fedora-silverblue/) for more information.
-</details>
 
 ## Overwriting System Defaults
 
