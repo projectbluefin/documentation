@@ -1,9 +1,13 @@
 name: check-spelling
 
 on:
-  push:
-    branches: [master]
-  pull_request: []
+  pull_request:
+  merge_group:
+  workflow_dispatch:
+ 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}-${{ inputs.fedora_version }}
+  cancel-in-progress: true
 
 jobs:
   formatting:
