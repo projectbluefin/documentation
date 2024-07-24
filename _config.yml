@@ -30,7 +30,7 @@ url: "https://docs.projectbluefin.io" # the base hostname & protocol for your si
 
 # Social (First three Required)
 repo: "https://github.com/ublue-os/bluefin"
-github_user: "castrojo"
+github_user: "ublue-os"
 github_repo: "bluefin"
 github_branch: "main"
 
