@@ -18,6 +18,13 @@
       url: local
     - title: "Contributor's Guide"
       external_url: "https://universal-blue.discourse.group/docs?topic=81"
+- title: Framework Laptops
+  url: ""
+  links:
+    - title: "Framework 13"
+      url: framework-13
+    - tite: "Framework 16"
+      url: framework-16
 - title: Supporting the Project
   url: ""
   links:
