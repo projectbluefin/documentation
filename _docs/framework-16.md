@@ -1,3 +1,8 @@
+---
+layout: page
+title: Installing Bluefin on a Framework 16
+permalink: framework-16
+---
 
 1. Download the Framework Laptop image of [Project Bluefin](https://projectbluefin.io/). Make sure you select Intel or AMD depending on the mainboard in your device:
 
