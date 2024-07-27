@@ -4,19 +4,6 @@ title: Introduction to Bluefin
 permalink: introduction
 ---
 
-# Prerequisites
-
-Bluefin, like all [Universal Blue](https://universal-blue.org) images, is a next generation Linux desktop, generally speaking it trends towards progressive improvement; the team rigorously and aggressively moves away from legacy technologies as soon as possible.
-
-Bluefin is:
-
-- **Flatpak First** - The application model in Bluefin is centered around isolated apps that are maintained in Flathub. Applications that do not work well with modern components such as Wayland, Pipewire, Flatpak Portals, etc. may provide a poor experience and are not recommended. 
-- **Cloud Native** - The intended developer experience is focused around containers.
-- **Purposely Invisible** - Bluefin is not a distribution. Your relationship is with Flathub, homebrew, and whatever you put in your containers. 
-- **Optimized for the 96%** - Not the 4% - Bluefin takes a "stronger together" approach towards features. You can always do what you want, but the value is to share best practices, the team doesn't spend much time on edge cases.
-
-If your requirements are outside of this scope, then **Bluefin might not be the best fit for you**. We recognize that in order to make a better desktop that many parts of the traditional Linux desktop experience will not be coming with us. If this appeals to you, then Bluefin is for you.
-
 ![image](https://github.com/user-attachments/assets/21208dd6-9ce5-41ba-9c21-d2bb97f7c1e8)
 
 # Features
@@ -31,7 +18,7 @@ System updates are image-based and automatic. Applications are logically separat
     - Blur my Shell - for that bling
     - [Tailscale GNOME QS](https://extensions.gnome.org/extension/6139/tailscale-qs/) for [tailscale integration](https://universal-blue.discourse.group/t/tailscale-vpn/290)
 - [Developer Mode](bluefin-dx) - Dedicated developer mode that transforms Bluefin into a powerful cloud native developer workstation.
-- [Ptyxis terminal](https://universal-blue.discourse.group/docs?topic=300) for container-focused workflows
+- [Ptyxis terminal](https://gitlab.gnome.org/chergert/ptyxis) for container-focused workflows
   - [Boxbuddy](https://flathub.org/apps/io.github.dvlv.boxbuddyrs) for container management
 - [Tailscale](https://tailscale.com) - included for VPN along with `wireguard-tools`
      - Use `ujust toggle-tailscale` to turn it off if you don't plan on using it.
@@ -59,13 +46,13 @@ management along with `libratbagd`
 - Core GNOME Applications installed from Flathub:
   - GNOME Calculator, Calendar, Characters, Connections, Contacts, Evince, Firmware, Logs, Maps, NautilusPreviewer, TextEditor, Weather, baobab, clocks, eog, and font-viewer.
 
-# Installation
+# Installation Requirements
 
 Review the [Fedora Silverblue installation instructions](https://docs.fedoraproject.org/en-US/fedora-silverblue/installation/). Some points to consider:
 
 - Use [Ventoy](https://www.ventoy.net/en/index.html) or the [Fedora Media Writer](https://flathub.org/apps/org.fedoraproject.MediaWriter) to create installation media. Other creation methods may not work properly.
-- Dual booting off of the same disk is *unsupported*, use a dedicated drive for another operating system and use your BIOS to choose another OS to boot off of. (This is how you should probably always do it anyway)
-- We strongly recommend using automated partitioning during installation, there are [known issues](https://docs.fedoraproject.org/en-US/fedora-silverblue/installation/) with manual partition on Atomic systems and is unnecessary to set up unless you are on a multi-disk system. 
+- Dual booting off of the same disk is **unsupported**, use a dedicated drive for another operating system and use your BIOS to choose another OS to boot off of. (This is how you should probably always do it anyway)
+- We **strongly recommend** using automated partitioning during installation, there are [known issues](https://docs.fedoraproject.org/en-US/fedora-silverblue/installation/) with manual partition on Atomic systems and is unnecessary to set up unless you are on a multi-disk system. 
 
 ## Secure Boot
 
