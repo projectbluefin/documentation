@@ -70,7 +70,7 @@ The `gts` and `stable` tags feature a gated kernel. This kernel follows the same
 
 Asus and Surface devices use their own dedicated images and only follow the `:latest` tag. This is to ensure proper support for those devices.
 
-#### Switching between channels
+### Switching between channels
 
 Use the `ujust rebase-helper` command to select rebase and select a specific channel: 
 
@@ -101,7 +101,7 @@ and look for the image you are on, look for a terribly long line like this: `ost
 
 The `ghcr.io/ublue-os/bluefin:gts` is the important part, with `bluefin` being the image name, and the `:latest` being the image tag. That is the image you are currently on. Look for `:gts`, `:stable`, `:latest`, or in certain cases the version like `:39` or `:40`. Use the `bootc switch` command to move to a newer or older version:
 
-### Examples
+#### Manual Rebase Examples
 
 In this example we're rebasing to `:stable`, which is the latest stable release of Fedora (currently 40): 
 
