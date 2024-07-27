@@ -83,9 +83,8 @@ Or select `date` and choose an older image.
 
 
 #### Switching between tags manually
-<summary>Here are the manual commands with rpm-ostree, we recommend becoming familiar with them if you find yourself rebasing often:</summary>
 
-Before changing a channel it is recommended to remove any locally layered packages: 
+Here are the manual commands with rpm-ostree, we recommend becoming familiar with them if you find yourself rebasing often. Before changing a channel it is recommended to remove any locally layered packages: 
 
 ```bash
 rpm-ostree reset
