@@ -25,7 +25,7 @@ Bluefin is:
 
 If your requirements are outside of this scope, then **Bluefin might not be the best fit for you**. We recognize that in order to make a better desktop that many parts of the traditional Linux desktop experience will not be coming with us. If this appeals to you, then Bluefin is for you.
 
-- [Get Started with Bluefin](introduction)
+- [Introduction to Bluefin](introduction) - to check out the features and installation instructions.
 - [Introductory blog post](https://www.ypsidanger.com/announcing-project-bluefin/) for more background information.
 
 > "Evolution is a process of constant branching and expansion." - Stephen Jay Gould
