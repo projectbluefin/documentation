@@ -144,7 +144,7 @@ The Jetbrains blog also has more information on Jetbrains Dev Containers support
 
 `ujust ollama` to get started.
 
-See also: https://universal-blue.discourse.group/docs?topic=705
+See also: [AI and Machine Learning](ai)
 
 ## Virtualization and Container Runtimes
 
