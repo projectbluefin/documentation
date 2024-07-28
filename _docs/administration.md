@@ -41,8 +41,6 @@ Machine firmware updates are provided through the standard Software Center:
 
 ![b6706ae4-d519-4508-b350-defce27aa8e4](https://github.com/user-attachments/assets/98256d26-87ff-458f-a5f1-ecfa31a4639c)
 
-- See also: https://universal-blue.discourse.group/docs?topic=513
-
 ### Upgrades and Throttle Settings
 
 Bluefin publishes images for the current and last stable version of Fedora. This is to give users maximum flexibility by allowing them to rebase to the version they want. You can choose from three rolling tags, or lock to a specific version of Fedora.  
