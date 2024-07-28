@@ -73,6 +73,22 @@ The most current [Docker Engine](https://docs.docker.com/engine/) is included by
   
 ## Command Line Experience
 
+### `bluefin-cli` 
+
+`ujust bluefin-cli` will install `bluefin-cli`, Bluefin's opt-in command line experience. `bluefin-cli` comes with some fantastic command line tools:
+- [atuin](https://github.com/atuinsh/atuin) for shell history
+- [direnv](https://direnv.net/) to load and unload environment variables depending on the current directory.
+- [eza](https://github.com/eza-community/eza) as a replacement `ls`
+- [fd](https://github.com/sharkdp/fd) for `find`
+- [fzf](https://github.com/junegunn/fzf) for command line fuzzy finding
+- [ripgrep](https://github.com/BurntSushi/ripgrep) for search
+- [ugrep](https://github.com/Genivia/ugrep) for grep
+- [yq](https://github.com/mikefarah/yq) - for yaml, json, and xml processing
+- [zoxide](https://github.com/ajeetdsouza/zoxide) as `cd`
+
+![image](https://github.com/user-attachments/assets/89be8151-5b57-4b71-bbe5-988bef2d6798)
+
+
 ### Pet Containers
 
 Long running processes should be kept in a pet container. Manage these via the included [BoxBuddy](https://github.com/Dvlv/BoxBuddyRS) application, available via the logomenu in the top left corner of your desktop under "Containers": 
