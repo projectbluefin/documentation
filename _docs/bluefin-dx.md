@@ -67,9 +67,8 @@ The most current [Docker Engine](https://docs.docker.com/engine/) is included by
 - [Cockpit](https://cockpit-project.org/) for local and remote management
 - A collection of well curated monospace fonts
 - [Tailscale](https://universal-blue.discourse.group/docs?topic=290) for VPN
-- [Just](https://github.com/casey/just) task runner for post-install automation tasks. Check out [our documentation](https://universal-blue.org/guide/just/) for more information on using and customizing just.
-- `fish` and `zsh` available as optional shells: use `ujust configure-shell` to select the shell you want to use
-- ROCm included
+- [Just](https://github.com/casey/just) task runner for post-install automation tasks
+- `fish` and `zsh` available as optional shells
   
 ## Command Line Experience
 
