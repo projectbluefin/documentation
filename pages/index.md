@@ -12,7 +12,7 @@ For end users it provides a system as reliable as a Chromebook with near-zero ma
 
 ![image](https://github.com/ublue-os/bluefin/assets/1264109/b093bdec-40dc-48d2-b8ff-fcf0df390e8c)
 
-# In Bluefin for You?
+# Is Bluefin for You?
 
 Bluefin, like all [Universal Blue](https://universal-blue.org) images, is a next generation Linux desktop, generally speaking it trends towards progressive improvement; the team rigorously and aggressively moves away from legacy technologies as soon as possible.
 
