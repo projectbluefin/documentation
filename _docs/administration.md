@@ -35,8 +35,6 @@ The [brew](https://brew.sh/) application is the package manager used for install
 
 Bluefin and Aurora are designed to be "hands off". System updates apply weekly, and Flatpaks update twice a day [in the background](https://github.com/ublue-os/config/tree/main/files/usr/lib/systemd). Updates are applied when the system reboots. Therefore, it is recommended to routinely power off your device when it's not being used to ensure kernel updates are being applied. Application updates (like the browser) happen independently of this and don't require a reboot.
 
-See [configuration of updates](https://universal-blue.discourse.group/docs?topic=80) if you want to change the default behavior.
-
 Machine firmware updates are provided through the standard Software Center:
 
 ![b6706ae4-d519-4508-b350-defce27aa8e4](https://github.com/user-attachments/assets/98256d26-87ff-458f-a5f1-ecfa31a4639c)
@@ -147,7 +145,7 @@ Bluefin and Aurora include Cockpit for machine management. We're hoping to inclu
 
 ## Changing the default terminal shell
 
-Bluefin ships [pytxis](https://gitlab.gnome.org/chergert/ptyxis) as the default terminal. It shows up as `Terminal` in the menu. It is **strongly recommended** that you [change your shell via the terminal emulator instead of system-wide](https://tim.siosm.fr/blog/2023/12/22/dont-change-defaut-login-shell/). Click on the Terminal settings and edit your profile:
+Bluefin ships [pytxis](https://devsuite.app/ptyxis/) as the default terminal. It shows up as `Terminal` in the menu. It is **strongly recommended** that you [change your shell via the terminal emulator instead of system-wide](https://tim.siosm.fr/blog/2023/12/22/dont-change-defaut-login-shell/). Click on the Terminal settings and edit your profile:
 
 ![image](https://github.com/user-attachments/assets/2c122205-dbd8-41e6-8b7b-4f536c3b69e9)
 
