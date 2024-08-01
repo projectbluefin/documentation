@@ -4,7 +4,9 @@ title: Press Kit
 permalink: /press-kit
 ---
 
-Thanks for generating content about about Bluefin and Universal Blue! 
+# Press Kit
+
+Thanks for generating content about about Bluefin and Universal Blue! This document will explain how to use the brand and terminology used by the project. 
 
 - [Bluefin](https://projectbluefin.io)
 - [Universal Blue](https://universal-blue.org)
