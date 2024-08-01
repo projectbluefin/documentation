@@ -4,13 +4,11 @@ title: Press Kit
 permalink: /press-kit
 ---
 
-# About
-
 Thanks for generating content about about Bluefin and Universal Blue! 
 
-- [Bluefin Website](https://projectbluefin.io)
+- [Bluefin](https://projectbluefin.io)
 - [Universal Blue](https://universal-blue.org)
-- [Introductory Blog Post](https://www.ypsidanger.com/announcing-project-bluefin/) - this has the backstory and is good backgrounbd material
+- [Introductory Blog Post](https://www.ypsidanger.com/announcing-project-bluefin/) - this has the backstory and background information
 
 # Bluefin Terminology
 
@@ -19,7 +17,8 @@ The name of the project is `Project Bluefin` but usually shortened to just `Blue
 ## Proper Usage
 
 - `Bluefin` - used to refer to the project and/or the operating system
-- `Bluefin GTS` - used to refer the GTS version of Bluefin specifically
+- `Bluefin GTS` - used to refer the GTS version of Bluefin specifically. This is the default experience
+- `Bluefin DX` - Bluefin with developer mode turned on, only relevant when discussing developer-specific features
 
 ## Incorrect Usage
 
@@ -45,6 +44,10 @@ All Universal Blue images share governance structures and are modelled after clo
 - [Mission](https://universal-blue.org/mission.html)
 - [Values](https://universal-blue.org/values.html)
 - [Membership](https://universal-blue.org/membership.html)
+
+# Contacts
+
+[Contact Jorge Castro](https://www.ypsidanger.com/contact/) if you have any questions, we love working with content creators!
 
 # Logos
 
