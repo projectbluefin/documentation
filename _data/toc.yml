@@ -11,6 +11,8 @@
       url: "bluefin-dx"      
     - title: "FAQ"
       url: "FAQ"
+    - title: "Press Kit"
+      url: press-kit
 - title: Contributing
   url: ""
   links:
