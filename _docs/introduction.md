@@ -18,7 +18,7 @@ System updates are image-based and automatic. Applications are logically separat
     - Blur my Shell - for that bling
     - [Tailscale GNOME QS](https://extensions.gnome.org/extension/6139/tailscale-qs/) for [tailscale integration](https://universal-blue.discourse.group/t/tailscale-vpn/290)
 - [Developer Mode](bluefin-dx) - Dedicated developer mode that transforms Bluefin into a powerful cloud native developer workstation.
-- [Ptyxis terminal](https://gitlab.gnome.org/chergert/ptyxis) for container-focused workflows
+- [Ptyxis terminal](https://devsuite.app/ptyxis/) for container-focused workflows
   - [Boxbuddy](https://flathub.org/apps/io.github.dvlv.boxbuddyrs) for container management
 - [Tailscale](https://tailscale.com) - included for VPN along with `wireguard-tools`
      - Use `ujust toggle-tailscale` to turn it off if you don't plan on using it.
