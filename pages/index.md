@@ -19,7 +19,7 @@ Bluefin, like all [Universal Blue](https://universal-blue.org) images, is a next
 Bluefin is:
 
 - **Flatpak First** - The application model in Bluefin is centered around isolated apps that are maintained in Flathub. Applications that do not work well with modern components such as Wayland, Pipewire, Flatpak Portals, etc. may provide a poor experience and are not recommended. 
-- **Cloud Native** - The intended developer experience is focused around containers. See Universal Blue's [mission statement](https://universal-blue.org/mission.html)
+- **Cloud Native** - The developer experience is focused around containers and exposing new Linux users to the [world of cloud native](https://www.cncf.io/). See Universal Blue's [mission statement](https://universal-blue.org/mission.html) for more information.
 - **Purposely Invisible** - Bluefin is not a distribution. Your relationship is with Flathub, homebrew, and whatever you put in your containers. 
 - **Optimized for the 96%** - Not the 4% - Bluefin takes a "stronger together" approach towards features. You can always do what you want, but the value is to share best practices, the team doesn't spend much time on edge cases.
 
