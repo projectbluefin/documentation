@@ -125,6 +125,14 @@ If you use an nvidia machine, remember that the `-nvidia` is important! (This is
 rpm-ostree rebase ostree-image-signed:docker://ghcr.io/ublue-os/bluefin-nvidia:stable
 ```
 
+Use the `skopeo inspect` command to query information from an image:
+
+```bash
+skopeo inspect docker://ghcr.io/ublue-os/bluefin
+```
+
+This will show all the available tags and useful metadata like image and kernel versions. 
+
 Check the [Fedora Silverblue User Guide](https://docs.fedoraproject.org/en-US/fedora-silverblue/) for more information.
 
 ## Overwriting System Defaults
