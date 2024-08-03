@@ -65,12 +65,12 @@ Most pain points can be addressed directly by planning ahead of time.
 
 ### All Users
   - Is your hardware Linux friendly?
-  - Does the hardware require an out of tree kernel module? 
-  - Wireless card supported? 
+  - Does the hardware require an out of tree kernel module? This may lead to long term maintenance issues. 
+  - Is your wireless card supported? 
   - Dedicated disk ready to go?
   - Do you understand the limitations of having an Nvidia GPU? 
   - Are the applications you use well supported on Flathub?
-  - Read this documentation in its entirety
+  - Read this documentation in its entirety, and also:
     - [Homebrew](https://docs.brew.sh/) documentation
     - [Flathub](https://docs.flathub.org/) documentation
     - [rpm-ostree](https://coreos.github.io/rpm-ostree/) documentation
