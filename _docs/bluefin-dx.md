@@ -102,9 +102,9 @@ For CLI warriors you can manage your containers with Ptyxis's built in container
 
 ![image](https://github.com/user-attachments/assets/2a4dc4b5-f1a8-4781-80a4-92ea4dfeeb97)
 
-[Ptyxis](https://universal-blue.discourse.group/docs?topic=300) also includes a host terminal so that you can quickly switch between containers and the host. 
+The included [Terminal](https://gitlab.gnome.org/chergert/ptyxis) includes a host terminal so that you can quickly switch between containers and the host. 
 
-- Further instructions on using Ptyxis: https://universal-blue.discourse.group/docs?topic=300
+- The default terminal is [Ptyxis](https://gitlab.gnome.org/chergert/ptyxis), which includes built in integration of distrobox containers. It is aliased as "Terminal" in the menu. 
 - [Podman Desktop](https://flathub.org/apps/io.podman_desktop.PodmanDesktop) - Containers and Kubernetes for application developers
 - [Pods](https://flathub.org/apps/com.github.marhkb.Pods) is also a great way to manage your containers graphically.
 
