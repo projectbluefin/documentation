@@ -19,13 +19,14 @@ This usually means you can set it up as part of the setup process and then likel
 
 ### Graphical Applications
 
-Use the GNOME Software Center or KDE Discover applications to [install applications from Flathub](https://flathub.org/). Unlike stock Fedora, system updates and upgrades are not handled by this application, it's scope has been reduced to only install Flatpaks from Flathub. The [Warehouse](https://flathub.org/apps/io.github.flattool.Warehouse) tool is included for management.
+Use the GNOME Software Center to [install applications from Flathub](https://flathub.org/). System updates and upgrades are not handled by this application, it's scope has been reduced to only install Flatpaks from Flathub. 
+The [Warehouse](https://flathub.org/apps/io.github.flattool.Warehouse) tool is included for management.
 
 ![86e06ae4-0aec-46ef-9709-936c3e938f70](https://github.com/user-attachments/assets/65b6cae5-9ed4-4d28-93b4-b6dfe9adf463)
 
 ### Command Line Applications
 
-The [brew](https://brew.sh/) application is the package manager used for installing command line applications in Bluefin and Aurora. 
+The [brew](https://brew.sh/) application is the package manager used for installing command line applications in Bluefin. 
 
 - [Homebrew Documentation](https://docs.brew.sh/)
 - [Homebrew Packages](https://formulae.brew.sh/)
@@ -33,7 +34,7 @@ The [brew](https://brew.sh/) application is the package manager used for install
 
 ## System Updates
 
-Bluefin and Aurora are designed to be "hands off". System updates apply weekly, and Flatpaks update twice a day [in the background](https://github.com/ublue-os/config/tree/main/files/usr/lib/systemd). Updates are applied when the system reboots. Therefore, it is recommended to routinely power off your device when it's not being used to ensure kernel updates are being applied. Application updates (like the browser) happen independently of this and don't require a reboot.
+Bluefin is designed to be "hands off". System updates apply weekly, and Flatpaks update twice a day [in the background](https://github.com/ublue-os/config/tree/main/files/usr/lib/systemd). Updates are applied when the system reboots. Therefore, it is recommended to routinely power off your device when it's not being used to ensure kernel updates are being applied. Application updates (like the browser) happen independently of this and don't require a reboot.
 
 Machine firmware updates are provided through the standard Software Center:
 
@@ -41,7 +42,7 @@ Machine firmware updates are provided through the standard Software Center:
 
 ### Upgrades and Throttle Settings
 
-Bluefin publishes images for the current and last stable version of Fedora. This is to give users maximum flexibility by allowing them to rebase to the version they want. You can choose from three rolling tags, or lock to a specific version of Fedora.  
+Bluefin publishes images based on the current and last stable version of Fedora. This is to give users maximum flexibility by allowing them to rebase to the version they want. You can choose from three rolling tags, or lock to a specific version of Fedora.  
 
 | | `gts` (default) | `stable` | `latest` |
 |---|---|---|---|
