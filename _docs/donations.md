@@ -31,7 +31,9 @@ If your software is included in Bluefin and missing from this list, please send 
 
 ## Universal Blue Team
 
-[HikariKnight](https://github.com/sponsors/HikariKnight)
-[Jorge Castro](https://github.com/sponsors/castrojo/)
-[Kyle Gospodnetich](https://github.com/KyleGospo)
-[nicknamenick](https://github.com/sponsors/nicknamenamenick)
+- bsherman
+- [HikariKnight](https://github.com/sponsors/HikariKnight)
+- [Jorge Castro](https://github.com/sponsors/castrojo/)
+- [Kyle Gospodnetich](https://github.com/KyleGospo)
+- M2
+- [nicknamenick](https://github.com/sponsors/nicknamenamenick)
