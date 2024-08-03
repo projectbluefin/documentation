@@ -19,6 +19,7 @@ If your software is included in Bluefin and missing from this list, please send 
 - [eza](https://github.com/cafkafk)
 - [fastfetch](https://github.com/LinusDierheimer)
 - fd: [David Peter](https://github.com/sharkdp) and [Tavian Barnes](https://github.com/tavianator)
+- Flatpak: Currently migrating fiscal hosts
 - [fzf](https://github.com/junegunn)
 - [GNOME](https://www.gnome.org/donate/)
 - [Homebrew](https://github.com/Homebrew/brew#donations)
