@@ -85,7 +85,7 @@ Most pain points can be addressed directly by planning ahead of time.
 - Download the right ISO from [the website](https://projectbluefin.io/#scene-picker)
 - Install the operating system
     * Use the entire disk with automatic partitioning
-    * (Optional): Set up Secure Boot
+    * (Optional): [Set up Secure Boot](introduction.md#secure-boot)
     * (Optional): `ujust switch-channel` to move to `:stable` or `:latest` 
 - Software Installation
     * Use GNOME Software to install Flatpaks
