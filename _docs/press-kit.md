@@ -55,7 +55,7 @@ All Universal Blue images share governance structures and are modelled after clo
 
 ## Primary Logo
 
-Bluefin's logo is a Deinonychus antirrhopus named "Bluefin". This is the primary logo: 
+Bluefin's logo is a *Deinonychus antirrhopus* named "Bluefin". This is the primary logo: 
 
 ![Bluefin](https://github.com/user-attachments/assets/ebf5ab24-4a25-4925-a19b-3d442833d221)
 
