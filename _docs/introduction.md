@@ -106,7 +106,7 @@ Bluefin strives to make maintenance as easy as possible, however many of the aut
 - Run a System Upgrade via the menu option or `ujust update` to observe an update and reboot
   - `ujust changelogs` will show incoming changes and updates coming from Fedora
 - Subscribe to the [announcements tag](https://universal-blue.discourse.group/tag/announcements) on the Universal Blue forums
-- Use the Warehouse application to manage Flatpak lifecycle:
+- Use the [Warehouse application](https://github.com/flattool/warehouse) to manage Flatpak lifecycle:
     * Pin to an old version or rollback
     * Easily remove applications at once
 - `ujust clean-system` to clean up old containers and unused flatpak runtimes
