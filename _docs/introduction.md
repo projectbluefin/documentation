@@ -66,7 +66,8 @@ Most pain points can be addressed directly by planning ahead of time.
 ### All Users
   - Is your hardware Linux friendly?
   - Does the hardware require an out of tree kernel module? This may lead to long term maintenance issues. 
-  - Is your wireless card supported? 
+  - Is your wireless card supported?
+  - Does your VPN provider provide a wireguard configuration to import into Network Manager?
   - Dedicated disk ready to go?
   - Do you understand the limitations of having an Nvidia GPU? 
   - Are the applications you use well supported on Flathub?
@@ -93,6 +94,7 @@ Most pain points can be addressed directly by planning ahead of time.
     * (Optional): Install Command line applications via `brew`
 - Post-installation Configuration
     * Select/Change default applications as you see fit
+    * (Optional) Import your [wireguard configuration via `wg-quick`](https://blogs.gnome.org/thaller/2019/03/15/wireguard-in-networkmanager/) or use the VPN configuration in the network manager GUI
 - (Optional) Developer Configuration
     * `ujust devmode` and follow the directions
     * Start VSCode and configure your settings and extensions   
