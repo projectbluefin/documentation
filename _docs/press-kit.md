@@ -19,7 +19,7 @@ The name of the project is `Project Bluefin` but usually shortened to just `Blue
 ## Proper Usage
 
 - `Bluefin` - used to refer to the project and/or the operating system
-- `Bluefin GTS` - used to refer the GTS version of Bluefin specifically. This is the default experience
+- `Bluefin GTS` - used to refer to the GTS version of Bluefin specifically. This is the default experience
 - `Bluefin DX` - Bluefin with developer mode turned on, only relevant when discussing developer-specific features
 
 ## Incorrect Usage
