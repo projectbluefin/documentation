@@ -90,7 +90,7 @@ The most current [Docker Engine](https://docs.docker.com/engine/) is included by
 
 ### Pet Containers
 
-Long running processes should be kept in a pet container. Manage these via the included [BoxBuddy](https://github.com/Dvlv/BoxBuddyRS) application, available via the logomenu in the top left corner of your desktop under "Containers": 
+Pet containers are available as interactive terminals via [distrobox](https://distrobox.it/). Manage these via the included [BoxBuddy](https://github.com/Dvlv/BoxBuddyRS) application, available via the logomenu in the top left corner of your desktop under "Containers": 
 
 ![image](https://github.com/user-attachments/assets/bdab71b0-c04a-4562-a73d-396d4b907060)
 
