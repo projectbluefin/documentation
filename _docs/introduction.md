@@ -64,36 +64,36 @@ Here is a short [runbook](https://www.pagerduty.com/resources/learn/what-is-a-ru
 Most pain points can be addressed directly by planning ahead of time.
 
 ### All Users
-  - [ ] Is your hardware Linux friendly?
-  - [ ] Does the hardware require an out of tree kernel module? 
-  - [ ] Wireless card supported? 
-  - [ ] Dedicated disk ready to go?
-  - [ ] Do you understand the limitations of having an Nvidia GPU? 
-  - [ ] Are the applications you use well supported on Flathub?
-  - [ ] Read this documentation in its entirety
-    - [ ] [Homebrew](https://docs.brew.sh/) documentation
-    - [ ] [Flathub](https://docs.flathub.org/) documentation
-    - [ ] [rpm-ostree](https://coreos.github.io/rpm-ostree/) documentation
-    - [ ] [bootc](https://containers.github.io/bootc/) documentation - this is a future tool that is currently included but not being used for important tasks, it will replace rpm-ostree in the Fall of 2024
+  - Is your hardware Linux friendly?
+  - Does the hardware require an out of tree kernel module? 
+  - Wireless card supported? 
+  - Dedicated disk ready to go?
+  - Do you understand the limitations of having an Nvidia GPU? 
+  - Are the applications you use well supported on Flathub?
+  - Read this documentation in its entirety
+    - [Homebrew](https://docs.brew.sh/) documentation
+    - [Flathub](https://docs.flathub.org/) documentation
+    - [rpm-ostree](https://coreos.github.io/rpm-ostree/) documentation
+    - [bootc](https://containers.github.io/bootc/) documentation - this is a future tool that is currently included but not being used for important tasks, it will replace rpm-ostree in the Fall of 2024
 
 ### Developers
- - [ ] Do you know [how to use containers](https://docker-curriculum.com/#introduction) for development? 
- - [ ] Do you know how to manage [systemd service units](https://systemd.io/) for both the system and user accounts?
+ - Do you know [how to use containers](https://docker-curriculum.com/#introduction) for development? 
+ - Do you know how to manage [systemd service units](https://systemd.io/) for both the system and user accounts?
 
 ## Day 1 - Deployment and Configuration
 
-- [ ] Download the right ISO from [the website](https://projectbluefin.io/#scene-picker)
-- [ ] Install the operating system
+- Download the right ISO from [the website](https://projectbluefin.io/#scene-picker)
+- Install the operating system
     * Use the entire disk with automatic partitioning
     * (Optional): Set up Secure Boot
     * (Optional): `ujust switch-channel` to move to `:stable` or `:latest` 
-- [ ] Software Installation
+- Software Installation
     * Use GNOME Software to install Flatpaks
         + (Optional): Use Flatseal to manage Flatpak permissions if appropriate
     * (Optional): Install Command line applications via `brew`
-- [ ] Post-installation Configuration
+- Post-installation Configuration
     * Select/Change default applications as you see fit
-- [ ] (Optional) Developer Configuration
+- (Optional) Developer Configuration
     * `ujust devmode` and follow the directions
     * Start VSCode and configure your settings and extensions   
 
@@ -101,13 +101,13 @@ Most pain points can be addressed directly by planning ahead of time.
 
 Bluefin strives to make maintenance as easy as possible, however many of the automated tasks can be run manually. 
 
-- [ ] Run a System Upgrade via the menu option or `ujust update` to observe an update and reboot
+- Run a System Upgrade via the menu option or `ujust update` to observe an update and reboot
   - `ujust changelogs` will show incoming changes and updates coming from Fedora
-- [ ] Subscribe to the [announcements tag](https://universal-blue.discourse.group/tag/announcements) on the Universal Blue forums
-- [ ] Use the Warehouse application to manage Flatpak lifecycle:
+- Subscribe to the [announcements tag](https://universal-blue.discourse.group/tag/announcements) on the Universal Blue forums
+- Use the Warehouse application to manage Flatpak lifecycle:
     * Pin to an old version or rollback
     * Easily remove applications at once
-- [ ] `ujust clean-system` to clean up old containers and unused flatpak runtimes
+- `ujust clean-system` to clean up old containers and unused flatpak runtimes
 
 # Secure Boot
 
