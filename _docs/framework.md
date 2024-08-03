@@ -6,7 +6,7 @@ permalink: framework
 
 # Bluefin and Aurora are community supported options for Framework laptops
 
-Fedora is an officially supported option for the [Framework](https://frame.work) laptops. Due to it's atomic nature, [Universal Blue](https://universal-blue.org/) images inherit the hardware support, which include Bluefin. Universal Blue partners with Framework to provide community support for these laptops by building on Fedora's support and extending it. The co-creators of Bluefin use Framework laptops as their laptops and it is the recommended "perfect setup". 
+Fedora is an officially supported option for the [Framework](https://frame.work) laptops. Due to it's cloud native nature, [Universal Blue](https://universal-blue.org/) images inherit the hardware support, which include Bluefin. Universal Blue partners with Framework to provide community support for these laptops by building on Fedora's support and extending it. The co-creators of Bluefin use Framework laptops as their laptops and it is the recommended "perfect setup". 
 
 ![83a08fa741add9e31b4762bf601337e4b506db8d](https://github.com/user-attachments/assets/3dd48f0f-f839-47ca-96f3-8e230e11e47e)
 
@@ -35,6 +35,11 @@ The core team and many contributors use Bluefin on the Framework 13(Intel/AMD) a
 - Automatic karg application for Frameworks with Intel hardware to support keyboard shortcuts
 - Framework logo is automatically applied to the Logo menu shell extension in GNOME when running on Framework hardware
    - Immediately obvious to the end user they're getting specialized support for their hardware.
+ 
+# Installation
+
+- [Framework 13](framework-13)
+- [Framework 16](framework-16)
 
 # Support Expectations
 
