@@ -18,7 +18,7 @@ If your software is included in Bluefin and missing from this list, please send 
 - [Extensions Manager](https://github.com/sponsors/mjakeman)
 - [eza](https://github.com/cafkafk)
 - [fastfetch](https://github.com/LinusDierheimer)
-- [fd] - [David Peter](https://github.com/sharkdp) and [Tavian Barnes](https://github.com/tavianator)
+- fd: [David Peter](https://github.com/sharkdp) and [Tavian Barnes](https://github.com/tavianator)
 - [fzf](https://github.com/junegunn)
 - [GNOME](https://www.gnome.org/donate/)
 - [Homebrew](https://github.com/Homebrew/brew#donations)
