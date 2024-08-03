@@ -29,6 +29,7 @@ The name of the project is `Project Bluefin` but usually shortened to just `Blue
 - `Universal Blue Bluefin` or `uBlue Bluefin` - "Bluefin is built with Universal Blue" or "Bluefin is a Universal Blue image" is recommended instead.
 - "Immutable Distribution" - Bluefin is an operating system, it is neither immutable nor a distribution, it is a custom image based on Fedora.
 
+
 # Universal Blue Terminology
 
 ## Proper Usage
