@@ -14,6 +14,7 @@ If your software is included in Bluefin and missing from this list, please send 
 
 - [Atuin](https://github.com/sponsors/atuinsh)
 - [Blur My Shell](https://github.com/aunetx)
+- [Clapper](https://liberapay.com/Clapper)
 - [Deja Dup](https://liberapay.com/DejaDup)
 - [Extensions Manager](https://github.com/sponsors/mjakeman)
 - [eza](https://github.com/cafkafk)
