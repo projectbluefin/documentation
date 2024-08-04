@@ -112,8 +112,8 @@ The included [Terminal](https://gitlab.gnome.org/chergert/ptyxis) includes a hos
 
 Designed for quick usage and "I need a test terminal now!" use cases, Preconfigured **ephemeral** terminal workspaces are available with keyboard shortcuts:
 
-<kbd>Ctrl</kbd>-<kbd>Alt</kbd>-<kbd>u</kbd> - Launch an Ubuntu container.
-<kbd>Ctrl</kbd>-<kbd>Alt</kbd>-<kbd>f</kbd> - Launch a Fedora container.
+- <kbd>Ctrl</kbd>-<kbd>Alt</kbd>-<kbd>u</kbd> - Launch an Ubuntu LTS container
+- <kbd>Ctrl</kbd>-<kbd>Alt</kbd>-<kbd>f</kbd> - Launch a Fedora container
 
 Note: The initial setup will take some time depending on network connectivity. These containers are managed via a Podman Quadlet and **will be destroyed and updated regularly**. Declarative configuration is kept in `/etc/distrobox/distrobox.ini`, see [distrobox-assemble](https://github.com/89luca89/distrobox/blob/main/docs/usage/distrobox-assemble.md#examples) for examples.  
 
