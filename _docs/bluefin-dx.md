@@ -81,6 +81,7 @@ The most current [Docker Engine](https://docs.docker.com/engine/) is included by
 - [fd](https://github.com/sharkdp/fd) for `find`
 - [fzf](https://github.com/junegunn/fzf) for command line fuzzy finding
 - [ripgrep](https://github.com/BurntSushi/ripgrep) for search
+- [tealdeer](https://github.com/dbrgn/tealdeer) for `tldr`
 - [ugrep](https://github.com/Genivia/ugrep) for grep
 - [yq](https://github.com/mikefarah/yq) - for yaml, json, and xml processing
 - [zoxide](https://github.com/ajeetdsouza/zoxide) as `cd`
