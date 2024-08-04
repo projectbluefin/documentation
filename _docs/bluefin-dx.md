@@ -104,9 +104,9 @@ For CLI warriors you can manage your containers with Ptyxis's built in container
 
 The included [Terminal](https://gitlab.gnome.org/chergert/ptyxis) includes a host terminal so that you can quickly switch between containers and the host. 
 
-- The default terminal is [Ptyxis](https://gitlab.gnome.org/chergert/ptyxis), which includes built in integration of distrobox containers. It is aliased as "Terminal" in the menu. 
+- The default terminal is [Ptyxis](https://gitlab.gnome.org/chergert/ptyxis), which includes built in integration of distrobox containers. It is aliased as "Terminal" in the menu. It is mapped to <kbd>Ctrl</kbd>-<kbd>Alt</kbd>-<kbd>Enter</kbd> by default for quick launch
 - [Podman Desktop](https://flathub.org/apps/io.podman_desktop.PodmanDesktop) - Containers and Kubernetes for application developers
-- [Pods](https://flathub.org/apps/com.github.marhkb.Pods) is also a great way to manage your containers graphically.
+- [Pods](https://flathub.org/apps/com.github.marhkb.Pods) is also a great way to manage your containers graphically
 
 ### Ephemeral Containers
 
@@ -114,7 +114,6 @@ Designed for quick usage and "I need a test terminal now!" use cases, Preconfigu
 
 <kbd>Ctrl</kbd>-<kbd>Alt</kbd>-<kbd>u</kbd> - Launch an Ubuntu container.
 <kbd>Ctrl</kbd>-<kbd>Alt</kbd>-<kbd>f</kbd> - Launch a Fedora container.
-<kbd>Ctrl</kbd>-<kbd>Alt</kbd>-<kbd>Enter</kbd> - Launch a [bluefin-cli container](https://universal-blue.discourse.group/t/the-bluefin-cli-container/704) (Experimental).
 
 Note: The initial setup will take some time depending on network connectivity. These containers are managed via a Podman Quadlet and **will be destroyed and updated regularly**.  
 
