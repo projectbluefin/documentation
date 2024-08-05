@@ -136,7 +136,9 @@ The Jetbrains blog also has more information on Jetbrains Dev Containers support
 
 - [Using Dev Containers in JetBrains IDEs](https://blog.jetbrains.com/idea/2024/07/using-dev-containers-in-jetbrains-ides-part-1/) – Part 1
 
-## Neovim with Devcontainers
+## Neovim
+
+`brew install neovim` then follow these directions for a devcontainer setup: 
 
 - [Running Neovim with Devcontainers](https://cadu.dev/running-neovim-on-devcontainers/)
 
