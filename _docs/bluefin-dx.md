@@ -136,6 +136,10 @@ The Jetbrains blog also has more information on Jetbrains Dev Containers support
 
 - [Using Dev Containers in JetBrains IDEs](https://blog.jetbrains.com/idea/2024/07/using-dev-containers-in-jetbrains-ides-part-1/) – Part 1
 
+## Neovim with Devcontainers
+
+- [Running Neovim with Devcontainers](https://cadu.dev/running-neovim-on-devcontainers/)
+
 ## Kubernetes and other Cloud Native Tooling
 
 - [kind](https://kind.sigs.k8s.io/) - Run a Kubernetes cluster on your machine. Run `kind create cluster` on the host to get started!
