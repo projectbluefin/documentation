@@ -150,7 +150,7 @@ Devpod also has support for Jetbrains
 
 ## Neovim
 
-`brew install neovim` then follow these directions for a devcontainer setup: 
+`brew install neovim devcontainer` then follow these directions for a devcontainer setup: 
 
 - [Running Neovim with Devcontainers](https://cadu.dev/running-neovim-on-devcontainers/)
 - [Devpod Quickstart for Neovim](https://devpod.sh/docs/getting-started/quickstart-vim)
