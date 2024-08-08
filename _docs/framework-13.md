@@ -37,7 +37,7 @@ permalink: framework-13
 
 ![5](https://canada1.discourse-cdn.com/free1/uploads/univeral_blue/original/2X/8/8f9a6cd5d75bc4ecc2ad60e0e466596a1ce488d5.jpeg)
 
-![6|690x431](https://canada1.discourse-cdn.com/free1/uploads/univeral_blue/original/2X/f/fa60672f8cf1cee3934430290a07c16e94dbe242.jpeg)
+![6](https://canada1.discourse-cdn.com/free1/uploads/univeral_blue/original/2X/f/fa60672f8cf1cee3934430290a07c16e94dbe242.jpeg)
 
 ![10](https://canada1.discourse-cdn.com/free1/uploads/univeral_blue/original/2X/3/3dc208b640503f2bd0cb5c0075745250a05c31ef.jpeg)
 
