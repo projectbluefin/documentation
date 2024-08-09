@@ -157,9 +157,11 @@ Devpod also has support for Jetbrains
 
 ## Kubernetes and other Cloud Native Tooling
 
+`ujust k8s-dev-tools` to get started: 
+
 - [kind](https://kind.sigs.k8s.io/) - Run a Kubernetes cluster on your machine. Run `kind create cluster` on the host to get started!
   - [kubectl](https://kubernetes.io/docs/reference/kubectl/) - Administer Kubernetes Clusters
-  - helm, ko, flux, minio-client -- if it's an incubated project we intend to add it where appropriate
+  - [k9s](https://k9scli.io/), [kubectx](https://github.com/ahmetb/kubectx), and [helm](https://helm.sh/). If you feel there's a tool that should be included by default, send a PR [to this file](https://github.com/ublue-os/bluefin/blob/main/system_files/shared/usr/share/ublue-os/homebrew/kubernetes.Brewfile). But let's not overdo it. 😄
 
 ## AI and Machine Learning
 
