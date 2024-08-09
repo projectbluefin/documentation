@@ -34,9 +34,10 @@ System updates are image-based and automatic. Applications are logically separat
 management along with `libratbagd`
   - [rclone](https://rclone.org/) and [restic](https://restic.net/) included
   - `zsh` and `fish` included (optional) 
-- Built on top of the the [Universal Blue main image](https://github.com/ublue-os/main)
+- Built on top of the the [Universal Blue main image](https://github.com/ublue-os/main) - resulting in easy sharing of benefits: 
   - Extra udev rules for game controllers and [other devices](https://github.com/ublue-os/config) included out of the box
   - All multimedia codecs included
+  - Many improvements from [Bazzite](https://bazzite.gg): GNOME Triple Buffering, Switcheroo support 
   - System designed for automatic staging of updates
     - If you've never used an image-based Linux before just use your computer normally
     - Don't overthink it, just shut your computer off when you're not using it
