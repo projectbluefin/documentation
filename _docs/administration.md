@@ -152,7 +152,9 @@ Check the [XDG Base Directory Specification](https://specifications.freedesktop.
 
 Bluefin and Aurora include Cockpit for machine management. We're hoping to include more out-of-the-box management templates, please [check this issue](https://github.com/ublue-os/bluefin/issues/271) if you're interested in volunteering.
 
-## Changing the default terminal shell
+## Terminal Configuration
+
+### Changing the default terminal shell
 
 Bluefin ships [pytxis](https://devsuite.app/ptyxis/) as the default terminal. It shows up as `Terminal` in the menu. It is **strongly recommended** that you [change your shell via the terminal emulator instead of system-wide](https://tim.siosm.fr/blog/2023/12/22/dont-change-defaut-login-shell/). Click on the Terminal settings and edit your profile:
 
@@ -162,6 +164,9 @@ Then select "Use Custom Command" and then add the shell you want to use. `/usr/b
 
 ![image](https://github.com/user-attachments/assets/8eb039db-7ec1-4847-b3d7-496d69fe9538)
 
+### Adjusting the transparency
+
+Ptyxis has a transparency option that you can toggle: `ujust ptyxis-transparency 0.95`. It accepts values between 0 and 1.0 to set the level of transparency. 
 
 ## Verification
 
