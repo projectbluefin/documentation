@@ -111,6 +111,8 @@ Bluefin strives to make maintenance as easy as possible, however many of the aut
     * Easily remove applications at once
 - `ujust clean-system` to clean up old containers and unused flatpak runtimes
 
+And one more piece of advice: The more you invest into day 0, the smoother your day 1 will be, which result in a smooth day 2 and beyond. 
+
 # Secure Boot
 
 Secure Boot is supported by default providing an additional layer of security. After the first installation, you will be prompted to enroll the secure boot key in the BIOS.
