@@ -15,13 +15,13 @@ Everything you need is included.
 Other than the visual differences, and codecs, there are some other key differences between Bluefin and Fedora Silverblue from a usage perspective:
 
 - Bluefin takes a [greenfield approach](https://en.wikipedia.org/wiki/Greenfield_project) to Linux applications by defaulting to Flathub and `brew` by default
-- Bluefin doesn't recommend using Toolbx - it instead focuses on [devcontainers](https://universal-blue.discourse.group/docs?topic=39) for declarative containerized development. 
+- Bluefin doesn't recommend using Toolbx - it instead focuses on [devcontainers](bluefin-dx#the-cloud-native-development-approach) for declarative containerized development. 
 - Bluefin *tries* to remove the need for the user to use `rpm-ostree` or `bootc` directly
 - Bluefin focuses on automation of OS services and upgrades instead of user interaction
 
 # How do I get my GNOME back to normal Fedora defaults?
 
-You can turn off the Dash to Dock and appindicator extensions to get a more stock Fedora experience by following [these instructions](https://universal-blue.discourse.group/t/managing-extensions/166).
+You can turn off the Dash to Dock and appindicator extensions to get a more stock Fedora experience by following [these instructions](administration#managing-extensions).
 
 We set the default dconf keys in `/etc/dconf/db/local`, removing those keys and updating the database will take you back to the fedora default:
 
