@@ -144,6 +144,18 @@ For example, the Distrobox configuration is in `/usr/etc/distrobox/distrobox.ini
 
 Check the [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html) for more information on configuration options, in particular `~/.local` and `~/.config`. 
 
+## Managing Extensions
+
+Bluefin uses the [Extension Manager](https://flathub.org/apps/com.mattjakeman.ExtensionManager) by Matthew Jakeman to manage the desktop extensions. The application is included by default. You can access it via the [Logo Menu](https://github.com/Aryan20/Logomenu) (thanks Aryan Kaushik!)
+
+![image](https://github.com/user-attachments/assets/c5ad1637-95c9-4692-8b25-e8ca6248e575)
+
+This is useful if you decide you do not want to use some of the ones bundled with Bluefin. 
+
+![extensions](https://github.com/user-attachments/assets/2ea316d3-bb71-461c-95dd-f119600d1568)
+
+>**Note**: If your session crashes, then all of your extensions will be disabled.
+
 ## Remote Management
 
 ### Note
