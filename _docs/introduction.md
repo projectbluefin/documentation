@@ -12,11 +12,12 @@ System updates are image-based and automatic. Applications are logically separat
 
 - Ubuntu-like GNOME layout.
   - Includes the following GNOME Extensions:
-    - Dash to Dock - for a more Unity-like dock
-    - Appindicator - for tray-like icons in the top right corner
-    - GSConnect - Integrate your mobile device with your desktop    
-    - Blur my Shell - for that bling
+    - [Dash to Dock](https://micheleg.github.io/dash-to-dock/) - for a more Unity-like dock
+    - [Appindicator](https://github.com/ubuntu/gnome-shell-extension-appindicator) - for tray-like icons in the top right corner
+    - [GSConnect](https://github.com/GSConnect/gnome-shell-extension-gsconnect) - Integrate your mobile device with your desktop    
+    - [Blur my Shell](https://github.com/aunetx/blur-my-shell) - for that bling
     - [Tailscale GNOME QS](https://extensions.gnome.org/extension/6139/tailscale-qs/) for [tailscale integration](https://universal-blue.discourse.group/t/tailscale-vpn/290)
+    - [Search Light](https://github.com/icedman/search-light) - for search and people who prefer a Spotlight workflow. Bound to <kbd>Super</kbd>-<kbd>Space</kbd> by default
 - [Developer Mode](bluefin-dx) - Dedicated developer mode that transforms Bluefin into a powerful cloud native developer workstation.
 - [Ptyxis terminal](https://devsuite.app/ptyxis/) for container-focused workflows
   - [Boxbuddy](https://flathub.org/apps/io.github.dvlv.boxbuddyrs) for container management
