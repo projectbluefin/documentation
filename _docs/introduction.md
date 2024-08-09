@@ -111,7 +111,7 @@ Bluefin strives to make maintenance as easy as possible, however many of the aut
     * Easily remove applications at once
 - `ujust clean-system` to clean up old containers and unused flatpak runtimes
 
-And one more piece of advice: The more you invest into day 0, the smoother your day 1 will be, which results in a smooth day 2. After that, it's all bragging rights. The `fastfetch` command will be there to remind you: 
+And one more piece of advice: The more you invest into day 0, the smoother your day 1 will be, which results in an even smoother day 2. After that, it's all bragging rights. The `fastfetch` command will be there to remind you of your milestone: 
 
 ![image](https://github.com/user-attachments/assets/e1b77128-6aaf-4a95-a9fc-cb1409a176fc)
 
