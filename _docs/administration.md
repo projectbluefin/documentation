@@ -180,7 +180,7 @@ Then select "Use Custom Command" and then add the shell you want to use. `/usr/b
 
 Ptyxis has a transparency option that you can toggle: `ujust ptyxis-transparency 0.95`. It accepts values between 0 and 1.0 to set the level of transparency. 
 
-See the [bluefin-cli](bluefin-dx.md#command-line-experience) section for more terminal goodies. 
+See the [bluefin-cli](https://docs.projectbluefin.io/bluefin-dx#bluefin-cli) section for more terminal goodies. 
 
 ## Verification
 
