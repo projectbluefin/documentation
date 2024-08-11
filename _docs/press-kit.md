@@ -38,7 +38,7 @@ The name of the project is `Project Bluefin` but usually shortened to just `Blue
 
 ## Incorrect Usage
 
-- `uBlue`, `UBlue`, `ublue-os`, or any contraction of the term. These shorthand names are commonly used as slugs in URLs or paths in the operating system such as `/usr/share/ublue-os`
+- `uBlue`, `UBlue`, `ublue-os`, or any contraction of the term. These shorthand names are commonly used as convenience slugs in URLs or paths in the operating system such as `/usr/share/ublue-os`
 
 # Governance
 
