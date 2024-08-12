@@ -51,7 +51,7 @@ Bluefin publishes images based on the current and last stable version of Fedora.
 | Target User: | Most users | Enthusiasts | Advanced users | 
 | System Updates: | Weekly | Weekly | Daily | 
 | Application Updates: | Twice a Day | Twice a Day | Twice a Day | 
-| Kernel: | Gated | Gated | Upstream | 
+| Kernel: | Gated | Gated | kernel-fsync | 
 
 - `gts`: This is the default image and is always aliased to the previous stable version of Fedora. It targets the majority of users. It is slang for "Grand Touring Support", to signify a faster cadence than an [LTS](https://www.linux.com/news/mark-shuttleworth-ubuntu-long-term-support/) 
 - `stable`: This is for enthusiasts who want the latest version of the GNOME and Fedora. It is always aliased to the current version of Fedora but follows the Fedora CoreOS release schedule and not the Fedora Silverblue release schedule.
@@ -59,13 +59,19 @@ Bluefin publishes images based on the current and last stable version of Fedora.
 
 The major difference between `latest` and `stable` is when they update. `latest` will upgrade to the next major Fedora release as soon as it is available and it builds daily. `stable` will upgrade when CoreOS does it's userpace upgrade, which is usually a few weeks afterwards, and only builds weekly. 
 
-#### Gated Kernel
+#### Gated Kernel 
 
 The `gts` and `stable` tags feature a gated kernel. This kernel follows the same version as the [Fedora CoreOS stable channel](https://fedoraproject.org/coreos/release-notes?arch=x86_64&stream=stable), which is a slower cadence than default Fedora Silverblue.
 
+#### kernel-fsync
+
+The `latest` tag features Sentry's [kernel-fsync](https://copr.fedorainfracloud.org/coprs/sentry/kernel-fsync/), which includes expanded hardware support, and uses the [BORE](https://github.com/firelzrd/bore-scheduler) CPU scheduler. This is the same kernel version as the latest version of Fedora. 
+
 #### Asus and Surface Devices
 
-Asus and Surface devices use their own dedicated images and only follow the `:latest` tag. This is to ensure proper support for those devices.
+Asus and Surface devices use their own dedicated images and only follow the `:latest` tag. This is to ensure proper support for those devices. 
+
+Note: The kernel-fsync kernel removes the need to have dedicated Asus and Surface images, users will be rebased to the generic image at some point in the future and these images will be deprecated. 
 
 ### Switching between channels
 
