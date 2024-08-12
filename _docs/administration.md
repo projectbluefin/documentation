@@ -65,7 +65,7 @@ The `gts` and `stable` tags feature a gated kernel. This kernel follows the same
 
 #### kernel-fsync
 
-The `latest` tag features Sentry's [kernel-fsync](https://copr.fedorainfracloud.org/coprs/sentry/kernel-fsync/), which includes expanded hardware support, and uses the [BORE](https://github.com/firelzrd/bore-scheduler) CPU scheduler. This is the same kernel version as the latest version of Fedora. 
+The `latest` tag features Sentry's [kernel-fsync](https://copr.fedorainfracloud.org/coprs/sentry/kernel-fsync/), which includes expanded hardware support, and uses the [BORE](https://github.com/firelzrd/bore-scheduler) CPU scheduler. This is the same kernel version as the latest version of Fedora and the exact same kernel that [Bazzite](https://bazzite.gg) uses.
 
 #### Asus and Surface Devices
 
