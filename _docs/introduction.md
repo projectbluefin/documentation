@@ -135,7 +135,7 @@ Secure boot is supported with our custom key. The pub key can be found in the ro
 
 ```bash
 sudo mokutil --timeout -1
-sudo mokutil --import secure_boot.der
+sudo mokutil --import public_key.der
 ```
 
 [Open an issue]({{ site.repo }}/issues)
