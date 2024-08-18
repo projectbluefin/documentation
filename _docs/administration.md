@@ -54,7 +54,7 @@ Bluefin publishes images based on the current and last stable version of Fedora.
 | Kernel: | Gated | Gated | kernel-fsync | 
 
 - `gts`: This is the default image and is always aliased to the previous stable version of Fedora. It targets the majority of users. It is slang for "Grand Touring Support", to signify a faster cadence than an [LTS](https://www.linux.com/news/mark-shuttleworth-ubuntu-long-term-support/) 
-- `stable`: This is for enthusiasts who want the latest version of the GNOME and Fedora. It is always aliased to the current version of Fedora but follows the Fedora CoreOS release schedule and not the Fedora Silverblue release schedule
+- `stable`: This is for enthusiasts who want the latest version of GNOME and Fedora. It is always aliased to the current version of Fedora but follows the Fedora CoreOS release schedule and not the Fedora Silverblue release schedule
 - `latest`: For users who want the very latest Fedora has to offer, an ungated kernel-fsync, daily updates, full open throttle 🔥  
 
 The major difference between `latest` and `stable` is when they update. `latest` will upgrade to the next major Fedora release as soon as it is available and it builds daily. `stable` will upgrade when CoreOS does it's userpace upgrade, which is usually a few weeks afterwards, and only builds weekly. 
