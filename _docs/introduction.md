@@ -11,7 +11,7 @@ permalink: introduction
 System updates are image-based and automatic. Applications are logically separated from the system by using Flatpaks for graphical applications and `brew` for command line applications.
 
 - Ubuntu-like GNOME layout.
-  - Includes the following GNOME Extensions:
+  - Integrates the following GNOME Extensions by default:
     - [Dash to Dock](https://micheleg.github.io/dash-to-dock/) - for a more Unity-like dock
     - [Appindicator](https://github.com/ubuntu/gnome-shell-extension-appindicator) - for tray-like icons in the top right corner
     - [GSConnect](https://github.com/GSConnect/gnome-shell-extension-gsconnect) - Integrate your mobile device with your desktop    
