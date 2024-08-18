@@ -33,7 +33,7 @@ System updates are image-based and automatic. Applications are logically separat
   - [Solaar](https://github.com/pwr-Solaar/Solaar) - included for Logitech mouse 
 management along with `libratbagd`
   - [rclone](https://rclone.org/) and [restic](https://restic.net/) included
-  - `zsh` and `fish` included (optional) 
+  - `zsh` and `fish` included ([Instructions](administration#changing-the-default-terminal-shell)) 
 - Built on top of the the [Universal Blue main image](https://github.com/ublue-os/main) - resulting in easy sharing of benefits: 
   - Extra udev rules for game controllers and [other devices](https://github.com/ublue-os/config) included out of the box
   - All multimedia codecs included
