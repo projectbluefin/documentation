@@ -138,4 +138,4 @@ sudo mokutil --timeout -1
 sudo mokutil --import public_key.der
 ```
 
-[Open an issue]({{ site.repo }}/issues)
+[Move on to system administration](administration)
