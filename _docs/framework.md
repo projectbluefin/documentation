@@ -23,7 +23,6 @@ The core team and many contributors use Bluefin on the Framework 13(Intel/AMD) a
 
 -    Patched Switcheroo (FW16 only)
      -  Applications will automatically use the dGPU. This is defined by their .desktop file, so applications like Steam & Lutris will do this automatically. No more need to add DRI_PRIME.
-- [Power Profile Switcher](https://github.com/eliapasquali/power-profile-switcher). By default power save is used when on battery and balanced when connected to power.
 - Fractional scaling enabled out of the box
 - Fingerprint service installed and enabled out of the box
 - VRR supported on the Framework 16 (Bazzite only)
