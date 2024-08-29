@@ -70,12 +70,12 @@ Most pain points can be addressed directly by planning ahead of time.
     - Does the hardware require an out of tree kernel module? This may lead to long term maintenance issues. 
     - Is your wireless card supported by Linux?
       - Poorly supported cards include Broadcom
+  - Are the applications you depend on well supported on Flathub?
   - Does your VPN provider provide a wireguard configuration to import into Network Manager?
   - Dedicated disk ready to go?
     - Bluefin does not support dual booting from the same disk
     - Bluefin does not support rebasing from a preexisting installation of Fedora
   - Do you understand the limitations of having an Nvidia GPU? 
-  - Are the applications you use well supported on Flathub?
   - Read this documentation in its entirety, and also:
     - [Homebrew](https://docs.brew.sh/) documentation
     - [Flathub](https://docs.flathub.org/) documentation
