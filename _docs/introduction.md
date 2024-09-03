@@ -55,6 +55,7 @@ Review the [Fedora Silverblue installation instructions](https://docs.fedoraproj
 - Use [Ventoy](https://www.ventoy.net/en/index.html) or the [Fedora Media Writer](https://flathub.org/apps/org.fedoraproject.MediaWriter) to create installation media. Other creation methods may not work properly.
 - Dual booting off of the same disk is **unsupported**, use a dedicated drive for another operating system and use your BIOS to choose another OS to boot off of. (This is how you should probably always do it anyway)
 - We **strongly recommend** using automated partitioning during installation, there are [known issues](https://docs.fedoraproject.org/en-US/fedora-silverblue/installation/) with manual partition on Atomic systems and is unnecessary to set up unless you are on a multi-disk system. 
+- A stock Bluefin installation is 11GB. Bluefin with developer mode enabled (`bluefin-dx`) is 19GB.   
 
 In order to set yourself up to success it's useful to plan out your Bluefin installation into three distinct phases, mirroring the systems operations lifecycle. 
 
@@ -70,11 +71,11 @@ Most pain points can be addressed directly by planning ahead of time.
     - Does the hardware require an out of tree kernel module? This may lead to long term maintenance issues. 
     - Is your wireless card supported by Linux?
       - Poorly supported cards include Broadcom
-  - Are the applications you depend on well supported on Flathub?
+  - Are the applications you depend on well supported on Flathub? 
   - Does your VPN provider provide a wireguard configuration to import into Network Manager?
   - Dedicated disk ready to go?
     - Bluefin does not support dual booting from the same disk
-    - Bluefin does not support rebasing from a preexisting installation of Fedora
+    - Bluefin does not support rebasing from a pre-existing installation of Fedora
   - Do you understand the limitations of having an Nvidia GPU? 
   - Read this documentation in its entirety, and also:
     - [Homebrew](https://docs.brew.sh/) documentation
