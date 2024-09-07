@@ -59,6 +59,8 @@ Bluefin publishes images based on the current and last stable version of Fedora.
 
 The major difference between `latest` and `stable` is when they update. `latest` will upgrade to the next major Fedora release as soon as it is available and it builds daily. `stable` will upgrade when CoreOS does it's userpace upgrade, which is usually a few weeks afterwards, and only builds weekly. 
 
+> One of Bluefin's strengths is being able to atomically adjust versions. All the tags are built from the same repository and are essentially the same, the version numbers will just be different. `gts` for a work machine and `stable` for your hot rod. Additionally the ability to rebase between release cadences lets users repurpose machines for different use cases without needing to reinstall. 
+
 #### Gated Kernel 
 
 The `gts` and `stable` tags feature a gated kernel. This kernel follows the same version as the [Fedora CoreOS stable channel](https://fedoraproject.org/coreos/release-notes?arch=x86_64&stream=stable), which is a slower cadence than default Fedora Silverblue.
