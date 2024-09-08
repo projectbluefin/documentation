@@ -76,7 +76,8 @@ Most pain points can be addressed directly by planning ahead of time.
   - Dedicated disk ready to go?
     - Bluefin does not support dual booting from the same disk
     - Bluefin does not support rebasing from a pre-existing installation of Fedora
-  - Do you understand the limitations of having an Nvidia GPU? 
+  - Do you understand the limitations of having an Nvidia GPU? (If applicable?)
+  - Remember that this is a custom Fedora based image, it does move at a brisk pace compared to something like Ubuntu LTS
   - Read this documentation in its entirety, and also:
     - [Homebrew](https://docs.brew.sh/) documentation
     - [Flathub](https://docs.flathub.org/) documentation
