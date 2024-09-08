@@ -89,11 +89,16 @@ Most pain points can be addressed directly by planning ahead of time.
 
 ## Day 1 - Deployment and Configuration
 
+### Deployment
 - Download the right ISO from [the website](https://projectbluefin.io/#scene-picker)
 - Install the operating system
     * Use the entire disk with automatic partitioning
     * (Optional): [Set up Secure Boot](introduction.md#secure-boot)
     * (Optional): `ujust switch-channel` to move to `:stable` or `:latest` 
+
+### Configuration
+The rest of these steps are user specific configuration and something that we tend to leave up to you. Automating this step is a good place to use tools like [chezmoi](https://www.chezmoi.io/) for dotfile configuration and syncing. Since the user space is all in your home directory, just about any tool you use to automate this step should work as you expect. Ideally, configuration that you might have done at the system level in the past is configured at your user level now, leading to a clean seperation between user configuration and the system image. 
+
 - Software Installation
     * Use GNOME Software to install Flatpaks
         + (Optional): Use Flatseal to manage Flatpak permissions if appropriate
@@ -103,8 +108,8 @@ Most pain points can be addressed directly by planning ahead of time.
     * (Optional) Import your [wireguard configuration via `wg-quick`](https://blogs.gnome.org/thaller/2019/03/15/wireguard-in-networkmanager/) or use the VPN configuration in the network manager GUI
 - (Optional) Developer Configuration
     * `ujust devmode` and follow the directions
-    * Start VSCode and configure your settings and extensions   
-
+    * Start VSCode and configure your settings and extensions
+ 
 ## Day 2 - Operations and Maintenance
 
 Bluefin strives to make maintenance as easy as possible, however many of the automated tasks can be run manually. 
