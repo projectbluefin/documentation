@@ -98,7 +98,9 @@ Most pain points can be addressed directly by planning ahead of time.
     * (Optional): `ujust switch-channel` to move to `:stable` or `:latest` 
 
 ### Configuration
-The rest of these steps are user specific configuration and something that we tend to leave up to you. Automating this step is a good place to use tools like [chezmoi](https://www.chezmoi.io/) for dotfile configuration and syncing. Since the user space is all in your home directory, just about any tool you use to automate this step should work as you expect. Ideally, configuration that you might have done at the system level in the past is configured at your user level now, leading to a clean seperation between user configuration and the system image. 
+The rest of these steps are user specific configuration and something that we tend to leave up to you. Automating this step is a good place to use tools like [chezmoi](https://www.chezmoi.io/) for dotfile configuration and syncing: `brew install chezmoi`
+
+Since the user space is all in your home directory, just about any tool you use to automate this step should work as you expect. Ideally, configuration that you might have done at the system level in the past is configured at your user level now, leading to a clean seperation between user configuration and the system image. 
 
 - Software Installation
     * Use GNOME Software to install Flatpaks
