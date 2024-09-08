@@ -119,6 +119,7 @@ Bluefin strives to make maintenance as easy as possible, however many of the aut
   - `ujust changelogs` will show incoming changes and updates coming from Fedora
   - `ujust bios` will reboot the machine and enter the BIOS/UEFI menu. This is very useful for booting into a Windows drive
 - Subscribe to the [announcements tag](https://universal-blue.discourse.group/tag/announcements) on the Universal Blue forums
+- Understand [rebase and rollback procedures](administration#switching-between-channels)
 - Use the [Warehouse application](https://github.com/flattool/warehouse) to manage Flatpak lifecycle:
     * Pin to an old version or rollback
     * Easily remove applications at once
