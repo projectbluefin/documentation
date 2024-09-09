@@ -149,4 +149,9 @@ sudo mokutil --timeout -1
 sudo mokutil --import public_key.der
 ```
 
+Use `mokutils --list-enrolled` to confirm that the akmods key is listed:
+
+![image](https://github.com/user-attachments/assets/b4ec5088-3846-473e-a57f-f984c0033766)
+
+
 [Move on to system administration](administration)
