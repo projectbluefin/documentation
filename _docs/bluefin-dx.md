@@ -134,7 +134,7 @@ You can add packages and call init hooks from this file, ensuring that your dist
 
 ## JetBrains
 
-`ujust jetbrains-toolbox` will fetch and install the [JetBrains Toolbox](https://www.jetbrains.com/toolbox-app) application, which will manage the installation of the JetBrains set of tools. This application will handle installation, removal, and upgrade of the JetBrains products, and is handled completely in your home directory, independent of the operating system image.
+`ujust jetbrains-toolbox` will fetch and install the [JetBrains Toolbox](https://www.jetbrains.com/toolbox-app) application, which will manage the installation of the JetBrains set of tools. This application will handle installation, removal, and upgrade of the JetBrains products, and is handled completely in your home directory, independent of the operating system image. We do not recommend using the Jetbrains flatpaks. 
 
 - Check the [Jetbrains documentation](https://www.jetbrains.com/help/idea/podman.html) for integrating those tools with the podman runtime. 
 - Check out how to [setup Jetbrains with devcontainers](https://www.jetbrains.com/help/idea/connect-to-devcontainer.html)
