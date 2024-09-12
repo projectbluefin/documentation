@@ -149,7 +149,7 @@ sudo mokutil --timeout -1
 sudo mokutil --import public_key.der
 ```
 
-Use `mokutils --list-enrolled` to confirm that the akmods key is listed:
+Use `mokutils --list-enrolled` to confirm that the ublue kernel key is listed:
 
 ![image](https://github.com/user-attachments/assets/259a9bb2-2198-4744-924d-df457e26c7f4)
 
