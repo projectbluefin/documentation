@@ -70,6 +70,14 @@ DevPod is an open source tool used to create reproducible developer environments
 - [Devpod Documentation](https://devpod.sh/docs/what-is-devpod)
 - [Loft.sh](https://www.loft.sh/)
 
+## Built in Performance Tooling
+
+[Sysprof](https://www.sysprof.com/) is included as a systemwide performance profiler. As well as [Brendan Gregg's](https://www.brendangregg.com/) recommended CLI tools:
+
+- `bcc`, `bpftrace`, `iproute2`, `nicstat`, `numactl`, `sysprof`, `sysstat`, `tiptop`, `trace-cmd`, and `util-linux`
+
+Thanks to Ubuntu and Canonical for the [detailed specification](https://discourse.ubuntu.com/t/spec-include-performance-tooling-in-ubuntu/43134) and rationale.
+
 ## Quality of Life Improvements
 
 - [Cockpit](https://cockpit-project.org/) for local and remote management
