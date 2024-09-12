@@ -8,7 +8,7 @@ permalink: /bluefin-dx
 The Bluefin Developer Experience (`bluefin-dx`) is a dedicated developer image with bundled tools. Unlike traditional Linux systems, the operating system and developer environment are explicitly and purposely separated. This means that tooling is not installed on the host, and is instead containerized, in a virtual machine, or scoped to the user's home directory. It is designed to meet the following use cases:
 
 - Endeavors to be the world's most powerful [cloud native developer environment](https://landscape.cncf.io/)
-- Full virtualization support
+- Full virtualization support centered around KVM and QEMU
 
 # The Cloud Native Development Approach
 
@@ -16,7 +16,7 @@ Bluefin goes "all in" on cloud native development and is used differently than a
 
 - Development is done in [devcontainers](https://containers.dev/)
 - Command line applications are installed using [homebrew](https://brew.sh)
-- Preconfigured ad-hoc containers for Ubuntu, Fedora, Wolfi, and a custom `bluefin-cli` container. Use whichever distribution you want. 
+- Preconfigured ad-hoc containers for Ubuntu, Fedora, and Wolfi. Use whichever distribution you want. 
 
 > This differs from apt, snap, and dnf where one packaging system handles both the graphical applications AND the command line applications.  This decoupling is what provides greater system reliability, near unlimited choice of software, and "distributed by default" development.  
 
@@ -24,9 +24,9 @@ In short, we picked it because this pattern is how servers are deployed in moder
 
 ![image](https://github.com/user-attachments/assets/51415b6c-b7fe-45e9-af74-c01694b26fbe)
 
-The pattern in `bluefin-dx` (and `aurora-dx`) are centered around container focused development using [devcontainers](https://containers.dev).  Since development is not dependent on the operating system image, you can use whatever you want, you do not need to use everything in here in order to be productive -- think of them as prepaved paths that you can choose to use.  
+The pattern in `bluefin-dx` (and `aurora-dx`) is centered around [devcontainers](https://containers.dev).  Since development is not dependent on the operating system image, you can use whatever you want, you do not need to use everything in here in order to be productive -- think of them as prepaved paths that you can choose to use.  
 
-Dev Containers were chosen to facilitate distributed development, each project has a declarative environment that is intended to be start the user with a "best practice" cloud-native workflow out of the box. The [Ultimate Guide to Dev Containers](https://www.daytona.io/dotfiles/ultimate-guide-to-dev-containers) has a good write up of the advantages of using devcontainers.
+Dev Containers were chosen to facilitate distributed development, each project has a declarative environment that is intended to be start the user with a "best practice" cloud-native workflow out of the box. The [Ultimate Guide to Dev Containers](https://www.daytona.io/dotfiles/ultimate-guide-to-dev-containers) has a good write up of the advantages of using devcontainers. This means that the development environment is kept in version control instead of coupled to the host. 
 
 Homebrew can also be used for installation of development tools. 
 
