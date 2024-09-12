@@ -77,6 +77,8 @@ Note: The kernel-fsync kernel removes the need to have dedicated Asus and Surfac
 
 ### Switching between channels
 
+> Note that the `stable` and `latest` channels update more aggresively and may introduce new changes from Fedora (including regressions), take the user's Linux expertise into account when changing the update cadence.
+
 Use the `ujust rebase-helper` command to select rebase and select a specific channel: 
 
 ![image](https://github.com/user-attachments/assets/72308e84-cd28-4fd1-a568-38fb889203fe)
