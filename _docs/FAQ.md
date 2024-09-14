@@ -45,7 +45,9 @@ They probably make fun of terms like "cloud native" too! Universal Blue images l
 
 We reuse the same technology that is well funded due to its very nature. You can learn all about Cloud Native here at [cncf.io](https://www.cncf.io/). Our summary of that is, **Linux geeks built empires**, let's use all that stuff to make the Linux desktop better. We want the Linux desktop to be _peers_ with cloud native, and that means we need to make a generational shift in how we consume Linux desktops. 
 
-There is also great economic benefit. `podman` is a great tool for enthusiasts but also a highly valuable one that is part of a portfolio of Red Hat products that people pay good money for. We feel that this is a great way for a community of enthusiasts to have a positive relationship with fellow open source community members that work for companies. And it's not just Red Hat, we have excellent working relationships with Linux teams at Microsoft, Canonical, SUSE, Chainguard, Equinix, Amazon, Google, you name it. Not in any official capacity, but the bond between Linux desktop nerds crosses all affiliations. 
+There is also great economic benefit. `podman` is a great tool for enthusiasts but also a highly valuable one that is part of a portfolio of Red Hat products that people pay good money for. We feel that this is a great way for a community of enthusiasts to have a positive relationship with fellow open source community members that work for companies. And it's not just Red Hat, we have excellent working relationships with Linux teams at Microsoft, Canonical, SUSE, Chainguard, Equinix, Amazon, Google, you name it. 
+
+> Not in any official capacity, but the bond between Linux desktop nerds crosses all affiliations. 
 
 Containers have been in Linux for over a decade, and gave birth to an entire multi-billion dollar industry. There's plenty of people who don't like containers, but that's fine, we're not taking your old distro away. It's all still Linux, it's a huge world. We consider this specific part of the kernel and the ecosystem that was built around it to be a prerequisite for true mastery of Linux, which we strive for. 
 
