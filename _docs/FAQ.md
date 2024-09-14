@@ -57,6 +57,12 @@ Learning this skillset will give you the skills you need to get a job in this in
 
 We **strongly** believe that there is no mass market future for application distribution for traditional packages. The majority of people who have tried Linux have overwhelmingly rejected the old model. We also purposely [do not cater to existing Linux users](https://www.youtube.com/watch?v=4CyWH6jx2pE), we choose to put that toil behind us. 
 
+At this point the user experience is so much better overall that focusing on fixing these issues is a much better investment. We recommend [donating to these upstream projects](donations). Many Bluefin users live out web applications anyway, the web won for us long ago. [`bluefin-dx`](bluefin-dx) contains all the powertools. To us the stability and usability of the system takes precedence over an application. And as a GNOME-based image, all the good new apps we love are always on Flathub, we are buying into that ecosystem. 
+
+# What's the deal with homebrew? 
+
+See [Homebrew is Great on Linux](https://www.ypsidanger.com/homebrew-is-great-on-linux/)
+
 # Starship is not for me, how do I disable it?
 
 You can remove or comment the line below in `/etc/bashrc` to restore the default prompt.
