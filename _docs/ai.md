@@ -14,10 +14,12 @@ permalink: /ai
 
 Bluefin-dx supports the installation of Ollama in different ways, for example by using the following `ujust` commands:
 
-- `ujust ollama` installs the CLI-version as a container.
-- `ujust ollama-web` installs [Open Web UI](https://docs.openwebui.com/) & Ollama as a container. During the installation process, there is the choice to install either a GPU or CPU-enabled version. Additionally, installation through Homebrew (`brew install ollama`) is required.
+- `ujust ollama install` installs the CLI-version as a container.
+- `ujust ollama install-open-webui` installs [Open Web UI](https://docs.openwebui.com/) & Ollama as a container.
 
-`systemd` does not autostart the containers; instead, the user needs to activate the script manually by using `systemctl --user start ollama` or `systemctl --user start ollama-web`. The `systemd` scripts are saved under: `~/.config/containers/systemd`. The scripts are:
+During the installation process, there is the choice to install either a GPU or CPU-enabled version. Additionally, installation through Homebrew (`brew install ollama`) is required.
+
+`systemd` does not autostart the containers; instead, the user needs to activate the script manually by using `systemctl --user start ollama` or `systemctl --user start ollama-web`. The first time the `ollama` service is started, it pulls the [Ollama Docker image](https://hub.docker.com/r/ollama/ollama), which is why the service may seem to be hanging (you can view logs using `journalctl --user -xeu ollama.service`). The `systemd` scripts are saved under: `~/.config/containers/systemd`. The scripts are:
 
 - `ollama.container` - which starts the CLI under port: 11434
 - `ollama-web.container` - which starts the Open Web UI under port: 8080 ([http://localhost:11434](http://localhost:11434))
