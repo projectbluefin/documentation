@@ -53,7 +53,7 @@ Containers have been in Linux for over a decade, and gave birth to an entire mul
 
 And that mastery is important for those users that want to learn the technology. Because the cloud native industry and all of open source in general is in dire need of more maintainers. Good ones. The ones that spent the first part of their journey learning the tools that are most important to learn. That's why it's economical for companies, and for users as well. Enthusiasts getting things for free and then providing direct feedback for things that will be valuable products is a great partnership, and plenty of communities are doing it right, the Linux desktop can be one of them.  
 
-Learning this skillset will give you the skills you need to get a job in this industry if you want. We need you!
+Learning this skillset will give you the skills you need to get a great job in this industry if you want. We need you!
 
 # But this isn't ready, Flatpaks have annoyed me for a bunch of reasons, and I like my Linux the way it is.
 
