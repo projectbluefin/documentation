@@ -21,7 +21,13 @@ Other than the visual differences, and codecs, there are some other key differen
 
 # Who is this for? 
 
-We **strongly** believe that new users to Linux should be introduced by via atomic image and not the traditional desktop. It is clear to us that this is a generational shift. We're purposely here to help existing users bury the past and move on to something more useful than wrestling with their operating system. One of the co-creators of Bluefin, using his experience from helping launch [askubuntu.com](https://askubuntu.com/users/235/jorge-castro), uses this as the reason for starting the project in the first place: 
+We **strongly** believe that new users to Linux should be introduced by via atomic image and not the traditional desktop. It is clear to us that this is a generational shift. We're purposely here to help existing users bury the past and move on to something more useful than wrestling with their operating system. 
+
+> **JARGON WARNING**: This next section goes in to the why into more detail than most people need. You don't need to know any of this to use your computer, we provide this information for more advanced users to understand the design decisions in Bluefin. **95% of folks will be fine just using their browser and the occasional Flatpak**, we've designed it to be a general purpose OS to fit most people's needs without care about this stuff.
+
+## Rationale 
+
+One of the co-creators of Bluefin, using his experience from helping launch [askubuntu.com](https://askubuntu.com/users/235/jorge-castro), uses this as the reason for starting the project in the first place: 
 
 ![image](https://github.com/user-attachments/assets/6165e0e3-b60b-4bd1-82a8-b2fdd0595933)
 
@@ -57,7 +63,7 @@ Learning this skillset will give you the skills you need to get a great job in t
 
 # But this isn't ready, Flatpaks have annoyed me for a bunch of reasons, and I like my Linux the way it is.
 
-We **strongly** believe that there is no mass market future for application distribution for traditional packages. The majority of people who have tried Linux have overwhelmingly rejected the old model. We also purposely [do not cater to existing Linux users](https://www.youtube.com/watch?v=4CyWH6jx2pE), we choose to put that toil behind us. 
+Why FlatHub? We believe that there is no mass market future for application distribution using traditional packages. The majority of people who have tried Linux have overwhelmingly rejected the old model. We also purposely [do not cater to existing Linux users](https://www.youtube.com/watch?v=4CyWH6jx2pE), we choose to put that toil behind us and concentrate on building the future desktop via Flathub.
 
 At this point the user experience is so much better overall that focusing on fixing these issues is a much better investment. We recommend [donating to these upstream projects](donations). Many Bluefin users live out web applications anyway, the web won for us long ago. [`bluefin-dx`](bluefin-dx) contains all the powertools. To us the stability and usability of the system takes precedence over an application. And as a GNOME-based image, all the good new apps we love are always on Flathub, we are buying into that ecosystem. 
 
