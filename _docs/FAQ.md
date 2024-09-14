@@ -53,6 +53,10 @@ And that mastery is important for those users that want to learn the technology.
 
 Learning this skillset will give you the skills you need to get a job in this industry if you want. We need you!
 
+# But this isn't ready, Flatpaks have annoyed me for a bunch of reasons, and I like my Linux the way it is.
+
+We **strongly** believe that there is no mass market future for application distribution for traditional packages. The majority of people who have tried Linux have overwhelmingly rejected the old model. We also purposely [do not cater to existing Linux users](https://www.youtube.com/watch?v=4CyWH6jx2pE), we choose to put that toil behind us. 
+
 # Starship is not for me, how do I disable it?
 
 You can remove or comment the line below in `/etc/bashrc` to restore the default prompt.
