@@ -30,6 +30,34 @@ sudo rm -f /etc/dconf/db/local.d/01-ublue
 sudo dconf update
 ```
 
+# Who is this for? 
+
+We **strongly** believe that new users to Linux should be introduced by via atomic image and not the traditional desktop. It is clear to us that this is a generational shift. We're purposely here to help existing users bury the past and move on to something more useful than wrestling with their operating system. One of the co-creators of Bluefin, Jorge Castro, uses this as his reasoning, using his experience from helping launch askubuntu.com, which ended up being an awesome tool for the everyone.
+
+![image](https://github.com/user-attachments/assets/6165e0e3-b60b-4bd1-82a8-b2fdd0595933)
+
+Why spend decades documenting workarounds when you can just remove the problem entirely! 
+
+## But old docs are still valuable! [Wisdom of the Ancients XKCD](https://xkcd.com/979/)
+
+Are they though? These days Linux is more generalized than ever before, it's one of the reasons we believe the old model of Linux distribution just doesn't work on client-focused Linux desktops. We're here to help get that out of dated stuff and put it in a museum. Where it rightfully belongs, an entire epoch of evolution of our desktops. This is like moving from the Jurassic to the Cretaceous. An important but vital part of our history, but it's time to upgrade to a new model.
+
+Bluefin users continually use the Arch wiki for just about everything anyway, just like everyone else. We just choose to consume it differently. The docs are purposely mostly pointers to documentation of the things that we ship. And then documentation that should take only 15 minutes to consume. This is why we are passionate about the whole "We are not a distribution" thing. We are trying to become as invisible as possible. Arch wiki, flatpak docs, brew docs, distrobox docs, is your next mission. Congratulations, you've complete the Linux starter dungeon!
+
+## My friends make fun of me because they think this is a fad or a toy like a chromebook, what do I tell them? 
+
+They probably make fun of terms like "cloud native" too! Universal Blue images like Bluefin are designed by infrastructure experts who have decades of combined Linux experience. We are purposely funneling the expertise of world-leading experts in Linux, open source, and the things that the modern world _depend on_. By catering to this audience we know we can help make _fundamental improvements_ to the Linux desktop by bringing in experts who can help with the pipeline. 
+
+## What is it with the Cloud Native Stuff Anyway? 
+
+We reuse the same technology that is well funded due to its very nature. You can learn all about Cloud Native here at [cncf.io](https://www.cncf.io/). Our summary of that is, **Linux geeks built empires**, let's use all that stuff to make the Linux desktop better. We want the Linux desktop to be _peers_ with cloud native, and that means we need to make a generational shift in how we consume Linux desktops. 
+
+There is also great economic benefit. `podman` is a great tool for enthusiasts but a highly valuable one that is part of a portfolio of Red Hat products that people pay good money for. We feel that this is a great way for a community of enthusiasts to have a positive relationship with fellow open source community members that work for companies. And it's not just Red Hat, we have excellent working relationships with Linux teams at Microsoft, Canonical, SUSE, Chainguard, Equinix, Amazon, Google, you name it. Not in any official capacity, but the bond between Linux desktop nerds crosses all affiliations. 
+
+Containers have been in Linux for over a decade, and gave birth to an entire multi-billion dollar industry. There's plenty of people who don't like containers, but that's fine, we're not taking your old distro away. We consider this specific part of the kernel and the ecosystem that was built around it to be a prerequisite for true mastery of Linux, which we strive for. 
+
+And that mastery is important for those users that want to learn the technology. Because the cloud native industry and all of open source in general is in dire need of more maintainers. Good ones. The ones that spent the first part of their journey learning the tools that are most important to learn. That's why it's economical for companies, and for users as well. Learning this skillset will give you the skills you need to get a job in this industry if you want. We need you. 
+
 # Starship is not for me, how do I disable it?
 
 You can remove or comment the line below in `/etc/bashrc` to restore the default prompt.
