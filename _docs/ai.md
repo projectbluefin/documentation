@@ -19,6 +19,8 @@ Bluefin-dx supports the installation of Ollama in different ways, for example by
 
 During the installation process, there is the choice to install either a GPU or CPU-enabled version. Additionally, installation through Homebrew (`brew install ollama`) is required.
 
+Homebrew will suggest you to start Ollama now using `brew services start ollama`: *do not run this command*, as it will interfer with the systemd services below.
+
 `systemd` does not autostart the containers; instead, the user needs to activate the script manually by using `systemctl --user start ollama` or `systemctl --user start ollama-web`. The first time the `ollama` service is started, it pulls the [Ollama Docker image](https://hub.docker.com/r/ollama/ollama), which is why the service may seem to be hanging (you can view logs using `journalctl --user -xeu ollama.service`). The `systemd` scripts are saved under: `~/.config/containers/systemd`. The scripts are:
 
 - `ollama.container` - which starts the CLI under port: 11434
