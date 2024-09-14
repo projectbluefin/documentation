@@ -67,7 +67,15 @@ See [Homebrew is Great on Linux](https://www.ypsidanger.com/homebrew-is-great-on
 
 # Why so many images, this is confusing! How are users going to cope with the complexity!
 
-Bazzite, Bluefin, and Aurora all came in at different times, the result of organic growth. **Don't overthink it, you are using Fedora**. The people seeking out Linux will figure it out and generally speaking we're the ones stuck admining a PC for a loved one, might as well it easy on ourselves. Chillops is the best ops. 
+Bazzite, Bluefin, and Aurora all came in at different times, the result of organic growth. **Don't overthink it, you are using Fedora**. The people seeking out Linux will figure it out and generally speaking we're the ones stuck admining a PC for a loved one, might as well it easy on ourselves. Chillops is the best ops. This ties into the next question:
+
+# What's with all the Ubuntu influence?
+
+Three of the co-creators of Bluefin worked on Ubuntu at Canonical. Ubuntu had tried [convergence](https://wiki.ubuntu.com/Convergence) in the past and though maligned by many, was the clear and obvious way to do it in hindsight. There are many things Canonical got right with Ubuntu conceptually, but the execution just wasn't quite there, and we can fix that now. 
+
+With Aurora, Bluefin, Bazzite, and uCore you can have a work related image, one for your handheld, one for your gaming desktop, one for your HTPC, and one for your homelab. Throw [Jellyfin](https://jellyfin.org/) on your server, and clients on each machine for a great unified media experience. 
+
+One "OS" tailored for each use case, but still also, just Fedora. We never quite got the phone but GSConnect is good enough. Until someone starts making phosh images. 😈
 
 # Starship is not for me, how do I disable it?
 
