@@ -40,9 +40,11 @@ Why spend decades documenting workarounds when you can just remove the problem e
 
 ## But old docs are still valuable! [Wisdom of the Ancients XKCD](https://xkcd.com/979/)
 
-Are they though? These days Linux is more generalized than ever before, it's one of the reasons we believe the old model of Linux distribution just doesn't work on client-focused Linux desktops. We're here to help get that out of dated stuff and put it in a museum. Where it rightfully belongs, an entire epoch of evolution of our desktops. This is like moving from the Jurassic to the Cretaceous. An important but vital part of our history, but it's time to upgrade to a new model.
+Are they though? We believe in automating as much as possible, better to fix the problem than have to document it. Just document the new stuff, which, if we're doing our job right is mostly upstream documentation anyway. 
 
-Bluefin users continually use the Arch wiki for just about everything anyway, just like everyone else. We just choose to consume it differently. The docs are purposely mostly pointers to documentation of the things that we ship. And then documentation that should take only 15 minutes to consume. This is why we are passionate about the whole "We are not a distribution" thing. We are trying to become as invisible as possible. Arch wiki, flatpak docs, brew docs, distrobox docs, is your next mission. Congratulations, you've complete the Linux starter dungeon!
+These days Linux is more generalized than ever before, it's one of the reasons we believe the old model of Linux distribution just doesn't work on client-focused Linux desktops. We're here to help get that out of dated stuff and put it in a museum. Where it rightfully belongs, an entire epoch of evolution of our desktops. This is like moving from the Jurassic to the Cretaceous. An important but vital part of our history, but it's time to upgrade to a new model.
+
+Bluefin users continually use the Arch wiki for just about everything anyway, just like everyone else. We just choose to consume it differently. The docs are purposely mostly pointers to documentation of the things that we ship. And then documentation that should take only 15 minutes to consume. This is why we are passionate about the whole "We are not a distribution" thing. We are trying to become as invisible as possible. Arch wiki, flatpak docs, brew docs, distrobox docs, and whatever container stack you use, including, all the traditional package managers in a container. Thi is your next mission. Congratulations, you've complete the Linux starter dungeon!
 
 ## My friends make fun of me because they think this is a fad or a toy like a chromebook, what do I tell them? 
 
