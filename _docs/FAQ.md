@@ -27,7 +27,9 @@ We **strongly** believe that new users to Linux should be introduced by via atom
 
 Why spend decades documenting workarounds when you can just remove the problem entirely! Check out [Jorge Castro's blog](https://www.ypsidanger.com/) for years of back story on our quest to improve the desktop. 
 
-## But old docs are still valuable! [Wisdom of the Ancients XKCD](https://xkcd.com/979/)
+## But old docs are still valuable!
+
+![image](https://imgs.xkcd.com/comics/wisdom_of_the_ancients.png)
 
 Are they though? We believe in automating as much as possible, better to fix the problem than have to document it. Just document the new stuff, which, if we're doing our job right is mostly upstream documentation anyway. 
 
