@@ -68,14 +68,14 @@ For more detailed information on overall Linux hardware support on T2 Macs (such
 You can create a custom image of Bluefin to include the needed broadcom wifi/bluetooth firmware for your mac. Currently, a community project by a Bluefin fan, [T2-Atomic](https://github.com/lauretano/t2-atomic), exists publishing Bluefin/Aurora images with all of the T2-enablement pieces in place. Feel free to use this as a resource in creating your own custom image.
 
 ##### Community Custom Images:
- - [T2-Atomic](https://github.com/lauretano/t2-atomic) - images build daily in sync just after the scheduled Bluefin builds. : 
+ - [T2-Atomic](https://github.com/lauretano/t2-atomic) - images build daily in sync just after the scheduled Bluefin builds. Copy/paste these strings into the rebase commands below where noted): 
    - lauretano/t2-atomic-bluefin:latest
    - lauretano/t2-atomic-bluefin-dx:latest
    - lauretano/t2-atomic-aurora:latest
    - lauretano/t2-atomic-aurora-dx:latest
 
 To rebase to these images, similar to rebasing to Bluefin from Silverblue, you need to first rebase to an unsigned image, then again to the signed image. 
-1. First, to an unsigned image, replacing "[repo/bluefin-package:tag]" with the repo and image variant of your choice or creation: 
+1. Rebase to the unsigned image, replacing "[repo/bluefin-package:tag]" with the repo and image variant of your choice or creation: 
 
 ```rpm-ostree rebase ostree-unverified-registry:ghcr.io/[repo/bluefin-package:tag]```
 
