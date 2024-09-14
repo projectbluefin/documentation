@@ -27,6 +27,8 @@ Homebrew will suggest you to start Ollama now using `brew services start ollama`
 - `ollama-web.container` - which starts the Open Web UI under port: 8080 ([http://localhost:11434](http://localhost:11434))
 - `ollama.network`, the network name is set as "ollama"
 
+You can pull the container images before starting the services if you want to monitor downloads: for example, use `grep Image ~/.config/containers/systemd/ollama.container` to see which image is pulled (say `docker.io/ollama/ollama:rocm`), and the run `podman pull docker.io/ollama/ollama:rocm`.
+
 To cross-check if the containers are launched correctly, you can use `podman ps --all`.
 
 ### Running the ollama open-webui
