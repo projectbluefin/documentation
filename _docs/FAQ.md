@@ -32,11 +32,11 @@ sudo dconf update
 
 # Who is this for? 
 
-We **strongly** believe that new users to Linux should be introduced by via atomic image and not the traditional desktop. It is clear to us that this is a generational shift. We're purposely here to help existing users bury the past and move on to something more useful than wrestling with their operating system. One of the co-creators of Bluefin, Jorge Castro, uses this as his reasoning, using his experience from helping launch askubuntu.com, which ended up being an awesome tool for the everyone.
+We **strongly** believe that new users to Linux should be introduced by via atomic image and not the traditional desktop. It is clear to us that this is a generational shift. We're purposely here to help existing users bury the past and move on to something more useful than wrestling with their operating system. One of the co-creators of Bluefin, using his experience from helping launch askubuntu.com, uses this as the reason for starting the project in the first place: 
 
 ![image](https://github.com/user-attachments/assets/6165e0e3-b60b-4bd1-82a8-b2fdd0595933)
 
-Why spend decades documenting workarounds when you can just remove the problem entirely! 
+Why spend decades documenting workarounds when you can just remove the problem entirely! Check out [Jorge Castro's blog](https://www.ypsidanger.com/) for years of back story on our quest to improve the desktop. 
 
 ## But old docs are still valuable! [Wisdom of the Ancients XKCD](https://xkcd.com/979/)
 
