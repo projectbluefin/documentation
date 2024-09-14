@@ -19,17 +19,6 @@ Other than the visual differences, and codecs, there are some other key differen
 - Bluefin *tries* to remove the need for the user to use `rpm-ostree` or `bootc` directly
 - Bluefin focuses on automation of OS services and upgrades instead of user interaction
 
-# How do I get my GNOME back to normal Fedora defaults?
-
-You can turn off the Dash to Dock and appindicator extensions to get a more stock Fedora experience by following [these instructions](administration#managing-extensions).
-
-We set the default dconf keys in `/etc/dconf/db/local`, removing those keys and updating the database will take you back to the fedora default:
-
-```bash
-sudo rm -f /etc/dconf/db/local.d/01-ublue
-sudo dconf update
-```
-
 # Who is this for? 
 
 We **strongly** believe that new users to Linux should be introduced by via atomic image and not the traditional desktop. It is clear to us that this is a generational shift. We're purposely here to help existing users bury the past and move on to something more useful than wrestling with their operating system. One of the co-creators of Bluefin, using his experience from helping launch askubuntu.com, uses this as the reason for starting the project in the first place: 
@@ -66,6 +55,17 @@ You can remove or comment the line below in `/etc/bashrc` to restore the default
 
 ```bash
 eval "$(starship init bash)"
+```
+
+# How do I get my GNOME back to normal Fedora defaults?
+
+You can turn off the Dash to Dock and appindicator extensions to get a more stock Fedora experience by following [these instructions](administration#managing-extensions).
+
+We set the default dconf keys in `/etc/dconf/db/local`, removing those keys and updating the database will take you back to the fedora default:
+
+```bash
+sudo rm -f /etc/dconf/db/local.d/01-ublue
+sudo dconf update
 ```
 
 # Should I trust you?
