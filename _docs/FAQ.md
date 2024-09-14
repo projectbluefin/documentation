@@ -65,6 +65,10 @@ At this point the user experience is so much better overall that focusing on fix
 
 See [Homebrew is Great on Linux](https://www.ypsidanger.com/homebrew-is-great-on-linux/)
 
+# Why so many images, this is confusing! How are users going to cope with the complexity!
+
+Bazzite, Bluefin, and Aurora all came in at different times, the result of organic growth. **Don't overthink it, you are using Fedora**. The people seeking out Linux will figure it out and generally speaking we're the ones stuck admining a PC for a loved one, might as well it easy on ourselves. Chillops is the best ops. 
+
 # Starship is not for me, how do I disable it?
 
 You can remove or comment the line below in `/etc/bashrc` to restore the default prompt.
