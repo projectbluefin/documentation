@@ -42,7 +42,7 @@ You can cross-check if the container is launched correctly using `podman ps --al
 
 ### Running the Open WebUI
 
-`ujust ollama install-open-webui` will set up the Open WebUI as a service unit in your user space. The `systemd` script is also saved under `~/.config/containers/systemd` as `ollama-web.container`.
+`ujust ollama install-open-webui` will set up the Open WebUI as a service unit in your user space. The `systemd` script is also saved under `~/.config/containers/systemd` as `ollama-web.container`. Note that `ollama-web` service requires the `ollama` service.
 
 Start the service using `systemctl --user start ollama-web`. As for the `ollama` service, it pulls an image the first time it is started.
 
