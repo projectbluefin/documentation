@@ -47,26 +47,6 @@ Bluefin users continually use the Arch wiki for just about everything anyway, ju
 
 They probably make fun of terms like "cloud native" too! Universal Blue images like Bluefin are designed by infrastructure experts who have decades of combined Linux experience. We are purposely funneling the expertise of world-leading experts in Linux, open source, and the things that the modern world _depend on_. By catering to this audience we know we can help make _fundamental improvements_ to the Linux desktop by bringing in experts who can help with the pipeline. 
 
-## What is it with the Cloud Native Stuff Anyway? 
-
-We reuse the same technology that is well funded due to its very nature. You can learn all about Cloud Native here at [cncf.io](https://www.cncf.io/). Our summary of that is, **Linux geeks built empires**, let's use all that stuff to make the Linux desktop better. We want the Linux desktop to be _peers_ with cloud native, and that means we need to make a generational shift in how we consume Linux desktops. 
-
-There is also great economic benefit. `podman` is a great tool for enthusiasts but also a highly valuable one that is part of a portfolio of Red Hat products that people pay good money for. We feel that this is a great way for a community of enthusiasts to have a positive relationship with fellow open source community members that work for companies. And it's not just Red Hat, we have excellent working relationships with Linux teams at Microsoft, Canonical, SUSE, Chainguard, Equinix, Amazon, Google, you name it. 
-
-> Not in any official capacity, but the bond between Linux desktop nerds crosses all affiliations. 
-
-Containers have been in Linux for over a decade, and gave birth to an entire multi-billion dollar industry. There's plenty of people who don't like containers, but that's fine, we're not taking your old distro away. It's all still Linux, it's a huge world. We consider this specific part of the kernel and the ecosystem that was built around it to be a prerequisite for true mastery of Linux, which we strive for. 
-
-And that mastery is important for those users that want to learn the technology. Because the cloud native industry and all of open source in general is in dire need of more maintainers. Good ones. The ones that spent the first part of their journey learning the tools that are most important to learn. That's why it's economical for companies, and for users as well. Enthusiasts getting things for free and then providing direct feedback for things that will be valuable products is a great partnership, and plenty of communities are doing it right, the Linux desktop can be one of them.  
-
-Learning this skillset will give you the skills you need to get a great job in this industry if you want. We need you!
-
-# But this isn't ready, Flatpaks have annoyed me for a bunch of reasons, and I like my Linux the way it is.
-
-Why FlatHub? We believe that there is no mass market future for application distribution using traditional packages. The majority of people who have tried Linux have overwhelmingly rejected the old model. We also purposely [do not cater to existing Linux users](https://www.youtube.com/watch?v=4CyWH6jx2pE), we choose to put that toil behind us and concentrate on building the future desktop via Flathub.
-
-At this point the user experience is so much better overall that focusing on fixing these issues is a much better investment. We recommend [donating to these upstream projects](donations). Many Bluefin users live out web applications anyway, the web won for us long ago. [`bluefin-dx`](bluefin-dx) contains all the powertools. To us the stability and usability of the system takes precedence over an application. And as a GNOME-based image, all the good new apps we love are always on Flathub, we are buying into that ecosystem. 
-
 # What's the deal with homebrew? 
 
 See [Homebrew is Great on Linux](https://www.ypsidanger.com/homebrew-is-great-on-linux/)
