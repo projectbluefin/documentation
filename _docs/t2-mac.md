@@ -17,7 +17,7 @@ With the specialized hardware needs of your T2 Mac, and Apple's mostly non-suppo
     - No! Not even the keyboard and trackpad on a MacBook Pro works with the mainline linux kernels. One of the least friendly, most proprietary x86 laptops. But it works. Since Bluefin switched to fsync kernel, the patches needed are already present.
     - sleep/suspend broke in a recent Apple firmware update (late 2023) and remains broken.
   - Is your wireless card supported by Linux?
-    - Of course not, Apple used Broadcom. The firmware can't be installed directly due to immutability, requiring rebasing to a personal or community custom image of Bluefin that includes the firmware files in the image. In the future, this can be packaged as a custom image like Surface/Asus.
+    - Of course not, Apple used Broadcom. The firmware can't be installed directly by the end user, requiring rebasing to a personal or community custom image of Bluefin that includes the firmware files in the image. In the future, this can be packaged as a custom image like Surface/Asus.
 
 ## Day 1 - Deployment and Configuration
 
@@ -44,7 +44,7 @@ Using dd, [Fedora Media Writer](https://docs.fedoraproject.org/en-US/fedora/late
 9. Click Finish Installation and then reboot into your new Bluefin install!
 
 ### Configuration (Required) for T2
-> Please note that wifi/bluetooth firmware cannot be layered in via a package. On non-immutable systems the firmware can be [extracted from a MacOS install (T2Linux Wiki)](https://wiki.t2linux.org/guides/wifi-bluetooth/#on-linux), but on Bluefin these files have to be brought in as a containerfile layer or script in a custom image.
+> Please note that wifi/bluetooth firmware cannot be layered in via a package. On traditional systems the firmware can be [extracted from a MacOS install (T2Linux Wiki)](https://wiki.t2linux.org/guides/wifi-bluetooth/#on-linux), but on Bluefin these files have to be brought in as a containerfile layer or script in a custom image.
 
 > Please also note that suspend/sleep doesn't work in most cases, if a Mac has firmware version v13.5 or newer. There are various workarounds.
 
