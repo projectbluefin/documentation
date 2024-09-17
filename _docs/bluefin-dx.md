@@ -102,6 +102,8 @@ Thanks to Ubuntu and Canonical for the [detailed specification](https://discours
 - [yq](https://github.com/mikefarah/yq) - for yaml, json, and xml processing
 - [zoxide](https://github.com/ajeetdsouza/zoxide) as `cd`
 
+The community may add new tools over time, re-running `ujust bluefin-cli` will pull in the new tools.  
+
 ![image](https://github.com/user-attachments/assets/89be8151-5b57-4b71-bbe5-988bef2d6798)
 
 
