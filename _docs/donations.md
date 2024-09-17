@@ -33,7 +33,7 @@ If your software is included in Bluefin and missing from this list, please send 
 
 ## Universal Blue Team
 
-Note that all [Universal Blue](https://universal-blue.org/) are kept in bash and Python in order to encourage contributions. Organizations that see value in our work can consider hiring any one of the millions of developers in the world with these skills to help out, we could always use the help. Get in touch with us if you'd be interested in trying that.
+Note that all [Universal Blue](https://universal-blue.org/) image sources are kept in bash and Python in order to encourage contributions. Organizations that see value in our work can consider hiring any one of the millions of developers in the world with these skills to help out, we could always use the help. Get in touch with us if you'd be interested in trying that.
 
 - bsherman
 - [HikariKnight](https://github.com/sponsors/HikariKnight)
