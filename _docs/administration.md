@@ -192,6 +192,33 @@ Ptyxis has a transparency option that you can toggle: `ujust ptyxis-transparency
 
 See the [bluefin-cli](https://docs.projectbluefin.io/bluefin-dx#bluefin-cli) section for more terminal goodies. 
 
+# Experimentation
+
+Bluefin provides some more experimental features, depending on the image. You're on your own if you venture here, prepare accordingly!  
+
+## Testing new Linux schedulers via scx_sched 
+
+[`sched-ext`](https://github.com/sched-ext/scx) is bundled in the `:latest` channel of Bluefin only. This feature requires patches not availble in other channels. 
+
+Follow the instructions for using sched-ext on the [CachyOS wiki](https://wiki.cachyos.org/configuration/sched-ext/#starting-the-scheduler) to get started. All the packages are included, there's no need to follow the installation commands. Shout out to CachyOS for their work in this area! <3 
+
+Example usage of `bpfland`: 
+```
+❯ sudo scx_bpfland 
+[sudo] password for jorge: 
+23:53:04 [INFO] scx_bpfland 1.0.4 x86_64-unknown-linux-gnu SMT on
+23:53:05 [INFO] preferred CPU domain = 0xfff
+23:53:05 [INFO] primary CPU domain = 0xfff
+23:53:05 [INFO] cpufreq performance level: auto
+23:53:05 [INFO] L2 cache ID 4: sibling CPUs: [4, 10]
+23:53:05 [INFO] L2 cache ID 1: sibling CPUs: [1, 7]
+23:53:05 [INFO] L2 cache ID 0: sibling CPUs: [0, 6]
+23:53:05 [INFO] L2 cache ID 2: sibling CPUs: [2, 8]
+23:53:05 [INFO] L2 cache ID 3: sibling CPUs: [3, 9]
+23:53:05 [INFO] L2 cache ID 5: sibling CPUs: [5, 11]
+23:53:05 [INFO] L3 cache ID 0: sibling CPUs: [0, 6, 1, 7, 2, 8, 3, 9, 4, 10, 5, 11]
+```
+
 ## Verification
 
 These images are signed with sigstore's [cosign](https://docs.sigstore.dev/cosign/overview/). You can verify the signature by downloading the `cosign.pub` key from [this repo](https://github.com/ublue-os/bluefin) and running the following command:
