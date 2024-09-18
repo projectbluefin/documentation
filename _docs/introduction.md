@@ -10,7 +10,7 @@ permalink: introduction
 
 System updates are image-based and automatic. Applications are logically separated from the system by using Flatpaks for graphical applications and `brew` for command line applications.
 
-> Bluefin is also "An interpretation of the Ubuntu spirit built on Fedora technology", which certain era of Ubuntu's history that a significant amount of open source people grew up with, like the Classic X-men. We try to bring that vibe here, we're the reboot. Chill vibes.
+> Bluefin is also "An interpretation of the Ubuntu spirit built on Fedora technology", which is a certain era of Ubuntu's history that a significant amount of open source people grew up with, like the Classic X-men. We try to bring that vibe here, we're the reboot. Chill vibes.
 
 - Ubuntu-like GNOME layout.
   - Integrates the following GNOME Extensions by default:
