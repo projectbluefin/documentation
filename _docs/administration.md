@@ -192,9 +192,19 @@ Ptyxis has a transparency option that you can toggle: `ujust ptyxis-transparency
 
 See the [bluefin-cli](https://docs.projectbluefin.io/bluefin-dx#bluefin-cli) section for more terminal goodies. 
 
-# Experimentation
+## Verification
 
-Bluefin provides some more experimental features, depending on the image. You're on your own if you venture here, prepare accordingly!  
+These images are signed with sigstore's [cosign](https://docs.sigstore.dev/cosign/overview/). You can verify the signature by downloading the `cosign.pub` key from [this repo](https://github.com/ublue-os/bluefin) and running the following command:
+
+```bash
+cosign verify --key cosign.pub ghcr.io/ublue-os/bluefin
+```
+
+## Experimentation
+
+Bluefin provides some more experimental features, depending on the image. You're on your own if you venture here, prepare accordingly! 
+
+> It has been **0** days since the last raptor attack.  --Anonymous
 
 ## Testing new Linux schedulers via scx_sched 
 
@@ -219,10 +229,3 @@ Example usage of `bpfland`:
 23:53:05 [INFO] L3 cache ID 0: sibling CPUs: [0, 6, 1, 7, 2, 8, 3, 9, 4, 10, 5, 11]
 ```
 
-## Verification
-
-These images are signed with sigstore's [cosign](https://docs.sigstore.dev/cosign/overview/). You can verify the signature by downloading the `cosign.pub` key from [this repo](https://github.com/ublue-os/bluefin) and running the following command:
-
-```bash
-cosign verify --key cosign.pub ghcr.io/ublue-os/bluefin
-```
