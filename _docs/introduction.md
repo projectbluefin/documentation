@@ -70,8 +70,11 @@ Most pain points can be addressed directly by planning ahead of time.
 
 ### All Users
   - Is your hardware Linux friendly?
+    - Do you understand the limitations of having an Nvidia GPU? (If applicable?) 
     - Does the hardware require an out of tree kernel module? This may lead to long term maintenance issues.
-      - Software that requires out of tree kernel modules like VirtualBox or VMWare are not supported. 
+    - Does the software you use require an out of tree kernel module?
+      - VirtualBox and VMWare are not supported
+      - Nvidia, Xbox One Controller Support, wl drivers, and v4l2loopback are supported. (These are "best effort", in certain cases we cannot control third party software that breaks with newer versions of the Linux kernel) 
     - Is your wireless card supported by Linux?
       - Poorly supported cards include Broadcom
   - Are the applications you depend on well supported on Flathub? 
@@ -79,7 +82,6 @@ Most pain points can be addressed directly by planning ahead of time.
   - Dedicated disk ready to go?
     - Bluefin does not support dual booting from the same disk
     - Bluefin does not support rebasing from a pre-existing installation of Fedora
-  - Do you understand the limitations of having an Nvidia GPU? (If applicable?)
   - Remember that this is a custom Fedora based image, it does move at a brisk pace compared to something like Ubuntu LTS
   - Read this documentation in its entirety, and also:
     - [Homebrew](https://docs.brew.sh/) documentation
