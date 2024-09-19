@@ -70,7 +70,8 @@ Most pain points can be addressed directly by planning ahead of time.
 
 ### All Users
   - Is your hardware Linux friendly?
-    - Does the hardware require an out of tree kernel module? This may lead to long term maintenance issues. 
+    - Does the hardware require an out of tree kernel module? This may lead to long term maintenance issues.
+      - Software that requires out of tree kernel modules like VirtualBox or VMWare are not supported. 
     - Is your wireless card supported by Linux?
       - Poorly supported cards include Broadcom
   - Are the applications you depend on well supported on Flathub? 
