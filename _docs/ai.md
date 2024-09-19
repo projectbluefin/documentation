@@ -10,47 +10,46 @@ permalink: /ai
 
 ## Local AI
 
-[Ollama](https://ollama.ai/) allows the running of open-source large language models, such as Llama 3, locally. It bundles model weights, configuration, and data into a single package, defined by a Modelfile, and optimizes setup and configuration details, including GPU usage.
+[Ollama](https://ollama.ai/) allows the running of open-source large language models, such as Llama 3.1, locally. It bundles model weights, configuration, and data into a single package, defined by a Modelfile, and optimizes setup and configuration details, including GPU usage.
 
 Bluefin-dx supports the installation of Ollama in different ways, for example by using the following `ujust` commands:
 
-- `ujust ollama install` installs the CLI-version as a container.
-- `ujust ollama install-open-webui` installs [Open Web UI](https://docs.openwebui.com/) & Ollama as a container.
+- `ujust ollama install` installs a `systemd` service unit to run Ollama in a container using Podman.
+- `ujust ollama install-open-webui` installs a `systemd` service unit to run the [Open WebUI](https://docs.openwebui.com/) as a container using Podman.
 
-During the installation process, there is the choice to install either a GPU or CPU-enabled version. Additionally, installation through Homebrew (`brew install ollama`) is required.
 
-Homebrew will suggest you to start Ollama now using `brew services start ollama`: *do not run this command*, as it will interfer with the systemd services below.
+### Running Ollama 
 
-`systemd` does not autostart the containers; instead, the user needs to activate the script manually by using `systemctl --user start ollama` or `systemctl --user start ollama-web`. The first time the `ollama` service is started, it pulls the [Ollama Docker image](https://hub.docker.com/r/ollama/ollama), which is why the service may seem to be hanging (you can view logs using `journalctl --user -xeu ollama.service`). The `systemd` scripts are saved under: `~/.config/containers/systemd`. The scripts are:
+`ujust ollama install` to get started! This will setup an Ollama service unit in your user space.
 
-- `ollama.container` - which starts the CLI under port: 11434
-- `ollama-web.container` - which starts the Open Web UI under port: 8080 ([http://localhost:11434](http://localhost:11434))
-- `ollama.network`, the network name is set as "ollama"
+During the installation process, there is the choice to install either a GPU or CPU-enabled version.
 
-You can pull the container images before starting the services if you want to monitor downloads: for example, use `grep Image ~/.config/containers/systemd/ollama.container` to see which image is pulled (say `docker.io/ollama/ollama:rocm`), and the run `podman pull docker.io/ollama/ollama:rocm`.
+Additionally, installation through Homebrew (`brew install ollama`) is required. Homebrew will suggest you to start Ollama now using `brew services start ollama`: *do not run this command*, as it will interfer with the systemd service.
 
-To cross-check if the containers are launched correctly, you can use `podman ps --all`.
+`systemd` does not autostart the container; instead, you need to activate the service manually using `systemctl --user start ollama`. 
 
-### Running the ollama open-webui
+The first time the `ollama` service is started, it pulls the [Ollama Docker image](https://hub.docker.com/r/ollama/ollama), which is why the service may appear to be hanging (you can view logs using `journalctl --user -xeu ollama.service`). Alternatively, you can pull the container images before starting the services if you want to monitor downloads: for example, use `grep Image ~/.config/containers/systemd/ollama.container` to see which image is pulled (say `docker.io/ollama/ollama:rocm`), and then run `podman pull docker.io/ollama/ollama:rocm`.
 
-`ujust ollama-web` will set up ollama with the webui as a service unit in your user space: 
+The `systemd` scripts are saved under: `~/.config/containers/systemd`. The scripts are:
 
-- Status: `systemctl status --user ollama-web`
-- Restart:  `systemctl restart --user ollama-web`
+- `ollama.container`, which starts the CLI under port 11434 ([http://localhost:11434](http://localhost:11434))
+- `ollama.network`, which set the network name to "ollama"
 
-You can also `start`, `stop`, and `disable` and `enable` the service unit. Open `localhost:8080` in your browser, then make yourself an account:
+You can verify that the service is running correctly using `systemctl status --user ollama`. You can also `restart`, `stop`, `enable` and `disable` the service.
+
+You can cross-check if the container is launched correctly using `podman ps --all`.
+
+
+### Running the Open WebUI
+
+`ujust ollama install-open-webui` will set up the Open WebUI as a service unit in your user space. The `systemd` script is also saved under `~/.config/containers/systemd` as `ollama-web.container`. Note that the `ollama-web` service requires the `ollama` service.
+
+Start the service using `systemctl --user start ollama-web`. As for the `ollama` service, it pulls an image the first time it is started.
+
+The Open WebUI is accessible under port 8080 ([http://localhost:8080](http://localhost:8080)). You can change the port in the `ollama-web.container` file.
 
 ![image](https://github.com/user-attachments/assets/a9db5693-99d0-4cdc-b342-8f09610f2b66)
 
-
-### Running ollama 
-
-`ujust ollama` to get started! This will setup an ollama service unit in your user space. Use this one if you just want ollama without the web ui: 
-
-- Status: `systemctl status --user ollama`
-- Restart:  `systemctl restart --user ollama`
-
-You can also `start`, `stop`, and `disable` and `enable` the service unit. 
 
 ### Desktop integration
 
