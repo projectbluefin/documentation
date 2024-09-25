@@ -154,6 +154,23 @@ For example, the Distrobox configuration is in `/usr/etc/distrobox/distrobox.ini
 
 Check the [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html) for more information on configuration options, in particular `~/.local` and `~/.config`. 
 
+## Community Aliases and Workarounds
+
+[just](https://just.systems) is used as a task runner on Bluefin. These are commonly community convenience aliases, or more complex scripts that help automate some tasks or initial setup. This is aliased as `ujust`, so that you can use `just` itself for your other projects. 
+
+### Handy Aliases
+
+- `ujust --choose` - Shows every command and the script that is being executed when that command is chosen. Useful for browsing the available commands
+- `ujust -n $command` - The `-n` will run a command in dry-run mode, this is useful for inspecting the commands being run
+- `ujust update` - Manually update the system, flatpaks, and brew formulas
+- `ujust bios` - Reboot the PC and enter the BIOS/UEFI. Useful for running dual boot systems from independent disks
+- `ujust device-info` - Sends the status, flatpak list, and system info to the CentOS pastebin, and returns the URL to the terminal. This makes it easy for the end user to paste the URL with their info so others can help them debug
+- `ujust changelogs` - Show the changelogs for each package since the last update
+
+> Pro tip, keep your own tasks and aliases in `~/.Justfile`, and they are also handy to put in the root of your project files to automate common tasks, check out this example from [Fedora Kinoite](https://gitlab.com/fedora/ostree/ci-test/-/blob/main/justfile?ref_type=heads).
+
+Note that generally speaking the project tries to keep the system Justfiles finely scoped, most of these workarounds and not full-fledged commands. They may get removed or changed depending on the problem they were initially meant to solve.
+
 ## Managing Extensions
 
 Bluefin uses the [Extension Manager](https://flathub.org/apps/com.mattjakeman.ExtensionManager) by Matthew Jakeman to manage the desktop extensions. The application is included by default. You can access it via the [Logo Menu](https://github.com/Aryan20/Logomenu) (thanks Aryan Kaushik!)
