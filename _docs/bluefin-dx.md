@@ -70,6 +70,8 @@ DevPod is an open source tool used to create reproducible developer environments
 - [Devpod Documentation](https://devpod.sh/docs/what-is-devpod)
 - [Loft.sh](https://www.loft.sh/)
 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/jSVWiecTeo0?si=5qtlkPFtOnAAq8aD" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ## Built in Performance Tooling
 
 [Sysprof](https://www.sysprof.com/) is included as a systemwide performance profiler. As well as [Brendan Gregg's](https://www.brendangregg.com/) recommended CLI tools:
