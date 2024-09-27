@@ -78,6 +78,7 @@ Most pain points can be addressed directly by planning ahead of time.
       - Nvidia, Xbox One Controller Support, wl drivers, and v4l2loopback are supported. (These are "best effort", in certain cases we cannot control third party software that breaks with newer versions of the Linux kernel) 
     - Is your wireless card supported by Linux?
       - Poorly supported cards include Broadcom
+      - Check [USB-Wifi](https://github.com/morrownr/USB-WiFi) if you are not sure
   - Are the applications you depend on well supported on Flathub? 
   - Does your VPN provider provide a wireguard configuration to import into Network Manager?
   - Dedicated disk ready to go?
