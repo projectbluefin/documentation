@@ -221,7 +221,7 @@ cosign verify --key cosign.pub ghcr.io/ublue-os/bluefin
 
 Bluefin provides some more experimental features, depending on the image. You're on your own if you venture here, prepare accordingly! 
 
-> It has been **0** days since the last raptor attack.  --Anonymous
+> It has been **zero** days since the last raptor attack.  --Anonymous
 
 ## Testing new Linux schedulers via scx_sched 
 
