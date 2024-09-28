@@ -262,7 +262,7 @@ Upstream bug tracker: [https://github.com/fedora-silverblue/issue-tracker/issues
 
 We use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) and enforce them with a bot to keep the changelogs tidy:
 
-```ini
+```
 chore: add Oyster build script
 docs: explain hat wobble
 feat: add beta sequence
