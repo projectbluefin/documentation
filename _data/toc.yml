@@ -19,7 +19,7 @@
     - title: "Building Locally"
       url: local
     - title: "Contributor's Guide"
-      external_url: "https://universal-blue.discourse.group/docs?topic=81"
+      url: contributing
 - title: Framework Laptops
   url: "framework"
   links:
