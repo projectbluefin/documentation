@@ -23,9 +23,7 @@ Feel free to report issues as you find them, and [helping others in the discussi
 
 ## Getting Started
 
-All types of contributions are encouraged and valued.
-
-Please make sure to read the relevant section before making your contribution. Your familiarity will ensure an efficient review process by the maintainers, and will smooth out the experience for all involved.
+All types of contributions are encouraged and valued. Please make sure to read the relevant section before making your contribution. Your familiarity will ensure an efficient review process by the maintainers, and will smooth out the experience for all involved.
 
 The community looks forward to your contributions!
 
@@ -51,7 +49,7 @@ If you want to ask a question, ask in the [discussion forum](https://community.p
 
 > When contributing to this project, you must agree that you have authored 100% of the content, that you have the necessary rights to the content and that the content you contribute may be provided under the project license.
 
-Generally speaking we try to follow the [Lazy Concensus](http://lazyconcens.us/) model of development to keep the builds healthy and ourselves happy.
+Generally speaking we try to follow the [Lazy Concensus](https://community.apache.org/committers/decisionMaking.html) model of development to keep the builds healthy and ourselves happy.
 
 - If you're looking for consensus to make a decision post an issue for feedback and remember to account for timezones and weekends/holidays/work time.
 - We want people to be opinionated in their builds so we're more of a loose confederation of repos than a top-down org.
@@ -105,9 +103,7 @@ A good bug report should describe the issue in detail. Generally speaking:
 
 ### Why we insist on using GitHub
 
-If you come to the Discord you might be asked to report an issue or start a discussion on GitHub. DON'T PANIC!
-
-We do this for a few reasons:
+If you come to the Discord you might be asked to report an issue or start a discussion on GitHub. DON'T PANIC! We do this for a few reasons:
 
 - Scalability - we're purposely designing this project to scale, and that means a focus on:
 - Asynchronous Communication - OSS is a worldwide phenomenon for a reason, forcing us to write everything down and capturing as much data is crucial to our ability to move quickly, at some point we'll have people in every time-zone, and keeping that efficient is the key.
@@ -126,7 +122,6 @@ We do this for a few reasons:
       - If something needs more discussion, [file a proposal.](https://github.com/orgs/ublue-os/discussions?discussions_q=is%3Aopen+label%3Aproposal)
     - You've earned it:
       - The commons depends on everyone chipping in, be proud of your contribution!
-
 
 ### How to test incoming changes
 
@@ -274,7 +269,7 @@ test: ensure Tayne retains clothing
 
 ### Documentation
 
-- We use [mkdocs-material](https://squidfunk.github.io/mkdocs-material/) for the website/docs.
+- Submit pull requests to [ublue-os/bluefin-docs](https://github.com/ublue-os/bluefin-docs)
 - Avoid the usage of terms likes "simply" or "easy", see [justsimply.dev](https://justsimply.dev/) for more information.
 
 ## Making a Release
