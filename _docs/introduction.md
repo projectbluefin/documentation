@@ -100,10 +100,14 @@ Most pain points can be addressed directly by planning ahead of time.
 ### Deployment
 - Download the right ISO from [the website](https://projectbluefin.io/#scene-picker)
 - Install the operating system
-    * Use the entire disk with automatic partitioning
-    * (Optional): [Set up Secure Boot](introduction#secure-boot)
-    * (Optional): `ujust switch-channel` to move to `:stable` or `:latest` 
-
+  - Use the entire disk with automatic partitioning
+  - (Optional): [Set up Secure Boot](introduction#secure-boot)
+  - (Optional): `ujust switch-channel` to move to `:stable` or `:latest`
+- Set up, test, and **verify backups** - While the system image is reproducible data, your user data in your home folder still needs to be backed up. Bluefin ships with two backup utilities depending on your preference. They are installed as Flatpaks so you can remove the one you don't use. `rclone` and `restic` are also preinstalled if you prefer command line tools
+  - [Deja Dup](https://apps.gnome.org/DejaDup/)
+  - [Pika Backup](https://apps.gnome.org/PikaBackup/)
+  - Ensure your backups are functional _before_ moving on to configuration
+ 
 ### Configuration
 The rest of these steps are user specific configuration and something that we tend to leave up to you. Automating this step is a good place to use tools like [chezmoi](https://www.chezmoi.io/) for dotfile configuration and syncing: `brew install chezmoi`
 
