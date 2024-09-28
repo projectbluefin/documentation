@@ -3,6 +3,8 @@ layout: page
 permalink: /contributing
 ---
 
+# Contributing
+
 We welcome pull requests! Here's a quick howto:
 
 1. Find what to work on via our [help wanted issues](https://github.com/issues?q=is%3Aopen+is%3Aissue+user%3Aublue-os+archived%3Afalse+label%3A%22help+wanted%22)
@@ -13,8 +15,6 @@ We welcome pull requests! Here's a quick howto:
 - [Open Pull Requests](https://github.com/pulls?user=ublue-os)
 - [Open Issues](https://github.com/issues?user=ublue-os)
 - [All published containers](https://github.com/orgs/ublue-os/packages)
-
-# Contributing
 
 Thanks for taking the time to look into helping out!
 All contributions are appreciated!
