@@ -186,7 +186,7 @@ Building locally is much faster than building in GitHub and is a good way to mov
 
 - The VM needs to find the container registry on the host system. Add the IP address of the default gateway to the `/etc/hosts` file
 
-   ```ini
+   ```
    # Container registry
    10.0.2.2 registry.dev.local
    ```
