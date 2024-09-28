@@ -58,9 +58,7 @@ Like all Universal Blue images, switching is atomic, allowing for clean switchin
 
 <iframe src="https://www.youtube.com/embed/?listType=playlist&list=PLj6YeMhvp2S5MwL7nPmMWk_lTbZsk_AmZ" frameborder="0" allowfullscreen></iframe>
 
-The most current [Docker Engine](https://docs.docker.com/engine/) is included by default and is set up to be the default container runtime for vscode. [DevPod](https://devpod.sh/docs/what-is-devpod) is included to use devcontainer functionality across clouds and self-hosted setups. 
-
-- [Devpod Quickstart VS Code](https://devpod.sh/docs/getting-started/quickstart-vscode)
+The most current [Docker Engine](https://docs.docker.com/engine/) is included by default and is set up to be the default container runtime for vscode. 
 
 ## Devpod
 
@@ -68,6 +66,7 @@ DevPod is an open source tool used to create reproducible developer environments
 
 - [Devpod Website](https://devpod.sh/)
 - [Devpod Documentation](https://devpod.sh/docs/what-is-devpod)
+- [Devpod Quickstart VS Code](https://devpod.sh/docs/getting-started/quickstart-vscode)
 - [Loft.sh](https://www.loft.sh/)
 
 Check out this talk from [Rich Burroughs](https://timeline.richburroughs.dev/):
