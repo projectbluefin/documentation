@@ -23,7 +23,7 @@ permalink: framework-16
    * Power on the laptop, repeatedly tapping F2 in order to get into the BIOS. Note: If you're having trouble with this, try again, holding down the Fn key while rapidly tapping F2.
    * In BIOS mode, arrow key over to Setup Utility. Press the enter key. Arrow down to Advanced. Then arrow right, then arrow down to Linux Audio Compatibility. Press enter.
    * A new box for Linux Audio Compatibility will appear, arrow to Linux, then press enter. Now press F10 key to reboot.
-   * Now we don't have an OS installed yet. So the reboot won't get us to a running operating system and we fully expect to see an error to this point. Simply press the power button to shutdown.
+   * Now we don't have an OS installed yet. So the reboot won't get us to a running operating system and we fully expect to see an error to this point. Press the power button to shutdown.
 
 
 ![audio1|592x444](upload://ljcQsFwbZxGitNcmd709Yyc6Ebt.jpeg) https://canada1.discourse-cdn.com/free1/uploads/univeral_blue/original/2X/9/95597a0cd918056ddcb1795563e8b8af8bd64237.jpeg
