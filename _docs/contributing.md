@@ -301,7 +301,7 @@ Keep in mind, checks, other than building the akmods, do fail in pull requests.
 
 In some cases there might be a regression in upstream Fedora that needs a fix. Packages can be "pinned" to a certain version, and can be added to the main Containerfiles similar to this snippet.
 
-```ini
+```
 # Revert to older version of ostree to fix Flatpak installations
 RUN rpm-ostree override replace https://bodhi.fedoraproject.org/updates/FEDORA-2023-cab8a89753
 ```
