@@ -62,7 +62,7 @@ The most current [Docker Engine](https://docs.docker.com/engine/) is included by
 
 ## Devpod
 
-DevPod is an open source tool used to create reproducible developer environments. Each developer environment runs in a separate container and is specified through a devcontainer.json. Codespaces but open-source, client-only and unopinionated: Works with any IDE and lets you use any cloud, kubernetes or just localhost docker. 
+DevPod is an open source tool used to create reproducible developer environments. Each developer environment runs in a separate container and is specified through a `devcontainer.json`. Codespaces but open-source, client-only and unopinionated: Works with any IDE and lets you use any cloud, kubernetes or just localhost `docker`. 
 
 - [Devpod Website](https://devpod.sh/)
 - [Devpod Documentation](https://devpod.sh/docs/what-is-devpod)
