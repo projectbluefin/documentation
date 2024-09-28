@@ -93,7 +93,7 @@ Thanks to Ubuntu and Canonical for the [detailed specification](https://discours
 
 ### `bluefin-cli` 
 
-`ujust bluefin-cli` will install `bluefin-cli`, Bluefin's opt-in command line experience. `bluefin-cli` comes with some fantastic command line tools:
+`ujust bluefin-cli` will install Bluefin's opt-in command line experience. `bluefin-cli` comes with some fantastic command line tools:
 - [atuin](https://github.com/atuinsh/atuin) for shell history
 - [direnv](https://direnv.net/) to load and unload environment variables depending on the current directory.
 - [eza](https://github.com/eza-community/eza) as a replacement `ls`
