@@ -51,11 +51,11 @@ Bluefin publishes images based on the current and last stable version of Fedora.
 | Target User: | Most users | Enthusiasts | Advanced users | 
 | System Updates: | Weekly | Weekly | Daily | 
 | Application Updates: | Twice a Day | Twice a Day | Twice a Day | 
-| Kernel: | Gated | Gated | kernel-fsync | 
+| Kernel: | Gated | Gated | Ungated | 
 
 - `gts`: This is the default image and is always aliased to the previous stable version of Fedora. It targets the majority of users. It is slang for "Grand Touring Support", to signify a faster cadence than an [LTS](https://www.linux.com/news/mark-shuttleworth-ubuntu-long-term-support/) 
 - `stable`: This is for enthusiasts who want the latest version of GNOME and Fedora. It is always aliased to the current version of Fedora but follows the Fedora CoreOS release schedule and not the Fedora Silverblue release schedule
-- `latest`: For users who want the very latest Fedora has to offer, an ungated kernel-fsync linux kernel, daily updates, full open throttle 🔥  
+- `latest`: For users who want the very latest Fedora has to offer, an ungated linux kernel, daily updates, full open throttle 🔥  
 
 The major difference between `latest` and `stable` is when they update. `latest` will upgrade to the next major Fedora release as soon as it is available and it builds daily. `stable` will upgrade when CoreOS does it's userpace upgrade, which is usually a few weeks afterwards, and only builds weekly. 
 
@@ -64,10 +64,6 @@ The major difference between `latest` and `stable` is when they update. `latest`
 #### Gated Kernel 
 
 The `gts` and `stable` tags feature a gated kernel. This kernel follows the same version as the [Fedora CoreOS stable channel](https://fedoraproject.org/coreos/release-notes?arch=x86_64&stream=stable), which is a slower cadence than default Fedora Silverblue.
-
-#### kernel-fsync
-
-The `latest` tag features Sentry's [kernel-fsync](https://copr.fedorainfracloud.org/coprs/sentry/kernel-fsync/), which includes expanded hardware support, and uses the [BORE](https://github.com/firelzrd/bore-scheduler) CPU scheduler. This is the same kernel version as the latest version of Fedora and the exact same kernel that [Bazzite](https://bazzite.gg) uses.
 
 #### Asus and Surface Devices
 
