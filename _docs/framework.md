@@ -23,7 +23,8 @@ The core team and many contributors use Bluefin on the Framework 13(Intel/AMD) a
 
 -    Patched Switcheroo (FW16 only)
      -  Applications will automatically use the dGPU. This is defined by their .desktop file, so applications like Steam & Lutris will do this automatically. No more need to add DRI_PRIME.
-- Fractional scaling enabled out of the box
+- Color Profiles for the Framework 13 2.8k display and Framework 16 display
+- Fractional scaling enabled out of the box (Not needed on the 2.8k display, choose 200%)
 - Fingerprint service installed and enabled out of the box
 - VRR supported on the Framework 16 (Bazzite only)
 - Steam Deck MicroSD cards are automounted and loaded into Steam when used with the  Framework MicroSD module
