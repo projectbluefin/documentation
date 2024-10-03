@@ -71,6 +71,13 @@ Asus and Surface devices use their own dedicated images and only follow the `:la
 
 Note: The kernel-fsync kernel removes the need to have dedicated Asus and Surface images, users will be rebased to the generic image at some point in the future and these images will be deprecated. 
 
+### Managing Updates
+
+In Settings->Network set `Metered Connection: has data limits or can incur charges` to pause Bluefin updates: 
+
+![image](https://github.com/user-attachments/assets/e550b5c4-391e-4903-8836-20596f5f3020)
+
+
 ### Switching between channels
 
 > Note that the `stable` and `latest` channels update more aggresively and may introduce new changes from Fedora (including regressions), take the user's Linux expertise into account when changing the update cadence.
