@@ -145,25 +145,31 @@ And one more piece of advice: The more you invest into day 0, the smoother your 
 
 # Secure Boot
 
-Secure Boot is supported by default providing an additional layer of security. After the first installation, you will be prompted to enroll the secure boot key in the BIOS.
+Secure Boot is supported by default providing an additional layer of security.
 
-Enter the password `universalblue` when prompted to enroll our key.
+Universal Blue supports secure boot with [our custom key](https://github.com/ublue-os/akmods/raw/main/certs/public_key.der)
+
+After the first installation, you will be prompted to enroll the secure boot key in the mokutil UEFI menu UI (*QWERTY* keyboard input and navigation).
+
+Then, select "Enroll MOK", and input "`universalblue`" as the password
 
 If this step is not completed during the initial setup, you can manually enroll the key by running the following command in the terminal:
 
-    ujust enroll-secure-boot-key
-
-Secure boot is supported with our custom key. The pub key can be found in the root of the akmods repository [here](https://github.com/ublue-os/akmods/raw/main/certs/public_key.der). If you'd like to enroll this key prior to installation or rebase, download the key and run the following:
-
-```bash
-sudo mokutil --timeout -1
-sudo mokutil --import public_key.der
+```sh
+ujust enroll-secure-boot-key
 ```
 
-Use `mokutil --list-enrolled` to confirm that the ublue kernel key is listed:
+If you'd like to enroll this key prior to installation or rebase, download the key and run the following:
+
+```sh
+sudo mokutil --timeout -1
+sudo mokutil --import path/to/public_key.der
+```
+
+You can use `mokutil --list-enrolled` to confirm that the "ublue kernel" key is listed:
 
 ![image](https://github.com/user-attachments/assets/259a9bb2-2198-4744-924d-df457e26c7f4)
 
-If you see `ublue akmods\` listed, this is an older key that will be removed at a later date. `ublue kernel` is the current key.
+_If you see `ublue akmods\` listed, it is a former key that is soon to be removed. `ublue kernel` is the current key._
 
 [Move on to system administration](administration)
