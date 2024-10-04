@@ -23,15 +23,14 @@ Bluefin is:
 - **Optimized for the 96%** - Not the 4% - Bluefin takes a "stronger together" approach towards features. You can always do what you want, but the value is to share best practices, the team doesn't spend much time on edge cases.
 - **Cloud Native** (For Developers) - The developer experience is focused around containers and exposing new Linux users to the [tools used in cloud native](https://www.cncf.io/). See Universal Blue's [mission statement](https://universal-blue.org/mission.html) for more information.
 
-Here's a video on why we take such a focused approach to the desktop and explicity focus on only supporting agreed upon best practices. The example used here is for our sister image [bazzite.gg](https://bazzite.gg): 
+If your requirements are outside of this scope, then **Bluefin might not be the best fit for you**. We recognize that in order to make a better desktop that many parts of the traditional Linux desktop experience will not be coming with us. Here's a video on why we take such a focused approach to the desktop and explicity focus on only supporting agreed upon best practices. The example used here is for our sister image [bazzite.gg](https://bazzite.gg): 
 
 
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/4CyWH6jx2pE?si=P8giABxUmRqmKVKx" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 
-
-If your requirements are outside of this scope, then **Bluefin might not be the best fit for you**. We recognize that in order to make a better desktop that many parts of the traditional Linux desktop experience will not be coming with us. If this appeals to you, then Bluefin is for you.
+ If this appeals to you, then Bluefin is for you! 
 
 - [Introduction to Bluefin](introduction) - to check out the features and installation instructions.
 - [Introductory blog post](https://www.ypsidanger.com/announcing-project-bluefin/) for more background information.
