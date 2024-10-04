@@ -85,7 +85,7 @@ Most pain points can be addressed directly by planning ahead of time.
     - Bluefin does not support dual booting from the same disk
     - Bluefin does not support rebasing from a pre-existing installation of Fedora
   - Remember that this is a custom Fedora based image, it does move at a brisk pace compared to something like Ubuntu LTS
-  - Read this documentation in its entirety, and also:
+  - Read this documentation in its entirety, here's some associated documentation:
     - [Homebrew](https://docs.brew.sh/) documentation
     - [Flathub](https://docs.flathub.org/) documentation
     - [rpm-ostree](https://coreos.github.io/rpm-ostree/) documentation
