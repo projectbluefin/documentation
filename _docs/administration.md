@@ -9,7 +9,7 @@ permalink: /administration
 
 Bluefin is designed to be installed for the life of the hardware without reinstallation. Unlike traditional operating systems the image is always pristine and "clean", making upgrades less problematic. This is possible because the image is built from scratch from the ground up and works before the client PC downloads and applies updates, as opposed to doing per-package upgrades in place. Updates are automatic and silent by default. 
 
-This usually means you can set it up as part of the setup process and then likely not have to come back here. 🙂 
+This usually means you can set it up your system once, and then have it remain that way. Then likely you'll never have to come back here. 🙂 
 
 > I want that "defaults lifestyle" --<a href="https://www.softwaredefinedtalk.com/hosts/matt">Matt Ray</a>
 
