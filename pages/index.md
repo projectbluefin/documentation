@@ -25,7 +25,11 @@ Bluefin is:
 
 Here's a video on why we take such a focused approach to the desktop and explicity focus on only supporting agreed upon best practices. The example used here is for our sister image [bazzite.gg](https://bazzite.gg): 
 
+
+
 <iframe width="560" height="315" src="https://www.youtube.com/embed/4CyWH6jx2pE?si=P8giABxUmRqmKVKx" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+
 
 If your requirements are outside of this scope, then **Bluefin might not be the best fit for you**. We recognize that in order to make a better desktop that many parts of the traditional Linux desktop experience will not be coming with us. If this appeals to you, then Bluefin is for you.
 
