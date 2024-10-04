@@ -64,7 +64,7 @@ In order to set yourself up to success it's useful to plan out your Bluefin inst
 
 # Installation Runbook
 
-Here is a short [runbook](https://www.pagerduty.com/resources/learn/what-is-a-runbook/) for the Bluefin installation process. Read this entire book set of documentation in order to ensure survival in case of raptor attack. 
+Here is a short [runbook](https://www.pagerduty.com/resources/learn/what-is-a-runbook/) for the Bluefin installation process. Read this entire book set of documentation in order to ensure survival in case of a raptor attack. 
 
 ## Day 0 - Planning
 Most pain points can be addressed directly by planning ahead of time.
