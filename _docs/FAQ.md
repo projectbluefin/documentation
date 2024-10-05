@@ -73,7 +73,7 @@ eval "$(starship init bash)"
 
 # How do I modify the Linux kernel's boot arguments?
 
-See this section of the [upstream documentation](https://docs.fedoraproject.org/en-US/fedora-coreos/kernel-args/#_modifying_kernel_arguments_on_existing_systems)
+See this section of the [upstream documentation](https://docs.fedoraproject.org/en-US/fedora-coreos/kernel-args/#_modifying_kernel_arguments_on_existing_systems).
 
 # Should I trust you?
 
