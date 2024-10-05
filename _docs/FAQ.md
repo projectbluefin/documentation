@@ -71,16 +71,9 @@ You can remove or comment the line below in `/etc/bashrc` to restore the default
 eval "$(starship init bash)"
 ```
 
-# How do I get my GNOME back to normal Fedora defaults?
+# How do I modify the Linux kernel's boot arguments?
 
-You can turn off the Dash to Dock and appindicator extensions to get a more stock Fedora experience by following [these instructions](administration#managing-extensions).
-
-We set the default dconf keys in `/etc/dconf/db/local`, removing those keys and updating the database will take you back to the fedora default:
-
-```bash
-sudo rm -f /etc/dconf/db/local.d/01-ublue
-sudo dconf update
-```
+See this section of the [upstream documentation](https://docs.fedoraproject.org/en-US/fedora-coreos/kernel-args/#_modifying_kernel_arguments_on_existing_systems)
 
 # Should I trust you?
 
