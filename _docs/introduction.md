@@ -79,6 +79,9 @@ Most pain points can be addressed directly by planning ahead of time.
     - Is your wireless card supported by Linux?
       - Poorly supported cards include Broadcom
       - Check [USB-Wifi](https://github.com/morrownr/USB-WiFi) if you are not sure
+    - Is your printer/scanner well supported in Linux?
+      - [Driverless printers](https://openprinting.github.io/printers/) are strongly recommended, we cannot guarantee every printer will work
+      - [Scanner support](http://www.sane-project.org/sane-mfgs.html)
   - Are the applications you depend on well supported on Flathub? 
   - Does your VPN provider provide a wireguard configuration to import into Network Manager?
   - Dedicated disk ready to go?
