@@ -16,7 +16,7 @@ permalink: /local
 
 2. Make modifications if desired
 
-3. Build the image (Note that this will download and the entire image)
+3. Build the image (Note that this will download the entire image)
 
     ```bash
     podman build . -t bluefin
