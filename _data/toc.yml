@@ -14,12 +14,12 @@
     - title: "Press Kit"
       url: press-kit
 - title: Contributing
-  url: ""
+  url: "contributing"
   links:
-    - title: "Building Locally"
-      url: local
     - title: "Contributor's Guide"
       url: contributing
+    - title: "Building Locally"
+      url: local
 - title: Framework Laptops
   url: "framework"
   links:
@@ -29,8 +29,11 @@
       url: framework-16
 - title: "T2 Macs (2018-2020)"
   url: "t2-mac"
+  links:
+    - title: "T2 Macs on Bluefin"
+      url: "t2-mac"
 - title: Supporting the Project
-  url: ""
+  url: "Donations"
   links:
     - title: "Donations"
       url: donations
