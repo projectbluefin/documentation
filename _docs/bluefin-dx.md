@@ -140,9 +140,13 @@ Designed for quick usage and "I need a test terminal now!" use cases, Preconfigu
 
 Note: The initial setup will take some time depending on network connectivity. These containers are managed via a Podman Quadlet and **will be destroyed and updated regularly**. Declarative configuration is kept in `/etc/distrobox/distrobox.ini`, see [distrobox-assemble](https://github.com/89luca89/distrobox/blob/main/docs/usage/distrobox-assemble.md#examples) for examples.  
 
-You can add packages and call init hooks from this file, ensuring that your distroboxes are built cleanly daily, but can still contain all your customizations and packages. 
+You can add packages and call init hooks from this file, ensuring that your distroboxes are built cleanly daily, but can still contain all your customizations and packages.
 
 ![image](https://github.com/user-attachments/assets/265b9a3d-5aad-4516-a6dd-937ea7cbc697)
+
+The containers are managed via systemd in the user space as `ubuntu-toolbox.target` and `fedora-toolbox.target`. To turn them off completely: 
+
+    systemctl disable --now --user ubuntu-toolbox.target fedora-toolbox.target
 
 # Other Tooling
 
