@@ -49,15 +49,19 @@ Bluefin publishes images based on the current and last stable version of Fedora.
 | Fedora Version: | 39 | 40 | 40 | 
 | GNOME Version: | 45 | 46 | 46 |
 | Target User: | Most users | Enthusiasts | Advanced users | 
-| System Updates: | Weekly | Weekly | Daily | 
+| System Updates: | Weekly | Weekly or Daily | Daily | 
 | Application Updates: | Twice a Day | Twice a Day | Twice a Day | 
 | Kernel: | Gated | Gated | Ungated | 
 
 - `gts`: This is the default image and is always aliased to the previous stable version of Fedora. It targets the majority of users. It is slang for "Grand Touring Support", to signify a faster cadence than an [LTS](https://www.linux.com/news/mark-shuttleworth-ubuntu-long-term-support/) 
-- `stable`: This is for enthusiasts who want the latest version of GNOME and Fedora. It is always aliased to the current version of Fedora but follows the Fedora CoreOS release schedule and not the Fedora Silverblue release schedule
-- `latest`: For users who want the very latest Fedora has to offer, an ungated linux kernel, daily updates, full open throttle 🔥  
+- `stable`: This is for enthusiasts who want the latest version of GNOME and Fedora. It is always aliased to the current version of Fedora but follows the Fedora CoreOS release schedule and not the Fedora Silverblue release schedule. 
+- `latest`: For users who want the very latest Fedora has to offer, an ungated linux kernel, daily updates, full open throttle 🔥
 
-The major difference between `latest` and `stable` is when they update. `latest` will upgrade to the next major Fedora release as soon as it is available and it builds daily. `stable` will upgrade when CoreOS does it's userpace upgrade, which is usually a few weeks afterwards, and only builds weekly. 
+
+    
+The major difference between `latest` and `stable` is the kernel cadence and when they do a major upgrade. `latest` will upgrade to the next major Fedora release as soon as it is available and builds daily.
+
+`stable` will upgrade when CoreOS does its userpace upgrade, which is usually a few weeks afterwards, and builds weekly or daily. Users can opt in to an optional `stable-daily` setting is available for daily stable updates, or stick to `stable` for weekly builds. 
 
 > One of Bluefin's strengths is being able to atomically adjust versions. All the tags are built from the same repository and are essentially the same, the version numbers will just be different. `gts` for a work machine and `stable` for your hot rod. Additionally the ability to rebase between release cadences lets users repurpose machines for different use cases without needing to reinstall. 
 
