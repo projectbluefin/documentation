@@ -75,6 +75,22 @@ eval "$(starship init bash)"
 
 See this section of the [upstream documentation](https://docs.fedoraproject.org/en-US/fedora-coreos/kernel-args/#_modifying_kernel_arguments_on_existing_systems).
 
+# I use a keyboard layout that is not listed in the settings. How can I use it?
+
+Your layout may be already included with Fedora, but you need to list extended keyboard layouts (example for the [EurKEY](https://eurkey.steffen.bruentjen.eu/start.html) layout):
+
+1. Open `Gnome Tweaks`.
+2. Navigate to `Keyboard`.
+3. Toggle the `Show Extended Input Sources` to `On`.
+4. Log out of your session and back again to commit the changes.
+5. Open the `Settings` app.
+6. Open the `Keyboard` category.
+7. Add a new input source with `+`.
+8. Click the three vertical dots button for "More..."
+9. You can use the search box to type in "EurKEY".
+10. There are only two to pick from, "English (United States)" and "Spanish (United States)". Pick one, probably "English (United States)" is what you want.
+11. You get another sub-selection and can now pick "EurKEY (US)"
+
 # Should I trust you?
 
 This is all hosted, built, signed, and pushed on GitHub. As far as if I'm a trustable fellow, here's my [bio](https://www.ypsidanger.com/about/). If you've made it this far, then welcome to the future! :smile:
