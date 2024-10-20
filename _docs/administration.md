@@ -13,7 +13,7 @@ This usually means you can set it up your system once, and then have it remain t
 
 > I want that "defaults lifestyle" --<a href="https://www.softwaredefinedtalk.com/hosts/matt">Matt Ray</a>
 
-![image](https://github.com/user-attachments/assets/3f83b3a8-7d8d-492d-bb00-bee259d16592)
+![Bluefin Desktop Environment Illustration](https://github.com/user-attachments/assets/3f83b3a8-7d8d-492d-bb00-bee259d16592)
 
 ## Installing Applications
 
@@ -22,7 +22,7 @@ This usually means you can set it up your system once, and then have it remain t
 Use the GNOME Software Center to [install applications from Flathub](https://flathub.org/). System updates and upgrades are not handled by this application, it's scope has been reduced to only install Flatpaks from Flathub. 
 The [Warehouse](https://flathub.org/apps/io.github.flattool.Warehouse) tool is included for management.
 
-![86e06ae4-0aec-46ef-9709-936c3e938f70](https://github.com/user-attachments/assets/65b6cae5-9ed4-4d28-93b4-b6dfe9adf463)
+![GNOME Software Center - App Illustration](https://github.com/user-attachments/assets/65b6cae5-9ed4-4d28-93b4-b6dfe9adf463)
 
 ### Command Line Applications
 
@@ -38,7 +38,7 @@ Bluefin is designed to be "hands off". System updates apply weekly, and Flatpaks
 
 Machine firmware updates are provided through the standard Software Center:
 
-![b6706ae4-d519-4508-b350-defce27aa8e4](https://github.com/user-attachments/assets/98256d26-87ff-458f-a5f1-ecfa31a4639c)
+![Software Center → Updates](https://github.com/user-attachments/assets/98256d26-87ff-458f-a5f1-ecfa31a4639c)
 
 ### Upgrades and Throttle Settings
 
@@ -75,10 +75,9 @@ Note: The kernel-fsync kernel removes the need to have dedicated Asus and Surfac
 
 ### Managing Updates
 
-In Settings->Network set `Metered Connection: has data limits or can incur charges` to pause Bluefin updates: 
+In Settings → Network → A network setting, set `Metered Connection: has data limits or can incur charges` to pause Bluefin updates: 
 
-![image](https://github.com/user-attachments/assets/e550b5c4-391e-4903-8836-20596f5f3020)
-
+![Settings → Network → A network setting - `Metered Connection: has data limits or can incur charges` Highlight](https://github.com/user-attachments/assets/2919692c-7e03-4694-8193-3f2f77f029fb)
 
 ### Switching between channels
 
@@ -86,13 +85,11 @@ In Settings->Network set `Metered Connection: has data limits or can incur charg
 
 Use the `ujust rebase-helper` command to select rebase and select a specific channel: 
 
-![image](https://github.com/user-attachments/assets/72308e84-cd28-4fd1-a568-38fb889203fe)
-
+![`ujust rebase-helper` - channel](https://github.com/user-attachments/assets/72308e84-cd28-4fd1-a568-38fb889203fe)
 
 Or select `date` and choose an older image. 
 
-![image](https://github.com/user-attachments/assets/567061da-036d-4779-873e-154a5a833e67)
-
+![`ujust rebase-helper` - date](https://github.com/user-attachments/assets/567061da-036d-4779-873e-154a5a833e67)
 
 #### Switching between tags manually
 
@@ -180,11 +177,11 @@ Note that generally speaking the project tries to keep the system Justfiles fine
 
 Bluefin uses the [Extension Manager](https://flathub.org/apps/com.mattjakeman.ExtensionManager) by Matthew Jakeman to manage the desktop extensions. The application is included by default. You can access it via the [Logo Menu](https://github.com/Aryan20/Logomenu) (thanks Aryan Kaushik!)
 
-![image](https://github.com/user-attachments/assets/c5ad1637-95c9-4692-8b25-e8ca6248e575)
+![GNOME Extension Menu Option (opens Extension Manager)](https://github.com/user-attachments/assets/c5ad1637-95c9-4692-8b25-e8ca6248e575)
 
 This is useful if you decide you do not want to use some of the ones bundled with Bluefin. 
 
-![extensions](https://github.com/user-attachments/assets/2ea316d3-bb71-461c-95dd-f119600d1568)
+![Extension Manager - System Extensions Highlight](https://github.com/user-attachments/assets/1d9756ce-fc1a-49da-a42e-89e275b80c91)
 
 >**Note**: If your session crashes, then all of your extensions will be disabled.
 
@@ -204,11 +201,11 @@ Bluefin and Aurora include Cockpit for machine management. We're hoping to inclu
 
 Bluefin ships [Ptyxis](https://devsuite.app/ptyxis/) as the default terminal. It shows up as `Terminal` in the menu. It is **strongly recommended** that you [change your shell via the terminal emulator instead of system-wide](https://tim.siosm.fr/blog/2023/12/22/dont-change-defaut-login-shell/). Click on the Terminal settings and edit your profile:
 
-![image](https://github.com/user-attachments/assets/2c122205-dbd8-41e6-8b7b-4f536c3b69e9)
+![Ptyxis → Preferences → Profiles → A Profile Setting → Edit...](https://github.com/user-attachments/assets/2c122205-dbd8-41e6-8b7b-4f536c3b69e9)
 
 Then select "Use Custom Command" and then add the shell you want to use. `/usr/bin/fish` and `/usr/bin/zsh` are both included on the image: 
 
-![image](https://github.com/user-attachments/assets/8eb039db-7ec1-4847-b3d7-496d69fe9538)
+![Ptyxis → Preferences → Profiles → A Profile Setting → Edit... → Shell → Custom Command](https://github.com/user-attachments/assets/8eb039db-7ec1-4847-b3d7-496d69fe9538)
 
 ### Adjusting the transparency
 
@@ -223,4 +220,3 @@ These images are signed with sigstore's [cosign](https://docs.sigstore.dev/cosig
 ```sh
 cosign verify --key cosign.pub ghcr.io/ublue-os/bluefin
 ```
-
