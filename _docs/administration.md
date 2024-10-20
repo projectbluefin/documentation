@@ -98,13 +98,13 @@ Or select `date` and choose an older image.
 
 Here are the manual commands with rpm-ostree, we recommend becoming familiar with them if you find yourself rebasing often. Before changing a channel it is recommended to remove any locally layered packages: 
 
-```bash
+```sh
 rpm-ostree reset
 ```
 
 Then run a status:
 
-```bash
+```sh
 rpm-ostree status
 ```
 
@@ -116,34 +116,34 @@ The `ghcr.io/ublue-os/bluefin:gts` is the important part, with `bluefin` being t
 
 In this example we're rebasing to `:stable`, which is the latest stable release of Fedora (currently 40): 
 
-```bash
+```sh
 rpm-ostree rebase ostree-image-signed:docker://ghcr.io/ublue-os/bluefin:stable
 ```
 To always be on the `:gts` (default) release:
 
-```bash
+```sh
 rpm-ostree rebase ostree-image-signed:docker://ghcr.io/ublue-os/bluefin:gts
 ```
 Explicit version tags of the Fedora release are available for users who wish to handle their upgrade cycle manually:
 
-```bash
+```sh
 rpm-ostree rebase ostree-image-signed:docker://ghcr.io/ublue-os/bluefin:40
 ```
 Additionally rebasing to a specific date tag is encouraged if you need to "pin" to a specific day or version:
 
-```bash
+```sh
 rpm-ostree rebase ostree-image-signed:docker://ghcr.io/ublue-os/bluefin:38-20231101
 ```
 
 If you use an nvidia machine, remember that the `-nvidia` is important! (This is why it's important to note the image name when you ran that previous status command:
 
-```bash
+```sh
 rpm-ostree rebase ostree-image-signed:docker://ghcr.io/ublue-os/bluefin-nvidia:stable
 ```
 
 Use the `skopeo inspect` command to query information from an image:
 
-```bash
+```sh
 skopeo inspect docker://ghcr.io/ublue-os/bluefin
 ```
 
@@ -220,7 +220,7 @@ See the [bluefin-cli](https://docs.projectbluefin.io/bluefin-dx#bluefin-cli) sec
 
 These images are signed with sigstore's [cosign](https://docs.sigstore.dev/cosign/overview/). You can verify the signature by downloading the `cosign.pub` key from [this repo](https://github.com/ublue-os/bluefin) and running the following command:
 
-```bash
+```sh
 cosign verify --key cosign.pub ghcr.io/ublue-os/bluefin
 ```
 
