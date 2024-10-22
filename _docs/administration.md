@@ -71,8 +71,6 @@ The `gts` and `stable` tags feature a gated kernel. This kernel follows the same
 
 Asus and Surface devices use their own dedicated images and only follow the `:latest` tag. This is to ensure proper support for those devices. 
 
-Note: The kernel-fsync kernel removes the need to have dedicated Asus and Surface images, users will be rebased to the generic image at some point in the future and these images will be deprecated. 
-
 ### Managing Updates
 
 In Settings->Network set `Metered Connection: has data limits or can incur charges` to pause Bluefin updates: 
