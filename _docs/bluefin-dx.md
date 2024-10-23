@@ -28,7 +28,7 @@ The pattern in `bluefin-dx` (and `aurora-dx`) is centered around [devcontainers]
 
 Each project has a declarative environment that is intended to be start the user with a "best practice" cloud-native workflow out of the box. The [Ultimate Guide to Dev Containers](https://www.daytona.io/dotfiles/ultimate-guide-to-dev-containers) has a good write up of the advantages of using devcontainers. This means that the development environment is kept in version control instead of coupled to the host. 
 
-Homebrew can also be used for installation of development tools but generally speaking is better for random CLI applications. 
+Homebrew can also be used for installation of development tools. However it is recommended to avoid that and declare the project's dependencies in version control. It's so easy sometimes, [it's okay](https://www.youtube.com/shorts/lKwavoyaaFA).
 
 > You can always use whatever you want, you do not need to use everything in here in order to be productive -- at the end of the day it's your computer, this is just a set of defaults.   
 
