@@ -18,7 +18,7 @@ Bluefin goes "all in" on cloud native development and is used differently than a
 - Command line applications are installed using [homebrew](https://brew.sh)
 - Preconfigured ad-hoc containers for Ubuntu, Fedora, and Wolfi. Use whichever distribution you want.
 
-This differs from traditional distributions by ensuring that the development environment is explicitly seperated from the host operating system. There is no equivalent to `apt install php` on Bluefin, development is done with `podman` or `docker` directly via your IDE.
+This differs from traditional distributions by making the development process operating system agnostic. There is no equivalent to `apt install php` on Bluefin, development is done with `podman` or `docker` directly via an IDE.
 
 > We picked the cloud native pattern because local development in containers translates to deployment of containers on modern infrastructure.  
 
