@@ -16,19 +16,21 @@ Bluefin goes "all in" on cloud native development and is used differently than a
 
 - Development is done in [devcontainers](https://containers.dev/)
 - Command line applications are installed using [homebrew](https://brew.sh)
-- Preconfigured ad-hoc containers for Ubuntu, Fedora, and Wolfi. Use whichever distribution you want. 
+- Preconfigured ad-hoc containers for Ubuntu, Fedora, and Wolfi. Use whichever distribution you want.
 
-> This differs from apt, snap, and dnf where one packaging system handles both the graphical applications AND the command line applications.  This decoupling is what provides greater system reliability, near unlimited choice of software, and "distributed by default" development.  
+This differs from traditional distributions by ensuring that the development environment is explicitly seperated from the host operating system. There is no equivalent to `apt install php` on Bluefin, development is done with `podman` or `docker` directly via your IDE.
 
-In short, we picked it because this pattern is how servers are deployed in modern infrastructure. And the developers deploying those systems are already using homebrew and we want to leverage as much of that success as possible for the Linux desktop.
+> We picked the cloud native pattern because local development in containers translates to deployment of containers on modern infrastructure.  
 
 ![image](https://github.com/user-attachments/assets/51415b6c-b7fe-45e9-af74-c01694b26fbe)
 
-The pattern in `bluefin-dx` (and `aurora-dx`) is centered around [devcontainers](https://containers.dev).  Since development is not dependent on the operating system image, you can use whatever you want, you do not need to use everything in here in order to be productive -- think of them as prepaved paths that you can choose to use.  
+The pattern in `bluefin-dx` (and `aurora-dx`) is centered around [devcontainers](https://containers.dev). Since the devcontainers live in the project's git repository, and they can deployed on any operating system, Linux, MacOS, or Windows (via WSL). This facilitates "distributed by default" development and avoids Linux users being "the odd one out" when working with developers on other operating systems. 
 
-Dev Containers were chosen to facilitate distributed development, each project has a declarative environment that is intended to be start the user with a "best practice" cloud-native workflow out of the box. The [Ultimate Guide to Dev Containers](https://www.daytona.io/dotfiles/ultimate-guide-to-dev-containers) has a good write up of the advantages of using devcontainers. This means that the development environment is kept in version control instead of coupled to the host. 
+Each project has a declarative environment that is intended to be start the user with a "best practice" cloud-native workflow out of the box. The [Ultimate Guide to Dev Containers](https://www.daytona.io/dotfiles/ultimate-guide-to-dev-containers) has a good write up of the advantages of using devcontainers. This means that the development environment is kept in version control instead of coupled to the host. 
 
-Homebrew can also be used for installation of development tools. 
+Homebrew can also be used for installation of development tools but generally speaking is better for random CLI applications. 
+
+> You can always use whatever you want, you do not need to use everything in here in order to be productive -- at the end of the day it's your computer, this is just a set of defaults.   
 
 >**Note**: This is an opinionated developer workflow that [differs from Fedora's use of toolbox](https://docs.fedoraproject.org/en-US/fedora-silverblue/toolbox/).  Toolbox is included for people who prefer the upstream approach. 
 
