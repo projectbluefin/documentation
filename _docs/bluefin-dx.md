@@ -193,7 +193,8 @@ See also: [AI and Machine Learning](ai)
 
 - [virt-manager](https://virt-manager.org/) and associated tooling (KVM, qemu)
 - [Incus](https://linuxcontainers.org/incus/) provides system containers
-  - [LXC](https://linuxcontainers.org/) and [LXD](https://ubuntu.com/lxd) are also provided for compatibility reasons 
+  - [LXC](https://linuxcontainers.org/) and
+  - [LXD](https://ubuntu.com/lxd) are also provided for compatibility reasons, however is deprecated and will be removed in Spring 2025  
 
 ## Podman Development
 
