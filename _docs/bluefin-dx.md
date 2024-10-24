@@ -28,7 +28,7 @@ The pattern in `bluefin-dx` (and `aurora-dx`) is centered around [devcontainers]
 
 Each project has a declarative environment that is intended to be start the user with a "best practice" cloud-native workflow out of the box. The [Ultimate Guide to Dev Containers](https://www.daytona.io/dotfiles/ultimate-guide-to-dev-containers) has a good write up of the advantages of using devcontainers. This means that the development environment is kept in version control instead of coupled to the host. 
 
-Homebrew can also be used for installation of development tools. However it is recommended to avoid that and declare the project's dependencies in version control. It's so easy sometimes, [it's okay](https://www.youtube.com/shorts/lKwavoyaaFA).
+Homebrew can also be used for installation of development tools. However it is recommended to avoid that and declare the project's dependencies in version control. It's so easy sometimes, [it's okay](https://www.youtube.com/shorts/lKwavoyaaFA). 
 
 > You can always use whatever you want, you do not need to use everything in here in order to be productive -- at the end of the day it's your computer, this is just a set of defaults.   
 
@@ -60,7 +60,7 @@ Like all Universal Blue images, switching is atomic, allowing for clean switchin
 
 <iframe src="https://www.youtube.com/embed/?listType=playlist&list=PLj6YeMhvp2S5MwL7nPmMWk_lTbZsk_AmZ" frameborder="0" allowfullscreen></iframe>
 
-The most current [Docker Engine](https://docs.docker.com/engine/) is included by default and is set up to be the default container runtime for vscode. 
+The most current [Docker Engine](https://docs.docker.com/engine/) is included by default and is set up to be the default container runtime for vscode. Using [docker compose](https://danielquinn.org/blog/developing-with-docker/) is also a great way to get started in container development and is an option if devcontainers don't fit your style. 
 
 ## Devpod
 
