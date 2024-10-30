@@ -84,7 +84,7 @@ In Settings->Network set `Metered Connection: has data limits or can incur charg
 
 Use the `ujust rebase-helper` command to select rebase and select a specific channel: 
 
-![image](https://github.com/user-attachments/assets/72308e84-cd28-4fd1-a568-38fb889203fe)
+![image](https://github.com/user-attachments/assets/5ac60808-1e15-4c80-9592-e41fd2b52917)
 
 
 Or select `date` and choose an older image. 
