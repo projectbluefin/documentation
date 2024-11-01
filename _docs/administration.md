@@ -46,8 +46,8 @@ Bluefin publishes images based on the current and last stable version of Fedora.
 
 | | `gts` (default) | `stable` or `stable-daily` | `latest` |
 |---|---|---|---|
-| Fedora Version: | 39 | 40 | 40 | 
-| GNOME Version: | 45 | 46 | 46 |
+| Fedora Version: | 40 | 40 | 41 | 
+| GNOME Version: | 46 | 46 | 47 |
 | Target User: | Most users | Enthusiasts | Advanced users | 
 | System Updates: | Weekly | Weekly or Daily | Daily | 
 | Application Updates: | Twice a Day | Twice a Day | Twice a Day | 
@@ -71,8 +71,6 @@ The `gts` and `stable` tags feature a gated kernel. This kernel follows the same
 
 Asus and Surface devices use their own dedicated images and only follow the `:latest` tag. This is to ensure proper support for those devices. 
 
-Note: The kernel-fsync kernel removes the need to have dedicated Asus and Surface images, users will be rebased to the generic image at some point in the future and these images will be deprecated. 
-
 ### Managing Updates
 
 In Settings → Network → A network setting, set `Metered Connection: has data limits or can incur charges` to pause Bluefin updates: 
@@ -85,7 +83,7 @@ In Settings → Network → A network setting, set `Metered Connection: has data
 
 Use the `ujust rebase-helper` command to select rebase and select a specific channel: 
 
-![`ujust rebase-helper` - channel](https://github.com/user-attachments/assets/72308e84-cd28-4fd1-a568-38fb889203fe)
+![`ujust rebase-helper` - channel](https://github.com/user-attachments/assets/5ac60808-1e15-4c80-9592-e41fd2b52917)
 
 Or select `date` and choose an older image. 
 
