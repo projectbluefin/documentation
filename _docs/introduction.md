@@ -88,11 +88,11 @@ Most pain points can be addressed directly by planning ahead of time.
     - Bluefin does not support dual booting from the same disk
     - Bluefin does not support rebasing from a pre-existing installation of Fedora
   - Remember that this is a custom Fedora based image, it does move at a brisk pace compared to something like Ubuntu LTS
-  - Read this documentation in its entirety, here's some associated documentation:
-    - [Homebrew](https://docs.brew.sh/) documentation
-    - [Flathub](https://docs.flathub.org/) documentation
-    - [bootc](https://containers.github.io/bootc/) documentation
-      - [rpm-ostree](https://coreos.github.io/rpm-ostree/) documentation - this tool is deprecated in Bluefin but still available on the image, it will be removed in Spring 2025
+  - Read this documentation in its entirety, here's some associated upstream documentation:
+    - [Homebrew](https://docs.brew.sh/) 
+    - [Flathub](https://docs.flathub.org/)
+    - [bootc](https://containers.github.io/bootc/)
+      - [rpm-ostree](https://coreos.github.io/rpm-ostree/) - this tool is deprecated in Bluefin but still available on the image, it will be removed in Spring 2025
 
 ### Developers
  - Do you know [how to use containers](https://docker-curriculum.com/#introduction) for development? 
