@@ -77,13 +77,13 @@ You can create a custom image of Bluefin to include the needed broadcom wifi/blu
 To rebase to these images, similar to rebasing to Bluefin from Silverblue, you need to first rebase to an unsigned image, then again to the signed image. 
 1. Rebase to the unsigned image, replacing "[repo/bluefin-package:tag]" with the repo and image variant of your choice or creation: 
 
-```rpm-ostree rebase ostree-unverified-registry:ghcr.io/[repo/bluefin-package:tag]```
+```sudo bootc switch ghcr.io/[repo/bluefin-package:tag]```
 
 2. Reboot ```systemctl reboot```
 
 3. Rebase to the signed image, again replacing "[repo/bluefin-package:tag]" with the repo and image variant of your choice:
 
-```rpm-ostree rebase ostree-image-signed:docker://ghcr.io/[repo/bluefin-package-:tag```
+```sudo bootc switch ghcr.io/[repo/bluefin-package-:tag --enforce-container-sigpolicy```
 
 See the [T2-Atomic](https://github.com/lauretano/t2-atomic) readme for details on other images (Sway, Cosmic, vanilla Silverblue) available.
 
@@ -93,7 +93,7 @@ In a terminal, you'll install several packages and enable some daemons needed to
 
 1. Install SharpenedBlade's T2Linux copr: ```sudo curl -o /etc/yum.repos.d/sharpenedblade-t2linux-fedora-40.repo https://copr.fedorainfracloud.org/coprs/sharpenedblade/t2linux/repo/fedora-40/sharpenedblade-t2linux-fedora-40.repo```
 
-2. Install T2-specific packages: ```sudo rpm-ostree install t2fanrd rust-tiny-dfr t2linux-audio``` and reboot when prompted.
+2. Install T2-specific packages: ```sudo dnf install t2fanrd rust-tiny-dfr t2linux-audio``` and reboot when prompted.
 
 3. After a reboot, ensure t2fanrd is running with ```systemctl status t2fanrd```. Fan speed curves can be managed by editing ```/etc/t2fanrd.conf```. See [T2FanRD](https://github.com/GnomedDev/T2FanRD) for details. 
 
@@ -117,7 +117,7 @@ If using a T2-Atomic image, edit ```/etc/modprobe.d/apple-gmux.conf``` and uncom
 
 Sound quality on the 16" MacBook pro can be substantially improved using a tuned software DSP created by the Asahi Linux team and brought to T2 Linux. Please read [T2 Apple Audio DSP (@lemmyg on GitHub)](https://github.com/lemmyg/t2-apple-audio-dsp/tree/speakers_161) for details. The .wav files for the MacBookPro16,1 are already included on T2-Atomic images and can be included in your own custom image.
 
-* If layering packages, install dependencies with ```rpm-ostree install calf libspatialaudio lsp-plugins-lv2 lv2-calf-plugins ladspa-swh-plugins pipewire-module-filter-chain-lv2```
+* If layering packages, install dependencies with ```sudo dnf install calf libspatialaudio lsp-plugins-lv2 lv2-calf-plugins ladspa-swh-plugins pipewire-module-filter-chain-lv2```
 * If using T2-Atomic, these dependencies are already installed. Rename the disabled config file and reboot. ```sudo mv /etc/pipewire/pipewire.conf.d/10-t2_161_speakers.confdisabled /etc/pipewire/pipewire.conf.d/10-t2_161_speakers.conf```
 
 #### Disabling Sleep/suspend, Lid switch, etc
