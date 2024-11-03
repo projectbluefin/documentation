@@ -96,7 +96,7 @@ A good bug report should describe the issue in detail. Generally speaking:
 - Make sure that you are using the latest version.
 - Remember that these are unofficial builds, it's usually prudent to investigate an issue before reporting it here or in Fedora!
 - Collect information about the bug:
-  - `rpm-ostree status -v` usually helps.
+  - `sudo bootc status` usually helps.
 - Image and Version.
 - Possibly your input and the output.
 - Can you reliably reproduce the issue? And can you also reproduce it with older versions?

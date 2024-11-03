@@ -54,7 +54,7 @@ management along with `libratbagd`
 
 Review the [Fedora Silverblue installation instructions](https://docs.fedoraproject.org/en-US/fedora-silverblue/installation/). Some points to consider:
 
-- Use [Ventoy](https://www.ventoy.net/en/index.html) or the [Fedora Media Writer](https://flathub.org/apps/org.fedoraproject.MediaWriter) to create installation media. Other creation methods may not work properly.
+- Use the [Fedora Media Writer](https://flathub.org/apps/org.fedoraproject.MediaWriter) to create installation media. Other creation methods may not work properly.
 - Dual booting off of the same disk is **unsupported**, use a dedicated drive for another operating system and use your BIOS to choose another OS to boot off of. (This is how you should probably always do it anyway)
 - We **strongly recommend** using automated partitioning during installation, there are [known issues](https://docs.fedoraproject.org/en-US/fedora-silverblue/installation/) with manual partition on Atomic systems and is unnecessary to set up unless you are on a multi-disk system. 
 - A stock Bluefin installation is 11GB. Bluefin with developer mode enabled (`bluefin-dx`) is 19GB.
@@ -88,11 +88,11 @@ Most pain points can be addressed directly by planning ahead of time.
     - Bluefin does not support dual booting from the same disk
     - Bluefin does not support rebasing from a pre-existing installation of Fedora
   - Remember that this is a custom Fedora based image, it does move at a brisk pace compared to something like Ubuntu LTS
-  - Read this documentation in its entirety, here's some associated documentation:
-    - [Homebrew](https://docs.brew.sh/) documentation
-    - [Flathub](https://docs.flathub.org/) documentation
-    - [rpm-ostree](https://coreos.github.io/rpm-ostree/) documentation
-    - [bootc](https://containers.github.io/bootc/) documentation - this is a future tool that is currently included but not being used for important tasks, it will replace rpm-ostree in the Fall of 2024
+  - Read this documentation in its entirety, here's some associated upstream documentation:
+    - [Homebrew](https://docs.brew.sh/) 
+    - [Flathub](https://docs.flathub.org/)
+    - [bootc](https://containers.github.io/bootc/)
+      - [rpm-ostree](https://coreos.github.io/rpm-ostree/) - this tool is deprecated in Bluefin but still available on the image, it will be removed in Spring 2025
 
 ### Developers
  - Do you know [how to use containers](https://docker-curriculum.com/#introduction) for development? 

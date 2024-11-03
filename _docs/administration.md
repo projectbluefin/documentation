@@ -100,40 +100,51 @@ rpm-ostree reset
 Then run a status:
 
 ```sh
-rpm-ostree status
+sudo bootc status
 ```
 
-and look for the image you are on, look for a terribly long line like this: `ostree-image-signed:docker://ghcr.io/ublue-os/bluefin:gts`
+and look for the image you are on, it should look something like this:
 
-The `ghcr.io/ublue-os/bluefin:gts` is the important part, with `bluefin` being the image name, and the `:latest` being the image tag. That is the image you are currently on. Look for `:gts`, `:stable`, `:latest`, or in certain cases the version like `:39` or `:40`. Use the `rpm-ostree` command to move to a newer or older version:
+```
+Current staged image: ghcr.io/ublue-os/bluefin:gts
+    Image version: 40.20241101.0 (2024-11-02 05:46:53.714 UTC)
+    Image digest: sha256:cb57c75f7d700773ed6f54e4ba5550235a647fc9251e69345b1113cfd81dc884
+Current booted image: ghcr.io/ublue-os/bluefin:gts
+    Image version: 40.20241030.0 (2024-10-31 05:47:14.513 UTC)
+    Image digest: sha256:5536b3511f38a57c7f71fd499b616671ef67043f155313f714f8c92a0f8d1e7c
+Current rollback state is native ostree
+```
+
+The `ghcr.io/ublue-os/bluefin:gts` is the important part, with `bluefin` being the image name, and the `:gts` being the image tag. That is the image you are currently on. Look for `:gts`, `:stable`, `:latest`, or in certain cases the version like `:39` or `:40`. Use the `bootc switch` command to move to a newer or older version:
 
 #### Manual Rebase Examples
 
-In this example we're rebasing to `:stable`, which is the latest stable release of Fedora (currently 40): 
+In this example we're rebasing to `:stable`, which is the latest stable release of Fedora (currently 40). The `--enforce-container-sigpolicy` is important to ensure you're checking the signature of the produced image:  
 
 ```sh
-rpm-ostree rebase ostree-image-signed:docker://ghcr.io/ublue-os/bluefin:stable
+sudo bootc switch ghcr.io/ublue-os/bluefin:stable --enforce-container-sigpolicy
 ```
 To always be on the `:gts` (default) release:
 
 ```sh
-rpm-ostree rebase ostree-image-signed:docker://ghcr.io/ublue-os/bluefin:gts
+sudo bootc switch ghcr.io/ublue-os/bluefin:gts --enforce-container-sigpolicy
 ```
 Explicit version tags of the Fedora release are available for users who wish to handle their upgrade cycle manually:
 
 ```sh
-rpm-ostree rebase ostree-image-signed:docker://ghcr.io/ublue-os/bluefin:40
+sudo bootc switch ghcr.io/ublue-os/bluefin:40 --enforce-container-sigpolicy
 ```
+
 Additionally rebasing to a specific date tag is encouraged if you need to "pin" to a specific day or version:
 
 ```sh
-rpm-ostree rebase ostree-image-signed:docker://ghcr.io/ublue-os/bluefin:38-20231101
+sudo bootc switch ghcr.io/ublue-os/bluefin:stable-20241027 --enforce-container-sigpolicy
 ```
 
 If you use an nvidia machine, remember that the `-nvidia` is important! (This is why it's important to note the image name when you ran that previous status command:
 
 ```sh
-rpm-ostree rebase ostree-image-signed:docker://ghcr.io/ublue-os/bluefin-nvidia:stable
+sudo bootc switch ghcr.io/ublue-os/bluefin-nvidia:stable --enforce-container-sigpolicy
 ```
 
 Use the `skopeo inspect` command to query information from an image:
