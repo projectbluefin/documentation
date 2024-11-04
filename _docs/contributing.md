@@ -81,19 +81,19 @@ The general pattern is `just build/run image tag flavor`
 - Tags: `gts`,`stable`,`latest`,`beta`
 - Flavors: `main`,`nvidia`,`hwe`,`hwe-nvidia`
 
-## Run the image and open a shell: 
+### Run the image and open a shell: 
 
 ```
 just run bluefin stable
 ```
 
-## Build an ISO: 
+### Build an ISO: 
 
 ```
 just build-iso bluefin stable
 ```
 
-## Run an ISO 
+### Run an ISO 
 This command fires up a virtual machine and runs the image: 
 
 ```
