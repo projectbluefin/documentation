@@ -65,7 +65,7 @@ The major difference between `latest` and `stable` is the kernel cadence and whe
 
 #### Gated Kernel 
 
-The `gts` and `stable` tags feature a gated kernel. This kernel follows the same version as the [Fedora CoreOS stable channel](https://fedoraproject.org/coreos/release-notes?arch=x86_64&stream=stable), which is a slower cadence than default Fedora Silverblue.
+The `gts` and `stable` tags feature a gated kernel. This kernel follows the same version as the [Fedora CoreOS stable stream](https://fedoraproject.org/coreos/release-notes?arch=x86_64&stream=stable), which is a slower cadence than default Fedora Silverblue.
 
 #### Asus and Surface Devices
 
@@ -78,11 +78,11 @@ In Settings->Network set `Metered Connection: has data limits or can incur charg
 ![image](https://github.com/user-attachments/assets/e550b5c4-391e-4903-8836-20596f5f3020)
 
 
-### Switching between channels
+### Switching between streams
 
-> Note that the `stable` and `latest` channels update more aggresively and may introduce new changes from Fedora (including regressions), take the user's Linux expertise into account when changing the update cadence.
+> Note that the `stable` and `latest` streams update more aggresively and may introduce new changes from Fedora (including regressions), take the user's Linux expertise into account when changing the update cadence.
 
-Use the `ujust rebase-helper` command to select rebase and select a specific channel: 
+Use the `ujust rebase-helper` command to select rebase and select a specific stream: 
 
 ![image](https://github.com/user-attachments/assets/5ac60808-1e15-4c80-9592-e41fd2b52917)
 
@@ -94,7 +94,7 @@ Or select `date` and choose an older image.
 
 #### Switching between tags manually
 
-Here are the manual commands with rpm-ostree, we recommend becoming familiar with them if you find yourself rebasing often. Before changing a channel it is recommended to remove any locally layered packages: 
+Here are the manual commands with rpm-ostree, we recommend becoming familiar with them if you find yourself rebasing often. Before changing a stream it is recommended to remove any locally layered packages: 
 
 ```bash
 rpm-ostree reset
