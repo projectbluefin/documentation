@@ -77,6 +77,35 @@ In Settings->Network set `Metered Connection: has data limits or can incur charg
 
 ![image](https://github.com/user-attachments/assets/e550b5c4-391e-4903-8836-20596f5f3020)
 
+### Enabling Local Layering
+**This will become the default mode in Bluefin in Spring 2025**
+
+Local Layering is [adding individual packages](https://coreos.github.io/rpm-ostree/administrator-handbook/#hybrid-imagepackaging-via-package-layering) onto the system.
+
+Generally speaking this is an anti-pattern in Bluefin as the end goal is to move away from the package based model entirely, however sometimes you just need something. Toggling this back to true is just the user's acknowledgement that this will entail manual maintenance as a reminder and that the experience isn't as nice. 
+
+> For some users this minimal amount of maintainance is still much smaller than what they are used to and will glady make that tradeoff. 
+
+You can toggle this setting in `/etc/rpm-ostreed.conf`:
+
+```
+LockLayering=true
+```
+From the manpage:
+
+>     LockLayering=
+>       Controls whether any mutation of the base OSTree commit is supported (for
+>       example, package overlays or overrides, initramfs overlays or regeneration).
+>       Defaults to false.
+
+`rpm-ostree reset` and a reboot will always bring the system back to pure image mode, making temporary compromises to get work done is perfectly fine.
+
+| Probably Fine | Don't Do It | 
+|---|---|
+| VPN Client | Steam |
+| Third party software | Developer Tooling | 
+
+Local layering does significantly increase update time, but by default all Bluefin systems update in the background anyway.
 
 ### Switching between streams
 
