@@ -80,16 +80,16 @@ In Settings->Network set `Metered Connection: has data limits or can incur charg
 ### Enabling Local Layering
 **This will become the default mode in Bluefin in Spring 2025**
 
-Local Layering is [adding individual packages](https://coreos.github.io/rpm-ostree/administrator-handbook/#hybrid-imagepackaging-via-package-layering) onto the system.
+Local Layering is [adding individual packages](https://coreos.github.io/rpm-ostree/administrator-handbook/#hybrid-imagepackaging-via-package-layering) onto the system. In Spring 2025 Bluefin comes with Local Layering **OFF** by default. It is currently enabled by default. 
 
-Generally speaking this is an anti-pattern in Bluefin as the end goal is to move away from the package based model entirely, however sometimes you just need something. Toggling this back to true is just the user's acknowledgement that this will entail manual maintenance as a reminder and that the experience isn't as nice. 
+Generally speaking this is an anti-pattern in Bluefin as the end goal is to move away from the package based model entirely, however sometimes you just need something. Toggling this back to `true` is just the user's acknowledgement that this will entail manual maintenance as a reminder and that the experience isn't as nice. 
 
-> For some users this minimal amount of maintainance is still much smaller than what they are used to and will glady make that tradeoff. 
+> For some users this minimal amount of maintainance is still much smaller than what they are used to and they glady make that tradeoff. Well played. 
 
 You can toggle this setting in `/etc/rpm-ostreed.conf`:
 
 ```
-LockLayering=true
+LockLayering=false
 ```
 From the manpage:
 
@@ -105,7 +105,7 @@ From the manpage:
 | VPN Client | Steam |
 | Third party software | Developer Tooling | 
 
-Local layering does significantly increase update time, but by default all Bluefin systems update in the background anyway.
+Local layering does significantly increase update time, but by default all Bluefin systems update in the background anyway and the result will mostly be invisible. Problems will generally occur if you are using a third party repository that doesn't align with what's happening in the Fedora archive at the time. Your mileage may vary. 
 
 ### Switching between streams
 
