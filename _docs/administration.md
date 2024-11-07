@@ -80,7 +80,7 @@ In Settings->Network set `Metered Connection: has data limits or can incur charg
 ### Enabling Local Layering
 **This will become the default mode in Bluefin in Spring 2025**
 
-Local Layering is [adding individual packages](https://coreos.github.io/rpm-ostree/administrator-handbook/#hybrid-imagepackaging-via-package-layering) onto the system. In Spring 2025 Bluefin comes with Local Layering **OFF** by default. It is currently enabled by default. 
+Local Layering is [adding individual packages](https://coreos.github.io/rpm-ostree/administrator-handbook/#hybrid-imagepackaging-via-package-layering) onto the system. In Spring 2025 Bluefin will come with Local Layering **OFF** by default. It is currently enabled by default. 
 
 Generally speaking this is an anti-pattern in Bluefin as the end goal is to move away from the package based model entirely, however sometimes you just need something. Toggling this back to `true` is just the user's acknowledgement that this will entail manual maintenance as a reminder and that the experience isn't as nice. 
 
