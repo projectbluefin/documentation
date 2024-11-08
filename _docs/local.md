@@ -4,7 +4,7 @@ title: Building Locally
 permalink: /local
 ---
 
-Bluefin is cloud native, so all all the tooling can be run locally or on any server. Check out the [Universal Blue Forge](https://github.com/ublue-os/forge) if you're interested in self-hosting
+Bluefin is cloud native, so all all the tooling can be run locally or on any server. Check out the [Universal Blue Forge](https://github.com/ublue-os/forge) if you're interested in self-hosting.
 
 # Building Bluefin
 
