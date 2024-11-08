@@ -8,7 +8,7 @@ Bluefin is cloud native, so all all the tooling can be run locally or on any ser
 
 # Building Bluefin
 
-Bluefin comes with a [Justfile](https://just.systems) at the root of the project. It is designed to facilitate local development. It is also useful for building Bluefin on a wider variety of CI/CD systems. 
+Bluefin uses [Just](https://just.systems) to manage build tasks. It is designed to facilitate local development. It is also useful for building Bluefin on a wider variety of CI/CD systems. 
 
 First clone the repo: 
 
