@@ -4,39 +4,51 @@ title: Building Locally
 permalink: /local
 ---
 
-Bluefin is cloud native, so all all the tooling can be run locally or on any server. 
+Bluefin is cloud native, so all all the tooling can be run locally or on any server. Check out the [Universal Blue Forge](https://github.com/ublue-os/forge) if you're interested in self-hosting
 
-## Building Locally (Bluefin Example)
+# Building Bluefin
 
-1. Clone this repository and `cd` into the working directory
+Bluefin comes with a [Justfile](https://just.systems) at the root of the project. It is designed to facilitate local development. It is also useful for building Bluefin on a wider variety of CI/CD systems. 
 
-    ```bash
-    git clone https://github.com/ublue-os/bluefin.git
-    cd bluefin
-    ```
+First clone the repo: 
 
-2. Make modifications if desired
+`git clone https://github.com/ublue-os/bluefin.git`
 
-3. Build the image (Note that this will download the entire image)
+The `Justfile` at the root of the repo is used to build the images and ISOs, here's some examples: 
 
-    ```bash
-    podman build . -t bluefin
-    ```
+| Command | Description | 
+|---|---|
+|`just build bluefin` | Defaults to `latest` main |
+|`just build bluefin-dx gts` | Builds `gts` only Bluefin DX |
+|`just build bluefin-dx beta nvidia` | Builds `beta` `nvidia` version of Bluefin DX |
+|`just build aurora stable nvidia` | Builds `nvidia` version of Aurora |
+|`just build aurora-dx latest hwe-nvidia`  | Builds `latest` `nvidia` Aurora DX | 
 
-4. [Podman push](https://docs.podman.io/en/latest/markdown/podman-push.1.html) to a registry of your choice.
+The general pattern is `just build/run image tag flavor`
 
-5. Rebase to your image to wherever you pushed it:
+- Images: `aurora`,`aurora-dx`,`bluefin`,`bluefin-dx`
+- Tags: `gts`,`stable`,`latest`,`beta`
+- Flavors: `main`,`nvidia`,`hwe`,`hwe-nvidia`
 
-    ```bash
-    sudo rpm-ostree rebase ostree-image-signed:docker://whatever/bluefin:latest
-    ```
-# Justfile Documentation
+### Run the image and open a shell: 
 
-The `Justfile` in the `ublue-os/bluefin` repository defines various tasks for managing the build process, cleaning, validation, and ISO building. Here is a detailed breakdown of the tasks and their purposes:
+```
+just run bluefin stable
+```
 
-## Variables and Initial Setup
-- `repo_organization`: Defines the organization name.
-- `images`, `flavors`, `tags`: Associative arrays mapping different image, flavor, and tag names to their respective values.
+### Build an ISO: 
+
+```
+just build-iso bluefin stable
+```
+
+### Run an ISO 
+This command fires up a virtual machine and runs the image: 
+
+```
+just run-iso bluefin stable
+```
+
 
 ## Tasks
 

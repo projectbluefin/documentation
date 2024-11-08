@@ -57,49 +57,6 @@ Generally speaking we try to follow the [Lazy Concensus](https://community.apach
 
 Ashley Willis has a great introductory post called [How to Be a Good Open Source Contributor During Hacktoberfest and Beyond](https://dev.to/github/how-to-be-a-good-open-source-contributor-during-hacktoberfest-and-beyond-cdi) that has useful tips if you are just getting started.
 
-# Building Bluefin
-
-Bluefin comes with a [Justfile](https://just.systems) at the root of the project. It is designed to facilitate local development. It is also useful for building Bluefin on a wider variety of CI/CD systems. 
-
-First clone the repo: 
-
-`git clone https://github.com/ublue-os/bluefin.git`
-
-The `Justfile` at the root of the repo is used to build the images and ISOs, here's some examples: 
-
-| Command | Description | 
-|---|---|
-|`just build bluefin` | Defaults to `latest` main |
-|`just build bluefin-dx gts` | Builds `gts` only Bluefin DX |
-|`just build bluefin-dx beta nvidia` | Builds `beta` `nvidia` version of Bluefin DX |
-|`just build aurora stable nvidia` | Builds `nvidia` version of Aurora |
-|`just build aurora-dx latest hwe-nvidia`  | Builds `latest` `nvidia` Aurora DX | 
-
-The general pattern is `just build/run image tag flavor`
-
-- Images: `aurora`,`aurora-dx`,`bluefin`,`bluefin-dx`
-- Tags: `gts`,`stable`,`latest`,`beta`
-- Flavors: `main`,`nvidia`,`hwe`,`hwe-nvidia`
-
-### Run the image and open a shell: 
-
-```
-just run bluefin stable
-```
-
-### Build an ISO: 
-
-```
-just build-iso bluefin stable
-```
-
-### Run an ISO 
-This command fires up a virtual machine and runs the image: 
-
-```
-just run-iso bluefin stable
-```
-
 ## Submitting Pull Requests
 
 ### Best Practices and Conventions
