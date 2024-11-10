@@ -18618,41 +18618,46 @@ footer {
 
 /* Dark mode overrides */
 :root {
-    --zinc-300: rgb(212 212 216);
-    --zinc-500: rgb(113 113 122);
-    --zinc-700: rgb(63 63 70);
-    --zinc-800: rgb(39 39 42);
-    --zinc-900: rgb(24 24 27);
+    --dark-300: #cbd5e1;
+    --dark-500: #64748b;
+    --dark-700: #334155;
+    --dark-800: #1e293b;
+    --dark-900: #0f172a;
+    --dark-950: #020617;
 }
 
 html.dark body {
-    background-color: var(--zinc-900);
-    color: var(--zinc-500);
+    background-color: var(--dark-900);
+    color: var(--dark-500);
 }
 
 html.dark .td-sidebar-nav__section-title a {
-    color: var(--zinc-500);
+    color: var(--dark-500);
 
     &:hover {
-        color: var(--zinc-300);
+        color: var(--dark-300);
     }
 }
 
 html.dark .td-toc {
-    border-color: var(--zinc-700);
+    border-color: var(--dark-700);
 }
 
-html:not(.dark) [data-theme-toggle=light] {
-    color: var(--zinc-500) !important;
+[data-theme-toggle] {
+    transition: color 300ms ease-in;
 }
 
-html.dark [data-theme-toggle=dark] {
-    color: var(--zinc-500) !important;
+html:not(.dark) [data-theme-toggle=dark] {
+    color: var(--dark-500) !important;
+}
+
+html.dark [data-theme-toggle=light] {
+    color: var(--dark-500) !important;
 }
 
 @media(min-width:768px) {
     html.dark .td-sidebar {
-        background-color: var(--zinc-800);
-        border-color: var(--zinc-700);
+        background-color: var(--dark-800);
+        border-color: var(--dark-700);
     }
 }
