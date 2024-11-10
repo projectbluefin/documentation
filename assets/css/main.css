@@ -18614,5 +18614,37 @@ footer {
         margin-top: 30px;
         margin-bottom: 30px;
     }
-    
+}
+
+/* Dark mode overrides */
+html.dark {
+    --zinc-300: rgb(212 212 216);
+    --zinc-500: rgb(113 113 122);
+    --zinc-700: rgb(63 63 70);
+    --zinc-800: rgb(39 39 42);
+    --zinc-900: rgb(24 24 27);
+}
+
+html.dark body {
+    background-color: var(--zinc-900);
+    color: var(--zinc-500);
+}
+
+html.dark .td-sidebar-nav__section-title a {
+    color: var(--zinc-500);
+
+    &:hover {
+        color: var(--zinc-300);
+    }
+}
+
+html.dark .td-toc {
+    border-color: var(--zinc-700);
+}
+
+@media(min-width:768px) {
+    html.dark .td-sidebar {
+        background-color: var(--zinc-800);
+        border-color: var(--zinc-700);
+    }
 }
