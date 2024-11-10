@@ -63,20 +63,23 @@ layout: null
     var Theme = {
         init: function () {
             const htmlClasses = document.documentElement.classList;
-            const savedTheme = localStorage.getItem("theme");
+            const savedTheme = localStorage.theme;
             const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-
-            if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
-                htmlClasses.add("dark");
+            const klass = "dark";
+            
+            if (savedTheme === klass || (!savedTheme && prefersDark)) {
+                htmlClasses.add(klass);
+            } else {
+                htmlClasses.remove(klass);
             }
 
             $(document).ready(function () {
                 $(document).on("click", "[data-theme-toggle]", function (e) {
                     const mode = e.currentTarget.dataset.themeToggle;
-                    htmlClasses.remove("light", "dark");
+                    htmlClasses.remove(klass);
                     htmlClasses.toggle(mode);
 
-                    localStorage.setItem("theme", mode);
+                    localStorage.theme = mode;
                 });
             });
         },
