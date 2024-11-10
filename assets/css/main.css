@@ -18617,7 +18617,7 @@ footer {
 }
 
 /* Dark mode overrides */
-html.dark {
+:root {
     --zinc-300: rgb(212 212 216);
     --zinc-500: rgb(113 113 122);
     --zinc-700: rgb(63 63 70);
@@ -18640,6 +18640,14 @@ html.dark .td-sidebar-nav__section-title a {
 
 html.dark .td-toc {
     border-color: var(--zinc-700);
+}
+
+html:not(.dark) [data-theme-toggle=light] {
+    color: var(--zinc-500) !important;
+}
+
+html.dark [data-theme-toggle=dark] {
+    color: var(--zinc-500) !important;
 }
 
 @media(min-width:768px) {
