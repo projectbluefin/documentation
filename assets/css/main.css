@@ -18614,5 +18614,50 @@ footer {
         margin-top: 30px;
         margin-bottom: 30px;
     }
-    
+}
+
+/* Dark mode overrides */
+:root {
+    --dark-300: #cbd5e1;
+    --dark-500: #64748b;
+    --dark-700: #334155;
+    --dark-800: #1e293b;
+    --dark-900: #0f172a;
+    --dark-950: #020617;
+}
+
+html.dark body {
+    background-color: var(--dark-900);
+    color: var(--dark-500);
+}
+
+html.dark .td-sidebar-nav__section-title a {
+    color: var(--dark-500);
+
+    &:hover {
+        color: var(--dark-300);
+    }
+}
+
+html.dark .td-toc {
+    border-color: var(--dark-700);
+}
+
+[data-theme-toggle] {
+    transition: color 300ms ease-in;
+}
+
+html:not(.dark) [data-theme-toggle=dark] {
+    color: var(--dark-500) !important;
+}
+
+html.dark [data-theme-toggle=light] {
+    color: var(--dark-500) !important;
+}
+
+@media(min-width:768px) {
+    html.dark .td-sidebar {
+        background-color: var(--dark-800);
+        border-color: var(--dark-700);
+    }
 }

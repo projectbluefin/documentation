@@ -1,6 +1,10 @@
 source "https://rubygems.org"
 ruby RUBY_VERSION
 
+# fix for error https://github.com/ffi/ffi/issues/1103:
+#   ffi-1.17.0-x86_64-linux-musl requires rubygems version >= 3.3.22, which is
+gem "ffi", "< 1.17"
+
 # Hello! This is where you manage which Jekyll version is used to run.
 # When you want to use a different version, change it below, save the
 # file and run `bundle install`. Run Jekyll with `bundle exec`, like so:
