@@ -58,3 +58,34 @@ layout: null
     };
     Search.init();
 }(jQuery));
+(function ($) {
+    'use strict';
+    var Theme = {
+        init: function() {
+            const htmlClasses = document.documentElement.classList;
+            const savedTheme = localStorage.theme;
+            const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+            const klass = "dark";
+            
+            if (savedTheme === klass || (!savedTheme && prefersDark)) {
+                htmlClasses.add(klass);
+            } else {
+                htmlClasses.remove(klass);
+            }
+
+            $(document).ready(function() {
+                $(document).on("click", "[data-theme-toggle]", function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    const mode = e.currentTarget.dataset.themeToggle;
+                    htmlClasses.remove(klass);
+                    htmlClasses.toggle(mode);
+
+                    localStorage.theme = mode;
+                });
+            });
+        },
+    };
+    Theme.init();
+}(jQuery));

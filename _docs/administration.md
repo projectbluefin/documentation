@@ -65,7 +65,7 @@ The major difference between `latest` and `stable` is the kernel cadence and whe
 
 #### Gated Kernel 
 
-The `gts` and `stable` tags feature a gated kernel. This kernel follows the same version as the [Fedora CoreOS stable channel](https://fedoraproject.org/coreos/release-notes?arch=x86_64&stream=stable), which is a slower cadence than default Fedora Silverblue.
+The `gts` and `stable` tags feature a gated kernel. This kernel follows the same version as the [Fedora CoreOS stable stream](https://fedoraproject.org/coreos/release-notes?arch=x86_64&stream=stable), which is a slower cadence than default Fedora Silverblue.
 
 #### Asus and Surface Devices
 
@@ -77,11 +77,41 @@ In Settings → Network → A network setting, set `Metered Connection: has data
 
 ![Settings → Network → A network setting - `Metered Connection: has data limits or can incur charges` Highlight](https://github.com/user-attachments/assets/2919692c-7e03-4694-8193-3f2f77f029fb)
 
-### Switching between channels
+### Enabling Local Layering
+**This will become the default mode in Bluefin in Spring 2025**
 
-> Note that the `stable` and `latest` channels update more aggresively and may introduce new changes from Fedora (including regressions), take the user's Linux expertise into account when changing the update cadence.
+Local Layering is [adding individual packages](https://coreos.github.io/rpm-ostree/administrator-handbook/#hybrid-imagepackaging-via-package-layering) onto the system. In Spring 2025 Bluefin will come with Local Layering **OFF** by default. It is currently enabled by default. 
 
-Use the `ujust rebase-helper` command to select rebase and select a specific channel: 
+Generally speaking this is an anti-pattern in Bluefin as the end goal is to move away from the package based model entirely, however sometimes you just need something. Toggling this back to `true` is just the user's acknowledgement that this will entail manual maintenance as a reminder and that the experience isn't as nice. 
+
+> For some users this minimal amount of maintainance is still much smaller than what they are used to and they glady make that tradeoff. Well played. 
+
+You can toggle this setting in `/etc/rpm-ostreed.conf`:
+
+```
+LockLayering=false
+```
+From the manpage:
+
+>     LockLayering=
+>       Controls whether any mutation of the base OSTree commit is supported (for
+>       example, package overlays or overrides, initramfs overlays or regeneration).
+>       Defaults to false.
+
+`rpm-ostree reset` and a reboot will always bring the system back to pure image mode, making temporary compromises to get work done is perfectly fine.
+
+| Probably Fine | Don't Do It | 
+|---|---|
+| VPN Client | Steam |
+| Third party software | Developer Tooling | 
+
+Local layering does significantly increase update time, but by default all Bluefin systems update in the background anyway and the result will mostly be invisible. Problems will generally occur if you are using a third party repository that doesn't align with what's happening in the Fedora archive at the time. Your mileage may vary. 
+
+### Switching between streams
+
+> Note that the `stable` and `latest` streams update more aggresively and may introduce new changes from Fedora (including regressions), take the user's Linux expertise into account when changing the update cadence.
+
+Use the `ujust rebase-helper` command to select rebase and select a specific stream: 
 
 ![`ujust rebase-helper` - channel](https://github.com/user-attachments/assets/5ac60808-1e15-4c80-9592-e41fd2b52917)
 
@@ -91,7 +121,7 @@ Or select `date` and choose an older image.
 
 #### Switching between tags manually
 
-Here are the manual commands with rpm-ostree, we recommend becoming familiar with them if you find yourself rebasing often. Before changing a channel it is recommended to remove any locally layered packages: 
+Here are the manual commands with rpm-ostree, we recommend becoming familiar with them if you find yourself rebasing often. Before changing a stream it is recommended to remove any locally layered packages: 
 
 ```sh
 rpm-ostree reset
