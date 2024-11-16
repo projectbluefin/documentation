@@ -11,7 +11,7 @@ Bluefin is designed to be installed for the life of the hardware without reinsta
 
 This usually means you can set it up your system once, and then have it remain that way. Then likely you'll never have to come back here. 🙂 
 
-> I want that "defaults lifestyle" --<a href="https://www.softwaredefinedtalk.com/hosts/matt">Matt Ray</a>
+> I want that "defaults lifestyle" --[Matt Ray](https://www.softwaredefinedtalk.com/hosts/matt)
 
 ![image](https://github.com/user-attachments/assets/3f83b3a8-7d8d-492d-bb00-bee259d16592)
 
