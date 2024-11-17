@@ -12,4 +12,3 @@ native deployment on GitHub pages. See the [repository]({{ site.repo }}) for mor
 ## Support
 
 If you need help, please don't hesitate to [open an issue](https://www.github.com/{{ site.github_user }}/{{ site.github_repo }}).
-

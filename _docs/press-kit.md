@@ -6,7 +6,7 @@ permalink: /press-kit
 
 # Press Kit
 
-Thanks for generating content about about Bluefin and Universal Blue! This document will explain how to use the brand and terminology used by the project. 
+Thanks for generating content about about Bluefin and Universal Blue! This document will explain how to use the brand and terminology used by the project.
 
 - [Bluefin](https://projectbluefin.io)
 - [Universal Blue](https://universal-blue.org)
@@ -14,7 +14,7 @@ Thanks for generating content about about Bluefin and Universal Blue! This docum
 
 # Bluefin Terminology
 
-The name of the project is `Project Bluefin` but usually shortened to just `Bluefin`. It is built with [Universal Blue](https://universal-blue.org), which publishes base images that Bluefin uses. These in turn are derived from Fedora's Silverblue images. Universal Blue is the parent organization of [Bluefin](https://projectbluefin.io), [Bazzite](https://bazzite.gg), [Aurora](https://getaurora.dev), and [uCore](https://github.com/ublue-os/ucore). It also acts as the GitHub organization. 
+The name of the project is `Project Bluefin` but usually shortened to just `Bluefin`. It is built with [Universal Blue](https://universal-blue.org), which publishes base images that Bluefin uses. These in turn are derived from Fedora's Silverblue images. Universal Blue is the parent organization of [Bluefin](https://projectbluefin.io), [Bazzite](https://bazzite.gg), [Aurora](https://getaurora.dev), and [uCore](https://github.com/ublue-os/ucore). It also acts as the GitHub organization.
 
 ## Proper Usage
 
@@ -28,7 +28,6 @@ The name of the project is `Project Bluefin` but usually shortened to just `Blue
 - `Fedora Bluefin` - this implies a formal relationship between Fedora and Bluefin. Check the [mission document](https://universal-blue.org/mission.html) for more information about the relationship between Fedora and Universal Blue
 - `Universal Blue Bluefin` or `uBlue Bluefin` - "Bluefin is built with Universal Blue" or "Bluefin is a Universal Blue image" is recommended instead.
 - "Immutable Distribution" - Bluefin is an operating system, it is neither immutable nor a distribution, it is a custom image based on Fedora.
-
 
 # Universal Blue Terminology
 
@@ -56,9 +55,9 @@ All Universal Blue images share governance structures and are modelled after clo
 
 ## Primary Logo
 
-Bluefin's logo is a *Deinonychus antirrhopus* named "Bluefin". This is the primary logo: 
+Bluefin's logo is a _Deinonychus antirrhopus_ named "Bluefin". This is the primary logo:
 
 ![Bluefin](https://github.com/user-attachments/assets/ebf5ab24-4a25-4925-a19b-3d442833d221)
 
-Feel free to use any of the other [dinosaurs](https://universal-blue.discourse.group/t/dinosaur-gallery/18) for additional artwork. 
-Please do not distort or modify the artwork or logos, including spacing, color, elements, and scaling. 
+Feel free to use any of the other [dinosaurs](https://universal-blue.discourse.group/t/dinosaur-gallery/18) for additional artwork.
+Please do not distort or modify the artwork or logos, including spacing, color, elements, and scaling.

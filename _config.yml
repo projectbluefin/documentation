@@ -47,9 +47,6 @@ logo_pixels: 34
 color: "#403F4C"
 # color: "#8c1515" # primary color for header, buttons
 
-# Build settings
-markdown: kramdown
-
 # If you add tags to pages, define this variable to link them to some external search
 # If you want to link to tags locally on the site, leave this commented out
 # tag_search_endpoint: https://ask.cyberinfrastructure.org/search?q=

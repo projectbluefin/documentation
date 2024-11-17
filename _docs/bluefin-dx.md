@@ -20,31 +20,33 @@ Bluefin goes "all in" on cloud native development and is used differently than a
 
 This differs from traditional distributions by making the development process operating system agnostic. There is no equivalent to `apt install php` on Bluefin, development is done with `podman` or `docker` directly via an IDE.
 
-> We picked the cloud native pattern because local development in containers translates to deployment of containers on modern infrastructure.  
+> We picked the cloud native pattern because local development in containers translates to deployment of containers on modern infrastructure.
 
 ![image](https://github.com/user-attachments/assets/51415b6c-b7fe-45e9-af74-c01694b26fbe)
 
-The pattern in `bluefin-dx` (and `aurora-dx`) is centered around [devcontainers](https://containers.dev). Since the devcontainers live in the project's git repository, and they can deployed on any operating system, Linux, MacOS, or Windows (via WSL). This facilitates "distributed by default" development and avoids Linux users being "the odd one out" when working with developers on other operating systems. 
+The pattern in `bluefin-dx` (and `aurora-dx`) is centered around [devcontainers](https://containers.dev). Since the devcontainers live in the project's git repository, and they can deployed on any operating system, Linux, MacOS, or Windows (via WSL). This facilitates "distributed by default" development and avoids Linux users being "the odd one out" when working with developers on other operating systems.
 
-Each project has a declarative environment that is intended to be start the user with a "best practice" cloud-native workflow out of the box. The [Ultimate Guide to Dev Containers](https://www.daytona.io/dotfiles/ultimate-guide-to-dev-containers) has a good write up of the advantages of using devcontainers. This means that the development environment is kept in version control instead of coupled to the host. 
+Each project has a declarative environment that is intended to be start the user with a "best practice" cloud-native workflow out of the box. The [Ultimate Guide to Dev Containers](https://www.daytona.io/dotfiles/ultimate-guide-to-dev-containers) has a good write up of the advantages of using devcontainers. This means that the development environment is kept in version control instead of coupled to the host.
 
-Homebrew can also be used for installation of development tools. However it is recommended to avoid that and declare the project's dependencies in version control. It's so easy sometimes, [it's okay](https://www.youtube.com/shorts/lKwavoyaaFA). 
+Homebrew can also be used for installation of development tools. However it is recommended to avoid that and declare the project's dependencies in version control. It's so easy sometimes, [it's okay](https://www.youtube.com/shorts/lKwavoyaaFA).
 
-> You can always use whatever you want, you do not need to use everything in here in order to be productive -- at the end of the day it's your computer, this is just a set of defaults.   
+> You can always use whatever you want, you do not need to use everything in here in order to be productive -- at the end of the day it's your computer, this is just a set of defaults.
 
->**Note**: This is an opinionated developer workflow that [differs from Fedora's use of toolbox](https://docs.fedoraproject.org/en-US/fedora-silverblue/toolbox/).  Toolbox is included for people who prefer the upstream approach. 
+> **Note**: This is an opinionated developer workflow that [differs from Fedora's use of toolbox](https://docs.fedoraproject.org/en-US/fedora-silverblue/toolbox/). Toolbox is included for people who prefer the upstream approach.
 
 # Enabling Developer Mode
 
 You can rebase to the dx image by using the following command:
 
 ## Step 1: Turn it on
+
 `ujust devmode` to enable or disable the dx mode, then reboot:
 
 ![image](https://github.com/user-attachments/assets/76df5201-da02-42d0-bec9-fad259df9b0d)
 
-## Step 2: Add yourself to the right groups 
-`ujust dx-group` - to add your user account to the right groups. Then log out and back in. This step only needs to be done once. 
+## Step 2: Add yourself to the right groups
+
+`ujust dx-group` - to add your user account to the right groups. Then log out and back in. This step only needs to be done once.
 
 Like all Universal Blue images, switching is atomic, allowing for clean switching between modes depending on the use case.
 
@@ -52,19 +54,19 @@ Like all Universal Blue images, switching is atomic, allowing for clean switchin
 
 ## Visual Studio Code with Docker
 
-[Visual Studio Code](https://code.visualstudio.com/) is included on the image as the default IDE. It comes with the [devcontainers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) already installed. It's the recommended developer experience, start here if you're new to containerized development! 
+[Visual Studio Code](https://code.visualstudio.com/) is included on the image as the default IDE. It comes with the [devcontainers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) already installed. It's the recommended developer experience, start here if you're new to containerized development!
 
 - [Dev Containers Documentation](https://code.visualstudio.com/docs/devcontainers/containers) - you can skip most of the installation instructions and go directly to [the tutorial](https://code.visualstudio.com/docs/devcontainers/tutorial#_install-the-extension)
-- [Dev Containers Specification](https://containers.dev/) 
+- [Dev Containers Specification](https://containers.dev/)
 - [Beginner's Series to: Dev Containers](https://www.youtube.com/watch?v=b1RavPr_878) - great introductory tutorial from the [VS Code YouTube channel](https://www.youtube.com/@code/videos)
 
 <iframe src="https://www.youtube.com/embed/?listType=playlist&list=PLj6YeMhvp2S5MwL7nPmMWk_lTbZsk_AmZ" frameborder="0" allowfullscreen></iframe>
 
-The most current [Docker Engine](https://docs.docker.com/engine/) is included by default and is set up to be the default container runtime for vscode. Using [docker compose](https://danielquinn.org/blog/developing-with-docker/) is also a great way to get started in container development and is an option if devcontainers don't fit your style. 
+The most current [Docker Engine](https://docs.docker.com/engine/) is included by default and is set up to be the default container runtime for vscode. Using [docker compose](https://danielquinn.org/blog/developing-with-docker/) is also a great way to get started in container development and is an option if devcontainers don't fit your style.
 
 ## Devpod
 
-DevPod is an open source tool used to create reproducible developer environments. Each developer environment runs in a separate container and is specified through a `devcontainer.json`. Codespaces but open-source, client-only and unopinionated: Works with any IDE and lets you use any cloud, kubernetes or just localhost `docker`. 
+DevPod is an open source tool used to create reproducible developer environments. Each developer environment runs in a separate container and is specified through a `devcontainer.json`. Codespaces but open-source, client-only and unopinionated: Works with any IDE and lets you use any cloud, kubernetes or just localhost `docker`.
 
 - [Devpod Website](https://devpod.sh/)
 - [Devpod Documentation](https://devpod.sh/docs/what-is-devpod)
@@ -90,12 +92,13 @@ Thanks to Ubuntu and Canonical for the [detailed specification](https://discours
 - [Tailscale](https://universal-blue.discourse.group/t/tailscale-vpn-on-bluefin/290) for VPN
 - [Just](https://github.com/casey/just) task runner for post-install automation tasks
 - `fish` and `zsh` available as optional shells
-  
+
 ## Command Line Experience
 
-### `bluefin-cli` 
+### `bluefin-cli`
 
 `ujust bluefin-cli` will install Bluefin's opt-in command line experience. `bluefin-cli` comes with some fantastic command line tools:
+
 - [atuin](https://github.com/atuinsh/atuin) for shell history
 - [direnv](https://direnv.net/) to load and unload environment variables depending on the current directory.
 - [eza](https://github.com/eza-community/eza) as a replacement `ls`
@@ -103,19 +106,18 @@ Thanks to Ubuntu and Canonical for the [detailed specification](https://discours
 - [fzf](https://github.com/junegunn/fzf) for command line fuzzy finding
 - [ripgrep](https://github.com/BurntSushi/ripgrep) for search
 - [tealdeer](https://github.com/dbrgn/tealdeer) for `tldr`
-- [trash-cli](https://github.com/andreafrancia/trash-cli) to manage the system trashcan. (Strongly recommended for new CLI users) 
+- [trash-cli](https://github.com/andreafrancia/trash-cli) to manage the system trashcan. (Strongly recommended for new CLI users)
 - [ugrep](https://github.com/Genivia/ugrep) for grep
 - [yq](https://github.com/mikefarah/yq) - for yaml, json, and xml processing
 - [zoxide](https://github.com/ajeetdsouza/zoxide) as `cd`
 
-The community may add new tools over time, re-running `ujust bluefin-cli` will pull in the new tools.  
+The community may add new tools over time, re-running `ujust bluefin-cli` will pull in the new tools.
 
 ![image](https://github.com/user-attachments/assets/89be8151-5b57-4b71-bbe5-988bef2d6798)
 
-
 ### Pet Containers
 
-Pet containers are available as interactive terminals via [distrobox](https://distrobox.it/). Manage these via the included [BoxBuddy](https://github.com/Dvlv/BoxBuddyRS) application, available via the logomenu in the top left corner of your desktop under "Containers": 
+Pet containers are available as interactive terminals via [distrobox](https://distrobox.it/). Manage these via the included [BoxBuddy](https://github.com/Dvlv/BoxBuddyRS) application, available via the logomenu in the top left corner of your desktop under "Containers":
 
 ![image](https://github.com/user-attachments/assets/bdab71b0-c04a-4562-a73d-396d4b907060)
 
@@ -123,11 +125,11 @@ Use BoxBuddy's interface to create your own pet containers from whichever distri
 
 ![image](https://github.com/user-attachments/assets/79570148-98f9-458f-b46e-2a87cfaa00ed)
 
-For CLI warriors you can manage your containers with Ptyxis's built in container support: 
+For CLI warriors you can manage your containers with Ptyxis's built in container support:
 
 ![image](https://github.com/user-attachments/assets/2a4dc4b5-f1a8-4781-80a4-92ea4dfeeb97)
 
-The included [Terminal](https://gitlab.gnome.org/chergert/ptyxis) includes a host terminal so that you can quickly switch between containers and the host. 
+The included [Terminal](https://gitlab.gnome.org/chergert/ptyxis) includes a host terminal so that you can quickly switch between containers and the host.
 
 - The default terminal is [Ptyxis](https://gitlab.gnome.org/chergert/ptyxis), which includes built in integration of distrobox containers. It is aliased as "Terminal" in the menu. It is mapped to <kbd>Ctrl</kbd>-<kbd>Alt</kbd>-<kbd>Enter</kbd> by default for quick launch
 - [Podman Desktop](https://flathub.org/apps/io.podman_desktop.PodmanDesktop) - Containers and Kubernetes for application developers
@@ -140,13 +142,13 @@ Designed for quick usage and "I need a test terminal now!" use cases, Preconfigu
 - <kbd>Ctrl</kbd>-<kbd>Alt</kbd>-<kbd>u</kbd> - Launch an Ubuntu LTS container
 - <kbd>Ctrl</kbd>-<kbd>Alt</kbd>-<kbd>f</kbd> - Launch a Fedora container
 
-Note: The initial setup will take some time depending on network connectivity. These containers are managed via a Podman Quadlet and **will be destroyed and updated regularly**. Declarative configuration is kept in `/etc/distrobox/distrobox.ini`, see [distrobox-assemble](https://github.com/89luca89/distrobox/blob/main/docs/usage/distrobox-assemble.md#examples) for examples.  
+Note: The initial setup will take some time depending on network connectivity. These containers are managed via a Podman Quadlet and **will be destroyed and updated regularly**. Declarative configuration is kept in `/etc/distrobox/distrobox.ini`, see [distrobox-assemble](https://github.com/89luca89/distrobox/blob/main/docs/usage/distrobox-assemble.md#examples) for examples.
 
 You can add packages and call init hooks from this file, ensuring that your distroboxes are built cleanly daily, but can still contain all your customizations and packages.
 
 ![image](https://github.com/user-attachments/assets/265b9a3d-5aad-4516-a6dd-937ea7cbc697)
 
-The containers are managed via systemd in the user space as `ubuntu-toolbox.target` and `fedora-toolbox.target`. To turn them off completely: 
+The containers are managed via systemd in the user space as `ubuntu-toolbox.target` and `fedora-toolbox.target`. To turn them off completely:
 
     systemctl disable --now --user ubuntu-toolbox.target fedora-toolbox.target
 
@@ -154,9 +156,9 @@ The containers are managed via systemd in the user space as `ubuntu-toolbox.targ
 
 ## JetBrains
 
-`ujust jetbrains-toolbox` will fetch and install the [JetBrains Toolbox](https://www.jetbrains.com/toolbox-app) application, which will manage the installation of the JetBrains set of tools. This application will handle installation, removal, and upgrade of the JetBrains products, and is handled completely in your home directory, independent of the operating system image. We do not recommend using the JetBrains flatpaks. 
+`ujust jetbrains-toolbox` will fetch and install the [JetBrains Toolbox](https://www.jetbrains.com/toolbox-app) application, which will manage the installation of the JetBrains set of tools. This application will handle installation, removal, and upgrade of the JetBrains products, and is handled completely in your home directory, independent of the operating system image. We do not recommend using the JetBrains flatpaks.
 
-- Check the [JetBrains documentation](https://www.jetbrains.com/help/idea/podman.html) for integrating those tools with the podman runtime. 
+- Check the [JetBrains documentation](https://www.jetbrains.com/help/idea/podman.html) for integrating those tools with the podman runtime.
 - Check out how to [setup JetBrains with devcontainers](https://www.jetbrains.com/help/idea/connect-to-devcontainer.html)
 - [Uninstallation instructions](https://toolbox-support.jetbrains.com/hc/en-us/articles/115001313270-How-to-uninstall-Toolbox-App-)
 
@@ -170,14 +172,14 @@ Devpod also has support for JetBrains
 
 ## Neovim
 
-`brew install neovim devcontainer` then follow these directions for a devcontainer setup: 
+`brew install neovim devcontainer` then follow these directions for a devcontainer setup:
 
 - [Running Neovim with Devcontainers](https://cadu.dev/running-neovim-on-devcontainers/)
 - [Devpod Quickstart for Neovim](https://devpod.sh/docs/getting-started/quickstart-vim)
 
 ## Kubernetes and other Cloud Native Tooling
 
-`ujust k8s-dev-tools` to get started: 
+`ujust k8s-dev-tools` to get started:
 
 - [kind](https://kind.sigs.k8s.io/) - Run a Kubernetes cluster on your machine. Run `kind create cluster` on the host to get started!
   - [kubectl](https://kubernetes.io/docs/reference/kubectl/) - Administer Kubernetes Clusters
@@ -194,12 +196,12 @@ See also: [AI and Machine Learning](ai)
 - [virt-manager](https://virt-manager.org/) and associated tooling (KVM, qemu)
 - [Incus](https://linuxcontainers.org/incus/) provides system containers
   - [LXC](https://linuxcontainers.org/) and
-  - [LXD](https://ubuntu.com/lxd) are also provided for compatibility reasons, however is deprecated and will be removed in Spring 2025  
+  - [LXD](https://ubuntu.com/lxd) are also provided for compatibility reasons, however is deprecated and will be removed in Spring 2025
 
 ## Podman Development
 
-All the upstream `podman` tools are included. This is the default system container runtime, and is the recommended developer configuration that Fedora ships with. 
+All the upstream `podman` tools are included. This is the default system container runtime, and is the recommended developer configuration that Fedora ships with.
 
-- Install the [Podman Desktop application](https://flathub.org/apps/io.podman_desktop.PodmanDesktop) for graphical use. 
+- Install the [Podman Desktop application](https://flathub.org/apps/io.podman_desktop.PodmanDesktop) for graphical use.
 
 > Though we default to docker and vscode for development, all of the Fedora upstream tools are included for those that prefer that experience.
