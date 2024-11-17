@@ -11,32 +11,31 @@ permalink: framework-16
 
 2. **Create a USB stick** using [Fedora Media Writer](https://docs.fedoraproject.org/en-US/fedora/latest/preparing-boot-media/#_on_windows) ([Windows](https://fedoraproject.org/fmw/FedoraMediaWriter-win32-latest.exe) or [Mac](https://fedoraproject.org/fmw/FedoraMediaWriter-osx-latest.dmg) or [Linux](https://flathub.org/apps/org.fedoraproject.MediaWriter))
 
-  * Insert your USB drive (8GB or larger). Note that it will be reformatted, so make sure you are ok with erasing any data that is on it.
-  * After installing Fedora Media Writer, run it. Choose Select .iso file, browse to bluefin-gts.iso and select it.
-* Click the Write button.
- * Once the USB drive creation is complete, you can click Finish, close Fedora Media Writer, eject your USB drive.
+- Insert your USB drive (8GB or larger). Note that it will be reformatted, so make sure you are ok with erasing any data that is on it.
+- After installing Fedora Media Writer, run it. Choose Select .iso file, browse to bluefin-gts.iso and select it.
+- Click the Write button.
+- Once the USB drive creation is complete, you can click Finish, close Fedora Media Writer, eject your USB drive.
 
 3. **Linux Audio Compatibility**
 
-* Before we begin the installation process with the Live USB, let's make sure you have your Linux Audio Compatibility set to Linux in the BIOS.
+- Before we begin the installation process with the Live USB, let's make sure you have your Linux Audio Compatibility set to Linux in the BIOS.
 
-   * Power on the laptop, repeatedly tapping F2 in order to get into the BIOS. Note: If you're having trouble with this, try again, holding down the Fn key while rapidly tapping F2.
-   * In BIOS mode, arrow key over to Setup Utility. Press the enter key. Arrow down to Advanced. Then arrow right, then arrow down to Linux Audio Compatibility. Press enter.
-   * A new box for Linux Audio Compatibility will appear, arrow to Linux, then press enter. Now press F10 key to reboot.
-   * Now we don't have an OS installed yet. So the reboot won't get us to a running operating system and we fully expect to see an error to this point. Press the power button to shutdown.
-
+  - Power on the laptop, repeatedly tapping F2 in order to get into the BIOS. Note: If you're having trouble with this, try again, holding down the Fn key while rapidly tapping F2.
+  - In BIOS mode, arrow key over to Setup Utility. Press the enter key. Arrow down to Advanced. Then arrow right, then arrow down to Linux Audio Compatibility. Press enter.
+  - A new box for Linux Audio Compatibility will appear, arrow to Linux, then press enter. Now press F10 key to reboot.
+  - Now we don't have an OS installed yet. So the reboot won't get us to a running operating system and we fully expect to see an error to this point. Press the power button to shutdown.
 
 ![audio1|592x444](upload://ljcQsFwbZxGitNcmd709Yyc6Ebt.jpeg) https://canada1.discourse-cdn.com/free1/uploads/univeral_blue/original/2X/9/95597a0cd918056ddcb1795563e8b8af8bd64237.jpeg
 ![audio2|592x444](upload://A1kiX4zZ71b24avCpqhGx38sfb9.jpeg) https://canada1.discourse-cdn.com/free1/uploads/univeral_blue/original/2X/f/fc74adc4a5f272f590359d13bb076d99e696176f.jpeg
 
 4. **Booting to the Bluefin USB**
 
-* Insert the USB drive into your powered off Framework Laptop 16, and then power on. If you have an existing OS installed on the Storage drive in your laptop, immediately after the power light comes on begin rapidly tapping (continuously ) the F12 key - you must begin tapping well before you see the Framework logo.
-* Select Linpus lite (General UDisk) with your arrow keys. Enter key.
-* Next select Install Bluefin. Hit the enter key.
-* Select the keyboard language you'd like to use. On the next screen, click on the Installation Destination button to choose the disk.
-* If there is an OS already installed on the target drive, you'll need to follow the guided steps to delete the existing partitions. 
-* Click Finish Installation and then reboot into your new Bluefin install!
+- Insert the USB drive into your powered off Framework Laptop 16, and then power on. If you have an existing OS installed on the Storage drive in your laptop, immediately after the power light comes on begin rapidly tapping (continuously ) the F12 key - you must begin tapping well before you see the Framework logo.
+- Select Linpus lite (General UDisk) with your arrow keys. Enter key.
+- Next select Install Bluefin. Hit the enter key.
+- Select the keyboard language you'd like to use. On the next screen, click on the Installation Destination button to choose the disk.
+- If there is an OS already installed on the target drive, you'll need to follow the guided steps to delete the existing partitions.
+- Click Finish Installation and then reboot into your new Bluefin install!
 
 ![boot1](https://canada1.discourse-cdn.com/free1/uploads/univeral_blue/original/2X/3/30ffe07e3b4fe394aaad6e11e862d42f894048b1.jpeg)
 

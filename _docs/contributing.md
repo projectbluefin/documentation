@@ -61,8 +61,8 @@ Ashley Willis has a great introductory post called [How to Be a Good Open Source
 
 ### Best Practices and Conventions
 
-Make sure your pull request adheres to our best practices. 
-These include following project conventions, making small pull requests, and commenting thoroughly. 
+Make sure your pull request adheres to our best practices.
+These include following project conventions, making small pull requests, and commenting thoroughly.
 
 - Follow the directions of the pull request template if one is available. It will help those who respond to your PR.
 - If a trivial fix such as a broken link, typo, or grammar mistake, review the entire document for other potential mistakes. Do not open multiple PRs for small fixes in the same document.
@@ -158,16 +158,16 @@ Building locally is much faster than building in GitHub and is a good way to mov
 
 - Add an entry for the container registry to your `/etc/hosts` file
 
-   ```ini
-   # Container registry
-   127.0.0.1 registry.dev.local
-   ```  
+  ```ini
+  # Container registry
+  127.0.0.1 registry.dev.local
+  ```
 
 - Start the container registry
 
-   ```bash
-   podman run -d --name registry.dev.local -p 5000:5000 docker.io/library/registry:latest
-   ```
+  ```bash
+  podman run -d --name registry.dev.local -p 5000:5000 docker.io/library/registry:latest
+  ```
 
 #### On the VM where you want to test the image
 
@@ -175,10 +175,10 @@ Building locally is much faster than building in GitHub and is a good way to mov
 
   ```bash
   ip route | grep "default via" | cut -d ' ' -f 3`
-  ``` 
+  ```
 
   _Example Output:_
-  
+
   ```bash
   $ ip route | grep "default via" | cut -d ' ' -f 3
   10.0.2.2
@@ -186,19 +186,19 @@ Building locally is much faster than building in GitHub and is a good way to mov
 
 - The VM needs to find the container registry on the host system. Add the IP address of the default gateway to the `/etc/hosts` file
 
-   ```
-   # Container registry
-   10.0.2.2 registry.dev.local
-   ```
+  ```
+  # Container registry
+  10.0.2.2 registry.dev.local
+  ```
 
 - Since the container registry is running in "insecure" mode we have to create the file `/etc/containers/registries.conf.d/ublue-dev.conf`
-   with the following configuration.
+  with the following configuration.
 
-   ```toml
-   [[registry]]
-   location = "registry.dev.local:5000"
-   insecure = true
-   ```
+  ```toml
+  [[registry]]
+  location = "registry.dev.local:5000"
+  insecure = true
+  ```
 
 ### Clone the repository
 
@@ -253,6 +253,7 @@ Some of the issues you find may involve other dependencies in other projects, in
 Upstream bug tracker: [https://github.com/fedora-silverblue/issue-tracker/issues](https://github.com/fedora-silverblue/issue-tracker/issues)
 
 ## Styleguides
+
 ### Commit Messages
 
 We use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) and enforce them with a bot to keep the changelogs tidy:
@@ -278,15 +279,15 @@ Releases are automated via [Release Please](https://github.com/googleapis/releas
 
 1. `release please` always opens a draft PR in https://github.com/ublue-os/main that tracks changes from the last release.
 2. Approving then merging the open PR will kick off the release action.
-    - If there is no open PR, committing anything to the repo will force the action to open a PR.
-    - `chore:` is ignored, so it must be something else, `fix:` or `docs:` is recommended.
+   - If there is no open PR, committing anything to the repo will force the action to open a PR.
+   - `chore:` is ignored, so it must be something else, `fix:` or `docs:` is recommended.
 3. The release action will then make a release.
-    - There is a delay as the ISOs need to be built, they will get attached to the same release after, this can take as long as 10 minutes.
-    - Do not touch `CHANGELOG.md`, the action handles that.
-    - It might be prudent to edit the release directly after the build to add topical links (website, gotchas) since we don't have a release template [To-Do: Release Template Needed].
-    - If checks fail for some reason, you may need to force merge to kick off the ISO generation.
-    - The `release please` action does work after the images have been built.
-  
+   - There is a delay as the ISOs need to be built, they will get attached to the same release after, this can take as long as 10 minutes.
+   - Do not touch `CHANGELOG.md`, the action handles that.
+   - It might be prudent to edit the release directly after the build to add topical links (website, gotchas) since we don't have a release template [To-Do: Release Template Needed].
+   - If checks fail for some reason, you may need to force merge to kick off the ISO generation.
+   - The `release please` action does work after the images have been built.
+
 Considerations in the Action: The `isogenerator` action should [always be pinned to a specific version](https://github.com/ublue-os/main/blob/8941081abb0d6cc06ca9db63c1bd243a0c2c2acc/.github/workflows/release-please.yml#L36) and never to `latest`. This is to ensure that `isogenerator` development and testing can happen using other images while keeping main in a release-able state on a "known good" version.
 
 ## Nvidia
@@ -316,9 +317,10 @@ Budget for a 24 hour delay after Fedora has fixed a regression before removing i
 
 ## Join The Project Team
 
-If you're interested in _maintaining_ something then check the [membership page](/membership) for more information. 
+If you're interested in _maintaining_ something then check the [membership page](/membership) for more information.
 
 ## Attribution
+
 This guide is based on the **contributing.md**. [Make your own](https://contributing.md/)!
 
 <hr>
