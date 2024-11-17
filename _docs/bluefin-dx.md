@@ -87,7 +87,7 @@ Thanks to Ubuntu and Canonical for the [detailed specification](https://discours
 
 - [Cockpit](https://cockpit-project.org/) for local and remote management
 - A collection of well curated monospace fonts
-- [Tailscale](https://universal-blue.discourse.group/docs?topic=290) for VPN
+- [Tailscale](https://universal-blue.discourse.group/t/tailscale-vpn-on-bluefin/290) for VPN
 - [Just](https://github.com/casey/just) task runner for post-install automation tasks
 - `fish` and `zsh` available as optional shells
   
