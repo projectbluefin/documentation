@@ -148,9 +148,11 @@ Current booted image: ghcr.io/ublue-os/bluefin:gts
 Current rollback state is native ostree
 ```
 
-The `ghcr.io/ublue-os/bluefin:gts` is the important part, with `bluefin` being the image name, and the `:gts` being the image tag. That is the image you are currently on. Look for `:gts`, `:stable`, `:latest`, or in certain cases the version like `:39` or `:40`. Use the `bootc switch` command to move to a newer or older version:
+The `ghcr.io/ublue-os/bluefin:gts` is the important part, with `bluefin` being the image name, and the `:gts` being the image tag. That is the image you are currently on. Look for `:gts`, `:stable`, `:latest`, or in certain cases the version like `:39` or `:40`. 
 
-> Pro Tip: Bluefin's [release notes](https://github.com/ublue-os/bluefin/releases) contain the stream switching instructions at the bottom of each release. This is useful if you're trying to nail down a regression in a specific package version. 
+> Pro Tip: Bluefin's [release notes](https://github.com/ublue-os/bluefin/releases) contain the stream switching instructions at the bottom of each release. This is useful if you're trying to nail down a regression in a specific package version.
+
+Use the `bootc switch` command to move to a newer or older version
 
 #### Manual Rebase Examples
 
