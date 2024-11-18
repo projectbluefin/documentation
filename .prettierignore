@@ -1,0 +1,11 @@
+assets/css/main.css
+*.xml
+_includes/sidebar.html
+pages/search.html
+_includes/scrolltop.html
+_includes/quiz/multiple-choice.html
+_includes/navigation.html
+_includes/footer.html
+_includes/header.html
+*.js
+*.svg

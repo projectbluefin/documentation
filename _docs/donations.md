@@ -6,7 +6,7 @@ permalink: donations
 
 # Donations
 
-Sustainability is a key focus of Universal Blue, the project focuses on efficiency and long term health. Donations are appreciated, especially those that benefit the Linux application ecosystem. 
+Sustainability is a key focus of Universal Blue, the project focuses on efficiency and long term health. Donations are appreciated, especially those that benefit the Linux application ecosystem.
 
 ## Upstream Projects included in Bluefin
 
