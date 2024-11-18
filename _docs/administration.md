@@ -152,7 +152,7 @@ The `ghcr.io/ublue-os/bluefin:gts` is the important part, with `bluefin` being t
 
 > Pro Tip: Bluefin's [release notes](https://github.com/ublue-os/bluefin/releases) contain the stream switching instructions at the bottom of each release. This is useful if you're trying to nail down a regression in a specific package version.
 
-Use the `bootc switch` command to move to a newer or older version
+Use the `bootc switch` command to move to a newer or older version:
 
 #### Manual Rebase Examples
 
