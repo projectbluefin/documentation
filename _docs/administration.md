@@ -66,7 +66,7 @@ The major difference between `latest` and `stable` is the kernel cadence and whe
 
 #### Gated Kernel
 
-The `gts` and `stable` tags feature a gated kernel. This kernel follows the same version as the [Fedora CoreOS stable stream](https://fedoraproject.org/coreos/release-notes?arch=x86_64&stream=stable), which is a slower cadence than default Fedora Silverblue.
+The `gts` and `stable` tags feature a gated kernel. This kernel follows the same version as the [Fedora CoreOS stable stream](https://fedoraproject.org/coreos/release-notes?arch=x86_64&stream=stable), which is a slower cadence than default Fedora Silverblue. The Universal Blue team may temporarily pin to a specific kernel in order to avoid regressions that may affect users. 
 
 #### Asus and Surface Devices
 
