@@ -12,7 +12,3 @@ permalink: /ai
 
 ![image](https://github.com/user-attachments/assets/9fd38164-e2a9-4da1-9bcd-29e0e7add071)
 
-If you use ollama via the command line regularly use `http://localhost:11434` in the settings to connect to your local setup:
-
-![image](https://github.com/user-attachments/assets/01a34931-1154-4272-b509-e78b6788ddc6)
-
