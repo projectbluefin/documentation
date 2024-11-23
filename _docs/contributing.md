@@ -273,31 +273,6 @@ test: ensure Tayne retains clothing
 - Submit pull requests to [ublue-os/bluefin-docs](https://github.com/ublue-os/bluefin-docs)
 - Avoid the usage of terms likes "simply" or "easy", see [justsimply.dev](https://justsimply.dev/) for more information.
 
-## Making a Release
-
-Releases are automated via [Release Please](https://github.com/googleapis/release-please) with additional modifications to publish images. Since the ISOs are `netinstalls`, and always pull the latest image, you usually don't need to do a release unless new ISOs are needed or for human reasons like incrementing a version number.
-
-1. `release please` always opens a draft PR in https://github.com/ublue-os/main that tracks changes from the last release.
-2. Approving then merging the open PR will kick off the release action.
-   - If there is no open PR, committing anything to the repo will force the action to open a PR.
-   - `chore:` is ignored, so it must be something else, `fix:` or `docs:` is recommended.
-3. The release action will then make a release.
-   - There is a delay as the ISOs need to be built, they will get attached to the same release after, this can take as long as 10 minutes.
-   - Do not touch `CHANGELOG.md`, the action handles that.
-   - It might be prudent to edit the release directly after the build to add topical links (website, gotchas) since we don't have a release template [To-Do: Release Template Needed].
-   - If checks fail for some reason, you may need to force merge to kick off the ISO generation.
-   - The `release please` action does work after the images have been built.
-
-Considerations in the Action: The `isogenerator` action should [always be pinned to a specific version](https://github.com/ublue-os/main/blob/8941081abb0d6cc06ca9db63c1bd243a0c2c2acc/.github/workflows/release-please.yml#L36) and never to `latest`. This is to ensure that `isogenerator` development and testing can happen using other images while keeping main in a release-able state on a "known good" version.
-
-## Nvidia
-
-Please note, RPM Fusion supports the initial Nvidia driver release available with each Fedora version, as well as the latest version provided by Nvidia. Any intermittent versions are not maintained by RPM Fusion after they have been superseded with a new version.
-
-In other words, each Fedora release has access to their chosen Nvidia driver version, but driver versions (e.g. beta versions) can also be installed from Nvidia directly. Once RPM Fusion switches to their newest desired version, the previous version is no longer available from their repositories.
-
-Keep in mind, checks, other than building the akmods, do fail in pull requests.
-
 ## Pinning a package version
 
 In some cases there might be a regression in upstream Fedora that needs a fix. Packages can be "pinned" to a certain version, and can be added to the main Containerfiles similar to this snippet.
