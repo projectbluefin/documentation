@@ -78,6 +78,16 @@ In Settings → Network → A network setting, set `Metered Connection: has data
 
 ![Settings → Network → A network setting - `Metered Connection: has data limits or can incur charges` Highlight](https://github.com/user-attachments/assets/2919692c-7e03-4694-8193-3f2f77f029fb)
 
+### Virtual Private Networks (VPN)
+
+[Tailscale](https://tailscale.com) is included by default to provide VPN services for both desktop and development use cases.
+
+- [Using Tailscale with Mullvad](https://tailscale.com/kb/1258/mullvad-exit-nodes) - provides the best out of the box experience 
+- [Using Tailscale with Docker](https://tailscale.com/kb/1282/docker) - for development
+- `ujust toggle-tailscale` will remove the built in desktop integration if you prefer to use something else.
+
+Another option is [ProtonVPN](https://protonvpn.com/), which is currently in the process of [officially supporting Flatpak](https://github.com/flathub/com.protonvpn.www/issues/349). Other VPN providers may provide a poor packaging experience and are not recommended. 
+
 ### Enabling Local Layering
 
 **This will become the default mode in Bluefin in Spring 2025**
