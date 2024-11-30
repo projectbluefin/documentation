@@ -90,7 +90,7 @@ Another option is [ProtonVPN](https://protonvpn.com/), which is currently in the
 
 ### Enabling Local Layering
 
-**This will become the default mode in Bluefin in Spring 2025**
+**Local Layering will be disabled by default in Spring 2025**
 
 Local Layering is [adding individual packages](https://coreos.github.io/rpm-ostree/administrator-handbook/#hybrid-imagepackaging-via-package-layering) onto the system. In Spring 2025 Bluefin will come with Local Layering **OFF** by default. It is currently enabled by default.
 
