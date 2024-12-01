@@ -60,7 +60,7 @@ Bluefin publishes images based on the current and last stable version of Fedora.
 
 The major difference between `latest` and `stable` is the kernel cadence and when they do a major upgrade. `latest` will upgrade to the next major Fedora release as soon as it is available and builds daily.
 
-`stable` will upgrade when CoreOS does its userpace upgrade, which is usually a few weeks afterwards, and builds weekly or daily. Users can opt in to an optional `stable-daily` setting is available for daily stable updates, or stick to `stable` for weekly builds.
+`stable` will upgrade when CoreOS does its userspace upgrade, which is usually a few weeks afterwards, and builds weekly or daily. Users can choose the `stable-daily` image for daily stable updates, or stick to `stable` for weekly builds.
 
 > One of Bluefin's strengths is being able to atomically adjust versions. All the tags are built from the same repository and are essentially the same, the version numbers will just be different. `gts` for a work machine and `stable` for your hot rod. Additionally the ability to rebase between release cadences lets users repurpose machines for different use cases without needing to reinstall.
 
