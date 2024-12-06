@@ -77,6 +77,13 @@ Check out this talk from [Rich Burroughs](https://timeline.richburroughs.dev/):
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/jSVWiecTeo0?si=5qtlkPFtOnAAq8aD" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
+## Container Management with Podman Desktop
+
+![Podman Desktop](https://github.com/user-attachments/assets/7f36eb1d-7893-4806-ac69-9f7303ad52d4)
+
+[Podman desktop](https://podman-desktop.io/) is included to provide container management. Check out the Podman Desktop [documentation](https://podman-desktop.io/docs/intro) for more information. 
+
+
 ## Built in Performance Tooling
 
 [Sysprof](https://www.sysprof.com/) is included as a systemwide performance profiler. As well as [Brendan Gregg's](https://www.brendangregg.com/) recommended CLI tools:
