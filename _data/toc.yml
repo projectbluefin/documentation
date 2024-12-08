@@ -8,7 +8,9 @@
     - title: "AI and Machine Learning"
       url: ai
     - title: "Developers"
-      url: "bluefin-dx"
+      url: bluefin-dx
+    - title: "Tips and Tricks"
+      url: tips
     - title: "FAQ"
       url: "FAQ"
     - title: "Press Kit"
