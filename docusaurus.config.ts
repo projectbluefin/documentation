@@ -46,6 +46,17 @@ const config: Config = {
   ],
 
   themeConfig: {
+    algolia: {
+      // FIXME: put the info here
+      // The application ID provided by Algolia
+      appId: 'YOUR_APP_ID',
+      // Public API key: it is safe to commit it
+      apiKey: 'YOUR_SEARCH_API_KEY',
+      indexName: 'YOUR_INDEX_NAME',
+      contextualSearch: true,
+      searchPagePath: 'search',
+    },
+    
     // Social card that shows up on discord when you share it
     image: 'img/meta.png',
     navbar: {
