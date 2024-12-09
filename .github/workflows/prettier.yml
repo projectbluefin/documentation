@@ -1,0 +1,23 @@
+name: Check syntax
+
+on:
+  push:
+
+jobs:
+  build:
+    name: Build Docusaurus
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: sudo npm install -g prettier
+
+      - name: Check syntax with prettier
+        run: /usr/local/bin/prettier --check .
+
