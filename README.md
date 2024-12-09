@@ -11,23 +11,21 @@ These docs are pretty sparse on purpose as Bluefin's intended to be invisible. I
 
 You've made some changes and want to see how they look?
 
-You can install jekyll and run it:
+You can install node and run it:
 
 ```
-brew install ruby
-gem install bundler
-bundle install
-jekyll serve
-```
-
-Then make sure to format all your files with Prettier!
-
-```
-just format
+npm run i
+npm run start
 ```
 
 Alternatively, you can run the container:
 
 ```
 docker compose up
+```
+
+Then make sure to format all your files with Prettier!
+
+```
+npm run prettier
 ```
