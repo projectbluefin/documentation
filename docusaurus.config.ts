@@ -77,7 +77,7 @@ const config: Config = {
         },
         {
           href: "https://projectbluefin.io/",
-          label: "Introduction",
+          label: "Website",
           position: "right",
         },
         {
@@ -101,19 +101,19 @@ const config: Config = {
       style: "dark",
       links: [
         {
-          title: "Jorge Castro",
+          title: "Universal Blue",
           items: [
             {
-              label: "Bluesky",
-              href: "https://bsky.app/profile/did:plc:2nh77jxvrbsyetftt2vjy7ab",
+              label: "Aurora",
+              href: "https://getaurora.dev",
             },
             {
-              label: "Blog",
-              href: "https://ypsidanger.com/",
+              label: "Bazzite",
+              href: "https://bazzite.gg/",
             },
             {
-              label: "Linkedin",
-              href: "https://linkedin.com/in/jorge-castro2112",
+              label: "uCore",
+              href: "https://github.com/ublue-os/ucore",
             },
           ],
         },
@@ -142,13 +142,9 @@ const config: Config = {
               href: "https://github.com/ublue-os/bluefin",
             },
             {
-              label: "This website on GitHub",
+              label: "Documentation on GitHub",
               href: "https://github.com/ublue-os/bluefin-docs",
-            },
-            {
-              label: "Universal Blue on Mastodon",
-              href: "https://fosstodon.org/@UniversalBlue",
-            },
+            }
           ],
         },
       ],
