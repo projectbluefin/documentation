@@ -15,48 +15,37 @@ import type { SidebarsConfig } from "@docusaurus/plugin-content-docs";
 const sidebars: SidebarsConfig = {
   baseSidebar: [
     {
-      type: 'category',
-      label: 'Documentation',
+      type: "category",
+      label: "Documentation",
       items: [
-        'introduction',
-        'administration',
-        'ai',
-        'bluefin-dx',
-        'tips',
-        'FAQ',
-        'press-kit'
-      ]
+        "introduction",
+        "administration",
+        "ai",
+        "bluefin-dx",
+        "tips",
+        "FAQ",
+        "press-kit",
+      ],
     },
     {
-      type: 'category',
-      label: 'Contributing',
-      items: [
-        'contributing',
-        'local',
-      ]
+      type: "category",
+      label: "Contributing",
+      items: ["contributing", "local"],
     },
     {
-      type: 'category',
-      label: 'Framework Laptops',
-      items: [
-        'framework',
-        'framework-13',
-        'framework-16',
-      ]
+      type: "category",
+      label: "Framework Laptops",
+      items: ["framework", "framework-13", "framework-16"],
     },
     {
-      type: 'category',
-      label: 'T2 Macs (2018-2020)',
-      items: [
-        't2-mac',
-      ]
+      type: "category",
+      label: "T2 Macs (2018-2020)",
+      items: ["t2-mac"],
     },
     {
-      type: 'category',
-      label: 'Supporting The Project',
-      items: [
-        'donations',
-      ]
+      type: "category",
+      label: "Supporting The Project",
+      items: ["donations"],
     },
   ],
 };

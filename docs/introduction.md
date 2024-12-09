@@ -179,4 +179,3 @@ You can use `mokutil --list-enrolled` to confirm that the "ublue kernel" key is 
 _If you see `ublue akmods\` listed, it is a former key that is soon to be removed. `ublue kernel` is the current key._
 
 [Move on to system administration](administration)
-
