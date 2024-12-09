@@ -33,7 +33,7 @@ const config: Config = {
           // Disables the landing page
           routeBasePath: "/",
           editUrl:
-            "https://github.com/ublue-os/bluefin-docs/tree/main/packages",
+            "https://github.com/ublue-os/bluefin-docs/tree/main",
         },
         theme: {
           customCss: "./src/css/custom.css",
