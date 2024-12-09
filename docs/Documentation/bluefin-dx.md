@@ -80,8 +80,7 @@ Check out this talk from [Rich Burroughs](https://timeline.richburroughs.dev/):
 
 ![Podman Desktop](https://github.com/user-attachments/assets/69f64ed1-7fcc-4040-9a3d-12b71308da1b)
 
-[Podman Desktop](https://podman-desktop.io/) is included to provide container management. Check out the Podman Desktop [documentation](https://podman-desktop.io/docs/intro) for more information. 
-
+[Podman Desktop](https://podman-desktop.io/) is included to provide container management. Check out the Podman Desktop [documentation](https://podman-desktop.io/docs/intro) for more information.
 
 ## Built in Performance Tooling
 

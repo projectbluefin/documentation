@@ -65,7 +65,7 @@ The major difference between `latest` and `stable` is the kernel cadence and whe
 
 #### Gated Kernel
 
-The `gts` and `stable` tags feature a gated kernel. This kernel follows the same version as the [Fedora CoreOS stable stream](https://fedoraproject.org/coreos/release-notes?arch=x86_64&stream=stable), which is a slower cadence than default Fedora Silverblue. The Universal Blue team may temporarily pin to a specific kernel in order to avoid regressions that may affect users. 
+The `gts` and `stable` tags feature a gated kernel. This kernel follows the same version as the [Fedora CoreOS stable stream](https://fedoraproject.org/coreos/release-notes?arch=x86_64&stream=stable), which is a slower cadence than default Fedora Silverblue. The Universal Blue team may temporarily pin to a specific kernel in order to avoid regressions that may affect users.
 
 #### Asus and Surface Devices
 
@@ -73,7 +73,7 @@ Asus and Surface devices use their own dedicated images and only follow the `:la
 
 ### Managing Updates
 
-In Settings → Network → A network setting, set `Metered Connection: has data limits or can incur charges` to pause Bluefin updates: 
+In Settings → Network → A network setting, set `Metered Connection: has data limits or can incur charges` to pause Bluefin updates:
 
 ![Settings → Network → A network setting - `Metered Connection: has data limits or can incur charges` Highlight](https://github.com/user-attachments/assets/2919692c-7e03-4694-8193-3f2f77f029fb)
 
@@ -81,16 +81,16 @@ In Settings → Network → A network setting, set `Metered Connection: has data
 
 [Tailscale](https://tailscale.com) is included by default to provide VPN services for both desktop and development use cases.
 
-- [Using Tailscale with Mullvad](https://tailscale.com/kb/1258/mullvad-exit-nodes) - provides the best out of the box experience 
+- [Using Tailscale with Mullvad](https://tailscale.com/kb/1258/mullvad-exit-nodes) - provides the best out of the box experience
 - [Using Tailscale with Docker](https://tailscale.com/kb/1282/docker) - for development
 - `ujust toggle-tailscale` will remove the built in desktop integration if you prefer to use something else.
 - Good VPN providers provide Wireguard configurations that can be imported directly into the Network Manager, check their documentation for more information.
 
-Another option is [ProtonVPN](https://protonvpn.com/), which is currently in the process of [officially supporting Flatpak](https://github.com/flathub/com.protonvpn.www/issues/349). 
+Another option is [ProtonVPN](https://protonvpn.com/), which is currently in the process of [officially supporting Flatpak](https://github.com/flathub/com.protonvpn.www/issues/349).
 
 - [ProtonVPN client](https://flathub.org/apps/com.protonvpn.www) - available on FlatHub
 
-Other VPN providers may provide a poor packaging experience and are not recommended. 
+Other VPN providers may provide a poor packaging experience and are not recommended.
 
 ### Enabling Local Layering
 
@@ -132,7 +132,7 @@ Use the `ujust rebase-helper` command to select rebase and select a specific str
 
 ![`ujust rebase-helper` - channel](https://github.com/user-attachments/assets/5ac60808-1e15-4c80-9592-e41fd2b52917)
 
-Or select `date` and choose an older image. 
+Or select `date` and choose an older image.
 
 ![`ujust rebase-helper` - date](https://github.com/user-attachments/assets/567061da-036d-4779-873e-154a5a833e67)
 
@@ -162,7 +162,7 @@ Current booted image: ghcr.io/ublue-os/bluefin:gts
 Current rollback state is native ostree
 ```
 
-The `ghcr.io/ublue-os/bluefin:gts` is the important part, with `bluefin` being the image name, and the `:gts` being the image tag. That is the image you are currently on. Look for `:gts`, `:stable`, `:latest`, or in certain cases the version like `:39` or `:40`. 
+The `ghcr.io/ublue-os/bluefin:gts` is the important part, with `bluefin` being the image name, and the `:gts` being the image tag. That is the image you are currently on. Look for `:gts`, `:stable`, `:latest`, or in certain cases the version like `:39` or `:40`.
 
 > Pro Tip: Bluefin's [release notes](https://github.com/ublue-os/bluefin/releases) contain the stream switching instructions at the bottom of each release. This is useful if you're trying to nail down a regression in a specific package version.
 

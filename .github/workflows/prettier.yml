@@ -20,4 +20,3 @@ jobs:
 
       - name: Check syntax with prettier
         run: /usr/local/bin/prettier --check .
-
