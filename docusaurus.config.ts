@@ -10,8 +10,6 @@ const config: Config = {
   favicon: 'img/favicon.ico',
 
   url: 'https://docs.projectbluefin.io/',
-  // Set the /<baseUrl>/ pathname under which your site is served
-  // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/',
 
   // GitHub pages deployment config.
@@ -56,6 +54,11 @@ const config: Config = {
       contextualSearch: true,
       searchPagePath: 'search',
     },
+
+    metadata: [
+      {name: 'keywords', content: 'documentation,bluefin,universalblue'},
+      {name: 'twitter:card', content: 'summary_large_image'},
+    ],
     
     // Social card that shows up on discord when you share it
     image: 'img/meta.png',
@@ -98,11 +101,19 @@ const config: Config = {
       style: 'dark',
       links: [
         {
-          title: 'Docs',
+          title: 'Jorge Castro',
           items: [
             {
-              label: 'Introduction',
-              to: '/intro',
+              label: 'Bluesky',
+              href: 'https://bsky.app/profile/did:plc:2nh77jxvrbsyetftt2vjy7ab',
+            },
+            {
+              label: 'Blog',
+              href: 'https://ypsidanger.com/',
+            },
+            {
+              label: 'Linkedin',
+              href: 'https://linkedin.com/in/jorge-castro2112',
             },
           ],
         },
@@ -111,15 +122,15 @@ const config: Config = {
           items: [
             {
               label: 'Answer Overflow',
-              href: 'https://stackoverflow.com/questions/tagged/docusaurus',
+              href: 'https://www.answeroverflow.com/c/1072614816579063828',
             },
             {
               label: 'Discord',
-              href: 'https://discordapp.com/invite/docusaurus',
+              href: 'https://discord.gg/WEu6BdFEtp',
             },
             {
-              label: 'X',
-              href: 'https://x.com/docusaurus',
+              label: 'Forum',
+              href: 'https://community.projectbluefin.io/',
             },
           ],
         },
@@ -129,6 +140,14 @@ const config: Config = {
             {
               label: 'GitHub',
               href: 'https://github.com/ublue-os/bluefin',
+            },
+            {
+              label: 'This website on GitHub',
+              href: 'https://github.com/ublue-os/bluefin-docs',
+            },
+            {
+              label: 'Universal Blue on Mastodon',
+              href: 'https://fosstodon.org/@UniversalBlue'
             },
           ],
         },
