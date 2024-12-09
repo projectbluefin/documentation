@@ -1,5 +1,5 @@
 ---
-title: Installing Bluefin on a Framework 13
+title: Framework 13
 author: Matt Hartley
 slug: /framework-13
 ---

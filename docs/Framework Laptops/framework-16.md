@@ -1,5 +1,5 @@
 ---
-title: Installing Bluefin on a Framework 16
+title: Framework 16
 author: Matt Hartley
 slug: /framework-16
 ---
