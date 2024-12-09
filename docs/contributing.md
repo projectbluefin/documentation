@@ -1,4 +1,5 @@
 ---
+title: Contributor's guide
 slug: /contributing
 ---
 
