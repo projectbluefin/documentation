@@ -107,7 +107,7 @@ Most pain points can be addressed directly by planning ahead of time.
 - Download the right ISO from [the website](https://projectbluefin.io/#scene-picker)
 - Install the operating system
   - Use the entire disk with automatic partitioning
-  - (Optional): [Set up Secure Boot](/Documentation/introduction.md#secure-boot)
+  - (Optional): [Set up Secure Boot](/introduction.md#secure-boot)
   - (Optional): `ujust switch-channel` to move to `:stable` or `:latest`
 - Set up, test, and **verify backups** - While the system image is reproducible data, your user data in your home folder still needs to be backed up. Bluefin ships with two backup utilities depending on your preference. They are installed as Flatpaks so you can remove the one you don't use. `rclone` and `restic` are also preinstalled if you prefer command line tools
   - [Deja Dup](https://apps.gnome.org/DejaDup/)
@@ -139,7 +139,7 @@ Bluefin strives to make maintenance as easy as possible, however many of the aut
   - `ujust changelogs` will show incoming changes and updates coming from Fedora
   - `ujust bios` will reboot the machine and enter the BIOS/UEFI menu. This is useful for booting into a Windows drive
 - Subscribe to the [announcements tag](https://universal-blue.discourse.group/tag/announcements) on the Universal Blue forums
-- Understand [rebase and rollback procedures](/Documentation/administration.md#switching-between-streams)
+- Understand [rebase and rollback procedures](/administration.md#switching-between-streams)
 - Use the [Warehouse application](https://github.com/flattool/warehouse) to manage Flatpak lifecycle:
   - Pin to an old version or rollback
   - Easily remove applications at once
