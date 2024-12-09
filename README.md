@@ -1,41 +1,31 @@
-# Website
+# Bluefin Docs
 
-This website is built using [Docusaurus](https://docusaurus.io/), a modern static website generator.
+These docs are pretty sparse on purpose as Bluefin's intended to be invisible. Ideally the docs should be able to be consumed in one sitting.
 
-### Installation
+## Guidelines
 
-```
-$ yarn
-```
+- Docs linking to upstream documentation directly with a short summary is preferred.
+- There's likely a reason why something is undocumented.
 
-### Local Development
+## Previewing your changes
 
-```
-$ yarn start
-```
+You've made some changes and want to see how they look?
 
-This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
-
-### Build
+You can install node and run it:
 
 ```
-$ yarn build
+npm run i
+npm run start
 ```
 
-This command generates static content into the `build` directory and can be served using any static contents hosting service.
-
-### Deployment
-
-Using SSH:
+Alternatively, you can run the container:
 
 ```
-$ USE_SSH=true yarn deploy
+docker compose up
 ```
 
-Not using SSH:
+Then make sure to format all your files with Prettier!
 
 ```
-$ GIT_USER=<Your GitHub username> yarn deploy
+npm run prettier
 ```
-
-If you are using GitHub pages for hosting, this command is a convenient way to build the website and push to the `gh-pages` branch.
