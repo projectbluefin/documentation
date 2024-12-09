@@ -144,7 +144,7 @@ const config: Config = {
             {
               label: "Documentation on GitHub",
               href: "https://github.com/ublue-os/bluefin-docs",
-            }
+            },
           ],
         },
       ],
