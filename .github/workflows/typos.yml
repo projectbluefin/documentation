@@ -17,4 +17,4 @@ jobs:
       - name: Check for typos
         uses: crate-ci/typos@592b36d23c62cb378f6097a292bc902ee73f93ef # version 1.0.4
         with: 
-          files: ./README.md ./_docs ./pages ./_posts
+          files: ./README.md ./docs ./pages
