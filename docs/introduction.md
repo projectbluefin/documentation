@@ -5,7 +5,7 @@ slug: /introduction
 
 ![image](https://github.com/user-attachments/assets/21208dd6-9ce5-41ba-9c21-d2bb97f7c1e8)
 
-# Features
+## Features
 
 System updates are image-based and automatic. Applications are logically separated from the system by using Flatpaks for graphical applications and `brew` for command line applications.
 
@@ -43,13 +43,13 @@ System updates are image-based and automatic. Applications are logically separat
     - If you've never used an image-based Linux before just use your computer normally
     - Don't overthink it, just shut your computer off when you're not using it
 
-# Applications
+## Applications
 
 - Mozilla Firefox, Mozilla Thunderbird, Extension Manager, DejaDup, FontDownloader, Flatseal, and the Clapper Media Player.
 - Core GNOME Applications installed from Flathub:
   - GNOME Calculator, Calendar, Characters, Connections, Contacts, Evince, Firmware, Logs, Maps, NautilusPreviewer, TextEditor, Weather, baobab, clocks, eog, and font-viewer.
 
-# Installation Requirements
+## Installation Requirements
 
 Review the [Fedora Silverblue installation instructions](https://docs.fedoraproject.org/en-US/fedora-silverblue/installation/). Some points to consider:
 
@@ -61,15 +61,15 @@ Review the [Fedora Silverblue installation instructions](https://docs.fedoraproj
 
 In order to set yourself up to success it's useful to plan out your Bluefin installation into three distinct phases, mirroring the systems operations lifecycle.
 
-# Installation Runbook
+## Installation Runbook
 
 Here is a short [runbook](https://www.pagerduty.com/resources/learn/what-is-a-runbook/) for the Bluefin installation process. Read the entirety of this documentation in order to ensure survival. (In case of a raptor attack).
 
-## Day 0 - Planning
+### Day 0 - Planning
 
 Most pain points can be addressed directly by planning ahead of time.
 
-### All Users
+#### All Users
 
 - Is your hardware Linux friendly?
   - Do you understand the limitations of having an Nvidia GPU? (If applicable?)
@@ -95,14 +95,14 @@ Most pain points can be addressed directly by planning ahead of time.
   - [bootc](https://containers.github.io/bootc/)
     - [rpm-ostree](https://coreos.github.io/rpm-ostree/) - this tool is deprecated in Bluefin but still available on the image, it will be removed in Spring 2025
 
-### Developers
+#### Developers
 
 - Do you know [how to use containers](https://docker-curriculum.com/#introduction) for development?
 - Do you know how to manage [systemd service units](https://systemd.io/) for both the system and user accounts?
 
-## Day 1 - Deployment and Configuration
+### Day 1 - Deployment and Configuration
 
-### Deployment
+#### Deployment
 
 - Download the right ISO from [the website](https://projectbluefin.io/#scene-picker)
 - Install the operating system
@@ -114,7 +114,7 @@ Most pain points can be addressed directly by planning ahead of time.
   - [Pika Backup](https://apps.gnome.org/PikaBackup/)
   - Ensure your backups are functional _before_ moving on to configuration
 
-### Configuration
+#### Configuration
 
 The rest of these steps are user specific configuration and something that we tend to leave up to you. Automating this step is a good place to use tools like [chezmoi](https://www.chezmoi.io/) for dotfile configuration and syncing: `brew install chezmoi`
 
@@ -131,7 +131,7 @@ Since the user space is all in your home directory, just about any tool you use 
   - `ujust devmode` and follow the directions
   - Start VSCode and configure your settings and extensions
 
-## Day 2 - Operations and Maintenance
+### Day 2 - Operations and Maintenance
 
 Bluefin strives to make maintenance as easy as possible, however many of the automated tasks can be run manually.
 
