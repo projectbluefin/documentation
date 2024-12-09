@@ -45,10 +45,10 @@ const config: Config = {
     algolia: {
       // FIXME: put the info here
       // The application ID provided by Algolia
-      appId: "YOUR_APP_ID",
+      appId: "H1LI1VATRI",
       // Public API key: it is safe to commit it
-      apiKey: "YOUR_SEARCH_API_KEY",
-      indexName: "YOUR_INDEX_NAME",
+      apiKey: "201fbeeb537ae90f533bedcb5a73230b",
+      indexName: "projectbluefin",
       contextualSearch: true,
       searchPagePath: "search",
     },
