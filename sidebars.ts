@@ -17,6 +17,7 @@ const sidebars: SidebarsConfig = {
     {
       type: "category",
       label: "Documentation",
+      collapsed: false,
       items: [
         "introduction",
         "administration",
@@ -30,21 +31,25 @@ const sidebars: SidebarsConfig = {
     {
       type: "category",
       label: "Contributing",
+      collapsed: true,
       items: ["contributing", "local"],
     },
     {
       type: "category",
       label: "Framework Laptops",
+      collapsed: true,
       items: ["framework", "framework-13", "framework-16"],
     },
     {
       type: "category",
       label: "T2 Macs (2018-2020)",
+      collapsed: true,
       items: ["t2-mac"],
     },
     {
       type: "category",
       label: "Supporting The Project",
+      collapsed: false,
       items: ["donations"],
     },
   ],
