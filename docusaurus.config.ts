@@ -1,5 +1,5 @@
 import { themes as prismThemes } from "prism-react-renderer";
-import type { Config, SidebarItem } from "@docusaurus/types";
+import type { Config } from "@docusaurus/types";
 import type * as Preset from "@docusaurus/preset-classic";
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
@@ -11,6 +11,10 @@ const config: Config = {
 
   url: "https://docs.projectbluefin.io/",
   baseUrl: "/",
+
+  future: {
+    experimental_faster: true,
+  },
 
   // GitHub pages deployment config.
   organizationName: "ublue-os",
@@ -43,7 +47,6 @@ const config: Config = {
 
   themeConfig: {
     algolia: {
-      // FIXME: put the info here
       // The application ID provided by Algolia
       appId: "H1LI1VATRI",
       // Public API key: it is safe to commit it
@@ -54,7 +57,7 @@ const config: Config = {
     },
 
     metadata: [
-      { name: "keywords", content: "documentation,bluefin,universalblue" },
+      { name: "keywords", content: "documentation, bluefin, universalblue, linux, gnome, podman, docker, cloudnative" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
 
