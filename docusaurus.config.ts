@@ -57,7 +57,11 @@ const config: Config = {
     },
 
     metadata: [
-      { name: "keywords", content: "documentation, bluefin, universalblue, linux, gnome, podman, docker, cloudnative" },
+      {
+        name: "keywords",
+        content:
+          "documentation, bluefin, universalblue, linux, gnome, podman, docker, cloudnative",
+      },
       { name: "twitter:card", content: "summary_large_image" },
     ],
 
