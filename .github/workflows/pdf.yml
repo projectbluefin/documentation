@@ -8,8 +8,14 @@ jobs:
   pdf:
     runs-on: ubuntu-latest
     steps: 
+    - name: Install Prince
+      run: |
+        curl https://www.princexml.com/download/prince-14.2-linux-generic-x86_64.tar.gz -O
+        tar zxf prince-14.2-linux-generic-x86_64.tar.gz
+        cd prince-14.2-linux-generic-x86_64
+        yes "" | sudo ./install.sh
     - name: Build PDF
-      run: docker run --rm -it -v $(pwd)/pdf:/app/pdf openbayes/docusaurus-prince-pdf -u https://docs.projectbluefin.io
+      run: npx docusaurus-prince-pdf -u https://docs.projectbluefin.io
     - name: Upload results
       uses: actions/upload-artifact@v3
       with:
