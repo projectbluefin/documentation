@@ -2,7 +2,7 @@
 slug: /bluefin-dx
 ---
 
-# Developer Mode (`bluefin-dx`)
+# Developer Mode
 
 The Bluefin Developer Experience (`bluefin-dx`) is a dedicated developer image with bundled tools. Unlike traditional Linux systems, the operating system and developer environment are explicitly and purposely separated. This means that tooling is not installed on the host, and is instead containerized, in a virtual machine, or scoped to the user's home directory. It is designed to meet the following use cases:
 
