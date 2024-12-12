@@ -1,0 +1,18 @@
+name: Generate Docs PDF
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:    
+jobs:
+  build:
+    - name: Build PDF
+      run: docker run --rm -it -v $(pwd)/pdf:/app/pdf openbayes/docusaurus-prince-pdf -u https://docs.projectbluefin.io
+
+    - name: Upload results
+      uses: actions/upload-artifact@v3
+      with:
+        name: result
+        # The output filename can be specified with --output option
+        path: pdf/bluefin.pdf
+        if-no-files-found: error
