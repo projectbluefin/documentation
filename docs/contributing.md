@@ -47,7 +47,11 @@ If you want to ask a question, ask in the [discussion forum](https://community.p
 
 ## I Want To Contribute
 
-> When contributing to this project, you must agree that you have authored 100% of the content, that you have the necessary rights to the content and that the content you contribute may be provided under the project license.
+:::Info
+
+When contributing to this project, you must agree that you have authored 100% of the content, that you have the necessary rights to the content and that the content you contribute may be provided under the project license.
+
+:::
 
 Generally speaking we try to follow the [Lazy Concensus](https://community.apache.org/committers/decisionMaking.html) model of development to keep the builds healthy and ourselves happy.
 
@@ -125,7 +129,7 @@ If you come to the Discord you might be asked to report an issue or start a disc
 
 ### How to test incoming changes
 
-One of the nice things about the image model is that we can generate an entire OS image for every change we want to commit, so this makes testing way easier than in the past.
+One of the nice things about the image model is that we can generate an entire OS image for every change we want to commit, so this makes testing way easier than in the past. 
 You can rebase to it, see if it works, and then move back.
 This also means we can increase the amount of testers!
 
@@ -298,7 +302,3 @@ Budget for a 24 hour delay after Fedora has fixed a regression before removing i
 ## Attribution
 
 This guide is based on the **contributing.md**. [Make your own](https://contributing.md/)!
-
-<hr/>
-
-**[\<\-\- View Universal Blue General Documentation](https://universal-blue.discourse.group/docs?topic=3318)**
