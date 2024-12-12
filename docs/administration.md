@@ -166,7 +166,9 @@ Use the `bootc switch` command to move to a newer or older version:
 
 #### Manual Rebase Examples
 
-In this example we're rebasing to `:stable`, which is the latest stable release of Fedora (currently 40). The `--enforce-container-sigpolicy` is important to ensure you're checking the signature of the produced image:
+<details>
+
+<summary>In this example we're rebasing to `:stable`, which is the latest stable release of Fedora (currently 40). The `--enforce-container-sigpolicy` is important to ensure you're checking the signature of the produced image:</summary>
 
 ```sh
 sudo bootc switch ghcr.io/ublue-os/bluefin:stable --enforce-container-sigpolicy
@@ -201,6 +203,8 @@ Use the `skopeo inspect` command to query information from an image:
 ```sh
 skopeo inspect docker://ghcr.io/ublue-os/bluefin
 ```
+
+</details>
 
 This will show all the available tags and useful metadata like image and kernel versions.
 
