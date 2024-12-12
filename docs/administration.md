@@ -11,7 +11,9 @@ Bluefin is designed to be installed for the life of the hardware without reinsta
 
 This usually means you can set it up your system once, and then have it remain that way. Then likely you'll never have to come back here. 🙂
 
-> I want that "defaults lifestyle" --[Matt Ray](https://www.softwaredefinedtalk.com/hosts/matt)
+> I want that "defaults lifestyle"
+>
+> -[Matt Ray](https://www.softwaredefinedtalk.com/hosts/matt)
 
 ![Bluefin Desktop Environment Illustration](https://github.com/user-attachments/assets/3f83b3a8-7d8d-492d-bb00-bee259d16592)
 
@@ -61,7 +63,12 @@ The major difference between `latest` and `stable` is the kernel cadence and whe
 
 `stable` will upgrade when CoreOS does its userspace upgrade, which is usually a few weeks afterwards, and builds weekly or daily. Users can choose the `stable-daily` image for daily stable updates, or stick to `stable` for weekly builds.
 
-> One of Bluefin's strengths is being able to atomically adjust versions. All the tags are built from the same repository and are essentially the same, the version numbers will just be different. `gts` for a work machine and `stable` for your hot rod. Additionally the ability to rebase between release cadences lets users repurpose machines for different use cases without needing to reinstall.
+:::info[Advantages]
+
+One of Bluefin's strengths is being able to atomically adjust versions. All the tags are built from the same repository and are essentially the same, the version numbers will just be different. `gts` for a work machine and `stable` for your hot rod. Additionally the ability to rebase between release cadences lets users repurpose machines for different use cases without needing to reinstall.
+
+:::
+
 
 #### Gated Kernel
 
@@ -96,7 +103,11 @@ Local Layering is [adding individual packages](https://coreos.github.io/rpm-ostr
 
 Generally speaking this is an anti-pattern in Bluefin as the end goal is to move away from the package based model entirely, however sometimes you just need something. Toggling this back to `true` is just the user's acknowledgement that this will entail manual maintenance as a reminder and that the experience isn't as nice.
 
-> For some users this minimal amount of maintainance is still much smaller than what they are used to and they glady make that tradeoff. Well played.
+:::info
+
+For some users this minimal amount of maintainance is still much smaller than what they are used to and they glady make that tradeoff. Well played.
+
+:::
 
 You can toggle this setting in `/etc/rpm-ostreed.conf`:
 
@@ -245,13 +256,19 @@ This is useful if you decide you do not want to use some of the ones bundled wit
 
 ![Extension Manager - System Extensions Highlight](https://github.com/user-attachments/assets/1d9756ce-fc1a-49da-a42e-89e275b80c91)
 
-> **Note**: If your session crashes, then all of your extensions will be disabled.
+:::note
+
+If your session crashes, then all of your extensions will be disabled. In the rare case when this happens you may need to turn them all back on in the extensions manager.
+
+:::
 
 ## Remote Management
 
-### Note
+:::note[Help Wanted]
 
-> This feature is incomplete and needs contributors to make it a reality
+This feature is incomplete and needs contributors to make it a reality
+
+:::
 
 Bluefin and Aurora include Cockpit for machine management. We're hoping to include more out-of-the-box management templates, please [check this issue](https://github.com/ublue-os/bluefin/issues/271) if you're interested in volunteering.
 
@@ -259,7 +276,11 @@ Bluefin and Aurora include Cockpit for machine management. We're hoping to inclu
 
 ### Changing the default terminal shell
 
-> Note that the Bluefin team lacks expertise in both fish and zsh, contributions to help us reach feature parity would be welcome and appreciated!
+:::note[Help Wanted]
+
+The Bluefin team lacks expertise in both fish and zsh, contributions to help us reach feature parity would be welcome and appreciated!
+
+:::
 
 Bluefin ships [Ptyxis](https://devsuite.app/ptyxis/) as the default terminal. It shows up as `Terminal` in the menu. It is **strongly recommended** that you [change your shell via the terminal emulator instead of system-wide](https://tim.siosm.fr/blog/2023/12/22/dont-change-defaut-login-shell/). Click on the Terminal settings and edit your profile:
 
@@ -268,12 +289,6 @@ Bluefin ships [Ptyxis](https://devsuite.app/ptyxis/) as the default terminal. It
 Then select "Use Custom Command" and then add the shell you want to use. `/usr/bin/fish` and `/usr/bin/zsh` are both included on the image:
 
 ![Ptyxis → Preferences → Profiles → A Profile Setting → Edit... → Shell → Custom Command](https://github.com/user-attachments/assets/8eb039db-7ec1-4847-b3d7-496d69fe9538)
-
-### Adjusting the transparency
-
-Ptyxis has a transparency option that you can toggle: `ujust ptyxis-transparency 0.95`. It accepts values between 0 and 1.0 to set the level of transparency.
-
-See the [bluefin-cli](https://docs.projectbluefin.io/bluefin-dx#bluefin-cli) section for more terminal goodies.
 
 ## Verification
 
