@@ -61,7 +61,7 @@ const config: Config = {
         'Keep up with the latest by <a href="https://universal-blue.discourse.group/tag/bluefin-news">following the announcements feed!</a>',
       backgroundColor: '#fafbfc',
       textColor: '#091E42',
-      isCloseable: false,
+      isCloseable: true,
     },
     metadata: [
       {
