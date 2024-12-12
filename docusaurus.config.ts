@@ -55,7 +55,14 @@ const config: Config = {
       contextualSearch: true,
       searchPagePath: "search",
     },
-
+    announcementBar: {
+      id: 'announcement',
+      content:
+        'Keep up with the latest by <a href="https://universal-blue.discourse.group/tag/bluefin-news">following the announcements feed!</a>',
+      backgroundColor: '#fafbfc',
+      textColor: '#091E42',
+      isCloseable: false,
+    },
     metadata: [
       {
         name: "keywords",
