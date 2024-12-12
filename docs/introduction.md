@@ -65,7 +65,7 @@ In order to set yourself up to success it's useful to plan out your Bluefin inst
 
 Here is a short [runbook](https://www.pagerduty.com/resources/learn/what-is-a-runbook/) for the Bluefin installation process. Read the entirety of this documentation in order to ensure survival. (In case of a raptor attack).
 
-### Day 0 - Planning
+### Day 0: Planning
 
 Most pain points can be addressed directly by planning ahead of time.
 
@@ -100,7 +100,7 @@ Most pain points can be addressed directly by planning ahead of time.
 - Do you know [how to use containers](https://docker-curriculum.com/#introduction) for development?
 - Do you know how to manage [systemd service units](https://systemd.io/) for both the system and user accounts?
 
-### Day 1 - Deployment and Configuration
+### Day 1: Deployment and Configuration
 
 #### Deployment
 
@@ -131,7 +131,7 @@ Since the user space is all in your home directory, just about any tool you use 
   - `ujust devmode` and follow the directions
   - Start VSCode and configure your settings and extensions
 
-### Day 2 - Operations and Maintenance
+### Day 2: Operations and Maintenance
 
 Bluefin strives to make maintenance as easy as possible, however many of the automated tasks can be run manually.
 
