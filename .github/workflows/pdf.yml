@@ -5,10 +5,11 @@ on:
       - main
   workflow_dispatch:    
 jobs:
-  build:
+  pdf:
+    runs-on: ubuntu-latest
+    steps: 
     - name: Build PDF
       run: docker run --rm -it -v $(pwd)/pdf:/app/pdf openbayes/docusaurus-prince-pdf -u https://docs.projectbluefin.io
-
     - name: Upload results
       uses: actions/upload-artifact@v3
       with:
