@@ -24,7 +24,7 @@ Bluefin is:
 
 If your requirements are outside of this scope, then **Bluefin might not be the best fit for you**. We recognize that in order to make a better desktop that many parts of the traditional Linux desktop experience will not be coming with us. [Here's a video](https://www.youtube.com/watch?v=4CyWH6jx2pE) on why we take such a focused approach to the desktop. The video is about [Bazzite.gg](https://bazzite.gg), which is a sister project, but the same applies. 
 
-:::note
+:::note[Begin your journey...]
 
 If this appeals to you, then Bluefin is for you!
 
@@ -33,7 +33,9 @@ If this appeals to you, then Bluefin is for you!
 
 :::
 
-> "Evolution is a process of constant branching and expansion." - Stephen Jay Gould
+> "Evolution is a process of constant branching and expansion."
+>
+> - Stephen Jay Gould
 
 
 ## Introductory Videos and Podcasts
