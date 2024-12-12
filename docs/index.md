@@ -22,12 +22,19 @@ Bluefin is:
 - **Optimized for the 96%** - Not the 4% - Bluefin takes a "stronger together" approach towards features. You can always do what you want, but the value is to share best practices, the team doesn't spend much time on edge cases.
 - **Cloud Native** (For Developers) - The developer experience is focused around containers and exposing new Linux users to the [tools used in cloud native](https://www.cncf.io/). See Universal Blue's [mission statement](https://universal-blue.org/mission.html) for more information.
 
-If your requirements are outside of this scope, then **Bluefin might not be the best fit for you**. We recognize that in order to make a better desktop that many parts of the traditional Linux desktop experience will not be coming with us. [Here's a video](https://www.youtube.com/watch?v=4CyWH6jx2pE) on why we take such a focused approach to the desktop. The video is about [Bazzite.gg](https://bazzite.gg), which is a sister project, but the same applies. If this appeals to you, then Bluefin is for you!
+If your requirements are outside of this scope, then **Bluefin might not be the best fit for you**. We recognize that in order to make a better desktop that many parts of the traditional Linux desktop experience will not be coming with us. [Here's a video](https://www.youtube.com/watch?v=4CyWH6jx2pE) on why we take such a focused approach to the desktop. The video is about [Bazzite.gg](https://bazzite.gg), which is a sister project, but the same applies. 
+
+:::note
+
+If this appeals to you, then Bluefin is for you!
 
 - [Introduction to Bluefin](https://docs.projectbluefin.io/introduction) - to check out the features and installation instructions.
 - [Introductory blog post](https://www.ypsidanger.com/announcing-project-bluefin/) for more background information.
 
+:::
+
 > "Evolution is a process of constant branching and expansion." - Stephen Jay Gould
+
 
 ## Introductory Videos and Podcasts
 
