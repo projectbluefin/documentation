@@ -5,6 +5,8 @@ slug: /ai
 
 # AI and Machine Learning
 
+GPU Acceleration for both Nvidia and AMD are included out of the box and usually do not require any extra setup. 
+
 ### Desktop integration
 
 [Install alpaca](https://flathub.org/apps/com.jeffser.Alpaca) to use a native desktop application. Alpaca supports Nvidia and AMD acceleration natively and includes ollama. If you prefer an all-GUI solution just use Alpaca and manage your models from within the application.
