@@ -133,10 +133,6 @@ const config: Config = {
           title: "Community",
           items: [
             {
-              label: "Answer Overflow",
-              href: "https://www.answeroverflow.com/c/1072614816579063828",
-            },
-            {
               label: "Discord",
               href: "https://discord.gg/WEu6BdFEtp",
             },
