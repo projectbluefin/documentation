@@ -40,6 +40,4 @@ If this appeals to you, then Bluefin is for you!
 
 ## Introductory Videos and Podcasts
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/Nz-yyDwTfRM&autoplay=1" srcdoc="<style>*{padding:0;margin:0;overflow:hidden}html,body{height:100%}img,span{position:absolute;width:100%;top:0;bottom:0;margin:auto}span{height:1.5em;text-align:center;font:48px/1.5 sans-serif;color:white;text-shadow:0 0 0.5em black}</style><a href=https://www.youtube.com/embed/3_yyyUMecwo?autoplay=1><img src=https://img.youtube.com/vi/Nz-yyDwTfRM/hqdefault.jpg alt=\'Bluefin Linux introduction\'><span>▶</span></a>" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen title="Bluefin Linux introduction"></iframe>
-
-<audio data-theme="day" data-src="https://changelog.com/shipit/122/embed" src="https://op3.dev/e/https://cdn.changelog.com/uploads/shipit/122/ship-it-122.mp3" preload="none" class="changelog-episode" controls></audio><p><a href="https://changelog.com/shipit/122">Ship It! 122: Linux distros</a> – Listen on <a href="https://changelog.com/">Changelog.com</a></p><script async src="//cdn.changelog.com/embed.js"></script>
+Check out our [list of videos and reviews](https://universal-blue.discourse.group/tags/c/bluefin/6/videos-and-podcasts) for more information.
