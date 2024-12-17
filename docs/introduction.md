@@ -77,6 +77,7 @@ Most pain points can be addressed directly by planning ahead of time.
   - Does the software you use require an out of tree kernel module?
     - VirtualBox and VMWare are not supported
     - Nvidia, Xbox One Controller Support, wl drivers, and v4l2loopback are supported. (These are "best effort", in certain cases we cannot control third party software that breaks with newer versions of the Linux kernel)
+    - [openzfs](https://github.com/openzfs/zfs) is included out of the box. It is used by maintainers regularly and has not yet fallen behind the kernels Bluefin ships. However, we still cannot guarantee this as it is an out of tree kernel module. 
   - Is your wireless card supported by Linux?
     - Poorly supported cards include Broadcom
     - Check [USB-Wifi](https://github.com/morrownr/USB-WiFi) if you are not sure
