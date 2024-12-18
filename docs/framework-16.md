@@ -6,7 +6,7 @@ slug: /framework-16
 
 1. Download the Framework Laptop image of [Project Bluefin](https://projectbluefin.io/). Make sure you select Intel or AMD depending on the mainboard in your device:
 
-![Download Bluefin](https://canada1.discourse-cdn.com/free1/uploads/univeral_blue/optimized/2X/4/43a5463997f19604e00386a8e050c90e711bf9de_2_690x324.png)
+![1f55f5cddf04cfb7c1041eaf8f81a382f7797cc8](https://github.com/user-attachments/assets/b1a36424-6427-4c3e-a25e-dad8ab6fce8f)
 
 2. **Create a USB stick** using [Fedora Media Writer](https://docs.fedoraproject.org/en-US/fedora/latest/preparing-boot-media/#_on_windows) ([Windows](https://fedoraproject.org/fmw/FedoraMediaWriter-win32-latest.exe) or [Mac](https://fedoraproject.org/fmw/FedoraMediaWriter-osx-latest.dmg) or [Linux](https://flathub.org/apps/org.fedoraproject.MediaWriter))
 
