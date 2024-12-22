@@ -173,12 +173,6 @@ Devpod also has support for JetBrains
   - [kubectl](https://kubernetes.io/docs/reference/kubectl/) - Administer Kubernetes Clusters
   - [k9s](https://k9scli.io/), [kubectx](https://github.com/ahmetb/kubectx), and [helm](https://helm.sh/). If you feel there's a tool that should be included by default, send a PR [to this file](https://github.com/ublue-os/bluefin/blob/main/system_files/shared/usr/share/ublue-os/homebrew/kubernetes.Brewfile). But let's not overdo it. 😄
 
-## AI and Machine Learning
-
-`ujust ollama` to get started.
-
-See also: [AI and Machine Learning](ai)
-
 ## Virtualization and Container Runtimes
 
 - [virt-manager](https://virt-manager.org/) and associated tooling (KVM, qemu)
