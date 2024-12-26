@@ -41,3 +41,5 @@ If this appeals to you, then Bluefin is for you!
 ## Introductory Videos and Podcasts
 
 Check out our [list of videos and reviews](https://universal-blue.discourse.group/tags/c/bluefin/6/videos-and-podcasts) for more information.
+
+<img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=f9b34ca2-b9c5-4075-8f0e-1f140c8bd16f" />
