@@ -72,6 +72,8 @@ One of Bluefin's strengths is being able to atomically adjust versions. All the 
 
 The `gts` and `stable` tags feature a gated kernel. This kernel follows the same version as the [Fedora CoreOS stable stream](https://fedoraproject.org/coreos/release-notes?arch=x86_64&stream=stable), which is a slower cadence than default Fedora Silverblue. The Universal Blue team may temporarily pin to a specific kernel in order to avoid regressions that may affect users.
 
+Adding and editing kernel boot arguments is currently handled by `rpm-ostree`, check the [upstream documentation](https://docs.fedoraproject.org/en-US/fedora-coreos/kernel-args/#_modifying_kernel_arguments_on_existing_systems) for more information.
+
 ### Managing Updates
 
 In Settings → Network → A network setting, set `Metered Connection: has data limits or can incur charges` to pause Bluefin updates:
