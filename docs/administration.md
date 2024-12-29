@@ -80,58 +80,7 @@ In Settings → Network → A network setting, set `Metered Connection: has data
 
 ![Settings → Network → A network setting - `Metered Connection: has data limits or can incur charges` Highlight](https://github.com/user-attachments/assets/2919692c-7e03-4694-8193-3f2f77f029fb)
 
-### Virtual Private Networks (VPN)
-
-[Tailscale](https://tailscale.com) is included by default to provide VPN services for both desktop and development use cases.
-
-- [Using Tailscale with Mullvad](https://tailscale.com/kb/1258/mullvad-exit-nodes) - provides the best out of the box experience
-- [Using Tailscale with Docker](https://tailscale.com/kb/1282/docker) - for development
-- `ujust toggle-tailscale` will remove the built in desktop integration if you prefer to use something else.
-- Good VPN providers provide Wireguard configurations that can be imported directly into the Network Manager, check their documentation for more information.
-
-Another option is [ProtonVPN](https://protonvpn.com/), which is currently in the process of [officially supporting Flatpak](https://github.com/flathub/com.protonvpn.www/issues/349).
-
-- [ProtonVPN client](https://flathub.org/apps/com.protonvpn.www) - available on FlatHub
-
-Other VPN providers may provide a poor packaging experience and are not recommended.
-
-### Enabling Local Layering
-
-**Local Layering will be disabled by default in Spring 2025**
-
-Local Layering is [adding individual packages](https://coreos.github.io/rpm-ostree/administrator-handbook/#hybrid-imagepackaging-via-package-layering) onto the system. In Spring 2025 Bluefin will come with Local Layering **OFF** by default. It is currently enabled by default.
-
-Generally speaking this is an anti-pattern in Bluefin as the end goal is to move away from the package based model entirely, however sometimes you just need something. Toggling this back to `true` is just the user's acknowledgement that this will entail manual maintenance as a reminder and that the experience isn't as nice.
-
-:::info
-
-For some users this minimal amount of maintainance is still much smaller than what they are used to and they glady make that tradeoff. Well played.
-
-:::
-
-You can toggle this setting in `/etc/rpm-ostreed.conf`:
-
-```
-LockLayering=false
-```
-
-From the manpage:
-
->     LockLayering=
->       Controls whether any mutation of the base OSTree commit is supported (for
->       example, package overlays or overrides, initramfs overlays or regeneration).
->       Defaults to false.
-
-`rpm-ostree reset` and a reboot will always bring the system back to pure image mode, making temporary compromises to get work done is perfectly fine.
-
-| Probably Fine        | Don't Do It       |
-| -------------------- | ----------------- |
-| VPN Client           | Steam             |
-| Third party software | Developer Tooling |
-
-Local layering does significantly increase update time, but by default all Bluefin systems update in the background anyway and the result will mostly be invisible. Problems will generally occur if you are using a third party repository that doesn't align with what's happening in the Fedora archive at the time. Your mileage may vary.
-
-### Switching between streams
+### Switching between Streams
 
 > Note that the `stable` and `latest` streams update more aggresively and may introduce new changes from Fedora (including regressions), take the user's Linux expertise into account when changing the update cadence.
 
@@ -220,6 +169,58 @@ skopeo inspect docker://ghcr.io/ublue-os/bluefin
 This will show all the available tags and useful metadata like image and kernel versions.
 
 Check the [Fedora Silverblue User Guide](https://docs.fedoraproject.org/en-US/fedora-silverblue/) for more information.
+
+
+### Virtual Private Networks (VPN)
+
+[Tailscale](https://tailscale.com) is included by default to provide VPN services for both desktop and development use cases.
+
+- [Using Tailscale with Mullvad](https://tailscale.com/kb/1258/mullvad-exit-nodes) - provides the best out of the box experience
+- [Using Tailscale with Docker](https://tailscale.com/kb/1282/docker) - for development
+- `ujust toggle-tailscale` will remove the built in desktop integration if you prefer to use something else.
+- Good VPN providers provide Wireguard configurations that can be imported directly into the Network Manager, check their documentation for more information.
+
+Another option is [ProtonVPN](https://protonvpn.com/), which is currently in the process of [officially supporting Flatpak](https://github.com/flathub/com.protonvpn.www/issues/349).
+
+- [ProtonVPN client](https://flathub.org/apps/com.protonvpn.www) - available on FlatHub
+
+Other VPN providers may provide a poor packaging experience and are not recommended.
+
+### Enabling Local Layering
+
+**Local Layering will be disabled by default in Spring 2025**
+
+Local Layering is [adding individual packages](https://coreos.github.io/rpm-ostree/administrator-handbook/#hybrid-imagepackaging-via-package-layering) onto the system. In Spring 2025 Bluefin will come with Local Layering **OFF** by default. It is currently enabled by default.
+
+Generally speaking this is an anti-pattern in Bluefin as the end goal is to move away from the package based model entirely, however sometimes you just need something. Toggling this back to `true` is just the user's acknowledgement that this will entail manual maintenance as a reminder and that the experience isn't as nice.
+
+:::info
+
+For some users this minimal amount of maintainance is still much smaller than what they are used to and they glady make that tradeoff. Well played.
+
+:::
+
+You can toggle this setting in `/etc/rpm-ostreed.conf`:
+
+```
+LockLayering=false
+```
+
+From the manpage:
+
+>     LockLayering=
+>       Controls whether any mutation of the base OSTree commit is supported (for
+>       example, package overlays or overrides, initramfs overlays or regeneration).
+>       Defaults to false.
+
+`rpm-ostree reset` and a reboot will always bring the system back to pure image mode, making temporary compromises to get work done is perfectly fine.
+
+| Probably Fine        | Don't Do It       |
+| -------------------- | ----------------- |
+| VPN Client           | Steam             |
+| Third party software | Developer Tooling |
+
+Local layering does significantly increase update time, but by default all Bluefin systems update in the background anyway and the result will mostly be invisible. Problems will generally occur if you are using a third party repository that doesn't align with what's happening in the Fedora archive at the time. Your mileage may vary.
 
 ## Overwriting System Defaults
 
