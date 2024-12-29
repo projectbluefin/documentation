@@ -32,6 +32,8 @@ The [brew](https://brew.sh/) application is the package manager used for install
 - [Homebrew Packages](https://formulae.brew.sh/)
 - [Cheatsheet](https://devhints.io/homebrew)
 
+Note that the cask functionality in homebrew is MacOS specific and non functional in Bluefin, flatpak is used instead. 
+
 ## System Updates
 
 Bluefin is designed to be "hands off". System updates apply weekly, and Flatpaks update twice a day [in the background](https://github.com/ublue-os/config/tree/main/files/usr/lib/systemd). Updates are applied when the system reboots. Therefore, it is recommended to routinely power off your device when it's not being used to ensure kernel updates are being applied. Application updates (like the browser) happen independently of this and don't require a reboot.
