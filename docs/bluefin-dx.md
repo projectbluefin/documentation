@@ -23,7 +23,7 @@ This differs from traditional distributions by making the development process op
 
 ![image](https://github.com/user-attachments/assets/51415b6c-b7fe-45e9-af74-c01694b26fbe)
 
-The pattern in `bluefin-dx` (and `aurora-dx`) is centered around [devcontainers](https://containers.dev). Since the devcontainers live in the project's git repository, and they can deployed on any operating system, Linux, MacOS, or Windows (via WSL). This facilitates "distributed by default" development and avoids Linux users being "the odd one out" when working with developers on other operating systems.
+The pattern in `bluefin-dx` (and `aurora-dx`) is centered around [devcontainers](https://containers.dev). Since the devcontainers live in the project's git repository, and they can deployed on any operating system, Linux, MacOS, or Windows (via WSL). This facilitates "distributed by default" development and avoids Linux users being "the odd one out" when working with teammates on other operating systems.
 
 Each project has a declarative environment that is intended to be start the user with a "best practice" cloud-native workflow out of the box. The [Ultimate Guide to Dev Containers](https://www.daytona.io/dotfiles/ultimate-guide-to-dev-containers) has a good write up of the advantages of using devcontainers. This means that the development environment is kept in version control instead of coupled to the host.
 
@@ -31,11 +31,9 @@ Homebrew can also be used for installation of development tools. However it is r
 
 > You can always use whatever you want, you do not need to use everything in here in order to be productive -- at the end of the day it's your computer, this is just a set of defaults.
 
-> **Note**: This is an opinionated developer workflow that [differs from Fedora's use of toolbox](https://docs.fedoraproject.org/en-US/fedora-silverblue/toolbox/). Toolbox is included for people who prefer the upstream approach.
-
 # Enabling Developer Mode
 
-You can rebase to the dx image by using the following command:
+Turning on developer mode is a two step process: 
 
 ## Step 1: Turn it on
 
@@ -76,11 +74,13 @@ Check out this talk from [Rich Burroughs](https://timeline.richburroughs.dev/):
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/jSVWiecTeo0?si=5qtlkPFtOnAAq8aD" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
-## Container Management with Podman Desktop
+## Podman and Podman Desktop
 
 ![Podman Desktop](https://github.com/user-attachments/assets/69f64ed1-7fcc-4040-9a3d-12b71308da1b)
 
-[Podman Desktop](https://podman-desktop.io/) is included to provide container management. Check out the Podman Desktop [documentation](https://podman-desktop.io/docs/intro) for more information.
+[Podman Desktop](https://podman-desktop.io/) is included to provide container management. Check out the Podman Desktop [documentation](https://podman-desktop.io/docs/intro) for more information. All the upstream `podman` tools are included. This is the default system container runtime, and is the recommended developer configuration that Fedora ships with.
+
+> Though Bluefin defaults to docker and vscode for development, all of the Fedora upstream tools are included for those that prefer that experience.
 
 ## Built in Performance Tooling
 
@@ -95,7 +95,7 @@ Thanks to Ubuntu and Canonical for the [detailed specification](https://discours
 - [Cockpit](https://cockpit-project.org/) for local and remote management
 - A collection of well curated monospace fonts
 - [Tailscale](https://universal-blue.discourse.group/t/tailscale-vpn-on-bluefin/290) for VPN
-- [Just](https://github.com/casey/just) task runner for post-install automation tasks
+- [Just](https://github.com/casey/just) task runner for automation tasks
 - `fish` and `zsh` available as optional shells
 
 ## Command Line Experience
@@ -130,7 +130,7 @@ Use BoxBuddy's interface to create your own pet containers from whichever distri
 
 ![image](https://github.com/user-attachments/assets/79570148-98f9-458f-b46e-2a87cfaa00ed)
 
-For CLI warriors you can manage your containers with Ptyxis's built in container support:
+For CLI warriors you can manage your containers with the Terminal's built in container support:
 
 ![image](https://github.com/user-attachments/assets/2a4dc4b5-f1a8-4781-80a4-92ea4dfeeb97)
 
@@ -177,13 +177,4 @@ Devpod also has support for JetBrains
 
 - [virt-manager](https://virt-manager.org/) and associated tooling (KVM, qemu)
 - [Incus](https://linuxcontainers.org/incus/) provides system containers
-  - [LXC](https://linuxcontainers.org/) and
-  - [LXD](https://ubuntu.com/lxd) are also provided for compatibility reasons, however is deprecated and will be removed in Spring 2025
-
-## Podman Development
-
-All the upstream `podman` tools are included. This is the default system container runtime, and is the recommended developer configuration that Fedora ships with.
-
-- Install the [Podman Desktop application](https://flathub.org/apps/io.podman_desktop.PodmanDesktop) for graphical use.
-
-> Though we default to docker and vscode for development, all of the Fedora upstream tools are included for those that prefer that experience.
+  - [LXC](https://linuxcontainers.org/) and [LXD](https://ubuntu.com/lxd) are also provided for compatibility reasons, however these tools are deprecated and will be removed in Spring 2025
