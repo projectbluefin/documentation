@@ -1,9 +1,10 @@
 name: Deploy to GitHub Pages
 
 on:
-  push:
+  pull_request:
     branches:
       - main
+  merge_group:    
   workflow_dispatch:
 
 jobs:
