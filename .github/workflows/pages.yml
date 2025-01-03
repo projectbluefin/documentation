@@ -27,6 +27,7 @@ jobs:
 
   deploy:
     name: Deploy to GitHub Pages
+    if: github.ref == 'refs/heads/main'
     needs: build
 
     # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
