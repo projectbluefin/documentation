@@ -44,7 +44,7 @@ Machine firmware updates are provided through the standard Software Center:
 
 ### Upgrades and Throttle Settings
 
-Bluefin publishes images based on the current and last stable version of Fedora. This is to give users maximum flexibility by allowing them to rebase to the version they want. You can choose from three rolling tags, or lock to a specific version of Fedora.
+Bluefin publishes images based on the current and last stable version of Fedora. This is to give users maximum flexibility by allowing them to rebase to the version they want. You can choose from three rolling tags, or lock to a specific version of Fedora. Check the [release notes](https://github.com/ublue-os/bluefin/releases) for specific version information. 
 
 |                      | `gts` (default) | `stable` or `stable-daily` | `latest`       |
 | -------------------- | --------------- | -------------------------- | -------------- |
