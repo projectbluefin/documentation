@@ -13,7 +13,7 @@ jobs:
   formatting:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Check for typos
         uses: crate-ci/typos@2ed38e07fc83ec249f9736b81008690c2c88ec98 # version 1.0.4
         with:
