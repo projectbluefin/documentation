@@ -35,10 +35,21 @@ Use Cases:
 - Great way to try Linux, if you like it, move the drive into your main machine without needing to reinstall.
   - Or if you want to commit, buy a new drive for your PC and then put your existing OS in an external case so you have a backup. Over time you may even put it in a drawer. 😈
 - Temporarily repurposing a machine.
-- Sharing a PC with a partner and you don't want to fight about Linux. 
+- Sharing a PC with a partner and you don't want to argue about Linux. 
 - Trying out hardware before purchasing.
 - "Hot desking" and existing machine in an office.
 - Great for the homelab! Put all your favorite tools on there!
+
+## Windows to Go
+
+You can also do the inverse, use [Rufus](https://rufus.ie) to install Windows onto an external drive in [Windows to Go](https://en.wikipedia.org/wiki/Windows_To_Go) mode.
+
+Use cases are keeping Windows around for:
+
+- Hardware that may need Windows to update firmware.
+- Critical applications that have no equivalent in Linux, but you don't use it that often. Tax software, for example.
+- Your relatives are visiting and you don't want to argue about Linux.
+- You play Destiny 2. 
 
 # Building Your Own Bluefin
 
