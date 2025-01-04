@@ -30,6 +30,8 @@ You can install Bluefin on an external drive to get a portable Bluefin installat
 
 ![bluefin-drive](https://github.com/user-attachments/assets/f3ea0252-b0ba-4c68-8566-68cfbdbfc6b2)
 
+**Don't forget to select full disk encryption during installation!**
+
 Use Cases:
 
 - Great way to try Linux, if you like it, move the drive into your main machine without needing to reinstall.
