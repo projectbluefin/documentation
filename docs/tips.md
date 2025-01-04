@@ -5,7 +5,7 @@ slug: /tips
 
 This section contains miscellaneus tips and tricks that may not be core documentation.
 
-# Maintainer Recommended Extensions
+## Maintainer Recommended Extensions
 
 Here are some GNOME extensions that the maintainers recommend to round out your experience. Remember to support extension authors by donating to the ones you love! Talk to a maintainer before PRing something here as this is an opinionated list. :)
 
@@ -24,7 +24,7 @@ Here are some GNOME extensions that the maintainers recommend to round out your 
 
 ![Ddcutil Demonstration](https://extensions.gnome.org/extension-data/screenshots/screenshot_6325_iQnSUzg.png)
 
-# Bluefin to Go: Using an external drive
+## Bluefin to Go: Using an external drive
 
 You can install Bluefin on an external drive to get a portable Bluefin installation:
 
@@ -40,7 +40,7 @@ Use Cases:
 - "Hot desking" and existing machine in an office.
 - Great for the homelab! Put all your favorite tools on there!
 
-## Windows to Go
+### Windows to Go
 
 You can also do the inverse, use [Rufus](https://rufus.ie) to install Windows onto an external drive in [Windows to Go](https://en.wikipedia.org/wiki/Windows_To_Go) mode.
 
@@ -51,7 +51,7 @@ Use cases are keeping Windows around for:
 - Your relatives are visiting and you don't want to argue about Linux.
 - You play Destiny 2. 
 
-# Building Your Own Bluefin
+## Building Your Own Bluefin
 
 Use the [image template](https://github.com/ublue-os/image-template) to make your own custom Bluefin image. Here are the maintainer custom images if you're looking for examples:
 
