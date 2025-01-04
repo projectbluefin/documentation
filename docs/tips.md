@@ -41,6 +41,7 @@ Use Cases:
 - Trying out hardware before purchasing.
 - "Hot desking" and existing machine in an office.
 - Great for the homelab! Put all your favorite tools on there!
+- From @mikes-tech-tips: Add a Bluefin DX drive to your docked [Bazzite powered](https://bazzite.gg) handheld. Party in the front, business in the back. 
 
 ### Windows to Go
 
