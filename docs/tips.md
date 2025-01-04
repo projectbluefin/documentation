@@ -24,6 +24,22 @@ Here are some GNOME extensions that the maintainers recommend to round out your 
 
 ![Ddcutil Demonstration](https://extensions.gnome.org/extension-data/screenshots/screenshot_6325_iQnSUzg.png)
 
+# Bluefin to Go: Using an external drive
+
+You can install Bluefin on an external drive to get a portable Bluefin installation:
+
+![bluefin-drive](https://github.com/user-attachments/assets/f3ea0252-b0ba-4c68-8566-68cfbdbfc6b2)
+
+Use Cases:
+
+- Great way to try Linux, if you like it, move the drive into your main machine without needing to reinstall.
+  - Or if you want to commit, buy a new drive for your PC and then put your existing OS in an external case so you have a backup. Over time you may even put it in a drawer. 😈
+- Temporarily repurposing a machine.
+- Sharing a PC with a partner and you don't want to fight about Linux. 
+- Trying out hardware before purchasing.
+- "Hot desking" and existing machine in an office.
+- Great for the homelab! Put all your favorite tools on there!
+
 # Building Your Own Bluefin
 
 Use the [image template](https://github.com/ublue-os/image-template) to make your own custom Bluefin image. Here are the maintainer custom images if you're looking for examples:
