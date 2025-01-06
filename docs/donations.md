@@ -7,6 +7,17 @@ slug: /donations
 
 Sustainability is a key focus of Universal Blue, the project focuses on efficiency and long term health. Donations are appreciated, especially those that benefit the Linux application ecosystem.
 
+# Bluefin Team
+Complete with actual job titles: 
+
+- [Brian Ketelsen](https://github.com/bketelsen) - Lead Developer Experience, Architect of The Final Shape (Emeritus)
+- [Benjamin Sherman](https://github.com/bsherman) - CTO
+- [m2Giles](https://github.com/m2Giles) - Lead Architect
+- [Jorge Castro](https://github.com/sponsors/castrojo/) - Product and Dromeasaurs 
+- [Tulip Blossom](https://github.com/sponsors/tulilirockz) - Large Maniraptoran Specialist
+- [Robert Sturla](https://github.com/p5) - "Hold onto your butts" guy and Lead DevOps
+- ... this could be you! ...
+
 ## Upstream Projects included in Bluefin
 
 If your software is included in Bluefin and missing from this list, please send a pull request to add it!
