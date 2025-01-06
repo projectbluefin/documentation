@@ -13,8 +13,8 @@ Complete with actual job titles:
 - [Brian Ketelsen](https://github.com/bketelsen) - Lead Developer Experience, Architect of The Final Shape (Emeritus)
 - [Benjamin Sherman](https://github.com/bsherman) - CTO
 - [m2Giles](https://github.com/m2Giles) - Lead Architect
-- [Jorge Castro](https://github.com/castrojo/) [Sponsor](https://github.com/sponsors/castrojo/) - Product and Dromeasaurs 
-- [Tulip Blossom](https://github.com/tulilirockz) [Sponsor](https://github.com/sponsors/tulilirockz)- Large Maniraptoran Specialist
+- [Jorge Castro](https://github.com/castrojo/) [[**Sponsor**]](https://github.com/sponsors/castrojo/) - Product and Dromeasaurs 
+- [Tulip Blossom](https://github.com/tulilirockz) [[**Sponsor**]](https://github.com/sponsors/tulilirockz)- Large Maniraptoran Specialist
 - [Robert Sturla](https://github.com/p5) - "Hold onto your butts" guy and Lead DevOps
 - ... this could be you! ...
 
