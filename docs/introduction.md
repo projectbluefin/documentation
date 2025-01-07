@@ -5,6 +5,10 @@ slug: /introduction
 
 ![image](https://github.com/user-attachments/assets/21208dd6-9ce5-41ba-9c21-d2bb97f7c1e8)
 
+> Give me a lever long enough and a Free OS to set it on, and I can move the world.
+>
+> -Steve Langasek
+
 ## Features
 
 System updates are image-based and automatic. Applications are logically separated from the system by using Flatpaks for graphical applications and `brew` for command line applications.
