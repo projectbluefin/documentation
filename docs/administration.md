@@ -120,7 +120,7 @@ Current booted image: ghcr.io/ublue-os/bluefin:gts
 Current rollback state is native ostree
 ```
 
-The `ghcr.io/ublue-os/bluefin:gts` is the important part, with `bluefin` being the image name, and the `:gts` being the image tag. That is the image you are currently on. Look for `:gts`, `:stable`, `:latest`, or in certain cases the version like `:39` or `:40`.
+The `ghcr.io/ublue-os/bluefin:gts` is the important part, with `bluefin` being the image name, and the `:gts` being the image tag. That is the image you are currently on. Look for `:gts`, `:stable`, `:latest`, or in certain cases the version like `:40` or `:41`.
 
 > Pro Tip: Bluefin's [release notes](https://github.com/ublue-os/bluefin/releases) contain the stream switching instructions at the bottom of each release. This is useful if you're trying to nail down a regression in a specific package version.
 
@@ -130,7 +130,7 @@ Use the `bootc switch` command to move to a newer or older version:
 
 <details>
 
-<summary>In this example we're rebasing to `:stable`, which is the latest stable release of Fedora (currently 40). The `--enforce-container-sigpolicy` is important to ensure you're checking the signature of the produced image:</summary>
+<summary>In this example we're rebasing to `:stable`, which is the latest stable release of Fedora (currently 41). The `--enforce-container-sigpolicy` is important to ensure you're checking the signature of the produced image:</summary>
 
 ```sh
 sudo bootc switch ghcr.io/ublue-os/bluefin:stable --enforce-container-sigpolicy
