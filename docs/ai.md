@@ -13,9 +13,9 @@ GPU Acceleration for both Nvidia and AMD are included out of the box and usually
 
 ![image](https://github.com/user-attachments/assets/9fd38164-e2a9-4da1-9bcd-29e0e7add071)
 
-
 ### Ollama CLI
 
 If you prefer a CLI or to interact with the ollama server from your scripts, then you can install ollama with either 
+
 - `brew install ollama` (recommended) with [Homebrew](https://formulae.brew.sh/formula/ollama)
-- The installation script from the [ollama website](https://ollama.com, but will require some manual tweaks in their docs to get it in your path.
+- The installation script from the [ollama website](https://ollama.com), but will require some manual tweaks in their docs to get it in your path.
