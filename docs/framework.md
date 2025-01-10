@@ -36,8 +36,8 @@ The core team and many contributors use Bluefin on the Framework 13(Intel/AMD) a
 
 # Installation
 
-- [Framework 13](framework-13)
-- [Framework 16](framework-16)
+- [Framework 13](/framework-13)
+- [Framework 16](/framework-16)
 
 # Support Expectations
 
