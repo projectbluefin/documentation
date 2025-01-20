@@ -168,7 +168,7 @@ Devpod also has support for JetBrains
 
 ## Kubernetes and other Cloud Native Tooling
 
-`ujust k8s-dev-tools` to get started:
+`ujust install-k8s-dev-tools` to get started:
 
 - [kind](https://kind.sigs.k8s.io/) - Run a Kubernetes cluster on your machine. Run `kind create cluster` on the host to get started!
   - [kubectl](https://kubernetes.io/docs/reference/kubectl/) - Administer Kubernetes Clusters
