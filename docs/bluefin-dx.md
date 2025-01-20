@@ -61,13 +61,13 @@ Like all Universal Blue images, switching is atomic, allowing for clean switchin
 
 The most current [Docker Engine](https://docs.docker.com/engine/) is included by default and is set up to be the default container runtime for vscode. Using [docker compose](https://danielquinn.org/blog/developing-with-docker/) is also a great way to get started in container development and is an option if devcontainers don't fit your style.
 
-## Devpod
+## DevPod
 
 DevPod is an open source tool used to create reproducible developer environments. Each developer environment runs in a separate container and is specified through a `devcontainer.json` file. It's like Codespaces but is open-source, client-only, and unopinionated: it works with any IDE and lets you use any cloud, Kubernetes, or even local `docker` environment.
 
-- [Devpod Website](https://devpod.sh/)
-- [Devpod Documentation](https://devpod.sh/docs/what-is-devpod)
-- [Devpod Quickstart VS Code](https://devpod.sh/docs/getting-started/quickstart-vscode)
+- [DevPod Website](https://devpod.sh/)
+- [DevPod Documentation](https://devpod.sh/docs/what-is-devpod)
+- [DevPod Quickstart VS Code](https://devpod.sh/docs/getting-started/quickstart-vscode)
 - [Loft.sh](https://www.loft.sh/)
 
 Check out this talk from [Rich Burroughs](https://timeline.richburroughs.dev/):
@@ -155,16 +155,16 @@ The JetBrains blog also has more information on JetBrains Dev Containers support
 
 - [Using Dev Containers in JetBrains IDEs – Part 1](https://blog.jetbrains.com/idea/2024/07/using-dev-containers-in-jetbrains-ides-part-1/)
 
-Devpod also has support for JetBrains:
+DevPod also has support for JetBrains:
 
-- [Devpod Quickstart JetBrains](https://devpod.sh/docs/getting-started/quickstart-jetbrains)
+- [DevPod Quickstart JetBrains](https://devpod.sh/docs/getting-started/quickstart-jetbrains)
 
 ## Neovim
 
 `brew install neovim devcontainer` then follow these directions for a devcontainer setup:
 
 - [Running Neovim with Devcontainers](https://cadu.dev/running-neovim-on-devcontainers/)
-- [Devpod Quickstart for Neovim](https://devpod.sh/docs/getting-started/quickstart-vim)
+- [DevPod Quickstart for Neovim](https://devpod.sh/docs/getting-started/quickstart-vim)
 
 ## Kubernetes and other Cloud Native Tooling
 
