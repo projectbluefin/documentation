@@ -15,25 +15,25 @@ Bluefin goes "all in" on cloud native development and is used differently than a
 
 - Development is done in [devcontainers](https://containers.dev/)
 - Command line applications are installed using [homebrew](https://brew.sh)
-- Preconfigured ad-hoc containers for Ubuntu, Fedora, and Wolfi. Use whichever distribution you want.
+- Preconfigured ad-hoc containers for Ubuntu, Fedora, and Wolfi are included. Use whichever distribution you want.
 
-This differs from traditional distributions by making the development process operating system agnostic. There is no equivalent to `apt install php` on Bluefin, development is done with `podman` or `docker` directly via an IDE.
+This differs from traditional distributions by making the development process operating system agnostic. There is no equivalent to `apt install php` on Bluefin; development is done with `podman` or `docker` directly via an IDE.
 
 > We picked the cloud native pattern because local development in containers translates to deployment of containers on modern infrastructure.
 
 ![image](https://github.com/user-attachments/assets/51415b6c-b7fe-45e9-af74-c01694b26fbe)
 
-The pattern in `bluefin-dx` (and `aurora-dx`) is centered around [devcontainers](https://containers.dev). Since the devcontainers live in the project's git repository, and they can deployed on any operating system, Linux, MacOS, or Windows (via WSL). This facilitates "distributed by default" development and avoids Linux users being "the odd one out" when working with teammates on other operating systems.
+The pattern in `bluefin-dx` (and `aurora-dx`) is centered around [devcontainers](https://containers.dev). Since devcontainers live in the project's git repository, they can be deployed on any operating system: Linux, MacOS, or Windows (via WSL). This facilitates "distributed by default" development and avoids Linux users being "the odd one out" when working with teammates on other operating systems.
 
-Each project has a declarative environment that is intended to be start the user with a "best practice" cloud-native workflow out of the box. The [Ultimate Guide to Dev Containers](https://www.daytona.io/dotfiles/ultimate-guide-to-dev-containers) has a good write up of the advantages of using devcontainers. This means that the development environment is kept in version control instead of coupled to the host.
+Each project includes a declarative environment intended to start the user with a "best practice" cloud-native workflow out of the box. The [Ultimate Guide to Dev Containers](https://www.daytona.io/dotfiles/ultimate-guide-to-dev-containers) has a good write-up on the advantages of using devcontainers. This means that the development environment is kept in version control instead of coupled to the host.
 
-Homebrew can also be used for installation of development tools. However it is recommended to avoid that and declare the project's dependencies in version control. It's so easy sometimes, [it's okay](https://www.youtube.com/shorts/lKwavoyaaFA).
+Homebrew can also be used to install development tools. However, it is recommended to avoid that and declare the project's dependencies in version control. It's so easy sometimes, [it's okay](https://www.youtube.com/shorts/lKwavoyaaFA).
 
-> You can always use whatever you want, you do not need to use everything in here in order to be productive -- at the end of the day it's your computer, this is just a set of defaults.
+> You can always use whatever you want. You do not need to use everything in here in order to be productive -- at the end of the day it's your computer and this is just a set of defaults.
 
 # Enabling Developer Mode
 
-Turning on developer mode is a two step process:
+Turning on developer mode is a two-step process:
 
 ## Step 1: Turn it on
 
@@ -51,7 +51,7 @@ Like all Universal Blue images, switching is atomic, allowing for clean switchin
 
 ## Visual Studio Code with Docker
 
-[Visual Studio Code](https://code.visualstudio.com/) is included on the image as the default IDE. It comes with the [devcontainers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) already installed. It's the recommended developer experience, start here if you're new to containerized development!
+[Visual Studio Code](https://code.visualstudio.com/) is included in the image as the default IDE. It comes with the [devcontainers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) already installed. It's the recommended developer experience, so start here if you're new to containerized development!
 
 - [Dev Containers Documentation](https://code.visualstudio.com/docs/devcontainers/containers) - you can skip most of the installation instructions and go directly to [the tutorial](https://code.visualstudio.com/docs/devcontainers/tutorial#_install-the-extension)
 - [Dev Containers Specification](https://containers.dev/)
@@ -63,7 +63,7 @@ The most current [Docker Engine](https://docs.docker.com/engine/) is included by
 
 ## Devpod
 
-DevPod is an open source tool used to create reproducible developer environments. Each developer environment runs in a separate container and is specified through a `devcontainer.json`. Codespaces but open-source, client-only and unopinionated: Works with any IDE and lets you use any cloud, kubernetes or just localhost `docker`.
+DevPod is an open source tool used to create reproducible developer environments. Each developer environment runs in a separate container and is specified through a `devcontainer.json` file. It's like Codespaces but is open-source, client-only, and unopinionated: it works with any IDE and lets you use any cloud, Kubernetes, or even local `docker` environment.
 
 - [Devpod Website](https://devpod.sh/)
 - [Devpod Documentation](https://devpod.sh/docs/what-is-devpod)
@@ -78,11 +78,11 @@ Check out this talk from [Rich Burroughs](https://timeline.richburroughs.dev/):
 
 ![Podman Desktop](https://github.com/user-attachments/assets/69f64ed1-7fcc-4040-9a3d-12b71308da1b)
 
-[Podman Desktop](https://podman-desktop.io/) is included to provide container management. Check out the Podman Desktop [documentation](https://podman-desktop.io/docs/intro) for more information. All the upstream `podman` tools are included. This is the default system container runtime, and is the recommended developer configuration that Fedora ships with.
+[Podman Desktop](https://podman-desktop.io/) is included to provide container management. Check out the Podman Desktop [documentation](https://podman-desktop.io/docs/intro) for more information. All the upstream `podman` tools are included. This is the default system container runtime and is the recommended developer configuration that Fedora ships with.
 
-> Though Bluefin defaults to docker and vscode for development, all of the Fedora upstream tools are included for those that prefer that experience.
+> Though Bluefin defaults to docker and vscode for development, all of the Fedora upstream tools are included for those who prefer that experience.
 
-## Built in Performance Tooling
+## Built-in Performance Tooling
 
 [Sysprof](https://www.sysprof.com/) is included as a systemwide performance profiler. As well as [Brendan Gregg's](https://www.brendangregg.com/) recommended CLI tools:
 
@@ -93,7 +93,7 @@ Thanks to Ubuntu and Canonical for the [detailed specification](https://discours
 ## Quality of Life Improvements
 
 - [Cockpit](https://cockpit-project.org/) for local and remote management
-- A collection of well curated monospace fonts
+- A collection of well-curated monospace fonts
 - [Tailscale](https://universal-blue.discourse.group/t/tailscale-vpn-on-bluefin/290) for VPN
 - [Just](https://github.com/casey/just) task runner for automation tasks
 - `fish` and `zsh` available as optional shells
@@ -111,7 +111,7 @@ Thanks to Ubuntu and Canonical for the [detailed specification](https://discours
 - [fzf](https://github.com/junegunn/fzf) for command line fuzzy finding
 - [ripgrep](https://github.com/BurntSushi/ripgrep) for search
 - [tealdeer](https://github.com/dbrgn/tealdeer) for `tldr`
-- [television](https://github.com/alexpasmantier/television) - a blazing fast general purpose fuzzy finder TUI - (`tv`)
+- [television](https://github.com/alexpasmantier/television) - a blazing fast general-purpose fuzzy finder TUI - (`tv`)
 - [trash-cli](https://github.com/andreafrancia/trash-cli) to manage the system trashcan. (Strongly recommended for new CLI users)
 - [ugrep](https://github.com/Genivia/ugrep) for grep
 - [yq](https://github.com/mikefarah/yq) - for yaml, json, and xml processing
@@ -131,7 +131,7 @@ Use BoxBuddy's interface to create your own pet containers from whichever distri
 
 ![image](https://github.com/user-attachments/assets/79570148-98f9-458f-b46e-2a87cfaa00ed)
 
-For CLI warriors you can manage your containers with the Terminal's built in container support:
+For CLI warriors you can manage your containers with the Terminal's built-in container support:
 
 ![image](https://github.com/user-attachments/assets/2a4dc4b5-f1a8-4781-80a4-92ea4dfeeb97)
 
@@ -153,9 +153,9 @@ The included [Terminal](https://gitlab.gnome.org/chergert/ptyxis) includes a hos
 
 The JetBrains blog also has more information on JetBrains Dev Containers support:
 
-- [Using Dev Containers in JetBrains IDEs](https://blog.jetbrains.com/idea/2024/07/using-dev-containers-in-jetbrains-ides-part-1/) – Part 1
+- [Using Dev Containers in JetBrains IDEs – Part 1](https://blog.jetbrains.com/idea/2024/07/using-dev-containers-in-jetbrains-ides-part-1/)
 
-Devpod also has support for JetBrains
+Devpod also has support for JetBrains:
 
 - [Devpod Quickstart JetBrains](https://devpod.sh/docs/getting-started/quickstart-jetbrains)
 
@@ -178,4 +178,4 @@ Devpod also has support for JetBrains
 
 - [virt-manager](https://virt-manager.org/) and associated tooling (KVM, qemu)
 - [Incus](https://linuxcontainers.org/incus/) provides system containers
-  - [LXC](https://linuxcontainers.org/) and [LXD](https://ubuntu.com/lxd) are also provided for compatibility reasons, however these tools are deprecated and will be removed in Spring 2025
+  - [LXC](https://linuxcontainers.org/) and [LXD](https://ubuntu.com/lxd) are also provided for compatibility reasons, however, these tools are deprecated and will be removed in Spring 2025
