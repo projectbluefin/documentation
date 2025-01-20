@@ -33,7 +33,7 @@ Homebrew can also be used for installation of development tools. However it is r
 
 # Enabling Developer Mode
 
-Turning on developer mode is a two step process: 
+Turning on developer mode is a two step process:
 
 ## Step 1: Turn it on
 

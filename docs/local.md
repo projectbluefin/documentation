@@ -13,12 +13,12 @@ First clone the repo:
 
 The `Justfile` at the root of the repo is used to build the images and ISOs, here's some examples:
 
-| Command                                  | Description                                  |
-| ---------------------------------------- | -------------------------------------------- |
-| `just build bluefin`                     | Defaults to `latest` main                    |
-| `just build bluefin-dx gts`              | Builds `gts` only Bluefin DX                 |
-| `just build bluefin-dx beta nvidia`      | Builds `beta` `nvidia` version of Bluefin DX |
-| `just build bluefin stable nvidia`       | Builds `nvidia` version of the Bluefin stable branch |
+| Command                             | Description                                          |
+| ----------------------------------- | ---------------------------------------------------- |
+| `just build bluefin`                | Defaults to `latest` main                            |
+| `just build bluefin-dx gts`         | Builds `gts` only Bluefin DX                         |
+| `just build bluefin-dx beta nvidia` | Builds `beta` `nvidia` version of Bluefin DX         |
+| `just build bluefin stable nvidia`  | Builds `nvidia` version of the Bluefin stable branch |
 
 The general pattern is `just build/run image tag flavor`
 
