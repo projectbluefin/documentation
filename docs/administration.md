@@ -32,7 +32,7 @@ The [brew](https://brew.sh/) application is the package manager used for install
 - [Homebrew Packages](https://formulae.brew.sh/)
 - [Cheatsheet](https://devhints.io/homebrew)
 
-Note that the cask functionality in homebrew is MacOS specific and non functional in Bluefin, flatpak is used instead. 
+Note that the cask functionality in homebrew is MacOS specific and non functional in Bluefin, flatpak is used instead.
 
 ## System Updates
 
@@ -44,7 +44,7 @@ Machine firmware updates are provided through the standard Software Center:
 
 ### Upgrades and Throttle Settings
 
-Bluefin publishes images based on the current and last stable version of Fedora. This is to give users maximum flexibility by allowing them to rebase to the version they want. You can choose from three rolling tags, or lock to a specific version of Fedora. Check the [release notes](https://github.com/ublue-os/bluefin/releases) for specific version information. 
+Bluefin publishes images based on the current and last stable version of Fedora. This is to give users maximum flexibility by allowing them to rebase to the version they want. You can choose from three rolling tags, or lock to a specific version of Fedora. Check the [release notes](https://github.com/ublue-os/bluefin/releases) for specific version information.
 
 |                      | `gts` (default) | `stable` or `stable-daily` | `latest`       |
 | -------------------- | --------------- | -------------------------- | -------------- |
@@ -68,7 +68,6 @@ The major difference between `latest` and `stable` is the kernel cadence and whe
 One of Bluefin's strengths is being able to atomically adjust versions. All the tags are built from the same repository and are essentially the same, the version numbers will just be different. `gts` for a work machine and `stable` for your hot rod. Additionally the ability to rebase between release cadences lets users repurpose machines for different use cases without needing to reinstall.
 
 :::
-
 
 #### Gated Kernel
 
@@ -171,7 +170,6 @@ skopeo inspect docker://ghcr.io/ublue-os/bluefin
 This will show all the available tags and useful metadata like image and kernel versions.
 
 Check the [Fedora Silverblue User Guide](https://docs.fedoraproject.org/en-US/fedora-silverblue/) for more information.
-
 
 ### Virtual Private Networks (VPN)
 

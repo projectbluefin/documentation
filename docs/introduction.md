@@ -59,7 +59,7 @@ Review the [Fedora Silverblue installation instructions](https://docs.fedoraproj
 
 - Use the [Fedora Media Writer](https://flathub.org/apps/org.fedoraproject.MediaWriter) to create installation media. Other creation methods may not work properly.
 - Dual booting off of the same disk is **unsupported**, use a dedicated drive for another operating system and use your BIOS to choose another OS to boot off of.
-  - Bluefin supports a [installation on an external drive](/tips/#bluefin-to-go-using-an-external-drive) if you want to try it on bare metal before committing. 
+  - Bluefin supports a [installation on an external drive](/tips/#bluefin-to-go-using-an-external-drive) if you want to try it on bare metal before committing.
 - We **strongly recommend** using automated partitioning during installation, there are [known issues](https://docs.fedoraproject.org/en-US/fedora-silverblue/installation/) with manual partition on Atomic systems and is unnecessary to set up unless you are on a multi-disk system.
 - A stock Bluefin installation is 11GB. Bluefin with developer mode enabled (`bluefin-dx`) is 19GB.
 - Read the installation runbook below to ensure your device and use case are supported by Bluefin!
@@ -82,7 +82,7 @@ Most pain points can be addressed directly by planning ahead of time.
   - Does the software you use require an out of tree kernel module?
     - VirtualBox and VMWare are not supported
     - Nvidia, Xbox One Controller Support, wl drivers, and v4l2loopback are supported. (These are "best effort", in certain cases we cannot control third party software that breaks with newer versions of the Linux kernel)
-    - [openzfs](https://github.com/openzfs/zfs) is included out of the box. It is used by maintainers regularly and has not yet fallen behind the kernels Bluefin ships. However, we still cannot guarantee this as it is an out of tree kernel module. 
+    - [openzfs](https://github.com/openzfs/zfs) is included out of the box. It is used by maintainers regularly and has not yet fallen behind the kernels Bluefin ships. However, we still cannot guarantee this as it is an out of tree kernel module.
   - Is your wireless card supported by Linux?
     - Poorly supported cards include Broadcom
     - Check [USB-Wifi](https://github.com/morrownr/USB-WiFi) if you are not sure
@@ -145,7 +145,7 @@ Bluefin strives to make maintenance as easy as possible, however many of the aut
   - `ujust changelogs` will show incoming changes and updates coming from Fedora
   - `ujust bios` will reboot the machine and enter the BIOS/UEFI menu. This is useful for booting into a Windows drive
 - Subscribe to the [announcements tag](https://universal-blue.discourse.group/tag/announcements) on the Universal Blue forums
-- Subscribe to the [release notes](https://github.com/ublue-os/bluefin/releases) 
+- Subscribe to the [release notes](https://github.com/ublue-os/bluefin/releases)
 - Understand [rebase and rollback procedures](/administration.md#switching-between-streams)
 - Use the [Warehouse application](https://github.com/flattool/warehouse) to manage Flatpak lifecycle:
   - Pin to an old version or rollback

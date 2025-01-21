@@ -129,7 +129,7 @@ If you come to the Discord you might be asked to report an issue or start a disc
 
 ### How to test incoming changes
 
-One of the nice things about the image model is that we can generate an entire OS image for every change we want to commit, so this makes testing way easier than in the past. 
+One of the nice things about the image model is that we can generate an entire OS image for every change we want to commit, so this makes testing way easier than in the past.
 You can rebase to it, see if it works, and then move back.
 This also means we can increase the amount of testers!
 
