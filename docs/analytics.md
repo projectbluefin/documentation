@@ -22,6 +22,8 @@ The Fedora countme service is on by default in Fedora, and we inherit that behav
 
 Homebrew's analytics are on by default. To turn them off:
 
-    brew analytics off
+```
+brew analytics off
+```
 
 Check the [homebrew documentation](https://docs.brew.sh/Analytics) for more information. 
