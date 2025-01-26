@@ -11,14 +11,14 @@ However that information must be privacy respecting via an open process so that 
 >
 > -- James Vowles
 
-# Fedora
+## Fedora
 
 The Fedora countme service is on by default in Fedora, and we inherit that behavior:
 
 - [countme](https://github.com/wgwoods/fedora-countme-data)
 - [How to turn it off](https://coreos.github.io/rpm-ostree/countme/)
 
-# Homebrew
+## Homebrew
 
 Homebrew's analytics are on by default. To turn them off:
 
