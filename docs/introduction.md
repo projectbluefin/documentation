@@ -183,6 +183,8 @@ You can use `mokutil --list-enrolled` to confirm that the "ublue kernel" key is 
 
 ![image](https://github.com/user-attachments/assets/259a9bb2-2198-4744-924d-df457e26c7f4)
 
-_If you see `ublue akmods\` listed, it is a former key that is soon to be removed. `ublue kernel` is the current key._
+:::note
+If you see `ublue akmods\` listed, it is a former key that is soon to be removed. `ublue kernel` is the current key.
+:::
 
 [Move on to system administration](administration)
