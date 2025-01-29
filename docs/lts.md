@@ -19,7 +19,7 @@ Bluefin but based on CentOS Stream 10, for people who prefer long lived Long Ter
 This species of raptor is for users who prefer a slower release cadence, about a three-to-five year lifespan on a single release.
 It is also for users that depend updated user space applications via Flathub and Homebrew, but may prefer the slower enterprise cadence for their host operating system.
 
-> "Sometimes there's that special Thinkpad, where everything is working perfectly. May this kernel and this laptop be one, forever." 
+> "Sometimes there's that special Thinkpad, where everything is working perfectly. May this kernel and this laptop be as one, forever." 
 >
 > -- Tired Sysadmin
 
@@ -52,7 +52,7 @@ Diverse akmod support unless someone signs up for it.
 Available with the following tags: 
 
 - `bluefin:lts` - stock kernel
-- `bluefin:lts-hwe` - (Doesn't exist yet) - Ships latest LTS kernel, this has a yearly cadence. That way you can start on `lts-hwe `from install and then a year later get the update. This is to ensure `bluefin:lts` stays relevant on newer hardware, especially towards the back half of its life. 
+- `bluefin:lts-hwe` - (Doesn't exist yet) - Ships latest LTS kernel, this has a yearly cadence. That way you can start on `lts-hwe `from install and then a year later get the update. This is to ensure that Bluefin LTS stays relevant on newer hardware, especially towards the latter half of its life. 
 
 Rebasing: We will explicitly not support rebasing from the Fedora based images and ensure the rebase helper keeps users protected.
 
