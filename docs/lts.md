@@ -15,7 +15,49 @@ Larger, more lethal [Bluefin](https://projectbluefin.io). `bluefin:lts` is built
 
 # Purpose and Status
 
+Bluefin but based on CentOS Stream 10, for people who prefer long lived Long Term Support. 
+
 ![image](https://github.com/user-attachments/assets/48985776-7a94-4138-bf00-d2df7824047d)
+
+
+#### Blockers
+
+- bootc-image-builder flatpak support
+- Secure Boot
+
+#### Next Up 
+
+- Nvidia drivers via their official repo
+  - We will add them as soon as it's available, but this lets us ship to non-Nvidia machines asap. 
+- Proper DX mode image
+- ZFS support 
+
+#### Out of Scope
+
+Diverse akmod support unless someone signs up for it. 
+
+#### Tags and Features
+
+Available with the following tags: 
+
+`bluefin:lts` - stock everything
+`bluefin:lts-hwe` - (Doesn't exist yet) - Ships latest LTS kernel, this has a yearly cadence. That way you can start on `lts-hwe `from install and then a year later get the update. This is to ensure `bluefin:lts` stays relevant on newer hardware, especially towards the back half of its life. 
+
+Rebasing: We will explicitly not support rebasing from the Fedora based images and ensure the rebase helper keeps users protected.
+
+Releases: Eventually publish weekly, no daily tags. Though we will push often at first. 
+
+Filesystem: We will keep the filesystems the default as per:
+
+> bketelsen: grandpa wants lts
+
+
+#### Schedule
+
+This is very aspirational and totally not up to us, but we'll be able to at least gather data at these events: 
+
+- Beta: Early March at [Southern California Linux Expo](https://www.socallinuxexpo.org/scale/22x)
+- General Availability: May 2025
 
 ### Installation and Caveats
 
@@ -31,14 +73,6 @@ Larger, more lethal [Bluefin](https://projectbluefin.io). `bluefin:lts` is built
   - No nvidia builds until Nvidia publishes EL10 drivers
 - No akmods or other hwe has been added
 
-## Rationale
-
-With most of my user facing life being in my browser and flatpak, a slower cadenced OS has a proven use case. With `bootc` being a critical piece of RHEL image mode, it means that stack in CentOS will be well maintained. And with the flexibility of the container model, we can source content from anywhere. This is a spike to see if it's worth adding this as a `bluefin:lts` branch, or worse case, a starting point for someone who wants to grow a community around this use case. 
-
-- GNOME47 will be shipping, we have builds for our stuff already
-- 6.12 LTS kernel covers Framework's current laptops, we can source newer kernels for different tags later, but this should be great for 2025.
-- Is there going to be a reliable GNOME COPR for El10?
-
 ## Building
 
 To build locally and then spit out a VM: 
@@ -50,13 +84,9 @@ just build-iso ghcr.io/ublue-os/bluefin-lts:latest
 
 qcow2 file is written to the `output/` directory. Username and password are `centos`/`centos`
 
-## Current Ideas
-
-- hyperscale sig provides newer kernels, we don't need to stay old old.
-- EPEL will fill in lots of stuff
-- Long lived and boring, we expect even less maintenance than Fedora-based Bluefin
+Long lived and boring, we expect even less maintenance than Fedora-based Bluefin
 
 ## Other Examples
 
-- [HeliumOS](https://codeberg.org/HeliumOS)
+- [HeliumOS](https://codeberg.org/HeliumOS) - Offering a KDE desktop on CentOS Stream/Almalinux
 - Valentin Rothberg - [fedora-bootc-workstation](https://github.com/vrothberg/fedora-bootc-workstation/tree/main)
