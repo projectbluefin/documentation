@@ -31,6 +31,13 @@ Bluefin LTS is composed of:
 
 ![image](https://github.com/user-attachments/assets/48985776-7a94-4138-bf00-d2df7824047d)
 
+:::warning
+
+While our payload is less churny than Fedora, note that this is still a new image, this project is still in alpha.
+
+:::
+
+
 #### Blockers
 
 - bootc-image-builder flatpak support
