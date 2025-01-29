@@ -16,9 +16,17 @@ Larger, more lethal [Bluefin](https://projectbluefin.io). `bluefin:lts` is built
 # Purpose and Status
 
 Bluefin but based on CentOS Stream 10, for people who prefer long lived Long Term Support. 
+This species of raptor is for users who prefer a slower release cadence, about a three-to-five year lifespan on a single release.
+It is also for users that depend on applications via Flathub and Homebrew, they need updated user space applications, but may prefer the slower enterprise cadence for their host operating system. 
+
+
+Bluefin LTS is composed of:
+
+- Mostly the same packages of Bluefin and Bluefin GTS, but built with CentOS Stream 10 and EPEL
+- The same features since they share the same source RPMs, just built on CentOS
+- An optional tag that we will publish to in the future, `lts-hwe` which will offer updated kernels that users can opt into
 
 ![image](https://github.com/user-attachments/assets/48985776-7a94-4138-bf00-d2df7824047d)
-
 
 #### Blockers
 
@@ -40,8 +48,8 @@ Diverse akmod support unless someone signs up for it.
 
 Available with the following tags: 
 
-`bluefin:lts` - stock everything
-`bluefin:lts-hwe` - (Doesn't exist yet) - Ships latest LTS kernel, this has a yearly cadence. That way you can start on `lts-hwe `from install and then a year later get the update. This is to ensure `bluefin:lts` stays relevant on newer hardware, especially towards the back half of its life. 
+- `bluefin:lts` - stock kernel
+- `bluefin:lts-hwe` - (Doesn't exist yet) - Ships latest LTS kernel, this has a yearly cadence. That way you can start on `lts-hwe `from install and then a year later get the update. This is to ensure `bluefin:lts` stays relevant on newer hardware, especially towards the back half of its life. 
 
 Rebasing: We will explicitly not support rebasing from the Fedora based images and ensure the rebase helper keeps users protected.
 
