@@ -42,10 +42,9 @@ While our payload is less churny than Fedora, note that this is still a new imag
 
 #### Next Up 
 
-- Nvidia drivers via their official repo
-  - We will add them as soon as it's available, but this lets us ship to non-Nvidia machines asap. 
 - Proper DX mode image
-- ZFS support 
+- ZFS support
+- Nvidia (external blocker)
 
 #### Out of Scope
 
@@ -60,7 +59,7 @@ Available with the following tags:
 
 Rebasing: We will explicitly not support rebasing from the Fedora based images and ensure the rebase helper keeps users protected.
 
-Releases: Eventually publish weekly, no daily tags. Though we will push often at first. 
+Releases: Builds publish weekly on Tuesdays, the images will update as often as the team is developing and will settle down into weeklies as the project matures
 
 Filesystem: We will keep the filesystems the default as per:
 
@@ -83,7 +82,6 @@ Do NOT rebase to this image from an existing Bluefin, Aurora, Bazzite, or Fedora
 
 1. Snag the ISO: [download.projectbluefin.io/bluefin-lts.iso](https://download.projectbluefin.io/bluefin-lts.iso)
 2. On first boot, install flatpaks: `ujust install-system-flatpaks`
-3. Automatic updates aren't working, you need to: `sudo bootc upgrade` by hand for now.
   
 [Incoming anaconda PR](https://github.com/rhinstaller/anaconda/pull/6056) for the flatpaks, also:
 
