@@ -14,6 +14,8 @@ Bluefin LTS is based on CentOS Stream 10, for people who prefer long lived Long 
 This species of raptor is for users who prefer a slower release cadence, about a three-to-five year lifespan on a single release.
 It is also for users that depend updated user space applications via Flathub and Homebrew, but may prefer the slower enterprise cadence for their host operating system.
 
+This image is built differently from Bluefin and Bluefin GTS, and is documented here seperately.
+
 > "Sometimes there's that special Thinkpad, where everything is working perfectly. May this kernel and this laptop be as one, forever." 
 >
 > -- Tired Sysadmin
