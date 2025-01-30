@@ -29,7 +29,8 @@ Bluefin LTS is composed of:
 - The same features since they share the same source RPMs, just built on CentOS
 - An optional tag that we will publish to in the future, `lts-hwe` which will offer updated kernels that users can opt into
 
-![image](https://github.com/user-attachments/assets/48985776-7a94-4138-bf00-d2df7824047d)
+![Pasted image](https://github.com/user-attachments/assets/3972ac0f-d37e-4e89-ae91-ff1eb76eabeb)
+
 
 :::warning
 
