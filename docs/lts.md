@@ -75,6 +75,12 @@ This is very aspirational and totally not up to us, but we'll be able to at leas
 
 ### Installation and Caveats
 
+:::danger
+
+Do NOT rebase to this image from an existing Bluefin, Aurora, Bazzite, or Fedora system. This warning is in red for a reason. 
+
+:::
+
 1. Snag the ISO: [download.projectbluefin.io/bluefin-lts.iso](https://download.projectbluefin.io/bluefin-lts.iso)
 2. On first boot, install flatpaks: `ujust install-system-flatpaks`
 3. Automatic updates aren't working, you need to: `sudo bootc upgrade` by hand for now.
