@@ -107,7 +107,4 @@ qcow2 file is written to the `output/` directory. Username and password are `cen
 
 Long lived and boring, we expect even less maintenance than Fedora-based Bluefin
 
-## Other Examples
-
-- [HeliumOS](https://codeberg.org/HeliumOS) - Offering a KDE desktop on CentOS Stream/Almalinux
-- Valentin Rothberg - [fedora-bootc-workstation](https://github.com/vrothberg/fedora-bootc-workstation/tree/main)
+![lol](https://github.com/user-attachments/assets/2ab31618-d6be-4620-8b80-5da53f4705f3)
