@@ -10,7 +10,7 @@ Larger, more lethal [Bluefin](https://projectbluefin.io). `bluefin:lts` is built
 
 # Purpose and Status
 
-Bluefin LTS is based on CentOS Stream 10, for people who prefer long lived Long Term Support. 
+Bluefin LTS is based on CentOS Stream 10, for people who prefer Long Term Support. 
 This species of raptor is for users who prefer a slower release cadence, about a three-to-five year lifespan on a single release.
 It is also for users that depend updated user space applications via Flathub and Homebrew, but may prefer the slower enterprise cadence for their host operating system.
 
