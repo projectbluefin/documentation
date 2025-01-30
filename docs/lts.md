@@ -6,6 +6,9 @@ slug: /lts
 # Bluefin LTS (Alpha)
 *Achillobator giganticus*
 
+![achillosmall](https://github.com/user-attachments/assets/b6945e80-34e4-44bb-8518-91ad31fed56d)
+
+
 Larger, more lethal [Bluefin](https://projectbluefin.io). `bluefin:lts` is built on CentOS Stream10.
 
 # Purpose and Status
