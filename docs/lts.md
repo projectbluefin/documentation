@@ -11,8 +11,6 @@ slug: /lts
 
 Larger, more lethal [Bluefin](https://projectbluefin.io). `bluefin:lts` is built on CentOS Stream10.
 
-![image](https://github.com/user-attachments/assets/2e160934-44e6-4aee-b2b8-accb3bcf0a41)
-
 # Purpose and Status
 
 Bluefin but based on CentOS Stream 10, for people who prefer long lived Long Term Support. 
@@ -36,7 +34,6 @@ Bluefin LTS is composed of:
 While our payload is less churny than Fedora, note that this is still a new image, this project is still in alpha.
 
 :::
-
 
 #### Blockers
 
@@ -69,7 +66,6 @@ Filesystem: We will keep the filesystems the default as per:
 
 > bketelsen: grandpa wants lts
 
-
 #### Schedule
 
 This is very aspirational and totally not up to us, but we'll be able to at least gather data at these events: 
@@ -79,13 +75,13 @@ This is very aspirational and totally not up to us, but we'll be able to at leas
 
 ### Installation and Caveats
 
-1. Snag the ISO: [download.projectbluefin.io/achillobator.iso](https://download.projectbluefin.io/achillobator.iso)
+1. Snag the ISO: [download.projectbluefin.io/bluefin-lts.iso](https://download.projectbluefin.io/bluefin-lts.iso)
 2. On first boot, install flatpaks: `ujust install-system-flatpaks`
 3. Automatic updates aren't working, you need to: `sudo bootc upgrade` by hand for now.
   
 [Incoming anaconda PR](https://github.com/rhinstaller/anaconda/pull/6056) for the flatpaks, also:
 
-- Do not rebase to this from an existing Fedora image, ain't no one testing that. Also the filesystems are going to be different, etc. We recommend a VM for now
+- **Do not rebase to this from an existing Fedora image, ain't no one testing that.** Also the filesystems are going to be different, etc. We recommend a VM for now
 - Some packages are missing until they get added to the EPEL10 repos.
   - Developer tools are included, -dx split will come later
   - No nvidia builds until Nvidia publishes EL10 drivers
