@@ -11,7 +11,7 @@ slug: /lts
 
 Larger, more lethal [Bluefin](https://projectbluefin.io). `bluefin:lts` is built on CentOS Stream10.
 
-# Purpose and Status
+## Purpose and Status
 
 Bluefin LTS is based on CentOS Stream 10, for people who prefer Long Term Support. 
 This species of raptor is for users who prefer a slower release cadence, about a three-to-five year lifespan on a single release.
@@ -75,7 +75,7 @@ This is very aspirational and totally not up to us, but we'll be able to at leas
 - Beta: Early March at [Southern California Linux Expo](https://www.socallinuxexpo.org/scale/22x)
 - General Availability: May 2025
 
-### Installation and Caveats
+## Installation and Caveats
 
 :::danger
 
@@ -83,8 +83,11 @@ Do NOT rebase to this image from an existing Bluefin, Aurora, Bazzite, or Fedora
 
 :::
 
-1. Snag the ISO: [download.projectbluefin.io/bluefin-lts.iso](https://download.projectbluefin.io/bluefin-lts.iso)
-2. On first boot, install flatpaks: `ujust install-system-flatpaks`
+1. Snag the ISO:
+   - x86_64: [download.projectbluefin.io/bluefin-lts.iso](https://download.projectbluefin.io/bluefin-lts.iso)
+   - ARM: [bluefin-lts-arm64.iso](https://download.projectbluefin.io/bluefin-lts-arm64.iso) ([checksum](https://download.projectbluefin.io/bluefin-lts-arm64.iso-CHECKSUM))
+   
+3. On first boot, install flatpaks: `ujust install-system-flatpaks`
   
 [Incoming anaconda PR](https://github.com/rhinstaller/anaconda/pull/6056) for the flatpaks, also:
 
@@ -93,6 +96,24 @@ Do NOT rebase to this image from an existing Bluefin, Aurora, Bazzite, or Fedora
   - Developer tools are included, -dx split will come later
   - No nvidia builds until Nvidia publishes EL10 drivers
 - No akmods or other hwe has been added
+
+## ARM Support
+
+### Using it with your Apple Silicon Mac
+
+[UTM](https://github.com/utmapp/UTM/) can boot these images if suitably configured:
+
+*   File → New, then select Virtualize
+*   Select Linux, then enable "Use Apple Virtualization" (The QEMU virtualization backend can also work, but this works better on Apple Silicon.)
+*   Browse for the Bluefin LTS ISO.
+*   It should default to 4GB of RAM; this is a good minimum value.
+*   On the Summary screen, it is not necessary to check the "Open VM Settings" box; while you may wish to adjust the configuration of the VM before first boot, the defaults are sensible.
+
+### Differences/Errata
+
+- No homebrew, they don't have arm builds, we will include [Pixi](https://github.com/prefix-dev/pixi) instead, which is a nice package manager built on the popular conda ecosystem - there's some good stuff in there!
+- Chromium 
+- No Firefox or Thunderbird, missing ARM builds, just about everything else is there.
 
 ## Building
 
