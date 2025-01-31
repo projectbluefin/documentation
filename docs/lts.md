@@ -90,7 +90,7 @@ Do NOT rebase to this image from an existing Bluefin, Aurora, Bazzite, or Fedora
 :::
 
 1. Snag the ISO:
-   - x86_64: [download.projectbluefin.io/bluefin-lts.iso](https://download.projectbluefin.io/bluefin-lts.iso)
+   - x86_64: [bluefin-lts.iso](https://download.projectbluefin.io/bluefin-lts.iso) ([checkum](https://download.projectbluefin.io/bluefin-lts.iso-CHECKSUM))
    - ARM: [bluefin-lts-arm64.iso](https://download.projectbluefin.io/bluefin-lts-arm64.iso) ([checksum](https://download.projectbluefin.io/bluefin-lts-arm64.iso-CHECKSUM))
    
 3. On first boot, install flatpaks: `ujust install-system-flatpaks`
