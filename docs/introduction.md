@@ -47,12 +47,6 @@ System updates are image-based and automatic. Applications are logically separat
     - If you've never used an image-based Linux before just use your computer normally
     - Don't overthink it, just shut your computer off when you're not using it
 
-## Applications
-
-- Mozilla Firefox, Mozilla Thunderbird, Extension Manager, DejaDup, FontDownloader, Flatseal, and the Clapper Media Player.
-- Core GNOME Applications installed from Flathub:
-  - GNOME Calculator, Calendar, Characters, Connections, Contacts, Evince, Firmware, Logs, Maps, NautilusPreviewer, TextEditor, Weather, baobab, clocks, eog, and font-viewer.
-
 ## Installation Requirements
 
 Review the [Fedora Silverblue installation instructions](https://docs.fedoraproject.org/en-US/fedora-silverblue/installation/). Some points to consider:
@@ -64,11 +58,9 @@ Review the [Fedora Silverblue installation instructions](https://docs.fedoraproj
 - A stock Bluefin installation is 11GB. Bluefin with developer mode enabled (`bluefin-dx`) is 19GB.
 - Read the installation runbook below to ensure your device and use case are supported by Bluefin!
 
-In order to set yourself up to success it's useful to plan out your Bluefin installation into three distinct phases, mirroring the systems operations lifecycle.
-
 ## Installation Runbook
 
-Here is a short [runbook](https://www.pagerduty.com/resources/learn/what-is-a-runbook/) for the Bluefin installation process. Read the entirety of this documentation in order to ensure survival. (In case of a raptor attack).
+In order to set yourself up to success it's useful to plan out your Bluefin installation into three distinct phases, mirroring the systems operations lifecycle. Here is a short [runbook](https://www.pagerduty.com/resources/learn/what-is-a-runbook/) for the Bluefin installation process. Read the entirety of this documentation in order to ensure survival. (In case of a raptor attack).
 
 ### Day 0: Planning
 
