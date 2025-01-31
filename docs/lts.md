@@ -134,4 +134,4 @@ qcow2 file is written to the `output/` directory. Username and password are `cen
 
 Long lived and boring, we expect even less maintenance than Fedora-based Bluefin
 
-![lol](https://github.com/user-attachments/assets/2ab31618-d6be-4620-8b80-5da53f4705f3)
+![achillobator_smol](https://github.com/user-attachments/assets/76d1a3ee-92e7-4d2e-88b6-0aebdb0b447d)
