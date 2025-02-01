@@ -89,13 +89,13 @@ Do NOT rebase to this image from an existing Bluefin, Aurora, Bazzite, or Fedora
 
 :::
 
-1. Snag the ISO:
+### 1. Snag the ISO:
    - x86_64: [bluefin-lts.iso](https://download.projectbluefin.io/bluefin-lts.iso) ([checkum](https://download.projectbluefin.io/bluefin-lts.iso-CHECKSUM))
    - ARM: [bluefin-lts-arm64.iso](https://download.projectbluefin.io/bluefin-lts-arm64.iso) ([checksum](https://download.projectbluefin.io/bluefin-lts-arm64.iso-CHECKSUM))
    
-3. On first boot, install flatpaks: `ujust install-system-flatpaks`
+### 2. On first boot, install flatpaks: `ujust install-system-flatpaks`
   
-[Incoming anaconda PR](https://github.com/rhinstaller/anaconda/pull/6056) for the flatpaks, also:
+This is a working around until Flatpaks can be put on the ISO: [Incoming anaconda PR](https://github.com/rhinstaller/anaconda/pull/6056) for the flatpaks, also:
 
 - **Do not rebase to this from an existing Fedora image, ain't no one testing that.** Also the filesystems are going to be different, etc. We recommend a VM for now
 - Some packages are missing until they get added to the EPEL10 repos.
