@@ -16,6 +16,7 @@ Larger, more lethal [Bluefin](https://projectbluefin.io). `bluefin:lts` is built
 Bluefin LTS is based on CentOS Stream 10, for people who prefer Long Term Support. 
 This species of raptor is for users who prefer a slower release cadence, about a three-to-five year lifespan on a single release.
 It is also for users that depend updated user space applications via Flathub and Homebrew, but may prefer the slower enterprise cadence for their host operating system.
+We expect less churn and maintenance over the course of its lifecycle. 
 
 This image is built differently from Bluefin and Bluefin GTS, and is documented here seperately.
 
@@ -121,17 +122,16 @@ This is a working around until Flatpaks can be put on the ISO: [Incoming anacond
 - Chromium 
 - No Firefox or Thunderbird, missing ARM builds, just about everything else is there.
 
-## Building
+## Building Locally 
 
 To build locally and then spit out a VM: 
 
 ```
+git clone https://github.com/ublue-os/bluefin-lts
+cd bluefin-lts
 just build
 just build-iso ghcr.io/ublue-os/bluefin:lts
 ```
 
 qcow2 file is written to the `output/` directory. Username and password are `centos`/`centos`
-
-Long lived and boring, we expect even less maintenance than Fedora-based Bluefin
-
 ![achillobator_smol](https://github.com/user-attachments/assets/76d1a3ee-92e7-4d2e-88b6-0aebdb0b447d)
