@@ -44,41 +44,42 @@ While our payload is less churny than Fedora, note that this is still a new imag
 - [Project Board](https://github.com/orgs/ublue-os/projects/9) - best place to follow status
 - [Repository](https://github.com/ublue-os/bluefin-lts)
 
-#### Blockers
+### Blockers
 
 - bootc-image-builder flatpak support
 - Secure Boot
 
-#### Next Up 
+### Next Up 
 
 - Proper DX mode image
 - ZFS support
 - Nvidia (external blocker)
 
-#### Out of Scope
+### Out of Scope
 
 Diverse akmod support unless someone signs up for it. 
 
-#### Tags and Features
+### Tags and Features
 
 Available with the following tags: 
 
 - `bluefin:lts` - stock kernel
-- `bluefin:lts-hwe` - (Doesn't exist yet) - Ships latest LTS kernel, this has a yearly cadence. That way you can start on `lts-hwe `from install and then a year later get the update. This is to ensure that Bluefin LTS stays relevant on newer hardware, especially towards the latter half of its life. 
+- `bluefin:lts-hwe` - (Doesn't exist yet) - Ships latest LTS kernel, this has a yearly cadence. That way you can start on `lts-hwe `from install and then a year later get the update. This is to ensure that Bluefin LTS stays relevant on newer hardware, especially towards the latter half of its life.
 
-Rebasing: We will explicitly not support rebasing from the Fedora based images and ensure the rebase helper keeps users protected.
+#### Nvidia Images
 
-Releases: Builds publish weekly on Tuesdays, the images will update as often as the team is developing and will settle down into weeklies as the project matures
-
-Filesystem: We will keep the filesystems the default as per:
-
-> bketelsen: grandpa wants lts
+Nvidia images will be provided for the `lts-hwe` images. Developer (DX) images will include the full CUDA stack. 
 
 #### Hibernation Enabled by Default
 
 Hibernation is on by default in a suspend-then-hibernate configuration. Here is the [exact config](https://github.com/ublue-os/bluefin-lts/blob/c0c8e2166cb5d0c4dd511ab3f677450c2cf8de0c/build_scripts/40-services.sh#L6). It is currently set to suspend then go into hibernation after one hour. See the [systemd-sleep.conf](https://www.freedesktop.org/software/systemd/man/latest/systemd-sleep.conf.html) documentation.
 
 Note that secureboot and hibernation are mutually exclusive. We do not yet offer secureboot enabled images of Bluefin LTS, if you need that functionality now we recommend the normal Bluefin and Bluefin GTS images.  
+
+#### Other features
+- Rebasing: We will explicitly not support rebasing from the Fedora based images and ensure the rebase helper keeps users protected.
+- Releases: Builds publish weekly on Tuesdays, the images will update as often as the team is developing and will settle down into weeklies as the project matures
+- Filesystem: We will keep the filesystems the default
 
 #### Schedule
 
