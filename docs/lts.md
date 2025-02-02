@@ -130,9 +130,10 @@ If there are other ways to set this up on MacOS please considering sending a pul
 
 ### Differences/Errata
 
-- No homebrew, they don't have arm builds, we will include [Pixi](https://github.com/prefix-dev/pixi) instead, which is a nice package manager built on the popular conda ecosystem - there's some good stuff in there!
-- Chromium 
-- No Firefox missing ARM builds, just about everything else is there.
+- [Pixi](https://github.com/prefix-dev/pixi) instead, which is a nice package manager built on the popular conda ecosystem - there's some good stuff in there!
+  - Homebrew doesn't have ARM Linux builds
+- Chromium as the browser
+  - Firefox doesn't have ARM Linux builds
 
 ## Building Locally 
 
