@@ -130,7 +130,7 @@ If there are other ways to set this up on MacOS please considering sending a pul
 
 ### Differences/Errata
 
-- [Pixi](https://github.com/prefix-dev/pixi) instead, which is a nice package manager built on the popular conda ecosystem - there's some good stuff in there!
+- [Pixi](https://github.com/prefix-dev/pixi) package manager is used instead
   - Homebrew doesn't have ARM Linux builds
 - Chromium as the browser
   - Firefox doesn't have ARM Linux builds
