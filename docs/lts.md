@@ -132,7 +132,7 @@ If there are other ways to set this up on MacOS please considering sending a pul
 
 - No homebrew, they don't have arm builds, we will include [Pixi](https://github.com/prefix-dev/pixi) instead, which is a nice package manager built on the popular conda ecosystem - there's some good stuff in there!
 - Chromium 
-- No Firefox or Thunderbird, missing ARM builds, just about everything else is there.
+- No Firefox missing ARM builds, just about everything else is there.
 
 ## Building Locally 
 
