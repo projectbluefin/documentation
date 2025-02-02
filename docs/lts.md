@@ -122,7 +122,7 @@ This is a working around until Flatpaks can be put on the ISO: [Incoming anacond
 *   It should default to 4GB of RAM; this is a good minimum value.
 *   On the Summary screen, it is not necessary to check the "Open VM Settings" box; while you may wish to adjust the configuration of the VM before first boot, the defaults are sensible.
 
-::: info[MacOS setups wanted]
+:::info[MacOS setups wanted]
 
 If there are other ways to set this up on MacOS please considering sending a pull request!
 
