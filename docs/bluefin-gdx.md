@@ -15,8 +15,14 @@ Bluefin GDX is designed to be an AI Workstation for Nvidia users. It combines [B
 
 ## Features
 
-tbd
+- [Nvidia CUDA](https://developer.nvidia.com/cuda-toolkit)
 
 ## Images
 
-- `bluefin-gdx:lts` 
+- [bluefin-gdx:lts](https://github.com/ublue-os/bluefin-lts/pkgs/container/bluefin-gdx) 
+
+## Supporting Bluefin LTS
+
+The team appreciates your support!
+
+- <a class="github-button" href="https://github.com/sponsors/tulilirockz" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-heart" data-size="large" aria-label="Sponsor tulilirockz">Sponsor</a> [Tulip Blossom](https://github.com/tulilirockz)- Lead Raptor Wrangler
