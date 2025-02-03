@@ -1,5 +1,5 @@
 ---
-title: Bluefin GDX
+title: Bluefin GDX (Alpha)
 slug: /gdx
 ---
 
@@ -7,4 +7,12 @@ slug: /gdx
 
 ## Purpose
 
-Bluefin GDX is a build of [Bluefin LTS](/lts) combined with the [Bluefin Developer Experience](/bluefin-dx) and Nvidia drivers. Bluefin for AI workstations. 
+Bluefin GDX is designed to be an AI Workstation for Nvidia users. It combines [Bluefin LTS](/lts) with the [Bluefin Developer Experience](/bluefin-dx) and includes CUDA and associated Nvidia tooling.
+
+## Features
+
+tbd
+
+## Images
+
+- `bluefin-gdx:lts` 
