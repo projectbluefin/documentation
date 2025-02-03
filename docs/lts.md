@@ -153,5 +153,3 @@ qcow2 file is written to the `output/` directory. Username and password are `cen
 The team appreciates your support!
 
 - <a class="github-button" href="https://github.com/sponsors/tulilirockz" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-heart" data-size="large" aria-label="Sponsor tulilirockz">Sponsor</a> [Tulip Blossom](https://github.com/tulilirockz)- Lead Raptor Wrangler
-  
-![achillobator_smol](https://github.com/user-attachments/assets/76d1a3ee-92e7-4d2e-88b6-0aebdb0b447d)
