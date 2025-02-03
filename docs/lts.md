@@ -65,7 +65,7 @@ The following images and tags are available:
 
 - `bluefin:lts` - stock kernel, 6.12.0 for the life of the release, same as Stream 10
 - `bluefin-hwe:lts` - kernel provided by the CentOS Hyperscale SIG
-- `bluefin-gdx:lts` - includes Nvidia drivers and associated CUDA tooling. See [Bluefin GDX](/bluefin-gdx)
+- `bluefin-gdx:lts` - includes Nvidia drivers and associated CUDA tooling. See [Bluefin GDX](/gdx)
 
 All images offer Bluefin's [Developer Mode](/bluefin-dx).
   
