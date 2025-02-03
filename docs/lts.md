@@ -59,12 +59,15 @@ While our payload is less churny than Fedora, note that this is still a new imag
 
 Diverse akmod support unless someone signs up for it. 
 
-### Tags and Features
+### Images
 
-Available with the following tags: 
+The following images and tags are available:
 
-- `bluefin:lts` - stock kernel
-- `bluefin:lts-hwe` - (Doesn't exist yet) - Ships latest LTS kernel, this has a yearly cadence. That way you can start on `lts-hwe `from install and then a year later get the update. This is to ensure that Bluefin LTS stays relevant on newer hardware, especially towards the latter half of its life.
+- `bluefin:lts` - stock kernel, 6.12.0 for the life of the release, same as Stream 10
+- `bluefin-lts-hwe` - kernel provided by the CentOS Hyperscale SIG
+- `bluefin-lts-hwe-nvidia` - kernel provided by the CentOS Hyperscale SIG, includes Nvidia drivers
+
+The Bluefin DX Developer Experience mode is available on all images, with the Nvidia DX mode adding CUDA tools.  
 
 #### Nvidia Images
 
