@@ -64,8 +64,8 @@ Diverse akmod support unless someone signs up for it.
 The following images and tags are available:
 
 - `bluefin:lts` - stock kernel, 6.12.0 for the life of the release, same as Stream 10
-- `bluefin-lts-hwe` - kernel provided by the CentOS Hyperscale SIG
-- `bluefin-lts-hwe-nvidia` - kernel provided by the CentOS Hyperscale SIG, includes Nvidia drivers
+- `bluefin-hwe:lts` - kernel provided by the CentOS Hyperscale SIG
+- `bluefin-hwe-nvidia:lts` - kernel provided by the CentOS Hyperscale SIG, includes Nvidia drivers
 
 The Bluefin DX Developer Experience mode is available on all images, with the Nvidia DX mode adding CUDA tools.  
 
