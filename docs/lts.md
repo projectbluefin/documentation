@@ -65,14 +65,10 @@ The following images and tags are available:
 
 - `bluefin:lts` - stock kernel, 6.12.0 for the life of the release, same as Stream 10
 - `bluefin-hwe:lts` - kernel provided by the CentOS Hyperscale SIG
-- `bluefin-hwe-nvidia:lts` - kernel provided by the CentOS Hyperscale SIG, includes Nvidia drivers
+- `bluefin-gdx:lts` - includes Nvidia drivers and associated CUDA tooling. See [Bluefin GDX](/bluefin-gdx)
 
-The Bluefin DX Developer Experience mode is available on all images, with the Nvidia DX mode adding CUDA tools.  
-
-#### Nvidia Images
-
-Nvidia images will be provided for the `lts-hwe` images. Developer (DX) images will include the full CUDA stack. 
-
+All images offer Bluefin's [Developer Mode](/bluefin-dx).
+  
 #### Hibernation Enabled by Default
 
 Hibernation is on by default in a suspend-then-hibernate configuration. Here is the [exact config](https://github.com/ublue-os/bluefin-lts/blob/c0c8e2166cb5d0c4dd511ab3f677450c2cf8de0c/build_scripts/40-services.sh#L6). The device will suspend then go into hibernation after two hours. See the [systemd-sleep.conf](https://www.freedesktop.org/software/systemd/man/latest/systemd-sleep.conf.html) documentation.
@@ -80,6 +76,7 @@ Hibernation is on by default in a suspend-then-hibernate configuration. Here is 
 Note that secureboot and hibernation are mutually exclusive. We do not yet offer secureboot enabled images of Bluefin LTS, if you need that functionality now we recommend the normal Bluefin and Bluefin GTS images.  
 
 #### Other features
+
 - Rebasing: We will explicitly not support rebasing from the Fedora based images and ensure the rebase helper keeps users protected.
 - Releases: Builds publish weekly on Tuesdays, the images will update as often as the team is developing and will settle down into weeklies as the project matures
 - Filesystem: We will keep the filesystems the default
