@@ -81,6 +81,8 @@ Most pain points can be addressed directly by planning ahead of time.
   - Is your printer/scanner well supported in Linux?
     - [Driverless printers](https://openprinting.github.io/printers/) are strongly recommended, we cannot guarantee every printer will work
     - [Scanner support](http://www.sane-project.org/sane-mfgs.html)
+- Is the BIOS/UEFI up to date on the device?
+    - We recommend having all hardware firmware updates completed and up to date before installation
 - Are the applications you depend on well supported on Flathub?
 - Does your VPN provider provide a wireguard configuration to import into Network Manager?
 - Dedicated disk ready to go?
