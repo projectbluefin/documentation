@@ -24,7 +24,6 @@ const sidebars: SidebarsConfig = {
         "analytics",
         "ai",
         "bluefin-dx",
-        "lts",
         "tips",
         "FAQ",
         "press-kit",
