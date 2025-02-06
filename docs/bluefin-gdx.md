@@ -23,7 +23,7 @@ Bluefin GDX is designed to be an AI Workstation for Nvidia users. It combines [B
 
 ## Installation
 
-- [Bluefin GDX](https://download.projectbluefin.io/bluefin-gdx-lts.iso) [checksum](https://download.projectbluefin.io/bluefin-gdx-lts.iso-CHECKSUM)
+- [Bluefin GDX](https://download.projectbluefin.io/bluefin-gdx-lts.iso) ([checksum](https://download.projectbluefin.io/bluefin-gdx-lts.iso-CHECKSUM))
 
 ## Supporting Bluefin GDX
 
