@@ -1,5 +1,5 @@
 ---
-title: Bluefin LTS
+title: Bluefin LTS (Alpha)
 slug: /lts
 ---
 
