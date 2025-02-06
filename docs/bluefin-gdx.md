@@ -13,6 +13,15 @@ slug: /gdx
 
 Bluefin GDX is designed to be an AI Workstation for Nvidia users. It combines [Bluefin LTS](/lts) with the [Bluefin Developer Experience](/bluefin-dx) and includes CUDA and associated Nvidia tooling. It is designed for AI and Machine Learning Professionals. 
 
+<iframe
+  width="560"
+  height="315"
+  src="[https://www.youtube.com/embed/lHu02MWIPUY](https://download.projectbluefin.io/bluefin-gdx.mp4)"
+  frameborder="0"
+  allow="autoplay; encrypted-media"
+  allowfullscreen>
+</iframe>
+
 ## Features
 
 - [Nvidia CUDA](https://developer.nvidia.com/cuda-toolkit)
