@@ -51,9 +51,7 @@ While our payload is less churny than Fedora, note that this is still a new imag
 
 ### Next Up 
 
-- Proper DX mode image
 - ZFS support
-- Nvidia (external blocker)
 
 ### Out of Scope
 
