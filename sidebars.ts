@@ -36,7 +36,7 @@ const sidebars: SidebarsConfig = {
       collapsed: false,
       items: [    
         "lts",
-        "gdx"
+        "bluefin-gdx"
       ],
     },
     {
