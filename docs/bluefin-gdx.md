@@ -11,7 +11,7 @@ slug: /gdx
 
 ## Scope and Purpose
 
-Bluefin GDX is designed to be an AI Workstation for Nvidia users. It combines [Bluefin LTS](/lts) with the [Bluefin Developer Experience](/bluefin-dx) and includes CUDA and associated Nvidia tooling. It is designed for AI and Machine Learning Professionals. 
+Bluefin GDX is designed to be an AI Workstation by providng Nvidia drivers and [CUDA](https://developer.nvidia.com/cuda-toolkit) in one image. It combines [Bluefin LTS](/lts) with the [Bluefin Developer Experience](/bluefin-dx). It is designed for AI and Machine Learning professionals.
 
 <iframe
   width="560"
