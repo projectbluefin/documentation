@@ -2,6 +2,7 @@
 title: Introduction to Bluefin
 slug: /introduction
 ---
+*Deinonychus antirrhopus*
 
 ![image](https://github.com/user-attachments/assets/21208dd6-9ce5-41ba-9c21-d2bb97f7c1e8)
 
