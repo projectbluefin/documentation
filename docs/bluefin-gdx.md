@@ -16,7 +16,7 @@ Bluefin GDX is designed to be an AI Workstation for Nvidia users. It combines [B
 <iframe
   width="560"
   height="315"
-  src="[https://www.youtube.com/embed/lHu02MWIPUY](https://download.projectbluefin.io/bluefin-gdx.mp4)"
+  src="https://download.projectbluefin.io/bluefin-gdx.mp4"
   frameborder="0"
   allow="autoplay; encrypted-media"
   allowfullscreen>
