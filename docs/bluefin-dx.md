@@ -173,6 +173,10 @@ DevPod also has support for JetBrains:
 - [kind](https://kind.sigs.k8s.io/) - Run a Kubernetes cluster on your machine. Run `kind create cluster` on the host to get started!
   - [kubectl](https://kubernetes.io/docs/reference/kubectl/) - Administer Kubernetes Clusters
   - [k9s](https://k9scli.io/), [kubectx](https://github.com/ahmetb/kubectx), and [helm](https://helm.sh/). If you feel there's a tool that should be included by default, send a PR [to this file](https://github.com/ublue-os/bluefin/blob/main/system_files/shared/usr/share/ublue-os/homebrew/kubernetes.Brewfile). But let's not overdo it. 😄
+ 
+## Ramalama
+
+[Ramalama](https://github.com/containers/ramalama) is included for local management and serving of AI models. Check the [AI documentation](ai) for more information. 
 
 ## Virtualization and Container Runtimes
 
