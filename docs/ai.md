@@ -39,7 +39,7 @@ REPOSITORY                                 TAG         IMAGE ID      CREATED    
 quay.io/ramalama/rocm                      latest      8875feffdb87  5 days ago     6.92 GB
 ```
 
-### Ollama API
+## Ollama API
 
 Since Alpaca doesn't expose any API, if you need other applications than Alpaca to interact with your ollama instance (for example an IDE) you should consider installing it [in a docker container](https://hub.docker.com/r/ollama/ollama).
 
