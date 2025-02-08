@@ -5,7 +5,15 @@ slug: /ai
 
 GPU Acceleration for both Nvidia and AMD are included out of the box and usually do not require any extra setup.
 
-[Ramalama](https://github.com/containers/ramalama) is included when [developer mode](/dx) is enabled. It offers the ability to pull models from huggingface, ollama, and any container registry. By default it pulls from ollama.com, check the 
+## Alpaca Graphical Client
+
+For light chatbot usage we recommend that users [install Alpaca](https://flathub.org/apps/com.jeffser.Alpaca) to manage and chat with your LLM models from within a native desktop application. Alpaca supports Nvidia and AMD acceleration natively and _includes ollama_.
+
+![image](https://github.com/user-attachments/assets/9fd38164-e2a9-4da1-9bcd-29e0e7add071)
+
+## Ramalama
+
+[Ramalama](https://github.com/containers/ramalama) is included when [developer mode](/dx) is enabled. It's for people who work with local models frequently and need advanced features. It offers the ability to pull models from huggingface, ollama, and any container registry. By default it pulls from ollama.com, check the [Ramalama documentation](https://ramalama.readthedocs.io/) for more information. 
 
 Examples include:
 
@@ -13,25 +21,19 @@ Examples include:
     ramalama run llama3.2  
     ramalama run deepseek-r1
 
-You can also serve the models locally so other applications can use it. 
+You can also serve the models locally: 
 
     ramalama serve deepseek-r1
 
 Then go to `http://127.0.0.0:8080` in your browser. 
 
-Ramalama will automatically pull in anything your host needs to do the workload. The images are also stored in the same container storage as your other containers:  
+Ramalama will automatically pull in anything your host needs to do the workload. The images are also stored in the same container storage as your other containers. This allows for centralized management of the ai models and other podman images:  
 
 ```
 ❯ podman images
 REPOSITORY                                 TAG         IMAGE ID      CREATED        SIZE
 quay.io/ramalama/rocm                      latest      8875feffdb87  5 days ago     6.92 GB
 ```
-
-### Alpaca Graphical Client
-
-[Install Alpaca](https://flathub.org/apps/com.jeffser.Alpaca) to manage and chat with your LLM models from within a native desktop application. Alpaca supports Nvidia and AMD acceleration natively and _includes ollama_.
-
-![image](https://github.com/user-attachments/assets/9fd38164-e2a9-4da1-9bcd-29e0e7add071)
 
 ### Ollama API
 
