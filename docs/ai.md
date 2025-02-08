@@ -15,7 +15,7 @@ For light chatbot usage we recommend that users [install Alpaca](https://flathub
 
 [Ramalama](https://github.com/containers/ramalama) is included when [developer mode](/bluefin-dx) is enabled. It's for people who work with local models frequently and need advanced features. It offers the ability to pull models from huggingface, ollama, and any container registry. By default it pulls from ollama.com, check the [Ramalama documentation] for more information. 
 
-Examples include:
+Ramalama's command line experience is similar to Podman, examples include:
 
 ```
 ramalama pull llama3.2:latest
