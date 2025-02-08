@@ -17,13 +17,17 @@ For light chatbot usage we recommend that users [install Alpaca](https://flathub
 
 Examples include:
 
+```
     ramalama pull llama3.2:latest
     ramalama run llama3.2  
     ramalama run deepseek-r1
+```
 
 You can also serve the models locally: 
 
+```
     ramalama serve deepseek-r1
+```
 
 Then go to `http://127.0.0.0:8080` in your browser. 
 
