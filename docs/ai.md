@@ -3,11 +3,31 @@ title: AI and Machine Learning
 slug: /ai
 ---
 
-# AI and Machine Learning
-
 GPU Acceleration for both Nvidia and AMD are included out of the box and usually do not require any extra setup.
 
-### Ollama GUI
+[Ramalama](https://github.com/containers/ramalama) is included when [developer mode](/dx) is enabled. It offers the ability to pull models from huggingface, ollama, and any container registry. By default it pulls from ollama.com, check the 
+
+Examples include:
+
+    ramalama pull llama3.2:latest
+    ramalama run llama3.2  
+    ramalama run deepseek-r1
+
+You can also serve the models locally so other applications can use it. 
+
+    ramalama serve deepseek-r1
+
+Then go to `http://127.0.0.0:8080` in your browser. 
+
+Ramalama will automatically pull in anything your host needs to do the workload. The images are also stored in the same container storage as your other containers:  
+
+```
+❯ podman images
+REPOSITORY                                 TAG         IMAGE ID      CREATED        SIZE
+quay.io/ramalama/rocm                      latest      8875feffdb87  5 days ago     6.92 GB
+```
+
+### Alpaca Graphical Client
 
 [Install Alpaca](https://flathub.org/apps/com.jeffser.Alpaca) to manage and chat with your LLM models from within a native desktop application. Alpaca supports Nvidia and AMD acceleration natively and _includes ollama_.
 
