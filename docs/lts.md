@@ -28,7 +28,7 @@ Bluefin LTS is composed of:
 
 - Mostly the same packages of Bluefin and Bluefin GTS, but built with CentOS Stream 10 and EPEL
 - The same features since they share the same source RPMs, just built on CentOS
-- An optional tag that we will publish to in the future, `lts-hwe` which will offer updated kernels that users can opt into
+- Seperate `lts-hwe` image with an updated Linux kernel
 
 ![Pasted image](https://github.com/user-attachments/assets/3972ac0f-d37e-4e89-ae91-ff1eb76eabeb)
 
