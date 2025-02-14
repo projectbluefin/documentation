@@ -9,13 +9,13 @@ slug: /lts
 ![achillosmall](https://github.com/user-attachments/assets/b6945e80-34e4-44bb-8518-91ad31fed56d)
 
 
-Larger, more lethal [Bluefin](https://projectbluefin.io). `bluefin:lts` is built on CentOS Stream10.
+Larger, more lethal [Bluefin](https://projectbluefin.io). `bluefin:lts` is built on CentOS 10.
 
 ## Purpose
 
-Bluefin LTS is based on CentOS Stream 10, for people who prefer Long Term Support. 
+Bluefin LTS is a workstation designed for people who prefer Long Term Support. 
 This species of raptor is for users who prefer a slower release cadence, about a three-to-five year lifespan on a single release.
-It is also for users that depend updated user space applications via Flathub and Homebrew, but may prefer the slower enterprise cadence for their host operating system.
+It is also for users that depend on updated user space applications via Flathub and Homebrew, but may prefer the slower enterprise cadence for their host operating system.
 We expect less churn and maintenance over the course of its lifecycle. 
 
 This image is built differently from Bluefin and Bluefin GTS, and is documented here seperately.
@@ -29,6 +29,8 @@ Bluefin LTS is composed of:
 - Mostly the same packages of Bluefin and Bluefin GTS, but built with CentOS Stream 10 and EPEL
 - The same features since they share the same source RPMs, just built on CentOS
 - Seperate `lts-hwe` image with an updated Linux kernel
+
+In the future we will investigate bringing newer versions of the GNOME desktop to Bluefin LTS as appropriate.
 
 ![Pasted image](https://github.com/user-attachments/assets/3972ac0f-d37e-4e89-ae91-ff1eb76eabeb)
 
@@ -61,8 +63,8 @@ Diverse akmod support unless someone signs up for it.
 
 The following images and tags are available:
 
-- `bluefin:lts` - stock kernel, 6.12.0 for the life of the release, same as Stream 10
-- `bluefin-hwe:lts` - kernel provided by the CentOS Hyperscale SIG
+- `bluefin:lts` - stock kernel, 6.12.0 for the life of the release, same as CentOS
+- `bluefin-hwe:lts` - kernel provided by the CentOS Hyperscale SIG (Not many people testing this right now, beware)
 - `bluefin-gdx:lts` - includes Nvidia drivers and associated CUDA tooling. See [Bluefin GDX](/gdx)
 
 All images offer Bluefin's [Developer Mode](/bluefin-dx).
