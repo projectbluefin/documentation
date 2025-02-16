@@ -1,6 +1,7 @@
 ---
 title: Welcome to Bluefin
 slug: /
+pagination_next: introduction
 ---
 
 # Welcome to Bluefin
