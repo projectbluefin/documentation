@@ -32,7 +32,6 @@ Bluefin GDX is designed to be an AI Workstation by providng Nvidia drivers and [
 ### Coming Soon
 
 - VSCode Cuda extensions
-- ollama
 
 ### Flatpaks 
 
