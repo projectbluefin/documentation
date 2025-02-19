@@ -27,10 +27,10 @@ Bluefin GDX is designed to be an AI Workstation by providng Nvidia drivers and [
 - [Nvidia CUDA](https://developer.nvidia.com/cuda-toolkit)
 - [Ramalama](https://github.com/containers/ramalama) for local management and serving of AI models
 - [uv](https://github.com/astral-sh/uv) for Python package management
+- [pixi](https://prefix.dev/) package manager for Conda integration
 
 ### Coming Soon
 
-- Conda and Pixie 
 - VSCode Cuda extensions
 - ollama
 
