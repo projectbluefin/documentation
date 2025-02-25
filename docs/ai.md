@@ -3,19 +3,17 @@ title: AI and Machine Learning
 slug: /ai
 ---
 
-GPU Acceleration for both Nvidia and AMD are included out of the box and usually do not require any extra setup.
+Bluefin's [developer experience](/bluefin-dx) fully supports local AI. GPU Acceleration for both Nvidia and AMD are included out of the box and usually do not require any extra setup. Bluefin's focus in AI is providing a generic API endpoint to the operating system that is controlled by the user. Similar to how Bluefin ships `podman`, we feel that `ramalama` and other great open source tools can be used for many useful purposes. 
 
-## Alpaca Graphical Client
+## AI Lab with Podman Desktop
 
-For light chatbot usage we recommend that users [install Alpaca](https://flathub.org/apps/com.jeffser.Alpaca) to manage and chat with your LLM models from within a native desktop application. Alpaca supports Nvidia and AMD[^1] acceleration natively and _includes ollama_.
+The [AI Lab extension](https://developers.redhat.com/products/podman-desktop/podman-ai-lab) can be installed inside the included Podman Desktop to provide a graphical interface for managing local models:
 
-![image](https://github.com/user-attachments/assets/9fd38164-e2a9-4da1-9bcd-29e0e7add071)
-
-[^1]: For proper AMD support, the Flatpak extension `com.jeffser.Alpaca.Plugins.AMD` must also be installed.
+![image](https://github.com/user-attachments/assets/e5557952-3e62-499e-93a9-934c4d452be0)
 
 ## Ramalama
 
-[Ramalama](https://github.com/containers/ramalama) is included when [developer mode](/bluefin-dx) is enabled. It's for people who work with local models frequently and need advanced features. It offers the ability to pull models from huggingface, ollama, and any container registry. By default it pulls from ollama.com, check the [Ramalama documentation] for more information. 
+[Ramalama](https://github.com/containers/ramalama) is included to manage local models and is the prefered default experience. It's for people who work with local models frequently and need advanced features. It offers the ability to pull models from huggingface, ollama, and any container registry. By default it pulls from ollama.com, check the [Ramalama documentation](https://github.com/containers/ramalama/tree/main/docs) for more information. 
 
 Ramalama's command line experience is similar to Podman, examples include:
 
@@ -41,9 +39,17 @@ REPOSITORY                                 TAG         IMAGE ID      CREATED    
 quay.io/ramalama/rocm                      latest      8875feffdb87  5 days ago     6.92 GB
 ```
 
-## Ollama API
+## Alpaca Graphical Client
 
-Since Alpaca doesn't expose any API, if you need other applications than Alpaca to interact with your ollama instance (for example an IDE) you should consider installing it [in a docker container](https://hub.docker.com/r/ollama/ollama).
+For light chatbot usage we recommend that users [install Alpaca](https://flathub.org/apps/com.jeffser.Alpaca) to manage and chat with your LLM models from within a native desktop application. Alpaca supports Nvidia and AMD[^1] acceleration natively and _includes ollama_.
+
+![image](https://github.com/user-attachments/assets/9fd38164-e2a9-4da1-9bcd-29e0e7add071)
+
+[^1]: For proper AMD support, the Flatpak extension `com.jeffser.Alpaca.Plugins.AMD` must also be installed.
+
+## Running Ollama as a Service
+
+Ollama can also be used for people who prefer to use that tool. If you want third party tools to integrate with it, (for example an IDE) you should consider installing it [in a docker container](https://hub.docker.com/r/ollama/ollama).
 
 To do so, first configure docker to use the nvidia drivers (that come preinstalled with Bluefin) with:
 
