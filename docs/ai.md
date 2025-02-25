@@ -3,7 +3,14 @@ title: AI and Machine Learning
 slug: /ai
 ---
 
-Bluefin's [developer experience](/bluefin-dx) fully supports local AI. GPU Acceleration for both Nvidia and AMD are included out of the box and usually do not require any extra setup. Bluefin's focus in AI is providing a generic API endpoint to the operating system that is controlled by the user. Similar to how Bluefin ships `podman`, we feel that `ramalama` and other great open source tools can be used for many useful purposes. 
+Bluefin's [developer experience](/bluefin-dx) fully supports local AI. GPU Acceleration for both Nvidia and AMD are included out of the box and usually do not require any extra setup. 
+
+:::tip[AI is an extension to cloud native]
+
+Bluefin's focus in AI is providing a generic API endpoint to the operating system that is controlled by the user. Similar to how Bluefin ships `podman`, we feel that `ramalama` and other great open source tools can be used for many useful purposes.
+
+:::
+
 
 ## AI Lab with Podman Desktop
 
