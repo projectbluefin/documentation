@@ -41,8 +41,8 @@ We don't have the ability to put these on the ISO yet, but here's an initial lis
 
 ## Installation
 
-- x86_64 ISO: [Bluefin GDX](https://download.projectbluefin.io/bluefin-gdx-lts.iso) ([checksum](https://download.projectbluefin.io/bluefin-gdx-lts.iso-CHECKSUM))
-- ARM ISO: Coming Soon
+- x86_64: [bluefin-gdx-lts.iso](https://download.projectbluefin.io/bluefin-gdx-lts.iso) ([checksum](https://download.projectbluefin.io/bluefin-gdx-lts.iso-CHECKSUM))
+- ARM: [bluefin-gdx-lts-arm64.iso](https://download.projectbluefin.io/bluefin-gdx-lts-arm64.iso) ([checksum](https://download.projectbluefin.io/bluefin-gdx-lts-arm64.iso-CHECKSUM))
 - Image: [bluefin-gdx:lts](https://github.com/ublue-os/bluefin-lts/pkgs/container/bluefin-gdx)
 
 Follow the [Bluefin LTS](/lts) instructions for post installation steps. 
