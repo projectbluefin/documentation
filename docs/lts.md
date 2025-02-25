@@ -105,9 +105,6 @@ Do NOT rebase to this image from an existing Bluefin, Aurora, Bazzite, or Fedora
 This is a working around until Flatpaks can be put on the ISO: [Incoming anaconda PR](https://github.com/rhinstaller/anaconda/pull/6056) for the flatpaks, also:
 
 - **Do not rebase to this from an existing Fedora image, ain't no one testing that.** Also the filesystems are going to be different, etc. We recommend a VM for now
-- Some packages are missing until they get added to the EPEL10 repos.
-  - Developer tools are included, -dx split will come later
-  - No nvidia builds until Nvidia publishes EL10 drivers
 - No akmods or other hwe has been added
 
 ## ARM Support
