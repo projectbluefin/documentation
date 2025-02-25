@@ -3,7 +3,7 @@ title: AI and Machine Learning
 slug: /ai
 ---
 
-Bluefin's [developer experience](/bluefin-dx) fully supports local AI. GPU Acceleration for both Nvidia and AMD are included out of the box and usually do not require any extra setup. 
+Bluefin's [developer experience](/bluefin-dx) fully supports local AI development workflows. GPU Acceleration for both Nvidia and AMD are included out of the box and usually do not require any extra setup. 
 
 :::tip[AI is an extension to cloud native]
 
