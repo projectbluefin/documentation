@@ -175,7 +175,7 @@ Check the [Fedora Silverblue User Guide](https://docs.fedoraproject.org/en-US/fe
 
 ### Virtual Private Networks (VPN)
 
-[Tailscale](https://tailscale.com) is included by default to provide VPN services for both desktop and development use cases.
+[Tailscale](https://tailscale.com) is included by default to provide VPN services for both desktop and development use cases. [Tailscale is pretty useful](https://blog.6nok.org/tailscale-is-pretty-useful/).
 
 - [Using Tailscale with Mullvad](https://tailscale.com/kb/1258/mullvad-exit-nodes) - provides the best out of the box experience
 - [Using Tailscale with Docker](https://tailscale.com/kb/1282/docker) - for development
