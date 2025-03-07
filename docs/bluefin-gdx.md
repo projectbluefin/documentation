@@ -1,5 +1,5 @@
 ---
-title: Bluefin GDX (GDX)
+title: Bluefin GDX (Alpha)
 slug: /gdx
 ---
 
