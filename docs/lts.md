@@ -136,14 +136,14 @@ If there are other ways to set this up on MacOS please considering sending a pul
 
 To build locally and then spit out a VM: 
 
-```
+```bash
 git clone https://github.com/ublue-os/bluefin-lts
 cd bluefin-lts
 just build
-just build-iso ghcr.io/ublue-os/bluefin:lts
+just build-qcow2 ghcr.io/ublue-os/bluefin:lts # if you want to build an ISO just change qcow2 to iso instead
 ```
 
-qcow2 file is written to the `output/` directory. Username and password are `centos`/`centos`
+The [qcow2](https://qemu-project.gitlab.io/qemu/system/images.html) file will be written to the `output/` directory. Default username and password are `centos`/`centos`
 
 ## Supporting Bluefin LTS
 
