@@ -115,7 +115,8 @@ Thanks to Ubuntu and Canonical for the [detailed specification](https://discours
 - [television](https://github.com/alexpasmantier/television) - a blazing fast general-purpose fuzzy finder TUI - (`tv`)
 - [trash-cli](https://github.com/andreafrancia/trash-cli) to manage the system trashcan. (Strongly recommended for new CLI users)
 - [ugrep](https://github.com/Genivia/ugrep) for grep
-- [yq](https://github.com/mikefarah/yq) - for yaml, json, and xml processing
+- [uutils](https://github.com/uutils/coreutils) as coreutils
+- [yq](https://github.com/mikefarah/yq) for yaml, json, and xml processing
 - [zoxide](https://github.com/ajeetdsouza/zoxide) as `cd`
 
 The community may add new tools over time, re-running `ujust bluefin-cli` will pull in the new tools.
