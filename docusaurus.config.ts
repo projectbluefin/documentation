@@ -88,6 +88,11 @@ const config: Config = {
           label: "Documentation",
         },
         {
+          href: "https://github.com/ublue-os/bluefin/discussions/categories/ask-bluefin",
+          label: "Ask Bluefin",
+          position: "left",
+        },
+        {
           href: "https://projectbluefin.io/",
           label: "Website",
           position: "right",
