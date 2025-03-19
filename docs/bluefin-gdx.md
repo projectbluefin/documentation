@@ -30,11 +30,12 @@ Bluefin GDX is designed to be an AI Workstation by providng Nvidia drivers and [
 - [pixi](https://prefix.dev/) package manager for Conda integration
 - ... and more! Check the [AI and Machine Learning](/ai) section for more!
 
-### Flatpaks 
+### Hardware
 
-We don't have the ability to put these on the ISO yet, but here's an initial list):
+Bluefin GDX runs great on any PC with the right hardware, but has been tested and known to work on:
 
-- Blender
+- [Framework Desktop](https://frame.work/desktop) 
+- [Thelio Astra](https://system76.com/desktops/thelio-astra-a1.1-n1/configure) - Find these Ampere-powered monsters at an open source conference near you!
 
 ## Installation
 
