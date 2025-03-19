@@ -38,12 +38,10 @@ Note that the cask functionality in homebrew is MacOS specific and non functiona
 
 ## System Updates
 
-Bluefin is designed to be "hands off". 
+Bluefin is designed to be "hands off". The system checks for updates every six(6) hours. This includes system updates, flatpaks, pet containers, and homebrew. 
 
-- System updates check daily. Most images are published weekly, but the team may push a new update at any given time.
-- Flatpaks update once a day
-- Homebrew updates once a day
-
+- Most images are published weekly, but the team may push a new update at any given time.
+ 
 Updates are applied when the system reboots. Therefore, it is recommended to routinely power off your device when it's not being used to ensure kernel updates are being applied. Application updates (like the browser) happen independently of this and don't require a reboot.
 
 Machine firmware updates are provided through the standard Software Center:
