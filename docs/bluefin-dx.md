@@ -58,8 +58,6 @@ Like all Universal Blue images, switching is atomic, allowing for clean switchin
 - [Dev Containers Specification](https://containers.dev/)
 - [Beginner's Series to: Dev Containers](https://www.youtube.com/watch?v=b1RavPr_878) - great introductory tutorial from the [VS Code YouTube channel](https://www.youtube.com/@code/videos)
 
-<iframe src="https://www.youtube.com/embed/?listType=playlist&list=PLj6YeMhvp2S5MwL7nPmMWk_lTbZsk_AmZ" frameborder="0" allowfullscreen></iframe>
-
 The most current [Docker Engine](https://docs.docker.com/engine/) is included by default and is set up to be the default container runtime for vscode. Using [docker compose](https://danielquinn.org/blog/developing-with-docker/) is also a great way to get started in container development and is an option if devcontainers don't fit your style.
 
 ## DevPod
@@ -103,7 +101,7 @@ Thanks to Ubuntu and Canonical for the [detailed specification](https://discours
 
 ### `bluefin-cli`
 
-`ujust bluefin-cli` will install Bluefin's opt-in command line experience. `bluefin-cli` comes with some fantastic command line tools:
+`ujust bluefin-cli` will install Bluefin's opt-in command line experience. It is designed to be a modern terminal experience that can be turned on and off depending on your use case. It comes with some fantastic CLI tools:
 
 - [atuin](https://github.com/atuinsh/atuin) for shell history
 - [direnv](https://direnv.net/) to load and unload environment variables depending on the current directory.
