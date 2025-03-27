@@ -103,7 +103,7 @@ Thanks to Ubuntu and Canonical for the [detailed specification](https://discours
 
 `ujust bluefin-cli` will install Bluefin's opt-in command line experience. It is designed to be a modern terminal experience that can be turned on and off depending on your use case. 
 
-:::tip[A greenfied terminal experience]
+:::tip[A greenfield terminal experience]
 
 We love our command line tools. This is intended to be a rendition of what a brand new terminal experience would look like with modern tooling. But the traditional tooling is always a toggle away. Keep up with the cool kids without sacrificing your "known good" kit. 
 
@@ -126,6 +126,10 @@ It comes with some fantastic CLI tools:
 - [zoxide](https://github.com/ajeetdsouza/zoxide) as `cd`
 
 The community may add new tools over time, re-running `ujust bluefin-cli` will pull in the new tools.
+
+> What greatness have I been missing? Being set in my old, tired ways.
+>
+> -- Bill Childers (Probably, this quote is made up)
 
 ![image](https://github.com/user-attachments/assets/89be8151-5b57-4b71-bbe5-988bef2d6798)
 
