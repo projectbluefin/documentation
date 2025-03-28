@@ -37,7 +37,7 @@ In the future we will investigate bringing newer versions of the GNOME desktop t
 
 :::warning
 
-While our payload is less churny than Fedora, note that this is still a new image, this project is still in alpha.
+While our payload is less churny than Fedora, note that this is still a new image, this project is still in beta.
 
 :::
 
