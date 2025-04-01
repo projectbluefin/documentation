@@ -27,7 +27,7 @@ The name of the project is `Project Bluefin` but usually shortened to just `Blue
 - `BluefinOS` - or any addition of "OS" to the name
 - `Fedora Bluefin` - this implies a formal relationship between Fedora and Bluefin. Check the [mission document](https://universal-blue.org/mission.html) for more information about the relationship between Fedora and Universal Blue
 - `Universal Blue Bluefin` or `uBlue Bluefin` - "Bluefin is built with Universal Blue" or "Bluefin is a Universal Blue image" is recommended instead.
-- "Immutable Distribution" - Bluefin is an operating system, it is neither immutable nor a distribution, it is a custom image based on Fedora.
+- "Immutable Distribution" - Bluefin is an operating system, it is neither immutable nor a distribution, it is a custom image that is a collection of distributions: Flathub, Homebrew, and Fedora.
 
 # Universal Blue Terminology
 
