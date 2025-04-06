@@ -31,7 +31,7 @@ If your requirements are outside of this scope, then **Bluefin might not be the 
 
 :::info[Begin your journey...]
 
-If this appeals to you, then Bluefin is for you!
+Bluefin is designed for people who are tired of the old ecosystem and want a fresh start. Despite the dinosaurs, we don't hang onto the past - we strive to improve our skill set. If this appeals to you, then Bluefin is for you!
 
 - [Introduction to Bluefin](https://docs.projectbluefin.io/introduction) - to check out the features and installation instructions.
 
