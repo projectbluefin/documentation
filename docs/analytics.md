@@ -7,7 +7,7 @@ Bluefin is a high performance predator, the team believes in the importance of i
 
 > Data, for me, is the foundation of F1. There's no human judgment involved. You've got to get your foundation right in data.
 >
-> -- James Vowles
+> -- [James Vowles](https://www.youtube.com/watch?v=nYzwvTSffiY&t=1025s)
 
 ## Fedora Countme Statistics
 
