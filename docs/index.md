@@ -10,7 +10,7 @@ A custom image of Fedora Silverblue, offering a familiar(ish) Ubuntu-style deskt
 
 For end users it provides a system as reliable as a Chromebook with near-zero maintenance while providing developers with a powerful [cloud-native development mode](bluefin-dx). Built with next generation tech, for people who need their machines to get work done.
 
-![image](https://github.com/ublue-os/bluefin/assets/1264109/b093bdec-40dc-48d2-b8ff-fcf0df390e8c)
+![Bluefin](https://github.com/user-attachments/assets/f613f17f-07e2-4dd5-84a8-5544875bfff4)
 
 ## Is Bluefin for You?
 
