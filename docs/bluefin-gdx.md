@@ -37,6 +37,8 @@ Bluefin GDX runs great on any PC with the right hardware, but has been tested an
 - [Framework Desktop](https://frame.work/desktop) 
 - [Thelio Astra](https://system76.com/desktops/thelio-astra-a1.1-n1/configure) - Find these Ampere-powered monsters at an open source conference near you!
 
+  ![image](https://github.com/user-attachments/assets/6dda949b-44a3-4e18-8fd5-f80609dd4c80)
+
 ## Installation
 
 - x86_64: [bluefin-gdx-lts.iso](https://download.projectbluefin.io/bluefin-gdx-lts.iso) ([checksum](https://download.projectbluefin.io/bluefin-gdx-lts.iso-CHECKSUM))
