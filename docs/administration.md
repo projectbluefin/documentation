@@ -26,7 +26,7 @@ Use the GNOME Software Center to [install applications from Flathub](https://fla
 
 ![GNOME Software Center - App Illustration](https://github.com/user-attachments/assets/65b6cae5-9ed4-4d28-93b4-b6dfe9adf463)
 
-### Command Line Applications
+### Command Line Applications 
 
 The [brew](https://brew.sh/) application is the package manager used for installing command line applications in Bluefin.
 
@@ -35,6 +35,10 @@ The [brew](https://brew.sh/) application is the package manager used for install
 - [Cheatsheet](https://devhints.io/homebrew)
 
 Note that the cask functionality in homebrew is MacOS specific and non functional in Bluefin, flatpak is used instead.
+
+### Fonts
+
+Homebrew is also used for installing fonts, browse [this page](https://formulae.brew.sh/cask-font/) and install your favorite fonts.
 
 ## System Updates
 
