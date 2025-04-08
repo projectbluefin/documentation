@@ -38,7 +38,8 @@ Bluefin features a GNOME desktop configured by our community. System updates are
   - [Input Leap](https://github.com/input-leap/input-leap) built in
   - [Solaar](https://github.com/pwr-Solaar/Solaar) - included for Logitech mouse
     management along with `libratbagd`
-  - [rclone](https://rclone.org/) and [restic](https://restic.net/) included
+  - [rclone](https://rclone.org/overview/) - mount almost any remote bucket onto your local machine, great for multiple machine setups
+  - [restic](https://restic.net/) - A modern backup program that can back up your files
   - `zsh` and `fish` included ([Instructions](/administration#changing-the-default-terminal-shell))
 - Built on top of the the [Universal Blue main image](https://github.com/ublue-os/main) - resulting in easy sharing of benefits:
   - Extra udev rules for game controllers and [other devices](https://github.com/ublue-os/config) included out of the box
