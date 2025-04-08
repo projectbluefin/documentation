@@ -40,6 +40,8 @@ Note that the cask functionality in homebrew is MacOS specific and non functiona
 
 Homebrew is also used for installing fonts, browse [this page](https://formulae.brew.sh/cask-font/) and install your favorite fonts.
 
+- Microsoft Fonts: Follow [these instructions](https://github.com/colindean/homebrew-fonts-nonfree) to install Office fonts if you need them. You can skip the homebrew installation instructions since those are provided for you.
+
 ## System Updates
 
 Bluefin is designed to be "hands off". The system checks for updates every six(6) hours. This includes system updates, flatpaks, pet containers, and homebrew. 
