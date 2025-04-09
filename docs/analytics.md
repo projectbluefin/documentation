@@ -33,3 +33,21 @@ brew analytics off
 ```
 
 Check the [homebrew documentation](https://docs.brew.sh/Analytics) for more information. You can also checkout the [operating system rankings](https://formulae.brew.sh/analytics/os-version/30d/) as a fun competition.
+
+## Contributor Metrics
+
+Since Bluefin is an [Universal Blue](https://universal-blue.org) image, it leverages the shared maintenance of a larger community.
+
+**Bluefin**
+
+![Alt](https://repobeats.axiom.co/api/embed/40b85b252bf6ea25eb90539d1adcea013ccae69a.svg "Repobeats analytics image")
+
+<br>
+
+**Bluefin LTS**
+
+![Alt](https://repobeats.axiom.co/api/embed/3e29c59ccd003fe1939ce0bdfccdee2b14203541.svg "Repobeats analytics image")
+
+**Shared Packages**
+
+![Alt](https://repobeats.axiom.co/api/embed/8bde34be4a2fcd7f506672742563f330d0b6b240.svg "Repobeats analytics image")
