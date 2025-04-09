@@ -99,7 +99,7 @@ This is a working around until Flatpaks can be put on the ISO: [Incoming anacond
 
 ## ARM Support
 
-### Using it with your Apple Silicon Mac
+### Using it in a VM on an Apple Silicon Mac
 
 [UTM](https://github.com/utmapp/UTM/) can boot these images if suitably configured:
 
