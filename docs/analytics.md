@@ -42,8 +42,6 @@ Since Bluefin is an [Universal Blue](https://universal-blue.org) image, it lever
 
 ![Alt](https://repobeats.axiom.co/api/embed/40b85b252bf6ea25eb90539d1adcea013ccae69a.svg "Repobeats analytics image")
 
-<br>
-
 **Bluefin LTS**
 
 ![Alt](https://repobeats.axiom.co/api/embed/3e29c59ccd003fe1939ce0bdfccdee2b14203541.svg "Repobeats analytics image")
