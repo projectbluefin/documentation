@@ -12,6 +12,7 @@ Bluefin is a high performance predator, the team believes in the importance of i
 ## Fedora Countme Statistics
 
 <img src="https://raw.githubusercontent.com/ublue-os/countme/refs/heads/main/growth_bluefins.svg" alt="Bluefin's CountMe Stats" decoding="async" loading="lazy" width="1280" height="720" />
+
 :::tip
 
 ARM builds are included in Bluefin LTS
