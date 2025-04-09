@@ -15,7 +15,7 @@ Bluefin is a high performance predator, the team believes in the importance of i
 
 :::info[Note on ARM builds]
 
-ARM builds are included in Bluefin LTS since that is the only Bluefin aarch64 image that currenty exists.
+ARM devices are included in Bluefin LTS since that is the only Bluefin aarch64 image that currenty exists.
 
 :::
 
