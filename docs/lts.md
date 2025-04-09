@@ -15,7 +15,7 @@ Larger, more lethal [Bluefin](https://projectbluefin.io). `bluefin:lts` is built
 
 Bluefin LTS is a workstation designed for people who prefer Long Term Support. 
 This species of raptor is for users who prefer a slower release cadence, about a three-to-five year lifespan on a single release.
-It is also for users that depend on updated user space applications via Flathub and Homebrew, but may prefer the slower enterprise cadence for their host operating system. 
+It is designed to redefine what "LTS" means by providing a modern kernel and associated hardware enablement, while striving for a lower rate of churn. 
 
 It features backported components like a modern Linux kernel from the CentOS [Hyperscale SIG](https://sigs.centos.org/hyperscale/). We expect less churn and maintenance over the course of its lifecycle. 
 
@@ -38,11 +38,6 @@ While our payload is less churny than Fedora, note that this is still a new imag
 
 :::
 
-## Status
-
-- [Project Board](https://github.com/orgs/ublue-os/projects/9) - best place to follow status
-- [Repository](https://github.com/ublue-os/bluefin-lts)
-
 ### Blockers
 
 - bootc-image-builder flatpak support
@@ -52,11 +47,9 @@ While our payload is less churny than Fedora, note that this is still a new imag
 
 - ZFS support
 
-### Out of Scope
-
-Diverse akmod support unless someone signs up for it. 
-
 ### Images
+
+- [Repository](https://github.com/ublue-os/bluefin-lts)
 
 The following images and tags are available:
 
@@ -81,7 +74,6 @@ Note that secureboot and hibernation are mutually exclusive. We do not yet offer
 
 This is very aspirational and totally not up to us, but we'll be able to at least gather data at these events: 
 
-- Beta: Early March at [Southern California Linux Expo](https://www.socallinuxexpo.org/scale/22x)
 - General Availability: May 2025
 
 ## Installation and Caveats
