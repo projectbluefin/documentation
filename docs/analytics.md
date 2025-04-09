@@ -36,7 +36,7 @@ Check the [homebrew documentation](https://docs.brew.sh/Analytics) for more info
 
 ## Contributor Metrics
 
-Since Bluefin is an [Universal Blue](https://universal-blue.org) image, it leverages the shared maintenance of a larger community.
+Since Bluefin is an [Universal Blue](https://universal-blue.org) image, it leverages the shared maintenance of a larger community. Note that builds are automated, long periods of inactivity are normal. 
 
 **Bluefin**
 
