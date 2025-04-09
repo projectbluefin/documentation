@@ -15,14 +15,9 @@ Larger, more lethal [Bluefin](https://projectbluefin.io). `bluefin:lts` is built
 
 Bluefin LTS is a workstation designed for people who prefer Long Term Support. 
 This species of raptor is for users who prefer a slower release cadence, about a three-to-five year lifespan on a single release.
-It is also for users that depend on updated user space applications via Flathub and Homebrew, but may prefer the slower enterprise cadence for their host operating system.
-We expect less churn and maintenance over the course of its lifecycle. 
+It is also for users that depend on updated user space applications via Flathub and Homebrew, but may prefer the slower enterprise cadence for their host operating system. It features backported components from the CentOS [Hyperscale SIG](https://sigs.centos.org/hyperscale/). We expect less churn and maintenance over the course of its lifecycle. 
 
 This image is built differently from Bluefin and Bluefin GTS, and is documented here seperately.
-
-> "Sometimes there's that special Thinkpad, where everything is working perfectly. May this kernel and this laptop be as one, forever." 
->
-> -- Tired Sysadmin
 
 Bluefin LTS is composed of:
 
