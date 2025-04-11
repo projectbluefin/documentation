@@ -20,7 +20,7 @@ Other than the visual differences, and codecs, there are some other key differen
 
 You can always do what you want, but Bluefin is designed with a certain workflow in mind. Here are some guidelines from the raptor experts:
 
-- Containerize your developer environments rather than commingle them with the OS. You can define them per project in a `devcontainers.json` file managed by Git.
+- Containerize your developer environments rather than commingle them with the OS. You can define them per project in a `devcontainers.json` file managed by Git. This keeps them independt of host OS configuration.
 - Stick to flatpaks and homebrew. The ideal is to leave the core OS image unchanged. Layering packages creates a maintenance burden that may be unnecessary to take on.
 - Follow the XDG standards for overriding core OS files. The `/etc`, `/var`, `/usr/local`, and `/opt` directories are writable, and many applications will look here for overrides of the read-only files shipped with the OS image in `/usr`. Add to this your home directory, which contains the `~/.local` and `~/.config` subdirectories, which often allow per-user overrides of system defaults. When you’re [using your UNIX system correctly](https://www.youtube.com/watch?v=JOeY07qKU9c), the read-only part is invisible!
 - Isolate the old-school jank in a container. Mangling packages on your host is for those throwback [paleosaurs](https://en.wikipedia.org/wiki/Palaeosaurus) among us; you know the type.
