@@ -12,7 +12,9 @@ slug: /introduction
 
 ## Features
 
-Bluefin features a GNOME desktop configured by our community. System updates are image-based and automatic. Applications are logically separated from the system by using Flatpaks for graphical applications and `brew` for command line applications. It is designed to be hands off and to stay out of your way. 
+Bluefin features a GNOME desktop configured by our community. It is designed to be hands off and to stay out of your way so you can focus on your applications.
+
+System updates are image-based and automatic. Applications are logically separated from the system by using Flatpaks for graphical applications and `brew` for command line applications.
 
 > Bluefin is also "An interpretation of the Ubuntu spirit built on Fedora technology", which is a certain era of Ubuntu's history that a significant amount of open source people grew up with, like the Classic X-men. We try to bring that vibe here, we're the reboot. Chill vibes.
 
