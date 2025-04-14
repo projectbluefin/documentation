@@ -101,7 +101,15 @@ Thanks to Ubuntu and Canonical for the [detailed specification](https://discours
 
 ### `bluefin-cli`
 
-`ujust bluefin-cli` will install Bluefin's opt-in command line experience. It is designed to be a modern terminal experience that can be turned on and off depending on your use case. 
+`ujust bluefin-cli` will install Bluefin's opt-in command line experience. It is designed to be a modern terminal experience that can be turned on and off depending on your use case. You can enable it it for `fish` or `zsh` by pre-pending an override to the `$SHELL` variable to the command with:
+
+```
+SHELL=fish ujust bluefin-cli
+SHELL=zsh ujust bluefin-cli
+# Or do it all at once from bash with
+ujust bluefin-cli && SHELL=fish ujust bluefin-cli && SHELL=zsh ujust bluefin-cli
+
+```
 
 :::tip[A greenfield terminal experience]
 
