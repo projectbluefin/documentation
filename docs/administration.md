@@ -60,8 +60,8 @@ Bluefin publishes images based on the current and last stable version of Fedora.
 
 |                      | `gts` (default) | `stable` or `stable-daily` | `latest`       |
 | -------------------- | --------------- | -------------------------- | -------------- |
-| Fedora Version:      | 40              | 41                         | 41             |
-| GNOME Version:       | 46              | 47                         | 47             |
+| Fedora Version:      | 41              | 41                         | 42             |
+| GNOME Version:       | 47              | 47                         | 48             |
 | Target User:         | Most users      | Enthusiasts                | Advanced users |
 | System Updates:      | Weekly          | Weekly or Daily            | Daily          |
 | Application Updates: | Twice a Day     | Twice a Day                | Twice a Day    |
