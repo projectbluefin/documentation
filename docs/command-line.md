@@ -5,8 +5,6 @@ slug: /command-line
 
 Bluefin is designed to be used by normal people, but the command line is our passion. Therefore we invest in our command line experience, knowing that most people will never see it. Slay out.
 
-## Command Line Experience
-
 ### `bluefin-cli`
 
 `ujust bluefin-cli` will install Bluefin's opt-in command line experience. It is designed to be a modern terminal experience that can be turned on and off depending on your use case. You can enable it it for `fish` or `zsh` by pre-pending an override to the `$SHELL` variable to the command with:
