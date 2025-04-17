@@ -7,15 +7,7 @@ Bluefin is designed to be used by normal people, but the command line is our pas
 
 ### `bluefin-cli`
 
-`ujust bluefin-cli` will install Bluefin's opt-in command line experience. It is designed to be a modern terminal experience that can be turned on and off depending on your use case. You can enable it it for `fish` or `zsh` by pre-pending an override to the `$SHELL` variable to the command with:
-
-```
-SHELL=fish ujust bluefin-cli
-SHELL=zsh ujust bluefin-cli
-# Or do it all at once from bash with
-ujust bluefin-cli && SHELL=fish ujust bluefin-cli && SHELL=zsh ujust bluefin-cli
-
-```
+`ujust bluefin-cli` will install Bluefin's opt-in command line experience. It is designed to be a modern terminal experience that can be turned on and off depending on your use case.
 
 :::tip[A greenfield terminal experience]
 
@@ -80,6 +72,17 @@ Bluefin ships [Ptyxis](https://devsuite.app/ptyxis/) as the default terminal. It
 Then select "Use Custom Command" and then add the shell you want to use. `/usr/bin/fish` and `/usr/bin/zsh` are both included on the image:
 
 ![Ptyxis → Preferences → Profiles → A Profile Setting → Edit... → Shell → Custom Command](https://github.com/user-attachments/assets/8eb039db-7ec1-4847-b3d7-496d69fe9538)
+
+### Using `bluefin-cli` with alternate shells
+
+You can enable `bluefin-cli` for `fish` or `zsh` by pre-pending an override to the `$SHELL` variable to the command with:
+
+```
+SHELL=fish ujust bluefin-cli
+SHELL=zsh ujust bluefin-cli
+# Or do it all at once from bash with
+ujust bluefin-cli && SHELL=fish ujust bluefin-cli && SHELL=zsh ujust bluefin-cli
+```
 
 ## Fonts
 
