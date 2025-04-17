@@ -7,7 +7,7 @@ Bluefin is designed to be used by normal people, but the command line is _our pa
 
 ### `bluefin-cli`
 
-`ujust bluefin-cli` will install Bluefin's opt-in command line experience. It is designed to be a modern terminal experience that can be turned on and off depending on your use case.
+`ujust bluefin-cli` will install Bluefin's opt-in command line experience using modern tools with great features that make us more efficient. It is designed to be turned on and off. 
 
 :::tip[A greenfield terminal experience]
 
