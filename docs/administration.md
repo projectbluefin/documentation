@@ -17,8 +17,6 @@ This usually means you can set it up your system once, and then have it remain t
 
 ## Installing Applications
 
-## Graphical Applications
-
 Use the GNOME Software Center to [install applications from Flathub](https://flathub.org/). System updates and upgrades are not handled by this application, it's scope has been reduced to only install Flatpaks from Flathub. Two flatpak management tools are included:
 
 - [Warehouse](https://flathub.org/apps/io.github.flattool.Warehouse) provides application management.
@@ -182,29 +180,6 @@ Another option is [ProtonVPN](https://protonvpn.com/), which is currently in the
 
 Other VPN providers may provide a poor packaging experience and are not recommended.
 
-### Command Line Applications 
-
-The [brew](https://brew.sh/) application is the package manager used for installing command line applications in Bluefin.
-
-- [Homebrew Documentation](https://docs.brew.sh/)
-- [Homebrew Packages](https://formulae.brew.sh/)
-- [Cheatsheet](https://devhints.io/homebrew)
-
-Note that the cask functionality in homebrew is MacOS specific and non functional in Bluefin, flatpak is used instead.
-
-:::note[Forging your own path]
-
-Other package management tools like [uv](https://github.com/astral-sh/uv), [pixi](https://github.com/prefix-dev/pixi), [asdf](https://asdf-vm.com/), and [mise](https://github.com/jdx/mise) are available and work perfectly fine with homebrew.  
-
-:::
-
-
-### Fonts
-
-Homebrew is also used for installing fonts, browse [this page](https://formulae.brew.sh/cask-font/) and install your favorite fonts. They will be copied into `~/.local/share/fonts`
-
-- Microsoft Fonts: Follow [these instructions](https://github.com/colindean/homebrew-fonts-nonfree) to install Office fonts if you need them. You can skip the homebrew installation instructions since it is installed already.
-
 
 ### Enabling Local Layering
 
@@ -292,24 +267,6 @@ This feature is incomplete and needs contributors to make it a reality
 :::
 
 Bluefin and Aurora include Cockpit for machine management. We're hoping to include more out-of-the-box management templates, please [check this issue](https://github.com/ublue-os/bluefin/issues/271) if you're interested in volunteering.
-
-## Terminal Configuration
-
-### Changing the default terminal shell
-
-:::note[Help Wanted]
-
-The Bluefin team lacks expertise in both fish and zsh, contributions to help us reach feature parity would be welcome and appreciated!
-
-:::
-
-Bluefin ships [Ptyxis](https://devsuite.app/ptyxis/) as the default terminal. It shows up as `Terminal` in the menu. It is **strongly recommended** that you [change your shell via the terminal emulator instead of system-wide](https://tim.siosm.fr/blog/2023/12/22/dont-change-defaut-login-shell/). Click on the Terminal settings and edit your profile:
-
-![Ptyxis → Preferences → Profiles → A Profile Setting → Edit...](https://github.com/user-attachments/assets/2c122205-dbd8-41e6-8b7b-4f536c3b69e9)
-
-Then select "Use Custom Command" and then add the shell you want to use. `/usr/bin/fish` and `/usr/bin/zsh` are both included on the image:
-
-![Ptyxis → Preferences → Profiles → A Profile Setting → Edit... → Shell → Custom Command](https://github.com/user-attachments/assets/8eb039db-7ec1-4847-b3d7-496d69fe9538)
 
 ## Verification
 

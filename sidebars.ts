@@ -21,6 +21,7 @@ const sidebars: SidebarsConfig = {
       items: [
         "introduction",
         "administration",
+        "command-line",
         "analytics",
         "ai",
         "bluefin-dx",
