@@ -17,7 +17,7 @@ This usually means you can set it up your system once, and then have it remain t
 
 ## Installing Applications
 
-### Graphical Applications
+## Graphical Applications
 
 Use the GNOME Software Center to [install applications from Flathub](https://flathub.org/). System updates and upgrades are not handled by this application, it's scope has been reduced to only install Flatpaks from Flathub. Two flatpak management tools are included:
 
@@ -25,22 +25,6 @@ Use the GNOME Software Center to [install applications from Flathub](https://fla
 - [Flatseal](https://flathub.org/apps/com.github.tchx84.Flatseal) is also included for permission management.
 
 ![GNOME Software Center - App Illustration](https://github.com/user-attachments/assets/65b6cae5-9ed4-4d28-93b4-b6dfe9adf463)
-
-### Command Line Applications 
-
-The [brew](https://brew.sh/) application is the package manager used for installing command line applications in Bluefin.
-
-- [Homebrew Documentation](https://docs.brew.sh/)
-- [Homebrew Packages](https://formulae.brew.sh/)
-- [Cheatsheet](https://devhints.io/homebrew)
-
-Note that the cask functionality in homebrew is MacOS specific and non functional in Bluefin, flatpak is used instead.
-
-### Fonts
-
-Homebrew is also used for installing fonts, browse [this page](https://formulae.brew.sh/cask-font/) and install your favorite fonts.
-
-- Microsoft Fonts: Follow [these instructions](https://github.com/colindean/homebrew-fonts-nonfree) to install Office fonts if you need them. You can skip the homebrew installation instructions since those are provided for you.
 
 ## System Updates
 
@@ -198,6 +182,30 @@ Another option is [ProtonVPN](https://protonvpn.com/), which is currently in the
 
 Other VPN providers may provide a poor packaging experience and are not recommended.
 
+### Command Line Applications 
+
+The [brew](https://brew.sh/) application is the package manager used for installing command line applications in Bluefin.
+
+- [Homebrew Documentation](https://docs.brew.sh/)
+- [Homebrew Packages](https://formulae.brew.sh/)
+- [Cheatsheet](https://devhints.io/homebrew)
+
+Note that the cask functionality in homebrew is MacOS specific and non functional in Bluefin, flatpak is used instead.
+
+:::note[Forging your own path]
+
+Other package management tools like [uv](https://github.com/astral-sh/uv), [pixi](https://github.com/prefix-dev/pixi), [asdf](https://asdf-vm.com/), and [mise](https://github.com/jdx/mise) are available and work perfectly fine with homebrew.  
+
+:::
+
+
+### Fonts
+
+Homebrew is also used for installing fonts, browse [this page](https://formulae.brew.sh/cask-font/) and install your favorite fonts. They will be copied into `~/.local/share/fonts`
+
+- Microsoft Fonts: Follow [these instructions](https://github.com/colindean/homebrew-fonts-nonfree) to install Office fonts if you need them. You can skip the homebrew installation instructions since it is installed already.
+
+
 ### Enabling Local Layering
 
 **Local Layering will be disabled by default in Spring 2025**
@@ -271,7 +279,7 @@ This is useful if you decide you do not want to use some of the ones bundled wit
 
 :::note
 
-If your session crashes, then all of your extensions will be disabled. In the rare case when this happens you may need to turn them all back on in the extensions manager.
+In the unlikely event that your session crashes, then all of your extensions will be disabled. In the rare case when this happens you may need to turn them all back on in the extensions manager.
 
 :::
 
