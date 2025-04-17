@@ -59,6 +59,8 @@ Other package management tools like [uv](https://github.com/astral-sh/uv), [pixi
 
 ### Changing the default terminal shell
 
+Bluefin uses [bash](https://www.gnu.org/software/bash/) by default but also ships with [fish](https://fishshell.com/) and [zsh](https://www.zsh.org/) on the image for convenience.
+
 :::note[Help Wanted]
 
 The Bluefin team lacks expertise in both fish and zsh, contributions to help us reach feature parity would be welcome and appreciated!
