@@ -51,7 +51,7 @@ Note that the cask functionality in homebrew is MacOS specific and non functiona
 
 :::info[Forging your own path]
 
-Other package management tools like [uv](https://github.com/astral-sh/uv), [pixi](https://github.com/prefix-dev/pixi), [asdf](https://asdf-vm.com/), and [mise](https://github.com/jdx/mise) are available and work perfectly fine with homebrew.  
+Other package management tools like [uv](https://github.com/astral-sh/uv), [pixi](https://github.com/prefix-dev/pixi), [asdf](https://asdf-vm.com/), and [mise](https://github.com/jdx/mise) are available and work perfectly fine when installed via homebrew. Package managers inside of package managers ... hey look it was like that when we got here, this one isn't our fault!
 
 :::
 
