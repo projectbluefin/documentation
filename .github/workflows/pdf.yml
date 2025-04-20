@@ -23,3 +23,8 @@ jobs:
           # The output filename can be specified with --output option
           path: pdf/bluefin.pdf
           if-no-files-found: error
+          - name: Release
+      - name: Release PDF     
+        uses: softprops/action-gh-release@v2
+        with:
+          files: pdf/bluefin.pdf
