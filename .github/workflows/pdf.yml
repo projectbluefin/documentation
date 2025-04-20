@@ -15,7 +15,7 @@ jobs:
           cd prince-15.4.1-linux-generic-x86_64
           yes "" | sudo ./install.sh
       - name: Build PDF
-        run: npx docusaurus-prince-pdf -u https://docs.projectbluefin.io -o pdf/bluefin.pdf
+        run: npx docusaurus-prince-pdf --toc -u https://docs.projectbluefin.io -o pdf/bluefin.pdf
       - name: Upload results
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
