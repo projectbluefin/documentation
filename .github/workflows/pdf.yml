@@ -24,7 +24,7 @@ jobs:
           path: pdf/bluefin.pdf
           if-no-files-found: error
       - name: Release PDF     
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@da05d552573ad5aba039eaac05058a918a7bf631 # v2
         if: github.ref_type == 'tag'
         with:
           files: pdf/bluefin.pdf
