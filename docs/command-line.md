@@ -55,6 +55,18 @@ The community may add new tools over time, re-running `ujust bluefin-cli` will p
 
 ![image](https://github.com/user-attachments/assets/89be8151-5b57-4b71-bbe5-988bef2d6798)
 
+### `fastfetch`
+
+We love to flex our machines and software. Run `fastfetch`:
+
+![image](https://github.com/user-attachments/assets/f720f9d8-7c3c-4f3c-9112-c627686e0fb1)
+
+This screen will show you hardware information, as well as your username, machine name, and kernel version. Each Bluefin image has a "Forged On" date, commemorating the initial installation of the machine. 
+
+![image](https://github.com/user-attachments/assets/99522c15-1209-4fa5-a076-1b6289bdbc76)
+
+
+
 ## Terminal Configuration
 
 ### Changing the default terminal shell
