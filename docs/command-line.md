@@ -57,13 +57,11 @@ The community may add new tools over time, re-running `ujust bluefin-cli` will p
 
 ### Message of the Day and `fastfetch`
 
-New terminals (`Ctrl`-`Alt`-`T`) display a message of the day with some basic information: 
+We prefer to have functional bling that is slick but it must also serve a purpose. New terminals (`Ctrl`-`Alt`-`T`) display a message of the day with some basic information: 
 
 ![image](https://github.com/user-attachments/assets/0e0326ef-6640-41a2-bd24-dae1b1647cfd)
 
-The `bluefin-dx:beta` line is the name of the OS image, and is a good way to remind yourself if you're on a pinned image. 
-
-Note that the Tip rotates regularly, we try to provide useful information.  
+The `bluefin-dx:beta` line is the name of the OS image, and is a good way to remind yourself if you're on a pinned image as well as a quick reference to common commands. You can toggle it on and off with `ujust toggle-user-motd`. Note that the Tip rotates regularly in order to spread useful tips to the community. 
 
 We love to flex our machines and software. Run `fastfetch`:
 
@@ -72,8 +70,6 @@ We love to flex our machines and software. Run `fastfetch`:
 This screen will show you hardware information, as well as your username, machine name, and kernel version. Each Bluefin image has a "Forged On" date, commemorating the initial installation of the machine. 
 
 ![image](https://github.com/user-attachments/assets/99522c15-1209-4fa5-a076-1b6289bdbc76)
-
-
 
 ## Terminal Configuration
 
