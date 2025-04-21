@@ -5,7 +5,7 @@ slug: /command-line
 
 Bluefin is designed to be used by normal people, but the command line is _our passion_. Therefore we invest in our command line experience, knowing that most people will never see it. Slay out.
 
-## Command Line Applications 
+## Installing Applications 
 
 The [brew](https://brew.sh/) application is the package manager used for installing command line applications in Bluefin.
 
@@ -13,7 +13,7 @@ The [brew](https://brew.sh/) application is the package manager used for install
 - [Homebrew Packages](https://formulae.brew.sh/)
 - [Cheatsheet](https://devhints.io/homebrew)
 
-Note that the cask functionality in homebrew is MacOS specific and non functional in Bluefin, flatpak is used instead. Other package management tools like [uv](https://github.com/astral-sh/uv), [pixi](https://github.com/prefix-dev/pixi), [asdf](https://asdf-vm.com/), and [mise](https://github.com/jdx/mise) are available and work perfectly fine when installed via homebrew. Package managers inside of package managers ... hey look it was like that when we got here, this one isn't our fault! They do work great though, and some users may prefer to use those tools. But people do use them, so we give you the option to forge your own path. 
+Note that the cask functionality in homebrew is MacOS specific and non functional in Bluefin, flatpak is used instead. Other package management tools like [uv](https://github.com/astral-sh/uv), [pixi](https://github.com/prefix-dev/pixi), [asdf](https://asdf-vm.com/), and [mise](https://github.com/jdx/mise) are available and work perfectly fine when installed via homebrew. Package managers inside of package managers ... hey look it was like that when we got here, this one isn't our fault! They do work great though, and some users may prefer those tools, so we give *you* the option to forge your own path. 
 
 :::info[Don't cross the streams]
 
