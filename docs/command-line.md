@@ -17,7 +17,7 @@ Note that the cask functionality in homebrew is MacOS specific and non functiona
 
 :::info[Don't cross the streams]
 
-Generally speaking, if you need a tool or utility, use homebrew, if you need a library or something for development work, use a container. 
+Generally speaking, if you need a tool or utility, use homebrew. If you need a library and dependencies for development work, use a container. This keeps everything nice and clean. 
 
 :::
 
