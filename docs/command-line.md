@@ -5,6 +5,22 @@ slug: /command-line
 
 Bluefin is designed to be used by normal people, but the command line is _our passion_. Therefore we invest in our command line experience, knowing that most people will never see it. Slay out.
 
+## Command Line Applications 
+
+The [brew](https://brew.sh/) application is the package manager used for installing command line applications in Bluefin.
+
+- [Homebrew Documentation](https://docs.brew.sh/)
+- [Homebrew Packages](https://formulae.brew.sh/)
+- [Cheatsheet](https://devhints.io/homebrew)
+
+Note that the cask functionality in homebrew is MacOS specific and non functional in Bluefin, flatpak is used instead. Other package management tools like [uv](https://github.com/astral-sh/uv), [pixi](https://github.com/prefix-dev/pixi), [asdf](https://asdf-vm.com/), and [mise](https://github.com/jdx/mise) are available and work perfectly fine when installed via homebrew. Package managers inside of package managers ... hey look it was like that when we got here, this one isn't our fault!
+
+:::info[Don't cross the streams]
+
+Generally speaking, if you need a tool or utility, use homebrew, if you need a library or something for development work, use a container. 
+
+:::
+
 ### `bluefin-cli`
 
 `ujust bluefin-cli` will install Bluefin's opt-in command line experience using modern tools with great features that make us more efficient. It is designed to be turned on and off. 
@@ -38,22 +54,6 @@ The community may add new tools over time, re-running `ujust bluefin-cli` will p
 > -- Bill Childers (Probably, this quote is made up)
 
 ![image](https://github.com/user-attachments/assets/89be8151-5b57-4b71-bbe5-988bef2d6798)
-
-## Command Line Applications 
-
-The [brew](https://brew.sh/) application is the package manager used for installing command line applications in Bluefin.
-
-- [Homebrew Documentation](https://docs.brew.sh/)
-- [Homebrew Packages](https://formulae.brew.sh/)
-- [Cheatsheet](https://devhints.io/homebrew)
-
-Note that the cask functionality in homebrew is MacOS specific and non functional in Bluefin, flatpak is used instead.
-
-:::info[Forging your own path]
-
-Other package management tools like [uv](https://github.com/astral-sh/uv), [pixi](https://github.com/prefix-dev/pixi), [asdf](https://asdf-vm.com/), and [mise](https://github.com/jdx/mise) are available and work perfectly fine when installed via homebrew. Package managers inside of package managers ... hey look it was like that when we got here, this one isn't our fault!
-
-:::
 
 ## Terminal Configuration
 
