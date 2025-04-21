@@ -55,7 +55,15 @@ The community may add new tools over time, re-running `ujust bluefin-cli` will p
 
 ![image](https://github.com/user-attachments/assets/89be8151-5b57-4b71-bbe5-988bef2d6798)
 
-### `fastfetch`
+### Message of the Day and `fastfetch`
+
+New terminals (`Ctrl`-`Alt`-`T`) display a message of the day with some basic information: 
+
+![image](https://github.com/user-attachments/assets/0e0326ef-6640-41a2-bd24-dae1b1647cfd)
+
+The `bluefin-dx:beta` line is the name of the OS image, and is a good way to remind yourself if you're on a pinned image. 
+
+Note that the Tip rotates regularly, we try to provide useful information.  
 
 We love to flex our machines and software. Run `fastfetch`:
 
