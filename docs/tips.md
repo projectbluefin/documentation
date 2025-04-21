@@ -56,8 +56,14 @@ Use cases are keeping Windows around for:
 
 ## Building Your Own Bluefin
 
-Use the [image template](https://github.com/ublue-os/image-template) to make your own custom Bluefin image. Here are the maintainer custom images if you're looking for examples:
+Bluefin can be extended via a custom image. Similarly to how we derive from Fedora and add our own opinions, users are free to build upon (or strip down) Bluefin however they see fit.  
+Use the [image template](https://github.com/ublue-os/image-template) to make your own custom Bluefin image. 
+
+> The operating system being used to draft these words is the product of my own artistic and creative expression – built on the work of countless other human beings. And that brings me joy.
+>
+> - [@ledif](https://blues.win/posts/joy-of-linux-theming/)
+
+Here are the maintainer custom images if you're looking for examples:
 
 - m2Giles, [m2os](https://github.com/m2Giles/m2os)
 - bsherman, [bOS](https://github.com/bsherman/bos)
-- castrojo, [Achillobator](https://github.com/castrojo/achillobator)
