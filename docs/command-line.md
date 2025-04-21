@@ -3,7 +3,7 @@ title: Command Line
 slug: /command-line
 ---
 
-Bluefin is designed to be used by normal people, but the command line is _our passion_. Therefore we invest in our command line experience, knowing that most people will never see it. Slay out.
+Bluefin is designed to be used by normal people, but the command line is _**our passion**_. Therefore we invest in our command line experience, knowing that most people will never see it. Slay out.
 
 ## Installing Applications 
 
