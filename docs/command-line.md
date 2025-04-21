@@ -71,6 +71,12 @@ This screen will show you hardware information, as well as your username, machin
 
 ![image](https://github.com/user-attachments/assets/99522c15-1209-4fa5-a076-1b6289bdbc76)
 
+:::tip[Of course it does]
+
+Note that the terminal color scheme will automatically match [your desktop accent color](https://release.gnome.org/47/). Restart your terminal after setting the color for the setting to apply.
+
+:::
+
 ## Terminal Configuration
 
 ### Changing the default terminal shell
