@@ -171,8 +171,9 @@ Check the [Fedora Silverblue User Guide](https://docs.fedoraproject.org/en-US/fe
 
 - [Using Tailscale with Mullvad](https://tailscale.com/kb/1258/mullvad-exit-nodes) - provides the best out of the box experience
 - [Using Tailscale with Docker](https://tailscale.com/kb/1282/docker) - for development
-- `ujust toggle-tailscale` will remove the built in desktop integration if you prefer to use something else.
-- Good VPN providers provide Wireguard configurations that can be imported directly into the Network Manager, check their documentation for more information.
+- `ujust toggle-tailscale` will remove the built in desktop integration if you prefer to use something else
+- Tailscale's [YouTube channel](https://www.youtube.com/@Tailscale) has lots of great tips and tricks
+- Good VPN providers provide Wireguard configurations that can be imported directly into the Network Manager, check their documentation for more information
 
 Another option is [ProtonVPN](https://protonvpn.com/), which is currently in the process of [officially supporting Flatpak](https://github.com/flathub/com.protonvpn.www/issues/349).
 
