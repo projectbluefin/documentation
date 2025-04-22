@@ -20,6 +20,7 @@ const sidebars: SidebarsConfig = {
       collapsed: false,
       items: [
         "introduction",
+        "installation",
         "administration",
         "command-line",
         "analytics",
