@@ -4,7 +4,15 @@ slug: /installation
 ---
 # Installation Runbook
 
-In order to set yourself up to success it's useful to plan out your Bluefin installation into three distinct phases, mirroring the systems operations lifecycle. Here is a short [runbook](https://www.pagerduty.com/resources/learn/what-is-a-runbook/) for the Bluefin installation process. Read the entirety of this documentation in order to ensure survival. (In case of a raptor attack).
+In order to set yourself up to success it's useful to plan out your Bluefin installation into phases so that you can avoid common pitfalls and poorly supported configurations. The pros call this the "systems operations lifecycle". This is just jargon for having a decent plan for what you want to accomplish. 
+
+:::tip[Please do not send your loved ones to this page]
+
+This runbook is for experienced users who are installing Bluefin for someone else. It is intended to be technical.  
+
+:::
+
+Here is a short [runbook](https://www.pagerduty.com/resources/learn/what-is-a-runbook/) for the Bluefin installation process. Read the entirety of this documentation in order to ensure survival. (In case of a raptor attack).
 
 ### Requirements
 
