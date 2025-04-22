@@ -26,7 +26,11 @@ You can always do what you want, but Bluefin is designed with a certain workflow
 - Isolate the old-school jank in a container. Mangling packages on your host is for those throwback [paleosaurs](https://en.wikipedia.org/wiki/Palaeosaurus) among us; you know the type.
 - Don’t overthink rebooting. Just turn off your PC when you’re not using it, and let the OS updates happen automatically, as they will.
 - Bluefin performs best on Linux friendly hardware like the Framework series of laptops. Check hardware compatibility before making the commitment.
-- Keep Bluefin’s ecosystem healthy by donating to application developers. 
+- Keep Bluefin’s ecosystem healthy by donating to application developers.
+
+> I have Become Legend.
+>
+> - [Dominus Ghaul](https://www.youtube.com/watch?v=Og-2axO4Bi0)
 
 ## So who is this for?
 
