@@ -8,7 +8,7 @@ In order to set yourself up to success it's useful to plan out your Bluefin inst
 
 But you can never be too sure, here's the nitty gritty in case you need it.
 
-:::tip[Please do not send your loved ones to this page]
+:::info[💙 Please do not send your loved ones to this page 💙]
 
 This runbook is for experienced users who are installing Bluefin for someone else. It is intended to be technical.  
 
