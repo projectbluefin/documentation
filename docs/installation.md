@@ -3,8 +3,10 @@ title: Installation
 slug: /installation
 ---
 # Installation Runbook
+a
+In order to set yourself up to success it's useful to plan out your Bluefin installation into phases so that you can avoid common pitfalls and poorly supported configurations. On Linux-friendly hardware usually just booting into the installation process and clicking through the recommended installer defaults is enough.
 
-In order to set yourself up to success it's useful to plan out your Bluefin installation into phases so that you can avoid common pitfalls and poorly supported configurations. On Linux-friendly hardware usually just booting into the installtion process and clicking through the recommended installer defaults is enough.
+![installer](https://github.com/user-attachments/assets/74871635-bd23-456e-b874-ecaed59765d3)
 
 But you can never be too sure, here's the nitty gritty in case you need it.
 
