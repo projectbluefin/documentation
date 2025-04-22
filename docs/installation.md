@@ -1,10 +1,12 @@
 ---
-title: Installation Runbook
+title: Installation
 slug: /installation
 ---
+# Installation Runbook
 
+In order to set yourself up to success it's useful to plan out your Bluefin installation into three distinct phases, mirroring the systems operations lifecycle. Here is a short [runbook](https://www.pagerduty.com/resources/learn/what-is-a-runbook/) for the Bluefin installation process. Read the entirety of this documentation in order to ensure survival. (In case of a raptor attack).
 
-# Requirements
+### Requirements
 
 Review the [Fedora Silverblue installation instructions](https://docs.fedoraproject.org/en-US/fedora-silverblue/installation/). Some points to consider:
 
@@ -14,10 +16,6 @@ Review the [Fedora Silverblue installation instructions](https://docs.fedoraproj
 - We **strongly recommend** using automated partitioning during installation, there are [known issues](https://docs.fedoraproject.org/en-US/fedora-silverblue/installation/) with manual partition on Atomic systems and is unnecessary to set up unless you are on a multi-disk system.
 - A stock Bluefin installation is 11GB. Bluefin with developer mode enabled (`bluefin-dx`) is 19GB.
 - Read the installation runbook below to ensure your device and use case are supported by Bluefin!
-
-# Installation Runbook
-
-In order to set yourself up to success it's useful to plan out your Bluefin installation into three distinct phases, mirroring the systems operations lifecycle. Here is a short [runbook](https://www.pagerduty.com/resources/learn/what-is-a-runbook/) for the Bluefin installation process. Read the entirety of this documentation in order to ensure survival. (In case of a raptor attack).
 
 ## Day 0: Planning
 
