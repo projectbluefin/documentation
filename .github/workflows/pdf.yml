@@ -23,8 +23,8 @@ jobs:
           # The output filename can be specified with --output option
           path: pdf/bluefin.pdf
           if-no-files-found: error
-      - name: Release PDF     
-        uses: softprops/action-gh-release@da05d552573ad5aba039eaac05058a918a7bf631 # v2
-        if: github.ref_type == 'tag'
-        with:
-          files: pdf/bluefin.pdf
+      - name: Upload Release Artifact
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          gh release upload ${{ needs.release_please.outputs.tag_name }} *.pdf
