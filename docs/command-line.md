@@ -57,7 +57,7 @@ The community may add new tools over time, re-running `ujust bluefin-cli` will p
 
 ### Message of the Day and `fastfetch`
 
-We prefer to have functional bling that is slick but it must also serve a purpose. New terminals (`Ctrl`-`Alt`-`T`) display a message of the day with some basic information: 
+We prefer to have functional bling that is slick but it must also serve a purpose. New terminals (`Ctrl`-`Alt`-`Enter`) display a message of the day with some basic information: 
 
 ![image](https://github.com/user-attachments/assets/0e0326ef-6640-41a2-bd24-dae1b1647cfd)
 
