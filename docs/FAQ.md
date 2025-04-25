@@ -36,7 +36,7 @@ You can always do what you want, but Bluefin is designed with a certain workflow
 
 We **strongly** believe that new users to Linux should be introduced by via atomic image and not the traditional desktop. It is clear to us that this is a generational shift. We're purposely here to help existing users bury the past and move on to something more useful than wrestling with their operating system.
 
-> **JARGON WARNING**: This next section goes in to the why into more detail than most people need. You don't need to know any of this to use your computer, we provide this information for more advanced users to understand the design decisions in Bluefin. **95% of folks will be fine just using their browser and the occasional Flatpak**, we've designed it to be a general purpose OS to fit most people's needs without care about this stuff.
+> **JARGON WARNING**: This next section goes into the why in more detail than most people need. You don't need to know any of this to use your computer, we provide this information for more advanced users to understand the design decisions in Bluefin. **95% of folks will be fine just using their browser and the occasional Flatpak**, we've designed it to be a general purpose OS to fit most people's needs without care about this stuff.
 
 ### Rationale
 
