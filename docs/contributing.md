@@ -178,7 +178,7 @@ Building locally is much faster than building in GitHub and is a good way to mov
 - Find out the IP address for the default gateway
 
   ```bash
-  ip route | grep "default via" | cut -d ' ' -f 3`
+  ip route | grep "default via" | cut -d ' ' -f 3
   ```
 
   _Example Output:_
@@ -209,7 +209,7 @@ Building locally is much faster than building in GitHub and is a good way to mov
 Clone the repository of your choice. In this example we are using [`https://github.com/ublue-os/main`](https://github.com/ublue-os/main)
 
 ```bash
-git clone https://github.com/ublue-os/main.git`
+git clone https://github.com/ublue-os/main.git
 ```
 
 ### Build the image
