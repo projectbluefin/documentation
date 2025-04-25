@@ -42,11 +42,12 @@ System updates are image-based and automatic. Applications are logically separat
     management along with `libratbagd`
   - [rclone](https://rclone.org/overview/) - mount almost any remote bucket onto your local machine, great for multiple machine setups
   - [restic](https://restic.net/) - A modern backup program that can back up your files
-  - `zsh` and `fish` included ([Instructions](/administration#changing-the-default-terminal-shell))
+  - `zsh` and `fish` included ([Instructions](/administration#changing-the-default-terminal-shell)) as optional shells
+  - [Switcheroo support](https://man.archlinux.org/man/switcherooctl.1.en?ref=news.itsfoss.com) for multi-GPU laptops
+  
 - Built on top of the the [Universal Blue main image](https://github.com/ublue-os/main) - resulting in easy sharing of benefits:
   - Extra udev rules for game controllers and [other devices](https://github.com/ublue-os/config) included out of the box
   - All multimedia codecs included
-  - Many improvements from [Bazzite](https://bazzite.gg): [Switcheroo support](https://man.archlinux.org/man/switcherooctl.1.en?ref=news.itsfoss.com) for multi-GPU laptops
   - System designed for automatic staging of updates
     - If you've never used an image-based Linux before just use your computer normally
     - Don't overthink it, just shut your computer off when you're not using it
