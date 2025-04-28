@@ -25,12 +25,18 @@ const sidebars: SidebarsConfig = {
         "gaming",
         "ai",
         "bluefin-dx",
-        "command-line",
+        "command-line"
+      ],
+    },
+    {,
+      type: "category",
+      label: "Project Information",
+      collapsed: false,
+      iteams: [        
         "analytics",
         "tips",
         "FAQ",
         "press-kit",
-      ],
     },
     {
       type: "category",
@@ -49,19 +55,19 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: "category",
-      label: "Framework Laptops",
+      label: "Framework Hardware",
       collapsed: true,
       items: ["framework", "framework-13", "framework-16"],
     },
     {
       type: "category",
-      label: "T2 Macs (2018-2020)",
+      label: "Other Hardware",
       collapsed: true,
       items: ["t2-mac"],
     },
     {
       type: "category",
-      label: "Supporting The Project",
+      label: "Donations",
       collapsed: false,
       items: ["donations"],
     },
