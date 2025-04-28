@@ -31,7 +31,7 @@ const sidebars: SidebarsConfig = {
     {
       type: "category",
       label: "Project Information",
-      collapsed: true,
+      collapsed: false,
       items: [
         "analytics",
         "FAQ",
