@@ -26,6 +26,7 @@ jobs:
           path: pdf/bluefin.pdf
           if-no-files-found: error
       - name: Upload Release Artifact
+        if: github.event_name != 'pull_request'
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
