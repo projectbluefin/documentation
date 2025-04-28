@@ -11,9 +11,9 @@ Most of the gaming experience depends on: An updated Linux kernel, updated MESA 
 
 :::
 
-Note that this experience is for general use case gaming and doesn't cover Virtual Reality headsets and other deep gaming customization. [Consider using Bazzite](https://bazzite.gg) instead. It features a more aggressive kernel update cadence than Bluefin for people who want to live on the leading edge.
+Note that this experience is for general use case gaming and doesn't cover Virtual Reality headsets and other deep gaming customization.[Consider using Bazzite](https://bazzite.gg) instead. It features a more aggressive kernel update cadence than Bluefin for people who want to live on the leading edge.
 
-## Installation
+##
 
 Run `ujust install-gaming-flatpaks`. 
 
