@@ -48,7 +48,9 @@ quay.io/ramalama/rocm                      latest      8875feffdb87  5 days ago 
 
 ## Alpaca Graphical Client
 
-For light chatbot usage we recommend that users [install Alpaca](https://flathub.org/apps/com.jeffser.Alpaca) to manage and chat with your LLM models from within a native desktop application. Alpaca supports Nvidia and AMD[^1] acceleration natively and _includes ollama_.
+For light chatbot usage we recommend that users [install Alpaca](https://flathub.org/apps/com.jeffser.Alpaca) to manage and chat with your LLM models from within a native desktop application. Alpaca supports Nvidia and AMD[^1] acceleration natively.
+
+The user is prompted to [install ollama separately](https://github.com/Jeffser/Alpaca/wiki/Installing-Ollama) when running Alpaca for the first time.
 
 ![image](https://github.com/user-attachments/assets/9fd38164-e2a9-4da1-9bcd-29e0e7add071)
 
