@@ -25,11 +25,18 @@ const sidebars: SidebarsConfig = {
         "gaming",
         "ai",
         "bluefin-dx",
-        "command-line",
+        "command-line"
+      ],
+    },
+    {
+      type: "category",
+      label: "Project Information",
+      collapsed: true,
+      items: [
         "analytics",
-        "tips",
         "FAQ",
         "press-kit",
+        "tips"
       ],
     },
     {
@@ -55,16 +62,11 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: "category",
-      label: "T2 Macs (2018-2020)",
+      label: "Other Hardware",
       collapsed: true,
       items: ["t2-mac"],
     },
-    {
-      type: "category",
-      label: "Supporting The Project",
-      collapsed: false,
-      items: ["donations"],
-    },
+    "donations",
   ],
 };
 
