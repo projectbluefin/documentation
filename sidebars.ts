@@ -28,7 +28,7 @@ const sidebars: SidebarsConfig = {
         "command-line"
       ],
     },
-    {,
+    {
       type: "category",
       label: "Project Information",
       collapsed: false,
