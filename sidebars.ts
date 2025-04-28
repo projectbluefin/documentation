@@ -32,11 +32,11 @@ const sidebars: SidebarsConfig = {
       type: "category",
       label: "Project Information",
       collapsed: false,
-      iteams: [        
+      items: [        
         "analytics",
         "tips",
         "FAQ",
-        "press-kit",
+        "press-kit"
     },
     {
       type: "category",
@@ -51,25 +51,25 @@ const sidebars: SidebarsConfig = {
       type: "category",
       label: "Contributing",
       collapsed: true,
-      items: ["contributing", "local"],
+      items: ["contributing", "local"]
     },
     {
       type: "category",
       label: "Framework Hardware",
       collapsed: true,
-      items: ["framework", "framework-13", "framework-16"],
+      items: ["framework", "framework-13", "framework-16"]
     },
     {
       type: "category",
       label: "Other Hardware",
       collapsed: true,
-      items: ["t2-mac"],
+      items: ["t2-mac"]
     },
     {
       type: "category",
       label: "Donations",
       collapsed: false,
-      items: ["donations"],
+      items: ["donations"]
     },
   ],
 };
