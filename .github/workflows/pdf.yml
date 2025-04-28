@@ -8,6 +8,8 @@ jobs:
   pdf:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+
       - name: Install Prince
         run: |
           curl https://www.princexml.com/download/prince-15.4.1-linux-generic-x86_64.tar.gz -O
@@ -24,6 +26,7 @@ jobs:
           path: pdf/bluefin.pdf
           if-no-files-found: error
       - name: Upload Release Artifact
+        if: github.event_name != 'pull_request'
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
