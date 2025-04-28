@@ -22,7 +22,7 @@ const sidebars: SidebarsConfig = {
         "introduction",
         "installation",
         "administration",
-        "gaming"
+        "gaming",
         "ai",
         "bluefin-dx",
         "command-line",
