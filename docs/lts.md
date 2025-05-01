@@ -87,9 +87,9 @@ Do NOT rebase to this image from an existing Bluefin, Aurora, Bazzite, or Fedora
 :::
 
 ### 1. Snag the ISO
-   - x86_64: [bluefin-lts.iso](https://download.projectbluefin.io/bluefin-lts.iso) ([checkum](https://download.projectbluefin.io/bluefin-lts.iso-CHECKSUM))
-   - ARM: [bluefin-lts-arm64.iso](https://download.projectbluefin.io/bluefin-lts-arm64.iso) ([checksum](https://download.projectbluefin.io/bluefin-lts-arm64.iso-CHECKSUM))
-   
+
+Check the [downloads page](./downloads.md) to download the correct ISO.
+
 ### 2. On first boot, install flatpaks: `ujust install-system-flatpaks`
   
 This is a working around until Flatpaks can be put on the ISO: [Incoming anaconda PR](https://github.com/rhinstaller/anaconda/pull/6056) for the flatpaks, also:

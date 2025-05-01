@@ -25,6 +25,10 @@ The [website](https://projectbluefin.io) is the intended method for users to dow
 - Bluefin: https://download.projectbluefin.io/bluefin-live-nvidia-open-stable-amd64.iso
 - Bluefin GTS: https://download.projectbluefin.io/bluefin-live-nvidia-open-gts-amd64.iso
 
+### ARM (aarch64)
+
+- Bluefin LTS (Beta): [bluefin-lts-arm64.iso](https://download.projectbluefin.io/bluefin-lts-arm64.iso)
+
 ## Torrents
 
 Torrents are graciously provided by fosstorrents.com:
