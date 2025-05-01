@@ -29,7 +29,7 @@ The [website](https://projectbluefin.io) is the intended method for users to dow
 ### ARM (aarch64)
 
 - Bluefin LTS (Beta): [bluefin-lts-arm64.iso](https://download.projectbluefin.io/bluefin-lts-arm64.iso)
-- Bluefin GDX: [bluefin-gdx-lts-arm64.iso](https://download.projectbluefin.io/bluefin-gdx-lts-arm64.iso)
+- Bluefin GDX (Beta): [bluefin-gdx-lts-arm64.iso](https://download.projectbluefin.io/bluefin-gdx-lts-arm64.iso)
 
 ## Torrents
 
