@@ -23,7 +23,7 @@ Complete with actual job titles:
 - [Robert Sturla](https://github.com/p5) - "Hold onto your butts" guy and Lead DevOps
 - ... this could be you! ...
 
-- <a class="github-button" "https://github.com/sponsors/madonuko" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-heart" data-size="large" aria-label="Sponsor @Madonuko">Sponsor</a> [Madonuko](https://github.com/madonuko) (Fyra Labs) - installation experience
+- <a class="github-button" href="https://github.com/sponsors/madonuko" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-heart" data-size="large" aria-label="Sponsor @Madonuko">Sponsor</a> [Madonuko](https://github.com/madonuko) (Fyra Labs) - installation experience
 
 ## Upstream Projects included in Bluefin
 
