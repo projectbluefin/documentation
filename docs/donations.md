@@ -21,7 +21,8 @@ Complete with actual job titles:
 - <a class="github-button" href="https://github.com/sponsors/castrojo" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-heart" data-size="large" aria-label="Sponsor @castrojo">Sponsor</a> [Jorge Castro](https://github.com/castrojo/) - Product Development and co-maintainer
 - <a class="github-button" href="https://github.com/sponsors/tulilirockz" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-heart" data-size="large" aria-label="Sponsor tulilirockz">Sponsor</a> [Tulip Blossom](https://github.com/tulilirockz) Large Maniraptoran Specialist and co-maintainer
 - [Robert Sturla](https://github.com/p5) - "Hold onto your butts" guy and Lead DevOps
-- ... this could be you! ...
+
+and special guest: 
 
 - <a class="github-button" href="https://github.com/sponsors/madonuko" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-heart" data-size="large" aria-label="Sponsor @Madonuko">Sponsor</a> [Madonuko](https://github.com/madonuko) (Fyra Labs) - installation experience
 
