@@ -24,10 +24,12 @@ The [website](https://projectbluefin.io) is the intended method for users to dow
 
 - Bluefin: [bluefin-live-nvidia-open-stable-amd64.iso](https://download.projectbluefin.io/bluefin-live-nvidia-open-stable-amd64.iso)
 - Bluefin GTS: [bluefin-live-nvidia-open-gts-amd64.iso](https://download.projectbluefin.io/bluefin-live-nvidia-open-gts-amd64.iso)
+- Bluefin GDX (Beta) : [bluefin-gdx-lts.iso](https://download.projectbluefin.io/bluefin-gdx-lts.iso)
 
 ### ARM (aarch64)
 
 - Bluefin LTS (Beta): [bluefin-lts-arm64.iso](https://download.projectbluefin.io/bluefin-lts-arm64.iso)
+- Bluefin GDX: [bluefin-gdx-lts-arm64.iso](https://download.projectbluefin.io/bluefin-gdx-lts-arm64.iso)
 
 ## Torrents
 
