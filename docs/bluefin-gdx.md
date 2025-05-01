@@ -41,8 +41,8 @@ Bluefin GDX runs great on any PC with the right hardware, but has been tested an
 
 ## Installation
 
-- x86_64: [bluefin-gdx-lts.iso](https://download.projectbluefin.io/bluefin-gdx-lts.iso) ([checksum](https://download.projectbluefin.io/bluefin-gdx-lts.iso-CHECKSUM))
-- ARM: [bluefin-gdx-lts-arm64.iso](https://download.projectbluefin.io/bluefin-gdx-lts-arm64.iso) ([checksum](https://download.projectbluefin.io/bluefin-gdx-lts-arm64.iso-CHECKSUM))
+Check the [downloads page](./downloads.md) for more information. 
+
 - Image: [bluefin-gdx:lts](https://github.com/ublue-os/bluefin-lts/pkgs/container/bluefin-gdx)
 
 Follow the [Bluefin LTS](/lts) instructions for post installation steps. 
