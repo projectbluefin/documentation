@@ -36,7 +36,8 @@ const sidebars: SidebarsConfig = {
         "analytics",
         "FAQ",
         "press-kit",
-        "tips"
+        "tips",
+        "downloads"
       ],
     },
     {
