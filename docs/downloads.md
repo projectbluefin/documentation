@@ -42,6 +42,6 @@ Torrents are graciously provided by fosstorrents.com:
 
 These are the older Anaconda-based installers with an older version of Bluefin, but don't worry it will autoupdate. Try this if nothing else works:
 
-- [bluefin-stable.iso](https://projectbluefin.dev/bluefin-stable.iso)
-- [bluefin-stable-nvidia.iso](https://projectbluefin.dev/bluefin-nvidia-stable.iso)
+- Bluefin (AMD/Intel): [bluefin-stable.iso](https://projectbluefin.dev/bluefin-stable.iso) - [Checksum](https://projectbluefin.dev/bluefin-stable.iso-CHECKSUM)
+- Bluefin (for Nvidia):  [bluefin-stable-nvidia.iso](https://projectbluefin.dev/bluefin-nvidia-stable.iso) - [Checksum](https://projectbluefin.dev/bluefin-nvidia-stable.iso-CHECKSUM)
 
