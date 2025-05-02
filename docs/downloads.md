@@ -19,18 +19,18 @@ The [website](https://projectbluefin.io) is the intended method for users to dow
 
 - Bluefin: [bluefin-live-stable-amd64.iso](https://download.projectbluefin.io/bluefin-live-stable-amd64.iso)
 - Bluefin GTS: [bluefin-live-gts-amd64.iso](https://download.projectbluefin.io/bluefin-live-gts-amd64.iso)
-- Bluefin LTS (Beta): [bluefin-lts.iso](https://download.projectbluefin.io/bluefin-lts.iso)
+- Bluefin LTS (Beta): [bluefin-live-lts-amd64.iso](https://download.projectbluefin.io/bluefin-lts-live-amd64.iso)
 
 ### Nvidia
 
 - Bluefin: [bluefin-live-nvidia-open-stable-amd64.iso](https://download.projectbluefin.io/bluefin-live-nvidia-open-stable-amd64.iso)
 - Bluefin GTS: [bluefin-live-nvidia-open-gts-amd64.iso](https://download.projectbluefin.io/bluefin-live-nvidia-open-gts-amd64.iso)
-- Bluefin GDX (Beta) : [bluefin-gdx-lts.iso](https://download.projectbluefin.io/bluefin-gdx-lts.iso)
+- Bluefin GDX (Beta) : [bluefin-gdx-lts-amd64.iso](https://download.projectbluefin.io/bluefin-gdx-lts-amd64.iso)
 
 ### ARM (aarch64)
 
-- Bluefin LTS (Beta): [bluefin-lts-arm64.iso](https://download.projectbluefin.io/bluefin-lts-arm64.iso)
-- Bluefin GDX (Beta): [bluefin-gdx-lts-arm64.iso](https://download.projectbluefin.io/bluefin-gdx-lts-arm64.iso)
+- Bluefin LTS (Beta): [bluefin-live-lts-arm64.iso](https://download.projectbluefin.io/bluefin-live-lts-arm64.iso)
+- Bluefin GDX (Beta): [bluefin-live-gdx-lts-arm64.iso](https://download.projectbluefin.io/bluefin-gdx-lts-arm64.iso)
 
 ## Torrents
 
@@ -43,5 +43,5 @@ Torrents are graciously provided by fosstorrents.com:
 These are the older Anaconda-based installers with an older version of Bluefin, but don't worry it will autoupdate. Try this if nothing else works:
 
 - Bluefin (AMD/Intel): [bluefin-stable.iso](https://projectbluefin.dev/bluefin-stable.iso) - [Checksum](https://projectbluefin.dev/bluefin-stable.iso-CHECKSUM)
-- Bluefin (for Nvidia):  [bluefin-stable-nvidia.iso](https://projectbluefin.dev/bluefin-nvidia-stable.iso) - [Checksum](https://projectbluefin.dev/bluefin-nvidia-stable.iso-CHECKSUM)
+- Bluefin (for Nvidia):  [bluefin-nvidia-stable.iso](https://projectbluefin.dev/bluefin-nvidia-stable.iso) - [Checksum](https://projectbluefin.dev/bluefin-nvidia-stable.iso-CHECKSUM)
 
