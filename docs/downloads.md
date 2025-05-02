@@ -37,3 +37,11 @@ The [website](https://projectbluefin.io) is the intended method for users to dow
 Torrents are graciously provided by fosstorrents.com:
 
 #### [fosstorrents.com/distributions/project-bluefin/](https://fosstorrents.com/distributions/project-bluefin/)
+
+## Older Backup ISOs
+
+These are the older Anaconda-based installers with an older version of Bluefin, but don't worry it will autoupdate. Try this if nothing else works:
+
+- [bluefin-stable.iso](https://projectbluefin.dev/bluefin-stable.iso)
+- [bluefin-stable-nvidia.iso](https://projectbluefin.dev/bluefin-nvidia-stable.iso)
+
