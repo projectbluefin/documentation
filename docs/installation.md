@@ -72,7 +72,12 @@ Most pain points can be addressed directly by planning ahead of time. Note that 
 
 ### Deployment
 
-- Download the right ISO from [the website](https://projectbluefin.io/#scene-picker)
+:::info[Download Bluefin]
+
+Download the right ISO from [the website](https://projectbluefin.io/#scene-picker)
+
+:::
+
 - Install the operating system
   - Use the entire disk with automatic partitioning
   - (Optional): [Set up Secure Boot](/introduction.md#secure-boot)
