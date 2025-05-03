@@ -19,7 +19,7 @@ The [website](https://projectbluefin.io) is the intended method for users to dow
 
 - Bluefin: [bluefin-live-stable-amd64.iso](https://download.projectbluefin.io/bluefin-live-stable-amd64.iso)
 - Bluefin GTS: [bluefin-live-gts-amd64.iso](https://download.projectbluefin.io/bluefin-live-gts-amd64.iso)
-- Bluefin LTS (Beta): [bluefin-live-lts-amd64.iso](https://download.projectbluefin.io/bluefin-lts-live-amd64.iso)
+- Bluefin LTS (Beta): [bluefin-live-lts-amd64.iso](https://download.projectbluefin.io/bluefin-live-lts-amd64.iso)
 
 ### Nvidia
 
