@@ -80,6 +80,10 @@ With Aurora, Bluefin, Bazzite, and uCore you can have a work related image, one 
 
 One "OS" tailored for each use case, but still also, just Fedora. We never quite got the phone but GSConnect is good enough. Until someone starts making phosh images. 😈
 
+## What's with all the dinosaurs?
+
+Check out [this interview](https://youtu.be/XpKFcLqbd-A?si=URBJa_IzxU18UObY&t=2451) for a summary of the dinosaurs!
+
 ## Starship is not for me, how do I disable it?
 
 You can remove or comment the line below in `/etc/bashrc` to restore the default prompt.
