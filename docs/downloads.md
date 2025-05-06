@@ -47,7 +47,7 @@ There are currently two sets of installation media. One using the Anaconda insta
 
 - Bluefin: [bluefin-nvidia-open-stable-amd64.iso](https://download.projectbluefin.io/bluefin-nvidia-open-stable-amd64.iso)
 - Bluefin GTS: [bluefin-nvidia-open-gts-amd64.iso](https://download.projectbluefin.io/bluefin-nvidia-open-gts-amd64.iso)
-- Bluefin GDX: [bluefin-gdx-amd64.iso](https://download.projectbluefin.io/bluefin-gdx-amd64.iso)
+- Bluefin GDX (Beta): [bluefin-gdx-amd64.iso](https://download.projectbluefin.io/bluefin-gdx-amd64.iso)
 
 ### ARM (aarch64)
 
