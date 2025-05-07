@@ -115,11 +115,6 @@ If there are other ways to set this up on MacOS please considering sending a pul
 
 :::
 
-### Differences/Errata
-
-- [Pixi](https://github.com/prefix-dev/pixi) package manager is used instead
-  - Homebrew doesn't have ARM Linux builds
-
 ## Building Locally 
 
 To build locally and then spit out a VM: 
