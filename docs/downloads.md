@@ -38,15 +38,15 @@ There are currently two sets of installation media. One using the Anaconda insta
 
 ### AMD/Intel
 
-- Bluefin: [bluefin-live-stable-amd64.iso](https://download.projectbluefin.io/bluefin-live-stable-amd64.iso)
-- Bluefin GTS: [bluefin-live-gts-amd64.iso](https://download.projectbluefin.io/bluefin-live-gts-amd64.iso)
-- Bluefin LTS (Beta): [bluefin-live-lts-amd64.iso](https://download.projectbluefin.io/bluefin-live-lts-amd64.iso)
+- Bluefin: [bluefin-live-stable-x86_64.iso](https://download.projectbluefin.io/bluefin-live-stable-x86_64.iso)
+- Bluefin GTS: [bluefin-live-gts-x86_64.iso](https://download.projectbluefin.io/bluefin-live-gts-x86_64.iso)
+- Bluefin LTS (Beta): [bluefin-live-lts-x86_64.iso](https://download.projectbluefin.io/bluefin-live-lts-x86_64.iso)
 
 ### Nvidia
 
-- Bluefin: [bluefin-live-nvidia-open-stable-amd64.iso](https://download.projectbluefin.io/bluefin-live-nvidia-open-stable-amd64.iso)
-- Bluefin GTS: [bluefin-live-nvidia-open-gts-amd64.iso](https://download.projectbluefin.io/bluefin-live-nvidia-open-gts-amd64.iso)
-- Bluefin GDX (Beta) : [bluefin-gdx-lts-amd64.iso](https://download.projectbluefin.io/bluefin-live-gdx-lts-amd64.iso)
+- Bluefin: [bluefin-live-nvidia-open-stable-x86_64.iso](https://download.projectbluefin.io/bluefin-live-nvidia-open-stable-x86_64.iso)
+- Bluefin GTS: [bluefin-live-nvidia-open-gts-x86_64.iso](https://download.projectbluefin.io/bluefin-live-nvidia-open-gts-x86_64.iso)
+- Bluefin GDX (Beta) : [bluefin-gdx-lts-x86_64.iso](https://download.projectbluefin.io/bluefin-live-gdx-lts-x86_64.iso)
 
 ### ARM (aarch64)
 
