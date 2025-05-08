@@ -4,6 +4,8 @@ slug: /introduction
 ---
 *Deinonychus antirrhopus*
 
+## [docs.projectbluefin.io](https://docs.projectbluefin.io)
+
 ![image](https://github.com/user-attachments/assets/21208dd6-9ce5-41ba-9c21-d2bb97f7c1e8)
 
 > Give me a lever long enough and a Free OS to set it on, and I can move the world.
