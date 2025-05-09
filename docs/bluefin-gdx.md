@@ -52,3 +52,4 @@ Follow the [Bluefin LTS](/lts) instructions for post installation steps.
 The team appreciates your support!
 
 - <a class="github-button" href="https://github.com/sponsors/tulilirockz" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-heart" data-size="large" aria-label="Sponsor tulilirockz">Sponsor</a> [Tulip Blossom](https://github.com/tulilirockz)- Lead Raptor Wrangler
+- <a class="github-button" href="https://github.com/sponsors/Conan-Kudo" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-heart" data-size="large" aria-label="Sponsor Neal Gompa">Sponsor</a> [Neal Gompa](https://github.com/sponsors/Conan-Kudo) - CentOS Hyperscale SIG Kernel Maintainer
