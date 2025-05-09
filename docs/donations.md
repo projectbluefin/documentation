@@ -22,9 +22,10 @@ Complete with actual job titles:
 - <a class="github-button" href="https://github.com/sponsors/tulilirockz" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-heart" data-size="large" aria-label="Sponsor tulilirockz">Sponsor</a> [Tulip Blossom](https://github.com/tulilirockz) Large Maniraptoran Specialist and co-maintainer
 - [Robert Sturla](https://github.com/p5) - "Hold onto your butts" guy and Lead DevOps
 
-and special guest: 
+and special guests: 
 
-- <a class="github-button" href="https://github.com/sponsors/madonuko" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-heart" data-size="large" aria-label="Sponsor @Madonuko">Sponsor</a> [Madonuko](https://github.com/madonuko) (Fyra Labs) - installation experience
+- <a class="github-button" href="https://github.com/sponsors/madonuko" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-heart" data-size="large" aria-label="Sponsor @Madonuko">Sponsor</a> [Madonuko](https://github.com/madonuko) (Fyra Labs) - Readymade installation experience
+- <a class="github-button" href="https://github.com/sponsors/Conan-Kudo" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-heart" data-size="large" aria-label="Sponsor Neal Gompa">Sponsor</a> [Neal Gompa](https://github.com/sponsors/Conan-Kudo) - CentOS Hyperscale SIG Kernel Maintainer (used in Bluefin LTS and Bluefin GDX)
 
 ## Upstream Projects included in Bluefin
 
