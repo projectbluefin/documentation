@@ -66,7 +66,9 @@ Do NOT rebase to this image from an existing Bluefin, Aurora, Bazzite, or Fedora
 
 ### Installation 
 
-Check the [downloads page](./downloads.md) to download the correct ISO.
+Check the [downloads page](./downloads.md) to download the correct ISO. 
+
+The only Bluefin LTS available with Nvidia drivers is [Bluefin GDX](/gdx). If you select Nvidia on the website it will download this ISO. Read this documentation first since it applies to Bluefin GDX. 
 
 :::warning
 
