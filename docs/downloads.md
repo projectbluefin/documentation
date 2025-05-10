@@ -46,12 +46,12 @@ There are currently two sets of installation media. One using the Anaconda insta
 
 - Bluefin: [readymade-bluefin-nvidia-open-stable-x86_64.iso](https://download.projectbluefin.io/readymade-bluefin-nvidia-open-stable-x86_64.iso)
 - Bluefin GTS: [readymade-bluefin-nvidia-open-gts-x86_64.iso](https://download.projectbluefin.io/readymade-bluefin-nvidia-open-gts-x86_64.iso)
-- Bluefin GDX (Beta) : [readymade-bluefin-gdx-lts-x86_64.iso](https://download.projectbluefin.io/readymade-bluefin-gdx-x86_64.iso)
+- Bluefin GDX (Beta) : [readymade-bluefin-gdx-x86_64.iso](https://download.projectbluefin.io/readymade-bluefin-gdx-x86_64.iso)
 
 ### ARM (aarch64)
 
-- Bluefin LTS (Beta): [readymade-bluefin-live-lts-aarch64.iso](https://download.projectbluefin.io/readymade-bluefin-lts-aarch64.iso)
-- Bluefin GDX (Beta): [readymade-bluefin-live-gdx-lts-aarch64.iso](https://download.projectbluefin.io/readymade-bluefin-gdx-aarch64.iso)
+- Bluefin LTS (Beta): [readymade-bluefin-live-aarch64.iso](https://download.projectbluefin.io/readymade-bluefin-lts-aarch64.iso)
+- Bluefin GDX (Beta): [readymade-bluefin-live-gdx-aarch64.iso](https://download.projectbluefin.io/readymade-bluefin-gdx-aarch64.iso)
 
 ## Torrents
 
