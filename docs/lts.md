@@ -56,35 +56,6 @@ While our payload is less churny than Fedora, note that this is still a new imag
 
 Due to it's nature Bluefin LTS is stable _in practice_, the reason it is tagged as Beta is that it hasn't received major kernel upgrades yet. After a few major upgrades and the community feels like it's been enough then we'll be done. There's also unanswered questions as to GNOME backports, but those efforts are just beginning in CentOS (and we're helping out!). Exciting times ahead!
 
-### Images
-
-- [Repository](https://github.com/ublue-os/bluefin-lts)
-
-The following images and tags are available:
-
-- `bluefin:lts` - base LTS experience using the CentOS [Hyperscale SIG](https://sigs.centos.org/hyperscale/) kernel - currently 6.13.8
-- `bluefin-gdx:lts` - includes Nvidia drivers and associated CUDA tooling. This is the only image with Nvidia drivers. See [Bluefin GDX](/gdx)
-
-All images offer Bluefin's [Developer Mode](/bluefin-dx).
-  
-#### Hibernation Enabled by Default
-
-Hibernation is on by default in a suspend-then-hibernate configuration. Here is the [exact config](https://github.com/ublue-os/bluefin-lts/blob/c0c8e2166cb5d0c4dd511ab3f677450c2cf8de0c/build_scripts/40-services.sh#L6). The device will suspend then go into hibernation after two hours. See the [systemd-sleep.conf](https://www.freedesktop.org/software/systemd/man/latest/systemd-sleep.conf.html) documentation.
-
-Note that secureboot and hibernation are mutually exclusive. We do not yet offer secureboot enabled images of Bluefin LTS, if you need that functionality now we recommend the normal Bluefin and Bluefin GTS images.  
-
-#### Other features
-
-- Rebasing: We will explicitly not support rebasing from the Fedora based images and ensure the rebase helper keeps users protected.
-- Releases: Builds publish weekly on Tuesdays, the images will update as often as the team is developing and will settle down into weeklies as the project matures
-- Filesystem: We will keep the filesystems the default
-
-#### Schedule
-
-This is very aspirational and totally not up to us, but we'll be able to at least gather data at these events: 
-
-- General Availability: May 2025
-
 ## Installation and Caveats
 
 :::danger
@@ -123,6 +94,30 @@ If there are other ways to set this up on MacOS please considering sending a pul
 
 :::
 
+### Images
+
+- [Repository](https://github.com/ublue-os/bluefin-lts)
+
+The following images and tags are available:
+
+- `bluefin:lts` - base LTS experience using the CentOS [Hyperscale SIG](https://sigs.centos.org/hyperscale/) kernel - currently 6.13.8
+- `bluefin-gdx:lts` - includes Nvidia drivers and associated CUDA tooling. This is the only image with Nvidia drivers. See [Bluefin GDX](/gdx)
+
+All images offer Bluefin's [Developer Mode](/bluefin-dx).
+  
+#### Other features
+
+- Rebasing: We will explicitly not support rebasing from the Fedora based images and ensure the rebase helper keeps users protected.
+- Releases: Builds publish weekly on Tuesdays, the images will update as often as the team is developing and will settle down into weeklies as the project matures
+- Filesystem: We will keep the filesystems the default
+
+#### Schedule
+
+This is very aspirational and totally not up to us, but we'll be able to at least gather data at these events: 
+
+- General Availability: May 2025
+
+
 ## Building Locally 
 
 To build locally and then spit out a VM: 
@@ -135,6 +130,12 @@ just build-qcow2 ghcr.io/ublue-os/bluefin:lts # if you want to build an ISO just
 ```
 
 The [qcow2](https://qemu-project.gitlab.io/qemu/system/images.html) file will be written to the `output/` directory. Default username and password are `centos`/`centos`
+
+#### Hibernation Enabled by Default
+
+Hibernation is on by default in a suspend-then-hibernate configuration. Here is the [exact config](https://github.com/ublue-os/bluefin-lts/blob/c0c8e2166cb5d0c4dd511ab3f677450c2cf8de0c/build_scripts/40-services.sh#L6). The device will suspend then go into hibernation after two hours. See the [systemd-sleep.conf](https://www.freedesktop.org/software/systemd/man/latest/systemd-sleep.conf.html) documentation.
+
+Note that secureboot and hibernation are mutually exclusive. We do not yet offer secureboot enabled images of Bluefin LTS, if you need that functionality now we recommend the normal Bluefin and Bluefin GTS images.  
 
 ## Supporting Bluefin LTS
 
