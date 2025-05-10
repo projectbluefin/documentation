@@ -38,7 +38,34 @@ Machine firmware updates are provided through the standard Software Center:
 
 ### Upgrades and Throttle Settings
 
-Bluefin publishes images based on the current and last stable version of Fedora. This is to give users maximum flexibility by allowing them to rebase to the version they want. You can choose from three rolling tags, or lock to a specific version of Fedora. Check the [release notes](https://github.com/ublue-os/bluefin/releases) for specific version information.
+Bluefin publishes images based on the current and last stable version of Fedora, as well as a CentOS based image.
+
+#### Bluefin 
+`stable`: This is for enthusiasts who want the latest version of GNOME and Fedora. It is always aliased to the current version of Fedora but follows the Fedora CoreOS release schedule and not the Fedora Silverblue release schedule. `stable-daily` is available for those who want daily builds.
+
+#### Bluefin GTS `gts`
+This is the default image and is always aliased to the previous stable version of Fedora. It targets the majority of users. It is slang for "Grand Touring Support", to signify a faster cadence than an [LTS](https://www.linux.com/news/mark-shuttleworth-ubuntu-long-term-support/)
+
+#### Bluefin LTS (Beta)
+`lts`: a workstation designed for people who prefer Long Term Support. This species of raptor is for users who prefer a slower release cadence, about a three-to-five year lifespan on a single release. Built with newer kernels, see [Bluefin LTS](/lts) for more information
+
+#### Bluefin GDX (Beta)
+`gdx`: Bluefin GDX is designed to be an AI Workstation by providng Nvidia drivers and CUDA in one image. It combines Bluefin LTS with the Bluefin Developer Experience. See [Bluefin GDX](/gdx) for more information
+
+### Latest (For Testers)
+This stream is purposely left unbranded and is not meant for general purpose use
+`latest`: For users who want the very latest Fedora has to offer, an ungated linux kernel, daily updates, full open throttle 🔥
+
+:::info[It's all just Bluefin]
+
+Bluefin's components are shared across all images, don't think of it as a seperate "Edition" or "Spin". In cloud native everything is always building on top of something else, swapping out a base image let's users lets the team generate images from two different Fedora releases and CentOS. Bluefin strives to be the same across all the images, we feel that the aggressiveness of updates can be just "be a setting". Ideally you use "Bluefin" and don't need to care about your update stream. 
+
+`lts` for a work machine and `stable` for your hot rod.
+
+:::
+
+This is to give users maximum flexibility by allowing them to rebase to the version they want. You can choose from three rolling tags, or lock to a specific version of Fedora. Check the [release notes](https://github.com/ublue-os/bluefin/releases) for specific version information.
+
 
 |                      | `gts` (default) | `stable` or `stable-daily` | `latest`       |
 | -------------------- | --------------- | -------------------------- | -------------- |
@@ -49,9 +76,6 @@ Bluefin publishes images based on the current and last stable version of Fedora.
 | Application Updates: | Twice a Day     | Twice a Day                | Twice a Day    |
 | Kernel:              | Gated           | Gated                      | Ungated        |
 
-- `gts`: This is the default image and is always aliased to the previous stable version of Fedora. It targets the majority of users. It is slang for "Grand Touring Support", to signify a faster cadence than an [LTS](https://www.linux.com/news/mark-shuttleworth-ubuntu-long-term-support/)
-- `stable`: This is for enthusiasts who want the latest version of GNOME and Fedora. It is always aliased to the current version of Fedora but follows the Fedora CoreOS release schedule and not the Fedora Silverblue release schedule. `stable-daily` is available for those who want daily builds.
-- `latest`: For users who want the very latest Fedora has to offer, an ungated linux kernel, daily updates, full open throttle 🔥
 
 The major difference between `latest` and `stable` is the kernel cadence and when they do a major upgrade. `latest` will upgrade to the next major Fedora release as soon as it is available and builds daily.
 
