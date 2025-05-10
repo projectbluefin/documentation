@@ -40,7 +40,7 @@ Machine firmware updates are provided through the standard Software Center:
 
 In Settings → Network → A network setting, set `Metered Connection: has data limits or can incur charges` to pause Bluefin updates:
 
-![Settings → Network → A network setting - `Metered Connection: has data limits or can incur charges` Highlight](https://github.com/user-attachments/assets/2919692c-7e03-4694-8193-3f2f77f029fb)
+![Settings → Network → A network setting - `Metered Connection: has data limits or can incur charges` Highlight](https://github.com/user-attachments/assets/97dfd5ff-d126-4fff-b439-18df391a1c49)
 
 ## Streams and Throttle Settings
 
