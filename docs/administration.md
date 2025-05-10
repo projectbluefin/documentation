@@ -188,7 +188,7 @@ This will show all the available tags and useful metadata like image and kernel 
 
 Check the [Fedora Silverblue User Guide](https://docs.fedoraproject.org/en-US/fedora-silverblue/) for more information.
 
-### Virtual Private Networks (VPN)
+## Virtual Private Networks (VPN)
 
 [Tailscale](https://tailscale.com) is included by default to provide VPN services for both desktop and development use cases. [Tailscale is pretty useful](https://blog.6nok.org/tailscale-is-pretty-useful/).
 
@@ -205,7 +205,7 @@ Another option is [ProtonVPN](https://protonvpn.com/), which is currently in the
 Other VPN providers may provide a poor packaging experience and are not recommended.
 
 
-### Enabling Local Layering
+## Enabling Local Layering
 
 **Local Layering will be disabled by default in Spring 2025**
 
