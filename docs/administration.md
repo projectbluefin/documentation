@@ -44,13 +44,13 @@ Bluefin publishes images based on the current and last stable version of Fedora,
 `stable`: This is for enthusiasts who want the latest version of GNOME and Fedora. It is always aliased to the current version of Fedora but follows the Fedora CoreOS release schedule and not the Fedora Silverblue release schedule. `stable-daily` is available for those who want daily builds.
 
 ### Bluefin GTS `gts`
-This is the default image and is always aliased to the previous stable version of Fedora. It targets the majority of users. It is slang for "Grand Touring Support", to signify a faster cadence than an [LTS](https://www.linux.com/news/mark-shuttleworth-ubuntu-long-term-support/)
+This is the default image and is always aliased to the previous stable version of Fedora. It targets the majority of users. It is slang for "Grand Touring Support", to signify a faster cadence than an [LTS](https://www.linux.com/news/mark-shuttleworth-ubuntu-long-term-support/).
 
 ### Bluefin LTS (Beta)
-`lts`: a workstation designed for people who prefer Long Term Support. This species of raptor is for users who prefer a slower release cadence, about a three-to-five year lifespan on a single release. Built with newer kernels, see [Bluefin LTS](/lts) for more information
+`lts`: a workstation designed for people who prefer Long Term Support. This species of raptor is for users who prefer a slower release cadence, about a three-to-five year lifespan on a single release. It is built on top of CentOS 10 but includes newer kernels and other selected components, see [Bluefin LTS](/lts) for more information.
 
 ### Bluefin GDX (Beta)
-`gdx`: Bluefin GDX is designed to be an AI Workstation by providng Nvidia drivers and CUDA in one image. It combines Bluefin LTS with the Bluefin Developer Experience. See [Bluefin GDX](/gdx) for more information
+`gdx`: Bluefin GDX is designed to be an AI Workstation by providing Nvidia drivers and CUDA in one image. It combines Bluefin LTS with the Bluefin Developer Experience, and therefor is also based on CentOS 10. See [Bluefin GDX](/gdx) for more information.
 
 #### Latest (For Testers)
 This stream is purposely left unbranded and is not meant for general purpose use
@@ -64,7 +64,7 @@ Bluefin's components are shared across all images, don't think of it as a sepera
 
 :::
 
-This is to give users maximum flexibility by allowing them to rebase to the version they want. You can choose from three rolling tags, or lock to a specific version of Fedora. Check the [release notes](https://github.com/ublue-os/bluefin/releases) for specific version information.
+You can choose from three rolling tags, or lock to a specific version of Fedora. Check the [release notes](https://github.com/ublue-os/bluefin/releases) for specific version information.
 
 
 |                      | `gts` (default) | `stable` or `stable-daily` | `latest`       |
@@ -83,7 +83,7 @@ The major difference between `latest` and `stable` is the kernel cadence and whe
 
 :::info[Advantages]
 
-One of Bluefin's strengths is being able to atomically adjust versions. All the tags are built from the same repository and are essentially the same, the version numbers will just be different. `gts` for a work machine and `stable` for your hot rod. Additionally the ability to rebase between release cadences lets users repurpose machines for different use cases without needing to reinstall.
+One of Bluefin's strengths is being able to atomically adjust versions. All the tags are built from the same repository and are essentially the same, the version numbers will just be different. `gts` for a work machine and `stable` for your hot rod. Additionally the ability to rebase between release cadences lets users repurpose machines for different use cases without needing to reinstall. Use `ujust rebase-helper` to see what's available.
 
 :::
 
