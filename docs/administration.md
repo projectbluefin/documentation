@@ -59,8 +59,7 @@ Bluefin offers images based on the current and last stable version of Fedora, as
 `gdx`: Bluefin GDX is designed to be an AI Workstation by providing Nvidia drivers and CUDA in one image. It combines Bluefin LTS with the Bluefin Developer Experience, therefore is also based on CentOS 10. See [Bluefin GDX](/gdx) for more information.
 
 #### Latest (For Testers)
-This stream is purposely left unbranded and is not meant for general purpose use
-`latest`: For users who want the very latest Fedora has to offer, an ungated linux kernel, daily updates, full open throttle 🔥
+`latest`: For users who want the very latest Fedora has to offer, an ungated linux kernel, daily updates, full open throttle. 🔥 This stream is purposely left unbranded and is not meant for general purpose use.
 
 :::info[It's all just Bluefin]
 
