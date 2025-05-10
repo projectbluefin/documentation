@@ -50,7 +50,7 @@ Bluefin publishes images based on the current and last stable version of Fedora,
 `lts`: a workstation designed for people who prefer Long Term Support. This species of raptor is for users who prefer a slower release cadence, about a three-to-five year lifespan on a single release. It is built on top of CentOS 10 but includes newer kernels and other selected components, see [Bluefin LTS](/lts) for more information.
 
 ### Bluefin GDX (Beta)
-`gdx`: Bluefin GDX is designed to be an AI Workstation by providing Nvidia drivers and CUDA in one image. It combines Bluefin LTS with the Bluefin Developer Experience, and therefor is also based on CentOS 10. See [Bluefin GDX](/gdx) for more information.
+`gdx`: Bluefin GDX is designed to be an AI Workstation by providing Nvidia drivers and CUDA in one image. It combines Bluefin LTS with the Bluefin Developer Experience, therefore is also based on CentOS 10. See [Bluefin GDX](/gdx) for more information.
 
 #### Latest (For Testers)
 This stream is purposely left unbranded and is not meant for general purpose use
@@ -64,7 +64,7 @@ Bluefin's components are shared across all images, don't think of it as a sepera
 
 :::
 
-You can choose from three rolling tags, or lock to a specific version of Fedora. Check the [release notes](https://github.com/ublue-os/bluefin/releases) for specific version information.
+You can choose from three rolling tags, or lock to a specific version of Fedora. Check the [release notes](https://github.com/ublue-os/bluefin/releases) for specific version information:
 
 
 |                      | `gts` (default) | `stable` or `stable-daily` | `latest`       |
@@ -76,10 +76,9 @@ You can choose from three rolling tags, or lock to a specific version of Fedora.
 | Application Updates: | Twice a Day     | Twice a Day                | Twice a Day    |
 | Kernel:              | Gated           | Gated                      | Ungated        |
 
+**Note:** Bluefin LTS and GDX not shown here, refer to their respective documentation for more details.
 
-The major difference between `latest` and `stable` is the kernel cadence and when they do a major upgrade. `latest` will upgrade to the next major Fedora release as soon as it is available and builds daily.
-
-`stable` will upgrade when CoreOS does its userspace upgrade, which is usually a few weeks afterwards, and builds weekly or daily. Users can choose the `stable-daily` image for daily stable updates, or stick to `stable` for weekly builds.
+The major difference between `latest` and `stable` is the kernel cadence and when they do a major upgrade. `latest` will upgrade to the next major Fedora release as soon as it is available and builds daily. `stable` will upgrade when CoreOS does its userspace upgrade, which is usually a few weeks afterwards, and builds weekly or daily. Users can choose the `stable-daily` image for daily stable updates, or stick to `stable` for weekly builds.
 
 :::info[Advantages]
 
