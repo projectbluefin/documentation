@@ -49,14 +49,14 @@ While our payload is less churny than Fedora, note that this is still a new imag
 
 ### Status
 
-- There are instances when something from Bluefin is not implemented in Bluefin LTS. Please [file an issue](https://github.com/ublue-os/bluefin-lts/issues) and tag it with `parity` and the team will investigate. They'll never _exactly_ but we can get the important ones done.
+- There are instances when something from Bluefin is not implemented in Bluefin LTS. Please [file an issue](https://github.com/ublue-os/bluefin-lts/issues) and tag it with `parity` and the team will investigate. They'll never _exactly_ but we can get the important ones done
 - Some things are missing from the kernel, like gamepad support, this is being worked on
 - Appimages are hard unsupported (those fuse packages aren't even in CentOS)
 - Local Layering is disabled by default
 
 Due to it's nature Bluefin LTS is stable _in practice_, the reason it is tagged as Beta is that it hasn't received major kernel upgrades yet. After a few major upgrades and the community feels like it's been enough then we'll be done. There's also unanswered questions as to GNOME backports, but those efforts are just beginning in CentOS (and we're helping out!). Exciting times ahead!
 
-## Installation and Caveats
+## Installation
 
 :::danger
 
@@ -111,7 +111,6 @@ All images offer Bluefin's [Developer Mode](/bluefin-dx).
 
 - Rebasing: We will explicitly not support rebasing from the Fedora based images and ensure the rebase helper keeps users protected.
 - Releases: Builds publish weekly on Tuesdays, the images will update as often as the team is developing and will settle down into weeklies as the project matures
-- Filesystem: We will keep the filesystems the default
 
 #### Schedule
 
