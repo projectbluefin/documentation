@@ -63,7 +63,7 @@ Bluefin offers images based on the current and last stable version of Fedora, as
 
 :::info[It's all just Bluefin]
 
-Bluefin's components are shared across all images, don't think of it as a seperate "Edition" or "Spin". In cloud native everything is always building on top of something else, swapping out a base image let's users lets the team generate images from two different Fedora releases and CentOS. Bluefin strives to be the same across all the images, we feel that the aggressiveness of updates can be just "be a setting". Ideally you use "Bluefin" and don't need to care about your update stream. 
+Bluefin's components are shared across all images, don't think of it as a seperate "Edition" or "Spin". Bluefin strives to be the same across all the images, we feel that the aggressiveness of updates can be just "be a setting". Ideally you use "Bluefin" and don't need to care about your update stream. 
 
 `lts` for a work machine and `stable` for your hot rod.
 
