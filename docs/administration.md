@@ -43,8 +43,8 @@ Bluefin publishes images based on the current and last stable version of Fedora,
 ### Bluefin 
 `stable`: This is for enthusiasts who want the latest version of GNOME and Fedora. It is always aliased to the current version of Fedora but follows the Fedora CoreOS release schedule and not the Fedora Silverblue release schedule. `stable-daily` is available for those who want daily builds.
 
-### Bluefin GTS `gts`
-This is the default image and is always aliased to the previous stable version of Fedora. It targets the majority of users. It is slang for "Grand Touring Support", to signify a faster cadence than an [LTS](https://www.linux.com/news/mark-shuttleworth-ubuntu-long-term-support/).
+### Bluefin GTS
+`gts`: This is the default image and is always aliased to the previous stable version of Fedora. It targets the majority of users. It is slang for "Grand Touring Support", to signify a faster cadence than an [LTS](https://www.linux.com/news/mark-shuttleworth-ubuntu-long-term-support/).
 
 ### Bluefin LTS (Beta)
 `lts`: a workstation designed for people who prefer Long Term Support. This species of raptor is for users who prefer a slower release cadence, about a three-to-five year lifespan on a single release. It is built on top of CentOS 10 but includes newer kernels and other selected components, see [Bluefin LTS](/lts) for more information.
