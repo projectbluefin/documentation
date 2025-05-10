@@ -36,9 +36,9 @@ Machine firmware updates are provided through the standard Software Center:
 
 ![Software Center → Updates](https://github.com/user-attachments/assets/98256d26-87ff-458f-a5f1-ecfa31a4639c)
 
-### Upgrades and Throttle Settings
+### Streams and Throttle Settings
 
-Bluefin offers images based on the current and last stable version of Fedora, as well as a CentOS based image. This is to provide users with flexibility as to how aggresive they want their updates. 
+Bluefin offers images based on the current and last stable version of Fedora, as well as a CentOS based image. This is to provide users with flexibility as to how aggresive they want their updates. These are referred to as "streams". 
 
 ### Bluefin 
 `stable`: This is for enthusiasts who want the latest version of GNOME and Fedora. It is always aliased to the current version of Fedora but follows the Fedora CoreOS release schedule and not the Fedora Silverblue release schedule. `stable-daily` is available for those who want daily builds.
