@@ -28,11 +28,10 @@ Bluefin LTS is composed of:
 - The same features since they share the same source RPMs, just built on CentOS
 - Updated Linux kernel from the CentOS [Hyperscale SIG](https://sigs.centos.org/hyperscale/) - currently 6.13.8.
 - ARM (aarch64) based images
-
-In the future we will investigate bringing newer versions of the GNOME desktop to Bluefin LTS as appropriate.
+  
+In the future we will investigate bringing newer versions of the GNOME desktop to Bluefin LTS as appropriate via the CentOS [Hyperscale SIG](https://sigs.centos.org/hyperscale/)
 
 ![Pasted image](https://github.com/user-attachments/assets/3972ac0f-d37e-4e89-ae91-ff1eb76eabeb)
-
 
 :::warning
 
@@ -42,7 +41,6 @@ While our payload is less churny than Fedora, note that this is still a new imag
 
 ### Blockers
 
-- bootc-image-builder flatpak support
 - Secure Boot
 
 ### Next Up 
@@ -86,16 +84,17 @@ Do NOT rebase to this image from an existing Bluefin, Aurora, Bazzite, or Fedora
 
 :::
 
-### 1. Snag the ISO
+### Installation 
 
 Check the [downloads page](./downloads.md) to download the correct ISO.
 
-### 2. On first boot, install flatpaks: `ujust install-system-flatpaks`
-  
-This is a working around until Flatpaks can be put on the ISO: [Incoming anaconda PR](https://github.com/rhinstaller/anaconda/pull/6056) for the flatpaks, also:
+:::warning
 
-- **Do not rebase to this from an existing Fedora image, ain't no one testing that.** Also the filesystems are going to be different, etc. We recommend a VM for now
-- No akmods or other hwe has been added
+The ISO uses Fedora to install Bluefin LTS, this is confusing because it will say Fedora but install a CentOS based image. We're working on fixing the branding to hide this from you because that's just bonkers.
+
+:::
+
+**Do not rebase to this from an existing Fedora image, ain't no one testing that.**
 
 ## ARM Support
 
