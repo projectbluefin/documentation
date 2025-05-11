@@ -98,7 +98,7 @@ See this section of the [upstream documentation](https://docs.fedoraproject.org/
 
 ## I cannot switch keyboard layouts via shortcut
 
-This is because GNOME's default switching key conflicts with Search Light. This can be easily fixed via Settings.
+This is because GNOME's default switching key conflicts with Search Light. This can be fixed via Settings.
 
 1. Open Up `Settings` and Navigate to `Keyboard`
 2. Scroll down to `Keyboard Shortcuts` then click on `View and Customize Shortcuts`
