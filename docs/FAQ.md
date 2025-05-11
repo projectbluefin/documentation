@@ -96,6 +96,17 @@ eval "$(starship init bash)"
 
 See this section of the [upstream documentation](https://docs.fedoraproject.org/en-US/fedora-coreos/kernel-args/#_modifying_kernel_arguments_on_existing_systems).
 
+## I cannot switch keyboard layouts via shortcut
+
+This is because GNOME's default switching key conflicts with Search Light. This can be fixed via Settings.
+
+1. Open Up `Settings` and Navigate to `Keyboard`
+2. Scroll down to `Keyboard Shortcuts` then click on `View and Customize Shortcuts`
+3. After opening up the shortcuts menu, click on `Typing`
+4. Set the `Switch to next input source` to be the key combination you want
+
+*Note: If you want to use the GNOME's default of `Super+Space`, you'll have to either disable Search Light or change their shortcut in `Extension Manager`*
+
 ## I use a keyboard layout that is not listed in the settings. How can I use it?
 
 Your layout may be already included with Fedora, but you need to list extended keyboard layouts (example for the [EurKEY](https://eurkey.steffen.bruentjen.eu/start.html) layout):
