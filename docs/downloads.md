@@ -36,6 +36,8 @@ There are currently two sets of installation media. One using the Anaconda insta
 
 ## Readymade Live ISO Downloads
 
+Due to the simplified nature of this installer, it's an excellent choice if you plan on using Bluefin inside virtual machines. 
+
 ### AMD/Intel
 
 - Bluefin: [readymade-bluefin-stable-x86_64.iso](https://download.projectbluefin.io/readymade-bluefin-stable-x86_64.iso)
