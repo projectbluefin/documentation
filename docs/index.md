@@ -27,7 +27,8 @@ Bluefin is:
 - **Purposely Invisible** - Bluefin is not a distribution. Your relationship is with Flathub, homebrew, and whatever you put in your containers.
 - **Optimized for the 96%** - Not the 4% - Bluefin takes a "stronger together" approach towards features. You can always do what you want, but the value is to share best practices, the team doesn't spend much time on edge cases.
 - **Proven development model** - Developer experience focused around containers and exposing new Linux users to the [tools used in cloud native](https://www.cncf.io/). See Universal Blue's [mission statement](https://universal-blue.org/mission.html) for more information.
-
+- **Purposely Focused on Great Hardware** - Bluefin runs best on Linux friendly hardware in order to provide as much of a legacy-free experience for our users as we can. We also want to support OEMs who sell Linux laptops and desktops, so we strive to run with the best combination of software and hardware. We do not go out of our way to document or workaround things that compromise the user experience, so in many cases another operating system is the correct choice. 
+  
 If your requirements are outside of this scope, then **Bluefin might not be the best fit for you**. Bluefin may cause discomfort and disembowelment [when held incorrectly](/FAQ/#am-i-holding-bluefin-wrong). We recognize that in order to make a better desktop that many parts of the traditional Linux desktop experience will not be coming with us. [Here's a video](https://www.youtube.com/watch?v=4CyWH6jx2pE) on why we take such a focused approach to the desktop. The video is about [Bazzite.gg](https://bazzite.gg), which is a sister project, but the same applies.
 
 :::info[Begin your journey...]
