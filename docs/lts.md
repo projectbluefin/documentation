@@ -33,6 +33,12 @@ In the future we will investigate bringing newer versions of the GNOME desktop t
 
 ![Pasted image](https://github.com/user-attachments/assets/3972ac0f-d37e-4e89-ae91-ff1eb76eabeb)
 
+### Rationale
+
+The classic definition of "LTS" or "Enterprise Linux" was to ship older, known good working versions of software. And for a long time it felt like your options were old and working, or new and shiny but may break. But in order to be a good desktop, you have to have good hardware support, and that means newer kernels, etc. Bluefin LTS is more about how regressions are handled more than a strict definition of "things must be old." In our world the applications are always up to date, so the "pace" of the base image isn't as important. 
+
+CentOS has efforts to bring a modern enterprise Linux desktop experience to fruition, Bluefin LTS is just a hello world example of what's possible. In a technical sense: CentOS + EPEL + Hyperscale Kernel + GNOME Backports + Bluefin's RPMs built on top. The _interesting part_ is that since it's delivered via bootc, the end user gets it as a finished product. In the old days this would be Ubuntu LTS + backports + PPAs, etc. and that is the world we're moving away from. 
+
 :::warning
 
 While our payload is less churny than Fedora, note that this is still a new image, this project is still in beta.
