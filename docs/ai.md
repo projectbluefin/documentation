@@ -52,6 +52,13 @@ For light chatbot usage we recommend that users [install Alpaca](https://flathub
 
 The user is prompted to [install ollama separately](https://github.com/Jeffser/Alpaca/wiki/Installing-Ollama) when running Alpaca for the first time.
 
+:::tip[Only a keystroke away]
+
+Bluefin binds `Ctrl`-`Alt`-`Backspace` as a quicklaunch for Alpaca automatically after you install it!
+
+:::
+
+
 ![image](https://github.com/user-attachments/assets/9fd38164-e2a9-4da1-9bcd-29e0e7add071)
 
 [^1]: For proper AMD support, the Flatpak extension `com.jeffser.Alpaca.Plugins.AMD` must also be installed.
