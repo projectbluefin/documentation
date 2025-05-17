@@ -75,7 +75,7 @@ Download the right ISO from [the website](https://projectbluefin.io/#scene-picke
 
 - Install the operating system
   - Use the entire disk with automatic partitioning
-  - (Optional): [Set up Secure Boot](/introduction.md#secure-boot)
+  - (Optional): [Set up Secure Boot](#secure-boot)
   - (Optional): `ujust rebase-helper` to move to `:stable` or `:latest`
 - Set up, test, and **verify backups** - While the system image is reproducible data, your user data in your home folder still needs to be backed up. Bluefin ships with two backup utilities depending on your preference. They are installed as Flatpaks so you can remove the one you don't use. `rclone` and `restic` are also preinstalled if you prefer command line tools
   - [Deja Dup](https://apps.gnome.org/DejaDup/)
