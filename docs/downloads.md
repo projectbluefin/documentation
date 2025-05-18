@@ -31,8 +31,8 @@ There are currently two sets of installation media. One using the Anaconda insta
 
 ### ARM (aarch64)
 
-- Bluefin LTS (Beta): [bluefin-lts-aarch64.iso](https://download.projectbluefin.io/bluefin-lts-aarch64.iso) (Not ready)
-- Bluefin GDX (Beta): [bluefin-gdx-lts-aarch64.iso](https://download.projectbluefin.io/bluefin-gdx-lts-aarch64.iso) (Not ready)
+- Bluefin LTS (Beta): [bluefin-lts-aarch64.iso](https://download.projectbluefin.io/bluefin-lts-aarch64.iso)
+- Bluefin GDX (Beta): [bluefin-gdx-lts-aarch64.iso](https://download.projectbluefin.io/bluefin-gdx-lts-aarch64.iso)
 
 ## Readymade Live ISO Downloads
 
