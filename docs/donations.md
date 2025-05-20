@@ -59,5 +59,4 @@ Note that all [Universal Blue](https://universal-blue.org/) image sources are ke
 - [Jorge Castro](https://github.com/sponsors/castrojo/)
 - [Kyle Gospodnetich](https://github.com/sponsors/KyleGospo)
 - M2
-- [nicknamenick](https://github.com/sponsors/nicknamenamenick)
 - [Tulip Blossom](https://github.com/sponsors/tulilirockz)
