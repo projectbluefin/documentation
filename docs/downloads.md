@@ -9,7 +9,7 @@ These ISOs are experimental, please [report issues](https://github.com/ublue-os/
 
 :::
 
-Here is a short [runbook](https://www.pagerduty.com/resources/learn/what-is-a-runbook/) for the Bluefin installation process. Read the entirety of this documentation in order to ensure survival. (In case of a raptor attack).
+Here is a short [runbook](/installation) for the Bluefin installation process. Read the entirety of this documentation in order to ensure survival. (In case of a raptor attack).
 
 ## Status
 
