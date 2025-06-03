@@ -26,7 +26,7 @@ Bluefin LTS is composed of:
 
 - Mostly the same packages of Bluefin and Bluefin GTS, but built with CentOS Stream 10 and EPEL
 - The same features since they share the same source RPMs, just built on CentOS
-- Updated Linux kernel from the CentOS [Hyperscale SIG](https://sigs.centos.org/hyperscale/) - currently 6.13.8.
+- Updated Linux kernel from the CentOS [Hyperscale SIG](https://sigs.centos.org/hyperscale/)
 - ARM (aarch64) based images
   
 In the future we will investigate bringing newer versions of the GNOME desktop to Bluefin LTS as appropriate via the CentOS [Hyperscale SIG](https://sigs.centos.org/hyperscale/)
