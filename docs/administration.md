@@ -47,13 +47,13 @@ In Settings → Network → A network setting, set `Metered Connection: has data
 Bluefin offers images based on the current and last stable version of Fedora, as well as a CentOS based image. This is to provide users with flexibility as to how aggresive they want their updates. These are referred to as "streams". 
 
 ### Bluefin 
-`stable`: This is for enthusiasts who want the latest version of GNOME and Fedora. It is always aliased to the current version of Fedora but follows the Fedora CoreOS release schedule and not the Fedora Silverblue release schedule. `stable-daily` is available for those who want daily builds.
+`stable`: This is for enthusiasts who want the latest version of GNOME and Fedora. It is always aliased to the current version of Fedora but follows the Fedora CoreOS release schedule and not the Fedora Silverblue release schedule. This means that kernel upgrades come about 2 weeks after they land in Fedora, which can be useful for avoiding kernel regressions since the Bluefin team can pin to a specific kernel in those circumstances. We call this "gating" the kernel. `stable-daily` is available for those who want daily builds.
 
 ### Bluefin GTS
-`gts`: This is the default image and is always aliased to the previous stable version of Fedora. It targets the majority of users. It is slang for "Grand Touring Support", to signify a faster cadence than an [LTS](https://www.linux.com/news/mark-shuttleworth-ubuntu-long-term-support/).
+`gts`: This is the default image and is always aliased to the previous stable version of Fedora. It targets the majority of users. It is slang for "Grand Touring Support", to signify a faster cadence than an [LTS](https://www.linux.com/news/mark-shuttleworth-ubuntu-long-term-support/). It also features a gated kernel. 
 
 ### Bluefin LTS (Beta)
-`lts`: a workstation designed for people who prefer Long Term Support. This species of raptor is for users who prefer a slower release cadence, about a three-to-five year lifespan on a single release. It is built on top of CentOS 10 but includes newer kernels and other selected components, see [Bluefin LTS](/lts) for more information.
+`lts`: a workstation designed for people who prefer Long Term Support. This species of raptor is for users who prefer a slower release cadence, about a three-to-five year lifespan on a single release. It is built on top of CentOS 10 but includes newer kernels and GNOME desktop components, see [Bluefin LTS](/lts) for more information.
 
 ### Bluefin GDX (Beta)
 `gdx`: Bluefin GDX is designed to be an AI Workstation by providing Nvidia drivers and CUDA in one image. It combines Bluefin LTS with the Bluefin Developer Experience, therefore is also based on CentOS 10. See [Bluefin GDX](/gdx) for more information.
