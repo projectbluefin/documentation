@@ -27,10 +27,10 @@ Bluefin LTS is composed of:
 - Mostly the same packages of Bluefin and Bluefin GTS, but built with CentOS Stream 10 and EPEL
 - The same features since they share the same source RPMs, just built on CentOS
 - Updated Linux kernel from the CentOS [Hyperscale SIG](https://sigs.centos.org/hyperscale/)
+- Backported GNOME desktop, also from the CentOS Hyperscale SIG
 - ARM (aarch64) based images
+- The Nvidia version of Bluefin LTS is branded as [Bluefin GDX](/gdx) and designed for AI and other GPU heavy workflows and includes CUDA
   
-In the future we will investigate bringing newer versions of the GNOME desktop to Bluefin LTS as appropriate via the CentOS [Hyperscale SIG](https://sigs.centos.org/hyperscale/)
-
 ![Pasted image](https://github.com/user-attachments/assets/3972ac0f-d37e-4e89-ae91-ff1eb76eabeb)
 
 ### Rationale
@@ -60,7 +60,7 @@ While our payload is less churny than Fedora, note that this is still a new imag
 - Appimages are hard unsupported (those fuse packages aren't even in CentOS)
 - Local Layering is disabled by default
 
-Due to it's nature Bluefin LTS is stable _in practice_, the reason it is tagged as Beta is that it hasn't received major kernel upgrades yet. After a few major upgrades and the community feels like it's been enough then we'll be done. There's also unanswered questions as to GNOME backports, but those efforts are just beginning in CentOS (and we're helping out!). Exciting times ahead!
+Due to it's nature Bluefin LTS is stable _in practice_, the reason it is tagged as Beta is that we want to let it cook for a while. After a few major upgrades and the community feels like it's been enough then we'll be done. Exciting times ahead!
 
 ## Installation
 
@@ -122,8 +122,7 @@ All images offer Bluefin's [Developer Mode](/bluefin-dx).
 
 This is very aspirational and totally not up to us, but we'll be able to at least gather data at these events: 
 
-- General Availability: May 2025
-
+- General Availability: Summer 2025
 
 ## Building Locally 
 
