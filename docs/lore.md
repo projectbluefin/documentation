@@ -4,7 +4,8 @@ Bluefin has a story to tell, via artwork, music, and various clues hidden in pla
 
 While this is the canon, the full story remains hidden, as users are encouraged to use their own cloud native journey as inspiration to the meaning. Each story element is related to open source projects and their maintainers and their communities. Their challenges, and their triumphs. 
 
-![BluefinCombo_c](https://github.com/user-attachments/assets/672bcdbb-b327-4d26-a9f2-40a805d3967d)
+![pair_scaled](https://github.com/user-attachments/assets/feaf2f80-b895-49ee-ac19-0ccd4f8857ca)
+
 
 ## Artwork
 
