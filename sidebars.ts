@@ -42,15 +42,6 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: "category",
-      label: "Bluefin LTS",
-      collapsed: false,
-      items: [    
-        "lts",
-        "bluefin-gdx"
-      ],
-    },
-    {
-      type: "category",
       label: "Contributing",
       collapsed: true,
       items: ["contributing", "local"],
