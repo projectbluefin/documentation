@@ -10,7 +10,7 @@ While this is the canon, the full story remains hidden, as users are encouraged 
 
 Bluefin comes with a monthly wallpaper drawn by [Jacob Schurr](https://www.etsy.com/shop/JSchnurrCommissions). Each scene represents a story that can apply to open source communities. 
 
-:::warn[Help!]
+:::info[Help!]
 
 We need someone to programatically grab the bluefin wallpapers for the repository and put them in a webwidget here so people can cycle through them. 
 
