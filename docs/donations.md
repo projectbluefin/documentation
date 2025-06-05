@@ -25,7 +25,6 @@ Complete with actual job titles:
 and special guests: 
 
 - <a class="github-button" href="https://github.com/sponsors/madonuko" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-heart" data-size="large" aria-label="Sponsor @Madonuko">Sponsor</a> [Madonuko](https://github.com/madonuko) (Fyra Labs) - Readymade installation experience
-- <a class="github-button" href="https://github.com/sponsors/Conan-Kudo" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-heart" data-size="large" aria-label="Sponsor Neal Gompa">Sponsor</a> [Neal Gompa](https://github.com/sponsors/Conan-Kudo) - CentOS Hyperscale SIG Kernel Maintainer (used in Bluefin LTS and Bluefin GDX)
 - [kolumni](https://ko-fi.com/kolunmi) - App store experience ([Bazaar](https://github.com/kolunmi/bazaar))
 
 ## Upstream Projects included in Bluefin
