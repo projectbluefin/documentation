@@ -52,12 +52,6 @@ Bluefin offers images based on the current and last stable version of Fedora, as
 ### Bluefin GTS
 `gts`: This is the default image and is always aliased to the previous stable version of Fedora. It targets the majority of users. It is slang for "Grand Touring Support", to signify a faster cadence than an [LTS](https://www.linux.com/news/mark-shuttleworth-ubuntu-long-term-support/). It also features a gated kernel. 
 
-### Bluefin LTS (Beta)
-`lts`: a workstation designed for people who prefer Long Term Support. This species of raptor is for users who prefer a slower release cadence, about a three-to-five year lifespan on a single release. It is built on top of CentOS 10 but includes newer kernels and GNOME desktop components, see [Bluefin LTS](/lts) for more information.
-
-### Bluefin GDX (Beta)
-`gdx`: Bluefin GDX is designed to be an AI Workstation by providing Nvidia drivers and CUDA in one image. It combines Bluefin LTS with the Bluefin Developer Experience, therefore is also based on CentOS 10. See [Bluefin GDX](/gdx) for more information.
-
 #### Latest (For Testers)
 `latest`: For users who want the very latest Fedora has to offer, an ungated linux kernel, daily updates, full open throttle. 🔥 This stream is purposely left unbranded and is not meant for general purpose use.
 
