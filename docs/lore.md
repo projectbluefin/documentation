@@ -2,14 +2,21 @@
 
 Bluefin has a story tell, via artwork, music, and various clues hidden in plain sight across the project. 
 
-While this is the canon, the full story remains hidden, as users are encouraged to use their own cloud native journey as inspiration to the meaning. Each story element is related to open source projects and their maintainers. Their challenges, and their triumphs. 
+While this is the canon, the full story remains hidden, as users are encouraged to use their own cloud native journey as inspiration to the meaning. Each story element is related to open source projects and their maintainers and their communities. Their challenges, and their triumphs. 
 
 ![BluefinCombo_c](https://github.com/user-attachments/assets/672bcdbb-b327-4d26-a9f2-40a805d3967d)
 
 ## Artwork
 
-Bluefin comes with a monthly wallpaper drawn by [Jacob Schurr](https://www.etsy.com/shop/JSchnurrCommissions). Each scene 
+Bluefin comes with a monthly wallpaper drawn by [Jacob Schurr](https://www.etsy.com/shop/JSchnurrCommissions). Each scene represents a story that can apply to open source communities. 
 
+:::warn[Help!]
+
+We need someone to programatically grab the bluefin wallpapers for the repository and put them in a webwidget here so people can cycle through them. 
+
+:::
+
+Each scene is currently unnamed, Jorge will reveal a title over time depending on the community accomplishing a milestone. 
 
 ## Music
 
