@@ -18,14 +18,14 @@ Complete with actual job titles:
 - [Brian Ketelsen](https://github.com/bketelsen) - Lead Developer Experience, Architect of The Final Shape (Emeritus)
 - [Benjamin Sherman](https://github.com/bsherman) - CTO
 - [m2Giles](https://github.com/m2Giles) - Lead Architect
-- <a class="github-button" href="https://github.com/sponsors/castrojo" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-heart" data-size="large" aria-label="Sponsor @castrojo">Sponsor</a> [Jorge Castro](https://github.com/castrojo/) - Product Development and co-maintainer
-- <a class="github-button" href="https://github.com/sponsors/tulilirockz" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-heart" data-size="large" aria-label="Sponsor tulilirockz">Sponsor</a> [Tulip Blossom](https://github.com/tulilirockz) Large Maniraptoran Specialist and co-maintainer
+- [Jorge Castro](https://github.com/castrojo/) - Product Development
+- [Tulip Blossom](https://github.com/tulilirockz) Large Maniraptoran Specialist and co-maintainer
 - [Robert Sturla](https://github.com/p5) - "Hold onto your butts" guy and Lead DevOps
 - [Chandeleer](https://ko-fi.com/chandeleer) - Art Director and Telescope Connoisseur
 
-and special guests: 
+and esteemed special guests: 
 
-- <a class="github-button" href="https://github.com/sponsors/madonuko" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-heart" data-size="large" aria-label="Sponsor @Madonuko">Sponsor</a> [Madonuko](https://github.com/madonuko) (Fyra Labs) - Readymade installation experience
+- [Madonuko](https://github.com/madonuko) (Fyra Labs) - Readymade installation experience
 - [kolumni](https://ko-fi.com/kolunmi) - App store experience ([Bazaar](https://github.com/kolunmi/bazaar))
 
 ## Upstream Projects included in Bluefin
