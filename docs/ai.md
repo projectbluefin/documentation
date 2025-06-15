@@ -36,7 +36,7 @@ You can also serve the models locally:
 ramalama serve deepseek-r1
 ```
 
-Then go to `http://127.0.0.0:8080` in your browser. Bluefin set's `rl` as an alias for `ramalama`, for brevity. 
+Then go to `http://127.0.0.0:8080` in your browser. Bluefin sets `rl` as an alias for `ramalama`, for brevity. 
 
 ```
 rl serve deepseek-r1
