@@ -36,7 +36,11 @@ You can also serve the models locally:
 ramalama serve deepseek-r1
 ```
 
-Then go to `http://127.0.0.0:8080` in your browser. 
+Then go to `http://127.0.0.0:8080` in your browser. Bluefin set's `rl` as an alias for `ramalama`, for brevity. 
+
+```
+rl serve deepseek-r1
+```
 
 Ramalama will automatically pull in anything your host needs to do the workload. The images are also stored in the same container storage as your other containers. This allows for centralized management of the ai models and other podman images:  
 
