@@ -18,7 +18,7 @@ This species of raptor is for users who prefer a slower release cadence, about a
 
 :::info[Redefining the LTS]
 
-Bluefin LTS features backported components like a modern Linux kernel from the CentOS [Hyperscale SIG](https://sigs.centos.org/hyperscale/). It features less churn and maintenance over the course of its lifecycle. This image is built differently from Bluefin and Bluefin GTS, and is documented here seperately.
+Bluefin LTS features backported components like a modern Linux kernel. It features less churn and maintenance over the course of its lifecycle. This image is built differently from Bluefin and Bluefin GTS, and is documented here seperately.
 
 ::: 
 
@@ -26,8 +26,8 @@ Bluefin LTS is composed of:
 
 - Mostly the same packages of Bluefin and Bluefin GTS, but built with CentOS Stream 10 and EPEL
 - The same features since they share the same source RPMs, just built on CentOS
-- Updated Linux kernel from the CentOS [Hyperscale SIG](https://sigs.centos.org/hyperscale/)
-- Backported GNOME desktop, also from the CentOS Hyperscale SIG
+- Updated Linux kernel from the CentOS
+- Backported GNOME desktop
 - ARM (aarch64) based images
 - The Nvidia version of Bluefin LTS is branded as [Bluefin GDX](/gdx) and designed for AI and other GPU heavy workflows and includes CUDA
   
@@ -56,7 +56,7 @@ While our payload is less churny than Fedora, note that this is still a new imag
 ### Status
 
 - There are instances when something from Bluefin is not implemented in Bluefin LTS. Please [file an issue](https://github.com/ublue-os/bluefin-lts/issues) and tag it with `parity` and the team will investigate. They'll never _exactly_ but we can get the important ones done
-- Some things are missing from the kernel, like gamepad support, this is being worked on
+- We haven't settled on a kernel
 - Appimages are hard unsupported (those fuse packages aren't even in CentOS)
 - Local Layering is disabled by default
 
@@ -110,6 +110,9 @@ The following images and tags are available:
 
 - `bluefin:lts` - base LTS experience using the CentOS [Hyperscale SIG](https://sigs.centos.org/hyperscale/) kernel - currently 6.13.8
 - `bluefin-gdx:lts` - includes Nvidia drivers and associated CUDA tooling. This is the only image with Nvidia drivers. See [Bluefin GDX](/gdx)
+- `bluefin:lts-testing` - adds GNOME 48 as a backport
+- `bluefin-gdx:lts-testing` - adds GNOME 48 as a backport
+
 
 All images offer Bluefin's [Developer Mode](/bluefin-dx).
   
@@ -148,4 +151,3 @@ Note that secureboot and hibernation are mutually exclusive. We do not yet offer
 The team appreciates your support!
 
 - <a class="github-button" href="https://github.com/sponsors/tulilirockz" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-heart" data-size="large" aria-label="Sponsor tulilirockz">Sponsor</a> [Tulip Blossom](https://github.com/tulilirockz)- Lead Raptor Wrangler
-- <a class="github-button" href="https://github.com/sponsors/Conan-Kudo" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-heart" data-size="large" aria-label="Sponsor Neal Gompa">Sponsor</a> [Neal Gompa](https://github.com/sponsors/Conan-Kudo) - CentOS Hyperscale SIG Kernel Maintainer
