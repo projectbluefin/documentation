@@ -30,7 +30,7 @@ System updates are image-based and automatic. Applications are logically separat
     - [Search Light](https://github.com/icedman/search-light) - for search and a MacOS Spotlight workflow. Bound to <kbd>Super</kbd>-<kbd>Space</kbd> by default. Check the screenshot at the bottom of this page for an example
 - [Developer Mode](/bluefin-dx) - Dedicated developer mode that transforms Bluefin into a powerful cloud native developer workstation
 - [Ptyxis terminal](https://devsuite.app/ptyxis/) for container-focused workflows
-  - [Boxbuddy](https://flathub.org/apps/io.github.dvlv.boxbuddyrs) for container management
+  - [Distroshelf](https://flathub.org/apps/com.ranfdev.DistroShelf) for container management
 - [Tailscale](https://tailscale.com) - included for VPN along with `wireguard-tools`
   - Use `ujust toggle-tailscale` to turn it off if you don't plan on using it.
 - [GNOME Extensions Manager](https://flathub.org/apps/com.mattjakeman.ExtensionManager) included
