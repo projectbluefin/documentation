@@ -99,13 +99,13 @@ Thanks to Ubuntu and Canonical for the [detailed specification](https://discours
 
 ### Pet Containers
 
-Pet containers are available as interactive terminals via [distrobox](https://distrobox.it/). Manage these via the included [BoxBuddy](https://github.com/Dvlv/BoxBuddyRS) application, available via the logomenu in the top left corner of your desktop under "Containers":
+Pet containers are available as interactive terminals via [distrobox](https://distrobox.it/). Manage these via the included [DistroShelf](https://github.com/ranfdev/DistroShelf) application, available via the logomenu in the top left corner of your desktop under "Containers":
 
 ![image](https://github.com/user-attachments/assets/bdab71b0-c04a-4562-a73d-396d4b907060)
 
-Use BoxBuddy's interface to create your own pet containers from whichever distribution is on the list:
+Use DistroShelf's interface to create your own pet containers from whichever distribution is on the list:
 
-![image](https://github.com/user-attachments/assets/79570148-98f9-458f-b46e-2a87cfaa00ed)
+![image](https://github.com/user-attachments/assets/2daf276d-2aed-47b9-9792-923d674ef226)
 
 For CLI warriors you can manage your containers with the Terminal's built-in container support:
 
