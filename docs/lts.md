@@ -60,7 +60,7 @@ While our payload is less churny than Fedora, note that this is still a new imag
 - Appimages are hard unsupported (those fuse packages aren't even in CentOS)
 - Local Layering is disabled by default
 
-Due to it's nature Bluefin LTS is stable _in practice_, the reason it is tagged as Beta is that we want to let it cook for a while. After a few major upgrades and the community feels like it's been enough then we'll be done. Exciting times ahead!
+Due to its nature Bluefin LTS is stable _in practice_, the reason it is tagged as Beta is that we want to let it cook for a while. After a few major upgrades and the community feels like it's been enough then we'll be done. Exciting times ahead!
 
 ## Installation
 
