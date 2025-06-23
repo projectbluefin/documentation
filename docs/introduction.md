@@ -34,7 +34,7 @@ System updates are image-based and automatic. Applications are logically separat
 - [Tailscale](https://tailscale.com) - included for VPN along with `wireguard-tools`
   - Use `ujust toggle-tailscale` to turn it off if you don't plan on using it.
 - [GNOME Extensions Manager](https://flathub.org/apps/com.mattjakeman.ExtensionManager) included
-- GNOME Software with [Flathub](https://flathub.org):
+- [Bazaar Application Store](https://github.com/kolunmi/bazaar) featuring [Flathub](https://flathub.org):
   - Use a familiar software center UI to install graphical software
   - [Warehouse](https://flathub.org/apps/io.github.flattool.Warehouse) included for flatpak management
 - Quality of Life Features
