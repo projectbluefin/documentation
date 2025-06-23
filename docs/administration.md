@@ -17,7 +17,7 @@ This usually means you can set it up your system once, and then have it remain t
 
 ## Installing Applications
 
-Use the GNOME Software Center to [install applications from Flathub](https://flathub.org/). System updates and upgrades are not handled by this application, it's scope has been reduced to only install Flatpaks from Flathub. Two flatpak management tools are included:
+Use [Bazaar](https://github.com/kolunmi/bazaar) to [install applications from Flathub](https://flathub.org/). System updates and upgrades are not handled by this application, it's scope has been reduced to only install Flatpaks from Flathub. Two flatpak management tools are included:
 
 - [Warehouse](https://flathub.org/apps/io.github.flattool.Warehouse) provides application management.
 - [Flatseal](https://flathub.org/apps/com.github.tchx84.Flatseal) is also included for permission management.
