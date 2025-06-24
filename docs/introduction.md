@@ -39,7 +39,6 @@ System updates are image-based and automatic. Applications are logically separat
   - [Warehouse](https://flathub.org/apps/io.github.flattool.Warehouse) included for flatpak management
 - Quality of Life Features
   - [Starship](https://starship.rs) terminal prompt enabled by default
-  - [Input Leap](https://github.com/input-leap/input-leap) built in
   - [Solaar](https://github.com/pwr-Solaar/Solaar) - included for Logitech mouse
     management along with `libratbagd`
   - [rclone](https://rclone.org/overview/) - mount almost any remote bucket onto your local machine, great for multiple machine setups
