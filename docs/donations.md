@@ -18,7 +18,7 @@ Complete with actual job titles:
 - [Brian Ketelsen](https://github.com/bketelsen) - Lead Developer Experience, Architect of The Final Shape (Emeritus)
 - [Benjamin Sherman](https://github.com/bsherman) - CTO
 - [m2Giles](https://github.com/m2Giles) - Lead Architect
-- [Jorge Castro](https://github.com/castrojo/) - Product Development
+- [Jorge Castro](https://github.com/castrojo/) - Product Development and Dinosaur Guy
 - [Tulip Blossom](https://github.com/tulilirockz) Large Maniraptoran Specialist and co-maintainer
 - [Robert Sturla](https://github.com/p5) - "Hold onto your butts" guy and Lead DevOps
 - [Chandeleer](https://ko-fi.com/chandeleer) - Art Director and Telescope Connoisseur
