@@ -89,8 +89,7 @@ The rest of these steps are user specific configuration and something that we te
 Since the user space is all in your home directory, just about any tool you use to automate this step should work as you expect. Ideally, configuration that you might have done at the system level in the past is configured at your user level now, leading to a clean seperation between user configuration and the system image.
 
 - Software Installation
-  - Use GNOME Software to install Flatpaks
-    - (Optional): Use Flatseal to manage Flatpak permissions if appropriate
+  - Use the Bazaar store to install applications
   - (Optional): Install Command line applications via `brew`
 - Post-installation Configuration
   - Select/Change default applications as you see fit
