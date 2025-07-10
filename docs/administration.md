@@ -185,10 +185,11 @@ Check the [Fedora Silverblue User Guide](https://docs.fedoraproject.org/en-US/fe
 - Tailscale's [YouTube channel](https://www.youtube.com/@Tailscale) has lots of great tips and tricks
 - Good VPN providers provide Wireguard configurations that can be imported directly into the Network Manager, check their documentation for more information
 
-Another option is [ProtonVPN](https://protonvpn.com/), which is currently in the process of [officially supporting Flatpak](https://github.com/flathub/com.protonvpn.www/issues/349).
+There are also VPN providers on Flathub which will offer a good experience: 
 
+- [Mozilla VPN](https://flathub.org/apps/org.mozilla.vpn)
 - [ProtonVPN client](https://flathub.org/apps/com.protonvpn.www) - available on FlatHub
-
+  
 Other VPN providers may provide a poor packaging experience and are not recommended.
 
 
