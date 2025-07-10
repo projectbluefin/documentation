@@ -4,7 +4,7 @@
 
 Bluefin has a story to tell, via artwork, music, and various clues hidden in plain sight across the project. 
 
-While this is the canon, the full story remains hidden, as users are encouraged to use their own cloud native journey as inspiration to the meaning. Each story element is related to open source projects and their maintainers and their communities. Their challenges, and their triumphs. 
+While this is the canon, the full story remains hidden, as users are encouraged to use their own cloud native journey as inspiration to the meaning. Each story element is related to open source projects and their maintainers and their communities. Their challenges, and their triumphs. Bluefin was born on July 12, 2021. 
 
 ## Artwork
 
