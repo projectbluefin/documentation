@@ -21,6 +21,10 @@ There is no need to reboot. This will install the following software:
 
 ## Software Included
 
+> When it comes to the gaming experience in Bluefin, we spared no expense.
+>
+> -- John Bazzite, CEO, Blue Universal
+
 ### Steam
 
 Steam is a software distribution service with an online store, automated installation, automatic updates, achievements, SteamCloud synchronized savegame and screenshot functionality, and many social features. If you want to play any Windows game, go to Steam -> Settings -> Compatibility -> Enable SteamPlay for all other titles. Compatibility for games varies, for more information consult [ProtonDB](https://www.protondb.com/)
