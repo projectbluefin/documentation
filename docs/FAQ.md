@@ -85,6 +85,10 @@ One "OS" tailored for each use case, but still also, just Fedora. We never quite
 
 Check out [this interview](https://youtu.be/XpKFcLqbd-A?si=URBJa_IzxU18UObY&t=2451) for a summary of the dinosaurs!
 
+## Can I get the dinosaurs for KDE? 
+
+- Check out [plasma-bluefin-wallpaper](https://github.com/grandpares/plasma-bluefin-wallpaper) if you're on a Plasma system. 
+
 ## Starship is not for me, how do I disable it?
 
 You can remove or comment the line below in `/etc/bashrc` to restore the default prompt.
