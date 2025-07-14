@@ -1,5 +1,7 @@
 # Bluefin Docs
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/ublue-os/bluefin-docs)
+
 These docs are pretty sparse on purpose as Bluefin's intended to be invisible. Ideally the docs should be able to be consumed in one sitting.
 
 ## Guidelines
