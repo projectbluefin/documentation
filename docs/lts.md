@@ -89,6 +89,20 @@ The ISO uses Fedora to install Bluefin LTS, this is confusing because it will sa
 
 **Do not rebase to this from an existing Fedora image, ain't no one testing that.**
 
+### Images
+
+- [Repository](https://github.com/ublue-os/bluefin-lts)
+
+The following images and tags are available:
+
+- `bluefin:lts` - base LTS experience, kernel 6.12.0 with long term maintenance from CentOS. 
+- `bluefin-gdx:lts` - includes Nvidia drivers and associated CUDA tooling. This is the only image with Nvidia drivers. See [Bluefin GDX](/gdx)
+- `bluefin:lts-testing` - Adds GNOME backports and gated Linux kernels, the latest patch version of the previous minor kernel release. 
+- `bluefin-gdx:lts-testing` - GDX with GNOME backports and gated Linux kernels, the latest patch version of the previous minor kernel release.
+
+Note that `-testing` will be rebranded as `-hwe` in the future. All images offer Bluefin's [Developer Mode](/bluefin-dx).
+  
+
 ## ARM Support
 
 ### Using it in a VM on an Apple Silicon Mac
@@ -107,19 +121,6 @@ If there are other ways to set this up on MacOS please considering sending a pul
 
 :::
 
-### Images
-
-- [Repository](https://github.com/ublue-os/bluefin-lts)
-
-The following images and tags are available:
-
-- `bluefin:lts` - base LTS experience, kernel 6.12.0 with long term maintenance from CentOS. 
-- `bluefin-gdx:lts` - includes Nvidia drivers and associated CUDA tooling. This is the only image with Nvidia drivers. See [Bluefin GDX](/gdx)
-- `bluefin:lts-testing` - Adds GNOME backports and gated Linux kernels, the latest patch version of the previous minor kernel release. 
-- `bluefin-gdx:lts-testing` - GDX with GNOME backports and gated Linux kernels, the latest patch version of the previous minor kernel release.
-
-Note that `-testing` will be rebranded as `-hwe` in the future. All images offer Bluefin's [Developer Mode](/bluefin-dx).
-  
 #### Other features
 
 - Rebasing: We will explicitly not support rebasing from the Fedora based images and ensure the rebase helper keeps users protected.
