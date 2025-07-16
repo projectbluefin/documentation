@@ -59,7 +59,7 @@ The community may add new tools over time, re-running `ujust bluefin-cli` will p
 
 [Bad Brew](https://bold-brew.com/) is included as a text based user interface (TUI) to Brew. This application features full package management for homebrew in a nice nerdy interface: 
 
-<img width="2001" height="1235" alt="image" src="https://github.com/user-attachments/assets/d07c0455-2514-4b73-bdd5-51eec50b570d" />
+<img width="1001" height="615" alt="image" src="https://github.com/user-attachments/assets/d07c0455-2514-4b73-bdd5-51eec50b570d" />
 
 
 ### Message of the Day and `fastfetch`
