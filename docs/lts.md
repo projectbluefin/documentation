@@ -11,33 +11,39 @@ slug: /lts
 
 Larger, more lethal [Bluefin](https://projectbluefin.io). `bluefin:lts` is built on CentOS 10.
 
+
+:::warning
+
+Bluefin LTS is in Beta, and is in progress, some things in this document are aspirational but will be completed by GA.
+
+:::
+
 ## Purpose
 
 Bluefin LTS is a workstation designed for people who prefer Long Term Support. 
 This species of raptor is for users who prefer a slower release cadence, about a three-to-five year lifespan on a single release.
 
-:::info[Redefining the LTS]
-
-Bluefin LTS features backported components like a modern Linux kernel. It features less churn and maintenance over the course of its lifecycle. This image is built differently from Bluefin and Bluefin GTS, and is documented here seperately.
-
-::: 
-
 Bluefin LTS is composed of:
 
 - Mostly the same packages of Bluefin and Bluefin GTS, but built with CentOS Stream 10 and EPEL
-- The same features since they share the same source RPMs, just built on CentOS
-- Updated Linux kernel from the CentOS
-- Backported GNOME desktop
+  - The same features since they share the same source RPMs, just built on CentOS
 - ARM (aarch64) based images
 - The Nvidia version of Bluefin LTS is branded as [Bluefin GDX](/gdx) and designed for AI and other GPU heavy workflows and includes CUDA
+
+Bluefin LTS also offers a hardware enablement branch with: 
+
+- Updated, but gated Linux kernel, usually one minor point release behind Fedora
+- Backported GNOME desktop from Fedora
   
 ![Pasted image](https://github.com/user-attachments/assets/3972ac0f-d37e-4e89-ae91-ff1eb76eabeb)
 
 ### Rationale
 
-The classic definition of "LTS" or "Enterprise Linux" was to ship older, known good working versions of software. And for a long time it felt like your options were old and working, or new and shiny but may break. But in order to be a good desktop, you have to have good hardware support, and that means newer kernels, etc. Bluefin LTS is more about how regressions are handled more than a strict definition of "things must be old." In our world the applications are always up to date, so the "pace" of the base image isn't as important. 
+Bluefin LTS ships with Linux 6.12.0, which is the kernel for the lifetime of release. It is for change-averse users. 
 
-CentOS has efforts to bring a modern enterprise Linux desktop experience to fruition, Bluefin LTS is just a hello world example of what's possible. In a technical sense: CentOS + EPEL + Hyperscale Kernel + GNOME Backports + Bluefin's RPMs built on top. The _interesting part_ is that since it's delivered via bootc, the end user gets it as a finished product. In the old days this would be Ubuntu LTS + backports + PPAs, etc. and that is the world we're moving away from. 
+However ...
+
+The classic definition of "LTS" or "Enterprise Linux" was to ship older, known good working versions of software. And for a long time it felt like your options were old and working, or new and shiny but may break. But in order to be a good desktop, you have to have good hardware support, and that means newer kernels, etc. Bluefin LTS is more about how regressions are handled more than a strict definition of "things must be old." In our world the applications are always up to date, so the "pace" of the base image isn't as important. See below for the image information
 
 :::warning
 
@@ -56,7 +62,6 @@ While our payload is less churny than Fedora, note that this is still a new imag
 ### Status
 
 - There are instances when something from Bluefin is not implemented in Bluefin LTS. Please [file an issue](https://github.com/ublue-os/bluefin-lts/issues) and tag it with `parity` and the team will investigate. They'll never _exactly_ but we can get the important ones done
-- We haven't settled on a kernel
 - Appimages are hard unsupported (those fuse packages aren't even in CentOS)
 - Local Layering is disabled by default
 
@@ -108,13 +113,12 @@ If there are other ways to set this up on MacOS please considering sending a pul
 
 The following images and tags are available:
 
-- `bluefin:lts` - base LTS experience using the CentOS [Hyperscale SIG](https://sigs.centos.org/hyperscale/) kernel - currently 6.13.8
+- `bluefin:lts` - base LTS experience, kernel 6.12.0 with long term maintenance from CentOS. 
 - `bluefin-gdx:lts` - includes Nvidia drivers and associated CUDA tooling. This is the only image with Nvidia drivers. See [Bluefin GDX](/gdx)
-- `bluefin:lts-testing` - adds GNOME 48 as a backport
-- `bluefin-gdx:lts-testing` - adds GNOME 48 as a backport
+- `bluefin:lts-testing` - Adds GNOME backports and gated Linux kernels, the latest patch version of the previous minor kernel release. 
+- `bluefin-gdx:lts-testing` - GDX with GNOME backports and gated Linux kernels, the latest patch version of the previous minor kernel release.
 
-
-All images offer Bluefin's [Developer Mode](/bluefin-dx).
+Note that `-testing` will be rebranded as `-hwe` in the future. All images offer Bluefin's [Developer Mode](/bluefin-dx).
   
 #### Other features
 
@@ -122,8 +126,6 @@ All images offer Bluefin's [Developer Mode](/bluefin-dx).
 - Releases: Builds publish weekly on Tuesdays, the images will update as often as the team is developing and will settle down into weeklies as the project matures
 
 #### Schedule
-
-This is very aspirational and totally not up to us, but we'll be able to at least gather data at these events: 
 
 - General Availability: Summer 2025
 
