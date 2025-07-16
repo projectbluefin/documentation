@@ -55,11 +55,11 @@ The community may add new tools over time, re-running `ujust bluefin-cli` will p
 
 ![image](https://github.com/user-attachments/assets/89be8151-5b57-4b71-bbe5-988bef2d6798)
 
-### Bad Brew 
+### Bold Brew 
 
-[Bad Brew](https://bold-brew.com/) is included as a text based user interface (TUI) to Brew. This application features full package management for homebrew in a nice nerdy interface: 
+[Bold Brew](https://bold-brew.com/) is included as a text based user interface (TUI) to Brew. This application features full package management for homebrew in a nice nerdy interface: 
 
-<img width="1001" height="615" alt="image" src="https://github.com/user-attachments/assets/d07c0455-2514-4b73-bdd5-51eec50b570d" />
+![boldbrew](https://github.com/user-attachments/assets/d07c0455-2514-4b73-bdd5-51eec50b570d)
 
 
 ### Message of the Day and `fastfetch`
