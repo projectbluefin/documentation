@@ -7,7 +7,7 @@ Bluefin is designed to be used by normal people, but the command line is _**our 
 
 ## Installing Applications 
 
-The [brew](https://brew.sh/) application is the package manager used for installing command line applications in Bluefin.
+[brew](https://brew.sh/) (Also known as Homebrew) is the package manager used for installing command line applications.
 
 - [Homebrew Documentation](https://docs.brew.sh/)
 - [Homebrew Packages](https://formulae.brew.sh/)
