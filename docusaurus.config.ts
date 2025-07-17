@@ -43,7 +43,7 @@ const config: Config = {
           blogDescription: 'Official Blog and Announcements',
           blogSidebarCount: 'ALL',
           blogSidebarTitle: 'Raptor News',
-          editUrl: 'https://github.com/ublue-os/bluefin-docs/edit/main/blog',
+          editUrl: 'https://github.com/ublue-os/bluefin-docs/edit/main/',
           authorsMapPath: 'authors.yaml',
         },
         theme: {
