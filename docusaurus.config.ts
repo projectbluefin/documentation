@@ -42,6 +42,8 @@ const config: Config = {
           blogTitle: 'Bluefin\'s Blog',
           blogDescription: 'Official Blog and Announcements',
           blogSidebarCount: 'ALL',
+          blogSidebarTitle: 'Raptor News',
+          editUrl: 'https://github.com/ublue-os/bluefin-docs/edit/main/blog'
           authorsMapPath: 'authors.yaml',
         },
         theme: {
@@ -64,7 +66,7 @@ const config: Config = {
     announcementBar: {
       id: "announcement",
       content:
-        'Keep up with the latest by <a href="https://universal-blue.discourse.group/tag/bluefin-news">following the announcements feed!</a>',
+        'Got a question? Try <a href="https://ask.projectbluefin.io">ask.projectbluefin.io</a>!',
       backgroundColor: "#fafbfc",
       textColor: "#091E42",
       isCloseable: true,
