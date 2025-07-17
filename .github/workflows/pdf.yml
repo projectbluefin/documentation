@@ -1,8 +1,7 @@
 name: Generate Docs PDF
 on:
-  push:
-    branches:
-      - main
+  schedule:
+    - cron: "50 5 * * 0" # 5:50 UTC Weekly on Sundays
   workflow_dispatch:
 
 jobs:
