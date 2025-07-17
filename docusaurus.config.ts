@@ -42,7 +42,7 @@ const config: Config = {
           blogTitle: 'Bluefin\'s Blog',
           blogDescription: 'Official Blog and Announcements',
           blogSidebarCount: 'ALL',
-          authorsMapPath: 'authors.yml',
+          authorsMapPath: '../blog/authors.yml',
         },
         theme: {
           customCss: "./src/css/custom.css",
