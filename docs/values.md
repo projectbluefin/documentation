@@ -29,8 +29,6 @@ We endeavour to utilize the latest in open-source technology (like [sigstore](ht
 
 We strive to prefer stability and correctness, but recognize that we must act to solve problems quickly and efficiently.
 
-* * *
-
-... and we can't have all that without the quote:
-
-"Culture eats strategy for breakfast." --Peter Drucker
+> "Culture eats strategy for breakfast." 
+>
+> --Peter Drucker
