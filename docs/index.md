@@ -15,7 +15,7 @@ For end users it provides a system as reliable as a Chromebook with near-zero ma
 
 ## Is Bluefin for You?
 
-Bluefin, like all [Universal Blue](https://universal-blue.org) images, is a next generation Linux desktop, generally speaking it trends towards progressive improvement; the team rigorously and aggressively moves away from legacy technologies as soon as possible in order to provide the best possible experience.
+Bluefin is a next generation Linux desktop, generally speaking it trends towards progressive improvement; the team rigorously and aggressively moves away from legacy technologies as soon as possible in order to provide the best possible experience.
 
 > Some might be so inclined to say that Bluefin would best serve developers or experienced Linux users, but I would argue that it’s an equally strong contender for new users because of how reliable it is and how well-configured it comes out of the box.
 >
@@ -26,14 +26,14 @@ Bluefin is:
 - **Flatpak First** - The application model in Bluefin is centered around isolated apps that are maintained in Flathub. Applications that do not work well with modern components such as Wayland, Pipewire, Flatpak Portals, etc. may provide a poor experience and are not recommended.
 - **Purposely Invisible** - Bluefin is not a distribution. Your relationship is with Flathub, homebrew, and whatever you put in your containers.
 - **Optimized for the 96%** - Not the 4% - Bluefin takes a "stronger together" approach towards features. You can always do what you want, but the value is to share best practices, the team doesn't spend much time on edge cases.
-- **Proven development model** - Developer experience focused around containers and exposing new Linux users to the [tools used in cloud native](https://www.cncf.io/). See Universal Blue's [mission statement](https://universal-blue.org/mission.html) for more information.
+- **Proven development model** - Developer experience focused around containers and exposing new Linux users to the [tools used in cloud native](https://www.cncf.io/). See our [Mission Statement](/mission), and [Values](/values) pages for more information. 
 - **Purposely Focused on Great Hardware** - Bluefin runs best on Linux friendly hardware in order to provide as much of a legacy-free experience for our users as we can. We also want to support OEMs who sell Linux laptops and desktops, so we strive to run with the best combination of software and hardware. We do not go out of our way to document or workaround things that compromise the user experience, so in many cases another operating system is the correct choice.
 
 > I'm a [Framework Linux Ambassador](https://community.frame.work/t/framework-linux-community-ambassador-program-launch/57771/) and Bluefin is a community supported option. This is the "halo car", the dream combination I use for my work and personal gear. A Linux friendly vendor with support, a working relationship with Fedora, and an OS that will last for the life of the device. This is the experience we want everyone to have, and it all starts with supporting vendors who care about Linux, it's the only way it can be sustainable long term. 
 >
 > -- Jorge
   
-If your requirements are outside of this scope, then **Bluefin might not be the best fit for you**. Bluefin may cause discomfort and disembowelment [when held incorrectly](/FAQ/#am-i-holding-bluefin-wrong). We recognize that in order to make a better desktop that many parts of the traditional Linux desktop experience will not be coming with us. [Here's a video](https://www.youtube.com/watch?v=4CyWH6jx2pE) on why we take such a focused approach to the desktop. The video is about [Bazzite.gg](https://bazzite.gg), which is a sister project, but the same applies.
+If your requirements are outside of this scope, then **Bluefin might not be the best fit for you**. Bluefin may cause discomfort and disembowelment [when held incorrectly](/FAQ/#am-i-holding-bluefin-wrong). We recognize that in order to make a better desktop that many parts of the traditional Linux desktop experience will not be coming with us. Check the [Code of Conduct](/code-of-conduct), 
 
 :::info[Begin your journey...]
 
