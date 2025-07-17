@@ -99,11 +99,11 @@ const config: Config = {
         },
         {
           href: "https://projectbluefin.io/",
-          label: "Website",
+          label: "Web",
           position: "right",
         },
         {
-          href: "https://community.projectbluefin.io/",
+          href: "https://github.com/ublue-os/bluefin/discussions",
           label: "Community",
           position: "right",
         },
