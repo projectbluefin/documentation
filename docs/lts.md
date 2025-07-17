@@ -34,6 +34,7 @@ Bluefin LTS also offers a hardware enablement branch with:
 
 - Updated, but gated Linux kernel, usually one minor point release behind Fedora
 - Backported GNOME desktop from Fedora
+- Toggle between branches with `ujust toggle-hwe` 
   
 ![Pasted image](https://github.com/user-attachments/assets/3972ac0f-d37e-4e89-ae91-ff1eb76eabeb)
 
