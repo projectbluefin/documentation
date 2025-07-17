@@ -33,11 +33,14 @@ const sidebars: SidebarsConfig = {
       label: "Project Information",
       collapsed: false,
       items: [
+        "code-of-conduct",
+        "mission",
+        "values", 
         "analytics",
         "FAQ",
         "press-kit",
         "tips",
-        "downloads"
+        "downloads"      
       ],
     },
     {
