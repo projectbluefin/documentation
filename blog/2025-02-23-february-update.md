@@ -1,11 +1,7 @@
 --- 
 title: February Infrastructure Update
 slug: february-infrastructure-update
-authors:
-  - name: Jorge O. Castro
-    title: Dinosaur Guy
-    url: https://github.com/castrojo
-    image_url: https://github.com/castrojo.png
+authors: castrojo
 tags: [announcements]
 ---
 

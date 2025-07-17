@@ -1,11 +1,7 @@
 --- 
 title: Bazaar is now the default app store in Bluefin
 slug: bazaar-default
-authors:
-  - name: Jorge O. Castro
-    title: Dinosaur Guy
-    url: https://github.com/castrojo
-    image_url: https://github.com/castrojo.png
+authors: castrojo
 tags: [announcements]
 ---
 
