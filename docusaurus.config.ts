@@ -39,7 +39,7 @@ const config: Config = {
           editUrl: "https://github.com/ublue-os/bluefin-docs/tree/main",
         },
         blog: {
-          blogTitle: 'Bluefin's Blog',
+          blogTitle: 'Bluefin\'s Blog',
           blogDescription: 'Official Blog and Announcements',
           showReadingTime: true,
           feedOptions: {
