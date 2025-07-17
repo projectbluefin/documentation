@@ -50,5 +50,3 @@ But also now is the time when the new folks start to step up, so it's encouragin
 ### Thanks
 
 This work wouldn't be possible without [Timothée Ravier](https://github.com/travier) and the [bootc](https://github.com/bootc-dev/bootc) team! You have our thanks. 
-
-And cheers to you, here's to another four more! **Post a pic of your desktop/laptop setup!**
