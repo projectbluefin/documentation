@@ -44,7 +44,7 @@ Bluefin LTS ships with Linux 6.12.0, which is the kernel for the lifetime of rel
 
 However ...
 
-The classic definition of "LTS" or "Enterprise Linux" was to ship older, known good working versions of software. And for a long time it felt like your options were old and working, or new and shiny but may break. But in order to be a good desktop, you have to have good hardware support, and that means newer kernels, etc. Bluefin LTS is more about how regressions are handled more than a strict definition of "things must be old." In our world the applications are always up to date, so the "pace" of the base image isn't as important. See below for the image information.
+The classic definition of "LTS" or "Enterprise Linux" was to ship older, known good working versions of software. And for a long time it felt like your options were old and working, or new and shiny but may break. But in order to be a good desktop, you have to have good hardware support, and that means newer kernels, etc. Bluefin LTS is more about how regressions are handled more than a strict definition of "things must be old." In our world the applications are always up to date, so the "pace" of the base image isn't as important. This is why `ujust toggle-hwe` exists, so users can adjust to their needs.
 
 :::warning
 
