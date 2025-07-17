@@ -41,12 +41,7 @@ const config: Config = {
         blog: {
           blogTitle: 'Bluefin\'s Blog',
           blogDescription: 'Official Blog and Announcements',
-          showReadingTime: true,
-          feedOptions: {
-            type: 'all',
-          },
           blogSidebarCount: 'ALL',
-          blogSidebarTitle: 'All our posts',
           authorsMapPath: 'authors.yml',
         },
         theme: {
