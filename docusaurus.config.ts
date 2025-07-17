@@ -48,6 +48,7 @@ const config: Config = {
           blogSidebarCount: 'ALL',
           blogSidebarTitle: 'All our posts',
           authorsMapPath: 'authors.yml',
+        },
         theme: {
           customCss: "./src/css/custom.css",
         },
