@@ -1,7 +1,7 @@
 --- 
 title: Fresh Bluefin ISOs and Bazaar 
 slug: fresh-bluefin-isos-and-bazaar
-authors:
+author:
   - name: Jorge O. Castro
   - title: Dinosaur Guy
   - url: https://github.com/castrojo
