@@ -152,11 +152,11 @@ const config: Config = {
           items: [
             {
               label: "Discord",
-              href: "https://discord.gg/WEu6BdFEtp",
+              href: "https://discord.gg/XUC8cANVHy",
             },
             {
               label: "Forum",
-              href: "https://community.projectbluefin.io/",
+              href: "https://github.com/ublue-os/bluefin/discussions",
             },
           ],
         },
