@@ -106,7 +106,7 @@ Bluefin strives to make maintenance as easy as possible, however many of the aut
   - `ujust changelogs` will show incoming changes and updates coming from Fedora
   - `ujust bios` will reboot the machine and enter the BIOS/UEFI menu. This is useful for booting into a Windows drive
 - Subscribe to the [announcements tag](https://universal-blue.discourse.group/tags/c/bluefin/6/announcements) on the Universal Blue forums
-  - [RSS Feed](https://meta.discourse.org/tag/bluefin-news.rss)
+  - [RSS Feed](https://universal-blue.discourse.group/tag/bluefin-news.rss)
 - Subscribe to the [release notes](https://github.com/ublue-os/bluefin/releases)
   - [RSS Feed](https://github.com/ublue-os/bluefin/releases.atom)
 - Understand [rebase and rollback procedures](/administration.md#switching-between-streams)
