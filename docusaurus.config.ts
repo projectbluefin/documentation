@@ -93,6 +93,10 @@ const config: Config = {
           position: "left",
         },
         {
+          to: 'blog',
+          label: 'Blog',
+          position: 'right',
+        {
           href: "https://projectbluefin.io/",
           label: "Website",
           position: "right",
