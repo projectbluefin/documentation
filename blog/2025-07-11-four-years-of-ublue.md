@@ -22,10 +22,10 @@ As Kyle mentioned in the [Bazzite update](https://universal-blue.discourse.group
 
 Here's our rolling totals: 
 
-**Core contributions:** 61 individuals
-**Contributors:** 1098 individuals
-**Participants:** 3069 individuals
-**Visitors:** 13469
+- **Core contributions:** 61 individuals
+- **Contributors:** 1098 individuals
+- **Participants:** 3069 individuals
+- **Visitors:** 13469
 
 And as we can see, the amount of contributions since Bazzite started to gain traction has really improved. I'm particularly proud of our contributor distribution here - it proves that non-code contributions around support can help keep our project healthy: 
 
