@@ -88,8 +88,8 @@ const config: Config = {
           label: "Documentation",
         },
         {
-          href: "https://deepwiki.com/ublue-os/bluefin-docs",
-          label: "Askbot",
+          href: "https://ask.projectbluefin.io",
+          label: "Ask Bluefin",
           position: "left",
         },
         {
