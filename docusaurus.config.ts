@@ -38,6 +38,16 @@ const config: Config = {
           routeBasePath: "/",
           editUrl: "https://github.com/ublue-os/bluefin-docs/tree/main",
         },
+        blog: {
+          blogTitle: 'Bluefin's Blog',
+          blogDescription: 'Official Blog and Announcements',
+          showReadingTime: true,
+          feedOptions: {
+            type: 'all',
+          },
+          blogSidebarCount: 'ALL',
+          blogSidebarTitle: 'All our posts',
+          authorsMapPath: 'authors.yml',
         theme: {
           customCss: "./src/css/custom.css",
         },
