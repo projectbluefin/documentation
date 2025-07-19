@@ -5,15 +5,6 @@ slug: /FAQ
 
 The [general FAQ](https://projectbluefin.io/#scene-faq) on the website covers some of the most common questions. This section containers more specific questions:
 
-## How is this different from Fedora Silverblue?
-
-Other than the visual differences, and codecs, there are some other key differences between Bluefin and Fedora Silverblue from a usage perspective:
-
-- Bluefin takes a [greenfield approach](https://en.wikipedia.org/wiki/Greenfield_project) to Linux applications by defaulting to Flathub and `brew` by default
-- Bluefin doesn't recommend using [Toolbox](https://github.com/containers/toolbox) - it instead focuses on [devcontainers](/bluefin-dx.md#the-cloud-native-development-approach) for declarative containerized development.
-- Bluefin _tries_ to remove the need for the user to use `rpm-ostree` or `bootc` directly
-- Bluefin focuses on automation of OS services and upgrades instead of user interaction
-
 ## Am I holding Bluefin wrong?
 
 ![Don't hold Bluefin wrong](https://github.com/user-attachments/assets/6d03851b-5d42-4235-9e1c-3dde7c455946)
