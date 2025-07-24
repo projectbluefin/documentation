@@ -1,3 +1,7 @@
+---
+unlisted: true
+---
+
 ![pair_scaled](https://github.com/user-attachments/assets/feaf2f80-b895-49ee-ac19-0ccd4f8857ca)
 
 # Lore
