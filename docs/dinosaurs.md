@@ -41,13 +41,16 @@ Bluefin features dinosaurs and other prehistoric life in its artwork. This inclu
 ## [ Redacted ]
 
 - Name: [ Redacted ]
+- Role: [ Redacted ]
 - Species: [Dakotaraptor steini](https://en.wikipedia.org/wiki/Dakotaraptor)
+  
 
 ![Dakotaraptor](https://github.com/user-attachments/assets/01b99cdf-2b10-4be4-88bf-23da3a945be8)
 
 ## [ Redacted ]
 
 - Name: [ Redacted ]
+- Role: [ Redacted ]
 - Species: [Utahraptor ostrommaysi](https://en.wikipedia.org/wiki/Utahraptor)
 
 ![Utahraptor](https://github.com/user-attachments/assets/1a9aad73-9a9b-470d-b9e7-53969fbc7b80)
