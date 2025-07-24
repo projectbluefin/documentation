@@ -19,6 +19,13 @@ Bluefin features dinosaurs and other prehistoric life in its artwork. This inclu
 
 ![Achillobator](https://github.com/user-attachments/assets/eb94b207-c29b-4410-96b5-8c0ac8ef238f)
 
+## Kubernetes
+
+- Name: Karl
+- Species: [Amargasaurus cazaui](https://en.wikipedia.org/wiki/Dakotaraptor)
+
+![Karl](https://github.com/user-attachments/assets/79ceae5e-f48b-4d87-aadd-c7f46294378e)
+
 ## [ Redacted ]
 
 - Name: [ Redacted ]
