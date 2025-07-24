@@ -45,6 +45,16 @@ Here are the cast of characters! Each represent something important to this ecos
 - Role: Sails are cool!
 - Species: [Dimetrodon limbatus](https://en.wikipedia.org/wiki/Dimetrodon)
 
+![Dolly](https://github.com/user-attachments/assets/f8094307-eba1-44f1-beed-5d6328350f41)
+
+
+## OhKei!
+
+- Name: Marcoventator tai
+- Role: Transportation and Heavy Industrial Output
+- Species: [Concavenator corcovatus](https://en.wikipedia.org/wiki/Concavenator)
+
+![tai](https://github.com/user-attachments/assets/936552bf-28ef-42a1-82ce-ae8b9a370ac1)
 
 ## [ Redacted ]
 
