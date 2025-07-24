@@ -3,7 +3,7 @@ title: Dinosaurs
 slug: dinosaurs
 ---
 
-Bluefin features dinosaurs and other prehistoric life in its artwork. This includes Bluefin's [kettle](https://en.wikipedia.org/wiki/Kettle_(birds)). Here are the cast of characters! 
+Bluefin features dinosaurs and other prehistoric life in its artwork. This includes Bluefin's [kettle](https://en.wikipedia.org/wiki/Kettle_(birds)). Here are the cast of characters! You can always support Jacob Schnurr's artwork via [his Etsy store](https://www.etsy.com/shop/JSchnurrCommissions?dd_referrer=https%3A%2F%2Fwww.google.com%2F).
 
 ## Bluefin and Bluefin GTS
 
