@@ -8,6 +8,7 @@ Bluefin features dinosaurs and other prehistoric life in its artwork. This inclu
 ## Bluefin and Bluefin GTS
 
 - Name: Bluefin
+- Role: The leader of the flock, first among equals, the nimblest
 - Species: [Deinonychus antirrhopus](https://en.wikipedia.org/wiki/Deinonychus)
 
 ![Bluefin](https://github.com/user-attachments/assets/01cee34f-ae35-417c-822e-bddbbf57686b)
@@ -15,6 +16,7 @@ Bluefin features dinosaurs and other prehistoric life in its artwork. This inclu
 ## Bluefin LTS and GDX
 
 - Name: [ Redacted ]
+- Role: One of the largest raptors, represents the inertia of the enterprise  
 - Species: [Achillobator giganticus](https://en.wikipedia.org/wiki/Achillobator)
 
 ![Achillobator](https://github.com/user-attachments/assets/eb94b207-c29b-4410-96b5-8c0ac8ef238f)
@@ -22,9 +24,19 @@ Bluefin features dinosaurs and other prehistoric life in its artwork. This inclu
 ## Kubernetes
 
 - Name: Karl
+- Role: Kubernetes unleashed, our guiding light
 - Species: [Amargasaurus cazaui](https://en.wikipedia.org/wiki/Dakotaraptor)
 
 ![Karl](https://github.com/user-attachments/assets/79ceae5e-f48b-4d87-aadd-c7f46294378e)
+
+## Homebrew
+
+- Name: Kate
+- Role: An unexpected ally
+- Species: [Kentrosaurus aethiopicus](https://en.wikipedia.org/wiki/Kentrosaurus)
+
+![Kate](https://github.com/user-attachments/assets/c1f9851a-1116-4bd5-8355-71acef25689d)
+
 
 ## [ Redacted ]
 
