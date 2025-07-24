@@ -1,5 +1,5 @@
 ---
-title: Community Values
+title: Values
 slug: values
 ---
 
