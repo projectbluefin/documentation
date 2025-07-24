@@ -3,7 +3,9 @@ title: Dinosaurs
 slug: dinosaurs
 ---
 
-Bluefin features dinosaurs and other prehistoric life in its artwork. This includes Bluefin's [kettle](https://en.wikipedia.org/wiki/Kettle_(birds)). Here are the cast of characters! You can always support Jacob Schnurr's artwork via [his Etsy store](https://www.etsy.com/shop/JSchnurrCommissions?dd_referrer=https%3A%2F%2Fwww.google.com%2F).
+Bluefin features dinosaurs and other prehistoric life in its artwork. Bluefin has friends, we call this Bluefin's [kettle](https://en.wikipedia.org/wiki/Kettle_(birds)). All the creatures here are drawn and designed by Jacob Schnurr. You can buy stickers to these and many more designs at [his Etsy store](https://www.etsy.com/shop/JSchnurrCommissions?dd_referrer=https%3A%2F%2Fwww.google.com%2F).
+
+Here are the cast of characters! Each represent something important to this ecosystem. 
 
 ## Bluefin and Bluefin GTS
 
@@ -24,7 +26,7 @@ Bluefin features dinosaurs and other prehistoric life in its artwork. This inclu
 ## Kubernetes
 
 - Name: Karl
-- Role: Kubernetes unleashed, our guiding light
+- Role: Kubernetes unleashed, our guiding light - represents our developer experience
 - Species: [Amargasaurus cazaui](https://en.wikipedia.org/wiki/Dakotaraptor)
 
 ![Karl](https://github.com/user-attachments/assets/79ceae5e-f48b-4d87-aadd-c7f46294378e)
@@ -36,6 +38,12 @@ Bluefin features dinosaurs and other prehistoric life in its artwork. This inclu
 - Species: [Kentrosaurus aethiopicus](https://en.wikipedia.org/wiki/Kentrosaurus)
 
 ![Kate](https://github.com/user-attachments/assets/c1f9851a-1116-4bd5-8355-71acef25689d)
+
+## Flathub
+
+- Name: Dolly
+- Role: Sails are cool!
+- Species: [Dimetrodon limbatus](https://en.wikipedia.org/wiki/Dimetrodon)
 
 
 ## [ Redacted ]
