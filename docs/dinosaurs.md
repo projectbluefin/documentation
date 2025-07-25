@@ -13,7 +13,8 @@ Here are the cast of characters! Each represent something important to this ecos
 - Role: The leader of the flock, first among equals, the nimblest
 - Species: [Deinonychus antirrhopus](https://en.wikipedia.org/wiki/Deinonychus)
 
-![Bluefin](https://github.com/user-attachments/assets/01cee34f-ae35-417c-822e-bddbbf57686b)
+![Bluefin](https://github.com/user-attachments/assets/97324a75-e6c6-409e-b9ee-18f69d3715d0)
+
 
 ## Bluefin LTS and GDX
 
