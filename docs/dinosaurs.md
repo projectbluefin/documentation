@@ -3,7 +3,7 @@ title: Dinosaurs
 slug: dinosaurs
 ---
 
-Bluefin features dinosaurs and other prehistoric life in its artwork. Bluefin has friends, we call this Bluefin's [kettle](https://en.wikipedia.org/wiki/Kettle_(birds)). All the creatures here are drawn and designed by Jacob Schnurr. You can buy stickers to these and many more designs at [his Etsy store](https://www.etsy.com/shop/JSchnurrCommissions?dd_referrer=https%3A%2F%2Fwww.google.com%2F).
+Bluefin features dinosaurs and other prehistoric life in its artwork. Bluefin has friends, we call this Bluefin's [kettle](https://en.wikipedia.org/wiki/Kettle_(birds)). All the creatures here are drawn and designed by Jacob Schnurr. You can buy stickers to these and many more designs at [his Etsy store](https://www.etsy.com/shop/JSchnurrCommissions?dd_referrer=https%3A%2F%2Fwww.google.com%2F). See also: [Why dinosaurs](https://www.youtube.com/watch?v=XpKFcLqbd-A&t=2451s)?
 
 Here are the cast of characters! Each represent something important to this ecosystem. 
 
