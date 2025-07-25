@@ -34,7 +34,7 @@ Here are the cast of characters! Each represent something important to this ecos
 
 ## Homebrew
 
-- Name: Kate
+- Name: Katharina
 - Role: An unexpected ally
 - Species: [Kentrosaurus aethiopicus](https://en.wikipedia.org/wiki/Kentrosaurus)
 
