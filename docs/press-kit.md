@@ -61,7 +61,5 @@ All Universal Blue images share governance structures and are modelled after clo
 
 Bluefin's logo is a _Deinonychus antirrhopus_ named "Bluefin". This is the primary logo:
 
-![Bluefin](https://github.com/user-attachments/assets/ebf5ab24-4a25-4925-a19b-3d442833d221)
-
-Feel free to use any of the other [dinosaurs](https://universal-blue.discourse.group/t/dinosaur-gallery/18) for additional artwork.
+Feel free to use any of the other [dinosaurs](/dinosaurs) for additional artwork.
 Please do not distort or modify the artwork or logos, including spacing, color, elements, and scaling.
