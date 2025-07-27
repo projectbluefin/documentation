@@ -62,7 +62,7 @@ See [Homebrew is Great on Linux](https://www.ypsidanger.com/homebrew-is-great-on
 
 ## Why so many images, this is confusing! How are users going to cope with the complexity!
 
-Bazzite, Bluefin, and Aurora all came in at different times, the result of organic growth. **Don't overthink it, you are using Fedora**. The people seeking out Linux will figure it out and generally speaking we're the ones stuck admining a PC for a loved one, might as well it easy on ourselves. Chillops is the best ops. This ties into the next question:
+Bazzite, Bluefin, and Aurora all came in at different times, the result of organic growth. **Don't overthink it, you are using Fedora**. The people seeking out Linux will figure it out and generally speaking we're the ones stuck admining a PC for a loved one, might as well make it straightforward for ourselves. Chillops is the best ops. This ties into the next question:
 
 ## What's with all the Ubuntu influence?
 

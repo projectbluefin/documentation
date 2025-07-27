@@ -101,7 +101,7 @@ Since the user space is all in your home directory, just about any tool you use 
 
 ## Day 2: Operations and Maintenance
 
-Bluefin strives to make maintenance as easy as possible, however many of the automated tasks can be run manually.
+Bluefin strives to make maintenance as straightforward as possible, however many of the automated tasks can be run manually.
 
 - Run a System Upgrade via the menu option or `ujust update` to observe an update and reboot
   - `ujust changelogs` will show incoming changes and updates coming from Fedora

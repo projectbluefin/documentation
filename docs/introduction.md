@@ -46,7 +46,7 @@ System updates are image-based and automatic. Applications are logically separat
   - [restic](https://restic.net/) - A modern backup program for your files
   - `zsh` and `fish` included ([Instructions](/command-line#changing-the-default-terminal-shell)) as optional shells
   - [Switcheroo support](https://man.archlinux.org/man/switcherooctl.1.en?ref=news.itsfoss.com) for laptops with multiple GPUs
-- Built on top of the [Universal Blue main image](https://github.com/ublue-os/main) - resulting in easy sharing of benefits:
+- Built on top of the [Universal Blue main image](https://github.com/ublue-os/main) - enabling straightforward sharing of benefits:
   - Extra udev rules for game controllers and [other devices](https://github.com/ublue-os/config) included out of the box
   - All multimedia codecs included
   - System designed for automatic staging of updates

@@ -71,7 +71,7 @@ _Note: You need to add the following command so that Steam games can access Mang
 
 ### Steam Tinker Launch
 
-Steam Tinker Launch is a versatile Linux wrapper tool for use with the Steam client which allows for easy graphical configuration of game tools, such as GameScope, MangoHud, modding tools and a bunch more. It supports both games using Proton and native Linux games. Check out the [feature list](https://github.com/sonic2kk/steamtinkerlaunch/wiki#features) to see supported features.
+Steam Tinker Launch is a versatile Linux wrapper tool for use with the Steam client which allows for straightforward graphical configuration of game tools, such as GameScope, MangoHud, modding tools and a bunch more. It supports both games using Proton and native Linux games. Check out the [feature list](https://github.com/sonic2kk/steamtinkerlaunch/wiki#features) to see supported features.
 
 ### Raw list of Flatpaks
 
