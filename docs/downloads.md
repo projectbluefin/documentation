@@ -40,7 +40,7 @@ Due to the simplified nature of this installer, it's an excellent choice if you 
 
 ### AMD/Intel
 
-- Bluefin: [readymade-bluefin-stable-x86_64.iso](https://download.projectbluefin.io/readymade-bluefin-stable-x86_64.iso) - [Checksum](readymade-bluefin-stable-x86_64.iso](https://download.projectbluefin.io/readymade-bluefin-stable-x86_64.iso-CHECKSUM)
+- Bluefin: [readymade-bluefin-stable-x86_64.iso](https://download.projectbluefin.io/readymade-bluefin-stable-x86_64.iso) - [Checksum](https://download.projectbluefin.io/readymade-bluefin-stable-x86_64.iso-CHECKSUM)
 - Bluefin GTS: [readymade-bluefin-gts-x86_64.iso](https://download.projectbluefin.io/readymade-bluefin-gts-x86_64.iso) - [Checksum](https://download.projectbluefin.io/readymade-bluefin-gts-x86_64.iso-CHECKSUM)
 - Bluefin LTS (Beta): [readymade-bluefin-lts-x86_64.iso](https://download.projectbluefin.io/readymade-bluefin-lts-x86_64.iso) - [Checksum](https://download.projectbluefin.io/readymade-bluefin-lts-x86_64.iso-CHECKSUM)
 
