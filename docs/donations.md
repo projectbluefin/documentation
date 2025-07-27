@@ -22,6 +22,7 @@ Complete with actual job titles:
 - [Tulip Blossom](https://github.com/sponsors/tulilirockz) Large Maniraptoran Specialist and co-maintainer
 - [Robert Sturla](https://github.com/p5) - "Hold onto your butts" guy and Lead DevOps
 - [Chandeleer](https://ko-fi.com/chandeleer) - Art Director and Telescope Connoisseur
+- [James Reilly](https://github.com/sponsors/hanthor) - LTS Specialist and shameless AI enjoyer
 
 and esteemed special guests:
 
@@ -56,9 +57,9 @@ If your software is included in Bluefin and missing from this list, please send 
 
 Note that all [Universal Blue](https://universal-blue.org/) image sources are kept in bash and Python in order to encourage contributions. Organizations that see value in our work can consider hiring any one of the millions of developers in the world with these skills to help out, we could always use the help. Get in touch with us if you'd be interested in trying that.
 
-- bsherman
+- [Benjamin Sherman](https://github.com/bsherman)
 - [HikariKnight](https://github.com/sponsors/HikariKnight)
 - [Jorge Castro](https://github.com/sponsors/castrojo/)
 - [Kyle Gospodnetich](https://github.com/sponsors/KyleGospo)
-- M2
+- [m2Giles](https://github.com/m2Giles)
 - [Tulip Blossom](https://github.com/sponsors/tulilirockz)
