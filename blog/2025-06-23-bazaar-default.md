@@ -17,7 +17,7 @@ Now Bazaar has enough feature parity with gnome-software so we’ve gone ahead a
 - Issues: Check these first as we’ve been logging people’s requests here: [GitHub · Where software is built](https://github.com/kolunmi/bazaar/issues) - note that the curated page with the dinosaurs and app tiles isn’t Bazaar, that’s our custom config, we’re still working on it. (The horizontal experience needs work still!)
 - There’s still some session integration work to happen over the next few days, notably the background service doesn’t start until you launch the app or you hit the super key. This means there’s a loading screen at first. We’re working to make that just be part of login, the end state will be instant launch.
 
-I prefer to use with the Super-space shortcut - this is nice because if you’re in chat or on the web and you see an app you like it’s an easy quickfire way to try an app:
+I prefer to use with the Super-space shortcut - this is nice because if you’re in chat or on the web and you see an app you like it’s an quick way to try an app:
 
 [![image](https://global.discourse-cdn.com/free1/uploads/univeral_blue/optimized/2X/5/5e1f747aaf76d4bd74463bac61b3a8fe205fa3d8_2_690x477.jpeg)
 

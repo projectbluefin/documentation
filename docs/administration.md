@@ -248,7 +248,7 @@ Check the [XDG Base Directory Specification](https://specifications.freedesktop.
 - `ujust -n $command` - The `-n` will run a command in dry-run mode, this is useful for inspecting the commands being run
 - `ujust update` - Manually update the system, flatpaks, and brew formulas
 - `ujust bios` - Reboot the PC and enter the BIOS/UEFI. Useful for running dual boot systems from independent disks
-- `ujust device-info` - Sends the status, flatpak list, and system info to the CentOS pastebin, and returns the URL to the terminal. This makes it easy for the end user to paste the URL with their info so others can help them debug
+- `ujust device-info` - Sends the status, flatpak list, and system info to the CentOS pastebin, and returns the URL to the terminal. This allows the end user to conveniently paste the URL with their info so others can help them debug
 - `ujust changelogs` - Show the changelogs for each package since the last update
 
 > Pro tip, keep your own tasks and aliases in `~/.Justfile`, and they are also handy to put in the root of your project files to automate common tasks, check out this example from [Fedora Kinoite](https://gitlab.com/fedora/ostree/ci-test/-/blob/main/justfile?ref_type=heads).

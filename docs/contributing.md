@@ -27,7 +27,7 @@ All types of contributions are encouraged and valued. Please make sure to read t
 
 The community looks forward to your contributions!
 
-If you like the project, but just don't have time to contribute, that's fine. There are other easy ways to support the project and show your appreciation, which we would also be very happy about:
+If you like the project, but just don't have time to contribute, that's fine. There are other ways to support the project and show your appreciation, which we would also be very happy about:
 
 - Star the project
 - Share it on all your social media (we 💙 Mastodon)
