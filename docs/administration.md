@@ -5,9 +5,9 @@ slug: /administration
 
 #### Day to Day Operation
 
-Bluefin is designed to be installed for the life of the hardware without reinstallation. Unlike traditional operating systems the image is always pristine and "clean", making upgrades less problematic. Updates are automatic and silent by default.
+Bluefin is designed to be installed for the life of the hardware without reinstallation. Unlike traditional operating systems, the image is always pristine and "clean", making upgrades less problematic. Updates are automatic and silent by default.
 
-This usually means you can set it up your system once, and then have it remain that way. Then likely you'll never have to come back here. 🙂
+This usually means you can set up your system once, and then have it remain that way. Then likely you'll never have to come back here. 🙂
 
 > I want that "defaults lifestyle".
 >
@@ -17,7 +17,7 @@ This usually means you can set it up your system once, and then have it remain t
 
 ## Installing Applications
 
-Use [Bazaar](https://github.com/kolunmi/bazaar) to [install applications from Flathub](https://flathub.org/). System updates and upgrades are not handled by this application, it's scope has been reduced to only install Flatpaks from Flathub. Two flatpak management tools are included:
+Use [Bazaar](https://github.com/kolunmi/bazaar) to [install applications from Flathub](https://flathub.org/). System updates and upgrades are not handled by this application, its scope has been reduced to only install Flatpaks from Flathub. Two flatpak management tools are included:
 
 - [Warehouse](https://flathub.org/apps/io.github.flattool.Warehouse) provides application management.
 - [Flatseal](https://flathub.org/apps/com.github.tchx84.Flatseal) is also included for permission management.
@@ -32,7 +32,7 @@ Bluefin is designed to be "hands off". The system checks for updates every six(6
 
 Updates are applied when the system reboots. Therefore, it is recommended to routinely power off your device when it's not being used to ensure kernel updates are being applied. Application updates (like the browser) happen independently of this and don't require a reboot.
 
-Machine firmware updates are provided through the Firmware application
+Machine firmware updates are provided through the Firmware application.
 
 ![Firmware](https://github.com/user-attachments/assets/0c3f2dce-1220-48d9-9a13-a1842a6a3bf3)
 
@@ -44,7 +44,7 @@ In Settings → Network → A network setting, set `Metered Connection: has data
 
 ## Streams and Throttle Settings
 
-Bluefin offers images based on the current and last stable version of Fedora, as well as a CentOS based image. This is to provide users with flexibility as to how aggresive they want their updates. These are referred to as "streams".
+Bluefin offers images based on the current and last stable version of Fedora, as well as a CentOS based image. This is to provide users with flexibility as to how aggressive they want their updates. These are referred to as "streams".
 
 ### Bluefin
 
@@ -56,11 +56,11 @@ Bluefin offers images based on the current and last stable version of Fedora, as
 
 #### Latest (For Testers)
 
-`latest`: For users who want the very latest Fedora has to offer, an ungated linux kernel, daily updates, full open throttle. 🔥 This stream is purposely left unbranded and is not meant for general purpose use.
+`latest`: For users who want the very latest Fedora has to offer, an ungated Linux kernel, daily updates, full open throttle. 🔥 This stream is purposely left unbranded and is not meant for general purpose use.
 
 :::info[It's all just Bluefin]
 
-Bluefin's components are shared across all images, don't think of it as a seperate "Edition" or "Spin". Bluefin strives to be the same across all the images, we feel that the aggressiveness of updates can be just "be a setting". Ideally you use "Bluefin" and don't need to care about your update stream.
+Bluefin's components are shared across all images, don't think of it as a separate "Edition" or "Spin". Bluefin strives to be the same across all the images, we feel that the aggressiveness of updates can be just "be a setting". Ideally you use "Bluefin" and don't need to care about your update stream.
 
 `lts` for a work machine and `stable` for your hot rod.
 
@@ -89,7 +89,7 @@ Adding and editing kernel boot arguments is currently handled by `rpm-ostree`, c
 
 ### Switching between Streams
 
-> Note that the `stable` and `latest` streams update more aggresively and may introduce new changes from Fedora (including regressions), take the user's Linux expertise into account when changing the update cadence.
+> Note that the `stable` and `latest` streams update more aggressively and may introduce new changes from Fedora (including regressions), take the user's Linux expertise into account when changing the update cadence.
 
 Use the `ujust rebase-helper` command to select rebase and select a specific stream:
 
@@ -190,7 +190,7 @@ Check the [Fedora Silverblue User Guide](https://docs.fedoraproject.org/en-US/fe
 There are also VPN providers on Flathub which will offer a good experience:
 
 - [Mozilla VPN](https://flathub.org/apps/org.mozilla.vpn)
-- [ProtonVPN client](https://flathub.org/apps/com.protonvpn.www) - available on FlatHub
+- [ProtonVPN client](https://flathub.org/apps/com.protonvpn.www) - available on Flathub
 
 Other VPN providers may provide a poor packaging experience and are not recommended.
 
@@ -204,7 +204,7 @@ Generally speaking this is an anti-pattern in Bluefin as the end goal is to move
 
 :::info
 
-For some users this minimal amount of maintainance is still much smaller than what they are used to and they glady make that tradeoff. Well played.
+For some users this minimal amount of maintenance is still much smaller than what they are used to and they gladly make that tradeoff. Well played.
 
 :::
 
@@ -253,7 +253,7 @@ Check the [XDG Base Directory Specification](https://specifications.freedesktop.
 
 > Pro tip, keep your own tasks and aliases in `~/.Justfile`, and they are also handy to put in the root of your project files to automate common tasks, check out this example from [Fedora Kinoite](https://gitlab.com/fedora/ostree/ci-test/-/blob/main/justfile?ref_type=heads).
 
-Note that generally speaking the project tries to keep the system Justfiles finely scoped, most of these workarounds and not full-fledged commands. They may get removed or changed depending on the problem they were initially meant to solve.
+Note that generally speaking the project tries to keep the system Justfiles finely scoped, most of these are workarounds and not full-fledged commands. They may get removed or changed depending on the problem they were initially meant to solve.
 
 ## Managing Extensions
 
