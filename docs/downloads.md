@@ -36,7 +36,7 @@ There are currently two sets of installation media. One using the Anaconda insta
 
 ## Readymade Live ISO Downloads
 
-Due to the simplified nature of this installer, it's an excellent choice if you plan on using Bluefin inside virtual machines. 
+Due to the simplified nature of this installer, it's an excellent choice if you plan on using Bluefin inside virtual machines.
 
 ### AMD/Intel
 
@@ -60,5 +60,4 @@ Due to the simplified nature of this installer, it's an excellent choice if you 
 These are the older Anaconda-based installers with an older version of Bluefin, but don't worry it will autoupdate. Try this if nothing else works:
 
 - Bluefin (AMD/Intel): [bluefin-stable.iso](https://projectbluefin.dev/bluefin-stable.iso) - [Checksum](https://projectbluefin.dev/bluefin-stable.iso-CHECKSUM)
-- Bluefin (for Nvidia):  [bluefin-nvidia-stable.iso](https://projectbluefin.dev/bluefin-nvidia-stable.iso) - [Checksum](https://projectbluefin.dev/bluefin-nvidia-stable.iso-CHECKSUM)
-
+- Bluefin (for Nvidia): [bluefin-nvidia-stable.iso](https://projectbluefin.dev/bluefin-nvidia-stable.iso) - [Checksum](https://projectbluefin.dev/bluefin-nvidia-stable.iso-CHECKSUM)

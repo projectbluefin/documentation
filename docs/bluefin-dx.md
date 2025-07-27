@@ -8,7 +8,7 @@ The Bluefin Developer Experience (`bluefin-dx`) is a dedicated developer image w
 
 - Endeavors to be the world's most powerful [cloud native developer environment](https://landscape.cncf.io/)
 - Full virtualization support centered around QEMU/KVM, as well as support for Docker and Incus
-- [Bluefin GDX](/gdx) variant specifically designed for AI and Machine Learning 
+- [Bluefin GDX](/gdx) variant specifically designed for AI and Machine Learning
 
 ## The Cloud Native Development Approach
 
@@ -149,14 +149,13 @@ DevPod also has support for JetBrains:
 - [kind](https://kind.sigs.k8s.io/) - Run a Kubernetes cluster on your machine. Run `kind create cluster` on the host to get started!
   - [kubectl](https://kubernetes.io/docs/reference/kubectl/) - Administer Kubernetes Clusters
   - [k9s](https://k9scli.io/) and [kubectx](https://github.com/ahmetb/kubectx)
-= [Dagger](https://dagger.io/) - an open-source runtime for composable workflows. This is a powerful tool that is a perfect match for Bluefin systems. (aka people are talking about this one.)
+    = [Dagger](https://dagger.io/) - an open-source runtime for composable workflows. This is a powerful tool that is a perfect match for Bluefin systems. (aka people are talking about this one.)
 
 If you feel there's a tool that should be included by default, send a PR [to this file](https://github.com/ublue-os/packages/blob/main/packages/bluefin/schemas/usr/share/ublue-os/homebrew/kubernetes.Brewfile). But let's not overdo it. 😄
- 
- 
+
 ## Ramalama
 
-[Ramalama](https://github.com/containers/ramalama) is included for local management and serving of AI models. Check the [AI documentation](/ai) for more information. 
+[Ramalama](https://github.com/containers/ramalama) is included for local management and serving of AI models. Check the [AI documentation](/ai) for more information.
 
 ## Virtualization and Container Runtimes
 

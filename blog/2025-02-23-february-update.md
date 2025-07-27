@@ -1,4 +1,4 @@
---- 
+---
 title: February Infrastructure Update
 slug: february-infrastructure-update
 authors: castrojo
@@ -15,7 +15,6 @@ And have a look at Bluefin’s new March wallpaper, coming next week!
 
 [![Bluefin](https://global.discourse-cdn.com/free1/uploads/univeral_blue/optimized/2X/6/6e4b5cf70a58deb74c0e2a57d0419c686865ed54_2_517x291.jpeg)
 
-
 ## Repo Consolidation
 
 These updates brought to you by Tulip, P5, M2, and bsherman.
@@ -24,7 +23,7 @@ These updates brought to you by Tulip, P5, M2, and bsherman.
 
 We’ve been doing a poor job historically of reviewing across so many repositories, so we did some consolidation. The [ublue-os/config](https://github.com/ublue-os/config) repo has been consolidated here:
 
--   [GitHub - ublue-os/packages: Spec files for packages published in ublue COPR repos](https://github.com/ublue-os/packages)
+- [GitHub - ublue-os/packages: Spec files for packages published in ublue COPR repos](https://github.com/ublue-os/packages)
 
 This repo contains a few things. First off, many parts of Aurora and Bluefin have been centralized into common services, and have been included here. Bazzite is in progress. This means service units, udev rules, desktop settings, motd, spec files, and their corresponding packages will all live here. This also means that we have more eyeballs on everything instead of it being spread out across repos.
 
@@ -52,6 +51,6 @@ Here’s the [tracking issue](https://github.com/ublue-os/main/issues/691) for t
 
 We have lots of places to visit, find us here, if you’re attending feel free to reach out:
 
--   [Meet the team at SCaLE 22x - 30 million pulls and counting!](https://universal-blue.discourse.group/t/meet-the-team-at-scale-22x-30-million-pulls-and-counting/6635)
--   [KubeCon + CloudNativeCon](https://events.linuxfoundation.org/kubecon-cloudnativecon-europe)
--   [Linux App Summit](https://linuxappsummit.org/)
+- [Meet the team at SCaLE 22x - 30 million pulls and counting!](https://universal-blue.discourse.group/t/meet-the-team-at-scale-22x-30-million-pulls-and-counting/6635)
+- [KubeCon + CloudNativeCon](https://events.linuxfoundation.org/kubecon-cloudnativecon-europe)
+- [Linux App Summit](https://linuxappsummit.org/)

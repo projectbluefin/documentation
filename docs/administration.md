@@ -26,10 +26,10 @@ Use [Bazaar](https://github.com/kolunmi/bazaar) to [install applications from Fl
 
 ## System Updates
 
-Bluefin is designed to be "hands off". The system checks for updates every six(6) hours. This includes system updates, flatpaks, pet containers, and homebrew. 
+Bluefin is designed to be "hands off". The system checks for updates every six(6) hours. This includes system updates, flatpaks, pet containers, and homebrew.
 
 - Most images are published weekly, but the team may push a new update at any given time.
- 
+
 Updates are applied when the system reboots. Therefore, it is recommended to routinely power off your device when it's not being used to ensure kernel updates are being applied. Application updates (like the browser) happen independently of this and don't require a reboot.
 
 Machine firmware updates are provided through the Firmware application
@@ -44,20 +44,23 @@ In Settings → Network → A network setting, set `Metered Connection: has data
 
 ## Streams and Throttle Settings
 
-Bluefin offers images based on the current and last stable version of Fedora, as well as a CentOS based image. This is to provide users with flexibility as to how aggresive they want their updates. These are referred to as "streams". 
+Bluefin offers images based on the current and last stable version of Fedora, as well as a CentOS based image. This is to provide users with flexibility as to how aggresive they want their updates. These are referred to as "streams".
 
-### Bluefin 
+### Bluefin
+
 `stable`: This is for enthusiasts who want the latest version of GNOME and Fedora. It is always aliased to the current version of Fedora but follows the Fedora CoreOS release schedule and not the Fedora Silverblue release schedule. This means that kernel upgrades come about 2 weeks after they land in Fedora, which can be useful for avoiding kernel regressions since the Bluefin team can pin to a specific kernel in those circumstances. We call this "gating" the kernel. `stable-daily` is available for those who want daily builds.
 
 ### Bluefin GTS
-`gts`: This is the default image and is always aliased to the previous stable version of Fedora. It targets the majority of users. It is slang for "Grand Touring Support", to signify a faster cadence than an [LTS](https://www.linux.com/news/mark-shuttleworth-ubuntu-long-term-support/). It also features a gated kernel. 
+
+`gts`: This is the default image and is always aliased to the previous stable version of Fedora. It targets the majority of users. It is slang for "Grand Touring Support", to signify a faster cadence than an [LTS](https://www.linux.com/news/mark-shuttleworth-ubuntu-long-term-support/). It also features a gated kernel.
 
 #### Latest (For Testers)
+
 `latest`: For users who want the very latest Fedora has to offer, an ungated linux kernel, daily updates, full open throttle. 🔥 This stream is purposely left unbranded and is not meant for general purpose use.
 
 :::info[It's all just Bluefin]
 
-Bluefin's components are shared across all images, don't think of it as a seperate "Edition" or "Spin". Bluefin strives to be the same across all the images, we feel that the aggressiveness of updates can be just "be a setting". Ideally you use "Bluefin" and don't need to care about your update stream. 
+Bluefin's components are shared across all images, don't think of it as a seperate "Edition" or "Spin". Bluefin strives to be the same across all the images, we feel that the aggressiveness of updates can be just "be a setting". Ideally you use "Bluefin" and don't need to care about your update stream.
 
 `lts` for a work machine and `stable` for your hot rod.
 
@@ -65,15 +68,14 @@ Bluefin's components are shared across all images, don't think of it as a sepera
 
 You can choose from three rolling tags, or lock to a specific version of Fedora. Check the [release notes](https://github.com/ublue-os/bluefin/releases) for specific version information:
 
-
-|                      | `gts` (default) | `stable` or `stable-daily` | `latest`       |
-| -------------------- | --------------- | -------------------------- | -------------- |
-| Fedora Version:      | 41              | 42                         | 42             |
-| GNOME Version:       | 47              | 48                         | 48             |
+|                      | `gts` (default) | `stable` or `stable-daily` | `latest`                   |
+| -------------------- | --------------- | -------------------------- | -------------------------- |
+| Fedora Version:      | 41              | 42                         | 42                         |
+| GNOME Version:       | 47              | 48                         | 48                         |
 | Target User:         | Most users      | Enthusiasts                | Advanced users and testers |
-| System Updates:      | Weekly          | Weekly or Daily            | Daily          |
-| Application Updates: | Twice a Day     | Twice a Day                | Twice a Day    |
-| Kernel:              | Gated           | Gated                      | Ungated        |
+| System Updates:      | Weekly          | Weekly or Daily            | Daily                      |
+| Application Updates: | Twice a Day     | Twice a Day                | Twice a Day                |
+| Kernel:              | Gated           | Gated                      | Ungated                    |
 
 **Note:** [Bluefin LTS](/lts) and [GDX](/gdx) not shown here, refer to their respective documentation for more details.
 
@@ -185,13 +187,12 @@ Check the [Fedora Silverblue User Guide](https://docs.fedoraproject.org/en-US/fe
 - Tailscale's [YouTube channel](https://www.youtube.com/@Tailscale) has lots of great tips and tricks
 - Good VPN providers provide Wireguard configurations that can be imported directly into the Network Manager, check their documentation for more information
 
-There are also VPN providers on Flathub which will offer a good experience: 
+There are also VPN providers on Flathub which will offer a good experience:
 
 - [Mozilla VPN](https://flathub.org/apps/org.mozilla.vpn)
 - [ProtonVPN client](https://flathub.org/apps/com.protonvpn.www) - available on FlatHub
-  
-Other VPN providers may provide a poor packaging experience and are not recommended.
 
+Other VPN providers may provide a poor packaging experience and are not recommended.
 
 ## Enabling Local Layering
 

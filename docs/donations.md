@@ -23,7 +23,7 @@ Complete with actual job titles:
 - [Robert Sturla](https://github.com/p5) - "Hold onto your butts" guy and Lead DevOps
 - [Chandeleer](https://ko-fi.com/chandeleer) - Art Director and Telescope Connoisseur
 
-and esteemed special guests: 
+and esteemed special guests:
 
 - [Madonuko](https://github.com/madonuko) (Fyra Labs) - Readymade installation experience
 - [kolumni](https://ko-fi.com/kolunmi) - App store experience ([Bazaar](https://github.com/kolunmi/bazaar))

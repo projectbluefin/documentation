@@ -25,7 +25,7 @@ const sidebars: SidebarsConfig = {
         "gaming",
         "ai",
         "bluefin-dx",
-        "command-line"
+        "command-line",
       ],
     },
     {
@@ -41,17 +41,14 @@ const sidebars: SidebarsConfig = {
         "mission",
         "press-kit",
         "tips",
-        "values" 
+        "values",
       ],
     },
     {
       type: "category",
       label: "Bluefin LTS",
       collapsed: false,
-      items: [
-        "lts",
-        "bluefin-gdx"
-      ],
+      items: ["lts", "bluefin-gdx"],
     },
     {
       type: "category",

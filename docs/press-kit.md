@@ -29,19 +29,18 @@ The name of the project is `Project Bluefin` but usually shortened to just `Blue
 - `Atomic` or any variation - this is a Fedora brand name and unrelated to Bluefin
 - `Universal Blue Bluefin` or `uBlue Bluefin` - "Bluefin is built with Universal Blue" or "Bluefin is a Universal Blue image" is recommended instead.
 - "Immutable Distribution" - Bluefin is an operating system, it is neither immutable nor a distribution, it is a custom image that is a collection of distributions: Flathub, Homebrew, and Fedora
-  
 
 # Universal Blue Terminology
 
 ## Proper Usage
 
-- `Universal Blue` - used to refer to the Universal Blue Project, the GitHub organization, or the collective set of maintainers 
+- `Universal Blue` - used to refer to the Universal Blue Project, the GitHub organization, or the collective set of maintainers
 
 ## Incorrect Usage
 
-- `uBlue`, `UBlue`, `ublue-os`, or any contraction of the term 
+- `uBlue`, `UBlue`, `ublue-os`, or any contraction of the term
 
-`ublue-os` is used as convenience slugs in URLs or paths in the operating system such as `/usr/share/ublue-os` 
+`ublue-os` is used as convenience slugs in URLs or paths in the operating system such as `/usr/share/ublue-os`
 
 # Governance
 

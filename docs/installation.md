@@ -2,13 +2,14 @@
 title: Installation
 slug: /installation
 ---
+
 # Installation Runbook
 
 In order to set yourself up to success it's useful to plan out your Bluefin installation into phases so that you can avoid common pitfalls and poorly supported configurations. On Linux-friendly hardware usually just booting into the installation process and clicking through the recommended installer defaults is enough. But you can never be too sure, here's the nitty gritty in case you need it.
 
 :::info[💙 Please do not send your loved ones to this page 💙]
 
-This runbook is for experienced users who are installing Bluefin for someone else. It is intended to be technical.  
+This runbook is for experienced users who are installing Bluefin for someone else. It is intended to be technical.
 
 :::
 
@@ -33,7 +34,7 @@ Most pain points can be addressed directly by planning ahead of time. Note that 
 
 - Is your hardware Linux friendly?
   - Do you understand the limitations of having an Nvidia GPU? (If applicable?)
-    - Nvidia Optimus laptops tend to be particularly troublesome 
+    - Nvidia Optimus laptops tend to be particularly troublesome
   - Does the hardware require an out of tree kernel module? This may lead to long term maintenance issues
   - Does the software you use require an out of tree kernel module?
     - VirtualBox and VMWare are not supported
@@ -46,7 +47,7 @@ Most pain points can be addressed directly by planning ahead of time. Note that 
     - [Driverless printers](https://openprinting.github.io/printers/) are strongly recommended, we cannot guarantee every printer will work
     - [Scanner support](http://www.sane-project.org/sane-mfgs.html)
 - Is the BIOS/UEFI up to date on the device?
-    - We recommend having all hardware firmware updates completed and up to date before installation
+  - We recommend having all hardware firmware updates completed and up to date before installation
 - Are the applications you depend on well supported on Flathub?
 - Does your VPN provider provide a wireguard configuration to import into Network Manager?
 - Dedicated disk ready to go?
