@@ -18,7 +18,6 @@ slug: /framework-16
 3. **Linux Audio Compatibility**
 
 - Before we begin the installation process with the Live USB, let's make sure you have your Linux Audio Compatibility set to Linux in the BIOS.
-
   - Power on the laptop, repeatedly tapping F2 in order to get into the BIOS. Note: If you're having trouble with this, try again, holding down the Fn key while rapidly tapping F2.
   - In BIOS mode, arrow key over to Setup Utility. Press the enter key. Arrow down to Advanced. Then arrow right, then arrow down to Linux Audio Compatibility. Press enter.
   - A new box for Linux Audio Compatibility will appear, arrow to Linux, then press enter. Now press F10 key to reboot.

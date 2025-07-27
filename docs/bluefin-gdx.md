@@ -34,18 +34,18 @@ Bluefin GDX is designed to be an AI Workstation by providng Nvidia drivers and [
 
 Bluefin GDX runs great on any PC with the right hardware, but has been tested and known to work on:
 
-- [Framework Desktop](https://frame.work/desktop) 
+- [Framework Desktop](https://frame.work/desktop)
 - [Thelio Astra](https://system76.com/desktops/thelio-astra-a1.1-n1/configure) - Find these Ampere-powered monsters at an open source conference near you!
 
   ![image](https://github.com/user-attachments/assets/6dda949b-44a3-4e18-8fd5-f80609dd4c80)
 
 ## Installation
 
-Check the [downloads page](./downloads.md) for more information. 
+Check the [downloads page](./downloads.md) for more information.
 
 - Image: [bluefin-gdx:lts](https://github.com/ublue-os/bluefin-lts/pkgs/container/bluefin-gdx)
 
-Follow the [Bluefin LTS](/lts) instructions for post installation steps. 
+Follow the [Bluefin LTS](/lts) instructions for post installation steps.
 
 ## Supporting Bluefin GDX
 

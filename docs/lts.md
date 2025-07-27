@@ -4,13 +4,12 @@ slug: /lts
 ---
 
 # Bluefin LTS (Beta)
-*Achillobator giganticus*
+
+_Achillobator giganticus_
 
 ![achillosmall](https://github.com/user-attachments/assets/b6945e80-34e4-44bb-8518-91ad31fed56d)
 
-
 Larger, more lethal [Bluefin](https://projectbluefin.io). `bluefin:lts` is built on CentOS 10.
-
 
 :::warning
 
@@ -20,7 +19,7 @@ Bluefin LTS is in Beta, and is in progress, some things in this document are asp
 
 ## Purpose
 
-Bluefin LTS is a workstation designed for people who prefer Long Term Support. 
+Bluefin LTS is a workstation designed for people who prefer Long Term Support.
 This species of raptor is for users who prefer a slower release cadence, about a three-to-five year lifespan on a single release.
 
 Bluefin LTS is composed of:
@@ -30,17 +29,17 @@ Bluefin LTS is composed of:
 - ARM (aarch64) based images
 - The Nvidia version of Bluefin LTS is branded as [Bluefin GDX](/gdx) and designed for AI and other GPU heavy workflows and includes CUDA
 
-Bluefin LTS also offers a hardware enablement branch with: 
+Bluefin LTS also offers a hardware enablement branch with:
 
 - Updated, but gated Linux kernel, usually one minor point release behind Fedora
 - Backported GNOME desktop from Fedora
-- Toggle between branches with `ujust toggle-hwe` 
-  
+- Toggle between branches with `ujust toggle-hwe`
+
 ![Pasted image](https://github.com/user-attachments/assets/3972ac0f-d37e-4e89-ae91-ff1eb76eabeb)
 
 ### Rationale
 
-Bluefin LTS ships with Linux 6.12.0, which is the kernel for the lifetime of release. It is for change-averse users. 
+Bluefin LTS ships with Linux 6.12.0, which is the kernel for the lifetime of release. It is for change-averse users.
 
 However ...
 
@@ -56,7 +55,7 @@ While our payload is less churny than Fedora, note that this is still a new imag
 
 - Secure Boot
 
-### Next Up 
+### Next Up
 
 - ZFS support
 
@@ -72,15 +71,15 @@ Due to its nature Bluefin LTS is stable _in practice_, the reason it is tagged a
 
 :::danger
 
-Do NOT rebase to this image from an existing Bluefin, Aurora, Bazzite, or Fedora system. This warning is in red for a reason. 
+Do NOT rebase to this image from an existing Bluefin, Aurora, Bazzite, or Fedora system. This warning is in red for a reason.
 
 :::
 
-### Download 
+### Download
 
-Check the [downloads page](./downloads.md) to download the correct ISO. 
+Check the [downloads page](./downloads.md) to download the correct ISO.
 
-The only Bluefin LTS available with Nvidia drivers is [Bluefin GDX](/gdx). If you select Nvidia on the website it will download this ISO. Read this documentation first since it applies to Bluefin GDX. 
+The only Bluefin LTS available with Nvidia drivers is [Bluefin GDX](/gdx). If you select Nvidia on the website it will download this ISO. Read this documentation first since it applies to Bluefin GDX.
 
 :::warning
 
@@ -96,13 +95,12 @@ The ISO uses Fedora to install Bluefin LTS, this is confusing because it will sa
 
 The following images and tags are available:
 
-- `bluefin:lts` - base LTS experience, kernel 6.12.0 with long term maintenance from CentOS. 
+- `bluefin:lts` - base LTS experience, kernel 6.12.0 with long term maintenance from CentOS.
 - `bluefin-gdx:lts` - includes Nvidia drivers and associated CUDA tooling. This is the only image with Nvidia drivers. See [Bluefin GDX](/gdx)
-- `bluefin:lts-testing` - Adds GNOME backports and gated Linux kernels, the latest patch version of the previous minor kernel release. 
+- `bluefin:lts-testing` - Adds GNOME backports and gated Linux kernels, the latest patch version of the previous minor kernel release.
 - `bluefin-gdx:lts-testing` - GDX with GNOME backports and gated Linux kernels, the latest patch version of the previous minor kernel release.
 
 Note that `-testing` will be rebranded as `-hwe` in the future. All images offer Bluefin's [Developer Mode](/bluefin-dx).
-  
 
 ## ARM Support
 
@@ -110,11 +108,11 @@ Note that `-testing` will be rebranded as `-hwe` in the future. All images offer
 
 [UTM](https://github.com/utmapp/UTM/) can boot these images if suitably configured:
 
-*   File → New, then select Virtualize
-*   Select Linux, then enable "Use Apple Virtualization" (The QEMU virtualization backend can also work, but this works better on Apple Silicon.)
-*   Browse for the Bluefin LTS ISO.
-*   It should default to 4GB of RAM; this is a good minimum value.
-*   On the Summary screen, it is not necessary to check the "Open VM Settings" box; while you may wish to adjust the configuration of the VM before first boot, the defaults are sensible.
+- File → New, then select Virtualize
+- Select Linux, then enable "Use Apple Virtualization" (The QEMU virtualization backend can also work, but this works better on Apple Silicon.)
+- Browse for the Bluefin LTS ISO.
+- It should default to 4GB of RAM; this is a good minimum value.
+- On the Summary screen, it is not necessary to check the "Open VM Settings" box; while you may wish to adjust the configuration of the VM before first boot, the defaults are sensible.
 
 :::info[MacOS setups wanted]
 
@@ -131,9 +129,9 @@ If there are other ways to set this up on MacOS please considering sending a pul
 
 - General Availability: Summer 2025
 
-## Building Locally 
+## Building Locally
 
-To build locally and then spit out a VM: 
+To build locally and then spit out a VM:
 
 ```bash
 git clone https://github.com/ublue-os/bluefin-lts
@@ -148,7 +146,7 @@ The [qcow2](https://qemu-project.gitlab.io/qemu/system/images.html) file will be
 
 Hibernation is on by default in a suspend-then-hibernate configuration. Here is the [exact config](https://github.com/ublue-os/bluefin-lts/blob/c0c8e2166cb5d0c4dd511ab3f677450c2cf8de0c/build_scripts/40-services.sh#L6). The device will suspend then go into hibernation after two hours. See the [systemd-sleep.conf](https://www.freedesktop.org/software/systemd/man/latest/systemd-sleep.conf.html) documentation.
 
-Note that secureboot and hibernation are mutually exclusive. We do not yet offer secureboot enabled images of Bluefin LTS, if you need that functionality now we recommend the normal Bluefin and Bluefin GTS images.  
+Note that secureboot and hibernation are mutually exclusive. We do not yet offer secureboot enabled images of Bluefin LTS, if you need that functionality now we recommend the normal Bluefin and Bluefin GTS images.
 
 ## Supporting Bluefin LTS
 

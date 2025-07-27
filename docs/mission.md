@@ -30,6 +30,7 @@ Accelerate operating system development by integrating with the cloud native eco
 - Explicit Community Values and Code of Conduct.
 
 ## Project Non-goals
+
 - The project strives for a minimalistic approach to serve the audience that is currently not using Linux. We target the 96%, not the 4%:
 - Focus on long-term sustainability of the installation
 - A fraction of a computer's life is day 0-3, we purposely invest in the idea that this installation should last for the life of the hardware

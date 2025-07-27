@@ -76,9 +76,9 @@ One "OS" tailored for each use case, but still also, just Fedora. We never quite
 
 Check out [this interview](https://youtu.be/XpKFcLqbd-A?si=URBJa_IzxU18UObY&t=2451) for a summary of the dinosaurs!
 
-## Can I get the dinosaurs for KDE? 
+## Can I get the dinosaurs for KDE?
 
-- Check out [plasma-bluefin-wallpaper](https://github.com/grandpares/plasma-bluefin-wallpaper) if you're on a Plasma system. 
+- Check out [plasma-bluefin-wallpaper](https://github.com/grandpares/plasma-bluefin-wallpaper) if you're on a Plasma system.
 
 ## Starship is not for me, how do I disable it?
 
@@ -101,7 +101,7 @@ This is because GNOME's default switching key conflicts with Search Light. This 
 3. After opening up the shortcuts menu, click on `Typing`
 4. Set the `Switch to next input source` to be the key combination you want
 
-*Note: If you want to use the GNOME's default of `Super+Space`, you'll have to either disable Search Light or change their shortcut in `Extension Manager`*
+_Note: If you want to use the GNOME's default of `Super+Space`, you'll have to either disable Search Light or change their shortcut in `Extension Manager`_
 
 ## I use a keyboard layout that is not listed in the settings. How can I use it?
 

@@ -39,12 +39,12 @@ const config: Config = {
           editUrl: "https://github.com/ublue-os/bluefin-docs/tree/main",
         },
         blog: {
-          blogTitle: 'Bluefin\'s Blog',
-          blogDescription: 'Official Blog and Announcements',
-          blogSidebarCount: 'ALL',
-          blogSidebarTitle: 'Raptor News',
-          editUrl: 'https://github.com/ublue-os/bluefin-docs/edit/main/',
-          authorsMapPath: 'authors.yaml',
+          blogTitle: "Bluefin's Blog",
+          blogDescription: "Official Blog and Announcements",
+          blogSidebarCount: "ALL",
+          blogSidebarTitle: "Raptor News",
+          editUrl: "https://github.com/ublue-os/bluefin-docs/edit/main/",
+          authorsMapPath: "authors.yaml",
         },
         theme: {
           customCss: "./src/css/custom.css",
@@ -101,9 +101,9 @@ const config: Config = {
           position: "left",
         },
         {
-          to: 'blog',
-          label: 'Blog',
-          position: 'right',
+          to: "blog",
+          label: "Blog",
+          position: "right",
         },
         {
           href: "https://projectbluefin.io/",

@@ -1,11 +1,11 @@
 ---
-title: Command Line 
+title: Command Line
 slug: /command-line
 ---
 
 Bluefin is designed to be used by normal people, but the command line is _**our passion**_. Therefore we invest in our command line experience, knowing that most people will never see it. Slay out.
 
-## Installing Applications 
+## Installing Applications
 
 [brew](https://brew.sh/) (Also known as Homebrew) is the package manager used for installing command line applications.
 
@@ -13,21 +13,21 @@ Bluefin is designed to be used by normal people, but the command line is _**our 
 - [Homebrew Packages](https://formulae.brew.sh/)
 - [Cheatsheet](https://devhints.io/homebrew)
 
-Note that the cask functionality in homebrew is MacOS specific and non functional in Bluefin, flatpak is used instead. Other package management tools like [uv](https://github.com/astral-sh/uv), [pixi](https://github.com/prefix-dev/pixi), [asdf](https://asdf-vm.com/), and [mise](https://github.com/jdx/mise) are available and work perfectly fine when installed via homebrew. Package managers inside of package managers ... hey look it was like that when we got here, this one isn't our fault! They do work great though, and some users may prefer those tools, so we give *you* the option to forge your own path. 
+Note that the cask functionality in homebrew is MacOS specific and non functional in Bluefin, flatpak is used instead. Other package management tools like [uv](https://github.com/astral-sh/uv), [pixi](https://github.com/prefix-dev/pixi), [asdf](https://asdf-vm.com/), and [mise](https://github.com/jdx/mise) are available and work perfectly fine when installed via homebrew. Package managers inside of package managers ... hey look it was like that when we got here, this one isn't our fault! They do work great though, and some users may prefer those tools, so we give _you_ the option to forge your own path.
 
 :::info[Don't cross the streams]
 
-Generally speaking, if you need a tool or utility, use homebrew. If you need a library and dependencies for development work, use a container. This keeps everything nice and clean. 
+Generally speaking, if you need a tool or utility, use homebrew. If you need a library and dependencies for development work, use a container. This keeps everything nice and clean.
 
 :::
 
 ### `bluefin-cli`
 
-`ujust bluefin-cli` will install Bluefin's opt-in command line experience using modern tools with great features that make us more efficient. It is designed to be turned on and off. 
+`ujust bluefin-cli` will install Bluefin's opt-in command line experience using modern tools with great features that make us more efficient. It is designed to be turned on and off.
 
 :::tip[A greenfield terminal experience]
 
-We love our command line tools. This is intended to be a rendition of what a brand new terminal experience would look like with modern tooling. The traditional tooling is always a toggle away. Keep up with the cool kids without sacrificing your "known good" kit. 
+We love our command line tools. This is intended to be a rendition of what a brand new terminal experience would look like with modern tooling. The traditional tooling is always a toggle away. Keep up with the cool kids without sacrificing your "known good" kit.
 
 :::
 
@@ -56,26 +56,25 @@ The community may add new tools over time, re-running `ujust bluefin-cli` will p
 
 ![image](https://github.com/user-attachments/assets/89be8151-5b57-4b71-bbe5-988bef2d6798)
 
-### Bold Brew 
+### Bold Brew
 
-[Bold Brew](https://bold-brew.com/) is included as a text based user interface (TUI) to Brew. This application features full package management for homebrew in a nice nerdy interface: 
+[Bold Brew](https://bold-brew.com/) is included as a text based user interface (TUI) to Brew. This application features full package management for homebrew in a nice nerdy interface:
 
 ![boldbrew](https://github.com/user-attachments/assets/d07c0455-2514-4b73-bdd5-51eec50b570d)
 
-
 ### Message of the Day and `fastfetch`
 
-We prefer to have functional bling that is slick but it must also serve a purpose. New terminals (`Ctrl`-`Alt`-`Enter`) display a message of the day with some basic information: 
+We prefer to have functional bling that is slick but it must also serve a purpose. New terminals (`Ctrl`-`Alt`-`Enter`) display a message of the day with some basic information:
 
 ![image](https://github.com/user-attachments/assets/0e0326ef-6640-41a2-bd24-dae1b1647cfd)
 
-The `bluefin-dx:beta` line is the name of the OS image, and is a good way to remind yourself if you're on a pinned image as well as a quick reference to common commands. You can toggle it on and off with `ujust toggle-user-motd`. Note that the Tip rotates regularly in order to spread useful tips to the community. 
+The `bluefin-dx:beta` line is the name of the OS image, and is a good way to remind yourself if you're on a pinned image as well as a quick reference to common commands. You can toggle it on and off with `ujust toggle-user-motd`. Note that the Tip rotates regularly in order to spread useful tips to the community.
 
 We love to flex our machines and software. Run `fastfetch`:
 
 ![image](https://github.com/user-attachments/assets/f720f9d8-7c3c-4f3c-9112-c627686e0fb1)
 
-This screen will show you hardware information, as well as your username, machine name, and kernel version. Each Bluefin image has a "Forged On" date, commemorating the initial installation of the machine. 
+This screen will show you hardware information, as well as your username, machine name, and kernel version. Each Bluefin image has a "Forged On" date, commemorating the initial installation of the machine.
 
 ![image](https://github.com/user-attachments/assets/99522c15-1209-4fa5-a076-1b6289bdbc76)
 

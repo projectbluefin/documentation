@@ -24,7 +24,7 @@ Complete with actual job titles:
 - [Chandeleer](https://ko-fi.com/chandeleer) - Art Director and Telescope Connoisseur
 - [James Reilly](https://github.com/sponsors/hanthor) - LTS Specialist and shameless AI enjoyer
 
-and esteemed special guests: 
+and esteemed special guests:
 
 - [Madonuko](https://github.com/madonuko) (Fyra Labs) - Readymade installation experience
 - [kolumni](https://ko-fi.com/kolunmi) - App store experience ([Bazaar](https://github.com/kolunmi/bazaar))

@@ -3,7 +3,7 @@ title: AI and Machine Learning
 slug: /ai
 ---
 
-Bluefin's [developer experience](/bluefin-dx) fully supports local AI development workflows. GPU Acceleration for both Nvidia and AMD are included out of the box and usually do not require any extra setup. 
+Bluefin's [developer experience](/bluefin-dx) fully supports local AI development workflows. GPU Acceleration for both Nvidia and AMD are included out of the box and usually do not require any extra setup.
 
 ## Methodology
 
@@ -23,29 +23,29 @@ The [AI Lab extension](https://developers.redhat.com/products/podman-desktop/pod
 
 ## Ramalama
 
-[Ramalama](https://github.com/containers/ramalama) is included to manage local models and is the prefered default experience. It's for people who work with local models frequently and need advanced features. It offers the ability to pull models from huggingface, ollama, and any container registry. By default it pulls from ollama.com, check the [Ramalama documentation](https://github.com/containers/ramalama/tree/main/docs) for more information. 
+[Ramalama](https://github.com/containers/ramalama) is included to manage local models and is the prefered default experience. It's for people who work with local models frequently and need advanced features. It offers the ability to pull models from huggingface, ollama, and any container registry. By default it pulls from ollama.com, check the [Ramalama documentation](https://github.com/containers/ramalama/tree/main/docs) for more information.
 
 Ramalama's command line experience is similar to Podman, examples include:
 
 ```
 ramalama pull llama3.2:latest
-ramalama run llama3.2  
+ramalama run llama3.2
 ramalama run deepseek-r1
 ```
 
-You can also serve the models locally: 
+You can also serve the models locally:
 
 ```
 ramalama serve deepseek-r1
 ```
 
-Then go to `http://127.0.0.0:8080` in your browser. Bluefin sets `rl` as an alias for `ramalama`, for brevity. 
+Then go to `http://127.0.0.0:8080` in your browser. Bluefin sets `rl` as an alias for `ramalama`, for brevity.
 
 ```
 rl serve deepseek-r1
 ```
 
-Ramalama will automatically pull in anything your host needs to do the workload. The images are also stored in the same container storage as your other containers. This allows for centralized management of the ai models and other podman images:  
+Ramalama will automatically pull in anything your host needs to do the workload. The images are also stored in the same container storage as your other containers. This allows for centralized management of the ai models and other podman images:
 
 ```
 ❯ podman images
@@ -64,7 +64,6 @@ The user is prompted to [install ollama separately](https://github.com/Jeffser/A
 Bluefin binds `Ctrl`-`Alt`-`Backspace` as a quicklaunch for Alpaca automatically after you install it!
 
 :::
-
 
 ![image](https://github.com/user-attachments/assets/9fd38164-e2a9-4da1-9bcd-29e0e7add071)
 
