@@ -50,7 +50,7 @@ System updates are image-based and automatic. Applications are logically separat
   - Extra udev rules for game controllers and [other devices](https://github.com/ublue-os/config) included out of the box
   - All multimedia codecs included
   - System designed for automatic staging of updates
-    - If you've never used an image-based Linux distribution before, simply use your computer normally
+    - If you've never used an image-based Linux before, use your computer normally
     - Don't overthink it—just shut your computer off when you're not using it
 
 ![Search Light on Bluefin](https://github.com/user-attachments/assets/ee44182f-15a1-4aa2-a521-84d48a42f7bc)
