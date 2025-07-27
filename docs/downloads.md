@@ -19,20 +19,20 @@ There are currently two sets of installation media. One using the Anaconda insta
 
 ### AMD/Intel
 
-- Bluefin: [bluefin-stable-x86_64.iso](https://download.projectbluefin.io/bluefin-stable-x86_64.iso)
-- Bluefin GTS: [bluefin-gts-x86_64.iso](https://download.projectbluefin.io/bluefin-gts-x86_64.iso)
-- Bluefin LTS (Beta): [bluefin-lts-x86_64.iso](https://download.projectbluefin.io/bluefin-lts-x86_64.iso)
+- Bluefin: [bluefin-stable-x86_64.iso](https://download.projectbluefin.io/bluefin-stable-x86_64.iso) - [Checksum](https://download.projectbluefin.io/bluefin-stable-x86_64.iso-CHECKSUM)
+- Bluefin GTS: [bluefin-gts-x86_64.iso](https://download.projectbluefin.io/bluefin-gts-x86_64.iso) - [Checksum](https://download.projectbluefin.io/bluefin-gts-x86_64.iso-CHECKSUM)
+- Bluefin LTS (Beta): [bluefin-lts-x86_64.iso](https://download.projectbluefin.io/bluefin-lts-x86_64.iso) - [Checksum](https://download.projectbluefin.io/bluefin-lts-x86_64.iso-CHECKSUM)
 
 ### Nvidia
 
-- Bluefin: [bluefin-nvidia-open-stable-x86_64.iso](https://download.projectbluefin.io/bluefin-nvidia-open-stable-x86_64.iso)
-- Bluefin GTS: [bluefin-nvidia-open-gts-x86_64.iso](https://download.projectbluefin.io/bluefin-nvidia-open-gts-x86_64.iso)
-- Bluefin GDX (Beta): [bluefin-gdx-x86_64.iso](https://download.projectbluefin.io/bluefin-gdx-lts-x86_64.iso)
+- Bluefin: [bluefin-nvidia-open-stable-x86_64.iso](https://download.projectbluefin.io/bluefin-nvidia-open-stable-x86_64.iso) - [Checksum](https://download.projectbluefin.io/bluefin-nvidia-open-stable-x86_64.iso-CHECKSUM)
+- Bluefin GTS: [bluefin-nvidia-open-gts-x86_64.iso](https://download.projectbluefin.io/bluefin-nvidia-open-gts-x86_64.iso) - [Checksum](https://download.projectbluefin.io/bluefin-nvidia-open-gts-x86_64.iso-CHECKSUM)
+- Bluefin GDX (Beta): [bluefin-gdx-x86_64.iso](https://download.projectbluefin.io/bluefin-gdx-lts-x86_64.iso) - [Checksum](https://download.projectbluefin.io/bluefin-gdx-lts-x86_64.iso-CHECKSUM)
 
 ### ARM (aarch64)
 
-- Bluefin LTS (Beta): [bluefin-lts-aarch64.iso](https://download.projectbluefin.io/bluefin-lts-aarch64.iso)
-- Bluefin GDX (Beta): [bluefin-gdx-lts-aarch64.iso](https://download.projectbluefin.io/bluefin-gdx-lts-aarch64.iso)
+- Bluefin LTS (Beta): [bluefin-lts-aarch64.iso](https://download.projectbluefin.io/bluefin-lts-aarch64.iso) - [Checksum](https://download.projectbluefin.io/bluefin-lts-aarch64.iso-CHECKSUM)
+- Bluefin GDX (Beta): [bluefin-gdx-lts-aarch64.iso](https://download.projectbluefin.io/bluefin-gdx-lts-aarch64.iso) - [Checksum](https://download.projectbluefin.io/bluefin-gdx-lts-aarch64.iso-CHECKSUM)
 
 ## Readymade Live ISO Downloads
 
@@ -40,26 +40,20 @@ Due to the simplified nature of this installer, it's an excellent choice if you 
 
 ### AMD/Intel
 
-- Bluefin: [readymade-bluefin-stable-x86_64.iso](https://download.projectbluefin.io/readymade-bluefin-stable-x86_64.iso)
-- Bluefin GTS: [readymade-bluefin-gts-x86_64.iso](https://download.projectbluefin.io/readymade-bluefin-gts-x86_64.iso)
-- Bluefin LTS (Beta): [readymade-bluefin-lts-x86_64.iso](https://download.projectbluefin.io/readymade-bluefin-lts-x86_64.iso)
+- Bluefin: [readymade-bluefin-stable-x86_64.iso](https://download.projectbluefin.io/readymade-bluefin-stable-x86_64.iso) - [Checksum](readymade-bluefin-stable-x86_64.iso](https://download.projectbluefin.io/readymade-bluefin-stable-x86_64.iso-CHECKSUM)
+- Bluefin GTS: [readymade-bluefin-gts-x86_64.iso](https://download.projectbluefin.io/readymade-bluefin-gts-x86_64.iso) - [Checksum](https://download.projectbluefin.io/readymade-bluefin-gts-x86_64.iso-CHECKSUM)
+- Bluefin LTS (Beta): [readymade-bluefin-lts-x86_64.iso](https://download.projectbluefin.io/readymade-bluefin-lts-x86_64.iso) - [Checksum](https://download.projectbluefin.io/readymade-bluefin-lts-x86_64.iso-CHECKSUM)
 
 ### Nvidia
 
-- Bluefin: [readymade-bluefin-nvidia-open-stable-x86_64.iso](https://download.projectbluefin.io/readymade-bluefin-nvidia-open-stable-x86_64.iso)
-- Bluefin GTS: [readymade-bluefin-nvidia-open-gts-x86_64.iso](https://download.projectbluefin.io/readymade-bluefin-nvidia-open-gts-x86_64.iso)
-- Bluefin GDX (Beta) : [readymade-bluefin-gdx-x86_64.iso](https://download.projectbluefin.io/readymade-bluefin-gdx-x86_64.iso)
+- Bluefin: [readymade-bluefin-nvidia-open-stable-x86_64.iso](https://download.projectbluefin.io/readymade-bluefin-nvidia-open-stable-x86_64.iso) - [Checksum](https://download.projectbluefin.io/readymade-bluefin-nvidia-open-stable-x86_64.iso-CHECKSUM)
+- Bluefin GTS: [readymade-bluefin-nvidia-open-gts-x86_64.iso](https://download.projectbluefin.io/readymade-bluefin-nvidia-open-gts-x86_64.iso) - [Checksum](https://download.projectbluefin.io/readymade-bluefin-nvidia-open-gts-x86_64.iso-CHECKSUM)
+- Bluefin GDX (Beta) : [readymade-bluefin-gdx-x86_64.iso](https://download.projectbluefin.io/readymade-bluefin-gdx-x86_64.iso) - [Checksum](https://download.projectbluefin.io/readymade-bluefin-gdx-x86_64.iso-CHECKSUM)
 
 ### ARM (aarch64)
 
-- Bluefin LTS (Beta): [readymade-bluefin-live-aarch64.iso](https://download.projectbluefin.io/readymade-bluefin-lts-aarch64.iso)
-- Bluefin GDX (Beta): [readymade-bluefin-live-gdx-aarch64.iso](https://download.projectbluefin.io/readymade-bluefin-gdx-aarch64.iso)
-
-## Torrents
-
-Torrents are graciously provided by fosstorrents.com:
-
-#### [fosstorrents.com/distributions/project-bluefin/](https://fosstorrents.com/distributions/project-bluefin/)
+- Bluefin LTS (Beta): [readymade-bluefin-live-aarch64.iso](https://download.projectbluefin.io/readymade-bluefin-lts-aarch64.iso) - [Checksum](https://download.projectbluefin.io/readymade-bluefin-lts-aarch64.iso-CHECKSUM)
+- Bluefin GDX (Beta): [readymade-bluefin-live-gdx-aarch64.iso](https://download.projectbluefin.io/readymade-bluefin-gdx-aarch64.iso) - [Checksum](https://download.projectbluefin.io/readymade-bluefin-gdx-aarch64.iso-CHECKSUM)
 
 ## Older Backup ISOs
 
