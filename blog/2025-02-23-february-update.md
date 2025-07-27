@@ -14,6 +14,7 @@ Most of these things are infrastructure and project related and won’t have a v
 And have a look at Bluefin’s new March wallpaper, coming next week!
 
 [![Bluefin](https://global.discourse-cdn.com/free1/uploads/univeral_blue/optimized/2X/6/6e4b5cf70a58deb74c0e2a57d0419c686865ed54_2_517x291.jpeg)
+<!-- truncate -->
 
 ## Repo Consolidation
 
