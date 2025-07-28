@@ -27,7 +27,7 @@ There is no need to reboot. This will install the following software:
 
 ### Steam
 
-Steam is a software distribution service with an online store, automated installation, automatic updates, achievements, SteamCloud synchronized savegame and screenshot functionality, and many social features. If you want to play any Windows game, go to Steam -> Settings -> Compatibility -> Enable SteamPlay for all other titles. Compatibility for games varies, for more information consult [ProtonDB](https://www.protondb.com/)
+Steam is a software distribution service with an online store, automated installation, automatic updates, achievements, SteamCloud synchronized savegame and screenshot functionality, and many social features. If you want to play any Windows game, go to **Steam** → **Settings** → **Compatibility** → **Enable SteamPlay for all other titles**. Compatibility for games varies, for more information consult [ProtonDB](https://www.protondb.com/)
 
 _Note: To add a game library on another drive, first you need to grant the app access to it:_
 
@@ -39,7 +39,7 @@ Heroic is an Open Source Games Launcher that supports running Epic Games Store, 
 
 ### Lutris
 
-Lutris can be thought of as a Swiss-army knife for gaming on Linux. It uses existing emulators, engine re-implementations and compatibility layers, it gives you a central interface to launch all your games. Check out [Lutris's Websites](https://lutris.net/) to check out many of the games it supports.
+Lutris can be thought of as a Swiss-army knife for gaming on Linux. It uses existing emulators, engine re-implementations and compatibility layers, it gives you a central interface to launch all your games. Check out [Lutris's website](https://lutris.net/) to check out many of the games it supports.
 
 ### ProtonPlus
 
