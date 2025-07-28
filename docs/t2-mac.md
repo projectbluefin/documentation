@@ -43,7 +43,7 @@ Using dd, [Fedora Media Writer](https://docs.fedoraproject.org/en-US/fedora/late
 5. When the installer starts, select the language you'd like to use to get to the main menu.
 6. At the main installer menu, select Installation Destination to choose your installation disk. Use automatic partitioning. If using an external drive, make sure your internal drive isn't also selected (with a checkbox) as this could cause the MacOS EFI bootloader on your internal drive to be modified.
    > Note that if you use encryption, you'll need an external keyboard every boot until you run a post-install command.
-7. With all the prerequisites set, proceed to install. Not a lot of detailed progress is shown here but if you are comfortable switching to other TTYs and use tmux there's lots of logging happening. The install doesn't take very long (faster than getting a blank Mac to internet recovery mode).
+7. With all the prerequisites set, proceed to install. Not a lot of detailed progress is shown here but if you are comfortable switching to other TTYs and use tmux ([Donate](https://github.com/sponsors/tmux)) there's lots of logging happening. The install doesn't take very long (faster than getting a blank Mac to internet recovery mode).
 8. Click Finish Installation and then reboot into your new Bluefin install!
 
 ### Configuration (Required) for T2

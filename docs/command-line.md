@@ -33,19 +33,19 @@ We love our command line tools. This is intended to be a rendition of what a bra
 
 It comes with some fantastic CLI tools:
 
-- [atuin](https://github.com/atuinsh/atuin) for shell history
+- [atuin](https://github.com/atuinsh/atuin) ([Donate](https://github.com/sponsors/atuinsh)) for shell history
 - [carapace](https://pixi.carapace.sh/) for shell completion
 - [direnv](https://direnv.net/) to load and unload environment variables depending on the current directory.
-- [eza](https://github.com/eza-community/eza) as a replacement `ls`
-- [fd](https://github.com/sharkdp/fd) for `find`
-- [fzf](https://github.com/junegunn/fzf) for command line fuzzy finding
+- [eza](https://github.com/eza-community/eza) ([Donate](https://github.com/sponsors/cafkafk)) as a replacement `ls`
+- [fd](https://github.com/sharkdp/fd) ([Donate](https://github.com/sponsors/sharkdp)) for `find`
+- [fzf](https://github.com/junegunn/fzf) ([Donate](https://github.com/sponsors/junegunn)) for command line fuzzy finding
 - [ripgrep](https://github.com/BurntSushi/ripgrep) for search
 - [tealdeer](https://github.com/dbrgn/tealdeer) for `tldr`
 - [television](https://github.com/alexpasmantier/television) - a blazing fast general-purpose fuzzy finder TUI - (`tv`)
 - [trash-cli](https://github.com/andreafrancia/trash-cli) to manage the system trashcan. (Strongly recommended for new CLI users)
 - [ugrep](https://github.com/Genivia/ugrep) for grep
 - [uutils](https://github.com/uutils/coreutils) as coreutils
-- [yq](https://github.com/mikefarah/yq) for yaml, json, and xml processing
+- [yq](https://github.com/mikefarah/yq) ([Donate](https://github.com/sponsors/mikefarah)) for yaml, json, and xml processing
 - [zoxide](https://github.com/ajeetdsouza/zoxide) as `cd`
 
 The community may add new tools over time, re-running `ujust bluefin-cli` will pull in the new tools.
@@ -88,7 +88,7 @@ Note that the terminal color scheme will automatically match [your desktop accen
 
 ### Changing the default terminal shell
 
-Bluefin uses [bash](https://www.gnu.org/software/bash/) by default but also ships with [fish](https://fishshell.com/) and [zsh](https://www.zsh.org/) on the image for convenience.
+Bluefin uses [bash](https://www.gnu.org/software/bash/) by default but also ships with [fish](https://fishshell.com/) ([Donate](https://github.com/sponsors/fish-shell)) and [zsh](https://www.zsh.org/) on the image for convenience.
 
 :::note[Help Wanted]
 

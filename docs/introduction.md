@@ -15,7 +15,7 @@ _Deinonychus antirrhopus_
 
 ## Features
 
-Bluefin features a GNOME desktop configured by our community. It is designed to be hands-off and stay out of your way so you can focus on your applications.
+Bluefin features a GNOME ([Donate](https://www.gnome.org/donate/)) desktop configured by our community. It is designed to be hands-off and stay out of your way so you can focus on your applications.
 
 System updates are image-based and automatic. Applications are logically separated from the system by using Flatpaks for graphical applications and `brew` for command-line applications.
 
@@ -26,24 +26,24 @@ System updates are image-based and automatic. Applications are logically separat
     - [Dash to Dock](https://micheleg.github.io/dash-to-dock/) - for a more Unity-like dock
     - [Appindicator](https://github.com/ubuntu/gnome-shell-extension-appindicator) - for tray-like icons in the top right corner
     - [GSConnect](https://github.com/GSConnect/gnome-shell-extension-gsconnect) - Integrate your mobile device with your desktop
-    - [Blur my Shell](https://github.com/aunetx/blur-my-shell) - for that bling
+    - [Blur my Shell](https://github.com/aunetx/blur-my-shell) ([Donate](https://github.com/sponsors/aunetx)) - for that bling
     - [Tailscale GNOME QS](https://extensions.gnome.org/extension/6139/tailscale-qs/) for [tailscale integration](https://universal-blue.discourse.group/t/tailscale-vpn/290)
     - [Search Light](https://github.com/icedman/search-light) - provides search functionality and a macOS Spotlight-like workflow. Bound to <kbd>Super</kbd>-<kbd>Space</kbd> by default. Check the screenshot at the bottom of this page for an example
 - [Developer Mode](/bluefin-dx) - Dedicated developer mode that transforms Bluefin into a powerful cloud-native developer workstation
 - [Ptyxis terminal](https://devsuite.app/ptyxis/) for container-focused workflows
-  - [Distroshelf](https://flathub.org/apps/com.ranfdev.DistroShelf) for container management
-- [Tailscale](https://tailscale.com) - included for VPN along with `wireguard-tools`
+  - [Distroshelf](https://flathub.org/apps/com.ranfdev.DistroShelf) ([Donate](https://github.com/sponsors/ranfdev)) for container management
+- [Tailscale](https://tailscale.com) ([Donate](https://github.com/sponsors/tailscale)) - included for VPN along with `wireguard-tools`
   - Use `ujust toggle-tailscale` to turn it off if you don't plan on using it.
-- [GNOME Extensions Manager](https://flathub.org/apps/com.mattjakeman.ExtensionManager) included
+- [GNOME Extensions Manager](https://flathub.org/apps/com.mattjakeman.ExtensionManager) ([Donate](https://github.com/sponsors/mjakeman)) included
 - [Bazaar Application Store](https://github.com/kolunmi/bazaar) featuring [Flathub](https://flathub.org):
   - Use a familiar software center UI to install graphical software
-  - [Warehouse](https://flathub.org/apps/io.github.flattool.Warehouse) included for Flatpak management
+  - [Warehouse](https://flathub.org/apps/io.github.flattool.Warehouse) ([Donate](https://ko-fi.com/heliguy)) included for Flatpak management
 - Quality of Life Features
   - [Starship](https://starship.rs) terminal prompt enabled by default
   - [Solaar](https://github.com/pwr-Solaar/Solaar) - included for managing Logitech mice
     along with `libratbagd`
-  - [rclone](https://rclone.org/overview/) - mount nearly any remote storage service onto your local machine, great for multi-machine setups
-  - [restic](https://restic.net/) - A modern backup program for your files
+  - [rclone](https://rclone.org/overview/) ([Donate](https://github.com/sponsors/rclone)) - mount nearly any remote storage service onto your local machine, great for multi-machine setups
+  - [restic](https://restic.net/) ([Donate](https://github.com/sponsors/restic)) - A modern backup program for your files
   - `zsh` and `fish` included ([Instructions](/command-line#changing-the-default-terminal-shell)) as optional shells
   - [Switcheroo support](https://man.archlinux.org/man/switcherooctl.1.en?ref=news.itsfoss.com) for laptops with multiple GPUs
 - Built on top of the [Universal Blue main image](https://github.com/ublue-os/main) - enabling straightforward sharing of benefits:
