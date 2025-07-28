@@ -3,7 +3,7 @@ title: Command Line
 slug: /command-line
 ---
 
-Bluefin is designed to be used by normal people, but the command line is _**our passion**_. Therefore we invest in our command line experience, knowing that most people will never see it. Slay out.
+Bluefin is designed to be used by normal people, but the command line is _**passion**_. Therefore we invest in the command line experience, knowing that most people will never see it. Slay out.
 
 ## Installing Applications
 
@@ -13,7 +13,7 @@ Bluefin is designed to be used by normal people, but the command line is _**our 
 - [Homebrew Packages](https://formulae.brew.sh/)
 - [Cheatsheet](https://devhints.io/homebrew)
 
-Note that the cask functionality in homebrew is MacOS specific and non functional in Bluefin, flatpak is used instead. Other package management tools like [uv](https://github.com/astral-sh/uv), [pixi](https://github.com/prefix-dev/pixi), [asdf](https://asdf-vm.com/), and [mise](https://github.com/jdx/mise) are available and work perfectly fine when installed via homebrew. Package managers inside of package managers ... hey look it was like that when we got here, this one isn't our fault! They do work great though, and some users may prefer those tools, so we give _you_ the option to forge your own path.
+Note that the cask functionality in homebrew is macOS specific and non functional in Bluefin, Flatpak is used instead. Other package management tools like [uv](https://github.com/astral-sh/uv), [pixi](https://github.com/prefix-dev/pixi), [asdf](https://asdf-vm.com/), and [mise](https://github.com/jdx/mise) are available and work perfectly fine when installed via homebrew. Package managers inside of package managers ... hey look it was like that when we got here, this one isn't our fault! They do work great though, and some users may prefer those tools, so you have the option to forge your own path.
 
 :::info[Don't cross the streams]
 
@@ -64,7 +64,7 @@ The community may add new tools over time, re-running `ujust bluefin-cli` will p
 
 ### Message of the Day and `fastfetch`
 
-We prefer to have functional bling that is slick but it must also serve a purpose. New terminals (`Ctrl`-`Alt`-`Enter`) display a message of the day with some basic information:
+The project prefers to have functional bling that is slick but it must also serve a purpose. New terminals (<kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Enter</kbd>) display a message of the day with some basic information:
 
 ![image](https://github.com/user-attachments/assets/0e0326ef-6640-41a2-bd24-dae1b1647cfd)
 

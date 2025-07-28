@@ -5,7 +5,7 @@ slug: /contributing
 
 # Contributing
 
-We welcome pull requests! Here's a quick howto:
+The project welcomes pull requests! Here's a quick howto:
 
 1. Find what to work on via our [help wanted issues](https://github.com/issues?q=is%3Aopen+is%3Aissue+user%3Aublue-os+archived%3Afalse+label%3A%22help+wanted%22)
 1. Ask questions in your PR or file an issue if you need help.
@@ -30,7 +30,7 @@ The community looks forward to your contributions!
 If you like the project, but just don't have time to contribute, that's fine. There are other ways to support the project and show your appreciation, which we would also be very happy about:
 
 - Star the project
-- Share it on all your social media (we 💙 Mastodon)
+- Share it on all your social media (the team 💙 Mastodon)
 - Refer this project in your project's readme.
 - Mention the project at local meetups and tell your friends/colleagues!
 
@@ -47,17 +47,17 @@ If you want to ask a question, ask in the [discussion forum](https://community.p
 
 ## I Want To Contribute
 
-:::Info
+:::info
 
 When contributing to this project, you must agree that you have authored 100% of the content, that you have the necessary rights to the content and that the content you contribute may be provided under the project license.
 
 :::
 
-Generally speaking we try to follow the [Lazy Concensus](https://community.apache.org/committers/decisionMaking.html) model of development to keep the builds healthy and ourselves happy.
+Generally speaking the project tries to follow the [Lazy Consensus](https://community.apache.org/committers/decisionMaking.html) model of development to keep the builds healthy and people happy.
 
 - If you're looking for consensus to make a decision post an issue for feedback and remember to account for timezones and weekends/holidays/work time.
-- We want people to be opinionated in their builds so we're more of a loose confederation of repos than a top-down org.
-- Try not to merge your own stuff, ask for a review. At some point when we have enough reviewers we'll be turning on branch protection.
+- The project wants people to be opinionated in their builds so it's more of a loose confederation of repos than a top-down org.
+- Try not to merge your own stuff, ask for a review. At some point when the project has enough reviewers it will be turning on branch protection.
 
 Ashley Willis has a great introductory post called [How to Be a Good Open Source Contributor During Hacktoberfest and Beyond](https://dev.to/github/how-to-be-a-good-open-source-contributor-during-hacktoberfest-and-beyond-cdi) that has useful tips if you are just getting started.
 

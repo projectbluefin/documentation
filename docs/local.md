@@ -5,7 +5,7 @@ slug: /local
 
 # Building Bluefin
 
-Bluefin is cloud native, so all all the tooling can be run locally or on any server. Check out the [Universal Blue Forge](https://github.com/ublue-os/forge) if you're interested in self-hosting. [Just](https://just.systems) is used to manage build tasks. It is designed to facilitate local development. It is also useful for building Bluefin on a wider variety of CI/CD systems.
+Bluefin is cloud native, so all the tooling can be run locally or on any server. Check out the [Universal Blue Forge](https://github.com/ublue-os/forge) if you're interested in self-hosting. [Just](https://just.systems) is used to manage build tasks. It is designed to facilitate local development. It is also useful for building Bluefin on a wider variety of CI/CD systems.
 
 First clone the repo:
 

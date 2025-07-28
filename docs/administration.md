@@ -7,7 +7,7 @@ slug: /administration
 
 Bluefin is designed to be installed for the life of the hardware without reinstallation. Unlike traditional operating systems, the image is always pristine and "clean", making upgrades less problematic. Updates are automatic and silent by default.
 
-This usually means you can set up your system once, and then have it remain that way. Then likely you'll never have to come back here. 🙂
+This typically means you can set up your system once, and then have it remain that way. Then likely you'll never have to come back here. 🙂
 
 > I want that "defaults lifestyle".
 >
@@ -38,7 +38,7 @@ Machine firmware updates are provided through the Firmware application.
 
 ### Managing Updates
 
-In Settings → Network → A network setting, set `Metered Connection: has data limits or can incur charges` to pause Bluefin updates:
+In **Settings** → **Network** → A network setting, set **Metered Connection: has data limits or can incur charges** to pause Bluefin updates:
 
 ![Settings → Network → A network setting - `Metered Connection: has data limits or can incur charges` Highlight](https://github.com/user-attachments/assets/97dfd5ff-d126-4fff-b439-18df391a1c49)
 
@@ -60,7 +60,7 @@ Bluefin offers images based on the current and last stable version of Fedora, as
 
 :::info[It's all just Bluefin]
 
-Bluefin's components are shared across all images, don't think of it as a separate "Edition" or "Spin". Bluefin strives to be the same across all the images, we feel that the aggressiveness of updates can be just "be a setting". Ideally you use "Bluefin" and don't need to care about your update stream.
+Bluefin's components are shared across all images, don't think of it as a separate "Edition" or "Spin". Bluefin strives to be the same across all the images, the team feels that the aggressiveness of updates can be "be a setting". Ideally you use "Bluefin" and don't need to care about your update stream.
 
 `lts` for a work machine and `stable` for your hot rod.
 
@@ -101,7 +101,7 @@ Or select `date` and choose an older image.
 
 #### Switching between tags manually
 
-Here are the manual commands with rpm-ostree, we recommend becoming familiar with them if you find yourself rebasing often. Before changing a stream it is recommended to remove any locally layered packages:
+Here are the manual commands with `rpm-ostree`, it is recommended to become familiar with them if you find yourself rebasing often. Before changing a stream it is recommended to remove any locally layered packages:
 
 ```sh
 rpm-ostree reset
@@ -127,7 +127,7 @@ Current rollback state is native ostree
 
 The `ghcr.io/ublue-os/bluefin:gts` is the important part, with `bluefin` being the image name, and the `:gts` being the image tag. That is the image you are currently on. Look for `:gts`, `:stable`, `:latest`, or in certain cases the version like `:40` or `:41`.
 
-> Pro Tip: Bluefin's [release notes](https://github.com/ublue-os/bluefin/releases) contain the stream switching instructions at the bottom of each release. This is useful if you're trying to nail down a regression in a specific package version.
+**Pro Tip**: Bluefin's [release notes](https://github.com/ublue-os/bluefin/releases) contain the stream switching instructions at the bottom of each release. This is useful if you're trying to nail down a regression in a specific package version.
 
 Use the `bootc switch` command to move to a newer or older version:
 
@@ -135,7 +135,7 @@ Use the `bootc switch` command to move to a newer or older version:
 
 <details>
 
-<summary>In this example we're rebasing to `:stable`, which is the latest stable release of Fedora (currently 41). The `--enforce-container-sigpolicy` is important to ensure you're checking the signature of the produced image:</summary>
+<summary>In this example you're rebasing to `:stable`, which is the latest stable release of Fedora (currently 41). The `--enforce-container-sigpolicy` is important to ensure you're checking the signature of the produced image:</summary>
 
 ```sh
 sudo bootc switch ghcr.io/ublue-os/bluefin:stable --enforce-container-sigpolicy

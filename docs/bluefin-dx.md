@@ -24,13 +24,13 @@ This differs from traditional distributions by making the development process op
 
 ![image](https://github.com/user-attachments/assets/51415b6c-b7fe-45e9-af74-c01694b26fbe)
 
-The pattern in `bluefin-dx` (and `aurora-dx`) is centered around [devcontainers](https://containers.dev). Since devcontainers live in the project's git repository, they can be deployed on any operating system: Linux, MacOS, or Windows (via WSL). This facilitates "distributed by default" development and avoids Linux users being "the odd one out" when working with teammates on other operating systems.
+The pattern in `bluefin-dx` (and `aurora-dx`) centers around [devcontainers](https://containers.dev). Since devcontainers live in the project's git repository, they can be deployed on any operating system: Linux, macOS, or Windows (via WSL). This facilitates "distributed by default" development and avoids Linux users being "the odd one out" when working with teammates on other operating systems.
 
 Each project includes a declarative environment intended to start the user with a "best practice" cloud-native workflow out of the box. The [Ultimate Guide to Dev Containers](https://www.daytona.io/dotfiles/ultimate-guide-to-dev-containers) has a good write-up on the advantages of using devcontainers. This means that the development environment is kept in version control instead of coupled to the host.
 
 Homebrew can also be used to install development tools. However, it is recommended to avoid that and declare the project's dependencies in version control. It's so convenient sometimes, [it's okay](https://www.youtube.com/shorts/lKwavoyaaFA).
 
-> You can always use whatever you want. You do not need to use everything in here in order to be productive -- at the end of the day it's your computer and this is just a set of defaults.
+You can always use whatever you want. You do not need to use everything in here in order to be productive -- at the end of the day it's your computer and this is a set of defaults.
 
 # Enabling Developer Mode
 
@@ -79,7 +79,7 @@ Check out this talk from [Rich Burroughs](https://timeline.richburroughs.dev/):
 
 [Podman Desktop](https://podman-desktop.io/) is included to provide container management. Check out the Podman Desktop [documentation](https://podman-desktop.io/docs/intro) for more information. All the upstream `podman` tools are included. This is the default system container runtime and is the recommended developer configuration that Fedora ships with.
 
-> Though Bluefin defaults to docker and vscode for development, all of the Fedora upstream tools are included for those who prefer that experience.
+Though Bluefin defaults to docker and vscode for development, all of the Fedora upstream tools are included for those who prefer that experience.
 
 ## Built-in Performance Tooling
 
@@ -87,7 +87,7 @@ Check out this talk from [Rich Burroughs](https://timeline.richburroughs.dev/):
 
 - `bcc`, `bpftrace`, `iproute2`, `nicstat`, `numactl`, `sysprof`, `sysstat`, `tiptop`, `trace-cmd`, and `util-linux`
 
-Thanks to Ubuntu and Canonical for the [detailed specification](https://discourse.ubuntu.com/t/spec-include-performance-tooling-in-ubuntu/43134) and rationale. We hope that the inclusion of performance tools will [lead to better upstream software](https://blogs.gnome.org/chergert/2024/09/25/messaging-needs/).
+Thanks to Ubuntu and Canonical for the [detailed specification](https://discourse.ubuntu.com/t/spec-include-performance-tooling-in-ubuntu/43134) and rationale. The project hopes that the inclusion of performance tools will [lead to better upstream software](https://blogs.gnome.org/chergert/2024/09/25/messaging-needs/).
 
 ## Quality of Life Improvements
 
