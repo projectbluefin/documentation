@@ -41,6 +41,31 @@ This project and everyone participating in it is governed by the
 
 By participating, you are expected to uphold this code. Please report unacceptable behavior to `jorge.castro@gmail.com`
 
+## Contribution Areas by Skill Set
+
+### For Cloud Native/DevOps Engineers
+As a cloud native project, we especially welcome contributors with skills in:
+- **Podman/Docker** - Container build improvements
+- **CI/CD & GitHub Actions** - Workflow optimization  
+- **Bash scripting** - Build script improvements
+- **Justfile** - Build system enhancements (see [main repo justfile](https://github.com/ublue-os/main))
+
+### For Documentation Writers
+- Improve hardware compatibility guides
+- Create tutorials for custom image building
+- Cross-reference missing projects between repositories
+- Update installation and troubleshooting guides
+
+### For Package Maintainers
+- Submit udev rules to [packages repo](https://github.com/ublue-os/packages)
+- Help maintain the [Universal Blue COPR](https://copr.fedorainfracloud.org/coprs/ublue-os/packages/packages/)
+- Package new applications for inclusion
+
+### For Hardware Enthusiasts
+- Test and document hardware compatibility
+- Submit hardware enablement patches
+- Help with Framework laptop and other specialized hardware support
+
 ## I Have a Question
 
 If you want to ask a question, ask in the [discussion forum](https://community.projectbluefin.io) or come hang out on [the Discord server](https://discord.gg/WEu6BdFEtp)
