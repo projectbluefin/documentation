@@ -189,7 +189,7 @@ Check the [Fedora Silverblue User Guide](https://docs.fedoraproject.org/en-US/fe
 
 There are also VPN providers on Flathub which will offer a good experience:
 
-- [Mozilla VPN](https://flathub.org/apps/org.mozilla.vpn)
+- [Mozilla VPN](https://flathub.org/apps/org.mozilla.vpn) ([Donate](https://foundation.mozilla.org/en/?form=donate&gad_source=1))
 - [ProtonVPN client](https://flathub.org/apps/com.protonvpn.www) - available on Flathub
 
 Other VPN providers may provide a poor packaging experience and are not recommended.

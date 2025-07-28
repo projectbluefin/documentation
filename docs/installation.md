@@ -55,7 +55,7 @@ Most pain points can be addressed directly by planning ahead of time. Note that 
   - Bluefin does not support rebasing from a pre-existing installation of Fedora
 - Remember that this is a custom Fedora based image, it does move at a brisk pace compared to something like Ubuntu LTS
 - Read this documentation in its entirety, here's some associated upstream documentation:
-  - [Homebrew](https://docs.brew.sh/)
+  - [Homebrew](https://docs.brew.sh/) ([Donate](https://github.com/Homebrew/brew#donations))
   - [Flathub](https://docs.flathub.org/)
   - [bootc](https://bootc-dev.github.io/bootc/)
 
@@ -78,9 +78,9 @@ Download the right ISO from [the website](https://projectbluefin.io/#scene-picke
   - Use the entire disk with automatic partitioning
   - (Optional): [Set up Secure Boot](#secure-boot)
   - (Optional): `ujust rebase-helper` to move to `:stable` or `:latest`
-- Set up, test, and **verify backups** - While the system image is reproducible data, your user data in your home folder still needs to be backed up. Bluefin ships with two backup utilities depending on your preference. They are installed as Flatpaks so you can remove the one you don't use. `rclone` and `restic` are also preinstalled if you prefer command line tools
-  - [Deja Dup](https://apps.gnome.org/DejaDup/)
-  - [Pika Backup](https://apps.gnome.org/PikaBackup/)
+- Set up, test, and **verify backups** - While the system image is reproducible data, your user data in your home folder still needs to be backed up. Bluefin ships with two backup utilities depending on your preference. They are installed as Flatpaks so you can remove the one you don't use. `rclone` ([Donate](https://github.com/sponsors/rclone)) and `restic` ([Donate](https://github.com/sponsors/restic)) are also preinstalled if you prefer command line tools
+  - [Deja Dup](https://apps.gnome.org/DejaDup/) ([Donate](https://liberapay.com/DejaDup))
+  - [Pika Backup](https://apps.gnome.org/PikaBackup/) ([Donate](https://opencollective.com/pika-backup))
   - Ensure your backups are functional _before_ moving on to configuration
 
 ### Configuration
@@ -116,7 +116,7 @@ Bluefin strives to make maintenance as straightforward as possible, however many
   - Easily remove applications at once
 - `ujust clean-system` to clean up old containers and unused flatpak runtimes
 
-And one more piece of advice: The more you invest into day 0, the smoother your day 1 will be, which results in an even smoother day 2. After that, it's all bragging rights. The `fastfetch` command will be there to remind you of your milestone:
+And one more piece of advice: The more you invest into day 0, the smoother your day 1 will be, which results in an even smoother day 2. After that, it's all bragging rights. The `fastfetch` ([Donate](https://github.com/sponsors/LinusDierheimer)) command will be there to remind you of your milestone:
 
 ![image](https://github.com/user-attachments/assets/e1b77128-6aaf-4a95-a9fc-cb1409a176fc)
 
