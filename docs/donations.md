@@ -48,25 +48,25 @@ Note that all [Universal Blue](https://universal-blue.org/) image sources are ke
 
 If your software is included in Bluefin and missing from this list, please send a pull request to add it!
 
-- [Atuin](https://github.com/sponsors/atuinsh)
-- [Blur My Shell](https://github.com/sponsors/aunetx)
-- [Clapper](https://liberapay.com/Clapper)
-- [Deja Dup](https://liberapay.com/DejaDup)
-- [Distroshelf](https://github.com/sponsors/ranfdev)
-- [Extensions Manager](https://github.com/sponsors/mjakeman)
-- [eza](https://github.com/sponsors/cafkafk)
-- [fastfetch](https://github.com/sponsors/LinusDierheimer)
-- fd: [David Peter](https://github.com/sponsors/sharkdp) and [Tavian Barnes](https://github.com/sponsors/tavianator)
-- Flatpak: Currently migrating fiscal hosts
-- [fzf](https://github.com/sponsors/junegunn)
-- [GNOME](https://www.gnome.org/donate/)
-- [Homebrew](https://github.com/Homebrew/brew#donations)
-- [Logo Menu](https://github.com/sponsors/Aryan20)
-- [Mozilla](https://foundation.mozilla.org/en/?form=donate&gad_source=1)
-- [Pika Backup](https://opencollective.com/pika-backup)
-- [Thunderbird](https://www.thunderbird.net/en-US/donate/)
-- [Warehouse](https://ko-fi.com/heliguy)
-- [yq](https://github.com/sponsors/mikefarah)
+- [Atuin](https://github.com/sponsors/atuinsh) - Magical shell history tool with sync and search capabilities
+- [Blur My Shell](https://github.com/sponsors/aunetx) - GNOME Shell extension that adds blur effects to the UI
+- [Clapper](https://liberapay.com/Clapper) - Modern media player built with GTK4 and GStreamer
+- [Deja Dup](https://liberapay.com/DejaDup) - Simple backup utility for GNOME
+- [Distroshelf](https://github.com/sponsors/ranfdev) - Native Linux app store and software center
+- [Extensions Manager](https://github.com/sponsors/mjakeman) - Native GNOME Shell extensions manager
+- [eza](https://github.com/sponsors/cafkafk) - Modern replacement for ls with colors and icons
+- [fastfetch](https://github.com/sponsors/LinusDierheimer) - Fast system information tool like neofetch
+- fd: [David Peter](https://github.com/sponsors/sharkdp) and [Tavian Barnes](https://github.com/sponsors/tavianator) - Fast and user-friendly alternative to find
+- Flatpak: Currently migrating fiscal hosts - Universal application distribution framework
+- [fzf](https://github.com/sponsors/junegunn) - Command-line fuzzy finder for files and history
+- [GNOME](https://www.gnome.org/donate/) - Modern desktop environment and development platform
+- [Homebrew](https://github.com/Homebrew/brew#donations) - Package manager for Linux and macOS
+- [Logo Menu](https://github.com/sponsors/Aryan20) - GNOME Shell extension for application launcher
+- [Mozilla](https://foundation.mozilla.org/en/?form=donate&gad_source=1) - Organization behind Firefox browser and web technologies
+- [Pika Backup](https://opencollective.com/pika-backup) - Simple backup application designed for GNOME
+- [Thunderbird](https://www.thunderbird.net/en-US/donate/) - Open-source email client with modern features
+- [Warehouse](https://ko-fi.com/heliguy) - Flatpak application manager with intuitive interface
+- [yq](https://github.com/sponsors/mikefarah) - Command-line YAML processor and editor
 
 - [Borg Backup](https://github.com/sponsors/borgbackup) - Secure backup program (package: `borgbackup`)
 - [fish](https://github.com/sponsors/fish-shell) - Smart and user-friendly command line shell (package: `fish`)
