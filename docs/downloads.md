@@ -41,7 +41,7 @@ Bluefin LTS is the long term support experience 📖 **[Read the documentation](
 
 ### Bluefin GDX
 
-📖 **[Read the documentation](/gdx)** to learn about features and differences.
+Bluefin GDX is an AI workstation with Nvidia and CUDA 📖 **[Read the documentation](/gdx)** to learn about features and differences.
 
 | Version            | Architecture  | Download                                                                                    | Checksum                                                                             |
 | ------------------ | ------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
