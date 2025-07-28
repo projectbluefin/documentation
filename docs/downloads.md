@@ -23,16 +23,29 @@ There are currently two sets of installation media. One using the Anaconda insta
 
 ### Bluefin
 
-Bluefin is the default experience 📖 **[Read the documentation](/introduction)** to learn about features and differences.
+The most current, based on the latest Fedora. 
+📖 **[Read the documentation](/introduction)** to learn about features and differences.
 
 | Version | Architecture | Download                                                                                                             | Checksum                                                                                       |
 | ------- | ------------ | -------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
 | Bluefin | AMD/Intel    | [📥 bluefin-stable-x86_64.iso](https://download.projectbluefin.io/bluefin-stable-x86_64.iso)                         | [🔐 Verify](https://download.projectbluefin.io/bluefin-stable-x86_64.iso-CHECKSUM)             |
 | Bluefin | Nvidia       | [📥 bluefin-nvidia-open-stable-x86_64.iso](https://download.projectbluefin.io/bluefin-nvidia-open-stable-x86_64.iso) | [🔐 Verify](https://download.projectbluefin.io/bluefin-nvidia-open-stable-x86_64.iso-CHECKSUM) |
 
+### Bluefin GTS
+
+The default experience for users, following the previous stable release of Fedora
+📖 **[Read the documentation](/introduction)** to learn about features and differences.
+
+| Version     | Architecture | Download                                                                                           | Checksum                                                                                    |
+| ----------- | ------------ | -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Bluefin GTS | AMD/Intel    | [📥 bluefin-gts-x86_64.iso](https://download.projectbluefin.io/bluefin-gts-x86_64.iso)                 | [🔐 Verify](https://download.projectbluefin.io/bluefin-gts-x86_64.iso-CHECKSUM)                 |
+| Bluefin GTS | Nvidia       | [📥 bluefin-nvidia-open-gts-x86_64.iso](https://download.projectbluefin.io/bluefin-nvidia-open-gts-x86_64.iso) | [🔐 Verify](https://download.projectbluefin.io/bluefin-nvidia-open-gts-x86_64.iso-CHECKSUM) |
+
+
 ### Bluefin LTS
 
-Bluefin LTS is the long term support experience 📖 **[Read the documentation](/lts)** to learn about features and differences.
+The long term support experience 
+📖 **[Read the documentation](/lts)** to learn about features and differences.
 
 | Version            | Architecture  | Download                                                                          | Checksum                                                                   |
 | ------------------ | ------------- | --------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
@@ -41,21 +54,13 @@ Bluefin LTS is the long term support experience 📖 **[Read the documentation](
 
 ### Bluefin GDX
 
-Bluefin GDX is an AI workstation with Nvidia and CUDA 📖 **[Read the documentation](/gdx)** to learn about features and differences.
+The AI workstation with Nvidia and CUDA 
+📖 **[Read the documentation](/gdx)** to learn about features and differences.
 
 | Version            | Architecture  | Download                                                                                    | Checksum                                                                             |
 | ------------------ | ------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
 | Bluefin GDX (Beta) | Nvidia        | [📥 bluefin-gdx-x86_64.iso](https://download.projectbluefin.io/bluefin-gdx-lts-x86_64.iso)     | [🔐 Verify](https://download.projectbluefin.io/bluefin-gdx-lts-x86_64.iso-CHECKSUM)     |
 | Bluefin GDX (Beta) | ARM (aarch64) | [📥 bluefin-gdx-lts-aarch64.iso](https://download.projectbluefin.io/bluefin-gdx-lts-aarch64.iso) | [🔐 Verify](https://download.projectbluefin.io/bluefin-gdx-lts-aarch64.iso-CHECKSUM) |
-
-### Bluefin GTS
-
-📖 **[Read the documentation](/introduction)** to learn about features and differences.
-
-| Version     | Architecture | Download                                                                                           | Checksum                                                                                    |
-| ----------- | ------------ | -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| Bluefin GTS | AMD/Intel    | [📥 bluefin-gts-x86_64.iso](https://download.projectbluefin.io/bluefin-gts-x86_64.iso)                 | [🔐 Verify](https://download.projectbluefin.io/bluefin-gts-x86_64.iso-CHECKSUM)                 |
-| Bluefin GTS | Nvidia       | [📥 bluefin-nvidia-open-gts-x86_64.iso](https://download.projectbluefin.io/bluefin-nvidia-open-gts-x86_64.iso) | [🔐 Verify](https://download.projectbluefin.io/bluefin-nvidia-open-gts-x86_64.iso-CHECKSUM) |
 
 ## Readymade Live ISO Downloads
 
@@ -63,6 +68,7 @@ Due to the simplified nature of this installer, it's an excellent choice if you 
 
 ### Bluefin
 
+The most current, based on the latest Fedora. 
 📖 **[Read the documentation](/introduction)** to learn about features and differences.
 
 | Version | Architecture | Download                                                                                                                                 | Checksum                                                                                                 |
@@ -72,6 +78,7 @@ Due to the simplified nature of this installer, it's an excellent choice if you 
 
 ### Bluefin LTS
 
+The long term support experience 
 📖 **[Read the documentation](/lts)** to learn about features and differences.
 
 | Version            | Architecture  | Download                                                                                            | Checksum                                                                                     |
@@ -81,6 +88,7 @@ Due to the simplified nature of this installer, it's an excellent choice if you 
 
 ### Bluefin GDX
 
+The AI workstation with Nvidia and CUDA 
 📖 **[Read the documentation](/gdx)** to learn about features and differences.
 
 | Version            | Architecture  | Download                                                                                              | Checksum                                                                                       |
@@ -90,6 +98,7 @@ Due to the simplified nature of this installer, it's an excellent choice if you 
 
 ### Bluefin GTS
 
+The default experience for users, following the previous stable release of Fedora
 📖 **[Read the documentation](/introduction)** to learn about features and differences.
 
 | Version     | Architecture | Download                                                                                                     | Checksum                                                                                              |
