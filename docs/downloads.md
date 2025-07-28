@@ -32,7 +32,7 @@ Bluefin is the default experience 📖 **[Read the documentation](/introduction)
 
 ### Bluefin LTS
 
-📖 **[Read the documentation](/lts)** to learn about features and differences.
+Bluefin LTS is the long term support experience 📖 **[Read the documentation](/lts)** to learn about features and differences.
 
 | Version            | Architecture  | Download                                                                          | Checksum                                                                   |
 | ------------------ | ------------- | --------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
