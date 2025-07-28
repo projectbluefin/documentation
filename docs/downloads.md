@@ -24,6 +24,7 @@ There are currently two sets of installation media. One using the Anaconda insta
 ### Bluefin
 
 The most current, based on the latest Fedora. 
+
 📖 **[Read the documentation](/introduction)** to learn about features and differences.
 
 | Version | Architecture | Download                                                                                                             | Checksum                                                                                       |
@@ -34,6 +35,7 @@ The most current, based on the latest Fedora.
 ### Bluefin GTS
 
 The default experience for users, following the previous stable release of Fedora
+
 📖 **[Read the documentation](/introduction)** to learn about features and differences.
 
 | Version     | Architecture | Download                                                                                           | Checksum                                                                                    |
@@ -45,6 +47,7 @@ The default experience for users, following the previous stable release of Fedor
 ### Bluefin LTS
 
 The long term support experience 
+
 📖 **[Read the documentation](/lts)** to learn about features and differences.
 
 | Version            | Architecture  | Download                                                                          | Checksum                                                                   |
@@ -55,6 +58,7 @@ The long term support experience
 ### Bluefin GDX
 
 The AI workstation with Nvidia and CUDA 
+
 📖 **[Read the documentation](/gdx)** to learn about features and differences.
 
 | Version            | Architecture  | Download                                                                                    | Checksum                                                                             |
@@ -69,6 +73,7 @@ Due to the simplified nature of this installer, it's an excellent choice if you 
 ### Bluefin
 
 The most current, based on the latest Fedora. 
+
 📖 **[Read the documentation](/introduction)** to learn about features and differences.
 
 | Version | Architecture | Download                                                                                                                                 | Checksum                                                                                                 |
@@ -79,6 +84,7 @@ The most current, based on the latest Fedora.
 ### Bluefin LTS
 
 The long term support experience 
+
 📖 **[Read the documentation](/lts)** to learn about features and differences.
 
 | Version            | Architecture  | Download                                                                                            | Checksum                                                                                     |
@@ -89,6 +95,7 @@ The long term support experience
 ### Bluefin GDX
 
 The AI workstation with Nvidia and CUDA 
+
 📖 **[Read the documentation](/gdx)** to learn about features and differences.
 
 | Version            | Architecture  | Download                                                                                              | Checksum                                                                                       |
@@ -99,6 +106,7 @@ The AI workstation with Nvidia and CUDA
 ### Bluefin GTS
 
 The default experience for users, following the previous stable release of Fedora
+
 📖 **[Read the documentation](/introduction)** to learn about features and differences.
 
 | Version     | Architecture | Download                                                                                                     | Checksum                                                                                              |
