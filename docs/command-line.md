@@ -3,7 +3,7 @@ title: Command Line
 slug: /command-line
 ---
 
-Bluefin is designed to be used by normal people, but the command line is _**our passion**_. Therefore we invest in our command line experience, knowing that most people will never see it. Slay out.
+Bluefin is designed to be used by normal people, but the command line is _**passion**_. Therefore the project invests in the command line experience, knowing that most people will never see it. Slay out.
 
 ## Installing Applications
 
@@ -13,7 +13,7 @@ Bluefin is designed to be used by normal people, but the command line is _**our 
 - [Homebrew Packages](https://formulae.brew.sh/)
 - [Cheatsheet](https://devhints.io/homebrew)
 
-Note that the cask functionality in homebrew is MacOS specific and non functional in Bluefin, flatpak is used instead. Other package management tools like [uv](https://github.com/astral-sh/uv), [pixi](https://github.com/prefix-dev/pixi), [asdf](https://asdf-vm.com/), and [mise](https://github.com/jdx/mise) are available and work perfectly fine when installed via homebrew. Package managers inside of package managers ... hey look it was like that when we got here, this one isn't our fault! They do work great though, and some users may prefer those tools, so we give _you_ the option to forge your own path.
+Note that the cask functionality in homebrew is macOS specific and non functional in Bluefin, Flatpak is used instead. Other package management tools like [uv](https://github.com/astral-sh/uv), [pixi](https://github.com/prefix-dev/pixi), [asdf](https://asdf-vm.com/), and [mise](https://github.com/jdx/mise) are available and work perfectly fine when installed via homebrew. Package managers inside of package managers ... hey look it was like that when the team got here, this one isn't their fault! They do work great though, and some users may prefer those tools, so you have the option to forge your own path.
 
 :::info[Don't cross the streams]
 
@@ -27,7 +27,7 @@ Generally speaking, if you need a tool or utility, use homebrew. If you need a l
 
 :::tip[A greenfield terminal experience]
 
-We love our command line tools. This is intended to be a rendition of what a brand new terminal experience would look like with modern tooling. The traditional tooling is always a toggle away. Keep up with the cool kids without sacrificing your "known good" kit.
+The project loves command line tools. This is intended to be a rendition of what a brand new terminal experience would look like with modern tooling. The traditional tooling is always a toggle away. Keep up with the cool kids without sacrificing your "known good" kit.
 
 :::
 
@@ -64,13 +64,13 @@ The community may add new tools over time, re-running `ujust bluefin-cli` will p
 
 ### Message of the Day and `fastfetch`
 
-We prefer to have functional bling that is slick but it must also serve a purpose. New terminals (`Ctrl`-`Alt`-`Enter`) display a message of the day with some basic information:
+The project prefers to have functional bling that is slick but it must also serve a purpose. New terminals (<kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Enter</kbd>) display a message of the day with some basic information:
 
 ![image](https://github.com/user-attachments/assets/0e0326ef-6640-41a2-bd24-dae1b1647cfd)
 
 The `bluefin-dx:beta` line is the name of the OS image, and is a good way to remind yourself if you're on a pinned image as well as a quick reference to common commands. You can toggle it on and off with `ujust toggle-user-motd`. Note that the Tip rotates regularly in order to spread useful tips to the community.
 
-We love to flex our machines and software. Run `fastfetch`:
+The project loves to flex machines and software. Run `fastfetch`:
 
 ![image](https://github.com/user-attachments/assets/f720f9d8-7c3c-4f3c-9112-c627686e0fb1)
 

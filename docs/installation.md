@@ -5,7 +5,7 @@ slug: /installation
 
 # Installation Runbook
 
-In order to set yourself up for success, it's useful to plan out your Bluefin installation into phases so that you can avoid common pitfalls and poorly supported configurations. On Linux-friendly hardware, usually just booting into the installation process and clicking through the recommended installer defaults is enough. But you can never be too sure—here's the nitty-gritty in case you need it.
+In order to set yourself up for success, it's useful to plan out your Bluefin installation into phases so that you can avoid common pitfalls and poorly supported configurations. On Linux-friendly hardware, booting into the installation process and clicking through the recommended installer defaults is usually enough. But you can never be too sure—here's the nitty-gritty in case you need it.
 
 :::info[💙 Please do not send your loved ones to this page 💙]
 
@@ -23,7 +23,7 @@ Review the [Fedora Silverblue installation instructions](https://docs.fedoraproj
 - Older BIOS-based systems are **unsupported**; only UEFI systems are supported
 - Dual booting off of the same disk is **unsupported**; use a dedicated drive for another operating system and use your BIOS to choose another OS to boot off of
   - Bluefin supports an [installation on an external drive](/tips/#bluefin-to-go-using-an-external-drive) if you want to try it on bare metal before committing
-- We **strongly recommend** using automated partitioning during installation; there are [known issues](https://docs.fedoraproject.org/en-US/fedora-silverblue/installation/) with manual partitioning on Atomic systems and it is unnecessary to set up unless you are on a multi-disk system
+- The project **strongly recommends** using automated partitioning during installation; there are [known issues](https://docs.fedoraproject.org/en-US/fedora-silverblue/installation/) with manual partitioning on Atomic systems and it is unnecessary to set up unless you are on a multi-disk system
 - A stock Bluefin installation is 11GB. Bluefin with developer mode enabled (`bluefin-dx`) is 19GB
 
 ## Day 0: Planning
@@ -47,7 +47,7 @@ Most pain points can be addressed directly by planning ahead of time. Note that 
     - [Driverless printers](https://openprinting.github.io/printers/) are strongly recommended; we cannot guarantee every printer will work
     - [Scanner support](http://www.sane-project.org/sane-mfgs.html)
 - Is the BIOS/UEFI up to date on the device?
-  - We recommend having all hardware firmware updates completed and up to date before installation
+- The project recommends having all hardware firmware updates completed and up to date before installation
 - Are the applications you depend on well supported on Flathub?
 - Does your VPN provider provide a wireguard configuration to import into Network Manager?
 - Dedicated disk ready to go?
@@ -87,7 +87,7 @@ Download the right ISO from [the website](https://projectbluefin.io/#scene-picke
 
 The rest of these steps are user specific configuration and something that we tend to leave up to you. Automating this step is a good place to use tools like [chezmoi](https://www.chezmoi.io/) for dotfile configuration and syncing: `brew install chezmoi`
 
-Since the user space is all in your home directory, just about any tool you use to automate this step should work as you expect. Ideally, configuration that you might have done at the system level in the past is configured at your user level now, leading to a clean seperation between user configuration and the system image.
+Since the user space is all in your home directory, any tool you use to automate this step should work as you expect. Ideally, configuration that you might have done at the system level in the past is configured at your user level now, leading to a clean separation between user configuration and the system image.
 
 - Software Installation
   - Use the Bazaar store to install applications
@@ -128,7 +128,7 @@ Universal Blue supports secure boot with [our custom key](https://github.com/ubl
 
 After the first installation, you will be prompted to enroll the secure boot key in the mokutil UEFI menu UI (_QWERTY_ keyboard input and navigation).
 
-Then, select "Enroll MOK", and input "`universalblue`" as the password
+Then, select **Enroll MOK**, and input `universalblue` as the password
 
 If this step is not completed during the initial setup, you can manually enroll the key by running the following command in the terminal:
 
