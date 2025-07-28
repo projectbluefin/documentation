@@ -192,7 +192,7 @@ There are also VPN providers on Flathub which will offer a good experience:
 - [Mozilla VPN](https://flathub.org/apps/org.mozilla.vpn) ([Donate](https://foundation.mozilla.org/en/?form=donate&gad_source=1))
 - [ProtonVPN client](https://flathub.org/apps/com.protonvpn.www) - available on Flathub
 
-Other VPN providers may provide a poor packaging experience and are not recommended.
+Other VPN providers that are not explicitly mentioned here may a poor packaging experience and are not recommended. If your VPN provider falls into this category then exporting the wireguard configuration and importing it manually may be the best approach.
 
 ## Enabling Local Layering
 
