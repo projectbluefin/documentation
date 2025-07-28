@@ -11,7 +11,9 @@ slug: /donations
 
 Sustainability is a key focus of Universal Blue, the project focuses on efficiency and long term health. Donations are appreciated, especially those that benefit the Linux application ecosystem. Donations cover the cost of the GitHub runners, sponsoring Paleoart for the OS, and hardware expenses.
 
-# Bluefin Team
+# Teams
+
+## Bluefin Team
 
 Complete with actual job titles:
 
@@ -28,6 +30,19 @@ and esteemed special guests:
 
 - [Madonuko](https://github.com/madonuko) (Fyra Labs) - Readymade installation experience
 - [kolumni](https://ko-fi.com/kolunmi) - App store experience ([Bazaar](https://github.com/kolunmi/bazaar))
+
+## Universal Blue Team
+
+Note that all [Universal Blue](https://universal-blue.org/) image sources are kept in bash and Python in order to encourage contributions. Organizations that see value in our work can consider hiring any one of the millions of developers in the world with these skills to help out, we could always use the help. Get in touch with us if you'd be interested in trying that.
+
+- [Benjamin Sherman](https://github.com/bsherman)
+- [HikariKnight](https://github.com/sponsors/HikariKnight)
+- [Jorge Castro](https://github.com/sponsors/castrojo/)
+- [Kyle Gospodnetich](https://github.com/sponsors/KyleGospo)
+- [m2Giles](https://github.com/m2Giles)
+- [Tulip Blossom](https://github.com/sponsors/tulilirockz)
+
+# Projects
 
 ## Upstream Projects included in Bluefin
 
@@ -63,14 +78,3 @@ If your software is included in Bluefin and missing from this list, please send 
 - [restic](https://github.com/sponsors/restic) - Fast, secure, efficient backup program (package: `restic`)
 - [Tailscale](https://github.com/sponsors/tailscale) - VPN service for secure networking (package: `tailscale`)
 - [tmux](https://github.com/sponsors/tmux) - Terminal multiplexer (package: `tmux`)
-
-## Universal Blue Team
-
-Note that all [Universal Blue](https://universal-blue.org/) image sources are kept in bash and Python in order to encourage contributions. Organizations that see value in our work can consider hiring any one of the millions of developers in the world with these skills to help out, we could always use the help. Get in touch with us if you'd be interested in trying that.
-
-- [Benjamin Sherman](https://github.com/bsherman)
-- [HikariKnight](https://github.com/sponsors/HikariKnight)
-- [Jorge Castro](https://github.com/sponsors/castrojo/)
-- [Kyle Gospodnetich](https://github.com/sponsors/KyleGospo)
-- [m2Giles](https://github.com/m2Giles)
-- [Tulip Blossom](https://github.com/sponsors/tulilirockz)
