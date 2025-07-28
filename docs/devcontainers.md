@@ -20,9 +20,7 @@ Dev Containers allow you to use a Docker container as a full-featured developmen
 
 ## Prerequisites
 
-Before you begin, ensure you [enabled developer mode](administration.md) on Bluefin.
-
-TODO: Fix the above link.
+Before you begin, ensure you [enabled developer mode](/bluefin-dx#step-1-turn-it-on) on Bluefin.
 
 ## Installation and Setup
 
@@ -159,9 +157,68 @@ Automate setup with lifecycle hooks:
 }
 ```
 
-## Command Line
+## Command Line Interface
 
-TODO: add instructions for the command line `devcontainer` tool, starting with `brew install devcontainer`
+The Dev Container CLI provides command-line access to dev container functionality, allowing you to build, run, and manage dev containers without VS Code.
+
+### Installation
+
+Install the Dev Container CLI using homebrew:
+
+```bash
+brew install devcontainer
+```
+
+You can also install it via npm:
+
+```bash
+npm install -g @devcontainers/cli
+```
+
+### Basic Usage
+
+**Build a dev container**:
+
+```bash
+devcontainer build .
+```
+
+**Run a dev container**:
+
+```bash
+devcontainer up .
+```
+
+**Execute commands in a dev container**:
+
+```bash
+devcontainer exec . bash
+```
+
+**Build and run in one command**:
+
+```bash
+devcontainer up --build .
+```
+
+### Useful Commands
+
+- `devcontainer --help` - Show all available commands
+- `devcontainer read-configuration .` - Parse and validate devcontainer.json
+- `devcontainer features install` - Install dev container features
+- `devcontainer templates apply` - Apply a dev container template
+
+### Integration with CI/CD
+
+The CLI is particularly useful for CI/CD pipelines where you want to build and test your application in the same environment as your development container:
+
+```bash
+# In your CI pipeline
+devcontainer build .
+devcontainer exec . npm test
+```
+
+For more detailed information, check the [official Dev Container CLI documentation](https://containers.dev/implementors/reference/).
 
 ## Tips for Bluefin Users
 
