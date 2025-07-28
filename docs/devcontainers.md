@@ -5,7 +5,7 @@ slug: /devcontainers
 
 # Dev Containers Quickstart Guide
 
-Dev Containers provide a consistent, reproducible development environment using containerization. This comprehensive guide helps you get started with Dev Containers in Visual Studio Code on Bluefin.
+Dev Containers provide a consistent, reproducible development environment using containerization. This guide helps you get started with Dev Containers in Visual Studio Code on Bluefin.
 
 ## What are Dev Containers?
 
@@ -20,27 +20,11 @@ Dev Containers allow you to use a Docker container as a full-featured developmen
 
 ## Prerequisites
 
-Before you begin, ensure you have:
-
-- **Visual Studio Code** installed on your Bluefin system
-- **Docker** or **Podman** running (Bluefin includes Podman by default)
-- **Dev Containers extension** for VS Code
+Before you begin, ensure you [enabled developer mode]() on Bluefin.
 
 ## Installation and Setup
 
-### 1. Install the Dev Containers Extension
-
-1. Open Visual Studio Code
-2. Navigate to Extensions view (`Ctrl+Shift+X` or `View > Extensions`)
-3. Search for "Dev Containers"
-4. Install the **Dev Containers** extension by Microsoft
-5. Restart VS Code if prompted
-
-**Documentation**: [Installing Extensions in VS Code](https://code.visualstudio.com/docs/editor/extension-marketplace)
-
 ### 2. Verify Container Runtime
-
-TODO: ensure bluefin has developer mode enabled, crosslink to that doc here.
 
 Ensure Docker or Podman is running:
 
@@ -172,6 +156,10 @@ Automate setup with lifecycle hooks:
   "postAttachCommand": "echo 'Container ready!'"
 }
 ```
+
+## Command Line
+
+TODO: add instructions for the command line `devcontainer` tool, starting with `brew install devcontainer`
 
 ## Tips for Bluefin Users
 
