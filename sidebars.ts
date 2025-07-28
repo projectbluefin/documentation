@@ -32,7 +32,7 @@ const sidebars: SidebarsConfig = {
     {
       type: "category",
       label: "Project Information",
-      collapsed: false,
+      collapsed: true,
       items: [
         "analytics",
         "code-of-conduct",
@@ -48,7 +48,7 @@ const sidebars: SidebarsConfig = {
     {
       type: "category",
       label: "Bluefin LTS",
-      collapsed: false,
+      collapsed: true,
       items: ["lts", "bluefin-gdx"],
     },
     {
