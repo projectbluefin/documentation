@@ -25,6 +25,7 @@ const sidebars: SidebarsConfig = {
         "gaming",
         "ai",
         "bluefin-dx",
+        "devcontainers",
         "command-line",
       ],
     },

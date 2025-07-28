@@ -29,13 +29,14 @@ Review the [Fedora Silverblue installation instructions](https://docs.fedoraproj
 ## System Requirements for Bluefin
 
 ### Quick Reference
-| Component | Minimum | Recommended |
-|-----------|---------|-------------|
-| **CPU** | 64-bit x86_64 | As much as you can spend |
-| **RAM** | 16 GB | 32 GB+ / As much as you can spend if you use ZFS |
-| **Storage** | 128 GB | As much as you can spend |
-| **Graphics** | Any modern Intel/AMD GPU | Any modern GPU except Nvidia Maxwell and older |
-| **Boot** | UEFI/BIOS | UEFI with Secure Boot |
+
+| Component    | Minimum                  | Recommended                                      |
+| ------------ | ------------------------ | ------------------------------------------------ |
+| **CPU**      | 64-bit x86_64            | As much as you can spend                         |
+| **RAM**      | 16 GB                    | 32 GB+ / As much as you can spend if you use ZFS |
+| **Storage**  | 128 GB                   | As much as you can spend                         |
+| **Graphics** | Any modern Intel/AMD GPU | Any modern GPU except Nvidia Maxwell and older   |
+| **Boot**     | UEFI/BIOS                | UEFI with Secure Boot                            |
 
 ### Why 16 GB RAM Minimum?
 
@@ -46,10 +47,11 @@ Bluefin ships with an extensive cloud-native development stack. These workloads 
 **Desktop Environment**: Modern GNOME with extensions and visual effects
 **System Architecture**: Atomic/immutable OS with OSTree requiring additional overhead
 
-*These requirements ensure smooth operation of Bluefin's integrated development workflow and container-first architecture.*
+_These requirements ensure smooth operation of Bluefin's integrated development workflow and container-first architecture._
 
 ---
-*Requirements based on upstream Fedora specifications with Bluefin-specific adjustments*
+
+_Requirements based on upstream Fedora specifications with Bluefin-specific adjustments_
 
 ## Day 0: Planning
 
