@@ -23,7 +23,7 @@ Review the [Fedora Silverblue installation instructions](https://docs.fedoraproj
 - Older BIOS-based systems are **unsupported**; only UEFI systems are supported
 - Dual booting off of the same disk is **unsupported**; use a dedicated drive for another operating system and use your BIOS to choose another OS to boot off of
   - Bluefin supports an [installation on an external drive](/tips/#bluefin-to-go-using-an-external-drive) if you want to try it on bare metal before committing
-- The project **strongly recommends** using automated partitioning during installation; there are [known issues](https://docs.fedoraproject.org/en-US/fedora-silverblue/installation/) with manual partitioning on Atomic systems and it is unnecessary to set up unless you are on a multi-disk system
+- We **strongly recommend** using automated partitioning during installation; there are [known issues](https://docs.fedoraproject.org/en-US/fedora-silverblue/installation/) with manual partitioning on Atomic systems and it is unnecessary to set up unless you are on a multi-disk system
 - A stock Bluefin installation is 11GB. Bluefin with developer mode enabled (`bluefin-dx`) is 19GB
 
 ## Day 0: Planning
@@ -47,7 +47,7 @@ Most pain points can be addressed directly by planning ahead of time. Note that 
     - [Driverless printers](https://openprinting.github.io/printers/) are strongly recommended; we cannot guarantee every printer will work
     - [Scanner support](http://www.sane-project.org/sane-mfgs.html)
 - Is the BIOS/UEFI up to date on the device?
-- The project recommends having all hardware firmware updates completed and up to date before installation
+- We recommend having all hardware firmware updates completed and up to date before installation
 - Are the applications you depend on well supported on Flathub?
 - Does your VPN provider provide a wireguard configuration to import into Network Manager?
 - Dedicated disk ready to go?

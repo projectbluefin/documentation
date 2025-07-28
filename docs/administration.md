@@ -28,7 +28,7 @@ Use [Bazaar](https://github.com/kolunmi/bazaar) to [install applications from Fl
 
 Bluefin is designed to be "hands off". The system checks for updates every six(6) hours. This includes system updates, flatpaks, pet containers, and homebrew.
 
-- Most images are published weekly, but the team may push a new update at any given time.
+- Most images are published weekly, but we may push a new update at any given time.
 
 Updates are applied when the system reboots. Therefore, it is recommended to routinely power off your device when it's not being used to ensure kernel updates are being applied. Application updates (like the browser) happen independently of this and don't require a reboot.
 
@@ -60,7 +60,7 @@ Bluefin offers images based on the current and last stable version of Fedora, as
 
 :::info[It's all just Bluefin]
 
-Bluefin's components are shared across all images, don't think of it as a separate "Edition" or "Spin". Bluefin strives to be the same across all the images, the team feels that the aggressiveness of updates can be "be a setting". Ideally you use "Bluefin" and don't need to care about your update stream.
+Bluefin's components are shared across all images, don't think of it as a separate "Edition" or "Spin". Bluefin strives to be the same across all the images, we feel that the aggressiveness of updates can be "be a setting". Ideally you use "Bluefin" and don't need to care about your update stream.
 
 `lts` for a work machine and `stable` for your hot rod.
 
@@ -253,7 +253,7 @@ Check the [XDG Base Directory Specification](https://specifications.freedesktop.
 
 > Pro tip, keep your own tasks and aliases in `~/.Justfile`, and they are also handy to put in the root of your project files to automate common tasks, check out this example from [Fedora Kinoite](https://gitlab.com/fedora/ostree/ci-test/-/blob/main/justfile?ref_type=heads).
 
-Note that generally speaking the project tries to keep the system Justfiles finely scoped, most of these are workarounds and not full-fledged commands. They may get removed or changed depending on the problem they were initially meant to solve.
+Note that generally speaking Bluefin tries to keep the system Justfiles finely scoped, most of these are workarounds and not full-fledged commands. They may get removed or changed depending on the problem they were initially meant to solve.
 
 ## Managing Extensions
 
