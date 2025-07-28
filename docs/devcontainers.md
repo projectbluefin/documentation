@@ -1,13 +1,13 @@
 ---
-title: Dev Containers Quickstart Guide
+title: Devcontainers Quickstart
 slug: /devcontainers
 ---
 
-# Dev Containers Quickstart Guide
+# Devcontainers Quickstart Guide
 
 Dev Containers provide a consistent, reproducible development environment using containerization. This guide helps you get started with Dev Containers in Visual Studio Code on Bluefin.
 
-## What are Dev Containers?
+## What are Devcontainers?
 
 Dev Containers allow you to use a Docker container as a full-featured development environment. Your entire development environment - including tools, runtime, dependencies, extensions, and settings - is defined in configuration files that can be versioned and shared with your team.
 
