@@ -27,7 +27,7 @@ Generally speaking, if you need a tool or utility, use homebrew. If you need a l
 
 :::tip[A greenfield terminal experience]
 
-The project loves command line tools. This is intended to be a rendition of what a brand new terminal experience would look like with modern tooling. The traditional tooling is always a toggle away. Keep up with the cool kids without sacrificing your "known good" kit.
+We love our command line tools. This is intended to be a rendition of what a brand new terminal experience would look like with modern tooling. The traditional tooling is always a toggle away. Keep up with the cool kids without sacrificing your "known good" kit.
 
 :::
 
