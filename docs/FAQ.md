@@ -70,7 +70,7 @@ Three of the co-creators of Bluefin worked on Ubuntu at Canonical. Ubuntu had tr
 
 With Aurora, Bluefin, Bazzite, and uCore you can have a work related image, one for your handheld, one for your gaming desktop, one for your HTPC, and one for your homelab. Throw [Jellyfin](https://jellyfin.org/) on your server, and clients on each machine for a great unified media experience.
 
-One "OS" tailored for each use case, but still also, Fedora. The project never quite got the phone but GSConnect is good enough. Until someone starts making phosh images. 😈
+One "OS" tailored for each use case.
 
 ## What's with all the dinosaurs?
 
