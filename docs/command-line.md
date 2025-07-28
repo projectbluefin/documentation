@@ -70,7 +70,7 @@ The project prefers to have functional bling that is slick but it must also serv
 
 The `bluefin-dx:beta` line is the name of the OS image, and is a good way to remind yourself if you're on a pinned image as well as a quick reference to common commands. You can toggle it on and off with `ujust toggle-user-motd`. Note that the Tip rotates regularly in order to spread useful tips to the community.
 
-The project loves to flex machines and software. Run `fastfetch`:
+We love to flex our machines and software. Run `fastfetch`:
 
 ![image](https://github.com/user-attachments/assets/f720f9d8-7c3c-4f3c-9112-c627686e0fb1)
 
