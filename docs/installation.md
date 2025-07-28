@@ -31,10 +31,10 @@ Review the [Fedora Silverblue installation instructions](https://docs.fedoraproj
 ### Quick Reference
 | Component | Minimum | Recommended |
 |-----------|---------|-------------|
-| **CPU** | 64-bit x86_64 | Multi-core (4+ cores) |
-| **RAM** | 16 GB | 32 GB+ |
-| **Storage** | 64 GB | 128 GB SSD |
-| **Graphics** | Basic display | Dedicated GPU |
+| **CPU** | 64-bit x86_64 | As much as you can spend |
+| **RAM** | 16 GB | 32 GB+ / As much as you can spend if you use ZFS |
+| **Storage** | 128 GB | As much as you can spend |
+| **Graphics** | Any modern Intel/AMD GPU | Any modern GPU except Nvidia Maxwell and older |
 | **Boot** | UEFI/BIOS | UEFI with Secure Boot |
 
 ### Why 16 GB RAM Minimum?
