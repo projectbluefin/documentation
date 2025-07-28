@@ -23,7 +23,7 @@ There are currently two sets of installation media. One using the Anaconda insta
 
 ### Bluefin
 
-📖 **[Read the documentation](/introduction)** to learn about features and differences.
+Bluefin is the default experience 📖 **[Read the documentation](/introduction)** to learn about features and differences.
 
 | Version | Architecture | Download                                                                                                             | Checksum                                                                                       |
 | ------- | ------------ | -------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
