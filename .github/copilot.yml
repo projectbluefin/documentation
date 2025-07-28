@@ -1,0 +1,75 @@
+# GitHub Copilot configuration for bluefin-docs repository
+# This configuration optimizes Copilot behavior for documentation development
+
+# Disable Copilot in directories with generated content and build artifacts
+"build/**":
+  enabled: false
+
+"node_modules/**":
+  enabled: false
+
+"static/**":
+  enabled: false
+
+".docusaurus/**":
+  enabled: false
+
+"public/**":
+  enabled: false
+
+"src/generated/**":
+  enabled: false
+
+# Disable Copilot for non-documentation languages
+"**/*.java":
+  enabled: false
+
+"**/*.cpp":
+  enabled: false
+
+"**/*.c":
+  enabled: false
+
+"**/*.cs":
+  enabled: false
+
+"**/*.go":
+  enabled: false
+
+# Enable Copilot for documentation source directories
+"src/**":
+  enabled: true
+
+"docs/**":
+  enabled: true
+
+"blog/**":
+  enabled: true
+
+# Enable Copilot for documentation file types
+"**/*.md":
+  enabled: true
+
+"**/*.mdx":
+  enabled: true
+
+"**/*.ts":
+  enabled: true
+
+"**/*.js":
+  enabled: true
+
+"**/*.css":
+  enabled: true
+
+"**/*.scss":
+  enabled: true
+
+"**/*.yml":
+  enabled: true
+
+"**/*.yaml":
+  enabled: true
+
+"**/*.json":
+  enabled: true
