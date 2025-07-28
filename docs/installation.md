@@ -26,6 +26,31 @@ Review the [Fedora Silverblue installation instructions](https://docs.fedoraproj
 - We **strongly recommend** using automated partitioning during installation; there are [known issues](https://docs.fedoraproject.org/en-US/fedora-silverblue/installation/) with manual partitioning on Atomic systems and it is unnecessary to set up unless you are on a multi-disk system
 - A stock Bluefin installation is 11GB. Bluefin with developer mode enabled (`bluefin-dx`) is 19GB
 
+## System Requirements for Bluefin
+
+### Quick Reference
+| Component | Minimum | Recommended |
+|-----------|---------|-------------|
+| **CPU** | 64-bit x86_64 | Multi-core (4+ cores) |
+| **RAM** | 16 GB | 32 GB+ |
+| **Storage** | 64 GB | 128 GB SSD |
+| **Graphics** | Basic display | Dedicated GPU |
+| **Boot** | UEFI/BIOS | UEFI with Secure Boot |
+
+### Why 16 GB RAM Minimum?
+
+Bluefin ships with an extensive cloud-native development stack. These workloads typically scale out to replicate entire clusters of computers and demand more resources than typical workloads:
+
+**Container Runtime**: Docker CE, Podman, and container composition tools
+**Development Tools**: Multiple language runtimes and development environments  
+**Desktop Environment**: Modern GNOME with extensions and visual effects
+**System Architecture**: Atomic/immutable OS with OSTree requiring additional overhead
+
+*These requirements ensure smooth operation of Bluefin's integrated development workflow and container-first architecture.*
+
+---
+*Requirements based on upstream Fedora specifications with Bluefin-specific adjustments*
+
 ## Day 0: Planning
 
 Most pain points can be addressed directly by planning ahead of time. Note that the term "Day" is an abstract—please do not install Bluefin over the course of three days. Typically, an installation should take about twenty minutes.
