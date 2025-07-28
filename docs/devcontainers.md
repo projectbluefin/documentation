@@ -20,7 +20,9 @@ Dev Containers allow you to use a Docker container as a full-featured developmen
 
 ## Prerequisites
 
-Before you begin, ensure you [enabled developer mode]() on Bluefin.
+Before you begin, ensure you [enabled developer mode](administration.md) on Bluefin.
+
+TODO: Fix the above link.
 
 ## Installation and Setup
 
