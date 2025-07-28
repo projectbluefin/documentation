@@ -53,6 +53,17 @@ If your software is included in Bluefin and missing from this list, please send 
 - [Warehouse](https://ko-fi.com/heliguy)
 - [yq](https://github.com/sponsors/mikefarah)
 
+- [Borg Backup](https://github.com/sponsors/borgbackup) - Secure backup program (package: `borgbackup`)
+- [fish](https://github.com/sponsors/fish-shell) - Smart and user-friendly command line shell (package: `fish`)
+- [Glow](https://github.com/sponsors/charmbracelet) - Terminal based markdown reader (package: `glow`)
+- [Gum](https://github.com/sponsors/charmbracelet) - Tool for glamorous shell scripts (package: `gum`)
+- [Podman Compose](https://github.com/sponsors/containers) - Docker compose implementation for Podman (package: `podman-compose`)
+- [PowerTOP](https://github.com/sponsors/fenrus75) - Linux tool to diagnose issues with power consumption (package: `powertop`)
+- [rclone](https://github.com/sponsors/rclone) - Cloud storage synchronization tool (package: `rclone`)
+- [restic](https://github.com/sponsors/restic) - Fast, secure, efficient backup program (package: `restic`)
+- [Tailscale](https://github.com/sponsors/tailscale) - VPN service for secure networking (package: `tailscale`)
+- [tmux](https://github.com/sponsors/tmux) - Terminal multiplexer (package: `tmux`)
+
 ## Universal Blue Team
 
 Note that all [Universal Blue](https://universal-blue.org/) image sources are kept in bash and Python in order to encourage contributions. Organizations that see value in our work can consider hiring any one of the millions of developers in the world with these skills to help out, we could always use the help. Get in touch with us if you'd be interested in trying that.
