@@ -13,7 +13,7 @@ This runbook is for experienced users who are installing Bluefin for someone els
 
 :::
 
-Here is a short [runbook](https://www.pagerduty.com/resources/learn/what-is-a-runbook/) for the Bluefin installation process. Read the entirety of this documentation to ensure survival (in case of a raptor attack).
+This page is a short [runbook](https://www.pagerduty.com/resources/learn/what-is-a-runbook/) for the Bluefin installation process. Read the entirety of this documentation to ensure survival (in case of a raptor attack).
 
 ### Requirements
 
