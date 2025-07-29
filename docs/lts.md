@@ -19,7 +19,7 @@ Bluefin LTS is in Beta, and is in progress, some things in this document are asp
 
 ## Purpose
 
-Bluefin LTS is a workstation designed for people who prefer Long Term Support.
+Bluefin LTS is a workstation designed for people who prefer Long Term Support but desire a modern desktop.
 This species of raptor is for users who prefer a slower release cadence, about a three-to-five year lifespan on a single release.
 
 Bluefin LTS is composed of:
@@ -32,24 +32,13 @@ Bluefin LTS is composed of:
 Bluefin LTS also offers a hardware enablement branch with:
 
 - Updated, but gated Linux kernel, usually one minor point release behind Fedora
-- Backported GNOME desktop from Fedora
 - Toggle between branches with `ujust toggle-hwe`
 
 ![Pasted image](https://github.com/user-attachments/assets/3972ac0f-d37e-4e89-ae91-ff1eb76eabeb)
 
 ### Rationale
 
-Bluefin LTS ships with Linux 6.12.0, which is the kernel for the lifetime of release. It is for change-averse users.
-
-However ...
-
-The classic definition of "LTS" or "Enterprise Linux" was to ship older, known good working versions of software. And for a long time it felt like your options were old and working, or new and shiny but may break. But in order to be a good desktop, you have to have good hardware support, and that means newer kernels, etc. Bluefin LTS is more about how regressions are handled more than a strict definition of "things must be old." In our world the applications are always up to date, so the "pace" of the base image isn't as important. This is why `ujust toggle-hwe` exists, so users can adjust to their needs.
-
-:::warning
-
-While our payload is less churny than Fedora, note that this is still a new image, this project is still in beta.
-
-:::
+Bluefin LTS ships with Linux 6.12.0, which is the kernel for the lifetime of release. It is for change-averse users. Bluefin LTS provides a backported GNOME desktop so that you are not left behind. And an optional `hwe` branch with new kernels. 
 
 ### Blockers
 
@@ -95,10 +84,10 @@ The ISO uses Fedora to install Bluefin LTS, this is confusing because it will sa
 
 The following images and tags are available:
 
-- `bluefin:lts` - base LTS experience, kernel 6.12.0 with long term maintenance from CentOS.
+- `bluefin:lts` - base LTS experience, kernel 6.12.0 with long term maintenance from CentOS with backported GNOME releases. 
 - `bluefin-gdx:lts` - includes Nvidia drivers and associated CUDA tooling. This is the only image with Nvidia drivers. See [Bluefin GDX](/gdx)
-- `bluefin:lts-testing` - Adds GNOME backports and gated Linux kernels, the latest patch version of the previous minor kernel release.
-- `bluefin-gdx:lts-testing` - GDX with GNOME backports and gated Linux kernels, the latest patch version of the previous minor kernel release.
+- `bluefin:lts-testing` - Fresher but gated Linux kernels, the latest patch version of the previous minor kernel release.
+- `bluefin-gdx:lts-testing` - GDX with gated Linux kernels, the latest patch version of the previous minor kernel release.
 
 Note that `-testing` will be rebranded as `-hwe` in the future. All images offer Bluefin's [Developer Mode](/bluefin-dx).
 
