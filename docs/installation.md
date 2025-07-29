@@ -49,10 +49,6 @@ Bluefin ships with an extensive cloud-native development stack. These workloads 
 
 _These requirements ensure smooth operation of Bluefin's integrated development workflow and container-first architecture._
 
----
-
-_Requirements based on upstream Fedora specifications with Bluefin-specific adjustments_
-
 ## Day 0: Planning
 
 Most pain points can be addressed directly by planning ahead of time. Note that the term "Day" is an abstract—please do not install Bluefin over the course of three days. Typically, an installation should take about twenty minutes.
