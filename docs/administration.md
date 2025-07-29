@@ -13,7 +13,7 @@ This typically means you can set up your system once, and then have it remain th
 >
 > -[Matt Ray](https://www.softwaredefinedtalk.com/hosts/matt)
 
-![Bluefin Desktop Environment Illustration](https://github.com/user-attachments/assets/3f83b3a8-7d8d-492d-bb00-bee259d16592)
+![Bluefin Desktop Environment Illustration](https://github.com/user-attachments/assets/229f3763-c876-4402-8249-e631303e722b)
 
 ## Installing Applications
 
@@ -21,8 +21,6 @@ Use [Bazaar](https://github.com/kolunmi/bazaar) to [install applications from Fl
 
 - [Warehouse](https://flathub.org/apps/io.github.flattool.Warehouse) provides application management.
 - [Flatseal](https://flathub.org/apps/com.github.tchx84.Flatseal) is also included for permission management.
-
-![The Bazaar Software Center - App Illustration](https://github.com/user-attachments/assets/925afa45-f04d-4e3f-8fb7-3d26342c0151)
 
 ## System Updates
 
@@ -34,13 +32,13 @@ Updates are applied when the system reboots. Therefore, it is recommended to rou
 
 Machine firmware updates are provided through the Firmware application.
 
-![Firmware](https://github.com/user-attachments/assets/0c3f2dce-1220-48d9-9a13-a1842a6a3bf3)
+![Firmware](https://github.com/user-attachments/assets/701d18b2-a40a-432a-ae22-0e3ac29fe191)
 
 ### Managing Updates
 
 In **Settings** → **Network** → A network setting, set **Metered Connection: has data limits or can incur charges** to pause Bluefin updates:
 
-![Settings → Network → A network setting - `Metered Connection: has data limits or can incur charges` Highlight](https://github.com/user-attachments/assets/97dfd5ff-d126-4fff-b439-18df391a1c49)
+![Settings → Network → A network setting - `Metered Connection: has data limits or can incur charges` Highlight](https://github.com/user-attachments/assets/00d04190-3a68-4fd1-8e03-7e97ef3193f2)
 
 ## Streams and Throttle Settings
 
