@@ -261,7 +261,7 @@ Bluefin uses the [Extension Manager](https://flathub.org/apps/com.mattjakeman.Ex
 
 This is useful if you decide you do not want to use some of the ones bundled with Bluefin.
 
-![Extension Manager - System Extensions Highlight](https://github.com/user-attachments/assets/1d9756ce-fc1a-49da-a42e-89e275b80c91)
+![Extension Manager - System Extensions Highlight](https://github.com/user-attachments/assets/31255d26-580e-4179-a748-635bfa540e9a)
 
 :::note
 
