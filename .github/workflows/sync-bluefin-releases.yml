@@ -154,7 +154,7 @@ jobs:
           SLUG_TAG="${{ steps.release_info.outputs.slug_tag }}"
 
           # Create the changelog file
-          CHANGELOG_FILE="changelog/$FILENAME"
+          CHANGELOG_FILE="changelogs/$FILENAME"
 
           # Check if file already exists
           if [[ -f "$CHANGELOG_FILE" ]]; then
@@ -214,7 +214,7 @@ jobs:
           CLEAN_TAG="${{ steps.release_info.outputs.clean_tag }}"
 
           # Create branch name
-          BRANCH_NAME="changelog/bluefin-$CLEAN_TAG-$(date +%s)"
+          BRANCH_NAME="changelogs/bluefin-$CLEAN_TAG-$(date +%s)"
           echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
 
           git config --local user.email "action@github.com"
@@ -223,7 +223,7 @@ jobs:
           # Create and checkout new branch
           git checkout -b "$BRANCH_NAME"
 
-          git add "changelog/$FILENAME"
+          git add "changelogs/$FILENAME"
 
           if git diff --staged --quiet; then
             echo "No changes to commit"
@@ -249,7 +249,7 @@ jobs:
           RELEASE_TYPE="${{ steps.release_info.outputs.release_type }}"
 
           # Read the changelog file content
-          CHANGELOG_CONTENT=$(cat "changelog/$FILENAME")
+          CHANGELOG_CONTENT=$(cat "changelogs/$FILENAME")
 
           # Create pull request body with the full changelog content
           PR_BODY="## Bluefin Release Changelog Entry
@@ -259,7 +259,7 @@ jobs:
           **Release Information:**
           - **Release:** [$RELEASE_TAG]($RELEASE_URL)
           - **Type:** $RELEASE_TYPE
-          - **Changelog File:** \`changelog/$FILENAME\`
+          - **Changelog File:** \`changelogs/$FILENAME\`
 
           **Changes:**
           - Added new changelog entry for Bluefin $RELEASE_TAG
@@ -302,7 +302,7 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Release:** $RELEASE_TAG" >> $GITHUB_STEP_SUMMARY
           echo "**Type:** $RELEASE_TYPE" >> $GITHUB_STEP_SUMMARY
-          echo "**Changelog File:** \`changelog/$FILENAME\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Changelog File:** \`changelogs/$FILENAME\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
           if [[ "${{ env.file_exists }}" == "true" ]]; then

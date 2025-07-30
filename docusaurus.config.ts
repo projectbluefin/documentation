@@ -140,10 +140,10 @@ const config: Config = {
           position: "right",
         },
         {
-          to: "changelog",
+          to: "changelogs",
           label: "Changelogs",
           position: "right",
-        }, 
+        },
         {
           href: "https://projectbluefin.io/",
           label: "Web",
