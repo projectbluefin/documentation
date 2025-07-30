@@ -1,4 +1,4 @@
-name: Sync Bluefin Releases
+name: Sync Bluefin and Bluefin LTS Releases
 
 on:
   repository_dispatch:
@@ -23,63 +23,105 @@ jobs:
         with:
           node-version: "22"
 
-      - name: Fetch latest release
-        id: fetch_latest_release
+      - name: Fetch latest releases
+        id: fetch_latest_releases
         if: github.event_name == 'workflow_dispatch'
         run: |
           # Fetch the latest release from ublue-os/bluefin
           echo "Fetching latest release from ublue-os/bluefin..."
-          LATEST_RELEASE=$(curl -s -H "Accept: application/vnd.github.v3+json" \
+          BLUEFIN_RELEASE=$(curl -s -H "Accept: application/vnd.github.v3+json" \
             "https://api.github.com/repos/ublue-os/bluefin/releases/latest")
 
           # Check if request was successful
-          if echo "$LATEST_RELEASE" | jq -e '.message' > /dev/null; then
-            echo "Error: Failed to fetch latest release"
-            echo "API Response: $LATEST_RELEASE"
+          if echo "$BLUEFIN_RELEASE" | jq -e '.message' > /dev/null; then
+            echo "Error: Failed to fetch latest bluefin release"
+            echo "API Response: $BLUEFIN_RELEASE"
             exit 1
           fi
 
-          # Extract release information
-          LATEST_TAG=$(echo "$LATEST_RELEASE" | jq -r '.tag_name')
-          LATEST_URL=$(echo "$LATEST_RELEASE" | jq -r '.html_url')
+          # Extract bluefin release information
+          BLUEFIN_TAG=$(echo "$BLUEFIN_RELEASE" | jq -r '.tag_name')
+          BLUEFIN_URL=$(echo "$BLUEFIN_RELEASE" | jq -r '.html_url')
+          BLUEFIN_DATE=$(echo "$BLUEFIN_RELEASE" | jq -r '.published_at')
 
-          echo "Latest release found: $LATEST_TAG"
-          echo "Release URL: $LATEST_URL"
+          echo "Latest bluefin release found: $BLUEFIN_TAG"
+          echo "Bluefin release URL: $BLUEFIN_URL"
 
-          # Set outputs for use in subsequent steps
-          echo "latest_tag=$LATEST_TAG" >> $GITHUB_OUTPUT
-          echo "latest_url=$LATEST_URL" >> $GITHUB_OUTPUT
+          # Try to fetch the latest release from ublue-os/bluefin-lts
+          echo "Fetching latest release from ublue-os/bluefin-lts..."
+          BLUEFIN_LTS_RELEASE=$(curl -s -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/ublue-os/bluefin-lts/releases/latest")
+
+          # Check if LTS request was successful
+          if echo "$BLUEFIN_LTS_RELEASE" | jq -e '.message' > /dev/null; then
+            echo "Warning: Failed to fetch latest bluefin-lts release, using only bluefin"
+            echo "latest_tag=$BLUEFIN_TAG" >> $GITHUB_OUTPUT
+            echo "latest_url=$BLUEFIN_URL" >> $GITHUB_OUTPUT
+            echo "source_repo=ublue-os/bluefin" >> $GITHUB_OUTPUT
+          else
+            # Extract bluefin-lts release information
+            BLUEFIN_LTS_TAG=$(echo "$BLUEFIN_LTS_RELEASE" | jq -r '.tag_name')
+            BLUEFIN_LTS_URL=$(echo "$BLUEFIN_LTS_RELEASE" | jq -r '.html_url')
+            BLUEFIN_LTS_DATE=$(echo "$BLUEFIN_LTS_RELEASE" | jq -r '.published_at')
+
+            echo "Latest bluefin-lts release found: $BLUEFIN_LTS_TAG"
+
+            # Compare dates and use the newer release
+            BLUEFIN_TIMESTAMP=$(date -d "$BLUEFIN_DATE" +%s 2>/dev/null || echo "0")
+            BLUEFIN_LTS_TIMESTAMP=$(date -d "$BLUEFIN_LTS_DATE" +%s 2>/dev/null || echo "0")
+
+            if [ "$BLUEFIN_LTS_TIMESTAMP" -gt "$BLUEFIN_TIMESTAMP" ]; then
+              echo "Using bluefin-lts release as it's newer"
+              echo "latest_tag=$BLUEFIN_LTS_TAG" >> $GITHUB_OUTPUT
+              echo "latest_url=$BLUEFIN_LTS_URL" >> $GITHUB_OUTPUT
+              echo "source_repo=ublue-os/bluefin-lts" >> $GITHUB_OUTPUT
+            else
+              echo "Using bluefin release as it's newer or equal"
+              echo "latest_tag=$BLUEFIN_TAG" >> $GITHUB_OUTPUT
+              echo "latest_url=$BLUEFIN_URL" >> $GITHUB_OUTPUT
+              echo "source_repo=ublue-os/bluefin" >> $GITHUB_OUTPUT
+            fi
+          fi
 
       - name: Get release data
         id: get_release
         run: |
-          # Determine release tag and URL based on trigger type
+          # Determine release tag, URL, and source repository based on trigger type
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             # Use the automatically fetched latest release
-            RELEASE_TAG="${{ steps.fetch_latest_release.outputs.latest_tag }}"
-            RELEASE_URL="${{ steps.fetch_latest_release.outputs.latest_url }}"
+            RELEASE_TAG="${{ steps.fetch_latest_releases.outputs.latest_tag }}"
+            RELEASE_URL="${{ steps.fetch_latest_releases.outputs.latest_url }}"
+            SOURCE_REPO="${{ steps.fetch_latest_releases.outputs.source_repo }}"
           else
             # Use data from repository_dispatch payload
             RELEASE_TAG="${{ github.event.client_payload.tag_name }}"
             RELEASE_URL="${{ github.event.client_payload.html_url }}"
+            # Determine source repo from URL or tag pattern
+            if [[ "$RELEASE_URL" == *"bluefin-lts"* ]] || [[ "$RELEASE_TAG" == lts-* ]]; then
+              SOURCE_REPO="ublue-os/bluefin-lts"
+            else
+              SOURCE_REPO="ublue-os/bluefin"
+            fi
           fi
 
           echo "Release tag: $RELEASE_TAG"
+          echo "Source repository: $SOURCE_REPO"
           echo "release_tag=$RELEASE_TAG" >> $GITHUB_OUTPUT
+          echo "source_repo=$SOURCE_REPO" >> $GITHUB_OUTPUT
 
-          # Fetch release data from GitHub API
+          # Fetch release data from GitHub API based on source repository
           if [[ -z "$RELEASE_URL" ]]; then
-            RELEASE_URL="https://github.com/ublue-os/bluefin/releases/tag/$RELEASE_TAG"
+            RELEASE_URL="https://github.com/$SOURCE_REPO/releases/tag/$RELEASE_TAG"
           fi
           echo "release_url=$RELEASE_URL" >> $GITHUB_OUTPUT
 
           # Get release data from GitHub API
           RELEASE_DATA=$(curl -s -H "Accept: application/vnd.github.v3+json" \
-            "https://api.github.com/repos/ublue-os/bluefin/releases/tags/$RELEASE_TAG")
+            "https://api.github.com/repos/$SOURCE_REPO/releases/tags/$RELEASE_TAG")
 
           # Check if release exists
           if echo "$RELEASE_DATA" | jq -e '.message' > /dev/null; then
-            echo "Error: Release not found for tag $RELEASE_TAG"
+            echo "Error: Release not found for tag $RELEASE_TAG in $SOURCE_REPO"
             echo "API Response: $RELEASE_DATA"
             exit 1
           fi
@@ -104,13 +146,22 @@ jobs:
         run: |
           RELEASE_TAG="${{ steps.get_release.outputs.release_tag }}"
           RELEASE_DATE="${{ steps.get_release.outputs.release_date }}"
+          SOURCE_REPO="${{ steps.get_release.outputs.source_repo }}"
 
           # Parse date to YYYY-MM-DD format
           FORMATTED_DATE=$(date -u -d "$RELEASE_DATE" '+%Y-%m-%d' 2>/dev/null || date -u -j -f '%Y-%m-%dT%H:%M:%SZ' "$RELEASE_DATE" '+%Y-%m-%d' 2>/dev/null || echo "$(date '+%Y-%m-%d')")
           echo "formatted_date=$FORMATTED_DATE" >> $GITHUB_OUTPUT
 
-          # Determine if this is a GTS or stable release
-          if [[ "$RELEASE_TAG" == *"gts"* ]]; then
+          # Determine release type based on source repository and tag pattern
+          if [[ "$SOURCE_REPO" == "ublue-os/bluefin-lts" ]] || [[ "$RELEASE_TAG" == lts-* ]]; then
+            RELEASE_TYPE="lts"
+            echo "release_type=lts" >> $GITHUB_OUTPUT
+            echo "release_tag_display=LTS" >> $GITHUB_OUTPUT
+            # Clean up the tag for filename (remove lts- prefix if present)
+            CLEAN_TAG=$(echo "$RELEASE_TAG" | sed 's/^lts-//')
+            # For LTS releases, slug tag is the same as clean tag
+            SLUG_TAG="$CLEAN_TAG"
+          elif [[ "$RELEASE_TAG" == *"gts"* ]]; then
             RELEASE_TYPE="gts"
             echo "release_type=gts" >> $GITHUB_OUTPUT
             echo "release_tag_display=GTS" >> $GITHUB_OUTPUT
@@ -131,8 +182,15 @@ jobs:
           CLEAN_TAG=$(echo "$CLEAN_TAG" | sed 's/^v//')
           SLUG_TAG=$(echo "$SLUG_TAG" | sed 's/^v//')
 
-          # Generate filename: YYYY-MM-DD-releaseversion.md
-          FILENAME="$FORMATTED_DATE-$CLEAN_TAG.md"
+          # Generate filename based on release type
+          if [[ "$RELEASE_TYPE" == "lts" ]]; then
+            FILENAME="$FORMATTED_DATE-lts-$CLEAN_TAG.md"
+          elif [[ "$RELEASE_TYPE" == "gts" ]]; then
+            FILENAME="$FORMATTED_DATE-gts-$CLEAN_TAG.md"
+          else
+            FILENAME="$FORMATTED_DATE-$CLEAN_TAG.md"
+          fi
+
           echo "filename=$FILENAME" >> $GITHUB_OUTPUT
           echo "clean_tag=$CLEAN_TAG" >> $GITHUB_OUTPUT
           echo "slug_tag=$SLUG_TAG" >> $GITHUB_OUTPUT
@@ -152,6 +210,7 @@ jobs:
           RELEASE_TAG_DISPLAY="${{ steps.release_info.outputs.release_tag_display }}"
           CLEAN_TAG="${{ steps.release_info.outputs.clean_tag }}"
           SLUG_TAG="${{ steps.release_info.outputs.slug_tag }}"
+          SOURCE_REPO="${{ steps.get_release.outputs.source_repo }}"
 
           # Create the changelog file
           CHANGELOG_FILE="changelogs/$FILENAME"
@@ -164,32 +223,41 @@ jobs:
             exit 0
           fi
 
-          # Create the frontmatter and content
-          cat > "$CHANGELOG_FILE" << 'EOF_CHANGELOG'
-          ---
-          title: "Bluefin RELEASE_TAG_DISPLAY CLEAN_TAG"
-          slug: bluefin-RELEASE_TYPE-SLUG_TAG
-          authors: [bluefin-release-bot]
-          tags: [release, bluefin, RELEASE_TYPE]
-          ---
+          # Determine title prefix based on source repository
+          if [[ "$SOURCE_REPO" == "ublue-os/bluefin-lts" ]]; then
+            TITLE_PREFIX="Bluefin LTS"
+          else
+            TITLE_PREFIX="Bluefin"
+          fi
 
-          Bluefin RELEASE_TAG_DISPLAY release CLEAN_TAG is now available.
-
-          <!--truncate-->
-
-          RELEASE_BODY_CONTENT
-
-          ---
-
-          **Release Information:**
-          - **Release:** [RELEASE_TAG](RELEASE_URL)
-          - **Type:** RELEASE_TAG_DISPLAY
-          - **Date:** FORMATTED_DATE
-
-          For installation instructions and more information, visit the [Bluefin documentation](https://docs.projectbluefin.io/).
-          EOF_CHANGELOG
+          # Create the changelog file using printf to avoid YAML parsing issues
+          printf '%s\n' \
+            '---' \
+            'title: "TITLE_PREFIX RELEASE_TAG_DISPLAY CLEAN_TAG"' \
+            'slug: bluefin-RELEASE_TYPE-SLUG_TAG' \
+            'authors: [bluefin-release-bot]' \
+            'tags: [release, bluefin, RELEASE_TYPE]' \
+            '---' \
+            '' \
+            'TITLE_PREFIX RELEASE_TAG_DISPLAY release CLEAN_TAG is now available.' \
+            '' \
+            '<!--truncate-->' \
+            '' \
+            'RELEASE_BODY_CONTENT' \
+            '' \
+            '---' \
+            '' \
+            '**Release Information:**' \
+            '- **Release:** [RELEASE_TAG](RELEASE_URL)' \
+            '- **Type:** RELEASE_TAG_DISPLAY' \
+            '- **Date:** FORMATTED_DATE' \
+            '- **Repository:** SOURCE_REPO' \
+            '' \
+            'For installation instructions and more information, visit the [Bluefin documentation](https://docs.projectbluefin.io/).' \
+            > "$CHANGELOG_FILE"
 
           # Replace placeholders in the file
+          sed -i "s/TITLE_PREFIX/$TITLE_PREFIX/g" "$CHANGELOG_FILE"
           sed -i "s/RELEASE_TAG_DISPLAY/$RELEASE_TAG_DISPLAY/g" "$CHANGELOG_FILE"
           sed -i "s/CLEAN_TAG/$CLEAN_TAG/g" "$CHANGELOG_FILE"
           sed -i "s/SLUG_TAG/$SLUG_TAG/g" "$CHANGELOG_FILE"
@@ -197,6 +265,7 @@ jobs:
           sed -i "s|RELEASE_TAG|$RELEASE_TAG|g" "$CHANGELOG_FILE"
           sed -i "s|RELEASE_URL|$RELEASE_URL|g" "$CHANGELOG_FILE"
           sed -i "s/FORMATTED_DATE/$FORMATTED_DATE/g" "$CHANGELOG_FILE"
+          sed -i "s|SOURCE_REPO|$SOURCE_REPO|g" "$CHANGELOG_FILE"
 
           # Insert the release body content
           sed -i "/RELEASE_BODY_CONTENT/r /tmp/release_body.md" "$CHANGELOG_FILE"
@@ -212,9 +281,11 @@ jobs:
           FILENAME="${{ steps.release_info.outputs.filename }}"
           RELEASE_TAG="${{ steps.get_release.outputs.release_tag }}"
           CLEAN_TAG="${{ steps.release_info.outputs.clean_tag }}"
+          SOURCE_REPO="${{ steps.get_release.outputs.source_repo }}"
 
-          # Create branch name
-          BRANCH_NAME="changelogs/bluefin-$CLEAN_TAG-$(date +%s)"
+          # Create branch name with repository information
+          REPO_SHORT=$(echo "$SOURCE_REPO" | cut -d'/' -f2)
+          BRANCH_NAME="changelogs/$REPO_SHORT-$CLEAN_TAG-$(date +%s)"
           echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
 
           git config --local user.email "action@github.com"
@@ -231,9 +302,16 @@ jobs:
             exit 0
           fi
 
-          git commit -m "Add changelog entry for Bluefin $RELEASE_TAG
+          # Determine commit message prefix based on source repository
+          if [[ "$SOURCE_REPO" == "ublue-os/bluefin-lts" ]]; then
+            COMMIT_PREFIX="Bluefin LTS"
+          else
+            COMMIT_PREFIX="Bluefin"
+          fi
 
-          Automatically generated from release: ${{ steps.get_release.outputs.release_url }}"
+          git commit -m "Add changelog entry for $COMMIT_PREFIX $RELEASE_TAG
+
+Automatically generated from release: ${{ steps.get_release.outputs.release_url }}"
 
           # Push the branch
           git push origin "$BRANCH_NAME"
@@ -247,36 +325,47 @@ jobs:
           BRANCH_NAME="${{ steps.create_branch.outputs.branch_name }}"
           FILENAME="${{ steps.release_info.outputs.filename }}"
           RELEASE_TYPE="${{ steps.release_info.outputs.release_type }}"
+          SOURCE_REPO="${{ steps.get_release.outputs.source_repo }}"
+
+          # Determine title prefix based on source repository
+          if [[ "$SOURCE_REPO" == "ublue-os/bluefin-lts" ]]; then
+            TITLE_PREFIX="Bluefin LTS"
+            PR_PREFIX="Bluefin LTS"
+          else
+            TITLE_PREFIX="Bluefin"
+            PR_PREFIX="Bluefin"
+          fi
 
           # Read the changelog file content
           CHANGELOG_CONTENT=$(cat "changelogs/$FILENAME")
 
           # Create pull request body with the full changelog content
-          PR_BODY="## Bluefin Release Changelog Entry
+          PR_BODY="## $TITLE_PREFIX Release Changelog Entry
 
-          This PR adds a changelog entry for Bluefin $RELEASE_TAG release.
+This PR adds a changelog entry for $PR_PREFIX $RELEASE_TAG release.
 
-          **Release Information:**
-          - **Release:** [$RELEASE_TAG]($RELEASE_URL)
-          - **Type:** $RELEASE_TYPE
-          - **Changelog File:** \`changelogs/$FILENAME\`
+**Release Information:**
+- **Release:** [$RELEASE_TAG]($RELEASE_URL)
+- **Repository:** $SOURCE_REPO
+- **Type:** $RELEASE_TYPE
+- **Changelog File:** \`changelogs/$FILENAME\`
 
-          **Changes:**
-          - Added new changelog entry for Bluefin $RELEASE_TAG
-          - Automatically generated from the release notes
+**Changes:**
+- Added new changelog entry for $PR_PREFIX $RELEASE_TAG
+- Automatically generated from the release notes
 
-          **Review Notes:**
-          - Please review the changelog content for accuracy
-          - Verify formatting and links are correct
-          - Check that the release information matches the actual release
+**Review Notes:**
+- Please review the changelog content for accuracy
+- Verify formatting and links are correct
+- Check that the release information matches the actual release
 
-          ---
+---
 
-          ## Changelog Entry Content
+## Changelog Entry Content
 
-          \`\`\`markdown
-          $CHANGELOG_CONTENT
-          \`\`\`"
+\`\`\`markdown
+$CHANGELOG_CONTENT
+\`\`\`"
 
           # Create pull request using GitHub API with semantic commit title
           curl -X POST \
@@ -285,7 +374,7 @@ jobs:
             -H "Content-Type: application/json" \
             "https://api.github.com/repos/${{ github.repository }}/pulls" \
             -d "{
-              \"title\": \"feat(blog): $RELEASE_TAG changelog sync\",
+              \"title\": \"feat(blog): $RELEASE_TAG changelog sync from $SOURCE_REPO\",
               \"head\": \"$BRANCH_NAME\",
               \"base\": \"main\",
               \"body\": $(echo "$PR_BODY" | jq -Rs .),
@@ -297,10 +386,19 @@ jobs:
           FILENAME="${{ steps.release_info.outputs.filename }}"
           RELEASE_TAG="${{ steps.get_release.outputs.release_tag }}"
           RELEASE_TYPE="${{ steps.release_info.outputs.release_type }}"
+          SOURCE_REPO="${{ steps.get_release.outputs.source_repo }}"
 
-          echo "## Bluefin Release Sync Complete" >> $GITHUB_STEP_SUMMARY
+          # Determine title prefix based on source repository
+          if [[ "$SOURCE_REPO" == "ublue-os/bluefin-lts" ]]; then
+            TITLE_PREFIX="Bluefin LTS"
+          else
+            TITLE_PREFIX="Bluefin"
+          fi
+
+          echo "## $TITLE_PREFIX Release Sync Complete" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Release:** $RELEASE_TAG" >> $GITHUB_STEP_SUMMARY
+          echo "**Repository:** $SOURCE_REPO" >> $GITHUB_STEP_SUMMARY
           echo "**Type:** $RELEASE_TYPE" >> $GITHUB_STEP_SUMMARY
           echo "**Changelog File:** \`changelogs/$FILENAME\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
