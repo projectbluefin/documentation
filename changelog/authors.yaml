@@ -12,8 +12,8 @@
 
 # Automation bot for release syncing
 bluefin-release-bot:
-  name: Bluefin Release Bot
-  title: Automated Release Sync
+  name: Bluefin Bot
+  title: Licensed Raptor Specialist
   url: https://github.com/ublue-os/bluefin
   image_url: https://github.com/ublue-os.png
 # Common ublue-os contributors (add as needed)
