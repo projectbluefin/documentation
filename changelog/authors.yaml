@@ -16,7 +16,7 @@ bluefin-release-bot:
   title: Licensed Raptor Specialist
   url: https://github.com/ublue-os/bluefin
   email: jorge.castro@gmail.com
-  image_url: https://github.com/projectbluefin.png
+  image_url: https://github.com/ublue-os/bluefin-website/blob/main/public/characters/leaping.png
   page: true
 bluefin-gts-release-bot:
   name: Bluefin Bot
@@ -30,7 +30,7 @@ bluefin-lts-release-bot:
   title: LTS Raptor Specialist
   url: https://github.com/ublue-os/bluefin
   email: jorge.castro@gmail.com
-  image_url: https://github.com/projectbluefin.png
+  image_url: https://github.com/ublue-os/bluefin-website/blob/main/public/characters/achillobator.webp
   page: true
 # Common ublue-os contributors (add as needed)
 # Add more authors as changelog contributors are identified
