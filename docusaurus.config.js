@@ -54,16 +54,16 @@ var config = {
         /**
          * Required for any multi-instance plugin
          */
-        id: "changelog",
+        id: "changelogs",
         /**
          * URL route for the changelog section of your site.
          * *DO NOT* include a trailing slash.
          */
-        routeBasePath: "changelog",
+        routeBasePath: "changelogs",
         /**
          * Path to data on filesystem relative to site dir.
          */
-        path: "./changelog",
+        path: "./changelogs",
         /**
          * Blog configuration
          */

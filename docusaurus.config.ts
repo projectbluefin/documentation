@@ -140,7 +140,7 @@ const config: Config = {
           position: "right",
         },
         {
-          to: "changelog",
+          to: "changelogs",
           label: "Changelogs",
           position: "right",
         }, 
