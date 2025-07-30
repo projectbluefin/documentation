@@ -128,11 +128,11 @@ var config = {
           label: "Blog",
           position: "right",
         },
-        /*  {
-                  to: "changelog",
-                  label: "Changelogs",
-                  position: "right",
-                }, */
+        {
+          to: "changelogs",
+          label: "Changelogs",
+          position: "right",
+        }, 
         {
           href: "https://projectbluefin.io/",
           label: "Web",
