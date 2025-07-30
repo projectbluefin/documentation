@@ -275,9 +275,3 @@ For more detailed information, check the [official Dev Container CLI documentati
 - **[Remote Development Extension Pack](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack)** - Complete remote development toolkit
 - **[Remote Development Tips](https://code.visualstudio.com/docs/remote/troubleshooting)** - Troubleshooting guide
 - **[Working with Containers](https://code.visualstudio.com/docs/remote/containers-advanced)** - Advanced container scenarios
-
-### Community Resources
-
-- **[Dev Containers Community](https://github.com/devcontainers/community)** - Community discussions and contributions
-- **[Awesome Dev Containers](https://github.com/manekinekko/awesome-devcontainers)** - Curated list of resources
-- **[Dev Container Registry](https://github.com/devcontainers/registry)** - Browse available features and templates
