@@ -309,9 +309,7 @@ jobs:
             COMMIT_PREFIX="Bluefin"
           fi
 
-          git commit -m "Add changelog entry for $COMMIT_PREFIX $RELEASE_TAG
-
-Automatically generated from release: ${{ steps.get_release.outputs.release_url }}"
+          git commit -m "Add changelog entry for $COMMIT_PREFIX $RELEASE_TAG - automatically generated from release: ${{ steps.get_release.outputs.release_url }}"
 
           # Push the branch
           git push origin "$BRANCH_NAME"
@@ -339,33 +337,8 @@ Automatically generated from release: ${{ steps.get_release.outputs.release_url 
           # Read the changelog file content
           CHANGELOG_CONTENT=$(cat "changelogs/$FILENAME")
 
-          # Create pull request body with the full changelog content
-          PR_BODY="## $TITLE_PREFIX Release Changelog Entry
-
-This PR adds a changelog entry for $PR_PREFIX $RELEASE_TAG release.
-
-**Release Information:**
-- **Release:** [$RELEASE_TAG]($RELEASE_URL)
-- **Repository:** $SOURCE_REPO
-- **Type:** $RELEASE_TYPE
-- **Changelog File:** \`changelogs/$FILENAME\`
-
-**Changes:**
-- Added new changelog entry for $PR_PREFIX $RELEASE_TAG
-- Automatically generated from the release notes
-
-**Review Notes:**
-- Please review the changelog content for accuracy
-- Verify formatting and links are correct
-- Check that the release information matches the actual release
-
----
-
-## Changelog Entry Content
-
-\`\`\`markdown
-$CHANGELOG_CONTENT
-\`\`\`"
+          # Create PR body using printf to avoid YAML parsing issues
+          PR_BODY="Changelog entry for $PR_PREFIX $RELEASE_TAG release from $SOURCE_REPO. Type: $RELEASE_TYPE. File: changelogs/$FILENAME"
 
           # Create pull request using GitHub API with semantic commit title
           curl -X POST \
