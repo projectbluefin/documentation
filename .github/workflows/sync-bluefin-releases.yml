@@ -240,7 +240,10 @@ jobs:
           FILENAME="${{ steps.release_info.outputs.filename }}"
           RELEASE_TYPE="${{ steps.release_info.outputs.release_type }}"
 
-          # Create pull request body
+          # Read the changelog file content
+          CHANGELOG_CONTENT=$(cat "changelog/$FILENAME")
+
+          # Create pull request body with the full changelog content
           PR_BODY="## Bluefin Release Changelog Entry
 
           This PR adds a changelog entry for Bluefin $RELEASE_TAG release.
@@ -257,16 +260,24 @@ jobs:
           **Review Notes:**
           - Please review the changelog content for accuracy
           - Verify formatting and links are correct
-          - Check that the release information matches the actual release"
+          - Check that the release information matches the actual release
 
-          # Create pull request using GitHub API
+          ---
+
+          ## Changelog Entry Content
+
+          \`\`\`markdown
+          $CHANGELOG_CONTENT
+          \`\`\`"
+
+          # Create pull request using GitHub API with semantic commit title
           curl -X POST \
             -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Content-Type: application/json" \
             "https://api.github.com/repos/${{ github.repository }}/pulls" \
             -d "{
-              \"title\": \"Add changelog entry for Bluefin $RELEASE_TAG\",
+              \"title\": \"feat(blog): $RELEASE_TAG changelog sync\",
               \"head\": \"$BRANCH_NAME\",
               \"base\": \"main\",
               \"body\": $(echo "$PR_BODY" | jq -Rs .),
