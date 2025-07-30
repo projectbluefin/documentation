@@ -28,7 +28,7 @@ bluefin-gts-release-bot:
 bluefin-lts-release-bot:
   name: Achillobator Giganticus
   title: LTS Raptor Specialist
-  url: https://github.com/ublue-os/bluefin
+  url: https://github.com/ublue-os/bluefin-lts
   email: jorge.castro@gmail.com
   image_url: https://github.com/projectbluefin.png
   page: true
