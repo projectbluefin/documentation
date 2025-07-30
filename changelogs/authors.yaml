@@ -30,7 +30,7 @@ bluefin-lts-release-bot:
   title: LTS Raptor Specialist
   url: https://github.com/ublue-os/bluefin-lts
   email: jorge.castro@gmail.com
-  image_url: bluefin-lts-release-bot
+  image_url: bluefin-lts-release-bot.png
   page: true
 # Common ublue-os contributors (add as needed)
 # Add more authors as changelog contributors are identified
