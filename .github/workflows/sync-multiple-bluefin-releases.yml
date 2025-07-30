@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       release_count:
-        description: 'Number of releases to fetch and sync'
+        description: "Number of releases to fetch and sync"
         required: false
-        default: '3'
+        default: "3"
         type: string
 
 jobs:
@@ -32,7 +32,7 @@ jobs:
         run: |
           RELEASE_COUNT="${{ github.event.inputs.release_count || '3' }}"
           echo "Fetching last $RELEASE_COUNT releases from ublue-os/bluefin..."
-          
+
           # Fetch releases from GitHub API
           RELEASES_DATA=$(curl -s -H "Accept: application/vnd.github.v3+json" \
             "https://api.github.com/repos/ublue-os/bluefin/releases?per_page=$RELEASE_COUNT")
@@ -46,7 +46,7 @@ jobs:
 
           # Sort releases by published date (oldest first) and save to file
           echo "$RELEASES_DATA" | jq 'sort_by(.published_at)' > /tmp/releases.json
-          
+
           # Count releases
           RELEASE_COUNT_ACTUAL=$(echo "$RELEASES_DATA" | jq 'length')
           echo "Found $RELEASE_COUNT_ACTUAL releases"
@@ -58,16 +58,16 @@ jobs:
           RELEASE_COUNT_ACTUAL="${{ steps.fetch_releases.outputs.release_count_actual }}"
           FILES_CREATED=()
           BRANCH_NAME="changelog/bluefin-multi-release-$(date +%s)"
-          
+
           echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
-          
+
           # Setup git
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          
+
           # Create new branch
           git checkout -b "$BRANCH_NAME"
-          
+
           # Process each release
           for i in $(seq 0 $((RELEASE_COUNT_ACTUAL - 1))); do
             echo "Processing release $((i + 1)) of $RELEASE_COUNT_ACTUAL..."
@@ -179,27 +179,27 @@ jobs:
             
             echo "Created: $CHANGELOG_FILE"
           done
-          
+
           # Check if any files were created
           if [ ${#FILES_CREATED[@]} -eq 0 ]; then
             echo "No new changelog files were created (all already exist)"
             echo "has_changes=false" >> $GITHUB_OUTPUT
             exit 0
           fi
-          
+
           # Commit changes
           COMMIT_MESSAGE="Add changelog entries for multiple Bluefin releases
 
           Automatically generated changelog entries for ${#FILES_CREATED[@]} release(s):
           $(printf '- %s\n' "${FILES_CREATED[@]}")"
-          
+
           git commit -m "$COMMIT_MESSAGE"
-          
+
           # Push the branch
           git push origin "$BRANCH_NAME"
           echo "has_changes=true" >> $GITHUB_OUTPUT
           echo "files_created=${#FILES_CREATED[@]}" >> $GITHUB_OUTPUT
-          
+
           # Save created files list for PR description
           printf '%s\n' "${FILES_CREATED[@]}" > /tmp/files_created.txt
 
@@ -208,10 +208,10 @@ jobs:
         run: |
           BRANCH_NAME="${{ steps.process_releases.outputs.branch_name }}"
           FILES_CREATED_COUNT="${{ steps.process_releases.outputs.files_created }}"
-          
+
           # Read created files list
           FILES_LIST=$(cat /tmp/files_created.txt)
-          
+
           # Create pull request body
           PR_BODY="## Multiple Bluefin Release Changelog Entries
 
@@ -266,7 +266,7 @@ jobs:
         run: |
           RELEASE_COUNT_ACTUAL="${{ steps.fetch_releases.outputs.release_count_actual }}"
           FILES_CREATED_COUNT="${{ steps.process_releases.outputs.files_created || '0' }}"
-          
+
           echo "## Multiple Bluefin Release Sync Complete" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Releases Processed:** $RELEASE_COUNT_ACTUAL" >> $GITHUB_STEP_SUMMARY
