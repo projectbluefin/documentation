@@ -1,0 +1,218 @@
+name: Sync Bluefin Releases
+
+on:
+  repository_dispatch:
+    types: [bluefin-release]
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "Release tag to sync (e.g., v1.2.3, gts-v1.2.3)"
+        required: true
+        type: string
+      release_url:
+        description: "GitHub release URL (optional, will be constructed if not provided)"
+        required: false
+        type: string
+
+jobs:
+  sync-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4
+        with:
+          node-version: "18"
+
+      - name: Get release data
+        id: get_release
+        run: |
+          # Determine release tag - from workflow_dispatch input or repository_dispatch payload
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            RELEASE_TAG="${{ github.event.inputs.release_tag }}"
+            RELEASE_URL="${{ github.event.inputs.release_url }}"
+          else
+            RELEASE_TAG="${{ github.event.client_payload.tag_name }}"
+            RELEASE_URL="${{ github.event.client_payload.html_url }}"
+          fi
+
+          echo "Release tag: $RELEASE_TAG"
+          echo "release_tag=$RELEASE_TAG" >> $GITHUB_OUTPUT
+
+          # Fetch release data from GitHub API
+          if [[ -z "$RELEASE_URL" ]]; then
+            RELEASE_URL="https://github.com/ublue-os/bluefin/releases/tag/$RELEASE_TAG"
+          fi
+          echo "release_url=$RELEASE_URL" >> $GITHUB_OUTPUT
+
+          # Get release data from GitHub API
+          RELEASE_DATA=$(curl -s -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/ublue-os/bluefin/releases/tags/$RELEASE_TAG")
+
+          # Check if release exists
+          if echo "$RELEASE_DATA" | jq -e '.message' > /dev/null; then
+            echo "Error: Release not found for tag $RELEASE_TAG"
+            echo "API Response: $RELEASE_DATA"
+            exit 1
+          fi
+
+          # Extract release information
+          RELEASE_NAME=$(echo "$RELEASE_DATA" | jq -r '.name // .tag_name')
+          RELEASE_BODY=$(echo "$RELEASE_DATA" | jq -r '.body // ""')
+          RELEASE_DATE=$(echo "$RELEASE_DATA" | jq -r '.published_at')
+          RELEASE_PRERELEASE=$(echo "$RELEASE_DATA" | jq -r '.prerelease')
+
+          echo "release_name=$RELEASE_NAME" >> $GITHUB_OUTPUT
+          echo "release_date=$RELEASE_DATE" >> $GITHUB_OUTPUT
+          echo "release_prerelease=$RELEASE_PRERELEASE" >> $GITHUB_OUTPUT
+
+          # Save release body to file for multi-line handling
+          echo "$RELEASE_BODY" > /tmp/release_body.md
+
+          echo "Release data extracted successfully"
+
+      - name: Determine release type and generate filename
+        id: release_info
+        run: |
+          RELEASE_TAG="${{ steps.get_release.outputs.release_tag }}"
+          RELEASE_DATE="${{ steps.get_release.outputs.release_date }}"
+
+          # Parse date to YYYY-MM-DD format
+          FORMATTED_DATE=$(date -u -d "$RELEASE_DATE" '+%Y-%m-%d' 2>/dev/null || date -u -j -f '%Y-%m-%dT%H:%M:%SZ' "$RELEASE_DATE" '+%Y-%m-%d' 2>/dev/null || echo "$(date '+%Y-%m-%d')")
+          echo "formatted_date=$FORMATTED_DATE" >> $GITHUB_OUTPUT
+
+          # Determine if this is a GTS or stable release
+          if [[ "$RELEASE_TAG" == *"gts"* ]]; then
+            RELEASE_TYPE="gts"
+            echo "release_type=gts" >> $GITHUB_OUTPUT
+            echo "release_tag_display=GTS" >> $GITHUB_OUTPUT
+            # Clean up the tag for filename (remove gts- prefix if present)
+            CLEAN_TAG=$(echo "$RELEASE_TAG" | sed 's/^gts-//')
+          else
+            RELEASE_TYPE="stable"
+            echo "release_type=stable" >> $GITHUB_OUTPUT
+            echo "release_tag_display=Stable" >> $GITHUB_OUTPUT
+            CLEAN_TAG="$RELEASE_TAG"
+          fi
+
+          # Remove 'v' prefix from tag if present for filename
+          CLEAN_TAG=$(echo "$CLEAN_TAG" | sed 's/^v//')
+
+          # Generate filename: YYYY-MM-DD-releaseversion.md
+          FILENAME="$FORMATTED_DATE-$CLEAN_TAG.md"
+          echo "filename=$FILENAME" >> $GITHUB_OUTPUT
+          echo "clean_tag=$CLEAN_TAG" >> $GITHUB_OUTPUT
+
+          echo "Generated filename: $FILENAME"
+          echo "Release type: $RELEASE_TYPE"
+
+      - name: Create changelog entry
+        run: |
+          RELEASE_NAME="${{ steps.get_release.outputs.release_name }}"
+          RELEASE_TAG="${{ steps.get_release.outputs.release_tag }}"
+          RELEASE_URL="${{ steps.get_release.outputs.release_url }}"
+          RELEASE_DATE="${{ steps.get_release.outputs.release_date }}"
+          FORMATTED_DATE="${{ steps.release_info.outputs.formatted_date }}"
+          FILENAME="${{ steps.release_info.outputs.filename }}"
+          RELEASE_TYPE="${{ steps.release_info.outputs.release_type }}"
+          RELEASE_TAG_DISPLAY="${{ steps.release_info.outputs.release_tag_display }}"
+          CLEAN_TAG="${{ steps.release_info.outputs.clean_tag }}"
+
+          # Create the changelog file
+          CHANGELOG_FILE="changelog/$FILENAME"
+
+          # Check if file already exists
+          if [[ -f "$CHANGELOG_FILE" ]]; then
+            echo "Changelog file already exists: $CHANGELOG_FILE"
+            echo "Skipping creation to avoid overwriting existing content"
+            echo "file_exists=true" >> $GITHUB_ENV
+            exit 0
+          fi
+
+          # Create the frontmatter and content
+          cat > "$CHANGELOG_FILE" << 'EOF_CHANGELOG'
+          ---
+          title: "Bluefin RELEASE_TAG_DISPLAY CLEAN_TAG"
+          slug: bluefin-RELEASE_TYPE-CLEAN_TAG
+          authors: [bluefin-release-bot]
+          tags: [release, bluefin, RELEASE_TYPE]
+          ---
+
+          Bluefin RELEASE_TAG_DISPLAY release CLEAN_TAG is now available.
+
+          <!--truncate-->
+
+          RELEASE_BODY_CONTENT
+
+          ---
+
+          **Release Information:**
+          - **Release:** [RELEASE_TAG](RELEASE_URL)
+          - **Type:** RELEASE_TAG_DISPLAY
+          - **Date:** FORMATTED_DATE
+
+          For installation instructions and more information, visit the [Bluefin documentation](https://docs.projectbluefin.io/).
+          EOF_CHANGELOG
+
+          # Replace placeholders in the file
+          sed -i "s/RELEASE_TAG_DISPLAY/$RELEASE_TAG_DISPLAY/g" "$CHANGELOG_FILE"
+          sed -i "s/CLEAN_TAG/$CLEAN_TAG/g" "$CHANGELOG_FILE"
+          sed -i "s/RELEASE_TYPE/$RELEASE_TYPE/g" "$CHANGELOG_FILE"
+          sed -i "s|RELEASE_TAG|$RELEASE_TAG|g" "$CHANGELOG_FILE"
+          sed -i "s|RELEASE_URL|$RELEASE_URL|g" "$CHANGELOG_FILE"
+          sed -i "s/FORMATTED_DATE/$FORMATTED_DATE/g" "$CHANGELOG_FILE"
+
+          # Insert the release body content
+          sed -i "/RELEASE_BODY_CONTENT/r /tmp/release_body.md" "$CHANGELOG_FILE"
+          sed -i "/RELEASE_BODY_CONTENT/d" "$CHANGELOG_FILE"
+
+          echo "Created changelog file: $CHANGELOG_FILE"
+          echo "file_exists=false" >> $GITHUB_ENV
+
+      - name: Commit and push changes
+        if: env.file_exists != 'true'
+        run: |
+          FILENAME="${{ steps.release_info.outputs.filename }}"
+          RELEASE_TAG="${{ steps.get_release.outputs.release_tag }}"
+
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+          git add "changelog/$FILENAME"
+
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+
+          git commit -m "Add changelog entry for Bluefin $RELEASE_TAG
+
+          Automatically generated from release: ${{ steps.get_release.outputs.release_url }}"
+          git push
+
+      - name: Create summary
+        run: |
+          FILENAME="${{ steps.release_info.outputs.filename }}"
+          RELEASE_TAG="${{ steps.get_release.outputs.release_tag }}"
+          RELEASE_TYPE="${{ steps.release_info.outputs.release_type }}"
+
+          echo "## Bluefin Release Sync Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Release:** $RELEASE_TAG" >> $GITHUB_STEP_SUMMARY
+          echo "**Type:** $RELEASE_TYPE" >> $GITHUB_STEP_SUMMARY
+          echo "**Changelog File:** \`changelog/$FILENAME\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [[ "${{ env.file_exists }}" == "true" ]]; then
+            echo "ℹ️ Changelog file already existed - no changes made" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "✅ Changelog entry created successfully" >> $GITHUB_STEP_SUMMARY
+          fi
