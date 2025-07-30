@@ -56,6 +56,36 @@ const config: Config = {
     ],
   ],
 
+  plugins: [
+    [
+      '@docusaurus/plugin-content-blog',
+      {
+        /**
+         * Required for any multi-instance plugin
+         */
+        id: 'changelog',
+        /**
+         * URL route for the changelog section of your site.
+         * *DO NOT* include a trailing slash.
+         */
+        routeBasePath: 'changelog',
+        /**
+         * Path to data on filesystem relative to site dir.
+         */
+        path: './changelog',
+        /**
+         * Blog configuration
+         */
+        blogTitle: 'Changelogs',
+        blogDescription: 'Changelog information from across the ublue-os organization',
+        blogSidebarCount: 'ALL',
+        blogSidebarTitle: 'All Changelogs',
+        authorsMapPath: 'authors.yaml',
+        editUrl: 'https://github.com/ublue-os/bluefin-docs/edit/main/',
+      },
+    ],
+  ],
+
   themeConfig: {
     algolia: {
       // The application ID provided by Algolia
@@ -106,6 +136,11 @@ const config: Config = {
         {
           to: "blog",
           label: "Blog",
+          position: "right",
+        },
+        {
+          to: "changelog",
+          label: "Changelogs",
           position: "right",
         },
         {
