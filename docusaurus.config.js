@@ -132,7 +132,7 @@ var config = {
           to: "changelogs",
           label: "Changelogs",
           position: "right",
-        }, 
+        },
         {
           href: "https://projectbluefin.io/",
           label: "Web",

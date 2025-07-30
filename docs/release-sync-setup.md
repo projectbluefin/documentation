@@ -1,6 +1,6 @@
 # Release Sync Setup Guide
 
-This document explains how to set up automatic release syncing from `ublue-os/bluefin` to the changelog in `ublue-os/bluefin-docs`.
+This document explains how to set up automatic release syncing from `ublue-os/bluefin` to the changelogs in `ublue-os/bluefin-docs`.
 
 ## Available Workflows
 
@@ -25,7 +25,7 @@ The workflow will:
 
 - Fetch the release data from the GitHub API
 - Determine if it's a GTS or stable release
-- Generate a properly formatted changelog entry
+- Generate a properly formatted changelogs entry
 - Commit the file to the repository
 
 #### Method 2: Automated Triggering (Requires Setup)
@@ -52,9 +52,9 @@ The workflow will:
 - Fetch the last N releases from `ublue-os/bluefin` (configurable, default 3)
 - Sort releases by published date (oldest first)
 - Process each release and determine type (gts/stable/other)
-- Create changelog entries for all new releases
-- Skip existing changelog files to avoid duplicates
-- Create a single pull request with all new changelog entries
+- Create changelogs entries for all new releases
+- Skip existing changelogs files to avoid duplicates
+- Create a single pull request with all new changelogs entries
 
 #### Configuration Options:
 
@@ -94,10 +94,10 @@ You'll need to create a Personal Access Token (PAT) with `repo` scope and add it
 
 ## File Format
 
-Generated changelog entries follow this format:
+Generated changelogs entries follow this format:
 
 - **Filename**: `YYYY-MM-DD-releaseversion.md`
-- **Location**: `changelog/` directory
+- **Location**: `changelogs/` directory
 - **Content**: Full release notes with proper Docusaurus frontmatter
 
 ## Release Types
@@ -117,12 +117,12 @@ All types are automatically categorized with appropriate tags for filtering and 
 1. **Release not found**: Ensure the release tag exists in `ublue-os/bluefin`
 2. **File already exists**: Both workflows skip creation if a file already exists with the same name
 3. **API rate limits**: If testing frequently, GitHub API rate limits may apply
-4. **No changes in multi-release sync**: All requested releases may already have changelog entries
+4. **No changes in multi-release sync**: All requested releases may already have changelogs entries
 
 ### Multiple Release Sync Specific:
 
-- **No files created**: This happens when all fetched releases already have changelog entries
-- **Partial creation**: Some releases may be skipped if their changelog files already exist
+- **No files created**: This happens when all fetched releases already have changelogs entries
+- **Partial creation**: Some releases may be skipped if their changelogs files already exist
 - **Release count adjustment**: Increase the `release_count` parameter if you need to fetch more releases
 
 ### Logs:

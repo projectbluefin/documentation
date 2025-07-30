@@ -57,7 +57,7 @@ jobs:
         run: |
           RELEASE_COUNT_ACTUAL="${{ steps.fetch_releases.outputs.release_count_actual }}"
           FILES_CREATED=()
-          BRANCH_NAME="changelog/bluefin-multi-release-$(date +%s)"
+          BRANCH_NAME="changelogs/bluefin-multi-release-$(date +%s)"
 
           echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
 
@@ -125,7 +125,7 @@ jobs:
             else
               FILENAME="$FORMATTED_DATE-$CLEAN_TAG.md"
             fi
-            CHANGELOG_FILE="changelog/$FILENAME"
+            CHANGELOG_FILE="changelogs/$FILENAME"
             
             # Check if file already exists
             if [[ -f "$CHANGELOG_FILE" ]]; then
