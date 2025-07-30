@@ -12,22 +12,22 @@
 
 # Automation bot for release syncing
 bluefin-release-bot:
-  name: Deinonychus Antirropus
-  title: Raptor Specialist
+  name: Bluefin
+  title: Head Hen · Deinonychus Antirropus
   url: https://github.com/ublue-os/bluefin
   email: jorge.castro@gmail.com
   image_url: /img/bluefin-release-bot.png
   page: true
 bluefin-gts-release-bot:
-  name: Deinonychus Antirropus
-  title: GTS Raptor Specialist
+  name: Bluefin GTS
+  title: Grand Touring Support · Deinonychus Antirropus
   url: https://github.com/ublue-os/bluefin
   email: jorge.castro@gmail.com
   image_url: https://github.com/projectbluefin.png
   page: true
 bluefin-lts-release-bot:
-  name: Achillobator Giganticus
-  title: LTS Raptor Specialist
+  name: Bluefin LTS
+  title: Long Term Support · Achillobator Giganticus
   url: https://github.com/ublue-os/bluefin-lts
   email: jorge.castro@gmail.com
   image_url: /img/bluefin-lts-release-bot.png
