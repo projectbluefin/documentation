@@ -1,0 +1,14 @@
+# Authors for changelog entries
+# Add new authors here following this format:
+
+# example_author:
+#   name: Example Author
+#   title: Maintainer
+#   url: https://github.com/example_author
+#   image_url: https://github.com/example_author.png
+#   socials:
+#     github: example_author
+#     x: example_author
+
+# Common ublue-os contributors (add as needed)
+# Add more authors as changelog contributors are identified
