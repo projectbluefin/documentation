@@ -16,7 +16,7 @@ bluefin-release-bot:
   title: Raptor Specialist
   url: https://github.com/ublue-os/bluefin
   email: jorge.castro@gmail.com
-  image_url: https://github.com/projectbluefin.png
+  image_url: bluefin-release-bot.png
   page: true
 bluefin-gts-release-bot:
   name: Deinonychus Antirropus
@@ -30,7 +30,7 @@ bluefin-lts-release-bot:
   title: LTS Raptor Specialist
   url: https://github.com/ublue-os/bluefin-lts
   email: jorge.castro@gmail.com
-  image_url: https://github.com/projectbluefin.png
+  image_url: bluefin-lts-release-bot
   page: true
 # Common ublue-os contributors (add as needed)
 # Add more authors as changelog contributors are identified
