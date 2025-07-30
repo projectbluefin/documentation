@@ -4,15 +4,6 @@ on:
   repository_dispatch:
     types: [bluefin-release]
   workflow_dispatch:
-    inputs:
-      release_tag:
-        description: "Release tag to sync (e.g., v1.2.3, gts-v1.2.3)"
-        required: true
-        type: string
-      release_url:
-        description: "GitHub release URL (optional, will be constructed if not provided)"
-        required: false
-        type: string
 
 jobs:
   sync-release:
@@ -32,14 +23,43 @@ jobs:
         with:
           node-version: "18"
 
+      - name: Fetch latest release
+        id: fetch_latest_release
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          # Fetch the latest release from ublue-os/bluefin
+          echo "Fetching latest release from ublue-os/bluefin..."
+          LATEST_RELEASE=$(curl -s -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/ublue-os/bluefin/releases/latest")
+          
+          # Check if request was successful
+          if echo "$LATEST_RELEASE" | jq -e '.message' > /dev/null; then
+            echo "Error: Failed to fetch latest release"
+            echo "API Response: $LATEST_RELEASE"
+            exit 1
+          fi
+          
+          # Extract release information
+          LATEST_TAG=$(echo "$LATEST_RELEASE" | jq -r '.tag_name')
+          LATEST_URL=$(echo "$LATEST_RELEASE" | jq -r '.html_url')
+          
+          echo "Latest release found: $LATEST_TAG"
+          echo "Release URL: $LATEST_URL"
+          
+          # Set outputs for use in subsequent steps
+          echo "latest_tag=$LATEST_TAG" >> $GITHUB_OUTPUT
+          echo "latest_url=$LATEST_URL" >> $GITHUB_OUTPUT
+
       - name: Get release data
         id: get_release
         run: |
-          # Determine release tag - from workflow_dispatch input or repository_dispatch payload
+          # Determine release tag and URL based on trigger type
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            RELEASE_TAG="${{ github.event.inputs.release_tag }}"
-            RELEASE_URL="${{ github.event.inputs.release_url }}"
+            # Use the automatically fetched latest release
+            RELEASE_TAG="${{ steps.fetch_latest_release.outputs.latest_tag }}"
+            RELEASE_URL="${{ steps.fetch_latest_release.outputs.latest_url }}"
           else
+            # Use data from repository_dispatch payload
             RELEASE_TAG="${{ github.event.client_payload.tag_name }}"
             RELEASE_URL="${{ github.event.client_payload.html_url }}"
           fi
