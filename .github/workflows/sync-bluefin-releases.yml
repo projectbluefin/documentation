@@ -320,9 +320,9 @@ jobs:
           PR_BODY="$PR_BODY"$'\n'"- Check that version type classification (stable/GTS/LTS) is correct"
           PR_BODY="$PR_BODY"$'\n'"- Existing changelog files were not overwritten"
           PR_BODY="$PR_BODY"$'\n\n'"**Version Types:**"
-          PR_BODY="$PR_BODY"$'\n'"- 🚢 **Stable**: Regular releases from ublue-os/bluefin"
-          PR_BODY="$PR_BODY"$'\n'"- ⭐ **GTS**: Good to Stable releases (tagged with 'gts')"
-          PR_BODY="$PR_BODY"$'\n'"- 🔒 **LTS**: Long Term Support releases from ublue-os/bluefin-lts"
+          PR_BODY="$PR_BODY"$'\n'"- 🚢 **Bluefin**: Bluefin Stable releases from ublue-os/bluefin"
+          PR_BODY="$PR_BODY"$'\n'"- ⭐ **Bluefin GTS**: Grand Touring Support releases (tagged with 'gts') from ublue-os/bluefin"
+          PR_BODY="$PR_BODY"$'\n'"- 🔒 **Bluefin LTS**: Long Term Support releases from ublue-os/bluefin-lts"
           PR_BODY="$PR_BODY"$'\n\n'"**Independent Processing:** This workflow now processes all version types independently with proper error handling to ensure maximum capture of release information."
 
           # Create pull request using GitHub API
