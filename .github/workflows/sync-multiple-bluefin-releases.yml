@@ -119,8 +119,12 @@ jobs:
             CLEAN_TAG=$(echo "$CLEAN_TAG" | sed 's/^v//')
             SLUG_TAG=$(echo "$SLUG_TAG" | sed 's/^v//')
             
-            # Generate filename: YYYY-MM-DD-releaseversion.md
-            FILENAME="$FORMATTED_DATE-$CLEAN_TAG.md"
+            # Generate filename: YYYY-MM-DD-releaseversion.md or YYYY-MM-DD-gts-releaseversion.md for GTS
+            if [[ "$RELEASE_TYPE" == "gts" ]]; then
+              FILENAME="$FORMATTED_DATE-gts-$CLEAN_TAG.md"
+            else
+              FILENAME="$FORMATTED_DATE-$CLEAN_TAG.md"
+            fi
             CHANGELOG_FILE="changelog/$FILENAME"
             
             # Check if file already exists
@@ -191,7 +195,7 @@ jobs:
           COMMIT_MESSAGE="Add changelog entries for multiple Bluefin releases
 
           Automatically generated changelog entries for ${#FILES_CREATED[@]} release(s):
-          $(printf '- %s\n' "${FILES_CREATED[@]}")"
+          $(printf "%s\n" "${FILES_CREATED[@]}" | sed 's/^/- /')"
 
           git commit -m "$COMMIT_MESSAGE"
 
