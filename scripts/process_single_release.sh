@@ -75,8 +75,10 @@ fi
 echo "Creating changelog entry: $CHANGELOG_FILE"
 
 # Determine title prefix based on source repository
+# For LTS releases, use "Bluefin" as prefix since RELEASE_TAG_DISPLAY already contains "LTS"
+# This prevents duplication like "Bluefin LTS LTS 20250602"
 if [[ "$SOURCE_REPO" == "ublue-os/bluefin-lts" ]]; then
-    TITLE_PREFIX="Bluefin LTS"
+    TITLE_PREFIX="Bluefin"
 else
     TITLE_PREFIX="Bluefin"
 fi
