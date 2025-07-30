@@ -14,7 +14,7 @@ The changelog section automatically syncs releases from `ublue-os/bluefin` using
 
 2. **Processing**: The workflow:
    - For manual triggers: Automatically fetches the latest release from the GitHub API
-   - For repository dispatch: Uses the release data from the webhook payload  
+   - For repository dispatch: Uses the release data from the webhook payload
    - Determines if it's a GTS or stable release based on the tag format
    - Generates a properly formatted changelog entry
    - Creates a file with the naming convention: `YYYY-MM-DD-releaseversion.md`
