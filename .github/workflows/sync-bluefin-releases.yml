@@ -31,21 +31,21 @@ jobs:
           echo "Fetching latest release from ublue-os/bluefin..."
           LATEST_RELEASE=$(curl -s -H "Accept: application/vnd.github.v3+json" \
             "https://api.github.com/repos/ublue-os/bluefin/releases/latest")
-          
+
           # Check if request was successful
           if echo "$LATEST_RELEASE" | jq -e '.message' > /dev/null; then
             echo "Error: Failed to fetch latest release"
             echo "API Response: $LATEST_RELEASE"
             exit 1
           fi
-          
+
           # Extract release information
           LATEST_TAG=$(echo "$LATEST_RELEASE" | jq -r '.tag_name')
           LATEST_URL=$(echo "$LATEST_RELEASE" | jq -r '.html_url')
-          
+
           echo "Latest release found: $LATEST_TAG"
           echo "Release URL: $LATEST_URL"
-          
+
           # Set outputs for use in subsequent steps
           echo "latest_tag=$LATEST_TAG" >> $GITHUB_OUTPUT
           echo "latest_url=$LATEST_URL" >> $GITHUB_OUTPUT
@@ -197,26 +197,81 @@ jobs:
           echo "Created changelog file: $CHANGELOG_FILE"
           echo "file_exists=false" >> $GITHUB_ENV
 
-      - name: Commit and push changes
+      - name: Create branch and commit changes
         if: env.file_exists != 'true'
+        id: create_branch
         run: |
           FILENAME="${{ steps.release_info.outputs.filename }}"
           RELEASE_TAG="${{ steps.get_release.outputs.release_tag }}"
+          CLEAN_TAG="${{ steps.release_info.outputs.clean_tag }}"
+
+          # Create branch name
+          BRANCH_NAME="changelog/bluefin-$CLEAN_TAG-$(date +%s)"
+          echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
 
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
+
+          # Create and checkout new branch
+          git checkout -b "$BRANCH_NAME"
 
           git add "changelog/$FILENAME"
 
           if git diff --staged --quiet; then
             echo "No changes to commit"
+            echo "has_changes=false" >> $GITHUB_OUTPUT
             exit 0
           fi
 
           git commit -m "Add changelog entry for Bluefin $RELEASE_TAG
 
           Automatically generated from release: ${{ steps.get_release.outputs.release_url }}"
-          git push
+
+          # Push the branch
+          git push origin "$BRANCH_NAME"
+          echo "has_changes=true" >> $GITHUB_OUTPUT
+
+      - name: Create Pull Request
+        if: env.file_exists != 'true' && steps.create_branch.outputs.has_changes == 'true'
+        run: |
+          RELEASE_TAG="${{ steps.get_release.outputs.release_tag }}"
+          RELEASE_URL="${{ steps.get_release.outputs.release_url }}"
+          BRANCH_NAME="${{ steps.create_branch.outputs.branch_name }}"
+          FILENAME="${{ steps.release_info.outputs.filename }}"
+          RELEASE_TYPE="${{ steps.release_info.outputs.release_type }}"
+
+          # Create pull request body
+          PR_BODY="## Bluefin Release Changelog Entry
+
+          This PR adds a changelog entry for Bluefin $RELEASE_TAG release.
+
+          **Release Information:**
+          - **Release:** [$RELEASE_TAG]($RELEASE_URL)
+          - **Type:** $RELEASE_TYPE
+          - **Changelog File:** \`changelog/$FILENAME\`
+
+          **Changes:**
+          - Added new changelog entry for Bluefin $RELEASE_TAG
+          - Automatically generated from the release notes
+
+          **Review Notes:**
+          - Please review the changelog content for accuracy
+          - Verify formatting and links are correct
+          - Check that the release information matches the actual release"
+
+          # Create pull request using GitHub API
+          curl -X POST \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            "https://api.github.com/repos/${{ github.repository }}/pulls" \
+            -d "{
+              \"title\": \"Add changelog entry for Bluefin $RELEASE_TAG\",
+              \"head\": \"$BRANCH_NAME\",
+              \"base\": \"main\",
+              \"body\": $(echo "$PR_BODY" | jq -Rs .),
+              \"draft\": false
+            }"
 
       - name: Create summary
         run: |
@@ -234,5 +289,10 @@ jobs:
           if [[ "${{ env.file_exists }}" == "true" ]]; then
             echo "ℹ️ Changelog file already existed - no changes made" >> $GITHUB_STEP_SUMMARY
           else
-            echo "✅ Changelog entry created successfully" >> $GITHUB_STEP_SUMMARY
+            if [[ "${{ steps.create_branch.outputs.has_changes }}" == "true" ]]; then
+              echo "✅ Pull request created successfully for changelog entry" >> $GITHUB_STEP_SUMMARY
+              echo "🔍 **Next Steps:** Review and merge the pull request to publish the changelog entry" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "ℹ️ No changes detected - changelog entry was not needed" >> $GITHUB_STEP_SUMMARY
+            fi
           fi
