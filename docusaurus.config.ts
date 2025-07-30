@@ -58,30 +58,31 @@ const config: Config = {
 
   plugins: [
     [
-      '@docusaurus/plugin-content-blog',
+      "@docusaurus/plugin-content-blog",
       {
         /**
          * Required for any multi-instance plugin
          */
-        id: 'changelog',
+        id: "changelog",
         /**
          * URL route for the changelog section of your site.
          * *DO NOT* include a trailing slash.
          */
-        routeBasePath: 'changelog',
+        routeBasePath: "changelog",
         /**
          * Path to data on filesystem relative to site dir.
          */
-        path: './changelog',
+        path: "./changelog",
         /**
          * Blog configuration
          */
-        blogTitle: 'Changelogs',
-        blogDescription: 'Changelog information from across the ublue-os organization',
-        blogSidebarCount: 'ALL',
-        blogSidebarTitle: 'All Changelogs',
-        authorsMapPath: 'authors.yaml',
-        editUrl: 'https://github.com/ublue-os/bluefin-docs/edit/main/',
+        blogTitle: "Changelogs",
+        blogDescription:
+          "Changelog information from across the ublue-os organization",
+        blogSidebarCount: "ALL",
+        blogSidebarTitle: "All Changelogs",
+        authorsMapPath: "authors.yaml",
+        editUrl: "https://github.com/ublue-os/bluefin-docs/edit/main/",
       },
     ],
   ],

@@ -38,7 +38,7 @@ Bluefin LTS also offers a hardware enablement branch with:
 
 ### Rationale
 
-Bluefin LTS ships with Linux 6.12.0, which is the kernel for the lifetime of release. It is for change-averse users. Bluefin LTS provides a backported GNOME desktop so that you are not left behind. And an optional `hwe` branch with new kernels. 
+Bluefin LTS ships with Linux 6.12.0, which is the kernel for the lifetime of release. It is for change-averse users. Bluefin LTS provides a backported GNOME desktop so that you are not left behind. And an optional `hwe` branch with new kernels.
 
 ### Blockers
 
@@ -84,7 +84,7 @@ The ISO uses Fedora to install Bluefin LTS, this is confusing because it will sa
 
 The following images and tags are available:
 
-- `bluefin:lts` - base LTS experience, kernel 6.12.0 with long term maintenance from CentOS with backported GNOME releases. 
+- `bluefin:lts` - base LTS experience, kernel 6.12.0 with long term maintenance from CentOS with backported GNOME releases.
 - `bluefin-gdx:lts` - includes Nvidia drivers and associated CUDA tooling. This is the only image with Nvidia drivers. See [Bluefin GDX](/gdx)
 - `bluefin:lts-testing` - Fresher but gated Linux kernels, the latest patch version of the previous minor kernel release.
 - `bluefin-gdx:lts-testing` - GDX with gated Linux kernels, the latest patch version of the previous minor kernel release.

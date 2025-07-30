@@ -10,5 +10,11 @@
 #     github: example_author
 #     x: example_author
 
+# Automation bot for release syncing
+bluefin-release-bot:
+  name: Bluefin Release Bot
+  title: Automated Release Sync
+  url: https://github.com/ublue-os/bluefin
+  image_url: https://github.com/ublue-os.png
 # Common ublue-os contributors (add as needed)
 # Add more authors as changelog contributors are identified
