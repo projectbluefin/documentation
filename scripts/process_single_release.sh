@@ -66,9 +66,10 @@ CHANGELOG_FILE="changelogs/$FILENAME"
 
 # Check if file already exists
 if [[ -f "$CHANGELOG_FILE" ]]; then
-    echo "Changelog file already exists: $CHANGELOG_FILE"
+    echo "WARNING: Changelog file already exists: $CHANGELOG_FILE"
+    echo "SKIPPED: $SOURCE_REPO:$RELEASE_TAG - file already exists"
     echo "Skipping creation to avoid overwriting existing content"
-    exit 1
+    exit 0
 fi
 
 echo "Creating changelog entry: $CHANGELOG_FILE"

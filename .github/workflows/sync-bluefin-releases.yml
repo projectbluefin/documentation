@@ -138,23 +138,23 @@ jobs:
             echo "$RELEASE_BODY" > "/tmp/release_body_${source_repo//\//_}_${release_tag}.md"
             
             # Process this release using existing logic from original workflow
-            ./scripts/process_single_release.sh "$source_repo" "$release_tag" "$release_url" "$release_date" "$RELEASE_NAME" "$RELEASE_BODY" "false"
+            output=$(./scripts/process_single_release.sh "$source_repo" "$release_tag" "$release_url" "$release_date" "$RELEASE_NAME" "$RELEASE_BODY" "false" 2>&1)
             local result=$?
             
-            case $result in
-              0)
-                FILES_CREATED+=("$source_repo:$release_tag")
-                echo "✅ Successfully created changelog for $release_tag"
-                ;;
-              1)
-                FILES_SKIPPED+=("$source_repo:$release_tag")
-                echo "⏭️ Skipped $release_tag (file already exists)"
-                ;;
-              *)
+            echo "$output"
+            
+            if [[ $result -eq 0 ]]; then
+                if echo "$output" | grep -q "SKIPPED:"; then
+                    FILES_SKIPPED+=("$source_repo:$release_tag")
+                    echo "⏭️ Skipped $release_tag (file already exists)"
+                else
+                    FILES_CREATED+=("$source_repo:$release_tag")
+                    echo "✅ Successfully created changelog for $release_tag"
+                fi
+            else
                 PROCESSING_ERRORS+=("$source_repo:$release_tag - Processing error ($result)")
                 echo "❌ Error processing $release_tag (exit code: $result)"
-                ;;
-            esac
+            fi
           }
 
           # Process releases based on trigger type
