@@ -116,20 +116,26 @@ jobs:
             echo "release_tag_display=GTS" >> $GITHUB_OUTPUT
             # Clean up the tag for filename (remove gts- prefix if present)
             CLEAN_TAG=$(echo "$RELEASE_TAG" | sed 's/^gts-//')
+            # For GTS releases, slug tag is the same as clean tag
+            SLUG_TAG="$CLEAN_TAG"
           else
             RELEASE_TYPE="stable"
             echo "release_type=stable" >> $GITHUB_OUTPUT
             echo "release_tag_display=Stable" >> $GITHUB_OUTPUT
             CLEAN_TAG="$RELEASE_TAG"
+            # For stable releases, slug tag removes the stable- prefix to avoid double "stable"
+            SLUG_TAG=$(echo "$RELEASE_TAG" | sed 's/^stable-//')
           fi
 
           # Remove 'v' prefix from tag if present for filename
           CLEAN_TAG=$(echo "$CLEAN_TAG" | sed 's/^v//')
+          SLUG_TAG=$(echo "$SLUG_TAG" | sed 's/^v//')
 
           # Generate filename: YYYY-MM-DD-releaseversion.md
           FILENAME="$FORMATTED_DATE-$CLEAN_TAG.md"
           echo "filename=$FILENAME" >> $GITHUB_OUTPUT
           echo "clean_tag=$CLEAN_TAG" >> $GITHUB_OUTPUT
+          echo "slug_tag=$SLUG_TAG" >> $GITHUB_OUTPUT
 
           echo "Generated filename: $FILENAME"
           echo "Release type: $RELEASE_TYPE"
@@ -145,6 +151,7 @@ jobs:
           RELEASE_TYPE="${{ steps.release_info.outputs.release_type }}"
           RELEASE_TAG_DISPLAY="${{ steps.release_info.outputs.release_tag_display }}"
           CLEAN_TAG="${{ steps.release_info.outputs.clean_tag }}"
+          SLUG_TAG="${{ steps.release_info.outputs.slug_tag }}"
 
           # Create the changelog file
           CHANGELOG_FILE="changelog/$FILENAME"
@@ -161,7 +168,7 @@ jobs:
           cat > "$CHANGELOG_FILE" << 'EOF_CHANGELOG'
           ---
           title: "Bluefin RELEASE_TAG_DISPLAY CLEAN_TAG"
-          slug: bluefin-RELEASE_TYPE-CLEAN_TAG
+          slug: bluefin-RELEASE_TYPE-SLUG_TAG
           authors: [bluefin-release-bot]
           tags: [release, bluefin, RELEASE_TYPE]
           ---
@@ -185,6 +192,7 @@ jobs:
           # Replace placeholders in the file
           sed -i "s/RELEASE_TAG_DISPLAY/$RELEASE_TAG_DISPLAY/g" "$CHANGELOG_FILE"
           sed -i "s/CLEAN_TAG/$CLEAN_TAG/g" "$CHANGELOG_FILE"
+          sed -i "s/SLUG_TAG/$SLUG_TAG/g" "$CHANGELOG_FILE"
           sed -i "s/RELEASE_TYPE/$RELEASE_TYPE/g" "$CHANGELOG_FILE"
           sed -i "s|RELEASE_TAG|$RELEASE_TAG|g" "$CHANGELOG_FILE"
           sed -i "s|RELEASE_URL|$RELEASE_URL|g" "$CHANGELOG_FILE"
