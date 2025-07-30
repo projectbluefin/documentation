@@ -10,10 +10,11 @@ The changelog section automatically syncs releases from `ublue-os/bluefin` using
 
 1. **Trigger**: The workflow can be triggered in two ways:
    - **Repository Dispatch**: Automatically when configured to receive webhook events from `ublue-os/bluefin`
-   - **Manual Dispatch**: Manually through the GitHub Actions interface with a release tag
+   - **Manual Dispatch**: Manually through the GitHub Actions interface (automatically uses the latest release)
 
 2. **Processing**: The workflow:
-   - Fetches release data from the GitHub API
+   - For manual triggers: Automatically fetches the latest release from the GitHub API
+   - For repository dispatch: Uses the release data from the webhook payload  
    - Determines if it's a GTS or stable release based on the tag format
    - Generates a properly formatted changelog entry
    - Creates a file with the naming convention: `YYYY-MM-DD-releaseversion.md`
@@ -33,13 +34,13 @@ Both types are automatically categorized with appropriate tags for filtering.
 
 ### Manual Triggering
 
-To manually sync a release:
+To manually sync the latest release:
 
 1. Go to the [Actions tab](https://github.com/ublue-os/bluefin-docs/actions/workflows/sync-bluefin-releases.yml)
 2. Click "Run workflow"
-3. Enter the release tag (e.g., `v1.2.3` or `gts-v1.2.3`)
-4. Optionally provide a custom release URL
-5. Click "Run workflow"
+3. Click "Run workflow" (no input required - automatically uses the latest release)
+
+The workflow will automatically fetch and sync the latest release from the ublue-os/bluefin repository.
 
 ## Contributing
 
