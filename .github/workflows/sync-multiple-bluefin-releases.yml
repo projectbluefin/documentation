@@ -1,0 +1,281 @@
+name: Sync Multiple Bluefin Releases
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_count:
+        description: 'Number of releases to fetch and sync'
+        required: false
+        default: '3'
+        type: string
+
+jobs:
+  sync-multiple-releases:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "22"
+
+      - name: Fetch multiple releases
+        id: fetch_releases
+        run: |
+          RELEASE_COUNT="${{ github.event.inputs.release_count || '3' }}"
+          echo "Fetching last $RELEASE_COUNT releases from ublue-os/bluefin..."
+          
+          # Fetch releases from GitHub API
+          RELEASES_DATA=$(curl -s -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/ublue-os/bluefin/releases?per_page=$RELEASE_COUNT")
+
+          # Check if request was successful
+          if echo "$RELEASES_DATA" | jq -e '.message' > /dev/null; then
+            echo "Error: Failed to fetch releases"
+            echo "API Response: $RELEASES_DATA"
+            exit 1
+          fi
+
+          # Sort releases by published date (oldest first) and save to file
+          echo "$RELEASES_DATA" | jq 'sort_by(.published_at)' > /tmp/releases.json
+          
+          # Count releases
+          RELEASE_COUNT_ACTUAL=$(echo "$RELEASES_DATA" | jq 'length')
+          echo "Found $RELEASE_COUNT_ACTUAL releases"
+          echo "release_count_actual=$RELEASE_COUNT_ACTUAL" >> $GITHUB_OUTPUT
+
+      - name: Process releases and create changelog entries
+        id: process_releases
+        run: |
+          RELEASE_COUNT_ACTUAL="${{ steps.fetch_releases.outputs.release_count_actual }}"
+          FILES_CREATED=()
+          BRANCH_NAME="changelog/bluefin-multi-release-$(date +%s)"
+          
+          echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
+          
+          # Setup git
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          
+          # Create new branch
+          git checkout -b "$BRANCH_NAME"
+          
+          # Process each release
+          for i in $(seq 0 $((RELEASE_COUNT_ACTUAL - 1))); do
+            echo "Processing release $((i + 1)) of $RELEASE_COUNT_ACTUAL..."
+            
+            # Extract release data
+            RELEASE_DATA=$(jq ".[$i]" /tmp/releases.json)
+            RELEASE_TAG=$(echo "$RELEASE_DATA" | jq -r '.tag_name')
+            RELEASE_NAME=$(echo "$RELEASE_DATA" | jq -r '.name // .tag_name')
+            RELEASE_BODY=$(echo "$RELEASE_DATA" | jq -r '.body // ""')
+            RELEASE_DATE=$(echo "$RELEASE_DATA" | jq -r '.published_at')
+            RELEASE_URL=$(echo "$RELEASE_DATA" | jq -r '.html_url')
+            RELEASE_PRERELEASE=$(echo "$RELEASE_DATA" | jq -r '.prerelease')
+            
+            echo "Processing release: $RELEASE_TAG"
+            
+            # Parse date to YYYY-MM-DD format
+            FORMATTED_DATE=$(date -u -d "$RELEASE_DATE" '+%Y-%m-%d' 2>/dev/null || date -u -j -f '%Y-%m-%dT%H:%M:%SZ' "$RELEASE_DATE" '+%Y-%m-%d' 2>/dev/null || echo "$(date '+%Y-%m-%d')")
+            
+            # Determine release type and generate naming
+            if [[ "$RELEASE_TAG" == *"gts"* ]]; then
+              RELEASE_TYPE="gts"
+              RELEASE_TAG_DISPLAY="GTS"
+              # Clean up the tag for filename (remove gts- prefix if present)
+              CLEAN_TAG=$(echo "$RELEASE_TAG" | sed 's/^gts-//')
+              SLUG_TAG="$CLEAN_TAG"
+            elif [[ "$RELEASE_TAG" == *"stable"* ]]; then
+              RELEASE_TYPE="stable"
+              RELEASE_TAG_DISPLAY="Stable"
+              CLEAN_TAG="$RELEASE_TAG"
+              # For stable releases, slug tag removes the stable- prefix to avoid double "stable"
+              SLUG_TAG=$(echo "$RELEASE_TAG" | sed 's/^stable-//')
+            else
+              # Handle other releases (beta, alpha, rc, etc.)
+              RELEASE_TYPE="other"
+              if [[ "$RELEASE_TAG" == *"beta"* ]]; then
+                RELEASE_TAG_DISPLAY="Beta"
+              elif [[ "$RELEASE_TAG" == *"alpha"* ]]; then
+                RELEASE_TAG_DISPLAY="Alpha"
+              elif [[ "$RELEASE_TAG" == *"rc"* ]]; then
+                RELEASE_TAG_DISPLAY="Release Candidate"
+              else
+                RELEASE_TAG_DISPLAY="Development"
+              fi
+              CLEAN_TAG="$RELEASE_TAG"
+              SLUG_TAG="$RELEASE_TAG"
+            fi
+            
+            # Remove 'v' prefix from tags if present for filename
+            CLEAN_TAG=$(echo "$CLEAN_TAG" | sed 's/^v//')
+            SLUG_TAG=$(echo "$SLUG_TAG" | sed 's/^v//')
+            
+            # Generate filename: YYYY-MM-DD-releaseversion.md
+            FILENAME="$FORMATTED_DATE-$CLEAN_TAG.md"
+            CHANGELOG_FILE="changelog/$FILENAME"
+            
+            # Check if file already exists
+            if [[ -f "$CHANGELOG_FILE" ]]; then
+              echo "Changelog file already exists: $CHANGELOG_FILE"
+              echo "Skipping to avoid overwriting existing content"
+              continue
+            fi
+            
+            echo "Creating changelog entry: $CHANGELOG_FILE"
+            
+            # Save release body to temporary file
+            echo "$RELEASE_BODY" > "/tmp/release_body_$i.md"
+            
+            # Create the changelog file using printf to avoid YAML parsing issues
+            printf '%s\n' \
+              '---' \
+              'title: "Bluefin RELEASE_TAG_DISPLAY CLEAN_TAG"' \
+              'slug: bluefin-RELEASE_TYPE-SLUG_TAG' \
+              'authors: [bluefin-release-bot]' \
+              'tags: [release, bluefin, RELEASE_TYPE]' \
+              '---' \
+              '' \
+              'Bluefin RELEASE_TAG_DISPLAY release CLEAN_TAG is now available.' \
+              '' \
+              '<!--truncate-->' \
+              '' \
+              'RELEASE_BODY_CONTENT' \
+              '' \
+              '---' \
+              '' \
+              '**Release Information:**' \
+              '- **Release:** [RELEASE_TAG](RELEASE_URL)' \
+              '- **Type:** RELEASE_TAG_DISPLAY' \
+              '- **Date:** FORMATTED_DATE' \
+              '' \
+              'For installation instructions and more information, visit the [Bluefin documentation](https://docs.projectbluefin.io/).' \
+              > "$CHANGELOG_FILE"
+
+            # Replace placeholders in the file
+            sed -i "s/RELEASE_TAG_DISPLAY/$RELEASE_TAG_DISPLAY/g" "$CHANGELOG_FILE"
+            sed -i "s/CLEAN_TAG/$CLEAN_TAG/g" "$CHANGELOG_FILE"
+            sed -i "s/SLUG_TAG/$SLUG_TAG/g" "$CHANGELOG_FILE"
+            sed -i "s/RELEASE_TYPE/$RELEASE_TYPE/g" "$CHANGELOG_FILE"
+            sed -i "s|RELEASE_TAG|$RELEASE_TAG|g" "$CHANGELOG_FILE"
+            sed -i "s|RELEASE_URL|$RELEASE_URL|g" "$CHANGELOG_FILE"
+            sed -i "s/FORMATTED_DATE/$FORMATTED_DATE/g" "$CHANGELOG_FILE"
+
+            # Insert the release body content
+            sed -i "/RELEASE_BODY_CONTENT/r /tmp/release_body_$i.md" "$CHANGELOG_FILE"
+            sed -i "/RELEASE_BODY_CONTENT/d" "$CHANGELOG_FILE"
+            
+            # Add file to git staging
+            git add "$CHANGELOG_FILE"
+            FILES_CREATED+=("$CHANGELOG_FILE")
+            
+            echo "Created: $CHANGELOG_FILE"
+          done
+          
+          # Check if any files were created
+          if [ ${#FILES_CREATED[@]} -eq 0 ]; then
+            echo "No new changelog files were created (all already exist)"
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # Commit changes
+          COMMIT_MESSAGE="Add changelog entries for multiple Bluefin releases
+
+          Automatically generated changelog entries for ${#FILES_CREATED[@]} release(s):
+          $(printf '- %s\n' "${FILES_CREATED[@]}")"
+          
+          git commit -m "$COMMIT_MESSAGE"
+          
+          # Push the branch
+          git push origin "$BRANCH_NAME"
+          echo "has_changes=true" >> $GITHUB_OUTPUT
+          echo "files_created=${#FILES_CREATED[@]}" >> $GITHUB_OUTPUT
+          
+          # Save created files list for PR description
+          printf '%s\n' "${FILES_CREATED[@]}" > /tmp/files_created.txt
+
+      - name: Create Pull Request
+        if: steps.process_releases.outputs.has_changes == 'true'
+        run: |
+          BRANCH_NAME="${{ steps.process_releases.outputs.branch_name }}"
+          FILES_CREATED_COUNT="${{ steps.process_releases.outputs.files_created }}"
+          
+          # Read created files list
+          FILES_LIST=$(cat /tmp/files_created.txt)
+          
+          # Create pull request body
+          PR_BODY="## Multiple Bluefin Release Changelog Entries
+
+          This PR adds changelog entries for multiple Bluefin releases.
+
+          **Summary:**
+          - **Files Created:** $FILES_CREATED_COUNT
+          - **Releases Processed:** ${{ steps.fetch_releases.outputs.release_count_actual }}
+
+          **Changes:**
+          $(echo "$FILES_LIST" | sed 's/^/- Added: /')
+
+          **Review Notes:**
+          - Please review each changelog entry for accuracy
+          - Verify formatting and links are correct  
+          - Check that release information matches actual releases
+          - Releases are sorted by published date (oldest first)
+          - Existing changelog files were not overwritten
+
+          **Release Types Handled:**
+          - GTS releases (tagged as 'gts')
+          - Stable releases (tagged as 'stable') 
+          - Other releases (beta, alpha, rc, etc. tagged as 'other')
+
+          ---
+
+          ## Files Created
+
+          $(echo "$FILES_LIST" | while read file; do
+            echo "### \`$file\`"
+            echo "\`\`\`markdown"
+            head -20 "$file" || echo "Could not read file"
+            echo "\`\`\`"
+            echo ""
+          done)"
+
+          # Create pull request using GitHub API
+          curl -X POST \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            "https://api.github.com/repos/${{ github.repository }}/pulls" \
+            -d "{
+              \"title\": \"feat(blog): sync multiple Bluefin releases changelog entries\",
+              \"head\": \"$BRANCH_NAME\",
+              \"base\": \"main\",
+              \"body\": $(echo "$PR_BODY" | jq -Rs .),
+              \"draft\": false
+            }"
+
+      - name: Create summary
+        run: |
+          RELEASE_COUNT_ACTUAL="${{ steps.fetch_releases.outputs.release_count_actual }}"
+          FILES_CREATED_COUNT="${{ steps.process_releases.outputs.files_created || '0' }}"
+          
+          echo "## Multiple Bluefin Release Sync Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Releases Processed:** $RELEASE_COUNT_ACTUAL" >> $GITHUB_STEP_SUMMARY
+          echo "**Files Created:** $FILES_CREATED_COUNT" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [[ "${{ steps.process_releases.outputs.has_changes }}" == "true" ]]; then
+            echo "✅ Pull request created successfully with $FILES_CREATED_COUNT changelog entries" >> $GITHUB_STEP_SUMMARY
+            echo "🔍 **Next Steps:** Review and merge the pull request to publish the changelog entries" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "ℹ️ No changes detected - all changelog entries already existed" >> $GITHUB_STEP_SUMMARY
+          fi
