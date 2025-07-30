@@ -15,6 +15,6 @@ bluefin-release-bot:
   name: Bluefin Bot
   title: Licensed Raptor Specialist
   url: https://github.com/ublue-os/bluefin
-  image_url: https://github.com/ublue-os.png
+  image_url: https://github.com/projectbluefin.png
 # Common ublue-os contributors (add as needed)
 # Add more authors as changelog contributors are identified
