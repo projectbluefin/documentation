@@ -139,11 +139,11 @@ const config: Config = {
           label: "Blog",
           position: "right",
         },
-        {
+    /*  {
           to: "changelog",
           label: "Changelogs",
           position: "right",
-        },
+        }, */
         {
           href: "https://projectbluefin.io/",
           label: "Web",
