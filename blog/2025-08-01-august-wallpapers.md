@@ -1,5 +1,5 @@
 ---
-title: August Update\: Long necks and LTS 
+title: "August Update: Long necks and LTS" 
 slug: 2025-08-01-august-wallpapers
 authors: castrojo
 tags: [announcements, artwork]
