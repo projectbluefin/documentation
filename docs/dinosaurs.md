@@ -7,7 +7,8 @@ Bluefin features dinosaurs and other prehistoric life in its artwork. Bluefin ha
 
 Here are the cast of characters! Each represent something important to this ecosystem.
 
-![Bluefin](https://github.com/user-attachments/assets/a5222dc5-a4a9-4e7f-a51a-2c2c92a9691e)
+![Bluefin](https://github.com/user-attachments/assets/9b054c6a-5146-40b2-b4d6-bf97abd01429)
+
 Illustration by Delphic Melody (M. Gopal)
 
 ## Bluefin and Bluefin GTS
