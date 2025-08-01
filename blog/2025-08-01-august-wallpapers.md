@@ -2,7 +2,7 @@
 title: "August Update: Long necks and LTS" 
 slug: 2025-08-01-august-wallpapers
 authors: castrojo
-tags: [announcements, artwork]
+tags: [announcements, artwork, lts]
 ---
 
 This month [Jacob Schnurr](https://www.etsy.com/shop/JSchnurrCommissions) takes us back to the Cretaceous. A herd of _Dreadnoughtus schrani_ lumber on their way to their nesting grounds as three _Nyctosaurus gracilis_ lazily fly overhead.
