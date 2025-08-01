@@ -87,9 +87,8 @@ The following images and tags are available:
 - `bluefin:lts` - base LTS experience, kernel 6.12.0 with long term maintenance from CentOS with backported GNOME releases.
 - `bluefin-gdx:lts` - includes Nvidia drivers and associated CUDA tooling. This is the only image with Nvidia drivers. See [Bluefin GDX](/gdx)
 - `bluefin:lts-testing` - Fresher but gated Linux kernels, the latest patch version of the previous minor kernel release.
-- `bluefin-gdx:lts-testing` - GDX with gated Linux kernels, the latest patch version of the previous minor kernel release.
 
-Note that `-testing` will be rebranded as `-hwe` in the future. All images offer Bluefin's [Developer Mode](/bluefin-dx).
+All images offer Bluefin's [Developer Mode](/bluefin-dx).
 
 ## ARM Support
 
