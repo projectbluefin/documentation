@@ -32,7 +32,9 @@ We've added Gradia for nicer screenshots, and Smile for emojis. You can either r
 - **[Gradia](https://flathub.org/apps/be.alexandervanhee.gradia)**: <kbd>Super</kbd>+<kbd>PrintScreen</kbd> - Advanced screenshot and annotation tool
 - **[Smile](https://flathub.org/apps/it.mijorus.smile)**: <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Space</kbd> and <kbd>Super</kbd>+<kbd>.</kbd> - Emoji picker and special characters
  
-Find out more about Bluefin's [/introduction#default-keyboard-shortcuts](default keyboard shortcuts).
+Find out more about Bluefin's default keyboard shortcuts in the [introduction](indroduction).
 
 ![All three tools](https://github.com/user-attachments/assets/bc70a63f-7bd1-4941-b5c3-c5e6480e90f0)
+
+## [Discuss this post](https://github.com/ublue-os/bluefin/discussions/2901)
 
