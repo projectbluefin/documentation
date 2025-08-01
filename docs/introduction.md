@@ -61,4 +61,5 @@ Bluefin includes several pre-configured keyboard shortcuts for enhanced producti
 - **[Gradia](https://flathub.org/apps/be.alexandervanhee.gradia)**: <kbd>Super</kbd>+<kbd>PrintScreen</kbd> - Advanced screenshot and annotation tool
 - **[Smile](https://flathub.org/apps/it.mijorus.smile)**: <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Space</kbd> and <kbd>Super</kbd>+<kbd>.</kbd> - Emoji picker and special characters
 
-![Search Light on Bluefin](https://github.com/user-attachments/assets/ee44182f-15a1-4aa2-a521-84d48a42f7bc)
+![All three tools](https://github.com/user-attachments/assets/bc70a63f-7bd1-4941-b5c3-c5e6480e90f0)
+
