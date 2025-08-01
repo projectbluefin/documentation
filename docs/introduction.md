@@ -53,4 +53,12 @@ System updates are image-based and automatic. Applications are logically separat
     - If you've never used an image-based Linux before, use your computer normally
     - Don't overthink it—just shut your computer off when you're not using it
 
+## Default Keyboard Shortcuts
+
+Bluefin includes several pre-configured keyboard shortcuts for enhanced productivity:
+
+- **Search Light**: <kbd>Super</kbd>+<kbd>Space</kbd> - macOS Spotlight-like search functionality
+- **[Gradia](https://flathub.org/apps/be.alexandervanhee.gradia)**: <kbd>Super</kbd>+<kbd>PrintScreen</kbd> - Advanced screenshot and annotation tool
+- **[Smile](https://flathub.org/apps/it.mijorus.smile)**: <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Space</kbd> and <kbd>Super</kbd>+<kbd>.</kbd> - Emoji picker and special characters
+
 ![Search Light on Bluefin](https://github.com/user-attachments/assets/ee44182f-15a1-4aa2-a521-84d48a42f7bc)
