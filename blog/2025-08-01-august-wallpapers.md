@@ -23,3 +23,12 @@ We're still working on it so there's some improvements to be made, as well as so
 [ask.projectbluefin.io](https://ask.projectbluefin.io) is working well with Dosu, we're still tweaking it but it's at least better than most web searches and almost any reddit post, so we're going to keep that around for people who want to use it. It's always linked from the docs, look for "Ask Bluefin" on the top left of this site.
 
 [Bazaar](https://github.com/kolunmi/bazaar) continues to improve, things are mostly settled. We fixed the MIME types for flatpakref files so that when the user single clicks on the Install button on [FlatHub](https://flathub.org) it just installs it immediately with only one confirmation dialog. This avoids this [unfortunate situation](https://youtu.be/Sa8nMiEoti0?si=lyZ0OpcvTbsS9L1J&t=960) when trying to install applications. 
+
+## Introducing Gradia and Emoji Picker
+
+We've added Gradia for nicer screenshots, and Smile for emojis. You can either run `ujust install-system-flatpaks` or click on the links to install them. 
+
+- **[Gradia](https://flathub.org/apps/be.alexandervanhee.gradia)**: <kbd>Super</kbd>+<kbd>PrintScreen</kbd> - Advanced screenshot and annotation tool
+- **[Smile](https://flathub.org/apps/it.mijorus.smile)**: <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Space</kbd> and <kbd>Super</kbd>+<kbd>.</kbd> - Emoji picker and special characters
+
+Find out more about Bluefin's [/introduction#default-keyboard-shortcuts](default keyboard shortcuts).
