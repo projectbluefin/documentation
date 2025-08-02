@@ -48,6 +48,7 @@ const config: Config = {
           blogSidebarTitle: "Raptor News",
           editUrl: "https://github.com/ublue-os/bluefin-docs/edit/main/",
           authorsMapPath: "authors.yaml",
+          truncateMarker: /(?!.*)/,
         },
         theme: {
           customCss: "./src/css/custom.css",
@@ -83,6 +84,7 @@ const config: Config = {
         blogSidebarTitle: "All Changelogs",
         authorsMapPath: "authors.yaml",
         editUrl: "https://github.com/ublue-os/bluefin-docs/edit/main/",
+        truncateMarker: /(?!.*)/,
       },
     ],
   ],

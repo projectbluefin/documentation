@@ -11,7 +11,6 @@ This month we return to our pleasant July savannah, our first ever dinosaur wall
 
 ![Screenshot From 2025-07-06 11-08-49](https://github.com/user-attachments/assets/4f7dc8e6-7797-46f1-aa56-1846a95fee64)
 
-<!-- truncate -->
 
 ## Fresh ISOs
 
