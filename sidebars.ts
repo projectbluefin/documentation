@@ -27,6 +27,7 @@ const sidebars: SidebarsConfig = {
         "bluefin-dx",
         "devcontainers",
         "command-line",
+        "communication",
       ],
     },
     {
