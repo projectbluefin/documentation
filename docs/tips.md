@@ -24,6 +24,11 @@ Here are some GNOME extensions that the maintainers recommend to round out your 
 
 ![Ddcutil Demonstration](https://extensions.gnome.org/extension-data/screenshots/screenshot_6325_iQnSUzg.png)
 
+- [Clipboard Indicator](https://extensions.gnome.org/extension/779/clipboard-indicator/)
+
+![Clipboard Indicator](https://github.com/user-attachments/assets/f3ef40ce-41ec-47a2-a78b-94ff4a129086)
+
+
 ## Bluefin to Go: Using an external drive
 
 You can install Bluefin on an external drive to get a portable Bluefin installation:
