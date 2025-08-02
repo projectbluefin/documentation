@@ -46,7 +46,7 @@ Illustration by Delphic Melody (M. Gopal)
 ## Flathub
 
 - Name: Dolly
-- Role: Sails are cool!
+- Role: Our application store, also sails are cool
 - Species: [Dimetrodon limbatus](https://en.wikipedia.org/wiki/Dimetrodon)
 
 ![Dolly](https://github.com/user-attachments/assets/f8094307-eba1-44f1-beed-5d6328350f41)
