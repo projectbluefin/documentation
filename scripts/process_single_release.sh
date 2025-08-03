@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Script to process a single release and create changelog entry
-# Usage: process_single_release.sh SOURCE_REPO RELEASE_TAG RELEASE_URL RELEASE_DATE RELEASE_NAME RELEASE_BODY RELEASE_PRERELEASE
+# Usage: process_single_release.sh SOURCE_REPO RELEASE_TAG RELEASE_URL RELEASE_DATE RELEASE_NAME RELEASE_BODY RELEASE_PRERELEASE AUTHOR
 # Exit codes: 0=success, 1=file already exists, 2=error
 
 set -e
@@ -13,14 +13,27 @@ RELEASE_DATE="$4"
 RELEASE_NAME="$5"
 RELEASE_BODY="$6"
 RELEASE_PRERELEASE="$7"
+AUTHOR="$8"
 
 if [[ -z "$SOURCE_REPO" || -z "$RELEASE_TAG" || -z "$RELEASE_DATE" ]]; then
     echo "Error: Missing required parameters"
-    echo "Usage: process_single_release.sh SOURCE_REPO RELEASE_TAG RELEASE_URL RELEASE_DATE RELEASE_NAME RELEASE_BODY RELEASE_PRERELEASE"
+    echo "Usage: process_single_release.sh SOURCE_REPO RELEASE_TAG RELEASE_URL RELEASE_DATE RELEASE_NAME RELEASE_BODY RELEASE_PRERELEASE AUTHOR"
     exit 2
 fi
 
+# Set default author if not provided for backward compatibility
+if [[ -z "$AUTHOR" ]]; then
+    if [[ "$SOURCE_REPO" == "ublue-os/bluefin-lts" ]] || [[ "$RELEASE_TAG" == lts-* ]]; then
+        AUTHOR="bluefin-lts-release-bot"
+    elif [[ "$RELEASE_TAG" == *"gts"* ]]; then
+        AUTHOR="bluefin-gts-release-bot"
+    else
+        AUTHOR="bluefin-release-bot"
+    fi
+fi
+
 echo "Processing release: $RELEASE_TAG from $SOURCE_REPO"
+echo "Using author: $AUTHOR"
 
 # Parse date to YYYY-MM-DD format
 FORMATTED_DATE=$(date -u -d "$RELEASE_DATE" '+%Y-%m-%d' 2>/dev/null || date -u -j -f '%Y-%m-%dT%H:%M:%SZ' "$RELEASE_DATE" '+%Y-%m-%d' 2>/dev/null || echo "$(date '+%Y-%m-%d')")
@@ -91,7 +104,7 @@ printf '%s\n' \
     '---' \
     'title: "TITLE_PREFIX RELEASE_TAG_DISPLAY CLEAN_TAG"' \
     'slug: bluefin-RELEASE_TYPE-SLUG_TAG' \
-    'authors: [bluefin-release-bot]' \
+    'authors: [AUTHOR_PLACEHOLDER]' \
     'tags: [release, bluefin, RELEASE_TYPE]' \
     '---' \
     '' \
@@ -118,6 +131,7 @@ sed -i "s/RELEASE_TAG_DISPLAY/$RELEASE_TAG_DISPLAY/g" "$CHANGELOG_FILE"
 sed -i "s/CLEAN_TAG/$CLEAN_TAG/g" "$CHANGELOG_FILE"
 sed -i "s/SLUG_TAG/$SLUG_TAG/g" "$CHANGELOG_FILE"
 sed -i "s/RELEASE_TYPE/$RELEASE_TYPE/g" "$CHANGELOG_FILE"
+sed -i "s/AUTHOR_PLACEHOLDER/$AUTHOR/g" "$CHANGELOG_FILE"
 sed -i "s|RELEASE_TAG|$RELEASE_TAG|g" "$CHANGELOG_FILE"
 sed -i "s|RELEASE_URL|$RELEASE_URL|g" "$CHANGELOG_FILE"
 sed -i "s/FORMATTED_DATE/$FORMATTED_DATE/g" "$CHANGELOG_FILE"
