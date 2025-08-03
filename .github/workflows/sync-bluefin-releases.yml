@@ -33,31 +33,58 @@ jobs:
           REPOSITORIES_ACCESSED=""
           REPOSITORIES_FAILED=""
 
-          # Fetch the latest release from ublue-os/bluefin
-          echo "Fetching latest release from ublue-os/bluefin..."
-          BLUEFIN_RELEASE=$(curl -s -H "Accept: application/vnd.github.v3+json" \
-            "https://api.github.com/repos/ublue-os/bluefin/releases/latest")
+          # Fetch all releases from ublue-os/bluefin to find latest stable and GTS
+          echo "Fetching all releases from ublue-os/bluefin..."
+          BLUEFIN_RELEASES=$(curl -s -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/ublue-os/bluefin/releases")
 
           # Check if request was successful
-          if echo "$BLUEFIN_RELEASE" | jq -e '.message' > /dev/null; then
-            echo "Warning: Failed to fetch latest bluefin release"
-            echo "API Response: $BLUEFIN_RELEASE"
+          if echo "$BLUEFIN_RELEASES" | jq -e '.message' > /dev/null; then
+            echo "Warning: Failed to fetch bluefin releases"
+            echo "API Response: $BLUEFIN_RELEASES"
             REPOSITORIES_FAILED="$REPOSITORIES_FAILED ublue-os/bluefin"
           else
-            # Extract bluefin release information
-            BLUEFIN_TAG=$(echo "$BLUEFIN_RELEASE" | jq -r '.tag_name')
-            BLUEFIN_URL=$(echo "$BLUEFIN_RELEASE" | jq -r '.html_url')
-            BLUEFIN_DATE=$(echo "$BLUEFIN_RELEASE" | jq -r '.published_at')
-
-            echo "Latest bluefin release found: $BLUEFIN_TAG"
-            echo "Bluefin release URL: $BLUEFIN_URL"
             REPOSITORIES_ACCESSED="$REPOSITORIES_ACCESSED ublue-os/bluefin"
             
-            # Save bluefin release data
-            echo "bluefin_tag=$BLUEFIN_TAG" >> $GITHUB_OUTPUT
-            echo "bluefin_url=$BLUEFIN_URL" >> $GITHUB_OUTPUT
-            echo "bluefin_date=$BLUEFIN_DATE" >> $GITHUB_OUTPUT
-            echo "bluefin_available=true" >> $GITHUB_OUTPUT
+            # Find latest stable release (tag contains 'stable')
+            BLUEFIN_STABLE_RELEASE=$(echo "$BLUEFIN_RELEASES" | jq -r '[.[] | select(.tag_name | test("stable")) | select(.prerelease == false)] | .[0]')
+            if [[ "$BLUEFIN_STABLE_RELEASE" != "null" ]]; then
+              BLUEFIN_STABLE_TAG=$(echo "$BLUEFIN_STABLE_RELEASE" | jq -r '.tag_name')
+              BLUEFIN_STABLE_URL=$(echo "$BLUEFIN_STABLE_RELEASE" | jq -r '.html_url')
+              BLUEFIN_STABLE_DATE=$(echo "$BLUEFIN_STABLE_RELEASE" | jq -r '.published_at')
+
+              echo "Latest stable release found: $BLUEFIN_STABLE_TAG"
+              echo "Stable release URL: $BLUEFIN_STABLE_URL"
+              
+              # Save stable release data
+              echo "bluefin_stable_tag=$BLUEFIN_STABLE_TAG" >> $GITHUB_OUTPUT
+              echo "bluefin_stable_url=$BLUEFIN_STABLE_URL" >> $GITHUB_OUTPUT
+              echo "bluefin_stable_date=$BLUEFIN_STABLE_DATE" >> $GITHUB_OUTPUT
+              echo "bluefin_stable_available=true" >> $GITHUB_OUTPUT
+            else
+              echo "No stable releases found"
+              echo "bluefin_stable_available=false" >> $GITHUB_OUTPUT
+            fi
+            
+            # Find latest GTS release (tag contains 'gts')
+            BLUEFIN_GTS_RELEASE=$(echo "$BLUEFIN_RELEASES" | jq -r '[.[] | select(.tag_name | test("gts")) | select(.prerelease == false)] | .[0]')
+            if [[ "$BLUEFIN_GTS_RELEASE" != "null" ]]; then
+              BLUEFIN_GTS_TAG=$(echo "$BLUEFIN_GTS_RELEASE" | jq -r '.tag_name')
+              BLUEFIN_GTS_URL=$(echo "$BLUEFIN_GTS_RELEASE" | jq -r '.html_url')
+              BLUEFIN_GTS_DATE=$(echo "$BLUEFIN_GTS_RELEASE" | jq -r '.published_at')
+
+              echo "Latest GTS release found: $BLUEFIN_GTS_TAG"
+              echo "GTS release URL: $BLUEFIN_GTS_URL"
+              
+              # Save GTS release data
+              echo "bluefin_gts_tag=$BLUEFIN_GTS_TAG" >> $GITHUB_OUTPUT
+              echo "bluefin_gts_url=$BLUEFIN_GTS_URL" >> $GITHUB_OUTPUT
+              echo "bluefin_gts_date=$BLUEFIN_GTS_DATE" >> $GITHUB_OUTPUT
+              echo "bluefin_gts_available=true" >> $GITHUB_OUTPUT
+            else
+              echo "No GTS releases found"
+              echo "bluefin_gts_available=false" >> $GITHUB_OUTPUT
+            fi
           fi
 
           # Try to fetch the latest release from ublue-os/bluefin-lts
@@ -161,12 +188,20 @@ jobs:
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             echo "Processing all available releases from workflow dispatch..."
             
-            # Process bluefin release if available
-            if [[ "${{ steps.fetch_latest_releases.outputs.bluefin_available }}" == "true" ]]; then
+            # Process bluefin stable release if available
+            if [[ "${{ steps.fetch_latest_releases.outputs.bluefin_stable_available }}" == "true" ]]; then
               process_single_release "ublue-os/bluefin" \
-                "${{ steps.fetch_latest_releases.outputs.bluefin_tag }}" \
-                "${{ steps.fetch_latest_releases.outputs.bluefin_url }}" \
-                "${{ steps.fetch_latest_releases.outputs.bluefin_date }}"
+                "${{ steps.fetch_latest_releases.outputs.bluefin_stable_tag }}" \
+                "${{ steps.fetch_latest_releases.outputs.bluefin_stable_url }}" \
+                "${{ steps.fetch_latest_releases.outputs.bluefin_stable_date }}"
+            fi
+            
+            # Process bluefin GTS release if available
+            if [[ "${{ steps.fetch_latest_releases.outputs.bluefin_gts_available }}" == "true" ]]; then
+              process_single_release "ublue-os/bluefin" \
+                "${{ steps.fetch_latest_releases.outputs.bluefin_gts_tag }}" \
+                "${{ steps.fetch_latest_releases.outputs.bluefin_gts_url }}" \
+                "${{ steps.fetch_latest_releases.outputs.bluefin_gts_date }}"
             fi
             
             # Process bluefin-lts release if available

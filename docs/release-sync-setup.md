@@ -17,16 +17,17 @@ The `ublue-os/bluefin-docs` repository contains two GitHub Action workflows for 
 
 1. Go to the [GitHub Actions tab](https://github.com/ublue-os/bluefin-docs/actions/workflows/sync-bluefin-releases.yml)
 2. Click "Run workflow"
-3. Enter the release tag (e.g., `v1.2.3` or `gts-v1.2.3`)
-4. Optionally provide a custom release URL
-5. Click "Run workflow"
+3. Click "Run workflow" to execute
 
 The workflow will:
 
-- Fetch the release data from the GitHub API
-- Determine if it's a GTS or stable release
-- Generate a properly formatted changelogs entry
-- Commit the file to the repository
+- Fetch all releases from the `ublue-os/bluefin` repository
+- Automatically identify and process the latest stable release (tagged with 'stable')
+- Automatically identify and process the latest GTS release (tagged with 'gts')
+- Also process the latest LTS release from `ublue-os/bluefin-lts` repository
+- Generate properly formatted changelog entries for each release type
+- Create a pull request with all new changelog entries
+- Skip existing files to avoid duplicates
 
 #### Method 2: Automated Triggering (Requires Setup)
 
@@ -102,13 +103,14 @@ Generated changelogs entries follow this format:
 
 ## Release Types
 
-The workflows handle three types of releases:
+The workflows handle multiple types of releases automatically:
 
-- **Stable releases**: Tags containing "stable" (e.g., `stable-20250101`) - Tagged as `stable`
-- **GTS releases**: Tags containing "gts" (e.g., `gts-20241215`) - Tagged as `gts`
-- **Other releases**: Beta, alpha, RC, and development releases (e.g., `beta-20250110`) - Tagged as `other`
+- **Stable releases**: Tags containing "stable" (e.g., `stable-20250803.2`) - Tagged as `stable`
+- **GTS releases**: Tags containing "gts" (e.g., `gts-20250801`) - Tagged as `gts`  
+- **LTS releases**: From the `ublue-os/bluefin-lts` repository (e.g., `lts-20250602`) - Tagged as `lts`
+- **Other releases**: Beta, alpha, RC, and development releases - Tagged as `other`
 
-All types are automatically categorized with appropriate tags for filtering and display.
+The main sync workflow now automatically fetches and processes both the latest stable and latest GTS releases in a single execution, ensuring both release types are kept up to date.
 
 ## Troubleshooting
 
