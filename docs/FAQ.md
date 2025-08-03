@@ -88,6 +88,9 @@ You can remove or comment the line below in `/etc/bashrc` to restore the default
 eval "$(starship init bash)"
 ```
 
+![image](https://github.com/user-attachments/assets/da7718c8-f82d-476b-ad0d-02c91e115ec8)
+
+
 ## How do I modify the Linux kernel's boot arguments?
 
 See this section of the [upstream documentation](https://docs.fedoraproject.org/en-US/fedora-coreos/kernel-args/#_modifying_kernel_arguments_on_existing_systems).
