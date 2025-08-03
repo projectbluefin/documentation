@@ -11,6 +11,18 @@ Here are the cast of characters! Each represent something important to this ecos
 
 Illustration by Delphic Melody (M. Gopal)
 
+
+## Music
+
+The Bluefin team releases music playlists regularly. If you would like to curate these songs on another service please send a pull request: 
+
+- Bluefin and the Birth of Universal Blue: [YouTube Music Playlist](https://music.youtube.com/playlist?list=PLhiPP9M5fgWHFlG3TS27gyOCQl4Dg115W&si=KfYPk3sBOM8HeRLW)
+- Bluefin finds Her Way: [YouTube Music Playlist](https://music.youtube.com/playlist?list=PLhiPP9M5fgWEvnp3w66WmcgiKvStzKXl9&si=eLmaXtQ6hbqU3LTV)
+- Bluefin and Achillobator: [YouTube Music Playlist](https://music.youtube.com/playlist?list=PLhiPP9M5fgWEZbkq6ZhaHA4b4UqLwZNxt&si=52Te8K6UlFW7DwoF)
+- Bluefin and the Lost Tribe of Contributors: [YouTube Music Playlist](https://music.youtube.com/playlist?list=PLhiPP9M5fgWEuxjlfOEX3fwA-E60-E4TA&si=01SkukMVTmfADwVl)
+- Bluefin and Dakota: [YouTube Music Playlist](https://music.youtube.com/playlist?list=PLhiPP9M5fgWHRa6Gt0UKWGxr3F0qg9t1g&si=pzhf5fA3usxyRquG)
+- Bluefin and the Children of Jensen: [YouTube Music Playlist](https://music.youtube.com/playlist?list=PLhiPP9M5fgWH4do22wEvgnoMUQLVYRIxt&si=YC5nDopgjBZ7fGhA)
+
 ## Bluefin and Bluefin GTS
 
 - Name: Bluefin
@@ -74,14 +86,3 @@ Illustration by Delphic Melody (M. Gopal)
 - Species: [Utahraptor ostrommaysi](https://en.wikipedia.org/wiki/Utahraptor)
 
 ![Utahraptor](https://github.com/user-attachments/assets/1a9aad73-9a9b-470d-b9e7-53969fbc7b80)
-
-## Music
-
-The Bluefin team releases music playlists regularly. If you would like to curate these songs on another service please send a pull request: 
-
-- Bluefin and the Birth of Universal Blue: [YouTube Music Playlist](https://music.youtube.com/playlist?list=PLhiPP9M5fgWHFlG3TS27gyOCQl4Dg115W&si=KfYPk3sBOM8HeRLW)
-- Bluefin finds Her Way: [YouTube Music Playlist](https://music.youtube.com/playlist?list=PLhiPP9M5fgWEvnp3w66WmcgiKvStzKXl9&si=eLmaXtQ6hbqU3LTV)
-- Bluefin and Achillobator: [YouTube Music Playlist](https://music.youtube.com/playlist?list=PLhiPP9M5fgWEZbkq6ZhaHA4b4UqLwZNxt&si=52Te8K6UlFW7DwoF)
-- Bluefin and the Lost Tribe of Contributors: [YouTube Music Playlist](https://music.youtube.com/playlist?list=PLhiPP9M5fgWEuxjlfOEX3fwA-E60-E4TA&si=01SkukMVTmfADwVl)
-- Bluefin and Dakota: [YouTube Music Playlist](https://music.youtube.com/playlist?list=PLhiPP9M5fgWHRa6Gt0UKWGxr3F0qg9t1g&si=pzhf5fA3usxyRquG)
-- Bluefin and the Children of Jensen: [YouTube Music Playlist](https://music.youtube.com/playlist?list=PLhiPP9M5fgWH4do22wEvgnoMUQLVYRIxt&si=YC5nDopgjBZ7fGhA)
