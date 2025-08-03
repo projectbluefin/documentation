@@ -84,3 +84,4 @@ The Bluefin team releases music playlists regularly. If you would like to curate
 - Bluefin and Achillobator: [YouTube Music Playlist](https://music.youtube.com/playlist?list=PLhiPP9M5fgWEZbkq6ZhaHA4b4UqLwZNxt&si=52Te8K6UlFW7DwoF)
 - Bluefin and the Lost Tribe of Contributors: [YouTube Music Playlist](https://music.youtube.com/playlist?list=PLhiPP9M5fgWEuxjlfOEX3fwA-E60-E4TA&si=01SkukMVTmfADwVl)
 - Bluefin and Dakota: [YouTube Music Playlist](https://music.youtube.com/playlist?list=PLhiPP9M5fgWHRa6Gt0UKWGxr3F0qg9t1g&si=pzhf5fA3usxyRquG)
+- Bluefin and the Children of Jensen: [YouTube Music Playlist](https://music.youtube.com/playlist?list=PLhiPP9M5fgWH4do22wEvgnoMUQLVYRIxt&si=YC5nDopgjBZ7fGhA)
