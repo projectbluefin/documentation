@@ -52,4 +52,5 @@ Check out our [list of videos and reviews](https://universal-blue.discourse.grou
 >
 > - Stephen Jay Gould
 
-<img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=f9b34ca2-b9c5-4075-8f0e-1f140c8bd16f" />
+![raptors](https://github.com/user-attachments/assets/217c80ab-f082-49c3-afa0-77950e0ccd9c)
+
