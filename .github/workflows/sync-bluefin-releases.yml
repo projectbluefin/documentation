@@ -146,6 +146,18 @@ jobs:
             echo "Processing release: $release_tag from $source_repo"
             TOTAL_PROCESSED=$((TOTAL_PROCESSED + 1))
             
+            # Determine the correct author based on release type
+            local author=""
+            if [[ "$source_repo" == "ublue-os/bluefin-lts" ]] || [[ "$release_tag" == lts-* ]]; then
+              author="bluefin-lts-release-bot"
+            elif [[ "$release_tag" == *"gts"* ]]; then
+              author="bluefin-gts-release-bot"
+            else
+              author="bluefin-release-bot"
+            fi
+            
+            echo "Using author: $author for release type"
+            
             # Get detailed release data
             RELEASE_DATA=$(curl -s -H "Accept: application/vnd.github.v3+json" \
               "https://api.github.com/repos/$source_repo/releases/tags/$release_tag")
@@ -164,7 +176,7 @@ jobs:
             echo "$RELEASE_BODY" > "/tmp/release_body_${source_repo//\//_}_${release_tag}.md"
             
             # Process this release using existing logic from original workflow
-            output=$(./scripts/process_single_release.sh "$source_repo" "$release_tag" "$release_url" "$release_date" "$RELEASE_NAME" "$RELEASE_BODY" "false" 2>&1)
+            output=$(./scripts/process_single_release.sh "$source_repo" "$release_tag" "$release_url" "$release_date" "$RELEASE_NAME" "$RELEASE_BODY" "false" "$author" 2>&1)
             local result=$?
             
             echo "$output"
@@ -233,7 +245,40 @@ jobs:
               PROCESSING_ERRORS+=("$SOURCE_REPO:$RELEASE_TAG - Release not found")
             else
               RELEASE_DATE=$(echo "$RELEASE_DATA" | jq -r '.published_at')
-              process_single_release "$SOURCE_REPO" "$RELEASE_TAG" "$RELEASE_URL" "$RELEASE_DATE"
+              
+              # Determine the correct author based on release type
+              AUTHOR=""
+              if [[ "$SOURCE_REPO" == "ublue-os/bluefin-lts" ]] || [[ "$RELEASE_TAG" == lts-* ]]; then
+                AUTHOR="bluefin-lts-release-bot"
+              elif [[ "$RELEASE_TAG" == *"gts"* ]]; then
+                AUTHOR="bluefin-gts-release-bot"
+              else
+                AUTHOR="bluefin-release-bot"
+              fi
+              
+              echo "Using author: $AUTHOR for repository dispatch release"
+              
+              # Call process_single_release with author parameter
+              RELEASE_NAME=$(echo "$RELEASE_DATA" | jq -r '.name // .tag_name')
+              RELEASE_BODY=$(echo "$RELEASE_DATA" | jq -r '.body // ""')
+              
+              output=$(./scripts/process_single_release.sh "$SOURCE_REPO" "$RELEASE_TAG" "$RELEASE_URL" "$RELEASE_DATE" "$RELEASE_NAME" "$RELEASE_BODY" "false" "$AUTHOR" 2>&1)
+              local result=$?
+              
+              echo "$output"
+              
+              if [[ $result -eq 0 ]]; then
+                  if echo "$output" | grep -q "SKIPPED:"; then
+                      FILES_SKIPPED+=("$SOURCE_REPO:$RELEASE_TAG")
+                      echo "⏭️ Skipped $RELEASE_TAG (file already exists)"
+                  else
+                      FILES_CREATED+=("$SOURCE_REPO:$RELEASE_TAG")
+                      echo "✅ Successfully created changelog for $RELEASE_TAG"
+                  fi
+              else
+                  PROCESSING_ERRORS+=("$SOURCE_REPO:$RELEASE_TAG - Processing error ($result)")
+                  echo "❌ Error processing $RELEASE_TAG (exit code: $result)"
+              fi
             fi
           fi
 
