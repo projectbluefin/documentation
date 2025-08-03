@@ -88,7 +88,7 @@ You can remove or comment the line below in `/etc/bashrc` to restore the default
 eval "$(starship init bash)"
 ```
 
-![image](https://github.com/user-attachments/assets/da7718c8-f82d-476b-ad0d-02c91e115ec8)
+![image](https://github.com/user-attachments/assets/013a75f5-0417-4287-9071-be58c8c38ffd)
 
 
 ## How do I modify the Linux kernel's boot arguments?
