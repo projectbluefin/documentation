@@ -15,10 +15,10 @@ slug: communications
 [community.projectbluefin.io](https://community.projectbluefin.io) - GitHub discussions for community chat and ideas.
 
 ### Ask Bluefin
-[ask.projectbluefin.io](https://ask.projectbluefin.io) - an AI dosu bot trained on Bluefin's documentation. Usage is tied to oyour github account, generous monthly free tier to help you learn Bluefin. 
+[ask.projectbluefin.io](https://ask.projectbluefin.io) - an AI dosu bot trained on Bluefin's documentation. Usage is tied to your github account, generous monthly free tier to help you learn Bluefin. 
 
 ### Feedback Survey
-[feedback.projectbluefin.io](https://feedback.projectbluefin.io) - Send your anonymous feedback directly to the team
+[feedback.projectbluefin.io](https://feedback.projectbluefin.io) - Send your anonymous feedback directly to the team!
 
 ## RSS Feeds
 
