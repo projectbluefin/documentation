@@ -49,6 +49,10 @@ const config: Config = {
           editUrl: "https://github.com/ublue-os/bluefin-docs/edit/main/",
           authorsMapPath: "authors.yaml",
           truncateMarker: /(?!.*)/,
+          feedOptions: {
+            type: ['rss', 'atom'],
+            xslt: true,
+          },
         },
         theme: {
           customCss: "./src/css/custom.css",
