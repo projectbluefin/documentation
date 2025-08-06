@@ -109,5 +109,5 @@ docker compose up -d
 
 and your ollama instance should be up and running at `http://127.0.0.1:11434`!
 
-> **NOTE:** if you still want to use Alpaca as one of the way of interacting with Ollama, you can open the application, then go to _Preferences_, toggle the option _Use the Remote Connection to Ollama_, specify the endpoint above (`http://127.0.0.1:11434`) as _Server URL_ (leave _Bearer Token_ empty) in the dialog that will pop up and then press _Connect_.
+> **NOTE:** if you still want to use Alpaca to interact with Ollama, you can open the application, then go to _Preferences_, toggle the option _Use the Remote Connection to Ollama_, specify the endpoint above (`http://127.0.0.1:11434`) as _Server URL_ (leave _Bearer Token_ empty) in the dialog that will pop up and then press _Connect_.
 > This way you should be able to manage the models installed on your ollama container and chat with them from the Alpaca GUI.
