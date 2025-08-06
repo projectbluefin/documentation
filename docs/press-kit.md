@@ -44,6 +44,8 @@ The name of the project is `Project Bluefin` but usually shortened to just `Blue
 
 `ublue-os` is used as convenience slugs in URLs or paths in the operating system such as `/usr/share/ublue-os`
 
+Also when dealing with communicating to end users, we want the word Universal to be repeated when mentioning the project. Invisible layer to the end user so that the focus can go on universal solutions for everyone. 
+
 # Governance
 
 All Universal Blue images share governance structures and are modelled after cloud native projects such as Kubernetes:
