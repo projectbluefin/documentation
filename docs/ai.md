@@ -25,27 +25,23 @@ The [AI Lab extension](https://developers.redhat.com/products/podman-desktop/pod
 
 [Ramalama](https://github.com/containers/ramalama) is included to manage local models and is the prefered default experience. It's for people who work with local models frequently and need advanced features. It offers the ability to pull models from huggingface, ollama, and any container registry. By default it pulls from ollama.com, check the [Ramalama documentation](https://github.com/containers/ramalama/tree/main/docs) for more information.
 
-Ramalama's command line experience is similar to Podman, examples include:
+Ramalama's command line experience is similar to Podman. Bluefin sets `rl` as an alias for `ramalama`, for brevity. Examples include:
 
 ```
-ramalama pull llama3.2:latest
-ramalama run llama3.2
-ramalama run deepseek-r1
+rl pull llama3.2:latest
+rl run llama3.2
+rl run deepseek-r1
 ```
 
 You can also serve the models locally:
 
 ```
-ramalama serve deepseek-r1
-```
-
-Then go to `http://127.0.0.0:8080` in your browser. Bluefin sets `rl` as an alias for `ramalama`, for brevity.
-
-```
 rl serve deepseek-r1
 ```
 
-Ramalama will automatically pull in anything your host needs to do the workload. The images are also stored in the same container storage as your other containers. This allows for centralized management of the ai models and other podman images:
+Then go to `http://127.0.0.0:8080` in your browser. 
+
+Ramalama will automatically pull in anything your host needs to do the workload. The images are also stored in the same container storage as your other containers. This allows for centralized management of the models and other podman images:
 
 ```
 ❯ podman images
