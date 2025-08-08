@@ -31,5 +31,5 @@ If all you do is file an issue or start a discussion then I do owe you a thanks,
 
 We've been getting new pull requests in for folks - our way to improve is to continue to work on getting people contributing. LFX Insights is [open source](https://github.com/linuxfoundation/insights) and contains some of the largest projects in the world. The fact that we can be involved with this is awesome, and you can [submit OSS projects](https://github.com/linuxfoundation/insights/discussions)! Stick everything in there and let's see who is working on improving. 😄
 
-This is just coming live for us, if you're a chart nerd, then feel free to dive into LFX and get started, the team is responsive and moving fast. And if you're like me you'll find yourself fixing up your own individual dashboard. Make yourself look spectacular!
+This is just coming live for us, if you're a chart nerd, then feel free to dive into LFX and get started, the team is responsive and moving fast. And if you're like me you'll find yourself fixing up your own individual dashboard. Make yourself look spectacular! You'll be seeing these charts featured more on the website, etc. Enjoy!
 
