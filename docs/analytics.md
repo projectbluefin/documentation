@@ -52,13 +52,3 @@ Since Bluefin is an [Universal Blue](https://universal-blue.org) image, it lever
 
 ![Alt](https://repobeats.axiom.co/api/embed/8bde34be4a2fcd7f506672742563f330d0b6b240.svg "Repobeats analytics image")
 
-## Contributors
-
-<iframe
-    src="https://insights.linuxfoundation.org/embed/project/ublue-os-bluefin?widget=contributors-leaderboard&startDate=2024-08-08&endDate=2025-08-08&timeRangeKey=past365days&repos=ublue-os-bluefin&metric=all%3Aall"
-    width="600"
-    height="673"
-    allowfullscreen
-    loading="lazy"
-    style="border: none; border-radius: 8px">
-</iframe>
