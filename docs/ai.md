@@ -53,11 +53,15 @@ REPOSITORY                                 TAG         IMAGE ID      CREATED    
 quay.io/ramalama/rocm                      latest      8875feffdb87  5 days ago     6.92 GB
 ```
 
+### Integrating with Existing Tools 
+
+`ramalama serve` will serve an OpenAI compatible endpoint at `http://0.0.0.0:8080`, you can use this to configure tools that do not support ramalama directly:
+
+![Newelle](https://github.com/user-attachments/assets/ff079ed5-43af-48fb-8e7b-e5b9446b3bfe)
+
 ## Alpaca Graphical Client
 
 For light chatbot usage we recommend that users [install Alpaca](https://flathub.org/apps/com.jeffser.Alpaca) to manage and chat with your LLM models from within a native desktop application. Alpaca supports Nvidia and AMD[^1] acceleration natively.
-
-The user is prompted to [install ollama separately](https://github.com/Jeffser/Alpaca/wiki/Installing-Ollama) when running Alpaca for the first time.
 
 :::tip[Only a keystroke away]
 
@@ -65,9 +69,11 @@ Bluefin binds `Ctrl`-`Alt`-`Backspace` as a quicklaunch for Alpaca automatically
 
 :::
 
-![image](https://github.com/user-attachments/assets/9fd38164-e2a9-4da1-9bcd-29e0e7add071)
+### Configuration
 
-[^1]: For proper AMD support, the Flatpak extension `com.jeffser.Alpaca.Plugins.AMD` must also be installed.
+![Alpaca](https://github.com/user-attachments/assets/104c5263-5d34-497a-b986-93bb0a41c23e)
+
+![image](https://github.com/user-attachments/assets/9fd38164-e2a9-4da1-9bcd-29e0e7add071)
 
 ## Running Ollama as a Service
 
