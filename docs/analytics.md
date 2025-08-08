@@ -3,6 +3,8 @@ title: Analytics
 slug: /analytics
 ---
 
+# User Metrics
+
 Bluefin is a high performance predator, the team believes in the importance of instrumentation and telemetry as a means to improve software. However that information must be privacy respecting via an open process so that we can verify what information is being donated.
 
 > Data, for me, is the foundation of F1. There's no human judgment involved. You've got to get your foundation right in data.
@@ -34,7 +36,7 @@ brew analytics off
 
 Check the [homebrew documentation](https://docs.brew.sh/Analytics) for more information. You can also checkout the [operating system rankings](https://formulae.brew.sh/analytics/os-version/30d/) as a fun competition.
 
-## Contributor Metrics
+# Contributor Metrics
 
 Since Bluefin is an [Universal Blue](https://universal-blue.org) image, it leverages the shared maintenance of a larger community. Note that builds are automated, long periods of inactivity are normal.
 
@@ -49,3 +51,14 @@ Since Bluefin is an [Universal Blue](https://universal-blue.org) image, it lever
 **Shared Packages**
 
 ![Alt](https://repobeats.axiom.co/api/embed/8bde34be4a2fcd7f506672742563f330d0b6b240.svg "Repobeats analytics image")
+
+## Contributors
+
+<iframe
+    src="https://insights.linuxfoundation.org/embed/project/ublue-os-bluefin?widget=contributors-leaderboard&startDate=2024-08-08&endDate=2025-08-08&timeRangeKey=past365days&repos=ublue-os-bluefin&metric=all%3Aall"
+    width="600"
+    height="673"
+    allowfullscreen
+    loading="lazy"
+    style="border: none; border-radius: 8px">
+</iframe>
