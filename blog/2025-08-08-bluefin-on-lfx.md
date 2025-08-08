@@ -33,3 +33,5 @@ We've been getting new pull requests in for folks - our way to improve is to con
 
 This is just coming live for us, if you're a chart nerd, then feel free to dive into LFX and get started, the team is responsive and moving fast. And if you're like me you'll find yourself fixing up your own individual dashboard. Make yourself look spectacular! You'll be seeing these charts featured more on the website, etc. Enjoy!
 
+### [Discussion](https://github.com/ublue-os/bluefin/discussions/2960)
+
