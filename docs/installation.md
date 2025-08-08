@@ -9,7 +9,7 @@ In order to set yourself up for success, it's useful to plan out your Bluefin in
 
 :::info[💙 Please do not send your loved ones to this page 💙]
 
-This runbook is for experienced users who are installing Bluefin for someone else. It is intended to be technical. Don't forget to [pick a good playlist](/dinosaurs/#music) for maximum immersion. 
+This runbook is for experienced users who are installing Bluefin for someone else. It is intended to be at an advanced technical skill level. Don't forget to [pick a good playlist](/dinosaurs/#music) for maximum immersion. 
 
 :::
 
