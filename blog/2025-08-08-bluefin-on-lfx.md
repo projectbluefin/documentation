@@ -9,6 +9,8 @@ This is a Linux Foundation effort to measure something near and dear to our hear
 
 Let's see how we're doing ... 
 
+[![LFX Health Score](https://insights.linuxfoundation.org/api/badge/health-score?project=ublue-os-bluefin)](https://insights.linuxfoundation.org/project/ublue-os-bluefin)
+
 ## Fancy Charts
 
 ![Whew](https://github.com/user-attachments/assets/4c05d343-76d6-4c9a-8b74-83fb0cf634e8)
