@@ -28,7 +28,7 @@ The name of the project is `Project Bluefin` but usually shortened to just `Blue
 - `Fedora Bluefin` - this implies a formal relationship between Fedora and Bluefin. Check the [mission document](https://universal-blue.org/mission.html) for more information about the relationship between Fedora and Universal Blue
 - `Atomic` or any variation - this is a Fedora brand name and unrelated to Bluefin
    - Addressing them both as Atomic weakens Fedora's brand, so a collective way to address them as a group would be cloud-native operating systems or just bootc images. Or just bootable containers, don't overthink it. bootc is the technology we all depend on and we should ensure that it is the #1 brand when it comes to this style of Linux. 
-   - Addressing them as "atomics" is wholey inapproprite unless you are Paul Atreides
+   - Addressing them as "atomics" is wholey inappropriate unless you are Paul Atreides
 - `Universal Blue Bluefin` or `uBlue Bluefin` - "Bluefin is built with Universal Blue" or "Bluefin is a Universal Blue image" is recommended instead.
 - "Immutable Distribution" - Bluefin is an operating system, it is neither immutable nor a distribution, it is a custom image that is a collection of distributions: Flathub, Homebrew, and Fedora
 
