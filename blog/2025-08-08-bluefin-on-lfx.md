@@ -1,5 +1,6 @@
 ---
 title: Joining LFX Insights
+authors: [castrojo]
 ---
 
 A nice milestone for us today! [Bluefin](https://insights.linuxfoundation.org/project/ublue-os-bluefin), [Aurora](https://insights.linuxfoundation.org/project/ublue-os-aurora), [Bazzite](https://insights.linuxfoundation.org/project/ublue-os-bazzite), and [Cayo](https://insights.linuxfoundation.org/project/cayo) are now listed in [LFX Insights](https://insights.linuxfoundation.org/).
