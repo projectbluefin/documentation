@@ -28,6 +28,13 @@ Here are some GNOME extensions that the maintainers recommend to round out your 
 
 ![Clipboard Indicator](https://github.com/user-attachments/assets/f3ef40ce-41ec-47a2-a78b-94ff4a129086)
 
+- [Bluetooth Battery Meter](https://extensions.gnome.org/extension/6670/bluetooth-battery-meter/)
+
+![Bluetooth Battery Meter](https://github.com/user-attachments/assets/c984cd64-cdae-4b7a-9c50-3d7ef9ffc83a)
+
+- [Battery Health Charging](https://github.com/maniacx/Battery-Health-Charging)
+
+![Battery Health Charging](https://github.com/user-attachments/assets/ca390411-dc1b-4e57-9c7a-a79d36b4d32b)
 
 ## Bluefin to Go: Using an external drive
 
