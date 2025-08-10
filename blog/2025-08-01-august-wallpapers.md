@@ -25,14 +25,5 @@ We're still working on it so there's some improvements to be made, as well as so
 
 [Bazaar](https://github.com/kolunmi/bazaar) continues to improve, things are mostly settled. We fixed the MIME types for flatpakref files so that should be good to go. We're mostly waiting on this to come to Flathub so we can add it to Bluefin LTS, the team is helping out with that process.
 
-## Introducing Gradia and Emoji Picker
-
-We've added Gradia for nicer screenshots, and Smile for emojis. You can either run `ujust install-system-flatpaks` or click on the links to install them. 
-
-- **[Gradia](https://flathub.org/apps/be.alexandervanhee.gradia)**: <kbd>Super</kbd>+<kbd>PrintScreen</kbd> - Advanced screenshot and annotation tool
-- **[Smile](https://flathub.org/apps/it.mijorus.smile)**: <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Space</kbd> and <kbd>Super</kbd>+<kbd>.</kbd> - Emoji picker and special characters
- 
-![All three tools](https://github.com/user-attachments/assets/bc70a63f-7bd1-4941-b5c3-c5e6480e90f0)
-
 ## [Discuss this post](https://github.com/ublue-os/bluefin/discussions/2901)
 
