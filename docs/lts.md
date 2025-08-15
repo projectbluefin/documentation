@@ -24,7 +24,7 @@ This species of raptor is for users who prefer a slower release cadence, about a
 
 Bluefin LTS is composed of:
 
-- Mostly the same packages of Bluefin and Bluefin GTS, but built with CentOS Stream 10 and EPEL
+- The same packages of Bluefin and Bluefin GTS, but built with CentOS Stream 10 and EPEL
   - The same features since they share the same source RPMs, just built on CentOS
 - ARM (aarch64) based images
 - The Nvidia version of Bluefin LTS is branded as [Bluefin GDX](/gdx) and designed for AI and other GPU heavy workflows and includes CUDA
