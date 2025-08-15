@@ -32,7 +32,7 @@ System updates are image-based and automatic. Applications are logically separat
 - [Developer Mode](/bluefin-dx) - Dedicated developer mode that transforms Bluefin into a powerful cloud-native developer workstation
 - [Ptyxis terminal](https://devsuite.app/ptyxis/) for container-focused workflows
   - [Distroshelf](https://flathub.org/apps/com.ranfdev.DistroShelf) ([Donate](https://github.com/sponsors/ranfdev)) for container management
-- [Tailscale](https://tailscale.com) ([Donate](https://github.com/sponsors/tailscale)) - included for VPN along with `wireguard-tools`
+- [Tailscale](https://tailscale.com) - included for VPN along with `wireguard-tools`
   - Use `ujust toggle-tailscale` to turn it off if you don't plan on using it.
 - [GNOME Extensions Manager](https://flathub.org/apps/com.mattjakeman.ExtensionManager) ([Donate](https://github.com/sponsors/mjakeman)) included
 - [Bazaar Application Store](https://github.com/kolunmi/bazaar) featuring [Flathub](https://flathub.org):
