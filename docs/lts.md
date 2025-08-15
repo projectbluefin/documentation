@@ -140,4 +140,5 @@ Note that secureboot and hibernation are mutually exclusive. We do not yet offer
 
 The team appreciates your support!
 
+- [James Reilly](https://github.com/sponsors/hanthor) - LTS Specialist and shameless AI enjoyer
 - <a class="github-button" href="https://github.com/sponsors/tulilirockz" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-heart" data-size="large" aria-label="Sponsor tulilirockz">Sponsor</a> [Tulip Blossom](https://github.com/tulilirockz)- Lead Raptor Wrangler
