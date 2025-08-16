@@ -11,12 +11,6 @@ _Achillobator giganticus_
 
 Larger, more lethal [Bluefin](https://projectbluefin.io). `bluefin:lts` is built on CentOS 10.
 
-:::warning
-
-Bluefin LTS is in Beta, and is in progress, some things in this document are aspirational but will be completed by GA.
-
-:::
-
 ## Purpose
 
 Bluefin LTS is a workstation designed for people who prefer Long Term Support but desire a modern desktop.
@@ -32,7 +26,7 @@ Bluefin LTS is composed of:
 Bluefin LTS also offers a hardware enablement branch with:
 
 - Updated, but gated Linux kernel, usually one minor point release behind Fedora
-- Toggle between branches with `ujust toggle-hwe`
+- Use `ujust rebase-helper`
 
 ![Pasted image](https://github.com/user-attachments/assets/3972ac0f-d37e-4e89-ae91-ff1eb76eabeb)
 
@@ -40,21 +34,11 @@ Bluefin LTS also offers a hardware enablement branch with:
 
 Bluefin LTS ships with Linux 6.12.0, which is the kernel for the lifetime of release. It is for change-averse users. Bluefin LTS provides a backported GNOME desktop so that you are not left behind. And an optional `hwe` branch with new kernels.
 
-### Blockers
-
-- Secure Boot
-
-### Next Up
-
-- ZFS support
-
 ### Status
 
-- There are instances when something from Bluefin is not implemented in Bluefin LTS. Please [file an issue](https://github.com/ublue-os/bluefin-lts/issues) and tag it with `parity` and the team will investigate. They'll never _exactly_ but we can get the important ones done
+- There may be instances when something from Bluefin is not implemented in Bluefin LTS. Please [file an issue](https://github.com/ublue-os/bluefin-lts/issues) and tag it with `parity` and the team will investigate. They'll never _exactly_ but we can get the important ones done
 - Appimages are hard unsupported (those fuse packages aren't even in CentOS)
 - Local Layering is disabled by default
-
-Due to its nature Bluefin LTS is stable _in practice_, the reason it is tagged as Beta is that we want to let it cook for a while. After a few major upgrades and the community feels like it's been enough then we'll be done. Exciting times ahead!
 
 ## Installation
 
@@ -70,12 +54,6 @@ Check the [downloads page](./downloads.md) to download the correct ISO.
 
 The only Bluefin LTS available with Nvidia drivers is [Bluefin GDX](/gdx). If you select Nvidia on the website it will download this ISO. Read this documentation first since it applies to Bluefin GDX.
 
-:::warning
-
-The ISO uses Fedora to install Bluefin LTS, this is confusing because it will say Fedora but install a CentOS based image. We're working on fixing the branding to hide this from you because that's just bonkers.
-
-:::
-
 **Do not rebase to this from an existing Fedora image, ain't no one testing that.**
 
 ### Images
@@ -86,7 +64,7 @@ The following images and tags are available:
 
 - `bluefin:lts` - base LTS experience, kernel 6.12.0 with long term maintenance from CentOS with backported GNOME releases.
 - `bluefin-gdx:lts` - includes Nvidia drivers and associated CUDA tooling. This is the only image with Nvidia drivers. See [Bluefin GDX](/gdx)
-- `bluefin:lts-testing` - Fresher but gated Linux kernels, the latest patch version of the previous minor kernel release.
+- `bluefin:lts-hwe` - Fresher but gated Linux kernels, the latest patch version of the previous minor kernel release.
 
 All images offer Bluefin's [Developer Mode](/bluefin-dx).
 
@@ -110,12 +88,7 @@ If there are other ways to set this up on MacOS please considering sending a pul
 
 #### Other features
 
-- Rebasing: We will explicitly not support rebasing from the Fedora based images and ensure the rebase helper keeps users protected.
 - Releases: Builds publish weekly on Tuesdays, the images will update as often as the team is developing and will settle down into weeklies as the project matures
-
-#### Schedule
-
-- General Availability: Summer 2025
 
 ## Building Locally
 
