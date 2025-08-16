@@ -37,3 +37,19 @@ This is just coming live for us, if you're a chart nerd, then feel free to dive 
 
 ### [Discussion](https://github.com/ublue-os/bluefin/discussions/2960)
 
+<script src="https://giscus.app/client.js"
+        data-repo="ublue-os/bluefin"
+        data-repo-id="R_kgDOJHEu4g"
+        data-category="Discussions"
+        data-category-id="DIC_kwDOJHEu4s4CtFFL"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="bottom"
+        data-theme="catppuccin_mocha"
+        data-lang="en"
+        crossorigin="anonymous"
+        async>
+</script>
+
