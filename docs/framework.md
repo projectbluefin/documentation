@@ -9,7 +9,7 @@ Fedora is an officially supported option for the [Framework](https://frame.work)
 
 ![83a08fa741add9e31b4762bf601337e4b506db8d](https://github.com/user-attachments/assets/3dd48f0f-f839-47ca-96f3-8e230e11e47e)
 
-Bluefin and it's sister images [Aurora](https://getaurora.dev), and [Bazzite](https://bazzite.gg) are community supported options on Framework hardware.
+Bluefin and its sister images [Aurora](https://getaurora.dev) and [Bazzite](https://bazzite.gg) are community supported options on Framework hardware.
 
 ![e7f719d97dee2083907dda5d06171608f6384bea](https://github.com/user-attachments/assets/3091108c-3228-400c-883d-16d6b734b47d)
 
