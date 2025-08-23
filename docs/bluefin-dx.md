@@ -146,7 +146,7 @@ DevPod also has support for JetBrains:
 
 ## Ramalama
 
-[Ramalama](https://github.com/containers/ramalama) is included for local management and serving of AI models. Check the [AI documentation](/ai) for more information.
+Install [Ramalama](https://github.com/containers/ramalama) with `brew install ramalama`: for local management and serving of AI models. Check the [AI documentation](/ai) for more information.
 
 ## Virtualization and Container Runtimes
 
