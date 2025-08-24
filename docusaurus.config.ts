@@ -52,6 +52,8 @@ const config: Config = {
           feedOptions: {
             type: ["rss", "atom"],
             xslt: true,
+            title: "Bluefin Blog",
+            description: "Official Blog and Announcements",
           },
         },
         theme: {
@@ -92,6 +94,8 @@ const config: Config = {
         feedOptions: {
           type: ["rss", "atom"],
           xslt: true,
+          title: "Bluefin Changelogs",
+          description: "Changelog information from across the ublue-os organization",
         },
       },
     ],
