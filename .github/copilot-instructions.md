@@ -38,6 +38,7 @@ Run production build locally:
 - Take screenshots of any UI changes to verify they display properly
 - ALWAYS run through the complete build process after making changes
 - Verify changelogs render correctly if you modify changelog files
+- Verify that changelogs ingest the stable and gts tags from ublue-os/bluefin and the lts tag from ublue-os/bluefin-lts
 
 **Always run these validation steps before committing:**
 
