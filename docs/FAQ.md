@@ -90,7 +90,6 @@ eval "$(starship init bash)"
 
 ![image](https://github.com/user-attachments/assets/013a75f5-0417-4287-9071-be58c8c38ffd)
 
-
 ## How do I modify the Linux kernel's boot arguments?
 
 See this section of the [upstream documentation](https://docs.fedoraproject.org/en-US/fedora-coreos/kernel-args/#_modifying_kernel_arguments_on_existing_systems).

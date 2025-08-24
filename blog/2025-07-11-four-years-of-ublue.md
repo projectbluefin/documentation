@@ -9,7 +9,6 @@ A little over four years ago some of my fellow ex-Ubuntu friends helped me compl
 
 Technically a day early but we intend to make this a weekend long celebration. [Eighteen months later](https://github.com/castrojo/ublue-image) we would form a community ... [Universal Blue](https://universal-blue.org), with the goal to provide modern Linux operating systems for the next generation of open source users and contributors.
 
-
 Now we have [Bazzite](https://bazzite.gg/), [Aurora](https://getaurora.dev/), and [Cayo](https://github.com/ublue-os/cayo). Finally, the tools to make our own fate. :smiling_imp: I don't have anything especially insightful to say other than thanks! Let's take a quick look at where we stand:
 
 ![chart](https://github.com/user-attachments/assets/8bb0acf8-3881-4746-b1e2-c74f06de7e9d)
