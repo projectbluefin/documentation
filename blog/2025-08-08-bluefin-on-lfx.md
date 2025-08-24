@@ -9,8 +9,6 @@ This is a Linux Foundation effort to measure something near and dear to our hear
 
 Let's see how we're doing ...
 
-[![LFX Health Score](https://insights.linuxfoundation.org/api/badge/health-score?project=ublue-os-bluefin)](https://insights.linuxfoundation.org/project/ublue-os-bluefin)
-
 ## Fancy Charts
 
 ![Whew](https://github.com/user-attachments/assets/4c05d343-76d6-4c9a-8b74-83fb0cf634e8)
@@ -34,6 +32,8 @@ If all you do is file an issue or start a discussion, then I do owe you a thanks
 We've been getting new pull requests in for folks - our way to improve is to continue to work on getting people contributing. LFX Insights is [open source](https://github.com/linuxfoundation/insights) and contains some of the largest projects in the world. The fact that we can be involved with this is awesome, and you can [submit OSS projects](https://github.com/linuxfoundation/insights/discussions)! Stick everything in there, and let's see who is working on improving. 😄
 
 This is just coming live for us, if you're a chart nerd, then feel free to dive into LFX and get started, the team is responsive and moving fast. And if you're like me, you'll find yourself fixing up your dashboard. Make yourself look spectacular! You'll be seeing these charts featured more on the website, etc. Enjoy!
+
+[![LFX Health Score](https://insights.linuxfoundation.org/api/badge/health-score?project=ublue-os-bluefin)](https://insights.linuxfoundation.org/project/ublue-os-bluefin)
 
 ### [Discussion](https://github.com/ublue-os/bluefin/discussions/2960)
 
