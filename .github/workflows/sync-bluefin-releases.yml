@@ -196,8 +196,8 @@ jobs:
           }
 
           # Process releases based on trigger type
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            echo "Processing all available releases from workflow dispatch..."
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]] || [[ "${{ github.event_name }}" == "schedule" ]]; then
+            echo "Processing all available releases from ${{ github.event_name }}..."
             
             # Process bluefin stable release if available
             if [[ "${{ steps.fetch_latest_releases.outputs.bluefin_stable_available }}" == "true" ]]; then

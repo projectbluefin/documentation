@@ -39,26 +39,27 @@ echo "Using author: $AUTHOR"
 FORMATTED_DATE=$(date -u -d "$RELEASE_DATE" '+%Y-%m-%d' 2>/dev/null || date -u -j -f '%Y-%m-%dT%H:%M:%SZ' "$RELEASE_DATE" '+%Y-%m-%d' 2>/dev/null || echo "$(date '+%Y-%m-%d')")
 
 # Determine release type based on source repository and tag pattern
-if [[ "$SOURCE_REPO" == "ublue-os/bluefin-lts" ]] || [[ "$RELEASE_TAG" == lts-* ]]; then
+if [[ "$SOURCE_REPO" == "ublue-os/bluefin-lts" ]] || [[ "$RELEASE_TAG" == lts-* ]] || [[ "$RELEASE_TAG" == lts.* ]]; then
     RELEASE_TYPE="lts"
     RELEASE_TAG_DISPLAY="LTS"
-    # Clean up the tag for filename (remove lts- prefix if present)
-    CLEAN_TAG=$(echo "$RELEASE_TAG" | sed 's/^lts-//')
+    # Clean up the tag for filename (remove lts- or lts. prefix if present)
+    CLEAN_TAG=$(echo "$RELEASE_TAG" | sed 's/^lts[-\.]//')
     # For LTS releases, slug tag is the same as clean tag
     SLUG_TAG="$CLEAN_TAG"
 elif [[ "$RELEASE_TAG" == *"gts"* ]]; then
     RELEASE_TYPE="gts"
     RELEASE_TAG_DISPLAY="GTS"
-    # Clean up the tag for filename (remove gts- prefix if present)
-    CLEAN_TAG=$(echo "$RELEASE_TAG" | sed 's/^gts-//')
+    # Clean up the tag for filename (remove gts- or gts. prefix if present)
+    CLEAN_TAG=$(echo "$RELEASE_TAG" | sed 's/^gts[-\.]//')
     # For GTS releases, slug tag is the same as clean tag
     SLUG_TAG="$CLEAN_TAG"
 else
     RELEASE_TYPE="stable"
     RELEASE_TAG_DISPLAY="Stable"
-    CLEAN_TAG="$RELEASE_TAG"
-    # For stable releases, slug tag removes the stable- prefix to avoid double "stable"
-    SLUG_TAG=$(echo "$RELEASE_TAG" | sed 's/^stable-//')
+    # For stable releases, clean up the tag to remove stable- or stable. prefix
+    CLEAN_TAG=$(echo "$RELEASE_TAG" | sed 's/^stable[-\.]//')
+    # For stable releases, slug tag is the same as clean tag to avoid double "stable"
+    SLUG_TAG="$CLEAN_TAG"
 fi
 
 # Remove 'v' prefix from tag if present for filename
