@@ -95,7 +95,7 @@ const config: Config = {
           type: ["rss", "atom"],
           xslt: true,
           title: "Bluefin Changelogs",
-          description: "Changelog information from across the ublue-os organization",
+          description: "Changelogs for Bluefin",
         },
       },
     ],
