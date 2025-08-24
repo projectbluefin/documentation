@@ -7,7 +7,7 @@ import type * as Preset from "@docusaurus/preset-classic";
 const config: Config = {
   title: "Bluefin",
   tagline: "Bluefin Documentation Resources",
-  favicon: "img/favicon.ico",
+  favicon: "img/logo.svg",
 
   url: "https://docs.projectbluefin.io/",
   baseUrl: "/",
