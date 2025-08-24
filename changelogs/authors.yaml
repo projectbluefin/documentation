@@ -30,7 +30,7 @@ bluefin-lts-release-bot:
   title: Long Term Support · Achillobator giganticus
   url: https://github.com/ublue-os/bluefin-lts
   email: jorge.castro@gmail.com
-  image_url: /img/bluefin-lts-release-bot.png
+  image_url: /img/bluefin-lts-release-bot.svg
   page: true
 # Common ublue-os contributors (add as needed)
 # Add more authors as changelog contributors are identified
