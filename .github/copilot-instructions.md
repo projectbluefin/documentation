@@ -185,12 +185,12 @@ After making any changes, ALWAYS:
 
 ## Repository Context
 
-This repository contains documentation for Bluefin OS. The main Bluefin OS images are built in the [ublue-os/bluefin](https://github.com/ublue-os/bluefin) repository. This docs repository:
+This repository contains documentation for Bluefin OS. The main Bluefin OS images are built in the [ublue-os/bluefin](https://github.com/ublue-os/bluefin) repository and [ublue-os/bluefin-lts](https://github.com/ublue-os/bluefin-lts) repositories. This docs repository:
 
 - Provides user-facing documentation
 - Generates release changelogs automatically
 - Deploys to https://docs.projectbluefin.io/ via GitHub Pages
-- Uses conventional commits for changelog generation
+- Uses conventional commits for changelog generation, follow the conventional commits spec when submitting pull requests: conventional-commits/conventionalcommits.org
 - Integrates with main repository via automated workflows
 
 Common documentation areas include:
