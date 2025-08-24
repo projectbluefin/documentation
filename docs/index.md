@@ -51,4 +51,3 @@ Check out our [list of videos and reviews](https://universal-blue.discourse.grou
 > - Stephen Jay Gould
 
 ![raptors](https://github.com/user-attachments/assets/217c80ab-f082-49c3-afa0-77950e0ccd9c)
-

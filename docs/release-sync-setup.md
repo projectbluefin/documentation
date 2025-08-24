@@ -106,7 +106,7 @@ Generated changelogs entries follow this format:
 The workflows handle multiple types of releases automatically:
 
 - **Stable releases**: Tags containing "stable" (e.g., `stable-20250803.2`) - Tagged as `stable`
-- **GTS releases**: Tags containing "gts" (e.g., `gts-20250801`) - Tagged as `gts`  
+- **GTS releases**: Tags containing "gts" (e.g., `gts-20250801`) - Tagged as `gts`
 - **LTS releases**: From the `ublue-os/bluefin-lts` repository (e.g., `lts-20250602`) - Tagged as `lts`
 - **Other releases**: Beta, alpha, RC, and development releases - Tagged as `other`
 

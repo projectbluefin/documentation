@@ -39,7 +39,7 @@ You can also serve the models locally:
 rl serve deepseek-r1
 ```
 
-Then go to `http://127.0.0.0:8080` in your browser. 
+Then go to `http://127.0.0.0:8080` in your browser.
 
 Ramalama will automatically pull in anything your host needs to do the workload. The images are also stored in the same container storage as your other containers. This allows for centralized management of the models and other podman images:
 
@@ -49,7 +49,7 @@ REPOSITORY                                 TAG         IMAGE ID      CREATED    
 quay.io/ramalama/rocm                      latest      8875feffdb87  5 days ago     6.92 GB
 ```
 
-### Integrating with Existing Tools 
+### Integrating with Existing Tools
 
 `ramalama serve` will serve an OpenAI compatible endpoint at `http://0.0.0.0:8080`, you can use this to configure tools that do not support ramalama directly:
 
