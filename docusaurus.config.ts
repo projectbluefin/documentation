@@ -130,7 +130,7 @@ const config: Config = {
       title: "Bluefin",
       logo: {
         alt: "Bluefin",
-        src: "img/logo.png",
+        src: "img/logo.svg",
       },
       items: [
         {
