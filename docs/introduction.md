@@ -32,7 +32,7 @@ System updates are image-based and automatic. Applications are logically separat
 - [Developer Mode](/bluefin-dx) - Dedicated developer mode that transforms Bluefin into a powerful cloud-native developer workstation
 - [Ptyxis terminal](https://devsuite.app/ptyxis/) for container-focused workflows
   - [Distroshelf](https://flathub.org/apps/com.ranfdev.DistroShelf) ([Donate](https://github.com/sponsors/ranfdev)) for container management
-- [Tailscale](https://tailscale.com) ([Donate](https://github.com/sponsors/tailscale)) - included for VPN along with `wireguard-tools`
+- [Tailscale](https://tailscale.com) - included for VPN along with `wireguard-tools`
   - Use `ujust toggle-tailscale` to turn it off if you don't plan on using it.
 - [GNOME Extensions Manager](https://flathub.org/apps/com.mattjakeman.ExtensionManager) ([Donate](https://github.com/sponsors/mjakeman)) included
 - [Bazaar Application Store](https://github.com/kolunmi/bazaar) featuring [Flathub](https://flathub.org):
@@ -52,14 +52,3 @@ System updates are image-based and automatic. Applications are logically separat
   - System designed for automatic staging of updates
     - If you've never used an image-based Linux before, use your computer normally
     - Don't overthink it—just shut your computer off when you're not using it
-
-## Default Keyboard Shortcuts
-
-Bluefin includes several pre-configured keyboard shortcuts for enhanced productivity:
-
-- **[Search Light](https://extensions.gnome.org/extension/5489/search-light/)**: <kbd>Super</kbd>+<kbd>Space</kbd> - macOS Spotlight-like search functionality
-- **[Gradia](https://flathub.org/apps/be.alexandervanhee.gradia)**: <kbd>Super</kbd>+<kbd>PrintScreen</kbd> - Advanced screenshot and annotation tool
-- **[Smile](https://flathub.org/apps/it.mijorus.smile)**: <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Space</kbd> and <kbd>Super</kbd>+<kbd>.</kbd> - Emoji picker and special characters
-
-![All three tools](https://github.com/user-attachments/assets/bc70a63f-7bd1-4941-b5c3-c5e6480e90f0)
-

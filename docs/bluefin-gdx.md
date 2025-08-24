@@ -1,5 +1,5 @@
 ---
-title: Bluefin GDX (Beta)
+title: Bluefin GDX
 slug: /gdx
 ---
 
@@ -27,7 +27,6 @@ Bluefin GDX is designed to be an AI Workstation by providng Nvidia drivers and [
 - [Nvidia CUDA](https://developer.nvidia.com/cuda-toolkit) and [VSCode integrations](https://developer.nvidia.com/nsight-visual-studio-code-edition)
 - [Ramalama](https://github.com/containers/ramalama) for local management and serving of AI models
 - [uv](https://github.com/astral-sh/uv) for Python package management
-- [pixi](https://prefix.dev/) package manager for Conda integration
 - ... and more! Check the [AI and Machine Learning](/ai) section for more!
 
 ### Hardware
@@ -51,4 +50,5 @@ Follow the [Bluefin LTS](/lts) instructions for post installation steps.
 
 The team appreciates your support!
 
+- [James Reilly](https://github.com/sponsors/hanthor) - LTS Specialist and shameless AI enjoyer
 - <a class="github-button" href="https://github.com/sponsors/tulilirockz" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-heart" data-size="large" aria-label="Sponsor tulilirockz">Sponsor</a> [Tulip Blossom](https://github.com/tulilirockz)- Lead Raptor Wrangler

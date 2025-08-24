@@ -27,8 +27,11 @@ The name of the project is `Project Bluefin` but usually shortened to just `Blue
 - `BluefinOS` `Bluefin OS` or `Bluefin Linux` - or any other addition of to the name, it's just `Bluefin`
 - `Fedora Bluefin` - this implies a formal relationship between Fedora and Bluefin. Check the [mission document](https://universal-blue.org/mission.html) for more information about the relationship between Fedora and Universal Blue
 - `Atomic` or any variation - this is a Fedora brand name and unrelated to Bluefin
+  - Addressing them both as Atomic weakens Fedora's brand, so a collective way to address them as a group would be cloud-native operating systems or just bootc images. Or just bootable containers, don't overthink it. bootc is the technology we all depend on and we should ensure that it is the #1 brand when it comes to this style of Linux.
+  - Addressing them as "atomics" is wholey inappropriate unless you are Paul Atreides
 - `Universal Blue Bluefin` or `uBlue Bluefin` - "Bluefin is built with Universal Blue" or "Bluefin is a Universal Blue image" is recommended instead.
 - "Immutable Distribution" - Bluefin is an operating system, it is neither immutable nor a distribution, it is a custom image that is a collection of distributions: Flathub, Homebrew, and Fedora
+  - Better examples would be "a bootc image", "a container image", or just "Bluefin"
 
 # Universal Blue Terminology
 
@@ -41,6 +44,8 @@ The name of the project is `Project Bluefin` but usually shortened to just `Blue
 - `uBlue`, `UBlue`, `ublue-os`, or any contraction of the term
 
 `ublue-os` is used as convenience slugs in URLs or paths in the operating system such as `/usr/share/ublue-os`
+
+Also when dealing with communicating to end users, we want the word Universal to be repeated when mentioning the project. Invisible layer to the end user so that the focus can go on universal solutions for everyone.
 
 # Governance
 

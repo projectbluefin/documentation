@@ -9,7 +9,6 @@ Alright everyone, it’s been fun testing!
 
 Now Bazaar has enough feature parity with gnome-software so we’ve gone ahead and made the switch in `bluefin:latest`. Most of you will get this update next weekend - in the meantime feel free to dive in and give feedback! `bluefin:stable-daily` will start to get this tomorrow.
 
-
 [![Blender](https://global.discourse-cdn.com/free1/uploads/univeral_blue/optimized/2X/f/f27454b850b7dc39d18cce600a1c083c305ce3a9_2_690x378.jpeg)
 
 [![Bazaar!](https://global.discourse-cdn.com/free1/uploads/univeral_blue/optimized/2X/f/fdb021e6b34e4aa505ff38e77d05e15976ace052_2_690x388.jpeg)

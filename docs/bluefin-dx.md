@@ -20,6 +20,8 @@ Bluefin goes "all in" on cloud native development and is used differently than a
 
 This differs from traditional distributions by making the development process operating system agnostic. There is no equivalent to `apt install php` on Bluefin; development is done with `podman` or `docker` directly via an IDE.
 
+We also believe in easy access to other thriving ecosystems like Python via `uv`. We throw in the towel on "one Linux system package manager to rule them all" because these ecosystems are giants themselves. Critics will say we ship too many package managers, we say we don't ship package managers, we ship _ecosystems that users want_. And these modern package managers are designed for a world running on containers because that's actually true. And we want it on our desktops out of the box.
+
 > We picked the cloud native pattern because local development in containers translates to deployment of containers on modern infrastructure.
 
 ![image](https://github.com/user-attachments/assets/51415b6c-b7fe-45e9-af74-c01694b26fbe)
@@ -142,20 +144,9 @@ DevPod also has support for JetBrains:
 - [Running Neovim with Devcontainers](https://cadu.dev/running-neovim-on-devcontainers/)
 - [DevPod Quickstart for Neovim](https://devpod.sh/docs/getting-started/quickstart-vim)
 
-## Kubernetes and other Cloud Native Tooling
-
-`ujust install-k8s-dev-tools` to get started:
-
-- [kind](https://kind.sigs.k8s.io/) - Run a Kubernetes cluster on your machine. Run `kind create cluster` on the host to get started!
-  - [kubectl](https://kubernetes.io/docs/reference/kubectl/) - Administer Kubernetes Clusters
-  - [k9s](https://k9scli.io/) and [kubectx](https://github.com/ahmetb/kubectx)
-    = [Dagger](https://dagger.io/) - an open-source runtime for composable workflows. This is a powerful tool that is a perfect match for Bluefin systems. (aka people are talking about this one.)
-
-If you feel there's a tool that should be included by default, send a PR [to this file](https://github.com/ublue-os/packages/blob/main/packages/bluefin/schemas/usr/share/ublue-os/homebrew/kubernetes.Brewfile). But let's not overdo it. 😄
-
 ## Ramalama
 
-[Ramalama](https://github.com/containers/ramalama) is included for local management and serving of AI models. Check the [AI documentation](/ai) for more information.
+Install [Ramalama](https://github.com/containers/ramalama) with `brew install ramalama`: for local management and serving of AI models. Check the [AI documentation](/ai) for more information.
 
 ## Virtualization and Container Runtimes
 

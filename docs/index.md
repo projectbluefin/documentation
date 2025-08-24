@@ -6,9 +6,7 @@ pagination_next: introduction
 
 # Welcome to Bluefin
 
-A custom image of Fedora Silverblue, offering a familiar Ubuntu-style desktop.
-
-For end users, it provides a system as reliable as a Chromebook with near-zero maintenance while providing developers with a powerful [cloud-native development mode](bluefin-dx). Built with next-generation technology, for people who need their machines to get work done.
+For end users a system as reliable as a Chromebook with near-zero maintenance while providing developers with a powerful [cloud-native development mode](bluefin-dx). Built with next-generation technology, for people who need their machines to get work done.
 
 ![Bluefin](https://github.com/user-attachments/assets/d3aa8bf9-c9fe-4fca-89e7-87b1ac808aa2)
 
@@ -53,4 +51,3 @@ Check out our [list of videos and reviews](https://universal-blue.discourse.grou
 > - Stephen Jay Gould
 
 ![raptors](https://github.com/user-attachments/assets/217c80ab-f082-49c3-afa0-77950e0ccd9c)
-

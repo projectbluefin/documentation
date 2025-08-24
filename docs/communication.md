@@ -6,19 +6,24 @@ slug: communications
 ## Channels and Resources
 
 ### Official Blog
+
 [blog.projectbluefin.io](https://blog.projectbluefin.io/) - Official announcements and news, the team posts regular announcements on this page.
 
 ### Changelogs
+
 [changelogs.projectbluefin.io](https://changelogs.projectbluefin.io) - Changelogs for all Bluefin releases, subscribe to this to keep track of incoming goodies!
 
 ### Discussions
+
 [community.projectbluefin.io](https://community.projectbluefin.io) - GitHub discussions for community chat and ideas.
 
 ### Ask Bluefin
-[ask.projectbluefin.io](https://ask.projectbluefin.io) - an AI dosu bot trained on Bluefin's documentation. Usage is tied to oyour github account, generous monthly free tier to help you learn Bluefin. 
+
+[ask.projectbluefin.io](https://ask.projectbluefin.io) - an AI dosu bot trained on Bluefin's documentation. Usage is tied to your github account, generous monthly free tier to help you learn Bluefin.
 
 ### Feedback Survey
-[feedback.projectbluefin.io](https://feedback.projectbluefin.io) - Send your anonymous feedback directly to the team
+
+[feedback.projectbluefin.io](https://feedback.projectbluefin.io) - Send your anonymous feedback directly to the team!
 
 ## RSS Feeds
 

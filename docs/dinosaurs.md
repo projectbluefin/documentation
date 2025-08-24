@@ -11,10 +11,9 @@ Here are the cast of characters! Each represent something important to this ecos
 
 Illustration by Delphic Melody (M. Gopal)
 
-
 ## Music
 
-The Bluefin team releases music playlists regularly. If you would like to curate these songs on another service please send a pull request: 
+The Bluefin team releases music playlists regularly. If you would like to curate these songs on another service please send a pull request:
 
 - Bluefin and the Birth of Universal Blue: [YouTube Music Playlist](https://music.youtube.com/playlist?list=PLhiPP9M5fgWHFlG3TS27gyOCQl4Dg115W&si=KfYPk3sBOM8HeRLW)
 - Bluefin finds Her Way: [YouTube Music Playlist](https://music.youtube.com/playlist?list=PLhiPP9M5fgWEvnp3w66WmcgiKvStzKXl9&si=eLmaXtQ6hbqU3LTV)

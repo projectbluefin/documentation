@@ -9,11 +9,11 @@ In order to set yourself up for success, it's useful to plan out your Bluefin in
 
 :::info[💙 Please do not send your loved ones to this page 💙]
 
-This runbook is for experienced users who are installing Bluefin for someone else. It is intended to be technical. Don't forget to [pick a good playlist](/dinosaurs/#music) for maximum immersion. 
+This runbook is for experienced users who are installing Bluefin for someone else. It is intended to be at an advanced technical skill level. Don't forget to [pick a good playlist](/dinosaurs/#music) for maximum immersion.
 
 :::
 
-This page is a short [runbook](https://www.pagerduty.com/resources/learn/what-is-a-runbook/) for the Bluefin installation process. Read the entirety of this documentation to ensure survival (in case of a raptor attack). 
+This page is a short [runbook](https://www.pagerduty.com/resources/learn/what-is-a-runbook/) for the Bluefin installation process. Read the entirety of this documentation to ensure survival (in case of a raptor attack).
 
 ### Requirements
 
@@ -129,10 +129,7 @@ Bluefin strives to make maintenance as straightforward as possible, however many
 - Run a System Upgrade via the menu option or `ujust update` to observe an update and reboot
   - `ujust changelogs` will show incoming changes and updates coming from Fedora
   - `ujust bios` will reboot the machine and enter the BIOS/UEFI menu. This is useful for booting into a Windows drive
-- Subscribe to the [announcements tag](https://universal-blue.discourse.group/tags/c/bluefin/6/announcements) on the Universal Blue forums
-  - [RSS Feed](https://universal-blue.discourse.group/tag/bluefin-news.rss)
-- Subscribe to the [release notes](https://github.com/ublue-os/bluefin/releases)
-  - [RSS Feed](https://github.com/ublue-os/bluefin/releases.atom)
+- Subscribe to the [blog](/blog) and [changelogs](/changelogs)
 - Understand [rebase and rollback procedures](/administration.md#switching-between-streams)
 - Use the [Warehouse application](https://github.com/flattool/warehouse) to manage Flatpak lifecycle:
   - Pin to an old version or rollback
