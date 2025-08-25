@@ -153,3 +153,7 @@ Install [Ramalama](https://github.com/containers/ramalama) with `brew install ra
 - [virt-manager](https://virt-manager.org/) and associated tooling (KVM, qemu)
 - [Incus](https://linuxcontainers.org/incus/) provides system containers
   - [LXC](https://linuxcontainers.org/) and [LXD](https://ubuntu.com/lxd) are also provided for compatibility reasons, however, these tools are deprecated and will be removed in Spring 2025
+ 
+# Local Application Development
+
+[GNOME Builder](https://developer.gnome.org/documentation/introduction/builder.html) is the recommended application stack for making application.
