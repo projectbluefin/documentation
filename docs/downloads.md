@@ -10,7 +10,7 @@ Here is a short [runbook](/installation) for the Bluefin installation process. R
 The most current, based on the latest Fedora.\
 📖 **[Read the documentation](/introduction)** to learn about features and differences.
 
-| Version | Architecture | Download                                                                                                             | Checksum                                                                                       |
+| Version | GPU | Download                                                                                                             | Checksum                                                                                       |
 | ------- | ------------ | -------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
 | Bluefin | AMD/Intel    | [📥 bluefin-stable-x86_64.iso](https://download.projectbluefin.io/bluefin-stable-x86_64.iso)                         | [🔐 Verify](https://download.projectbluefin.io/bluefin-stable-x86_64.iso-CHECKSUM)             |
 | Bluefin | Nvidia       | [📥 bluefin-nvidia-open-stable-x86_64.iso](https://download.projectbluefin.io/bluefin-nvidia-open-stable-x86_64.iso) | [🔐 Verify](https://download.projectbluefin.io/bluefin-nvidia-open-stable-x86_64.iso-CHECKSUM) |
@@ -20,7 +20,7 @@ The most current, based on the latest Fedora.\
 The default experience for users, following the previous stable release of Fedora.\
 📖 **[Read the documentation](/introduction)** to learn about features and differences.
 
-| Version     | Architecture | Download                                                                                                       | Checksum                                                                                    |
+| Version     | GPU | Download                                                                                                       | Checksum                                                                                    |
 | ----------- | ------------ | -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
 | Bluefin GTS | AMD/Intel    | [📥 bluefin-gts-x86_64.iso](https://download.projectbluefin.io/bluefin-gts-x86_64.iso)                         | [🔐 Verify](https://download.projectbluefin.io/bluefin-gts-x86_64.iso-CHECKSUM)             |
 | Bluefin GTS | Nvidia       | [📥 bluefin-nvidia-open-gts-x86_64.iso](https://download.projectbluefin.io/bluefin-nvidia-open-gts-x86_64.iso) | [🔐 Verify](https://download.projectbluefin.io/bluefin-nvidia-open-gts-x86_64.iso-CHECKSUM) |
@@ -30,10 +30,10 @@ The default experience for users, following the previous stable release of Fedor
 The long term support experience.\
 📖 **[Read the documentation](/lts)** to learn about features and differences.
 
-| Version            | Architecture  | Download                                                                                 | Checksum                                                                         |
+| Version            | GPU  | Download                                                                                 | Checksum                                                                         |
 | ------------------ | ------------- | ---------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| Bluefin LTS (Beta) | AMD/Intel     | [📥 bluefin-lts-x86_64.iso](https://download.projectbluefin.io/bluefin-lts-x86_64.iso)   | [🔐 Verify](https://download.projectbluefin.io/bluefin-lts-x86_64.iso-CHECKSUM)  |
-| Bluefin LTS (Beta) | ARM (aarch64) | [📥 bluefin-lts-aarch64.iso](https://download.projectbluefin.io/bluefin-lts-aarch64.iso) | [🔐 Verify](https://download.projectbluefin.io/bluefin-lts-aarch64.iso-CHECKSUM) |
+| Bluefin LTS  | AMD/Intel     | [📥 bluefin-lts-x86_64.iso](https://download.projectbluefin.io/bluefin-lts-x86_64.iso)   | [🔐 Verify](https://download.projectbluefin.io/bluefin-lts-x86_64.iso-CHECKSUM)  |
+| Bluefin LTS  | ARM (aarch64) | [📥 bluefin-lts-aarch64.iso](https://download.projectbluefin.io/bluefin-lts-aarch64.iso) | [🔐 Verify](https://download.projectbluefin.io/bluefin-lts-aarch64.iso-CHECKSUM) |
 
 ## Bluefin GDX
 
