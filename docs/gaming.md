@@ -32,7 +32,7 @@ Steam is a software distribution service with an online store, automated install
 _Note: To add a game library on another drive, first you need to grant the app access to it:_
 
 `flatpak override --user --filesystem=/path/to/your/Steam/Library com.valvesoftware.Steam`
-
+z
 ### Heroic Games Launcher
 
 Heroic is an Open Source Games Launcher that supports running Epic Games Store, GOG, and Prime Gaming games.
@@ -72,21 +72,3 @@ _Note: You need to add the following command so that Steam games can access Mang
 ### Steam Tinker Launch
 
 Steam Tinker Launch is a versatile Linux wrapper tool for use with the Steam client which allows for straightforward graphical configuration of game tools, such as GameScope, MangoHud, modding tools and a bunch more. It supports both games using Proton and native Linux games. Check out the [feature list](https://github.com/sonic2kk/steamtinkerlaunch/wiki#features) to see supported features.
-
-### Raw list of Flatpaks
-
-```
-app/com.valvesoftware.Steam/x86_64/stable
-app/com.heroicgameslauncher.hgl/x86_64/stable
-app/net.lutris.Lutris/x86_64/stable
-app/com.vysp3r.ProtonPlus/x86_64/stable
-app/com.dec05eba.gpu_screen_recorder/x86_64/stable
-app/com.github.Matoking.protontricks/x86_64/stable
-runtime/org.freedesktop.Platform.VulkanLayer.gamescope/x86_64/24.08
-runtime/org.freedesktop.Platform.VulkanLayer.gamescope/x86_64/23.08
-runtime/org.freedesktop.Platform.VulkanLayer.OBSVkCapture/x86_64/24.08
-runtime/com.obsproject.Studio.Plugin.OBSVkCapture/x86_64/stable
-runtime/org.freedesktop.Platform.VulkanLayer.MangoHud/x86_64/24.08
-runtime/org.freedesktop.Platform.VulkanLayer.MangoHud/x86_64/23.08
-runtime/com.valvesoftware.Steam.Utility.steamtinkerlaunch/x86_64/stable
-```
