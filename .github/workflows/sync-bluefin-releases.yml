@@ -336,6 +336,7 @@ jobs:
 
       - name: Create Pull Request
         if: steps.create_branch.outputs.has_changes == 'true'
+        id: create_pr
         run: |
           BRANCH_NAME="${{ steps.create_branch.outputs.branch_name }}"
           FILES_CREATED_COUNT="${{ steps.process_releases.outputs.files_created_count }}"
@@ -404,8 +405,8 @@ jobs:
           PR_BODY="$PR_BODY"$'\n'"- 🔒 **Bluefin LTS**: Long Term Support releases from ublue-os/bluefin-lts"
           PR_BODY="$PR_BODY"$'\n\n'"**Independent Processing:** This workflow now processes all version types independently with proper error handling to ensure maximum capture of release information."
 
-          # Create pull request using GitHub API
-          curl -X POST \
+          # Create pull request using GitHub API and capture response
+          PR_RESPONSE=$(curl -s -X POST \
             -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Content-Type: application/json" \
@@ -416,7 +417,92 @@ jobs:
               \"base\": \"main\",
               \"body\": $(echo "$PR_BODY" | jq -Rs .),
               \"draft\": false
-            }"
+            }")
+
+          # Check if PR creation was successful and extract PR number
+          if echo "$PR_RESPONSE" | jq -e '.number' > /dev/null; then
+            PR_NUMBER=$(echo "$PR_RESPONSE" | jq -r '.number')
+            echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
+            echo "pr_created=true" >> $GITHUB_OUTPUT
+            echo "✅ Pull request #$PR_NUMBER created successfully"
+          else
+            echo "❌ Failed to create pull request"
+            echo "API Response: $PR_RESPONSE"
+            echo "pr_created=false" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+      - name: Enable Auto-merge
+        if: steps.create_pr.outputs.pr_created == 'true'
+        run: |
+          PR_NUMBER="${{ steps.create_pr.outputs.pr_number }}"
+          
+          echo "🔄 Enabling auto-merge for PR #$PR_NUMBER..."
+          
+          # Enable auto-merge using GitHub API - correct endpoint for enabling auto-merge
+          # Note: The correct API endpoint is PUT /repos/{owner}/{repo}/pulls/{pull_number}/merge for enabling auto-merge
+          AUTO_MERGE_RESPONSE=$(curl -s -w "HTTPSTATUS:%{http_code}" \
+            -X PUT \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            -H "Content-Type: application/json" \
+            "https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUMBER/merge" \
+            -d '{
+              "merge_method": "merge"
+            }')
+
+          # Extract HTTP status and response body
+          HTTP_STATUS=$(echo "$AUTO_MERGE_RESPONSE" | sed -n 's/.*HTTPSTATUS:\([0-9]*\)$/\1/p')
+          RESPONSE_BODY=$(echo "$AUTO_MERGE_RESPONSE" | sed 's/HTTPSTATUS:[0-9]*$//')
+
+          echo "HTTP Status: $HTTP_STATUS"
+          
+          case $HTTP_STATUS in
+            200)
+              # Successfully merged or auto-merge enabled
+              if echo "$RESPONSE_BODY" | jq -e '.merged' > /dev/null 2>&1; then
+                MERGED=$(echo "$RESPONSE_BODY" | jq -r '.merged')
+                if [[ "$MERGED" == "true" ]]; then
+                  echo "✅ PR #$PR_NUMBER was automatically merged immediately"
+                else
+                  echo "✅ Auto-merge enabled for PR #$PR_NUMBER"
+                  echo "The PR will automatically merge when all branch protection requirements are met."
+                fi
+              else
+                echo "✅ Auto-merge enabled for PR #$PR_NUMBER"
+                echo "The PR will automatically merge when all branch protection requirements are met."
+              fi
+              ;;
+            202)
+              echo "✅ Auto-merge enabled for PR #$PR_NUMBER"
+              echo "The PR will automatically merge when all branch protection requirements are met."
+              ;;
+            404)
+              echo "⚠️ PR #$PR_NUMBER not found or auto-merge feature may not be available"
+              echo "This could be due to repository settings or permissions."
+              echo "The PR was created successfully but will require manual merging."
+              ;;
+            405)
+              echo "⚠️ Auto-merge is not enabled for this repository"
+              echo "Repository settings may need to be updated to allow auto-merge."
+              echo "The PR was created successfully but will require manual merging."
+              ;;
+            422)
+              ERROR_MSG=$(echo "$RESPONSE_BODY" | jq -r '.message // "Validation failed"')
+              echo "⚠️ Auto-merge could not be enabled for PR #$PR_NUMBER: $ERROR_MSG"
+              echo "This may be due to branch protection rules, required status checks, or conflicting changes."
+              echo "The PR was created successfully but will require manual merging."
+              ;;
+            *)
+              echo "⚠️ Unexpected HTTP status $HTTP_STATUS when enabling auto-merge for PR #$PR_NUMBER"
+              if [[ -n "$RESPONSE_BODY" ]]; then
+                ERROR_MSG=$(echo "$RESPONSE_BODY" | jq -r '.message // "Unknown error"')
+                echo "Error message: $ERROR_MSG"
+              fi
+              echo "The PR was created successfully but auto-merge status is unclear."
+              ;;
+          esac
 
       - name: Create comprehensive summary
         run: |
