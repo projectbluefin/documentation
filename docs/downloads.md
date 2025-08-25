@@ -40,7 +40,7 @@ The long term support experience.\
 The AI workstation with Nvidia and CUDA.\
 📖 **[Read the documentation](/gdx)** to learn about features and differences.
 
-| Version            | Architecture  | Download                                                                                         | Checksum                                                                             |
+| Version            | GPU  | Download                                                                                         | Checksum                                                                             |
 | ------------------ | ------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
 | Bluefin GDX | Nvidia        | [📥 bluefin-gdx-x86_64.iso](https://download.projectbluefin.io/bluefin-gdx-lts-x86_64.iso)       | [🔐 Verify](https://download.projectbluefin.io/bluefin-gdx-lts-x86_64.iso-CHECKSUM)  |
 | Bluefin GDX | ARM (aarch64) | [📥 bluefin-gdx-lts-aarch64.iso](https://download.projectbluefin.io/bluefin-gdx-lts-aarch64.iso) | [🔐 Verify](https://download.projectbluefin.io/bluefin-gdx-lts-aarch64.iso-CHECKSUM) |
