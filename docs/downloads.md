@@ -93,5 +93,5 @@ a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef123456  bluefin-stable
 $ cat bluefin-stable-x86_64.iso-CHECKSUM
 a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef123456  bluefin-stable-x86_64.iso
 
-# ✅ Match! Your download is verified
+# 🦖 Rawr! Your download is verified
 ```
