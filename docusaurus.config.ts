@@ -6,7 +6,7 @@ import type * as Preset from "@docusaurus/preset-classic";
 
 const config: Config = {
   title: "Bluefin",
-  tagline: "Bluefin Documentation Resources",
+  tagline: "Bluefin Documentation",
   favicon: "img/logo.svg",
 
   url: "https://docs.projectbluefin.io/",
@@ -85,7 +85,7 @@ const config: Config = {
          */
         blogTitle: "Changelogs",
         blogDescription:
-          "Changelog information from across the ublue-os organization",
+          "Changelogs for Bluefin",
         blogSidebarCount: "ALL",
         blogSidebarTitle: "All Changelogs",
         authorsMapPath: "authors.yaml",
