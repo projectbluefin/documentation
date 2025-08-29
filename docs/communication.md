@@ -15,9 +15,9 @@ slug: communications
 
 ### Discussions
 
-[community.projectbluefin.io](https://community.projectbluefin.io) - GitHub discussions for community chat and ideas.
-[Discussions RSS Feed](https://github.com/ublue-os/bluefin/discussions.atom)
-[Discussions Announcements RSS](https://github.com/ublue-os/bluefin/discussions.atom?discussions_q=is%3Aopen+label%3Aannouncements)
+- [community.projectbluefin.io](https://community.projectbluefin.io) - GitHub discussions for community chat and ideas.
+- [Discussions RSS Feed](https://github.com/ublue-os/bluefin/discussions.atom)
+- [Discussions Announcements RSS](https://github.com/ublue-os/bluefin/discussions.atom?discussions_q=is%3Aopen+label%3Aannouncements)
 
 ### Ask Bluefin
 
