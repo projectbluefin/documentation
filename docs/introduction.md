@@ -28,7 +28,7 @@ System updates are image-based and automatic. Applications are logically separat
     - [GSConnect](https://github.com/GSConnect/gnome-shell-extension-gsconnect) - Integrate your mobile device with your desktop
     - [Blur my Shell](https://github.com/aunetx/blur-my-shell) ([Donate](https://github.com/sponsors/aunetx)) - for that bling
     - [Tailscale GNOME QS](https://extensions.gnome.org/extension/6139/tailscale-qs/) for [tailscale integration](https://universal-blue.discourse.group/t/tailscale-vpn/290)
-    - [Search Light](https://github.com/icedman/search-light) - provides search functionality and a macOS Spotlight-like workflow. Bound to <kbd>Super</kbd>-<kbd>Space</kbd> by default. Check the screenshot at the bottom of this page for an example
+    - [Search Light](https://github.com/icedman/search-light) - provides search functionality and a macOS Spotlight-like workflow. Bound to <kbd>Super</kbd>-<kbd>Space</kbd> by default.
 - [Developer Mode](/bluefin-dx) - Dedicated developer mode that transforms Bluefin into a powerful cloud-native developer workstation
 - [Ptyxis terminal](https://devsuite.app/ptyxis/) for container-focused workflows
   - [Distroshelf](https://flathub.org/apps/com.ranfdev.DistroShelf) ([Donate](https://github.com/sponsors/ranfdev)) for container management
