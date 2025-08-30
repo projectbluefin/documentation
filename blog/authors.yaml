@@ -6,6 +6,7 @@ castrojo:
   image_url: https://github.com/castrojo.png
   email: jorge.castro@gmail.com
   socials:
-    github: castrojo
-    linkedin: jorge-castro2112
-    newsletter: https://ypsidanger.com
+    bluesky: "castrojo.bsky.social"
+    github: "castrojo"
+    linkedin: "jorge-castro2112"
+    newsletter: "https://ypsidanger.com"
