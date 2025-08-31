@@ -66,7 +66,7 @@ jobs:
             fi
             
             # Find latest GTS release (tag contains 'gts')
-            BLUEFIN_GTS_RELEASE=$(echo "$BLUEFIN_RELEASES" | jq -r '[.[] | select(.tag_name | test("gts")) | select(.prerelease == true)] | .[0]')
+            BLUEFIN_GTS_RELEASE=$(echo "$BLUEFIN_RELEASES" | jq -r '[.[] | select(.tag_name | test("gts"))] | .[0]')
             if [[ "$BLUEFIN_GTS_RELEASE" != "null" ]]; then
               BLUEFIN_GTS_TAG=$(echo "$BLUEFIN_GTS_RELEASE" | jq -r '.tag_name')
               BLUEFIN_GTS_URL=$(echo "$BLUEFIN_GTS_RELEASE" | jq -r '.html_url')
