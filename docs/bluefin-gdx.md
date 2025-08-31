@@ -40,11 +40,7 @@ Bluefin GDX runs great on any PC with the right hardware, but has been tested an
 
 ## Installation
 
-Check the [downloads page](./downloads.md) for more information.
-
-- Image: [bluefin-gdx:lts](https://github.com/ublue-os/bluefin-lts/pkgs/container/bluefin-gdx)
-
-Follow the [Bluefin LTS](/lts) instructions for post installation steps.
+Check the [downloads page](./downloads.md) for more information. Follow the [Bluefin LTS](/lts) instructions for post installation steps.
 
 ## Supporting Bluefin GDX
 
