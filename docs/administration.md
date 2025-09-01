@@ -52,16 +52,8 @@ Bluefin offers images based on the current and last stable version of Fedora, as
 
 `gts`: This is the default image and is always aliased to the previous stable version of Fedora. It targets the majority of users. It is slang for "Grand Touring Support", to signify a faster cadence than an [LTS](https://www.linux.com/news/mark-shuttleworth-ubuntu-long-term-support/). It also features a gated kernel.
 
-#### Latest (For Testers)
-
+:::note[Latest (For Testers)]
 `latest`: For users who want the very latest Fedora has to offer, an ungated Linux kernel, daily updates, full open throttle. 🔥 This stream is purposely left unbranded and is not meant for general purpose use.
-
-:::info[It's all just Bluefin]
-
-Bluefin's components are shared across all images, don't think of it as a separate "Edition" or "Spin". Bluefin strives to be the same across all the images, we feel that the aggressiveness of updates can be "be a setting". Ideally you use "Bluefin" and don't need to care about your update stream.
-
-`lts` for a work machine and `stable` for your hot rod.
-
 :::
 
 You can choose from three rolling tags, or lock to a specific version of Fedora. Check the [release notes](https://github.com/ublue-os/bluefin/releases) for specific version information:
@@ -84,6 +76,14 @@ The major difference between `latest` and `stable` is the kernel cadence and whe
 The `gts` and `stable` tags feature a gated kernel. This kernel follows the same version as the [Fedora CoreOS stable stream](https://fedoraproject.org/coreos/release-notes?arch=x86_64&stream=stable), which is a slower cadence than default Fedora Silverblue. The Universal Blue team may temporarily pin to a specific kernel in order to avoid regressions that may affect users.
 
 Adding and editing kernel boot arguments is currently handled by `rpm-ostree`, check the [upstream documentation](https://docs.fedoraproject.org/en-US/fedora-coreos/kernel-args/#_modifying_kernel_arguments_on_existing_systems) for more information.
+
+:::info[It's all just Bluefin]
+
+Bluefin's components are shared across all images, don't think of it as a separate "Edition" or "Spin". Bluefin strives to be the same across all the images, we feel that the aggressiveness of updates can be "be a setting". Ideally you use "Bluefin" and don't need to care about your update stream.
+
+`lts` for a work machine and `stable` for your hot rod.
+
+:::
 
 ### Switching between Streams
 
