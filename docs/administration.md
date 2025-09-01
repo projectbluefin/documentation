@@ -183,7 +183,8 @@ Check the [Fedora Silverblue User Guide](https://docs.fedoraproject.org/en-US/fe
 - [Using Tailscale with Docker](https://tailscale.com/kb/1282/docker) - for development
 - `ujust toggle-tailscale` will remove the built in desktop integration if you prefer to use something else
 - Tailscale's [YouTube channel](https://www.youtube.com/@Tailscale) has lots of great tips and tricks
-- Good VPN providers provide Wireguard configurations that can be imported directly into the Network Manager, check their documentation for more information
+- Good VPN providers may provide Wireguard configurations that can be imported directly into the Network Manager, check their documentation for more information:
+  - [NordVPN](https://support.nordvpn.com/hc/en-us/articles/20347784574097-Connecting-to-NordVPN-Linux-Network-Manager)
 
 There are also VPN providers on Flathub which will offer a good experience:
 
