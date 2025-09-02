@@ -30,15 +30,15 @@ With the specialized hardware needs of your T2 Mac, and Apple's mostly non-suppo
 
 #### Create a Bluefin USB
 
-Using dd, [Fedora Media Writer](https://docs.fedoraproject.org/en-US/fedora/latest/preparing-boot-media/), or similar. Ventoy also works.
+Using dd, [Fedora Media Writer](https://docs.fedoraproject.org/en-US/fedora/latest/preparing-boot-media/), or similar.
 
 #### Install Bluefin
 
 > Note: an External keyboard and mouse are required to install Bluefin on T2 at this time, and on-boot to unlock an encrypted disk (until a command is run later).
 
-1. With your Mac off, connect an external keyboard and mouse, and insert your Bluefin or Ventoy USB.
+1. With your Mac off, connect an external keyboard and mouse, and insert your Bluefin USB 
 2. Hold the option (alt on a Windows keyboard) key and power on your Mac.
-3. At the boot menu, select "EFI Boot" (it'll have a USB icon). Click Continue. If using Ventoy select the Bluefin ISO from the Ventoy menu.
+3. At the boot menu, select "EFI Boot" (it'll have a USB icon). Click Continue.
 4. At the Fedora installer boot screen, select to test your media or not before the install.
 5. When the installer starts, select the language you'd like to use to get to the main menu.
 6. At the main installer menu, select Installation Destination to choose your installation disk. Use automatic partitioning. If using an external drive, make sure your internal drive isn't also selected (with a checkbox) as this could cause the MacOS EFI bootloader on your internal drive to be modified.
