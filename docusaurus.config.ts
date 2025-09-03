@@ -160,11 +160,6 @@ const config: Config = {
           position: "right",
         },
         {
-          href: "https://projectbluefin.io/",
-          label: "Web",
-          position: "right",
-        },
-        {
           href: "https://github.com/ublue-os/bluefin/discussions",
           label: "Community",
           position: "right",
