@@ -11,12 +11,12 @@ Accelerate operating system development by integrating with the cloud native eco
 
 ## Commitment to the Ecosystem
 
-- Focus on improving the upstream experience with existing distributions instead of building a custom distribution:
+- Focus on improving the upstream experience by moving away from the traditional distribution model entirely and focusing on these areas:
   - Flathub
   - Homebrew
-  - Fedora CoreOS / CentOS Stream
+  - A base OS image
 - Take a "distroless" approach to images, the project should be invisible
-- Actively encourage upstream contribution by intentionally limiting scope
+- Actively encourage upstream contribution by intentionally limiting scope to ensure that our users understand the importance of supporting Flathub and Homebrew.
 
 ## Community and Project
 
