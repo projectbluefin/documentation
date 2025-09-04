@@ -29,3 +29,19 @@
   --ifm-color-primary-lightest: #a2b5fa; /* Lightest */
   --docusaurus-highlighted-code-line-bg: rgba(74, 105, 189, 0.3);
 }
+
+/* Hide external link icons */
+.iconExternalLink_nPIU,
+[class*="iconExternalLink"],
+svg[class*="iconExternalLink"],
+.icon-external-link,
+a[href^="http"]:not([href*="docs.projectbluefin.io"]) .iconExternalLink_nPIU,
+a[href^="https"]:not([href*="docs.projectbluefin.io"]) .iconExternalLink_nPIU {
+  display: none !important;
+}
+
+/* Alternative approach: hide all external link icons globally */
+a[target="_blank"]::after,
+a[rel*="noopener"]::after {
+  display: none !important;
+}

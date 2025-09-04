@@ -135,6 +135,7 @@ const config: Config = {
       logo: {
         alt: "Bluefin",
         src: "img/logo.svg",
+        href: "https://projectbluefin.io/"
       },
       items: [
         {
@@ -156,11 +157,6 @@ const config: Config = {
         {
           to: "changelogs",
           label: "Changelogs",
-          position: "right",
-        },
-        {
-          href: "https://projectbluefin.io/",
-          label: "Web",
           position: "right",
         },
         {
