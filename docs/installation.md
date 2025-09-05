@@ -41,12 +41,7 @@ Review the [Fedora Silverblue installation instructions](https://docs.fedoraproj
 
 ### Why 16 GB RAM Minimum?
 
-Bluefin ships with an extensive cloud-native development stack. These workloads typically scale out to replicate entire clusters of computers and demand more resources than typical workloads:
-
-**Container Runtime**: Docker CE, Podman, and container composition tools
-**Development Tools**: Multiple language runtimes and development environments  
-**Desktop Environment**: Modern GNOME with extensions and visual effects
-**System Architecture**: Atomic/immutable OS with OSTree requiring additional overhead
+Bluefin ships with an extensive cloud-native development stack. These workloads typically scale out to replicate entire clusters of computers and demand more resources than typical workloads.
 
 _These requirements ensure smooth operation of Bluefin's integrated development workflow and container-first architecture._
 
