@@ -33,6 +33,7 @@ if [[ -z "$AUTHOR" ]]; then
 fi
 
 echo "Processing release: $RELEASE_TAG from $SOURCE_REPO"
+echo "Release date: $RELEASE_DATE"
 echo "Using author: $AUTHOR"
 
 # Parse date to YYYY-MM-DD format
@@ -83,6 +84,7 @@ if [[ -f "$CHANGELOG_FILE" ]]; then
     echo "WARNING: Changelog file already exists: $CHANGELOG_FILE"
     echo "SKIPPED: $SOURCE_REPO:$RELEASE_TAG - file already exists"
     echo "Skipping creation to avoid overwriting existing content"
+    echo "If you want to regenerate this file, please delete it first"
     exit 0
 fi
 
