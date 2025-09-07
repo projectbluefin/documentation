@@ -44,12 +44,54 @@ if ! command -v gh &> /dev/null; then
     exit 1
 fi
 
+# Check authentication
+echo "Checking GitHub CLI authentication..."
+if ! gh auth status >/dev/null 2>&1; then
+    echo "❌ Error: GitHub CLI is not authenticated"
+    echo "Please run 'gh auth login' first"
+    echo "Or set the GH_TOKEN environment variable"
+    exit 1
+fi
+
+echo "✅ GitHub CLI authentication verified"
+
+# Function to fetch releases with retry logic
+fetch_releases_with_retry() {
+    local repo="$1"
+    local filter="$2"
+    local max_attempts=3
+    local attempt=1
+    
+    while [[ $attempt -le $max_attempts ]]; do
+        echo "Attempting to fetch releases from $repo (attempt $attempt/$max_attempts)"
+        
+        local result
+        if result=$(gh api "repos/$repo/releases" --paginate --jq "$filter" 2>&1); then
+            echo "$result"
+            return 0
+        else
+            echo "❌ API call failed (attempt $attempt/$max_attempts): $result"
+            if [[ $attempt -lt $max_attempts ]]; then
+                echo "Retrying in 5 seconds..."
+                sleep 5
+            fi
+            ((attempt++))
+        fi
+    done
+    
+    echo "❌ Failed to fetch releases from $repo after $max_attempts attempts"
+    echo "[]"
+    return 1
+}
+
 # Process stable releases from ublue-os/bluefin
 echo ""
 echo "=== Processing stable releases from ublue-os/bluefin ==="
-STABLE_RELEASES=$(gh api repos/ublue-os/bluefin/releases --paginate --jq "[.[] | select(.tag_name | contains(\"stable\")) | select(.prerelease == false) | select(.published_at > \"$CUTOFF_DATE\")] | sort_by(.published_at) | reverse" 2>/dev/null || echo "[]")
+STABLE_FILTER="[.[] | select(.tag_name | contains(\"stable\")) | select(.prerelease == false) | select(.published_at > \"$CUTOFF_DATE\")] | sort_by(.published_at) | reverse"
+STABLE_RELEASES=$(fetch_releases_with_retry "ublue-os/bluefin" "$STABLE_FILTER")
 
-if [[ "$STABLE_RELEASES" != "[]" ]]; then
+if [[ "$STABLE_RELEASES" != "[]" && -n "$STABLE_RELEASES" ]]; then
+    echo "Found $(echo "$STABLE_RELEASES" | jq length) stable release(s)"
     echo "$STABLE_RELEASES" | jq -c '.[]' | while read -r release; do
         TAG=$(echo "$release" | jq -r '.tag_name')
         URL=$(echo "$release" | jq -r '.html_url')
@@ -68,9 +110,11 @@ fi
 # Process GTS releases from ublue-os/bluefin
 echo ""
 echo "=== Processing GTS releases from ublue-os/bluefin ==="
-GTS_RELEASES=$(gh api repos/ublue-os/bluefin/releases --paginate --jq "[.[] | select(.tag_name | contains(\"gts\")) | select(.published_at > \"$CUTOFF_DATE\")] | sort_by(.published_at) | reverse" 2>/dev/null || echo "[]")
+GTS_FILTER="[.[] | select(.tag_name | contains(\"gts\")) | select(.prerelease == false) | select(.published_at > \"$CUTOFF_DATE\")] | sort_by(.published_at) | reverse"
+GTS_RELEASES=$(fetch_releases_with_retry "ublue-os/bluefin" "$GTS_FILTER")
 
-if [[ "$GTS_RELEASES" != "[]" ]]; then
+if [[ "$GTS_RELEASES" != "[]" && -n "$GTS_RELEASES" ]]; then
+    echo "Found $(echo "$GTS_RELEASES" | jq length) GTS release(s)"
     echo "$GTS_RELEASES" | jq -c '.[]' | while read -r release; do
         TAG=$(echo "$release" | jq -r '.tag_name')
         URL=$(echo "$release" | jq -r '.html_url')
@@ -89,9 +133,11 @@ fi
 # Process LTS releases from ublue-os/bluefin-lts
 echo ""
 echo "=== Processing LTS releases from ublue-os/bluefin-lts ==="
-LTS_RELEASES=$(gh api repos/ublue-os/bluefin-lts/releases --paginate --jq "[.[] | select(.published_at > \"$CUTOFF_DATE\")] | sort_by(.published_at) | reverse" 2>/dev/null || echo "[]")
+LTS_FILTER="[.[] | select(.published_at > \"$CUTOFF_DATE\")] | sort_by(.published_at) | reverse"
+LTS_RELEASES=$(fetch_releases_with_retry "ublue-os/bluefin-lts" "$LTS_FILTER")
 
-if [[ "$LTS_RELEASES" != "[]" ]]; then
+if [[ "$LTS_RELEASES" != "[]" && -n "$LTS_RELEASES" ]]; then
+    echo "Found $(echo "$LTS_RELEASES" | jq length) LTS release(s)"
     echo "$LTS_RELEASES" | jq -c '.[]' | while read -r release; do
         TAG=$(echo "$release" | jq -r '.tag_name')
         URL=$(echo "$release" | jq -r '.html_url')
