@@ -24,12 +24,58 @@ jobs:
         run: |
           # GitHub CLI is pre-installed on ubuntu-latest
           gh --version
+          
+          # Set up authentication and verify it works
+          echo "Setting up GitHub CLI authentication..."
+          echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
+          
+          # Verify authentication works
+          echo "Verifying GitHub CLI authentication..."
+          gh auth status
+          
+          # Test basic API access
+          echo "Testing API access..."
+          gh api user --jq '.login' || {
+            echo "❌ GitHub API authentication failed"
+            exit 1
+          }
+          
+          echo "✅ GitHub CLI authentication successful"
 
       - name: Process releases
         id: process
         run: |
           echo "Processing releases..."
           
+          # Function to fetch releases with retry logic
+          fetch_releases_with_retry() {
+            local repo="$1"
+            local filter="$2"
+            local max_attempts=3
+            local attempt=1
+            
+            while [[ $attempt -le $max_attempts ]]; do
+              echo "Attempting to fetch releases from $repo (attempt $attempt/$max_attempts)"
+              
+              local result
+              if result=$(gh api "repos/$repo/releases" --paginate --jq "$filter" 2>&1); then
+                echo "$result"
+                return 0
+              else
+                echo "❌ API call failed (attempt $attempt/$max_attempts): $result"
+                if [[ $attempt -lt $max_attempts ]]; then
+                  echo "Retrying in 5 seconds..."
+                  sleep 5
+                fi
+                ((attempt++))
+              fi
+            done
+            
+            echo "❌ Failed to fetch releases from $repo after $max_attempts attempts"
+            echo "[]"
+            return 1
+          }
+
           # Function to process a single release
           process_release() {
             local repo="$1"
@@ -66,10 +112,24 @@ jobs:
               REPO="ublue-os/bluefin"
             fi
             
-            # Get release details
-            RELEASE_DATA=$(gh api repos/$REPO/releases/tags/$TAG 2>/dev/null || echo "{}")
+            echo "Processing single release from repository dispatch: $REPO:$TAG"
             
-            if [[ "$RELEASE_DATA" != "{}" ]]; then
+            # Get release details with retry logic
+            RELEASE_DATA=""
+            for attempt in {1..3}; do
+              echo "Fetching release details for $TAG (attempt $attempt/3)"
+              if RELEASE_DATA=$(gh api "repos/$REPO/releases/tags/$TAG" 2>&1); then
+                break
+              else
+                echo "❌ Failed to fetch release details (attempt $attempt/3): $RELEASE_DATA"
+                if [[ $attempt -lt 3 ]]; then
+                  echo "Retrying in 5 seconds..."
+                  sleep 5
+                fi
+              fi
+            done
+            
+            if [[ -n "$RELEASE_DATA" && "$RELEASE_DATA" != "{}" ]]; then
               DATE=$(echo "$RELEASE_DATA" | jq -r '.published_at')
               NAME=$(echo "$RELEASE_DATA" | jq -r '.name // .tag_name')
               BODY=$(echo "$RELEASE_DATA" | jq -r '.body // ""')
@@ -77,6 +137,8 @@ jobs:
               if process_release "$REPO" "$TAG" "$URL" "$DATE" "$NAME" "$BODY"; then
                 PROCESSED_COUNT=$((PROCESSED_COUNT + 1))
               fi
+            else
+              echo "❌ Failed to fetch release details for $TAG after 3 attempts"
             fi
           else
             # Handle scheduled/manual runs - get recent releases (last 10 days)
@@ -87,10 +149,13 @@ jobs:
             echo "Looking for releases published after: $CUTOFF_DATE"
             
             # Process stable releases from ublue-os/bluefin
+            echo ""
             echo "=== Processing stable releases from ublue-os/bluefin ==="
-            STABLE_RELEASES=$(gh api repos/ublue-os/bluefin/releases --paginate --jq "[.[] | select(.tag_name | contains(\"stable\")) | select(.prerelease == false) | select(.published_at > \"$CUTOFF_DATE\")] | sort_by(.published_at) | reverse" 2>/dev/null || echo "[]")
+            STABLE_FILTER="[.[] | select(.tag_name | contains(\"stable\")) | select(.prerelease == false) | select(.published_at > \"$CUTOFF_DATE\")] | sort_by(.published_at) | reverse"
+            STABLE_RELEASES=$(fetch_releases_with_retry "ublue-os/bluefin" "$STABLE_FILTER")
             
-            if [[ "$STABLE_RELEASES" != "[]" ]]; then
+            if [[ "$STABLE_RELEASES" != "[]" && -n "$STABLE_RELEASES" ]]; then
+              echo "Found $(echo "$STABLE_RELEASES" | jq length) stable release(s)"
               echo "$STABLE_RELEASES" | jq -c '.[]' | while read -r release; do
                 TAG=$(echo "$release" | jq -r '.tag_name')
                 URL=$(echo "$release" | jq -r '.html_url')
@@ -107,10 +172,13 @@ jobs:
             fi
             
             # Process GTS releases from ublue-os/bluefin
+            echo ""
             echo "=== Processing GTS releases from ublue-os/bluefin ==="
-            GTS_RELEASES=$(gh api repos/ublue-os/bluefin/releases --paginate --jq "[.[] | select(.tag_name | contains(\"gts\")) | select(.published_at > \"$CUTOFF_DATE\")] | sort_by(.published_at) | reverse" 2>/dev/null || echo "[]")
+            GTS_FILTER="[.[] | select(.tag_name | contains(\"gts\")) | select(.prerelease == false) | select(.published_at > \"$CUTOFF_DATE\")] | sort_by(.published_at) | reverse"
+            GTS_RELEASES=$(fetch_releases_with_retry "ublue-os/bluefin" "$GTS_FILTER")
             
-            if [[ "$GTS_RELEASES" != "[]" ]]; then
+            if [[ "$GTS_RELEASES" != "[]" && -n "$GTS_RELEASES" ]]; then
+              echo "Found $(echo "$GTS_RELEASES" | jq length) GTS release(s)"
               echo "$GTS_RELEASES" | jq -c '.[]' | while read -r release; do
                 TAG=$(echo "$release" | jq -r '.tag_name')
                 URL=$(echo "$release" | jq -r '.html_url')
@@ -127,10 +195,13 @@ jobs:
             fi
             
             # Process LTS releases from ublue-os/bluefin-lts
+            echo ""
             echo "=== Processing LTS releases from ublue-os/bluefin-lts ==="
-            LTS_RELEASES=$(gh api repos/ublue-os/bluefin-lts/releases --paginate --jq "[.[] | select(.published_at > \"$CUTOFF_DATE\")] | sort_by(.published_at) | reverse" 2>/dev/null || echo "[]")
+            LTS_FILTER="[.[] | select(.published_at > \"$CUTOFF_DATE\")] | sort_by(.published_at) | reverse"
+            LTS_RELEASES=$(fetch_releases_with_retry "ublue-os/bluefin-lts" "$LTS_FILTER")
             
-            if [[ "$LTS_RELEASES" != "[]" ]]; then
+            if [[ "$LTS_RELEASES" != "[]" && -n "$LTS_RELEASES" ]]; then
+              echo "Found $(echo "$LTS_RELEASES" | jq length) LTS release(s)"
               echo "$LTS_RELEASES" | jq -c '.[]' | while read -r release; do
                 TAG=$(echo "$release" | jq -r '.tag_name')
                 URL=$(echo "$release" | jq -r '.html_url')
@@ -148,7 +219,18 @@ jobs:
           fi
 
           echo "processed_count=$PROCESSED_COUNT" >> $GITHUB_OUTPUT
-          echo "Processed $PROCESSED_COUNT new releases"
+          
+          echo ""
+          echo "=== Release Sync Summary ==="
+          echo "Trigger: ${{ github.event_name }}"
+          echo "Cutoff date: ${CUTOFF_DATE:-N/A}"
+          echo "Processed releases: $PROCESSED_COUNT"
+          
+          if [[ $PROCESSED_COUNT -gt 0 ]]; then
+            echo "✅ Successfully processed $PROCESSED_COUNT release(s)"
+          else
+            echo "ℹ️ No new releases found to process"
+          fi
 
       - name: Create Pull Request
         if: steps.process.outputs.processed_count != '0'
