@@ -39,7 +39,7 @@ jobs:
             local name="$5"
             local body="$6"
             
-            echo "Processing $repo:$tag"
+            echo "Processing $repo:$tag (published: $date)"
             
             # Call existing script to process release
             if ./scripts/process_single_release.sh "$repo" "$tag" "$url" "$date" "$name" "$body" "false" ""; then
@@ -79,52 +79,71 @@ jobs:
               fi
             fi
           else
-            # Handle scheduled/manual runs - get latest releases
-            echo "Fetching latest releases from repositories..."
+            # Handle scheduled/manual runs - get recent releases (last 10 days)
+            echo "Fetching recent releases from repositories..."
             
-            # Get latest stable release from ublue-os/bluefin
-            STABLE_RELEASE=$(gh api repos/ublue-os/bluefin/releases --jq '[.[] | select(.tag_name | contains("stable")) | select(.prerelease == false)][0]' 2>/dev/null || echo "null")
+            # Calculate date threshold (10 days ago)
+            CUTOFF_DATE=$(date -d '10 days ago' --iso-8601)
+            echo "Looking for releases published after: $CUTOFF_DATE"
             
-            if [[ "$STABLE_RELEASE" != "null" ]]; then
-              TAG=$(echo "$STABLE_RELEASE" | jq -r '.tag_name')
-              URL=$(echo "$STABLE_RELEASE" | jq -r '.html_url')
-              DATE=$(echo "$STABLE_RELEASE" | jq -r '.published_at')
-              NAME=$(echo "$STABLE_RELEASE" | jq -r '.name // .tag_name')
-              BODY=$(echo "$STABLE_RELEASE" | jq -r '.body // ""')
-              
-              if process_release "ublue-os/bluefin" "$TAG" "$URL" "$DATE" "$NAME" "$BODY"; then
-                PROCESSED_COUNT=$((PROCESSED_COUNT + 1))
-              fi
+            # Process stable releases from ublue-os/bluefin
+            echo "=== Processing stable releases from ublue-os/bluefin ==="
+            STABLE_RELEASES=$(gh api repos/ublue-os/bluefin/releases --paginate --jq "[.[] | select(.tag_name | contains(\"stable\")) | select(.prerelease == false) | select(.published_at > \"$CUTOFF_DATE\")] | sort_by(.published_at) | reverse" 2>/dev/null || echo "[]")
+            
+            if [[ "$STABLE_RELEASES" != "[]" ]]; then
+              echo "$STABLE_RELEASES" | jq -c '.[]' | while read -r release; do
+                TAG=$(echo "$release" | jq -r '.tag_name')
+                URL=$(echo "$release" | jq -r '.html_url')
+                DATE=$(echo "$release" | jq -r '.published_at')
+                NAME=$(echo "$release" | jq -r '.name // .tag_name')
+                BODY=$(echo "$release" | jq -r '.body // ""')
+                
+                if process_release "ublue-os/bluefin" "$TAG" "$URL" "$DATE" "$NAME" "$BODY"; then
+                  PROCESSED_COUNT=$((PROCESSED_COUNT + 1))
+                fi
+              done
+            else
+              echo "No recent stable releases found"
             fi
             
-            # Get latest GTS release from ublue-os/bluefin
-            GTS_RELEASE=$(gh api repos/ublue-os/bluefin/releases --jq '[.[] | select(.tag_name | contains("gts"))][0]' 2>/dev/null || echo "null")
+            # Process GTS releases from ublue-os/bluefin
+            echo "=== Processing GTS releases from ublue-os/bluefin ==="
+            GTS_RELEASES=$(gh api repos/ublue-os/bluefin/releases --paginate --jq "[.[] | select(.tag_name | contains(\"gts\")) | select(.published_at > \"$CUTOFF_DATE\")] | sort_by(.published_at) | reverse" 2>/dev/null || echo "[]")
             
-            if [[ "$GTS_RELEASE" != "null" ]]; then
-              TAG=$(echo "$GTS_RELEASE" | jq -r '.tag_name')
-              URL=$(echo "$GTS_RELEASE" | jq -r '.html_url')
-              DATE=$(echo "$GTS_RELEASE" | jq -r '.published_at')
-              NAME=$(echo "$GTS_RELEASE" | jq -r '.name // .tag_name')
-              BODY=$(echo "$GTS_RELEASE" | jq -r '.body // ""')
-              
-              if process_release "ublue-os/bluefin" "$TAG" "$URL" "$DATE" "$NAME" "$BODY"; then
-                PROCESSED_COUNT=$((PROCESSED_COUNT + 1))
-              fi
+            if [[ "$GTS_RELEASES" != "[]" ]]; then
+              echo "$GTS_RELEASES" | jq -c '.[]' | while read -r release; do
+                TAG=$(echo "$release" | jq -r '.tag_name')
+                URL=$(echo "$release" | jq -r '.html_url')
+                DATE=$(echo "$release" | jq -r '.published_at')
+                NAME=$(echo "$release" | jq -r '.name // .tag_name')
+                BODY=$(echo "$release" | jq -r '.body // ""')
+                
+                if process_release "ublue-os/bluefin" "$TAG" "$URL" "$DATE" "$NAME" "$BODY"; then
+                  PROCESSED_COUNT=$((PROCESSED_COUNT + 1))
+                fi
+              done
+            else
+              echo "No recent GTS releases found"
             fi
             
-            # Get latest LTS release from ublue-os/bluefin-lts
-            LTS_RELEASE=$(gh api repos/ublue-os/bluefin-lts/releases/latest 2>/dev/null || echo "null")
+            # Process LTS releases from ublue-os/bluefin-lts
+            echo "=== Processing LTS releases from ublue-os/bluefin-lts ==="
+            LTS_RELEASES=$(gh api repos/ublue-os/bluefin-lts/releases --paginate --jq "[.[] | select(.published_at > \"$CUTOFF_DATE\")] | sort_by(.published_at) | reverse" 2>/dev/null || echo "[]")
             
-            if [[ "$LTS_RELEASE" != "null" ]]; then
-              TAG=$(echo "$LTS_RELEASE" | jq -r '.tag_name')
-              URL=$(echo "$LTS_RELEASE" | jq -r '.html_url')
-              DATE=$(echo "$LTS_RELEASE" | jq -r '.published_at')
-              NAME=$(echo "$LTS_RELEASE" | jq -r '.name // .tag_name')
-              BODY=$(echo "$LTS_RELEASE" | jq -r '.body // ""')
-              
-              if process_release "ublue-os/bluefin-lts" "$TAG" "$URL" "$DATE" "$NAME" "$BODY"; then
-                PROCESSED_COUNT=$((PROCESSED_COUNT + 1))
-              fi
+            if [[ "$LTS_RELEASES" != "[]" ]]; then
+              echo "$LTS_RELEASES" | jq -c '.[]' | while read -r release; do
+                TAG=$(echo "$release" | jq -r '.tag_name')
+                URL=$(echo "$release" | jq -r '.html_url')
+                DATE=$(echo "$release" | jq -r '.published_at')
+                NAME=$(echo "$release" | jq -r '.name // .tag_name')
+                BODY=$(echo "$release" | jq -r '.body // ""')
+                
+                if process_release "ublue-os/bluefin-lts" "$TAG" "$URL" "$DATE" "$NAME" "$BODY"; then
+                  PROCESSED_COUNT=$((PROCESSED_COUNT + 1))
+                fi
+              done
+            else
+              echo "No recent LTS releases found"
             fi
           fi
 
