@@ -38,7 +38,7 @@ jobs:
             "https://api.github.com/repos/ublue-os/bluefin/releases")
 
           # Check if request was successful
-          if echo "$BLUEFIN_RELEASES" | jq -e '.message' > /dev/null; then
+          if echo "$BLUEFIN_RELEASES" | jq -e 'if type == "object" and has("message") then .message else empty end' > /dev/null; then
             echo "Warning: Failed to fetch bluefin releases"
             echo "API Response: $BLUEFIN_RELEASES"
             REPOSITORIES_FAILED="$REPOSITORIES_FAILED ublue-os/bluefin"
@@ -92,7 +92,7 @@ jobs:
             "https://api.github.com/repos/ublue-os/bluefin-lts/releases/latest")
 
           # Check if LTS request was successful
-          if echo "$BLUEFIN_LTS_RELEASE" | jq -e '.message' > /dev/null; then
+          if echo "$BLUEFIN_LTS_RELEASE" | jq -e 'if type == "object" and has("message") then .message else empty end' > /dev/null; then
             echo "Warning: Failed to fetch latest bluefin-lts release"
             echo "API Response: $BLUEFIN_LTS_RELEASE"
             REPOSITORIES_FAILED="$REPOSITORIES_FAILED ublue-os/bluefin-lts"
@@ -162,7 +162,7 @@ jobs:
             RELEASE_DATA=$(curl -s -H "Accept: application/vnd.github.v3+json" \
               "https://api.github.com/repos/$source_repo/releases/tags/$release_tag")
             
-            if echo "$RELEASE_DATA" | jq -e '.message' > /dev/null; then
+            if echo "$RELEASE_DATA" | jq -e 'if type == "object" and has("message") then .message else empty end' > /dev/null; then
               echo "Warning: Could not fetch detailed data for $release_tag from $source_repo"
               PROCESSING_ERRORS+=("$source_repo:$release_tag - API access error")
               return 1
@@ -240,7 +240,7 @@ jobs:
             RELEASE_DATA=$(curl -s -H "Accept: application/vnd.github.v3+json" \
               "https://api.github.com/repos/$SOURCE_REPO/releases/tags/$RELEASE_TAG")
             
-            if echo "$RELEASE_DATA" | jq -e '.message' > /dev/null; then
+            if echo "$RELEASE_DATA" | jq -e 'if type == "object" and has("message") then .message else empty end' > /dev/null; then
               echo "Error: Release not found for tag $RELEASE_TAG in $SOURCE_REPO"
               PROCESSING_ERRORS+=("$SOURCE_REPO:$RELEASE_TAG - Release not found")
             else
