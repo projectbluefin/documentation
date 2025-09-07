@@ -1,14 +1,12 @@
-name: Sync Bluefin Releases
+name: Fetch Changelogs
 
 on:
   schedule:
     - cron: "0 10 * * *" # 6am US Eastern Time (ET) = 10:00 UTC
   workflow_dispatch:
-  repository_dispatch:
-    types: [bluefin-release]
 
 jobs:
-  sync-releases:
+  sync-release:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -16,343 +14,601 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@ff7abcd0c3c05ccf6adc123a8cd1fd4fb30fb493
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
         with:
-          token: ${{ secrets.GH_PAT }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Setup GitHub CLI
+      - name: Set up Node.js
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: "22"
+
+      - name: Fetch latest releases from all repositories
+        id: fetch_latest_releases
         run: |
-          # GitHub CLI is pre-installed on ubuntu-latest
-          gh --version
-          
-          # Set up authentication and verify it works
-          echo "Setting up GitHub CLI authentication with GH_PAT..."
-          echo "${{ secrets.GH_PAT }}" | gh auth login --with-token
-          
-          # Verify authentication works
-          echo "Verifying GitHub CLI authentication..."
-          gh auth status
-          
-      - name: Test basic API access
-        run: |
-          # Test basic API access to ensure authentication was successful
-          echo "Testing GitHub API access with authenticated user..."
-          USER_LOGIN=$(gh api user --jq '.login' 2>&1)
-          API_EXIT_CODE=$?
-          
-          if [[ $API_EXIT_CODE -eq 0 && -n "$USER_LOGIN" && "$USER_LOGIN" != "null" ]]; then
-            echo "✅ GitHub API authentication successful - authenticated as: $USER_LOGIN"
+          echo "Fetching latest releases from all Bluefin repositories..."
+
+          # Initialize status tracking
+          REPOSITORIES_ACCESSED=""
+          REPOSITORIES_FAILED=""
+
+          # Fetch all releases from ublue-os/bluefin to find latest stable and GTS
+          echo "Fetching all releases from ublue-os/bluefin..."
+          BLUEFIN_RELEASES=$(curl -s -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/ublue-os/bluefin/releases")
+
+          # Check if request was successful
+          if echo "$BLUEFIN_RELEASES" | jq -e '.message' > /dev/null; then
+            echo "Warning: Failed to fetch bluefin releases"
+            echo "API Response: $BLUEFIN_RELEASES"
+            REPOSITORIES_FAILED="$REPOSITORIES_FAILED ublue-os/bluefin"
           else
-            echo "❌ GitHub API authentication failed"
-            echo "Error output: $USER_LOGIN"
-            echo "Exit code: $API_EXIT_CODE"
-            echo "This indicates that the GH_PAT secret is either missing, invalid, or lacks sufficient permissions"
+            REPOSITORIES_ACCESSED="$REPOSITORIES_ACCESSED ublue-os/bluefin"
+            
+            # Find latest stable release (tag contains 'stable')
+            BLUEFIN_STABLE_RELEASE=$(echo "$BLUEFIN_RELEASES" | jq -r '[.[] | select(.tag_name | test("stable")) | select(.prerelease == false)] | .[0]')
+            if [[ "$BLUEFIN_STABLE_RELEASE" != "null" ]]; then
+              BLUEFIN_STABLE_TAG=$(echo "$BLUEFIN_STABLE_RELEASE" | jq -r '.tag_name')
+              BLUEFIN_STABLE_URL=$(echo "$BLUEFIN_STABLE_RELEASE" | jq -r '.html_url')
+              BLUEFIN_STABLE_DATE=$(echo "$BLUEFIN_STABLE_RELEASE" | jq -r '.published_at')
+
+              echo "Latest stable release found: $BLUEFIN_STABLE_TAG"
+              echo "Stable release URL: $BLUEFIN_STABLE_URL"
+              
+              # Save stable release data
+              echo "bluefin_stable_tag=$BLUEFIN_STABLE_TAG" >> $GITHUB_OUTPUT
+              echo "bluefin_stable_url=$BLUEFIN_STABLE_URL" >> $GITHUB_OUTPUT
+              echo "bluefin_stable_date=$BLUEFIN_STABLE_DATE" >> $GITHUB_OUTPUT
+              echo "bluefin_stable_available=true" >> $GITHUB_OUTPUT
+            else
+              echo "No stable releases found"
+              echo "bluefin_stable_available=false" >> $GITHUB_OUTPUT
+            fi
+            
+            # Find latest GTS release (tag contains 'gts')
+            BLUEFIN_GTS_RELEASE=$(echo "$BLUEFIN_RELEASES" | jq -r '[.[] | select(.tag_name | test("gts"))] | .[0]')
+            if [[ "$BLUEFIN_GTS_RELEASE" != "null" ]]; then
+              BLUEFIN_GTS_TAG=$(echo "$BLUEFIN_GTS_RELEASE" | jq -r '.tag_name')
+              BLUEFIN_GTS_URL=$(echo "$BLUEFIN_GTS_RELEASE" | jq -r '.html_url')
+              BLUEFIN_GTS_DATE=$(echo "$BLUEFIN_GTS_RELEASE" | jq -r '.published_at')
+
+              echo "Latest GTS release found: $BLUEFIN_GTS_TAG"
+              echo "GTS release URL: $BLUEFIN_GTS_URL"
+              
+              # Save GTS release data
+              echo "bluefin_gts_tag=$BLUEFIN_GTS_TAG" >> $GITHUB_OUTPUT
+              echo "bluefin_gts_url=$BLUEFIN_GTS_URL" >> $GITHUB_OUTPUT
+              echo "bluefin_gts_date=$BLUEFIN_GTS_DATE" >> $GITHUB_OUTPUT
+              echo "bluefin_gts_available=true" >> $GITHUB_OUTPUT
+            else
+              echo "No GTS releases found"
+              echo "bluefin_gts_available=false" >> $GITHUB_OUTPUT
+            fi
+          fi
+
+          # Try to fetch the latest release from ublue-os/bluefin-lts
+          echo "Fetching latest release from ublue-os/bluefin-lts..."
+          BLUEFIN_LTS_RELEASE=$(curl -s -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/ublue-os/bluefin-lts/releases/latest")
+
+          # Check if LTS request was successful
+          if echo "$BLUEFIN_LTS_RELEASE" | jq -e '.message' > /dev/null; then
+            echo "Warning: Failed to fetch latest bluefin-lts release"
+            echo "API Response: $BLUEFIN_LTS_RELEASE"
+            REPOSITORIES_FAILED="$REPOSITORIES_FAILED ublue-os/bluefin-lts"
+            echo "bluefin_lts_available=false" >> $GITHUB_OUTPUT
+          else
+            # Extract bluefin-lts release information
+            BLUEFIN_LTS_TAG=$(echo "$BLUEFIN_LTS_RELEASE" | jq -r '.tag_name')
+            BLUEFIN_LTS_URL=$(echo "$BLUEFIN_LTS_RELEASE" | jq -r '.html_url')
+            BLUEFIN_LTS_DATE=$(echo "$BLUEFIN_LTS_RELEASE" | jq -r '.published_at')
+
+            echo "Latest bluefin-lts release found: $BLUEFIN_LTS_TAG"
+            REPOSITORIES_ACCESSED="$REPOSITORIES_ACCESSED ublue-os/bluefin-lts"
+            
+            # Save LTS release data
+            echo "bluefin_lts_tag=$BLUEFIN_LTS_TAG" >> $GITHUB_OUTPUT
+            echo "bluefin_lts_url=$BLUEFIN_LTS_URL" >> $GITHUB_OUTPUT
+            echo "bluefin_lts_date=$BLUEFIN_LTS_DATE" >> $GITHUB_OUTPUT
+            echo "bluefin_lts_available=true" >> $GITHUB_OUTPUT
+          fi
+
+          # Output summary
+          echo "repositories_accessed=$REPOSITORIES_ACCESSED" >> $GITHUB_OUTPUT
+          echo "repositories_failed=$REPOSITORIES_FAILED" >> $GITHUB_OUTPUT
+
+          # Check if at least one repository was accessible
+          if [[ -z "$REPOSITORIES_ACCESSED" ]]; then
+            echo "Error: No releases could be fetched from any repository"
             exit 1
           fi
 
-      - name: Process releases
-        id: process
+          echo "Repository access summary:"
+          echo "Accessible repositories:$REPOSITORIES_ACCESSED"
+          echo "Failed repositories:$REPOSITORIES_FAILED"
+
+      - name: Process available releases
+        id: process_releases
         run: |
-          echo "Processing releases..."
-          
-          # Function to fetch releases with retry logic
-          fetch_releases_with_retry() {
-            local repo="$1"
-            local filter="$2"
-            local max_attempts=3
-            local attempt=1
+          # Initialize tracking
+          FILES_CREATED=()
+          FILES_SKIPPED=()
+          PROCESSING_ERRORS=()
+          TOTAL_PROCESSED=0
+
+          # Helper function to process a single release
+          process_single_release() {
+            local source_repo="$1"
+            local release_tag="$2"
+            local release_url="$3"
+            local release_date="$4"
             
-            while [[ $attempt -le $max_attempts ]]; do
-              echo "Attempting to fetch releases from $repo (attempt $attempt/$max_attempts)"
+            echo "Processing release: $release_tag from $source_repo"
+            TOTAL_PROCESSED=$((TOTAL_PROCESSED + 1))
+            
+            # Determine the correct author based on release type
+            local author=""
+            if [[ "$source_repo" == "ublue-os/bluefin-lts" ]] || [[ "$release_tag" == lts-* ]]; then
+              author="bluefin-lts-release-bot"
+            elif [[ "$release_tag" == *"gts"* ]]; then
+              author="bluefin-gts-release-bot"
+            else
+              author="bluefin-release-bot"
+            fi
+            
+            echo "Using author: $author for release type"
+            
+            # Get detailed release data
+            RELEASE_DATA=$(curl -s -H "Accept: application/vnd.github.v3+json" \
+              "https://api.github.com/repos/$source_repo/releases/tags/$release_tag")
+            
+            if echo "$RELEASE_DATA" | jq -e '.message' > /dev/null; then
+              echo "Warning: Could not fetch detailed data for $release_tag from $source_repo"
+              PROCESSING_ERRORS+=("$source_repo:$release_tag - API access error")
+              return 1
+            fi
+            
+            # Extract detailed release information
+            RELEASE_NAME=$(echo "$RELEASE_DATA" | jq -r '.name // .tag_name')
+            RELEASE_BODY=$(echo "$RELEASE_DATA" | jq -r '.body // ""')
+            
+            # Save release body for processing
+            echo "$RELEASE_BODY" > "/tmp/release_body_${source_repo//\//_}_${release_tag}.md"
+            
+            # Process this release using existing logic from original workflow
+            output=$(./scripts/process_single_release.sh "$source_repo" "$release_tag" "$release_url" "$release_date" "$RELEASE_NAME" "$RELEASE_BODY" "false" "$author" 2>&1)
+            local result=$?
+            
+            echo "$output"
+            
+            if [[ $result -eq 0 ]]; then
+                if echo "$output" | grep -q "SKIPPED:"; then
+                    FILES_SKIPPED+=("$source_repo:$release_tag")
+                    echo "⏭️ Skipped $release_tag (file already exists)"
+                else
+                    FILES_CREATED+=("$source_repo:$release_tag")
+                    echo "✅ Successfully created changelog for $release_tag"
+                fi
+            else
+                PROCESSING_ERRORS+=("$source_repo:$release_tag - Processing error ($result)")
+                echo "❌ Error processing $release_tag (exit code: $result)"
+            fi
+          }
+
+          # Process releases based on trigger type
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]] || [[ "${{ github.event_name }}" == "schedule" ]]; then
+            echo "Processing all available releases from ${{ github.event_name }}..."
+            
+            # Process bluefin stable release if available
+            if [[ "${{ steps.fetch_latest_releases.outputs.bluefin_stable_available }}" == "true" ]]; then
+              process_single_release "ublue-os/bluefin" \
+                "${{ steps.fetch_latest_releases.outputs.bluefin_stable_tag }}" \
+                "${{ steps.fetch_latest_releases.outputs.bluefin_stable_url }}" \
+                "${{ steps.fetch_latest_releases.outputs.bluefin_stable_date }}"
+            fi
+            
+            # Process bluefin GTS release if available
+            if [[ "${{ steps.fetch_latest_releases.outputs.bluefin_gts_available }}" == "true" ]]; then
+              process_single_release "ublue-os/bluefin" \
+                "${{ steps.fetch_latest_releases.outputs.bluefin_gts_tag }}" \
+                "${{ steps.fetch_latest_releases.outputs.bluefin_gts_url }}" \
+                "${{ steps.fetch_latest_releases.outputs.bluefin_gts_date }}"
+            fi
+            
+            # Process bluefin-lts release if available
+            if [[ "${{ steps.fetch_latest_releases.outputs.bluefin_lts_available }}" == "true" ]]; then
+              process_single_release "ublue-os/bluefin-lts" \
+                "${{ steps.fetch_latest_releases.outputs.bluefin_lts_tag }}" \
+                "${{ steps.fetch_latest_releases.outputs.bluefin_lts_url }}" \
+                "${{ steps.fetch_latest_releases.outputs.bluefin_lts_date }}"
+            fi
+          else
+            echo "Processing single release from repository dispatch..."
+            
+            # Handle repository_dispatch (single release)
+            RELEASE_TAG="${{ github.event.client_payload.tag_name }}"
+            RELEASE_URL="${{ github.event.client_payload.html_url }}"
+            
+            # Determine source repo from URL or tag pattern
+            if [[ "$RELEASE_URL" == *"bluefin-lts"* ]] || [[ "$RELEASE_TAG" == lts-* ]]; then
+              SOURCE_REPO="ublue-os/bluefin-lts"
+            else
+              SOURCE_REPO="ublue-os/bluefin"
+            fi
+            
+            # For repository_dispatch, we need to get the release date
+            RELEASE_DATA=$(curl -s -H "Accept: application/vnd.github.v3+json" \
+              "https://api.github.com/repos/$SOURCE_REPO/releases/tags/$RELEASE_TAG")
+            
+            if echo "$RELEASE_DATA" | jq -e '.message' > /dev/null; then
+              echo "Error: Release not found for tag $RELEASE_TAG in $SOURCE_REPO"
+              PROCESSING_ERRORS+=("$SOURCE_REPO:$RELEASE_TAG - Release not found")
+            else
+              RELEASE_DATE=$(echo "$RELEASE_DATA" | jq -r '.published_at')
               
-              local result
-              if result=$(gh api "repos/$repo/releases" --paginate --jq "$filter" 2>&1); then
-                echo "$result"
-                return 0
+              # Determine the correct author based on release type
+              AUTHOR=""
+              if [[ "$SOURCE_REPO" == "ublue-os/bluefin-lts" ]] || [[ "$RELEASE_TAG" == lts-* ]]; then
+                AUTHOR="bluefin-lts-release-bot"
+              elif [[ "$RELEASE_TAG" == *"gts"* ]]; then
+                AUTHOR="bluefin-gts-release-bot"
               else
-                echo "❌ API call failed (attempt $attempt/$max_attempts): $result"
-                if [[ $attempt -lt $max_attempts ]]; then
-                  echo "Retrying in 5 seconds..."
-                  sleep 5
-                fi
-                ((attempt++))
+                AUTHOR="bluefin-release-bot"
               fi
-            done
-            
-            echo "❌ Failed to fetch releases from $repo after $max_attempts attempts"
-            echo "[]"
-            return 1
-          }
-
-          # Function to validate release data completeness
-          validate_release_data() {
-            local release_json="$1"
-            local tag="$2"
-            
-            # Check if basic fields are present
-            local body_length=$(echo "$release_json" | jq -r '.body // ""' | wc -c)
-            local name=$(echo "$release_json" | jq -r '.name // ""')
-            local published_at=$(echo "$release_json" | jq -r '.published_at // ""')
-            
-            echo "🔍 Validating release data for $tag:"
-            echo "  - Name: '$name'"
-            echo "  - Published: $published_at"
-            echo "  - Body length: $body_length characters"
-            
-            # Validation checks
-            if [[ -z "$published_at" || "$published_at" == "null" ]]; then
-              echo "❌ Missing published_at timestamp"
-              return 1
-            fi
-            
-            if [[ $body_length -lt 100 ]]; then
-              echo "❌ Release body too short ($body_length chars) - likely incomplete"
-              echo "Body content: $(echo "$release_json" | jq -r '.body // ""')"
-              return 1
-            fi
-            
-            # Check for essential sections in release body
-            local body_content=$(echo "$release_json" | jq -r '.body // ""')
-            if ! echo "$body_content" | grep -q "### Major packages"; then
-              echo "⚠️ WARNING: Missing '### Major packages' section"
-            fi
-            
-            echo "✅ Release data validation passed"
-            return 0
-          }
-
-          # Function to process a single release
-          process_release() {
-            local repo="$1"
-            local tag="$2"
-            local url="$3"
-            local date="$4"
-            local name="$5"
-            local body="$6"
-            
-            echo "Processing $repo:$tag (published: $date)"
-            
-            # Validate input parameters
-            if [[ -z "$body" || "$body" == "null" ]]; then
-              echo "❌ ERROR: Empty or null release body for $repo:$tag"
-              echo "This may result in incomplete changelog generation"
-              return 1
-            fi
-            
-            # Log release body length for debugging
-            BODY_LENGTH=$(echo "$body" | wc -c)
-            echo "📊 Release body length: $BODY_LENGTH characters"
-            
-            # Check for minimum expected content
-            if [[ $BODY_LENGTH -lt 500 ]]; then
-              echo "⚠️ WARNING: Release body seems unusually short for $repo:$tag"
-              echo "Body preview: $(echo "$body" | head -c 200)..."
-            fi
-            
-            # Call existing script to process release with enhanced error handling
-            if ./scripts/process_single_release.sh "$repo" "$tag" "$url" "$date" "$name" "$body" "false" ""; then
-              echo "✅ Successfully processed $repo:$tag"
-              return 0
-            else
-              local exit_code=$?
-              if [[ $exit_code -eq 1 ]]; then
-                echo "ℹ️ Skipped $repo:$tag (already exists)"
-                return 1
-              else
-                echo "❌ FAILED to process $repo:$tag (exit code: $exit_code)"
-                echo "This indicates a serious issue with changelog generation"
-                return 1
-              fi
-            fi
-          }
-
-          # Track processed releases
-          PROCESSED_COUNT=0
-
-          if [[ "${{ github.event_name }}" == "repository_dispatch" ]]; then
-            # Handle single release from repository dispatch
-            TAG="${{ github.event.client_payload.tag_name }}"
-            URL="${{ github.event.client_payload.html_url }}"
-            
-            # Determine source repo from URL
-            if [[ "$URL" == *"bluefin-lts"* ]] || [[ "$TAG" == lts-* ]]; then
-              REPO="ublue-os/bluefin-lts"
-            else
-              REPO="ublue-os/bluefin"
-            fi
-            
-            echo "Processing single release from repository dispatch: $REPO:$TAG"
-            
-            # Get release details with retry logic
-            RELEASE_DATA=""
-            for attempt in {1..3}; do
-              echo "Fetching release details for $TAG (attempt $attempt/3)"
-              if RELEASE_DATA=$(gh api "repos/$REPO/releases/tags/$TAG" 2>&1); then
-                break
-              else
-                echo "❌ Failed to fetch release details (attempt $attempt/3): $RELEASE_DATA"
-                if [[ $attempt -lt 3 ]]; then
-                  echo "Retrying in 5 seconds..."
-                  sleep 5
-                fi
-              fi
-            done
-            
-            if [[ -n "$RELEASE_DATA" && "$RELEASE_DATA" != "{}" ]]; then
-              # Validate release data before processing
-              if validate_release_data "$RELEASE_DATA" "$TAG"; then
-                DATE=$(echo "$RELEASE_DATA" | jq -r '.published_at')
-                NAME=$(echo "$RELEASE_DATA" | jq -r '.name // .tag_name')
-                BODY=$(echo "$RELEASE_DATA" | jq -r '.body // ""')
-                
-                if process_release "$REPO" "$TAG" "$URL" "$DATE" "$NAME" "$BODY"; then
-                  PROCESSED_COUNT=$((PROCESSED_COUNT + 1))
-                fi
-              else
-                echo "❌ Release data validation failed for $TAG - skipping to prevent incomplete changelog"
-              fi
-            else
-              echo "❌ Failed to fetch release details for $TAG after 3 attempts"
-            fi
-          else
-            # Handle scheduled/manual runs - get recent releases (last 10 days)
-            echo "Fetching recent releases from repositories..."
-            
-            # Calculate date threshold (10 days ago)
-            CUTOFF_DATE=$(date -d '10 days ago' --iso-8601)
-            echo "Looking for releases published after: $CUTOFF_DATE"
-            
-            # Process stable releases from ublue-os/bluefin
-            echo ""
-            echo "=== Processing stable releases from ublue-os/bluefin ==="
-            STABLE_FILTER="[.[] | select(.tag_name | contains(\"stable\")) | select(.prerelease == false) | select(.published_at > \"$CUTOFF_DATE\")] | sort_by(.published_at) | reverse"
-            STABLE_RELEASES=$(fetch_releases_with_retry "ublue-os/bluefin" "$STABLE_FILTER")
-            
-            if [[ "$STABLE_RELEASES" != "[]" && -n "$STABLE_RELEASES" ]]; then
-              echo "Found $(echo "$STABLE_RELEASES" | jq length) stable release(s)"
-              echo "$STABLE_RELEASES" | jq -c '.[]' | while read -r release; do
-                TAG=$(echo "$release" | jq -r '.tag_name')
-                URL=$(echo "$release" | jq -r '.html_url')
-                DATE=$(echo "$release" | jq -r '.published_at')
-                NAME=$(echo "$release" | jq -r '.name // .tag_name')
-                BODY=$(echo "$release" | jq -r '.body // ""')
-                
-                # Validate release data before processing
-                if validate_release_data "$release" "$TAG"; then
-                  if process_release "ublue-os/bluefin" "$TAG" "$URL" "$DATE" "$NAME" "$BODY"; then
-                    PROCESSED_COUNT=$((PROCESSED_COUNT + 1))
+              
+              echo "Using author: $AUTHOR for repository dispatch release"
+              
+              # Call process_single_release with author parameter
+              RELEASE_NAME=$(echo "$RELEASE_DATA" | jq -r '.name // .tag_name')
+              RELEASE_BODY=$(echo "$RELEASE_DATA" | jq -r '.body // ""')
+              
+              output=$(./scripts/process_single_release.sh "$SOURCE_REPO" "$RELEASE_TAG" "$RELEASE_URL" "$RELEASE_DATE" "$RELEASE_NAME" "$RELEASE_BODY" "false" "$AUTHOR" 2>&1)
+              local result=$?
+              
+              echo "$output"
+              
+              if [[ $result -eq 0 ]]; then
+                  if echo "$output" | grep -q "SKIPPED:"; then
+                      FILES_SKIPPED+=("$SOURCE_REPO:$RELEASE_TAG")
+                      echo "⏭️ Skipped $RELEASE_TAG (file already exists)"
+                  else
+                      FILES_CREATED+=("$SOURCE_REPO:$RELEASE_TAG")
+                      echo "✅ Successfully created changelog for $RELEASE_TAG"
                   fi
-                else
-                  echo "❌ Skipping $TAG due to validation failure"
-                fi
-              done
-            else
-              echo "No recent stable releases found"
-            fi
-            
-            # Process GTS releases from ublue-os/bluefin
-            echo ""
-            echo "=== Processing GTS releases from ublue-os/bluefin ==="
-            GTS_FILTER="[.[] | select(.tag_name | contains(\"gts\")) | select(.prerelease == false) | select(.published_at > \"$CUTOFF_DATE\")] | sort_by(.published_at) | reverse"
-            GTS_RELEASES=$(fetch_releases_with_retry "ublue-os/bluefin" "$GTS_FILTER")
-            
-            if [[ "$GTS_RELEASES" != "[]" && -n "$GTS_RELEASES" ]]; then
-              echo "Found $(echo "$GTS_RELEASES" | jq length) GTS release(s)"
-              echo "$GTS_RELEASES" | jq -c '.[]' | while read -r release; do
-                TAG=$(echo "$release" | jq -r '.tag_name')
-                URL=$(echo "$release" | jq -r '.html_url')
-                DATE=$(echo "$release" | jq -r '.published_at')
-                NAME=$(echo "$release" | jq -r '.name // .tag_name')
-                BODY=$(echo "$release" | jq -r '.body // ""')
-                
-                # Validate release data before processing
-                if validate_release_data "$release" "$TAG"; then
-                  if process_release "ublue-os/bluefin" "$TAG" "$URL" "$DATE" "$NAME" "$BODY"; then
-                    PROCESSED_COUNT=$((PROCESSED_COUNT + 1))
-                  fi
-                else
-                  echo "❌ Skipping $TAG due to validation failure"
-                fi
-              done
-            else
-              echo "No recent GTS releases found"
-            fi
-            
-            # Process LTS releases from ublue-os/bluefin-lts
-            echo ""
-            echo "=== Processing LTS releases from ublue-os/bluefin-lts ==="
-            LTS_FILTER="[.[] | select(.published_at > \"$CUTOFF_DATE\")] | sort_by(.published_at) | reverse"
-            LTS_RELEASES=$(fetch_releases_with_retry "ublue-os/bluefin-lts" "$LTS_FILTER")
-            
-            if [[ "$LTS_RELEASES" != "[]" && -n "$LTS_RELEASES" ]]; then
-              echo "Found $(echo "$LTS_RELEASES" | jq length) LTS release(s)"
-              echo "$LTS_RELEASES" | jq -c '.[]' | while read -r release; do
-                TAG=$(echo "$release" | jq -r '.tag_name')
-                URL=$(echo "$release" | jq -r '.html_url')
-                DATE=$(echo "$release" | jq -r '.published_at')
-                NAME=$(echo "$release" | jq -r '.name // .tag_name')
-                BODY=$(echo "$release" | jq -r '.body // ""')
-                
-                # Validate release data before processing
-                if validate_release_data "$release" "$TAG"; then
-                  if process_release "ublue-os/bluefin-lts" "$TAG" "$URL" "$DATE" "$NAME" "$BODY"; then
-                    PROCESSED_COUNT=$((PROCESSED_COUNT + 1))
-                  fi
-                else
-                  echo "❌ Skipping $TAG due to validation failure"
-                fi
-              done
-            else
-              echo "No recent LTS releases found"
+              else
+                  PROCESSING_ERRORS+=("$SOURCE_REPO:$RELEASE_TAG - Processing error ($result)")
+                  echo "❌ Error processing $RELEASE_TAG (exit code: $result)"
+              fi
             fi
           fi
 
-          echo "processed_count=$PROCESSED_COUNT" >> $GITHUB_OUTPUT
-          
-          echo ""
-          echo "=== Release Sync Summary ==="
-          echo "Trigger: ${{ github.event_name }}"
-          echo "Cutoff date: ${CUTOFF_DATE:-N/A}"
-          echo "Processed releases: $PROCESSED_COUNT"
-          
-          if [[ $PROCESSED_COUNT -gt 0 ]]; then
-            echo "✅ Successfully processed $PROCESSED_COUNT release(s)"
-          else
-            echo "ℹ️ No new releases found to process"
+          # Output results for next steps
+          echo "files_created_count=${#FILES_CREATED[@]}" >> $GITHUB_OUTPUT
+          echo "files_skipped_count=${#FILES_SKIPPED[@]}" >> $GITHUB_OUTPUT
+          echo "processing_errors_count=${#PROCESSING_ERRORS[@]}" >> $GITHUB_OUTPUT
+          echo "total_processed=$TOTAL_PROCESSED" >> $GITHUB_OUTPUT
+
+          # Save detailed results for PR description and summary
+          printf '%s\n' "${FILES_CREATED[@]}" > /tmp/files_created.txt
+          printf '%s\n' "${FILES_SKIPPED[@]}" > /tmp/files_skipped.txt
+          printf '%s\n' "${PROCESSING_ERRORS[@]}" > /tmp/processing_errors.txt
+
+          echo "Processing complete:"
+          echo "- Total processed: $TOTAL_PROCESSED"
+          echo "- Files created: ${#FILES_CREATED[@]}"
+          echo "- Files skipped: ${#FILES_SKIPPED[@]}"
+          echo "- Processing errors: ${#PROCESSING_ERRORS[@]}"
+
+      - name: Create branch and commit changes
+        if: steps.process_releases.outputs.files_created_count != '0'
+        id: create_branch
+        run: |
+          FILES_CREATED_COUNT="${{ steps.process_releases.outputs.files_created_count }}"
+
+          # Create branch name with timestamp
+          BRANCH_NAME="changelogs/bluefin-releases-sync-$(date +%s)"
+          echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
+
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+          # Create and checkout new branch
+          git checkout -b "$BRANCH_NAME"
+
+          # Add all changelog files
+          git add changelogs/
+
+          # Check if there are actual changes to commit
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            exit 0
           fi
+
+          # Create commit message
+          COMMIT_MESSAGE="Add changelog entries for Bluefin releases"$'\n\n'"Automatically generated $FILES_CREATED_COUNT changelog entries from multiple repositories"
+
+          git commit -m "$COMMIT_MESSAGE"
+
+          # Push the branch
+          git push origin "$BRANCH_NAME"
+          echo "has_changes=true" >> $GITHUB_OUTPUT
 
       - name: Create Pull Request
-        if: steps.process.outputs.processed_count != '0'
-        uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e # v7
-        with:
-          token: ${{ secrets.GH_PAT }}
-          commit-message: "feat(changelogs): sync ${{ steps.process.outputs.processed_count }} Bluefin release(s)"
-          title: "feat(changelogs): sync ${{ steps.process.outputs.processed_count }} Bluefin release(s)"
-          body: |
-            ## Bluefin Release Sync
-            
-            This PR automatically syncs ${{ steps.process.outputs.processed_count }} new Bluefin release changelog(s).
-            
-            **Trigger:** ${{ github.event_name }}
-            **Processed:** ${{ steps.process.outputs.processed_count }} release(s)
-            
-            Generated by the automated release sync workflow.
-          branch: changelogs/sync-bluefin-releases
-          delete-branch: true
-          draft: false
-
-      - name: Enable auto-merge
-        if: steps.process.outputs.processed_count != '0'
+        if: steps.create_branch.outputs.has_changes == 'true'
+        id: create_pr
         run: |
-          # Get the PR number from the previous step
-          PR_NUMBER=$(gh pr list --head changelogs/sync-bluefin-releases --json number --jq '.[0].number')
-          
-          if [[ -n "$PR_NUMBER" && "$PR_NUMBER" != "null" ]]; then
-            echo "Enabling auto-merge for PR #$PR_NUMBER"
-            gh pr merge $PR_NUMBER --auto --merge
-            echo "✅ Auto-merge enabled for PR #$PR_NUMBER"
-          else
-            echo "⚠️ Could not find PR to enable auto-merge"
+          BRANCH_NAME="${{ steps.create_branch.outputs.branch_name }}"
+          FILES_CREATED_COUNT="${{ steps.process_releases.outputs.files_created_count }}"
+          FILES_SKIPPED_COUNT="${{ steps.process_releases.outputs.files_skipped_count }}"
+          PROCESSING_ERRORS_COUNT="${{ steps.process_releases.outputs.processing_errors_count }}"
+          TOTAL_PROCESSED="${{ steps.process_releases.outputs.total_processed }}"
+
+          # Build comprehensive PR description
+          PR_TITLE="feat(blog): sync Bluefin releases - $FILES_CREATED_COUNT changelog(s) created"
+
+          # Create PR body with sections
+          PR_BODY="## Bluefin Release Changelog Sync"
+          PR_BODY="$PR_BODY"$'\n\n'"This PR adds changelog entries for Bluefin releases with enhanced error handling and comprehensive processing."
+          PR_BODY="$PR_BODY"$'\n\n'"### Summary"
+          PR_BODY="$PR_BODY"$'\n'"- **Files Created:** $FILES_CREATED_COUNT"
+          PR_BODY="$PR_BODY"$'\n'"- **Files Skipped:** $FILES_SKIPPED_COUNT"
+          PR_BODY="$PR_BODY"$'\n'"- **Processing Errors:** $PROCESSING_ERRORS_COUNT"
+          PR_BODY="$PR_BODY"$'\n'"- **Total Processed:** $TOTAL_PROCESSED"
+          PR_BODY="$PR_BODY"$'\n'"- **Trigger:** ${{ github.event_name }}"
+
+          # Add repository access info for workflow_dispatch
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            REPOS_ACCESSED="${{ steps.fetch_latest_releases.outputs.repositories_accessed }}"
+            REPOS_FAILED="${{ steps.fetch_latest_releases.outputs.repositories_failed }}"
+            PR_BODY="$PR_BODY"$'\n\n'"### Repository Access Status"
+            PR_BODY="$PR_BODY"$'\n'"- **Accessible:** $REPOS_ACCESSED"
+            PR_BODY="$PR_BODY"$'\n'"- **Failed:** $REPOS_FAILED"
           fi
-        env:
-          GH_TOKEN: ${{ secrets.GH_PAT }}
+
+          # Add details from files if they exist
+          if [[ -f "/tmp/files_created.txt" && -s "/tmp/files_created.txt" ]]; then
+            PR_BODY="$PR_BODY"$'\n\n'"### Files Created"
+            while read -r line; do
+              if [[ -n "$line" ]]; then
+                PR_BODY="$PR_BODY"$'\n'"- ✅ $line"
+              fi
+            done < /tmp/files_created.txt
+          fi
+
+          if [[ -f "/tmp/files_skipped.txt" && -s "/tmp/files_skipped.txt" ]]; then
+            PR_BODY="$PR_BODY"$'\n\n'"### Files Skipped"
+            while read -r line; do
+              if [[ -n "$line" ]]; then
+                PR_BODY="$PR_BODY"$'\n'"- ⏭️ $line"
+              fi
+            done < /tmp/files_skipped.txt
+          fi
+
+          if [[ -f "/tmp/processing_errors.txt" && -s "/tmp/processing_errors.txt" ]]; then
+            PR_BODY="$PR_BODY"$'\n\n'"### Processing Errors"
+            while read -r line; do
+              if [[ -n "$line" ]]; then
+                PR_BODY="$PR_BODY"$'\n'"- ❌ $line"
+              fi
+            done < /tmp/processing_errors.txt
+          fi
+
+          PR_BODY="$PR_BODY"$'\n\n'"### Review Notes"
+          PR_BODY="$PR_BODY"$'\n'"- Please review each changelog entry for accuracy and formatting"
+          PR_BODY="$PR_BODY"$'\n'"- Verify that release information matches actual releases"
+          PR_BODY="$PR_BODY"$'\n'"- Check that version type classification (stable/GTS/LTS) is correct"
+          PR_BODY="$PR_BODY"$'\n'"- Existing changelog files were not overwritten"
+          PR_BODY="$PR_BODY"$'\n\n'"**Version Types:**"
+          PR_BODY="$PR_BODY"$'\n'"- 🚢 **Bluefin**: Bluefin Stable releases from ublue-os/bluefin"
+          PR_BODY="$PR_BODY"$'\n'"- ⭐ **Bluefin GTS**: Grand Touring Support releases (tagged with 'gts') from ublue-os/bluefin"
+          PR_BODY="$PR_BODY"$'\n'"- 🔒 **Bluefin LTS**: Long Term Support releases from ublue-os/bluefin-lts"
+          PR_BODY="$PR_BODY"$'\n\n'"**Independent Processing:** This workflow now processes all version types independently with proper error handling to ensure maximum capture of release information."
+
+          # Create pull request using GitHub API and capture response
+          PR_RESPONSE=$(curl -s -X POST \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            "https://api.github.com/repos/${{ github.repository }}/pulls" \
+            -d "{
+              \"title\": $(echo "$PR_TITLE" | jq -Rs .),
+              \"head\": \"$BRANCH_NAME\",
+              \"base\": \"main\",
+              \"body\": $(echo "$PR_BODY" | jq -Rs .),
+              \"draft\": false
+            }")
+
+          # Check if PR creation was successful and extract PR number
+          if echo "$PR_RESPONSE" | jq -e '.number' > /dev/null; then
+            PR_NUMBER=$(echo "$PR_RESPONSE" | jq -r '.number')
+            echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
+            echo "pr_created=true" >> $GITHUB_OUTPUT
+            echo "✅ Pull request #$PR_NUMBER created successfully"
+          else
+            echo "❌ Failed to create pull request"
+            echo "API Response: $PR_RESPONSE"
+            echo "pr_created=false" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+      - name: Enable Auto-merge
+        if: steps.create_pr.outputs.pr_created == 'true'
+        run: |
+          PR_NUMBER="${{ steps.create_pr.outputs.pr_number }}"
+          
+          echo "🔄 Enabling auto-merge for PR #$PR_NUMBER..."
+          
+          # Enable auto-merge using GitHub API - correct endpoint for enabling auto-merge
+          # Note: The correct API endpoint is PUT /repos/{owner}/{repo}/pulls/{pull_number}/merge for enabling auto-merge
+          AUTO_MERGE_RESPONSE=$(curl -s -w "HTTPSTATUS:%{http_code}" \
+            -X PUT \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            -H "Content-Type: application/json" \
+            "https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUMBER/merge" \
+            -d '{
+              "merge_method": "merge"
+            }')
+
+          # Extract HTTP status and response body
+          HTTP_STATUS=$(echo "$AUTO_MERGE_RESPONSE" | sed -n 's/.*HTTPSTATUS:\([0-9]*\)$/\1/p')
+          RESPONSE_BODY=$(echo "$AUTO_MERGE_RESPONSE" | sed 's/HTTPSTATUS:[0-9]*$//')
+
+          echo "HTTP Status: $HTTP_STATUS"
+          
+          case $HTTP_STATUS in
+            200)
+              # Successfully merged or auto-merge enabled
+              if echo "$RESPONSE_BODY" | jq -e '.merged' > /dev/null 2>&1; then
+                MERGED=$(echo "$RESPONSE_BODY" | jq -r '.merged')
+                if [[ "$MERGED" == "true" ]]; then
+                  echo "✅ PR #$PR_NUMBER was automatically merged immediately"
+                else
+                  echo "✅ Auto-merge enabled for PR #$PR_NUMBER"
+                  echo "The PR will automatically merge when all branch protection requirements are met."
+                fi
+              else
+                echo "✅ Auto-merge enabled for PR #$PR_NUMBER"
+                echo "The PR will automatically merge when all branch protection requirements are met."
+              fi
+              ;;
+            202)
+              echo "✅ Auto-merge enabled for PR #$PR_NUMBER"
+              echo "The PR will automatically merge when all branch protection requirements are met."
+              ;;
+            404)
+              echo "⚠️ PR #$PR_NUMBER not found or auto-merge feature may not be available"
+              echo "This could be due to repository settings or permissions."
+              echo "The PR was created successfully but will require manual merging."
+              ;;
+            405)
+              echo "⚠️ Auto-merge is not enabled for this repository"
+              echo "Repository settings may need to be updated to allow auto-merge."
+              echo "The PR was created successfully but will require manual merging."
+              ;;
+            422)
+              ERROR_MSG=$(echo "$RESPONSE_BODY" | jq -r '.message // "Validation failed"')
+              echo "⚠️ Auto-merge could not be enabled for PR #$PR_NUMBER: $ERROR_MSG"
+              echo "This may be due to branch protection rules, required status checks, or conflicting changes."
+              echo "The PR was created successfully but will require manual merging."
+              ;;
+            *)
+              echo "⚠️ Unexpected HTTP status $HTTP_STATUS when enabling auto-merge for PR #$PR_NUMBER"
+              if [[ -n "$RESPONSE_BODY" ]]; then
+                ERROR_MSG=$(echo "$RESPONSE_BODY" | jq -r '.message // "Unknown error"')
+                echo "Error message: $ERROR_MSG"
+              fi
+              echo "The PR was created successfully but auto-merge status is unclear."
+              ;;
+          esac
+
+      - name: Create comprehensive summary
+        run: |
+          FILES_CREATED_COUNT="${{ steps.process_releases.outputs.files_created_count || '0' }}"
+          FILES_SKIPPED_COUNT="${{ steps.process_releases.outputs.files_skipped_count || '0' }}"
+          PROCESSING_ERRORS_COUNT="${{ steps.process_releases.outputs.processing_errors_count || '0' }}"
+          TOTAL_PROCESSED="${{ steps.process_releases.outputs.total_processed || '0' }}"
+
+          echo "## 🚀 Bluefin Release Sync Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Summary statistics
+          echo "### 📊 Processing Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- **Total Processed:** $TOTAL_PROCESSED release(s)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Files Created:** $FILES_CREATED_COUNT" >> $GITHUB_STEP_SUMMARY
+          echo "- **Files Skipped:** $FILES_SKIPPED_COUNT" >> $GITHUB_STEP_SUMMARY
+          echo "- **Processing Errors:** $PROCESSING_ERRORS_COUNT" >> $GITHUB_STEP_SUMMARY
+          echo "- **Trigger:** ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Repository access status (for workflow_dispatch)
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "### 🔗 Repository Access Status" >> $GITHUB_STEP_SUMMARY
+            REPOS_ACCESSED="${{ steps.fetch_latest_releases.outputs.repositories_accessed || 'None' }}"
+            REPOS_FAILED="${{ steps.fetch_latest_releases.outputs.repositories_failed || 'None' }}"
+            
+            echo "- **✅ Accessible Repositories:** $REPOS_ACCESSED" >> $GITHUB_STEP_SUMMARY
+            echo "- **❌ Failed Repositories:** $REPOS_FAILED" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          # Detailed results
+          if [[ -f "/tmp/files_created.txt" && -s "/tmp/files_created.txt" ]]; then
+            echo "### ✅ Created Changelog Files" >> $GITHUB_STEP_SUMMARY
+            while read -r line; do
+              if [[ -n "$line" ]]; then
+                REPO_TAG="$line"
+                REPO="${REPO_TAG%:*}"
+                TAG="${REPO_TAG#*:}"
+                
+                # Determine version type based on repo and tag
+                if [[ "$REPO" == "ublue-os/bluefin-lts" ]] || [[ "$TAG" == lts-* ]]; then
+                  VERSION_TYPE="🔒 LTS"
+                elif [[ "$TAG" == *"gts"* ]]; then
+                  VERSION_TYPE="⭐ GTS"
+                else
+                  VERSION_TYPE="🚢 Stable"
+                fi
+                
+                echo "- $VERSION_TYPE **$TAG** from \`$REPO\`" >> $GITHUB_STEP_SUMMARY
+              fi
+            done < /tmp/files_created.txt
+            echo "" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          if [[ -f "/tmp/files_skipped.txt" && -s "/tmp/files_skipped.txt" ]]; then
+            echo "### ⏭️ Skipped Files" >> $GITHUB_STEP_SUMMARY
+            while read -r line; do
+              if [[ -n "$line" ]]; then
+                echo "- $line" >> $GITHUB_STEP_SUMMARY
+              fi
+            done < /tmp/files_skipped.txt
+            echo "" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          if [[ -f "/tmp/processing_errors.txt" && -s "/tmp/processing_errors.txt" ]]; then
+            echo "### ⚠️ Processing Errors" >> $GITHUB_STEP_SUMMARY
+            while read -r line; do
+              if [[ -n "$line" ]]; then
+                echo "- $line" >> $GITHUB_STEP_SUMMARY
+              fi
+            done < /tmp/processing_errors.txt
+            echo "" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          # Version type legend and improvements
+          echo "### 📋 Version Types & Improvements" >> $GITHUB_STEP_SUMMARY
+          echo "**Version Types:**" >> $GITHUB_STEP_SUMMARY
+          echo "- **🚢 Stable**: Regular production releases from ublue-os/bluefin" >> $GITHUB_STEP_SUMMARY
+          echo "- **⭐ GTS**: Good to Stable releases (extended testing)" >> $GITHUB_STEP_SUMMARY
+          echo "- **🔒 LTS**: Long Term Support releases from ublue-os/bluefin-lts" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Workflow Improvements:**" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ **Independent Processing**: All version types processed independently" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ **Enhanced Error Handling**: Repository failures don't block other repositories" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ **Comprehensive Reporting**: Clear visibility into all processing results" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ **LTS Support**: Proper handling of ublue-os/bluefin-lts repository" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Next steps
+          if [[ "${{ steps.create_branch.outputs.has_changes }}" == "true" ]]; then
+            echo "### 🔍 Next Steps" >> $GITHUB_STEP_SUMMARY
+            echo "✅ **Pull request created successfully** with $FILES_CREATED_COUNT changelog entries" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Please review the pull request to:**" >> $GITHUB_STEP_SUMMARY
+            echo "- Verify changelog content accuracy and formatting" >> $GITHUB_STEP_SUMMARY
+            echo "- Confirm version type classification is correct" >> $GITHUB_STEP_SUMMARY
+            echo "- Check that release information matches actual releases" >> $GITHUB_STEP_SUMMARY
+            echo "- Merge to publish the changelog entries" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### ℹ️ No Action Required" >> $GITHUB_STEP_SUMMARY
+            if [[ "$FILES_CREATED_COUNT" -eq 0 && "$FILES_SKIPPED_COUNT" -gt 0 ]]; then
+              echo "All changelog entries already existed - no new files created" >> $GITHUB_STEP_SUMMARY
+            elif [[ "$PROCESSING_ERRORS_COUNT" -gt 0 ]]; then
+              echo "Processing completed with errors - please check the error details above" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "No changelog entries were needed at this time" >> $GITHUB_STEP_SUMMARY
+            fi
+          fi
