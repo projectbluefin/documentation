@@ -32,7 +32,7 @@ I have Become Legend.
 
 Bluefin **strongly** believes that new users to Linux should be introduced via atomic image and not the traditional desktop. It is clear that this is a generational shift. We are purposely here to help existing users bury the past and move on to something more useful than wrestling with their operating system.
 
-:::warning JARGON WARNING
+:::warning[JARGON WARNING]
 
 This next section goes into the why in more detail than most people need. You don't need to know any of this to use your computer, we provide this information for more advanced users to understand the design decisions in Bluefin. **95% of folks will be fine using their browser and the occasional Flatpak**, it is designed to be a general purpose OS to fit most people's needs without care about this stuff.
 
