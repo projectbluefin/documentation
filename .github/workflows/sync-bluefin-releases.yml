@@ -18,7 +18,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@ff7abcd0c3c05ccf6adc123a8cd1fd4fb30fb493
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_PAT }}
 
       - name: Setup GitHub CLI
         run: |
@@ -26,21 +26,29 @@ jobs:
           gh --version
           
           # Set up authentication and verify it works
-          echo "Setting up GitHub CLI authentication..."
-          echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
+          echo "Setting up GitHub CLI authentication with GH_PAT..."
+          echo "${{ secrets.GH_PAT }}" | gh auth login --with-token
           
           # Verify authentication works
           echo "Verifying GitHub CLI authentication..."
           gh auth status
           
-          # Test basic API access
-          echo "Testing API access..."
-          gh api user --jq '.login' || {
-            echo "❌ GitHub API authentication failed"
-            exit 1
-          }
+      - name: Test basic API access
+        run: |
+          # Test basic API access to ensure authentication was successful
+          echo "Testing GitHub API access with authenticated user..."
+          USER_LOGIN=$(gh api user --jq '.login' 2>&1)
+          API_EXIT_CODE=$?
           
-          echo "✅ GitHub CLI authentication successful"
+          if [[ $API_EXIT_CODE -eq 0 && -n "$USER_LOGIN" && "$USER_LOGIN" != "null" ]]; then
+            echo "✅ GitHub API authentication successful - authenticated as: $USER_LOGIN"
+          else
+            echo "❌ GitHub API authentication failed"
+            echo "Error output: $USER_LOGIN"
+            echo "Exit code: $API_EXIT_CODE"
+            echo "This indicates that the GH_PAT secret is either missing, invalid, or lacks sufficient permissions"
+            exit 1
+          fi
 
       - name: Process releases
         id: process
@@ -317,7 +325,7 @@ jobs:
         if: steps.process.outputs.processed_count != '0'
         uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e # v7
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_PAT }}
           commit-message: "feat(changelogs): sync ${{ steps.process.outputs.processed_count }} Bluefin release(s)"
           title: "feat(changelogs): sync ${{ steps.process.outputs.processed_count }} Bluefin release(s)"
           body: |
@@ -347,4 +355,4 @@ jobs:
             echo "⚠️ Could not find PR to enable auto-merge"
           fi
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_PAT }}
