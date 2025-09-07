@@ -76,6 +76,43 @@ jobs:
             return 1
           }
 
+          # Function to validate release data completeness
+          validate_release_data() {
+            local release_json="$1"
+            local tag="$2"
+            
+            # Check if basic fields are present
+            local body_length=$(echo "$release_json" | jq -r '.body // ""' | wc -c)
+            local name=$(echo "$release_json" | jq -r '.name // ""')
+            local published_at=$(echo "$release_json" | jq -r '.published_at // ""')
+            
+            echo "🔍 Validating release data for $tag:"
+            echo "  - Name: '$name'"
+            echo "  - Published: $published_at"
+            echo "  - Body length: $body_length characters"
+            
+            # Validation checks
+            if [[ -z "$published_at" || "$published_at" == "null" ]]; then
+              echo "❌ Missing published_at timestamp"
+              return 1
+            fi
+            
+            if [[ $body_length -lt 100 ]]; then
+              echo "❌ Release body too short ($body_length chars) - likely incomplete"
+              echo "Body content: $(echo "$release_json" | jq -r '.body // ""')"
+              return 1
+            fi
+            
+            # Check for essential sections in release body
+            local body_content=$(echo "$release_json" | jq -r '.body // ""')
+            if ! echo "$body_content" | grep -q "### Major packages"; then
+              echo "⚠️ WARNING: Missing '### Major packages' section"
+            fi
+            
+            echo "✅ Release data validation passed"
+            return 0
+          }
+
           # Function to process a single release
           process_release() {
             local repo="$1"
@@ -87,13 +124,37 @@ jobs:
             
             echo "Processing $repo:$tag (published: $date)"
             
-            # Call existing script to process release
+            # Validate input parameters
+            if [[ -z "$body" || "$body" == "null" ]]; then
+              echo "❌ ERROR: Empty or null release body for $repo:$tag"
+              echo "This may result in incomplete changelog generation"
+              return 1
+            fi
+            
+            # Log release body length for debugging
+            BODY_LENGTH=$(echo "$body" | wc -c)
+            echo "📊 Release body length: $BODY_LENGTH characters"
+            
+            # Check for minimum expected content
+            if [[ $BODY_LENGTH -lt 500 ]]; then
+              echo "⚠️ WARNING: Release body seems unusually short for $repo:$tag"
+              echo "Body preview: $(echo "$body" | head -c 200)..."
+            fi
+            
+            # Call existing script to process release with enhanced error handling
             if ./scripts/process_single_release.sh "$repo" "$tag" "$url" "$date" "$name" "$body" "false" ""; then
-              echo "✅ Processed $repo:$tag"
+              echo "✅ Successfully processed $repo:$tag"
               return 0
             else
-              echo "⚠️ Skipped $repo:$tag (already exists or error)"
-              return 1
+              local exit_code=$?
+              if [[ $exit_code -eq 1 ]]; then
+                echo "ℹ️ Skipped $repo:$tag (already exists)"
+                return 1
+              else
+                echo "❌ FAILED to process $repo:$tag (exit code: $exit_code)"
+                echo "This indicates a serious issue with changelog generation"
+                return 1
+              fi
             fi
           }
 
@@ -130,12 +191,17 @@ jobs:
             done
             
             if [[ -n "$RELEASE_DATA" && "$RELEASE_DATA" != "{}" ]]; then
-              DATE=$(echo "$RELEASE_DATA" | jq -r '.published_at')
-              NAME=$(echo "$RELEASE_DATA" | jq -r '.name // .tag_name')
-              BODY=$(echo "$RELEASE_DATA" | jq -r '.body // ""')
-              
-              if process_release "$REPO" "$TAG" "$URL" "$DATE" "$NAME" "$BODY"; then
-                PROCESSED_COUNT=$((PROCESSED_COUNT + 1))
+              # Validate release data before processing
+              if validate_release_data "$RELEASE_DATA" "$TAG"; then
+                DATE=$(echo "$RELEASE_DATA" | jq -r '.published_at')
+                NAME=$(echo "$RELEASE_DATA" | jq -r '.name // .tag_name')
+                BODY=$(echo "$RELEASE_DATA" | jq -r '.body // ""')
+                
+                if process_release "$REPO" "$TAG" "$URL" "$DATE" "$NAME" "$BODY"; then
+                  PROCESSED_COUNT=$((PROCESSED_COUNT + 1))
+                fi
+              else
+                echo "❌ Release data validation failed for $TAG - skipping to prevent incomplete changelog"
               fi
             else
               echo "❌ Failed to fetch release details for $TAG after 3 attempts"
@@ -163,8 +229,13 @@ jobs:
                 NAME=$(echo "$release" | jq -r '.name // .tag_name')
                 BODY=$(echo "$release" | jq -r '.body // ""')
                 
-                if process_release "ublue-os/bluefin" "$TAG" "$URL" "$DATE" "$NAME" "$BODY"; then
-                  PROCESSED_COUNT=$((PROCESSED_COUNT + 1))
+                # Validate release data before processing
+                if validate_release_data "$release" "$TAG"; then
+                  if process_release "ublue-os/bluefin" "$TAG" "$URL" "$DATE" "$NAME" "$BODY"; then
+                    PROCESSED_COUNT=$((PROCESSED_COUNT + 1))
+                  fi
+                else
+                  echo "❌ Skipping $TAG due to validation failure"
                 fi
               done
             else
@@ -186,8 +257,13 @@ jobs:
                 NAME=$(echo "$release" | jq -r '.name // .tag_name')
                 BODY=$(echo "$release" | jq -r '.body // ""')
                 
-                if process_release "ublue-os/bluefin" "$TAG" "$URL" "$DATE" "$NAME" "$BODY"; then
-                  PROCESSED_COUNT=$((PROCESSED_COUNT + 1))
+                # Validate release data before processing
+                if validate_release_data "$release" "$TAG"; then
+                  if process_release "ublue-os/bluefin" "$TAG" "$URL" "$DATE" "$NAME" "$BODY"; then
+                    PROCESSED_COUNT=$((PROCESSED_COUNT + 1))
+                  fi
+                else
+                  echo "❌ Skipping $TAG due to validation failure"
                 fi
               done
             else
@@ -209,8 +285,13 @@ jobs:
                 NAME=$(echo "$release" | jq -r '.name // .tag_name')
                 BODY=$(echo "$release" | jq -r '.body // ""')
                 
-                if process_release "ublue-os/bluefin-lts" "$TAG" "$URL" "$DATE" "$NAME" "$BODY"; then
-                  PROCESSED_COUNT=$((PROCESSED_COUNT + 1))
+                # Validate release data before processing
+                if validate_release_data "$release" "$TAG"; then
+                  if process_release "ublue-os/bluefin-lts" "$TAG" "$URL" "$DATE" "$NAME" "$BODY"; then
+                    PROCESSED_COUNT=$((PROCESSED_COUNT + 1))
+                  fi
+                else
+                  echo "❌ Skipping $TAG due to validation failure"
                 fi
               done
             else
