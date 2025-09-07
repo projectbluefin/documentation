@@ -1,10 +1,14 @@
 #!/bin/bash
 
 # Script to process a single release and create changelog entry
-# Usage: process_single_release.sh SOURCE_REPO RELEASE_TAG RELEASE_URL RELEASE_DATE RELEASE_NAME RELEASE_BODY RELEASE_PRERELEASE AUTHOR
+# Usage: process_single_release.sh SOURCE_REPO RELEASE_TAG RELEASE_URL RELEASE_DATE RELEASE_NAME RELEASE_BODY RELEASE_PRERELEASE AUTHOR [--force-regenerate]
 # Exit codes: 0=success, 1=file already exists, 2=error
 
 set -e
+
+# Source GitHub API utilities
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/github_api_utils.sh"
 
 SOURCE_REPO="$1"
 RELEASE_TAG="$2"
@@ -14,10 +18,17 @@ RELEASE_NAME="$5"
 RELEASE_BODY="$6"
 RELEASE_PRERELEASE="$7"
 AUTHOR="$8"
+FORCE_REGENERATE="false"
+
+# Check for force regenerate flag
+if [[ "$9" == "--force-regenerate" ]] || [[ "$FORCE_REGENERATE_CHANGELOGS" == "true" ]]; then
+    FORCE_REGENERATE="true"
+    log_info "🔄 Force regeneration enabled - will overwrite existing files"
+fi
 
 if [[ -z "$SOURCE_REPO" || -z "$RELEASE_TAG" || -z "$RELEASE_DATE" ]]; then
-    echo "Error: Missing required parameters"
-    echo "Usage: process_single_release.sh SOURCE_REPO RELEASE_TAG RELEASE_URL RELEASE_DATE RELEASE_NAME RELEASE_BODY RELEASE_PRERELEASE AUTHOR"
+    log_error "Missing required parameters"
+    echo "Usage: process_single_release.sh SOURCE_REPO RELEASE_TAG RELEASE_URL RELEASE_DATE RELEASE_NAME RELEASE_BODY RELEASE_PRERELEASE AUTHOR [--force-regenerate]"
     exit 2
 fi
 
@@ -35,6 +46,11 @@ fi
 echo "Processing release: $RELEASE_TAG from $SOURCE_REPO"
 echo "Release date: $RELEASE_DATE"
 echo "Using author: $AUTHOR"
+
+log_info "📋 Processing release: $RELEASE_TAG from $SOURCE_REPO"
+log_verbose "Release date: $RELEASE_DATE"
+log_verbose "Using author: $AUTHOR"
+log_verbose "Force regenerate: $FORCE_REGENERATE"
 
 # Parse date to YYYY-MM-DD format
 FORMATTED_DATE=$(date -u -d "$RELEASE_DATE" '+%Y-%m-%d' 2>/dev/null || date -u -j -f '%Y-%m-%dT%H:%M:%SZ' "$RELEASE_DATE" '+%Y-%m-%d' 2>/dev/null || echo "$(date '+%Y-%m-%d')")
@@ -81,14 +97,21 @@ CHANGELOG_FILE="changelogs/$FILENAME"
 
 # Check if file already exists
 if [[ -f "$CHANGELOG_FILE" ]]; then
-    echo "WARNING: Changelog file already exists: $CHANGELOG_FILE"
-    echo "SKIPPED: $SOURCE_REPO:$RELEASE_TAG - file already exists"
-    echo "Skipping creation to avoid overwriting existing content"
-    echo "If you want to regenerate this file, please delete it first"
-    exit 0
+    if [[ "$FORCE_REGENERATE" == "true" ]]; then
+        log_warn "⚠️ Changelog file exists but force regeneration enabled: $CHANGELOG_FILE"
+        log_info "🗑️ Removing existing file to regenerate..."
+        rm -f "$CHANGELOG_FILE"
+    else
+        log_warn "⚠️ Changelog file already exists: $CHANGELOG_FILE"
+        echo "SKIPPED: $SOURCE_REPO:$RELEASE_TAG - file already exists"
+        log_info "💡 To regenerate this file, use --force-regenerate flag or set FORCE_REGENERATE_CHANGELOGS=true"
+        exit 0
+    fi
 fi
 
 echo "Creating changelog entry: $CHANGELOG_FILE"
+
+log_info "📝 Creating changelog entry: $CHANGELOG_FILE"
 
 # Determine title prefix based on source repository
 # For LTS releases, use "Bluefin" as prefix since RELEASE_TAG_DISPLAY already contains "LTS"
@@ -104,8 +127,10 @@ echo "$RELEASE_BODY" > "/tmp/release_body_single.md"
 
 # Validate release body content for completeness
 echo "Validating release body content..."
+log_debug "Validating release body content..."
 BODY_LENGTH=$(echo "$RELEASE_BODY" | wc -c)
 echo "Release body length: $BODY_LENGTH characters"
+log_verbose "Release body length: $BODY_LENGTH characters"
 
 # Check for essential sections in the release body
 MISSING_SECTIONS=""
@@ -122,18 +147,22 @@ fi
 # Log validation results
 if [[ -n "$MISSING_SECTIONS" ]]; then
     echo "⚠️ WARNING: Release body appears incomplete. Missing sections:$MISSING_SECTIONS"
+    log_warn "Release body appears incomplete. Missing sections:$MISSING_SECTIONS"
     echo "Release body preview (first 500 chars):"
     echo "$RELEASE_BODY" | head -c 500
     echo "..."
     echo "This may result in an incomplete changelog. Consider regenerating from source."
+    log_verbose "Release body preview: $(echo "$RELEASE_BODY" | head -c 200)..."
 else
     echo "✅ Release body validation passed - all essential sections found"
+    log_verbose "✅ Release body validation passed - all essential sections found"
 fi
 
 # Log some content statistics
 COMMITS_COUNT=$(echo "$RELEASE_BODY" | grep -c "^\| \*\*\[" || echo "0")
 PACKAGES_COUNT=$(echo "$RELEASE_BODY" | grep -c "^| [✨🔄❌]" || echo "0")
 echo "📊 Content statistics: $COMMITS_COUNT commits, $PACKAGES_COUNT package changes"
+log_verbose "Content statistics: $COMMITS_COUNT commits, $PACKAGES_COUNT package changes"
 
 # Create the changelog file using printf to avoid YAML parsing issues
 printf '%s\n' \
@@ -179,8 +208,10 @@ sed -i "/RELEASE_BODY_CONTENT/d" "$CHANGELOG_FILE"
 
 # Validate the generated changelog file
 echo "Validating generated changelog file..."
+log_debug "Validating generated changelog file..."
 CHANGELOG_SIZE=$(wc -c < "$CHANGELOG_FILE")
 echo "Generated changelog size: $CHANGELOG_SIZE bytes"
+log_verbose "Generated changelog size: $CHANGELOG_SIZE bytes"
 
 # Verify essential sections made it into the final changelog
 FINAL_MISSING_SECTIONS=""
@@ -197,24 +228,33 @@ fi
 # Final validation report
 if [[ -n "$FINAL_MISSING_SECTIONS" ]]; then
     echo "❌ ERROR: Generated changelog is missing sections:$FINAL_MISSING_SECTIONS"
+    log_error "Generated changelog is missing sections:$FINAL_MISSING_SECTIONS"
     echo "This suggests the release body was incomplete or processing failed."
     echo "Changelog file: $CHANGELOG_FILE"
+    log_error "Changelog file: $CHANGELOG_FILE"
     exit 2
 else
     echo "✅ Changelog validation passed - all essential sections present"
+    log_verbose "✅ Changelog validation passed - all essential sections present"
 fi
 
 # Count lines to ensure substantial content
 LINE_COUNT=$(wc -l < "$CHANGELOG_FILE")
 echo "Generated changelog has $LINE_COUNT lines"
+log_verbose "Generated changelog has $LINE_COUNT lines"
 
 if [[ $LINE_COUNT -lt 30 ]]; then
     echo "⚠️ WARNING: Changelog seems unusually short ($LINE_COUNT lines)"
+    log_warn "Changelog seems unusually short ($LINE_COUNT lines)"
     echo "This may indicate incomplete content generation."
 fi
 
 echo "Successfully created changelog file: $CHANGELOG_FILE"
 echo "Release type: $RELEASE_TYPE"
 echo "Generated filename: $FILENAME"
+
+log_info "✅ Successfully created changelog file: $CHANGELOG_FILE"
+log_verbose "Release type: $RELEASE_TYPE"
+log_verbose "Generated filename: $FILENAME"
 
 exit 0
