@@ -102,6 +102,39 @@ fi
 # Save release body to temporary file
 echo "$RELEASE_BODY" > "/tmp/release_body_single.md"
 
+# Validate release body content for completeness
+echo "Validating release body content..."
+BODY_LENGTH=$(echo "$RELEASE_BODY" | wc -c)
+echo "Release body length: $BODY_LENGTH characters"
+
+# Check for essential sections in the release body
+MISSING_SECTIONS=""
+if ! echo "$RELEASE_BODY" | grep -q "### All Images"; then
+    MISSING_SECTIONS="$MISSING_SECTIONS 'All Images'"
+fi
+if ! echo "$RELEASE_BODY" | grep -q "### Commits"; then
+    MISSING_SECTIONS="$MISSING_SECTIONS 'Commits'"
+fi
+if ! echo "$RELEASE_BODY" | grep -q "### How to rebase"; then
+    MISSING_SECTIONS="$MISSING_SECTIONS 'How to rebase'"
+fi
+
+# Log validation results
+if [[ -n "$MISSING_SECTIONS" ]]; then
+    echo "⚠️ WARNING: Release body appears incomplete. Missing sections:$MISSING_SECTIONS"
+    echo "Release body preview (first 500 chars):"
+    echo "$RELEASE_BODY" | head -c 500
+    echo "..."
+    echo "This may result in an incomplete changelog. Consider regenerating from source."
+else
+    echo "✅ Release body validation passed - all essential sections found"
+fi
+
+# Log some content statistics
+COMMITS_COUNT=$(echo "$RELEASE_BODY" | grep -c "^\| \*\*\[" || echo "0")
+PACKAGES_COUNT=$(echo "$RELEASE_BODY" | grep -c "^| [✨🔄❌]" || echo "0")
+echo "📊 Content statistics: $COMMITS_COUNT commits, $PACKAGES_COUNT package changes"
+
 # Create the changelog file using printf to avoid YAML parsing issues
 printf '%s\n' \
     '---' \
@@ -143,6 +176,42 @@ sed -i "s|SOURCE_REPO|$SOURCE_REPO|g" "$CHANGELOG_FILE"
 # Insert the release body content
 sed -i "/RELEASE_BODY_CONTENT/r /tmp/release_body_single.md" "$CHANGELOG_FILE"
 sed -i "/RELEASE_BODY_CONTENT/d" "$CHANGELOG_FILE"
+
+# Validate the generated changelog file
+echo "Validating generated changelog file..."
+CHANGELOG_SIZE=$(wc -c < "$CHANGELOG_FILE")
+echo "Generated changelog size: $CHANGELOG_SIZE bytes"
+
+# Verify essential sections made it into the final changelog
+FINAL_MISSING_SECTIONS=""
+if ! grep -q "### All Images" "$CHANGELOG_FILE"; then
+    FINAL_MISSING_SECTIONS="$FINAL_MISSING_SECTIONS 'All Images'"
+fi
+if ! grep -q "### Commits" "$CHANGELOG_FILE"; then
+    FINAL_MISSING_SECTIONS="$FINAL_MISSING_SECTIONS 'Commits'"
+fi
+if ! grep -q "### How to rebase" "$CHANGELOG_FILE"; then
+    FINAL_MISSING_SECTIONS="$FINAL_MISSING_SECTIONS 'How to rebase'"
+fi
+
+# Final validation report
+if [[ -n "$FINAL_MISSING_SECTIONS" ]]; then
+    echo "❌ ERROR: Generated changelog is missing sections:$FINAL_MISSING_SECTIONS"
+    echo "This suggests the release body was incomplete or processing failed."
+    echo "Changelog file: $CHANGELOG_FILE"
+    exit 2
+else
+    echo "✅ Changelog validation passed - all essential sections present"
+fi
+
+# Count lines to ensure substantial content
+LINE_COUNT=$(wc -l < "$CHANGELOG_FILE")
+echo "Generated changelog has $LINE_COUNT lines"
+
+if [[ $LINE_COUNT -lt 30 ]]; then
+    echo "⚠️ WARNING: Changelog seems unusually short ($LINE_COUNT lines)"
+    echo "This may indicate incomplete content generation."
+fi
 
 echo "Successfully created changelog file: $CHANGELOG_FILE"
 echo "Release type: $RELEASE_TYPE"
