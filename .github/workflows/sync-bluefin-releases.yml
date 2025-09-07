@@ -35,10 +35,11 @@ jobs:
           # Fetch all releases from ublue-os/bluefin to find latest stable and GTS
           echo "Fetching all releases from ublue-os/bluefin..."
           BLUEFIN_RELEASES=$(curl -s -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             "https://api.github.com/repos/ublue-os/bluefin/releases")
 
-          # Check if request was successful
-          if echo "$BLUEFIN_RELEASES" | jq -e '.message' > /dev/null; then
+          # Check if request was successful - check for both HTTP errors and API error messages
+          if [[ -z "$BLUEFIN_RELEASES" ]] || echo "$BLUEFIN_RELEASES" | jq -e '.message // .errors' > /dev/null 2>&1 || ! echo "$BLUEFIN_RELEASES" | jq empty > /dev/null 2>&1; then
             echo "Warning: Failed to fetch bluefin releases"
             echo "API Response: $BLUEFIN_RELEASES"
             REPOSITORIES_FAILED="$REPOSITORIES_FAILED ublue-os/bluefin"
@@ -46,40 +47,48 @@ jobs:
             REPOSITORIES_ACCESSED="$REPOSITORIES_ACCESSED ublue-os/bluefin"
             
             # Find latest stable release (tag contains 'stable')
-            BLUEFIN_STABLE_RELEASE=$(echo "$BLUEFIN_RELEASES" | jq -r '[.[] | select(.tag_name | test("stable")) | select(.prerelease == false)] | .[0]')
-            if [[ "$BLUEFIN_STABLE_RELEASE" != "null" ]]; then
-              BLUEFIN_STABLE_TAG=$(echo "$BLUEFIN_STABLE_RELEASE" | jq -r '.tag_name')
-              BLUEFIN_STABLE_URL=$(echo "$BLUEFIN_STABLE_RELEASE" | jq -r '.html_url')
-              BLUEFIN_STABLE_DATE=$(echo "$BLUEFIN_STABLE_RELEASE" | jq -r '.published_at')
+            if BLUEFIN_STABLE_RELEASE=$(echo "$BLUEFIN_RELEASES" | jq -r '[.[] | select(.tag_name | test("stable")) | select(.prerelease == false)] | .[0]' 2>/dev/null) && [[ "$BLUEFIN_STABLE_RELEASE" != "null" && -n "$BLUEFIN_STABLE_RELEASE" ]]; then
+              if BLUEFIN_STABLE_TAG=$(echo "$BLUEFIN_STABLE_RELEASE" | jq -r '.tag_name' 2>/dev/null) && \
+                 BLUEFIN_STABLE_URL=$(echo "$BLUEFIN_STABLE_RELEASE" | jq -r '.html_url' 2>/dev/null) && \
+                 BLUEFIN_STABLE_DATE=$(echo "$BLUEFIN_STABLE_RELEASE" | jq -r '.published_at' 2>/dev/null) && \
+                 [[ "$BLUEFIN_STABLE_TAG" != "null" && "$BLUEFIN_STABLE_URL" != "null" && "$BLUEFIN_STABLE_DATE" != "null" ]]; then
 
-              echo "Latest stable release found: $BLUEFIN_STABLE_TAG"
-              echo "Stable release URL: $BLUEFIN_STABLE_URL"
-              
-              # Save stable release data
-              echo "bluefin_stable_tag=$BLUEFIN_STABLE_TAG" >> $GITHUB_OUTPUT
-              echo "bluefin_stable_url=$BLUEFIN_STABLE_URL" >> $GITHUB_OUTPUT
-              echo "bluefin_stable_date=$BLUEFIN_STABLE_DATE" >> $GITHUB_OUTPUT
-              echo "bluefin_stable_available=true" >> $GITHUB_OUTPUT
+                echo "Latest stable release found: $BLUEFIN_STABLE_TAG"
+                echo "Stable release URL: $BLUEFIN_STABLE_URL"
+                
+                # Save stable release data
+                echo "bluefin_stable_tag=$BLUEFIN_STABLE_TAG" >> $GITHUB_OUTPUT
+                echo "bluefin_stable_url=$BLUEFIN_STABLE_URL" >> $GITHUB_OUTPUT
+                echo "bluefin_stable_date=$BLUEFIN_STABLE_DATE" >> $GITHUB_OUTPUT
+                echo "bluefin_stable_available=true" >> $GITHUB_OUTPUT
+              else
+                echo "Error parsing stable release data"
+                echo "bluefin_stable_available=false" >> $GITHUB_OUTPUT
+              fi
             else
               echo "No stable releases found"
               echo "bluefin_stable_available=false" >> $GITHUB_OUTPUT
             fi
             
             # Find latest GTS release (tag contains 'gts')
-            BLUEFIN_GTS_RELEASE=$(echo "$BLUEFIN_RELEASES" | jq -r '[.[] | select(.tag_name | test("gts"))] | .[0]')
-            if [[ "$BLUEFIN_GTS_RELEASE" != "null" ]]; then
-              BLUEFIN_GTS_TAG=$(echo "$BLUEFIN_GTS_RELEASE" | jq -r '.tag_name')
-              BLUEFIN_GTS_URL=$(echo "$BLUEFIN_GTS_RELEASE" | jq -r '.html_url')
-              BLUEFIN_GTS_DATE=$(echo "$BLUEFIN_GTS_RELEASE" | jq -r '.published_at')
+            if BLUEFIN_GTS_RELEASE=$(echo "$BLUEFIN_RELEASES" | jq -r '[.[] | select(.tag_name | test("gts"))] | .[0]' 2>/dev/null) && [[ "$BLUEFIN_GTS_RELEASE" != "null" && -n "$BLUEFIN_GTS_RELEASE" ]]; then
+              if BLUEFIN_GTS_TAG=$(echo "$BLUEFIN_GTS_RELEASE" | jq -r '.tag_name' 2>/dev/null) && \
+                 BLUEFIN_GTS_URL=$(echo "$BLUEFIN_GTS_RELEASE" | jq -r '.html_url' 2>/dev/null) && \
+                 BLUEFIN_GTS_DATE=$(echo "$BLUEFIN_GTS_RELEASE" | jq -r '.published_at' 2>/dev/null) && \
+                 [[ "$BLUEFIN_GTS_TAG" != "null" && "$BLUEFIN_GTS_URL" != "null" && "$BLUEFIN_GTS_DATE" != "null" ]]; then
 
-              echo "Latest GTS release found: $BLUEFIN_GTS_TAG"
-              echo "GTS release URL: $BLUEFIN_GTS_URL"
-              
-              # Save GTS release data
-              echo "bluefin_gts_tag=$BLUEFIN_GTS_TAG" >> $GITHUB_OUTPUT
-              echo "bluefin_gts_url=$BLUEFIN_GTS_URL" >> $GITHUB_OUTPUT
-              echo "bluefin_gts_date=$BLUEFIN_GTS_DATE" >> $GITHUB_OUTPUT
-              echo "bluefin_gts_available=true" >> $GITHUB_OUTPUT
+                echo "Latest GTS release found: $BLUEFIN_GTS_TAG"
+                echo "GTS release URL: $BLUEFIN_GTS_URL"
+                
+                # Save GTS release data
+                echo "bluefin_gts_tag=$BLUEFIN_GTS_TAG" >> $GITHUB_OUTPUT
+                echo "bluefin_gts_url=$BLUEFIN_GTS_URL" >> $GITHUB_OUTPUT
+                echo "bluefin_gts_date=$BLUEFIN_GTS_DATE" >> $GITHUB_OUTPUT
+                echo "bluefin_gts_available=true" >> $GITHUB_OUTPUT
+              else
+                echo "Error parsing GTS release data"
+                echo "bluefin_gts_available=false" >> $GITHUB_OUTPUT
+              fi
             else
               echo "No GTS releases found"
               echo "bluefin_gts_available=false" >> $GITHUB_OUTPUT
@@ -89,28 +98,34 @@ jobs:
           # Try to fetch the latest release from ublue-os/bluefin-lts
           echo "Fetching latest release from ublue-os/bluefin-lts..."
           BLUEFIN_LTS_RELEASE=$(curl -s -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             "https://api.github.com/repos/ublue-os/bluefin-lts/releases/latest")
 
-          # Check if LTS request was successful
-          if echo "$BLUEFIN_LTS_RELEASE" | jq -e '.message' > /dev/null; then
+          # Check if LTS request was successful - check for both HTTP errors and API error messages
+          if [[ -z "$BLUEFIN_LTS_RELEASE" ]] || echo "$BLUEFIN_LTS_RELEASE" | jq -e '.message // .errors' > /dev/null 2>&1 || ! echo "$BLUEFIN_LTS_RELEASE" | jq empty > /dev/null 2>&1; then
             echo "Warning: Failed to fetch latest bluefin-lts release"
             echo "API Response: $BLUEFIN_LTS_RELEASE"
             REPOSITORIES_FAILED="$REPOSITORIES_FAILED ublue-os/bluefin-lts"
             echo "bluefin_lts_available=false" >> $GITHUB_OUTPUT
           else
-            # Extract bluefin-lts release information
-            BLUEFIN_LTS_TAG=$(echo "$BLUEFIN_LTS_RELEASE" | jq -r '.tag_name')
-            BLUEFIN_LTS_URL=$(echo "$BLUEFIN_LTS_RELEASE" | jq -r '.html_url')
-            BLUEFIN_LTS_DATE=$(echo "$BLUEFIN_LTS_RELEASE" | jq -r '.published_at')
+            # Extract bluefin-lts release information with error handling
+            if BLUEFIN_LTS_TAG=$(echo "$BLUEFIN_LTS_RELEASE" | jq -r '.tag_name' 2>/dev/null) && \
+               BLUEFIN_LTS_URL=$(echo "$BLUEFIN_LTS_RELEASE" | jq -r '.html_url' 2>/dev/null) && \
+               BLUEFIN_LTS_DATE=$(echo "$BLUEFIN_LTS_RELEASE" | jq -r '.published_at' 2>/dev/null) && \
+               [[ "$BLUEFIN_LTS_TAG" != "null" && "$BLUEFIN_LTS_URL" != "null" && "$BLUEFIN_LTS_DATE" != "null" ]]; then
 
-            echo "Latest bluefin-lts release found: $BLUEFIN_LTS_TAG"
-            REPOSITORIES_ACCESSED="$REPOSITORIES_ACCESSED ublue-os/bluefin-lts"
-            
-            # Save LTS release data
-            echo "bluefin_lts_tag=$BLUEFIN_LTS_TAG" >> $GITHUB_OUTPUT
-            echo "bluefin_lts_url=$BLUEFIN_LTS_URL" >> $GITHUB_OUTPUT
-            echo "bluefin_lts_date=$BLUEFIN_LTS_DATE" >> $GITHUB_OUTPUT
-            echo "bluefin_lts_available=true" >> $GITHUB_OUTPUT
+              echo "Latest bluefin-lts release found: $BLUEFIN_LTS_TAG"
+              REPOSITORIES_ACCESSED="$REPOSITORIES_ACCESSED ublue-os/bluefin-lts"
+              
+              # Save LTS release data
+              echo "bluefin_lts_tag=$BLUEFIN_LTS_TAG" >> $GITHUB_OUTPUT
+              echo "bluefin_lts_url=$BLUEFIN_LTS_URL" >> $GITHUB_OUTPUT
+              echo "bluefin_lts_date=$BLUEFIN_LTS_DATE" >> $GITHUB_OUTPUT
+              echo "bluefin_lts_available=true" >> $GITHUB_OUTPUT
+            else
+              echo "Error parsing LTS release data"
+              echo "bluefin_lts_available=false" >> $GITHUB_OUTPUT
+            fi
           fi
 
           # Output summary
@@ -160,17 +175,22 @@ jobs:
             
             # Get detailed release data
             RELEASE_DATA=$(curl -s -H "Accept: application/vnd.github.v3+json" \
+              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
               "https://api.github.com/repos/$source_repo/releases/tags/$release_tag")
             
-            if echo "$RELEASE_DATA" | jq -e '.message' > /dev/null; then
+            if [[ -z "$RELEASE_DATA" ]] || echo "$RELEASE_DATA" | jq -e '.message // .errors' > /dev/null 2>&1 || ! echo "$RELEASE_DATA" | jq empty > /dev/null 2>&1; then
               echo "Warning: Could not fetch detailed data for $release_tag from $source_repo"
               PROCESSING_ERRORS+=("$source_repo:$release_tag - API access error")
               return 1
             fi
             
-            # Extract detailed release information
-            RELEASE_NAME=$(echo "$RELEASE_DATA" | jq -r '.name // .tag_name')
-            RELEASE_BODY=$(echo "$RELEASE_DATA" | jq -r '.body // ""')
+            # Extract detailed release information with error handling
+            if ! RELEASE_NAME=$(echo "$RELEASE_DATA" | jq -r '.name // .tag_name' 2>/dev/null) || \
+               ! RELEASE_BODY=$(echo "$RELEASE_DATA" | jq -r '.body // ""' 2>/dev/null); then
+              echo "Error parsing release data for $release_tag from $source_repo"
+              PROCESSING_ERRORS+=("$source_repo:$release_tag - Data parsing error")
+              return 1
+            fi
             
             # Save release body for processing
             echo "$RELEASE_BODY" > "/tmp/release_body_${source_repo//\//_}_${release_tag}.md"
@@ -238,13 +258,17 @@ jobs:
             
             # For repository_dispatch, we need to get the release date
             RELEASE_DATA=$(curl -s -H "Accept: application/vnd.github.v3+json" \
+              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
               "https://api.github.com/repos/$SOURCE_REPO/releases/tags/$RELEASE_TAG")
             
-            if echo "$RELEASE_DATA" | jq -e '.message' > /dev/null; then
+            if [[ -z "$RELEASE_DATA" ]] || echo "$RELEASE_DATA" | jq -e '.message // .errors' > /dev/null 2>&1 || ! echo "$RELEASE_DATA" | jq empty > /dev/null 2>&1; then
               echo "Error: Release not found for tag $RELEASE_TAG in $SOURCE_REPO"
               PROCESSING_ERRORS+=("$SOURCE_REPO:$RELEASE_TAG - Release not found")
             else
-              RELEASE_DATE=$(echo "$RELEASE_DATA" | jq -r '.published_at')
+              if RELEASE_DATE=$(echo "$RELEASE_DATA" | jq -r '.published_at' 2>/dev/null) && \
+                 RELEASE_NAME=$(echo "$RELEASE_DATA" | jq -r '.name // .tag_name' 2>/dev/null) && \
+                 RELEASE_BODY=$(echo "$RELEASE_DATA" | jq -r '.body // ""' 2>/dev/null) && \
+                 [[ "$RELEASE_DATE" != "null" && "$RELEASE_NAME" != "null" ]]; then
               
               # Determine the correct author based on release type
               AUTHOR=""
@@ -256,28 +280,29 @@ jobs:
                 AUTHOR="bluefin-release-bot"
               fi
               
-              echo "Using author: $AUTHOR for repository dispatch release"
-              
-              # Call process_single_release with author parameter
-              RELEASE_NAME=$(echo "$RELEASE_DATA" | jq -r '.name // .tag_name')
-              RELEASE_BODY=$(echo "$RELEASE_DATA" | jq -r '.body // ""')
-              
-              output=$(./scripts/process_single_release.sh "$SOURCE_REPO" "$RELEASE_TAG" "$RELEASE_URL" "$RELEASE_DATE" "$RELEASE_NAME" "$RELEASE_BODY" "false" "$AUTHOR" 2>&1)
-              local result=$?
-              
-              echo "$output"
-              
-              if [[ $result -eq 0 ]]; then
-                  if echo "$output" | grep -q "SKIPPED:"; then
-                      FILES_SKIPPED+=("$SOURCE_REPO:$RELEASE_TAG")
-                      echo "⏭️ Skipped $RELEASE_TAG (file already exists)"
-                  else
-                      FILES_CREATED+=("$SOURCE_REPO:$RELEASE_TAG")
-                      echo "✅ Successfully created changelog for $RELEASE_TAG"
-                  fi
+                echo "Using author: $AUTHOR for repository dispatch release"
+                
+                # Call process_single_release with author parameter
+                output=$(./scripts/process_single_release.sh "$SOURCE_REPO" "$RELEASE_TAG" "$RELEASE_URL" "$RELEASE_DATE" "$RELEASE_NAME" "$RELEASE_BODY" "false" "$AUTHOR" 2>&1)
+                local result=$?
+                
+                echo "$output"
+                
+                if [[ $result -eq 0 ]]; then
+                    if echo "$output" | grep -q "SKIPPED:"; then
+                        FILES_SKIPPED+=("$SOURCE_REPO:$RELEASE_TAG")
+                        echo "⏭️ Skipped $RELEASE_TAG (file already exists)"
+                    else
+                        FILES_CREATED+=("$SOURCE_REPO:$RELEASE_TAG")
+                        echo "✅ Successfully created changelog for $RELEASE_TAG"
+                    fi
+                else
+                    PROCESSING_ERRORS+=("$SOURCE_REPO:$RELEASE_TAG - Processing error ($result)")
+                    echo "❌ Error processing $RELEASE_TAG (exit code: $result)"
+                fi
               else
-                  PROCESSING_ERRORS+=("$SOURCE_REPO:$RELEASE_TAG - Processing error ($result)")
-                  echo "❌ Error processing $RELEASE_TAG (exit code: $result)"
+                echo "Error parsing repository dispatch release data"
+                PROCESSING_ERRORS+=("$SOURCE_REPO:$RELEASE_TAG - Data parsing error")
               fi
             fi
           fi
