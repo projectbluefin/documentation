@@ -10,6 +10,14 @@ The project welcomes pull requests! Here's a quick howto:
 1. Find what to work on via our [help wanted issues](https://github.com/issues?q=is%3Aopen+is%3Aissue+user%3Aublue-os+archived%3Afalse+label%3A%22help+wanted%22)
 1. Ask questions in your PR or file an issue if you need help.
 
+:::tip
+
+> You don't need permission to contribute to your own destiny.
+>
+> -- Amber Graner
+
+:::
+
 ### Other Useful Links
 
 - [Open Pull Requests](https://github.com/pulls?user=ublue-os)
