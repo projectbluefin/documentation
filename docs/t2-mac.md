@@ -38,9 +38,9 @@ Using dd, [Fedora Media Writer](https://docs.fedoraproject.org/en-US/fedora/late
 
 #### Install Bluefin
 
-:::note
+:::note[This is madness]
 
-Note: an External keyboard and mouse are required to install Bluefin on T2 at this time, and on-boot to unlock an encrypted disk (until a command is run later).
+An External keyboard and mouse are required to install Bluefin on T2 at this time, and on-boot to unlock an encrypted disk (until a command is run later).
 
 :::
 
