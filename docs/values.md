@@ -29,6 +29,10 @@ The project endeavors to utilize the latest in open-source technology (like [sig
 
 The project strives to prefer stability and correctness, but recognizes that it must act to solve problems quickly and efficiently.
 
-> "Culture eats strategy for breakfast."
->
-> --Peter Drucker
+:::tip
+
+"Culture eats strategy for breakfast."
+
+-- Peter Drucker
+
+:::
