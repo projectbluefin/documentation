@@ -26,9 +26,9 @@ With the specialized hardware needs of your T2 Mac, and Apple's mostly non-suppo
 
 1. Start by downloading the standard Laptop image of [Project Bluefin](https://projectbluefin.io/).
 
-:::note
+:::note[Dual-boot support]
 
-Note on Dualboot: the Fedora installer (Anaconda) doesn't support a dualboot for these OCI deployments, so install on a Mac you don't need MacOS on or to a USB/Thunderbolt SSD.
+Anaconda, the installation software Bluefin uses doesn't support a dualboot for OCI deployments, so install on a Mac you don't need MacOS on or to a USB/Thunderbolt SSD.
 
 :::
 
