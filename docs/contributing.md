@@ -12,9 +12,9 @@ The project welcomes pull requests! Here's a quick howto:
 
 :::tip
 
-> You don't need permission to contribute to your own destiny.
->
-> -- Amber Graner
+You don't need permission to contribute to your own destiny.
+
+-- Amber Graner
 
 :::
 
