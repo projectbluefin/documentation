@@ -17,6 +17,7 @@
     "prettier-lint": "prettier --check ."
   },
   "dependencies": {
+    "@1password/docusaurus-plugin-stored-data": "^1.0.0",
     "@docusaurus/core": "3.8.1",
     "@docusaurus/faster": "^3.8.1",
     "@docusaurus/preset-classic": "3.8.1",

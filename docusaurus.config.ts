@@ -63,6 +63,38 @@ const config: Config = {
     ],
   ],
 
+  plugins: [
+    [
+      "@docusaurus/plugin-content-blog",
+      {
+        id: "changelogs",
+        routeBasePath: "changelogs",
+        path: "./changelogs",
+        blogTitle: "Bluefin Changelogs",
+        blogDescription: "Release notes and changelogs for Bluefin",
+        blogSidebarCount: "ALL",
+        blogSidebarTitle: "All Releases",
+        authorsMapPath: "authors.yaml",
+        feedOptions: {
+          type: ["rss", "atom"],
+          xslt: true,
+          title: "Bluefin Changelogs",
+          description: "Release notes and changelogs for Bluefin",
+        },
+        tagsBasePath: "tags",
+      },
+    ],
+    [
+      "@1password/docusaurus-plugin-stored-data",
+      {
+        data: {
+          bluefinReleases: "https://github.com/ublue-os/bluefin/releases.atom",
+          bluefinLtsReleases: "https://github.com/ublue-os/bluefin-lts/releases.atom",
+        },
+      },
+    ],
+  ],
+
   themeConfig: {
     algolia: {
       // The application ID provided by Algolia
@@ -114,6 +146,11 @@ const config: Config = {
         {
           to: "blog",
           label: "Blog",
+          position: "right",
+        },
+        {
+          to: "changelogs",
+          label: "Changelog",
           position: "right",
         },
         {
