@@ -63,44 +63,6 @@ const config: Config = {
     ],
   ],
 
-  plugins: [
-    [
-      "@docusaurus/plugin-content-blog",
-      {
-        /**
-         * Required for any multi-instance plugin
-         */
-        id: "changelogs",
-        /**
-         * URL route for the changelog section of your site.
-         * *DO NOT* include a trailing slash.
-         */
-        routeBasePath: "changelogs",
-        /**
-         * Path to data on filesystem relative to site dir.
-         */
-        path: "./changelogs",
-        /**
-         * Blog configuration
-         */
-        blogTitle: "Changelogs",
-        blogDescription:
-          "Changelogs for Bluefin",
-        blogSidebarCount: "ALL",
-        blogSidebarTitle: "All Changelogs",
-        authorsMapPath: "authors.yaml",
-        editUrl: "https://github.com/ublue-os/bluefin-docs/edit/main/",
-        truncateMarker: /(?!.*)/,
-        feedOptions: {
-          type: ["rss", "atom"],
-          xslt: true,
-          title: "Bluefin Changelogs",
-          description: "Changelogs for Bluefin",
-        },
-      },
-    ],
-  ],
-
   themeConfig: {
     algolia: {
       // The application ID provided by Algolia
