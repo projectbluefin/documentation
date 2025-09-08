@@ -125,7 +125,7 @@ Bluefin strives to make maintenance as straightforward as possible, however many
 - Run a System Upgrade via the menu option or `ujust update` to observe an update and reboot
   - `ujust changelogs` will show incoming changes and updates coming from Fedora
   - `ujust bios` will reboot the machine and enter the BIOS/UEFI menu. This is useful for booting into a Windows drive
-- Subscribe to the [blog](/blog) and [changelogs](/changelogs)
+- Subscribe to the [blog](/blog)
 - Understand [rebase and rollback procedures](/administration.md#switching-between-streams)
 - Use the [Warehouse application](https://github.com/flattool/warehouse) to manage Flatpak lifecycle:
   - Pin to an old version or rollback
