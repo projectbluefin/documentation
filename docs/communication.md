@@ -11,7 +11,8 @@ slug: communications
 
 ### Changelogs
 
-[changelogs.projectbluefin.io](https://changelogs.projectbluefin.io) - Changelogs for all Bluefin releases, subscribe to this to keep track of incoming goodies!
+[Bluefin releases](https://github.com/ublue-os/bluefin/releases.atom)
+[bluefin LTS releases](https://github.com/ublue-os/bluefin-lts/releases.atom)
 
 ### Discussions
 
@@ -30,4 +31,3 @@ slug: communications
 ## Main RSS Feeds
 
 - **Blog** - [https://docs.projectbluefin.io/blog/rss.xml](https://docs.projectbluefin.io/blog/rss.xml)
-- **Changelogs** - [https://docs.projectbluefin.io/changelogs/rss.xml](https://docs.projectbluefin.io/changelogs/rss.xml)
