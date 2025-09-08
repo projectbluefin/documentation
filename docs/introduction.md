@@ -9,9 +9,13 @@ _Deinonychus antirrhopus_
 
 ![image](https://github.com/user-attachments/assets/21208dd6-9ce5-41ba-9c21-d2bb97f7c1e8)
 
-> Give me a lever long enough and a Free OS to set it on, and I can move the world.
->
-> -Steve Langasek
+:::tip
+
+Give me a lever long enough and a Free OS to set it on, and I can move the world.
+
+-- Steve Langasek
+
+:::
 
 ## Features
 
@@ -19,7 +23,11 @@ Bluefin features a GNOME ([Donate](https://www.gnome.org/donate/)) desktop confi
 
 System updates are image-based and automatic. Applications are logically separated from the system by using Flatpaks for graphical applications and `brew` for command-line applications.
 
-> Bluefin is "An interpretation of the Ubuntu spirit built on Fedora technology"—a callback to an era of Ubuntu's history that many open source enthusiasts grew up with, much like the Classic X-Men. We aim to bring that same vibe here; think of us as the reboot. Chill vibes.
+:::tip
+
+Bluefin is "An interpretation of the Ubuntu spirit built on Fedora technology"—a callback to an era of Ubuntu's history that many open source enthusiasts grew up with, much like the Classic X-Men. We aim to bring that same vibe here; think of us as the reboot. Chill vibes.
+
+:::
 
 - Ubuntu-like GNOME layout.
   - Integrates the following GNOME Extensions by default:

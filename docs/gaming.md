@@ -21,9 +21,13 @@ There is no need to reboot. This will install the following software:
 
 ## Software Included
 
-> When it comes to the gaming experience in Bluefin, we spared no expense.
->
-> -- John Bazzite, CEO, Blue Universal
+:::tip
+
+When it comes to the gaming experience in Bluefin, we spared no expense.
+
+-- John Bazzite, CEO, Blue Universal
+
+:::
 
 ### Steam
 

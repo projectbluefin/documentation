@@ -26,7 +26,11 @@ With the specialized hardware needs of your T2 Mac, and Apple's mostly non-suppo
 
 1. Start by downloading the standard Laptop image of [Project Bluefin](https://projectbluefin.io/).
 
-> Note on Dualboot: the Fedora installer (Anaconda) doesn't support a dualboot for these OCI deployments, so install on a Mac you don't need MacOS on or to a USB/Thunderbolt SSD.
+:::note[Dual-boot support]
+
+Anaconda, the installation software Bluefin uses doesn't support a dualboot for OCI deployments, so install on a Mac you don't need MacOS on or to a USB/Thunderbolt SSD.
+
+:::
 
 #### Create a Bluefin USB
 
@@ -34,7 +38,11 @@ Using dd, [Fedora Media Writer](https://docs.fedoraproject.org/en-US/fedora/late
 
 #### Install Bluefin
 
-> Note: an External keyboard and mouse are required to install Bluefin on T2 at this time, and on-boot to unlock an encrypted disk (until a command is run later).
+:::note[This is madness]
+
+An External keyboard and mouse are required to install Bluefin on T2 at this time, and on-boot to unlock an encrypted disk (until a command is run later).
+
+:::
 
 1. With your Mac off, connect an external keyboard and mouse, and insert your Bluefin USB 
 2. Hold the option (alt on a Windows keyboard) key and power on your Mac.
@@ -48,9 +56,17 @@ Using dd, [Fedora Media Writer](https://docs.fedoraproject.org/en-US/fedora/late
 
 ### Configuration (Required) for T2
 
-> Please note that wifi/bluetooth firmware cannot be layered in via a package. On traditional systems the firmware can be [extracted from a MacOS install (T2Linux Wiki)](https://wiki.t2linux.org/guides/wifi-bluetooth/#on-linux), but on Bluefin these files have to be brought in as a containerfile layer or script in a custom image.
+:::note
 
-> Please also note that suspend/sleep doesn't work in most cases, if a Mac has firmware version v13.5 or newer. There are various workarounds.
+Please note that wifi/bluetooth firmware cannot be layered in via a package. On traditional systems the firmware can be [extracted from a MacOS install (T2Linux Wiki)](https://wiki.t2linux.org/guides/wifi-bluetooth/#on-linux), but on Bluefin these files have to be brought in as a containerfile layer or script in a custom image.
+
+:::
+
+:::note
+
+Please also note that suspend/sleep doesn't work in most cases, if a Mac has firmware version v13.5 or newer. There are various workarounds.
+
+:::
 
 Here, you have a choice to make. If you need wifi/bluetooth firmware, you'll need to rebase to a custom or community T2-specific Bluefin image. If not, you can layer several packages to get same experience as the T2-specific images. See the table below for a breakdown and the steps below that.
 

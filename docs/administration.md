@@ -9,9 +9,13 @@ Bluefin is designed to be installed for the life of the hardware without reinsta
 
 This typically means you can set up your system once, and then have it remain that way. Then likely you'll never have to come back here. 🙂
 
-> I want that "defaults lifestyle".
->
-> -[Matt Ray](https://www.softwaredefinedtalk.com/hosts/matt)
+:::tip
+
+I want that "defaults lifestyle".
+
+-- [Matt Ray](https://www.softwaredefinedtalk.com/hosts/matt)
+
+:::
 
 ![Bluefin Desktop Environment Illustration](https://github.com/user-attachments/assets/229f3763-c876-4402-8249-e631303e722b)
 
@@ -87,7 +91,11 @@ Bluefin's components are shared across all images, don't think of it as a separa
 
 ### Switching between Streams
 
-> Note that the `stable` and `latest` streams update more aggressively and may introduce new changes from Fedora (including regressions), take the user's Linux expertise into account when changing the update cadence.
+:::note
+
+Note that the `stable` and `latest` streams update more aggressively and may introduce new changes from Fedora (including regressions), take the user's Linux expertise into account when changing the update cadence.
+
+:::
 
 Use the `ujust rebase-helper` command to select rebase and select a specific stream:
 
@@ -248,7 +256,14 @@ Check the [XDG Base Directory Specification](https://specifications.freedesktop.
 - `ujust device-info` - Sends the status, flatpak list, and system info to the CentOS pastebin, and returns the URL to the terminal. This allows the end user to conveniently paste the URL with their info so others can help them debug
 - `ujust changelogs` - Show the changelogs for each package since the last update
 
-> Pro tip, keep your own tasks and aliases in `~/.Justfile`, and they are also handy to put in the root of your project files to automate common tasks, check out this example from [Fedora Kinoite](https://gitlab.com/fedora/ostree/ci-test/-/blob/main/justfile?ref_type=heads).
+:::tip
+
+Keep your own tasks and aliases in `~/.Justfile`, and they are also handy to put in the root of your project files to automate common tasks, check out this example from [Fedora Kinoite](https://gitlab.com/fedora/ostree/ci-test/-/blob/main/justfile?ref_type=heads).
+
+
+Pro tip, keep your own tasks and aliases in `~/.Justfile`, and they are also handy to put in the root of your project files to automate common tasks, check out this example from [Fedora Kinoite](https://gitlab.com/fedora/ostree/ci-test/-/blob/main/justfile?ref_type=heads).
+
+:::
 
 Note that generally speaking Bluefin tries to keep the system Justfiles finely scoped, most of these are workarounds and not full-fledged commands. They may get removed or changed depending on the problem they were initially meant to solve.
 

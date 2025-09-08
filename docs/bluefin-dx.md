@@ -22,7 +22,11 @@ This differs from traditional distributions by making the development process op
 
 We also believe in easy access to other thriving ecosystems like Python via `uv`. We throw in the towel on "one Linux system package manager to rule them all" because these ecosystems are giants themselves. Critics will say we ship too many package managers, we say we don't ship package managers, we ship _ecosystems that users want_. And these modern package managers are designed for a world running on containers because that's actually true. And we want it on our desktops out of the box.
 
-> We picked the cloud native pattern because local development in containers translates to deployment of containers on modern infrastructure.
+:::tip[Why cloud native?]
+
+We picked the cloud native pattern because local development in containers translates to deployment of containers on modern infrastructure.
+
+:::
 
 ![image](https://github.com/user-attachments/assets/51415b6c-b7fe-45e9-af74-c01694b26fbe)
 

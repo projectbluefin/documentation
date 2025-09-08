@@ -50,9 +50,13 @@ It comes with some fantastic CLI tools:
 
 The community may add new tools over time, re-running `ujust bluefin-cli` will pull in the new tools.
 
-> What greatness have I been missing? Being set in my old, tired ways.
->
-> -- Bill Childers (Probably, this quote is made up)
+:::tip
+
+What greatness have I been missing? Being set in my old, tired ways.
+
+-- Bill Childers (Probably, this quote is made up)
+
+:::
 
 ![image](https://github.com/user-attachments/assets/89be8151-5b57-4b71-bbe5-988bef2d6798)
 

@@ -201,4 +201,7 @@ Common documentation areas include:
 - Hardware-specific guides (`docs/framework*.md`)
 - Administrative information (`docs/administration.md`)
 
-**Remember**: Documentation should be consumable in one sitting and link to upstream docs rather than duplicating content.
+Other Rules:
+
+- **Remember**: Documentation should be consumable in one sitting and link to upstream docs rather than duplicating content.
+- **Never** create new pages unless explicitly told to do so. 
