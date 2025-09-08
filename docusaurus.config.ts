@@ -117,11 +117,6 @@ const config: Config = {
           position: "right",
         },
         {
-          to: "changelogs",
-          label: "Changelogs",
-          position: "right",
-        },
-        {
           href: "https://github.com/ublue-os/bluefin/discussions",
           label: "Community",
           position: "right",
