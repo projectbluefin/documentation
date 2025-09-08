@@ -1,0 +1,23 @@
+lts:
+  name: Bluefin LTS
+  title: Long Term Support Release
+  image_url: https://github.com/ublue-os.png
+  url: https://github.com/ublue-os/bluefin-lts
+  socials:
+    github: "ublue-os"
+
+gts:
+  name: Bluefin GTS  
+  title: Gated Testing Stream Release
+  image_url: https://github.com/ublue-os.png
+  url: https://github.com/ublue-os/bluefin
+  socials:
+    github: "ublue-os"
+
+stable:
+  name: Bluefin Stable
+  title: Stable Release Stream
+  image_url: https://github.com/ublue-os.png
+  url: https://github.com/ublue-os/bluefin
+  socials:
+    github: "ublue-os"
