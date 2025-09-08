@@ -39,6 +39,19 @@ Review the [Fedora Silverblue installation instructions](https://docs.fedoraproj
 | **Graphics** | Any modern Intel/AMD GPU | Any modern GPU except Nvidia Maxwell and older   |
 | **Boot**     | UEFI (BIOS unsupported)  | UEFI with Secure Boot                            |
 
+### Disk Usage
+
+This is how much disk space each image of Bluefin by default, this includes the flatpak applications (which can be removed): 
+
+#### Bluefin 
+~12.4 GB / ~17.4 GB with developer mode enabled
+
+#### Bluefin LTS
+~13.2 GB / ~14.5 GB with developer mode enabled
+
+#### Bluefin GDX
+~18.1 GB (Developer mode included)
+
 ### Why 16 GB RAM Minimum?
 
 Bluefin ships with an extensive cloud-native development stack. These workloads typically scale out to replicate entire clusters of computers and demand more resources than typical workloads.
