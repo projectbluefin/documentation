@@ -151,13 +151,8 @@ const config: Config = {
           position: "right",
         },
         {
-          to: "changelogs",
-          label: "Changelog",
-          position: "right",
-        },
-        {
           to: "feeds",
-          label: "Community Feeds",
+          label: "Changelogs",
           position: "right",
         },
         {
