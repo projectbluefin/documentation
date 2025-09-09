@@ -90,6 +90,8 @@ const config: Config = {
         data: {
           bluefinReleases: "https://github.com/ublue-os/bluefin/releases.atom",
           bluefinLtsReleases: "https://github.com/ublue-os/bluefin-lts/releases.atom",
+          bluefinDiscussions: "https://github.com/ublue-os/bluefin/discussions.atom",
+          bluefinAnnouncements: "https://github.com/ublue-os/bluefin/discussions.atom?discussions_q=is%3Aopen+label%3Aannouncements",
         },
       },
     ],
@@ -151,6 +153,11 @@ const config: Config = {
         {
           to: "changelogs",
           label: "Changelog",
+          position: "right",
+        },
+        {
+          to: "feeds",
+          label: "Community Feeds",
           position: "right",
         },
         {

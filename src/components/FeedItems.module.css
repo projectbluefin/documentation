@@ -1,0 +1,130 @@
+.feedContainer {
+  margin-bottom: 2rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+  padding: 1.5rem;
+  background: var(--ifm-background-color);
+}
+
+.feedTitle {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: var(--ifm-color-emphasis-800);
+  font-size: 1.25rem;
+  font-weight: 600;
+  border-bottom: 2px solid var(--ifm-color-primary);
+  padding-bottom: 0.5rem;
+}
+
+.feedList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.feedItem {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 6px;
+  background: var(--ifm-color-emphasis-100);
+  transition: box-shadow 0.2s ease;
+}
+
+.feedItem:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.feedItem:last-child {
+  margin-bottom: 0;
+}
+
+.feedItemContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.feedItemTitle {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.feedItemTitle a {
+  color: var(--ifm-color-primary);
+  text-decoration: none;
+}
+
+.feedItemTitle a:hover {
+  text-decoration: underline;
+}
+
+.feedItemDate {
+  font-size: 0.875rem;
+  color: var(--ifm-color-emphasis-600);
+  font-style: italic;
+}
+
+.feedItemAuthor {
+  font-size: 0.875rem;
+  color: var(--ifm-color-emphasis-700);
+  font-weight: 500;
+}
+
+.feedItemDescription {
+  font-size: 0.875rem;
+  color: var(--ifm-color-emphasis-700);
+  line-height: 1.4;
+  margin-top: 0.5rem;
+}
+
+.feedItemDescription p {
+  margin: 0.5rem 0;
+}
+
+.feedItemDescription p:first-child {
+  margin-top: 0;
+}
+
+.feedItemDescription p:last-child {
+  margin-bottom: 0;
+}
+
+.noItems {
+  color: var(--ifm-color-emphasis-600);
+  font-style: italic;
+  text-align: center;
+  padding: 1rem;
+}
+
+.error {
+  color: var(--ifm-color-danger);
+  font-weight: 500;
+  text-align: center;
+  padding: 1rem;
+  background: var(--ifm-color-danger-contrast-background);
+  border-radius: 4px;
+  border: 1px solid var(--ifm-color-danger-contrast-border);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .feedContainer {
+    padding: 1rem;
+  }
+  
+  .feedItem {
+    padding: 0.75rem;
+  }
+  
+  .feedItemTitle {
+    font-size: 0.9rem;
+  }
+  
+  .feedItemDate,
+  .feedItemAuthor,
+  .feedItemDescription {
+    font-size: 0.8rem;
+  }
+}
