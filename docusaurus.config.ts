@@ -131,7 +131,7 @@ const config: Config = {
           position: "right",
         },
         {
-          to: "feeds",
+          to: "changelogs",
           label: "Changelogs",
           position: "right",
         },
