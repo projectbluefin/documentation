@@ -24,15 +24,34 @@
 
 .feedItem {
   margin-bottom: 1rem;
-  padding: 1rem;
   border: 1px solid var(--ifm-color-emphasis-200);
   border-radius: 6px;
   background: var(--ifm-color-emphasis-100);
-  transition: box-shadow 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .feedItem:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+  border-color: var(--ifm-color-primary);
+}
+
+.feedItemLink {
+  display: block;
+  padding: 1rem;
+  text-decoration: none;
+  color: inherit;
+  border-radius: 6px;
+}
+
+.feedItemLink:hover {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* For non-clickable items, add padding directly to content */
+.feedItem > .feedItemContent {
+  padding: 1rem;
 }
 
 .feedItem:last-child {
@@ -49,15 +68,7 @@
   margin: 0;
   font-size: 1rem;
   font-weight: 500;
-}
-
-.feedItemTitle a {
   color: var(--ifm-color-primary);
-  text-decoration: none;
-}
-
-.feedItemTitle a:hover {
-  text-decoration: underline;
 }
 
 .feedItemDate {
