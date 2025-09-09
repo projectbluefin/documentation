@@ -1,6 +1,7 @@
 import React from 'react';
 import Layout from '@theme/Layout';
 import FeedItems from '../components/FeedItems';
+import PackageSummary from '../components/PackageSummary';
 import styles from './CommunityFeeds.module.css';
 
 const CommunityFeeds: React.FC = () => {
@@ -13,6 +14,18 @@ const CommunityFeeds: React.FC = () => {
         <div className={styles.header}>
           <h1>Changelogs and Feeds</h1>
           <p>Stay up to date with the latest Bluefin releases, community discussions, and announcements. Stay frosty.</p>
+        </div>
+
+        {/* Package Summary Boxes */}
+        <div className={styles.packageSummaryGrid}>
+          <PackageSummary 
+            feedKey="bluefinReleases"
+            title="Bluefin Stable"
+          />
+          <PackageSummary 
+            feedKey="bluefinLtsReleases"
+            title="Bluefin LTS"
+          />
         </div>
 
         <div className={styles.feedGrid}>
