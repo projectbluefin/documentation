@@ -17,6 +17,13 @@
   line-height: 1.6;
 }
 
+.packageSummaryGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
 .feedGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -83,6 +90,11 @@
 /* Responsive design */
 @media (max-width: 996px) {
   .feedGrid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .packageSummaryGrid {
     grid-template-columns: 1fr;
     gap: 1.5rem;
   }
