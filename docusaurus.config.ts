@@ -1,6 +1,7 @@
 import { themes as prismThemes } from "prism-react-renderer";
 import type { Config } from "@docusaurus/types";
 import type * as Preset from "@docusaurus/preset-classic";
+import path from 'path';
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
@@ -68,10 +69,14 @@ const config: Config = {
       "@1password/docusaurus-plugin-stored-data",
       {
         data: {
+          // Use upstream's direct feed approach for better reliability
           bluefinReleases: "https://github.com/ublue-os/bluefin/releases.atom",
           bluefinLtsReleases: "https://github.com/ublue-os/bluefin-lts/releases.atom",
           bluefinDiscussions: "https://github.com/ublue-os/bluefin/discussions.atom",
           bluefinAnnouncements: "https://github.com/ublue-os/bluefin/discussions.atom?discussions_q=is%3Aopen+label%3Aannouncements",
+          // Keep our local feeds as backup
+          'bluefin-releases-local': path.resolve(__dirname, 'static', 'feeds', 'bluefin-releases.json'),
+          'bluefin-lts-releases-local': path.resolve(__dirname, 'static', 'feeds', 'bluefin-lts-releases.json'),
         },
       },
     ],

@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "docusaurus": "docusaurus",
-    "start": "docusaurus start",
-    "build": "docusaurus build",
+    "start": "npm run fetch-feeds && docusaurus start",
+    "build": "npm run fetch-feeds && docusaurus build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
     "clear": "docusaurus clear",
@@ -14,7 +14,8 @@
     "write-heading-ids": "docusaurus write-heading-ids",
     "typecheck": "tsc",
     "prettier": "prettier --write .",
-    "prettier-lint": "prettier --check ."
+    "prettier-lint": "prettier --check .",
+    "fetch-feeds": "node scripts/fetch-feeds.js"
   },
   "dependencies": {
     "@1password/docusaurus-plugin-stored-data": "^1.0.0",
@@ -25,9 +26,11 @@
     "@mdx-js/react": "^3.0.0",
     "caniuse-lite": "^1.0.30001727",
     "clsx": "^2.0.0",
+    "node-fetch": "^3.3.2",
     "prism-react-renderer": "^2.3.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "xml2js": "^0.6.2"
   },
   "devDependencies": {
     "@docusaurus/module-type-aliases": "3.8.1",
