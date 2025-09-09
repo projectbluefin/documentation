@@ -11,13 +11,13 @@ slug: communications
 
 ### Chat
 
-[Discord Chat](https://discord.gg/XUC8cANVHy)
+- [Discord Chat](https://discord.gg/XUC8cANVHy)
 
 ### Changelogs
 
-[changelogs.projectbluefin.io](https://changelogs.projectbluefin.io)
-[Bluefin releases](https://github.com/ublue-os/bluefin/releases.atom)
-[bluefin LTS releases](https://github.com/ublue-os/bluefin-lts/releases.atom)
+- [changelogs.projectbluefin.io](https://changelogs.projectbluefin.io)
+- [Bluefin releases](https://github.com/ublue-os/bluefin/releases.atom)
+- [Bluefin LTS releases](https://github.com/ublue-os/bluefin-lts/releases.atom)
 
 ### Discussions
 
