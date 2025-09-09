@@ -65,26 +65,6 @@ const config: Config = {
 
   plugins: [
     [
-      "@docusaurus/plugin-content-blog",
-      {
-        id: "changelogs",
-        routeBasePath: "changelogs",
-        path: "./changelogs",
-        blogTitle: "Bluefin Changelogs",
-        blogDescription: "Release notes and changelogs for Bluefin",
-        blogSidebarCount: "ALL",
-        blogSidebarTitle: "All Releases",
-        authorsMapPath: "authors.yaml",
-        feedOptions: {
-          type: ["rss", "atom"],
-          xslt: true,
-          title: "Bluefin Changelogs",
-          description: "Release notes and changelogs for Bluefin",
-        },
-        tagsBasePath: "tags",
-      },
-    ],
-    [
       "@1password/docusaurus-plugin-stored-data",
       {
         data: {
