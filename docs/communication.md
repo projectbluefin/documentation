@@ -9,8 +9,13 @@ slug: communications
 
 [blog.projectbluefin.io](https://blog.projectbluefin.io/) - Official announcements and news, the team posts regular announcements on this page.
 
+### Chat
+
+[Discord Chat](https://discord.gg/XUC8cANVHy)
+
 ### Changelogs
 
+[changelogs.projectbluefin.io](https://changelogs.projectbluefin.io)
 [Bluefin releases](https://github.com/ublue-os/bluefin/releases.atom)
 [bluefin LTS releases](https://github.com/ublue-os/bluefin-lts/releases.atom)
 
