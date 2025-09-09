@@ -7,7 +7,7 @@ slug: communications
 
 ### Official Blog
 
-[blog.projectbluefin.io](https://blog.projectbluefin.io/) - Official announcements and news, the team posts regular announcements on this page.
+- [blog.projectbluefin.io](https://blog.projectbluefin.io/) - Official announcements and news, the team posts regular announcements on this page.
 
 ### Chat
 
