@@ -47,7 +47,7 @@ const CommunityFeeds: React.FC = () => {
         </div>
 
         <div className={styles.additionalLinks}>
-          <h2>Additional Resources</h2>
+          <h2>Additional Feeds</h2>
           <div className={styles.linkGrid}>
             <a href="https://docs.projectbluefin.io/blog/rss.xml" className={styles.resourceLink}>
               <strong>Blog RSS Feed</strong>
