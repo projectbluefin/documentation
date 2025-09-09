@@ -66,25 +66,25 @@
 
 .feedItemTitle {
   margin: 0;
-  font-size: 1rem;
+  font-size: 1.25rem;
   font-weight: 500;
   color: var(--ifm-color-primary);
 }
 
 .feedItemDate {
-  font-size: 0.875rem;
+  font-size: 0.95rem;
   color: var(--ifm-color-emphasis-600);
   font-style: italic;
 }
 
 .feedItemAuthor {
-  font-size: 0.875rem;
+  font-size: 0.95rem;
   color: var(--ifm-color-emphasis-700);
   font-weight: 500;
 }
 
 .feedItemDescription {
-  font-size: 0.875rem;
+  font-size: 0.95rem;
   color: var(--ifm-color-emphasis-700);
   line-height: 1.4;
   margin-top: 0.5rem;

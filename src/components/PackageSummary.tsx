@@ -128,7 +128,7 @@ export default function PackageSummary({ feedKey, title }: PackageSummaryProps) 
         paddingBottom: '0.5rem'
       }}>{title} - Latest Versions</Heading>
       <div style={{ 
-        fontSize: '0.95em',
+        fontSize: '0.95rem',
         fontFamily: 'monospace',
         lineHeight: '1.6'
       }}>
