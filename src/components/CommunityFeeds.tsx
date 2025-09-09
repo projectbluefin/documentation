@@ -6,20 +6,20 @@ import styles from './CommunityFeeds.module.css';
 const CommunityFeeds: React.FC = () => {
   return (
     <Layout
-      title="Community Feeds"
-      description="Stay up to date with Bluefin releases, discussions, and announcements"
+      title="Changelogs and Feeds"
+      description="Stay up to date with Bluefin releases, discussions, and announcements. Stay frosty."
     >
       <div className="container margin-vert--lg">
         <div className={styles.header}>
-          <h1>Community Feeds</h1>
-          <p>Stay up to date with the latest Bluefin releases, community discussions, and announcements</p>
+          <h1>Changelogs and Feeds</h1>
+          <p>Stay up to date with the latest Bluefin releases, community discussions, and announcements. Stay frosty.</p>
         </div>
 
         <div className={styles.feedGrid}>
           <div className={styles.feedColumn}>
             <FeedItems 
               feedId="bluefinReleases" 
-              title="Latest Releases" 
+              title="Bluefin and Bluefin GTS Releases" 
               maxItems={5}
               showDescription={false}
             />
