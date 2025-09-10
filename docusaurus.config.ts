@@ -146,8 +146,8 @@ const config: Config = {
           position: "right",
         },
         {
-          href: "https://github.com/ublue-os/bluefin",
-          label: "GitHub",
+          href: "https://store.projectbluefin.io",
+          label: "Store (US Only)",
           position: "right",
         },
       ],
