@@ -28,7 +28,7 @@ The default experience for users, following the previous stable release of Fedor
 ## Bluefin LTS
 
 The long term support experience.\
-📖 **[Read the documentation](/lts)** to learn about features and differences.
+📖 **[Read the documentation](/lts)** to learn about features and differences. The HWE images stand for "Hardware Enablement", these ISOs come with updated kernels and are recommended for newer devices such as Framework Computers. Note that `ujust rebase-helper` allows for users to switch back and forth, the ISOs are provided for convenience. 
 
 | Version            | GPU  | Download                                                                                 | Checksum                                                                         |
 | ------------------ | ------------- | ---------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
