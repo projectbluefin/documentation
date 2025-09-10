@@ -34,6 +34,8 @@ The long term support experience.\
 | ------------------ | ------------- | ---------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
 | Bluefin LTS  | AMD/Intel     | [📥 bluefin-lts-x86_64.iso](https://download.projectbluefin.io/bluefin-lts-x86_64.iso)   | [🔐 Verify](https://download.projectbluefin.io/bluefin-lts-x86_64.iso-CHECKSUM)  |
 | Bluefin LTS  | ARM (aarch64) | [📥 bluefin-lts-aarch64.iso](https://download.projectbluefin.io/bluefin-lts-aarch64.iso) | [🔐 Verify](https://download.projectbluefin.io/bluefin-lts-aarch64.iso-CHECKSUM) |
+| Bluefin LTS HWE  | AMD/Intel     | [📥 bluefin-lts-hwe-x86_64.iso](https://download.projectbluefin.io/bluefin-lts-hwe-x86_64.iso)   | [🔐 Verify](https://download.projectbluefin.io/bluefin-lts-hwe-x86_64.iso-CHECKSUM)  |
+| Bluefin LTS HWE  | ARM (aarch64) | [📥 bluefin-lts-hwe-aarch64.iso](https://download.projectbluefin.io/bluefin-lts-hwe-aarch64.iso) | [🔐 Verify](https://download.projectbluefin.io/bluefin-lts-hwe-aarch64.iso-CHECKSUM) |
 
 ## Bluefin GDX
 
