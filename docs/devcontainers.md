@@ -24,7 +24,7 @@ Before you begin, ensure you [enabled developer mode](/bluefin-dx#step-1-turn-it
 
 ## Installation and Setup
 
-### 2. Verify Container Runtime
+### Verify Container Runtime
 
 Ensure Docker or Podman is running:
 
