@@ -23,10 +23,11 @@ Bluefin LTS is composed of:
 - ARM (aarch64) based images
 - The Nvidia version of Bluefin LTS is branded as [Bluefin GDX](/gdx) and designed for AI and other GPU heavy workflows and includes CUDA
 
-Bluefin LTS also offers a hardware enablement branch with:
+Bluefin LTS also offers a HWE (Hardware Enablement) branch with:
 
 - Updated, but gated Linux kernel, usually one minor point release behind Fedora
-- Use `ujust rebase-helper`
+- Dedicated Bluefin LTS HWE ISOs for installation on newer hardware like Framework Computers
+- `ujust rebase-helper` command allows for users to easily switch back and forth between an LTS kernel and a newer kernel for better hardware support
 
 ![Pasted image](https://github.com/user-attachments/assets/3972ac0f-d37e-4e89-ae91-ff1eb76eabeb)
 
@@ -52,7 +53,7 @@ Do NOT rebase to this image from an existing Bluefin, Aurora, Bazzite, or Fedora
 
 Check the [downloads page](./downloads.md) to download the correct ISO.
 
-The only Bluefin LTS available with Nvidia drivers is [Bluefin GDX](/gdx). If you select Nvidia on the website it will download this ISO. Read this documentation first since it applies to Bluefin GDX.
+- The only Bluefin LTS available with Nvidia drivers is [Bluefin GDX](/gdx). If you select Nvidia on the website it will download this ISO. Read this documentation first since it applies to Bluefin GDX.
 
 **Do not rebase to this from an existing Fedora image, ain't no one testing that.**
 
