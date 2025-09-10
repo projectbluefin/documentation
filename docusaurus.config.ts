@@ -167,8 +167,8 @@ const config: Config = {
               href: "https://bazzite.gg/",
             },
             {
-              label: "uCore",
-              href: "https://github.com/ublue-os/ucore",
+              label: "Cayo",
+              href: "https://projectcayo.org/",
             },
           ],
         },
@@ -180,20 +180,20 @@ const config: Config = {
               href: "https://discord.gg/XUC8cANVHy",
             },
             {
-              label: "Forum",
+              label: "Discussions",
               href: "https://github.com/ublue-os/bluefin/discussions",
             },
           ],
         },
         {
-          title: "More",
+          title: "Source Code",
           items: [
             {
-              label: "GitHub",
+              label: "Bluefin",
               href: "https://github.com/ublue-os/bluefin",
             },
             {
-              label: "Documentation on GitHub",
+              label: "Bluefin Documentation",
               href: "https://github.com/ublue-os/bluefin-docs",
             },
           ],
