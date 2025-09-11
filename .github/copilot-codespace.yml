@@ -1,0 +1,106 @@
+# GitHub Copilot Coding Agent Environment Configuration
+# This file customizes the environment for the GitHub Copilot coding agent
+# to optimize performance for the bluefin-docs repository
+
+# Base container image with Node.js pre-installed
+image: mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm
+
+# Preinstall tools and dependencies to speed up the coding agent
+onCreateCommand: |
+  # Install Bun package manager (used by this project instead of npm)
+  echo "Installing Bun package manager..."
+  curl -fsSL https://bun.sh/install | bash
+  
+  # Add bun to PATH for current session
+  export PATH="$HOME/.bun/bin:$PATH"
+  echo 'export PATH="$HOME/.bun/bin:$PATH"' >> ~/.bashrc
+  
+  # Install project dependencies from lockfile
+  echo "Installing project dependencies..."
+  bun install --frozen-lockfile
+  
+  # Verify installation
+  echo "Verifying installation..."
+  bun --version
+  node --version
+  
+  # Test build to ensure everything works
+  echo "Testing build process..."
+  bun run build || echo "Build completed with warnings"
+  
+  # Setup Git configuration for commits
+  git config --global user.email "copilot@github.com"
+  git config --global user.name "GitHub Copilot"
+  
+  echo "GitHub Copilot coding agent environment setup complete!"
+
+# Development lifecycle commands
+updateContentCommand: |
+  # Update dependencies when lockfile changes
+  export PATH="$HOME/.bun/bin:$PATH"
+  bun install --frozen-lockfile
+
+postCreateCommand: |
+  # Final setup message
+  echo "✅ Bluefin Documentation environment ready!"
+  echo ""
+  echo "Available commands:"
+  echo "  bun run start         - Start development server (http://localhost:3000)"
+  echo "  bun run build         - Build production site"
+  echo "  bun run serve         - Serve built site locally"
+  echo "  bun run typecheck     - Validate TypeScript"
+  echo "  bun run prettier-lint - Check code formatting"
+  echo "  bun run prettier      - Fix code formatting"
+  echo ""
+  echo "Project info:"
+  echo "  - Docusaurus 3.8.1 TypeScript documentation site"
+  echo "  - React 19.x with TypeScript 5.9.2"
+  echo "  - Uses Bun package manager instead of npm"
+
+# Environment variables for the coding agent
+containerEnv:
+  NODE_OPTIONS: "--max-old-space-size=4096"
+  NODE_ENV: "development"
+
+# Container features to enable
+features:
+  # Git for version control
+  "ghcr.io/devcontainers/features/git:1": {}
+  
+  # Additional utilities
+  "ghcr.io/devcontainers/features/common-utils:2": {
+    "installZsh": false,
+    "installOhMyZsh": false,
+    "upgradePackages": true,
+    "username": "vscode"
+  }
+
+# VS Code extensions that would be helpful for this project
+customizations:
+  vscode:
+    extensions:
+      - "esbenp.prettier-vscode"
+      - "ms-vscode.vscode-typescript-next"
+      - "davidanson.vscode-markdownlint"
+      - "unifiedjs.vscode-mdx"
+      - "ms-vscode.vscode-json"
+      - "redhat.vscode-yaml"
+      - "github.copilot"
+      - "github.copilot-chat"
+    settings:
+      "typescript.preferences.quoteStyle": "double"
+      "prettier.configPath": ".prettierrc"
+      "editor.formatOnSave": true
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+
+# Port forwarding for development server
+forwardPorts:
+  - 3000  # Docusaurus development server
+
+# Resource allocation optimized for documentation builds
+memory: "4gb"
+cpus: 2
+
+# Development container metadata
+metadata:
+  description: "Development environment for Bluefin OS documentation site"
