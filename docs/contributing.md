@@ -51,6 +51,14 @@ By participating, you are expected to uphold this code. Please report unacceptab
 
 ## Contribution Areas by Skill Set
 
+### Helping out FlatHub
+
+Since Bluefin is designed to be invisible a good way to help out is by helping FlatHub. The team maintains a list of contribution opportunities for flatpaks shipped in Bluefin:
+
+- [Flatpak](https://github.com/ublue-os/flatpak-tracker/issues) opportunities.
+
+Many of these have existing pull requests upstream and may just need volunteers to help test the new version. This is a great way to help the entire desktop community!
+
 ### For Cloud Native/DevOps Engineers
 
 As a cloud native project, we especially welcome contributors with skills in:
