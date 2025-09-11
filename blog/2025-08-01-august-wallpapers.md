@@ -18,7 +18,7 @@ We're still working on it so there's some improvements to be made, as well as so
 
 [Bluefin LTS](https://docs.projectbluefin.io/lts) and GDX are nearing the home stretch, with the GNOME48 backport completed and the kernel policy set. It will ship with the stock CentOS kernel, 6.12.0, which will receive updates and backports throughout its lifecycle.
 
-- The hwe stream will be opt in with a `ujust toggle-hwe`, which will bring in a new kernel. This stream is intended for people who need fresh kernels for new hardware. We will not be producing ISOs for these, but will likely do so in the future.
+- The hwe stream will be opt in with a `ujust rebase-helper`, which will bring in a new kernel. This stream is intended for people who need fresh kernels for new hardware. We will not be producing ISOs for these, but will likely do so in the future.
 - The default filesystem across the board will be XFS.
 - Hoping to add ZFS over the weekend.
 
