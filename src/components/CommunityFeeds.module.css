@@ -19,7 +19,7 @@
 
 .packageSummaryGrid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 2rem;
   margin-bottom: 3rem;
 }
@@ -95,7 +95,7 @@
   }
 
   .packageSummaryGrid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
     gap: 1.5rem;
   }
 
@@ -122,6 +122,11 @@
   }
 
   .feedColumn {
+    gap: 1rem;
+  }
+
+  .packageSummaryGrid {
+    grid-template-columns: 1fr;
     gap: 1rem;
   }
 
