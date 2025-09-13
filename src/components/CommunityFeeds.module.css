@@ -26,6 +26,13 @@
 
 .feedGrid {
   display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.additionalFeedsGrid {
+  display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 2rem;
   margin-bottom: 3rem;
@@ -108,7 +115,12 @@
 /* Responsive design */
 @media (max-width: 996px) {
   .feedGrid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .additionalFeedsGrid {
+    grid-template-columns: 1fr 1fr;
     gap: 1.5rem;
   }
 
@@ -136,6 +148,12 @@
   }
 
   .feedGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .additionalFeedsGrid {
+    grid-template-columns: 1fr;
     gap: 1rem;
   }
 

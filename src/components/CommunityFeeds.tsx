@@ -45,6 +45,35 @@ const CommunityFeeds: React.FC = () => {
             <p className={styles.sectionByline}>
               <em>Achillobator giganticus</em>
             </p>
+          </div>
+          <div className={styles.feedColumn}>
+            <FeedItems
+              feedId="bluefinReleases"
+              title="Bluefin GTS"
+              maxItems={10}
+              showDescription={false}
+              filter={(item) => item.title.startsWith("gts-")}
+            />
+            <p className={styles.sectionByline}>
+              <em>Deinonychus antirrhopus</em>
+            </p>
+          </div>
+          <div className={styles.feedColumn}>
+            <FeedItems
+              feedId="bluefinReleases"
+              title="Bluefin"
+              maxItems={10}
+              showDescription={false}
+              filter={(item) => item.title.startsWith("stable-")}
+            />
+            <p className={styles.sectionByline}>
+              <em>Utahraptor ostrommaysi</em>
+            </p>
+          </div>
+        </div>
+
+        <div className={styles.additionalFeedsGrid}>
+          <div className={styles.feedColumn}>
             <FeedItems
               feedId="bluefinDiscussions"
               title="Community Discussions"
@@ -53,15 +82,6 @@ const CommunityFeeds: React.FC = () => {
             />
           </div>
           <div className={styles.feedColumn}>
-            <FeedItems
-              feedId="bluefinReleases"
-              title="Bluefin and Bluefin GTS"
-              maxItems={10}
-              showDescription={false}
-            />
-            <p className={styles.sectionByline}>
-              <em>Deinonychus antirrhopus</em>
-            </p>
             <FeedItems
               feedId="bluefinAnnouncements"
               title="Announcements"

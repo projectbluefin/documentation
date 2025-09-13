@@ -7,6 +7,7 @@ interface FeedItemsProps {
   title: string;
   maxItems?: number;
   showDescription?: boolean;
+  filter?: (item: FeedItem) => boolean;
 }
 
 interface VersionChange {
@@ -182,6 +183,7 @@ const FeedItems: React.FC<FeedItemsProps> = ({
   title,
   maxItems = 5,
   showDescription = false,
+  filter,
 }) => {
   try {
     const feedData: ParsedFeed = useStoredFeed(feedId);
@@ -201,6 +203,11 @@ const FeedItems: React.FC<FeedItemsProps> = ({
       items = Array.isArray(feedData.feed.entry)
         ? feedData.feed.entry
         : [feedData.feed.entry];
+    }
+
+    // Apply filter if provided
+    if (filter) {
+      items = items.filter(filter);
     }
 
     // Limit items to maxItems
