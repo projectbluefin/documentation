@@ -62,14 +62,11 @@ const extractVersionSummary = (content: string): VersionChange[] => {
   if (kernelMatch) {
     const versionText = kernelMatch[1].trim();
     if (versionText.includes("➡️")) {
-      // Extract the upgrade arrow format: "6.14.11-300 ➡️ 6.15.9-201"
+      // Only show upgrades (with arrow), not static versions
       const [fromVersion, toVersion] = versionText
         .split("➡️")
         .map((v) => v.trim());
       changes.push({ name: "Kernel", change: `${fromVersion} → ${toVersion}` });
-    } else if (versionText && versionText !== "N/A") {
-      // Just show the current version if no upgrade arrow
-      changes.push({ name: "Kernel", change: versionText });
     }
   }
 
@@ -79,12 +76,11 @@ const extractVersionSummary = (content: string): VersionChange[] => {
   if (mesaMatch) {
     const versionText = mesaMatch[1].trim();
     if (versionText.includes("➡️")) {
+      // Only show upgrades (with arrow), not static versions
       const [fromVersion, toVersion] = versionText
         .split("➡️")
         .map((v) => v.trim());
       changes.push({ name: "Mesa", change: `${fromVersion} → ${toVersion}` });
-    } else if (versionText && versionText !== "N/A") {
-      changes.push({ name: "Mesa", change: versionText });
     }
   }
 
@@ -94,12 +90,11 @@ const extractVersionSummary = (content: string): VersionChange[] => {
   if (nvidiaMatch) {
     const versionText = nvidiaMatch[1].trim();
     if (versionText.includes("➡️")) {
+      // Only show upgrades (with arrow), not static versions
       const [fromVersion, toVersion] = versionText
         .split("➡️")
         .map((v) => v.trim());
       changes.push({ name: "NVIDIA", change: `${fromVersion} → ${toVersion}` });
-    } else if (versionText && versionText !== "N/A") {
-      changes.push({ name: "NVIDIA", change: versionText });
     }
   }
 
@@ -109,19 +104,11 @@ const extractVersionSummary = (content: string): VersionChange[] => {
   if (gnomeMatch) {
     const versionText = gnomeMatch[1].trim();
     if (versionText.includes("➡️")) {
+      // Only show upgrades (with arrow), not static versions
       const [fromVersion, toVersion] = versionText
         .split("➡️")
         .map((v) => v.trim());
       changes.push({ name: "GNOME", change: `${fromVersion} → ${toVersion}` });
-    } else if (versionText && versionText !== "N/A") {
-      // Only show GNOME version if it's a significant update or if there are upgrades
-      if (
-        versionText.includes("47.") ||
-        versionText.includes("48.") ||
-        versionText.includes("46.")
-      ) {
-        changes.push({ name: "GNOME", change: versionText });
-      }
     }
   }
 
