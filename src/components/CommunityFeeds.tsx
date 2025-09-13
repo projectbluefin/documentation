@@ -29,7 +29,7 @@ const CommunityFeeds: React.FC = () => {
           <div className={styles.feedColumn}>
             <FeedItems
               feedId="bluefinLtsReleases"
-              title="Bluefin LTS Releases"
+              title="Bluefin LTS"
               maxItems={5}
               showDescription={false}
             />
@@ -43,7 +43,7 @@ const CommunityFeeds: React.FC = () => {
           <div className={styles.feedColumn}>
             <FeedItems
               feedId="bluefinReleases"
-              title="Bluefin and Bluefin GTS Releases"
+              title="Bluefin and Bluefin GTS"
               maxItems={5}
               showDescription={false}
             />
