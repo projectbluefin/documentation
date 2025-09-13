@@ -1,4 +1,4 @@
-declare module '@theme/useStoredFeed' {
+declare module "@theme/useStoredFeed" {
   interface FeedItem {
     title: string;
     link: string;
@@ -18,12 +18,12 @@ declare module '@theme/useStoredFeed' {
   export default useStoredFeed;
 }
 
-declare module '@theme/useStoredData' {
+declare module "@theme/useStoredData" {
   function useStoredData(key: string): any;
   export default useStoredData;
 }
 
-declare module '@theme/useStoredJson' {
+declare module "@theme/useStoredJson" {
   function useStoredJson(key: string): any;
   export default useStoredJson;
 }

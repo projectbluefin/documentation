@@ -41,15 +41,18 @@ Review the [Fedora Silverblue installation instructions](https://docs.fedoraproj
 
 ### Disk Usage
 
-This is how much disk space each image of Bluefin by default, this includes the flatpak applications (which can be removed): 
+This is how much disk space each image of Bluefin by default, this includes the flatpak applications (which can be removed):
 
-#### Bluefin 
+#### Bluefin
+
 ~12.4 GB / ~17.4 GB with developer mode enabled
 
 #### Bluefin LTS
+
 ~13.2 GB / ~14.5 GB with developer mode enabled
 
 #### Bluefin GDX
+
 ~18.1 GB (Developer mode included)
 
 ### Why 16 GB RAM Minimum?

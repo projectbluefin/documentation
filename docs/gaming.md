@@ -37,6 +37,7 @@ _Note: To add a game library on another drive, first you need to grant the app a
 
 `flatpak override --user --filesystem=/path/to/your/Steam/Library com.valvesoftware.Steam`
 z
+
 ### Heroic Games Launcher
 
 Heroic is an Open Source Games Launcher that supports running Epic Games Store, GOG, and Prime Gaming games.
