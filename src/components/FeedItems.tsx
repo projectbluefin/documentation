@@ -47,6 +47,16 @@ interface ParsedFeed {
   };
 }
 
+// Helper function to format date in long form
+const formatLongDate = (dateString: string): string => {
+  const date = new Date(dateString);
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+};
+
 // Helper function to extract key version changes from changelog content
 const extractVersionSummary = (content: string): VersionChange[] => {
   const changes: VersionChange[] = [];
@@ -210,15 +220,7 @@ const FeedItems: React.FC<FeedItemsProps> = ({
             const itemAuthor =
               typeof item.author === "string" ? item.author : item.author?.name;
 
-            // Replace github-actions[bot] with appropriate authors based on feedId
-            let displayAuthor = itemAuthor;
-            if (itemAuthor === "github-actions[bot]") {
-              if (feedId === "bluefinLtsReleases") {
-                displayAuthor = "Achillobator Giganticus";
-              } else if (feedId === "bluefinReleases") {
-                displayAuthor = "Deinonychus antirrhopus";
-              }
-            }
+            // No individual authors displayed for release feeds - moved to section level
             const itemDescription =
               item.description ||
               (typeof item.content === "object"
@@ -245,19 +247,8 @@ const FeedItems: React.FC<FeedItemsProps> = ({
                       <h4 className={styles.feedItemTitle}>{item.title}</h4>
                       {itemDate && (
                         <time className={styles.feedItemDate}>
-                          {new Date(itemDate).toLocaleDateString()}
+                          {formatLongDate(itemDate)}
                         </time>
-                      )}
-                      {displayAuthor && (
-                        <span className={styles.feedItemAuthor}>
-                          by{" "}
-                          {feedId === "bluefinLtsReleases" &&
-                          displayAuthor === "Achillobator Giganticus" ? (
-                            <em>{displayAuthor}</em>
-                          ) : (
-                            displayAuthor
-                          )}
-                        </span>
                       )}
                       {versionSummary.length > 0 && (
                         <div className={styles.executiveSummary}>
@@ -285,19 +276,8 @@ const FeedItems: React.FC<FeedItemsProps> = ({
                     <h4 className={styles.feedItemTitle}>{item.title}</h4>
                     {itemDate && (
                       <time className={styles.feedItemDate}>
-                        {new Date(itemDate).toLocaleDateString()}
+                        {formatLongDate(itemDate)}
                       </time>
-                    )}
-                    {displayAuthor && (
-                      <span className={styles.feedItemAuthor}>
-                        by{" "}
-                        {feedId === "bluefinLtsReleases" &&
-                        displayAuthor === "Achillobator Giganticus" ? (
-                          <em>{displayAuthor}</em>
-                        ) : (
-                          displayAuthor
-                        )}
-                      </span>
                     )}
                     {versionSummary.length > 0 && (
                       <div className={styles.executiveSummary}>
