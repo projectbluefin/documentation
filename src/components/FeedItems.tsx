@@ -7,6 +7,7 @@ interface FeedItemsProps {
   title: string;
   maxItems?: number;
   showDescription?: boolean;
+  filter?: (item: FeedItem) => boolean;
 }
 
 interface VersionChange {
@@ -153,11 +154,36 @@ const isReleaseFeed = (feedId: string): boolean => {
   return feedId === "bluefinReleases" || feedId === "bluefinLtsReleases";
 };
 
+// Helper function to format release titles for better readability
+const formatReleaseTitle = (title: string, feedId: string): string => {
+  if (feedId === "bluefinLtsReleases") {
+    // For LTS releases: Remove "bluefin-lts LTS: " or "Bluefin LTS: " prefix
+    // Example: "bluefin-lts LTS: 20250910 (c10s, #cfd65ad)" -> "20250910 (c10s, #cfd65ad)"
+    // Example: "Bluefin LTS: 20250808 (c10s)" -> "20250808 (c10s)"
+    return title.replace(/^(bluefin-lts|Bluefin) LTS: /, "");
+  } else if (feedId === "bluefinReleases") {
+    // For stable releases: Remove "stable-" prefix and ": Stable" text
+    // Example: "stable-20250907: Stable (F42.20250907, #921e6ba)" -> "20250907 (F42.20250907, #921e6ba)"
+    if (title.startsWith("stable-")) {
+      return title.replace(/^stable-([^:]+): Stable (.+)$/, "$1 $2");
+    }
+    // For GTS releases: Remove "gts-" prefix and ": Gts" text
+    // Example: "gts-20250907: Gts (F41.20250907, #921e6ba)" -> "20250907 (F41.20250907, #921e6ba)"
+    else if (title.startsWith("gts-")) {
+      return title.replace(/^gts-([^:]+): Gts (.+)$/, "$1 $2");
+    }
+  }
+
+  // Return original title if no formatting rules apply
+  return title;
+};
+
 const FeedItems: React.FC<FeedItemsProps> = ({
   feedId,
   title,
   maxItems = 5,
   showDescription = false,
+  filter,
 }) => {
   try {
     const feedData: ParsedFeed = useStoredFeed(feedId);
@@ -177,6 +203,11 @@ const FeedItems: React.FC<FeedItemsProps> = ({
       items = Array.isArray(feedData.feed.entry)
         ? feedData.feed.entry
         : [feedData.feed.entry];
+    }
+
+    // Apply filter if provided
+    if (filter) {
+      items = items.filter(filter);
     }
 
     // Limit items to maxItems
@@ -257,6 +288,9 @@ const FeedItems: React.FC<FeedItemsProps> = ({
                 ? extractVersionSummary(itemDescription)
                 : [];
 
+            // Format the title for better readability
+            const displayTitle = formatReleaseTitle(item.title, feedId);
+
             return (
               <li key={itemId} className={styles.feedItem}>
                 {itemLink ? (
@@ -267,7 +301,7 @@ const FeedItems: React.FC<FeedItemsProps> = ({
                     className={styles.feedItemLink}
                   >
                     <div className={styles.feedItemContent}>
-                      <h4 className={styles.feedItemTitle}>{item.title}</h4>
+                      <h4 className={styles.feedItemTitle}>{displayTitle}</h4>
                       {itemDate && (
                         <time className={styles.feedItemDate}>
                           {formatLongDate(itemDate)}
@@ -296,7 +330,7 @@ const FeedItems: React.FC<FeedItemsProps> = ({
                   </a>
                 ) : (
                   <div className={styles.feedItemContent}>
-                    <h4 className={styles.feedItemTitle}>{item.title}</h4>
+                    <h4 className={styles.feedItemTitle}>{displayTitle}</h4>
                     {itemDate && (
                       <time className={styles.feedItemDate}>
                         {formatLongDate(itemDate)}
