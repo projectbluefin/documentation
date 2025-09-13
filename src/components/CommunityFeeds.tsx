@@ -36,12 +36,17 @@ const CommunityFeeds: React.FC = () => {
 
         <div className={styles.feedGrid}>
           <div className={styles.feedColumn}>
-            <FeedItems
-              feedId="bluefinLtsReleases"
-              title="Bluefin LTS"
-              maxItems={5}
-              showDescription={false}
-            />
+            <div>
+              <FeedItems
+                feedId="bluefinLtsReleases"
+                title="Bluefin LTS"
+                maxItems={5}
+                showDescription={false}
+              />
+              <p className={styles.sectionByline}>
+                <em>Achillobator Giganticus</em>
+              </p>
+            </div>
             <FeedItems
               feedId="bluefinDiscussions"
               title="Community Discussions"
@@ -50,12 +55,17 @@ const CommunityFeeds: React.FC = () => {
             />
           </div>
           <div className={styles.feedColumn}>
-            <FeedItems
-              feedId="bluefinReleases"
-              title="Bluefin and Bluefin GTS"
-              maxItems={5}
-              showDescription={false}
-            />
+            <div>
+              <FeedItems
+                feedId="bluefinReleases"
+                title="Bluefin and Bluefin GTS"
+                maxItems={5}
+                showDescription={false}
+              />
+              <p className={styles.sectionByline}>
+                <em>Deinonychus antirrhopus</em>
+              </p>
+            </div>
             <FeedItems
               feedId="bluefinAnnouncements"
               title="Announcements"

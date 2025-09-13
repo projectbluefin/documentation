@@ -37,6 +37,13 @@
   gap: 2rem;
 }
 
+.sectionByline {
+  margin: -1rem 0 1rem 0;
+  color: var(--ifm-color-emphasis-600);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
 .additionalLinks {
   margin-top: 3rem;
   padding-top: 2rem;
