@@ -122,6 +122,29 @@ const extractVersionSummary = (content: string): VersionChange[] => {
     }
   }
 
+  const dockerMatch = content.match(
+    /<td><strong>Docker<\/strong><\/td>\s*<td>([^<]+)/,
+  );
+  if (dockerMatch) {
+    const versionText = dockerMatch[1].trim();
+    if (versionText.includes("➡️")) {
+      // Only show upgrades (with arrow), not static versions
+      const [fromVersion, toVersion] = versionText
+        .split("➡️")
+        .map((v) => v.trim());
+      changes.push({ name: "Docker", change: `${fromVersion} → ${toVersion}` });
+    }
+  }
+
+  const systemdMatch = content.match(
+    /<td>🔄<\/td>\s*<td>systemd<\/td>\s*<td>([^<]+)<\/td>\s*<td>([^<]+)/,
+  );
+  if (systemdMatch) {
+    const fromVersion = systemdMatch[1].trim();
+    const toVersion = systemdMatch[2].trim();
+    changes.push({ name: "systemd", change: `${fromVersion} → ${toVersion}` });
+  }
+
   return changes;
 };
 
