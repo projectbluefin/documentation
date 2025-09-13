@@ -143,6 +143,25 @@ export default function PackageSummary({
       packages.push({ name: "NVIDIA", version: latestVersion });
     }
 
+    const dockerMatch = content.match(
+      /<td><strong>Docker<\/strong><\/td>\s*<td>([^<]+)/,
+    );
+    if (dockerMatch) {
+      const versionText = dockerMatch[1].trim();
+      const latestVersion = versionText.includes("➡️")
+        ? versionText.split("➡️")[1].trim()
+        : versionText;
+      packages.push({ name: "Docker", version: latestVersion });
+    }
+
+    const systemdMatch = content.match(
+      /<td>🔄<\/td>\s*<td>systemd<\/td>\s*<td>[^<]*<\/td>\s*<td>([^<]+)/,
+    );
+    if (systemdMatch) {
+      const versionText = systemdMatch[1].trim();
+      packages.push({ name: "systemd", version: versionText });
+    }
+
     return packages;
   };
 
