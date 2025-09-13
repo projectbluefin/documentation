@@ -36,17 +36,12 @@ const CommunityFeeds: React.FC = () => {
 
         <div className={styles.feedGrid}>
           <div className={styles.feedColumn}>
-            <div>
-              <FeedItems
-                feedId="bluefinLtsReleases"
-                title="Bluefin LTS"
-                maxItems={5}
-                showDescription={false}
-              />
-              <p className={styles.sectionByline}>
-                <em>Achillobator Giganticus</em>
-              </p>
-            </div>
+            <FeedItems
+              feedId="bluefinLtsReleases"
+              title="Bluefin LTS"
+              maxItems={5}
+              showDescription={false}
+            />
             <FeedItems
               feedId="bluefinDiscussions"
               title="Community Discussions"
@@ -55,17 +50,12 @@ const CommunityFeeds: React.FC = () => {
             />
           </div>
           <div className={styles.feedColumn}>
-            <div>
-              <FeedItems
-                feedId="bluefinReleases"
-                title="Bluefin and Bluefin GTS"
-                maxItems={5}
-                showDescription={false}
-              />
-              <p className={styles.sectionByline}>
-                <em>Deinonychus antirrhopus</em>
-              </p>
-            </div>
+            <FeedItems
+              feedId="bluefinReleases"
+              title="Bluefin and Bluefin GTS"
+              maxItems={5}
+              showDescription={false}
+            />
             <FeedItems
               feedId="bluefinAnnouncements"
               title="Announcements"
@@ -77,6 +67,14 @@ const CommunityFeeds: React.FC = () => {
 
         <div className={styles.additionalLinks}>
           <h2>Additional Feeds</h2>
+          <div className={styles.speciesNames}>
+            <p className={styles.sectionByline}>
+              <em>Achillobator giganticus</em>
+            </p>
+            <p className={styles.sectionByline}>
+              <em>Deinonychus antirrhopus</em>
+            </p>
+          </div>
           <div className={styles.linkGrid}>
             <a
               href="https://docs.projectbluefin.io/blog/rss.xml"

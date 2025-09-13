@@ -44,6 +44,17 @@
   text-align: center;
 }
 
+.speciesNames {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.speciesNames .sectionByline {
+  margin: 0;
+}
+
 .additionalLinks {
   margin-top: 3rem;
   padding-top: 2rem;
@@ -140,6 +151,11 @@
   .linkGrid {
     grid-template-columns: 1fr;
     gap: 1rem;
+  }
+
+  .speciesNames {
+    flex-direction: column;
+    gap: 0.5rem;
   }
 
   .resourceLink {
