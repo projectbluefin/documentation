@@ -42,6 +42,9 @@ const CommunityFeeds: React.FC = () => {
               maxItems={10}
               showDescription={false}
             />
+            <p className={styles.sectionByline}>
+              <em>Achillobator giganticus</em>
+            </p>
             <FeedItems
               feedId="bluefinDiscussions"
               title="Community Discussions"
@@ -56,6 +59,9 @@ const CommunityFeeds: React.FC = () => {
               maxItems={10}
               showDescription={false}
             />
+            <p className={styles.sectionByline}>
+              <em>Deinonychus antirrhopus</em>
+            </p>
             <FeedItems
               feedId="bluefinAnnouncements"
               title="Announcements"
@@ -67,14 +73,6 @@ const CommunityFeeds: React.FC = () => {
 
         <div className={styles.additionalLinks}>
           <h2>Additional Feeds</h2>
-          <div className={styles.speciesNames}>
-            <p className={styles.sectionByline}>
-              <em>Achillobator giganticus</em>
-            </p>
-            <p className={styles.sectionByline}>
-              <em>Deinonychus antirrhopus</em>
-            </p>
-          </div>
           <div className={styles.linkGrid}>
             <a
               href="https://docs.projectbluefin.io/blog/rss.xml"
