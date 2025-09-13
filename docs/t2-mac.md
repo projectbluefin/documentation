@@ -44,7 +44,7 @@ An External keyboard and mouse are required to install Bluefin on T2 at this tim
 
 :::
 
-1. With your Mac off, connect an external keyboard and mouse, and insert your Bluefin USB 
+1. With your Mac off, connect an external keyboard and mouse, and insert your Bluefin USB
 2. Hold the option (alt on a Windows keyboard) key and power on your Mac.
 3. At the boot menu, select "EFI Boot" (it'll have a USB icon). Click Continue.
 4. At the Fedora installer boot screen, select to test your media or not before the install.

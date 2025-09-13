@@ -13,6 +13,7 @@ This file (`.github/copilot-codespace.yml`) customizes the GitHub Copilot coding
 ## Build Process
 
 The environment automatically:
+
 1. Installs Bun package manager
 2. Installs project dependencies from `bun.lockb`
 3. Tests the build process to ensure everything works

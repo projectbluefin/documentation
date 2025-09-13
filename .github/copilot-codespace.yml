@@ -10,28 +10,28 @@ onCreateCommand: |
   # Install Bun package manager (used by this project instead of npm)
   echo "Installing Bun package manager..."
   curl -fsSL https://bun.sh/install | bash
-  
+
   # Add bun to PATH for current session
   export PATH="$HOME/.bun/bin:$PATH"
   echo 'export PATH="$HOME/.bun/bin:$PATH"' >> ~/.bashrc
-  
+
   # Install project dependencies from lockfile
   echo "Installing project dependencies..."
   bun install --frozen-lockfile
-  
+
   # Verify installation
   echo "Verifying installation..."
   bun --version
   node --version
-  
+
   # Test build to ensure everything works
   echo "Testing build process..."
   bun run build || echo "Build completed with warnings"
-  
+
   # Setup Git configuration for commits
   git config --global user.email "copilot@github.com"
   git config --global user.name "GitHub Copilot"
-  
+
   echo "GitHub Copilot coding agent environment setup complete!"
 
 # Development lifecycle commands
@@ -66,14 +66,15 @@ containerEnv:
 features:
   # Git for version control
   "ghcr.io/devcontainers/features/git:1": {}
-  
+
   # Additional utilities
-  "ghcr.io/devcontainers/features/common-utils:2": {
-    "installZsh": false,
-    "installOhMyZsh": false,
-    "upgradePackages": true,
-    "username": "vscode"
-  }
+  "ghcr.io/devcontainers/features/common-utils:2":
+    {
+      "installZsh": false,
+      "installOhMyZsh": false,
+      "upgradePackages": true,
+      "username": "vscode",
+    }
 
 # VS Code extensions that would be helpful for this project
 customizations:
@@ -95,7 +96,7 @@ customizations:
 
 # Port forwarding for development server
 forwardPorts:
-  - 3000  # Docusaurus development server
+  - 3000 # Docusaurus development server
 
 # Resource allocation optimized for documentation builds
 memory: "4gb"

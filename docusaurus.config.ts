@@ -69,9 +69,12 @@ const config: Config = {
       {
         data: {
           bluefinReleases: "https://github.com/ublue-os/bluefin/releases.atom",
-          bluefinLtsReleases: "https://github.com/ublue-os/bluefin-lts/releases.atom",
-          bluefinDiscussions: "https://github.com/ublue-os/bluefin/discussions.atom",
-          bluefinAnnouncements: "https://github.com/ublue-os/bluefin/discussions.atom?discussions_q=is%3Aopen+label%3Aannouncements",
+          bluefinLtsReleases:
+            "https://github.com/ublue-os/bluefin-lts/releases.atom",
+          bluefinDiscussions:
+            "https://github.com/ublue-os/bluefin/discussions.atom",
+          bluefinAnnouncements:
+            "https://github.com/ublue-os/bluefin/discussions.atom?discussions_q=is%3Aopen+label%3Aannouncements",
         },
       },
     ],
@@ -111,7 +114,7 @@ const config: Config = {
       logo: {
         alt: "Bluefin",
         src: "img/logo.svg",
-        href: "https://projectbluefin.io/"
+        href: "https://projectbluefin.io/",
       },
       items: [
         {

@@ -204,4 +204,4 @@ Common documentation areas include:
 Other Rules:
 
 - **Remember**: Documentation should be consumable in one sitting and link to upstream docs rather than duplicating content.
-- **Never** create new pages unless explicitly told to do so. 
+- **Never** create new pages unless explicitly told to do so.

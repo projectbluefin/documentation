@@ -7,7 +7,7 @@ lts:
     github: "ublue-os"
 
 gts:
-  name: Bluefin GTS  
+  name: Bluefin GTS
   title: Gated Testing Stream Release
   image_url: https://github.com/ublue-os.png
   url: https://github.com/ublue-os/bluefin
