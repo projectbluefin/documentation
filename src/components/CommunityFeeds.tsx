@@ -21,25 +21,11 @@ const CommunityFeeds: React.FC = () => {
 
         {/* Package Summary Boxes */}
         <div className={styles.packageSummaryGrid}>
-          <PackageSummary feedKey="bluefinReleases" title="Bluefin Stable" />
           <PackageSummary feedKey="bluefinLtsReleases" title="Bluefin LTS" />
+          <PackageSummary feedKey="bluefinReleases" title="Bluefin Stable" />
         </div>
 
         <div className={styles.feedGrid}>
-          <div className={styles.feedColumn}>
-            <FeedItems
-              feedId="bluefinReleases"
-              title="Bluefin and Bluefin GTS Releases"
-              maxItems={5}
-              showDescription={false}
-            />
-            <FeedItems
-              feedId="bluefinAnnouncements"
-              title="Announcements"
-              maxItems={3}
-              showDescription={false}
-            />
-          </div>
           <div className={styles.feedColumn}>
             <FeedItems
               feedId="bluefinLtsReleases"
@@ -51,6 +37,20 @@ const CommunityFeeds: React.FC = () => {
               feedId="bluefinDiscussions"
               title="Community Discussions"
               maxItems={5}
+              showDescription={false}
+            />
+          </div>
+          <div className={styles.feedColumn}>
+            <FeedItems
+              feedId="bluefinReleases"
+              title="Bluefin and Bluefin GTS Releases"
+              maxItems={5}
+              showDescription={false}
+            />
+            <FeedItems
+              feedId="bluefinAnnouncements"
+              title="Announcements"
+              maxItems={3}
               showDescription={false}
             />
           </div>
