@@ -1,7 +1,7 @@
 ---
 title: "Bluefin LTS: Reimagining the Enterprise Linux Desktop" 
 slug: bluefin-lts-ga
-authors: castrojo, bluefin-lts-release-bot
+authors: castrojo
 ---
 
 _Achillobator giganticus_
@@ -142,7 +142,7 @@ Special thanks to Carl George, Laura Santamaria, Shaun McCance, and the entire b
 
 ### The Road Ahead
 
-And lastly, I'm sure you'll find some missing functionality compared to the Fedora build as there are some creature comforts that are missing. We call these `parity` bugs, so if find them file them.
+And lastly, I'm sure you'll find some missing functionality compared to the Fedora build as there are some creature comforts that are missing. We call these `parity` bugs, so if find them file them. There are some things that won't be coming with, CentOS Stream's focus is on long term support, so we may choose to drop a feature if it's not straightforward to bring to Bluefin LTS. 
 
 Imagine that our final goal is that LTS, GTS, and stable is just a slider in an update page in a control panel, they should feel and act the same. I'm pretty much there with my personal machines, sometimes I have to check which machine is which because it doesn't really matter. I feel the pain on the infrastructure side instead. :smile:
 
