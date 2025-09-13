@@ -39,7 +39,7 @@ const CommunityFeeds: React.FC = () => {
             <FeedItems
               feedId="bluefinLtsReleases"
               title="Bluefin LTS"
-              maxItems={5}
+              maxItems={10}
               showDescription={false}
             />
             <FeedItems
@@ -53,7 +53,7 @@ const CommunityFeeds: React.FC = () => {
             <FeedItems
               feedId="bluefinReleases"
               title="Bluefin and Bluefin GTS"
-              maxItems={5}
+              maxItems={10}
               showDescription={false}
             />
             <FeedItems
