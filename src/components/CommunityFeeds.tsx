@@ -22,7 +22,16 @@ const CommunityFeeds: React.FC = () => {
         {/* Package Summary Boxes */}
         <div className={styles.packageSummaryGrid}>
           <PackageSummary feedKey="bluefinLtsReleases" title="Bluefin LTS" />
-          <PackageSummary feedKey="bluefinReleases" title="Bluefin Stable" />
+          <PackageSummary
+            feedKey="bluefinReleases"
+            title="Bluefin GTS"
+            filter={(item) => item.title.startsWith("gts-")}
+          />
+          <PackageSummary
+            feedKey="bluefinReleases"
+            title="Bluefin Stable"
+            filter={(item) => item.title.startsWith("stable-")}
+          />
         </div>
 
         <div className={styles.feedGrid}>

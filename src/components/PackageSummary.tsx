@@ -10,11 +10,13 @@ interface PackageInfo {
 interface PackageSummaryProps {
   feedKey: string;
   title: string;
+  filter?: (item: any) => boolean;
 }
 
 export default function PackageSummary({
   feedKey,
   title,
+  filter,
 }: PackageSummaryProps) {
   const feedData = useStoredFeed(feedKey);
 
@@ -34,6 +36,15 @@ export default function PackageSummary({
       items = Array.isArray(feedData.feed.entry)
         ? feedData.feed.entry
         : [feedData.feed.entry];
+    }
+
+    if (items.length === 0) {
+      return [];
+    }
+
+    // Apply filter if provided
+    if (filter) {
+      items = items.filter(filter);
     }
 
     if (items.length === 0) {
