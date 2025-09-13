@@ -209,6 +209,16 @@ const FeedItems: React.FC<FeedItemsProps> = ({
             const itemDate = item.pubDate || item.updated;
             const itemAuthor =
               typeof item.author === "string" ? item.author : item.author?.name;
+
+            // Replace github-actions[bot] with appropriate authors based on feedId
+            let displayAuthor = itemAuthor;
+            if (itemAuthor === "github-actions[bot]") {
+              if (feedId === "bluefinLtsReleases") {
+                displayAuthor = "Achillobator Giganticus";
+              } else if (feedId === "bluefinReleases") {
+                displayAuthor = "Deinonychus antirrhopus";
+              }
+            }
             const itemDescription =
               item.description ||
               (typeof item.content === "object"
@@ -238,9 +248,15 @@ const FeedItems: React.FC<FeedItemsProps> = ({
                           {new Date(itemDate).toLocaleDateString()}
                         </time>
                       )}
-                      {itemAuthor && (
+                      {displayAuthor && (
                         <span className={styles.feedItemAuthor}>
-                          by {itemAuthor}
+                          by{" "}
+                          {feedId === "bluefinLtsReleases" &&
+                          displayAuthor === "Achillobator Giganticus" ? (
+                            <em>{displayAuthor}</em>
+                          ) : (
+                            displayAuthor
+                          )}
                         </span>
                       )}
                       {versionSummary.length > 0 && (
@@ -272,9 +288,15 @@ const FeedItems: React.FC<FeedItemsProps> = ({
                         {new Date(itemDate).toLocaleDateString()}
                       </time>
                     )}
-                    {itemAuthor && (
+                    {displayAuthor && (
                       <span className={styles.feedItemAuthor}>
-                        by {itemAuthor}
+                        by{" "}
+                        {feedId === "bluefinLtsReleases" &&
+                        displayAuthor === "Achillobator Giganticus" ? (
+                          <em>{displayAuthor}</em>
+                        ) : (
+                          displayAuthor
+                        )}
                       </span>
                     )}
                     {versionSummary.length > 0 && (

@@ -29,7 +29,7 @@ const CommunityFeeds: React.FC = () => {
           />
           <PackageSummary
             feedKey="bluefinReleases"
-            title="Bluefin Stable"
+            title="Bluefin"
             filter={(item) => item.title.startsWith("stable-")}
           />
         </div>

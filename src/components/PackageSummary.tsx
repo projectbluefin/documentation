@@ -100,7 +100,7 @@ export default function PackageSummary({
     }
 
     const gnomeMatch = content.match(
-      /<td><strong>Gnome<\/strong><\/td>\s*<td>([^<]+)/,
+      /<td><strong>(?:Gnome|GNOME)<\/strong><\/td>\s*<td>([^<]+)/,
     );
     if (gnomeMatch) {
       const versionText = gnomeMatch[1].trim();
@@ -174,7 +174,7 @@ export default function PackageSummary({
           paddingBottom: "0.5rem",
         }}
       >
-        {title} - Latest Versions
+        {title}
       </Heading>
       <div
         style={{
