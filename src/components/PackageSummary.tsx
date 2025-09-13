@@ -51,116 +51,95 @@ export default function PackageSummary({
       return [];
     }
 
-    const latestRelease = items[0];
-
-    // Extract content from different possible locations
-    let content = "";
-    if (
-      typeof latestRelease.content === "object" &&
-      latestRelease.content?.value
-    ) {
-      content = latestRelease.content.value;
-    } else if (typeof latestRelease.content === "string") {
-      content = latestRelease.content;
-    } else if (latestRelease.description) {
-      content = latestRelease.description;
-    }
-
-    // Parse major packages from the HTML content
+    // Look through recent releases (up to 10) to find the latest version of each package
     const packages: PackageInfo[] = [];
+    const maxItemsToSearch = Math.min(10, items.length);
 
-    if (!content) {
-      return packages;
+    // Helper function to extract package versions from content
+    const extractPackageFromContent = (
+      content: string,
+      packageName: string,
+      pattern: RegExp,
+    ): string | null => {
+      const match = content.match(pattern);
+      if (match) {
+        const versionText = match[1].trim();
+        // Extract the latest version if there's an arrow (6.14.11-300 ➡️ 6.15.9-201)
+        return versionText.includes("➡️")
+          ? versionText.split("➡️")[1].trim()
+          : versionText;
+      }
+      return null;
+    };
+
+    // Package patterns to search for
+    const packagePatterns = [
+      {
+        name: "Kernel",
+        pattern: /<td><strong>Kernel<\/strong><\/td>\s*<td>([^<]+)/,
+      },
+      {
+        name: "HWE Kernel",
+        pattern: /<td><strong>HWE Kernel<\/strong><\/td>\s*<td>([^<]+)/,
+      },
+      {
+        name: "GNOME",
+        pattern: /<td><strong>(?:Gnome|GNOME)<\/strong><\/td>\s*<td>([^<]+)/,
+      },
+      {
+        name: "Mesa",
+        pattern: /<td><strong>Mesa<\/strong><\/td>\s*<td>([^<]+)/,
+      },
+      {
+        name: "Podman",
+        pattern: /<td><strong>Podman<\/strong><\/td>\s*<td>([^<]+)/,
+      },
+      {
+        name: "NVIDIA",
+        pattern: /<td><strong>Nvidia<\/strong><\/td>\s*<td>([^<]+)/,
+      },
+      {
+        name: "Docker",
+        pattern: /<td><strong>Docker<\/strong><\/td>\s*<td>([^<]+)/,
+      },
+      {
+        name: "systemd",
+        pattern:
+          /<td>🔄<\/td>\s*<td>systemd<\/td>\s*<td>[^<]*<\/td>\s*<td>([^<]+)/,
+      },
+    ];
+
+    // For each package, find the latest version from recent releases
+    for (const pkg of packagePatterns) {
+      for (let i = 0; i < maxItemsToSearch; i++) {
+        const item = items[i];
+
+        // Extract content from different possible locations
+        let content = "";
+        if (typeof item.content === "object" && item.content?.value) {
+          content = item.content.value;
+        } else if (typeof item.content === "string") {
+          content = item.content;
+        } else if (item.description) {
+          content = item.description;
+        }
+
+        if (!content) continue;
+
+        const version = extractPackageFromContent(
+          content,
+          pkg.name,
+          pkg.pattern,
+        );
+        if (version) {
+          // Found this package version, add it and stop looking for this package
+          packages.push({ name: pkg.name, version });
+          break;
+        }
+      }
     }
 
-    // Look for package version patterns in the HTML table content
-    // Pattern for HTML table: <td><strong>PackageName</strong></td><td>version</td>
-
-    const kernelMatch = content.match(
-      /<td><strong>Kernel<\/strong><\/td>\s*<td>([^<]+)/,
-    );
-    if (kernelMatch) {
-      // Extract the latest version if there's an arrow (6.14.11-300 ➡️ 6.15.9-201)
-      const versionText = kernelMatch[1].trim();
-      const latestVersion = versionText.includes("➡️")
-        ? versionText.split("➡️")[1].trim()
-        : versionText;
-      packages.push({ name: "Kernel", version: latestVersion });
-    }
-
-    const hweKernelMatch = content.match(
-      /<td><strong>HWE Kernel<\/strong><\/td>\s*<td>([^<]+)/,
-    );
-    if (hweKernelMatch) {
-      const versionText = hweKernelMatch[1].trim();
-      const latestVersion = versionText.includes("➡️")
-        ? versionText.split("➡️")[1].trim()
-        : versionText;
-      packages.push({ name: "HWE Kernel", version: latestVersion });
-    }
-
-    const gnomeMatch = content.match(
-      /<td><strong>(?:Gnome|GNOME)<\/strong><\/td>\s*<td>([^<]+)/,
-    );
-    if (gnomeMatch) {
-      const versionText = gnomeMatch[1].trim();
-      const latestVersion = versionText.includes("➡️")
-        ? versionText.split("➡️")[1].trim()
-        : versionText;
-      packages.push({ name: "GNOME", version: latestVersion });
-    }
-
-    const mesaMatch = content.match(
-      /<td><strong>Mesa<\/strong><\/td>\s*<td>([^<]+)/,
-    );
-    if (mesaMatch) {
-      const versionText = mesaMatch[1].trim();
-      const latestVersion = versionText.includes("➡️")
-        ? versionText.split("➡️")[1].trim()
-        : versionText;
-      packages.push({ name: "Mesa", version: latestVersion });
-    }
-
-    const podmanMatch = content.match(
-      /<td><strong>Podman<\/strong><\/td>\s*<td>([^<]+)/,
-    );
-    if (podmanMatch) {
-      const versionText = podmanMatch[1].trim();
-      const latestVersion = versionText.includes("➡️")
-        ? versionText.split("➡️")[1].trim()
-        : versionText;
-      packages.push({ name: "Podman", version: latestVersion });
-    }
-
-    const nvidiaMatch = content.match(
-      /<td><strong>Nvidia<\/strong><\/td>\s*<td>([^<]+)/,
-    );
-    if (nvidiaMatch) {
-      const versionText = nvidiaMatch[1].trim();
-      const latestVersion = versionText.includes("➡️")
-        ? versionText.split("➡️")[1].trim()
-        : versionText;
-      packages.push({ name: "NVIDIA", version: latestVersion });
-    }
-
-    const dockerMatch = content.match(
-      /<td><strong>Docker<\/strong><\/td>\s*<td>([^<]+)/,
-    );
-    if (dockerMatch) {
-      const versionText = dockerMatch[1].trim();
-      const latestVersion = versionText.includes("➡️")
-        ? versionText.split("➡️")[1].trim()
-        : versionText;
-      packages.push({ name: "Docker", version: latestVersion });
-    }
-
-    const systemdMatch = content.match(
-      /<td>🔄<\/td>\s*<td>systemd<\/td>\s*<td>[^<]*<\/td>\s*<td>([^<]+)/,
-    );
-    if (systemdMatch) {
-      const versionText = systemdMatch[1].trim();
-      packages.push({ name: "systemd", version: versionText });
-    }
+    return packages;
 
     return packages;
   };
