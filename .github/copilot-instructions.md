@@ -8,13 +8,14 @@ Bluefin documentation is a Docusaurus 3.8.1 TypeScript website that provides com
 
 Bootstrap, build, and test the repository:
 
-- `npm install` -- takes 60 seconds. NEVER CANCEL. Set timeout to 120+ seconds.
-- `npm run build` -- takes 30 seconds. NEVER CANCEL. Set timeout to 60+ seconds.
+- `npm install` -- takes 50-60 seconds. NEVER CANCEL. Set timeout to 120+ seconds.
+  - **Note**: If installation fails with React peer dependency conflicts, use `npm install --legacy-peer-deps`
+- `npm run build` -- takes 7-15 seconds (includes fetch-feeds step). NEVER CANCEL. Set timeout to 60+ seconds.
 
 Run the development server:
 
 - **ALWAYS run the bootstrapping steps first.**
-- Local development: `npm run start`
+- Local development: `npm run start` (includes automatic feed fetching)
 - Docker development: `docker compose up`
 
 Run production build locally:
@@ -26,9 +27,9 @@ Run production build locally:
 **CRITICAL TIMING REQUIREMENTS:**
 
 - **NEVER CANCEL build commands** - Set explicit timeouts of 60+ minutes for all builds
-- npm install: 60 seconds (set 120+ second timeout)
-- npm run build: 30 seconds (set 60+ second timeout)
-- npm run typecheck: 2 seconds (set 30+ second timeout)
+- npm install: 60 seconds (set 120+ second timeout, use --legacy-peer-deps if needed)
+- npm run build: 7-15 seconds (set 60+ second timeout, includes feed fetching)
+- npm run typecheck: 2 seconds (set 30+ second timeout, some errors may be tolerated by build)
 - npm run prettier-lint: 3 seconds (set 30+ second timeout)
 
 **Manual Validation Requirements:**
@@ -38,7 +39,7 @@ Run production build locally:
 - Take screenshots of any UI changes to verify they display properly
 - ALWAYS run through the complete build process after making changes
 - Verify changelogs render correctly if you modify changelog files
-- Verify that changelogs ingest the stable and gts tags from ublue-os/bluefin and the lts tag from ublue-os/bluefin-lts
+- Verify that release feeds are fetched correctly (stable and gts tags from ublue-os/bluefin and lts tag from ublue-os/bluefin-lts)
 
 **Always run these validation steps before committing:**
 
@@ -56,24 +57,29 @@ All commands must be run from repository root:
 ```bash
 # Install dependencies (NEVER CANCEL - 60s runtime)
 npm install
+# If above fails with React peer dependency conflicts, use:
+# npm install --legacy-peer-deps
 
-# Start development server (auto-reloads on changes)
+# Start development server (auto-reloads on changes, includes feed fetching)
 npm run start
 
-# Build production site (NEVER CANCEL - 30s runtime)
+# Build production site (NEVER CANCEL - 7-15s runtime, includes feed fetching)
 npm run build
 
 # Serve built site locally
 npm run serve
 
-# Validate TypeScript
+# Validate TypeScript (some errors may be tolerated by build process)
 npm run typecheck
 
-# Check formatting
+# Check formatting (many warnings expected on existing files)
 npm run prettier-lint
 
 # Fix formatting issues
 npm run prettier
+
+# Fetch release feeds manually (auto-runs during start/build)
+npm run fetch-feeds
 
 # Clear build cache if needed
 npm run clear
@@ -91,15 +97,19 @@ docker compose up
 docker compose down
 ```
 
+**Note**: The CI/CD pipeline uses `bun` as the package manager, but `npm` is fully supported for local development.
+
 ### Repository Structure
 
 ```
 docs/                    # Documentation markdown files
 blog/                   # Blog posts
-changelogs/             # Auto-generated release changelogs
+changelogs/             # Changelog content (manually created and auto-generated)
 src/                    # React components and pages
-static/                 # Static assets (images, etc.)
-sidebars.ts             # Navigation structure
+static/                 # Static assets (images, feeds, etc.)
+scripts/                # Build scripts (fetch-feeds.js)
+sidebars.ts             # Navigation structure (TypeScript)
+sidebars.js             # Navigation structure (JavaScript, legacy)
 docusaurus.config.ts    # Main configuration
 package.json            # Dependencies and scripts
 ```
@@ -108,7 +118,8 @@ package.json            # Dependencies and scripts
 
 - **Documentation**: Files in `docs/` directory, written in Markdown/MDX
 - **Blog Posts**: Files in `blog/` directory, with frontmatter metadata
-- **Changelogs**: Auto-generated in `changelogs/` directory via GitHub workflows
+- **Changelogs**: Files in `changelogs/` directory, manually created content
+- **Release Feeds**: Auto-fetched JSON files in `static/feeds/` via `fetch-feeds` script
 - **Static Assets**: Images and files in `static/` directory
 
 ## Development Guidelines
@@ -130,32 +141,37 @@ package.json            # Dependencies and scripts
 ### Formatting Requirements
 
 - Run `npm run prettier` to automatically fix formatting issues
-- Prettier will modify 85+ files on first run - this is expected
-- TypeScript compilation must pass (`npm run typecheck`)
-- All builds must complete successfully
+- `npm run prettier-lint` will show warnings for many existing files - this is normal and expected
+- TypeScript compilation (`npm run typecheck`) may show some errors that are tolerated by the build process
+- All builds must complete successfully even with minor TypeScript warnings
 
 ## Troubleshooting
 
 ### Common Issues
 
-- **Build timeouts**: Builds can take 30+ seconds. Always set generous timeouts and never cancel
+- **Build timeouts**: Builds can take 7-15+ seconds due to feed fetching. Always set generous timeouts and never cancel
+- **Dependency conflicts**: If `npm install` fails, try `npm install --legacy-peer-deps` for React version conflicts
 - **Formatting warnings**: `npm run prettier-lint` shows many warnings for existing files - this is normal
-- **Missing dependencies**: If build fails, try `npm install` first
+- **TypeScript errors**: Some TypeScript errors in components may be tolerated by the build process
+- **Missing dependencies**: If build fails, try `npm install` (with --legacy-peer-deps if needed) first
 - **Port conflicts**: Development server uses port 3000 by default
+- **Feed fetching**: If builds hang, check network connectivity to GitHub releases API
 
 ### Recovery Steps
 
 1. Clear build cache: `npm run clear`
-2. Reinstall dependencies: `rm -rf node_modules package-lock.json && npm install`
-3. Check for TypeScript errors: `npm run typecheck`
-4. Verify formatting: `npm run prettier-lint`
+2. Reinstall dependencies: `rm -rf node_modules package-lock.json && npm install --legacy-peer-deps`
+3. Check for TypeScript errors: `npm run typecheck` (some errors may be tolerated)
+4. Verify formatting: `npm run prettier-lint` (warnings expected)
+5. Test feed fetching: `npm run fetch-feeds`
 
 ## Dependencies
 
 - **Node.js**: Version 18+ required (see package.json engines field)
-- **Package Managers**: Both npm and bun supported (bun used in CI)
+- **Package Managers**: npm supported for local development, bun used in CI/CD
 - **Docker**: Optional for containerized development
 - **OS**: Works on Linux, macOS, Windows
+- **Network**: Internet connection required for release feed fetching
 
 ## Validation Scenarios
 
