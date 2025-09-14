@@ -162,15 +162,15 @@ const formatReleaseTitle = (title: string, feedId: string): string => {
     // Example: "Bluefin LTS: 20250808 (c10s)" -> "20250808 (c10s)"
     return title.replace(/^(bluefin-lts|Bluefin) LTS: /, "");
   } else if (feedId === "bluefinReleases") {
-    // For stable releases: Remove "stable-" prefix and ": Stable" text
-    // Example: "stable-20250907: Stable (F42.20250907, #921e6ba)" -> "20250907 (F42.20250907, #921e6ba)"
+    // For stable releases: Remove "stable-" prefix and ": Stable" text, simplify Fedora version
+    // Example: "stable-20250907: Stable (F42.20250907, #921e6ba)" -> "20250907 (F42 #921e6ba)"
     if (title.startsWith("stable-")) {
-      return title.replace(/^stable-([^:]+): Stable (.+)$/, "$1 $2");
+      return title.replace(/^stable-([^:]+): Stable \(F(\d+)\.\d+, (#[^)]+)\)$/, "$1 (F$2 $3)");
     }
-    // For GTS releases: Remove "gts-" prefix and ": Gts" text
-    // Example: "gts-20250907: Gts (F41.20250907, #921e6ba)" -> "20250907 (F41.20250907, #921e6ba)"
+    // For GTS releases: Remove "gts-" prefix and ": Gts" text, simplify Fedora version
+    // Example: "gts-20250907: Gts (F41.20250907, #921e6ba)" -> "20250907 (F41 #921e6ba)"
     else if (title.startsWith("gts-")) {
-      return title.replace(/^gts-([^:]+): Gts (.+)$/, "$1 $2");
+      return title.replace(/^gts-([^:]+): Gts \(F(\d+)\.\d+, (#[^)]+)\)$/, "$1 (F$2 $3)");
     }
   }
 
@@ -308,17 +308,16 @@ const FeedItems: React.FC<FeedItemsProps> = ({
                         </time>
                       )}
                       {versionSummary.length > 0 && (
-                        <div className={styles.executiveSummary}>
-                          {versionSummary.map((change, idx) => (
-                            <span
+                        <ul className={styles.executiveSummary}>
+                          {versionSummary.map((change) => (
+                            <li
                               key={change.name}
                               className={styles.versionChange}
                             >
-                              {idx > 0 && " • "}
                               <strong>{change.name}:</strong> {change.change}
-                            </span>
+                            </li>
                           ))}
-                        </div>
+                        </ul>
                       )}
                       {showDescription && itemDescription && (
                         <div
@@ -337,17 +336,16 @@ const FeedItems: React.FC<FeedItemsProps> = ({
                       </time>
                     )}
                     {versionSummary.length > 0 && (
-                      <div className={styles.executiveSummary}>
-                        {versionSummary.map((change, idx) => (
-                          <span
+                      <ul className={styles.executiveSummary}>
+                        {versionSummary.map((change) => (
+                          <li
                             key={change.name}
                             className={styles.versionChange}
                           >
-                            {idx > 0 && " • "}
                             <strong>{change.name}:</strong> {change.change}
-                          </span>
+                          </li>
                         ))}
-                      </div>
+                      </ul>
                     )}
                     {showDescription && itemDescription && (
                       <div
