@@ -83,7 +83,7 @@ This will be the lab that will keep Bluefin on the leading edge of open source A
 - [Ramalama](https://github.com/containers/ramalama) for local management and serving of AI models
 - [uv](https://github.com/astral-sh/uv) for Python package management
 - ... and more! Check the [AI and Machine Learning](/ai) section for more!
-- We are looking for AI/ML enthusuasts with strong opinions who want to be involved! Inquire within!
+- We are looking for AI/ML enthusiasts with strong opinions who want to be involved! Inquire within!
 
 ![Bluefin GDX at KubeCon + CloudNativeCon EU](https://github.com/user-attachments/assets/2c2f9d50-a704-49cb-9b0b-f139014a8bc0)
 
