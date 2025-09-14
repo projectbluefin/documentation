@@ -128,10 +128,11 @@
   background: var(--ifm-color-emphasis-100);
   border-left: 3px solid var(--ifm-color-primary-lighter);
   border-radius: 0 4px 4px 0;
+  list-style-type: none;
 }
 
 .versionChange {
-  display: inline;
+  display: list-item;
   white-space: nowrap;
 }
 
