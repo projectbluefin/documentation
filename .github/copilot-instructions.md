@@ -199,6 +199,87 @@ After making any changes, ALWAYS:
    # Verify static site works correctly
    ```
 
+## Changelog Package Tracking
+
+The changelog cards automatically track important package versions from release feeds. Package tracking is centrally managed in `src/config/packageConfig.ts` to make maintenance simple and consistent.
+
+### How Package Tracking Works
+
+- **Package Summary Cards**: Display current versions of tracked packages in the top three cards on /changelogs/
+- **Individual Changelog Entries**: Show version transitions (old → new) when packages are upgraded
+- **Centralized Configuration**: All package patterns are defined once in `packageConfig.ts` and used by both `FeedItems.tsx` and `PackageSummary.tsx`
+
+### Adding a New Package
+
+To track a new package in changelog cards:
+
+1. **Edit** `src/config/packageConfig.ts`
+2. **Add** a new entry to the `PACKAGE_PATTERNS` array:
+
+```typescript
+{
+  name: "PackageName",        // Display name (e.g., "Docker", "GNOME")
+  pattern: /regex pattern/,    // Regex to extract version from changelog HTML
+  changePattern?: /regex/,     // Optional: For "All Images" format packages
+}
+```
+
+3. **Pattern Types**:
+   - **Standard format**: `<td><strong>PackageName</strong></td><td>version</td>`
+     ```typescript
+     pattern: /<td><strong>Docker<\/strong><\/td>\s*<td>([^<]+)/
+     ```
+   - **"All Images" format**: `<td>🔄</td><td>packagename</td><td>oldversion</td><td>newversion</td>`
+     ```typescript
+     pattern: /<td>🔄<\/td>\s*<td>packagename<\/td>\s*<td>[^<]*<\/td>\s*<td>([^<]+)/,
+     changePattern: /<td>🔄<\/td>\s*<td>packagename<\/td>\s*<td>([^<]+)<\/td>\s*<td>([^<]+)/,
+     ```
+
+### Removing a Package
+
+To stop tracking a package:
+
+1. **Edit** `src/config/packageConfig.ts`
+2. **Remove** the entry from the `PACKAGE_PATTERNS` array
+3. **Test** the changes with `npm run build` and `npm run start`
+
+### Package Handling Rules
+
+- **Missing packages** gracefully fill in over time as new releases include them
+- **Failed pattern matches** are silently ignored - no errors thrown
+- **Version arrows** (6.14.11-300 ➡️ 6.15.9-201) are automatically detected for upgrade transitions
+- **Static versions** (no arrow) show current version in summary cards
+- **Search scope**: Examines up to 10 recent releases to find the latest version of each package
+
+### Current Tracked Packages
+
+As of this documentation update, the following packages are tracked:
+- **Kernel**: Main kernel version
+- **HWE Kernel**: Hardware enablement kernel
+- **GNOME**: Desktop environment version  
+- **Mesa**: Graphics drivers
+- **Podman**: Container runtime
+- **NVIDIA**: Proprietary GPU drivers
+- **Docker**: Container platform
+- **systemd**: System and service manager
+- **bootc**: Bootable container tools
+
+### Validation After Changes
+
+Always validate package tracking changes:
+
+```bash
+# TypeScript validation
+npm run typecheck
+
+# Build test  
+npm run build
+
+# Manual testing
+npm run start
+# Navigate to /changelogs/ and verify package versions display correctly
+```
+
 ## Repository Context
 
 This repository contains documentation for Bluefin OS. The main Bluefin OS images are built in the [ublue-os/bluefin](https://github.com/ublue-os/bluefin) repository and [ublue-os/bluefin-lts](https://github.com/ublue-os/bluefin-lts) repositories. This docs repository:

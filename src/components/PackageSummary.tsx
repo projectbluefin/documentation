@@ -1,6 +1,7 @@
 import React from "react";
 import useStoredFeed from "@theme/useStoredFeed";
 import Heading from "@theme/Heading";
+import { PACKAGE_PATTERNS, extractPackageVersion } from "../config/packageConfig";
 
 interface PackageInfo {
   name: string;
@@ -61,53 +62,11 @@ export default function PackageSummary({
       packageName: string,
       pattern: RegExp,
     ): string | null => {
-      const match = content.match(pattern);
-      if (match) {
-        const versionText = match[1].trim();
-        // Extract the latest version if there's an arrow (6.14.11-300 ➡️ 6.15.9-201)
-        return versionText.includes("➡️")
-          ? versionText.split("➡️")[1].trim()
-          : versionText;
-      }
-      return null;
+      return extractPackageVersion(content, pattern);
     };
 
-    // Package patterns to search for
-    const packagePatterns = [
-      {
-        name: "Kernel",
-        pattern: /<td><strong>Kernel<\/strong><\/td>\s*<td>([^<]+)/,
-      },
-      {
-        name: "HWE Kernel",
-        pattern: /<td><strong>HWE Kernel<\/strong><\/td>\s*<td>([^<]+)/,
-      },
-      {
-        name: "GNOME",
-        pattern: /<td><strong>(?:Gnome|GNOME)<\/strong><\/td>\s*<td>([^<]+)/,
-      },
-      {
-        name: "Mesa",
-        pattern: /<td><strong>Mesa<\/strong><\/td>\s*<td>([^<]+)/,
-      },
-      {
-        name: "Podman",
-        pattern: /<td><strong>Podman<\/strong><\/td>\s*<td>([^<]+)/,
-      },
-      {
-        name: "NVIDIA",
-        pattern: /<td><strong>Nvidia<\/strong><\/td>\s*<td>([^<]+)/,
-      },
-      {
-        name: "Docker",
-        pattern: /<td><strong>Docker<\/strong><\/td>\s*<td>([^<]+)/,
-      },
-      {
-        name: "systemd",
-        pattern:
-          /<td>🔄<\/td>\s*<td>systemd<\/td>\s*<td>[^<]*<\/td>\s*<td>([^<]+)/,
-      },
-    ];
+    // Use centralized package patterns
+    const packagePatterns = PACKAGE_PATTERNS;
 
     // For each package, find the latest version from recent releases
     for (const pkg of packagePatterns) {
@@ -138,8 +97,6 @@ export default function PackageSummary({
         }
       }
     }
-
-    return packages;
 
     return packages;
   };
