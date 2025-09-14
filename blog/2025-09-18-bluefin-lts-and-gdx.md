@@ -1,5 +1,5 @@
 ---
-title: "Bluefin LTS: Reimagining the Enterprise Linux Desktop" 
+title: "Bluefin LTS: Reinventing the Steel" 
 slug: bluefin-lts-ga
 authors: castrojo
 ---
