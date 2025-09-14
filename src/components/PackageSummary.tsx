@@ -107,6 +107,11 @@ export default function PackageSummary({
         pattern:
           /<td>🔄<\/td>\s*<td>systemd<\/td>\s*<td>[^<]*<\/td>\s*<td>([^<]+)/,
       },
+      {
+        name: "bootc",
+        pattern:
+          /<td>🔄<\/td>\s*<td>bootc<\/td>\s*<td>[^<]*<\/td>\s*<td>([^<]+)/,
+      },
     ];
 
     // For each package, find the latest version from recent releases
