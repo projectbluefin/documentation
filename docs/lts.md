@@ -67,6 +67,8 @@ The following images and tags are available:
 - `bluefin-gdx:lts` - includes Nvidia drivers and associated CUDA tooling. This is the only image with Nvidia drivers. See [Bluefin GDX](/gdx)
 - `bluefin:lts-hwe` - Fresher but gated Linux kernels matching other Bluefins.
 
+### Switching to the hwe branch
+
 Use the `ujust rebase-helper` command to switch your image to the HWE branch if you require newer kernels. All images offer Bluefin's [Developer Mode](/bluefin-dx).
 
 ## ARM Support
