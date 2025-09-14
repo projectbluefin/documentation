@@ -10,7 +10,7 @@ _Achillobator giganticus_
 
 After nine months of development Bluefin LTS and Bluefin GDX are now Generally Available(GA). The reign of Achillobator has begun. Find the download links [on the website](https://projectbluefin.io), or snag them below.
 
-# What is Bluefin LTS?
+# What is Bluefin LTS (Long Term Support)? 
 
 Bluefin LTS is a workstation designed for people who prefer Long Term Support but desire a modern desktop. This species of raptor is for users who prefer a slower release cadence, about a three-to-five year lifespan on a single release. Like other Bluefins it features first-class support for Flathub via [Bazaar](https://github.com/kolunmi/bazaar), Homebrew, ZFS, and all the [other goodies](https://docs.projectbluefin.io/introduction). 
 
@@ -62,7 +62,7 @@ Updates will come as often as we need them for now and will settle into weekly r
 
 # What is Bluefin GDX? 
 
-Bluefin GDX is designed to be an AI Workstation by providng Nvidia drivers and [CUDA](https://developer.nvidia.com/cuda-toolkit) in one image. It combines [Bluefin LTS](/lts) with the [Bluefin Developer Experience](/bluefin-dx). 
+Bluefin GDX is designed to be an AI Workstation by providng Nvidia drivers and [CUDA](https://developer.nvidia.com/cuda-toolkit) in one image. It combines [Bluefin LTS](/lts) with the [Bluefin Developer Experience](/bluefin-dx). There's no cool expansion of GDX: GPU Developer Experience I guess. Maybe someday we'll call it Bluefin CUDA Edition. (Jensen call me!)
 
 The reason we brand it differently is that it is designed for AI and Machine Learning professionals. Instead of a multitude of Nvidia images like Bluefin we will concentrate on this one image to focus on one thing: this is our platform for open source AI. Improvements made in GDX will make it's way into Bluefin's developer mode. GDX gives us a place to rev fast with some new friends:
 
