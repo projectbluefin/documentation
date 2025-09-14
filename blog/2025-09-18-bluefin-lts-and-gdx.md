@@ -49,7 +49,7 @@ A very special thanks to [Jordan Petridis](https://blogs.gnome.org/alatiera/) fr
 
 ### New Installation
 
-Installation is via a [live session](https://github.com/ublue-os/titanoboa) with the new [Anaconda webui](https://communityblog.fedoraproject.org/anaconda-webui-progress-update-and-roadmap/). This installer is miles better than the ones we used to ship, thanks to blah blah.
+Installation is via a [live session](https://github.com/ublue-os/titanoboa) with the new [Anaconda webui](https://communityblog.fedoraproject.org/anaconda-webui-progress-update-and-roadmap/). This installer is miles better than the ones we used to ship, thanks to the Anaconda team. 
 
 Secure boot and all those goodies are available: 
 
@@ -64,8 +64,7 @@ Updates will come as often as we need them for now and will settle into weekly r
 
 Bluefin GDX is designed to be an AI Workstation by providng Nvidia drivers and [CUDA](https://developer.nvidia.com/cuda-toolkit) in one image. It combines [Bluefin LTS](/lts) with the [Bluefin Developer Experience](/bluefin-dx). 
 
-The reason we brand it differently is that it is designed for AI and Machine Learning professionals. Instead of a multitude of Nvidia images like Bluefin we will concentrate on this one image to focus on one thing: this is our platform for open source AI. 
-
+The reason we brand it differently is that it is designed for AI and Machine Learning professionals. Instead of a multitude of Nvidia images like Bluefin we will concentrate on this one image to focus on one thing: this is our platform for open source AI. Improvements made in GDX will make it's way into Bluefin's developer mode. GDX gives us a place to rev fast with some new friends:
 
 :::info[Teamwork ...]
 
@@ -91,7 +90,7 @@ You can find Bluefin GDX on the conference circuit!
 
 # What this all means
 
-Bluefin LTS will end up being way more sustainable than Bluefin and Bluefin GTS from a developer perspective. It's more of an initial setup and then we don't touch it as often. We have had periods in beta development where we've gone weeks not touching it. If you look [changelogs.projectbluefin.io](https://changelogs.projectbluefin.io) you'll soon notice the pattern, mostly minor version bumps. Nice. 
+Bluefin LTS will end up being way more sustainable than Bluefin and Bluefin GTS from a developer perspective. It's more of an initial setup and then we don't touch it as often. We have had periods in beta development where we didn't need to touch it for weeks. If you look [changelogs.projectbluefin.io](https://changelogs.projectbluefin.io) you'll soon notice the pattern, mostly minor version bumps. Nice. 
 
 It's also much more advantageous for us to derive off of a base image that ends up being a commercial product -- there is no doubt that CentOS and Red Hat have their weight behind these base images, whereas we are unable to get that level of commitment from Fedora. 
 
@@ -101,19 +100,17 @@ As it turns out, Bluefin LTS HWE is in the exact same ecological niche as GTS. T
 
 ![image chooser](https://github.com/user-attachments/assets/118d6702-8001-4215-9d8f-6fab78f4860c)
 
-So as you can see, it's getting a bit crowded. We'll see how people react to LTS, and I expect we'd hide the GTS option from the website but continue to offer it.
+As you can see, it's getting a bit crowded. We'll see how people react to LTS, and I expect we'd hide the GTS option from the website but continue to offer it. 
 
-With bootc we can deliver a desktop experience with the latest GNOME, and a new kernel -- but on a solid base with less regressions. This previous generation of thinking kept CentOS in a very locked set of use cases. The old boring ones. Now with bootc + containers + flathub + homebrew, we feel that this less churny base makes for a compelling desktop. We'll see how they compete!
+With bootc we can deliver a desktop experience with the latest GNOME, and a new kernel -- but on a solid base with less regressions. The previous generation of thinking kept CentOS in a very locked set of use cases. The old boring ones. Now with bootc + containers + flathub + homebrew, we feel that this less churny base makes for a compelling desktop. We'll see how they compete!
 
 ## Less bitey Bluefin and Bluefin GTS
 
-Since Bluefin LTS is "bootc natural" and not a transplant, we've decided to leave local layering enabled by default in Bluefin and Bluefin GTS. There are users who use that ecosystem, so no worries there. Savages.
+Since Bluefin LTS is "bootc natural" and not a transplant, it comes with less compromises out of the box. Bluefin LTS doesn't support local layering at all and AppImages don't work either. (Told ya'll those things were not gonna make it lol.) Bluefin LTS also does not support older machines with v2 CPU instructions. 
 
-This also lets us be less strict in Bluefin. Bluefin LTS doesn't support local layering at all and AppImages don't work either. (Told ya'll those things were not gonna make it lol.) Bluefin LTS also does not support older machines with v2 CPU instructions. The Fedora based images will continue to serve these use cases. James also has his own [tunaOS](https://github.com/tuna-os/tunaOS), which offers a wide variety of Bluefin-derived variants, including an AlmaLinux based sister to Bluefin LTS. That covers just about everybody. 
+This also lets us be less strict in Bluefin. We've decided to leave local layering enabled by default in Bluefin and Bluefin GTS. There are users who use that ecosystem, so no worries there. Savages. The Fedora based images will continue to serve these use cases. James also has his own [tunaOS](https://github.com/tuna-os/tunaOS), which offers a wide variety of Bluefin-derived variants, including an AlmaLinux based sister to Bluefin LTS. That covers just about everybody - The `bootc` community around CentOS is quite diverse, and offers a variety of options. 
 
-The [downloads](/downloads) page is looking pretty good these days but I am very interested to see what you decide since we do measure everything. :smile: 
-
-It's always a click away if you prefer the old school list to the website chooser. 
+The [downloads](/downloads) page is looking pretty good these days but I am very interested to see what you decide since we do measure everything, so feel free to peruse that list. :smile: 
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/kFPqsK9lNPc?si=pzHZpOJviCMrzPvU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
@@ -126,7 +123,7 @@ We celebrate this release with this T-shirt, the "Reign of Achillobator", signif
 ![Reign of Achillobator](https://github.com/user-attachments/assets/0eed0cad-741a-4a0a-b70e-f31c18de5aad)
 ![Rawr!](https://github.com/user-attachments/assets/de297710-c611-4c58-ab22-633f0c5431c8)
 
-And of course we gut stuff for the kids, and some other weird things! Unfortunately this store is US only for now. 
+And of course we've got stuff for the kids, and some other weird things! Unfortunately this store is US only for now. 
 
 ![kids](https://github.com/user-attachments/assets/7893d480-fdf0-4e99-b025-5f51b9fd81bb)
 ![soap!](https://github.com/user-attachments/assets/006d05a5-52fc-45fe-8881-c478d5b35650)
@@ -138,15 +135,15 @@ Proceeds from the store items will go towards paying for more paleoartwork. I th
 
 Bluefin is brought to you by [Tulip Blossom](https://github.com/sponsors/tulilirockz) and [James Reilly](https://github.com/sponsors/hanthor). The team grew this cycle with some fantastic new folks helping out to finish Bluefin LTS:
 
-[Yulian Kuncheff (Daegalus)](https://yulian.kuncheff.com) hopped in to help with the GitHub actions and the `lts-hwe` branch. [Ahmed Adan](https://github.com/ahmedadan) and [M. Gopal (Delphic Melody)](https://linksta.cc/@delphic-melody) round out the new team with fantastic work on the website, documentation, and testing. 
+[Yulian Kuncheff (Daegalus)](https://yulian.kuncheff.com) hopped in to help with the GitHub actions and the `lts-hwe` branch. [Ahmed Adan](https://github.com/ahmedadan) and [M. Gopal (Delphic Melody)](https://linksta.cc/@delphic-melody) round out the new team with fantastic work on the artwork, website, documentation, and testing. 
 
 Special thanks to Carl George, Laura Santamaria, Shaun McCance, and the entire bootc team for their (continuing) support of this project! The game has started. The clue is: `Gardener`
 
 ### The Road Ahead
 
-And lastly, I'm sure you'll find some missing functionality compared to the Fedora build as there are some creature comforts that are missing. We call these `parity` bugs, so if find them, file them. There are some things that won't be coming with; CentOS Stream's focus is on long term support, so we may choose to drop a feature if it's not straightforward to bring to Bluefin LTS. 
+And lastly, there is some missing functionality compared to the Fedora build as there are some creature comforts that are missing. We call these `parity` bugs, so if find them, file them. There are some things that won't be coming with; CentOS Stream's focus is on long term support, so we may choose to drop a feature if it's not straightforward to bring to Bluefin LTS. 
 
-Imagine choosing between LTS, GTS, and stable with just a slider on an update page in a control panel, they should feel and act the same as each other I'm pretty much there with my personal machines, sometimes I have to check which machine is which because it doesn't really matter. I feel the pain on the infrastructure side instead. :smile:
+Imagine choosing between LTS, GTS, and stable with just a slider on an update page in a control panel. They should feel and act the same as each other. I'm pretty much there with my personal machines, sometimes I have to check which machine is which because it doesn't really matter. I feel the pain on the infrastructure side instead. :smile:
 
 # Downloads
 
