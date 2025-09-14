@@ -18,7 +18,7 @@ Bluefin LTS is a workstation designed for people who prefer Long Term Support bu
 
 Bluefin LTS is composed of:
 
-- Mostly the same packages of Bluefin and Bluefin GTS, but built with CentOS Stream 10 and EPEL, for extra packages.
+- Mostly the same packages of Bluefin and Bluefin GTS, but built with CentOS Stream 10 and EPEL for extra packages.
   - The same features since they share the same source RPMs, just built on CentOS
 - A backported GNOME 48 desktop
 - ARM (aarch64) based images
@@ -43,7 +43,7 @@ Here's how I pitched the idea earlier this year:
 
 ### A modern GNOME Desktop
 
-Bluefin LTS provides a backported GNOME desktop so that you are not left behind. This is an important thing for us. James has been diligitenlty working on GNOME backports with the upstream CentOS community, and we feel bringing in modern GNOME desktops to an LTS makes sense. I may be old but I'm not dead!
+Bluefin LTS provides a backported GNOME desktop so that you are not left behind. This is an important thing for us. James has been diligenlty working on GNOME backports with the upstream CentOS community, and we feel bringing modern GNOME desktops to an LTS makes sense. I may be old but I'm not dead!
 
 A very special thanks to [Jordan Petridis](https://blogs.gnome.org/alatiera/) from GNOME for technical advice and review.
 
@@ -83,7 +83,7 @@ This will be the lab that will keep Bluefin on the leading edge of open source A
 - [Ramalama](https://github.com/containers/ramalama) for local management and serving of AI models
 - [uv](https://github.com/astral-sh/uv) for Python package management
 - ... and more! Check the [AI and Machine Learning](/ai) section for more!
-- We are looking for people who want to be involved! 
+- We are looking for AI/ML enthusuasts with strong opinions who want to be involved! Inquire within!
 
 ![Bluefin GDX at KubeCon + CloudNativeCon EU](https://github.com/user-attachments/assets/2c2f9d50-a704-49cb-9b0b-f139014a8bc0)
 
@@ -144,15 +144,15 @@ Special thanks to Carl George, Laura Santamaria, Shaun McCance, and the entire b
 
 ### The Road Ahead
 
-And lastly, I'm sure you'll find some missing functionality compared to the Fedora build as there are some creature comforts that are missing. We call these `parity` bugs, so if find them file them. There are some things that won't be coming with, CentOS Stream's focus is on long term support, so we may choose to drop a feature if it's not straightforward to bring to Bluefin LTS. 
+And lastly, I'm sure you'll find some missing functionality compared to the Fedora build as there are some creature comforts that are missing. We call these `parity` bugs, so if find them, file them. There are some things that won't be coming with; CentOS Stream's focus is on long term support, so we may choose to drop a feature if it's not straightforward to bring to Bluefin LTS. 
 
-Imagine that our final goal is that LTS, GTS, and stable is just a slider in an update page in a control panel, they should feel and act the same. I'm pretty much there with my personal machines, sometimes I have to check which machine is which because it doesn't really matter. I feel the pain on the infrastructure side instead. :smile:
+Imagine choosing between LTS, GTS, and stable with just a slider on an update page in a control panel, they should feel and act the same as each other I'm pretty much there with my personal machines, sometimes I have to check which machine is which because it doesn't really matter. I feel the pain on the infrastructure side instead. :smile:
 
 # Downloads
 
 :::warning
 
-Remember you cannot rebase between CentOS and Fedora Bluefins, ain't no one testing that. Beware. Also this is the new installer you'll love it.
+Remember you cannot rebase between CentOS and Fedora Bluefins, ain't no one testing that. Beware. Also this is the new installer -- you'll love it. 
 
 :::
 
