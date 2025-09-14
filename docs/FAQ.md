@@ -129,6 +129,10 @@ Your layout may be already included with Fedora, but you need to list extended k
 10. There are only two to pick from, "English (United States)" and "Spanish (United States)". Pick one, probably "English (United States)" is what you want.
 11. You get another sub-selection and can now pick "EurKEY (US)"
 
+## How do I install Microsoft fonts?
+
+Follow [these instructions](https://github.com/colindean/homebrew-fonts-nonfree) to install them via homebrew.
+
 ## Should I trust you?
 
 This is all hosted, built, signed, and pushed on GitHub. As far as if I'm a trustable fellow, here's my [bio](https://www.ypsidanger.com/about/). If you've made it this far, then welcome to the future! :smile:
