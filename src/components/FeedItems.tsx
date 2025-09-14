@@ -1,6 +1,7 @@
 import React from "react";
 import useStoredFeed from "@theme/useStoredFeed";
 import styles from "./FeedItems.module.css";
+import { PACKAGE_PATTERNS, extractVersionChange } from "../config/packageConfig";
 
 interface FeedItemsProps {
   feedId: string;
@@ -64,95 +65,12 @@ const extractVersionSummary = (content: string): VersionChange[] => {
 
   if (!content) return changes;
 
-  // Look for package version patterns in the HTML table content
-  // Pattern: <td><strong>PackageName</strong></td><td>version</td>
-
-  const kernelMatch = content.match(
-    /<td><strong>Kernel<\/strong><\/td>\s*<td>([^<]+)/,
-  );
-  if (kernelMatch) {
-    const versionText = kernelMatch[1].trim();
-    if (versionText.includes("➡️")) {
-      // Only show upgrades (with arrow), not static versions
-      const [fromVersion, toVersion] = versionText
-        .split("➡️")
-        .map((v) => v.trim());
-      changes.push({ name: "Kernel", change: `${fromVersion} → ${toVersion}` });
+  // Use centralized package configuration
+  for (const packageConfig of PACKAGE_PATTERNS) {
+    const versionChange = extractVersionChange(content, packageConfig);
+    if (versionChange) {
+      changes.push(versionChange);
     }
-  }
-
-  const mesaMatch = content.match(
-    /<td><strong>Mesa<\/strong><\/td>\s*<td>([^<]+)/,
-  );
-  if (mesaMatch) {
-    const versionText = mesaMatch[1].trim();
-    if (versionText.includes("➡️")) {
-      // Only show upgrades (with arrow), not static versions
-      const [fromVersion, toVersion] = versionText
-        .split("➡️")
-        .map((v) => v.trim());
-      changes.push({ name: "Mesa", change: `${fromVersion} → ${toVersion}` });
-    }
-  }
-
-  const nvidiaMatch = content.match(
-    /<td><strong>Nvidia<\/strong><\/td>\s*<td>([^<]+)/,
-  );
-  if (nvidiaMatch) {
-    const versionText = nvidiaMatch[1].trim();
-    if (versionText.includes("➡️")) {
-      // Only show upgrades (with arrow), not static versions
-      const [fromVersion, toVersion] = versionText
-        .split("➡️")
-        .map((v) => v.trim());
-      changes.push({ name: "NVIDIA", change: `${fromVersion} → ${toVersion}` });
-    }
-  }
-
-  const gnomeMatch = content.match(
-    /<td><strong>Gnome<\/strong><\/td>\s*<td>([^<]+)/,
-  );
-  if (gnomeMatch) {
-    const versionText = gnomeMatch[1].trim();
-    if (versionText.includes("➡️")) {
-      // Only show upgrades (with arrow), not static versions
-      const [fromVersion, toVersion] = versionText
-        .split("➡️")
-        .map((v) => v.trim());
-      changes.push({ name: "GNOME", change: `${fromVersion} → ${toVersion}` });
-    }
-  }
-
-  const dockerMatch = content.match(
-    /<td><strong>Docker<\/strong><\/td>\s*<td>([^<]+)/,
-  );
-  if (dockerMatch) {
-    const versionText = dockerMatch[1].trim();
-    if (versionText.includes("➡️")) {
-      // Only show upgrades (with arrow), not static versions
-      const [fromVersion, toVersion] = versionText
-        .split("➡️")
-        .map((v) => v.trim());
-      changes.push({ name: "Docker", change: `${fromVersion} → ${toVersion}` });
-    }
-  }
-
-  const systemdMatch = content.match(
-    /<td>🔄<\/td>\s*<td>systemd<\/td>\s*<td>([^<]+)<\/td>\s*<td>([^<]+)/,
-  );
-  if (systemdMatch) {
-    const fromVersion = systemdMatch[1].trim();
-    const toVersion = systemdMatch[2].trim();
-    changes.push({ name: "systemd", change: `${fromVersion} → ${toVersion}` });
-  }
-
-  const bootcMatch = content.match(
-    /<td>🔄<\/td>\s*<td>bootc<\/td>\s*<td>([^<]+)<\/td>\s*<td>([^<]+)/,
-  );
-  if (bootcMatch) {
-    const fromVersion = bootcMatch[1].trim();
-    const toVersion = bootcMatch[2].trim();
-    changes.push({ name: "bootc", change: `${fromVersion} → ${toVersion}` });
   }
 
   return changes;
