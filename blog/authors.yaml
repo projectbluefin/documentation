@@ -10,3 +10,39 @@ castrojo:
     github: "castrojo"
     linkedin: "jorge-castro2112"
     newsletter: "https://ypsidanger.com"
+
+daegalus:
+  name: Yulian Kuncheff
+  page: true
+  title: Bluefin Contributor
+  url: https://github.com/daegalus
+  image_url: https://github.com/daegalus.png
+  socials:
+    github: "daegalus"
+
+hanthor:
+  name: James Reilly
+  page: true
+  title: Bluefin Contributor
+  url: https://github.com/hanthor
+  image_url: https://github.com/hanthor.png
+  socials:
+    github: "hanthor"
+
+renner0e:
+  name: renner
+  page: true
+  title: Bluefin Contributor
+  url: https://github.com/renner0e
+  image_url: https://github.com/renner0e.png
+  socials:
+    github: "renner0e"
+
+tulilirockz:
+  name: Tulip Blossom
+  page: true
+  title: Bluefin Contributor
+  url: https://github.com/tulilirockz
+  image_url: https://github.com/tulilirockz.png
+  socials:
+    github: "tulilirockz"
