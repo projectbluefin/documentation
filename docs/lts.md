@@ -72,6 +72,15 @@ The following images and tags are available:
 - Secureboot is **NOT SUPPORTED** at this time, but may be supported at a future date
 - Use the `ujust rebase-helper` command to switch your image to the HWE branch if you require newer kernels. All images offer Bluefin's [Developer Mode](/bluefin-dx).
 
+### Errata
+
+There are a few lingering issues that will take more time to complete:
+
+- [hwe doesn't have secure boot](https://github.com/ublue-os/bluefin-lts/issues/678) - we hope to revisit later this fall
+- [Bazaar curated config is missing](https://github.com/ublue-os/bluefin-lts/issues/680) - the curated section isn't available yet
+- [gnome-user-share is missing](https://github.com/ublue-os/bluefin-lts/issues/626) - we recommend using [rclone mount](https://rclone.org/commands/rclone_mount/) instead
+
+
 ## ARM Support
 
 ### Using it in a VM on an Apple Silicon Mac
