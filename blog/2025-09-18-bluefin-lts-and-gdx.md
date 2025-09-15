@@ -65,8 +65,8 @@ Updates will come as often as we need them for now and will settle into weekly r
 There are a few lingering issues that will take more time:
 
 - [hwe doesn't have secure boot](https://github.com/ublue-os/bluefin-lts/issues/678) - we hope to revisit later this fall
-- [Add Bazaar config](https://github.com/ublue-os/bluefin-lts/issues/680) - the curated section isn't available yet
-- [Add gnome-user-share](https://github.com/ublue-os/bluefin-lts/issues/626) 
+- [Bazaar curated config is missing](https://github.com/ublue-os/bluefin-lts/issues/680) - the curated section isn't available yet
+- [gnome-user-share is missing](https://github.com/ublue-os/bluefin-lts/issues/626) - we recommend using [rclone mount](https://rclone.org/commands/rclone_mount/) instead
 
 # What is Bluefin GDX? 
 
