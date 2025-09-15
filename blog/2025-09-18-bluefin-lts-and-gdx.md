@@ -131,7 +131,7 @@ We celebrate this release with this T-shirt, the "Reign of Achillobator", signif
 ![Reign of Achillobator](https://github.com/user-attachments/assets/0eed0cad-741a-4a0a-b70e-f31c18de5aad)
 ![Rawr!](https://github.com/user-attachments/assets/de297710-c611-4c58-ab22-633f0c5431c8)
 
-And of course we've got stuff for the kids, and some other weird things! Unfortunately this store is US only for now. 
+And of course we've got stuff for the kids, and some other weird things! Currently this store is US only for now. 
 
 ![kids](https://github.com/user-attachments/assets/7893d480-fdf0-4e99-b025-5f51b9fd81bb)
 ![soap!](https://github.com/user-attachments/assets/006d05a5-52fc-45fe-8881-c478d5b35650)
@@ -152,6 +152,14 @@ Special thanks to Carl George, Laura Santamaria, Shaun McCance, and the entire b
 And lastly, there is some missing functionality compared to the Fedora build as there are some creature comforts that are missing. We call these `parity` bugs, so if find them, file them. There are some things that won't be coming with; CentOS Stream's focus is on long term support, so we may choose to drop a feature if it's not straightforward to bring to Bluefin LTS. 
 
 Imagine choosing between LTS, GTS, and stable with just a slider on an update page in a control panel. They should feel and act the same as each other. I'm pretty much there with my personal machines, sometimes I have to check which machine is which because it doesn't really matter. I feel the pain on the infrastructure side instead. :smile:
+
+### Shred to Achillobator
+
+Two new soundtracks accompany this release, enjoy!
+
+- [Bluefin and Achillobator](https://music.youtube.com/playlist?list=PLhiPP9M5fgWEZbkq6ZhaHA4b4UqLwZNxt&si=lkAcTlHzaf1Wl5VO)
+- [Bluefin and The Children of Jensen](https://music.youtube.com/playlist?list=PLhiPP9M5fgWH4do22wEvgnoMUQLVYRIxt&si=_KqYuGf3xs_ePaxU)
+
 
 # Downloads
 
