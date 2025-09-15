@@ -60,6 +60,14 @@ Secure boot and all those goodies are available:
 
 Updates will come as often as we need them for now and will settle into weekly releases on Tuesdays. Follow updates on [changelogs.projectbluefin.io](https://changelogs.projectbluefin.io). 
 
+### Errata
+
+There are a few lingering issues that will take more time:
+
+- [hwe doesn't have secure boot](https://github.com/ublue-os/bluefin-lts/issues/678) - we hope to revisit later this fall
+- [Add Bazaar config](https://github.com/ublue-os/bluefin-lts/issues/680) - the curated section isn't available yet
+- [Add gnome-user-share](https://github.com/ublue-os/bluefin-lts/issues/626) 
+
 # What is Bluefin GDX? 
 
 Bluefin GDX is designed to be an AI Workstation by providng Nvidia drivers and [CUDA](https://developer.nvidia.com/cuda-toolkit) in one image. It combines [Bluefin LTS](/lts) with the [Bluefin Developer Experience](/bluefin-dx). There's no cool expansion of GDX: GPU Developer Experience I guess. Maybe someday we'll call it Bluefin CUDA Edition. (Jensen call me!)
