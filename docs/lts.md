@@ -35,11 +35,11 @@ Bluefin LTS also offers a HWE (Hardware Enablement) branch with:
 
 Bluefin LTS ships with Linux 6.12.0, which is the kernel for the lifetime of release. It is for change-averse users. Bluefin LTS provides a backported GNOME desktop so that you are not left behind. And an optional `hwe` branch with new kernels.
 
-### Status
+### Differences from Bluefin GTS and Bluefin
 
 - There may be instances when something from Bluefin is not implemented in Bluefin LTS. Please [file an issue](https://github.com/ublue-os/bluefin-lts/issues) and tag it with `parity` and the team will investigate. They'll never _exactly_ but we can get the important ones done
 - Appimages are hard unsupported (those fuse packages aren't even in CentOS)
-- Local Layering is disabled by default
+- Local Layering is not supported
 
 ## Installation
 
@@ -67,9 +67,10 @@ The following images and tags are available:
 - `bluefin-gdx:lts` - includes Nvidia drivers and associated CUDA tooling. This is the only image with Nvidia drivers. See [Bluefin GDX](/gdx)
 - `bluefin:lts-hwe` - Fresher but gated Linux kernels matching other Bluefins.
 
-### Switching to the hwe branch
+### Using the HWE branch
 
-Use the `ujust rebase-helper` command to switch your image to the HWE branch if you require newer kernels. All images offer Bluefin's [Developer Mode](/bluefin-dx).
+- Secureboot is **NOT SUPPORTED** at this time, but may be supported at a future date
+- Use the `ujust rebase-helper` command to switch your image to the HWE branch if you require newer kernels. All images offer Bluefin's [Developer Mode](/bluefin-dx).
 
 ## ARM Support
 
