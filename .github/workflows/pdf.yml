@@ -10,6 +10,11 @@ jobs:
       contents: write
     runs-on: ubuntu-latest
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@c6295a65d1254861815972266d5933fd6e532bdf # v2.11.1
+        with:
+          egress-policy: audit
+
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
 
       - name: Install Prince
@@ -18,8 +23,10 @@ jobs:
           tar zxf prince-15.4.1-linux-generic-x86_64.tar.gz
           cd prince-15.4.1-linux-generic-x86_64
           yes "" | sudo ./install.sh
+
       - name: Build PDF
         run: npx docusaurus-prince-pdf --toc -u https://docs.projectbluefin.io -o pdf/bluefin.pdf
+
       - name: Upload results
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
@@ -28,6 +35,7 @@ jobs:
           path: pdf/bluefin.pdf
           if-no-files-found: error
           overwrite: true
+
       - name: Upload Release Artifact
         if: github.event_name != 'pull_request'
         env:

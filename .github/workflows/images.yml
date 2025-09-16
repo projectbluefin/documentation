@@ -10,14 +10,21 @@ jobs:
     name: calibreapp/image-actions
     runs-on: ubuntu-latest
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@c6295a65d1254861815972266d5933fd6e532bdf # v2.11.1
+        with:
+          egress-policy: audit
+
       - name: Checkout Repo
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+
       - name: Compress Images
         id: calibre
         uses: calibreapp/image-actions@main
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           compressOnly: true
+
       - name: Create New Pull Request If Needed
         if: steps.calibre.outputs.markdown != ''
         uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e # v7
