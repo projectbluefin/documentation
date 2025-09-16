@@ -16,9 +16,11 @@ You've made some changes and want to see how they look?
 You can install node and run it:
 
 ```
-npm run i
+npm install --legacy-peer-deps
 npm run start
 ```
+
+> **Note**: The `--legacy-peer-deps` flag is required due to peer dependency conflicts between React versions. If you encounter "Cannot find module" errors (like `xml2js`), make sure you're using this flag during installation.
 
 Alternatively, you can run the container:
 
@@ -31,3 +33,24 @@ Then make sure to format all your files with Prettier!
 ```
 npm run prettier
 ```
+
+## Troubleshooting
+
+### "Cannot find module 'xml2js'" error
+
+If you encounter this error when running `npm run start`:
+
+```
+Error: Cannot find module 'xml2js'
+```
+
+This is typically caused by peer dependency conflicts during installation. To resolve:
+
+1. Remove existing node_modules: `rm -rf node_modules`
+2. Install with legacy peer deps: `npm install --legacy-peer-deps`
+3. Try running the command again: `npm run start`
+
+### Build Requirements
+
+- Node.js 18+ (see `package.json` engines field)
+- For production builds, the CI uses `bun` but `npm` works for local development
