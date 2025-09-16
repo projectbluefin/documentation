@@ -3,8 +3,6 @@ title: Introduction to Bluefin LTS
 slug: /lts
 ---
 
-# Bluefin LTS (Beta)
-
 _Achillobator giganticus_
 
 ![achillosmall](https://github.com/user-attachments/assets/b6945e80-34e4-44bb-8518-91ad31fed56d)
