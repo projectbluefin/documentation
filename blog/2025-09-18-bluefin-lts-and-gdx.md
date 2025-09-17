@@ -80,9 +80,9 @@ We are happy to announce that we've formed a community partnership with the [Red
 
 :::
 
-This will be the lab that will keep Bluefin on the leading edge of open source AI. More to follow as we get going! Here's Mo Duffy on Destination Linux: 
+This will be the lab that will keep Bluefin on the leading edge of open source AI. Here's Mo Duffy on Destination Linux to give you an idea of what we're thinking about. 
 
-[ vid ]
+<iframe width="560" height="315" src="https://www.youtube.com/embed/EJZkJi8qF-M?si=gNvKLPo3z9khFjME&amp;start=3094" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ## Features
 
