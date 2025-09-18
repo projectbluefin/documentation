@@ -76,5 +76,4 @@ If your software is included in Bluefin and missing from this list, please send 
 - [PowerTOP](https://github.com/sponsors/fenrus75) - Linux tool to diagnose issues with power consumption (package: `powertop`)
 - [rclone](https://github.com/sponsors/rclone) - Cloud storage synchronization tool (package: `rclone`)
 - [restic](https://github.com/sponsors/restic) - Fast, secure, efficient backup program (package: `restic`)
-- [Tailscale](https://github.com/sponsors/tailscale) - VPN service for secure networking (package: `tailscale`)
 - [tmux](https://github.com/sponsors/tmux) - Terminal multiplexer (package: `tmux`)
