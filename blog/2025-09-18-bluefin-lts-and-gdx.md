@@ -41,13 +41,13 @@ Here's how I pitched the idea earlier this year:
 <iframe width="560" height="315" src="https://www.youtube.com/embed/mLrGJjXO94w?si=zbK262VrLN3vpYJo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 
-### A modern GNOME Desktop
+## A modern GNOME Desktop
 
 Bluefin LTS provides a backported GNOME desktop so that you are not left behind. This is an important thing for us. James has been diligenlty working on GNOME backports with the upstream CentOS community, and we feel bringing modern GNOME desktops to an LTS makes sense. I may be old but I'm not dead!
 
 A very special thanks to [Jordan Petridis](https://blogs.gnome.org/alatiera/) from GNOME for technical advice and review.
 
-### New Installation
+## New Installation Experience
 
 Installation is via a [live session](https://github.com/ublue-os/titanoboa) with the new [Anaconda webui](https://communityblog.fedoraproject.org/anaconda-webui-progress-update-and-roadmap/). This installer is miles better than the ones we used to ship, thanks to the Anaconda team. 
 
@@ -56,11 +56,11 @@ Secure boot and all those goodies are available:
 ![live session](https://github.com/user-attachments/assets/20d54c0e-cd05-4047-871e-ab1965483902)
 ![live session installation](https://github.com/user-attachments/assets/370fba9b-7c20-4ad3-8ec7-4efd0330e5fb)
 
-### Update Cadence
+## Update Cadence
 
 Updates will come as often as we need them for now and will settle into weekly releases on Tuesdays. Follow updates on [changelogs.projectbluefin.io](https://changelogs.projectbluefin.io). 
 
-### Errata
+## Errata
 
 There are a few lingering issues that will take more time:
 
@@ -153,7 +153,7 @@ And lastly, there is some missing functionality compared to the Fedora build as 
 
 Imagine choosing between LTS, GTS, and stable with just a slider on an update page in a control panel. They should feel and act the same as each other. I'm pretty much there with my personal machines, sometimes I have to check which machine is which because it doesn't really matter. I feel the pain on the infrastructure side instead. :smile:
 
-# Shred to Achillobator
+## Shred to Achillobator
 
 Two new soundtracks accompany this release, enjoy!
 
