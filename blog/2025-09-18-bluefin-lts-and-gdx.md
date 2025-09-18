@@ -122,7 +122,7 @@ The [downloads](/downloads) page is looking pretty good these days but I am very
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/kFPqsK9lNPc?si=pzHZpOJviCMrzPvU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
-## Merch
+# Merch
 
 Now let's get on to the good stuff. [store.projectbluefin.io](https://store.projectbluefin.io) will take you to the new Bluefin store, which has a ton of awesome items!
 
@@ -139,7 +139,7 @@ And of course we've got stuff for the kids, and some other weird things! Current
 
 Proceeds from the store items will go towards paying for more paleoartwork. I think this is a fair deal, Bluefin would have never gotten this far without the work of these fine artists. Having a way for the community to sponsor the artwork in return for the awesome comfort of an _Achillobator giganticus_ hoodie? Peak Linux.
 
-### Special Thanks
+# Special Thanks
 
 Bluefin is brought to you by [Tulip Blossom](https://github.com/sponsors/tulilirockz) and [James Reilly](https://github.com/sponsors/hanthor). The team grew this cycle with some fantastic new folks helping out to finish Bluefin LTS:
 
@@ -147,13 +147,13 @@ Bluefin is brought to you by [Tulip Blossom](https://github.com/sponsors/tulilir
 
 Special thanks to Carl George, Laura Santamaria, Shaun McCance, and the entire bootc team for their (continuing) support of this project! The game has started. The clue is: `Gardener`
 
-### The Road Ahead
+# The Road Ahead
 
 And lastly, there is some missing functionality compared to the Fedora build as there are some creature comforts that are missing. We call these `parity` bugs, so if find them, file them. There are some things that won't be coming with; CentOS Stream's focus is on long term support, so we may choose to drop a feature if it's not straightforward to bring to Bluefin LTS. 
 
 Imagine choosing between LTS, GTS, and stable with just a slider on an update page in a control panel. They should feel and act the same as each other. I'm pretty much there with my personal machines, sometimes I have to check which machine is which because it doesn't really matter. I feel the pain on the infrastructure side instead. :smile:
 
-### Shred to Achillobator
+# Shred to Achillobator
 
 Two new soundtracks accompany this release, enjoy!
 
@@ -170,7 +170,7 @@ Remember you cannot rebase between CentOS and Fedora Bluefins, ain't no one test
 :::
 
 
-### Bluefin LTS
+## Download Bluefin LTS
 
 The long term support experience.
 
@@ -183,9 +183,7 @@ The long term support experience.
 | Bluefin LTS HWE  | AMD/Intel     | [📥 bluefin-lts-hwe-x86_64.iso](https://download.projectbluefin.io/bluefin-lts-hwe-x86_64.iso)   | [🔐 Verify](https://download.projectbluefin.io/bluefin-lts-hwe-x86_64.iso-CHECKSUM)  |
 | Bluefin LTS HWE  | ARM (aarch64) | [📥 bluefin-lts-hwe-aarch64.iso](https://download.projectbluefin.io/bluefin-lts-hwe-aarch64.iso) | [🔐 Verify](https://download.projectbluefin.io/bluefin-lts-hwe-aarch64.iso-CHECKSUM) |
 
-
-
-### Bluefin GDX
+## Download Bluefin GDX
 
 The AI workstation with Nvidia and CUDA.
 
