@@ -196,4 +196,5 @@ The AI workstation with Nvidia and CUDA.
 | Bluefin GDX | AMD/Intel + Nvidia        | [📥 bluefin-gdx-x86_64.iso](https://download.projectbluefin.io/bluefin-gdx-lts-x86_64.iso)       | [🔐 Verify](https://download.projectbluefin.io/bluefin-gdx-lts-x86_64.iso-CHECKSUM)  |
 | Bluefin GDX | ARM (aarch64) + Nvidia | [📥 bluefin-gdx-lts-aarch64.iso](https://download.projectbluefin.io/bluefin-gdx-lts-aarch64.iso) | [🔐 Verify](https://download.projectbluefin.io/bluefin-gdx-lts-aarch64.iso-CHECKSUM) |
 
+### [Discussion](https://github.com/ublue-os/bluefin/discussions/3232)
 
