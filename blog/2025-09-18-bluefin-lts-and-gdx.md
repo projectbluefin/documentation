@@ -143,7 +143,7 @@ Proceeds from the store items will go towards paying for more paleoartwork. I th
 
 Bluefin is brought to you by [Tulip Blossom](https://github.com/sponsors/tulilirockz) and [James Reilly](https://github.com/sponsors/hanthor). The team grew this cycle with some fantastic new folks helping out to finish Bluefin LTS:
 
-[Yulian Kuncheff (Daegalus)](https://yulian.kuncheff.com) hopped in to help with the GitHub actions and the `lts-hwe` branch. [Ahmed Adan](https://github.com/ahmedadan) and [M. Gopal (Delphic Melody)](https://linksta.cc/@delphic-melody) round out the new team with fantastic work on the artwork, website, documentation, and testing. 
+[Yulian Kuncheff (Daegalus)](https://yulian.kuncheff.com) hopped in to help with the GitHub actions and the `lts-hwe` branch. [Ahmed Adan](https://github.com/ahmedadan) and [M. Gopal (Delphic Melody)](https://linksta.cc/@delphic-melody) round out the new team with fantastic work on the artwork, website, documentation, and testing. And don't forget to check out the new [coloring book](https://docs.projectbluefin.io/blog/color-with-bluefin)!
 
 Special thanks to Carl George, Laura Santamaria, Shaun McCance, and the entire bootc team for their (continuing) support of this project! The game has started. The clue is: `Gardener`
 
