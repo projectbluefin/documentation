@@ -41,7 +41,7 @@ Bluefin GDX runs great on any PC with the right hardware, but has been tested an
 
 :::tip[AMD user?]
 
-This image is for Nvidia hardware, using [Bluefin LTS](/lts) and turning on [developer mode](/dx) is the recommended path for AMD systems. All AI/ML tools and improvements are brought to Bluefin's developer mode. 
+This image is for Nvidia hardware, using [Bluefin LTS](/lts) and turning on [developer mode](/bluefin-dx) is the recommended path for AMD systems. All AI/ML tools and improvements are brought to Bluefin's developer mode. 
 
 ::: 
 
