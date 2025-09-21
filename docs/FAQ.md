@@ -133,6 +133,10 @@ Your layout may be already included with Fedora, but you need to list extended k
 
 Follow [these instructions](https://github.com/colindean/homebrew-fonts-nonfree) to install them via homebrew.
 
+## How do I perform major version upgrades?
+
+We recommend following these [highly detailed instructions](https://gld.mcphail.uk/posts/how-to-perform-a-major-version-upgrade-on-bluefin/).
+
 ## Should I trust you?
 
 This is all hosted, built, signed, and pushed on GitHub. As far as if I'm a trustable fellow, here's my [bio](https://www.ypsidanger.com/about/). If you've made it this far, then welcome to the future! :smile:
