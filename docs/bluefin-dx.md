@@ -50,7 +50,11 @@ Turning on developer mode is a two-step process:
 
 ## Step 2: Add yourself to the right groups
 
-`ujust dx-group` - to add your user account to the right groups. Then log out and back in. This step only needs to be done once.
+**Bluefin LTS users**: You can skip this step and just reboot. 
+
+For other Bluefins: 
+
+`ujust dx-group` - to add your user account to the right groups. Then reboot. This step only needs to be done once.
 
 Like all Universal Blue images, switching is atomic, allowing for clean switching between modes depending on the use case.
 
