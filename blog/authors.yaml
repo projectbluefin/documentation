@@ -7,9 +7,12 @@ castrojo:
   email: jorge.castro@gmail.com
   socials:
     bluesky: "castrojo.bsky.social"
+    mastodon: "@jorge@hachyderm.io"
     github: "castrojo"
     linkedin: "jorge-castro2112"
     newsletter: "https://ypsidanger.com"
+    youtube: "JorgeCastro"
+    blog: "https://ypsidanger.com"
 
 daegalus:
   name: Yulian Kuncheff
@@ -28,6 +31,9 @@ hanthor:
   image_url: https://github.com/hanthor.png
   socials:
     github: "hanthor"
+    bluesky: "reilly.asia"
+    mastodon: "@jreilly112@techhub.social"
+    linkedin: "jreilly112"
 
 renner0e:
   name: renner
