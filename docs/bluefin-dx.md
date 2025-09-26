@@ -159,8 +159,8 @@ Install [Ramalama](https://github.com/containers/ramalama) with `brew install ra
 ## Virtualization and Container Runtimes
 
 - [virt-manager](https://virt-manager.org/) and associated tooling (KVM, qemu)
-- [Incus](https://linuxcontainers.org/incus/) provides system containers
-  - [LXC](https://linuxcontainers.org/) and [LXD](https://ubuntu.com/lxd) are also provided for compatibility reasons, however, these tools are deprecated and will be removed in Spring 2025
+- [Incus](https://linuxcontainers.org/incus/) provides system containers (Not available in Bluefin LTS)
+
 
 # Local Application Development
 
