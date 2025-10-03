@@ -43,7 +43,7 @@ Bluefin LTS ships with Linux 6.12.0, which is the kernel for the lifetime of rel
 
 :::danger
 
-Do NOT rebase to this image from an existing Bluefin, Aurora, Bazzite, or Fedora system. This warning is in red for a reason.
+Do NOT rebase to this image from an existing Bluefin, Aurora, Bazzite, or Fedora system. This is an untested configuration and is unsupported and can lead to data loss. This warning is in red for a reason.
 
 :::
 
