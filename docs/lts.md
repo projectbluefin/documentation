@@ -72,12 +72,9 @@ The following images and tags are available:
 
 ### Errata
 
-There are a few lingering issues that will take more time to complete:
+There are a few lingering issues that will take more time to complete, these are documented here:
 
-- [hwe doesn't have secure boot](https://github.com/ublue-os/bluefin-lts/issues/678) - we hope to revisit later this fall
-- [Bazaar curated config is missing](https://github.com/ublue-os/bluefin-lts/issues/680) - the curated section isn't available yet
-- [gnome-user-share is missing](https://github.com/ublue-os/bluefin-lts/issues/626) - we recommend using [rclone mount](https://rclone.org/commands/rclone_mount/) instead
-
+- [Bluefin LTS Errata](https://app.dosu.dev/documents/317cf1da-6dda-45d0-bad4-5645878ac451)
 
 ## ARM Support
 
