@@ -11,7 +11,7 @@ The [general FAQ](https://projectbluefin.io/#scene-faq) on the website covers so
 
 You can always do what you want, but Bluefin is designed with a certain workflow in mind. Here are some guidelines from the raptor experts:
 
-- Containerize your developer environments rather than commingle them with the OS. You can define them per project in a `devcontainers.json` file managed by Git. This keeps them independent of host OS configuration.
+- Containerize your developer environments rather than commingle them with the OS. You can define them per project in a `devcontainers.json` file managed by Git. This keeps them independent of host OS configuration. Bluefin is designed for a cross-platform world. 
 - Stick to Flatpaks and homebrew. The ideal is to leave the core OS image unchanged. Layering packages creates a maintenance burden that may be unnecessary to take on.
 - Follow the XDG standards for overriding core OS files. The `/etc`, `/var`, `/usr/local`, and `/opt` directories are writable, and many applications will look here for overrides of the read-only files shipped with the OS image in `/usr`. Add to this your home directory, which contains the `~/.local` and `~/.config` subdirectories, which often allow per-user overrides of system defaults. When you’re [using your UNIX system correctly](https://www.youtube.com/watch?v=JOeY07qKU9c), the read-only part is invisible!
 - Isolate the old-school jank in a container. Mangling packages on your host is for those throwback [paleosaurs](https://en.wikipedia.org/wiki/Palaeosaurus) among us; you know the type.
@@ -30,7 +30,7 @@ I have Become Legend.
 
 ## So who is this for?
 
-Bluefin **strongly** believes that new users to Linux should be introduced via atomic image and not the traditional desktop. It is clear that this is a generational shift. We are purposely here to help existing users bury the past and move on to something more useful than wrestling with their operating system.
+Bluefin **strongly** believes that new users to Linux should be introduced via a modern desktop. The market has already rejected the prior generation Linux clients, while modern implementations like ChromeOS and Android continute to be the most successful. It is clear that this is a generational shift. We are purposely here to help existing users bury the past and move on to something more useful than wrestling with their operating system.
 
 :::warning[JARGON WARNING]
 
@@ -70,7 +70,7 @@ See [Homebrew is Great on Linux](https://www.ypsidanger.com/homebrew-is-great-on
 
 ## Why so many images, this is confusing! How are users going to cope with the complexity!
 
-Bazzite, Bluefin, and Aurora all came in at different times, the result of organic growth. **Don't overthink it, you are using Fedora**. The people seeking out Linux will figure it out and generally speaking the ones stuck admining a PC for a loved one might as well make it straightforward for themselves. Chillops is the best ops. This ties into the next question:
+Bazzite, Bluefin, and Aurora all came in at different times, the result of organic growth. **Don't overthink it**, the operating system's role is to boot and talk to the hardware, everything else is written by someone else. The people seeking out Linux will figure it out and generally speaking the ones stuck admining a PC for a loved one might as well make it straightforward for themselves. Chillops is the best ops. This ties into the next question:
 
 ## What's with all the Ubuntu influence?
 
