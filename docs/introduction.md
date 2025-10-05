@@ -42,6 +42,7 @@ Bluefin is "An interpretation of the Ubuntu spirit built on Fedora technology"â€
   - [Distroshelf](https://flathub.org/apps/com.ranfdev.DistroShelf) ([Donate](https://github.com/sponsors/ranfdev)) for container management
 - [Tailscale](https://tailscale.com) - included for VPN along with `wireguard-tools`
   - Use `ujust toggle-tailscale` to turn it off if you don't plan on using it.
+  - [Tailscale systray support](https://tailscale.com/kb/1597/linux-systray) included
 - [GNOME Extensions Manager](https://flathub.org/apps/com.mattjakeman.ExtensionManager) ([Donate](https://github.com/sponsors/mjakeman)) included
 - [Bazaar Application Store](https://github.com/kolunmi/bazaar) featuring [Flathub](https://flathub.org):
   - Use a familiar software center UI to install graphical software
