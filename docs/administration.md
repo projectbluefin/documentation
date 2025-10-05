@@ -189,6 +189,7 @@ Check the [Fedora Silverblue User Guide](https://docs.fedoraproject.org/en-US/fe
 
 - [Using Tailscale with Mullvad](https://tailscale.com/kb/1258/mullvad-exit-nodes) - provides the best out of the box experience
 - [Using Tailscale with Docker](https://tailscale.com/kb/1282/docker) - for development
+- [Using the system tray with tailscale](https://tailscale.com/kb/1597/linux-systray) - follow this for setting up the tailscale icon in the system tray
 - `ujust toggle-tailscale` will remove the built in desktop integration if you prefer to use something else
 - Tailscale's [YouTube channel](https://www.youtube.com/@Tailscale) has lots of great tips and tricks
 - Good VPN providers may provide Wireguard configurations that can be imported directly into the Network Manager, check their documentation for more information:
