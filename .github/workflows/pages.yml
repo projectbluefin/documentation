@@ -9,6 +9,8 @@ on:
       - main
   merge_group:
   workflow_dispatch:
+  schedule:
+    - cron: "50 6 * * 0,2" # 6:50 UTC sundays and tuesdays to generate changelog page right after builds
 
 jobs:
   build:
