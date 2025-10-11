@@ -60,12 +60,6 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: "category",
-      label: "Framework Laptops",
-      collapsed: true,
-      items: ["framework", "framework-13", "framework-16"],
-    },
-    {
-      type: "category",
       label: "Other Hardware",
       collapsed: true,
       items: ["t2-mac"],

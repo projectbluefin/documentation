@@ -30,14 +30,6 @@ Bluefin is:
 - **Proven development model** - Developer experience focused around containers and exposing new Linux users to the [tools used in cloud native](https://www.cncf.io/). See the [Mission Statement](/mission) and [Values](/values) pages for more information.
 - **Purposely Focused on Great Hardware** - Bluefin runs best on Linux friendly hardware in order to provide as much of a legacy-free experience for users as possible. Bluefin also wants to support OEMs who sell Linux laptops and desktops, so it strives to run with the best combination of software and hardware. We do not go out of our way to document or workaround things that compromise the user experience, so in many cases another operating system is the correct choice.
 
-:::note[Why Framework?]
-
-I'm a [Framework Linux Ambassador](https://community.frame.work/t/framework-linux-community-ambassador-program-launch/57771/) and Bluefin is a community supported option. This is the "halo car", the dream combination I use for my work and personal gear. A Linux friendly vendor with support, a working relationship with Fedora, and an OS that will last for the life of the device. This is the experience we want everyone to have, and it all starts with supporting vendors who care about Linux, it's the only way it can be sustainable long term.
-
--- Jorge
-
-:::
-
 If your requirements are outside of this scope, then **Bluefin might not be the best fit for you**. Bluefin may cause discomfort and disembowelment [when held incorrectly](/FAQ/#am-i-holding-bluefin-wrong). We recognize that in order to make a better desktop, many parts of the traditional Linux desktop experience will not be coming with us. Check the [Code of Conduct](/code-of-conduct).
 
 :::info[Begin your journey...]
