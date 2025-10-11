@@ -24,7 +24,7 @@ Bluefin LTS is composed of:
 Bluefin LTS also offers a HWE (Hardware Enablement) branch with:
 
 - Updated, but gated Linux kernel, usually one minor point release behind Fedora
-- Dedicated Bluefin LTS HWE ISOs for installation on newer hardware like Framework Computers
+- Dedicated Bluefin LTS HWE ISOs for installation on newer hardware
 - `ujust rebase-helper` command allows for users to easily switch back and forth between an LTS kernel and a newer kernel for better hardware support
 
 ![Pasted image](https://github.com/user-attachments/assets/3972ac0f-d37e-4e89-ae91-ff1eb76eabeb)
