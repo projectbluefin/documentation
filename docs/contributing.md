@@ -6,6 +6,15 @@ slug: /contributing
 
 This guide provides detailed instructions for contributing to [Bluefin](https://projectbluefin.io), the Fedora Atomic-based developer workstation. Whether you're fixing bugs, adding features, or improving documentation, this guide will help you contribute effectively using the workflows established by the Bluefin maintainer team.
 
+
+:::tip
+
+You don't need permission to contribute to your own destiny.
+
+-- Amber Graner
+
+:::
+
 ## Overview
 
 **Repository:** [@ublue-os/bluefin](https://github.com/ublue-os/bluefin)  
@@ -42,6 +51,10 @@ Bluefin images are built using:
 | **gts** | Long-term support | As needed | 41 (LTS) |
 
 ## Getting Started
+
+:::info First Time Contributing?
+Start small! Documentation improvements or simple package additions are great first contributions. Don't hesitate to ask questions in issues or discussions.
+:::
 
 ### Prerequisites
 
@@ -231,7 +244,9 @@ com.example.NewApp
 
 ### Commit Message Format
 
-Bluefin uses [Conventional Commits](https://www.conventionalcommits.org/) enforced by CI:
+:::caution Important
+Bluefin uses [Conventional Commits](https://www.conventionalcommits.org/) enforced by CI. Your PR will fail if commit messages don't follow this format!
+:::
 
 **Format:**
 ```
@@ -312,6 +327,10 @@ git push origin feat/add-bazaar-integration --force-with-lease
 
 ## Testing Your Changes
 
+:::tip Testing is Key
+Always test your changes locally or via PR builds before merging. Broken builds affect everyone!
+:::
+
 ### Local Build Testing
 
 **Option 1: Full Container Build** (Recommended for maintainers)
@@ -346,6 +365,10 @@ When you open a PR, GitHub Actions automatically builds your changes. Check the 
 - Build artifacts
 
 ### Testing on Your System
+
+:::warning Testing on Your System
+Rebasing to PR images is powerful but comes with risk. Always have a backup plan to revert to stable!
+:::
 
 **Using PR Images:**
 
@@ -490,6 +513,10 @@ git push origin --delete your-branch-name
 
 ## Advanced Workflows
 
+:::note Advanced Git Techniques
+These workflows are for more experienced contributors. New contributors should focus on the basics first!
+:::
+
 ### Working with Renovate Bot
 
 **Understanding Renovate:**
@@ -589,6 +616,10 @@ git merge main
 
 ## Contribution Areas by Expertise
 
+:::info Find Your Fit
+Contributors come from diverse backgrounds. Whether you're a DevOps engineer, package maintainer, or documentation writer, there's a place for your skills in Bluefin!
+:::
+
 ### For Cloud Native/DevOps Engineers
 
 **Container Build Optimization:**
@@ -678,6 +709,10 @@ git merge main
 - Create user feedback surveys
 
 ## Troubleshooting Guide
+
+:::tip Common Issues & Solutions
+Stuck? Check this section first. Most problems have been encountered before and have known solutions!
+:::
 
 ### Build Failures
 
@@ -820,6 +855,10 @@ All contributors must follow the [Universal Blue Code of Conduct](https://github
 
 ### Issue Capture Discipline
 
+:::note Issue Capture Philosophy
+Use Discord for rapid debugging, but always capture solutions in GitHub issues. This builds permanent, searchable knowledge for the community.
+:::
+
 From the contributing guide philosophy:
 
 **The "Issue Capture" Pattern:**
@@ -958,6 +997,10 @@ sudo bootc switch ghcr.io/ublue-os/bluefin:gts
 
 ## Pinning Package Versions
 
+:::caution Temporary Workarounds Only
+Package pins are temporary workarounds for upstream regressions. Always document why they exist and remove them after the fix is released!
+:::
+
 Sometimes upstream Fedora has a regression requiring a temporary pin.
 
 **Add a Pin:**
@@ -1079,6 +1122,10 @@ As of October 2025, Bluefin sees:
 The project welcomes all skill levels and contribution types. Start small, learn the workflows, and grow your involvement over time.
 
 ## Final Tips
+
+:::tip Welcome to Bluefin!
+Every maintainer started as a first-time contributor. Take it one step at a time, and don't be afraid to ask questions!
+:::
 
 1. **Start small**: Begin with documentation or simple package additions
 2. **Ask questions**: Don't hesitate to ask for clarification
