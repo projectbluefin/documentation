@@ -227,7 +227,7 @@ To track a new package in changelog cards:
 3. **Pattern Types**:
    - **Standard format**: `<td><strong>PackageName</strong></td><td>version</td>`
      ```typescript
-     pattern: /<td><strong>Docker<\/strong><\/td>\s*<td>([^<]+)/
+     pattern: /<td><strong>Docker<\/strong><\/td>\s*<td>([^<]+)/;
      ```
    - **"All Images" format**: `<td>🔄</td><td>packagename</td><td>oldversion</td><td>newversion</td>`
      ```typescript
@@ -254,9 +254,10 @@ To stop tracking a package:
 ### Current Tracked Packages
 
 As of this documentation update, the following packages are tracked:
+
 - **Kernel**: Main kernel version
 - **HWE Kernel**: Hardware enablement kernel
-- **GNOME**: Desktop environment version  
+- **GNOME**: Desktop environment version
 - **Mesa**: Graphics drivers
 - **Podman**: Container runtime
 - **NVIDIA**: Proprietary GPU drivers
@@ -272,7 +273,7 @@ Always validate package tracking changes:
 # TypeScript validation
 npm run typecheck
 
-# Build test  
+# Build test
 npm run build
 
 # Manual testing
