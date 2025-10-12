@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "docusaurus": "docusaurus",
-    "start": "npm run fetch-feeds && docusaurus start",
-    "build": "npm run fetch-feeds && docusaurus build",
+    "start": "npm run fetch-feeds && npm run fetch-contributing && docusaurus start",
+    "build": "npm run fetch-feeds && npm run fetch-contributing && docusaurus build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
     "clear": "docusaurus clear",
@@ -15,7 +15,8 @@
     "typecheck": "tsc",
     "prettier": "prettier --write .",
     "prettier-lint": "prettier --check .",
-    "fetch-feeds": "node scripts/fetch-feeds.js"
+    "fetch-feeds": "node scripts/fetch-feeds.js",
+    "fetch-contributing": "node scripts/fetch-contributing.js"
   },
   "dependencies": {
     "@1password/docusaurus-plugin-stored-data": "^1.0.0",

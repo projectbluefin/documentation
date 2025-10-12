@@ -1,7 +1,10 @@
 import React from "react";
 import useStoredFeed from "@theme/useStoredFeed";
 import styles from "./FeedItems.module.css";
-import { PACKAGE_PATTERNS, extractVersionChange } from "../config/packageConfig";
+import {
+  PACKAGE_PATTERNS,
+  extractVersionChange,
+} from "../config/packageConfig";
 
 interface FeedItemsProps {
   feedId: string;

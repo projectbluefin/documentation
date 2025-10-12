@@ -1,7 +1,10 @@
 import React from "react";
 import useStoredFeed from "@theme/useStoredFeed";
 import Heading from "@theme/Heading";
-import { PACKAGE_PATTERNS, extractPackageVersion } from "../config/packageConfig";
+import {
+  PACKAGE_PATTERNS,
+  extractPackageVersion,
+} from "../config/packageConfig";
 
 interface PackageInfo {
   name: string;

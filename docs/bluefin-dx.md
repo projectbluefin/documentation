@@ -50,9 +50,9 @@ Turning on developer mode is a two-step process:
 
 ## Step 2: Add yourself to the right groups
 
-**Bluefin LTS users**: You can skip this step and just reboot. 
+**Bluefin LTS users**: You can skip this step and just reboot.
 
-For other Bluefins: 
+For other Bluefins:
 
 `ujust dx-group` - to add your user account to the right groups. Then reboot. This step only needs to be done once.
 
@@ -159,7 +159,6 @@ Install [Ramalama](https://github.com/containers/ramalama) with `brew install ra
 
 - [virt-manager](https://virt-manager.org/) and associated tooling (KVM, qemu)
 - [Incus](https://linuxcontainers.org/incus/) provides system containers (Not available in Bluefin LTS)
-
 
 # Local Application Development
 
