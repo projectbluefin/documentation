@@ -58,16 +58,6 @@ slug: /contributing
     // Enhance the fetched content with Graner's quote and admonitions
     let enhancedContent = fetchedContent;
     
-    // Add Graner's quote after the intro paragraph
-    const granerQuote = `\n\n:::tip\n\nYou don't need permission to contribute to your own destiny.\n\n-- Amber Graner\n\n:::\n`;
-    
-    // Find the first heading after the intro and insert the quote before it
-    const firstHeadingMatch = enhancedContent.match(/\n## /);
-    if (firstHeadingMatch) {
-      const insertPos = firstHeadingMatch.index;
-      enhancedContent = enhancedContent.slice(0, insertPos) + granerQuote + enhancedContent.slice(insertPos);
-    }
-    
     // Add strategic admonitions throughout the document
     const admonitions = [
       {
