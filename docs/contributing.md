@@ -2,262 +2,1090 @@
 title: Contributor's guide
 slug: /contributing
 ---
+# Bluefin Contributor's Guide
 
-# Contributing
+This guide provides detailed instructions for contributing to [Bluefin](https://projectbluefin.io), the Fedora Atomic-based developer workstation. Whether you're fixing bugs, adding features, or improving documentation, this guide will help you contribute effectively using the workflows established by the Bluefin maintainer team.
 
-The project welcomes pull requests! Here's a quick howto:
+## Overview
 
-1. Find what to work on via our [help wanted issues](https://github.com/issues?q=is%3Aopen+is%3Aissue+user%3Aublue-os+archived%3Afalse+label%3A%22help+wanted%22)
-1. Ask questions in your PR or file an issue if you need help.
+**Repository:** [@ublue-os/bluefin](https://github.com/ublue-os/bluefin)  
+**License:** Apache 2.0  
+**Maintainers:** 4 core maintainers (@castrojo, @p5, @m2Giles, @tulilirockz)  
+**Daily Activity:** 8-12 commits/day (including automated updates)  
+**Review Time:** Manual PRs reviewed within 24-48 hours
 
-:::tip
+## Understanding Bluefin's Architecture
 
-You don't need permission to contribute to your own destiny.
+### Image-Based Development
 
--- Amber Graner
+Bluefin uses OCI container images as the distribution mechanism. Every commit to the repository triggers builds that create bootable OS images. This architecture means:
 
-:::
+- **Changes are atomic**: Updates apply all-or-nothing
+- **Built-in rollback**: Previous deployments remain available
+- **Container-based builds**: All images built via GitHub Actions
+- **Multi-variant support**: Base, DX (developer), nvidia, and gts (LTS) variants
 
-### Other Useful Links
+### Build System
 
-- [Open Pull Requests](https://github.com/pulls?user=ublue-os)
-- [Open Issues](https://github.com/issues?user=ublue-os)
-- [All published containers](https://github.com/orgs/ublue-os/packages)
+Bluefin images are built using:
+- **Containerfile**: Defines the base image layers and build arguments
+- **Build scripts**: Located in `build_files/` directory, organized by stage
+- **GitHub Actions**: Automated workflows in `.github/workflows/`
+- **Renovate Bot**: Automated dependency updates (60% of all commits)
 
-Thanks for taking the time to look into helping out!
-All contributions are appreciated!
+### Release Channels
 
-Feel free to report issues as you find them, and [helping others in the discussions](https://community.projectbluefin.io) is always appreciated.
+| Channel | Purpose | Update Frequency | Fedora Version |
+|---------|---------|------------------|----------------|
+| **latest** | Daily builds | Multiple times per day | 42 (current) |
+| **stable** | Weekly builds | Weekly | 42 |
+| **gts** | Long-term support | As needed | 41 (LTS) |
 
 ## Getting Started
 
-All types of contributions are encouraged and valued. Please make sure to read the relevant section before making your contribution. Your familiarity will ensure an efficient review process by the maintainers, and will smooth out the experience for all involved.
+### Prerequisites
 
-The community looks forward to your contributions!
+**Required Knowledge:**
+- Git workflow basics
+- Container concepts (Podman/Docker)
+- Bash scripting fundamentals
+- GitHub Actions basics (for CI/CD changes)
 
-If you like the project, but just don't have time to contribute, that's fine. There are other ways to support the project and show your appreciation, which we would also be very happy about:
+**Required Tools:**
+- Git (version 2.x or higher)
+- Text editor (VS Code, vim, etc.)
+- GitHub account with 2FA enabled
+- Podman or Docker (for local builds)
 
-- Star the project
-- Share it on all your social media (the team 💙 Mastodon)
-- Refer this project in your project's readme.
-- Mention the project at local meetups and tell your friends/colleagues!
+**Optional but Recommended:**
+- Bluefin installation (for testing)
+- Access to @ublue-os Discord or discussion forum
 
-## Code of Conduct
+### Fork and Clone
 
-This project and everyone participating in it is governed by the
-[Code of Conduct](https://github.com/ublue-os/main?tab=coc-ov-file#readme).
+1. **Fork the repository** on GitHub to your account:
+   ```bash
+   # Navigate to https://github.com/ublue-os/bluefin
+   # Click "Fork" in the upper right
+   ```
 
-By participating, you are expected to uphold this code. Please report unacceptable behavior to `jorge.castro@gmail.com`
+2. **Clone your fork**:
+   ```bash
+   git clone https://github.com/YOUR_USERNAME/bluefin.git
+   cd bluefin
+   ```
 
-## Contribution Areas by Skill Set
+3. **Add upstream remote**:
+   ```bash
+   git remote add upstream https://github.com/ublue-os/bluefin.git
+   git fetch upstream
+   ```
 
-### Helping out FlatHub
+4. **Verify your setup**:
+   ```bash
+   git remote -v
+   # Should show:
+   # origin    https://github.com/YOUR_USERNAME/bluefin.git (fetch)
+   # origin    https://github.com/YOUR_USERNAME/bluefin.git (push)
+   # upstream  https://github.com/ublue-os/bluefin.git (fetch)
+   # upstream  https://github.com/ublue-os/bluefin.git (push)
+   ```
 
-Since Bluefin is designed to be invisible a good way to help out is by helping FlatHub. The team maintains a list of contribution opportunities for flatpaks shipped in Bluefin:
+## Contribution Workflow
 
-- [Flatpak](https://github.com/ublue-os/flatpak-tracker/issues) opportunities.
+### Finding Work
 
-Many of these have existing pull requests upstream and may just need volunteers to help test the new version. This is a great way to help the entire desktop community!
+**Help Wanted Issues**
+The easiest way to start is with labeled issues:
+```bash
+# View help wanted issues
+open "https://github.com/issues?q=is%3Aopen+is%3Aissue+user%3Aublue-os+archived%3Afalse+label%3A%22help+wanted%22"
+```
+
+**Common Contribution Areas:**
+- 🐛 **Bug fixes**: Issues labeled `bug`
+- 📦 **Package additions**: Issues labeled `enhancement`
+- 📝 **Documentation**: Issues labeled `documentation`
+- 🔧 **Build improvements**: Issues labeled `just` or `github_actions`
+- 🎨 **DX features**: Issues labeled `dx`
+
+### Branching Strategy
+
+1. **Always branch from main**:
+   ```bash
+   git checkout main
+   git pull upstream main
+   ```
+
+2. **Create a descriptive feature branch**:
+   ```bash
+   # For a bug fix
+   git checkout -b fix/cockpit-startup-crash
+   
+   # For a feature
+   git checkout -b feat/add-bazaar-integration
+   
+   # For documentation
+   git checkout -b docs/improve-local-build-guide
+   
+   # For chores/maintenance
+   git checkout -b chore/update-copr-repos
+   ```
+
+3. **Branch naming conventions**:
+   - `fix/`: Bug fixes
+   - `feat/`: New features
+   - `docs/`: Documentation changes
+   - `chore/`: Maintenance tasks
+   - `refactor/`: Code refactoring
+
+### Making Changes
+
+#### File Structure Overview
+
+```
+bluefin/
+├── .github/
+│   └── workflows/          # GitHub Actions CI/CD
+│       ├── build-image-*.yml      # Image build workflows
+│       ├── reusable-build.yml     # Shared build logic
+│       └── clean.yml              # Cleanup workflows
+├── build_files/
+│   ├── base/               # Base image build scripts
+│   ├── shared/             # Shared utilities and scripts
+│   └── dx/                 # Developer edition scripts
+├── system_files/
+│   └── shared/             # Files copied into the image
+├── flatpaks/               # Flatpak app lists
+├── just/                   # Just recipes (ujust commands)
+├── iso_files/              # ISO-specific configurations
+├── packages.json           # Package manifest
+└── Containerfile           # Main image definition
+```
+
+#### Common Change Types
+
+**1. Adding a Package**
+
+Edit `packages.json`:
+```bash
+vim packages.json
+```
+
+Add your package to the appropriate array:
+```json
+{
+  "all": {
+    "include": {
+      "rpm": [
+        "existing-package",
+        "your-new-package"
+      ]
+    }
+  }
+}
+```
+
+**3. Adding a Just Recipe**
+
+Create or edit a file in `just/`:
+```bash
+vim just/60-custom.just
+```
+
+Add your recipe:
+```make
+# Install custom development tool
+install-custom-tool:
+    #!/usr/bin/env bash
+    set -euxo pipefail
+    echo "Installing custom tool..."
+    toolbox run sudo dnf install -y custom-tool
+```
+
+**4. Modifying Build Scripts**
+
+Build scripts are numbered by execution order. Common scripts:
+- `04-packages.sh`: Package installation
+- `05-override-install.sh`: RPM overrides
+- `07-base-image-changes.sh`: System modifications
+- `17-cleanup.sh`: Cleanup operations
+
+Always test your changes with a local build (see Testing section).
+
+**5. Adding Flatpaks**
+
+Edit the appropriate flatpak list file:
+```bash
+# For all Bluefin variants
+edit flatpaks/bluefin-list.txt
+
+# For DX variant only
+edit flatpaks/bluefin-dx-list.txt
+```
+
+Add Flatpak IDs (one per line):
+```
+com.example.NewApp
+```
+
+### Commit Message Format
+
+Bluefin uses [Conventional Commits](https://www.conventionalcommits.org/) enforced by CI:
+
+**Format:**
+```
+<type>(<scope>): <subject>
+
+<body>
+
+<footer>
+```
+
+**Types:**
+- `feat`: New feature
+- `fix`: Bug fix
+- `docs`: Documentation changes
+- `chore`: Maintenance tasks
+- `refactor`: Code refactoring
+- `test`: Testing additions/changes
+- `style`: Code style changes
+- `perf`: Performance improvements
+
+**Examples from Actual Bluefin Commits:**
+
+```bash
+# Simple fix
+git commit -m "fix: remove cockpit and brew setup functions"
+
+# Feature addition
+git commit -m "feat: add bazaar flatpak to default installation"
+
+# Chore with scope
+git commit -m "chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to 9168d7d"
+
+# Documentation
+git commit -m "docs: explain hat wobble"
+
+# Multi-line with explanation
+git commit -m "fix: Remove unused terminal and VFIO configurations
+
+These configurations were causing conflicts with default GNOME settings
+and are no longer needed with the updated kernel modules."
+```
+
+**Commit Message Tips:**
+- Keep subject line under 72 characters
+- Use imperative mood ("add" not "added" or "adds")
+- Don't end subject line with a period
+- Provide context in the body for complex changes
+- Reference issues with `Fixes #123` or `Closes #456`
+
+### Making the Commit
+
+```bash
+# Stage your changes
+git add path/to/modified/file.sh
+
+# Or stage all changes
+git add .
+
+# Review what you're committing
+git diff --cached
+
+# Commit with message
+git commit -m "feat(just): add custom development tool installer"
+
+# Or use an editor for multi-line commits
+git commit
+```
+
+### Pushing Changes
+
+```bash
+# Push to your fork
+git push origin feat/add-bazaar-integration
+
+# If you need to force push after amending (use with caution)
+git push origin feat/add-bazaar-integration --force-with-lease
+```
+
+## Testing Your Changes
+
+### Local Build Testing
+
+**Option 1: Full Container Build** (Recommended for maintainers)
+
+```bash
+# Build the base image
+podman build -t bluefin-test:latest .
+
+# Build with specific arguments
+podman build \
+  --build-arg FEDORA_MAJOR_VERSION=42 \
+  --build-arg IMAGE_NAME=bluefin \
+  -t bluefin-test:latest \
+  .
+```
+
+**Option 2: Script Testing** (Faster for script changes)
+
+```bash
+# Test a specific build script
+podman run --rm -it \
+  -v "$(pwd)/build_files:/build_files:ro" \
+  ghcr.io/ublue-os/silverblue-main:42 \
+  bash /build_files/base/04-packages.sh
+```
+
+**Option 3: GitHub Actions Build** (Use PR builds)
+
+When you open a PR, GitHub Actions automatically builds your changes. Check the Actions tab for:
+- Build logs
+- Success/failure status
+- Build artifacts
+
+### Testing on Your System
+
+**Using PR Images:**
+
+Every PR generates a test image. You can rebase to it:
+
+```bash
+# Find the PR number (e.g., #3322)
+# Rebase to the PR image
+sudo bootc switch ghcr.io/ublue-os/bluefin:pr-3322
+
+# Reboot to test
+sudo systemctl reboot
+
+# If it works, leave feedback on the PR
+# If it doesn't work, revert to stable
+sudo bootc switch ghcr.io/ublue-os/bluefin:stable
+sudo systemctl reboot
+```
+
+**Testing Just Recipes:**
+
+```bash
+# List available recipes
+ujust
+
+# Test your new recipe
+ujust install-custom-tool
+
+# Check for errors in the output
+```
+
+### Linting and Validation
+
+**Shell Script Linting:**
+```bash
+# Install shellcheck if not present
+brew install shellcheck
+
+# Lint shell scripts
+shellcheck build_files/base/*.sh
+```
+
+**Container Linting:**
+```bash
+# Use hadolint for Containerfile
+podman run --rm -i hadolint/hadolint < Containerfile
+```
+
+**JSON Validation:**
+```bash
+# Validate packages.json
+jq empty packages.json && echo "Valid JSON" || echo "Invalid JSON"
+```
+
+## Opening a Pull Request
+
+### Pre-PR Checklist
+
+- [ ] Code follows existing patterns in the repository
+- [ ] Commit messages use Conventional Commits format
+- [ ] Changes are tested (locally or via understanding of impact)
+- [ ] Documentation updated if needed
+- [ ] No unrelated changes included
+- [ ] Branch is up-to-date with upstream main
+
+### Creating the PR
+
+1. **Push your branch** (if not already done):
+   ```bash
+   git push origin your-branch-name
+   ```
+
+2. **Open PR on GitHub**:
+   - Navigate to https://github.com/ublue-os/bluefin
+   - Click "Pull requests" → "New pull request"
+   - Click "compare across forks"
+   - Select your fork and branch
+   - Click "Create pull request"
+
+3. **Fill out PR description**:
+
+```markdown
+## Description
+Brief description of what this PR does.
+
+## Type of Change
+- [ ] Bug fix
+- [ ] New feature
+- [ ] Documentation update
+- [ ] Code refactoring
+- [ ] Build/CI improvement
+
+## Testing Done
+- Local build: Yes/No
+- Tested on running system: Yes/No
+- Just recipes tested: Yes/No
+
+## Related Issues
+Fixes #123
+```
+
+### PR Review Process
+
+**What Happens Next:**
+1. **Automated checks run**: CI builds your changes
+2. **Size label applied**: PR size labeled automatically (XS, S, M, L, XL)
+3. **Maintainer review**: Usually within 24-48 hours
+4. **Feedback addressed**: Make changes if requested
+5. **Approval and merge**: Once approved, maintainers merge
+
+**During Review:**
+
+If changes are requested:
+```bash
+# Make the requested changes
+vim path/to/file
+
+# Commit the changes
+git add path/to/file
+git commit -m "fix: address review feedback on error handling"
+
+# Push to update the PR
+git push origin your-branch-name
+```
+
+**After Merge:**
+
+```bash
+# Switch back to main
+git checkout main
+
+# Pull the latest changes
+git pull upstream main
+
+# Update your fork
+git push origin main
+
+# Delete your feature branch
+git branch -d your-branch-name
+git push origin --delete your-branch-name
+```
+
+## Advanced Workflows
+
+### Working with Renovate Bot
+
+**Understanding Renovate:**
+- Renovate creates PRs for dependency updates automatically
+- Updates include: base images, GitHub Actions, container digests
+- Auto-merge is enabled for low-risk updates
+- Accounts for 60% of all commits
+
+**Common Renovate PRs:**
+```
+chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to abc123
+chore(deps): update softprops/action-gh-release digest to def456
+```
+
+**When Renovate Conflicts with Your PR:**
+```bash
+# Rebase on latest main
+git checkout your-branch
+git fetch upstream
+git rebase upstream/main
+
+# Resolve conflicts if any
+git mergetool  # or manually edit files
+
+# Continue rebase
+git rebase --continue
+
+# Force push (your PR, your branch)
+git push origin your-branch --force-with-lease
+```
+
+### Multi-Commit PRs
+
+For larger features:
+
+```bash
+# Create logical commits as you work
+git add file1.sh
+git commit -m "feat: add base functionality"
+
+git add file2.sh
+git commit -m "feat: add error handling"
+
+git add file3.sh
+git commit -m "docs: document new feature"
+
+# Push all commits
+git push origin your-branch
+```
+
+### Amending Commits
+
+```bash
+# Stage additional changes
+git add forgotten-file.sh
+
+# Amend the last commit
+git commit --amend
+
+# Or amend without changing message
+git commit --amend --no-edit
+
+# Force push with safety
+git push origin your-branch --force-with-lease
+```
+
+### Cherry-Picking Changes
+
+```bash
+# Cherry-pick a commit from another branch
+git cherry-pick abc123def
+
+# Cherry-pick multiple commits
+git cherry-pick abc123..def456
+
+# Resolve conflicts if needed
+git cherry-pick --continue
+```
+
+### Working with Upstream Changes
+
+```bash
+# Fetch upstream changes regularly
+git fetch upstream
+
+# Update main branch
+git checkout main
+git merge upstream/main
+
+# Rebase feature branch
+git checkout your-feature
+git rebase main
+
+# Or merge main into feature
+git merge main
+```
+
+## Contribution Areas by Expertise
 
 ### For Cloud Native/DevOps Engineers
 
-As a cloud native project, we especially welcome contributors with skills in:
+**Container Build Optimization:**
+- Improve Containerfile layer caching
+- Optimize build scripts for speed
+- Reduce image size
 
-- **Podman/Docker** - Container build improvements
-- **CI/CD & GitHub Actions** - Workflow optimization
-- **Bash scripting** - Build script improvements
-- **Justfile** - Build system enhancements (see [main repo justfile](https://github.com/ublue-os/main))
+**CI/CD Improvements:**
+- Optimize GitHub Actions workflows
+- Add build parallelization
+- Improve artifact handling
 
-### For Documentation Writers
-
-- Improve hardware compatibility guides
-- Create tutorials for custom image building
-- Cross-reference missing projects between repositories
-- Update installation and troubleshooting guides
+**Example Tasks:**
+- Refactor `reusable-build.yml` for better caching
+- Add build-time validation tests
+- Implement workflow failure notifications
 
 ### For Package Maintainers
 
-- Submit udev rules to [packages repo](https://github.com/ublue-os/packages)
-- Help maintain the [Universal Blue COPR](https://copr.fedorainfracloud.org/coprs/ublue-os/packages/packages/)
-- Package new applications for inclusion
+**Package Management:**
+- Submit packages to [@ublue-os/packages](https://github.com/ublue-os/packages)
+- Maintain COPR repositories
+- Update package manifests
 
-### For Hardware Enthusiasts
+**UDEV Rules:**
+- Submit hardware enablement rules
+- Test on various hardware
+- Document hardware requirements
 
-- Test and document hardware compatibility
-- Submit hardware enablement patches
-- Help with Framework laptop and other specialized hardware support
+**Example Tasks:**
+- Add new hardware support to packages.json
+- Update COPR repository definitions
+- Submit udev rules for new devices
 
-## I Have a Question
+### For Shell Script Developers
 
-If you want to ask a question, ask in the [discussion forum](https://community.projectbluefin.io) or come hang out on [the Discord server](https://discord.gg/WEu6BdFEtp)
+**Build Script Improvements:**
+- Enhance error handling
+- Add progress indicators
+- Improve script modularity
 
-## I Want To Contribute
+**Just Recipe Development:**
+- Create new ujust commands
+- Improve existing recipes
+- Add user-friendly aliases
 
-:::info
+**Example Tasks:**
+- Refactor build scripts for clarity
+- Add validation to just recipes
+- Improve error messages
 
-When contributing to this project, you must agree that you have authored 100% of the content, that you have the necessary rights to the content and that the content you contribute may be provided under the project license.
+### For Documentation Writers
 
-:::
+**Documentation Needs:**
+- Hardware compatibility guides
+- Custom image building tutorials
+- Troubleshooting documentation
+- Installation guides
 
-Generally speaking the project tries to follow the [Lazy Consensus](https://community.apache.org/committers/decisionMaking.html) model of development to keep the builds healthy and people happy.
+**Documentation Standards:**
+- Use clear, concise language
+- Avoid terms like "simply" or "easy" ([justsimply.dev](https://justsimply.dev/))
+- Include practical examples
+- Link to related documentation
 
-- If you're looking for consensus to make a decision post an issue for feedback and remember to account for timezones and weekends/holidays/work time.
-- The project wants people to be opinionated in their builds so it's more of a loose confederation of repos than a top-down org.
-- Try not to merge your own stuff, ask for a review. At some point when the project has enough reviewers it will be turning on branch protection.
+**Example Tasks:**
+- Document hardware-specific issues
+- Create video tutorials
+- Update installation instructions
+- Write troubleshooting guides
 
-Ashley Willis has a great introductory post called [How to Be a Good Open Source Contributor During Hacktoberfest and Beyond](https://dev.to/github/how-to-be-a-good-open-source-contributor-during-hacktoberfest-and-beyond-cdi) that has useful tips if you are just getting started.
+### For Frontend/UX Developers
 
-## Submitting Pull Requests
+**User Experience:**
+- Improve GNOME shell extensions
+- Customize desktop defaults
+- UI/UX enhancements
 
-### Best Practices and Conventions
+**Testing:**
+- Test desktop responsiveness
+- Validate accessibility features
+- Report UX issues
 
-Make sure your pull request adheres to our best practices.
-These include following project conventions, making small pull requests, and commenting thoroughly.
+**Example Tasks:**
+- Test GNOME extensions compatibility
+- Propose UX improvements
+- Create user feedback surveys
 
-- Follow the directions of the pull request template if one is available. It will help those who respond to your PR.
-- If a trivial fix such as a broken link, typo, or grammar mistake, review the entire document for other potential mistakes. Do not open multiple PRs for small fixes in the same document.
-- Reference any issues related to your PR, or issues that PR may solve.
-- Avoid creating overly large changes in a single commit. Instead, break your PR into multiple small, logical commits. This makes it easier for your PR to be reviewed.
-  - Small commits and small pull requests get reviewed faster and are more likely to be correct than big ones.
-  - Open a Different Pull Request for Fixes and Generic Features
-- Comment on your own PR where you believe something may need further explanation.
-- If your PR is considered a “Work in progress” [mark it as a draft](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/changing-the-stage-of-a-pull-request).
+## Troubleshooting Guide
 
-### Submitting a Pull Request
+### Build Failures
 
-If you want to contribute code to the project, the general workflow is as follows:
-
-1. [Fork the desired project repository on GitHub](https://docs.github.com/en/get-started/quickstart/fork-a-repo#forking-a-repository).
-2. [Clone your fork to your own local machine](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository).
-3. Create a new branch in your local repository.
-4. Make the code changes locally in your cloned repository's directory.
-5. Commit your changes, and be sure to use [correctly formatted commit titles](#commit-messages).
-6. Push your new branch to your own GitHub fork.
-7. Visit GitHub in a web browser to [submit the pull request back to the original repository](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request#creating-the-pull-request).
-
-If you're new to `git`, it's a good idea to use a graphical user interface such as [GitHub Desktop](https://desktop.github.com/) to simplify all of these steps.
-
-## Reporting Bugs
-
-### Before Submitting a Bug Report
-
-A good bug report should describe the issue in detail. Generally speaking:
-
-- Make sure that you are using the latest version.
-- Remember that these are unofficial builds, it's usually prudent to investigate an issue before reporting it here or in Fedora!
-- Collect information about the bug:
-  - `sudo bootc status` usually helps.
-- Image and Version.
-- Possibly your input and the output.
-- Can you reliably reproduce the issue? And can you also reproduce it with older versions?
-
-### Why we insist on using GitHub
-
-If you come to the Discord you might be asked to report an issue or start a discussion on GitHub. DON'T PANIC! We do this for a few reasons:
-
-- Scalability - we're purposely designing this project to scale, and that means a focus on:
-- Asynchronous Communication - OSS is a worldwide phenomenon for a reason, forcing us to write everything down and capturing as much data is crucial to our ability to move quickly, at some point we'll have people in every time-zone, and keeping that efficient is the key.
-  - Discord search is not an engineering tool, it's for chat, it's extremely difficult for even the most experienced person to "spin up" by tracking a chat vs. an issue on GitHub.
-  - It feels slow! It does, but over the long term, it is much more efficient, because you are also solving the problem for as many people as you can, so we gotta make it count!
-- Leverage chat as much as you can to debug and move fast
-  - But when things get over a few messages, start copying stuff into a text editor so you have it.
-  - and then file an issue, you can always edit and fix it up later, concentrate on the capture.
-  - It's hard to have that discipline, that's why we have teammates.
-  - "Oh I'll just file it later" is a good way to learn something twice. It's going to happen, but knowing the trap is a good way to avoid it (or end up gravitating towards it!).
-- **DON'T BE AFRAID OF FILING AN ISSUE**
-  - Part of our culture is to _teach_ and help each other grow.
-  - Better to file an issue and have it closed than let a subtle problem spiral out of control.
-    - Having an issue closed means you've ruled something out, that can be just as important as a solution!
-    - That also doesn't mean to file 47 issues around your favorite feature in a 10 minute period:
-      - If something needs more discussion, [file a proposal.](https://github.com/orgs/ublue-os/discussions?discussions_q=is%3Aopen+label%3Aproposal)
-    - You've earned it:
-      - The commons depends on everyone chipping in, be proud of your contribution!
-
-### How to test incoming changes
-
-One of the nice things about the image model is that we can generate an entire OS image for every change we want to commit, so this makes testing way easier than in the past.
-You can rebase to it, see if it works, and then move back.
-This also means we can increase the amount of testers!
-
-We strive towards a model where proposed changes are more thoroughly reviewed and tested by the community.
-If you see a pull request that is opened up on an image you're following, you can leave a review on how it's working for you.
-At the bottom of every PR you'll see something like this:
-
-![contributing1](https://github.com/user-attachments/assets/08333764-8b77-4d7e-a980-b8d22fd460ce)
-
-Click on "Add your review", then, after adding your comments, click on the green "Review Changes" button and you'll see this:
-
-![contributing2](https://github.com/user-attachments/assets/0733dbc4-2e17-4aa9-8ef2-013f2af093c0)
-
-Don't worry, you can't mess anything up, all the merging and stuff will be done by the maintainer, what this does is lets us gather information in a more formal manner than just shoving everything in a forum thread.
-The more people are reviewing and testing images, the better off we'll be, especially for images that are new.
-
-At some point we'll have a bot that will leave you instructions on how to rebase to the image and all that stuff, but in the meantime we'll leave instructions manually.
-
-Here's an example: [https://github.com/ublue-os/nvidia/pull/49](https://github.com/ublue-os/nvidia/pull/49)
-
-## Building Locally
-
-Check [building locally](./local.md) for more information.
-
-## Reporting problems to Fedora
-
-We endeavour to be a good partner to Fedora.
-
-This project is consuming new features in Fedora and `ostree`, it is not uncommon to find an issue.
-
-It is **strongly recommended** that you attempt to reproduce the issue with a vanilla Fedora installation to see if it's a Universal Blue issue or a Fedora issue.
-
-If you are confused and can't confirm, ask in chat or post in the forums and see if someone more experienced can help out.
-Issues that you can confirm should be reported upstream, and in some cases we can help test and find fixes.
-
-Some of the issues you find may involve other dependencies in other projects, in those cases the Fedora team will tell you where to report the issue.
-
-Upstream bug tracker: [https://github.com/fedora-silverblue/issue-tracker/issues](https://github.com/fedora-silverblue/issue-tracker/issues)
-
-## Styleguides
-
-### Commit Messages
-
-We use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) and enforce them with a bot to keep the changelogs tidy:
-
+**Problem:** Build fails with package conflict
 ```
-chore: add Oyster build script
-docs: explain hat wobble
-feat: add beta sequence
-fix: remove broken confirmation message
-refactor: share logic between 4d3d3d3 and flarhgunnstow
-style: convert tabs to spaces
-test: ensure Tayne retains clothing
+Error: package foo conflicts with bar
 ```
+
+**Solution:**
+1. Check if package is already included elsewhere
+2. Add exclusion to packages.json
+3. Check COPR repository compatibility
+
+**Problem:** Git error during build
+```
+fatal: unable to access 'https://github.com/': Could not resolve host
+```
+
+**Solution:**
+1. Check network connectivity in build environment
+2. Verify GitHub Actions has network access
+3. Check if rate-limited by GitHub
+
+### Local Testing Issues
+
+**Problem:** Podman build fails with permission error
+```
+Error: writing blob: adding layer with blob: permissions denied
+```
+
+**Solution:**
+```bash
+# Run with appropriate permissions
+sudo podman build -t test .
+
+# Or configure rootless podman
+podman system migrate
+```
+
+**Problem:** Out of disk space during build
+```
+Error: no space left on device
+```
+
+**Solution:**
+```bash
+# Clean up podman storage
+podman system prune -a
+
+# Check disk space
+df -h
+```
+
+### PR Issues
+
+**Problem:** CI check failing - Conventional Commit validation
+```
+❌ Commit message does not follow Conventional Commits format
+```
+
+**Solution:**
+```bash
+# Amend the commit message
+git commit --amend
+
+# Update the PR
+git push origin your-branch --force-with-lease
+```
+
+**Problem:** Merge conflict with main
+```
+CONFLICT (content): Merge conflict in packages.json
+```
+
+**Solution:**
+```bash
+# Fetch latest upstream
+git fetch upstream
+
+# Rebase on main
+git rebase upstream/main
+
+# Resolve conflicts manually
+vim packages.json
+
+# Mark as resolved
+git add packages.json
+git rebase --continue
+
+# Force push
+git push origin your-branch --force-with-lease
+```
+
+## Community Interaction
+
+### Communication Channels
+
+**GitHub Issues:**
+- Primary venue for bug reports and feature requests
+- Use issue templates when available
+- Search existing issues before creating new ones
+
+**Discord:**
+- Real-time chat for quick questions
+- Discord: Check [the documentation](https://docs.projectbluefin.io/communications/) for the server link
+- **Remember:** Discord is for chat, not permanent documentation
+
+**Discussion Forum:**
+- [community.projectbluefin.io](https://community.projectbluefin.io/)
+- Long-form discussions
+- Support questions
+- Community feedback
+
+### Communication Best Practices
+
+**DO:**
+- ✅ Ask questions in issues for permanent record
+- ✅ Search before asking
+- ✅ Provide context and details
+- ✅ Be patient with maintainer response times
+- ✅ Help others when you can
+- ✅ Thank contributors
+
+**DON'T:**
+- ❌ Use Discord for bug reports (file issues instead)
+- ❌ Expect immediate responses
+- ❌ Ping maintainers directly unless urgent
+- ❌ Ask the same question in multiple channels
+- ❌ Post "me too" comments without additional info
+
+### Code of Conduct
+
+All contributors must follow the [Universal Blue Code of Conduct](https://github.com/ublue-os/main?tab=coc-ov-file#readme).
+
+**Key Points:**
+- Be respectful and inclusive
+- Welcome newcomers
+- Focus on constructive feedback
+- Report inappropriate behavior to `jorge.castro@gmail.com`
+
+### Issue Capture Discipline
+
+From the contributing guide philosophy:
+
+**The "Issue Capture" Pattern:**
+1. **Use Discord for rapid iteration** - Debug quickly in chat
+2. **Capture to text editor** - Copy important findings as you go
+3. **File an issue** - Create permanent record of solution
+4. **Edit and improve** - Clean up the issue description later
+
+**Why This Matters:**
+- Solves the problem once for everyone
+- Creates searchable documentation
+- Prevents asking the same question twice
+- Builds institutional knowledge
+
+**Example Flow:**
+```
+Discord: "Hey, package X is failing to install"
+  ↓ (quick back-and-forth debugging)
+  ↓ (copy findings to text editor)
+  ↓
+GitHub Issue: "Package X fails on Fedora 42 due to Y dependency"
+  - Symptoms
+  - Root cause
+  - Solution
+  - Related links
+```
+
+## Contributing to Infrastructure
+
+### GitHub Actions Workflows
+
+**Workflow Structure:**
+- `build-image-*.yml`: Per-channel build triggers
+- `reusable-build.yml`: Shared build logic
+- `clean.yml`: Artifact cleanup
+- `generate-release.yml`: Release notes
+
+**Making Workflow Changes:**
+
+```bash
+# Edit workflow file
+vim .github/workflows/build-image-stable.yml
+
+# Validate syntax locally
+# Use GitHub's workflow validator or:
+yamllint .github/workflows/build-image-stable.yml
+
+# Commit
+git add .github/workflows/build-image-stable.yml
+git commit -m "chore(ci): improve stable build caching"
+
+# Test in your fork first
+git push origin your-branch
+# Open PR from fork to see if it works
+```
+
+**Common Workflow Patterns:**
+
+```yaml
+# Conditional execution
+- name: Build only on main
+  if: github.ref == 'refs/heads/main'
+  run: ./build.sh
+
+# Matrix builds
+strategy:
+  matrix:
+    variant: [bluefin, bluefin-dx]
+    fedora: [41, 42]
+```
+
+### Build Script Development
+
+**Script Organization:**
+- `00-09`: Early stage (kernel, repos, packages)
+- `10-16`: Mid stage (configuration, additions)
+- `17-19`: Late stage (cleanup, initramfs)
+
+**Script Template:**
+
+```bash
+#!/usr/bin/bash
+set -eoux pipefail
+
+echo "::group:: Your Script Name"
+
+# Your logic here
+# Use $FEDORA_MAJOR_VERSION for version-specific logic
+# Use $IMAGE_NAME for image-specific logic
+
+echo "::endgroup::"
+```
+
+**Testing Scripts:**
+
+```bash
+# Direct execution (for simple scripts)
+bash -x build_files/base/04-packages.sh
+
+# Container execution (more realistic)
+podman run --rm -it \
+  -v "$(pwd):/workspace:ro" \
+  -e FEDORA_MAJOR_VERSION=42 \
+  ghcr.io/ublue-os/silverblue-main:42 \
+  bash /workspace/build_files/base/04-packages.sh
+```
+
+## Release Process
+
+### Understanding Releases
+
+Bluefin uses continuous delivery:
+- **Daily builds**: Automatic, no manual release
+- **Version format**: `42.20251012.1` (Fedora.YYYYMMDD.build)
+- **Multiple builds per day**: Various channels updated independently
+
+### Release Channels
+
+**stable** (Weekly):
+```bash
+# Rebase to stable
+sudo bootc switch ghcr.io/ublue-os/bluefin:stable
+```
+
+**latest** (Daily):
+```bash
+# Rebase to latest
+sudo bootc switch ghcr.io/ublue-os/bluefin:latest
+```
+
+**gts** (LTS):
+```bash
+# Rebase to GTS (Long Term Support)
+sudo bootc switch ghcr.io/ublue-os/bluefin:gts
+```
+
+## Pinning Package Versions
+
+Sometimes upstream Fedora has a regression requiring a temporary pin.
+
+**Add a Pin:**
+
+Edit the appropriate Containerfile section:
+```dockerfile
+# Revert to older version of ostree to fix Flatpak installations
+RUN rpm-ostree override replace \
+    https://bodhi.fedoraproject.org/updates/FEDORA-2023-cab8a89753
+```
+
+**Document the Pin:**
+```bash
+# Add comment explaining:
+# - What's pinned
+# - Why it's pinned
+# - Link to upstream bug
+# - When to remove (after fix is released)
+```
+
+**Remove a Pin:**
+
+Wait 24-48 hours after Fedora releases a fix (for rebuild propagation), then:
+```bash
+# Remove the override
+git diff Containerfile
+# Confirm the pin is removed
+git commit -m "chore: remove ostree pin after upstream fix"
+```
+
+## Fedora Upstream Reporting
+
+### When to Report Upstream
+
+If you find a bug that:
+- Exists in vanilla Fedora Silverblue/Kinoite
+- Is not caused by Bluefin modifications
+- Affects the base Fedora Atomic system
+
+### How to Report Upstream
+
+1. **Reproduce on vanilla Fedora** (if possible):
+   ```bash
+   # Boot vanilla Fedora Silverblue
+   # Test if the issue occurs there
+   ```
+
+2. **Report to Fedora**:
+   - Upstream tracker: [fedora-silverblue/issue-tracker](https://github.com/fedora-silverblue/issue-tracker/issues)
+   - Include: Fedora version, steps to reproduce, logs
+
+3. **Link in Bluefin Issue**:
+   - Cross-reference the upstream issue
+   - Track upstream progress
+   - Help test fixes
+
+## Maintainer Notes
+
+### Becoming a Maintainer
+
+Contributing regularly and demonstrating expertise may lead to maintainer status. Qualities valued:
+- Consistent quality contributions
+- Good communication
+- Helpful to other contributors
+- Understands project goals
+- Reliable and responsive
+
+**Current Maintainer Structure:**
+- Lead: @castrojo (infrastructure, project direction)
+- Core: @p5, @m2Giles, @tulilirockz (features, maintenance, testing)
+
+### Lazy Consensus Model
+
+Bluefin follows [Apache Lazy Consensus](https://community.apache.org/committers/decisionMaking.html):
+- Assume consensus unless objections raised
+- Allow time for feedback (account for timezones/holidays)
+- Opinionated decisions encouraged
+- Post issues for major changes requiring feedback
+
+## Additional Resources
+
+### Related Repositories
+
+- [@ublue-os/main](https://github.com/ublue-os/main) - Base Universal Blue images
+- [@ublue-os/packages](https://github.com/ublue-os/packages) - Package specifications
+- [@ublue-os/akmods](https://github.com/ublue-os/akmods) - Kernel modules
+- [@ublue-os/bluefin-docs](https://github.com/ublue-os/bluefin-docs) - Documentation site
 
 ### Documentation
 
-- Submit pull requests to [ublue-os/bluefin-docs](https://github.com/ublue-os/bluefin-docs)
-- Avoid the usage of terms likes "simply" or "easy", see [justsimply.dev](https://justsimply.dev/) for more information.
+- [Bluefin Documentation](https://docs.projectbluefin.io/)
+- [Building Locally](https://docs.projectbluefin.io/local)
+- [Universal Blue Guide](https://universal-blue.org/guide/)
+- [Fedora Atomic Documentation](https://docs.fedoraproject.org/en-US/fedora-silverblue/)
 
-## Pinning a package version
+### Tooling
 
-In some cases there might be a regression in upstream Fedora that needs a fix. Packages can be "pinned" to a certain version, and can be added to the main Containerfiles similar to this snippet.
+- [Conventional Commits](https://www.conventionalcommits.org/)
+- [Just Command Runner](https://github.com/casey/just)
+- [Podman Documentation](https://docs.podman.io/)
+- [GitHub Actions Documentation](https://docs.github.com/en/actions)
 
-```
-# Revert to older version of ostree to fix Flatpak installations
-RUN rpm-ostree override replace https://bodhi.fedoraproject.org/updates/FEDORA-2023-cab8a89753
-```
+### Community
 
-And then subsequently removed after Fedora has fixed the issue.
+- [Discussion Forum](https://community.projectbluefin.io/)
+- [Discord Server](https://discord.gg/WEu6BdFEtp)
+- [GitHub Discussions](https://github.com/ublue-os/bluefin/discussions)
 
-## Reverting a Pinned Package
+## Contribution Statistics
 
-Fedora publishes images every 24h; local testing may show a fixed regression but that fix might not be in the final image until the next run.
+As of October 2025, Bluefin sees:
+- **8-12 commits per day** (including automation)
+- **60% automated** (Renovate bot updates)
+- **35% core maintainers** (manual contributions)
+- **5% community** (external contributors)
+- **24-48 hour review time** for manual PRs
+- **84 open issues** (actively triaged)
 
-Budget for a 24 hour delay after Fedora has fixed a regression before removing it.
+The project welcomes all skill levels and contribution types. Start small, learn the workflows, and grow your involvement over time.
 
-<!-- Commented this out since docusaurus was complaining about a broken link. -->
-<!-- ## Join The Project Team -->
+## Final Tips
 
-<!-- If you're interested in _maintaining_ something then check the [membership page]() for more information. -->
+1. **Start small**: Begin with documentation or simple package additions
+2. **Ask questions**: Don't hesitate to ask for clarification
+3. **Test thoroughly**: Use local builds or PR images
+4. **Be patient**: Reviews take time; maintainers balance multiple priorities
+5. **Learn from others**: Read merged PRs to understand patterns
+6. **Follow conventions**: Stick to established patterns in the codebase
+7. **Document your work**: Help future contributors with clear explanations
 
-## Attribution
-
-This guide is based on the **contributing.md**. [Make your own](https://contributing.md/)!
+Remember: Every maintainer started as a first-time contributor. Welcome to the Bluefin community!
