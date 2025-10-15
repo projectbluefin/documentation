@@ -27,13 +27,13 @@ Bluefin LTS also offers a hardware enablement branch (`bluefin:lts-hwe`) with:
 
 - Updated Linux kernel, currently 6.15.9.
 - Toggle between branches with `ujust rebase-helper`.
-- Dedicated HWE ISOs for newer kit like the Framework 12 and Framework Desktop.
+- Dedicated HWE ISOs for newer kit
 
 ## Rationale
 
 Bluefin LTS ships with Linux 6.12.0, which is the kernel for the lifetime of release. An optional `hwe` branch with new kernels is available, offering the same modern kernel you'll find in Bluefin and Bluefin GTS. Both vanilla and HWE ISOs are available, and you can always choose to switch back and forth after installation.
 
-I have been dogfooding Bluefin LTS for most of this year on my Framework 13 and my Framework Desktop. This is the most "work focused" image and is suitable for "set it and forget it" style desktops. We are **proud** of this one!
+I have been dogfooding Bluefin LTS for most of this year. This is the most "work focused" image and is suitable for "set it and forget it" style desktops. We are **proud** of this one!
 
 Here's how I pitched the idea earlier this year:
 
