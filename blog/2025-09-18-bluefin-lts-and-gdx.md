@@ -170,7 +170,7 @@ Remember you cannot rebase between CentOS and Fedora Bluefins, ain't no one test
 
 The long term support experience.
 
-📖 **[Read the documentation](/lts)** to learn about features and differences. Choose HWE for Framework Computers or if you just want newer kernels.
+📖 **[Read the documentation](/lts)** to learn about features and differences.
 
 | Version         | GPU           | Download                                                                                         | Checksum                                                                             |
 | --------------- | ------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
