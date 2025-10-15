@@ -137,6 +137,8 @@ package.json            # Dependencies and scripts
 - Use imperative tone for instructions: "Run this command", "Do not do this"
 - Include clear, tested examples
 - Link to upstream documentation when appropriate
+- Issues labelled with `blog` should generate a docusaurus appropriate blog post with appropriate tags
+- When implementing an issue with the `blog` label add the author's github information into the appropriate places in authors.yml to match the rest
 
 ### Formatting Requirements
 
