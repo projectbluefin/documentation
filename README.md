@@ -11,6 +11,14 @@ These docs are pretty sparse on purpose as Bluefin's intended to be invisible. I
 
 ## Previewing your changes
 
+This project uses `just` as a command runner for convenience.
+
+- `just serve`: Build and serve the documentation locally.
+- `just build`: Build the documentation.
+
+<details>
+<summary>Manual setup</summary>
+
 You've made some changes and want to see how they look?
 
 You can install node and run it:
@@ -21,6 +29,7 @@ npm run start
 ```
 
 > **Note**: The `--legacy-peer-deps` flag is required due to peer dependency conflicts between React versions. If you encounter "Cannot find module" errors (like `xml2js`), make sure you're using this flag during installation.
+</details>
 
 Alternatively, you can run the container:
 
