@@ -55,7 +55,7 @@ Bluefin is "An interpretation of the Ubuntu spirit built on Fedora technology"â€
   - [restic](https://restic.net/) ([Donate](https://github.com/sponsors/restic)) - A modern backup program for your files
   - `zsh` and `fish` included ([Instructions](/command-line#changing-the-default-terminal-shell)) as optional shells
   - [Switcheroo support](https://man.archlinux.org/man/switcherooctl.1.en?ref=news.itsfoss.com) for laptops with multiple GPUs
-- Built on top of the [Universal Blue main image](https://github.com/ublue-os/main) - enabling straightforward sharing of benefits:
+- Built on top of the [Universal Blue](https://github.com/ublue-os/main) main image - enabling straightforward sharing of benefits:
   - Extra udev rules for game controllers and [other devices](https://github.com/ublue-os/config) included out of the box
   - All multimedia codecs included
   - System designed for automatic staging of updates
