@@ -34,7 +34,6 @@ We love our command line tools. This is intended to be a rendition of what a bra
 It comes with some fantastic CLI tools:
 
 - [atuin](https://github.com/atuinsh/atuin) ([Donate](https://github.com/sponsors/atuinsh)) for shell history
-- [carapace](https://pixi.carapace.sh/) for shell completion
 - [direnv](https://direnv.net/) to load and unload environment variables depending on the current directory.
 - [eza](https://github.com/eza-community/eza) ([Donate](https://github.com/sponsors/cafkafk)) as a replacement `ls`
 - [fd](https://github.com/sharkdp/fd) ([Donate](https://github.com/sponsors/sharkdp)) for `find`
