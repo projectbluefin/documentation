@@ -35,13 +35,12 @@ Bluefin is "An interpretation of the Ubuntu spirit built on Fedora technology"â€
     - [Appindicator](https://github.com/ubuntu/gnome-shell-extension-appindicator) - for tray-like icons in the top right corner
     - [GSConnect](https://github.com/GSConnect/gnome-shell-extension-gsconnect) - Integrate your mobile device with your desktop
     - [Blur my Shell](https://github.com/aunetx/blur-my-shell) ([Donate](https://github.com/sponsors/aunetx)) - for that bling
-    - [Tailscale GNOME QS](https://extensions.gnome.org/extension/6139/tailscale-qs/) for [tailscale integration](https://universal-blue.discourse.group/t/tailscale-vpn/290)
     - [Search Light](https://github.com/icedman/search-light) - provides search functionality and a macOS Spotlight-like workflow. Bound to <kbd>Super</kbd>-<kbd>Space</kbd> by default.
 - [Developer Mode](/bluefin-dx) - Dedicated developer mode that transforms Bluefin into a powerful cloud-native developer workstation
 - [Ptyxis terminal](https://devsuite.app/ptyxis/) for container-focused workflows
   - [Distroshelf](https://flathub.org/apps/com.ranfdev.DistroShelf) ([Donate](https://github.com/sponsors/ranfdev)) for container management
 - [Tailscale](https://tailscale.com) - included for VPN along with `wireguard-tools`
-  - Use `ujust toggle-tailscale` to turn it off if you don't plan on using it.
+  - Use `systemctl disable --now tailscaled.service` to turn it off if you don't plan on using it.
   - [Tailscale systray support](https://tailscale.com/kb/1597/linux-systray) included
 - [GNOME Extensions Manager](https://flathub.org/apps/com.mattjakeman.ExtensionManager) ([Donate](https://github.com/sponsors/mjakeman)) included
 - [Bazaar Application Store](https://github.com/kolunmi/bazaar) featuring [Flathub](https://flathub.org):
