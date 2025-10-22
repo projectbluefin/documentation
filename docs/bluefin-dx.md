@@ -102,7 +102,6 @@ Thanks to Ubuntu and Canonical for the [detailed specification](https://discours
 ## Quality of Life Improvements
 
 - A collection of well-curated monospace fonts
-- [Tailscale](https://universal-blue.discourse.group/t/tailscale-vpn-on-bluefin/290) for VPN
 - [Just](https://github.com/casey/just) task runner for automation tasks
 - `fish` and `zsh` available as optional shells
 
