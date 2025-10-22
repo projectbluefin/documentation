@@ -55,6 +55,18 @@ quay.io/ramalama/rocm                      latest      8875feffdb87  5 days ago 
 
 ![Newelle](https://github.com/user-attachments/assets/ff079ed5-43af-48fb-8e7b-e5b9446b3bfe)
 
+## AI Command Line Tools
+
+The following AI-focused command-line tools are available via homebrew, install individually or use this command to install them all: `ujust bluefin-ai`
+
+| Name                                                                | Description                                            |
+| ------------------------------------------------------------------- | ------------------------------------------------------ |
+| [aichat](https://formulae.brew.sh/formula/aichat)                   | All-in-one AI-Powered CLI Chat & Copilot               |
+| [block-goose-cli](https://formulae.brew.sh/formula/block-goose-cli) | Block Protocol AI agent CLI                            |
+| [clio](https://formulae.brew.sh/formula/clio)                       | AI assistant for the command line powered by GPTScript |
+| [gemini-cli](https://formulae.brew.sh/formula/gemini-cli)           | Command-line interface for Google's Gemini API         |
+| [mods](https://formulae.brew.sh/formula/mods)                       | AI on the command-line                                 |
+
 ## Alpaca Graphical Client
 
 For light chatbot usage we recommend that users [install Alpaca](https://flathub.org/apps/com.jeffser.Alpaca) to manage and chat with your LLM models from within a native desktop application. Alpaca supports Nvidia and AMD[^1] acceleration natively.
