@@ -160,6 +160,19 @@ Install [Ramalama](https://github.com/containers/ramalama) with `brew install ra
 - [virt-manager](https://virt-manager.org/) and associated tooling (KVM, qemu)
 - [Incus](https://linuxcontainers.org/incus/) provides system containers (Not available in Bluefin LTS)
 
-# Local Application Development
+## Local Application Development
 
 [GNOME Builder](https://developer.gnome.org/documentation/introduction/builder.html) is the recommended application stack for making application.
+
+## Fonts
+
+| Font |
+| :--- |
+| CaskaydiaMono Nerd Font [link](https://formulae.brew.sh/cask/font-caskaydia-mono-nerd-font) |
+| Droid Sans Mono Nerd Font [link](https://formulae.brew.sh/cask/font-droid-sans-mono-nerd-font) |
+| Go Mono Nerd Font [link](https://formulae.brew.sh/cask/font-go-mono-nerd-font) |
+| IBM Plex Mono Nerd Font [link](https://formulae.brew.sh/cask/font-ibm-plex-mono-nerd-font) |
+| Sauce Code Pro Nerd Font [link](https://formulae.brew.sh/cask/font-sauce-code-pro-nerd-font) |
+| Source Code Pro [link](https://formulae.brew.sh/cask/font-source-code-pro) |
+| Ubuntu Nerd Font [link](https://formulae.brew.sh/cask/font-ubuntu-nerd-font) |
+| FiraCode Nerd Font [link](https://formulae.brew.sh/cask/font-fira-code-nerd-font) |
