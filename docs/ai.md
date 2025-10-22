@@ -25,13 +25,19 @@ The [AI Lab extension](https://developers.redhat.com/products/podman-desktop/pod
 
 The following AI-focused command-line tools are available via homebrew, install individually or use this command to install them all: `ujust bluefin-ai`
 
-| Name                                                                | Description                                            |
-| ------------------------------------------------------------------- | ------------------------------------------------------ |
-| [aichat](https://formulae.brew.sh/formula/aichat)                   | All-in-one AI-Powered CLI Chat & Copilot               |
-| [block-goose-cli](https://formulae.brew.sh/formula/block-goose-cli) | Block Protocol AI agent CLI                            |
-| [clio](https://formulae.brew.sh/formula/clio)                       | AI assistant for the command line powered by GPTScript |
-| [gemini-cli](https://formulae.brew.sh/formula/gemini-cli)           | Command-line interface for Google's Gemini API         |
-| [mods](https://formulae.brew.sh/formula/mods)                       | AI on the command-line                                 |
+| Name                                                                    | Description                                                      |
+| ----------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| [aichat](https://formulae.brew.sh/formula/aichat)                       | All-in-one AI-Powered CLI Chat & Copilot                         |
+| [block-goose-cli](https://formulae.brew.sh/formula/block-goose-cli)     | Block Protocol AI agent CLI                                      |
+| [clio](https://formulae.brew.sh/formula/clio)                           | AI assistant for the command line powered by GPTScript           |
+| [codex](https://formulae.brew.sh/cask/codex)                            | Code editor for OpenAI's coding agent that runs in your terminal |
+| [crush](https://formulae.brew.sh/formula/crush)                         | AI coding agent for the terminal, from charm.sh                  |
+| [gemini-cli](https://formulae.brew.sh/formula/gemini-cli)               | Command-line interface for Google's Gemini API                   |
+| [llm](https://formulae.brew.sh/formula/llm)                             | Access large language models from the command line               |
+| [mods](https://formulae.brew.sh/formula/mods)                           | AI on the command-line, from charm.sh                            |
+| [opencode](https://formulae.brew.sh/formula/opencode)                   | AI coding agent for the terminal                                 |
+| [qwen-code](https://formulae.brew.sh/formula/qwen-code)                 | CLI for Qwen3-Coder models                                       |
+| [whisper-cpp](https://formulae.brew.sh/formula/whisper-cpp)             | High-performance inference of OpenAI's Whisper model             |
 
 ## Ramalama
 
