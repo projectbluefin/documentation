@@ -21,6 +21,18 @@ The [AI Lab extension](https://developers.redhat.com/products/podman-desktop/pod
 
 ![image](https://github.com/user-attachments/assets/e5557952-3e62-499e-93a9-934c4d452be0)
 
+## AI Command Line Tools
+
+The following AI-focused command-line tools are available via homebrew, install individually or use this command to install them all: `ujust bluefin-ai`
+
+| Name                                                                | Description                                            |
+| ------------------------------------------------------------------- | ------------------------------------------------------ |
+| [aichat](https://formulae.brew.sh/formula/aichat)                   | All-in-one AI-Powered CLI Chat & Copilot               |
+| [block-goose-cli](https://formulae.brew.sh/formula/block-goose-cli) | Block Protocol AI agent CLI                            |
+| [clio](https://formulae.brew.sh/formula/clio)                       | AI assistant for the command line powered by GPTScript |
+| [gemini-cli](https://formulae.brew.sh/formula/gemini-cli)           | Command-line interface for Google's Gemini API         |
+| [mods](https://formulae.brew.sh/formula/mods)                       | AI on the command-line                                 |
+
 ## Ramalama
 
 Install [Ramalama](https://github.com/containers/ramalama) via `brew install ramalama`: manage local models and is the prefered default experience. It's for people who work with local models frequently and need advanced features. It offers the ability to pull models from huggingface, ollama, and any container registry. By default it pulls from ollama.com, check the [Ramalama documentation](https://github.com/containers/ramalama/tree/main/docs) for more information.
@@ -55,17 +67,9 @@ quay.io/ramalama/rocm                      latest      8875feffdb87  5 days ago 
 
 ![Newelle](https://github.com/user-attachments/assets/ff079ed5-43af-48fb-8e7b-e5b9446b3bfe)
 
-## AI Command Line Tools
+## Docker Model Runner
 
-The following AI-focused command-line tools are available via homebrew, install individually or use this command to install them all: `ujust bluefin-ai`
-
-| Name                                                                | Description                                            |
-| ------------------------------------------------------------------- | ------------------------------------------------------ |
-| [aichat](https://formulae.brew.sh/formula/aichat)                   | All-in-one AI-Powered CLI Chat & Copilot               |
-| [block-goose-cli](https://formulae.brew.sh/formula/block-goose-cli) | Block Protocol AI agent CLI                            |
-| [clio](https://formulae.brew.sh/formula/clio)                       | AI assistant for the command line powered by GPTScript |
-| [gemini-cli](https://formulae.brew.sh/formula/gemini-cli)           | Command-line interface for Google's Gemini API         |
-| [mods](https://formulae.brew.sh/formula/mods)                       | AI on the command-line                                 |
+[TBD]
 
 ## Alpaca Graphical Client
 
