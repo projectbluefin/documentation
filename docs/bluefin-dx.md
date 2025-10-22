@@ -150,10 +150,6 @@ DevPod also has support for JetBrains:
 - [Running Neovim with Devcontainers](https://cadu.dev/running-neovim-on-devcontainers/)
 - [DevPod Quickstart for Neovim](https://devpod.sh/docs/getting-started/quickstart-vim)
 
-## Ramalama
-
-Install [Ramalama](https://github.com/containers/ramalama) with `brew install ramalama`: for local management and serving of AI models. Check the [AI documentation](/ai) for more information.
-
 ## Virtualization and Container Runtimes
 
 - [virt-manager](https://virt-manager.org/) and associated tooling (KVM, qemu)
@@ -163,7 +159,9 @@ Install [Ramalama](https://github.com/containers/ramalama) with `brew install ra
 
 [GNOME Builder](https://developer.gnome.org/documentation/introduction/builder.html) is the recommended application stack for making application.
 
-### Kubernetes
+## Kubernetes
+
+`ujust bluefin-k8s` will install a common set of tools used by Kubernetes administrators. Or you can install these individually:
 
 | Name                                                              | Description                                                                      |
 | ----------------------------------------------------------------- | -------------------------------------------------------------------------------- |
