@@ -161,7 +161,7 @@ DevPod also has support for JetBrains:
 
 ## Kubernetes
 
-`ujust bluefin-k8s` will install a common set of tools used by Kubernetes administrators. Or you can install these individually:
+`ujust bluefin-k8s` will install a common set of tools used by Kubernetes administrators. Or install these individually:
 
 | Name                                                              | Description                                                                      |
 | ----------------------------------------------------------------- | -------------------------------------------------------------------------------- |
@@ -180,8 +180,7 @@ DevPod also has support for JetBrains:
 
 ## Fonts
 
-Developer mode contains a collection of curated Mono fonts for your visual pleasure. Install them in one go with `ujust bluefin-fonts`. 
-Check the [homebrew website](https://formulae.brew.sh/cask-font/) to add more fonts, or use the included [Embellish](https://flathub.org/en/apps/io.github.getnf.embellish) tool. 
+`ujust bluefin-fonts` will install the following collection of well-curated Mono fonts. Or install these individually. Check the [homebrew website](https://formulae.brew.sh/cask-font/) to add more fonts, or use the included [Embellish](https://flathub.org/en/apps/io.github.getnf.embellish) tool. 
 
 | Font |
 | :--- |
