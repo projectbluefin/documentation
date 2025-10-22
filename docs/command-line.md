@@ -31,21 +31,32 @@ We love our command line tools. This is intended to be a rendition of what a bra
 
 :::
 
-It comes with some fantastic CLI tools:
+The following applications are installed when you run `ujust bluefin-cli`:
 
-- [atuin](https://github.com/atuinsh/atuin) ([Donate](https://github.com/sponsors/atuinsh)) for shell history
-- [direnv](https://direnv.net/) to load and unload environment variables depending on the current directory.
-- [eza](https://github.com/eza-community/eza) ([Donate](https://github.com/sponsors/cafkafk)) as a replacement `ls`
-- [fd](https://github.com/sharkdp/fd) ([Donate](https://github.com/sponsors/sharkdp)) for `find`
-- [fzf](https://github.com/junegunn/fzf) ([Donate](https://github.com/sponsors/junegunn)) for command line fuzzy finding
-- [ripgrep](https://github.com/BurntSushi/ripgrep) for search
-- [tealdeer](https://github.com/dbrgn/tealdeer) for `tldr`
-- [television](https://github.com/alexpasmantier/television) - a blazing fast general-purpose fuzzy finder TUI - (`tv`)
-- [trash-cli](https://github.com/andreafrancia/trash-cli) to manage the system trashcan. (Strongly recommended for new CLI users)
-- [ugrep](https://github.com/Genivia/ugrep) for grep
-- [uutils](https://github.com/uutils/coreutils) as coreutils
-- [yq](https://github.com/mikefarah/yq) ([Donate](https://github.com/sponsors/mikefarah)) for yaml, json, and xml processing
-- [zoxide](https://github.com/ajeetdsouza/zoxide) as `cd`
+| Name                                                                  | Description                                                           |
+| --------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| [atuin](https://formulae.brew.sh/formula/atuin)                       | Improved shell history for zsh, bash, fish and nushell                |
+| [bat](https://formulae.brew.sh/formula/bat)                           | Clone of cat(1) with syntax highlighting and Git integration          |
+| [bash-preexec](https://formulae.brew.sh/formula/bash-preexec)         | Bash preexec and precmd functions à la Zsh                            |
+| [bbrew](https://formulae.brew.sh/formula/bbrew)                       | TUI for Homebrew package management                                   |
+| [chezmoi](https://formulae.brew.sh/formula/chezmoi)                   | Manage your dotfiles across multiple diverse machines, securely       |
+| [direnv](https://formulae.brew.sh/formula/direnv)                     | Load/unload environment variables based on $PWD                       |
+| [dysk](https://formulae.brew.sh/formula/dysk)                         | Get information on your mounted disks                                 |
+| [eza](https://formulae.brew.sh/formula/eza)                           | Modern, maintained replacement for ls                                 |
+| [fd](https://formulae.brew.sh/formula/fd)                             | Simple, fast and user-friendly alternative to find                    |
+| [gh](https://formulae.brew.sh/formula/gh)                             | GitHub command-line tool                                              |
+| [glab](https://formulae.brew.sh/formula/glab)                         | Open-source GitLab command-line tool                                  |
+| [rg](https://formulae.brew.sh/formula/ripgrep)                        | Search tool like grep and The Silver Searcher (ripgrep)               |
+| [starship](https://formulae.brew.sh/formula/starship)                 | Cross-shell prompt for astronauts                                     |
+| [shellcheck](https://formulae.brew.sh/formula/shellcheck)             | Static analysis and lint tool, for (ba)sh scripts                     |
+| [stress-ng](https://formulae.brew.sh/formula/stress-ng)               | Stress test a computer system in various selectable ways              |
+| [tealdeer](https://formulae.brew.sh/formula/tealdeer)                 | Very fast implementation of tldr in Rust                              |
+| [trash-cli](https://formulae.brew.sh/formula/trash-cli)               | Command-line interface to the freedesktop.org trashcan                |
+| [television](https://formulae.brew.sh/formula/television)             | General purpose fuzzy finder TUI                                      |
+| [uutils-coreutils](https://formulae.brew.sh/formula/uutils-coreutils) | Cross-platform Rust rewrite of the GNU coreutils                      |
+| [ugrep](https://formulae.brew.sh/formula/ugrep)                       | Ultra fast grep with query UI, fuzzy search, archive search, and more |
+| [yq](https://formulae.brew.sh/formula/yq)                             | Process YAML, JSON, XML, CSV and properties documents from the CLI    |
+| [zoxide](https://formulae.brew.sh/formula/zoxide)                     | Shell extension to navigate your filesystem faster                    |
 
 The community may add new tools over time, re-running `ujust bluefin-cli` will pull in the new tools.
 
