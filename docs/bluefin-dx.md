@@ -182,13 +182,13 @@ DevPod also has support for JetBrains:
 
 `ujust bluefin-fonts` will install the following collection of well-curated Mono fonts. Or install these individually. Check the [homebrew website](https://formulae.brew.sh/cask-font/) to add more fonts, or use the included [Embellish](https://flathub.org/en/apps/io.github.getnf.embellish) tool. 
 
-| Font |
-| :--- |
-| CaskaydiaMono Nerd Font [link](https://formulae.brew.sh/cask/font-caskaydia-mono-nerd-font) |
-| Droid Sans Mono Nerd Font [link](https://formulae.brew.sh/cask/font-droid-sans-mono-nerd-font) |
-| Go Mono Nerd Font [link](https://formulae.brew.sh/cask/font-go-mono-nerd-font) |
-| IBM Plex Mono Nerd Font [link](https://formulae.brew.sh/cask/font-ibm-plex-mono-nerd-font) |
-| Sauce Code Pro Nerd Font [link](https://formulae.brew.sh/cask/font-sauce-code-pro-nerd-font) |
-| Source Code Pro [link](https://formulae.brew.sh/cask/font-source-code-pro) |
-| Ubuntu Nerd Font [link](https://formulae.brew.sh/cask/font-ubuntu-nerd-font) |
-| FiraCode Nerd Font [link](https://formulae.brew.sh/cask/font-fira-code-nerd-font) |
+| Name                                                              |
+| ----------------------------------------------------------------- |
+| [CaskaydiaMono Nerd Font](https://formulae.brew.sh/cask/font-caskaydia-mono-nerd-font) |
+| [Droid Sans Mono Nerd Font](https://formulae.brew.sh/cask/font-droid-sans-mono-nerd-font) |
+| [Go Mono Nerd Font](https://formulae.brew.sh/cask/font-go-mono-nerd-font) |
+| [IBM Plex Mono Nerd Font](https://formulae.brew.sh/cask/font-ibm-plex-mono-nerd-font) |
+| [Sauce Code Pro Nerd Font](https://formulae.brew.sh/cask/font-sauce-code-pro-nerd-font) |
+| [Source Code Pro](https://formulae.brew.sh/cask/font-source-code-pro) |
+| [Ubuntu Nerd Font](https://formulae.brew.sh/cask/font-ubuntu-nerd-font) |
+| [FiraCode Nerd Font](https://formulae.brew.sh/cask/font-fira-code-nerd-font) |
