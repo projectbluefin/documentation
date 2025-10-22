@@ -166,6 +166,9 @@ Install [Ramalama](https://github.com/containers/ramalama) with `brew install ra
 
 ## Fonts
 
+Developer mode contains a collection of curated Mono fonts for your visual pleasure. Install them in one go with `ujust bluefin-fonts`. 
+Check the [homebrew website](https://formulae.brew.sh/cask-font/) to add more fonts, or use the included [Embellish](https://flathub.org/en/apps/io.github.getnf.embellish) tool. 
+
 | Font |
 | :--- |
 | CaskaydiaMono Nerd Font [link](https://formulae.brew.sh/cask/font-caskaydia-mono-nerd-font) |
