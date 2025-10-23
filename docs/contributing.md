@@ -14,24 +14,7 @@ You don't need permission to contribute to your own destiny.
 
 :::
 
-## Overview
-
-**Repository:** [@ublue-os/bluefin](https://github.com/ublue-os/bluefin)  
-**License:** Apache 2.0  
-**Maintainers:** 4 core maintainers (@castrojo, @p5, @m2Giles, @tulilirockz)  
-**Daily Activity:** 8-12 commits/day (including automated updates)  
-**Review Time:** Manual PRs reviewed within 24-48 hours
-
 ## Understanding Bluefin's Architecture
-
-### Image-Based Development
-
-Bluefin uses OCI container images as the distribution mechanism. Every commit to the repository triggers builds that create bootable OS images. This architecture means:
-
-- **Changes are atomic**: Updates apply all-or-nothing
-- **Built-in rollback**: Previous deployments remain available
-- **Container-based builds**: All images built via GitHub Actions
-- **Multi-variant support**: Base, DX (developer), nvidia, and gts (LTS) variants
 
 ### Build System
 
@@ -45,9 +28,10 @@ Bluefin images are built using:
 
 | Channel | Purpose | Update Frequency | Fedora Version |
 |---------|---------|------------------|----------------|
-| **latest** | Daily builds | Multiple times per day | 42 (current) |
-| **stable** | Weekly builds | Weekly | 42 |
-| **gts** | Long-term support | As needed | 41 (LTS) |
+| **latest** | Daily builds | Multiple times per day | F42 (current) |
+| **stable** | Weekly builds | Weekly | F42 |
+| **gts** | Grand touring support | Weekly | F41 (GTS) |
+| **lts** | Long term support | Weekly | CentOS 10 |
 
 ## Getting Started
 
@@ -68,10 +52,6 @@ Start small! Documentation improvements or simple package additions are great fi
 - Text editor (VS Code, vim, etc.)
 - GitHub account with 2FA enabled
 - Podman or Docker (for local builds)
-
-**Optional but Recommended:**
-- Bluefin installation (for testing)
-- Access to @ublue-os Discord or discussion forum
 
 ### Fork and Clone
 
@@ -115,11 +95,12 @@ open "https://github.com/issues?q=is%3Aopen+is%3Aissue+user%3Aublue-os+archived%
 ```
 
 **Common Contribution Areas:**
-- 🐛 **Bug fixes**: Issues labeled `bug`
-- 📦 **Package additions**: Issues labeled `enhancement`
-- 📝 **Documentation**: Issues labeled `documentation`
-- 🔧 **Build improvements**: Issues labeled `just` or `github_actions`
-- 🎨 **DX features**: Issues labeled `dx`
+- **Help Wanted**: Issues labeled `help-wanted`
+- **Bug fixes**: Issues labeled `bug`
+- **Package additions**: Issues labeled `enhancement`
+- **Documentation**: Issues labeled `documentation`
+- **Build improvements**: Issues labeled `just` or `github_actions`
+- **DX features**: Issues labeled `dx`
 
 ### Branching Strategy
 
@@ -179,24 +160,7 @@ bluefin/
 
 **1. Adding a Package**
 
-Edit `packages.json`:
-```bash
-vim packages.json
-```
-
-Add your package to the appropriate array:
-```json
-{
-  "all": {
-    "include": {
-      "rpm": [
-        "existing-package",
-        "your-new-package"
-      ]
-    }
-  }
-}
-```
+TODO: Update
 
 **3. Adding a Just Recipe**
 
