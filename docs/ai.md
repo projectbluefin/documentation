@@ -29,9 +29,9 @@ The following AI-focused command-line tools are available via homebrew, install 
 | ----------------------------------------------------------------------- | ---------------------------------------------------------------- |
 | [aichat](https://formulae.brew.sh/formula/aichat)                       | All-in-one AI-Powered CLI Chat & Copilot                         |
 | [block-goose-cli](https://formulae.brew.sh/formula/block-goose-cli)     | Block Protocol AI agent CLI                                      |
-| [clio](https://formulae.brew.sh/formula/clio)                           | AI assistant for the command line powered by GPTScript           |
+| [clio](https://github.com/gptscript-ai/clio)                            | AI assistant for the command line powered by GPTScript           |
 | [codex](https://formulae.brew.sh/cask/codex)                            | Code editor for OpenAI's coding agent that runs in your terminal |
-| [crush](https://formulae.brew.sh/formula/crush)                         | AI coding agent for the terminal, from charm.sh                  |
+| [crush](https://github.com/charmbracelet/crush)                         | AI coding agent for the terminal, from charm.sh                  |
 | [gemini-cli](https://formulae.brew.sh/formula/gemini-cli)               | Command-line interface for Google's Gemini API                   |
 | [llm](https://formulae.brew.sh/formula/llm)                             | Access large language models from the command line               |
 | [mods](https://formulae.brew.sh/formula/mods)                           | AI on the command-line, from charm.sh                            |
