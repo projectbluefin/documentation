@@ -18,11 +18,12 @@ You don't need permission to contribute to your own destiny.
 
 ### Build System
 
-Bluefin images are built using:
-- **Containerfile**: Defines the base image layers and build arguments
-- **Build scripts**: Located in `build_files/` directory, organized by stage
-- **GitHub Actions**: Automated workflows in `.github/workflows/`
-- **Renovate Bot**: Automated dependency updates (60% of all commits)
+Bluefin's build process is orchestrated by `just` and defined in the `Justfile`. The core components are:
+- **Justfile**: The command runner that orchestrates the entire build process. It defines recipes for building, testing, and cleaning.
+- **Containerfile**: A multi-stage container build file that defines the base image layers and executes the main build scripts.
+- **Build scripts**: A series of shell scripts located in the `build_files/` directory, organized by image variant (`base`, `dx`) and execution order. These scripts handle package installation, system configuration, and cleanup.
+- **GitHub Actions**: Automated CI/CD workflows located in `.github/workflows/` that use `just` to build and publish images.
+- **Renovate Bot**: Automated dependency updates for base images and other components.
 
 ### Release Channels
 
@@ -144,15 +145,15 @@ bluefin/
 │       ├── reusable-build.yml     # Shared build logic
 │       └── clean.yml              # Cleanup workflows
 ├── build_files/
-│   ├── base/               # Base image build scripts
-│   ├── shared/             # Shared utilities and scripts
-│   └── dx/                 # Developer edition scripts
+│   ├── base/               # Base image build scripts (04-packages.sh is key)
+│   ├── dx/                 # Developer edition scripts (03-packages-dx.sh is key)
+│   └── shared/             # Shared utilities and scripts
 ├── system_files/
 │   └── shared/             # Files copied into the image
 ├── flatpaks/               # Flatpak app lists
 ├── just/                   # Just recipes (ujust commands)
 ├── iso_files/              # ISO-specific configurations
-├── packages.json           # Package manifest
+├── Justfile                # Main build automation recipes
 └── Containerfile           # Main image definition
 ```
 
@@ -160,7 +161,60 @@ bluefin/
 
 **1. Adding a Package**
 
-TODO: Update
+Package management in Bluefin is handled through shell scripts in the `build_files` directory, not a single JSON file. This allows for more complex installation logic and better separation of concerns.
+
+**Process:**
+
+1.  **Identify the correct script**:
+    *   For packages in the base image (for all users), edit `build_files/base/04-packages.sh`.
+    *   For packages in the Developer Experience (DX) image, edit `build_files/dx/03-packages-dx.sh`.
+
+2.  **Determine the package source**:
+    *   **Fedora Repositories**: For packages available in the standard Fedora repositories.
+    *   **COPR Repositories**: For packages from a COPR (Cool Other Package Repo).
+
+3.  **Edit the script**:
+
+    *   **For Fedora Packages**:
+        Add your package name to the `FEDORA_PACKAGES` array in the appropriate script. Keep the list alphabetized.
+
+        *Example: Adding `htop` to the base image in `build_files/base/04-packages.sh`*
+        ```bash
+        FEDORA_PACKAGES=(
+            # ... other packages
+            glow
+            gnome-shell-extension-appindicator
+            htop  # Add your package here
+            gum
+            hplip
+            # ... other packages
+        )
+        ```
+
+    *   **For COPR Packages**:
+        Use the `copr_install_isolated` helper function. This function enables the COPR, installs the package, and disables it again to prevent conflicts. Add this call after the main `dnf install` command for `FEDORA_PACKAGES`.
+
+        *Example: Adding `my-copr-package` from `user/repo` COPR to the DX image in `build_files/dx/03-packages-dx.sh`*
+        ```bash
+        # ... after the dnf5 -y install "${FEDORA_PACKAGES[@]}" line
+
+        echo "Installing DX COPR packages with isolated repo enablement..."
+        copr_install_isolated "user/repo" "my-copr-package"
+        ```
+
+4.  **Excluding a Package**:
+    To remove a package, add it to the `EXCLUDED_PACKAGES` array in the same script.
+
+    *Example: Excluding `unwanted-package` from the base image*
+    ```bash
+    EXCLUDED_PACKAGES=(
+        # ... other packages
+        unwanted-package
+    )
+    ```
+
+5.  **Test your changes**:
+    After making changes, it's recommended to run a local build to ensure your changes haven't broken the build process. See the "Testing Your Changes" section below.
 
 **3. Adding a Just Recipe**
 
@@ -194,10 +248,10 @@ Always test your changes with a local build (see Testing section).
 Edit the appropriate flatpak list file:
 ```bash
 # For all Bluefin variants
-edit flatpaks/bluefin-list.txt
+edit flatpaks/system-flatpaks.list
 
 # For DX variant only
-edit flatpaks/bluefin-dx-list.txt
+edit flatpaks/system-flatpaks-dx.list
 ```
 
 Add Flatpak IDs (one per line):
@@ -296,7 +350,21 @@ Always test your changes locally or via PR builds before merging. Broken builds 
 
 ### Local Build Testing
 
-**Option 1: Full Container Build** (Recommended for maintainers)
+**Option 1: Using `just` (Recommended)**
+
+The `Justfile` provides convenient recipes for building. This is the easiest and recommended way to build locally.
+
+```bash
+# Build the base bluefin image for the latest stream
+just build bluefin latest main
+
+# Build the developer (dx) variant with nvidia drivers
+just build bluefin-dx latest nvidia
+```
+
+**Option 2: Full Container Build with `podman`**
+
+If you prefer not to use `just`, you can invoke `podman` directly. This is useful if you don't have `just` installed or need more control over the build arguments.
 
 ```bash
 # Build the base image
