@@ -2,7 +2,11 @@
 
 Guardians, today Bluefin GTS switched its base from Fedora 41 to Fedora 42. The gathering of raptors has begun. In a few weeks Bluefin (aka `bluefin:stable`) releases and we will start the cycle all over again.
 
-[ Music link]
+:::note[Release Soundtrack]
+
+[Bluefin and the Bazaar of Destiny](https://music.youtube.com/playlist?list=PLhiPP9M5fgWFOhFgduxhleNTmfVSj9JmO&si=GSYmrNFJQ--KGS-a)
+
+:::
 
 Looking for Fedora 43? That's here too in `bluefin:latest`, and will roll out to `bluefin:stable` users over the next few weeks. As we move towards a more distroless model we'll likely shift away from the userspace and focus more on overall desktop feautures, etc. It's also tough to write two of these, so we'll likely just move to spring/autumn cadences  
 
@@ -18,8 +22,6 @@ Here's the major Fedora release information:
   * GNOME 49 release notes (Link would go here)
   * Bluefin changelog - and here are all the package updates (Link would go here)
 
------
-
 ## What is Bluefin?​
 
 Bluefin is an operating system for your computer. It is designed to be installed on a device upgrade for the life of the hardware – we accomplish this by sharing the maintenance and care of our systems together as a community. It is designed to be as “zero touch” as possible by providing a curated GNOME experience.
@@ -29,7 +31,11 @@ Bluefin GTS (aka `bluefin:gts`) is our standard release, designed to be one cycl
   * **AMD/Intel**: `https://download.projectbluefin.io/bluefin-gts-x86_64.iso`
   * **Nvidia**: `https://download.projectbluefin.io/bluefin-nvidia-open-gts-x86_64.iso`
 
------
+![theclueiscollapse](https://github.com/user-attachments/assets/e78c149d-eddc-40bf-8103-8f3b13364142)
+
+We are also pleased to announce November's wallpaper, which you can select now in your wallpaper configuration screen, or just wait until November for it to rotate in. This unidentified Dromeasaur is by [Dr. Natalia Jagielska](https://natalia-jagielska.weebly.com/), a world renowned expert [paleontologist](https://www.nationalgeographic.com/science/article/stunning-scottish-pterosaur-is-biggest-fossil-of-its-kind) and [paleoartist](https://natalia-jagielska.weebly.com/art.html)! We have collaborated on vectorizing renditions of her work to make it suitable for a wallpaper collection. 
+
+I am so stoked over this, an actual scientist! I'm retconning that this is just Bluefin enjoying a nice day at the lake. We have **two** more wallpapers from her coming soon and can't wait to share them with you. I have come to really appreciate the world of flying reptiles. They are [terrifying](https://en.wikipedia.org/wiki/Pterosaur#/media/File:Size_disparity_of_late_Maastrichtian_pterosaurs_and_birds.svg). 
 
 ## Major Changes​
 
