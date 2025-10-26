@@ -49,21 +49,33 @@ There are a few major changes from a Bluefin perspective that we've been looking
 
 ### Introducing Bazaar
 
-Bazaar makes its debut in Bluefin GTS! All Bluefins are now just using the Bazaar flatpak. You're in for a treat:
+[Bazaar](https://github.com/kolunmi/bazaar) makes its debut in Bluefin GTS! All Bluefins are now just using the Bazaar flatpak. You're in for a treat:
+
+![Bazaar2](https://github.com/user-attachments/assets/296d11eb-8c71-4c95-a2d0-bda1cb5ba5aa)
+
+It's been super awesome seeing Bazaar move from a random project we found on r/gnome to what is effectively now the premier app store experience for FlatHub and Linux. You can help out tremendously by [sponsoring the author](https://github.com/sponsors/kolunmi). This is also a major milestone for Bluefin since that ecosystem is feature packed with kickass GNOME applications. I am finding more applications now than I ever have, and they're all right there in FlatHub. But it's also a milestone for all Linuxes since flatpak's upcoming release gives us the flexibility to do this in a proper way with full lifecycle management. We can now be more flexible with the applications we can ship mid-cycle by plopping a file in `/etc/preinstall.d`. Those of you making custom images will really take advantage of this! 
+
+Shoutout to Sebastian Wick for this work in Flatpak and working on the next release.
+
+:::tip[What makes us different?]
+
+We're committed to a future where authors deliver their applications how they see fit. This should be decoupled from the operating system. 
+
+:::
+
+### Homebrew
+
+Speaking of , we've been doing more work engaging with Homebrew developers, check out this interview I did with Workbrew talking about our hopes and dreams:
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/-LVnq_xXCnk?si=lHHtGkZjYBC1pKJ1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+Let us know if you're interested in working on Homebrew for Linux, we have opened a [homebrew tap] so that we can interate on 
 
 ### Fonts
 
 The fonts have been a disaster for a long time, we're finally ripping the bandaid off and removing a bunch of fonts from the image. For you command line nerds you can install any of the [fonts listed in Homebrew](https://formulae.brew.sh/cask-font/) or use a tool like Embellish to install more fonts.
 
 If you're in developer mode you can bring the monospace fonts back with `ujust bluefin-fonts`. 
-
-### Homebrew
-
-We've been doing more work engaging with Homebrew developers, check out this interview I did with Workbrew talking about our hopes and dreams:
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/-LVnq_xXCnk?si=lHHtGkZjYBC1pKJ1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-
-Let us know if you're interested in working on Homebrew for Linux, we have opened a [homebrew tap] so that we can interate on 
 
 ### Tailscale
 
