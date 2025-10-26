@@ -35,9 +35,9 @@ Bluefin GTS (aka `bluefin:gts`) is our standard release, designed to be one cycl
 
 ![theclueiscollapse](https://github.com/user-attachments/assets/e78c149d-eddc-40bf-8103-8f3b13364142)
 
-We are also pleased to announce November's wallpaper, which you can select now in your wallpaper configuration screen, or just wait until November for it to rotate in. This unidentified Dromeasaur is by [Dr. Natalia Jagielska](https://natalia-jagielska.weebly.com/), a world renowned expert [paleontologist](https://www.nationalgeographic.com/science/article/stunning-scottish-pterosaur-is-biggest-fossil-of-its-kind) and [paleoartist](https://natalia-jagielska.weebly.com/art.html)! 
+This unidentified Dromeasaur is by [Dr. Natalia Jagielska](https://natalia-jagielska.weebly.com/), a world renowned expert [paleontologist](https://www.nationalgeographic.com/science/article/stunning-scottish-pterosaur-is-biggest-fossil-of-its-kind) and [paleoartist](https://natalia-jagielska.weebly.com/art.html)! We reached out to work with her on bringing her artwork and style to Bluefin, and she said yes! This rendition will be revealed in November, or you can just manually pick it in the wallpaper chooser. 
 
-I am so stoked over this, an actual scientist! I'm retconning that this is just Bluefin enjoying a nice day at the lake. We have **two** more wallpapers from her coming soon and can't wait to share them with you. I have come to really appreciate the world of flying reptiles. They are [terrifying](https://en.wikipedia.org/wiki/Pterosaur#/media/File:Size_disparity_of_late_Maastrichtian_pterosaurs_and_birds.svg).
+I am so stoked over this, an actual scientist! We're retconning that this is just Bluefin enjoying a nice day at the lake. We have **two** more wallpapers from her coming soon. I have come to really appreciate the world of flying reptiles. They are [terrifying](https://en.wikipedia.org/wiki/Pterosaur#/media/File:Size_disparity_of_late_Maastrichtian_pterosaurs_and_birds.svg).
 
 Natalia's artwork was vectorized and remastered by [Delphic Melody](https://ko-fi.com/melodyofdelphi), please consider donating so that the collaboration can continue! 
 
