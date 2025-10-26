@@ -28,7 +28,7 @@ Here's the major release information:
 
 Bluefin is an operating system for your computer. It is designed to be installed on a device upgrade for the life of the hardware – we accomplish this by sharing the maintenance and care of our systems together as a community. It is designed to be as “zero touch” as possible by providing a curated GNOME experience.
 
-Bluefin GTS (aka `bluefin:gts`) is our standard release, designed to be one cycle behind the most current Fedora release. This one's been in the oven for about six months and is ready for to go. If you're brand new you can use the website to pick the right image or use one of the direct DL links:
+Bluefin GTS (aka `bluefin:gts`) is our standard release, designed to be one cycle behind the most current Fedora release. This one's been in the oven for about six months and is ready for to go. In a few weeks the `bluefin:stable` branch will move on to Fedora 43. If you're brand new you can use the website to pick the right image or use one of the direct DL links:
 
   * **AMD/Intel**: `https://download.projectbluefin.io/bluefin-gts-x86_64.iso`
   * **Nvidia**: `https://download.projectbluefin.io/bluefin-nvidia-open-gts-x86_64.iso`
@@ -37,19 +37,17 @@ Bluefin GTS (aka `bluefin:gts`) is our standard release, designed to be one cycl
 
 This unidentified Dromeasaur is by [Dr. Natalia Jagielska](https://natalia-jagielska.weebly.com/), a world renowned expert [paleontologist](https://www.nationalgeographic.com/science/article/stunning-scottish-pterosaur-is-biggest-fossil-of-its-kind) and [paleoartist](https://natalia-jagielska.weebly.com/art.html)! We reached out to work with her on bringing her artwork and style to Bluefin, and she said yes! This rendition will be revealed in November, or you can just manually pick it in the wallpaper chooser. 
 
-I am so stoked over this, an actual scientist! We're retconning that this is just Bluefin enjoying a nice day at the lake. We have **two** more wallpapers from her coming soon. I have come to really appreciate the world of flying reptiles. They are [terrifying](https://en.wikipedia.org/wiki/Pterosaur#/media/File:Size_disparity_of_late_Maastrichtian_pterosaurs_and_birds.svg).
+I am so stoked about this, an actual scientist! We're retconning that this is just Bluefin enjoying a nice day at the lake. We have **two** more wallpapers from her coming soon. I have come to really appreciate the world of flying reptiles. They are [terrifying](https://en.wikipedia.org/wiki/Pterosaur#/media/File:Size_disparity_of_late_Maastrichtian_pterosaurs_and_birds.svg).
 
 Natalia's artwork was vectorized and remastered by [Delphic Melody](https://ko-fi.com/melodyofdelphi), please consider donating so that the collaboration can continue! 
 
 ## Major Changes​
 
-There are a few major changes from a Bluefin perspective that we've been looking forward to, let's roll\!
+There are a few major changes from a Bluefin perspective that we've been looking forward to:
 
 ### Installation Experience​
 
 - The Anaconda web-ui installer is now the default installer, dramatically improving the experience.
-- Live instance
-
 
 ### Introducing Bazaar
 
@@ -69,7 +67,7 @@ We're committed to a future where authors deliver their applications how they se
 
 ### Homebrew
 
-Speaking of , we've been doing more work engaging with Homebrew developers, check out this interview I did with Workbrew talking about our hopes and dreams:
+Speaking of packages, we've been doing more work engaging with Homebrew developers, check out this interview I did with Workbrew talking about our hopes and dreams:
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/-LVnq_xXCnk?si=lHHtGkZjYBC1pKJ1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
@@ -107,11 +105,11 @@ Extinction is a natural part of life. After a deprecation cycle the following im
 
 ### Repository Changes
 
-As usual most of the changes are the work we do in GitHub to deliver Bluefin and not so much in the image itself. Major parts of the Bluefin repository have been cleaned up to align with the improvements and lessons learned from building Bluefin LTS earlier in the year. This has been the bulk of the work in the past few weeks. 
+As usual most of the changes we do in GitHub to deliver Bluefin and not so much in the image itself. Major parts of the Bluefin repository have been cleaned up to align with the improvements and lessons learned from building Bluefin LTS earlier in the year. This has been the bulk of the work in the past few weeks. 
 
 Bluefin has significantly been simplified, now would be a great time to contribute as we've brought the repository up to the state of more modern `bootc` projects like Bluefin LTS.
 
-- `bluefin:gts` and `bluefin:stable` will be publishing on Tuesdays from now on. Publishing on Saturday nights is an artifact of pre-automation reserved time for testing before a stable release. 
+- `bluefin:gts` and `bluefin:stable` will be publishing on Tuesdays from now on. Publishing on Saturday nights is an artifact of pre-automation "reserved time" for testing before a stable release. 
 
 ![banner2](https://github.com/user-attachments/assets/5fae0e10-a0d4-4d6f-a106-d835654445b4)
 
@@ -145,9 +143,9 @@ Here's the current lay of the land:
 
 -----
 
-## Desktop DevOps folks wanted\!​
+## Desktop DevOps folks wanted!​
 
-Bluefin is an active predator and is constantly hungry. You can help keep Bluefin healthy by becoming a contributor\! We are an open source project and accept contributions:
+Bluefin is an active predator and is constantly hungry. You can help keep Bluefin healthy by becoming a contributor! We are an open source project and accept contributions:
 
   * [Help Wanted issues](https://github.com/ublue-os/main/issues%3Fq%3Dis%253Aissue%2Bis%253Aopen%2Blabel%253A%2522help%2Bwanted%2522)
   * [Contributing Guide](https://docs.projectbluefin.io/contributing/)
@@ -174,6 +172,4 @@ Feel free to [browse around](https://insights.linuxfoundation.org/project/ublue-
 
 ### What's Next?​
 
-Go to bed!
-
-## Stay Safe​
+Going to bed and taking a nap!
