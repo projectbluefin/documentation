@@ -10,6 +10,8 @@ Guardians, today Bluefin GTS switched its base from Fedora 41 to Fedora 42. The 
 
 Looking for Fedora 43? That's here too in `bluefin:latest`, and will roll out to `bluefin:stable` users over the next few weeks. As we move towards a more distroless model we'll likely shift away from the userspace and focus more on overall desktop feautures, etc. It's also tough to write two of these, so we'll likely just move to spring/autumn cadences  
 
+![banner](https://github.com/user-attachments/assets/1b7b7f22-7212-4086-ac00-1d7c534fb9a3)
+
 ## Hello from KubeCon!
 
 As a [`bootc`](https://bootc-dev.github.io/) reference architecture we tend to align with the release cadence of the rest of cloud native. That means we do status reports like this depending on where we are in the world at the time, and to ensure transparency. Soon I'll be in Atlanta, GA, for [KubeCon + CloudNativeCon](https://events.linuxfoundation.org/kubecon-cloudnativecon-north-america/), come say hello! 
@@ -111,7 +113,7 @@ Bluefin has significantly been simplified, now would be a great time to contribu
 
 - `bluefin:gts` and `bluefin:stable` will be publishing on Tuesdays from now on. Publishing on Saturday nights is an artifact of pre-automation reserved time for testing before a stable release. 
 
------
+![banner2](https://github.com/user-attachments/assets/5fae0e10-a0d4-4d6f-a106-d835654445b4)
 
 ## More Information​
 
