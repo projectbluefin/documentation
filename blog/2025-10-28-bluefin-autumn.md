@@ -151,7 +151,20 @@ Bluefin is an active predator and is constantly hungry. You can help keep Bluefi
 As a cloud native project we are always looking for contributors with skills in Podman, Docker, CI/CD, GitHub Actions, and good ole bash.
 
 ## Bring on the Charts!
-Let's take a look at our contributor health, and celebrate the amazing folks who have come together to bring you Bluefin!
+Let's take a look at our contributor health, and celebrate the amazing folks who have come together to bring you Bluefin! We use [LFX Insights](https://insights.linuxfoundation.org/) to measure our project health. First note that my results here are skewed, since I am either usually just merging or telling a bot it's ok to do something. This also does not include the rest of Universal Blue. Yes, Aurora people basically maintain both, haha. 
+
+![lfx1](https://github.com/user-attachments/assets/4ada7112-705b-4358-ab75-cc0f7182201d)
+
+This next one surprised me, I was expecting 20 or 30ish at best. Nice work ya'll! 
+
+![active contributors](https://github.com/user-attachments/assets/e6e786dc-03bc-4cc8-882a-dd59ddb63dd0)
+
+Haha yep, I can't hide from the data though, free me from this! 
+
+![jorge](https://github.com/user-attachments/assets/616ae642-6e80-4c90-9951-3c233c95f3fa)
+
+Feel free to [browse around](https://insights.linuxfoundation.org/project/ublue-os-bluefin/repository/ublue-os-bluefin) and learn cool things about Bluefin's creators.
+
 
 [lfx charts]
 
