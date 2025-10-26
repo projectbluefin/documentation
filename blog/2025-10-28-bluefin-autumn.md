@@ -1,0 +1,144 @@
+# Bluefin Autumn Update
+
+Guardians, today Bluefin GTS switched its base from Fedora 41 to Fedora 42. The gathering of raptors has begun. In a few weeks Bluefin (aka `bluefin:stable`) releases and we will start the cycle all over again.
+
+[ Music link]
+
+Looking for Fedora 43? That's here too in `bluefin:latest`, and will roll out to `bluefin:stable` users over the next few weeks. As we move towards a more distroless model we'll likely shift away from the userspace and focus more on overall desktop feautures, etc. It's also tough to write two of these, so we'll likely just move to spring/autumn cadences  
+
+## Hello from KubeCon!
+
+As a [`bootc`](https://bootc-dev.github.io/) reference architecture we tend to align with the release cadence of the rest of cloud native. That means we do status reports like this depending on where we are in the world at the time, and to ensure transparency. Soon I'll be in Atlanta, GA, for [KubeCon + CloudNativeCon](https://events.linuxfoundation.org/kubecon-cloudnativecon-north-america/), come say hello! 
+
+You'll receive this update during your next update window, or you can run an update manually by clicking on this icon:
+
+Here's the major Fedora release information:
+
+  * Fedora Magazine: What's new in Fedora Workstation 43 (Link would go here)
+  * GNOME 49 release notes (Link would go here)
+  * Bluefin changelog - and here are all the package updates (Link would go here)
+
+-----
+
+## What is Bluefin?​
+
+Bluefin is an operating system for your computer. It is designed to be installed on a device upgrade for the life of the hardware – we accomplish this by sharing the maintenance and care of our systems together as a community. It is designed to be as “zero touch” as possible by providing a curated GNOME experience.
+
+Bluefin GTS (aka `bluefin:gts`) is our standard release, designed to be one cycle behind the latest Fedora release. If you're brand new you can use the website to pick the right image or use one of the direct DL links:
+
+  * **AMD/Intel**: `https://download.projectbluefin.io/bluefin-gts-x86_64.iso`
+  * **Nvidia**: `https://download.projectbluefin.io/bluefin-nvidia-open-gts-x86_64.iso`
+
+-----
+
+## Major Changes​
+
+There are a few major changes from a Bluefin perspective that we've been looking forward to, let's roll\!
+
+### Installation Experience​
+
+- The Anaconda web-ui installer is now the default installer, dramatically improving the experience.
+- Live instance
+
+
+### Introducing Bazaar
+
+Bazaar makes its debut in Bluefin GTS! All Bluefins are now just using the Bazaar flatpak. You're in for a treat:
+
+### Fonts
+
+The fonts have been a disaster for a long time, we're finally ripping the bandaid off and removing a bunch of fonts from the image. For you command line nerds you can install any of the [fonts listed in Homebrew](https://formulae.brew.sh/cask-font/) or use a tool like Embellish to install more fonts.
+
+If you're in developer mode you can bring the monospace fonts back with `ujust bluefin-fonts`. 
+
+### Homebrew
+
+We've been doing more work engaging with Homebrew developers, check out this interview I did with Workbrew talking about our hopes and dreams:
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/-LVnq_xXCnk?si=lHHtGkZjYBC1pKJ1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+Let us know if you're interested in working on Homebrew for Linux, we have opened a [homebrew tap] so that we can interate on 
+
+### Tailscale
+
+We've dropped the GNOME Quick Settings extension for tailscale in favor of the upstream system tray implementation. For more information, [check the docs](https://docs.projectbluefin.io/administration/#virtual-private-networks-vpn), this requires manual set up. 
+
+The tailscale experience is still not where it needs to be, but now that Tailscale has started work on an official system tray implementation we expect this to solidify over the next few upstream releases.
+
+### `ujust` commands returning
+
+After a hiatus we've finally refactored the Homebrew management in Bluefin. We're adding back some convenience commands: 
+
+   - AI & Machine Learning Tools: run `ujust bluefin-ai` to install them.
+     - Learn more in the [AI and Machine Learning documentation](https://docs.projectbluefin.io/ai).
+   - Kubernetes Tools: Run `ujust bluefin-k8s` to install them.
+     - For a full list of the tools, check out the [Kubernetes documentation](https://docs.projectbluefin.io/bluefin-dx#kubernetes).
+   - Developer Fonts: Run `ujust bluefin-fonts` to install them. 
+     - See the full list of fonts in the [Fonts documentation](https://docs.projectbluefin.io/bluefin-dx#fonts).
+
+### Removal Notices​
+
+Extinction is a natural part of life. After a deprecation cycle the following images are now removed:
+
+  - **Nvidia Closed Images**: Due to Nvidia's software support changes we can no longer support the older closed modules for Nvidia cards. Not many people are using these, either migrate to the `nvidia-open` images or move to a stock image to use the built in kernel drivers.
+  - **Bluefin HWE Images**: Not many people were using these, they have also been removed. 
+
+### Repository Changes
+
+As usual most of the changes are the work we do in GitHub to deliver Bluefin and not so much in the image itself. Major parts of the Bluefin repository have been cleaned up to align with the improvements and lessons learned from building Bluefin LTS earlier in the year. This has been the bulk of the work in the past few weeks. 
+
+Bluefin has significantly been simplified, now would be a great time to contribute as we've brought the repository up to the state of more modern `bootc` projects like Bluefin LTS.
+
+- `bluefin:gts` and `bluefin:stable` will be publishing on Tuesdays from now on. Publishing on Saturday nights is an artifact of pre-automation reserved time for testing before a stable release. 
+
+-----
+
+## More Information​
+
+Bluefin is a deinonychus, and may snap at you occasionally. Four year olds can get feisty of so there might be issues that you discover that we haven't seen before. Filing issues is always appreciated.
+
+  * [Bluefin Documentation](https://docs.projectbluefin.io/)
+  * [Universal Blue](https://universal-blue.org/)
+
+We also accept donations to sponsor the infrastructure and artwork.
+
+-----
+
+## Is that it?​
+
+Nothing makes ops people happier than uneventful things.
+
+Today is really like any other, we just updated a few tags, you always have the option to go to any version we support at any time. Wether you like the chill vibe of `bluefin:gts` , the refined aggresiveness of `bluefin:stable` , the raptor abides.
+
+Here's the current lay of the land:
+
+| | `gts` (default) | `stable` or `stable-daily` | `latest` |
+| --- | --- | --- | --- |
+| **Fedora Version:** | 42 | 43 | 43 |
+| **GNOME Version:** | 48 | 49 | 49 |
+| **Target User:** | Most users | Enthusiasts | Advanced users and testers |
+| **System Updates:** | Weekly | Weekly or Daily | Daily |
+| **Application Updates:** | Twice a Day | Twice a Day | Twice a Day |
+| **Kernel:** | Gated | Gated | Ungated |
+
+-----
+
+## Desktop DevOps folks wanted\!​
+
+Bluefin is an active predator and is constantly hungry. You can help keep Bluefin healthy by becoming a contributor\! We are an open source project and accept contributions:
+
+  * [Help Wanted issues](https://github.com/ublue-os/main/issues%3Fq%3Dis%253Aissue%2Bis%253Aopen%2Blabel%253A%2522help%2Bwanted%2522)
+  * [Contributing Guide](https://docs.projectbluefin.io/contributing/)
+
+As a cloud native project we are always looking for contributors with skills in Podman, Docker, CI/CD, GitHub Actions, and good ole bash.
+
+## Bring on the Charts!
+Let's take a look at our contributor health, and celebrate the amazing folks who have come together to bring you Bluefin!
+
+[lfx charts]
+
+### What's Next?​
+
+Go to bed!
+
+## Stay Safe​
