@@ -10,7 +10,7 @@ Guardians, today Bluefin GTS switched its base from Fedora 41 to Fedora 42. The 
 
 :::
 
-Looking for Fedora 43? That's here too in `bluefin:latest`, and will roll out to `bluefin:stable` users over the next few weeks. It's tough to write two of these, so we'll likely just move to spring/autumn announcements. 
+Looking for Fedora 43? That's here too in `bluefin:latest`, and will roll out to `bluefin:stable` users over the next few weeks. It's tough to write two of these, so we'll likely just move to spring/autumn announcements and whenever major things land. When `bluefin:stable` upgrades I will post it as an addenum in the discussion thread for this post.
 
 ## Introduction
 
