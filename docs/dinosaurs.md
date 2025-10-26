@@ -21,6 +21,7 @@ The Bluefin team releases music playlists regularly. If you would like to curate
 - Bluefin and the Lost Tribe of Contributors: [YouTube Music Playlist](https://music.youtube.com/playlist?list=PLhiPP9M5fgWEuxjlfOEX3fwA-E60-E4TA&si=01SkukMVTmfADwVl)
 - Bluefin and Dakota: [YouTube Music Playlist](https://music.youtube.com/playlist?list=PLhiPP9M5fgWHRa6Gt0UKWGxr3F0qg9t1g&si=pzhf5fA3usxyRquG)
 - Bluefin and the Children of Jensen: [YouTube Music Playlist](https://music.youtube.com/playlist?list=PLhiPP9M5fgWH4do22wEvgnoMUQLVYRIxt&si=YC5nDopgjBZ7fGhA)
+- Bluefin and the Bazaar of Destiny: [YouTube Music Playlist](https://music.youtube.com/playlist?list=PLhiPP9M5fgWFOhFgduxhleNTmfVSj9JmO&si=ccWzNrzlAlGu0Lj3)
 
 ## Bluefin and Bluefin GTS
 
