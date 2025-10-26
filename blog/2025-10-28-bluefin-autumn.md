@@ -10,7 +10,7 @@ Guardians, today Bluefin GTS switched its base from Fedora 41 to Fedora 42. The 
 
 :::
 
-Looking for Fedora 43? That's here too in `bluefin:latest`, and will roll out to `bluefin:stable` users over the next few weeks. As we move towards a more distroless model we'll likely shift away from the userspace and focus more on overall desktop feautures, etc. It's also tough to write two of these, so we'll likely just move to spring/autumn cadences  
+Looking for Fedora 43? That's here too in `bluefin:latest`, and will roll out to `bluefin:stable` users over the next few weeks. It's tough to write two of these, so we'll likely just move to spring/autumn announcements. 
 
 ## Introduction
 
@@ -18,11 +18,11 @@ Soon I'll be in Atlanta, GA, for [KubeCon + CloudNativeCon](https://events.linux
 
 You'll receive this update during your next update window, or you can run an update manually by clicking on this icon:
 
-Here's the major Fedora release information:
+Here's the major release information:
 
-  * Fedora Magazine: What's new in Fedora Workstation 43 (Link would go here)
-  * GNOME 49 release notes (Link would go here)
-  * Bluefin changelog - and here are all the package updates (Link would go here)
+  * [GNOME 48 release notes](https://release.gnome.org/48/)
+  * [Fedora 42 release notes](https://docs.fedoraproject.org/en-US/fedora/f42/release-notes/)
+  * Bluefin changelog
 
 ## What is Bluefin?​
 
