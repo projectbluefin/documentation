@@ -113,7 +113,7 @@ As usual most of the changes we do in GitHub to deliver Bluefin and not so much 
 
 Bluefin has significantly been simplified, now would be a great time to contribute as we've brought the repository up to the state of more modern `bootc` projects like Bluefin LTS.
 
-- `bluefin:gts` and `bluefin:stable` will be publishing on Tuesdays from now on. Publishing on Saturday nights is an artifact of pre-automation "reserved time" for testing before a stable release. 
+- `bluefin:gts` and `bluefin:stable` will be publishing on Tuesdays from now on instead of Saturdays. Publishing on Saturday nights is an artifact of pre-automation "reserved time" for testing before a weekly release. This matches the same release schedule as Bluefin LTS.
 
 ![banner2](https://github.com/user-attachments/assets/5fae0e10-a0d4-4d6f-a106-d835654445b4)
 
