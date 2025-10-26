@@ -28,7 +28,7 @@ Here's the major Fedora release information:
 
 Bluefin is an operating system for your computer. It is designed to be installed on a device upgrade for the life of the hardware – we accomplish this by sharing the maintenance and care of our systems together as a community. It is designed to be as “zero touch” as possible by providing a curated GNOME experience.
 
-Bluefin GTS (aka `bluefin:gts`) is our standard release, designed to be one cycle behind the latest Fedora release. If you're brand new you can use the website to pick the right image or use one of the direct DL links:
+Bluefin GTS (aka `bluefin:gts`) is our standard release, designed to be one cycle behind the most current Fedora release. This one's been in the oven for about six months and is ready for to go. If you're brand new you can use the website to pick the right image or use one of the direct DL links:
 
   * **AMD/Intel**: `https://download.projectbluefin.io/bluefin-gts-x86_64.iso`
   * **Nvidia**: `https://download.projectbluefin.io/bluefin-nvidia-open-gts-x86_64.iso`
