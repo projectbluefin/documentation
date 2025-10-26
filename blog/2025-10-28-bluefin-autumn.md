@@ -1,3 +1,5 @@
+![banner](https://github.com/user-attachments/assets/1b7b7f22-7212-4086-ac00-1d7c534fb9a3)
+
 # Bluefin Autumn Update
 
 Guardians, today Bluefin GTS switched its base from Fedora 41 to Fedora 42. The gathering of raptors has begun. In a few weeks Bluefin (aka `bluefin:stable`) releases and we will start the cycle all over again.
@@ -9,8 +11,6 @@ Guardians, today Bluefin GTS switched its base from Fedora 41 to Fedora 42. The 
 :::
 
 Looking for Fedora 43? That's here too in `bluefin:latest`, and will roll out to `bluefin:stable` users over the next few weeks. As we move towards a more distroless model we'll likely shift away from the userspace and focus more on overall desktop feautures, etc. It's also tough to write two of these, so we'll likely just move to spring/autumn cadences  
-
-![banner](https://github.com/user-attachments/assets/1b7b7f22-7212-4086-ac00-1d7c534fb9a3)
 
 ## Hello from KubeCon!
 
