@@ -33,9 +33,11 @@ Bluefin GTS (aka `bluefin:gts`) is our standard release, designed to be one cycl
 
 ![theclueiscollapse](https://github.com/user-attachments/assets/e78c149d-eddc-40bf-8103-8f3b13364142)
 
-We are also pleased to announce November's wallpaper, which you can select now in your wallpaper configuration screen, or just wait until November for it to rotate in. This unidentified Dromeasaur is by [Dr. Natalia Jagielska](https://natalia-jagielska.weebly.com/), a world renowned expert [paleontologist](https://www.nationalgeographic.com/science/article/stunning-scottish-pterosaur-is-biggest-fossil-of-its-kind) and [paleoartist](https://natalia-jagielska.weebly.com/art.html)! We have collaborated on vectorizing renditions of her work to make it suitable for a wallpaper collection. 
+We are also pleased to announce November's wallpaper, which you can select now in your wallpaper configuration screen, or just wait until November for it to rotate in. This unidentified Dromeasaur is by [Dr. Natalia Jagielska](https://natalia-jagielska.weebly.com/), a world renowned expert [paleontologist](https://www.nationalgeographic.com/science/article/stunning-scottish-pterosaur-is-biggest-fossil-of-its-kind) and [paleoartist](https://natalia-jagielska.weebly.com/art.html)! 
 
-I am so stoked over this, an actual scientist! I'm retconning that this is just Bluefin enjoying a nice day at the lake. We have **two** more wallpapers from her coming soon and can't wait to share them with you. I have come to really appreciate the world of flying reptiles. They are [terrifying](https://en.wikipedia.org/wiki/Pterosaur#/media/File:Size_disparity_of_late_Maastrichtian_pterosaurs_and_birds.svg). 
+I am so stoked over this, an actual scientist! I'm retconning that this is just Bluefin enjoying a nice day at the lake. We have **two** more wallpapers from her coming soon and can't wait to share them with you. I have come to really appreciate the world of flying reptiles. They are [terrifying](https://en.wikipedia.org/wiki/Pterosaur#/media/File:Size_disparity_of_late_Maastrichtian_pterosaurs_and_birds.svg).
+
+Natalia's artwork was vectorized and remastered by [Delphic Melody](https://ko-fi.com/melodyofdelphi), please consider donating so that the collaboration can continue! 
 
 ## Major Changes​
 
@@ -69,7 +71,7 @@ Speaking of , we've been doing more work engaging with Homebrew developers, chec
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/-LVnq_xXCnk?si=lHHtGkZjYBC1pKJ1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
-Let us know if you're interested in working on Homebrew for Linux, we have opened a [homebrew tap] so that we can interate on 
+Let us know if you're interested in working on Homebrew for Linux, we have opened a [homebrew tap] so that we can interate on bringing cool new things to you. A huge shoutout goes to [Yulian Kuncheff](https://ko-fi.com/yulian) for spearheading this effort, please consider donating! and ahmedadan 
 
 ### Fonts
 
