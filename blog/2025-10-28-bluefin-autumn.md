@@ -149,14 +149,14 @@ Here's the current lay of the land:
 
 | | `gts` (default) | `stable` or `stable-daily` | `latest` |
 | --- | --- | --- | --- |
-| **Fedora Version:** | 42 | 43 | 43 |
-| **GNOME Version:** | 48 | 49 | 49 |
+| **Fedora Version:** | 42 | 42 | 43 |
+| **GNOME Version:** | 48 | 48 | 49 |
 | **Target User:** | Most users | Enthusiasts | Advanced users and testers |
 | **System Updates:** | Weekly | Weekly or Daily | Daily |
 | **Application Updates:** | Twice a Day | Twice a Day | Twice a Day |
 | **Kernel:** | Gated | Gated | Ungated |
 
------
+NOTE: The `stable` and `stable-daily` branches will move to F43 over the following few weeks. 
 
 ## Desktop DevOps folks wanted!​
 
