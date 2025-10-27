@@ -84,6 +84,7 @@ Speaking of packages, we've been doing more work engaging with Homebrew develope
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/-LVnq_xXCnk?si=lHHtGkZjYBC1pKJ1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
+
 Let us know if you're interested in working on Homebrew for Linux, we have opened a [homebrew tap] so that we can interate on bringing cool new things to you. A huge shoutout goes to [Yulian Kuncheff](https://ko-fi.com/yulian) for spearheading this effort, please consider donating! and ahmedadan 
 
 ### Fonts
@@ -185,4 +186,4 @@ Feel free to [browse around](https://insights.linuxfoundation.org/project/ublue-
 
 ### What's Next?​
 
-After KubeCon we head into the holidays, where things will slow down significantly. We've been in the lab with mad doctor Timothée Ravier and have been cooking up something that will change the course of Bluefin for the better, forever. We can't wait to show you, until then, enjoy!
+After KubeCon we head into the holidays, where things will slow down significantly. We've been in the lab with mad doctor Timothée Ravier and have been cooking up something. We expect that this will change the course of Bluefin for the better, forever. We can't wait to show you, until then, enjoy!
