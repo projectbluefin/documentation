@@ -1,6 +1,11 @@
-![banner](https://github.com/user-attachments/assets/1b7b7f22-7212-4086-ac00-1d7c534fb9a3)
+---
+title: "Bluefin Autumn 2025: We visit the Bazaar"
+slug: 2025-10-28-bluefin-autumn
+authors: castrojo
+tags: [announcements]
+---
 
-# Bluefin Autumn Update
+![banner](https://github.com/user-attachments/assets/1b7b7f22-7212-4086-ac00-1d7c534fb9a3)
 
 Guardians, today Bluefin GTS switched its base from Fedora 41 to Fedora 42. The gathering of raptors has begun. In a few weeks Bluefin (aka `bluefin:stable`) releases and we will start the cycle all over again.
 
@@ -176,4 +181,4 @@ Feel free to [browse around](https://insights.linuxfoundation.org/project/ublue-
 
 ### What's Next?​
 
-Going to bed and taking a nap!
+After KubeCon we head into the holidays, where things will slow down significantly. We've been in the lab with mad doctor Timothée Ravier and have been cooking up something that will change the course of Bluefin for the better, forever. We can't wait to show you, until then, enjoy!
