@@ -62,7 +62,8 @@ There are a few major changes from a Bluefin perspective that we've been looking
 
 [Bazaar](https://github.com/kolunmi/bazaar) makes its debut in Bluefin GTS! All Bluefins are now just using the Bazaar flatpak. You're in for a treat:
 
-![Bazaar2](https://github.com/user-attachments/assets/296d11eb-8c71-4c95-a2d0-bda1cb5ba5aa)
+![bazaar1](https://github.com/user-attachments/assets/3cd53813-d8d4-4728-8379-70c08c0365a1)
+![bazaar2](https://github.com/user-attachments/assets/1dec1e08-7b32-49df-b14b-5d393bbd0992)
 
 It's been super awesome seeing Bazaar move from a random project we found on r/gnome to what is effectively now the premier app store experience for FlatHub and Linux. You can help out tremendously by [sponsoring the author](https://github.com/sponsors/kolunmi). 
 
