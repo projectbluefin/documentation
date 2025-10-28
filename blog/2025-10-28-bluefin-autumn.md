@@ -151,9 +151,15 @@ Sometimes starting in open source can be a real barrier if you don't know where 
 
 ![flatpak tracker](https://github.com/user-attachments/assets/c7051430-cff0-44e2-8706-30b0110a8dee)
 
-This is important work because we want applications to be updated to the latest runtimes for security reasons. As it turns out, many of these applications have OPEN PULL REQUESTS already with people updating the runtime, you just need to find the app, run the updated version by following the instructions, and then report back to the Flatpak maintainer that the new app is working great (or broken!). 
+This is important work because we want applications to be updated to the latest runtimes for security reasons. As it turns out, many of these applications have OPEN PULL REQUESTS already with people updating the runtime, you just need to find the app, run the updated version by following the instructions, and then report back to the Flatpak maintainer that the new app is working great (or broken!). Since GNOME 49 just released, there's plenty to do, so feel free to dive in and get started! Also remember, this work helps all of FlatHub, we're explictly sending new volunteers to help upstream.
 
-Since GNOME 49 just released, there's plenty to do, so feel free to dive in and get started! Also remember, this work helps all of FlatHub, we're explictly sending new volunteers to help upstream, so find your favorite app and see if there's a test build available for a new runtime. And if you have the skills to port applications to new runtimes, now is the time to flex. 😄
+:::note[FlatHub is critical to the desktop]
+
+We choose to help move application development forward via FlatHub instead of fragmenting the flatpak ecosystem with distribution-specific nonsense. 
+
+:::
+
+Find your favorite app and see if there's a test build available for a new runtime. And if you have the skills to port applications to new runtimes, now is the time to flex. 😄
 
 
 -----
