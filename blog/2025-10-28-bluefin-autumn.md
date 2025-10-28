@@ -141,6 +141,19 @@ Bluefin is a deinonychus, and may snap at you occasionally. Four year olds can g
 
 We also accept donations to sponsor the infrastructure and artwork.
 
+## Helping FlatHub
+
+Sometimes starting in open source can be a real barrier if you don't know where to start. Don't have the skills to do cloud native things yet? Here's a good way to help out FlatHub. Flatpaks rely on what we call "runtimes" to ensure that the application has the dependencies it needs to run. Do a `flatpak list` to check them out:
+
+![flatpaklist](https://github.com/user-attachments/assets/61a51c5d-b16b-4798-9f5c-d46aef3c32d3)
+
+[Flatpak Tracker](https://github.com/ublue-os/flatpak-tracker) is a site we made that will check all of the applications we ship in Bluefin and see which runtimes need to be updated. We label them by image, here's the [the list of applications that need to be updated](https://github.com/ublue-os/flatpak-tracker/issues?q=is%3Aissue%20state%3Aopen%20label%3Abluefin-bazaar).  
+
+![flatpak tracker](https://github.com/user-attachments/assets/c7051430-cff0-44e2-8706-30b0110a8dee)
+
+This is important work because we want applications to be updated to the latest runtimes for security reasons. As it turns out, many of these applications have OPEN PULL REQUESTS already with people updating the runtime, you just need to find the app, run the updated version by following the instructions, and then report back to the Flatpak maintainer that the new app is working great (or broken!). Since GNOME 49 just released, there's plenty to do, so feel free to dive in and get started!
+
+
 -----
 
 ## Is that it?​
