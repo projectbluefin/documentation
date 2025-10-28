@@ -217,3 +217,6 @@ Feel free to [browse around](https://insights.linuxfoundation.org/project/ublue-
 ### What's Next?​
 
 After KubeCon we head into the holidays, where things will slow down significantly. We've been in the lab with mad doctor Timothée Ravier and have been cooking up something. We expect that this will change the course of Bluefin for the better, forever. We can't wait to show you, until then, enjoy!
+
+![banner](https://github.com/user-attachments/assets/0c6a5557-d629-4af8-8c8f-e34b886dde1f)
+
