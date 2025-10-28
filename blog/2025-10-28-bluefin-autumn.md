@@ -29,7 +29,7 @@ Here's the major release information:
 
   * [GNOME 48 release notes](https://release.gnome.org/48/)
   * [Fedora 42 release notes](https://docs.fedoraproject.org/en-US/fedora/f42/release-notes/)
-  * Bluefin changelog
+  * [Bluefin changelog](https://github.com/ublue-os/bluefin/releases/tag/gts-20251028) - detailed changes
 
 ## What is Bluefin?​
 
@@ -58,7 +58,8 @@ There are a few major changes from a Bluefin perspective that we've been looking
 
 ### Installation Experience​
 
-- The Anaconda web-ui installer is now the default installer, dramatically improving the experience.
+- The Anaconda web-ui installer is now the default installer, dramatically improving the experience. We say goodbye to the old GTK Anaconda installer.
+- We'll be automatically refreshing all the Bluefin ISOs once a month to ensure the installation media is fresh. 
 
 ### Introducing Bazaar
 
