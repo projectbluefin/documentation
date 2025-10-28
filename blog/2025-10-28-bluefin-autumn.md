@@ -7,7 +7,7 @@ tags: [announcements]
 
 ![banner](https://github.com/user-attachments/assets/1b7b7f22-7212-4086-ac00-1d7c534fb9a3)
 
-Guardians, today Bluefin GTS switched its base from Fedora 41 to Fedora 42. The gathering of raptors has begun. In a few weeks Bluefin (aka `bluefin:stable`) releases and we will start the cycle all over again.
+Guardians, today Bluefin GTS switched its base from Fedora 41 to Fedora 42. The gathering of raptors has begun. In a two weeks Bluefin (aka `bluefin:stable`) releases on Fedora 43 and we will start the cycle all over again!
 
 :::note[Release Soundtrack]
 
