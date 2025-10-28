@@ -212,9 +212,6 @@ Haha yep, I can't hide from the data though, free me from this!
 
 Feel free to [browse around](https://insights.linuxfoundation.org/project/ublue-os-bluefin/repository/ublue-os-bluefin) and learn cool things about Bluefin's creators.
 
-
-[lfx charts]
-
 ### What's Next?​
 
 After KubeCon we head into the holidays, where things will slow down significantly. We've been in the lab with mad doctor Timothée Ravier and have been cooking up something. We expect that this will change the course of Bluefin for the better, forever. We can't wait to show you, until then, enjoy!
