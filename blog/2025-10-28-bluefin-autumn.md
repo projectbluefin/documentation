@@ -89,7 +89,7 @@ Speaking of packages, we've been doing more work engaging with Homebrew develope
 <iframe width="560" height="315" src="https://www.youtube.com/embed/-LVnq_xXCnk?si=lHHtGkZjYBC1pKJ1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 
-Let us know if you're interested in working on Homebrew for Linux, we have opened a [homebrew tap] so that we can interate on bringing cool new things to you. A huge shoutout goes to [Yulian Kuncheff](https://ko-fi.com/yulian) and [Ahmed Adan](https://github.com/sponsors/ahmedadan) for spearheading this effort, please consider donating! 
+Let us know if you're interested in working on Homebrew for Linux, we have opened a [homebrew tap](https://github.com/ublue-os/homebrew-tap) so that we can interate on bringing cool new things to you. A huge shoutout goes to [Yulian Kuncheff](https://ko-fi.com/yulian) and [Ahmed Adan](https://github.com/sponsors/ahmedadan) for spearheading this effort, please consider donating! 
 
 ### Fonts
 
