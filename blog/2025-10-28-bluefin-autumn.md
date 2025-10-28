@@ -192,7 +192,7 @@ NOTE: The `stable` and `stable-daily` branches will move to F43 in two weeks.
 
 Bluefin is an active predator and is constantly hungry. You can help keep Bluefin healthy by becoming a contributor! We are an open source project and accept contributions:
 
-  * [Help Wanted issues](https://github.com/ublue-os/main/issues%3Fq%3Dis%253Aissue%2Bis%253Aopen%2Blabel%253A%2522help%2Bwanted%2522)
+  * [Help Wanted issues](https://github.com/ublue-os/main/issues?q=is%3Aissue%20state%3Aopen%20label%3A"help%20wanted")
   * [Contributing Guide](https://docs.projectbluefin.io/contributing/)
 
 As a cloud native project we are always looking for contributors with skills in Podman, Docker, CI/CD, GitHub Actions, and good ole bash.
