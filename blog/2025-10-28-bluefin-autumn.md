@@ -93,7 +93,7 @@ Let us know if you're interested in working on Homebrew for Linux, we have opene
 
 ### Fonts
 
-The fonts have been a disaster for a long time, we're finally ripping the bandaid off and removing a bunch of fonts from the image. For you command line nerds you can install any of the [fonts listed in Homebrew](https://formulae.brew.sh/cask-font/) or use a tool like Embellish to install more fonts.
+The fonts have been a disaster for a long time, we're finally ripping the bandaid off and removing a bunch of fonts from the image. For you command line nerds you can install any of the [fonts listed in Homebrew](https://formulae.brew.sh/cask-font/) or use a tool like [Embellish](https://flathub.org/en/apps/io.github.getnf.embellish) to install more fonts.
 
 If you're in developer mode you can bring the monospace fonts back with `ujust bluefin-fonts`. 
 
