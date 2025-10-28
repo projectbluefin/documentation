@@ -162,7 +162,11 @@ We choose to help move application development forward via FlatHub instead of fr
 Find your favorite app and see if there's a test build available for a new runtime. And if you have the skills to port applications to new runtimes, now is the time to flex. 😄
 
 
------
+## store.projectbluefin.io
+
+Check out [store.projectbluefin.io](https://store.projectbluefin.io) and pick up some dino merch. Thanks to John Johnson for ensuring our coffee mug game is up to snuff:
+
+![mugs](https://github.com/user-attachments/assets/a5aaef32-6f56-4466-b250-3472690cdf1b)
 
 ## Is that it?​
 
