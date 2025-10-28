@@ -15,13 +15,15 @@ Guardians, today Bluefin GTS switched its base from Fedora 41 to Fedora 42. The 
 
 :::
 
-Looking for Fedora 43? That's here too in `bluefin:latest`, and will roll out to `bluefin:stable` users over the next few weeks. It's tough to write two of these, so we'll likely just move to spring/autumn announcements and whenever major things land. When `bluefin:stable` upgrades I will post it as an addenum in the discussion thread for this post.
+Looking for Fedora 43? That's here too in `bluefin:latest`, and will roll out to `bluefin:stable` users in 2 weeks. It's tough to write two of these, so we'll likely just move to spring/autumn announcements and whenever major things land. When `bluefin:stable` upgrades I will post it as an addenum in the discussion thread for this post.
 
 ## Introduction
 
-Soon I'll be in Atlanta, GA, for [KubeCon + CloudNativeCon](https://events.linuxfoundation.org/kubecon-cloudnativecon-north-america/), come say hello! As a [`bootc`](https://bootc-dev.github.io/) reference architecture we tend to align with the release cadence of other projects. That means we do status reports like this depending on where we are in the world at the time, and to ensure transparency. It's also our chance to gather with attendees and get feedback on how we can make Bluefin better.
+As it ends up F43 will be coming to `bluefin:stable` while we're in Atlanta, GA, for [KubeCon + CloudNativeCon](https://events.linuxfoundation.org/kubecon-cloudnativecon-north-america/), come say hello! As a [`bootc`](https://bootc-dev.github.io/) reference architecture we tend to align with the release cadence of other projects. This usually means that I'm on the road when there's a Bluefin release happening, so we do status reports like this depending on where we are in the world at the time, and to ensure transparency. It's also our chance to gather with attendees and get feedback on how we can make Bluefin better and gather feedback. 
 
 You'll receive this update during your next update window, or you can run an update manually by clicking on this icon:
+
+![update](https://github.com/user-attachments/assets/0bda2d1e-792d-4f91-b958-c2d52f8aec21)
 
 Here's the major release information:
 
