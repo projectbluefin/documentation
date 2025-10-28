@@ -173,7 +173,7 @@ Check out [store.projectbluefin.io](https://store.projectbluefin.io) and pick up
 
 Nothing makes ops people happier than uneventful things.
 
-Today is really like any other, we just updated a few tags, you always have the option to go to any version we support at any time. Wether you like the chill vibe of `bluefin:gts` , the refined aggresiveness of `bluefin:stable` , the raptor abides.
+Today is really like any other, we just updated a few tags, you always have the option to go to any version we support at any time. Wether you like the chill vibe of `bluefin:gts` or the refined aggresiveness of `bluefin:stable` , the raptor abides.
 
 Here's the current lay of the land:
 
