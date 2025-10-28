@@ -98,6 +98,8 @@ If you're in developer mode you can bring the monospace fonts back with `ujust b
 
 We've dropped the GNOME Quick Settings extension for tailscale in favor of the upstream system tray implementation. For more information, [check the docs](https://docs.projectbluefin.io/administration/#virtual-private-networks-vpn), this requires manual set up. 
 
+- [Linux systray application](https://tailscale.com/kb/1597/linux-systray) - these docs will get your tailscale icon going in your tray. 
+
 The tailscale experience is still not where it needs to be, but now that Tailscale has started work on an official system tray implementation we expect this to solidify over the next few upstream releases.
 
 ### `ujust` commands returning
