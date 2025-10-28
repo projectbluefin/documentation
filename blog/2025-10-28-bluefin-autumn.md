@@ -155,7 +155,7 @@ This is important work because we want applications to be updated to the latest 
 
 :::note[FlatHub is critical to the desktop]
 
-We choose to help move application development forward via FlatHub instead of fragmenting the flatpak ecosystem with distribution-specific nonsense. 
+We choose to help move application development forward via FlatHub instead of fragmenting the ecosystem with distribution-specific packaging. This includes shipping a premier FlatHub experience out of the box. You do not have to worry about misconfigured and low-quality Fedora flatpak remotes and packages on Bluefin systems.  
 
 :::
 
