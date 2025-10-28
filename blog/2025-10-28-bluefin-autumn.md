@@ -186,7 +186,7 @@ Here's the current lay of the land:
 | **Application Updates:** | Twice a Day | Twice a Day | Twice a Day |
 | **Kernel:** | Gated | Gated | Ungated |
 
-NOTE: The `stable` and `stable-daily` branches will move to F43 over the following few weeks. 
+NOTE: The `stable` and `stable-daily` branches will move to F43 in two weeks. 
 
 ## Desktop DevOps folks wanted!​
 
