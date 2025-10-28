@@ -25,7 +25,7 @@ You'll receive this update during your next update window, or you can run an upd
 
 ![update](https://github.com/user-attachments/assets/0bda2d1e-792d-4f91-b958-c2d52f8aec21)
 
-Here's the major release information:
+If you've never experienced a Bluefin upgrade before, McPhail has a [full writeup](https://gld.mcphail.uk/posts/how-to-perform-a-major-version-upgrade-on-bluefin/). Here's the major release information:
 
   * [GNOME 48 release notes](https://release.gnome.org/48/)
   * [Fedora 42 release notes](https://docs.fedoraproject.org/en-US/fedora/f42/release-notes/)
