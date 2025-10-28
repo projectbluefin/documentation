@@ -221,5 +221,5 @@ After KubeCon we head into the holidays, where things will slow down significant
 
 ![banner](https://github.com/user-attachments/assets/0c6a5557-d629-4af8-8c8f-e34b886dde1f)
 
-### [Discusion Thread](https://github.com/ublue-os/bluefin/discussions/3510)
+### [Discussion Thread](https://github.com/ublue-os/bluefin/discussions/3510)
 
