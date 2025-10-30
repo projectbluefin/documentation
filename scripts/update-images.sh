@@ -134,7 +134,7 @@ current_date=$(date -u '+%Y-%m-%d %H:%M:%S UTC')
         elif [[ "$line" == *"<!-- LAST_UPDATE -->"* ]]; then
             echo "$line"
             echo ""
-            echo "_This page is automatically updated via GitHub Actions. Last updated: $current_date_"
+            echo "_This page is automatically updated via GitHub Actions. Last updated: ${current_date}_"
             # Skip any trailing content
             break
         else
