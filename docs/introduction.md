@@ -61,9 +61,15 @@ Bluefin is "An interpretation of the Ubuntu spirit built on Fedora technology"â€
     - If you've never used an image-based Linux before, use your computer normally
     - Don't overthink itâ€”just shut your computer off when you're not using it
 
-## Upstream Focus
+## Distroless Focus
 
 Bluefin specifically ships upstream tools in lieue of custom applications. The idea of a "distribution app store" has proven to be unsustainable for desktop application authors, so Bluefin ships tools like [Bazaar](https://github.com/kolunmi/bazaar) and [Homebrew](https://brew.sh) instead. Additionally the team purposely ensures that the workflows used in Bluefin remain not only distribution agnostic, but operating system agnostic. For example, `podman`, `docker`, and `flatpak` instead of distribution specific tooling, etc.
+
+:::info[It's a Cross Platform World]
+
+The workflows in Bluefin are purposely upstream focused -- we believe in a consistent Linux experience for everyone, wether it's WSL on Windows, Podman/Docker on a Mac, or any Linux system. The [cloud native ecosystem](http://cncf.io) has proven that this model works. This allows millions of developers to onboard with a workflow that they know, and allows Linux to compete where it matters the most. A community-driven approach that leads to a sustainable future where we're in charge of our operating systems again. 
+
+:::
 
 ![Bazaar](https://github.com/user-attachments/assets/788def08-5743-4e38-a140-e75148f8a1c7)
 
