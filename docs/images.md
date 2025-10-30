@@ -21,6 +21,12 @@ This page shows the latest published container images for Bluefin OS.
 | `stable-20250831` | 2025-08-31 | [View Package](https://github.com/ublue-os/bluefin/pkgs/container/bluefin) |
 <!-- STABLE_IMAGES_END -->
 
+### Stable Daily Release
+
+| Image Name | Publication Date | Package Link |
+|------------|------------------|--------------|
+<!-- STABLE_DAILY_IMAGES_START -->
+<!-- STABLE_DAILY_IMAGES_END -->
 
 ### GTS Release
 

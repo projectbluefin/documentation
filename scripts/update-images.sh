@@ -66,8 +66,12 @@ temp_file=$(mktemp)
 
 # Fetch images for each release type (15 images each, sorted newest first)
 echo "Fetching stable images..."
-stable_data=$(fetch_images "ublue-os" "bluefin" "stable" 15)
+stable_data=$(fetch_images "ublue-os" "bluefin" "stable-[0-9]" 15)
 stable_images=$(format_table_rows "bluefin" "bluefin" "$stable_data")
+
+echo "Fetching stable-daily images..."
+stable_daily_data=$(fetch_images "ublue-os" "bluefin" "stable-daily" 15)
+stable_daily_images=$(format_table_rows "bluefin" "bluefin" "$stable_daily_data")
 
 echo "Fetching GTS images..."
 gts_data=$(fetch_images "ublue-os" "bluefin" "gts" 15)
@@ -88,6 +92,13 @@ current_date=$(date -u '+%Y-%m-%d %H:%M:%S UTC')
             echo "$stable_images"
             # Skip until end marker
             while IFS= read -r line && [[ "$line" != *"<!-- STABLE_IMAGES_END -->"* ]]; do
+                :
+            done
+            echo "$line"
+        elif [[ "$line" == *"<!-- STABLE_DAILY_IMAGES_START -->"* ]]; then
+            echo "$line"
+            echo "$stable_daily_images"
+            while IFS= read -r line && [[ "$line" != *"<!-- STABLE_DAILY_IMAGES_END -->"* ]]; do
                 :
             done
             echo "$line"
