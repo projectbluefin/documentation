@@ -19,6 +19,10 @@ This page shows the latest published container images for Bluefin OS.
 | `stable-20250907` | 2025-09-07 | [View Package](https://github.com/ublue-os/bluefin/pkgs/container/bluefin) |
 | `stable-20250831` | 2025-08-31 | [View Package](https://github.com/ublue-os/bluefin/pkgs/container/bluefin) |
 
+### Stable Daily Release
+
+| Image Name | Publication Date | Package Link |
+|------------|------------------|--------------|
 
 ### GTS Release
 
@@ -34,7 +38,6 @@ This page shows the latest published container images for Bluefin OS.
 | `gts-20250921` | 2025-09-21 | [View Package](https://github.com/ublue-os/bluefin/pkgs/container/bluefin) |
 | `gts-20250914` | 2025-09-14 | [View Package](https://github.com/ublue-os/bluefin/pkgs/container/bluefin) |
 | `gts-20250907` | 2025-09-07 | [View Package](https://github.com/ublue-os/bluefin/pkgs/container/bluefin) |
-<!-- GTS_IMAGES_END -->
 
 ### LTS Release
 
@@ -51,4 +54,5 @@ This page shows the latest published container images for Bluefin OS.
 | `lts.20250907` | 2025-09-07 | [View Package](https://github.com/ublue-os/bluefin-lts/pkgs/container/bluefin-lts) |
 | `lts.20250905` | 2025-09-05 | [View Package](https://github.com/ublue-os/bluefin-lts/pkgs/container/bluefin-lts) |
 
+<!-- LAST_UPDATE -->
 *This page is automatically updated via GitHub Actions. Last updated: 2025-10-30 19:14:12 UTC*
