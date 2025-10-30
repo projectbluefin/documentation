@@ -42,6 +42,7 @@ fetch_images() {
          {
              id: .id,
              tag: ([.metadata.container.tags[] | select(test($pattern))][0]),
+             all_tags: .metadata.container.tags,
              created_at: .created_at
          }
         ] | 
@@ -56,9 +57,19 @@ format_table_rows() {
     local package=$2
     local version_data=$3
     
-    echo "$version_data" | jq -r --arg repo "$repo" --arg pkg "$package" \
-        'select(.tag != null) | 
-        "| `\(.tag)` | \(.created_at | split("T")[0]) | [View Package](https://github.com/ublue-os/\($repo)/pkgs/container/\($pkg)/\(.id)?tag=\(.tag)) |"'
+    echo "$version_data" | jq -r --arg repo "$repo" --arg pkg "$package" '
+        select(.tag != null) | 
+        
+        # Build labels for special tags
+        (
+            if (.all_tags | contains(["latest"])) then " 🏷️ **latest**" else "" end +
+            if (.all_tags | index("stable") != null) then " 🏷️ **stable**" else "" end +
+            if (.all_tags | contains(["stable-daily"])) then " 🏷️ **stable-daily**" else "" end +
+            if (.all_tags | index("lts") != null) then " 🏷️ **lts**" else "" end
+        ) as $labels |
+        
+        "| `\(.tag)`\($labels) | \(.created_at | split("T")[0]) | [View Package](https://github.com/ublue-os/\($repo)/pkgs/container/\($pkg)/\(.id)?tag=\(.tag)) |"
+    '
 }
 
 # Temporary file for the new content
