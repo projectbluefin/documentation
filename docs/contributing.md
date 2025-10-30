@@ -14,25 +14,40 @@ You don't need permission to contribute to your own destiny.
 
 :::
 
+## Overview
+
+**Repository:** [@ublue-os/bluefin](https://github.com/ublue-os/bluefin)
+**License:** Apache 2.0
+**Maintainers:** 4 core maintainers (@castrojo, @p5, @m2Giles, @tulilirockz)
+**Daily Activity:** 8-12 commits/day (including automated updates)
+**Review Time:** Manual PRs reviewed within 24-48 hours
+
 ## Understanding Bluefin's Architecture
+
+### Image-Based Development
+
+Bluefin uses OCI container images as the distribution mechanism. Every commit to the repository triggers builds that create bootable OS images. This architecture means:
+
+- **Changes are atomic**: Updates apply all-or-nothing
+- **Built-in rollback**: Previous deployments remain available
+- **Container-based builds**: All images built via GitHub Actions
+- **Multi-variant support**: Base, DX (developer), nvidia, and gts (LTS) variants
 
 ### Build System
 
-Bluefin's build process is orchestrated by `just` and defined in the `Justfile`. The core components are:
-- **Justfile**: The command runner that orchestrates the entire build process. It defines recipes for building, testing, and cleaning.
-- **Containerfile**: A multi-stage container build file that defines the base image layers and executes the main build scripts.
-- **Build scripts**: A series of shell scripts located in the `build_files/` directory, organized by image variant (`base`, `dx`) and execution order. These scripts handle package installation, system configuration, and cleanup.
-- **GitHub Actions**: Automated CI/CD workflows located in `.github/workflows/` that use `just` to build and publish images.
-- **Renovate Bot**: Automated dependency updates for base images and other components.
+Bluefin images are built using:
+- **Containerfile**: Defines the base image layers and build arguments
+- **Build scripts**: Located in `build_files/` directory, organized by stage
+- **GitHub Actions**: Automated workflows in `.github/workflows/`
+- **Renovate Bot**: Automated dependency updates (60% of all commits)
 
 ### Release Channels
 
 | Channel | Purpose | Update Frequency | Fedora Version |
 |---------|---------|------------------|----------------|
-| **latest** | Daily builds | Multiple times per day | F42 (current) |
-| **stable** | Weekly builds | Weekly | F42 |
-| **gts** | Grand touring support | Weekly | F41 (GTS) |
-| **lts** | Long term support | Weekly | CentOS 10 |
+| **latest** | Daily builds | Multiple times per day | 43 (current) |
+| **stable** | Weekly builds | Weekly | 43 |
+| **gts** | Long-term support | As needed | 42 (LTS) |
 
 ## Getting Started
 
@@ -53,6 +68,10 @@ Start small! Documentation improvements or simple package additions are great fi
 - Text editor (VS Code, vim, etc.)
 - GitHub account with 2FA enabled
 - Podman or Docker (for local builds)
+
+**Optional but Recommended:**
+- Bluefin installation (for testing)
+- Access to @ublue-os Discord or discussion forum
 
 ### Fork and Clone
 
@@ -96,12 +115,11 @@ open "https://github.com/issues?q=is%3Aopen+is%3Aissue+user%3Aublue-os+archived%
 ```
 
 **Common Contribution Areas:**
-- **Help Wanted**: Issues labeled `help-wanted`
-- **Bug fixes**: Issues labeled `bug`
-- **Package additions**: Issues labeled `enhancement`
-- **Documentation**: Issues labeled `documentation`
-- **Build improvements**: Issues labeled `just` or `github_actions`
-- **DX features**: Issues labeled `dx`
+- 🐛 **Bug fixes**: Issues labeled `bug`
+- 📦 **Package additions**: Issues labeled `enhancement`
+- 📝 **Documentation**: Issues labeled `documentation`
+- 🔧 **Build improvements**: Issues labeled `just` or `github_actions`
+- 🎨 **DX features**: Issues labeled `dx`
 
 ### Branching Strategy
 
@@ -115,13 +133,13 @@ open "https://github.com/issues?q=is%3Aopen+is%3Aissue+user%3Aublue-os+archived%
    ```bash
    # For a bug fix
    git checkout -b fix/cockpit-startup-crash
-   
+
    # For a feature
    git checkout -b feat/add-bazaar-integration
-   
+
    # For documentation
    git checkout -b docs/improve-local-build-guide
-   
+
    # For chores/maintenance
    git checkout -b chore/update-copr-repos
    ```
@@ -145,15 +163,15 @@ bluefin/
 │       ├── reusable-build.yml     # Shared build logic
 │       └── clean.yml              # Cleanup workflows
 ├── build_files/
-│   ├── base/               # Base image build scripts (04-packages.sh is key)
-│   ├── dx/                 # Developer edition scripts (03-packages-dx.sh is key)
-│   └── shared/             # Shared utilities and scripts
+│   ├── base/               # Base image build scripts
+│   ├── shared/             # Shared utilities and scripts
+│   └── dx/                 # Developer edition scripts
 ├── system_files/
 │   └── shared/             # Files copied into the image
 ├── flatpaks/               # Flatpak app lists
 ├── just/                   # Just recipes (ujust commands)
 ├── iso_files/              # ISO-specific configurations
-├── Justfile                # Main build automation recipes
+├── packages.json           # Package manifest
 └── Containerfile           # Main image definition
 ```
 
@@ -161,60 +179,24 @@ bluefin/
 
 **1. Adding a Package**
 
-Package management in Bluefin is handled through shell scripts in the `build_files` directory, not a single JSON file. This allows for more complex installation logic and better separation of concerns.
+Edit `packages.json`:
+```bash
+vim packages.json
+```
 
-**Process:**
-
-1.  **Identify the correct script**:
-    *   For packages in the base image (for all users), edit `build_files/base/04-packages.sh`.
-    *   For packages in the Developer Experience (DX) image, edit `build_files/dx/03-packages-dx.sh`.
-
-2.  **Determine the package source**:
-    *   **Fedora Repositories**: For packages available in the standard Fedora repositories.
-    *   **COPR Repositories**: For packages from a COPR (Cool Other Package Repo).
-
-3.  **Edit the script**:
-
-    *   **For Fedora Packages**:
-        Add your package name to the `FEDORA_PACKAGES` array in the appropriate script. Keep the list alphabetized.
-
-        *Example: Adding `htop` to the base image in `build_files/base/04-packages.sh`*
-        ```bash
-        FEDORA_PACKAGES=(
-            # ... other packages
-            glow
-            gnome-shell-extension-appindicator
-            htop  # Add your package here
-            gum
-            hplip
-            # ... other packages
-        )
-        ```
-
-    *   **For COPR Packages**:
-        Use the `copr_install_isolated` helper function. This function enables the COPR, installs the package, and disables it again to prevent conflicts. Add this call after the main `dnf install` command for `FEDORA_PACKAGES`.
-
-        *Example: Adding `my-copr-package` from `user/repo` COPR to the DX image in `build_files/dx/03-packages-dx.sh`*
-        ```bash
-        # ... after the dnf5 -y install "${FEDORA_PACKAGES[@]}" line
-
-        echo "Installing DX COPR packages with isolated repo enablement..."
-        copr_install_isolated "user/repo" "my-copr-package"
-        ```
-
-4.  **Excluding a Package**:
-    To remove a package, add it to the `EXCLUDED_PACKAGES` array in the same script.
-
-    *Example: Excluding `unwanted-package` from the base image*
-    ```bash
-    EXCLUDED_PACKAGES=(
-        # ... other packages
-        unwanted-package
-    )
-    ```
-
-5.  **Test your changes**:
-    After making changes, it's recommended to run a local build to ensure your changes haven't broken the build process. See the "Testing Your Changes" section below.
+Add your package to the appropriate array:
+```json
+{
+  "all": {
+    "include": {
+      "rpm": [
+        "existing-package",
+        "your-new-package"
+      ]
+    }
+  }
+}
+```
 
 **3. Adding a Just Recipe**
 
@@ -248,10 +230,10 @@ Always test your changes with a local build (see Testing section).
 Edit the appropriate flatpak list file:
 ```bash
 # For all Bluefin variants
-edit flatpaks/system-flatpaks.list
+edit flatpaks/bluefin-list.txt
 
 # For DX variant only
-edit flatpaks/system-flatpaks-dx.list
+edit flatpaks/bluefin-dx-list.txt
 ```
 
 Add Flatpak IDs (one per line):
@@ -350,21 +332,7 @@ Always test your changes locally or via PR builds before merging. Broken builds 
 
 ### Local Build Testing
 
-**Option 1: Using `just` (Recommended)**
-
-The `Justfile` provides convenient recipes for building. This is the easiest and recommended way to build locally.
-
-```bash
-# Build the base bluefin image for the latest stream
-just build bluefin latest main
-
-# Build the developer (dx) variant with nvidia drivers
-just build bluefin-dx latest nvidia
-```
-
-**Option 2: Full Container Build with `podman`**
-
-If you prefer not to use `just`, you can invoke `podman` directly. This is useful if you don't have `just` installed or need more control over the build arguments.
+**Option 1: Full Container Build** (Recommended for maintainers)
 
 ```bash
 # Build the base image
@@ -958,7 +926,7 @@ git push origin your-branch
 strategy:
   matrix:
     variant: [bluefin, bluefin-dx]
-    fedora: [41, 42]
+    fedora: [42, 43]
 ```
 
 ### Build Script Development
@@ -1104,7 +1072,7 @@ xargs flatpak --system -y install --or-update < /etc/ublue-os/system-flatpaks-dx
 
 ## Featuring Flatpaks in Bazaar
 
-Bazaar’s featured sections are defined in a YAML configuration file:  
+Bazaar’s featured sections are defined in a YAML configuration file:
 `system_files/shared/usr/share/ublue-os/bazaar/config.yaml`
 
 Each section (e.g., "Bluefin Recommends", "Browsers", "Media") contains an `appids` list specifying which Flatpaks appear in that section. To feature a Flatpak:
