@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e
 
+# Enable more verbose error reporting
+set -o pipefail
+
 # Check for GITHUB_TOKEN
 if [ -z "$GITHUB_TOKEN" ]; then
     echo "Warning: GITHUB_TOKEN not set. API requests may be rate limited."
@@ -20,11 +23,20 @@ fetch_images() {
     # This queries GHCR (ghcr.io) properly through the Packages API
     local url="https://api.github.com/orgs/${org}/packages/container/${package}/versions?per_page=100"
     
+    local response
     if [ -n "$AUTH_HEADER" ]; then
-        curl -s -H "$AUTH_HEADER" -H "Accept: application/vnd.github+json" "$url"
+        response=$(curl -s -H "$AUTH_HEADER" -H "Accept: application/vnd.github+json" "$url")
     else
-        curl -s -H "Accept: application/vnd.github+json" "$url"
-    fi | jq -r --arg pattern "^${tag_pattern}" '
+        response=$(curl -s -H "Accept: application/vnd.github+json" "$url")
+    fi
+    
+    # Validate response is valid JSON array
+    if ! echo "$response" | jq -e 'if type == "array" then true else false end' > /dev/null 2>&1; then
+        echo "Error: Invalid API response for ${package}" >&2
+        return 1
+    fi
+    
+    echo "$response" | jq -r --arg pattern "^${tag_pattern}" '
         [.[] | 
          select(.metadata.container.tags[] | test($pattern)) |
          {
