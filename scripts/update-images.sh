@@ -1,64 +1,69 @@
 #!/bin/bash
 set -e
 
-# Function to fetch release tags from GitHub releases
-fetch_images() {
-    local repo=$1
-    local tag_pattern=$2
-    local limit=$3
-    
-    # Fetch releases from GitHub API (public, no auth needed)
-    curl -s "https://api.github.com/repos/ublue-os/${repo}/releases?per_page=100" \
-        | jq -r '.[].tag_name' \
-        | grep -E "^${tag_pattern}" \
-        | head -n "$limit"
-}
+# Check for GITHUB_TOKEN
+if [ -z "$GITHUB_TOKEN" ]; then
+    echo "Warning: GITHUB_TOKEN not set. API requests may be rate limited."
+    AUTH_HEADER=""
+else
+    AUTH_HEADER="Authorization: Bearer $GITHUB_TOKEN"
+fi
 
-# Function to get release date
-get_release_date() {
-    local repo=$1
-    local tag=$2
+# Function to fetch package versions from GitHub Packages API
+fetch_images() {
+    local org=$1
+    local package=$2
+    local tag_pattern=$3
+    local limit=$4
     
-    curl -s "https://api.github.com/repos/ublue-os/${repo}/releases/tags/${tag}" \
-        | jq -r '.published_at' \
-        | cut -d'T' -f1
+    # Fetch package versions from GitHub Packages API with authentication
+    # This queries GHCR (ghcr.io) properly through the Packages API
+    local url="https://api.github.com/orgs/${org}/packages/container/${package}/versions?per_page=100"
+    
+    if [ -n "$AUTH_HEADER" ]; then
+        curl -s -H "$AUTH_HEADER" -H "Accept: application/vnd.github+json" "$url"
+    else
+        curl -s -H "Accept: application/vnd.github+json" "$url"
+    fi | jq -r --arg pattern "^${tag_pattern}" '
+        [.[] | 
+         select(.metadata.container.tags[] | test($pattern)) |
+         {
+             id: .id,
+             tag: ([.metadata.container.tags[] | select(test($pattern))][0]),
+             created_at: .created_at
+         }
+        ] | 
+        sort_by(.created_at) | 
+        reverse | 
+        .[:'"$limit"'][]'
 }
 
 # Function to format image data as markdown table rows
 format_table_rows() {
     local repo=$1
     local package=$2
-    local tags=$3
+    local version_data=$3
     
-    while IFS= read -r tag; do
-        [ -z "$tag" ] && continue
-        
-        # Get release date
-        formatted_date=$(get_release_date "$repo" "$tag")
-        
-        # Create package URL - point to GHCR package page
-        package_url="https://github.com/ublue-os/${repo}/pkgs/container/${package}"
-        
-        # Output markdown row
-        echo "| \`${tag}\` | ${formatted_date} | [View Package](${package_url}) |"
-    done <<< "$tags"
+    echo "$version_data" | jq -r --arg repo "$repo" --arg pkg "$package" \
+        'select(.tag != null) | 
+        "| `\(.tag)` | \(.created_at | split("T")[0]) | [View Package](https://github.com/ublue-os/\($repo)/pkgs/container/\($pkg)/\(.id)?tag=\(.tag)) |"'
 }
 
 # Temporary file for the new content
 temp_file=$(mktemp)
 
-# Fetch images for each release type
+# Fetch images for each release type (15 images each, sorted newest first)
 echo "Fetching stable images..."
-stable_tags=$(fetch_images "bluefin" "stable" 10)
-stable_images=$(format_table_rows "bluefin" "bluefin" "$stable_tags")
+stable_data=$(fetch_images "ublue-os" "bluefin" "stable" 15)
+stable_images=$(format_table_rows "bluefin" "bluefin" "$stable_data")
 
 echo "Fetching GTS images..."
-gts_tags=$(fetch_images "bluefin" "gts" 10)
-gts_images=$(format_table_rows "bluefin" "bluefin" "$gts_tags")
+gts_data=$(fetch_images "ublue-os" "bluefin" "gts" 15)
+gts_images=$(format_table_rows "bluefin" "bluefin" "$gts_data")
 
 echo "Fetching LTS images..."
-lts_tags=$(fetch_images "bluefin-lts" "lts" 10)
-lts_images=$(format_table_rows "bluefin-lts" "bluefin-lts" "$lts_tags")
+lts_data=$(fetch_images "ublue-os" "bluefin-lts" "lts" 15)
+lts_images=$(format_table_rows "bluefin-lts" "bluefin-lts" "$lts_data")
 
 # Get current timestamp
 current_date=$(date -u '+%Y-%m-%d %H:%M:%S UTC')

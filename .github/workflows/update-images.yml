@@ -14,6 +14,7 @@ on:
 
 permissions:
   contents: write
+  packages: read
 
 jobs:
   update-images:
@@ -25,6 +26,8 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Fetch image data and update page
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           chmod +x scripts/update-images.sh
           ./scripts/update-images.sh
