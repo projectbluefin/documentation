@@ -57,6 +57,11 @@ format_table_rows() {
     local package=$2
     local version_data=$3
     
+    # Output table header first
+    echo "| Image Name | Publication Date | Package Link |"
+    echo "| ---------- | ---------------- | ------------ |"
+    
+    # Then output the data rows
     echo "$version_data" | jq -r --arg repo "$repo" --arg pkg "$package" '
         select(.tag != null) | 
         
