@@ -89,8 +89,12 @@ gts_data=$(fetch_images "ublue-os" "bluefin" "gts" 15)
 gts_images=$(format_table_rows "bluefin" "bluefin" "$gts_data")
 
 echo "Fetching LTS images..."
-lts_data=$(fetch_images "ublue-os" "bluefin-lts" "lts" 15)
-lts_images=$(format_table_rows "bluefin-lts" "bluefin-lts" "$lts_data")
+if lts_data=$(fetch_images "ublue-os" "bluefin-lts" "lts" 15); then
+    lts_images=$(format_table_rows "bluefin-lts" "bluefin-lts" "$lts_data")
+else
+    echo "Warning: Failed to fetch LTS images, skipping..."
+    lts_images=""
+fi
 
 # Get current timestamp
 current_date=$(date -u '+%Y-%m-%d %H:%M:%S UTC')
@@ -128,8 +132,10 @@ current_date=$(date -u '+%Y-%m-%d %H:%M:%S UTC')
             done
             echo "$line"
         elif [[ "$line" == *"<!-- LAST_UPDATE -->"* ]]; then
-            echo "*This page is automatically updated via GitHub Actions. Last updated: $current_date*"
-            # Skip any trailing timestamps
+            echo "$line"
+            echo ""
+            echo "_This page is automatically updated via GitHub Actions. Last updated: $current_date_"
+            # Skip any trailing content
             break
         else
             echo "$line"
