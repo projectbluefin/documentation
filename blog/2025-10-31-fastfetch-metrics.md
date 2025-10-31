@@ -1,5 +1,5 @@
 ---
-title: "Flex your fastfetch"
+title: "Flex your `fastfetch`"
 date: 2025-10-31
 authors: [renner0e, castrojo]
 ---
