@@ -1,6 +1,6 @@
 # Bluefin Documentation
 
-Bluefin documentation is a Docusaurus 3.8.1 TypeScript website that provides comprehensive documentation for the Bluefin operating system. The site generates both documentation pages and changelogs from markdown files.
+Bluefin documentation is a Docusaurus 3.8.1 TypeScript website that provides comprehensive documentation for the Bluefin operating system. The site generates documentation pages from markdown files and auto-fetches release feeds for changelogs.
 
 **Always reference these instructions first and fallback to search or bash commands only when you encounter unexpected information that does not match the info here.**
 
@@ -102,24 +102,35 @@ docker compose down
 ### Repository Structure
 
 ```
-docs/                    # Documentation markdown files
-blog/                   # Blog posts
-changelogs/             # Changelog content (manually created and auto-generated)
+docs/                    # Documentation markdown files (26 files)
+blog/                   # Blog posts (16 files)
+  authors.yaml          # Blog author information with socials
+changelogs/             # Changelog welcome content (manually created)
+  authors.yaml          # Changelog author information
 src/                    # React components and pages
+  components/           # React components (FeedItems, PackageSummary, CommunityFeeds)
+  config/               # Configuration (packageConfig.ts)
+  pages/                # Custom pages (changelogs.tsx)
+  types/                # TypeScript type definitions
+  css/                  # Custom styling
 static/                 # Static assets (images, feeds, etc.)
+  feeds/                # Auto-generated release feeds (JSON)
+  img/                  # Images and graphics
 scripts/                # Build scripts (fetch-feeds.js)
 sidebars.ts             # Navigation structure (TypeScript)
-sidebars.js             # Navigation structure (JavaScript, legacy)
-docusaurus.config.ts    # Main configuration
+docusaurus.config.ts    # Main Docusaurus configuration
 package.json            # Dependencies and scripts
+Justfile                # Just command runner recipes (build, serve)
 ```
 
 ### Content Types
 
-- **Documentation**: Files in `docs/` directory, written in Markdown/MDX
-- **Blog Posts**: Files in `blog/` directory, with frontmatter metadata
-- **Changelogs**: Files in `changelogs/` directory, manually created content
-- **Release Feeds**: Auto-fetched JSON files in `static/feeds/` via `fetch-feeds` script
+- **Documentation**: 26 files in `docs/` directory, written in Markdown/MDX
+- **Blog Posts**: 16 files in `blog/` directory, with frontmatter metadata and author attribution from `blog/authors.yaml`
+- **Changelogs**: Manually created welcome content in `changelogs/` directory, displayed alongside auto-generated release feeds
+- **Release Feeds**: Auto-fetched JSON files in `static/feeds/` via `fetch-feeds.js` script
+  - `bluefin-releases.json` - fetched from ublue-os/bluefin releases
+  - `bluefin-lts-releases.json` - fetched from ublue-os/bluefin-lts releases
 - **Static Assets**: Images and files in `static/` directory
 
 ## Development Guidelines
@@ -138,7 +149,8 @@ package.json            # Dependencies and scripts
 - Include clear, tested examples
 - Link to upstream documentation when appropriate
 - Issues labelled with `blog` should generate a docusaurus appropriate blog post with appropriate tags
-- When implementing an issue with the `blog` label add the author's github information into the appropriate places in authors.yml to match the rest
+- When implementing an issue with the `blog` label add the author's github information into the appropriate places in `blog/authors.yaml` to match the rest
+- Authors YAML format includes: name, page, title, url, image_url, and optional socials (bluesky, mastodon, github, linkedin, youtube, blog)
 
 ### Formatting Requirements
 
@@ -174,6 +186,13 @@ package.json            # Dependencies and scripts
 - **Docker**: Optional for containerized development
 - **OS**: Works on Linux, macOS, Windows
 - **Network**: Internet connection required for release feed fetching
+- **Key Dependencies**:
+  - Docusaurus 3.8.1 (core, preset-classic, faster)
+  - React 19.x
+  - TypeScript 5.9.2
+  - Prettier 3.6.2
+  - xml2js 0.6.2 (for feed parsing)
+  - node-fetch 3.3.2 (for fetching feeds)
 
 ## Validation Scenarios
 
@@ -295,13 +314,17 @@ This repository contains documentation for Bluefin OS. The main Bluefin OS image
 
 Common documentation areas include:
 
-- Installation guides (`docs/installation.md`)
-- Developer experience (`docs/bluefin-dx.md`)
+- Installation guides (`docs/installation.md`, `docs/downloads.md`)
+- Developer experience (`docs/bluefin-gdx.md`, `docs/devcontainers.md`)
 - FAQ and troubleshooting (`docs/FAQ.md`)
-- Hardware-specific guides (`docs/framework*.md`)
-- Administrative information (`docs/administration.md`)
+- Hardware-specific guides (`docs/t2-mac.md`)
+- Community information (`docs/communication.md`, `docs/code-of-conduct.md`, `docs/values.md`, `docs/mission.md`)
+- Gaming support (`docs/gaming.md`)
+- LTS information (`docs/lts.md`)
+- Tips and command-line usage (`docs/tips.md`, `docs/command-line.md`)
 
 Other Rules:
 
 - **Remember**: Documentation should be consumable in one sitting and link to upstream docs rather than duplicating content.
 - **Never** create new pages unless explicitly told to do so.
+- **Images page removed**: The automated images page was recently removed (commit 52e6fee). Do not recreate it.
