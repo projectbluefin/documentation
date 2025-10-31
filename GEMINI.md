@@ -56,4 +56,3 @@ The `package.json` file contains the following scripts:
 - `build`: Builds the static site.
 - `prettier`: Formats the code.
 - `fetch-feeds`: Fetches feeds from external sources.
-- `fetch-contributing`: Fetches the contributing guide from another repository.
