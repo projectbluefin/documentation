@@ -1,18 +1,14 @@
 ---
-title: "Bluefin adds usage metrics to fastfetch"
+title: "Flex your fastfetch"
 date: 2025-10-31
 authors: [renner0e, castrojo]
 ---
 
-A new feature has been added to `fastfetch` to display usage metrics. This will give users a better understanding of the project's user base and the popularity of Bazaar.
+[renner0e](https://github.com/renner0e) has been cooking on some lightweight bling. The `fastfetch` output on Bluefin (and Aurora) will now include the [weekly checkins](/analytics) of Bluefin systems, as well as weekly installs of Bazaar. This gives us insight to the ballpark number of Bluefin systems and people diving into the pure Flathub experience. 
 
-This change, contributed by [renner0e](https://github.com/renner0e), adds two new metrics to the `fastfetch` output:
+- **Murder Chickens**: Weekly count of Bluefin users.
+- **Bazaar Installs**: Weekly count of package installations from Bazaar.
 
-- **Murder Chickens**: A weekly count of Bluefin users.
-- **Bazaar Installs**: A weekly count of package installations from Bazaar.
+Expect it to land in next week's build, enjoy! 
 
-This will provide valuable insight into the growth and usage of Bluefin and its features.
-
-The change was implemented in this [pull request](https://github.com/ublue-os/packages/pull/991), with corresponding changes in the [main bluefin repository](https://github.com/ublue-os/bluefin/pull/3548) and the [LTS repository](https://github.com/ublue-os/bluefin-lts/pull/828).
-
-I could not find a screenshot in the pull request, but the change is a simple one-liner that improves the user experience for Homebrew users.
+![flex](https://github.com/user-attachments/assets/7f376819-d9f1-49d3-a8a1-00941cf0ab1b)
