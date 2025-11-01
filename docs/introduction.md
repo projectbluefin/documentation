@@ -45,6 +45,7 @@ Bluefin is "An interpretation of the Ubuntu spirit built on Fedora technology"â€
 - [GNOME Extensions Manager](https://flathub.org/apps/com.mattjakeman.ExtensionManager) ([Donate](https://github.com/sponsors/mjakeman)) included
 - [Bazaar Application Store](https://github.com/kolunmi/bazaar) featuring [Flathub](https://flathub.org):
   - Use a familiar software center UI to install graphical software
+  - Abandoned applications are unlisted. Applications that depend on out of date flatpak runtimes to be excluded from the app store. 
   - [Warehouse](https://flathub.org/apps/io.github.flattool.Warehouse) ([Donate](https://ko-fi.com/heliguy)) included for Flatpak management
 - Quality of Life Features
   - [Starship](https://starship.rs) terminal prompt enabled by default
