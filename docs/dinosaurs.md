@@ -1,5 +1,5 @@
 ---
-title: Dinosaurs and Music
+title: Dinosaurs
 slug: dinosaurs
 ---
 
