@@ -11,15 +11,10 @@ interface YouTubePlaylistProps {
  * Supports:
  * - music.youtube.com/playlist?list=ID
  * - youtube.com/playlist?list=ID
- * - Direct playlist IDs
+ * - Direct playlist IDs (any format: PL, RD, UU, LL, WL, FL, etc.)
  */
 const extractPlaylistId = (playlistIdOrUrl: string): string => {
-  // If it's already just an ID (starts with PL), return it
-  if (playlistIdOrUrl.startsWith("PL")) {
-    return playlistIdOrUrl;
-  }
-
-  // Try to extract from URL
+  // Try to extract from URL first
   try {
     const url = new URL(playlistIdOrUrl);
     const listParam = url.searchParams.get("list");
@@ -27,9 +22,11 @@ const extractPlaylistId = (playlistIdOrUrl: string): string => {
       return listParam;
     }
   } catch (e) {
-    // Not a valid URL, might be just an ID
+    // Not a valid URL, assume it's already a playlist ID
   }
 
+  // Return as-is if it looks like a playlist ID (alphanumeric with common prefixes)
+  // YouTube playlist IDs can start with PL, RD, UU, LL, WL, FL, etc.
   return playlistIdOrUrl;
 };
 
@@ -47,7 +44,6 @@ const YouTubePlaylist: React.FC<YouTubePlaylistProps> = ({
           className={styles.playlistIframe}
           src={`https://www.youtube.com/embed/videoseries?list=${cleanPlaylistId}`}
           title={title}
-          frameBorder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           referrerPolicy="strict-origin-when-cross-origin"
           allowFullScreen
