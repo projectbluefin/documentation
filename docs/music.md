@@ -5,7 +5,7 @@ slug: music
 
 import MusicPlaylist from '@site/src/components/MusicPlaylist';
 
-The Bluefin team releases music playlists regularly. If you would like to curate these songs on another service please send a pull request:
+The Bluefin team releases music playlists regularly. Each song and album has a theme and reason for being included. How do the songs speak to you?
 
 ## Legendary Adventures
 
@@ -83,3 +83,5 @@ Bluefin was born in 2001.
 />
 
 </div>
+
+If you would like to curate these songs on another service please send a pull request.
