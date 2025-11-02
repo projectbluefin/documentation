@@ -9,7 +9,7 @@ const config: Config = {
   tagline: "Bluefin Documentation",
   favicon: "img/logo.svg",
 
-  url: "https://docs.projectbluefin.io/",
+  url: "https://docs.projectbluefin.io",
   baseUrl: "/",
 
   future: {
