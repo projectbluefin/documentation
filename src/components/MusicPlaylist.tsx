@@ -21,8 +21,9 @@ const extractPlaylistId = (playlistIdOrUrl: string): string => {
     if (listParam) {
       return listParam;
     }
-  } catch (e) {
+  } catch {
     // Not a valid URL, assume it's already a playlist ID
+    // This is expected behavior when passing playlist IDs directly
   }
 
   // Return as-is if it looks like a playlist ID (alphanumeric with common prefixes)
@@ -41,7 +42,7 @@ const MusicPlaylist: React.FC<MusicPlaylistProps> = ({ title, playlistId }) => {
           className={styles.embedIframe}
           src={`https://music.youtube.com/embed/playlist?list=${cleanPlaylistId}`}
           title={title}
-          allow="autoplay; clipboard-write; encrypted-media; picture-in-picture"
+          allow="clipboard-write; encrypted-media; picture-in-picture"
           loading="lazy"
         />
       </div>
