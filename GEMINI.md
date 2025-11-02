@@ -1,5 +1,7 @@
 ## Project Overview
 
+Follow the instructions in [.github/copilot-instructions.md](these instructions) as the source of truth. 
+
 This is the documentation website for Bluefin, a custom image of Fedora Silverblue. The website is built using Docusaurus, a static site generator based on React.
 
 The main technologies used are:
