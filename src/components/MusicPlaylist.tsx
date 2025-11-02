@@ -46,6 +46,8 @@ const MusicPlaylist: React.FC<MusicPlaylistProps> = ({ title, playlistId }) => {
 
   useEffect(() => {
     // Load metadata from the build-time generated JSON file
+    // Note: This fetch is cached by the browser, so multiple component instances
+    // will efficiently share the same request. No need for additional memoization.
     fetch("/data/playlist-metadata.json")
       .then((response) => response.json())
       .then((data: PlaylistMetadata[]) => {
