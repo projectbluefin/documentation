@@ -24,7 +24,7 @@ The Bluefin team releases music playlists regularly. If you would like to curate
 
 </div>
 
-# Two
+# Forming the Kettle
 
 <div style={{
   display: 'grid',
