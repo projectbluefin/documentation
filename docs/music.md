@@ -7,7 +7,7 @@ import MusicPlaylist from '@site/src/components/MusicPlaylist';
 
 The Bluefin team releases music playlists regularly. If you would like to curate these songs on another service please send a pull request:
 
-## Latest Adventurs
+## Legendary Adventures
 
 Bluefin in 2025 focuses on upstream projects and contributor growth. 
 
@@ -33,7 +33,7 @@ Bluefin in 2025 focuses on upstream projects and contributor growth.
 
 ## Forming the Kettle
 
-Bluefin forms partnerships with other projects. 
+Bluefin forms partnerships with other legendary projects. 
 
 <div style={{
   display: 'grid',
