@@ -114,7 +114,7 @@ const config: Config = {
       logo: {
         alt: "Bluefin",
         src: "img/logo.svg",
-        href: "https://projectbluefin.io/",
+        href: "https://projectbluefin.io",
       },
       items: [
         {
