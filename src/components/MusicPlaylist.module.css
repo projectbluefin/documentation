@@ -22,7 +22,7 @@
 .thumbnailWrapper {
   position: relative;
   width: 100%;
-  padding-bottom: 56.25%; /* 16:9 aspect ratio */
+  padding-bottom: 100%; /* 1:1 aspect ratio */
   overflow: hidden;
   background-color: var(--ifm-color-emphasis-200);
 }
@@ -33,7 +33,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   transition: transform 0.2s ease;
 }
 
