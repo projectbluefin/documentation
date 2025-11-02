@@ -68,7 +68,7 @@ Bluefin specifically ships upstream tools in lieue of custom applications. The i
 
 :::info[It's a Cross Platform World]
 
-The workflows in Bluefin are purposely upstream focused -- we believe in a consistent Linux experience for everyone, wether it's WSL on Windows, Podman/Docker on a Mac, or any Linux system. The [cloud native ecosystem](http://cncf.io) has proven that this model works. This allows millions of developers to onboard with a workflow that they know, and allows Linux to compete where it matters the most. A community-driven approach that leads to a sustainable future where we're in charge of our operating systems again. 
+The workflows in Bluefin are purposely upstream focused -- we believe in a consistent Linux experience for everyone, wether it's WSL on Windows, Podman/Docker on a Mac, or any Linux system. The [cloud native ecosystem](http://cncf.io) has proven that this model works. This allows millions of existing developers to onboard with a workflow that they already know, and allows Linux to compete where it matters the most. A community-driven approach that leads to a sustainable future where we're in charge of our operating systems again. 
 
 :::
 
