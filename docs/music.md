@@ -7,7 +7,7 @@ import MusicPlaylist from '@site/src/components/MusicPlaylist';
 
 The Bluefin team releases music playlists regularly. If you would like to curate these songs on another service please send a pull request:
 
-# One
+# Origins
 
 <div style={{
   display: 'grid',
@@ -26,6 +26,18 @@ The Bluefin team releases music playlists regularly. If you would like to curate
   title="Bluefin finds Her Way"
   playlistId="PLhiPP9M5fgWEvnp3w66WmcgiKvStzKXl9"
 />
+
+</div>
+
+# Adventures
+
+<div style={{
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+  gap: '1.5rem',
+  marginTop: '2rem',
+  marginBottom: '2rem'
+}}>
 
 <MusicPlaylist 
   title="Bluefin and Achillobator"
@@ -53,6 +65,18 @@ The Bluefin team releases music playlists regularly. If you would like to curate
   title="Bluefin and Dakota"
   playlistId="PLhiPP9M5fgWHRa6Gt0UKWGxr3F0qg9t1g"
 />
+
+</div>
+
+# Legends
+
+<div style={{
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+  gap: '1.5rem',
+  marginTop: '2rem',
+  marginBottom: '2rem'
+}}>
 
 <MusicPlaylist 
   title="Bluefin and the Children of Jensen"
