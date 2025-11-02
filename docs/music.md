@@ -7,7 +7,9 @@ import MusicPlaylist from '@site/src/components/MusicPlaylist';
 
 The Bluefin team releases music playlists regularly. If you would like to curate these songs on another service please send a pull request:
 
-## Adventures
+## Latest Adventurs
+
+Bluefin in 2025 focuses on upstream projects and contributor growth. 
 
 <div style={{
   display: 'grid',
@@ -30,6 +32,8 @@ The Bluefin team releases music playlists regularly. If you would like to curate
 </div>
 
 ## Forming the Kettle
+
+Bluefin forms partnerships with other projects. 
 
 <div style={{
   display: 'grid',
@@ -57,6 +61,8 @@ The Bluefin team releases music playlists regularly. If you would like to curate
 </div>
 
 ## Origins
+
+Bluefin was born in 2001. 
 
 <div style={{
   display: 'grid',
