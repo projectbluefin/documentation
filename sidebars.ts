@@ -41,6 +41,7 @@ const sidebars: SidebarsConfig = {
         "downloads",
         "FAQ",
         "mission",
+        "music",
         "press-kit",
         "tips",
         "values",
