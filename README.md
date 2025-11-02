@@ -29,6 +29,7 @@ npm run start
 ```
 
 > **Note**: The `--legacy-peer-deps` flag is required due to peer dependency conflicts between React versions. If you encounter "Cannot find module" errors (like `xml2js`), make sure you're using this flag during installation.
+
 </details>
 
 Alternatively, you can run the container:
