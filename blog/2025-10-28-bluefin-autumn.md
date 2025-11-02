@@ -11,7 +11,7 @@ Guardians, today Bluefin GTS switched its base from Fedora 41 to Fedora 42. The 
 
 :::note[Release Soundtrack]
 
-[Bluefin and the Bazaar of Destiny](https://music.youtube.com/playlist?list=PLhiPP9M5fgWFOhFgduxhleNTmfVSj9JmO&si=GSYmrNFJQ--KGS-a)
+Check out [Bluefin and the Bazaar of Destiny](/music) on our music page.
 
 :::
 

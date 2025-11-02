@@ -153,10 +153,10 @@ Imagine choosing between LTS, GTS, and stable with just a slider on an update pa
 
 ## Shred to Achillobator
 
-Two new soundtracks accompany this release, enjoy!
+Two new soundtracks accompany this release! Check out our [music page](/music) to listen to:
 
-- [Bluefin and Achillobator](https://music.youtube.com/playlist?list=PLhiPP9M5fgWEZbkq6ZhaHA4b4UqLwZNxt&si=lkAcTlHzaf1Wl5VO)
-- [Bluefin and The Children of Jensen](https://music.youtube.com/playlist?list=PLhiPP9M5fgWH4do22wEvgnoMUQLVYRIxt&si=_KqYuGf3xs_ePaxU)
+- Bluefin and Achillobator
+- Bluefin and The Children of Jensen
 
 # Downloads
 
