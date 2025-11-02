@@ -7,7 +7,7 @@ import MusicPlaylist from '@site/src/components/MusicPlaylist';
 
 The Bluefin team releases music playlists regularly. If you would like to curate these songs on another service please send a pull request:
 
-# Adventures
+## Adventures
 
 <div style={{
   display: 'grid',
@@ -29,7 +29,7 @@ The Bluefin team releases music playlists regularly. If you would like to curate
 
 </div>
 
-# Forming the Kettle
+## Forming the Kettle
 
 <div style={{
   display: 'grid',
@@ -56,7 +56,7 @@ The Bluefin team releases music playlists regularly. If you would like to curate
 
 </div>
 
-# Origins
+## Origins
 
 <div style={{
   display: 'grid',
