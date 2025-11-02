@@ -328,3 +328,4 @@ Other Rules:
 - **Remember**: Documentation should be consumable in one sitting and link to upstream docs rather than duplicating content.
 - **Never** create new pages unless explicitly told to do so.
 - **Images page removed**: The automated images page was recently removed (commit 52e6fee). Do not recreate it.
+- For [music.md](docs/music.md) - always ensure the thumbnail aspect ratio is 1:1 and ensure that the album sizes remain consistent across the page.
