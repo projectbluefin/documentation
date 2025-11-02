@@ -163,32 +163,32 @@ DevPod also has support for JetBrains:
 
 `ujust bluefin-k8s` will install a common set of tools used by Kubernetes administrators. Or install these individually:
 
-| Name                                                              | Description                                                                      |
-| ----------------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| [cdk8s](https://formulae.brew.sh/formula/cdk8s)                     | Defines Kubernetes applications and reusable abstractions using familiar programming languages. |
-| [k0sctl](https://formulae.brew.sh/formula/k0sctl)                   | A command-line tool for bootstrapping and managing k0s Kubernetes clusters.      |
-| [k3sup](https://formulae.brew.sh/formula/k3sup)                     | A light-weight utility to install k3s on any local or remote VM.                 |
-| [kind](https://formulae.brew.sh/formula/kind)                       | A tool for running local Kubernetes clusters using Docker container “nodes”.     |
-| [dagger](https://formulae.brew.sh/formula/dagger)                   | A portable devkit for CI/CD pipelines.                                           |
-| [grype](https://formulae.brew.sh/formula/grype)                     | A vulnerability scanner for container images and filesystems.                    |
-| [helm](https://formulae.brew.sh/formula/helm)                       | The package manager for Kubernetes.                                              |
-| [kubectl](https://formulae.brew.sh/formula/kubectl)                 | The Kubernetes command-line tool, allows you to run commands against Kubernetes clusters. |
-| [k9s](https://formulae.brew.sh/formula/k9s)                         | Provides a terminal UI to interact with your Kubernetes clusters.                |
-| [kubectx](https://formulae.brew.sh/formula/kubectx)                 | A tool to switch between contexts (clusters) on kubectl faster.                  |
-| [pack](https://formulae.brew.sh/formula/pack)                       | A CLI tool to build apps using Cloud Native Buildpacks.                          |
-| [syft](https://formulae.brew.sh/formula/syft)                       | A CLI tool and library for generating a Software Bill of Materials (SBOM) from container images and filesystems. |
+| Name                                                | Description                                                                                                      |
+| --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| [cdk8s](https://formulae.brew.sh/formula/cdk8s)     | Defines Kubernetes applications and reusable abstractions using familiar programming languages.                  |
+| [k0sctl](https://formulae.brew.sh/formula/k0sctl)   | A command-line tool for bootstrapping and managing k0s Kubernetes clusters.                                      |
+| [k3sup](https://formulae.brew.sh/formula/k3sup)     | A light-weight utility to install k3s on any local or remote VM.                                                 |
+| [kind](https://formulae.brew.sh/formula/kind)       | A tool for running local Kubernetes clusters using Docker container “nodes”.                                     |
+| [dagger](https://formulae.brew.sh/formula/dagger)   | A portable devkit for CI/CD pipelines.                                                                           |
+| [grype](https://formulae.brew.sh/formula/grype)     | A vulnerability scanner for container images and filesystems.                                                    |
+| [helm](https://formulae.brew.sh/formula/helm)       | The package manager for Kubernetes.                                                                              |
+| [kubectl](https://formulae.brew.sh/formula/kubectl) | The Kubernetes command-line tool, allows you to run commands against Kubernetes clusters.                        |
+| [k9s](https://formulae.brew.sh/formula/k9s)         | Provides a terminal UI to interact with your Kubernetes clusters.                                                |
+| [kubectx](https://formulae.brew.sh/formula/kubectx) | A tool to switch between contexts (clusters) on kubectl faster.                                                  |
+| [pack](https://formulae.brew.sh/formula/pack)       | A CLI tool to build apps using Cloud Native Buildpacks.                                                          |
+| [syft](https://formulae.brew.sh/formula/syft)       | A CLI tool and library for generating a Software Bill of Materials (SBOM) from container images and filesystems. |
 
 ## Fonts
 
-`ujust bluefin-fonts` will install the following collection of well-curated Mono fonts. Or install these individually. Check the [homebrew website](https://formulae.brew.sh/cask-font/) to add more fonts, or use the included [Embellish](https://flathub.org/en/apps/io.github.getnf.embellish) tool. 
+`ujust bluefin-fonts` will install the following collection of well-curated Mono fonts. Or install these individually. Check the [homebrew website](https://formulae.brew.sh/cask-font/) to add more fonts, or use the included [Embellish](https://flathub.org/en/apps/io.github.getnf.embellish) tool.
 
-| Name                                                              |
-| ----------------------------------------------------------------- |
-| [CaskaydiaMono Nerd Font](https://formulae.brew.sh/cask/font-caskaydia-mono-nerd-font) |
+| Name                                                                                      |
+| ----------------------------------------------------------------------------------------- |
+| [CaskaydiaMono Nerd Font](https://formulae.brew.sh/cask/font-caskaydia-mono-nerd-font)    |
 | [Droid Sans Mono Nerd Font](https://formulae.brew.sh/cask/font-droid-sans-mono-nerd-font) |
-| [Go Mono Nerd Font](https://formulae.brew.sh/cask/font-go-mono-nerd-font) |
-| [IBM Plex Mono Nerd Font](https://formulae.brew.sh/cask/font-ibm-plex-mono-nerd-font) |
-| [Sauce Code Pro Nerd Font](https://formulae.brew.sh/cask/font-sauce-code-pro-nerd-font) |
-| [Source Code Pro](https://formulae.brew.sh/cask/font-source-code-pro) |
-| [Ubuntu Nerd Font](https://formulae.brew.sh/cask/font-ubuntu-nerd-font) |
-| [FiraCode Nerd Font](https://formulae.brew.sh/cask/font-fira-code-nerd-font) |
+| [Go Mono Nerd Font](https://formulae.brew.sh/cask/font-go-mono-nerd-font)                 |
+| [IBM Plex Mono Nerd Font](https://formulae.brew.sh/cask/font-ibm-plex-mono-nerd-font)     |
+| [Sauce Code Pro Nerd Font](https://formulae.brew.sh/cask/font-sauce-code-pro-nerd-font)   |
+| [Source Code Pro](https://formulae.brew.sh/cask/font-source-code-pro)                     |
+| [Ubuntu Nerd Font](https://formulae.brew.sh/cask/font-ubuntu-nerd-font)                   |
+| [FiraCode Nerd Font](https://formulae.brew.sh/cask/font-fira-code-nerd-font)              |

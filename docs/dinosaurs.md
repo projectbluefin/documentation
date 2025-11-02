@@ -3,6 +3,8 @@ title: Dinosaurs and Music
 slug: dinosaurs
 ---
 
+import YouTubePlaylist from '@site/src/components/YouTubePlaylist';
+
 Bluefin features dinosaurs and other prehistoric life in its artwork. Bluefin has friends, we call this Bluefin's [kettle](<https://en.wikipedia.org/wiki/Kettle_(birds)>). All the creatures here are designed and drawn by Jacob Schnurr. You can buy stickers to these and many more designs at [his Etsy store](https://www.etsy.com/shop/JSchnurrCommissions?dd_referrer=https%3A%2F%2Fwww.google.com%2F). See also: [Why dinosaurs](https://www.youtube.com/watch?v=XpKFcLqbd-A&t=2451s)?
 
 Here are the cast of characters! Each represent something important to this ecosystem.
@@ -15,13 +17,40 @@ Illustration by Delphic Melody (M. Gopal)
 
 The Bluefin team releases music playlists regularly. If you would like to curate these songs on another service please send a pull request:
 
-- Bluefin and the Birth of Universal Blue: [YouTube Music Playlist](https://music.youtube.com/playlist?list=PLhiPP9M5fgWHFlG3TS27gyOCQl4Dg115W&si=KfYPk3sBOM8HeRLW)
-- Bluefin finds Her Way: [YouTube Music Playlist](https://music.youtube.com/playlist?list=PLhiPP9M5fgWEvnp3w66WmcgiKvStzKXl9&si=eLmaXtQ6hbqU3LTV)
-- Bluefin and Achillobator: [YouTube Music Playlist](https://music.youtube.com/playlist?list=PLhiPP9M5fgWEZbkq6ZhaHA4b4UqLwZNxt&si=52Te8K6UlFW7DwoF)
-- Bluefin and the Lost Tribe of Contributors: [YouTube Music Playlist](https://music.youtube.com/playlist?list=PLhiPP9M5fgWEuxjlfOEX3fwA-E60-E4TA&si=01SkukMVTmfADwVl)
-- Bluefin and Dakota: [YouTube Music Playlist](https://music.youtube.com/playlist?list=PLhiPP9M5fgWHRa6Gt0UKWGxr3F0qg9t1g&si=pzhf5fA3usxyRquG)
-- Bluefin and the Children of Jensen: [YouTube Music Playlist](https://music.youtube.com/playlist?list=PLhiPP9M5fgWH4do22wEvgnoMUQLVYRIxt&si=YC5nDopgjBZ7fGhA)
-- Bluefin and the Bazaar of Destiny: [YouTube Music Playlist](https://music.youtube.com/playlist?list=PLhiPP9M5fgWFOhFgduxhleNTmfVSj9JmO&si=ccWzNrzlAlGu0Lj3)
+<YouTubePlaylist 
+  title="Bluefin and the Birth of Universal Blue"
+  playlistId="PLhiPP9M5fgWHFlG3TS27gyOCQl4Dg115W"
+/>
+
+<YouTubePlaylist 
+  title="Bluefin finds Her Way"
+  playlistId="PLhiPP9M5fgWEvnp3w66WmcgiKvStzKXl9"
+/>
+
+<YouTubePlaylist 
+  title="Bluefin and Achillobator"
+  playlistId="PLhiPP9M5fgWEZbkq6ZhaHA4b4UqLwZNxt"
+/>
+
+<YouTubePlaylist 
+  title="Bluefin and the Lost Tribe of Contributors"
+  playlistId="PLhiPP9M5fgWEuxjlfOEX3fwA-E60-E4TA"
+/>
+
+<YouTubePlaylist 
+  title="Bluefin and Dakota"
+  playlistId="PLhiPP9M5fgWHRa6Gt0UKWGxr3F0qg9t1g"
+/>
+
+<YouTubePlaylist 
+  title="Bluefin and the Children of Jensen"
+  playlistId="PLhiPP9M5fgWH4do22wEvgnoMUQLVYRIxt"
+/>
+
+<YouTubePlaylist 
+  title="Bluefin and the Bazaar of Destiny"
+  playlistId="PLhiPP9M5fgWFOhFgduxhleNTmfVSj9JmO"
+/>
 
 ## Bluefin and Bluefin GTS
 
