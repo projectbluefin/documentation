@@ -7,6 +7,8 @@ import MusicPlaylist from '@site/src/components/MusicPlaylist';
 
 The Bluefin team releases music playlists regularly. If you would like to curate these songs on another service please send a pull request:
 
+# The Bluefin Cycle
+
 <div style={{
   display: 'grid',
   gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
@@ -44,6 +46,18 @@ The Bluefin team releases music playlists regularly. If you would like to curate
   title="Bluefin and the Children of Jensen"
   playlistId="PLhiPP9M5fgWH4do22wEvgnoMUQLVYRIxt"
 />
+
+</div>
+
+# The Bazaar Cycle
+
+<div style={{
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+  gap: '1.5rem',
+  marginTop: '2rem',
+  marginBottom: '2rem'
+}}>
 
 <MusicPlaylist 
   title="Bluefin and the Bazaar of Destiny"
