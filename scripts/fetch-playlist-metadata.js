@@ -154,12 +154,14 @@ async function fetchPlaylistMetadata(playlistId, title) {
         /<meta property="og:description" content="([^"]+)"/,
       );
       if (descMatch) {
+        // Decode HTML entities in the correct order to prevent double-unescaping
+        // Replace &amp; last since other entities may contain it
         description = descMatch[1]
           .replace(/&quot;/g, '"')
           .replace(/&#39;/g, "'")
-          .replace(/&amp;/g, "&")
           .replace(/&lt;/g, "<")
-          .replace(/&gt;/g, ">");
+          .replace(/&gt;/g, ">")
+          .replace(/&amp;/g, "&");
         console.log(`  ✓ Fallback to meta description`);
       }
     }
