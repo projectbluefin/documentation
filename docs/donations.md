@@ -50,7 +50,6 @@ If your software is included in Bluefin and missing from this list, please send 
 
 - [Atuin](https://github.com/sponsors/atuinsh) - Magical shell history tool with sync and search capabilities
 - [Blur My Shell](https://github.com/sponsors/aunetx) - GNOME Shell extension that adds blur effects to the UI
-- [Clapper](https://liberapay.com/Clapper) - Modern media player built with GTK4 and GStreamer
 - [Deja Dup](https://liberapay.com/DejaDup) - Simple backup utility for GNOME
 - [Distroshelf](https://github.com/sponsors/ranfdev) - Native Linux app store and software center
 - [Extensions Manager](https://github.com/sponsors/mjakeman) - Native GNOME Shell extensions manager
@@ -64,6 +63,7 @@ If your software is included in Bluefin and missing from this list, please send 
 - [Logo Menu](https://github.com/sponsors/Aryan20) - GNOME Shell extension for application launcher
 - [Mozilla](https://foundation.mozilla.org/en/?form=donate&gad_source=1) - Organization behind Firefox browser and web technologies
 - [Pika Backup](https://opencollective.com/pika-backup) - Simple backup application designed for GNOME
+- [Showtime](https://github.com/sponsors/kra-mo/) - GNOME Video Player
 - [Thunderbird](https://www.thunderbird.net/en-US/donate/) - Open-source email client with modern features
 - [Warehouse](https://ko-fi.com/heliguy) - Flatpak application manager with intuitive interface
 - [yq](https://github.com/sponsors/mikefarah) - Command-line YAML processor and editor
