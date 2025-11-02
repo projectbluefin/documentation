@@ -30,10 +30,7 @@ const extractPlaylistId = (playlistIdOrUrl: string): string => {
   return playlistIdOrUrl;
 };
 
-const MusicPlaylist: React.FC<MusicPlaylistProps> = ({
-  title,
-  playlistId,
-}) => {
+const MusicPlaylist: React.FC<MusicPlaylistProps> = ({ title, playlistId }) => {
   const cleanPlaylistId = extractPlaylistId(playlistId);
 
   return (
