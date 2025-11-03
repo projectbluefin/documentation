@@ -329,3 +329,17 @@ Other Rules:
 - **Never** create new pages unless explicitly told to do so.
 - **Images page removed**: The automated images page was recently removed (commit 52e6fee). Do not recreate it.
 - For [music.md](docs/music.md) - always ensure the thumbnail aspect ratio is 1:1 and ensure that the album sizes remain consistent across the page.
+
+### Attribution Requirements
+
+AI agents must disclose what tool and model they are using in the "Assisted-by" commit footer:
+
+```text
+Assisted-by: [Model Name] via [Tool Name]
+```
+
+Example:
+
+```text
+Assisted-by: GLM 4.6 via Claude Code
+```
