@@ -98,7 +98,7 @@ You can find Bluefin GDX on the conference circuit!
 
 Bluefin LTS will end up being way more sustainable than Bluefin and Bluefin GTS from a developer perspective. It's more of an initial setup and then we don't touch it as often. We have had periods in beta development where we didn't need to touch it for weeks. If you look [changelogs.projectbluefin.io](https://changelogs.projectbluefin.io) you'll soon notice the pattern, mostly minor version bumps. Nice.
 
-It's also much more advantageous for us to derive off of a base image that ends up being a commercial product -- there is no doubt that CentOS and Red Hat have their weight behind these base images, whereas we are unable to get that level of commitment from Fedora. And as [Steven Rosenberg pointed out](https://zola.passthejoe.net/blog/hello-aeon/), Fedora isn't really improving in this area, and with `bootc`'s composefs work coming along nicely we now have multiple base images to choose from. It will be an interesting year!
+It's also much more advantageous for us to derive off of a base image that ends up being a commercial product -- there is no doubt that CentOS and Red Hat have their weight behind these base images, whereas we are unable to get that level of commitment from Fedora. And as [Steven Rosenberg pointed out](https://tilde.club/~passthejoe/zola/blog/hello-aeon/), Fedora isn't really improving in this area, and with `bootc`'s composefs work coming along nicely we now have multiple base images to choose from. It will be an interesting year!
 
 ## What does this mean for Bluefin GTS?
 
