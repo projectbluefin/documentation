@@ -131,7 +131,7 @@ Your layout may be already included with Fedora, but you need to list extended k
 
 ## How do I install Microsoft fonts?
 
-Follow [these instructions](https://github.com/colindean/homebrew-fonts-nonfree) to install them via homebrew.
+Follow [these instructions](https://github.com/colindean/homebrew-fonts-nonfree) to install them via homebrew. (Skip the homebrew installation instructions). 
 
 ## How do I perform major version upgrades?
 
