@@ -8,7 +8,7 @@ The Bluefin Developer Experience (`bluefin-dx`) is a dedicated developer image w
 
 :::info[Stronger Together]
 
-There are [9.2 million cloud native developers](https://www.cncf.io/wp-content/uploads/2025/04/Blue-DN29-State-of-Cloud-Native-Development.pdf) in the world. Our workflow is based on the development lessons learned from these techniques 
+There are [15.6 million cloud native developers](https://www.cncf.io/announcements/2025/11/11/cncf-and-slashdata-survey-finds-cloud-native-ecosystem-surges-to-15-6m-developers/) in the world. Our workflow is based on the development lessons learned from these techniques 
 
 ::: 
 
