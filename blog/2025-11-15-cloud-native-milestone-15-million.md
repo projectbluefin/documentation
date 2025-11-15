@@ -17,3 +17,5 @@ This represents remarkable growth from the [Q1 2025 survey](https://www.cncf.io/
 This huge number of developers is why we chose `bootc`, and it's reassuring to know that our development model is continuing to grow so quickly. The explosive growth from 9.2 million developers in April to 15.6 million in November demonstrates the rapid mainstream adoption of cloud-native technologies.
 
 :::
+
+## [Discussion](https://github.com/ublue-os/bluefin/discussions/3645)
