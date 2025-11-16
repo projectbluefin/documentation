@@ -78,19 +78,6 @@ Like all Universal Blue images, switching is atomic, allowing for clean switchin
 
 The most current [Docker Engine](https://docs.docker.com/engine/) is included by default and is set up to be the default container runtime for vscode. Using [docker compose](https://danielquinn.org/blog/developing-with-docker/) is also a great way to get started in container development and is an option if devcontainers don't fit your style.
 
-## DevPod
-
-DevPod is an open source tool used to create reproducible developer environments. Each developer environment runs in a separate container and is specified through a `devcontainer.json` file. It's like Codespaces but is open-source, client-only, and unopinionated: it works with any IDE and lets you use any cloud, Kubernetes, or even local `docker` environment.
-
-- [DevPod Website](https://devpod.sh/)
-- [DevPod Documentation](https://devpod.sh/docs/what-is-devpod)
-- [DevPod Quickstart VS Code](https://devpod.sh/docs/getting-started/quickstart-vscode)
-- [Loft.sh](https://www.loft.sh/)
-
-Check out this talk from [Rich Burroughs](https://timeline.richburroughs.dev/):
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/jSVWiecTeo0?si=5qtlkPFtOnAAq8aD" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-
 ## Podman and Podman Desktop
 
 ![Podman Desktop](https://github.com/user-attachments/assets/69f64ed1-7fcc-4040-9a3d-12b71308da1b)
