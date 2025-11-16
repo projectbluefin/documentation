@@ -90,9 +90,7 @@ async function fetchPlaylistMetadata(playlistId, title) {
           // Get description
           if (primaryInfo?.description?.simpleText) {
             description = primaryInfo.description.simpleText;
-            console.log(
-              `  ✓ Description: ${String(description).substring(0, Math.min(60, String(description).length))}...`,
-            );
+            console.log(`  ✓ Description: ${String(description).substring(0, Math.min(60, String(description).length))}...`);
           }
 
           // Get thumbnail (playlist cover art)
