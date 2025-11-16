@@ -9,7 +9,7 @@ The Bluefin team releases music playlists regularly. Each song and album has a t
 
 ## Legendary Adventures
 
-Bluefin in 2025 focuses on upstream projects and contributor growth. 
+Bluefin in 2025 focuses on upstream projects and contributor growth.
 
 <div style={{
   display: 'grid',
@@ -33,7 +33,7 @@ Bluefin in 2025 focuses on upstream projects and contributor growth.
 
 ## Forming the Kettle
 
-Bluefin forms partnerships with other legendary projects. 
+Bluefin forms partnerships with other legendary projects.
 
 <div style={{
   display: 'grid',
@@ -62,7 +62,7 @@ Bluefin forms partnerships with other legendary projects.
 
 ## Origins
 
-Bluefin was born in 2001. 
+Bluefin was born in 2001.
 
 <div style={{
   display: 'grid',
