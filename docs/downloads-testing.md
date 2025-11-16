@@ -47,20 +47,6 @@ The AI workstation with Nvidia and CUDA.\
 | Bluefin GDX | Nvidia        | [📥 bluefin-gdx-x86_64.iso](https://projectbluefin.dev/bluefin-gdx-lts-x86_64.iso)       | [🔐 Verify](https://projectbluefin.dev/bluefin-gdx-lts-x86_64.iso-CHECKSUM)  |
 | Bluefin GDX | ARM (aarch64) | [📥 bluefin-gdx-lts-aarch64.iso](https://projectbluefin.dev/bluefin-gdx-lts-aarch64.iso) | [🔐 Verify](https://projectbluefin.dev/bluefin-gdx-lts-aarch64.iso-CHECKSUM) |
 
-## Older Backup ISOs
-
-These are the older Anaconda-based installers with an older version of Bluefin, but don't worry it will autoupdate. Try this if nothing else works:
-
-#### Bluefin (AMD/Intel)
-
-📥 **Download:** [bluefin-stable.iso](https://projectbluefin.dev/bluefin-stable.iso)  
-🔐 **Verify:** [Checksum](https://projectbluefin.dev/bluefin-stable.iso-CHECKSUM)
-
-#### Bluefin (for Nvidia)
-
-📥 **Download:** [bluefin-nvidia-stable.iso](https://projectbluefin.dev/bluefin-nvidia-stable.iso)  
-🔐 **Verify:** [Checksum](https://projectbluefin.dev/bluefin-nvidia-stable.iso-CHECKSUM)
-
 ## Verifying Downloads with Checksums
 
 **Checksums** allow you to verify that your download completed successfully and wasn't corrupted or tampered with. After downloading an ISO, you can compare its checksum to the official checksum file to ensure integrity. While optional, verification is recommended for important installations.
