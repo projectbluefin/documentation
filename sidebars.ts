@@ -57,7 +57,7 @@ const sidebars: SidebarsConfig = {
       type: "category",
       label: "Contributing",
       collapsed: true,
-      items: ["contributing", "local"],
+      items: ["contributing", "local", "downloads-testing"],
     },
     {
       type: "category",
