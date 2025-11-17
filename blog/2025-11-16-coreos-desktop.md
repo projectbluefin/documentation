@@ -76,7 +76,7 @@ We do NOT have this promotion process today. This is the goal. If you are on `bl
 
 This does mean that we will no longer be shipping the stock Fedora kernel in any branch. We're fine with this since we prefer to keep all our users on a gated kernel. 
 
-### [Discussions and Questions](https://github.com/ublue-os/bluefin/discussions/3654)
+## [Discussions and Questions](https://github.com/ublue-os/bluefin/discussions/3654)
 
 
 
