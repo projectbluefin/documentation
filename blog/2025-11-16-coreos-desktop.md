@@ -56,9 +56,9 @@ At first this looks like a rename, so let's go over the changes:
 
 - `bluefin:next` - all changes will land here first. We make no stability guarantees. It will build daily. This will not replace `bluefin:latest` because we will for sure break things in here. This will build at least daily and every time a change lands
 - `bluefin:testing` - When changes in `:next` have been tested by at least one person they queue up to land in testing. We anticipate things to sit in here for a week or two at a minimum unless we need to fix a regression. This builds daily.
-- `bluefin:stable` - This is effectively the current version of Fedora, except all changes going into this will have at least be vetted by the previous branches. We do NOT have this today. This is the goal.
+- `bluefin:stable` - This is effectively the current version of Fedora, except all changes going into this will have at least be vetted by the previous branches.
 
-If you are on `bluefin:latest` we will point you to `bluefin:stable-daily` so that you are still getting daily builds. We purposely are not moving you to `next` because that will be volatile. Both the `next` and `testing` branches will be opt in.
+We do NOT have this promotion process today. This is the goal. If you are on `bluefin:latest` we will point you to `bluefin:stable-daily` so that you are still getting daily builds. We purposely are not moving you to `next` because that will be volatile. Both the `next` and `testing` branches will be opt in.
 
 ## Benefits
 
