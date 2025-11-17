@@ -39,7 +39,7 @@ In the meantime let's pretend it's out so that we can continue to Bluefin's new 
 
 This has resulted in confusion, especially as Bluefin LTS has come up to speed. So starting in the Spring of 2026 we're moving to this layout: 
 
-### Future Bluefin (November 2026)
+### Future Bluefin (Spring 2026)
 
 |                      | `stable` (default) or `stable-daily` | `testing`               | `next`   |
 | -------------------- | --------------- | -------------------------- | -------------------------- |
