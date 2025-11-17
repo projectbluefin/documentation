@@ -5,20 +5,24 @@ authors: castrojo
 tags: [announcements]
 ---
 
+:::tip[Coming this Spring]
+
 This spring (2026) we are rolling `bluefin:gts` and `bluefin:latest` into `bluefin:stable` for one "Bluefin". No action will be required on your part, this will happen automatically. 
+
+:::
 
 We're doing this for a few reasons:
 
 - The value GTS provided is "older software works better". What it really means is "no one messed with this", changes still made in Bluefin affect this branch immediately. 
 - `bluefin:latest` - this one an antipattern, you want to be able to pin something, and people make assumptions of what it means. We'll transparently move you to `bluefin:stable` too.
 
+If you're new here there's no need to panic, `bluefin:gts` and `bluefin:stable` always share the same version twice a year for a few weeks. We're in that period now, they're both at Fedora 42. 
+
 :::note[Where is F43 in `bluefin:stable`?]
 
 The promotion of `bluefin:stable` is delayed until next week due to waiting for the ZFS module to catch up to Linux 6.17. This typically doesn't happen but we're monitoring the situation and will make the release next week or the week after, depending on the completion of the work.  
 
 ::: 
-
-If you're new here there's no need to panic, `bluefin:gts` and `bluefin:stable` always share the same version twice a year for a few weeks. We're in that period now, they're both at Fedora 42. 
 
 In the meantime let's pretend it's out so that we can continue to Bluefin's new model. The workflow looks like this currently: 
 
