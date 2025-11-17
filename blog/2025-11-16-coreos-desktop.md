@@ -14,7 +14,7 @@ This spring (2026) we are rolling `bluefin:gts` and `bluefin:latest` into `bluef
 We're doing this for a few reasons:
 
 - The value GTS provided is "older software works better". What it really means is "no one messed with this", changes still made in Bluefin affect this branch immediately. 
-- `bluefin:latest` - this one an antipattern, you want to be able to pin something, and people make assumptions of what it means. We'll transparently move you to `bluefin:stable` too.
+- `bluefin:latest` - this one is an antipattern, you want to be able to pin something, and people make assumptions of what it means. We'll transparently move you to `bluefin:stable` too.
 
 If you're new here there's no need to panic, `bluefin:gts` and `bluefin:stable` always share the same version twice a year for a few weeks. We're in that period now, they're both at Fedora 42. 
 
