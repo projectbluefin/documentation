@@ -19,7 +19,7 @@ We're still working on it so there's some improvements to be made, as well as so
 [Bluefin LTS](https://docs.projectbluefin.io/lts) and GDX are nearing the home stretch, with the GNOME48 backport completed and the kernel policy set. It will ship with the stock CentOS kernel, 6.12.0, which will receive updates and backports throughout its lifecycle.
 
 - The hwe stream will be opt in with a `ujust rebase-helper`, which will bring in a new kernel. This stream is intended for people who need fresh kernels for new hardware. We will not be producing ISOs for these, but will likely do so in the future.
-- The default filesystem across the board will be XFS.
+- ~~The default filesystem across the board will be XFS.~~
 - Hoping to add ZFS over the weekend.
 
 [ask.projectbluefin.io](https://ask.projectbluefin.io) is working well with Dosu, we're still tweaking it but it's at least better than most web searches and almost any reddit post, so we're going to keep that around for people who want to use it. It's always linked from the docs, look for "Ask Bluefin" on the top left of this site.
