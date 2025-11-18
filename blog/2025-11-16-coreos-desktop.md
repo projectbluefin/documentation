@@ -1,5 +1,5 @@
 ---
-title: "Streamling Bluefin Releases"
+title: "Streamlining Bluefin Releases"
 slug: unifying-bluefin
 authors: castrojo
 tags: [announcements]
