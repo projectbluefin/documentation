@@ -42,6 +42,11 @@ Bluefin GTS (aka `bluefin:gts`) is our standard release, designed to be one cycl
 | Bluefin GTS | AMD/Intel | [📥 bluefin-gts-x86_64.iso](https://download.projectbluefin.io/bluefin-gts-x86_64.iso)                         | [🔐 Verify](https://download.projectbluefin.io/bluefin-gts-x86_64.iso-CHECKSUM)             |
 | Bluefin GTS | Nvidia    | [📥 bluefin-nvidia-open-gts-x86_64.iso](https://download.projectbluefin.io/bluefin-nvidia-open-gts-x86_64.iso) | [🔐 Verify](https://download.projectbluefin.io/bluefin-nvidia-open-gts-x86_64.iso-CHECKSUM) |
 
+| Version | GPU       | Download                                                                                                             | Checksum                                                                                       |
+| ------- | --------- | -------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| Bluefin | AMD/Intel | [📥 bluefin-stable-x86_64.iso](https://download.projectbluefin.io/bluefin-stable-x86_64.iso)                         | [🔐 Verify](https://download.projectbluefin.io/bluefin-stable-x86_64.iso-CHECKSUM)             |
+| Bluefin | Nvidia    | [📥 bluefin-nvidia-open-stable-x86_64.iso](https://download.projectbluefin.io/bluefin-nvidia-open-stable-x86_64.iso) | [🔐 Verify](https://download.projectbluefin.io/bluefin-nvidia-open-stable-x86_64.iso-CHECKSUM) |
+
 ## Welcome to Bluefin
 
 ![theclueiscollapse](https://github.com/user-attachments/assets/e78c149d-eddc-40bf-8103-8f3b13364142)
@@ -177,8 +182,8 @@ Here's the current lay of the land:
 
 |                          | `gts` (default) | `stable` or `stable-daily` | `latest`                   |
 | ------------------------ | --------------- | -------------------------- | -------------------------- |
-| **Fedora Version:**      | 42              | 42                         | 43                         |
-| **GNOME Version:**       | 48              | 48                         | 49                         |
+| **Fedora Version:**      | 42              | 43                         | 43                         |
+| **GNOME Version:**       | 48              | 49                         | 49                         |
 | **Target User:**         | Most users      | Enthusiasts                | Advanced users and testers |
 | **System Updates:**      | Weekly          | Weekly or Daily            | Daily                      |
 | **Application Updates:** | Twice a Day     | Twice a Day                | Twice a Day                |
