@@ -12,7 +12,7 @@ There are [15.6 million cloud native developers](https://www.cncf.io/announcemen
 
 ::: 
 
-Bluefin endevours to ship: 
+Bluefin endeavors to ship:
 
 - The world's most powerful [cloud native developer environment](https://landscape.cncf.io/)
 - Full virtualization support centered around QEMU/KVM, as well as support for Docker and Incus
