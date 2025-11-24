@@ -13,7 +13,7 @@ We wanted to centralize this because keeping Bluefin and Bluefin LTS configs in 
 
 It also means we cleaned out some broken stuff, and are down to just 34 just recipes, which makes all of this sustainable, especially since we're sharing the maintenance with [Aurora](https://getaurora.dev). All the recipes now include confirmation dialogs and have been refined. I am glad we got this done because this part of Bluefin was really starting to show its age! Thanks to @tullilirockz for working on this! Thanks to @hanthor for implementing it in Bluefin LTS! Run `ujust` or `ujust --choose` to get started!
 
-# Bold Brew and Homebrew
+## Bold Brew and Brewfiles
 
 We now have a nice way for the community [to contribute to Bluefin's Brewfiles](https://github.com/projectbluefin/common/tree/main/system_files/usr/share/ublue-os/homebrew).
 
