@@ -173,6 +173,10 @@ DevPod also has support for JetBrains:
 | [pack](https://formulae.brew.sh/formula/pack)       | A CLI tool to build apps using Cloud Native Buildpacks.                                                          |
 | [syft](https://formulae.brew.sh/formula/syft)       | A CLI tool and library for generating a Software Bill of Materials (SBOM) from container images and filesystems. |
 
+### CNCF Tools
+
+For access to the full suite of [Cloud Native Computing Foundation](https://l.cncf.io) tools, use `ujust cncf` to browse and install from an extensive collection of 89 CNCF projects including graduated, incubating, and sandbox tools. This includes Argo, Cilium, Envoy, Flux, Istio, Linkerd, Prometheus, and many more.
+
 ## Fonts
 
 `ujust bluefin-fonts` will install the following collection of well-curated Mono fonts. Or install these individually. Check the [homebrew website](https://formulae.brew.sh/cask-font/) to add more fonts, or use the included [Embellish](https://flathub.org/en/apps/io.github.getnf.embellish) tool.
