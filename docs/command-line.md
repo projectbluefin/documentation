@@ -72,9 +72,13 @@ What greatness have I been missing? Being set in my old, tired ways.
 
 ### Bold Brew
 
-[Bold Brew](https://bold-brew.com/) is included as a text based user interface (TUI) to Brew. This application features full package management for homebrew in a nice nerdy interface:
+[Bold Brew](https://bold-brew.com/) (`bbrew`) is included as a text based user interface (TUI) to Brew. This application features full package management for homebrew in a nice nerdy interface:
 
 ![boldbrew](https://github.com/user-attachments/assets/d07c0455-2514-4b73-bdd5-51eec50b570d)
+
+Bold Brew also acts as a launcher for Bluefin's included curated Brewfiles. Run `ujust bbrew` to select a file to browse and install applications from:
+
+![bbrew](https://github.com/user-attachments/assets/b713c96e-cbf1-45f6-91b0-2399b44c389a)
 
 ### Message of the Day and `fastfetch`
 
