@@ -29,6 +29,12 @@ This is awesome because we can now curate app bundles of CLI tools to users. We'
 
 ![bbrew wide](https://github.com/user-attachments/assets/0a8bb770-f3c7-43f1-a35b-b350da415c84)
 
+## More Cloud Mumbo Jumbo
+
+And lastly, we now have `ujust cncf`, which will show you all of the projects that are [part of the CNCF](https://landscape.cncf.io). Many of you work with these tools every day, the hope is to show you all of the cool things you can play with in cloud native!
+
+![cncf](https://github.com/user-attachments/assets/1ee76144-c913-4449-a3cb-7ede1659b598)
+
 ## More Consistent Bluefin
 
 Ultimately this will lead to better Bluefins and has been a primary source of `parity` issues between Bluefin and Bluefin LTS. Bluefin continutes to actively shrink over time! 
