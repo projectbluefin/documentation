@@ -7,7 +7,7 @@ tags: [announcements]
 
 Greetings guardians! 
 
-A few minor updates today, you'll receive these updates either today or tomorrow depending on the build you're on. Our first is some updates to our usage of `just`. Just is a task runner that we use to ship community aliases. Our justfiles are ancient, some going back to the beginning of the project. We are consolidating most parts of what you call "Bluefin" into a [common repository](https://github.com/projectbluefin/common). These are all mostly scripts, there's nothing distribution specific about them. 
+A few minor updates today, you'll receive these updates either today or tomorrow depending on the build you're on. Our first is some updates to our usage of `just`. [Just](https://just.systems) is a task runner that we use to ship community aliases. Our justfiles are ancient, some going back to the beginning of the project. We are consolidating most parts of what you call "Bluefin" into a [common repository](https://github.com/projectbluefin/common). These are all mostly scripts, there's nothing distribution specific about them. 
 
 We wanted to centralize this because keeping Bluefin and Bluefin LTS configs in sync is too problematic. In this manner we can make the Bluefin parts easily plop onto any image no matter what the image is. 
 
