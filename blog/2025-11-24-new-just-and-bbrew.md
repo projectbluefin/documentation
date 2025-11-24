@@ -11,7 +11,7 @@ A few minor updates today, you'll receive these updates either today or tomorrow
 
 We wanted to centralize this because keeping Bluefin and Bluefin LTS configs in sync is too problematic. In this manner we can make the Bluefin parts easily plop onto any image no matter what the image is. 
 
-It also means we cleaned out some broken stuff, and are down to just 34 just recipes, which makes all of this sustainable, especially since we're sharing the maintenance with [Aurora](https://getaurora.dev). All the recipes now include confirmation dialogs and have been refined. I am glad we got this done because this part of Bluefin was really starting to show its age! Thanks to @tullilirockz for working on this! Run `ujust` or `ujust --choose` to get started!
+It also means we cleaned out some broken stuff, and are down to just 34 just recipes, which makes all of this sustainable, especially since we're sharing the maintenance with [Aurora](https://getaurora.dev). All the recipes now include confirmation dialogs and have been refined. I am glad we got this done because this part of Bluefin was really starting to show its age! Thanks to @tullilirockz for working on this! Thanks to @hanthor for implementing it in Bluefin LTS! Run `ujust` or `ujust --choose` to get started!
 
 # Bold Brew and Homebrew
 
