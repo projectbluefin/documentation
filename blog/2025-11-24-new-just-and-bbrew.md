@@ -34,3 +34,5 @@ This is awesome because we can now curate app bundles of CLI tools to users. We'
 Ultimately this will lead to better Bluefins and has been a primary source of `parity` issues between Bluefin and Bluefin LTS. Bluefin continutes to actively shrink over time! 
 
 We still have work to do, like the motd, bling, and all that other stuff but we'll keep you up to date!
+
+## [Discussion](https://github.com/ublue-os/bluefin/discussions/3711)
