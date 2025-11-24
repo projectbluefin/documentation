@@ -37,7 +37,7 @@ And lastly, we now have `ujust cncf`, which will show you all of the projects th
 
 ## More Consistent Bluefin
 
-Ultimately this will lead to better Bluefins and has been a primary source of `parity` issues between Bluefin and Bluefin LTS. Bluefin continutes to actively shrink over time! 
+Ultimately this consolidation of all of our config will lead to better Bluefins and has been a primary source of `parity` issues between Bluefin and Bluefin LTS. Bluefin continutes to actively shrink over time! 
 
 We still have work to do, like the motd, bling, and all that other stuff but we'll keep you up to date!
 
