@@ -5,7 +5,7 @@ authors: castrojo
 tags: [announcements, artwork]
 ---
 
-Happy Thanksgiving for those of you in the US eating dinosaurs! Today I am happy to show off some of the recent collaboration we've been doing with paleoartists. We've [covered this before](https://docs.projectbluefin.io/blog#welcome-to-bluefin) but now the collection is complete!
+Happy Thanksgiving for those of you in the US eating dinosaurs! Today I am happy to show off some of the recent collaboration we've been doing with some awesome paleoartists. We've [covered this before](https://docs.projectbluefin.io/blog#welcome-to-bluefin) but now the collection is complete!
 
 ## Natalia Jagielska
 
