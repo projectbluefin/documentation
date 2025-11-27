@@ -30,7 +30,7 @@ All the wallpapers have a night version as well, so go check it out!
 
 Natalia's artwork was vectorized and remastered by [Delphic Melody](https://ko-fi.com/melodyofdelphi), please consider donating so that the collaboration can continue!
 
-## Andy Frazer (Dragon of Wales)
+## Andy Frazer (Dragons of Wales)
 
 Original Bluefin artist Andy Frazer returns with _Dusk_. I love this one.
 
