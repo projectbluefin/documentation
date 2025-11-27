@@ -37,7 +37,7 @@ Original Bluefin artist Andy Frazer returns with _Dusk_. I love this one.
 <a href="https://github.com/ublue-os/artwork/tree/main/wallpapers/dusk"><img src="/img/blog/2025-11-27-bluefin-and-paleoartists/dusk-day.png" alt="day" /></a>
 <a href="https://github.com/ublue-os/artwork/tree/main/wallpapers/dusk"><img src="/img/blog/2025-11-27-bluefin-and-paleoartists/dusk-night.png" alt="night" /></a>
 
-Also Andy is working on another Bluefin for us, which I haven't seen yet. I can't wait to find out!
+Also Andy is working on another Bluefin for us, which I haven't seen yet. I can't wait to find out! Andy also has a [25% off special](https://www.etsy.com/uk/shop/dragonsofwales) on all his books. I have a few of these and they are not only awesome to own but make great gifts as well. 
 
 ## How to get them
 
