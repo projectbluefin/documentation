@@ -48,3 +48,5 @@ This is not yet included by default so you can hop in early with a `ujust bbrew`
 `bluefin-wallpapers-extra` will bring this collection in. Also you will notice that the Aurora and Bazzite artwork collections are available. This tap is distro agnostic so go nuts putting dinosaurs, cone people, and mechs everywhere!
 
 You can also just [grab them from the repository](https://github.com/ublue-os/artwork/tree/main/wallpapers) if you prefer to do it that way. Stay tuned for a special holiday wallpaper, coming soon!
+
+### [Discussion](https://github.com/ublue-os/bluefin/discussions/3733)
