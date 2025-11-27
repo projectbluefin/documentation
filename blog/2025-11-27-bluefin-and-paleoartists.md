@@ -25,9 +25,6 @@ And lastly we have _Prey_, starring a hungry [Venetoraptor gassenae](https://en.
 <a href="https://github.com/ublue-os/artwork/tree/main/wallpapers/prey"><img src="/img/blog/2025-11-27-bluefin-and-paleoartists/prey-day.png" alt="day" /></a>
 <a href="https://github.com/ublue-os/artwork/tree/main/wallpapers/prey"><img src="/img/blog/2025-11-27-bluefin-and-paleoartists/prey-night.png" alt="night" /></a>
 
-
-All the wallpapers have a night version as well, so go check it out!
-
 Natalia's artwork was vectorized and remastered by [Delphic Melody](https://ko-fi.com/melodyofdelphi), please consider donating so that the collaboration can continue!
 
 ## Andy Frazer (Dragons of Wales)
