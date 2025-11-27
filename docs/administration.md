@@ -247,7 +247,7 @@ Check the [XDG Base Directory Specification](https://specifications.freedesktop.
 
 [just](https://just.systems) is used as a task runner on Bluefin. These are commonly community convenience aliases, or more complex scripts that help automate some tasks or initial setup. This is aliased as `ujust`, so that you can use `just` itself for your other projects.
 
-### GGetting Started with ujust
+### Getting Started with ujust
 
 - `ujust --choose` - Shows every command and the script that is being executed when that command is chosen. Useful for browsing the available commands
 - `ujust -n $command` - The `-n` will run a command in dry-run mode, this is useful for inspecting the commands being run
