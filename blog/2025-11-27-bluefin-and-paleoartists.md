@@ -11,7 +11,7 @@ Happy Thanksgiving for those of you in the US eating dinosaurs! Today I am happy
 
 Our newest collaboration is with [Dr. Natalia Jagielska](https://natalia-jagielska.weebly.com/), a world renowned expert [paleontologist](https://www.nationalgeographic.com/science/article/stunning-scottish-pterosaur-is-biggest-fossil-of-its-kind) and [paleoartist](https://natalia-jagielska.weebly.com/art.html)! I've always been a huge fan of her art style and she has graciously given us three wonderful pieces of art. The first you probably already recognize since it's been the wallpaper of the month for November, entitled _Collapse_:
 
-![day]https://github.com/user-attachments/assets/6be62567-0270-4faa-8fef-cb49801b088a)
+![day](https://github.com/user-attachments/assets/6be62567-0270-4faa-8fef-cb49801b088a)
 ![night](https://github.com/user-attachments/assets/f5cbb7a7-ad3b-4e37-95a2-c665d77947e3)
 
 The second is an homage to Ubuntu's [famous Hardy Heron wallpaper](https://www.omgubuntu.co.uk/2020/04/focal-fossa-familiar-face-wallpaper), originally designed by Ken Wimer. This one is a mashup of one Natalia's pterosaurs in place of the heron. This one is called _Tenacious Pterosaur_.
