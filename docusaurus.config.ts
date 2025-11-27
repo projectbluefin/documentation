@@ -170,8 +170,8 @@ const config: Config = {
               href: "https://bazzite.gg/",
             },
             {
-              label: "Cayo",
-              href: "https://projectcayo.org/",
+              label: "uCore",
+              href: "https://github.com/ublue-os/ucore",
             },
           ],
         },
