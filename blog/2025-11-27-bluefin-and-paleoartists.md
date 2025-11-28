@@ -46,4 +46,4 @@ This is not yet included by default so you can hop in early with a `ujust bbrew`
 
 You can also just [grab them from the repository](https://github.com/ublue-os/artwork/tree/main/wallpapers) if you prefer to do it that way. Stay tuned for a special holiday wallpaper, coming soon!
 
-### [Discussion](https://github.com/ublue-os/bluefin/discussions/3733)
+## [Discussion](https://github.com/ublue-os/bluefin/discussions/3733)
