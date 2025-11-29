@@ -262,55 +262,54 @@ Pro tip, keep your own tasks and aliases in `~/.Justfile`, and they are also han
 
 Bluefin includes curated CLI tools shared as Brewfiles. These commands install curated collections of tools via Homebrew:
 
-| Command | Description |
-| ------- | ----------- |
+| Command             | Description                                                                                                                 |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------------- |
 | `ujust bluefin-cli` | Modern CLI tools: atuin, bat, chezmoi, direnv, eza, fd, gh, glab, ripgrep, starship, tealdeer, television, zoxide, and more |
-| `ujust bbrew` | Launch [Bold Brew](https://bold-brew.com/) to select Brewfile bundles |
+| `ujust bbrew`       | Launch [Bold Brew](https://bold-brew.com/) to select Brewfile bundles                                                       |
 
 ### System Commands
 
-| Command | Description |
-| ------- | ----------- |
-| `ujust update` | Manually update the system, flatpaks, and brew formulas |
-| `ujust toggle-updates` | Enable or disable automatic system updates |
-| `ujust changelogs` | Show the changelogs for each package since the last update |
-| `ujust bios` | Reboot the PC and enter the BIOS/UEFI. Useful for running dual boot systems from independent disks |
-| `ujust bios-info` | Display BIOS/UEFI information (manufacturer, product name, version, release date) |
-| `ujust device-info` | Sends the status, flatpak list, and system info to the CentOS pastebin, and returns the URL to the terminal. This allows the end user to conveniently paste the URL with their info so others can help them debug |
-| `ujust rebase-helper` | Interactive assistant to switch between streams, rebase to different images, or roll back to a previous version |
-| `ujust clean-system` | Clean up unused containers, volumes, flatpak runtimes, and rpm-ostree deployments |
-| `ujust check-idle-power-draw` | Measure your system's idle power consumption using powerstat |
-| `ujust check-local-overrides` | Show files that differ between `/usr/etc` and `/etc` to identify local customizations |
-| `ujust logs-this-boot` | Show all system log messages from the current boot |
-| `ujust logs-last-boot` | Show all system log messages from the previous boot |
-| `ujust enroll-secure-boot-key` | Enroll the Nvidia driver & KMOD signing key for secure boot (password: "universalblue") |
-| `ujust toggle-user-motd` | Toggle display of the message of the day in terminal |
-| `ujust setup-luks-tpm-unlock` | Enable automatic LUKS disk unlock via TPM |
-| `ujust remove-luks-tpm-unlock` | Disable automatic LUKS disk unlock via TPM |
-| `ujust toggle-iwd` | Switch between iwd and wpa_supplicant for Wi-Fi networking (iwd can improve throughput and reduce latency) |
-| `ujust benchmark` | Run a one-minute system benchmark using stress-ng |
+| Command                        | Description                                                                                                                                                                                                       |
+| ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ujust update`                 | Manually update the system, flatpaks, and brew formulas                                                                                                                                                           |
+| `ujust toggle-updates`         | Enable or disable automatic system updates                                                                                                                                                                        |
+| `ujust changelogs`             | Show the changelogs for each package since the last update                                                                                                                                                        |
+| `ujust bios`                   | Reboot the PC and enter the BIOS/UEFI. Useful for running dual boot systems from independent disks                                                                                                                |
+| `ujust bios-info`              | Display BIOS/UEFI information (manufacturer, product name, version, release date)                                                                                                                                 |
+| `ujust device-info`            | Sends the status, flatpak list, and system info to the CentOS pastebin, and returns the URL to the terminal. This allows the end user to conveniently paste the URL with their info so others can help them debug |
+| `ujust rebase-helper`          | Interactive assistant to switch between streams, rebase to different images, or roll back to a previous version                                                                                                   |
+| `ujust clean-system`           | Clean up unused containers, volumes, flatpak runtimes, and rpm-ostree deployments                                                                                                                                 |
+| `ujust check-idle-power-draw`  | Measure your system's idle power consumption using powerstat                                                                                                                                                      |
+| `ujust check-local-overrides`  | Show files that differ between `/usr/etc` and `/etc` to identify local customizations                                                                                                                             |
+| `ujust logs-this-boot`         | Show all system log messages from the current boot                                                                                                                                                                |
+| `ujust logs-last-boot`         | Show all system log messages from the previous boot                                                                                                                                                               |
+| `ujust enroll-secure-boot-key` | Enroll the Nvidia driver & KMOD signing key for secure boot (password: "universalblue")                                                                                                                           |
+| `ujust toggle-user-motd`       | Toggle display of the message of the day in terminal                                                                                                                                                              |
+| `ujust setup-luks-tpm-unlock`  | Enable automatic LUKS disk unlock via TPM                                                                                                                                                                         |
+| `ujust remove-luks-tpm-unlock` | Disable automatic LUKS disk unlock via TPM                                                                                                                                                                        |
+| `ujust toggle-iwd`             | Switch between iwd and wpa_supplicant for Wi-Fi networking (iwd can improve throughput and reduce latency)                                                                                                        |
+| `ujust benchmark`              | Run a one-minute system benchmark using stress-ng                                                                                                                                                                 |
 
 ### Developer Experience Commands
 
-| Command | Description |
-| ------- | ----------- |
-| `ujust devmode` | Toggle between Bluefin and the Developer Experience (bluefin-dx) |
-| `ujust dx-group` | Add your user to docker, incus-admin, libvirt, and dialout groups for full developer access |
-| `ujust bluefin-cli` | Install Bluefin's curated command line experience with modern tools (atuin, bat, eza, fd, ripgrep, starship, zoxide, and more) |
-| `ujust toggle-devmode` | Alias for `ujust devmode` |
+| Command                | Description                                                                                                                    |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `ujust devmode`        | Toggle between Bluefin and the Developer Experience (bluefin-dx)                                                               |
+| `ujust dx-group`       | Add your user to docker, incus-admin, libvirt, and dialout groups for full developer access                                    |
+| `ujust bluefin-cli`    | Install Bluefin's curated command line experience with modern tools (atuin, bat, eza, fd, ripgrep, starship, zoxide, and more) |
+| `ujust toggle-devmode` | Alias for `ujust devmode`                                                                                                      |
 
 ### Application Installation Commands
 
-| Command | Description |
-| ------- | ----------- |
-| `ujust jetbrains-toolbox` | Install [JetBrains Toolbox](https://www.jetbrains.com/toolbox-app/) for managing JetBrains IDEs |
-| `ujust install-opentabletdriver` | Install or uninstall [OpenTabletDriver](https://opentabletdriver.net/), an open source tablet driver |
-| `ujust install-resolve` | Install, upgrade, or uninstall [DaVinci Resolve](https://www.blackmagicdesign.com/products/davinciresolve) video editor via davincibox |
-| `ujust install-system-flatpaks` | Install the default system flatpaks (useful after rebasing) |
-| `ujust install-system-flatpaks-extra` | Install extra recommended flatpak applications |
-| `ujust bluefin-apps` | Install both default and extra system flatpaks |
-| `ujust cncf` | Launch Bold Brew with the CNCF tools Brewfile for cloud native development tools |
-
+| Command                               | Description                                                                                                                            |
+| ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `ujust jetbrains-toolbox`             | Install [JetBrains Toolbox](https://www.jetbrains.com/toolbox-app/) for managing JetBrains IDEs                                        |
+| `ujust install-opentabletdriver`      | Install or uninstall [OpenTabletDriver](https://opentabletdriver.net/), an open source tablet driver                                   |
+| `ujust install-resolve`               | Install, upgrade, or uninstall [DaVinci Resolve](https://www.blackmagicdesign.com/products/davinciresolve) video editor via davincibox |
+| `ujust install-system-flatpaks`       | Install the default system flatpaks (useful after rebasing)                                                                            |
+| `ujust install-system-flatpaks-extra` | Install extra recommended flatpak applications                                                                                         |
+| `ujust bluefin-apps`                  | Install both default and extra system flatpaks                                                                                         |
+| `ujust cncf`                          | Launch Bold Brew with the CNCF tools Brewfile for cloud native development tools                                                       |
 
 Note that generally speaking Bluefin tries to keep the system Justfiles finely scoped, most of these are workarounds and not full-fledged commands. They may get removed or changed depending on the problem they were initially meant to solve.
 

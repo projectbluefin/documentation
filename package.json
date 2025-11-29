@@ -17,7 +17,8 @@
     "prettier-lint": "prettier --check .",
     "fetch-feeds": "node scripts/fetch-feeds.js",
     "fetch-playlists": "node scripts/fetch-playlist-metadata.js",
-    "fetch-data": "npm run fetch-feeds && npm run fetch-playlists"
+    "fetch-github-profiles": "node scripts/fetch-github-profiles.js",
+    "fetch-data": "npm run fetch-feeds && npm run fetch-playlists && npm run fetch-github-profiles"
   },
   "dependencies": {
     "@1password/docusaurus-plugin-stored-data": "^1.0.0",

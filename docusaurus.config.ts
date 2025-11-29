@@ -140,7 +140,7 @@ const config: Config = {
         },
         {
           href: "https://github.com/ublue-os/bluefin/discussions",
-          label: "Community",
+          label: "Discussions",
           position: "right",
         },
         {

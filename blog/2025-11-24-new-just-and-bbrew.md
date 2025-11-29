@@ -5,11 +5,11 @@ authors: castrojo
 tags: [announcements]
 ---
 
-Greetings guardians! 
+Greetings guardians!
 
-A few minor updates today, you'll receive these updates either today or tomorrow depending on the build you're on. Our first is some updates to our usage of `just`. [Just](https://just.systems) is a task runner that we use to [ship community aliases](https://docs.projectbluefin.io/administration/#community-aliases-and-workarounds). Our justfiles are ancient, some going back to the beginning of the project. We are consolidating most parts of what you call "Bluefin" into a [common repository](https://github.com/projectbluefin/common). These are all mostly scripts, there's nothing distribution specific about them. 
+A few minor updates today, you'll receive these updates either today or tomorrow depending on the build you're on. Our first is some updates to our usage of `just`. [Just](https://just.systems) is a task runner that we use to [ship community aliases](https://docs.projectbluefin.io/administration/#community-aliases-and-workarounds). Our justfiles are ancient, some going back to the beginning of the project. We are consolidating most parts of what you call "Bluefin" into a [common repository](https://github.com/projectbluefin/common). These are all mostly scripts, there's nothing distribution specific about them.
 
-We wanted to centralize this because keeping Bluefin and Bluefin LTS configs in sync is too problematic. In this manner we can make the Bluefin parts easily plop onto any image no matter what the image is. 
+We wanted to centralize this because keeping Bluefin and Bluefin LTS configs in sync is too problematic. In this manner we can make the Bluefin parts easily plop onto any image no matter what the image is.
 
 It also means we cleaned out some broken stuff, and are down to just 34 just recipes, which makes all of this sustainable, especially since we're sharing the maintenance with [Aurora](https://getaurora.dev). All the recipes now include confirmation dialogs and have been refined. I am glad we got this done because this part of Bluefin was really starting to show its age! Thanks to @tullilirockz for working on this! Thanks to @hanthor for implementing it in Bluefin LTS! Run `ujust` or `ujust --choose` to get started!
 
@@ -21,7 +21,7 @@ We workshopped some ideas on how to make this nicer for users. We [approached bo
 
 ![bbrew](https://github.com/user-attachments/assets/6057cf26-e153-44d5-9695-e6a201d77951)
 
-`ujust bbrew` is the entry point, we will generate a little menu for you for every Brewfile in Bluefin. So if we add more they just show up here. Then after you choose one `bbrew` will open up showing you that Brewfile. You can then select and choose what you want to install, or hit Ctrl-A to grab everything. 
+`ujust bbrew` is the entry point, we will generate a little menu for you for every Brewfile in Bluefin. So if we add more they just show up here. Then after you choose one `bbrew` will open up showing you that Brewfile. You can then select and choose what you want to install, or hit Ctrl-A to grab everything.
 
 ## Bold Brew is to Homebrew what Bazaar is to Flathub
 
@@ -37,7 +37,7 @@ And lastly, we now have `ujust cncf`, which will show you all of the projects th
 
 ## More Consistent Bluefin
 
-Ultimately this consolidation of all of our config will lead to better Bluefins and has been a primary source of `parity` issues between Bluefin and Bluefin LTS. Bluefin continutes to actively shrink over time! 
+Ultimately this consolidation of all of our config will lead to better Bluefins and has been a primary source of `parity` issues between Bluefin and Bluefin LTS. Bluefin continutes to actively shrink over time!
 
 We still have work to do, like the motd, bling, and all that other stuff but we'll keep you up to date!
 
