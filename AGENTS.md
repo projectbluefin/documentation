@@ -18,6 +18,50 @@ Run the development server:
 - Local development: `npm run start` (includes automatic feed fetching)
 - Docker development: `docker compose up`
 
+**CRITICAL: Development Server Reliability**
+
+To ensure the development server runs reliably and doesn't crash:
+
+1. **Use detached mode for persistent server:**
+
+   ```bash
+   pkill -f docusaurus && sleep 2
+   npx docusaurus start --host 0.0.0.0 --no-open
+   ```
+
+   - Use `mode: "detached"` with a named `sessionId` (e.g., "docusaurus-detached")
+   - Server runs completely detached and survives after shell exits
+   - Process persists indefinitely until manually stopped
+   - Set `initial_wait` not needed - use separate command to verify
+
+2. **Verify server started:**
+
+   ```bash
+   sleep 35 && curl -s http://localhost:3000/ | grep '<title>'
+   ps aux | grep docusaurus | grep -v grep
+   ss -tlnp | grep :3000
+   ```
+
+3. **Bind to all interfaces:** Always use `--host 0.0.0.0` to ensure IPv4/IPv6 accessibility
+
+4. **Stop the server:**
+
+   ```bash
+   pkill -f docusaurus
+   ```
+
+5. **Best practices from Docusaurus documentation:**
+   - Development: Use `docusaurus start` for live preview with hot-reload
+   - Production testing: Use `npm run build && npm run serve` for static files
+   - Never use dev server in production - always serve static build
+   - For CI/CD: Build static files and deploy to CDN/static hosting
+
+6. **Why detached mode works:**
+   - Process runs with `setsid` on Unix systems (detaches from terminal)
+   - Survives shell session termination
+   - Cannot be stopped with `stop_bash` - use `pkill` instead
+   - Designed for long-running services like web servers
+
 Run production build locally:
 
 - `npm run serve` -- serves the built site locally
