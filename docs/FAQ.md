@@ -132,15 +132,19 @@ Your layout may be already included with Fedora, but you need to list extended k
 ## How do I set up an Input Method Editor (IME)?
 
 1. Install [Fcitx5](https://flathub.org/en/apps/org.fcitx.Fcitx5):
- ```bash
- flatpak install org.fcitx.Fcitx5
- ```
+
+```bash
+flatpak install org.fcitx.Fcitx5
+```
+
 2. Install the [kimpanel](https://extensions.gnome.org/extension/261/kimpanel/) Gnome extension (required on Gnome/Wayland).
 3. Install the Flatpak Add-on for the language you want to use.
    - For example, for Chinese:
- ```bash
- flatpak install org.fcitx.Fcitx5.Addon.ChineseAddons
- ```
+
+```bash
+flatpak install org.fcitx.Fcitx5.Addon.ChineseAddons
+```
+
 4. In Fcitx5 settings, add the input method you want to use.
    - For example, for Chinese: Add 'Pinyin' to the list under Current Input Method.
 
@@ -150,7 +154,7 @@ For additional information, see [Fcitx wiki](https://fcitx-im.org/wiki/Using_Fci
 
 ## How do I install Microsoft fonts?
 
-Follow [these instructions](https://github.com/colindean/homebrew-fonts-nonfree) to install them via homebrew. (Skip the homebrew installation instructions). 
+Follow [these instructions](https://github.com/colindean/homebrew-fonts-nonfree) to install them via homebrew. (Skip the homebrew installation instructions).
 
 ## How do I perform major version upgrades?
 
