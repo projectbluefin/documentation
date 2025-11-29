@@ -10,12 +10,12 @@ Bootstrap, build, and test the repository:
 
 - `npm install` -- takes 50-60 seconds. NEVER CANCEL. Set timeout to 120+ seconds.
   - **Note**: If installation fails with React peer dependency conflicts, use `npm install --legacy-peer-deps`
-- `npm run build` -- takes 7-15 seconds (includes fetch-feeds step). NEVER CANCEL. Set timeout to 60+ seconds.
+- `npm run build` -- takes 7-15 seconds (includes fetch-data step: feeds, playlists, GitHub profiles). NEVER CANCEL. Set timeout to 60+ seconds.
 
 Run the development server:
 
 - **ALWAYS run the bootstrapping steps first.**
-- Local development: `npm run start` (includes automatic feed fetching)
+- Local development: `npm run start` (includes automatic data fetching: feeds, playlists, GitHub profiles)
 - Docker development: `docker compose up`
 
 **CRITICAL: Development Server Reliability**
@@ -104,10 +104,10 @@ npm install
 # If above fails with React peer dependency conflicts, use:
 # npm install --legacy-peer-deps
 
-# Start development server (auto-reloads on changes, includes feed fetching)
+# Start development server (auto-reloads on changes, includes data fetching)
 npm run start
 
-# Build production site (NEVER CANCEL - 7-15s runtime, includes feed fetching)
+# Build production site (NEVER CANCEL - 7-15s runtime, includes data fetching)
 npm run build
 
 # Serve built site locally
@@ -122,8 +122,12 @@ npm run prettier-lint
 # Fix formatting issues
 npm run prettier
 
-# Fetch release feeds manually (auto-runs during start/build)
-npm run fetch-feeds
+# Fetch all data manually (auto-runs during start/build)
+npm run fetch-data
+# Or fetch individual data sources:
+npm run fetch-feeds              # Release feeds from GitHub
+npm run fetch-playlists          # YouTube playlist metadata
+npm run fetch-github-profiles    # GitHub user profiles for donations page
 
 # Clear build cache if needed
 npm run clear
@@ -146,21 +150,22 @@ docker compose down
 ### Repository Structure
 
 ```
-docs/                    # Documentation markdown files (26 files)
-blog/                   # Blog posts (16 files)
+docs/                    # Documentation markdown files (28 files)
+blog/                   # Blog posts (21 files)
   authors.yaml          # Blog author information with socials
 changelogs/             # Changelog welcome content (manually created)
   authors.yaml          # Changelog author information
 src/                    # React components and pages
-  components/           # React components (FeedItems, PackageSummary, CommunityFeeds)
+  components/           # React components (FeedItems, PackageSummary, CommunityFeeds, MusicPlaylist, GitHubProfileCard)
   config/               # Configuration (packageConfig.ts)
   pages/                # Custom pages (changelogs.tsx)
   types/                # TypeScript type definitions
   css/                  # Custom styling
-static/                 # Static assets (images, feeds, etc.)
-  feeds/                # Auto-generated release feeds (JSON)
+static/                 # Static assets (images, data, feeds, etc.)
+  data/                 # Auto-generated data files (playlist-metadata.json, github-profiles.json)
+  feeds/                # Auto-generated release feeds (bluefin-releases.json, bluefin-lts-releases.json)
   img/                  # Images and graphics
-scripts/                # Build scripts (fetch-feeds.js)
+scripts/                # Build scripts (fetch-feeds.js, fetch-playlists.js, fetch-github-profiles.js)
 sidebars.ts             # Navigation structure (TypeScript)
 docusaurus.config.ts    # Main Docusaurus configuration
 package.json            # Dependencies and scripts
@@ -169,12 +174,14 @@ Justfile                # Just command runner recipes (build, serve)
 
 ### Content Types
 
-- **Documentation**: 26 files in `docs/` directory, written in Markdown/MDX
-- **Blog Posts**: 16 files in `blog/` directory, with frontmatter metadata and author attribution from `blog/authors.yaml`
+- **Documentation**: 28 files in `docs/` directory, written in Markdown/MDX
+- **Blog Posts**: 21 files in `blog/` directory, with frontmatter metadata and author attribution from `blog/authors.yaml`
 - **Changelogs**: Manually created welcome content in `changelogs/` directory, displayed alongside auto-generated release feeds
-- **Release Feeds**: Auto-fetched JSON files in `static/feeds/` via `fetch-feeds.js` script
-  - `bluefin-releases.json` - fetched from ublue-os/bluefin releases
-  - `bluefin-lts-releases.json` - fetched from ublue-os/bluefin-lts releases
+- **Auto-Generated Data**: JSON files generated at build time via `npm run fetch-data`
+  - `static/feeds/bluefin-releases.json` - Release feed from ublue-os/bluefin
+  - `static/feeds/bluefin-lts-releases.json` - Release feed from ublue-os/bluefin-lts
+  - `static/data/playlist-metadata.json` - YouTube playlist metadata for music page
+  - `static/data/github-profiles.json` - GitHub user profiles for donations page
 - **Static Assets**: Images and files in `static/` directory
 
 ## Development Guidelines
@@ -207,13 +214,14 @@ Justfile                # Just command runner recipes (build, serve)
 
 ### Common Issues
 
-- **Build timeouts**: Builds can take 7-15+ seconds due to feed fetching. Always set generous timeouts and never cancel
+- **Build timeouts**: Builds can take 7-15+ seconds due to data fetching (feeds, playlists, GitHub profiles). Always set generous timeouts and never cancel
 - **Dependency conflicts**: If `npm install` fails, try `npm install --legacy-peer-deps` for React version conflicts
 - **Formatting warnings**: `npm run prettier-lint` shows many warnings for existing files - this is normal
 - **TypeScript errors**: Some TypeScript errors in components may be tolerated by the build process
 - **Missing dependencies**: If build fails, try `npm install` (with --legacy-peer-deps if needed) first
 - **Port conflicts**: Development server uses port 3000 by default
-- **Feed fetching**: If builds hang, check network connectivity to GitHub releases API
+- **Data fetching failures**: If builds hang, check network connectivity to GitHub API and YouTube
+- **GitHub rate limits**: Set GITHUB_TOKEN or GH_TOKEN environment variable to increase API rate limits for profile fetching
 
 ### Recovery Steps
 
@@ -221,7 +229,7 @@ Justfile                # Just command runner recipes (build, serve)
 2. Reinstall dependencies: `rm -rf node_modules package-lock.json && npm install --legacy-peer-deps`
 3. Check for TypeScript errors: `npm run typecheck` (some errors may be tolerated)
 4. Verify formatting: `npm run prettier-lint` (warnings expected)
-5. Test feed fetching: `npm run fetch-feeds`
+5. Test data fetching: `npm run fetch-data` (or individual scripts)
 
 ## Dependencies
 
@@ -351,7 +359,9 @@ npm run start
 This repository contains documentation for Bluefin OS. The main Bluefin OS images are built in the [ublue-os/bluefin](https://github.com/ublue-os/bluefin) repository and [ublue-os/bluefin-lts](https://github.com/ublue-os/bluefin-lts) repositories. This docs repository:
 
 - Provides user-facing documentation
-- Generates release changelogs automatically
+- Generates release changelogs automatically from GitHub releases
+- Fetches YouTube playlist metadata for the music page
+- Fetches GitHub user profiles for the donations/credits page
 - Deploys to https://docs.projectbluefin.io/ via GitHub Pages
 - Uses conventional commits for changelog generation, follow the conventional commits spec when submitting pull requests: conventional-commits/conventionalcommits.org
 - Integrates with main repository via automated workflows
@@ -359,20 +369,26 @@ This repository contains documentation for Bluefin OS. The main Bluefin OS image
 Common documentation areas include:
 
 - Installation guides (`docs/installation.md`, `docs/downloads.md`)
-- Developer experience (`docs/bluefin-gdx.md`, `docs/devcontainers.md`)
+- Developer experience (`docs/bluefin-dx.md`, `docs/bluefin-gdx.md`, `docs/devcontainers.md`)
 - FAQ and troubleshooting (`docs/FAQ.md`)
 - Hardware-specific guides (`docs/t2-mac.md`)
-- Community information (`docs/communication.md`, `docs/code-of-conduct.md`, `docs/values.md`, `docs/mission.md`)
+- Community information (`docs/communication.md`, `docs/code-of-conduct.md`, `docs/values.md`, `docs/mission.md`, `docs/donations.mdx`)
 - Gaming support (`docs/gaming.md`)
 - LTS information (`docs/lts.md`)
 - Tips and command-line usage (`docs/tips.md`, `docs/command-line.md`)
+- Music playlists (`docs/music.md`)
+- AI information (`docs/ai.md`)
+- Local development (`docs/local.md`)
+- Lore and dinosaurs (`docs/lore.md`, `docs/dinosaurs.md`)
+- Press kit (`docs/press-kit.md`)
 
 Other Rules:
 
 - **Remember**: Documentation should be consumable in one sitting and link to upstream docs rather than duplicating content.
 - **Never** create new pages unless explicitly told to do so.
 - **Images page removed**: The automated images page was recently removed (commit 52e6fee). Do not recreate it.
-- For [music.md](docs/music.md) - always ensure the thumbnail aspect ratio is 1:1 and ensure that the album sizes remain consistent across the page.
+- For `docs/music.md` - always ensure the thumbnail aspect ratio is 1:1 and ensure that the album sizes remain consistent across the page. Playlists use the MusicPlaylist component which fetches metadata at build time.
+- For `docs/donations.mdx` - uses GitHubProfileCard component which displays profiles fetched at build time from `static/data/github-profiles.json`. Profile data includes name, bio, avatar, company, location, and social links.
 
 ### Attribution Requirements
 
