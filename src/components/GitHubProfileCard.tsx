@@ -230,7 +230,7 @@ const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
           </a>
         </h3>
         {title && <p className={styles.title}>{title}</p>}
-        <p className={styles.bio}>{user.bio || "No bio available"}</p>
+        {user.bio && <p className={styles.bio}>{user.bio}</p>}
         <div className={styles.stats}>
           <span>
             <strong>{user.public_repos}</strong> repos
