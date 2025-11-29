@@ -19,8 +19,8 @@ const GITHUB_USERNAMES = [
   // Legendary Supporters
   'abbycabs', 'ahrkrak', 'angellk', 'ashleymcnamara', 'caniszczyk',
   'carlwgeorge', 'cblecker', 'cgwalters', 'colindean', 'craigmcl',
-  'ctsdownloads', 'dustinkirkland', 'ericcurtin', 'funnelfiasco', 'idvoretskyi',
-  'jbeda', 'jberkus', 'jeefy', 'jonobacon', 'karasowles',
+  'ctsdownloads', 'dustinkirkland', 'ericcurtin', 'funnelfiasco', 'heavyelement',
+  'idvoretskyi', 'jbeda', 'jberkus', 'jeefy', 'jonobacon', 'karasowles',
   'kenvandine', 'lhawthorn', 'liljenstolpe', 'marcoceppi', 'marrusl',
   'mattfarina', 'mattray', 'mfahlandt', 'michaeltunnell', 'mrbobbytables',
   'nimbinatus', 'parispittman', 'popey', 'puja108', 'ramcq',
