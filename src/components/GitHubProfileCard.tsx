@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styles from "./GitHubProfileCard.module.css";
+import profilesData from "@site/static/data/github-profiles.json";
 
 interface GitHubUser {
   login: string;
@@ -17,9 +18,6 @@ interface GitHubProfileCardProps {
   sponsorUrl?: string;
 }
 
-const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
-const CACHE_KEY_PREFIX = "github_profile_";
-
 const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
   username,
   title,
@@ -29,56 +27,16 @@ const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const cacheKey = `${CACHE_KEY_PREFIX}${username}`;
+    // Use pre-fetched profile data from build time
+    const profileData = profilesData[username];
     
-    // Check if we have cached data
-    if (typeof window !== "undefined") {
-      const cachedData = localStorage.getItem(cacheKey);
-      if (cachedData) {
-        try {
-          const { data, timestamp } = JSON.parse(cachedData);
-          const age = Date.now() - timestamp;
-          
-          // Use cached data if it's less than 24 hours old
-          if (age < CACHE_DURATION) {
-            setUser(data);
-            setLoading(false);
-            return;
-          }
-        } catch (e) {
-          // Invalid cache data, will fetch fresh
-          localStorage.removeItem(cacheKey);
-        }
-      }
+    if (profileData) {
+      setUser(profileData);
+      setLoading(false);
+    } else {
+      console.error(`Profile data not found for ${username}`);
+      setLoading(false);
     }
-
-    // Fetch fresh data
-    fetch(`https://api.github.com/users/${username}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setUser(data);
-        setLoading(false);
-        
-        // Cache the data
-        if (typeof window !== "undefined" && data.login) {
-          try {
-            localStorage.setItem(
-              cacheKey,
-              JSON.stringify({
-                data,
-                timestamp: Date.now(),
-              })
-            );
-          } catch (e) {
-            // localStorage might be full, ignore
-            console.warn(`Failed to cache profile for ${username}`);
-          }
-        }
-      })
-      .catch((error) => {
-        console.error(`Error fetching GitHub user ${username}:`, error);
-        setLoading(false);
-      });
   }, [username]);
 
   if (loading) {
