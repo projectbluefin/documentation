@@ -4,7 +4,7 @@ const path = require('path');
 // List all GitHub usernames from donations.mdx
 const GITHUB_USERNAMES = [
   // Current Maintainers
-  'ahmedadan', 'befanyt', 'castrojo', 'daegalus', 'dagalus',
+  'ahmedadan', 'befanyt', 'castrojo', 'daegalus',
   'hanthor', 'inffy', 'p5', 'renner0e', 'tulilirockz',
   
   // Artists
