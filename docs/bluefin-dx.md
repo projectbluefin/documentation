@@ -6,17 +6,17 @@ slug: /bluefin-dx
 
 The Bluefin Developer Experience (`bluefin-dx`) is a dedicated developer image with bundled tools. Unlike traditional Linux systems, the operating system and developer environment are explicitly and purposely separated. This means that tooling is not installed on the host, and is instead containerized, in a virtual machine, or scoped to the user's home directory. It is designed to meet the following use cases:
 
-:::info[Stronger Together]
-
-There are [15.6 million cloud native developers](https://www.cncf.io/announcements/2025/11/11/cncf-and-slashdata-survey-finds-cloud-native-ecosystem-surges-to-15-6m-developers/) in the world. Our workflow is based on the development lessons learned from these techniques
-
-:::
-
 Bluefin endeavors to ship:
 
 - The world's most powerful [cloud native developer environment](https://landscape.cncf.io/)
 - Full virtualization support centered around QEMU/KVM, as well as support for Docker and Incus
 - [Bluefin GDX](/gdx) variant specifically designed for AI and Machine Learning
+
+:::info[Stronger Together]
+
+There are [15.6 million cloud native developers](https://www.cncf.io/announcements/2025/11/11/cncf-and-slashdata-survey-finds-cloud-native-ecosystem-surges-to-15-6m-developers/) in the world. Our workflow is based on the development lessons learned from these techniques
+
+:::
 
 ## The Cloud Native Development Approach
 
