@@ -92,7 +92,9 @@ This feature allows Bluefin users to maintain a single `Brewfile` that manages:
 - Lightweight gitops between all of your machines
 - Paves the wave for better Homebrew/Flatpak integration
 
-Your entire application stack can now be version controlled and reproduced across machines. Woo! We feel that this is a nice complement to [devcontainers](https://containers.dev/), providing even more flexibility to your workflows!
+The huge community benefit is the shareability of a list-o-files. You can give your friend the hookup, and in fact many of Bluefin's "features" are just us shipping our own Brewfiles. For you experts out there this likely just simplifies something you probably already have. And for those of you just starting your command line spec tree it's a nice milestone to hit: "I can get a new install up and running in 10 minutes". There's lots of ways to do this, but this is an easy one. 😄
+
+Woo! We feel that this is a nice complement to [devcontainers](https://containers.dev/), providing even more flexibility to your workflows!
  
 ## How does it work in practice?
 
