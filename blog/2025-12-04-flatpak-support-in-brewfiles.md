@@ -111,3 +111,4 @@ Refer to the [Homebrew Bundle documentation](https://docs.brew.sh/Brew-Bundle-an
 
 Speaking about "Easiest way to get a clean install in 10 minutes", [SaveDesktop](https://flathub.org/en/apps/io.github.vikdevelop.SaveDesktop) is the nice GUI way to do this. You'll always find it in Bluefin's Curated section in the Bazaar app store. (Tell your friends!) 
 
+## [Discussions](https://github.com/ublue-os/bluefin/discussions/3767)
