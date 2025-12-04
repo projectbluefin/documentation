@@ -32,17 +32,17 @@ brew bundle
 
 ## Remote Support
 
-Homebrew Bundle supports three tiers of Flatpak remotes:
+Homebrew Bundle supports three ways to interact with Flatpak remotes:
 
-### Tier 1: Default Remote (Flathub)
+### Default Remote (Flathub)
 
-For packages from Flathub (the default), just specify the app ID:
+For packages from Flathub (the default), just specify the app ID. Most of us will use it this way:
 
 ```ruby
 flatpak "com.spotify.Client"
 ```
 
-### Tier 2: URL Remote
+### URL Remote
 
 For packages from other repositories, specify the remote URL:
 
@@ -50,7 +50,7 @@ For packages from other repositories, specify the remote URL:
 flatpak "org.godotengine.Godot", remote: "https://dl.flathub.org/beta-repo/"
 ```
 
-### Tier 3: Named Remote with URL
+### Named Remote with URL
 
 For shared remotes that you want to reuse across multiple packages:
 
