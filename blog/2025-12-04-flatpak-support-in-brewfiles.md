@@ -104,7 +104,7 @@ Refer to the [Homebrew Bundle documentation](https://docs.brew.sh/Brew-Bundle-an
 
 ## References
 
-- [Pull Request: Add Flatpak support to brew bundle](https://github.com/Homebrew/brew/pull/19518)
+- [Pull Request: Add Flatpak support to brew bundle](https://github.com/Homebrew/brew/pull/21097)
 - [Issue: Feature Request - Add Flatpak support to Brewfile](https://github.com/Homebrew/brew/issues/18163)
 
 ## Also Check Out
