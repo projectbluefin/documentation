@@ -3,9 +3,9 @@ title: Dinosaurs
 slug: dinosaurs
 ---
 
-Bluefin features dinosaurs and other prehistoric life in its artwork. Bluefin has friends, we call this Bluefin's [kettle](<https://en.wikipedia.org/wiki/Kettle_(birds)>). All the creatures here are designed and drawn by Jacob Schnurr. You can buy stickers to these and many more designs at [his Etsy store](https://www.etsy.com/shop/JSchnurrCommissions?dd_referrer=https%3A%2F%2Fwww.google.com%2F). See also: [Why dinosaurs](https://www.youtube.com/watch?v=XpKFcLqbd-A&t=2451s)?
+Bluefin features dinosaurs and other prehistoric life in its artwork. Bluefin has friends, we call this Bluefin's [kettle](<https://en.wikipedia.org/wiki/Kettle_(birds)>). All the creatures here are designed and drawn by Jacob Schnurr. You can buy stickers of these and many more designs at [his Etsy store](https://www.etsy.com/shop/JSchnurrCommissions?dd_referrer=https%3A%2F%2Fwww.google.com%2F). See also: [Why dinosaurs](https://www.youtube.com/watch?v=XpKFcLqbd-A&t=2451s)?
 
-Here are the cast of characters! Each represent something important to this ecosystem.
+Here are the cast of characters! Each represents something important to this ecosystem.
 
 ![Bluefin](https://github.com/user-attachments/assets/9b054c6a-5146-40b2-b4d6-bf97abd01429)
 
@@ -31,7 +31,7 @@ Illustration by Delphic Melody (M. Gopal)
 
 - Name: Karl
 - Role: Kubernetes unleashed, our guiding light - represents our developer experience
-- Species: [Amargasaurus cazaui](https://en.wikipedia.org/wiki/Dakotaraptor)
+- Species: [Amargasaurus cazaui](https://en.wikipedia.org/wiki/Amargasaurus)
 
 ![Karl](https://github.com/user-attachments/assets/79ceae5e-f48b-4d87-aadd-c7f46294378e)
 
