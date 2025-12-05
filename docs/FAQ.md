@@ -3,7 +3,7 @@ title: Frequently Asked Questions
 slug: /FAQ
 ---
 
-The [general FAQ](https://projectbluefin.io/#scene-faq) on the website covers some of the most common questions. This section containers more specific questions:
+The [general FAQ](https://projectbluefin.io/#scene-faq) on the website covers some of the most common questions. This section contains more specific questions:
 
 ## Am I holding Bluefin wrong?
 

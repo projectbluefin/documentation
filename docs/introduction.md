@@ -45,7 +45,7 @@ Bluefin is "An interpretation of the Ubuntu spirit built on Fedora technology"â€
 - [GNOME Extensions Manager](https://flathub.org/apps/com.mattjakeman.ExtensionManager) ([Donate](https://github.com/sponsors/mjakeman)) included
 - [Bazaar Application Store](https://github.com/kolunmi/bazaar) featuring [Flathub](https://flathub.org):
   - Use a familiar software center UI to install graphical software
-  - Abandoned applications are unlisted. Applications that depend on out of date flatpak runtimes to be excluded from the app store.
+  - Abandoned applications are unlisted. Applications that depend on out-of-date flatpak runtimes are excluded from the app store.
   - [Warehouse](https://flathub.org/apps/io.github.flattool.Warehouse) ([Donate](https://ko-fi.com/heliguy)) included for Flatpak management
 - Quality of Life Features
   - [Starship](https://starship.rs) terminal prompt enabled by default
@@ -64,11 +64,11 @@ Bluefin is "An interpretation of the Ubuntu spirit built on Fedora technology"â€
 
 ## Distroless Focus
 
-Bluefin specifically ships upstream tools in lieue of custom applications. The idea of a "distribution app store" has proven to be unsustainable for desktop application authors, so Bluefin ships tools like [Bazaar](https://github.com/kolunmi/bazaar) and [Homebrew](https://brew.sh) instead. Additionally the team purposely ensures that the workflows used in Bluefin remain not only distribution agnostic, but operating system agnostic. For example, `podman`, `docker`, and `flatpak` instead of distribution specific tooling, etc.
+Bluefin specifically ships upstream tools in lieu of custom applications. The idea of a "distribution app store" has proven to be unsustainable for desktop application authors, so Bluefin ships tools like [Bazaar](https://github.com/kolunmi/bazaar) and [Homebrew](https://brew.sh) instead. Additionally the team purposely ensures that the workflows used in Bluefin remain not only distribution agnostic, but operating system agnostic. For example, `podman`, `docker`, and `flatpak` instead of distribution specific tooling, etc.
 
 :::info[It's a Cross Platform World]
 
-The workflows in Bluefin are purposely upstream focused -- we believe in a consistent Linux experience for everyone, wether it's WSL on Windows, Podman/Docker on a Mac, or any Linux system. The [cloud native ecosystem](http://cncf.io) has proven that this model works. This allows millions of existing developers to onboard with a workflow that they already know, and allows Linux to compete where it matters the most. A community-driven approach that leads to a sustainable future where we're in charge of our operating systems again.
+The workflows in Bluefin are purposely upstream focused -- we believe in a consistent Linux experience for everyone, whether it's WSL on Windows, Podman/Docker on a Mac, or any Linux system. The [cloud native ecosystem](http://cncf.io) has proven that this model works. This allows millions of existing developers to onboard with a workflow that they already know, and allows Linux to compete where it matters the most. A community-driven approach that leads to a sustainable future where we're in charge of our operating systems again.
 
 :::
 

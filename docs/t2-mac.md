@@ -105,7 +105,7 @@ To rebase to these images, similar to rebasing to Bluefin from Silverblue, you n
 
 3. Rebase to the signed image, again replacing "[repo/bluefin-package:tag]" with the repo and image variant of your choice:
 
-`sudo bootc switch ghcr.io/[repo/bluefin-package-:tag --enforce-container-sigpolicy`
+`sudo bootc switch ghcr.io/[repo/bluefin-package:tag] --enforce-container-sigpolicy`
 
 See the [T2-Atomic](https://github.com/lauretano/t2-atomic) readme for details on other images (Sway, Cosmic, vanilla Silverblue) available.
 

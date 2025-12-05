@@ -35,7 +35,7 @@ Bluefin LTS ships with Linux 6.12.0, which is the kernel for the lifetime of rel
 
 ### Differences from Bluefin GTS and Bluefin
 
-- There may be instances when something from Bluefin is not implemented in Bluefin LTS. Please [file an issue](https://github.com/ublue-os/bluefin-lts/issues) and tag it with `parity` and the team will investigate. They'll never _exactly_ but we can get the important ones done
+- There may be instances when something from Bluefin is not implemented in Bluefin LTS. Please [file an issue](https://github.com/ublue-os/bluefin-lts/issues) and tag it with `parity` and the team will investigate. They'll never match _exactly_ but we can get the important ones done
 - Appimages are hard unsupported (those fuse packages aren't even in CentOS)
 - Local Layering is not supported
 

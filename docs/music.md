@@ -62,7 +62,7 @@ Bluefin forms partnerships with other legendary projects.
 
 ## Origins
 
-Bluefin was born in 2001.
+Bluefin was born in 2021.
 
 <div style={{
   display: 'grid',
