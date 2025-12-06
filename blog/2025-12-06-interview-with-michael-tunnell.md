@@ -19,3 +19,5 @@ Check out [TuxDigital](https://tuxdigital.com/) and [This Week in Linux](https:/
   referrerPolicy="strict-origin-when-cross-origin" 
   allowFullScreen
 ></iframe>
+
+## [Discussions](https://github.com/ublue-os/bluefin/discussions/3784)
