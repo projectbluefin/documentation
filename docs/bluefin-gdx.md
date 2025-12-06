@@ -15,7 +15,7 @@ How many of these freaking things are there?
 
 ## Scope and Purpose
 
-Bluefin GDX is designed to be an AI Workstation by providng Nvidia drivers and [CUDA](https://developer.nvidia.com/cuda-toolkit) in one image. It combines [Bluefin LTS](/lts) with the [Bluefin Developer Experience](/bluefin-dx). It is designed for AI and Machine Learning professionals.
+Bluefin GDX is designed to be an AI Workstation by providing Nvidia drivers and [CUDA](https://developer.nvidia.com/cuda-toolkit) in one image. It combines [Bluefin LTS](/lts) with the [Bluefin Developer Experience](/bluefin-dx). It is designed for AI and Machine Learning professionals.
 
 <iframe
   width="560"
