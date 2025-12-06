@@ -5,7 +5,7 @@ authors: castrojo
 tags: [community]
 ---
 
-I had the pleasure of sitting down with [Michael Tunnell](https://michaeltunnell.com/) to discuss Bluefin, cloud-native Linux desktops, and the future of the project.
+I had the pleasure of sitting down with [Michael Tunnell](https://michaeltunnell.com/) to discuss Azurora, Bazzite, Bluefin, cloud-native Linux desktops, and the future of the project.
 
 Check out [TuxDigital](https://tuxdigital.com/) and [This Week in Linux](https://tuxdigital.com/thisweekinlinux/).
 
