@@ -115,18 +115,5 @@
     "remoteScreenshot": "https://extensions.gnome.org/extension-data/screenshots/screenshot_7065_c1v2s78.jpg",
     "icon": "https://extensions.gnome.org/extension-data/icons/icon_7065.png",
     "donateUrl": null
-  },
-  {
-    "id": 6784,
-    "uuid": "wiggle@mechtifs",
-    "name": "Wiggle",
-    "creator": "mechtifs",
-    "creatorUrl": "https://extensions.gnome.org/accounts/profile/mechtifs",
-    "description": "Wiggle is a GNOME Shell extension that magnifies the cursor when the mouse is moved rapidly.",
-    "url": "https://extensions.gnome.org/extension/6784/",
-    "screenshot": "/img/extensions/6784.gif",
-    "remoteScreenshot": "https://extensions.gnome.org/extension-data/screenshots/screenshot_6784_NnfNleK.gif",
-    "icon": "https://extensions.gnome.org/extension-data/icons/icon_6784.png",
-    "donateUrl": null
   }
 ]

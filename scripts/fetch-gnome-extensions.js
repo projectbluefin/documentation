@@ -20,7 +20,6 @@ const EXTENSION_IDS = [
   5964, // Quick Settings Audio Devices Hider
   6000, // Quick Settings Audio Devices Renamer
   7065, // Tiling Shell
-  6784, // Wiggle
 ];
 
 const OUTPUT_JSON = path.join(__dirname, "../static/data/gnome-extensions.json");
