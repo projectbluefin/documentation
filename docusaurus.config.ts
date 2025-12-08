@@ -192,7 +192,7 @@ const config: Config = {
             },
             {
               label: "Blog Feed",
-              href: "/blog/atom.xml",
+              href: "https://docs.projectbluefin.io/blog/atom.xml",
             },
           ],
         },
