@@ -27,6 +27,8 @@ The [Tips and Tricks](/tips) page has a new refreshed look with extension thumbn
 
 Kick the tyres and let us know what you think!
 
+## [Discussions](https://github.com/ublue-os/bluefin/discussions/)
+
 <script src="https://giscus.app/client.js"
         data-repo="ublue-os/bluefin"
         data-repo-id="R_kgDOJHEu4g"
