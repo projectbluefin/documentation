@@ -190,6 +190,10 @@ const config: Config = {
               label: "Feedback",
               href: "https://feedback.projectbluefin.io/",
             },
+            {
+              label: "Blog Feed",
+              href: "/blog/atom.xml",
+            },
           ],
         },
         {
