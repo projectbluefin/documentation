@@ -5,7 +5,7 @@ authors: castrojo
 tags: [announcements]
 ---
 
-We've added two pages the documentation today:
+We've added two pages of documentation today:
 
 ## Driver Versions Page
 
