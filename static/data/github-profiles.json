@@ -3,10 +3,10 @@
     "login": "ahmedadan",
     "name": "Ahmed Adan",
     "avatar_url": "https://avatars.githubusercontent.com/u/1892225?v=4",
-    "bio": null,
+    "bio": "@projectbluefin maintainer",
     "html_url": "https://github.com/ahmedadan",
     "public_repos": 39,
-    "followers": 16
+    "followers": 20
   },
   "befanyt": {
     "login": "befanyt",
@@ -24,7 +24,7 @@
     "bio": "Developer Relations @ Cloud Native Computing Foundation (cncf.io)\r\n\r\nEmeritus: VMware • Heptio •  Kubernetes • Canonical • Ubuntu  • Stacklet • Cloud Custodian",
     "html_url": "https://github.com/castrojo",
     "public_repos": 159,
-    "followers": 778
+    "followers": 786
   },
   "daegalus": {
     "login": "daegalus",
@@ -39,9 +39,9 @@
     "login": "hanthor",
     "name": "James Reilly",
     "avatar_url": "https://avatars.githubusercontent.com/u/5840441?v=4",
-    "bio": "Maintainer: Bluefin https://projectbluefin.io\r\n\r\nCo-Lead AlmaLinux Atomic SIG\r\nEx-Element Support Eng.",
+    "bio": "@projectbluefin  bluefin LTS \r\n@fossunited Lucknow chapter\r\n@AlmaLinux -  Atomic SIG\r\nEx- @element-hq  all about Matrix!\r\n",
     "html_url": "https://github.com/hanthor",
-    "public_repos": 105,
+    "public_repos": 107,
     "followers": 39
   },
   "inffy": {
@@ -50,8 +50,8 @@
     "avatar_url": "https://avatars.githubusercontent.com/u/10782843?v=4",
     "bio": "Tech nerd from FI. Interested on FOSS and Linux.\r\n\r\nAlso maintains uBlues Aurora (https://getaurora.dev)",
     "html_url": "https://github.com/inffy",
-    "public_repos": 15,
-    "followers": 16
+    "public_repos": 16,
+    "followers": 17
   },
   "p5": {
     "login": "p5",
@@ -68,7 +68,7 @@
     "avatar_url": "https://avatars.githubusercontent.com/u/80410025?v=4",
     "bio": "Linux Nerd, Universal Blue and Aurora Maintainer (https://getaurora.dev)",
     "html_url": "https://github.com/renner0e",
-    "public_repos": 99,
+    "public_repos": 100,
     "followers": 20
   },
   "tulilirockz": {
@@ -77,8 +77,8 @@
     "avatar_url": "https://avatars.githubusercontent.com/u/120808662?v=4",
     "bio": "Big Linux fan :)",
     "html_url": "https://github.com/tulilirockz",
-    "public_repos": 149,
-    "followers": 133
+    "public_repos": 151,
+    "followers": 137
   },
   "chandeleer1698": {
     "login": "chandeleer1698",
@@ -96,7 +96,7 @@
     "bio": "Aspiring web developer and eclectic dabbler in vector art.\r\n\r\n",
     "html_url": "https://github.com/delphicmelody",
     "public_repos": 16,
-    "followers": 11
+    "followers": 12
   },
   "bketelsen": {
     "login": "bketelsen",
@@ -105,7 +105,7 @@
     "bio": null,
     "html_url": "https://github.com/bketelsen",
     "public_repos": 468,
-    "followers": 1366
+    "followers": 1364
   },
   "bsherman": {
     "login": "bsherman",
@@ -123,7 +123,7 @@
     "bio": null,
     "html_url": "https://github.com/m2Giles",
     "public_repos": 20,
-    "followers": 24
+    "followers": 25
   },
   "rothgar": {
     "login": "rothgar",
@@ -132,7 +132,7 @@
     "bio": "learning and sharing\r\n",
     "html_url": "https://github.com/rothgar",
     "public_repos": 274,
-    "followers": 953
+    "followers": 956
   },
   "alatiera": {
     "login": "alatiera",
@@ -140,7 +140,7 @@
     "avatar_url": "https://avatars.githubusercontent.com/u/16531710?v=4",
     "bio": null,
     "html_url": "https://github.com/alatiera",
-    "public_repos": 115,
+    "public_repos": 116,
     "followers": 0
   },
   "kolunmi": {
@@ -150,7 +150,7 @@
     "bio": "You can reach me at kolunmi@posteo.net\r\n&& pfp by my wonderful friend Melody!  https://linksta.cc/@delphic-melody\r\n&& my friend Amy: https://www.atiusamy.com :}",
     "html_url": "https://github.com/kolunmi",
     "public_repos": 14,
-    "followers": 92
+    "followers": 93
   },
   "madonuko": {
     "login": "madonuko",
@@ -168,7 +168,7 @@
     "bio": "open source @github @sustainers @openjs-foundation\r\n\r\nalum:@mozilla @MozillaScience @OICR @wormbase @uwaterloo \r\n📸 CC BY-NC-SA Faces of Open Source",
     "html_url": "https://github.com/abbycabs",
     "public_repos": 135,
-    "followers": 1308
+    "followers": 1310
   },
   "ahrkrak": {
     "login": "ahrkrak",
@@ -195,7 +195,7 @@
     "bio": "Senior Director of Developer Relations @ GitHub ",
     "html_url": "https://github.com/ashleymcnamara",
     "public_repos": 185,
-    "followers": 1917
+    "followers": 1919
   },
   "caniszczyk": {
     "login": "caniszczyk",
@@ -204,7 +204,7 @@
     "bio": "always paying it forward",
     "html_url": "https://github.com/caniszczyk",
     "public_repos": 78,
-    "followers": 768
+    "followers": 769
   },
   "carlwgeorge": {
     "login": "carlwgeorge",
@@ -221,7 +221,7 @@
     "avatar_url": "https://avatars.githubusercontent.com/u/1431969?v=4",
     "bio": "I fight for the users. | maintainer, @kubernetes | chair, @cncf governing board | architect & sr principal sre, red hat @openshift",
     "html_url": "https://github.com/cblecker",
-    "public_repos": 136,
+    "public_repos": 139,
     "followers": 377
   },
   "cgwalters": {
@@ -231,7 +231,7 @@
     "bio": "Software engineer at @RedHatOfficial\r\n\r\n",
     "html_url": "https://github.com/cgwalters",
     "public_repos": 455,
-    "followers": 533
+    "followers": 535
   },
   "colindean": {
     "login": "colindean",
@@ -258,7 +258,7 @@
     "bio": "Linux Support Lead for Framework Computer, doer of randomness with Linux.",
     "html_url": "https://github.com/ctsdownloads",
     "public_repos": 35,
-    "followers": 26
+    "followers": 27
   },
   "dustinkirkland": {
     "login": "dustinkirkland",
@@ -267,7 +267,7 @@
     "bio": "VP of Engineering @chainguard-dev \r\nOpen source author and maintainer",
     "html_url": "https://github.com/dustinkirkland",
     "public_repos": 61,
-    "followers": 354
+    "followers": 356
   },
   "ericcurtin": {
     "login": "ericcurtin",
@@ -275,8 +275,8 @@
     "avatar_url": "https://avatars.githubusercontent.com/u/1694275?v=4",
     "bio": "https://gitlab.com/ecurtin\r\nhttps://gitlab.freedesktop.org/ecurtin\r\n\r\n    \r\n",
     "html_url": "https://github.com/ericcurtin",
-    "public_repos": 220,
-    "followers": 184
+    "public_repos": 223,
+    "followers": 186
   },
   "funnelfiasco": {
     "login": "funnelfiasco",
@@ -284,8 +284,8 @@
     "avatar_url": "https://avatars.githubusercontent.com/u/445852?v=4",
     "bio": null,
     "html_url": "https://github.com/funnelfiasco",
-    "public_repos": 71,
-    "followers": 48
+    "public_repos": 72,
+    "followers": 50
   },
   "heavyelement": {
     "login": "heavyelement",
@@ -294,7 +294,7 @@
     "bio": "Follow the code.",
     "html_url": "https://github.com/heavyelement",
     "public_repos": 8,
-    "followers": 106
+    "followers": 110
   },
   "idvoretskyi": {
     "login": "idvoretskyi",
@@ -303,7 +303,7 @@
     "bio": "Senior Developer Advocate @cncf",
     "html_url": "https://github.com/idvoretskyi",
     "public_repos": 188,
-    "followers": 471
+    "followers": 473
   },
   "jbeda": {
     "login": "jbeda",
@@ -311,8 +311,8 @@
     "avatar_url": "https://avatars.githubusercontent.com/u/37310?v=4",
     "bio": "Semi-retired. Did some stuff.",
     "html_url": "https://github.com/jbeda",
-    "public_repos": 86,
-    "followers": 1288
+    "public_repos": 87,
+    "followers": 1291
   },
   "jberkus": {
     "login": "jberkus",
@@ -321,7 +321,7 @@
     "bio": "Kubernetes/CNCF Slack: jberkus",
     "html_url": "https://github.com/jberkus",
     "public_repos": 108,
-    "followers": 390
+    "followers": 391
   },
   "jeefy": {
     "login": "jeefy",
@@ -330,7 +330,7 @@
     "bio": "Project things @cncf | Kubernetes & OSS Advocate | Goose Enthusiast",
     "html_url": "https://github.com/jeefy",
     "public_repos": 145,
-    "followers": 156
+    "followers": 157
   },
   "jonobacon": {
     "login": "jonobacon",
@@ -356,8 +356,8 @@
     "avatar_url": "https://avatars.githubusercontent.com/u/54789?v=4",
     "bio": null,
     "html_url": "https://github.com/kenvandine",
-    "public_repos": 258,
-    "followers": 184
+    "public_repos": 261,
+    "followers": 188
   },
   "lhawthorn": {
     "login": "lhawthorn",
@@ -366,7 +366,7 @@
     "bio": "Director, Red Hat Open Source Program Office",
     "html_url": "https://github.com/lhawthorn",
     "public_repos": 7,
-    "followers": 58
+    "followers": 59
   },
   "liljenstolpe": {
     "login": "liljenstolpe",
@@ -392,7 +392,7 @@
     "avatar_url": "https://avatars.githubusercontent.com/u/891823?v=4",
     "bio": "Product manager at Red Hat. I enjoy image-based operating systems, container engines, and weird music.",
     "html_url": "https://github.com/marrusl",
-    "public_repos": 8,
+    "public_repos": 9,
     "followers": 6
   },
   "mattfarina": {
@@ -401,8 +401,8 @@
     "avatar_url": "https://avatars.githubusercontent.com/u/62991?v=4",
     "bio": "Engineer, developer, author, speaker. Distinguished Engineer at @SUSE. Maintainer of Rancher Desktop, @helm, and @artifacthub.",
     "html_url": "https://github.com/mattfarina",
-    "public_repos": 181,
-    "followers": 646
+    "public_repos": 182,
+    "followers": 647
   },
   "mattray": {
     "login": "mattray",
@@ -420,7 +420,7 @@
     "bio": "Doing Stuff @kubermatic \r\n on a farm in the middle of nowhere -\r\n@cncf TAG Operational Resilience Co Chair\r\n@kubernetes SIG ContribEx Co Chair",
     "html_url": "https://github.com/mfahlandt",
     "public_repos": 52,
-    "followers": 32
+    "followers": 33
   },
   "michaeltunnell": {
     "login": "MichaelTunnell",
@@ -429,7 +429,7 @@
     "bio": "Content Creator. Writer. Marketer. Designer.",
     "html_url": "https://github.com/MichaelTunnell",
     "public_repos": 28,
-    "followers": 68
+    "followers": 70
   },
   "mrbobbytables": {
     "login": "mrbobbytables",
@@ -437,7 +437,7 @@
     "avatar_url": "https://avatars.githubusercontent.com/u/6500863?v=4",
     "bio": "Kubernetes & OSS Advocate | CNCF cat wrangler",
     "html_url": "https://github.com/mrbobbytables",
-    "public_repos": 136,
+    "public_repos": 137,
     "followers": 495
   },
   "nimbinatus": {
@@ -447,7 +447,7 @@
     "bio": "Community Architect at Red Hat. Community: DevOps focused. I ❤️ clouds. Weather nerd, Pythonista. Specializing in solving the unsolvable.",
     "html_url": "https://github.com/nimbinatus",
     "public_repos": 122,
-    "followers": 92
+    "followers": 93
   },
   "parispittman": {
     "login": "parispittman",
@@ -464,8 +464,8 @@
     "avatar_url": "https://avatars.githubusercontent.com/u/1841272?v=4",
     "bio": "Developer Advocate / Engineering Manager / Community Manager / Cat fan.",
     "html_url": "https://github.com/popey",
-    "public_repos": 347,
-    "followers": 617
+    "public_repos": 348,
+    "followers": 619
   },
   "puja108": {
     "login": "puja108",
@@ -474,7 +474,7 @@
     "bio": "VP Product @giantswarm",
     "html_url": "https://github.com/puja108",
     "public_repos": 24,
-    "followers": 52
+    "followers": 53
   },
   "ramcq": {
     "login": "ramcq",
@@ -492,7 +492,7 @@
     "bio": "Mr SELinux, Red Hat Senior Distinguished Engineer. Works on  @containers  projects: ai-lab-recipes, Podman, Skopeo, Buildah, image, storage...",
     "html_url": "https://github.com/rhatdan",
     "public_repos": 156,
-    "followers": 1112
+    "followers": 1115
   },
   "sarahnovotny": {
     "login": "sarahnovotny",
@@ -501,7 +501,7 @@
     "bio": null,
     "html_url": "https://github.com/sarahnovotny",
     "public_repos": 5,
-    "followers": 42
+    "followers": 43
   },
   "thockin": {
     "login": "thockin",
@@ -510,7 +510,7 @@
     "bio": null,
     "html_url": "https://github.com/thockin",
     "public_repos": 64,
-    "followers": 1995
+    "followers": 2001
   },
   "travier": {
     "login": "travier",
@@ -518,61 +518,7 @@
     "avatar_url": "https://avatars.githubusercontent.com/u/64795720?v=4",
     "bio": "CoreOS engineer at Red Hat, Fedora Atomic Desktops maintainer, KDE developer.",
     "html_url": "https://github.com/travier",
-    "public_repos": 142,
-    "followers": 303
-  },
-  "wwitzel3": {
-    "login": "wwitzel3",
-    "name": "Wayne Witzel III",
-    "avatar_url": "https://avatars.githubusercontent.com/u/27317?v=4",
-    "bio": "Software engineer and electrician.",
-    "html_url": "https://github.com/wwitzel3",
-    "public_repos": 124,
-    "followers": 72
-  },
-  "antheas": {
-    "login": "antheas",
-    "name": "Antheas Kapenekakis",
-    "avatar_url": "https://avatars.githubusercontent.com/u/5252246?v=4",
-    "bio": "Comp. Sci. PhD Fellow @ Aalborg University, Denmark",
-    "html_url": "https://github.com/antheas",
-    "public_repos": 37,
-    "followers": 50
-  },
-  "dreamyukii": {
-    "login": "dreamyukii",
-    "name": "dreamyuki",
-    "avatar_url": "https://avatars.githubusercontent.com/u/49896401?v=4",
-    "bio": "nothing to see here",
-    "html_url": "https://github.com/dreamyukii",
-    "public_repos": 76,
-    "followers": 44
-  },
-  "HikariKnight": {
-    "login": "HikariKnight",
-    "name": "HikariKnight",
-    "avatar_url": "https://avatars.githubusercontent.com/u/2557889?v=4",
-    "bio": "I do things with scripts to make other things work.\r\nCurrently helping out with @ublue-os :heart: ",
-    "html_url": "https://github.com/HikariKnight",
-    "public_repos": 24,
-    "followers": 176
-  },
-  "KyleGospo": {
-    "login": "KyleGospo",
-    "name": "Kyle Gospodnetich",
-    "avatar_url": "https://avatars.githubusercontent.com/u/10704358?v=4",
-    "bio": "Creator of Bazzite and Maintainer @ublue-os & @frostyard | Linux Community Engineer @microsoft",
-    "html_url": "https://github.com/KyleGospo",
-    "public_repos": 138,
-    "followers": 233
-  },
-  "noelmiller": {
-    "login": "noelmiller",
-    "name": "Noel Miller",
-    "avatar_url": "https://avatars.githubusercontent.com/u/4983138?v=4",
-    "bio": "Dedicated Operations TAM at @RedHatOfficial | Maintainer for @bazzite-org",
-    "html_url": "https://github.com/noelmiller",
-    "public_repos": 43,
-    "followers": 53
+    "public_repos": 140,
+    "followers": 305
   }
 }
