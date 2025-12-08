@@ -200,8 +200,12 @@ const config: Config = {
               href: "https://github.com/ublue-os/bluefin-lts",
             },
             {
-              label: "Bluefin Documentation",
-              href: "https://github.com/ublue-os/bluefin-docs",
+              label: "Documentation",
+              href: "https://github.com/projectbluefin/documentation",
+            },
+            {
+              label: "Bluefin Website",
+              href: "https://github.com/projectbluefin/website",
             },
           ],
         },
