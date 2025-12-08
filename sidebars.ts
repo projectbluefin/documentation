@@ -39,6 +39,7 @@ const sidebars: SidebarsConfig = {
         "code-of-conduct",
         "dinosaurs",
         "downloads",
+        "driver-versions",
         "FAQ",
         "mission",
         "music",

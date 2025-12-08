@@ -20,47 +20,68 @@ Run the development server:
 
 **CRITICAL: Development Server Reliability**
 
-To ensure the development server runs reliably and doesn't crash:
+To ensure the development server runs reliably and stays running:
 
-1. **Use detached mode for persistent server:**
-
-   ```bash
-   pkill -f docusaurus && sleep 2
-   npx docusaurus start --host 0.0.0.0 --no-open
-   ```
-
-   - Use `mode: "detached"` with a named `sessionId` (e.g., "docusaurus-detached")
-   - Server runs completely detached and survives after shell exits
-   - Process persists indefinitely until manually stopped
-   - Set `initial_wait` not needed - use separate command to verify
-
-2. **Verify server started:**
+1. **The ONLY reliable method - Use detached mode with background process redirection:**
 
    ```bash
-   sleep 35 && curl -s http://localhost:3000/ | grep '<title>'
-   ps aux | grep docusaurus | grep -v grep
-   ss -tlnp | grep :3000
+   cd /var/home/jorge/src/bluefin-docs && npm start 2>&1 | tee /tmp/docusaurus-server.log &
    ```
 
-3. **Bind to all interfaces:** Always use `--host 0.0.0.0` to ensure IPv4/IPv6 accessibility
+   **CRITICAL REQUIREMENTS:**
+   - Use `mode: "detached"` when running via bash tool
+   - Redirect output to log file with `2>&1 | tee /tmp/docusaurus-server.log`
+   - Add `&` at the end to background the process
+   - Use `initial_wait: 30` or higher for initial startup
+   - Process persists after shell exits and survives indefinitely
+
+2. **Verify server started successfully:**
+
+   ```bash
+   sleep 40 && tail -50 /tmp/docusaurus-server.log
+   curl -I http://localhost:3000/
+   ps aux | grep -E "node|npm|docusaurus" | grep -v grep
+   ```
+
+   Expected output:
+   - Log should show: `[SUCCESS] Docusaurus website is running at: http://localhost:3000/`
+   - curl should return: `HTTP/1.1 200 OK`
+   - ps should show node/npm processes running
+
+3. **Monitor server logs in real-time:**
+
+   ```bash
+   tail -f /tmp/docusaurus-server.log
+   ```
 
 4. **Stop the server:**
 
    ```bash
+   pkill -f "npm start"
    pkill -f docusaurus
+   # Verify it stopped:
+   ps aux | grep -E "node.*docusaurus" | grep -v grep
    ```
 
-5. **Best practices from Docusaurus documentation:**
-   - Development: Use `docusaurus start` for live preview with hot-reload
+5. **Why this method is reliable:**
+   - `npm start` handles all data fetching (feeds, playlists, profiles) automatically
+   - Detached mode survives shell session termination
+   - Log redirection allows monitoring without blocking
+   - Background process (`&`) returns immediately while server starts
+   - Cannot be stopped with `stop_bash` - must use `pkill`
+   - Works consistently across all environments
+
+6. **DO NOT use these methods (they are unreliable):**
+   - ❌ `npm start` alone without detached mode - terminates with session
+   - ❌ `npx docusaurus start` directly - doesn't run data fetching scripts
+   - ❌ `mode: "async"` - can disconnect unexpectedly
+   - ❌ `mode: "sync"` - blocks and may timeout
+
+7. **Best practices from Docusaurus documentation:**
+   - Development: Use `npm start` for live preview with hot-reload
    - Production testing: Use `npm run build && npm run serve` for static files
    - Never use dev server in production - always serve static build
    - For CI/CD: Build static files and deploy to CDN/static hosting
-
-6. **Why detached mode works:**
-   - Process runs with `setsid` on Unix systems (detaches from terminal)
-   - Survives shell session termination
-   - Cannot be stopped with `stop_bash` - use `pkill` instead
-   - Designed for long-running services like web servers
 
 Run production build locally:
 
