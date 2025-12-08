@@ -6,13 +6,13 @@ export default function GiscusComments(): React.ReactElement {
   const { colorMode } = useColorMode();
 
   return (
-    <div style={{ marginTop: '2rem' }}>
+    <div style={{ marginTop: '2rem', marginBottom: '4rem', minHeight: '400px' }}>
       <Giscus
         id="comments"
         repo="ublue-os/bluefin"
-        repoId="R_kgDOM7K2bw"
+        repoId="R_kgDOJHEu4g"
         category="Discussions"
-        categoryId="DIC_kwDOM7K2b84Cl7Bh"
+        categoryId="DIC_kwDOJHEu4s4CtFFL"
         mapping="pathname"
         strict="0"
         reactionsEnabled="1"
