@@ -2,6 +2,7 @@
 title: "Bluefin LTS @IndiaFOSS 2025"
 slug: bluefin-lts-indiafoss-2025
 authors: hanthor
+tags: [lts, community, video]
 ---
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/0_TExIe4rNw?si=mL0AcmZH6jMw_rgK&amp;start=5683" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>

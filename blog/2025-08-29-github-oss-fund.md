@@ -1,6 +1,7 @@
 ---
 title: GitHub Open Source Fund
 authors: [castrojo]
+tags: [announcements, community]
 ---
 
 Today we're happy to announce that Bluefin was one of the 71 projects selected for Github's [Secure Open Source Fund](https://github.blog/open-source/maintainers/securing-the-supply-chain-at-scale-starting-with-71-important-open-source-projects/). We applied for and were selected earlier this year, with [tulilirockz](https://github.com/tulilirockz) representing the team and working with GitHub -- getting some awesome training and some funding to work on improving our security posture. Also awesome to see CNCF Projects like `bootc` and `fluxcd`. We're in excellent company. 😄

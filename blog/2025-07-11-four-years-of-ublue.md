@@ -2,7 +2,7 @@
 title: Four Years of Universal Blue
 slug: four-years-of-universal-blue
 authors: castrojo
-tags: [announcements]
+tags: [announcements, community]
 ---
 
 A little over four years ago some of my fellow ex-Ubuntu friends helped me complete the first prototype for [Bluefin](https://projectbluefin.io). It was our pocket vision of a "what if we could start over and make exactly what we want?". For you archaeologists, here's [the first version](https://github.com/castrojo/ublue/tree/e0f113a98b98bb0782ecf9314e5348b60d7f2357).

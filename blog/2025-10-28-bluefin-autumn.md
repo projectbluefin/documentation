@@ -2,7 +2,7 @@
 title: "Bluefin Autumn 2025: We visit the Bazaar"
 slug: 2025-10-28-bluefin-autumn
 authors: castrojo
-tags: [announcements]
+tags: [announcements, homebrew, lts, community, cloud-native, video]
 ---
 
 ![banner](https://github.com/user-attachments/assets/1b7b7f22-7212-4086-ac00-1d7c534fb9a3)

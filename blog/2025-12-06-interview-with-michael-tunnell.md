@@ -2,7 +2,7 @@
 title: "Interview with Michael Tunnell"
 slug: interview-with-michael-tunnell
 authors: castrojo
-tags: [community]
+tags: [community, video]
 ---
 
 I had the pleasure of sitting down with [Michael Tunnell](https://michaeltunnell.com/) to discuss Aurora, Bazzite, Bluefin, cloud-native Linux desktops, and the future of the project.
