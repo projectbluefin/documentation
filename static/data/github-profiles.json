@@ -77,8 +77,8 @@
     "avatar_url": "https://avatars.githubusercontent.com/u/120808662?v=4",
     "bio": "Big Linux fan :)",
     "html_url": "https://github.com/tulilirockz",
-    "public_repos": 151,
-    "followers": 137
+    "public_repos": 152,
+    "followers": 138
   },
   "chandeleer1698": {
     "login": "chandeleer1698",
@@ -105,7 +105,7 @@
     "bio": null,
     "html_url": "https://github.com/bketelsen",
     "public_repos": 468,
-    "followers": 1364
+    "followers": 1363
   },
   "bsherman": {
     "login": "bsherman",
@@ -239,7 +239,7 @@
     "avatar_url": "https://avatars.githubusercontent.com/u/197224?v=4",
     "bio": "Scholar, bon vivant, champion of the oppressed.",
     "html_url": "https://github.com/colindean",
-    "public_repos": 300,
+    "public_repos": 301,
     "followers": 246
   },
   "craigmcl": {
@@ -275,8 +275,8 @@
     "avatar_url": "https://avatars.githubusercontent.com/u/1694275?v=4",
     "bio": "https://gitlab.com/ecurtin\r\nhttps://gitlab.freedesktop.org/ecurtin\r\n\r\n    \r\n",
     "html_url": "https://github.com/ericcurtin",
-    "public_repos": 223,
-    "followers": 186
+    "public_repos": 225,
+    "followers": 187
   },
   "funnelfiasco": {
     "login": "funnelfiasco",
@@ -520,5 +520,23 @@
     "html_url": "https://github.com/travier",
     "public_repos": 140,
     "followers": 305
+  },
+  "wwitzel3": {
+    "login": "wwitzel3",
+    "name": "Wayne Witzel III",
+    "avatar_url": "https://avatars.githubusercontent.com/u/27317?v=4",
+    "bio": "Software engineer and electrician.",
+    "html_url": "https://github.com/wwitzel3",
+    "public_repos": 124,
+    "followers": 72
+  },
+  "antheas": {
+    "login": "antheas",
+    "name": "Antheas Kapenekakis",
+    "avatar_url": "https://avatars.githubusercontent.com/u/5252246?v=4",
+    "bio": "Comp. Sci. PhD Fellow @ Aalborg University, Denmark",
+    "html_url": "https://github.com/antheas",
+    "public_repos": 37,
+    "followers": 51
   }
 }
