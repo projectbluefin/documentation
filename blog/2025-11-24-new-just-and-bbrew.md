@@ -2,7 +2,7 @@
 title: "New Just and Bold Brew Improvements"
 slug: new-just-and-bbrew
 authors: castrojo
-tags: [announcements]
+tags: [announcements, homebrew, community]
 ---
 
 Greetings guardians!

@@ -2,7 +2,7 @@
 title: February Infrastructure Update
 slug: february-infrastructure-update
 authors: castrojo
-tags: [announcements]
+tags: [announcements, homebrew]
 ---
 
 Hey ya’ll, we’re about to head into conference season so I thought I’d do a quick rollup for you before the team starts on F42 work.

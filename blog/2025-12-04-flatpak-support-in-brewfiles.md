@@ -2,7 +2,7 @@
 title: "Flatpak Support in Brewfiles"
 slug: flatpak-support-in-brewfiles
 authors: castrojo
-tags: [announcements, homebrew]
+tags: [announcements, homebrew, community]
 ---
 
 Flatpak support in Brewfiles is here! You can now manage your Flatpak applications alongside your Homebrew formulae, casks, and other dependencies in a single `Brewfile`. This is thanks to the amazing work by [Ahmed Adan](https://github.com/ahmedadan) ([Donate](https://github.com/sponsors/ahmedadan)), who worked with upstream to land this feature.
