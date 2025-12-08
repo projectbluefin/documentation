@@ -4,6 +4,7 @@ slug: music
 ---
 
 import MusicPlaylist from '@site/src/components/MusicPlaylist';
+import styles from '@site/src/components/ExtensionsGrid.module.css';
 
 The Bluefin team releases music playlists regularly. Each song and album has a theme and reason for being included. How do the songs speak to you?
 
@@ -11,13 +12,7 @@ The Bluefin team releases music playlists regularly. Each song and album has a t
 
 Bluefin in 2025 focuses on upstream projects and contributor growth.
 
-<div style={{
-  display: 'grid',
-  gridTemplateColumns: 'repeat(3, 1fr)',
-  gap: '1.5rem',
-  marginTop: '2rem',
-  marginBottom: '2rem'
-}}>
+<div className={styles.extensionsGrid}>
 
 <MusicPlaylist 
   title="Bluefin and the Bazaar of Destiny"
@@ -35,13 +30,7 @@ Bluefin in 2025 focuses on upstream projects and contributor growth.
 
 Bluefin forms partnerships with other legendary projects.
 
-<div style={{
-  display: 'grid',
-  gridTemplateColumns: 'repeat(3, 1fr)',
-  gap: '1.5rem',
-  marginTop: '2rem',
-  marginBottom: '2rem'
-}}>
+<div className={styles.extensionsGrid}>
 
 <MusicPlaylist 
   title="Bluefin and Achillobator"
@@ -64,13 +53,7 @@ Bluefin forms partnerships with other legendary projects.
 
 Bluefin was born in 2021.
 
-<div style={{
-  display: 'grid',
-  gridTemplateColumns: 'repeat(3, 1fr)',
-  gap: '1.5rem',
-  marginTop: '2rem',
-  marginBottom: '2rem'
-}}>
+<div className={styles.extensionsGrid}>
 
 <MusicPlaylist 
   title="Bluefin and the Birth of Universal Blue"
