@@ -186,6 +186,10 @@ const config: Config = {
               label: "Discussions",
               href: "https://github.com/ublue-os/bluefin/discussions",
             },
+            {
+              label: "Feedback",
+              href: "https://feedback.projectbluefin.io/",
+            },
           ],
         },
         {
@@ -206,6 +210,10 @@ const config: Config = {
             {
               label: "Bluefin Website",
               href: "https://github.com/projectbluefin/website",
+            },
+            {
+              label: "Report Issue",
+              href: "https://github.com/ublue-os/bluefin/issues/new/choose",
             },
           ],
         },
