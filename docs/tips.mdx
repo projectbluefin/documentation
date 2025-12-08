@@ -4,6 +4,7 @@ slug: /tips
 ---
 
 import GnomeExtensions from '@site/src/components/GnomeExtensions';
+import styles from '@site/src/components/ExtensionsGrid.module.css';
 
 This section contains miscellaneous tips and tricks that may not be core documentation.
 
@@ -11,13 +12,7 @@ This section contains miscellaneous tips and tricks that may not be core documen
 
 Here are some GNOME extensions that the maintainers recommend to round out your experience. Remember to support extension authors by donating to the ones you love! Talk to a maintainer before PRing something here as this is an opinionated list. :)
 
-<div style={{
-  display: 'grid',
-  gridTemplateColumns: 'repeat(3, 1fr)',
-  gap: '1.5rem',
-  marginTop: '2rem',
-  marginBottom: '2rem'
-}}>
+<div className={styles.extensionsGrid}>
 
 <GnomeExtensions extensionId={5724} />
 <GnomeExtensions extensionId={6670} />
