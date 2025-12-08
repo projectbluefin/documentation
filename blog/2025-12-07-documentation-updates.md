@@ -26,3 +26,19 @@ The [Tips and Tricks](/tips) page has a new refreshed look with extension thumbn
 ![Copyous](https://github.com/user-attachments/assets/dc567bd4-3442-4b3c-a87d-38576740bdca)
 
 Kick the tyres and let us know what you think!
+
+<script src="https://giscus.app/client.js"
+        data-repo="ublue-os/bluefin"
+        data-repo-id="R_kgDOJHEu4g"
+        data-category="Discussions"
+        data-category-id="DIC_kwDOJHEu4s4CtFFL"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="bottom"
+        data-theme="dark"
+        data-lang="en"
+        crossorigin="anonymous"
+        async>
+</script>
