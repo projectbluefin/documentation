@@ -23,6 +23,6 @@ The page includes direct links to upstream release notes for [NVIDIA drivers](ht
 
 The [Tips and Tricks](/tips) page has a new refreshed look with extension thumbnails. We haven't touched these in a while, but the reason I was there was to add [Copyous](https://extensions.gnome.org/extension/8834/copyous/) to our list of recommended extensions. This thing is so good! It puts a strip of clipboard items on the top that you can summon:
 
-<img width="2554" height="495" alt="image" src="https://github.com/user-attachments/assets/dc567bd4-3442-4b3c-a87d-38576740bdca" />
+![Copyous](https://github.com/user-attachments/assets/dc567bd4-3442-4b3c-a87d-38576740bdca)
 
 Kick the tyres and let us know what you think!
