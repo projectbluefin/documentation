@@ -2,7 +2,7 @@
 title: "Bluefin LTS: Reinventing the Steel"
 slug: bluefin-lts-ga
 authors: castrojo
-tags: [lts, homebrew, community]
+tags: [lts, homebrew, community, video]
 ---
 
 _Achillobator giganticus_
