@@ -9,9 +9,9 @@ export default function GiscusComments(): React.ReactElement {
     <div style={{ marginTop: '2rem' }}>
       <Giscus
         id="comments"
-        repo="projectbluefin/documentation"
+        repo="ublue-os/bluefin"
         repoId="R_kgDOM7K2bw"
-        category="Blog Comments"
+        category="Discussions"
         categoryId="DIC_kwDOM7K2b84Cl7Bh"
         mapping="pathname"
         strict="0"
