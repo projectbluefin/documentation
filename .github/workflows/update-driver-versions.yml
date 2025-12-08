@@ -1,0 +1,58 @@
+name: Update Driver Versions
+
+on:
+  schedule:
+    # Run every Wednesday at 10:00 AM UTC
+    - cron: '0 10 * * 3'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-driver-versions:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run update script
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/update-driver-versions.js
+
+      - name: Check for changes
+        id: check_changes
+        run: |
+          if git diff --quiet docs/driver-versions.md; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "No changes detected"
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "Changes detected"
+          fi
+
+      - name: Commit and push changes
+        if: steps.check_changes.outputs.has_changes == 'true'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add docs/driver-versions.md
+          git commit -m "docs: update driver versions [automated]"
+          git push
+
+      - name: Summary
+        run: |
+          if [ "${{ steps.check_changes.outputs.has_changes }}" == "true" ]; then
+            echo "✅ Driver versions updated successfully" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "ℹ️  No new releases found, document is up to date" >> $GITHUB_STEP_SUMMARY
+          fi
