@@ -8,19 +8,11 @@ last_updated: 2025-12-08
 
 # Driver Versions
 
-## Executive Summary
-
-This report tracks major driver versions across Bluefin releases to help users identify and switch to specific driver versions. Each entry includes direct links to release pages for reference.
+This page tracks major driver versions across Bluefin releases to help users identify and switch to specific driver versions.
 
 ## Overview
 
 [@ublue-os/bluefin](https://github.com/ublue-os/bluefin) and [@ublue-os/bluefin-lts](https://github.com/ublue-os/bluefin-lts) publish detailed changelogs with every release that include kernel versions, Mesa driver versions, and NVIDIA driver versions. This report consolidates that information for the most recent stable, GTS, and LTS releases to help users troubleshoot driver-specific issues or test specific configurations.
-
-**Purpose:** Help users switch to specific driver combinations for testing or troubleshooting.
-
-**Data Sources:** 
-- [@ublue-os/bluefin](https://github.com/ublue-os/bluefin) - Stable and GTS releases
-- [@ublue-os/bluefin-lts](https://github.com/ublue-os/bluefin-lts) - LTS releases
 
 ## Bluefin
 
@@ -148,7 +140,7 @@ sudo systemctl reboot
 :::tip Finding Your Current Version
 Check your current Bluefin version with:
 ```bash
-rpm-ostree status
+bootc status
 ```
 :::
 
@@ -174,20 +166,3 @@ The `--enforce-container-sigpolicy` flag ensures you're always running a signed 
 - [Bluefin Documentation](https://docs.projectbluefin.io/) - Official docs
 - [Bluefin LTS Documentation](https://docs.projectbluefin.io/lts) - LTS-specific docs
 - [@bootc-dev/bootc](https://github.com/containers/bootc) - Bootc reference
-
----
-
-**Report Generated:** 2025-10-15  
-**Data Sources:** 
-- [@ublue-os/bluefin](https://github.com/ublue-os/bluefin) - Stable and GTS releases
-- [@ublue-os/bluefin-lts](https://github.com/ublue-os/bluefin-lts) - LTS releases
-
-All channels include thoroughly tested driver combinations with cosign-signed container images.
-
-## Changelog
-
-| Date | Changes | Commit |
-|------|---------|--------|
-| 2025-10-15 | Initial report created based on Bazzite template | (current) |
-
-
