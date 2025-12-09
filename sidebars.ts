@@ -66,7 +66,16 @@ const sidebars: SidebarsConfig = {
       collapsed: true,
       items: ["t2-mac"],
     },
-    "donations",
+    {
+      type: "category",
+      label: "Donations",
+      collapsed: false,
+      link: {
+        type: "doc",
+        id: "donations/index",
+      },
+      items: ["donations/contributors", "donations/projects"],
+    },
   ],
 };
 

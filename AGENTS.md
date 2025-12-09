@@ -149,6 +149,7 @@ npm run fetch-data
 npm run fetch-feeds              # Release feeds from GitHub
 npm run fetch-playlists          # YouTube playlist metadata
 npm run fetch-github-profiles    # GitHub user profiles for donations page
+npm run fetch-github-repos       # GitHub repo stats for projects page
 
 # Clear build cache if needed
 npm run clear
@@ -177,7 +178,7 @@ blog/                   # Blog posts (21 files)
 changelogs/             # Changelog welcome content (manually created)
   authors.yaml          # Changelog author information
 src/                    # React components and pages
-  components/           # React components (FeedItems, PackageSummary, CommunityFeeds, MusicPlaylist, GitHubProfileCard)
+  components/           # React components (FeedItems, PackageSummary, CommunityFeeds, MusicPlaylist, GitHubProfileCard, ProjectCard)
   config/               # Configuration (packageConfig.ts)
   pages/                # Custom pages (changelogs.tsx)
   types/                # TypeScript type definitions
@@ -186,7 +187,7 @@ static/                 # Static assets (images, data, feeds, etc.)
   data/                 # Auto-generated data files (playlist-metadata.json, github-profiles.json)
   feeds/                # Auto-generated release feeds (bluefin-releases.json, bluefin-lts-releases.json)
   img/                  # Images and graphics
-scripts/                # Build scripts (fetch-feeds.js, fetch-playlists.js, fetch-github-profiles.js)
+scripts/                # Build scripts (fetch-feeds.js, fetch-playlists.js, fetch-github-profiles.js, fetch-github-repos.js)
 sidebars.ts             # Navigation structure (TypeScript)
 docusaurus.config.ts    # Main Docusaurus configuration
 package.json            # Dependencies and scripts
@@ -203,6 +204,7 @@ Justfile                # Just command runner recipes (build, serve)
   - `static/feeds/bluefin-lts-releases.json` - Release feed from ublue-os/bluefin-lts
   - `static/data/playlist-metadata.json` - YouTube playlist metadata for music page
   - `static/data/github-profiles.json` - GitHub user profiles for donations page
+  - `static/data/github-repos.json` - GitHub repo stats for projects donations page
 - **Static Assets**: Images and files in `static/` directory
 
 ## Development Guidelines
@@ -393,7 +395,8 @@ Common documentation areas include:
 - Developer experience (`docs/bluefin-dx.md`, `docs/bluefin-gdx.md`, `docs/devcontainers.md`)
 - FAQ and troubleshooting (`docs/FAQ.md`)
 - Hardware-specific guides (`docs/t2-mac.md`)
-- Community information (`docs/communication.md`, `docs/code-of-conduct.md`, `docs/values.md`, `docs/mission.md`, `docs/donations.mdx`)
+- Community information (`docs/communication.md`, `docs/code-of-conduct.md`, `docs/values.md`, `docs/mission.md`, `docs/donations/`)
+  - Donations section split into: `docs/donations/index.mdx`, `docs/donations/contributors.mdx`, `docs/donations/projects.mdx`
 - Gaming support (`docs/gaming.md`)
 - LTS information (`docs/lts.md`)
 - Tips and command-line usage (`docs/tips.md`, `docs/command-line.md`)
@@ -410,6 +413,70 @@ Other Rules:
 - **Images page removed**: The automated images page was recently removed (commit 52e6fee). Do not recreate it.
 - For `docs/music.md` - always ensure the thumbnail aspect ratio is 1:1 and ensure that the album sizes remain consistent across the page. Playlists use the MusicPlaylist component which fetches metadata at build time.
 - For `docs/donations.mdx` - uses GitHubProfileCard component which displays profiles fetched at build time from `static/data/github-profiles.json`. Profile data includes name, bio, avatar, company, location, and social links.
+
+## ProjectCard Component (Projects Donations Page)
+
+The `ProjectCard` component (`src/components/ProjectCard.tsx`) displays open source projects on the `/donations/projects` page with icons, descriptions, GitHub stats (stars/forks), and donate buttons.
+
+### Component Props
+
+```typescript
+interface ProjectCardProps {
+  name: string;           // Display name of the project
+  description: string;    // Short description
+  sponsorUrl?: string;    // URL to donation/sponsor page
+  packageName?: string;   // Optional package name to display
+  icon?: string;          // URL to project icon (typically GitHub avatar)
+  githubRepo?: string;    // GitHub repo path (e.g., "owner/repo") for stats
+}
+```
+
+### How It Works
+
+1. **Build-time data**: Stats are pre-fetched via `scripts/fetch-github-repos.js` and stored in `static/data/github-repos.json`
+2. **Runtime fallback**: If build-time data is missing, fetches from GitHub API with request queue (1s delay) and localStorage caching (24h)
+3. **Graceful degradation**: Projects without `githubRepo` prop (e.g., GitLab-hosted) simply don't show stats
+
+### Adding a New Project
+
+1. **Edit** `docs/donations/projects.mdx`
+2. **Add** a ProjectCard in the appropriate section:
+
+```jsx
+<ProjectCard
+  name="Project Name"
+  description="What the project does"
+  sponsorUrl="https://sponsor-url.com"
+  icon="https://github.com/org-or-user.png"
+  githubRepo="owner/repo"
+/>
+```
+
+3. **Edit** `scripts/fetch-github-repos.js` to add the repo to `GITHUB_REPOS` array
+4. **Test** with `npm run fetch-github-repos && npm run start`
+
+### Upstream Package Sources
+
+The projects page should reflect packages actually included in Bluefin. Reference these files:
+
+- **Flatpak apps**: [ublue-os/bluefin/flatpaks/system-flatpaks.list](https://github.com/ublue-os/bluefin/blob/main/flatpaks/system-flatpaks.list)
+- **GNOME extensions**: [ublue-os/bluefin/system_files/shared/usr/share/gnome-shell/extensions/](https://github.com/ublue-os/bluefin/tree/main/system_files/shared/usr/share/gnome-shell/extensions)
+- **Homebrew CLI tools (bluefin-cli)**: [projectbluefin/common/system_files/shared/usr/share/ublue-os/homebrew/cli.Brewfile](https://github.com/projectbluefin/common/blob/main/system_files/shared/usr/share/ublue-os/homebrew/cli.Brewfile)
+
+### Icon URLs
+
+Use GitHub avatar URLs for icons:
+- Organizations: `https://github.com/org-name.png`
+- Users: `https://github.com/username.png`
+
+For projects not on GitHub, you can still use the org's GitHub avatar if they have a mirror, or omit the icon prop.
+
+### Projects Without GitHub Repos
+
+Some projects are hosted on GitLab or elsewhere (e.g., GNOME apps, Firefox, Thunderbird). For these:
+- Omit the `githubRepo` prop
+- The card will display without stars/forks
+- Still include `icon` and `sponsorUrl` if available
 
 ### Attribution Requirements
 
