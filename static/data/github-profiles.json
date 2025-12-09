@@ -42,7 +42,7 @@
     "bio": "@projectbluefin  bluefin LTS \r\n@fossunited Lucknow chapter\r\n@AlmaLinux -  Atomic SIG\r\nEx- @element-hq  all about Matrix!\r\n",
     "html_url": "https://github.com/hanthor",
     "public_repos": 107,
-    "followers": 39
+    "followers": 40
   },
   "inffy": {
     "login": "inffy",
@@ -51,7 +51,7 @@
     "bio": "Tech nerd from FI. Interested on FOSS and Linux.\r\n\r\nAlso maintains uBlues Aurora (https://getaurora.dev)",
     "html_url": "https://github.com/inffy",
     "public_repos": 16,
-    "followers": 17
+    "followers": 18
   },
   "p5": {
     "login": "p5",
@@ -114,7 +114,7 @@
     "bio": "@ublue-os and ucore Maintainer • System Software Engineer and Cloud Architect ",
     "html_url": "https://github.com/bsherman",
     "public_repos": 60,
-    "followers": 56
+    "followers": 58
   },
   "m2Giles": {
     "login": "m2Giles",
@@ -149,7 +149,7 @@
     "avatar_url": "https://avatars.githubusercontent.com/u/113054217?v=4",
     "bio": "You can reach me at kolunmi@posteo.net\r\n&& pfp by my wonderful friend Melody!  https://linksta.cc/@delphic-melody\r\n&& my friend Amy: https://www.atiusamy.com :}",
     "html_url": "https://github.com/kolunmi",
-    "public_repos": 14,
+    "public_repos": 15,
     "followers": 93
   },
   "madonuko": {
@@ -159,7 +159,7 @@
     "bio": "DevOps Engineering at @FyraLabs and @Ultramarine-Linux",
     "html_url": "https://github.com/madonuko",
     "public_repos": 44,
-    "followers": 55
+    "followers": 56
   },
   "abbycabs": {
     "login": "abbycabs",
@@ -168,7 +168,7 @@
     "bio": "open source @github @sustainers @openjs-foundation\r\n\r\nalum:@mozilla @MozillaScience @OICR @wormbase @uwaterloo \r\n📸 CC BY-NC-SA Faces of Open Source",
     "html_url": "https://github.com/abbycabs",
     "public_repos": 135,
-    "followers": 1310
+    "followers": 1311
   },
   "ahrkrak": {
     "login": "ahrkrak",
@@ -186,7 +186,7 @@
     "bio": null,
     "html_url": "https://github.com/angellk",
     "public_repos": 21,
-    "followers": 49
+    "followers": 50
   },
   "ashleymcnamara": {
     "login": "ashleymcnamara",
@@ -303,7 +303,7 @@
     "bio": "Senior Developer Advocate @cncf",
     "html_url": "https://github.com/idvoretskyi",
     "public_repos": 188,
-    "followers": 473
+    "followers": 474
   },
   "jbeda": {
     "login": "jbeda",
@@ -384,7 +384,7 @@
     "bio": "Cloud & Containers & Security",
     "html_url": "https://github.com/marcoceppi",
     "public_repos": 270,
-    "followers": 265
+    "followers": 266
   },
   "marrusl": {
     "login": "marrusl",
@@ -430,113 +430,5 @@
     "html_url": "https://github.com/MichaelTunnell",
     "public_repos": 28,
     "followers": 70
-  },
-  "mrbobbytables": {
-    "login": "mrbobbytables",
-    "name": "Bob Killen",
-    "avatar_url": "https://avatars.githubusercontent.com/u/6500863?v=4",
-    "bio": "Kubernetes & OSS Advocate | CNCF cat wrangler",
-    "html_url": "https://github.com/mrbobbytables",
-    "public_repos": 137,
-    "followers": 495
-  },
-  "nimbinatus": {
-    "login": "nimbinatus",
-    "name": "Laura Santamaria",
-    "avatar_url": "https://avatars.githubusercontent.com/u/1538692?v=4",
-    "bio": "Community Architect at Red Hat. Community: DevOps focused. I ❤️ clouds. Weather nerd, Pythonista. Specializing in solving the unsolvable.",
-    "html_url": "https://github.com/nimbinatus",
-    "public_repos": 122,
-    "followers": 93
-  },
-  "parispittman": {
-    "login": "parispittman",
-    "name": "Paris",
-    "avatar_url": "https://avatars.githubusercontent.com/u/5912992?v=4",
-    "bio": "building communities in cloud native and swift",
-    "html_url": "https://github.com/parispittman",
-    "public_repos": 31,
-    "followers": 175
-  },
-  "popey": {
-    "login": "popey",
-    "name": "Alan Pope",
-    "avatar_url": "https://avatars.githubusercontent.com/u/1841272?v=4",
-    "bio": "Developer Advocate / Engineering Manager / Community Manager / Cat fan.",
-    "html_url": "https://github.com/popey",
-    "public_repos": 348,
-    "followers": 619
-  },
-  "puja108": {
-    "login": "puja108",
-    "name": "Puja",
-    "avatar_url": "https://avatars.githubusercontent.com/u/5468872?v=4",
-    "bio": "VP Product @giantswarm",
-    "html_url": "https://github.com/puja108",
-    "public_repos": 24,
-    "followers": 53
-  },
-  "ramcq": {
-    "login": "ramcq",
-    "name": "Robert McQueen",
-    "avatar_url": "https://avatars.githubusercontent.com/u/254468?v=4",
-    "bio": null,
-    "html_url": "https://github.com/ramcq",
-    "public_repos": 45,
-    "followers": 22
-  },
-  "rhatdan": {
-    "login": "rhatdan",
-    "name": "Daniel J Walsh",
-    "avatar_url": "https://avatars.githubusercontent.com/u/2000835?v=4",
-    "bio": "Mr SELinux, Red Hat Senior Distinguished Engineer. Works on  @containers  projects: ai-lab-recipes, Podman, Skopeo, Buildah, image, storage...",
-    "html_url": "https://github.com/rhatdan",
-    "public_repos": 156,
-    "followers": 1115
-  },
-  "sarahnovotny": {
-    "login": "sarahnovotny",
-    "name": "Sarah Novotny",
-    "avatar_url": "https://avatars.githubusercontent.com/u/127370?v=4",
-    "bio": null,
-    "html_url": "https://github.com/sarahnovotny",
-    "public_repos": 5,
-    "followers": 43
-  },
-  "thockin": {
-    "login": "thockin",
-    "name": "Tim Hockin",
-    "avatar_url": "https://avatars.githubusercontent.com/u/5595220?v=4",
-    "bio": null,
-    "html_url": "https://github.com/thockin",
-    "public_repos": 64,
-    "followers": 2001
-  },
-  "travier": {
-    "login": "travier",
-    "name": "Timothée Ravier",
-    "avatar_url": "https://avatars.githubusercontent.com/u/64795720?v=4",
-    "bio": "CoreOS engineer at Red Hat, Fedora Atomic Desktops maintainer, KDE developer.",
-    "html_url": "https://github.com/travier",
-    "public_repos": 140,
-    "followers": 305
-  },
-  "wwitzel3": {
-    "login": "wwitzel3",
-    "name": "Wayne Witzel III",
-    "avatar_url": "https://avatars.githubusercontent.com/u/27317?v=4",
-    "bio": "Software engineer and electrician.",
-    "html_url": "https://github.com/wwitzel3",
-    "public_repos": 124,
-    "followers": 72
-  },
-  "antheas": {
-    "login": "antheas",
-    "name": "Antheas Kapenekakis",
-    "avatar_url": "https://avatars.githubusercontent.com/u/5252246?v=4",
-    "bio": "Comp. Sci. PhD Fellow @ Aalborg University, Denmark",
-    "html_url": "https://github.com/antheas",
-    "public_repos": 37,
-    "followers": 51
   }
 }
