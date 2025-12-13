@@ -16,7 +16,7 @@ This page tracks major driver versions across Bluefin releases to help users ide
 
 | Image Tag | Kernel Version | NVIDIA Driver | Mesa Version |
 |-----------|----------------|---------------|--------------|
-| [**stable-20251209**](https://github.com/ublue-os/bluefin/releases/tag/stable-20251209) | 6.17.7-300 | 590.44.01-1 | [25.2.7-1](https://docs.mesa3d.org/relnotes/25.2.7.html) |
+| [**stable-20251209**](https://github.com/ublue-os/bluefin/releases/tag/stable-20251209) | 6.17.7-300 | [590.44.01-1](https://www.nvidia.com/en-us/drivers/details/258750/) | [25.2.7-1](https://docs.mesa3d.org/relnotes/25.2.7.html) |
 | [**stable-20251204**](https://github.com/ublue-os/bluefin/releases/tag/stable-20251204) | 6.17.7-300 | [580.105.08-1](https://www.nvidia.com/en-us/drivers/details/257493/) | [25.2.7-1](https://docs.mesa3d.org/relnotes/25.2.7.html) |
 | [**stable-20251202**](https://github.com/ublue-os/bluefin/releases/tag/stable-20251202) | 6.17.7-300 | [580.105.08-1](https://www.nvidia.com/en-us/drivers/details/257493/) | [25.2.7-1](https://docs.mesa3d.org/relnotes/25.2.7.html) |
 | [**stable-20251125**](https://github.com/ublue-os/bluefin/releases/tag/stable-20251125) | 6.17.1-300 | [580.105.08-1](https://www.nvidia.com/en-us/drivers/details/257493/) | [25.2.6-1](https://docs.mesa3d.org/relnotes/25.2.6.html) |
@@ -38,7 +38,7 @@ This page tracks major driver versions across Bluefin releases to help users ide
 
 | Image Tag | Kernel Version | NVIDIA Driver | Mesa Version |
 |-----------|----------------|---------------|--------------|
-| [**gts-20251209**](https://github.com/ublue-os/bluefin/releases/tag/gts-20251209) | 6.17.7-200 | 590.44.01-1 | [25.1.9-1](https://docs.mesa3d.org/relnotes/25.1.9.html) |
+| [**gts-20251209**](https://github.com/ublue-os/bluefin/releases/tag/gts-20251209) | 6.17.7-200 | [590.44.01-1](https://www.nvidia.com/en-us/drivers/details/258750/) | [25.1.9-1](https://docs.mesa3d.org/relnotes/25.1.9.html) |
 | [**gts-20251204**](https://github.com/ublue-os/bluefin/releases/tag/gts-20251204) | 6.17.7-200 | [580.105.08-1](https://www.nvidia.com/en-us/drivers/details/257493/) | [25.1.9-1](https://docs.mesa3d.org/relnotes/25.1.9.html) |
 | [**gts-20251202**](https://github.com/ublue-os/bluefin/releases/tag/gts-20251202) | 6.17.7-200 | [580.105.08-1](https://www.nvidia.com/en-us/drivers/details/257493/) | [25.1.9-1](https://docs.mesa3d.org/relnotes/25.1.9.html) |
 | [**gts-20251125**](https://github.com/ublue-os/bluefin/releases/tag/gts-20251125) | 6.17.1-300 | [580.105.08-1](https://www.nvidia.com/en-us/drivers/details/257493/) | [25.1.9-1](https://docs.mesa3d.org/relnotes/25.1.9.html) |
@@ -59,7 +59,7 @@ This page tracks major driver versions across Bluefin releases to help users ide
 
 | Image Tag | Kernel Version | NVIDIA Driver | Mesa Version |
 |-----------|----------------|---------------|--------------|
-| [**lts.20251209**](https://github.com/ublue-os/bluefin-lts/releases/tag/lts.20251209) | 6.12.0-164 (HWE: 6.17.7-200.fc42) | 590.44.01-1 | [25.2.5-3](https://docs.mesa3d.org/relnotes/25.2.5.html) |
+| [**lts.20251209**](https://github.com/ublue-os/bluefin-lts/releases/tag/lts.20251209) | 6.12.0-164 (HWE: 6.17.7-200.fc42) | [590.44.01-1](https://www.nvidia.com/en-us/drivers/details/258750/) | [25.2.5-3](https://docs.mesa3d.org/relnotes/25.2.5.html) |
 | [**lts.20251202**](https://github.com/ublue-os/bluefin-lts/releases/tag/lts.20251202) | 6.12.0-164 (HWE: 6.17.7-200.fc42) | [580.105.08-1](https://www.nvidia.com/en-us/drivers/details/257493/) | [25.2.5-3](https://docs.mesa3d.org/relnotes/25.2.5.html) |
 | [**lts.20251125**](https://github.com/ublue-os/bluefin-lts/releases/tag/lts.20251125) | 6.12.0-161 (HWE: 6.17.1-300.fc42) | [580.105.08-1](https://www.nvidia.com/en-us/drivers/details/257493/) | [25.2.5-2](https://docs.mesa3d.org/relnotes/25.2.5.html) |
 | [**lts.20251118**](https://github.com/ublue-os/bluefin-lts/releases/tag/lts.20251118) | 6.12.0-157 (HWE: 6.16.10-200.fc42) | [580.105.08-1](https://www.nvidia.com/en-us/drivers/details/257493/) | [25.0.7-5](https://docs.mesa3d.org/relnotes/25.0.7.html) |
@@ -77,7 +77,7 @@ This page tracks major driver versions across Bluefin releases to help users ide
 | [**lts.20250903**](https://github.com/ublue-os/bluefin-lts/releases/tag/lts.20250903) | 6.12.0-124 (HWE: 6.15.11-1) | [580.82.07-2](https://www.nvidia.com/en-us/drivers/details/253003/) | [25.0.7](https://docs.mesa3d.org/relnotes/25.0.7.html) |
 
 :::info NVIDIA Availability
-NVIDIA driver versions are only listed in NVIDIA-specific image variants. Non-NVIDIA images do not include kmod-nvidia packages. The most recent releases include NVIDIA driver **[580.95.05-1](https://www.nvidia.com/en-us/drivers/details/254665/)** across all channels.
+NVIDIA driver versions are only listed in NVIDIA-specific image variants. Non-NVIDIA images do not include kmod-nvidia packages. The most recent releases include NVIDIA driver **[590.44.01-1](https://www.nvidia.com/en-us/drivers/details/258750/)** (Beta) across all channels.
 :::
 
 ## How to Switch to a Specific Version

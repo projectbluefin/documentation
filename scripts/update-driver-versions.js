@@ -10,6 +10,7 @@ const path = require('path');
 const https = require('https');
 
 const DOC_PATH = path.join(__dirname, '../docs/driver-versions.md');
+const NVIDIA_DRIVERS_CACHE = path.join(__dirname, '../.nvidia-drivers-cache.json');
 
 // GitHub API configuration
 const GITHUB_API = 'https://api.github.com';
@@ -17,6 +18,108 @@ const REPOS = {
   bluefin: 'ublue-os/bluefin',
   bluefinLts: 'ublue-os/bluefin-lts',
 };
+
+// Cache for NVIDIA driver URLs
+let nvidiaDriverCache = {};
+
+/**
+ * Load NVIDIA driver cache from file
+ */
+function loadNvidiaCache() {
+  try {
+    if (fs.existsSync(NVIDIA_DRIVERS_CACHE)) {
+      const data = fs.readFileSync(NVIDIA_DRIVERS_CACHE, 'utf8');
+      nvidiaDriverCache = JSON.parse(data);
+      console.log(`Loaded ${Object.keys(nvidiaDriverCache).length} NVIDIA driver URLs from cache`);
+    }
+  } catch (error) {
+    console.warn('Failed to load NVIDIA cache:', error.message);
+    nvidiaDriverCache = {};
+  }
+}
+
+/**
+ * Save NVIDIA driver cache to file
+ */
+function saveNvidiaCache() {
+  try {
+    fs.writeFileSync(NVIDIA_DRIVERS_CACHE, JSON.stringify(nvidiaDriverCache, null, 2), 'utf8');
+    console.log(`Saved ${Object.keys(nvidiaDriverCache).length} NVIDIA driver URLs to cache`);
+  } catch (error) {
+    console.warn('Failed to save NVIDIA cache:', error.message);
+  }
+}
+
+/**
+ * Fetch NVIDIA driver URLs from their website
+ */
+function fetchNvidiaDriverUrls() {
+  return new Promise((resolve, reject) => {
+    https
+      .get('https://www.nvidia.com/en-us/drivers/unix/', (res) => {
+        let data = '';
+
+        res.on('data', (chunk) => {
+          data += chunk;
+        });
+
+        res.on('end', () => {
+          if (res.statusCode === 200) {
+            // Extract driver version -> URL mappings from the page
+            const driverMap = {};
+            
+            // Match pattern: <a href="https://www.nvidia.com/en-us/drivers/details/XXXXX/">VERSION</a>
+            const pattern = /<a href="(https:\/\/www\.nvidia\.com\/en-us\/drivers\/details\/\d+\/)">([\d.]+)<\/a>/g;
+            let match;
+            
+            while ((match = pattern.exec(data)) !== null) {
+              const url = match[1];
+              const version = match[2];
+              driverMap[version] = url;
+            }
+            
+            console.log(`Fetched ${Object.keys(driverMap).length} NVIDIA driver URLs from nvidia.com`);
+            resolve(driverMap);
+          } else {
+            reject(new Error(`NVIDIA website returned ${res.statusCode}`));
+          }
+        });
+      })
+      .on('error', reject);
+  });
+}
+
+/**
+ * Get NVIDIA driver URL for a given version
+ */
+async function getNvidiaDriverUrl(version) {
+  // Extract base version (e.g., "580.105.08" from "580.105.08-1")
+  const baseVersion = version.split('-')[0];
+  
+  // Check cache first
+  if (nvidiaDriverCache[baseVersion]) {
+    return nvidiaDriverCache[baseVersion];
+  }
+  
+  // Try to fetch from NVIDIA website
+  try {
+    const freshDriverMap = await fetchNvidiaDriverUrls();
+    
+    // Update cache with fresh data
+    Object.assign(nvidiaDriverCache, freshDriverMap);
+    
+    // Save cache for future runs
+    saveNvidiaCache();
+    
+    if (nvidiaDriverCache[baseVersion]) {
+      return nvidiaDriverCache[baseVersion];
+    }
+  } catch (error) {
+    console.warn(`Failed to fetch NVIDIA driver URLs: ${error.message}`);
+  }
+  
+  return null;
+}
 
 /**
  * Fetch data from GitHub API
@@ -149,40 +252,21 @@ function extractDriverInfo(releaseBody, stream) {
 /**
  * Format driver info into table row
  */
-function formatTableRow(release, stream) {
+async function formatTableRow(release, stream) {
   const drivers = extractDriverInfo(release.body, stream);
 
   const tag = release.tag_name;
   const releaseUrl = release.html_url;
 
-  // NVIDIA driver version to URL mapping
-  const nvidiaUrlMap = {
-    '580.105.08': 'https://www.nvidia.com/en-us/drivers/details/257493/',
-    '580.95.05': 'https://www.nvidia.com/en-us/drivers/details/254665/',
-    '580.82.07': 'https://www.nvidia.com/en-us/drivers/details/253003/',
-    '580.76.05': 'https://www.nvidia.com/en-us/drivers/details/252613/',
-  };
-
   // Create NVIDIA driver link
   let nvidiaLink = drivers.nvidia;
   if (drivers.nvidia !== 'N/A') {
-    // Extract base version (e.g., "580.105.08" from "580.105.08-1")
-    const baseVersion = drivers.nvidia.split('-')[0];
-    
-    // Try to get URL from mapping first
-    if (nvidiaUrlMap[baseVersion]) {
-      nvidiaLink = `[${drivers.nvidia}](${nvidiaUrlMap[baseVersion]})`;
+    const nvidiaUrl = await getNvidiaDriverUrl(drivers.nvidia);
+    if (nvidiaUrl) {
+      nvidiaLink = `[${drivers.nvidia}](${nvidiaUrl})`;
     } else {
-      // Fallback: try to extract NVIDIA URL from release body
-      const escapedVersion = drivers.nvidia.replace(/\./g, '\\.');
-      const nvidiaUrlMatch = release.body.match(
-        new RegExp(`\\[${escapedVersion}\\]\\((https:\\/\\/www\\.nvidia\\.com[^\\)]+)\\)`, 'i')
-      );
-      if (nvidiaUrlMatch) {
-        nvidiaLink = `[${drivers.nvidia}](${nvidiaUrlMatch[1]})`;
-      } else {
-        nvidiaLink = drivers.nvidia;
-      }
+      console.warn(`⚠️  No NVIDIA driver URL found for version ${drivers.nvidia}`);
+      nvidiaLink = drivers.nvidia;
     }
   }
 
@@ -201,6 +285,9 @@ function formatTableRow(release, stream) {
  */
 async function updateDocument() {
   try {
+    // Load NVIDIA driver cache
+    loadNvidiaCache();
+    
     // Read current document
     const content = fs.readFileSync(DOC_PATH, 'utf8');
     const lines = content.split('\n');
@@ -251,7 +338,7 @@ async function updateDocument() {
         }
         if (firstRowTag !== releases.stable.tag_name) {
           // Insert new row at the top
-          const newRow = formatTableRow(releases.stable, 'stable');
+          const newRow = await formatTableRow(releases.stable, 'stable');
           newContent += newRow + '\n';
           console.log(`✅ Added new stable release: ${releases.stable.tag_name}`);
         } else {
@@ -292,7 +379,7 @@ async function updateDocument() {
         }
         if (firstRowTag !== releases.gts.tag_name) {
           // Insert new row at the top
-          const newRow = formatTableRow(releases.gts, 'gts');
+          const newRow = await formatTableRow(releases.gts, 'gts');
           newContent += newRow + '\n';
           console.log(`✅ Added new GTS release: ${releases.gts.tag_name}`);
         } else {
@@ -333,7 +420,7 @@ async function updateDocument() {
         }
         if (firstRowTag !== releases.lts.tag_name) {
           // Insert new row at the top
-          const newRow = formatTableRow(releases.lts, 'lts');
+          const newRow = await formatTableRow(releases.lts, 'lts');
           newContent += newRow + '\n';
           console.log(`✅ Added new LTS release: ${releases.lts.tag_name}`);
         } else {
