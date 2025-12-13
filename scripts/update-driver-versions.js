@@ -258,9 +258,16 @@ async function updateDocument() {
           console.log(`ℹ️  Stable release ${releases.stable.tag_name} already exists at top`);
         }
 
-        // Continue with existing rows
+        // Continue with existing rows, deduplicating by tag name
+        const seenTags = new Set([releases.stable.tag_name]);
         while (i < lines.length && lines[i].startsWith('|')) {
-          newContent += lines[i] + '\n';
+          const rowTag = lines[i].match(/\|\s*\*\*([^*]+)\*\*/)?.[1];
+          if (!rowTag || !seenTags.has(rowTag)) {
+            if (rowTag) seenTags.add(rowTag);
+            newContent += lines[i] + '\n';
+          } else {
+            console.log(`ℹ️  Skipping duplicate row: ${rowTag}`);
+          }
           i++;
         }
         continue;
@@ -292,9 +299,16 @@ async function updateDocument() {
           console.log(`ℹ️  GTS release ${releases.gts.tag_name} already exists at top`);
         }
 
-        // Continue with existing rows
+        // Continue with existing rows, deduplicating by tag name
+        const seenGtsTags = new Set([releases.gts.tag_name]);
         while (i < lines.length && lines[i].startsWith('|')) {
-          newContent += lines[i] + '\n';
+          const rowTag = lines[i].match(/\|\s*\*\*([^*]+)\*\*/)?.[1];
+          if (!rowTag || !seenGtsTags.has(rowTag)) {
+            if (rowTag) seenGtsTags.add(rowTag);
+            newContent += lines[i] + '\n';
+          } else {
+            console.log(`ℹ️  Skipping duplicate row: ${rowTag}`);
+          }
           i++;
         }
         continue;
@@ -326,9 +340,16 @@ async function updateDocument() {
           console.log(`ℹ️  LTS release ${releases.lts.tag_name} already exists at top`);
         }
 
-        // Continue with existing rows
+        // Continue with existing rows, deduplicating by tag name
+        const seenLtsTags = new Set([releases.lts.tag_name]);
         while (i < lines.length && lines[i].startsWith('|')) {
-          newContent += lines[i] + '\n';
+          const rowTag = lines[i].match(/\|\s*\*\*([^*]+)\*\*/)?.[1];
+          if (!rowTag || !seenLtsTags.has(rowTag)) {
+            if (rowTag) seenLtsTags.add(rowTag);
+            newContent += lines[i] + '\n';
+          } else {
+            console.log(`ℹ️  Skipping duplicate row: ${rowTag}`);
+          }
           i++;
         }
         continue;

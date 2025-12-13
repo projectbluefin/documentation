@@ -18,7 +18,6 @@ This page tracks major driver versions across Bluefin releases to help users ide
 |-----------|----------------|---------------|--------------|
 | [**stable-20251209**](https://github.com/ublue-os/bluefin/releases/tag/stable-20251209) | 6.17.7-300 | 590.44.01-1 | [25.2.7-1](https://docs.mesa3d.org/relnotes/25.2.7.html) |
 | [**stable-20251204**](https://github.com/ublue-os/bluefin/releases/tag/stable-20251204) | 6.17.7-300 | [580.105.08-1](https://www.nvidia.com/en-us/drivers/details/257493/) | [25.2.7-1](https://docs.mesa3d.org/relnotes/25.2.7.html) |
-| [**stable-20251204**](https://github.com/ublue-os/bluefin/releases/tag/stable-20251204) | 6.17.7-300 | [580.105.08-1](https://www.nvidia.com/en-us/drivers/details/257493/) | [25.2.7-1](https://docs.mesa3d.org/relnotes/25.2.7.html) |
 | [**stable-20251202**](https://github.com/ublue-os/bluefin/releases/tag/stable-20251202) | 6.17.7-300 | [580.105.08-1](https://www.nvidia.com/en-us/drivers/details/257493/) | [25.2.7-1](https://docs.mesa3d.org/relnotes/25.2.7.html) |
 | [**stable-20251125**](https://github.com/ublue-os/bluefin/releases/tag/stable-20251125) | 6.17.1-300 | [580.105.08-1](https://www.nvidia.com/en-us/drivers/details/257493/) | [25.2.6-1](https://docs.mesa3d.org/relnotes/25.2.6.html) |
 | [**stable-20251119**](https://github.com/ublue-os/bluefin/releases/tag/stable-20251119) | 6.17.1-300 | [580.105.08-1](https://www.nvidia.com/en-us/drivers/details/257493/) | [25.2.6-1](https://docs.mesa3d.org/relnotes/25.2.6.html) |
@@ -41,7 +40,6 @@ This page tracks major driver versions across Bluefin releases to help users ide
 |-----------|----------------|---------------|--------------|
 | [**gts-20251209**](https://github.com/ublue-os/bluefin/releases/tag/gts-20251209) | 6.17.7-200 | 590.44.01-1 | [25.1.9-1](https://docs.mesa3d.org/relnotes/25.1.9.html) |
 | [**gts-20251204**](https://github.com/ublue-os/bluefin/releases/tag/gts-20251204) | 6.17.7-200 | [580.105.08-1](https://www.nvidia.com/en-us/drivers/details/257493/) | [25.1.9-1](https://docs.mesa3d.org/relnotes/25.1.9.html) |
-| [**gts-20251204**](https://github.com/ublue-os/bluefin/releases/tag/gts-20251204) | 6.17.7-200 | [580.105.08-1](https://www.nvidia.com/en-us/drivers/details/257493/) | [25.1.9-1](https://docs.mesa3d.org/relnotes/25.1.9.html) |
 | [**gts-20251202**](https://github.com/ublue-os/bluefin/releases/tag/gts-20251202) | 6.17.7-200 | [580.105.08-1](https://www.nvidia.com/en-us/drivers/details/257493/) | [25.1.9-1](https://docs.mesa3d.org/relnotes/25.1.9.html) |
 | [**gts-20251125**](https://github.com/ublue-os/bluefin/releases/tag/gts-20251125) | 6.17.1-300 | [580.105.08-1](https://www.nvidia.com/en-us/drivers/details/257493/) | [25.1.9-1](https://docs.mesa3d.org/relnotes/25.1.9.html) |
 | [**gts-20251028**](https://github.com/ublue-os/bluefin/releases/tag/gts-20251028) | 6.16.8-200 | [580.95.05-1](https://www.nvidia.com/en-us/drivers/details/254665/) | [25.1.9-1](https://docs.mesa3d.org/relnotes/25.1.9.html) |
@@ -62,7 +60,6 @@ This page tracks major driver versions across Bluefin releases to help users ide
 | Image Tag | Kernel Version | NVIDIA Driver | Mesa Version |
 |-----------|----------------|---------------|--------------|
 | [**lts.20251209**](https://github.com/ublue-os/bluefin-lts/releases/tag/lts.20251209) | 6.12.0-164 (HWE: 6.17.7-200.fc42) | 590.44.01-1 | [25.2.5-3](https://docs.mesa3d.org/relnotes/25.2.5.html) |
-| [**lts.20251202**](https://github.com/ublue-os/bluefin-lts/releases/tag/lts.20251202) | 6.12.0-164 (HWE: 6.17.7-200.fc42) | [580.105.08-1](https://www.nvidia.com/en-us/drivers/details/257493/) | [25.2.5-3](https://docs.mesa3d.org/relnotes/25.2.5.html) |
 | [**lts.20251202**](https://github.com/ublue-os/bluefin-lts/releases/tag/lts.20251202) | 6.12.0-164 (HWE: 6.17.7-200.fc42) | [580.105.08-1](https://www.nvidia.com/en-us/drivers/details/257493/) | [25.2.5-3](https://docs.mesa3d.org/relnotes/25.2.5.html) |
 | [**lts.20251125**](https://github.com/ublue-os/bluefin-lts/releases/tag/lts.20251125) | 6.12.0-161 (HWE: 6.17.1-300.fc42) | [580.105.08-1](https://www.nvidia.com/en-us/drivers/details/257493/) | [25.2.5-2](https://docs.mesa3d.org/relnotes/25.2.5.html) |
 | [**lts.20251118**](https://github.com/ublue-os/bluefin-lts/releases/tag/lts.20251118) | 6.12.0-157 (HWE: 6.16.10-200.fc42) | [580.105.08-1](https://www.nvidia.com/en-us/drivers/details/257493/) | [25.0.7-5](https://docs.mesa3d.org/relnotes/25.0.7.html) |
