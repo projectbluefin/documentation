@@ -2,8 +2,8 @@ name: Update Driver Versions
 
 on:
   schedule:
-    # Run every Wednesday at 10:00 AM UTC
-    - cron: '0 10 * * 3'
+    # Run every Tuesday at 10:00 AM UTC
+    - cron: '0 10 * * 2'
   workflow_dispatch:
 
 permissions:
