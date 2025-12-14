@@ -53,4 +53,4 @@ You can also grab these wallpapers directly from the [artwork repository](https:
 
 Happy holidays from the Bluefin team!
 
-## [Discussion](https://github.com/ublue-os/bluefin/discussions)
+## [Discussion](https://github.com/ublue-os/bluefin/discussions/3841)
