@@ -305,7 +305,6 @@ Bluefin includes curated CLI tools shared as Brewfiles. These commands install c
 | ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
 | `ujust jetbrains-toolbox`             | Install [JetBrains Toolbox](https://www.jetbrains.com/toolbox-app/) for managing JetBrains IDEs                                        |
 | `ujust install-opentabletdriver`      | Install or uninstall [OpenTabletDriver](https://opentabletdriver.net/), an open source tablet driver                                   |
-| `ujust install-resolve`               | Install, upgrade, or uninstall [DaVinci Resolve](https://www.blackmagicdesign.com/products/davinciresolve) video editor via davincibox |
 | `ujust install-system-flatpaks`       | Install the default system flatpaks (useful after rebasing)                                                                            |
 | `ujust install-system-flatpaks-extra` | Install extra recommended flatpak applications                                                                                         |
 | `ujust bluefin-apps`                  | Install both default and extra system flatpaks                                                                                         |
