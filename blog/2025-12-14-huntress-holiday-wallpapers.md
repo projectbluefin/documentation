@@ -1,5 +1,5 @@
 ---
-title: "New Huntress Wallpaper and Holiday Artwork"
+title: "New Huntress and Holiday Artwork"
 slug: huntress-holiday-wallpapers
 authors: castrojo
 tags: [announcements, artwork, homebrew]
@@ -28,7 +28,7 @@ If you enjoy Chandeleer's work, please consider supporting them through their [K
 
 ## How to Install
 
-These wallpapers are available through the [@ublue-os/homebrew](https://github.com/ublue-os/homebrew) tap. ~~You can install them using `ujust bbrew` and selecting the artwork option:~~ (this is broken right now sorry). 
+These wallpapers are available through the [@ublue-os/homebrew](https://github.com/ublue-os/homebrew) tap. We've finally solved the teething problems with the tap and we now consider it production ready.  ~~You can install them using `ujust bbrew` and selecting the artwork option:~~ (this is broken right now sorry). We do not yet ship these by default so right now they are opt in: 
 
 ### Installing Bluefin Wallpapers Extra
 
