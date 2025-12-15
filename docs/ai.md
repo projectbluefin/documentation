@@ -23,7 +23,7 @@ The [AI Lab extension](https://developers.redhat.com/products/podman-desktop/pod
 
 ## AI Command Line Tools
 
-The following AI-focused command-line tools are available via homebrew, install individually or use this command to install them all: `ujust bluefin-ai`
+The following AI-focused command-line tools are available via homebrew, install individually or use this command to install them all: `ujust bbrew` and choose the `ai` menu option:
 
 | Name                                                                | Description                                                      |
 | ------------------------------------------------------------------- | ---------------------------------------------------------------- |
