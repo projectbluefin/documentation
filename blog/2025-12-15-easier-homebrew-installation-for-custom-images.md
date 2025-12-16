@@ -7,11 +7,7 @@ tags: [homebrew, development]
 
 import GitHubProfileCard from "@site/src/components/GitHubProfileCard";
 
-We've created a new repository to make it much easier to add Homebrew to your custom bootc images.
-
-## @projectbluefin/brew
-
-[@projectbluefin/brew](https://github.com/projectbluefin/brew) repository provides a pre-packaged OCI container image that bundles everything you need to add Homebrew to your custom image-based systems. This is an evolution of a long journey to integrate homebrew better onto our Linux systems. Instead of manually setting up Homebrew, configuring services, and managing shell integrations, you can now include everything with a single line in your Containerfile.
+We've created a new repository to make it much easier to add Homebrew to your custom bootc images. [@projectbluefin/brew](https://github.com/projectbluefin/brew) repository provides a pre-packaged OCI container image that bundles everything you need to add Homebrew to your custom image-based systems. This is an evolution of a long journey to integrate homebrew better onto our Linux systems. Instead of manually setting up Homebrew, configuring services, and managing shell integrations, you can now include everything with a single line in your Containerfile.
 
 ```dockerfile
 COPY --from=ghcr.io/projectbluefin/brew:latest /system_files /
