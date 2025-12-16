@@ -5,6 +5,8 @@ authors: castrojo
 tags: [homebrew, development]
 ---
 
+import GitHubProfileCard from "@site/src/components/GitHubProfileCard";
+
 We've created a new repository to make it much easier to add Homebrew to your custom bootc images.
 
 ## @projectbluefin/brew
@@ -20,3 +22,23 @@ On first boot, the `brew-setup.service` automatically extracts Homebrew to `/var
 This removes a bunch of the manual stuff you had to do in your template to get the full thing, now it's much easier and reliable for everyone. Once we're done the container will rebuild after a Homebrew release, keeping us up to date and safe!
 
 Check out the repository at [github.com/projectbluefin/brew](https://github.com/projectbluefin/brew) for more information and examples.
+
+## Thanks! 
+
+This work and testing brought to you by:
+
+<div
+  style={{
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))",
+    gap: "1.5rem",
+    marginBottom: "2rem",
+  }}
+>
+  <GitHubProfileCard
+    username="tulilirockz"
+    title="Large Maniraptoran Specialist and co-maintainer"
+    sponsorUrl="https://github.com/sponsors/tulilirockz"
+  />
+  <GitHubProfileCard username="renner0e" />
+</div>
