@@ -191,10 +191,12 @@ For access to the full suite of [Cloud Native Computing Foundation](https://l.cn
 | Name                                                                                      |
 | ----------------------------------------------------------------------------------------- |
 | [CaskaydiaMono Nerd Font](https://formulae.brew.sh/cask/font-caskaydia-mono-nerd-font)    |
+| [Comic Shanns Mono Nerd Font](https://formulae.brew.sh/cask/font-comic-shanns-mono-nerd-font) |
 | [Droid Sans Mono Nerd Font](https://formulae.brew.sh/cask/font-droid-sans-mono-nerd-font) |
 | [Go Mono Nerd Font](https://formulae.brew.sh/cask/font-go-mono-nerd-font)                 |
-| [IBM Plex Mono Nerd Font](https://formulae.brew.sh/cask/font-ibm-plex-mono-nerd-font)     |
+| [Blex Mono Nerd Font](https://formulae.brew.sh/cask/font-blex-mono-nerd-font)             |
 | [Sauce Code Pro Nerd Font](https://formulae.brew.sh/cask/font-sauce-code-pro-nerd-font)   |
 | [Source Code Pro](https://formulae.brew.sh/cask/font-source-code-pro)                     |
 | [Ubuntu Nerd Font](https://formulae.brew.sh/cask/font-ubuntu-nerd-font)                   |
 | [FiraCode Nerd Font](https://formulae.brew.sh/cask/font-fira-code-nerd-font)              |
+| [0xProto Nerd Font](https://formulae.brew.sh/cask/font-0xproto-nerd-font)                 |

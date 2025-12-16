@@ -29,14 +29,20 @@ The following AI-focused command-line tools are available via homebrew, install 
 | ------------------------------------------------------------------- | ---------------------------------------------------------------- |
 | [aichat](https://formulae.brew.sh/formula/aichat)                   | All-in-one AI-Powered CLI Chat & Copilot                         |
 | [block-goose-cli](https://formulae.brew.sh/formula/block-goose-cli) | Block Protocol AI agent CLI                                      |
+| [claude-code](https://formulae.brew.sh/cask/claude-code)            | Claude coding agent with desktop integration                     |
 | [clio](https://github.com/gptscript-ai/clio)                        | AI assistant for the command line powered by GPTScript           |
 | [codex](https://formulae.brew.sh/cask/codex)                        | Code editor for OpenAI's coding agent that runs in your terminal |
+| [copilot-cli](https://formulae.brew.sh/cask/copilot-cli)            | GitHub Copilot CLI for terminal assistance                       |
 | [crush](https://github.com/charmbracelet/crush)                     | AI coding agent for the terminal, from charm.sh                  |
 | [gemini-cli](https://formulae.brew.sh/formula/gemini-cli)           | Command-line interface for Google's Gemini API                   |
+| [kimi-cli](https://formulae.brew.sh/formula/kimi-cli)               | CLI for Moonshot AI's Kimi models                                |
 | [llm](https://formulae.brew.sh/formula/llm)                         | Access large language models from the command line               |
+| [lm-studio](https://formulae.brew.sh/cask/lm-studio)                | Desktop app for running local LLMs                               |
+| [mistral-vibe](https://formulae.brew.sh/formula/mistral-vibe)       | CLI for Mistral AI models                                        |
 | [mods](https://formulae.brew.sh/formula/mods)                       | AI on the command-line, from charm.sh                            |
 | [opencode](https://formulae.brew.sh/formula/opencode)               | AI coding agent for the terminal                                 |
 | [qwen-code](https://formulae.brew.sh/formula/qwen-code)             | CLI for Qwen3-Coder models                                       |
+| [ramalama](https://formulae.brew.sh/formula/ramalama)               | Manage and run AI models locally with containers                 |
 | [whisper-cpp](https://formulae.brew.sh/formula/whisper-cpp)         | High-performance inference of OpenAI's Whisper model             |
 
 ## Ramalama
