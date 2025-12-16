@@ -148,6 +148,13 @@ DevPod also has support for JetBrains:
 ## Virtualization and Container Runtimes
 
 - [virt-manager](https://virt-manager.org/) and associated tooling (KVM, qemu)
+
+Note: Bluefin LTS users must install the QEMU addon from Bazaar: 
+
+![qemu](https://github.com/user-attachments/assets/5b0462d2-2c08-4086-a4ce-c34afa9685c2)
+
+or via command line: `flatpak install flathub org.virt_manager.virt_manager org.virt_manager.virt_manager.Extension.Qemu `
+ 
 - [Incus](https://linuxcontainers.org/incus/) provides system containers (Not available in Bluefin LTS)
 
 ## Local Application Development
