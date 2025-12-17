@@ -38,3 +38,5 @@ This work and testing brought to you by:
   />
   <GitHubProfileCard username="renner0e" />
 </div>
+
+## [Discussions](https://github.com/ublue-os/bluefin/discussions/3860)
