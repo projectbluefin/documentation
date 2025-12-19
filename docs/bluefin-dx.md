@@ -163,7 +163,7 @@ or via command line: `flatpak install flathub org.virt_manager.virt_manager org.
 
 ## Kubernetes
 
-`ujust bluefin-k8s` will install a common set of tools used by Kubernetes administrators. Or install these individually:
+Run `ujust bbrew` and select `k8s-tools` to install a common set of tools used by Kubernetes administrators. Or install these individually:
 
 | Name                                                | Description                                                                                                      |
 | --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
