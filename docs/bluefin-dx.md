@@ -186,7 +186,7 @@ For access to the full suite of [Cloud Native Computing Foundation](https://l.cn
 
 ## Fonts
 
-`ujust bluefin-fonts` will install the following collection of well-curated Mono fonts. Or install these individually. Check the [homebrew website](https://formulae.brew.sh/cask-font/) to add more fonts, or use the included [Embellish](https://flathub.org/en/apps/io.github.getnf.embellish) tool.
+Run `ujust bbrew` and select `fonts` to install the following collection of well-curated Mono fonts. Or install these individually. Check the [homebrew website](https://formulae.brew.sh/cask-font/) to add more fonts, or use the included [Embellish](https://flathub.org/en/apps/io.github.getnf.embellish) tool.
 
 | Name                                                                                      |
 | ----------------------------------------------------------------------------------------- |
