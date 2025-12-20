@@ -386,7 +386,6 @@ This repository contains documentation for Bluefin OS. The main Bluefin OS image
 - Fetches YouTube playlist metadata for the music page
 - Fetches GitHub user profiles for the donations/credits page
 - Deploys to https://docs.projectbluefin.io/ via GitHub Pages
-- Uses conventional commits for changelog generation, follow the conventional commits spec when submitting pull requests: conventional-commits/conventionalcommits.org
 - Integrates with main repository via automated workflows
 
 Common documentation areas include:
@@ -478,16 +477,78 @@ Some projects are hosted on GitLab or elsewhere (e.g., GNOME apps, Firefox, Thun
 - The card will display without stars/forks
 - Still include `icon` and `sponsorUrl` if available
 
-### Attribution Requirements
+## Commit Guidelines
 
-AI agents must disclose what tool and model they are using in the "Assisted-by" commit footer:
+This repository uses [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) for standardized commit messages that support automated changelog generation.
 
-```text
+### Using the Conventional Commit Prompt
+
+Use the [conventional-commit.prompt.md](.github/prompts/conventional-commit.prompt.md) prompt file to generate properly formatted commit messages. The prompt will:
+
+1. Review your staged changes with `git status` and `git diff`
+2. Guide you through the commit message structure
+3. Validate your message against the specification
+4. Automatically execute the commit command
+
+### Commit Message Format
+
+Commits must follow this structure:
+
+```
+type(scope): description
+
+[optional body]
+
+[optional footer(s)]
+```
+
+**Types:**
+- `feat` - New feature
+- `fix` - Bug fix
+- `docs` - Documentation changes
+- `style` - Formatting, missing semi colons, etc.
+- `refactor` - Code restructuring without behavior change
+- `perf` - Performance improvements
+- `test` - Adding or updating tests
+- `build` - Build system or dependency changes
+- `ci` - CI configuration changes
+- `chore` - Maintenance tasks
+- `revert` - Reverting previous commits
+
+**Scope:** Optional but recommended for clarity (e.g., `docs`, `prompts`, `build`, `components`)
+
+**Description:** Short imperative summary (e.g., "add" not "added")
+
+### AI Agent Attribution
+
+AI agents must disclose the tool and model used in the commit footer with an "Assisted-by" trailer:
+
+```
 Assisted-by: [Model Name] via [Tool Name]
 ```
 
-Example:
+### Complete Example
 
-```text
-Assisted-by: GLM 4.6 via Claude Code
+Here's a complete commit combining conventional format with AI attribution:
+
 ```
+feat(prompts): add conventional commit prompt file
+
+Add the conventional-commit.prompt.md from awesome-copilot repository
+to help contributors write standardized commit messages. This prompt
+automates the commit message generation process and validates against
+the Conventional Commits specification.
+
+Assisted-by: Claude Sonnet 4.5 via GitHub Copilot
+```
+
+### Quick Examples
+
+```
+docs: update installation guide for F42
+fix(changelog): resolve feed fetching timeout issue
+chore(deps): update docusaurus to 3.8.1
+feat(components)!: redesign ProjectCard with stats API
+```
+
+**Note:** Add `!` after the type/scope to indicate breaking changes, or use `BREAKING CHANGE:` in the footer.
