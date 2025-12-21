@@ -149,17 +149,21 @@
 .donateLink {
   display: inline-block;
   font-size: 0.8rem;
-  color: var(--ifm-color-primary);
+  color: white;
   text-decoration: none;
-  padding: 0.25rem 0.5rem;
+  padding: 0.4rem 0.75rem;
   border-radius: 4px;
-  background-color: var(--ifm-color-primary-lightest);
+  background-color: var(--ifm-color-primary);
   transition: all 0.2s ease;
+  font-weight: 500;
 }
 
 .donateLink:hover {
-  background-color: var(--ifm-color-primary);
+  background-color: var(--ifm-color-primary-dark);
   color: white;
+  text-decoration: none;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 /* Responsive adjustments */
