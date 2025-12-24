@@ -23,9 +23,9 @@ There are [15.6 million cloud native developers](https://www.cncf.io/announcemen
 Bluefin goes "all in" on cloud native development and is used differently than a traditional distribution such as Ubuntu:
 
 - Development is done containers, common container patterns include:
-  - Via [devcontainers](https://containers.dev/) with VSCode, Jetbrains, or neovim
-  - [Podman Desktop](https://podman-desktop.io/docs/intro)
-  - [Podman](https://podman.io/docs) or [Docker](https://docs.docker.com/reference/cli/docker/) command line tools
+  - [Devcontainers](https://containers.dev/) with VSCode, Jetbrains, or neovim
+  - [Podman Desktop](https://podman-desktop.io/docs/intro) for container development with a graphical (GUI) interface 
+  - [Podman](https://podman.io/docs) or [Docker](https://docs.docker.com/reference/cli/docker/) command line container management
 - Command line applications are installed using [homebrew](https://brew.sh)
 - Preconfigured ad-hoc containers for Ubuntu, Fedora, and Wolfi are included. Use whichever distribution you want.
 
@@ -79,15 +79,13 @@ Like all Universal Blue images, switching is atomic, allowing for clean switchin
 - [Dev Containers Specification](https://containers.dev/)
 - [Beginner's Series to: Dev Containers](https://www.youtube.com/watch?v=b1RavPr_878) - great introductory tutorial from the [VS Code YouTube channel](https://www.youtube.com/@code/videos)
 
-The most current [Docker Engine](https://docs.docker.com/engine/) is included by default and is set up to be the default container runtime for vscode. Using [docker compose](https://danielquinn.org/blog/developing-with-docker/) is also a great way to get started in container development and is an option if devcontainers don't fit your style.
+The most current [Docker Engine](https://docs.docker.com/engine/) is included by default and is set up to be the default container runtime for VSCode Using [docker compose](https://danielquinn.org/blog/developing-with-docker/) is also a great way to get started in container development and is an option if devcontainers don't fit your style. Note, Docker Desktop is not available, use Podman Desktop for graphical container management.
 
 ## Podman and Podman Desktop
 
 ![Podman Desktop](https://github.com/user-attachments/assets/69f64ed1-7fcc-4040-9a3d-12b71308da1b)
 
-[Podman Desktop](https://podman-desktop.io/) is included to provide container management. Check out the Podman Desktop [documentation](https://podman-desktop.io/docs/intro) for more information. All the upstream `podman` tools are included. This is the default system container runtime and is the recommended developer configuration that Fedora ships with.
-
-Though Bluefin defaults to docker and vscode for development, all of the Fedora upstream tools are included for those who prefer that experience.
+[Podman Desktop](https://podman-desktop.io/) is included to provide container management. Check out the Podman Desktop [documentation](https://podman-desktop.io/docs/intro) for more information. All the upstream `podman` tools are included. This is the default system container runtime and is the recommended developer configuration for new users.
 
 ## Built-in Performance Tooling
 
