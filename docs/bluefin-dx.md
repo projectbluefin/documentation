@@ -22,7 +22,10 @@ There are [15.6 million cloud native developers](https://www.cncf.io/announcemen
 
 Bluefin goes "all in" on cloud native development and is used differently than a traditional distribution such as Ubuntu:
 
-- Development is done in [devcontainers](https://containers.dev/)
+- Development is done containers, common container patterns include:
+  - Via [devcontainers](https://containers.dev/) with VSCode, Jetbrains, or neovim
+  - [Podman Desktop](https://podman-desktop.io/docs/intro)
+  - [Podman](https://podman.io/docs) or [Docker](https://docs.docker.com/reference/cli/docker/) command line tools
 - Command line applications are installed using [homebrew](https://brew.sh)
 - Preconfigured ad-hoc containers for Ubuntu, Fedora, and Wolfi are included. Use whichever distribution you want.
 
