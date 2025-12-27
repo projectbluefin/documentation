@@ -25,8 +25,9 @@ Start small! Documentation improvements or simple additions are great first cont
 Bluefin is made via [lazy concensus](https://www.apache.org/foundation/glossary.html#LazyConsensus), which means that we trend towards "Just Do It" because if it was too crazy someone would say something. This is a nice casual way to open source, and is inspired by [Kubernetes](https://kubernetes.dev).
 
 - Check the [Project Board](https://github.com/orgs/projectbluefin/projects/2)
-- Items in Draft are things that need to happen but aren't claimed or specced out
-- Check out the existing issues if you wanna fix something
+- Items in Draft are
+  - Things that need to happen but aren't claimed or specced out
+  - Or transient things that don't need much planning like "Improve contributor guide" or "Fix up this just recipe". These are things that are identified as being needed but don't need much planning, "just send a sysadmin" style tasks.
 - Convert a Draft task into an issue to design and specify something
   - Design and spec are for the good of the project and don't come with an implementation commitment. 
 
