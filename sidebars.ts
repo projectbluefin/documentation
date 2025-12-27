@@ -35,6 +35,7 @@ const sidebars: SidebarsConfig = {
       label: "Project Information",
       collapsed: true,
       items: [
+        "activity",
         "analytics",
         "code-of-conduct",
         "dinosaurs",

@@ -1,0 +1,136 @@
+---
+title: Activity
+description: Weekly timeline of project activity from the Bluefin project board
+---
+
+import ActivityCard from '@site/src/components/ActivityCard';
+import styles from '@site/src/components/ActivityCard.module.css';
+import activityData from '@site/static/data/activity-items.json';
+
+# Project Activity Timeline
+
+A chronological view of work happening on the Bluefin project. Items are organized by week and color-coded by status.
+
+<div className={styles.statusLegend}>
+  <p>
+    <strong>Status Legend:</strong>
+    {' '}
+    <span className={styles.statusDoneText}>● Done</span>
+    {' • '}
+    <span className={styles.statusInProgressText}>● In Progress</span>
+    {' • '}
+    <span className={styles.statusTodoText}>● Todo</span>
+    {' • '}
+    <span className={styles.statusBlockedText}>● Blocked</span>
+  </p>
+</div>
+
+export function ActivityTimeline() {
+  // Group items by ISO week (Monday start)
+  function getWeekStart(date) {
+    const d = new Date(date);
+    const day = d.getDay();
+    const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Adjust to Monday
+    const monday = new Date(d.setDate(diff));
+    monday.setHours(0, 0, 0, 0);
+    return monday;
+  }
+  
+  function formatWeekHeader(date) {
+    return date.toLocaleDateString('en-US', {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric',
+    });
+  }
+  
+  // Group by week
+  const itemsByWeek = activityData.reduce((acc, item) => {
+    const weekStart = getWeekStart(item.updatedAt);
+    const weekKey = weekStart.toISOString();
+    
+    if (!acc[weekKey]) {
+      acc[weekKey] = {
+        weekStart,
+        items: [],
+      };
+    }
+    
+    acc[weekKey].items.push(item);
+    return acc;
+  }, {});
+  
+  // Sort weeks newest first
+  const sortedWeeks = Object.values(itemsByWeek).sort(
+    (a, b) => b.weekStart.getTime() - a.weekStart.getTime()
+  );
+  
+  if (sortedWeeks.length === 0) {
+    return (
+      <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--ifm-color-emphasis-600)' }}>
+        <p>No activity data available. Run <code>npm run fetch-activity-data</code> to fetch the latest project board data.</p>
+      </div>
+    );
+  }
+  
+  return (
+    <>
+      {sortedWeeks.map(({ weekStart, items }) => (
+        <div key={weekStart.toISOString()}>
+          <div className={styles.weekHeader}>
+            <h2 className={styles.weekTitle}>
+              Week of {formatWeekHeader(weekStart)}
+            </h2>
+            <span className={styles.weekCount}>
+              {items.length} {items.length === 1 ? 'item' : 'items'}
+            </span>
+          </div>
+          
+          <div className={styles.grid}>
+            {items.map((item) => (
+              <ActivityCard
+                key={item.id}
+                title={item.title}
+                body={item.body}
+                status={item.status}
+                isDraft={item.isDraft}
+                isPR={item.isPR}
+                updatedAt={item.updatedAt}
+                url={item.url}
+                repository={item.repository}
+                repositoryUrl={item.repositoryUrl}
+                number={item.number}
+                assignees={item.assignees}
+                labels={item.labels}
+              />
+            ))}
+          </div>
+        </div>
+      ))}
+    </>
+  );
+}
+
+<ActivityTimeline />
+
+---
+
+## About This Data
+
+This timeline displays items from the [Bluefin Project Board](https://github.com/orgs/projectbluefin/projects/2) organized by the week they were last updated. Each card shows:
+
+- **Status**: Current state in the project workflow (color-coded border)
+- **Type**: Whether it's a draft, issue, or pull request
+- **Repository**: Which repo the item belongs to (if applicable)
+- **Assignees**: Who's working on it
+- **Labels**: Tags and categories
+
+Data is automatically fetched during the build process. To manually update:
+
+```bash
+npm run fetch-activity-data
+```
+
+:::tip
+Visit the [full project board](https://github.com/orgs/projectbluefin/projects/2) to see real-time updates, add comments, or track more detailed progress.
+:::

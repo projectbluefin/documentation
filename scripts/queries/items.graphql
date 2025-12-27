@@ -1,0 +1,89 @@
+query($org: String!, $projectNumber: Int!, $cursor: String) {
+  organization(login: $org) {
+    projectV2(number: $projectNumber) {
+      items(first: 50, after: $cursor) {
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+        nodes {
+          id
+          createdAt
+          updatedAt
+          isArchived
+          fieldValues(first: 20) {
+            nodes {
+              ... on ProjectV2ItemFieldSingleSelectValue {
+                name
+                field {
+                  ... on ProjectV2FieldCommon {
+                    name
+                  }
+                }
+              }
+            }
+          }
+          content {
+            __typename
+            ... on DraftIssue {
+              title
+              body
+              createdAt
+              updatedAt
+            }
+            ... on Issue {
+              title
+              body
+              number
+              url
+              createdAt
+              updatedAt
+              repository {
+                nameWithOwner
+                url
+              }
+              assignees(first: 10) {
+                nodes {
+                  login
+                  name
+                  avatarUrl
+                }
+              }
+              labels(first: 10) {
+                nodes {
+                  name
+                  color
+                }
+              }
+            }
+            ... on PullRequest {
+              title
+              body
+              number
+              url
+              createdAt
+              updatedAt
+              repository {
+                nameWithOwner
+                url
+              }
+              assignees(first: 10) {
+                nodes {
+                  login
+                  name
+                  avatarUrl
+                }
+              }
+              labels(first: 10) {
+                nodes {
+                  name
+                  color
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
