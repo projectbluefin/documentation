@@ -214,7 +214,7 @@ async function fetchAllProjectItems() {
 
     // Rate limit protection: wait 1 second between requests
     if (hasNextPage) {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, GITHUB_API_DELAY_MS));
     }
   }
 
