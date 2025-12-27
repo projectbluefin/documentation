@@ -61,25 +61,17 @@ Bluefin is a predator and may snap at you occasionally, and is opinionated for a
 - We tend to [say no](https://mikemcquaid.com/saying-no/)
   - But don't take it personally, we can't eat cheeseburgers every day, maybe someday. That's what brought you here!
 
-
 ## Overview
 
 **Repository:** [@ublue-os/bluefin](https://github.com/ublue-os/bluefin)
-**License:** Apache 2.0
-**Maintainers:** 4 core maintainers (@castrojo, @p5, @m2Giles, @tulilirockz)
-**Daily Activity:** 8-12 commits/day (including automated updates)
-**Review Time:** Manual PRs reviewed within 24-48 hours
 
 ## Understanding Bluefin's Architecture
+
+[ diagram goes here ]
 
 ### Image-Based Development
 
 Bluefin uses OCI container images as the distribution mechanism. Every commit to the repository triggers builds that create bootable OS images. This architecture means:
-
-- **Changes are atomic**: Updates apply all-or-nothing
-- **Built-in rollback**: Previous deployments remain available
-- **Container-based builds**: All images built via GitHub Actions
-- **Multi-variant support**: Base, DX (developer), nvidia, and gts (LTS) variants
 
 ### Build System
 
@@ -89,6 +81,8 @@ Bluefin images are built using:
 - **GitHub Actions**: Automated workflows in `.github/workflows/`
 - **Renovate Bot**: Automated dependency updates (60% of all commits)
 
+We're making containers here with bash and a little bit of Python, it's not the space shuttle.
+
 ### Release Channels
 
 | Channel | Purpose | Update Frequency | Fedora Version |
@@ -96,8 +90,6 @@ Bluefin images are built using:
 | **latest** | Daily builds | Multiple times per day | 43 (current) |
 | **stable** | Weekly builds | Weekly | 43 |
 | **gts** | Long-term support | As needed | 42 (LTS) |
-
-
 
 ### Prerequisites
 
@@ -115,7 +107,7 @@ Bluefin images are built using:
 
 **Optional but Recommended:**
 - Bluefin installation (for testing)
-- Involvement the issues. 
+- Involvement the issues and understanding the problem before committing
 
 ### Fork and Clone
 
@@ -520,7 +512,7 @@ Fixes #123
 2. **Size label applied**: PR size labeled automatically (XS, S, M, L, XL)
 3. **Maintainer review**: Usually within 24-48 hours
 4. **Feedback addressed**: Make changes if requested
-5. **Approval and merge**: Once approved, maintainers merge
+5. **Approval and merge**: Once approved, maintainers merge, rinse and repeat!
 
 **During Review:**
 
@@ -561,6 +553,8 @@ These workflows are for more experienced contributors. New contributors should f
 :::
 
 ### Working with Renovate Bot
+
+We strive to automate as much as we can, which means lazily spending our time watching the machine hum. Renovate runs every 30 minutes, and when a change is made in upstream Universal Blue everything rebuilds, it takes about an 30 minutes to 2 hours for a merged fix or feature to go live, depending on where in the chain the fix was needed. 
 
 **Understanding Renovate:**
 - Renovate creates PRs for dependency updates automatically
@@ -674,28 +668,14 @@ Contributors come from diverse backgrounds. Whether you're a DevOps engineer, pa
 - Optimize GitHub Actions workflows
 - Add build parallelization
 - Improve artifact handling
-
-**Example Tasks:**
-- Refactor `reusable-build.yml` for better caching
-- Add build-time validation tests
-- Implement workflow failure notifications
+- Cloudflare experts always appreciated!
 
 ### For Package Maintainers
-
-**Package Management:**
-- Submit packages to [@ublue-os/packages](https://github.com/ublue-os/packages)
-- Maintain COPR repositories
-- Update package manifests
 
 **UDEV Rules:**
 - Submit hardware enablement rules
 - Test on various hardware
 - Document hardware requirements
-
-**Example Tasks:**
-- Add new hardware support to packages.json
-- Update COPR repository definitions
-- Submit udev rules for new devices
 
 ### For Shell Script Developers
 
@@ -703,24 +683,14 @@ Contributors come from diverse backgrounds. Whether you're a DevOps engineer, pa
 - Enhance error handling
 - Add progress indicators
 - Improve script modularity
+- Make more use of `gum`, `glow` for a nice CLI user experieance
 
 **Just Recipe Development:**
-- Create new ujust commands
+- Maintain ujust commands
 - Improve existing recipes
-- Add user-friendly aliases
-
-**Example Tasks:**
-- Refactor build scripts for clarity
-- Add validation to just recipes
-- Improve error messages
+- Add user-friendly aliases, etc.
 
 ### For Documentation Writers
-
-**Documentation Needs:**
-- Hardware compatibility guides
-- Custom image building tutorials
-- Troubleshooting documentation
-- Installation guides
 
 **Documentation Standards:**
 - Use clear, concise language
@@ -728,28 +698,9 @@ Contributors come from diverse backgrounds. Whether you're a DevOps engineer, pa
 - Include practical examples
 - Link to related documentation
 
-**Example Tasks:**
-- Document hardware-specific issues
-- Create video tutorials
-- Update installation instructions
-- Write troubleshooting guides
-
 ### For Frontend/UX Developers
 
-**User Experience:**
-- Improve GNOME shell extensions
-- Customize desktop defaults
-- UI/UX enhancements
-
-**Testing:**
-- Test desktop responsiveness
-- Validate accessibility features
-- Report UX issues
-
-**Example Tasks:**
-- Test GNOME extensions compatibility
-- Propose UX improvements
-- Create user feedback surveys
+- Work upstream!
 
 ## Troubleshooting Guide
 
