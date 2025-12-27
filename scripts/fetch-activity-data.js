@@ -6,15 +6,27 @@
 
 import fetch from 'node-fetch';
 import fs from 'fs/promises';
+import { readFileSync } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Read GraphQL queries from separate files
+const FIELDS_QUERY = readFileSync(
+  path.join(__dirname, 'queries', 'fields.graphql'),
+  'utf-8'
+);
+const ITEMS_QUERY = readFileSync(
+  path.join(__dirname, 'queries', 'items.graphql'),
+  'utf-8'
+);
+
 const ORG = 'projectbluefin';
 const PROJECT_NUMBER = 2;
 const OUTPUT_PATH = path.join(__dirname, '..', 'static', 'data', 'activity-items.json');
+const GITHUB_API_DELAY_MS = 1000;
 
 // GitHub token from environment (optional for public projects)
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
@@ -23,132 +35,6 @@ const headers = {
   'Content-Type': 'application/json',
   ...(GITHUB_TOKEN && { Authorization: `Bearer ${GITHUB_TOKEN}` }),
 };
-
-/**
- * GraphQL query to fetch project fields (for Status field ID)
- */
-const FIELDS_QUERY = `
-  query($org: String!, $projectNumber: Int!) {
-    organization(login: $org) {
-      projectV2(number: $projectNumber) {
-        id
-        title
-        fields(first: 20) {
-          nodes {
-            ... on ProjectV2FieldCommon {
-              id
-              name
-              dataType
-            }
-            ... on ProjectV2SingleSelectField {
-              id
-              name
-              options {
-                id
-                name
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-`;
-
-/**
- * GraphQL query to fetch project items with pagination
- */
-const ITEMS_QUERY = `
-  query($org: String!, $projectNumber: Int!, $cursor: String) {
-    organization(login: $org) {
-      projectV2(number: $projectNumber) {
-        items(first: 50, after: $cursor) {
-          pageInfo {
-            hasNextPage
-            endCursor
-          }
-          nodes {
-            id
-            createdAt
-            updatedAt
-            isArchived
-            fieldValues(first: 20) {
-              nodes {
-                ... on ProjectV2ItemFieldSingleSelectValue {
-                  name
-                  field {
-                    ... on ProjectV2FieldCommon {
-                      name
-                    }
-                  }
-                }
-              }
-            }
-            content {
-              __typename
-              ... on DraftIssue {
-                title
-                body
-                createdAt
-                updatedAt
-              }
-              ... on Issue {
-                title
-                body
-                number
-                url
-                createdAt
-                updatedAt
-                repository {
-                  nameWithOwner
-                  url
-                }
-                assignees(first: 10) {
-                  nodes {
-                    login
-                    name
-                    avatarUrl
-                  }
-                }
-                labels(first: 10) {
-                  nodes {
-                    name
-                    color
-                  }
-                }
-              }
-              ... on PullRequest {
-                title
-                body
-                number
-                url
-                createdAt
-                updatedAt
-                repository {
-                  nameWithOwner
-                  url
-                }
-                assignees(first: 10) {
-                  nodes {
-                    login
-                    name
-                    avatarUrl
-                  }
-                }
-                labels(first: 10) {
-                  nodes {
-                    name
-                    color
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-`;
 
 /**
  * Execute GraphQL query

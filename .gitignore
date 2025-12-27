@@ -11,7 +11,15 @@
 # Auto-generated documentation
 /docs/contributing.md
 /static/feeds/*.json
+/static/data/activity-items.json
+/static/data/playlist-metadata.json
+/static/data/github-repos.json
 .nvidia-drivers-cache.json
+
+# Compiled JavaScript from TypeScript
+/src/**/*.js
+!**/*.config.js
+!**/scripts/**/*.js
 
 # Misc
 .DS_Store
