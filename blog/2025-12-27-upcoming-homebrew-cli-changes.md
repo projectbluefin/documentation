@@ -17,4 +17,4 @@ Atuin has been causing some issues, so we've disabled it by default to ensure a 
 
 ## More updates coming
 
-We will be publishing a large year-in-review update next week that will cover much more details, but we wanted to give you a heads up as soon as these land as they are behavioral changes. In the meantime we've set up [todo.projectbluefin.io](https://todo.projectbluefin.io) for you to follow along the major changes coming in Bluefin. Thanks!
+We will be publishing a large year-in-review update next week that will cover these topics in much more detail, but we wanted to give you a heads-up on these behavioral changes before they land. In the meantime, we've set up [todo.projectbluefin.io](https://todo.projectbluefin.io) for you to follow along with the major changes coming in Bluefin. Thanks!
