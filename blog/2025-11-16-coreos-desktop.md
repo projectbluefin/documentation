@@ -7,7 +7,7 @@ tags: [announcements]
 
 :::tip[Coming this Spring]
 
-This spring (2026) we are rolling `bluefin:gts` and `bluefin:latest` into `bluefin:stable` for one "Bluefin". No action will be required on your part, this will happen automatically.
+We are rolling `bluefin:gts` and `bluefin:latest` into `bluefin:stable` for one "Bluefin". No action will be required on your part, this will happen automatically **during the week of March 1st, 2026**.
 
 :::
 
