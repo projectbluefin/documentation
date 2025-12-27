@@ -63,7 +63,24 @@ Bluefin is a predator and may snap at you occasionally, and is opinionated for a
 
 ## Overview
 
-**Repository:** [@ublue-os/bluefin](https://github.com/ublue-os/bluefin)
+Bluefin is undergoing a refactor, this is the endstate, which we expect to finish by the end of 2025, but this is a good place to start. Bluefin is a combination of a set of configuration OCI containers which are then shipped on different images. Bluefin and Bluefin GTS are built on Universal Blue's Fedora-based `bootc` images. Bluefin LTS is based off off a CentOS stream `bootc` based image. And the newest in-development image is based off of a GNOME OS based `bootc image`. 
+
+### Bluefin OCI containers
+
+- Bluefin common: [@projectbluefin/common](https://github.com/ublue-os/bluefin) - Most of Bluefin's opinion is here
+  - ujust, motd, service units, GNOME and CLI configuration, application choices, etc. Most things that have to do with the workload should live in this repo
+- [@ublue-os/artwork](https://github.com/ublue-os/artwork) - Art assets
+- Homebrew via an OCI: [@ublue-os/brew](https://github.com/ublue-os/brew) and associated [@ublue-os/homebrew-tap](https://github.com/ublue-os/homebrew-tap)
+
+### Images 
+
+- Bluefin stable and GTS: [@ublue-os/bluefin](https://github.com/ublue-os/bluefin) - generates Fedora-based Bluefin OCI container
+- Bluefin LTS [@ublue-os/bluefin-lts](https://github.com/ublue-os/bluefin-lts) - generates a CentOS-based Bluefin OCI container
+- Bluefin distroless prototype (aka Dakotaraptor) [@ublue-os/distroless](https://github.com/projectbluefin/distroless) - generates a GNOME OS based Bluefin OCI container
+
+:::info Distroless
+This is opposite of the traditional Linux distribution model, the value is in the other OCI layers, not the base image. This is what we mean by "distributions don't matter", since you can use any base image it's just another choice in the long list of decisions we have to make. And since you can source software from anywhere, the idea of "who gets you the same software better" doesn't make much sense when you can just automate that.
+:::
 
 ## Understanding Bluefin's Architecture
 
