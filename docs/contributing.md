@@ -55,6 +55,38 @@ Bluefin images are built using:
 Start small! Documentation improvements or simple package additions are great first contributions. Don't hesitate to ask questions in issues or discussions.
 :::
 
+## How Bluefin is Made
+
+Bluefin is made via [lazy concensus](https://www.apache.org/foundation/glossary.html#LazyConsensus), which means that we trend towards "Just Do It" because if it was too crazy someone would say something. This is a nice casual way to open source, and is inspired by [Kubernetes](https://kubernetes.dev).
+
+- Check the [Project Board](https://github.com/orgs/projectbluefin/projects/2)
+- Items in Draft are things that need to happen but aren't claimed or specced out
+- Check out the existing issues if you wanna fix something
+- Convert a Draft task into an issue to design and specify something
+  - Design and spec are for the good of the project and don't come with an implementation commitment. 
+
+### Where to find stuff
+
+[ New repo diagram goes here ]
+
+### Things to know before diving in
+
+> If you are reading this, then you may also be a Kubernetes nerd. You are the target audience for Bluefin. Welcome!
+
+Bluefin is a predator and may snap at you occasionally, and is opinionated for a reason:
+
+- The userspace is mostly stable, we are not planning on making major changes to the layout - it's just the Ubuntu desktop. 
+- Our **infrastructure velocity** comes from infrastructure work
+  - This is the projects main focus because you can't deliver a product without the best infrastructure, [bootc](https://github.com/bootc-dev/bootc) is cloud native tech, we choose to build on it for a reason. 
+- Our **product velocity** comes from the workload
+  - Ship a kickass GNOME experience and all the best upstream tech
+  - Deliver a premiere cloud native developer experience
+  - Abstract the operating system away from the user
+- Sustainability is vital to the project
+  - Sometimes not shipping a thing is better than the maintenance burden
+- We tend to [say no](https://mikemcquaid.com/saying-no/)
+  - But don't take it personally, we can't eat cheeseburgers every day, maybe someday. That's what brought you here!
+
 ### Prerequisites
 
 **Required Knowledge:**
@@ -64,14 +96,14 @@ Start small! Documentation improvements or simple package additions are great fi
 - GitHub Actions basics (for CI/CD changes)
 
 **Required Tools:**
-- Git (version 2.x or higher)
+- git 
 - Text editor (VS Code, vim, etc.)
 - GitHub account with 2FA enabled
 - Podman or Docker (for local builds)
 
 **Optional but Recommended:**
 - Bluefin installation (for testing)
-- Access to @ublue-os Discord or discussion forum
+- Involvement the issues. 
 
 ### Fork and Clone
 
