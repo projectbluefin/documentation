@@ -13,7 +13,7 @@ Homebrew's path will now be placed _after_ the system path. This will cause `bre
 
 ## Bluefin CLI
 
-Atuin's been causing too many issues for us, so we've elected to turn it off by default so that users can enjoy the rest of `bluefin-cli`. We will investigate a nicer atuin integration in the future once we have time to investigate a cleaner solution.
+Atuin has been causing some issues, so we've disabled it by default to ensure a stable experience with `bluefin-cli`. We plan to investigate a better integration for Atuin in the future.
 
 ## More updates coming
 
