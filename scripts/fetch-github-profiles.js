@@ -33,6 +33,9 @@ const GITHUB_USERNAMES = [
 const OUTPUT_DIR = path.join(__dirname, '..', 'static', 'data');
 const OUTPUT_FILE = path.join(OUTPUT_DIR, 'github-profiles.json');
 
+// Cache configuration
+const CACHE_MAX_AGE_HOURS = 24;
+
 // Check for GitHub token from environment
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
 
@@ -73,6 +76,22 @@ async function fetchProfile(username) {
 }
 
 async function fetchAllProfiles() {
+  // Check if existing cache is fresh enough
+  if (fs.existsSync(OUTPUT_FILE)) {
+    const stats = fs.statSync(OUTPUT_FILE);
+    const ageHours = (Date.now() - stats.mtimeMs) / (1000 * 60 * 60);
+    
+    if (ageHours < CACHE_MAX_AGE_HOURS && !process.argv.includes('--force')) {
+      console.log(`✓ Cache is ${ageHours.toFixed(1)}h old (max ${CACHE_MAX_AGE_HOURS}h). Skipping fetch.`);
+      console.log(`  Use --force flag to bypass cache and force fresh fetch.`);
+      return;
+    } else if (ageHours >= CACHE_MAX_AGE_HOURS) {
+      console.log(`⏱️  Cache is ${ageHours.toFixed(1)}h old (max ${CACHE_MAX_AGE_HOURS}h). Fetching fresh data...`);
+    } else {
+      console.log('🔄 --force flag detected. Fetching fresh data...');
+    }
+  }
+  
   if (!GITHUB_TOKEN) {
     console.warn('⚠️  No GitHub token found. Set GITHUB_TOKEN or GH_TOKEN environment variable.');
     console.warn('   This script may hit rate limits without authentication.');

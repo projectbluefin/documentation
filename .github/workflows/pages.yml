@@ -28,6 +28,15 @@ jobs:
 
       - uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76 # v2
 
+      - name: Restore GitHub data cache
+        uses: actions/cache@v4 # v4
+        with:
+          path: static/data
+          key: github-data-${{ hashFiles('scripts/fetch-github-*.js') }}-${{ github.run_number }}
+          restore-keys: |
+            github-data-${{ hashFiles('scripts/fetch-github-*.js') }}-
+            github-data-
+
       - name: Install dependencies
         run: bun install --frozen-lockfile --production
 
