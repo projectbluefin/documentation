@@ -14,6 +14,54 @@ You don't need permission to contribute to your own destiny.
 
 :::
 
+## Getting Started
+
+:::info First Time Contributing?
+Start small! Documentation improvements or simple additions are great first contributions. Don't hesitate to ask questions in issues or discussions.
+:::
+
+## How Bluefin is Made
+
+Bluefin is made via [lazy concensus](https://www.apache.org/foundation/glossary.html#LazyConsensus), which means that we trend towards "Just Do It" because if it was too crazy someone would say something. This is a nice casual way to open source, and is inspired by [Kubernetes](https://kubernetes.dev).
+
+- Check the [Project Board](https://github.com/orgs/projectbluefin/projects/2)
+- Items in Draft are things that need to happen but aren't claimed or specced out
+- Check out the existing issues if you wanna fix something
+- Convert a Draft task into an issue to design and specify something
+  - Design and spec are for the good of the project and don't come with an implementation commitment. 
+
+### Where to find stuff
+
+[ New repo diagram goes here ]
+
+### Things to know before diving in
+
+> If you are reading this, then you may also be a Kubernetes nerd. You are the target audience for Bluefin. Welcome!
+
+### Lazy Consensus Model
+
+Bluefin follows a loose [Apache Lazy Consensus](https://community.apache.org/committers/decisionMaking.html):
+- Assume consensus unless objections raised
+- Allow time for feedback (account for timezones/holidays)
+- Opinionated decisions encouraged
+- Post issues for major changes requiring feedback and tag them with `enhancement`
+
+Bluefin is a predator and may snap at you occasionally, and is opinionated for a reason:
+
+- The userspace is mostly stable, we are not planning on making major changes to the layout - it's just the Ubuntu desktop. 
+- Our **infrastructure velocity** comes from infrastructure work
+  - This is the projects main focus because you can't deliver a product without the best infrastructure, [bootc](https://github.com/bootc-dev/bootc) is cloud native tech, we choose to build on it for a reason.
+  - If you're "The Linux person on a Kubernetes platform team" this is the place for you
+- Our **product velocity** comes from the workload
+  - Ship a kickass GNOME experience and all the best upstream tech
+  - Deliver a premiere cloud native developer experience
+  - Abstract the operating system away from the user
+- Sustainability is vital to the project
+  - Sometimes not shipping a thing is better than the maintenance burden
+- We tend to [say no](https://mikemcquaid.com/saying-no/)
+  - But don't take it personally, we can't eat cheeseburgers every day, maybe someday. That's what brought you here!
+
+
 ## Overview
 
 **Repository:** [@ublue-os/bluefin](https://github.com/ublue-os/bluefin)
@@ -49,43 +97,7 @@ Bluefin images are built using:
 | **stable** | Weekly builds | Weekly | 43 |
 | **gts** | Long-term support | As needed | 42 (LTS) |
 
-## Getting Started
 
-:::info First Time Contributing?
-Start small! Documentation improvements or simple package additions are great first contributions. Don't hesitate to ask questions in issues or discussions.
-:::
-
-## How Bluefin is Made
-
-Bluefin is made via [lazy concensus](https://www.apache.org/foundation/glossary.html#LazyConsensus), which means that we trend towards "Just Do It" because if it was too crazy someone would say something. This is a nice casual way to open source, and is inspired by [Kubernetes](https://kubernetes.dev).
-
-- Check the [Project Board](https://github.com/orgs/projectbluefin/projects/2)
-- Items in Draft are things that need to happen but aren't claimed or specced out
-- Check out the existing issues if you wanna fix something
-- Convert a Draft task into an issue to design and specify something
-  - Design and spec are for the good of the project and don't come with an implementation commitment. 
-
-### Where to find stuff
-
-[ New repo diagram goes here ]
-
-### Things to know before diving in
-
-> If you are reading this, then you may also be a Kubernetes nerd. You are the target audience for Bluefin. Welcome!
-
-Bluefin is a predator and may snap at you occasionally, and is opinionated for a reason:
-
-- The userspace is mostly stable, we are not planning on making major changes to the layout - it's just the Ubuntu desktop. 
-- Our **infrastructure velocity** comes from infrastructure work
-  - This is the projects main focus because you can't deliver a product without the best infrastructure, [bootc](https://github.com/bootc-dev/bootc) is cloud native tech, we choose to build on it for a reason. 
-- Our **product velocity** comes from the workload
-  - Ship a kickass GNOME experience and all the best upstream tech
-  - Deliver a premiere cloud native developer experience
-  - Abstract the operating system away from the user
-- Sustainability is vital to the project
-  - Sometimes not shipping a thing is better than the maintenance burden
-- We tend to [say no](https://mikemcquaid.com/saying-no/)
-  - But don't take it personally, we can't eat cheeseburgers every day, maybe someday. That's what brought you here!
 
 ### Prerequisites
 
@@ -1189,14 +1201,6 @@ Contributing regularly and demonstrating expertise may lead to maintainer status
 - Lead: @castrojo (infrastructure, project direction)
 - Core: @p5, @m2Giles, @tulilirockz (features, maintenance, testing)
 
-### Lazy Consensus Model
-
-Bluefin follows [Apache Lazy Consensus](https://community.apache.org/committers/decisionMaking.html):
-- Assume consensus unless objections raised
-- Allow time for feedback (account for timezones/holidays)
-- Opinionated decisions encouraged
-- Post issues for major changes requiring feedback
-
 ## Additional Resources
 
 ### Related Repositories
@@ -1225,16 +1229,6 @@ Bluefin follows [Apache Lazy Consensus](https://community.apache.org/committers/
 - [Discussion Forum](https://community.projectbluefin.io/)
 - [Discord Server](https://discord.gg/WEu6BdFEtp)
 - [GitHub Discussions](https://github.com/ublue-os/bluefin/discussions)
-
-## Contribution Statistics
-
-As of October 2025, Bluefin sees:
-- **8-12 commits per day** (including automation)
-- **60% automated** (Renovate bot updates)
-- **35% core maintainers** (manual contributions)
-- **5% community** (external contributors)
-- **24-48 hour review time** for manual PRs
-- **84 open issues** (actively triaged)
 
 The project welcomes all skill levels and contribution types. Start small, learn the workflows, and grow your involvement over time.
 
