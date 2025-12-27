@@ -9,7 +9,7 @@ We hope that you're enjoying the holidays! We're making some important changes t
 
 ## Homebrew
 
-Homebrew's path will now be placed _after_ the system path, this will cause `brew doctor` to complain but we feel that this will lead to a cleaner experience overall. This is working fine for lots of us so we'll see how many spacebar heaters we break with this one, heh. This change is already on the daily builds if you're using one of them.
+Homebrew's path will now be placed _after_ the system path. This will cause `brew doctor` to complain, but we feel that this will lead to a cleaner experience overall. This has been working well in testing, and the change is already on the daily builds if you're using one of them.
 
 ## Bluefin CLI
 
