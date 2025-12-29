@@ -47,34 +47,34 @@ flowchart TB
     subgraph base["Base Images"]
         ublue["<strong>Universal Blue</strong><br/>Base Image<br/>Shared with Bazzite GNOME"]
         centos["<strong>CentOS Stream</strong><br/>Base Image"]
-        gnome["<strong>GNOME OS</strong><br/>Base Image"
+        gnome_base["<strong>GNOME OS</strong><br/>Base Image"]
     end
     
     subgraph images["Final Images"]
         bluefin["bluefin:stable"]
         lts["bluefin:lts<br/>bluefin:lts-hwe<br/>bluefin-gdx"]
-        gnome["Dakotaraptor Prototype<br/>bluefin:distroless"]
+        distroless["Dakotaraptor Prototype<br/>bluefin:distroless"]
     end
     
     common --> ublue
     common --> centos
-    common --> gnome
+    common --> gnome_base
     
     brew --> ublue
     brew --> centos
-    brew --> gnome
+    brew --> gnome_base
     
     artwork --> ublue
     artwork --> centos
-    artwork --> gnome
+    artwork --> gnome_base
     
     branding --> ublue
     branding --> centos
-    branding --> gnome
+    branding --> gnome_base
     
     ublue --> bluefin
     centos --> lts
-    gnome --> distroless
+    gnome_base --> distroless
     
     style oci fill:#708ee3
     style base fill:#4a69bd
