@@ -20,9 +20,11 @@ We continue to sync with the team at Red Hat as we journey with bootc through it
 
 :::tip[My 2026 prediction]
 
-bootc _dramatically_ drops the barrier to making your own OS. We're not here to build a distribution, our purpose has always been to show that you can make operating systems using dockerfiles. That's it lol. Millions of people know how to do this, the Universal Blue "mission" is pretty much finished. People are already making a bunch of these on other distro base images and I can't wait to see what people build. Who knows, there may be another Bazzite out there, let's see who steps up and becomes Legend!
+bootc _dramatically_ drops the barrier to making your own OS. We're not here to build a distribution, our purpose has always been to show that you can make operating systems using dockerfiles. That's it lol. Millions of people know how to do this, the Universal Blue "mission" is pretty much complete. Now we just swim in that merch money from [store.projectbluefin.io](https://store.projectbluefin.io) and keep the builds green. People are already making a bunch of these on other distro base images and I can't wait to see what people build. Who knows, there may be another Bazzite out there, let's see who steps up and becomes Legend!
 
 :::
+
+These aren't monolithic things, as you'll soon see, we can source software from anywhere and it's a bunch of interconnected layers. This is reflected in our use of [@projectbluefin](https://github.com/projectbluefin) as our main GitHub org.
 
 With that out of the way ... this update will cover mostly "How Bluefin is made" and where we're hoping to head in 2026.
 
@@ -102,10 +104,9 @@ Once we've established a set of re-usable components, we then combine them with 
 
 Since the bulk of what makes Bluefin is now just an OCI container the base OS can more easily be abstracted away. 
 
-
 ### A Streamlined, Maintainable set of Images
 
-Decoupling Bluefin this way has already allowed us to delete a bunch of duplicated code, and makes maintenance easier for the team. This also makes it way easier for people to contribute and resolves a bunch of `parity` bugs between the images. Maintaining Bluefin happens in the common OCI layers and not as much in the image repositories. 
+Decoupling Bluefin this way has already allowed us to delete a bunch of duplicated code, and makes maintenance easier for the team. This also makes it way easier for people to contribute and resolves a bunch of `parity` bugs between the images. Maintaining Bluefin happens in the common OCI layers and not as much in the image repositories. Custom images will start moving this way too as it let's custom image builders pick and choose from whichever container they want at a much more granular level.  
 
 This also gave us the opportunity to clean up a bunch of old justfiles and scripts that have not been looked at for _years_. We have also been taking a less-is-more approach by shipping less customizations as just recipes. 
 
@@ -154,7 +155,7 @@ _Dakotaraptor_ will not be for everyone and will offer the least amount of compr
 
 Don't worry, we won't call it "Distroless".
 
-The other Blufin OCI containers will still continue as before. _Dakotaraptor_ will represent a faster development cycle, directly pulling from upstream, while maintaining production quality.
+The other Blufin OCI containers will still continue as before. _Dakotaraptor_ will represent a faster development cycle, directly pulling from upstream, while maintaining production quality. Think of "distroless" as a model flip, the source is the main thing we interact with, _the Linux desktop_. And then we can bolt on whatever kernel we want, with modern Linuxes this is straightforward to make. And since the system libraries for GNOME OS are just ... the Freedesktop and GNOME runtimes, we're running on stuff that's already used by a ton of people. This way of assembly is new, but the payload is _not_. That's why we're feeling confident about the quality out of the gate on this one.  
 
 We haven't yet finalized how next -> testing -> stable will look like, but having the `next` branch following the nightly GNOME development cadence is a goal. This channel will fastest raptor with aggressive component upgrades and no holds barred. The stable branch will be based on the stable GNOME builds and we're hoping to help GNOME maintain these branches. If you want to be part of this effort, now is the time to step up!
 
