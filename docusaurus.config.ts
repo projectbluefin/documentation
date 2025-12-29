@@ -193,12 +193,45 @@ const config: Config = {
               href: "https://github.com/ublue-os/bluefin/discussions",
             },
             {
+              label: "Ask Bluefin",
+              href: "https://ask.projectbluefin.io",
+            },
+            {
               label: "Feedback",
               href: "https://feedback.projectbluefin.io/",
             },
             {
+              label: "Official Blog",
+              href: "https://blog.projectbluefin.io/",
+            },
+            {
+              label: "Changelogs",
+              href: "https://changelogs.projectbluefin.io",
+            },
+          ],
+        },
+        {
+          title: "RSS Feeds",
+          items: [
+            {
               label: "Blog Feed",
               href: "https://docs.projectbluefin.io/blog/atom.xml",
+            },
+            {
+              label: "Releases Feed",
+              href: "https://github.com/ublue-os/bluefin/releases.atom",
+            },
+            {
+              label: "LTS Releases Feed",
+              href: "https://github.com/ublue-os/bluefin-lts/releases.atom",
+            },
+            {
+              label: "Discussions Feed",
+              href: "https://github.com/ublue-os/bluefin/discussions.atom",
+            },
+            {
+              label: "Announcements Feed",
+              href: "https://github.com/ublue-os/bluefin/discussions.atom?discussions_q=is%3Aopen+label%3Aannouncements",
             },
           ],
         },
