@@ -179,32 +179,69 @@ const config: Config = {
               label: "uCore",
               href: "https://github.com/ublue-os/ucore",
             },
+            {
+              label: "Universal Blue",
+              href: "https://universal-blue.org",
+            },
           ],
         },
         {
           title: "Community",
           items: [
             {
-              label: "Discord",
-              href: "https://discord.gg/XUC8cANVHy",
+              label: "Blog and Announcements",
+              href: "https://blog.projectbluefin.io/",
             },
             {
               label: "Discussions",
               href: "https://github.com/ublue-os/bluefin/discussions",
             },
             {
+              label: "Discord",
+              href: "https://discord.gg/XUC8cANVHy",
+            },
+            {
+              label: "Ask Bluefin",
+              href: "https://ask.projectbluefin.io",
+            },
+            {
               label: "Feedback",
               href: "https://feedback.projectbluefin.io/",
             },
             {
-              label: "Blog Feed",
+              label: "Changelogs",
+              href: "https://changelogs.projectbluefin.io",
+            },
+          ],
+        },
+        {
+          title: "RSS Feeds",
+          items: [
+            {
+              label: "Blog and Announcements Feed",
               href: "https://docs.projectbluefin.io/blog/atom.xml",
+            },
+            {
+              label: "Releases Feed",
+              href: "https://github.com/ublue-os/bluefin/releases.atom",
+            },
+            {
+              label: "LTS Releases Feed",
+              href: "https://github.com/ublue-os/bluefin-lts/releases.atom",
+            },
+            {
+              label: "Discussions Feed",
+              href: "https://github.com/ublue-os/bluefin/discussions.atom",
             },
           ],
         },
         {
           title: "GitHub",
           items: [
+            {
+              label: "Main Bluefin Repository",
+              href: "https://github.com/projectbluefin",
+            },
             {
               label: "Bluefin",
               href: "https://github.com/ublue-os/bluefin",
@@ -218,7 +255,7 @@ const config: Config = {
               href: "https://github.com/projectbluefin/documentation",
             },
             {
-              label: "Bluefin Website",
+              label: "Website",
               href: "https://github.com/projectbluefin/website",
             },
             {
