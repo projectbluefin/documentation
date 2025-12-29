@@ -3,7 +3,9 @@ title: AI and Machine Learning
 slug: /ai
 ---
 
-Bluefin's [developer experience](/bluefin-dx) fully supports local AI development workflows. GPU Acceleration for both Nvidia and AMD are included out of the box and usually do not require any extra setup.
+## Bluespeed
+
+"Bluespeed" is a combination of Bluefin's [developer experience](/bluefin-dx) and full support for AI development workflows via a community managed set of tool recommendations. GPU Acceleration for both Nvidia and AMD are included out of the box and usually do not require any extra setup. Also it's a great reason to [sell more swag](https://store.projectbluefin.io).
 
 ## Methodology
 
