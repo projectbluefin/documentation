@@ -171,7 +171,7 @@ The [`experimental-ide`](https://github.com/projectbluefin/common/blob/main/syst
 
 Thanks to the new [flatpak support in brewfiles](https://docs.projectbluefin.io/blog/flatpak-support-in-brewfiles) we can ship all sorts of combinations now!
 
-And finally, thanks to our [custom tap]([@ublue-os/homebrew-tap](https://github.com/ublue-os/homebrew-tap)) we are investigating on how to bring `bluefin-cli` to MacOS, so that you can have these same convenience tools on multiple operating systems. James [has a prototype](https://github.com/hanthor/bluefin-cli)  that you can check out. 
+And finally, thanks to our [custom tap](https://github.com/ublue-os/homebrew-tap) we are investigating on how to bring `bluefin-cli` to MacOS, so that you can have these same convenience tools on multiple operating systems. James [has a prototype](https://github.com/hanthor/bluefin-cli)  that you can check out. 
 
 ### AI/Machine Learning Tools
 aka "Bluespeed"
