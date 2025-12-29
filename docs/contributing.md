@@ -24,7 +24,7 @@ Start small! Documentation improvements or simple additions are great first cont
 
 Bluefin is made via [lazy concensus](https://www.apache.org/foundation/glossary.html#LazyConsensus), which means that we trend towards "Just Do It" because if it was too crazy someone would say something. This is a nice casual way to open source, and is inspired by [Kubernetes](https://kubernetes.dev).
 
-- Check the [Project Board](https://github.com/orgs/projectbluefin/projects/2)
+- Check [todo.projectbluefin.io](https://github.com/orgs/projectbluefin/projects/2)
 - Items in Draft are
   - Things that need to happen but aren't claimed or specced out
   - Or transient things that don't need much planning like "Improve contributor guide" or "Fix up this just recipe". These are things that are identified as being needed but don't need much planning, "just send a sysadmin" style tasks.
@@ -34,52 +34,6 @@ Bluefin is made via [lazy concensus](https://www.apache.org/foundation/glossary.
 ### Architecture
 
 Bluefin's customization are kept in OCI containers, and are then assembled with other containers and base images to create the different Bluefin images:
-
-```mermaid
-flowchart TB
-    subgraph oci["Bluefin OCI Containers"]
-        common["<strong>@projectbluefin/common</strong><br/>Desktop Configuration<br/>Shared with Aurora"]
-        brew["<strong>@ublue-os/brew</strong><br/>Homebrew Integration<br/>Shared with Aurora and Bazzite"]
-        artwork["<strong>@ublue-os/artwork</strong><br/>Artwork<br/>Shared with Aurora and Bazzite"]
-        branding["<strong>@projectbluefin/branding</strong><br/>Branding Assets"]
-    end
-    
-    subgraph base["Base Images"]
-        ublue["<strong>Universal Blue</strong><br/>Base Image<br/>Shared with Bazzite GNOME"]
-        centos["<strong>CentOS Stream</strong><br/>Base Image"]
-        gnome_base["<strong>GNOME OS</strong><br/>Base Image"]
-    end
-    
-    subgraph images["Final Images"]
-        bluefin["bluefin:stable"]
-        lts["bluefin:lts<br/>bluefin:lts-hwe<br/>bluefin-gdx"]
-        distroless["Dakotaraptor Prototype<br/>bluefin:distroless"]
-    end
-    
-    common --> ublue
-    common --> centos
-    common --> gnome_base
-    
-    brew --> ublue
-    brew --> centos
-    brew --> gnome_base
-    
-    artwork --> ublue
-    artwork --> centos
-    artwork --> gnome_base
-    
-    branding --> ublue
-    branding --> centos
-    branding --> gnome_base
-    
-    ublue --> bluefin
-    centos --> lts
-    gnome_base --> distroless
-    
-    style oci fill:#708ee3
-    style base fill:#4a69bd
-    style images fill:#8a97f7
-```
 
 ### Things to know before diving in
 
@@ -131,7 +85,53 @@ This is opposite of the traditional Linux distribution model, the value is in th
 
 ## Understanding Bluefin's Architecture
 
-[ diagram goes here ]
+The different components are then assembled in this order. This is done via GitHub actions and heavy use of Renovate to automate the entire build process:
+
+```mermaid
+flowchart TB
+    subgraph oci["Bluefin OCI Containers"]
+        common["<strong>@projectbluefin/common</strong><br/>Desktop Configuration<br/>Shared with Aurora"]
+        brew["<strong>@ublue-os/brew</strong><br/>Homebrew Integration<br/>Shared with Aurora and Bazzite"]
+        artwork["<strong>@ublue-os/artwork</strong><br/>Artwork<br/>Shared with Aurora and Bazzite"]
+        branding["<strong>@projectbluefin/branding</strong><br/>Branding Assets"]
+    end
+    
+    subgraph base["Base Images"]
+        ublue["<strong>Universal Blue</strong><br/>Base Image<br/>Shared with Bazzite GNOME"]
+        centos["<strong>CentOS Stream</strong><br/>Base Image"]
+        gnome_base["<strong>GNOME OS</strong><br/>Base Image"]
+    end
+    
+    subgraph images["Final Images"]
+        bluefin["bluefin:stable"]
+        lts["bluefin:lts<br/>bluefin:lts-hwe<br/>bluefin-gdx"]
+        distroless["Dakotaraptor Prototype<br/>bluefin:distroless"]
+    end
+    
+    common --> ublue
+    common --> centos
+    common --> gnome_base
+    
+    brew --> ublue
+    brew --> centos
+    brew --> gnome_base
+    
+    artwork --> ublue
+    artwork --> centos
+    artwork --> gnome_base
+    
+    branding --> ublue
+    branding --> centos
+    branding --> gnome_base
+    
+    ublue --> bluefin
+    centos --> lts
+    gnome_base --> distroless
+    
+    style oci fill:#708ee3
+    style base fill:#4a69bd
+    style images fill:#8a97f7
+```
 
 ### Image-Based Development
 
