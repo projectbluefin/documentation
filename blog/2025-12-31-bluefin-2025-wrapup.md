@@ -6,21 +6,31 @@ tags: [announcements]
 ---
 
 
-Greetings Guardians, today we're going to go over some of the things we're finishing up for 2025, and talk about where we're going in 2026. Check out the [Autumn 2025 Update](https://docs.projectbluefin.io/blog/2025-10-28-bluefin-autumn/) and the [2024 update](https://universal-blue.discourse.group/t/universal-blue-2024-wrap-up/5999) if you want more backstory. We appreciate you joining us on your Linux journey, let's get going!
+Greetings Guardians, it has indeed been a fantastic year!
+
+Today we're going to go over some of the things we're finishing up for 2025, and talk about where we're going in 2026. Check out the [Autumn 2025 Update](https://docs.projectbluefin.io/blog/2025-10-28-bluefin-autumn/) and the [2024 update](https://universal-blue.discourse.group/t/universal-blue-2024-wrap-up/5999) if you want more backstory. We appreciate you joining us on your Linux journey, let's get going! The game is afoot, the clue is: `lumina`. 
 
 ## How was 2025?
 
-This year we spent most of our time on cleanup and sustainability. Bluefin is mostly feature complete so we don't really ship major user-visible changes as much as we used to. 
+This year we spent most of our time on cleanup and sustainability. Bluefin is mostly feature complete so we don't really ship major user-visible changes as much as we used to. Much of it is nerd automation improvements that most of you will never need to actually care about. This has also been a kickass year for [Bazzite](https://bazzite.gg), which has been a fantastic real-world test for [`bootc`](https://containers.github.io/bootc/) based sytems like ours! This year was great for bootc, here's a photo of the team!
 
 [ pic of the bootc team from kubecon]
 
-This update will cover mostly "How Bluefin is made" and where we're hoping to head in 2026.
+We continue to sync with the team at Red Hat as we journey with bootc through its [CNCF Project Lifecycle](https://contribute.cncf.io/projects/lifecycle/). This works out well for us because we know what we need to do. Our role is to provide an independent voice, and with new orgs like [the bootcrew](https://github.com/bootcrew), [bluebuild](https://github.com/blue-build), and [secureblue](https://github.com/secureblue/secureblue) springing up it brings more voices to the choir. This is also why you've seen us slowly decouple from [Universal Blue](https://universal-blue.org) more explicitly. This is a forcing function.
+
+:::tip[My 2026 prediction]
+
+bootc _dramatically_ drops the barrier to making your own OS. We're not here to build a distribution, our purpose has always been to show that you can make operating systems using dockerfiles. That's it lol. Millions of people know how to do this, the Universal Blue "mission" is pretty much finished. People are already making a bunch of these on other distro base images and I can't wait to see what people build. Who knows, there may be another Bazzite out there, let's see who steps up and becomes Legend!
+
+:::
+
+With that out of the way ... this update will cover mostly "How Bluefin is made" and where we're hoping to head in 2026.
 
 ## Tracking Progress
 
-[todo.projectbluefin.io](https://todo.projectbluefin.io) will send you to the project board from now on. Every item in this post will be tracked here. Some of the things in this post are complete, and some are close and need help, feel free to dive in!
+[todo.projectbluefin.io](https://todo.projectbluefin.io) will send you to the project board. Every item in this post will be tracked here. Some of the things in this post are complete, and some are close and need help, feel free to dive in!
 
-You may notice some minor changes (like the motd colors changing), but we're hoping to be complete with the major transitions over the next two weeks.
+You may notice some minor changes (like the motd colors changing), but we're hoping to be complete with the major transitions over the next two weeks. File an issue if you notice something! Exercising the fix-loop with this new architecture will immediately show dividends as we can now ship fixes to all Bluefins and Aurora. 
 
 We've also updated the [Contributing Guide](https://docs.projectbluefin.io/contributing) to reflect Bluefin's updated architecture and processes. Note, Linux nerd stuff incoming:
 
@@ -28,7 +38,7 @@ We've also updated the [Contributing Guide](https://docs.projectbluefin.io/contr
 
 Bluefin is undergoing a refactor with some significant changes under the hood, which we expect to finish by the end of 2025. Some of this isn't done yet, so I'm going to talk about the endstate of where we want to be. Bluefin is a combination of a set of configuration [OCI containers](https://opencontainers.org/) which are then shipped on different images. Originally the [Bluefin repository](https://github.com/ublue-os/bluefin) had everything we needed, and was a result of organic growth.
 
-The team drastically refactored this repository in 2025 since it predates the usage of [`bootc`](https://containers.github.io/bootc/) and was falling behind. Similarly, [Bluefin LTS](https://github.com/ublue-os/bluefin-lts) was built from the ground up on [`bootc`](https://containers.github.io/bootc/), but we had to manually bring over the Bluefin parts to build it. We want to share as much code with [Aurora](https://getaurora.dev) and [Bazzite](https://bazzite.gg) as we can. The three projects share many things, but we needed a more efficient way to do this. So we rearchitected Bluefin to the following model: 
+The team drastically refactored this repository in 2025 since it predates the usage of [`bootc`](https://containers.github.io/bootc/) and was falling behind. Similarly, [Bluefin LTS](https://github.com/ublue-os/bluefin-lts) was built from the ground up on [`bootc`](), but we had to manually bring over the Bluefin parts to build it. We want to share as much code with [Aurora](https://getaurora.dev) and [Bazzite](https://bazzite.gg) as we can. The three projects share many things, but we needed a more efficient way to do this. So we rearchitected Bluefin to the following model: 
 
 ```mermaid
 flowchart TB
