@@ -224,15 +224,12 @@ Justfile                # Just command runner recipes (build, serve)
 - The CI/CD pipeline regenerates them anyway
 
 **If you accidentally committed these files**:
-```bash
-# Remove from last commit
-git reset HEAD~ static/data/playlist-metadata.json
+# Remove from last commit (if not pushed yet)
+git rm --cached static/data/playlist-metadata.json
 git commit --amend --no-edit
-git checkout origin/main -- static/data/playlist-metadata.json
 
-# Force push if already pushed
+# After amending, if you have already pushed the commit:
 git push --force-with-lease
-```
 
 **These files are already in `.gitignore`** but may appear if generated before gitignore was updated.
 
