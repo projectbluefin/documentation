@@ -15,7 +15,7 @@ export default function FooterWrapper(props: Props): ReactNode {
   // Example: https://github.com/ublue-os/bluefin-docs/edit/main/blog/2024-12-30-ublue-2024-wrapup.md
   let filePath = null;
   if (editUrl) {
-    const match = editUrl.match(/edit\/main\/(.+)$/);
+    const match = editUrl.match(/\/(?:edit|tree)\/[^/]+\/(.+)$/);
     if (match) {
       filePath = match[1];
     }
