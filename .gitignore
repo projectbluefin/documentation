@@ -11,6 +11,7 @@
 # Auto-generated documentation
 /docs/contributing.md
 /static/feeds/*.json
+/static/data/*.json
 .nvidia-drivers-cache.json
 
 # Misc
