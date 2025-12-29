@@ -77,10 +77,11 @@ const BOT_LOGINS = [
 ];
 
 function isBotAccount(login: string): boolean {
+  const lowerCaseLogin = login.toLowerCase();
   return (
-    BOT_LOGINS.includes(login) ||
-    login.endsWith("[bot]") ||
-    login.toLowerCase().includes("bot")
+    BOT_LOGINS.some((bot) => bot.toLowerCase() === lowerCaseLogin) ||
+    lowerCaseLogin.endsWith("[bot]") ||
+    lowerCaseLogin.includes("bot")
   );
 }
 
