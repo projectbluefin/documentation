@@ -99,7 +99,7 @@ const config: Config = {
     announcementBar: {
       id: "announcement",
       content:
-        'Got a question? Try <a href="https://ask.projectbluefin.io">ask.projectbluefin.io</a>!',
+        'Reminder: Bluefin GTS will merge into Bluefin on 1 March 2026. Check the <a href="https://https://docs.projectbluefin.io/blog/bluefin-2025/">State of the Raptor</a> for more information.',
       backgroundColor: "#fafbfc",
       textColor: "#091E42",
       isCloseable: true,
