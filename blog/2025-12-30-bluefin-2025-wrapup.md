@@ -214,6 +214,7 @@ And here's the stuff that doesn't fit anywhere else in this report!
 - Actually Going to Market (GTM)
   - We're almost to the point where we can start to market Bluefin instead of purposely going under the radar
   - Investigating refreshed video content for the website - this will be expensive so we probably won't look into this until after the user-visible features have landed
+- Updated [Contributor Guide](https://docs.projectbluefin.io/contributing)
 
 ## Metrics
 
