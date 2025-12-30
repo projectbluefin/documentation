@@ -1,6 +1,6 @@
 ---
-title: 'Bluefin 2026: State of the Raptor'
-slug: bluefin-2026
+title: 'Bluefin 2025: State of the Raptor'
+slug: bluefin-2025
 authors: castrojo
 tags: [announcements]
 ---
