@@ -180,7 +180,7 @@ Oh, and in order to help us out with this you don't even need to talk to us, jus
 
 ## Refining the Bluefin Developer Experience
 
-About 60% of you turn on Bluefin's [Developer Mode](https://docs.projectbluefin.io/bluefin-dx/) We purposely focus on these [15.6 millions developers](https://docs.projectbluefin.io/blog/cloud-native-milestone-15-million) and strive to deliver the world's best cloud native development experience. 
+About 60% of you turn on Bluefin's [Developer Mode](https://docs.projectbluefin.io/bluefin-dx/). We purposely focus on these [15.6 millions developers](https://docs.projectbluefin.io/blog/cloud-native-milestone-15-million) and strive to deliver the world's best cloud native development experience. 
 
 Now thanks to the efforts [from the team](https://docs.projectbluefin.io/donations/contributors) homebrew is now in a much better state on Linux, allowing us to reshuffle some things around. In 2026 we will strive to remove the need for a dedicated `bluefin-dx` image and give you more flexibility moving forward:
 
