@@ -37,7 +37,7 @@ As you'll soon see below, we can source software from anywhere and it's just a b
 
 But that sounds like a bunch of marketing crap, let's explain it  ... this update will cover mostly "How Bluefin is made" and where we're hoping to head in 2026.
 
-![wide](htps://github.com/user-attachments/assets/a6f60461-e501-48c5-9ec4-533262d1435f)
+![wide](https://github.com/user-attachments/assets/5a9a4dba-bc7f-4aca-aaee-44708376831f)
 
 ## Tracking Progress
 
