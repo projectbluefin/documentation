@@ -39,6 +39,8 @@ But that sounds like a bunch of marketing crap, let's explain it  ... this updat
 
 ![wide](https://github.com/user-attachments/assets/5a9a4dba-bc7f-4aca-aaee-44708376831f)
 
+> JF's Bluefin desktop
+
 ## Tracking Progress
 
 [todo.projectbluefin.io](https://todo.projectbluefin.io) will send you to the project board. Every item in this post will be tracked here. Some of the things in this post are complete, and some are close and need help, feel free to dive in!
