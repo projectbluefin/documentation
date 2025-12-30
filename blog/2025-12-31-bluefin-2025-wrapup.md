@@ -214,8 +214,12 @@ On to the numbers! First off let's look at our critical upstreams. This level of
 
 - [Flathub 2025 year in review](https://flathub.org/en/year-in-review/2025) - 20.3% Year over Year Growth, and [Bazaar](https://github.com/ublue-os/bazaar) continues to get better all the time. 
 - [Homebrew Yearly Statistics](https://formulae.brew.sh/analytics/os-version/365d/) - Bluefin (#11), Bazzite (#12), and Aurora (#15) have a strong showing in homebrew usage
-- gnome 
-- ours: [ do these last for freshness]
+
+This year we moved to [LFX Insights](https://insights.linuxfoundation.org/) as our platform. Here are our complete [contributor metrics](https://insights.linuxfoundation.org/project/ublue-os-bluefin/contributors) and a few charts. You can also always check out all our charts on our [Analytics page](https://docs.projectbluefin.io/analytics), where we've finally crossed the 3k weekly users milestone!
+
+![contributors](https://github.com/user-attachments/assets/55b2dd9e-27d8-4ced-a28a-6cb173425891) ![issues](https://github.com/user-attachments/assets/2d9081c3-06e6-4f5e-aed0-c1b4edfe5435) ![commits](https://github.com/user-attachments/assets/ba3805d2-1509-4069-bb69-64e59ad7b042)
+
+I've selected some graphs, feel free to dive in and don't forget to check out [Aurora](https://insights.linuxfoundation.org/project/aurora) and [Bazzite](https://insights.linuxfoundation.org/project/ublue-os-bazzite) too!
 
 ### Development Roadmap(ish)
 
