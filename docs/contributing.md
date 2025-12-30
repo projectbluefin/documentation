@@ -403,6 +403,12 @@ AI agents must disclose the tool and model used in the commit footer with an "As
 Assisted-by: [Model Name] via [Tool Name]
 ```
 
+Example:
+
+```text
+Assisted-by: Claude 4.5 Opus via GitHub Copilot
+```
+
 
 ### Making the Commit
 
