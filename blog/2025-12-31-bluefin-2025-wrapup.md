@@ -11,7 +11,7 @@ Greetings Guardians!
 Today we're going to go over some of the things we're finishing up for 2025, and talk about where we're going in 2026. Check out the [Autumn 2025 Update](https://docs.projectbluefin.io/blog/2025-10-28-bluefin-autumn/) and the [2024 update](https://universal-blue.discourse.group/t/universal-blue-2024-wrap-up/5999) if you want more backstory. We appreciate you joining us on your Linux journey, let's get going! 
 
 
-::: warning
+:::warning
 
 Bluefin GTS will be merged into Bluefin on the week of March 1st, 2026, see below for more information!
 
@@ -47,7 +47,7 @@ We've also updated the [Contributing Guide](https://docs.projectbluefin.io/contr
 
 Bluefin is undergoing a refactor with some significant changes under the hood, which we expect to finish soon, but is mostly there. Some of this isn't done yet, so I'm going to talk about the endstate of where we want to be. Bluefin is a combination of a set of configuration [OCI containers](https://opencontainers.org/) which are then shipped on different images. Originally the [Bluefin repository](https://github.com/ublue-os/bluefin) had everything we needed, and was a result of organic growth. Everything was built here.
 
-The team drastically refactored this repository in 2025 since it predates the usage of [`bootc`](https://containers.github.io/bootc/) and was falling behind. Similarly, [Bluefin LTS](https://github.com/ublue-os/bluefin-lts) was built from the ground up on [`bootc`](), but we had to manually bring over the Bluefin parts to build it. We want to share as much code with [Aurora](https://getaurora.dev) and [Bazzite](https://bazzite.gg) as we can. The three projects share many things, but we needed a more efficient way to do this. "One big Bluefin" wasn't going to cut it. So we rearchitected Bluefin to the following model: 
+The team drastically refactored this repository in 2025 since it predates the usage of [`bootc`](https://containers.github.io/bootc/) and was falling behind. Similarly, [Bluefin LTS](https://github.com/ublue-os/bluefin-lts) was built from the ground up on `bootc`, but we had to manually bring over the Bluefin parts to build it. We want to share as much code with [Aurora](https://getaurora.dev) and [Bazzite](https://bazzite.gg) as we can. The three projects share many things, but we needed a more efficient way to do this. "One big Bluefin" wasn't going to cut it. So we rearchitected Bluefin to the following model: 
 
 ```mermaid
 flowchart TB
@@ -127,7 +127,7 @@ I had to explain how Bluefin will be built in order to explain the changes comin
 
 As covered in - [Streamlining Bluefin Releases](https://docs.projectbluefin.io/blog/unifying-bluefin) we will be merging the `bluefin:gts` images into `bluefin:stable`. Effectively we're merging them both. 
 
-::: warning
+:::warning
 
 Bluefin GTS will be merged into Bluefin on the week of March 1st, 2026.
 
@@ -199,7 +199,7 @@ Our [AI toolset](https://github.com/projectbluefin/common/blob/main/system_files
 
 We've also added [Codex](https://developers.openai.com/codex/cli/), [Copilot CLI](https://github.com/features/copilot/cli), [Gemini](https://github.com/google-gemini/gemini-cli), [LM Studio](https://lmstudio.ai/), [Mistral Vibe](https://github.com/mistralai/mistral-vibe), and [Qwen Code](https://qwenlm.github.io/qwen-code-docs/) to the list. Please continue to send us feedback on the tools you use.
 
-::: info [Thanks Docker!]
+:::info[Thanks Docker!]
 
 You'll find the new [Docker model plugin](https://www.docker.com/blog/docker-model-runner-universal-blue/) included too, a huge shoutout to the folks at Docker for working with us!
 
