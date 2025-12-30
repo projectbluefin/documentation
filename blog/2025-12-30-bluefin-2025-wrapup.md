@@ -230,7 +230,10 @@ And here's the stuff that doesn't fit anywhere else in this report!
 
 On to the numbers! First off let's look at our critical upstreams. This level of growth confirms our decision to trust in systems that prioritize application developers.
 
-- [Flathub 2025 year in review](https://flathub.org/en/year-in-review/2025) - 20.3% Year over Year Growth, and [Bazaar](https://github.com/ublue-os/bazaar) continues to get better all the time. 
+- [Flathub 2025 year in review](https://flathub.org/en/year-in-review/2025) - 20.3% Year over Year Growth, and [Bazaar](https://github.com/ublue-os/bazaar) continues to get better all the time.
+
+As you can see, we not only bet on Flathub, we worked with the folks at Bazaar to ship a pure Flathub experience on our images. If you're looking for one thing to donate to in 2026, please [consider donating to Kolunmi] - app development on Linux will never improve unless we _invest in the application ecosystem directly_.
+
 - [Homebrew Yearly Statistics](https://formulae.brew.sh/analytics/os-version/365d/) - Bluefin (#11), Bazzite (#12), and Aurora (#15) have a strong showing in homebrew usage
 
 This year we moved to [LFX Insights](https://insights.linuxfoundation.org/) as our platform. Here are our complete [contributor metrics](https://insights.linuxfoundation.org/project/ublue-os-bluefin/contributors) and a few charts. You can also always check out all our charts on our [Analytics page](https://docs.projectbluefin.io/analytics), where we've finally crossed the 3k weekly users milestone!
