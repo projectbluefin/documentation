@@ -137,16 +137,14 @@ We wanted to commit to a date as soon as we could, and will be moving you to a F
 
 This will also be this single most user-affecting change in Bluefin for 2026, and we're really looking forward to having a proper gitops workflow with testing branches!
 
-#### Bluefin LTS
+### Bluefin LTS
 
 Some of you may have noticed parts of GNOME 49 landing in Bluefin LTS. Originally we had planned on backporting GNOME ourselves but this is happening as part of CentOS Stream's lifecycle. This "feels" like a good cadence for an LTS. Here's the lowdown on where LTS is today:
 
 - The tuned policy [still needs a fix](https://github.com/ublue-os/bluefin-lts/issues/841), this makes you have to run a workaround to get power management working on a laptop. This sucks
 - Many of the inconsistencies will be resolved once Bluefin LTS moves to the common OCI layers
 
-The hardware enablement branch brings in the Fedora kernel so you do have a nice option to not fall too far behind, this has effectively replaced Bluefin GTS by bringing a relaxed desktop upgrade cadence and less regressions overall. The `lts-hwe` branches also now support secure boot.
-
-This is the image I use on my work machines. 
+The hardware enablement branch brings in the Fedora kernel so you do have a nice option to not fall too far behind, this has effectively replaced Bluefin GTS by bringing a relaxed desktop upgrade cadence and less regressions overall. The `lts-hwe` branches also now support secure boot. Despite this is the image I use on my work machines, and the new architecture will help here. 
 
 ### Bluefin's Distroless Future
 > Thanks to [Sri Ramkrishna](https://portfolio.ramkrishna.me) for contributing to this section
