@@ -1,5 +1,5 @@
 ---
-title: 'Bluefin 2025: State of the Raptor'
+title: 'Bluefin 2025 Wrap-up: State of the Raptor'
 slug: bluefin-2025
 authors: castrojo
 tags: [announcements]
