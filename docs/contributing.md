@@ -1,5 +1,5 @@
 ---
-title: Contributor's guide
+title: Contributor's Guide
 slug: /contributing
 ---
 # Bluefin Contributor's Guide
