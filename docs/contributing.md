@@ -395,6 +395,15 @@ and are no longer needed with the updated kernel modules."
 - Provide context in the body for complex changes
 - Reference issues with `Fixes #123` or `Closes #456`
 
+### AI Agent Attribution
+
+AI agents must disclose the tool and model used in the commit footer with an "Assisted-by" trailer. The `AGENTS.md` used in Bluefin's repo will tell your agent to enforce this policy:
+
+```
+Assisted-by: [Model Name] via [Tool Name]
+```
+
+
 ### Making the Commit
 
 ```bash
@@ -1171,9 +1180,6 @@ Each section (e.g., "Bluefin Recommends", "Browsers", "Media") contains an `appi
 
 - Flatpak maintainers are responsible for keeping their applications up to date on Flathub.
 - Bluefin maintainers review and merge changes to system Flatpak lists and Bazaar configuration.
-
-
-
 
 ## Fedora Upstream Reporting
 
