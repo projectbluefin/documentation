@@ -172,9 +172,9 @@ _Dakotaraptor_ will not be for everyone and will offer the least amount of compr
 
 Don't worry, we won't call it "Distroless".
 
-The other Blufin OCI containers will still continue as before. _Dakotaraptor_ will represent a faster development cycle, directly pulling from upstream, while maintaining production quality. Think of "distroless" as a model flip, the source is the main thing we interact with, _the Linux desktop_. And then we can bolt on whatever kernel we want, with modern Linuxes this is straightforward to make. And since the system libraries for GNOME OS are just ... the Freedesktop and GNOME runtimes, we're running on stuff that's already used by a ton of people. This way of assembly is new, but the payload is _not_. That's why we're feeling confident about the quality out of the gate on this one. 
+The other Blufin OCI containers will still continue as before. _Dakotaraptor_ will represent a faster development cycle, directly pulling from upstream, while maintaining production quality. Think of "distroless" as a model flip, the source is the main thing we interact with, _the Linux desktop_. And then we can bolt on whatever kernel we want, with modern Linuxes this is straightforward to make. And since the system libraries for GNOME OS are just ... the Freedesktop and GNOME runtimes, we're running on stuff that's already used by a ton of people. **This way of assembly is new, but the payload is _not_**. That's why we're feeling confident about the quality out of the gate on this one. 
 
-We haven't yet finalized how next -> testing -> stable will look like, but having the `next` branch following the nightly GNOME development cadence is a goal. This channel will fastest raptor with aggressive component upgrades and no holds barred. The stable branch will be based on the stable GNOME builds and we're hoping to help GNOME maintain these branches. If you want to be part of this effort, now is the time to step up!
+We haven't yet finalized how next -> testing -> stable will look like, but having the `next` branch following the nightly GNOME development cadence is a goal. This channel will be our fastest raptor with aggressive component upgrades and no holds barred. The stable branch will be based on the stable GNOME builds and we're hoping to help GNOME maintain these branches. If you want to be part of this effort, now is the time to step up!
 
 Oh, and in order to help us out with this you don't even need to talk to us, just go [talk to GNOME directly](https://os.gnome.org/). "Distroless" means spending more time with the things you love, and not so much time with the delivery service. We're mostly just waiting for GNOME 50 to come out. Expect this one to be VM-only for a while.
 
@@ -232,7 +232,7 @@ On to the numbers! First off let's look at our critical upstreams. This level of
 
 - [Flathub 2025 year in review](https://flathub.org/en/year-in-review/2025) - 20.3% Year over Year Growth, and [Bazaar](https://github.com/ublue-os/bazaar) continues to get better all the time.
 
-As you can see, we not only bet on Flathub, we worked with the folks at Bazaar to ship a pure Flathub experience on our images. If you're looking for one thing to donate to in 2026, please [consider donating to Kolunmi] - app development on Linux will never improve unless we _invest in the application ecosystem directly_.
+As you can see, we not only bet on Flathub, we worked with the folks at Bazaar to ship a pure Flathub experience on our images. If you're looking for one thing to donate to in 2026, please [consider donating to Kolunmi](https://github.com/kolunmi/bazaar) - app development on Linux will never improve unless we _invest in the application ecosystem directly_.
 
 - [Homebrew Yearly Statistics](https://formulae.brew.sh/analytics/os-version/365d/) - Bluefin (#11), Bazzite (#12), and Aurora (#15) have a strong showing in homebrew usage
 
