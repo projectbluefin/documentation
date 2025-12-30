@@ -37,6 +37,8 @@ As you'll soon see below, we can source software from anywhere and it's just a b
 
 But that sounds like a bunch of marketing crap, let's explain it  ... this update will cover mostly "How Bluefin is made" and where we're hoping to head in 2026.
 
+![wide](htps://github.com/user-attachments/assets/a6f60461-e501-48c5-9ec4-533262d1435f)
+
 ## Tracking Progress
 
 [todo.projectbluefin.io](https://todo.projectbluefin.io) will send you to the project board. Every item in this post will be tracked here. Some of the things in this post are complete, and some are close and need help, feel free to dive in!
