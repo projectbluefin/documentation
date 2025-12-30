@@ -10,6 +10,13 @@ Greetings Guardians!
 
 Today we're going to go over some of the things we're finishing up for 2025, and talk about where we're going in 2026. Check out the [Autumn 2025 Update](https://docs.projectbluefin.io/blog/2025-10-28-bluefin-autumn/) and the [2024 update](https://universal-blue.discourse.group/t/universal-blue-2024-wrap-up/5999) if you want more backstory. We appreciate you joining us on your Linux journey, let's get going! 
 
+
+::: warning
+
+Bluefin GTS will be merged into Bluefin on the week of March 1st, 2026, see below for more information!
+
+:::
+
 ## How was 2025?
 
 This year we spent most of our time on cleanup and sustainability. Bluefin is mostly feature complete so we don't really ship major user-visible changes as much as we used to. Much of it is "nerd automation" improvements that most of you will never need to actually care about. This has also been a kickass year for [Bazzite](https://bazzite.gg), which has been a fantastic real-world test for [`bootc`](https://containers.github.io/bootc/) based sytems like ours! Overall the ecosystem is doing well, this year was great for bootc, here's a photo of the team from KubeCon this past November:
@@ -114,15 +121,17 @@ Thanks for your patience with this transition, it did take longer than expected 
 
 ## Looking forward to 2026
 
-### Bluefin Updates 
-
 I had to explain how Bluefin will be built in order to explain the changes coming. These are the **user-visible changes** that you can expect in 2026:
 
-#### Bluefin Re-Imagined Or is that Re-Imaged?
+### Bluefin
 
 As covered in - [Streamlining Bluefin Releases](https://docs.projectbluefin.io/blog/unifying-bluefin) we will be merging the `bluefin:gts` images into `bluefin:stable`. Effectively we're merging them both. 
 
-### Bluefin GTS will be merged into Bluefin on the week of March 1st, 2026. 
+::: warning
+
+Bluefin GTS will be merged into Bluefin on the week of March 1st, 2026.
+
+:::
 
 We wanted to commit to a date as soon as we could, and will be moving you to a Fedora 43 base that week. And then everyone will be upgraded to a Fedora 44 base [about a month later](https://fedorapeople.org/groups/schedule/f-44/f-44-all-tasks.html). Note that this won't be a zero-day upgrade and will follow the usual [CoreOS cadence](https://fedoraproject.org/coreos/). By then the next -> testing -> stable workflow will be live and you'll be able to opt into the newest versions at your leisure. If this is confusing to you don't sweat it, we'll be more communicative when March rolls around to keep the transition as smooth as we can. 
 
