@@ -155,7 +155,7 @@ The hardware enablement branch brings in the Fedora kernel so you do have a nice
 ### Bluefin's Distroless Future
 > Thanks to [Sri Ramkrishna](https://portfolio.ramkrishna.me) for contributing to this section
 
-It is impossible to ignore the fantastic work happening in the the [Linux Userspace API (UAPI) Group](https://uapi-group.org/). Thanks to the work done by [the bootcrew](https://github.com/bootcrew) it is now possible to decouple Bluefin from a traditional Linux distribution base image entirely and combine both UAPI and [`bootc`](https://containers.github.io/bootc/) approaches into one OS.
+It is impossible to ignore the fantastic work happening in the the [Linux Userspace API (UAPI) Group](https://uapi-group.org/). Thanks to the work done by [the bootcrew](https://github.com/bootcrew) and [Jordan Petridis](https://gitlab.gnome.org/alatiera) it is now possible to decouple Bluefin from a traditional Linux distribution base image entirely and combine both UAPI and [`bootc`](https://containers.github.io/bootc/) approaches into one OS.
 
 This new Bluefin is nicknamed [_Dakotaraptor_](https://github.com/projectbluefin/distroless) and will be our attempt to ship a production quality [`bootc`](https://containers.github.io/bootc/) image based on [GNOME OS](https://os.gnome.org/). This gives us some benefits that we can't get from other images:
 
