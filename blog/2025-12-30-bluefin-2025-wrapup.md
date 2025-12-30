@@ -23,6 +23,8 @@ This year we spent most of our time on cleanup and sustainability. Bluefin is mo
 
 ![bootc team](https://github.com/user-attachments/assets/888cfa53-177e-4436-97b9-48d3aeb2b3e5)
 
+> Jorge with members of the bootc team: Mark Russell, Joseph Marrero, Laura Santamaria, and Colin Walters
+
 We continue to sync with the various teams at Red Hat as we journey with bootc through its [CNCF Project Lifecycle](https://contribute.cncf.io/projects/lifecycle/). This works out well for us because we know what we need to do. Our role is to provide an independent voice, and with new orgs like [the bootcrew](https://github.com/bootcrew), [bluebuild](https://github.com/blue-build), and [secureblue](https://github.com/secureblue/secureblue) springing up it brings more voices to the choir. 2026 will be the year where we expect participation in bootc to increase. This is also why you've seen us slowly decouple from [Universal Blue](https://universal-blue.org) more explicitly. This is a forcing function to move us away from monolithic "distributions" to an ecosystem full of different images, each with different communities and needs, while retaining the value of shared components.
 
 :::tip[My 2026 prediction]
