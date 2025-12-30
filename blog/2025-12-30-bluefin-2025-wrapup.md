@@ -162,6 +162,10 @@ This new Bluefin is nicknamed [_Dakotaraptor_](https://github.com/projectbluefin
 
 _Dakotaraptor_ will not be for everyone and will offer the least amount of compromises. Not only is local layering unsupported, there's no system package manager at all! We'll be using [Buildstream](https://buildstream.build/index.html) since it's the tech behind this, and you'll hear more about it in 2026 as other projects check it out. This effort is still nascent, so no promises, but it's already got people excited, check it out at [@projectbluefin/distroless](https://github.com/projectbluefin/distroless/). 
 
+![distroless](https://github.com/user-attachments/assets/f14f3299-dc8d-4ca5-ba5b-a4cdf85d98d5)
+
+> JumpyVi's setup 
+
 Don't worry, we won't call it "Distroless".
 
 The other Blufin OCI containers will still continue as before. _Dakotaraptor_ will represent a faster development cycle, directly pulling from upstream, while maintaining production quality. Think of "distroless" as a model flip, the source is the main thing we interact with, _the Linux desktop_. And then we can bolt on whatever kernel we want, with modern Linuxes this is straightforward to make. And since the system libraries for GNOME OS are just ... the Freedesktop and GNOME runtimes, we're running on stuff that's already used by a ton of people. This way of assembly is new, but the payload is _not_. That's why we're feeling confident about the quality out of the gate on this one. 
