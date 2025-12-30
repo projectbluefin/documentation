@@ -29,7 +29,7 @@ The project endeavors to utilize the latest in open-source technology (like [sig
 
 The project strives to prefer stability and correctness, but recognizes that it must act to solve problems quickly and efficiently.
 
-## The Human is more importantr than the Machine
+## The Human is more important than the Machine
 
 All of the artwork in Bluefin will always be by a human being who has been compensated for their work. 
 
