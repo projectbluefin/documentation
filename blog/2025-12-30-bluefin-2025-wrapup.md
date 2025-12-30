@@ -248,3 +248,7 @@ This year the team plans to [attend SCaLE again](https://www.socallinuxexpo.org/
 This ended up longer than anticipated, thank you for joining us in 2025, and we look forward to working with you in 2026! And lastly if you've made it this far and still want more backstory, make sure you check out this interview with Michael Tunnell:
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/K6-GMTq2T7s?si=Z9Ivj6O3Fgcqh_zj" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+### [Discussions](https://github.com/ublue-os/bluefin/discussions/3942)
+
+Leave a comment or question!
