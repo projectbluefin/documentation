@@ -175,7 +175,7 @@ About 60% of you turn on Bluefin's [Developer Mode](https://docs.projectbluefin.
 Now thanks to the efforts [from the team](https://docs.projectbluefin.io/donations/contributors) homebrew is now in a much better state on Linux, allowing us to reshuffle some things around. In 2026 we will strive to remove the need for a dedicated `bluefin-dx` image and give you more flexibility moving forward:
 
 - Homebrew will continue to be our path forward, 
-- We've added `containerd` to the base images and will bring Docker in as well so that everything works out of the box, there will not be a need to do the adduser mumbo jumbo, we'll take care of that for you. 
+- We've added `containerd` to the base images and will bring Docker in as well so that everything works out of the box, there will not be a need to do the adduser mumbo jumbo, we'll take care of that for you. Research in this area is still ongoing!
 - How we'll accomplish this transition is still a bunch of guesstimates, so consider this one a slow burn. 
 
 ### Curated Developer Experiences
