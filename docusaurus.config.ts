@@ -236,6 +236,23 @@ const config: Config = {
           ],
         },
         {
+          title: "Contribute",
+          items: [
+            {
+              label: "Open Issues",
+              href: "https://issues.projectbluefin.io",
+            },
+            {
+              label: "Open Pull Requests",
+              href: "https://pullrequests.projectbluefin.io",
+            },
+            {
+              label: "Contributor's Guide",
+              href: "https://contribute.projectbluefin.io",
+            },
+          ],
+        },
+        {
           title: "GitHub",
           items: [
             {
