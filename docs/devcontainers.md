@@ -236,7 +236,7 @@ For more detailed information, check the [official Dev Container CLI documentati
 - Check container runtime is running (`podman ps` or `docker ps`)
 - Verify devcontainer.json syntax
 - Review container logs in Output panel
-- Add options for SELinux in `.devcontainer/devcontainer.json`
+- Configure SELinux options in `.devcontainer/devcontainer.json` if running on systems with SELinux enabled
 
 ```json
 {
