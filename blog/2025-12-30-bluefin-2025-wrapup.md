@@ -98,7 +98,7 @@ flowchart TB
 
 These are what make up the bulk of Bluefin and are shipped as [OCI containers](https://opencontainers.org/). This moves us away from classic distro packaging and towards a pure cloud native approach. We're migrating away from the [packaging repo](https://github.com/ublue-os/packages) and instead keep all the config files in an easy-to-read tree in git, that just gets copied over in the build step: 
 
-- [@projectbluefin/common](https://github.com/ublue-os/bluefin) - Most of Bluefin's opinion on distro experience is here
+- [@projectbluefin/common](https://github.com/projectbluefin/common) - Most of Bluefin's opinion on distro experience is here
   - ujust, motd, service units, GNOME and CLI configuration, application choices, etc. Most things that have to do with the workload should live in this repo
   - This is shared with Aurora so that we can maintain consistency across images
 - [@projectbluefin/branding](https://github.com/projectbluefin/branding) - Branding assets that we don't want to keep in the common repo
