@@ -7,7 +7,7 @@ Here is a short [runbook](/installation) for the Bluefin installation process. R
 
 ## Bluefin
 
-The most current, based on the latest Fedora.\
+The default experience for users, based on the latest Fedora.\
 📖 **[Read the documentation](/introduction)** to learn about features and differences.
 
 | Version | GPU       | Download                                                                                                             | Checksum                                                                                       |
@@ -17,7 +17,13 @@ The most current, based on the latest Fedora.\
 
 ## Bluefin GTS
 
-The default experience for users, following the previous stable release of Fedora.\
+:::info
+
+`gts` will automatically be merged into `stable` on the week of March 1st 2026. See [Streamlining Bluefin Releases](https://docs.projectbluefin.io/blog/unifying-bluefin/) for more information.
+
+:::
+
+The previous default experience, following the previous stable release of Fedora.\
 📖 **[Read the documentation](/introduction)** to learn about features and differences.
 
 | Version     | GPU       | Download                                                                                                       | Checksum                                                                                    |
