@@ -111,7 +111,7 @@ These containers have the advantage of making consumption by other [`bootc`](htt
 
 Once we've established a set of re-usable components, we then combine them with a base image that make the final operating system:
 
-- [@ublue-os/bluefin](https://github.com/ublue-os/bluefin) - Bluefin: generates Fedora-based Bluefin OCI container
+- [@ublue-os/bluefin](https://github.com/ublue-os/bluefin) - Bluefin: generates a Fedora-based Bluefin OCI container
 - [@ublue-os/bluefin-lts](https://github.com/ublue-os/bluefin-lts) - Bluefin LTS: generates a CentOS-based Bluefin OCI container
 - [@projectbluefin/distroless](https://github.com/projectbluefin/distroless) - Dakotaraptor prototype - generates a GNOME OS based Bluefin OCI container (more on this below!)
 
@@ -150,7 +150,7 @@ Some of you may have noticed parts of GNOME 49 landing in Bluefin LTS. Originall
 - The tuned policy [still needs a fix](https://github.com/ublue-os/bluefin-lts/issues/841), this makes you have to run a workaround to get power management working on a laptop. This sucks
 - Many of the inconsistencies will be resolved once Bluefin LTS moves to the common OCI layers
 
-The hardware enablement branch brings in the Fedora kernel so you do have a nice option to not fall too far behind, this has effectively replaced Bluefin GTS by bringing a relaxed desktop upgrade cadence and less regressions overall. The `lts-hwe` branches also now support secure boot. Despite this is the image I use on my work machines, and the new architecture will help here. 
+The hardware enablement branch brings in the Fedora kernel so you do have a nice option to not fall too far behind. This has effectively replaced Bluefin GTS by bringing a relaxed desktop upgrade cadence and less regressions overall. The `lts-hwe` branches also now support secure boot. Despite these papercuts this is the image I use on my work machines, and the new architecture will help here. 
 
 ### Bluefin's Distroless Future
 > Thanks to [Sri Ramkrishna](https://portfolio.ramkrishna.me) for contributing to this section
