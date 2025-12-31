@@ -80,7 +80,7 @@ Bluefin is undergoing a refactor, this is the endstate, which we expect to finis
 - Bluefin distroless prototype (aka Dakotaraptor) [@ublue-os/distroless](https://github.com/projectbluefin/distroless) - generates a GNOME OS based Bluefin OCI container
 
 :::info Distroless
-This is opposite of the traditional Linux distribution model, the value is in the other OCI layers, not the base image. This is what we mean by "distributions don't matter", since you can use any base image it's just another choice in the long list of decisions we have to make. And since you can source software from anywhere, the idea of "who gets you the same software better" doesn't make much sense when you can just automate that.
+This is opposite of the traditional Linux distribution model, the value is in the other OCI layers, not the base image. This is what we mean by "distributions don't matter", since you can use any base image it's just another choice in the long list of decisions we have to make. It's still _important_, it just doesn't matter. And since you can source software from anywhere, the idea of "who gets you the same software better" doesn't make much sense when you can just automate that.
 :::
 
 ## Understanding Bluefin's Architecture
