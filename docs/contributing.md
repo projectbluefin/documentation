@@ -3,6 +3,7 @@ title: Contributor's Guide
 slug: /contributing
 ---
 # Bluefin Contributor's Guide
+### Welcome to [contribute.projectbluefin.io](https://contribute.projectbluefin.io)
 
 This guide provides detailed instructions for contributing to [Bluefin](https://projectbluefin.io). Whether you're fixing bugs, adding features, or improving documentation, this guide will help you contribute effectively using the workflows established by the Bluefin team.
 
