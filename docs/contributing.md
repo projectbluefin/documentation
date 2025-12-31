@@ -1223,8 +1223,9 @@ Contributing regularly and demonstrating expertise may lead to maintainer status
 - Reliable and responsive
 
 **Current Maintainer Structure:**
-- Lead: @castrojo (infrastructure, project direction)
-- Core: @p5, @m2Giles, @tulilirockz (features, maintenance, testing)
+
+- [Current Core Team](https://github.com/orgs/projectbluefin/people)
+
 
 ## Additional Resources
 
