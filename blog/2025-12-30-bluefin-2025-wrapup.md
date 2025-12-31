@@ -17,6 +17,11 @@ Bluefin GTS will be merged into Bluefin on the week of March 1st, 2026, see belo
 
 :::
 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/I4RbjGwj6is?si=CI67XKZBDgcRJqCD" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+> Companion Video if you wanna check it out!
+
+
 ## How was 2025?
 
 This year we spent most of our time on cleanup and sustainability. Bluefin is mostly feature complete so we don't really ship major user-visible changes as much as we used to. Much of it is "nerd automation" improvements that most of you will never need to actually care about. This has also been a kickass year for [Bazzite](https://bazzite.gg), which has been a fantastic real-world test for [`bootc`](https://containers.github.io/bootc/) based sytems like ours! Overall the ecosystem is doing well, this year was great for bootc, here's a photo of the team from KubeCon this past November:
