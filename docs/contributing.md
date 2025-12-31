@@ -730,7 +730,7 @@ git merge main
 ## Contribution Areas by Expertise
 
 :::info Find Your Fit
-Contributors come from diverse backgrounds. Whether you're a DevOps engineer, package maintainer, or documentation writer, there's a place for your skills in Bluefin!
+Contributors come from diverse backgrounds. Whether you're a DevOps engineer, artist, hobbyist, homelabber, or documentation writer, there's a place for your skills in Bluefin!
 :::
 
 ### For Cloud Native/DevOps Engineers
@@ -746,7 +746,7 @@ Contributors come from diverse backgrounds. Whether you're a DevOps engineer, pa
 - Improve artifact handling
 - Cloudflare experts always appreciated!
 
-### For Package Maintainers
+### For Maintainers
 
 **UDEV Rules:**
 - Submit hardware enablement rules
@@ -1227,13 +1227,6 @@ Contributing regularly and demonstrating expertise may lead to maintainer status
 
 ## Additional Resources
 
-### Related Repositories
-
-- [@ublue-os/main](https://github.com/ublue-os/main) - Base Universal Blue images
-- [@ublue-os/packages](https://github.com/ublue-os/packages) - Package specifications
-- [@ublue-os/akmods](https://github.com/ublue-os/akmods) - Kernel modules
-- [@ublue-os/bluefin-docs](https://github.com/ublue-os/bluefin-docs) - Documentation site
-
 ### Documentation
 
 - [Bluefin Documentation](https://docs.projectbluefin.io/)
@@ -1248,12 +1241,6 @@ Contributing regularly and demonstrating expertise may lead to maintainer status
 - [Podman Documentation](https://docs.podman.io/)
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)
 
-### Community
-
-- [Discussion Forum](https://community.projectbluefin.io/)
-- [Discord Server](https://discord.gg/WEu6BdFEtp)
-- [GitHub Discussions](https://github.com/ublue-os/bluefin/discussions)
-
 The project welcomes all skill levels and contribution types. Start small, learn the workflows, and grow your involvement over time.
 
 ## Final Tips
@@ -1262,7 +1249,7 @@ The project welcomes all skill levels and contribution types. Start small, learn
 Every maintainer started as a first-time contributor. Take it one step at a time, and don't be afraid to ask questions!
 :::
 
-1. **Start small**: Begin with documentation or simple package additions
+1. **Start small**: Begin with documentation or simple fixes and additions
 2. **Ask questions**: Don't hesitate to ask for clarification
 3. **Test thoroughly**: Use local builds or PR images
 4. **Be patient**: Reviews take time; maintainers balance multiple priorities
