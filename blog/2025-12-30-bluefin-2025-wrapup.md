@@ -20,7 +20,12 @@ Bluefin GTS will be merged into Bluefin on the week of March 1st, 2026, see belo
 <iframe width="560" height="315" src="https://www.youtube.com/embed/I4RbjGwj6is?si=CI67XKZBDgcRJqCD" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 > Companion Video if you wanna check it out!
+>
 
+Also check out:
+
+- [Aurora - Stargazer 5 - Year in review](https://docs.getaurora.dev/blog/aurora-2025/)
+- [Bazzite “Spring Cleaning in December” Update](https://universal-blue.discourse.group/t/bazzite-spring-cleaning-in-december-update/)
 
 ## How was 2025?
 
