@@ -5,7 +5,7 @@ slug: /introduction
 
 _Deinonychus antirrhopus_
 
-## [docs.projectbluefin.io](https://docs.projectbluefin.io)
+## Welcome to [docs.projectbluefin.io](https://docs.projectbluefin.io)
 
 ![image](https://github.com/user-attachments/assets/21208dd6-9ce5-41ba-9c21-d2bb97f7c1e8)
 

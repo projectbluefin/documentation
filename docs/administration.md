@@ -46,15 +46,21 @@ In **Settings** → **Network** → A network setting, set **Metered Connection:
 
 ## Streams and Throttle Settings
 
+:::info
+
+`gts` and `latest` will be merged into `stable` on the week of March 1st 2026. Users will be moved automatically without manual intervention. For more information, including why we're doing this, and what comes next, see [Streamlining Bluefin Releases](https://docs.projectbluefin.io/blog/unifying-bluefin/). 
+
+:::
+
 Bluefin offers images based on the current and last stable version of Fedora, as well as a CentOS based image. This is to provide users with flexibility as to how aggressive they want their updates. These are referred to as "streams".
 
 ### Bluefin
 
-`stable`: This is for enthusiasts who want the latest version of GNOME and Fedora. It is always aliased to the current version of Fedora but follows the Fedora CoreOS release schedule. This means that kernel upgrades come about 2 weeks after they land in Fedora, which can be useful for avoiding kernel regressions since the Bluefin team can pin to a specific kernel in those circumstances. We call this "gating" the kernel. `stable-daily` is available for those who want daily builds.
+`stable`: This is the default stream for Bluefin, aimed at most users. It is always aliased to the current version of Fedora but follows the Fedora CoreOS release schedule. This means that kernel upgrades come about 2 weeks after they land in Fedora, which can be useful for avoiding kernel regressions since the Bluefin team can pin to a specific kernel in those circumstances. We call this "gating" the kernel. `stable-daily` is available for those who want daily builds.
 
 ### Bluefin GTS
 
-`gts`: This is the default image and is always aliased to the previous stable version of Fedora. It targets the majority of users. It is slang for "Grand Touring Support", to signify a faster cadence than an [LTS](https://www.linux.com/news/mark-shuttleworth-ubuntu-long-term-support/). It also features a gated kernel.
+`gts`: This is the previous default image and is always aliased to the previous stable version of Fedora. It is slang for "Grand Touring Support", to signify a faster cadence than an [LTS](https://www.linux.com/news/mark-shuttleworth-ubuntu-long-term-support/). It also features a gated kernel.
 
 :::note[Latest (For Testers)]
 `latest`: For users who want the very latest Fedora has to offer, an ungated Linux kernel, daily updates, full open throttle. 🔥 This stream is purposely left unbranded and is not meant for general purpose use.

@@ -3,6 +3,7 @@ title: Contributor's Guide
 slug: /contributing
 ---
 # Bluefin Contributor's Guide
+### Welcome to [contribute.projectbluefin.io](https://contribute.projectbluefin.io)
 
 This guide provides detailed instructions for contributing to [Bluefin](https://projectbluefin.io). Whether you're fixing bugs, adding features, or improving documentation, this guide will help you contribute effectively using the workflows established by the Bluefin team.
 
@@ -80,7 +81,7 @@ Bluefin is undergoing a refactor, this is the endstate, which we expect to finis
 - Bluefin distroless prototype (aka Dakotaraptor) [@ublue-os/distroless](https://github.com/projectbluefin/distroless) - generates a GNOME OS based Bluefin OCI container
 
 :::info Distroless
-This is opposite of the traditional Linux distribution model, the value is in the other OCI layers, not the base image. This is what we mean by "distributions don't matter", since you can use any base image it's just another choice in the long list of decisions we have to make. And since you can source software from anywhere, the idea of "who gets you the same software better" doesn't make much sense when you can just automate that.
+This is opposite of the traditional Linux distribution model, the value is in the other OCI layers, not the base image. This is what we mean by "distributions don't matter", since you can use any base image it's just another choice in the long list of decisions we have to make. It's still _important_, it just doesn't matter. And since you can source software from anywhere, the idea of "who gets you the same software better" doesn't make much sense when you can just automate that.
 :::
 
 ## Understanding Bluefin's Architecture
@@ -207,19 +208,16 @@ We're making containers here with bash and a little bit of Python, it's not the 
 
 ### Finding Work
 
-**Help Wanted Issues**
-The easiest way to start is with labeled issues:
-```bash
-# View help wanted issues
-open "https://github.com/issues?q=is%3Aopen+is%3Aissue+user%3Aublue-os+archived%3Afalse+label%3A%22help+wanted%22"
-```
+- **[pullrequests.projectbluefin.io](https://pullrequests.projectbluefin.io)** - Pull Request reviews are always appreciated, even if you don't have permissions to merge you can help out by validating that the PR works and is tested.
+- **[issues.projectbluefin.io](https://issues.projectbluefin.io)** - Participation and triage of issues is always appreciated!
 
-**Common Contribution Areas:**
+#### Common Contribution Areas
+
 - 🐛 **Bug fixes**: Issues labeled `bug`
 - 📦 **Package additions**: Issues labeled `enhancement`
 - 📝 **Documentation**: Issues labeled `documentation`
 - 🔧 **Build improvements**: Issues labeled `just` or `github_actions`
-- 🎨 **DX features**: Issues labeled `dx`
+- 🎨 **Developer features**: Issues labeled `dx`
 
 ### Branching Strategy
 
@@ -733,7 +731,7 @@ git merge main
 ## Contribution Areas by Expertise
 
 :::info Find Your Fit
-Contributors come from diverse backgrounds. Whether you're a DevOps engineer, package maintainer, or documentation writer, there's a place for your skills in Bluefin!
+Contributors come from diverse backgrounds. Whether you're a DevOps engineer, artist, hobbyist, homelabber, or documentation writer, there's a place for your skills in Bluefin!
 :::
 
 ### For Cloud Native/DevOps Engineers
@@ -749,7 +747,7 @@ Contributors come from diverse backgrounds. Whether you're a DevOps engineer, pa
 - Improve artifact handling
 - Cloudflare experts always appreciated!
 
-### For Package Maintainers
+### For Maintainers
 
 **UDEV Rules:**
 - Submit hardware enablement rules
@@ -1225,17 +1223,11 @@ Contributing regularly and demonstrating expertise may lead to maintainer status
 - Reliable and responsive
 
 **Current Maintainer Structure:**
-- Lead: @castrojo (infrastructure, project direction)
-- Core: @p5, @m2Giles, @tulilirockz (features, maintenance, testing)
+
+- [Current Core Team](https://github.com/orgs/projectbluefin/people)
+
 
 ## Additional Resources
-
-### Related Repositories
-
-- [@ublue-os/main](https://github.com/ublue-os/main) - Base Universal Blue images
-- [@ublue-os/packages](https://github.com/ublue-os/packages) - Package specifications
-- [@ublue-os/akmods](https://github.com/ublue-os/akmods) - Kernel modules
-- [@ublue-os/bluefin-docs](https://github.com/ublue-os/bluefin-docs) - Documentation site
 
 ### Documentation
 
@@ -1251,12 +1243,6 @@ Contributing regularly and demonstrating expertise may lead to maintainer status
 - [Podman Documentation](https://docs.podman.io/)
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)
 
-### Community
-
-- [Discussion Forum](https://community.projectbluefin.io/)
-- [Discord Server](https://discord.gg/WEu6BdFEtp)
-- [GitHub Discussions](https://github.com/ublue-os/bluefin/discussions)
-
 The project welcomes all skill levels and contribution types. Start small, learn the workflows, and grow your involvement over time.
 
 ## Final Tips
@@ -1265,7 +1251,7 @@ The project welcomes all skill levels and contribution types. Start small, learn
 Every maintainer started as a first-time contributor. Take it one step at a time, and don't be afraid to ask questions!
 :::
 
-1. **Start small**: Begin with documentation or simple package additions
+1. **Start small**: Begin with documentation or simple fixes and additions
 2. **Ask questions**: Don't hesitate to ask for clarification
 3. **Test thoroughly**: Use local builds or PR images
 4. **Be patient**: Reviews take time; maintainers balance multiple priorities
