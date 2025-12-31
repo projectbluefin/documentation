@@ -239,7 +239,9 @@ For more detailed information, check the [official Dev Container CLI documentati
 - Add options for SELinux in `.devcontainer/devcontainer.json`
 
 ```json
-	"runArgs": ["--security-opt", "label=disable"]
+{
+  "runArgs": ["--security-opt", "label=disable"]
+}
 ```
 
 **Extensions not loading**:
