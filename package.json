@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "docusaurus": "docusaurus",
-    "start": "npm run fetch-data && docusaurus start",
+    "start": "npm run fetch-data && docusaurus start --host 0.0.0.0",
     "build": "npm run fetch-data && docusaurus build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
