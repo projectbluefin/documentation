@@ -172,7 +172,9 @@ _Dakotaraptor_ will not be for everyone and will offer the least amount of compr
 
 Don't worry, we won't call it "Distroless".
 
-The other Blufin OCI containers will still continue as before. _Dakotaraptor_ will represent a faster development cycle, directly pulling from upstream, while maintaining production quality. Think of "distroless" as a model flip, the source is the main thing we interact with, _the Linux desktop_, and that's [GNOME](https://gnome.org). And then we can bolt on whatever kernel we want, with modern Linuxes this is straightforward to make. And since the system libraries for GNOME OS are just ... the Freedesktop and GNOME runtimes, we're running on stuff that's already used by a ton of people. **This way of assembly is new, but the payload is _not_**. That's why we're feeling confident about the quality out of the gate on this one. 
+The other Blufin OCI containers will still continue as before. _Dakotaraptor_ will represent a faster development cycle, directly pulling from upstream, while maintaining production quality. Think of "distroless" as a model flip, the source is the main thing we interact with, _the Linux desktop_, and that's [GNOME](https://gnome.org). And then we can bolt on whatever kernel we want, with modern Linuxes this is straightforward to make. And since the system libraries for GNOME OS are just ... the Freedesktop and GNOME runtimes, we're running on stuff that's already used by a ton of people. **This way of assembly is new, but the payload is _not_**. 
+
+That's why we're feeling confident about the quality out of the gate on this one. That just leaves a set of automation scripts and some config files, that's Bluefin! 
 
 We haven't yet finalized how next -> testing -> stable will look like, but having the `next` branch following the nightly GNOME development cadence is a goal. This channel will be our fastest raptor with aggressive component upgrades and no holds barred. The stable branch will be based on the stable GNOME builds and we're hoping to help GNOME maintain these branches. If you want to be part of this effort, now is the time to step up!
 
