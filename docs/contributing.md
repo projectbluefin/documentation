@@ -207,8 +207,10 @@ We're making containers here with bash and a little bit of Python, it's not the 
 
 ### Finding Work
 
-**Help Wanted Issues**
-The easiest way to start is with labeled issues:
+**[pullrequests.projectbluefin.io](https://pullrequests.projectbluefin.io)** - Pull Request reviews are always appreciated, even if you don't have permissions to merge you can help out by validating that the PR works and is tested. 
+**[issues.projectbluefin.io](https://issues.projectbluefin.io)** - Participation and triage of issues is always appreciated!
+
+Help Wanted Issues is the easiest way to start is with labeled issues:
 ```bash
 # View help wanted issues
 open "https://github.com/issues?q=is%3Aopen+is%3Aissue+user%3Aublue-os+archived%3Afalse+label%3A%22help+wanted%22"
