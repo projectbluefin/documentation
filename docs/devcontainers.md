@@ -238,8 +238,8 @@ For more detailed information, check the [official Dev Container CLI documentati
 - Review container logs in Output panel
 - Review SELinux access control errors (from cockpit or `ausearch -m avc -ts recent`).
     - If there is access error to system files (e.g. `libc6.so`), try `restorecon -R -v $HOME/.local/share`, ignore the warnings for inaccessible files.
-    - If there is access error to mounted volumes, try `restorecon -R -v /path/to/mounted/volume`
-    - The last resort would to disable SELinux in `.devcontainer/devcontainer.json` with the following setting and has security implications:
+    - If there is access error to mounted volumes, try `restorecon -R -v /path/to/mounted/volume` which is usually the parent folder of your project.
+    - The last resort would to disable SELinux with the following setting in `.devcontainer/devcontainer.json` and has security implications:
 
 ```json
 {
