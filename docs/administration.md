@@ -294,7 +294,7 @@ Bluefin includes curated CLI tools shared as Brewfiles. These commands install c
 | `ujust toggle-tpm2`            | Toggle automatic LUKS disk unlock via TPM (enable/disable with optional PIN)                                                                                                                                      |
 | `ujust toggle-iwd`             | Switch between iwd and wpa_supplicant for Wi-Fi networking (iwd can improve throughput and reduce latency)                                                                                                        |
 | `ujust benchmark`              | Run a one-minute system benchmark using stress-ng                                                                                                                                                                 |
-| `ujust powerwash`              | Factory reset this device to its initial state (experimental feature with double confirmation)                                                                                                                    |
+| `ujust powerwash`              | Factory reset this device to its initial state (experimental feature) |
 
 ### Developer Experience Commands
 
@@ -313,8 +313,7 @@ Bluefin includes curated CLI tools shared as Brewfiles. These commands install c
 | `ujust install-opentabletdriver`      | Install or uninstall [OpenTabletDriver](https://opentabletdriver.net/), an open source tablet driver                                   |
 | `ujust install-system-flatpaks`       | Install the default system flatpaks (useful after rebasing)                                                                            |
 | `ujust install-system-flatpaks-extra` | Install extra recommended flatpak applications                                                                                         |
-| `ujust bluefin-apps`                  | Install both default and extra system flatpaks                                                                                         |
-| `ujust cncf`                          | Launch Bold Brew with the CNCF tools Brewfile for cloud native development tools                                                       |
+
 
 Note that generally speaking Bluefin tries to keep the system Justfiles finely scoped, most of these are workarounds and not full-fledged commands. They may get removed or changed depending on the problem they were initially meant to solve.
 
