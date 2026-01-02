@@ -69,7 +69,7 @@ Bluefin is undergoing a refactor, this is the endstate, which we expect to finis
 
 ### Bluefin OCI containers
 
-- Bluefin common: [@projectbluefin/common](https://github.com/ublue-os/bluefin) - Most of Bluefin's opinion is here
+- Bluefin common: [@projectbluefin/common](https://github.com/projectbluefin/common) - Most of Bluefin's opinion is here
   - ujust, motd, service units, GNOME and CLI configuration, application choices, etc. Most things that have to do with the workload should live in this repo
 - [@ublue-os/artwork](https://github.com/ublue-os/artwork) - Art assets
 - Homebrew via an OCI: [@ublue-os/brew](https://github.com/ublue-os/brew) and associated [@ublue-os/homebrew-tap](https://github.com/ublue-os/homebrew-tap)

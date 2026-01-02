@@ -17,6 +17,16 @@ Bluefin GTS will be merged into Bluefin on the week of March 1st, 2026, see belo
 
 :::
 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/I4RbjGwj6is?si=CI67XKZBDgcRJqCD" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+> Companion Video if you wanna check it out!
+>
+
+Also check out:
+
+- [Aurora - Stargazer 5 - Year in review](https://docs.getaurora.dev/blog/aurora-2025/)
+- [Bazzite “Spring Cleaning in December” Update](https://universal-blue.discourse.group/t/bazzite-spring-cleaning-in-december-update/)
+
 ## How was 2025?
 
 This year we spent most of our time on cleanup and sustainability. Bluefin is mostly feature complete so we don't really ship major user-visible changes as much as we used to. Much of it is "nerd automation" improvements that most of you will never need to actually care about. This has also been a kickass year for [Bazzite](https://bazzite.gg), which has been a fantastic real-world test for [`bootc`](https://containers.github.io/bootc/) based sytems like ours! Overall the ecosystem is doing well, this year was great for bootc, here's a photo of the team from KubeCon this past November:
@@ -98,7 +108,7 @@ flowchart TB
 
 These are what make up the bulk of Bluefin and are shipped as [OCI containers](https://opencontainers.org/). This moves us away from classic distro packaging and towards a pure cloud native approach. We're migrating away from the [packaging repo](https://github.com/ublue-os/packages) and instead keep all the config files in an easy-to-read tree in git, that just gets copied over in the build step: 
 
-- [@projectbluefin/common](https://github.com/ublue-os/bluefin) - Most of Bluefin's opinion on distro experience is here
+- [@projectbluefin/common](https://github.com/projectbluefin/common) - Most of Bluefin's opinion on distro experience is here
   - ujust, motd, service units, GNOME and CLI configuration, application choices, etc. Most things that have to do with the workload should live in this repo
   - This is shared with Aurora so that we can maintain consistency across images
 - [@projectbluefin/branding](https://github.com/projectbluefin/branding) - Branding assets that we don't want to keep in the common repo

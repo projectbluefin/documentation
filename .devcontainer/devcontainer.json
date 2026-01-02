@@ -4,7 +4,9 @@
   "name": "Node.js & TypeScript",
   "image": "mcr.microsoft.com/devcontainers/typescript-node:3-22-bookworm",
   "features": {
-    "ghcr.io/devcontainers-community/npm-features/prettier:1": {}
+    "ghcr.io/devcontainers-community/npm-features/prettier:1": {},
+    "ghcr.io/guiyomh/features/just:0": {}
   },
-  "postCreateCommand": "npm install"
+  "postCreateCommand": "npm install --legacy-peer-deps",
+  "forwardPorts": [3000]
 }
