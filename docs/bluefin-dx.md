@@ -24,8 +24,8 @@ Bluefin goes "all in" on cloud native development and is used differently than a
 
 - Development is done containers, common container patterns include:
   - [Devcontainers](https://containers.dev/) with VSCode, Jetbrains, or neovim
-  - [Podman Desktop](https://podman-desktop.io/docs/intro) for container development with a graphical (GUI) interface 
-  - [Podman](https://podman.io/docs) or [Docker](https://docs.docker.com/reference/cli/docker/) command line container management
+  - [Podman Desktop](https://podman-desktop.io/docs/intro) for container development with a graphical (GUI) interface. Here's [an example of a podman/vscode setup](https://podman-desktop.io/blog/2025/05/05/vs-code-with-podman-desktop) - these extensions are included in Bluefin  
+  - [Podman](https://podman.io/docs) or [Docker](https://docs.docker.com/reference/cli/docker/) command line container management. 
 - Command line applications are installed using [homebrew](https://brew.sh)
 - Preconfigured ad-hoc containers for Ubuntu, Fedora, and Wolfi are included. Use whichever distribution you want.
 
