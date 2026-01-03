@@ -1,7 +1,8 @@
 ---
 description: 'Converts GitHub issues and discussions into formatted Docusaurus blog posts with proper metadata, links, and author attribution'
-tools: ['github', 'edit/editFiles', 'search/codebase', 'web/fetch']
+tools: ['github', 'edit', 'search']
 model: 'gpt-4o'
+
 ---
 
 # Blog Poster Agent
