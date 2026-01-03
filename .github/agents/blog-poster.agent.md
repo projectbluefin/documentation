@@ -14,7 +14,7 @@ You are a specialist in converting GitHub issues and discussions into properly f
 - Fetch assigned GitHub issues or discussions using the GitHub API
 - Convert content to Docusaurus-compatible markdown format
 - Preserve the author's original content without modification
-- Add proper frontmatter metadata (title, date, authors, tags)
+- Add proper frontmatter metadata (title, authors, tags)
 
 ### 2. Link Enhancement
 - Link to the originating GitHub discussion so readers can participate
