@@ -110,7 +110,7 @@ Before completing:
 ```yaml
 github-username:
   name: Full Name
-  page: github-username
+  page: true
   title: Role or Title
   url: https://github.com/github-username
   image_url: https://github.com/github-username.png
