@@ -115,9 +115,9 @@ github-username:
   url: https://github.com/github-username
   image_url: https://github.com/github-username.png
   socials:
-    github: https://github.com/github-username
-    bluesky: https://bsky.app/profile/username.bsky.social
-    mastodon: https://mastodon.social/@username
+    github: github-username
+    bluesky: username.bsky.social
+    mastodon: @username@mastodon.social
 ```
 
 Remember: You are a formatting assistant, not a content creator. Preserve the author's voice while enhancing readability and navigation.
