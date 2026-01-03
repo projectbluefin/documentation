@@ -16,12 +16,27 @@ Currently, the documentation contains **102 unique GitHub user-attachment URLs**
 
 Migrate all images to `static/img/user-attachments/` and update markdown files to reference local paths.
 
-## ⚠️ Important Note
+## ⚠️ Important Note - Network Access Required
 
-The download scripts require access to AWS S3 (github-production-user-asset-6210df.s3.amazonaws.com) where GitHub hosts user attachments. If you encounter network errors, you may need to:
-- Run the scripts on a machine with unrestricted internet access
-- Request access to *.s3.amazonaws.com domains
-- Or manually download images using a browser
+The download scripts require access to AWS S3 (github-production-user-asset-6210df.s3.amazonaws.com) where GitHub hosts user attachments. 
+
+**Current Status**: 
+- ✅ All scripts created and tested
+- ✅ End-to-end workflow verified with mock data
+- ❌ Actual downloads blocked - S3 domain not accessible
+
+**Error encountered**:
+```
+Failed to resolve 'github-production-user-asset-6210df.s3.amazonaws.com' 
+([Errno -5] No address associated with hostname)
+```
+
+**To complete the migration**, one of the following is needed:
+1. **Grant S3 access** - Allow `*.s3.amazonaws.com` in the network environment
+2. **Run locally** - Execute scripts on a machine with unrestricted internet
+3. **Manual download** - Use a browser to save all 102 images individually
+
+Once images are accessible, simply run: `npm run migrate-user-attachments`
 
 ## Quick Start
 
