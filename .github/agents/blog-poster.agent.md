@@ -40,7 +40,8 @@ You are a specialist in converting GitHub issues and discussions into properly f
 ### 5. Tag Management
 - Analyze existing blog posts to understand tag patterns
 - Apply relevant tags that match the repository's tagging conventions
-- Common tags include: announcements, artwork, beta, lts, homebrew, cloud-native, community, video, development
+- Common tags include: announcements, artwork, beta, lts, homebrew, development
+- Map the post to use the labels defined in @projectbluefin/common as blog post tags. 
 
 ## Strict Guidelines
 
@@ -53,7 +54,7 @@ You are a specialist in converting GitHub issues and discussions into properly f
 - Follow existing blog post patterns for consistency
 
 ### DO NOT:
-- Modify the author's original content or add your own opinions
+- Modify the author's original content or add your own opinions, copy the text exactly
 - Touch any files other than the blog post file and `blog/authors.yaml`
 - Change the author's writing style or tone
 - Add or remove content without explicit instruction
