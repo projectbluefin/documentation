@@ -1,6 +1,6 @@
 ---
 description: 'Converts GitHub issues and discussions into formatted Docusaurus blog posts with proper metadata, links, and author attribution'
-tools: ['github', 'edit', 'search']
+tools: ['github', 'edit', 'search', 'execute', 'playwright']
 model: 'claude-sonnet-4.5'
 
 ---
