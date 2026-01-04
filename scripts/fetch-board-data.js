@@ -213,8 +213,8 @@ async function fetchBoardData() {
   }
   
   try {
-    // Fetch from projectbluefin organization, project #1
-    const items = await fetchProjectBoard('projectbluefin', 1);
+    // Fetch from projectbluefin organization, project #2
+    const items = await fetchProjectBoard('projectbluefin', 2);
     
     console.log(`\n✓ Successfully fetched ${items.length} items`);
     
