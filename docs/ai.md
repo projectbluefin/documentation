@@ -21,7 +21,7 @@ Bluefin's focus in AI is providing a generic API endpoint to the operating syste
 
 The [AI Lab extension](https://developers.redhat.com/products/podman-desktop/podman-ai-lab) can be installed inside the included Podman Desktop to provide a graphical interface for managing local models:
 
-![image](https://github.com/user-attachments/assets/e5557952-3e62-499e-93a9-934c4d452be0)
+![image](/img/user-attachments/e5557952-3e62-499e-93a9-934c4d452be0.png)
 
 ## AI Command Line Tools
 
@@ -78,7 +78,7 @@ quay.io/ramalama/rocm                      latest      8875feffdb87  5 days ago 
 
 `ramalama serve` will serve an OpenAI compatible endpoint at `http://0.0.0.0:8080`, you can use this to configure tools that do not support ramalama directly:
 
-![Newelle](https://github.com/user-attachments/assets/ff079ed5-43af-48fb-8e7b-e5b9446b3bfe)
+![Newelle](/img/user-attachments/ff079ed5-43af-48fb-8e7b-e5b9446b3bfe.png)
 
 ## Docker Model Runner
 
@@ -96,6 +96,6 @@ Bluefin binds `Ctrl`-`Alt`-`Backspace` as a quicklaunch for Alpaca automatically
 
 ### Configuration
 
-![Alpaca](https://github.com/user-attachments/assets/104c5263-5d34-497a-b986-93bb0a41c23e)
+![Alpaca](/img/user-attachments/104c5263-5d34-497a-b986-93bb0a41c23e.png)
 
-![image](https://github.com/user-attachments/assets/9fd38164-e2a9-4da1-9bcd-29e0e7add071)
+![image](/img/user-attachments/9fd38164-e2a9-4da1-9bcd-29e0e7add071.png)

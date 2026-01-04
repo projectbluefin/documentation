@@ -150,7 +150,7 @@ Bluefin strives to make maintenance as straightforward as possible, however many
 
 And one more piece of advice: The more you invest into day 0, the smoother your day 1 will be, which results in an even smoother day 2. After that, it's all bragging rights. The `fastfetch` ([Donate](https://github.com/sponsors/LinusDierheimer)) command will be there to remind you of your milestone:
 
-![image](https://github.com/user-attachments/assets/e1b77128-6aaf-4a95-a9fc-cb1409a176fc)
+![image](/img/user-attachments/e1b77128-6aaf-4a95-a9fc-cb1409a176fc.png)
 
 ## Secure Boot
 
@@ -177,7 +177,7 @@ sudo mokutil --import path/to/public_key.der
 
 You can use `mokutil --list-enrolled` to confirm that the "ublue kernel" key is listed:
 
-![image](https://github.com/user-attachments/assets/259a9bb2-2198-4744-924d-df457e26c7f4)
+![image](/img/user-attachments/259a9bb2-2198-4744-924d-df457e26c7f4.png)
 
 :::note
 If you see `ublue akmods\` listed, it is a former key that is soon to be removed. `ublue kernel` is the current key.

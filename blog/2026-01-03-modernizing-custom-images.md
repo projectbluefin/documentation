@@ -19,7 +19,7 @@ The existing templates mostly let you take Bluefin and modify it. But now with t
 - You can instead work on making the image
 - All desktop agnostic config is centralized in [@projectbluefin/common](https://github.com/projectbluefin/common) and set up in a way that you can extend it.
 
-![ubuntu-bootc](https://github.com/user-attachments/assets/3bd27bb8-a76a-4e6d-be76-18f0b40c7883)
+![ubuntu-bootc](/img/user-attachments/3bd27bb8-a76a-4e6d-be76-18f0b40c7883.png)
 
 > Tulip quickly took the Bluefin containers and a [bootcrew ubuntu-bootc](https://github.com/bootc-dev/ubuntu-bootc) image to create an Ubuntu Bluefin.
 

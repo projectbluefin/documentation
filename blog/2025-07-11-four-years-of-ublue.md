@@ -11,13 +11,13 @@ Technically a day early but we intend to make this a weekend long celebration. [
 
 Now we have [Bazzite](https://bazzite.gg/), [Aurora](https://getaurora.dev/), and [Cayo](https://github.com/ublue-os/cayo). Finally, the tools to make our own fate. :smiling_imp: I don't have anything especially insightful to say other than thanks! Let's take a quick look at where we stand:
 
-![chart](https://github.com/user-attachments/assets/8bb0acf8-3881-4746-b1e2-c74f06de7e9d)
+![chart](/img/user-attachments/8bb0acf8-3881-4746-b1e2-c74f06de7e9d.png)
 
 We're sitting at about ~25,000 weekly checkins of Universal Blue systems, and now that we have sort of functional installers, who knows how fast we can grow!
 
 As Kyle mentioned in the [Bazzite update](https://universal-blue.discourse.group/t/bazzite-july-2025-update-bazaar-z13-kernel-6-15-steam-hardware-survey/9501) our communities continute to grow as well! We're now well over 30 million pulls of our images (we kind of stopped counting that). Here's the contributor stats:
 
-![chart2](https://github.com/user-attachments/assets/c1159002-a693-4c91-8c42-6c57002c0464)
+![chart2](/img/user-attachments/c1159002-a693-4c91-8c42-6c57002c0464.png)
 
 Here's our rolling totals:
 
@@ -28,7 +28,7 @@ Here's our rolling totals:
 
 And as we can see, the amount of contributions since Bazzite started to gain traction has really improved. I'm particularly proud of our contributor distribution here - it proves that non-code contributions around support can help keep our project healthy:
 
-![chart3](https://github.com/user-attachments/assets/55826b39-9524-4c68-8529-8f51a4b5ced2)
+![chart3](/img/user-attachments/55826b39-9524-4c68-8529-8f51a4b5ced2.png)
 
 (This chart is measuring the partial month of July, ignore that drop off we're not collapsing. :smiley: )
 
@@ -38,7 +38,7 @@ You have my thanks, you've made my operating system invisible, it has been a ple
 
 Today is also Bluefin's fourth birthday. I suppose as the first product she was the one who would push the hardest, and will always strive for the pure bootc experience. The dinosaurs remind us that we need to force change in order to achieve the best possible desktop we can. Here's a peek at something special:
 
-![chart4](https://github.com/user-attachments/assets/dc2d23a7-d954-4e57-bfae-b5ced04d15f7)
+![chart4](/img/user-attachments/dc2d23a7-d954-4e57-bfae-b5ced04d15f7.png)
 
 I was unfortunately unable to find out the lifespan of a _Deinonychus_, so we'll have to just roll with it.
 

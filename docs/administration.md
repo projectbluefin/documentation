@@ -17,7 +17,7 @@ I want that "defaults lifestyle".
 
 :::
 
-![Bluefin Desktop Environment Illustration](https://github.com/user-attachments/assets/229f3763-c876-4402-8249-e631303e722b)
+![Bluefin Desktop Environment Illustration](/img/user-attachments/229f3763-c876-4402-8249-e631303e722b.png)
 
 ## Installing Applications
 
@@ -36,13 +36,13 @@ Updates are applied when the system reboots. Therefore, it is recommended to rou
 
 Machine firmware updates are provided through the Firmware application.
 
-![Firmware](https://github.com/user-attachments/assets/701d18b2-a40a-432a-ae22-0e3ac29fe191)
+![Firmware](/img/user-attachments/701d18b2-a40a-432a-ae22-0e3ac29fe191.png)
 
 ### Managing Updates
 
 In **Settings** → **Network** → A network setting, set **Metered Connection: has data limits or can incur charges** to pause Bluefin updates:
 
-![Settings → Network → A network setting - `Metered Connection: has data limits or can incur charges` Highlight](https://github.com/user-attachments/assets/00d04190-3a68-4fd1-8e03-7e97ef3193f2)
+![Settings → Network → A network setting - `Metered Connection: has data limits or can incur charges` Highlight](/img/user-attachments/00d04190-3a68-4fd1-8e03-7e97ef3193f2.png)
 
 ## Streams and Throttle Settings
 
@@ -105,11 +105,11 @@ Note that the `stable` and `latest` streams update more aggressively and may int
 
 Use the `ujust rebase-helper` command to select rebase and select a specific stream:
 
-![`ujust rebase-helper` - channel](https://github.com/user-attachments/assets/5ac60808-1e15-4c80-9592-e41fd2b52917)
+![`ujust rebase-helper` - channel](/img/user-attachments/5ac60808-1e15-4c80-9592-e41fd2b52917.png)
 
 Or select `date` and choose an older image.
 
-![`ujust rebase-helper` - date](https://github.com/user-attachments/assets/567061da-036d-4779-873e-154a5a833e67)
+![`ujust rebase-helper` - date](/img/user-attachments/567061da-036d-4779-873e-154a5a833e67.png)
 
 #### Switching between tags manually
 
@@ -321,11 +321,11 @@ Note that generally speaking Bluefin tries to keep the system Justfiles finely s
 
 Bluefin uses the [Extension Manager](https://flathub.org/apps/com.mattjakeman.ExtensionManager) by Matthew Jakeman to manage the desktop extensions. The application is included by default. You can access it via the [Logo Menu](https://github.com/Aryan20/Logomenu) (thanks Aryan Kaushik!)
 
-![GNOME Extension Menu Option (opens Extension Manager)](https://github.com/user-attachments/assets/c5ad1637-95c9-4692-8b25-e8ca6248e575)
+![GNOME Extension Menu Option (opens Extension Manager)](/img/user-attachments/c5ad1637-95c9-4692-8b25-e8ca6248e575.png)
 
 This is useful if you decide you do not want to use some of the ones bundled with Bluefin.
 
-![Extension Manager - System Extensions Highlight](https://github.com/user-attachments/assets/31255d26-580e-4179-a748-635bfa540e9a)
+![Extension Manager - System Extensions Highlight](/img/user-attachments/31255d26-580e-4179-a748-635bfa540e9a.png)
 
 :::note
 

@@ -11,19 +11,19 @@ Let's see how we're doing ...
 
 ## Fancy Charts
 
-![Whew](https://github.com/user-attachments/assets/4c05d343-76d6-4c9a-8b74-83fb0cf634e8)
+![Whew](/img/user-attachments/4c05d343-76d6-4c9a-8b74-83fb0cf634e8.png)
 
 Whew! Ok, that's always good. Let's drill right to the red parts because that's the interesting part.
 
-![Oh no!](https://github.com/user-attachments/assets/59ee8fad-5f61-455c-a09a-f855eee2aa75)
+![Oh no!](/img/user-attachments/59ee8fad-5f61-455c-a09a-f855eee2aa75.png)
 
 Here's where we need to use our brains. Charts by themselves can be misleading. Our names are missing (caching issue, probably), but it's clear that I am doing a ton of work! Too much!
 
-![yikes](https://github.com/user-attachments/assets/72475511-a341-42c0-9f13-3d9f9f7f4698)
+![yikes](/img/user-attachments/72475511-a341-42c0-9f13-3d9f9f7f4698.png)
 
 What this doesn't show you is that 95% of the work I do on Bluefin is telling a bot it's ok to do something. My takeaway here is "we need to automate more things" because in an ideal world, it's the bots and automation humming away quietly. But ... the chart is also not lying, we are top-heavy for sure, no doubt. We also ensure we measure things outside of code:
 
-![hi john](https://github.com/user-attachments/assets/db34c7bd-5441-4da5-b70b-c14dfb67f725)
+![hi john](/img/user-attachments/db34c7bd-5441-4da5-b70b-c14dfb67f725.png)
 
 If all you do is file an issue or start a discussion, then I do owe you a thanks; we couldn't do it without you.
 
