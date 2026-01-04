@@ -1,0 +1,238 @@
+.header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.header h1 {
+  color: var(--ifm-color-primary);
+  margin-bottom: 1rem;
+  font-size: 2.5rem;
+}
+
+.header p {
+  font-size: 1.1rem;
+  color: var(--ifm-color-emphasis-700);
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.summaryGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.summaryCard {
+  padding: 1.5rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+  background: var(--ifm-background-color);
+  text-align: center;
+}
+
+.summaryCard h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 2rem;
+  color: var(--ifm-color-primary);
+  font-weight: 600;
+}
+
+.summaryCard p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--ifm-color-emphasis-700);
+  font-weight: 500;
+}
+
+.weekSection {
+  margin-bottom: 3rem;
+}
+
+.weekHeader {
+  font-size: 1.5rem;
+  color: var(--ifm-color-emphasis-800);
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--ifm-color-primary);
+}
+
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+}
+
+.card {
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+  padding: 1.5rem;
+  background: var(--ifm-background-color);
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+  border-color: var(--ifm-color-primary);
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--ifm-color-primary);
+}
+
+.cardTitle a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.cardTitle a:hover {
+  text-decoration: underline;
+}
+
+.cardMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+  color: var(--ifm-color-emphasis-600);
+}
+
+.cardMetaItem {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.cardMetaItem strong {
+  color: var(--ifm-color-emphasis-800);
+  font-weight: 500;
+}
+
+.cardLabels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.label {
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  background: var(--ifm-color-primary-lightest);
+  color: var(--ifm-color-primary-darker);
+  font-size: 0.8rem;
+  font-weight: 500;
+  border: 1px solid var(--ifm-color-primary-lighter);
+}
+
+.status {
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border: 1px solid;
+}
+
+.status.todo {
+  background: var(--ifm-color-gray-300);
+  color: var(--ifm-color-gray-900);
+  border-color: var(--ifm-color-gray-400);
+}
+
+.status.inProgress {
+  background: var(--ifm-color-info-contrast-background);
+  color: var(--ifm-color-info-dark);
+  border-color: var(--ifm-color-info);
+}
+
+.status.done {
+  background: var(--ifm-color-success-contrast-background);
+  color: var(--ifm-color-success-dark);
+  border-color: var(--ifm-color-success);
+}
+
+.status.unknown {
+  background: var(--ifm-color-emphasis-200);
+  color: var(--ifm-color-emphasis-800);
+  border-color: var(--ifm-color-emphasis-300);
+}
+
+.cardDescription {
+  font-size: 0.9rem;
+  color: var(--ifm-color-emphasis-700);
+  line-height: 1.5;
+  max-height: 4.5em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+.noItems {
+  text-align: center;
+  padding: 3rem;
+  color: var(--ifm-color-emphasis-600);
+  font-style: italic;
+  font-size: 1.1rem;
+}
+
+.error {
+  text-align: center;
+  padding: 2rem;
+  color: var(--ifm-color-danger);
+  font-weight: 500;
+  background: var(--ifm-color-danger-contrast-background);
+  border-radius: 8px;
+  border: 1px solid var(--ifm-color-danger-contrast-border);
+}
+
+/* Responsive design */
+@media (max-width: 996px) {
+  .header h1 {
+    font-size: 2rem;
+  }
+
+  .header p {
+    font-size: 1rem;
+  }
+
+  .cardGrid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .header {
+    margin-bottom: 2rem;
+  }
+
+  .header h1 {
+    font-size: 1.75rem;
+  }
+
+  .summaryGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .cardGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .card {
+    padding: 1rem;
+  }
+
+  .weekSection {
+    margin-bottom: 2rem;
+  }
+}
