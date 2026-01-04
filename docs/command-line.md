@@ -68,33 +68,33 @@ What greatness have I been missing? Being set in my old, tired ways.
 
 :::
 
-![image](https://github.com/user-attachments/assets/89be8151-5b57-4b71-bbe5-988bef2d6798)
+![image](/img/user-attachments/89be8151-5b57-4b71-bbe5-988bef2d6798.jpg)
 
 ### Bold Brew
 
 [Bold Brew](https://bold-brew.com/) (`bbrew`) is included as a text based user interface (TUI) to Brew. This application features full package management for homebrew in a nice nerdy interface:
 
-![boldbrew](https://github.com/user-attachments/assets/d07c0455-2514-4b73-bdd5-51eec50b570d)
+![boldbrew](/img/user-attachments/d07c0455-2514-4b73-bdd5-51eec50b570d.png)
 
 Bold Brew also acts as a launcher for Bluefin's included curated Brewfiles. Run `ujust bbrew` to select a file to browse and install applications from:
 
-![bbrew](https://github.com/user-attachments/assets/b713c96e-cbf1-45f6-91b0-2399b44c389a)
+![bbrew](/img/user-attachments/b713c96e-cbf1-45f6-91b0-2399b44c389a.png)
 
 ### Message of the Day and `fastfetch`
 
 The project prefers to have functional bling that is slick but it must also serve a purpose. New terminals (<kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Enter</kbd>) display a message of the day with some basic information:
 
-![image](https://github.com/user-attachments/assets/0e0326ef-6640-41a2-bd24-dae1b1647cfd)
+![image](/img/user-attachments/0e0326ef-6640-41a2-bd24-dae1b1647cfd.png)
 
 The `bluefin-dx:beta` line is the name of the OS image, and is a good way to remind yourself if you're on a pinned image as well as a quick reference to common commands. You can toggle it on and off with `ujust toggle-user-motd`. Note that the Tip rotates regularly in order to spread useful tips to the community.
 
 We love to flex our machines and software. Run `fastfetch`:
 
-![image](https://github.com/user-attachments/assets/f720f9d8-7c3c-4f3c-9112-c627686e0fb1)
+![image](/img/user-attachments/f720f9d8-7c3c-4f3c-9112-c627686e0fb1.png)
 
 This screen will show you hardware information, as well as your username, machine name, and kernel version. Each Bluefin image has a "Forged On" date, commemorating the initial installation of the machine.
 
-![image](https://github.com/user-attachments/assets/99522c15-1209-4fa5-a076-1b6289bdbc76)
+![image](/img/user-attachments/99522c15-1209-4fa5-a076-1b6289bdbc76.png)
 
 :::tip[Of course it does]
 
@@ -116,11 +116,11 @@ The Bluefin team lacks expertise in both fish and zsh, contributions to help us 
 
 Bluefin ships [Ptyxis](https://devsuite.app/ptyxis/) as the default terminal. It shows up as `Terminal` in the menu. It is **strongly recommended** that you [change your shell via the terminal emulator instead of system-wide](https://tim.siosm.fr/blog/2023/12/22/dont-change-defaut-login-shell/). Click on the Terminal settings and edit your profile:
 
-![Ptyxis → Preferences → Profiles → A Profile Setting → Edit...](https://github.com/user-attachments/assets/2c122205-dbd8-41e6-8b7b-4f536c3b69e9)
+![Ptyxis → Preferences → Profiles → A Profile Setting → Edit...](/img/user-attachments/2c122205-dbd8-41e6-8b7b-4f536c3b69e9.png)
 
 Then select "Use Custom Command" and then add the shell you want to use. `/usr/bin/fish` and `/usr/bin/zsh` are both included on the image:
 
-![Ptyxis → Preferences → Profiles → A Profile Setting → Edit... → Shell → Custom Command](https://github.com/user-attachments/assets/8eb039db-7ec1-4847-b3d7-496d69fe9538)
+![Ptyxis → Preferences → Profiles → A Profile Setting → Edit... → Shell → Custom Command](/img/user-attachments/8eb039db-7ec1-4847-b3d7-496d69fe9538.png)
 
 ### Using `bluefin-cli` with alternate shells
 

@@ -31,7 +31,7 @@ Also check out:
 
 This year we spent most of our time on cleanup and sustainability. Bluefin is mostly feature complete so we don't really ship major user-visible changes as much as we used to. Much of it is "nerd automation" improvements that most of you will never need to actually care about. This has also been a kickass year for [Bazzite](https://bazzite.gg), which has been a fantastic real-world test for [`bootc`](https://containers.github.io/bootc/) based sytems like ours! Overall the ecosystem is doing well, this year was great for bootc, here's a photo of the team from KubeCon this past November:
 
-![bootc team](https://github.com/user-attachments/assets/888cfa53-177e-4436-97b9-48d3aeb2b3e5)
+![bootc team](/img/user-attachments/888cfa53-177e-4436-97b9-48d3aeb2b3e5.png)
 
 > Jorge with members of the bootc team: Mark Russell, Joseph Marrero, Laura Santamaria, and Colin Walters
 
@@ -47,7 +47,7 @@ As you'll soon see below, we can source software from anywhere and it's just a b
 
 But that sounds like a bunch of marketing crap, let's explain it  ... this update will cover mostly "How Bluefin is made" and where we're hoping to head in 2026.
 
-![wide](https://github.com/user-attachments/assets/5a9a4dba-bc7f-4aca-aaee-44708376831f)
+![wide](/img/user-attachments/5a9a4dba-bc7f-4aca-aaee-44708376831f.png)
 
 > JF's Bluefin desktop
 
@@ -176,7 +176,7 @@ This new Bluefin is nicknamed [_Dakotaraptor_](https://github.com/projectbluefin
 
 _Dakotaraptor_ will not be for everyone and will offer the least amount of compromises. Not only is local layering unsupported, there's no system package manager at all! We'll be using [Buildstream](https://buildstream.build/index.html) since it's the tech behind this, and you'll hear more about it in 2026 as other projects check it out. This effort is still nascent, so no promises, but it's already got people excited, check it out at [@projectbluefin/distroless](https://github.com/projectbluefin/distroless/). 
 
-![distroless](https://github.com/user-attachments/assets/f14f3299-dc8d-4ca5-ba5b-a4cdf85d98d5)
+![distroless](/img/user-attachments/f14f3299-dc8d-4ca5-ba5b-a4cdf85d98d5.png)
 
 > JumpyVi's setup 
 
@@ -251,7 +251,7 @@ As you can see, we not only bet on Flathub, we worked with the folks at Bazaar t
 
 This year we moved to [LFX Insights](https://insights.linuxfoundation.org/) as our platform. Here are our complete [contributor metrics](https://insights.linuxfoundation.org/project/ublue-os-bluefin/contributors) and a few charts. You can also always check out all our charts on our [Analytics page](https://docs.projectbluefin.io/analytics), where we've finally crossed the 3k weekly users milestone!
 
-![contributors](https://github.com/user-attachments/assets/55b2dd9e-27d8-4ced-a28a-6cb173425891) ![issues](https://github.com/user-attachments/assets/2d9081c3-06e6-4f5e-aed0-c1b4edfe5435) ![commits](https://github.com/user-attachments/assets/ba3805d2-1509-4069-bb69-64e59ad7b042)
+![contributors](/img/user-attachments/55b2dd9e-27d8-4ced-a28a-6cb173425891.png) ![issues](/img/user-attachments/2d9081c3-06e6-4f5e-aed0-c1b4edfe5435.png) ![commits](/img/user-attachments/ba3805d2-1509-4069-bb69-64e59ad7b042.png)
 
 I've selected some graphs, feel free to dive in and don't forget to check out [Aurora](https://insights.linuxfoundation.org/project/aurora) and [Bazzite](https://insights.linuxfoundation.org/project/ublue-os-bazzite) too!
 

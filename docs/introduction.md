@@ -7,7 +7,7 @@ _Deinonychus antirrhopus_
 
 ## Welcome to [docs.projectbluefin.io](https://docs.projectbluefin.io)
 
-![image](https://github.com/user-attachments/assets/21208dd6-9ce5-41ba-9c21-d2bb97f7c1e8)
+![image](/img/user-attachments/21208dd6-9ce5-41ba-9c21-d2bb97f7c1e8.png)
 
 :::tip
 
@@ -72,6 +72,6 @@ The workflows in Bluefin are purposely upstream focused -- we believe in a consi
 
 :::
 
-![Bazaar](https://github.com/user-attachments/assets/788def08-5743-4e38-a140-e75148f8a1c7)
+![Bazaar](/img/user-attachments/788def08-5743-4e38-a140-e75148f8a1c7.png)
 
-![Bazaar2](https://github.com/user-attachments/assets/296d11eb-8c71-4c95-a2d0-bda1cb5ba5aa)
+![Bazaar2](/img/user-attachments/296d11eb-8c71-4c95-a2d0-bda1cb5ba5aa.png)
