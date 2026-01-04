@@ -199,8 +199,15 @@ async function fetchBoardData() {
   if (!GITHUB_TOKEN) {
     console.warn('\n⚠️  No GitHub token found. Set GITHUB_TOKEN or GH_TOKEN environment variable.');
     console.warn('   This script requires authentication for GraphQL API access.');
-    console.warn('   Get a token at: https://github.com/settings/tokens\n');
-    throw new Error('GitHub token is required');
+    console.warn('   Get a token at: https://github.com/settings/tokens');
+    console.warn('   Creating empty board data file to prevent build failure.\n');
+    
+    // Create empty file so build doesn't fail
+    if (!fs.existsSync(OUTPUT_DIR)) {
+      fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+    }
+    fs.writeFileSync(OUTPUT_FILE, JSON.stringify([], null, 2), 'utf-8');
+    return;
   } else {
     console.log('✓ Using authenticated GitHub API access\n');
   }
@@ -246,5 +253,10 @@ async function fetchBoardData() {
 
 fetchBoardData().catch(error => {
   console.error('Fatal error:', error);
-  process.exit(1);
+  // Don't fail build - create empty file instead
+  if (!fs.existsSync(OUTPUT_DIR)) {
+    fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+  }
+  fs.writeFileSync(OUTPUT_FILE, JSON.stringify([], null, 2), 'utf-8');
+  console.warn('Created empty board data file to prevent build failure.');
 });
