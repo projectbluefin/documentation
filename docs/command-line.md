@@ -114,11 +114,14 @@ The Bluefin team lacks expertise in both fish and zsh, contributions to help us 
 
 :::
 
-Bluefin ships [Ptyxis](https://devsuite.app/ptyxis/) as the default terminal. It shows up as `Terminal` in the menu. It is **strongly recommended** that you [change your shell via the terminal emulator instead of system-wide](https://tim.siosm.fr/blog/2023/12/22/dont-change-defaut-login-shell/). Click on the Terminal settings and edit your profile:
+Bluefin ships [Ptyxis](https://devsuite.app/ptyxis/) as the default terminal. It shows up as `Terminal` in the menu. It is **strongly recommended** that you [change your shell via the terminal emulator instead of system-wide](https://tim.siosm.fr/blog/2023/12/22/dont-change-defaut-login-shell/). First install the shell you want with `brew install zsh` or `brew install fish`. Click on the Terminal settings and edit your profile:
 
 ![Ptyxis → Preferences → Profiles → A Profile Setting → Edit...](/img/user-attachments/2c122205-dbd8-41e6-8b7b-4f536c3b69e9.png)
 
-Then select "Use Custom Command" and then add the shell you want to use. `/usr/bin/fish` and `/usr/bin/zsh` are both included on the image:
+Then select "Use Custom Command" and then add the shell you want to use: 
+
+- zsh - `/home/linuxbrew/.linuxbrew/bin/zsh` 
+- fish - `/home/linuxbrew/.linuxbrew/bin/fish`
 
 ![Ptyxis → Preferences → Profiles → A Profile Setting → Edit... → Shell → Custom Command](/img/user-attachments/8eb039db-7ec1-4847-b3d7-496d69fe9538.png)
 
