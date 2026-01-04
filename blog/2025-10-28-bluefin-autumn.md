@@ -5,7 +5,7 @@ authors: castrojo
 tags: [announcements, homebrew, lts, community, cloud-native, video]
 ---
 
-![banner](https://github.com/user-attachments/assets/1b7b7f22-7212-4086-ac00-1d7c534fb9a3)
+![banner](/img/user-attachments/1b7b7f22-7212-4086-ac00-1d7c534fb9a3.png)
 
 Guardians, today Bluefin GTS switched its base from Fedora 41 to Fedora 42. The gathering of raptors has begun. In a two weeks Bluefin (aka `bluefin:stable`) releases on Fedora 43 and we will start the cycle all over again!
 
@@ -23,7 +23,7 @@ As it ends up F43 will be coming to `bluefin:stable` while we're in Atlanta, GA,
 
 You'll receive this update during your next update window, or you can run an update manually by clicking on this icon:
 
-![update](https://github.com/user-attachments/assets/0bda2d1e-792d-4f91-b958-c2d52f8aec21)
+![update](/img/user-attachments/0bda2d1e-792d-4f91-b958-c2d52f8aec21.png)
 
 If you've never experienced a Bluefin upgrade before, McPhail has a [full writeup](https://gld.mcphail.uk/posts/how-to-perform-a-major-version-upgrade-on-bluefin/). Here's the major release information:
 
@@ -49,7 +49,7 @@ Bluefin GTS (aka `bluefin:gts`) is our standard release, designed to be one cycl
 
 ## Welcome to Bluefin
 
-![theclueiscollapse](https://github.com/user-attachments/assets/e78c149d-eddc-40bf-8103-8f3b13364142)
+![theclueiscollapse](/img/user-attachments/e78c149d-eddc-40bf-8103-8f3b13364142.png)
 
 This unidentified Dromeasaur is by [Dr. Natalia Jagielska](https://natalia-jagielska.weebly.com/), a world renowned expert [paleontologist](https://www.nationalgeographic.com/science/article/stunning-scottish-pterosaur-is-biggest-fossil-of-its-kind) and [paleoartist](https://natalia-jagielska.weebly.com/art.html)! We reached out to work with her on bringing her artwork and style to Bluefin, and she said yes! This rendition will be revealed in November, or you can just manually pick it in the wallpaper chooser.
 
@@ -70,8 +70,8 @@ There are a few major changes from a Bluefin perspective that we've been looking
 
 [Bazaar](https://github.com/kolunmi/bazaar) makes its debut in Bluefin GTS! All Bluefins are now just using the Bazaar flatpak. You're in for a treat:
 
-![bazaar1](https://github.com/user-attachments/assets/3cd53813-d8d4-4728-8379-70c08c0365a1)
-![bazaar2](https://github.com/user-attachments/assets/1dec1e08-7b32-49df-b14b-5d393bbd0992)
+![bazaar1](/img/user-attachments/3cd53813-d8d4-4728-8379-70c08c0365a1.png)
+![bazaar2](/img/user-attachments/1dec1e08-7b32-49df-b14b-5d393bbd0992.png)
 
 It's been super awesome seeing Bazaar move from a random project we found on r/gnome to what is effectively now the premier app store experience for FlatHub and Linux. You can help out tremendously by [sponsoring the author](https://github.com/sponsors/kolunmi).
 
@@ -135,7 +135,7 @@ Bluefin has significantly been simplified, now would be a great time to contribu
 
 - `bluefin:gts` and `bluefin:stable` will be publishing on Tuesdays from now on instead of Saturdays. Publishing on Saturday nights is an artifact of pre-automation "reserved time" for testing before a weekly release. This matches the same release schedule as Bluefin LTS.
 
-![banner2](https://github.com/user-attachments/assets/5fae0e10-a0d4-4d6f-a106-d835654445b4)
+![banner2](/img/user-attachments/5fae0e10-a0d4-4d6f-a106-d835654445b4.png)
 
 ## More Information​
 
@@ -150,11 +150,11 @@ We also accept donations to sponsor the infrastructure and artwork.
 
 Sometimes starting in open source can be a real barrier if you don't know where to start. Don't have the skills to do cloud native things yet? Here's a good way to help out FlatHub. Flatpaks rely on what we call "runtimes" to ensure that the application has the dependencies it needs to run. Do a `flatpak list` to check them out:
 
-![flatpaklist](https://github.com/user-attachments/assets/61a51c5d-b16b-4798-9f5c-d46aef3c32d3)
+![flatpaklist](/img/user-attachments/61a51c5d-b16b-4798-9f5c-d46aef3c32d3.png)
 
 [Flatpak Tracker](https://github.com/ublue-os/flatpak-tracker) is a site we made that will check all of the applications we ship in Bluefin and see which runtimes need to be updated. We label them by image, here's the [the list of applications that need to be updated](https://github.com/ublue-os/flatpak-tracker/issues?q=is%3Aissue%20state%3Aopen%20label%3Abluefin-bazaar).
 
-![flatpak tracker](https://github.com/user-attachments/assets/c7051430-cff0-44e2-8706-30b0110a8dee)
+![flatpak tracker](/img/user-attachments/c7051430-cff0-44e2-8706-30b0110a8dee.png)
 
 This is important work because we want applications to be updated to the latest runtimes for security reasons. As it turns out, many of these applications have OPEN PULL REQUESTS already with people updating the runtime, you just need to find the app, run the updated version by following the instructions, and then report back to the Flatpak maintainer that the new app is working great (or broken!). Since GNOME 49 just released, there's plenty to do, so feel free to dive in and get started! Also remember, this work helps all of FlatHub, we're explictly sending new volunteers to help upstream.
 
@@ -170,7 +170,7 @@ Find your favorite app and see if there's a test build available for a new runti
 
 Check out [store.projectbluefin.io](https://store.projectbluefin.io) and pick up some dino merch. Thanks to John Johnson for ensuring our coffee mug game is up to snuff:
 
-![mugs](https://github.com/user-attachments/assets/a5aaef32-6f56-4466-b250-3472690cdf1b)
+![mugs](/img/user-attachments/a5aaef32-6f56-4466-b250-3472690cdf1b.png)
 
 ## Is that it?​
 
@@ -204,15 +204,15 @@ As a cloud native project we are always looking for contributors with skills in 
 
 Let's take a look at our contributor health, and celebrate the amazing folks who have come together to bring you Bluefin! We use [LFX Insights](https://insights.linuxfoundation.org/) to measure our project health. First note that my results here are skewed, since I am either usually just merging or telling a bot it's ok to do something. This also does not include the rest of Universal Blue. Yes, Aurora people basically maintain both, haha.
 
-![lfx1](https://github.com/user-attachments/assets/4ada7112-705b-4358-ab75-cc0f7182201d)
+![lfx1](/img/user-attachments/4ada7112-705b-4358-ab75-cc0f7182201d.png)
 
 This next one surprised me, I was expecting 20 or 30ish at best. Nice work ya'll!
 
-![active contributors](https://github.com/user-attachments/assets/e6e786dc-03bc-4cc8-882a-dd59ddb63dd0)
+![active contributors](/img/user-attachments/e6e786dc-03bc-4cc8-882a-dd59ddb63dd0.png)
 
 Haha yep, I can't hide from the data though, free me from this!
 
-![jorge](https://github.com/user-attachments/assets/616ae642-6e80-4c90-9951-3c233c95f3fa)
+![jorge](/img/user-attachments/616ae642-6e80-4c90-9951-3c233c95f3fa.png)
 
 Feel free to [browse around](https://insights.linuxfoundation.org/project/ublue-os-bluefin/repository/ublue-os-bluefin) and learn cool things about Bluefin's creators.
 
@@ -220,6 +220,6 @@ Feel free to [browse around](https://insights.linuxfoundation.org/project/ublue-
 
 After KubeCon we head into the holidays, where things will slow down significantly. We've been in the lab with mad doctor Timothée Ravier and have been cooking up something. We expect that this will change the course of Bluefin for the better, forever. We can't wait to show you, until then, enjoy!
 
-![banner](https://github.com/user-attachments/assets/0c6a5557-d629-4af8-8c8f-e34b886dde1f)
+![banner](/img/user-attachments/0c6a5557-d629-4af8-8c8f-e34b886dde1f.png)
 
 ### [Discussion Thread](https://github.com/ublue-os/bluefin/discussions/3510)

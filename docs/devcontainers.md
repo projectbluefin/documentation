@@ -5,7 +5,7 @@ slug: /devcontainers
 
 # Devcontainers Quickstart Guide
 
-Dev Containers provide a consistent, reproducible development environment using containerization. This guide helps you get started with Dev Containers in Visual Studio Code on Bluefin.
+Dev Containers provide a consistent, reproducible development environment using containerization. This guide helps you get started with Dev Containers in Visual Studio Code on Bluefin. This is an opinionated configuration, some users may prefer to just use Podman/Docker directly. 
 
 ## What are Devcontainers?
 

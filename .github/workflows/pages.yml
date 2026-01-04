@@ -41,6 +41,8 @@ jobs:
         run: bun install --frozen-lockfile --production
 
       - name: Build website
+        env:
+          GITHUB_TOKEN: ${{ secrets.PROJECT_READ_TOKEN }}
         run: bun run build
 
       - name: Upload Build Artifact

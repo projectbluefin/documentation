@@ -24,8 +24,8 @@ Bluefin goes "all in" on cloud native development and is used differently than a
 
 - Development is done containers, common container patterns include:
   - [Devcontainers](https://containers.dev/) with VSCode, Jetbrains, or neovim
-  - [Podman Desktop](https://podman-desktop.io/docs/intro) for container development with a graphical (GUI) interface 
-  - [Podman](https://podman.io/docs) or [Docker](https://docs.docker.com/reference/cli/docker/) command line container management
+  - [Podman Desktop](https://podman-desktop.io/docs/intro) for container development with a graphical (GUI) interface. Here's [an example of a podman/vscode setup](https://podman-desktop.io/blog/2025/05/05/vs-code-with-podman-desktop) - these extensions are included in Bluefin  
+  - [Podman](https://podman.io/docs) or [Docker](https://docs.docker.com/reference/cli/docker/) command line container management. 
 - Command line applications are installed using [homebrew](https://brew.sh)
 - Preconfigured ad-hoc containers for Ubuntu, Fedora, and Wolfi are included. Use whichever distribution you want.
 
@@ -39,7 +39,7 @@ We picked the cloud native pattern because local development in containers trans
 
 :::
 
-![image](https://github.com/user-attachments/assets/51415b6c-b7fe-45e9-af74-c01694b26fbe)
+![image](/img/user-attachments/51415b6c-b7fe-45e9-af74-c01694b26fbe.png)
 
 The pattern in `bluefin-dx` (and `aurora-dx`) centers around [devcontainers](https://containers.dev). Since devcontainers live in the project's git repository, they can be deployed on any operating system: Linux, macOS, or Windows (via WSL). This facilitates "distributed by default" development and avoids Linux users being "the odd one out" when working with teammates on other operating systems.
 
@@ -57,7 +57,7 @@ Turning on developer mode is a two-step process:
 
 `ujust devmode` to enable or disable the dx mode, then reboot:
 
-![image](https://github.com/user-attachments/assets/76df5201-da02-42d0-bec9-fad259df9b0d)
+![image](/img/user-attachments/76df5201-da02-42d0-bec9-fad259df9b0d.png)
 
 ## Step 2: Add yourself to the right groups
 
@@ -83,7 +83,7 @@ The most current [Docker Engine](https://docs.docker.com/engine/) is included by
 
 ## Podman and Podman Desktop
 
-![Podman Desktop](https://github.com/user-attachments/assets/69f64ed1-7fcc-4040-9a3d-12b71308da1b)
+![Podman Desktop](/img/user-attachments/69f64ed1-7fcc-4040-9a3d-12b71308da1b.png)
 
 [Podman Desktop](https://podman-desktop.io/) is included to provide container management. Check out the Podman Desktop [documentation](https://podman-desktop.io/docs/intro) for more information. All the upstream `podman` tools are included. This is the default system container runtime and is the recommended developer configuration for new users.
 
@@ -105,15 +105,15 @@ Thanks to Ubuntu and Canonical for the [detailed specification](https://discours
 
 Pet containers are available as interactive terminals via [distrobox](https://distrobox.it/). Manage these via the included [DistroShelf](https://github.com/ranfdev/DistroShelf) application, available via the logomenu in the top left corner of your desktop under "Containers":
 
-![image](https://github.com/user-attachments/assets/bdab71b0-c04a-4562-a73d-396d4b907060)
+![image](/img/user-attachments/bdab71b0-c04a-4562-a73d-396d4b907060.png)
 
 Use DistroShelf's interface to create your own pet containers from whichever distribution is on the list:
 
-![image](https://github.com/user-attachments/assets/2daf276d-2aed-47b9-9792-923d674ef226)
+![image](/img/user-attachments/2daf276d-2aed-47b9-9792-923d674ef226.png)
 
 For CLI warriors you can manage your containers with the Terminal's built-in container support:
 
-![image](https://github.com/user-attachments/assets/2a4dc4b5-f1a8-4781-80a4-92ea4dfeeb97)
+![image](/img/user-attachments/2a4dc4b5-f1a8-4781-80a4-92ea4dfeeb97.png)
 
 The included [Terminal](https://gitlab.gnome.org/chergert/ptyxis) includes a host terminal so that you can quickly switch between containers and the host.
 
@@ -152,7 +152,7 @@ DevPod also has support for JetBrains:
 
 Note: Bluefin LTS users must install the QEMU addon from Bazaar: 
 
-![qemu](https://github.com/user-attachments/assets/5b0462d2-2c08-4086-a4ce-c34afa9685c2)
+![qemu](/img/user-attachments/5b0462d2-2c08-4086-a4ce-c34afa9685c2.png)
 
 or via command line: `flatpak install flathub org.virt_manager.virt_manager org.virt_manager.virt_manager.Extension.Qemu `
  

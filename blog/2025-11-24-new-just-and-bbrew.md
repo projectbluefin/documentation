@@ -19,7 +19,7 @@ We now have a nice way for the community [to contribute to Bluefin's Brewfiles](
 
 We workshopped some ideas on how to make this nicer for users. We [approached bold-brew](https://github.com/Valkyrie00/bold-brew/issues/36) with the idea of presenting Brewfiles to users in a dedicated view. Vito was very accomodating and implemented the idea, kudos to him! Now let me show you how it works:
 
-![bbrew](https://github.com/user-attachments/assets/6057cf26-e153-44d5-9695-e6a201d77951)
+![bbrew](/img/user-attachments/6057cf26-e153-44d5-9695-e6a201d77951.png)
 
 `ujust bbrew` is the entry point, we will generate a little menu for you for every Brewfile in Bluefin. So if we add more they just show up here. Then after you choose one `bbrew` will open up showing you that Brewfile. You can then select and choose what you want to install, or hit Ctrl-A to grab everything.
 
@@ -27,13 +27,13 @@ We workshopped some ideas on how to make this nicer for users. We [approached bo
 
 This is awesome because we can now curate app bundles of CLI tools to users. We're starting off with AI tools, k8s tools, and monospace fonts. Feel free to send PRs to these Brewfiles, since users can pick and choose we can ship the tools you depend on the most. You'll also notice some color improvements in `bbrew`, make sure you [check out the repo](https://github.com/Valkyrie00/bold-brew) and give them a star!
 
-![bbrew wide](https://github.com/user-attachments/assets/0a8bb770-f3c7-43f1-a35b-b350da415c84)
+![bbrew wide](/img/user-attachments/0a8bb770-f3c7-43f1-a35b-b350da415c84.png)
 
 ## More Cloud Mumbo Jumbo
 
 And lastly, we now have `ujust cncf`, which will show you all of the projects that are [part of the CNCF](https://landscape.cncf.io). Many of you work with these tools every day, the hope is to show you all of the cool things you can play with in cloud native!
 
-![cncf](https://github.com/user-attachments/assets/1ee76144-c913-4449-a3cb-7ede1659b598)
+![cncf](/img/user-attachments/1ee76144-c913-4449-a3cb-7ede1659b598.png)
 
 ## More Consistent Bluefin
 

@@ -1,0 +1,16 @@
+---
+name: blog poster
+description: Post a blog post
+---
+
+- Use the github API to do all tasks instead os scraping the web
+- Under no circumstance do you touch any files other than the blog file and the authors.yaml (optional) - do NOT touch anything else
+- Take a github issue or github discussion that is assigned to you and post it as a @docusaurus blog post.
+  - Always follow the best practices by the upstream documentation
+- Always link to the github discussions of the topic so that each blog post links to the originating github discussion
+- Ensure the tags on the blog post are relevant and follow the pattern of the rest of the blog
+- Ensure you link to every repository mentioned, use the `@projectname/repo` pattern when referring to other repositories
+- Ensure the major projects mentioned have hyperlinks to their upstream projects
+- Do NOT modify the content itself, you are adding links and a convenience to the authore, you do NOT add any opinion to the content
+- Auto add the person to authors.yaml if the author is not included
+- Ensure all images are reformatted to use the `![Description](https://githurl)` format so that they show up in proper @docusaurus formatting
