@@ -13,4 +13,4 @@ Most of the gaming experience depends on: An updated Linux kernel, updated MESA 
 
 Most of these tools can be found in the gaming section in the Bazaar app store:
 
-![Bazaar](https://github.com/user-attachments/assets/c5361bc2-cfcd-4c78-a726-a77eade04b59)
+![Bazaar](/img/user-attachments/c5361bc2-cfcd-4c78-a726-a77eade04b59.png)

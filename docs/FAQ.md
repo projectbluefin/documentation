@@ -7,7 +7,7 @@ The [general FAQ](https://projectbluefin.io/#scene-faq) on the website covers so
 
 ## Am I holding Bluefin wrong?
 
-![Don't hold Bluefin wrong](https://github.com/user-attachments/assets/6d03851b-5d42-4235-9e1c-3dde7c455946)
+![Don't hold Bluefin wrong](/img/user-attachments/6d03851b-5d42-4235-9e1c-3dde7c455946.png)
 
 You can always do what you want, but Bluefin is designed with a certain workflow in mind. Here are some guidelines from the raptor experts:
 
@@ -42,7 +42,7 @@ This next section goes into the why in more detail than most people need. You do
 
 One of the co-creators of Bluefin, using his experience from helping launch [askubuntu.com](https://askubuntu.com/users/235/jorge-castro), uses this as the reason for starting Bluefin in the first place:
 
-![image](https://github.com/user-attachments/assets/6165e0e3-b60b-4bd1-82a8-b2fdd0595933)
+![image](/img/user-attachments/6165e0e3-b60b-4bd1-82a8-b2fdd0595933.png)
 
 Why spend decades documenting workarounds when you can just remove the problem entirely! Check out [Jorge Castro's blog](https://www.ypsidanger.com/) for years of back story on our quest to improve the desktop.
 
@@ -96,7 +96,7 @@ You can remove or comment the line below in `/etc/bashrc` to restore the default
 eval "$(starship init bash)"
 ```
 
-![image](https://github.com/user-attachments/assets/013a75f5-0417-4287-9071-be58c8c38ffd)
+![image](/img/user-attachments/013a75f5-0417-4287-9071-be58c8c38ffd.png)
 
 ## How do I modify the Linux kernel's boot arguments?
 
