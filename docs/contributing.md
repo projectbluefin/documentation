@@ -25,7 +25,8 @@ Start small! Documentation improvements or simple additions are great first cont
 
 Bluefin is made via [lazy concensus](https://www.apache.org/foundation/glossary.html#LazyConsensus), which means that we trend towards "Just Do It" because if it was too crazy someone would say something. This is a nice casual way to open source, and is inspired by [Kubernetes](https://kubernetes.dev).
 
-- Check [todo.projectbluefin.io](https://github.com/orgs/projectbluefin/projects/2)
+- Check [todo.projectbluefin.io](https://todo.projectbluefin.io/) to check work that is either new or in progress
+- Check [done.projectbluefin.io](https://done.projectbluefin.io/) to check work that has recently been completed
 - Items in Draft are
   - Things that need to happen but aren't claimed or specced out
   - Or transient things that don't need much planning like "Improve contributor guide" or "Fix up this just recipe". These are things that are identified as being needed but don't need much planning, "just send a sysadmin" style tasks.
