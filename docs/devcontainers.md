@@ -236,6 +236,16 @@ For more detailed information, check the [official Dev Container CLI documentati
 - Check container runtime is running (`podman ps` or `docker ps`)
 - Verify devcontainer.json syntax
 - Review container logs in Output panel
+- Review SELinux access control errors (from cockpit or `ausearch -m avc -ts recent`).
+    - If there is access error to system files (e.g. `libc6.so`), try `restorecon -R -v $HOME/.local/share`. `restorecon` may warn about files in subdirectories your user cannot read, which is expected and can be ignored.
+    - If there is access error to mounted volumes, try `restorecon -R -v /path/to/mounted/volume` which is usually the parent folder of your project.
+    - The last resort would to disable SELinux with the following setting in `.devcontainer/devcontainer.json` and has security implications:
+
+```json
+{
+  "runArgs": ["--security-opt", "label=disable"]
+}
+```
 
 **Extensions not loading**:
 
