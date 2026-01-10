@@ -21,14 +21,14 @@ Now that Ask Bluefin is setup it can automate tasks for you like "Manually updat
 
 > Some other common examples
 
-### Automated Troubleshooting
+## Automated Troubleshooting
 
 You can ask the tool things about your system using natural language: 
 
 ![Top CPU usage](https://github.com/user-attachments/assets/537d5f2c-0a84-460d-b936-ae699376a1d7)
 
 
-## 🏥 System Health
+### 🏥 System Health
 
 | I want to check... | Use this tool | Example Prompt |
 |-------------------|---------------|----------------|
@@ -38,7 +38,7 @@ You can ask the tool things about your system using natural language:
 | **Disk Space** | `get_disk_usage` | "Are any disks full?" |
 | **Hardware** | `get_hardware_information` | "List the PCI devices." |
 
-## 🔍 Troubleshooting
+### 🔍 Troubleshooting
 
 | I want to check... | Use this tool | Example Prompt |
 |-------------------|---------------|----------------|
@@ -50,7 +50,7 @@ You can ask the tool things about your system using natural language:
 | **Service Logs** | `get_service_logs` | "Show recent logs for sshd." |
 | **Specific Log File** | `read_log_file` | "Read the last 50 lines of /var/log/messages." |
 
-## 🌐 Network
+### 🌐 Network
 
 | I want to check... | Use this tool | Example Prompt |
 |-------------------|---------------|----------------|
@@ -58,7 +58,7 @@ You can ask the tool things about your system using natural language:
 | **Open Ports** | `get_listening_ports` | "What ports are open?" |
 | **Connections** | `get_network_connections` | "Who is connected to port 22?" |
 
-## 📂 Files & Storage
+### 📂 Files & Storage
 
 | I want to check... | Use this tool | Example Prompt |
 |-------------------|---------------|----------------|
@@ -66,7 +66,7 @@ You can ask the tool things about your system using natural language:
 | **Large Folders** | `list_directories` | "Find the largest folders in /var." |
 | **Recent Changes** | `list_files` | "What files in /etc changed recently?" |
 
-## 💡 Pro Tips
+### 💡 Pro Tips
 
 - **Combine Tools:** You don't need to ask for one thing at a time.
   > "Check CPU usage and show me the top 5 processes."
@@ -79,5 +79,7 @@ You can ask the tool things about your system using natural language:
 
 ![troubleshooting](https://github.com/user-attachments/assets/0ca8873d-a0d4-4822-b4a9-6486588bdbbd)
 
+## Customizing with MCPs
 
+## Goose Plugins
 
