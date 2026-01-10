@@ -420,7 +420,7 @@ Common documentation areas include:
 - Developer experience (`docs/bluefin-dx.md`, `docs/bluefin-gdx.md`, `docs/devcontainers.md`)
 - FAQ and troubleshooting (`docs/FAQ.md`)
 - Hardware-specific guides (`docs/t2-mac.md`)
-- Community information (`docs/communication.md`, `docs/code-of-conduct.md`, `docs/values.md`, `docs/mission.md`, `docs/donations/`)
+- Community information (`docs/code-of-conduct.md`, `docs/values.md`, `docs/mission.md`, `docs/donations/`)
   - Donations section split into: `docs/donations/index.mdx`, `docs/donations/contributors.mdx`, `docs/donations/projects.mdx`
 - Gaming support (`docs/gaming.md`)
 - LTS information (`docs/lts.md`)
