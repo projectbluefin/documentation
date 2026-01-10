@@ -10,8 +10,12 @@ This does not exist yet, it's here to document how we expect the feature to work
 
 Bluefin features automated troubleshooting tools to help find problems with your system. In the menu select "Ask Bluefin":
 
-> (Things in quotes are notes) - goosecli with linux-mcp-server comes up
-> onboarding process we automate, user can select whatever combo of commercial and local AI they can via goose's providers
+- goosecli with linux-mcp-server comes up
+- onboarding process
+- Select whatever combo of commercial and local AI they can via goose's providers
+- Local setup goes to:
+  - Ramalama config and service unit
+  - Choice of local model
 
 Now that Ask Bluefin is setup it can automate tasks for you like "Manually update this computer for me."
 
@@ -19,8 +23,10 @@ Now that Ask Bluefin is setup it can automate tasks for you like "Manually updat
 
 ### Automated Troubleshooting
 
+You can ask the tool things about your system using natural language: 
 
-> This is an inline copy of the [cheatsheet](https://github.com/rhel-lightspeed/linux-mcp-server/blob/main/docs/cheatsheet.md) from upstream for now, but you get the idea:
+![troubleshooting](https://github.com/user-attachments/assets/0ca8873d-a0d4-4822-b4a9-6486588bdbbd)
+
 
 ## 🏥 System Health
 
