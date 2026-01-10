@@ -5,12 +5,12 @@ unlisted: true
 ---
 
 :::info
-This does not exist yet, it's here to document how we expect the feature to work. This is also only documented the tooling we're shipping, not a general troubleshooting guide. This is a rework of 
+This does not exist yet, it's here to document how we expect the feature to work. This is also only documented the tooling we're shipping, not a general troubleshooting guide.
 :::
 
 Bluefin features automated troubleshooting tools to help find problems with your system. In the menu select "Ask Bluefin":
 
-(Somewhere else in the docs goose CLI is introduced as UX for interfacing with your computer)
+Somewhere else in the docs goose CLI is introduced as UX for interfacing with your computer: [AI page](/ai)
 
 - goosecli with linux-mcp-server comes up
 - onboarding process
