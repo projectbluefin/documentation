@@ -10,6 +10,8 @@ This does not exist yet, it's here to document how we expect the feature to work
 
 Bluefin features automated troubleshooting tools to help find problems with your system. In the menu select "Ask Bluefin":
 
+(Somewhere else in the docs goose CLI is introduced as UX for interfacing with your computer)
+
 - goosecli with linux-mcp-server comes up
 - onboarding process
 - Select whatever combo of commercial and local AI they can via goose's providers
