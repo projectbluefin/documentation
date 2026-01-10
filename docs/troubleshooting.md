@@ -4,38 +4,73 @@ slug: /troubleshooting
 unlisted: true
 ---
 
-# Troubleshooting
-
-This page provides solutions to common issues you may encounter with Bluefin.
-
 :::info
-This is a work in progress. More troubleshooting guides will be added over time.
+This does not exist yet, it's here to document how we expect the feature to work. This is also only documented the tooling we're shipping, not a general troubleshooting guide. This is a rework of 
 :::
 
-## Common Issues
+Bluefin features automated troubleshooting tools to help find problems with your system. In the menu select "Ask Bluefin":
 
-### Issue Category 1
+> (Things in quotes are notes) - goosecli with linux-mcp-server comes up
+> onboarding process we automate, user can select whatever combo of commercial and local AI they can via goose's providers
 
-Description and solution to be added.
+Now that Ask Bluefin is setup it can automate tasks for you like "Manually update this computer for me."
 
-### Issue Category 2
+> Some other common examples
 
-Description and solution to be added.
+### Automated Troubleshooting
 
-## Getting Help
 
-If you're experiencing an issue not covered here:
+> This is an inline copy of the [cheatsheet](https://github.com/rhel-lightspeed/linux-mcp-server/blob/main/docs/cheatsheet.md) from upstream for now, but you get the idea:
 
-1. Check the [FAQ](/FAQ) for common questions
-2. Visit our [community support channels](https://universal-blue.discourse.group/)
-3. Search existing [GitHub issues](https://github.com/ublue-os/bluefin/issues)
-4. Create a new issue if your problem hasn't been reported
+## 🏥 System Health
 
-## Reporting Bugs
+| I want to check... | Use this tool | Example Prompt |
+|-------------------|---------------|----------------|
+| **OS / Kernel** | `get_system_information` | "What OS version is this?" |
+| **CPU Load** | `get_cpu_information` | "Is the CPU overloaded?" |
+| **Memory / RAM** | `get_memory_information` | "How much free RAM do I have?" |
+| **Disk Space** | `get_disk_usage` | "Are any disks full?" |
+| **Hardware** | `get_hardware_information` | "List the PCI devices." |
 
-When reporting bugs, include:
+## 🔍 Troubleshooting
 
-- Your Bluefin version (`rpm-ostree status`)
-- Hardware specifications
-- Steps to reproduce the issue
-- Any relevant error messages or logs
+| I want to check... | Use this tool | Example Prompt |
+|-------------------|---------------|----------------|
+| **Running Apps** | `list_processes` | "What's using the most CPU?" |
+| **Process Details** | `get_process_info` | "Inspect process ID 1234." |
+| **Services** | `list_services` | "Are all services running?" |
+| **Service Status** | `get_service_status` | "Why did nginx fail?" |
+| **System Logs** | `get_journal_logs` | "Show errors from the last hour." |
+| **Service Logs** | `get_service_logs` | "Show recent logs for sshd." |
+| **Specific Log File** | `read_log_file` | "Read the last 50 lines of /var/log/messages." |
+
+## 🌐 Network
+
+| I want to check... | Use this tool | Example Prompt |
+|-------------------|---------------|----------------|
+| **IP Addresses** | `get_network_interfaces` | "What is my IP address?" |
+| **Open Ports** | `get_listening_ports` | "What ports are open?" |
+| **Connections** | `get_network_connections` | "Who is connected to port 22?" |
+
+## 📂 Files & Storage
+
+| I want to check... | Use this tool | Example Prompt |
+|-------------------|---------------|----------------|
+| **Disk Partitions** | `list_block_devices` | "Show me the partition layout." |
+| **Large Folders** | `list_directories` | "Find the largest folders in /var." |
+| **Recent Changes** | `list_files` | "What files in /etc changed recently?" |
+
+## 💡 Pro Tips
+
+- **Combine Tools:** You don't need to ask for one thing at a time.
+  > "Check CPU usage and show me the top 5 processes."
+  
+- **Filter Logs:** Be specific with time and priority to save context window.
+  > "Show me `error` priority logs from the last `30 minutes`."
+
+- **Remote Hosts:** If you configured SSH, just ask to run on a specific host.
+  > "Check disk usage on `webserver1`."
+
+
+
+
