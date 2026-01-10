@@ -20,7 +20,7 @@ Bluefin's focus in AI is providing a generic API endpoint to the operating syste
 - GPU Acceleration for both Nvidia and AMD are included out of the box and usually do not require any extra setup
 - [Goose](https://block.github.io/goose/) as the primary interface to hosted and local models - we strive to align with the [Agentic AI Foundation](https://aaif.io/) and the tools they recommend
 - Local LLM service management
-- A great reason to [sell more swag](https://store.projectbluefin.io).
+- A great reason to [sell more swag](https://store.projectbluefin.io)
 
 We work closely with the [RHEL Lightspeed team](https://github.com/rhel-lightspeed) by shipping their code, giving feedback, and pushing the envelope where we can. 
 
