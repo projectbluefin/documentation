@@ -31,6 +31,7 @@ You can ask the tool things about your system using natural language:
 
 
 ### 🏥 System Health
+Note: these are taken from the linux-server-mcp page but you get the idea:
 
 | I want to check... | Use this tool | Example Prompt |
 |-------------------|---------------|----------------|
