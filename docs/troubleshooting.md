@@ -25,7 +25,7 @@ Now that Ask Bluefin is setup it can automate tasks for you like "Manually updat
 
 You can ask the tool things about your system using natural language: 
 
-![troubleshooting](https://github.com/user-attachments/assets/0ca8873d-a0d4-4822-b4a9-6486588bdbbd)
+![Top CPU usage](https://github.com/user-attachments/assets/537d5f2c-0a84-460d-b936-ae699376a1d7)
 
 
 ## 🏥 System Health
@@ -77,6 +77,7 @@ You can ask the tool things about your system using natural language:
 - **Remote Hosts:** If you configured SSH, just ask to run on a specific host.
   > "Check disk usage on `webserver1`."
 
+![troubleshooting](https://github.com/user-attachments/assets/0ca8873d-a0d4-4822-b4a9-6486588bdbbd)
 
 
 
