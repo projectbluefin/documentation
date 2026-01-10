@@ -99,3 +99,10 @@ Bluefin binds `Ctrl`-`Alt`-`Backspace` as a quicklaunch for Alpaca automatically
 ![Alpaca](/img/user-attachments/104c5263-5d34-497a-b986-93bb0a41c23e.png)
 
 ![image](/img/user-attachments/9fd38164-e2a9-4da1-9bcd-29e0e7add071.png)
+
+
+## Automated Troubleshooting (WIP)
+
+Bluefin ships with automated troubleshooting tools:
+
+- [Work in progress](https://docs.projectbluefin.io/troubleshooting/)
