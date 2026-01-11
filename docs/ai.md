@@ -5,21 +5,23 @@ slug: /ai
 
 ## Methodology
 
-Bluefin was brought to life by [Jacob Schnurr](https://www.etsy.com/shop/JSchnurrCommissions) and [Andy Frazer](https://www.etsy.com/uk/shop/dragonsofwales). The artwork is free for you to use. It represents the delicate balance of life and is there to remind us that open source is an ecosystem that needs to be sustained. The software we make has an effect on the world: Bluefin might be put together by technology nerds, but it took two humans to show us the importance of the creativity of the human mind.
+Bluefin was created by engineers, but was brought to life by [Jacob Schnurr](https://www.etsy.com/shop/JSchnurrCommissions) and [Andy Frazer](https://www.etsy.com/uk/shop/dragonsofwales). The artwork is free for you to use and will always be made by humans. It is there to remind us that open source is an ecosystem that needs to be sustained. The software we make has an effect on the world. Bluefin's AI integration will always be user controlled, with a focus on open source models and tools. 
 
 :::tip[AI is an extension of cloud native]
 
-Bluefin's focus in AI is providing a generic API endpoint to the operating system that is controlled by the user. Similar to how Bluefin ships `podman`, we feel that `ramalama` and other great open source tools can be used for many useful purposes. Bluefin's AI integration will always be local-first and user controlled.
-
+Bluefin's focus in AI is providing a generic API endpoint to the operating system that is controlled by the user. Similar to how Bluefin ships `podman`, we feel that `ramalama` and other great open source tools can be used for many useful purposes.
 :::
 
 ## Bluespeed
 
-"Bluespeed" is our collection of Bluefin's [developer experience](/bluefin-dx) tools and full support for AI development workflows. We do this via community managed set of tool recommendations and configuration. 
+"Bluespeed" is our collection of Bluefin's [developer experience](/bluefin-dx) tools and support for AI development workflows. We do this via community managed set of tool recommendations and configuration. We believe that the operating system should come with a defined set of AI APIs out of the box. 
 
-- GPU Acceleration for both Nvidia and AMD are included out of the box and usually do not require any extra setup
-- [Goose](https://block.github.io/goose/) as the primary interface to hosted and local models - we strive to align with the [Agentic AI Foundation](https://aaif.io/) and the tools they recommend
+- "Bring your own LLM" aproach, it should be easy to switch between local models and hosted ones
+   - [Goose](https://block.github.io/goose/) as the primary interface to hosted and local models -
+- Accelerate open standards in AI by shipping tools from the [Agentic AI Foundation](https://aaif.io/), [CNCF](https://cncf.io), and other foundations
 - Local LLM service management
+  - Model management via `ramalama` and Docker Model, your choice
+- GPU Acceleration for both Nvidia and AMD are included out of the box and usually do not require any extra setup
 - A great reason to [sell more swag](https://store.projectbluefin.io)
 
 We work closely with the [RHEL Lightspeed team](https://github.com/rhel-lightspeed) by shipping their code, giving feedback, and pushing the envelope where we can. 
