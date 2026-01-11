@@ -14,14 +14,15 @@ Bluefin's focus in AI is providing a generic API endpoint to the operating syste
 
 ## Bluespeed
 
-"Bluespeed" is our collection of Bluefin's [developer experience](/bluefin-dx) tools and support for AI development workflows. We do this via community managed set of tool recommendations and configuration. We believe that the operating system should come with a defined set of AI APIs out of the box. 
+"Bluespeed" is our collection of Bluefin's [developer experience](/bluefin-dx) tools and support for AI development workflows. We do this via community managed set of tool recommendations and configuration. We believe that the operating system should have more API endpoints for AI.  
 
 - "Bring your own LLM" aproach, it should be easy to switch between local models and hosted ones
-   - [Goose](https://block.github.io/goose/) as the primary interface to hosted and local models -
+   - [Goose](https://block.github.io/goose/) as the primary interface to hosted and local models
 - Accelerate open standards in AI by shipping tools from the [Agentic AI Foundation](https://aaif.io/), [CNCF](https://cncf.io), and other foundations
 - Local LLM service management
   - Model management via `ramalama` and Docker Model, your choice
 - GPU Acceleration for both Nvidia and AMD are included out of the box and usually do not require any extra setup
+- Highlight great AI/ML applications on FlatHub in our curated section in the App Store
 - A great reason to [sell more swag](https://store.projectbluefin.io)
 
 We work closely with the [RHEL Lightspeed team](https://github.com/rhel-lightspeed) by shipping their code, giving feedback, and pushing the envelope where we can. 
