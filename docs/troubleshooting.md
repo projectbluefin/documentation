@@ -12,7 +12,10 @@ Bluefin features automated troubleshooting tools to help find problems with your
 
 Somewhere else in the docs goose CLI is introduced as UX for interfacing with your computer: [AI page](/ai)
 
-- goosecli with linux-mcp-server comes up
+- Install the tools `brew install ublue-os/experimental-tap/linux-mcp-server`
+  - This installs linux-mcp-server + the goose client + our config, follow the instructions in the terminal.
+
+- TODO:
 - onboarding process
 - Select whatever combo of commercial and local AI they can via goose's providers
 - Local setup goes to:
