@@ -4,6 +4,9 @@ slug: /troubleshooting
 unlisted: true
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 :::info
 This does not exist yet, it's here to document how we expect the feature to work. This is also only documented the tooling we're shipping, not a general troubleshooting guide.
 :::
@@ -12,7 +15,21 @@ Bluefin features automated troubleshooting tools to help find problems with your
 
 Somewhere else in the docs goose CLI is introduced as UX for interfacing with your computer: [AI page](/ai)
 
-- Install the tools `brew install ublue-os/experimental-tap/linux-mcp-server`
+- Install the tools:
+
+<Tabs groupId="operating-systems">
+  <TabItem value="linux" label="Linux" default>
+    ```bash
+    brew install ublue-os/experimental-tap/linux-mcp-server
+    ```
+  </TabItem>
+  <TabItem value="macos" label="macOS">
+    ```bash
+    brew install ublue-os/experimental-tap/linux-mcp-server
+    ```
+  </TabItem>
+</Tabs>
+
   - This installs linux-mcp-server + the goose client + our config, follow the instructions in the terminal.
 
 - TODO:
