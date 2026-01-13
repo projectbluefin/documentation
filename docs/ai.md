@@ -94,7 +94,7 @@ quay.io/ramalama/rocm                      latest      8875feffdb87  5 days ago 
 
 - Force Vulkan instead of ROCm: `ramalama serve --image quay.io/ramalama/ramalama gpt-oss:latest`
 - Strix Halo users: `ramalama serve --image docker.io/kyuz0/amd-strix-halo-toolboxes:vulkan-radv gpt-oss:latest`
-  - Check out [AMD Strix Halo Llama.cpp Toolboxes](https://github.com/kyuz0/amd-strix-halo-toolboxes) for more information
+  - Check out [AMD Strix Halo Llama.cpp Toolboxes](https://github.com/kyuz0/amd-strix-halo-toolboxes) and [Donato Capitella's channel](https://www.youtube.com/@donatocapitella) for more information
 
 ## Docker Model Runner
 
