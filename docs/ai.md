@@ -9,7 +9,8 @@ Bluefin was created by engineers, but was brought to life by [Jacob Schnurr](htt
 
 :::tip[AI is an extension of cloud native]
 
-Bluefin's focus in AI is providing a generic API endpoint to the operating system that is controlled by the user. Similar to how Bluefin ships `podman`, we feel that `goose-cli`, `ramalama` and other great open source tools can be used to build an API layer for the operating system. 
+Bluefin's focus in AI is providing a generic API endpoint to the operating system that is controlled by the user. Just as Bluefin's operating system is built with [CNCF](https://cncf.io) tech like `bootc` and `podman`, this experience is powered by [Agentic AI Foundation](https://aaif.io/) tech like `goose`. With a strong dash of the open source components that power [RHEL Lightspeed](https://www.redhat.com/en/lightspeed). 
+
 :::
 
 ## Bluespeed
