@@ -84,12 +84,17 @@ Ramalama will automatically pull in anything your host needs to do the workload.
 REPOSITORY                                 TAG         IMAGE ID      CREATED        SIZE
 quay.io/ramalama/rocm                      latest      8875feffdb87  5 days ago     6.92 GB
 ```
-
 ### Integrating with Existing Tools
 
 `ramalama serve` will serve an OpenAI compatible endpoint at `http://0.0.0.0:8080`, you can use this to configure tools that do not support ramalama directly:
 
 ![Newelle](/img/user-attachments/ff079ed5-43af-48fb-8e7b-e5b9446b3bfe.png)
+
+### Other Ramalama tips
+
+- Force Vulkan instead of ROCm: `ramalama serve --image quay.io/ramalama/ramalama gpt-oss:latest`
+- Strix Halo users: `ramalama serve --image docker.io/kyuz0/amd-strix-halo-toolboxes:vulkan-radv gpt-oss:latest`
+  - Check out [AMD Strix Halo Llama.cpp Toolboxes](https://github.com/kyuz0/amd-strix-halo-toolboxes) for more information
 
 ## Docker Model Runner
 
