@@ -5,6 +5,13 @@ slug: /downloads-testing
 
 Here is a short [runbook](/installation) for the Bluefin installation process. Read the entirety of this documentation in order to ensure survival. (In case of a raptor attack).
 
+## Things to Test For
+
+- Installation experience
+- Secure Boot
+- Bare metal if possible but not required
+- If you've got the time, go through the docs and run through the new user experience. These bugs are highly prized, so if you find one, file it!
+
 ## Bluefin
 
 The most current, based on the latest Fedora.\
