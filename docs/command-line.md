@@ -35,7 +35,7 @@ The following applications are installed when you run `ujust bluefin-cli`:
 
 | Name                                                                  | Description                                                           |
 | --------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| [atuin](https://formulae.brew.sh/formula/atuin)                       | Improved shell history for zsh, bash, fish and nushell                |
+| [atuin](https://formulae.brew.sh/formula/atuin)                       | Improved shell history for zsh, bash, fish and nushell (Off by default) |
 | [bat](https://formulae.brew.sh/formula/bat)                           | Clone of cat(1) with syntax highlighting and Git integration          |
 | [bash-preexec](https://formulae.brew.sh/formula/bash-preexec)         | Bash preexec and precmd functions à la Zsh                            |
 | [bbrew](https://formulae.brew.sh/formula/bbrew)                       | TUI for Homebrew package management                                   |
