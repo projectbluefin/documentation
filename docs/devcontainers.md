@@ -7,6 +7,8 @@ slug: /devcontainers
 
 Dev Containers provide a consistent, reproducible development environment using containerization. This guide helps you get started with Dev Containers in Visual Studio Code on Bluefin. This is an opinionated configuration, some users may prefer to just use Podman/Docker directly. 
 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/kPMA9cnpScU?si=mGWgdLPbl-wWujc8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ## What are Devcontainers?
 
 Dev Containers allow you to use a Docker container as a full-featured development environment. Your entire development environment - including tools, runtime, dependencies, extensions, and settings - is defined in configuration files that can be versioned and shared with your team.
