@@ -95,6 +95,12 @@ quay.io/ramalama/rocm                      latest      8875feffdb87  5 days ago 
 - Force Vulkan instead of ROCm: `ramalama serve --image quay.io/ramalama/ramalama gpt-oss:latest`
 - Strix Halo users: `ramalama serve --image docker.io/kyuz0/amd-strix-halo-toolboxes:vulkan-radv gpt-oss:latest`
   - Check out [AMD Strix Halo Llama.cpp Toolboxes](https://github.com/kyuz0/amd-strix-halo-toolboxes) and [Donato Capitella's channel](https://www.youtube.com/@donatocapitella) for more information
+ 
+### Running AI Agents in VS Code
+
+Here is an example of using devcontainers to run agents inside containers for isolation: 
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/w3kI6XlZXZQ?si=5pygGs5E_Qedf-S8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ## Docker Model Runner
 
