@@ -9,8 +9,10 @@ Here is a short [runbook](/installation) for the Bluefin installation process. R
 
 - Installation experience
 - Secure Boot
+- First run experience, check a few applications and the Bazaar app store
 - Bare metal if possible but not required
-- If you've got the time, go through the docs and run through the new user experience. These bugs are highly prized, so if you find one, file it!
+- If you've got the time, go through the docs and run through the new user experience step by step. These bugs are highly prized, so if you find one, file it!
+- File issues in the [@projectbluefin/iso repository](https://github.com/projectbluefin/iso/issues)
 
 ## Bluefin
 
