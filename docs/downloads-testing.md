@@ -22,16 +22,6 @@ The most current, based on the latest Fedora.\
 | Bluefin | AMD/Intel | [📥 bluefin-stable-x86_64.iso](https://projectbluefin.dev/bluefin-stable-x86_64.iso)                         | [🔐 Verify](https://projectbluefin.dev/bluefin-stable-x86_64.iso-CHECKSUM)             |
 | Bluefin | Nvidia    | [📥 bluefin-nvidia-open-stable-x86_64.iso](https://projectbluefin.dev/bluefin-nvidia-open-stable-x86_64.iso) | [🔐 Verify](https://projectbluefin.dev/bluefin-nvidia-open-stable-x86_64.iso-CHECKSUM) |
 
-## Bluefin GTS
-
-The default experience for users, following the previous stable release of Fedora.\
-📖 **[Read the documentation](/introduction)** to learn about features and differences.
-
-| Version     | GPU       | Download                                                                                               | Checksum                                                                            |
-| ----------- | --------- | ------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------- |
-| Bluefin GTS | AMD/Intel | [📥 bluefin-gts-x86_64.iso](https://projectbluefin.dev/bluefin-gts-x86_64.iso)                         | [🔐 Verify](https://projectbluefin.dev/bluefin-gts-x86_64.iso-CHECKSUM)             |
-| Bluefin GTS | Nvidia    | [📥 bluefin-nvidia-open-gts-x86_64.iso](https://projectbluefin.dev/bluefin-nvidia-open-gts-x86_64.iso) | [🔐 Verify](https://projectbluefin.dev/bluefin-nvidia-open-gts-x86_64.iso-CHECKSUM) |
-
 ## Bluefin LTS
 
 The long term support experience.\
