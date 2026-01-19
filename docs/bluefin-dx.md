@@ -47,6 +47,8 @@ Each project includes a declarative environment intended to start the user with 
 
 Homebrew can also be used to install development tools. However, it is recommended to avoid that and declare the project's dependencies in version control. It's so convenient sometimes, [it's okay](https://www.youtube.com/shorts/lKwavoyaaFA).
 
+Mise is similar to Homebrew, but includes the ability to install specific versions of applications (such as node 20 in one project, and node 21 in another). You can use the `mise.toml` file in your project to keep track of what specific tools you require. [These can also be installed globally just like homebrew](https://mise.jdx.dev/configuration.html#global-config-config-mise-config-toml)
+
 You can always use whatever you want. You do not need to use everything in here in order to be productive -- at the end of the day it's your computer and this is a set of defaults.
 
 # Enabling Developer Mode
