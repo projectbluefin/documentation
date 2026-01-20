@@ -137,16 +137,11 @@ The JetBrains blog also has more information on JetBrains Dev Containers support
 
 - [Using Dev Containers in JetBrains IDEs – Part 1](https://blog.jetbrains.com/idea/2024/07/using-dev-containers-in-jetbrains-ides-part-1/)
 
-DevPod also has support for JetBrains:
-
-- [DevPod Quickstart JetBrains](https://devpod.sh/docs/getting-started/quickstart-jetbrains)
-
 ## Neovim
 
 `brew install neovim devcontainer` then follow these directions for a devcontainer setup:
 
 - [Running Neovim with Devcontainers](https://cadu.dev/running-neovim-on-devcontainers/)
-- [DevPod Quickstart for Neovim](https://devpod.sh/docs/getting-started/quickstart-vim)
 
 ## Virtualization and Container Runtimes
 
