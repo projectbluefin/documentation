@@ -47,6 +47,8 @@ Each project includes a declarative environment intended to start the user with 
 
 Homebrew can also be used to install development tools. However, it is recommended to avoid that and declare the project's dependencies in version control. It's so convenient sometimes, [it's okay](https://www.youtube.com/shorts/lKwavoyaaFA).
 
+Mise is a tool that allows you to install specific versions of applications for a project, (such as node 20 in one project, and node 21 in another). You can use the `mise.toml` file in your repository to keep track of what specific tools you require. [These can also be installed globally](https://mise.jdx.dev/configuration.html#global-config-config-mise-config-toml). This can be used similar to devcontainers, but does not require you to switch into a container to use it.
+
 You can always use whatever you want. You do not need to use everything in here in order to be productive -- at the end of the day it's your computer and this is a set of defaults.
 
 # Enabling Developer Mode
@@ -135,16 +137,11 @@ The JetBrains blog also has more information on JetBrains Dev Containers support
 
 - [Using Dev Containers in JetBrains IDEs – Part 1](https://blog.jetbrains.com/idea/2024/07/using-dev-containers-in-jetbrains-ides-part-1/)
 
-DevPod also has support for JetBrains:
-
-- [DevPod Quickstart JetBrains](https://devpod.sh/docs/getting-started/quickstart-jetbrains)
-
 ## Neovim
 
 `brew install neovim devcontainer` then follow these directions for a devcontainer setup:
 
 - [Running Neovim with Devcontainers](https://cadu.dev/running-neovim-on-devcontainers/)
-- [DevPod Quickstart for Neovim](https://devpod.sh/docs/getting-started/quickstart-vim)
 
 ## Virtualization and Container Runtimes
 
