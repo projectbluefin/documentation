@@ -46,6 +46,12 @@ Plans:
 
 **Dependencies:** Phase 1 (requires correct TypeScript configuration)
 
+**Plans:** 1 plan
+
+Plans:
+
+- [ ] 02-01-PLAN.md — Fix FeedData type interface and create data structure types
+
 **Requirements:**
 
 - TYPE-01: src/types/theme.d.ts FeedData interface fixed to match useStoredFeed hook structure
