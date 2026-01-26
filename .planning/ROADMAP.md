@@ -110,6 +110,12 @@ Plans:
 
 **Dependencies:** Phase 3 (requires all components fixed)
 
+**Plans:** 1 plan
+
+Plans:
+
+- [ ] 04-01-PLAN.md — Configure ESLint, formalize Prettier config, validate all quality gates
+
 **Requirements:**
 
 - QUALITY-01: Dead code removed from 17 TypeScript files
