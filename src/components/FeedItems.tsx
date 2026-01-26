@@ -19,6 +19,8 @@ interface VersionChange {
   change: string;
 }
 
+// Local type definitions that match src/types/theme.d.ts
+// These must be kept in sync with the module declaration
 interface FeedItem {
   title: string;
   link:
@@ -39,16 +41,19 @@ interface FeedItem {
 }
 
 interface ParsedFeed {
-  channel?: {
-    item?: FeedItem[];
-  };
+  // RSS feed structure
   rss?: {
     channel?: {
-      item?: FeedItem[];
+      item?: FeedItem | FeedItem[];
     };
   };
+  // Alternative RSS structure
+  channel?: {
+    item?: FeedItem | FeedItem[];
+  };
+  // Atom feed structure
   feed?: {
-    entry?: FeedItem[];
+    entry?: FeedItem | FeedItem[];
   };
 }
 
