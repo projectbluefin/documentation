@@ -1,3 +1,8 @@
+/**
+ * Swizzled to add PageContributors component to documentation page footers.
+ * Displays GitHub contributors for each doc page based on file path.
+ * Original wrapper pattern from Docusaurus theme customization.
+ */
 import React from "react";
 import Footer from "@theme-original/DocItem/Footer";
 import type FooterType from "@theme/DocItem/Footer";
