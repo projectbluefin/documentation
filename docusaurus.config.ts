@@ -31,11 +31,7 @@ const config: Config = {
     locales: ["en"],
   },
 
-  markdown: {
-    mermaid: true,
-  },
-
-  themes: ["@docusaurus/theme-mermaid"],
+  themes: [],
 
   presets: [
     [
@@ -84,18 +80,18 @@ const config: Config = {
         },
       },
     ],
+    [
+      "@easyops-cn/docusaurus-search-local",
+      {
+        hashed: true,
+        docsRouteBasePath: "/",
+        indexBlog: true,
+        indexDocs: true,
+      },
+    ],
   ],
 
   themeConfig: {
-    algolia: {
-      // The application ID provided by Algolia
-      appId: "H1LI1VATRI",
-      // Public API key: it is safe to commit it
-      apiKey: "201fbeeb537ae90f533bedcb5a73230b",
-      indexName: "projectbluefin",
-      contextualSearch: true,
-      searchPagePath: "search",
-    },
     announcementBar: {
       id: "announcement",
       content:

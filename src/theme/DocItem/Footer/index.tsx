@@ -8,17 +8,23 @@ import type { WrapperProps } from "@docusaurus/types";
 type Props = WrapperProps<typeof FooterType>;
 
 export default function FooterWrapper(props: Props): React.ReactElement {
-  const { metadata } = useDoc();
-  const editUrl = metadata.editUrl;
-
-  // Extract file path from edit URL
-  // Example: https://github.com/ublue-os/bluefin-docs/tree/main/docs/installation.md
+  // Safely try to get doc metadata, return basic footer if not in doc context
   let filePath = null;
-  if (editUrl) {
-    const match = editUrl.match(/\/(?:edit|tree)\/[^/]+\/(.+)$/);
-    if (match) {
-      filePath = match[1];
+  try {
+    const { metadata } = useDoc();
+    const editUrl = metadata.editUrl;
+
+    // Extract file path from edit URL
+    // Example: https://github.com/ublue-os/bluefin-docs/tree/main/docs/installation.md
+    if (editUrl) {
+      const match = editUrl.match(/\/(?:edit|tree)\/[^/]+\/(.+)$/);
+      if (match) {
+        filePath = match[1];
+      }
     }
+  } catch (error) {
+    // Not in a doc context, just render basic footer
+    return <Footer {...props} />;
   }
 
   return (

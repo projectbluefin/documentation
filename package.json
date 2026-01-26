@@ -47,6 +47,10 @@
     "prettier": "3.6.2",
     "typescript": "5.9.2"
   },
+  "overrides": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
   "browserslist": {
     "production": [
       ">0.5%",
