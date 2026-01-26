@@ -77,6 +77,12 @@ Plans:
 
 **Dependencies:** Phase 2 (requires correct type definitions)
 
+**Plans:** 1 plan
+
+Plans:
+
+- [ ] 03-01-PLAN.md — Audit swizzled components, verify SSR safety, and remove dead code
+
 **Requirements:**
 
 - COMP-01: TypeScript errors in FeedItems.tsx resolved
@@ -94,7 +100,7 @@ Plans:
 4. All window/localStorage usage is guarded with `typeof window !== 'undefined'` checks
 5. Each of the 3 swizzled components (BlogPostItem, DocItem/Footer) has documented rationale or is removed
 
-**Research Notes:** Fixing type errors and removing dead code. Component priority: FeedItems/PackageSummary → ProjectCard → theme overrides → remaining.
+**Research Notes:** Phase 2 already fixed COMP-01, COMP-02, COMP-03 (type errors resolved). Phase 3 focuses on SSR safety audit, swizzled component cleanup (2 to remove, 1 to document), and dead code removal.
 
 ---
 
