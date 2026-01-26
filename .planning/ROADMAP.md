@@ -16,6 +16,12 @@ Transform the Bluefin documentation site from functional-but-flawed to technical
 
 **Dependencies:** None (foundation phase)
 
+**Plans:** 1 plan
+
+Plans:
+
+- [ ] 01-01-PLAN.md — Configure dependencies with npm overrides and validate foundation
+
 **Requirements:**
 
 - CONFIG-01: React 19 peer dependencies resolved using npm overrides
