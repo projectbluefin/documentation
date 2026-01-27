@@ -16,7 +16,7 @@ See: .planning/MILESTONES.md (v1.0 shipped, v1.1 in progress)
 **Phase:** v1.1 COMPLETE ✅  
 **Plan:** All phases complete (Phase 1: 3/3, Phase 2: 2/2, Phase 3: 2/2)  
 **Status:** PRODUCTION READY - All deliverables verified  
-**Last activity:** 2026-01-27 - Completed Phase 3 Plan 02 (User Documentation & Performance)
+**Last activity:** 2026-01-27 - Completed quick task 001: Remove Bun refs and fix workflow
 
 **Progress:**
 
@@ -93,6 +93,12 @@ See: .planning/MILESTONES.md (v1.0 shipped, v1.1 in progress)
 ### Known Blockers
 
 None currently. Ready to begin Phase 1 planning.
+
+### Quick Tasks Completed
+
+| #   | Description                                                                                    | Date       | Commit  | Directory                                                                                             |
+| --- | ---------------------------------------------------------------------------------------------- | ---------- | ------- | ----------------------------------------------------------------------------------------------------- |
+| 001 | Remove Bun lockfile from workflows and all Bun references, trigger January report regeneration | 2026-01-27 | db2d682 | [001-remove-bun-lockfile-from-workflows-and-a](./quick/001-remove-bun-lockfile-from-workflows-and-a/) |
 
 ### Technical Notes
 
