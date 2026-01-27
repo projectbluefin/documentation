@@ -22,6 +22,7 @@
     "fetch-github-repos": "node scripts/fetch-github-repos.js",
     "fetch-contributors": "node scripts/fetch-contributors.js",
     "fetch-board-data": "node scripts/fetch-board-data.js",
+    "generate-report": "node scripts/generate-report.js",
     "fetch-data": "npm run fetch-feeds && npm run fetch-playlists && npm run fetch-github-profiles && npm run fetch-github-repos && npm run fetch-contributors && npm run fetch-board-data"
   },
   "dependencies": {
