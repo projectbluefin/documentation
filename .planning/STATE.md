@@ -1,7 +1,7 @@
 # Project State: Bluefin Documentation - Weekly Reports Feature
 
-**Last Updated:** 2026-01-26
-**Status:** 🚀 v1.1 MILESTONE STARTED - Weekly Reports Feature
+**Last Updated:** 2026-01-27
+**Status:** 🚀 v1.1 MILESTONE IN PROGRESS - Biweekly Reports Phase 1
 
 ## Project Reference
 
@@ -12,23 +12,21 @@ See: .planning/MILESTONES.md (v1.0 shipped, v1.1 in progress)
 
 ## Current Position
 
-**Milestone:** v1.1 Weekly Reports Feature  
-**Phase:** Ready to plan Phase 1 (Foundation & Data Collection)  
-**Plan:** Not started  
-**Status:** ROADMAP.md and REQUIREMENTS.md created, ready for `/gsd-plan-phase 1`  
-**Last activity:** 2026-01-26 - v1.1 milestone planning complete
+**Milestone:** v1.1 Biweekly Reports Feature  
+**Phase:** 1 of 3 (Automated Report System)  
+**Plan:** 1 of 1 in current phase  
+**Status:** Phase 1 Plan 1 complete  
+**Last activity:** 2026-01-27 - Completed 01-01-PLAN.md (data fetching infrastructure)
 
 **Progress:**
 
 ```
-[    ] Phase 1: Foundation & Data Collection (0%)
-[    ] Phase 2: Display Components (0%)
-[    ] Phase 3: Content Management (0%)
-[    ] Phase 4: Navigation & Discovery (0%)
-[    ] Phase 5: Polish & Documentation (0%)
+[████] Phase 1: Automated Report System (33% - infrastructure ready)
+[    ] Phase 2: Navigation & Discovery (0%)
+[    ] Phase 3: Documentation & Refinement (0%)
 ```
 
-**Overall:** 0/19 requirements complete (0%)
+**Overall:** 1/3 plans complete (33%)
 
 ## Performance Metrics (v1.1 Targets)
 
@@ -53,13 +51,16 @@ See: .planning/MILESTONES.md (v1.0 shipped, v1.1 in progress)
 
 ### Decisions Made
 
-| Date       | Decision                                       | Rationale                                                            | Impact                                        |
-| ---------- | ---------------------------------------------- | -------------------------------------------------------------------- | --------------------------------------------- |
-| 2026-01-26 | Hybrid weekly reports model (auto + manual)    | Combine automated metrics with manual narrative for best UX          | Weekly reports provide data AND storytelling  |
-| 2026-01-26 | Markdown-based reports (similar to blog posts) | Leverage existing Docusaurus patterns for consistency                | Authors use familiar frontmatter format       |
-| 2026-01-26 | Build-time data fetching for weekly activity   | Follow existing pattern (feeds, playlists, profiles)                 | Consistent architecture, no runtime API calls |
-| 2026-01-26 | 5-phase sequential roadmap                     | Each phase builds on previous (foundation → display → content → nav) | Clear dependencies, prevents rework           |
-| 2026-01-26 | File naming: YYYY-week-NN.md                   | Standard ISO week numbering for clarity                              | Easy to sort chronologically, unambiguous     |
+| Date       | Decision                                       | Rationale                                                            | Impact                                                         |
+| ---------- | ---------------------------------------------- | -------------------------------------------------------------------- | -------------------------------------------------------------- |
+| 2026-01-26 | Hybrid weekly reports model (auto + manual)    | Combine automated metrics with manual narrative for best UX          | Weekly reports provide data AND storytelling                   |
+| 2026-01-26 | Markdown-based reports (similar to blog posts) | Leverage existing Docusaurus patterns for consistency                | Authors use familiar frontmatter format                        |
+| 2026-01-26 | Build-time data fetching for weekly activity   | Follow existing pattern (feeds, playlists, profiles)                 | Consistent architecture, no runtime API calls                  |
+| 2026-01-26 | 5-phase sequential roadmap                     | Each phase builds on previous (foundation → display → content → nav) | Clear dependencies, prevents rework                            |
+| 2026-01-26 | File naming: YYYY-week-NN.md                   | Standard ISO week numbering for clarity                              | Easy to sort chronologically, unambiguous                      |
+| 2026-01-27 | Static label mapping vs. API fetching          | Fast, no API calls, colors from projectbluefin/common                | Phase 1 uses static mapping, can add refresh script later      |
+| 2026-01-27 | Bot detection with regex patterns              | Filter bots BEFORE updating history to prevent contamination         | Clean contributor tracking, separate bot activity reporting    |
+| 2026-01-27 | JSON file for contributor history              | Gitignored, persists via checkout action, simple structure           | Historical tracking without database, no external dependencies |
 
 ### Active TODOs
 
@@ -100,25 +101,20 @@ None currently. Ready to begin Phase 1 planning.
 **Architecture for v1.1:**
 
 ```
-weekly-reports/              # Manual markdown content
-├── YYYY-week-NN.md          # Individual reports
-└── authors.yaml             # Author attribution
+reports/                     # Docusaurus blog instance for biweekly reports
+├── YYYY-MM-DD-report.md     # Generated report files
+└── authors.yaml             # Empty or system-generated
+
+scripts/lib/                 # ✅ COMPLETE (Phase 1 Plan 1)
+├── graphql-queries.js       # Projects V2 GraphQL queries
+├── label-mapping.js         # Static label colors & categories
+└── contributor-tracker.js   # Historical contributor tracking
 
 scripts/
-└── fetch-weekly-data.js     # Aggregates weekly metrics
+└── generate-report.js       # TODO: Main report generator (Phase 1 Plan 2-3)
 
 static/data/
-└── weekly-activity.json     # Auto-generated (gitignored)
-
-src/
-├── types/
-│   └── weekly-reports.d.ts  # TypeScript interfaces
-├── components/
-│   ├── WeeklyActivity.tsx   # Metrics widget
-│   ├── WeeklyReportCard.tsx # Report preview
-│   └── WeeklySummary.tsx    # Week-over-week comparison
-└── pages/
-    └── weekly-reports.tsx   # Main listing page
+└── contributors-history.json # Auto-generated (gitignored)
 ```
 
 **Data Sources:**
@@ -133,10 +129,10 @@ src/
 
 ### Last Session
 
-**Session:** 2026-01-26  
-**Stopped at:** v1.1 milestone planning complete (ROADMAP.md, REQUIREMENTS.md created)  
-**Resume with:** `/gsd-plan-phase 1` to begin Phase 1 (Foundation & Data Collection)  
-**Commits:** None yet (planning documents uncommitted, in branch `gsd/milestone-v1.1-weekly-reports`)
+**Session:** 2026-01-27  
+**Stopped at:** Completed 01-01-PLAN.md (data fetching infrastructure)  
+**Resume with:** Continue Phase 1 with next plan (report generation script)  
+**Commits:** 4 task commits + 1 metadata commit in branch `gsd/milestone-v1.1-weekly-reports`
 
 ### Next Steps
 
@@ -183,5 +179,5 @@ npm run build
 
 ---
 
-_State updated: 2026-01-26 for v1.1 milestone_  
-_Ready for phase planning_
+_State updated: 2026-01-27 after completing Phase 1 Plan 1_  
+_Ready for next plan in Phase 1_
