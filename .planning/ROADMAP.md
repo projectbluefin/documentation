@@ -105,7 +105,9 @@ Plans:
 
 ### Phase 3: Documentation & Refinement (1 day)
 
-**Goal:** Document the system for maintainers and refine automation
+**Goal:** Document the system for maintainers and refine automation  
+**Status:** Planned  
+**Plans:** 2 plans (2 waves)
 
 **Delivers:**
 
@@ -119,10 +121,16 @@ Plans:
 
 - `AGENTS.md` (updated with reports section)
 - `docs/reports.md` (new, user documentation)
-- `.github/workflows/biweekly-report.yml` (refined error handling)
-- `scripts/generate-biweekly-report.js` (improved logging)
+- `.github/workflows/biweekly-reports.yml` (refined error handling)
+- `scripts/generate-report.js` (improved logging)
+- `scripts/lib/graphql-queries.js` (retry logic, rate limit detection)
 
 **Dependencies:** Phase 2 (full feature deployed)
+
+Plans:
+
+- [ ] 03-01-PLAN.md — Developer docs & error handling (Wave 1)
+- [ ] 03-02-PLAN.md — User docs & performance validation (Wave 2)
 
 **Success Criteria:**
 
