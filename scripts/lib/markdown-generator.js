@@ -1,12 +1,12 @@
 /**
- * Markdown generation for biweekly reports
+ * Markdown generation for monthly reports
  *
  * Generates formatted markdown matching reference format
  * Reference: https://github.com/projectbluefin/common/issues/166
  * Pattern from RESEARCH.md (lines 603-652)
  */
 
-import { format, getISOWeek } from "date-fns";
+import { format } from "date-fns";
 import {
   LABEL_CATEGORIES,
   LABEL_COLORS,
@@ -32,29 +32,40 @@ export function generateReportMarkdown(
   startDate,
   endDate,
 ) {
+  // Extract year and month from startDate in UTC
+  const year = startDate.getUTCFullYear();
+  const month = startDate.getUTCMonth(); // 0-indexed
+  const monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+  const monthYear = `${monthNames[month]} ${year}`;
   const dateStr = format(endDate, "yyyy-MM-dd");
-  const startStr = format(startDate, "yyyy-MM-dd");
 
   // Generate frontmatter with MDX import for new contributors
   const frontmatter = `---
-title: "Biweekly Report: ${startStr} to ${dateStr}"
+title: "Monthly Report: ${monthYear}"
 date: ${dateStr}
-tags: [biweekly-report, project-activity]
+tags: [monthly-report, project-activity]
 ---
 
 ${newContributors.length > 0 ? "import GitHubProfileCard from '@site/src/components/GitHubProfileCard';\n" : ""}
 `;
 
-  // Calculate ISO week numbers for the report period
-  const startWeek = getISOWeek(startDate);
-  const endWeek = getISOWeek(endDate);
-  const weeksDisplay =
-    startWeek === endWeek ? `${startWeek}` : `${startWeek} and ${endWeek}`;
-
   // Generate summary section
   const summary = `# Summary
 
-- **Weeks:** ${weeksDisplay}
+- **Month:** ${monthYear}
 - **Items completed:** ${completedItems.length}
 - **Contributors:** ${contributors.length}
 - **New contributors:** ${newContributors.length}

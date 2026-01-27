@@ -1,24 +1,16 @@
 #!/usr/bin/env node
 /**
- * Biweekly report generation script
+ * Monthly report generation script
  *
  * Fetches project board data, generates formatted markdown report, and writes to reports/ directory
- * Runs every other Monday (biweekly schedule)
+ * Runs on the first Monday of each month
  */
 
 import { fetchProjectItems, filterByStatus } from "./lib/graphql-queries.js";
 import { updateContributorHistory, isBot } from "./lib/contributor-tracker.js";
 import { generateReportMarkdown } from "./lib/markdown-generator.js";
 import { getCategoryForLabel } from "./lib/label-mapping.js";
-import {
-  subWeeks,
-  startOfDay,
-  endOfDay,
-  format,
-  getISOWeek,
-  parseISO,
-  isWithinInterval,
-} from "date-fns";
+import { format, parseISO, isWithinInterval } from "date-fns";
 import { writeFile } from "fs/promises";
 
 /**
@@ -41,15 +33,24 @@ const github = {
 };
 
 /**
- * Calculate report window
- * Pattern 4 from RESEARCH.md (lines 273-294)
+ * Calculate report window for previous month (UTC)
  *
  * @returns {{startDate: Date, endDate: Date}} Report window
  */
 function calculateReportWindow() {
-  const reportDate = new Date(); // Today (Monday when workflow runs)
-  const endDate = endOfDay(subWeeks(reportDate, 0)); // Sunday night before Monday
-  const startDate = startOfDay(subWeeks(reportDate, 2)); // 2 weeks ago
+  const now = new Date();
+  const year = now.getUTCFullYear();
+  const month = now.getUTCMonth() - 1; // Previous month
+
+  // Handle January (month 0) -> go to December of previous year
+  const reportYear = month < 0 ? year - 1 : year;
+  const reportMonth = month < 0 ? 11 : month;
+
+  // Simple: first day to last day of the month, UTC
+  const startDate = new Date(Date.UTC(reportYear, reportMonth, 1));
+  const endDate = new Date(
+    Date.UTC(reportYear, reportMonth + 1, 0, 23, 59, 59, 999),
+  );
 
   return { startDate, endDate };
 }
@@ -72,7 +73,10 @@ function isInReportWindow(item, window) {
   }
 
   const itemDate = parseISO(statusField.updatedAt);
-  return isWithinInterval(itemDate, window);
+  return isWithinInterval(itemDate, {
+    start: window.startDate,
+    end: window.endDate,
+  });
 }
 
 /**
@@ -112,7 +116,7 @@ function aggregateBotActivity(botItems) {
  * Main report generation function
  */
 async function generateReport() {
-  log.info("=== Biweekly Report Generator ===");
+  log.info("=== Monthly Report Generator ===");
 
   // Check for GITHUB_TOKEN
   if (!process.env.GITHUB_TOKEN && !process.env.GH_TOKEN) {
@@ -124,20 +128,10 @@ async function generateReport() {
     process.exit(1);
   }
 
-  // Biweekly schedule check (RESEARCH.md Pitfall 6, lines 496-506)
-  const currentWeek = getISOWeek(new Date());
-  if (currentWeek % 2 !== 0) {
-    log.info(`Skipping report generation (odd week ${currentWeek})`);
-    log.info("Reports are generated on even-numbered ISO weeks");
-    process.exit(0);
-  }
-
-  log.info(`Running report for ISO week ${currentWeek}`);
-
-  // Calculate report window
+  // Calculate report window (previous month)
   const { startDate, endDate } = calculateReportWindow();
   log.info(
-    `Report period: ${format(startDate, "yyyy-MM-dd")} to ${format(endDate, "yyyy-MM-dd")}`,
+    `Report period: ${format(startDate, "MMMM yyyy")} (${format(startDate, "yyyy-MM-dd")} to ${format(endDate, "yyyy-MM-dd")})`,
   );
 
   try {
@@ -151,9 +145,9 @@ async function generateReport() {
     log.info(`Items in "Done" column: ${doneItems.length}`);
 
     // Filter by date range (items updated within window)
-    const itemsInWindow = doneItems.filter((item) =>
-      isInReportWindow(item, { startDate, endDate }),
-    );
+    const itemsInWindow = doneItems
+      .filter((item) => isInReportWindow(item, { startDate, endDate }))
+      .filter((item) => item.content && item.content.title && item.content.url); // Skip items without valid content
     log.info(`Items completed in window: ${itemsInWindow.length}`);
 
     // Handle empty data period
