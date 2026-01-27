@@ -7,7 +7,11 @@
  */
 
 import { format, getISOWeek } from "date-fns";
-import { LABEL_CATEGORIES, generateBadge } from "./label-mapping.js";
+import {
+  LABEL_CATEGORIES,
+  LABEL_COLORS,
+  generateBadge,
+} from "./label-mapping.js";
 
 /**
  * Generate complete report markdown
@@ -64,11 +68,19 @@ ${newContributors.length > 0 ? "import GitHubProfileCard from '@site/src/compone
         categoryName,
         categoryLabels,
       );
-      // Generate inline label badges
+      // Remove emoji from category name (everything before first space after emoji)
+      const cleanCategoryName = categoryName.replace(/^[\p{Emoji}\s]+/u, "");
+      // Generate styled label badges
       const labelBadges = categoryLabels
-        .map((label) => `\`${label}\``)
+        .map((labelName) => {
+          const color = LABEL_COLORS[labelName] || "808080"; // Gray fallback
+          const encodedName = encodeURIComponent(
+            labelName.replace(/_/g, "__").replace(/ /g, "_"),
+          );
+          return `![${labelName}](https://img.shields.io/badge/${encodedName}-${color}?style=flat-square)`;
+        })
         .join(" ");
-      return `## ${categoryName}\n\n${labelBadges}\n\n${section}`;
+      return `## ${cleanCategoryName}\n\n${labelBadges}\n\n${section}`;
     })
     .join("\n\n");
 
@@ -156,7 +168,6 @@ export function generateCategorySection(items, categoryName, categoryLabels) {
 
   Object.entries(labelGroups).forEach(([labelName, entries]) => {
     entries.forEach(({ item, label }) => {
-      const badge = generateBadge(label);
       const type = item.content.__typename === "PullRequest" ? "PR" : "Issue";
       const number = item.content.number;
       const title = item.content.title;
@@ -164,7 +175,8 @@ export function generateCategorySection(items, categoryName, categoryLabels) {
       const author = item.content.author?.login || "unknown";
 
       // Use zero-width space to prevent GitHub notifications
-      const line = `- ${badge} [#${number} ${title}](${url}) by @\u200B${author}`;
+      // No badge needed - items are grouped under section with label badges
+      const line = `- [#${number} ${title}](${url}) by @\u200B${author}`;
       lines.push(line);
     });
   });

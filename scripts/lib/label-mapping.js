@@ -24,12 +24,20 @@ export const LABEL_COLORS = {
   "area/policy": "BFD4F2",
   "area/iso": "8B4513",
   "area/upstream": "C2E0C6",
+  "area/flatpak": "8B5CF6",
+  "area/hardware": "F59E0B",
+  "area/nvidia": "76B900",
+  "area/testing": "FBBF24",
 
   // Kind labels
   "kind/bug": "D93F0B",
   "kind/enhancement": "A2EEEF",
   "kind/documentation": "0075CA",
   "kind/tech-debt": "FEF2C0",
+  "kind/automation": "BFD4F2",
+  "kind/github-action": "2088FF",
+  "kind/parity": "D4C5F9",
+  "kind/renovate": "1E3A8A",
 
   // Common labels
   "good first issue": "7057FF",
@@ -45,14 +53,23 @@ export const LABEL_COLORS = {
  */
 export const LABEL_CATEGORIES = {
   "🖥️ Desktop": ["area/gnome", "area/aurora", "area/bling"],
-  "🛠️ Development": ["area/dx", "area/buildstream", "area/finpilot"],
-  "📦 Ecosystem": ["area/brew", "area/just", "area/bluespeed"],
+  "🛠️ Development": ["area/dx"],
+  "📦 Ecosystem": ["area/brew", "area/bluespeed", "area/flatpak"],
   "⚙️ System Services & Policies": ["area/services", "area/policy"],
-  "🏗️ Infrastructure": ["area/iso", "area/upstream"],
+  "💻 Hardware": ["area/hardware", "area/nvidia"],
+  "🏗️ Infrastructure": [
+    "area/iso",
+    "area/upstream",
+    "area/buildstream",
+    "area/finpilot",
+    "area/just",
+    "area/testing",
+  ],
   "🔧 Bug Fixes": ["kind/bug"],
   "🚀 Enhancements": ["kind/enhancement"],
   "📚 Documentation": ["kind/documentation"],
   "🧹 Tech Debt": ["kind/tech-debt"],
+  "🤖 Automation": ["kind/automation", "kind/github-action", "kind/renovate"],
 };
 
 /**
