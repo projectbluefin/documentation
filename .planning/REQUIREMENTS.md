@@ -79,24 +79,24 @@ Explicitly excluded. Documented to prevent scope creep.
 
 Which phases cover which requirements. Updated during roadmap creation.
 
-| Requirement | Phase   | Status  |
-| ----------- | ------- | ------- |
-| CONFIG-01   | Phase 1 | Pending |
-| CONFIG-02   | Phase 1 | Pending |
-| CONFIG-03   | Phase 1 | Pending |
-| TYPE-01     | Phase 2 | Pending |
-| TYPE-02     | Phase 2 | Pending |
-| TYPE-03     | Phase 2 | Pending |
-| TYPE-04     | Phase 2 | Pending |
-| COMP-01     | Phase 3 | Pending |
-| COMP-02     | Phase 3 | Pending |
-| COMP-03     | Phase 3 | Pending |
-| COMP-04     | Phase 3 | Pending |
-| COMP-05     | Phase 3 | Pending |
-| COMP-06     | Phase 3 | Pending |
-| QUALITY-01  | Phase 4 | Pending |
-| QUALITY-02  | Phase 4 | Pending |
-| QUALITY-03  | Phase 4 | Pending |
+| Requirement | Phase   | Status   |
+| ----------- | ------- | -------- |
+| CONFIG-01   | Phase 1 | Pending  |
+| CONFIG-02   | Phase 1 | Pending  |
+| CONFIG-03   | Phase 1 | Pending  |
+| TYPE-01     | Phase 2 | Pending  |
+| TYPE-02     | Phase 2 | Pending  |
+| TYPE-03     | Phase 2 | Pending  |
+| TYPE-04     | Phase 2 | Pending  |
+| COMP-01     | Phase 3 | Pending  |
+| COMP-02     | Phase 3 | Pending  |
+| COMP-03     | Phase 3 | Pending  |
+| COMP-04     | Phase 3 | Pending  |
+| COMP-05     | Phase 3 | Pending  |
+| COMP-06     | Phase 3 | Pending  |
+| QUALITY-01  | Phase 4 | Complete |
+| QUALITY-02  | Phase 4 | Complete |
+| QUALITY-03  | Phase 4 | Complete |
 
 **Coverage:**
 
