@@ -72,9 +72,9 @@ Title: feat(04-02): Add CI/CD validation gates
 Added validation gates to GitHub Actions workflow to enforce code quality standards.
 
 ## Changes
-- Added TypeScript validation step (bun run typecheck) - blocking
-- Added ESLint validation step (bun run lint) - blocking
-- Added Prettier check (bun run prettier-lint) - non-blocking
+- Added TypeScript validation step (npm run typecheck) - blocking
+- Added ESLint validation step (npm run lint) - blocking
+- Added Prettier check (npm run prettier-lint) - non-blocking
 
 ## Verification
 - CI workflow runs validation before build

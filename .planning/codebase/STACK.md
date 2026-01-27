@@ -22,9 +22,7 @@
 
 **Package Manager:**
 
-- npm - Local development (with package-lock.json)
-- bun - CI/CD pipeline (specified in `.github/workflows/pages.yml`)
-- Both supported interchangeably
+- npm - Package manager (standard across development and CI/CD)
 
 ## Frameworks
 
@@ -98,7 +96,7 @@
 **Development:**
 
 - Node.js >= 18.0
-- npm or bun package manager
+- npm - Package manager
 - Optional: Docker for containerized development
 - Optional: Just command runner
 
