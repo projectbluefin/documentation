@@ -31,12 +31,14 @@ export function generateReportMarkdown(
   const dateStr = format(endDate, "yyyy-MM-dd");
   const startStr = format(startDate, "yyyy-MM-dd");
 
-  // Generate frontmatter
+  // Generate frontmatter with MDX import for new contributors
   const frontmatter = `---
 title: "Biweekly Report: ${startStr} to ${dateStr}"
 date: ${dateStr}
 tags: [biweekly-report, project-activity]
 ---
+
+${newContributors.length > 0 ? "import GitHubProfileCard from '@site/src/components/GitHubProfileCard';\n" : ""}
 `;
 
   // Generate summary section
@@ -279,10 +281,17 @@ function generateContributorsSection(contributors, newContributors) {
 Thank you to all contributors this period: ${contributorList}`;
 
   if (newContributors.length > 0) {
-    const newList = newContributors
-      .map((username) => `@${username}`)
-      .join(", ");
-    section += `\n\n### 🎉 New Contributors\n\nWelcome to: ${newList}`;
+    section += `\n\n### 🎉 New Contributors\n\nWelcome to our new contributors!\n\n`;
+
+    // Use GitHubProfileCard component for each new contributor
+    const profileCards = newContributors
+      .map(
+        (username) =>
+          `<GitHubProfileCard username="${username}" title="New Contributor" />`,
+      )
+      .join("\n\n");
+
+    section += profileCards;
   }
 
   return section;

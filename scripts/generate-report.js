@@ -182,7 +182,7 @@ async function generateReport() {
     );
 
     // Write to file
-    const filename = `reports/${format(endDate, "yyyy-MM-dd")}-report.md`;
+    const filename = `reports/${format(endDate, "yyyy-MM-dd")}-report.mdx`;
     await writeFile(filename, markdown, "utf8");
 
     console.log(`\n✅ Report generated: ${filename}`);
