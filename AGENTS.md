@@ -442,15 +442,15 @@ npm run start
 # Navigate to /changelogs/ and verify package versions display correctly
 ```
 
-## Biweekly Reports System
+## Monthly Reports System
 
-The biweekly reports system automatically generates transparent, data-driven summaries of completed work, active contributors, and project momentum from the Bluefin Project Board. Reports are published every other Monday (even-numbered ISO weeks) covering the previous two-week period.
+The monthly reports system automatically generates transparent, data-driven summaries of completed work, active contributors, and project momentum from the Bluefin Project Board. Reports are published on the last day of each month covering the entire month's activity.
 
 ### Architecture Overview
 
 **System Components:**
 
-- **GitHub Actions Workflow** (`.github/workflows/biweekly-reports.yml`) - Cron-scheduled automation
+- **GitHub Actions Workflow** (`.github/workflows/monthly-reports.yml`) - Cron-scheduled automation
 - **Data Collection** (`scripts/generate-report.js`) - Main orchestration script
 - **GraphQL Client** (`scripts/lib/graphql-queries.js`) - GitHub Projects V2 API integration
 - **Label Mapping** (`scripts/lib/label-mapping.js`) - Static label colors and categorization
@@ -461,13 +461,11 @@ The biweekly reports system automatically generates transparent, data-driven sum
 **Data Flow:**
 
 ```
-GitHub Actions Cron (every Monday 10:00 UTC)
-  ↓
-Check biweekly schedule (even ISO week?)
+GitHub Actions Cron (monthly on last day)
   ↓
 Fetch project board data (GraphQL API with pagination)
   ↓
-Filter by Status="Done" + date range
+Filter by Status="Done" + date range (entire month)
   ↓
 Separate human contributions from bot activity
   ↓
@@ -496,16 +494,17 @@ Build and deploy via GitHub Pages
 
 **Cron Schedule:**
 
-- Workflow runs every Monday at 10:00 UTC (`cron: "0 10 * * 1"`)
-- Script calculates ISO week number (1-53)
-- Reports generated only on even-numbered weeks (2, 4, 6, ... 52)
-- Odd weeks: Script exits with "Skipping report generation" message
+- Workflow runs on the last day of each month at 10:00 UTC
+- Script calculates month date range (first day to last day)
+- Reports cover entire month's completed items
+- Single report generated per month
 
-**ISO Week Number Calculation:**
+**Date Range Calculation:**
 
-- Uses `date-fns` library `getISOWeek()` function
-- Week 1 starts with first Thursday of year (ISO 8601 standard)
-- Biweekly filter: `currentWeek % 2 !== 0` skips odd weeks
+- Uses `date-fns` library for date manipulation
+- Month boundaries: startOfMonth to endOfMonth
+- Filters items with Status="Done" updated within month range
+- Report filename: YYYY-MM-DD-report.mdx (last day of month)
 
 **Project Board Data Fetching:**
 
@@ -540,17 +539,17 @@ Build and deploy via GitHub Pages
 
 ### File Locations and Purposes
 
-| File Path                                | Purpose                                             |
-| ---------------------------------------- | --------------------------------------------------- |
-| `.github/workflows/biweekly-reports.yml` | GitHub Actions workflow (cron + manual trigger)     |
-| `scripts/generate-report.js`             | Main orchestration script                           |
-| `scripts/lib/graphql-queries.js`         | GraphQL client and Projects V2 queries              |
-| `scripts/lib/label-mapping.js`           | Static label color and category mappings            |
-| `scripts/lib/contributor-tracker.js`     | Historical contributor tracking with bot filtering  |
-| `scripts/lib/markdown-generator.js`      | Report markdown formatting and templates            |
-| `reports/`                               | Generated report blog posts (YYYY-MM-DD-report.mdx) |
-| `static/data/contributors-history.json`  | Auto-generated contributor history (gitignored)     |
-| `docusaurus.config.ts`                   | Multi-blog configuration (`id: 'reports'`)          |
+| File Path                               | Purpose                                             |
+| --------------------------------------- | --------------------------------------------------- |
+| `.github/workflows/monthly-reports.yml` | GitHub Actions workflow (cron + manual trigger)     |
+| `scripts/generate-report.js`            | Main orchestration script                           |
+| `scripts/lib/graphql-queries.js`        | GraphQL client and Projects V2 queries              |
+| `scripts/lib/label-mapping.js`          | Static label color and category mappings            |
+| `scripts/lib/contributor-tracker.js`    | Historical contributor tracking with bot filtering  |
+| `scripts/lib/markdown-generator.js`     | Report markdown formatting and templates            |
+| `reports/`                              | Generated report blog posts (YYYY-MM-DD-report.mdx) |
+| `static/data/contributors-history.json` | Auto-generated contributor history (gitignored)     |
+| `docusaurus.config.ts`                  | Multi-blog configuration (`id: 'reports'`)          |
 
 ### Manual Report Generation
 
@@ -585,8 +584,6 @@ To generate a report locally for testing:
    # Navigate to http://localhost:3000/reports
    ```
 
-**Note:** Manual runs respect biweekly schedule. To bypass odd-week check for testing, comment out lines 108-113 in `scripts/generate-report.js`.
-
 ### Testing Workflow Manually
 
 To test the GitHub Actions workflow without waiting for cron:
@@ -594,7 +591,7 @@ To test the GitHub Actions workflow without waiting for cron:
 1. **Navigate to Actions tab:**
    - Open repository in GitHub
    - Click "Actions" tab
-   - Select "Generate Biweekly Report" workflow
+   - Select "Generate Monthly Report" workflow
 
 2. **Trigger workflow manually:**
    - Click "Run workflow" button (top right)
@@ -619,19 +616,6 @@ To test the GitHub Actions workflow without waiting for cron:
 - Debug issues in clean CI environment
 
 ### Troubleshooting Guide
-
-#### Issue: Script exits with "Skipping report generation (odd week)"
-
-**Cause:** Reports only run on even-numbered ISO weeks (2, 4, 6, ... 52)
-
-**Solution:** This is expected behavior. Next report will generate on following Monday (even week). To override for testing, comment out the biweekly check in `scripts/generate-report.js` lines 108-113.
-
-**Verify current week:**
-
-```bash
-date +%V  # ISO week number
-# If odd (1, 3, 5...), report will skip
-```
 
 #### Issue: "GITHUB_TOKEN or GH_TOKEN environment variable required"
 
@@ -660,7 +644,7 @@ export GH_TOKEN=$(gh auth token)
 - Ensure `GITHUB_TOKEN` is set (authenticated requests have higher limits)
 - In CI, workflow token automatically provides authentication
 
-**GraphQL Points:** Each query uses ~50 points. 5,000 point limit allows ~100 reports/hour (far exceeds biweekly needs).
+**GraphQL Points:** Each query uses ~50 points. 5,000 point limit allows ~100 reports/hour (far exceeds monthly needs).
 
 #### Issue: "Network timeout" or "ECONNRESET"
 
@@ -914,7 +898,7 @@ npm run start
 
 - Each report uses ~50 GraphQL points (query complexity)
 - Rate limit: 5,000 points/hour (authenticated)
-- Capacity: ~100 reports/hour (far exceeds biweekly needs)
+- Capacity: ~100 reports/hour (far exceeds monthly needs)
 - Pagination: 100 items per request (efficient for large projects)
 
 **Optimization Strategies:**
