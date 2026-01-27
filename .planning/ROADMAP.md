@@ -67,29 +67,36 @@
 
 ### Phase 2: Navigation & Discovery (1 day)
 
-**Goal:** Integrate reports into site navigation and enable discoverability
+**Goal:** Integrate reports into site navigation and enable discoverability  
+**Status:** Planned  
+**Plans:** 2 plans (1 wave)
 
 **Delivers:**
 
-- Main navigation link to `/reports`
-- RSS feed configuration (automatic from Docusaurus)
+- Main navigation link to `/reports` ✅ (done in Phase 1)
+- RSS feed configuration (automatic from Docusaurus) ✅ (done in Phase 1)
 - Cross-links with changelogs and blog
 - Search integration verification
 - Mobile navigation testing
 
 **Key Files:**
 
-- `docusaurus.config.ts` (navbar configuration)
-- `src/pages/index.tsx` (optional homepage link)
-- `blog/` posts (cross-link to reports)
-- `docs/changelogs.mdx` (link to reports)
+- `src/pages/changelogs.tsx` (cross-link intro)
+- `scripts/lib/markdown-generator.js` (footer template)
+- `docusaurus.config.ts` (navbar order verification)
+- `reports/` (test report generation)
 
-**Dependencies:** Phase 1 (reports must exist)
+**Dependencies:** Phase 1 (reports must exist) ✅ COMPLETE
+
+Plans:
+
+- [ ] 02-01-PLAN.md — Cross-links & content integration (Wave 1)
+- [ ] 02-02-PLAN.md — Validation & testing (Wave 2)
 
 **Success Criteria:**
 
-- "Reports" link visible in desktop and mobile navigation
-- RSS feed validates at `/reports/rss.xml`
+- "Reports" link visible in desktop and mobile navigation ✅ (done in Phase 1)
+- RSS feed validates at `/reports/rss.xml` ✅ (done in Phase 1)
 - Cross-links function correctly
 - Search returns report results
 - Mobile navigation works correctly
