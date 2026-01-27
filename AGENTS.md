@@ -167,7 +167,7 @@ docker compose up
 docker compose down
 ```
 
-**Note**: The CI/CD pipeline uses `bun` as the package manager, but `npm` is fully supported for local development.
+**Note**: The repository uses `npm` as the package manager for both local development and CI/CD, following standard Docusaurus practices.
 
 ### Repository Structure
 
@@ -284,182 +284,45 @@ git push --force-with-lease
 4. Verify formatting: `npm run prettier-lint` (warnings expected)
 5. Test data fetching: `npm run fetch-data` (or individual scripts)
 
-## Package Management Best Practices
+## Package Management
 
-This repository follows Docusaurus best practices for package management with special handling for dual lockfile support (npm + bun).
-
-### Package Manager Configuration
-
-**Primary Package Manager:** Bun 1.3.6 (enforced in CI/CD)  
-**Secondary Support:** npm (for local development)  
-**Configuration Files:**
-
-- `package.json` - Dependencies and scripts
-- `bun.lockb` - Bun lockfile (committed, used in CI)
-- `package-lock.json` - npm lockfile (committed, local development)
-- `.npmrc` - npm configuration (engine-strict, prefer-offline)
-- `packageManager` field in package.json locks bun version
-
-### Why Dual Lockfiles?
-
-**Problem:** CI uses bun for speed, but developers may prefer npm locally. This causes lockfile drift.
-
-**Solution:** Multi-layered automatic synchronization:
-
-1. **CI Workflow** (`.github/workflows/sync-bun-lockfile.yml`)
-   - Automatically syncs `bun.lockb` when `package-lock.json` changes in PRs
-   - Commits the updated lockfile back to the PR
-   - Zero developer effort required
-
-2. **Pre-commit Hook** (`.githooks/pre-commit`)
-   - Optional: Auto-syncs before commit if bun is installed locally
-   - Enable with: `git config core.hooksPath .githooks`
-
-3. **Documentation** (`.github/BUN-LOCKFILE-SYNC.md`)
-   - Complete guide for troubleshooting and manual sync
-   - Migration paths if standardizing on one package manager
+This repository uses **npm** as the standard package manager for both local development and CI/CD, following official Docusaurus recommendations.
 
 ### Adding Dependencies
-
-**Option A: Using npm (Recommended for local dev)**
 
 ```bash
 npm install package-name
 git add package.json package-lock.json
 git commit -m "feat: add package-name"
 git push
-# CI will auto-sync bun.lockb in PR
 ```
 
-**Option B: Using bun (If you have it installed)**
+### Docusaurus Best Practices
 
-```bash
-bun add package-name
-git add package.json bun.lockb
-git commit -m "feat: add package-name"
-git push
-```
-
-**Option C: Manual sync (If CI workflow unavailable)**
-
-```bash
-npm install package-name
-bun install  # Regenerates bun.lockb
-git add package.json package-lock.json bun.lockb
-git commit -m "feat: add package-name"
-git push
-```
-
-### Lockfile Sync Troubleshooting
-
-**If CI fails with "lockfile had changes, but lockfile is frozen":**
-
-```bash
-# Quick fix - regenerate bun.lockb
-bun install
-git add bun.lockb
-git commit -m "chore: sync bun.lockb"
-git push
-
-# Or let the sync workflow handle it (if enabled)
-# Just push - workflow will auto-commit the fix
-```
-
-**If you don't have bun installed:**
-
-```bash
-# Install bun
-curl -fsSL https://bun.sh/install | bash
-source ~/.bash_profile
-
-# Or just push and let CI handle it
-git push
-# CI will auto-sync and commit to your PR
-```
-
-### Docusaurus-Specific Best Practices
-
-1. **Always commit both lockfiles** - They stay in sync via automation
+1. **Always commit package-lock.json** - Ensures deterministic builds
 2. **Use npm overrides for peer dependencies** - Already configured for React 19
-3. **Engine-strict mode enabled** - Enforces Node.js 18+ requirement
-4. **Prefer offline caching** - Configured in `.npmrc` for faster installs
-5. **lockfile-version 3** - Use npm 7+ format (configured in `.npmrc`)
-
-### packageManager Field (Corepack)
-
-The `package.json` includes:
-
-```json
-{
-  "packageManager": "bun@1.3.6"
-}
-```
-
-This is the **Corepack standard** for locking package manager versions. Benefits:
-
-- Ensures consistent bun version across all environments
-- Corepack automatically downloads correct version if missing
-- Prevents "works on my machine" issues from version drift
-
-**To use Corepack (Node.js 16.9+):**
-
-```bash
-corepack enable
-corepack install
-# Now "bun" command uses exact version from packageManager field
-```
+3. **Use npm ci in CI** - Faster, stricter installs from lockfile
+4. **Never manually edit package-lock.json** - Let npm manage it
 
 ### CI/CD Package Management
 
 **GitHub Actions workflow uses:**
 
-- `oven-sh/setup-bun@v2` action (installs bun)
-- `bun install --frozen-lockfile --production` (fails if lockfile out of sync)
-- Cached dependencies for faster builds
-- Sync workflow auto-fixes lockfile drift in PRs
+- `actions/setup-node@v4` with npm caching
+- `npm ci` for fast, deterministic dependency installation
+- Standard Docusaurus build commands
 
 **Build steps:**
 
-1. Install dependencies (`bun install --frozen-lockfile`)
-2. Run validation (`bun run typecheck`, `bun run lint`)
-3. Fetch build-time data (`bun run fetch-data`)
-4. Build site (`bun run build`)
-
-### When to Update Lockfiles
-
-**Always update lockfiles when:**
-
-- Adding new dependencies (`npm install X` or `bun add X`)
-- Removing dependencies (`npm uninstall X` or `bun remove X`)
-- Updating dependency versions (`npm update` or `bun update`)
-- Changing `package.json` dependencies manually
-
-**Never manually edit lockfiles** - Let package managers generate them
-
-### Verification
-
-After package changes, verify both lockfiles:
-
-```bash
-# Verify npm lockfile
-npm install
-git diff package-lock.json
-# Should show your intended changes
-
-# Verify bun lockfile
-bun install
-git diff bun.lockb
-# Should show corresponding bun changes
-
-# Verify build still works
-npm run build
-# Or: bun run build
-```
+1. Install dependencies (`npm ci`)
+2. Run validation (`npm run typecheck`, `npm run lint`)
+3. Fetch build-time data (`npm run fetch-data`)
+4. Build site (`npm run build`)
 
 ## Dependencies
 
 - **Node.js**: Version 18+ required (see package.json engines field)
-- **Package Managers**: npm supported for local development, bun used in CI/CD
+- **Package Manager**: npm (standard across development and CI/CD)
 - **Docker**: Optional for containerized development
 - **OS**: Works on Linux, macOS, Windows
 - **Network**: Internet connection required for release feed fetching
