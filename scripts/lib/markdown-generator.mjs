@@ -220,18 +220,22 @@ export function generateCategorySectionWithSubsections(
 
   const sections = [];
 
-  // Planned Work subsection
+  // Planned Work subsection (always show, with ChillOps if empty)
   if (planned.length > 0) {
     sections.push(
       `#### 📋 Planned Work\n\n${formatItemList(planned, displayedUrls)}`,
     );
+  } else {
+    sections.push(`#### 📋 Planned Work\n\n> Status: _ChillOps_`);
   }
 
-  // Opportunistic Work subsection
+  // Opportunistic Work subsection (always show, with ChillOps if empty)
   if (opportunistic.length > 0) {
     sections.push(
       `#### ⚡ Opportunistic Work\n\n${formatItemList(opportunistic, displayedUrls)}`,
     );
+  } else {
+    sections.push(`#### ⚡ Opportunistic Work\n\n> Status: _ChillOps_`);
   }
 
   return sections.join("\n\n");
