@@ -349,7 +349,7 @@ function generateContributorsSection(contributors, newContributors) {
   // Section 1: New Contributors (highlighted, shown first)
   if (newContributors.length > 0) {
     section += `## 🌟 New Contributors\n\nWelcome to our new contributors!\n\n`;
-    section += `<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>\n\n`;
+    section += `<div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem', marginBottom: '2rem' }}>\n\n`;
 
     const newContributorCards = newContributors
       .map(
@@ -365,7 +365,7 @@ function generateContributorsSection(contributors, newContributors) {
   // Section 2: All Contributors (without highlight)
   section += `## 👥 Contributors\n\n`;
   section += `Thank you to everyone who contributed this period!\n\n`;
-  section += `<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>\n\n`;
+  section += `<div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem', marginBottom: '2rem' }}>\n\n`;
 
   const allContributorCards = contributors
     .map((username) => `<GitHubProfileCard username="${username}" />`)
