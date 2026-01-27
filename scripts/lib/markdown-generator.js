@@ -153,7 +153,8 @@ export function generateCategorySection(items, categoryName, categoryLabels) {
       const url = item.content.url;
       const author = item.content.author?.login || "unknown";
 
-      const line = `- ${badge} [#${number} ${title}](${url}) by @${author}`;
+      // Use zero-width space to prevent GitHub notifications
+      const line = `- ${badge} [#${number} ${title}](${url}) by @\u200B${author}`;
       lines.push(line);
     });
   });
@@ -189,7 +190,8 @@ function generateUncategorizedSection(items) {
     const url = item.content.url;
     const author = item.content.author?.login || "unknown";
 
-    return `- [#${number} ${title}](${url}) by @${author}`;
+    // Use zero-width space to prevent GitHub notifications
+    return `- [#${number} ${title}](${url}) by @\u200B${author}`;
   });
 
   return `## 📋 Other\n\n${lines.join("\n")}`;
@@ -272,8 +274,9 @@ ${itemsList}
  * @returns {string} Markdown section
  */
 function generateContributorsSection(contributors, newContributors) {
+  // Use zero-width space after @ to prevent GitHub notifications
   const contributorList = contributors
-    .map((username) => `@${username}`)
+    .map((username) => `@\u200B${username}`)
     .join(", ");
 
   let section = `## 👥 Contributors
@@ -283,7 +286,9 @@ Thank you to all contributors this period: ${contributorList}`;
   if (newContributors.length > 0) {
     section += `\n\n### 🎉 New Contributors\n\nWelcome to our new contributors!\n\n`;
 
-    // Use GitHubProfileCard component for each new contributor
+    // Use GitHubProfileCard component for each new contributor in grid (matching donations page style)
+    section += `<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>\n\n`;
+
     const profileCards = newContributors
       .map(
         (username) =>
@@ -292,6 +297,7 @@ Thank you to all contributors this period: ${contributorList}`;
       .join("\n\n");
 
     section += profileCards;
+    section += `\n\n</div>`;
   }
 
   return section;
