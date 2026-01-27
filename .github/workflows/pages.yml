@@ -26,10 +26,13 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76 # v2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
 
       - name: Restore GitHub data cache
-        uses: actions/cache@v4 # v4
+        uses: actions/cache@v4
         with:
           path: static/data
           key: github-data-${{ hashFiles('scripts/fetch-github-*.js') }}-${{ github.run_number }}
@@ -38,12 +41,21 @@ jobs:
             github-data-
 
       - name: Install dependencies
-        run: bun install --frozen-lockfile --production
+        run: npm ci
+
+      - name: Run TypeScript validation
+        run: npm run typecheck
+
+      - name: Run ESLint validation
+        run: npm run lint
+
+      - name: Run Prettier check (warnings only)
+        run: npm run prettier-lint || true
 
       - name: Build website
         env:
           GITHUB_TOKEN: ${{ secrets.PROJECT_READ_TOKEN }}
-        run: bun run build
+        run: npm run build
 
       - name: Upload Build Artifact
         uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4

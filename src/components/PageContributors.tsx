@@ -1,3 +1,7 @@
+/**
+ * SSR-Safe: Uses typeof window checks before accessing localStorage.
+ * Data fetching strategy: build-time JSON → localStorage cache → runtime API fallback
+ */
 import React, { useEffect, useState } from "react";
 import styles from "./PageContributors.module.css";
 import contributorsData from "@site/static/data/file-contributors.json";

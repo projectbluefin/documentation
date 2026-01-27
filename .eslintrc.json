@@ -1,0 +1,43 @@
+{
+  "extends": [
+    "plugin:@docusaurus/recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "plugins": ["@docusaurus", "@typescript-eslint"],
+  "parser": "@typescript-eslint/parser",
+  "env": {
+    "browser": true,
+    "node": true,
+    "es2022": true
+  },
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "project": "./tsconfig.json"
+  },
+  "rules": {
+    "@docusaurus/string-literal-i18n-messages": "warn",
+    "@docusaurus/no-untranslated-text": "off",
+    "@typescript-eslint/no-explicit-any": "warn",
+    "@typescript-eslint/no-empty-function": "warn",
+    "@typescript-eslint/no-var-requires": "warn"
+  },
+  "overrides": [
+    {
+      "files": ["scripts/**/*.js"],
+      "rules": {
+        "@typescript-eslint/no-var-requires": "off"
+      }
+    }
+  ],
+  "ignorePatterns": [
+    "build/",
+    "node_modules/",
+    ".docusaurus/",
+    "static/data/*.json",
+    "static/feeds/*.json"
+  ]
+}

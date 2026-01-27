@@ -1,3 +1,7 @@
+/**
+ * SSR-Safe: Uses typeof window checks before accessing localStorage.
+ * Data fetching strategy: build-time JSON → localStorage cache → runtime API fallback
+ */
 import React, { useEffect, useState } from "react";
 import styles from "./GitHubProfileCard.module.css";
 import profilesData from "@site/static/data/github-profiles.json";
@@ -16,6 +20,7 @@ interface GitHubProfileCardProps {
   username: string;
   title?: string;
   sponsorUrl?: string;
+  highlight?: boolean; // Gold foil effect for new contributors
 }
 
 const CACHE_KEY_PREFIX = "github_profile_";
@@ -52,11 +57,11 @@ class RequestQueue {
     while (this.queue.length > 0) {
       const now = Date.now();
       const timeSinceLastRequest = now - this.lastRequestTime;
-      
+
       // Wait if we're going too fast
       if (timeSinceLastRequest < this.MIN_DELAY) {
-        await new Promise(resolve => 
-          setTimeout(resolve, this.MIN_DELAY - timeSinceLastRequest)
+        await new Promise((resolve) =>
+          setTimeout(resolve, this.MIN_DELAY - timeSinceLastRequest),
         );
       }
 
@@ -76,8 +81,8 @@ const requestQueue = new RequestQueue();
 // Try to detect if we're in a build/SSR context where we might have a token
 const getAuthHeaders = (): HeadersInit => {
   const headers: HeadersInit = {
-    'Accept': 'application/vnd.github.v3+json',
-    'User-Agent': 'Bluefin-Docs',
+    Accept: "application/vnd.github.v3+json",
+    "User-Agent": "Bluefin-Docs",
   };
 
   // In browser context, check for any available auth
@@ -85,7 +90,7 @@ const getAuthHeaders = (): HeadersInit => {
     // Check if there's a token in window (could be injected by build process)
     const token = (window as any).GITHUB_TOKEN;
     if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
+      headers["Authorization"] = `Bearer ${token}`;
     }
   }
 
@@ -94,26 +99,27 @@ const getAuthHeaders = (): HeadersInit => {
 
 const fetchGitHubProfile = async (username: string): Promise<GitHubUser> => {
   return requestQueue.add(async () => {
-    const response = await fetch(
-      `https://api.github.com/users/${username}`,
-      { headers: getAuthHeaders() }
-    );
-    
+    const response = await fetch(`https://api.github.com/users/${username}`, {
+      headers: getAuthHeaders(),
+    });
+
     if (!response.ok) {
       // Check if we hit rate limit
-      const remaining = response.headers.get('X-RateLimit-Remaining');
-      const resetTime = response.headers.get('X-RateLimit-Reset');
-      
-      if (response.status === 403 && remaining === '0') {
-        const resetDate = resetTime ? new Date(parseInt(resetTime) * 1000) : new Date();
+      const remaining = response.headers.get("X-RateLimit-Remaining");
+      const resetTime = response.headers.get("X-RateLimit-Reset");
+
+      if (response.status === 403 && remaining === "0") {
+        const resetDate = resetTime
+          ? new Date(parseInt(resetTime) * 1000)
+          : new Date();
         throw new Error(
-          `GitHub API rate limit exceeded. Resets at ${resetDate.toLocaleTimeString()}`
+          `GitHub API rate limit exceeded. Resets at ${resetDate.toLocaleTimeString()}`,
         );
       }
-      
+
       throw new Error(`GitHub API returned ${response.status}`);
     }
-    
+
     const data = await response.json();
     return {
       login: data.login,
@@ -131,6 +137,7 @@ const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
   username,
   title,
   sponsorUrl,
+  highlight = false,
 }) => {
   const [user, setUser] = useState<GitHubUser | null>(null);
   const [loading, setLoading] = useState(true);
@@ -138,7 +145,7 @@ const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
   useEffect(() => {
     // First, try pre-fetched build-time data
     const profileData = profilesData[username];
-    
+
     if (profileData) {
       setUser(profileData);
       setLoading(false);
@@ -149,12 +156,12 @@ const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
     if (typeof window !== "undefined") {
       const cacheKey = `${CACHE_KEY_PREFIX}${username}`;
       const cachedData = localStorage.getItem(cacheKey);
-      
+
       if (cachedData) {
         try {
           const { data, timestamp } = JSON.parse(cachedData);
           const age = Date.now() - timestamp;
-          
+
           if (age < CACHE_DURATION) {
             setUser(data);
             setLoading(false);
@@ -175,7 +182,7 @@ const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
       .then((profileData) => {
         setUser(profileData);
         setLoading(false);
-        
+
         // Cache in localStorage with 30-day expiry
         if (typeof window !== "undefined") {
           try {
@@ -185,7 +192,7 @@ const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
               JSON.stringify({
                 data: profileData,
                 timestamp: Date.now(),
-              })
+              }),
             );
           } catch (e) {
             console.warn(`Failed to cache profile for ${username}`);
@@ -215,7 +222,7 @@ const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
   }
 
   return (
-    <div className={styles.card}>
+    <div className={`${styles.card} ${highlight ? styles.highlight : ""}`}>
       <a href={user.html_url} target="_blank" rel="noopener noreferrer">
         <img
           src={user.avatar_url}
@@ -224,6 +231,7 @@ const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
         />
       </a>
       <div className={styles.content}>
+        {highlight && <div className={styles.badge}>⭐ New Contributor</div>}
         <h3 className={styles.name}>
           <a href={user.html_url} target="_blank" rel="noopener noreferrer">
             {user.name || user.login}

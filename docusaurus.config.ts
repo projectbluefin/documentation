@@ -84,18 +84,43 @@ const config: Config = {
         },
       },
     ],
+    [
+      "@easyops-cn/docusaurus-search-local",
+      {
+        hashed: true,
+        docsRouteBasePath: "/",
+        indexBlog: true,
+        indexDocs: true,
+      },
+    ],
+    [
+      "@docusaurus/plugin-content-blog",
+      {
+        id: "reports",
+        routeBasePath: "reports",
+        path: "./reports",
+        blogTitle: "Monthly Reports",
+        blogDescription:
+          "Automated project activity reports from GitHub Project Board",
+        blogSidebarTitle: "Recent Reports",
+        blogSidebarCount: 10,
+        postsPerPage: 20,
+        showReadingTime: false, // System-generated content
+        authorsMapPath: "authors.yaml",
+        feedOptions: {
+          type: "all",
+          title: "Project Bluefin - Monthly Reports",
+          description: "Automated monthly activity reports from project board",
+          copyright: `Copyright © ${new Date().getFullYear()} Project Bluefin`,
+        },
+        // Enable table of contents in right sidebar
+        blogPostComponent: "@theme/BlogPostPage",
+        showLastUpdateTime: false,
+      },
+    ],
   ],
 
   themeConfig: {
-    algolia: {
-      // The application ID provided by Algolia
-      appId: "H1LI1VATRI",
-      // Public API key: it is safe to commit it
-      apiKey: "201fbeeb537ae90f533bedcb5a73230b",
-      indexName: "projectbluefin",
-      contextualSearch: true,
-      searchPagePath: "search",
-    },
     announcementBar: {
       id: "announcement",
       content:
@@ -142,6 +167,11 @@ const config: Config = {
         {
           to: "changelogs",
           label: "Changelogs",
+          position: "right",
+        },
+        {
+          to: "reports",
+          label: "Reports",
           position: "right",
         },
         {

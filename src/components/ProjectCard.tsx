@@ -1,3 +1,7 @@
+/**
+ * SSR-Safe: Uses typeof window checks before accessing localStorage.
+ * Data fetching strategy: build-time JSON → localStorage cache → runtime API fallback
+ */
 import React, { useEffect, useState } from "react";
 import styles from "./ProjectCard.module.css";
 import reposData from "@site/static/data/github-repos.json";
@@ -53,7 +57,7 @@ class RequestQueue {
 
       if (timeSinceLastRequest < this.MIN_DELAY) {
         await new Promise((resolve) =>
-          setTimeout(resolve, this.MIN_DELAY - timeSinceLastRequest)
+          setTimeout(resolve, this.MIN_DELAY - timeSinceLastRequest),
         );
       }
 
@@ -113,8 +117,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     requestQueue
       .add(() =>
         fetch(`https://api.github.com/repos/${githubRepo}`).then((res) =>
-          res.ok ? res.json() : null
-        )
+          res.ok ? res.json() : null,
+        ),
       )
       .then((data) => {
         if (data) {
@@ -127,7 +131,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
             try {
               localStorage.setItem(
                 cacheKey,
-                JSON.stringify({ data: repoStats, timestamp: Date.now() })
+                JSON.stringify({ data: repoStats, timestamp: Date.now() }),
               );
             } catch {}
           }
