@@ -10,42 +10,42 @@
  * Colors from projectbluefin/common labels (manually extracted top labels)
  */
 export const LABEL_COLORS = {
-  // Area labels
-  "area/gnome": "0E8A16",
-  "area/aurora": "1D76DB",
-  "area/bling": "FBCA04",
-  "area/dx": "006B75",
-  "area/buildstream": "0052CC",
-  "area/finpilot": "5319E7",
-  "area/brew": "D93F0B",
-  "area/just": "E99695",
-  "area/bluespeed": "1D76DB",
-  "area/services": "C5DEF5",
-  "area/policy": "BFD4F2",
-  "area/iso": "8B4513",
-  "area/upstream": "C2E0C6",
-  "area/flatpak": "8B5CF6",
-  "area/hardware": "F59E0B",
-  "area/nvidia": "76B900",
-  "area/testing": "FBBF24",
+  // Area labels - adjusted for light/dark mode readability
+  "area/gnome": "28A745", // Brighter green (was too dark)
+  "area/aurora": "1D76DB", // Good blue
+  "area/bling": "F9C74F", // Darker yellow (was too light)
+  "area/dx": "17A2B8", // Brighter teal (was too dark)
+  "area/buildstream": "0066FF", // Brighter blue (was too dark)
+  "area/finpilot": "7C3AED", // Good purple
+  "area/brew": "E8590C", // Good orange
+  "area/just": "E99695", // Good pink
+  "area/bluespeed": "1D76DB", // Good blue
+  "area/services": "4A90E2", // Darker light blue (was too light)
+  "area/policy": "5B8BC1", // Darker light blue (was too light)
+  "area/iso": "A0522D", // Adjusted brown
+  "area/upstream": "5CB85C", // Mid green (was too light)
+  "area/flatpak": "9333EA", // Good purple
+  "area/hardware": "F59E0B", // Good amber
+  "area/nvidia": "76B900", // Good lime green
+  "area/testing": "F59E0B", // Good amber (was too light)
 
-  // Kind labels
-  "kind/bug": "D93F0B",
-  "kind/enhancement": "A2EEEF",
-  "kind/documentation": "0075CA",
-  "kind/tech-debt": "FEF2C0",
-  "kind/automation": "BFD4F2",
-  "kind/github-action": "2088FF",
-  "kind/parity": "D4C5F9",
-  "kind/renovate": "1E3A8A",
+  // Kind labels - adjusted for light/dark mode readability
+  "kind/bug": "E8590C", // Good orange-red
+  "kind/enhancement": "17A2B8", // Teal (was too light)
+  "kind/documentation": "0066FF", // Good blue (was too dark)
+  "kind/tech-debt": "D4A259", // Darker tan (was too light)
+  "kind/automation": "5B8BC1", // Darker light blue (was too light)
+  "kind/github-action": "2088FF", // Good blue
+  "kind/parity": "9333EA", // Good purple (was too light)
+  "kind/renovate": "3B82F6", // Brighter blue (was too dark)
 
   // Common labels
   "good first issue": "7057FF",
-  "help wanted": "008672",
-  wontfix: "FFFFFF",
-  duplicate: "CFD3D7",
-  invalid: "E4E669",
-  question: "D876E3",
+  "help wanted": "28A745",
+  wontfix: "6C757D", // Gray instead of white
+  duplicate: "6C757D",
+  invalid: "E8590C",
+  question: "D946EF",
 };
 
 /**
