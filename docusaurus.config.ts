@@ -93,6 +93,28 @@ const config: Config = {
         indexDocs: true,
       },
     ],
+    [
+      "@docusaurus/plugin-content-blog",
+      {
+        id: "reports",
+        routeBasePath: "reports",
+        path: "./reports",
+        blogTitle: "Biweekly Reports",
+        blogDescription:
+          "Automated project activity reports from GitHub Project Board",
+        blogSidebarTitle: "Recent Reports",
+        blogSidebarCount: 10,
+        postsPerPage: 20,
+        showReadingTime: false, // System-generated content
+        authorsMapPath: "authors.yaml",
+        feedOptions: {
+          type: "all",
+          title: "Project Bluefin - Biweekly Reports",
+          description: "Automated biweekly activity reports from project board",
+          copyright: `Copyright © ${new Date().getFullYear()} Project Bluefin`,
+        },
+      },
+    ],
   ],
 
   themeConfig: {
@@ -142,6 +164,16 @@ const config: Config = {
         {
           to: "changelogs",
           label: "Changelogs",
+          position: "right",
+        },
+        {
+          to: "reports",
+          label: "Reports",
+          position: "right",
+        },
+        {
+          href: "https://feedback.projectbluefin.io/",
+          label: "Feedback",
           position: "right",
         },
         {
