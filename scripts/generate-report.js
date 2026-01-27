@@ -22,6 +22,25 @@ import {
 import { writeFile } from "fs/promises";
 
 /**
+ * Structured logging with timestamps and levels
+ */
+const log = {
+  info: (msg) => console.log(`[${new Date().toISOString()}] INFO: ${msg}`),
+  warn: (msg) => console.log(`[${new Date().toISOString()}] WARN: ${msg}`),
+  error: (msg) => console.error(`[${new Date().toISOString()}] ERROR: ${msg}`),
+};
+
+/**
+ * GitHub Actions annotation helpers
+ */
+const github = {
+  error: (msg, file = "scripts/generate-report.js") =>
+    console.error(`::error file=${file}::${msg}`),
+  warning: (msg) => console.log(`::warning::${msg}`),
+  notice: (msg) => console.log(`::notice::${msg}`),
+};
+
+/**
  * Calculate report window
  * Pattern 4 from RESEARCH.md (lines 273-294)
  *
@@ -93,12 +112,13 @@ function aggregateBotActivity(botItems) {
  * Main report generation function
  */
 async function generateReport() {
-  console.log("=== Biweekly Report Generator ===\n");
+  log.info("=== Biweekly Report Generator ===");
 
   // Check for GITHUB_TOKEN
   if (!process.env.GITHUB_TOKEN && !process.env.GH_TOKEN) {
-    console.error(
-      "Error: GITHUB_TOKEN or GH_TOKEN environment variable required",
+    log.error("GITHUB_TOKEN or GH_TOKEN environment variable required");
+    github.error(
+      "Missing authentication token. Set GITHUB_TOKEN or GH_TOKEN environment variable",
     );
     console.error("Set one of these tokens to authenticate with GitHub API");
     process.exit(1);
@@ -107,34 +127,42 @@ async function generateReport() {
   // Biweekly schedule check (RESEARCH.md Pitfall 6, lines 496-506)
   const currentWeek = getISOWeek(new Date());
   if (currentWeek % 2 !== 0) {
-    console.log(`Skipping report generation (odd week ${currentWeek})`);
-    console.log("Reports are generated on even-numbered ISO weeks");
+    log.info(`Skipping report generation (odd week ${currentWeek})`);
+    log.info("Reports are generated on even-numbered ISO weeks");
     process.exit(0);
   }
 
-  console.log(`Running report for ISO week ${currentWeek}`);
+  log.info(`Running report for ISO week ${currentWeek}`);
 
   // Calculate report window
   const { startDate, endDate } = calculateReportWindow();
-  console.log(
+  log.info(
     `Report period: ${format(startDate, "yyyy-MM-dd")} to ${format(endDate, "yyyy-MM-dd")}`,
   );
 
   try {
     // Fetch project board data
-    console.log("\nFetching project board data...");
+    log.info("Fetching project board data...");
     const allItems = await fetchProjectItems("projectbluefin", 2);
-    console.log(`Total items on board: ${allItems.length}`);
+    log.info(`Total items on board: ${allItems.length}`);
 
     // Filter by Status="Done" column
     const doneItems = filterByStatus(allItems, "Done");
-    console.log(`Items in "Done" column: ${doneItems.length}`);
+    log.info(`Items in "Done" column: ${doneItems.length}`);
 
     // Filter by date range (items updated within window)
     const itemsInWindow = doneItems.filter((item) =>
       isInReportWindow(item, { startDate, endDate }),
     );
-    console.log(`Items completed in window: ${itemsInWindow.length}`);
+    log.info(`Items completed in window: ${itemsInWindow.length}`);
+
+    // Handle empty data period
+    if (itemsInWindow.length === 0) {
+      log.warn(
+        "No items completed in this period - generating quiet period report",
+      );
+      github.warning("This was a quiet period with no completed items");
+    }
 
     // Separate human contributions from bot activity
     const humanItems = itemsInWindow.filter(
@@ -144,8 +172,8 @@ async function generateReport() {
       isBot(item.content?.author?.login || ""),
     );
 
-    console.log(`Human contributions: ${humanItems.length}`);
-    console.log(`Bot contributions: ${botItems.length}`);
+    log.info(`Human contributions: ${humanItems.length}`);
+    log.info(`Bot contributions: ${botItems.length}`);
 
     // Extract contributor usernames (human only)
     const contributors = [
@@ -155,23 +183,32 @@ async function generateReport() {
           .filter((login) => login),
       ),
     ];
-    console.log(`Unique contributors: ${contributors.length}`);
+    log.info(`Unique contributors: ${contributors.length}`);
 
-    // Track contributors and identify new ones
-    console.log("\nUpdating contributor history...");
-    const newContributors = await updateContributorHistory(contributors);
-    if (newContributors.length > 0) {
-      console.log(
-        `New contributors this period: ${newContributors.join(", ")}`,
-      );
+    // Track contributors and identify new ones (with error handling)
+    log.info("Updating contributor history...");
+    let newContributors = [];
+    try {
+      newContributors = await updateContributorHistory(contributors);
+      if (newContributors.length > 0) {
+        log.info(`New contributors this period: ${newContributors.join(", ")}`);
+        github.notice(
+          `🎉 ${newContributors.length} new contributor${newContributors.length > 1 ? "s" : ""} this period!`,
+        );
+      }
+    } catch (error) {
+      log.warn("Contributor history update failed, continuing without it");
+      log.warn(`Error: ${error.message}`);
+      // Continue report generation even if contributor tracking fails
+      newContributors = [];
     }
 
     // Aggregate bot activity
     const botActivity = aggregateBotActivity(botItems);
-    console.log(`Bot activity groups: ${botActivity.length}`);
+    log.info(`Bot activity groups: ${botActivity.length}`);
 
     // Generate markdown
-    console.log("\nGenerating markdown...");
+    log.info("Generating markdown...");
     const markdown = generateReportMarkdown(
       humanItems,
       contributors,
@@ -185,31 +222,62 @@ async function generateReport() {
     const filename = `reports/${format(endDate, "yyyy-MM-dd")}-report.mdx`;
     await writeFile(filename, markdown, "utf8");
 
-    console.log(`\n✅ Report generated: ${filename}`);
-    console.log(`   ${humanItems.length} items completed`);
-    console.log(`   ${contributors.length} contributors`);
-    console.log(`   ${newContributors.length} new contributors`);
-    console.log(`   ${botItems.length} bot PRs`);
-  } catch (error) {
-    console.error("\n❌ Report generation failed:");
-    console.error(error.message);
+    log.info(`✅ Report generated: ${filename}`);
+    log.info(`   ${humanItems.length} items completed`);
+    log.info(`   ${contributors.length} contributors`);
+    log.info(`   ${newContributors.length} new contributors`);
+    log.info(`   ${botItems.length} bot PRs`);
 
+    // GitHub Actions summary annotation
+    github.notice(
+      `Report generated: ${humanItems.length} items, ${contributors.length} contributors, ${newContributors.length} new`,
+    );
+  } catch (error) {
+    log.error("Report generation failed");
+    log.error(error.message);
+
+    // GitHub Actions error annotation
     if (error.message.includes("rate limit")) {
+      github.error(
+        "GitHub API rate limit exceeded. Wait for rate limit reset or use token with higher limits.",
+      );
       console.error(
         "\nTip: Use a personal access token with higher rate limits",
       );
+      process.exit(1);
     }
 
-    if (error.message.includes("authentication")) {
+    if (
+      error.message.includes("authentication") ||
+      error.message.includes("Authentication")
+    ) {
+      github.error(
+        "GitHub authentication failed. Ensure GITHUB_TOKEN or GH_TOKEN is valid and has required permissions.",
+      );
       console.error("\nTip: Set GITHUB_TOKEN or GH_TOKEN environment variable");
+      process.exit(1);
     }
 
+    if (
+      error.message.includes("Network") ||
+      error.message.includes("timeout")
+    ) {
+      github.error(
+        "Network failure during report generation. Check connectivity and GitHub API status.",
+      );
+      process.exit(1);
+    }
+
+    // Generic error
+    github.error(`Report generation failed: ${error.message}`);
     process.exit(1);
   }
 }
 
 // Run the script
 generateReport().catch((error) => {
-  console.error("Unhandled error:", error);
+  log.error("Unhandled error in report generation");
+  log.error(error.message);
+  github.error(`Unhandled error: ${error.message}`);
   process.exit(1);
 });

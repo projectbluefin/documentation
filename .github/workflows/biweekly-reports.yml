@@ -29,9 +29,16 @@ jobs:
         run: npm ci
 
       - name: Generate biweekly report
+        id: generate
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm run generate-report
+        continue-on-error: true
+
+      - name: Check generation result
+        if: steps.generate.outcome == 'failure'
+        run: |
+          echo "::warning::Report generation encountered errors but will attempt commit"
 
       - name: Commit and push report
         run: |

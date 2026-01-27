@@ -55,8 +55,23 @@ export async function updateContributorHistory(contributors) {
     const content = await readFile(historyPath, "utf8");
     history = JSON.parse(content);
   } catch (error) {
-    // File doesn't exist yet, start fresh
-    console.log("No existing contributor history, starting fresh");
+    if (error.code === "ENOENT") {
+      // File doesn't exist yet, start fresh
+      console.log("[INFO] No existing contributor history, starting fresh");
+    } else if (error instanceof SyntaxError) {
+      // JSON parse error - file is corrupted
+      console.log(
+        `[WARN] Contributor history corrupted. Resetting history file.`,
+      );
+      console.log(`[WARN] Error: ${error.message}`);
+      // history already initialized to fresh state above
+    } else {
+      // Other file system error
+      console.log(
+        `[WARN] Could not read contributor history: ${error.message}`,
+      );
+      // Continue with fresh history
+    }
   }
 
   // Filter out bots BEFORE processing
