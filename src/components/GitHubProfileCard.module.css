@@ -45,8 +45,8 @@
 
 .badge {
   position: absolute;
-  top: 12px;
-  right: 12px;
+  bottom: 12px;
+  left: 12px;
   background: linear-gradient(135deg, #ffd700, #ffed4e);
   color: #8b7500;
   padding: 0.35rem 0.75rem;
