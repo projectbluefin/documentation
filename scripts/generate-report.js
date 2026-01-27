@@ -6,10 +6,15 @@
  * Runs on the first Monday of each month
  */
 
-import { fetchProjectItems, filterByStatus } from "./lib/graphql-queries.js";
+import {
+  fetchProjectItems,
+  filterByStatus,
+  fetchClosedItemsFromRepo,
+} from "./lib/graphql-queries.js";
 import { updateContributorHistory, isBot } from "./lib/contributor-tracker.js";
 import { generateReportMarkdown } from "./lib/markdown-generator.js";
 import { getCategoryForLabel } from "./lib/label-mapping.js";
+import { MONITORED_REPOS } from "./lib/monitored-repos.js";
 import { format, parseISO, isWithinInterval } from "date-fns";
 import { writeFile } from "fs/promises";
 
@@ -137,11 +142,11 @@ async function generateReport() {
   try {
     // Fetch project board data
     log.info("Fetching project board data...");
-    const allItems = await fetchProjectItems("projectbluefin", 2);
-    log.info(`Total items on board: ${allItems.length}`);
+    const boardItems = await fetchProjectItems("projectbluefin", 2);
+    log.info(`Total items on board: ${boardItems.length}`);
 
     // Filter by Status="Done" column
-    const doneItems = filterByStatus(allItems, "Done");
+    const doneItems = filterByStatus(boardItems, "Done");
     log.info(`Items in "Done" column: ${doneItems.length}`);
 
     // Filter by date range (items updated within window)
@@ -150,34 +155,92 @@ async function generateReport() {
       .filter((item) => item.content && item.content.title && item.content.url); // Skip items without valid content
     log.info(`Items completed in window: ${itemsInWindow.length}`);
 
+    // Fetch opportunistic work from monitored repositories
+    log.info("Fetching opportunistic work from monitored repositories...");
+    const allOpportunisticItems = [];
+
+    for (const repo of MONITORED_REPOS) {
+      const [owner, name] = repo.split("/");
+      log.info(`  Fetching from ${repo}...`);
+      const repoItems = await fetchClosedItemsFromRepo(
+        owner,
+        name,
+        startDate,
+        endDate,
+      );
+      allOpportunisticItems.push(...repoItems);
+    }
+
+    log.info(
+      `Total closed items from monitored repos: ${allOpportunisticItems.length}`,
+    );
+
+    // Extract URLs from project board items to identify opportunistic work
+    const boardItemUrls = new Set(
+      itemsInWindow.map((item) => item.content?.url).filter(Boolean),
+    );
+
+    // Filter opportunistic items (not on project board)
+    const opportunisticItems = allOpportunisticItems
+      .filter((item) => !boardItemUrls.has(item.url))
+      .map((item) => {
+        // Transform to match board item structure for consistency
+        return {
+          content: {
+            __typename: item.type, // "Issue" or "PullRequest"
+            number: item.number,
+            title: item.title,
+            url: item.url,
+            repository: { nameWithOwner: item.repository },
+            labels: { nodes: item.labels },
+            author: { login: item.author },
+          },
+        };
+      });
+
+    log.info(
+      `Opportunistic items (not on board): ${opportunisticItems.length}`,
+    );
+
     // Handle empty data period
-    if (itemsInWindow.length === 0) {
+    if (itemsInWindow.length === 0 && opportunisticItems.length === 0) {
       log.warn(
         "No items completed in this period - generating quiet period report",
       );
       github.warning("This was a quiet period with no completed items");
     }
 
-    // Separate human contributions from bot activity
-    const humanItems = itemsInWindow.filter(
+    // Separate human contributions from bot activity (both planned and opportunistic)
+    const allItems = [...itemsInWindow, ...opportunisticItems];
+    const humanItems = allItems.filter(
       (item) => !isBot(item.content?.author?.login || ""),
     );
-    const botItems = itemsInWindow.filter((item) =>
+    const botItems = allItems.filter((item) =>
       isBot(item.content?.author?.login || ""),
     );
 
-    log.info(`Human contributions: ${humanItems.length}`);
+    // Separate planned vs opportunistic within human items
+    const plannedHumanItems = itemsInWindow.filter(
+      (item) => !isBot(item.content?.author?.login || ""),
+    );
+    const opportunisticHumanItems = opportunisticItems.filter(
+      (item) => !isBot(item.content?.author?.login || ""),
+    );
+
+    log.info(`Planned work (human): ${plannedHumanItems.length}`);
+    log.info(`Opportunistic work (human): ${opportunisticHumanItems.length}`);
     log.info(`Bot contributions: ${botItems.length}`);
 
-    // Extract contributor usernames (human only)
+    // Extract contributor usernames (human only, PRs only - people who wrote code)
     const contributors = [
       ...new Set(
         humanItems
+          .filter((item) => item.content?.__typename === "PullRequest")
           .map((item) => item.content?.author?.login)
           .filter((login) => login),
       ),
     ];
-    log.info(`Unique contributors: ${contributors.length}`);
+    log.info(`Unique contributors (PR authors): ${contributors.length}`);
 
     // Track contributors and identify new ones (with error handling)
     log.info("Updating contributor history...");
@@ -204,7 +267,8 @@ async function generateReport() {
     // Generate markdown
     log.info("Generating markdown...");
     const markdown = generateReportMarkdown(
-      humanItems,
+      plannedHumanItems,
+      opportunisticHumanItems,
       contributors,
       newContributors,
       botActivity,
@@ -217,14 +281,15 @@ async function generateReport() {
     await writeFile(filename, markdown, "utf8");
 
     log.info(`✅ Report generated: ${filename}`);
-    log.info(`   ${humanItems.length} items completed`);
+    log.info(`   ${plannedHumanItems.length} planned work items`);
+    log.info(`   ${opportunisticHumanItems.length} opportunistic work items`);
     log.info(`   ${contributors.length} contributors`);
     log.info(`   ${newContributors.length} new contributors`);
     log.info(`   ${botItems.length} bot PRs`);
 
     // GitHub Actions summary annotation
     github.notice(
-      `Report generated: ${humanItems.length} items, ${contributors.length} contributors, ${newContributors.length} new`,
+      `Report generated: ${plannedHumanItems.length} planned + ${opportunisticHumanItems.length} opportunistic, ${contributors.length} contributors, ${newContributors.length} new`,
     );
   } catch (error) {
     log.error("Report generation failed");

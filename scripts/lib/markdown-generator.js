@@ -16,7 +16,8 @@ import {
 /**
  * Generate complete report markdown
  *
- * @param {Array} completedItems - Items completed during report period
+ * @param {Array} plannedItems - Items from project board completed during period
+ * @param {Array} opportunisticItems - Items from repos not on project board
  * @param {Array<string>} contributors - Contributor usernames
  * @param {Array<string>} newContributors - First-time contributor usernames
  * @param {Array} botActivity - Bot activity grouped by repo and bot
@@ -25,7 +26,8 @@ import {
  * @returns {string} Complete markdown content
  */
 export function generateReportMarkdown(
-  completedItems,
+  plannedItems,
+  opportunisticItems,
   contributors,
   newContributors,
   botActivity,
@@ -62,11 +64,16 @@ tags: [monthly-report, project-activity]
 import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
 `;
 
+  // Calculate total items
+  const totalItems = plannedItems.length + opportunisticItems.length;
+
   // Generate summary section
   const summary = `# Summary
 
 - **Month:** ${monthYear}
-- **Items completed:** ${completedItems.length}
+- **Total items:** ${totalItems}
+  - **Planned work:** ${plannedItems.length}
+  - **Opportunistic work:** ${opportunisticItems.length}
 - **Contributors:** ${contributors.length}
 - **New contributors:** ${newContributors.length}
 `;
@@ -79,13 +86,18 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
     ([_, labels]) => labels.some((label) => label.startsWith("kind/")),
   );
 
-  // Generate area sections
+  // Track displayed items to avoid duplicates across categories
+  const displayedUrls = new Set();
+
+  // Generate area sections with planned vs opportunistic subsections
   const areaSections = areaCategories
     .map(([categoryName, categoryLabels]) => {
-      const section = generateCategorySection(
-        completedItems,
+      const section = generateCategorySectionWithSubsections(
+        plannedItems,
+        opportunisticItems,
         categoryName,
         categoryLabels,
+        displayedUrls,
       );
       const cleanCategoryName = categoryName.replace(/^[\p{Emoji}\s]+/u, "");
       const labelBadges = categoryLabels
@@ -99,15 +111,18 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
         .join(" ");
       return `### ${cleanCategoryName}\n\n${labelBadges}\n\n${section}`;
     })
+    .filter((section) => section)
     .join("\n\n");
 
-  // Generate kind sections
+  // Generate kind sections with planned vs opportunistic subsections
   const kindSections = kindCategories
     .map(([categoryName, categoryLabels]) => {
-      const section = generateCategorySection(
-        completedItems,
+      const section = generateCategorySectionWithSubsections(
+        plannedItems,
+        opportunisticItems,
         categoryName,
         categoryLabels,
+        displayedUrls,
       );
       const cleanCategoryName = categoryName.replace(/^[\p{Emoji}\s]+/u, "");
       const labelBadges = categoryLabels
@@ -132,8 +147,9 @@ ${areaSections}
 
 ${kindSections}`;
 
-  // Generate uncategorized section
-  const uncategorizedSection = generateUncategorizedSection(completedItems);
+  // Generate uncategorized section (combine both planned and opportunistic)
+  const allItems = [...plannedItems, ...opportunisticItems];
+  const uncategorizedSection = generateUncategorizedSection(allItems);
 
   // Generate bot activity section
   const botSection = generateBotActivitySection(botActivity);
@@ -172,12 +188,103 @@ ${kindSections}`;
 }
 
 /**
- * Generate a category section with items matching category labels
+ * Generate category section with subsections for Planned vs Opportunistic work
  *
- * @param {Array} items - All completed items
- * @param {string} categoryName - Category display name with emoji
- * @param {Array<string>} categoryLabels - Label names for this category
- * @returns {string} Markdown list or ChillOps status if no items
+ * @param {Array} plannedItems - Items from project board
+ * @param {Array} opportunisticItems - Items from repos not on board
+ * @param {string} categoryName - Category display name
+ * @param {Array<string>} categoryLabels - Labels belonging to this category
+ * @param {Set} displayedUrls - Set of URLs already displayed (modified in place)
+ * @returns {string} Markdown section content
+ */
+export function generateCategorySectionWithSubsections(
+  plannedItems,
+  opportunisticItems,
+  categoryName,
+  categoryLabels,
+  displayedUrls,
+) {
+  // Get items for each type, filtering out already displayed items
+  const planned = filterItemsByLabels(plannedItems, categoryLabels).filter(
+    (item) => !displayedUrls.has(item.content?.url),
+  );
+  const opportunistic = filterItemsByLabels(
+    opportunisticItems,
+    categoryLabels,
+  ).filter((item) => !displayedUrls.has(item.content?.url));
+
+  // If both empty, show ChillOps
+  if (planned.length === 0 && opportunistic.length === 0) {
+    return "> Status: _ChillOps_";
+  }
+
+  const sections = [];
+
+  // Planned Work subsection
+  if (planned.length > 0) {
+    sections.push(
+      `#### 📋 Planned Work\n\n${formatItemList(planned, displayedUrls)}`,
+    );
+  }
+
+  // Opportunistic Work subsection
+  if (opportunistic.length > 0) {
+    sections.push(
+      `#### ⚡ Opportunistic Work\n\n${formatItemList(opportunistic, displayedUrls)}`,
+    );
+  }
+
+  return sections.join("\n\n");
+}
+
+/**
+ * Filter items by category labels
+ *
+ * @param {Array} items - Items to filter
+ * @param {Array<string>} categoryLabels - Labels to match
+ * @returns {Array} Filtered items
+ */
+function filterItemsByLabels(items, categoryLabels) {
+  return items.filter((item) => {
+    if (!item.content?.labels?.nodes) return false;
+
+    const itemLabels = item.content.labels.nodes.map((l) => l.name);
+    return categoryLabels.some((catLabel) => itemLabels.includes(catLabel));
+  });
+}
+
+/**
+ * Format list of items as markdown
+ *
+ * @param {Array} items - Items to format
+ * @param {Set} displayedUrls - Set to track displayed URLs
+ * @returns {string} Markdown list
+ */
+function formatItemList(items, displayedUrls) {
+  const lines = items.map((item) => {
+    const type = item.content.__typename === "PullRequest" ? "PR" : "Issue";
+    const number = item.content.number;
+    const title = item.content.title;
+    const url = item.content.url;
+    const author = item.content.author?.login || "unknown";
+
+    // Mark this URL as displayed
+    displayedUrls.add(url);
+
+    // Use zero-width space to prevent GitHub notifications
+    return `- [#${number} ${title}](${url}) by @\u200B${author}`;
+  });
+
+  return lines.join("\n");
+}
+
+/**
+ * Generate category section (legacy - for backwards compatibility)
+ *
+ * @param {Array} items - Items completed during report period
+ * @param {string} categoryName - Category display name
+ * @param {Array<string>} categoryLabels - Labels belonging to this category
+ * @returns {string} Markdown section content
  */
 export function generateCategorySection(items, categoryName, categoryLabels) {
   // Find items with at least one label matching this category
