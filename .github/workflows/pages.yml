@@ -40,6 +40,15 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile --production
 
+      - name: Run TypeScript validation
+        run: bun run typecheck
+
+      - name: Run ESLint validation
+        run: bun run lint
+
+      - name: Run Prettier check (warnings only)
+        run: bun run prettier-lint || true
+
       - name: Build website
         env:
           GITHUB_TOKEN: ${{ secrets.PROJECT_READ_TOKEN }}
