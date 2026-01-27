@@ -9,11 +9,11 @@
  * Opportunistic work: Issues/PRs from other monitored repositories
  */
 
-import { fetchClosedItemsFromRepo } from "./lib/graphql-queries.js";
-import { updateContributorHistory, isBot } from "./lib/contributor-tracker.js";
-import { generateReportMarkdown } from "./lib/markdown-generator.js";
-import { getCategoryForLabel } from "./lib/label-mapping.js";
-import { MONITORED_REPOS } from "./lib/monitored-repos.js";
+import { fetchClosedItemsFromRepo } from "./lib/graphql-queries.mjs";
+import { updateContributorHistory, isBot } from "./lib/contributor-tracker.mjs";
+import { generateReportMarkdown } from "./lib/markdown-generator.mjs";
+import { getCategoryForLabel } from "./lib/label-mapping.mjs";
+import { MONITORED_REPOS } from "./lib/monitored-repos.mjs";
 import { format } from "date-fns";
 import { writeFile } from "fs/promises";
 
