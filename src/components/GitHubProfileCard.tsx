@@ -20,6 +20,7 @@ interface GitHubProfileCardProps {
   username: string;
   title?: string;
   sponsorUrl?: string;
+  highlight?: boolean; // Gold foil effect for new contributors
 }
 
 const CACHE_KEY_PREFIX = "github_profile_";
@@ -136,6 +137,7 @@ const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
   username,
   title,
   sponsorUrl,
+  highlight = false,
 }) => {
   const [user, setUser] = useState<GitHubUser | null>(null);
   const [loading, setLoading] = useState(true);
@@ -220,7 +222,7 @@ const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
   }
 
   return (
-    <div className={styles.card}>
+    <div className={`${styles.card} ${highlight ? styles.highlight : ""}`}>
       <a href={user.html_url} target="_blank" rel="noopener noreferrer">
         <img
           src={user.avatar_url}
@@ -229,6 +231,7 @@ const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
         />
       </a>
       <div className={styles.content}>
+        {highlight && <div className={styles.badge}>⭐ New Contributor</div>}
         <h3 className={styles.name}>
           <a href={user.html_url} target="_blank" rel="noopener noreferrer">
             {user.name || user.login}

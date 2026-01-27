@@ -52,14 +52,14 @@ export function generateReportMarkdown(
   const monthYear = `${monthNames[month]} ${year}`;
   const dateStr = format(endDate, "yyyy-MM-dd");
 
-  // Generate frontmatter with MDX import for new contributors
+  // Generate frontmatter with MDX import for GitHubProfileCard component
   const frontmatter = `---
 title: "Monthly Report: ${monthYear}"
 date: ${dateStr}
 tags: [monthly-report, project-activity]
 ---
 
-${newContributors.length > 0 ? "import GitHubProfileCard from '@site/src/components/GitHubProfileCard';\n" : ""}
+import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
 `;
 
   // Generate summary section
@@ -337,38 +337,42 @@ ${itemsList}
 }
 
 /**
- * Generate contributors section with thank you list and new contributor highlights
+ * Generate contributors section with GitHubProfileCard components
  *
  * @param {Array<string>} contributors - All contributor usernames
  * @param {Array<string>} newContributors - First-time contributor usernames
  * @returns {string} Markdown section
  */
 function generateContributorsSection(contributors, newContributors) {
-  // Use zero-width space after @ to prevent GitHub notifications
-  const contributorList = contributors
-    .map((username) => `@\u200B${username}`)
-    .join(", ");
+  let section = "";
 
-  let section = `## 👥 Contributors
-
-Thank you to all contributors this period: ${contributorList}`;
-
+  // Section 1: New Contributors (highlighted, shown first)
   if (newContributors.length > 0) {
-    section += `\n\n### 🎉 New Contributors\n\nWelcome to our new contributors!\n\n`;
-
-    // Use GitHubProfileCard component for each new contributor in grid (matching donations page style)
+    section += `## 🌟 New Contributors\n\nWelcome to our new contributors!\n\n`;
     section += `<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>\n\n`;
 
-    const profileCards = newContributors
+    const newContributorCards = newContributors
       .map(
         (username) =>
-          `<GitHubProfileCard username="${username}" title="New Contributor" />`,
+          `<GitHubProfileCard username="${username}" highlight={true} />`,
       )
       .join("\n\n");
 
-    section += profileCards;
-    section += `\n\n</div>`;
+    section += newContributorCards;
+    section += `\n\n</div>\n\n`;
   }
+
+  // Section 2: All Contributors (without highlight)
+  section += `## 👥 Contributors\n\n`;
+  section += `Thank you to everyone who contributed this period!\n\n`;
+  section += `<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>\n\n`;
+
+  const allContributorCards = contributors
+    .map((username) => `<GitHubProfileCard username="${username}" />`)
+    .join("\n\n");
+
+  section += allContributorCards;
+  section += `\n\n</div>`;
 
   return section;
 }
