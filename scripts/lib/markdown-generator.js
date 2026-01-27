@@ -6,7 +6,7 @@
  * Pattern from RESEARCH.md (lines 603-652)
  */
 
-import { format } from "date-fns";
+import { format, getISOWeek } from "date-fns";
 import { LABEL_CATEGORIES, generateBadge } from "./label-mapping.js";
 
 /**
@@ -41,9 +41,16 @@ tags: [biweekly-report, project-activity]
 ${newContributors.length > 0 ? "import GitHubProfileCard from '@site/src/components/GitHubProfileCard';\n" : ""}
 `;
 
+  // Calculate ISO week numbers for the report period
+  const startWeek = getISOWeek(startDate);
+  const endWeek = getISOWeek(endDate);
+  const weeksDisplay =
+    startWeek === endWeek ? `${startWeek}` : `${startWeek} and ${endWeek}`;
+
   // Generate summary section
   const summary = `# Summary
 
+- **Weeks:** ${weeksDisplay}
 - **Items completed:** ${completedItems.length}
 - **Contributors:** ${contributors.length}
 - **New contributors:** ${newContributors.length}
