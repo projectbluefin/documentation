@@ -1,27 +1,42 @@
 # Project Milestones: Bluefin Documentation
 
-## v1.1 Weekly Reports Feature (In Progress: Started 2026-01-26)
+# Project Milestones: Bluefin Documentation
 
-**Goal:** Add weekly reports section to aggregate and display project activity
+## v1.1 Monthly Reports Feature (Shipped: 2026-01-27)
 
-**Status:** Planning  
-**Started:** 2026-01-26
+**Goal:** Add automated monthly reports section to aggregate and display project activity
 
-**Phases planned:** 5 phases (8 days estimated)
+**Status:** ✅ SHIPPED  
+**Started:** 2026-01-26  
+**Completed:** 2026-01-27
 
-**Key deliverables:**
+**Phases completed:** 2 phases (Phase 3 deferred)
 
-- Weekly reports directory structure with markdown-based content
-- Auto-generated weekly activity data (releases, discussions, blog posts, contributors)
-- Display components (WeeklyActivity, WeeklyReportCard, WeeklySummary)
-- Weekly reports listing page with chronological sorting
-- RSS/Atom feed for reports
+**Key accomplishments:**
+
+- Automated monthly report generation from GitHub project board data
+- Multi-blog Docusaurus configuration with `/reports` route
+- Historical contributor tracking with query-based detection (regeneration-safe)
+- Label categorization and badge formatting matching projectbluefin/common
+- Bot filtering and activity aggregation
+- Planned vs Opportunistic work subsections
+- Consistent ChillOps messaging for empty sections
+- RSS feed at `/reports/rss.xml`
 - Navigation integration and cross-links
 - Mobile-responsive design
+- Monthly automation via GitHub Actions (last day of month)
 
-**Requirements:** 19 requirements across 5 phases (FOUND, DISP, CONT, NAV, DOC)
+**Stats:**
 
-**Current status:** ROADMAP.md and REQUIREMENTS.md created, ready for phase planning
+- 15/15 Phase 1 requirements shipped (100%)
+- 2 phases completed, 1 deferred (documentation met via AGENTS.md)
+- Post-launch improvements: PR #593 (historical detection, bot filtering, ChillOps)
+- Timeline: 2026-01-26 to 2026-01-27 (2 days execution + improvements)
+- Reports live: December 2025, January 2026
+
+**Git range:** Phase 1 commits in `gsd/milestone-v1.1-weekly-reports` → PR #593 merged to main
+
+**What's next:** Milestone complete and operational. Ready for v1.2 planning or other priorities.
 
 ---
 
