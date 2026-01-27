@@ -13,20 +13,20 @@ See: .planning/MILESTONES.md (v1.0 shipped, v1.1 in progress)
 ## Current Position
 
 **Milestone:** v1.1 Biweekly Reports Feature  
-**Phase:** Phase 1 Complete, Ready for Phase 2  
-**Plan:** All 3 plans in Phase 1 complete  
-**Status:** Phase 1 VERIFIED ✅ (15/15 must-haves passed)  
-**Last activity:** 2026-01-27 - Phase 1 verification passed, ready for Phase 2 planning
+**Phase:** Phase 2 In Progress (Navigation & Discovery)  
+**Plan:** 1 of 2 in Phase 2 complete  
+**Status:** Phase 2 Plan 01 complete - Cross-links integrated  
+**Last activity:** 2026-01-27 - Completed 02-01-PLAN.md (Cross-links & content integration)
 
 **Progress:**
 
 ```
 [████] Phase 1: Automated Report System (100% - VERIFIED ✅)
-[    ] Phase 2: Navigation & Discovery (0%)
+[██  ] Phase 2: Navigation & Discovery (50%)
 [    ] Phase 3: Documentation & Refinement (0%)
 ```
 
-**Overall:** Phase 1 complete (100%), 2 phases remaining
+**Overall:** Phase 1 complete (100%), Phase 2 in progress (50%), 1.5 phases remaining
 
 ## Performance Metrics (v1.1 Targets)
 
@@ -64,6 +64,9 @@ See: .planning/MILESTONES.md (v1.0 shipped, v1.1 in progress)
 | 2026-01-27 | Multi-blog with id: 'reports'                  | Docusaurus best practice for separate blog instances                 | Clean separation of reports from main blog                     |
 | 2026-01-27 | Cron weekly, biweekly filter in script         | Simpler schedule, script handles even/odd week logic                 | Single cron expression, flexible filtering logic               |
 | 2026-01-27 | workflow_dispatch for manual testing           | Essential for validation before production use                       | Enables testing without waiting for cron schedule              |
+| 2026-01-27 | Cross-link intro paragraphs for reports        | Explain complementary relationship (changelogs vs reports)           | Clear navigation between related content types                 |
+| 2026-01-27 | Footer template in generated reports           | Consistent navigation in every report                                | Links back to changelogs and blog from all reports             |
+| 2026-01-27 | Fixed duplicate Feedback navbar entry          | Navbar had two identical Feedback entries                            | Corrected order: Blog, Changelogs, Reports, Discussions, Store |
 
 ### Active TODOs
 
@@ -133,27 +136,27 @@ static/data/
 ### Last Session
 
 **Session:** 2026-01-27  
-**Stopped at:** Completed 01-03-PLAN.md (Docusaurus integration & automation) - Phase 1 COMPLETE ✅  
-**Resume with:** Plan Phase 2 with `/gsd-plan-phase 2` (Navigation & Discovery)  
-**Commits:** 10 task commits total (Plan 01: 4, Plan 02: 3, Plan 03: 3) in branch `gsd/milestone-v1.1-weekly-reports`
+**Stopped at:** Completed 02-01-PLAN.md (Cross-links & content integration) - Phase 2 Plan 01 COMPLETE ✅  
+**Resume with:** Continue Phase 2 with Plan 02 (Validation & Testing)  
+**Commits:** 13 task commits total (Phase 1: 10, Phase 2 Plan 01: 3) in branch `gsd/milestone-v1.1-weekly-reports`
 
 ### Next Steps
 
 **Immediate:**
 
-1. Commit Phase 1 completion (SUMMARY.md, STATE.md updates)
+1. Commit Phase 2 Plan 01 completion (SUMMARY.md, STATE.md updates)
 2. Push branch `gsd/milestone-v1.1-weekly-reports`
-3. Create PR for Phase 1 changes
-4. Test workflow manually via GitHub Actions UI
-5. Begin Phase 2 planning with `/gsd-plan-phase 2`
+3. Continue with Phase 2 Plan 02 (Validation & Testing) or create PR
 
 **Context for future work:**
 
 - Phase 1 complete: End-to-end automated report system operational
+- Phase 2 Plan 01 complete: Cross-links and content integration done
 - Multi-blog configured: /reports route live with RSS feed
-- GitHub Actions workflow ready: Biweekly automation on schedule
+- Cross-links established: Changelogs ↔ Reports, Reports → Blog
+- Navbar order verified: Blog, Changelogs, Reports, Discussions, Feedback, Store
 - TypeScript baseline maintained: 0 errors (pre-existing React LSP warnings unrelated)
-- Next: Phase 2 will focus on navigation, discovery, and cross-links
+- Next: Phase 2 Plan 02 will focus on validation, testing, and mobile verification
 
 **Files to reference:**
 
@@ -183,5 +186,5 @@ npm run build
 
 ---
 
-_State updated: 2026-01-27 after completing Phase 1 Plan 2_  
-_Phase 1 complete - ready for Phase 2 planning_
+_State updated: 2026-01-27 after completing Phase 2 Plan 01_  
+_Phase 2 in progress - ready for Plan 02 (Validation & Testing)_
