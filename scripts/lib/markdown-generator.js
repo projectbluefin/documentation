@@ -113,11 +113,11 @@ ${newContributors.length > 0 ? "import GitHubProfileCard from '@site/src/compone
     .join("\n\n");
 
   // Combine with section headers
-  const categorySections = `# Project Areas
+  const categorySections = `# Focus Area
 
 ${areaSections}
 
-# Work Types
+# Work by Type
 
 ${kindSections}`;
 
