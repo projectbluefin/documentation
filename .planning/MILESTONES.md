@@ -1,5 +1,30 @@
 # Project Milestones: Bluefin Documentation
 
+## v1.1 Weekly Reports Feature (In Progress: Started 2026-01-26)
+
+**Goal:** Add weekly reports section to aggregate and display project activity
+
+**Status:** Planning  
+**Started:** 2026-01-26
+
+**Phases planned:** 5 phases (8 days estimated)
+
+**Key deliverables:**
+
+- Weekly reports directory structure with markdown-based content
+- Auto-generated weekly activity data (releases, discussions, blog posts, contributors)
+- Display components (WeeklyActivity, WeeklyReportCard, WeeklySummary)
+- Weekly reports listing page with chronological sorting
+- RSS/Atom feed for reports
+- Navigation integration and cross-links
+- Mobile-responsive design
+
+**Requirements:** 19 requirements across 5 phases (FOUND, DISP, CONT, NAV, DOC)
+
+**Current status:** ROADMAP.md and REQUIREMENTS.md created, ready for phase planning
+
+---
+
 ## v1.0 Technical Cleanup (Shipped: 2026-01-26)
 
 **Delivered:** Transform documentation site from functional-but-flawed to technically sound and maintainable

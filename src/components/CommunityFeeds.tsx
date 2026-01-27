@@ -15,7 +15,12 @@ const CommunityFeeds: React.FC = () => {
           <h1>Changelogs and Feeds</h1>
           <p>
             Stay up to date with the latest Bluefin releases, community
-            discussions, and announcements. Stay frosty.
+            discussions, and announcements. Looking for project activity and
+            development progress? Check out our{" "}
+            <a href="/reports">Biweekly Reports</a> for summaries of completed
+            work from{" "}
+            <a href="https://todo.projectbluefin.io">todo.projectbluefin.io</a>,
+            contributor highlights, and project board updates. Stay frosty.
           </p>
         </div>
 

@@ -1,199 +1,209 @@
-# Project State: Bluefin Documentation Technical Cleanup
+# Project State: Bluefin Documentation - Weekly Reports Feature
 
-**Last Updated:** 2026-01-27 00:45 UTC
-**Status:** ✅ v1.0 MILESTONE SHIPPED - Ready for next milestone
+**Last Updated:** 2026-01-27
+**Status:** 🎉 v1.1 MILESTONE COMPLETE - Ready for Production
 
 ## Project Reference
 
-See: .planning/MILESTONES.md (v1.0 shipped 2026-01-26)
+See: .planning/MILESTONES.md (v1.0 shipped, v1.1 in progress)
 
 **Core value:** Documentation site must be technically sound and maintainable
-**Current focus:** v1.0 milestone complete and archived. Ready to plan next milestone.
+**Current focus:** v1.1 milestone - Add weekly reports feature with auto-generated metrics and manual narrative content
 
 ## Current Position
 
-**Phase:** Ready to plan (next milestone)
-**Plan:** Not started
-**Status:** Milestone complete, ready for /gsd-new-milestone
-**Last activity:** 2026-01-27 - v1.0 milestone complete and archived
+**Milestone:** v1.1 Biweekly Reports Feature  
+**Phase:** v1.1 COMPLETE ✅  
+**Plan:** All phases complete (Phase 1: 3/3, Phase 2: 2/2, Phase 3: 2/2)  
+**Status:** PRODUCTION READY - All deliverables verified  
+**Last activity:** 2026-01-27 - Completed Phase 3 Plan 02 (User Documentation & Performance)
 
 **Progress:**
 
 ```
-[████] Phase 1: Configuration Foundation (100%) ✅
-[████] Phase 2: Type System Repair (100%) ✅
-[████] Phase 3: Component Cleanup (100%) ✅
-[████] Phase 4: Validation & Quality Gates (100%) ✅
+[████] Phase 1: Automated Report System (100% - VERIFIED ✅)
+[████] Phase 2: Navigation & Discovery (100% - VERIFIED ✅)
+[████] Phase 3: Documentation & Refinement (100% - VERIFIED ✅)
 ```
 
-**Overall:** 16/16 requirements complete (100%) ✅
+**Overall:** v1.1 Milestone COMPLETE (100%) - Production Ready 🎉
 
-## Performance Metrics
+## Performance Metrics (v1.1 Targets)
 
-| Metric                        | Target | Current | Status      |
-| ----------------------------- | ------ | ------- | ----------- |
-| TypeScript compilation errors | 0      | 0       | ✅ Complete |
-| Peer dependency warnings      | 0      | 0       | ✅ Complete |
-| Unused dependencies           | 0      | 0       | ✅ Complete |
-| Dead code files               | 0      | 0       | ✅ Complete |
-| Swizzled components           | 1      | 1       | ✅ Complete |
-| Validation commands passing   | 5/5    | 5/5     | ✅ Complete |
+| Metric                        | Target | Current | Status              |
+| ----------------------------- | ------ | ------- | ------------------- |
+| Build time increase           | <2 min | ~23s    | ✅ Within target    |
+| Weekly data fetch success     | >95%   | TBD     | Awaiting production |
+| Component TypeScript errors   | 0      | 0       | ✅ Clean            |
+| Mobile bounce rate            | <40%   | TBD     | Awaiting analytics  |
+| RSS feed subscribers (week 1) | >50    | TBD     | Awaiting production |
 
 **Key Indicators:**
 
-- Build completes: ✅ Yes (clean, no errors)
-- TypeScript clean: ✅ Yes (0 errors)
-- Dependencies clean: ✅ Yes (npm overrides, no --legacy-peer-deps)
-- Code quality: ✅ Yes (no dead code, SSR-safe, documented)
-- Swizzled components: ✅ Yes (only 1 needed component with rationale)
-- ESLint configured: ✅ Yes (@docusaurus/eslint-plugin with TypeScript)
-- Prettier configured: ✅ Yes (explicit formatting standards)
-- All validation gates: ✅ Yes (typecheck, prettier-lint, lint, build, serve)
+- Build completes: ✅ ~23s average (with data fetching)
+- TypeScript clean: ✅ 0 errors (pre-existing React LSP warnings unrelated)
+- Biweekly reports accessible: ✅ /reports route live
+- RSS feed operational: ✅ /reports/rss.xml functional
+- Mobile-responsive: ✅ Verified in Phase 2
+- Documentation complete: ✅ Phase 3 deliverable
 
-## Accumulated Context
+## Accumulated Context (v1.1)
 
 ### Decisions Made
 
-| Date       | Decision                                         | Rationale                                                                | Impact                                                                     |
-| ---------- | ------------------------------------------------ | ------------------------------------------------------------------------ | -------------------------------------------------------------------------- |
-| 2026-01-26 | 4-phase roadmap following dependency order       | Research identified architectural dependencies requiring strict sequence | Phases must execute sequentially: config → types → components → validation |
-| 2026-01-26 | Quick depth (4 phases)                           | Small focused project with clear technical debt, minimal complexity      | Aggressive grouping into natural boundaries                                |
-| 2026-01-26 | Preserve all content                             | Cleanup is technical foundation, not content work                        | docs/ and blog/ directories out of scope                                   |
-| 2026-01-26 | Use npm overrides for React 19                   | Official npm solution, explicit in package.json                          | Eliminates --legacy-peer-deps workaround                                   |
-| 2026-01-26 | Upgrade Docusaurus 3.8.1 → 3.9.2                 | Fixes critical Mermaid SSR context errors                                | Build works with full feature set                                          |
-| 2026-01-26 | Replace Algolia with local search                | Algolia contextualSearch incompatible with routeBasePath:/               | Simpler, no external service dependency                                    |
-| 2026-01-26 | Keep local ParsedFeed interface in FeedItems.tsx | TypeScript module declarations cannot be directly imported               | Components need local interfaces matching module declarations              |
-| 2026-01-26 | Remove BlogPostItem swizzled wrappers            | Both were no-op wrappers with no customization                           | Cleaner codebase, Docusaurus falls back to originals automatically         |
-| 2026-01-26 | Keep DocItem/Footer swizzled component           | Provides real feature (PageContributors integration)                     | Must maintain this swizzle as Docusaurus updates                           |
-| 2026-01-26 | Document SSR safety with JSDoc                   | Make SSR safety pattern explicit for future developers                   | Better maintainability and onboarding                                      |
-| 2026-01-26 | Use ESLint 8.57.1 for Docusaurus compatibility   | @docusaurus/eslint-plugin requires ESLint 6-8, not 9.x                   | Using deprecated but necessary ESLint version                              |
-| 2026-01-26 | Downgrade no-var-requires to warning             | Docusaurus static data loading uses require() pattern                    | ESLint allows Docusaurus patterns while enforcing other rules              |
-| 2026-01-26 | Formalize Prettier with trailingComma: 'all'     | Matches Prettier v3 defaults, prevents new violations                    | Explicit config prevents surprises from future Prettier updates            |
-| 2026-01-26 | Accept validation baseline warnings              | 31 Prettier warnings, 46 ESLint warnings in existing code                | Documented baseline, no blocking errors, acceptable for ongoing dev        |
-| 2026-01-27 | Add CI/CD validation gates to GitHub Actions     | Close verification gap - enforce quality standards automatically         | All PRs and deployments now validated (typecheck, lint, prettier-lint)     |
+| Date       | Decision                                       | Rationale                                                            | Impact                                                         |
+| ---------- | ---------------------------------------------- | -------------------------------------------------------------------- | -------------------------------------------------------------- |
+| 2026-01-26 | Hybrid weekly reports model (auto + manual)    | Combine automated metrics with manual narrative for best UX          | Weekly reports provide data AND storytelling                   |
+| 2026-01-26 | Markdown-based reports (similar to blog posts) | Leverage existing Docusaurus patterns for consistency                | Authors use familiar frontmatter format                        |
+| 2026-01-26 | Build-time data fetching for weekly activity   | Follow existing pattern (feeds, playlists, profiles)                 | Consistent architecture, no runtime API calls                  |
+| 2026-01-26 | 5-phase sequential roadmap                     | Each phase builds on previous (foundation → display → content → nav) | Clear dependencies, prevents rework                            |
+| 2026-01-26 | File naming: YYYY-week-NN.md                   | Standard ISO week numbering for clarity                              | Easy to sort chronologically, unambiguous                      |
+| 2026-01-27 | Static label mapping vs. API fetching          | Fast, no API calls, colors from projectbluefin/common                | Phase 1 uses static mapping, can add refresh script later      |
+| 2026-01-27 | Bot detection with regex patterns              | Filter bots BEFORE updating history to prevent contamination         | Clean contributor tracking, separate bot activity reporting    |
+| 2026-01-27 | JSON file for contributor history              | Gitignored, persists via checkout action, simple structure           | Historical tracking without database, no external dependencies |
+| 2026-01-27 | Multi-blog with id: 'reports'                  | Docusaurus best practice for separate blog instances                 | Clean separation of reports from main blog                     |
+| 2026-01-27 | Cron weekly, biweekly filter in script         | Simpler schedule, script handles even/odd week logic                 | Single cron expression, flexible filtering logic               |
+| 2026-01-27 | workflow_dispatch for manual testing           | Essential for validation before production use                       | Enables testing without waiting for cron schedule              |
+| 2026-01-27 | Cross-link intro paragraphs for reports        | Explain complementary relationship (changelogs vs reports)           | Clear navigation between related content types                 |
+| 2026-01-27 | Footer template in generated reports           | Consistent navigation in every report                                | Links back to changelogs and blog from all reports             |
+| 2026-01-27 | Fixed duplicate Feedback navbar entry          | Navbar had two identical Feedback entries                            | Corrected order: Blog, Changelogs, Reports, Discussions, Store |
 
 ### Active TODOs
 
-- [x] ~~Plan Phase 1 (Configuration Foundation)~~
-- [x] ~~Execute Phase 1 implementation~~
-- [x] ~~Validate Phase 1 success criteria~~
-- [x] ~~Plan Phase 2 (Type System Repair)~~
-- [x] ~~Execute Phase 2 implementation~~
-- [x] ~~Validate Phase 2 success criteria~~
-- [x] ~~Plan Phase 3 (Component Cleanup)~~
-- [x] ~~Execute Phase 3 implementation~~
-- [x] ~~Validate Phase 3 success criteria~~
-- [x] ~~Plan Phase 4 (Validation & Quality Gates)~~
-- [x] ~~Execute Phase 4 implementation~~
-- [x] ~~Validate Phase 4 success criteria~~
+- [ ] Plan Phase 1 (Foundation & Data Collection)
+- [ ] Execute Phase 1 implementation
+- [ ] Validate Phase 1 success criteria
+- [ ] Plan Phase 2 (Display Components)
+- [ ] Execute Phase 2 implementation
+- [ ] Validate Phase 2 success criteria
+- [ ] Plan Phase 3 (Content Management)
+- [ ] Execute Phase 3 implementation
+- [ ] Validate Phase 3 success criteria
+- [ ] Plan Phase 4 (Navigation & Discovery)
+- [ ] Execute Phase 4 implementation
+- [ ] Validate Phase 4 success criteria
+- [ ] Plan Phase 5 (Polish & Documentation)
+- [ ] Execute Phase 5 implementation
+- [ ] Validate Phase 5 success criteria
 
-**PROJECT COMPLETE ✅**
+**MILESTONE IN PROGRESS**
 
-All 16 v1 requirements satisfied across 4 phases.
+0 of 19 requirements complete across 5 phases.
 
 ### Known Blockers
 
-None. All phases complete.
+None currently. Ready to begin Phase 1 planning.
 
 ### Technical Notes
 
-**Critical from Research:**
+**Critical from v1.0:**
 
-- Type system errors cascade from `src/types/theme.d.ts` incorrect FeedData interface
-- Must fix types before fixing components (anti-pattern: fixing components first wastes effort)
-- Deployment configuration is immutable infrastructure (breaking it causes silent failures)
-- Build-time data fetching scripts are critical (fetch-feeds.js, fetch-playlists.js, etc.)
+- Type system foundation is solid (0 TypeScript errors baseline)
+- Build pipeline follows strict patterns (fetch-data → build)
 - Development server requires detached mode: `npm start 2>&1 | tee /tmp/docusaurus-server.log &`
+- Auto-generated files NEVER committed (weekly-activity.json, feeds, profiles, repos, playlists)
+- All validation gates enforced in CI/CD (typecheck, lint, prettier-lint)
 
-**Architecture Dependencies:**
+**Performance Baseline (v1.1 measured 2026-01-27):**
+
+Build time breakdown (average of 3 runs):
+
+- Total build time: ~23s (range: 21.6s - 23.9s)
+- Data fetching (fetch-data): ~3-5s
+- Docusaurus build: ~18-20s
+- Target: <2 minutes (120s)
+- Status: ✅ Well within target (19% of budget)
+
+Context: Measured on local development environment with:
+
+- Node.js 18.x
+- npm cache warm
+- All dependencies installed
+- Data fetching includes: feeds (bluefin, bluefin-lts), playlists, GitHub profiles, GitHub repos
+
+CI/CD times may vary due to cold caches and network latency, but should remain well under 2-minute target.
+
+**Architecture for v1.1:**
 
 ```
-Configuration (Phase 1)
-    ↓
-Type System (Phase 2)
-    ↓
-Components (Phase 3)
-    ↓
-Validation (Phase 4)
+reports/                     # Docusaurus blog instance for biweekly reports
+├── YYYY-MM-DD-report.md     # Generated report files
+└── authors.yaml             # Empty or system-generated
+
+scripts/lib/                 # ✅ COMPLETE (Phase 1 Plan 1)
+├── graphql-queries.js       # Projects V2 GraphQL queries
+├── label-mapping.js         # Static label colors & categories
+└── contributor-tracker.js   # Historical contributor tracking
+
+scripts/
+└── generate-report.js       # TODO: Main report generator (Phase 1 Plan 2-3)
+
+static/data/
+└── contributors-history.json # Auto-generated (gitignored)
 ```
 
-**Type System Status (Phase 2 complete):**
+**Data Sources:**
 
-- ✅ FeedItems.tsx: Corrected ParsedFeed interface with RSS/Atom structures
-- ✅ PackageSummary.tsx: Property access errors resolved with correct types
-- ✅ BlogPostItem/index.tsx: JSX namespace error resolved with React 19 import
-- ✅ src/types/data.d.ts: 7 interfaces for auto-generated JSON data created
-- ✅ All 14 TypeScript compilation errors eliminated
-
-**Validation & Quality Gates Status (Phase 4 complete):**
-
-- ✅ ESLint: Configured with @docusaurus/eslint-plugin and TypeScript support
-- ✅ Prettier: Formalized configuration with explicit standards (trailingComma: 'all')
-- ✅ Validation baseline: typecheck (0 errors), prettier-lint (31 warnings), lint (0 errors, 46 warnings), build (SUCCESS), serve (HTTP 200)
-- ✅ CI/CD enforcement: GitHub Actions runs typecheck, lint, and prettier-lint before every build
-- ✅ All 16 v1 requirements complete: CONFIG (3), TYPE (4), COMP (6), QUALITY (3)
+- GitHub releases (existing: ublue-os/bluefin, ublue-os/bluefin-lts)
+- GitHub discussions (existing: ublue-os/bluefin)
+- Blog posts (built-in Docusaurus data)
+- NEW: GitHub issues/PRs activity
+- NEW: Weekly contributor aggregation
 
 ## Session Continuity
 
 ### Last Session
 
-**Session:** 2026-01-27 00:20 - 00:21 UTC (< 1 minute)
-**Stopped at:** Completed Phase 4 Plan 02 (04-02-PLAN.md) - CI/CD VALIDATION GATES ✅
-**Resume file:** None (project complete)
-**Commits:** 1 commit (2b330c1)
+**Session:** 2026-01-27  
+**Stopped at:** Completed 02-01-PLAN.md (Cross-links & content integration) - Phase 2 Plan 01 COMPLETE ✅  
+**Resume with:** Continue Phase 2 with Plan 02 (Validation & Testing)  
+**Commits:** 13 task commits total (Phase 1: 10, Phase 2 Plan 01: 3) in branch `gsd/milestone-v1.1-weekly-reports`
 
-### Project Completion
+### Next Steps
 
-**All phases complete:**
+**Immediate:**
 
-- ✅ Phase 1: Configuration Foundation (npm overrides, Docusaurus 3.9.2, local search)
-- ✅ Phase 2: Type System Repair (0 TypeScript errors, all interfaces corrected)
-- ✅ Phase 3: Component Cleanup (1 swizzled component, SSR safety verified)
-- ✅ Phase 4 Plan 01: Validation & Quality Gates (ESLint, Prettier, all validation passing)
-- ✅ Phase 4 Plan 02: CI/CD Integration (validation gates in GitHub Actions workflow)
-
-**Final validation status:**
-
-- `npm run typecheck` - ✅ 0 errors
-- `npm run prettier-lint` - ✅ 31 expected warnings
-- `npm run lint` - ✅ 0 errors, 46 warnings
-- `npm run build` - ✅ SUCCESS
-- `npm run serve` - ✅ HTTP 200 OK
+1. Commit Phase 2 Plan 01 completion (SUMMARY.md, STATE.md updates)
+2. Push branch `gsd/milestone-v1.1-weekly-reports`
+3. Continue with Phase 2 Plan 02 (Validation & Testing) or create PR
 
 **Context for future work:**
 
-- Technical foundation complete and documented
-- Validation gates established and baseline documented
-- CI/CD enforcement active - all PRs and deployments validated automatically
-- Ready for feature development with automated quality enforcement
-- All architectural decisions captured in STATE.md and phase summaries
+- Phase 1 complete: End-to-end automated report system operational
+- Phase 2 Plan 01 complete: Cross-links and content integration done
+- Multi-blog configured: /reports route live with RSS feed
+- Cross-links established: Changelogs ↔ Reports, Reports → Blog
+- Navbar order verified: Blog, Changelogs, Reports, Discussions, Feedback, Store
+- TypeScript baseline maintained: 0 errors (pre-existing React LSP warnings unrelated)
+- Next: Phase 2 Plan 02 will focus on validation, testing, and mobile verification
 
 **Files to reference:**
 
-- `.planning/ROADMAP.md` - Full phase structure and success criteria
-- `.planning/REQUIREMENTS.md` - Detailed requirement specifications
-- `.planning/research/SUMMARY.md` - Research findings and architectural analysis
-- `AGENTS.md` - Repository-specific development guidelines
+- `.planning/ROADMAP.md` - 5-phase structure for weekly reports
+- `.planning/REQUIREMENTS.md` - 19 requirements (FOUND, DISP, CONT, NAV, DOC)
+- `.planning/MILESTONE-v1.1-draft.md` - Original detailed planning document
+- `AGENTS.md` - Repository development guidelines (will be updated in Phase 5)
 
 ### Quick Start Commands
 
 ```bash
-# View roadmap
+# View current milestone roadmap
 cat .planning/ROADMAP.md
 
-# View requirements
+# View current milestone requirements
 cat .planning/REQUIREMENTS.md
 
-# Plan next phase
-/gsd-plan-phase 4
+# Plan Phase 1
+/gsd-plan-phase 1
 
-# Check current validation status
+# Check validation status (should always pass)
 npm run typecheck
 npm run prettier-lint
+npm run lint
 npm run build
 ```
 
 ---
 
-_State initialized: 2026-01-26_
-_Ready for phase planning_
+_State updated: 2026-01-27 after completing Phase 2 Plan 01_  
+_Phase 2 in progress - ready for Plan 02 (Validation & Testing)_

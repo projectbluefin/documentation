@@ -22,6 +22,7 @@
     "fetch-github-repos": "node scripts/fetch-github-repos.js",
     "fetch-contributors": "node scripts/fetch-contributors.js",
     "fetch-board-data": "node scripts/fetch-board-data.js",
+    "generate-report": "node scripts/generate-report.js",
     "fetch-data": "npm run fetch-feeds && npm run fetch-playlists && npm run fetch-github-profiles && npm run fetch-github-repos && npm run fetch-contributors && npm run fetch-board-data"
   },
   "dependencies": {
@@ -33,8 +34,10 @@
     "@easyops-cn/docusaurus-search-local": "^0.52.0",
     "@giscus/react": "^3.1.0",
     "@mdx-js/react": "^3.0.0",
+    "@octokit/graphql": "^9.0.3",
     "caniuse-lite": "^1.0.30001727",
     "clsx": "^2.0.0",
+    "date-fns": "^4.1.0",
     "node-fetch": "^3.3.2",
     "prism-react-renderer": "^2.3.0",
     "react": "^19.0.0",
