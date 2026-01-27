@@ -4,6 +4,65 @@ Bluefin documentation is a Docusaurus 3.8.1 TypeScript website that provides com
 
 **Always reference these instructions first and fallback to search or bash commands only when you encounter unexpected information that does not match the info here.**
 
+## Git Workflow - CRITICAL RULES
+
+**NEVER push directly to main/trunk unless EXPLICITLY instructed by the user.**
+
+### Required Workflow
+
+1. **ALWAYS work in a feature branch**
+
+   ```bash
+   git checkout -b feature/descriptive-name
+   ```
+
+2. **Commit your changes to the branch**
+
+   ```bash
+   git add <files>
+   git commit -m "conventional commit message"
+   ```
+
+3. **Push the branch to remote** (only when ready)
+
+   ```bash
+   git push -u origin feature/descriptive-name
+   ```
+
+4. **Create a pull request** (do not merge)
+
+   ```bash
+   gh pr create --title "Title" --body "Description"
+   ```
+
+5. **WAIT for user approval** - Do not merge or push to main
+
+### What NOT to Do
+
+- ❌ NEVER `git push origin main` or `git push origin HEAD:main`
+- ❌ NEVER commit directly to main branch
+- ❌ NEVER merge PRs without explicit user instruction
+- ❌ NEVER use `--force` or `--force-with-lease` on main branch
+
+### Exception Cases
+
+The ONLY time you push to main is when the user explicitly says:
+
+- "push this to main"
+- "merge this to trunk"
+- "deploy this now"
+- Similar explicit direct instructions
+
+### Why This Matters
+
+This repository has branch protection rules that require:
+
+- Pull requests for all changes
+- Merge queue for integration
+- Review/approval workflows
+
+Bypassing these (even though technically possible with certain permissions) violates the project's governance and CI/CD processes.
+
 ## Working Effectively
 
 Bootstrap, build, and test the repository:
