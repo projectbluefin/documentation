@@ -8,5 +8,13 @@
     "research": true,
     "plan_check": true,
     "verifier": true
+  },
+  "git": {
+    "workflow": "branch",
+    "protected_branches": ["main", "master"],
+    "branch_prefix": "gsd",
+    "auto_pr": false,
+    "pr_on_completion": true,
+    "prompt_before_pr": true
   }
 }
