@@ -14,9 +14,9 @@ See: .planning/MILESTONES.md (v1.0 shipped, v1.1 in progress)
 
 **Milestone:** v1.1 Biweekly Reports Feature  
 **Phase:** 1 of 3 (Automated Report System)  
-**Plan:** 2 of 2 in current phase  
-**Status:** Phase 1 Complete (Wave 2 done)  
-**Last activity:** 2026-01-27 - Completed 01-02-PLAN.md (report generation engine)
+**Plan:** 3 of 3 in current phase  
+**Status:** Phase 1 COMPLETE ✅  
+**Last activity:** 2026-01-27 - Completed 01-03-PLAN.md (Docusaurus integration & automation)
 
 **Progress:**
 
@@ -26,7 +26,7 @@ See: .planning/MILESTONES.md (v1.0 shipped, v1.1 in progress)
 [    ] Phase 3: Documentation & Refinement (0%)
 ```
 
-**Overall:** 2/3 plans complete (67%)
+**Overall:** 3/3 plans complete in Phase 1 (100%)
 
 ## Performance Metrics (v1.1 Targets)
 
@@ -61,6 +61,9 @@ See: .planning/MILESTONES.md (v1.0 shipped, v1.1 in progress)
 | 2026-01-27 | Static label mapping vs. API fetching          | Fast, no API calls, colors from projectbluefin/common                | Phase 1 uses static mapping, can add refresh script later      |
 | 2026-01-27 | Bot detection with regex patterns              | Filter bots BEFORE updating history to prevent contamination         | Clean contributor tracking, separate bot activity reporting    |
 | 2026-01-27 | JSON file for contributor history              | Gitignored, persists via checkout action, simple structure           | Historical tracking without database, no external dependencies |
+| 2026-01-27 | Multi-blog with id: 'reports'                  | Docusaurus best practice for separate blog instances                 | Clean separation of reports from main blog                     |
+| 2026-01-27 | Cron weekly, biweekly filter in script         | Simpler schedule, script handles even/odd week logic                 | Single cron expression, flexible filtering logic               |
+| 2026-01-27 | workflow_dispatch for manual testing           | Essential for validation before production use                       | Enables testing without waiting for cron schedule              |
 
 ### Active TODOs
 
@@ -130,26 +133,27 @@ static/data/
 ### Last Session
 
 **Session:** 2026-01-27  
-**Stopped at:** Completed 01-02-PLAN.md (report generation engine) - Phase 1 COMPLETE  
-**Resume with:** Plan Phase 2 with `/gsd-plan-phase 2` (Docusaurus blog integration)  
-**Commits:** 7 task commits total (Plan 01: 4, Plan 02: 3) in branch `gsd/milestone-v1.1-weekly-reports`
+**Stopped at:** Completed 01-03-PLAN.md (Docusaurus integration & automation) - Phase 1 COMPLETE ✅  
+**Resume with:** Plan Phase 2 with `/gsd-plan-phase 2` (Navigation & Discovery)  
+**Commits:** 10 task commits total (Plan 01: 4, Plan 02: 3, Plan 03: 3) in branch `gsd/milestone-v1.1-weekly-reports`
 
 ### Next Steps
 
 **Immediate:**
 
-1. Commit milestone planning documents (ROADMAP.md, REQUIREMENTS.md, updated MILESTONES.md, STATE.md)
+1. Commit Phase 1 completion (SUMMARY.md, STATE.md updates)
 2. Push branch `gsd/milestone-v1.1-weekly-reports`
-3. Create PR for milestone setup
-4. Begin Phase 1 planning with `/gsd-plan-phase 1`
+3. Create PR for Phase 1 changes
+4. Test workflow manually via GitHub Actions UI
+5. Begin Phase 2 planning with `/gsd-plan-phase 2`
 
 **Context for future work:**
 
-- v1.1 follows v1.0's technical foundation
-- TypeScript baseline is clean (0 errors)
-- CI/CD validation gates are active
-- Git workflow enforces branch-based development
-- All new work must pass: typecheck, lint, prettier-lint, build
+- Phase 1 complete: End-to-end automated report system operational
+- Multi-blog configured: /reports route live with RSS feed
+- GitHub Actions workflow ready: Biweekly automation on schedule
+- TypeScript baseline maintained: 0 errors (pre-existing React LSP warnings unrelated)
+- Next: Phase 2 will focus on navigation, discovery, and cross-links
 
 **Files to reference:**
 
