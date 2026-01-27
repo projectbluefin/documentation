@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Pre-commit hook to auto-sync bun.lockb when package-lock.json changes
+
+# Check if package-lock.json is being committed
+if git diff --cached --name-only | grep -q "package-lock.json\|package.json"; then
+  echo "📦 package.json or package-lock.json changed, syncing bun.lockb..."
+  
+  # Check if bun is available
+  if command -v bun &> /dev/null; then
+    # Regenerate bun.lockb
+    bun install --silent 2>&1 | grep -v "Saved lockfile"
+    
+    # Add bun.lockb to staging if it changed
+    if git diff --name-only | grep -q "bun.lockb"; then
+      echo "✓ bun.lockb updated and staged"
+      git add bun.lockb
+    else
+      echo "✓ bun.lockb already in sync"
+    fi
+  else
+    echo "⚠️  Warning: bun not found. bun.lockb may be out of sync."
+    echo "   Install bun: curl -fsSL https://bun.sh/install | bash"
+    echo "   Or the CI workflow will auto-sync it for you."
+  fi
+fi
