@@ -2,20 +2,19 @@
 /**
  * Monthly report generation script
  *
- * Fetches project board data, generates formatted markdown report, and writes to reports/ directory
- * Runs on the first Monday of each month
+ * Fetches closed issues/PRs from monitored repositories, generates formatted markdown report, and writes to reports/ directory
+ * Runs on the last day of each month
+ *
+ * Planned work: Issues/PRs from projectbluefin/common
+ * Opportunistic work: Issues/PRs from other monitored repositories
  */
 
-import {
-  fetchProjectItems,
-  filterByStatus,
-  fetchClosedItemsFromRepo,
-} from "./lib/graphql-queries.js";
-import { updateContributorHistory, isBot } from "./lib/contributor-tracker.js";
-import { generateReportMarkdown } from "./lib/markdown-generator.js";
-import { getCategoryForLabel } from "./lib/label-mapping.js";
-import { MONITORED_REPOS } from "./lib/monitored-repos.js";
-import { format, parseISO, isWithinInterval } from "date-fns";
+import { fetchClosedItemsFromRepo } from "./lib/graphql-queries.mjs";
+import { updateContributorHistory, isBot } from "./lib/contributor-tracker.mjs";
+import { generateReportMarkdown } from "./lib/markdown-generator.mjs";
+import { getCategoryForLabel } from "./lib/label-mapping.mjs";
+import { MONITORED_REPOS } from "./lib/monitored-repos.mjs";
+import { format } from "date-fns";
 import { writeFile } from "fs/promises";
 
 /**
@@ -61,33 +60,9 @@ function calculateReportWindow() {
 }
 
 /**
- * Check if item was updated within report window
- *
- * @param {Object} item - Project item
- * @param {{startDate: Date, endDate: Date}} window - Report window
- * @returns {boolean} True if item updated in window
- */
-function isInReportWindow(item, window) {
-  // Find Status field to get updatedAt timestamp
-  const statusField = item.fieldValues.nodes.find(
-    (fv) => fv.field?.name === "Status",
-  );
-
-  if (!statusField?.updatedAt) {
-    return false;
-  }
-
-  const itemDate = parseISO(statusField.updatedAt);
-  return isWithinInterval(itemDate, {
-    start: window.startDate,
-    end: window.endDate,
-  });
-}
-
-/**
  * Aggregate bot activity by repository and bot username
  *
- * @param {Array} botItems - Bot items from project board
+ * @param {Array} botItems - Bot items from monitored repositories
  * @returns {Array} Aggregated bot activity [{repo, bot, count, items}]
  */
 function aggregateBotActivity(botItems) {
@@ -140,26 +115,35 @@ async function generateReport() {
   );
 
   try {
-    // Fetch project board data
-    log.info("Fetching project board data...");
-    const boardItems = await fetchProjectItems("projectbluefin", 2);
-    log.info(`Total items on board: ${boardItems.length}`);
+    // Fetch planned work from projectbluefin/common repository
+    log.info("Fetching planned work from projectbluefin/common...");
+    const plannedItems = await fetchClosedItemsFromRepo(
+      "projectbluefin",
+      "common",
+      startDate,
+      endDate,
+    );
 
-    // Filter by Status="Done" column
-    const doneItems = filterByStatus(boardItems, "Done");
-    log.info(`Items in "Done" column: ${doneItems.length}`);
+    // Filter to only include merged PRs (exclude closed issues)
+    const plannedPRs = plannedItems.filter(
+      (item) => item.type === "PullRequest",
+    );
+    log.info(
+      `Planned work items from projectbluefin/common: ${plannedPRs.length} PRs (${plannedItems.length - plannedPRs.length} issues excluded)`,
+    );
 
-    // Filter by date range (items updated within window)
-    const itemsInWindow = doneItems
-      .filter((item) => isInReportWindow(item, { startDate, endDate }))
-      .filter((item) => item.content && item.content.title && item.content.url); // Skip items without valid content
-    log.info(`Items completed in window: ${itemsInWindow.length}`);
-
-    // Fetch opportunistic work from monitored repositories
-    log.info("Fetching opportunistic work from monitored repositories...");
-    const allOpportunisticItems = [];
+    // Fetch opportunistic work from other monitored repositories
+    log.info(
+      "Fetching opportunistic work from other monitored repositories...",
+    );
+    const opportunisticItems = [];
 
     for (const repo of MONITORED_REPOS) {
+      // Skip projectbluefin/common since we already fetched it as planned work
+      if (repo === "projectbluefin/common") {
+        continue;
+      }
+
       const [owner, name] = repo.split("/");
       log.info(`  Fetching from ${repo}...`);
       const repoItems = await fetchClosedItemsFromRepo(
@@ -168,42 +152,38 @@ async function generateReport() {
         startDate,
         endDate,
       );
-      allOpportunisticItems.push(...repoItems);
+      opportunisticItems.push(...repoItems);
     }
 
+    // Filter to only include merged PRs (exclude closed issues)
+    const opportunisticPRs = opportunisticItems.filter(
+      (item) => item.type === "PullRequest",
+    );
     log.info(
-      `Total closed items from monitored repos: ${allOpportunisticItems.length}`,
+      `Opportunistic work items from other repos: ${opportunisticPRs.length} PRs (${opportunisticItems.length - opportunisticPRs.length} issues excluded)`,
     );
 
-    // Extract URLs from project board items to identify opportunistic work
-    const boardItemUrls = new Set(
-      itemsInWindow.map((item) => item.content?.url).filter(Boolean),
-    );
+    // Transform items to match expected structure
+    const transformItem = (item) => ({
+      content: {
+        __typename: item.type, // "Issue" or "PullRequest"
+        number: item.number,
+        title: item.title,
+        url: item.url,
+        repository: { nameWithOwner: item.repository },
+        labels: { nodes: item.labels },
+        author: { login: item.author },
+      },
+    });
 
-    // Filter opportunistic items (not on project board)
-    const opportunisticItems = allOpportunisticItems
-      .filter((item) => !boardItemUrls.has(item.url))
-      .map((item) => {
-        // Transform to match board item structure for consistency
-        return {
-          content: {
-            __typename: item.type, // "Issue" or "PullRequest"
-            number: item.number,
-            title: item.title,
-            url: item.url,
-            repository: { nameWithOwner: item.repository },
-            labels: { nodes: item.labels },
-            author: { login: item.author },
-          },
-        };
-      });
-
-    log.info(
-      `Opportunistic items (not on board): ${opportunisticItems.length}`,
-    );
+    const itemsInWindow = plannedPRs.map(transformItem);
+    const transformedOpportunisticItems = opportunisticPRs.map(transformItem);
 
     // Handle empty data period
-    if (itemsInWindow.length === 0 && opportunisticItems.length === 0) {
+    if (
+      itemsInWindow.length === 0 &&
+      transformedOpportunisticItems.length === 0
+    ) {
       log.warn(
         "No items completed in this period - generating quiet period report",
       );
@@ -211,7 +191,7 @@ async function generateReport() {
     }
 
     // Separate human contributions from bot activity (both planned and opportunistic)
-    const allItems = [...itemsInWindow, ...opportunisticItems];
+    const allItems = [...itemsInWindow, ...transformedOpportunisticItems];
     const humanItems = allItems.filter(
       (item) => !isBot(item.content?.author?.login || ""),
     );
@@ -223,7 +203,7 @@ async function generateReport() {
     const plannedHumanItems = itemsInWindow.filter(
       (item) => !isBot(item.content?.author?.login || ""),
     );
-    const opportunisticHumanItems = opportunisticItems.filter(
+    const opportunisticHumanItems = transformedOpportunisticItems.filter(
       (item) => !isBot(item.content?.author?.login || ""),
     );
 

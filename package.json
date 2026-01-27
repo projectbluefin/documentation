@@ -2,7 +2,6 @@
   "name": "bluefin-docusaurus",
   "version": "0.0.0",
   "private": true,
-  "type": "module",
   "scripts": {
     "docusaurus": "docusaurus",
     "start": "npm run fetch-data && docusaurus start --host 0.0.0.0",
@@ -23,7 +22,7 @@
     "fetch-github-repos": "node scripts/fetch-github-repos.js",
     "fetch-contributors": "node scripts/fetch-contributors.js",
     "fetch-board-data": "node scripts/fetch-board-data.js",
-    "generate-report": "node scripts/generate-report.js",
+    "generate-report": "node scripts/generate-report.mjs",
     "fetch-data": "npm run fetch-feeds && npm run fetch-playlists && npm run fetch-github-profiles && npm run fetch-github-repos && npm run fetch-contributors && npm run fetch-board-data"
   },
   "dependencies": {

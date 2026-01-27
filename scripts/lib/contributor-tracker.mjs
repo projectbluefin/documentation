@@ -15,6 +15,7 @@ const BOT_PATTERNS = [
   /^dependabot\[bot\]$/,
   /^renovate\[bot\]$/,
   /^github-actions\[bot\]$/,
+  /^github-actions$/, // GitHub Actions bot without [bot] suffix
   /^copilot-swe-agent$/,
   /^ubot-\d+$/,
   /bot$/i, // Catches most bot usernames

@@ -11,7 +11,7 @@ import {
   LABEL_CATEGORIES,
   LABEL_COLORS,
   generateBadge,
-} from "./label-mapping.js";
+} from "./label-mapping.mjs";
 
 /**
  * Generate complete report markdown
