@@ -1,175 +1,126 @@
-# Roadmap: Weekly Reports Feature (v1.1)
+# Roadmap: Biweekly Reports Feature (v1.1)
 
 **Milestone:** v1.1  
-**Goal:** Add weekly reports section to aggregate and display project activity  
+**Goal:** Add automated biweekly reports from GitHub Project Board  
 **Status:** Planning  
-**Created:** 2026-01-26
+**Created:** 2026-01-26  
+**Updated:** 2026-01-27
 
 ---
 
 ## Milestone Overview
 
-**What:** Weekly reports feature for Bluefin documentation site
+**What:** Automated biweekly status reports from GitHub Project Board #2
 
-**Why:** Provide users with digestible weekly summaries of project activities, releases, community discussions, and development progress.
+**Why:** Provide community with transparent, data-driven summaries of completed work, contributors, and project momentum.
 
-**How:** Hybrid model combining auto-generated metrics with manual narrative content (similar to changelog + blog patterns).
+**How:** 100% automated system that fetches project board data, categorizes by labels, formats as blog posts, and publishes every other Monday.
 
-**Success:** Reports accessible from navigation, chronologically sorted, mobile-responsive, passing all validation gates, with RSS feed support.
+**Success:** Reports published biweekly at `/reports`, properly categorized, mobile-responsive, with RSS feed support. Zero manual intervention required.
 
 ---
 
 ## Phase Breakdown
 
-### Phase 1: Foundation & Data Collection (2 days)
+### Phase 1: Automated Report System (3-4 days)
 
-**Goal:** Establish infrastructure for aggregating weekly activity data
+**Goal:** Build complete end-to-end automated report generation and publishing system
 
 **Delivers:**
 
-- Weekly reports directory structure
-- Data aggregation script (`fetch-weekly-data.js`)
-- TypeScript type definitions
-- Build pipeline integration
+- GitHub Project Board data fetching (GraphQL API integration)
+- Label categorization and badge formatting
+- Report markdown generation (matching issue #166 format)
+- Separate Docusaurus blog instance at `/reports`
+- Biweekly automation (GitHub Actions workflow)
+- Historical contributor tracking
+- Bot filtering and aggregation
 
 **Key Files:**
 
-- `weekly-reports/` (new directory)
-- `scripts/fetch-weekly-data.js` (new)
-- `src/types/weekly-reports.d.ts` (new)
-- `package.json` (updated scripts)
-- `static/data/weekly-activity.json` (auto-generated, gitignored)
+- `scripts/generate-biweekly-report.js` (new) - Main report generator
+- `scripts/fetch-board-data.js` (new) - Project board API integration
+- `scripts/utils/label-mapping.js` (new) - Static label color mapping
+- `scripts/utils/contributor-history.js` (new) - Track new contributors
+- `reports/` (new directory) - Report blog posts
+- `docusaurus.config.ts` (modified) - Add second blog instance
+- `.github/workflows/biweekly-report.yml` (new) - Automation workflow
+- `static/data/contributor-history.json` (auto-generated, gitignored)
 
 **Dependencies:** None (first phase)
 
 **Success Criteria:**
 
-- `npm run fetch-weekly-data` executes without errors
-- `weekly-activity.json` generates with valid structure
+- Script fetches project board data successfully
+- Report markdown matches issue #166 format exactly
+- Labels categorized correctly with colored badges
+- Bots separated into aggregate section
+- New contributors identified and highlighted
+- `/reports` blog instance renders correctly
 - TypeScript compilation passes
 - Build completes successfully
+- Manual test: generate one report and verify all sections
 
 ---
 
-### Phase 2: Display Components (2 days)
+### Phase 2: Navigation & Discovery (1 day)
 
-**Goal:** Create React components for displaying weekly reports
-
-**Delivers:**
-
-- WeeklyActivity component (metrics widget)
-- WeeklyReportCard component (report preview)
-- WeeklySummary component (week-over-week comparison)
-- Weekly reports listing page
-
-**Key Files:**
-
-- `src/components/WeeklyActivity.tsx` (new)
-- `src/components/WeeklyActivity.module.css` (new)
-- `src/components/WeeklyReportCard.tsx` (new)
-- `src/components/WeeklyReportCard.module.css` (new)
-- `src/components/WeeklySummary.tsx` (new)
-- `src/components/WeeklySummary.module.css` (new)
-- `src/pages/weekly-reports.tsx` (new)
-- `src/pages/weekly-reports.module.css` (new)
-
-**Dependencies:** Phase 1 (types and data structure)
-
-**Success Criteria:**
-
-- Components render without errors
-- TypeScript validation passes
-- Mobile-responsive design verified
-- Matches existing site aesthetics
-
----
-
-### Phase 3: Content Management (2 days)
-
-**Goal:** Enable manual report creation and content authoring
+**Goal:** Integrate reports into site navigation and enable discoverability
 
 **Delivers:**
 
-- Report template with frontmatter structure
-- Sample weekly reports (2-3 initial reports)
-- Report parser/loader utility
-- Integration of manual + auto-generated content
-
-**Key Files:**
-
-- `weekly-reports/_TEMPLATE.md` (new)
-- `weekly-reports/authors.yaml` (new)
-- `weekly-reports/2026-week-04.md` (new, sample)
-- `weekly-reports/2026-week-03.md` (new, sample)
-- Report loader utility (location TBD during planning)
-
-**Dependencies:** Phase 2 (display components)
-
-**Success Criteria:**
-
-- Template report renders correctly
-- Sample reports display properly
-- Frontmatter parsed without errors
-- Reports sorted chronologically
-- Build succeeds with reports
-
----
-
-### Phase 4: Navigation & Discovery (1 day)
-
-**Goal:** Integrate weekly reports into site navigation and improve discoverability
-
-**Delivers:**
-
-- Main navigation link
-- RSS/Atom feed configuration
-- Cross-links with existing content
+- Main navigation link to `/reports`
+- RSS feed configuration (automatic from Docusaurus)
+- Cross-links with changelogs and blog
 - Search integration verification
+- Mobile navigation testing
 
 **Key Files:**
 
-- `docusaurus.config.ts` (navbar, feed config)
-- `sidebars.ts` (optional, if adding to sidebar)
-- Changelog pages (cross-link updates)
-- Footer (optional feed link)
+- `docusaurus.config.ts` (navbar configuration)
+- `src/pages/index.tsx` (optional homepage link)
+- `blog/` posts (cross-link to reports)
+- `docs/changelogs.mdx` (link to reports)
 
-**Dependencies:** Phase 3 (content must exist)
+**Dependencies:** Phase 1 (reports must exist)
 
 **Success Criteria:**
 
-- Navigation links work on desktop and mobile
-- RSS feed validates successfully
-- Cross-links function properly
-- Search returns weekly report results
+- "Reports" link visible in desktop and mobile navigation
+- RSS feed validates at `/reports/rss.xml`
+- Cross-links function correctly
+- Search returns report results
+- Mobile navigation works correctly
 
 ---
 
-### Phase 5: Polish & Documentation (1 day)
+### Phase 3: Documentation & Refinement (1 day)
 
-**Goal:** Finalize feature with documentation, testing, and quality improvements
+**Goal:** Document the system for maintainers and refine automation
 
 **Delivers:**
 
-- User-facing documentation
-- Developer documentation
-- Automated report generation script (cron helper)
-- Performance optimization
-- Accessibility audit
+- Developer documentation in AGENTS.md
+- User-facing documentation explaining reports
+- Troubleshooting guide for automation failures
+- Performance validation
+- Error handling improvements
 
 **Key Files:**
 
-- `docs/weekly-reports.md` (new, user documentation)
-- `AGENTS.md` (updated with weekly reports section)
-- `.github/workflows/generate-weekly-report.yml` (optional, automation)
-- Component JSDoc comments
+- `AGENTS.md` (updated with reports section)
+- `docs/reports.md` (new, user documentation)
+- `.github/workflows/biweekly-report.yml` (refined error handling)
+- `scripts/generate-biweekly-report.js` (improved logging)
 
-**Dependencies:** Phase 4 (full feature deployed)
+**Dependencies:** Phase 2 (full feature deployed)
 
 **Success Criteria:**
 
-- Documentation complete and accurate
-- Performance metrics acceptable (<2min build increase)
-- Accessibility: keyboard navigation, ARIA labels
+- AGENTS.md has complete automation documentation
+- User docs explain what reports show and where to find them
+- Error handling tested (API failures, rate limits, missing data)
+- Build time increase measured and acceptable
 - All validation gates pass (typecheck, lint, prettier, build)
 
 ---
@@ -177,15 +128,11 @@
 ## Phase Dependencies
 
 ```
-Phase 1 (Foundation)
+Phase 1 (Automated Report System)
     ↓
-Phase 2 (Display Components)
+Phase 2 (Navigation & Discovery)
     ↓
-Phase 3 (Content Management)
-    ↓
-Phase 4 (Navigation & Discovery)
-    ↓
-Phase 5 (Polish & Documentation)
+Phase 3 (Documentation & Refinement)
 ```
 
 **Execution:** Sequential (each phase depends on previous)
@@ -196,13 +143,38 @@ Phase 5 (Polish & Documentation)
 
 | Phase | Duration | Cumulative |
 | ----- | -------- | ---------- |
-| 1     | 2 days   | Day 2      |
-| 2     | 2 days   | Day 4      |
-| 3     | 2 days   | Day 6      |
-| 4     | 1 day    | Day 7      |
-| 5     | 1 day    | Day 8      |
+| 1     | 3-4 days | Day 4      |
+| 2     | 1 day    | Day 5      |
+| 3     | 1 day    | Day 6      |
 
-**Total:** 8 working days (~2 weeks with normal pace)
+**Total:** 5-6 working days (~1 week with normal pace)
+
+---
+
+## Technical Details
+
+### Data Source
+
+- **GitHub Project Board:** `https://github.com/orgs/projectbluefin/projects/2`
+- **Tracked Repositories:** projectbluefin/common, projectbluefin/dakota, ublue-os/bluefin, ublue-os/bluefin-lts
+- **Filtering:** Items moved to "Done" + large "In Progress" items (size:M+)
+- **Time Window:** 2-week periods ending Sunday before publication Monday
+
+### Report Format
+
+- **Reference:** https://github.com/projectbluefin/common/issues/166
+- **Sections:** Summary, Categorized Work, Bot Activity, Contributors
+- **Categories:** Based on projectbluefin/common label conventions (area/_, kind/_)
+- **Badges:** Shields.io format with static color mapping
+- **Bot Handling:** Aggregate table + collapsible details
+- **New Contributors:** Tracked across all 4 repos
+
+### Automation
+
+- **Schedule:** Every other Monday (biweekly)
+- **Trigger:** GitHub Actions cron schedule
+- **Process:** Fetch → Categorize → Generate → Commit → Auto-merge
+- **Error Handling:** Graceful failures with maintainer alerts
 
 ---
 
@@ -210,19 +182,22 @@ Phase 5 (Polish & Documentation)
 
 **Technical Risks:**
 
-- GitHub API rate limits → Use GITHUB_TOKEN env var
-- Build time increase → Cache weekly-activity.json, implement delta fetching
-- TypeScript errors in components → Follow existing component patterns strictly
+- GitHub GraphQL API rate limits → Use GITHUB_TOKEN, implement request throttling
+- Project board API changes → Pin GraphQL schema version, add validation
+- Build time increase → Monitor performance, optimize if needed
+- Label mapping drift → Document update process, validate against common repo
 
-**Content Risks:**
+**Operational Risks:**
 
-- Report staleness → Document clear authoring cadence (Friday generation)
-- Quality inconsistency → Provide detailed template with examples
+- Report generation failures → Comprehensive error handling, alert on failures
+- Incomplete data → Fallback to partial reports with warning
+- Timezone issues → Use consistent UTC calculation for biweekly periods
 
 **UX Risks:**
 
-- Discoverability → Add to prominent navigation position
-- Mobile experience → Mobile-first design approach
+- Discoverability → Prominent navigation link, cross-links from blog/changelogs
+- Mobile experience → Test on mobile devices, ensure responsive layout
+- Empty reports → Handle quiet periods gracefully (show "quiet week" message)
 
 ---
 
@@ -230,31 +205,56 @@ Phase 5 (Polish & Documentation)
 
 **Launch Metrics (Week 1):**
 
-- Weekly reports page receives >500 visitors
-- RSS feed has >50 subscribers
+- First automated report publishes successfully
+- All sections render correctly (summary, categories, bots, contributors)
+- RSS feed validates
 - Zero TypeScript/build errors
 
-**Operational Metrics (Ongoing):**
+**Operational Metrics (First Month):**
 
-- Build time increase <2 minutes
-- Script success rate >95%
-- Mobile bounce rate <40%
+- 2 biweekly reports published automatically (100% success rate)
+- Build time increase <1 minute
+- Zero manual interventions required
+- New contributors correctly identified
 
 **Content Metrics (Month 1):**
 
-- 1 report published per week (4 total)
-- Average report length >500 words
-- Cross-link engagement >100 clicks/week
+- Reports page receives >100 visitors
+- RSS feed has >10 subscribers
+- Cross-link engagement from changelogs/blog
 
 ---
 
 ## Out of Scope (Future Enhancements)
 
-- Email newsletter integration
-- Interactive charts/visualizations (beyond simple CSS)
+- Manual narrative additions (reports are 100% automated)
+- Interactive charts/visualizations
 - Report comments/discussion threads
-- Automated report generation from AI (manual curation only for v1.1)
-- Historical data backfill (only forward-looking reports)
+- Email newsletter integration
+- Historical data backfill (forward-looking only)
+- Per-contributor statistics page
+- Trend analysis across reports
+
+---
+
+## Changes from Original Plan
+
+**Original (v1.0 of planning):**
+
+- 5 phases with hybrid manual+automated approach
+- Custom React components for display
+- Manual narrative writing
+- Weekly cadence
+
+**Updated (v1.1 actual):**
+
+- 3 phases with 100% automation
+- Standard Docusaurus blog (no custom components needed)
+- Zero manual intervention
+- Biweekly cadence
+- Focus on project board data (not raw repo activity)
+
+The scope simplified significantly because reports are fully automated from a single data source (project board), not a hybrid system requiring manual curation.
 
 ---
 
