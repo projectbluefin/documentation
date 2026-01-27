@@ -187,6 +187,7 @@ async function generateReport() {
         // Transform to match board item structure for consistency
         return {
           content: {
+            __typename: item.type, // "Issue" or "PullRequest"
             number: item.number,
             title: item.title,
             url: item.url,
@@ -230,15 +231,16 @@ async function generateReport() {
     log.info(`Opportunistic work (human): ${opportunisticHumanItems.length}`);
     log.info(`Bot contributions: ${botItems.length}`);
 
-    // Extract contributor usernames (human only)
+    // Extract contributor usernames (human only, PRs only - people who wrote code)
     const contributors = [
       ...new Set(
         humanItems
+          .filter((item) => item.content?.__typename === "PullRequest")
           .map((item) => item.content?.author?.login)
           .filter((login) => login),
       ),
     ];
-    log.info(`Unique contributors: ${contributors.length}`);
+    log.info(`Unique contributors (PR authors): ${contributors.length}`);
 
     // Track contributors and identify new ones (with error handling)
     log.info("Updating contributor history...");

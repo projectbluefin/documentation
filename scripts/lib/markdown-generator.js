@@ -86,6 +86,9 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
     ([_, labels]) => labels.some((label) => label.startsWith("kind/")),
   );
 
+  // Track displayed items to avoid duplicates across categories
+  const displayedUrls = new Set();
+
   // Generate area sections with planned vs opportunistic subsections
   const areaSections = areaCategories
     .map(([categoryName, categoryLabels]) => {
@@ -94,6 +97,7 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
         opportunisticItems,
         categoryName,
         categoryLabels,
+        displayedUrls,
       );
       const cleanCategoryName = categoryName.replace(/^[\p{Emoji}\s]+/u, "");
       const labelBadges = categoryLabels
@@ -118,6 +122,7 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
         opportunisticItems,
         categoryName,
         categoryLabels,
+        displayedUrls,
       );
       const cleanCategoryName = categoryName.replace(/^[\p{Emoji}\s]+/u, "");
       const labelBadges = categoryLabels
@@ -189,6 +194,7 @@ ${kindSections}`;
  * @param {Array} opportunisticItems - Items from repos not on board
  * @param {string} categoryName - Category display name
  * @param {Array<string>} categoryLabels - Labels belonging to this category
+ * @param {Set} displayedUrls - Set of URLs already displayed (modified in place)
  * @returns {string} Markdown section content
  */
 export function generateCategorySectionWithSubsections(
@@ -196,10 +202,16 @@ export function generateCategorySectionWithSubsections(
   opportunisticItems,
   categoryName,
   categoryLabels,
+  displayedUrls,
 ) {
-  // Get items for each type
-  const planned = filterItemsByLabels(plannedItems, categoryLabels);
-  const opportunistic = filterItemsByLabels(opportunisticItems, categoryLabels);
+  // Get items for each type, filtering out already displayed items
+  const planned = filterItemsByLabels(plannedItems, categoryLabels).filter(
+    (item) => !displayedUrls.has(item.content?.url),
+  );
+  const opportunistic = filterItemsByLabels(
+    opportunisticItems,
+    categoryLabels,
+  ).filter((item) => !displayedUrls.has(item.content?.url));
 
   // If both empty, show ChillOps
   if (planned.length === 0 && opportunistic.length === 0) {
@@ -210,13 +222,15 @@ export function generateCategorySectionWithSubsections(
 
   // Planned Work subsection
   if (planned.length > 0) {
-    sections.push(`#### 📋 Planned Work\n\n${formatItemList(planned)}`);
+    sections.push(
+      `#### 📋 Planned Work\n\n${formatItemList(planned, displayedUrls)}`,
+    );
   }
 
   // Opportunistic Work subsection
   if (opportunistic.length > 0) {
     sections.push(
-      `#### ⚡ Opportunistic Work\n\n${formatItemList(opportunistic)}`,
+      `#### ⚡ Opportunistic Work\n\n${formatItemList(opportunistic, displayedUrls)}`,
     );
   }
 
@@ -243,15 +257,19 @@ function filterItemsByLabels(items, categoryLabels) {
  * Format list of items as markdown
  *
  * @param {Array} items - Items to format
+ * @param {Set} displayedUrls - Set to track displayed URLs
  * @returns {string} Markdown list
  */
-function formatItemList(items) {
+function formatItemList(items, displayedUrls) {
   const lines = items.map((item) => {
     const type = item.content.__typename === "PullRequest" ? "PR" : "Issue";
     const number = item.content.number;
     const title = item.content.title;
     const url = item.content.url;
     const author = item.content.author?.login || "unknown";
+
+    // Mark this URL as displayed
+    displayedUrls.add(url);
 
     // Use zero-width space to prevent GitHub notifications
     return `- [#${number} ${title}](${url}) by @\u200B${author}`;
