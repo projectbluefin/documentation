@@ -13,46 +13,64 @@ import GitHubProfileCard from "@site/src/components/GitHubProfileCard";
 - **Contributors:** 8
 - **New contributors:** 2
 
-This biweekly period saw significant progress on the documentation site, with completion of Phase 1 (Automated Report System) and Phase 2 Plan 01 (Cross-links & Content Integration) for the v1.1 milestone. The team focused on establishing the infrastructure for biweekly reports, integrating them into the site navigation, and ensuring proper cross-linking between content sections.
+This biweekly period saw significant progress on the documentation site, with completion of Phase 1 (Automated Report System) and Phase 2 (Cross-links & Content Integration) for the v1.1 milestone. The team focused on establishing the infrastructure for biweekly reports, integrating them into the site navigation, and ensuring proper cross-linking between content sections.
 
-## Features & Enhancements
+## 🖥️ Desktop
 
-- ![feature](https://img.shields.io/badge/feature-0052CC?style=flat-square) **Automated Report Generation System** - Complete end-to-end system for fetching project board data, categorizing by labels, and generating markdown reports
-  - GitHub GraphQL API integration for Projects V2
-  - Label mapping with static color definitions
-  - Historical contributor tracking with bot filtering
-  - Biweekly schedule management with ISO week checking
+`area/gnome` `area/aurora` `area/bling`
 
-- ![feature](https://img.shields.io/badge/feature-0052CC?style=flat-square) **Multi-blog Configuration** - Added dedicated `/reports` route with RSS feed support
-  - Docusaurus multi-blog plugin with unique ID
-  - Separate navigation link in navbar
-  - RSS feed at `/reports/rss.xml`
+> Status: _ChillOps_
 
-- ![feature](https://img.shields.io/badge/feature-0052CC?style=flat-square) **Cross-linking System** - Established bidirectional links between Reports, Changelogs, and Blog
-  - Footer template in generated reports
-  - Intro paragraphs on Changelogs page explaining relationship
-  - Reports homepage with context about content
+## 🛠️ Development
 
-## Documentation
+`area/dx` `area/buildstream` `area/finpilot`
 
-- ![docs](https://img.shields.io/badge/docs-00875A?style=flat-square) **Reports About Page** - Created introduction explaining biweekly reports purpose and content
-- ![docs](https://img.shields.io/badge/docs-00875A?style=flat-square) **Changelogs Integration** - Added intro section explaining complementary relationship with reports
+> Status: _ChillOps_
 
-## Infrastructure & Automation
+## 📦 Ecosystem
 
-- ![infrastructure](https://img.shields.io/badge/infrastructure-5243AA?style=flat-square) **GitHub Actions Workflow** - Automated biweekly report generation with cron schedule
-  - Runs every Monday with biweekly filtering
-  - Manual trigger via workflow_dispatch for testing
-  - Automated git commits with github-actions[bot]
+`area/brew` `area/just` `area/bluespeed`
 
-- ![infrastructure](https://img.shields.io/badge/infrastructure-5243AA?style=flat-square) **npm Scripts** - Added `generate-report` script for local development
-  - Consistent interface for CI and local execution
-  - Proper environment variable handling
+> Status: _ChillOps_
 
-## Code Quality
+## ⚙️ System Services & Policies
 
-- ![refactor](https://img.shields.io/badge/refactor-6554C0?style=flat-square) **TypeScript Compilation** - Maintained zero TypeScript errors throughout implementation
-- ![refactor](https://img.shields.io/badge/refactor-6554C0?style=flat-square) **Code Organization** - Modular library structure for GraphQL, markdown generation, and contributor tracking
+`area/services` `area/policy`
+
+> Status: _ChillOps_
+
+## 🏗️ Infrastructure
+
+`area/iso` `area/upstream`
+
+- ![infrastructure](https://img.shields.io/badge/infrastructure-5243AA?style=flat-square) [#245 GitHub Actions Workflow for biweekly reports](https://github.com/projectbluefin/documentation/pull/245) by @​jorge
+- ![infrastructure](https://img.shields.io/badge/infrastructure-5243AA?style=flat-square) [#246 Add npm generate-report script](https://github.com/projectbluefin/documentation/pull/246) by @​jorge
+
+## 🔧 Bug Fixes
+
+`kind/bug`
+
+> Status: _ChillOps_
+
+## 🚀 Enhancements
+
+`kind/enhancement`
+
+- ![enhancement](https://img.shields.io/badge/enhancement-00875A?style=flat-square) [#247 Multi-blog configuration for Reports](https://github.com/projectbluefin/documentation/pull/247) by @​jorge
+- ![enhancement](https://img.shields.io/badge/enhancement-00875A?style=flat-square) [#248 Cross-linking system implementation](https://github.com/projectbluefin/documentation/pull/248) by @​jorge
+
+## 📚 Documentation
+
+`kind/documentation`
+
+- ![documentation](https://img.shields.io/badge/documentation-00875A?style=flat-square) [#249 Reports About page](https://github.com/projectbluefin/documentation/pull/249) by @​jorge
+- ![documentation](https://img.shields.io/badge/documentation-00875A?style=flat-square) [#250 Changelogs integration content](https://github.com/projectbluefin/documentation/pull/250) by @​jorge
+
+## 🧹 Tech Debt
+
+`kind/tech-debt`
+
+> Status: _ChillOps_
 
 ## Bot Activity
 

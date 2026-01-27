@@ -56,7 +56,7 @@ ${newContributors.length > 0 ? "import GitHubProfileCard from '@site/src/compone
 - **New contributors:** ${newContributors.length}
 `;
 
-  // Generate categorized sections
+  // Generate categorized sections (always show all categories, even if empty)
   const categorySections = Object.entries(LABEL_CATEGORIES)
     .map(([categoryName, categoryLabels]) => {
       const section = generateCategorySection(
@@ -64,9 +64,12 @@ ${newContributors.length > 0 ? "import GitHubProfileCard from '@site/src/compone
         categoryName,
         categoryLabels,
       );
-      return section ? `## ${categoryName}\n\n${section}` : "";
+      // Generate inline label badges
+      const labelBadges = categoryLabels
+        .map((label) => `\`${label}\``)
+        .join(" ");
+      return `## ${categoryName}\n\n${labelBadges}\n\n${section}`;
     })
-    .filter((section) => section !== "")
     .join("\n\n");
 
   // Generate uncategorized section
@@ -114,7 +117,7 @@ ${newContributors.length > 0 ? "import GitHubProfileCard from '@site/src/compone
  * @param {Array} items - All completed items
  * @param {string} categoryName - Category display name with emoji
  * @param {Array<string>} categoryLabels - Label names for this category
- * @returns {string} Markdown list or empty string if no items
+ * @returns {string} Markdown list or ChillOps status if no items
  */
 export function generateCategorySection(items, categoryName, categoryLabels) {
   // Find items with at least one label matching this category
@@ -126,7 +129,7 @@ export function generateCategorySection(items, categoryName, categoryLabels) {
   });
 
   if (categoryItems.length === 0) {
-    return ""; // Graceful degradation - no section if no items
+    return "> Status: _ChillOps_"; // Show ChillOps status for empty categories
   }
 
   // Group by label within category
