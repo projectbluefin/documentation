@@ -99,7 +99,7 @@ const config: Config = {
         id: "reports",
         routeBasePath: "reports",
         path: "./reports",
-        blogTitle: "Biweekly Reports",
+        blogTitle: "Monthly Reports",
         blogDescription:
           "Automated project activity reports from GitHub Project Board",
         blogSidebarTitle: "Recent Reports",
@@ -109,8 +109,8 @@ const config: Config = {
         authorsMapPath: "authors.yaml",
         feedOptions: {
           type: "all",
-          title: "Project Bluefin - Biweekly Reports",
-          description: "Automated biweekly activity reports from project board",
+          title: "Project Bluefin - Monthly Reports",
+          description: "Automated monthly activity reports from project board",
           copyright: `Copyright © ${new Date().getFullYear()} Project Bluefin`,
         },
         // Enable table of contents in right sidebar
