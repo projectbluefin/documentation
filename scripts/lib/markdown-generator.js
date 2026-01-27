@@ -72,8 +72,14 @@ tags: [biweekly-report, project-activity]
     newContributors,
   );
 
-  // Generate footer
+  // Generate footer with cross-links
   const footer = `---
+
+*Want to see the latest OS releases? Check out the [Changelogs](/changelogs) page. For announcements and deep dives, read our [Blog](/blog).*
+
+*This report was automatically generated from the [Project Bluefin Project Board](https://github.com/orgs/projectbluefin/projects/2).*
+
+---
 
 *Generated on ${format(new Date(), "yyyy-MM-dd")}*  
 [View Project Board](https://github.com/orgs/projectbluefin/projects/2) | [Report an Issue](https://github.com/projectbluefin/common/issues/new)
