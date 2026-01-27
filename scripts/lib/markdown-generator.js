@@ -77,12 +77,12 @@ tags: [biweekly-report, project-activity]
 
 *Want to see the latest OS releases? Check out the [Changelogs](/changelogs) page. For announcements and deep dives, read our [Blog](/blog).*
 
-*This report was automatically generated from the [Project Bluefin Project Board](https://github.com/orgs/projectbluefin/projects/2).*
+*This report was automatically generated from [todo.projectbluefin.io](https://todo.projectbluefin.io).*
 
 ---
 
 *Generated on ${format(new Date(), "yyyy-MM-dd")}*  
-[View Project Board](https://github.com/orgs/projectbluefin/projects/2) | [Report an Issue](https://github.com/projectbluefin/common/issues/new)
+[View Project Board](https://todo.projectbluefin.io) | [Report an Issue](https://github.com/projectbluefin/common/issues/new)
 `;
 
   // Combine all sections

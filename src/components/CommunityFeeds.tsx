@@ -18,8 +18,9 @@ const CommunityFeeds: React.FC = () => {
             discussions, and announcements. Looking for project activity and
             development progress? Check out our{" "}
             <a href="/reports">Biweekly Reports</a> for summaries of completed
-            work, contributor highlights, and project board updates. Stay
-            frosty.
+            work from{" "}
+            <a href="https://todo.projectbluefin.io">todo.projectbluefin.io</a>,
+            contributor highlights, and project board updates. Stay frosty.
           </p>
         </div>
 

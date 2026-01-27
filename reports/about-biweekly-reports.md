@@ -7,7 +7,7 @@ tags: [meta, about]
 
 # About Biweekly Reports
 
-Welcome to Biweekly Reports! This section tracks Project Bluefin's development activity, completed work, and contributor highlights from our [GitHub Project Board](https://github.com/orgs/projectbluefin/projects/2).
+Welcome to Biweekly Reports! This section tracks Project Bluefin's development activity, completed work, and contributor highlights from [todo.projectbluefin.io](https://todo.projectbluefin.io).
 
 ## What's in a report?
 
@@ -26,4 +26,4 @@ Reports are published automatically every two weeks to keep the community inform
 
 ---
 
-_Reports are generated automatically from the Project Bluefin Project Board. [View the board](https://github.com/orgs/projectbluefin/projects/2) or [report an issue](https://github.com/projectbluefin/common/issues/new)._
+_Reports are generated automatically from [todo.projectbluefin.io](https://todo.projectbluefin.io). [View the board](https://todo.projectbluefin.io) or [report an issue](https://github.com/projectbluefin/common/issues/new)._
