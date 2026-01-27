@@ -264,7 +264,8 @@ function formatItemList(items, displayedUrls) {
   const lines = items.map((item) => {
     const type = item.content.__typename === "PullRequest" ? "PR" : "Issue";
     const number = item.content.number;
-    const title = item.content.title;
+    // Escape curly braces in titles to prevent MDX interpretation as JSX
+    const title = item.content.title.replace(/{/g, "\\{").replace(/}/g, "\\}");
     const url = item.content.url;
     const author = item.content.author?.login || "unknown";
 
@@ -325,7 +326,10 @@ export function generateCategorySection(items, categoryName, categoryLabels) {
     entries.forEach(({ item, label }) => {
       const type = item.content.__typename === "PullRequest" ? "PR" : "Issue";
       const number = item.content.number;
-      const title = item.content.title;
+      // Escape curly braces in titles to prevent MDX interpretation as JSX
+      const title = item.content.title
+        .replace(/{/g, "\\{")
+        .replace(/}/g, "\\}");
       const url = item.content.url;
       const author = item.content.author?.login || "unknown";
 
@@ -363,7 +367,8 @@ function generateUncategorizedSection(items) {
   const lines = uncategorizedItems.map((item) => {
     const type = item.content.__typename === "PullRequest" ? "PR" : "Issue";
     const number = item.content.number;
-    const title = item.content.title;
+    // Escape curly braces in titles to prevent MDX interpretation as JSX
+    const title = item.content.title.replace(/{/g, "\\{").replace(/}/g, "\\}");
     const url = item.content.url;
     const author = item.content.author?.login || "unknown";
 
@@ -428,7 +433,10 @@ export function generateBotDetailsList(botActivity) {
     .flatMap((activity) => activity.items)
     .map((item) => {
       const number = item.content.number;
-      const title = item.content.title;
+      // Escape curly braces in titles to prevent MDX interpretation as JSX
+      const title = item.content.title
+        .replace(/{/g, "\\{")
+        .replace(/}/g, "\\}");
       const url = item.content.url;
       const repo = item.content.repository.nameWithOwner;
       return `- [#${number} ${title}](${url}) in ${repo}`;

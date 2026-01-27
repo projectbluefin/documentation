@@ -39,16 +39,27 @@ const github = {
 /**
  * Calculate report window for previous month (UTC)
  *
+ * @param {string} [overrideMonth] - Optional month override in YYYY-MM format (e.g., "2026-01")
  * @returns {{startDate: Date, endDate: Date}} Report window
  */
-function calculateReportWindow() {
-  const now = new Date();
-  const year = now.getUTCFullYear();
-  const month = now.getUTCMonth() - 1; // Previous month
+function calculateReportWindow(overrideMonth) {
+  let reportYear, reportMonth;
 
-  // Handle January (month 0) -> go to December of previous year
-  const reportYear = month < 0 ? year - 1 : year;
-  const reportMonth = month < 0 ? 11 : month;
+  if (overrideMonth) {
+    // Parse override (e.g., "2026-01" -> year: 2026, month: 0)
+    const [year, month] = overrideMonth.split("-").map(Number);
+    reportYear = year;
+    reportMonth = month - 1; // Convert to 0-indexed
+  } else {
+    // Default: previous month
+    const now = new Date();
+    const year = now.getUTCFullYear();
+    const month = now.getUTCMonth() - 1; // Previous month
+
+    // Handle January (month 0) -> go to December of previous year
+    reportYear = month < 0 ? year - 1 : year;
+    reportMonth = month < 0 ? 11 : month;
+  }
 
   // Simple: first day to last day of the month, UTC
   const startDate = new Date(Date.UTC(reportYear, reportMonth, 1));
@@ -108,8 +119,17 @@ async function generateReport() {
     process.exit(1);
   }
 
-  // Calculate report window (previous month)
-  const { startDate, endDate } = calculateReportWindow();
+  // Parse CLI arguments for month override (e.g., --month=2026-01)
+  const monthOverride = process.argv
+    .find((arg) => arg.startsWith("--month="))
+    ?.split("=")[1];
+
+  if (monthOverride) {
+    log.info(`Using month override: ${monthOverride}`);
+  }
+
+  // Calculate report window (previous month or override)
+  const { startDate, endDate } = calculateReportWindow(monthOverride);
   log.info(
     `Report period: ${format(startDate, "MMMM yyyy")} (${format(startDate, "yyyy-MM-dd")} to ${format(endDate, "yyyy-MM-dd")})`,
   );
