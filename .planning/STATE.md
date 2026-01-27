@@ -94,6 +94,14 @@ See: .planning/MILESTONES.md (v1.0 shipped, v1.1 shipped)
 - Use /gsd-new-milestone to start planning cycle
 - Consider: Analytics integration, contributor insights, report enhancements, or new features
 
+### Pending Todos
+
+**Count:** 1 todo in `.planning/todos/pending/`
+
+| Todo                                                                                                                          | Area    | Created    |
+| ----------------------------------------------------------------------------------------------------------------------------- | ------- | ---------- |
+| [Simplify bot activity table to show total count per repo](.planning/todos/pending/2026-01-27-simplify-bot-activity-table.md) | reports | 2026-01-27 |
+
 ### Known Blockers
 
 None currently. v1.1 operational and stable.
