@@ -442,6 +442,521 @@ npm run start
 # Navigate to /changelogs/ and verify package versions display correctly
 ```
 
+## Biweekly Reports System
+
+The biweekly reports system automatically generates transparent, data-driven summaries of completed work, active contributors, and project momentum from the Bluefin Project Board. Reports are published every other Monday (even-numbered ISO weeks) covering the previous two-week period.
+
+### Architecture Overview
+
+**System Components:**
+
+- **GitHub Actions Workflow** (`.github/workflows/biweekly-reports.yml`) - Cron-scheduled automation
+- **Data Collection** (`scripts/generate-report.js`) - Main orchestration script
+- **GraphQL Client** (`scripts/lib/graphql-queries.js`) - GitHub Projects V2 API integration
+- **Label Mapping** (`scripts/lib/label-mapping.js`) - Static label colors and categorization
+- **Contributor Tracking** (`scripts/lib/contributor-tracker.js`) - Historical contributor tracking with bot filtering
+- **Markdown Generator** (`scripts/lib/markdown-generator.js`) - Report formatting and template
+- **Multi-blog Configuration** (`docusaurus.config.ts`) - Separate blog instance for reports at `/reports`
+
+**Data Flow:**
+
+```
+GitHub Actions Cron (every Monday 10:00 UTC)
+  ↓
+Check biweekly schedule (even ISO week?)
+  ↓
+Fetch project board data (GraphQL API with pagination)
+  ↓
+Filter by Status="Done" + date range
+  ↓
+Separate human contributions from bot activity
+  ↓
+Update contributor history (track first-time contributors)
+  ↓
+Categorize items by labels (Desktop, Dev, Ecosystem, Hardware, Infrastructure)
+  ↓
+Generate markdown (frontmatter + sections)
+  ↓
+Write to reports/YYYY-MM-DD-report.mdx
+  ↓
+Git commit and push
+  ↓
+Build and deploy via GitHub Pages
+```
+
+**Data Sources:**
+
+- **Project Board:** [todo.projectbluefin.io](https://todo.projectbluefin.io) (GitHub Projects V2)
+- **Items:** Issues and Pull Requests across all Bluefin repositories
+- **Labels:** Label colors and categories from static mapping
+- **Contributors:** Author information from GitHub API
+- **Historical Data:** `static/data/contributors-history.json` (persisted via Git checkout action)
+
+### How It Works
+
+**Cron Schedule:**
+
+- Workflow runs every Monday at 10:00 UTC (`cron: "0 10 * * 1"`)
+- Script calculates ISO week number (1-53)
+- Reports generated only on even-numbered weeks (2, 4, 6, ... 52)
+- Odd weeks: Script exits with "Skipping report generation" message
+
+**ISO Week Number Calculation:**
+
+- Uses `date-fns` library `getISOWeek()` function
+- Week 1 starts with first Thursday of year (ISO 8601 standard)
+- Biweekly filter: `currentWeek % 2 !== 0` skips odd weeks
+
+**Project Board Data Fetching:**
+
+- GraphQL query to `organization.projectV2(number: 2)` for projectbluefin org
+- Pagination: 100 items per page with cursor-based continuation
+- Fields fetched: `id`, `fieldValues`, `content` (Issue/PR), `labels`, `author`
+- Status field includes `updatedAt` timestamp for date filtering
+
+**Label Categorization:**
+
+- **Project Areas:** Desktop, Development, Ecosystem, Hardware, Infrastructure
+- **Work Types:** Bug, Enhancement, Documentation, Tech Debt, Automation
+- **Badge Generation:** Color-coded badges using static label mapping
+- **Fallback:** Uncategorized items grouped separately
+
+**Contributor Tracking:**
+
+- **Bot Detection:** Regex patterns for common bot usernames (dependabot, renovate, etc.)
+- **Historical Tracking:** JSON file persists contributor list across report runs
+- **First-Time Recognition:** Compares current contributors against history
+- **Bot Separation:** Bot activity shown separately from human contributions
+
+**Markdown Generation:**
+
+- **Frontmatter:** Report metadata (date, tags, authors, slug)
+- **Summary:** Key metrics (items completed, contributors, new contributors)
+- **Project Areas:** Work grouped by area with status badges
+- **Work Types:** Items categorized by enhancement/bug/docs/etc.
+- **Bot Activity:** Aggregated by repository and bot username
+- **Contributors:** List with links to GitHub profiles
+- **Footer:** Cross-links to changelogs and blog
+
+### File Locations and Purposes
+
+| File Path                                | Purpose                                             |
+| ---------------------------------------- | --------------------------------------------------- |
+| `.github/workflows/biweekly-reports.yml` | GitHub Actions workflow (cron + manual trigger)     |
+| `scripts/generate-report.js`             | Main orchestration script                           |
+| `scripts/lib/graphql-queries.js`         | GraphQL client and Projects V2 queries              |
+| `scripts/lib/label-mapping.js`           | Static label color and category mappings            |
+| `scripts/lib/contributor-tracker.js`     | Historical contributor tracking with bot filtering  |
+| `scripts/lib/markdown-generator.js`      | Report markdown formatting and templates            |
+| `reports/`                               | Generated report blog posts (YYYY-MM-DD-report.mdx) |
+| `static/data/contributors-history.json`  | Auto-generated contributor history (gitignored)     |
+| `docusaurus.config.ts`                   | Multi-blog configuration (`id: 'reports'`)          |
+
+### Manual Report Generation
+
+To generate a report locally for testing:
+
+1. **Export GitHub token:**
+
+   ```bash
+   export GITHUB_TOKEN=your_personal_access_token
+   # Token needs: repo read access, project read access
+   ```
+
+2. **Run generation script:**
+
+   ```bash
+   npm run generate-report
+   # Script outputs progress logs
+   # Report written to reports/YYYY-MM-DD-report.mdx
+   ```
+
+3. **Review generated report:**
+
+   ```bash
+   cat reports/YYYY-MM-DD-report.mdx
+   # Check frontmatter and content sections
+   ```
+
+4. **Preview in browser:**
+
+   ```bash
+   npm run start
+   # Navigate to http://localhost:3000/reports
+   ```
+
+**Note:** Manual runs respect biweekly schedule. To bypass odd-week check for testing, comment out lines 108-113 in `scripts/generate-report.js`.
+
+### Testing Workflow Manually
+
+To test the GitHub Actions workflow without waiting for cron:
+
+1. **Navigate to Actions tab:**
+   - Open repository in GitHub
+   - Click "Actions" tab
+   - Select "Generate Biweekly Report" workflow
+
+2. **Trigger workflow manually:**
+   - Click "Run workflow" button (top right)
+   - Select branch (usually `main` or test branch)
+   - Click green "Run workflow" button
+
+3. **Monitor execution:**
+   - Workflow appears in run list immediately
+   - Click run to see live logs
+   - Check each step: checkout, setup, install, generate, commit
+
+4. **Verify results:**
+   - Check for new commit in repository history
+   - Review generated report file in `reports/` directory
+   - Verify report displays correctly on deployed site
+
+**Workflow Dispatch Benefits:**
+
+- Test automation without modifying cron schedule
+- Validate changes to scripts before merge
+- Generate ad-hoc reports for special periods
+- Debug issues in clean CI environment
+
+### Troubleshooting Guide
+
+#### Issue: Script exits with "Skipping report generation (odd week)"
+
+**Cause:** Reports only run on even-numbered ISO weeks (2, 4, 6, ... 52)
+
+**Solution:** This is expected behavior. Next report will generate on following Monday (even week). To override for testing, comment out the biweekly check in `scripts/generate-report.js` lines 108-113.
+
+**Verify current week:**
+
+```bash
+date +%V  # ISO week number
+# If odd (1, 3, 5...), report will skip
+```
+
+#### Issue: "GITHUB_TOKEN or GH_TOKEN environment variable required"
+
+**Cause:** Missing authentication token for GitHub API
+
+**Solution:** Export token with repo read access:
+
+```bash
+export GITHUB_TOKEN=ghp_your_token_here
+# Or use GitHub CLI token:
+export GH_TOKEN=$(gh auth token)
+```
+
+**In CI:** Token is automatically provided via `secrets.GITHUB_TOKEN` (no action needed).
+
+**Token Permissions:** Requires `contents: read` and `project: read` (automatically granted to workflow token).
+
+#### Issue: "GraphQL rate limit exceeded"
+
+**Cause:** Hit GitHub API rate limits (5,000 requests/hour authenticated, 60/hour unauthenticated)
+
+**Solution:** Script includes rate limit detection and logs reset time:
+
+- Check error message for rate limit reset timestamp
+- Wait for rate limit to reset (typically 1 hour)
+- Ensure `GITHUB_TOKEN` is set (authenticated requests have higher limits)
+- In CI, workflow token automatically provides authentication
+
+**GraphQL Points:** Each query uses ~50 points. 5,000 point limit allows ~100 reports/hour (far exceeds biweekly needs).
+
+#### Issue: "Network timeout" or "ECONNRESET"
+
+**Cause:** Network issues or GitHub API downtime
+
+**Solution:** Script includes automatic retry with exponential backoff:
+
+- Retries up to 3 times (delays: 2s, 4s, 8s)
+- Check logs for retry attempts
+- Verify GitHub API status: [githubstatus.com](https://www.githubstatus.com/)
+- If persistent, re-run workflow manually after network recovery
+
+**Error Log Example:**
+
+```
+Retry 1/3 after network error: ECONNRESET
+Retry 2/3 after network error: ETIMEDOUT
+```
+
+#### Issue: Empty report sections
+
+**Cause:** No items completed in report window (quiet period)
+
+**Solution:** This is expected behavior during low-activity periods:
+
+- Report still generated with summary section
+- Message indicates "quiet period with no completed items"
+- Bot activity may still be present
+- Historical contributor tracking continues normally
+
+**Verify on Project Board:**
+
+- Check [todo.projectbluefin.io](https://todo.projectbluefin.io)
+- Filter by Status="Done" and date range
+- Confirm no items moved to Done in report window
+
+#### Issue: "Failed to update contributor history"
+
+**Cause:** `contributors-history.json` is corrupted or unreadable
+
+**Solution:** Script includes automatic recovery:
+
+- Detects invalid JSON format
+- Logs warning: "Contributor history corrupted. Resetting history file."
+- Initializes fresh history with current contributors
+- Report generation continues normally
+
+**Manual Reset (if needed):**
+
+```bash
+rm static/data/contributors-history.json
+npm run generate-report
+# History rebuilt from current report
+```
+
+**Note:** Resetting history means all current contributors treated as new (one-time occurrence).
+
+#### Issue: Missing labels or incorrect categorization
+
+**Cause:** Label mapping out of sync with project board labels
+
+**Solution:** Update static label mapping:
+
+1. Check current labels on [Project Board](https://todo.projectbluefin.io)
+2. Edit `scripts/lib/label-mapping.js`
+3. Update `LABEL_COLORS` object with new colors
+4. Update `LABEL_CATEGORIES` if category structure changed
+5. Test with: `npm run generate-report`
+
+**See:** "Updating Label Mappings" section below for detailed process.
+
+### Updating Label Mappings
+
+Label mappings are static (not fetched at runtime) for performance. Update when label colors or categories change in the project board.
+
+**Process:**
+
+1. **Identify label changes:**
+   - Navigate to [Project Board](https://todo.projectbluefin.io)
+   - Click any item to see label list
+   - Note new labels or color changes
+
+2. **Edit label mapping file:**
+
+   ```bash
+   # Open mapping file
+   vim scripts/lib/label-mapping.js
+   ```
+
+3. **Update LABEL_COLORS object:**
+
+   ```javascript
+   export const LABEL_COLORS = {
+     // Format: "label-name": "hexcolor"
+     desktop: "0e8a16",
+     development: "1d76db",
+     // Add new labels:
+     "new-label": "ff6b6b",
+   };
+   ```
+
+4. **Update LABEL_CATEGORIES (if needed):**
+
+   ```javascript
+   export const LABEL_CATEGORIES = {
+     projectAreas: [
+       "desktop",
+       "development",
+       "ecosystem",
+       "hardware",
+       "infrastructure",
+     ],
+     workTypes: [
+       "bug",
+       "enhancement",
+       "documentation",
+       "tech-debt",
+       "automation",
+     ],
+   };
+   ```
+
+5. **Test changes:**
+
+   ```bash
+   npm run generate-report
+   # Check that new labels appear with correct colors
+   npm run start
+   # Verify badges render correctly in browser
+   ```
+
+**Label Color Format:**
+
+- Hex codes without `#` prefix (GitHub API format)
+- 6 characters (e.g., `"ff6b6b"` for red)
+- Case insensitive
+
+**Automatic Refresh (Future Enhancement):**
+
+- Currently manual update required
+- Future: Script could fetch labels from projectbluefin/common `.github/labels.yml`
+- See: `.planning/phases/03-documentation-refinement/03-CONTEXT.md` out-of-scope section
+
+### Modifying Report Templates
+
+Report markdown structure is defined in `scripts/lib/markdown-generator.js`. Customize sections, formatting, or content as needed.
+
+**Key Functions:**
+
+```javascript
+// Generate frontmatter (metadata)
+generateFrontmatter(startDate, endDate);
+// Returns: YAML frontmatter string
+
+// Generate summary section
+generateSummary(items, contributors, newContributors, startDate, endDate);
+// Returns: Markdown string with key metrics
+
+// Generate project area sections
+generateCategorySection(items, categoryName);
+// Returns: Markdown with items grouped by area
+
+// Generate bot activity tables
+generateBotSection(botActivity);
+// Returns: Markdown tables of bot PRs by repo
+
+// Generate contributors list
+generateContributorsSection(contributors, newContributors);
+// Returns: Markdown list with profile links
+```
+
+**Customization Examples:**
+
+**Change date format in frontmatter:**
+
+```javascript
+// Before:
+date: ${format(endDate, "yyyy-MM-dd")}
+
+// After (human-readable):
+date: ${format(endDate, "MMMM d, yyyy")}
+```
+
+**Add new section (e.g., "Top Contributors"):**
+
+```javascript
+function generateTopContributorsSection(items) {
+  const contributorCounts = {};
+  items.forEach((item) => {
+    const author = item.content?.author?.login;
+    if (author)
+      contributorCounts[author] = (contributorCounts[author] || 0) + 1;
+  });
+
+  const sorted = Object.entries(contributorCounts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5);
+
+  return (
+    `## Top Contributors\n\n` +
+    sorted
+      .map(
+        ([author, count]) =>
+          `- [@${author}](https://github.com/${author}): ${count} items`,
+      )
+      .join("\n")
+  );
+}
+```
+
+**Modify item display format:**
+
+```javascript
+// Before:
+- [#${number}](${url}): ${title}
+
+// After (add repository):
+- [${repo}#${number}](${url}): ${title}
+```
+
+**Testing Template Changes:**
+
+```bash
+# Generate test report
+npm run generate-report
+
+# Check output
+cat reports/YYYY-MM-DD-report.mdx
+
+# Preview in browser
+npm run start
+# Navigate to http://localhost:3000/reports
+```
+
+**Validation:**
+
+- Ensure valid Docusaurus frontmatter (YAML format)
+- Test that markdown renders correctly
+- Verify links work (GitHub profiles, issues, PRs)
+- Check that badges display properly
+
+### Performance Considerations
+
+**Build Time Impact:**
+
+- Report generation adds ~5-15 seconds to build process
+- Data fetching is primary bottleneck (GraphQL API calls)
+- Total build time: ~20-30 seconds (well within <2 minute target)
+
+**GraphQL API Usage:**
+
+- Each report uses ~50 GraphQL points (query complexity)
+- Rate limit: 5,000 points/hour (authenticated)
+- Capacity: ~100 reports/hour (far exceeds biweekly needs)
+- Pagination: 100 items per request (efficient for large projects)
+
+**Optimization Strategies:**
+
+- **Cursor Pagination:** Fetches only necessary pages (no over-fetching)
+- **Field Selection:** GraphQL query requests only needed fields
+- **Bot Filtering:** Happens in-memory after fetching (no extra API calls)
+- **Static Labels:** No API calls for label colors (mapped statically)
+
+**Caching (Not Implemented):**
+
+- Current: Fresh data every run (preferred for accuracy)
+- Future: Could cache project board data (5-10 minute TTL)
+- Tradeoff: Caching reduces API usage but may show stale data
+
+**Monitoring:**
+
+- Check workflow execution time in GitHub Actions logs
+- Monitor "Fetching project board data" step duration
+- Flag if build exceeds 2 minute target (optimization needed)
+
+### Auto-Generated Files - DO NOT COMMIT
+
+The following file is auto-generated at build time and should **NEVER** be committed to git:
+
+- `static/data/contributors-history.json` - Generated by contributor tracking
+
+**Why:** This file is managed by the GitHub Actions workflow and persisted via Git checkout action. Committing it creates merge conflicts and git history bloat.
+
+**Gitignore Status:** Already in `.gitignore` but may appear if generated locally.
+
+**If Accidentally Committed:**
+
+```bash
+# Remove from last commit (if not pushed)
+git rm --cached static/data/contributors-history.json
+git commit --amend --no-edit
+
+# After amending, if already pushed:
+git push --force-with-lease
+```
+
 ## Repository Context
 
 This repository contains documentation for Bluefin OS. The main Bluefin OS images are built in the [ublue-os/bluefin](https://github.com/ublue-os/bluefin) repository and [ublue-os/bluefin-lts](https://github.com/ublue-os/bluefin-lts) repositories. This docs repository:
