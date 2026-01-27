@@ -299,4 +299,129 @@ export function getStatusValue(item) {
   return statusField?.name || null;
 }
 
-export { PROJECT_QUERY, graphqlWithAuth };
+/**
+ * GraphQL query to fetch closed issues and PRs from a repository
+ */
+const REPO_CLOSED_ITEMS_QUERY = `
+  query($owner: String!, $name: String!, $since: DateTime!, $cursor: String) {
+    repository(owner: $owner, name: $name) {
+      issues(first: 100, after: $cursor, states: CLOSED, filterBy: {since: $since}) {
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+        nodes {
+          number
+          title
+          url
+          closedAt
+          labels(first: 10) {
+            nodes {
+              name
+              color
+            }
+          }
+          author {
+            login
+          }
+        }
+      }
+      pullRequests(first: 100, after: $cursor, states: MERGED, orderBy: {field: UPDATED_AT, direction: DESC}) {
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+        nodes {
+          number
+          title
+          url
+          mergedAt
+          labels(first: 10) {
+            nodes {
+              name
+              color
+            }
+          }
+          author {
+            login
+          }
+        }
+      }
+    }
+  }
+`;
+
+/**
+ * Fetch closed issues and merged PRs from a repository within date range
+ *
+ * @param {string} owner - Repository owner (e.g., "ublue-os")
+ * @param {string} name - Repository name (e.g., "bluefin")
+ * @param {Date} startDate - Start of date range
+ * @param {Date} endDate - End of date range
+ * @returns {Promise<Array>} Array of closed issues and merged PRs
+ */
+export async function fetchClosedItemsFromRepo(
+  owner,
+  name,
+  startDate,
+  endDate,
+) {
+  try {
+    const result = await retryWithBackoff(async () => {
+      return await graphqlWithAuth(REPO_CLOSED_ITEMS_QUERY, {
+        owner,
+        name,
+        since: startDate.toISOString(),
+        cursor: null,
+      });
+    });
+
+    const repo = result.repository;
+    const allItems = [];
+
+    // Process closed issues
+    const closedIssues = repo.issues.nodes
+      .filter((issue) => {
+        const closedAt = new Date(issue.closedAt);
+        return closedAt >= startDate && closedAt <= endDate;
+      })
+      .map((issue) => ({
+        type: "Issue",
+        number: issue.number,
+        title: issue.title,
+        url: issue.url,
+        closedAt: issue.closedAt,
+        labels: issue.labels.nodes,
+        author: issue.author?.login || "unknown",
+        repository: `${owner}/${name}`,
+      }));
+
+    // Process merged PRs
+    const mergedPRs = repo.pullRequests.nodes
+      .filter((pr) => {
+        const mergedAt = new Date(pr.mergedAt);
+        return mergedAt >= startDate && mergedAt <= endDate;
+      })
+      .map((pr) => ({
+        type: "PullRequest",
+        number: pr.number,
+        title: pr.title,
+        url: pr.url,
+        closedAt: pr.mergedAt, // Use mergedAt for consistency
+        labels: pr.labels.nodes,
+        author: pr.author?.login || "unknown",
+        repository: `${owner}/${name}`,
+      }));
+
+    allItems.push(...closedIssues, ...mergedPRs);
+    return allItems;
+  } catch (error) {
+    console.error(
+      `Error fetching closed items from ${owner}/${name}: ${error.message}`,
+    );
+    // Return empty array instead of throwing - don't fail entire report for one repo
+    return [];
+  }
+}
+
+export { PROJECT_QUERY, graphqlWithAuth, REPO_CLOSED_ITEMS_QUERY };
