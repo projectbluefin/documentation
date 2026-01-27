@@ -4,6 +4,53 @@ Bluefin documentation is a Docusaurus 3.8.1 TypeScript website that provides com
 
 **Always reference these instructions first and fallback to search or bash commands only when you encounter unexpected information that does not match the info here.**
 
+## GSD Agent Selection - ALWAYS REMIND USER
+
+**CRITICAL: Before starting ANY GSD work, ALWAYS ask the user:**
+
+```
+🤖 AGENT SELECTION CHECKPOINT
+
+I'm about to work on: [brief description of task]
+
+Recommended agent: [agent-name]
+Reason: [why this agent fits]
+
+Alternatives:
+- [other-agent]: [when to use instead]
+- [quick-task/yourself]: [if simpler approach exists]
+
+Should I proceed with [recommended-agent], or would you prefer a different approach?
+
+📚 See .planning/AGENT-SELECTION-GUIDE.md for detailed guidance
+```
+
+**When transitioning between GSD phases, ALWAYS remind:**
+
+```
+✅ [Previous Phase] Complete: [what was accomplished]
+
+🔄 Next Phase: [what's next]
+Recommended agent: [agent-name]
+Reason: [why]
+
+Example workflow:
+- Research phase done → Planning phase needed → Use gsd-planner
+- Planning phase done → Implementation needed → Use gsd-executor
+- Implementation hit a bug → Investigation needed → Use gsd-debugger
+
+Should I spawn [recommended-agent] or continue differently?
+```
+
+**Key principles:**
+
+- ✅ ALWAYS pause to confirm agent choice before spawning
+- ✅ ALWAYS explain why that agent is appropriate
+- ✅ ALWAYS mention simpler alternatives (quick task, direct action)
+- ✅ ALWAYS reference the agent selection guide
+- ❌ NEVER assume you know which agent the user wants
+- ❌ NEVER auto-spawn agents without checking first
+
 ## Git Workflow - CRITICAL RULES
 
 **NEVER push directly to main/trunk unless EXPLICITLY instructed by the user.**
