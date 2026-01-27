@@ -1,22 +1,22 @@
-# Roadmap: Biweekly Reports Feature (v1.1)
+# Roadmap: Monthly Reports Feature (v1.1)
 
 **Milestone:** v1.1  
-**Goal:** Add automated biweekly reports from GitHub Project Board  
-**Status:** In Progress - Phase 1 Complete  
+**Goal:** Add automated monthly reports from monitored repositories  
+**Status:** ✅ COMPLETE  
 **Created:** 2026-01-26  
-**Updated:** 2026-01-27
+**Completed:** 2026-01-27
 
 ---
 
 ## Milestone Overview
 
-**What:** Automated biweekly status reports from GitHub Project Board #2
+**What:** Automated monthly status reports from projectbluefin/common and monitored repositories
 
 **Why:** Provide community with transparent, data-driven summaries of completed work, contributors, and project momentum.
 
-**How:** 100% automated system that fetches project board data, categorizes by labels, formats as blog posts, and publishes every other Monday.
+**How:** 100% automated system that fetches merged PRs from repositories, categorizes by labels, formats as blog posts, and publishes on the last day of each month.
 
-**Success:** Reports published biweekly at `/reports`, properly categorized, mobile-responsive, with RSS feed support. Zero manual intervention required.
+**Success:** ✅ Reports published monthly at `/reports`, properly categorized, mobile-responsive, with RSS feed support. Zero manual intervention required.
 
 ---
 
@@ -65,37 +65,31 @@
 
 ---
 
-### Phase 2: Navigation & Discovery (1 day)
+### Phase 2: Navigation & Discovery ✅ COMPLETE
 
 **Goal:** Integrate reports into site navigation and enable discoverability  
-**Status:** Planned  
-**Plans:** 2 plans (1 wave)
+**Status:** Complete (2026-01-27)  
+**Plans:** 2 plans completed
 
-**Delivers:**
+**Delivered:**
 
-- Main navigation link to `/reports` ✅ (done in Phase 1)
-- RSS feed configuration (automatic from Docusaurus) ✅ (done in Phase 1)
-- Cross-links with changelogs and blog
-- Search integration verification
-- Mobile navigation testing
+- ✅ Main navigation link to `/reports`
+- ✅ RSS feed configuration (automatic from Docusaurus)
+- ✅ Cross-links with changelogs and blog
+- ✅ Search integration verified
+- ✅ Mobile navigation tested
 
 **Key Files:**
 
 - `src/pages/changelogs.tsx` (cross-link intro)
-- `scripts/lib/markdown-generator.js` (footer template)
-- `docusaurus.config.ts` (navbar order verification)
-- `reports/` (test report generation)
+- `scripts/lib/markdown-generator.mjs` (footer template)
+- `docusaurus.config.ts` (navbar order verified)
+- `reports/` (test reports generated)
 
-**Dependencies:** Phase 1 (reports must exist) ✅ COMPLETE
+**Dependencies:** Phase 1 ✅ COMPLETE
 
-Plans:
+**Success Criteria:** All met - Reports accessible, discoverable, mobile-responsive
 
-- [ ] 02-01-PLAN.md — Cross-links & content integration (Wave 1)
-- [ ] 02-02-PLAN.md — Validation & testing (Wave 2)
-
-**Success Criteria:**
-
-- "Reports" link visible in desktop and mobile navigation ✅ (done in Phase 1)
 - RSS feed validates at `/reports/rss.xml` ✅ (done in Phase 1)
 - Cross-links function correctly
 - Search returns report results
