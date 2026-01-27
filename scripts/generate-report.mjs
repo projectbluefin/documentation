@@ -10,7 +10,7 @@
  */
 
 import { fetchClosedItemsFromRepo } from "./lib/graphql-queries.mjs";
-import { updateContributorHistory, isBot } from "./lib/contributor-tracker.mjs";
+import { identifyNewContributors, isBot } from "./lib/contributor-tracker.mjs";
 import { generateReportMarkdown } from "./lib/markdown-generator.mjs";
 import { getCategoryForLabel } from "./lib/label-mapping.mjs";
 import { MONITORED_REPOS } from "./lib/monitored-repos.mjs";
@@ -242,11 +242,11 @@ async function generateReport() {
     ];
     log.info(`Unique contributors (PR authors): ${contributors.length}`);
 
-    // Track contributors and identify new ones (with error handling)
-    log.info("Updating contributor history...");
+    // Identify new contributors by querying historical contributions
+    log.info("Identifying new contributors...");
     let newContributors = [];
     try {
-      newContributors = await updateContributorHistory(contributors);
+      newContributors = await identifyNewContributors(contributors, startDate);
       if (newContributors.length > 0) {
         log.info(`New contributors this period: ${newContributors.join(", ")}`);
         github.notice(
@@ -254,7 +254,7 @@ async function generateReport() {
         );
       }
     } catch (error) {
-      log.warn("Contributor history update failed, continuing without it");
+      log.warn("New contributor detection failed, continuing without it");
       log.warn(`Error: ${error.message}`);
       // Continue report generation even if contributor tracking fails
       newContributors = [];
