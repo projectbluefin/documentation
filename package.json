@@ -2,6 +2,7 @@
   "name": "bluefin-docusaurus",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "docusaurus": "docusaurus",
     "start": "npm run fetch-data && docusaurus start --host 0.0.0.0",
