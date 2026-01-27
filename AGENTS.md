@@ -503,7 +503,7 @@ npm run start
 
 ## Monthly Reports System
 
-The monthly reports system automatically generates transparent, data-driven summaries of completed work, active contributors, and project momentum from the Bluefin Project Board. Reports are published on the last day of each month covering the entire month's activity.
+The monthly reports system automatically generates transparent, data-driven summaries of completed work, active contributors, and project momentum from monitored Bluefin repositories. Reports are published on the last day of each month covering the entire month's activity.
 
 ### Architecture Overview
 
@@ -511,7 +511,8 @@ The monthly reports system automatically generates transparent, data-driven summ
 
 - **GitHub Actions Workflow** (`.github/workflows/monthly-reports.yml`) - Cron-scheduled automation
 - **Data Collection** (`scripts/generate-report.js`) - Main orchestration script
-- **GraphQL Client** (`scripts/lib/graphql-queries.js`) - GitHub Projects V2 API integration
+- **GraphQL Client** (`scripts/lib/graphql-queries.js`) - GitHub REST API integration for repository data
+- **Monitored Repos** (`scripts/lib/monitored-repos.js`) - List of repositories to track
 - **Label Mapping** (`scripts/lib/label-mapping.js`) - Static label colors and categorization
 - **Contributor Tracking** (`scripts/lib/contributor-tracker.js`) - Historical contributor tracking with bot filtering
 - **Markdown Generator** (`scripts/lib/markdown-generator.js`) - Report formatting and template
@@ -522,9 +523,11 @@ The monthly reports system automatically generates transparent, data-driven summ
 ```
 GitHub Actions Cron (monthly on last day)
   ↓
-Fetch project board data (GraphQL API with pagination)
+Fetch closed PRs from projectbluefin/common (planned work)
   ↓
-Filter by Status="Done" + date range (entire month)
+Fetch closed PRs from other monitored repos (opportunistic work)
+  ↓
+Filter to merged PRs only (exclude closed issues)
   ↓
 Separate human contributions from bot activity
   ↓
@@ -543,8 +546,9 @@ Build and deploy via GitHub Pages
 
 **Data Sources:**
 
-- **Project Board:** [todo.projectbluefin.io](https://todo.projectbluefin.io) (GitHub Projects V2)
-- **Items:** Issues and Pull Requests across all Bluefin repositories
+- **Planned Work:** Merged PRs from `projectbluefin/common`
+- **Opportunistic Work:** Merged PRs from other monitored repositories
+- **Monitored Repos:** See `scripts/lib/monitored-repos.js` for full list
 - **Labels:** Label colors and categories from static mapping
 - **Contributors:** Author information from GitHub API
 - **Historical Data:** `static/data/contributors-history.json` (persisted via Git checkout action)
@@ -562,15 +566,16 @@ Build and deploy via GitHub Pages
 
 - Uses `date-fns` library for date manipulation
 - Month boundaries: startOfMonth to endOfMonth
-- Filters items with Status="Done" updated within month range
+- Filters merged PRs with mergedAt/closedAt within month range
 - Report filename: YYYY-MM-DD-report.mdx (last day of month)
 
-**Project Board Data Fetching:**
+**Repository Data Fetching:**
 
-- GraphQL query to `organization.projectV2(number: 2)` for projectbluefin org
-- Pagination: 100 items per page with cursor-based continuation
-- Fields fetched: `id`, `fieldValues`, `content` (Issue/PR), `labels`, `author`
-- Status field includes `updatedAt` timestamp for date filtering
+- GraphQL queries to fetch closed issues and merged PRs from monitored repositories
+- Planned work: `projectbluefin/common` repository
+- Opportunistic work: All other monitored repositories (see `scripts/lib/monitored-repos.js`)
+- Filters to merged PRs only (excludes closed issues)
+- Date filtering: mergedAt/closedAt within report month
 
 **Label Categorization:**
 
@@ -578,13 +583,19 @@ Build and deploy via GitHub Pages
 - **Work Types:** Bug, Enhancement, Documentation, Tech Debt, Automation
 - **Badge Generation:** Color-coded badges using static label mapping
 - **Fallback:** Uncategorized items grouped separately
+- **Planned vs Opportunistic:** Items are split into two subsections within each category
 
 **Contributor Tracking:**
 
-- **Bot Detection:** Regex patterns for common bot usernames (dependabot, renovate, etc.)
-- **Historical Tracking:** JSON file persists contributor list across report runs
+- **Bot Detection:** Regex patterns for common bot usernames (dependabot, renovate, github-actions, etc.)
+- **Historical Tracking:** JSON file persists contributor list across report runs (`static/data/contributors-history.json`)
 - **First-Time Recognition:** Compares current contributors against history
+- **New Contributor Highlight:** First-time contributors are:
+  - Listed in a separate "🌟 New Contributors" section above repeat contributors
+  - Given a gold foil effect (`highlight={true}` prop) on their GitHubProfileCard
+  - Also included in the main "👥 Contributors" section (without highlight)
 - **Bot Separation:** Bot activity shown separately from human contributions
+- **PR Authors Only:** Only merged PR authors are counted as contributors (closed issues excluded)
 
 **Markdown Generation:**
 
