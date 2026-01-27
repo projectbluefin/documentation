@@ -113,6 +113,9 @@ const config: Config = {
           description: "Automated biweekly activity reports from project board",
           copyright: `Copyright © ${new Date().getFullYear()} Project Bluefin`,
         },
+        // Enable table of contents in right sidebar
+        blogPostComponent: "@theme/BlogPostPage",
+        showLastUpdateTime: false,
       },
     ],
   ],

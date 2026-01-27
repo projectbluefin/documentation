@@ -60,29 +60,66 @@ ${newContributors.length > 0 ? "import GitHubProfileCard from '@site/src/compone
 - **New contributors:** ${newContributors.length}
 `;
 
-  // Generate categorized sections (always show all categories, even if empty)
-  const categorySections = Object.entries(LABEL_CATEGORIES)
+  // Separate area categories from kind categories
+  const areaCategories = Object.entries(LABEL_CATEGORIES).filter(
+    ([_, labels]) => labels.some((label) => label.startsWith("area/")),
+  );
+  const kindCategories = Object.entries(LABEL_CATEGORIES).filter(
+    ([_, labels]) => labels.some((label) => label.startsWith("kind/")),
+  );
+
+  // Generate area sections
+  const areaSections = areaCategories
     .map(([categoryName, categoryLabels]) => {
       const section = generateCategorySection(
         completedItems,
         categoryName,
         categoryLabels,
       );
-      // Remove emoji from category name (everything before first space after emoji)
       const cleanCategoryName = categoryName.replace(/^[\p{Emoji}\s]+/u, "");
-      // Generate styled label badges
       const labelBadges = categoryLabels
         .map((labelName) => {
-          const color = LABEL_COLORS[labelName] || "808080"; // Gray fallback
+          const color = LABEL_COLORS[labelName] || "808080";
           const encodedName = encodeURIComponent(
             labelName.replace(/_/g, "__").replace(/ /g, "_"),
           );
           return `![${labelName}](https://img.shields.io/badge/${encodedName}-${color}?style=flat-square)`;
         })
         .join(" ");
-      return `## ${cleanCategoryName}\n\n${labelBadges}\n\n${section}`;
+      return `### ${cleanCategoryName}\n\n${labelBadges}\n\n${section}`;
     })
     .join("\n\n");
+
+  // Generate kind sections
+  const kindSections = kindCategories
+    .map(([categoryName, categoryLabels]) => {
+      const section = generateCategorySection(
+        completedItems,
+        categoryName,
+        categoryLabels,
+      );
+      const cleanCategoryName = categoryName.replace(/^[\p{Emoji}\s]+/u, "");
+      const labelBadges = categoryLabels
+        .map((labelName) => {
+          const color = LABEL_COLORS[labelName] || "808080";
+          const encodedName = encodeURIComponent(
+            labelName.replace(/_/g, "__").replace(/ /g, "_"),
+          );
+          return `![${labelName}](https://img.shields.io/badge/${encodedName}-${color}?style=flat-square)`;
+        })
+        .join(" ");
+      return `### ${cleanCategoryName}\n\n${labelBadges}\n\n${section}`;
+    })
+    .join("\n\n");
+
+  // Combine with section headers
+  const categorySections = `# Project Areas
+
+${areaSections}
+
+# Work Types
+
+${kindSections}`;
 
   // Generate uncategorized section
   const uncategorizedSection = generateUncategorizedSection(completedItems);
