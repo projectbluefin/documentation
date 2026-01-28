@@ -65,8 +65,6 @@ export const LABEL_CATEGORIES = {
     "area/just",
     "area/testing",
   ],
-  "🔧 Bug Fixes": ["kind/bug"],
-  "🚀 Enhancements": ["kind/enhancement"],
   "📚 Documentation": ["kind/documentation"],
   "🧹 Tech Debt": ["kind/tech-debt"],
   "🤖 Automation": ["kind/automation", "kind/github-action", "kind/renovate"],
