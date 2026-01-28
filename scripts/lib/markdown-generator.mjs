@@ -146,7 +146,7 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
         .join(" ");
 
       // Add Homebrew updates as a subsection under Development category
-      let fullSection = `### ${cleanCategoryName}\n\n${labelBadges}\n\n${section}`;
+      let fullSection = `## ${cleanCategoryName}\n\n${labelBadges}\n\n${section}`;
       if (
         (cleanCategoryName === "Development" ||
           categoryName.includes("Development")) &&
@@ -157,8 +157,8 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
         // Extract just the content (remove the ## heading and adjust remaining headings)
         const homebrewContent = homebrewSection
           .replace(/^## Homebrew Package Updates\n\n/, "")
-          .replace(/^### /gm, "##### "); // Convert ### to ##### for proper nesting
-        fullSection += `\n\n#### Homebrew Package Updates\n\n${homebrewContent}`;
+          .replace(/^### /gm, "#### "); // Convert ### to #### for proper nesting
+        fullSection += `\n\n### Homebrew Package Updates\n\n${homebrewContent}`;
       }
 
       return fullSection;
@@ -186,18 +186,14 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
           return `![${labelName}](https://img.shields.io/badge/${encodedName}-${color}?style=flat-square)`;
         })
         .join(" ");
-      return `### ${cleanCategoryName}\n\n${labelBadges}\n\n${section}`;
+      return `## ${cleanCategoryName}\n\n${labelBadges}\n\n${section}`;
     })
     .join("\n\n---\n\n");
 
-  // Combine with section headers
-  const categorySections = `# Focus Area
-
-${areaSections}
+  // Combine sections without group headers
+  const categorySections = `${areaSections}
 
 ---
-
-# Work by Type
 
 ${kindSections}`;
 
@@ -289,19 +285,19 @@ export function generateCategorySectionWithSubsections(
   // Planned Work subsection (always show, with ChillOps if empty)
   if (planned.length > 0) {
     sections.push(
-      `#### Planned Work\n\n${formatItemList(planned, displayedUrls)}`,
+      `### Planned Work\n\n${formatItemList(planned, displayedUrls)}`,
     );
   } else {
-    sections.push(`#### 📋 Planned Work\n\n> Status: _ChillOps_`);
+    sections.push(`### Planned Work\n\n> Status: _ChillOps_`);
   }
 
   // Opportunistic Work subsection (always show, with ChillOps if empty)
   if (opportunistic.length > 0) {
     sections.push(
-      `#### Opportunistic Work\n\n${formatItemList(opportunistic, displayedUrls)}`,
+      `### Opportunistic Work\n\n${formatItemList(opportunistic, displayedUrls)}`,
     );
   } else {
-    sections.push(`#### ⚡ Opportunistic Work\n\n> Status: _ChillOps_`);
+    sections.push(`### Opportunistic Work\n\n> Status: _ChillOps_`);
   }
 
   return sections.join("\n\n");
@@ -639,7 +635,7 @@ function generateBotActivitySection(botActivity, totalPRs, totalBotPRs) {
 
   return `---
 
-## 🤖 Bot Activity
+## Bot Activity
 
 **Automation Percentage:** ${automationPercentage}% (${totalBotPRs} bot PRs out of ${totalPRs} total PRs)
 
