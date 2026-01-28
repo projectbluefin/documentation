@@ -56,9 +56,6 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
 - fix: switch GDX to HWE kernel by [@​hanthor](https://github.com/hanthor) in [#1007](https://github.com/ublue-os/bluefin-lts/pull/1007)
 - chore: remove a few unnecessary steps on build by [@​tulilirockz](https://github.com/tulilirockz) in [#991](https://github.com/ublue-os/bluefin-lts/pull/991)
 - pull: do rebase instead by [@​tulilirockz](https://github.com/tulilirockz) in [#985](https://github.com/ublue-os/bluefin-lts/pull/985)
-- chore: move `ublue-privileged-setup` invocation to `/usr/bin` instead of `/usr/libexec` by [@​tulilirockz](https://github.com/tulilirockz) in [#917](https://github.com/ublue-os/bluefin-lts/pull/917)
-- ci: add permissions to workflows + DEFAULT_TAG needs to change on `manifest` job by [@​tulilirockz](https://github.com/tulilirockz) in [#980](https://github.com/ublue-os/bluefin-lts/pull/980)
-- chore: clean up a buuunch of vendored things that we dont need anymore by [@​tulilirockz](https://github.com/tulilirockz) in [#975](https://github.com/ublue-os/bluefin-lts/pull/975)
 - fix(dx): identify as dx in imageinfo by [@​rrenomeron](https://github.com/rrenomeron) in [#958](https://github.com/ublue-os/bluefin-lts/pull/958)
 - feat(dx): Add Cockpit packages by [@​rrenomeron](https://github.com/rrenomeron) in [#948](https://github.com/ublue-os/bluefin-lts/pull/948)
 - feat: Add opencode-desktop-linux cask (v1.1.15) by [@​KiKaraage](https://github.com/KiKaraage) in [#118](https://github.com/ublue-os/homebrew-experimental-tap/pull/118)
@@ -150,6 +147,7 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
 
 #### Opportunistic Work
 
+- chore: move `ublue-privileged-setup` invocation to `/usr/bin` instead of `/usr/libexec` by [@​tulilirockz](https://github.com/tulilirockz) in [#917](https://github.com/ublue-os/bluefin-lts/pull/917)
 - chore(countme): remove countme service by [@​tulilirockz](https://github.com/tulilirockz) in [#972](https://github.com/ublue-os/bluefin-lts/pull/972)
 
 ---
@@ -235,6 +233,7 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
 
 - chore: move `ublue-privileged-setup` references to `/usr/bin` instead of `/usr/libexec` by [@​tulilirockz](https://github.com/tulilirockz) in [#3846](https://github.com/ublue-os/bluefin/pull/3846)
 - chore: clean up every file referenced by projectbluefin/common already by [@​tulilirockz](https://github.com/tulilirockz) in [#3959](https://github.com/ublue-os/bluefin/pull/3959)
+- chore: clean up a buuunch of vendored things that we dont need anymore by [@​tulilirockz](https://github.com/tulilirockz) in [#975](https://github.com/ublue-os/bluefin-lts/pull/975)
 - chore:remove antigravity after promotion by [@​inffy](https://github.com/inffy) in [#126](https://github.com/ublue-os/homebrew-experimental-tap/pull/126)
 - Rename from `distroless` to `dakota` everywhere by [@​hecknt](https://github.com/hecknt) in [#28](https://github.com/projectbluefin/dakota/pull/28)
 
@@ -251,6 +250,7 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
 #### Opportunistic Work
 
 - chore(ci): enable SBOMs by [@​renner0e](https://github.com/renner0e) in [#4044](https://github.com/ublue-os/bluefin/pull/4044)
+- ci: add permissions to workflows + DEFAULT_TAG needs to change on `manifest` job by [@​tulilirockz](https://github.com/tulilirockz) in [#980](https://github.com/ublue-os/bluefin-lts/pull/980)
 - ci: attempt to handle merge_group events as well by [@​tulilirockz](https://github.com/tulilirockz) in [#1017](https://github.com/ublue-os/bluefin-lts/pull/1017)
 - ci: fix tagging for pull request merging by [@​tulilirockz](https://github.com/tulilirockz) in [#1016](https://github.com/ublue-os/bluefin-lts/pull/1016)
 - chore(ci): add `-testing` for real on testing environments by [@​tulilirockz](https://github.com/tulilirockz) in [#1018](https://github.com/ublue-os/bluefin-lts/pull/1018)
@@ -263,12 +263,25 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
 
 ---
 
+### Localization
+
+![kind/translation](https://img.shields.io/badge/kind%2Ftranslation-8B5CF6?style=flat-square)
+
+#### Planned Work
+
+- feat: adds french translation to the desktop files by [@​theMimolet](https://github.com/theMimolet) in [#143](https://github.com/projectbluefin/common/pull/143)
+- chore(translation): Add Polish translation to curated.yaml by [@​Micro856](https://github.com/Micro856) in [#175](https://github.com/projectbluefin/common/pull/175)
+
+#### ⚡ Opportunistic Work
+
+> Status: _ChillOps_
+
+---
+
 ## Other
 
-- chore(translation): Add Polish translation to curated.yaml by [@​Micro856](https://github.com/Micro856) in [#175](https://github.com/projectbluefin/common/pull/175)
 - fix(bluefin,dx): remove ssh askpass configuration by [@​tulilirockz](https://github.com/tulilirockz) in [#118](https://github.com/projectbluefin/common/pull/118)
 - feat: add Multiplication Puzzle to Education curation for Bazaar by [@​KiKaraage](https://github.com/KiKaraage) in [#96](https://github.com/projectbluefin/common/pull/96)
-- feat: adds french translation to the desktop files by [@​theMimolet](https://github.com/theMimolet) in [#143](https://github.com/projectbluefin/common/pull/143)
 - fix: leftover file in /boot for real by [@​renner0e](https://github.com/renner0e) in [#3986](https://github.com/ublue-os/bluefin/pull/3986)
 - fix(nvidia): override gschemas on nvidia using sed since we already have these on common now by [@​tulilirockz](https://github.com/tulilirockz) in [#3984](https://github.com/ublue-os/bluefin/pull/3984)
 - fix: cleanup /\{boot,tmp\} by [@​renner0e](https://github.com/renner0e) in [#3922](https://github.com/ublue-os/bluefin/pull/3922)
@@ -648,6 +661,8 @@ We welcome our newest Guardians to the project.
 
 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem', marginBottom: '2rem' }}>
 
+<GitHubProfileCard username="theMimolet" />
+
 <GitHubProfileCard username="tulilirockz" sponsorUrl="https://github.com/sponsors/tulilirockz" />
 
 <GitHubProfileCard username="castrojo" sponsorUrl="https://github.com/sponsors/castrojo" />
@@ -665,8 +680,6 @@ We welcome our newest Guardians to the project.
 <GitHubProfileCard username="sebjag" />
 
 <GitHubProfileCard username="coxde" />
-
-<GitHubProfileCard username="theMimolet" />
 
 <GitHubProfileCard username="lambdaclan" />
 

@@ -38,6 +38,7 @@ export const LABEL_COLORS = {
   "kind/github-action": "2088FF", // Good blue
   "kind/parity": "9333EA", // Good purple (was too light)
   "kind/renovate": "3B82F6", // Brighter blue (was too dark)
+  "kind/translation": "8B5CF6", // Purple for i18n/l10n work
 
   // Common labels
   "good first issue": "7057FF",
@@ -68,6 +69,7 @@ export const LABEL_CATEGORIES = {
   "📚 Documentation": ["kind/documentation"],
   "🧹 Tech Debt": ["kind/tech-debt"],
   "🤖 Automation": ["kind/automation", "kind/github-action", "kind/renovate"],
+  "🌍 Localization": ["kind/translation"],
 };
 
 /**
