@@ -1,7 +1,7 @@
 ---
 tags:
   - drivers
-last_updated: 2026-01-21
+last_updated: 2026-01-28
 ---
 
 # Driver Versions
@@ -16,6 +16,7 @@ This page tracks major driver versions across Bluefin releases to help users ide
 
 | Image Tag | Kernel Version | NVIDIA Driver | Mesa Version |
 |-----------|----------------|---------------|--------------|
+| [**stable-20260127**](https://github.com/ublue-os/bluefin/releases/tag/stable-20260127) | 6.17.12-300 | [590.48.01-3](https://www.nvidia.com/en-us/drivers/details/259268/) | [25.2.7-1](https://docs.mesa3d.org/relnotes/25.2.7.html) |
 | [**stable-20260120**](https://github.com/ublue-os/bluefin/releases/tag/stable-20260120) | 6.17.11-300 | [590.48.01-1](https://www.nvidia.com/en-us/drivers/details/259268/) | [25.2.7-1](https://docs.mesa3d.org/relnotes/25.2.7.html) |
 | [**stable-20260113**](https://github.com/ublue-os/bluefin/releases/tag/stable-20260113) | 6.17.11-300 | [590.48.01-1](https://www.nvidia.com/en-us/drivers/details/259268/) | [25.2.7-1](https://docs.mesa3d.org/relnotes/25.2.7.html) |
 | [**stable-20260106**](https://github.com/ublue-os/bluefin/releases/tag/stable-20260106) | 6.17.8-300 | [590.48.01-1](https://www.nvidia.com/en-us/drivers/details/259268/) | [25.2.7-1](https://docs.mesa3d.org/relnotes/25.2.7.html) |
@@ -44,6 +45,7 @@ This page tracks major driver versions across Bluefin releases to help users ide
 
 | Image Tag | Kernel Version | NVIDIA Driver | Mesa Version |
 |-----------|----------------|---------------|--------------|
+| [**gts-20260127**](https://github.com/ublue-os/bluefin/releases/tag/gts-20260127) | 6.17.12-200 | [590.48.01-3](https://www.nvidia.com/en-us/drivers/details/259268/) | [25.1.9-1](https://docs.mesa3d.org/relnotes/25.1.9.html) |
 | [**gts-20260120**](https://github.com/ublue-os/bluefin/releases/tag/gts-20260120) | 6.17.11-200 | [590.48.01-1](https://www.nvidia.com/en-us/drivers/details/259268/) | [25.1.9-1](https://docs.mesa3d.org/relnotes/25.1.9.html) |
 | [**gts-20260108**](https://github.com/ublue-os/bluefin/releases/tag/gts-20260108) | 6.17.11-200 | [590.48.01-1](https://www.nvidia.com/en-us/drivers/details/259268/) | [25.1.9-1](https://docs.mesa3d.org/relnotes/25.1.9.html) |
 | [**gts-20260106**](https://github.com/ublue-os/bluefin/releases/tag/gts-20260106) | 6.17.8-200 | [590.48.01-1](https://www.nvidia.com/en-us/drivers/details/259268/) | [25.1.9-1](https://docs.mesa3d.org/relnotes/25.1.9.html) |
@@ -71,6 +73,7 @@ This page tracks major driver versions across Bluefin releases to help users ide
 
 | Image Tag | Kernel Version | NVIDIA Driver | Mesa Version |
 |-----------|----------------|---------------|--------------|
+| [**lts.20251223**](https://github.com/ublue-os/bluefin-lts/releases/tag/lts.20251223) | 6.12.0-172 (HWE: 6.17.8-200.fc42) | [590.44.01-1](https://www.nvidia.com/en-us/drivers/details/258752/) | [25.2.5-3](https://docs.mesa3d.org/relnotes/25.2.5.html) |
 | [**lts.20251223**](https://github.com/ublue-os/bluefin-lts/releases/tag/lts.20251223) | 6.12.0-172 (HWE: 6.17.8-200.fc42) | [590.44.01-1](https://www.nvidia.com/en-us/drivers/details/258752/) | [25.2.5-3](https://docs.mesa3d.org/relnotes/25.2.5.html) |
 | [**lts.20251214**](https://github.com/ublue-os/bluefin-lts/releases/tag/lts.20251214) | 6.12.0-170 (HWE: 6.17.7-200.fc42) | [590.44.01-1](https://www.nvidia.com/en-us/drivers/details/258752/) | [25.2.5-3](https://docs.mesa3d.org/relnotes/25.2.5.html) |
 | [**lts.20251209**](https://github.com/ublue-os/bluefin-lts/releases/tag/lts.20251209) | 6.12.0-164 (HWE: 6.17.7-200.fc42) | [590.44.01-1](https://www.nvidia.com/en-us/drivers/details/258750/) | [25.2.5-3](https://docs.mesa3d.org/relnotes/25.2.5.html) |
@@ -178,6 +181,7 @@ The `--enforce-container-sigpolicy` flag ensures you're always running a signed 
 - [Bluefin Documentation](https://docs.projectbluefin.io/) - Official docs
 - [Bluefin LTS Documentation](https://docs.projectbluefin.io/lts) - LTS-specific docs
 - [@bootc-dev/bootc](https://github.com/containers/bootc) - Bootc reference
+
 
 
 
