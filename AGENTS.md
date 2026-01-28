@@ -1058,6 +1058,253 @@ git commit --amend --no-edit
 git push --force-with-lease
 ```
 
+## Driver Versions Workflow
+
+The driver versions workflow automatically tracks and updates kernel, NVIDIA, and Mesa driver versions across Bluefin streams (stable, GTS, LTS). The workflow runs weekly to keep the `docs/driver-versions.md` documentation current with the latest releases.
+
+### Architecture Overview
+
+**System Components:**
+
+- **GitHub Actions Workflow** (`.github/workflows/update-driver-versions.yml`) - Weekly cron automation
+- **Update Script** (`scripts/update-driver-versions.js`) - Fetches releases and updates documentation
+- **NVIDIA Cache** (`.nvidia-drivers-cache.json`) - Persisted driver URL mappings (committed to git)
+- **Documentation** (`docs/driver-versions.md`) - User-facing driver version tables
+
+**Data Flow:**
+
+```
+GitHub Actions Cron (Wednesdays 10:00 UTC)
+  ↓
+Fetch latest releases from ublue-os/bluefin (stable, gts)
+  ↓
+Fetch latest release from ublue-os/bluefin-lts (lts)
+  ↓
+Extract driver versions from release bodies (Major packages table)
+  ↓
+Check NVIDIA cache for driver URLs
+  ↓
+Fetch missing driver URLs from nvidia.com (if cache miss)
+  ↓
+Update docs/driver-versions.md with new releases
+  ↓
+Create PR if changes detected
+  ↓
+Auto-merge PR
+```
+
+### Schedule and Triggering
+
+**Weekly Schedule:**
+
+- Runs every Wednesday at 10:00 UTC
+- Fetches up to 10 recent releases per stream to find latest
+- Creates PR only if new releases detected
+
+**Idempotency Guarantees:**
+
+The workflow is designed to be safely run multiple times without creating duplicates:
+
+- **Script level**: Checks if release already exists at top of each table before adding
+- **Script level**: Deduplicates all rows by tag name within each section
+- **Script level**: Only writes file if content actually changes
+- **Workflow level**: Checks for existing open PR before creating new one
+- **Workflow level**: Uses static branch name `automated/update-driver-versions`
+- **Result**: Can be manually triggered multiple times - will not create duplicate PRs
+
+**Manual Triggering:**
+
+```bash
+# Trigger workflow manually via GitHub CLI
+gh workflow run update-driver-versions.yml
+
+# Or via GitHub web UI: Actions → Update Driver Versions → Run workflow
+
+# Test locally (requires GITHUB_TOKEN)
+export GITHUB_TOKEN=$(gh auth token)
+node scripts/update-driver-versions.js
+```
+
+### NVIDIA Cache Persistence
+
+**Why the cache is committed to git:**
+
+- **Performance**: Reduces nvidia.com scraping by ~80% (only misses on new drivers)
+- **Reliability**: Avoids dependency on nvidia.com uptime during workflow runs
+- **Rate Limiting**: Minimizes external requests that could fail
+- **Speed**: Cache hits return instantly without network requests
+
+**Cache Behavior:**
+
+- File: `.nvidia-drivers-cache.json`
+- Format: `{ "driver-version": "https://nvidia.com/drivers/details/id/" }`
+- Updates: Only when encountering unknown driver versions
+- Persistence: Committed to git, survives workflow runs
+
+**Example cache entry:**
+
+```json
+{
+  "580.126.09": "https://www.nvidia.com/en-us/drivers/details/261245/",
+  "590.48.01": "https://www.nvidia.com/en-us/drivers/details/259268/"
+}
+```
+
+### Error Handling and Resilience
+
+**Retry Logic:**
+
+- 3 retries with exponential backoff (2s, 4s, 8s delays)
+- Applies to both GitHub API calls and NVIDIA website fetching
+- Logs retry attempts with error details
+
+**Rate Limit Detection:**
+
+- Monitors `X-RateLimit-Remaining` header from GitHub API
+- Warns when < 100 requests remaining
+- Exits gracefully if rate limit exceeded (workflow retries next week)
+- Authenticated requests have 5,000 req/hour limit (unauthenticated: 60/hour)
+
+**Network Resilience:**
+
+- Handles transient network failures automatically via retry
+- Falls back gracefully if NVIDIA URLs unavailable (shows version without link)
+- Validates all required releases fetched before updating document
+
+### Troubleshooting
+
+#### Issue: "GitHub API rate limit exceeded"
+
+**Cause:** Hit API rate limits (unlikely with token, workflow uses `secrets.GITHUB_TOKEN`)
+
+**Solution:** Workflow token automatically provides authentication. If testing locally:
+
+```bash
+export GITHUB_TOKEN=$(gh auth token)
+node scripts/update-driver-versions.js
+```
+
+**Rate limit status:** Check headers in logs or use:
+
+```bash
+gh api rate_limit
+```
+
+#### Issue: "No NVIDIA driver URL found for version X"
+
+**Cause:** New driver version not yet listed on nvidia.com/drivers/unix page
+
+**Solution:** This is expected behavior for very recent drivers:
+
+- Script logs warning but continues
+- Version appears in table without hyperlink
+- Cache will be updated once NVIDIA publishes driver page
+- Re-run workflow next week to fetch URL
+
+#### Issue: "NVIDIA website returned 503" or network timeout
+
+**Cause:** nvidia.com temporarily unavailable or network issues
+
+**Solution:** Retry logic handles this automatically:
+
+- Script retries up to 3 times with backoff
+- If persistent, workflow fails but retries next week
+- Check nvidia.com uptime: https://www.nvidia.com/en-us/drivers/unix/
+- Cached drivers still work (only affects new driver URL lookups)
+
+#### Issue: Failed to extract driver info from release body
+
+**Cause:** Release body format changed or missing "Major packages" table
+
+**Solution:** Script expects this table format:
+
+```markdown
+### Major packages
+
+| Package    | Version      |
+| ---------- | ------------ |
+| **Kernel** | 6.12.8-200   |
+| **Mesa**   | 24.3.3-300   |
+| **Nvidia** | 580.126.09-1 |
+```
+
+**Fix steps:**
+
+1. Check release body format in GitHub: https://github.com/ublue-os/bluefin/releases/latest
+2. Update regex patterns in `extractDriverInfo()` function if format changed
+3. Test locally: `node scripts/update-driver-versions.js`
+4. Commit fix and workflow will work next week
+
+#### Issue: Workflow creates PR but doesn't auto-merge
+
+**Cause:** Auto-merge requires branch protection or PR checks to pass
+
+**Solution:** This is expected behavior in some cases:
+
+- Check PR for CI/CD check failures
+- Workflow has `contents: write` and `pull-requests: write` permissions
+- Auto-merge command: `gh pr merge --auto --squash <pr-number>`
+- Manual merge: Review PR and merge via GitHub UI
+
+### Upstream Dependencies
+
+**Release Sources:**
+
+- Bluefin stable/gts: [ublue-os/bluefin/releases](https://github.com/ublue-os/bluefin/releases)
+  - Tags: `stable-YYYYMMDD`, `gts-YYYYMMDD`
+- Bluefin LTS: [ublue-os/bluefin-lts/releases](https://github.com/ublue-os/bluefin-lts/releases)
+  - Tags: `lts.YYYYMMDD`
+
+**Driver Information:**
+
+- NVIDIA driver URLs: Scraped from https://www.nvidia.com/en-us/drivers/unix/
+- Mesa release notes: Generated URLs like `https://docs.mesa3d.org/relnotes/24.3.3.html`
+- Kernel versions: Extracted from release body "Major packages" table
+
+### Modifying the Workflow
+
+**Change schedule:**
+
+Edit `.github/workflows/update-driver-versions.yml`:
+
+```yaml
+schedule:
+  # Run every Wednesday at 10:00 AM UTC
+  - cron: "0 10 * * 3"
+  # Change to daily: '0 10 * * *'
+  # Change to monthly: '0 10 1 * *'
+```
+
+**Add new driver type:**
+
+Edit `scripts/update-driver-versions.js` in `extractDriverInfo()` function:
+
+```javascript
+// Add extraction for new package
+const newPackageMatch = tableRows.match(
+  /\|\s*\*\*NewPackage\*\*\s*\|\s*([^\|\s]+)(?:\s*➡️\s*([^\|\s]+))?\s*\|/,
+);
+if (newPackageMatch) {
+  info.newPackage = newPackageMatch[2] || newPackageMatch[1];
+}
+```
+
+Update `formatTableRow()` to include in output.
+
+**Validation after changes:**
+
+```bash
+# Test script locally
+export GITHUB_TOKEN=$(gh auth token)
+node scripts/update-driver-versions.js
+
+# Verify markdown output
+cat docs/driver-versions.md
+
+# Check workflow syntax
+gh workflow view update-driver-versions.yml
+```
+
 ## Repository Context
 
 This repository contains documentation for Bluefin OS. The main Bluefin OS images are built in the [ublue-os/bluefin](https://github.com/ublue-os/bluefin) repository and [ublue-os/bluefin-lts](https://github.com/ublue-os/bluefin-lts) repositories. This docs repository:
