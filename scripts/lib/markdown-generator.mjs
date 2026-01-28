@@ -12,6 +12,7 @@ import {
   LABEL_COLORS,
   generateBadge,
 } from "./label-mapping.mjs";
+import { getSponsorUrl } from "./github-sponsors.mjs";
 
 /**
  * Generate complete report markdown
@@ -733,6 +734,10 @@ function generateContributorsSection(contributors, newContributors) {
 
     const newContributorCards = newContributors
       .map((username) => {
+        const sponsorUrl = getSponsorUrl(username);
+        if (sponsorUrl) {
+          return `<GitHubProfileCard username="${username}" highlight={true} sponsorUrl="${sponsorUrl}" />`;
+        }
         return `<GitHubProfileCard username="${username}" highlight={true} />`;
       })
       .join("\n\n");
@@ -753,6 +758,10 @@ function generateContributorsSection(contributors, newContributors) {
 
     const continuingContributorCards = continuingContributors
       .map((username) => {
+        const sponsorUrl = getSponsorUrl(username);
+        if (sponsorUrl) {
+          return `<GitHubProfileCard username="${username}" sponsorUrl="${sponsorUrl}" />`;
+        }
         return `<GitHubProfileCard username="${username}" />`;
       })
       .join("\n\n");
