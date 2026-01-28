@@ -121,6 +121,7 @@ const fetchGitHubProfile = async (username: string): Promise<GitHubUser> => {
     }
 
     const data = await response.json();
+
     return {
       login: data.login,
       name: data.name,

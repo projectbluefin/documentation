@@ -732,27 +732,34 @@ function generateContributorsSection(contributors, newContributors) {
     section += `<div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem', marginBottom: '2rem' }}>\n\n`;
 
     const newContributorCards = newContributors
-      .map(
-        (username) =>
-          `<GitHubProfileCard username="${username}" highlight={true} />`,
-      )
+      .map((username) => {
+        return `<GitHubProfileCard username="${username}" highlight={true} />`;
+      })
       .join("\n\n");
 
     section += newContributorCards;
     section += `\n\n</div>\n\n`;
   }
 
-  // Section 2: All Contributors (without highlight)
-  section += `## Contributors\n\n`;
-  section += `Thank you to our continuing contributors!\n\n`;
-  section += `<div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem', marginBottom: '2rem' }}>\n\n`;
+  // Section 2: Continuing Contributors (excluding new contributors to avoid duplicates)
+  const continuingContributors = contributors.filter(
+    (username) => !newContributors.includes(username),
+  );
 
-  const allContributorCards = contributors
-    .map((username) => `<GitHubProfileCard username="${username}" />`)
-    .join("\n\n");
+  if (continuingContributors.length > 0) {
+    section += `## Contributors\n\n`;
+    section += `Thank you to our continuing contributors!\n\n`;
+    section += `<div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem', marginBottom: '2rem' }}>\n\n`;
 
-  section += allContributorCards;
-  section += `\n\n</div>`;
+    const continuingContributorCards = continuingContributors
+      .map((username) => {
+        return `<GitHubProfileCard username="${username}" />`;
+      })
+      .join("\n\n");
+
+    section += continuingContributorCards;
+    section += `\n\n</div>`;
+  }
 
   return section;
 }
