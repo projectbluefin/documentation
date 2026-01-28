@@ -55,9 +55,14 @@ export function generateReportMarkdown(
   const dateStr = format(endDate, "yyyy-MM-dd");
 
   // Generate frontmatter with MDX import for GitHubProfileCard component
+  // Slug format: /YYYY/MM (e.g., /2026/01)
+  const monthPadded = String(month + 1).padStart(2, "0");
+  const slug = `/${year}/${monthPadded}`;
+
   const frontmatter = `---
 title: "Monthly Report: ${monthYear}"
 date: ${dateStr}
+slug: ${slug}
 tags: [monthly-report, project-activity]
 ---
 
