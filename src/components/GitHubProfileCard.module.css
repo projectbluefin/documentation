@@ -44,9 +44,9 @@
 }
 
 .badge {
-  position: absolute;
-  bottom: 12px;
-  left: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
   background: linear-gradient(135deg, #ffd700, #ffed4e);
   color: #8b7500;
   padding: 0.35rem 0.75rem;
@@ -55,6 +55,8 @@
   font-weight: 600;
   box-shadow: 0 2px 8px rgba(255, 215, 0, 0.4);
   letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
+  width: fit-content;
 }
 
 .avatar {
@@ -117,13 +119,30 @@
   border-radius: 6px;
   font-size: 0.9rem;
   font-weight: 500;
-  transition: background 0.2s ease;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .sponsorButton:hover {
   background: var(--ifm-color-primary-dark);
   color: white;
   text-decoration: none;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Special styling for sponsor button on highlighted cards */
+.highlight .sponsorButton {
+  background: linear-gradient(135deg, #ffd700, #ffed4e);
+  color: #8b7500;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.4);
+}
+
+.highlight .sponsorButton:hover {
+  background: linear-gradient(135deg, #ffed4e, #ffd700);
+  color: #6b5900;
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.5);
 }
 
 .loading,
