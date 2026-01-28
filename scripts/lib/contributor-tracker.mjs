@@ -13,14 +13,18 @@ import { MONITORED_REPOS } from "./monitored-repos.mjs";
  */
 const BOT_PATTERNS = [
   /^dependabot\[bot\]$/,
+  /^dependabot$/i, // Dependabot without [bot] suffix
   /^renovate\[bot\]$/,
+  /^renovate$/i, // Renovate without [bot] suffix (GraphQL returns this)
+  /^app\/renovate$/, // Renovate GitHub App format (REST API format)
   /^github-actions\[bot\]$/,
   /^github-actions$/, // GitHub Actions bot without [bot] suffix
   /^copilot-swe-agent$/,
   /^ubot-\d+$/,
   /^pull$/,
   /^testpullapp$/,
-  /bot$/i, // Catches most bot usernames
+  /^app\//i, // GitHub Apps (app/renovate, app/dependabot, etc.)
+  /bot$/i, // Catches most bot usernames (must be last)
 ];
 
 /**

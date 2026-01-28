@@ -205,7 +205,19 @@ ${kindSections}`;
   const uncategorizedSection = generateUncategorizedSection(allItems);
 
   // Generate bot activity section (non-homebrew only, since homebrew is now under Development)
-  const botSection = generateBotActivitySection(otherBotActivity);
+  // Calculate total PRs (human + all bots including homebrew)
+  const totalBotPRs = botActivity.reduce(
+    (sum, activity) => sum + activity.count,
+    0,
+  );
+  const totalHumanPRs = plannedItems.length + opportunisticItems.length;
+  const totalPRs = totalHumanPRs + totalBotPRs;
+
+  const botSection = generateBotActivitySection(
+    otherBotActivity,
+    totalPRs,
+    totalBotPRs,
+  );
 
   // Generate contributors section
   const contributorsSection = generateContributorsSection(
@@ -610,19 +622,25 @@ function generatePackageTable(packages, tapName) {
  * Generate bot activity section with aggregate table and details
  *
  * @param {Array} botActivity - Bot activity grouped by repo and bot
+ * @param {number} totalPRs - Total PRs (human + bot) in the period
+ * @param {number} totalBotPRs - Total bot PRs (all bots) in the period
  * @returns {string} Markdown section with table and collapsible details
  */
-function generateBotActivitySection(botActivity) {
+function generateBotActivitySection(botActivity, totalPRs, totalBotPRs) {
   if (!botActivity || botActivity.length === 0) {
     return ""; // No bot activity this period
   }
 
-  const table = generateBotActivityTable(botActivity);
+  const automationPercentage = ((totalBotPRs / totalPRs) * 100).toFixed(1);
+
+  const table = generateBotActivityTable(botActivity, totalPRs);
   const details = generateBotDetailsList(botActivity);
 
   return `---
 
 ## 🤖 Bot Activity
+
+**Automation Percentage:** ${automationPercentage}% (${totalBotPRs} bot PRs out of ${totalPRs} total PRs)
 
 ${table}
 
@@ -633,9 +651,10 @@ ${details}`;
  * Generate bot activity summary table (aggregated by repository)
  *
  * @param {Array} botActivity - Array of {repo, bot, count, items}
+ * @param {number} totalPRs - Total PRs in the period (for percentage calculation)
  * @returns {string} Markdown table
  */
-export function generateBotActivityTable(botActivity) {
+export function generateBotActivityTable(botActivity, totalPRs) {
   // Aggregate by repository (sum all bot activity per repo)
   const repoAggregates = {};
 
@@ -651,12 +670,15 @@ export function generateBotActivityTable(botActivity) {
     repoAggregates[repo] += activity.count;
   });
 
-  const header = `| Repository | Bot PRs |
-|------------|---------|`;
+  const header = `| Repository | Bot PRs | % of Total |
+|------------|---------|------------|`;
 
   const rows = Object.entries(repoAggregates)
     .sort((a, b) => b[1] - a[1]) // Sort by count descending
-    .map(([repo, count]) => `| ${repo} | ${count} |`);
+    .map(([repo, count]) => {
+      const percentage = ((count / totalPRs) * 100).toFixed(1);
+      return `| ${repo} | ${count} | ${percentage}% |`;
+    });
 
   return [header, ...rows].join("\n");
 }
