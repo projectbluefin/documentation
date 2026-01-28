@@ -259,6 +259,7 @@ function filterItemsByLabels(items, categoryLabels) {
 
 /**
  * Format list of items as markdown
+ * Format: title by @author in #PR (Hyperlight-style single-line format)
  *
  * @param {Array} items - Items to format
  * @param {Set} displayedUrls - Set to track displayed URLs
@@ -276,8 +277,9 @@ function formatItemList(items, displayedUrls) {
     // Mark this URL as displayed
     displayedUrls.add(url);
 
+    // Hyperlight-style format: title by @author in #PR
     // Use zero-width space to prevent GitHub notifications
-    return `- [#${number} ${title}](${url}) by @\u200B${author}`;
+    return `- ${title} by [@\u200B${author}](https://github.com/${author}) in [#${number}](${url})`;
   });
 
   return lines.join("\n");
@@ -285,6 +287,7 @@ function formatItemList(items, displayedUrls) {
 
 /**
  * Generate category section (legacy - for backwards compatibility)
+ * Format: title by @author in #PR (Hyperlight-style single-line format)
  *
  * @param {Array} items - Items completed during report period
  * @param {string} categoryName - Category display name
@@ -337,9 +340,9 @@ export function generateCategorySection(items, categoryName, categoryLabels) {
       const url = item.content.url;
       const author = item.content.author?.login || "unknown";
 
+      // Hyperlight-style format: title by @author in #PR
       // Use zero-width space to prevent GitHub notifications
-      // No badge needed - items are grouped under section with label badges
-      const line = `- [#${number} ${title}](${url}) by @\u200B${author}`;
+      const line = `- ${title} by [@\u200B${author}](https://github.com/${author}) in [#${number}](${url})`;
       lines.push(line);
     });
   });
@@ -349,6 +352,7 @@ export function generateCategorySection(items, categoryName, categoryLabels) {
 
 /**
  * Generate uncategorized items section
+ * Format: title by @author in #PR (Hyperlight-style single-line format)
  *
  * @param {Array} items - All completed items
  * @returns {string} Markdown section or empty string
@@ -376,8 +380,9 @@ function generateUncategorizedSection(items) {
     const url = item.content.url;
     const author = item.content.author?.login || "unknown";
 
+    // Hyperlight-style format: title by @author in #PR
     // Use zero-width space to prevent GitHub notifications
-    return `- [#${number} ${title}](${url}) by @\u200B${author}`;
+    return `- ${title} by [@\u200B${author}](https://github.com/${author}) in [#${number}](${url})`;
   });
 
   return `## 📋 Other\n\n${lines.join("\n")}`;
@@ -405,29 +410,40 @@ ${details}`;
 }
 
 /**
- * Generate bot activity summary table
+ * Generate bot activity summary table (aggregated by repository)
  *
  * @param {Array} botActivity - Array of {repo, bot, count, items}
  * @returns {string} Markdown table
  */
 export function generateBotActivityTable(botActivity) {
-  const header = `| Repository | Bot | PRs |
-|------------|-----|-----|`;
+  // Aggregate by repository (sum all bot activity per repo)
+  const repoAggregates = {};
 
-  const rows = botActivity.map((activity) => {
+  botActivity.forEach((activity) => {
     const repo = activity.repo
       .replace("ublue-os/", "")
       .replace("projectbluefin/", "");
-    const bot = activity.bot;
-    const count = activity.count;
-    return `| ${repo} | ${bot} | ${count} |`;
+
+    if (!repoAggregates[repo]) {
+      repoAggregates[repo] = 0;
+    }
+
+    repoAggregates[repo] += activity.count;
   });
+
+  const header = `| Repository | Bot PRs |
+|------------|---------|`;
+
+  const rows = Object.entries(repoAggregates)
+    .sort((a, b) => b[1] - a[1]) // Sort by count descending
+    .map(([repo, count]) => `| ${repo} | ${count} |`);
 
   return [header, ...rows].join("\n");
 }
 
 /**
  * Generate collapsible details list with full bot PR list
+ * Format: title by @author in #PR (Hyperlight-style single-line format)
  *
  * @param {Array} botActivity - Array of {repo, bot, count, items}
  * @returns {string} Markdown collapsible details
@@ -443,7 +459,10 @@ export function generateBotDetailsList(botActivity) {
         .replace(/}/g, "\\}");
       const url = item.content.url;
       const repo = item.content.repository.nameWithOwner;
-      return `- [#${number} ${title}](${url}) in ${repo}`;
+      const author = item.content.author?.login || "unknown";
+
+      // Hyperlight-style format with repository context
+      return `- ${title} by [@\u200B${author}](https://github.com/${author}) in [${repo}#${number}](${url})`;
     })
     .join("\n");
 
