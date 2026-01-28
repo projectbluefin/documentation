@@ -1101,6 +1101,17 @@ Auto-merge PR
 - Fetches up to 10 recent releases per stream to find latest
 - Creates PR only if new releases detected
 
+**Idempotency Guarantees:**
+
+The workflow is designed to be safely run multiple times without creating duplicates:
+
+- **Script level**: Checks if release already exists at top of each table before adding
+- **Script level**: Deduplicates all rows by tag name within each section
+- **Script level**: Only writes file if content actually changes
+- **Workflow level**: Checks for existing open PR before creating new one
+- **Workflow level**: Uses static branch name `automated/update-driver-versions`
+- **Result**: Can be manually triggered multiple times - will not create duplicate PRs
+
 **Manual Triggering:**
 
 ```bash

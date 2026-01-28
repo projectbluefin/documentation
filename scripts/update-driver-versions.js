@@ -11,7 +11,14 @@
  * - Caches NVIDIA driver URLs (persisted in .nvidia-drivers-cache.json)
  * - Retry logic with exponential backoff for network resilience
  * - GitHub API rate limit detection and graceful handling
- * - Automatic deduplication of release entries
+ * - Automatic deduplication of release entries (idempotent)
+ * - Safe to run multiple times - only adds new releases
+ *
+ * Idempotency Guarantees:
+ * - Checks if latest release already exists before adding
+ * - Deduplicates all rows by tag name within each section
+ * - Only writes file if content actually changes
+ * - Can be safely re-run or triggered multiple times
  *
  * Usage:
  *   node scripts/update-driver-versions.js
@@ -593,9 +600,20 @@ async function updateDocument() {
       `last_updated: ${today}`,
     );
 
+    // Check if content actually changed
+    const contentChanged = content !== newContent;
+
+    if (!contentChanged) {
+      console.log(
+        "\nℹ️  No changes needed - document already up to date (idempotent run)",
+      );
+      return;
+    }
+
     // Write updated content
     fs.writeFileSync(DOC_PATH, newContent, "utf8");
     console.log("\n✅ Document updated successfully!");
+    console.log("   Script is idempotent - safe to run multiple times");
   } catch (error) {
     console.error("❌ Error updating document:", error.message);
     process.exit(1);
