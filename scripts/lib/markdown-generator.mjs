@@ -111,6 +111,18 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
   // Track displayed items to avoid duplicates across categories
   const displayedUrls = new Set();
 
+  // Split bot activity into homebrew and other
+  const homebrewActivity = botActivity.filter(
+    (activity) =>
+      activity.repo === "ublue-os/homebrew-tap" ||
+      activity.repo === "ublue-os/homebrew-experimental-tap",
+  );
+  const otherBotActivity = botActivity.filter(
+    (activity) =>
+      activity.repo !== "ublue-os/homebrew-tap" &&
+      activity.repo !== "ublue-os/homebrew-experimental-tap",
+  );
+
   // Generate area sections with planned vs opportunistic subsections
   const areaSections = areaCategories
     .map(([categoryName, categoryLabels]) => {
@@ -131,10 +143,27 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
           return `![${labelName}](https://img.shields.io/badge/${encodedName}-${color}?style=flat-square)`;
         })
         .join(" ");
-      return `### ${cleanCategoryName}\n\n${labelBadges}\n\n${section}`;
+
+      // Add Homebrew updates as a subsection under Development category
+      let fullSection = `### ${cleanCategoryName}\n\n${labelBadges}\n\n${section}`;
+      if (
+        (cleanCategoryName === "Development" ||
+          categoryName.includes("Development")) &&
+        homebrewActivity.length > 0
+      ) {
+        const homebrewSection =
+          generateHomebrewUpdatesSection(homebrewActivity);
+        // Extract just the content (remove the ## heading and adjust remaining headings)
+        const homebrewContent = homebrewSection
+          .replace(/^## Homebrew Package Updates\n\n/, "")
+          .replace(/^### /gm, "##### "); // Convert ### to ##### for proper nesting
+        fullSection += `\n\n#### Homebrew Package Updates\n\n${homebrewContent}`;
+      }
+
+      return fullSection;
     })
     .filter((section) => section)
-    .join("\n\n");
+    .join("\n\n---\n\n");
 
   // Generate kind sections with planned vs opportunistic subsections
   const kindSections = kindCategories
@@ -158,12 +187,14 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
         .join(" ");
       return `### ${cleanCategoryName}\n\n${labelBadges}\n\n${section}`;
     })
-    .join("\n\n");
+    .join("\n\n---\n\n");
 
   // Combine with section headers
   const categorySections = `# Focus Area
 
 ${areaSections}
+
+---
 
 # Work by Type
 
@@ -173,8 +204,8 @@ ${kindSections}`;
   const allItems = [...plannedItems, ...opportunisticItems];
   const uncategorizedSection = generateUncategorizedSection(allItems);
 
-  // Generate bot activity section
-  const botSection = generateBotActivitySection(botActivity);
+  // Generate bot activity section (non-homebrew only, since homebrew is now under Development)
+  const botSection = generateBotActivitySection(otherBotActivity);
 
   // Generate contributors section
   const contributorsSection = generateContributorsSection(
@@ -407,7 +438,172 @@ function generateUncategorizedSection(items) {
     return `- ${title} by [@\u200B${author}](https://github.com/${author}) in [#${number}](${url})`;
   });
 
-  return `## Other\n\n${lines.join("\n")}`;
+  return `---\n\n## Other\n\n${lines.join("\n")}`;
+}
+
+/**
+ * Generate Homebrew package updates section
+ * Hybrid format: Badge summary + compact table
+ *
+ * @param {Array} homebrewActivity - Array of {repo, bot, count, items}
+ * @returns {string} Markdown section with badges and table
+ */
+function generateHomebrewUpdatesSection(homebrewActivity) {
+  // Calculate totals by tap
+  let experimentalCount = 0;
+  let productionCount = 0;
+
+  homebrewActivity.forEach((activity) => {
+    if (activity.repo === "ublue-os/homebrew-experimental-tap") {
+      experimentalCount += activity.count;
+    } else if (activity.repo === "ublue-os/homebrew-tap") {
+      productionCount += activity.count;
+    }
+  });
+
+  const totalCount = experimentalCount + productionCount;
+
+  // Parse package updates from PR titles
+  const packageUpdates = parseHomebrewPackageUpdates(homebrewActivity);
+
+  // Generate badges - production first to highlight it
+  const badges = [];
+  if (productionCount > 0) {
+    badges.push(
+      `![Production Tap](https://img.shields.io/badge/production--tap-${productionCount}%20updates-blue?style=flat-square)`,
+    );
+  }
+  if (experimentalCount > 0) {
+    badges.push(
+      `![Experimental Tap](https://img.shields.io/badge/experimental--tap-${experimentalCount}%20updates-orange?style=flat-square)`,
+    );
+  }
+
+  // Generate summary table - production first
+  const summaryTable = `| Tap | Updates |
+|-----|---------|
+| production-tap | ${productionCount} |
+| experimental-tap | ${experimentalCount} |`;
+
+  // Generate detailed package tables - production first
+  let detailSections = "";
+
+  // Production tap details
+  if (Object.keys(packageUpdates.production).length > 0) {
+    const prodTable = generatePackageTable(
+      packageUpdates.production,
+      "production",
+    );
+    detailSections += `<details>
+<summary>View all production-tap updates (${productionCount})</summary>
+
+${prodTable}
+
+</details>`;
+  }
+
+  // Experimental tap details
+  if (Object.keys(packageUpdates.experimental).length > 0) {
+    const expTable = generatePackageTable(
+      packageUpdates.experimental,
+      "experimental",
+    );
+    if (detailSections) detailSections += "\n\n";
+    detailSections += `<details>
+<summary>View all experimental-tap updates (${experimentalCount})</summary>
+
+${expTable}
+
+</details>`;
+  }
+
+  return `## Homebrew Package Updates
+
+${badges.join(" ")}
+
+**${totalCount} automated updates** this month via GitHub Actions. Homebrew tap version bumps ensure Bluefin users always have access to the latest stable releases.
+
+### Quick Summary
+
+${summaryTable}
+
+${detailSections}`;
+}
+
+/**
+ * Parse package names and versions from homebrew PR titles
+ *
+ * @param {Array} homebrewActivity - Array of {repo, bot, count, items}
+ * @returns {Object} { experimental: {pkg: [versions]}, production: {pkg: [versions]} }
+ */
+function parseHomebrewPackageUpdates(homebrewActivity) {
+  const updates = {
+    experimental: {},
+    production: {},
+  };
+
+  homebrewActivity.forEach((activity) => {
+    const tapKey =
+      activity.repo === "ublue-os/homebrew-experimental-tap"
+        ? "experimental"
+        : "production";
+
+    activity.items.forEach((item) => {
+      const title = item.content.title;
+      // Pattern: "package-name version" or "package-name: version"
+      // Example: "opencode-desktop-linux 1.1.18"
+      const match = title.match(/^([a-z0-9-]+)\s+([0-9]+\.[0-9.]+)/i);
+
+      if (match) {
+        const pkgName = match[1];
+        const version = match[2];
+
+        if (!updates[tapKey][pkgName]) {
+          updates[tapKey][pkgName] = [];
+        }
+
+        updates[tapKey][pkgName].push({
+          version,
+          prNumber: item.content.number,
+          prUrl: item.content.url,
+        });
+      }
+    });
+  });
+
+  return updates;
+}
+
+/**
+ * Generate package update table for a tap
+ *
+ * @param {Object} packages - {pkgName: [{version, prNumber, prUrl}]}
+ * @param {string} tapName - "experimental" or "main"
+ * @returns {string} Markdown table
+ */
+function generatePackageTable(packages, tapName) {
+  // Sort packages by update count (descending)
+  const sortedPackages = Object.entries(packages).sort(
+    (a, b) => b[1].length - a[1].length,
+  );
+
+  const rows = sortedPackages.map(([pkgName, versions]) => {
+    // Show version progression or single version
+    const versionStr =
+      versions.length > 1
+        ? `${versions[0].version} → ${versions[versions.length - 1].version} (${versions.length} updates)`
+        : versions[0].version;
+
+    // Link to first PR (or could link to all)
+    const prLink = `[#${versions[0].prNumber}](${versions[0].prUrl})`;
+
+    return `| ${pkgName} | ${versionStr} | ${prLink} |`;
+  });
+
+  const header = `| Package | Versions | PR |
+|---------|----------|-----|`;
+
+  return [header, ...rows].join("\n");
 }
 
 /**
@@ -424,7 +620,9 @@ function generateBotActivitySection(botActivity) {
   const table = generateBotActivityTable(botActivity);
   const details = generateBotDetailsList(botActivity);
 
-  return `## 🤖 Bot Activity
+  return `---
+
+## 🤖 Bot Activity
 
 ${table}
 
