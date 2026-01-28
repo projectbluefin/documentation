@@ -163,7 +163,7 @@ ${kindSections}`;
   // Generate footer with cross-links
   const footer = `---
 
-*Want to see the latest OS releases? Check out the [Changelogs](/changelogs) page. For announcements and deep dives, read our [Blog](/blog).*
+*Want to see the latest OS releases? Check out the [Changelogs](/changelogs). For announcements and deep dives, read our [Blog](/blog).*
 
 *This report was automatically generated from [todo.projectbluefin.io](https://todo.projectbluefin.io).*
 
@@ -223,7 +223,7 @@ export function generateCategorySectionWithSubsections(
   // Planned Work subsection (always show, with ChillOps if empty)
   if (planned.length > 0) {
     sections.push(
-      `#### 📋 Planned Work\n\n${formatItemList(planned, displayedUrls)}`,
+      `#### Planned Work\n\n${formatItemList(planned, displayedUrls)}`,
     );
   } else {
     sections.push(`#### 📋 Planned Work\n\n> Status: _ChillOps_`);
@@ -232,7 +232,7 @@ export function generateCategorySectionWithSubsections(
   // Opportunistic Work subsection (always show, with ChillOps if empty)
   if (opportunistic.length > 0) {
     sections.push(
-      `#### ⚡ Opportunistic Work\n\n${formatItemList(opportunistic, displayedUrls)}`,
+      `#### Opportunistic Work\n\n${formatItemList(opportunistic, displayedUrls)}`,
     );
   } else {
     sections.push(`#### ⚡ Opportunistic Work\n\n> Status: _ChillOps_`);
@@ -385,7 +385,7 @@ function generateUncategorizedSection(items) {
     return `- ${title} by [@\u200B${author}](https://github.com/${author}) in [#${number}](${url})`;
   });
 
-  return `## 📋 Other\n\n${lines.join("\n")}`;
+  return `## Other\n\n${lines.join("\n")}`;
 }
 
 /**
@@ -486,7 +486,7 @@ function generateContributorsSection(contributors, newContributors) {
 
   // Section 1: New Contributors (highlighted, shown first)
   if (newContributors.length > 0) {
-    section += `## 🌟 New Contributors\n\nWelcome to our new contributors!\n\n`;
+    section += `## New Contributors\n\nWelcome to our New Lights!\n\n`;
     section += `<div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem', marginBottom: '2rem' }}>\n\n`;
 
     const newContributorCards = newContributors
@@ -501,8 +501,8 @@ function generateContributorsSection(contributors, newContributors) {
   }
 
   // Section 2: All Contributors (without highlight)
-  section += `## 👥 Contributors\n\n`;
-  section += `Thank you to everyone who contributed this period!\n\n`;
+  section += `## Contributors\n\n`;
+  section += `Thank you to our continuing contributors!\n\n`;
   section += `<div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem', marginBottom: '2rem' }}>\n\n`;
 
   const allContributorCards = contributors
