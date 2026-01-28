@@ -43,20 +43,41 @@
   box-shadow: 0 0 12px rgba(255, 215, 0, 0.5);
 }
 
+/* Button row for badge and sponsor button */
+.buttonRow {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* New contributor badge - styled as a button to match sponsor button */
 .badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.5rem 1rem;
   background: linear-gradient(135deg, #ffd700, #ffed4e);
   color: #8b7500;
-  padding: 0.35rem 0.75rem;
-  border-radius: 20px;
-  font-size: 0.75rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
   font-weight: 600;
+  line-height: 1;
   box-shadow: 0 2px 8px rgba(255, 215, 0, 0.4);
-  letter-spacing: 0.5px;
-  margin-bottom: 0.5rem;
-  width: fit-content;
+  transition: all 0.2s ease;
+  border: none;
+  cursor: default;
+  white-space: nowrap;
+  vertical-align: middle;
+  height: auto;
+  min-height: 36px;
+}
+
+.badge:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.5);
+  background: linear-gradient(135deg, #ffed4e, #ffd700);
 }
 
 .avatar {
@@ -111,16 +132,25 @@
 }
 
 .sponsorButton {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
   padding: 0.5rem 1rem;
   background: var(--ifm-color-primary);
   color: white;
   text-decoration: none;
   border-radius: 6px;
   font-size: 0.9rem;
-  font-weight: 500;
+  font-weight: 600;
+  line-height: 1;
   transition: all 0.2s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: none;
+  white-space: nowrap;
+  vertical-align: middle;
+  height: auto;
+  min-height: 36px;
 }
 
 .sponsorButton:hover {
@@ -131,11 +161,10 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
-/* Special styling for sponsor button on highlighted cards */
+/* Gold styling for sponsor button on highlighted cards - matches badge */
 .highlight .sponsorButton {
   background: linear-gradient(135deg, #ffd700, #ffed4e);
   color: #8b7500;
-  font-weight: 600;
   box-shadow: 0 2px 8px rgba(255, 215, 0, 0.4);
 }
 
@@ -160,6 +189,10 @@
   }
 
   .stats {
+    justify-content: center;
+  }
+
+  .buttonRow {
     justify-content: center;
   }
 }

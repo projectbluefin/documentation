@@ -232,7 +232,6 @@ const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
         />
       </a>
       <div className={styles.content}>
-        {highlight && <div className={styles.badge}>⭐ New Contributor</div>}
         <h3 className={styles.name}>
           <a href={user.html_url} target="_blank" rel="noopener noreferrer">
             {user.name || user.login}
@@ -248,15 +247,20 @@ const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
             <strong>{user.followers}</strong> followers
           </span>
         </div>
-        {sponsorUrl && (
-          <a
-            href={sponsorUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.sponsorButton}
-          >
-            ❤️ Sponsor
-          </a>
+        {(highlight || sponsorUrl) && (
+          <div className={styles.buttonRow}>
+            {highlight && <div className={styles.badge}>★ New Light</div>}
+            {sponsorUrl && (
+              <a
+                href={sponsorUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.sponsorButton}
+              >
+                ♥ Sponsor
+              </a>
+            )}
+          </div>
         )}
       </div>
     </div>
