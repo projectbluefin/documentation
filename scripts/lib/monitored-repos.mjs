@@ -24,7 +24,6 @@ export const MONITORED_REPOS = [
   "projectbluefin/documentation",
   "projectbluefin/branding",
   "projectbluefin/iso",
-  "projectbluefin/dakota",
-  "projectbluefin/distroless",
+  "projectbluefin/dakota", // Formerly projectbluefin/distroless
   "projectbluefin/egg",
 ];

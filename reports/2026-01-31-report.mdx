@@ -11,10 +11,10 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
 # Summary
 
 - **Month:** January 2026
-- **Total items:** 163
-  - **Planned work:** 35
-  - **Opportunistic work:** 128
-- **Contributors:** 22
+- **Total items:** 175
+  - **Planned work:** 36
+  - **Opportunistic work:** 139
+- **Contributors:** 24
 - **New contributors:** 10
 
 
@@ -34,9 +34,13 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
 - fix: #3919 add no-op for appimage files by [@​sebjag](https://github.com/sebjag) in [#109](https://github.com/projectbluefin/common/pull/109)
 - feat: add everything from bluefin-schemas and bluefin(lts) by [@​renner0e](https://github.com/renner0e) in [#101](https://github.com/projectbluefin/common/pull/101)
 
-#### ⚡ Opportunistic Work
+#### Opportunistic Work
 
-> Status: _ChillOps_
+- feat: update GNOME Foundry to 1.0.1 by [@​KiKaraage](https://github.com/KiKaraage) in [#101](https://github.com/ublue-os/homebrew-experimental-tap/pull/101)
+- FIx schema override file by [@​alatiera](https://github.com/alatiera) in [#42](https://github.com/projectbluefin/dakota/pull/42)
+- Set temporary "About" branding by [@​jumpyvi](https://github.com/jumpyvi) in [#48](https://github.com/projectbluefin/dakota/pull/48)
+
+---
 
 ### ️ Development
 
@@ -57,6 +61,58 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
 - chore: clean up a buuunch of vendored things that we dont need anymore by [@​tulilirockz](https://github.com/tulilirockz) in [#975](https://github.com/ublue-os/bluefin-lts/pull/975)
 - fix(dx): identify as dx in imageinfo by [@​rrenomeron](https://github.com/rrenomeron) in [#958](https://github.com/ublue-os/bluefin-lts/pull/958)
 - feat(dx): Add Cockpit packages by [@​rrenomeron](https://github.com/rrenomeron) in [#948](https://github.com/ublue-os/bluefin-lts/pull/948)
+- feat: Add opencode-desktop-linux cask (v1.1.15) by [@​KiKaraage](https://github.com/KiKaraage) in [#118](https://github.com/ublue-os/homebrew-experimental-tap/pull/118)
+
+#### Homebrew Package Updates
+
+![Production Tap](https://img.shields.io/badge/production--tap-23%20updates-blue?style=flat-square) ![Experimental Tap](https://img.shields.io/badge/experimental--tap-28%20updates-orange?style=flat-square)
+
+**51 automated updates** this month via GitHub Actions. Homebrew tap version bumps ensure Bluefin users always have access to the latest stable releases.
+
+##### Quick Summary
+
+| Tap | Updates |
+|-----|---------|
+| production-tap | 23 |
+| experimental-tap | 28 |
+
+<details>
+<summary>View all production-tap updates (23)</summary>
+
+| Package | Versions | PR |
+|---------|----------|-----|
+| goose-linux | 1.19.0 → 1.21.1 (6 updates) | [#193](https://github.com/ublue-os/homebrew-tap/pull/193) |
+| lm-studio-linux | 0.3.37 → 0.3.39 (3 updates) | [#194](https://github.com/ublue-os/homebrew-tap/pull/194) |
+| antigravity-linux | 1.14.2 → 1.15.8 (3 updates) | [#201](https://github.com/ublue-os/homebrew-tap/pull/201) |
+| visual-studio-code-linux | 1.108.0 → 1.108.2 (3 updates) | [#197](https://github.com/ublue-os/homebrew-tap/pull/197) |
+| pmbootstrap | 3.8.0 → 3.9.0 (2 updates) | [#200](https://github.com/ublue-os/homebrew-tap/pull/200) |
+| framework-tool | 0.5.0 | [#212](https://github.com/ublue-os/homebrew-tap/pull/212) |
+| linux-mcp-server | 1.2.1 | [#222](https://github.com/ublue-os/homebrew-tap/pull/222) |
+| vscodium-linux | 1.108.10359 | [#203](https://github.com/ublue-os/homebrew-tap/pull/203) |
+| 1password-gui-linux | 8.12.0 | [#211](https://github.com/ublue-os/homebrew-tap/pull/211) |
+
+</details>
+
+<details>
+<summary>View all experimental-tap updates (28)</summary>
+
+| Package | Versions | PR |
+|---------|----------|-----|
+| opencode-desktop-linux | 1.1.18 → 1.1.36 (10 updates) | [#134](https://github.com/ublue-os/homebrew-experimental-tap/pull/134) |
+| cursor-linux | 2.3.21 → 2.4.21 (8 updates) | [#109](https://github.com/ublue-os/homebrew-experimental-tap/pull/109) |
+| goland-linux | 2025.3.1 → 2025.3.1.1 (2 updates) | [#112](https://github.com/ublue-os/homebrew-experimental-tap/pull/112) |
+| intellij-idea-linux | 2025.3.1.1 | [#113](https://github.com/ublue-os/homebrew-experimental-tap/pull/113) |
+| phpstorm-linux | 2025.3.1.1 | [#114](https://github.com/ublue-os/homebrew-experimental-tap/pull/114) |
+| webstorm-linux | 2025.3.1.1 | [#115](https://github.com/ublue-os/homebrew-experimental-tap/pull/115) |
+| datagrip-linux | 2025.3.3 | [#117](https://github.com/ublue-os/homebrew-experimental-tap/pull/117) |
+| clion-linux | 2025.3.1.1 | [#128](https://github.com/ublue-os/homebrew-experimental-tap/pull/128) |
+| pycharm-linux | 2025.3.1.1 | [#129](https://github.com/ublue-os/homebrew-experimental-tap/pull/129) |
+| rubymine-linux | 2025.3.1.1 | [#130](https://github.com/ublue-os/homebrew-experimental-tap/pull/130) |
+| rustrover-linux | 2025.3.2 | [#142](https://github.com/ublue-os/homebrew-experimental-tap/pull/142) |
+
+</details>
+
+---
 
 ### Ecosystem
 
@@ -77,6 +133,12 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
 
 - chore: remove references to brew timer by [@​tulilirockz](https://github.com/tulilirockz) in [#3988](https://github.com/ublue-os/bluefin/pull/3988)
 - chore(flatpak, iso): remove all flatpak-related things from here by [@​tulilirockz](https://github.com/tulilirockz) in [#960](https://github.com/ublue-os/bluefin-lts/pull/960)
+- feat(cask): add goose GUI cask by [@​ahmedadan](https://github.com/ahmedadan) in [#188](https://github.com/ublue-os/homebrew-tap/pull/188)
+- feat: promote antigravity to main tap by [@​inffy](https://github.com/inffy) in [#199](https://github.com/ublue-os/homebrew-tap/pull/199)
+- feat: add linux-mcp-server formula and bottle workflow by [@​ahmedadan](https://github.com/ahmedadan) in [#221](https://github.com/ublue-os/homebrew-tap/pull/221)
+- fix(linux-mcp-server): improve caveats and fix script syntax by [@​ahmedadan](https://github.com/ahmedadan) in [#125](https://github.com/ublue-os/homebrew-experimental-tap/pull/125)
+
+---
 
 ### ️ System Services & Policies
 
@@ -90,6 +152,8 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
 
 - chore(countme): remove countme service by [@​tulilirockz](https://github.com/tulilirockz) in [#972](https://github.com/ublue-os/bluefin-lts/pull/972)
 
+---
+
 ### Hardware
 
 ![area/hardware](https://img.shields.io/badge/area%2Fhardware-F59E0B?style=flat-square) ![area/nvidia](https://img.shields.io/badge/area%2Fnvidia-76B900?style=flat-square)
@@ -102,6 +166,8 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
 
 - fix: include pcsc-lite for passkey support on initramfs by [@​tulilirockz](https://github.com/tulilirockz) in [#1045](https://github.com/ublue-os/bluefin-lts/pull/1045)
 - fix(gdx): nvidia-specific override for kms-modifiers by [@​tulilirockz](https://github.com/tulilirockz) in [#970](https://github.com/ublue-os/bluefin-lts/pull/970)
+
+---
 
 ### ️ Infrastructure
 
@@ -129,6 +195,15 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
 - fix: don't pull in centos-logos on downstream images by [@​renner0e](https://github.com/renner0e) in [#1053](https://github.com/ublue-os/bluefin-lts/pull/1053)
 - feat: update run-vm-iso to use titanoboa ISOs by [@​hanthor](https://github.com/hanthor) in [#1041](https://github.com/ublue-os/bluefin-lts/pull/1041)
 - fix: testing build name by [@​hanthor](https://github.com/hanthor) in [#1009](https://github.com/ublue-os/bluefin-lts/pull/1009)
+- Add support for the flatpak version of qemu by [@​jumpyvi](https://github.com/jumpyvi) in [#41](https://github.com/projectbluefin/dakota/pull/41)
+- (Experimental) Just script for disk install by [@​jumpyvi](https://github.com/jumpyvi) in [#51](https://github.com/projectbluefin/dakota/pull/51)
+- Copy binaries that we need from gnomeos-devel by [@​hecknt](https://github.com/hecknt) in [#49](https://github.com/projectbluefin/dakota/pull/49)
+- Modify the initramfs to add OSTree boot support by [@​hecknt](https://github.com/hecknt) in [#44](https://github.com/projectbluefin/dakota/pull/44)
+- Remove ostree support from our end by [@​hecknt](https://github.com/hecknt) in [#46](https://github.com/projectbluefin/dakota/pull/46)
+- feat: remove everything by [@​renner0e](https://github.com/renner0e) in [#22](https://github.com/projectbluefin/dakota/pull/22)
+- Change the build system around to fix updates by [@​hecknt](https://github.com/hecknt) in [#26](https://github.com/projectbluefin/dakota/pull/26)
+
+---
 
 # Work by Type
 
@@ -149,6 +224,12 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
 - fix: Disable old rpm-ostreed-automatic.timer by [@​inffy](https://github.com/inffy) in [#3969](https://github.com/ublue-os/bluefin/pull/3969)
 - fix: remove merging from the Pull config by [@​hanthor](https://github.com/hanthor) in [#1003](https://github.com/ublue-os/bluefin-lts/pull/1003)
 - fix: remove minor workaround that broke "Forged On" by [@​tulilirockz](https://github.com/tulilirockz) in [#971](https://github.com/ublue-os/bluefin-lts/pull/971)
+- fix: remove custom block-goose-cli-linux formula by [@​ahmedadan](https://github.com/ahmedadan) in [#127](https://github.com/ublue-os/homebrew-experimental-tap/pull/127)
+- fix: add deps for opencode-desktop-linux (1.1.20) by [@​KiKaraage](https://github.com/KiKaraage) in [#138](https://github.com/ublue-os/homebrew-experimental-tap/pull/138)
+- Fix container image labels by [@​sideeffffect](https://github.com/sideeffffect) in [#25](https://github.com/projectbluefin/dakota/pull/25)
+- Re-add fallocate in `generate-bootable-image` by [@​hecknt](https://github.com/hecknt) in [#40](https://github.com/projectbluefin/dakota/pull/40)
+
+---
 
 ### Enhancements
 
@@ -164,6 +245,8 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
 
 - feat: Implement lts-testing on testing branch by [@​hanthor](https://github.com/hanthor) in [#945](https://github.com/ublue-os/bluefin-lts/pull/945)
 
+---
+
 ### Documentation
 
 ![kind/documentation](https://img.shields.io/badge/kind%2Fdocumentation-0066FF?style=flat-square)
@@ -172,9 +255,11 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
 
 - docs: update label colors and document directory structure by [@​castrojo](https://github.com/castrojo) in [#147](https://github.com/projectbluefin/common/pull/147)
 
-#### ⚡ Opportunistic Work
+#### Opportunistic Work
 
-> Status: _ChillOps_
+- Add bare metal installation instructions by [@​hecknt](https://github.com/hecknt) in [#29](https://github.com/projectbluefin/dakota/pull/29)
+
+---
 
 ### Tech Debt
 
@@ -182,12 +267,17 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
 
 #### Planned Work
 
+- chore(rollback-helper): disable debugging tag by [@​tulilirockz](https://github.com/tulilirockz) in [#193](https://github.com/projectbluefin/common/pull/193)
 - chore: remove xdg-terminal-exec hack script by [@​tulilirockz](https://github.com/tulilirockz) in [#191](https://github.com/projectbluefin/common/pull/191)
 
 #### Opportunistic Work
 
 - chore: move `ublue-privileged-setup` references to `/usr/bin` instead of `/usr/libexec` by [@​tulilirockz](https://github.com/tulilirockz) in [#3846](https://github.com/ublue-os/bluefin/pull/3846)
 - chore: clean up every file referenced by projectbluefin/common already by [@​tulilirockz](https://github.com/tulilirockz) in [#3959](https://github.com/ublue-os/bluefin/pull/3959)
+- chore:remove antigravity after promotion by [@​inffy](https://github.com/inffy) in [#126](https://github.com/ublue-os/homebrew-experimental-tap/pull/126)
+- Rename from `distroless` to `dakota` everywhere by [@​hecknt](https://github.com/hecknt) in [#28](https://github.com/projectbluefin/dakota/pull/28)
+
+---
 
 ### Automation
 
@@ -205,6 +295,22 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
 - chore(ci): add `-testing` for real on testing environments by [@​tulilirockz](https://github.com/tulilirockz) in [#1018](https://github.com/ublue-os/bluefin-lts/pull/1018)
 - fix(ci): make `10(image)` have suffixes so they dont all fight over the (10) tag by [@​tulilirockz](https://github.com/tulilirockz) in [#1021](https://github.com/ublue-os/bluefin-lts/pull/1021)
 - fix(ci): HWE naming on daily builds by [@​tulilirockz](https://github.com/tulilirockz) in [#1020](https://github.com/ublue-os/bluefin-lts/pull/1020)
+- Fix homebrew bump action by [@​lambdaclan](https://github.com/lambdaclan) in [#196](https://github.com/ublue-os/homebrew-tap/pull/196)
+- chore(deps): pin actions/checkout action to 8e8c483 by [@​renovate](https://github.com/renovate) in [#198](https://github.com/ublue-os/homebrew-tap/pull/198)
+- chore(deps): update actions/cache digest to 8b402f5 by [@​renovate](https://github.com/renovate) in [#205](https://github.com/ublue-os/homebrew-tap/pull/205)
+- chore(deps): update actions/setup-python digest to a309ff8 by [@​renovate](https://github.com/renovate) in [#213](https://github.com/ublue-os/homebrew-tap/pull/213)
+- hotfix: use host env and update dependencies by [@​ahmedadan](https://github.com/ahmedadan) in [#108](https://github.com/ublue-os/homebrew-experimental-tap/pull/108)
+- fix(ci): use --no-rebuild flag to prevent bottle filename mismatch by [@​ahmedadan](https://github.com/ahmedadan) in [#120](https://github.com/ublue-os/homebrew-experimental-tap/pull/120)
+- chore(deps): pin dependencies by [@​renovate](https://github.com/renovate) in [#121](https://github.com/ublue-os/homebrew-experimental-tap/pull/121)
+- chore(deps): update actions/checkout action to v6 by [@​renovate](https://github.com/renovate) in [#122](https://github.com/ublue-os/homebrew-experimental-tap/pull/122)
+- chore(deps): update github artifact actions (major) by [@​renovate](https://github.com/renovate) in [#123](https://github.com/ublue-os/homebrew-experimental-tap/pull/123)
+- chore(deps): update actions/github-script action to v8 by [@​renovate](https://github.com/renovate) in [#132](https://github.com/ublue-os/homebrew-experimental-tap/pull/132)
+- fix: fix brew style errors in workflows by [@​inffy](https://github.com/inffy) in [#139](https://github.com/ublue-os/homebrew-experimental-tap/pull/139)
+- chore(deps): update actions/cache digest to 8b402f5 by [@​renovate](https://github.com/renovate) in [#144](https://github.com/ublue-os/homebrew-experimental-tap/pull/144)
+- chore(deps): update peter-evans/create-pull-request digest to c0f553f by [@​renovate](https://github.com/renovate) in [#150](https://github.com/ublue-os/homebrew-experimental-tap/pull/150)
+- chore(deps): update actions/setup-python digest to a309ff8 by [@​renovate](https://github.com/renovate) in [#152](https://github.com/ublue-os/homebrew-experimental-tap/pull/152)
+
+---
 
 ## Other
 
@@ -239,6 +345,7 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
 - chore: remove a few files that got added to projectbluefin/common by [@​tulilirockz](https://github.com/tulilirockz) in [#1572](https://github.com/ublue-os/aurora/pull/1572)
 - chore: remove ublue-os-update-services by [@​renner0e](https://github.com/renner0e) in [#1571](https://github.com/ublue-os/aurora/pull/1571)
 - chore: delete ublue-fix-hostname by [@​renner0e](https://github.com/renner0e) in [#1570](https://github.com/ublue-os/aurora/pull/1570)
+- chore(deps): pin actions/github-script action to d7906e4 - abandoned by [@​renovate](https://github.com/renovate) in [#131](https://github.com/ublue-os/homebrew-experimental-tap/pull/131)
 - feat(agents): convert blog-poster skill to GitHub Copilot agent by [@​castrojo](https://github.com/castrojo) in [#556](https://github.com/projectbluefin/documentation/pull/556)
 - docs(administration): add ujust powerwash command documentation by [@​castrojo](https://github.com/castrojo) in [#554](https://github.com/projectbluefin/documentation/pull/554)
 - docs(agents): remove non-existent communication.md reference by [@​castrojo](https://github.com/castrojo) in [#567](https://github.com/projectbluefin/documentation/pull/567)
@@ -273,33 +380,9 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
 - feat: multi-distro support for local ISO build by [@​hanthor](https://github.com/hanthor) in [#14](https://github.com/projectbluefin/iso/pull/14)
 - feat: build latest bootc and revert to f42 anaconda by [@​hanthor](https://github.com/hanthor) in [#15](https://github.com/projectbluefin/iso/pull/15)
 - feat(ci): add ISO promotion workflow from testing to production by [@​castrojo](https://github.com/castrojo) in [#17](https://github.com/projectbluefin/iso/pull/17)
-- (Experimental) Just script for disk install by [@​jumpyvi](https://github.com/jumpyvi) in [#51](https://github.com/projectbluefin/dakota/pull/51)
-- Copy binaries that we need from gnomeos-devel by [@​hecknt](https://github.com/hecknt) in [#49](https://github.com/projectbluefin/dakota/pull/49)
-- Set temporary "About" branding by [@​jumpyvi](https://github.com/jumpyvi) in [#48](https://github.com/projectbluefin/dakota/pull/48)
-- Remove ostree support from our end by [@​hecknt](https://github.com/hecknt) in [#46](https://github.com/projectbluefin/dakota/pull/46)
-- Modify the initramfs to add OSTree boot support by [@​hecknt](https://github.com/hecknt) in [#44](https://github.com/projectbluefin/dakota/pull/44)
-- FIx schema override file by [@​alatiera](https://github.com/alatiera) in [#42](https://github.com/projectbluefin/dakota/pull/42)
-- Add support for the flatpak version of qemu by [@​jumpyvi](https://github.com/jumpyvi) in [#41](https://github.com/projectbluefin/dakota/pull/41)
-- Re-add fallocate in `generate-bootable-image` by [@​hecknt](https://github.com/hecknt) in [#40](https://github.com/projectbluefin/dakota/pull/40)
-- Add bare metal installation instructions by [@​hecknt](https://github.com/hecknt) in [#29](https://github.com/projectbluefin/dakota/pull/29)
-- Rename from `distroless` to `dakota` everywhere by [@​hecknt](https://github.com/hecknt) in [#28](https://github.com/projectbluefin/dakota/pull/28)
-- Change the build system around to fix updates by [@​hecknt](https://github.com/hecknt) in [#26](https://github.com/projectbluefin/dakota/pull/26)
-- Fix container image labels by [@​sideeffffect](https://github.com/sideeffffect) in [#25](https://github.com/projectbluefin/dakota/pull/25)
-- feat: remove everything by [@​renner0e](https://github.com/renner0e) in [#22](https://github.com/projectbluefin/dakota/pull/22)
-- (Experimental) Just script for disk install by [@​jumpyvi](https://github.com/jumpyvi) in [#51](https://github.com/projectbluefin/dakota/pull/51)
-- Copy binaries that we need from gnomeos-devel by [@​hecknt](https://github.com/hecknt) in [#49](https://github.com/projectbluefin/dakota/pull/49)
-- Set temporary "About" branding by [@​jumpyvi](https://github.com/jumpyvi) in [#48](https://github.com/projectbluefin/dakota/pull/48)
-- Remove ostree support from our end by [@​hecknt](https://github.com/hecknt) in [#46](https://github.com/projectbluefin/dakota/pull/46)
-- Modify the initramfs to add OSTree boot support by [@​hecknt](https://github.com/hecknt) in [#44](https://github.com/projectbluefin/dakota/pull/44)
-- FIx schema override file by [@​alatiera](https://github.com/alatiera) in [#42](https://github.com/projectbluefin/dakota/pull/42)
-- Add support for the flatpak version of qemu by [@​jumpyvi](https://github.com/jumpyvi) in [#41](https://github.com/projectbluefin/dakota/pull/41)
-- Re-add fallocate in `generate-bootable-image` by [@​hecknt](https://github.com/hecknt) in [#40](https://github.com/projectbluefin/dakota/pull/40)
-- Add bare metal installation instructions by [@​hecknt](https://github.com/hecknt) in [#29](https://github.com/projectbluefin/dakota/pull/29)
-- Rename from `distroless` to `dakota` everywhere by [@​hecknt](https://github.com/hecknt) in [#28](https://github.com/projectbluefin/dakota/pull/28)
-- Change the build system around to fix updates by [@​hecknt](https://github.com/hecknt) in [#26](https://github.com/projectbluefin/dakota/pull/26)
-- Fix container image labels by [@​sideeffffect](https://github.com/sideeffffect) in [#25](https://github.com/projectbluefin/dakota/pull/25)
-- feat: remove everything by [@​renner0e](https://github.com/renner0e) in [#22](https://github.com/projectbluefin/dakota/pull/22)
 - Buildstream skeleton by [@​alatiera](https://github.com/alatiera) in [#1](https://github.com/projectbluefin/egg/pull/1)
+
+---
 
 ## 🤖 Bot Activity
 
@@ -592,9 +675,9 @@ Thank you to our continuing contributors!
 
 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem', marginBottom: '2rem' }}>
 
-<GitHubProfileCard username="Micro856" />
-
 <GitHubProfileCard username="tulilirockz" />
+
+<GitHubProfileCard username="Micro856" />
 
 <GitHubProfileCard username="castrojo" />
 
@@ -622,19 +705,23 @@ Thank you to our continuing contributors!
 
 <GitHubProfileCard username="ledif" />
 
+<GitHubProfileCard username="lambdaclan" />
+
+<GitHubProfileCard username="renovate" />
+
 <GitHubProfileCard username="leafyoung" />
 
 <GitHubProfileCard username="AlexanderVanhee" />
 
 <GitHubProfileCard username="RaduAvramescu" />
 
-<GitHubProfileCard username="jumpyvi" />
-
 <GitHubProfileCard username="hecknt" />
 
-<GitHubProfileCard username="alatiera" />
+<GitHubProfileCard username="jumpyvi" />
 
 <GitHubProfileCard username="sideeffffect" />
+
+<GitHubProfileCard username="alatiera" />
 
 </div>
 
