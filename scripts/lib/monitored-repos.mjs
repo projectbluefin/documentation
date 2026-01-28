@@ -15,6 +15,10 @@ export const MONITORED_REPOS = [
   "ublue-os/bluefin-lts",
   "ublue-os/aurora",
 
+  // Homebrew taps
+  "ublue-os/homebrew-tap",
+  "ublue-os/homebrew-experimental-tap",
+
   // Project Bluefin organization
   "projectbluefin/common",
   "projectbluefin/documentation",
