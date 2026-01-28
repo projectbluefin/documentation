@@ -54,10 +54,32 @@ export function generateReportMarkdown(
   const monthYear = `${monthNames[month]} ${year}`;
   const dateStr = format(endDate, "yyyy-MM-dd");
 
+  // Dinosaur-themed monthly titles (catchy and alliterative)
+  const monthlyTitles = [
+    "Jurassic January",
+    "Fossil February",
+    "Mesozoic March",
+    "Allosaurus April",
+    "Megalosaurus May",
+    "Juravenator June",
+    "Jovial July",
+    "Archaeopteryx August",
+    "Stegosaurus September",
+    "Ornithopod October",
+    "Nodosaurus November",
+    "Deinonychus December",
+  ];
+  const monthlyTitle = monthlyTitles[month];
+
   // Generate frontmatter with MDX import for GitHubProfileCard component
+  // Slug format: /YYYY/MM (e.g., /2026/01)
+  const monthPadded = String(month + 1).padStart(2, "0");
+  const slug = `/${year}/${monthPadded}`;
+
   const frontmatter = `---
-title: "Monthly Report: ${monthYear}"
+title: "${monthlyTitle} ${year}"
 date: ${dateStr}
+slug: ${slug}
 tags: [monthly-report, project-activity]
 ---
 
