@@ -14,6 +14,7 @@ import { identifyNewContributors, isBot } from "./lib/contributor-tracker.mjs";
 import { generateReportMarkdown } from "./lib/markdown-generator.mjs";
 import { getCategoryForLabel } from "./lib/label-mapping.mjs";
 import { MONITORED_REPOS } from "./lib/monitored-repos.mjs";
+import { fetchBuildMetrics } from "./lib/build-metrics.mjs";
 import { format } from "date-fns";
 import { writeFile } from "fs/promises";
 
@@ -264,6 +265,25 @@ async function generateReport() {
     const botActivity = aggregateBotActivity(botItems);
     log.info(`Bot activity groups: ${botActivity.length}`);
 
+    // Fetch build health metrics
+    log.info("Fetching build health metrics...");
+    let buildMetrics = null;
+    try {
+      buildMetrics = await fetchBuildMetrics(startDate, endDate);
+      if (buildMetrics) {
+        log.info(
+          `✅ Build metrics fetched: ${buildMetrics.images.length} workflows tracked`,
+        );
+      } else {
+        log.warn("Build metrics unavailable, section will be skipped");
+      }
+    } catch (error) {
+      log.warn("Build metrics fetch failed, continuing without it");
+      log.warn(`Error: ${error.message}`);
+      // Continue report generation even if build metrics fail
+      buildMetrics = null;
+    }
+
     // Generate markdown
     log.info("Generating markdown...");
     const markdown = generateReportMarkdown(
@@ -274,6 +294,7 @@ async function generateReport() {
       botActivity,
       startDate,
       endDate,
+      buildMetrics,
     );
 
     // Write to file
@@ -286,6 +307,9 @@ async function generateReport() {
     log.info(`   ${contributors.length} contributors`);
     log.info(`   ${newContributors.length} new contributors`);
     log.info(`   ${botItems.length} bot PRs`);
+    log.info(
+      `   ${buildMetrics ? buildMetrics.images.length + " workflows tracked" : "Build metrics unavailable"}`,
+    );
 
     // GitHub Actions summary annotation
     github.notice(
