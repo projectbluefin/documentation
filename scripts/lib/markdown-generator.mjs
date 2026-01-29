@@ -325,19 +325,19 @@ export function generateCategorySectionWithSubsections(
   // Planned Work subsection (always show, with ChillOps if empty)
   if (planned.length > 0) {
     sections.push(
-      `### Planned Work\n\n${formatItemList(planned, displayedUrls)}`,
+      `#### Planned Work\n\n${formatItemList(planned, displayedUrls)}`,
     );
   } else {
-    sections.push(`### Planned Work\n\n> Status: _ChillOps_`);
+    sections.push(`#### Planned Work\n\n> Status: _ChillOps_`);
   }
 
   // Opportunistic Work subsection (always show, with ChillOps if empty)
   if (opportunistic.length > 0) {
     sections.push(
-      `### Opportunistic Work\n\n${formatItemList(opportunistic, displayedUrls)}`,
+      `#### Opportunistic Work\n\n${formatItemList(opportunistic, displayedUrls)}`,
     );
   } else {
-    sections.push(`### Opportunistic Work\n\n> Status: _ChillOps_`);
+    sections.push(`#### Opportunistic Work\n\n> Status: _ChillOps_`);
   }
 
   return sections.join("\n\n");
