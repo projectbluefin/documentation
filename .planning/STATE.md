@@ -96,12 +96,13 @@ See: .planning/MILESTONES.md (v1.0 shipped, v1.1 shipped)
 
 ### Pending Todos
 
-**Count:** 2 todos in `.planning/todos/pending/`
+**Count:** 3 todos in `.planning/todos/pending/`
 
 | Todo                                                                                                                          | Area    | Created    |
 | ----------------------------------------------------------------------------------------------------------------------------- | ------- | ---------- |
 | [Simplify bot activity table to show total count per repo](.planning/todos/pending/2026-01-27-simplify-bot-activity-table.md) | reports | 2026-01-27 |
 | [Upgrade Node.js from 18 to latest LTS version](.planning/todos/pending/2026-01-28-upgrade-node-18-to-latest-lts.md)          | tooling | 2026-01-28 |
+| [Add homebrew tap promotion section](.planning/todos/pending/2026-01-29-add-homebrew-tap-promotion-section.md)                | docs    | 2026-01-29 |
 
 ### Known Blockers
 
