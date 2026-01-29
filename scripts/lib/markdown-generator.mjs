@@ -224,7 +224,10 @@ ${kindSections}`;
 
   // Generate uncategorized section (combine both planned and opportunistic)
   const allItems = [...plannedItems, ...opportunisticItems];
-  const uncategorizedSection = generateUncategorizedSection(allItems);
+  const uncategorizedSection = generateUncategorizedSection(
+    allItems,
+    displayedUrls,
+  );
 
   // Generate bot activity section (non-homebrew only, since homebrew is now under Development)
   // Calculate total PRs (human + all bots including homebrew)
@@ -442,13 +445,17 @@ export function generateCategorySection(items, categoryName, categoryLabels) {
  * Format: title by @author in #PR (Hyperlight-style single-line format)
  *
  * @param {Array} items - All completed items
+ * @param {Set} displayedUrls - Set of URLs already displayed (to avoid duplicates)
  * @returns {string} Markdown section or empty string
  */
-function generateUncategorizedSection(items) {
-  // Find items without any categorized labels
+function generateUncategorizedSection(items, displayedUrls) {
+  // Find items without any categorized labels AND not already displayed
   const knownLabels = Object.values(LABEL_CATEGORIES).flat();
 
   const uncategorizedItems = items.filter((item) => {
+    // Skip if already displayed in a category
+    if (displayedUrls.has(item.content?.url)) return false;
+
     if (!item.content?.labels?.nodes) return true;
 
     const itemLabels = item.content.labels.nodes.map((l) => l.name);
@@ -466,6 +473,9 @@ function generateUncategorizedSection(items) {
     const title = item.content.title.replace(/{/g, "\\{").replace(/}/g, "\\}");
     const url = item.content.url;
     const author = item.content.author?.login || "unknown";
+
+    // Mark as displayed
+    displayedUrls.add(url);
 
     // Hyperlight-style format: title by @author in #PR
     // Use zero-width space to prevent GitHub notifications
