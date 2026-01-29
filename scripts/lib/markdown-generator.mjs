@@ -807,7 +807,7 @@ export function generateBuildHealthSection(buildMetrics, startDate, endDate) {
   const perfectClub =
     stats.perfectImages.length > 0
       ? stats.perfectImages.map((name) => `\`${name}\``).join(", ")
-      : "_None this month_";
+      : "_None. Vegeta is displeased._";
 
   const highlights = `### This Month's Highlights
 
