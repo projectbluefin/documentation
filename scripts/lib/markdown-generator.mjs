@@ -116,7 +116,7 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
   // Generate summary section as compact table
   const summary = `# Summary
 
-| Metric | Value |
+| | |
 |--------|-------|
 | **Total Items** | ${totalItems} (${plannedItems.length} planned, ${opportunisticItems.length} opportunistic) |
 | **Contributors** | ${contributors.length} total, ${newContributors.length} new |
