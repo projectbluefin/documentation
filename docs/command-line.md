@@ -33,30 +33,30 @@ We love our command line tools. This is intended to be a rendition of what a bra
 
 The following applications are installed when you run `ujust bluefin-cli`:
 
-| Name                                                                  | Description                                                           |
-| --------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| Name                                                                  | Description                                                             |
+| --------------------------------------------------------------------- | ----------------------------------------------------------------------- |
 | [atuin](https://formulae.brew.sh/formula/atuin)                       | Improved shell history for zsh, bash, fish and nushell (Off by default) |
-| [bat](https://formulae.brew.sh/formula/bat)                           | Clone of cat(1) with syntax highlighting and Git integration          |
-| [bash-preexec](https://formulae.brew.sh/formula/bash-preexec)         | Bash preexec and precmd functions à la Zsh                            |
-| [bbrew](https://formulae.brew.sh/formula/bbrew)                       | TUI for Homebrew package management                                   |
-| [chezmoi](https://formulae.brew.sh/formula/chezmoi)                   | Manage your dotfiles across multiple diverse machines, securely       |
-| [direnv](https://formulae.brew.sh/formula/direnv)                     | Load/unload environment variables based on $PWD                       |
-| [dysk](https://formulae.brew.sh/formula/dysk)                         | Get information on your mounted disks                                 |
-| [eza](https://formulae.brew.sh/formula/eza)                           | Modern, maintained replacement for ls                                 |
-| [fd](https://formulae.brew.sh/formula/fd)                             | Simple, fast and user-friendly alternative to find                    |
-| [gh](https://formulae.brew.sh/formula/gh)                             | GitHub command-line tool                                              |
-| [glab](https://formulae.brew.sh/formula/glab)                         | Open-source GitLab command-line tool                                  |
-| [rg](https://formulae.brew.sh/formula/ripgrep)                        | Search tool like grep and The Silver Searcher (ripgrep)               |
-| [starship](https://formulae.brew.sh/formula/starship)                 | Cross-shell prompt for astronauts                                     |
-| [shellcheck](https://formulae.brew.sh/formula/shellcheck)             | Static analysis and lint tool, for (ba)sh scripts                     |
-| [stress-ng](https://formulae.brew.sh/formula/stress-ng)               | Stress test a computer system in various selectable ways              |
-| [tealdeer](https://formulae.brew.sh/formula/tealdeer)                 | Very fast implementation of tldr in Rust                              |
-| [trash-cli](https://formulae.brew.sh/formula/trash-cli)               | Command-line interface to the freedesktop.org trashcan                |
-| [television](https://formulae.brew.sh/formula/television)             | General purpose fuzzy finder TUI                                      |
-| [uutils-coreutils](https://formulae.brew.sh/formula/uutils-coreutils) | Cross-platform Rust rewrite of the GNU coreutils                      |
-| [ugrep](https://formulae.brew.sh/formula/ugrep)                       | Ultra fast grep with query UI, fuzzy search, archive search, and more |
-| [yq](https://formulae.brew.sh/formula/yq)                             | Process YAML, JSON, XML, CSV and properties documents from the CLI    |
-| [zoxide](https://formulae.brew.sh/formula/zoxide)                     | Shell extension to navigate your filesystem faster                    |
+| [bat](https://formulae.brew.sh/formula/bat)                           | Clone of cat(1) with syntax highlighting and Git integration            |
+| [bash-preexec](https://formulae.brew.sh/formula/bash-preexec)         | Bash preexec and precmd functions à la Zsh                              |
+| [bbrew](https://formulae.brew.sh/formula/bbrew)                       | TUI for Homebrew package management                                     |
+| [chezmoi](https://formulae.brew.sh/formula/chezmoi)                   | Manage your dotfiles across multiple diverse machines, securely         |
+| [direnv](https://formulae.brew.sh/formula/direnv)                     | Load/unload environment variables based on $PWD                         |
+| [dysk](https://formulae.brew.sh/formula/dysk)                         | Get information on your mounted disks                                   |
+| [eza](https://formulae.brew.sh/formula/eza)                           | Modern, maintained replacement for ls                                   |
+| [fd](https://formulae.brew.sh/formula/fd)                             | Simple, fast and user-friendly alternative to find                      |
+| [gh](https://formulae.brew.sh/formula/gh)                             | GitHub command-line tool                                                |
+| [glab](https://formulae.brew.sh/formula/glab)                         | Open-source GitLab command-line tool                                    |
+| [rg](https://formulae.brew.sh/formula/ripgrep)                        | Search tool like grep and The Silver Searcher (ripgrep)                 |
+| [starship](https://formulae.brew.sh/formula/starship)                 | Cross-shell prompt for astronauts                                       |
+| [shellcheck](https://formulae.brew.sh/formula/shellcheck)             | Static analysis and lint tool, for (ba)sh scripts                       |
+| [stress-ng](https://formulae.brew.sh/formula/stress-ng)               | Stress test a computer system in various selectable ways                |
+| [tealdeer](https://formulae.brew.sh/formula/tealdeer)                 | Very fast implementation of tldr in Rust                                |
+| [trash-cli](https://formulae.brew.sh/formula/trash-cli)               | Command-line interface to the freedesktop.org trashcan                  |
+| [television](https://formulae.brew.sh/formula/television)             | General purpose fuzzy finder TUI                                        |
+| [uutils-coreutils](https://formulae.brew.sh/formula/uutils-coreutils) | Cross-platform Rust rewrite of the GNU coreutils                        |
+| [ugrep](https://formulae.brew.sh/formula/ugrep)                       | Ultra fast grep with query UI, fuzzy search, archive search, and more   |
+| [yq](https://formulae.brew.sh/formula/yq)                             | Process YAML, JSON, XML, CSV and properties documents from the CLI      |
+| [zoxide](https://formulae.brew.sh/formula/zoxide)                     | Shell extension to navigate your filesystem faster                      |
 
 The community may add new tools over time, re-running `ujust bluefin-cli` will pull in the new tools.
 
@@ -79,6 +79,18 @@ What greatness have I been missing? Being set in my old, tired ways.
 Bold Brew also acts as a launcher for Bluefin's included curated Brewfiles. Run `ujust bbrew` to select a file to browse and install applications from:
 
 ![bbrew](/img/user-attachments/b713c96e-cbf1-45f6-91b0-2399b44c389a.png)
+
+:::tip[Production-Ready Packages]
+
+The following packages have been promoted from the experimental tap to production and are now available through `ujust bbrew`:
+
+- **antigravity-linux** - Antigravity application for Linux
+- **goose-linux** - Goose CLI tool for Linux
+- **linux-mcp-server** - Model Context Protocol server for Linux
+
+Use `ujust bbrew` to browse and install these packages. Follow [the tap instructions](https://github.com/ublue-os/homebrew-tap) if you want to do it by hand.
+
+:::
 
 ### Message of the Day and `fastfetch`
 
@@ -118,9 +130,9 @@ Bluefin ships [Ptyxis](https://devsuite.app/ptyxis/) as the default terminal. It
 
 ![Ptyxis → Preferences → Profiles → A Profile Setting → Edit...](/img/user-attachments/2c122205-dbd8-41e6-8b7b-4f536c3b69e9.png)
 
-Then select "Use Custom Command" and then add the shell you want to use: 
+Then select "Use Custom Command" and then add the shell you want to use:
 
-- zsh - `/home/linuxbrew/.linuxbrew/bin/zsh` 
+- zsh - `/home/linuxbrew/.linuxbrew/bin/zsh`
 - fish - `/home/linuxbrew/.linuxbrew/bin/fish`
 
 ![Ptyxis → Preferences → Profiles → A Profile Setting → Edit... → Shell → Custom Command](/img/user-attachments/8eb039db-7ec1-4847-b3d7-496d69fe9538.png)
