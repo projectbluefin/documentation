@@ -45,6 +45,7 @@ const CATEGORY_DESCRIPTIONS = {
  * @param {Array} botActivity - Bot activity grouped by repo and bot
  * @param {Date} startDate - Report period start date
  * @param {Date} endDate - Report period end date
+ * @param {Object|null} buildMetrics - Build health metrics from fetchBuildMetrics()
  * @returns {string} Complete markdown content
  */
 export function generateReportMarkdown(
@@ -55,6 +56,7 @@ export function generateReportMarkdown(
   botActivity,
   startDate,
   endDate,
+  buildMetrics = null,
 ) {
   // Extract year and month from startDate in UTC
   const year = startDate.getUTCFullYear();
@@ -244,6 +246,13 @@ ${kindSections}`;
     totalBotPRs,
   );
 
+  // Generate build health section
+  const buildHealthSection = generateBuildHealthSection(
+    buildMetrics,
+    startDate,
+    endDate,
+  );
+
   // Generate contributors section
   const contributorsSection = generateContributorsSection(
     contributors,
@@ -270,6 +279,7 @@ ${kindSections}`;
     categorySections,
     uncategorizedSection,
     botSection,
+    buildHealthSection,
     contributorsSection,
     footer,
   ]
@@ -746,6 +756,75 @@ export function generateBotDetailsList(botActivity) {
 ${itemsList}
 
 </details>`;
+}
+
+/**
+ * Generate Build Health section with success rates and statistics
+ *
+ * @param {Object} buildMetrics - Build metrics from fetchBuildMetrics()
+ * @param {Date} startDate - Report period start date
+ * @param {Date} endDate - Report period end date
+ * @returns {string} Markdown section or empty string if no data
+ */
+export function generateBuildHealthSection(buildMetrics, startDate, endDate) {
+  if (
+    !buildMetrics ||
+    !buildMetrics.images ||
+    buildMetrics.images.length === 0
+  ) {
+    return ""; // No build metrics available
+  }
+
+  const { images, stats } = buildMetrics;
+
+  // Format average duration as minutes
+  const avgMinutes = Math.round(stats.avgDuration / 60);
+
+  // Generate success rates table
+  const tableHeader = `| Image | Success Rate | Builds | MoM Change |
+|------|--------------|--------|------------|`;
+
+  const tableRows = images
+    .map((img) => {
+      // Format MoM change as badge or baseline
+      let momDisplay;
+      if (img.momChange === null) {
+        momDisplay = "_Baseline_"; // First report, no previous data
+      } else if (img.momChange >= 0) {
+        momDisplay = `![+${img.momChange}%](https://img.shields.io/badge/%2B${img.momChange}%25-success?style=flat-square)`;
+      } else {
+        const absChange = Math.abs(img.momChange);
+        momDisplay = `![${img.momChange}%](https://img.shields.io/badge/--${absChange}%25-critical?style=flat-square)`;
+      }
+
+      return `| ${img.name} | ${img.successRate}% | ${img.totalBuilds} | ${momDisplay} |`;
+    })
+    .join("\n");
+
+  const successRatesTable = `${tableHeader}\n${tableRows}`;
+
+  // Generate highlights section
+  const perfectClub =
+    stats.perfectImages.length > 0
+      ? stats.perfectImages.join(", ")
+      : "_None this month_";
+
+  const highlights = `### This Month's Highlights
+
+- 📊 **Total Builds:** ${stats.totalBuilds} builds across all images
+- 🏆 **Most Active:** ${stats.mostActive} (${images.find((img) => img.name === stats.mostActive)?.totalBuilds || 0} builds)
+- 💯 **100% Club:** ${perfectClub}
+- ⏱️ **Avg Build Time:** ${avgMinutes} minutes across all variants`;
+
+  return `---
+
+## Build Health
+
+### Success Rates by Image
+
+${successRatesTable}
+
+${highlights}`;
 }
 
 /**
