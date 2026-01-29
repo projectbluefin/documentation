@@ -113,12 +113,22 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
   // Calculate total items
   const totalItems = plannedItems.length + opportunisticItems.length;
 
+  // Calculate automation percentage for summary
+  const totalBotPRs = botActivity.reduce(
+    (sum, activity) => sum + activity.count,
+    0,
+  );
+  const totalHumanPRs = plannedItems.length + opportunisticItems.length;
+  const totalPRs = totalHumanPRs + totalBotPRs;
+  const automationPercentage = ((totalBotPRs / totalPRs) * 100).toFixed(1);
+
   // Generate summary section as compact table
   const summary = `# Summary
 
 | | |
 |--------|-------|
 | **Total Items** | ${totalItems} (${plannedItems.length} planned, ${opportunisticItems.length} opportunistic) |
+| **Automation** | ${automationPercentage}% (${totalBotPRs} bot PRs out of ${totalPRs} total PRs) |
 | **Contributors** | ${contributors.length} total, ${newContributors.length} new |
 `;
 
@@ -230,13 +240,7 @@ ${kindSections}`;
   );
 
   // Generate bot activity section (non-homebrew only, since homebrew is now under Development)
-  // Calculate total PRs (human + all bots including homebrew)
-  const totalBotPRs = botActivity.reduce(
-    (sum, activity) => sum + activity.count,
-    0,
-  );
-  const totalHumanPRs = plannedItems.length + opportunisticItems.length;
-  const totalPRs = totalHumanPRs + totalBotPRs;
+  // Note: totalBotPRs, totalHumanPRs, totalPRs already calculated above for summary
 
   const botSection = generateBotActivitySection(
     otherBotActivity,
