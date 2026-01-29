@@ -42,7 +42,7 @@ const CommunityFeeds: React.FC = () => {
             <FeedItems
               feedId="bluefinLtsReleases"
               title="Bluefin LTS"
-              maxItems={12} // 12 weeks < 90 days
+              maxItems={10}
               showDescription={false}
             />
             <p className={styles.sectionByline}>
@@ -53,7 +53,7 @@ const CommunityFeeds: React.FC = () => {
             <FeedItems
               feedId="bluefinReleases"
               title="Bluefin GTS"
-              maxItems={12} // 12 weeks < 90 days
+              maxItems={10}
               showDescription={false}
               filter={(item) => item.title.startsWith("gts-")}
             />
@@ -65,7 +65,7 @@ const CommunityFeeds: React.FC = () => {
             <FeedItems
               feedId="bluefinReleases"
               title="Bluefin"
-              maxItems={12} // 12 weeks < 90 days
+              maxItems={10}
               showDescription={false}
               filter={(item) => item.title.startsWith("stable-")}
             />
