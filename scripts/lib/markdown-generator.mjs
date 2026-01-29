@@ -811,10 +811,12 @@ export function generateBuildHealthSection(buildMetrics, startDate, endDate) {
 
   const highlights = `### This Month's Highlights
 
-- 📊 **Total Builds:** ${stats.totalBuilds} builds across all images
-- 🏆 **Most Active:** \`${stats.mostActive}\` (${images.find((img) => img.name === stats.mostActive)?.totalBuilds || 0} builds)
-- 💯 **100% Club:** ${perfectClub}
-- ⏱️ **Avg Build Time:** ${avgMinutes} minutes across all variants`;
+| Metric | Value |
+|--------|-------|
+| 📊 **Total Builds** | ${stats.totalBuilds} builds across all images |
+| 🏆 **Most Active** | \`${stats.mostActive}\` (${images.find((img) => img.name === stats.mostActive)?.totalBuilds || 0} builds) |
+| 💯 **100% Club** | ${perfectClub} |
+| ⏱️ **Avg Build Time** | ${avgMinutes} minutes across all variants |`;
 
   return `---
 
