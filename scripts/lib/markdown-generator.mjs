@@ -781,11 +781,15 @@ export function generateBuildHealthSection(buildMetrics, startDate, endDate) {
   const avgMinutes = Math.round(stats.avgDuration / 60);
 
   // Generate success rates table
-  const tableHeader = `| Image | Success Rate | Builds | Monthly Change |
-|------|--------------|--------|----------------|`;
+  const tableHeader = `| Image | Success Rate | Successes | Failures | Monthly Change |
+|------|--------------|-----------|----------|----------------|`;
 
   const tableRows = images
     .map((img) => {
+      // Calculate successes and failures
+      const successes = Math.round((img.successRate / 100) * img.totalBuilds);
+      const failures = img.totalBuilds - successes;
+
       // Format MoM change as badge or baseline
       let momDisplay;
       if (img.momChange === null) {
@@ -797,7 +801,7 @@ export function generateBuildHealthSection(buildMetrics, startDate, endDate) {
         momDisplay = `![${img.momChange}%](https://img.shields.io/badge/--${absChange}%25-critical?style=flat-square)`;
       }
 
-      return `| \`${img.name}\` | ${img.successRate}% | ${img.totalBuilds} | ${momDisplay} |`;
+      return `| \`${img.name}\` | ${img.successRate}% | ${successes} | ${failures} | ${momDisplay} |`;
     })
     .join("\n");
 
