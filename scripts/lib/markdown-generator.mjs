@@ -15,6 +15,27 @@ import {
 import { getSponsorUrl } from "./github-sponsors.mjs";
 
 /**
+ * Category descriptions for monthly reports
+ * Provides context for what types of work fall under each category
+ */
+const CATEGORY_DESCRIPTIONS = {
+  Desktop:
+    "GNOME desktop environment, Aurora variant (KDE), and terminal enhancements",
+  Development: "Development tools and IDE integrations",
+  Ecosystem:
+    "Homebrew packages, AI/ML tools (Bluespeed), and Flatpak applications",
+  "System Services & Policies": "Systemd services and system-level policies",
+  Hardware: "Hardware support, drivers, NVIDIA GPU, and ARM64 architecture",
+  Infrastructure:
+    "ISO images, upstream integration, build systems, and testing frameworks",
+  Documentation: "Documentation improvements and additions",
+  "Tech Debt": "Maintenance work and feature parity between variants",
+  Automation:
+    "CI/CD pipelines, GitHub Actions, and automated dependency updates",
+  Localization: "Translation and internationalization work",
+};
+
+/**
  * Generate complete report markdown
  *
  * @param {Array} plannedItems - Items from project board completed during period
@@ -146,7 +167,9 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
         .join(" ");
 
       // Add Homebrew updates as a subsection under Development category
-      let fullSection = `## ${cleanCategoryName}\n\n${labelBadges}\n\n${section}`;
+      const description = CATEGORY_DESCRIPTIONS[cleanCategoryName];
+      const descriptionText = description ? `\n\n*${description}*\n` : "\n";
+      let fullSection = `## ${cleanCategoryName}\n\n${labelBadges}${descriptionText}\n${section}`;
       if (
         (cleanCategoryName === "Development" ||
           categoryName.includes("Development")) &&
@@ -186,7 +209,9 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
           return `![${labelName}](https://img.shields.io/badge/${encodedName}-${color}?style=flat-square)`;
         })
         .join(" ");
-      return `## ${cleanCategoryName}\n\n${labelBadges}\n\n${section}`;
+      const description = CATEGORY_DESCRIPTIONS[cleanCategoryName];
+      const descriptionText = description ? `\n\n*${description}*\n` : "\n";
+      return `## ${cleanCategoryName}\n\n${labelBadges}${descriptionText}\n${section}`;
     })
     .join("\n\n---\n\n");
 
