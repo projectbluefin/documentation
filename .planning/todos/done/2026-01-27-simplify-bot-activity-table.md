@@ -28,6 +28,7 @@ This level of detail isn't useful for report readers. They only need to know tot
 Aggregate bot activity at the repository level instead of per-bot:
 
 **Desired output:**
+
 ```
 | Repository | Bot PRs |
 |------------|---------|
@@ -37,16 +38,19 @@ Aggregate bot activity at the repository level instead of per-bot:
 ```
 
 **Implementation:**
+
 - Modify `generateBotActivityTable()` in `markdown-generator.mjs`
 - Group bot items by repository, sum counts
 - Simplify table header and rows
 - Keep detailed bot breakdown in collapsible details section
 
 **Files to modify:**
+
 - `scripts/lib/markdown-generator.mjs` lines 388-422 (`generateBotActivityTable` function)
 - May need to adjust `generateBotActivitySection` caller (lines 388-401)
 
 **Testing:**
+
 - Regenerate December and January reports
 - Verify table is shorter and more readable
 - Ensure details section still shows per-bot breakdown
