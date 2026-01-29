@@ -43,7 +43,7 @@ function formatWeekRange(weekStart: Date): string {
 // Helper function to normalize status names for CSS classes
 function normalizeStatus(status: string): string {
   const normalized = status.toLowerCase().replace(/[^a-z0-9]/g, "");
-  
+
   if (normalized.includes("todo") || normalized === "backlog") {
     return "todo";
   } else if (
@@ -54,7 +54,7 @@ function normalizeStatus(status: string): string {
   } else if (normalized.includes("done") || normalized.includes("complete")) {
     return "done";
   }
-  
+
   return "unknown";
 }
 

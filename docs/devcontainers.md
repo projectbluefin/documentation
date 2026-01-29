@@ -5,7 +5,7 @@ slug: /devcontainers
 
 # Devcontainers Quickstart Guide
 
-Dev Containers provide a consistent, reproducible development environment using containerization. This guide helps you get started with Dev Containers in Visual Studio Code on Bluefin. This is an opinionated configuration, some users may prefer to just use Podman/Docker directly. 
+Dev Containers provide a consistent, reproducible development environment using containerization. This guide helps you get started with Dev Containers in Visual Studio Code on Bluefin. This is an opinionated configuration, some users may prefer to just use Podman/Docker directly.
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/kPMA9cnpScU?si=mGWgdLPbl-wWujc8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
@@ -239,9 +239,9 @@ For more detailed information, check the [official Dev Container CLI documentati
 - Verify devcontainer.json syntax
 - Review container logs in Output panel
 - Review SELinux access control errors (from cockpit or `ausearch -m avc -ts recent`).
-    - If there is access error to system files (e.g. `libc6.so`), try `restorecon -R -v $HOME/.local/share`. `restorecon` may warn about files in subdirectories your user cannot read, which is expected and can be ignored.
-    - If there is access error to mounted volumes, try `restorecon -R -v /path/to/mounted/volume` which is usually the parent folder of your project.
-    - The last resort would to disable SELinux with the following setting in `.devcontainer/devcontainer.json` and has security implications:
+  - If there is access error to system files (e.g. `libc6.so`), try `restorecon -R -v $HOME/.local/share`. `restorecon` may warn about files in subdirectories your user cannot read, which is expected and can be ignored.
+  - If there is access error to mounted volumes, try `restorecon -R -v /path/to/mounted/volume` which is usually the parent folder of your project.
+  - The last resort would to disable SELinux with the following setting in `.devcontainer/devcontainer.json` and has security implications:
 
 ```json
 {

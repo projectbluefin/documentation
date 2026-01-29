@@ -5,6 +5,7 @@
 **Recommended Approach:** Use `gh pr merge --auto` with enhanced workflow permissions
 
 **Rationale:**
+
 - Works with existing repository ruleset (merge queue + PR requirements)
 - Requires minimal changes to current workflow
 - Maintains security and quality gates
@@ -19,6 +20,7 @@
 ### Repository Protection Configuration
 
 **Ruleset:** `main` (active)
+
 - **Merge Queue:** Enabled
   - Strategy: `ALLGREEN` (all status checks must pass)
   - Max entries to merge: 5
@@ -37,11 +39,12 @@
 
 ```yaml
 permissions:
-  contents: write     # For git commits
+  contents: write # For git commits
   pull-requests: read # For GraphQL queries
 ```
 
 **Missing for auto-merge:**
+
 - No PR creation permission
 - No permission to enable auto-merge on PRs
 - Workflow pushes directly to main (bypasses PR flow)
@@ -50,12 +53,12 @@ permissions:
 
 ## Options Comparison
 
-| Approach | Pros | Cons | Security | Implementation |
-|----------|------|------|----------|----------------|
-| **1. `gh pr merge --auto` with GITHUB_TOKEN** | ✅ Native GitHub feature<br>✅ Works with rulesets<br>✅ No extra tokens needed<br>✅ Respects status checks | ❌ Requires PR creation first<br>❌ Needs permission changes | 🟢 High - respects all rules | Easy - 10 lines |
-| **2. GitHub App Token** | ✅ Can bypass restrictions<br>✅ Fine-grained permissions<br>✅ Audit trail | ❌ Requires app setup<br>❌ Complex token generation<br>❌ Can bypass needed checks | 🟡 Medium - depends on config | Hard - 30+ lines |
-| **3. Personal Access Token (PAT)** | ✅ Simple to set up | ❌ Tied to user account<br>❌ Security risk<br>❌ Breaks on user removal | 🔴 Low - poor practice | Easy - 5 lines |
-| **4. Direct push to main** | ✅ Simplest | ❌ Bypasses all protection<br>❌ No review possible<br>❌ Violates governance | 🔴 Very Low - dangerous | Current state |
+| Approach                                      | Pros                                                                                                         | Cons                                                                                | Security                      | Implementation   |
+| --------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------- | ----------------------------- | ---------------- |
+| **1. `gh pr merge --auto` with GITHUB_TOKEN** | ✅ Native GitHub feature<br>✅ Works with rulesets<br>✅ No extra tokens needed<br>✅ Respects status checks | ❌ Requires PR creation first<br>❌ Needs permission changes                        | 🟢 High - respects all rules  | Easy - 10 lines  |
+| **2. GitHub App Token**                       | ✅ Can bypass restrictions<br>✅ Fine-grained permissions<br>✅ Audit trail                                  | ❌ Requires app setup<br>❌ Complex token generation<br>❌ Can bypass needed checks | 🟡 Medium - depends on config | Hard - 30+ lines |
+| **3. Personal Access Token (PAT)**            | ✅ Simple to set up                                                                                          | ❌ Tied to user account<br>❌ Security risk<br>❌ Breaks on user removal            | 🔴 Low - poor practice        | Easy - 5 lines   |
+| **4. Direct push to main**                    | ✅ Simplest                                                                                                  | ❌ Bypasses all protection<br>❌ No review possible<br>❌ Violates governance       | 🔴 Very Low - dangerous       | Current state    |
 
 **Recommendation:** Option 1 (gh pr merge --auto)
 
@@ -69,8 +72,8 @@ permissions:
 
 ```yaml
 permissions:
-  contents: write        # For git commits
-  pull-requests: write   # To create and enable auto-merge on PRs
+  contents: write # For git commits
+  pull-requests: write # To create and enable auto-merge on PRs
 ```
 
 **2. Create PR Instead of Direct Push**
@@ -154,12 +157,14 @@ Ensure build passes before merge:
 5. **Merge** → PR automatically merges when queue clears
 
 **Merge Queue Behavior:**
+
 - Groups PRs together (up to 5 at once)
 - Tests them in merge queue branch
 - Merges if all checks pass
 - Prevents "merge race" conditions
 
 **Required Conditions:**
+
 - ✅ No required reviews (already configured: `required_approving_review_count: 0`)
 - ✅ Auto-merge enabled (already configured: `autoMergeAllowed: true`)
 - ✅ Status checks pass (enforced by merge queue `ALLGREEN`)
@@ -185,18 +190,19 @@ Ensure build passes before merge:
 
 ### What Changes vs Current Workflow
 
-| Aspect | Current (Direct Push) | With Auto-Merge PR |
-|--------|----------------------|-------------------|
-| Protection bypassed? | ✅ Yes (pushes to main) | ❌ No (uses PR) |
-| Reviewable? | ❌ No audit trail | ✅ Yes (PR history) |
-| Can be blocked? | ❌ No way to stop | ✅ Yes (close PR) |
-| Status checks? | ❌ Skipped | ✅ Required |
+| Aspect               | Current (Direct Push)   | With Auto-Merge PR  |
+| -------------------- | ----------------------- | ------------------- |
+| Protection bypassed? | ✅ Yes (pushes to main) | ❌ No (uses PR)     |
+| Reviewable?          | ❌ No audit trail       | ✅ Yes (PR history) |
+| Can be blocked?      | ❌ No way to stop       | ✅ Yes (close PR)   |
+| Status checks?       | ❌ Skipped              | ✅ Required         |
 
 **Security Improvement:** Moving to PR-based flow is MORE secure than current direct push.
 
 ### Bot Security
 
 **github-actions[bot]** is a special system account:
+
 - Tied to GitHub Actions service (not a user)
 - Cannot be compromised like PAT
 - Permissions limited by workflow file
@@ -211,6 +217,7 @@ Ensure build passes before merge:
 **When to use:** Need to bypass branch protection completely
 
 **Setup:**
+
 ```yaml
 - name: Generate GitHub App Token
   id: generate-token
@@ -226,6 +233,7 @@ Ensure build passes before merge:
 ```
 
 **Why not recommended here:**
+
 - Requires creating GitHub App
 - More complex setup
 - Overkill for this use case (no bypass needed)
@@ -235,6 +243,7 @@ Ensure build passes before merge:
 **When to use:** Never (bad practice)
 
 **Why avoid:**
+
 - Tied to user account (security risk)
 - Breaks if user leaves
 - Violates principle of least privilege
@@ -247,6 +256,7 @@ Ensure build passes before merge:
 **Before merging changes:**
 
 1. **Test PR creation in feature branch:**
+
    ```bash
    git checkout -b test-monthly-reports-automerge
    # Make workflow changes
@@ -255,16 +265,19 @@ Ensure build passes before merge:
    ```
 
 2. **Verify PR created:**
+
    ```bash
    gh pr list --author "github-actions[bot]"
    ```
 
 3. **Check auto-merge enabled:**
+
    ```bash
    gh pr view <PR-NUMBER> --json autoMergeRequest
    ```
 
 4. **Monitor merge queue:**
+
    ```bash
    gh api repos/projectbluefin/documentation/branches/main/protection --jq '.merge_queue'
    ```
@@ -275,6 +288,7 @@ Ensure build passes before merge:
 
 **Rollback Plan:**
 If auto-merge fails, PR remains open and can be:
+
 - Manually merged via GitHub UI
 - Closed and workflow re-run
 - Edited to fix issues before merge
@@ -297,7 +311,7 @@ on:
 
 permissions:
   contents: write
-  pull-requests: write  # ← ADD THIS
+  pull-requests: write # ← ADD THIS
 
 jobs:
   generate-report:
@@ -320,7 +334,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm run generate-report
 
-      - name: Create PR with auto-merge  # ← REPLACE "Commit and push" step
+      - name: Create PR with auto-merge # ← REPLACE "Commit and push" step
         run: |
           BRANCH="monthly-report/$(date +%Y-%m)"
           git config user.name "github-actions[bot]"

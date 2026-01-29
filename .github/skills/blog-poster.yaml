@@ -2,7 +2,6 @@
 name: blog poster
 description: Post a blog post
 ---
-
 - Use the github API to do all tasks instead os scraping the web
 - Under no circumstance do you touch any files other than the blog file and the authors.yaml (optional) - do NOT touch anything else
 - Take a github issue or github discussion that is assigned to you and post it as a @docusaurus blog post.

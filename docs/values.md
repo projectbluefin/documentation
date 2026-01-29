@@ -31,7 +31,7 @@ The project strives to prefer stability and correctness, but recognizes that it 
 
 ## The Human is more important than the Machine
 
-All of the artwork in Bluefin will always be by a human being who has been compensated for their work. 
+All of the artwork in Bluefin will always be by a human being who has been compensated for their work.
 
 :::tip
 

@@ -1,7 +1,7 @@
 ---
-agent: 'agent'
-description: 'Generate conventional commit messages following the Conventional Commits specification with proper formatting, validation, and automatic git commit execution.'
-tools: ['runCommands', 'changes', 'think']
+agent: "agent"
+description: "Generate conventional commit messages following the Conventional Commits specification with proper formatting, validation, and automatic git commit execution."
+tools: ["runCommands", "changes", "think"]
 ---
 
 ### Instructions

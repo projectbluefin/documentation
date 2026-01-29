@@ -11,7 +11,7 @@ Flatpak support in Brewfiles is here! You can now manage your Flatpak applicatio
 
 Homebrew Bundle now supports Flatpak packages on Linux. This means you can declare your Flatpak applications in your `Brewfile` and have them installed automatically with `brew bundle`.
 
-Note from Jorge: I haven't played with this feature yet but announcing it so we can get feedback right away. 
+Note from Jorge: I haven't played with this feature yet but announcing it so we can get feedback right away.
 
 ## Basic Usage
 
@@ -69,7 +69,7 @@ All the standard `brew bundle` commands work with Flatpak:
 - **`brew bundle check`** - Verify all Flatpak packages are installed
 - **`brew bundle list --flatpak`** - List Flatpak packages in your Brewfile
 
-Check out the [brew bundle documentation](https://docs.brew.sh/Brew-Bundle-and-Brewfile) for more information. 
+Check out the [brew bundle documentation](https://docs.brew.sh/Brew-Bundle-and-Brewfile) for more information.
 
 ### Dump Options
 
@@ -95,7 +95,7 @@ This feature allows Bluefin users to maintain a single `Brewfile` that manages:
 The huge community benefit is the shareability of a list-o-files. You can give your friend the hookup, and in fact many of Bluefin's "features" are just us shipping our own Brewfiles. For you experts out there this likely just simplifies something you probably already have. And for those of you just starting your command line spec tree it's a nice milestone to hit: "I can get a new install up and running in 10 minutes". There's lots of ways to do this, but this is an easy one. 😄
 
 Woo! We feel that this is a nice complement to [devcontainers](https://containers.dev/), providing even more flexibility to your workflows!
- 
+
 ## How does it work in practice?
 
 You're going to have to tell me, I am on holiday in the German countryside, but this feature is super exciting and I'm looking forward to hearing your feedback!
@@ -109,6 +109,6 @@ Refer to the [Homebrew Bundle documentation](https://docs.brew.sh/Brew-Bundle-an
 
 ## Also Check Out
 
-Speaking about "Easiest way to get a clean install in 10 minutes", [SaveDesktop](https://flathub.org/en/apps/io.github.vikdevelop.SaveDesktop) is the nice GUI way to do this. You'll always find it in Bluefin's Curated section in the Bazaar app store. (Tell your friends!) 
+Speaking about "Easiest way to get a clean install in 10 minutes", [SaveDesktop](https://flathub.org/en/apps/io.github.vikdevelop.SaveDesktop) is the nice GUI way to do this. You'll always find it in Bluefin's Curated section in the Bazaar app store. (Tell your friends!)
 
 ## [Discussion](https://github.com/ublue-os/bluefin/discussions/3767)

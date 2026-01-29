@@ -4,8 +4,8 @@ slug: /troubleshooting
 unlisted: true
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 
 :::info
 This does not exist yet, it's here to document how we expect the feature to work. This is also only documented the tooling we're shipping, not a general troubleshooting guide.
@@ -13,30 +13,28 @@ This does not exist yet, it's here to document how we expect the feature to work
 
 - [Bluefin AI page](/ai) - gives this page more context on our plans for Bluespeed
 
-> "Ask Bluefin", is a custom operating system agent. For you new users, a system designed to help you learn Linux, without the toil of digging through the internet or being told that you installed the wrong Linux distribution. "Ask Bluefin" is trained on the operating system and its documentation, so it's always learning from the source of truth and tweaked by the community. For you Linux veterans, a power diagnostic tool for your local PC, with built in integration to your servers and cluster ... 
+> "Ask Bluefin", is a custom operating system agent. For you new users, a system designed to help you learn Linux, without the toil of digging through the internet or being told that you installed the wrong Linux distribution. "Ask Bluefin" is trained on the operating system and its documentation, so it's always learning from the source of truth and tweaked by the community. For you Linux veterans, a power diagnostic tool for your local PC, with built in integration to your servers and cluster ...
 
-In the menu select "Ask Bluefin" to use the chat agent. 
+In the menu select "Ask Bluefin" to use the chat agent.
 
-
-<img src="https://github.com/user-attachments/assets/c4116f0b-47e5-43f8-97fd-c55fbe373d01" alt="askbluefin" />
-
+<img
+  src="https://github.com/user-attachments/assets/c4116f0b-47e5-43f8-97fd-c55fbe373d01"
+  alt="askbluefin"
+/>
 
 ### Installation
 
 <Tabs groupId="operating-systems">
   <TabItem value="linux" label="Linux" default>
-    ```bash
-    brew install ublue-os/experimental-tap/linux-mcp-server
-    ```
+    ```bash brew install ublue-os/experimental-tap/linux-mcp-server ```
   </TabItem>
   <TabItem value="macos" label="macOS">
-    ```bash
-    brew install ublue-os/experimental-tap/linux-mcp-server
-    ```
+    ```bash brew install ublue-os/experimental-tap/linux-mcp-server ```
   </TabItem>
 </Tabs>
 
 This installs linux-mcp-server + the goose client + our config, follow the instructions in the terminal. TODO:
+
 - onboarding process
 - "Bring your own LLM": Select whatever combo of commercial and local AI they can via goose's providers
 - Local setup goes to:
@@ -56,56 +54,56 @@ Now that Ask Bluefin is setup it can automate tasks for you like "Manually updat
 
 ## Automated Troubleshooting
 
-You can ask the tool things about your system using natural language: 
+You can ask the tool things about your system using natural language:
 
 ![Top CPU usage](https://github.com/user-attachments/assets/537d5f2c-0a84-460d-b936-ae699376a1d7)
 
-
 ### 🏥 System Health
+
 Note: these are taken from the linux-server-mcp page but you get the idea:
 
-| I want to check... | Use this tool | Example Prompt |
-|-------------------|---------------|----------------|
-| **OS / Kernel** | `get_system_information` | "What OS version is this?" |
-| **CPU Load** | `get_cpu_information` | "Is the CPU overloaded?" |
-| **Memory / RAM** | `get_memory_information` | "How much free RAM do I have?" |
-| **Disk Space** | `get_disk_usage` | "Are any disks full?" |
-| **Hardware** | `get_hardware_information` | "List the PCI devices." |
+| I want to check... | Use this tool              | Example Prompt                 |
+| ------------------ | -------------------------- | ------------------------------ |
+| **OS / Kernel**    | `get_system_information`   | "What OS version is this?"     |
+| **CPU Load**       | `get_cpu_information`      | "Is the CPU overloaded?"       |
+| **Memory / RAM**   | `get_memory_information`   | "How much free RAM do I have?" |
+| **Disk Space**     | `get_disk_usage`           | "Are any disks full?"          |
+| **Hardware**       | `get_hardware_information` | "List the PCI devices."        |
 
 ### 🔍 Troubleshooting
 
-| I want to check... | Use this tool | Example Prompt |
-|-------------------|---------------|----------------|
-| **Running Apps** | `list_processes` | "What's using the most CPU?" |
-| **Process Details** | `get_process_info` | "Inspect process ID 1234." |
-| **Services** | `list_services` | "Are all services running?" |
-| **Service Status** | `get_service_status` | "Why did nginx fail?" |
-| **System Logs** | `get_journal_logs` | "Show errors from the last hour." |
-| **Service Logs** | `get_service_logs` | "Show recent logs for sshd." |
-| **Specific Log File** | `read_log_file` | "Read the last 50 lines of /var/log/messages." |
+| I want to check...    | Use this tool        | Example Prompt                                 |
+| --------------------- | -------------------- | ---------------------------------------------- |
+| **Running Apps**      | `list_processes`     | "What's using the most CPU?"                   |
+| **Process Details**   | `get_process_info`   | "Inspect process ID 1234."                     |
+| **Services**          | `list_services`      | "Are all services running?"                    |
+| **Service Status**    | `get_service_status` | "Why did nginx fail?"                          |
+| **System Logs**       | `get_journal_logs`   | "Show errors from the last hour."              |
+| **Service Logs**      | `get_service_logs`   | "Show recent logs for sshd."                   |
+| **Specific Log File** | `read_log_file`      | "Read the last 50 lines of /var/log/messages." |
 
 ### 🌐 Network
 
-| I want to check... | Use this tool | Example Prompt |
-|-------------------|---------------|----------------|
-| **IP Addresses** | `get_network_interfaces` | "What is my IP address?" |
-| **Open Ports** | `get_listening_ports` | "What ports are open?" |
-| **Connections** | `get_network_connections` | "Who is connected to port 22?" |
+| I want to check... | Use this tool             | Example Prompt                 |
+| ------------------ | ------------------------- | ------------------------------ |
+| **IP Addresses**   | `get_network_interfaces`  | "What is my IP address?"       |
+| **Open Ports**     | `get_listening_ports`     | "What ports are open?"         |
+| **Connections**    | `get_network_connections` | "Who is connected to port 22?" |
 
 ### 📂 Files & Storage
 
-| I want to check... | Use this tool | Example Prompt |
-|-------------------|---------------|----------------|
-| **Disk Partitions** | `list_block_devices` | "Show me the partition layout." |
-| **Large Folders** | `list_directories` | "Find the largest folders in /var." |
-| **Recent Changes** | `list_files` | "What files in /etc changed recently?" |
+| I want to check...  | Use this tool        | Example Prompt                         |
+| ------------------- | -------------------- | -------------------------------------- |
+| **Disk Partitions** | `list_block_devices` | "Show me the partition layout."        |
+| **Large Folders**   | `list_directories`   | "Find the largest folders in /var."    |
+| **Recent Changes**  | `list_files`         | "What files in /etc changed recently?" |
 
 ### 💡 Pro Tips
 
 - **Combine Tools:** You don't need to ask for one thing at a time.
   > "Check CPU usage and show me the top 5 processes."
-  
 - **Filter Logs:** Be specific with time and priority to save context window.
+
   > "Show me `error` priority logs from the last `30 minutes`."
 
 - **Remote Hosts:** If you configured SSH, just ask to run on a specific host.
@@ -116,4 +114,3 @@ Note: these are taken from the linux-server-mcp page but you get the idea:
 ## Customizing with MCPs
 
 ## Goose Plugins
-

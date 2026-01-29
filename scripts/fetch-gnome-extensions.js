@@ -22,7 +22,10 @@ const EXTENSION_IDS = [
   7065, // Tiling Shell
 ];
 
-const OUTPUT_JSON = path.join(__dirname, "../static/data/gnome-extensions.json");
+const OUTPUT_JSON = path.join(
+  __dirname,
+  "../static/data/gnome-extensions.json",
+);
 const OUTPUT_IMG_DIR = path.join(__dirname, "../static/img/extensions");
 
 function fetchJSON(url) {

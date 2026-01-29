@@ -48,7 +48,7 @@ In **Settings** → **Network** → A network setting, set **Metered Connection:
 
 :::info
 
-`gts` and `latest` will be merged into `stable` on the week of March 1st 2026. Users will be moved automatically without manual intervention. For more information, including why we're doing this, and what comes next, see [Streamlining Bluefin Releases](https://docs.projectbluefin.io/blog/unifying-bluefin/). 
+`gts` and `latest` will be merged into `stable` on the week of March 1st 2026. Users will be moved automatically without manual intervention. For more information, including why we're doing this, and what comes next, see [Streamlining Bluefin Releases](https://docs.projectbluefin.io/blog/unifying-bluefin/).
 
 :::
 
@@ -294,7 +294,7 @@ Bluefin includes curated CLI tools shared as Brewfiles. These commands install c
 | `ujust toggle-tpm2`            | Toggle automatic LUKS disk unlock via TPM (enable/disable with optional PIN)                                                                                                                                      |
 | `ujust toggle-iwd`             | Switch between iwd and wpa_supplicant for Wi-Fi networking (iwd can improve throughput and reduce latency)                                                                                                        |
 | `ujust benchmark`              | Run a one-minute system benchmark using stress-ng                                                                                                                                                                 |
-| `ujust powerwash`              | Factory reset this device to its initial state (experimental feature) |
+| `ujust powerwash`              | Factory reset this device to its initial state (experimental feature)                                                                                                                                             |
 
 ### Developer Experience Commands
 
@@ -307,13 +307,12 @@ Bluefin includes curated CLI tools shared as Brewfiles. These commands install c
 
 ### Application Installation Commands
 
-| Command                               | Description                                                                                                                            |
-| ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| `ujust jetbrains-toolbox`             | Install [JetBrains Toolbox](https://www.jetbrains.com/toolbox-app/) for managing JetBrains IDEs                                        |
-| `ujust install-opentabletdriver`      | Install or uninstall [OpenTabletDriver](https://opentabletdriver.net/), an open source tablet driver                                   |
-| `ujust install-system-flatpaks`       | Install the default system flatpaks (useful after rebasing)                                                                            |
-| `ujust install-system-flatpaks-extra` | Install extra recommended flatpak applications                                                                                         |
-
+| Command                               | Description                                                                                          |
+| ------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `ujust jetbrains-toolbox`             | Install [JetBrains Toolbox](https://www.jetbrains.com/toolbox-app/) for managing JetBrains IDEs      |
+| `ujust install-opentabletdriver`      | Install or uninstall [OpenTabletDriver](https://opentabletdriver.net/), an open source tablet driver |
+| `ujust install-system-flatpaks`       | Install the default system flatpaks (useful after rebasing)                                          |
+| `ujust install-system-flatpaks-extra` | Install extra recommended flatpak applications                                                       |
 
 Note that generally speaking Bluefin tries to keep the system Justfiles finely scoped, most of these are workarounds and not full-fledged commands. They may get removed or changed depending on the problem they were initially meant to solve.
 

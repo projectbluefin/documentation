@@ -19,7 +19,7 @@ This removes a bunch of the manual stuff you had to do in your template to get t
 
 Check out the repository at [github.com/ublue-os/brew](https://github.com/ublue-os/brew) for more information and examples.
 
-## Thanks! 
+## Thanks!
 
 This work and testing brought to you by:
 

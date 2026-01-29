@@ -5,20 +5,20 @@ slug: /ai
 
 ## Methodology
 
-Bluefin was created by engineers, but was brought to life by [Jacob Schnurr](https://www.etsy.com/shop/JSchnurrCommissions) and [Andy Frazer](https://www.etsy.com/uk/shop/dragonsofwales). The artwork is free for you to use and will always be made by humans. It is there to remind us that open source is an ecosystem that needs to be sustained. The software we make has an effect on the world. Bluefin's AI integration will always be user controlled, with a focus on open source models and tools. 
+Bluefin was created by engineers, but was brought to life by [Jacob Schnurr](https://www.etsy.com/shop/JSchnurrCommissions) and [Andy Frazer](https://www.etsy.com/uk/shop/dragonsofwales). The artwork is free for you to use and will always be made by humans. It is there to remind us that open source is an ecosystem that needs to be sustained. The software we make has an effect on the world. Bluefin's AI integration will always be user controlled, with a focus on open source models and tools.
 
 :::tip[AI is an extension of cloud native]
 
-Bluefin's focus in AI is providing a generic API endpoint to the operating system that is controlled by the user. Just as Bluefin's operating system is built with [CNCF](https://cncf.io) tech like `bootc` and `podman`, this experience is powered by [Agentic AI Foundation](https://aaif.io/) tech like `goose`. With a strong dash of the open source components that power [RHEL Lightspeed](https://www.redhat.com/en/lightspeed). 
+Bluefin's focus in AI is providing a generic API endpoint to the operating system that is controlled by the user. Just as Bluefin's operating system is built with [CNCF](https://cncf.io) tech like `bootc` and `podman`, this experience is powered by [Agentic AI Foundation](https://aaif.io/) tech like `goose`. With a strong dash of the open source components that power [RHEL Lightspeed](https://www.redhat.com/en/lightspeed).
 
 :::
 
 ## Bluespeed
 
-"Bluespeed" is our collection of Bluefin's [developer experience](/bluefin-dx) tools and support for AI development workflows. We do this via community managed set of tool recommendations and configuration. We believe that the operating system should have more API endpoints for AI.  
+"Bluespeed" is our collection of Bluefin's [developer experience](/bluefin-dx) tools and support for AI development workflows. We do this via community managed set of tool recommendations and configuration. We believe that the operating system should have more API endpoints for AI.
 
 - "Bring your own LLM" aproach, it should be easy to switch between local models and hosted ones
-   - [Goose](https://block.github.io/goose/) as the primary interface to hosted and local models
+  - [Goose](https://block.github.io/goose/) as the primary interface to hosted and local models
 - Accelerate open standards in AI by shipping tools from the [Agentic AI Foundation](https://aaif.io/), [CNCF](https://cncf.io), and other foundations
 - Local LLM service management
   - Model management via `ramalama` and Docker Model, your choice
@@ -26,7 +26,7 @@ Bluefin's focus in AI is providing a generic API endpoint to the operating syste
 - Highlight great AI/ML applications on FlatHub in our curated section in the App Store
 - A great reason to [sell more swag](https://store.projectbluefin.io)
 
-We work closely with the [RHEL Lightspeed team](https://github.com/rhel-lightspeed) by shipping their code, giving feedback, and pushing the envelope where we can. 
+We work closely with the [RHEL Lightspeed team](https://github.com/rhel-lightspeed) by shipping their code, giving feedback, and pushing the envelope where we can.
 
 ## AI Lab with Podman Desktop
 
@@ -49,7 +49,7 @@ The following AI-focused command-line tools are available via homebrew, install 
 | [gemini-cli](https://formulae.brew.sh/formula/gemini-cli)           | Command-line interface for Google's Gemini API                   |
 | [kimi-cli](https://formulae.brew.sh/formula/kimi-cli)               | CLI for Moonshot AI's Kimi models                                |
 | [llm](https://formulae.brew.sh/formula/llm)                         | Access large language models from the command line               |
-| [lm-studio](https://lmstudio.ai/)                                  | Desktop app for running local LLMs                               |
+| [lm-studio](https://lmstudio.ai/)                                   | Desktop app for running local LLMs                               |
 | [mistral-vibe](https://formulae.brew.sh/formula/mistral-vibe)       | CLI for Mistral AI models                                        |
 | [mods](https://formulae.brew.sh/formula/mods)                       | AI on the command-line, from charm.sh                            |
 | [opencode](https://formulae.brew.sh/formula/opencode)               | AI coding agent for the terminal                                 |
@@ -84,6 +84,7 @@ Ramalama will automatically pull in anything your host needs to do the workload.
 REPOSITORY                                 TAG         IMAGE ID      CREATED        SIZE
 quay.io/ramalama/rocm                      latest      8875feffdb87  5 days ago     6.92 GB
 ```
+
 ### Integrating with Existing Tools
 
 `ramalama serve` will serve an OpenAI compatible endpoint at `http://0.0.0.0:8080`, you can use this to configure tools that do not support ramalama directly:
@@ -95,10 +96,10 @@ quay.io/ramalama/rocm                      latest      8875feffdb87  5 days ago 
 - Force Vulkan instead of ROCm: `ramalama serve --image quay.io/ramalama/ramalama gpt-oss:latest`
 - Strix Halo users: `ramalama serve --image docker.io/kyuz0/amd-strix-halo-toolboxes:vulkan-radv gpt-oss:latest`
   - Check out [AMD Strix Halo Llama.cpp Toolboxes](https://github.com/kyuz0/amd-strix-halo-toolboxes) and [Donato Capitella's channel](https://www.youtube.com/@donatocapitella) for more information
- 
+
 ### Running AI Agents in VS Code
 
-Here is an example of using devcontainers to run agents inside containers for isolation: 
+Here is an example of using devcontainers to run agents inside containers for isolation:
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/w3kI6XlZXZQ?si=5pygGs5E_Qedf-S8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
@@ -121,7 +122,6 @@ Bluefin binds `Ctrl`-`Alt`-`Backspace` as a quicklaunch for Alpaca automatically
 ![Alpaca](/img/user-attachments/104c5263-5d34-497a-b986-93bb0a41c23e.png)
 
 ![image](/img/user-attachments/9fd38164-e2a9-4da1-9bcd-29e0e7add071.png)
-
 
 ## Automated Troubleshooting (WIP)
 

@@ -24,8 +24,8 @@ Bluefin goes "all in" on cloud native development and is used differently than a
 
 - Development is done containers, common container patterns include:
   - [Devcontainers](https://containers.dev/) with VSCode, Jetbrains, or neovim
-  - [Podman Desktop](https://podman-desktop.io/docs/intro) for container development with a graphical (GUI) interface. Here's [an example of a podman/vscode setup](https://podman-desktop.io/blog/2025/05/05/vs-code-with-podman-desktop) - these extensions are included in Bluefin  
-  - [Podman](https://podman.io/docs) or [Docker](https://docs.docker.com/reference/cli/docker/) command line container management. 
+  - [Podman Desktop](https://podman-desktop.io/docs/intro) for container development with a graphical (GUI) interface. Here's [an example of a podman/vscode setup](https://podman-desktop.io/blog/2025/05/05/vs-code-with-podman-desktop) - these extensions are included in Bluefin
+  - [Podman](https://podman.io/docs) or [Docker](https://docs.docker.com/reference/cli/docker/) command line container management.
 - Command line applications are installed using [homebrew](https://brew.sh)
 - Preconfigured ad-hoc containers for Ubuntu, Fedora, and Wolfi are included. Use whichever distribution you want.
 
@@ -147,12 +147,12 @@ The JetBrains blog also has more information on JetBrains Dev Containers support
 
 - [virt-manager](https://virt-manager.org/) and associated tooling (KVM, qemu)
 
-Note: Bluefin LTS users must install the QEMU addon from Bazaar: 
+Note: Bluefin LTS users must install the QEMU addon from Bazaar:
 
 ![qemu](/img/user-attachments/5b0462d2-2c08-4086-a4ce-c34afa9685c2.png)
 
 or via command line: `flatpak install flathub org.virt_manager.virt_manager org.virt_manager.virt_manager.Extension.Qemu `
- 
+
 - [Incus](https://linuxcontainers.org/incus/) provides system containers (Not available in Bluefin LTS)
 
 ## Local Application Development
@@ -163,20 +163,20 @@ or via command line: `flatpak install flathub org.virt_manager.virt_manager org.
 
 Run `ujust bbrew` and select `k8s-tools` to install a common set of tools used by Kubernetes administrators. Or install these individually:
 
-| Name                                                | Description                                                                                                      |
-| --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| [cdk8s](https://formulae.brew.sh/formula/cdk8s)     | Defines Kubernetes applications and reusable abstractions using familiar programming languages                  |
-| [dagger](https://formulae.brew.sh/formula/dagger)   | A portable devkit for CI/CD pipelines                                                                           |
-| [grype](https://formulae.brew.sh/formula/grype)     | A vulnerability scanner for container images and filesystems                                                    |
-| [helm](https://formulae.brew.sh/formula/helm)       | The package manager for Kubernetes                                                                              |
-| [k0sctl](https://k0sproject.io/)                    | A command-line tool for bootstrapping and managing k0s Kubernetes clusters                                      |
-| [k3sup](https://formulae.brew.sh/formula/k3sup)     | A light-weight utility to install k3s on any local or remote VM                                                 |
-| [k9s](https://formulae.brew.sh/formula/k9s)         | Provides a terminal UI to interact with your Kubernetes clusters                                                |
-| [kind](https://formulae.brew.sh/formula/kind)       | A tool for running local Kubernetes clusters using Docker container "nodes"                                     |
+| Name                                                     | Description                                                                                                     |
+| -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| [cdk8s](https://formulae.brew.sh/formula/cdk8s)          | Defines Kubernetes applications and reusable abstractions using familiar programming languages                  |
+| [dagger](https://formulae.brew.sh/formula/dagger)        | A portable devkit for CI/CD pipelines                                                                           |
+| [grype](https://formulae.brew.sh/formula/grype)          | A vulnerability scanner for container images and filesystems                                                    |
+| [helm](https://formulae.brew.sh/formula/helm)            | The package manager for Kubernetes                                                                              |
+| [k0sctl](https://k0sproject.io/)                         | A command-line tool for bootstrapping and managing k0s Kubernetes clusters                                      |
+| [k3sup](https://formulae.brew.sh/formula/k3sup)          | A light-weight utility to install k3s on any local or remote VM                                                 |
+| [k9s](https://formulae.brew.sh/formula/k9s)              | Provides a terminal UI to interact with your Kubernetes clusters                                                |
+| [kind](https://formulae.brew.sh/formula/kind)            | A tool for running local Kubernetes clusters using Docker container "nodes"                                     |
 | [kubectl](https://kubernetes.io/docs/reference/kubectl/) | The Kubernetes command-line tool, allows you to run commands against Kubernetes clusters                        |
-| [kubectx](https://formulae.brew.sh/formula/kubectx) | A tool to switch between contexts (clusters) on kubectl faster                                                  |
-| [pack](https://buildpacks.io/)                      | A CLI tool to build apps using Cloud Native Buildpacks                                                          |
-| [syft](https://formulae.brew.sh/formula/syft)       | A CLI tool and library for generating a Software Bill of Materials (SBOM) from container images and filesystems |
+| [kubectx](https://formulae.brew.sh/formula/kubectx)      | A tool to switch between contexts (clusters) on kubectl faster                                                  |
+| [pack](https://buildpacks.io/)                           | A CLI tool to build apps using Cloud Native Buildpacks                                                          |
+| [syft](https://formulae.brew.sh/formula/syft)            | A CLI tool and library for generating a Software Bill of Materials (SBOM) from container images and filesystems |
 
 ### CNCF Tools
 
@@ -186,15 +186,15 @@ For access to the full suite of [Cloud Native Computing Foundation](https://l.cn
 
 Run `ujust bbrew` and select `fonts` to install the following collection of well-curated Mono fonts. Or install these individually. Check the [homebrew website](https://formulae.brew.sh/cask-font/) to add more fonts, or use the included [Embellish](https://flathub.org/en/apps/io.github.getnf.embellish) tool.
 
-| Name                                                                                      |
-| ----------------------------------------------------------------------------------------- |
-| [CaskaydiaMono Nerd Font](https://formulae.brew.sh/cask/font-caskaydia-mono-nerd-font)    |
+| Name                                                                                          |
+| --------------------------------------------------------------------------------------------- |
+| [CaskaydiaMono Nerd Font](https://formulae.brew.sh/cask/font-caskaydia-mono-nerd-font)        |
 | [Comic Shanns Mono Nerd Font](https://formulae.brew.sh/cask/font-comic-shanns-mono-nerd-font) |
-| [Droid Sans Mono Nerd Font](https://formulae.brew.sh/cask/font-droid-sans-mono-nerd-font) |
-| [Go Mono Nerd Font](https://formulae.brew.sh/cask/font-go-mono-nerd-font)                 |
-| [Blex Mono Nerd Font](https://formulae.brew.sh/cask/font-blex-mono-nerd-font)             |
-| [Sauce Code Pro Nerd Font](https://formulae.brew.sh/cask/font-sauce-code-pro-nerd-font)   |
-| [Source Code Pro](https://formulae.brew.sh/cask/font-source-code-pro)                     |
-| [Ubuntu Nerd Font](https://formulae.brew.sh/cask/font-ubuntu-nerd-font)                   |
-| [FiraCode Nerd Font](https://formulae.brew.sh/cask/font-fira-code-nerd-font)              |
-| [0xProto Nerd Font](https://formulae.brew.sh/cask/font-0xproto-nerd-font)                 |
+| [Droid Sans Mono Nerd Font](https://formulae.brew.sh/cask/font-droid-sans-mono-nerd-font)     |
+| [Go Mono Nerd Font](https://formulae.brew.sh/cask/font-go-mono-nerd-font)                     |
+| [Blex Mono Nerd Font](https://formulae.brew.sh/cask/font-blex-mono-nerd-font)                 |
+| [Sauce Code Pro Nerd Font](https://formulae.brew.sh/cask/font-sauce-code-pro-nerd-font)       |
+| [Source Code Pro](https://formulae.brew.sh/cask/font-source-code-pro)                         |
+| [Ubuntu Nerd Font](https://formulae.brew.sh/cask/font-ubuntu-nerd-font)                       |
+| [FiraCode Nerd Font](https://formulae.brew.sh/cask/font-fira-code-nerd-font)                  |
+| [0xProto Nerd Font](https://formulae.brew.sh/cask/font-0xproto-nerd-font)                     |

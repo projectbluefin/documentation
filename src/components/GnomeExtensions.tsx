@@ -43,7 +43,8 @@ const GnomeExtensions: React.FC<GnomeExtensionsProps> = ({ extensionId }) => {
 
   const thumbnailUrl = extension.screenshot || extension.remoteScreenshot;
   // Truncate description to first sentence or 150 chars
-  const shortDescription = extension.description.split("\n")[0].slice(0, 150) + 
+  const shortDescription =
+    extension.description.split("\n")[0].slice(0, 150) +
     (extension.description.length > 150 ? "..." : "");
 
   return (
