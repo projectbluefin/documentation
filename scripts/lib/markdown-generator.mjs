@@ -797,7 +797,7 @@ export function generateBuildHealthSection(buildMetrics, startDate, endDate) {
         momDisplay = `![${img.momChange}%](https://img.shields.io/badge/--${absChange}%25-critical?style=flat-square)`;
       }
 
-      return `| ${img.name} | ${img.successRate}% | ${img.totalBuilds} | ${momDisplay} |`;
+      return `| \`${img.name}\` | ${img.successRate}% | ${img.totalBuilds} | ${momDisplay} |`;
     })
     .join("\n");
 
@@ -806,13 +806,13 @@ export function generateBuildHealthSection(buildMetrics, startDate, endDate) {
   // Generate highlights section
   const perfectClub =
     stats.perfectImages.length > 0
-      ? stats.perfectImages.join(", ")
+      ? stats.perfectImages.map((name) => `\`${name}\``).join(", ")
       : "_None this month_";
 
   const highlights = `### This Month's Highlights
 
 - 📊 **Total Builds:** ${stats.totalBuilds} builds across all images
-- 🏆 **Most Active:** ${stats.mostActive} (${images.find((img) => img.name === stats.mostActive)?.totalBuilds || 0} builds)
+- 🏆 **Most Active:** \`${stats.mostActive}\` (${images.find((img) => img.name === stats.mostActive)?.totalBuilds || 0} builds)
 - 💯 **100% Club:** ${perfectClub}
 - ⏱️ **Avg Build Time:** ${avgMinutes} minutes across all variants`;
 

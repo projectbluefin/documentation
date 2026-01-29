@@ -17,29 +17,37 @@ import { request } from "@octokit/request";
 const TRACKED_WORKFLOWS = [
   // ublue-os/bluefin workflows
   {
-    name: "Bluefin Stable",
+    name: "bluefin:stable",
     repo: "ublue-os/bluefin",
     workflowId: 125772764,
   },
-  { name: "Bluefin GTS", repo: "ublue-os/bluefin", workflowId: 125772761 },
-  { name: "Bluefin Latest", repo: "ublue-os/bluefin", workflowId: 146755607 },
+  { name: "bluefin:gts", repo: "ublue-os/bluefin", workflowId: 125772761 },
+  { name: "bluefin:latest", repo: "ublue-os/bluefin", workflowId: 146755607 },
 
   // ublue-os/bluefin-lts workflows
-  { name: "Bluefin LTS", repo: "ublue-os/bluefin-lts", workflowId: 141565346 },
+  { name: "bluefin:lts", repo: "ublue-os/bluefin-lts", workflowId: 141565346 },
   {
-    name: "Bluefin LTS HWE",
+    name: "bluefin:lts-hwe",
     repo: "ublue-os/bluefin-lts",
     workflowId: 177905245,
   },
-  { name: "Bluefin DX", repo: "ublue-os/bluefin-lts", workflowId: 141565344 },
-  { name: "Bluefin GDX", repo: "ublue-os/bluefin-lts", workflowId: 141733516 },
   {
-    name: "Bluefin LTS HWE DX",
+    name: "bluefin-dx:lts",
+    repo: "ublue-os/bluefin-lts",
+    workflowId: 141565344,
+  },
+  {
+    name: "bluefin-gdx:lts",
+    repo: "ublue-os/bluefin-lts",
+    workflowId: 141733516,
+  },
+  {
+    name: "bluefin-dx:lts-hwe",
     repo: "ublue-os/bluefin-lts",
     workflowId: 141567601,
   },
   {
-    name: "Bluefin DX LTS HWE",
+    name: "bluefin-dx:lts-hwe",
     repo: "ublue-os/bluefin-lts",
     workflowId: 141569417,
   },
