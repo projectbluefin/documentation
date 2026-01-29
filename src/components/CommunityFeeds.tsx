@@ -14,11 +14,12 @@ const CommunityFeeds: React.FC = () => {
         <div className={styles.header}>
           <h1>Changelogs and Feeds</h1>
           <p>
-            Stay up to date with the latest Bluefin releases. Looking for project activity and
-            development progress? Check out our{" "}
+            Stay up to date with the latest Bluefin releases. Looking for
+            project activity and development progress? Check out our{" "}
             <a href="/reports">Monthly Reports</a> for summaries of completed
             work from{" "}
-            <a href="https://todo.projectbluefin.io">todo.projectbluefin.io</a>. Stay frosty.
+            <a href="https://todo.projectbluefin.io">todo.projectbluefin.io</a>.
+            Stay frosty.
           </p>
         </div>
 
@@ -88,7 +89,7 @@ const CommunityFeeds: React.FC = () => {
             <FeedItems
               feedId="bluefinAnnouncements"
               title="Announcements"
-              maxItems={3}
+              maxItems={5}
               showDescription={false}
             />
           </div>

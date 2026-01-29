@@ -201,12 +201,22 @@ const FeedItems: React.FC<FeedItemsProps> = ({
                   itemLink = `https://github.com/ublue-os/bluefin/releases/tag/${tag}`;
                 } else if (feedId === "bluefinLtsReleases") {
                   itemLink = `https://github.com/ublue-os/bluefin-lts/releases/tag/${tag}`;
-                } else if (
-                  feedId === "bluefinDiscussions" ||
-                  feedId === "bluefinAnnouncements"
-                ) {
-                  // For discussions, the ID format might be different, but we'll try
-                  itemLink = `https://github.com/ublue-os/bluefin/discussions/${tag}`;
+                }
+              } else {
+                // Try to match GitHub Discussion IDs
+                // Format: "tag:github.com,2008:Discussion/12345"
+                const discussionMatch = item.id.match(
+                  /^tag:github\.com,\d+:Discussion\/(\d+)$/,
+                );
+
+                if (discussionMatch) {
+                  const [, discussionId] = discussionMatch;
+                  if (
+                    feedId === "bluefinDiscussions" ||
+                    feedId === "bluefinAnnouncements"
+                  ) {
+                    itemLink = `https://github.com/ublue-os/bluefin/discussions/${discussionId}`;
+                  }
                 }
               }
             }
