@@ -841,11 +841,11 @@ ${highlights}`;
  * @returns {string} Markdown section
  */
 function generateContributorsSection(contributors, newContributors) {
-  let section = "";
+  let section = "## Contributors\n\n";
 
   // Section 1: New Contributors (highlighted, shown first)
   if (newContributors.length > 0) {
-    section += `## New Lights\n\n`;
+    section += `### New Lights\n\n`;
     section += `We welcome our newest Guardians to the project.\n\n`;
     section += `> "I do not know what the future holds. But I know this: with you at our side, there is nothing we cannot face."\n`;
     section += `> \n`;
@@ -872,7 +872,7 @@ function generateContributorsSection(contributors, newContributors) {
   );
 
   if (continuingContributors.length > 0) {
-    section += `## Contributors\n\n`;
+    section += `### Wayfinders\n\n`;
     section += `> "Define yourself by your actions."\n`;
     section += `> \n`;
     section += `> —Lord Saladin\n\n`;
