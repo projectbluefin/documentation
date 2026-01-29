@@ -113,15 +113,13 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
   // Calculate total items
   const totalItems = plannedItems.length + opportunisticItems.length;
 
-  // Generate summary section
+  // Generate summary section as compact table
   const summary = `# Summary
 
-- **Month:** ${monthYear}
-- **Total items:** ${totalItems}
-  - **Planned work:** ${plannedItems.length}
-  - **Opportunistic work:** ${opportunisticItems.length}
-- **Contributors:** ${contributors.length}
-- **New contributors:** ${newContributors.length}
+| Metric | Value |
+|--------|-------|
+| **Total Items** | ${totalItems} (${plannedItems.length} planned, ${opportunisticItems.length} opportunistic) |
+| **Contributors** | ${contributors.length} total, ${newContributors.length} new |
 `;
 
   // Separate area categories from kind categories
