@@ -46,8 +46,15 @@ export function isBot(username) {
  * @returns {Promise<Set<string>>} Set of contributor usernames who contributed before this date
  */
 export async function fetchContributorsBeforeDate(beforeDate) {
+  // Subtract 1ms to avoid overlap: beforeDate is the START of the current report period,
+  // so we need to exclude it from historical data (use < instead of <=)
+  const historicalEnd = new Date(beforeDate.getTime() - 1);
+
   console.log(
     `[INFO] Fetching historical contributors before ${beforeDate.toISOString()}...`,
+  );
+  console.log(
+    `[INFO] Historical query range: 2024-01-01 to ${historicalEnd.toISOString()}`,
   );
 
   const allContributors = new Set();
@@ -57,13 +64,13 @@ export async function fetchContributorsBeforeDate(beforeDate) {
     const [owner, name] = repo.split("/");
 
     try {
-      // Fetch PRs from project start (2024-01-01) to report start date
+      // Fetch PRs from project start (2024-01-01) to day before report start
       const projectStart = new Date(Date.UTC(2024, 0, 1));
       const items = await fetchClosedItemsFromRepo(
         owner,
         name,
         projectStart,
-        beforeDate,
+        historicalEnd,
       );
 
       // Filter to merged PRs only
