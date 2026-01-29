@@ -651,8 +651,92 @@ Build and deploy via GitHub Pages
 - **Project Areas:** Work grouped by area with status badges
 - **Work Types:** Items categorized by enhancement/bug/docs/etc.
 - **Bot Activity:** Aggregated by repository and bot username
+- **Build Health:** CI/CD success rates and statistics (see Build Health Metrics below)
 - **Contributors:** List with links to GitHub profiles
 - **Footer:** Cross-links to changelogs and blog
+
+### Build Health Metrics
+
+Monthly reports include a "Build Health" section showing CI/CD success rates, build statistics, and month-over-month trends for all Bluefin image build workflows.
+
+**Tracked Workflows:**
+
+| Workflow ID | Repository           | Image Name         |
+| ----------- | -------------------- | ------------------ |
+| 125772764   | ublue-os/bluefin     | Bluefin Stable     |
+| 125772761   | ublue-os/bluefin     | Bluefin GTS        |
+| 125772763   | ublue-os/bluefin     | Bluefin Beta       |
+| 146755607   | ublue-os/bluefin     | Bluefin Latest     |
+| 141565346   | ublue-os/bluefin-lts | Bluefin LTS        |
+| 177905245   | ublue-os/bluefin-lts | Bluefin LTS HWE    |
+| 141565344   | ublue-os/bluefin-lts | Bluefin DX         |
+| 141733516   | ublue-os/bluefin-lts | Bluefin GDX        |
+| 141567601   | ublue-os/bluefin-lts | Bluefin LTS HWE DX |
+| 141569417   | ublue-os/bluefin-lts | Bluefin DX LTS HWE |
+
+**Metrics Calculated:**
+
+- **Success Rate:** Percentage of successful workflow runs (conclusion = "success")
+- **Total Builds:** Count of workflow runs within the month
+- **MoM Change:** Month-over-month percentage change in success rate
+- **Average Duration:** Mean build time in minutes across all runs
+
+**Build Counting Rules:**
+
+- Counts are at **workflow run level**, not individual job level
+- Each workflow run = 1 build event (even if produces multiple image variants)
+- Only tracks actual build workflows (excludes auxiliary workflows like "Generate Release")
+- First report shows "_Baseline_" instead of MoM change (no previous month data)
+
+**Statistics:**
+
+- **Total Builds:** Sum across all workflows
+- **Most Active:** Workflow with highest build count
+- **100% Club:** Workflows with perfect success rate (no failures)
+- **Avg Build Time:** Average duration across all workflows in minutes
+
+**Data Source:**
+
+- GitHub Actions API: `GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs`
+- Date filtering: `created={start_date}..{end_date}`
+- Retry logic: 3 attempts with exponential backoff (2s, 4s, 8s)
+- Graceful degradation: Section skipped if API unavailable
+
+**Error Handling:**
+
+- API failures logged as warnings (report generation continues)
+- Rate limit detection with reset time logging
+- Network timeouts retry automatically
+- Missing data shows "N/A" or skips section entirely
+
+**Output Format:**
+
+```markdown
+## Build Health
+
+### Success Rates by Image
+
+| Image          | Success Rate | Builds | MoM Change                            |
+| -------------- | ------------ | ------ | ------------------------------------- |
+| Bluefin Stable | 98.5%        | 67     | ![+2.3%](https://...badge...success)  |
+| Bluefin GTS    | 100%         | 45     | ![+1.2%](https://...badge...success)  |
+| Bluefin LTS    | 97.1%        | 52     | ![-1.5%](https://...badge...critical) |
+| First Report   | 98.5%        | 67     | _Baseline_                            |
+
+### This Month's Highlights
+
+- 📊 **Total Builds:** 423 builds across all images
+- 🏆 **Most Active:** Bluefin Stable (67 builds)
+- 💯 **100% Club:** Bluefin GTS, Bluefin LTS (perfect success rate)
+- ⏱️ **Avg Build Time:** 32 minutes across all variants
+```
+
+**Troubleshooting:**
+
+- **"Failed to fetch workflow runs":** Check GitHub API status and token permissions
+- **"Build metrics unavailable":** API timeout or rate limit - section will be skipped
+- **Incorrect workflow IDs:** Update `TRACKED_WORKFLOWS` in `scripts/lib/build-metrics.mjs`
+- **Wrong build counts:** Verify date range calculation and workflow run filtering
 
 ### File Locations and Purposes
 
@@ -664,6 +748,7 @@ Build and deploy via GitHub Pages
 | `scripts/lib/label-mapping.js`          | Static label color and category mappings            |
 | `scripts/lib/contributor-tracker.js`    | Historical contributor tracking with bot filtering  |
 | `scripts/lib/markdown-generator.js`     | Report markdown formatting and templates            |
+| `scripts/lib/build-metrics.mjs`         | Build health metrics fetcher (GitHub Actions API)   |
 | `reports/`                              | Generated report blog posts (YYYY-MM-DD-report.mdx) |
 | `static/data/contributors-history.json` | Auto-generated contributor history (gitignored)     |
 | `docusaurus.config.ts`                  | Multi-blog configuration (`id: 'reports'`)          |
