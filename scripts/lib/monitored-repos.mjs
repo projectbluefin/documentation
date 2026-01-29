@@ -13,7 +13,7 @@ export const MONITORED_REPOS = [
   // Core Bluefin repositories
   "ublue-os/bluefin",
   "ublue-os/bluefin-lts",
-  "ublue-os/aurora",
+  // Aurora excluded - KDE variant tracked separately (not Bluefin-focused)
 
   // Homebrew taps
   "ublue-os/homebrew-tap",
