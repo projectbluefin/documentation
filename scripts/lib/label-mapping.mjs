@@ -28,6 +28,7 @@ export const LABEL_COLORS = {
   "area/hardware": "F59E0B", // Good amber
   "area/nvidia": "76B900", // Good lime green
   "area/testing": "F59E0B", // Good amber (was too light)
+  aarch64: "F59E0B", // Good amber - ARM64 architecture
 
   // Kind labels - adjusted for light/dark mode readability
   "kind/bug": "E8590C", // Good orange-red
@@ -57,7 +58,7 @@ export const LABEL_CATEGORIES = {
   Development: ["area/dx"],
   Ecosystem: ["area/brew", "area/bluespeed", "area/flatpak"],
   "System Services & Policies": ["area/services", "area/policy"],
-  Hardware: ["area/hardware", "area/nvidia"],
+  Hardware: ["area/hardware", "area/nvidia", "aarch64"],
   Infrastructure: [
     "area/iso",
     "area/upstream",
@@ -67,7 +68,7 @@ export const LABEL_CATEGORIES = {
     "area/testing",
   ],
   Documentation: ["kind/documentation"],
-  "Tech Debt": ["kind/tech-debt"],
+  "Tech Debt": ["kind/tech-debt", "kind/parity"],
   Automation: ["kind/automation", "kind/github-action", "kind/renovate"],
   Localization: ["kind/translation"],
 };
