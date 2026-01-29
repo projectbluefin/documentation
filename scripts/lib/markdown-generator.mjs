@@ -781,8 +781,8 @@ export function generateBuildHealthSection(buildMetrics, startDate, endDate) {
   const avgMinutes = Math.round(stats.avgDuration / 60);
 
   // Generate success rates table
-  const tableHeader = `| Image | Success Rate | Builds | MoM Change |
-|------|--------------|--------|------------|`;
+  const tableHeader = `| Image | Success Rate | Builds | Monthly Change |
+|------|--------------|--------|----------------|`;
 
   const tableRows = images
     .map((img) => {
@@ -820,7 +820,9 @@ export function generateBuildHealthSection(buildMetrics, startDate, endDate) {
 
 ## Build Health
 
-### Success Rates by Image
+### Raptor Race
+
+Keep Bluefin healthy with green builds. Wranglers apply within!
 
 ${successRatesTable}
 

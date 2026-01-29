@@ -22,7 +22,6 @@ const TRACKED_WORKFLOWS = [
     workflowId: 125772764,
   },
   { name: "Bluefin GTS", repo: "ublue-os/bluefin", workflowId: 125772761 },
-  { name: "Bluefin Beta", repo: "ublue-os/bluefin", workflowId: 125772763 },
   { name: "Bluefin Latest", repo: "ublue-os/bluefin", workflowId: 146755607 },
 
   // ublue-os/bluefin-lts workflows
