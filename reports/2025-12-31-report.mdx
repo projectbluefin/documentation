@@ -5,23 +5,25 @@ slug: /2025/12
 tags: [monthly-report, project-activity]
 ---
 
-import GitHubProfileCard from "@site/src/components/GitHubProfileCard";
+import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
+
 
 # Summary
 
-|                  |                                         |
-| ---------------- | --------------------------------------- |
-| **Total Items**  | 115 (49 planned, 66 opportunistic)      |
-| **Automation**   | 42.5% (85 bot PRs out of 200 total PRs) |
-| **Contributors** | 20 total, 16 new                        |
+| | |
+|--------|-------|
+| **Total Items** | 115 (49 planned, 66 opportunistic) |
+| **Automation** | 42.5% (85 bot PRs out of 200 total PRs) |
+| **Contributors** | 20 total, 16 new |
+
 
 ## Desktop
 
 ![area/gnome](https://img.shields.io/badge/area%2Fgnome-28A745?style=flat-square) ![area/aurora](https://img.shields.io/badge/area%2Faurora-1D76DB?style=flat-square) ![area/bling](https://img.shields.io/badge/area%2Fbling-F9C74F?style=flat-square)
 
-_GNOME desktop environment, Aurora variant (KDE), and terminal enhancements_
+*GNOME desktop environment, Aurora variant (KDE), and terminal enhancements*
 
-### Planned Work
+#### Planned Work
 
 - feat: disable atuin shell integration by default by [@​castrojo](https://github.com/castrojo) in [#90](https://github.com/projectbluefin/common/pull/90)
 - fix(motd): use full terminal width by [@​renner0e](https://github.com/renner0e) in [#87](https://github.com/projectbluefin/common/pull/87)
@@ -33,7 +35,7 @@ _GNOME desktop environment, Aurora variant (KDE), and terminal enhancements_
 - feat: add full-desktop Brewfile with GNOME Circle apps by [@​castrojo](https://github.com/castrojo) in [#32](https://github.com/projectbluefin/common/pull/32)
 - feat: add bluefin-faces and fastfetch by [@​renner0e](https://github.com/renner0e) in [#31](https://github.com/projectbluefin/common/pull/31)
 
-### Opportunistic Work
+#### Opportunistic Work
 
 - refactor: migrate GNOME extensions from COPR to git submodules by [@​ahmedadan](https://github.com/ahmedadan) in [#938](https://github.com/ublue-os/bluefin-lts/pull/938)
 
@@ -43,14 +45,14 @@ _GNOME desktop environment, Aurora variant (KDE), and terminal enhancements_
 
 ![area/dx](https://img.shields.io/badge/area%2Fdx-17A2B8?style=flat-square)
 
-_Development tools and IDE integrations_
+*Development tools and IDE integrations*
 
-### Planned Work
+#### Planned Work
 
 - feat: add nvim, micro, and helix to the ide list by [@​castrojo](https://github.com/castrojo) in [#88](https://github.com/projectbluefin/common/pull/88)
 - feat(dx): add Swift development environment by [@​joshyorko](https://github.com/joshyorko) in [#72](https://github.com/projectbluefin/common/pull/72)
 
-### Opportunistic Work
+#### Opportunistic Work
 
 > Status: _ChillOps_
 
@@ -62,43 +64,43 @@ _Development tools and IDE integrations_
 
 #### Quick Summary
 
-| Tap              | Updates |
-| ---------------- | ------- |
-| production-tap   | 33      |
-| experimental-tap | 43      |
+| Tap | Updates |
+|-----|---------|
+| production-tap | 33 |
+| experimental-tap | 43 |
 
 <details>
 <summary>View all production-tap updates (33)</summary>
 
-| Package                  | Versions                              | PR                                                        |
-| ------------------------ | ------------------------------------- | --------------------------------------------------------- |
-| lm-studio-linux          | 0.3.36 → 0.3.33 (4 updates)           | [#181](https://github.com/ublue-os/homebrew-tap/pull/181) |
-| jetbrains-toolbox-linux  | 3.2.0.65851 → 3.1.1.64142 (3 updates) | [#180](https://github.com/ublue-os/homebrew-tap/pull/180) |
-| vscodium-linux           | 1.107.18627 → 1.107.18605 (2 updates) | [#183](https://github.com/ublue-os/homebrew-tap/pull/183) |
-| visual-studio-code-linux | 1.107.1 → 1.107.0 (2 updates)         | [#179](https://github.com/ublue-os/homebrew-tap/pull/179) |
-| 1password-gui-linux      | 8.11.22                               | [#155](https://github.com/ublue-os/homebrew-tap/pull/155) |
+| Package | Versions | PR |
+|---------|----------|-----|
+| lm-studio-linux | 0.3.36 → 0.3.33 (4 updates) | [#181](https://github.com/ublue-os/homebrew-tap/pull/181) |
+| jetbrains-toolbox-linux | 3.2.0.65851 → 3.1.1.64142 (3 updates) | [#180](https://github.com/ublue-os/homebrew-tap/pull/180) |
+| vscodium-linux | 1.107.18627 → 1.107.18605 (2 updates) | [#183](https://github.com/ublue-os/homebrew-tap/pull/183) |
+| visual-studio-code-linux | 1.107.1 → 1.107.0 (2 updates) | [#179](https://github.com/ublue-os/homebrew-tap/pull/179) |
+| 1password-gui-linux | 8.11.22 | [#155](https://github.com/ublue-os/homebrew-tap/pull/155) |
 
 </details>
 
 <details>
 <summary>View all experimental-tap updates (43)</summary>
 
-| Package             | Versions                          | PR                                                                     |
-| ------------------- | --------------------------------- | ---------------------------------------------------------------------- |
-| cursor-linux        | 2.3.15 → 2.2.6 (9 updates)        | [#105](https://github.com/ublue-os/homebrew-experimental-tap/pull/105) |
-| antigravity-linux   | 1.13.3 → 1.11.17 (3 updates)      | [#83](https://github.com/ublue-os/homebrew-experimental-tap/pull/83)   |
-| datagrip-linux      | 2025.3.2 → 2025.3.1 (2 updates)   | [#92](https://github.com/ublue-os/homebrew-experimental-tap/pull/92)   |
-| dataspell-linux     | 2025.3.1 → 2025.3 (2 updates)     | [#91](https://github.com/ublue-os/homebrew-experimental-tap/pull/91)   |
-| bluefin-cli         | 0.0.3 → 0.0.2 (2 updates)         | [#89](https://github.com/ublue-os/homebrew-experimental-tap/pull/89)   |
-| rustrover-linux     | 2025.3.1 → 2025.3 (2 updates)     | [#86](https://github.com/ublue-os/homebrew-experimental-tap/pull/86)   |
-| phpstorm-linux      | 2025.3.1 → 2025.3 (2 updates)     | [#85](https://github.com/ublue-os/homebrew-experimental-tap/pull/85)   |
-| webstorm-linux      | 2025.3.1 → 2025.3 (2 updates)     | [#87](https://github.com/ublue-os/homebrew-experimental-tap/pull/87)   |
-| intellij-idea-linux | 2025.3.1 → 2025.3 (2 updates)     | [#78](https://github.com/ublue-os/homebrew-experimental-tap/pull/78)   |
-| pycharm-linux       | 2025.3.1 → 2025.3 (2 updates)     | [#79](https://github.com/ublue-os/homebrew-experimental-tap/pull/79)   |
-| rider-linux         | 2025.3.1 → 2025.3.0.4 (2 updates) | [#80](https://github.com/ublue-os/homebrew-experimental-tap/pull/80)   |
-| rubymine-linux      | 2025.3.1 → 2025.3 (2 updates)     | [#81](https://github.com/ublue-os/homebrew-experimental-tap/pull/81)   |
-| clion-linux         | 2025.3.1                          | [#75](https://github.com/ublue-os/homebrew-experimental-tap/pull/75)   |
-| goland-linux        | 2025.3                            | [#55](https://github.com/ublue-os/homebrew-experimental-tap/pull/55)   |
+| Package | Versions | PR |
+|---------|----------|-----|
+| cursor-linux | 2.3.15 → 2.2.6 (9 updates) | [#105](https://github.com/ublue-os/homebrew-experimental-tap/pull/105) |
+| antigravity-linux | 1.13.3 → 1.11.17 (3 updates) | [#83](https://github.com/ublue-os/homebrew-experimental-tap/pull/83) |
+| datagrip-linux | 2025.3.2 → 2025.3.1 (2 updates) | [#92](https://github.com/ublue-os/homebrew-experimental-tap/pull/92) |
+| dataspell-linux | 2025.3.1 → 2025.3 (2 updates) | [#91](https://github.com/ublue-os/homebrew-experimental-tap/pull/91) |
+| bluefin-cli | 0.0.3 → 0.0.2 (2 updates) | [#89](https://github.com/ublue-os/homebrew-experimental-tap/pull/89) |
+| rustrover-linux | 2025.3.1 → 2025.3 (2 updates) | [#86](https://github.com/ublue-os/homebrew-experimental-tap/pull/86) |
+| phpstorm-linux | 2025.3.1 → 2025.3 (2 updates) | [#85](https://github.com/ublue-os/homebrew-experimental-tap/pull/85) |
+| webstorm-linux | 2025.3.1 → 2025.3 (2 updates) | [#87](https://github.com/ublue-os/homebrew-experimental-tap/pull/87) |
+| intellij-idea-linux | 2025.3.1 → 2025.3 (2 updates) | [#78](https://github.com/ublue-os/homebrew-experimental-tap/pull/78) |
+| pycharm-linux | 2025.3.1 → 2025.3 (2 updates) | [#79](https://github.com/ublue-os/homebrew-experimental-tap/pull/79) |
+| rider-linux | 2025.3.1 → 2025.3.0.4 (2 updates) | [#80](https://github.com/ublue-os/homebrew-experimental-tap/pull/80) |
+| rubymine-linux | 2025.3.1 → 2025.3 (2 updates) | [#81](https://github.com/ublue-os/homebrew-experimental-tap/pull/81) |
+| clion-linux | 2025.3.1 | [#75](https://github.com/ublue-os/homebrew-experimental-tap/pull/75) |
+| goland-linux | 2025.3 | [#55](https://github.com/ublue-os/homebrew-experimental-tap/pull/55) |
 
 </details>
 
@@ -108,9 +110,9 @@ _Development tools and IDE integrations_
 
 ![area/brew](https://img.shields.io/badge/area%2Fbrew-E8590C?style=flat-square) ![area/bluespeed](https://img.shields.io/badge/area%2Fbluespeed-1D76DB?style=flat-square) ![area/flatpak](https://img.shields.io/badge/area%2Fflatpak-9333EA?style=flat-square)
 
-_Homebrew packages, AI/ML tools (Bluespeed), and Flatpak applications_
+*Homebrew packages, AI/ML tools (Bluespeed), and Flatpak applications*
 
-### Planned Work
+#### Planned Work
 
 - chore(tools): move swift Brewfile to shared by [@​ahmedadan](https://github.com/ahmedadan) in [#76](https://github.com/projectbluefin/common/pull/76)
 - Brewfile fixup by [@​hanthor](https://github.com/hanthor) in [#64](https://github.com/projectbluefin/common/pull/64)
@@ -121,7 +123,7 @@ _Homebrew packages, AI/ML tools (Bluespeed), and Flatpak applications_
 - feat: add LM Studio to AI tools Brewfile by [@​castrojo](https://github.com/castrojo) in [#24](https://github.com/projectbluefin/common/pull/24)
 - feat: add IDE Brewfile with VSCode, VSCodium, and JetBrains by [@​castrojo](https://github.com/castrojo) in [#23](https://github.com/projectbluefin/common/pull/23)
 
-### Opportunistic Work
+#### Opportunistic Work
 
 > Status: _ChillOps_
 
@@ -131,9 +133,9 @@ _Homebrew packages, AI/ML tools (Bluespeed), and Flatpak applications_
 
 ![area/services](https://img.shields.io/badge/area%2Fservices-4A90E2?style=flat-square) ![area/policy](https://img.shields.io/badge/area%2Fpolicy-5B8BC1?style=flat-square)
 
-_Systemd services and system-level policies_
+*Systemd services and system-level policies*
 
-### Planned Work
+#### Planned Work
 
 - fix: re-include zsa udev rules by [@​tulilirockz](https://github.com/tulilirockz) in [#74](https://github.com/projectbluefin/common/pull/74)
 - fix: togge-tpm2 recipe when NO pin is used by [@​inffy](https://github.com/inffy) in [#61](https://github.com/projectbluefin/common/pull/61)
@@ -143,7 +145,7 @@ _Systemd services and system-level policies_
 - feat: add contents of `ublue-os-singing` to common by [@​tulilirockz](https://github.com/tulilirockz) in [#41](https://github.com/projectbluefin/common/pull/41)
 - feat: rewrite luks autounlock script with new instructions from gnomeOS by [@​tulilirockz](https://github.com/tulilirockz) in [#40](https://github.com/projectbluefin/common/pull/40)
 
-### Opportunistic Work
+#### Opportunistic Work
 
 > Status: _ChillOps_
 
@@ -153,7 +155,7 @@ _Systemd services and system-level policies_
 
 ![area/hardware](https://img.shields.io/badge/area%2Fhardware-F59E0B?style=flat-square) ![area/nvidia](https://img.shields.io/badge/area%2Fnvidia-76B900?style=flat-square) ![aarch64](https://img.shields.io/badge/aarch64-F59E0B?style=flat-square)
 
-_Hardware support, drivers, NVIDIA GPU, and ARM64 architecture_
+*Hardware support, drivers, NVIDIA GPU, and ARM64 architecture*
 
 > Status: _ChillOps_
 
@@ -163,14 +165,14 @@ _Hardware support, drivers, NVIDIA GPU, and ARM64 architecture_
 
 ![area/iso](https://img.shields.io/badge/area%2Fiso-A0522D?style=flat-square) ![area/upstream](https://img.shields.io/badge/area%2Fupstream-5CB85C?style=flat-square) ![area/buildstream](https://img.shields.io/badge/area%2Fbuildstream-0066FF?style=flat-square) ![area/finpilot](https://img.shields.io/badge/area%2Ffinpilot-7C3AED?style=flat-square) ![area/just](https://img.shields.io/badge/area%2Fjust-E99695?style=flat-square) ![area/testing](https://img.shields.io/badge/area%2Ftesting-F59E0B?style=flat-square)
 
-_ISO images, upstream integration, build systems, and testing frameworks_
+*ISO images, upstream integration, build systems, and testing frameworks*
 
-### Planned Work
+#### Planned Work
 
 - feat: add loading message to ujust bbrew command by [@​castrojo](https://github.com/castrojo) in [#97](https://github.com/projectbluefin/common/pull/97)
 - feat(ci): add justfile validation by [@​renner0e](https://github.com/renner0e) in [#94](https://github.com/projectbluefin/common/pull/94)
 - chore(ujust, bluefin): do not run rollback helper on centos by [@​tulilirockz](https://github.com/tulilirockz) in [#92](https://github.com/projectbluefin/common/pull/92)
-- feat(just): add a generic shared just recipe by [@​inffy](https://github.com/inffy) in [#84](https://github.com/projectbluefin/common/pull/84)
+- feat(just):  add a generic shared just recipe by [@​inffy](https://github.com/inffy) in [#84](https://github.com/projectbluefin/common/pull/84)
 - feat: add ujust powerwash command for factory reset by [@​castrojo](https://github.com/castrojo) in [#75](https://github.com/projectbluefin/common/pull/75)
 - fix: also install cli.Brewfile for bluefin-cli by [@​renner0e](https://github.com/renner0e) in [#69](https://github.com/projectbluefin/common/pull/69)
 - feat(just): add clean-system back by [@​renner0e](https://github.com/renner0e) in [#66](https://github.com/projectbluefin/common/pull/66)
@@ -181,7 +183,7 @@ _ISO images, upstream integration, build systems, and testing frameworks_
 - fix: remove resolve ujust recipe by [@​castrojo](https://github.com/castrojo) in [#47](https://github.com/projectbluefin/common/pull/47)
 - chore(just): optionally include custom just recipes by [@​tunix](https://github.com/tunix) in [#22](https://github.com/projectbluefin/common/pull/22)
 
-### Opportunistic Work
+#### Opportunistic Work
 
 > Status: _ChillOps_
 
@@ -191,7 +193,7 @@ _ISO images, upstream integration, build systems, and testing frameworks_
 
 ![kind/documentation](https://img.shields.io/badge/kind%2Fdocumentation-0066FF?style=flat-square)
 
-_Documentation improvements and additions_
+*Documentation improvements and additions*
 
 > Status: _ChillOps_
 
@@ -201,13 +203,13 @@ _Documentation improvements and additions_
 
 ![kind/tech-debt](https://img.shields.io/badge/kind%2Ftech-debt-D4A259?style=flat-square) ![kind/parity](https://img.shields.io/badge/kind%2Fparity-9333EA?style=flat-square)
 
-_Maintenance work and feature parity between variants_
+*Maintenance work and feature parity between variants*
 
-### Planned Work
+#### Planned Work
 
 - chore: move ublue-bling to `/usr/bin` instead of `/usr/libexec` by [@​tulilirockz](https://github.com/tulilirockz) in [#48](https://github.com/projectbluefin/common/pull/48)
 
-### Opportunistic Work
+#### Opportunistic Work
 
 > Status: _ChillOps_
 
@@ -217,14 +219,14 @@ _Maintenance work and feature parity between variants_
 
 ![kind/automation](https://img.shields.io/badge/kind%2Fautomation-5B8BC1?style=flat-square) ![kind/github-action](https://img.shields.io/badge/kind%2Fgithub-action-2088FF?style=flat-square) ![kind/renovate](https://img.shields.io/badge/kind%2Frenovate-3B82F6?style=flat-square)
 
-_CI/CD pipelines, GitHub Actions, and automated dependency updates_
+*CI/CD pipelines, GitHub Actions, and automated dependency updates*
 
-### Planned Work
+#### Planned Work
 
 - feat: enable merge queue in build workflow by [@​castrojo](https://github.com/castrojo) in [#46](https://github.com/projectbluefin/common/pull/46)
 - Add regex manager for ublue-os artwork releases by [@​inffy](https://github.com/inffy) in [#26](https://github.com/projectbluefin/common/pull/26)
 
-### Opportunistic Work
+#### Opportunistic Work
 
 > Status: _ChillOps_
 
@@ -234,7 +236,7 @@ _CI/CD pipelines, GitHub Actions, and automated dependency updates_
 
 ![kind/translation](https://img.shields.io/badge/kind%2Ftranslation-8B5CF6?style=flat-square)
 
-_Translation and internationalization work_
+*Translation and internationalization work*
 
 > Status: _ChillOps_
 
@@ -321,11 +323,11 @@ _Translation and internationalization work_
 
 **Automation Percentage:** 42.5% (85 bot PRs out of 200 total PRs)
 
-| Repository    | Bot PRs | % of Total |
-| ------------- | ------- | ---------- |
-| documentation | 6       | 3.0%       |
-| dakota        | 2       | 1.0%       |
-| common        | 1       | 0.5%       |
+| Repository | Bot PRs | % of Total |
+|------------|---------|------------|
+| documentation | 6 | 3.0% |
+| dakota | 2 | 1.0% |
+| common | 1 | 0.5% |
 
 <details>
 <summary>View bot activity details</summary>
@@ -350,24 +352,24 @@ _Translation and internationalization work_
 
 Keep Bluefin healthy with green builds. Wranglers apply within!
 
-| Image                | Success Rate | Successes | Failures | Monthly Change                                                               |
-| -------------------- | ------------ | --------- | -------- | ---------------------------------------------------------------------------- |
-| `bluefin:stable`     | 81%          | 222       | 52       | ![+8.4%](https://img.shields.io/badge/%2B8.4%25-success?style=flat-square)   |
-| `bluefin:gts`        | 72.8%        | 126       | 47       | ![+7.1%](https://img.shields.io/badge/%2B7.1%25-success?style=flat-square)   |
-| `bluefin:latest`     | 83.5%        | 223       | 44       | ![+38.7%](https://img.shields.io/badge/%2B38.7%25-success?style=flat-square) |
-| `bluefin:lts`        | 78.5%        | 102       | 28       | ![-1.6%](https://img.shields.io/badge/--1.6%25-critical?style=flat-square)   |
-| `bluefin:lts-hwe`    | 80.8%        | 105       | 25       | ![+2.7%](https://img.shields.io/badge/%2B2.7%25-success?style=flat-square)   |
-| `bluefin-dx:lts`     | 78.5%        | 102       | 28       | ![-3%](https://img.shields.io/badge/--3%25-critical?style=flat-square)       |
-| `bluefin-gdx:lts`    | 50.8%        | 66        | 64       | ![-28.8%](https://img.shields.io/badge/--28.8%25-critical?style=flat-square) |
-| `bluefin-dx:lts-hwe` | 0%           | 0         | 0        | ![+0%](https://img.shields.io/badge/%2B0%25-success?style=flat-square)       |
+| Image | Success Rate | Successes | Failures | Monthly Change |
+|------|--------------|-----------|----------|----------------|
+| `bluefin:stable` | 81% | 222 | 52 | ![+8.4%](https://img.shields.io/badge/%2B8.4%25-success?style=flat-square) |
+| `bluefin:gts` | 72.8% | 126 | 47 | ![+7.1%](https://img.shields.io/badge/%2B7.1%25-success?style=flat-square) |
+| `bluefin:latest` | 83.5% | 223 | 44 | ![+38.7%](https://img.shields.io/badge/%2B38.7%25-success?style=flat-square) |
+| `bluefin:lts` | 78.5% | 102 | 28 | ![-1.6%](https://img.shields.io/badge/--1.6%25-critical?style=flat-square) |
+| `bluefin:lts-hwe` | 80.8% | 105 | 25 | ![+2.7%](https://img.shields.io/badge/%2B2.7%25-success?style=flat-square) |
+| `bluefin-dx:lts` | 78.5% | 102 | 28 | ![-3%](https://img.shields.io/badge/--3%25-critical?style=flat-square) |
+| `bluefin-gdx:lts` | 50.8% | 66 | 64 | ![-28.8%](https://img.shields.io/badge/--28.8%25-critical?style=flat-square) |
+| `bluefin-dx:lts-hwe` | 0% | 0 | 0 | ![+0%](https://img.shields.io/badge/%2B0%25-success?style=flat-square) |
 
 ### This Month's Highlights
 
-| Metric                | Value                          |
-| --------------------- | ------------------------------ |
-| 📊 **Total Builds**   | 1234 builds across all images  |
-| 🏆 **Most Active**    | `bluefin:stable` (274 builds)  |
-| 💯 **100% Club**      | _None. Vegeta is displeased._  |
+| Metric | Value |
+|--------|-------|
+| 📊 **Total Builds** | 1234 builds across all images |
+| 🏆 **Most Active** | `bluefin:stable` (274 builds) |
+| 💯 **100% Club** | _None. Vegeta is displeased._ |
 | ⏱️ **Avg Build Time** | 22 minutes across all variants |
 
 ## Contributors
@@ -377,7 +379,7 @@ Keep Bluefin healthy with green builds. Wranglers apply within!
 We welcome our newest Guardians to the project.
 
 > "I do not know what the future holds. But I know this: with you at our side, there is nothing we cannot face."
->
+> 
 > —Commander Zavala
 
 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem', marginBottom: '2rem' }}>
@@ -390,17 +392,9 @@ We welcome our newest Guardians to the project.
 
 <GitHubProfileCard username="sebjag" highlight={true} />
 
-<GitHubProfileCard
-  username="tulilirockz"
-  highlight={true}
-  sponsorUrl="https://github.com/sponsors/tulilirockz"
-/>
+<GitHubProfileCard username="tulilirockz" highlight={true} sponsorUrl="https://github.com/sponsors/tulilirockz" />
 
-<GitHubProfileCard
-  username="ahmedadan"
-  highlight={true}
-  sponsorUrl="https://github.com/sponsors/ahmedadan"
-/>
+<GitHubProfileCard username="ahmedadan" highlight={true} sponsorUrl="https://github.com/sponsors/ahmedadan" />
 
 <GitHubProfileCard username="joshyorko" highlight={true} />
 
@@ -427,25 +421,16 @@ We welcome our newest Guardians to the project.
 ### Wayfinders
 
 > "Define yourself by your actions."
->
+> 
 > —Lord Saladin
 
 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem', marginBottom: '2rem' }}>
 
-<GitHubProfileCard
-  username="castrojo"
-  sponsorUrl="https://github.com/sponsors/castrojo"
-/>
+<GitHubProfileCard username="castrojo" sponsorUrl="https://github.com/sponsors/castrojo" />
 
-<GitHubProfileCard
-  username="inffy"
-  sponsorUrl="https://github.com/sponsors/inffy"
-/>
+<GitHubProfileCard username="inffy" sponsorUrl="https://github.com/sponsors/inffy" />
 
-<GitHubProfileCard
-  username="hanthor"
-  sponsorUrl="https://github.com/sponsors/hanthor"
-/>
+<GitHubProfileCard username="hanthor" sponsorUrl="https://github.com/sponsors/hanthor" />
 
 <GitHubProfileCard username="sideeffffect" />
 
@@ -453,11 +438,11 @@ We welcome our newest Guardians to the project.
 
 ---
 
-_Want to see the latest OS releases? Check out the [Changelogs](/changelogs). For announcements and deep dives, read our [Blog](/blog)._
+*Want to see the latest OS releases? Check out the [Changelogs](/changelogs). For announcements and deep dives, read our [Blog](/blog).*
 
-_This report was automatically generated from [todo.projectbluefin.io](https://todo.projectbluefin.io)._
+*This report was automatically generated from [todo.projectbluefin.io](https://todo.projectbluefin.io).*
 
 ---
 
-_Generated on 2026-01-29_  
+*Generated on 2026-01-29*  
 [View Project Board](https://todo.projectbluefin.io) | [Report an Issue](https://github.com/projectbluefin/common/issues/new)
