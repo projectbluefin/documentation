@@ -51,6 +51,68 @@ Should I spawn [recommended-agent] or continue differently?
 - ❌ NEVER assume you know which agent the user wants
 - ❌ NEVER auto-spawn agents without checking first
 
+## Work Tracking with Beads
+
+**This repository uses [Beads](https://github.com/block/beads) for issue tracking.**
+
+### Quick Reference
+
+```bash
+# List open issues
+bd list --status=open
+
+# Show issue details
+bd show <issue-id>
+
+# Create new issue
+bd create --title "Task name" --description "Details" --type task --priority 1
+
+# Update status
+bd update <issue-id> --status in_progress
+
+# Close issue
+bd close <issue-id> --reason "Completed"
+
+# List ready tasks (no blockers)
+bd ready
+
+# Add dependency (issue-id depends on depends-on-id)
+bd dep <issue-id> <depends-on-id>
+```
+
+### Issue Types
+
+- `task` - General work item (default)
+- `bug` - Bug fix
+- `feature` - New feature
+- `epic` - Large multi-issue effort
+- `chore` - Maintenance work
+
+### Priority Levels
+
+- P0: Critical/urgent
+- P1: High priority (default for important work)
+- P2: Normal priority (default)
+- P3: Low priority (nice to have)
+
+### Labels
+
+Use labels to categorize work:
+- `ci-cd`, `validation`, `tooling`, `dependencies`, `security`
+- `reports`, `monthly-reports`, `community-engagement`
+- `documentation`, `automation`, `workflow`
+
+### Historical Planning Context
+
+The `.planning-archive/` directory contains historical project artifacts from v1.0 and v1.1 milestones (both shipped). This includes:
+
+- Milestone documentation and requirements
+- Phase work verification records
+- Research and technical notes
+- Decision history and rationale
+
+**See `.planning-archive/MIGRATION.md` for migration details from the old planning system to Beads.**
+
 ## Git Workflow - CRITICAL RULES
 
 **NEVER push directly to main/trunk unless EXPLICITLY instructed by the user.**
@@ -1568,3 +1630,29 @@ feat(components)!: redesign ProjectCard with stats API
 ```
 
 **Note:** Add `!` after the type/scope to indicate breaking changes, or use `BREAKING CHANGE:` in the footer.
+
+## Landing the Plane (Session Completion)
+
+**When ending a work session**, you MUST complete ALL steps below. Work is NOT complete until `git push` succeeds.
+
+**MANDATORY WORKFLOW:**
+
+1. **File issues for remaining work** - Create issues for anything that needs follow-up
+2. **Run quality gates** (if code changed) - Tests, linters, builds
+3. **Update issue status** - Close finished work, update in-progress items
+4. **PUSH TO REMOTE** - This is MANDATORY:
+   ```bash
+   git pull --rebase
+   bd sync
+   git push
+   git status  # MUST show "up to date with origin"
+   ```
+5. **Clean up** - Clear stashes, prune remote branches
+6. **Verify** - All changes committed AND pushed
+7. **Hand off** - Provide context for next session
+
+**CRITICAL RULES:**
+- Work is NOT complete until `git push` succeeds
+- NEVER stop before pushing - that leaves work stranded locally
+- NEVER say "ready to push when you are" - YOU must push
+- If push fails, resolve and retry until it succeeds
