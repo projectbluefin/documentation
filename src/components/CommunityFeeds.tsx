@@ -89,7 +89,7 @@ const CommunityFeeds: React.FC = () => {
             <FeedItems
               feedId="bluefinAnnouncements"
               title="Announcements"
-              maxItems={3}
+              maxItems={5}
               showDescription={false}
             />
           </div>
