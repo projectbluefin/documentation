@@ -55,4 +55,4 @@ Each month will list every person that contributed to Bluefin for that month, so
 
 If there's an area of Bluefin that you're finding hard to keep track of leave feedback in this thread!
 
-## [Discussion](https://github.com/ublue-os/bluefin/discussions)
+## [Discussion](https://github.com/ublue-os/bluefin/discussions/4146)
