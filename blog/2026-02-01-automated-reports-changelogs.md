@@ -2,7 +2,7 @@
 slug: automated-reports-changelogs
 title: Automated reports and changelogs
 authors: [castrojo]
-tags: [announcements, reports]
+tags: [announcements]
 ---
 
 ![Jurassic January Header](https://github.com/user-attachments/assets/ea52552e-ac01-456a-9577-331e358a7286)
