@@ -62,5 +62,5 @@ This is typically caused by peer dependency conflicts during installation. To re
 
 ### Build Requirements
 
-- Node.js 18+ (see `package.json` engines field)
+- Node.js 20+ (see `package.json` engines field)
 - For production builds, the CI uses `bun` but `npm` works for local development

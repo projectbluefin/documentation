@@ -80,7 +80,7 @@ When you add Dev Container configuration, VS Code creates a `.devcontainer` fold
 ```json
 {
   "name": "Node.js",
-  "image": "mcr.microsoft.com/devcontainers/javascript-node:18",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:20",
   "features": {
     "ghcr.io/devcontainers/features/git:1": {}
   },

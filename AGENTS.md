@@ -98,6 +98,7 @@ bd dep <issue-id> <depends-on-id>
 ### Labels
 
 Use labels to categorize work:
+
 - `ci-cd`, `validation`, `tooling`, `dependencies`, `security`
 - `reports`, `monthly-reports`, `community-engagement`
 - `documentation`, `automation`, `workflow`
@@ -489,7 +490,7 @@ git push
 
 ## Dependencies
 
-- **Node.js**: Version 18+ required (see package.json engines field)
+- **Node.js**: Version 20+ required (see package.json engines field)
 - **Package Manager**: npm (standard across development and CI/CD)
 - **Docker**: Optional for containerized development
 - **OS**: Works on Linux, macOS, Windows
@@ -1652,6 +1653,7 @@ feat(components)!: redesign ProjectCard with stats API
 7. **Hand off** - Provide context for next session
 
 **CRITICAL RULES:**
+
 - Work is NOT complete until `git push` succeeds
 - NEVER stop before pushing - that leaves work stranded locally
 - NEVER say "ready to push when you are" - YOU must push
