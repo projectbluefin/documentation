@@ -489,7 +489,7 @@ git push
 
 ## Dependencies
 
-- **Node.js**: Version 18+ required (see package.json engines field)
+- **Node.js**: Version 20+ required (see package.json engines field)
 - **Package Manager**: npm (standard across development and CI/CD)
 - **Docker**: Optional for containerized development
 - **OS**: Works on Linux, macOS, Windows
