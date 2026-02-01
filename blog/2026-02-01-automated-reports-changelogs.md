@@ -13,7 +13,7 @@ It can be difficult to keep track of things if you're not paying attention. I've
 
 Changelogs are actually pretty weird in bootc land. We usually extract the package version info from the last rechunking step to generate the changelogs - however that doesn't really cover the entire project, just the things in that repository. There's also a new upstream rechunker coming down the pipeline so that means that we'll need to rework how we generate the changelogs (thanks to [@renner0e](https://github.com/renner0e) for investigating this!). The existing changelogs also really only tell you about the things in the image, and not the "whole" of Bluefin. These will always continue to be published on [changelogs.projectbluefin.io](https://changelogs.projectbluefin.io)
 
-This reports aren't a replacement for the changelogs, just as this blog will continue to handle most of the "Why?" we do things -- for us it's a good way to blog about the meta and not the minutea.
+These reports aren't a replacement for the changelogs, just as this blog will continue to handle most of the "Why?" we do things -- for us it's a good way to blog about the meta and not the minutiae.
 
 We've divided Bluefin into the categories that match the labels throughout the project, so that we can organize things a little bit better. Each section looks like this:
 
