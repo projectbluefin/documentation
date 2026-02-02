@@ -178,7 +178,7 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
         })
         .join(" ");
 
-      // Add Homebrew sections as subsections under Development category
+      // Add Homebrew section under Development category
       const description = CATEGORY_DESCRIPTIONS[cleanCategoryName];
       const descriptionText = description ? `\n\n*${description}*\n` : "\n";
       let fullSection = `## ${cleanCategoryName}\n\n${labelBadges}${descriptionText}\n${section}`;
@@ -186,21 +186,30 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
         cleanCategoryName === "Development" ||
         categoryName.includes("Development")
       ) {
-        // Add tap promotions first (if any)
-        if (tapPromotions && tapPromotions.length > 0) {
-          const promotionsContent = generateTapPromotionsContent(tapPromotions);
-          fullSection += `\n\n### Homebrew Tap Promotions\n\n${promotionsContent}`;
-        }
+        // Create unified Homebrew section with promotions and updates
+        const hasPromotions = tapPromotions && tapPromotions.length > 0;
+        const hasUpdates = homebrewActivity.length > 0;
 
-        // Then add package updates (if any)
-        if (homebrewActivity.length > 0) {
-          const homebrewSection =
-            generateHomebrewUpdatesSection(homebrewActivity);
-          // Extract just the content (remove the ## heading and adjust remaining headings)
-          const homebrewContent = homebrewSection
-            .replace(/^## Homebrew Package Updates\n\n/, "")
-            .replace(/^### /gm, "#### "); // Convert ### to #### for proper nesting
-          fullSection += `\n\n### Homebrew Package Updates\n\n${homebrewContent}`;
+        if (hasPromotions || hasUpdates) {
+          fullSection += `\n\n### Homebrew\n\n`;
+
+          // Add promotions subsection (if any)
+          if (hasPromotions) {
+            const promotionsContent =
+              generateTapPromotionsContent(tapPromotions);
+            fullSection += `#### Promotions\n\n${promotionsContent}\n\n`;
+          }
+
+          // Add package updates subsection (if any)
+          if (hasUpdates) {
+            const homebrewSection =
+              generateHomebrewUpdatesSection(homebrewActivity);
+            // Extract just the content (remove the ## heading and adjust remaining headings)
+            const homebrewContent = homebrewSection
+              .replace(/^## Homebrew Package Updates\n\n/, "")
+              .replace(/^### /gm, "##### "); // Convert ### to ##### for proper nesting
+            fullSection += `#### Package Updates\n\n${homebrewContent}`;
+          }
         }
       }
 
