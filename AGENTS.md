@@ -67,6 +67,72 @@ The `.planning-archive/` directory contains historical project artifacts from v1
 
 **See `.planning-archive/MIGRATION.md` for migration details from the old planning system to Beads.**
 
+## Fork Workflow
+
+**This repository is configured as a working fork:**
+
+- **Origin (working fork):** `git@github.com:castrojo/documentation.git`
+- **Upstream (main project):** `git@github.com:projectbluefin/documentation.git`
+
+### Daily Development Workflow
+
+All work happens in your fork (`castrojo/documentation`):
+
+1. **Create feature branch** for your work
+2. **Make changes** and commit locally
+3. **Push to your fork** (origin)
+4. **Test thoroughly** before submitting upstream
+
+### Submitting Pull Requests Upstream
+
+When ready to contribute back to the main project:
+
+1. **Squash commits** into logical units:
+
+   ```bash
+   git rebase -i HEAD~N  # where N is number of commits to squash
+   ```
+
+2. **Push to your fork**:
+
+   ```bash
+   git push origin <branch-name>
+   ```
+
+3. **Open browser for PR submission**:
+
+   ```bash
+   gh pr create --repo projectbluefin/documentation --web
+   ```
+
+   The `--web` flag opens your browser with the PR form pre-filled. You will:
+   - Add the PR title
+   - Write the PR description
+   - Submit when ready
+
+### Syncing with Upstream
+
+Periodically pull changes from upstream to stay current:
+
+```bash
+# Fetch latest from upstream
+git fetch upstream
+
+# Merge upstream changes into your main branch
+git checkout main
+git merge upstream/main
+
+# Push updates to your fork
+git push origin main
+```
+
+### Why This Approach
+
+- **Isolation**: Your fork remains independent for experimentation
+- **Clean history**: Squashing creates clean, reviewable PRs upstream
+- **Flexibility**: You control when and what gets contributed upstream
+- **Collaboration**: User provides context for PRs (title/description)
+
 ## Git Workflow - CRITICAL RULES
 
 **NEVER push directly to main/trunk unless EXPLICITLY instructed by the user.**
