@@ -56,16 +56,9 @@ Use labels to categorize work:
 - `reports`, `monthly-reports`, `community-engagement`
 - `documentation`, `automation`, `workflow`
 
-### Historical Planning Context
+### Work Tracking
 
-The `.planning-archive/` directory contains historical project artifacts from v1.0 and v1.1 milestones (both shipped). This includes:
-
-- Milestone documentation and requirements
-- Phase work verification records
-- Research and technical notes
-- Decision history and rationale
-
-**See `.planning-archive/MIGRATION.md` for migration details from the old planning system to Beads.**
+All work is tracked in beads issues. Use `bd` commands to manage tasks, features, bugs, and dependencies. See the Beads section above for workflow details.
 
 ## Git Workflow - CRITICAL RULES
 
@@ -1022,7 +1015,7 @@ Label mappings are static (not fetched at runtime) for performance. Update when 
 
 - Currently manual update required
 - Future: Script could fetch labels from projectbluefin/common `.github/labels.yml`
-- See: `.planning/phases/03-documentation-refinement/03-CONTEXT.md` out-of-scope section
+- This would eliminate the need for manual label mapping updates
 
 ### Modifying Report Templates
 
