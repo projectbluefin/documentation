@@ -235,6 +235,24 @@ Run production build locally:
 - `npm run build` -- ensures site builds successfully
 - Manual testing via `npm run start` -- verify your changes work in the browser
 
+**CI/CD Enforcement:**
+
+All validation gates are automatically enforced in the GitHub Actions workflow (`.github/workflows/pages.yml`):
+
+- **TypeScript validation** (`npm run typecheck`) - **BLOCKING** - CI fails if TypeScript errors are present
+- **ESLint validation** (`npm run lint`) - **BLOCKING** - CI fails if ESLint errors are found (warnings are allowed)
+- **Prettier check** (`npm run prettier-lint || true`) - **NON-BLOCKING** - Warnings logged but do not fail the build
+
+The workflow runs these checks on:
+
+- Pull requests to main branch
+- Direct pushes to main branch
+- Merge queue operations
+- Manual workflow dispatch
+- Scheduled builds (Sundays and Tuesdays at 6:50 UTC)
+
+This ensures code quality standards are automatically enforced before deployment.
+
 ## Common Tasks
 
 ### Development Commands
