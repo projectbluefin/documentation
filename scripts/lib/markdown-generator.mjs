@@ -46,6 +46,7 @@ const CATEGORY_DESCRIPTIONS = {
  * @param {Date} startDate - Report period start date
  * @param {Date} endDate - Report period end date
  * @param {Object|null} buildMetrics - Build health metrics from fetchBuildMetrics()
+ * @param {Array} tapPromotions - Tap promotions from fetchTapPromotions()
  * @returns {string} Complete markdown content
  */
 export function generateReportMarkdown(
@@ -57,6 +58,7 @@ export function generateReportMarkdown(
   startDate,
   endDate,
   buildMetrics = null,
+  tapPromotions = [],
 ) {
   // Extract year and month from startDate in UTC
   const year = startDate.getUTCFullYear();
@@ -176,22 +178,39 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
         })
         .join(" ");
 
-      // Add Homebrew updates as a subsection under Development category
+      // Add Homebrew section under Development category
       const description = CATEGORY_DESCRIPTIONS[cleanCategoryName];
       const descriptionText = description ? `\n\n*${description}*\n` : "\n";
       let fullSection = `## ${cleanCategoryName}\n\n${labelBadges}${descriptionText}\n${section}`;
       if (
-        (cleanCategoryName === "Development" ||
-          categoryName.includes("Development")) &&
-        homebrewActivity.length > 0
+        cleanCategoryName === "Development" ||
+        categoryName.includes("Development")
       ) {
-        const homebrewSection =
-          generateHomebrewUpdatesSection(homebrewActivity);
-        // Extract just the content (remove the ## heading and adjust remaining headings)
-        const homebrewContent = homebrewSection
-          .replace(/^## Homebrew Package Updates\n\n/, "")
-          .replace(/^### /gm, "#### "); // Convert ### to #### for proper nesting
-        fullSection += `\n\n### Homebrew Package Updates\n\n${homebrewContent}`;
+        // Create unified Homebrew section with promotions and updates
+        const hasPromotions = tapPromotions && tapPromotions.length > 0;
+        const hasUpdates = homebrewActivity.length > 0;
+
+        if (hasPromotions || hasUpdates) {
+          fullSection += `\n\n### Homebrew\n\n`;
+
+          // Add promotions subsection (if any)
+          if (hasPromotions) {
+            const promotionsContent =
+              generateTapPromotionsContent(tapPromotions);
+            fullSection += `#### Promotions\n\n${promotionsContent}\n\n`;
+          }
+
+          // Add package updates subsection (if any)
+          if (hasUpdates) {
+            const homebrewSection =
+              generateHomebrewUpdatesSection(homebrewActivity);
+            // Extract just the content (remove the ## heading and adjust remaining headings)
+            const homebrewContent = homebrewSection
+              .replace(/^## Homebrew Package Updates\n\n/, "")
+              .replace(/^### /gm, "##### "); // Convert ### to ##### for proper nesting
+            fullSection += `#### Package Updates\n\n${homebrewContent}`;
+          }
+        }
       }
 
       return fullSection;
@@ -897,4 +916,53 @@ function generateContributorsSection(contributors, newContributors) {
   }
 
   return section;
+}
+
+/**
+ * Generate Homebrew Tap Promotions content (without heading)
+ * Used as a subsection under Development category
+ *
+ * @param {Array} promotions - Array of {name, description, mergedAt, prNumber, prUrl}
+ * @returns {string} Markdown content
+ */
+function generateTapPromotionsContent(promotions) {
+  if (!promotions || promotions.length === 0) {
+    return ""; // No promotions this period
+  }
+
+  const promotionsList = promotions
+    .map((promo) => {
+      const mergedDate = new Date(promo.mergedAt).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      });
+      return `- **${promo.name}** - ${promo.description} ([#${promo.prNumber}](${promo.prUrl}), ${mergedDate})`;
+    })
+    .join("\n");
+
+  return `The following packages graduated from experimental-tap to production-tap this month, ready for wider use:
+
+${promotionsList}
+
+Use \`ujust bbrew\` to browse and install these packages. Follow [the tap instructions](https://github.com/ublue-os/homebrew-tap) if you want to do it by hand.`;
+}
+
+/**
+ * Generate Homebrew Tap Promotions section (standalone)
+ * Legacy function - kept for backward compatibility
+ *
+ * @param {Array} promotions - Array of {name, description, mergedAt, prNumber, prUrl}
+ * @returns {string} Markdown section or empty string
+ */
+function generateTapPromotionsSection(promotions) {
+  if (!promotions || promotions.length === 0) {
+    return ""; // No promotions this period
+  }
+
+  const content = generateTapPromotionsContent(promotions);
+  return `---
+
+## Homebrew Tap Promotions
+
+${content}`;
 }

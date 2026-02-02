@@ -13,7 +13,7 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
 | | |
 |--------|-------|
 | **Total Items** | 148 (36 planned, 112 opportunistic) |
-| **Automation** | 62.8% (250 bot PRs out of 398 total PRs) |
+| **Automation** | 62.3% (245 bot PRs out of 393 total PRs) |
 | **Contributors** | 23 total, 10 new |
 
 
@@ -62,13 +62,25 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
 - Add SELinux options to devcontainer configuration by [@​leafyoung](https://github.com/leafyoung) in [#547](https://github.com/projectbluefin/documentation/pull/547)
 - fix(mise): Mise introduction and upstream links by [@​rwaltr](https://github.com/rwaltr) in [#577](https://github.com/projectbluefin/documentation/pull/577)
 
-### Homebrew Package Updates
+### Homebrew
+
+#### Promotions
+
+The following packages graduated from experimental-tap to production-tap this month, ready for wider use:
+
+- **goose-linux** - Open source, extensible AI agent that goes beyond code suggestions ([#188](https://github.com/ublue-os/homebrew-tap/pull/188), Jan 2)
+- **antigravity-linux** - AI Coding Agent IDE ([#199](https://github.com/ublue-os/homebrew-tap/pull/199), Jan 12)
+- **linux-mcp-server** - MCP server for Linux system administration and diagnostics ([#221](https://github.com/ublue-os/homebrew-tap/pull/221), Jan 25)
+
+Use `ujust bbrew` to browse and install these packages. Follow [the tap instructions](https://github.com/ublue-os/homebrew-tap) if you want to do it by hand.
+
+#### Package Updates
 
 ![Production Tap](https://img.shields.io/badge/production--tap-31%20updates-blue?style=flat-square) ![Experimental Tap](https://img.shields.io/badge/experimental--tap-44%20updates-orange?style=flat-square)
 
 **75 automated updates** this month via GitHub Actions. Homebrew tap version bumps ensure Bluefin users always have access to the latest stable releases.
 
-#### Quick Summary
+##### Quick Summary
 
 | Tap | Updates |
 |-----|---------|
@@ -365,12 +377,12 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
 
 ## Bot Activity
 
-**Automation Percentage:** 62.8% (250 bot PRs out of 398 total PRs)
+**Automation Percentage:** 62.3% (245 bot PRs out of 393 total PRs)
 
 | Repository | Bot PRs | % of Total |
 |------------|---------|------------|
-| bluefin | 87 | 21.9% |
-| bluefin-lts | 69 | 17.3% |
+| bluefin | 85 | 21.6% |
+| bluefin-lts | 66 | 16.8% |
 | documentation | 10 | 2.5% |
 | iso | 7 | 1.8% |
 | common | 1 | 0.3% |
@@ -465,8 +477,6 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
 - chore(deps): update ghcr.io/projectbluefin/common:latest docker digest to 7f4ecb6 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#3987](https://github.com/ublue-os/bluefin/pull/3987)
 - chore(deps): update ghcr.io/projectbluefin/common:latest docker digest to 9c2265c by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#3985](https://github.com/ublue-os/bluefin/pull/3985)
 - chore(deps): update ghcr.io/projectbluefin/common:latest docker digest to 5a4e3bc by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#3980](https://github.com/ublue-os/bluefin/pull/3980)
-- chore(deps): update ghcr.io/projectbluefin/common:latest docker digest to 81129a6 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#3979](https://github.com/ublue-os/bluefin/pull/3979)
-- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to dd6ae9d by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#3978](https://github.com/ublue-os/bluefin/pull/3978)
 - chore(deps): update quay.io/centos-bootc/centos-bootc:c10s docker digest to f6d2aa7 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1073](https://github.com/ublue-os/bluefin-lts/pull/1073)
 - chore(deps): update quay.io/centos-bootc/centos-bootc:c10s docker digest to 693006c by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1068](https://github.com/ublue-os/bluefin-lts/pull/1068)
 - chore(deps): update cgr.dev/chainguard/wolfi-base:latest docker digest to 17ab070 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1066](https://github.com/ublue-os/bluefin-lts/pull/1066)
@@ -520,9 +530,6 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
 - chore(deps): update ghcr.io/projectbluefin/common:latest docker digest to 81129a6 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#963](https://github.com/ublue-os/bluefin-lts/pull/963)
 - chore(deps): update ghcr.io/projectbluefin/common:latest docker digest to c050ac0 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#962](https://github.com/ublue-os/bluefin-lts/pull/962)
 - chore(deps): update ghcr.io/projectbluefin/common:latest docker digest to a6f9953 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#961](https://github.com/ublue-os/bluefin-lts/pull/961)
-- chore(deps): update ghcr.io/projectbluefin/common:latest docker digest to 59b7344 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#959](https://github.com/ublue-os/bluefin-lts/pull/959)
-- chore(deps): update system_files/usr/share/gnome-shell/extensions/tmp/caffeine digest to 395e8d8 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#956](https://github.com/ublue-os/bluefin-lts/pull/956)
-- chore(deps): update system_files/usr/share/gnome-shell/extensions/gsconnect@andyholmes.github.io digest to 925fe06 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#955](https://github.com/ublue-os/bluefin-lts/pull/955)
 - [pull] lts from main by [@​pull](https://github.com/pull) in [ublue-os/bluefin-lts#1048](https://github.com/ublue-os/bluefin-lts/pull/1048)
 - [pull] lts from main by [@​pull](https://github.com/pull) in [ublue-os/bluefin-lts#1036](https://github.com/ublue-os/bluefin-lts/pull/1036)
 - [pull] lts from main by [@​pull](https://github.com/pull) in [ublue-os/bluefin-lts#1034](https://github.com/ublue-os/bluefin-lts/pull/1034)
