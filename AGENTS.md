@@ -1157,7 +1157,7 @@ Label mappings are static (not fetched at runtime) for performance. Update when 
 
 - Currently manual update required
 - Future: Script could fetch labels from projectbluefin/common `.github/labels.yml`
-- See: `.planning/phases/03-documentation-refinement/03-CONTEXT.md` out-of-scope section
+- This would eliminate the need for manual label mapping updates
 
 ### Modifying Report Templates
 
@@ -1740,27 +1740,33 @@ feat(components)!: redesign ProjectCard with stats API
 
 ## Landing the Plane (Session Completion)
 
-**When ending a work session**, you MUST complete ALL steps below. Work is NOT complete until `git push` succeeds.
+**When ending a work session**, you MUST complete ALL steps below. Work is NOT complete until a PR is created.
 
-**MANDATORY WORKFLOW:**
+**MANDATORY WORKFLOW FOR CODE CHANGES:**
 
-1. **File issues for remaining work** - Create issues for anything that needs follow-up
+1. **File beads issues for remaining work** - Create issues for anything that needs follow-up
 2. **Run quality gates** (if code changed) - Tests, linters, builds
-3. **Update issue status** - Close finished work, update in-progress items
-4. **PUSH TO REMOTE** - This is MANDATORY:
+3. **Update beads issue status** - Close finished work, update in-progress items
+4. **COMMIT TO FEATURE BRANCH** - This is MANDATORY:
    ```bash
-   git pull --rebase
-   bd sync
-   git push
-   git status  # MUST show "up to date with origin"
+   git status                              # Check what changed
+   git add <files>                         # Stage code changes
+   bd sync --from-main                     # Pull beads updates from main
+   git commit -m "conventional commit"     # Commit with conventional format
+   git push origin feature/branch-name     # Push to your fork
    ```
-5. **Clean up** - Clear stashes, prune remote branches
-6. **Verify** - All changes committed AND pushed
-7. **Hand off** - Provide context for next session
+5. **CREATE PULL REQUEST** - Always use feature branches:
+   ```bash
+   gh pr create --repo projectbluefin/documentation --web
+   # Opens browser with PR form - add title and description
+   ```
+6. **NEVER PUSH DIRECTLY TO MAIN** - All code changes go through PRs
+7. **Hand off** - Provide PR URL and context for next session
 
 **CRITICAL RULES:**
 
-- Work is NOT complete until `git push` succeeds
-- NEVER stop before pushing - that leaves work stranded locally
-- NEVER say "ready to push when you are" - YOU must push
-- If push fails, resolve and retry until it succeeds
+- **ALWAYS use feature branches** - Never commit code directly to main
+- **ALL code changes require PRs** - This is a fork workflow (castrojo → projectbluefin)
+- Work is NOT complete until PR is created
+- NEVER say "ready to push when you are" - YOU must create the PR
+- Exception: Beads metadata commits happen automatically on beads-metadata branch
