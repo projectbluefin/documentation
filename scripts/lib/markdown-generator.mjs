@@ -46,6 +46,7 @@ const CATEGORY_DESCRIPTIONS = {
  * @param {Date} startDate - Report period start date
  * @param {Date} endDate - Report period end date
  * @param {Object|null} buildMetrics - Build health metrics from fetchBuildMetrics()
+ * @param {Array} tapPromotions - Tap promotions from fetchTapPromotions()
  * @returns {string} Complete markdown content
  */
 export function generateReportMarkdown(
@@ -57,6 +58,7 @@ export function generateReportMarkdown(
   startDate,
   endDate,
   buildMetrics = null,
+  tapPromotions = [],
 ) {
   // Extract year and month from startDate in UTC
   const year = startDate.getUTCFullYear();
@@ -255,6 +257,9 @@ ${kindSections}`;
     endDate,
   );
 
+  // Generate tap promotions section
+  const tapPromotionsSection = generateTapPromotionsSection(tapPromotions);
+
   // Generate contributors section
   const contributorsSection = generateContributorsSection(
     contributors,
@@ -282,6 +287,7 @@ ${kindSections}`;
     uncategorizedSection,
     botSection,
     buildHealthSection,
+    tapPromotionsSection,
     contributorsSection,
     footer,
   ]
@@ -897,4 +903,36 @@ function generateContributorsSection(contributors, newContributors) {
   }
 
   return section;
+}
+
+/**
+ * Generate Homebrew Tap Promotions section
+ *
+ * @param {Array} promotions - Array of {name, description, mergedAt, prNumber, prUrl}
+ * @returns {string} Markdown section or empty string
+ */
+function generateTapPromotionsSection(promotions) {
+  if (!promotions || promotions.length === 0) {
+    return ""; // No promotions this period
+  }
+
+  const promotionsList = promotions
+    .map((promo) => {
+      const mergedDate = new Date(promo.mergedAt).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      });
+      return `- **${promo.name}** - ${promo.description} ([#${promo.prNumber}](${promo.prUrl}), ${mergedDate})`;
+    })
+    .join("\n");
+
+  return `---
+
+## Homebrew Tap Promotions
+
+The following packages graduated from experimental-tap to production-tap this month, ready for wider use:
+
+${promotionsList}
+
+Use \`ujust bbrew\` to browse and install these packages. Follow [the tap instructions](https://github.com/ublue-os/homebrew-tap) if you want to do it by hand.`;
 }
