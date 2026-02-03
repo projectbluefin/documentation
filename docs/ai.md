@@ -152,15 +152,18 @@ Bluefin binds `Ctrl`-`Alt`-`Backspace` as a quicklaunch for Alpaca automatically
 
 ### Goose Desktop (WIP)
 
-- Established desktop experience, recently ported as Brew cask
-- Work with extensions (built-in tools & MCP)
-- Let you use existing CLI instances of Claude Code, Cursor Agent, Codex or Gemini CLI, in addition to inferences from Ollama and many cloud providers
-- Available in Flathub soon!
+Goose Desktop is an extensible AI agent with familiar desktop interface. Developed by Block, it was recently donated to Agentic AI Foundation (AAIF), a vendor-neutral home for open source agentic AI under the Linux Foundation umbrella. Goose let you log in to multiple providers, use your own local inference, as well as utilizing instances of CLI tools like Claude Code, Cursor Agent, Codex or Gemini CLI. 
+
+Their built-in extensions covers a wide range, from memory tools, sandboxed code execution, to documents/spreadsheets editing. You can also add external MCP extensions and agent skills, create Recipes from a session, and use Scheduler to run recipes automatically.
+
+In the meantime, you can install Goose Desktop from our Homebrew tap:
 
 ```
 brew tap ublue-os/tap
 brew install ublue-os/tap/goose-linux
 ```
+
+Read more information about Goose Desktop on [Goose documentation page](https://block.github.io/goose/docs/)
 
 ### OpenCode Desktop (WIP)
 
