@@ -239,6 +239,7 @@ async function generateReport() {
     log.info(`Bot contributions: ${botItems.length}`);
 
     // Extract contributor usernames (human only, PRs only - people who wrote code)
+    // This includes PR authors from BOTH planned (projectbluefin/common) AND opportunistic repos
     const contributors = [
       ...new Set(
         humanItems
@@ -248,6 +249,53 @@ async function generateReport() {
       ),
     ];
     log.info(`Unique contributors (PR authors): ${contributors.length}`);
+
+    // Log contributor breakdown by source for validation
+    const plannedContributors = [
+      ...new Set(
+        plannedHumanItems
+          .filter((item) => item.content?.__typename === "PullRequest")
+          .map((item) => item.content?.author?.login)
+          .filter((login) => login),
+      ),
+    ];
+    const opportunisticContributors = [
+      ...new Set(
+        opportunisticHumanItems
+          .filter((item) => item.content?.__typename === "PullRequest")
+          .map((item) => item.content?.author?.login)
+          .filter((login) => login),
+      ),
+    ];
+    log.info(
+      `  - From planned work: ${plannedContributors.length} contributors`,
+    );
+    log.info(
+      `  - From opportunistic work: ${opportunisticContributors.length} contributors`,
+    );
+
+    // Log overlap between planned and opportunistic
+    const overlap = plannedContributors.filter((c) =>
+      opportunisticContributors.includes(c),
+    );
+    if (overlap.length > 0) {
+      log.info(
+        `  - Contributors in both: ${overlap.length} (${overlap.join(", ")})`,
+      );
+    }
+
+    // Validation: Contributors should include authors from both sources
+    const expectedTotal = new Set([
+      ...plannedContributors,
+      ...opportunisticContributors,
+    ]).size;
+    if (contributors.length !== expectedTotal) {
+      log.warn(
+        `⚠️  Contributor count mismatch: expected ${expectedTotal}, got ${contributors.length}`,
+      );
+    } else {
+      log.info(`✅ Contributor count validation passed`);
+    }
 
     // Identify new contributors by querying historical contributions
     log.info("Identifying new contributors...");
@@ -298,6 +346,38 @@ async function generateReport() {
       if (topVoicesCandidates.length >= 5) {
         topVoices = getTopVoices(topVoicesCandidates, engagementMap, 10);
         log.info(`Top Voices identified: ${topVoices.length}`);
+
+        // Validation: Verify no Top Voices users authored PRs (they should be engagement-only)
+        const topVoicesWithPRs = topVoices.filter((voice) => {
+          return humanItems.some(
+            (item) =>
+              item.content?.__typename === "PullRequest" &&
+              item.content?.author?.login === voice,
+          );
+        });
+
+        if (topVoicesWithPRs.length > 0) {
+          log.warn(
+            `⚠️  Found ${topVoicesWithPRs.length} Top Voices users who authored PRs (should be 0):`,
+          );
+          topVoicesWithPRs.forEach((voice) => {
+            const prs = humanItems.filter(
+              (item) =>
+                item.content?.__typename === "PullRequest" &&
+                item.content?.author?.login === voice,
+            );
+            log.warn(`  - ${voice}: ${prs.length} PRs`);
+            prs.forEach((pr) => {
+              log.warn(
+                `      ${pr.content.repository}#${pr.content.number}: ${pr.content.title}`,
+              );
+            });
+          });
+        } else {
+          log.info(
+            `✅ Validation passed: All Top Voices are engagement-only (no PR authors)`,
+          );
+        }
 
         // Calculate stats
         engagementStats = {
