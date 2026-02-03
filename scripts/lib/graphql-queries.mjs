@@ -424,4 +424,211 @@ export async function fetchClosedItemsFromRepo(
   }
 }
 
+/**
+ * GraphQL query to fetch discussion comments
+ * Note: Discussions API does not support date filtering, so we fetch all and filter in-memory
+ */
+const DISCUSSIONS_QUERY = `
+  query($owner: String!, $name: String!, $cursor: String) {
+    repository(owner: $owner, name: $name) {
+      discussions(first: 100, after: $cursor, orderBy: {field: UPDATED_AT, direction: DESC}) {
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+        nodes {
+          title
+          number
+          author {
+            login
+          }
+          comments(first: 100) {
+            nodes {
+              author {
+                login
+              }
+              createdAt
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+/**
+ * GraphQL query to fetch issue comments
+ */
+const ISSUES_COMMENTS_QUERY = `
+  query($owner: String!, $name: String!, $since: DateTime!, $cursor: String) {
+    repository(owner: $owner, name: $name) {
+      issues(first: 100, after: $cursor, filterBy: {since: $since}, states: [OPEN, CLOSED]) {
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+        nodes {
+          number
+          title
+          author {
+            login
+          }
+          comments(first: 100) {
+            nodes {
+              author {
+                login
+              }
+              createdAt
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+/**
+ * Fetch discussion comments from ublue-os/bluefin
+ *
+ * Note: Discussions API does not support date filtering, so we fetch all
+ * discussions and filter comments in-memory by date range.
+ *
+ * @param {Date} startDate - Start of date range
+ * @param {Date} endDate - End of date range
+ * @returns {Promise<Array>} Array of comment objects [{author, createdAt, discussionTitle, discussionNumber}]
+ */
+export async function fetchDiscussionComments(startDate, endDate) {
+  const allComments = [];
+  let hasNextPage = true;
+  let cursor = null;
+  let discussionCount = 0;
+
+  try {
+    while (hasNextPage) {
+      const result = await retryWithBackoff(async () => {
+        return await graphqlWithAuth(DISCUSSIONS_QUERY, {
+          owner: "ublue-os",
+          name: "bluefin",
+          cursor,
+        });
+      });
+
+      const discussions = result.repository.discussions.nodes;
+      discussionCount += discussions.length;
+
+      for (const discussion of discussions) {
+        const discussionAuthor = discussion.author?.login;
+
+        for (const comment of discussion.comments.nodes) {
+          const commentDate = new Date(comment.createdAt);
+          const commentAuthor = comment.author?.login;
+
+          // Filter by date range
+          if (commentDate < startDate || commentDate > endDate) {
+            continue;
+          }
+
+          // Exclude discussion author's own comments (they're OP, not engagement)
+          if (commentAuthor === discussionAuthor) {
+            continue;
+          }
+
+          // Exclude null authors
+          if (!commentAuthor) {
+            continue;
+          }
+
+          allComments.push({
+            author: commentAuthor,
+            createdAt: comment.createdAt,
+            discussionTitle: discussion.title,
+            discussionNumber: discussion.number,
+          });
+        }
+      }
+
+      hasNextPage = result.repository.discussions.pageInfo.hasNextPage;
+      cursor = result.repository.discussions.pageInfo.endCursor;
+    }
+
+    return allComments;
+  } catch (error) {
+    console.error(`Error fetching discussions: ${error.message}`);
+    return [];
+  }
+}
+
+/**
+ * Fetch issue comments from a repository
+ *
+ * Uses `since` filter for efficiency (supported by Issues API).
+ *
+ * @param {string} owner - Repository owner
+ * @param {string} name - Repository name
+ * @param {Date} startDate - Start of date range
+ * @param {Date} endDate - End of date range
+ * @returns {Promise<Array>} Array of comment objects [{author, createdAt, issueNumber, issueTitle}]
+ */
+export async function fetchIssueComments(owner, name, startDate, endDate) {
+  const allComments = [];
+  let hasNextPage = true;
+  let cursor = null;
+
+  try {
+    while (hasNextPage) {
+      const result = await retryWithBackoff(async () => {
+        return await graphqlWithAuth(ISSUES_COMMENTS_QUERY, {
+          owner,
+          name,
+          since: startDate.toISOString(),
+          cursor,
+        });
+      });
+
+      const issues = result.repository.issues.nodes;
+
+      for (const issue of issues) {
+        const issueAuthor = issue.author?.login;
+
+        for (const comment of issue.comments.nodes) {
+          const commentDate = new Date(comment.createdAt);
+          const commentAuthor = comment.author?.login;
+
+          // Filter by date range
+          if (commentDate < startDate || commentDate > endDate) {
+            continue;
+          }
+
+          // Exclude issue author's own comments (they're OP, not engagement)
+          if (commentAuthor === issueAuthor) {
+            continue;
+          }
+
+          // Exclude null authors
+          if (!commentAuthor) {
+            continue;
+          }
+
+          allComments.push({
+            author: commentAuthor,
+            createdAt: comment.createdAt,
+            issueNumber: issue.number,
+            issueTitle: issue.title,
+          });
+        }
+      }
+
+      hasNextPage = result.repository.issues.pageInfo.hasNextPage;
+      cursor = result.repository.issues.pageInfo.endCursor;
+    }
+
+    return allComments;
+  } catch (error) {
+    console.error(
+      `Error fetching issues from ${owner}/${name}: ${error.message}`,
+    );
+    return [];
+  }
+}
+
 export { PROJECT_QUERY, graphqlWithAuth, REPO_CLOSED_ITEMS_QUERY };

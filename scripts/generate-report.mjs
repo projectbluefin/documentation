@@ -16,6 +16,11 @@ import { getCategoryForLabel } from "./lib/label-mapping.mjs";
 import { MONITORED_REPOS } from "./lib/monitored-repos.mjs";
 import { fetchBuildMetrics } from "./lib/build-metrics.mjs";
 import { fetchTapPromotions } from "./lib/tap-promotions.mjs";
+import {
+  aggregateEngagement,
+  excludeContributors,
+  getTopVoices,
+} from "./lib/engagement-tracker.mjs";
 import { format } from "date-fns";
 import { writeFile } from "fs/promises";
 
@@ -262,6 +267,73 @@ async function generateReport() {
       newContributors = [];
     }
 
+    // Fetch engagement data (discussions + issues)
+    // CONTRIBUTOR HIERARCHY (MUTUALLY EXCLUSIVE):
+    // 1. New Lights: First-time PR authors (highest priority)
+    // 2. Wayfinders: Continuing PR authors (code contributors)
+    // 3. Top Voices: Engagement-only (NO code contributions)
+    // Rule: PR authors are EXCLUDED from Top Voices (code > engagement in priority)
+    log.info("Analyzing community engagement...");
+    let topVoices = [];
+    let engagementStats = {
+      totalDiscussions: 0,
+      totalIssues: 0,
+      uniqueParticipants: 0,
+    };
+
+    try {
+      const engagementMap = await aggregateEngagement(startDate, endDate);
+
+      // Exclude ALL contributors (both new and continuing) from Top Voices
+      // This ensures strict separation: code contributors in New Lights/Wayfinders, engagement-only in Top Voices
+      const topVoicesCandidates = excludeContributors(
+        engagementMap,
+        contributors,
+      );
+      log.info(
+        `Top Voices candidates (after filtering): ${topVoicesCandidates.length}`,
+      );
+
+      // Get Top 10 (or empty if <5)
+      if (topVoicesCandidates.length >= 5) {
+        topVoices = getTopVoices(topVoicesCandidates, engagementMap, 10);
+        log.info(`Top Voices identified: ${topVoices.length}`);
+
+        // Calculate stats
+        engagementStats = {
+          totalDiscussions: [...engagementMap.values()].reduce(
+            (sum, s) => sum + s.discussions,
+            0,
+          ),
+          totalIssues: [...engagementMap.values()].reduce(
+            (sum, s) => sum + s.issues,
+            0,
+          ),
+          uniqueParticipants: topVoicesCandidates.length,
+        };
+
+        if (topVoices.length > 0) {
+          github.notice(
+            `👥 ${topVoices.length} Top Voices identified (${engagementStats.uniqueParticipants} participants)`,
+          );
+        }
+      } else {
+        log.info(
+          `Not enough participants for Top Voices section (need ≥5, have ${topVoicesCandidates.length})`,
+        );
+      }
+    } catch (error) {
+      log.warn("Engagement tracking failed, continuing without it");
+      log.warn(`Error: ${error.message}`);
+      // Continue report generation even if engagement tracking fails
+      topVoices = [];
+      engagementStats = {
+        totalDiscussions: 0,
+        totalIssues: 0,
+        uniqueParticipants: 0,
+      };
+    }
+
     // Aggregate bot activity
     const botActivity = aggregateBotActivity(botItems);
     log.info(`Bot activity groups: ${botActivity.length}`);
@@ -317,6 +389,8 @@ async function generateReport() {
       endDate,
       buildMetrics,
       tapPromotions,
+      topVoices,
+      engagementStats,
     );
 
     // Write to file
@@ -333,10 +407,13 @@ async function generateReport() {
       `   ${buildMetrics ? buildMetrics.images.length + " workflows tracked" : "Build metrics unavailable"}`,
     );
     log.info(`   ${tapPromotions.length} tap promotions`);
+    log.info(
+      `   ${topVoices.length} top voices (${engagementStats.uniqueParticipants} participants)`,
+    );
 
     // GitHub Actions summary annotation
     github.notice(
-      `Report generated: ${plannedHumanItems.length} planned + ${opportunisticHumanItems.length} opportunistic, ${contributors.length} contributors, ${newContributors.length} new, ${tapPromotions.length} tap promotions`,
+      `Report generated: ${plannedHumanItems.length} planned + ${opportunisticHumanItems.length} opportunistic, ${contributors.length} contributors, ${newContributors.length} new, ${tapPromotions.length} tap promotions, ${topVoices.length} top voices`,
     );
   } catch (error) {
     log.error("Report generation failed");

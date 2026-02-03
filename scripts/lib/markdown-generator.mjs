@@ -47,6 +47,8 @@ const CATEGORY_DESCRIPTIONS = {
  * @param {Date} endDate - Report period end date
  * @param {Object|null} buildMetrics - Build health metrics from fetchBuildMetrics()
  * @param {Array} tapPromotions - Tap promotions from fetchTapPromotions()
+ * @param {Array<string>} topVoices - Top voices from engagement tracking
+ * @param {Object} engagementStats - Engagement stats {totalDiscussions, totalIssues, uniqueParticipants}
  * @returns {string} Complete markdown content
  */
 export function generateReportMarkdown(
@@ -59,6 +61,12 @@ export function generateReportMarkdown(
   endDate,
   buildMetrics = null,
   tapPromotions = [],
+  topVoices = [],
+  engagementStats = {
+    totalDiscussions: 0,
+    totalIssues: 0,
+    uniqueParticipants: 0,
+  },
 ) {
   // Extract year and month from startDate in UTC
   const year = startDate.getUTCFullYear();
@@ -274,10 +282,12 @@ ${kindSections}`;
     endDate,
   );
 
-  // Generate contributors section
+  // Generate contributors section (includes New Lights, Wayfinders, and Top Voices)
   const contributorsSection = generateContributorsSection(
     contributors,
     newContributors,
+    topVoices,
+    engagementStats,
   );
 
   // Generate footer with cross-links
@@ -857,13 +867,32 @@ ${highlights}`;
 }
 
 /**
- * Generate contributors section with GitHubProfileCard components
+ * Generate contributors section with profile cards
  *
- * @param {Array<string>} contributors - All contributor usernames
- * @param {Array<string>} newContributors - First-time contributor usernames
+ * HIERARCHY (MUTUALLY EXCLUSIVE - highest priority first):
+ * 1. New Lights: First-time PR authors (highest honor)
+ * 2. Wayfinders: Continuing PR authors (code contributors)
+ * 3. Top Voices: Engagement contributors (discussions/issues ONLY, no PR authors)
+ *
+ * EXCLUSIVITY RULES:
+ * - If in New Lights → NOT in Wayfinders or Top Voices
+ * - If in Wayfinders → NOT in Top Voices
+ * - Top Voices = Engagement-only (no code contributions this month)
+ *
+ * Each person appears in ONLY ONE subsection per report.
+ *
+ * @param {Array<string>} contributors - All contributor usernames (PR authors)
+ * @param {Array<string>} newContributors - First-time contributor usernames (PR authors)
+ * @param {Array<string>} topVoices - Top community voices (non-PR authors)
+ * @param {Object} engagementStats - Stats object {totalDiscussions, totalIssues, uniqueParticipants}
  * @returns {string} Markdown section
  */
-function generateContributorsSection(contributors, newContributors) {
+function generateContributorsSection(
+  contributors,
+  newContributors,
+  topVoices,
+  engagementStats,
+) {
   let section = "## Contributors\n\n";
 
   // Section 1: New Contributors (highlighted, shown first)
@@ -912,7 +941,27 @@ function generateContributorsSection(contributors, newContributors) {
       .join("\n\n");
 
     section += continuingContributorCards;
-    section += `\n\n</div>`;
+    section += `\n\n</div>\n\n`;
+  }
+
+  // Section 3: Top Voices (community members who help via discussions/issues)
+  if (topVoices && topVoices.length >= 5) {
+    section += `### Top Voices\n\n`;
+    section += `> "Your wisdom guides us all."\n\n`;
+    section += `<div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem', marginBottom: '2rem' }}>\n\n`;
+
+    const topVoicesCards = topVoices
+      .map((username) => `<GitHubProfileCard username="${username}" />`)
+      .join("\n\n");
+
+    section += topVoicesCards;
+    section += `\n\n</div>\n\n`;
+
+    // Add engagement stats
+    section += `**This Month's Engagement:**\n`;
+    section += `- **Total Discussion Comments**: ${engagementStats.totalDiscussions} across ublue-os/bluefin\n`;
+    section += `- **Total Issue Comments**: ${engagementStats.totalIssues} across 10 repositories\n`;
+    section += `- **Unique Participants**: ${engagementStats.uniqueParticipants} (excluding contributors)\n`;
   }
 
   return section;
