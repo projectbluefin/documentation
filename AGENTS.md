@@ -163,13 +163,30 @@ gh pr create --repo projectbluefin/documentation  # ❌ NOT WITHOUT EXPLICIT INS
    git commit -m "conventional commit message"
    ```
 
-3. **Push the branch to remote** (only when ready)
+3. **Squash commits before creating PR**
+
+   **CRITICAL**: ALL PRs to upstream MUST be squashed to a single commit.
+
+   ```bash
+   # If you have multiple commits, squash them:
+   git reset --soft <base-commit>
+   git commit -m "feat: descriptive single commit message"
+   git push origin feature/name --force-with-lease
+   ```
+
+   **Why squash:**
+   - Keeps upstream history clean and readable
+   - Each PR = one logical unit of work = one commit
+   - Easier to review, revert, and track changes
+   - Matches project's commit hygiene standards
+
+4. **Push the branch to remote** (only when ready)
 
    ```bash
    git push -u origin feature/descriptive-name
    ```
 
-4. **DO NOT create a pull request automatically**
+5. **DO NOT create a pull request automatically**
 
    **CRITICAL**: NEVER run `gh pr create` unless the user EXPLICITLY instructs you to do so.
 
@@ -184,7 +201,7 @@ gh pr create --repo projectbluefin/documentation  # ❌ NOT WITHOUT EXPLICIT INS
    - "submit this for review"
    - "open a PR to upstream"
 
-5. **WAIT for user approval** - Do not merge or push to main
+6. **WAIT for user approval** - Do not merge or push to main
 
 ### What NOT to Do
 
