@@ -20,12 +20,13 @@
   position: relative;
   background: linear-gradient(
     135deg,
-    rgba(255, 215, 0, 0.1) 0%,
-    rgba(255, 237, 78, 0.15) 50%,
-    rgba(255, 215, 0, 0.1) 100%
+    rgba(255, 215, 0, 0.15) 0%,
+    rgba(255, 237, 78, 0.22) 50%,
+    rgba(255, 215, 0, 0.15) 100%
   );
-  border: 2px solid;
-  border-image: linear-gradient(135deg, #ffd700, #ffed4e, #ffd700) 1;
+  border: 2px solid #e6c200;
+  border-radius: 12px;
+  overflow: hidden;
   box-shadow:
     0 4px 12px rgba(255, 215, 0, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.3);
@@ -41,6 +42,31 @@
 .highlight .avatar {
   border-color: #ffd700;
   box-shadow: 0 0 12px rgba(255, 215, 0, 0.5);
+}
+
+/* Holographic overlay for gold foil */
+.highlight::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  pointer-events: none;
+  opacity: var(--foil-opacity, 0);
+  transition: opacity 0.3s ease;
+  mix-blend-mode: color-dodge;
+  background:
+    radial-gradient(
+      circle at var(--pointer-x, 50%) var(--pointer-y, 50%),
+      hsla(45, 100%, 65%, 0.3) 0%,
+      hsla(50, 95%, 60%, 0.2) 25%,
+      transparent 50%
+    ),
+    repeating-linear-gradient(
+      calc(var(--pointer-x, 50%) * 3.6deg),
+      hsla(45, 100%, 70%, 0.1) 0%,
+      hsla(50, 100%, 65%, 0.15) 5%,
+      hsla(45, 100%, 70%, 0.1) 10%
+    );
 }
 
 /* Button row for badge and sponsor button */
@@ -179,12 +205,13 @@
   position: relative;
   background: linear-gradient(
     135deg,
-    rgba(176, 196, 222, 0.08) 0%,
-    rgba(192, 210, 235, 0.12) 50%,
-    rgba(176, 196, 222, 0.08) 100%
+    rgba(176, 196, 222, 0.15) 0%,
+    rgba(192, 210, 235, 0.22) 50%,
+    rgba(176, 196, 222, 0.15) 100%
   );
-  border: 2px solid;
-  border-image: linear-gradient(135deg, #a8b8cc, #d4dce8, #a8b8cc) 1;
+  border: 2px solid #b8c6d8;
+  border-radius: 12px;
+  overflow: hidden;
   box-shadow:
     0 4px 12px rgba(176, 196, 222, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.3);
@@ -200,6 +227,31 @@
 .silverHighlight .avatar {
   border-color: #b0b8c8;
   box-shadow: 0 0 12px rgba(176, 196, 222, 0.45);
+}
+
+/* Holographic overlay for silver foil */
+.silverHighlight::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  pointer-events: none;
+  opacity: var(--foil-opacity, 0);
+  transition: opacity 0.3s ease;
+  mix-blend-mode: color-dodge;
+  background:
+    radial-gradient(
+      circle at var(--pointer-x, 50%) var(--pointer-y, 50%),
+      hsla(215, 30%, 75%, 0.25) 0%,
+      hsla(220, 35%, 70%, 0.18) 25%,
+      transparent 50%
+    ),
+    repeating-linear-gradient(
+      calc(var(--pointer-x, 50%) * 3.6deg),
+      hsla(215, 30%, 80%, 0.08) 0%,
+      hsla(220, 35%, 75%, 0.12) 5%,
+      hsla(215, 30%, 80%, 0.08) 10%
+    );
 }
 
 /* Silver styling for sponsor button on silver cards */
@@ -220,20 +272,13 @@
   position: relative;
   background: linear-gradient(
     135deg,
-    rgba(185, 220, 255, 0.08) 0%,
-    rgba(220, 235, 255, 0.12) 50%,
-    rgba(185, 220, 255, 0.08) 100%
+    rgba(185, 220, 255, 0.15) 0%,
+    rgba(220, 235, 255, 0.22) 50%,
+    rgba(185, 220, 255, 0.15) 100%
   );
-  border: 2px solid;
-  border-image: linear-gradient(
-      135deg,
-      #88c8ee,
-      #d0e8ff,
-      #a0d0f0,
-      #d0e8ff,
-      #88c8ee
-    )
-    1;
+  border: 2px solid #a0d0f0;
+  border-radius: 12px;
+  overflow: hidden;
   box-shadow:
     0 4px 12px rgba(135, 200, 250, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.4);
@@ -249,6 +294,31 @@
 .diamondHighlight .avatar {
   border-color: #88c8ee;
   box-shadow: 0 0 12px rgba(135, 200, 250, 0.45);
+}
+
+/* Holographic overlay for diamond foil */
+.diamondHighlight::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  pointer-events: none;
+  opacity: var(--foil-opacity, 0);
+  transition: opacity 0.3s ease;
+  mix-blend-mode: color-dodge;
+  background:
+    radial-gradient(
+      circle at var(--pointer-x, 50%) var(--pointer-y, 50%),
+      hsla(200, 80%, 75%, 0.3) 0%,
+      hsla(205, 85%, 70%, 0.2) 25%,
+      transparent 50%
+    ),
+    repeating-linear-gradient(
+      calc(var(--pointer-x, 50%) * 3.6deg),
+      hsla(200, 80%, 80%, 0.1) 0%,
+      hsla(205, 85%, 75%, 0.15) 5%,
+      hsla(200, 80%, 80%, 0.1) 10%
+    );
 }
 
 /* Diamond styling for sponsor button on diamond cards */

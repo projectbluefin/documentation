@@ -142,9 +142,33 @@ const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
 }) => {
   const [user, setUser] = useState<GitHubUser | null>(null);
   const [loading, setLoading] = useState(true);
+  const [pointerStyles, setPointerStyles] = useState<React.CSSProperties>({});
 
   // Normalize highlight prop: true -> 'gold', false/undefined -> null
   const highlightType = highlight === true ? "gold" : highlight || null;
+
+  // Mouse tracking for holographic effect (only on highlighted cards)
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!highlightType) return;
+
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+
+    setPointerStyles({
+      "--pointer-x": `${x}%`,
+      "--pointer-y": `${y}%`,
+      "--foil-opacity": "1",
+    } as React.CSSProperties);
+  };
+
+  const handlePointerLeave = () => {
+    if (!highlightType) return;
+
+    setPointerStyles({
+      "--foil-opacity": "0",
+    } as React.CSSProperties);
+  };
 
   useEffect(() => {
     // First, try pre-fetched build-time data
@@ -236,7 +260,12 @@ const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
           : "";
 
   return (
-    <div className={`${styles.card} ${highlightClass}`}>
+    <div
+      className={`${styles.card} ${highlightClass}`}
+      onPointerMove={handlePointerMove}
+      onPointerLeave={handlePointerLeave}
+      style={pointerStyles}
+    >
       <a href={user.html_url} target="_blank" rel="noopener noreferrer">
         <img
           src={user.avatar_url}
