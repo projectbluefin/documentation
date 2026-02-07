@@ -40,6 +40,8 @@
 }
 
 .highlight .avatar {
+  position: relative;
+  z-index: 2;
   border-color: #ffd700;
   box-shadow: 0 0 12px rgba(255, 215, 0, 0.5);
 }
@@ -54,19 +56,31 @@
   opacity: var(--foil-opacity, 0);
   transition: opacity 0.3s ease;
   mix-blend-mode: color-dodge;
-  background:
-    radial-gradient(
-      circle at var(--pointer-x, 50%) var(--pointer-y, 50%),
-      hsla(45, 100%, 65%, 0.3) 0%,
-      hsla(50, 95%, 60%, 0.2) 25%,
-      transparent 50%
-    ),
-    repeating-linear-gradient(
-      calc(var(--pointer-x, 50%) * 3.6deg),
-      hsla(45, 100%, 70%, 0.1) 0%,
-      hsla(50, 100%, 65%, 0.15) 5%,
-      hsla(45, 100%, 70%, 0.1) 10%
-    );
+  z-index: 1;
+  background-image: linear-gradient(
+    115deg,
+    transparent 20%,
+    hsla(45, 100%, 70%, 0.3) 36%,
+    hsla(50, 100%, 65%, 0.5) 43%,
+    hsla(55, 100%, 60%, 0.6) 50%,
+    hsla(50, 100%, 65%, 0.5) 57%,
+    hsla(45, 100%, 70%, 0.3) 64%,
+    transparent 80%
+  );
+  background-size: 300% 300%;
+  background-position: calc((var(--pointer-x, 50%) - 50) * 1%)
+    calc((var(--pointer-y, 50%) - 50) * 1%);
+  filter: brightness(1.2) contrast(1.3);
+}
+
+.highlight .avatar {
+  position: relative;
+  z-index: 2;
+}
+
+.highlight .avatar {
+  position: relative;
+  z-index: 2;
 }
 
 /* Button row for badge and sponsor button */
@@ -225,6 +239,8 @@
 }
 
 .silverHighlight .avatar {
+  position: relative;
+  z-index: 2;
   border-color: #b0b8c8;
   box-shadow: 0 0 12px rgba(176, 196, 222, 0.45);
 }
@@ -239,19 +255,31 @@
   opacity: var(--foil-opacity, 0);
   transition: opacity 0.3s ease;
   mix-blend-mode: color-dodge;
-  background:
-    radial-gradient(
-      circle at var(--pointer-x, 50%) var(--pointer-y, 50%),
-      hsla(215, 30%, 75%, 0.25) 0%,
-      hsla(220, 35%, 70%, 0.18) 25%,
-      transparent 50%
-    ),
-    repeating-linear-gradient(
-      calc(var(--pointer-x, 50%) * 3.6deg),
-      hsla(215, 30%, 80%, 0.08) 0%,
-      hsla(220, 35%, 75%, 0.12) 5%,
-      hsla(215, 30%, 80%, 0.08) 10%
-    );
+  z-index: 1;
+  background-image: linear-gradient(
+    115deg,
+    transparent 20%,
+    hsla(215, 40%, 80%, 0.3) 36%,
+    hsla(220, 45%, 75%, 0.5) 43%,
+    hsla(225, 40%, 70%, 0.6) 50%,
+    hsla(220, 45%, 75%, 0.5) 57%,
+    hsla(215, 40%, 80%, 0.3) 64%,
+    transparent 80%
+  );
+  background-size: 300% 300%;
+  background-position: calc((var(--pointer-x, 50%) - 50) * 1%)
+    calc((var(--pointer-y, 50%) - 50) * 1%);
+  filter: brightness(1.2) contrast(1.3);
+}
+
+.silverHighlight .avatar {
+  position: relative;
+  z-index: 2;
+}
+
+.silverHighlight .avatar {
+  position: relative;
+  z-index: 2;
 }
 
 /* Silver styling for sponsor button on silver cards */
@@ -292,6 +320,8 @@
 }
 
 .diamondHighlight .avatar {
+  position: relative;
+  z-index: 2;
   border-color: #88c8ee;
   box-shadow: 0 0 12px rgba(135, 200, 250, 0.45);
 }
@@ -306,19 +336,31 @@
   opacity: var(--foil-opacity, 0);
   transition: opacity 0.3s ease;
   mix-blend-mode: color-dodge;
-  background:
-    radial-gradient(
-      circle at var(--pointer-x, 50%) var(--pointer-y, 50%),
-      hsla(200, 80%, 75%, 0.3) 0%,
-      hsla(205, 85%, 70%, 0.2) 25%,
-      transparent 50%
-    ),
-    repeating-linear-gradient(
-      calc(var(--pointer-x, 50%) * 3.6deg),
-      hsla(200, 80%, 80%, 0.1) 0%,
-      hsla(205, 85%, 75%, 0.15) 5%,
-      hsla(200, 80%, 80%, 0.1) 10%
-    );
+  z-index: 1;
+  background-image: linear-gradient(
+    115deg,
+    transparent 20%,
+    hsla(200, 90%, 80%, 0.3) 36%,
+    hsla(205, 90%, 75%, 0.5) 43%,
+    hsla(210, 85%, 70%, 0.6) 50%,
+    hsla(205, 90%, 75%, 0.5) 57%,
+    hsla(200, 90%, 80%, 0.3) 64%,
+    transparent 80%
+  );
+  background-size: 300% 300%;
+  background-position: calc((var(--pointer-x, 50%) - 50) * 1%)
+    calc((var(--pointer-y, 50%) - 50) * 1%);
+  filter: brightness(1.2) contrast(1.3);
+}
+
+.diamondHighlight .avatar {
+  position: relative;
+  z-index: 2;
+}
+
+.diamondHighlight .avatar {
+  position: relative;
+  z-index: 2;
 }
 
 /* Diamond styling for sponsor button on diamond cards */
