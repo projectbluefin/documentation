@@ -102,7 +102,51 @@ When a user asks you to "complete the epic" or "finish the work", this means:
 
 **🚨 CRITICAL: NEVER create a pull request unless EXPLICITLY instructed by the user.**
 
+**🚨 CRITICAL: ALL WORK MUST BE DONE IN THE CASTROJO/DOCUMENTATION FORK.**
+
 Completing work (closing issues, validating, building) does NOT mean "create a PR". The user must explicitly say "create a PR" or "make a pull request" or similar direct instruction.
+
+## Repository Context - CRITICAL
+
+This is a **FORK WORKFLOW** repository:
+
+- **Your fork (origin):** `git@github.com:castrojo/documentation.git`
+- **Upstream (projectbluefin):** `git@github.com:projectbluefin/documentation.git`
+
+### Absolute Rules for Fork Usage
+
+**ALL WORK HAPPENS IN THE FORK:**
+
+1. **ALWAYS** branch from your fork's main
+2. **ALWAYS** commit to your fork
+3. **ALWAYS** push to your fork (origin)
+4. **NEVER** push directly to upstream/projectbluefin
+5. **NEVER** create PRs to upstream without explicit instruction
+
+**If you're ever instructed to touch upstream, ASK FOR CONFIRMATION FIRST.**
+
+### Why This Matters
+
+- The fork is YOUR workspace - safe to experiment
+- Upstream is the CANONICAL repository - protected and shared
+- PRs are the ONLY way to submit changes upstream
+- Even with write access to upstream, you must use the fork workflow
+
+### Fork Workflow Commands
+
+```bash
+# Correct: Branch from fork
+git checkout -b feature/name origin/main
+
+# Correct: Push to fork
+git push -u origin feature/name
+
+# WRONG: Never push directly to upstream
+git push upstream feature/name  # ❌ NEVER DO THIS
+
+# WRONG: Never create PRs without instruction
+gh pr create --repo projectbluefin/documentation  # ❌ NOT WITHOUT EXPLICIT INSTRUCTION
+```
 
 ### Required Workflow
 
@@ -148,6 +192,10 @@ Completing work (closing issues, validating, building) does NOT mean "create a P
 - ❌ NEVER commit directly to main branch
 - ❌ NEVER merge PRs without explicit user instruction
 - ❌ NEVER use `--force` or `--force-with-lease` on main branch
+- ❌ NEVER push to upstream repository (git push upstream)
+- ❌ NEVER create commits on upstream/main branch
+- ❌ NEVER fetch from upstream and work directly on those branches
+- ❌ NEVER bypass the fork - ALL WORK STAYS IN CASTROJO/DOCUMENTATION
 
 ### Exception Cases
 
