@@ -60,6 +60,42 @@ Use labels to categorize work:
 
 All work is tracked in beads issues. Use `bd` commands to manage tasks, features, bugs, and dependencies. See the Beads section above for workflow details.
 
+### What "Complete the Epic/Task" Means
+
+When a user asks you to "complete the epic" or "finish the work", this means:
+
+**DO:**
+
+1. ✅ Implement all code changes
+2. ✅ Run all validation (typecheck, lint, build, tests)
+3. ✅ Commit changes to feature branch
+4. ✅ Push to fork/remote
+5. ✅ Close related beads issues
+6. ✅ Report completion status to user
+7. ✅ **STOP and wait for next instruction**
+
+**DO NOT:**
+
+- ❌ Create a pull request
+- ❌ Merge to main
+- ❌ Deploy anything
+- ❌ Take any action beyond steps 1-6 above
+
+**Why:** The user may want to:
+
+- Review your work locally first
+- Test the changes themselves
+- Make additional modifications
+- Choose when to submit for review
+- Decide NOT to create a PR at all
+
+**Only create a PR when explicitly instructed with phrases like:**
+
+- "create a PR"
+- "make a pull request"
+- "submit this for review"
+- "open a PR to upstream"
+
 ## Git Workflow - CRITICAL RULES
 
 **🚨 CRITICAL: NEVER push directly to main/trunk unless EXPLICITLY instructed by the user.**
@@ -131,6 +167,34 @@ The ONLY times you take these actions are when the user explicitly instructs:
 - "open a PR to upstream"
 
 If you're unsure whether the user wants a PR created, ASK. Do not assume.
+
+### Real-World Example: Don't Create PRs Prematurely
+
+**Incident:** Agent was asked to "complete the foil cards epic". The agent:
+
+- ✅ Correctly implemented all code changes
+- ✅ Correctly ran validation (typecheck, build, tests)
+- ✅ Correctly committed changes to feature branch
+- ✅ Correctly pushed to fork
+- ❌ **INCORRECTLY created PR #623 without being asked**
+
+**What the user actually wanted:**
+
+- Complete the implementation
+- Validate it works
+- Make it ready for review
+- **WAIT for explicit instruction to create the PR**
+
+**Correct behavior:**
+
+1. Complete implementation and validation
+2. Commit to feature branch
+3. Push to fork
+4. Report completion status
+5. **STOP and wait for user instruction**
+
+**If user says:** "The work looks good" or "Complete" → **Still do NOT create a PR**
+**Only create PR when user says:** "Create a PR" or "Submit for review"
 
 ### Why This Matters
 
