@@ -60,9 +60,93 @@ Use labels to categorize work:
 
 All work is tracked in beads issues. Use `bd` commands to manage tasks, features, bugs, and dependencies. See the Beads section above for workflow details.
 
+### What "Complete the Epic/Task" Means
+
+When a user asks you to "complete the epic" or "finish the work", this means:
+
+**DO:**
+
+1. ✅ Implement all code changes
+2. ✅ Run all validation (typecheck, lint, build, tests)
+3. ✅ Commit changes to feature branch
+4. ✅ Push to fork/remote
+5. ✅ Close related beads issues
+6. ✅ Report completion status to user
+7. ✅ **STOP and wait for next instruction**
+
+**DO NOT:**
+
+- ❌ Create a pull request
+- ❌ Merge to main
+- ❌ Deploy anything
+- ❌ Take any action beyond steps 1-6 above
+
+**Why:** The user may want to:
+
+- Review your work locally first
+- Test the changes themselves
+- Make additional modifications
+- Choose when to submit for review
+- Decide NOT to create a PR at all
+
+**Only create a PR when explicitly instructed with phrases like:**
+
+- "create a PR"
+- "make a pull request"
+- "submit this for review"
+- "open a PR to upstream"
+
 ## Git Workflow - CRITICAL RULES
 
-**NEVER push directly to main/trunk unless EXPLICITLY instructed by the user.**
+**🚨 CRITICAL: NEVER push directly to main/trunk unless EXPLICITLY instructed by the user.**
+
+**🚨 CRITICAL: NEVER create a pull request unless EXPLICITLY instructed by the user.**
+
+**🚨 CRITICAL: ALL WORK MUST BE DONE IN THE CASTROJO/DOCUMENTATION FORK.**
+
+Completing work (closing issues, validating, building) does NOT mean "create a PR". The user must explicitly say "create a PR" or "make a pull request" or similar direct instruction.
+
+## Repository Context - CRITICAL
+
+This is a **FORK WORKFLOW** repository:
+
+- **Your fork (origin):** `git@github.com:castrojo/documentation.git`
+- **Upstream (projectbluefin):** `git@github.com:projectbluefin/documentation.git`
+
+### Absolute Rules for Fork Usage
+
+**ALL WORK HAPPENS IN THE FORK:**
+
+1. **ALWAYS** branch from your fork's main
+2. **ALWAYS** commit to your fork
+3. **ALWAYS** push to your fork (origin)
+4. **NEVER** push directly to upstream/projectbluefin
+5. **NEVER** create PRs to upstream without explicit instruction
+
+**If you're ever instructed to touch upstream, ASK FOR CONFIRMATION FIRST.**
+
+### Why This Matters
+
+- The fork is YOUR workspace - safe to experiment
+- Upstream is the CANONICAL repository - protected and shared
+- PRs are the ONLY way to submit changes upstream
+- Even with write access to upstream, you must use the fork workflow
+
+### Fork Workflow Commands
+
+```bash
+# Correct: Branch from fork
+git checkout -b feature/name origin/main
+
+# Correct: Push to fork
+git push -u origin feature/name
+
+# WRONG: Never push directly to upstream
+git push upstream feature/name  # ❌ NEVER DO THIS
+
+# WRONG: Never create PRs without instruction
+gh pr create --repo projectbluefin/documentation  # ❌ NOT WITHOUT EXPLICIT INSTRUCTION
+```
 
 ### Required Workflow
 
@@ -85,11 +169,20 @@ All work is tracked in beads issues. Use `bd` commands to manage tasks, features
    git push -u origin feature/descriptive-name
    ```
 
-4. **Create a pull request** (do not merge)
+4. **DO NOT create a pull request automatically**
 
-   ```bash
-   gh pr create --title "Title" --body "Description"
-   ```
+   **CRITICAL**: NEVER run `gh pr create` unless the user EXPLICITLY instructs you to do so.
+
+   Even if you see phrases like:
+   - "complete the epic"
+   - "finish the work"
+   - "implement the feature"
+
+   These do NOT mean "create a PR". Wait for explicit PR creation instruction:
+   - "create a PR"
+   - "make a pull request"
+   - "submit this for review"
+   - "open a PR to upstream"
 
 5. **WAIT for user approval** - Do not merge or push to main
 
@@ -99,15 +192,57 @@ All work is tracked in beads issues. Use `bd` commands to manage tasks, features
 - ❌ NEVER commit directly to main branch
 - ❌ NEVER merge PRs without explicit user instruction
 - ❌ NEVER use `--force` or `--force-with-lease` on main branch
+- ❌ NEVER push to upstream repository (git push upstream)
+- ❌ NEVER create commits on upstream/main branch
+- ❌ NEVER fetch from upstream and work directly on those branches
+- ❌ NEVER bypass the fork - ALL WORK STAYS IN CASTROJO/DOCUMENTATION
 
 ### Exception Cases
 
-The ONLY time you push to main is when the user explicitly says:
+The ONLY times you take these actions are when the user explicitly instructs:
+
+**Push to main:**
 
 - "push this to main"
 - "merge this to trunk"
 - "deploy this now"
-- Similar explicit direct instructions
+
+**Create a PR:**
+
+- "create a PR"
+- "make a pull request"
+- "submit this for review"
+- "open a PR to upstream"
+
+If you're unsure whether the user wants a PR created, ASK. Do not assume.
+
+### Real-World Example: Don't Create PRs Prematurely
+
+**Incident:** Agent was asked to "complete the foil cards epic". The agent:
+
+- ✅ Correctly implemented all code changes
+- ✅ Correctly ran validation (typecheck, build, tests)
+- ✅ Correctly committed changes to feature branch
+- ✅ Correctly pushed to fork
+- ❌ **INCORRECTLY created PR #623 without being asked**
+
+**What the user actually wanted:**
+
+- Complete the implementation
+- Validate it works
+- Make it ready for review
+- **WAIT for explicit instruction to create the PR**
+
+**Correct behavior:**
+
+1. Complete implementation and validation
+2. Commit to feature branch
+3. Push to fork
+4. Report completion status
+5. **STOP and wait for user instruction**
+
+**If user says:** "The work looks good" or "Complete" → **Still do NOT create a PR**
+**Only create PR when user says:** "Create a PR" or "Submit for review"
 
 ### Why This Matters
 
