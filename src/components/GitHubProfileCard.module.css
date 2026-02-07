@@ -174,6 +174,96 @@
   box-shadow: 0 4px 12px rgba(255, 215, 0, 0.5);
 }
 
+/* Silver foil effect for Special Guests */
+.silverHighlight {
+  position: relative;
+  background: linear-gradient(
+    135deg,
+    rgba(176, 196, 222, 0.08) 0%,
+    rgba(192, 210, 235, 0.12) 50%,
+    rgba(176, 196, 222, 0.08) 100%
+  );
+  border: 2px solid;
+  border-image: linear-gradient(135deg, #a8b8cc, #d4dce8, #a8b8cc) 1;
+  box-shadow:
+    0 4px 12px rgba(176, 196, 222, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.silverHighlight:hover {
+  box-shadow:
+    0 6px 20px rgba(176, 196, 222, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  transform: translateY(-3px);
+}
+
+.silverHighlight .avatar {
+  border-color: #b0b8c8;
+  box-shadow: 0 0 12px rgba(176, 196, 222, 0.45);
+}
+
+/* Silver styling for sponsor button on silver cards */
+.silverHighlight .sponsorButton {
+  background: linear-gradient(135deg, #b8c6d8, #d4dce8);
+  color: #4a5568;
+  box-shadow: 0 2px 8px rgba(176, 196, 222, 0.4);
+}
+
+.silverHighlight .sponsorButton:hover {
+  background: linear-gradient(135deg, #d4dce8, #b8c6d8);
+  color: #2d3748;
+  box-shadow: 0 4px 12px rgba(176, 196, 222, 0.5);
+}
+
+/* Diamond foil effect for Maintainers Emeritus */
+.diamondHighlight {
+  position: relative;
+  background: linear-gradient(
+    135deg,
+    rgba(185, 220, 255, 0.08) 0%,
+    rgba(220, 235, 255, 0.12) 50%,
+    rgba(185, 220, 255, 0.08) 100%
+  );
+  border: 2px solid;
+  border-image: linear-gradient(
+      135deg,
+      #88c8ee,
+      #d0e8ff,
+      #a0d0f0,
+      #d0e8ff,
+      #88c8ee
+    )
+    1;
+  box-shadow:
+    0 4px 12px rgba(135, 200, 250, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.diamondHighlight:hover {
+  box-shadow:
+    0 6px 20px rgba(135, 200, 250, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  transform: translateY(-3px);
+}
+
+.diamondHighlight .avatar {
+  border-color: #88c8ee;
+  box-shadow: 0 0 12px rgba(135, 200, 250, 0.45);
+}
+
+/* Diamond styling for sponsor button on diamond cards */
+.diamondHighlight .sponsorButton {
+  background: linear-gradient(135deg, #88c8ee, #b8e0ff);
+  color: #2a6496;
+  box-shadow: 0 2px 8px rgba(135, 200, 250, 0.4);
+}
+
+.diamondHighlight .sponsorButton:hover {
+  background: linear-gradient(135deg, #b8e0ff, #88c8ee);
+  color: #1a4a70;
+  box-shadow: 0 4px 12px rgba(135, 200, 250, 0.5);
+}
+
 .loading,
 .error {
   padding: 2rem;

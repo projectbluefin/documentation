@@ -20,7 +20,7 @@ interface GitHubProfileCardProps {
   username: string;
   title?: string;
   sponsorUrl?: string;
-  highlight?: boolean; // Gold foil effect for new contributors
+  highlight?: boolean | "gold" | "silver" | "diamond";
 }
 
 const CACHE_KEY_PREFIX = "github_profile_";
@@ -143,6 +143,9 @@ const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
   const [user, setUser] = useState<GitHubUser | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Normalize highlight prop: true -> 'gold', false/undefined -> null
+  const highlightType = highlight === true ? "gold" : highlight || null;
+
   useEffect(() => {
     // First, try pre-fetched build-time data
     const profileData = profilesData[username];
@@ -222,8 +225,18 @@ const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
     );
   }
 
+  // Determine the highlight CSS class
+  const highlightClass =
+    highlightType === "gold"
+      ? styles.highlight
+      : highlightType === "silver"
+        ? styles.silverHighlight
+        : highlightType === "diamond"
+          ? styles.diamondHighlight
+          : "";
+
   return (
-    <div className={`${styles.card} ${highlight ? styles.highlight : ""}`}>
+    <div className={`${styles.card} ${highlightClass}`}>
       <a href={user.html_url} target="_blank" rel="noopener noreferrer">
         <img
           src={user.avatar_url}
@@ -247,9 +260,11 @@ const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
             <strong>{user.followers}</strong> followers
           </span>
         </div>
-        {(highlight || sponsorUrl) && (
+        {(highlightType || sponsorUrl) && (
           <div className={styles.buttonRow}>
-            {highlight && <div className={styles.badge}>★ New Light</div>}
+            {highlightType === "gold" && (
+              <div className={styles.badge}>★ New Light</div>
+            )}
             {sponsorUrl && (
               <a
                 href={sponsorUrl}

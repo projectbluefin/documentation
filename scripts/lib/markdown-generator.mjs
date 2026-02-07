@@ -13,6 +13,7 @@ import {
   generateBadge,
 } from "./label-mapping.mjs";
 import { getSponsorUrl } from "./github-sponsors.mjs";
+import { getDistinguishedHighlight } from "./distinguished-contributors.mjs";
 
 /**
  * Category descriptions for monthly reports
@@ -878,10 +879,16 @@ function generateContributorsSection(contributors, newContributors) {
     const newContributorCards = newContributors
       .map((username) => {
         const sponsorUrl = getSponsorUrl(username);
+        const distinguished = getDistinguishedHighlight(username);
+        // Distinguished contributors (silver/diamond) keep their foil type
+        // instead of receiving the default gold 'New Light' foil
+        const highlightProp = distinguished
+          ? `highlight="${distinguished}"`
+          : `highlight={true}`;
         if (sponsorUrl) {
-          return `<GitHubProfileCard username="${username}" highlight={true} sponsorUrl="${sponsorUrl}" />`;
+          return `<GitHubProfileCard username="${username}" ${highlightProp} sponsorUrl="${sponsorUrl}" />`;
         }
-        return `<GitHubProfileCard username="${username}" highlight={true} />`;
+        return `<GitHubProfileCard username="${username}" ${highlightProp} />`;
       })
       .join("\n\n");
 
@@ -904,10 +911,15 @@ function generateContributorsSection(contributors, newContributors) {
     const continuingContributorCards = continuingContributors
       .map((username) => {
         const sponsorUrl = getSponsorUrl(username);
+        const distinguished = getDistinguishedHighlight(username);
+        // Distinguished contributors always show their foil type
+        const highlightProp = distinguished
+          ? ` highlight="${distinguished}"`
+          : "";
         if (sponsorUrl) {
-          return `<GitHubProfileCard username="${username}" sponsorUrl="${sponsorUrl}" />`;
+          return `<GitHubProfileCard username="${username}"${highlightProp} sponsorUrl="${sponsorUrl}" />`;
         }
-        return `<GitHubProfileCard username="${username}" />`;
+        return `<GitHubProfileCard username="${username}"${highlightProp} />`;
       })
       .join("\n\n");
 
