@@ -62,7 +62,11 @@ All work is tracked in beads issues. Use `bd` commands to manage tasks, features
 
 ## Git Workflow - CRITICAL RULES
 
-**NEVER push directly to main/trunk unless EXPLICITLY instructed by the user.**
+**🚨 CRITICAL: NEVER push directly to main/trunk unless EXPLICITLY instructed by the user.**
+
+**🚨 CRITICAL: NEVER create a pull request unless EXPLICITLY instructed by the user.**
+
+Completing work (closing issues, validating, building) does NOT mean "create a PR". The user must explicitly say "create a PR" or "make a pull request" or similar direct instruction.
 
 ### Required Workflow
 
@@ -85,11 +89,20 @@ All work is tracked in beads issues. Use `bd` commands to manage tasks, features
    git push -u origin feature/descriptive-name
    ```
 
-4. **Create a pull request** (do not merge)
+4. **DO NOT create a pull request automatically**
 
-   ```bash
-   gh pr create --title "Title" --body "Description"
-   ```
+   **CRITICAL**: NEVER run `gh pr create` unless the user EXPLICITLY instructs you to do so.
+
+   Even if you see phrases like:
+   - "complete the epic"
+   - "finish the work"
+   - "implement the feature"
+
+   These do NOT mean "create a PR". Wait for explicit PR creation instruction:
+   - "create a PR"
+   - "make a pull request"
+   - "submit this for review"
+   - "open a PR to upstream"
 
 5. **WAIT for user approval** - Do not merge or push to main
 
@@ -102,12 +115,22 @@ All work is tracked in beads issues. Use `bd` commands to manage tasks, features
 
 ### Exception Cases
 
-The ONLY time you push to main is when the user explicitly says:
+The ONLY times you take these actions are when the user explicitly instructs:
+
+**Push to main:**
 
 - "push this to main"
 - "merge this to trunk"
 - "deploy this now"
-- Similar explicit direct instructions
+
+**Create a PR:**
+
+- "create a PR"
+- "make a pull request"
+- "submit this for review"
+- "open a PR to upstream"
+
+If you're unsure whether the user wants a PR created, ASK. Do not assume.
 
 ### Why This Matters
 
