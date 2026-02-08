@@ -90,11 +90,7 @@ Check out [this interview](https://youtu.be/XpKFcLqbd-A?si=URBJa_IzxU18UObY&t=24
 
 ## Starship is not for me, how do I disable it?
 
-You can remove or comment the line below in `/etc/bashrc` to restore the default prompt.
-
-```bash
-eval "$(starship init bash)"
-```
+You can remove or comment everything in the file `/etc/profile.d/90-bluefin-starship.sh` to restore the default prompt.
 
 ![image](/img/user-attachments/013a75f5-0417-4287-9071-be58c8c38ffd.png)
 
