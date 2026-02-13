@@ -39,76 +39,9 @@ This installs linux-mcp-server + the goose client + our config, follow the instr
   - Choice of local model
 - A [docs2db setup](https://github.com/rhel-lightspeed/docs2db) preloaded with Bluefin's documentation
 
-Now that Ask Bluefin is setup it can automate tasks for you like "Manually update this computer for me."
-
-> Some other common examples
-
-## Basic System Things
-
-- "What kind of computer is this?"
-- "How do I get started with Podman?"
-- [Add]
-
-## Automated Troubleshooting
-
-You can ask the tool things about your system using natural language:
-
-![Top CPU usage](/img/troubleshooting/top-cpu-usage.png)
-
-### 🏥 System Health
-
-Note: these are taken from the linux-server-mcp page but you get the idea:
-
-| I want to check... | Use this tool              | Example Prompt                 |
-| ------------------ | -------------------------- | ------------------------------ |
-| **OS / Kernel**    | `get_system_information`   | "What OS version is this?"     |
-| **CPU Load**       | `get_cpu_information`      | "Is the CPU overloaded?"       |
-| **Memory / RAM**   | `get_memory_information`   | "How much free RAM do I have?" |
-| **Disk Space**     | `get_disk_usage`           | "Are any disks full?"          |
-| **Hardware**       | `get_hardware_information` | "List the PCI devices."        |
-
-### 🔍 Troubleshooting
-
-| I want to check...    | Use this tool        | Example Prompt                                 |
-| --------------------- | -------------------- | ---------------------------------------------- |
-| **Running Apps**      | `list_processes`     | "What's using the most CPU?"                   |
-| **Process Details**   | `get_process_info`   | "Inspect process ID 1234."                     |
-| **Services**          | `list_services`      | "Are all services running?"                    |
-| **Service Status**    | `get_service_status` | "Why did nginx fail?"                          |
-| **System Logs**       | `get_journal_logs`   | "Show errors from the last hour."              |
-| **Service Logs**      | `get_service_logs`   | "Show recent logs for sshd."                   |
-| **Specific Log File** | `read_log_file`      | "Read the last 50 lines of /var/log/messages." |
-
-### 🌐 Network
-
-| I want to check... | Use this tool             | Example Prompt                 |
-| ------------------ | ------------------------- | ------------------------------ |
-| **IP Addresses**   | `get_network_interfaces`  | "What is my IP address?"       |
-| **Open Ports**     | `get_listening_ports`     | "What ports are open?"         |
-| **Connections**    | `get_network_connections` | "Who is connected to port 22?" |
-
-### 📂 Files & Storage
-
-| I want to check...  | Use this tool        | Example Prompt                         |
-| ------------------- | -------------------- | -------------------------------------- |
-| **Disk Partitions** | `list_block_devices` | "Show me the partition layout."        |
-| **Large Folders**   | `list_directories`   | "Find the largest folders in /var."    |
-| **Recent Changes**  | `list_files`         | "What files in /etc changed recently?" |
-
-### 💡 Pro Tips
-
-- **Combine Tools:** You don't need to ask for one thing at a time.
-  > "Check CPU usage and show me the top 5 processes."
-- **Filter Logs:** Be specific with time and priority to save context window.
-
-  > "Show me `error` priority logs from the last `30 minutes`."
-
-- **Remote Hosts:** If you configured SSH, just ask to run on a specific host.
-  > "Check disk usage on `webserver1`."
-
-![troubleshooting](/img/troubleshooting/troubleshooting-example.png)
-
 # Configuration
+
+:::info You need to install and configure the MCP servers to use this. Pull requests to automate this welcome! :::
 
 #### linux-mcp-server
 
