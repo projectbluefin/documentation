@@ -53,7 +53,7 @@ Now that Ask Bluefin is setup it can automate tasks for you like "Manually updat
 
 You can ask the tool things about your system using natural language:
 
-![Top CPU usage](https://github.com/user-attachments/assets/537d5f2c-0a84-460d-b936-ae699376a1d7)
+![Top CPU usage](/img/troubleshooting/top-cpu-usage.png)
 
 ### 🏥 System Health
 
@@ -106,7 +106,7 @@ Note: these are taken from the linux-server-mcp page but you get the idea:
 - **Remote Hosts:** If you configured SSH, just ask to run on a specific host.
   > "Check disk usage on `webserver1`."
 
-![troubleshooting](https://github.com/user-attachments/assets/0ca8873d-a0d4-4822-b4a9-6486588bdbbd)
+![troubleshooting](/img/troubleshooting/troubleshooting-example.png)
 
 # Configuration
 
@@ -158,9 +158,9 @@ brew install uv
 Edit `~/.config/goose/profiles.yaml` and add the MCP servers under the `mcp_servers` section:
 
 ```yaml
-provider: openai # or your preferred provider
-processor: gpt-4o
-accelerator: gpt-4o-mini
+provider: google-gemini
+processor: gemini-2.0-flash-exp
+accelerator: gemini-2.0-flash-exp
 moderator: passive
 
 mcp_servers:
@@ -176,6 +176,8 @@ mcp_servers:
     env:
       DOSU_DEPLOYMENT_SLUG: 018da525-51f8-75ec-befc-c36a5f27ce5c
 ```
+
+**Authentication:** When you first start Goose with Google Gemini, it will open your browser to authenticate with your Google account. No API key configuration required.
 
 **Step 3: Restart Goose**
 
