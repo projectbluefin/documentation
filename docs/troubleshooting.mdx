@@ -15,7 +15,7 @@ This does not exist yet, it's here to document how we expect the feature to work
 
 In the menu select "Ask Bluefin" to use the chat agent.
 
-![ask](https://github.com/user-attachments/assets/c4116f0b-47e5-43f8-97fd-c55fbe373d01)
+![ask](/img/troubleshooting/ask-bluefin-menu.png)
 
 > "Ask Bluefin", is a custom operating system agent. For you new users, a system designed to help you learn Linux, without the toil of digging through the internet or being told that you installed the wrong Linux distribution. "Ask Bluefin" is trained on the operating system and its documentation, so it's always learning from the source of truth and tweaked by the community. For you Linux veterans, a power diagnostic tool for your local PC, with built in integration to your servers and cluster ...
 
@@ -39,10 +39,11 @@ This installs linux-mcp-server + the goose client + our config, follow the instr
   - Choice of local model
 - A [docs2db setup](https://github.com/rhel-lightspeed/docs2db) preloaded with Bluefin's documentation
 
-
 # Configuration
 
-:::info You need to install and configure the MCP servers to use this. Pull requests to automate this welcome! :::
+:::info
+You need to install and configure the MCP servers to use this. Pull requests to automate this welcome!
+:::
 
 #### linux-mcp-server
 
@@ -83,18 +84,14 @@ Goose stores MCP server configurations in `~/.config/goose/profiles.yaml`.
 # Install linux-mcp-server
 brew install ublue-os/tap/linux-mcp-server
 
-# Install dosu-mcp (requires uv)
-brew install uv
-```
-
 **Step 2: Configure Goose**
 
 Edit `~/.config/goose/profiles.yaml` and add the MCP servers under the `mcp_servers` section:
 
 ```yaml
-provider: openai # or your preferred provider
-processor: gpt-4o
-accelerator: gpt-4o-mini
+provider: google-gemini
+processor: gemini-2.0-flash-exp
+accelerator: gemini-2.0-flash-exp
 moderator: passive
 
 mcp_servers:
@@ -110,6 +107,8 @@ mcp_servers:
     env:
       DOSU_DEPLOYMENT_SLUG: 018da525-51f8-75ec-befc-c36a5f27ce5c
 ```
+
+**Authentication:** When you first start Goose with Google Gemini, it will open your browser to authenticate with your Google account. No API key configuration required.
 
 **Step 3: Restart Goose**
 
@@ -190,23 +189,13 @@ Close and reopen OpenCode to load the MCP servers. You can verify they're loaded
 - [Building MCP Servers](https://modelcontextprotocol.io/docs/building-servers)
 - [MCP Specification](https://spec.modelcontextprotocol.io/)
 
-Now that Ask Bluefin is setup it can automate tasks for you like "Manually update this computer for me."
-
-> Some other common examples
-
-## Basic System Things
-
-- "What kind of computer is this?"
-- "How do I get started with Podman?"
-- [Add]
-
 ## Automated Troubleshooting
 
 You can ask the tool things about your system using natural language:
 
-![Top CPU usage](https://github.com/user-attachments/assets/537d5f2c-0a84-460d-b936-ae699376a1d7)
+![Top CPU usage](/img/troubleshooting/top-cpu-usage.png)
 
-### 🏥 System Health
+### System Health
 
 Note: these are taken from the linux-server-mcp page but you get the idea:
 
@@ -218,7 +207,7 @@ Note: these are taken from the linux-server-mcp page but you get the idea:
 | **Disk Space**     | `get_disk_usage`           | "Are any disks full?"          |
 | **Hardware**       | `get_hardware_information` | "List the PCI devices."        |
 
-### 🔍 Troubleshooting
+### Troubleshooting
 
 | I want to check...    | Use this tool        | Example Prompt                                 |
 | --------------------- | -------------------- | ---------------------------------------------- |
@@ -230,7 +219,7 @@ Note: these are taken from the linux-server-mcp page but you get the idea:
 | **Service Logs**      | `get_service_logs`   | "Show recent logs for sshd."                   |
 | **Specific Log File** | `read_log_file`      | "Read the last 50 lines of /var/log/messages." |
 
-### 🌐 Network
+### Network
 
 | I want to check... | Use this tool             | Example Prompt                 |
 | ------------------ | ------------------------- | ------------------------------ |
@@ -238,7 +227,7 @@ Note: these are taken from the linux-server-mcp page but you get the idea:
 | **Open Ports**     | `get_listening_ports`     | "What ports are open?"         |
 | **Connections**    | `get_network_connections` | "Who is connected to port 22?" |
 
-### 📂 Files & Storage
+### Files & Storage
 
 | I want to check...  | Use this tool        | Example Prompt                         |
 | ------------------- | -------------------- | -------------------------------------- |
@@ -246,7 +235,7 @@ Note: these are taken from the linux-server-mcp page but you get the idea:
 | **Large Folders**   | `list_directories`   | "Find the largest folders in /var."    |
 | **Recent Changes**  | `list_files`         | "What files in /etc changed recently?" |
 
-### 💡 Pro Tips
+### Pro Tips
 
 - **Combine Tools:** You don't need to ask for one thing at a time.
   > "Check CPU usage and show me the top 5 processes."
@@ -257,4 +246,4 @@ Note: these are taken from the linux-server-mcp page but you get the idea:
 - **Remote Hosts:** If you configured SSH, just ask to run on a specific host.
   > "Check disk usage on `webserver1`."
 
-![troubleshooting](https://github.com/user-attachments/assets/0ca8873d-a0d4-4822-b4a9-6486588bdbbd)
+![troubleshooting](/img/troubleshooting/troubleshooting-example.png)
