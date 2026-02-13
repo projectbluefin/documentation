@@ -108,6 +108,150 @@ Note: these are taken from the linux-server-mcp page but you get the idea:
 
 ![troubleshooting](https://github.com/user-attachments/assets/0ca8873d-a0d4-4822-b4a9-6486588bdbbd)
 
-## Customizing with MCPs
+# Configuration
 
-## Goose Plugins
+#### linux-mcp-server
+
+Provides system diagnostics and monitoring tools:
+
+- System information (OS, kernel, hardware)
+- Process management
+- Service monitoring (systemd)
+- Log access (journalctl)
+- Network diagnostics
+- File system inspection
+
+**Repository**: [ublue-os/linux-mcp-server](https://github.com/rhel-lightspeed/linux-mcp-server)
+
+#### dosu-mcp
+
+Connects your agent to Bluefin documentation and knowledge bases:
+
+- Search documentation sources
+- Replicates ask.projectbluefin.io on your system
+
+**Repository**: [dosubot/dosu-mcp](https://github.com/dosubot/dosu-mcp)
+
+### MCP Configuration
+
+The configuration process differs depending on which AI client you're using:
+
+<Tabs groupId="ai-client">
+  <TabItem value="goose" label="Goose" default>
+
+#### Goose Configuration
+
+Goose stores MCP server configurations in `~/.config/goose/profiles.yaml`.
+
+**Step 1: Install MCP Servers**
+
+```bash
+# Install linux-mcp-server
+brew install ublue-os/tap/linux-mcp-server
+
+# Install dosu-mcp (requires uv)
+brew install uv
+```
+
+**Step 2: Configure Goose**
+
+Edit `~/.config/goose/profiles.yaml` and add the MCP servers under the `mcp_servers` section:
+
+```yaml
+provider: openai # or your preferred provider
+processor: gpt-4o
+accelerator: gpt-4o-mini
+moderator: passive
+
+mcp_servers:
+  linux-mcp-server:
+    command: /home/linuxbrew/.linuxbrew/bin/linux-mcp-server
+    env:
+      LOG_LEVEL: info
+
+  dosu:
+    command: uvx
+    args:
+      - dosu-mcp
+    env:
+      DOSU_DEPLOYMENT_SLUG: 018da525-51f8-75ec-befc-c36a5f27ce5c
+```
+
+**Step 3: Restart Goose**
+
+Restart Goose to load the MCP servers:
+
+```bash
+# Exit Goose (Ctrl+D or /exit)
+# Start Goose again
+goose session start
+```
+
+**Note on Dosu Configuration:** The Bluefin documentation deployment UUID shown above can be shared amongst all Bluefin users - no API key required for read-only access to the documentation knowledge base.
+
+  </TabItem>
+  <TabItem value="opencode" label="OpenCode">
+
+#### OpenCode Configuration
+
+OpenCode stores MCP server configurations in `~/.config/opencode/config.json`.
+
+**Step 1: Install MCP Servers**
+
+```bash
+# Install linux-mcp-server
+brew install ublue-os/tap/linux-mcp-server
+
+# Install dosu-mcp (requires uv)
+brew install uv
+```
+
+**Step 2: Configure OpenCode**
+
+Edit `~/.config/opencode/config.json` and add the MCP servers:
+
+```json
+{
+  "mcpServers": {
+    "linux-mcp-server": {
+      "command": "linux-mcp-server",
+      "args": [],
+      "env": {
+        "LOG_LEVEL": "info"
+      }
+    },
+    "dosu": {
+      "command": "uvx",
+      "args": ["dosu-mcp"],
+      "env": {
+        "DOSU_DEPLOYMENT_SLUG": "018da525-51f8-75ec-befc-c36a5f27ce5c"
+      }
+    }
+  }
+}
+```
+
+**Step 3: Restart OpenCode**
+
+Close and reopen OpenCode to load the MCP servers. You can verify they're loaded by asking:
+
+> "What MCP servers are available?"
+
+**Note on Dosu Configuration:** The Bluefin documentation deployment UUID shown above can be shared amongst all Bluefin users - no API key required for read-only access to the documentation knowledge base.
+
+  </TabItem>
+</Tabs>
+
+### Security Considerations
+
+- MCP servers run with your user permissions
+- Only install MCP servers from trusted sources
+- Review server documentation for required permissions
+- Use environment variables for sensitive credentials (don't hardcode in config)
+- Regularly update MCP servers to get security patches
+
+### Further Reading
+
+- [MCP Official Documentation](https://modelcontextprotocol.io/)
+- [Building MCP Servers](https://modelcontextprotocol.io/docs/building-servers)
+- [MCP Specification](https://spec.modelcontextprotocol.io/)
