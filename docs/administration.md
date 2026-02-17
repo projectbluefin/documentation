@@ -68,14 +68,14 @@ Bluefin offers images based on the current and last stable version of Fedora, as
 
 You can choose from three rolling tags, or lock to a specific version of Fedora. Check the [release notes](https://github.com/ublue-os/bluefin/releases) for specific version information:
 
-|                      | `gts` (default) | `stable` or `stable-daily` | `latest`                   |
-| -------------------- | --------------- | -------------------------- | -------------------------- |
-| Fedora Version:      | 42              | 43                         | 43                         |
-| GNOME Version:       | 48              | 49                         | 49                         |
-| Target User:         | Most users      | Enthusiasts                | Advanced users and testers |
-| System Updates:      | Weekly          | Weekly or Daily            | Daily                      |
-| Application Updates: | Twice a Day     | Twice a Day                | Twice a Day                |
-| Kernel:              | Gated           | Gated                      | Ungated                    |
+|                      | `gts`           | `stable` (default) or `stable-daily` | `latest`                   |
+| -------------------- | --------------- | ------------------------------------ | -------------------------- |
+| Fedora Version:      | 42              | 43                                   | 43                         |
+| GNOME Version:       | 48              | 49                                   | 49                         |
+| Target User:         | Most users      | Enthusiasts                          | Advanced users and testers |
+| System Updates:      | Weekly          | Weekly or Daily                      | Daily                      |
+| Application Updates: | Twice a Day     | Twice a Day                          | Twice a Day                |
+| Kernel:              | Gated           | Gated                                | Ungated                    |
 
 **Note:** [Bluefin LTS](/lts) and [GDX](/gdx) not shown here, refer to their respective documentation for more details.
 
