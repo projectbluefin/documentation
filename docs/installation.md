@@ -73,7 +73,7 @@ Users can expect:
 
 Recommendation: Ubuntu or a custom image. 
 
-### Requirements
+### System Requirements
 
 Review the [Fedora Silverblue installation instructions](https://docs.fedoraproject.org/en-US/fedora-silverblue/installation/). Some differences to consider:
 
