@@ -120,7 +120,7 @@ Once we've established a set of re-usable components, we then combine them with 
 
 - [@ublue-os/bluefin](https://github.com/ublue-os/bluefin) - Bluefin: generates a Fedora-based Bluefin OCI container
 - [@ublue-os/bluefin-lts](https://github.com/ublue-os/bluefin-lts) - Bluefin LTS: generates a CentOS-based Bluefin OCI container
-- [@projectbluefin/distroless](https://github.com/projectbluefin/distroless) - Dakotaraptor prototype - generates a GNOME OS based Bluefin OCI container (more on this below!)
+- [@projectbluefin/distroless](https://github.com/projectbluefin/dakota) - Dakotaraptor prototype - generates a GNOME OS based Bluefin OCI container (more on this below!)
 
 Since the bulk of what makes Bluefin is now just an OCI container the base OS can more easily be abstracted away. This means that these repositories can now do way less than they were doing before. We will continue to prune these over the course of this year.
 
