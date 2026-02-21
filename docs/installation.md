@@ -23,17 +23,17 @@ Bluefin is purposely designed to follow the state of the art of Linux developmen
 
 A Tier 1 configuration is considered fully supported. These configurations receive the highest level of coverage and are prioritized. 
 
-Requirements:
+#### Requirements
 - Linux friendly hardware (no external kernel modules required)
   - Laptop vendors may or may not fall under this tier.
   - "Our hardware is fully supported in the upstream Linux kernel" ← good
   - "We only support Ubuntu 24.04" ← probably not good
 - Software packaged for modern Linuxes (Flatpak, containers, etc)
 
-Users can expect:
+#### Users can expect
 - The most reliable and intended Bluefin experience 
 
-Recommendation: Bluefin
+**Recommendation:** Bluefin
 
 ### Tier 2
 
@@ -41,16 +41,16 @@ A Tier 2 configuration is not fully supported and may contain compromises due to
 It can mostly work but may need post-install configuration. 
 
 - NVidia GPUs on desktops
-- Some linux laptop vendors may fall under this tier
-  - Might have good kernel support but needs an external module for a fan controller or some other component of the laptop.    
+- Some Linux laptop vendors may fall under this tier
+  - Might have good kernel support but needs an external module for a fan controller or some other component
 - Locally layered packages or other software configurations not covered in the documentation
-- ARM machines (the core team does not have access to this hardware but generates images for the community)
-- Appimages 
+- ARM/aarch64 hardware - the core team does not have access to this hardware but generates images for the community
 
 Users can expect:
 
 - Unreliable upgrades and manual system maintenance
     * The team typically does not take these configurations into account when testing.
+- Generally works fine day to day 
 
 Recommendation: Try Bluefin and see how it runs. Some people make custom images, investigation may be needed.
 
@@ -60,8 +60,8 @@ Tier 3 is mostly unsupported - it may work perfectly or be a disaster.
 
 - Known problematic hardware (Asus and Apple laptops)
 - Dual GPU laptops with Nvidia hardware
-- Software edge cases designed for experts
-  - .run files and tarballs
+- Old school "good luck with this!" packaging formats
+  - .run files, tarballs, and Appimages
   - Anything where the software asks for DKMS
 - Exotic hardware in general - in some cases a Tier 3 installation may be used as bragging rights.
 
