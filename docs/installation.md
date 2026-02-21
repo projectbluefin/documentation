@@ -26,7 +26,7 @@ A Tier 1 configuration is considered fully supported. These configurations recei
 Requirements:
 - Linux friendly hardware (no external kernel modules required)
   - Laptop vendors may or may not fall under this tier.
-  - "Our hardware is fully supported in the upstream Linux kernel <-- good
+  - "Our hardware is fully supported in the upstream Linux kernel" <-- good
   - "We only support Ubuntu 24.04" <-- probably not good
 - Software packaged for modern Linuxes (Flatpak, containers, etc)
 
@@ -60,6 +60,9 @@ Tier 3 is mostly unsupported - it may work perfectly or be a disaster.
 
 - Known problematic hardware (Asus and Apple laptops)
 - Dual GPU laptops with Nvidia hardware
+- Software edge cases designed for experts
+  - .run files and tarballs
+  - Anything where the software asks for DKMS
 - Exotic hardware in general - in some cases a Tier 3 installation may be used as bragging rights.
 
 Users can expect:
