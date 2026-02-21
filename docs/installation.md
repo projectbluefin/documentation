@@ -38,26 +38,28 @@ A Tier 1 configuration is considered fully supported. These configurations recei
 ### Tier 2
 
 A Tier 2 configuration is not fully supported and may contain compromises due to hardware or software choices. 
-It can mostly work but may need post-install configuration. 
+It can mostly work but may need post-install configuration. Some of these work fine but are put here because the software is delivered by the vendor and not something the team can control like Nvidia drivers. 
 
+#### Requirements
 - NVidia GPUs on desktops
 - Some Linux laptop vendors may fall under this tier
   - Might have good kernel support but needs an external module for a fan controller or some other component
 - Locally layered packages or other software configurations not covered in the documentation
 - ARM/aarch64 hardware - the core team does not have access to this hardware but generates images for the community
 
-Users can expect:
+#### Users can expect
 
 - Unreliable upgrades and manual system maintenance
     * The team typically does not take these configurations into account when testing.
 - Generally works fine day to day 
 
-Recommendation: Try Bluefin and see how it runs. Some people make custom images, investigation may be needed.
+**Recommendation:** Try Bluefin and see how it runs. Some people make custom images, investigation may be needed.
 
 ### Tier 3
 
 Tier 3 is mostly unsupported - it may work perfectly or be a disaster. 
 
+#### Requirements
 - Known problematic hardware (Asus and Apple laptops)
 - Dual GPU laptops with Nvidia hardware
 - Old school "good luck with this!" packaging formats
@@ -65,13 +67,13 @@ Tier 3 is mostly unsupported - it may work perfectly or be a disaster.
   - Anything where the software asks for DKMS
 - Exotic hardware in general - in some cases a Tier 3 installation may be used as bragging rights.
 
-Users can expect:
+#### Users can expect
 
 - Unreliable upgrades and manual system maintenance
     * The team typically does not take these configurations into account when testing.
 - "Flaky support" - wireless may or may not work occasionally, suspend/resume issues, etc.
 
-Recommendation: Ubuntu or a custom image. 
+**Recommendation:** Ubuntu or a custom image. 
 
 ### System Requirements
 
