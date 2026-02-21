@@ -13,7 +13,7 @@ Originally I mostly just wanted to add copilot instructions to the [Universal Bl
 
 #### If you are making a custom image I want you to try this!
 
-The existing templates mostly let you take Bluefin and modify it. But now with this new OCI layout, we can instead have you assemble your own Bluefin like how [Aurora](https://github.com/ublue-os/aurora), [Bluefin LTS](https://github.com/ublue-os/bluefin-lts), [Bluefin](https://github.com/ublue-os/bluefin), and [dakotaraptor](https://github.com/projectbluefin/distroless) do it. This does a few things:
+The existing templates mostly let you take Bluefin and modify it. But now with this new OCI layout, we can instead have you assemble your own Bluefin like how [Aurora](https://github.com/ublue-os/aurora), [Bluefin LTS](https://github.com/ublue-os/bluefin-lts), [Bluefin](https://github.com/ublue-os/bluefin), and [dakotaraptor](https://github.com/projectbluefin/dakota) do it. This does a few things:
 
 - Let's you be at least as good as any of those right out of the gate, your custom image is built by the production setup that's well known
 - You can instead work on making the image
