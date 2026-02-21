@@ -17,7 +17,7 @@ This page is a short [runbook](https://www.pagerduty.com/resources/learn/what-is
 
 ## Support Tiers
 
-Bluefin is purposely designed to follow the state of the art of Linux development, the project optimizes a "golden path" to provide users the best chance to succeed. Therefore not all configurations are supported, here is a quick guide:
+Bluefin is purposely designed to follow the state of the art of Linux development, the project optimizes a "golden path" to provide users the best chance to succeed. However sometimes you just get lucky (or unlucky). This section is inspired by Homebrew's [support tiers](https://docs.brew.sh/Support-Tiers). Not all configurations are supported, here is a quick guide:
 
 ### Tier 1
 
