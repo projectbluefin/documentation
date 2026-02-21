@@ -25,6 +25,9 @@ A Tier 1 configuration is considered fully supported. These configurations recei
 
 Requirements:
 - Linux friendly hardware (no external kernel modules required)
+  - Laptop vendors may or may not fall under this tier.
+  - "Our hardware is fully supported in the upstream Linux kernel <-- good
+  - "We only support Ubuntu 24.04" <-- not good
 - Software packaged for modern Linuxes (Flatpak, containers, etc)
 
 Users can expect:
@@ -38,6 +41,8 @@ A Tier 2 configuration is not fully supported and may contain compromises due to
 It can mostly work but may need post-install configuration. 
 
 - NVidia GPUs on desktops
+- Some linux laptop vendors may fall under this tier
+  - Might have good kernel support but needs an external module for a fan controller or some other component of the laptop.    
 - Locally layered packages or other software configurations not covered in the documentation
 - ARM machines (the core team does not have access to this hardware but generates images for the community)
 - Appimages 
