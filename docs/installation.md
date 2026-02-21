@@ -26,8 +26,8 @@ A Tier 1 configuration is considered fully supported. These configurations recei
 Requirements:
 - Linux friendly hardware (no external kernel modules required)
   - Laptop vendors may or may not fall under this tier.
-  - "Our hardware is fully supported in the upstream Linux kernel" <-- good
-  - "We only support Ubuntu 24.04" <-- probably not good
+  - "Our hardware is fully supported in the upstream Linux kernel" ← good
+  - "We only support Ubuntu 24.04" ← probably not good
 - Software packaged for modern Linuxes (Flatpak, containers, etc)
 
 Users can expect:
