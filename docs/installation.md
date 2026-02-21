@@ -15,6 +15,55 @@ This runbook is for experienced users who are installing Bluefin for someone els
 
 This page is a short [runbook](https://www.pagerduty.com/resources/learn/what-is-a-runbook/) for the Bluefin installation process. Read the entirety of this documentation to ensure survival (in case of a raptor attack).
 
+## Support Tiers
+
+Bluefin is purposely designed to follow the state of the art of Linux development, the project optimizes a "golden path" to provide users the best chance to succeed. Therefore not all configurations are supported, here is a quick guide:
+
+### Tier 1
+
+A Tier 1 configuration is considered fully supported. These configurations receive the highest level of coverage and are prioritized. 
+
+Requirements:
+- Linux friendly hardware (no external kernel modules required)
+
+Users can expect:
+- The most reliable and intended Bluefin experience 
+
+Recommendation: Bluefin
+
+### Tier 2
+
+A Tier 2 configuration is not fully supported and may contain compromises due to hardware or software choices. 
+It can mostly work but may need post-install configuration 
+
+- NVidia GPUs on desktops
+- Locally layered packages or other software configurations not covered in the documentation
+- ARM machines (the core team does not have access to this hardware but generates images for the community)
+- Appimages
+
+Users can expect:
+
+- Unreliable upgrades and manual system maintenance
+    * The team typically does not take these configurations into account when testing.
+
+Recommendation: Try Bluefin and see how it runs. Some people make custom images, investigation may be needed.
+
+### Tier 3
+
+Tier 3 is mostly unsupported - it may work perfectly or be a disaster. 
+
+- Known problematic hardware (Asus and Apple laptops)
+- Dual GPU laptops with Nvidia hardware
+- Exotic hardware in general - in some cases a Tier 3 installation may be used as bragging rights.
+
+Users can expect:
+
+- Unreliable upgrades and manual system maintenance
+    * The team typically does not take these configurations into account when testing.
+- "Flaky support" - wireless may or may not work occasionally, suspend/resume issues, etc.
+
+Recommendation: Ubuntu or a custom image. 
+
 ### Requirements
 
 Review the [Fedora Silverblue installation instructions](https://docs.fedoraproject.org/en-US/fedora-silverblue/installation/). Some differences to consider:
