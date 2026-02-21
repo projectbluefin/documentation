@@ -75,7 +75,7 @@ Tier 3 is mostly unsupported - it may work perfectly or be a disaster.
 
 **Recommendation:** Ubuntu or a custom image. 
 
-### System Requirements
+## System Requirements
 
 Review the [Fedora Silverblue installation instructions](https://docs.fedoraproject.org/en-US/fedora-silverblue/installation/). Some differences to consider:
 
@@ -86,8 +86,6 @@ Review the [Fedora Silverblue installation instructions](https://docs.fedoraproj
   - Bluefin supports an [installation on an external drive](/tips/#bluefin-to-go-using-an-external-drive) if you want to try it on bare metal before committing
 - We **strongly recommend** using automated partitioning during installation; there are [known issues](https://docs.fedoraproject.org/en-US/fedora-silverblue/installation/) with manual partitioning on Atomic systems and it is unnecessary to set up unless you are on a multi-disk system
 - A stock Bluefin installation is 11GB. Bluefin with developer mode enabled (`bluefin-dx`) is 19GB
-
-## System Requirements for Bluefin
 
 ### Quick Reference
 
