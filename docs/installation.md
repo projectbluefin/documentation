@@ -19,7 +19,7 @@ This page is a short [runbook](https://www.pagerduty.com/resources/learn/what-is
 
 Bluefin is purposely designed to follow the state of the art of Linux development, the project optimizes a "golden path" to provide users the best chance to succeed. However sometimes you just get lucky (or unlucky). This section is inspired by Homebrew's [support tiers](https://docs.brew.sh/Support-Tiers). Not all configurations are supported. Here is a quick guide:
 
-### Tier 1
+### Tier 1 - The best experience
 
 A Tier 1 configuration is considered fully supported. These configurations receive the highest level of coverage and are prioritized. 
 
@@ -28,14 +28,14 @@ A Tier 1 configuration is considered fully supported. These configurations recei
   - Linux laptop vendors may or may not fall under this tier.
   - "Our hardware is fully supported in the upstream Linux kernel" ← good
   - "We only support Ubuntu 24.04" ← probably not good
-- Software packaged for modern Linuxes (Flatpak, containers, etc)
+- Software packaged for modern Linuxes (Flatpak for desktop apps, containers for development, etc)
 
 #### Users can expect
 - The most reliable and intended Bluefin experience 
 
 **Recommendation:** Bluefin
 
-### Tier 2
+### Tier 2 - You're probably ok
 
 A Tier 2 configuration is not fully supported and may contain compromises due to hardware or software choices. 
 It can mostly work but may need post-install configuration. Some of these work fine but are put here because the software is delivered by the vendor and not something the team can control like Nvidia drivers. 
@@ -55,7 +55,7 @@ It can mostly work but may need post-install configuration. Some of these work f
 
 **Recommendation:** Try Bluefin and see how it runs. Some people make custom images, investigation may be needed.
 
-### Tier 3
+### Tier 3 - Who knows?
 
 Tier 3 is mostly unsupported - it may work perfectly or be a disaster. 
 
