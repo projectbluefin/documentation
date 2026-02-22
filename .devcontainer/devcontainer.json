@@ -2,7 +2,7 @@
 // README at: https://github.com/devcontainers/templates/tree/main/src/typescript-node
 {
   "name": "Node.js & TypeScript",
-  "image": "mcr.microsoft.com/devcontainers/typescript-node:3-22-bookworm",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:4-22-bookworm",
   "features": {
     "ghcr.io/devcontainers-community/npm-features/prettier:1": {},
     "ghcr.io/guiyomh/features/just:0": {}
