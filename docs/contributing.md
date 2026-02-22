@@ -155,7 +155,7 @@ We're making containers here with bash and a little bit of Python, it's not the 
 |---------|---------|------------------|----------------|
 | **latest** | Daily builds | Multiple times per day | 43 (current) |
 | **stable** | Weekly builds | Weekly | 43 |
-| **gts** | Long-term support | As needed | 42 (LTS) |
+| **gts** | Long-term support | As needed | 42 |
 
 ### Prerequisites
 
