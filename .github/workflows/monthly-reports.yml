@@ -20,7 +20,7 @@ jobs:
           fetch-depth: 0 # Full history for contributor tracking
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
         with:
           node-version: "20"
           cache: "npm"
