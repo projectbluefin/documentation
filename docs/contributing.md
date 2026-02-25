@@ -66,7 +66,7 @@ Bluefin is a predator and may snap at you occasionally, and is opinionated for a
 
 ## Overview
 
-Bluefin is undergoing a refactor, this is the endstate, which we expect to finish by the end of 2025, but this is a good place to start. Bluefin is a combination of a set of configuration OCI containers which are then shipped on different images.
+Bluefin is a combination of a set of configuration OCI containers which are then shipped on different images.
 
 ### Bluefin OCI containers
 
