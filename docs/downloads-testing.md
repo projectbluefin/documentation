@@ -19,32 +19,32 @@ Here is a short [runbook](/installation) for the Bluefin installation process. R
 The most current, based on the latest Fedora.\
 📖 **[Read the documentation](/introduction)** to learn about features and differences.
 
-| Version | GPU       | Download                                                                                                     | Checksum                                                                               |
-| ------- | --------- | ------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------- |
-| Bluefin | AMD/Intel | [📥 bluefin-stable-x86_64.iso](https://projectbluefin.dev/bluefin-stable-x86_64.iso)                         | [🔐 Verify](https://projectbluefin.dev/bluefin-stable-x86_64.iso-CHECKSUM)             |
-| Bluefin | Nvidia    | [📥 bluefin-nvidia-open-stable-x86_64.iso](https://projectbluefin.dev/bluefin-nvidia-open-stable-x86_64.iso) | [🔐 Verify](https://projectbluefin.dev/bluefin-nvidia-open-stable-x86_64.iso-CHECKSUM) |
+| Version | GPU       | Download                                                                                                     | Torrent                                                                                                        | Checksum                                                                               |
+| ------- | --------- | ------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| Bluefin | AMD/Intel | [📥 bluefin-stable-x86_64.iso](https://projectbluefin.dev/bluefin-stable-x86_64.iso)                         | [🧲 Torrent](https://projectbluefin.dev/bluefin-stable-x86_64.iso.torrent) | [🔐 Verify](https://projectbluefin.dev/bluefin-stable-x86_64.iso-CHECKSUM)             |
+| Bluefin | Nvidia    | [📥 bluefin-nvidia-open-stable-x86_64.iso](https://projectbluefin.dev/bluefin-nvidia-open-stable-x86_64.iso) | [🧲 Torrent](https://projectbluefin.dev/bluefin-nvidia-open-stable-x86_64.iso.torrent) | [🔐 Verify](https://projectbluefin.dev/bluefin-nvidia-open-stable-x86_64.iso-CHECKSUM) |
 
 ## Bluefin LTS
 
 The long term support experience.\
 📖 **[Read the documentation](/lts)** to learn about features and differences. The HWE images stand for "Hardware Enablement", these ISOs come with updated kernels and are recommended for newer devices such as Framework Computers. Note that `ujust rebase-helper` allows for users to switch back and forth, the ISOs are provided for convenience.
 
-| Version                           | GPU           | Download                                                                                 | Checksum                                                                     |
-| --------------------------------- | ------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| Bluefin LTS                       | AMD/Intel     | [📥 bluefin-lts-x86_64.iso](https://projectbluefin.dev/bluefin-lts-x86_64.iso)           | [🔐 Verify](https://projectbluefin.dev/bluefin-lts-x86_64.iso-CHECKSUM)      |
-| Bluefin LTS                       | ARM (aarch64) | [📥 bluefin-lts-aarch64.iso](https://projectbluefin.dev/bluefin-lts-aarch64.iso)         | [🔐 Verify](https://projectbluefin.dev/bluefin-lts-aarch64.iso-CHECKSUM)     |
-| Bluefin LTS (Hardware Enablement) | AMD/Intel     | [📥 bluefin-lts-hwe-x86_64.iso](https://projectbluefin.dev/bluefin-lts-hwe-x86_64.iso)   | [🔐 Verify](https://projectbluefin.dev/bluefin-lts-hwe-x86_64.iso-CHECKSUM)  |
-| Bluefin LTS (Hardware Enablement) | ARM (aarch64) | [📥 bluefin-lts-hwe-aarch64.iso](https://projectbluefin.dev/bluefin-lts-hwe-aarch64.iso) | [🔐 Verify](https://projectbluefin.dev/bluefin-lts-hwe-aarch64.iso-CHECKSUM) |
+| Version                           | GPU           | Download                                                                                 | Torrent                                                                                                            | Checksum                                                                     |
+| --------------------------------- | ------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------- |
+| Bluefin LTS                       | AMD/Intel     | [📥 bluefin-lts-x86_64.iso](https://projectbluefin.dev/bluefin-lts-x86_64.iso)           |                                                                                                                    | [🔐 Verify](https://projectbluefin.dev/bluefin-lts-x86_64.iso-CHECKSUM)      |
+| Bluefin LTS                       | ARM (aarch64) | [📥 bluefin-lts-aarch64.iso](https://projectbluefin.dev/bluefin-lts-aarch64.iso)         |                                                                                                                    | [🔐 Verify](https://projectbluefin.dev/bluefin-lts-aarch64.iso-CHECKSUM)     |
+| Bluefin LTS (Hardware Enablement) | AMD/Intel     | [📥 bluefin-lts-hwe-x86_64.iso](https://projectbluefin.dev/bluefin-lts-hwe-x86_64.iso)   | [🧲 Torrent](https://projectbluefin.dev/bluefin-lts-hwe-x86_64.iso.torrent)    | [🔐 Verify](https://projectbluefin.dev/bluefin-lts-hwe-x86_64.iso-CHECKSUM)  |
+| Bluefin LTS (Hardware Enablement) | ARM (aarch64) | [📥 bluefin-lts-hwe-aarch64.iso](https://projectbluefin.dev/bluefin-lts-hwe-aarch64.iso) | [🧲 Torrent](https://projectbluefin.dev/bluefin-lts-hwe-aarch64.iso.torrent) | [🔐 Verify](https://projectbluefin.dev/bluefin-lts-hwe-aarch64.iso-CHECKSUM) |
 
 ## Bluefin GDX
 
 The AI workstation with Nvidia and CUDA.\
 📖 **[Read the documentation](/gdx)** to learn about features and differences.
 
-| Version     | GPU           | Download                                                                                 | Checksum                                                                     |
-| ----------- | ------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| Bluefin GDX | Nvidia        | [📥 bluefin-gdx-x86_64.iso](https://projectbluefin.dev/bluefin-gdx-lts-x86_64.iso)       | [🔐 Verify](https://projectbluefin.dev/bluefin-gdx-lts-x86_64.iso-CHECKSUM)  |
-| Bluefin GDX | ARM (aarch64) | [📥 bluefin-gdx-lts-aarch64.iso](https://projectbluefin.dev/bluefin-gdx-lts-aarch64.iso) | [🔐 Verify](https://projectbluefin.dev/bluefin-gdx-lts-aarch64.iso-CHECKSUM) |
+| Version     | GPU           | Download                                                                                 | Torrent | Checksum                                                                     |
+| ----------- | ------------- | ---------------------------------------------------------------------------------------- | ------- | ---------------------------------------------------------------------------- |
+| Bluefin GDX | Nvidia        | [📥 bluefin-gdx-x86_64.iso](https://projectbluefin.dev/bluefin-gdx-lts-x86_64.iso)       |         | [🔐 Verify](https://projectbluefin.dev/bluefin-gdx-lts-x86_64.iso-CHECKSUM)  |
+| Bluefin GDX | ARM (aarch64) | [📥 bluefin-gdx-lts-aarch64.iso](https://projectbluefin.dev/bluefin-gdx-lts-aarch64.iso) |         | [🔐 Verify](https://projectbluefin.dev/bluefin-gdx-lts-aarch64.iso-CHECKSUM) |
 
 ## Verifying Downloads with Checksums
 
