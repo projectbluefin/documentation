@@ -15,7 +15,7 @@ import { generateReportMarkdown } from "./lib/markdown-generator.mjs";
 import { getCategoryForLabel } from "./lib/label-mapping.mjs";
 import { MONITORED_REPOS } from "./lib/monitored-repos.mjs";
 import { fetchBuildMetrics } from "./lib/build-metrics.mjs";
-import { fetchTapPromotions } from "./lib/tap-promotions.mjs";
+import { fetchTapPromotions, fetchExperimentalAdditions } from "./lib/tap-promotions.mjs";
 import { format } from "date-fns";
 import { writeFile } from "fs/promises";
 
@@ -285,24 +285,27 @@ async function generateReport() {
       buildMetrics = null;
     }
 
-    // Fetch tap promotions
-    log.info("Fetching homebrew tap promotions...");
-    let tapPromotions = [];
+    // Fetch tap additions
+    log.info("Fetching homebrew tap additions...");
+    const tapAdditions = { production: [], experimental: [] };
     try {
-      tapPromotions = await fetchTapPromotions(startDate, endDate);
-      if (tapPromotions.length > 0) {
-        log.info(`✅ Tap promotions found: ${tapPromotions.length} packages`);
+      tapAdditions.production = await fetchTapPromotions(startDate, endDate);
+      tapAdditions.experimental = await fetchExperimentalAdditions(startDate, endDate);
+      
+      const totalAdditions = tapAdditions.production.length + tapAdditions.experimental.length;
+
+      if (totalAdditions > 0) {
+        log.info(`✅ Tap additions found: ${tapAdditions.production.length} production, ${tapAdditions.experimental.length} experimental`);
         github.notice(
-          `🍺 ${tapPromotions.length} packages promoted to production-tap`,
+          `🍺 ${totalAdditions} new packages added to taps`,
         );
       } else {
-        log.info("No tap promotions this period");
+        log.info("No tap additions this period");
       }
     } catch (error) {
-      log.warn("Tap promotions fetch failed, continuing without it");
+      log.warn("Tap additions fetch failed, continuing without it");
       log.warn(`Error: ${error.message}`);
-      // Continue report generation even if tap promotions fail
-      tapPromotions = [];
+      // Continue report generation even if tap additions fail
     }
 
     // Generate markdown
@@ -316,7 +319,7 @@ async function generateReport() {
       startDate,
       endDate,
       buildMetrics,
-      tapPromotions,
+      tapAdditions,
     );
 
     // Write to file
@@ -332,11 +335,12 @@ async function generateReport() {
     log.info(
       `   ${buildMetrics ? buildMetrics.images.length + " workflows tracked" : "Build metrics unavailable"}`,
     );
-    log.info(`   ${tapPromotions.length} tap promotions`);
+    const totalAdditions = tapAdditions.production.length + tapAdditions.experimental.length;
+    log.info(`   ${totalAdditions} tap additions`);
 
     // GitHub Actions summary annotation
     github.notice(
-      `Report generated: ${plannedHumanItems.length} planned + ${opportunisticHumanItems.length} opportunistic, ${contributors.length} contributors, ${newContributors.length} new, ${tapPromotions.length} tap promotions`,
+      `Report generated: ${plannedHumanItems.length} planned + ${opportunisticHumanItems.length} opportunistic, ${contributors.length} contributors, ${newContributors.length} new, ${totalAdditions} tap additions`,
     );
   } catch (error) {
     log.error("Report generation failed");
