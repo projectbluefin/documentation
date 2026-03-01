@@ -90,6 +90,8 @@ const TITLE_PATTERNS = {
   Desktop: [
     // GNOME desktop environment
     /\bgnome\b/i,
+    /gnomeos/i,
+    /dconf/i,
     // KDE/Aurora desktop environment  
     /\bkde\b/i,
     /\bplasma\b/i,
@@ -102,6 +104,9 @@ const TITLE_PATTERNS = {
     /\bzsh\b/i,
     /prompt/i,
     /\bbling\b/i,
+    // Visual elements
+    /\bfonts?\b/i,
+    /\blogos?\b/i,
   ],
   Hardware: [/kernel/i, /driver/i, /firmware/i, /nvidia/i, /\bgpu\b/i],
   Infrastructure: [
@@ -111,8 +116,20 @@ const TITLE_PATTERNS = {
     /buildstream/i,
     /\bci\b/i,
     /pipeline/i,
+    /\bjust\b/i,
+    /justfile/i,
+    /actions/i,
+    /chunkah/i,
   ],
-  Development: [/\bide\b/i, /vscode/i, /jetbrains/i, /\bdx\b/i],
+  Development: [
+    /\bide\b/i,
+    /vscode/i,
+    /jetbrains/i,
+    /\bdx\b/i,
+    /docker/i,
+    /qemu/i,
+    /\bvm\b/i,
+  ],
   "System Services & Policies": [
     /systemd/i,
     /service/i,
