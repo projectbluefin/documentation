@@ -411,7 +411,7 @@ function filterItemsByLabels(items, categoryLabels, targetCategory = null) {
 }
 
 /**
- * Format list of items as markdown
+ * Format list of items as markdown with Dakota items grouped separately
  * Format: title by @author in #PR (Hyperlight-style single-line format)
  *
  * @param {Array} items - Items to format
@@ -419,31 +419,73 @@ function filterItemsByLabels(items, categoryLabels, targetCategory = null) {
  * @returns {string} Markdown list
  */
 function formatItemList(items, displayedUrls) {
-  const lines = [];
-  
-  items.forEach((item) => {
-    const url = item.content?.url;
+  // Separate Dakota items from other items
+  const dakotaItems = items.filter(
+    (item) => item.content?.repository?.nameWithOwner === "projectbluefin/dakota"
+  );
+  const otherItems = items.filter(
+    (item) => item.content?.repository?.nameWithOwner !== "projectbluefin/dakota"
+  );
+
+  const sections = [];
+
+  // Format non-Dakota items first
+  if (otherItems.length > 0) {
+    const lines = [];
+    otherItems.forEach((item) => {
+      const url = item.content?.url;
+      
+      // Skip if already displayed
+      if (displayedUrls.has(url)) {
+        return;
+      }
+      
+      const type = item.content.__typename === "PullRequest" ? "PR" : "Issue";
+      const number = item.content.number;
+      // Escape curly braces in titles to prevent MDX interpretation as JSX
+      const title = item.content.title.replace(/{/g, "\\{").replace(/}/g, "\\}");
+      const author = item.content.author?.login || "unknown";
+
+      // Mark this URL as displayed
+      displayedUrls.add(url);
+
+      // Hyperlight-style format: title by @author in #PR
+      // Use zero-width space to prevent GitHub notifications
+      lines.push(`- ${title} by [@\u200B${author}](https://github.com/${author}) in [#${number}](${url})`);
+    });
+    sections.push(lines.join("\n"));
+  }
+
+  // Format Dakota items with subheading if any exist
+  if (dakotaItems.length > 0) {
+    const lines = [];
+    dakotaItems.forEach((item) => {
+      const url = item.content?.url;
+      
+      // Skip if already displayed
+      if (displayedUrls.has(url)) {
+        return;
+      }
+      
+      const type = item.content.__typename === "PullRequest" ? "PR" : "Issue";
+      const number = item.content.number;
+      // Escape curly braces in titles to prevent MDX interpretation as JSX
+      const title = item.content.title.replace(/{/g, "\\{").replace(/}/g, "\\}");
+      const author = item.content.author?.login || "unknown";
+
+      // Mark this URL as displayed
+      displayedUrls.add(url);
+
+      // Hyperlight-style format: title by @author in #PR
+      // Use zero-width space to prevent GitHub notifications
+      lines.push(`- ${title} by [@\u200B${author}](https://github.com/${author}) in [#${number}](${url})`);
+    });
     
-    // Skip if already displayed
-    if (displayedUrls.has(url)) {
-      return;
-    }
-    
-    const type = item.content.__typename === "PullRequest" ? "PR" : "Issue";
-    const number = item.content.number;
-    // Escape curly braces in titles to prevent MDX interpretation as JSX
-    const title = item.content.title.replace(/{/g, "\\{").replace(/}/g, "\\}");
-    const author = item.content.author?.login || "unknown";
+    const dakotaSection = `##### Dakota (GNOME OS Prototype)\n\n${lines.join("\n")}`;
+    sections.push(dakotaSection);
+  }
 
-    // Mark this URL as displayed
-    displayedUrls.add(url);
-
-    // Hyperlight-style format: title by @author in #PR
-    // Use zero-width space to prevent GitHub notifications
-    lines.push(`- ${title} by [@\u200B${author}](https://github.com/${author}) in [#${number}](${url})`);
-  });
-
-  return lines.join("\n");
+  return sections.join("\n\n");
 }
 
 /**
