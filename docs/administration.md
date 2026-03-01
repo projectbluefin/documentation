@@ -46,21 +46,11 @@ In **Settings** → **Network** → A network setting, set **Metered Connection:
 
 ## Streams and Throttle Settings
 
-:::info
-
-`gts` and `latest` will be merged into `stable` on the week of March 1st 2026. Users will be moved automatically without manual intervention. For more information, including why we're doing this, and what comes next, see [Streamlining Bluefin Releases](https://docs.projectbluefin.io/blog/unifying-bluefin/).
-
-:::
-
-Bluefin offers images based on the current and last stable version of Fedora, as well as a CentOS based image. This is to provide users with flexibility as to how aggressive they want their updates. These are referred to as "streams".
+Bluefin offers images based on the current version of Fedora, as well as a CentOS based image. This is to provide users with flexibility as to how aggressive they want their updates. These are referred to as "streams".
 
 ### Bluefin
 
 `stable`: This is the default stream for Bluefin, aimed at most users. It is always aliased to the current version of Fedora but follows the Fedora CoreOS release schedule. This means that kernel upgrades come about 2 weeks after they land in Fedora, which can be useful for avoiding kernel regressions since the Bluefin team can pin to a specific kernel in those circumstances. We call this "gating" the kernel. `stable-daily` is available for those who want daily builds.
-
-### Bluefin GTS
-
-`gts`: This is the previous default image and is always aliased to the previous stable version of Fedora. It is slang for "Grand Touring Support", to signify a faster cadence than an [LTS](https://www.linux.com/news/mark-shuttleworth-ubuntu-long-term-support/). It also features a gated kernel.
 
 :::note[Latest (For Testers)]
 `latest`: For users who want the very latest Fedora has to offer, an ungated Linux kernel, daily updates, full open throttle. 🔥 This stream is purposely left unbranded and is not meant for general purpose use.
@@ -68,14 +58,14 @@ Bluefin offers images based on the current and last stable version of Fedora, as
 
 You can choose from three rolling tags, or lock to a specific version of Fedora. Check the [release notes](https://github.com/ublue-os/bluefin/releases) for specific version information:
 
-|                      | `gts`           | `stable` (default) or `stable-daily` | `latest`                   |
-| -------------------- | --------------- | ------------------------------------ | -------------------------- |
-| Fedora Version:      | 42              | 43                                   | 43                         |
-| GNOME Version:       | 48              | 49                                   | 49                         |
-| Target User:         | Most users      | Enthusiasts                          | Advanced users and testers |
-| System Updates:      | Weekly          | Weekly or Daily                      | Daily                      |
-| Application Updates: | Twice a Day     | Twice a Day                          | Twice a Day                |
-| Kernel:              | Gated           | Gated                                | Ungated                    |
+|                      | `stable` (default) or `stable-daily` | `latest`                   |
+| -------------------- | ------------------------------------ | -------------------------- |
+| Fedora Version:      | 43                                   | 43                         |
+| GNOME Version:       | 49                                   | 49                         |
+| Target User:         | All Users
+| System Updates:      | Weekly or Daily                      | Daily                      |
+| Application Updates: | Twice a Day                          | Twice a Day                |
+| Kernel:              | Gated                                | Ungated                    |
 
 **Note:** [Bluefin LTS](/lts) and [GDX](/gdx) not shown here, refer to their respective documentation for more details.
 
@@ -83,7 +73,7 @@ The major difference between `latest` and `stable` is the kernel cadence and whe
 
 #### Gated Kernel
 
-The `gts` and `stable` tags feature a gated kernel. This kernel follows the same version as the [Fedora CoreOS stable stream](https://fedoraproject.org/coreos/release-notes?arch=x86_64&stream=stable), which is a slower cadence than default Fedora Silverblue. The Universal Blue team may temporarily pin to a specific kernel in order to avoid regressions that may affect users.
+The `stable` tag features a gated kernel. This kernel follows the same version as the [Fedora CoreOS stable stream](https://fedoraproject.org/coreos/release-notes?arch=x86_64&stream=stable), which is a slower cadence than default Fedora Silverblue. The Universal Blue team may temporarily pin to a specific kernel in order to avoid regressions that may affect users.
 
 Adding and editing kernel boot arguments is currently handled by `rpm-ostree`, check the [upstream documentation](https://docs.fedoraproject.org/en-US/fedora-coreos/kernel-args/#_modifying_kernel_arguments_on_existing_systems) for more information.
 
@@ -96,12 +86,6 @@ Bluefin's components are shared across all images, don't think of it as a separa
 :::
 
 ### Switching between Streams
-
-:::note
-
-Note that the `stable` and `latest` streams update more aggressively and may introduce new changes from Fedora (including regressions), take the user's Linux expertise into account when changing the update cadence.
-
-:::
 
 Use the `ujust rebase-helper` command to select rebase and select a specific stream:
 
@@ -128,16 +112,16 @@ sudo bootc status
 and look for the image you are on, it should look something like this:
 
 ```
-Current staged image: ghcr.io/ublue-os/bluefin:gts
+Current staged image: ghcr.io/ublue-os/bluefin:stable
     Image version: 40.20241101.0 (2024-11-02 05:46:53.714 UTC)
     Image digest: sha256:cb57c75f7d700773ed6f54e4ba5550235a647fc9251e69345b1113cfd81dc884
-Current booted image: ghcr.io/ublue-os/bluefin:gts
+Current booted image: ghcr.io/ublue-os/bluefin:stable
     Image version: 40.20241030.0 (2024-10-31 05:47:14.513 UTC)
     Image digest: sha256:5536b3511f38a57c7f71fd499b616671ef67043f155313f714f8c92a0f8d1e7c
 Current rollback state is native ostree
 ```
 
-The `ghcr.io/ublue-os/bluefin:gts` is the important part, with `bluefin` being the image name, and the `:gts` being the image tag. That is the image you are currently on. Look for `:gts`, `:stable`, `:latest`, or in certain cases the version like `:40` or `:41`.
+The `ghcr.io/ublue-os/bluefin:stable` is the important part, with `bluefin` being the image name, and the `:stable` being the image tag. That is the image you are currently on. Look for `:stable`, `:latest`, or in certain cases the version like `:40` or `:41`.
 
 **Pro Tip**: Bluefin's [release notes](https://github.com/ublue-os/bluefin/releases) contain the stream switching instructions at the bottom of each release. This is useful if you're trying to nail down a regression in a specific package version.
 
@@ -153,12 +137,6 @@ Use the `bootc switch` command to move to a newer or older version:
 sudo bootc switch ghcr.io/ublue-os/bluefin:stable --enforce-container-sigpolicy
 ```
 
-To always be on the `:gts` (default) release:
-
-```sh
-sudo bootc switch ghcr.io/ublue-os/bluefin:gts --enforce-container-sigpolicy
-```
-
 Explicit version tags of the Fedora release are available for users who wish to handle their upgrade cycle manually:
 
 ```sh
@@ -171,10 +149,10 @@ Additionally rebasing to a specific date tag is encouraged if you need to "pin" 
 sudo bootc switch ghcr.io/ublue-os/bluefin:stable-20241027 --enforce-container-sigpolicy
 ```
 
-If you use an nvidia machine, remember that the `-nvidia` is important! (This is why it's important to note the image name when you ran that previous status command:
+If you use an nvidia machine, remember that the `-nvidia-open` is important! (This is why it's important to note the image name when you ran that previous status command:
 
 ```sh
-sudo bootc switch ghcr.io/ublue-os/bluefin-nvidia:stable --enforce-container-sigpolicy
+sudo bootc switch ghcr.io/ublue-os/bluefin-nvidia-open:stable --enforce-container-sigpolicy
 ```
 
 Use the `skopeo inspect` command to query information from an image:
