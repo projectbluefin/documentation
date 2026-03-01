@@ -62,7 +62,7 @@ You can choose from three rolling tags, or lock to a specific version of Fedora.
 | -------------------- | ------------------------------------ | -------------------------- |
 | Fedora Version:      | 43                                   | 43                         |
 | GNOME Version:       | 49                                   | 49                         |
-| Target User:         | All Users
+| Target User:         | All Users                            |                            |
 | System Updates:      | Weekly or Daily                      | Daily                      |
 | Application Updates: | Twice a Day                          | Twice a Day                |
 | Kernel:              | Gated                                | Ungated                    |
