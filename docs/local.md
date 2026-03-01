@@ -20,14 +20,14 @@ The `Justfile` at the root of the repo is used to build the images and ISOs, her
 | Command                             | Description                                          |
 | ----------------------------------- | ---------------------------------------------------- |
 | `just build bluefin`                | Defaults to `latest` main                            |
-| `just build bluefin-dx gts`         | Builds `gts` only Bluefin DX                         |
+| `just build bluefin-dx stable`      | Builds `stable` only Bluefin DX                      |
 | `just build bluefin-dx beta nvidia` | Builds `beta` `nvidia` version of Bluefin DX         |
 | `just build bluefin stable nvidia`  | Builds `nvidia` version of the Bluefin stable branch |
 
 The general pattern is `just build/run image tag flavor`
 
 - Images: `bluefin`,`bluefin-dx`
-- Tags: `gts`,`stable`,`latest`,`beta`
+- Tags: `stable`,`latest`,`beta`
 - Flavors: `main`,`nvidia`,`hwe`,`hwe-nvidia`
 
 ### Run the image and open a shell:

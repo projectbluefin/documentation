@@ -18,7 +18,6 @@ The name of the project is `Project Bluefin` but usually shortened to just `Blue
 ## Proper Usage
 
 - `Bluefin` - used to refer to the project and/or the operating system
-- `Bluefin GTS` - used to refer to the GTS version of Bluefin specifically. This is the default experience
 - `Bluefin DX` - Bluefin with developer mode turned on, relevant when discussing developer-specific features
 - `Bluefin GDX` - Bluefin with developer mode turned on, and Nvidia specific tooling like CUDA. Relevant when discussing AI-specific features
 
