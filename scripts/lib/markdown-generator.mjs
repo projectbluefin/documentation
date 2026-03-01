@@ -744,9 +744,10 @@ function generatePackageTable(packages, tapName) {
 
   const rows = sortedPackages.map(([pkgName, versions]) => {
     // Show version progression or single version
+    // Reverse the order to show oldest → newest (upgrade direction)
     const versionStr =
       versions.length > 1
-        ? `${versions[0].version} → ${versions[versions.length - 1].version} (${versions.length} updates)`
+        ? `${versions[versions.length - 1].version} → ${versions[0].version} (${versions.length} updates)`
         : versions[0].version;
 
     // Link to first PR (or could link to all)
