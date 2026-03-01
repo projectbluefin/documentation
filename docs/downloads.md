@@ -15,22 +15,6 @@ The default experience for users, based on the latest Fedora.\
 | Bluefin | AMD/Intel | [📥 bluefin-stable-x86_64.iso](https://download.projectbluefin.io/bluefin-stable-x86_64.iso)                         | [🧲 Torrent](https://download.projectbluefin.io/bluefin-stable-x86_64.iso.torrent) | [🔐 Verify](https://download.projectbluefin.io/bluefin-stable-x86_64.iso-CHECKSUM)             |
 | Bluefin | Nvidia    | [📥 bluefin-nvidia-open-stable-x86_64.iso](https://download.projectbluefin.io/bluefin-nvidia-open-stable-x86_64.iso) | [🧲 Torrent](https://download.projectbluefin.io/bluefin-nvidia-open-stable-x86_64.iso.torrent) | [🔐 Verify](https://download.projectbluefin.io/bluefin-nvidia-open-stable-x86_64.iso-CHECKSUM) |
 
-## Bluefin GTS
-
-:::info
-
-`gts` will automatically be merged into `stable` on the week of March 1st 2026. See [Streamlining Bluefin Releases](https://docs.projectbluefin.io/blog/unifying-bluefin/) for more information.
-
-:::
-
-The previous default experience, following the previous stable release of Fedora.\
-📖 **[Read the documentation](/introduction)** to learn about features and differences.
-
-| Version     | GPU       | Download                                                                                                       | Torrent | Checksum                                                                                    |
-| ----------- | --------- | -------------------------------------------------------------------------------------------------------------- | ------- | ------------------------------------------------------------------------------------------- |
-| Bluefin GTS | AMD/Intel | [📥 bluefin-gts-x86_64.iso](https://download.projectbluefin.io/bluefin-gts-x86_64.iso)                         |         | [🔐 Verify](https://download.projectbluefin.io/bluefin-gts-x86_64.iso-CHECKSUM)             |
-| Bluefin GTS | Nvidia    | [📥 bluefin-nvidia-open-gts-x86_64.iso](https://download.projectbluefin.io/bluefin-nvidia-open-gts-x86_64.iso) |         | [🔐 Verify](https://download.projectbluefin.io/bluefin-nvidia-open-gts-x86_64.iso-CHECKSUM) |
-
 ## Bluefin LTS
 
 The long term support experience.\

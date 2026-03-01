@@ -11,7 +11,7 @@ Here are the cast of characters! Each represents something important to this eco
 
 Illustration by Delphic Melody (M. Gopal)
 
-## Bluefin and Bluefin GTS
+## Bluefin
 
 - Name: Bluefin
 - Role: The leader of the flock, first among equals, the nimblest
