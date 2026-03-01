@@ -11,9 +11,9 @@ import {
   LABEL_CATEGORIES,
   LABEL_COLORS,
   generateBadge,
+  getCategoryForItem,
 } from "./label-mapping.mjs";
 import { getSponsorUrl } from "./github-sponsors.mjs";
-import { getDistinguishedHighlight } from "./distinguished-contributors.mjs";
 
 /**
  * Category descriptions for monthly reports
@@ -253,9 +253,20 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
 ${kindSections}`;
 
   // Generate uncategorized section (combine both planned and opportunistic)
+  // Deduplicate by URL to prevent items from appearing twice
   const allItems = [...plannedItems, ...opportunisticItems];
+  const seenUrls = new Set();
+  const uniqueItems = allItems.filter((item) => {
+    const url = item.content?.url;
+    if (!url || seenUrls.has(url)) {
+      return false;
+    }
+    seenUrls.add(url);
+    return true;
+  });
+  
   const uncategorizedSection = generateUncategorizedSection(
-    allItems,
+    uniqueItems,
     displayedUrls,
   );
 
@@ -326,13 +337,20 @@ export function generateCategorySectionWithSubsections(
   categoryLabels,
   displayedUrls,
 ) {
+  // Clean category name for smart categorization matching
+  const cleanCategoryName = categoryName.replace(/^[\p{Emoji}\s]+/u, "");
+
   // Get items for each type, filtering out already displayed items
-  const planned = filterItemsByLabels(plannedItems, categoryLabels).filter(
-    (item) => !displayedUrls.has(item.content?.url),
-  );
+  // Pass category name for smart categorization fallback
+  const planned = filterItemsByLabels(
+    plannedItems,
+    categoryLabels,
+    cleanCategoryName,
+  ).filter((item) => !displayedUrls.has(item.content?.url));
   const opportunistic = filterItemsByLabels(
     opportunisticItems,
     categoryLabels,
+    cleanCategoryName,
   ).filter((item) => !displayedUrls.has(item.content?.url));
 
   // If both empty, show ChillOps
@@ -364,18 +382,31 @@ export function generateCategorySectionWithSubsections(
 }
 
 /**
- * Filter items by category labels
+ * Filter items by category using smart categorization
+ * Uses labels first, then falls back to title patterns and repository
  *
  * @param {Array} items - Items to filter
  * @param {Array<string>} categoryLabels - Labels to match
+ * @param {string} targetCategory - Category name to match against
  * @returns {Array} Filtered items
  */
-function filterItemsByLabels(items, categoryLabels) {
+function filterItemsByLabels(items, categoryLabels, targetCategory = null) {
   return items.filter((item) => {
-    if (!item.content?.labels?.nodes) return false;
+    // First check labels (original behavior)
+    if (item.content?.labels?.nodes) {
+      const itemLabels = item.content.labels.nodes.map((l) => l.name);
+      if (categoryLabels.some((catLabel) => itemLabels.includes(catLabel))) {
+        return true;
+      }
+    }
 
-    const itemLabels = item.content.labels.nodes.map((l) => l.name);
-    return categoryLabels.some((catLabel) => itemLabels.includes(catLabel));
+    // If targetCategory provided, use smart categorization fallback
+    if (targetCategory) {
+      const smartCategory = getCategoryForItem(item);
+      return smartCategory === targetCategory;
+    }
+
+    return false;
   });
 }
 
@@ -388,12 +419,20 @@ function filterItemsByLabels(items, categoryLabels) {
  * @returns {string} Markdown list
  */
 function formatItemList(items, displayedUrls) {
-  const lines = items.map((item) => {
+  const lines = [];
+  
+  items.forEach((item) => {
+    const url = item.content?.url;
+    
+    // Skip if already displayed
+    if (displayedUrls.has(url)) {
+      return;
+    }
+    
     const type = item.content.__typename === "PullRequest" ? "PR" : "Issue";
     const number = item.content.number;
     // Escape curly braces in titles to prevent MDX interpretation as JSX
     const title = item.content.title.replace(/{/g, "\\{").replace(/}/g, "\\}");
-    const url = item.content.url;
     const author = item.content.author?.login || "unknown";
 
     // Mark this URL as displayed
@@ -401,7 +440,7 @@ function formatItemList(items, displayedUrls) {
 
     // Hyperlight-style format: title by @author in #PR
     // Use zero-width space to prevent GitHub notifications
-    return `- ${title} by [@\u200B${author}](https://github.com/${author}) in [#${number}](${url})`;
+    lines.push(`- ${title} by [@\u200B${author}](https://github.com/${author}) in [#${number}](${url})`);
   });
 
   return lines.join("\n");
@@ -475,23 +514,21 @@ export function generateCategorySection(items, categoryName, categoryLabels) {
 /**
  * Generate uncategorized items section
  * Format: title by @author in #PR (Hyperlight-style single-line format)
+ * Now uses smart categorization - only truly uncategorizable items end up here
  *
  * @param {Array} items - All completed items
  * @param {Set} displayedUrls - Set of URLs already displayed (to avoid duplicates)
  * @returns {string} Markdown section or empty string
  */
 function generateUncategorizedSection(items, displayedUrls) {
-  // Find items without any categorized labels AND not already displayed
-  const knownLabels = Object.values(LABEL_CATEGORIES).flat();
-
+  // Find items that couldn't be categorized even with smart categorization
   const uncategorizedItems = items.filter((item) => {
     // Skip if already displayed in a category
     if (displayedUrls.has(item.content?.url)) return false;
 
-    if (!item.content?.labels?.nodes) return true;
-
-    const itemLabels = item.content.labels.nodes.map((l) => l.name);
-    return !itemLabels.some((label) => knownLabels.includes(label));
+    // Use smart categorization - only include if it returns "Other"
+    const category = getCategoryForItem(item);
+    return category === "Other";
   });
 
   if (uncategorizedItems.length === 0) {
@@ -879,16 +916,10 @@ function generateContributorsSection(contributors, newContributors) {
     const newContributorCards = newContributors
       .map((username) => {
         const sponsorUrl = getSponsorUrl(username);
-        const distinguished = getDistinguishedHighlight(username);
-        // Distinguished contributors (silver/diamond) keep their foil type
-        // instead of receiving the default gold 'New Light' foil
-        const highlightProp = distinguished
-          ? `highlight="${distinguished}"`
-          : `highlight={true}`;
         if (sponsorUrl) {
-          return `<GitHubProfileCard username="${username}" ${highlightProp} sponsorUrl="${sponsorUrl}" />`;
+          return `<GitHubProfileCard username="${username}" highlight={true} sponsorUrl="${sponsorUrl}" />`;
         }
-        return `<GitHubProfileCard username="${username}" ${highlightProp} />`;
+        return `<GitHubProfileCard username="${username}" highlight={true} />`;
       })
       .join("\n\n");
 
@@ -911,15 +942,10 @@ function generateContributorsSection(contributors, newContributors) {
     const continuingContributorCards = continuingContributors
       .map((username) => {
         const sponsorUrl = getSponsorUrl(username);
-        const distinguished = getDistinguishedHighlight(username);
-        // Distinguished contributors always show their foil type
-        const highlightProp = distinguished
-          ? ` highlight="${distinguished}"`
-          : "";
         if (sponsorUrl) {
-          return `<GitHubProfileCard username="${username}"${highlightProp} sponsorUrl="${sponsorUrl}" />`;
+          return `<GitHubProfileCard username="${username}" sponsorUrl="${sponsorUrl}" />`;
         }
-        return `<GitHubProfileCard username="${username}"${highlightProp} />`;
+        return `<GitHubProfileCard username="${username}" />`;
       })
       .join("\n\n");
 
