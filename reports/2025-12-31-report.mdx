@@ -12,9 +12,9 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
 
 | | |
 |--------|-------|
-| **Total Items** | 115 (49 planned, 66 opportunistic) |
-| **Automation** | 41.3% (81 bot PRs out of 196 total PRs) |
-| **Contributors** | 20 total, 16 new |
+| **Total Items** | 83 (49 planned, 34 opportunistic) |
+| **Automation** | 34.1% (43 bot PRs out of 126 total PRs) |
+| **Contributors** | 16 total, 14 new |
 
 
 ## Desktop
@@ -38,6 +38,7 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
 #### Opportunistic Work
 
 - refactor: migrate GNOME extensions from COPR to git submodules by [@​ahmedadan](https://github.com/ahmedadan) in [#938](https://github.com/ublue-os/bluefin-lts/pull/938)
+- feat(prompts): add conventional commit prompt and guidelines by [@​castrojo](https://github.com/castrojo) in [#529](https://github.com/projectbluefin/documentation/pull/529)
 
 ---
 
@@ -54,51 +55,60 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
 
 #### Opportunistic Work
 
-> Status: _ChillOps_
+- Add an experimental dockerd cask by [@​jumpyvi](https://github.com/jumpyvi) in [#102](https://github.com/ublue-os/homebrew-experimental-tap/pull/102)
 
 ### Homebrew
 
+#### New Applications
+
+The following applications were added to our Homebrew taps this month:
+
+| Application | Description | Status |
+|-------------|-------------|--------|
+| [**docker-rootless-linux**](https://github.com/ublue-os/homebrew-experimental-tap/pull/102) | Docker static binaries with rootless extras | ![Experimental](https://img.shields.io/badge/experimental-orange?style=flat-square) |
+| [**libvirt-full**](https://github.com/ublue-os/homebrew-experimental-tap/pull/106) | C virtualization API, now with udev support | ![Experimental](https://img.shields.io/badge/experimental-orange?style=flat-square) |
+| [**ydotool**](https://github.com/ublue-os/homebrew-experimental-tap/pull/103) | Generic command-line automation tool (no X!) | ![Experimental](https://img.shields.io/badge/experimental-orange?style=flat-square) |
+
+Use `ujust bbrew` to browse and install these packages. Follow [the tap instructions](https://github.com/ublue-os/homebrew-tap) if you want to do it by hand.
+
 #### Package Updates
 
-![Production Tap](https://img.shields.io/badge/production--tap-33%20updates-blue?style=flat-square) ![Experimental Tap](https://img.shields.io/badge/experimental--tap-39%20updates-orange?style=flat-square)
+![Production Tap](https://img.shields.io/badge/production--tap-16%20updates-blue?style=flat-square) ![Experimental Tap](https://img.shields.io/badge/experimental--tap-21%20updates-orange?style=flat-square)
 
-**72 automated updates** this month via GitHub Actions. Homebrew tap version bumps ensure Bluefin users always have access to the latest stable releases.
+**37 automated updates** this month via GitHub Actions. Homebrew tap version bumps ensure Bluefin users always have access to the latest stable releases.
 
 ##### Quick Summary
 
 | Tap | Updates |
 |-----|---------|
-| production-tap | 33 |
-| experimental-tap | 39 |
+| production-tap | 16 |
+| experimental-tap | 21 |
 
 <details>
-<summary>View all production-tap updates (33)</summary>
+<summary>View all production-tap updates (16)</summary>
 
 | Package | Versions | PR |
 |---------|----------|-----|
-| lm-studio-linux | 0.3.36 → 0.3.33 (4 updates) | [#181](https://github.com/ublue-os/homebrew-tap/pull/181) |
-| jetbrains-toolbox-linux | 3.2.0.65851 → 3.1.1.64142 (3 updates) | [#180](https://github.com/ublue-os/homebrew-tap/pull/180) |
-| vscodium-linux | 1.107.18627 → 1.107.18605 (2 updates) | [#183](https://github.com/ublue-os/homebrew-tap/pull/183) |
-| visual-studio-code-linux | 1.107.1 → 1.107.0 (2 updates) | [#179](https://github.com/ublue-os/homebrew-tap/pull/179) |
-| 1password-gui-linux | 8.11.22 | [#155](https://github.com/ublue-os/homebrew-tap/pull/155) |
+| vscodium-linux | 1.107.18605 → 1.107.18627 (2 updates) | [#183](https://github.com/ublue-os/homebrew-tap/pull/183) |
+| lm-studio-linux | 0.3.35 → 0.3.36 (2 updates) | [#181](https://github.com/ublue-os/homebrew-tap/pull/181) |
+| jetbrains-toolbox-linux | 3.2.0.65851 | [#180](https://github.com/ublue-os/homebrew-tap/pull/180) |
+| visual-studio-code-linux | 1.107.1 | [#179](https://github.com/ublue-os/homebrew-tap/pull/179) |
 
 </details>
 
 <details>
-<summary>View all experimental-tap updates (39)</summary>
+<summary>View all experimental-tap updates (21)</summary>
 
 | Package | Versions | PR |
 |---------|----------|-----|
-| cursor-linux | 2.3.15 → 2.2.6 (9 updates) | [#105](https://github.com/ublue-os/homebrew-experimental-tap/pull/105) |
-| antigravity-linux | 1.13.3 → 1.11.17 (3 updates) | [#83](https://github.com/ublue-os/homebrew-experimental-tap/pull/83) |
-| datagrip-linux | 2025.3.2 → 2025.3.1 (2 updates) | [#92](https://github.com/ublue-os/homebrew-experimental-tap/pull/92) |
-| dataspell-linux | 2025.3.1 → 2025.3 (2 updates) | [#91](https://github.com/ublue-os/homebrew-experimental-tap/pull/91) |
-| bluefin-cli | 0.0.3 → 0.0.2 (2 updates) | [#89](https://github.com/ublue-os/homebrew-experimental-tap/pull/89) |
-| rustrover-linux | 2025.3.1 → 2025.3 (2 updates) | [#86](https://github.com/ublue-os/homebrew-experimental-tap/pull/86) |
-| webstorm-linux | 2025.3.1 → 2025.3 (2 updates) | [#87](https://github.com/ublue-os/homebrew-experimental-tap/pull/87) |
-| rider-linux | 2025.3.1 → 2025.3.0.4 (2 updates) | [#80](https://github.com/ublue-os/homebrew-experimental-tap/pull/80) |
-| rubymine-linux | 2025.3.1 → 2025.3 (2 updates) | [#81](https://github.com/ublue-os/homebrew-experimental-tap/pull/81) |
+| cursor-linux | 2.2.36 → 2.3.15 (5 updates) | [#105](https://github.com/ublue-os/homebrew-experimental-tap/pull/105) |
+| datagrip-linux | 2025.3.1 → 2025.3.2 (2 updates) | [#92](https://github.com/ublue-os/homebrew-experimental-tap/pull/92) |
+| bluefin-cli | 0.0.2 → 0.0.3 (2 updates) | [#89](https://github.com/ublue-os/homebrew-experimental-tap/pull/89) |
+| dataspell-linux | 2025.3.1 | [#91](https://github.com/ublue-os/homebrew-experimental-tap/pull/91) |
+| rustrover-linux | 2025.3.1 | [#86](https://github.com/ublue-os/homebrew-experimental-tap/pull/86) |
 | phpstorm-linux | 2025.3.1 | [#85](https://github.com/ublue-os/homebrew-experimental-tap/pull/85) |
+| antigravity-linux | 1.13.3 | [#83](https://github.com/ublue-os/homebrew-experimental-tap/pull/83) |
+| webstorm-linux | 2025.3.1 | [#87](https://github.com/ublue-os/homebrew-experimental-tap/pull/87) |
 | clion-linux | 2025.3.1 | [#75](https://github.com/ublue-os/homebrew-experimental-tap/pull/75) |
 | intellij-idea-linux | 2025.3.1 | [#78](https://github.com/ublue-os/homebrew-experimental-tap/pull/78) |
 | pycharm-linux | 2025.3.1 | [#79](https://github.com/ublue-os/homebrew-experimental-tap/pull/79) |
@@ -115,10 +125,14 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
 
 #### Planned Work
 
+- feat: add Claude Code, Mistral Vibe & Kimi CLI by [@​KiKaraage](https://github.com/KiKaraage) in [#37](https://github.com/projectbluefin/common/pull/37)
+- feat: move bazaar config to common repo by [@​dreamyukii](https://github.com/dreamyukii) in [#33](https://github.com/projectbluefin/common/pull/33)
+- feat: add Jan to Bazaar curated section by [@​coxde](https://github.com/coxde) in [#99](https://github.com/projectbluefin/common/pull/99)
+- feat(bazaar): add brief, remove rewaita by [@​castrojo](https://github.com/castrojo) in [#89](https://github.com/projectbluefin/common/pull/89)
 - chore(tools): move swift Brewfile to shared by [@​ahmedadan](https://github.com/ahmedadan) in [#76](https://github.com/projectbluefin/common/pull/76)
 - Brewfile fixup by [@​hanthor](https://github.com/hanthor) in [#64](https://github.com/projectbluefin/common/pull/64)
+- fix: centralize bluefin bazaar config by [@​renner0e](https://github.com/renner0e) in [#59](https://github.com/projectbluefin/common/pull/59)
 - fix: Change copilot-cli from brew to cask installation by [@​inffy](https://github.com/inffy) in [#38](https://github.com/projectbluefin/common/pull/38)
-- feat: add Claude Code, Mistral Vibe & Kimi CLI by [@​KiKaraage](https://github.com/KiKaraage) in [#37](https://github.com/projectbluefin/common/pull/37)
 - Add font-comic-shanns-mono-nerd-font to Brewfile by [@​theMimolet](https://github.com/theMimolet) in [#29](https://github.com/projectbluefin/common/pull/29)
 - feat: update ai-tools.Brewfile by [@​castrojo](https://github.com/castrojo) in [#25](https://github.com/projectbluefin/common/pull/25)
 - feat: add LM Studio to AI tools Brewfile by [@​castrojo](https://github.com/castrojo) in [#24](https://github.com/projectbluefin/common/pull/24)
@@ -126,7 +140,16 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
 
 #### Opportunistic Work
 
-> Status: _ChillOps_
+- fix(wallpapers): use postflight for artifacts by [@​ahmedadan](https://github.com/ahmedadan) in [#173](https://github.com/ublue-os/homebrew-tap/pull/173)
+- fix: wallpapers by [@​ahmedadan](https://github.com/ahmedadan) in [#170](https://github.com/ublue-os/homebrew-tap/pull/170)
+- Add experimental ydotool formulae by [@​jumpyvi](https://github.com/jumpyvi) in [#103](https://github.com/ublue-os/homebrew-experimental-tap/pull/103)
+- Add custom libvirt formulae (usb and devices support) by [@​jumpyvi](https://github.com/jumpyvi) in [#106](https://github.com/ublue-os/homebrew-experimental-tap/pull/106)
+- fix(bluefin-cli): style fix by [@​inffy](https://github.com/inffy) in [#100](https://github.com/ublue-os/homebrew-experimental-tap/pull/100)
+- fix(ci): ran brew style . --fix by [@​ahmedadan](https://github.com/ahmedadan) in [#82](https://github.com/ublue-os/homebrew-experimental-tap/pull/82)
+- Add blog post on upcoming Homebrew CLI changes by [@​castrojo](https://github.com/castrojo) in [#542](https://github.com/projectbluefin/documentation/pull/542)
+- Add Discussions section to blog post on Homebrew by [@​castrojo](https://github.com/castrojo) in [#525](https://github.com/projectbluefin/documentation/pull/525)
+- feat: add brew post by [@​castrojo](https://github.com/castrojo) in [#522](https://github.com/projectbluefin/documentation/pull/522)
+- feat: add bazaar pictures by [@​renner0e](https://github.com/renner0e) in [#1](https://github.com/projectbluefin/branding/pull/1)
 
 ---
 
@@ -158,7 +181,14 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
 
 *Hardware support, drivers, NVIDIA GPU, and ARM64 architecture*
 
+#### Planned Work
+
 > Status: _ChillOps_
+
+#### Opportunistic Work
+
+- ci: enable automerge for driver version PRs by [@​castrojo](https://github.com/castrojo) in [#530](https://github.com/projectbluefin/documentation/pull/530)
+- fix: remove duplicate driver version entries and prevent future duplicates by [@​castrojo](https://github.com/castrojo) in [#519](https://github.com/projectbluefin/documentation/pull/519)
 
 ---
 
@@ -186,7 +216,8 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
 
 #### Opportunistic Work
 
-> Status: _ChillOps_
+- Fix style so actions can pass by [@​jumpyvi](https://github.com/jumpyvi) in [#107](https://github.com/ublue-os/homebrew-experimental-tap/pull/107)
+- chore(devcontainer): install legacy npm deps, add just, and configure port forwarding by [@​eltorrero](https://github.com/eltorrero) in [#552](https://github.com/projectbluefin/documentation/pull/552)
 
 ---
 
@@ -196,7 +227,29 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
 
 *Documentation improvements and additions*
 
+#### Planned Work
+
 > Status: _ChillOps_
+
+#### Opportunistic Work
+
+- End of Year Update by [@​castrojo](https://github.com/castrojo) in [#543](https://github.com/projectbluefin/documentation/pull/543)
+- Add title to GitHubProfileCard for user 'inffy' by [@​inffy](https://github.com/inffy) in [#549](https://github.com/projectbluefin/documentation/pull/549)
+- docs: fix link for projectbluefin/common by [@​coxde](https://github.com/coxde) in [#551](https://github.com/projectbluefin/documentation/pull/551)
+- Enhance 2025 wrap-up with video and content updates by [@​castrojo](https://github.com/castrojo) in [#553](https://github.com/projectbluefin/documentation/pull/553)
+- feat(footer): add Contribute column with issues, PRs, and guide links by [@​castrojo](https://github.com/castrojo) in [#548](https://github.com/projectbluefin/documentation/pull/548)
+- Update pages to reference upcoming changes to release streams by [@​fizzyizzy05](https://github.com/fizzyizzy05) in [#546](https://github.com/projectbluefin/documentation/pull/546)
+- Add page contributors section to docs and blog by [@​castrojo](https://github.com/castrojo) in [#545](https://github.com/projectbluefin/documentation/pull/545)
+- Move communication channels to footer by [@​castrojo](https://github.com/castrojo) in [#544](https://github.com/projectbluefin/documentation/pull/544)
+- docs(donations): add @krisnova to advisors and mentors by [@​castrojo](https://github.com/castrojo) in [#536](https://github.com/projectbluefin/documentation/pull/536)
+- feat: update contributor guide by [@​castrojo](https://github.com/castrojo) in [#535](https://github.com/projectbluefin/documentation/pull/535)
+- chore: remove unused changelogs folder by [@​castrojo](https://github.com/castrojo) in [#533](https://github.com/projectbluefin/documentation/pull/533)
+- docs(tips): add donation URLs for GNOME extensions by [@​castrojo](https://github.com/castrojo) in [#531](https://github.com/projectbluefin/documentation/pull/531)
+- docs: fix incorrect ujust commands by [@​castrojo](https://github.com/castrojo) in [#528](https://github.com/projectbluefin/documentation/pull/528)
+- docs: update brew package lists to match source of truth by [@​castrojo](https://github.com/castrojo) in [#527](https://github.com/projectbluefin/documentation/pull/527)
+- Update Brewfile package tables to match projectbluefin/common by [@​castrojo](https://github.com/castrojo) in [#523](https://github.com/projectbluefin/documentation/pull/523)
+- docs: remove ujust install-resolve command by [@​castrojo](https://github.com/castrojo) in [#521](https://github.com/projectbluefin/documentation/pull/521)
+- feat: add huntress and holiday wallpapers blog post by [@​castrojo](https://github.com/castrojo) in [#520](https://github.com/projectbluefin/documentation/pull/520)
 
 ---
 
@@ -247,88 +300,18 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
 
 - fix: set wallpaper metadata path to /usr/share by [@​renner0e](https://github.com/renner0e) in [#39](https://github.com/projectbluefin/common/pull/39)
 - feat: add wallpapers by [@​renner0e](https://github.com/renner0e) in [#34](https://github.com/projectbluefin/common/pull/34)
-- feat: move bazaar config to common repo by [@​dreamyukii](https://github.com/dreamyukii) in [#33](https://github.com/projectbluefin/common/pull/33)
-- feat: add Jan to Bazaar curated section by [@​coxde](https://github.com/coxde) in [#99](https://github.com/projectbluefin/common/pull/99)
 - feat: add Cryptomator to utilities list by [@​sebjag](https://github.com/sebjag) in [#95](https://github.com/projectbluefin/common/pull/95)
-- feat(bazaar): add brief, remove rewaita by [@​castrojo](https://github.com/castrojo) in [#89](https://github.com/projectbluefin/common/pull/89)
-- fix: centralize bluefin bazaar config by [@​renner0e](https://github.com/renner0e) in [#59](https://github.com/projectbluefin/common/pull/59)
-- fix(wallpapers): use postflight for artifacts by [@​ahmedadan](https://github.com/ahmedadan) in [#173](https://github.com/ublue-os/homebrew-tap/pull/173)
-- fix: wallpapers by [@​ahmedadan](https://github.com/ahmedadan) in [#170](https://github.com/ublue-os/homebrew-tap/pull/170)
-- fix: Update SHA256 checksums for 2025-11-30 releases by [@​castrojo](https://github.com/castrojo) in [#150](https://github.com/ublue-os/homebrew-tap/pull/150)
-- fix: manually update sha256 for bluefin-wallpapers (2025-11-17) by [@​KiKaraage](https://github.com/KiKaraage) in [#134](https://github.com/ublue-os/homebrew-tap/pull/134)
-- Fix style so actions can pass by [@​jumpyvi](https://github.com/jumpyvi) in [#107](https://github.com/ublue-os/homebrew-experimental-tap/pull/107)
-- Add experimental ydotool formulae by [@​jumpyvi](https://github.com/jumpyvi) in [#103](https://github.com/ublue-os/homebrew-experimental-tap/pull/103)
-- Add custom libvirt formulae (usb and devices support) by [@​jumpyvi](https://github.com/jumpyvi) in [#106](https://github.com/ublue-os/homebrew-experimental-tap/pull/106)
-- Add an experimental dockerd cask by [@​jumpyvi](https://github.com/jumpyvi) in [#102](https://github.com/ublue-os/homebrew-experimental-tap/pull/102)
-- fix(bluefin-cli): style fix by [@​inffy](https://github.com/inffy) in [#100](https://github.com/ublue-os/homebrew-experimental-tap/pull/100)
-- fix(ci): ran brew style . --fix by [@​ahmedadan](https://github.com/ahmedadan) in [#82](https://github.com/ublue-os/homebrew-experimental-tap/pull/82)
-- End of Year Update by [@​castrojo](https://github.com/castrojo) in [#543](https://github.com/projectbluefin/documentation/pull/543)
-- chore(devcontainer): install legacy npm deps, add just, and configure port forwarding by [@​eltorrero](https://github.com/eltorrero) in [#552](https://github.com/projectbluefin/documentation/pull/552)
-- Add title to GitHubProfileCard for user 'inffy' by [@​inffy](https://github.com/inffy) in [#549](https://github.com/projectbluefin/documentation/pull/549)
-- docs: fix link for projectbluefin/common by [@​coxde](https://github.com/coxde) in [#551](https://github.com/projectbluefin/documentation/pull/551)
-- Enhance 2025 wrap-up with video and content updates by [@​castrojo](https://github.com/castrojo) in [#553](https://github.com/projectbluefin/documentation/pull/553)
-- feat(footer): add Contribute column with issues, PRs, and guide links by [@​castrojo](https://github.com/castrojo) in [#548](https://github.com/projectbluefin/documentation/pull/548)
-- Update pages to reference upcoming changes to release streams by [@​fizzyizzy05](https://github.com/fizzyizzy05) in [#546](https://github.com/projectbluefin/documentation/pull/546)
-- Add page contributors section to docs and blog by [@​castrojo](https://github.com/castrojo) in [#545](https://github.com/projectbluefin/documentation/pull/545)
-- Move communication channels to footer by [@​castrojo](https://github.com/castrojo) in [#544](https://github.com/projectbluefin/documentation/pull/544)
-- Add blog post on upcoming Homebrew CLI changes by [@​castrojo](https://github.com/castrojo) in [#542](https://github.com/projectbluefin/documentation/pull/542)
-- docs(donations): add @krisnova to advisors and mentors by [@​castrojo](https://github.com/castrojo) in [#536](https://github.com/projectbluefin/documentation/pull/536)
-- feat: update contributor guide by [@​castrojo](https://github.com/castrojo) in [#535](https://github.com/projectbluefin/documentation/pull/535)
-- chore: remove unused changelogs folder by [@​castrojo](https://github.com/castrojo) in [#533](https://github.com/projectbluefin/documentation/pull/533)
-- docs(tips): add donation URLs for GNOME extensions by [@​castrojo](https://github.com/castrojo) in [#531](https://github.com/projectbluefin/documentation/pull/531)
-- ci: enable automerge for driver version PRs by [@​castrojo](https://github.com/castrojo) in [#530](https://github.com/projectbluefin/documentation/pull/530)
-- feat(prompts): add conventional commit prompt and guidelines by [@​castrojo](https://github.com/castrojo) in [#529](https://github.com/projectbluefin/documentation/pull/529)
-- docs: fix incorrect ujust commands by [@​castrojo](https://github.com/castrojo) in [#528](https://github.com/projectbluefin/documentation/pull/528)
-- docs: update brew package lists to match source of truth by [@​castrojo](https://github.com/castrojo) in [#527](https://github.com/projectbluefin/documentation/pull/527)
-- Add Discussions section to blog post on Homebrew by [@​castrojo](https://github.com/castrojo) in [#525](https://github.com/projectbluefin/documentation/pull/525)
-- Update Brewfile package tables to match projectbluefin/common by [@​castrojo](https://github.com/castrojo) in [#523](https://github.com/projectbluefin/documentation/pull/523)
-- feat: add brew post by [@​castrojo](https://github.com/castrojo) in [#522](https://github.com/projectbluefin/documentation/pull/522)
-- docs: remove ujust install-resolve command by [@​castrojo](https://github.com/castrojo) in [#521](https://github.com/projectbluefin/documentation/pull/521)
-- feat: add huntress and holiday wallpapers blog post by [@​castrojo](https://github.com/castrojo) in [#520](https://github.com/projectbluefin/documentation/pull/520)
-- fix: remove duplicate driver version entries and prevent future duplicates by [@​castrojo](https://github.com/castrojo) in [#519](https://github.com/projectbluefin/documentation/pull/519)
-- ci: change driver versions workflow to open PR instead of direct push by [@​castrojo](https://github.com/castrojo) in [#517](https://github.com/projectbluefin/documentation/pull/517)
-- add Tailscale systray recommendation by [@​bronson](https://github.com/bronson) in [#514](https://github.com/projectbluefin/documentation/pull/514)
-- docs: add @mairin to Special Guests section by [@​castrojo](https://github.com/castrojo) in [#516](https://github.com/projectbluefin/documentation/pull/516)
-- feat: split donations page into contributors and projects by [@​castrojo](https://github.com/castrojo) in [#513](https://github.com/projectbluefin/documentation/pull/513)
-- docs(gdx): convert donation links to GitHubProfileCard components by [@​castrojo](https://github.com/castrojo) in [#512](https://github.com/projectbluefin/documentation/pull/512)
-- docs(lts): convert donation links to GitHubProfileCard components by [@​castrojo](https://github.com/castrojo) in [#511](https://github.com/projectbluefin/documentation/pull/511)
-- feat: improve footer navigation and fix links by [@​castrojo](https://github.com/castrojo) in [#510](https://github.com/projectbluefin/documentation/pull/510)
-- fix: update footer links and add Bluefin website by [@​castrojo](https://github.com/castrojo) in [#509](https://github.com/projectbluefin/documentation/pull/509)
-- fix: make GNOME extensions grid responsive for mobile by [@​castrojo](https://github.com/castrojo) in [#508](https://github.com/projectbluefin/documentation/pull/508)
-- feat: add Giscus comments to blog posts by [@​castrojo](https://github.com/castrojo) in [#507](https://github.com/projectbluefin/documentation/pull/507)
-- Create 2025-12-07-documentation-updates.md by [@​castrojo](https://github.com/castrojo) in [#506](https://github.com/projectbluefin/documentation/pull/506)
-- docs: improve tagging and cleanup driver-versions page by [@​castrojo](https://github.com/castrojo) in [#505](https://github.com/projectbluefin/documentation/pull/505)
-- feat: add driver versions page with automated updates by [@​castrojo](https://github.com/castrojo) in [#504](https://github.com/projectbluefin/documentation/pull/504)
-- feat(tips): Add GNOME extensions thumbnail gallery by [@​castrojo](https://github.com/castrojo) in [#503](https://github.com/projectbluefin/documentation/pull/503)
-- Correct minor typos and grammar errors across documentation by [@​AnthonyStainer](https://github.com/AnthonyStainer) in [#500](https://github.com/projectbluefin/documentation/pull/500)
-- Fix reference links by [@​wommy](https://github.com/wommy) in [#498](https://github.com/projectbluefin/documentation/pull/498)
-- feat: add the interview with michael by [@​castrojo](https://github.com/castrojo) in [#501](https://github.com/projectbluefin/documentation/pull/501)
-- feat: brewfile blog post by [@​castrojo](https://github.com/castrojo) in [#497](https://github.com/projectbluefin/documentation/pull/497)
-- feat: add bazaar pictures by [@​renner0e](https://github.com/renner0e) in [#1](https://github.com/projectbluefin/branding/pull/1)
-- Add some default branding by [@​jumpyvi](https://github.com/jumpyvi) in [#20](https://github.com/projectbluefin/dakota/pull/20)
-- feat: Switch to ublue-os brew container by [@​castrojo](https://github.com/castrojo) in [#21](https://github.com/projectbluefin/dakota/pull/21)
-- Deduplicate .gitmodules by [@​sideeffffect](https://github.com/sideeffffect) in [#17](https://github.com/projectbluefin/dakota/pull/17)
-- feat: add QoL features to Justfile by [@​ahmedadan](https://github.com/ahmedadan) in [#18](https://github.com/projectbluefin/dakota/pull/18)
-- feat: remove logos use common by [@​renner0e](https://github.com/renner0e) in [#16](https://github.com/projectbluefin/dakota/pull/16)
-- fix: make vm respect change in resolution in gnome by [@​ahmedadan](https://github.com/ahmedadan) in [#15](https://github.com/projectbluefin/dakota/pull/15)
-- fix: properly use common by [@​renner0e](https://github.com/renner0e) in [#13](https://github.com/projectbluefin/dakota/pull/13)
-- fix: add git submodule init to Justfile by [@​ahmedadan](https://github.com/ahmedadan) in [#14](https://github.com/projectbluefin/dakota/pull/14)
-- feat: add show-me-the-future command by [@​castrojo](https://github.com/castrojo) in [#12](https://github.com/projectbluefin/dakota/pull/12)
-- feat: add just run-vm to simplify testing by [@​ahmedadan](https://github.com/ahmedadan) in [#11](https://github.com/projectbluefin/dakota/pull/11)
-- fix: add with recursive to build.yml by [@​ahmedadan](https://github.com/ahmedadan) in [#9](https://github.com/projectbluefin/dakota/pull/9)
-- fix: update upstream image url by [@​castrojo](https://github.com/castrojo) in [#8](https://github.com/projectbluefin/dakota/pull/8)
 
 ---
 
 ## Bot Activity
 
-**Automation Percentage:** 41.3% (81 bot PRs out of 196 total PRs)
+**Automation Percentage:** 34.1% (43 bot PRs out of 126 total PRs)
 
 | Repository | Bot PRs | % of Total |
 |------------|---------|------------|
-| documentation | 6 | 3.1% |
-| dakota | 2 | 1.0% |
-| common | 1 | 0.5% |
+| documentation | 5 | 4.0% |
+| common | 1 | 0.8% |
 
 <details>
 <summary>View bot activity details</summary>
@@ -337,11 +320,8 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
 - docs: update driver versions by [@​github-actions](https://github.com/github-actions) in [projectbluefin/documentation#550](https://github.com/projectbluefin/documentation/pull/550)
 - docs: update driver versions by [@​github-actions](https://github.com/github-actions) in [projectbluefin/documentation#534](https://github.com/projectbluefin/documentation/pull/534)
 - docs: update driver versions by [@​github-actions](https://github.com/github-actions) in [projectbluefin/documentation#526](https://github.com/projectbluefin/documentation/pull/526)
-- docs: update driver versions by [@​github-actions](https://github.com/github-actions) in [projectbluefin/documentation#518](https://github.com/projectbluefin/documentation/pull/518)
 - feat: implement GitHub data caching to reduce API calls and build times by [@​copilot-swe-agent](https://github.com/copilot-swe-agent) in [projectbluefin/documentation#538](https://github.com/projectbluefin/documentation/pull/538)
 - Implement gemini-code-assist code review recommendations by [@​copilot-swe-agent](https://github.com/copilot-swe-agent) in [projectbluefin/documentation#539](https://github.com/projectbluefin/documentation/pull/539)
-- build(deps): bump actions/checkout from 6.0.0 to 6.0.1 by [@​dependabot](https://github.com/dependabot) in [projectbluefin/dakota#10](https://github.com/projectbluefin/dakota/pull/10)
-- build(deps): bump docker/metadata-action from 5.9.0 to 5.10.0 by [@​dependabot](https://github.com/dependabot) in [projectbluefin/dakota#7](https://github.com/projectbluefin/dakota/pull/7)
 
 </details>
 
@@ -385,6 +365,8 @@ We welcome our newest Guardians to the project.
 
 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem', marginBottom: '2rem' }}>
 
+<GitHubProfileCard username="KiKaraage" highlight={true} />
+
 <GitHubProfileCard username="renner0e" highlight={true} />
 
 <GitHubProfileCard username="dreamyukii" highlight={true} />
@@ -399,7 +381,7 @@ We welcome our newest Guardians to the project.
 
 <GitHubProfileCard username="joshyorko" highlight={true} />
 
-<GitHubProfileCard username="KiKaraage" highlight={true} />
+<GitHubProfileCard username="hanthor" highlight={true} sponsorUrl="https://github.com/sponsors/hanthor" />
 
 <GitHubProfileCard username="theMimolet" highlight={true} />
 
@@ -410,12 +392,6 @@ We welcome our newest Guardians to the project.
 <GitHubProfileCard username="eltorrero" highlight={true} />
 
 <GitHubProfileCard username="fizzyizzy05" highlight={true} />
-
-<GitHubProfileCard username="bronson" highlight={true} />
-
-<GitHubProfileCard username="AnthonyStainer" highlight={true} />
-
-<GitHubProfileCard username="wommy" highlight={true} />
 
 </div>
 
@@ -431,10 +407,6 @@ We welcome our newest Guardians to the project.
 
 <GitHubProfileCard username="inffy" sponsorUrl="https://github.com/sponsors/inffy" />
 
-<GitHubProfileCard username="hanthor" sponsorUrl="https://github.com/sponsors/hanthor" />
-
-<GitHubProfileCard username="sideeffffect" />
-
 </div>
 
 ---
@@ -445,5 +417,5 @@ We welcome our newest Guardians to the project.
 
 ---
 
-*Generated on 2026-02-01*  
+*Generated on 2026-03-01*  
 [View Project Board](https://todo.projectbluefin.io) | [Report an Issue](https://github.com/projectbluefin/common/issues/new)

@@ -47,7 +47,7 @@ const CATEGORY_DESCRIPTIONS = {
  * @param {Date} startDate - Report period start date
  * @param {Date} endDate - Report period end date
  * @param {Object|null} buildMetrics - Build health metrics from fetchBuildMetrics()
- * @param {Array} tapPromotions - Tap promotions from fetchTapPromotions()
+ * @param {Object} tapAdditions - Tap additions from fetchTapAdditions() {production: [], experimental: []}
  * @returns {string} Complete markdown content
  */
 export function generateReportMarkdown(
@@ -59,7 +59,7 @@ export function generateReportMarkdown(
   startDate,
   endDate,
   buildMetrics = null,
-  tapPromotions = [],
+  tapAdditions = { production: [], experimental: [] },
 ) {
   // Extract year and month from startDate in UTC
   const year = startDate.getUTCFullYear();
@@ -188,17 +188,18 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
         categoryName.includes("Development")
       ) {
         // Create unified Homebrew section with promotions and updates
-        const hasPromotions = tapPromotions && tapPromotions.length > 0;
+        const hasPromotions = tapAdditions.production && tapAdditions.production.length > 0;
+        const hasExperimental = tapAdditions.experimental && tapAdditions.experimental.length > 0;
         const hasUpdates = homebrewActivity.length > 0;
 
-        if (hasPromotions || hasUpdates) {
+        if (hasPromotions || hasExperimental || hasUpdates) {
           fullSection += `\n\n### Homebrew\n\n`;
 
-          // Add promotions subsection (if any)
-          if (hasPromotions) {
-            const promotionsContent =
-              generateTapPromotionsContent(tapPromotions);
-            fullSection += `#### Promotions\n\n${promotionsContent}\n\n`;
+          // Add New Applications subsection (if any)
+          if (hasPromotions || hasExperimental) {
+            const newAppsContent =
+              generateNewApplicationsContent(tapAdditions);
+            fullSection += `#### New Applications\n\n${newAppsContent}\n\n`;
           }
 
           // Add package updates subsection (if any)
@@ -1000,50 +1001,52 @@ function generateContributorsSection(contributors, newContributors) {
 }
 
 /**
- * Generate Homebrew Tap Promotions content (without heading)
+ * Generate New Applications content (without heading)
  * Used as a subsection under Development category
  *
- * @param {Array} promotions - Array of {name, description, mergedAt, prNumber, prUrl}
+ * @param {Object} tapAdditions - { production: [], experimental: [] }
  * @returns {string} Markdown content
  */
-function generateTapPromotionsContent(promotions) {
-  if (!promotions || promotions.length === 0) {
-    return ""; // No promotions this period
+function generateNewApplicationsContent(tapAdditions) {
+  const { production, experimental } = tapAdditions;
+  
+  // Combine lists
+  const allApps = [];
+  
+  if (production) {
+    production.forEach(app => {
+       allApps.push({ ...app, status: 'Stable' });
+    });
   }
+  
+  if (experimental) {
+    experimental.forEach(app => {
+       allApps.push({ ...app, status: 'Experimental' });
+    });
+  }
+  
+  if (allApps.length === 0) return "";
+  
+  // Sort by name
+  allApps.sort((a, b) => a.name.localeCompare(b.name));
+  
+  const header = `| Application | Description | Status |
+|-------------|-------------|--------|`;
+  
+  const rows = allApps.map(app => {
+     const statusBadge = app.status === 'Stable' 
+        ? `![Stable](https://img.shields.io/badge/stable-blue?style=flat-square)` 
+        : `![Experimental](https://img.shields.io/badge/experimental-orange?style=flat-square)`;
+     
+     return `| [**${app.name}**](${app.prUrl}) | ${app.description} | ${statusBadge} |`;
+  }).join("\n");
+  
+  return `The following applications were added to our Homebrew taps this month:
 
-  const promotionsList = promotions
-    .map((promo) => {
-      const mergedDate = new Date(promo.mergedAt).toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-      });
-      return `- **${promo.name}** - ${promo.description} ([#${promo.prNumber}](${promo.prUrl}), ${mergedDate})`;
-    })
-    .join("\n");
-
-  return `The following packages graduated from experimental-tap to production-tap this month, ready for wider use:
-
-${promotionsList}
+${header}
+${rows}
 
 Use \`ujust bbrew\` to browse and install these packages. Follow [the tap instructions](https://github.com/ublue-os/homebrew-tap) if you want to do it by hand.`;
 }
 
-/**
- * Generate Homebrew Tap Promotions section (standalone)
- * Legacy function - kept for backward compatibility
- *
- * @param {Array} promotions - Array of {name, description, mergedAt, prNumber, prUrl}
- * @returns {string} Markdown section or empty string
- */
-function generateTapPromotionsSection(promotions) {
-  if (!promotions || promotions.length === 0) {
-    return ""; // No promotions this period
-  }
 
-  const content = generateTapPromotionsContent(promotions);
-  return `---
-
-## Homebrew Tap Promotions
-
-${content}`;
-}
