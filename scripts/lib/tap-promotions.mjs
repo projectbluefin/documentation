@@ -13,7 +13,7 @@ const TAP_REPOS = {
 };
 
 /**
- * Fetch promoted packages during a date range
+ * Fetch promoted packages during a date range (Production Tap)
  *
  * @param {Date} startDate - Start of reporting period
  * @param {Date} endDate - End of reporting period
@@ -23,20 +23,41 @@ export async function fetchTapPromotions(startDate, endDate) {
   console.log(
     `\n🍺 Fetching tap promotions from ${startDate.toISOString().split("T")[0]} to ${endDate.toISOString().split("T")[0]}...\n`,
   );
+  return fetchRepoAdditions(TAP_REPOS.production, startDate, endDate);
+}
 
-  // Fetch merged PRs from production tap
-  const productionPRs = await fetchMergedPRs(
-    TAP_REPOS.production,
-    startDate,
-    endDate,
+/**
+ * Fetch new packages from experimental tap during a date range
+ *
+ * @param {Date} startDate - Start of reporting period
+ * @param {Date} endDate - End of reporting period
+ * @returns {Promise<Array>} Array of {name, description, mergedAt, prNumber, prUrl}
+ */
+export async function fetchExperimentalAdditions(startDate, endDate) {
+  console.log(
+    `\n🧪 Fetching experimental tap additions from ${startDate.toISOString().split("T")[0]} to ${endDate.toISOString().split("T")[0]}...\n`,
   );
+  return fetchRepoAdditions(TAP_REPOS.experimental, startDate, endDate);
+}
 
-  console.log(`   Found ${productionPRs.length} merged PRs in production-tap`);
+/**
+ * Fetch added packages from a repository during a date range
+ *
+ * @param {string} repo - Repository in format "owner/repo"
+ * @param {Date} startDate - Start of reporting period
+ * @param {Date} endDate - End of reporting period
+ * @returns {Promise<Array>} Array of {name, description, mergedAt, prNumber, prUrl}
+ */
+async function fetchRepoAdditions(repo, startDate, endDate) {
+  // Fetch merged PRs from tap
+  const prs = await fetchMergedPRs(repo, startDate, endDate);
+
+  console.log(`   Found ${prs.length} merged PRs in ${repo}`);
 
   // Find PRs that added new formula/cask files
-  const promotions = [];
-  for (const pr of productionPRs) {
-    const files = await fetchPRFiles(TAP_REPOS.production, pr.number);
+  const additions = [];
+  for (const pr of prs) {
+    const files = await fetchPRFiles(repo, pr.number);
 
     // Look for added formula or cask files
     const addedPackages = files.filter(
@@ -53,12 +74,9 @@ export async function fetchTapPromotions(startDate, endDate) {
         .replace(/\.rb$/, "");
 
       // Fetch package description from the added file
-      const description = await fetchPackageDescription(
-        TAP_REPOS.production,
-        file.filename,
-      );
+      const description = await fetchPackageDescription(repo, file.filename);
 
-      promotions.push({
+      additions.push({
         name: packageName,
         description: description || "No description available",
         mergedAt: pr.mergedAt,
@@ -67,13 +85,13 @@ export async function fetchTapPromotions(startDate, endDate) {
       });
 
       console.log(
-        `   ✅ Found promotion: ${packageName} (PR #${pr.number}, ${new Date(pr.mergedAt).toLocaleDateString()})`,
+        `   ✅ Found addition: ${packageName} (PR #${pr.number}, ${new Date(pr.mergedAt).toLocaleDateString()})`,
       );
     }
   }
 
-  console.log(`\n   Total promotions found: ${promotions.length}\n`);
-  return promotions;
+  console.log(`\n   Total additions found in ${repo}: ${additions.length}\n`);
+  return additions;
 }
 
 /**
