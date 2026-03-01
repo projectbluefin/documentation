@@ -74,6 +74,64 @@ export const LABEL_CATEGORIES = {
 };
 
 /**
+ * Title patterns for smart categorization fallback
+ * Used when items lack proper area/* or kind/* labels
+ */
+const TITLE_PATTERNS = {
+  Localization: [
+    /translation/i,
+    /translate/i,
+    /\bl10n\b/i,
+    /\bi18n\b/i,
+    /french|czech|german|spanish|italian|portuguese|russian|chinese|japanese/i,
+  ],
+  Documentation: [/\bdocs?\b/i, /documentation/i, /readme/i, /\bguide\b/i],
+  Ecosystem: [/flatpak/i, /bazaar/i, /flathub/i, /homebrew/i, /\bbrew\b/i],
+  Desktop: [
+    // GNOME desktop environment
+    /\bgnome\b/i,
+    // KDE/Aurora desktop environment  
+    /\bkde\b/i,
+    /\bplasma\b/i,
+    /aurora/i,
+    // Terminal enhancements (area/bling)
+    /starship/i,
+    /terminal/i,
+    /\bshell\b/i,
+    /\bbash\b/i,
+    /\bzsh\b/i,
+    /prompt/i,
+    /\bbling\b/i,
+  ],
+  Hardware: [/kernel/i, /driver/i, /firmware/i, /nvidia/i, /\bgpu\b/i],
+  Infrastructure: [
+    /\biso\b/i,
+    /upstream/i,
+    /\bbuild/i,
+    /buildstream/i,
+    /\bci\b/i,
+    /pipeline/i,
+  ],
+  Development: [/\bide\b/i, /vscode/i, /jetbrains/i, /\bdx\b/i],
+  "System Services & Policies": [
+    /systemd/i,
+    /service/i,
+    /\bpolicy\b/i,
+    /polkit/i,
+    /selinux/i,
+  ],
+};
+
+/**
+ * Repository to category mapping for fallback categorization
+ */
+const REPO_CATEGORY_MAP = {
+  "projectbluefin/documentation": "Documentation",
+  "ublue-os/homebrew-tap": "Ecosystem",
+  "ublue-os/homebrew-experimental-tap": "Ecosystem",
+};
+
+/**
  * Get category for a label name
  *
  * @param {string} labelName - Label name (e.g., "area/gnome")
@@ -85,6 +143,80 @@ export function getCategoryForLabel(labelName) {
       return category;
     }
   }
+  return "Other";
+}
+
+/**
+ * Smart categorization based on PR/issue title patterns
+ * Used as fallback when no matching labels are found
+ *
+ * @param {string} title - PR or issue title
+ * @returns {string|null} Category name or null if no match
+ */
+export function getCategoryFromTitle(title) {
+  if (!title) return null;
+
+  for (const [category, patterns] of Object.entries(TITLE_PATTERNS)) {
+    for (const pattern of patterns) {
+      if (pattern.test(title)) {
+        return category;
+      }
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Get category based on repository name
+ * Used as final fallback when labels and title don't match
+ *
+ * @param {string} repoName - Repository name (e.g., "projectbluefin/documentation")
+ * @returns {string|null} Category name or null if no match
+ */
+export function getCategoryFromRepository(repoName) {
+  if (!repoName) return null;
+  return REPO_CATEGORY_MAP[repoName] || null;
+}
+
+/**
+ * Get category for an item using multi-stage fallback logic
+ * 1. Check labels (existing behavior)
+ * 2. Check title patterns (new)
+ * 3. Check repository (new)
+ * 4. Return "Other"
+ *
+ * @param {Object} item - Item with content.labels, content.title, content.repository
+ * @returns {string} Category name
+ */
+export function getCategoryForItem(item) {
+  // Stage 1: Check labels (existing behavior)
+  if (item.content?.labels?.nodes) {
+    const itemLabels = item.content.labels.nodes.map((l) => l.name);
+    const knownLabels = Object.values(LABEL_CATEGORIES).flat();
+    const matchingLabel = itemLabels.find((label) =>
+      knownLabels.includes(label),
+    );
+    if (matchingLabel) {
+      return getCategoryForLabel(matchingLabel);
+    }
+  }
+
+  // Stage 2: Check title patterns (new fallback)
+  const titleCategory = getCategoryFromTitle(item.content?.title);
+  if (titleCategory) {
+    return titleCategory;
+  }
+
+  // Stage 3: Check repository (final fallback)
+  const repoCategory = getCategoryFromRepository(
+    item.content?.repository?.nameWithOwner,
+  );
+  if (repoCategory) {
+    return repoCategory;
+  }
+
+  // Stage 4: Default to "Other"
   return "Other";
 }
 
