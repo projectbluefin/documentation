@@ -24,6 +24,5 @@ export const MONITORED_REPOS = [
   "projectbluefin/documentation",
   "projectbluefin/branding",
   "projectbluefin/iso",
-  "projectbluefin/dakota", // Formerly projectbluefin/distroless
-  "projectbluefin/egg",
+  "projectbluefin/dakota", // GNOME OS Prototype
 ];
