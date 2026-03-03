@@ -240,3 +240,5 @@ You can use `mokutil --list-enrolled` to confirm that the "ublue kernel" key is 
 :::note
 If you see `ublue akmods\` listed, it is a former key that is soon to be removed. `ublue kernel` is the current key.
 :::
+
+Lenovo ThinkPad users (P, T, X series): Before enabling Secure Boot, go to BIOS (F1) → Security → Secure Boot and enable "Allow Microsoft 3rd party UEFI CA". This setting is required for Fedora's signed shim bootloader to be recognized by the firmware. Without it, Secure Boot will fail with a violation error.
