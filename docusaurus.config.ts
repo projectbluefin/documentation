@@ -45,14 +45,14 @@ const config: Config = {
           sidebarPath: "./sidebars.ts",
           // Disables the landing page
           routeBasePath: "/",
-          editUrl: "https://github.com/ublue-os/bluefin-docs/tree/main",
+          editUrl: "https://github.com/projectbluefin/documentation/tree/main",
         },
         blog: {
           blogTitle: "Bluefin's Blog",
           blogDescription: "Official Blog and Announcements",
           blogSidebarCount: "ALL",
           blogSidebarTitle: "Raptor News",
-          editUrl: "https://github.com/ublue-os/bluefin-docs/edit/main/",
+          editUrl: "https://github.com/projectbluefin/documentation/edit/main/",
           authorsMapPath: "authors.yaml",
           truncateMarker: /(?!.*)/,
           feedOptions: {
@@ -124,7 +124,7 @@ const config: Config = {
     announcementBar: {
       id: "announcement",
       content:
-        'Reminder: Bluefin GTS will merge into Bluefin on 1 March 2026. Check the <a href="https://docs.projectbluefin.io/blog/bluefin-2025/">State of the Raptor</a> for more information.',
+        'Reminder: Bluefin GTS will be merged the week of March 9th. Check the <a href="https://docs.projectbluefin.io/blog/bluefin-2025/">State of the Raptor</a> for more information.',
       backgroundColor: "#fafbfc",
       textColor: "#091E42",
       isCloseable: true,

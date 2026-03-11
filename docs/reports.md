@@ -1,22 +1,22 @@
 ---
 sidebar_position: 6
-title: Biweekly Reports
+title: Monthly Reports
 ---
 
-# Biweekly Reports
+# Monthly Reports
 
-Biweekly reports provide transparent, data-driven summaries of completed work, active contributors, and project momentum from the [Bluefin Project Board](https://todo.projectbluefin.io).
+Monthly reports provide transparent, data-driven summaries of completed work, active contributors, and project momentum from the [Bluefin Project Board](https://todo.projectbluefin.io).
 
-## What Are Biweekly Reports?
+## What Are Monthly Reports?
 
-Biweekly reports are automatically generated every other week, summarizing:
+Monthly reports are automatically generated each month, summarizing:
 
 - **Completed Work:** Items moved to "Done" on the project board, categorized by area and type
 - **Contributors:** Everyone who contributed during the period, with special recognition for first-time contributors
 - **Bot Activity:** Automated dependency updates and maintenance tasks
 - **Project Status:** ChillOps philosophy indicators for each project area
 
-Reports are published every other Monday covering the previous two-week period.
+Reports are published monthly covering the previous month's activity.
 
 ## ChillOps Philosophy
 
@@ -88,7 +88,7 @@ Understanding the content types:
 | -------------- | -------------------------------------- | ----------- | ------------------------ |
 | **Changelogs** | OS release notes with package versions | Per release | GitHub Releases          |
 | **Blog Posts** | Deep dives, announcements, tutorials   | Ad-hoc      | Manual authoring         |
-| **Reports**    | Project activity summaries             | Biweekly    | Project board automation |
+| **Reports**    | Project activity summaries             | Monthly     | Project board automation |
 
 **Use changelogs** to see what changed in a specific OS release.  
 **Use blog posts** for detailed explanations and guides.  
@@ -104,7 +104,7 @@ Understanding the content types:
 
 Reports are 100% automatically generated from the project board:
 
-1. Every other Monday at 10:00 UTC
+1. Monthly on the last day of the month at 10:00 UTC
 2. GitHub Actions workflow fetches project board data
 3. Script categorizes completed items by labels
 4. Markdown report generated and committed
