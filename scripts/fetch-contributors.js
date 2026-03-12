@@ -13,8 +13,8 @@ const CACHE_MAX_AGE_HOURS = 24;
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
 
 // GitHub repo details
-const REPO_OWNER = "ublue-os";
-const REPO_NAME = "bluefin-docs";
+const REPO_OWNER = "projectbluefin";
+const REPO_NAME = "documentation";
 
 // Bot accounts to filter out
 const BOT_LOGINS = [

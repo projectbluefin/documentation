@@ -94,7 +94,7 @@ const fetchFileContributors = async (
 ): Promise<Contributor[]> => {
   return requestQueue.add(async () => {
     const response = await fetch(
-      `https://api.github.com/repos/ublue-os/bluefin-docs/commits?path=${filePath}`,
+      `https://api.github.com/repos/projectbluefin/documentation/commits?path=${filePath}`,
       {
         headers: {
           Accept: "application/vnd.github.v3+json",

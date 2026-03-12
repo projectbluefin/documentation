@@ -20,7 +20,7 @@ export default function FooterWrapper(props: Props): React.ReactElement {
     const editUrl = metadata.editUrl;
 
     // Extract file path from edit URL
-    // Example: https://github.com/ublue-os/bluefin-docs/tree/main/docs/installation.md
+    // Example: https://github.com/projectbluefin/documentation/tree/main/docs/installation.md
     if (editUrl) {
       const match = editUrl.match(/\/(?:edit|tree)\/[^/]+\/(.+)$/);
       if (match) {
