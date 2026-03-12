@@ -70,6 +70,10 @@ What greatness have I been missing? Being set in my old, tired ways.
 
 ![image](/img/user-attachments/89be8151-5b57-4b71-bbe5-988bef2d6798.jpg)
 
+# `bluefin-cli` for Mac and Windows (WSL)
+
+On a Mac or Windows machine? Want to play with the Bluefin user experience on your native operating system? No problem! We have an early alpha `bluefin-cli` cross-platform app brewing at `brew install ublue-os/tap/bluefin-cli` it should work on MacOS, any Linux, Windows (WSL+PowerShell). you can use it to grab Bluefin artwork and to bring all this Bluefin command line goodness to a terminal near you. Please [open issues with feedback](https://github.com/hanthor/bluefin-cli/issues/new)
+
 ### Bold Brew
 
 [Bold Brew](https://bold-brew.com/) (`bbrew`) is included as a text based user interface (TUI) to Brew. This application features full package management for homebrew in a nice nerdy interface:
@@ -156,3 +160,6 @@ Calibri, Cambria, Candara, Consolas, Constantia and Corbel are included in font-
 ```
 brew tap colindean/fonts-nonfree && brew install --cask font-microsoft-office font-microsoft-aptos font-arial font-arial-black font-courier-new font-times-new-roman font-georgia
 ```
+
+
+
