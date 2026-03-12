@@ -156,3 +156,8 @@ Calibri, Cambria, Candara, Consolas, Constantia and Corbel are included in font-
 ```
 brew tap colindean/fonts-nonfree && brew install --cask font-microsoft-office font-microsoft-aptos font-arial font-arial-black font-courier-new font-times-new-roman font-georgia
 ```
+
+
+# Not on Bluefin?
+
+No problem! We have an early alpha `bluefin-cli` cross-platform app brewing at `brew install ublue-os/tap/bluefin-cli` it should work on MacOS, any Linux, Windows (WSL+PowerShell). you can use it to grab Bluefin artwork and to bring all this Bluefin command line goodness to a terminal near you. Please open issus with feedback at https://github.com/hanthor/bluefin-cli/issues/new
