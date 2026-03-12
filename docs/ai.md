@@ -51,7 +51,6 @@ The following AI-focused command-line tools are available via homebrew, install 
 | [llm](https://formulae.brew.sh/formula/llm)                         | Access large language models from the command line               |
 | [lm-studio](https://lmstudio.ai/)                                   | Desktop app for running local LLMs                               |
 | [mistral-vibe](https://formulae.brew.sh/formula/mistral-vibe)       | CLI for Mistral AI models                                        |
-| [mods](https://formulae.brew.sh/formula/mods)                       | AI on the command-line, from charm.sh                            |
 | [opencode](https://formulae.brew.sh/formula/opencode)               | AI coding agent for the terminal                                 |
 | [qwen-code](https://formulae.brew.sh/formula/qwen-code)             | CLI for Qwen3-Coder models                                       |
 | [ramalama](https://formulae.brew.sh/formula/ramalama)               | Manage and run AI models locally with containers                 |
