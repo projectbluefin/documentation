@@ -121,7 +121,8 @@ const buildRow = (item: FeedItem, feedId: string): DriverRow | null => {
   const content = getContent(item);
   if (!content) return null;
 
-  const tag = item.title ?? "";
+  const fullTitle = item.title ?? "";
+  const tag = fullTitle.includes(": ") ? fullTitle.split(": ")[0] : fullTitle;
   const link = resolveItemLink(item, feedId);
   const date = formatDate(item.pubDate ?? item.updated ?? "");
 
