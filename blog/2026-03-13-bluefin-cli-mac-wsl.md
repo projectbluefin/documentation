@@ -1,33 +1,43 @@
 ---
 slug: bluefin-cli-mac-wsl
-title: "bluefin-cli: Now on Mac and Windows"
+title: "Bluefin CLI for Mac and Windows"
 authors: [castrojo]
 tags: [announcements, homebrew]
 ---
 
-The command line is our passion. And now you don't need to run Bluefin to get in on it.
+We like to say "The command line is our passion. Therefore we invest in the command line experience, knowing that most people will never see it." Sounds grandiose!
 
-We've been quietly building `bluefin-cli` — the opt-in terminal experience that ships with Bluefin — into something that runs anywhere. Today it's available as an early alpha on macOS, any Linux distribution, and Windows via WSL or PowerShell.
+Bluefin CLI is one of my favorite Bluefin features. I get to host meetings with [CNCF Ambassadors](https://www.cncf.io/people/ambassadors) and they have the coolest prompt setups, etc. But also you start to find cool little tools that just freshen up the Linux command line experience. And of course they're all written in rust, duh. We've been building `bluefin-cli` — the opt-in terminal experience that ships with Bluefin — into something that runs anywhere. Today it's available as an early alpha on macOS, any Linux distribution, and Windows via WSL or PowerShell. This work is brought to you by @hanthor! 
 
 ## What is `bluefin-cli`?
 
-On Bluefin, `ujust bluefin-cli` turns on a curated set of modern command line tools: `eza`, `bat`, `zoxide`, `atuin`, `starship`, `ripgrep`, `fd`, `ugrep`, `tealdeer`, and more. The philosophy is simple — a greenfield terminal experience using the best tools available today, with the ability to toggle it off and return to your known-good kit at any time.
+On Bluefin, `ujust bluefin-cli` turns on a curated set of modern command line tools: `eza`, `bat`, `zoxide`, `atuin`, `starship`, `ripgrep`, `fd`, `ugrep`, `tealdeer`, and more. The philosophy is simple — a greenfield terminal experience using the best tools available today, with the ability to toggle it off and return to your known-good kit at any time. That toggle is important because this is an opinionated setup you should be able to turn it off. It's also designed to not be too crazy, we want subtle bling here. And anyway it's a template for you to build off if you want to go customize everything. And we use this system to pull in Flatpaks like Podman Desktop, which is an awesome GUI way to manage your containers. This could all be adapted to bring the same developer experience to other operating systems. "Bluefin the Application" I guess.  
 
-That same experience is now available cross-platform.
+Some of Bluefin's best parts are common aliases. I want `ujust update` and `ujust bios` in Ubuntu and Windows. PRs to make it nice and slick would be appreciated. 
+
+![bluefin-cli](https://github.com/user-attachments/assets/cd7ce65c-46b4-499e-a60e-1bd51b6abc8d)
+
+And our community curated `ujust bbrew` app lists are great, I love it when someone finds a new CLI tool in an exciting space, especially in AI. I learned about `llmfit`, a nice tool that figures out the optimal local model for your hardware. Knowing that we're all curating awesomeness is a really fun part of this! 
+
+![bbrew](https://github.com/user-attachments/assets/1ddb01ed-7ba6-4bc2-9099-331ce404da4d)
+
+## Why?
+
+I've always argued that the Linux development experience competes best when you do container development. This is the technology that forced Microsoft and Apple to adopt cloud native in the first place. MacOS even has it's [own container tool](https://github.com/apple/container), an analogue to podman. Each OS ships something, and Docker and podman run on all of them. We have a diverse set of implementations, but one common standard. I betcha distrobox would work on that Mac thing if it doesn't already. 
+
+There's just something about _doing_ it on Linux, on the platform it was designed for, that leads to that extra bit of user experience. And the one thing I wish more Linux nerds would understand, we live in a cross platform world. Changing platforms is tough enough, let's at least give the developers a comfortable place to land! An operating system agnostic development environment is a competitive advantage when we have home court advantage. 
+
+## Expectations
+
+This is an alpha. What we want is for you to be able to have the Bluefin experience on the Mac and Windows, wallpapers and everything. James is almost there, we just need people to give the thing a once over, see what needs to happen. Ideally we want one click happyness for both systems eventually. 
 
 ## Installation
 
-Install via Homebrew:
+You need Homebrew installed on the system:
 
 ```bash
 brew install ublue-os/tap/bluefin-cli
 ```
-
-This works on:
-
-- **macOS** — Intel and Apple Silicon
-- **Linux** — any distribution with Homebrew
-- **Windows** — WSL2 or PowerShell
 
 On Windows with PowerShell, enable shell integration after installing:
 
@@ -47,24 +57,24 @@ bluefin-cli shell fish on
 
 ## What you get
 
-Once enabled, `bluefin-cli` brings the same tooling to your terminal regardless of OS:
+Once enabled, `bluefin-cli` brings the bling:
 
 - **`eza`** — modern replacement for `ls`
 - **`bat`** — `cat` with syntax highlighting and git integration
 - **`zoxide`** — smarter `cd` that learns your habits
 - **`atuin`** — shell history sync across machines
 - **`starship`** — fast, cross-shell prompt
-- **`uutils-coreutils`** — Rust rewrite of the GNU coreutils
+- **`uutils-coreutils`** — Rust rewrite of the GNU coreutils - that's right, before Ubuntu did it lol!
 - **`ripgrep`**, **`fd`**, **`ugrep`** — faster search tools
 - **`tealdeer`** — fast `tldr` for quick command references
 
-You can also grab Bluefin artwork and wallpaper collections, browse and install curated Brewfiles via the TUI, and run `bluefin-cli motd show` to get the same Message of the Day that greets Bluefin users at every new terminal.
+You can also grab Bluefin artwork and wallpaper collections, browse and install curated Brewfiles via the `ujust bbrew` command, and run `bluefin-cli motd show` to get the same Message of the Day that greets Bluefin users at every new terminal.
 
 ## This is an early alpha
 
 The cross-platform release is early. Things will be rough in places. [Open issues with feedback](https://github.com/hanthor/bluefin-cli/issues/new) — that's how this gets better.
 
-The full source is at [hanthor/bluefin-cli](https://github.com/hanthor/bluefin-cli). Contributions welcome.
+The full source is at [hanthor/bluefin-cli](https://github.com/hanthor/bluefin-cli). Contributions welcome, we'd love feature parity!
 
 ---
 
