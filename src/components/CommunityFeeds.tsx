@@ -25,43 +25,15 @@ const CommunityFeeds: React.FC = () => {
 
         {/* Package Summary Boxes */}
         <div className={styles.packageSummaryGrid}>
-          <PackageSummary feedKey="bluefinLtsReleases" title="Bluefin LTS" />
-          <PackageSummary
-            feedKey="bluefinReleases"
-            title="Bluefin GTS"
-            filter={(item) => item.title.startsWith("gts-")}
-          />
           <PackageSummary
             feedKey="bluefinReleases"
             title="Bluefin"
             filter={(item) => item.title.startsWith("stable-")}
           />
+          <PackageSummary feedKey="bluefinLtsReleases" title="Bluefin LTS" />
         </div>
 
         <div className={styles.feedGrid}>
-          <div className={styles.feedColumn}>
-            <FeedItems
-              feedId="bluefinLtsReleases"
-              title="Bluefin LTS"
-              maxItems={10}
-              showDescription={false}
-            />
-            <p className={styles.sectionByline}>
-              <em>Achillobator giganticus</em>
-            </p>
-          </div>
-          <div className={styles.feedColumn}>
-            <FeedItems
-              feedId="bluefinReleases"
-              title="Bluefin GTS"
-              maxItems={10}
-              showDescription={false}
-              filter={(item) => item.title.startsWith("gts-")}
-            />
-            <p className={styles.sectionByline}>
-              <em>Deinonychus antirrhopus</em>
-            </p>
-          </div>
           <div className={styles.feedColumn}>
             <FeedItems
               feedId="bluefinReleases"
@@ -72,6 +44,17 @@ const CommunityFeeds: React.FC = () => {
             />
             <p className={styles.sectionByline}>
               <em>Utahraptor ostrommaysi</em>
+            </p>
+          </div>
+          <div className={styles.feedColumn}>
+            <FeedItems
+              feedId="bluefinLtsReleases"
+              title="Bluefin LTS"
+              maxItems={10}
+              showDescription={false}
+            />
+            <p className={styles.sectionByline}>
+              <em>Achillobator giganticus</em>
             </p>
           </div>
         </div>

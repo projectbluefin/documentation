@@ -67,7 +67,7 @@ Performs the same cleaning operations as `clean` but with elevated privileges us
 Validates the combination of image, tag, and flavor provided as arguments.
 
 - Checks if the provided image, tag, and flavor exist in the predefined associative arrays.
-- Ensures that certain combinations (e.g., `gts` tag with `aurora` image) are not allowed.
+- Ensures that certain combinations (e.g., an invalid tag with `aurora` image) are not allowed.
 
 ### sudoif
 

@@ -77,7 +77,7 @@ Bluefin is a combination of a set of configuration OCI containers which are then
 
 ### Images 
 
-- Bluefin stable and GTS: [@ublue-os/bluefin](https://github.com/ublue-os/bluefin) - generates Fedora-based Bluefin OCI container
+- Bluefin stable: [@ublue-os/bluefin](https://github.com/ublue-os/bluefin) - generates Fedora-based Bluefin OCI container
 - Bluefin LTS [@ublue-os/bluefin-lts](https://github.com/ublue-os/bluefin-lts) - generates a CentOS-based Bluefin OCI container
 - Bluefin distroless prototype (aka Dakotaraptor) [@ublue-os/dakota](https://github.com/projectbluefin/dakota) - generates a GNOME OS based Bluefin OCI container
 
@@ -155,7 +155,6 @@ We're making containers here with bash and a little bit of Python, it's not the 
 |---------|---------|------------------|----------------|
 | **latest** | Daily builds | Multiple times per day | 43 (current) |
 | **stable** | Weekly builds | Weekly | 43 |
-| **gts** | Long-term support | As needed | 42 |
 
 ### Prerequisites
 
