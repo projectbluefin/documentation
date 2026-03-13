@@ -108,14 +108,14 @@ const formatDate = (dateString: string): string => {
 
 const kernelPattern = PACKAGE_PATTERNS.find(
   (p) => p.name === "Kernel",
-)!.pattern;
+)?.pattern;
 const hweKernelPattern = PACKAGE_PATTERNS.find(
   (p) => p.name === "HWE Kernel",
-)!.pattern;
-const mesaPattern = PACKAGE_PATTERNS.find((p) => p.name === "Mesa")!.pattern;
+)?.pattern;
+const mesaPattern = PACKAGE_PATTERNS.find((p) => p.name === "Mesa")?.pattern;
 const nvidiaPattern = PACKAGE_PATTERNS.find(
   (p) => p.name === "NVIDIA",
-)!.pattern;
+)?.pattern;
 
 const buildRow = (item: FeedItem, feedId: string): DriverRow | null => {
   const content = getContent(item);
