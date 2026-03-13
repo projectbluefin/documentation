@@ -1,6 +1,7 @@
 import React from "react";
 import Layout from "@theme/Layout";
 import FeedItems from "../components/FeedItems";
+import { CombinedFeedItems } from "../components/FeedItems";
 import PackageSummary from "../components/PackageSummary";
 import styles from "./CommunityFeeds.module.css";
 
@@ -25,38 +26,27 @@ const CommunityFeeds: React.FC = () => {
 
         {/* Package Summary Boxes */}
         <div className={styles.packageSummaryGrid}>
+          <PackageSummary feedKey="bluefinLtsReleases" title="Bluefin LTS" />
           <PackageSummary
             feedKey="bluefinReleases"
             title="Bluefin"
             filter={(item) => item.title.startsWith("stable-")}
           />
-          <PackageSummary feedKey="bluefinLtsReleases" title="Bluefin LTS" />
         </div>
 
         <div className={styles.feedGrid}>
-          <div className={styles.feedColumn}>
-            <FeedItems
-              feedId="bluefinReleases"
-              title="Bluefin"
-              maxItems={10}
-              showDescription={false}
-              filter={(item) => item.title.startsWith("stable-")}
-            />
-            <p className={styles.sectionByline}>
-              <em>Utahraptor ostrommaysi</em>
-            </p>
-          </div>
-          <div className={styles.feedColumn}>
-            <FeedItems
-              feedId="bluefinLtsReleases"
-              title="Bluefin LTS"
-              maxItems={10}
-              showDescription={false}
-            />
-            <p className={styles.sectionByline}>
-              <em>Achillobator giganticus</em>
-            </p>
-          </div>
+          <CombinedFeedItems
+            title="Release Changelogs"
+            feeds={[
+              { feedId: "bluefinLtsReleases", label: "Bluefin LTS" },
+              {
+                feedId: "bluefinReleases",
+                label: "Bluefin",
+                filter: (item) => item.title.startsWith("stable-"),
+              },
+            ]}
+            maxItems={20}
+          />
         </div>
 
         <div className={styles.additionalFeedsGrid}>

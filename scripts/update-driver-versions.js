@@ -271,7 +271,7 @@ function fetchGitHub(url) {
 }
 
 /**
- * Get latest release for each stream (stable, gts, lts)
+ * Get latest release for each stream (stable, lts)
  */
 async function getLatestReleases() {
   console.log("Fetching latest releases from GitHub...");
@@ -297,15 +297,11 @@ async function getLatestReleases() {
     r.tag_name.startsWith("stable-"),
   );
 
-  // Find latest GTS release
-  const latestGts = bluefinReleases.find((r) => r.tag_name.startsWith("gts-"));
-
   // Find latest LTS release
   const latestLts = bluefinLtsReleases[0]; // LTS releases all start with "lts."
 
   return {
     stable: latestStable,
-    gts: latestGts,
     lts: latestLts,
   };
 }
@@ -434,17 +430,15 @@ async function updateDocument() {
     const releases = await getLatestReleases();
 
     // Validate releases were found
-    if (!releases.stable || !releases.gts || !releases.lts) {
+    if (!releases.stable || !releases.lts) {
       console.error("❌ Failed to fetch all required releases");
       console.error("  Stable:", releases.stable?.tag_name || "NOT FOUND");
-      console.error("  GTS:", releases.gts?.tag_name || "NOT FOUND");
       console.error("  LTS:", releases.lts?.tag_name || "NOT FOUND");
       process.exit(1);
     }
 
     console.log("Latest releases:");
     console.log("- Stable:", releases.stable.tag_name);
-    console.log("- GTS:", releases.gts.tag_name);
     console.log("- LTS:", releases.lts.tag_name);
 
     // Find the table sections and insert new rows
@@ -493,49 +487,6 @@ async function updateDocument() {
           const rowTag = lines[i].match(/\|\s*\*\*([^*]+)\*\*/)?.[1];
           if (!rowTag || !seenTags.has(rowTag)) {
             if (rowTag) seenTags.add(rowTag);
-            newContent += lines[i] + "\n";
-          } else {
-            console.log(`ℹ️  Skipping duplicate row: ${rowTag}`);
-          }
-          i++;
-        }
-        continue;
-      } else if (line === "## Bluefin GTS") {
-        // Copy section header
-        newContent += line + "\n";
-        i++;
-        // Skip any blank lines after the section header
-        while (i < lines.length && lines[i].trim() === "") {
-          newContent += lines[i] + "\n";
-          i++;
-        }
-        // Copy table header rows
-        newContent += lines[i] + "\n"; // Table header row 1
-        i++;
-        newContent += lines[i] + "\n"; // Table header row 2
-        i++;
-        // Check if the first row is already the latest GTS
-        let firstRowTag = null;
-        if (i < lines.length && lines[i].startsWith("|")) {
-          firstRowTag = lines[i].match(/\|\s*\*\*([^*]+)\*\*/)?.[1];
-        }
-        if (firstRowTag !== releases.gts.tag_name) {
-          // Insert new row at the top
-          const newRow = await formatTableRow(releases.gts, "gts");
-          newContent += newRow + "\n";
-          console.log(`✅ Added new GTS release: ${releases.gts.tag_name}`);
-        } else {
-          console.log(
-            `ℹ️  GTS release ${releases.gts.tag_name} already exists at top`,
-          );
-        }
-
-        // Continue with existing rows, deduplicating by tag name
-        const seenGtsTags = new Set([releases.gts.tag_name]);
-        while (i < lines.length && lines[i].startsWith("|")) {
-          const rowTag = lines[i].match(/\|\s*\*\*([^*]+)\*\*/)?.[1];
-          if (!rowTag || !seenGtsTags.has(rowTag)) {
-            if (rowTag) seenGtsTags.add(rowTag);
             newContent += lines[i] + "\n";
           } else {
             console.log(`ℹ️  Skipping duplicate row: ${rowTag}`);
