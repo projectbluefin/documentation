@@ -19,15 +19,13 @@
 
 .packageSummaryGrid {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 420px));
   gap: 2rem;
   margin-bottom: 3rem;
+  justify-content: center;
 }
 
 .feedGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 2rem;
   margin-bottom: 3rem;
 }
 
@@ -114,18 +112,13 @@
 
 /* Responsive design */
 @media (max-width: 996px) {
-  .feedGrid {
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-  }
-
   .additionalFeedsGrid {
     grid-template-columns: 1fr 1fr;
     gap: 1.5rem;
   }
 
   .packageSummaryGrid {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 420px));
     gap: 1.5rem;
   }
 
@@ -145,11 +138,6 @@
 
   .header h1 {
     font-size: 1.75rem;
-  }
-
-  .feedGrid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
   }
 
   .additionalFeedsGrid {

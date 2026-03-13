@@ -64,6 +64,66 @@
   gap: 0.5rem;
 }
 
+.feedItemHeader {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.feedLabel {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.2em 0.55em;
+  border-radius: 3px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.feedLabelBluefin {
+  background: #0057b8;
+  color: #ffffff;
+}
+
+.feedLabelLts {
+  background: #5c3d1e;
+  color: #ffffff;
+}
+
+.copyButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 4px;
+  padding: 0.1em 0.4em;
+  font-size: 0.8rem;
+  color: var(--ifm-color-emphasis-500);
+  cursor: pointer;
+  opacity: 0;
+  transition:
+    opacity 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
+  flex-shrink: 0;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+.feedItem:hover .copyButton {
+  opacity: 1;
+}
+
+.copyButton:hover {
+  color: var(--ifm-color-primary);
+  border-color: var(--ifm-color-primary);
+  background: none;
+}
+
 .feedItemTitle {
   margin: 0;
   font-size: 1.25rem;
@@ -139,6 +199,58 @@
 .versionChange strong {
   color: var(--ifm-color-emphasis-800);
   font-weight: 500;
+}
+
+.commitList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.82rem;
+  font-family: var(--ifm-font-family-monospace);
+  background: var(--ifm-color-emphasis-100);
+  border-left: 3px solid var(--ifm-color-emphasis-300);
+  border-radius: 0 4px 4px 0;
+  padding: 0.4rem 0.6rem;
+}
+
+.commitRow {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  line-height: 1.4;
+}
+
+.commitHash {
+  font-weight: 600;
+  color: var(--ifm-color-primary);
+  white-space: nowrap;
+  flex-shrink: 0;
+  text-decoration: none;
+}
+
+.commitHash:hover {
+  text-decoration: underline;
+}
+
+.commitSubject {
+  color: var(--ifm-color-emphasis-800);
+  flex: 1;
+  min-width: 0;
+  font-family: var(--ifm-font-family-base);
+  font-size: 0.82rem;
+}
+
+.commitSubject a {
+  color: var(--ifm-color-primary);
+}
+
+.commitAuthor {
+  color: var(--ifm-color-emphasis-500);
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-family: var(--ifm-font-family-base);
+  font-size: 0.78rem;
 }
 
 /* Responsive design */
