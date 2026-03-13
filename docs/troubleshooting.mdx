@@ -74,39 +74,40 @@ The configuration process differs depending on which AI client you're using:
 
 #### Goose Configuration
 
-Goose stores MCP server configurations in `~/.config/goose/profiles.yaml`.
+Goose stores MCP server configurations in `~/.config/goose/config.yaml`.
 
 **Step 1: Install MCP Servers**
 
 ```bash
 # Install linux-mcp-server
 brew install ublue-os/tap/linux-mcp-server
+```
 
 **Step 2: Configure Goose**
 
-Edit `~/.config/goose/profiles.yaml` and add the MCP servers under the `mcp_servers` section:
+Edit `~/.config/goose/config.yaml` and add the MCP servers under the `extensions` section:
 
 ```yaml
-provider: google-gemini
-processor: gemini-2.0-flash-exp
-accelerator: gemini-2.0-flash-exp
-moderator: passive
-
-mcp_servers:
-  linux-mcp-server:
-    command: /home/linuxbrew/.linuxbrew/bin/linux-mcp-server
-    env:
-      LOG_LEVEL: info
+extensions:
+  linuxtools:
+    enabled: true
+    type: stdio
+    name: linuxtools
+    description: Linux system diagnostics
+    cmd: /home/linuxbrew/.linuxbrew/bin/linux-mcp-server
+    args: []
+    envs: {}
+    timeout: 300
 
   dosu:
-    command: uvx
-    args:
-      - dosu-mcp
-    env:
-      DOSU_DEPLOYMENT_SLUG: 83775020-c22e-485a-a222-987b2f5a3823
+    enabled: true
+    type: streamable_http
+    name: Dosu
+    description: Dosu AI documentation assistant
+    uri: https://api.dosu.dev/v1/mcp
+    headers:
+      X-Deployment-ID: 83775020-c22e-485a-a222-987b2f5a3823
 ```
-
-**Authentication:** When you first start Goose with Google Gemini, it will open your browser to authenticate with your Google account. No API key configuration required.
 
 **Step 3: Restart Goose**
 
@@ -118,6 +119,8 @@ Restart Goose to load the MCP servers:
 goose session start
 ```
 
+Goose will prompt you to authenticate with Dosu the first time it tries to use the extension. Follow the browser prompt to complete sign-in.
+
 **Note on Dosu Configuration:** The Bluefin documentation deployment UUID shown above can be shared amongst all Bluefin users - no API key required for read-only access to the documentation knowledge base.
 
   </TabItem>
@@ -125,44 +128,53 @@ goose session start
 
 #### OpenCode Configuration
 
-OpenCode stores MCP server configurations in `~/.config/opencode/config.json`.
+OpenCode stores MCP server configurations in `~/.config/opencode/opencode.json`.
 
 **Step 1: Install MCP Servers**
 
 ```bash
 # Install linux-mcp-server
 brew install ublue-os/tap/linux-mcp-server
-
-# Install dosu-mcp (requires uv)
-brew install uv
 ```
 
 **Step 2: Configure OpenCode**
 
-Edit `~/.config/opencode/config.json` and add the MCP servers:
+Edit `~/.config/opencode/opencode.json` and add the MCP servers under the `mcp` key:
 
 ```json
 {
-  "mcpServers": {
+  "mcp": {
     "linux-mcp-server": {
-      "command": "linux-mcp-server",
-      "args": [],
-      "env": {
+      "type": "local",
+      "command": ["/home/linuxbrew/.linuxbrew/bin/linux-mcp-server"],
+      "enabled": true,
+      "environment": {
         "LOG_LEVEL": "info"
       }
     },
     "dosu": {
-      "command": "uvx",
-      "args": ["dosu-mcp"],
-      "env": {
-        "DOSU_DEPLOYMENT_SLUG": "83775020-c22e-485a-a222-987b2f5a3823"
+      "type": "remote",
+      "url": "https://api.dosu.dev/v1/mcp",
+      "enabled": true,
+      "headers": {
+        "X-Deployment-ID": "83775020-c22e-485a-a222-987b2f5a3823"
       }
     }
   }
 }
 ```
 
-**Step 3: Restart OpenCode**
+**Step 3: Authenticate with Dosu**
+
+Dosu requires a one-time OAuth login. Run:
+
+```bash
+opencode mcp auth dosu
+```
+
+This opens your browser to complete the sign-in. After authorizing, OpenCode stores the token automatically — you won't need to repeat this step.
+
+**Step 4: Restart OpenCode**
 
 Close and reopen OpenCode to load the MCP servers. You can verify they're loaded by asking:
 
