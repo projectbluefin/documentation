@@ -5,9 +5,11 @@ authors: [castrojo]
 tags: [announcements, homebrew]
 ---
 
-We like to say "The command line is our passion. Therefore we invest in the command line experience, knowing that most people will never see it." Sounds grandiose!
+We like to say "The command line is our passion. Therefore we invest in the command line experience, knowing that most people will never see it." Sounds grandiose! Bluefin CLI is a a terminal experience designed around shipping a new "default terminal experience" with modern tools. But it also has things like the just task runner, making the community shared aliases and shortcuts easy. And that just lets the good stuff float to the top. 
 
-Bluefin CLI is one of my favorite Bluefin features. I get to host meetings with [CNCF Ambassadors](https://www.cncf.io/people/ambassadors) and they have the coolest prompt setups, etc. But also you start to find cool little tools that just freshen up the Linux command line experience. And of course they're all written in rust, duh. We've been building `bluefin-cli` — the opt-in terminal experience that ships with Bluefin — into something that runs anywhere. Today it's available as an early alpha on macOS, any Linux distribution, and Windows via WSL or PowerShell. This work is brought to you by @hanthor! 
+Bluefin CLI is one of my favorite Bluefin features. I get to host meetings with [CNCF Ambassadors](https://www.cncf.io/people/ambassadors) and they have the coolest prompt setups, etc. I love checking out a fellow nerd's loadout. You start to find cool little tools that just freshen up the Linux command line experience. And of course they're all written in rust, duh. We've been building `bluefin-cli` — the opt-in terminal experience that ships with Bluefin — into something that runs anywhere. Today it's available as an early alpha on macOS, any Linux distribution, and Windows via WSL or PowerShell. 
+
+This work is brought to you by @hanthor! 
 
 ## What is `bluefin-cli`?
 
