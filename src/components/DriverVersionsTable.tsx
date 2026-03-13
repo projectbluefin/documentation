@@ -126,10 +126,18 @@ const buildRow = (item: FeedItem, feedId: string): DriverRow | null => {
   const link = resolveItemLink(item, feedId);
   const date = formatDate(item.pubDate ?? item.updated ?? "");
 
-  const kernel = extractPackageVersion(content, kernelPattern) ?? "";
-  const hweKernel = extractPackageVersion(content, hweKernelPattern) ?? "";
-  const mesa = extractPackageVersion(content, mesaPattern) ?? "";
-  const nvidia = extractPackageVersion(content, nvidiaPattern) ?? "";
+  const kernel = kernelPattern
+    ? (extractPackageVersion(content, kernelPattern) ?? "")
+    : "";
+  const hweKernel = hweKernelPattern
+    ? (extractPackageVersion(content, hweKernelPattern) ?? "")
+    : "";
+  const mesa = mesaPattern
+    ? (extractPackageVersion(content, mesaPattern) ?? "")
+    : "";
+  const nvidia = nvidiaPattern
+    ? (extractPackageVersion(content, nvidiaPattern) ?? "")
+    : "";
 
   return { tag, link, date, kernel, hweKernel, mesa, nvidia };
 };
