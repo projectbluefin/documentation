@@ -51,7 +51,7 @@
     "@docusaurus/types": "3.9.2",
     "@typescript-eslint/eslint-plugin": "8.57.2",
     "@typescript-eslint/parser": "8.57.2",
-    "eslint": "8.57.1",
+    "eslint": "10.1.0",
     "prettier": "3.8.1",
     "typescript": "6.0.2"
   },
