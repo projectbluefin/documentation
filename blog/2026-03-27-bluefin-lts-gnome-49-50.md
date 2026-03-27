@@ -1,6 +1,6 @@
 ---
 title: "Bluefin LTS: Now with GNOME 49 and 50"
-authors: [castrojo, hanthor]
+authors: [castrojo]
 tags: [lts, announcements, beta]
 ---
 
