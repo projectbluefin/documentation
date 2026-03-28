@@ -63,6 +63,7 @@ const BoardChangelog: React.FC = () => {
   const boardData = useMemo(() => {
     try {
       // This path will be resolved at build time by Docusaurus
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       return require("@site/static/data/board-changelog.json") as BoardItem[];
     } catch (error) {
       console.error("Error loading board changelog data:", error);

@@ -27,7 +27,7 @@ export default function FooterWrapper(props: Props): React.ReactElement {
         filePath = match[1];
       }
     }
-  } catch (error) {
+  } catch (_error) {
     // Not in a doc context, just render basic footer
     return <Footer {...props} />;
   }

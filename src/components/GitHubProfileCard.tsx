@@ -198,7 +198,7 @@ const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
             // Cache expired, remove it
             localStorage.removeItem(cacheKey);
           }
-        } catch (e) {
+        } catch (_e) {
           // Invalid cache data
           localStorage.removeItem(cacheKey);
         }
@@ -222,7 +222,7 @@ const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
                 timestamp: Date.now(),
               }),
             );
-          } catch (e) {
+          } catch (_e) {
             console.warn(`Failed to cache profile for ${username}`);
           }
         }
