@@ -22,3 +22,5 @@ Find your image with a `sudo bootc status` and you basically adding a `-testing`
 ### We need one more legend. 
 
 Huge thanks to [@hanthor](https://github.com/hanthor) on this one, and if you're as annoyed as I am with those manual branch names you can help just add a toggle to the [rebase helper](https://github.com/projectbluefin/common/issues/211) so that we can just have this be a nice testing switch! Once we get that going and add a testing branch to `bluefin:stable` we'll have a nice easy way for people to opt in and out of testing. Good luck, have fun!
+
+## [Discussion](https://github.com/ublue-os/bluefin/discussions/3974#discussioncomment-16218738)
