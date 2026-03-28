@@ -361,9 +361,6 @@ const REPO_MERGED_PRS_QUERY = `
   }
 `;
 
-// Keep for backward compatibility with any external consumers
-const REPO_CLOSED_ITEMS_QUERY = REPO_CLOSED_ISSUES_QUERY;
-
 /**
  * Fetch closed issues and merged PRs from a repository within date range.
  * Both resources are paginated independently to avoid silent truncation at 100 items.
@@ -450,18 +447,6 @@ export async function fetchClosedItemsFromRepo(
       allItems.push(...mergedPRs);
       prsCursor = prs.pageInfo.endCursor;
       prsHasNextPage = prs.pageInfo.hasNextPage;
-
-      // Early exit: once the oldest PR on this page was merged before our window,
-      // no subsequent pages will contain in-range PRs (mergedAt is not the sort key,
-      // but PRs merged long before startDate will not appear in a recent window)
-      if (prs.nodes.length > 0) {
-        const oldestMergedAt = new Date(
-          prs.nodes[prs.nodes.length - 1].mergedAt,
-        );
-        if (oldestMergedAt < startDate) {
-          prsHasNextPage = false;
-        }
-      }
     }
 
     return allItems;
@@ -477,7 +462,6 @@ export async function fetchClosedItemsFromRepo(
 export {
   PROJECT_QUERY,
   graphqlWithAuth,
-  REPO_CLOSED_ITEMS_QUERY,
   REPO_CLOSED_ISSUES_QUERY,
   REPO_MERGED_PRS_QUERY,
 };
