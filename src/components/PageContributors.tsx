@@ -160,7 +160,7 @@ const PageContributors: React.FC<PageContributorsProps> = ({ filePath }) => {
           } else {
             localStorage.removeItem(cacheKey);
           }
-        } catch (e) {
+        } catch (_e) {
           localStorage.removeItem(cacheKey);
         }
       }
@@ -183,7 +183,7 @@ const PageContributors: React.FC<PageContributorsProps> = ({ filePath }) => {
                 timestamp: Date.now(),
               }),
             );
-          } catch (e) {
+          } catch (_e) {
             console.warn(`Failed to cache contributors for ${filePath}`);
           }
         }
