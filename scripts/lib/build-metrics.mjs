@@ -43,7 +43,7 @@ const TRACKED_WORKFLOWS = [
   {
     name: "bluefin-dx:lts-hwe",
     repo: "ublue-os/bluefin-lts",
-    workflowId: 141567601,
+    workflowId: 141569417,
   },
 ];
 

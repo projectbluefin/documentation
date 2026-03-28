@@ -300,9 +300,9 @@ export function getStatusValue(item) {
 }
 
 /**
- * GraphQL query to fetch closed issues and PRs from a repository
+ * GraphQL query to fetch closed issues from a repository (paginated)
  */
-const REPO_CLOSED_ITEMS_QUERY = `
+const REPO_CLOSED_ISSUES_QUERY = `
   query($owner: String!, $name: String!, $since: DateTime!, $cursor: String) {
     repository(owner: $owner, name: $name) {
       issues(first: 100, after: $cursor, states: CLOSED, filterBy: {since: $since}) {
@@ -326,6 +326,16 @@ const REPO_CLOSED_ITEMS_QUERY = `
           }
         }
       }
+    }
+  }
+`;
+
+/**
+ * GraphQL query to fetch merged PRs from a repository (paginated)
+ */
+const REPO_MERGED_PRS_QUERY = `
+  query($owner: String!, $name: String!, $cursor: String) {
+    repository(owner: $owner, name: $name) {
       pullRequests(first: 100, after: $cursor, states: MERGED, orderBy: {field: UPDATED_AT, direction: DESC}) {
         pageInfo {
           hasNextPage
@@ -351,8 +361,12 @@ const REPO_CLOSED_ITEMS_QUERY = `
   }
 `;
 
+// Keep for backward compatibility with any external consumers
+const REPO_CLOSED_ITEMS_QUERY = REPO_CLOSED_ISSUES_QUERY;
+
 /**
- * Fetch closed issues and merged PRs from a repository within date range
+ * Fetch closed issues and merged PRs from a repository within date range.
+ * Both resources are paginated independently to avoid silent truncation at 100 items.
  *
  * @param {string} owner - Repository owner (e.g., "ublue-os")
  * @param {string} name - Repository name (e.g., "bluefin")
@@ -367,53 +381,89 @@ export async function fetchClosedItemsFromRepo(
   endDate,
 ) {
   try {
-    const result = await retryWithBackoff(async () => {
-      return await graphqlWithAuth(REPO_CLOSED_ITEMS_QUERY, {
-        owner,
-        name,
-        since: startDate.toISOString(),
-        cursor: null,
-      });
-    });
-
-    const repo = result.repository;
     const allItems = [];
 
-    // Process closed issues
-    const closedIssues = repo.issues.nodes
-      .filter((issue) => {
-        const closedAt = new Date(issue.closedAt);
-        return closedAt >= startDate && closedAt <= endDate;
-      })
-      .map((issue) => ({
-        type: "Issue",
-        number: issue.number,
-        title: issue.title,
-        url: issue.url,
-        closedAt: issue.closedAt,
-        labels: issue.labels.nodes,
-        author: issue.author?.login || "unknown",
-        repository: `${owner}/${name}`,
-      }));
+    // Paginate closed issues (server-side date filter via `since` keeps page count low)
+    let issuesCursor = null;
+    let issuesHasNextPage = true;
+    while (issuesHasNextPage) {
+      const result = await retryWithBackoff(async () => {
+        return await graphqlWithAuth(REPO_CLOSED_ISSUES_QUERY, {
+          owner,
+          name,
+          since: startDate.toISOString(),
+          cursor: issuesCursor,
+        });
+      });
 
-    // Process merged PRs
-    const mergedPRs = repo.pullRequests.nodes
-      .filter((pr) => {
-        const mergedAt = new Date(pr.mergedAt);
-        return mergedAt >= startDate && mergedAt <= endDate;
-      })
-      .map((pr) => ({
-        type: "PullRequest",
-        number: pr.number,
-        title: pr.title,
-        url: pr.url,
-        closedAt: pr.mergedAt, // Use mergedAt for consistency
-        labels: pr.labels.nodes,
-        author: pr.author?.login || "unknown",
-        repository: `${owner}/${name}`,
-      }));
+      const issues = result.repository.issues;
+      const closedIssues = issues.nodes
+        .filter((issue) => {
+          const closedAt = new Date(issue.closedAt);
+          return closedAt >= startDate && closedAt <= endDate;
+        })
+        .map((issue) => ({
+          type: "Issue",
+          number: issue.number,
+          title: issue.title,
+          url: issue.url,
+          closedAt: issue.closedAt,
+          labels: issue.labels.nodes,
+          author: issue.author?.login || "unknown",
+          repository: `${owner}/${name}`,
+        }));
 
-    allItems.push(...closedIssues, ...mergedPRs);
+      allItems.push(...closedIssues);
+      issuesCursor = issues.pageInfo.endCursor;
+      issuesHasNextPage = issues.pageInfo.hasNextPage;
+    }
+
+    // Paginate merged PRs (no server-side date filter, so pagination is critical)
+    let prsCursor = null;
+    let prsHasNextPage = true;
+    while (prsHasNextPage) {
+      const result = await retryWithBackoff(async () => {
+        return await graphqlWithAuth(REPO_MERGED_PRS_QUERY, {
+          owner,
+          name,
+          cursor: prsCursor,
+        });
+      });
+
+      const prs = result.repository.pullRequests;
+      const mergedPRs = prs.nodes
+        .filter((pr) => {
+          const mergedAt = new Date(pr.mergedAt);
+          return mergedAt >= startDate && mergedAt <= endDate;
+        })
+        .map((pr) => ({
+          type: "PullRequest",
+          number: pr.number,
+          title: pr.title,
+          url: pr.url,
+          closedAt: pr.mergedAt, // Use mergedAt for consistency
+          labels: pr.labels.nodes,
+          author: pr.author?.login || "unknown",
+          repository: `${owner}/${name}`,
+        }));
+
+      allItems.push(...mergedPRs);
+      prsCursor = prs.pageInfo.endCursor;
+      prsHasNextPage = prs.pageInfo.hasNextPage;
+
+      // Early exit: once the oldest PR on this page was merged before our window,
+      // no subsequent pages will contain in-range PRs (mergedAt is not the sort key,
+      // but PRs merged long before startDate will not appear in a recent window)
+      if (prs.nodes.length > 0) {
+        const oldestMergedAt = new Date(
+          prs.nodes[prs.nodes.length - 1].mergedAt,
+        );
+        if (oldestMergedAt < startDate) {
+          prsHasNextPage = false;
+        }
+      }
+    }
+
     return allItems;
   } catch (error) {
     console.error(
@@ -424,4 +474,10 @@ export async function fetchClosedItemsFromRepo(
   }
 }
 
-export { PROJECT_QUERY, graphqlWithAuth, REPO_CLOSED_ITEMS_QUERY };
+export {
+  PROJECT_QUERY,
+  graphqlWithAuth,
+  REPO_CLOSED_ITEMS_QUERY,
+  REPO_CLOSED_ISSUES_QUERY,
+  REPO_MERGED_PRS_QUERY,
+};
