@@ -36,6 +36,15 @@ The long term support experience.\
 | Bluefin LTS (Hardware Enablement) | AMD/Intel     | [📥 bluefin-lts-hwe-x86_64.iso](https://projectbluefin.dev/bluefin-lts-hwe-x86_64.iso)   | [🧲 Torrent](https://projectbluefin.dev/bluefin-lts-hwe-x86_64.iso.torrent)    | [🔐 Verify](https://projectbluefin.dev/bluefin-lts-hwe-x86_64.iso-CHECKSUM)  |
 | Bluefin LTS (Hardware Enablement) | ARM (aarch64) | [📥 bluefin-lts-hwe-aarch64.iso](https://projectbluefin.dev/bluefin-lts-hwe-aarch64.iso) | [🧲 Torrent](https://projectbluefin.dev/bluefin-lts-hwe-aarch64.iso.torrent) | [🔐 Verify](https://projectbluefin.dev/bluefin-lts-hwe-aarch64.iso-CHECKSUM) |
 
+### LTS-HWE Testing (Weekly)
+
+These are weekly testing ISOs for the hardware-enablement branch.
+
+| Version                                   | GPU           | Download                                                                                                 | Torrent                                                                                                       | Checksum                                                                                                     |
+| ----------------------------------------- | ------------- | -------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| Bluefin LTS (Hardware Enablement Testing) | AMD/Intel     | [📥 bluefin-lts-hwe-testing-x86_64.iso](https://projectbluefin.dev/bluefin-lts-hwe-testing-x86_64.iso)   | [🧲 Torrent](https://projectbluefin.dev/bluefin-lts-hwe-testing-x86_64.iso.torrent)                           | [🔐 Verify](https://projectbluefin.dev/bluefin-lts-hwe-testing-x86_64.iso-CHECKSUM)                          |
+| Bluefin LTS (Hardware Enablement Testing) | ARM (aarch64) | [📥 bluefin-lts-hwe-testing-aarch64.iso](https://projectbluefin.dev/bluefin-lts-hwe-testing-aarch64.iso) | [🧲 Torrent](https://projectbluefin.dev/bluefin-lts-hwe-testing-aarch64.iso.torrent)                         | [🔐 Verify](https://projectbluefin.dev/bluefin-lts-hwe-testing-aarch64.iso-CHECKSUM)                         |
+
 ## Bluefin GDX
 
 The AI workstation with Nvidia and CUDA.\
