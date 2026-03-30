@@ -14,14 +14,9 @@ const CommunityFeeds: React.FC = () => {
         <div className={styles.overviewPanel}>
           <div className={styles.header}>
             <h1>Changelogs and Feeds</h1>
-            <p className={styles.overviewLead}>
-              Bluefin and Bluefin LTS release summaries in one place: package
-              changes, major bumps, contributors, and supply chain signals.
-            </p>
             <p className={styles.overviewLinks}>
               Need project-wide status? See <a href="/reports">Monthly Reports</a>{" "}
-              for delivery summaries from{" "}
-              <a href="https://todo.projectbluefin.io">todo.projectbluefin.io</a>.
+              for delivery summaries from <a href="https://todo.projectbluefin.io">todo.projectbluefin.io</a>.
             </p>
           </div>
 
