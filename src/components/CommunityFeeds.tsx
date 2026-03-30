@@ -1,6 +1,5 @@
 import React from "react";
 import Layout from "@theme/Layout";
-import FeedItems from "../components/FeedItems";
 import { CombinedFeedItems } from "../components/FeedItems";
 import PackageSummary from "../components/PackageSummary";
 import styles from "./CommunityFeeds.module.css";
@@ -12,26 +11,28 @@ const CommunityFeeds: React.FC = () => {
       description="Stay up to date with Bluefin releases, discussions, and announcements. Stay frosty."
     >
       <div className="container margin-vert--lg">
-        <div className={styles.header}>
-          <h1>Changelogs and Feeds</h1>
-          <p>
-            Stay up to date with the latest Bluefin releases. Looking for
-            project activity and development progress? Check out our{" "}
-            <a href="/reports">Monthly Reports</a> for summaries of completed
-            work from{" "}
-            <a href="https://todo.projectbluefin.io">todo.projectbluefin.io</a>.
-            Stay frosty.
-          </p>
-        </div>
+        <div className={styles.overviewPanel}>
+          <div className={styles.header}>
+            <h1>Changelogs and Feeds</h1>
+            <p className={styles.overviewLead}>
+              Bluefin and Bluefin LTS release summaries in one place: package
+              changes, major bumps, contributors, and supply chain signals.
+            </p>
+            <p className={styles.overviewLinks}>
+              Need project-wide status? See <a href="/reports">Monthly Reports</a>{" "}
+              for delivery summaries from{" "}
+              <a href="https://todo.projectbluefin.io">todo.projectbluefin.io</a>.
+            </p>
+          </div>
 
-        {/* Package Summary Boxes */}
-        <div className={styles.packageSummaryGrid}>
-          <PackageSummary feedKey="bluefinLtsReleases" title="Bluefin LTS" />
-          <PackageSummary
-            feedKey="bluefinReleases"
-            title="Bluefin"
-            filter={(item) => item.title.startsWith("stable-")}
-          />
+          <div className={styles.packageSummaryGrid}>
+            <PackageSummary feedKey="bluefinLtsReleases" title="Bluefin LTS" />
+            <PackageSummary
+              feedKey="bluefinReleases"
+              title="Bluefin"
+              filter={(item) => item.title.startsWith("stable-")}
+            />
+          </div>
         </div>
 
         <div className={styles.feedGrid}>
@@ -47,25 +48,6 @@ const CommunityFeeds: React.FC = () => {
             ]}
             maxItems={20}
           />
-        </div>
-
-        <div className={styles.additionalFeedsGrid}>
-          <div className={styles.feedColumn}>
-            <FeedItems
-              feedId="bluefinDiscussions"
-              title="Community Discussions"
-              maxItems={5}
-              showDescription={false}
-            />
-          </div>
-          <div className={styles.feedColumn}>
-            <FeedItems
-              feedId="bluefinAnnouncements"
-              title="Announcements"
-              maxItems={5}
-              showDescription={false}
-            />
-          </div>
         </div>
 
         <div className={styles.additionalLinks}>

@@ -62,6 +62,16 @@ Items categorized by nature of work:
 - **Tech Debt:** Refactoring and cleanup
 - **Automation:** CI/CD and tooling
 
+## Supply Chain Notes in Changelogs
+
+Changelog cards now include a **Supply Chain** block when a release contains commit subjects related to SBOMs, attestations, or provenance tooling updates.
+
+- The signal is derived from release commit entries (for example, references to SBOM generation, attest workflows, `cosign`, `oras`, or `syft` changes).
+- It is designed as a fast indicator for users tracking release integrity changes without reading every commit line.
+- LTS changelog cards include the same section now, and will begin showing entries as LTS SBOM/provenance commits land.
+- Cards now include a direct link to the matching GHCR package tag view in GitHub, which is the easiest path to inspect signatures and related supply-chain artifacts.
+- For full release context, open the linked release and commit details from each changelog card.
+
 ### Bot Activity
 
 Automated maintenance tasks performed by bots:
@@ -91,6 +101,7 @@ Understanding the content types:
 | **Reports**    | Project activity summaries             | Monthly     | Project board automation |
 
 **Use changelogs** to see what changed in a specific OS release.  
+They now also include supply-chain-related highlights when present in release commits.  
 **Use blog posts** for detailed explanations and guides.  
 **Use reports** to track project momentum and contributor activity.
 

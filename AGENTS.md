@@ -66,10 +66,10 @@ All work is tracked in beads issues. Use `bd` commands to manage tasks, features
 
 ### Required Workflow
 
-1. **ALWAYS work in a feature branch**
+1. **ALWAYS work in a topic branch**
 
    ```bash
-   git checkout -b feature/descriptive-name
+   git checkout -b <type>/<short-description>
    ```
 
 2. **Commit your changes to the branch**
@@ -82,7 +82,7 @@ All work is tracked in beads issues. Use `bd` commands to manage tasks, features
 3. **Push the branch to remote** (only when ready)
 
    ```bash
-   git push -u origin feature/descriptive-name
+   git push -u origin <type>/<short-description>
    ```
 
 4. **Create a pull request** (do not merge)
