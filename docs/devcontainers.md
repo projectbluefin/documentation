@@ -5,7 +5,7 @@ slug: /devcontainers
 
 # Devcontainers Quickstart Guide
 
-Dev Containers provide a consistent, reproducible development environment using containerization. This guide helps you get started with Dev Containers in Visual Studio Code on Bluefin. This is an opinionated configuration, some users may prefer to just use Podman/Docker directly.
+Dev Containers provide a consistent, reproducible development environment using containerization. This guide helps you get started with [Dev Containers in Visual Studio Code](https://code.visualstudio.com/docs/devcontainers/containers) on Bluefin. This is an opinionated configuration, some users may prefer to just use Podman/Docker directly.
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/kPMA9cnpScU?si=mGWgdLPbl-wWujc8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
@@ -37,6 +37,15 @@ podman --version
 # For Docker
 docker --version
 ```
+
+By default, the Dev Containers extension uses docker.
+To switch to podman, make the following changes in Dev Containers settings:
+```
+"dev.containers.dockerComposePath": "podman-compose"
+"dev.containers.dockerPath": "podman"
+"dev.containers.dockerSocketPath": "/run/user/1000/podman/podman.sock"
+```
+You can use `systemctl --user status podman.socket` to find the socket path corresponding to your user id. Or if you want to run podman in rootful mode, use `/run/podman/podman.sock` instead.
 
 ## Getting Started
 
