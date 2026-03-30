@@ -43,6 +43,13 @@ These are weekly testing ISOs for the hardware-enablement branch.
 - [📥 bluefin-lts-hwe-testing-x86_64.iso](https://projectbluefin.dev/bluefin-lts-hwe-testing-x86_64.iso)
 - [📥 bluefin-lts-hwe-testing-aarch64.iso](https://projectbluefin.dev/bluefin-lts-hwe-testing-aarch64.iso)
 
+#### Verify
+
+| Architecture | Verify |
+| ------------ | ------ |
+| x86_64       | [🔐 bluefin-lts-hwe-testing-x86_64.iso-CHECKSUM](https://projectbluefin.dev/bluefin-lts-hwe-testing-x86_64.iso-CHECKSUM) |
+| aarch64      | [🔐 bluefin-lts-hwe-testing-aarch64.iso-CHECKSUM](https://projectbluefin.dev/bluefin-lts-hwe-testing-aarch64.iso-CHECKSUM) |
+
 ## Bluefin GDX
 
 The AI workstation with Nvidia and CUDA.\
