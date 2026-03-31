@@ -387,7 +387,7 @@ export default function ImagesCatalogComponent(): React.JSX.Element {
                               <strong>NVIDIA</strong> {entry.versions?.nvidia || "Unknown"}
                             </span>
                           </div>
-                          <code>{entry.nvidiaCommand}</code>
+                          <CopyableCode>{entry.nvidiaCommand}</CopyableCode>
                         </>
                       ) : (
                         <p className={styles.emptyText}>No Nvidia variant published for this stream tag.</p>
@@ -407,7 +407,7 @@ export default function ImagesCatalogComponent(): React.JSX.Element {
                             </span>
                           )}
                         </div>
-                        <code>{entry.command}</code>
+                        <CopyableCode>{entry.command}</CopyableCode>
                       </>
                     )}
                   </TabItem>
