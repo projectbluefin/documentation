@@ -1,14 +1,30 @@
 const fs = require("fs");
 const path = require("path");
 
-const fetch = (...args) => import("node-fetch").then(({ default: fn }) => fn(...args));
+const fetch = (...args) =>
+  import("node-fetch").then(({ default: fn }) => fn(...args));
 
 const OUTPUT_DIR = path.join(__dirname, "..", "static", "data");
 const OUTPUT_FILE = path.join(OUTPUT_DIR, "driver-versions.json");
-const FEED_BLUEFIN = path.join(__dirname, "..", "static", "feeds", "bluefin-releases.json");
-const FEED_LTS = path.join(__dirname, "..", "static", "feeds", "bluefin-lts-releases.json");
+const FEED_BLUEFIN = path.join(
+  __dirname,
+  "..",
+  "static",
+  "feeds",
+  "bluefin-releases.json",
+);
+const FEED_LTS = path.join(
+  __dirname,
+  "..",
+  "static",
+  "feeds",
+  "bluefin-lts-releases.json",
+);
+const SBOM_FILE = path.join(OUTPUT_DIR, "sbom-attestations.json");
 
-const CACHE_MAX_AGE_HOURS = Number(process.env.DRIVER_VERSIONS_CACHE_HOURS || 168);
+const CACHE_MAX_AGE_HOURS = Number(
+  process.env.DRIVER_VERSIONS_CACHE_HOURS || 168,
+);
 const HISTORY_DAYS = Number(process.env.DRIVER_VERSIONS_HISTORY_DAYS || 90);
 const FORCE_REFRESH = process.argv.includes("--force");
 
@@ -19,6 +35,42 @@ function readJsonIfExists(filePath, fallback) {
   } catch {
     return fallback;
   }
+}
+
+/**
+ * Look up packageVersions from the SBOM cache for a specific stream + cacheKey.
+ * cacheKey format matches fetch-github-sbom.js: e.g. "stable-20260331", "lts-20260331".
+ * Returns null if not found.
+ */
+function lookupSbomVersionsForTag(sbomCache, sbomStreamId, cacheKey) {
+  return (
+    sbomCache?.streams?.[sbomStreamId]?.releases?.[cacheKey]?.packageVersions ||
+    null
+  );
+}
+
+/**
+ * Apply SBOM overlay to a history row in-place.
+ * Overlays kernel and mesa from the SBOM cache if available.
+ * NVIDIA is intentionally excluded — it is not in the SBOM.
+ */
+function applySbomOverlay(row, sbomCache, sbomStreamId) {
+  if (!sbomCache || !sbomStreamId || !row?.versions) return;
+
+  // Extract YYYYMMDD from tag name (e.g. "stable-20260331" or "lts.20260331")
+  const tagStr = String(row.tag || "");
+  const dateMatch = tagStr.match(/(\d{8})/);
+  if (!dateMatch) return;
+
+  const streamPrefix = sbomStreamId === "bluefin-lts" ? "lts" : "stable";
+  const cacheKey = `${streamPrefix}-${dateMatch[1]}`;
+
+  const sbomV = lookupSbomVersionsForTag(sbomCache, sbomStreamId, cacheKey);
+  if (!sbomV) return;
+
+  if (sbomV.kernel) row.versions.kernel = sbomV.kernel;
+  if (sbomV.mesa) row.versions.mesa = sbomV.mesa;
+  // NEVER touch row.versions.nvidia or row.versions.hweKernel
 }
 
 function cacheAgeHours() {
@@ -58,7 +110,10 @@ function extractVersionFromMarkdown(content, labels) {
 
   for (const label of labels) {
     const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    const regex = new RegExp(`\\|\\s*\\*\\*${escaped}\\*\\*\\s*\\|\\s*([^|]+)\\|`, "i");
+    const regex = new RegExp(
+      `\\|\\s*\\*\\*${escaped}\\*\\*\\s*\\|\\s*([^|]+)\\|`,
+      "i",
+    );
     const match = content.match(regex);
     if (!match || !match[1]) continue;
     return splitVersion(match[1]);
@@ -112,7 +167,9 @@ function buildRowFromApiRelease(release, streamId) {
     tag: release?.tag_name || `${streamId}-unknown`,
     title: release?.name || null,
     releaseUrl: release?.html_url || null,
-    publishedAt: parseDate(release?.published_at || release?.created_at || null),
+    publishedAt: parseDate(
+      release?.published_at || release?.created_at || null,
+    ),
     versions: {
       kernel: extractVersionFromMarkdown(body, ["Kernel"]),
       hweKernel: extractVersionFromMarkdown(body, ["HWE Kernel"]),
@@ -124,7 +181,11 @@ function buildRowFromApiRelease(release, streamId) {
 
 function pickBluefinStableItems(feed) {
   const items = Array.isArray(feed?.items) ? feed.items : [];
-  return items.filter((item) => String(item?.title || "").toLowerCase().startsWith("stable-"));
+  return items.filter((item) =>
+    String(item?.title || "")
+      .toLowerCase()
+      .startsWith("stable-"),
+  );
 }
 
 function pickLtsItems(feed) {
@@ -132,11 +193,14 @@ function pickLtsItems(feed) {
   return items.filter((item) => {
     const link = String(item?.link || "").toLowerCase();
     if (link.includes("/releases/tag/lts.")) return true;
-    return String(item?.title || "").toLowerCase().includes(" lts:");
+    return String(item?.title || "")
+      .toLowerCase()
+      .includes(" lts:");
   });
 }
 
-function buildStream(streamId, name, subtitle, command, feedItems) {
+function buildStream(streamId, name, subtitle, command, feedItems, sbomCache) {
+  const sbomStreamId = streamId; // e.g. "bluefin-stable" or "bluefin-lts"
   const cutoff = Date.now() - HISTORY_DAYS * 24 * 60 * 60 * 1000;
   const recentItems = feedItems.filter((item) => {
     const parsed = Date.parse(item?.pubDate || item?.updated || "");
@@ -144,7 +208,11 @@ function buildStream(streamId, name, subtitle, command, feedItems) {
     return parsed >= cutoff;
   });
 
-  const history = recentItems.map((item) => buildRow(item, streamId));
+  const history = recentItems.map((item) => {
+    const row = buildRow(item, streamId);
+    applySbomOverlay(row, sbomCache, sbomStreamId);
+    return row;
+  });
   return {
     id: streamId,
     name,
@@ -170,19 +238,32 @@ async function fetchReleases(owner, repo) {
   });
 
   if (!response.ok) {
-    throw new Error(`GitHub releases API failed for ${owner}/${repo}: ${response.status}`);
+    throw new Error(
+      `GitHub releases API failed for ${owner}/${repo}: ${response.status}`,
+    );
   }
 
   return response.json();
 }
 
-function buildStreamFromApi(streamId, name, subtitle, command, releases, tagPrefix) {
+function buildStreamFromApi(
+  streamId,
+  name,
+  subtitle,
+  command,
+  releases,
+  tagPrefix,
+  sbomCache,
+) {
+  const sbomStreamId = streamId; // e.g. "bluefin-stable" or "bluefin-lts"
   const cutoff = Date.now() - HISTORY_DAYS * 24 * 60 * 60 * 1000;
 
   const filtered = releases
     .filter((release) => String(release?.tag_name || "").startsWith(tagPrefix))
     .filter((release) => {
-      const parsed = Date.parse(release?.published_at || release?.created_at || "");
+      const parsed = Date.parse(
+        release?.published_at || release?.created_at || "",
+      );
       if (Number.isNaN(parsed)) return false;
       return parsed >= cutoff;
     })
@@ -192,7 +273,11 @@ function buildStreamFromApi(streamId, name, subtitle, command, releases, tagPref
         Date.parse(a?.published_at || a?.created_at || 0),
     );
 
-  const history = filtered.map((release) => buildRowFromApiRelease(release, streamId));
+  const history = filtered.map((release) => {
+    const row = buildRowFromApiRelease(release, streamId);
+    applySbomOverlay(row, sbomCache, sbomStreamId);
+    return row;
+  });
 
   return {
     id: streamId,
@@ -215,6 +300,15 @@ function main() {
     return;
   }
 
+  const sbomCache = readJsonIfExists(SBOM_FILE, null);
+  if (sbomCache) {
+    console.log("SBOM attestation cache loaded.");
+  } else {
+    console.log(
+      "SBOM attestation cache not found — kernel/mesa will fall back to release bodies.",
+    );
+  }
+
   return Promise.all([
     fetchReleases("ublue-os", "bluefin"),
     fetchReleases("ublue-os", "bluefin-lts"),
@@ -228,6 +322,7 @@ function main() {
           "sudo bootc switch ghcr.io/ublue-os/bluefin:stable --enforce-container-sigpolicy",
           bluefinReleases,
           "stable-",
+          sbomCache,
         ),
         buildStreamFromApi(
           "bluefin-lts",
@@ -236,6 +331,7 @@ function main() {
           "sudo bootc switch ghcr.io/ublue-os/bluefin:lts --enforce-container-sigpolicy",
           ltsReleases,
           "lts.",
+          sbomCache,
         ),
       ];
 
@@ -267,6 +363,7 @@ function main() {
           "Current stable stream from ublue-os/bluefin.",
           "sudo bootc switch ghcr.io/ublue-os/bluefin:stable --enforce-container-sigpolicy",
           pickBluefinStableItems(bluefinFeed),
+          sbomCache,
         ),
         buildStream(
           "bluefin-lts",
@@ -274,6 +371,7 @@ function main() {
           "Long-term support stream from ublue-os/bluefin-lts.",
           "sudo bootc switch ghcr.io/ublue-os/bluefin:lts --enforce-container-sigpolicy",
           pickLtsItems(ltsFeed),
+          sbomCache,
         ),
       ];
 
@@ -289,7 +387,9 @@ function main() {
       }
 
       fs.writeFileSync(OUTPUT_FILE, JSON.stringify(output, null, 2), "utf-8");
-      console.log(`Driver versions data saved to ${OUTPUT_FILE} (feed fallback)`);
+      console.log(
+        `Driver versions data saved to ${OUTPUT_FILE} (feed fallback)`,
+      );
     });
 }
 
