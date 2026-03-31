@@ -204,7 +204,8 @@
   vertical-align: middle;
 }
 
-.feedItem:hover .copyButton {
+.feedItem:hover .copyButton,
+.copyButton:focus-visible {
   opacity: 1;
 }
 

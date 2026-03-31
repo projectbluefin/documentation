@@ -156,6 +156,7 @@ function buildRow(item, streamId) {
       hweKernel: extractVersion(content, ["HWE Kernel"]),
       mesa: extractVersion(content, ["Mesa"]),
       nvidia: extractVersion(content, ["Nvidia", "NVIDIA"]),
+      gnome: extractVersion(content, ["Gnome", "GNOME"]),
     },
   };
 }
@@ -175,6 +176,7 @@ function buildRowFromApiRelease(release, streamId) {
       hweKernel: extractVersionFromMarkdown(body, ["HWE Kernel"]),
       mesa: extractVersionFromMarkdown(body, ["Mesa"]),
       nvidia: extractVersionFromMarkdown(body, ["Nvidia", "NVIDIA"]),
+      gnome: extractVersionFromMarkdown(body, ["Gnome", "GNOME"]),
     },
   };
 }

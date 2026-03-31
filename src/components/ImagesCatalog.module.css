@@ -287,6 +287,7 @@
   word-break: break-all;
 }
 
+
 .section :global(.tabs) {
   margin-top: 0.35rem;
   border: 0;

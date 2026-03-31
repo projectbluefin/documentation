@@ -144,9 +144,42 @@
 }
 
 .majorBump {
-  border-color: color-mix(in srgb, #d97b00 70%, var(--ifm-color-emphasis-300));
-  box-shadow: 0 0 0 2px color-mix(in srgb, #d97b00 28%, transparent);
-  background: color-mix(in srgb, #d97b00 14%, var(--ifm-background-color));
+  position: relative;
+  overflow: hidden;
+  border: 2px solid #e6c200;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 215, 0, 0.15) 0%,
+    rgba(255, 237, 78, 0.22) 50%,
+    rgba(255, 215, 0, 0.15) 100%
+  );
+  box-shadow:
+    0 4px 12px rgba(255, 215, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.majorBump::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  mix-blend-mode: color-dodge;
+  z-index: 1;
+  background-image: linear-gradient(
+    115deg,
+    transparent 20%,
+    hsla(45, 100%, 70%, 0.3) 36%,
+    hsla(50, 100%, 65%, 0.5) 43%,
+    hsla(55, 100%, 60%, 0.6) 50%,
+    hsla(50, 100%, 65%, 0.5) 57%,
+    hsla(45, 100%, 70%, 0.3) 64%,
+    transparent 80%
+  );
+  background-size: 300% 300%;
+  background-position: 50% 50%;
+  opacity: 0.35;
+  filter: brightness(1.2) contrast(1.3);
 }
 
 .nvidiaCard {
@@ -155,21 +188,120 @@
 }
 
 .nvidiaMajorBump {
-  border-color: color-mix(in srgb, #76b900 82%, var(--ifm-color-emphasis-300));
-  box-shadow: 0 0 0 2px color-mix(in srgb, #76b900 35%, transparent);
-  background: color-mix(in srgb, #76b900 22%, var(--ifm-background-color));
+  position: relative;
+  overflow: hidden;
+  border: 2px solid #5a9900;
+  background: linear-gradient(
+    135deg,
+    rgba(118, 185, 0, 0.15) 0%,
+    rgba(160, 220, 0, 0.22) 50%,
+    rgba(118, 185, 0, 0.15) 100%
+  );
+  box-shadow:
+    0 4px 12px rgba(118, 185, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.nvidiaMajorBump::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  mix-blend-mode: color-dodge;
+  z-index: 1;
+  background-image: linear-gradient(
+    115deg,
+    transparent 20%,
+    hsla(85, 100%, 65%, 0.3) 36%,
+    hsla(90, 100%, 60%, 0.5) 43%,
+    hsla(95, 100%, 55%, 0.6) 50%,
+    hsla(90, 100%, 60%, 0.5) 57%,
+    hsla(85, 100%, 65%, 0.3) 64%,
+    transparent 80%
+  );
+  background-size: 300% 300%;
+  background-position: 50% 50%;
+  opacity: 0.35;
+  filter: brightness(1.2) contrast(1.3);
 }
 
 .nvidiaMinorBump {
-  border-color: color-mix(in srgb, #76b900 68%, var(--ifm-color-emphasis-300));
-  box-shadow: 0 0 0 2px color-mix(in srgb, #76b900 24%, transparent);
-  background: color-mix(in srgb, #76b900 16%, var(--ifm-background-color));
+  position: relative;
+  overflow: hidden;
+  border: 2px solid color-mix(in srgb, #76b900 68%, var(--ifm-color-emphasis-300));
+  background: linear-gradient(
+    135deg,
+    rgba(118, 185, 0, 0.10) 0%,
+    rgba(140, 200, 0, 0.16) 50%,
+    rgba(118, 185, 0, 0.10) 100%
+  );
+  box-shadow:
+    0 4px 12px rgba(118, 185, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.nvidiaMinorBump::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  mix-blend-mode: color-dodge;
+  z-index: 1;
+  background-image: linear-gradient(
+    115deg,
+    transparent 20%,
+    hsla(85, 60%, 70%, 0.2) 36%,
+    hsla(90, 65%, 65%, 0.35) 43%,
+    hsla(95, 60%, 60%, 0.4) 50%,
+    hsla(90, 65%, 65%, 0.35) 57%,
+    hsla(85, 60%, 70%, 0.2) 64%,
+    transparent 80%
+  );
+  background-size: 300% 300%;
+  background-position: 50% 50%;
+  opacity: 0.28;
+  filter: brightness(1.1) contrast(1.2);
 }
 
 .minorBump {
-  border-color: color-mix(in srgb, #9aa4b0 78%, var(--ifm-color-emphasis-300));
-  box-shadow: 0 0 0 2px color-mix(in srgb, #9aa4b0 26%, transparent);
-  background: color-mix(in srgb, #c7ccd3 24%, var(--ifm-background-color));
+  position: relative;
+  overflow: hidden;
+  border: 2px solid #b8c6d8;
+  background: linear-gradient(
+    135deg,
+    rgba(176, 196, 222, 0.15) 0%,
+    rgba(192, 210, 235, 0.22) 50%,
+    rgba(176, 196, 222, 0.15) 100%
+  );
+  box-shadow:
+    0 4px 12px rgba(176, 196, 222, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.minorBump::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  mix-blend-mode: color-dodge;
+  z-index: 1;
+  background-image: linear-gradient(
+    115deg,
+    transparent 20%,
+    hsla(215, 40%, 80%, 0.3) 36%,
+    hsla(220, 45%, 75%, 0.5) 43%,
+    hsla(225, 40%, 70%, 0.6) 50%,
+    hsla(220, 45%, 75%, 0.5) 57%,
+    hsla(215, 40%, 80%, 0.3) 64%,
+    transparent 80%
+  );
+  background-size: 300% 300%;
+  background-position: 50% 50%;
+  opacity: 0.35;
+  filter: brightness(1.2) contrast(1.3);
 }
 
 .majorVersionLabel {
@@ -179,6 +311,8 @@
   font-size: 0.72rem;
   color: var(--ifm-color-emphasis-700);
   font-weight: 700;
+  position: relative;
+  z-index: 2;
 }
 
 .majorVersionValue {
@@ -189,6 +323,8 @@
   font-weight: 800;
   color: var(--ifm-color-emphasis-900);
   word-break: break-word;
+  position: relative;
+  z-index: 2;
 }
 
 .versionMissing {
@@ -199,27 +335,295 @@
 .bumpTag {
   display: inline-block;
   margin-top: 0.35rem;
-  border: 1px solid color-mix(in srgb, #d97b00 70%, var(--ifm-color-emphasis-300));
+  border: 1px solid #c9a800;
   border-radius: 999px;
   padding: 0.08rem 0.42rem;
   font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.02em;
   text-transform: uppercase;
+  background: #ffd700;
+  color: #5a3e00;
+  position: relative;
+  z-index: 2;
 }
 
 .minorTag {
   display: inline-block;
   margin-top: 0.35rem;
-  border: 1px solid color-mix(in srgb, #8f99a5 78%, var(--ifm-color-emphasis-300));
+  border: 1px solid #8fa8c0;
   border-radius: 999px;
   padding: 0.08rem 0.42rem;
   font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.02em;
   text-transform: uppercase;
-  color: var(--ifm-color-emphasis-800);
-  background: color-mix(in srgb, #d2d7de 38%, var(--ifm-background-color));
+  background: #c8d8e8;
+  color: #1e2d3a;
+  position: relative;
+  z-index: 2;
+}
+
+.nvidiaBumpTag {
+  display: inline-block;
+  margin-top: 0.35rem;
+  border: 1px solid #3d7a00;
+  border-radius: 999px;
+  padding: 0.08rem 0.42rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  background: #76b900;
+  color: #1a3600;
+  position: relative;
+  z-index: 2;
+}
+
+.nvidiaMinorTag {
+  display: inline-block;
+  margin-top: 0.35rem;
+  border: 1px solid #5a8a20;
+  border-radius: 999px;
+  padding: 0.08rem 0.42rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  background: #c8e090;
+  color: #1e3600;
+  position: relative;
+  z-index: 2;
+}
+
+.mesaCard {
+  border-color: color-mix(in srgb, #e06020 55%, var(--ifm-color-emphasis-300));
+  background: color-mix(in srgb, #e06020 10%, var(--ifm-background-color));
+}
+
+.mesaMajorBump {
+  position: relative;
+  overflow: hidden;
+  border: 2px solid #c04000;
+  background: linear-gradient(
+    135deg,
+    rgba(224, 96, 32, 0.15) 0%,
+    rgba(255, 128, 48, 0.22) 50%,
+    rgba(224, 96, 32, 0.15) 100%
+  );
+  box-shadow:
+    0 4px 12px rgba(224, 96, 32, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.mesaMajorBump::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  mix-blend-mode: color-dodge;
+  z-index: 1;
+  background-image: linear-gradient(
+    115deg,
+    transparent 20%,
+    hsla(20, 100%, 65%, 0.3) 36%,
+    hsla(25, 100%, 60%, 0.5) 43%,
+    hsla(30, 100%, 55%, 0.6) 50%,
+    hsla(25, 100%, 60%, 0.5) 57%,
+    hsla(20, 100%, 65%, 0.3) 64%,
+    transparent 80%
+  );
+  background-size: 300% 300%;
+  background-position: 50% 50%;
+  opacity: 0.35;
+  filter: brightness(1.2) contrast(1.3);
+}
+
+.mesaMinorBump {
+  position: relative;
+  overflow: hidden;
+  border: 2px solid color-mix(in srgb, #e06020 68%, var(--ifm-color-emphasis-300));
+  background: linear-gradient(
+    135deg,
+    rgba(224, 96, 32, 0.10) 0%,
+    rgba(240, 120, 56, 0.16) 50%,
+    rgba(224, 96, 32, 0.10) 100%
+  );
+  box-shadow:
+    0 4px 12px rgba(224, 96, 32, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.mesaMinorBump::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  mix-blend-mode: color-dodge;
+  z-index: 1;
+  background-image: linear-gradient(
+    115deg,
+    transparent 20%,
+    hsla(20, 60%, 70%, 0.2) 36%,
+    hsla(25, 65%, 65%, 0.35) 43%,
+    hsla(30, 60%, 60%, 0.4) 50%,
+    hsla(25, 65%, 65%, 0.35) 57%,
+    hsla(20, 60%, 70%, 0.2) 64%,
+    transparent 80%
+  );
+  background-size: 300% 300%;
+  background-position: 50% 50%;
+  opacity: 0.28;
+  filter: brightness(1.1) contrast(1.2);
+}
+
+.mesaBumpTag {
+  display: inline-block;
+  margin-top: 0.35rem;
+  border: 1px solid #a03000;
+  border-radius: 999px;
+  padding: 0.08rem 0.42rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  background: #e06020;
+  color: #fff3ee;
+  position: relative;
+  z-index: 2;
+}
+
+.mesaMinorTag {
+  display: inline-block;
+  margin-top: 0.35rem;
+  border: 1px solid #b04820;
+  border-radius: 999px;
+  padding: 0.08rem 0.42rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  background: #f0c0a0;
+  color: #4a1800;
+  position: relative;
+  z-index: 2;
+}
+
+.gnomeCard {
+  border-color: color-mix(in srgb, #3584e4 55%, var(--ifm-color-emphasis-300));
+  background: color-mix(in srgb, #3584e4 10%, var(--ifm-background-color));
+}
+
+.gnomeMajorBump {
+  position: relative;
+  overflow: hidden;
+  border: 2px solid #1a5ab8;
+  background: linear-gradient(
+    135deg,
+    rgba(53, 132, 228, 0.15) 0%,
+    rgba(78, 160, 255, 0.22) 50%,
+    rgba(53, 132, 228, 0.15) 100%
+  );
+  box-shadow:
+    0 4px 12px rgba(53, 132, 228, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.gnomeMajorBump::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  mix-blend-mode: color-dodge;
+  z-index: 1;
+  background-image: linear-gradient(
+    115deg,
+    transparent 20%,
+    hsla(210, 100%, 70%, 0.3) 36%,
+    hsla(215, 100%, 65%, 0.5) 43%,
+    hsla(220, 100%, 60%, 0.6) 50%,
+    hsla(215, 100%, 65%, 0.5) 57%,
+    hsla(210, 100%, 70%, 0.3) 64%,
+    transparent 80%
+  );
+  background-size: 300% 300%;
+  background-position: 50% 50%;
+  opacity: 0.35;
+  filter: brightness(1.2) contrast(1.3);
+}
+
+.gnomeMinorBump {
+  position: relative;
+  overflow: hidden;
+  border: 2px solid color-mix(in srgb, #3584e4 68%, var(--ifm-color-emphasis-300));
+  background: linear-gradient(
+    135deg,
+    rgba(53, 132, 228, 0.10) 0%,
+    rgba(78, 160, 255, 0.16) 50%,
+    rgba(53, 132, 228, 0.10) 100%
+  );
+  box-shadow:
+    0 4px 12px rgba(53, 132, 228, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.gnomeMinorBump::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  mix-blend-mode: color-dodge;
+  z-index: 1;
+  background-image: linear-gradient(
+    115deg,
+    transparent 20%,
+    hsla(210, 60%, 75%, 0.2) 36%,
+    hsla(215, 65%, 70%, 0.35) 43%,
+    hsla(220, 60%, 65%, 0.4) 50%,
+    hsla(215, 65%, 70%, 0.35) 57%,
+    hsla(210, 60%, 75%, 0.2) 64%,
+    transparent 80%
+  );
+  background-size: 300% 300%;
+  background-position: 50% 50%;
+  opacity: 0.28;
+  filter: brightness(1.1) contrast(1.2);
+}
+
+.gnomeBumpTag {
+  display: inline-block;
+  margin-top: 0.35rem;
+  border: 1px solid #1040a0;
+  border-radius: 999px;
+  padding: 0.08rem 0.42rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  background: #3584e4;
+  color: #e8f2ff;
+  position: relative;
+  z-index: 2;
+}
+
+.gnomeMinorTag {
+  display: inline-block;
+  margin-top: 0.35rem;
+  border: 1px solid #2060c0;
+  border-radius: 999px;
+  padding: 0.08rem 0.42rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  background: #b0d0f8;
+  color: #001840;
+  position: relative;
+  z-index: 2;
 }
 
 .rebaseInline {
@@ -245,25 +649,17 @@
 }
 
 .commandBlock :global(.theme-code-block) {
-  display: inline-block;
-  width: auto;
-  max-width: 100%;
+  display: block;
+  width: 100%;
   margin-top: 0.15rem;
   margin-bottom: 0;
-}
-
-.commandBlock :global(button[class*="copyButton"]) {
-  opacity: 1;
-}
-
-.commandBlock :global([class*="buttonGroup"] button) {
-  opacity: 1 !important;
 }
 
 .commandBlock :global(pre) {
   margin: 0;
   white-space: pre-wrap;
   word-break: break-word;
+  /* padding-right handled globally in custom.css */
 }
 
 .archiveTimeline {

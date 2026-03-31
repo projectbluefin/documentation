@@ -10,6 +10,7 @@ interface VersionSet {
   hweKernel: string | null;
   mesa: string | null;
   nvidia: string | null;
+  gnome: string | null;
 }
 
 interface DriverRow {
@@ -37,7 +38,7 @@ interface DriverCatalog {
   streams?: DriverStream[];
 }
 
-const catalog = driverVersionsData as DriverCatalog;
+const catalog = driverVersionsData as unknown as DriverCatalog;
 
 function formatDate(value: string | null | undefined) {
   if (!value) return "Unknown";
@@ -95,6 +96,7 @@ function ReleaseNode({
   const nvidia = valueOrFallback(row.versions.nvidia);
   const mesa = valueOrFallback(row.versions.mesa);
   const hwe = row.versions.hweKernel;
+  const gnome = valueOrFallback(row.versions.gnome);
 
   const kernelMajor = majorNumber(row.versions.kernel);
   const previousKernelMajor = majorNumber(previousRow?.versions.kernel);
@@ -130,6 +132,40 @@ function ReleaseNode({
     nvidiaParts.major === previousNvidiaParts.major &&
     nvidiaParts.minor !== previousNvidiaParts.minor;
 
+  const mesaMajor = majorNumber(row.versions.mesa);
+  const previousMesaMajor = majorNumber(previousRow?.versions.mesa);
+  const mesaMajorBump =
+    mesaMajor !== null &&
+    previousMesaMajor !== null &&
+    previousMesaMajor !== mesaMajor;
+  const mesaParts = majorMinor(row.versions.mesa);
+  const previousMesaParts = majorMinor(previousRow?.versions.mesa);
+  const mesaMinorBump =
+    !mesaMajorBump &&
+    mesaParts.major !== null &&
+    previousMesaParts.major !== null &&
+    mesaParts.minor !== null &&
+    previousMesaParts.minor !== null &&
+    mesaParts.major === previousMesaParts.major &&
+    mesaParts.minor !== previousMesaParts.minor;
+
+  const gnomeMajor = majorNumber(row.versions.gnome);
+  const previousGnomeMajor = majorNumber(previousRow?.versions.gnome);
+  const gnomeMajorBump =
+    gnomeMajor !== null &&
+    previousGnomeMajor !== null &&
+    previousGnomeMajor !== gnomeMajor;
+  const gnomeParts = majorMinor(row.versions.gnome);
+  const previousGnomeParts = majorMinor(previousRow?.versions.gnome);
+  const gnomeMinorBump =
+    !gnomeMajorBump &&
+    gnomeParts.major !== null &&
+    previousGnomeParts.major !== null &&
+    gnomeParts.minor !== null &&
+    previousGnomeParts.minor !== null &&
+    gnomeParts.major === previousGnomeParts.major &&
+    gnomeParts.minor !== previousGnomeParts.minor;
+
   return (
     <article className={styles.timelineNode}>
       <div className={emphasize ? `${styles.nodeBody} ${styles.nodeBodyLatest}` : styles.nodeBody}>
@@ -149,7 +185,7 @@ function ReleaseNode({
             className={
               kernelMajorBump
                 ? `${styles.majorVersionCard} ${styles.majorBump}`
-                : !emphasize && kernelMinorBump
+                : kernelMinorBump
                   ? `${styles.majorVersionCard} ${styles.minorBump}`
                   : styles.majorVersionCard
             }
@@ -157,29 +193,55 @@ function ReleaseNode({
             <span className={styles.majorVersionLabel}>Kernel</span>
             <VersionValue value={kernel} />
             {kernelMajorBump && <span className={styles.bumpTag}>Major bump</span>}
-            {!emphasize && kernelMinorBump && <span className={styles.minorTag}>Minor bump</span>}
+            {kernelMinorBump && <span className={styles.minorTag}>Minor bump</span>}
           </div>
+          {hwe !== null && (
+            <div className={styles.majorVersionCard}>
+              <span className={styles.majorVersionLabel}>HWE Kernel</span>
+              <VersionValue value={hwe} />
+            </div>
+          )}
           <div
             className={
               nvidiaMajorBump
                 ? `${styles.majorVersionCard} ${styles.nvidiaCard} ${styles.nvidiaMajorBump}`
-                : !emphasize && nvidiaMinorBump
+                : nvidiaMinorBump
                   ? `${styles.majorVersionCard} ${styles.nvidiaCard} ${styles.nvidiaMinorBump}`
                   : `${styles.majorVersionCard} ${styles.nvidiaCard}`
             }
           >
             <span className={styles.majorVersionLabel}>NVIDIA</span>
             <VersionValue value={nvidia} />
-            {nvidiaMajorBump && <span className={styles.bumpTag}>Major bump</span>}
-            {!emphasize && nvidiaMinorBump && <span className={styles.minorTag}>Minor bump</span>}
+            {nvidiaMajorBump && <span className={styles.nvidiaBumpTag}>Major bump</span>}
+            {nvidiaMinorBump && <span className={styles.nvidiaMinorTag}>Minor bump</span>}
           </div>
-          <div className={styles.majorVersionCard}>
+          <div
+            className={
+              mesaMajorBump
+                ? `${styles.majorVersionCard} ${styles.mesaCard} ${styles.mesaMajorBump}`
+                : mesaMinorBump
+                  ? `${styles.majorVersionCard} ${styles.mesaCard} ${styles.mesaMinorBump}`
+                  : `${styles.majorVersionCard} ${styles.mesaCard}`
+            }
+          >
             <span className={styles.majorVersionLabel}>Mesa</span>
             <VersionValue value={mesa} />
+            {mesaMajorBump && <span className={styles.mesaBumpTag}>Major bump</span>}
+            {mesaMinorBump && <span className={styles.mesaMinorTag}>Minor bump</span>}
           </div>
-          <div className={styles.majorVersionCard}>
-            <span className={styles.majorVersionLabel}>HWE</span>
-            <VersionValue value={hwe} />
+          <div
+            className={
+              gnomeMajorBump
+                ? `${styles.majorVersionCard} ${styles.gnomeCard} ${styles.gnomeMajorBump}`
+                : gnomeMinorBump
+                  ? `${styles.majorVersionCard} ${styles.gnomeCard} ${styles.gnomeMinorBump}`
+                  : `${styles.majorVersionCard} ${styles.gnomeCard}`
+            }
+          >
+            <span className={styles.majorVersionLabel}>GNOME</span>
+            <VersionValue value={gnome} />
+            {gnomeMajorBump && <span className={styles.gnomeBumpTag}>Major bump</span>}
+            {gnomeMinorBump && <span className={styles.gnomeMinorTag}>Minor bump</span>}
           </div>
         </div>
 
