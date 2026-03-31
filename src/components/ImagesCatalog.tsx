@@ -1,38 +1,11 @@
-import React, { useState, useCallback } from "react";
+import React from "react";
 import Link from "@docusaurus/Link";
 import Heading from "@theme/Heading";
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
+import CodeBlock from "@theme/CodeBlock";
 import styles from "./ImagesCatalog.module.css";
 
-// Copyable code block — styled like a <code> element with a hover-reveal copy button
-function CopyableCode({ children }: { children: string }) {
-  const [copied, setCopied] = useState(false);
-  const handleCopy = useCallback(
-    (e: React.MouseEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      navigator.clipboard.writeText(children).then(() => {
-        setCopied(true);
-        setTimeout(() => setCopied(false), 1500);
-      });
-    },
-    [children],
-  );
-  return (
-    <div className={styles.copyableCode}>
-      <code>{children}</code>
-      <button
-        onClick={handleCopy}
-        className={styles.copyableCodeBtn}
-        title={copied ? "Copied!" : "Copy to clipboard"}
-        aria-label={copied ? "Copied!" : `Copy ${children}`}
-      >
-        {copied ? "✓" : "⎘"}
-      </button>
-    </div>
-  );
-}
 
 interface StreamInfo {
   label: string;
@@ -136,12 +109,12 @@ function StreamList({
           </div>
           {preferNvidia ? (
             entry.nvidiaCommand ? (
-              <CopyableCode>{entry.nvidiaCommand}</CopyableCode>
+                          <CodeBlock language="bash">{entry.nvidiaCommand}</CodeBlock>
             ) : (
               <span className={styles.emptyText}>No Nvidia variant for this tag.</span>
             )
           ) : (
-            <CopyableCode>{entry.command}</CopyableCode>
+                        <CodeBlock language="bash">{entry.command}</CodeBlock>
           )}
         </li>
       ))}
@@ -387,7 +360,7 @@ export default function ImagesCatalogComponent(): React.JSX.Element {
                               <strong>NVIDIA</strong> {entry.versions?.nvidia || "Unknown"}
                             </span>
                           </div>
-                          <CopyableCode>{entry.nvidiaCommand}</CopyableCode>
+              <CodeBlock language="bash">{entry.nvidiaCommand}</CodeBlock>
                         </>
                       ) : (
                         <p className={styles.emptyText}>No Nvidia variant published for this stream tag.</p>
@@ -407,7 +380,7 @@ export default function ImagesCatalogComponent(): React.JSX.Element {
                             </span>
                           )}
                         </div>
-                        <CopyableCode>{entry.command}</CopyableCode>
+            <CodeBlock language="bash">{entry.command}</CodeBlock>
                       </>
                     )}
                   </TabItem>
@@ -452,7 +425,7 @@ export default function ImagesCatalogComponent(): React.JSX.Element {
                   </Link>
                   .
                 </p>
-                {product.security?.verifyCommand && <CopyableCode>{product.security.verifyCommand}</CopyableCode>}
+                {product.security?.verifyCommand && <CodeBlock language="bash">{product.security.verifyCommand}</CodeBlock>}
               </TabItem>
               <TabItem value="verify-provenance">
                 <p className={styles.tabCopy}>
@@ -463,7 +436,7 @@ export default function ImagesCatalogComponent(): React.JSX.Element {
                   </Link>
                   .
                 </p>
-                {product.security?.attestCommand && <CopyableCode>{product.security.attestCommand}</CopyableCode>}
+                {product.security?.attestCommand && <CodeBlock language="bash">{product.security.attestCommand}</CodeBlock>}
                 {product.security?.attestCommand && product.security.hasAttestation === false && (
                   <p className={styles.tabCopy}>
                     Note: attestations are not yet published for this image. The command is provided for when they are.
@@ -479,7 +452,7 @@ export default function ImagesCatalogComponent(): React.JSX.Element {
                   </Link>
                   .
                 </p>
-                {product.security?.sbomCommand && <CopyableCode>{product.security.sbomCommand}</CopyableCode>}
+                {product.security?.sbomCommand && <CodeBlock language="bash">{product.security.sbomCommand}</CodeBlock>}
               </TabItem>
             </Tabs>
           </section>
