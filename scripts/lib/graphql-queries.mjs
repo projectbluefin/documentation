@@ -377,9 +377,9 @@ export async function fetchClosedItemsFromRepo(
   startDate,
   endDate,
 ) {
+  // Declared outside try so partial results are preserved on mid-pagination error.
+  const allItems = [];
   try {
-    const allItems = [];
-
     // Paginate closed issues (server-side date filter via `since` keeps page count low)
     let issuesCursor = null;
     let issuesHasNextPage = true;
@@ -452,10 +452,11 @@ export async function fetchClosedItemsFromRepo(
     return allItems;
   } catch (error) {
     console.error(
-      `Error fetching closed items from ${owner}/${name}: ${error.message}`,
+      `Returning ${allItems.length} partial items before failure from ${owner}/${name}: ${error.message}`,
     );
-    // Return empty array instead of throwing - don't fail entire report for one repo
-    return [];
+    // Return partial results rather than empty array — avoids silently discarding
+    // items already fetched from earlier pages before the error occurred.
+    return allItems;
   }
 }
 
