@@ -121,6 +121,11 @@ const config: Config = {
   ],
 
   themeConfig: {
+    docs: {
+      sidebar: {
+        hideable: false,
+      },
+    },
     announcementBar: {
       id: "announcement",
       content:
