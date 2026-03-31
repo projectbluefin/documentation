@@ -731,7 +731,6 @@ const CombinedFeedItems: React.FC<CombinedFeedItemsProps> = ({
             releaseSummary,
           };
         }),
-      // eslint-disable-next-line react-hooks/exhaustive-deps
       [displayItems.map((i) => i.guid || i.id).join(",")],
     );
 
@@ -755,7 +754,6 @@ const CombinedFeedItems: React.FC<CombinedFeedItemsProps> = ({
             const {
               itemDescription,
               isRelease,
-              commits,
               supplyChainHighlights,
               displayTitle,
               supplyChainLinks,
