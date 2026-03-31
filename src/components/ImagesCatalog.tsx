@@ -3,7 +3,6 @@ import Link from "@docusaurus/Link";
 import Heading from "@theme/Heading";
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
-import imagesData from "@site/static/data/images.json";
 import styles from "./ImagesCatalog.module.css";
 
 interface StreamInfo {
@@ -63,8 +62,6 @@ interface ImagesCatalog {
   generatedAt?: string;
   products: Product[];
 }
-
-const catalog = imagesData as ImagesCatalog;
 
 function sourceText(source: "live" | "cache" | "unavailable", kind: string) {
   if (source === "live") return `${kind}: live`;
@@ -143,6 +140,27 @@ function formatDate(value?: string | null) {
 }
 
 export default function ImagesCatalogComponent(): React.JSX.Element {
+  const [catalog, setCatalog] = React.useState<ImagesCatalog>({ products: [] });
+
+  React.useEffect(() => {
+    let mounted = true;
+
+    fetch("/data/images.json")
+      .then((response) => (response.ok ? response.json() : null))
+      .then((data) => {
+        if (!mounted || !data || !Array.isArray(data.products)) return;
+        setCatalog(data as ImagesCatalog);
+      })
+      .catch(() => {
+        if (!mounted) return;
+        setCatalog({ products: [] });
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
   const products = Array.isArray(catalog?.products) ? catalog.products : [];
   const [nvidiaModeByProduct, setNvidiaModeByProduct] = React.useState<Record<string, boolean>>(
     {},

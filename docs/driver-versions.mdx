@@ -9,6 +9,19 @@ import DriverVersionsCatalog from "@site/src/components/DriverVersionsCatalog";
 
 Sometimes the raptor just gets you. This page tracks major driver versions across Bluefin releases to help users identify and switch to specific driver versions. Good for ruling out major components. Remember to rebase back to the release stream later if you want to see if your issue gets fixed, use `ujust rebase-helper` for that. Good luck, you got this.
 
+:::tip bootc switch preflight
+Before switching streams or pinning a dated tag, verify the target exists for your current image variant:
+
+```bash
+IMAGE_NAME=$(jq -r '."image-name"' < /usr/share/ublue-os/image-info.json)
+TARGET_TAG=stable
+skopeo inspect docker://ghcr.io/${IMAGE_NAME}:${TARGET_TAG} >/dev/null && \
+  sudo bootc switch --enforce-container-sigpolicy ghcr.io/${IMAGE_NAME}:${TARGET_TAG}
+```
+
+If you hit `manifest unknown`, the tag is not published for that image/stream pair.
+:::
+
 ## Stable
 
 <DriverVersionsCatalog streamId="bluefin-stable" />

@@ -19,6 +19,7 @@ const sidebars: SidebarsConfig = {
       label: "Documentation",
       collapsed: false,
       items: [
+        "index",
         "introduction",
         "installation",
         "administration",
