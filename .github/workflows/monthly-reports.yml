@@ -25,7 +25,17 @@ jobs:
           node-version: "24"
           cache: "npm"
 
+      - name: Cache node_modules
+        id: cache-node-modules
+        uses: actions/cache@v5
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            node-modules-${{ runner.os }}-
+
       - name: Install dependencies
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: npm ci
 
       - name: Generate monthly report

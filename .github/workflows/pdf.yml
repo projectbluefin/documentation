@@ -17,7 +17,17 @@ jobs:
 
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
 
+      - name: Cache Prince XML
+        id: cache-prince
+        uses: actions/cache@v5
+        with:
+          path: |
+            /usr/local/lib/prince
+            /usr/local/bin/prince
+          key: prince-15.4.1-linux-x86_64
+
       - name: Install Prince
+        if: steps.cache-prince.outputs.cache-hit != 'true'
         run: |
           curl https://www.princexml.com/download/prince-15.4.1-linux-generic-x86_64.tar.gz -O
           tar zxf prince-15.4.1-linux-generic-x86_64.tar.gz
