@@ -1,10 +1,11 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import useStoredFeed from "@theme/useStoredFeed";
 import styles from "./FeedItems.module.css";
 import {
   PACKAGE_PATTERNS,
   extractVersionChange,
 } from "../config/packageConfig";
+import githubProfilesData from "@site/static/data/github-profiles.json";
 
 // Small inline copy button — renders a clipboard icon, shows a tick for 1.5s after copy
 const CopyButton: React.FC<{ text: string }> = ({ text }) => {
@@ -111,6 +112,122 @@ interface CommitEntry {
   author: string;
 }
 
+interface SupplyChainHighlight {
+  keyword: string;
+  commit: CommitEntry;
+}
+
+interface SupplyChainLinks {
+  packageTagUrl: string | null;
+}
+
+interface ReleaseContributor {
+  login: string;
+  displayName: string;
+  html_url: string;
+  avatar_url: string;
+}
+
+interface ReleaseSummary {
+  commits: number;
+  packageUpdates: number;
+  newPackages: number;
+  removedPackages: number;
+  majorBumps: number;
+  supplyChainSignals: number;
+}
+
+const ContributorAvatar: React.FC<{
+  author: string;
+  contributor?: ReleaseContributor;
+}> = ({ author, contributor }) => {
+  const [imageError, setImageError] = useState(false);
+  const displayName = contributor?.displayName || author;
+  const profileUrl = contributor?.html_url || null;
+  const avatarUrl = contributor?.avatar_url || null;
+
+  const initials = displayName
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join("");
+
+  const avatarInner = !imageError && avatarUrl ? (
+    <img
+      src={avatarUrl}
+      alt={displayName}
+      className={styles.contributorAvatarImage}
+      onError={() => setImageError(true)}
+      loading="lazy"
+    />
+  ) : (
+    <span className={styles.contributorAvatarFallback}>{initials || "?"}</span>
+  );
+
+  if (profileUrl) {
+    return (
+      <span
+        className={styles.contributorAvatarLink}
+        role="link"
+        tabIndex={0}
+        onClick={(e) => {
+          e.stopPropagation();
+          window.open(profileUrl, "_blank", "noopener,noreferrer");
+        }}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            e.stopPropagation();
+            window.open(profileUrl, "_blank", "noopener,noreferrer");
+          }
+        }}
+        title={displayName}
+        aria-label={displayName}
+      >
+        <span className={styles.contributorAvatar}>{avatarInner}</span>
+      </span>
+    );
+  }
+
+  return (
+    <span className={styles.contributorAvatar} title={displayName} aria-label={displayName}>
+      {avatarInner}
+    </span>
+  );
+};
+
+interface MajorVersionBump {
+  name: string;
+  from: string;
+  to: string;
+}
+
+const ActionLinkButton: React.FC<{ label: string; url: string }> = ({
+  label,
+  url,
+}) => (
+  <span
+    className={styles.actionLinkButton}
+    role="link"
+    tabIndex={0}
+    onClick={(e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      window.open(url, "_blank", "noopener,noreferrer");
+    }}
+    onKeyDown={(e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        e.stopPropagation();
+        window.open(url, "_blank", "noopener,noreferrer");
+      }
+    }}
+  >
+    {label}
+  </span>
+);
+
 // Extract the Commits table from release HTML content
 const extractCommits = (content: string): CommitEntry[] => {
   if (!content) return [];
@@ -146,6 +263,160 @@ const extractCommits = (content: string): CommitEntry[] => {
   }
   return commits;
 };
+
+const SUPPLY_CHAIN_KEYWORDS = [
+  "sbom",
+  "attest",
+  "attestation",
+  "provenance",
+  "spdx",
+  "syft",
+  "cosign",
+  "oras",
+];
+
+const stripHtml = (input: string): string => input.replace(/<[^>]+>/g, " ");
+
+const extractSupplyChainHighlights = (
+  commits: CommitEntry[],
+): SupplyChainHighlight[] => {
+  const highlights: SupplyChainHighlight[] = [];
+
+  for (const commit of commits) {
+    const normalizedSubject = stripHtml(commit.subject).toLowerCase();
+    for (const keyword of SUPPLY_CHAIN_KEYWORDS) {
+      if (normalizedSubject.includes(keyword)) {
+        highlights.push({ keyword, commit });
+        break;
+      }
+    }
+  }
+
+  return highlights;
+};
+
+const extractReleaseTag = (title: string): string | null => {
+  const tagMatch = title.match(
+    /(stable-\d{8}|gts-\d{8}|beta-\d{8}|latest-\d{8}|lts[-.]\d{8})/i,
+  );
+  if (!tagMatch) return null;
+
+  const normalized = tagMatch[1].toLowerCase();
+  return normalized;
+};
+
+const getSupplyChainLinks = (title: string): SupplyChainLinks => {
+  const releaseTag = extractReleaseTag(title);
+
+  if (!releaseTag) {
+    return { packageTagUrl: null };
+  }
+
+  return {
+    packageTagUrl: `https://github.com/orgs/ublue-os/packages/container/bluefin?tag=${encodeURIComponent(releaseTag)}`,
+  };
+};
+
+const countMatches = (content: string, pattern: RegExp): number => {
+  const matches = content.match(pattern);
+  return matches ? matches.length : 0;
+};
+
+const parseMajorVersion = (value: string): number | null => {
+  const match = value.match(/\d+/);
+  if (!match) return null;
+  return Number.parseInt(match[0], 10);
+};
+
+const extractMajorVersionBumps = (content: string): MajorVersionBump[] => {
+  const bumps: MajorVersionBump[] = [];
+  const sectionRegex =
+    /<h3>Major(?: DX| GDX)? packages<\/h3>\s*<table[\s\S]*?<tbody>([\s\S]*?)<\/tbody>/gi;
+
+  const sections = content.matchAll(sectionRegex);
+  for (const section of sections) {
+    const tbody = section[1];
+    const rowRegex =
+      /<tr>\s*<td><strong>([^<]+)<\/strong><\/td>\s*<td>([^<]+)<\/td>\s*<\/tr>/g;
+    const rows = tbody.matchAll(rowRegex);
+
+    for (const row of rows) {
+      const name = row[1].trim();
+      const versionText = row[2].trim();
+      const split = versionText.split(/➡️|→/).map((part) => part.trim());
+
+      if (split.length < 2) continue;
+
+      const from = split[0];
+      const to = split[split.length - 1];
+      const fromMajor = parseMajorVersion(from);
+      const toMajor = parseMajorVersion(to);
+
+      if (fromMajor === null || toMajor === null) continue;
+      if (toMajor > fromMajor) {
+        bumps.push({ name, from, to });
+      }
+    }
+  }
+
+  return bumps;
+};
+
+const extractReleaseSummary = (
+  content: string,
+  commits: CommitEntry[],
+  supplyChainHighlights: SupplyChainHighlight[],
+  majorVersionBumps: MajorVersionBump[],
+): ReleaseSummary => ({
+  commits: commits.length,
+  packageUpdates: countMatches(content, /<td>🔄<\/td>/g),
+  newPackages: countMatches(content, /<td>✨<\/td>/g),
+  removedPackages: countMatches(content, /<td>❌<\/td>/g),
+  majorBumps: majorVersionBumps.length,
+  supplyChainSignals: supplyChainHighlights.length,
+});
+
+const getReleaseContributors = (commits: CommitEntry[]): string[] => {
+  const unique = new Set<string>();
+  for (const commit of commits) {
+    if (commit.author) {
+      unique.add(commit.author);
+    }
+  }
+  return Array.from(unique);
+};
+
+const normalizeName = (value: string): string =>
+  value
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+
+const PROFILE_LOOKUP: Record<string, ReleaseContributor> = (() => {
+  const lookup: Record<string, ReleaseContributor> = {};
+  const entries = Object.values(githubProfilesData as Record<string, any>);
+
+  for (const profile of entries) {
+    if (!profile?.login || !profile?.html_url || !profile?.avatar_url) continue;
+    const contributor: ReleaseContributor = {
+      login: profile.login,
+      displayName: profile.name || profile.login,
+      html_url: profile.html_url,
+      avatar_url: profile.avatar_url,
+    };
+
+    lookup[normalizeName(profile.login)] = contributor;
+    if (profile.name) {
+      lookup[normalizeName(profile.name)] = contributor;
+    }
+  }
+
+  return lookup;
+})();
+
+const getContributorForAuthor = (author: string): ReleaseContributor | undefined =>
+  PROFILE_LOOKUP[normalizeName(author)];
 
 // Helper function to extract key version changes from changelog content
 const extractVersionSummary = (content: string): VersionChange[] => {
@@ -419,6 +690,50 @@ const CombinedFeedItems: React.FC<CombinedFeedItemsProps> = ({
 
     const displayItems = tagged.slice(0, maxItems);
 
+    // Pre-compute all expensive per-item derived data in a single useMemo so
+    // the regex scans run once per feed update rather than on every render.
+    const derivedItems = useMemo(
+      () =>
+        displayItems.map((item) => {
+          const itemDescription =
+            item.description ||
+            (typeof item.content === "object"
+              ? item.content?.value
+              : item.content);
+          const isRelease = isReleaseFeed(item._feedId);
+          const commits =
+            isRelease && itemDescription
+              ? extractCommits(itemDescription)
+              : [];
+          const supplyChainHighlights = extractSupplyChainHighlights(commits);
+          const displayTitle = formatReleaseTitle(item.title, item._feedId);
+          const supplyChainLinks = getSupplyChainLinks(displayTitle);
+          const majorVersionBumps =
+            isRelease && itemDescription
+              ? extractMajorVersionBumps(itemDescription)
+              : [];
+          const contributors = getReleaseContributors(commits);
+          const releaseSummary = extractReleaseSummary(
+            itemDescription || "",
+            commits,
+            supplyChainHighlights,
+            majorVersionBumps,
+          );
+          return {
+            itemDescription,
+            isRelease,
+            commits,
+            supplyChainHighlights,
+            displayTitle,
+            supplyChainLinks,
+            majorVersionBumps,
+            contributors,
+            releaseSummary,
+          };
+        }),
+      [displayItems.map((i) => i.guid || i.id).join(",")],
+    );
+
     if (displayItems.length === 0) {
       return (
         <div className={styles.feedContainer}>
@@ -435,24 +750,26 @@ const CombinedFeedItems: React.FC<CombinedFeedItemsProps> = ({
           {displayItems.map((item, index) => {
             const itemLink = resolveItemLink(item, item._feedId);
             const itemDate = item.pubDate || item.updated;
-            const itemDescription =
-              item.description ||
-              (typeof item.content === "object"
-                ? item.content?.value
-                : item.content);
             const itemId = item.guid || item.id || itemLink || index;
-            const versionSummary =
-              isReleaseFeed(item._feedId) && itemDescription
-                ? extractVersionSummary(itemDescription)
-                : [];
-            const commits =
-              isReleaseFeed(item._feedId) && itemDescription
-                ? extractCommits(itemDescription)
-                : [];
-            const displayTitle = formatReleaseTitle(item.title, item._feedId);
+            const {
+              itemDescription,
+              isRelease,
+              supplyChainHighlights,
+              displayTitle,
+              supplyChainLinks,
+              majorVersionBumps,
+              contributors,
+              releaseSummary,
+            } = derivedItems[index];
+            const visibleContributors = contributors.slice(0, 8);
+            const overflowContributors = Math.max(contributors.length - 8, 0);
 
             const inner = (
               <div className={styles.feedItemContent}>
+                <div
+                  className={`${styles.cardArtwork} ${item._feedId === "bluefinLtsReleases" ? styles.cardArtworkLts : styles.cardArtworkMain}`}
+                  aria-hidden="true"
+                />
                 <div className={styles.feedItemHeader}>
                   <span
                     className={`${styles.feedLabel} ${item._feedId === "bluefinLtsReleases" ? styles.feedLabelLts : styles.feedLabelBluefin}`}
@@ -462,43 +779,106 @@ const CombinedFeedItems: React.FC<CombinedFeedItemsProps> = ({
                   <h4 className={styles.feedItemTitle}>{displayTitle}</h4>
                   <CopyButton text={displayTitle} />
                 </div>
+                {contributors.length > 0 && (
+                  <div className={styles.contributorsRow}>
+                    <span className={styles.contributorsLabel}>Contributors</span>
+                    <div className={styles.contributorsAvatars}>
+                      {visibleContributors.map((author) => (
+                        <ContributorAvatar
+                          key={author}
+                          author={author}
+                          contributor={getContributorForAuthor(author)}
+                        />
+                      ))}
+                      {overflowContributors > 0 && (
+                        <span className={styles.contributorOverflow}>
+                          +{overflowContributors}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
                 {itemDate && (
                   <time className={styles.feedItemDate}>
                     {formatLongDate(itemDate)}
                   </time>
                 )}
-                {versionSummary.length > 0 && (
-                  <ul className={styles.executiveSummary}>
-                    {versionSummary.map((change) => (
-                      <li key={change.name} className={styles.versionChange}>
-                        <strong>{change.name}:</strong> {change.change}
-                      </li>
-                    ))}
-                  </ul>
+                {isRelease && (
+                  <div className={styles.releaseSummaryBlock}>
+                    <div className={styles.releaseSummaryTitle}>Release Summary</div>
+                    <div className={styles.releaseSummaryGrid}>
+                      <span>
+                        <strong>{releaseSummary.commits}</strong> commits
+                      </span>
+                      <span>
+                        <strong>{releaseSummary.packageUpdates}</strong> package updates
+                      </span>
+                      <span>
+                        <strong>{releaseSummary.newPackages}</strong> additions
+                      </span>
+                      <span>
+                        <strong>{releaseSummary.removedPackages}</strong> removals
+                      </span>
+                      <span>
+                        <strong>{releaseSummary.majorBumps}</strong> major bumps
+                      </span>
+                    </div>
+                  </div>
                 )}
-                {commits.length > 0 && (
-                  <div
-                    className={styles.commitList}
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    {commits.map((c) => (
-                      <div key={c.hash} className={styles.commitRow}>
-                        <a
-                          href={c.hashUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className={styles.commitHash}
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          {c.hash}
-                        </a>
-                        <span
-                          className={styles.commitSubject}
-                          dangerouslySetInnerHTML={{ __html: c.subject }}
+                {majorVersionBumps.length > 0 && (
+                  <div className={styles.headsUpBlock}>
+                    <div className={styles.headsUpTitle}>
+                      Heads Up: Major Version Bumps
+                    </div>
+                    <ul className={styles.headsUpList}>
+                      {majorVersionBumps.map((bump) => (
+                        <li key={`${bump.name}-${bump.from}-${bump.to}`}>
+                          <strong>{bump.name}:</strong> {bump.from} -&gt; {bump.to}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {isRelease && (
+                  <div className={styles.supplyChainBlock}>
+                    <div className={styles.supplyChainTitle}>Supply Chain</div>
+                    {supplyChainHighlights.length > 0 ? (
+                      <ul className={styles.supplyChainList}>
+                        {supplyChainHighlights.map(({ keyword, commit }) => (
+                          <li key={`${commit.hash}-${keyword}`}>
+                            <ActionLinkButton
+                              label={commit.hash}
+                              url={commit.hashUrl}
+                            />{" "}
+                            includes <strong>{keyword}</strong>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className={styles.supplyChainEmpty}>
+                        No SBOM/provenance commits detected in this release yet.
+                      </p>
+                    )}
+                    <div className={styles.supplyChainLinks}>
+                      {supplyChainLinks.packageTagUrl && (
+                        <ActionLinkButton
+                          label="View package signatures"
+                          url={supplyChainLinks.packageTagUrl}
                         />
-                        <span className={styles.commitAuthor}>{c.author}</span>
-                      </div>
-                    ))}
+                      )}
+                      {supplyChainHighlights[0]?.commit.hashUrl && (
+                        <ActionLinkButton
+                          label="Open first attestation-related commit"
+                          url={supplyChainHighlights[0].commit.hashUrl}
+                        />
+                      )}
+                      {itemLink && (
+                        <ActionLinkButton
+                          label="Open full release notes"
+                          url={itemLink}
+                        />
+                      )}
+                    </div>
                   </div>
                 )}
                 {showDescription && itemDescription && (
