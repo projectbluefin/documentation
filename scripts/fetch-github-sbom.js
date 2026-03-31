@@ -159,8 +159,11 @@ async function fetchAllPackageVersions(org, pkg) {
     try {
       batch = await fetchJson(url);
     } catch (err) {
-      console.warn(`  Packages API page ${page} failed: ${err.message}`);
-      break;
+      // Rethrow so the caller (main) can preserve existing cache for this package
+      // rather than silently returning an empty result and clearing all releases.
+      throw new Error(
+        `Packages API page ${page} for ${org}/${pkg} failed: ${err.message}`,
+      );
     }
     if (!Array.isArray(batch) || batch.length === 0) break;
     versions.push(...batch);
@@ -254,16 +257,21 @@ async function verifyAttestation(imageRef, spec) {
         error: "no attestation",
       };
     }
+    // Unexpected tooling/registry/auth failure — do NOT claim present: true.
+    // Callers use present: false (no attestation) vs present: null (error/unknown)
+    // to distinguish absence from verification failure.
     return {
-      present: true,
+      present: null,
       verified: false,
       predicateType: null,
+      errorKind: "tooling",
       error: String(err.stderr || err.message),
     };
   }
 
-  // cosign outputs NDJSON (one JSON object per line)
-  const lines = (stdout + stderr)
+  // cosign outputs NDJSON (one JSON object per line) on stdout only;
+  // stderr carries status messages ("Verification OK") that must not be parsed.
+  const lines = stdout
     .split("\n")
     .map((l) => l.trim())
     .filter((l) => l.startsWith("{"));
@@ -547,6 +555,12 @@ function findRecentTagsForStream(allVersions, spec) {
       const dateStr = extractDateFromTag(normalised);
       if (!dateStr) continue;
 
+      // Enforce canonical tag: only exact `<streamPrefix>-YYYYMMDD` is accepted.
+      // Non-canonical variants like lts-hwe-testing-20260331 would normalise to
+      // lts-20260331 and silently overwrite valid canonical entries.
+      const expectedCanonical = `${spec.streamPrefix}-${dateStr}`;
+      if (normalised !== expectedCanonical) continue;
+
       found.push({
         tag: normalised,
         cacheKey: buildCacheKey(spec.streamPrefix, dateStr),
@@ -577,7 +591,18 @@ function findRecentTagsForStream(allVersions, spec) {
  */
 async function processStream(spec, allVersionsByPackage, existing) {
   const pkgKey = `${spec.org}/${spec.package}`;
-  const allVersions = allVersionsByPackage.get(pkgKey) || [];
+  // If the key is absent the Packages API fetch failed — preserve existing cache.
+  if (!allVersionsByPackage.has(pkgKey)) {
+    if (existing?.streams?.[spec.id]) {
+      console.log(
+        `  ${spec.id}: Packages API unavailable — keeping existing cache`,
+      );
+      return existing.streams[spec.id];
+    }
+    // No existing cache to fall back to; return empty stream.
+    return { ...spec, releases: {} };
+  }
+  const allVersions = allVersionsByPackage.get(pkgKey);
   const recentTags = findRecentTagsForStream(allVersions, spec);
 
   console.log(
@@ -616,6 +641,9 @@ async function processStream(spec, allVersionsByPackage, existing) {
         verified: attestation.verified,
         predicateType: attestation.predicateType,
         slsaType: SLSA_TYPE,
+        ...(attestation.errorKind !== undefined && {
+          errorKind: attestation.errorKind,
+        }),
         error: attestation.error,
       };
     }
@@ -714,7 +742,8 @@ async function main() {
       console.log(`    ${versions.length} versions fetched`);
     } catch (err) {
       console.error(`  Failed to fetch versions for ${key}: ${err.message}`);
-      allVersionsByPackage.set(key, []);
+      // Do NOT set an empty array — leave the key absent so processStream
+      // detects the fetch failure and preserves the existing cache instead.
     }
   }
 

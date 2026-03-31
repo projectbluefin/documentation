@@ -7,19 +7,29 @@
 export interface AttestationResult {
   /**
    * Whether a SLSA provenance attestation was found for this image.
+   * true  = attestation present and verified.
    * false = no attestation published (the command will fail if run).
+   * null  = verification could not complete due to a tooling/registry/auth
+   *         error; attestation existence is unknown.
    */
-  present: boolean;
+  present: boolean | null;
   /**
    * Whether the attestation passed cosign signature verification.
-   * false with present:true = attestation exists but verification failed.
+   * false with present:true  = attestation exists but verification failed.
    * false with present:false = attestation does not exist.
+   * false with present:null  = verification could not be attempted.
    */
   verified: boolean;
   /** SLSA predicate type URI, populated when present:true */
   predicateType: string | null;
   /** SLSA type URL used during verification */
   slsaType: string;
+  /**
+   * Error classification for present:null results.
+   * "tooling" = cosign/oras/registry error (transient or auth failure).
+   * Absent (undefined) for present:true/false results.
+   */
+  errorKind?: "tooling";
   /** Human-readable error string when present:false or verified:false */
   error: string | null;
 }

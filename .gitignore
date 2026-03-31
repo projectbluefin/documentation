@@ -12,8 +12,6 @@
 /docs/contributing.md
 /static/feeds/*.json
 /static/data/*.json
-# Seed file for SBOM attestation cache — must exist at build time
-!/static/data/sbom-attestations.json
 
 # Misc
 .DS_Store

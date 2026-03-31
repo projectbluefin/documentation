@@ -50,6 +50,7 @@ jobs:
           path: static/data
           key: github-data-${{ hashFiles('scripts/fetch-*.js') }}
           restore-keys: |
+            github-data-sbom-
             github-data-
 
       - name: Install dependencies
