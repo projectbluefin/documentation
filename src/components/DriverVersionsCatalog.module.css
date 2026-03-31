@@ -1,0 +1,312 @@
+.timelinePage {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: repeat(2, minmax(0, auto));
+  gap: 1rem;
+  padding-left: 2.35rem;
+}
+
+.archiveRail {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 1.9rem;
+  pointer-events: none;
+}
+
+.archiveRail::before {
+  content: "";
+  position: absolute;
+  left: 0.8rem;
+  top: 1.05rem;
+  bottom: 1.05rem;
+  width: 4px;
+  border-radius: 999px;
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--ifm-color-primary) 85%, #ffffff) 0%,
+    color-mix(in srgb, var(--ifm-color-primary) 55%, var(--ifm-color-emphasis-300)) 45%,
+    color-mix(in srgb, var(--ifm-color-emphasis-500) 72%, #6f7c8d) 100%
+  );
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ifm-color-primary) 16%, transparent);
+  transition: width 160ms ease, box-shadow 160ms ease, filter 160ms ease;
+}
+
+.timelinePage:has(.archiveDetails[open]) .archiveRail::before {
+  width: 5px;
+  filter: saturate(1.12);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ifm-color-primary) 26%, transparent);
+}
+
+.archiveNow,
+.archivePast {
+  position: absolute;
+  left: 0;
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.archiveNow {
+  top: 0;
+}
+
+.archivePast {
+  bottom: 0;
+}
+
+.streamSection {
+  position: relative;
+  padding: 0.25rem 0 0.5rem;
+  height: fit-content;
+}
+
+.streamHeader {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  align-items: flex-start;
+  margin-top: -0.45rem;
+  margin-bottom: 0.2rem;
+}
+
+.streamMeta {
+  font-size: 0.78rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 999px;
+  padding: 0.2rem 0.55rem;
+  background: var(--ifm-color-emphasis-100);
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.timeline {
+  margin-top: 0.85rem;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.timelineNode {
+  position: relative;
+}
+
+.nodeBody {
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 10px;
+  padding: 0.65rem;
+  background: color-mix(in srgb, var(--ifm-background-color) 94%, var(--ifm-color-emphasis-100));
+}
+
+.nodeBodyLatest {
+  border-color: color-mix(in srgb, var(--ifm-color-primary) 48%, var(--ifm-color-emphasis-300));
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--ifm-color-primary) 18%, transparent);
+}
+
+.nodeHeader {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  align-items: baseline;
+}
+
+.releaseTagLink {
+  text-decoration: none;
+}
+
+.releaseTag {
+  font-size: 1rem;
+  color: var(--ifm-color-emphasis-900);
+}
+
+.releaseDate {
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.84rem;
+}
+
+.majorVersions {
+  margin-top: 0.55rem;
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+}
+
+.majorVersionCard {
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 10px;
+  background: color-mix(in srgb, #2f74b5 10%, var(--ifm-background-color));
+  padding: 0.5rem 0.6rem;
+}
+
+.majorBump {
+  border-color: color-mix(in srgb, #d97b00 70%, var(--ifm-color-emphasis-300));
+  box-shadow: 0 0 0 2px color-mix(in srgb, #d97b00 28%, transparent);
+  background: color-mix(in srgb, #d97b00 14%, var(--ifm-background-color));
+}
+
+.nvidiaCard {
+  border-color: color-mix(in srgb, #76b900 55%, var(--ifm-color-emphasis-300));
+  background: color-mix(in srgb, #76b900 13%, var(--ifm-background-color));
+}
+
+.nvidiaMajorBump {
+  border-color: color-mix(in srgb, #76b900 82%, var(--ifm-color-emphasis-300));
+  box-shadow: 0 0 0 2px color-mix(in srgb, #76b900 35%, transparent);
+  background: color-mix(in srgb, #76b900 22%, var(--ifm-background-color));
+}
+
+.nvidiaMinorBump {
+  border-color: color-mix(in srgb, #76b900 68%, var(--ifm-color-emphasis-300));
+  box-shadow: 0 0 0 2px color-mix(in srgb, #76b900 24%, transparent);
+  background: color-mix(in srgb, #76b900 16%, var(--ifm-background-color));
+}
+
+.minorBump {
+  border-color: color-mix(in srgb, #9aa4b0 78%, var(--ifm-color-emphasis-300));
+  box-shadow: 0 0 0 2px color-mix(in srgb, #9aa4b0 26%, transparent);
+  background: color-mix(in srgb, #c7ccd3 24%, var(--ifm-background-color));
+}
+
+.majorVersionLabel {
+  display: block;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  font-size: 0.72rem;
+  color: var(--ifm-color-emphasis-700);
+  font-weight: 700;
+}
+
+.majorVersionValue {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 1.15rem;
+  line-height: 1.2;
+  font-weight: 800;
+  color: var(--ifm-color-emphasis-900);
+  word-break: break-word;
+}
+
+.versionMissing {
+  color: var(--ifm-color-emphasis-600);
+  font-style: italic;
+}
+
+.bumpTag {
+  display: inline-block;
+  margin-top: 0.35rem;
+  border: 1px solid color-mix(in srgb, #d97b00 70%, var(--ifm-color-emphasis-300));
+  border-radius: 999px;
+  padding: 0.08rem 0.42rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.minorTag {
+  display: inline-block;
+  margin-top: 0.35rem;
+  border: 1px solid color-mix(in srgb, #8f99a5 78%, var(--ifm-color-emphasis-300));
+  border-radius: 999px;
+  padding: 0.08rem 0.42rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--ifm-color-emphasis-800);
+  background: color-mix(in srgb, #d2d7de 38%, var(--ifm-background-color));
+}
+
+.rebaseInline {
+  margin-top: 0.6rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+  padding: 0.45rem 0.55rem;
+  background: var(--ifm-background-color);
+}
+
+.rebaseInlineLabel {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--ifm-color-emphasis-700);
+  margin-bottom: 0.25rem;
+}
+
+.rebaseInline code {
+  display: block;
+  word-break: break-word;
+}
+
+.commandBlock :global(.theme-code-block) {
+  display: inline-block;
+  width: auto;
+  max-width: 100%;
+  margin-top: 0.15rem;
+  margin-bottom: 0;
+}
+
+.commandBlock :global(button[class*="copyButton"]) {
+  opacity: 1;
+}
+
+.commandBlock :global([class*="buttonGroup"] button) {
+  opacity: 1 !important;
+}
+
+.commandBlock :global(pre) {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.archiveTimeline {
+  margin-top: 0.7rem;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.emptyText {
+  margin: 0.65rem 0 0;
+  color: var(--ifm-color-emphasis-600);
+}
+
+.rebaseSection {
+  margin-top: 0.9rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 10px;
+  padding: 0.65rem;
+  background: color-mix(in srgb, #2f9e7f 10%, var(--ifm-background-color));
+}
+
+.rebaseTitle {
+  margin: 0;
+  font-size: 0.98rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.rebaseList {
+  margin: 0.5rem 0 0;
+  padding-left: 1.15rem;
+}
+
+.rebaseList li {
+  margin-bottom: 0.45rem;
+}
+
+.rebaseList li:last-child {
+  margin-bottom: 0;
+}
+
+.rebaseList code {
+  display: inline-block;
+  margin-top: 0.3rem;
+  word-break: break-word;
+}

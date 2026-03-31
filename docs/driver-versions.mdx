@@ -3,7 +3,7 @@ tags:
   - drivers
 ---
 
-import DriverVersionsTable from "@site/src/components/DriverVersionsTable";
+import DriverVersionsCatalog from "@site/src/components/DriverVersionsCatalog";
 
 # Driver Versions
 
@@ -13,79 +13,10 @@ This page tracks major driver versions across Bluefin releases to help users ide
 
 [@ublue-os/bluefin](https://github.com/ublue-os/bluefin) and [@ublue-os/bluefin-lts](https://github.com/ublue-os/bluefin-lts) publish detailed changelogs with every release that include kernel versions, Mesa driver versions, and NVIDIA driver versions. This report consolidates that information for the most recent Stable and LTS releases to help users troubleshoot driver-specific issues or test specific configurations.
 
-<DriverVersionsTable />
+## Stable
 
-:::info NVIDIA Availability
-NVIDIA driver versions are only listed in NVIDIA-specific image variants. Non-NVIDIA images do not include kmod-nvidia packages.
-:::
+<DriverVersionsCatalog streamId="bluefin-stable" />
 
-## How to Switch to a Specific Version
+## LTS
 
-To switch to any of these versions, use the `bootc switch` command with signature enforcement based on [@bootc-dev/bootc](https://github.com/containers/bootc):
-
-### Bluefin Stream
-
-```bash
-# Get your current image name
-IMAGE_NAME=$(jq -r '."image-name"' < /usr/share/ublue-os/image-info.json)
-
-# Switch to latest stable
-sudo bootc switch --enforce-container-sigpolicy ghcr.io/ublue-os/$IMAGE_NAME:stable
-
-# Switch to a specific stable version
-sudo bootc switch --enforce-container-sigpolicy ghcr.io/ublue-os/$IMAGE_NAME:stable-20251012
-
-# Switch to an older stable version (e.g., stable-20250928)
-sudo bootc switch --enforce-container-sigpolicy ghcr.io/ublue-os/$IMAGE_NAME:stable-20250928
-
-# Reboot to apply changes
-sudo systemctl reboot
-```
-
-### Bluefin LTS Stream
-
-```bash
-# Get your current image name
-IMAGE_NAME=$(jq -r '."image-name"' < /usr/share/ublue-os/image-info.json)
-
-# Switch to latest LTS
-sudo bootc switch --enforce-container-sigpolicy ghcr.io/ublue-os/$IMAGE_NAME:lts
-
-# Switch to a specific LTS version
-sudo bootc switch --enforce-container-sigpolicy ghcr.io/ublue-os/$IMAGE_NAME:lts.20251006
-
-# Reboot to apply changes
-sudo systemctl reboot
-```
-
-:::tip Finding Your Current Version
-Check your current Bluefin version with:
-
-```bash
-bootc status
-```
-
-:::
-
-:::info Signature Enforcement
-The `--enforce-container-sigpolicy` flag ensures you're always running a signed image, maintaining security and integrity of your system.
-:::
-
-## Testing & Rollback Strategy
-
-### For Users Testing Driver Issues
-
-1. **Identify the suspected problematic version** from the table above
-2. **Switch to the previous stable version** using `bootc switch`
-3. **Test your specific use case** (desktop performance, hardware compatibility, etc.)
-4. **Report findings** in the [@ublue-os/bluefin](https://github.com/ublue-os/bluefin) issue tracker with specific version numbers
-
-## References
-
-- [@ublue-os/bluefin](https://github.com/ublue-os/bluefin) - Stable releases
-- [@ublue-os/bluefin-lts](https://github.com/ublue-os/bluefin-lts) - LTS releases
-- [Bluefin Releases](https://github.com/ublue-os/bluefin/releases) - Stable releases
-- [Bluefin LTS Releases](https://github.com/ublue-os/bluefin-lts/releases) - LTS releases
-- [Bluefin Documentation](https://docs.projectbluefin.io/) - Official docs
-- [Bluefin LTS Documentation](https://docs.projectbluefin.io/lts) - LTS-specific docs
-- [@bootc-dev/bootc](https://github.com/containers/bootc) - Bootc reference
+<DriverVersionsCatalog streamId="bluefin-lts" />
