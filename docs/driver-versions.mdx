@@ -15,8 +15,8 @@ Before switching streams or pinning a dated tag, verify the target exists for yo
 ```bash
 IMAGE_NAME=$(jq -r '."image-name"' < /usr/share/ublue-os/image-info.json)
 TARGET_TAG=stable
-skopeo inspect docker://ghcr.io/ublue-os/${IMAGE_NAME}:${TARGET_TAG} >/dev/null
-sudo bootc switch --enforce-container-sigpolicy ghcr.io/ublue-os/${IMAGE_NAME}:${TARGET_TAG}
+skopeo inspect docker://ghcr.io/${IMAGE_NAME}:${TARGET_TAG} >/dev/null && \
+  sudo bootc switch --enforce-container-sigpolicy ghcr.io/${IMAGE_NAME}:${TARGET_TAG}
 ```
 
 If you hit `manifest unknown`, the tag is not published for that image/stream pair.
