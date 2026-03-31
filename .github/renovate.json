@@ -1,0 +1,15 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "packageRules": [
+    {
+      "description": "Group eslint and @typescript-eslint together — they must update as a unit because @typescript-eslint has a peer dep on specific eslint and typescript versions",
+      "matchPackageNames": [
+        "eslint",
+        "@typescript-eslint/eslint-plugin",
+        "@typescript-eslint/parser"
+      ],
+      "groupName": "eslint monorepo",
+      "groupSlug": "eslint-monorepo"
+    }
+  ]
+}
