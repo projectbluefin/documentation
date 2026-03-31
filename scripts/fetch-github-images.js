@@ -383,8 +383,12 @@ function buildSecurityInfo(spec, inspectTag) {
   const hasNoPipeline = !isKeyless && !cosignKeyUrl;
 
   // Keyless: GitHub OIDC / Sigstore — certificate-based, no public key file.
+  // The OIDC identity is derived from keyRepo so LTS/GDX variants resolve to their own
+  // workflow repo automatically. We use --certificate-identity-regexp with a ^ anchor so
+  // any workflow file under .github/workflows/ in the signing repo is accepted (the exact
+  // workflow filename may differ across streams).
   const OIDC_ISSUER = "https://token.actions.githubusercontent.com";
-  const OIDC_IDENTITY = `https://github.com/ublue-os/bluefin/.github/workflows/reusable-build.yml@refs/heads/main`;
+  const OIDC_IDENTITY_PREFIX = `^https://github.com/${spec.keyRepo}/.github/workflows/`;
   const SLSA_TYPE = "https://slsa.dev/provenance/v1";
 
   if (hasNoPipeline) {
@@ -400,8 +404,8 @@ function buildSecurityInfo(spec, inspectTag) {
   if (isKeyless) {
     return {
       cosignKeyUrl: null,
-      verifyCommand: `cosign verify --certificate-oidc-issuer ${OIDC_ISSUER} --certificate-identity ${OIDC_IDENTITY} ${imageRef}`,
-      attestCommand: `cosign verify-attestation --type ${SLSA_TYPE} --certificate-oidc-issuer ${OIDC_ISSUER} --certificate-identity ${OIDC_IDENTITY} ${imageRef}`,
+      verifyCommand: `cosign verify --certificate-oidc-issuer ${OIDC_ISSUER} --certificate-identity-regexp '${OIDC_IDENTITY_PREFIX}' ${imageRef}`,
+      attestCommand: `cosign verify-attestation --type ${SLSA_TYPE} --certificate-oidc-issuer ${OIDC_ISSUER} --certificate-identity-regexp '${OIDC_IDENTITY_PREFIX}' ${imageRef}`,
       hasAttestation: true,
       sbomCommand: `syft scan ${imageRef} -o spdx-json`,
     };
