@@ -52,7 +52,7 @@ The AI workstation with Nvidia and CUDA.\
 
 | Version     | GPU           | Download                                                                                 | Torrent | Checksum                                                                     |
 | ----------- | ------------- | ---------------------------------------------------------------------------------------- | ------- | ---------------------------------------------------------------------------- |
-| Bluefin GDX | Nvidia        | [📥 bluefin-gdx-x86_64.iso](https://projectbluefin.dev/bluefin-gdx-lts-x86_64.iso)       |         | [🔐 Verify](https://projectbluefin.dev/bluefin-gdx-lts-x86_64.iso-CHECKSUM)  |
+| Bluefin GDX | Nvidia        | [📥 bluefin-gdx-lts-x86_64.iso](https://projectbluefin.dev/bluefin-gdx-lts-x86_64.iso)   |         | [🔐 Verify](https://projectbluefin.dev/bluefin-gdx-lts-x86_64.iso-CHECKSUM)  |
 | Bluefin GDX | ARM (aarch64) | [📥 bluefin-gdx-lts-aarch64.iso](https://projectbluefin.dev/bluefin-gdx-lts-aarch64.iso) |         | [🔐 Verify](https://projectbluefin.dev/bluefin-gdx-lts-aarch64.iso-CHECKSUM) |
 
 ## Verifying Downloads with Checksums
