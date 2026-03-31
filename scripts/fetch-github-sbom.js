@@ -5,7 +5,7 @@
  * and writes the result to static/data/sbom-attestations.json.
  *
  * Runs only from .github/workflows/update-sbom-cache.yml — not part of the
- * shared fetch-data chain (pages.yml doesn't install cosign).
+ * shared fetch-data chain (pages.yml doesn't install cosign/oras).
  *
  * Key design decisions:
  *  - Tag pattern: GHCR uses <stream>-<YYYYMMDD> (e.g. stable-20260331).
@@ -17,11 +17,21 @@
  *  - Pagination: GitHub Packages API is paginated; we fetch all pages.
  *  - Failure modes: present:false = no attestation published;
  *                   verified:false = attestation exists but verification failed.
+ *  - SBOM download: uses `oras discover` to find the vnd.spdx+json referrer
+ *    digest, then `oras pull` to download sbom.json into a temp directory.
+ *    The Syft JSON is parsed for RPM artifacts to extract packageVersions.
+ *  - SBOM cache: keyed by image digest — if the digest hasn't changed AND
+ *    packageVersions is non-null, the existing cache entry is reused.
+ *  - NVIDIA: intentionally absent from SBOM (akmod, built outside the image).
+ *    Consumers fall back to releases/feeds for NVIDIA versions.
+ *  - Atomic write: output is written to a temp file then renamed to avoid
+ *    leaving a truncated JSON file if the process is interrupted.
  */
 
 "use strict";
 
 const fs = require("fs");
+const os = require("os");
 const path = require("path");
 const { execFile } = require("child_process");
 const { promisify } = require("util");
@@ -54,6 +64,9 @@ const OIDC_ISSUER = "https://token.actions.githubusercontent.com";
 /**
  * Streams to scan.  keyRepo drives the OIDC identity regexp used by cosign.
  * package is the GHCR container package name under the org.
+ *
+ * NOTE: bluefin-lts uses key-based signing (keyless: false).
+ * The main bluefin streams use OIDC keyless signing (keyless: true).
  */
 const STREAM_SPECS = [
   {
@@ -90,7 +103,7 @@ const STREAM_SPECS = [
     package: "bluefin",
     streamPrefix: "lts",
     keyRepo: "ublue-os/bluefin-lts",
-    keyless: true,
+    keyless: false, // LTS uses key-based signing, not OIDC keyless
   },
   {
     id: "bluefin-dx-stable",
@@ -174,10 +187,12 @@ function extractDateFromTag(tag) {
 }
 
 /**
- * Normalise an lts.YYYYMMDD tag to the lts-YYYYMMDD cache-key format.
+ * Normalise an lts.YYYYMMDD tag (and any suffix) to lts-YYYYMMDD format.
+ * Handles: lts.20260331 → lts-20260331
+ *          lts.20260331-hwe → lts-20260331-hwe
  */
 function normaliseLtsTag(tag) {
-  return tag.replace(/^lts\.(\d{8})$/, "lts-$1");
+  return tag.replace(/^lts\.(\d{8})(.*)?$/, "lts-$1$2");
 }
 
 /**
@@ -272,6 +287,240 @@ async function verifyAttestation(imageRef, spec) {
 }
 
 // ---------------------------------------------------------------------------
+// SBOM download via oras
+// ---------------------------------------------------------------------------
+
+/**
+ * Download the Syft SBOM for an image from GHCR via oras.
+ *
+ * Steps:
+ *   1. oras discover --format json <imageRef>@<digest>
+ *      → find referrer with artifactType == "application/vnd.spdx+json"
+ *   2. oras pull <imageRef>@<sbomDigest> --output <tmpdir>
+ *   3. Return path to the pulled sbom.json
+ *
+ * Returns null on any error (caller treats packageVersions as null).
+ */
+async function downloadSbom(imageRef, digest) {
+  if (!digest) {
+    console.warn("    downloadSbom: no digest available, skipping");
+    return null;
+  }
+
+  const ref = `${imageRef.replace(/:.*$/, "")}@${digest}`;
+  let tmpDir = null;
+
+  try {
+    // Step 1: discover referrers
+    const discoverResult = await execFileAsync(
+      "oras",
+      ["discover", "--format", "json", ref],
+      {
+        env: { ...process.env },
+        maxBuffer: 4 * 1024 * 1024,
+        timeout: 60000,
+      },
+    );
+
+    let referrers = [];
+    try {
+      const discovered = JSON.parse(discoverResult.stdout);
+      // oras discover --format json returns { manifests: [...] }
+      referrers = discovered?.manifests || discovered?.referrers || [];
+    } catch {
+      console.warn("    downloadSbom: failed to parse oras discover output");
+      return null;
+    }
+
+    const sbomReferrer = referrers.find(
+      (r) =>
+        r?.artifactType === "application/vnd.spdx+json" ||
+        r?.mediaType === "application/vnd.spdx+json",
+    );
+
+    if (!sbomReferrer) {
+      console.warn(`    downloadSbom: no SPDX referrer found for ${digest}`);
+      return null;
+    }
+
+    const sbomDigest = sbomReferrer.digest;
+    if (!sbomDigest) {
+      console.warn("    downloadSbom: referrer has no digest");
+      return null;
+    }
+
+    // Step 2: pull SBOM into temp directory
+    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "bluefin-sbom-"));
+    const sbomRef = `${imageRef.replace(/:.*$/, "")}@${sbomDigest}`;
+
+    await execFileAsync("oras", ["pull", sbomRef, "--output", tmpDir], {
+      env: { ...process.env },
+      maxBuffer: 8 * 1024 * 1024,
+      timeout: 120000,
+    });
+
+    // SBOM file may be named sbom.json or spdx.json
+    const candidates = ["sbom.json", "spdx.json"];
+    for (const candidate of candidates) {
+      const candidate_path = path.join(tmpDir, candidate);
+      if (fs.existsSync(candidate_path)) {
+        return candidate_path;
+      }
+    }
+
+    // Fallback: find first .json file in tmpdir
+    const files = fs.readdirSync(tmpDir).filter((f) => f.endsWith(".json"));
+    if (files.length > 0) {
+      return path.join(tmpDir, files[0]);
+    }
+
+    console.warn("    downloadSbom: no JSON file found after oras pull");
+    return null;
+  } catch (err) {
+    console.warn(`    downloadSbom: error — ${err.message}`);
+    return null;
+  }
+  // Note: tmpDir cleanup happens in the caller (extractPackageVersions wrapper)
+}
+
+/**
+ * Compare two RPM-style version strings numerically by segment.
+ * Returns negative if a < b, positive if a > b, 0 if equal.
+ * Example: "6.18.2-200.fc43" vs "6.18.13-200.fc43" → "6.18.2" < "6.18.13"
+ */
+function compareRpmVersions(a, b) {
+  // Split on non-alphanumeric boundaries, compare each segment numerically if possible
+  const segA = a.split(/[.\-~]/).filter(Boolean);
+  const segB = b.split(/[.\-~]/).filter(Boolean);
+  const len = Math.max(segA.length, segB.length);
+  for (let i = 0; i < len; i++) {
+    const sa = segA[i] || "0";
+    const sb = segB[i] || "0";
+    const na = parseInt(sa, 10);
+    const nb = parseInt(sb, 10);
+    if (!isNaN(na) && !isNaN(nb)) {
+      if (na !== nb) return na - nb;
+    } else {
+      const cmp = sa.localeCompare(sb);
+      if (cmp !== 0) return cmp;
+    }
+  }
+  return 0;
+}
+
+/**
+ * Strip RPM epoch prefix ("1:") from a version string.
+ * "1:25.3.6-6.fc43" → "25.3.6-6.fc43"
+ */
+function stripEpoch(version) {
+  if (!version) return version;
+  return version.replace(/^\d+:/, "");
+}
+
+/**
+ * Extract package versions from a Syft SBOM JSON file.
+ * Returns a PackageVersions object or null on parse failure.
+ *
+ * Package mapping:
+ *   kernel   → name == "kernel", pick lowest semver (booted kernel, not the newer alongside)
+ *   gnome    → name == "gnome-shell"
+ *   mesa     → name == "mesa-filesystem", strip epoch prefix
+ *   podman   → name == "podman"
+ *   systemd  → name == "systemd"
+ *   bootc    → name == "bootc"
+ *   fedora   → name == "fedora-release-common", extract leading digits → "F" + digits
+ */
+function extractPackageVersions(sbomPath) {
+  if (!sbomPath) return null;
+
+  let sbom;
+  try {
+    const raw = fs.readFileSync(sbomPath, "utf-8");
+    sbom = JSON.parse(raw);
+  } catch (err) {
+    console.warn(
+      `    extractPackageVersions: failed to parse SBOM — ${err.message}`,
+    );
+    return null;
+  }
+
+  const artifacts = sbom?.artifacts;
+  if (!Array.isArray(artifacts)) {
+    console.warn("    extractPackageVersions: no artifacts array in SBOM");
+    return null;
+  }
+
+  // Only RPM artifacts
+  const rpms = artifacts.filter((a) => a?.type === "rpm");
+
+  const result = {
+    kernel: null,
+    gnome: null,
+    mesa: null,
+    podman: null,
+    systemd: null,
+    bootc: null,
+    fedora: null,
+  };
+
+  // Collect all kernel versions to pick the lowest (booted kernel)
+  const kernelVersions = [];
+
+  for (const pkg of rpms) {
+    const name = pkg?.name;
+    const version = pkg?.version;
+    if (!name || !version) continue;
+
+    switch (name) {
+      case "kernel":
+        kernelVersions.push(String(version));
+        break;
+      case "gnome-shell":
+        if (!result.gnome) result.gnome = String(version);
+        break;
+      case "mesa-filesystem":
+        if (!result.mesa) result.mesa = stripEpoch(String(version));
+        break;
+      case "podman":
+        if (!result.podman) result.podman = String(version);
+        break;
+      case "systemd":
+        if (!result.systemd) result.systemd = String(version);
+        break;
+      case "bootc":
+        if (!result.bootc) result.bootc = String(version);
+        break;
+      case "fedora-release-common": {
+        if (!result.fedora) {
+          // Strip any epoch prefix, then extract leading integer
+          const stripped = stripEpoch(String(version));
+          const fedoraMatch = stripped.match(/^(\d+)/);
+          if (fedoraMatch) {
+            result.fedora = `F${fedoraMatch[1]}`;
+          }
+        }
+        break;
+      }
+    }
+  }
+
+  // Pick the lowest kernel version (the booted kernel, not a newer pending update)
+  if (kernelVersions.length === 0) {
+    console.warn("    extractPackageVersions: no kernel RPM found in SBOM");
+  } else {
+    if (kernelVersions.length > 1) {
+      console.log(
+        `    extractPackageVersions: found ${kernelVersions.length} kernel versions, picking lowest`,
+      );
+    }
+    kernelVersions.sort(compareRpmVersions);
+    result.kernel = kernelVersions[0];
+  }
+
+  return result;
+}
+
+// ---------------------------------------------------------------------------
 // Per-stream scanning
 // ---------------------------------------------------------------------------
 
@@ -336,28 +585,76 @@ async function processStream(spec, allVersionsByPackage, existing) {
 
   const releases = {};
   for (const { tag, cacheKey, imageRef, digest } of recentTags) {
-    // Check if we already have a verified result in the existing cache
+    // Cache hit: reuse if digest matches AND packageVersions is already populated.
+    // If packageVersions is null (e.g. SBOM download previously failed), retry.
     const existingEntry = existing?.streams?.[spec.id]?.releases?.[cacheKey];
-    if (!FORCE_REFRESH && existingEntry?.verified === true) {
-      console.log(`    ${cacheKey}: cache hit (already verified)`);
+    const digestMatches = existingEntry?.digest === digest;
+    const hasVersions = existingEntry?.packageVersions != null;
+    const isVerified = existingEntry?.attestation?.verified === true;
+
+    if (!FORCE_REFRESH && digestMatches && isVerified && hasVersions) {
+      console.log(
+        `    ${cacheKey}: cache hit (digest match, verified, versions populated)`,
+      );
       releases[cacheKey] = existingEntry;
       continue;
     }
 
-    console.log(`    ${cacheKey}: verifying attestation for ${imageRef}`);
-    const attestation = await verifyAttestation(imageRef, spec);
-
-    releases[cacheKey] = {
-      tag,
-      imageRef,
-      digest,
-      attestation: {
+    // Partial cache hit: attestation already verified but SBOM not yet downloaded
+    let attestation;
+    if (!FORCE_REFRESH && digestMatches && isVerified && !hasVersions) {
+      console.log(
+        `    ${cacheKey}: attestation cached, fetching SBOM packageVersions`,
+      );
+      attestation = existingEntry.attestation;
+    } else {
+      console.log(`    ${cacheKey}: verifying attestation for ${imageRef}`);
+      attestation = await verifyAttestation(imageRef, spec);
+      attestation = {
         present: attestation.present,
         verified: attestation.verified,
         predicateType: attestation.predicateType,
         slsaType: SLSA_TYPE,
         error: attestation.error,
-      },
+      };
+    }
+
+    // Download and parse SBOM to extract packageVersions
+    let packageVersions = null;
+    let sbomPath = null;
+    let tmpDir = null;
+    try {
+      sbomPath = await downloadSbom(imageRef, digest);
+      if (sbomPath) {
+        tmpDir = path.dirname(sbomPath);
+        packageVersions = extractPackageVersions(sbomPath);
+        if (packageVersions) {
+          console.log(
+            `    ${cacheKey}: extracted packageVersions (kernel: ${packageVersions.kernel})`,
+          );
+        }
+      }
+    } catch (err) {
+      console.warn(
+        `    ${cacheKey}: SBOM download/parse error — ${err.message}`,
+      );
+    } finally {
+      // Clean up temp directory
+      if (tmpDir) {
+        try {
+          fs.rmSync(tmpDir, { recursive: true, force: true });
+        } catch {
+          // ignore cleanup errors
+        }
+      }
+    }
+
+    releases[cacheKey] = {
+      tag,
+      imageRef,
+      digest,
+      attestation,
+      packageVersions,
       checkedAt: new Date().toISOString(),
     };
   }
@@ -408,11 +705,10 @@ async function main() {
     `Fetching package versions for ${uniquePackages.size} package(s)...`,
   );
   const allVersionsByPackage = new Map();
-  for (const [key, { org, pkg: pkgName }] of uniquePackages) {
-    const pkg = pkgName || key.split("/")[1];
+  for (const [key, { org, package: pkgName }] of uniquePackages) {
     console.log(`  ${key}`);
     try {
-      const versions = await fetchAllPackageVersions(org, pkg);
+      const versions = await fetchAllPackageVersions(org, pkgName);
       allVersionsByPackage.set(key, versions);
       console.log(`    ${versions.length} versions fetched`);
     } catch (err) {
@@ -445,9 +741,12 @@ async function main() {
     streams,
   };
 
+  // Atomic write: write to temp file then rename to avoid truncated JSON on interrupt
   const outDir = path.dirname(OUTPUT_FILE);
   if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
-  fs.writeFileSync(OUTPUT_FILE, JSON.stringify(output, null, 2), "utf-8");
+  const tmpFile = OUTPUT_FILE + ".tmp";
+  fs.writeFileSync(tmpFile, JSON.stringify(output, null, 2), "utf-8");
+  fs.renameSync(tmpFile, OUTPUT_FILE);
   console.log(`\nSBOM attestation cache written to ${OUTPUT_FILE}`);
 }
 
