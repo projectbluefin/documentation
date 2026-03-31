@@ -439,7 +439,7 @@ export default function ImagesCatalogComponent(): React.JSX.Element {
                 <p className={styles.tabCopy}>
                   SBOM generation gives you a component inventory for audits, policy checks, and vulnerability triage workflows.
                   {" "}
-                  <Link to="https://openssf.org/projects/sbom-everywhere/" target="_blank" rel="noopener noreferrer">
+                  <Link to="https://github.com/anchore/syft" target="_blank" rel="noopener noreferrer">
                     Learn more
                   </Link>
                   .

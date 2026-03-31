@@ -53,7 +53,7 @@ const PRODUCT_SPECS = [
     summary: "Long-term support Bluefin stream.",
     streamOrder: ["lts"],
     versionSource: { feed: "lts", stream: "lts" },
-    keyRepo: "ublue-os/bluefin",
+    keyRepo: "ublue-os/bluefin-lts",
     nvidiaPackage: "bluefin-nvidia-open",
     nvidiaTagFallback: { lts: "latest" },
     allowTestingStreams: true,
@@ -68,7 +68,7 @@ const PRODUCT_SPECS = [
     summary: "Long-term support Bluefin DX stream.",
     streamOrder: ["lts"],
     versionSource: { feed: "lts", stream: "lts" },
-    keyRepo: "ublue-os/bluefin",
+    keyRepo: "ublue-os/bluefin-lts",
     nvidiaPackage: "bluefin-dx-nvidia-open",
     nvidiaTagFallback: { lts: "latest" },
     allowTestingStreams: true,
@@ -368,24 +368,49 @@ function attachNvidiaTestingCommands(streams, spec, nvidiaTagSet) {
 }
 
 function buildSecurityInfo(spec, inspectTag) {
-  let cosignKeyUrl = null;
-  if (spec.keyRepo === "ublue-os/bluefin") {
-    cosignKeyUrl = "https://raw.githubusercontent.com/ublue-os/bluefin/main/cosign.pub";
-  }
-  if (spec.keyRepo === "ublue-os/bluefin-lts") {
-    cosignKeyUrl = "https://raw.githubusercontent.com/ublue-os/bluefin-lts/main/cosign.pub";
+  const imageRef = `ghcr.io/${spec.org}/${spec.package}:${inspectTag}`;
+
+  // Mainline bluefin images (stable/latest/beta streams) use GitHub OIDC keyless signing.
+  // LTS images use traditional key-based signing with cosign.pub from the lts repo.
+  // Dakota has no signing pipeline — commands are omitted.
+  const KEYLESS_REPOS = ["ublue-os/bluefin"];
+  const KEY_REPOS = {
+    "ublue-os/bluefin-lts": "https://raw.githubusercontent.com/ublue-os/bluefin-lts/main/cosign.pub",
+  };
+
+  const isKeyless = KEYLESS_REPOS.includes(spec.keyRepo);
+  const cosignKeyUrl = KEY_REPOS[spec.keyRepo] || null;
+  const hasNoPipeline = !isKeyless && !cosignKeyUrl;
+
+  // Keyless: GitHub OIDC / Sigstore — certificate-based, no public key file.
+  const OIDC_ISSUER = "https://token.actions.githubusercontent.com";
+  const OIDC_IDENTITY = `https://github.com/ublue-os/bluefin/.github/workflows/reusable-build.yml@refs/heads/main`;
+  const SLSA_TYPE = "https://slsa.dev/provenance/v1";
+
+  if (hasNoPipeline) {
+    return {
+      cosignKeyUrl: null,
+      verifyCommand: null,
+      attestCommand: null,
+      sbomCommand: `syft scan ${imageRef} -o spdx-json`,
+    };
   }
 
-  const imageRef = `ghcr.io/${spec.org}/${spec.package}:${inspectTag}`;
+  if (isKeyless) {
+    return {
+      cosignKeyUrl: null,
+      verifyCommand: `cosign verify --certificate-oidc-issuer ${OIDC_ISSUER} --certificate-identity ${OIDC_IDENTITY} ${imageRef}`,
+      attestCommand: `cosign verify-attestation --type ${SLSA_TYPE} --certificate-oidc-issuer ${OIDC_ISSUER} --certificate-identity ${OIDC_IDENTITY} ${imageRef}`,
+      sbomCommand: `syft scan ${imageRef} -o spdx-json`,
+    };
+  }
+
+  // Key-based signing (LTS, GDX).
   return {
     cosignKeyUrl,
-    verifyCommand: cosignKeyUrl
-      ? `cosign verify --key ${cosignKeyUrl} ${imageRef}`
-      : `cosign verify ${imageRef}`,
-    attestCommand: cosignKeyUrl
-      ? `cosign verify-attestation --type slsaprovenance --key ${cosignKeyUrl} ${imageRef}`
-      : `cosign verify-attestation --type slsaprovenance ${imageRef}`,
-    sbomCommand: `syft ${imageRef} -o spdx-json`,
+    verifyCommand: `cosign verify --key ${cosignKeyUrl} ${imageRef}`,
+    attestCommand: `cosign verify-attestation --type ${SLSA_TYPE} --key ${cosignKeyUrl} ${imageRef}`,
+    sbomCommand: `syft scan ${imageRef} -o spdx-json`,
   };
 }
 
