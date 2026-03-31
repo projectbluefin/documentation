@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 permissions:
-  contents: write # for git commit + push
+  contents: read
 
 jobs:
   update-sbom-cache:
@@ -46,6 +46,15 @@ jobs:
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: npm ci
 
+      - name: Restore existing SBOM data cache (for incremental updates)
+        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
+        with:
+          path: static/data
+          key: github-data-sbom-${{ github.run_id }}
+          restore-keys: |
+            github-data-sbom-
+            github-data-
+
       - name: Install cosign
         uses: sigstore/cosign-installer@d7d6bc7722e3daa8354c50bcb52f4837da5e9b6a # v3.8.1
 
@@ -65,14 +74,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.PROJECT_READ_TOKEN }}
         run: npm run fetch-sbom
 
-      - name: Commit updated cache
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add static/data/sbom-attestations.json
-          if git diff --cached --quiet; then
-            echo "No changes to sbom-attestations.json — skipping commit."
-          else
-            git commit -m "chore(sbom): update attestation cache $(date -u +%Y-%m-%d)"
-            git push
-          fi
+      - name: Save SBOM data cache
+        uses: actions/cache/save@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
+        with:
+          path: static/data
+          key: github-data-sbom-${{ github.run_id }}
