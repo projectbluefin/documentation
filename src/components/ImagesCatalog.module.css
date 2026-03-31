@@ -287,6 +287,57 @@
   word-break: break-all;
 }
 
+/* Copyable code block: same visual as bare <code> but with hover-reveal copy button */
+.copyableCode {
+  position: relative;
+  display: block;
+  margin-bottom: 0.4rem;
+}
+
+.copyableCode code {
+  display: block;
+  padding: 0.45rem 3rem 0.45rem 0.55rem; /* extra right space for the button */
+  border-radius: 8px;
+  background: var(--ifm-color-emphasis-100);
+  word-break: break-all;
+  font-size: var(--ifm-code-font-size);
+  margin-bottom: 0;
+}
+
+.copyableCodeBtn {
+  position: absolute;
+  top: 50%;
+  right: 0.4rem;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 4px;
+  padding: 0.1em 0.4em;
+  font-size: 0.8rem;
+  color: var(--ifm-color-emphasis-500);
+  cursor: pointer;
+  opacity: 0;
+  transition:
+    opacity 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
+  line-height: 1;
+}
+
+.copyableCode:hover .copyableCodeBtn,
+.copyableCodeBtn:focus-visible {
+  opacity: 1;
+}
+
+.copyableCodeBtn:hover {
+  color: var(--ifm-color-primary);
+  border-color: var(--ifm-color-primary);
+  background: none;
+}
+
 .section :global(.tabs) {
   margin-top: 0.35rem;
   border: 0;

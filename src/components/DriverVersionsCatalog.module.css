@@ -245,25 +245,17 @@
 }
 
 .commandBlock :global(.theme-code-block) {
-  display: inline-block;
-  width: auto;
-  max-width: 100%;
+  display: block;
+  width: 100%;
   margin-top: 0.15rem;
   margin-bottom: 0;
-}
-
-.commandBlock :global(button[class*="copyButton"]) {
-  opacity: 1;
-}
-
-.commandBlock :global([class*="buttonGroup"] button) {
-  opacity: 1 !important;
 }
 
 .commandBlock :global(pre) {
   margin: 0;
   white-space: pre-wrap;
   word-break: break-word;
+  /* padding-right handled globally in custom.css */
 }
 
 .archiveTimeline {

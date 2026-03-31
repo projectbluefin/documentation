@@ -64,3 +64,21 @@ a[rel*="noopener"]::after {
 .docs-doc-id-images .theme-doc-markdown {
   max-width: none;
 }
+
+/* ── Copy button consistency ──────────────────────────────────────────────── */
+/*
+ * Docusaurus renders the copy button as position:absolute inside the <pre>
+ * container. Without extra right padding, code text on the last line slides
+ * directly underneath it.  Reserve ~3rem so that never happens.
+ */
+.theme-code-block pre {
+  padding-right: 3.5rem !important;
+}
+
+/*
+ * Reveal the copy button on keyboard focus as well as mouse hover so it is
+ * accessible to keyboard and screen-reader users.
+ */
+[class*="buttonGroup"] button:focus-visible {
+  opacity: 1 !important;
+}
