@@ -45,3 +45,22 @@ a[target="_blank"]::after,
 a[rel*="noopener"]::after {
   display: none !important;
 }
+
+/* Images doc layout: keep left sidebar, remove right TOC space */
+.docs-doc-id-images .theme-doc-toc-desktop,
+.docs-doc-id-images .table-of-contents {
+  display: none !important;
+}
+
+.docs-doc-id-images .col.col--3 {
+  display: none;
+}
+
+.docs-doc-id-images .col.col--9 {
+  max-width: 100%;
+  flex: 0 0 100%;
+}
+
+.docs-doc-id-images .theme-doc-markdown {
+  max-width: none;
+}
