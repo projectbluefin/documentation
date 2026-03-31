@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import useStoredFeed from "@theme/useStoredFeed";
 import styles from "./FeedItems.module.css";
 import {
@@ -690,6 +690,51 @@ const CombinedFeedItems: React.FC<CombinedFeedItemsProps> = ({
 
     const displayItems = tagged.slice(0, maxItems);
 
+    // Pre-compute all expensive per-item derived data in a single useMemo so
+    // the regex scans run once per feed update rather than on every render.
+    const derivedItems = useMemo(
+      () =>
+        displayItems.map((item) => {
+          const itemDescription =
+            item.description ||
+            (typeof item.content === "object"
+              ? item.content?.value
+              : item.content);
+          const isRelease = isReleaseFeed(item._feedId);
+          const commits =
+            isRelease && itemDescription
+              ? extractCommits(itemDescription)
+              : [];
+          const supplyChainHighlights = extractSupplyChainHighlights(commits);
+          const displayTitle = formatReleaseTitle(item.title, item._feedId);
+          const supplyChainLinks = getSupplyChainLinks(displayTitle);
+          const majorVersionBumps =
+            isRelease && itemDescription
+              ? extractMajorVersionBumps(itemDescription)
+              : [];
+          const contributors = getReleaseContributors(commits);
+          const releaseSummary = extractReleaseSummary(
+            itemDescription || "",
+            commits,
+            supplyChainHighlights,
+            majorVersionBumps,
+          );
+          return {
+            itemDescription,
+            isRelease,
+            commits,
+            supplyChainHighlights,
+            displayTitle,
+            supplyChainLinks,
+            majorVersionBumps,
+            contributors,
+            releaseSummary,
+          };
+        }),
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      [displayItems.map((i) => i.guid || i.id).join(",")],
+    );
+
     if (displayItems.length === 0) {
       return (
         <div className={styles.feedContainer}>
@@ -706,32 +751,20 @@ const CombinedFeedItems: React.FC<CombinedFeedItemsProps> = ({
           {displayItems.map((item, index) => {
             const itemLink = resolveItemLink(item, item._feedId);
             const itemDate = item.pubDate || item.updated;
-            const itemDescription =
-              item.description ||
-              (typeof item.content === "object"
-                ? item.content?.value
-                : item.content);
             const itemId = item.guid || item.id || itemLink || index;
-            const commits =
-              isReleaseFeed(item._feedId) && itemDescription
-                ? extractCommits(itemDescription)
-                : [];
-            const supplyChainHighlights = extractSupplyChainHighlights(commits);
-            const displayTitle = formatReleaseTitle(item.title, item._feedId);
-            const supplyChainLinks = getSupplyChainLinks(displayTitle);
-            const majorVersionBumps =
-              isReleaseFeed(item._feedId) && itemDescription
-                ? extractMajorVersionBumps(itemDescription)
-                : [];
-            const contributors = getReleaseContributors(commits);
-            const visibleContributors = contributors.slice(0, 8);
-            const overflowContributors = Math.max(contributors.length - 8, 0);
-            const releaseSummary = extractReleaseSummary(
-              itemDescription || "",
+            const {
+              itemDescription,
+              isRelease,
               commits,
               supplyChainHighlights,
+              displayTitle,
+              supplyChainLinks,
               majorVersionBumps,
-            );
+              contributors,
+              releaseSummary,
+            } = derivedItems[index];
+            const visibleContributors = contributors.slice(0, 8);
+            const overflowContributors = Math.max(contributors.length - 8, 0);
 
             const inner = (
               <div className={styles.feedItemContent}>
@@ -772,7 +805,7 @@ const CombinedFeedItems: React.FC<CombinedFeedItemsProps> = ({
                     {formatLongDate(itemDate)}
                   </time>
                 )}
-                {isReleaseFeed(item._feedId) && (
+                {isRelease && (
                   <div className={styles.releaseSummaryBlock}>
                     <div className={styles.releaseSummaryTitle}>Release Summary</div>
                     <div className={styles.releaseSummaryGrid}>
@@ -808,7 +841,7 @@ const CombinedFeedItems: React.FC<CombinedFeedItemsProps> = ({
                     </ul>
                   </div>
                 )}
-                {isReleaseFeed(item._feedId) && (
+                {isRelease && (
                   <div className={styles.supplyChainBlock}>
                     <div className={styles.supplyChainTitle}>Supply Chain</div>
                     {supplyChainHighlights.length > 0 ? (
