@@ -392,6 +392,7 @@ function buildSecurityInfo(spec, inspectTag) {
       cosignKeyUrl: null,
       verifyCommand: null,
       attestCommand: null,
+      hasAttestation: false,
       sbomCommand: `syft scan ${imageRef} -o spdx-json`,
     };
   }
@@ -401,15 +402,18 @@ function buildSecurityInfo(spec, inspectTag) {
       cosignKeyUrl: null,
       verifyCommand: `cosign verify --certificate-oidc-issuer ${OIDC_ISSUER} --certificate-identity ${OIDC_IDENTITY} ${imageRef}`,
       attestCommand: `cosign verify-attestation --type ${SLSA_TYPE} --certificate-oidc-issuer ${OIDC_ISSUER} --certificate-identity ${OIDC_IDENTITY} ${imageRef}`,
+      hasAttestation: true,
       sbomCommand: `syft scan ${imageRef} -o spdx-json`,
     };
   }
 
-  // Key-based signing (LTS, GDX).
+  // Key-based signing (LTS, GDX): signatures exist but SLSA attestations are not yet published.
+  // The command is included so users can run it in the future when attestations are implemented.
   return {
     cosignKeyUrl,
     verifyCommand: `cosign verify --key ${cosignKeyUrl} ${imageRef}`,
     attestCommand: `cosign verify-attestation --type ${SLSA_TYPE} --key ${cosignKeyUrl} ${imageRef}`,
+    hasAttestation: false,
     sbomCommand: `syft scan ${imageRef} -o spdx-json`,
   };
 }
