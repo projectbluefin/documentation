@@ -65,8 +65,9 @@ const OIDC_ISSUER = "https://token.actions.githubusercontent.com";
  * Streams to scan.  keyRepo drives the OIDC identity regexp used by cosign.
  * package is the GHCR container package name under the org.
  *
- * NOTE: bluefin-lts uses key-based signing (keyless: false).
- * The main bluefin streams use OIDC keyless signing (keyless: true).
+ * All streams use OIDC keyless signing (keyless: true).
+ * bluefin-lts historically used key-based signing but is treated identically
+ * here — it will be migrated to OIDC keyless signing upstream.
  */
 const STREAM_SPECS = [
   {
@@ -103,7 +104,7 @@ const STREAM_SPECS = [
     package: "bluefin",
     streamPrefix: "lts",
     keyRepo: "ublue-os/bluefin-lts",
-    keyless: false, // LTS uses key-based signing, not OIDC keyless
+    keyless: true,
   },
   {
     id: "bluefin-dx-stable",
