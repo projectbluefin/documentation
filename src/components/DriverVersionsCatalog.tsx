@@ -78,7 +78,8 @@ function majorMinor(value: string | null | undefined) {
 }
 
 function rebaseCommandForTag(tag: string) {
-  return `sudo bootc switch --enforce-container-sigpolicy "ghcr.io/$(jq -r '.\"image-name\"' /usr/share/ublue-os/image-info.json):${tag}"`;
+  const safeTag = /^[a-z0-9][a-z0-9._-]*$/i.test(tag) ? tag : "stable";
+  return `sudo bootc switch --enforce-container-sigpolicy "ghcr.io/$(jq -r '.\"image-name\"' /usr/share/ublue-os/image-info.json):${safeTag}"`;
 }
 
 function ReleaseNode({
@@ -200,6 +201,24 @@ interface DriverVersionsCatalogProps {
 export default function DriverVersionsCatalog({ streamId }: DriverVersionsCatalogProps): React.JSX.Element {
   const allStreams = Array.isArray(catalog.streams) ? catalog.streams : [];
   const stream = allStreams.find((entry) => entry.id === streamId);
+  const fallbackLabel = streamId === "bluefin-lts" ? "LTS" : "Stable";
+
+  if (!stream && allStreams.length > 0) {
+    return (
+      <div className={styles.timelinePage}>
+        <aside className={styles.archiveRail} aria-hidden="true">
+          <span className={styles.archiveNow}>Now</span>
+          <span className={styles.archivePast}>Past</span>
+        </aside>
+        <section className={styles.streamSection}>
+          <header className={styles.streamHeader}>
+            <span className={styles.streamMeta}>cache · 0 releases in {fallbackLabel}</span>
+          </header>
+          <p className={styles.emptyText}>No releases in the last 90 days for this stream.</p>
+        </section>
+      </div>
+    );
+  }
 
   if (!stream) {
     return <p className={styles.emptyText}>No driver version data available yet.</p>;

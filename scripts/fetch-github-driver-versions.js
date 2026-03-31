@@ -253,7 +253,10 @@ function main() {
       fs.writeFileSync(OUTPUT_FILE, JSON.stringify(output, null, 2), "utf-8");
       console.log(`Driver versions data saved to ${OUTPUT_FILE}`);
     })
-    .catch(() => {
+    .catch((error) => {
+      console.warn(
+        `GitHub releases API failed, falling back to feeds: ${error?.message || "unknown error"}`,
+      );
       const bluefinFeed = readJsonIfExists(FEED_BLUEFIN, { items: [] });
       const ltsFeed = readJsonIfExists(FEED_LTS, { items: [] });
 
