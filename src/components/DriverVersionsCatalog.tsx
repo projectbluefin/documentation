@@ -170,8 +170,8 @@ function ReleaseNode({
           >
             <span className={styles.majorVersionLabel}>NVIDIA</span>
             <VersionValue value={nvidia} />
-            {nvidiaMajorBump && <span className={styles.bumpTag}>Major bump</span>}
-            {!emphasize && nvidiaMinorBump && <span className={styles.minorTag}>Minor bump</span>}
+            {nvidiaMajorBump && <span className={styles.nvidiaBumpTag}>Major bump</span>}
+            {!emphasize && nvidiaMinorBump && <span className={styles.nvidiaMinorTag}>Minor bump</span>}
           </div>
           <div className={styles.majorVersionCard}>
             <span className={styles.majorVersionLabel}>Mesa</span>
