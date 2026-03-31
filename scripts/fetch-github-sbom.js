@@ -591,7 +591,18 @@ function findRecentTagsForStream(allVersions, spec) {
  */
 async function processStream(spec, allVersionsByPackage, existing) {
   const pkgKey = `${spec.org}/${spec.package}`;
-  const allVersions = allVersionsByPackage.get(pkgKey) || [];
+  // If the key is absent the Packages API fetch failed — preserve existing cache.
+  if (!allVersionsByPackage.has(pkgKey)) {
+    if (existing?.streams?.[spec.id]) {
+      console.log(
+        `  ${spec.id}: Packages API unavailable — keeping existing cache`,
+      );
+      return existing.streams[spec.id];
+    }
+    // No existing cache to fall back to; return empty stream.
+    return { ...spec, releases: {} };
+  }
+  const allVersions = allVersionsByPackage.get(pkgKey);
   const recentTags = findRecentTagsForStream(allVersions, spec);
 
   console.log(
@@ -630,6 +641,9 @@ async function processStream(spec, allVersionsByPackage, existing) {
         verified: attestation.verified,
         predicateType: attestation.predicateType,
         slsaType: SLSA_TYPE,
+        ...(attestation.errorKind !== undefined && {
+          errorKind: attestation.errorKind,
+        }),
         error: attestation.error,
       };
     }
@@ -728,7 +742,8 @@ async function main() {
       console.log(`    ${versions.length} versions fetched`);
     } catch (err) {
       console.error(`  Failed to fetch versions for ${key}: ${err.message}`);
-      allVersionsByPackage.set(key, []);
+      // Do NOT set an empty array — leave the key absent so processStream
+      // detects the fetch failure and preserves the existing cache instead.
     }
   }
 
