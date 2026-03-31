@@ -144,9 +144,42 @@
 }
 
 .majorBump {
-  border-color: color-mix(in srgb, #d97b00 70%, var(--ifm-color-emphasis-300));
-  box-shadow: 0 0 0 2px color-mix(in srgb, #d97b00 28%, transparent);
-  background: color-mix(in srgb, #d97b00 14%, var(--ifm-background-color));
+  position: relative;
+  overflow: hidden;
+  border: 2px solid #e6c200;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 215, 0, 0.15) 0%,
+    rgba(255, 237, 78, 0.22) 50%,
+    rgba(255, 215, 0, 0.15) 100%
+  );
+  box-shadow:
+    0 4px 12px rgba(255, 215, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.majorBump::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  mix-blend-mode: color-dodge;
+  z-index: 1;
+  background-image: linear-gradient(
+    115deg,
+    transparent 20%,
+    hsla(45, 100%, 70%, 0.3) 36%,
+    hsla(50, 100%, 65%, 0.5) 43%,
+    hsla(55, 100%, 60%, 0.6) 50%,
+    hsla(50, 100%, 65%, 0.5) 57%,
+    hsla(45, 100%, 70%, 0.3) 64%,
+    transparent 80%
+  );
+  background-size: 300% 300%;
+  background-position: 50% 50%;
+  opacity: 0.35;
+  filter: brightness(1.2) contrast(1.3);
 }
 
 .nvidiaCard {
@@ -167,9 +200,42 @@
 }
 
 .minorBump {
-  border-color: color-mix(in srgb, #9aa4b0 78%, var(--ifm-color-emphasis-300));
-  box-shadow: 0 0 0 2px color-mix(in srgb, #9aa4b0 26%, transparent);
-  background: color-mix(in srgb, #c7ccd3 24%, var(--ifm-background-color));
+  position: relative;
+  overflow: hidden;
+  border: 2px solid #b8c6d8;
+  background: linear-gradient(
+    135deg,
+    rgba(176, 196, 222, 0.15) 0%,
+    rgba(192, 210, 235, 0.22) 50%,
+    rgba(176, 196, 222, 0.15) 100%
+  );
+  box-shadow:
+    0 4px 12px rgba(176, 196, 222, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.minorBump::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  mix-blend-mode: color-dodge;
+  z-index: 1;
+  background-image: linear-gradient(
+    115deg,
+    transparent 20%,
+    hsla(215, 40%, 80%, 0.3) 36%,
+    hsla(220, 45%, 75%, 0.5) 43%,
+    hsla(225, 40%, 70%, 0.6) 50%,
+    hsla(220, 45%, 75%, 0.5) 57%,
+    hsla(215, 40%, 80%, 0.3) 64%,
+    transparent 80%
+  );
+  background-size: 300% 300%;
+  background-position: 50% 50%;
+  opacity: 0.35;
+  filter: brightness(1.2) contrast(1.3);
 }
 
 .majorVersionLabel {
@@ -179,6 +245,8 @@
   font-size: 0.72rem;
   color: var(--ifm-color-emphasis-700);
   font-weight: 700;
+  position: relative;
+  z-index: 2;
 }
 
 .majorVersionValue {
@@ -189,6 +257,8 @@
   font-weight: 800;
   color: var(--ifm-color-emphasis-900);
   word-break: break-word;
+  position: relative;
+  z-index: 2;
 }
 
 .versionMissing {
@@ -199,27 +269,33 @@
 .bumpTag {
   display: inline-block;
   margin-top: 0.35rem;
-  border: 1px solid color-mix(in srgb, #d97b00 70%, var(--ifm-color-emphasis-300));
+  border: 1px solid #e6c200;
   border-radius: 999px;
   padding: 0.08rem 0.42rem;
   font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.02em;
   text-transform: uppercase;
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.25), rgba(255, 237, 78, 0.35));
+  color: #7a5c00;
+  position: relative;
+  z-index: 2;
 }
 
 .minorTag {
   display: inline-block;
   margin-top: 0.35rem;
-  border: 1px solid color-mix(in srgb, #8f99a5 78%, var(--ifm-color-emphasis-300));
+  border: 1px solid #b8c6d8;
   border-radius: 999px;
   padding: 0.08rem 0.42rem;
   font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.02em;
   text-transform: uppercase;
-  color: var(--ifm-color-emphasis-800);
-  background: color-mix(in srgb, #d2d7de 38%, var(--ifm-background-color));
+  background: linear-gradient(135deg, rgba(176, 196, 222, 0.3), rgba(192, 210, 235, 0.4));
+  color: #3a4a5a;
+  position: relative;
+  z-index: 2;
 }
 
 .rebaseInline {
