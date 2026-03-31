@@ -159,8 +159,11 @@ async function fetchAllPackageVersions(org, pkg) {
     try {
       batch = await fetchJson(url);
     } catch (err) {
-      console.warn(`  Packages API page ${page} failed: ${err.message}`);
-      break;
+      // Rethrow so the caller (main) can preserve existing cache for this package
+      // rather than silently returning an empty result and clearing all releases.
+      throw new Error(
+        `Packages API page ${page} for ${org}/${pkg} failed: ${err.message}`,
+      );
     }
     if (!Array.isArray(batch) || batch.length === 0) break;
     versions.push(...batch);
@@ -254,16 +257,21 @@ async function verifyAttestation(imageRef, spec) {
         error: "no attestation",
       };
     }
+    // Unexpected tooling/registry/auth failure — do NOT claim present: true.
+    // Callers use present: false (no attestation) vs present: null (error/unknown)
+    // to distinguish absence from verification failure.
     return {
-      present: true,
+      present: null,
       verified: false,
       predicateType: null,
+      errorKind: "tooling",
       error: String(err.stderr || err.message),
     };
   }
 
-  // cosign outputs NDJSON (one JSON object per line)
-  const lines = (stdout + stderr)
+  // cosign outputs NDJSON (one JSON object per line) on stdout only;
+  // stderr carries status messages ("Verification OK") that must not be parsed.
+  const lines = stdout
     .split("\n")
     .map((l) => l.trim())
     .filter((l) => l.startsWith("{"));
@@ -546,6 +554,12 @@ function findRecentTagsForStream(allVersions, spec) {
       if (!normalised.startsWith(`${spec.streamPrefix}-`)) continue;
       const dateStr = extractDateFromTag(normalised);
       if (!dateStr) continue;
+
+      // Enforce canonical tag: only exact `<streamPrefix>-YYYYMMDD` is accepted.
+      // Non-canonical variants like lts-hwe-testing-20260331 would normalise to
+      // lts-20260331 and silently overwrite valid canonical entries.
+      const expectedCanonical = `${spec.streamPrefix}-${dateStr}`;
+      if (normalised !== expectedCanonical) continue;
 
       found.push({
         tag: normalised,
