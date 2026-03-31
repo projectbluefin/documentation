@@ -185,7 +185,7 @@ function ReleaseNode({
             className={
               kernelMajorBump
                 ? `${styles.majorVersionCard} ${styles.majorBump}`
-                : !emphasize && kernelMinorBump
+                : kernelMinorBump
                   ? `${styles.majorVersionCard} ${styles.minorBump}`
                   : styles.majorVersionCard
             }
@@ -193,17 +193,19 @@ function ReleaseNode({
             <span className={styles.majorVersionLabel}>Kernel</span>
             <VersionValue value={kernel} />
             {kernelMajorBump && <span className={styles.bumpTag}>Major bump</span>}
-            {!emphasize && kernelMinorBump && <span className={styles.minorTag}>Minor bump</span>}
+            {kernelMinorBump && <span className={styles.minorTag}>Minor bump</span>}
           </div>
-          <div className={styles.majorVersionCard}>
-            <span className={styles.majorVersionLabel}>HWE Kernel</span>
-            <VersionValue value={hwe} />
-          </div>
+          {hwe !== null && (
+            <div className={styles.majorVersionCard}>
+              <span className={styles.majorVersionLabel}>HWE Kernel</span>
+              <VersionValue value={hwe} />
+            </div>
+          )}
           <div
             className={
               nvidiaMajorBump
                 ? `${styles.majorVersionCard} ${styles.nvidiaCard} ${styles.nvidiaMajorBump}`
-                : !emphasize && nvidiaMinorBump
+                : nvidiaMinorBump
                   ? `${styles.majorVersionCard} ${styles.nvidiaCard} ${styles.nvidiaMinorBump}`
                   : `${styles.majorVersionCard} ${styles.nvidiaCard}`
             }
@@ -211,13 +213,13 @@ function ReleaseNode({
             <span className={styles.majorVersionLabel}>NVIDIA</span>
             <VersionValue value={nvidia} />
             {nvidiaMajorBump && <span className={styles.nvidiaBumpTag}>Major bump</span>}
-            {!emphasize && nvidiaMinorBump && <span className={styles.nvidiaMinorTag}>Minor bump</span>}
+            {nvidiaMinorBump && <span className={styles.nvidiaMinorTag}>Minor bump</span>}
           </div>
           <div
             className={
               mesaMajorBump
                 ? `${styles.majorVersionCard} ${styles.mesaCard} ${styles.mesaMajorBump}`
-                : !emphasize && mesaMinorBump
+                : mesaMinorBump
                   ? `${styles.majorVersionCard} ${styles.mesaCard} ${styles.mesaMinorBump}`
                   : `${styles.majorVersionCard} ${styles.mesaCard}`
             }
@@ -225,13 +227,13 @@ function ReleaseNode({
             <span className={styles.majorVersionLabel}>Mesa</span>
             <VersionValue value={mesa} />
             {mesaMajorBump && <span className={styles.mesaBumpTag}>Major bump</span>}
-            {!emphasize && mesaMinorBump && <span className={styles.mesaMinorTag}>Minor bump</span>}
+            {mesaMinorBump && <span className={styles.mesaMinorTag}>Minor bump</span>}
           </div>
           <div
             className={
               gnomeMajorBump
                 ? `${styles.majorVersionCard} ${styles.gnomeCard} ${styles.gnomeMajorBump}`
-                : !emphasize && gnomeMinorBump
+                : gnomeMinorBump
                   ? `${styles.majorVersionCard} ${styles.gnomeCard} ${styles.gnomeMinorBump}`
                   : `${styles.majorVersionCard} ${styles.gnomeCard}`
             }
@@ -239,7 +241,7 @@ function ReleaseNode({
             <span className={styles.majorVersionLabel}>GNOME</span>
             <VersionValue value={gnome} />
             {gnomeMajorBump && <span className={styles.gnomeBumpTag}>Major bump</span>}
-            {!emphasize && gnomeMinorBump && <span className={styles.gnomeMinorTag}>Minor bump</span>}
+            {gnomeMinorBump && <span className={styles.gnomeMinorTag}>Minor bump</span>}
           </div>
         </div>
 
