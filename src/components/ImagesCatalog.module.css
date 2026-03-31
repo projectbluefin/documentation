@@ -1,0 +1,345 @@
+.imagesPage {
+  width: 100%;
+}
+
+.sectionGroup {
+  margin-bottom: 1.5rem;
+}
+
+.groupTitle {
+  margin: 0 0 0.5rem;
+}
+
+.groupHint {
+  margin: 0 0 0.55rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.cards {
+  display: grid;
+  gap: 1rem;
+}
+
+.card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 12px;
+  background: var(--ifm-background-color);
+  padding: 1rem;
+}
+
+.card::after {
+  content: "";
+  position: absolute;
+  right: 0.45rem;
+  top: 0.45rem;
+  width: 150px;
+  height: 150px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: right top;
+  pointer-events: none;
+  opacity: 1;
+}
+
+.cardBluefin::after {
+  background-image: url("/img/characters/bluefin-small.webp");
+}
+
+.cardLts::after {
+  background-image: url("/img/characters/achillobator.webp");
+  opacity: 1;
+}
+
+.cardDakota::after {
+  background-image: url("/img/characters/dakotaraptor.webp");
+  opacity: 1;
+}
+
+.cardHeader {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.55rem;
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: 1.3rem;
+  color: var(--ifm-color-primary);
+}
+
+.registryBadge {
+  display: inline-block;
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  background: var(--ifm-color-emphasis-100);
+  color: var(--ifm-color-emphasis-800);
+}
+
+.summary {
+  position: relative;
+  z-index: 1;
+  margin: 0.35rem 0 0;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.statsRow {
+  position: relative;
+  z-index: 1;
+  margin-top: 0.7rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.validationMeta {
+  margin: 0.5rem 0 0;
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.82rem;
+}
+
+.statChip {
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 6px;
+  padding: 0.25rem 0.5rem;
+  background: var(--ifm-color-emphasis-100);
+  font-size: 0.84rem;
+}
+
+.chipCache {
+  border-color: #8a6b00;
+  color: #8a6b00;
+}
+
+.chipUnavailable {
+  border-color: #6b7280;
+  color: #6b7280;
+}
+
+.versionRow {
+  margin-top: 0.65rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.streamVersionPills {
+  margin: 0.2rem 0 0.45rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.versionPill {
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 999px;
+  padding: 0.2rem 0.55rem;
+  background: color-mix(in srgb, var(--ifm-background-color) 94%, var(--ifm-color-emphasis-100));
+  font-size: 0.82rem;
+}
+
+.section {
+  margin-top: 0.9rem;
+}
+
+.focusSection {
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 12px;
+  padding: 0.7rem 0.8rem 0.8rem;
+}
+
+.streamsSection {
+  background: color-mix(in srgb, #2f74b5 10%, var(--ifm-background-color));
+}
+
+.securitySection {
+  background: color-mix(in srgb, #2f9e7f 10%, var(--ifm-background-color));
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: 0.92rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--ifm-color-emphasis-800);
+}
+
+.nvidiaControl {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.15rem;
+  min-width: 176px;
+}
+
+.nvidiaToggleLabel {
+  margin: 0;
+  line-height: 1.15;
+  color: var(--ifm-color-emphasis-900);
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
+.nvidiaToggleQuestion {
+  margin: 0;
+  line-height: 1.15;
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.72rem;
+}
+
+.nvidiaToggleGroup {
+  display: inline-flex;
+  gap: 0.35rem;
+  margin-top: 0.1rem;
+}
+
+.nvidiaToggleGroup :global(.button) {
+  min-width: 52px;
+  padding-inline: 0.65rem;
+}
+
+.streamList {
+  margin: 0;
+  padding-left: 1rem;
+}
+
+.streamList li {
+  margin-bottom: 0.35rem;
+}
+
+.streamTag {
+  display: inline-block;
+  min-width: 85px;
+  margin-right: 0.45rem;
+  font-weight: 700;
+  color: var(--ifm-color-emphasis-900);
+}
+
+.streamList code {
+  word-break: break-word;
+}
+
+.emptyText {
+  margin: 0;
+  color: var(--ifm-color-emphasis-600);
+}
+
+.testingDetails {
+  display: inline-block;
+  width: fit-content;
+  max-width: 100%;
+  margin-top: 0.45rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--ifm-background-color) 94%, var(--ifm-color-emphasis-100));
+  padding: 0.5rem 0.65rem;
+}
+
+.testingDetails summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.linkRow {
+  margin-top: 0.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.9rem;
+}
+
+.securityText {
+  margin: 0.2rem 0 0.45rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.tabCopy {
+  margin: 0 0 0.5rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.section code {
+  display: block;
+  margin-bottom: 0.4rem;
+  padding: 0.45rem 0.55rem;
+  border-radius: 8px;
+  background: var(--ifm-color-emphasis-100);
+  word-break: break-all;
+}
+
+.section :global(.tabs) {
+  margin-top: 0.35rem;
+  border: 0;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--ifm-color-primary) 6%, var(--ifm-background-color));
+  padding: 0.35rem 0.45rem 0.45rem;
+  overflow: hidden;
+}
+
+/* Streams widget: title + driver toggle + tabs as one unit */
+.streamsSection .sectionHeader {
+  margin-bottom: 0.2rem;
+}
+
+.streamsSection :global(.tabs) {
+  margin-top: 0;
+  background: transparent;
+  padding: 0;
+}
+
+.streamsSection :global(.tabs-container > .margin-top--md) {
+  margin-top: 0.25rem !important;
+  background: transparent;
+  padding: 0;
+}
+
+.section :global(.tabs-container > .margin-top--md) {
+  margin-top: 0.35rem !important;
+  background: color-mix(in srgb, var(--ifm-color-primary) 6%, var(--ifm-background-color));
+  padding: 0.35rem 0.35rem 0.2rem;
+}
+
+.section :global(.tabs__item) {
+  border-radius: 8px;
+}
+
+.section :global(.tabs__item--active) {
+  background: color-mix(in srgb, var(--ifm-color-primary) 14%, var(--ifm-background-color));
+}
+
+.section :global(.tabs-container > .margin-top--md code) {
+  background: color-mix(in srgb, var(--ifm-color-primary) 10%, var(--ifm-background-color));
+  border: 0;
+}
+
+.testingDetails code {
+  display: inline-block;
+  width: auto;
+}
+
+@media (max-width: 768px) {
+  .card::after {
+    width: 96px;
+    height: 96px;
+  }
+}

@@ -40,6 +40,7 @@ const sidebars: SidebarsConfig = {
         "dinosaurs",
         "downloads",
         "driver-versions",
+        "images",
         "FAQ",
         "mission",
         "music",

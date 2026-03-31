@@ -1449,7 +1449,7 @@ Other Rules:
 
 - **Remember**: Documentation should be consumable in one sitting and link to upstream docs rather than duplicating content.
 - **Never** create new pages unless explicitly told to do so.
-- **Images page removed**: The automated images page was recently removed (commit 52e6fee). Do not recreate it.
+- **Images page**: The `/images` catalog page is intentionally enabled. Keep the card design modern, preserve testing streams as collapsed-by-default details, and maintain graceful fallbacks when metadata sources are unavailable.
 - For `docs/music.md` - always ensure the thumbnail aspect ratio is 1:1 and ensure that the album sizes remain consistent across the page. Playlists use the MusicPlaylist component which fetches metadata at build time.
 - For `docs/donations.mdx` - uses GitHubProfileCard component which displays profiles fetched at build time from `static/data/github-profiles.json`. Profile data includes name, bio, avatar, company, location, and social links.
 

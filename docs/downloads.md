@@ -7,6 +7,8 @@ Here is a short [runbook](/installation) for the Bluefin installation process. R
 
 ## Bluefin
 
+<a id="bluefin"></a>
+
 The default experience for users, based on the latest Fedora.\
 📖 **[Read the documentation](/introduction)** to learn about features and differences.
 
@@ -16,6 +18,8 @@ The default experience for users, based on the latest Fedora.\
 | Bluefin | Nvidia    | [📥 bluefin-nvidia-open-stable-x86_64.iso](https://download.projectbluefin.io/bluefin-nvidia-open-stable-x86_64.iso) | [🧲 Torrent](https://download.projectbluefin.io/bluefin-nvidia-open-stable-x86_64.iso.torrent) | [🔐 Verify](https://download.projectbluefin.io/bluefin-nvidia-open-stable-x86_64.iso-CHECKSUM) |
 
 ## Bluefin LTS
+
+<a id="bluefin-lts"></a>
 
 The long term support experience.\
 📖 **[Read the documentation](/lts)** to learn about features and differences. The HWE images stand for "Hardware Enablement", these ISOs come with updated kernels and are recommended for newer devices such as Framework Computers. Note that `ujust rebase-helper` allows for users to switch back and forth, the ISOs are provided for convenience.
@@ -28,6 +32,8 @@ The long term support experience.\
 | Bluefin LTS (Hardware Enablement) | ARM (aarch64) | [📥 bluefin-lts-hwe-aarch64.iso](https://download.projectbluefin.io/bluefin-lts-hwe-aarch64.iso) | [🧲 Torrent](https://download.projectbluefin.io/bluefin-lts-hwe-aarch64.iso.torrent) | [🔐 Verify](https://download.projectbluefin.io/bluefin-lts-hwe-aarch64.iso-CHECKSUM) |
 
 ## Bluefin GDX
+
+<a id="bluefin-gdx"></a>
 
 The AI workstation with Nvidia and CUDA.\
 📖 **[Read the documentation](/gdx)** to learn about features and differences.

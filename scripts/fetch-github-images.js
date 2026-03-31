@@ -1,0 +1,613 @@
+const fs = require("fs");
+const path = require("path");
+const { execFile } = require("child_process");
+const { promisify } = require("util");
+
+const execFileAsync = promisify(execFile);
+
+const OUTPUT_DIR = path.join(__dirname, "..", "static", "data");
+const OUTPUT_FILE = path.join(OUTPUT_DIR, "images.json");
+const FEED_BLUEFIN = path.join(__dirname, "..", "static", "feeds", "bluefin-releases.json");
+const FEED_LTS = path.join(__dirname, "..", "static", "feeds", "bluefin-lts-releases.json");
+
+const CACHE_MAX_AGE_HOURS = Number(process.env.IMAGES_CACHE_HOURS || 168);
+const REFRESH_HOURS = Number(process.env.IMAGES_REFRESH_HOURS || 336);
+const STALE_DAYS = Number(process.env.IMAGES_STALE_DAYS || 30);
+const FORCE_REFRESH = process.argv.includes("--force");
+
+const PRODUCT_SPECS = [
+  {
+    id: "ublue-bluefin",
+    name: "Bluefin",
+    org: "ublue-os",
+    package: "bluefin",
+    artwork: "bluefin",
+    summary: "Primary Bluefin desktop image for most systems.",
+    streamOrder: ["stable", "stable-daily", "latest", "beta"],
+    versionSource: { feed: "bluefin", stream: "stable" },
+    keyRepo: "ublue-os/bluefin",
+    nvidiaPackage: "bluefin-nvidia-open",
+    allowTestingStreams: false,
+    isoSectionLink: "/downloads#bluefin",
+  },
+  {
+    id: "ublue-bluefin-dx",
+    name: "Bluefin DX",
+    org: "ublue-os",
+    package: "bluefin-dx",
+    artwork: "bluefin",
+    summary: "Developer-focused Bluefin image with DX tooling.",
+    streamOrder: ["stable", "latest", "beta"],
+    versionSource: { feed: "bluefin", stream: "stable" },
+    keyRepo: "ublue-os/bluefin",
+    nvidiaPackage: "bluefin-dx-nvidia-open",
+    allowTestingStreams: false,
+    isoSectionLink: "/downloads#bluefin",
+  },
+  {
+    id: "ublue-bluefin-lts",
+    name: "Bluefin LTS",
+    org: "ublue-os",
+    package: "bluefin",
+    artwork: "achillobator",
+    summary: "Long-term support Bluefin stream.",
+    streamOrder: ["lts"],
+    versionSource: { feed: "lts", stream: "lts" },
+    keyRepo: "ublue-os/bluefin",
+    nvidiaPackage: "bluefin-nvidia-open",
+    nvidiaTagFallback: { lts: "latest" },
+    allowTestingStreams: true,
+    isoSectionLink: "/downloads#bluefin-lts",
+  },
+  {
+    id: "ublue-bluefin-dx-lts",
+    name: "Bluefin DX LTS",
+    org: "ublue-os",
+    package: "bluefin-dx",
+    artwork: "achillobator",
+    summary: "Long-term support Bluefin DX stream.",
+    streamOrder: ["lts"],
+    versionSource: { feed: "lts", stream: "lts" },
+    keyRepo: "ublue-os/bluefin",
+    nvidiaPackage: "bluefin-dx-nvidia-open",
+    nvidiaTagFallback: { lts: "latest" },
+    allowTestingStreams: true,
+    isoSectionLink: "/downloads#bluefin-lts",
+  },
+  {
+    id: "ublue-bluefin-gdx",
+    name: "Bluefin GDX",
+    org: "ublue-os",
+    package: "bluefin-gdx",
+    artwork: "achillobator",
+    summary: "AI-focused GDX track with LTS roots.",
+    streamOrder: ["lts", "latest", "beta"],
+    versionSource: { feed: "lts", stream: "lts" },
+    keyRepo: "ublue-os/bluefin-lts",
+    keepEvenIfStale: true,
+    allowTestingStreams: true,
+    isoSectionLink: "/downloads#bluefin-gdx",
+  },
+  {
+    id: "projectbluefin-dakota",
+    name: "Project Bluefin Dakota",
+    org: "projectbluefin",
+    package: "dakota",
+    artwork: "dakotaraptor",
+    summary: "Project Bluefin Dakota image stream.",
+    streamOrder: ["latest"],
+    versionSource: null,
+    keyRepo: "projectbluefin/dakota",
+    allowTestingStreams: false,
+    versionOverrides: {
+      gnome: "50",
+      kernel: "redacted",
+      fedora: null,
+    },
+  },
+];
+
+function readJsonIfExists(filePath, fallback) {
+  if (!fs.existsSync(filePath)) return fallback;
+  try {
+    return JSON.parse(fs.readFileSync(filePath, "utf-8"));
+  } catch {
+    return fallback;
+  }
+}
+
+function readCache() {
+  return readJsonIfExists(OUTPUT_FILE, null);
+}
+
+function cacheAgeHours() {
+  if (!fs.existsSync(OUTPUT_FILE)) return Number.POSITIVE_INFINITY;
+  const stats = fs.statSync(OUTPUT_FILE);
+  return (Date.now() - stats.mtimeMs) / (1000 * 60 * 60);
+}
+
+function normalizeTestingTag(raw) {
+  return raw
+    .replace(/-(amd64|arm64)$/i, "")
+    .replace(/([.-])\d{8}(?=-|$)/g, "")
+    .replace(/-(\d{8})$/, "")
+    .replace(/\.+/g, ".")
+    .replace(/-+/g, "-")
+    .replace(/\.-/g, "-")
+    .replace(/-\./g, "-")
+    .replace(/(^[.-]+|[.-]+$)/g, "");
+}
+
+function formatDownloads(value) {
+  if (typeof value !== "number") return "Unavailable";
+  return new Intl.NumberFormat("en-US").format(value);
+}
+
+function parseFeedVersion(feedItem, labels) {
+  if (!feedItem || !feedItem.content) return null;
+  for (const label of labels) {
+    const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const regex = new RegExp(
+      `<td><strong>${escaped}<\\/strong><\\/td>\\s*<td>([^<]+)<\\/td>`,
+      "i",
+    );
+    const match = feedItem.content.match(regex);
+    if (!match || !match[1]) continue;
+    const raw = match[1].trim();
+    const parts = raw.split("➡️").map((entry) => entry.trim()).filter(Boolean);
+    return parts.length > 0 ? parts[parts.length - 1] : raw;
+  }
+
+  return null;
+}
+
+function parseFedoraFromFeedItem(feedItem) {
+  if (!feedItem?.title) return null;
+  const match = feedItem.title.match(/\(F(\d+)[^)]*\)/i);
+  if (!match || !match[1]) return null;
+  return `F${match[1]}`;
+}
+
+function parseFedoraFromImageVersion(imageVersion) {
+  if (!imageVersion) return null;
+  const match = String(imageVersion).match(/^(\d{2})\./);
+  if (!match || !match[1]) return null;
+  return `F${match[1]}`;
+}
+
+function latestFeedItem(feeds, source) {
+  if (!source) return null;
+  const items = source.feed === "lts" ? feeds.lts.items : feeds.bluefin.items;
+  const stream = source.stream === "stable-daily" ? "stable" : source.stream;
+
+  const match = items.find((item) => {
+    const title = (item.title || "").toLowerCase();
+    if (stream === "lts") return title.includes(" lts:");
+    return title.startsWith(`${stream}-`);
+  });
+
+  return match || null;
+}
+
+async function fetchText(url) {
+  const headers = {
+    "User-Agent": "BluefinDocsImages/1.0",
+    Accept: "application/vnd.github+json",
+  };
+  const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
+  if (token) headers.Authorization = `Bearer ${token}`;
+
+  const response = await fetch(url, { headers });
+  if (!response.ok) {
+    throw new Error(`${response.status} ${response.statusText}`);
+  }
+
+  return response.text();
+}
+
+async function fetchJson(url) {
+  const text = await fetchText(url);
+  return JSON.parse(text);
+}
+
+async function fetchDownloads(org, pkg) {
+  const url = `https://github.com/orgs/${org}/packages/container/package/${pkg}`;
+  const html = await fetchText(url);
+  const match = html.match(/Total downloads<\/span>\s*<h3[^>]*title="([\d,]+)"/i);
+  if (!match) return null;
+  const value = Number.parseInt(match[1].replace(/,/g, ""), 10);
+  return Number.isNaN(value) ? null : value;
+}
+
+async function listTags(imageRef) {
+  const { stdout } = await execFileAsync("skopeo", ["list-tags", `docker://${imageRef}`], {
+    maxBuffer: 16 * 1024 * 1024,
+  });
+  const parsed = JSON.parse(stdout);
+  return Array.isArray(parsed.Tags) ? parsed.Tags : [];
+}
+
+async function inspectImage(imageRef, tag) {
+  const { stdout } = await execFileAsync(
+    "skopeo",
+    ["inspect", "--no-tags", `docker://${imageRef}:${tag}`],
+    { maxBuffer: 8 * 1024 * 1024 },
+  );
+  return JSON.parse(stdout);
+}
+
+function buildTopStreams(spec, tagSet) {
+  const top = [];
+  for (const tag of spec.streamOrder) {
+    if (tag === "gts") continue;
+    if (tagSet.has(tag)) {
+      top.push({
+        label: tag.toUpperCase(),
+        tag,
+        command: `sudo bootc switch ghcr.io/${spec.org}/${spec.package}:${tag} --enforce-container-sigpolicy`,
+        versions: null,
+      });
+    }
+  }
+  return top;
+}
+
+function attachNvidiaCommands(streams, spec, nvidiaTagSet) {
+  if (!spec.nvidiaPackage || !nvidiaTagSet) return streams;
+
+  return streams.map((entry) => {
+    let nvidiaTag = null;
+
+    if (nvidiaTagSet.has(entry.tag)) {
+      nvidiaTag = entry.tag;
+    } else if (spec.nvidiaTagFallback?.[entry.tag] && nvidiaTagSet.has(spec.nvidiaTagFallback[entry.tag])) {
+      nvidiaTag = spec.nvidiaTagFallback[entry.tag];
+    }
+
+    if (!nvidiaTag) {
+      return { ...entry, nvidiaCommand: null };
+    }
+
+    return {
+      ...entry,
+      nvidiaCommand: `sudo bootc switch ghcr.io/${spec.org}/${spec.nvidiaPackage}:${nvidiaTag} --enforce-container-sigpolicy`,
+    };
+  });
+}
+
+function buildTestingStreams(spec, tags) {
+  if (!spec.allowTestingStreams) {
+    return [];
+  }
+
+  const normalized = new Set();
+  for (const raw of tags) {
+    const lower = raw.toLowerCase();
+
+    // Global exclusions: deprecated lines or non-supported branches.
+    if (lower.includes("gts")) continue;
+    if (lower.includes("unstable")) continue;
+    if (lower.includes("stream10")) continue;
+    if (/(^|-)10(-|$)/.test(lower)) continue;
+
+    // LTS/GDX-only testing families.
+    const isLtsTestingFamily =
+      /^lts-testing(?:-\d+)?$/.test(lower) ||
+      /^lts-hwe-testing(?:-\d+)?$/.test(lower) ||
+      /^lts-testing-hwe(?:-\d+)?$/.test(lower);
+
+    if (!isLtsTestingFamily) {
+      continue;
+    }
+
+    normalized.add(normalizeTestingTag(lower));
+  }
+
+  return [...normalized]
+    .filter(Boolean)
+    .sort((a, b) => a.localeCompare(b))
+    .map((tag) => ({
+      label: tag,
+      tag,
+      command: `sudo bootc switch ghcr.io/${spec.org}/${spec.package}:${tag} --enforce-container-sigpolicy`,
+      versions: null,
+    }));
+}
+
+async function buildStreamVersionInfo(spec, imageRef, streamTag, feeds) {
+  const feedKey = streamTag === "lts" ? "lts" : streamTag;
+  const feedSource = spec.versionSource
+    ? { feed: spec.versionSource.feed, stream: feedKey }
+    : null;
+  const feedItem = latestFeedItem(feeds, feedSource);
+
+  const versions = {
+    gnome: parseFeedVersion(feedItem, ["GNOME", "Gnome"]),
+    kernel: parseFeedVersion(feedItem, ["Kernel"]),
+    nvidia: parseFeedVersion(feedItem, ["Nvidia"]),
+    fedora: null,
+  };
+
+  let imageVersion = null;
+  try {
+    const inspected = await inspectImage(imageRef, streamTag);
+    imageVersion = inspected?.Labels?.["org.opencontainers.image.version"] || null;
+  } catch {
+    imageVersion = null;
+  }
+
+  if (spec.name.includes("LTS") || spec.name.includes("GDX")) {
+    versions.fedora = "10";
+  } else {
+    versions.fedora = parseFedoraFromFeedItem(feedItem) || parseFedoraFromImageVersion(imageVersion);
+  }
+
+  if (spec.versionOverrides) {
+    versions.gnome = spec.versionOverrides.gnome ?? versions.gnome;
+    versions.kernel = spec.versionOverrides.kernel ?? versions.kernel;
+    versions.nvidia = spec.versionOverrides.nvidia ?? versions.nvidia;
+    versions.fedora = spec.versionOverrides.fedora ?? versions.fedora;
+  }
+
+  return versions;
+}
+
+function attachNvidiaTestingCommands(streams, spec, nvidiaTagSet) {
+  if (!spec.nvidiaPackage || !nvidiaTagSet) return streams;
+
+  return streams.map((entry) => {
+    if (!nvidiaTagSet.has(entry.tag)) {
+      return { ...entry, nvidiaCommand: null };
+    }
+
+    return {
+      ...entry,
+      nvidiaCommand: `sudo bootc switch ghcr.io/${spec.org}/${spec.nvidiaPackage}:${entry.tag} --enforce-container-sigpolicy`,
+    };
+  });
+}
+
+function buildSecurityInfo(spec, inspectTag) {
+  let cosignKeyUrl = null;
+  if (spec.keyRepo === "ublue-os/bluefin") {
+    cosignKeyUrl = "https://raw.githubusercontent.com/ublue-os/bluefin/main/cosign.pub";
+  }
+  if (spec.keyRepo === "ublue-os/bluefin-lts") {
+    cosignKeyUrl = "https://raw.githubusercontent.com/ublue-os/bluefin-lts/main/cosign.pub";
+  }
+
+  const imageRef = `ghcr.io/${spec.org}/${spec.package}:${inspectTag}`;
+  return {
+    cosignKeyUrl,
+    verifyCommand: cosignKeyUrl
+      ? `cosign verify --key ${cosignKeyUrl} ${imageRef}`
+      : `cosign verify ${imageRef}`,
+    attestCommand: cosignKeyUrl
+      ? `cosign verify-attestation --type slsaprovenance --key ${cosignKeyUrl} ${imageRef}`
+      : `cosign verify-attestation --type slsaprovenance ${imageRef}`,
+    sbomCommand: `syft ${imageRef} -o spdx-json`,
+  };
+}
+
+async function fetchPackageVersions(org, pkg) {
+  const url = `https://api.github.com/orgs/${org}/packages/container/${pkg}/versions?per_page=100`;
+  return fetchJson(url);
+}
+
+function latestUpdatedAt(versions) {
+  const timestamps = versions.map((entry) => Date.parse(entry.updated_at)).filter((value) => !Number.isNaN(value));
+  if (!timestamps.length) return null;
+  return new Date(Math.max(...timestamps)).toISOString();
+}
+
+function findDigestLink(versions, digest) {
+  if (!digest) return null;
+  return versions.find((entry) => entry.name === digest)?.html_url || null;
+}
+
+function findTaggedVersionLink(versions, tag) {
+  if (!tag) return null;
+  for (const entry of versions) {
+    const tags = entry?.metadata?.container?.tags || [];
+    if (Array.isArray(tags) && tags.includes(tag) && entry.html_url) {
+      return entry.html_url;
+    }
+  }
+  return null;
+}
+
+function releaseInfoFromFeedItem(item) {
+  if (!item) return null;
+  return {
+    title: item.title || null,
+    url: item.link || null,
+    assetsUrl: item.link ? `${item.link}#assets` : null,
+  };
+}
+
+async function buildProduct(spec, feeds, cachedById, ageHours) {
+  const existing = cachedById.get(spec.id) || null;
+  const shouldRefresh = FORCE_REFRESH || !existing || ageHours >= REFRESH_HOURS;
+
+  if (!shouldRefresh && existing) {
+    return {
+      ...existing,
+      downloads: { ...existing.downloads, source: "cache" },
+      metadataSource: "cache",
+    };
+  }
+
+  const imageRef = `ghcr.io/${spec.org}/${spec.package}`;
+
+  let versions = [];
+  try {
+    versions = await fetchPackageVersions(spec.org, spec.package);
+  } catch {
+    versions = existing?.packageVersions || [];
+  }
+
+  let downloadsTotal = null;
+  let downloadSource = "unavailable";
+  try {
+    downloadsTotal = await fetchDownloads(spec.org, spec.package);
+    downloadSource = downloadsTotal === null ? "unavailable" : "live";
+  } catch {
+    if (typeof existing?.downloads?.total === "number") {
+      downloadsTotal = existing.downloads.total;
+      downloadSource = "cache";
+    }
+  }
+
+  let tags = [];
+  try {
+    tags = await listTags(imageRef);
+  } catch {
+    tags = existing?.allTags || [];
+  }
+  const tagSet = new Set(tags);
+
+  let nvidiaTagSet = null;
+  if (spec.nvidiaPackage) {
+    try {
+      const nvidiaTags = await listTags(`ghcr.io/${spec.org}/${spec.nvidiaPackage}`);
+      nvidiaTagSet = new Set(nvidiaTags);
+    } catch {
+      nvidiaTagSet = null;
+    }
+  }
+
+  const streams = attachNvidiaCommands(buildTopStreams(spec, tagSet), spec, nvidiaTagSet);
+  const testingStreams = attachNvidiaTestingCommands(
+    buildTestingStreams(spec, tags),
+    spec,
+    nvidiaTagSet,
+  );
+
+  for (const stream of streams) {
+    stream.versions = await buildStreamVersionInfo(spec, imageRef, stream.tag, feeds);
+  }
+
+  for (const stream of testingStreams) {
+    stream.versions = await buildStreamVersionInfo(spec, imageRef, stream.tag, feeds);
+  }
+  const inspectTag = streams[0]?.tag || "latest";
+
+  let metadata = null;
+  let metadataSource = "unavailable";
+  try {
+    const inspected = await inspectImage(imageRef, inspectTag);
+    const labels = inspected.Labels || {};
+    const digest = inspected.Digest || null;
+    const taggedLink = findTaggedVersionLink(versions, inspectTag);
+    metadata = {
+      digest,
+      digestShort: digest ? digest.replace(/^sha256:/, "").slice(0, 12) : null,
+      digestLink: findDigestLink(versions, digest) || taggedLink,
+      architecture: inspected.Architecture || null,
+      os: inspected.Os || null,
+      labels: {
+        version: labels["org.opencontainers.image.version"] || null,
+        revision: labels["org.opencontainers.image.revision"] || null,
+        source: labels["org.opencontainers.image.source"] || null,
+        ostreeCommit: labels["ostree.commit"] || null,
+      },
+    };
+    metadataSource = "live";
+  } catch {
+    metadata = existing?.metadata || null;
+    metadataSource = metadata ? "cache" : "unavailable";
+  }
+
+  const feedItem = latestFeedItem(feeds, spec.versionSource);
+  const versionsFromFeed = {
+    gnome: parseFeedVersion(feedItem, ["GNOME", "Gnome"]),
+    kernel: parseFeedVersion(feedItem, ["Kernel"]),
+    nvidia: parseFeedVersion(feedItem, ["Nvidia"]),
+    release: releaseInfoFromFeedItem(feedItem),
+  };
+
+  if (metadata && !metadata.digestLink && versionsFromFeed.release?.assetsUrl) {
+    metadata.digestLink = versionsFromFeed.release.assetsUrl;
+  }
+
+  const updatedAt = latestUpdatedAt(versions) || existing?.lastPublishedAt || null;
+  const staleCutoff = Date.now() - STALE_DAYS * 24 * 60 * 60 * 1000;
+  const stale = updatedAt ? Date.parse(updatedAt) < staleCutoff : false;
+
+  return {
+    id: spec.id,
+    name: spec.name,
+    org: spec.org,
+    package: spec.package,
+    summary: spec.summary,
+    artwork: spec.artwork,
+    imageRef,
+    packagePageUrl: `https://github.com/orgs/${spec.org}/packages/container/package/${spec.package}`,
+    isoSectionLink: spec.isoSectionLink || null,
+    downloads: {
+      total: downloadsTotal,
+      display: formatDownloads(downloadsTotal),
+      source: downloadSource,
+    },
+    streams,
+    testingStreams,
+    metadata,
+    metadataSource,
+    versions: versionsFromFeed,
+    security: buildSecurityInfo(spec, inspectTag),
+    inspectTag,
+    lastPublishedAt: updatedAt,
+    stale,
+    keepEvenIfStale: Boolean(spec.keepEvenIfStale),
+  };
+}
+
+async function main() {
+  const ageHours = cacheAgeHours();
+  if (ageHours < CACHE_MAX_AGE_HOURS && !FORCE_REFRESH) {
+    console.log(`Cache is ${ageHours.toFixed(1)}h old (max ${CACHE_MAX_AGE_HOURS}h). Skipping fetch.`);
+    return;
+  }
+
+  const existing = readCache();
+  const cachedById = new Map((existing?.products || []).map((product) => [product.id, product]));
+  const feeds = {
+    bluefin: readJsonIfExists(FEED_BLUEFIN, { items: [] }),
+    lts: readJsonIfExists(FEED_LTS, { items: [] }),
+  };
+
+  const products = [];
+  for (const spec of PRODUCT_SPECS) {
+    console.log(`Fetching ${spec.org}/${spec.package}...`);
+    const product = await buildProduct(spec, feeds, cachedById, ageHours);
+    if (product.stale && !product.keepEvenIfStale) {
+      console.log(`Skipping stale image ${spec.org}/${spec.package} (older than ${STALE_DAYS} days).`);
+      continue;
+    }
+    products.push(product);
+  }
+
+  products.sort((a, b) => {
+    const aScore = typeof a.downloads.total === "number" ? a.downloads.total : -1;
+    const bScore = typeof b.downloads.total === "number" ? b.downloads.total : -1;
+    if (aScore !== bScore) return bScore - aScore;
+    return a.name.localeCompare(b.name);
+  });
+
+  const output = {
+    generatedAt: new Date().toISOString(),
+    cacheHours: CACHE_MAX_AGE_HOURS,
+    refreshHours: REFRESH_HOURS,
+    staleDays: STALE_DAYS,
+    products,
+  };
+
+  if (!fs.existsSync(OUTPUT_DIR)) fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+  fs.writeFileSync(OUTPUT_FILE, JSON.stringify(output, null, 2), "utf-8");
+  console.log(`Image data saved to ${OUTPUT_FILE}`);
+}
+
+main().catch((error) => {
+  console.error(error.message);
+  process.exit(1);
+});
