@@ -38,7 +38,7 @@ interface DriverCatalog {
   streams?: DriverStream[];
 }
 
-const catalog = driverVersionsData as DriverCatalog;
+const catalog = driverVersionsData as unknown as DriverCatalog;
 
 function formatDate(value: string | null | undefined) {
   if (!value) return "Unknown";
