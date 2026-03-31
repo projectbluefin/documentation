@@ -10,7 +10,11 @@ on:
   merge_group:
   workflow_dispatch:
   schedule:
-    - cron: "50 6 * * 0,2" # 6:50 UTC sundays and tuesdays to generate changelog page right after builds
+    - cron: "50 6 * * 0" # 6:50 UTC sundays
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
   build:
@@ -31,16 +35,25 @@ jobs:
           node-version: 24
           cache: npm
 
+      - name: Cache node_modules
+        id: cache-node-modules
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            node-modules-${{ runner.os }}-
+
       - name: Restore GitHub data cache
         uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
         with:
           path: static/data
-          key: github-data-${{ hashFiles('scripts/fetch-github-*.js') }}
+          key: github-data-${{ hashFiles('scripts/fetch-*.js') }}
           restore-keys: |
-            github-data-${{ hashFiles('scripts/fetch-github-*.js') }}-
             github-data-
 
       - name: Install dependencies
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: npm ci
 
       - name: Fetch data
