@@ -53,6 +53,7 @@ interface Product {
     cosignKeyUrl?: string | null;
     verifyCommand?: string | null;
     attestCommand?: string | null;
+    hasAttestation?: boolean | null;
     sbomCommand?: string | null;
   } | null;
   lastPublishedAt?: string | null;
@@ -434,12 +435,17 @@ export default function ImagesCatalogComponent(): React.JSX.Element {
                   .
                 </p>
                 {product.security?.attestCommand && <code>{product.security.attestCommand}</code>}
+                {product.security?.attestCommand && product.security.hasAttestation === false && (
+                  <p className={styles.tabCopy}>
+                    Note: attestations are not yet published for this image. The command is provided for when they are.
+                  </p>
+                )}
               </TabItem>
               <TabItem value="generate-sbom">
                 <p className={styles.tabCopy}>
                   SBOM generation gives you a component inventory for audits, policy checks, and vulnerability triage workflows.
                   {" "}
-                  <Link to="https://openssf.org/projects/sbom-everywhere/" target="_blank" rel="noopener noreferrer">
+                  <Link to="https://github.com/anchore/syft" target="_blank" rel="noopener noreferrer">
                     Learn more
                   </Link>
                   .
