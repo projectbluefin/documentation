@@ -210,8 +210,12 @@ function parseFedoraFromImageVersion(imageVersion) {
 
 function latestFeedItem(feeds, source) {
   if (!source) return null;
+  // stable-daily has no dedicated release feed — returning stable metadata would
+  // misrepresent daily-only images as stable releases. Return null so callers
+  // render unknown values instead.
+  if (source.stream === "stable-daily") return null;
   const items = source.feed === "lts" ? feeds.lts.items : feeds.bluefin.items;
-  const stream = source.stream === "stable-daily" ? "stable" : source.stream;
+  const stream = source.stream;
 
   const match = items.find((item) => {
     const title = (item.title || "").toLowerCase();

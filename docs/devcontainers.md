@@ -40,11 +40,13 @@ docker --version
 
 By default, the Dev Containers extension uses docker.
 To switch to podman, make the following changes in Dev Containers settings:
-```
+
+```json
 "dev.containers.dockerComposePath": "podman-compose"
 "dev.containers.dockerPath": "podman"
 "dev.containers.dockerSocketPath": "/run/user/1000/podman/podman.sock"
 ```
+
 You can use `systemctl --user status podman.socket` to find the socket path corresponding to your user id. Or if you want to run podman in rootful mode, use `/run/podman/podman.sock` instead.
 
 ## Getting Started
