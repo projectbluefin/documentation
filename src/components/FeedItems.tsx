@@ -6,6 +6,8 @@ import {
   extractVersionChange,
 } from "../config/packageConfig";
 import githubProfilesData from "@site/static/data/github-profiles.json";
+import sbomAttestationsData from "@site/static/data/sbom-attestations.json";
+import type { SbomAttestationsData } from "../types/sbom";
 
 // Small inline copy button — renders a clipboard icon, shows a tick for 1.5s after copy
 const CopyButton: React.FC<{ text: string }> = ({ text }) => {
@@ -119,6 +121,8 @@ interface SupplyChainHighlight {
 
 interface SupplyChainLinks {
   packageTagUrl: string | null;
+  attestationVerified: boolean | null;
+  attestationPresent: boolean | null;
 }
 
 interface ReleaseContributor {
@@ -153,17 +157,20 @@ const ContributorAvatar: React.FC<{
     .map((part) => part[0]?.toUpperCase())
     .join("");
 
-  const avatarInner = !imageError && avatarUrl ? (
-    <img
-      src={avatarUrl}
-      alt={displayName}
-      className={styles.contributorAvatarImage}
-      onError={() => setImageError(true)}
-      loading="lazy"
-    />
-  ) : (
-    <span className={styles.contributorAvatarFallback}>{initials || "?"}</span>
-  );
+  const avatarInner =
+    !imageError && avatarUrl ? (
+      <img
+        src={avatarUrl}
+        alt={displayName}
+        className={styles.contributorAvatarImage}
+        onError={() => setImageError(true)}
+        loading="lazy"
+      />
+    ) : (
+      <span className={styles.contributorAvatarFallback}>
+        {initials || "?"}
+      </span>
+    );
 
   if (profileUrl) {
     return (
@@ -191,7 +198,11 @@ const ContributorAvatar: React.FC<{
   }
 
   return (
-    <span className={styles.contributorAvatar} title={displayName} aria-label={displayName}>
+    <span
+      className={styles.contributorAvatar}
+      title={displayName}
+      aria-label={displayName}
+    >
       {avatarInner}
     </span>
   );
@@ -301,7 +312,10 @@ const extractReleaseTag = (title: string): string | null => {
   );
   if (!tagMatch) return null;
 
-  const normalized = tagMatch[1].toLowerCase();
+  // Normalise lts.YYYYMMDD → lts-YYYYMMDD to match cache key format
+  const normalized = tagMatch[1]
+    .toLowerCase()
+    .replace(/^lts\.(\d{8})$/, "lts-$1");
   return normalized;
 };
 
@@ -309,11 +323,33 @@ const getSupplyChainLinks = (title: string): SupplyChainLinks => {
   const releaseTag = extractReleaseTag(title);
 
   if (!releaseTag) {
-    return { packageTagUrl: null };
+    return {
+      packageTagUrl: null,
+      attestationVerified: null,
+      attestationPresent: null,
+    };
+  }
+
+  // Look up attestation state from the SBOM cache.
+  // Cache keys match releaseTag format: stable-YYYYMMDD, gts-YYYYMMDD, lts-YYYYMMDD, etc.
+  let attestationVerified: boolean | null = null;
+  let attestationPresent: boolean | null = null;
+  const cache = sbomAttestationsData as unknown as SbomAttestationsData;
+  if (cache?.streams) {
+    for (const stream of Object.values(cache.streams)) {
+      const entry = stream.releases?.[releaseTag];
+      if (entry) {
+        attestationVerified = entry.attestation.verified ?? null;
+        attestationPresent = entry.attestation.present ?? null;
+        break;
+      }
+    }
   }
 
   return {
     packageTagUrl: `https://github.com/orgs/ublue-os/packages/container/bluefin?tag=${encodeURIComponent(releaseTag)}`,
+    attestationVerified,
+    attestationPresent,
   };
 };
 
@@ -415,8 +451,9 @@ const PROFILE_LOOKUP: Record<string, ReleaseContributor> = (() => {
   return lookup;
 })();
 
-const getContributorForAuthor = (author: string): ReleaseContributor | undefined =>
-  PROFILE_LOOKUP[normalizeName(author)];
+const getContributorForAuthor = (
+  author: string,
+): ReleaseContributor | undefined => PROFILE_LOOKUP[normalizeName(author)];
 
 // Helper function to extract key version changes from changelog content
 const extractVersionSummary = (content: string): VersionChange[] => {
@@ -702,9 +739,7 @@ const CombinedFeedItems: React.FC<CombinedFeedItemsProps> = ({
               : item.content);
           const isRelease = isReleaseFeed(item._feedId);
           const commits =
-            isRelease && itemDescription
-              ? extractCommits(itemDescription)
-              : [];
+            isRelease && itemDescription ? extractCommits(itemDescription) : [];
           const supplyChainHighlights = extractSupplyChainHighlights(commits);
           const displayTitle = formatReleaseTitle(item.title, item._feedId);
           const supplyChainLinks = getSupplyChainLinks(displayTitle);
@@ -781,7 +816,9 @@ const CombinedFeedItems: React.FC<CombinedFeedItemsProps> = ({
                 </div>
                 {contributors.length > 0 && (
                   <div className={styles.contributorsRow}>
-                    <span className={styles.contributorsLabel}>Contributors</span>
+                    <span className={styles.contributorsLabel}>
+                      Contributors
+                    </span>
                     <div className={styles.contributorsAvatars}>
                       {visibleContributors.map((author) => (
                         <ContributorAvatar
@@ -805,19 +842,23 @@ const CombinedFeedItems: React.FC<CombinedFeedItemsProps> = ({
                 )}
                 {isRelease && (
                   <div className={styles.releaseSummaryBlock}>
-                    <div className={styles.releaseSummaryTitle}>Release Summary</div>
+                    <div className={styles.releaseSummaryTitle}>
+                      Release Summary
+                    </div>
                     <div className={styles.releaseSummaryGrid}>
                       <span>
                         <strong>{releaseSummary.commits}</strong> commits
                       </span>
                       <span>
-                        <strong>{releaseSummary.packageUpdates}</strong> package updates
+                        <strong>{releaseSummary.packageUpdates}</strong> package
+                        updates
                       </span>
                       <span>
                         <strong>{releaseSummary.newPackages}</strong> additions
                       </span>
                       <span>
-                        <strong>{releaseSummary.removedPackages}</strong> removals
+                        <strong>{releaseSummary.removedPackages}</strong>{" "}
+                        removals
                       </span>
                       <span>
                         <strong>{releaseSummary.majorBumps}</strong> major bumps
@@ -833,7 +874,8 @@ const CombinedFeedItems: React.FC<CombinedFeedItemsProps> = ({
                     <ul className={styles.headsUpList}>
                       {majorVersionBumps.map((bump) => (
                         <li key={`${bump.name}-${bump.from}-${bump.to}`}>
-                          <strong>{bump.name}:</strong> {bump.from} -&gt; {bump.to}
+                          <strong>{bump.name}:</strong> {bump.from} -&gt;{" "}
+                          {bump.to}
                         </li>
                       ))}
                     </ul>
@@ -842,6 +884,23 @@ const CombinedFeedItems: React.FC<CombinedFeedItemsProps> = ({
                 {isRelease && (
                   <div className={styles.supplyChainBlock}>
                     <div className={styles.supplyChainTitle}>Supply Chain</div>
+                    {supplyChainLinks.attestationVerified === true && (
+                      <p className={styles.supplyChainAttestation}>
+                        Attestation verified for this release.
+                      </p>
+                    )}
+                    {supplyChainLinks.attestationPresent === true &&
+                      supplyChainLinks.attestationVerified === false && (
+                        <p className={styles.supplyChainAttestation}>
+                          Attestation present but verification failed for this
+                          release.
+                        </p>
+                      )}
+                    {supplyChainLinks.attestationPresent === false && (
+                      <p className={styles.supplyChainAttestation}>
+                        No attestation found for this release.
+                      </p>
+                    )}
                     {supplyChainHighlights.length > 0 ? (
                       <ul className={styles.supplyChainList}>
                         {supplyChainHighlights.map(({ keyword, commit }) => (

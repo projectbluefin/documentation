@@ -1,0 +1,70 @@
+name: Update SBOM Attestation Cache
+
+on:
+  schedule:
+    - cron: "0 4 * * *" # 04:00 UTC nightly
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+permissions:
+  contents: write # for git commit + push
+
+jobs:
+  update-sbom-cache:
+    name: Fetch and cache SBOM attestations
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@fa2e9d605c4eeb9fcad4c99c224cee0c6c7f3594 # v2.16.0
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Cache node_modules
+        id: cache-node-modules
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            node-modules-${{ runner.os }}-
+
+      - name: Install dependencies
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        run: npm ci
+
+      - name: Install cosign
+        uses: sigstore/cosign-installer@d7d6bc7722e3daa8354c50bcb52f4837da5e9b6a # v3.8.1
+
+      - name: Fetch SBOM attestation metadata
+        env:
+          # PROJECT_READ_TOKEN must have packages:read scope for cross-org
+          # (ublue-os) package registry access. GITHUB_TOKEN alone is
+          # insufficient for cross-org package reads.
+          GITHUB_TOKEN: ${{ secrets.PROJECT_READ_TOKEN }}
+        run: npm run fetch-sbom
+
+      - name: Commit updated cache
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add static/data/sbom-attestations.json
+          if git diff --cached --quiet; then
+            echo "No changes to sbom-attestations.json — skipping commit."
+          else
+            git commit -m "chore(sbom): update attestation cache $(date -u +%Y-%m-%d)"
+            git push
+          fi
