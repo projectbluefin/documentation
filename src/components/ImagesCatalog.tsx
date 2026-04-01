@@ -450,7 +450,7 @@ export default function ImagesCatalogComponent(): React.JSX.Element {
 
   return (
     <div className={styles.imagesPage}>
-      <section className={styles.sectionGroup}>
+      <section id="bluefin-stable" className={styles.sectionGroup}>
         <Heading as="h2" className={styles.groupTitle}>
           Bluefin
         </Heading>
@@ -464,7 +464,7 @@ export default function ImagesCatalogComponent(): React.JSX.Element {
         <div className={styles.cards}>{renderCards(mainlineProducts)}</div>
       </section>
 
-      <section className={styles.sectionGroup}>
+      <section id="bluefin-lts" className={styles.sectionGroup}>
         <Heading as="h2" className={styles.groupTitle}>
           Bluefin LTS and GDX
         </Heading>

@@ -46,8 +46,10 @@ function loadOsEvents(
 const STABLE_OS_EVENTS: OsReleaseEvent[] = loadOsEvents(bluefinReleasesData, "stable");
 const LTS_OS_EVENTS: OsReleaseEvent[] = loadOsEvents(bluefinLtsReleasesData, "lts");
 const ALL_OS_EVENTS: OsReleaseEvent[] = [
-  ...STABLE_OS_EVENTS,
-  ...LTS_OS_EVENTS,
+  // Most recent stable release only
+  ...(STABLE_OS_EVENTS.length > 0 ? [STABLE_OS_EVENTS[0]] : []),
+  // Most recent LTS release only
+  ...(LTS_OS_EVENTS.length > 0 ? [LTS_OS_EVENTS[0]] : []),
 ].sort((a, b) => b.dateMs - a.dateMs);
 
 /**
@@ -317,29 +319,32 @@ const FirehoseFeed: React.FC = () => {
     [filteredOsEvents, filters.showOsReleases, filters.updatedWithin],
   );
 
-  // ── Unified timeline ────────────────────────────────────────────────────────
+  // ── Grouped sections ───────────────────────────────────────────────────────
   //
-  // App events are deduplicated to one card per app (most recent release).
-  // OS events are kept individually — all 10 stable + 10 LTS appear as
-  // separate cards sorted by date. The two streams are interleaved chronologically.
+  // OS releases are pinned as the featured section. App updates follow as a
+  // secondary section, separated by a visual divider. Each section is sorted
+  // by date independently.
 
-  const timeline = useMemo((): FlatTimelineEvent[] => {
-    const appEntries: AppTimelineEvent[] = filteredUniqueApps.map(
-      ({ app, latestMs }) => ({
-        kind: "app" as const,
-        app,
-        dateMs: latestMs,
-      }),
-    );
-    return [...appEntries, ...filteredOsEvents].sort((a, b) => b.dateMs - a.dateMs);
-  }, [filteredUniqueApps, filteredOsEvents]);
+  const osSection = filteredOsEvents; // already sorted by dateMs desc
+  const appSection = filteredUniqueApps
+    .map(({ app, latestMs }): AppTimelineEvent => ({ kind: "app", app, dateMs: latestMs }))
+    .sort((a, b) => b.dateMs - a.dateMs);
 
   const isEmpty = allEvents.length === 0 && ALL_OS_EVENTS.length === 0;
+  const feedEmpty = osSection.length === 0 && appSection.length === 0;
 
   return (
     <div className={styles.layout}>
       {/* ── Sidebar ── */}
       <aside className={styles.sidebarColumn}>
+        {/* More Information — pinned at very top */}
+        <section className={styles.sidebarInfoLinks}>
+          <h3 className={styles.sidebarHeading}>More Information</h3>
+          <nav className={styles.sidebarQuickLinks}>
+            <a href="/images" className={styles.sidebarQuickLink}>Images catalog →</a>
+            <a href="/driver-versions" className={styles.sidebarQuickLink}>Driver versions →</a>
+          </nav>
+        </section>
         <RssLinks />
         {featuredApp && <FeaturedAppBanner app={featuredApp} />}
         <FirehoseFilters
@@ -383,7 +388,7 @@ const FirehoseFeed: React.FC = () => {
               pipeline runs every 6 hours — check back soon.
             </p>
           </div>
-        ) : timeline.length === 0 ? (
+        ) : feedEmpty ? (
           <div className={styles.emptyState}>
             <p>No items match the current filters.</p>
             <button
@@ -394,13 +399,32 @@ const FirehoseFeed: React.FC = () => {
             </button>
           </div>
         ) : (
-          timeline.map((event) =>
-            event.kind === "os" ? (
-              <OsReleaseCard key={`os-${event.release.tag}`} event={event} />
-            ) : (
-              <FirehoseCard key={event.app.id} app={event.app} />
-            ),
-          )
+          <>
+            {/* ── OS Releases — featured section ── */}
+            {osSection.length > 0 && (
+              <section className={styles.feedSection}>
+                <h2 className={styles.feedSectionHeading}>Bluefin OS Releases</h2>
+                {osSection.map((event) => (
+                  <OsReleaseCard key={`os-${event.release.tag}`} event={event} />
+                ))}
+              </section>
+            )}
+
+            {/* ── App Updates — secondary section ── */}
+            {appSection.length > 0 && (
+              <section className={styles.feedSection}>
+                <div className={styles.appSectionDivider}>
+                  <h2 className={styles.feedSectionHeading}>App Updates</h2>
+                  <span className={styles.appSectionHint}>
+                    Flatpak &amp; Homebrew packages included in Bluefin
+                  </span>
+                </div>
+                {appSection.map((event) => (
+                  <FirehoseCard key={event.app.id} app={event.app} />
+                ))}
+              </section>
+            )}
+          </>
         )}
       </main>
     </div>
