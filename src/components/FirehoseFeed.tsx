@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import firehoseData from "@site/static/data/firehose-apps.json";
 import type { FirehoseApp, FirehoseRelease, FirehoseFilterState } from "../types/firehose";
 import FirehoseCard from "./FirehoseCard";
@@ -250,7 +250,11 @@ const FirehoseFeed: React.FC = () => {
     [filteredEvents],
   );
 
-  const featuredApp = useMemo(() => getFeaturedApp(uniqueApps), [uniqueApps]);
+  const [featuredApp, setFeaturedApp] = useState<FirehoseApp | null>(null);
+
+  useEffect(() => {
+    setFeaturedApp(getFeaturedApp(uniqueApps));
+  }, [uniqueApps]);
 
   const isEmpty = allEvents.length === 0;
 
