@@ -1,1624 +1,365 @@
-# Bluefin Documentation
+# Bluefin Documentation — Agent Instructions
 
-Bluefin documentation is a Docusaurus 3.8.1 TypeScript website that provides comprehensive documentation for the Bluefin operating system. The site generates documentation pages from markdown files and auto-fetches release feeds for changelogs.
+**Repository:** `castrojo/documentation` (fork of `projectbluefin/documentation`)  
+**Deployed at:** <https://docs.projectbluefin.io/>  
+**Local path:** `/var/home/jorge/src/documentation`  
+**Framework:** Docusaurus 3.9.x (TypeScript), React 19, Node 24
 
-**Always reference these instructions first and fallback to search or bash commands only when you encounter unexpected information that does not match the info here.**
+---
 
-## Work Tracking with Beads
-
-**This repository uses [Beads](https://github.com/block/beads) for issue tracking.**
-
-### Quick Reference
+## Quick Start
 
 ```bash
-# List open issues
-bd list --status=open
-
-# Show issue details
-bd show <issue-id>
-
-# Create new issue
-bd create --title "Task name" --description "Details" --type task --priority 1
-
-# Update status
-bd update <issue-id> --status in_progress
-
-# Close issue
-bd close <issue-id> --reason "Completed"
-
-# List ready tasks (no blockers)
-bd ready
-
-# Add dependency (issue-id depends on depends-on-id)
-bd dep <issue-id> <depends-on-id>
-```
-
-### Issue Types
-
-- `task` - General work item (default)
-- `bug` - Bug fix
-- `feature` - New feature
-- `epic` - Large multi-issue effort
-- `chore` - Maintenance work
-
-### Priority Levels
-
-- P0: Critical/urgent
-- P1: High priority (default for important work)
-- P2: Normal priority (default)
-- P3: Low priority (nice to have)
-
-### Labels
-
-Use labels to categorize work:
-
-- `ci-cd`, `validation`, `tooling`, `dependencies`, `security`
-- `reports`, `monthly-reports`, `community-engagement`
-- `documentation`, `automation`, `workflow`
-
-### Work Tracking
-
-All work is tracked in beads issues. Use `bd` commands to manage tasks, features, bugs, and dependencies. See the Beads section above for workflow details.
-
-## Git Workflow - CRITICAL RULES
-
-**NEVER push directly to main/trunk unless EXPLICITLY instructed by the user.**
-
-### Required Workflow
-
-1. **ALWAYS work in a topic branch**
-
-   ```bash
-   git checkout -b <type>/<short-description>
-   ```
-
-2. **Commit your changes to the branch**
-
-   ```bash
-   git add <files>
-   git commit -m "conventional commit message"
-   ```
-
-3. **Push the branch to remote** (only when ready)
-
-   ```bash
-   git push -u origin <type>/<short-description>
-   ```
-
-4. **Create a pull request** (do not merge)
-
-   ```bash
-   gh pr create --title "Title" --body "Description"
-   ```
-
-5. **WAIT for user approval** - Do not merge or push to main
-
-### What NOT to Do
-
-- ❌ NEVER `git push origin main` or `git push origin HEAD:main`
-- ❌ NEVER commit directly to main branch
-- ❌ NEVER merge PRs without explicit user instruction
-- ❌ NEVER use `--force` or `--force-with-lease` on main branch
-
-### Exception Cases
-
-The ONLY time you push to main is when the user explicitly says:
-
-- "push this to main"
-- "merge this to trunk"
-- "deploy this now"
-- Similar explicit direct instructions
-
-### Why This Matters
-
-This repository has branch protection rules that require:
-
-- Pull requests for all changes
-- Merge queue for integration
-- Review/approval workflows
-
-Bypassing these (even though technically possible with certain permissions) violates the project's governance and CI/CD processes.
-
-## Working Effectively
-
-Bootstrap, build, and test the repository:
-
-- `npm install` -- takes 50-60 seconds. NEVER CANCEL. Set timeout to 120+ seconds.
-  - **Note**: If installation fails with React peer dependency conflicts, use `npm install --legacy-peer-deps`
-- `npm run build` -- takes 7-15 seconds (includes fetch-data step: feeds, playlists, GitHub profiles). NEVER CANCEL. Set timeout to 60+ seconds.
-
-Run the development server:
-
-- **ALWAYS run the bootstrapping steps first.**
-- Local development: `npm run start` (includes automatic data fetching: feeds, playlists, GitHub profiles)
-- Docker development: `docker compose up`
-
-**CRITICAL: Development Server Reliability**
-
-To ensure the development server runs reliably and stays running:
-
-1. **The ONLY reliable method - Use detached mode with background process redirection:**
-
-   ```bash
-   cd /var/home/jorge/src/bluefin-docs && npm start 2>&1 | tee /tmp/docusaurus-server.log &
-   ```
-
-   **CRITICAL REQUIREMENTS:**
-   - Use `mode: "detached"` when running via bash tool
-   - Redirect output to log file with `2>&1 | tee /tmp/docusaurus-server.log`
-   - Add `&` at the end to background the process
-   - Use `initial_wait: 30` or higher for initial startup
-   - Process persists after shell exits and survives indefinitely
-
-2. **Verify server started successfully:**
-
-   ```bash
-   sleep 40 && tail -50 /tmp/docusaurus-server.log
-   curl -I http://localhost:3000/
-   ps aux | grep -E "node|npm|docusaurus" | grep -v grep
-   ```
-
-   Expected output:
-   - Log should show: `[SUCCESS] Docusaurus website is running at: http://localhost:3000/`
-   - curl should return: `HTTP/1.1 200 OK`
-   - ps should show node/npm processes running
-
-3. **Monitor server logs in real-time:**
-
-   ```bash
-   tail -f /tmp/docusaurus-server.log
-   ```
-
-4. **Stop the server:**
-
-   ```bash
-   pkill -f "npm start"
-   pkill -f docusaurus
-   # Verify it stopped:
-   ps aux | grep -E "node.*docusaurus" | grep -v grep
-   ```
-
-5. **Why this method is reliable:**
-   - `npm start` handles all data fetching (feeds, playlists, profiles) automatically
-   - Detached mode survives shell session termination
-   - Log redirection allows monitoring without blocking
-   - Background process (`&`) returns immediately while server starts
-   - Cannot be stopped with `stop_bash` - must use `pkill`
-   - Works consistently across all environments
-
-6. **DO NOT use these methods (they are unreliable):**
-   - ❌ `npm start` alone without detached mode - terminates with session
-   - ❌ `npx docusaurus start` directly - doesn't run data fetching scripts
-   - ❌ `mode: "async"` - can disconnect unexpectedly
-   - ❌ `mode: "sync"` - blocks and may timeout
-
-7. **Best practices from Docusaurus documentation:**
-   - Development: Use `npm start` for live preview with hot-reload
-   - Production testing: Use `npm run build && npm run serve` for static files
-   - Never use dev server in production - always serve static build
-   - For CI/CD: Build static files and deploy to CDN/static hosting
-
-Run production build locally:
-
-- `npm run serve` -- serves the built site locally
-
-## Validation
-
-**CRITICAL TIMING REQUIREMENTS:**
-
-- **NEVER CANCEL build commands** - Set explicit timeouts of 60+ minutes for all builds
-- npm install: 60 seconds (set 120+ second timeout, use --legacy-peer-deps if needed)
-- npm run build: 7-15 seconds (set 60+ second timeout, includes feed fetching)
-- npm run typecheck: 2 seconds (set 30+ second timeout, some errors may be tolerated by build)
-- npm run prettier-lint: 3 seconds (set 30+ second timeout)
-
-**Manual Validation Requirements:**
-
-- ALWAYS manually validate documentation changes by running the development server
-- Test at least one complete end-to-end scenario: start dev server, navigate to changed pages, verify content renders correctly
-- Take screenshots of any UI changes to verify they display properly
-- ALWAYS run through the complete build process after making changes
-- Verify changelogs render correctly if you modify changelog files
-- Verify that release feeds are fetched correctly (stable and gts tags from ublue-os/bluefin and lts tag from ublue-os/bluefin-lts)
-
-**Always run these validation steps before committing:**
-
-- `npm run typecheck` -- validates TypeScript compilation
-- `npm run prettier-lint` -- checks code formatting (will show warnings for existing files, this is normal)
-- `npm run build` -- ensures site builds successfully
-- Manual testing via `npm run start` -- verify your changes work in the browser
-
-**CI/CD Enforcement:**
-
-All validation gates are automatically enforced in the GitHub Actions workflow (`.github/workflows/pages.yml`):
-
-- **TypeScript validation** (`npm run typecheck`) - **BLOCKING** - CI fails if TypeScript errors are present
-- **ESLint validation** (`npm run lint`) - **BLOCKING** - CI fails if ESLint errors are found (warnings are allowed)
-- **Prettier check** (`npm run prettier-lint || true`) - **NON-BLOCKING** - Warnings logged but do not fail the build
-
-The workflow runs these checks on:
-
-- Pull requests to main branch
-- Direct pushes to main branch
-- Merge queue operations
-- Manual workflow dispatch
-- Scheduled builds (Sundays and Tuesdays at 6:50 UTC)
-
-This ensures code quality standards are automatically enforced before deployment.
-
-## Common Tasks
-
-### Development Commands
-
-All commands must be run from repository root:
-
-```bash
-# Install dependencies (NEVER CANCEL - 60s runtime)
+# Install dependencies
 npm install
-# If above fails with React peer dependency conflicts, use:
-# npm install --legacy-peer-deps
 
-# Start development server (auto-reloads on changes, includes data fetching)
+# Start dev server (fetches data automatically, hot-reload)
 npm run start
 
-# Build production site (NEVER CANCEL - 7-15s runtime, includes data fetching)
+# Full production build
 npm run build
 
-# Serve built site locally
-npm run serve
-
-# Validate TypeScript (some errors may be tolerated by build process)
+# Type check
 npm run typecheck
 
-# Check formatting (many warnings expected on existing files)
-npm run prettier-lint
-
-# Fix formatting issues
-npm run prettier
-
-# Fetch all data manually (auto-runs during start/build)
-npm run fetch-data
-# Or fetch individual data sources:
-npm run fetch-feeds              # Release feeds from GitHub
-npm run fetch-playlists          # YouTube playlist metadata
-npm run fetch-github-profiles    # GitHub user profiles for donations page
-npm run fetch-github-repos       # GitHub repo stats for projects page
-
-# Clear build cache if needed
-npm run clear
+# Lint
+npm run lint
 ```
 
-### Docker Development
+Dev server: <http://localhost:3000/>
 
-Alternative to npm for development:
+---
+
+## Git Workflow
+
+**Never push directly to main.** Always work on a topic branch:
 
 ```bash
-# Start containerized development (NEVER CANCEL - pulls image first time)
-docker compose up
-
-# Stop containerized development
-docker compose down
+git checkout -b <type>/<short-description>
+git add <files>
+git commit -m "type(scope): description"
+git push -u origin <type>/<short-description>
+# Then open a PR — do not merge
 ```
 
-**Note**: The repository uses `npm` as the package manager for both local development and CI/CD, following standard Docusaurus practices.
+Types: `feat`, `fix`, `docs`, `refactor`, `perf`, `ci`, `chore`
 
-### Repository Structure
+AI agent attribution (required in every commit footer):
 
 ```
-docs/                    # Documentation markdown files (28 files)
-blog/                   # Blog posts (21 files)
-  authors.yaml          # Blog author information with socials
-changelogs/             # Changelog welcome content (manually created)
-  authors.yaml          # Changelog author information
-src/                    # React components and pages
-  components/           # React components (FeedItems, PackageSummary, CommunityFeeds, MusicPlaylist, GitHubProfileCard, ProjectCard)
-  config/               # Configuration (packageConfig.ts)
-  pages/                # Custom pages (changelogs.tsx)
+Assisted-by: Claude Sonnet 4.6 via GitHub Copilot
+Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>
+```
+
+**Fork sync:** This is a fork of `projectbluefin/documentation`. Keep in sync:
+
+```bash
+git fetch upstream
+git checkout main
+git reset --hard upstream/main
+git push origin main --force-with-lease
+```
+
+---
+
+## Validation Gates (all required before committing)
+
+| Check | Command | Blocking? |
+|---|---|---|
+| TypeScript | `npm run typecheck` | YES |
+| ESLint | `npm run lint` | YES |
+| Prettier | `npm run prettier-lint` | No (warnings only in CI) |
+| Build | `npm run build` | YES |
+
+CI enforces TypeScript and ESLint as hard failures. Prettier is warnings-only.
+
+---
+
+## Repository Structure
+
+```
+docs/                   # User documentation (Markdown/MDX)
+blog/                   # Blog posts with frontmatter + authors.yaml
+reports/                # Monthly auto-generated report MDX posts
+src/
+  components/           # React components (see Components section)
+  config/               # packageConfig.ts — centralized package tracking
+  pages/                # Custom Docusaurus pages
+    changelogs.tsx       # /changelogs page
+    board.tsx            # /board page
   types/                # TypeScript type definitions
-  css/                  # Custom styling
-static/                 # Static assets (images, data, feeds, etc.)
-  data/                 # Auto-generated data files (playlist-metadata.json, github-profiles.json)
-  feeds/                # Auto-generated release feeds (bluefin-releases.json, bluefin-lts-releases.json)
-  img/                  # Images and graphics
-scripts/                # Build scripts (fetch-feeds.js, fetch-playlists.js, fetch-github-profiles.js, fetch-github-repos.js)
-sidebars.ts             # Navigation structure (TypeScript)
+    sbom.ts              # SBOM attestation types
+    sbom-attestations.d.ts  # Ambient module declaration (allows missing file at tsc time)
+    data.d.ts            # General data types
+    theme.d.ts           # Docusaurus theme type augmentations
+  css/                  # custom.css
+  theme/                # Swizzled Docusaurus components
+    DocItem/Footer/      # Adds PageContributors to every doc page
+scripts/                # Data-fetch and utility scripts (see Data Pipeline section)
+  lib/                  # Shared library modules for generate-report
+static/
+  data/                 # Auto-generated JSON (gitignored — except sbom-attestations.json seed)
+  feeds/                # Auto-generated release feeds (gitignored)
+  img/                  # Static images
+.github/
+  workflows/            # CI/CD workflows (see CI/CD section)
+  agents/               # GitHub Copilot agent definitions
+  prompts/              # Copilot prompt files
 docusaurus.config.ts    # Main Docusaurus configuration
-package.json            # Dependencies and scripts
-Justfile                # Just command runner recipes (build, serve)
+sidebars.ts             # Sidebar navigation
+Justfile                # build, serve recipes
 ```
 
-### Content Types
+---
 
-- **Documentation**: 28 files in `docs/` directory, written in Markdown/MDX
-- **Blog Posts**: 21 files in `blog/` directory, with frontmatter metadata and author attribution from `blog/authors.yaml`
-- **Changelogs**: Manually created welcome content in `changelogs/` directory, displayed alongside auto-generated release feeds
-- **Auto-Generated Data**: JSON files generated at build time via `npm run fetch-data`
-  - `static/feeds/bluefin-releases.json` - Release feed from ublue-os/bluefin
-  - `static/feeds/bluefin-lts-releases.json` - Release feed from ublue-os/bluefin-lts
-  - `static/data/playlist-metadata.json` - YouTube playlist metadata for music page
-  - `static/data/github-profiles.json` - GitHub user profiles for donations page
-  - `static/data/github-repos.json` - GitHub repo stats for projects donations page
-- **Static Assets**: Images and files in `static/` directory
+## Data Pipeline
 
-### Auto-Generated Files - DO NOT COMMIT
+### How data reaches the site
 
-**CRITICAL**: The following files are auto-generated at build time and should **NEVER** be committed to git:
+The site fetches all data at **build time** via npm scripts. No runtime API calls from the browser (except `GnomeExtensions.tsx` which fetches live from extensions.gnome.org, and the `ProjectCard.tsx` runtime fallback for missing repo stats).
 
-- `static/data/playlist-metadata.json` - Generated by `npm run fetch-playlists`
-- `static/data/github-profiles.json` - Generated by `npm run fetch-github-profiles`
-- `static/data/github-repos.json` - Generated by `npm run fetch-github-repos`
-- `static/feeds/bluefin-releases.json` - Generated by `npm run fetch-feeds`
-- `static/feeds/bluefin-lts-releases.json` - Generated by `npm run fetch-feeds`
+#### Standard data pipeline (`npm run fetch-data`)
 
-**Why**: These files are fetched fresh on every build and deployment. Committing them:
+Runs automatically during `npm run start` and `npm run build`.
 
-- Creates unnecessary merge conflicts
-- Adds bloat to git history
-- May contain stale/outdated data
-- The CI/CD pipeline regenerates them anyway
+| Script | Output | What it fetches |
+|---|---|---|
+| `fetch-feeds.js` | `static/feeds/bluefin-releases.json`, `static/feeds/bluefin-lts-releases.json` | GitHub Atom release feeds from ublue-os/bluefin and ublue-os/bluefin-lts |
+| `fetch-playlist-metadata.js` | `static/data/playlist-metadata.json` | YouTube playlist thumbnails/descriptions |
+| `fetch-github-profiles.js` | `static/data/github-profiles.json` | GitHub user profiles (~80 users for donations page) |
+| `fetch-github-repos.js` | `static/data/github-repos.json` | GitHub repo stars/forks for projects page |
+| `fetch-github-driver-versions.js` | `static/data/driver-versions.json` | Kernel/Mesa/NVIDIA/GNOME version history per stream from GitHub releases |
+| `fetch-github-images.js` | `static/data/images.json` | OCI image catalog — streams, versions, bootc switch commands, download counts. Reads `sbom-attestations.json` and overlays package versions from SBOM data |
+| `fetch-contributors.js` | `static/data/file-contributors.json` | Per-file git contributors (used by DocItem/Footer) |
+| `fetch-board-data.js` | `static/data/board-changelog.json` | projectbluefin org project board data (requires PROJECT_READ_TOKEN with `project:read`) |
 
-**If you accidentally committed these files**:
+All scripts use a **24-hour file-mtime cache**: if the output JSON is younger than 24 hours, the fetch is skipped. Pass `--force` to bypass.
 
-# Remove from last commit (if not pushed yet)
-
-git rm --cached static/data/playlist-metadata.json
-git commit --amend --no-edit
-
-# After amending, if you have already pushed the commit:
-
-git push --force-with-lease
-
-**These files are already in `.gitignore`** but may appear if generated before gitignore was updated.
-
-## Development Guidelines
-
-### File Organization
-
-- Documentation files use `.md` or `.mdx` extensions
-- Place images in `static/img/` directory
-- Reference images using `/img/filename.ext` paths
-- Use descriptive filenames for documentation files
-
-### Content Guidelines
-
-- Avoid terms like "simply" or "easy" (see [justsimply.dev](https://justsimply.dev/))
-- Use imperative tone for instructions: "Run this command", "Do not do this"
-- Include clear, tested examples
-- Link to upstream documentation when appropriate
-- Issues labelled with `blog` should generate a docusaurus appropriate blog post with appropriate tags
-- When implementing an issue with the `blog` label add the author's github information into the appropriate places in `blog/authors.yaml` to match the rest
-- Authors YAML format includes: name, page, title, url, image_url, and optional socials (bluesky, mastodon, github, linkedin, youtube, blog)
-
-### Formatting Requirements
-
-- Run `npm run prettier` to automatically fix formatting issues
-- `npm run prettier-lint` will show warnings for many existing files - this is normal and expected
-- TypeScript compilation (`npm run typecheck`) may show some errors that are tolerated by the build process
-- All builds must complete successfully even with minor TypeScript warnings
-
-## Troubleshooting
-
-### Common Issues
-
-- **Build timeouts**: Builds can take 7-15+ seconds due to data fetching (feeds, playlists, GitHub profiles). Always set generous timeouts and never cancel
-- **Dependency conflicts**: If `npm install` fails, try `npm install --legacy-peer-deps` for React version conflicts
-- **Formatting warnings**: `npm run prettier-lint` shows many warnings for existing files - this is normal
-- **TypeScript errors**: Some TypeScript errors in components may be tolerated by the build process
-- **Missing dependencies**: If build fails, try `npm install` (with --legacy-peer-deps if needed) first
-- **Port conflicts**: Development server uses port 3000 by default
-- **Data fetching failures**: If builds hang, check network connectivity to GitHub API and YouTube
-- **GitHub rate limits**: Set GITHUB_TOKEN or GH_TOKEN environment variable to increase API rate limits for profile fetching
-
-### Recovery Steps
-
-1. Clear build cache: `npm run clear`
-2. Reinstall dependencies: `rm -rf node_modules package-lock.json && npm install --legacy-peer-deps`
-3. Check for TypeScript errors: `npm run typecheck` (some errors may be tolerated)
-4. Verify formatting: `npm run prettier-lint` (warnings expected)
-5. Test data fetching: `npm run fetch-data` (or individual scripts)
-
-## Package Management
-
-This repository uses **npm** as the standard package manager for both local development and CI/CD, following official Docusaurus recommendations.
-
-### Adding Dependencies
+Requires `GITHUB_TOKEN` (or `GH_TOKEN`) env var for authenticated GitHub API requests:
 
 ```bash
-npm install package-name
-git add package.json package-lock.json
-git commit -m "feat: add package-name"
-git push
+export GITHUB_TOKEN=$(gh auth token)
+npm run fetch-data
 ```
 
-### Docusaurus Best Practices
-
-1. **Always commit package-lock.json** - Ensures deterministic builds
-2. **Use npm overrides for peer dependencies** - Already configured for React 19
-3. **Use npm ci in CI** - Faster, stricter installs from lockfile
-4. **Never manually edit package-lock.json** - Let npm manage it
-
-### CI/CD Package Management
-
-**GitHub Actions workflow uses:**
-
-- `actions/setup-node@v4` with npm caching
-- `npm ci` for fast, deterministic dependency installation
-- Standard Docusaurus build commands
-
-**Build steps:**
-
-1. Install dependencies (`npm ci`)
-2. Run validation (`npm run typecheck`, `npm run lint`)
-3. Fetch build-time data (`npm run fetch-data`)
-4. Build site (`npm run build`)
-
-## Dependencies
-
-- **Node.js**: Version 20+ required (see package.json engines field)
-- **Package Manager**: npm (standard across development and CI/CD)
-- **Docker**: Optional for containerized development
-- **OS**: Works on Linux, macOS, Windows
-- **Network**: Internet connection required for release feed fetching
-- **Key Dependencies**:
-  - Docusaurus 3.8.1 (core, preset-classic, faster)
-  - React 19.x
-  - TypeScript 5.9.2
-  - Prettier 3.6.2
-  - xml2js 0.6.2 (for feed parsing)
-  - node-fetch 3.3.2 (for fetching feeds)
-
-## Validation Scenarios
-
-After making any changes, ALWAYS:
-
-1. **Build Validation**: Run full build process
-
-   ```bash
-   npm run typecheck
-   npm run build
-   ```
-
-2. **Content Validation**: Start development server and manually test
-
-   ```bash
-   npm run start
-   # Navigate to changed pages in browser
-   # Verify content renders correctly
-   # Test navigation and links
-   ```
-
-3. **Production Validation**: Test built site
-   ```bash
-   npm run serve
-   # Verify static site works correctly
-   ```
-
-## Changelog Package Tracking
-
-The changelog cards automatically track important package versions from release feeds. Package tracking is centrally managed in `src/config/packageConfig.ts` to make maintenance simple and consistent.
-
-### How Package Tracking Works
-
-- **Package Summary Cards**: Display current versions of tracked packages in the top three cards on /changelogs/
-- **Individual Changelog Entries**: Show version transitions (old → new) when packages are upgraded
-- **Centralized Configuration**: All package patterns are defined once in `packageConfig.ts` and used by both `FeedItems.tsx` and `PackageSummary.tsx`
-
-### Adding a New Package
-
-To track a new package in changelog cards:
-
-1. **Edit** `src/config/packageConfig.ts`
-2. **Add** a new entry to the `PACKAGE_PATTERNS` array:
-
-```typescript
-{
-  name: "PackageName",        // Display name (e.g., "Docker", "GNOME")
-  pattern: /regex pattern/,    // Regex to extract version from changelog HTML
-  changePattern?: /regex/,     // Optional: For "All Images" format packages
-}
-```
-
-3. **Pattern Types**:
-   - **Standard format**: `<td><strong>PackageName</strong></td><td>version</td>`
-     ```typescript
-     pattern: /<td><strong>Docker<\/strong><\/td>\s*<td>([^<]+)/;
-     ```
-   - **"All Images" format**: `<td>🔄</td><td>packagename</td><td>oldversion</td><td>newversion</td>`
-     ```typescript
-     pattern: /<td>🔄<\/td>\s*<td>packagename<\/td>\s*<td>[^<]*<\/td>\s*<td>([^<]+)/,
-     changePattern: /<td>🔄<\/td>\s*<td>packagename<\/td>\s*<td>([^<]+)<\/td>\s*<td>([^<]+)/,
-     ```
-
-### Removing a Package
-
-To stop tracking a package:
-
-1. **Edit** `src/config/packageConfig.ts`
-2. **Remove** the entry from the `PACKAGE_PATTERNS` array
-3. **Test** the changes with `npm run build` and `npm run start`
-
-### Package Handling Rules
-
-- **Missing packages** gracefully fill in over time as new releases include them
-- **Failed pattern matches** are silently ignored - no errors thrown
-- **Version arrows** (6.14.11-300 ➡️ 6.15.9-201) are automatically detected for upgrade transitions
-- **Static versions** (no arrow) show current version in summary cards
-- **Search scope**: Examines up to 10 recent releases to find the latest version of each package
-
-### Current Tracked Packages
-
-As of this documentation update, the following packages are tracked:
-
-- **Kernel**: Main kernel version
-- **HWE Kernel**: Hardware enablement kernel
-- **GNOME**: Desktop environment version
-- **Mesa**: Graphics drivers
-- **Podman**: Container runtime
-- **NVIDIA**: Proprietary GPU drivers
-- **Docker**: Container platform
-- **systemd**: System and service manager
-- **bootc**: Bootable container tools
-
-### Validation After Changes
-
-Always validate package tracking changes:
+Run individual scripts:
 
 ```bash
-# TypeScript validation
-npm run typecheck
-
-# Build test
-npm run build
-
-# Manual testing
-npm run start
-# Navigate to /changelogs/ and verify package versions display correctly
+npm run fetch-feeds
+npm run fetch-playlists
+npm run fetch-github-profiles
+npm run fetch-github-repos
+npm run fetch-github-driver-versions
+npm run fetch-github-images
+npm run fetch-contributors
+npm run fetch-board-data
 ```
+
+#### SBOM attestation pipeline (separate nightly workflow)
+
+The SBOM pipeline runs **only in `.github/workflows/update-sbom-cache.yml`**. It is NOT part of `fetch-data` — it requires `cosign` and `oras` which are not installed in the standard build environment.
+
+| Script | Output | What it does |
+|---|---|---|
+| `fetch-github-sbom.js` | `static/data/sbom-attestations.json` | Uses cosign to verify SLSA attestations and oras to download Syft SBOMs. Extracts RPM package versions (kernel, gnome, mesa, podman, systemd, bootc, fedora) per stream/release. |
+
+Run with `npm run fetch-sbom` — requires cosign and oras on PATH, plus PROJECT_READ_TOKEN with `packages:read`.
+
+**Data flow:**
+
+```
+update-sbom-cache.yml (nightly 04:00 UTC)
+  cosign verify-attestation → GHCR OCI images
+  oras discover/pull → Syft SPDX JSON
+  → static/data/sbom-attestations.json
+  → saved to GHA cache (key: github-data-sbom-RUN_ID)
+
+pages.yml (every build)
+  restore-keys: github-data-sbom-   ← picks up SBOM data from nightly cache
+  npm run fetch-github-images       ← reads sbom-attestations.json, overlays versions
+  → static/data/images.json
+```
+
+**NVIDIA is intentionally absent from SBOM** — NVIDIA drivers are akmod packages built outside the OCI image. The site falls back to release feeds for NVIDIA versions.
+
+#### Seed file note
+
+`static/data/sbom-attestations.json` is committed as an empty seed `{ "generatedAt": null, "streams": {} }` to allow the build to succeed before the first SBOM cache run. `FeedItems.tsx` imports it via a static TypeScript import, so the file must exist at build time.
+
+The `.gitignore` has `!/static/data/sbom-attestations.json` to keep the seed tracked.
+
+**Do not commit a populated version of this file** — it is managed entirely by the GHA cache.
+
+All other `static/data/*.json` and `static/feeds/*.json` files are gitignored and must never be committed.
+
+---
+
+## CI/CD Workflows
+
+### `pages.yml` — Build and deploy
+
+Triggers: PR to main, push to main, merge_group, workflow_dispatch, schedule (Sundays 6:50 UTC)
+
+Key steps:
+1. Restore `node_modules` cache (key: `package-lock.json` hash)
+2. **Restore GitHub data cache** — key `github-data-{scripts-hash}`, restore-keys include `github-data-sbom-` (picks up SBOM data from nightly workflow)
+3. `npm ci` (only on cache miss)
+4. `npm run fetch-data` (GITHUB_TOKEN: PROJECT_READ_TOKEN)
+5. TypeScript validation (BLOCKING)
+6. ESLint validation (BLOCKING)
+7. Prettier check (non-blocking)
+8. Build
+9. Upload pages artifact → deploy to GitHub Pages (main only)
+
+### `update-sbom-cache.yml` — Nightly SBOM fetch
+
+Triggers: schedule (04:00 UTC nightly), workflow_dispatch
+
+Steps: checkout → setup-node → restore existing SBOM cache (incremental) → install cosign → install oras → oras login to GHCR → `npm run fetch-sbom` → save cache
+
+Permissions: `contents:read` only — no file commits, cache-only data flow.
+
+Required secret: `PROJECT_READ_TOKEN` with `packages:read` scope for cross-org (ublue-os) GHCR access.
+
+### `monthly-reports.yml` — Monthly report generation
+
+Triggers: first Monday of each month 10:00 UTC, workflow_dispatch
+
+Permissions: `contents:write`, `pull-requests:write`
+
+Generates a report MDX in `reports/`, commits to a branch, creates a PR with auto-merge.
+
+### `pdf.yml` — Weekly PDF export
+
+Triggers: Sundays 5:50 UTC, workflow_dispatch
+
+Generates `pdf/bluefin.pdf` via Prince XML from the live site, uploads to GitHub Release `0.1`.
+
+### `renovate-validate.yml` — Renovate config validation
+
+Triggers: PRs touching `renovate.json`
+
+Runs `renovate-config-validator --strict`.
+
+---
+
+## Components
+
+| Component | Page/Location | Data source |
+|---|---|---|
+| `FeedItems.tsx` + `CommunityFeeds.tsx` | `changelogs.tsx` | `static/feeds/*.json` + `sbom-attestations.json` |
+| `PackageSummary.tsx` | `changelogs.tsx` | Derived from feeds via `src/config/packageConfig.ts` |
+| `ImagesCatalog.tsx` | `src/pages/images.tsx` | `static/data/images.json` (includes SBOM version overlays) |
+| `DriverVersionsCatalog.tsx` | `docs/driver-versions.mdx` | `static/data/driver-versions.json` |
+| `BoardChangelog.tsx` | `board.tsx` | `static/data/board-changelog.json` |
+| `GitHubProfileCard.tsx` | `docs/donations/*.mdx` | `static/data/github-profiles.json` |
+| `ProjectCard.tsx` | `docs/donations/projects.mdx` | `static/data/github-repos.json` (build-time) + GitHub API (runtime fallback) |
+| `GnomeExtensions.tsx` | `docs/extensions.mdx` | Live fetch from extensions.gnome.org at runtime |
+| `MusicPlaylist.tsx` | `docs/music.md` | `static/data/playlist-metadata.json` |
+| `PageContributors.tsx` | DocItem/Footer (all doc pages) | `static/data/file-contributors.json` |
+| `GiscusComments/` | Blog posts | GitHub Discussions via Giscus |
+
+### Changelog package tracking
+
+Package versions shown in changelog cards are centrally managed in `src/config/packageConfig.ts`. The `PACKAGE_PATTERNS` array defines regex patterns matched against release body HTML.
+
+To add a tracked package: add an entry to `PACKAGE_PATTERNS`, run `npm run build`, verify on `/changelogs`.
+
+Currently tracked: Kernel, HWE Kernel, GNOME, Mesa, Podman, NVIDIA, Docker, systemd, bootc.
+
+---
+
+## Content Guidelines
+
+- Documentation should be consumable in one sitting. Link upstream docs; don't duplicate.
+- Avoid "simply", "easy", "just" — see <https://justsimply.dev/>
+- Imperative tone: "Run this command"
+- Never create new pages unless explicitly instructed.
+- Blog posts: use MDX with frontmatter tags; add author to `blog/authors.yaml` (fields: name, page, title, url, image_url, optional socials: bluesky, mastodon, github, linkedin, youtube, blog).
+- Images: place in `static/img/`, reference as `/img/filename.ext`
+- Music page: `MusicPlaylist` component requires 1:1 thumbnail aspect ratio and consistent album sizes.
+- Donations/contributors page: uses `GitHubProfileCard` — distinguished contributors get foil effects via the `highlight` prop.
+
+---
 
 ## Monthly Reports System
 
-The monthly reports system automatically generates transparent, data-driven summaries of completed work, active contributors, and project momentum from monitored Bluefin repositories. Reports are published on the last day of each month covering the entire month's activity.
-
-### Architecture Overview
-
-**System Components:**
-
-- **GitHub Actions Workflow** (`.github/workflows/monthly-reports.yml`) - Cron-scheduled automation
-- **Data Collection** (`scripts/generate-report.js`) - Main orchestration script
-- **GraphQL Client** (`scripts/lib/graphql-queries.js`) - GitHub REST API integration for repository data
-- **Monitored Repos** (`scripts/lib/monitored-repos.js`) - List of repositories to track
-- **Label Mapping** (`scripts/lib/label-mapping.js`) - Static label colors and categorization
-- **Contributor Tracking** (`scripts/lib/contributor-tracker.js`) - Historical contributor tracking with bot filtering
-- **Markdown Generator** (`scripts/lib/markdown-generator.js`) - Report formatting and template
-- **Multi-blog Configuration** (`docusaurus.config.ts`) - Separate blog instance for reports at `/reports`
-
-**Data Flow:**
-
-```
-GitHub Actions Cron (monthly on last day)
-  ↓
-Fetch closed PRs from projectbluefin/common (planned work)
-  ↓
-Fetch closed PRs from other monitored repos (opportunistic work)
-  ↓
-Filter to merged PRs only (exclude closed issues)
-  ↓
-Separate human contributions from bot activity
-  ↓
-Update contributor history (track first-time contributors)
-  ↓
-Categorize items by labels (Desktop, Dev, Ecosystem, Hardware, Infrastructure)
-  ↓
-Generate markdown (frontmatter + sections)
-  ↓
-Write to reports/YYYY-MM-DD-report.mdx
-  ↓
-Git commit and push
-  ↓
-Build and deploy via GitHub Pages
-```
-
-**Data Sources:**
-
-- **Planned Work:** Merged PRs from `projectbluefin/common`
-- **Opportunistic Work:** Merged PRs from other monitored repositories
-- **Monitored Repos:** See `scripts/lib/monitored-repos.js` for full list
-- **Labels:** Label colors and categories from static mapping
-- **Contributors:** Author information from GitHub API
-- **Historical Data:** `static/data/contributors-history.json` (persisted via Git checkout action)
-
-### How It Works
-
-**Cron Schedule:**
-
-- Workflow runs on the last day of each month at 10:00 UTC
-- Script calculates month date range (first day to last day)
-- Reports cover entire month's completed items
-- Single report generated per month
-
-**Date Range Calculation:**
-
-- Uses `date-fns` library for date manipulation
-- Month boundaries: startOfMonth to endOfMonth
-- Filters merged PRs with mergedAt/closedAt within month range
-- Report filename: YYYY-MM-DD-report.mdx (last day of month)
-
-**Repository Data Fetching:**
-
-- GraphQL queries to fetch closed issues and merged PRs from monitored repositories
-- Planned work: `projectbluefin/common` repository
-- Opportunistic work: All other monitored repositories (see `scripts/lib/monitored-repos.js`)
-- Filters to merged PRs only (excludes closed issues)
-- Date filtering: mergedAt/closedAt within report month
-
-**Label Categorization:**
-
-- **Project Areas:** Desktop, Development, Ecosystem, Hardware, Infrastructure
-- **Work Types:** Bug, Enhancement, Documentation, Tech Debt, Automation
-- **Badge Generation:** Color-coded badges using static label mapping
-- **Fallback:** Uncategorized items grouped separately
-- **Planned vs Opportunistic:** Items are split into two subsections within each category
-
-**Contributor Tracking:**
-
-- **Bot Detection:** Regex patterns for common bot usernames (dependabot, renovate, github-actions, etc.)
-- **Historical Tracking:** JSON file persists contributor list across report runs (`static/data/contributors-history.json`)
-- **First-Time Recognition:** Compares current contributors against history
-- **New Contributor Highlight:** First-time contributors are:
-  - Listed in a separate "🌟 New Contributors" section above repeat contributors
-  - Given a gold foil effect (`highlight={true}` prop) on their GitHubProfileCard
-  - Also included in the main "👥 Contributors" section (without highlight)
-- **Bot Separation:** Bot activity shown separately from human contributions
-- **PR Authors Only:** Only merged PR authors are counted as contributors (closed issues excluded)
-
-**Markdown Generation:**
-
-- **Frontmatter:** Report metadata (date, tags, authors, slug)
-- **Summary:** Key metrics (items completed, contributors, new contributors)
-- **Project Areas:** Work grouped by area with status badges
-- **Work Types:** Items categorized by enhancement/bug/docs/etc.
-- **Bot Activity:** Aggregated by repository and bot username
-- **Build Health:** CI/CD success rates and statistics (see Build Health Metrics below)
-- **Contributors:** List with links to GitHub profiles
-- **Footer:** Cross-links to changelogs and blog
-
-### Build Health Metrics
-
-Monthly reports include a "Build Health" section showing CI/CD success rates, build statistics, and month-over-month trends for all Bluefin image build workflows.
-
-**Tracked Workflows:**
-
-| Workflow ID | Repository           | Image Name         |
-| ----------- | -------------------- | ------------------ |
-| 125772764   | ublue-os/bluefin     | Bluefin Stable     |
-| 125772761   | ublue-os/bluefin     | Bluefin GTS        |
-| 125772763   | ublue-os/bluefin     | Bluefin Beta       |
-| 146755607   | ublue-os/bluefin     | Bluefin Latest     |
-| 141565346   | ublue-os/bluefin-lts | Bluefin LTS        |
-| 177905245   | ublue-os/bluefin-lts | Bluefin LTS HWE    |
-| 141565344   | ublue-os/bluefin-lts | Bluefin DX         |
-| 141733516   | ublue-os/bluefin-lts | Bluefin GDX        |
-| 141567601   | ublue-os/bluefin-lts | Bluefin LTS HWE DX |
-| 141569417   | ublue-os/bluefin-lts | Bluefin DX LTS HWE |
-
-**Metrics Calculated:**
-
-- **Success Rate:** Percentage of successful workflow runs (conclusion = "success")
-- **Total Builds:** Count of workflow runs within the month
-- **MoM Change:** Month-over-month percentage change in success rate
-- **Average Duration:** Mean build time in minutes across all runs
-
-**Build Counting Rules:**
-
-- Counts are at **workflow run level**, not individual job level
-- Each workflow run = 1 build event (even if produces multiple image variants)
-- Only tracks actual build workflows (excludes auxiliary workflows like "Generate Release")
-- First report shows "_Baseline_" instead of MoM change (no previous month data)
-
-**Statistics:**
-
-- **Total Builds:** Sum across all workflows
-- **Most Active:** Workflow with highest build count
-- **100% Club:** Workflows with perfect success rate (no failures)
-- **Avg Build Time:** Average duration across all workflows in minutes
-
-**Data Source:**
-
-- GitHub Actions API: `GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs`
-- Date filtering: `created={start_date}..{end_date}`
-- Retry logic: 3 attempts with exponential backoff (2s, 4s, 8s)
-- Graceful degradation: Section skipped if API unavailable
-
-**Error Handling:**
-
-- API failures logged as warnings (report generation continues)
-- Rate limit detection with reset time logging
-- Network timeouts retry automatically
-- Missing data shows "N/A" or skips section entirely
-
-**Output Format:**
-
-```markdown
-## Build Health
-
-### Success Rates by Image
-
-| Image          | Success Rate | Builds | MoM Change                            |
-| -------------- | ------------ | ------ | ------------------------------------- |
-| Bluefin Stable | 98.5%        | 67     | ![+2.3%](https://...badge...success)  |
-| Bluefin GTS    | 100%         | 45     | ![+1.2%](https://...badge...success)  |
-| Bluefin LTS    | 97.1%        | 52     | ![-1.5%](https://...badge...critical) |
-| First Report   | 98.5%        | 67     | _Baseline_                            |
-
-### This Month's Highlights
-
-- 📊 **Total Builds:** 423 builds across all images
-- 🏆 **Most Active:** Bluefin Stable (67 builds)
-- 💯 **100% Club:** Bluefin GTS, Bluefin LTS (perfect success rate)
-- ⏱️ **Avg Build Time:** 32 minutes across all variants
-```
-
-**Troubleshooting:**
-
-- **"Failed to fetch workflow runs":** Check GitHub API status and token permissions
-- **"Build metrics unavailable":** API timeout or rate limit - section will be skipped
-- **Incorrect workflow IDs:** Update `TRACKED_WORKFLOWS` in `scripts/lib/build-metrics.mjs`
-- **Wrong build counts:** Verify date range calculation and workflow run filtering
-
-### File Locations and Purposes
-
-| File Path                               | Purpose                                             |
-| --------------------------------------- | --------------------------------------------------- |
-| `.github/workflows/monthly-reports.yml` | GitHub Actions workflow (cron + manual trigger)     |
-| `scripts/generate-report.js`            | Main orchestration script                           |
-| `scripts/lib/graphql-queries.js`        | GraphQL client and Projects V2 queries              |
-| `scripts/lib/label-mapping.js`          | Static label color and category mappings            |
-| `scripts/lib/contributor-tracker.js`    | Historical contributor tracking with bot filtering  |
-| `scripts/lib/markdown-generator.js`     | Report markdown formatting and templates            |
-| `scripts/lib/build-metrics.mjs`         | Build health metrics fetcher (GitHub Actions API)   |
-| `reports/`                              | Generated report blog posts (YYYY-MM-DD-report.mdx) |
-| `static/data/contributors-history.json` | Auto-generated contributor history (gitignored)     |
-| `docusaurus.config.ts`                  | Multi-blog configuration (`id: 'reports'`)          |
-
-### Manual Report Generation
-
-To generate a report locally for testing:
-
-1. **Export GitHub token:**
-
-   ```bash
-   export GITHUB_TOKEN=your_personal_access_token
-   # Token needs: repo read access, project read access
-   ```
-
-2. **Run generation script:**
-
-   ```bash
-   npm run generate-report
-   # Script outputs progress logs
-   # Report written to reports/YYYY-MM-DD-report.mdx
-   ```
-
-3. **Review generated report:**
-
-   ```bash
-   cat reports/YYYY-MM-DD-report.mdx
-   # Check frontmatter and content sections
-   ```
-
-4. **Preview in browser:**
-
-   ```bash
-   npm run start
-   # Navigate to http://localhost:3000/reports
-   ```
-
-### Testing Workflow Manually
-
-To test the GitHub Actions workflow without waiting for cron:
-
-1. **Navigate to Actions tab:**
-   - Open repository in GitHub
-   - Click "Actions" tab
-   - Select "Generate Monthly Report" workflow
-
-2. **Trigger workflow manually:**
-   - Click "Run workflow" button (top right)
-   - Select branch (usually `main` or test branch)
-   - Click green "Run workflow" button
-
-3. **Monitor execution:**
-   - Workflow appears in run list immediately
-   - Click run to see live logs
-   - Check each step: checkout, setup, install, generate, commit
-
-4. **Verify results:**
-   - Check for new commit in repository history
-   - Review generated report file in `reports/` directory
-   - Verify report displays correctly on deployed site
-
-**Workflow Dispatch Benefits:**
-
-- Test automation without modifying cron schedule
-- Validate changes to scripts before merge
-- Generate ad-hoc reports for special periods
-- Debug issues in clean CI environment
-
-### Troubleshooting Guide
-
-#### Issue: "GITHUB_TOKEN or GH_TOKEN environment variable required"
-
-**Cause:** Missing authentication token for GitHub API
-
-**Solution:** Export token with repo read access:
+Auto-generated by `.github/workflows/monthly-reports.yml` on the first Monday of each month.
+
+### Library modules (in `scripts/lib/`)
+
+| Module | Purpose |
+|---|---|
+| `graphql-queries.mjs` | GitHub GraphQL client, fetches PRs from monitored repos |
+| `monitored-repos.mjs` | List of repos to include in report |
+| `contributor-tracker.mjs` | New vs repeat contributor tracking, bot filtering |
+| `markdown-generator.mjs` | MDX formatting and templates |
+| `build-metrics.mjs` | CI success rates from tracked workflow IDs |
+| `label-mapping.mjs` | Static label color/category map |
+| `github-sponsors.mjs` | Sponsor data |
+| `tap-promotions.mjs` | Homebrew tap promotion data |
+
+**Planned work source:** Merged PRs from `projectbluefin/common`  
+**Opportunistic work source:** Merged PRs from all other monitored repos
+
+### Contributor tracking
+
+- `static/data/contributors-history.json` — gitignored, managed by the workflow
+- First-time contributors get `highlight={true}` on their `GitHubProfileCard` (gold foil)
+- Bots are excluded from human contributor counts
+
+### Manual generation
 
 ```bash
-export GITHUB_TOKEN=ghp_your_token_here
-# Or use GitHub CLI token:
-export GH_TOKEN=$(gh auth token)
-```
-
-**In CI:** Token is automatically provided via `secrets.GITHUB_TOKEN` (no action needed).
-
-**Token Permissions:** Requires `contents: read` and `project: read` (automatically granted to workflow token).
-
-#### Issue: "GraphQL rate limit exceeded"
-
-**Cause:** Hit GitHub API rate limits (5,000 requests/hour authenticated, 60/hour unauthenticated)
-
-**Solution:** Script includes rate limit detection and logs reset time:
-
-- Check error message for rate limit reset timestamp
-- Wait for rate limit to reset (typically 1 hour)
-- Ensure `GITHUB_TOKEN` is set (authenticated requests have higher limits)
-- In CI, workflow token automatically provides authentication
-
-**GraphQL Points:** Each query uses ~50 points. 5,000 point limit allows ~100 reports/hour (far exceeds monthly needs).
-
-#### Issue: "Network timeout" or "ECONNRESET"
-
-**Cause:** Network issues or GitHub API downtime
-
-**Solution:** Script includes automatic retry with exponential backoff:
-
-- Retries up to 3 times (delays: 2s, 4s, 8s)
-- Check logs for retry attempts
-- Verify GitHub API status: [githubstatus.com](https://www.githubstatus.com/)
-- If persistent, re-run workflow manually after network recovery
-
-**Error Log Example:**
-
-```
-Retry 1/3 after network error: ECONNRESET
-Retry 2/3 after network error: ETIMEDOUT
-```
-
-#### Issue: Empty report sections
-
-**Cause:** No items completed in report window (quiet period)
-
-**Solution:** This is expected behavior during low-activity periods:
-
-- Report still generated with summary section
-- Message indicates "quiet period with no completed items"
-- Bot activity may still be present
-- Historical contributor tracking continues normally
-
-**Verify on Project Board:**
-
-- Check [todo.projectbluefin.io](https://todo.projectbluefin.io)
-- Filter by Status="Done" and date range
-- Confirm no items moved to Done in report window
-
-#### Issue: "Failed to update contributor history"
-
-**Cause:** `contributors-history.json` is corrupted or unreadable
-
-**Solution:** Script includes automatic recovery:
-
-- Detects invalid JSON format
-- Logs warning: "Contributor history corrupted. Resetting history file."
-- Initializes fresh history with current contributors
-- Report generation continues normally
-
-**Manual Reset (if needed):**
-
-```bash
-rm static/data/contributors-history.json
+export GITHUB_TOKEN=$(gh auth token)
 npm run generate-report
-# History rebuilt from current report
+npm run start   # preview at http://localhost:3000/reports
 ```
 
-**Note:** Resetting history means all current contributors treated as new (one-time occurrence).
+---
 
-#### Issue: Missing labels or incorrect categorization
+## ProjectCard component
 
-**Cause:** Label mapping out of sync with project board labels
+`src/components/ProjectCard.tsx` — used on `docs/donations/projects.mdx`.
 
-**Solution:** Update static label mapping:
+Props: `name`, `description`, `sponsorUrl?`, `packageName?`, `icon?`, `githubRepo?`
 
-1. Check current labels on [Project Board](https://todo.projectbluefin.io)
-2. Edit `scripts/lib/label-mapping.js`
-3. Update `LABEL_COLORS` object with new colors
-4. Update `LABEL_CATEGORIES` if category structure changed
-5. Test with: `npm run generate-report`
+To add a new project:
+1. Add `<ProjectCard>` to `docs/donations/projects.mdx`
+2. Add the repo to `GITHUB_REPOS` in `scripts/fetch-github-repos.js`
+3. Test: `npm run fetch-github-repos && npm run start`
 
-**See:** "Updating Label Mappings" section below for detailed process.
+Icon URLs: use `https://github.com/org-name.png` or `https://github.com/username.png`.
 
-### Updating Label Mappings
+---
 
-Label mappings are static (not fetched at runtime) for performance. Update when label colors or categories change in the project board.
+## Known Issues
 
-**Process:**
+### SBOM seed file (load-bearing committed JSON)
 
-1. **Identify label changes:**
-   - Navigate to [Project Board](https://todo.projectbluefin.io)
-   - Click any item to see label list
-   - Note new labels or color changes
+`static/data/sbom-attestations.json` is committed as an empty seed. This is required because `FeedItems.tsx` uses a static import — the Docusaurus build will fail if the file does not exist. The TypeScript ambient declaration in `src/types/sbom-attestations.d.ts` satisfies `tsc`, but the bundler still needs the file. Do not remove or rename it from git until a build-time fallback is implemented.
 
-2. **Edit label mapping file:**
+### cosign/oras not in standard build environment
 
-   ```bash
-   # Open mapping file
-   vim scripts/lib/label-mapping.js
-   ```
+Do not add `fetch-sbom` to the `fetch-data` chain. `pages.yml` does not install cosign or oras.
 
-3. **Update LABEL_COLORS object:**
+### PROJECT_READ_TOKEN scopes
 
-   ```javascript
-   export const LABEL_COLORS = {
-     // Format: "label-name": "hexcolor"
-     desktop: "0e8a16",
-     development: "1d76db",
-     // Add new labels:
-     "new-label": "ff6b6b",
-   };
-   ```
+`fetch-board-data.js`: needs `project:read`  
+`fetch-github-sbom.js`: needs `packages:read` (cross-org ublue-os GHCR)
 
-4. **Update LABEL_CATEGORIES (if needed):**
+The default `GITHUB_TOKEN` is insufficient for both.
 
-   ```javascript
-   export const LABEL_CATEGORIES = {
-     projectAreas: [
-       "desktop",
-       "development",
-       "ecosystem",
-       "hardware",
-       "infrastructure",
-     ],
-     workTypes: [
-       "bug",
-       "enhancement",
-       "documentation",
-       "tech-debt",
-       "automation",
-     ],
-   };
-   ```
+---
 
-5. **Test changes:**
+## Troubleshooting
 
-   ```bash
-   npm run generate-report
-   # Check that new labels appear with correct colors
-   npm run start
-   # Verify badges render correctly in browser
-   ```
-
-**Label Color Format:**
-
-- Hex codes without `#` prefix (GitHub API format)
-- 6 characters (e.g., `"ff6b6b"` for red)
-- Case insensitive
-
-**Automatic Refresh (Future Enhancement):**
-
-- Currently manual update required
-- Future: Script could fetch labels from projectbluefin/common `.github/labels.yml`
-- This would eliminate the need for manual label mapping updates
-
-### Modifying Report Templates
-
-Report markdown structure is defined in `scripts/lib/markdown-generator.js`. Customize sections, formatting, or content as needed.
-
-**Key Functions:**
-
-```javascript
-// Generate frontmatter (metadata)
-generateFrontmatter(startDate, endDate);
-// Returns: YAML frontmatter string
-
-// Generate summary section
-generateSummary(items, contributors, newContributors, startDate, endDate);
-// Returns: Markdown string with key metrics
-
-// Generate project area sections
-generateCategorySection(items, categoryName);
-// Returns: Markdown with items grouped by area
-
-// Generate bot activity tables
-generateBotSection(botActivity);
-// Returns: Markdown tables of bot PRs by repo
-
-// Generate contributors list
-generateContributorsSection(contributors, newContributors);
-// Returns: Markdown list with profile links
-```
-
-**Customization Examples:**
-
-**Change date format in frontmatter:**
-
-```javascript
-// Before:
-date: ${format(endDate, "yyyy-MM-dd")}
-
-// After (human-readable):
-date: ${format(endDate, "MMMM d, yyyy")}
-```
-
-**Add new section (e.g., "Top Contributors"):**
-
-```javascript
-function generateTopContributorsSection(items) {
-  const contributorCounts = {};
-  items.forEach((item) => {
-    const author = item.content?.author?.login;
-    if (author)
-      contributorCounts[author] = (contributorCounts[author] || 0) + 1;
-  });
-
-  const sorted = Object.entries(contributorCounts)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 5);
-
-  return (
-    `## Top Contributors\n\n` +
-    sorted
-      .map(
-        ([author, count]) =>
-          `- [@${author}](https://github.com/${author}): ${count} items`,
-      )
-      .join("\n")
-  );
-}
-```
-
-**Modify item display format:**
-
-```javascript
-// Before:
-- [#${number}](${url}): ${title}
-
-// After (add repository):
-- [${repo}#${number}](${url}): ${title}
-```
-
-**Testing Template Changes:**
-
-```bash
-# Generate test report
-npm run generate-report
-
-# Check output
-cat reports/YYYY-MM-DD-report.mdx
-
-# Preview in browser
-npm run start
-# Navigate to http://localhost:3000/reports
-```
-
-**Validation:**
-
-- Ensure valid Docusaurus frontmatter (YAML format)
-- Test that markdown renders correctly
-- Verify links work (GitHub profiles, issues, PRs)
-- Check that badges display properly
-
-### Performance Considerations
-
-**Build Time Impact:**
-
-- Report generation adds ~5-15 seconds to build process
-- Data fetching is primary bottleneck (GraphQL API calls)
-- Total build time: ~20-30 seconds (well within <2 minute target)
-
-**GraphQL API Usage:**
-
-- Each report uses ~50 GraphQL points (query complexity)
-- Rate limit: 5,000 points/hour (authenticated)
-- Capacity: ~100 reports/hour (far exceeds monthly needs)
-- Pagination: 100 items per request (efficient for large projects)
-
-**Optimization Strategies:**
-
-- **Cursor Pagination:** Fetches only necessary pages (no over-fetching)
-- **Field Selection:** GraphQL query requests only needed fields
-- **Bot Filtering:** Happens in-memory after fetching (no extra API calls)
-- **Static Labels:** No API calls for label colors (mapped statically)
-
-**Caching (Not Implemented):**
-
-- Current: Fresh data every run (preferred for accuracy)
-- Future: Could cache project board data (5-10 minute TTL)
-- Tradeoff: Caching reduces API usage but may show stale data
-
-**Monitoring:**
-
-- Check workflow execution time in GitHub Actions logs
-- Monitor "Fetching project board data" step duration
-- Flag if build exceeds 2 minute target (optimization needed)
-
-### Auto-Generated Files - DO NOT COMMIT
-
-The following file is auto-generated at build time and should **NEVER** be committed to git:
-
-- `static/data/contributors-history.json` - Generated by contributor tracking
-
-**Why:** This file is managed by the GitHub Actions workflow and persisted via Git checkout action. Committing it creates merge conflicts and git history bloat.
-
-**Gitignore Status:** Already in `.gitignore` but may appear if generated locally.
-
-**If Accidentally Committed:**
-
-```bash
-# Remove from last commit (if not pushed)
-git rm --cached static/data/contributors-history.json
-git commit --amend --no-edit
-
-# After amending, if already pushed:
-git push --force-with-lease
-```
-
-## Driver Versions Workflow
-
-The driver versions workflow automatically tracks and updates kernel, NVIDIA, and Mesa driver versions across Bluefin streams (stable, GTS, LTS). The workflow runs weekly to keep the `docs/driver-versions.md` documentation current with the latest releases.
-
-### Architecture Overview
-
-**System Components:**
-
-- **GitHub Actions Workflow** (`.github/workflows/update-driver-versions.yml`) - Weekly cron automation
-- **Update Script** (`scripts/update-driver-versions.js`) - Fetches releases and updates documentation
-- **NVIDIA Cache** (`.nvidia-drivers-cache.json`) - Persisted driver URL mappings (committed to git)
-- **Documentation** (`docs/driver-versions.md`) - User-facing driver version tables
-
-**Data Flow:**
-
-```
-GitHub Actions Cron (Wednesdays 10:00 UTC)
-  ↓
-Fetch latest releases from ublue-os/bluefin (stable, gts)
-  ↓
-Fetch latest release from ublue-os/bluefin-lts (lts)
-  ↓
-Extract driver versions from release bodies (Major packages table)
-  ↓
-Check NVIDIA cache for driver URLs
-  ↓
-Fetch missing driver URLs from nvidia.com (if cache miss)
-  ↓
-Update docs/driver-versions.md with new releases
-  ↓
-Create PR if changes detected
-  ↓
-Auto-merge PR
-```
-
-### Schedule and Triggering
-
-**Weekly Schedule:**
-
-- Runs every Wednesday at 10:00 UTC
-- Fetches up to 10 recent releases per stream to find latest
-- Creates PR only if new releases detected
-
-**Idempotency Guarantees:**
-
-The workflow is designed to be safely run multiple times without creating duplicates:
-
-- **Script level**: Checks if release already exists at top of each table before adding
-- **Script level**: Deduplicates all rows by tag name within each section
-- **Script level**: Only writes file if content actually changes
-- **Workflow level**: Checks for existing open PR before creating new one
-- **Workflow level**: Uses static branch name `automated/update-driver-versions`
-- **Result**: Can be manually triggered multiple times - will not create duplicate PRs
-
-**Manual Triggering:**
-
-```bash
-# Trigger workflow manually via GitHub CLI
-gh workflow run update-driver-versions.yml
-
-# Or via GitHub web UI: Actions → Update Driver Versions → Run workflow
-
-# Test locally (requires GITHUB_TOKEN)
-export GITHUB_TOKEN=$(gh auth token)
-node scripts/update-driver-versions.js
-```
-
-### NVIDIA Cache Persistence
-
-**Why the cache is committed to git:**
-
-- **Performance**: Reduces nvidia.com scraping by ~80% (only misses on new drivers)
-- **Reliability**: Avoids dependency on nvidia.com uptime during workflow runs
-- **Rate Limiting**: Minimizes external requests that could fail
-- **Speed**: Cache hits return instantly without network requests
-
-**Cache Behavior:**
-
-- File: `.nvidia-drivers-cache.json`
-- Format: `{ "driver-version": "https://nvidia.com/drivers/details/id/" }`
-- Updates: Only when encountering unknown driver versions
-- Persistence: Committed to git, survives workflow runs
-
-**Example cache entry:**
-
-```json
-{
-  "580.126.09": "https://www.nvidia.com/en-us/drivers/details/261245/",
-  "590.48.01": "https://www.nvidia.com/en-us/drivers/details/259268/"
-}
-```
-
-### Error Handling and Resilience
-
-**Retry Logic:**
-
-- 3 retries with exponential backoff (2s, 4s, 8s delays)
-- Applies to both GitHub API calls and NVIDIA website fetching
-- Logs retry attempts with error details
-
-**Rate Limit Detection:**
-
-- Monitors `X-RateLimit-Remaining` header from GitHub API
-- Warns when < 100 requests remaining
-- Exits gracefully if rate limit exceeded (workflow retries next week)
-- Authenticated requests have 5,000 req/hour limit (unauthenticated: 60/hour)
-
-**Network Resilience:**
-
-- Handles transient network failures automatically via retry
-- Falls back gracefully if NVIDIA URLs unavailable (shows version without link)
-- Validates all required releases fetched before updating document
-
-### Troubleshooting
-
-#### Issue: "GitHub API rate limit exceeded"
-
-**Cause:** Hit API rate limits (unlikely with token, workflow uses `secrets.GITHUB_TOKEN`)
-
-**Solution:** Workflow token automatically provides authentication. If testing locally:
-
-```bash
-export GITHUB_TOKEN=$(gh auth token)
-node scripts/update-driver-versions.js
-```
-
-**Rate limit status:** Check headers in logs or use:
-
-```bash
-gh api rate_limit
-```
-
-#### Issue: "No NVIDIA driver URL found for version X"
-
-**Cause:** New driver version not yet listed on nvidia.com/drivers/unix page
-
-**Solution:** This is expected behavior for very recent drivers:
-
-- Script logs warning but continues
-- Version appears in table without hyperlink
-- Cache will be updated once NVIDIA publishes driver page
-- Re-run workflow next week to fetch URL
-
-#### Issue: "NVIDIA website returned 503" or network timeout
-
-**Cause:** nvidia.com temporarily unavailable or network issues
-
-**Solution:** Retry logic handles this automatically:
-
-- Script retries up to 3 times with backoff
-- If persistent, workflow fails but retries next week
-- Check nvidia.com uptime: https://www.nvidia.com/en-us/drivers/unix/
-- Cached drivers still work (only affects new driver URL lookups)
-
-#### Issue: Failed to extract driver info from release body
-
-**Cause:** Release body format changed or missing "Major packages" table
-
-**Solution:** Script expects this table format:
-
-```markdown
-### Major packages
-
-| Package    | Version      |
-| ---------- | ------------ |
-| **Kernel** | 6.12.8-200   |
-| **Mesa**   | 24.3.3-300   |
-| **Nvidia** | 580.126.09-1 |
-```
-
-**Fix steps:**
-
-1. Check release body format in GitHub: https://github.com/ublue-os/bluefin/releases/latest
-2. Update regex patterns in `extractDriverInfo()` function if format changed
-3. Test locally: `node scripts/update-driver-versions.js`
-4. Commit fix and workflow will work next week
-
-#### Issue: Workflow creates PR but doesn't auto-merge
-
-**Cause:** Auto-merge requires branch protection or PR checks to pass
-
-**Solution:** This is expected behavior in some cases:
-
-- Check PR for CI/CD check failures
-- Workflow has `contents: write` and `pull-requests: write` permissions
-- Auto-merge command: `gh pr merge --auto --squash <pr-number>`
-- Manual merge: Review PR and merge via GitHub UI
-
-### Upstream Dependencies
-
-**Release Sources:**
-
-- Bluefin stable/gts: [ublue-os/bluefin/releases](https://github.com/ublue-os/bluefin/releases)
-  - Tags: `stable-YYYYMMDD`, `gts-YYYYMMDD`
-- Bluefin LTS: [ublue-os/bluefin-lts/releases](https://github.com/ublue-os/bluefin-lts/releases)
-  - Tags: `lts.YYYYMMDD`
-
-**Driver Information:**
-
-- NVIDIA driver URLs: Scraped from https://www.nvidia.com/en-us/drivers/unix/
-- Mesa release notes: Generated URLs like `https://docs.mesa3d.org/relnotes/24.3.3.html`
-- Kernel versions: Extracted from release body "Major packages" table
-
-### Modifying the Workflow
-
-**Change schedule:**
-
-Edit `.github/workflows/update-driver-versions.yml`:
-
-```yaml
-schedule:
-  # Run every Wednesday at 10:00 AM UTC
-  - cron: "0 10 * * 3"
-  # Change to daily: '0 10 * * *'
-  # Change to monthly: '0 10 1 * *'
-```
-
-**Add new driver type:**
-
-Edit `scripts/update-driver-versions.js` in `extractDriverInfo()` function:
-
-```javascript
-// Add extraction for new package
-const newPackageMatch = tableRows.match(
-  /\|\s*\*\*NewPackage\*\*\s*\|\s*([^\|\s]+)(?:\s*➡️\s*([^\|\s]+))?\s*\|/,
-);
-if (newPackageMatch) {
-  info.newPackage = newPackageMatch[2] || newPackageMatch[1];
-}
-```
-
-Update `formatTableRow()` to include in output.
-
-**Validation after changes:**
-
-```bash
-# Test script locally
-export GITHUB_TOKEN=$(gh auth token)
-node scripts/update-driver-versions.js
-
-# Verify markdown output
-cat docs/driver-versions.md
-
-# Check workflow syntax
-gh workflow view update-driver-versions.yml
-```
-
-## Repository Context
-
-This repository contains documentation for Bluefin OS. The main Bluefin OS images are built in the [ublue-os/bluefin](https://github.com/ublue-os/bluefin) repository and [ublue-os/bluefin-lts](https://github.com/ublue-os/bluefin-lts) repositories. This docs repository:
-
-- Provides user-facing documentation
-- Generates release changelogs automatically from GitHub releases
-- Fetches YouTube playlist metadata for the music page
-- Fetches GitHub user profiles for the donations/credits page
-- Deploys to https://docs.projectbluefin.io/ via GitHub Pages
-- Integrates with main repository via automated workflows
-
-Common documentation areas include:
-
-- Installation guides (`docs/installation.md`, `docs/downloads.md`)
-- Developer experience (`docs/bluefin-dx.md`, `docs/bluefin-gdx.md`, `docs/devcontainers.md`)
-- FAQ and troubleshooting (`docs/FAQ.md`)
-- Hardware-specific guides (`docs/t2-mac.md`)
-- Community information (`docs/code-of-conduct.md`, `docs/values.md`, `docs/mission.md`, `docs/donations/`)
-  - Donations section split into: `docs/donations/index.mdx`, `docs/donations/contributors.mdx`, `docs/donations/projects.mdx`
-- Gaming support (`docs/gaming.md`)
-- LTS information (`docs/lts.md`)
-- Tips and command-line usage (`docs/tips.md`, `docs/command-line.md`)
-- Music playlists (`docs/music.md`)
-- AI information (`docs/ai.md`)
-- Local development (`docs/local.md`)
-- Lore and dinosaurs (`docs/lore.md`, `docs/dinosaurs.md`)
-- Press kit (`docs/press-kit.md`)
-
-Other Rules:
-
-- **Remember**: Documentation should be consumable in one sitting and link to upstream docs rather than duplicating content.
-- **Never** create new pages unless explicitly told to do so.
-- **Images page**: The `/images` catalog page is intentionally enabled. Keep the card design modern, preserve testing streams as collapsed-by-default details, and maintain graceful fallbacks when metadata sources are unavailable.
-- For `docs/music.md` - always ensure the thumbnail aspect ratio is 1:1 and ensure that the album sizes remain consistent across the page. Playlists use the MusicPlaylist component which fetches metadata at build time.
-- For `docs/donations.mdx` - uses GitHubProfileCard component which displays profiles fetched at build time from `static/data/github-profiles.json`. Profile data includes name, bio, avatar, company, location, and social links.
-
-## ProjectCard Component (Projects Donations Page)
-
-The `ProjectCard` component (`src/components/ProjectCard.tsx`) displays open source projects on the `/donations/projects` page with icons, descriptions, GitHub stats (stars/forks), and donate buttons.
-
-### Component Props
-
-```typescript
-interface ProjectCardProps {
-  name: string; // Display name of the project
-  description: string; // Short description
-  sponsorUrl?: string; // URL to donation/sponsor page
-  packageName?: string; // Optional package name to display
-  icon?: string; // URL to project icon (typically GitHub avatar)
-  githubRepo?: string; // GitHub repo path (e.g., "owner/repo") for stats
-}
-```
-
-### How It Works
-
-1. **Build-time data**: Stats are pre-fetched via `scripts/fetch-github-repos.js` and stored in `static/data/github-repos.json`
-2. **Runtime fallback**: If build-time data is missing, fetches from GitHub API with request queue (1s delay) and localStorage caching (24h)
-3. **Graceful degradation**: Projects without `githubRepo` prop (e.g., GitLab-hosted) simply don't show stats
-
-### Adding a New Project
-
-1. **Edit** `docs/donations/projects.mdx`
-2. **Add** a ProjectCard in the appropriate section:
-
-```jsx
-<ProjectCard
-  name="Project Name"
-  description="What the project does"
-  sponsorUrl="https://sponsor-url.com"
-  icon="https://github.com/org-or-user.png"
-  githubRepo="owner/repo"
-/>
-```
-
-3. **Edit** `scripts/fetch-github-repos.js` to add the repo to `GITHUB_REPOS` array
-4. **Test** with `npm run fetch-github-repos && npm run start`
-
-### Upstream Package Sources
-
-The projects page should reflect packages actually included in Bluefin. Reference these files:
-
-- **Flatpak apps**: [ublue-os/bluefin/flatpaks/system-flatpaks.list](https://github.com/ublue-os/bluefin/blob/main/flatpaks/system-flatpaks.list)
-- **GNOME extensions**: [ublue-os/bluefin/system_files/shared/usr/share/gnome-shell/extensions/](https://github.com/ublue-os/bluefin/tree/main/system_files/shared/usr/share/gnome-shell/extensions)
-- **Homebrew CLI tools (bluefin-cli)**: [projectbluefin/common/system_files/shared/usr/share/ublue-os/homebrew/cli.Brewfile](https://github.com/projectbluefin/common/blob/main/system_files/shared/usr/share/ublue-os/homebrew/cli.Brewfile)
-
-### Icon URLs
-
-Use GitHub avatar URLs for icons:
-
-- Organizations: `https://github.com/org-name.png`
-- Users: `https://github.com/username.png`
-
-For projects not on GitHub, you can still use the org's GitHub avatar if they have a mirror, or omit the icon prop.
-
-### Projects Without GitHub Repos
-
-Some projects are hosted on GitLab or elsewhere (e.g., GNOME apps, Firefox, Thunderbird). For these:
-
-- Omit the `githubRepo` prop
-- The card will display without stars/forks
-- Still include `icon` and `sponsorUrl` if available
-
-## Commit Guidelines
-
-This repository uses [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) for standardized commit messages that support automated changelog generation.
-
-### Using the Conventional Commit Prompt
-
-Use the [conventional-commit.prompt.md](.github/prompts/conventional-commit.prompt.md) prompt file to generate properly formatted commit messages. The prompt will:
-
-1. Review your staged changes with `git status` and `git diff`
-2. Guide you through the commit message structure
-3. Validate your message against the specification
-4. Automatically execute the commit command
-
-### Commit Message Format
-
-Commits must follow this structure:
-
-```
-type(scope): description
-
-[optional body]
-
-[optional footer(s)]
-```
-
-**Types:**
-
-- `feat` - New feature
-- `fix` - Bug fix
-- `docs` - Documentation changes
-- `style` - Formatting, missing semi colons, etc.
-- `refactor` - Code restructuring without behavior change
-- `perf` - Performance improvements
-- `test` - Adding or updating tests
-- `build` - Build system or dependency changes
-- `ci` - CI configuration changes
-- `chore` - Maintenance tasks
-- `revert` - Reverting previous commits
-
-**Scope:** Optional but recommended for clarity (e.g., `docs`, `prompts`, `build`, `components`)
-
-**Description:** Short imperative summary (e.g., "add" not "added")
-
-### AI Agent Attribution
-
-AI agents must disclose the tool and model used in the commit footer with an "Assisted-by" trailer:
-
-```
-Assisted-by: [Model Name] via [Tool Name]
-```
-
-### Complete Example
-
-Here's a complete commit combining conventional format with AI attribution:
-
-```
-feat(prompts): add conventional commit prompt file
-
-Add the conventional-commit.prompt.md from awesome-copilot repository
-to help contributors write standardized commit messages. This prompt
-automates the commit message generation process and validates against
-the Conventional Commits specification.
-
-Assisted-by: Claude Sonnet 4.5 via GitHub Copilot
-```
-
-### Quick Examples
-
-```
-docs: update installation guide for F42
-fix(changelog): resolve feed fetching timeout issue
-chore(deps): update docusaurus to 3.8.1
-feat(components)!: redesign ProjectCard with stats API
-```
-
-**Note:** Add `!` after the type/scope to indicate breaking changes, or use `BREAKING CHANGE:` in the footer.
-
-## Landing the Plane (Session Completion)
-
-**When ending a work session**, you MUST complete ALL steps below. Work is NOT complete until `git push` succeeds.
-
-**MANDATORY WORKFLOW:**
-
-1. **File issues for remaining work** - Create issues for anything that needs follow-up
-2. **Run quality gates** (if code changed) - Tests, linters, builds
-3. **Update issue status** - Close finished work, update in-progress items
-4. **PUSH TO REMOTE** - This is MANDATORY:
-   ```bash
-   git pull --rebase
-   bd sync
-   git push
-   git status  # MUST show "up to date with origin"
-   ```
-5. **Clean up** - Clear stashes, prune remote branches
-6. **Verify** - All changes committed AND pushed
-7. **Hand off** - Provide context for next session
-
-**CRITICAL RULES:**
-
-- Work is NOT complete until `git push` succeeds
-- NEVER stop before pushing - that leaves work stranded locally
-- NEVER say "ready to push when you are" - YOU must push
-- If push fails, resolve and retry until it succeeds
+| Symptom | Cause | Fix |
+|---|---|---|
+| `npm install` fails with peer conflicts | React 19 peer dep | Use `npm install --legacy-peer-deps` |
+| Build fails on missing `sbom-attestations.json` | Gitignore misconfigured | Verify `!/static/data/sbom-attestations.json` in `.gitignore` |
+| `board-changelog.json` is empty `[]` | Missing PROJECT_READ_TOKEN | Export `PROJECT_READ_TOKEN` with `project:read` scope |
+| `images.json` missing SBOM package versions | SBOM cache not yet populated | Run `update-sbom-cache.yml` via workflow_dispatch on upstream |
+| TypeScript deprecation error on `baseUrl` | TypeScript 6 change | `tsconfig.json` has `"ignoreDeprecations": "6.0"` — already handled |
+| Prettier warnings on existing files | Pre-existing style drift | Non-blocking in CI; run `npm run prettier` to fix all at once |
+| `contributors-history.json` corrupt | File corruption | Delete and re-run `npm run generate-report` to rebuild |
