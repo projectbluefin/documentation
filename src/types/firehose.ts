@@ -127,4 +127,6 @@ export interface FirehoseFilterState {
   updatedWithin: "all" | "1d" | "7d" | "30d" | "90d";
   verifiedOnly: boolean;
   unverifiedOnly: boolean;
+  /** Whether to show OS release cards in the timeline. Defaults to true. */
+  showOsReleases: boolean;
 }
