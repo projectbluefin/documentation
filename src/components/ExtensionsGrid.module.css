@@ -1,0 +1,23 @@
+.extensionsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+/* Tablet: 2 columns */
+@media (max-width: 996px) {
+  .extensionsGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+  }
+}
+
+/* Mobile: 1 column for better readability */
+@media (max-width: 576px) {
+  .extensionsGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
