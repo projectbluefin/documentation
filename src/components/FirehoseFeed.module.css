@@ -252,6 +252,16 @@
   border-radius: 8px;
 }
 
+.osHiddenNotice {
+  padding: 0.6rem 1rem;
+  margin-bottom: 1rem;
+  background: var(--ifm-color-warning-contrast-background, #fff3cd);
+  border-left: 3px solid var(--ifm-color-warning, #e0a800);
+  border-radius: 4px;
+  font-size: 0.875rem;
+  color: var(--ifm-color-warning-dark, #856404);
+}
+
 .clearFiltersBtn {
   margin-top: 0.75rem;
   padding: 0.4rem 1rem;

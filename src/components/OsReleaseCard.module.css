@@ -1,0 +1,435 @@
+/* ── Card shell ─────────────────────────────────────────────────────────────── */
+
+.card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 12px;
+  background: var(--ifm-background-color);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1rem;
+  transition: box-shadow 0.2s;
+}
+
+.card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* ── Mascot art (::after pseudo, matching ImagesCatalog pattern) ── */
+
+.cardStable::after,
+.cardLts::after {
+  content: "";
+  position: absolute;
+  right: 1rem;
+  top: 0.75rem;
+  width: 120px;
+  height: 120px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: right top;
+  pointer-events: none;
+  opacity: 0.35;
+}
+
+.cardStable::after {
+  background-image: url("/img/characters/bluefin-small.webp");
+}
+
+.cardLts::after {
+  background-image: url("/img/characters/achillobator.webp");
+}
+
+/* ── Stream accent borders ── */
+
+.cardStable {
+  border-left: 3px solid var(--ifm-color-primary);
+}
+
+.cardLts {
+  border-left: 3px solid #d97706;
+}
+
+/* ── Header ────────────────────────────────────────────────────────────────── */
+
+.cardHeader {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 0.75rem;
+  /* Leave room for mascot art on the right */
+  padding-right: 130px;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.35rem;
+}
+
+.cardTitle {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--ifm-color-primary);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.metaRow {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.releaseTag {
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.85rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.releaseDate {
+  font-size: 0.8rem;
+  color: var(--ifm-color-emphasis-600);
+}
+
+/* ── Stream badge ────────────────────────────────────────────────────────────── */
+
+.streamBadge {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+.badgeStable {
+  background: rgba(34, 197, 94, 0.15);
+  color: #15803d;
+  border: 1px solid rgba(34, 197, 94, 0.35);
+}
+
+.badgeLts {
+  background: rgba(217, 119, 6, 0.15);
+  color: #b45309;
+  border: 1px solid rgba(217, 119, 6, 0.35);
+}
+
+/* ── Base version chip (Fedora / CentOS) ─────────────────────────────────────── */
+
+.baseChip {
+  font-size: 0.74rem;
+  color: var(--ifm-color-emphasis-600);
+  background: var(--ifm-color-emphasis-100);
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 4px;
+  padding: 0.1rem 0.45rem;
+}
+
+/* ── Package version chips ───────────────────────────────────────────────────── */
+
+.chipsRow {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-bottom: 0.6rem;
+}
+
+.dxRow {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 0.75rem;
+}
+
+.dxLabel {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ifm-color-emphasis-600);
+  flex-shrink: 0;
+}
+
+.versionChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: var(--ifm-color-emphasis-100);
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 6px;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.8rem;
+}
+
+.chipChanged {
+  background: rgba(234, 179, 8, 0.1);
+  border-color: rgba(234, 179, 8, 0.4);
+}
+
+.chipLabel {
+  font-weight: 600;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.chipValue {
+  color: var(--ifm-color-emphasis-900);
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.78rem;
+}
+
+.chipUpdated {
+  font-size: 0.7rem;
+  color: #d97706;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* ── Collapsible toggle ──────────────────────────────────────────────────────── */
+
+.collapsible {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 0.4rem;
+}
+
+.collapsibleToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: none;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 6px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.82rem;
+  color: var(--ifm-color-emphasis-700);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.collapsibleToggle:hover {
+  background: var(--ifm-color-emphasis-100);
+  border-color: var(--ifm-color-emphasis-400);
+  color: var(--ifm-color-emphasis-900);
+}
+
+.chevron {
+  font-size: 0.75rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.collapsiblePanel {
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  background: var(--ifm-background-surface-color, var(--ifm-color-emphasis-50));
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 6px;
+  max-height: 420px;
+  overflow-y: auto;
+}
+
+/* ── Package diff ────────────────────────────────────────────────────────────── */
+
+.diffSection {
+  font-size: 0.82rem;
+}
+
+.diffGroupHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 600;
+  font-size: 0.76rem;
+  color: var(--ifm-color-emphasis-600);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0.6rem 0 0.3rem;
+}
+
+.diffGroupHeader:first-child {
+  margin-top: 0;
+}
+
+.diffRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.18rem 0.4rem;
+  border-radius: 3px;
+  margin-bottom: 0.08rem;
+}
+
+.diffAdded {
+  background: rgba(34, 197, 94, 0.07);
+}
+
+.diffChanged {
+  background: rgba(234, 179, 8, 0.07);
+}
+
+.diffRemoved {
+  background: rgba(239, 68, 68, 0.07);
+}
+
+.diffName {
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.78rem;
+  color: var(--ifm-color-emphasis-800);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.diffVersion {
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.75rem;
+  color: var(--ifm-color-emphasis-600);
+  flex-shrink: 0;
+}
+
+.diffVersionChange {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex-shrink: 0;
+}
+
+.prevVersion {
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.75rem;
+  color: var(--ifm-color-emphasis-500);
+  text-decoration: line-through;
+}
+
+.versionArrow {
+  color: var(--ifm-color-emphasis-400);
+  font-size: 0.7rem;
+}
+
+.newVersion {
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.75rem;
+  color: #15803d;
+}
+
+/* ── Commits ─────────────────────────────────────────────────────────────────── */
+
+.commitsSection {
+  font-size: 0.82rem;
+}
+
+.commitRow {
+  display: flex;
+  align-items: baseline;
+  gap: 0.65rem;
+  padding: 0.25rem 0;
+  border-bottom: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.commitRow:last-child {
+  border-bottom: none;
+}
+
+.commitHash {
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.75rem;
+  color: var(--ifm-color-primary);
+  flex-shrink: 0;
+  min-width: 56px;
+}
+
+.commitHash a {
+  color: var(--ifm-color-primary);
+  text-decoration: none;
+}
+
+.commitHash a:hover {
+  text-decoration: underline;
+}
+
+.commitSubject {
+  flex: 1;
+  color: var(--ifm-color-emphasis-800);
+  font-size: 0.8rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.commitAuthor {
+  font-size: 0.75rem;
+  color: var(--ifm-color-emphasis-500);
+  flex-shrink: 0;
+}
+
+/* ── Footer ──────────────────────────────────────────────────────────────────── */
+
+.cardFooter {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 0.6rem;
+  margin-top: 0.6rem;
+  border-top: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.viewLink {
+  font-size: 0.85rem;
+  color: var(--ifm-color-primary);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.viewLink:hover {
+  text-decoration: underline;
+}
+
+/* ── Shared ──────────────────────────────────────────────────────────────────── */
+
+.emptyNote {
+  font-size: 0.8rem;
+  color: var(--ifm-color-emphasis-500);
+  margin: 0;
+  font-style: italic;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────────── */
+
+@media (max-width: 600px) {
+  .card {
+    padding: 1rem;
+  }
+
+  .cardHeader {
+    padding-right: 80px;
+  }
+
+  .cardStable::after,
+  .cardLts::after {
+    width: 70px;
+    height: 70px;
+    opacity: 0.25;
+  }
+
+  .commitSubject {
+    white-space: normal;
+  }
+
+  .chipsRow,
+  .dxRow {
+    gap: 0.35rem;
+  }
+}

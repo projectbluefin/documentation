@@ -1,7 +1,12 @@
 import React, { useState, useMemo, useEffect } from "react";
 import firehoseData from "@site/static/data/firehose-apps.json";
+import bluefinReleasesData from "@site/static/feeds/bluefin-releases.json";
+import bluefinLtsReleasesData from "@site/static/feeds/bluefin-lts-releases.json";
 import type { FirehoseApp, FirehoseRelease, FirehoseFilterState } from "../types/firehose";
+import type { OsReleaseEvent, AppTimelineEvent, FlatTimelineEvent } from "../types/os-feed";
+import { parseOsRelease } from "../utils/parseOsRelease";
 import FirehoseCard from "./FirehoseCard";
+import OsReleaseCard from "./OsReleaseCard";
 import FirehoseFilters from "./FirehoseFilters";
 import styles from "./FirehoseFeed.module.css";
 
@@ -20,6 +25,30 @@ export interface FlatRelease {
   release: FirehoseRelease;
   dateMs: number;
 }
+
+// ── OS release events (parsed once at module scope) ───────────────────────────
+
+function loadOsEvents(
+  feedData: typeof bluefinReleasesData,
+  stream: "stable" | "lts",
+): OsReleaseEvent[] {
+  const events: OsReleaseEvent[] = [];
+  for (const item of feedData.items ?? []) {
+    const release = parseOsRelease(item, stream);
+    if (!release) continue; // GTS entry or parse failure — skip
+    const dateMs = new Date(item.pubDate).getTime();
+    if (isNaN(dateMs)) continue;
+    events.push({ kind: "os", stream, dateMs, release });
+  }
+  return events;
+}
+
+const STABLE_OS_EVENTS: OsReleaseEvent[] = loadOsEvents(bluefinReleasesData, "stable");
+const LTS_OS_EVENTS: OsReleaseEvent[] = loadOsEvents(bluefinLtsReleasesData, "lts");
+const ALL_OS_EVENTS: OsReleaseEvent[] = [
+  ...STABLE_OS_EVENTS,
+  ...LTS_OS_EVENTS,
+].sort((a, b) => b.dateMs - a.dateMs);
 
 /**
  * Flatten every app's releases array into individual events.
@@ -118,7 +147,13 @@ function getFeaturedApp(uniqueApps: UniqueApp[]): FirehoseApp | null {
 
 // ── Statistics panel ──────────────────────────────────────────────────────────
 
-function Statistics({ uniqueApps }: { uniqueApps: UniqueApp[] }) {
+function Statistics({
+  uniqueApps,
+  osEventCount,
+}: {
+  uniqueApps: UniqueApp[];
+  osEventCount: number;
+}) {
   const counts = useMemo(() => {
     const byType: Record<string, number> = {};
     for (const { app } of uniqueApps) {
@@ -139,6 +174,12 @@ function Statistics({ uniqueApps }: { uniqueApps: UniqueApp[] }) {
             <dd>{count}</dd>
           </React.Fragment>
         ))}
+        {osEventCount > 0 && (
+          <>
+            <dt>OS Releases</dt>
+            <dd>{osEventCount}</dd>
+          </>
+        )}
       </dl>
     </section>
   );
@@ -229,10 +270,13 @@ const DEFAULT_FILTERS: FirehoseFilterState = {
   updatedWithin: "all",
   verifiedOnly: false,
   unverifiedOnly: false,
+  showOsReleases: true,
 };
 
 const FirehoseFeed: React.FC = () => {
   const [filters, setFilters] = useState<FirehoseFilterState>(DEFAULT_FILTERS);
+
+  // ── App events ──────────────────────────────────────────────────────────────
 
   const allEvents: FlatRelease[] = useMemo(
     () => flattenReleases(firehoseData.apps ?? []),
@@ -241,10 +285,8 @@ const FirehoseFeed: React.FC = () => {
 
   const filteredEvents = useMemo(() => applyFilters(allEvents, filters), [allEvents, filters]);
 
-  // Single deduplication pass — shared by getFeaturedApp, Statistics, and FirehoseFilters
   const uniqueApps: UniqueApp[] = useMemo(() => toUniqueApps(allEvents), [allEvents]);
 
-  // Unique apps after filters — one card per app in the main feed
   const filteredUniqueApps: UniqueApp[] = useMemo(
     () => toUniqueApps(filteredEvents),
     [filteredEvents],
@@ -256,7 +298,43 @@ const FirehoseFeed: React.FC = () => {
     setFeaturedApp(getFeaturedApp(uniqueApps));
   }, [uniqueApps]);
 
-  const isEmpty = allEvents.length === 0;
+  // ── OS release events ───────────────────────────────────────────────────────
+
+  const filteredOsEvents = useMemo((): OsReleaseEvent[] => {
+    if (!filters.showOsReleases) return [];
+    if (filters.updatedWithin === "all") return ALL_OS_EVENTS;
+    const maxAge = DAYS_MS[filters.updatedWithin];
+    const now = Date.now();
+    return ALL_OS_EVENTS.filter((e) => now - e.dateMs <= maxAge);
+  }, [filters.showOsReleases, filters.updatedWithin]);
+
+  // How many OS events are hidden by the date filter (for inline notice)
+  const hiddenOsCount = useMemo(
+    () =>
+      filters.showOsReleases && filters.updatedWithin !== "all"
+        ? ALL_OS_EVENTS.length - filteredOsEvents.length
+        : 0,
+    [filteredOsEvents, filters.showOsReleases, filters.updatedWithin],
+  );
+
+  // ── Unified timeline ────────────────────────────────────────────────────────
+  //
+  // App events are deduplicated to one card per app (most recent release).
+  // OS events are kept individually — all 10 stable + 10 LTS appear as
+  // separate cards sorted by date. The two streams are interleaved chronologically.
+
+  const timeline = useMemo((): FlatTimelineEvent[] => {
+    const appEntries: AppTimelineEvent[] = filteredUniqueApps.map(
+      ({ app, latestMs }) => ({
+        kind: "app" as const,
+        app,
+        dateMs: latestMs,
+      }),
+    );
+    return [...appEntries, ...filteredOsEvents].sort((a, b) => b.dateMs - a.dateMs);
+  }, [filteredUniqueApps, filteredOsEvents]);
+
+  const isEmpty = allEvents.length === 0 && ALL_OS_EVENTS.length === 0;
 
   return (
     <div className={styles.layout}>
@@ -270,11 +348,27 @@ const FirehoseFeed: React.FC = () => {
           onFiltersChange={setFilters}
           matchCount={filteredUniqueApps.length}
         />
-        {!isEmpty && <Statistics uniqueApps={uniqueApps} />}
+        {!isEmpty && (
+          <Statistics uniqueApps={uniqueApps} osEventCount={ALL_OS_EVENTS.length} />
+        )}
       </aside>
 
       {/* ── Main feed ── */}
       <main className={styles.feedColumn}>
+        {/* Inline notice when OS events are hidden by the date filter */}
+        {hiddenOsCount > 0 && (
+          <p className={styles.osHiddenNotice}>
+            {hiddenOsCount} OS release{hiddenOsCount !== 1 ? "s" : ""} hidden by the
+            date filter.{" "}
+            <button
+              className={styles.clearFiltersBtn}
+              onClick={() => setFilters({ ...filters, updatedWithin: "all" })}
+            >
+              Show all
+            </button>
+          </p>
+        )}
+
         {isEmpty ? (
           <div className={styles.emptyState}>
             <p>
@@ -289,9 +383,9 @@ const FirehoseFeed: React.FC = () => {
               pipeline runs every 6 hours — check back soon.
             </p>
           </div>
-        ) : filteredUniqueApps.length === 0 ? (
+        ) : timeline.length === 0 ? (
           <div className={styles.emptyState}>
-            <p>No apps match the current filters.</p>
+            <p>No items match the current filters.</p>
             <button
               className={styles.clearFiltersBtn}
               onClick={() => setFilters(DEFAULT_FILTERS)}
@@ -300,9 +394,13 @@ const FirehoseFeed: React.FC = () => {
             </button>
           </div>
         ) : (
-          filteredUniqueApps.map(({ app }) => (
-            <FirehoseCard key={app.id} app={app} />
-          ))
+          timeline.map((event) =>
+            event.kind === "os" ? (
+              <OsReleaseCard key={`os-${event.release.tag}`} event={event} />
+            ) : (
+              <FirehoseCard key={event.app.id} app={event.app} />
+            ),
+          )
         )}
       </main>
     </div>
