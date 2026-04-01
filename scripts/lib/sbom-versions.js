@@ -17,13 +17,16 @@ function readSbomCache(filePath) {
 
 /**
  * Return the most recent packageVersions for a stream.
- * Walks releases newest-first (object key order reflects insertion order from the fetch script).
+ * Keys are <stream>-YYYYMMDD; sort descending so newest release wins
+ * regardless of insertion order.
  * Used by the Images page to show current versions per product.
  */
 function lookupVersionsForStream(cache, streamId) {
   const stream = cache?.streams?.[streamId];
   if (!stream?.releases) return null;
-  for (const entry of Object.values(stream.releases)) {
+  const keys = Object.keys(stream.releases).sort().reverse();
+  for (const key of keys) {
+    const entry = stream.releases[key];
     if (entry?.packageVersions) return entry.packageVersions;
   }
   return null;
