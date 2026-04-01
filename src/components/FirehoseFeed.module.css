@@ -27,8 +27,6 @@
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
-  max-height: calc(100vh - var(--ifm-navbar-height, 60px) - 2rem);
-  overflow-y: auto;
 }
 
 @media (max-width: 768px) {
@@ -46,6 +44,30 @@
   letter-spacing: 0.06em;
   color: var(--ifm-color-emphasis-600);
   margin: 0 0 0.4rem;
+}
+
+/* ── More Information (top of sidebar) ──────────────────────────────── */
+
+.sidebarInfoLinks {
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.sidebarQuickLinks {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.sidebarQuickLink {
+  font-size: 0.875rem;
+  color: var(--ifm-color-primary);
+  text-decoration: none;
+}
+
+.sidebarQuickLink:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 /* ── RSS links ────────────────────────────────────────────────────────── */
@@ -240,6 +262,43 @@
 
 .feedColumn {
   min-width: 0;
+}
+
+/* ── Feed sections ────────────────────────────────────────────────────── */
+
+.feedSection {
+  margin-bottom: 2.5rem;
+}
+
+.feedSectionHeading {
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--ifm-color-emphasis-600);
+  margin: 0 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--ifm-color-emphasis-200);
+}
+
+.appSectionDivider {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--ifm-color-emphasis-200);
+}
+
+.appSectionDivider .feedSectionHeading {
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.appSectionHint {
+  font-size: 0.8rem;
+  color: var(--ifm-color-emphasis-500);
 }
 
 /* ── Empty states ─────────────────────────────────────────────────────── */

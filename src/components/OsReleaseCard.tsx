@@ -164,7 +164,7 @@ function VersionChip({ pkg }: { pkg: ParsedMajorPackage }) {
 
 // ── Chip labels we surface in the header chips row ────────────────────────────
 
-const HEADER_CHIP_NAMES = ["Kernel", "Gnome", "Mesa", "Podman", "Nvidia"];
+const HEADER_CHIP_NAMES = ["Kernel", "Gnome", "Mesa", "Podman", "Nvidia", "bootc", "systemd", "pipewire"];
 
 // ── Main component ────────────────────────────────────────────────────────────
 
@@ -178,12 +178,20 @@ const OsReleaseCard: React.FC<OsReleaseCardProps> = ({ event }) => {
   const streamLabel = isLts ? "LTS" : "Stable";
   const cardClass = `${styles.card} ${isLts ? styles.cardLts : styles.cardStable}`;
 
-  // Key package chips (header row): subset of well-known packages
+  // Key package chips (header row): subset of well-known packages.
+  // Falls back to fullDiff when a name isn't in the curated majorPackages table.
   const headerChips = HEADER_CHIP_NAMES.flatMap((name) => {
-    const pkg = release.majorPackages.find(
+    const major = release.majorPackages.find(
       (p) => p.name.toLowerCase() === name.toLowerCase(),
     );
-    return pkg ? [pkg] : [];
+    if (major) return [major];
+    const diff = release.fullDiff.find(
+      (d) => d.name.toLowerCase() === name.toLowerCase(),
+    );
+    if (diff && diff.newVersion) {
+      return [{ name: diff.name, version: diff.newVersion, prevVersion: diff.prevVersion }];
+    }
+    return [];
   });
 
   // Diff summary for collapsible label
@@ -206,12 +214,7 @@ const OsReleaseCard: React.FC<OsReleaseCardProps> = ({ event }) => {
       {/* ── Header ── */}
       <div className={styles.cardHeader}>
         <div className={styles.titleRow}>
-          <span
-            className={`${styles.streamBadge} ${isLts ? styles.badgeLts : styles.badgeStable}`}
-          >
-            {streamLabel}
-          </span>
-          <h2 className={styles.cardTitle}>Bluefin</h2>
+          <h2 className={styles.cardTitle}>{isLts ? "Bluefin LTS" : "Bluefin"}</h2>
         </div>
 
         <div className={styles.metaRow}>
@@ -272,6 +275,12 @@ const OsReleaseCard: React.FC<OsReleaseCardProps> = ({ event }) => {
           className={styles.viewLink}
         >
           View on GitHub →
+        </a>
+        <a
+          href={`/images#${isLts ? "bluefin-lts" : "bluefin-stable"}`}
+          className={styles.viewLink}
+        >
+          Image details →
         </a>
       </div>
     </article>

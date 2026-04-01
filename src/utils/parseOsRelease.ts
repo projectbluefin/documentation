@@ -264,6 +264,21 @@ export function parseOsRelease(
 
   if (majorPackages.length === 0 && fullDiff.length === 0) return null;
 
+  // Backfill: any majorPackage or dxPackage that changed but is absent from fullDiff
+  // gets a synthetic "changed" entry so the collapsible list shows the full upgrade path.
+  const fullDiffNames = new Set(fullDiff.map((e) => e.name.toLowerCase()));
+  for (const pkg of [...majorPackages, ...dxPackages]) {
+    if (pkg.prevVersion && !fullDiffNames.has(pkg.name.toLowerCase())) {
+      fullDiff.unshift({
+        indicator: "changed",
+        name: pkg.name,
+        prevVersion: pkg.prevVersion,
+        newVersion: pkg.version,
+      });
+      fullDiffNames.add(pkg.name.toLowerCase());
+    }
+  }
+
   const tag = extractTag(item.title, stream);
 
   return {

@@ -29,7 +29,7 @@
   background-repeat: no-repeat;
   background-position: right top;
   pointer-events: none;
-  opacity: 0.35;
+  opacity: 1;
 }
 
 .cardStable::after {
@@ -310,18 +310,24 @@
   font-family: var(--ifm-font-family-monospace);
   font-size: 0.75rem;
   color: var(--ifm-color-emphasis-500);
-  text-decoration: line-through;
+  background: var(--ifm-color-emphasis-100);
+  border-radius: 3px;
+  padding: 0 0.3rem;
 }
 
 .versionArrow {
-  color: var(--ifm-color-emphasis-400);
-  font-size: 0.7rem;
+  color: var(--ifm-color-emphasis-600);
+  font-size: 0.8rem;
+  font-weight: 600;
 }
 
 .newVersion {
   font-family: var(--ifm-font-family-monospace);
   font-size: 0.75rem;
   color: #15803d;
+  background: rgba(21, 128, 61, 0.08);
+  border-radius: 3px;
+  padding: 0 0.3rem;
 }
 
 /* ── Commits ─────────────────────────────────────────────────────────────────── */
@@ -381,6 +387,7 @@
   z-index: 1;
   display: flex;
   justify-content: flex-end;
+  gap: 1.25rem;
   padding-top: 0.6rem;
   margin-top: 0.6rem;
   border-top: 1px solid var(--ifm-color-emphasis-200);
@@ -391,10 +398,14 @@
   color: var(--ifm-color-primary);
   text-decoration: none;
   font-weight: 500;
+  padding: 0.2rem 0.6rem;
+  border: 1px solid var(--ifm-color-primary-lightest, rgba(0,0,0,0.15));
+  border-radius: 4px;
 }
 
 .viewLink:hover {
-  text-decoration: underline;
+  background: var(--ifm-color-primary-lightest, rgba(0,0,0,0.05));
+  text-decoration: none;
 }
 
 /* ── Shared ──────────────────────────────────────────────────────────────────── */
@@ -421,7 +432,7 @@
   .cardLts::after {
     width: 70px;
     height: 70px;
-    opacity: 0.25;
+    opacity: 1;
   }
 
   .commitSubject {
