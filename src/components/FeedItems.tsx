@@ -319,7 +319,7 @@ const extractReleaseTag = (title: string): string | null => {
   return normalized;
 };
 
-const getSupplyChainLinks = (title: string): SupplyChainLinks => {
+const getSupplyChainLinks = (title: string, feedId?: string): SupplyChainLinks => {
   const releaseTag = extractReleaseTag(title);
 
   if (!releaseTag) {
@@ -332,11 +332,25 @@ const getSupplyChainLinks = (title: string): SupplyChainLinks => {
 
   // Look up attestation state from the SBOM cache.
   // Cache keys match releaseTag format: stable-YYYYMMDD, latest-YYYYMMDD, lts-YYYYMMDD, etc.
+  //
+  // lts-YYYYMMDD keys appear in multiple streams (bluefin-lts, bluefin-dx-lts, bluefin-gdx-lts).
+  // Use feedId to prefer the correct stream family before falling back to any match.
+  const isLtsFeed = feedId === "bluefinLtsReleases";
+
   let attestationVerified: boolean | null = null;
   let attestationPresent: boolean | null = null;
   const cache = sbomAttestationsData as unknown as SbomAttestationsData;
   if (cache?.streams) {
-    for (const stream of Object.values(cache.streams)) {
+    const streamEntries = Object.entries(cache.streams);
+
+    // First pass: only streams that match the feed's LTS/non-LTS family.
+    const preferred = streamEntries.filter(([key]) =>
+      isLtsFeed ? key.includes("lts") : !key.includes("lts"),
+    );
+
+    const searchOrder = preferred.length > 0 ? preferred : streamEntries;
+
+    for (const [, stream] of searchOrder) {
       const entry = stream.releases?.[releaseTag];
       if (entry) {
         attestationVerified = entry.attestation.verified ?? null;
@@ -742,7 +756,7 @@ const CombinedFeedItems: React.FC<CombinedFeedItemsProps> = ({
             isRelease && itemDescription ? extractCommits(itemDescription) : [];
           const supplyChainHighlights = extractSupplyChainHighlights(commits);
           const displayTitle = formatReleaseTitle(item.title, item._feedId);
-          const supplyChainLinks = getSupplyChainLinks(displayTitle);
+          const supplyChainLinks = getSupplyChainLinks(displayTitle, item._feedId);
           const majorVersionBumps =
             isRelease && itemDescription
               ? extractMajorVersionBumps(itemDescription)
