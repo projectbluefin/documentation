@@ -66,12 +66,18 @@ export async function fetchContributorsBeforeDate(beforeDate) {
     try {
       // Fetch PRs from project start (2024-01-01) to day before report start
       const projectStart = new Date(Date.UTC(2024, 0, 1));
-      const items = await fetchClosedItemsFromRepo(
+      const { items, partial, error } = await fetchClosedItemsFromRepo(
         owner,
         name,
         projectStart,
         historicalEnd,
       );
+
+      if (partial) {
+        console.warn(
+          `[WARN] Historical data truncated for ${repo}: fetched ${items.length} items before error: ${error || "unknown error"}`,
+        );
+      }
 
       // Filter to merged PRs only
       const mergedPRs = items.filter((item) => item.type === "PullRequest");

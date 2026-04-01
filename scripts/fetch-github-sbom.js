@@ -256,17 +256,18 @@ async function fetchReleaseTags(owner, repo) {
 
 /** Cache tokens keyed by "org/image" to avoid one request per release tag */
 const ghcrTokenCache = new Map();
+const GHCR_TOKEN_REFRESH_MS = 4 * 60 * 1000;
 
 /**
  * Get an anonymous GHCR bearer token for the given org/image.
- * Tokens are scoped per-repository and cached for the process lifetime
- * Tokens are short-lived; we cache with expiry and refresh as needed.
+ * Tokens are scoped per-repository and short-lived (~5 min).
+ * Refresh cached tokens older than 4 minutes.
  */
 async function getGhcrToken(org, image) {
   const key = `${org}/${image}`;
   const cached = ghcrTokenCache.get(key);
   const nowMs = Date.now();
-  if (cached && cached.expiresAtMs > nowMs + 30 * 1000) {
+  if (cached && nowMs - cached.fetchedAt <= GHCR_TOKEN_REFRESH_MS) {
     return cached.token;
   }
 
@@ -281,10 +282,9 @@ async function getGhcrToken(org, image) {
   }
   const token = data?.token;
   if (!token) throw new Error(`No token in GHCR response for ${key}`);
-  const expiresInSec = Number(data?.expires_in || 300);
   ghcrTokenCache.set(key, {
     token,
-    expiresAtMs: nowMs + expiresInSec * 1000,
+    fetchedAt: nowMs,
   });
   return token;
 }
@@ -304,7 +304,7 @@ function selectAmd64DigestFromManifest(manifest, contentDigestHeader) {
   }
 
   if (manifest?.schemaVersion === 2) {
-    return contentDigestHeader || null;
+    return contentDigestHeader || manifest?.config?.digest || null;
   }
 
   return null;

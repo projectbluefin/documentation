@@ -369,7 +369,7 @@ const REPO_MERGED_PRS_QUERY = `
  * @param {string} name - Repository name (e.g., "bluefin")
  * @param {Date} startDate - Start of date range
  * @param {Date} endDate - End of date range
- * @returns {Promise<Array>} Array of closed issues and merged PRs
+ * @returns {Promise<{items: Array, partial: boolean, error?: string}>} Fetch result
  */
 export async function fetchClosedItemsFromRepo(
   owner,
@@ -449,14 +449,13 @@ export async function fetchClosedItemsFromRepo(
       prsHasNextPage = prs.pageInfo.hasNextPage;
     }
 
-    return allItems;
+    return { items: allItems, partial: false };
   } catch (error) {
     console.error(
       `Returning ${allItems.length} partial items before failure from ${owner}/${name}: ${error.message}`,
     );
-    // Return partial results rather than empty array — avoids silently discarding
-    // items already fetched from earlier pages before the error occurred.
-    return allItems;
+    // Return partial results with explicit metadata so callers can surface truncation.
+    return { items: allItems, partial: true, error: error.message };
   }
 }
 

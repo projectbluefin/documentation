@@ -137,14 +137,36 @@ async function generateReport() {
   );
 
   try {
+    const truncationWarnings = {
+      planned: [],
+      opportunistic: [],
+    };
+
     // Fetch planned work from projectbluefin/common repository
     log.info("Fetching planned work from projectbluefin/common...");
-    const plannedItems = await fetchClosedItemsFromRepo(
+    const plannedResult = await fetchClosedItemsFromRepo(
       "projectbluefin",
       "common",
       startDate,
       endDate,
     );
+    const {
+      items: plannedItems,
+      partial: plannedPartial,
+      error: plannedError,
+    } = plannedResult;
+
+    if (plannedPartial) {
+      truncationWarnings.planned.push(
+        `> ⚠️ **Data truncated** — \`projectbluefin/common\` pagination failed mid-fetch (fetched ${plannedItems.length} items before error: ${plannedError || "unknown error"}). This section may be incomplete.`,
+      );
+      log.warn(
+        `Planned work data is partial for projectbluefin/common (${plannedItems.length} items): ${plannedError || "unknown error"}`,
+      );
+      github.warning(
+        `Data truncated for projectbluefin/common (fetched ${plannedItems.length} items before error)`,
+      );
+    }
 
     // Filter to only include merged PRs (exclude closed issues)
     const plannedPRs = plannedItems.filter(
@@ -168,12 +190,24 @@ async function generateReport() {
 
       const [owner, name] = repo.split("/");
       log.info(`  Fetching from ${repo}...`);
-      const repoItems = await fetchClosedItemsFromRepo(
+      const repoResult = await fetchClosedItemsFromRepo(
         owner,
         name,
         startDate,
         endDate,
       );
+      const { items: repoItems, partial, error } = repoResult;
+      if (partial) {
+        truncationWarnings.opportunistic.push(
+          `> ⚠️ **Data truncated** — \`${repo}\` pagination failed mid-fetch (fetched ${repoItems.length} items before error: ${error || "unknown error"}). This section may be incomplete.`,
+        );
+        log.warn(
+          `Opportunistic data is partial for ${repo} (${repoItems.length} items): ${error || "unknown error"}`,
+        );
+        github.warning(
+          `Data truncated for ${repo} (fetched ${repoItems.length} items before error)`,
+        );
+      }
       opportunisticItems.push(...repoItems);
     }
 
@@ -310,7 +344,7 @@ async function generateReport() {
 
     // Generate markdown
     log.info("Generating markdown...");
-    const markdown = generateReportMarkdown(
+    let markdown = generateReportMarkdown(
       plannedHumanItems,
       opportunisticHumanItems,
       contributors,
@@ -321,6 +355,27 @@ async function generateReport() {
       buildMetrics,
       tapAdditions,
     );
+
+    if (
+      truncationWarnings.planned.length > 0 ||
+      truncationWarnings.opportunistic.length > 0
+    ) {
+      const warningSections = ["## Data Quality Warnings"];
+      if (truncationWarnings.planned.length > 0) {
+        warningSections.push(
+          "### Planned Work",
+          ...truncationWarnings.planned,
+        );
+      }
+      if (truncationWarnings.opportunistic.length > 0) {
+        warningSections.push(
+          "### Opportunistic Work",
+          ...truncationWarnings.opportunistic,
+        );
+      }
+      const warningBlock = warningSections.join("\n\n");
+      markdown = markdown.replace("# Summary", `# Summary\n\n${warningBlock}`);
+    }
 
     // Write to file
     const filename = `reports/${format(endDate, "yyyy-MM-dd")}-report.mdx`;

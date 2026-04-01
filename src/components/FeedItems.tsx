@@ -1,9 +1,10 @@
 import React, { useState, useCallback, useMemo } from "react";
 import useStoredFeed from "@theme/useStoredFeed";
 import styles from "./FeedItems.module.css";
-import githubProfilesData from "@site/static/data/github-profiles.json";
-import sbomAttestationsData from "@site/static/data/sbom-attestations-frontend.json";
+import sbomAttestationsData from "@site/static/data/sbom-attestations.json";
+import firehoseAppsData from "@site/static/data/firehose-apps.json";
 import type { SbomAttestationsData } from "../types/sbom";
+import type { FirehoseApp, FirehoseData, FirehoseRelease } from "../types/firehose";
 
 // Small inline copy button — renders a clipboard icon, shows a tick for 1.5s after copy
 const CopyButton: React.FC<{ text: string }> = ({ text }) => {
@@ -103,106 +104,18 @@ const formatLongDate = (dateString: string): string => {
   });
 };
 
-interface CommitEntry {
-  hash: string;
-  hashUrl: string;
-  subject: string; // raw HTML — may contain <a> links to PRs/issues
-  author: string;
-}
-
-interface SupplyChainHighlight {
-  keyword: string;
-  commit: CommitEntry;
-}
-
 interface SupplyChainLinks {
   packageTagUrl: string | null;
   attestationVerified: boolean | null;
   attestationPresent: boolean | null;
 }
 
-interface ReleaseContributor {
-  login: string;
-  displayName: string;
-  html_url: string;
-  avatar_url: string;
-}
-
 interface ReleaseSummary {
-  commits: number;
   packageUpdates: number;
   newPackages: number;
   removedPackages: number;
   majorBumps: number;
-  supplyChainSignals: number;
 }
-
-const ContributorAvatar: React.FC<{
-  author: string;
-  contributor?: ReleaseContributor;
-}> = ({ author, contributor }) => {
-  const [imageError, setImageError] = useState(false);
-  const displayName = contributor?.displayName || author;
-  const profileUrl = contributor?.html_url || null;
-  const avatarUrl = contributor?.avatar_url || null;
-
-  const initials = displayName
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join("");
-
-  const avatarInner =
-    !imageError && avatarUrl ? (
-      <img
-        src={avatarUrl}
-        alt={displayName}
-        className={styles.contributorAvatarImage}
-        onError={() => setImageError(true)}
-        loading="lazy"
-      />
-    ) : (
-      <span className={styles.contributorAvatarFallback}>
-        {initials || "?"}
-      </span>
-    );
-
-  if (profileUrl) {
-    return (
-      <span
-        className={styles.contributorAvatarLink}
-        role="link"
-        tabIndex={0}
-        onClick={(e) => {
-          e.stopPropagation();
-          window.open(profileUrl, "_blank", "noopener,noreferrer");
-        }}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            e.stopPropagation();
-            window.open(profileUrl, "_blank", "noopener,noreferrer");
-          }
-        }}
-        title={displayName}
-        aria-label={displayName}
-      >
-        <span className={styles.contributorAvatar}>{avatarInner}</span>
-      </span>
-    );
-  }
-
-  return (
-    <span
-      className={styles.contributorAvatar}
-      title={displayName}
-      aria-label={displayName}
-    >
-      {avatarInner}
-    </span>
-  );
-};
 
 interface MajorVersionBump {
   name: string;
@@ -235,71 +148,9 @@ const ActionLinkButton: React.FC<{ label: string; url: string }> = ({
   </span>
 );
 
-// Extract the Commits table from release HTML content
-const extractCommits = (content: string): CommitEntry[] => {
-  if (!content) return [];
-
-  // Find the <h3>Commits</h3> section (feed content is already HTML, not markdown)
-  const commitsMatch = content.match(
-    /<h3>Commits<\/h3>\s*<table[\s\S]*?<tbody>([\s\S]*?)<\/tbody>/,
-  );
-  if (!commitsMatch) return [];
-
-  const tbody = commitsMatch[1];
-  const rows = tbody.match(/<tr>([\s\S]*?)<\/tr>/g);
-  if (!rows) return [];
-
-  const commits: CommitEntry[] = [];
-  for (const row of rows) {
-    // Hash cell: <td><strong><a href="URL">HASH</a></strong></td>
-    const hashMatch = row.match(
-      /<td><strong><a href="([^"]+)">([^<]+)<\/a><\/strong><\/td>/,
-    );
-    // Subject cell: second <td> — may contain nested HTML
-    const cells = row.match(/<td>([\s\S]*?)<\/td>/g);
-    // Author cell: third <td>
-    if (!hashMatch || !cells || cells.length < 3) continue;
-
-    const hashUrl = hashMatch[1];
-    const hash = hashMatch[2];
-    // Strip outer <td>…</td> tags from subject cell
-    const subject = cells[1].replace(/^<td>|<\/td>$/g, "");
-    const author = cells[2].replace(/<[^>]+>/g, "").trim();
-
-    commits.push({ hash, hashUrl, subject, author });
-  }
-  return commits;
-};
-
-const SUPPLY_CHAIN_KEYWORDS = [
-  "sbom",
-  "attest",
-  "attestation",
-  "provenance",
-  "spdx",
-  "syft",
-  "cosign",
-  "oras",
-];
-
-const stripHtml = (input: string): string => input.replace(/<[^>]+>/g, " ");
-
-const extractSupplyChainHighlights = (
-  commits: CommitEntry[],
-): SupplyChainHighlight[] => {
-  const highlights: SupplyChainHighlight[] = [];
-
-  for (const commit of commits) {
-    const normalizedSubject = stripHtml(commit.subject).toLowerCase();
-    for (const keyword of SUPPLY_CHAIN_KEYWORDS) {
-      if (normalizedSubject.includes(keyword)) {
-        highlights.push({ keyword, commit });
-        break;
-      }
-    }
-  }
-
-  return highlights;
+const FIREHOSE_APP_ID_BY_FEED_ID: Record<string, string> = {
+  bluefinReleases: "bluefin-os-stable",
+  bluefinLtsReleases: "bluefin-os-lts",
 };
 
 const extractReleaseTag = (title: string): string | null => {
@@ -318,6 +169,53 @@ const extractReleaseTag = (title: string): string | null => {
   if (ltsDateMatch) return `lts-${ltsDateMatch[1]}`;
 
   return null;
+};
+
+const FIREHOSE_OS_APP_LOOKUP: Record<string, FirehoseApp> = (() => {
+  const firehose = firehoseAppsData as unknown as FirehoseData;
+  const lookup: Record<string, FirehoseApp> = {};
+  for (const app of firehose.apps || []) {
+    if (app.packageType === "os") lookup[app.id] = app;
+  }
+  return lookup;
+})();
+
+const normalizeReleaseDate = (value?: string | null): string | null => {
+  if (!value) return null;
+  const match = value.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!match) return null;
+  return `${match[1]}-${match[2]}-${match[3]}`;
+};
+
+const getReleaseDateFromTag = (releaseTag: string | null): string | null => {
+  if (!releaseTag) return null;
+  const match = releaseTag.match(/(\d{8})$/);
+  if (!match) return null;
+  return match[1].replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3");
+};
+
+const getFirehoseRelease = (
+  feedId: string,
+  title: string,
+): { app: FirehoseApp; release: FirehoseRelease } | null => {
+  const appId = FIREHOSE_APP_ID_BY_FEED_ID[feedId];
+  if (!appId) return null;
+  const app = FIREHOSE_OS_APP_LOOKUP[appId];
+  if (!app?.releases?.length) return null;
+
+  const releaseTag = extractReleaseTag(title);
+  const releaseDate = getReleaseDateFromTag(releaseTag);
+  if (!releaseDate) return null;
+
+  const release = app.releases.find((candidate) => {
+    const byVersion = normalizeReleaseDate(candidate.version) === releaseDate;
+    const byTitle = normalizeReleaseDate(candidate.title) === releaseDate;
+    const byDate = normalizeReleaseDate(candidate.date) === releaseDate;
+    return byVersion || byTitle || byDate;
+  });
+
+  if (!release) return null;
+  return { app, release };
 };
 
 const getSupplyChainLinks = (title: string, feedId?: string): SupplyChainLinks => {
@@ -368,107 +266,55 @@ const getSupplyChainLinks = (title: string, feedId?: string): SupplyChainLinks =
   };
 };
 
-const countMatches = (content: string, pattern: RegExp): number => {
-  const matches = content.match(pattern);
-  return matches ? matches.length : 0;
-};
-
-const parseMajorVersion = (value: string): number | null => {
+const parseMajorVersion = (value: string | null): number | null => {
+  if (!value) return null;
   const match = value.match(/\d+/);
   if (!match) return null;
   return Number.parseInt(match[0], 10);
 };
 
-const extractMajorVersionBumps = (content: string): MajorVersionBump[] => {
-  const bumps: MajorVersionBump[] = [];
-  const sectionRegex =
-    /<h3>Major(?: DX| GDX)? packages<\/h3>\s*<table[\s\S]*?<tbody>([\s\S]*?)<\/tbody>/gi;
-
-  const sections = content.matchAll(sectionRegex);
-  for (const section of sections) {
-    const tbody = section[1];
-    const rowRegex =
-      /<tr>\s*<td><strong>([^<]+)<\/strong><\/td>\s*<td>([^<]+)<\/td>\s*<\/tr>/g;
-    const rows = tbody.matchAll(rowRegex);
-
-    for (const row of rows) {
-      const name = row[1].trim();
-      const versionText = row[2].trim();
-      const split = versionText.split(/➡️|→/).map((part) => part.trim());
-
-      if (split.length < 2) continue;
-
-      const from = split[0];
-      const to = split[split.length - 1];
-      const fromMajor = parseMajorVersion(from);
-      const toMajor = parseMajorVersion(to);
-
-      if (fromMajor === null || toMajor === null) continue;
-      if (toMajor > fromMajor) {
-        bumps.push({ name, from, to });
+const extractMajorVersionBumpsFromFirehose = (
+  release: FirehoseRelease | null,
+): MajorVersionBump[] => {
+  if (!release?.packageDiff) return [];
+  return release.packageDiff.changed
+    .flatMap((pkg) => {
+      const fromMajor = parseMajorVersion(pkg.oldVersion);
+      const toMajor = parseMajorVersion(pkg.newVersion);
+      if (fromMajor === null || toMajor === null || toMajor <= fromMajor) {
+        return [];
       }
-    }
-  }
-
-  return bumps;
+      return [
+        {
+          name: pkg.name,
+          from: pkg.oldVersion || "unknown",
+          to: pkg.newVersion || "unknown",
+        },
+      ];
+    })
+    .slice(0, 10);
 };
 
-const extractReleaseSummary = (
-  content: string,
-  commits: CommitEntry[],
-  supplyChainHighlights: SupplyChainHighlight[],
+const extractReleaseSummaryFromFirehose = (
+  release: FirehoseRelease | null,
   majorVersionBumps: MajorVersionBump[],
-): ReleaseSummary => ({
-  commits: commits.length,
-  packageUpdates: countMatches(content, /<td>🔄<\/td>/g),
-  newPackages: countMatches(content, /<td>✨<\/td>/g),
-  removedPackages: countMatches(content, /<td>❌<\/td>/g),
-  majorBumps: majorVersionBumps.length,
-  supplyChainSignals: supplyChainHighlights.length,
-});
-
-const getReleaseContributors = (commits: CommitEntry[]): string[] => {
-  const unique = new Set<string>();
-  for (const commit of commits) {
-    if (commit.author) {
-      unique.add(commit.author);
-    }
-  }
-  return Array.from(unique);
+): ReleaseSummary | null => {
+  if (!release?.packageDiff) return null;
+  return {
+    packageUpdates: release.packageDiff.changed.length,
+    newPackages: release.packageDiff.added.length,
+    removedPackages: release.packageDiff.removed.length,
+    majorBumps: majorVersionBumps.length,
+  };
 };
 
-const normalizeName = (value: string): string =>
-  value
-    .toLowerCase()
-    .replace(/[^a-z0-9\s]/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
-
-const PROFILE_LOOKUP: Record<string, ReleaseContributor> = (() => {
-  const lookup: Record<string, ReleaseContributor> = {};
-  const entries = Object.values(githubProfilesData as Record<string, any>);
-
-  for (const profile of entries) {
-    if (!profile?.login || !profile?.html_url || !profile?.avatar_url) continue;
-    const contributor: ReleaseContributor = {
-      login: profile.login,
-      displayName: profile.name || profile.login,
-      html_url: profile.html_url,
-      avatar_url: profile.avatar_url,
-    };
-
-    lookup[normalizeName(profile.login)] = contributor;
-    if (profile.name) {
-      lookup[normalizeName(profile.name)] = contributor;
-    }
-  }
-
-  return lookup;
-})();
-
-const getContributorForAuthor = (
-  author: string,
-): ReleaseContributor | undefined => PROFILE_LOOKUP[normalizeName(author)];
+const getNvidiaVersionFromFirehose = (feedId: string, title: string): string | null => {
+  const firehoseRelease = getFirehoseRelease(feedId, title);
+  if (!firehoseRelease?.app.osInfo?.majorPackages) return null;
+  const majorPackages = firehoseRelease.app.osInfo.majorPackages;
+  // Explicit workaround path: NVIDIA is not present in SBOM packageVersions.
+  return majorPackages.NVIDIA || majorPackages.Nvidia || majorPackages.nvidia || null;
+};
 
 const SBOM_STREAM_BY_FEED_ID: Record<string, string> = {
   bluefinReleases: "bluefin-stable",
@@ -491,6 +337,8 @@ const extractVersionSummary = (title: string, feedId: string): VersionChange[] =
   if (packages.podman) changes.push({ name: "Podman", change: packages.podman });
   if (packages.systemd) changes.push({ name: "systemd", change: packages.systemd });
   if (packages.bootc) changes.push({ name: "bootc", change: packages.bootc });
+  const nvidia = getNvidiaVersionFromFirehose(feedId, title);
+  if (nvidia) changes.push({ name: "NVIDIA", change: nvidia });
 
   return changes;
 };
@@ -750,8 +598,7 @@ const CombinedFeedItems: React.FC<CombinedFeedItemsProps> = ({
 
     const displayItems = tagged.slice(0, maxItems);
 
-    // Pre-compute all expensive per-item derived data in a single useMemo so
-    // the regex scans run once per feed update rather than on every render.
+    // Pre-compute all expensive per-item derived data in a single useMemo.
     const derivedItems = useMemo(
       () =>
         displayItems.map((item) => {
@@ -761,31 +608,24 @@ const CombinedFeedItems: React.FC<CombinedFeedItemsProps> = ({
               ? item.content?.value
               : item.content);
           const isRelease = isReleaseFeed(item._feedId);
-          const commits =
-            isRelease && itemDescription ? extractCommits(itemDescription) : [];
-          const supplyChainHighlights = extractSupplyChainHighlights(commits);
           const displayTitle = formatReleaseTitle(item.title, item._feedId);
           const supplyChainLinks = getSupplyChainLinks(displayTitle, item._feedId);
-          const majorVersionBumps =
-            isRelease && itemDescription
-              ? extractMajorVersionBumps(itemDescription)
-              : [];
-          const contributors = getReleaseContributors(commits);
-          const releaseSummary = extractReleaseSummary(
-            itemDescription || "",
-            commits,
-            supplyChainHighlights,
+          const firehoseRelease = isRelease
+            ? getFirehoseRelease(item._feedId, item.title)
+            : null;
+          const majorVersionBumps = extractMajorVersionBumpsFromFirehose(
+            firehoseRelease?.release || null,
+          );
+          const releaseSummary = extractReleaseSummaryFromFirehose(
+            firehoseRelease?.release || null,
             majorVersionBumps,
           );
           return {
             itemDescription,
             isRelease,
-            commits,
-            supplyChainHighlights,
             displayTitle,
             supplyChainLinks,
             majorVersionBumps,
-            contributors,
             releaseSummary,
           };
         }),
@@ -812,15 +652,11 @@ const CombinedFeedItems: React.FC<CombinedFeedItemsProps> = ({
             const {
               itemDescription,
               isRelease,
-              supplyChainHighlights,
               displayTitle,
               supplyChainLinks,
               majorVersionBumps,
-              contributors,
               releaseSummary,
             } = derivedItems[index];
-            const visibleContributors = contributors.slice(0, 8);
-            const overflowContributors = Math.max(contributors.length - 8, 0);
 
             const inner = (
               <div className={styles.feedItemContent}>
@@ -837,41 +673,17 @@ const CombinedFeedItems: React.FC<CombinedFeedItemsProps> = ({
                   <h4 className={styles.feedItemTitle}>{displayTitle}</h4>
                   <CopyButton text={displayTitle} />
                 </div>
-                {contributors.length > 0 && (
-                  <div className={styles.contributorsRow}>
-                    <span className={styles.contributorsLabel}>
-                      Contributors
-                    </span>
-                    <div className={styles.contributorsAvatars}>
-                      {visibleContributors.map((author) => (
-                        <ContributorAvatar
-                          key={author}
-                          author={author}
-                          contributor={getContributorForAuthor(author)}
-                        />
-                      ))}
-                      {overflowContributors > 0 && (
-                        <span className={styles.contributorOverflow}>
-                          +{overflowContributors}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                )}
                 {itemDate && (
                   <time className={styles.feedItemDate}>
                     {formatLongDate(itemDate)}
                   </time>
                 )}
-                {isRelease && (
+                {isRelease && releaseSummary && (
                   <div className={styles.releaseSummaryBlock}>
                     <div className={styles.releaseSummaryTitle}>
                       Release Summary
                     </div>
                     <div className={styles.releaseSummaryGrid}>
-                      <span>
-                        <strong>{releaseSummary.commits}</strong> commits
-                      </span>
                       <span>
                         <strong>{releaseSummary.packageUpdates}</strong> package
                         updates
@@ -924,34 +736,11 @@ const CombinedFeedItems: React.FC<CombinedFeedItemsProps> = ({
                         No attestation found for this release.
                       </p>
                     )}
-                    {supplyChainHighlights.length > 0 ? (
-                      <ul className={styles.supplyChainList}>
-                        {supplyChainHighlights.map(({ keyword, commit }) => (
-                          <li key={`${commit.hash}-${keyword}`}>
-                            <ActionLinkButton
-                              label={commit.hash}
-                              url={commit.hashUrl}
-                            />{" "}
-                            includes <strong>{keyword}</strong>
-                          </li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <p className={styles.supplyChainEmpty}>
-                        No SBOM/provenance commits detected in this release yet.
-                      </p>
-                    )}
                     <div className={styles.supplyChainLinks}>
                       {supplyChainLinks.packageTagUrl && (
                         <ActionLinkButton
                           label="View package signatures"
                           url={supplyChainLinks.packageTagUrl}
-                        />
-                      )}
-                      {supplyChainHighlights[0]?.commit.hashUrl && (
-                        <ActionLinkButton
-                          label="Open first attestation-related commit"
-                          url={supplyChainHighlights[0].commit.hashUrl}
                         />
                       )}
                       {itemLink && (
