@@ -13,6 +13,7 @@
 /static/feeds/*.json
 /static/data/*.json
 !/static/data/sbom-attestations.json
+!/static/data/sbom-attestations-frontend.json
 !/static/data/firehose-apps.json
 
 # Misc

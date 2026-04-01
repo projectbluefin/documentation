@@ -59,6 +59,20 @@ const OUTPUT_FILE = path.join(
   "sbom-attestations.json",
 );
 
+/**
+ * Frontend-facing slim copy of the SBOM cache.
+ * Identical structure but with `allPackages` stripped from every release —
+ * keeping only `packageVersions` and `attestation`. This prevents the full
+ * RPM inventory (hundreds of entries per release) from bloating the JS bundle.
+ */
+const FRONTEND_OUTPUT_FILE = path.join(
+  __dirname,
+  "..",
+  "static",
+  "data",
+  "sbom-attestations-frontend.json",
+);
+
 // How many calendar days of releases to scan per stream.
 const LOOKBACK_DAYS = Number(process.env.SBOM_LOOKBACK_DAYS || 90);
 
@@ -1020,6 +1034,23 @@ async function main() {
   fs.writeFileSync(tmpFile, JSON.stringify(output, null, 2), "utf-8");
   fs.renameSync(tmpFile, OUTPUT_FILE);
   console.log(`\nSBOM attestation cache written to ${OUTPUT_FILE}`);
+
+  // Write slim frontend copy — strips allPackages from every release so the
+  // JS bundle only includes packageVersions + attestation (not full RPM lists).
+  const frontendStreams = {};
+  for (const [streamId, stream] of Object.entries(streams)) {
+    const slimReleases = {};
+    for (const [key, entry] of Object.entries(stream.releases || {})) {
+      const { allPackages: _dropped, ...rest } = entry;
+      slimReleases[key] = rest;
+    }
+    frontendStreams[streamId] = { ...stream, releases: slimReleases };
+  }
+  const frontendOutput = { ...output, streams: frontendStreams };
+  const tmpFrontend = FRONTEND_OUTPUT_FILE + ".tmp";
+  fs.writeFileSync(tmpFrontend, JSON.stringify(frontendOutput, null, 2), "utf-8");
+  fs.renameSync(tmpFrontend, FRONTEND_OUTPUT_FILE);
+  console.log(`SBOM frontend slim cache written to ${FRONTEND_OUTPUT_FILE}`);
 }
 
 if (require.main === module) {
