@@ -259,8 +259,8 @@ const ghcrTokenCache = new Map();
 const GHCR_TOKEN_REFRESH_MS = 4 * 60 * 1000;
 
 /**
- * Get an anonymous GHCR bearer token for the given org/image.
- * Tokens are scoped per-repository and short-lived (~5 min).
+ * Get a GHCR bearer token for the given org/image.
+ * Prefer GITHUB_TOKEN/GH_TOKEN when available; fall back to anonymous token.
  * Refresh cached tokens older than 4 minutes.
  */
 async function getGhcrToken(org, image) {
@@ -271,21 +271,24 @@ async function getGhcrToken(org, image) {
     return cached.token;
   }
 
+  // Prefer GITHUB_TOKEN — works directly as GHCR Bearer when workflow has packages:read.
+  const githubToken = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
+  if (githubToken) {
+    ghcrTokenCache.set(key, { token: githubToken, fetchedAt: nowMs });
+    return githubToken;
+  }
+
+  // Fallback: anonymous token (works for truly public images, may be rate-limited)
   const url = `https://ghcr.io/token?scope=repository:${org}/${image}:pull&service=ghcr.io`;
   let data;
   try {
     data = await fetchJson(url);
   } catch (err) {
-    throw new Error(
-      `GHCR token request failed for ${key}: ${err.message}`,
-    );
+    throw new Error(`GHCR token request failed for ${key}: ${err.message}`);
   }
   const token = data?.token;
   if (!token) throw new Error(`No token in GHCR response for ${key}`);
-  ghcrTokenCache.set(key, {
-    token,
-    fetchedAt: nowMs,
-  });
+  ghcrTokenCache.set(key, { token, fetchedAt: nowMs });
   return token;
 }
 

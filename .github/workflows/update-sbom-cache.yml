@@ -11,6 +11,7 @@ concurrency:
 
 permissions:
   contents: read
+  packages: read
 
 jobs:
   update-sbom-cache:
@@ -62,8 +63,6 @@ jobs:
 
       - name: Fetch SBOM attestation metadata
         env:
-          # github.token is sufficient — fetch-github-sbom.js uses the public Releases API
-          # and anonymous GHCR bearer tokens. No packages:read PAT required.
           GITHUB_TOKEN: ${{ github.token }}
         run: npm run fetch-sbom
 

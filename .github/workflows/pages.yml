@@ -53,6 +53,16 @@ jobs:
             github-data-sbom-
             github-data-
 
+      - name: Restore SBOM attestation cache (overrides general data cache)
+        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
+        with:
+          path: |
+            static/data/sbom-attestations.json
+            static/data/sbom-attestations-frontend.json
+          key: github-data-sbom-fresh-${{ github.run_id }}
+          restore-keys: |
+            github-data-sbom-
+
       - name: Install dependencies
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: npm ci
