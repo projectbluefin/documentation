@@ -26,7 +26,8 @@
     "fetch-board-data": "node scripts/fetch-board-data.js",
     "generate-report": "node scripts/generate-report.mjs",
     "fetch-sbom": "node scripts/fetch-github-sbom.js",
-    "fetch-data": "npm run fetch-feeds && npm run fetch-playlists && npm run fetch-github-profiles && npm run fetch-github-repos && npm run fetch-github-driver-versions && npm run fetch-github-images && npm run fetch-contributors && npm run fetch-board-data"
+    "fetch-firehose": "node scripts/fetch-firehose.js",
+    "fetch-data": "npm run fetch-feeds && npm run fetch-playlists && npm run fetch-github-profiles && npm run fetch-github-repos && npm run fetch-github-driver-versions && npm run fetch-github-images && npm run fetch-contributors && npm run fetch-board-data && npm run fetch-firehose"
   },
   "dependencies": {
     "@1password/docusaurus-plugin-stored-data": "^1.0.0",
@@ -45,6 +46,7 @@
     "prism-react-renderer": "^2.3.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-icons": "^5.6.0",
     "xml2js": "^0.6.2"
   },
   "devDependencies": {
