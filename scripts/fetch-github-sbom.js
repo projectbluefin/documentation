@@ -294,10 +294,14 @@ async function orasLogin() {
   const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
   if (!token) return;
 
+  // x-access-token works for GITHUB_TOKEN in Actions.
+  // For local dev with a PAT, set ORAS_USERNAME to your GitHub username.
+  const username = process.env.ORAS_USERNAME || "x-access-token";
+
   try {
     await execFileAsync(
       "oras",
-      ["login", "ghcr.io", "-u", "x-access-token", "--password-stdin"],
+      ["login", "ghcr.io", "-u", username, "--password-stdin"],
       {
         input: token,
         env: { ...process.env },
@@ -306,7 +310,8 @@ async function orasLogin() {
     );
     console.log("oras: logged in to ghcr.io");
   } catch (err) {
-    console.warn(`oras: login failed — ${err.message}`);
+    // Login failure is non-fatal — oras may still work for public images
+    console.warn(`oras: login failed (continuing anonymously) — ${err.message}`);
   }
 }
 
