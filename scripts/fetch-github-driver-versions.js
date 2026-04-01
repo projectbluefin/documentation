@@ -27,6 +27,9 @@ const CACHE_MAX_AGE_HOURS = Number(
   process.env.DRIVER_VERSIONS_CACHE_HOURS || 168,
 );
 const HISTORY_DAYS = Number(process.env.DRIVER_VERSIONS_HISTORY_DAYS || 90);
+const LTS_HISTORY_DAYS = Number(
+  process.env.DRIVER_VERSIONS_LTS_HISTORY_DAYS || 365,
+);
 const FORCE_REFRESH = process.argv.includes("--force");
 
 const RELEASE_URL_BY_STREAM = {
@@ -291,9 +294,17 @@ function buildNvidiaMap(releases) {
   return map;
 }
 
-function buildStream(streamId, name, subtitle, command, feedItems, sbomCache) {
+function buildStream(
+  streamId,
+  name,
+  subtitle,
+  command,
+  feedItems,
+  sbomCache,
+  historyDays = HISTORY_DAYS,
+) {
   const sbomStreamId = streamId; // e.g. "bluefin-stable" or "bluefin-lts"
-  const cutoff = Date.now() - HISTORY_DAYS * 24 * 60 * 60 * 1000;
+  const cutoff = Date.now() - historyDays * 24 * 60 * 60 * 1000;
   const recentItems = feedItems.filter((item) => {
     const parsed = Date.parse(item?.pubDate || item?.updated || "");
     if (Number.isNaN(parsed)) return false;
@@ -356,9 +367,10 @@ function buildStreamFromApi(
   releases,
   tagPrefix,
   sbomCache,
+  historyDays = HISTORY_DAYS,
 ) {
   const sbomStreamId = streamId; // e.g. "bluefin-stable" or "bluefin-lts"
-  const cutoff = Date.now() - HISTORY_DAYS * 24 * 60 * 60 * 1000;
+  const cutoff = Date.now() - historyDays * 24 * 60 * 60 * 1000;
 
   const filtered = releases
     .filter((release) => String(release?.tag_name || "").startsWith(tagPrefix))
@@ -444,6 +456,7 @@ async function main() {
           ltsReleases,
           "lts.",
           sbomCache,
+          LTS_HISTORY_DAYS,
         ),
       ];
 
@@ -485,6 +498,7 @@ async function main() {
           "sudo bootc switch ghcr.io/ublue-os/bluefin:lts --enforce-container-sigpolicy",
           ltsFeed.items || [],
           sbomCache,
+          LTS_HISTORY_DAYS,
         ),
       ];
 
