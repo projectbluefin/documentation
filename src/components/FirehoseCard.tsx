@@ -1,12 +1,15 @@
 import React, { useState, useCallback } from "react";
 import { SiFlathub } from "react-icons/si";
 import { FaGithub, FaGitlab, FaCopy, FaCheck } from "react-icons/fa";
-import type { FirehoseApp, FirehoseRelease } from "../types/firehose";
+import type {
+  FirehoseApp,
+  FirehosePackageVersions,
+  FirehosePackageDiff,
+} from "../types/firehose";
 import styles from "./FirehoseCard.module.css";
 
 interface FirehoseCardProps {
   app: FirehoseApp;
-  release: FirehoseRelease;
 }
 
 function formatDate(iso: string): string {
@@ -21,25 +24,12 @@ function formatDate(iso: string): string {
 
 function PackageBadge({ type }: { type: string }) {
   const label =
-    type === "flatpak" ? "Flathub" : type === "homebrew" ? "Homebrew" : "OS Release";
-  return <span className={`${styles.badge} ${styles[`badge_${type}`]}`}>{label}</span>;
-}
-
-function AppIcon({ app }: { app: FirehoseApp }) {
-  if (app.icon) {
-    return (
-      <img
-        src={app.icon}
-        alt={app.name}
-        className={styles.appIcon}
-        width={48}
-        height={48}
-        loading="lazy"
-      />
-    );
-  }
-  const emoji = app.packageType === "homebrew" ? "🍺" : "🐧";
-  return <span className={styles.appIconEmoji}>{emoji}</span>;
+    type === "flatpak" ? "Flathub" : type === "homebrew" ? "Homebrew" : "Release";
+  return (
+    <span className={`${styles.packageTypeBadge} ${styles[`badge_${type}`]}`}>
+      {label}
+    </span>
+  );
 }
 
 function CopyButton({ command }: { command: string }) {
@@ -57,7 +47,7 @@ function CopyButton({ command }: { command: string }) {
 
   return (
     <button
-      className={styles.copyBtn}
+      className={`${styles.copyButton} ${copied ? styles.copied : ""}`}
       onClick={handleCopy}
       aria-label={copied ? "Copied!" : "Copy install command"}
       title={copied ? "Copied!" : "Copy to clipboard"}
@@ -67,14 +57,153 @@ function CopyButton({ command }: { command: string }) {
   );
 }
 
-const FirehoseCard: React.FC<FirehoseCardProps> = ({ app, release }) => {
-  const sourceIcon =
+/** Labels and ordering for OS package version chips */
+const OS_CHIP_DEFS: Array<{
+  key: Exclude<keyof FirehosePackageVersions, "allPackages">;
+  label: string;
+}> = [
+  { key: "fedora", label: "Fedora" },
+  { key: "kernel", label: "Kernel" },
+  { key: "gnome", label: "GNOME" },
+  { key: "mesa", label: "Mesa" },
+  { key: "podman", label: "Podman" },
+  { key: "systemd", label: "systemd" },
+  { key: "bootc", label: "bootc" },
+];
+
+function OsPackageChips({ versions }: { versions: FirehosePackageVersions }) {
+  const chips = OS_CHIP_DEFS.filter(({ key }) => versions[key]);
+  if (chips.length === 0) return null;
+  return (
+    <div className={styles.osChipGrid}>
+      {chips.map(({ key, label }) => (
+        <span key={key} className={styles.osChip}>
+          <span className={styles.osChipLabel}>{label}</span>
+          <span className={styles.osChipVersion}>{versions[key]}</span>
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function OsPackageDiff({ diff }: { diff: FirehosePackageDiff }) {
+  const [expanded, setExpanded] = useState(false);
+  const total = diff.added.length + diff.changed.length + diff.removed.length;
+  if (total === 0) return null;
+
+  const summary = [
+    diff.added.length > 0 && `+${diff.added.length} added`,
+    diff.changed.length > 0 && `~${diff.changed.length} changed`,
+    diff.removed.length > 0 && `-${diff.removed.length} removed`,
+  ]
+    .filter(Boolean)
+    .join(", ");
+
+  return (
+    <div className={styles.packageDiff}>
+      <button
+        className={styles.packageDiffToggle}
+        onClick={() => setExpanded((v) => !v)}
+        aria-expanded={expanded}
+      >
+        <span className={styles.toggleIcon}>›</span>
+        <span className={styles.packageDiffSummary}>{summary} vs previous release</span>
+      </button>
+      {expanded && (
+        <div className={styles.packageDiffTable}>
+          {diff.added.length > 0 && (
+            <section>
+              <h4 className={`${styles.diffSectionTitle} ${styles.diffAdded}`}>
+                Added ({diff.added.length})
+              </h4>
+              <table className={styles.diffTable}>
+                <tbody>
+                  {diff.added.map((e) => (
+                    <tr key={e.name} className={styles.diffRowAdded}>
+                      <td className={styles.diffPkgName}>{e.name}</td>
+                      <td className={styles.diffVersion}>{e.newVersion}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </section>
+          )}
+          {diff.changed.length > 0 && (
+            <section>
+              <h4 className={`${styles.diffSectionTitle} ${styles.diffChanged}`}>
+                Changed ({diff.changed.length})
+              </h4>
+              <table className={styles.diffTable}>
+                <tbody>
+                  {diff.changed.map((e) => (
+                    <tr key={e.name} className={styles.diffRowChanged}>
+                      <td className={styles.diffPkgName}>{e.name}</td>
+                      <td className={styles.diffVersion}>
+                        <span className={styles.diffOldVersion}>{e.oldVersion}</span>
+                        <span className={styles.diffArrow}>→</span>
+                        {e.newVersion}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </section>
+          )}
+          {diff.removed.length > 0 && (
+            <section>
+              <h4 className={`${styles.diffSectionTitle} ${styles.diffRemoved}`}>
+                Removed ({diff.removed.length})
+              </h4>
+              <table className={styles.diffTable}>
+                <tbody>
+                  {diff.removed.map((e) => (
+                    <tr key={e.name} className={styles.diffRowRemoved}>
+                      <td className={styles.diffPkgName}>{e.name}</td>
+                      <td className={styles.diffVersion}>{e.oldVersion}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </section>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+const FirehoseCard: React.FC<FirehoseCardProps> = ({ app }) => {
+  const [showOlder, setShowOlder] = useState(false);
+
+  const latestRelease = app.releases?.[0];
+  const olderReleases = app.releases?.slice(1) ?? [];
+
+  // Version: prefer release title/version, fall back to currentReleaseVersion,
+  // then homebrewInfo.versions[0] for apps with no tracked release history.
+  const displayVersion =
+    latestRelease?.title ||
+    latestRelease?.version ||
+    app.currentReleaseVersion ||
+    app.homebrewInfo?.versions?.[0];
+
+  // Date: prefer currentReleaseDate, then updatedAt
+  const releaseDate = app.currentReleaseDate || app.updatedAt;
+
+  // Primary link: flathub > release url > homebrewInfo.homepage > source repo
+  const primaryHref =
+    (app.flathubUrl || undefined) ||
+    latestRelease?.url ||
+    app.homebrewInfo?.homepage ||
+    app.sourceRepo?.url;
+
+  // Source icon link
+  const sourceIconLink =
     app.sourceRepo?.type === "github" ? (
       <a
         href={app.sourceRepo.url}
         target="_blank"
         rel="noopener noreferrer"
-        className={styles.iconLink}
+        className={styles.sourceIconLink}
         aria-label="Source on GitHub"
         title="View source on GitHub"
       >
@@ -85,7 +214,7 @@ const FirehoseCard: React.FC<FirehoseCardProps> = ({ app, release }) => {
         href={app.sourceRepo.url}
         target="_blank"
         rel="noopener noreferrer"
-        className={styles.iconLink}
+        className={styles.sourceIconLink}
         aria-label="Source on GitLab"
         title="View source on GitLab"
       >
@@ -93,58 +222,209 @@ const FirehoseCard: React.FC<FirehoseCardProps> = ({ app, release }) => {
       </a>
     ) : null;
 
-  const flathubIcon = app.flathubUrl ? (
-    <a
-      href={app.flathubUrl}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={styles.iconLink}
-      aria-label="Download on Flathub"
-      title="Download on Flathub"
-    >
-      <SiFlathub size={16} />
-    </a>
-  ) : null;
+  // Flathub icon link
+  const flathubIconLink =
+    app.flathubUrl ? (
+      <a
+        href={app.flathubUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={styles.flathubIconLink}
+        aria-label="Download on Flathub"
+        title="Download on Flathub"
+      >
+        <SiFlathub size={16} />
+      </a>
+    ) : null;
 
+  // Homebrew install command — prefer top-level formula, fall back to homebrewInfo
+  const brewFormula = app.formula || app.homebrewInfo?.formula;
   const brewInstall =
-    app.packageType === "homebrew" && app.formula
-      ? `brew install ${app.formula}`
+    app.packageType === "homebrew" && brewFormula
+      ? `brew install ${brewFormula}`
       : null;
 
   return (
-    <article className={styles.card}>
-      <header className={styles.cardHeader}>
-        <AppIcon app={app} />
-        <div className={styles.appMeta}>
-          <div className={styles.appTitleRow}>
-            <span className={styles.appName}>{app.name}</span>
-            <span className={styles.version}>
-              {release.title || release.version}
+    <article
+      className={`${styles.groupedReleaseCard} ${styles.releaseCard}`}
+      data-package-type={app.packageType}
+    >
+      <div className={styles.mainRelease}>
+        {/* ── Header: icon + title section ── */}
+        <div className={styles.releaseHeader}>
+          {app.icon ? (
+            <img
+              src={app.icon}
+              alt={app.name}
+              className={styles.releaseIcon}
+              width={48}
+              height={48}
+              loading="lazy"
+            />
+          ) : (
+            <span className={styles.releaseIconEmoji}>
+              {app.packageType === "homebrew" ? "🍺" : app.packageType === "os" ? "🐧" : "📦"}
             </span>
-            <span className={styles.date}>{formatDate(release.date)}</span>
-            <PackageBadge type={app.packageType} />
-          </div>
-          <div className={styles.appLinks}>
-            {flathubIcon}
-            {sourceIcon}
+          )}
+
+          <div className={styles.releaseTitleSection}>
+            <div className={styles.releaseNameRow}>
+              {/* Name + version — left */}
+              <h3 className={styles.releaseName}>
+                {primaryHref ? (
+                  <a href={primaryHref} target="_blank" rel="noopener noreferrer">
+                    {app.name}
+                    {displayVersion && (
+                      <span className={styles.versionInline}> {displayVersion}</span>
+                    )}
+                  </a>
+                ) : (
+                  <>
+                    {app.name}
+                    {displayVersion && (
+                      <span className={styles.versionInline}> {displayVersion}</span>
+                    )}
+                  </>
+                )}
+              </h3>
+
+              {/* Date + badge + icons — right */}
+              <div className={styles.releaseMeta}>
+                {releaseDate ? (
+                  <span className={styles.releaseDate}>{formatDate(releaseDate)}</span>
+                ) : (
+                  <span className={styles.releaseDate} title="No release history tracked">
+                    —
+                  </span>
+                )}
+                <div className={styles.metaBadges}>
+                  <PackageBadge type={app.packageType} />
+                  {flathubIconLink}
+                  {sourceIconLink}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </header>
 
-      {brewInstall && (
-        <div className={styles.brewInstall}>
-          <code>{brewInstall}</code>
-          <CopyButton command={brewInstall} />
+        {/* ── App ID (flatpak only) ── */}
+        {app.packageType === "flatpak" && app.id && (
+          <p className={styles.releaseAppId}>{app.id.replace(/^flatpak-/, "")}</p>
+        )}
+
+        {/* ── Homebrew install row ── */}
+        {brewInstall && (
+          <div className={styles.brewInstallRow}>
+            <code className={styles.brewCommand}>{brewInstall}</code>
+            <CopyButton command={brewInstall} />
+          </div>
+        )}
+
+        {/* ── Summary ── */}
+        {app.summary && (
+          <p className={styles.releaseSummary}>{app.summary}</p>
+        )}
+
+        {/* ── OS package version chips ── */}
+        {app.packageType === "os" && app.osInfo && (
+          <div className={styles.releaseNotes}>
+            <OsPackageChips
+              versions={{
+                fedora: app.osInfo.fedoraVersion ?? null,
+                kernel: app.osInfo.kernelVersion ?? null,
+                gnome: app.osInfo.gnomeVersion ?? null,
+                mesa: app.osInfo.mesaVersion ?? null,
+                podman: app.osInfo.majorPackages?.["Podman"] ?? null,
+                systemd: app.osInfo.majorPackages?.["systemd"] ?? null,
+                bootc: app.osInfo.majorPackages?.["bootc"] ?? null,
+              }}
+            />
+            {latestRelease?.packageDiff && (
+              <OsPackageDiff diff={latestRelease.packageDiff} />
+            )}
+            {latestRelease?.url && (
+              <a
+                href={latestRelease.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.releaseLink}
+              >
+                View Releases on GitHub →
+              </a>
+            )}
+          </div>
+        )}
+
+        {/* ── Release notes (non-OS) ── */}
+        {app.packageType !== "os" && latestRelease?.description ? (
+          <div className={styles.releaseNotes}>
+            <div
+              className={styles.releaseDescription}
+              dangerouslySetInnerHTML={{ __html: latestRelease.description }}
+            />
+            {latestRelease.url && (
+              <a
+                href={latestRelease.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.releaseLink}
+              >
+                View Full Release →
+              </a>
+            )}
+          </div>
+        ) : app.packageType !== "os" && app.description && !latestRelease ? (
+          /* For apps with no release history, show package description if available */
+          <div className={styles.releaseNotes}>
+            <p className={styles.releaseDescription}>{app.description}</p>
+          </div>
+        ) : null}
+      </div>
+
+      {/* ── Older releases ── */}
+      {olderReleases.length > 0 && (
+        <div className={styles.olderReleasesSection}>
+          <button
+            className={styles.olderReleasesToggle}
+            onClick={() => setShowOlder((v) => !v)}
+            aria-expanded={showOlder}
+          >
+            <span className={styles.toggleIcon}>›</span>
+            {showOlder
+              ? "Hide older releases"
+              : `Show ${olderReleases.length} older release${olderReleases.length !== 1 ? "s" : ""}`}
+          </button>
+          {showOlder && (
+            <div className={styles.olderReleasesList}>
+              {olderReleases.map((release) => (
+                <div key={release.version} className={styles.olderReleaseItem}>
+                  <div className={styles.olderReleaseHeader}>
+                    <span className={styles.olderReleaseVersion}>
+                      {release.title || release.version}
+                    </span>
+                    <span className={styles.olderReleaseDate}>
+                      {formatDate(release.date)}
+                    </span>
+                  </div>
+                  {/* OS: show package chips + diff; others: show HTML description */}
+                  {app.packageType === "os" && release.packageVersions ? (
+                    <>
+                      <OsPackageChips versions={release.packageVersions} />
+                      {release.packageDiff && (
+                        <OsPackageDiff diff={release.packageDiff} />
+                      )}
+                    </>
+                  ) : release.description ? (
+                    <div
+                      className={styles.releaseDescription}
+                      dangerouslySetInnerHTML={{ __html: release.description }}
+                    />
+                  ) : null}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
-      )}
-
-      {app.summary && <p className={styles.summary}>{app.summary}</p>}
-
-      {release.description && (
-        <div
-          className={styles.releaseBody}
-          dangerouslySetInnerHTML={{ __html: release.description }}
-        />
       )}
     </article>
   );

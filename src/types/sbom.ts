@@ -56,6 +56,12 @@ export interface PackageVersions {
   bootc: string | null;
   /** e.g. "F43" derived from `fedora-release-common` */
   fedora: string | null;
+  /**
+   * Flat name→version map of every RPM artifact in the image.
+   * Used by fetch-firehose.js to compute per-release package diffs.
+   * Absent (undefined) from cache entries written before this field was added.
+   */
+  allPackages?: Record<string, string> | null;
 }
 
 export interface SbomRelease {

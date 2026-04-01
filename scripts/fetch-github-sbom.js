@@ -10,13 +10,22 @@
  * Key design decisions:
  *  - Tag pattern: GHCR uses <stream>-<YYYYMMDD> (e.g. stable-20260331).
  *    We match with /[.-](\d{8})$/ and normalise lts.YYYYMMDD → lts-YYYYMMDD.
- *  - Auth: caller must export GITHUB_TOKEN (= PROJECT_READ_TOKEN in GHA) with
- *    cross-org packages:read scope.
+ *  - Auth: no PAT required. Tag enumeration uses the GitHub Releases API with
+ *    the standard github.token (no cross-org scope needed). Digest resolution
+ *    uses an anonymous GHCR bearer token — public images are accessible without
+ *    credentials. The oras discover/pull path also works anonymously for public
+ *    GHCR images without a prior `oras login`.
+ *  - Digest: resolveAmd64Digest() fetches the OCI image index and returns the
+ *    amd64 child manifest digest (not the index digest). SBOM attestations are
+ *    attached to the platform-specific digest, not the multi-arch index.
  *  - NDJSON: cosign verify-attestation outputs one JSON object per line.
  *    We parse each line individually.
- *  - Pagination: GitHub Packages API is paginated; we fetch all pages.
+ *  - Pagination: GitHub Releases API is paginated; we fetch all pages.
  *  - Failure modes: present:false = no attestation published;
  *                   verified:false = attestation exists but verification failed.
+ *  - lts/gdx streams: no SBOMs yet. keyless:false, cosignKeyUrl set.
+ *    present:false is the correct result — pipeline handles gracefully.
+ *    When lts SBOMs are published they will be picked up automatically.
  *  - SBOM download: uses `oras discover` to find the vnd.spdx+json referrer
  *    digest, then `oras pull` to download sbom.json into a temp directory.
  *    The Syft JSON is parsed for RPM artifacts to extract packageVersions.
@@ -64,27 +73,26 @@ const OIDC_ISSUER = "https://token.actions.githubusercontent.com";
 /**
  * Streams to scan.  keyRepo drives the OIDC identity regexp used by cosign.
  * package is the GHCR container package name under the org.
+ * releasesRepo is the GitHub repo used for tag enumeration via Releases API.
  *
- * All streams use OIDC keyless signing (keyless: true).
- * bluefin-lts historically used key-based signing but is treated identically
- * here — it will be migrated to OIDC keyless signing upstream.
+ * keyless:true  → OIDC keyless signing (stable/latest/beta mainline streams)
+ * keyless:false → key-based signing; cosignKeyUrl required (lts/gdx streams).
+ *                 These streams have no SBOMs yet — present:false is expected.
+ *                 When lts SBOMs are published, no code changes are needed.
+ *
+ * GTS is retired and absent from this list.
  */
+const COSIGN_KEY_LTS =
+  "https://raw.githubusercontent.com/ublue-os/bluefin-lts/main/cosign.pub";
+
 const STREAM_SPECS = [
   {
     id: "bluefin-stable",
     label: "Bluefin Stable",
     org: "ublue-os",
     package: "bluefin",
+    releasesRepo: "ublue-os/bluefin",
     streamPrefix: "stable",
-    keyRepo: "ublue-os/bluefin",
-    keyless: true,
-  },
-  {
-    id: "bluefin-gts",
-    label: "Bluefin GTS",
-    org: "ublue-os",
-    package: "bluefin",
-    streamPrefix: "gts",
     keyRepo: "ublue-os/bluefin",
     keyless: true,
   },
@@ -93,6 +101,7 @@ const STREAM_SPECS = [
     label: "Bluefin Latest",
     org: "ublue-os",
     package: "bluefin",
+    releasesRepo: "ublue-os/bluefin",
     streamPrefix: "latest",
     keyRepo: "ublue-os/bluefin",
     keyless: true,
@@ -102,16 +111,61 @@ const STREAM_SPECS = [
     label: "Bluefin LTS",
     org: "ublue-os",
     package: "bluefin",
+    releasesRepo: "ublue-os/bluefin-lts",
     streamPrefix: "lts",
     keyRepo: "ublue-os/bluefin-lts",
-    keyless: true,
+    keyless: false,
+    cosignKeyUrl: COSIGN_KEY_LTS,
   },
   {
     id: "bluefin-dx-stable",
     label: "Bluefin DX Stable",
     org: "ublue-os",
     package: "bluefin-dx",
+    releasesRepo: "ublue-os/bluefin",
     streamPrefix: "stable",
+    keyRepo: "ublue-os/bluefin",
+    keyless: true,
+  },
+  {
+    id: "bluefin-dx-latest",
+    label: "Bluefin DX Latest",
+    org: "ublue-os",
+    package: "bluefin-dx",
+    releasesRepo: "ublue-os/bluefin",
+    streamPrefix: "latest",
+    keyRepo: "ublue-os/bluefin",
+    keyless: true,
+  },
+  {
+    id: "bluefin-dx-lts",
+    label: "Bluefin DX LTS",
+    org: "ublue-os",
+    package: "bluefin-dx",
+    releasesRepo: "ublue-os/bluefin-lts",
+    streamPrefix: "lts",
+    keyRepo: "ublue-os/bluefin-lts",
+    keyless: false,
+    cosignKeyUrl: COSIGN_KEY_LTS,
+  },
+  {
+    id: "bluefin-gdx-lts",
+    label: "Bluefin GDX LTS",
+    org: "ublue-os",
+    package: "bluefin-gdx",
+    releasesRepo: "ublue-os/bluefin-lts",
+    streamPrefix: "lts",
+    keyRepo: "ublue-os/bluefin-lts",
+    keyless: false,
+    cosignKeyUrl: COSIGN_KEY_LTS,
+  },
+  {
+    id: "bluefin-gdx-latest",
+    label: "Bluefin GDX Latest",
+    org: "ublue-os",
+    package: "bluefin-gdx",
+    releasesRepo: "ublue-os/bluefin",
+    streamPrefix: "latest",
     keyRepo: "ublue-os/bluefin",
     keyless: true,
   },
@@ -121,13 +175,16 @@ const STREAM_SPECS = [
 // HTTP helpers (same pattern as fetch-github-images.js)
 // ---------------------------------------------------------------------------
 
-async function fetchText(url) {
+async function fetchText(url, extraHeaders = {}) {
   const headers = {
     "User-Agent": "BluefinDocsSBOM/1.0",
-    Accept: "application/vnd.github+json",
+    ...extraHeaders,
   };
   const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
-  if (token) headers.Authorization = `Bearer ${token}`;
+  // Only attach the GitHub token for api.github.com requests — not for ghcr.io
+  if (token && url.includes("api.github.com")) {
+    headers.Authorization = `Bearer ${token}`;
+  }
 
   const response = await fetch(url, { headers });
   if (!response.ok) {
@@ -136,9 +193,133 @@ async function fetchText(url) {
   return response.text();
 }
 
-async function fetchJson(url) {
-  const text = await fetchText(url);
+async function fetchJson(url, extraHeaders = {}) {
+  const text = await fetchText(url, extraHeaders);
   return JSON.parse(text);
+}
+
+// ---------------------------------------------------------------------------
+// GitHub Releases API — paginated tag listing (no PAT needed)
+// ---------------------------------------------------------------------------
+
+/**
+ * Fetch all release tag names for a given owner/repo using the Releases API.
+ * Uses standard github.token — no cross-org packages:read scope required.
+ * Returns an array of { tagName, publishedAt } objects.
+ */
+async function fetchReleaseTags(owner, repo) {
+  const tags = [];
+  let page = 1;
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    const url = `https://api.github.com/repos/${owner}/${repo}/releases?per_page=100&page=${page}`;
+    let batch;
+    try {
+      batch = await fetchJson(url);
+    } catch (err) {
+      throw new Error(
+        `Releases API page ${page} for ${owner}/${repo} failed: ${err.message}`,
+      );
+    }
+    if (!Array.isArray(batch) || batch.length === 0) break;
+    for (const release of batch) {
+      if (release.tag_name) {
+        tags.push({
+          tagName: release.tag_name,
+          publishedAt: release.published_at || release.created_at || null,
+        });
+      }
+    }
+    if (batch.length < 100) break;
+    page++;
+  }
+  return tags;
+}
+
+// ---------------------------------------------------------------------------
+// GHCR anonymous bearer token + amd64 digest resolution
+// ---------------------------------------------------------------------------
+
+/** Cache tokens keyed by "org/image" to avoid one request per release tag */
+const ghcrTokenCache = new Map();
+
+/**
+ * Get an anonymous GHCR bearer token for the given org/image.
+ * Tokens are scoped per-repository and cached for the process lifetime
+ * (tokens are typically valid for 5 minutes — sufficient for one run).
+ */
+async function getGhcrToken(org, image) {
+  const key = `${org}/${image}`;
+  if (ghcrTokenCache.has(key)) return ghcrTokenCache.get(key);
+
+  const url = `https://ghcr.io/token?scope=repository:${org}/${image}:pull&service=ghcr.io`;
+  let data;
+  try {
+    data = await fetchJson(url);
+  } catch (err) {
+    throw new Error(
+      `GHCR token request failed for ${key}: ${err.message}`,
+    );
+  }
+  const token = data?.token;
+  if (!token) throw new Error(`No token in GHCR response for ${key}`);
+  ghcrTokenCache.set(key, token);
+  return token;
+}
+
+/**
+ * Resolve the amd64 platform manifest digest for an image tag.
+ *
+ * Fetches the OCI image index, parses the manifests[] array, and returns
+ * the digest of the linux/amd64 child manifest. This is the digest that
+ * SBOM attestations are attached to — NOT the image index digest.
+ *
+ * Returns null if the amd64 entry cannot be found or the fetch fails.
+ */
+async function resolveAmd64Digest(org, image, tag) {
+  const token = await getGhcrToken(org, image);
+  const url = `https://ghcr.io/v2/${org}/${image}/manifests/${tag}`;
+
+  let manifest;
+  try {
+    manifest = await fetchJson(url, {
+      Authorization: `Bearer ${token}`,
+      Accept: [
+        "application/vnd.oci.image.index.v1+json",
+        "application/vnd.docker.distribution.manifest.list.v2+json",
+        "application/vnd.docker.distribution.manifest.v2+json",
+      ].join(", "),
+    });
+  } catch (err) {
+    console.warn(
+      `    resolveAmd64Digest: manifest fetch failed for ${org}/${image}:${tag} — ${err.message}`,
+    );
+    return null;
+  }
+
+  // Multi-arch image index: find the linux/amd64 child manifest
+  const manifests = manifest?.manifests;
+  if (Array.isArray(manifests)) {
+    const amd64 = manifests.find(
+      (m) =>
+        m?.platform?.os === "linux" && m?.platform?.architecture === "amd64",
+    );
+    if (amd64?.digest) return amd64.digest;
+    console.warn(
+      `    resolveAmd64Digest: no linux/amd64 entry in index for ${org}/${image}:${tag}`,
+    );
+    return null;
+  }
+
+  // Single-arch manifest: the manifest itself is the amd64 digest carrier.
+  // We need the digest from the Content-Digest header; re-fetch with HEAD.
+  // Fall back to schemaVersion check — if it's a v2 manifest, use config.digest.
+  if (manifest?.config?.digest) return manifest.config.digest;
+
+  console.warn(
+    `    resolveAmd64Digest: cannot determine amd64 digest for ${org}/${image}:${tag}`,
+  );
+  return null;
 }
 
 // ---------------------------------------------------------------------------
@@ -148,8 +329,10 @@ async function fetchJson(url) {
 /**
  * Fetch all package versions (tags) for an org/package, handling pagination.
  * Returns an array of version objects from the GitHub Packages API.
+ * @deprecated Use fetchReleaseTags() + resolveAmd64Digest() instead.
+ *   This function remains for reference only and is no longer called.
  */
-async function fetchAllPackageVersions(org, pkg) {
+async function _fetchAllPackageVersions(org, pkg) {
   const versions = [];
   let page = 1;
   // eslint-disable-next-line no-constant-condition
@@ -159,8 +342,6 @@ async function fetchAllPackageVersions(org, pkg) {
     try {
       batch = await fetchJson(url);
     } catch (err) {
-      // Rethrow so the caller (main) can preserve existing cache for this package
-      // rather than silently returning an empty result and clearing all releases.
       throw new Error(
         `Packages API page ${page} for ${org}/${pkg} failed: ${err.message}`,
       );
@@ -234,14 +415,12 @@ async function verifyAttestation(imageRef, spec) {
   ];
 
   let stdout = "";
-  let stderr = "";
   try {
     const result = await execFileAsync("cosign", args, {
       env: { ...process.env },
       maxBuffer: 4 * 1024 * 1024,
     });
     stdout = result.stdout;
-    stderr = result.stderr;
   } catch (err) {
     const msg = (err.stderr || err.message || "").toLowerCase();
     // cosign exits non-zero when no attestation exists
@@ -438,6 +617,10 @@ function stripEpoch(version) {
  *   systemd  → name == "systemd"
  *   bootc    → name == "bootc"
  *   fedora   → name == "fedora-release-common", extract leading digits → "F" + digits
+ *
+ * Also collects allPackages: a flat {name: version} map of every RPM artifact.
+ * This enables per-release diff computation in fetch-firehose.js without
+ * additional network calls at build time.
  */
 function extractPackageVersions(sbomPath) {
   if (!sbomPath) return null;
@@ -470,6 +653,8 @@ function extractPackageVersions(sbomPath) {
     systemd: null,
     bootc: null,
     fedora: null,
+    /** Flat name→version map of every RPM in the image */
+    allPackages: /** @type {Record<string, string>} */ ({}),
   };
 
   // Collect all kernel versions to pick the lowest (booted kernel)
@@ -480,24 +665,30 @@ function extractPackageVersions(sbomPath) {
     const version = pkg?.version;
     if (!name || !version) continue;
 
+    // Capture every RPM for diff computation, epoch-stripped.
+    // kernel is handled specially below (multi-version dedup) — skip here.
+    if (name !== "kernel") {
+      result.allPackages[name] = stripEpoch(String(version));
+    }
+
     switch (name) {
       case "kernel":
         kernelVersions.push(String(version));
         break;
       case "gnome-shell":
-        if (!result.gnome) result.gnome = String(version);
+        if (!result.gnome) result.gnome = stripEpoch(String(version));
         break;
       case "mesa-filesystem":
         if (!result.mesa) result.mesa = stripEpoch(String(version));
         break;
       case "podman":
-        if (!result.podman) result.podman = String(version);
+        if (!result.podman) result.podman = stripEpoch(String(version));
         break;
       case "systemd":
-        if (!result.systemd) result.systemd = String(version);
+        if (!result.systemd) result.systemd = stripEpoch(String(version));
         break;
       case "bootc":
-        if (!result.bootc) result.bootc = String(version);
+        if (!result.bootc) result.bootc = stripEpoch(String(version));
         break;
       case "fedora-release-common": {
         if (!result.fedora) {
@@ -524,7 +715,14 @@ function extractPackageVersions(sbomPath) {
     }
     kernelVersions.sort(compareRpmVersions);
     result.kernel = kernelVersions[0];
+    // Write the correctly-picked (lowest/booted) kernel into allPackages so diff
+    // comparisons use the same value as the displayed chip.
+    result.allPackages["kernel"] = stripEpoch(kernelVersions[0]);
   }
+
+  console.log(
+    `    extractPackageVersions: captured ${Object.keys(result.allPackages).length} RPM packages`,
+  );
 
   return result;
 }
@@ -535,40 +733,42 @@ function extractPackageVersions(sbomPath) {
 
 /**
  * Find recent dated tags for a given stream prefix.
- * Returns an array of { tag, cacheKey, dateStr, imageRef } objects,
- * most-recent first, limited to MAX_RELEASES within LOOKBACK_DAYS.
+ *
+ * @param {Array<{tagName: string, publishedAt: string|null}>} releaseTags
+ *   Release tags from the GitHub Releases API (fetchReleaseTags output).
+ * @param {object} spec  Stream spec from STREAM_SPECS.
+ * @returns {Array<{tag: string, cacheKey: string, dateStr: string, imageRef: string, publishedAt: string|null}>}
+ *   Most-recent first, limited to MAX_RELEASES within LOOKBACK_DAYS.
+ *   digest is NOT included here — resolveAmd64Digest() is called in processStream().
  */
-function findRecentTagsForStream(allVersions, spec) {
+function findRecentTagsForStream(releaseTags, spec) {
   const cutoff = Date.now() - LOOKBACK_DAYS * 24 * 60 * 60 * 1000;
   const found = [];
 
-  for (const version of allVersions) {
-    const tags = version?.metadata?.container?.tags || [];
-    const updatedAt = version.updated_at
-      ? Date.parse(version.updated_at)
-      : null;
-    if (updatedAt !== null && updatedAt < cutoff) continue;
+  for (const { tagName, publishedAt } of releaseTags) {
+    const publishedMs = publishedAt ? Date.parse(publishedAt) : null;
+    if (publishedMs !== null && publishedMs < cutoff) continue;
 
-    for (const rawTag of tags) {
-      const normalised = normaliseLtsTag(rawTag.toLowerCase());
-      if (!normalised.startsWith(`${spec.streamPrefix}-`)) continue;
-      const dateStr = extractDateFromTag(normalised);
-      if (!dateStr) continue;
+    const normalised = normaliseLtsTag(tagName.toLowerCase());
+    if (!normalised.startsWith(`${spec.streamPrefix}-`)) continue;
+    const dateStr = extractDateFromTag(normalised);
+    if (!dateStr) continue;
 
-      // Enforce canonical tag: only exact `<streamPrefix>-YYYYMMDD` is accepted.
-      // Non-canonical variants like lts-hwe-testing-20260331 would normalise to
-      // lts-20260331 and silently overwrite valid canonical entries.
-      const expectedCanonical = `${spec.streamPrefix}-${dateStr}`;
-      if (normalised !== expectedCanonical) continue;
+    // Enforce canonical tag: only exact `<streamPrefix>-YYYYMMDD` is accepted.
+    // Non-canonical variants like lts-hwe-testing-20260331 would normalise to
+    // lts-20260331 and silently overwrite valid canonical entries.
+    const expectedCanonical = `${spec.streamPrefix}-${dateStr}`;
+    if (normalised !== expectedCanonical) continue;
 
-      found.push({
-        tag: normalised,
-        cacheKey: buildCacheKey(spec.streamPrefix, dateStr),
-        dateStr,
-        imageRef: `ghcr.io/${spec.org}/${spec.package}:${rawTag}`,
-        digest: version.name || null,
-      });
-    }
+    found.push({
+      tag: normalised,
+      cacheKey: buildCacheKey(spec.streamPrefix, dateStr),
+      dateStr,
+      // Use the original tag name (not lowercased normalised) for the image ref
+      // so the GHCR manifest lookup uses the exact published tag.
+      imageRef: `ghcr.io/${spec.org}/${spec.package}:${tagName}`,
+      publishedAt: publishedAt || null,
+    });
   }
 
   // Deduplicate by cacheKey (keep first/most-recent encounter)
@@ -588,37 +788,53 @@ function findRecentTagsForStream(allVersions, spec) {
 
 /**
  * Build the result object for a single stream.
+ *
+ * @param {object} spec  Stream spec from STREAM_SPECS.
+ * @param {Map<string, Array<{tagName: string, publishedAt: string|null}>>} releaseTagsByRepo
+ *   Pre-fetched release tags keyed by "owner/repo" (spec.releasesRepo).
+ * @param {object|null} existing  Existing cache for incremental updates.
  */
-async function processStream(spec, allVersionsByPackage, existing) {
-  const pkgKey = `${spec.org}/${spec.package}`;
-  // If the key is absent the Packages API fetch failed — preserve existing cache.
-  if (!allVersionsByPackage.has(pkgKey)) {
+async function processStream(spec, releaseTagsByRepo, existing) {
+  // If the releases repo fetch failed — preserve existing cache.
+  if (!releaseTagsByRepo.has(spec.releasesRepo)) {
     if (existing?.streams?.[spec.id]) {
       console.log(
-        `  ${spec.id}: Packages API unavailable — keeping existing cache`,
+        `  ${spec.id}: Releases API unavailable — keeping existing cache`,
       );
       return existing.streams[spec.id];
     }
     // No existing cache to fall back to; return empty stream.
-    return { ...spec, releases: {} };
+    return { id: spec.id, label: spec.label, org: spec.org, package: spec.package, streamPrefix: spec.streamPrefix, keyRepo: spec.keyRepo, keyless: spec.keyless, releases: {} };
   }
-  const allVersions = allVersionsByPackage.get(pkgKey);
-  const recentTags = findRecentTagsForStream(allVersions, spec);
+  const releaseTags = releaseTagsByRepo.get(spec.releasesRepo);
+  const recentTags = findRecentTagsForStream(releaseTags, spec);
 
   console.log(
     `  ${spec.id}: found ${recentTags.length} recent tagged releases`,
   );
 
   const releases = {};
-  for (const { tag, cacheKey, imageRef, digest } of recentTags) {
+  for (const { tag, cacheKey, imageRef } of recentTags) {
+    // Resolve the amd64 platform digest for this tag.
+    // SBOM attestations are attached to the platform-specific digest,
+    // not the multi-arch image index digest.
+    const [org, image] = [spec.org, spec.package];
+    const tagName = imageRef.split(":").pop();
+    const digest = await resolveAmd64Digest(org, image, tagName);
+
     // Cache hit: reuse if digest matches AND packageVersions is already populated.
     // If packageVersions is null (e.g. SBOM download previously failed), retry.
     const existingEntry = existing?.streams?.[spec.id]?.releases?.[cacheKey];
-    const digestMatches = existingEntry?.digest === digest;
+    const digestMatches = digest && existingEntry?.digest === digest;
     const hasVersions = existingEntry?.packageVersions != null;
+    // allPackages may be absent from entries cached before this feature was added —
+    // treat missing allPackages as a cache miss so the SBOM is re-downloaded.
+    const hasAllPackages =
+      existingEntry?.packageVersions?.allPackages != null &&
+      Object.keys(existingEntry.packageVersions.allPackages).length > 0;
     const isVerified = existingEntry?.attestation?.verified === true;
 
-    if (!FORCE_REFRESH && digestMatches && isVerified && hasVersions) {
+    if (!FORCE_REFRESH && digestMatches && isVerified && hasVersions && hasAllPackages) {
       console.log(
         `    ${cacheKey}: cache hit (digest match, verified, versions populated)`,
       );
@@ -627,8 +843,9 @@ async function processStream(spec, allVersionsByPackage, existing) {
     }
 
     // Partial cache hit: attestation already verified but SBOM not yet downloaded
+    // (or allPackages was missing from an older cache entry — re-download SBOM only)
     let attestation;
-    if (!FORCE_REFRESH && digestMatches && isVerified && !hasVersions) {
+    if (!FORCE_REFRESH && digestMatches && isVerified && (!hasVersions || (hasVersions && !hasAllPackages))) {
       console.log(
         `    ${cacheKey}: attestation cached, fetching SBOM packageVersions`,
       );
@@ -707,7 +924,7 @@ async function processStream(spec, allVersionsByPackage, existing) {
 async function main() {
   if (!process.env.GITHUB_TOKEN && !process.env.GH_TOKEN) {
     console.warn(
-      "Warning: GITHUB_TOKEN / GH_TOKEN not set. Packages API calls may be rate-limited.",
+      "Warning: GITHUB_TOKEN / GH_TOKEN not set. GitHub API calls may be rate-limited.",
     );
   }
 
@@ -721,29 +938,25 @@ async function main() {
     }
   }
 
-  // Fetch package versions once per unique org/package pair (avoid duplicate API calls)
-  const uniquePackages = new Map();
-  for (const spec of STREAM_SPECS) {
-    const key = `${spec.org}/${spec.package}`;
-    if (!uniquePackages.has(key)) {
-      uniquePackages.set(key, { org: spec.org, package: spec.package });
-    }
-  }
+  // Deduplicate releasesRepo values — multiple streams share the same repo
+  // (e.g. bluefin-stable and bluefin-dx-stable both use ublue-os/bluefin).
+  const uniqueRepos = new Set(STREAM_SPECS.map((s) => s.releasesRepo));
 
   console.log(
-    `Fetching package versions for ${uniquePackages.size} package(s)...`,
+    `Fetching release tags for ${uniqueRepos.size} repo(s)...`,
   );
-  const allVersionsByPackage = new Map();
-  for (const [key, { org, package: pkgName }] of uniquePackages) {
-    console.log(`  ${key}`);
+  const releaseTagsByRepo = new Map();
+  for (const repoPath of uniqueRepos) {
+    const [owner, repo] = repoPath.split("/");
+    console.log(`  ${repoPath}`);
     try {
-      const versions = await fetchAllPackageVersions(org, pkgName);
-      allVersionsByPackage.set(key, versions);
-      console.log(`    ${versions.length} versions fetched`);
+      const tags = await fetchReleaseTags(owner, repo);
+      releaseTagsByRepo.set(repoPath, tags);
+      console.log(`    ${tags.length} release tags fetched`);
     } catch (err) {
-      console.error(`  Failed to fetch versions for ${key}: ${err.message}`);
-      // Do NOT set an empty array — leave the key absent so processStream
-      // detects the fetch failure and preserves the existing cache instead.
+      console.error(`  Failed to fetch releases for ${repoPath}: ${err.message}`);
+      // Leave the key absent so processStream detects the fetch failure
+      // and preserves the existing cache instead of producing an empty stream.
     }
   }
 
@@ -752,7 +965,7 @@ async function main() {
   for (const spec of STREAM_SPECS) {
     console.log(`\nProcessing stream: ${spec.id}`);
     try {
-      const result = await processStream(spec, allVersionsByPackage, existing);
+      const result = await processStream(spec, releaseTagsByRepo, existing);
       streams[spec.id] = result;
     } catch (err) {
       console.error(`  Error processing ${spec.id}: ${err.message}`);
@@ -762,6 +975,23 @@ async function main() {
         console.log(`  Kept existing cache for ${spec.id}`);
       }
     }
+  }
+
+  // Empty-cache guard: if every stream produced zero releases, something is
+  // wrong (likely all Releases API fetches failed). Exit non-zero so the GHA
+  // workflow marks the step as failed instead of silently overwriting with an
+  // empty cache.
+  const totalReleases = Object.values(streams).reduce(
+    (sum, s) => sum + Object.keys(s?.releases || {}).length,
+    0,
+  );
+  if (totalReleases === 0) {
+    console.error(
+      "Error: all streams produced zero releases. " +
+      "This indicates a Releases API failure. " +
+      "Refusing to overwrite cache with empty data.",
+    );
+    process.exit(1);
   }
 
   const output = {

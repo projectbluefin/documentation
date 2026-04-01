@@ -38,6 +38,7 @@ const PRODUCT_SPECS = [
     summary: "Primary Bluefin desktop image for most systems.",
     streamOrder: ["stable", "stable-daily", "latest", "beta"],
     versionSource: { feed: "bluefin", stream: "stable" },
+    sbomStreamId: "bluefin-stable",
     keyRepo: "ublue-os/bluefin",
     nvidiaPackage: "bluefin-nvidia-open",
     allowTestingStreams: false,
@@ -52,6 +53,7 @@ const PRODUCT_SPECS = [
     summary: "Developer-focused Bluefin image with DX tooling.",
     streamOrder: ["stable", "latest", "beta"],
     versionSource: { feed: "bluefin", stream: "stable" },
+    sbomStreamId: "bluefin-dx-stable",
     keyRepo: "ublue-os/bluefin",
     nvidiaPackage: "bluefin-dx-nvidia-open",
     allowTestingStreams: false,
@@ -66,6 +68,7 @@ const PRODUCT_SPECS = [
     summary: "Long-term support Bluefin stream.",
     streamOrder: ["lts"],
     versionSource: { feed: "lts", stream: "lts" },
+    sbomStreamId: "bluefin-lts",
     keyRepo: "ublue-os/bluefin-lts",
     nvidiaPackage: "bluefin-nvidia-open",
     nvidiaTagFallback: { lts: "latest" },
@@ -81,6 +84,7 @@ const PRODUCT_SPECS = [
     summary: "Long-term support Bluefin DX stream.",
     streamOrder: ["lts"],
     versionSource: { feed: "lts", stream: "lts" },
+    sbomStreamId: "bluefin-dx-lts",
     keyRepo: "ublue-os/bluefin-lts",
     nvidiaPackage: "bluefin-dx-nvidia-open",
     nvidiaTagFallback: { lts: "latest" },
@@ -96,6 +100,7 @@ const PRODUCT_SPECS = [
     summary: "AI-focused GDX track with LTS roots.",
     streamOrder: ["lts", "latest", "beta"],
     versionSource: { feed: "lts", stream: "lts" },
+    sbomStreamId: "bluefin-gdx-lts",
     keyRepo: "ublue-os/bluefin-lts",
     keepEvenIfStale: true,
     allowTestingStreams: true,
@@ -110,6 +115,7 @@ const PRODUCT_SPECS = [
     summary: "Project Bluefin Dakota image stream.",
     streamOrder: ["latest"],
     versionSource: null,
+    sbomStreamId: null,
     keyRepo: "projectbluefin/dakota",
     allowTestingStreams: false,
     versionOverrides: {
@@ -242,7 +248,7 @@ async function fetchText(url) {
   return response.text();
 }
 
-async function fetchJson(url) {
+async function _fetchJson(url) {
   const text = await fetchText(url);
   return JSON.parse(text);
 }
@@ -406,12 +412,8 @@ async function buildStreamVersionInfo(
 
   // Overlay SBOM-sourced versions for kernel, gnome, and fedora.
   // NVIDIA is intentionally excluded — it is not in the SBOM (akmod, built outside image).
-  if (sbomCache && spec.versionSource) {
-    const sbomStreamId =
-      spec.versionSource.feed === "lts"
-        ? "bluefin-lts"
-        : `bluefin-${spec.versionSource.stream || "stable"}`;
-    const sbomVersions = lookupSbomVersions(sbomCache, sbomStreamId);
+  if (sbomCache && spec.sbomStreamId) {
+    const sbomVersions = lookupSbomVersions(sbomCache, spec.sbomStreamId);
     if (sbomVersions) {
       if (sbomVersions.kernel) versions.kernel = sbomVersions.kernel;
       if (sbomVersions.gnome) versions.gnome = sbomVersions.gnome;
@@ -493,9 +495,10 @@ function buildSecurityInfo(spec, inspectTag) {
   };
 }
 
-async function fetchPackageVersions(org, pkg) {
-  const url = `https://api.github.com/orgs/${org}/packages/container/${pkg}/versions?per_page=100`;
-  return fetchJson(url);
+async function fetchPackageVersions(_org, _pkg) {
+  // Packages API requires packages:read PAT (cross-org GHCR) — not available with github.token.
+  // All callers handle an empty array gracefully; digest/tagged links fall back to release URLs.
+  return [];
 }
 
 function latestUpdatedAt(versions) {
@@ -545,12 +548,7 @@ async function buildProduct(spec, feeds, cachedById, ageHours, sbomCache) {
 
   const imageRef = `ghcr.io/${spec.org}/${spec.package}`;
 
-  let versions = [];
-  try {
-    versions = await fetchPackageVersions(spec.org, spec.package);
-  } catch {
-    versions = existing?.packageVersions || [];
-  }
+  const versions = await fetchPackageVersions(spec.org, spec.package);
 
   let downloadsTotal = null;
   let downloadSource = "unavailable";
@@ -652,12 +650,8 @@ async function buildProduct(spec, feeds, cachedById, ageHours, sbomCache) {
 
   // Overlay SBOM-sourced versions for kernel and gnome on the top-level versions object.
   // NVIDIA is intentionally excluded — it is not in the SBOM.
-  if (sbomCache && spec.versionSource) {
-    const sbomStreamId =
-      spec.versionSource.feed === "lts"
-        ? "bluefin-lts"
-        : `bluefin-${spec.versionSource.stream || "stable"}`;
-    const sbomVersions = lookupSbomVersions(sbomCache, sbomStreamId);
+  if (sbomCache && spec.sbomStreamId) {
+    const sbomVersions = lookupSbomVersions(sbomCache, spec.sbomStreamId);
     if (sbomVersions) {
       if (sbomVersions.kernel) versionsFromFeed.kernel = sbomVersions.kernel;
       if (sbomVersions.gnome) versionsFromFeed.gnome = sbomVersions.gnome;

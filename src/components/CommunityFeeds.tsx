@@ -17,9 +17,9 @@ const CommunityFeeds: React.FC = () => {
             className={styles.heroDino}
           />
           <div className={styles.heroText}>
-            <h1 className={styles.heroTitle}>Bluefin Firehose</h1>
+            <h1 className={styles.heroTitle}>Changelogs</h1>
             <p className={styles.heroSubtitle}>
-              Track updates for Bluefin OS, Flathub apps, and Homebrew packages
+              The Firehose - track updates from Bluefin, Homebrew, and Flathub
             </p>
             <p className={styles.heroLinks}>
               Need project-wide status? See <a href="/reports">Monthly Reports</a>{" "}

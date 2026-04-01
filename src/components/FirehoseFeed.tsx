@@ -147,36 +147,44 @@ function Statistics({ uniqueApps }: { uniqueApps: UniqueApp[] }) {
 // ── Featured App Banner ───────────────────────────────────────────────────────
 
 function FeaturedAppBanner({ app }: { app: FirehoseApp }) {
+  const href = app.flathubUrl ?? app.sourceRepo?.url;
+
   return (
-    <section className={styles.featuredBanner}>
-      <h3 className={styles.sidebarHeading}>Featured Today</h3>
-      <div className={styles.featuredCard}>
-        {app.icon ? (
-          <img
-            src={app.icon}
-            alt={app.name}
-            className={styles.featuredIcon}
-            width={40}
-            height={40}
-            loading="lazy"
-          />
-        ) : (
-          <span className={styles.featuredIconEmoji}>🍺</span>
-        )}
-        <div>
-          <div className={styles.featuredName}>
-            {app.flathubUrl ? (
-              <a href={app.flathubUrl} target="_blank" rel="noopener noreferrer">
-                {app.name}
-              </a>
-            ) : (
-              app.name
+    <div className={styles.featuredBanner}>
+      <div className={styles.featuredLabel}>
+        <span className={styles.starIcon}>⭐</span>
+        <span>Featured Today</span>
+      </div>
+      <a
+        href={href ?? "#"}
+        target={href ? "_blank" : undefined}
+        rel="noopener noreferrer"
+        className={styles.featuredContent}
+        aria-label={`View ${app.name}`}
+      >
+        <div className={styles.featuredAppInfo}>
+          {app.icon && (
+            <img
+              src={app.icon}
+              alt={app.name}
+              className={styles.featuredIcon}
+              width={48}
+              height={48}
+              loading="lazy"
+            />
+          )}
+          <div className={styles.featuredText}>
+            <div className={styles.featuredName}>{app.name}</div>
+            {app.summary && (
+              <p className={styles.featuredSummary}>{app.summary}</p>
             )}
           </div>
-          {app.summary && <p className={styles.featuredSummary}>{app.summary}</p>}
         </div>
-      </div>
-    </section>
+        <button className={styles.featuredCta} type="button">
+          View App <span className={styles.arrow}>→</span>
+        </button>
+      </a>
+    </div>
   );
 }
 
@@ -236,6 +244,12 @@ const FirehoseFeed: React.FC = () => {
   // Single deduplication pass — shared by getFeaturedApp, Statistics, and FirehoseFilters
   const uniqueApps: UniqueApp[] = useMemo(() => toUniqueApps(allEvents), [allEvents]);
 
+  // Unique apps after filters — one card per app in the main feed
+  const filteredUniqueApps: UniqueApp[] = useMemo(
+    () => toUniqueApps(filteredEvents),
+    [filteredEvents],
+  );
+
   const featuredApp = useMemo(() => getFeaturedApp(uniqueApps), [uniqueApps]);
 
   const isEmpty = allEvents.length === 0;
@@ -250,7 +264,7 @@ const FirehoseFeed: React.FC = () => {
           apps={uniqueApps.map(({ app }) => app)}
           filters={filters}
           onFiltersChange={setFilters}
-          matchCount={filteredEvents.length}
+          matchCount={filteredUniqueApps.length}
         />
         {!isEmpty && <Statistics uniqueApps={uniqueApps} />}
       </aside>
@@ -271,7 +285,7 @@ const FirehoseFeed: React.FC = () => {
               pipeline runs every 6 hours — check back soon.
             </p>
           </div>
-        ) : filteredEvents.length === 0 ? (
+        ) : filteredUniqueApps.length === 0 ? (
           <div className={styles.emptyState}>
             <p>No apps match the current filters.</p>
             <button
@@ -282,8 +296,8 @@ const FirehoseFeed: React.FC = () => {
             </button>
           </div>
         ) : (
-          filteredEvents.map(({ app, release }) => (
-            <FirehoseCard key={`${app.id}@${release.version}`} app={app} release={release} />
+          filteredUniqueApps.map(({ app }) => (
+            <FirehoseCard key={app.id} app={app} />
           ))
         )}
       </main>
