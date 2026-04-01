@@ -30,6 +30,11 @@ const RELEASE_URL_BY_STREAM = {
   "bluefin-lts": "https://github.com/ublue-os/bluefin-lts/releases",
 };
 
+const RELEASE_REPO_BY_STREAM = {
+  "bluefin-stable": "ublue-os/bluefin",
+  "bluefin-lts": "ublue-os/bluefin-lts",
+};
+
 function readJsonIfExists(filePath, fallback) {
   if (!fs.existsSync(filePath)) return fallback;
   try {
@@ -202,7 +207,13 @@ function rowFromSbomRelease(streamId, cacheKey, releaseEntry, nvidiaVersion) {
     stream: streamId,
     tag: releaseEntry?.tag || cacheKey,
     title: releaseEntry?.tag || cacheKey,
-    releaseUrl: RELEASE_URL_BY_STREAM[streamId] || null,
+    releaseUrl: (() => {
+      const tag = releaseEntry?.tag || cacheKey;
+      const repo = RELEASE_REPO_BY_STREAM[streamId];
+      return repo && tag
+        ? `https://github.com/${repo}/releases/tag/${tag}`
+        : RELEASE_URL_BY_STREAM[streamId] || null;
+    })(),
     publishedAt,
     versions: {
       kernel: pkg.kernel || null,
@@ -254,15 +265,26 @@ function buildStreamFromSbom(
   };
 }
 
+function normalizeReleaseTag(tag) {
+  // GitHub LTS release tags use dots (lts.YYYYMMDD) but SBOM cache keys use
+  // hyphens (lts-YYYYMMDD). Normalize so NVIDIA lookups match SBOM entries.
+  return typeof tag === "string" ? tag.replace(/^lts\./, "lts-") : tag;
+}
+
 function buildNvidiaMap(releases) {
   const map = {};
   for (const release of releases || []) {
     const tag = release?.tag_name;
     if (!tag) continue;
-    map[tag] = extractVersionFromMarkdown(release?.body || "", [
+    const normalizedTag = normalizeReleaseTag(tag);
+    const version = extractVersionFromMarkdown(release?.body || "", [
       "Nvidia",
       "NVIDIA",
     ]);
+    map[normalizedTag] = version;
+    // Also key by raw tag so stable-YYYYMMDD lookups (no normalization needed)
+    // still resolve correctly without a second pass.
+    if (normalizedTag !== tag) map[tag] = version;
   }
   return map;
 }
@@ -294,24 +316,34 @@ function buildStream(streamId, name, subtitle, command, feedItems, sbomCache) {
 }
 
 async function fetchReleases(owner, repo) {
-  const url = `https://api.github.com/repos/${owner}/${repo}/releases?per_page=100`;
-  const response = await fetch(url, {
-    headers: {
-      Accept: "application/vnd.github+json",
-      "User-Agent": "bluefin-docs-driver-versions",
-      ...(process.env.GITHUB_TOKEN
-        ? { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` }
-        : {}),
-    },
-  });
+  const releases = [];
+  let url = `https://api.github.com/repos/${owner}/${repo}/releases?per_page=100`;
+  const headers = {
+    Accept: "application/vnd.github+json",
+    "User-Agent": "bluefin-docs-driver-versions",
+    ...(process.env.GITHUB_TOKEN
+      ? { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` }
+      : {}),
+  };
 
-  if (!response.ok) {
-    throw new Error(
-      `GitHub releases API failed for ${owner}/${repo}: ${response.status}`,
-    );
+  while (url) {
+    const response = await fetch(url, { headers });
+
+    if (!response.ok) {
+      throw new Error(
+        `GitHub releases API failed for ${owner}/${repo}: ${response.status}`,
+      );
+    }
+
+    const page = await response.json();
+    releases.push(...page);
+
+    const link = response.headers.get("link");
+    const next = link?.match(/<([^>]+)>;\s*rel="next"/)?.[1] ?? null;
+    url = next;
   }
 
-  return response.json();
+  return releases;
 }
 
 function buildStreamFromApi(

@@ -2,7 +2,7 @@ import React, { useState, useCallback, useMemo } from "react";
 import useStoredFeed from "@theme/useStoredFeed";
 import styles from "./FeedItems.module.css";
 import githubProfilesData from "@site/static/data/github-profiles.json";
-import sbomAttestationsData from "@site/static/data/sbom-attestations.json";
+import sbomAttestationsData from "@site/static/data/sbom-attestations-frontend.json";
 import type { SbomAttestationsData } from "../types/sbom";
 
 // Small inline copy button — renders a clipboard icon, shows a tick for 1.5s after copy
@@ -306,13 +306,18 @@ const extractReleaseTag = (title: string): string | null => {
   const tagMatch = title.match(
     /(stable-\d{8}|beta-\d{8}|latest-\d{8}|lts[-.]\d{8})/i,
   );
-  if (!tagMatch) return null;
+  if (tagMatch) {
+    // Normalise lts.YYYYMMDD → lts-YYYYMMDD to match cache key format
+    return tagMatch[1]
+      .toLowerCase()
+      .replace(/^lts\.(\d{8})$/, "lts-$1");
+  }
 
-  // Normalise lts.YYYYMMDD → lts-YYYYMMDD to match cache key format
-  const normalized = tagMatch[1]
-    .toLowerCase()
-    .replace(/^lts\.(\d{8})$/, "lts-$1");
-  return normalized;
+  // LTS feed titles use "bluefin-lts LTS: YYYYMMDD (...)" format — extract date
+  const ltsDateMatch = title.match(/\bLTS:\s*(\d{8})\b/i);
+  if (ltsDateMatch) return `lts-${ltsDateMatch[1]}`;
+
+  return null;
 };
 
 const getSupplyChainLinks = (title: string, feedId?: string): SupplyChainLinks => {
