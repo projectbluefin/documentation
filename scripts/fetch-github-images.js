@@ -152,6 +152,30 @@ function lookupSbomVersions(sbomCache, streamId) {
   return null;
 }
 
+function normalizeSbomStreamTag(streamTag) {
+  if (!streamTag) return null;
+  if (streamTag === "stable-daily") return "stable";
+  return streamTag;
+}
+
+function buildSbomStreamId(spec, streamTag) {
+  const normalizedTag = normalizeSbomStreamTag(streamTag);
+  if (!spec?.sbomStreamId || !normalizedTag) return null;
+  return spec.sbomStreamId.replace(/-(stable|latest|lts|beta)$/, `-${normalizedTag}`);
+}
+
+function fallbackSbomVersionsByPackage(sbomCache, spec) {
+  if (!sbomCache?.streams || !spec?.org || !spec?.package) return null;
+  const streamEntries = Object.values(sbomCache.streams).filter(
+    (stream) => stream?.org === spec.org && stream?.package === spec.package,
+  );
+  for (const stream of streamEntries) {
+    const versions = lookupSbomVersions(sbomCache, stream.id);
+    if (versions) return versions;
+  }
+  return null;
+}
+
 function readCache() {
   return readJsonIfExists(OUTPUT_FILE, null);
 }
@@ -195,9 +219,14 @@ function parseFeedVersion(feedItem, labels) {
   return null;
 }
 
-function sbomVersionsForStream(sbomCache, sbomStreamId) {
-  if (!sbomCache || !sbomStreamId) return null;
-  return lookupSbomVersions(sbomCache, sbomStreamId);
+function sbomVersionsForStream(sbomCache, spec, streamTag) {
+  if (!sbomCache || !spec) return null;
+  const exactStreamId = buildSbomStreamId(spec, streamTag);
+  if (exactStreamId) {
+    const exact = lookupSbomVersions(sbomCache, exactStreamId);
+    if (exact) return exact;
+  }
+  return fallbackSbomVersionsByPackage(sbomCache, spec);
 }
 
 function latestFeedItem(feeds, source) {
@@ -327,7 +356,7 @@ async function buildStreamVersionInfo(
   feeds,
   sbomCache,
 ) {
-  const sbomVersions = sbomVersionsForStream(sbomCache, spec.sbomStreamId);
+  const sbomVersions = sbomVersionsForStream(sbomCache, spec, streamTag);
   const feedKey = streamTag === "lts" ? "lts" : streamTag;
   const feedSource = spec.versionSource
     ? { feed: spec.versionSource.feed, stream: feedKey }
@@ -558,7 +587,7 @@ async function buildProduct(spec, feeds, cachedById, ageHours, sbomCache) {
   }
 
   const feedItem = latestFeedItem(feeds, spec.versionSource);
-  const sbomVersions = sbomVersionsForStream(sbomCache, spec.sbomStreamId);
+  const sbomVersions = sbomVersionsForStream(sbomCache, spec, spec.versionSource?.stream);
   const versionsFromFeed = {
     gnome: sbomVersions?.gnome || null,
     kernel: sbomVersions?.kernel || null,

@@ -48,11 +48,8 @@ function formatDate(value: string | null | undefined) {
     year: "numeric",
     month: "short",
     day: "numeric",
+    timeZone: "UTC",
   });
-}
-
-function valueOrFallback(value: string | null | undefined, fallback = "N/A") {
-  return value || fallback;
 }
 
 function VersionValue({ value }: { value: string | null | undefined }) {
@@ -80,7 +77,7 @@ function majorMinor(value: string | null | undefined) {
 
 function rebaseCommandForTag(tag: string) {
   const safeTag = /^[a-z0-9][a-z0-9._-]*$/i.test(tag) ? tag : "stable";
-  return `sudo bootc switch --enforce-container-sigpolicy "ghcr.io/$(jq -r '.\"image-name\"' /usr/share/ublue-os/image-info.json):${safeTag}"`;
+  return `sudo bootc switch --enforce-container-sigpolicy "ghcr.io/$(jq -r '.["image-name"]' /usr/share/ublue-os/image-info.json):${safeTag}"`;
 }
 
 function ReleaseNode({
@@ -92,11 +89,7 @@ function ReleaseNode({
   previousRow?: DriverRow;
   emphasize: boolean;
 }) {
-  const kernel = valueOrFallback(row.versions.kernel);
-  const nvidia = valueOrFallback(row.versions.nvidia);
-  const mesa = valueOrFallback(row.versions.mesa);
   const hwe = row.versions.hweKernel;
-  const gnome = valueOrFallback(row.versions.gnome);
 
   const kernelMajor = majorNumber(row.versions.kernel);
   const previousKernelMajor = majorNumber(previousRow?.versions.kernel);
@@ -191,7 +184,7 @@ function ReleaseNode({
             }
           >
             <span className={styles.majorVersionLabel}>Kernel</span>
-            <VersionValue value={kernel} />
+            <VersionValue value={row.versions.kernel} />
             {kernelMajorBump && <span className={styles.bumpTag}>Major bump</span>}
             {kernelMinorBump && <span className={styles.minorTag}>Minor bump</span>}
           </div>
@@ -211,7 +204,7 @@ function ReleaseNode({
             }
           >
             <span className={styles.majorVersionLabel}>NVIDIA</span>
-            <VersionValue value={nvidia} />
+            <VersionValue value={row.versions.nvidia} />
             {nvidiaMajorBump && <span className={styles.nvidiaBumpTag}>Major bump</span>}
             {nvidiaMinorBump && <span className={styles.nvidiaMinorTag}>Minor bump</span>}
           </div>
@@ -225,7 +218,7 @@ function ReleaseNode({
             }
           >
             <span className={styles.majorVersionLabel}>Mesa</span>
-            <VersionValue value={mesa} />
+            <VersionValue value={row.versions.mesa} />
             {mesaMajorBump && <span className={styles.mesaBumpTag}>Major bump</span>}
             {mesaMinorBump && <span className={styles.mesaMinorTag}>Minor bump</span>}
           </div>
@@ -239,7 +232,7 @@ function ReleaseNode({
             }
           >
             <span className={styles.majorVersionLabel}>GNOME</span>
-            <VersionValue value={gnome} />
+            <VersionValue value={row.versions.gnome} />
             {gnomeMajorBump && <span className={styles.gnomeBumpTag}>Major bump</span>}
             {gnomeMinorBump && <span className={styles.gnomeMinorTag}>Minor bump</span>}
           </div>

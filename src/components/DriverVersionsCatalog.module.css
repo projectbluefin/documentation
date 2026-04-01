@@ -322,7 +322,7 @@
   line-height: 1.2;
   font-weight: 800;
   color: var(--ifm-color-emphasis-900);
-  word-break: break-word;
+  overflow-wrap: anywhere;
   position: relative;
   z-index: 2;
 }
@@ -645,7 +645,7 @@
 
 .rebaseInline code {
   display: block;
-  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .commandBlock :global(.theme-code-block) {
@@ -658,7 +658,7 @@
 .commandBlock :global(pre) {
   margin: 0;
   white-space: pre-wrap;
-  word-break: break-word;
+  overflow-wrap: anywhere;
   /* padding-right handled globally in custom.css */
 }
 
@@ -704,7 +704,7 @@
 .rebaseList code {
   display: inline-block;
   margin-top: 0.3rem;
-  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 /* Dark mode: restore color-dodge for maximum shimmer on dark backgrounds */
