@@ -753,7 +753,9 @@ async function main() {
   };
 
   if (!fs.existsSync(OUTPUT_DIR)) fs.mkdirSync(OUTPUT_DIR, { recursive: true });
-  fs.writeFileSync(OUTPUT_FILE, JSON.stringify(output, null, 2), "utf-8");
+  const TMP_FILE = OUTPUT_FILE + ".tmp";
+  fs.writeFileSync(TMP_FILE, JSON.stringify(output, null, 2), "utf-8");
+  fs.renameSync(TMP_FILE, OUTPUT_FILE);
   console.log(`Image data saved to ${OUTPUT_FILE}`);
 }
 
