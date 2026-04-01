@@ -2,6 +2,10 @@ const fs = require("fs");
 const path = require("path");
 const { execFile } = require("child_process");
 const { promisify } = require("util");
+const {
+  readSbomCache,
+  lookupVersionsForStream,
+} = require("./lib/sbom-versions");
 
 const execFileAsync = promisify(execFile);
 
@@ -142,14 +146,7 @@ function readJsonIfExists(filePath, fallback) {
  * Returns null if no populated entry is found.
  */
 function lookupSbomVersions(sbomCache, streamId) {
-  const stream = sbomCache?.streams?.[streamId];
-  if (!stream?.releases) return null;
-  const keys = Object.keys(stream.releases).sort().reverse(); // YYYYMMDD-desc
-  for (const key of keys) {
-    const entry = stream.releases[key];
-    if (entry?.packageVersions) return entry.packageVersions;
-  }
-  return null;
+  return lookupVersionsForStream(sbomCache, streamId);
 }
 
 function normalizeSbomStreamTag(streamTag) {
@@ -644,7 +641,7 @@ async function main() {
     bluefin: readJsonIfExists(FEED_BLUEFIN, { items: [] }),
     lts: readJsonIfExists(FEED_LTS, { items: [] }),
   };
-  const sbomCache = readJsonIfExists(SBOM_FILE, null);
+  const sbomCache = readSbomCache(SBOM_FILE);
   if (sbomCache) {
     console.log("SBOM attestation cache loaded.");
   } else {

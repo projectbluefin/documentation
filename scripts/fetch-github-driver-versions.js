@@ -1,5 +1,9 @@
 const fs = require("fs");
 const path = require("path");
+const {
+  readSbomCache,
+  lookupVersionsForRelease,
+} = require("./lib/sbom-versions");
 
 const OUTPUT_DIR = path.join(__dirname, "..", "static", "data");
 const OUTPUT_FILE = path.join(OUTPUT_DIR, "driver-versions.json");
@@ -50,10 +54,7 @@ function readJsonIfExists(filePath, fallback) {
  * Returns null if not found.
  */
 function lookupSbomVersionsForTag(sbomCache, sbomStreamId, cacheKey) {
-  return (
-    sbomCache?.streams?.[sbomStreamId]?.releases?.[cacheKey]?.packageVersions ||
-    null
-  );
+  return lookupVersionsForRelease(sbomCache, sbomStreamId, cacheKey);
 }
 
 /**
@@ -404,7 +405,7 @@ async function main() {
   // Load SBOM cache if available — used as an overlay on release-based rows.
   // The Releases API is always the primary source of row data so the page is
   // never empty when the SBOM cache is absent, empty, or stale.
-  const sbomCache = readJsonIfExists(SBOM_FILE, null);
+  const sbomCache = readSbomCache(SBOM_FILE);
   const sbomLoaded =
     Boolean(sbomCache?.generatedAt) && Boolean(sbomCache?.streams);
   if (sbomLoaded) {
@@ -513,7 +514,6 @@ if (require.main === module) {
 }
 
 module.exports = {
-  lookupSbomVersionsForTag,
   rowFromSbomRelease,
   buildStreamFromSbom,
 };
