@@ -11,13 +11,9 @@
  *  - Tag pattern: GHCR uses <stream>-<YYYYMMDD> (e.g. stable-20260331).
  *    We match with /[.-](\d{8})$/ and normalise lts.YYYYMMDD → lts-YYYYMMDD.
  *  - Auth: no PAT required. Tag enumeration uses the GitHub Releases API with
- *    the standard github.token (no cross-org scope needed). Digest resolution
- *    uses an anonymous GHCR bearer token — public images are accessible without
- *    credentials. The oras discover/pull path also works anonymously for public
- *    GHCR images without a prior `oras login`.
- *  - Digest: resolveAmd64Digest() fetches the OCI image index and returns the
- *    amd64 child manifest digest (not the index digest). SBOM attestations are
- *    attached to the platform-specific digest, not the multi-arch index.
+ *    the standard github.token (no cross-org scope needed). For GHCR access,
+ *    we attempt `oras login ghcr.io` with GITHUB_TOKEN/GH_TOKEN when available.
+ *    Public images may also work anonymously.
  *  - NDJSON: cosign verify-attestation outputs one JSON object per line.
  *    We parse each line individually.
  *  - Pagination: GitHub Releases API is paginated; we fetch all pages.
@@ -26,8 +22,9 @@
  *  - lts/gdx streams: no SBOMs yet. keyless:false, cosignKeyUrl set.
  *    present:false is the correct result — pipeline handles gracefully.
  *    When lts SBOMs are published they will be picked up automatically.
- *  - SBOM download: uses `oras discover` to find the vnd.spdx+json referrer
- *    digest, then `oras pull` to download sbom.json into a temp directory.
+ *  - SBOM download: uses `oras discover` on the image tag to find the
+ *    vnd.spdx+json referrer digest, then `oras pull` to download sbom.json
+ *    into a temp directory.
  *    The Syft JSON is parsed for RPM artifacts to extract packageVersions.
  *  - SBOM cache: keyed by image digest — if the digest hasn't changed AND
  *    packageVersions is non-null, the existing cache entry is reused.
@@ -251,139 +248,6 @@ async function fetchReleaseTags(owner, repo) {
 }
 
 // ---------------------------------------------------------------------------
-// GHCR anonymous bearer token + amd64 digest resolution
-// ---------------------------------------------------------------------------
-
-/** Cache tokens keyed by "org/image" to avoid one request per release tag */
-const ghcrTokenCache = new Map();
-const GHCR_TOKEN_REFRESH_MS = 4 * 60 * 1000;
-
-/**
- * Get a GHCR bearer token for the given org/image.
- * Prefer GITHUB_TOKEN/GH_TOKEN when available; fall back to anonymous token.
- * Refresh cached tokens older than 4 minutes.
- */
-async function getGhcrToken(org, image) {
-  const key = `${org}/${image}`;
-  const cached = ghcrTokenCache.get(key);
-  const nowMs = Date.now();
-  if (cached && nowMs - cached.fetchedAt <= GHCR_TOKEN_REFRESH_MS) {
-    return cached.token;
-  }
-
-  // Prefer GITHUB_TOKEN — works directly as GHCR Bearer when workflow has packages:read.
-  const githubToken = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
-  if (githubToken) {
-    ghcrTokenCache.set(key, { token: githubToken, fetchedAt: nowMs });
-    return githubToken;
-  }
-
-  // Fallback: anonymous token (works for truly public images, may be rate-limited)
-  const url = `https://ghcr.io/token?scope=repository:${org}/${image}:pull&service=ghcr.io`;
-  let data;
-  try {
-    data = await fetchJson(url);
-  } catch (err) {
-    throw new Error(`GHCR token request failed for ${key}: ${err.message}`);
-  }
-  const token = data?.token;
-  if (!token) throw new Error(`No token in GHCR response for ${key}`);
-  ghcrTokenCache.set(key, { token, fetchedAt: nowMs });
-  return token;
-}
-
-function invalidateGhcrToken(org, image) {
-  ghcrTokenCache.delete(`${org}/${image}`);
-}
-
-function selectAmd64DigestFromManifest(manifest, contentDigestHeader) {
-  const manifests = manifest?.manifests;
-  if (Array.isArray(manifests)) {
-    const amd64 = manifests.find(
-      (m) =>
-        m?.platform?.os === "linux" && m?.platform?.architecture === "amd64",
-    );
-    return amd64?.digest || null;
-  }
-
-  if (manifest?.schemaVersion === 2) {
-    return contentDigestHeader || manifest?.config?.digest || null;
-  }
-
-  return null;
-}
-
-/**
- * Resolve the amd64 platform manifest digest for an image tag.
- *
- * Fetches the OCI image index, parses the manifests[] array, and returns
- * the digest of the linux/amd64 child manifest. This is the digest that
- * SBOM attestations are attached to — NOT the image index digest.
- *
- * Returns null if the amd64 entry cannot be found or the fetch fails.
- */
-async function resolveAmd64Digest(org, image, tag) {
-  const url = `https://ghcr.io/v2/${org}/${image}/manifests/${tag}`;
-
-  const tryFetchManifest = async (token) => {
-    const response = await fetch(url, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        Accept: [
-          "application/vnd.oci.image.index.v1+json",
-          "application/vnd.docker.distribution.manifest.list.v2+json",
-          "application/vnd.docker.distribution.manifest.v2+json",
-        ].join(", "),
-      },
-    });
-    return response;
-  };
-
-  let response;
-  try {
-    let token = await getGhcrToken(org, image);
-    response = await tryFetchManifest(token);
-
-    if (response.status === 401) {
-      invalidateGhcrToken(org, image);
-      token = await getGhcrToken(org, image);
-      response = await tryFetchManifest(token);
-    }
-  } catch (err) {
-    console.warn(
-      `    resolveAmd64Digest: manifest fetch failed for ${org}/${image}:${tag} — ${err.message}`,
-    );
-    return null;
-  }
-
-  if (!response.ok) {
-    console.warn(
-      `    resolveAmd64Digest: manifest fetch failed for ${org}/${image}:${tag} — HTTP ${response.status}`,
-    );
-    return null;
-  }
-
-  let manifest;
-  try {
-    manifest = await response.json();
-  } catch (err) {
-    console.warn(
-      `    resolveAmd64Digest: invalid manifest JSON for ${org}/${image}:${tag} — ${err.message}`,
-    );
-    return null;
-  }
-
-  const contentDigest = response.headers.get("docker-content-digest");
-  const digest = selectAmd64DigestFromManifest(manifest, contentDigest);
-  if (digest) return digest;
-
-  console.warn(
-    `    resolveAmd64Digest: cannot determine amd64 digest for ${org}/${image}:${tag}`,
-  );
-  return null;
-}
-
-// ---------------------------------------------------------------------------
 // Tag filtering helpers
 // ---------------------------------------------------------------------------
 
@@ -421,6 +285,30 @@ function buildCacheKey(streamPrefix, dateStr) {
 // ---------------------------------------------------------------------------
 // cosign verification
 // ---------------------------------------------------------------------------
+
+/**
+ * Best-effort GHCR login for ORAS.
+ * Uses GITHUB_TOKEN/GH_TOKEN if available; otherwise no-op (anonymous mode).
+ */
+async function orasLogin() {
+  const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
+  if (!token) return;
+
+  try {
+    await execFileAsync(
+      "oras",
+      ["login", "ghcr.io", "-u", "x-access-token", "--password-stdin"],
+      {
+        input: token,
+        env: { ...process.env },
+        timeout: 15000,
+      },
+    );
+    console.log("oras: logged in to ghcr.io");
+  } catch (err) {
+    console.warn(`oras: login failed — ${err.message}`);
+  }
+}
 
 /**
  * Attempt cosign verify-attestation for an image digest.
@@ -511,27 +399,22 @@ async function verifyAttestation(imageRef, spec) {
  * Download the Syft SBOM for an image from GHCR via oras.
  *
  * Steps:
- *   1. oras discover --format json <imageRef>@<digest>
+ *   1. oras discover --format json <imageRef>
  *      → find referrer with artifactType == "application/vnd.spdx+json"
- *   2. oras pull <imageRef>@<sbomDigest> --output <tmpdir>
+ *   2. oras pull <repo>@<sbomDigest> --output <tmpdir>
  *   3. Return path to the pulled sbom.json
  *
  * Returns null on any error (caller treats packageVersions as null).
  */
-async function downloadSbom(imageRef, digest) {
-  if (!digest) {
-    console.warn("    downloadSbom: no digest available, skipping");
-    return null;
-  }
-
-  const ref = `${imageRef.replace(/:.*$/, "")}@${digest}`;
+async function downloadSbom(imageRef) {
+  const repoRef = imageRef.replace(/:[^/]+$/, "");
   let tmpDir = null;
 
   try {
     // Step 1: discover referrers
     const discoverResult = await execFileAsync(
       "oras",
-      ["discover", "--format", "json", ref],
+      ["discover", "--format", "json", imageRef],
       {
         env: { ...process.env },
         maxBuffer: 4 * 1024 * 1024,
@@ -556,7 +439,7 @@ async function downloadSbom(imageRef, digest) {
     );
 
     if (!sbomReferrer) {
-      console.warn(`    downloadSbom: no SPDX referrer found for ${digest}`);
+      console.warn(`    downloadSbom: no SPDX referrer found for ${imageRef}`);
       return null;
     }
 
@@ -568,7 +451,7 @@ async function downloadSbom(imageRef, digest) {
 
     // Step 2: pull SBOM into temp directory
     tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "bluefin-sbom-"));
-    const sbomRef = `${imageRef.replace(/:.*$/, "")}@${sbomDigest}`;
+    const sbomRef = `${repoRef}@${sbomDigest}`;
 
     await execFileAsync("oras", ["pull", sbomRef, "--output", tmpDir], {
       env: { ...process.env },
@@ -768,7 +651,6 @@ function extractPackageVersions(sbomPath) {
  * @param {object} spec  Stream spec from STREAM_SPECS.
  * @returns {Array<{tag: string, cacheKey: string, dateStr: string, imageRef: string, publishedAt: string|null}>}
  *   Most-recent first, limited to MAX_RELEASES within LOOKBACK_DAYS.
- *   digest is NOT included here — resolveAmd64Digest() is called in processStream().
  */
 function findRecentTagsForStream(releaseTags, spec) {
   const cutoff = Date.now() - LOOKBACK_DAYS * 24 * 60 * 60 * 1000;
@@ -844,17 +726,9 @@ async function processStream(spec, releaseTagsByRepo, existing) {
 
   const releases = {};
   for (const { tag, cacheKey, imageRef } of recentTags) {
-    // Resolve the amd64 platform digest for this tag.
-    // SBOM attestations are attached to the platform-specific digest,
-    // not the multi-arch image index digest.
-    const [org, image] = [spec.org, spec.package];
-    const tagName = imageRef.split(":").pop();
-    const digest = await resolveAmd64Digest(org, image, tagName);
-
     // Cache hit: reuse if digest matches AND packageVersions is already populated.
     // If packageVersions is null (e.g. SBOM download previously failed), retry.
     const existingEntry = existing?.streams?.[spec.id]?.releases?.[cacheKey];
-    const digestMatches = digest && existingEntry?.digest === digest;
     const hasVersions = existingEntry?.packageVersions != null;
     // allPackages may be absent from entries cached before this feature was added —
     // treat missing allPackages as a cache miss so the SBOM is re-downloaded.
@@ -863,9 +737,9 @@ async function processStream(spec, releaseTagsByRepo, existing) {
       Object.keys(existingEntry.packageVersions.allPackages).length > 0;
     const isVerified = existingEntry?.attestation?.verified === true;
 
-    if (!FORCE_REFRESH && digestMatches && isVerified && hasVersions && hasAllPackages) {
+    if (!FORCE_REFRESH && isVerified && hasVersions && hasAllPackages) {
       console.log(
-        `    ${cacheKey}: cache hit (digest match, verified, versions populated)`,
+        `    ${cacheKey}: cache hit (verified, versions populated)`,
       );
       releases[cacheKey] = existingEntry;
       continue;
@@ -874,7 +748,7 @@ async function processStream(spec, releaseTagsByRepo, existing) {
     // Partial cache hit: attestation already verified but SBOM not yet downloaded
     // (or allPackages was missing from an older cache entry — re-download SBOM only)
     let attestation;
-    if (!FORCE_REFRESH && digestMatches && isVerified && (!hasVersions || (hasVersions && !hasAllPackages))) {
+    if (!FORCE_REFRESH && isVerified && (!hasVersions || (hasVersions && !hasAllPackages))) {
       console.log(
         `    ${cacheKey}: attestation cached, fetching SBOM packageVersions`,
       );
@@ -899,7 +773,7 @@ async function processStream(spec, releaseTagsByRepo, existing) {
     let sbomPath = null;
     let tmpDir = null;
     try {
-      sbomPath = await downloadSbom(imageRef, digest);
+      sbomPath = await downloadSbom(imageRef);
       if (sbomPath) {
         tmpDir = path.dirname(sbomPath);
         packageVersions = extractPackageVersions(sbomPath);
@@ -927,7 +801,7 @@ async function processStream(spec, releaseTagsByRepo, existing) {
     releases[cacheKey] = {
       tag,
       imageRef,
-      digest,
+      digest: existingEntry?.digest || null,
       attestation,
       packageVersions,
       checkedAt: new Date().toISOString(),
@@ -956,6 +830,7 @@ async function main() {
       "Warning: GITHUB_TOKEN / GH_TOKEN not set. GitHub API calls may be rate-limited.",
     );
   }
+  await orasLogin();
 
   // Load existing cache for incremental updates
   let existing = null;
@@ -1067,5 +942,4 @@ module.exports = {
   stripEpoch,
   compareRpmVersions,
   extractPackageVersions,
-  selectAmd64DigestFromManifest,
 };
