@@ -5,6 +5,7 @@ import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 import CodeBlock from "@theme/CodeBlock";
 import styles from "./ImagesCatalog.module.css";
+import imagesCatalogData from "@site/static/data/images.json";
 
 
 interface StreamInfo {
@@ -139,26 +140,7 @@ function formatDate(value?: string | null) {
 }
 
 export default function ImagesCatalogComponent(): React.JSX.Element {
-  const [catalog, setCatalog] = React.useState<ImagesCatalog>({ products: [] });
-
-  React.useEffect(() => {
-    let mounted = true;
-
-    fetch("/data/images.json")
-      .then((response) => (response.ok ? response.json() : null))
-      .then((data) => {
-        if (!mounted || !data || !Array.isArray(data.products)) return;
-        setCatalog(data as ImagesCatalog);
-      })
-      .catch(() => {
-        if (!mounted) return;
-        setCatalog({ products: [] });
-      });
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
+  const catalog = (imagesCatalogData as ImagesCatalog) || { products: [] };
 
   const products = Array.isArray(catalog?.products) ? catalog.products : [];
   const [nvidiaModeByProduct, setNvidiaModeByProduct] = React.useState<Record<string, boolean>>(

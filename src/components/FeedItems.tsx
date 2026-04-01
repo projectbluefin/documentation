@@ -1,10 +1,6 @@
 import React, { useState, useCallback, useMemo } from "react";
 import useStoredFeed from "@theme/useStoredFeed";
 import styles from "./FeedItems.module.css";
-import {
-  PACKAGE_PATTERNS,
-  extractVersionChange,
-} from "../config/packageConfig";
 import githubProfilesData from "@site/static/data/github-profiles.json";
 import sbomAttestationsData from "@site/static/data/sbom-attestations.json";
 import type { SbomAttestationsData } from "../types/sbom";
@@ -469,19 +465,27 @@ const getContributorForAuthor = (
   author: string,
 ): ReleaseContributor | undefined => PROFILE_LOOKUP[normalizeName(author)];
 
-// Helper function to extract key version changes from changelog content
-const extractVersionSummary = (content: string): VersionChange[] => {
+const SBOM_STREAM_BY_FEED_ID: Record<string, string> = {
+  bluefinReleases: "bluefin-stable",
+  bluefinLtsReleases: "bluefin-lts",
+};
+
+const extractVersionSummary = (title: string, feedId: string): VersionChange[] => {
+  const streamId = SBOM_STREAM_BY_FEED_ID[feedId];
+  const cacheKey = extractReleaseTag(title);
+  if (!streamId || !cacheKey) return [];
+
+  const cache = sbomAttestationsData as unknown as SbomAttestationsData;
+  const packages = cache?.streams?.[streamId]?.releases?.[cacheKey]?.packageVersions;
+  if (!packages) return [];
+
   const changes: VersionChange[] = [];
-
-  if (!content) return changes;
-
-  // Use centralized package configuration
-  for (const packageConfig of PACKAGE_PATTERNS) {
-    const versionChange = extractVersionChange(content, packageConfig);
-    if (versionChange) {
-      changes.push(versionChange);
-    }
-  }
+  if (packages.kernel) changes.push({ name: "Kernel", change: packages.kernel });
+  if (packages.gnome) changes.push({ name: "GNOME", change: packages.gnome });
+  if (packages.mesa) changes.push({ name: "Mesa", change: packages.mesa });
+  if (packages.podman) changes.push({ name: "Podman", change: packages.podman });
+  if (packages.systemd) changes.push({ name: "systemd", change: packages.systemd });
+  if (packages.bootc) changes.push({ name: "bootc", change: packages.bootc });
 
   return changes;
 };
@@ -616,8 +620,8 @@ const FeedItems: React.FC<FeedItemsProps> = ({
                 : item.content);
             const itemId = item.guid || item.id || itemLink || index;
             const versionSummary =
-              isReleaseFeed(feedId) && itemDescription
-                ? extractVersionSummary(itemDescription)
+              isReleaseFeed(feedId)
+                ? extractVersionSummary(item.title, feedId)
                 : [];
             const displayTitle = formatReleaseTitle(item.title, feedId);
 

@@ -25,6 +25,11 @@ const CACHE_MAX_AGE_HOURS = Number(
 const HISTORY_DAYS = Number(process.env.DRIVER_VERSIONS_HISTORY_DAYS || 90);
 const FORCE_REFRESH = process.argv.includes("--force");
 
+const RELEASE_URL_BY_STREAM = {
+  "bluefin-stable": "https://github.com/ublue-os/bluefin/releases",
+  "bluefin-lts": "https://github.com/ublue-os/bluefin-lts/releases",
+};
+
 function readJsonIfExists(filePath, fallback) {
   if (!fs.existsSync(filePath)) return fallback;
   try {
@@ -109,23 +114,6 @@ function splitVersion(raw) {
   return parts.length ? parts[parts.length - 1] : String(raw).trim();
 }
 
-function extractVersion(content, labels) {
-  if (!content) return null;
-
-  for (const label of labels) {
-    const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    const regex = new RegExp(
-      `<td><strong>${escaped}<\\/strong><\\/td>\\s*<td>([^<]+)<\\/td>`,
-      "i",
-    );
-    const match = content.match(regex);
-    if (!match || !match[1]) continue;
-    return splitVersion(match[1]);
-  }
-
-  return null;
-}
-
 function extractVersionFromMarkdown(content, labels) {
   if (!content) return null;
 
@@ -173,11 +161,11 @@ function buildRow(item, streamId) {
     releaseUrl: item?.link || null,
     publishedAt: parseDate(item?.pubDate || item?.updated || null),
     versions: {
-      kernel: extractVersion(content, ["Kernel"]),
-      hweKernel: extractVersion(content, ["HWE Kernel"]),
-      mesa: extractVersion(content, ["Mesa"]),
-      nvidia: extractVersion(content, ["Nvidia", "NVIDIA"]),
-      gnome: extractVersion(content, ["Gnome", "GNOME"]),
+      kernel: null,
+      hweKernel: null,
+      mesa: null,
+      nvidia: extractVersionFromMarkdown(content, ["Nvidia", "NVIDIA"]),
+      gnome: null,
     },
   };
 }
@@ -193,33 +181,90 @@ function buildRowFromApiRelease(release, streamId) {
       release?.published_at || release?.created_at || null,
     ),
     versions: {
-      kernel: extractVersionFromMarkdown(body, ["Kernel"]),
-      hweKernel: extractVersionFromMarkdown(body, ["HWE Kernel"]),
-      mesa: extractVersionFromMarkdown(body, ["Mesa"]),
+      kernel: null,
+      hweKernel: null,
+      mesa: null,
       nvidia: extractVersionFromMarkdown(body, ["Nvidia", "NVIDIA"]),
-      gnome: extractVersionFromMarkdown(body, ["Gnome", "GNOME"]),
+      gnome: null,
     },
   };
 }
 
-function pickBluefinStableItems(feed) {
-  const items = Array.isArray(feed?.items) ? feed.items : [];
-  return items.filter((item) =>
-    String(item?.title || "")
-      .toLowerCase()
-      .startsWith("stable-"),
-  );
+function rowFromSbomRelease(streamId, cacheKey, releaseEntry, nvidiaVersion) {
+  const pkg = releaseEntry?.packageVersions || {};
+  const datePart = String(cacheKey || "").match(/(\d{8})$/)?.[1] || null;
+  let publishedAt = null;
+  if (datePart) {
+    publishedAt = datePart.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3T00:00:00.000Z");
+  }
+
+  return {
+    stream: streamId,
+    tag: releaseEntry?.tag || cacheKey,
+    title: releaseEntry?.tag || cacheKey,
+    releaseUrl: RELEASE_URL_BY_STREAM[streamId] || null,
+    publishedAt,
+    versions: {
+      kernel: pkg.kernel || null,
+      hweKernel: null,
+      mesa: pkg.mesa || null,
+      nvidia: nvidiaVersion || null,
+      gnome: pkg.gnome || null,
+    },
+  };
 }
 
-function pickLtsItems(feed) {
-  const items = Array.isArray(feed?.items) ? feed.items : [];
-  return items.filter((item) => {
-    const link = String(item?.link || "").toLowerCase();
-    if (link.includes("/releases/tag/lts.")) return true;
-    return String(item?.title || "")
-      .toLowerCase()
-      .includes(" lts:");
-  });
+function buildStreamFromSbom(
+  streamId,
+  name,
+  subtitle,
+  command,
+  sbomCache,
+  nvidiaByTag,
+) {
+  const stream = sbomCache?.streams?.[streamId];
+  const releases = stream?.releases || {};
+  const cutoff = Date.now() - HISTORY_DAYS * 24 * 60 * 60 * 1000;
+
+  const history = Object.entries(releases)
+    .sort(([a], [b]) => b.localeCompare(a))
+    .map(([cacheKey, entry]) =>
+      rowFromSbomRelease(
+        streamId,
+        cacheKey,
+        entry,
+        nvidiaByTag?.[entry?.tag || cacheKey] || null,
+      ),
+    )
+    .filter((row) => {
+      const parsed = Date.parse(row.publishedAt || "");
+      if (Number.isNaN(parsed)) return false;
+      return parsed >= cutoff;
+    });
+
+  return {
+    id: streamId,
+    name,
+    subtitle,
+    command,
+    source: "sbom",
+    rowCount: history.length,
+    latest: history[0] || null,
+    history,
+  };
+}
+
+function buildNvidiaMap(releases) {
+  const map = {};
+  for (const release of releases || []) {
+    const tag = release?.tag_name;
+    if (!tag) continue;
+    map[tag] = extractVersionFromMarkdown(release?.body || "", [
+      "Nvidia",
+      "NVIDIA",
+    ]);
+  }
+  return map;
 }
 
 function buildStream(streamId, name, subtitle, command, feedItems, sbomCache) {
@@ -241,7 +286,7 @@ function buildStream(streamId, name, subtitle, command, feedItems, sbomCache) {
     name,
     subtitle,
     command,
-    source: "cache",
+    source: "release-fallback",
     rowCount: history.length,
     latest: history[0] || null,
     history,
@@ -307,7 +352,7 @@ function buildStreamFromApi(
     name,
     subtitle,
     command,
-    source: "github-api",
+    source: "release-fallback",
     rowCount: history.length,
     latest: history[0] || null,
     history,
@@ -324,13 +369,66 @@ async function main() {
   }
 
   const sbomCache = readJsonIfExists(SBOM_FILE, null);
-  if (sbomCache) {
+  const hasSbomData =
+    Boolean(sbomCache?.generatedAt) &&
+    Boolean(sbomCache?.streams) &&
+    Object.keys(sbomCache.streams).length > 0;
+
+  if (hasSbomData) {
     console.log("SBOM attestation cache loaded.");
-  } else {
-    console.log(
-      "SBOM attestation cache not found — kernel/mesa will fall back to release bodies.",
-    );
+    let stableNvidia = {};
+    let ltsNvidia = {};
+    try {
+      const [bluefinReleases, ltsReleases] = await Promise.all([
+        fetchReleases("ublue-os", "bluefin"),
+        fetchReleases("ublue-os", "bluefin-lts"),
+      ]);
+      stableNvidia = buildNvidiaMap(bluefinReleases);
+      ltsNvidia = buildNvidiaMap(ltsReleases);
+    } catch {
+      console.warn(
+        "Could not fetch release bodies for NVIDIA fallback; continuing with SBOM-only values.",
+      );
+    }
+
+    const streams = [
+      buildStreamFromSbom(
+        "bluefin-stable",
+        "Bluefin",
+        "Current stable stream from ublue-os/bluefin.",
+        "sudo bootc switch ghcr.io/ublue-os/bluefin:stable --enforce-container-sigpolicy",
+        sbomCache,
+        stableNvidia,
+      ),
+      buildStreamFromSbom(
+        "bluefin-lts",
+        "Bluefin LTS",
+        "Long-term support stream from ublue-os/bluefin-lts.",
+        "sudo bootc switch ghcr.io/ublue-os/bluefin:lts --enforce-container-sigpolicy",
+        sbomCache,
+        ltsNvidia,
+      ),
+    ];
+
+    const output = {
+      generatedAt: new Date().toISOString(),
+      cacheHours: CACHE_MAX_AGE_HOURS,
+      historyDays: HISTORY_DAYS,
+      streams,
+    };
+
+    if (!fs.existsSync(OUTPUT_DIR)) {
+      fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+    }
+
+    fs.writeFileSync(OUTPUT_FILE, JSON.stringify(output, null, 2), "utf-8");
+    console.log(`Driver versions data saved to ${OUTPUT_FILE} (SBOM primary)`);
+    return;
   }
+
+  console.warn(
+    "SBOM attestation cache not found — using release fallback (NVIDIA workaround path).",
+  );
 
   return Promise.all([
     fetchReleases("ublue-os", "bluefin"),
@@ -345,7 +443,7 @@ async function main() {
           "sudo bootc switch ghcr.io/ublue-os/bluefin:stable --enforce-container-sigpolicy",
           bluefinReleases,
           "stable-",
-          sbomCache,
+          null,
         ),
         buildStreamFromApi(
           "bluefin-lts",
@@ -354,7 +452,7 @@ async function main() {
           "sudo bootc switch ghcr.io/ublue-os/bluefin:lts --enforce-container-sigpolicy",
           ltsReleases,
           "lts.",
-          sbomCache,
+          null,
         ),
       ];
 
@@ -385,16 +483,16 @@ async function main() {
           "Bluefin",
           "Current stable stream from ublue-os/bluefin.",
           "sudo bootc switch ghcr.io/ublue-os/bluefin:stable --enforce-container-sigpolicy",
-          pickBluefinStableItems(bluefinFeed),
-          sbomCache,
+          bluefinFeed.items || [],
+          null,
         ),
         buildStream(
           "bluefin-lts",
           "Bluefin LTS",
           "Long-term support stream from ublue-os/bluefin-lts.",
           "sudo bootc switch ghcr.io/ublue-os/bluefin:lts --enforce-container-sigpolicy",
-          pickLtsItems(ltsFeed),
-          sbomCache,
+          ltsFeed.items || [],
+          null,
         ),
       ];
 
@@ -416,7 +514,15 @@ async function main() {
     });
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+if (require.main === module) {
+  main().catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
+}
+
+module.exports = {
+  lookupSbomVersionsForTag,
+  rowFromSbomRelease,
+  buildStreamFromSbom,
+};
