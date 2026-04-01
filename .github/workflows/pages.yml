@@ -60,6 +60,10 @@ jobs:
       - name: Fetch data
         env:
           GITHUB_TOKEN: ${{ secrets.PROJECT_READ_TOKEN }}
+          # Always re-fetch driver versions on every build so GNOME/kernel/mesa
+          # versions stay current. The data is small (GitHub API call) and the
+          # script's internal 168h TTL would otherwise serve stale cached data.
+          DRIVER_VERSIONS_CACHE_HOURS: "0"
         run: npm run fetch-data
 
       - name: Run TypeScript validation
