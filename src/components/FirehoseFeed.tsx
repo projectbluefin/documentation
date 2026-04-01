@@ -59,6 +59,25 @@ function applyFilters(events: FlatRelease[], f: FirehoseFilterState): FlatReleas
   });
 }
 
+/** Unique apps derived from a flat event stream, one entry per app (first = most recent). */
+export interface UniqueApp {
+  app: FirehoseApp;
+  latestMs: number;
+}
+
+/** Deduplicate a flat event stream to one entry per app (first occurrence = most recent release). */
+export function toUniqueApps(events: FlatRelease[]): UniqueApp[] {
+  const seen = new Set<string>();
+  const result: UniqueApp[] = [];
+  for (const { app, dateMs } of events) {
+    if (!seen.has(app.id)) {
+      seen.add(app.id);
+      result.push({ app, latestMs: dateMs });
+    }
+  }
+  return result;
+}
+
 /**
  * Deterministic daily featured app.
  * Uses a date-based seed so the selection is consistent within a day but
@@ -68,21 +87,11 @@ function applyFilters(events: FlatRelease[], f: FirehoseFilterState): FlatReleas
  * most-recent release within 90 days.
  * Falls back to all flatpaks with at least one valid release if no eligible app found.
  */
-function getFeaturedApp(events: FlatRelease[]): FirehoseApp | null {
-  if (events.length === 0) return null;
+function getFeaturedApp(uniqueApps: UniqueApp[]): FirehoseApp | null {
+  if (uniqueApps.length === 0) return null;
 
   const now = Date.now();
   const ninetyDaysMs = 90 * 24 * 60 * 60 * 1000;
-
-  // Deduplicate to one entry per app (first occurrence = most recent release)
-  const seen = new Set<string>();
-  const uniqueApps: Array<{ app: FirehoseApp; latestMs: number }> = [];
-  for (const { app, dateMs } of events) {
-    if (!seen.has(app.id)) {
-      seen.add(app.id);
-      uniqueApps.push({ app, latestMs: dateMs });
-    }
-  }
 
   let eligible = uniqueApps.filter(
     ({ app, latestMs }) =>
@@ -109,31 +118,21 @@ function getFeaturedApp(events: FlatRelease[]): FirehoseApp | null {
 
 // ── Statistics panel ──────────────────────────────────────────────────────────
 
-function Statistics({ events }: { events: FlatRelease[] }) {
+function Statistics({ uniqueApps }: { uniqueApps: UniqueApp[] }) {
   const counts = useMemo(() => {
-    // Count unique apps by package type
-    const seen = new Set<string>();
     const byType: Record<string, number> = {};
-    for (const { app } of events) {
-      if (!seen.has(app.id)) {
-        seen.add(app.id);
-        byType[app.packageType] = (byType[app.packageType] ?? 0) + 1;
-      }
+    for (const { app } of uniqueApps) {
+      byType[app.packageType] = (byType[app.packageType] ?? 0) + 1;
     }
     return byType;
-  }, [events]);
-
-  const uniqueAppCount = useMemo(() => {
-    const seen = new Set(events.map(({ app }) => app.id));
-    return seen.size;
-  }, [events]);
+  }, [uniqueApps]);
 
   return (
     <section className={styles.statsPanel}>
       <h3 className={styles.sidebarHeading}>Statistics</h3>
       <dl className={styles.statsList}>
         <dt>Total apps</dt>
-        <dd>{uniqueAppCount}</dd>
+        <dd>{uniqueApps.length}</dd>
         {Object.entries(counts).map(([type, count]) => (
           <React.Fragment key={type}>
             <dt>{type === "flatpak" ? "Flathub" : type === "homebrew" ? "Homebrew" : "OS Release"}</dt>
@@ -234,20 +233,10 @@ const FirehoseFeed: React.FC = () => {
 
   const filteredEvents = useMemo(() => applyFilters(allEvents, filters), [allEvents, filters]);
 
-  const featuredApp = useMemo(() => getFeaturedApp(allEvents), [allEvents]);
+  // Single deduplication pass — shared by getFeaturedApp, Statistics, and FirehoseFilters
+  const uniqueApps: UniqueApp[] = useMemo(() => toUniqueApps(allEvents), [allEvents]);
 
-  // Unique apps list for FirehoseFilters (needs FirehoseApp[])
-  const allApps: FirehoseApp[] = useMemo(() => {
-    const seen = new Set<string>();
-    const apps: FirehoseApp[] = [];
-    for (const { app } of allEvents) {
-      if (!seen.has(app.id)) {
-        seen.add(app.id);
-        apps.push(app);
-      }
-    }
-    return apps;
-  }, [allEvents]);
+  const featuredApp = useMemo(() => getFeaturedApp(uniqueApps), [uniqueApps]);
 
   const isEmpty = allEvents.length === 0;
 
@@ -258,12 +247,12 @@ const FirehoseFeed: React.FC = () => {
         <RssLinks />
         {featuredApp && <FeaturedAppBanner app={featuredApp} />}
         <FirehoseFilters
-          apps={allApps}
+          apps={uniqueApps.map(({ app }) => app)}
           filters={filters}
           onFiltersChange={setFilters}
           matchCount={filteredEvents.length}
         />
-        {!isEmpty && <Statistics events={allEvents} />}
+        {!isEmpty && <Statistics uniqueApps={uniqueApps} />}
       </aside>
 
       {/* ── Main feed ── */}
