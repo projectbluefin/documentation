@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import firehoseData from "@site/static/data/firehose-apps.json";
-import type { FirehoseApp, FirehoseFilterState } from "../types/firehose";
+import type { FirehoseApp, FirehoseRelease, FirehoseFilterState } from "../types/firehose";
 import FirehoseCard from "./FirehoseCard";
 import FirehoseFilters from "./FirehoseFilters";
 import styles from "./FirehoseFeed.module.css";
@@ -14,9 +14,36 @@ const DAYS_MS: Record<string, number> = {
   "90d": 90 * 24 * 60 * 60 * 1000,
 };
 
-function applyFilters(apps: FirehoseApp[], f: FirehoseFilterState): FirehoseApp[] {
+/** A single release event flattened out of its parent app. */
+export interface FlatRelease {
+  app: FirehoseApp;
+  release: FirehoseRelease;
+  dateMs: number;
+}
+
+/**
+ * Flatten every app's releases array into individual events.
+ * Releases with no parseable date are silently dropped.
+ * Result is sorted newest-first.
+ */
+function flattenReleases(apps: FirehoseApp[]): FlatRelease[] {
+  const events: FlatRelease[] = [];
+  for (const app of apps) {
+    const releases = app.releases;
+    if (!releases || releases.length === 0) continue;
+    for (const release of releases) {
+      const dateMs = new Date(release.date).getTime();
+      if (isNaN(dateMs)) continue;
+      events.push({ app, release, dateMs });
+    }
+  }
+  events.sort((a, b) => b.dateMs - a.dateMs);
+  return events;
+}
+
+function applyFilters(events: FlatRelease[], f: FirehoseFilterState): FlatRelease[] {
   const now = Date.now();
-  return apps.filter((app) => {
+  return events.filter(({ app, dateMs }) => {
     if (f.verifiedOnly && !app.isVerified) return false;
     if (f.unverifiedOnly && app.isVerified) return false;
     if (f.packageType !== "all" && app.packageType !== f.packageType) return false;
@@ -26,8 +53,7 @@ function applyFilters(apps: FirehoseApp[], f: FirehoseFilterState): FirehoseApp[
     }
     if (f.updatedWithin !== "all") {
       const maxAge = DAYS_MS[f.updatedWithin];
-      const age = now - new Date(app.updatedAt).getTime();
-      if (age > maxAge) return false;
+      if (now - dateMs > maxAge) return false;
     }
     return true;
   });
@@ -38,24 +64,35 @@ function applyFilters(apps: FirehoseApp[], f: FirehoseFilterState): FirehoseApp[
  * Uses a date-based seed so the selection is consistent within a day but
  * does NOT use Math.random() (which would cause SSR hydration mismatch).
  *
- * Eligible: flatpak, installsLastMonth > 1000, updated within 90 days.
- * Falls back to all flatpaks if no eligible app found.
+ * Eligible: flatpak with at least one valid release, installsLastMonth > 1000,
+ * most-recent release within 90 days.
+ * Falls back to all flatpaks with at least one valid release if no eligible app found.
  */
-function getFeaturedApp(apps: FirehoseApp[]): FirehoseApp | null {
-  if (apps.length === 0) return null;
+function getFeaturedApp(events: FlatRelease[]): FirehoseApp | null {
+  if (events.length === 0) return null;
 
   const now = Date.now();
   const ninetyDaysMs = 90 * 24 * 60 * 60 * 1000;
 
-  let eligible = apps.filter(
-    (a) =>
-      a.packageType === "flatpak" &&
-      (a.installsLastMonth ?? 0) > 1000 &&
-      now - new Date(a.updatedAt).getTime() < ninetyDaysMs,
+  // Deduplicate to one entry per app (first occurrence = most recent release)
+  const seen = new Set<string>();
+  const uniqueApps: Array<{ app: FirehoseApp; latestMs: number }> = [];
+  for (const { app, dateMs } of events) {
+    if (!seen.has(app.id)) {
+      seen.add(app.id);
+      uniqueApps.push({ app, latestMs: dateMs });
+    }
+  }
+
+  let eligible = uniqueApps.filter(
+    ({ app, latestMs }) =>
+      app.packageType === "flatpak" &&
+      (app.installsLastMonth ?? 0) > 1000 &&
+      now - latestMs < ninetyDaysMs,
   );
 
   if (eligible.length === 0) {
-    eligible = apps.filter((a) => a.packageType === "flatpak");
+    eligible = uniqueApps.filter(({ app }) => app.packageType === "flatpak");
   }
 
   if (eligible.length === 0) return null;
@@ -67,26 +104,36 @@ function getFeaturedApp(apps: FirehoseApp[]): FirehoseApp | null {
     hash = (hash * 31 + dateKey.charCodeAt(i)) & 0xffffffff;
   }
   const idx = Math.abs(hash) % eligible.length;
-  return eligible[idx];
+  return eligible[idx].app;
 }
 
 // ── Statistics panel ──────────────────────────────────────────────────────────
 
-function Statistics({ apps }: { apps: FirehoseApp[] }) {
+function Statistics({ events }: { events: FlatRelease[] }) {
   const counts = useMemo(() => {
+    // Count unique apps by package type
+    const seen = new Set<string>();
     const byType: Record<string, number> = {};
-    for (const a of apps) {
-      byType[a.packageType] = (byType[a.packageType] ?? 0) + 1;
+    for (const { app } of events) {
+      if (!seen.has(app.id)) {
+        seen.add(app.id);
+        byType[app.packageType] = (byType[app.packageType] ?? 0) + 1;
+      }
     }
     return byType;
-  }, [apps]);
+  }, [events]);
+
+  const uniqueAppCount = useMemo(() => {
+    const seen = new Set(events.map(({ app }) => app.id));
+    return seen.size;
+  }, [events]);
 
   return (
     <section className={styles.statsPanel}>
       <h3 className={styles.sidebarHeading}>Statistics</h3>
       <dl className={styles.statsList}>
         <dt>Total apps</dt>
-        <dd>{apps.length}</dd>
+        <dd>{uniqueAppCount}</dd>
         {Object.entries(counts).map(([type, count]) => (
           <React.Fragment key={type}>
             <dt>{type === "flatpak" ? "Flathub" : type === "homebrew" ? "Homebrew" : "OS Release"}</dt>
@@ -180,19 +227,29 @@ const DEFAULT_FILTERS: FirehoseFilterState = {
 const FirehoseFeed: React.FC = () => {
   const [filters, setFilters] = useState<FirehoseFilterState>(DEFAULT_FILTERS);
 
-  const allApps: FirehoseApp[] = useMemo(
-    () =>
-      [...(firehoseData.apps ?? [])].sort(
-        (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
-      ),
+  const allEvents: FlatRelease[] = useMemo(
+    () => flattenReleases(firehoseData.apps ?? []),
     [],
   );
 
-  const filteredApps = useMemo(() => applyFilters(allApps, filters), [allApps, filters]);
+  const filteredEvents = useMemo(() => applyFilters(allEvents, filters), [allEvents, filters]);
 
-  const featuredApp = useMemo(() => getFeaturedApp(allApps), [allApps]);
+  const featuredApp = useMemo(() => getFeaturedApp(allEvents), [allEvents]);
 
-  const isEmpty = allApps.length === 0;
+  // Unique apps list for FirehoseFilters (needs FirehoseApp[])
+  const allApps: FirehoseApp[] = useMemo(() => {
+    const seen = new Set<string>();
+    const apps: FirehoseApp[] = [];
+    for (const { app } of allEvents) {
+      if (!seen.has(app.id)) {
+        seen.add(app.id);
+        apps.push(app);
+      }
+    }
+    return apps;
+  }, [allEvents]);
+
+  const isEmpty = allEvents.length === 0;
 
   return (
     <div className={styles.layout}>
@@ -204,9 +261,9 @@ const FirehoseFeed: React.FC = () => {
           apps={allApps}
           filters={filters}
           onFiltersChange={setFilters}
-          matchCount={filteredApps.length}
+          matchCount={filteredEvents.length}
         />
-        {!isEmpty && <Statistics apps={allApps} />}
+        {!isEmpty && <Statistics events={allEvents} />}
       </aside>
 
       {/* ── Main feed ── */}
@@ -225,7 +282,7 @@ const FirehoseFeed: React.FC = () => {
               pipeline runs every 6 hours — check back soon.
             </p>
           </div>
-        ) : filteredApps.length === 0 ? (
+        ) : filteredEvents.length === 0 ? (
           <div className={styles.emptyState}>
             <p>No apps match the current filters.</p>
             <button
@@ -236,7 +293,9 @@ const FirehoseFeed: React.FC = () => {
             </button>
           </div>
         ) : (
-          filteredApps.map((app) => <FirehoseCard key={app.id} app={app} />)
+          filteredEvents.map(({ app, release }) => (
+            <FirehoseCard key={`${app.id}@${release.version}`} app={app} release={release} />
+          ))
         )}
       </main>
     </div>

@@ -1,23 +1,22 @@
 import React, { useState, useCallback } from "react";
 import { SiFlathub } from "react-icons/si";
 import { FaGithub, FaGitlab, FaCopy, FaCheck } from "react-icons/fa";
-import type { FirehoseApp } from "../types/firehose";
+import type { FirehoseApp, FirehoseRelease } from "../types/firehose";
 import styles from "./FirehoseCard.module.css";
 
 interface FirehoseCardProps {
   app: FirehoseApp;
+  release: FirehoseRelease;
 }
 
 function formatDate(iso: string): string {
-  try {
-    return new Date(iso).toLocaleDateString(undefined, {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  } catch {
-    return iso;
-  }
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return "";
+  return d.toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
 }
 
 function PackageBadge({ type }: { type: string }) {
@@ -68,12 +67,7 @@ function CopyButton({ command }: { command: string }) {
   );
 }
 
-const FirehoseCard: React.FC<FirehoseCardProps> = ({ app }) => {
-  const [showOlder, setShowOlder] = useState(false);
-
-  const latestRelease = app.releases?.[0];
-  const olderReleases = app.releases?.slice(1) ?? [];
-
+const FirehoseCard: React.FC<FirehoseCardProps> = ({ app, release }) => {
   const sourceIcon =
     app.sourceRepo?.type === "github" ? (
       <a
@@ -106,9 +100,9 @@ const FirehoseCard: React.FC<FirehoseCardProps> = ({ app }) => {
       rel="noopener noreferrer"
       className={styles.iconLink}
       aria-label="Download on Flathub"
-        title="Download on Flathub"
-      >
-        <SiFlathub size={16} />
+      title="Download on Flathub"
+    >
+      <SiFlathub size={16} />
     </a>
   ) : null;
 
@@ -124,14 +118,10 @@ const FirehoseCard: React.FC<FirehoseCardProps> = ({ app }) => {
         <div className={styles.appMeta}>
           <div className={styles.appTitleRow}>
             <span className={styles.appName}>{app.name}</span>
-            {latestRelease && (
-              <span className={styles.version}>
-                {latestRelease.title || latestRelease.version}
-              </span>
-            )}
-            <span className={styles.date}>
-              {formatDate(app.currentReleaseDate || app.updatedAt)}
+            <span className={styles.version}>
+              {release.title || release.version}
             </span>
+            <span className={styles.date}>{formatDate(release.date)}</span>
             <PackageBadge type={app.packageType} />
           </div>
           <div className={styles.appLinks}>
@@ -150,43 +140,11 @@ const FirehoseCard: React.FC<FirehoseCardProps> = ({ app }) => {
 
       {app.summary && <p className={styles.summary}>{app.summary}</p>}
 
-      {latestRelease?.description && (
+      {release.description && (
         <div
           className={styles.releaseBody}
-          dangerouslySetInnerHTML={{ __html: latestRelease.description }}
+          dangerouslySetInnerHTML={{ __html: release.description }}
         />
-      )}
-
-      {olderReleases.length > 0 && (
-        <div className={styles.olderSection}>
-          <button
-            className={styles.olderToggle}
-            onClick={() => setShowOlder((v) => !v)}
-            aria-expanded={showOlder}
-          >
-            {showOlder
-              ? "Hide older releases"
-              : `Show ${olderReleases.length} older release${olderReleases.length !== 1 ? "s" : ""}`}
-          </button>
-          {showOlder && (
-            <div className={styles.olderReleases}>
-              {olderReleases.map((release) => (
-                <div key={release.version} className={styles.olderRelease}>
-                  <div className={styles.olderReleaseHeader}>
-                    <strong>{release.title || release.version}</strong>
-                    <span className={styles.date}>{formatDate(release.date)}</span>
-                  </div>
-                  {release.description && (
-                    <div
-                      className={styles.releaseBody}
-                      dangerouslySetInnerHTML={{ __html: release.description }}
-                    />
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
       )}
     </article>
   );
