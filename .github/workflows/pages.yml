@@ -80,8 +80,6 @@ jobs:
         run: npm run prettier-lint || true
 
       - name: Build website
-        env:
-          GITHUB_TOKEN: ${{ secrets.PROJECT_READ_TOKEN }}
         run: npm run build
 
       - name: Upload Build Artifact

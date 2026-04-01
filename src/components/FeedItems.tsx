@@ -308,7 +308,7 @@ const extractSupplyChainHighlights = (
 
 const extractReleaseTag = (title: string): string | null => {
   const tagMatch = title.match(
-    /(stable-\d{8}|gts-\d{8}|beta-\d{8}|latest-\d{8}|lts[-.]\d{8})/i,
+    /(stable-\d{8}|beta-\d{8}|latest-\d{8}|lts[-.]\d{8})/i,
   );
   if (!tagMatch) return null;
 
@@ -331,7 +331,7 @@ const getSupplyChainLinks = (title: string): SupplyChainLinks => {
   }
 
   // Look up attestation state from the SBOM cache.
-  // Cache keys match releaseTag format: stable-YYYYMMDD, gts-YYYYMMDD, lts-YYYYMMDD, etc.
+  // Cache keys match releaseTag format: stable-YYYYMMDD, latest-YYYYMMDD, lts-YYYYMMDD, etc.
   let attestationVerified: boolean | null = null;
   let attestationPresent: boolean | null = null;
   const cache = sbomAttestationsData as unknown as SbomAttestationsData;

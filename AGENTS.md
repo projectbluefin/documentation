@@ -163,7 +163,7 @@ The SBOM pipeline runs **only in `.github/workflows/update-sbom-cache.yml`**. It
 |---|---|---|
 | `fetch-github-sbom.js` | `static/data/sbom-attestations.json` | Uses cosign to verify SLSA attestations and oras to download Syft SBOMs. Extracts RPM package versions (kernel, gnome, mesa, podman, systemd, bootc, fedora) per stream/release. |
 
-Run with `npm run fetch-sbom` — requires cosign and oras on PATH, plus PROJECT_READ_TOKEN with `packages:read`.
+Run with `npm run fetch-sbom` — requires cosign and oras on PATH. Uses `github.token` only — no PAT required.
 
 **Data flow:**
 
@@ -215,11 +215,11 @@ Key steps:
 
 Triggers: schedule (04:00 UTC nightly), workflow_dispatch
 
-Steps: checkout → setup-node → restore existing SBOM cache (incremental) → install cosign → install oras → oras login to GHCR → `npm run fetch-sbom` → save cache
+Steps: checkout → setup-node → restore existing SBOM cache (incremental) → install cosign → install oras → `npm run fetch-sbom` → save cache
 
 Permissions: `contents:read` only — no file commits, cache-only data flow.
 
-Required secret: `PROJECT_READ_TOKEN` with `packages:read` scope for cross-org (ublue-os) GHCR access.
+Required secret: none — `github.token` is sufficient (`fetch-github-sbom.js` uses the public Releases API and anonymous GHCR bearer tokens).
 
 ### `monthly-reports.yml` — Monthly report generation
 
@@ -345,10 +345,9 @@ Do not add `fetch-sbom` to the `fetch-data` chain. `pages.yml` does not install 
 
 ### PROJECT_READ_TOKEN scopes
 
-`fetch-board-data.js`: needs `project:read`  
-`fetch-github-sbom.js`: needs `packages:read` (cross-org ublue-os GHCR)
+`fetch-board-data.js`: needs `project:read`
 
-The default `GITHUB_TOKEN` is insufficient for both.
+The default `GITHUB_TOKEN` is insufficient for this. All other fetch scripts use only `github.token`.
 
 ---
 

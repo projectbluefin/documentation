@@ -53,7 +53,6 @@ jobs:
           key: github-data-sbom-${{ github.run_id }}
           restore-keys: |
             github-data-sbom-
-            github-data-
 
       - name: Install cosign
         uses: sigstore/cosign-installer@cad07c2e89fa2edd6e2d7bab4c1aa38e53f76003 # v4.1.1
@@ -73,7 +72,7 @@ jobs:
           node -e "
             const fs = require('fs');
             const data = JSON.parse(fs.readFileSync('static/data/sbom-attestations.json', 'utf8'));
-            const count = Object.values(data.streams || {}).reduce((acc, s) => acc + (s.releases?.length || 0), 0);
+            const count = Object.values(data.streams || {}).reduce((acc, s) => acc + Object.keys(s.releases || {}).length, 0);
             console.log('Total releases in SBOM cache:', count);
             if (count === 0) { console.error('ERROR: SBOM cache is empty — all streams produced zero releases'); process.exit(1); }
           "
