@@ -195,18 +195,9 @@ function parseFeedVersion(feedItem, labels) {
   return null;
 }
 
-function parseFedoraFromFeedItem(feedItem) {
-  if (!feedItem?.title) return null;
-  const match = feedItem.title.match(/\(F(\d+)[^)]*\)/i);
-  if (!match || !match[1]) return null;
-  return `F${match[1]}`;
-}
-
-function parseFedoraFromImageVersion(imageVersion) {
-  if (!imageVersion) return null;
-  const match = String(imageVersion).match(/^(\d{2})\./);
-  if (!match || !match[1]) return null;
-  return `F${match[1]}`;
+function sbomVersionsForStream(sbomCache, sbomStreamId) {
+  if (!sbomCache || !sbomStreamId) return null;
+  return lookupSbomVersions(sbomCache, sbomStreamId);
 }
 
 function latestFeedItem(feeds, source) {
@@ -336,6 +327,7 @@ async function buildStreamVersionInfo(
   feeds,
   sbomCache,
 ) {
+  const sbomVersions = sbomVersionsForStream(sbomCache, spec.sbomStreamId);
   const feedKey = streamTag === "lts" ? "lts" : streamTag;
   const feedSource = spec.versionSource
     ? { feed: spec.versionSource.feed, stream: feedKey }
@@ -343,45 +335,20 @@ async function buildStreamVersionInfo(
   const feedItem = latestFeedItem(feeds, feedSource);
 
   const versions = {
-    gnome: parseFeedVersion(feedItem, ["GNOME", "Gnome"]),
-    kernel: parseFeedVersion(feedItem, ["Kernel"]),
+    gnome: sbomVersions?.gnome || null,
+    kernel: sbomVersions?.kernel || null,
     nvidia: parseFeedVersion(feedItem, ["Nvidia"]),
-    fedora: null,
+    fedora: sbomVersions?.fedora || null,
   };
 
-  let imageVersion = null;
-  try {
-    const inspected = await inspectImage(imageRef, streamTag);
-    imageVersion =
-      inspected?.Labels?.["org.opencontainers.image.version"] || null;
-  } catch {
-    imageVersion = null;
-  }
-
-  if (spec.name.includes("LTS") || spec.name.includes("GDX")) {
-    versions.fedora = "10";
-  } else {
-    versions.fedora =
-      parseFedoraFromFeedItem(feedItem) ||
-      parseFedoraFromImageVersion(imageVersion);
-  }
+  // SBOM-only policy: fedora version is sourced from SBOM packageVersions.
+  // Do not infer from release bodies or image labels.
 
   if (spec.versionOverrides) {
     versions.gnome = spec.versionOverrides.gnome ?? versions.gnome;
     versions.kernel = spec.versionOverrides.kernel ?? versions.kernel;
     versions.nvidia = spec.versionOverrides.nvidia ?? versions.nvidia;
     versions.fedora = spec.versionOverrides.fedora ?? versions.fedora;
-  }
-
-  // Overlay SBOM-sourced versions for kernel, gnome, and fedora.
-  // NVIDIA is intentionally excluded — it is not in the SBOM (akmod, built outside image).
-  if (sbomCache && spec.sbomStreamId) {
-    const sbomVersions = lookupSbomVersions(sbomCache, spec.sbomStreamId);
-    if (sbomVersions) {
-      if (sbomVersions.kernel) versions.kernel = sbomVersions.kernel;
-      if (sbomVersions.gnome) versions.gnome = sbomVersions.gnome;
-      if (sbomVersions.fedora) versions.fedora = sbomVersions.fedora;
-    }
   }
 
   return versions;
@@ -591,22 +558,13 @@ async function buildProduct(spec, feeds, cachedById, ageHours, sbomCache) {
   }
 
   const feedItem = latestFeedItem(feeds, spec.versionSource);
+  const sbomVersions = sbomVersionsForStream(sbomCache, spec.sbomStreamId);
   const versionsFromFeed = {
-    gnome: parseFeedVersion(feedItem, ["GNOME", "Gnome"]),
-    kernel: parseFeedVersion(feedItem, ["Kernel"]),
+    gnome: sbomVersions?.gnome || null,
+    kernel: sbomVersions?.kernel || null,
     nvidia: parseFeedVersion(feedItem, ["Nvidia"]),
     release: releaseInfoFromFeedItem(feedItem),
   };
-
-  // Overlay SBOM-sourced versions for kernel and gnome on the top-level versions object.
-  // NVIDIA is intentionally excluded — it is not in the SBOM.
-  if (sbomCache && spec.sbomStreamId) {
-    const sbomVersions = lookupSbomVersions(sbomCache, spec.sbomStreamId);
-    if (sbomVersions) {
-      if (sbomVersions.kernel) versionsFromFeed.kernel = sbomVersions.kernel;
-      if (sbomVersions.gnome) versionsFromFeed.gnome = sbomVersions.gnome;
-    }
-  }
 
   if (metadata && !metadata.digestLink && versionsFromFeed.release?.assetsUrl) {
     metadata.digestLink = versionsFromFeed.release.assetsUrl;

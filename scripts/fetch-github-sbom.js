@@ -246,11 +246,15 @@ const ghcrTokenCache = new Map();
 /**
  * Get an anonymous GHCR bearer token for the given org/image.
  * Tokens are scoped per-repository and cached for the process lifetime
- * (tokens are typically valid for 5 minutes — sufficient for one run).
+ * Tokens are short-lived; we cache with expiry and refresh as needed.
  */
 async function getGhcrToken(org, image) {
   const key = `${org}/${image}`;
-  if (ghcrTokenCache.has(key)) return ghcrTokenCache.get(key);
+  const cached = ghcrTokenCache.get(key);
+  const nowMs = Date.now();
+  if (cached && cached.expiresAtMs > nowMs + 30 * 1000) {
+    return cached.token;
+  }
 
   const url = `https://ghcr.io/token?scope=repository:${org}/${image}:pull&service=ghcr.io`;
   let data;
@@ -263,8 +267,33 @@ async function getGhcrToken(org, image) {
   }
   const token = data?.token;
   if (!token) throw new Error(`No token in GHCR response for ${key}`);
-  ghcrTokenCache.set(key, token);
+  const expiresInSec = Number(data?.expires_in || 300);
+  ghcrTokenCache.set(key, {
+    token,
+    expiresAtMs: nowMs + expiresInSec * 1000,
+  });
   return token;
+}
+
+function invalidateGhcrToken(org, image) {
+  ghcrTokenCache.delete(`${org}/${image}`);
+}
+
+function selectAmd64DigestFromManifest(manifest, contentDigestHeader) {
+  const manifests = manifest?.manifests;
+  if (Array.isArray(manifests)) {
+    const amd64 = manifests.find(
+      (m) =>
+        m?.platform?.os === "linux" && m?.platform?.architecture === "amd64",
+    );
+    return amd64?.digest || null;
+  }
+
+  if (manifest?.schemaVersion === 2) {
+    return contentDigestHeader || null;
+  }
+
+  return null;
 }
 
 /**
@@ -277,19 +306,32 @@ async function getGhcrToken(org, image) {
  * Returns null if the amd64 entry cannot be found or the fetch fails.
  */
 async function resolveAmd64Digest(org, image, tag) {
-  const token = await getGhcrToken(org, image);
   const url = `https://ghcr.io/v2/${org}/${image}/manifests/${tag}`;
 
-  let manifest;
-  try {
-    manifest = await fetchJson(url, {
-      Authorization: `Bearer ${token}`,
-      Accept: [
-        "application/vnd.oci.image.index.v1+json",
-        "application/vnd.docker.distribution.manifest.list.v2+json",
-        "application/vnd.docker.distribution.manifest.v2+json",
-      ].join(", "),
+  const tryFetchManifest = async (token) => {
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: [
+          "application/vnd.oci.image.index.v1+json",
+          "application/vnd.docker.distribution.manifest.list.v2+json",
+          "application/vnd.docker.distribution.manifest.v2+json",
+        ].join(", "),
+      },
     });
+    return response;
+  };
+
+  let response;
+  try {
+    let token = await getGhcrToken(org, image);
+    response = await tryFetchManifest(token);
+
+    if (response.status === 401) {
+      invalidateGhcrToken(org, image);
+      token = await getGhcrToken(org, image);
+      response = await tryFetchManifest(token);
+    }
   } catch (err) {
     console.warn(
       `    resolveAmd64Digest: manifest fetch failed for ${org}/${image}:${tag} — ${err.message}`,
@@ -297,24 +339,26 @@ async function resolveAmd64Digest(org, image, tag) {
     return null;
   }
 
-  // Multi-arch image index: find the linux/amd64 child manifest
-  const manifests = manifest?.manifests;
-  if (Array.isArray(manifests)) {
-    const amd64 = manifests.find(
-      (m) =>
-        m?.platform?.os === "linux" && m?.platform?.architecture === "amd64",
-    );
-    if (amd64?.digest) return amd64.digest;
+  if (!response.ok) {
     console.warn(
-      `    resolveAmd64Digest: no linux/amd64 entry in index for ${org}/${image}:${tag}`,
+      `    resolveAmd64Digest: manifest fetch failed for ${org}/${image}:${tag} — HTTP ${response.status}`,
     );
     return null;
   }
 
-  // Single-arch manifest: the manifest itself is the amd64 digest carrier.
-  // We need the digest from the Content-Digest header; re-fetch with HEAD.
-  // Fall back to schemaVersion check — if it's a v2 manifest, use config.digest.
-  if (manifest?.config?.digest) return manifest.config.digest;
+  let manifest;
+  try {
+    manifest = await response.json();
+  } catch (err) {
+    console.warn(
+      `    resolveAmd64Digest: invalid manifest JSON for ${org}/${image}:${tag} — ${err.message}`,
+    );
+    return null;
+  }
+
+  const contentDigest = response.headers.get("docker-content-digest");
+  const digest = selectAmd64DigestFromManifest(manifest, contentDigest);
+  if (digest) return digest;
 
   console.warn(
     `    resolveAmd64Digest: cannot determine amd64 digest for ${org}/${image}:${tag}`,
@@ -978,7 +1022,16 @@ async function main() {
   console.log(`\nSBOM attestation cache written to ${OUTPUT_FILE}`);
 }
 
-main().catch((err) => {
-  console.error(err.message);
-  process.exit(1);
-});
+if (require.main === module) {
+  main().catch((err) => {
+    console.error(err.message);
+    process.exit(1);
+  });
+}
+
+module.exports = {
+  stripEpoch,
+  compareRpmVersions,
+  extractPackageVersions,
+  selectAmd64DigestFromManifest,
+};
