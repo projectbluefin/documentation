@@ -101,6 +101,7 @@ function applySbomOverlay(row, sbomCache, sbomStreamId) {
 
   if (sbomV.kernel) row.versions.kernel = sbomV.kernel;
   if (sbomV.mesa) row.versions.mesa = sbomV.mesa;
+  if (sbomV.gnome) row.versions.gnome = sbomV.gnome;
   // NEVER touch row.versions.nvidia or row.versions.hweKernel
 }
 
