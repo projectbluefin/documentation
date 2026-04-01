@@ -64,6 +64,10 @@ jobs:
           # versions stay current. The data is small (GitHub API call) and the
           # script's internal 168h TTL would otherwise serve stale cached data.
           DRIVER_VERSIONS_CACHE_HOURS: "0"
+          # Always re-fetch firehose app data on every build so the changelogs
+          # page shows current releases. The committed seed is an empty array;
+          # without this the cache check sees a fresh mtime and skips the fetch.
+          FIREHOSE_CACHE_HOURS: "0"
         run: npm run fetch-data
 
       - name: Run TypeScript validation

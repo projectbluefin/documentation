@@ -6,27 +6,43 @@ const OUTPUT_FILE = path.join(OUTPUT_DIR, "firehose-apps.json");
 const SOURCE_URL =
   "https://castrojo.github.io/bluefin-releases/apps.json";
 
-// Cache configuration — match the 6h pipeline schedule of bluefin-releases
-const CACHE_MAX_AGE_HOURS = 6;
+// Cache configuration — match the 6h pipeline schedule of bluefin-releases.
+// Set FIREHOSE_CACHE_HOURS=0 to always fetch (used in CI via pages.yml).
+const CACHE_MAX_AGE_HOURS = Number(process.env.FIREHOSE_CACHE_HOURS ?? 6);
 
 async function fetchFirehoseData() {
-  // Check if existing cache is fresh enough
+  // Check if existing cache is fresh enough.
+  // Always fetch if: cache is expired, --force is set, CACHE_MAX_AGE_HOURS=0,
+  // or the file contains an empty apps array (committed seed).
   if (fs.existsSync(OUTPUT_FILE)) {
     const stats = fs.statSync(OUTPUT_FILE);
     const ageHours = (Date.now() - stats.mtimeMs) / (1000 * 60 * 60);
 
-    if (ageHours < CACHE_MAX_AGE_HOURS && !process.argv.includes("--force")) {
+    // Check whether file is the empty seed (0 apps) — always fetch in that case
+    let isEmpty = false;
+    try {
+      const existing = JSON.parse(fs.readFileSync(OUTPUT_FILE, "utf-8"));
+      isEmpty = !Array.isArray(existing.apps) || existing.apps.length === 0;
+    } catch {
+      isEmpty = true;
+    }
+
+    const isForced = process.argv.includes("--force") || CACHE_MAX_AGE_HOURS === 0;
+
+    if (!isEmpty && !isForced && ageHours < CACHE_MAX_AGE_HOURS) {
       console.log(
         `✓ Firehose cache is ${ageHours.toFixed(1)}h old (max ${CACHE_MAX_AGE_HOURS}h). Skipping fetch.`,
       );
-      console.log(`  Use --force flag to bypass cache and force fresh fetch.`);
+      console.log(`  Use --force flag or FIREHOSE_CACHE_HOURS=0 to bypass.`);
       return;
-    } else if (ageHours >= CACHE_MAX_AGE_HOURS) {
-      console.log(
-        `⏱️  Firehose cache is ${ageHours.toFixed(1)}h old (max ${CACHE_MAX_AGE_HOURS}h). Fetching fresh data...`,
-      );
+    } else if (isEmpty) {
+      console.log("Firehose seed file is empty — fetching fresh data...");
+    } else if (isForced) {
+      console.log("Forced fetch — fetching fresh firehose data...");
     } else {
-      console.log("🔄 --force flag detected. Fetching fresh firehose data...");
+      console.log(
+        `Firehose cache is ${ageHours.toFixed(1)}h old (max ${CACHE_MAX_AGE_HOURS}h). Fetching fresh data...`,
+      );
     }
   } else {
     console.log("Fetching firehose data for the first time...");
