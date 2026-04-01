@@ -174,11 +174,6 @@ function normalizeTestingTag(raw) {
     .replace(/(^[.-]+|[.-]+$)/g, "");
 }
 
-function formatDownloads(value) {
-  if (typeof value !== "number") return "Unavailable";
-  return new Intl.NumberFormat("en-US").format(value);
-}
-
 function parseFeedVersion(feedItem, labels) {
   if (!feedItem || !feedItem.content) return null;
   for (const label of labels) {
@@ -230,33 +225,6 @@ function latestFeedItem(feeds, source) {
   });
 
   return match || null;
-}
-
-async function fetchText(url) {
-  const headers = {
-    "User-Agent": "BluefinDocsImages/1.0",
-    Accept: "application/vnd.github+json",
-  };
-  const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
-  if (token) headers.Authorization = `Bearer ${token}`;
-
-  const response = await fetch(url, { headers });
-  if (!response.ok) {
-    throw new Error(`${response.status} ${response.statusText}`);
-  }
-
-  return response.text();
-}
-
-async function fetchDownloads(org, pkg) {
-  const url = `https://github.com/orgs/${org}/packages/container/package/${pkg}`;
-  const html = await fetchText(url);
-  const match = html.match(
-    /Total downloads<\/span>\s*<h3[^>]*title="([\d,]+)"/i,
-  );
-  if (!match) return null;
-  const value = Number.parseInt(match[1].replace(/,/g, ""), 10);
-  return Number.isNaN(value) ? null : value;
 }
 
 async function listTags(imageRef) {
@@ -536,7 +504,6 @@ async function buildProduct(spec, feeds, cachedById, ageHours, sbomCache) {
   if (!shouldRefresh && existing) {
     return {
       ...existing,
-      downloads: { ...existing.downloads, source: "cache" },
       metadataSource: "cache",
     };
   }
@@ -544,18 +511,6 @@ async function buildProduct(spec, feeds, cachedById, ageHours, sbomCache) {
   const imageRef = `ghcr.io/${spec.org}/${spec.package}`;
 
   const versions = await fetchPackageVersions(spec.org, spec.package);
-
-  let downloadsTotal = null;
-  let downloadSource = "unavailable";
-  try {
-    downloadsTotal = await fetchDownloads(spec.org, spec.package);
-    downloadSource = downloadsTotal === null ? "unavailable" : "live";
-  } catch {
-    if (typeof existing?.downloads?.total === "number") {
-      downloadsTotal = existing.downloads.total;
-      downloadSource = "cache";
-    }
-  }
 
   let tags = [];
   try {
@@ -672,11 +627,6 @@ async function buildProduct(spec, feeds, cachedById, ageHours, sbomCache) {
     imageRef,
     packagePageUrl: `https://github.com/orgs/${spec.org}/packages/container/package/${spec.package}`,
     isoSectionLink: spec.isoSectionLink || null,
-    downloads: {
-      total: downloadsTotal,
-      display: formatDownloads(downloadsTotal),
-      source: downloadSource,
-    },
     streams,
     testingStreams,
     metadata,
@@ -735,14 +685,7 @@ async function main() {
     products.push(product);
   }
 
-  products.sort((a, b) => {
-    const aScore =
-      typeof a.downloads.total === "number" ? a.downloads.total : -1;
-    const bScore =
-      typeof b.downloads.total === "number" ? b.downloads.total : -1;
-    if (aScore !== bScore) return bScore - aScore;
-    return a.name.localeCompare(b.name);
-  });
+  products.sort((a, b) => a.name.localeCompare(b.name));
 
   const output = {
     generatedAt: new Date().toISOString(),

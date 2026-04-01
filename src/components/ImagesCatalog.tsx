@@ -28,10 +28,6 @@ interface Product {
   artwork: "bluefin" | "achillobator" | "dakotaraptor";
   packagePageUrl: string;
   isoSectionLink?: string | null;
-  downloads: {
-    display: string;
-    source: "live" | "cache" | "unavailable";
-  };
   streams: StreamInfo[];
   testingStreams: StreamInfo[];
   metadata: {
@@ -276,12 +272,6 @@ export default function ImagesCatalogComponent(): React.JSX.Element {
           <p className={styles.summary}>{product.summary}</p>
 
           <div className={styles.statsRow}>
-            <span className={styles.statChip}>
-              <strong>Pulls:</strong> {product.downloads.display}
-            </span>
-            <span className={sourceClass(product.downloads.source)}>
-              {sourceText(product.downloads.source, "Downloads")}
-            </span>
             <span className={sourceClass(product.metadataSource)}>
               {sourceText(product.metadataSource, "Metadata")}
             </span>

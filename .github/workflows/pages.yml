@@ -59,7 +59,7 @@ jobs:
 
       - name: Fetch data
         env:
-          GITHUB_TOKEN: ${{ secrets.PROJECT_READ_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
           # Always re-fetch driver versions on every build so GNOME/kernel/mesa
           # versions stay current. The data is small (GitHub API call) and the
           # script's internal 168h TTL would otherwise serve stale cached data.
@@ -69,6 +69,13 @@ jobs:
           # without this the cache check sees a fresh mtime and skips the fetch.
           FIREHOSE_CACHE_HOURS: "0"
         run: npm run fetch-data
+
+      - name: Fetch board data
+        env:
+          # fetch-board-data.js requires project:read scope; only this step
+          # receives the elevated PAT — all other fetch scripts use github.token.
+          GITHUB_TOKEN: ${{ secrets.PROJECT_READ_TOKEN }}
+        run: node scripts/fetch-board-data.js
 
       - name: Run TypeScript validation
         run: npm run typecheck
