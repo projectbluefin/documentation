@@ -1,27 +1,41 @@
-.card {
+/* ── Card shell ─────────────────────────────────────────────────────────── */
+
+.groupedReleaseCard {
   background: var(--ifm-card-background-color, var(--ifm-background-surface-color));
   border: 1px solid var(--ifm-color-emphasis-300);
-  border-radius: var(--ifm-card-border-radius, 8px);
+  border-radius: 6px;
   padding: 1.25rem;
   margin-bottom: 1rem;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.cardHeader {
+.groupedReleaseCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.mainRelease {
+  /* block-level container for the primary release content */
+}
+
+/* ── Header: icon + title section ────────────────────────────────────────── */
+
+.releaseHeader {
   display: flex;
   align-items: flex-start;
-  gap: 0.75rem;
+  gap: 1rem;
   margin-bottom: 0.75rem;
 }
 
-.appIcon {
+.releaseIcon {
   width: 48px;
   height: 48px;
-  border-radius: 8px;
-  flex-shrink: 0;
+  border-radius: 6px;
   object-fit: contain;
+  flex-shrink: 0;
 }
 
-.appIconEmoji {
+.releaseIconEmoji {
   font-size: 2rem;
   line-height: 48px;
   width: 48px;
@@ -29,174 +43,459 @@
   flex-shrink: 0;
 }
 
-.appMeta {
+.releaseTitleSection {
   flex: 1;
   min-width: 0;
 }
 
-.appTitleRow {
+/* ── Name row: name+version LEFT, meta RIGHT ─────────────────────────────── */
+
+.releaseNameRow {
   display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.4rem;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
   margin-bottom: 0.25rem;
 }
 
-.appName {
-  font-weight: 700;
-  font-size: 1rem;
-}
-
-.version {
-  font-size: 0.85rem;
-  color: var(--ifm-color-emphasis-600);
-}
-
-.date {
-  font-size: 0.8rem;
-  color: var(--ifm-color-emphasis-500);
-  margin-left: auto;
-}
-
-.appLinks {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-}
-
-.iconLink {
-  color: var(--ifm-color-emphasis-600);
-  transition: color 0.15s;
-}
-
-.iconLink:hover {
-  color: var(--ifm-color-primary);
-}
-
-/* Package type badges */
-.badge {
-  font-size: 0.7rem;
+.releaseName {
+  font-size: 1.125rem;
   font-weight: 600;
-  padding: 0.1rem 0.4rem;
-  border-radius: 4px;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
+  margin: 0;
+  line-height: 1.3;
+  flex: 1;
 }
 
+.releaseName a {
+  color: var(--ifm-font-color-base);
+  text-decoration: none;
+}
+
+.releaseName a:hover {
+  color: var(--ifm-color-primary);
+  text-decoration: none;
+}
+
+.versionInline {
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--ifm-color-emphasis-600);
+  margin-left: 0.25rem;
+}
+
+/* ── Meta column (right side of name row) ────────────────────────────────── */
+
+.releaseMeta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+
+.releaseDate {
+  font-size: 0.75rem;
+  color: var(--ifm-color-emphasis-600);
+  white-space: nowrap;
+}
+
+.metaBadges {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* ── Package type badges ──────────────────────────────────────────────────── */
+
+.packageTypeBadge {
+  font-size: 0.625rem;
+  font-weight: 600;
+  padding: 0.125rem 0.5rem;
+  border-radius: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+/* stylelint-disable selector-class-pattern */
 .badge_flatpak {
-  background: var(--ifm-color-primary-lightest, #dbeafe);
-  color: var(--ifm-color-primary-darkest, #1e40af);
+  background: rgba(74, 144, 226, 0.15);
+  color: var(--ifm-color-primary);
+  border: 1px solid rgba(74, 144, 226, 0.3);
 }
 
 .badge_homebrew {
-  background: #fef3c7;
-  color: #92400e;
+  background: rgba(251, 191, 36, 0.15);
+  color: #b45309;
+  border: 1px solid rgba(251, 191, 36, 0.3);
 }
 
 /* stylelint-disable-next-line selector-class-pattern */
-.badge_os-release {
-  background: #d1fae5;
-  color: #065f46;
+.badge_os {
+  background: linear-gradient(
+    135deg,
+    rgba(123, 47, 247, 0.2),
+    rgba(74, 144, 226, 0.2)
+  );
+  color: #7c3aed;
+  border: 1px solid rgba(123, 47, 247, 0.4);
+}
+/* stylelint-enable selector-class-pattern */
+
+/* ── Icon links (Flathub, GitHub, GitLab) ────────────────────────────────── */
+
+.sourceIconLink,
+.flathubIconLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ifm-color-emphasis-600);
+  font-size: 1rem;
+  opacity: 0.7;
+  transition: opacity 0.2s, color 0.2s;
+  width: 20px;
+  height: 20px;
 }
 
-/* Homebrew install command */
-.brewInstall {
+.sourceIconLink:hover,
+.flathubIconLink:hover {
+  opacity: 1;
+  color: var(--ifm-color-primary);
+}
+
+/* ── App ID (flatpak monospace line) ─────────────────────────────────────── */
+
+.releaseAppId {
+  font-size: 0.75rem;
+  color: var(--ifm-color-emphasis-600);
+  margin: 0 0 0.75rem;
+  font-family: var(--ifm-font-family-monospace);
+}
+
+/* ── Homebrew install row ─────────────────────────────────────────────────── */
+
+.brewInstallRow {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: var(--ifm-code-background);
+  margin: 0 0 0.75rem;
+}
+
+.brewCommand {
+  font-size: 0.75rem;
+  font-family: var(--ifm-font-family-monospace);
+  color: var(--ifm-font-color-base);
+  background: rgba(74, 144, 226, 0.1);
+  padding: 0.25rem 0.5rem;
   border-radius: 4px;
-  padding: 0.35rem 0.6rem;
-  margin-bottom: 0.75rem;
-  font-size: 0.85rem;
+  border: 1px solid rgba(74, 144, 226, 0.2);
 }
 
-.brewInstall code {
-  flex: 1;
-  background: none;
-  padding: 0;
-  font-size: inherit;
-}
-
-.copyBtn {
-  background: none;
-  border: none;
+.copyButton {
+  background: rgba(74, 144, 226, 0.15);
+  border: 1px solid rgba(74, 144, 226, 0.3);
+  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
   cursor: pointer;
-  padding: 2px 4px;
-  color: var(--ifm-color-emphasis-500);
+  color: var(--ifm-color-primary);
   display: flex;
   align-items: center;
-  border-radius: 3px;
-  transition: color 0.15s, background 0.15s;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
 }
 
-.copyBtn:hover {
-  color: var(--ifm-color-primary);
-  background: var(--ifm-color-emphasis-100);
+.copyButton:hover {
+  background: rgba(74, 144, 226, 0.25);
 }
 
-/* App summary */
-.summary {
+.copyButton.copied {
+  background: rgba(34, 197, 94, 0.15);
+  border-color: rgba(34, 197, 94, 0.3);
+  color: #15803d;
+}
+
+/* ── Summary ──────────────────────────────────────────────────────────────── */
+
+.releaseSummary {
   color: var(--ifm-color-emphasis-700);
-  font-size: 0.9rem;
   margin-bottom: 0.75rem;
   line-height: 1.5;
-}
-
-/* Release body HTML (from AppStream / GitHub releases) */
-.releaseBody {
   font-size: 0.875rem;
-  line-height: 1.6;
-  color: var(--ifm-font-color-base);
 }
 
-.releaseBody ul,
-.releaseBody ol {
-  padding-left: 1.25rem;
-  margin: 0.5rem 0;
-}
+/* ── Release notes block ──────────────────────────────────────────────────── */
 
-.releaseBody p {
-  margin: 0.4rem 0;
-}
-
-/* Older releases toggle */
-.olderSection {
-  margin-top: 0.75rem;
+.releaseNotes {
   border-top: 1px solid var(--ifm-color-emphasis-200);
-  padding-top: 0.5rem;
+  padding-top: 0.75rem;
+  margin-top: 0.75rem;
 }
 
-.olderToggle {
-  background: none;
-  border: none;
-  cursor: pointer;
+.releaseDescription {
+  font-size: 0.875rem;
+  color: var(--ifm-color-emphasis-700);
+  margin: 0 0 0.75rem;
+  line-height: 1.6;
+}
+
+.releaseDescription p {
+  margin: 0 0 0.5rem;
+}
+
+.releaseDescription ul,
+.releaseDescription ol {
+  margin: 0.5rem 0;
+  padding-left: 1.5rem;
+}
+
+.releaseDescription li {
+  margin: 0.25rem 0;
+}
+
+.releaseLink {
   color: var(--ifm-color-primary);
-  font-size: 0.85rem;
-  padding: 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  text-decoration: none;
+}
+
+.releaseLink:hover {
   text-decoration: underline;
-  text-underline-offset: 2px;
 }
 
-.olderToggle:hover {
-  color: var(--ifm-color-primary-dark);
+/* ── OS package version chip grid ─────────────────────────────────────────── */
+
+.osChipGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin-bottom: 0.75rem;
 }
 
-.olderReleases {
+.osChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 6px;
+  padding: 0.25rem 0.5rem;
+  background: var(--ifm-color-emphasis-100);
+  font-size: 0.84rem;
+  white-space: nowrap;
+}
+
+.osChipLabel {
+  font-weight: 600;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.osChipVersion {
+  color: var(--ifm-font-color-base);
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.82rem;
+}
+
+.olderReleaseItem .osChipGrid {
+  margin-bottom: 0;
+}
+
+/* ── Older releases section ───────────────────────────────────────────────── */
+
+.olderReleasesSection {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.olderReleasesToggle {
+  background: transparent;
+  border: none;
+  color: var(--ifm-color-primary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0.5rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.toggleIcon {
+  font-size: 1rem;
+  transition: transform 0.2s;
+  display: inline-block;
+}
+
+.olderReleasesToggle[aria-expanded="true"] .toggleIcon {
+  transform: rotate(90deg);
+}
+
+.olderReleasesList {
   margin-top: 0.75rem;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.75rem;
 }
 
-.olderRelease {
-  padding-top: 0.75rem;
-  border-top: 1px dashed var(--ifm-color-emphasis-200);
+.olderReleaseItem {
+  padding: 0.75rem;
+  background: var(--ifm-color-emphasis-100);
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 4px;
 }
 
 .olderReleaseHeader {
   display: flex;
-  align-items: baseline;
-  gap: 0.5rem;
-  margin-bottom: 0.4rem;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.olderReleaseVersion {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--ifm-font-color-base);
+}
+
+.olderReleaseDate {
+  font-size: 0.75rem;
+  color: var(--ifm-color-emphasis-600);
+}
+
+/* ── Package diff section ─────────────────────────────────────────────────── */
+
+.packageDiff {
+  margin-top: 0.75rem;
+}
+
+.packageDiffToggle {
+  background: transparent;
+  border: none;
+  color: var(--ifm-color-emphasis-600);
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0.25rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.packageDiffToggle:hover {
+  color: var(--ifm-color-primary);
+}
+
+.packageDiffToggle[aria-expanded="true"] .toggleIcon {
+  transform: rotate(90deg);
+}
+
+.packageDiffSummary {
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.78rem;
+}
+
+.packageDiffTable {
+  margin-top: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.diffSectionTitle {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 0.25rem;
+}
+
+.diffAdded {
+  color: #15803d;
+}
+
+.diffChanged {
+  color: #b45309;
+}
+
+.diffRemoved {
+  color: #b91c1c;
+}
+
+[data-theme="dark"] .diffAdded {
+  color: #4ade80;
+}
+
+[data-theme="dark"] .diffChanged {
+  color: #fbbf24;
+}
+
+[data-theme="dark"] .diffRemoved {
+  color: #f87171;
+}
+
+.diffTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+}
+
+.diffTable td {
+  padding: 0.1rem 0.4rem;
+  vertical-align: top;
+}
+
+.diffTable td:first-child {
+  padding-left: 0;
+}
+
+.diffPkgName {
+  font-family: var(--ifm-font-family-monospace);
+  color: var(--ifm-font-color-base);
+  white-space: nowrap;
+}
+
+.diffVersion {
+  font-family: var(--ifm-font-family-monospace);
+  color: var(--ifm-color-emphasis-700);
+  word-break: break-all;
+}
+
+.diffOldVersion {
+  color: var(--ifm-color-emphasis-500);
+  text-decoration: line-through;
+  margin-right: 0.25rem;
+}
+
+.diffArrow {
+  color: var(--ifm-color-emphasis-500);
+  margin-right: 0.25rem;
+}
+
+.diffRowAdded .diffPkgName::before {
+  content: "+ ";
+  color: #15803d;
+}
+
+.diffRowChanged .diffPkgName::before {
+  content: "~ ";
+  color: #b45309;
+}
+
+.diffRowRemoved .diffPkgName::before {
+  content: "- ";
+  color: #b91c1c;
+}
+
+[data-theme="dark"] .diffRowAdded .diffPkgName::before {
+  color: #4ade80;
+}
+
+[data-theme="dark"] .diffRowChanged .diffPkgName::before {
+  color: #fbbf24;
+}
+
+[data-theme="dark"] .diffRowRemoved .diffPkgName::before {
+  color: #f87171;
 }

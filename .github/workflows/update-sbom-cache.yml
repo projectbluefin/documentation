@@ -61,18 +61,22 @@ jobs:
       - name: Install oras
         uses: oras-project/setup-oras@5c0b487ce3fe0ce3ab0d034e63669e426e294e4d # v1.2.3
 
-      - name: Login to GHCR (for oras referrers API)
-        run: |
-          echo "${{ secrets.PROJECT_READ_TOKEN || github.token }}" \
-            | oras login ghcr.io -u ${{ github.actor }} --password-stdin
-
       - name: Fetch SBOM attestation metadata
         env:
-          # PROJECT_READ_TOKEN must have packages:read scope for cross-org
-          # (ublue-os) package registry access. GITHUB_TOKEN alone is
-          # insufficient for cross-org package reads.
-          GITHUB_TOKEN: ${{ secrets.PROJECT_READ_TOKEN }}
+          # github.token is sufficient — fetch-github-sbom.js uses the public Releases API
+          # and anonymous GHCR bearer tokens. No packages:read PAT required.
+          GITHUB_TOKEN: ${{ github.token }}
         run: npm run fetch-sbom
+
+      - name: Validate SBOM cache is non-empty
+        run: |
+          node -e "
+            const fs = require('fs');
+            const data = JSON.parse(fs.readFileSync('static/data/sbom-attestations.json', 'utf8'));
+            const count = Object.values(data.streams || {}).reduce((acc, s) => acc + (s.releases?.length || 0), 0);
+            console.log('Total releases in SBOM cache:', count);
+            if (count === 0) { console.error('ERROR: SBOM cache is empty — all streams produced zero releases'); process.exit(1); }
+          "
 
       - name: Save SBOM data cache
         uses: actions/cache/save@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5

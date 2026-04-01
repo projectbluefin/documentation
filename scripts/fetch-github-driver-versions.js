@@ -50,6 +50,26 @@ function lookupSbomVersionsForTag(sbomCache, sbomStreamId, cacheKey) {
 }
 
 /**
+ * Derive the SBOM cache key prefix from a stream ID.
+ * The SBOM cache key format is "<streamPrefix>-YYYYMMDD" (e.g. "stable-20260331").
+ * sbomStreamId format is "<product>-<streamPrefix>" (e.g. "bluefin-stable",
+ * "bluefin-dx-latest", "bluefin-gdx-lts").
+ * Strip everything up to and including the last product segment.
+ *
+ * Explicit map is used instead of string manipulation to be unambiguous:
+ */
+const SBOM_STREAM_PREFIX = {
+  "bluefin-stable":    "stable",
+  "bluefin-latest":    "latest",
+  "bluefin-lts":       "lts",
+  "bluefin-dx-stable": "stable",
+  "bluefin-dx-latest": "latest",
+  "bluefin-dx-lts":    "lts",
+  "bluefin-gdx-lts":   "lts",
+  "bluefin-gdx-latest":"latest",
+};
+
+/**
  * Apply SBOM overlay to a history row in-place.
  * Overlays kernel and mesa from the SBOM cache if available.
  * NVIDIA is intentionally excluded — it is not in the SBOM.
@@ -62,7 +82,11 @@ function applySbomOverlay(row, sbomCache, sbomStreamId) {
   const dateMatch = tagStr.match(/(\d{8})/);
   if (!dateMatch) return;
 
-  const streamPrefix = sbomStreamId === "bluefin-lts" ? "lts" : "stable";
+  const streamPrefix = SBOM_STREAM_PREFIX[sbomStreamId];
+  if (!streamPrefix) {
+    console.warn(`    applySbomOverlay: unknown sbomStreamId "${sbomStreamId}" — skipping`);
+    return;
+  }
   const cacheKey = `${streamPrefix}-${dateMatch[1]}`;
 
   const sbomV = lookupSbomVersionsForTag(sbomCache, sbomStreamId, cacheKey);

@@ -41,7 +41,7 @@ const PACKAGE_TYPE_OPTIONS = [
   { value: "all", label: "All" },
   { value: "flatpak", label: "Flathub" },
   { value: "homebrew", label: "Homebrew" },
-  { value: "os-release", label: "OS Release" },
+  { value: "os", label: "OS Release" },
 ] as const;
 
 const FirehoseFilters: React.FC<FirehoseFiltersProps> = ({
@@ -57,9 +57,7 @@ const FirehoseFilters: React.FC<FirehoseFiltersProps> = ({
     filters.packageType !== "all" ||
     filters.category !== "all" ||
     filters.appSet !== "all" ||
-    filters.updatedWithin !== "all" ||
-    filters.verifiedOnly ||
-    filters.unverifiedOnly;
+    filters.updatedWithin !== "all";
 
   function clearAll() {
     onFiltersChange({
@@ -86,39 +84,6 @@ const FirehoseFilters: React.FC<FirehoseFiltersProps> = ({
           </>
         )}
       </div>
-
-      {/* Verification */}
-      <section className={styles.filterSection}>
-        <h3 className={styles.filterHeading}>Verification</h3>
-        <label className={styles.checkLabel}>
-          <input
-            type="checkbox"
-            checked={filters.verifiedOnly}
-            onChange={(e) => {
-              onFiltersChange({
-                ...filters,
-                verifiedOnly: e.target.checked,
-                unverifiedOnly: e.target.checked ? false : filters.unverifiedOnly,
-              });
-            }}
-          />
-          Verified only
-        </label>
-        <label className={styles.checkLabel}>
-          <input
-            type="checkbox"
-            checked={filters.unverifiedOnly}
-            onChange={(e) => {
-              onFiltersChange({
-                ...filters,
-                unverifiedOnly: e.target.checked,
-                verifiedOnly: e.target.checked ? false : filters.verifiedOnly,
-              });
-            }}
-          />
-          Unverified only
-        </label>
-      </section>
 
       {/* Package Type */}
       <section className={styles.filterSection}>
