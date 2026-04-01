@@ -323,38 +323,6 @@ async function resolveAmd64Digest(org, image, tag) {
 }
 
 // ---------------------------------------------------------------------------
-// GitHub Packages API — paginated tag listing
-// ---------------------------------------------------------------------------
-
-/**
- * Fetch all package versions (tags) for an org/package, handling pagination.
- * Returns an array of version objects from the GitHub Packages API.
- * @deprecated Use fetchReleaseTags() + resolveAmd64Digest() instead.
- *   This function remains for reference only and is no longer called.
- */
-async function _fetchAllPackageVersions(org, pkg) {
-  const versions = [];
-  let page = 1;
-  // eslint-disable-next-line no-constant-condition
-  while (true) {
-    const url = `https://api.github.com/orgs/${org}/packages/container/${pkg}/versions?per_page=100&page=${page}`;
-    let batch;
-    try {
-      batch = await fetchJson(url);
-    } catch (err) {
-      throw new Error(
-        `Packages API page ${page} for ${org}/${pkg} failed: ${err.message}`,
-      );
-    }
-    if (!Array.isArray(batch) || batch.length === 0) break;
-    versions.push(...batch);
-    if (batch.length < 100) break;
-    page++;
-  }
-  return versions;
-}
-
-// ---------------------------------------------------------------------------
 // Tag filtering helpers
 // ---------------------------------------------------------------------------
 
@@ -673,7 +641,7 @@ function extractPackageVersions(sbomPath) {
 
     switch (name) {
       case "kernel":
-        kernelVersions.push(String(version));
+        kernelVersions.push(stripEpoch(String(version)));
         break;
       case "gnome-shell":
         if (!result.gnome) result.gnome = stripEpoch(String(version));

@@ -248,11 +248,6 @@ async function fetchText(url) {
   return response.text();
 }
 
-async function _fetchJson(url) {
-  const text = await fetchText(url);
-  return JSON.parse(text);
-}
-
 async function fetchDownloads(org, pkg) {
   const url = `https://github.com/orgs/${org}/packages/container/package/${pkg}`;
   const html = await fetchText(url);

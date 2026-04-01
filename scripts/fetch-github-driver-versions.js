@@ -1,9 +1,6 @@
 const fs = require("fs");
 const path = require("path");
 
-const fetch = (...args) =>
-  import("node-fetch").then(({ default: fn }) => fn(...args));
-
 const OUTPUT_DIR = path.join(__dirname, "..", "static", "data");
 const OUTPUT_FILE = path.join(OUTPUT_DIR, "driver-versions.json");
 const FEED_BLUEFIN = path.join(
@@ -317,7 +314,7 @@ function buildStreamFromApi(
   };
 }
 
-function main() {
+async function main() {
   const ageHours = cacheAgeHours();
   if (ageHours < CACHE_MAX_AGE_HOURS && !FORCE_REFRESH) {
     console.log(
@@ -419,12 +416,7 @@ function main() {
     });
 }
 
-try {
-  Promise.resolve(main()).catch((error) => {
-    console.error(error?.message || "Failed to generate driver versions data");
-    process.exit(1);
-  });
-} catch (error) {
-  console.error(error?.message || "Failed to generate driver versions data");
+main().catch((err) => {
+  console.error(err);
   process.exit(1);
-}
+});
