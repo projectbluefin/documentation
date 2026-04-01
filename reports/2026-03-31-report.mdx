@@ -1,0 +1,642 @@
+---
+title: "Mesozoic March 2026"
+date: 2026-03-31
+slug: /2026/03
+tags: [monthly-report, project-activity]
+---
+
+import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
+
+
+# Summary
+
+| | |
+|--------|-------|
+| **Total Items** | 118 (8 planned, 110 opportunistic) |
+| **Automation** | 68.6% (258 bot PRs out of 376 total PRs) |
+| **Contributors** | 17 total, 4 new |
+
+
+## Desktop
+
+![area/gnome](https://img.shields.io/badge/area%2Fgnome-28A745?style=flat-square) ![area/aurora](https://img.shields.io/badge/area%2Faurora-1D76DB?style=flat-square) ![area/bling](https://img.shields.io/badge/area%2Fbling-F9C74F?style=flat-square)
+
+*GNOME desktop environment, Aurora variant (KDE), and terminal enhancements*
+
+#### Planned Work
+
+- fix(ublue-fastfetch): use exec to preserve parent shell detection by [@​kriszentner](https://github.com/kriszentner) in [#233](https://github.com/projectbluefin/common/pull/233)
+- fix: alias definition for cat command by [@​castrojo](https://github.com/castrojo) in [#220](https://github.com/projectbluefin/common/pull/220)
+
+#### Opportunistic Work
+
+- fix: upgrade selinux-policy to 43.x for GNOME 49 to resolve GDM failure by [@​hanthor](https://github.com/hanthor) in [#1242](https://github.com/ublue-os/bluefin-lts/pull/1242)
+- feat: add Bazaar Companion extension by [@​castrojo](https://github.com/castrojo) in [#1243](https://github.com/ublue-os/bluefin-lts/pull/1243)
+- fix(build): resolve dracut EXDEV and libjxl conflict in gnome-50 builds by [@​hanthor](https://github.com/hanthor) in [#1240](https://github.com/ublue-os/bluefin-lts/pull/1240)
+- fix: install jxl-pixbuf-loader for JPEG-XL desktop backgrounds by [@​hanthor](https://github.com/hanthor) in [#1230](https://github.com/ublue-os/bluefin-lts/pull/1230)
+- feat: add GNOME 50 full build pipeline with GNOME_VERSION build arg by [@​hanthor](https://github.com/hanthor) in [#1218](https://github.com/ublue-os/bluefin-lts/pull/1218)
+- feat: add GNOME 50 testing builds (lts-testing-50, lts-hwe-testing-50) by [@​hanthor](https://github.com/hanthor) in [#1209](https://github.com/ublue-os/bluefin-lts/pull/1209)
+- feat: switch from GNOME 48 to GNOME 49 by [@​hanthor](https://github.com/hanthor) in [#1207](https://github.com/ublue-os/bluefin-lts/pull/1207)
+- Revert "feat(GNOME) : gnome 49 backport" by [@​hanthor](https://github.com/hanthor) in [#1192](https://github.com/ublue-os/bluefin-lts/pull/1192)
+- feat(GNOME) : gnome 49 backport by [@​hanthor](https://github.com/hanthor) in [#1187](https://github.com/ublue-os/bluefin-lts/pull/1187)
+- feat(driver-versions): add foil effects, Mesa/GNOME cards, CodeBlock refactor by [@​castrojo](https://github.com/castrojo) in [#694](https://github.com/projectbluefin/documentation/pull/694)
+
+##### Dakota (GNOME OS Prototype)
+
+- Update gnome-build-meta ref by [@​alatiera](https://github.com/alatiera) in [#76](https://github.com/projectbluefin/dakota/pull/76)
+
+---
+
+## Development
+
+![area/dx](https://img.shields.io/badge/area%2Fdx-17A2B8?style=flat-square)
+
+*Development tools and IDE integrations*
+
+#### Planned Work
+
+> Status: _ChillOps_
+
+#### Opportunistic Work
+
+- feat: Add OpenSSF Scorecard Action by [@​KyleGospo](https://github.com/KyleGospo) in [#4273](https://github.com/ublue-os/bluefin/pull/4273)
+- chore(renovate): fix automerge rules and reschedule lts cron by [@​castrojo](https://github.com/castrojo) in [#1171](https://github.com/ublue-os/bluefin-lts/pull/1171)
+- Update dockerd-linux SHA by [@​jumpyvi](https://github.com/jumpyvi) in [#208](https://github.com/ublue-os/homebrew-experimental-tap/pull/208)
+- Update docker to 29.2.1 by [@​jumpyvi](https://github.com/jumpyvi) in [#195](https://github.com/ublue-os/homebrew-experimental-tap/pull/195)
+
+### Homebrew
+
+#### Package Updates
+
+![Production Tap](https://img.shields.io/badge/production--tap-34%20updates-blue?style=flat-square) ![Experimental Tap](https://img.shields.io/badge/experimental--tap-44%20updates-orange?style=flat-square)
+
+**78 automated updates** this month via GitHub Actions. Homebrew tap version bumps ensure Bluefin users always have access to the latest stable releases.
+
+##### Quick Summary
+
+| Tap | Updates |
+|-----|---------|
+| production-tap | 34 |
+| experimental-tap | 44 |
+
+<details>
+<summary>View all production-tap updates (34)</summary>
+
+| Package | Versions | PR |
+|---------|----------|-----|
+| antigravity-linux | 1.20.3 → 1.21.9 (6 updates) | [#317](https://github.com/ublue-os/homebrew-tap/pull/317) |
+| visual-studio-code-linux | 1.110.0 → 1.113.0 (5 updates) | [#311](https://github.com/ublue-os/homebrew-tap/pull/311) |
+| vscodium-linux | 1.110.01571 → 1.112.01907 (4 updates) | [#309](https://github.com/ublue-os/homebrew-tap/pull/309) |
+| goose-linux | 1.27.0 → 1.28.0 (4 updates) | [#304](https://github.com/ublue-os/homebrew-tap/pull/304) |
+| jetbrains-toolbox-linux | 3.3.1.75249 → 3.4.1.78303 (3 updates) | [#310](https://github.com/ublue-os/homebrew-tap/pull/310) |
+| lm-studio-linux | 0.4.7 → 0.4.8 (2 updates) | [#314](https://github.com/ublue-os/homebrew-tap/pull/314) |
+| 1password-gui-linux | 8.12.6 → 8.12.8 (2 updates) | [#302](https://github.com/ublue-os/homebrew-tap/pull/302) |
+| framework-tool | 0.6.1 | [#292](https://github.com/ublue-os/homebrew-tap/pull/292) |
+
+</details>
+
+<details>
+<summary>View all experimental-tap updates (44)</summary>
+
+| Package | Versions | PR |
+|---------|----------|-----|
+| opencode-desktop-linux | 1.3.2 → 1.3.9 (5 updates) | [#253](https://github.com/ublue-os/homebrew-experimental-tap/pull/253) |
+| emdash-linux | 0.4.41 → 0.4.45 (4 updates) | [#250](https://github.com/ublue-os/homebrew-experimental-tap/pull/250) |
+| rider-linux | 2025.3.3 → 2026.1 (3 updates) | [#255](https://github.com/ublue-os/homebrew-experimental-tap/pull/255) |
+| rustrover-linux | 2025.3.5 → 2026.1 (2 updates) | [#256](https://github.com/ublue-os/homebrew-experimental-tap/pull/256) |
+| pycharm-linux | 2025.3.4 → 2026.1 (2 updates) | [#254](https://github.com/ublue-os/homebrew-experimental-tap/pull/254) |
+| cursor-linux | 2.6.21 → 2.6.22 (2 updates) | [#240](https://github.com/ublue-os/homebrew-experimental-tap/pull/240) |
+| craft-agents-linux | 0.8.0 → 0.8.1 (2 updates) | [#239](https://github.com/ublue-os/homebrew-experimental-tap/pull/239) |
+| clion-linux | 2025.3.4 → 2026.1 (2 updates) | [#238](https://github.com/ublue-os/homebrew-experimental-tap/pull/238) |
+| goland-linux | 2025.3.4 → 2026.1 (2 updates) | [#243](https://github.com/ublue-os/homebrew-experimental-tap/pull/243) |
+| phpstorm-linux | 2025.3.4 → 2026.1 (2 updates) | [#245](https://github.com/ublue-os/homebrew-experimental-tap/pull/245) |
+| rubymine-linux | 2025.3.4 → 2026.1 (2 updates) | [#247](https://github.com/ublue-os/homebrew-experimental-tap/pull/247) |
+| dataspell-linux | 2026.1 | [#252](https://github.com/ublue-os/homebrew-experimental-tap/pull/252) |
+| datagrip-linux | 2026.1 | [#241](https://github.com/ublue-os/homebrew-experimental-tap/pull/241) |
+| dockerd-linux | 29.3.1 | [#225](https://github.com/ublue-os/homebrew-experimental-tap/pull/225) |
+| intellij-idea-linux | 2026.1 | [#228](https://github.com/ublue-os/homebrew-experimental-tap/pull/228) |
+| webstorm-linux | 2026.1 | [#235](https://github.com/ublue-os/homebrew-experimental-tap/pull/235) |
+
+</details>
+
+---
+
+## Ecosystem
+
+![area/brew](https://img.shields.io/badge/area%2Fbrew-E8590C?style=flat-square) ![area/bluespeed](https://img.shields.io/badge/area%2Fbluespeed-1D76DB?style=flat-square) ![area/flatpak](https://img.shields.io/badge/area%2Fflatpak-9333EA?style=flat-square)
+
+*Homebrew packages, AI/ML tools (Bluespeed), and Flatpak applications*
+
+#### Planned Work
+
+- Remove 'mods' from ai-tools.Brewfile by [@​mmartinortiz](https://github.com/mmartinortiz) in [#231](https://github.com/projectbluefin/common/pull/231)
+- feat(brew): podman-tui to Homebrew CLI Brewfile by [@​castrojo](https://github.com/castrojo) in [#228](https://github.com/projectbluefin/common/pull/228)
+- feat: add llmfit to ai-tools.Brewfile by [@​KiKaraage](https://github.com/KiKaraage) in [#226](https://github.com/projectbluefin/common/pull/226)
+
+#### Opportunistic Work
+
+- feat: add Bazaar Companion extension by [@​coxde](https://github.com/coxde) in [#4089](https://github.com/ublue-os/bluefin/pull/4089)
+- fix: turn off bazaar.service by [@​renner0e](https://github.com/renner0e) in [#4264](https://github.com/ublue-os/bluefin/pull/4264)
+- fix(antigravity): URL scheme handling, user guidance, and added path by [@​hanthor](https://github.com/hanthor) in [#290](https://github.com/ublue-os/homebrew-tap/pull/290)
+- fix(emacs-app-linux): avoid on_arch_conditional errors and improve WM_CLASS handling by [@​dtg01100](https://github.com/dtg01100) in [#189](https://github.com/ublue-os/homebrew-experimental-tap/pull/189)
+- fix: use experimental tap path throughout bottle workflow by [@​hanthor](https://github.com/hanthor) in [#201](https://github.com/ublue-os/homebrew-experimental-tap/pull/201)
+- fix: fully-qualify bluefin-cli tap in bottle workflow by [@​hanthor](https://github.com/hanthor) in [#199](https://github.com/ublue-os/homebrew-experimental-tap/pull/199)
+- fix: use supported macOS x86 runner for bluefin-cli bottles by [@​hanthor](https://github.com/hanthor) in [#198](https://github.com/ublue-os/homebrew-experimental-tap/pull/198)
+- chore: switch bluefin-cli to Homebrew Go formula + bottles by [@​hanthor](https://github.com/hanthor) in [#197](https://github.com/ublue-os/homebrew-experimental-tap/pull/197)
+- chore: bump craft-agents-linux 0.6.0 by [@​KiKaraage](https://github.com/KiKaraage) in [#196](https://github.com/ublue-os/homebrew-experimental-tap/pull/196)
+- Update Homebrew installation command for bluefin-cli by [@​hanthor](https://github.com/hanthor) in [#672](https://github.com/projectbluefin/documentation/pull/672)
+- feat(reports): add 'New Applications' section for Homebrew additions by [@​castrojo](https://github.com/castrojo) in [#653](https://github.com/projectbluefin/documentation/pull/653)
+- chore(deps): pin homebrew/actions action to 8f52032 by [@​mergeraptor](https://github.com/mergeraptor) in [#42](https://github.com/projectbluefin/iso/pull/42)
+
+---
+
+## System Services & Policies
+
+![area/services](https://img.shields.io/badge/area%2Fservices-4A90E2?style=flat-square) ![area/policy](https://img.shields.io/badge/area%2Fpolicy-5B8BC1?style=flat-square)
+
+*Systemd services and system-level policies*
+
+#### Planned Work
+
+> Status: _ChillOps_
+
+#### Opportunistic Work
+
+- fix: turn off bazaar.service for now by [@​renner0e](https://github.com/renner0e) in [#1172](https://github.com/ublue-os/bluefin-lts/pull/1172)
+- fix: fetch raw instead of blob for zram config by [@​jumpyvi](https://github.com/jumpyvi) in [#1170](https://github.com/ublue-os/bluefin-lts/pull/1170)
+
+---
+
+## Hardware
+
+![area/hardware](https://img.shields.io/badge/area%2Fhardware-F59E0B?style=flat-square) ![area/nvidia](https://img.shields.io/badge/area%2Fnvidia-76B900?style=flat-square) ![aarch64](https://img.shields.io/badge/aarch64-F59E0B?style=flat-square)
+
+*Hardware support, drivers, NVIDIA GPU, and ARM64 architecture*
+
+#### Planned Work
+
+> Status: _ChillOps_
+
+#### Opportunistic Work
+
+- fix(ci): replace cosign attest with oras attach and use RPM-bundled nvidia-install.sh by [@​buggerman](https://github.com/buggerman) in [#4274](https://github.com/ublue-os/bluefin/pull/4274)
+- fix:DRACUT_TMPDIR export for kernel swap by [@​hanthor](https://github.com/hanthor) in [#1251](https://github.com/ublue-os/bluefin-lts/pull/1251)
+- fix(gdx): guard nvidia-modeset.conf copy for arm64 by [@​hanthor](https://github.com/hanthor) in [#1232](https://github.com/ublue-os/bluefin-lts/pull/1232)
+- fix(gdx): remove stale kernel-pin, follow coreos-stable akmods by [@​hanthor](https://github.com/hanthor) in [#1231](https://github.com/ublue-os/bluefin-lts/pull/1231)
+- feat(driver-versions): rebuild page as timeline with per-release reba… by [@​castrojo](https://github.com/castrojo) in [#684](https://github.com/projectbluefin/documentation/pull/684)
+- Feat/driver versions redesign by [@​castrojo](https://github.com/castrojo) in [#665](https://github.com/projectbluefin/documentation/pull/665)
+
+---
+
+## Infrastructure
+
+![area/iso](https://img.shields.io/badge/area%2Fiso-A0522D?style=flat-square) ![area/upstream](https://img.shields.io/badge/area%2Fupstream-5CB85C?style=flat-square) ![area/buildstream](https://img.shields.io/badge/area%2Fbuildstream-0066FF?style=flat-square) ![area/finpilot](https://img.shields.io/badge/area%2Ffinpilot-7C3AED?style=flat-square) ![area/just](https://img.shields.io/badge/area%2Fjust-E99695?style=flat-square) ![area/testing](https://img.shields.io/badge/area%2Ftesting-F59E0B?style=flat-square)
+
+*ISO images, upstream integration, build systems, and testing frameworks*
+
+#### Planned Work
+
+> Status: _ChillOps_
+
+#### Opportunistic Work
+
+- feat(ci): add DNF package cache to reusable build workflow by [@​castrojo](https://github.com/castrojo) in [#4359](https://github.com/ublue-os/bluefin/pull/4359)
+- feat(beta): turn on Bluefin beta by [@​castrojo](https://github.com/castrojo) in [#4355](https://github.com/ublue-os/bluefin/pull/4355)
+- chore(beta): point beta builds at beta branch by [@​hanthor](https://github.com/hanthor) in [#4362](https://github.com/ublue-os/bluefin/pull/4362)
+- feat: deprecate GTS image tag and migrate to stable by [@​ahmedadan](https://github.com/ahmedadan) in [#4251](https://github.com/ublue-os/bluefin/pull/4251)
+- feat: layer GNOME 50 on top of GNOME 49 base image by [@​hanthor](https://github.com/hanthor) in [#1212](https://github.com/ublue-os/bluefin-lts/pull/1212)
+- fix(ci): use tree-hash anchor for accurate promotion commit list by [@​castrojo](https://github.com/castrojo) in [#1197](https://github.com/ublue-os/bluefin-lts/pull/1197)
+- ci(promote): replace push-based promotion with PR gate by [@​castrojo](https://github.com/castrojo) in [#1195](https://github.com/ublue-os/bluefin-lts/pull/1195)
+- fix(ci): prevent production LTS tag pollution from main branch merges by [@​castrojo](https://github.com/castrojo) in [#1154](https://github.com/ublue-os/bluefin-lts/pull/1154)
+- fix: remove redundant macOS tap copy in bottle build by [@​hanthor](https://github.com/hanthor) in [#202](https://github.com/ublue-os/homebrew-experimental-tap/pull/202)
+- fix: avoid tap ambiguity in macOS bottle build by [@​hanthor](https://github.com/hanthor) in [#200](https://github.com/ublue-os/homebrew-experimental-tap/pull/200)
+- fix: add .npmrc legacy-peer-deps to unblock TypeScript 6 build by [@​castrojo](https://github.com/castrojo) in [#678](https://github.com/projectbluefin/documentation/pull/678)
+- feat(sbom): add SBOM attestation cache pipeline by [@​castrojo](https://github.com/castrojo) in [#693](https://github.com/projectbluefin/documentation/pull/693)
+- feat: SBOM pipeline for data by [@​castrojo](https://github.com/castrojo) in [#691](https://github.com/projectbluefin/documentation/pull/691)
+- perf(ci): add node_modules cache, broaden data cache key, add concurr… by [@​castrojo](https://github.com/castrojo) in [#688](https://github.com/projectbluefin/documentation/pull/688)
+- Upstream pr/fix signing SBOM commands by [@​castrojo](https://github.com/castrojo) in [#687](https://github.com/projectbluefin/documentation/pull/687)
+- fix: correct stale repo refs, announcement bar, and CI cache key by [@​castrojo](https://github.com/castrojo) in [#660](https://github.com/projectbluefin/documentation/pull/660)
+- docs(agents): update documentation for build-iso-lts-hwe-testing.yml … by [@​castrojo](https://github.com/castrojo) in [#46](https://github.com/projectbluefin/iso/pull/46)
+- ci(prerelease): attach iso-CHECKSUM files to GitHub prereleases by [@​castrojo](https://github.com/castrojo) in [#45](https://github.com/projectbluefin/iso/pull/45)
+- ci(iso): harden testing/production isolation across build and promote… by [@​castrojo](https://github.com/castrojo) in [#44](https://github.com/projectbluefin/iso/pull/44)
+- ci(iso): add weekly lts-hwe-testing iso build by [@​castrojo](https://github.com/castrojo) in [#43](https://github.com/projectbluefin/iso/pull/43)
+- fix(ci): correct build-iso-all cron schedule to run monthly by [@​castrojo](https://github.com/castrojo) in [#37](https://github.com/projectbluefin/iso/pull/37)
+
+##### Dakota (GNOME OS Prototype)
+
+- feat(ci): turn on automerge by [@​castrojo](https://github.com/castrojo) in [#145](https://github.com/projectbluefin/dakota/pull/145)
+- ci: Track with arch aarch64 for the arm elements by [@​alatiera](https://github.com/alatiera) in [#114](https://github.com/projectbluefin/dakota/pull/114)
+- ci: Use buildstream to track elements by [@​alatiera](https://github.com/alatiera) in [#111](https://github.com/projectbluefin/dakota/pull/111)
+- Fix the build_image_name again by [@​alatiera](https://github.com/alatiera) in [#97](https://github.com/projectbluefin/dakota/pull/97)
+- ci: Fix yaml indentation by [@​alatiera](https://github.com/alatiera) in [#95](https://github.com/projectbluefin/dakota/pull/95)
+- ci: Only setup the CAS config if the secrets exist by [@​alatiera](https://github.com/alatiera) in [#94](https://github.com/projectbluefin/dakota/pull/94)
+- Run builds on commits and PRs by [@​alatiera](https://github.com/alatiera) in [#92](https://github.com/projectbluefin/dakota/pull/92)
+- chore: rename build-egg.yml to build.yml by [@​castrojo](https://github.com/castrojo) in [#89](https://github.com/projectbluefin/dakota/pull/89)
+
+---
+
+## Documentation
+
+![kind/documentation](https://img.shields.io/badge/kind%2Fdocumentation-0066FF?style=flat-square)
+
+*Documentation improvements and additions*
+
+#### Planned Work
+
+> Status: _ChillOps_
+
+#### Opportunistic Work
+
+- chore(renovate): group eslint and @typescript-eslint in one PR by [@​castrojo](https://github.com/castrojo) in [#698](https://github.com/projectbluefin/documentation/pull/698)
+- chore(deps): update step-security/harden-runner action to v2.16.1 by [@​mergeraptor](https://github.com/mergeraptor) in [#689](https://github.com/projectbluefin/documentation/pull/689)
+- docs(downloads): add weekly lts-hwe testing download table by [@​castrojo](https://github.com/castrojo) in [#695](https://github.com/projectbluefin/documentation/pull/695)
+- fix(images): address issue #20 reviewer feedback — cert identity, par… by [@​castrojo](https://github.com/castrojo) in [#690](https://github.com/projectbluefin/documentation/pull/690)
+- fix(images): wire fetch-github-images into fetch-data chain by [@​castrojo](https://github.com/castrojo) in [#686](https://github.com/projectbluefin/documentation/pull/686)
+- docs(downloads,driver-versions): fix links and remove backup ISO section by [@​castrojo](https://github.com/castrojo) in [#685](https://github.com/projectbluefin/documentation/pull/685)
+- feat(images): add images catalog page by [@​castrojo](https://github.com/castrojo) in [#683](https://github.com/projectbluefin/documentation/pull/683)
+- feat(changelogs): prototype changelog card UI with supply chain and c… by [@​castrojo](https://github.com/castrojo) in [#682](https://github.com/projectbluefin/documentation/pull/682)
+- docs: Docs/lts hwe testing download links by [@​castrojo](https://github.com/castrojo) in [#681](https://github.com/projectbluefin/documentation/pull/681)
+- doc: include podman settings in devcontainers doc resolves #661 by [@​NahsiN](https://github.com/NahsiN) in [#673](https://github.com/projectbluefin/documentation/pull/673)
+- fix(reports): correct workflow ID and add PR pagination by [@​castrojo](https://github.com/castrojo) in [#679](https://github.com/projectbluefin/documentation/pull/679)
+- Remove 'mods' from AI tools documentation by [@​mmartinortiz](https://github.com/mmartinortiz) in [#659](https://github.com/projectbluefin/documentation/pull/659)
+- fix(docs): correct Goose and OpenCode MCP config for dosu by [@​castrojo](https://github.com/castrojo) in [#669](https://github.com/projectbluefin/documentation/pull/669)
+- blog: add hanthor profile card to bluefin-cli announcement by [@​castrojo](https://github.com/castrojo) in [#667](https://github.com/projectbluefin/documentation/pull/667)
+- blog: announce bluefin-cli for Mac and Windows (WSL) by [@​castrojo](https://github.com/castrojo) in [#666](https://github.com/projectbluefin/documentation/pull/666)
+- feat(changelogs): redesign changelog page with combined feed and commit view by [@​castrojo](https://github.com/castrojo) in [#664](https://github.com/projectbluefin/documentation/pull/664)
+- docs: remove retired GTS references from active documentation by [@​castrojo](https://github.com/castrojo) in [#663](https://github.com/projectbluefin/documentation/pull/663)
+- Update installation instructions for Lenovo ThinkPad users by [@​jfmongrain](https://github.com/jfmongrain) in [#656](https://github.com/projectbluefin/documentation/pull/656)
+- Document early alpha `bluefin-cli` for cross-platform use by [@​hanthor](https://github.com/hanthor) in [#662](https://github.com/projectbluefin/documentation/pull/662)
+- feat: goobye Bluefin GTS by [@​castrojo](https://github.com/castrojo) in [#654](https://github.com/projectbluefin/documentation/pull/654)
+- docs(agents): rewrite AGENTS.md and remove stale planning artifacts by [@​castrojo](https://github.com/castrojo) in [#38](https://github.com/projectbluefin/iso/pull/38)
+
+---
+
+## Tech Debt
+
+![kind/tech-debt](https://img.shields.io/badge/kind%2Ftech-debt-D4A259?style=flat-square) ![kind/parity](https://img.shields.io/badge/kind%2Fparity-9333EA?style=flat-square)
+
+*Maintenance work and feature parity between variants*
+
+#### Planned Work
+
+- chore(rollback-helper): Remove gts by [@​AtomHare](https://github.com/AtomHare) in [#229](https://github.com/projectbluefin/common/pull/229)
+
+#### Opportunistic Work
+
+- fix(packages): add autofs and restrict ROCm to non-nvidia dx by [@​castrojo](https://github.com/castrojo) in [#4370](https://github.com/ublue-os/bluefin/pull/4370)
+
+---
+
+## Automation
+
+![kind/automation](https://img.shields.io/badge/kind%2Fautomation-5B8BC1?style=flat-square) ![kind/github-action](https://img.shields.io/badge/kind%2Fgithub-action-2088FF?style=flat-square) ![kind/renovate](https://img.shields.io/badge/kind%2Frenovate-3B82F6?style=flat-square)
+
+*CI/CD pipelines, GitHub Actions, and automated dependency updates*
+
+#### Planned Work
+
+- fix(renovate): use customManagers with currentValue group by [@​ahmedadan](https://github.com/ahmedadan) in [#242](https://github.com/projectbluefin/common/pull/242)
+
+#### Opportunistic Work
+
+- fix(ci): grant contents:write to generate-release jobs by [@​castrojo](https://github.com/castrojo) in [#4371](https://github.com/ublue-os/bluefin/pull/4371)
+- chore(ci): add Sigstore build attestations by [@​castrojo](https://github.com/castrojo) in [#4369](https://github.com/ublue-os/bluefin/pull/4369)
+- fix(ci): remove pull_request trigger from GNOME 50 workflow by [@​castrojo](https://github.com/castrojo) in [#1238](https://github.com/ublue-os/bluefin-lts/pull/1238)
+- fix: upload-artifact names for hwe/non-hwe gnome50 builds by [@​hanthor](https://github.com/hanthor) in [#1220](https://github.com/ublue-os/bluefin-lts/pull/1220)
+- feat: add bluefin-dx GNOME 50 build variants by [@​hanthor](https://github.com/hanthor) in [#1221](https://github.com/ublue-os/bluefin-lts/pull/1221)
+- fix(ci): use regular merge for promotion PRs instead of squash by [@​castrojo](https://github.com/castrojo) in [#1201](https://github.com/ublue-os/bluefin-lts/pull/1201)
+- fix(ci): replace PR promotion with squash push in promote-to-lts by [@​castrojo](https://github.com/castrojo) in [#1177](https://github.com/ublue-os/bluefin-lts/pull/1177)
+- fix(ci): sync workflow files and AGENTS.md from main by [@​castrojo](https://github.com/castrojo) in [#1161](https://github.com/ublue-os/bluefin-lts/pull/1161)
+- fix(ci): fix LTS promotion workflow failures by [@​castrojo](https://github.com/castrojo) in [#1157](https://github.com/ublue-os/bluefin-lts/pull/1157)
+- fix(ci): prevent branch pollution by replacing pull app with manual workflow by [@​castrojo](https://github.com/castrojo) in [#1152](https://github.com/ublue-os/bluefin-lts/pull/1152)
+- fix(ci): prevent accidental LTS tag publishing from pull bot PRs by [@​castrojo](https://github.com/castrojo) in [#1147](https://github.com/ublue-os/bluefin-lts/pull/1147)
+- feat: switch lts builds to cron-only schedule by [@​castrojo](https://github.com/castrojo) in [#1138](https://github.com/ublue-os/bluefin-lts/pull/1138)
+- fix(ci): restrict SBOM generation to lts branch only by [@​castrojo](https://github.com/castrojo) in [#1142](https://github.com/ublue-os/bluefin-lts/pull/1142)
+- revert: restore SBOM generation on main branch by [@​castrojo](https://github.com/castrojo) in [#1141](https://github.com/ublue-os/bluefin-lts/pull/1141)
+- fix(ci): restrict SBOM generation to lts branch only by [@​castrojo](https://github.com/castrojo) in [#1140](https://github.com/ublue-os/bluefin-lts/pull/1140)
+- chore(deps): update github actions (major) by [@​mergeraptor](https://github.com/mergeraptor) in [#40](https://github.com/projectbluefin/iso/pull/40)
+- chore(deps): update github actions by [@​mergeraptor](https://github.com/mergeraptor) in [#39](https://github.com/projectbluefin/iso/pull/39)
+
+---
+
+## Localization
+
+![kind/translation](https://img.shields.io/badge/kind%2Ftranslation-8B5CF6?style=flat-square)
+
+*Translation and internationalization work*
+
+#### Planned Work
+
+- feat(bazaar, po): add Indonesian curation translation by [@​KiKaraage](https://github.com/KiKaraage) in [#207](https://github.com/projectbluefin/common/pull/207)
+
+#### Opportunistic Work
+
+> Status: _ChillOps_
+
+---
+
+## Other
+
+- fix(packages): remove sssd cluster packages  by [@​castrojo](https://github.com/castrojo) in [#4356](https://github.com/ublue-os/bluefin/pull/4356)
+- fix: upgrade script was being wiped by /tmp tmpfs mount by [@​hanthor](https://github.com/hanthor) in [#1213](https://github.com/ublue-os/bluefin-lts/pull/1213)
+- chore: remove .opencode/ and plans directory by [@​castrojo](https://github.com/castrojo) in [#119](https://github.com/projectbluefin/dakota/pull/119)
+- Revert image squash by [@​alatiera](https://github.com/alatiera) in [#96](https://github.com/projectbluefin/dakota/pull/96)
+- Disable chunkify again by [@​alatiera](https://github.com/alatiera) in [#88](https://github.com/projectbluefin/dakota/pull/88)
+- Add bluefin CAS server by [@​alatiera](https://github.com/alatiera) in [#41](https://github.com/projectbluefin/dakota/pull/41)
+- Update refs by [@​alatiera](https://github.com/alatiera) in [#78](https://github.com/projectbluefin/dakota/pull/78)
+
+---
+
+## Bot Activity
+
+**Automation Percentage:** 68.6% (258 bot PRs out of 376 total PRs)
+
+| Repository | Bot PRs | % of Total |
+|------------|---------|------------|
+| bluefin | 84 | 22.3% |
+| bluefin-lts | 73 | 19.4% |
+| dakota | 13 | 3.5% |
+| documentation | 9 | 2.4% |
+| common | 1 | 0.3% |
+
+<details>
+<summary>View bot activity details</summary>
+
+- chore(deps): pin dependencies by [@​renovate](https://github.com/renovate) in [projectbluefin/common#243](https://github.com/projectbluefin/common/pull/243)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to 650e325 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4384](https://github.com/ublue-os/bluefin/pull/4384)
+- chore(deps): update ghcr.io/ublue-os/brew:latest docker digest to 230f256 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4382](https://github.com/ublue-os/bluefin/pull/4382)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to 845c8aa by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4383](https://github.com/ublue-os/bluefin/pull/4383)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to 3242f44 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4381](https://github.com/ublue-os/bluefin/pull/4381)
+- chore(deps): update system_files/shared/usr/share/gnome-shell/extensions/tmp/bazaar-integration@kolunmi.github.io digest to 0f4df05 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4373](https://github.com/ublue-os/bluefin/pull/4373)
+- chore(deps): update ghcr.io/projectbluefin/common:latest docker digest to a04a1e6 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4372](https://github.com/ublue-os/bluefin/pull/4372)
+- chore(deps): update github/codeql-action digest to c10b806 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4349](https://github.com/ublue-os/bluefin/pull/4349)
+- chore(deps): update ghcr.io/ublue-os/brew:latest docker digest to b727251 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4357](https://github.com/ublue-os/bluefin/pull/4357)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to 922ab9f by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4366](https://github.com/ublue-os/bluefin/pull/4366)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to 3d1f4cf by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4365](https://github.com/ublue-os/bluefin/pull/4365)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to c423397 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4363](https://github.com/ublue-os/bluefin/pull/4363)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to 71f71fe by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4360](https://github.com/ublue-os/bluefin/pull/4360)
+- chore(deps): update ghcr.io/projectbluefin/common:latest docker digest to 702a73b by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4354](https://github.com/ublue-os/bluefin/pull/4354)
+- chore(deps): update ghcr.io/projectbluefin/common:latest docker digest to 7600049 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4353](https://github.com/ublue-os/bluefin/pull/4353)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to d437517 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4352](https://github.com/ublue-os/bluefin/pull/4352)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to 37e6afc by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4351](https://github.com/ublue-os/bluefin/pull/4351)
+- chore(deps): update ghcr.io/projectbluefin/common:latest docker digest to 48a1786 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4350](https://github.com/ublue-os/bluefin/pull/4350)
+- chore(deps): update anchore/sbom-action digest to e22c389 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4326](https://github.com/ublue-os/bluefin/pull/4326)
+- chore(deps): update github/codeql-action digest to 3869755 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4345](https://github.com/ublue-os/bluefin/pull/4345)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to 5adf254 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4348](https://github.com/ublue-os/bluefin/pull/4348)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to 6c6cb68 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4347](https://github.com/ublue-os/bluefin/pull/4347)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to 1fcbd82 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4346](https://github.com/ublue-os/bluefin/pull/4346)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to 373863d by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4342](https://github.com/ublue-os/bluefin/pull/4342)
+- chore(deps): update github/codeql-action digest to c6f9311 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4324](https://github.com/ublue-os/bluefin/pull/4324)
+- chore(deps): update ghcr.io/ublue-os/brew:latest docker digest to d10f9b3 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4331](https://github.com/ublue-os/bluefin/pull/4331)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to 82b6c13 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4339](https://github.com/ublue-os/bluefin/pull/4339)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to 7d464af by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4338](https://github.com/ublue-os/bluefin/pull/4338)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to f7a6604 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4337](https://github.com/ublue-os/bluefin/pull/4337)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to c02f193 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4336](https://github.com/ublue-os/bluefin/pull/4336)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to cf5fadb by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4335](https://github.com/ublue-os/bluefin/pull/4335)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to 5fff5b1 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4333](https://github.com/ublue-os/bluefin/pull/4333)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to e16cc19 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4332](https://github.com/ublue-os/bluefin/pull/4332)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to c6f7b0d by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4330](https://github.com/ublue-os/bluefin/pull/4330)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to 68ca4b9 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4329](https://github.com/ublue-os/bluefin/pull/4329)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to c2ea241 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4327](https://github.com/ublue-os/bluefin/pull/4327)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to d8f7451 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4325](https://github.com/ublue-os/bluefin/pull/4325)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to 3f6ad4a by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4323](https://github.com/ublue-os/bluefin/pull/4323)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to 3b42b00 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4322](https://github.com/ublue-os/bluefin/pull/4322)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to 06c4ef9 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4321](https://github.com/ublue-os/bluefin/pull/4321)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to 091f7f0 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4320](https://github.com/ublue-os/bluefin/pull/4320)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to 95b17f8 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4318](https://github.com/ublue-os/bluefin/pull/4318)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to 89cbe7d by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4317](https://github.com/ublue-os/bluefin/pull/4317)
+- chore(deps): update system_files/shared/usr/share/gnome-shell/extensions/search-light@icedman.github.com digest to 4e93e0e by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4313](https://github.com/ublue-os/bluefin/pull/4313)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to 4286d1e by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4315](https://github.com/ublue-os/bluefin/pull/4315)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to d228473 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4314](https://github.com/ublue-os/bluefin/pull/4314)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to cf186c0 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4312](https://github.com/ublue-os/bluefin/pull/4312)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to 5a030e7 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4311](https://github.com/ublue-os/bluefin/pull/4311)
+- chore(deps): update softprops/action-gh-release digest to 153bb8e by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4301](https://github.com/ublue-os/bluefin/pull/4301)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to 1faa30f by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4309](https://github.com/ublue-os/bluefin/pull/4309)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to ac5902e by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4307](https://github.com/ublue-os/bluefin/pull/4307)
+- chore(deps): update system_files/shared/usr/share/gnome-shell/extensions/search-light@icedman.github.com digest to e4ad180 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4295](https://github.com/ublue-os/bluefin/pull/4295)
+- chore(deps): update ghcr.io/ublue-os/brew:latest docker digest to fef8b47 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4293](https://github.com/ublue-os/bluefin/pull/4293)
+- chore(deps): update github/codeql-action digest to b1bff81 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4305](https://github.com/ublue-os/bluefin/pull/4305)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to 41b24f8 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4306](https://github.com/ublue-os/bluefin/pull/4306)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to 8f33eb6 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4304](https://github.com/ublue-os/bluefin/pull/4304)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to 6a7927a by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4303](https://github.com/ublue-os/bluefin/pull/4303)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to d5cb0e4 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4302](https://github.com/ublue-os/bluefin/pull/4302)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to 213ec9c by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4300](https://github.com/ublue-os/bluefin/pull/4300)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to c19cbe4 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4298](https://github.com/ublue-os/bluefin/pull/4298)
+- chore(deps): update softprops/action-gh-release digest to b25b93d by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4297](https://github.com/ublue-os/bluefin/pull/4297)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to 01f4995 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4296](https://github.com/ublue-os/bluefin/pull/4296)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to 2c2cd12 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4294](https://github.com/ublue-os/bluefin/pull/4294)
+- chore(deps): update softprops/action-gh-release digest to 71d29a0 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4292](https://github.com/ublue-os/bluefin/pull/4292)
+- chore(deps): update aszc/change-string-case-action action to v8 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4288](https://github.com/ublue-os/bluefin/pull/4288)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to 72a30c4 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4291](https://github.com/ublue-os/bluefin/pull/4291)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to d338079 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4290](https://github.com/ublue-os/bluefin/pull/4290)
+- chore(deps): update ghcr.io/projectbluefin/common:latest docker digest to 9409d0c by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4289](https://github.com/ublue-os/bluefin/pull/4289)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to b663d48 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4286](https://github.com/ublue-os/bluefin/pull/4286)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to 7d7aba6 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4285](https://github.com/ublue-os/bluefin/pull/4285)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to e6c9838 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4284](https://github.com/ublue-os/bluefin/pull/4284)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to aada8fd by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4282](https://github.com/ublue-os/bluefin/pull/4282)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to b1cb101 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4281](https://github.com/ublue-os/bluefin/pull/4281)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to eab0621 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4279](https://github.com/ublue-os/bluefin/pull/4279)
+- chore(deps): update ghcr.io/projectbluefin/common:latest docker digest to 69e0d5c by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4277](https://github.com/ublue-os/bluefin/pull/4277)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to 73d538d by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4278](https://github.com/ublue-os/bluefin/pull/4278)
+- chore(deps): update ghcr.io/projectbluefin/common:latest docker digest to cbe78e6 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4255](https://github.com/ublue-os/bluefin/pull/4255)
+- chore(deps): update actions/setup-node digest to 53b8394 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4259](https://github.com/ublue-os/bluefin/pull/4259)
+- chore(deps): update anchore/sbom-action digest to 57aae52 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4268](https://github.com/ublue-os/bluefin/pull/4268)
+- chore(deps): update ghcr.io/ublue-os/brew:latest docker digest to 2eca44f by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4265](https://github.com/ublue-os/bluefin/pull/4265)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to ce7c746 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4270](https://github.com/ublue-os/bluefin/pull/4270)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to 5ceb795 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4253](https://github.com/ublue-os/bluefin/pull/4253)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to 4384228 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4252](https://github.com/ublue-os/bluefin/pull/4252)
+- chore(deps): update ghcr.io/ublue-os/brew:latest docker digest to ca91068 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4248](https://github.com/ublue-os/bluefin/pull/4248)
+- chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to f8d5fd2 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin#4249](https://github.com/ublue-os/bluefin/pull/4249)
+- chore(deps): update system_files/usr/share/gnome-shell/extensions/dash-to-dock@micxgx.gmail.com digest to 69c6ee5 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1228](https://github.com/ublue-os/bluefin-lts/pull/1228)
+- chore(deps): update quay.io/centos-bootc/centos-bootc:c10s docker digest to 2c33da4 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1241](https://github.com/ublue-os/bluefin-lts/pull/1241)
+- chore(deps): update ghcr.io/ublue-os/brew:latest docker digest to 230f256 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1246](https://github.com/ublue-os/bluefin-lts/pull/1246)
+- chore(deps): update ghcr.io/projectbluefin/common:latest docker digest to a04a1e6 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1244](https://github.com/ublue-os/bluefin-lts/pull/1244)
+- chore(deps): update system_files/usr/share/gnome-shell/extensions/appindicatorsupport@rgcjonas.gmail.com digest to 5d276f3 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1216](https://github.com/ublue-os/bluefin-lts/pull/1216)
+- chore(deps): update quay.io/centos-bootc/centos-bootc:c10s docker digest to e699fae by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1223](https://github.com/ublue-os/bluefin-lts/pull/1223)
+- chore(deps): update system_files/usr/share/gnome-shell/extensions/gsconnect@andyholmes.github.io digest to 35bc599 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1236](https://github.com/ublue-os/bluefin-lts/pull/1236)
+- chore(deps): update cgr.dev/chainguard/wolfi-base:latest docker digest to a5a619c by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1234](https://github.com/ublue-os/bluefin-lts/pull/1234)
+- chore(deps): update ghcr.io/projectbluefin/common:latest docker digest to 702a73b by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1237](https://github.com/ublue-os/bluefin-lts/pull/1237)
+- chore(deps): update anchore/sbom-action digest to e22c389 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1210](https://github.com/ublue-os/bluefin-lts/pull/1210)
+- chore(deps): update ghcr.io/ublue-os/brew:latest docker digest to b727251 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1239](https://github.com/ublue-os/bluefin-lts/pull/1239)
+- chore(deps): update ghcr.io/projectbluefin/common:latest docker digest to 48a1786 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1235](https://github.com/ublue-os/bluefin-lts/pull/1235)
+- chore(deps): update hanthor/changelog-action digest to 0f9fc8c by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1233](https://github.com/ublue-os/bluefin-lts/pull/1233)
+- chore(deps): update cgr.dev/chainguard/wolfi-base:latest docker digest to 237a457 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1229](https://github.com/ublue-os/bluefin-lts/pull/1229)
+- chore(deps): update system_files/usr/share/gnome-shell/extensions/dash-to-dock@micxgx.gmail.com digest to 4a55b91 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1227](https://github.com/ublue-os/bluefin-lts/pull/1227)
+- chore(deps): update system_files/usr/share/gnome-shell/extensions/dash-to-dock@micxgx.gmail.com digest to 716b285 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1226](https://github.com/ublue-os/bluefin-lts/pull/1226)
+- chore(deps): update system_files/usr/share/gnome-shell/extensions/dash-to-dock@micxgx.gmail.com digest to 8a7e21a by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1225](https://github.com/ublue-os/bluefin-lts/pull/1225)
+- chore(deps): update system_files/usr/share/gnome-shell/extensions/dash-to-dock@micxgx.gmail.com digest to ca92703 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1224](https://github.com/ublue-os/bluefin-lts/pull/1224)
+- chore(deps): update ghcr.io/ublue-os/brew:latest docker digest to d10f9b3 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1222](https://github.com/ublue-os/bluefin-lts/pull/1222)
+- chore(deps): update system_files/usr/share/gnome-shell/extensions/dash-to-dock@micxgx.gmail.com digest to 57ac68f by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1219](https://github.com/ublue-os/bluefin-lts/pull/1219)
+- chore(deps): update system_files/usr/share/gnome-shell/extensions/dash-to-dock@micxgx.gmail.com digest to 57ac68f by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1208](https://github.com/ublue-os/bluefin-lts/pull/1208)
+- chore(deps): update cgr.dev/chainguard/wolfi-base:latest docker digest to 73de6aa by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1206](https://github.com/ublue-os/bluefin-lts/pull/1206)
+- chore(deps): update system_files/usr/share/gnome-shell/extensions/appindicatorsupport@rgcjonas.gmail.com digest to 5f21a79 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1205](https://github.com/ublue-os/bluefin-lts/pull/1205)
+- chore(deps): update quay.io/centos-bootc/centos-bootc:c10s docker digest to 56d49d1 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1204](https://github.com/ublue-os/bluefin-lts/pull/1204)
+- chore(deps): update cgr.dev/chainguard/wolfi-base:latest docker digest to 550e0d6 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1203](https://github.com/ublue-os/bluefin-lts/pull/1203)
+- chore(deps): update system_files/usr/share/gnome-shell/extensions/tmp/caffeine digest to 2fafa49 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1200](https://github.com/ublue-os/bluefin-lts/pull/1200)
+- chore(deps): update quay.io/centos-bootc/centos-bootc:c10s docker digest to 54b49be by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1198](https://github.com/ublue-os/bluefin-lts/pull/1198)
+- chore(deps): update quay.io/centos-bootc/centos-bootc:c10s docker digest to 7b1e3d1 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1194](https://github.com/ublue-os/bluefin-lts/pull/1194)
+- chore(deps): update system_files/usr/share/gnome-shell/extensions/search-light@icedman.github.com digest to 4e93e0e by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1193](https://github.com/ublue-os/bluefin-lts/pull/1193)
+- chore(deps): update quay.io/centos-bootc/centos-bootc:c10s docker digest to b10c380 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1191](https://github.com/ublue-os/bluefin-lts/pull/1191)
+- chore(deps): update quay.io/centos-bootc/centos-bootc:c10s docker digest to ff6f31c by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1185](https://github.com/ublue-os/bluefin-lts/pull/1185)
+- chore(deps): update system_files/usr/share/gnome-shell/extensions/search-light@icedman.github.com digest to e4ad180 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1190](https://github.com/ublue-os/bluefin-lts/pull/1190)
+- chore(deps): update ghcr.io/ublue-os/brew:latest docker digest to fef8b47 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1189](https://github.com/ublue-os/bluefin-lts/pull/1189)
+- chore(deps): update cgr.dev/chainguard/wolfi-base:latest docker digest to 2a43204 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1188](https://github.com/ublue-os/bluefin-lts/pull/1188)
+- chore(deps): update ghcr.io/projectbluefin/common:latest docker digest to 9409d0c by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1186](https://github.com/ublue-os/bluefin-lts/pull/1186)
+- chore(deps): update cgr.dev/chainguard/wolfi-base:latest docker digest to a9a3a0c by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1184](https://github.com/ublue-os/bluefin-lts/pull/1184)
+- chore(deps): update cgr.dev/chainguard/wolfi-base:latest docker digest to 08420c1 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1181](https://github.com/ublue-os/bluefin-lts/pull/1181)
+- chore(deps): update ghcr.io/projectbluefin/common:latest docker digest to 69e0d5c by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1174](https://github.com/ublue-os/bluefin-lts/pull/1174)
+- chore(deps): update actions/download-artifact digest to 3e5f45b by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1183](https://github.com/ublue-os/bluefin-lts/pull/1183)
+- chore(deps): update quay.io/centos-bootc/centos-bootc:c10s docker digest to c2dba5f by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1182](https://github.com/ublue-os/bluefin-lts/pull/1182)
+- chore(deps): update cgr.dev/chainguard/wolfi-base:latest docker digest to 08420c1 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1156](https://github.com/ublue-os/bluefin-lts/pull/1156)
+- chore(deps): update quay.io/centos-bootc/centos-bootc:c10s docker digest to 226b06f by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1179](https://github.com/ublue-os/bluefin-lts/pull/1179)
+- chore(deps): update quay.io/centos-bootc/centos-bootc:c10s docker digest to 9c0d148 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1178](https://github.com/ublue-os/bluefin-lts/pull/1178)
+- chore(deps): update anchore/sbom-action digest to 57aae52 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1175](https://github.com/ublue-os/bluefin-lts/pull/1175)
+- chore(deps): update quay.io/centos-bootc/centos-bootc:c10s docker digest to d1a9fbd by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1173](https://github.com/ublue-os/bluefin-lts/pull/1173)
+- chore(deps): update actions/setup-node digest to 53b8394 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1163](https://github.com/ublue-os/bluefin-lts/pull/1163)
+- chore(deps): update quay.io/centos-bootc/centos-bootc:c10s docker digest to 923014b by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1162](https://github.com/ublue-os/bluefin-lts/pull/1162)
+- chore(deps): update ghcr.io/projectbluefin/common:latest docker digest to b9a75b6 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1164](https://github.com/ublue-os/bluefin-lts/pull/1164)
+- chore(deps): update system_files/usr/share/gnome-shell/extensions/tmp/caffeine digest to 873a1b0 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1166](https://github.com/ublue-os/bluefin-lts/pull/1166)
+- chore(deps): update docker/metadata-action action to v6 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1167](https://github.com/ublue-os/bluefin-lts/pull/1167)
+- chore(deps): update system_files/usr/share/gnome-shell/extensions/gsconnect@andyholmes.github.io digest to ed2f3a1 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1168](https://github.com/ublue-os/bluefin-lts/pull/1168)
+- chore(deps): update ghcr.io/ublue-os/brew:latest docker digest to 2eca44f by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1169](https://github.com/ublue-os/bluefin-lts/pull/1169)
+- chore(deps): update system_files/usr/share/gnome-shell/extensions/dash-to-dock@micxgx.gmail.com digest to 0f21b6b by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1165](https://github.com/ublue-os/bluefin-lts/pull/1165)
+- chore(deps): update cgr.dev/chainguard/wolfi-base:latest docker digest to 786c4d1 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1149](https://github.com/ublue-os/bluefin-lts/pull/1149)
+- chore(deps): update system_files/usr/share/gnome-shell/extensions/tmp/caffeine digest to 98b3b4f by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1148](https://github.com/ublue-os/bluefin-lts/pull/1148)
+- chore(deps): update ghcr.io/projectbluefin/common:latest docker digest to cbe78e6 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1146](https://github.com/ublue-os/bluefin-lts/pull/1146)
+- chore(deps): update quay.io/centos-bootc/centos-bootc:c10s docker digest to d4ef607 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1145](https://github.com/ublue-os/bluefin-lts/pull/1145)
+- chore(deps): update ghcr.io/ublue-os/brew:latest docker digest to ca91068 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1135](https://github.com/ublue-os/bluefin-lts/pull/1135)
+- chore(deps): update quay.io/centos-bootc/centos-bootc:c10s docker digest to d4ef607 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1139](https://github.com/ublue-os/bluefin-lts/pull/1139)
+- chore(deps): update quay.io/centos-bootc/centos-bootc:c10s docker digest to 7dca424 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1131](https://github.com/ublue-os/bluefin-lts/pull/1131)
+- chore(deps): update anchore/sbom-action digest to 17ae174 by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1132](https://github.com/ublue-os/bluefin-lts/pull/1132)
+- chore(deps): update ghcr.io/projectbluefin/common:latest docker digest to b8fe93b by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1133](https://github.com/ublue-os/bluefin-lts/pull/1133)
+- chore(deps): update github artifact actions (major) by [@​ubot-7274](https://github.com/ubot-7274) in [ublue-os/bluefin-lts#1134](https://github.com/ublue-os/bluefin-lts/pull/1134)
+- promote: main → lts by [@​github-actions](https://github.com/github-actions) in [ublue-os/bluefin-lts#1245](https://github.com/ublue-os/bluefin-lts/pull/1245)
+- promote: main → lts by [@​github-actions](https://github.com/github-actions) in [ublue-os/bluefin-lts#1211](https://github.com/ublue-os/bluefin-lts/pull/1211)
+- promote: main → lts by [@​github-actions](https://github.com/github-actions) in [ublue-os/bluefin-lts#1202](https://github.com/ublue-os/bluefin-lts/pull/1202)
+- promote: main → lts by [@​github-actions](https://github.com/github-actions) in [ublue-os/bluefin-lts#1199](https://github.com/ublue-os/bluefin-lts/pull/1199)
+- promote: main → lts by [@​github-actions](https://github.com/github-actions) in [ublue-os/bluefin-lts#1196](https://github.com/ublue-os/bluefin-lts/pull/1196)
+- promote: main to lts by [@​github-actions](https://github.com/github-actions) in [ublue-os/bluefin-lts#1153](https://github.com/ublue-os/bluefin-lts/pull/1153)
+- [pull] lts from main by [@​pull](https://github.com/pull) in [ublue-os/bluefin-lts#1144](https://github.com/ublue-os/bluefin-lts/pull/1144)
+- [pull] lts from main by [@​pull](https://github.com/pull) in [ublue-os/bluefin-lts#1143](https://github.com/ublue-os/bluefin-lts/pull/1143)
+- [pull] lts from main by [@​pull](https://github.com/pull) in [ublue-os/bluefin-lts#1137](https://github.com/ublue-os/bluefin-lts/pull/1137)
+- [pull] lts from main by [@​pull](https://github.com/pull) in [ublue-os/bluefin-lts#1136](https://github.com/ublue-os/bluefin-lts/pull/1136)
+- chore(deps): update sigstore/cosign-installer action to v4 by [@​renovate](https://github.com/renovate) in [projectbluefin/documentation#692](https://github.com/projectbluefin/documentation/pull/692)
+- chore(deps): update typescript-eslint monorepo to v8 (major) by [@​renovate](https://github.com/renovate) in [projectbluefin/documentation#644](https://github.com/projectbluefin/documentation/pull/644)
+- chore(deps): update dependency typescript to v6 by [@​renovate](https://github.com/renovate) in [projectbluefin/documentation#675](https://github.com/projectbluefin/documentation/pull/675)
+- chore(deps): update actions/deploy-pages action to v5 by [@​renovate](https://github.com/renovate) in [projectbluefin/documentation#674](https://github.com/projectbluefin/documentation/pull/674)
+- chore(deps): update all non-major dependencies by [@​renovate](https://github.com/renovate) in [projectbluefin/documentation#671](https://github.com/projectbluefin/documentation/pull/671)
+- chore(deps): update all non-major dependencies by [@​renovate](https://github.com/renovate) in [projectbluefin/documentation#670](https://github.com/projectbluefin/documentation/pull/670)
+- chore(deps): update all non-major dependencies by [@​renovate](https://github.com/renovate) in [projectbluefin/documentation#657](https://github.com/projectbluefin/documentation/pull/657)
+- blog: Bluefin LTS: Now with GNOME 49 and 50 by [@​copilot-swe-agent](https://github.com/copilot-swe-agent) in [projectbluefin/documentation#677](https://github.com/projectbluefin/documentation/pull/677)
+- docs(reports): Monthly report for March 2026 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/documentation#652](https://github.com/projectbluefin/documentation/pull/652)
+- chore(deps): update tarball sources by [@​github-actions](https://github.com/github-actions) in [projectbluefin/dakota#143](https://github.com/projectbluefin/dakota/pull/143)
+- chore(deps): track core and junction sources by [@​github-actions](https://github.com/github-actions) in [projectbluefin/dakota#142](https://github.com/projectbluefin/dakota/pull/142)
+- chore(deps): track Bluefin element sources by [@​github-actions](https://github.com/github-actions) in [projectbluefin/dakota#144](https://github.com/projectbluefin/dakota/pull/144)
+- chore(deps): track Bluefin element sources by [@​github-actions](https://github.com/github-actions) in [projectbluefin/dakota#141](https://github.com/projectbluefin/dakota/pull/141)
+- chore(deps): track Bluefin element sources by [@​github-actions](https://github.com/github-actions) in [projectbluefin/dakota#132](https://github.com/projectbluefin/dakota/pull/132)
+- chore(deps): track Bluefin element sources by [@​github-actions](https://github.com/github-actions) in [projectbluefin/dakota#128](https://github.com/projectbluefin/dakota/pull/128)
+- chore(deps): update tarball sources by [@​github-actions](https://github.com/github-actions) in [projectbluefin/dakota#125](https://github.com/projectbluefin/dakota/pull/125)
+- chore(deps): track core and junction sources by [@​github-actions](https://github.com/github-actions) in [projectbluefin/dakota#123](https://github.com/projectbluefin/dakota/pull/123)
+- chore(deps): track Bluefin element sources by [@​github-actions](https://github.com/github-actions) in [projectbluefin/dakota#124](https://github.com/projectbluefin/dakota/pull/124)
+- chore(deps): track Bluefin element sources by [@​github-actions](https://github.com/github-actions) in [projectbluefin/dakota#115](https://github.com/projectbluefin/dakota/pull/115)
+- chore(deps): update tarball sources by [@​github-actions](https://github.com/github-actions) in [projectbluefin/dakota#113](https://github.com/projectbluefin/dakota/pull/113)
+- chore(deps): track Bluefin element sources by [@​github-actions](https://github.com/github-actions) in [projectbluefin/dakota#104](https://github.com/projectbluefin/dakota/pull/104)
+- chore(deps): update tarball sources by [@​github-actions](https://github.com/github-actions) in [projectbluefin/dakota#74](https://github.com/projectbluefin/dakota/pull/74)
+
+</details>
+
+---
+
+## Build Health
+
+### Raptor Race
+
+Keep Bluefin healthy with green builds. Wranglers apply within!
+
+| Image | Success Rate | Successes | Failures | Monthly Change |
+|------|--------------|-----------|----------|----------------|
+| `bluefin:stable` | 82.1% | 184 | 40 | ![+23.6%](https://img.shields.io/badge/%2B23.6%25-success?style=flat-square) |
+| `bluefin:latest` | 83.5% | 182 | 36 | ![+6.5%](https://img.shields.io/badge/%2B6.5%25-success?style=flat-square) |
+| `bluefin:lts` | 78.6% | 272 | 74 | ![+15.2%](https://img.shields.io/badge/%2B15.2%25-success?style=flat-square) |
+| `bluefin:lts-hwe` | 76.5% | 260 | 80 | ![+5.8%](https://img.shields.io/badge/%2B5.8%25-success?style=flat-square) |
+| `bluefin-dx:lts` | 75.7% | 256 | 82 | ![+26.4%](https://img.shields.io/badge/%2B26.4%25-success?style=flat-square) |
+| `bluefin-gdx:lts` | 38% | 128 | 209 | ![-25.9%](https://img.shields.io/badge/--25.9%25-critical?style=flat-square) |
+| `bluefin-dx:lts-hwe` | 77.8% | 263 | 75 | ![+30.8%](https://img.shields.io/badge/%2B30.8%25-success?style=flat-square) |
+
+### This Month's Highlights
+
+| Metric | Value |
+|--------|-------|
+| 📊 **Total Builds** | 2141 builds across all images |
+| 🏆 **Most Active** | `bluefin:lts` (346 builds) |
+| 💯 **100% Club** | _None. Vegeta is displeased._ |
+| ⏱️ **Avg Build Time** | 17 minutes across all variants |
+
+## Contributors
+
+### New Lights
+
+We welcome our newest Guardians to the project.
+
+> "I do not know what the future holds. But I know this: with you at our side, there is nothing we cannot face."
+> 
+> —Commander Zavala
+
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem', marginBottom: '2rem' }}>
+
+<GitHubProfileCard username="kriszentner" highlight={true} />
+
+<GitHubProfileCard username="buggerman" highlight={true} />
+
+<GitHubProfileCard username="mergeraptor" highlight={true} />
+
+<GitHubProfileCard username="NahsiN" highlight={true} />
+
+</div>
+
+### Wayfinders
+
+> "Define yourself by your actions."
+> 
+> —Lord Saladin
+
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem', marginBottom: '2rem' }}>
+
+<GitHubProfileCard username="ahmedadan" sponsorUrl="https://github.com/sponsors/ahmedadan" />
+
+<GitHubProfileCard username="AtomHare" />
+
+<GitHubProfileCard username="mmartinortiz" />
+
+<GitHubProfileCard username="castrojo" sponsorUrl="https://github.com/sponsors/castrojo" />
+
+<GitHubProfileCard username="KiKaraage" />
+
+<GitHubProfileCard username="coxde" />
+
+<GitHubProfileCard username="hanthor" sponsorUrl="https://github.com/sponsors/hanthor" />
+
+<GitHubProfileCard username="KyleGospo" sponsorUrl="https://github.com/sponsors/KyleGospo" />
+
+<GitHubProfileCard username="renner0e" />
+
+<GitHubProfileCard username="jumpyvi" />
+
+<GitHubProfileCard username="dtg01100" />
+
+<GitHubProfileCard username="jfmongrain" />
+
+<GitHubProfileCard username="alatiera" />
+
+</div>
+
+---
+
+*Want to see the latest OS releases? Check out the [Changelogs](/changelogs). For announcements and deep dives, read our [Blog](/blog).*
+
+*This report was automatically generated from [todo.projectbluefin.io](https://todo.projectbluefin.io).*
+
+---
+
+*Generated on 2026-04-01*  
+[View Project Board](https://todo.projectbluefin.io) | [Report an Issue](https://github.com/projectbluefin/common/issues/new)
