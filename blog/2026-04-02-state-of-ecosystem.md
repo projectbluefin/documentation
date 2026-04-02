@@ -18,6 +18,8 @@ Let's talk about numbers that matter to us. Here's the rollup:
 - KubeCon + CloudNativeCon EU hit 13,500+ attendees, not only was it the largest KubeCon ever, but it was the _largest open source conference in the world_.
 - Flahub had [21.6% Year over Year growth](https://flathub.org/en/year-in-review/2025) last year.
 
+![KubeCon](https://github.com/user-attachments/assets/485cb866-afd0-4967-b98d-8f7c3259846f)
+
 ### What this means
 
 First off it means a lot of tired developers. The `bootc` booths and talks were well attended, and everyone was talking about platform engineering and the challenges of infrastructure at scale. These are the lessons we want to bring into Bluefin and friends, we are a tiny little chicken in a world of giants. We must be crafty and efficient!
