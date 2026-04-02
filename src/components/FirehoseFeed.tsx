@@ -3,7 +3,7 @@ import firehoseData from "@site/static/data/firehose-apps.json";
 import bluefinReleasesData from "@site/static/feeds/bluefin-releases.json";
 import bluefinLtsReleasesData from "@site/static/feeds/bluefin-lts-releases.json";
 import type { FirehoseApp, FirehoseRelease, FirehoseFilterState } from "../types/firehose";
-import type { OsReleaseEvent, AppTimelineEvent, FlatTimelineEvent } from "../types/os-feed";
+import type { OsReleaseEvent, AppTimelineEvent } from "../types/os-feed";
 import { parseOsRelease } from "../utils/parseOsRelease";
 import FirehoseCard from "./FirehoseCard";
 import OsReleaseCard from "./OsReleaseCard";
