@@ -33,3 +33,5 @@ I received tons of feedback and "tell your friends hello!", but here's the lesso
 ### Not into any of those things? 
 
 Kick back and enjoy your computer! 
+
+### [Discussions](https://github.com/ublue-os/bluefin/discussions/4400)
