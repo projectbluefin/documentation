@@ -149,10 +149,6 @@ async function fetchMergedPRs(repo, startDate, endDate) {
     hasNextPage = data.repository.pullRequests.pageInfo.hasNextPage;
     cursor = data.repository.pullRequests.pageInfo.endCursor;
 
-    // Stop if we've gone past the date range
-    if (prs.length > 0 && new Date(prs[prs.length - 1].mergedAt) < startDate) {
-      break;
-    }
   }
 
   return allPRs;

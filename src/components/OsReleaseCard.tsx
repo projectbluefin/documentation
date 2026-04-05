@@ -164,7 +164,7 @@ function VersionChip({ pkg }: { pkg: ParsedMajorPackage }) {
 
 // ── Chip labels we surface in the header chips row ────────────────────────────
 
-const HEADER_CHIP_NAMES = ["Kernel", "Gnome", "Mesa", "Podman", "Nvidia", "bootc", "systemd", "pipewire"];
+const HEADER_CHIP_NAMES = ["Kernel", "HWE Kernel", "Gnome", "Mesa", "Podman", "Nvidia", "bootc", "systemd", "pipewire"];
 
 // ── Main component ────────────────────────────────────────────────────────────
 

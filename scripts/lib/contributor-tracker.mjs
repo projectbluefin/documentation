@@ -24,7 +24,10 @@ const BOT_PATTERNS = [
   /^pull$/,
   /^testpullapp$/,
   /^app\//i, // GitHub Apps (app/renovate, app/dependabot, etc.)
-  /bot$/i, // Catches most bot usernames (must be last)
+  /^mergeraptor(\[bot\])?$/i, // GitHub App bot (BOT_kgDOD_FuEQ) — appears with or without [bot] suffix depending on API
+  /^Copilot$/i, // GitHub Copilot automation account
+  /\[bot\]$/i, // Generic catch-all: any GitHub App with [bot] suffix (e.g. someapp[bot])
+  /bot$/i, // Catches remaining bot usernames that end in "bot" without brackets
 ];
 
 /**
