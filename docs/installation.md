@@ -214,11 +214,11 @@ And one more piece of advice: The more you invest into day 0, the smoother your 
 
 Secure Boot is supported by default providing an additional layer of security.
 
-Universal Blue supports secure boot with [our custom key](https://github.com/ublue-os/akmods/raw/main/certs/public_key.der)
+Universal Blue supports secure boot with [our custom key](https://github.com/ublue-os/akmods/raw/main/certs/public_key.der).
 
-After the first installation, you will be prompted to enroll the secure boot key in the mokutil UEFI menu UI (_QWERTY_ keyboard input and navigation).
+After installation completes, during first boot you will be prompted to enroll the secure boot key using the [mokutil UEFI menu UI](https://docs.fedoraproject.org/en-US/quick-docs/mok-enrollment/#_enrolling_self_signing_key_after_reboot) (_QWERTY_ keyboard input and navigation).
 
-Then, select **Enroll MOK**, and input `universalblue` as the password
+Select **Enroll MOK**, and input `universalblue` as the password.
 
 If this step is not completed during the initial setup, you can manually enroll the key by running the following command in the terminal:
 
