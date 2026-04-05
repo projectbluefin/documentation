@@ -5,7 +5,7 @@
  * during the reporting period by analyzing merged PRs and file additions.
  */
 
-import { graphqlWithAuth } from "./graphql-queries.mjs";
+import { graphqlWithAuth, retryWithBackoff } from "./graphql-queries.mjs";
 
 const TAP_REPOS = {
   production: "ublue-os/homebrew-tap",
@@ -105,7 +105,6 @@ async function fetchRepoAdditions(repo, startDate, endDate) {
 async function fetchMergedPRs(repo, startDate, endDate) {
   const [owner, name] = repo.split("/");
 
-  // GraphQL query to fetch merged PRs
   const query = `
     query($owner: String!, $name: String!, $cursor: String) {
       repository(owner: $owner, name: $name) {
@@ -113,7 +112,7 @@ async function fetchMergedPRs(repo, startDate, endDate) {
           first: 100
           after: $cursor
           states: MERGED
-          orderBy: {field: UPDATED_AT, direction: DESC}
+          orderBy: {field: MERGED_AT, direction: DESC}
         ) {
           pageInfo {
             hasNextPage
@@ -135,10 +134,11 @@ async function fetchMergedPRs(repo, startDate, endDate) {
   let cursor = null;
 
   while (hasNextPage) {
-    const data = await graphqlWithAuth(query, { owner, name, cursor });
+    const data = await retryWithBackoff(() =>
+      graphqlWithAuth(query, { owner, name, cursor })
+    );
     const prs = data.repository.pullRequests.nodes;
 
-    // Filter PRs within date range
     const filteredPRs = prs.filter((pr) => {
       const mergedAt = new Date(pr.mergedAt);
       return mergedAt >= startDate && mergedAt <= endDate;
@@ -146,9 +146,15 @@ async function fetchMergedPRs(repo, startDate, endDate) {
 
     allPRs = allPRs.concat(filteredPRs);
 
+    // Early-exit: results ordered MERGED_AT DESC — once oldest on page is before
+    // startDate, no further pages will have in-window PRs
+    const oldest = prs[prs.length - 1];
+    if (oldest && new Date(oldest.mergedAt) < startDate) {
+      break;
+    }
+
     hasNextPage = data.repository.pullRequests.pageInfo.hasNextPage;
     cursor = data.repository.pullRequests.pageInfo.endCursor;
-
   }
 
   return allPRs;
@@ -169,7 +175,7 @@ async function fetchPRFiles(repo, prNumber) {
     );
   }
 
-  const url = `https://api.github.com/repos/${repo}/pulls/${prNumber}/files`;
+  const url = `https://api.github.com/repos/${repo}/pulls/${prNumber}/files?per_page=100`;
   const response = await fetch(url, {
     headers: {
       Authorization: `Bearer ${token}`,

@@ -336,7 +336,7 @@ const REPO_CLOSED_ISSUES_QUERY = `
 const REPO_MERGED_PRS_QUERY = `
   query($owner: String!, $name: String!, $cursor: String) {
     repository(owner: $owner, name: $name) {
-      pullRequests(first: 100, after: $cursor, states: MERGED, orderBy: {field: UPDATED_AT, direction: DESC}) {
+      pullRequests(first: 100, after: $cursor, states: MERGED, orderBy: {field: MERGED_AT, direction: DESC}) {
         pageInfo {
           hasNextPage
           endCursor
@@ -438,7 +438,7 @@ export async function fetchClosedItemsFromRepo(
           number: pr.number,
           title: pr.title,
           url: pr.url,
-          closedAt: pr.mergedAt, // Use mergedAt for consistency
+          closedAt: pr.mergedAt,
           labels: pr.labels.nodes,
           author: pr.author?.login || "unknown",
           repository: `${owner}/${name}`,
@@ -446,6 +446,14 @@ export async function fetchClosedItemsFromRepo(
 
       allItems.push(...mergedPRs);
       prsCursor = prs.pageInfo.endCursor;
+
+      // Early-exit: results are ordered MERGED_AT DESC, so once the oldest PR on
+      // this page was merged before startDate we won't find any more in-window PRs
+      const oldestOnPage = prs.nodes[prs.nodes.length - 1];
+      if (oldestOnPage && new Date(oldestOnPage.mergedAt) < startDate) {
+        break;
+      }
+
       prsHasNextPage = prs.pageInfo.hasNextPage;
     }
 
@@ -462,6 +470,7 @@ export async function fetchClosedItemsFromRepo(
 export {
   PROJECT_QUERY,
   graphqlWithAuth,
+  retryWithBackoff,
   REPO_CLOSED_ISSUES_QUERY,
   REPO_MERGED_PRS_QUERY,
 };
