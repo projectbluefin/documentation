@@ -32,7 +32,9 @@ Dev server: <http://localhost:3000/>
 
 ## Git Workflow
 
-**Never push directly to main.** Always work on a topic branch:
+**Never push directly to main.** Always work on a topic branch.
+
+**One branch per logical fix.** Never bundle unrelated changes onto the same branch, even if the second change is small. Each fix gets its own branch and PR — create a separate branch, cherry-pick if needed.
 
 ```bash
 git checkout -b <type>/<short-description>
@@ -72,6 +74,29 @@ git push origin main --force-with-lease
 | Build | `npm run build` | YES |
 
 CI enforces TypeScript and ESLint as hard failures. Prettier is warnings-only.
+
+---
+
+## Required Skills
+
+| Task type | Load before starting |
+|---|---|
+| Any change to `.github/workflows/*.yml` | `github-actions-expert` skill |
+| Multi-file planning or design decisions | `blueprint-mode` skill |
+
+Failure to load the required skill before touching workflow files is a hard rule violation.
+
+---
+
+## Audit Tasks
+
+When asked to audit or investigate anything in this repo, **call `ask_user` before writing any plan.** Minimum questions to ask:
+
+1. Are the open issues still current, or stale?
+2. Forward-only fix, or retroactive correction of past data?
+3. What does "done" look like — what is in scope and out of scope?
+
+Do not proceed to planning until answers are collected.
 
 ---
 
