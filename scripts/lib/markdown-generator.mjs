@@ -13,6 +13,7 @@ import {
   generateBadge,
   getCategoryForItem,
 } from "./label-mapping.mjs";
+import { isBot } from "./contributor-tracker.mjs";
 import { getSponsorUrl } from "./github-sponsors.mjs";
 
 /**
@@ -948,8 +949,12 @@ ${highlights}`;
 function generateContributorsSection(contributors, newContributors) {
   let section = "## Contributors\n\n";
 
+  // Defensive bot filter — belt-and-suspenders in case isBot() upstream missed any
+  const safeContributors = contributors.filter((u) => !isBot(u));
+  const safeNewContributors = newContributors.filter((u) => !isBot(u));
+
   // Section 1: New Contributors (highlighted, shown first)
-  if (newContributors.length > 0) {
+  if (safeNewContributors.length > 0) {
     section += `### New Lights\n\n`;
     section += `We welcome our newest Guardians to the project.\n\n`;
     section += `> "I do not know what the future holds. But I know this: with you at our side, there is nothing we cannot face."\n`;
@@ -957,7 +962,7 @@ function generateContributorsSection(contributors, newContributors) {
     section += `> —Commander Zavala\n\n`;
     section += `<div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem', marginBottom: '2rem' }}>\n\n`;
 
-    const newContributorCards = newContributors
+    const newContributorCards = safeNewContributors
       .map((username) => {
         const sponsorUrl = getSponsorUrl(username);
         if (sponsorUrl) {
@@ -972,8 +977,8 @@ function generateContributorsSection(contributors, newContributors) {
   }
 
   // Section 2: Continuing Contributors (excluding new contributors to avoid duplicates)
-  const continuingContributors = contributors.filter(
-    (username) => !newContributors.includes(username),
+  const continuingContributors = safeContributors.filter(
+    (username) => !safeNewContributors.includes(username),
   );
 
   if (continuingContributors.length > 0) {
