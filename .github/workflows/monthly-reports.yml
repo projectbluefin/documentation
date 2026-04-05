@@ -16,8 +16,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
-        with:
-          fetch-depth: 0 # Full history for contributor tracking
 
       - name: Setup Node.js
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
@@ -37,6 +35,14 @@ jobs:
       - name: Install dependencies
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: npm ci
+
+      - name: Restore known contributors cache
+        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
+        with:
+          path: scripts/data/known-contributors.json
+          key: contributor-cache-v1-${{ github.run_id }}
+          restore-keys: |
+            contributor-cache-v1-
 
       - name: Generate monthly report
         id: generate
@@ -60,23 +66,29 @@ jobs:
 
       - name: Commit changes to branch
         run: |
-          git add reports/
-          [ -f static/data/contributors-history.json ] && git add static/data/contributors-history.json || true
+          git add reports/ scripts/data/known-contributors.json
           git diff --staged --quiet || git commit -m "docs(reports): add monthly report for $(date +%B\ %Y)"
+
+      - name: Save known contributors cache
+        uses: actions/cache/save@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
+        with:
+          path: scripts/data/known-contributors.json
+          key: contributor-cache-v1-${{ github.run_id }}
 
       - name: Push branch and create PR
         run: |
           BRANCH_NAME="monthly-report/$(date +%Y-%m)"
+          TODAY=$(date +%Y-%m-%d)
           # force-with-lease safely overwrites the branch if it exists from a prior failed run
           git push -u origin "$BRANCH_NAME" --force-with-lease
           # Only create the PR if one doesn't already exist for this branch
           if ! gh pr view "$BRANCH_NAME" --json number --jq '.number' > /dev/null 2>&1; then
             gh pr create \
               --title "docs(reports): Monthly report for $(date +%B\ %Y)" \
-              --body "$(cat <<'EOFBODY'
+              --body "$(cat <<EOFBODY
           ## Automated Monthly Report
 
-          This PR contains the automated monthly report generated on $(date +%Y-%m-%d).
+          This PR contains the automated monthly report generated on ${TODAY}.
 
           ### Contents
           - Monthly activity summary

@@ -1,33 +1,35 @@
 /**
- * Historical contributor tracking for monthly reports
+ * Contributor tracking for monthly reports
  *
- * Identifies first-time contributors by querying GitHub history
- * This allows accurate regeneration of past reports
+ * Identifies first-time contributors using a GHA cache append-only set.
+ * New contributor = not seen in any previous run. Known = in cache from prior run.
  */
 
-import { fetchClosedItemsFromRepo } from "./graphql-queries.mjs";
-import { MONITORED_REPOS } from "./monitored-repos.mjs";
+import { readFile, writeFile, mkdir } from "fs/promises";
+import { dirname } from "path";
+
+const DEFAULT_CACHE_PATH = "scripts/data/known-contributors.json";
+const DEFAULT_SEED_PATH = "scripts/data/known-contributors-seed.json";
 
 /**
- * Bot detection patterns
+ * Bot detection patterns — explicit known bots only
  */
 const BOT_PATTERNS = [
   /^dependabot\[bot\]$/,
-  /^dependabot$/i, // Dependabot without [bot] suffix
+  /^dependabot$/i,
   /^renovate\[bot\]$/,
-  /^renovate$/i, // Renovate without [bot] suffix (GraphQL returns this)
-  /^app\/renovate$/, // Renovate GitHub App format (REST API format)
+  /^renovate$/i,
+  /^app\/renovate$/,
   /^github-actions\[bot\]$/,
-  /^github-actions$/, // GitHub Actions bot without [bot] suffix
+  /^github-actions$/,
   /^copilot-swe-agent$/,
   /^ubot-\d+$/,
   /^pull$/,
   /^testpullapp$/,
-  /^app\//i, // GitHub Apps (app/renovate, app/dependabot, etc.)
-  /^mergeraptor(\[bot\])?$/i, // GitHub App bot (BOT_kgDOD_FuEQ) — appears with or without [bot] suffix depending on API
-  /^Copilot$/i, // GitHub Copilot automation account
-  /\[bot\]$/i, // Generic catch-all: any GitHub App with [bot] suffix (e.g. someapp[bot])
-  /bot$/i, // Catches remaining bot usernames that end in "bot" without brackets
+  /^app\//i,
+  /^mergeraptor(\[bot\])?$/i,
+  /^Copilot$/i,
+  /\[bot\]$/i,
 ];
 
 /**
@@ -41,96 +43,61 @@ export function isBot(username) {
 }
 
 /**
- * Fetch all contributors who contributed BEFORE a given date
+ * Load known contributors from cache file.
+ * Falls back to seed file if cache is absent.
+ * Returns empty Set on any parse error (never throws).
  *
- * This determines who was already a contributor before the report period
- *
- * @param {Date} beforeDate - Cutoff date (start of report period)
- * @returns {Promise<Set<string>>} Set of contributor usernames who contributed before this date
+ * @param {string} [cachePath] - Path to GHA-managed cache file
+ * @param {string} [seedPath] - Path to committed seed file (fallback)
+ * @returns {Promise<Set<string>>}
  */
-export async function fetchContributorsBeforeDate(beforeDate) {
-  // Subtract 1ms to avoid overlap: beforeDate is the START of the current report period,
-  // so we need to exclude it from historical data (use < instead of <=)
-  const historicalEnd = new Date(beforeDate.getTime() - 1);
-
-  console.log(
-    `[INFO] Fetching historical contributors before ${beforeDate.toISOString()}...`,
-  );
-  console.log(
-    `[INFO] Historical query range: 2024-01-01 to ${historicalEnd.toISOString()}`,
-  );
-
-  const allContributors = new Set();
-
-  // Query all monitored repos for PRs merged before the report period
-  for (const repo of MONITORED_REPOS) {
-    const [owner, name] = repo.split("/");
-
+export async function loadKnownContributors(
+  cachePath = DEFAULT_CACHE_PATH,
+  seedPath = DEFAULT_SEED_PATH,
+) {
+  for (const path of [cachePath, seedPath]) {
     try {
-      // Fetch PRs from project start (2024-01-01) to day before report start
-      const projectStart = new Date(Date.UTC(2024, 0, 1));
-      const { items, partial, error } = await fetchClosedItemsFromRepo(
-        owner,
-        name,
-        projectStart,
-        historicalEnd,
-      );
-
-      if (partial) {
-        console.warn(
-          `[WARN] Historical data truncated for ${repo}: fetched ${items.length} items before error: ${error || "unknown error"}`,
-        );
+      const raw = await readFile(path, "utf8");
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        console.log(`[INFO] Loaded ${parsed.length} known contributors from ${path}`);
+        return new Set(parsed);
       }
-
-      // Filter to merged PRs only
-      const mergedPRs = items.filter((item) => item.type === "PullRequest");
-
-      // Extract human contributors
-      mergedPRs.forEach((item) => {
-        const author = item.author;
-        if (author && !isBot(author)) {
-          allContributors.add(author);
-        }
-      });
-
-      console.log(
-        `[INFO]   ${repo}: ${mergedPRs.length} historical PRs, ${Array.from(allContributors).length} unique contributors so far`,
-      );
-    } catch (error) {
-      console.warn(`[WARN] Failed to fetch historical data from ${repo}`);
-      console.warn(`[WARN] Error: ${error.message}`);
-      // Continue with other repos
+    } catch {
+      // ENOENT or malformed JSON — try next path
     }
   }
-
-  console.log(
-    `[INFO] Found ${allContributors.size} contributors before ${beforeDate.toISOString().split("T")[0]}`,
-  );
-
-  return allContributors;
+  console.log("[INFO] No known contributors file found — cold start");
+  return new Set();
 }
 
 /**
- * Identify new contributors for a report period
+ * Save known contributors to cache file.
+ * Creates parent directory if missing. Throws on write failure.
  *
- * A contributor is "new" if they have no merged PRs before the report start date
- *
- * @param {Array<string>} contributors - Contributors in current report period
- * @param {Date} reportStartDate - Start of report period
- * @returns {Promise<Array<string>>} Array of new contributor usernames
+ * @param {Set<string>} knownSet
+ * @param {string} [cachePath]
  */
-export async function identifyNewContributors(contributors, reportStartDate) {
-  // Filter out bots first
-  const humanContributors = contributors.filter((username) => !isBot(username));
+export async function saveKnownContributors(
+  knownSet,
+  cachePath = DEFAULT_CACHE_PATH,
+) {
+  await mkdir(dirname(cachePath), { recursive: true });
+  const sorted = [...knownSet].sort();
+  await writeFile(cachePath, JSON.stringify(sorted, null, 2) + "\n", "utf8");
+  console.log(`[INFO] Saved ${knownSet.size} known contributors to ${cachePath}`);
+}
 
-  // Fetch contributors who contributed before this report period
-  const historicalContributors =
-    await fetchContributorsBeforeDate(reportStartDate);
-
-  // New contributors are those NOT in historical set
-  const newContributors = humanContributors.filter(
-    (username) => !historicalContributors.has(username),
-  );
+/**
+ * Identify new contributors for a report period.
+ * Pure function — caller owns load/save lifecycle.
+ *
+ * @param {string[]} contributors - Human contributors this period (pre-filtered, no bots)
+ * @param {Set<string>} knownSet - All contributors seen in prior runs
+ * @returns {string[]} Contributors not present in knownSet
+ */
+export function identifyNewContributors(contributors, knownSet) {
+  const newContributors = contributors.filter((u) => !knownSet.has(u));
 
   if (newContributors.length > 0) {
     console.log(
@@ -141,20 +108,4 @@ export async function identifyNewContributors(contributors, reportStartDate) {
   }
 
   return newContributors;
-}
-
-/**
- * DEPRECATED: Legacy function for backwards compatibility
- * Use identifyNewContributors() instead for accurate historical detection
- */
-export async function updateContributorHistory(contributors) {
-  console.warn(
-    "[WARN] updateContributorHistory() is deprecated. This function uses a cumulative history file which breaks report regeneration.",
-  );
-  console.warn(
-    "[WARN] For accurate regeneration, use identifyNewContributors() which queries GitHub history.",
-  );
-
-  // Return empty array to indicate no new contributors with legacy method
-  return [];
 }
