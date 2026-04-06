@@ -71,8 +71,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
           # Always re-fetch image metadata on every build so hasAttestation,
-          # versions, and security info stay current.
+          # versions, and security info stay current. IMAGES_REFRESH_HOURS: "0"
+          # forces the per-product inner cache to also refresh (it defaults to
+          # 336h and would otherwise serve stale nvidia tag data from GHA cache).
           IMAGES_CACHE_HOURS: "0"
+          IMAGES_REFRESH_HOURS: "0"
           # Always re-fetch driver versions on every build so GNOME/kernel/mesa
           # versions stay current. The data is small (GitHub API call) and the
           # script's internal 168h TTL would otherwise serve stale cached data.
