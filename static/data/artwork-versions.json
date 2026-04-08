@@ -1,0 +1,10 @@
+{
+  "$schema": "../schemas/artwork-versions-schema.json",
+  "versions": {
+    "bluefin-wallpapers": "2025-12-14",
+    "bluefin-wallpapers-extra": "2025-12-14",
+    "aurora-wallpapers": "2026-03-05",
+    "bazzite-wallpapers": "2025-12-14"
+  },
+  "updatedAt": "2026-07-10T00:00:00Z"
+}

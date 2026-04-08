@@ -1,0 +1,88 @@
+name: Sync Artwork from ublue-os/artwork
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "static/data/artwork-versions.json"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Force re-check even if no version changed"
+        type: boolean
+        default: false
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false # never cancel artwork sync mid-run
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync-artwork:
+    name: Detect and convert new wallpapers
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@fa2e9d605c4eeb9fcad4c99c224cee0c6c7f3594 # v2.16.0
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
+        with:
+          node-version: "24"
+
+      - name: Install JXL tools and ffmpeg
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y libjxl-tools ffmpeg
+
+      - name: Verify djxl is available
+        run: djxl --version
+
+      - name: Run artwork sync script
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/update-artwork.mjs
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if git diff --quiet && git diff --cached --quiet; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Read PR body from ARTWORK_CHANGES.md
+        if: steps.changes.outputs.has_changes == 'true'
+        id: pr-body
+        run: |
+          if [ -f ARTWORK_CHANGES.md ]; then
+            {
+              echo "body<<EOF"
+              cat ARTWORK_CHANGES.md
+              echo "EOF"
+            } >> "$GITHUB_OUTPUT"
+          else
+            echo "body=Automated artwork sync from ublue-os/artwork" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create Pull Request
+        if: steps.changes.outputs.has_changes == 'true'
+        uses: peter-evans/create-pull-request@c0f553fe549906ede9cf27b5156039d195d2ece0 # v8.1.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: artwork/automated-sync-${{ github.run_id }}
+          title: "artwork: sync new wallpapers from ublue-os/artwork"
+          body: ${{ steps.pr-body.outputs.body }}
+          labels: artwork,automated
+          commit-message: "artwork: add new wallpapers from upstream"

@@ -10,3 +10,7 @@ dev:
 
 serve:
     npm run start
+
+# Run Playwright e2e tests against the local dev server (reuses existing if running)
+test:
+    npm run test:e2e

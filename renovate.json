@@ -26,6 +26,13 @@
       "description": "Major updates require manual review",
       "matchUpdateTypes": ["major"],
       "automerge": false
+    },
+    {
+      "description": "Artwork version bumps — do not automerge, let the update workflow open a review PR",
+      "matchFileNames": ["static/data/artwork-versions.json"],
+      "automerge": false,
+      "groupName": "artwork wallpaper versions",
+      "groupSlug": "artwork-versions"
     }
   ],
   "vulnerabilityAlerts": {
@@ -36,5 +43,55 @@
     "enabled": true,
     "automerge": true,
     "schedule": ["before 6am on Monday"]
-  }
+  },
+  "customManagers": [
+    {
+      "customType": "regex",
+      "fileMatch": ["^static/data/artwork-versions\\.json$"],
+      "matchStrings": [
+        "\"bluefin-wallpapers\":\\s*\"(?<currentValue>[0-9]{4}-[0-9]{2}-[0-9]{2})\""
+      ],
+      "depNameTemplate": "bluefin-wallpapers",
+      "datasourceTemplate": "github-releases",
+      "packageNameTemplate": "ublue-os/artwork",
+      "versioningTemplate": "loose",
+      "extractVersionTemplate": "^bluefin-v(?<version>.+)$"
+    },
+    {
+      "customType": "regex",
+      "fileMatch": ["^static/data/artwork-versions\\.json$"],
+      "matchStrings": [
+        "\"bluefin-wallpapers-extra\":\\s*\"(?<currentValue>[0-9]{4}-[0-9]{2}-[0-9]{2})\""
+      ],
+      "depNameTemplate": "bluefin-wallpapers-extra",
+      "datasourceTemplate": "github-releases",
+      "packageNameTemplate": "ublue-os/artwork",
+      "versioningTemplate": "loose",
+      "extractVersionTemplate": "^bluefin-extra-v(?<version>.+)$"
+    },
+    {
+      "customType": "regex",
+      "fileMatch": ["^static/data/artwork-versions\\.json$"],
+      "matchStrings": [
+        "\"aurora-wallpapers\":\\s*\"(?<currentValue>[0-9]{4}-[0-9]{2}-[0-9]{2})\""
+      ],
+      "depNameTemplate": "aurora-wallpapers",
+      "datasourceTemplate": "github-releases",
+      "packageNameTemplate": "ublue-os/artwork",
+      "versioningTemplate": "loose",
+      "extractVersionTemplate": "^aurora-v(?<version>.+)$"
+    },
+    {
+      "customType": "regex",
+      "fileMatch": ["^static/data/artwork-versions\\.json$"],
+      "matchStrings": [
+        "\"bazzite-wallpapers\":\\s*\"(?<currentValue>[0-9]{4}-[0-9]{2}-[0-9]{2})\""
+      ],
+      "depNameTemplate": "bazzite-wallpapers",
+      "datasourceTemplate": "github-releases",
+      "packageNameTemplate": "ublue-os/artwork",
+      "versioningTemplate": "loose",
+      "extractVersionTemplate": "^bazzite-v(?<version>.+)$"
+    }
+  ]
 }

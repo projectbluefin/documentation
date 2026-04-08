@@ -15,6 +15,8 @@
 !/static/data/sbom-attestations.json
 !/static/data/sbom-attestations-frontend.json
 !/static/data/firehose-apps.json
+!/static/data/artwork.json
+!/static/data/artwork-versions.json
 
 # Misc
 .DS_Store
@@ -28,3 +30,4 @@ yarn-debug.log*
 yarn-error.log*
 QWEN.md
 .beads/
+test-results/
