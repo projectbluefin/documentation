@@ -47,7 +47,7 @@
   "customManagers": [
     {
       "customType": "regex",
-      "fileMatch": ["^static/data/artwork-versions\\.json$"],
+      "managerFilePatterns": ["/^static/data/artwork-versions\\.json$/"],
       "matchStrings": [
         "\"bluefin-wallpapers\":\\s*\"(?<currentValue>[0-9]{4}-[0-9]{2}-[0-9]{2})\""
       ],
@@ -59,7 +59,7 @@
     },
     {
       "customType": "regex",
-      "fileMatch": ["^static/data/artwork-versions\\.json$"],
+      "managerFilePatterns": ["/^static/data/artwork-versions\\.json$/"],
       "matchStrings": [
         "\"bluefin-wallpapers-extra\":\\s*\"(?<currentValue>[0-9]{4}-[0-9]{2}-[0-9]{2})\""
       ],
@@ -71,7 +71,7 @@
     },
     {
       "customType": "regex",
-      "fileMatch": ["^static/data/artwork-versions\\.json$"],
+      "managerFilePatterns": ["/^static/data/artwork-versions\\.json$/"],
       "matchStrings": [
         "\"aurora-wallpapers\":\\s*\"(?<currentValue>[0-9]{4}-[0-9]{2}-[0-9]{2})\""
       ],
@@ -83,7 +83,7 @@
     },
     {
       "customType": "regex",
-      "fileMatch": ["^static/data/artwork-versions\\.json$"],
+      "managerFilePatterns": ["/^static/data/artwork-versions\\.json$/"],
       "matchStrings": [
         "\"bazzite-wallpapers\":\\s*\"(?<currentValue>[0-9]{4}-[0-9]{2}-[0-9]{2})\""
       ],
