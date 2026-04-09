@@ -56,11 +56,14 @@ const MONTH_NAMES = [
 ];
 
 function cardLabel(collectionId: string, wallpaperId: string, title: string | null): string {
-  if (collectionId === "bluefin-monthly" && title === null) {
+  if (collectionId === "bluefin-monthly") {
     const match = wallpaperId.match(/^bluefin-(\d{2})$/);
     if (match) {
       const month = parseInt(match[1], 10);
-      if (month >= 1 && month <= 12) return `${MONTH_NAMES[month - 1]} - [ Redacted ]`;
+      if (month >= 1 && month <= 12) {
+        const titlePart = title ?? "[ Redacted ]";
+        return `${MONTH_NAMES[month - 1]} - ${titlePart}`;
+      }
     }
   }
   return displayTitle(title);
