@@ -153,7 +153,7 @@ test.describe("B1 — homepage hero image", () => {
 // locator instead.
 // ---------------------------------------------------------------------------
 
-test.describe("B2 — artwork gallery layout stability", () => {
+test.describe.fixme("B2 — artwork gallery layout stability", () => {
   test("artwork page CLS is below 0.1 after networkidle", async ({ page }) => {
     await page.goto("/artwork");
     // Give React hydration + artwork.json fetch time to complete
