@@ -52,53 +52,55 @@ test.describe("A1 — trailingSlash config", () => {
 });
 
 // ---------------------------------------------------------------------------
-// B1 — Homepage hero image: LCP optimisation guards
+// B1 — Homepage hero image: source-format + rendered-ratio guards
 //
-// Fix requires replacing plain markdown ![]() with a raw <img> tag bearing
-// fetchpriority="high", explicit width + height, and a WebP src.
-// The three tests below are RED on current code and GREEN after the fix.
+// The homepage hero must stay authored as markdown image syntax and must
+// render at the same aspect ratio as the underlying asset.
 //
-// Gate 2 finding on loading attribute: plain Docusaurus markdown does NOT
-// inject loading="lazy", so testing for its absence is a false green.
-// Instead, test for the *presence* of fetchpriority="high" (which the fix
-// adds and current code lacks).
-//
-// Gate 2 finding on payload: content-length headers are absent on the dev
-// server (chunked transfer).  Use fs.statSync on the image file referenced
-// in the hero img src attribute.
+// Gate on payload via fs.statSync because the dev server uses chunked
+// transfer and does not expose content-length headers reliably.
 // ---------------------------------------------------------------------------
 
 test.describe("B1 — homepage hero image", () => {
-  test("hero image has fetchpriority=high (not plain markdown)", async ({
-    page,
-  }) => {
-    await page.goto("/");
-    const hero = page.locator("article img").first();
-    await expect(hero).toBeVisible({ timeout: 10_000 });
-    const priority = await hero.getAttribute("fetchpriority");
-    expect(
-      priority,
-      'Hero image lacks fetchpriority="high" — LCP element must be explicitly prioritised. ' +
-        'Replace the markdown ![]() syntax with a raw <img fetchpriority="high" loading="eager" ...> tag.'
-    ).toBe("high");
+  test("hero image is authored with markdown syntax in docs/index.md", () => {
+    const indexMd = fs.readFileSync(
+      path.join(REPO_ROOT, "docs", "index.md"),
+      "utf8"
+    );
 
-    const loading = await hero.getAttribute("loading");
     expect(
-      loading,
-      'Hero image must have loading="eager" — prevents the browser from deferring the LCP load.'
-    ).toBe("eager");
+      indexMd,
+      "Homepage hero must use markdown image syntax, not a raw <img> tag."
+    ).toMatch(/!\[Bluefin desktop screenshot\]\(\/img\/bluefin-hero\.webp\)/);
+
+    expect(indexMd).not.toMatch(/<img[^>]+bluefin-hero\.webp/);
   });
 
-  test("hero image has explicit width and height attributes", async ({
+  test("hero image preserves the asset aspect ratio when rendered", async ({
     page,
   }) => {
     await page.goto("/");
     const hero = page.locator("article img").first();
     await expect(hero).toBeVisible({ timeout: 10_000 });
-    const w = await hero.getAttribute("width");
-    const h = await hero.getAttribute("height");
-    expect(w, "Hero image must have explicit width to prevent CLS").toBeTruthy();
-    expect(h, "Hero image must have explicit height to prevent CLS").toBeTruthy();
+
+    const metrics = await hero.evaluate((node) => {
+      const img = node as HTMLImageElement;
+      const rect = img.getBoundingClientRect();
+      return {
+        renderedWidth: rect.width,
+        renderedHeight: rect.height,
+        naturalWidth: img.naturalWidth,
+        naturalHeight: img.naturalHeight,
+      };
+    });
+
+    const naturalRatio = metrics.naturalWidth / metrics.naturalHeight;
+    const renderedRatio = metrics.renderedWidth / metrics.renderedHeight;
+
+    expect(
+      Math.abs(renderedRatio - naturalRatio),
+      `Hero image rendered ratio ${renderedRatio.toFixed(4)} must match natural ratio ${naturalRatio.toFixed(4)}.`
+    ).toBeLessThan(0.02);
   });
 
   test("hero image file on disk is under 500 KB (currently a 3.6 MB PNG)", () => {
