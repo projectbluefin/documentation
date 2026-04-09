@@ -50,6 +50,22 @@ function displayTitle(title: string | null): string {
   return title ?? "[ Redacted ]";
 }
 
+const MONTH_NAMES = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December",
+];
+
+function cardLabel(collectionId: string, wallpaperId: string, title: string | null): string {
+  if (collectionId === "bluefin-monthly" && title === null) {
+    const match = wallpaperId.match(/^bluefin-(\d{2})$/);
+    if (match) {
+      const month = parseInt(match[1], 10);
+      if (month >= 1 && month <= 12) return MONTH_NAMES[month - 1];
+    }
+  }
+  return displayTitle(title);
+}
+
 function CreditDisplay({ wallpaper }: { wallpaper: Wallpaper }): React.JSX.Element {
   if (!wallpaper.author) {
     return <span>Author unknown</span>;
@@ -407,6 +423,7 @@ export default function ArtworkGallery(): React.JSX.Element {
             <div className={styles.grid}>
               {collection.wallpapers.map((wallpaper) => {
                 const title = displayTitle(wallpaper.title);
+                const label = cardLabel(collection.id, wallpaper.id, wallpaper.title);
                 const cardKey = `${activeProject}:${collection.id}:${wallpaper.id}`;
 
                 if (!wallpaper.hasLightbox) {
@@ -429,7 +446,7 @@ export default function ArtworkGallery(): React.JSX.Element {
                       <div key={cardKey} className={styles.thumbCard}>
                         {thumbContent}
                         <div className={styles.cardMeta}>
-                          <strong>{title}</strong>
+                          <strong>{label}</strong>
                           <div className={styles.creditLine}><CreditDisplay wallpaper={wallpaper} /></div>
                         </div>
                       </div>
@@ -448,7 +465,7 @@ export default function ArtworkGallery(): React.JSX.Element {
                     >
                       {thumbContent}
                       <div className={styles.cardMeta}>
-                        <strong>{title}</strong>
+                        <strong>{label}</strong>
                         <div className={styles.creditLine}><CreditDisplay wallpaper={wallpaper} /></div>
                       </div>
                     </a>
@@ -487,7 +504,7 @@ export default function ArtworkGallery(): React.JSX.Element {
                       </div>
                     )}
                     <div className={styles.cardMeta}>
-                      <strong>{title}</strong>
+                      <strong>{label}</strong>
                       <div className={styles.creditLine}><CreditDisplay wallpaper={wallpaper} /></div>
                     </div>
                   </button>
