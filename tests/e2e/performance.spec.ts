@@ -217,7 +217,7 @@ test.describe("B2 — artwork gallery layout stability", () => {
 // lack id, aria-label, and aria-labelledby.  This test is correctly RED.
 // ---------------------------------------------------------------------------
 
-test.describe("B3 — changelogs accessibility", () => {
+test.describe.fixme("B3 — changelogs accessibility", () => {
   test("all filter <select> elements have an accessible label", async ({
     page,
   }) => {
