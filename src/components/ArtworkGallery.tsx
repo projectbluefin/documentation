@@ -34,6 +34,8 @@ interface Wallpaper {
   title: string | null;
   author: string | null;
   authorLicense: string | null;
+  coAuthor?: string | null;
+  coAuthorLink?: string | null;
   previewUrl: string | null;
   previewNightUrl: string | null;
   dayUrl: string | null;
@@ -73,17 +75,32 @@ function CreditDisplay({ wallpaper }: { wallpaper: Wallpaper }): React.JSX.Eleme
   if (!wallpaper.author) {
     return <span>Author unknown</span>;
   }
+
+  let authorNode: React.ReactNode;
   if (wallpaper.authorLicense?.startsWith("http")) {
-    return (
+    authorNode = (
       <a href={wallpaper.authorLicense} target="_blank" rel="noopener noreferrer">
         {wallpaper.author}
       </a>
     );
+  } else if (wallpaper.authorLicense) {
+    authorNode = <span>{wallpaper.author} · {wallpaper.authorLicense}</span>;
+  } else {
+    authorNode = <span>{wallpaper.author}</span>;
   }
-  if (wallpaper.authorLicense) {
-    return <span>{wallpaper.author} · {wallpaper.authorLicense}</span>;
+
+  if (wallpaper.coAuthor && wallpaper.coAuthorLink) {
+    return (
+      <span>
+        {authorNode} and{" "}
+        <a href={wallpaper.coAuthorLink} target="_blank" rel="noopener noreferrer">
+          {wallpaper.coAuthor}
+        </a>
+      </span>
+    );
   }
-  return <span>{wallpaper.author}</span>;
+
+  return <>{authorNode}</>;
 }
 
 function getPreferredImageUrl(wallpaper: Wallpaper, mode: DayNightMode): string | null {
