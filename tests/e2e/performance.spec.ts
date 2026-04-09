@@ -158,7 +158,7 @@ test.describe.fixme("B2 — artwork gallery layout stability", () => {
     await page.goto("/artwork");
     // Give React hydration + artwork.json fetch time to complete
     await page.waitForLoadState("networkidle");
-    await page.waitForTimeout(2_000);
+    await expect(page.getByText("Loading artwork catalog...")).not.toBeVisible({ timeout: 10_000 });
 
     const cls = await page.evaluate(
       () =>
