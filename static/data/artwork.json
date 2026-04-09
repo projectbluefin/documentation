@@ -146,8 +146,8 @@
             {
               "id": "bluefin-11",
               "title": "Collapse",
-              "author": "Jacob Schnurr",
-              "authorLicense": "https://www.etsy.com/shop/JSchnurrCommissions",
+              "author": "Dr. Natalia Jagielska",
+              "authorLicense": "https://natalia-jagielska.weebly.com/",
               "previewUrl": "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/collapse/collapse-day.svg",
               "dayUrl": "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/bluefin/png/11-bluefin-day.png",
               "nightUrl": "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/bluefin/png/11-bluefin-night.png",
@@ -193,19 +193,6 @@
               "jxlUrl": "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/bluefin/images/chicken.jxl",
               "primaryFormat": null,
               "hasLightbox": true
-            },
-            {
-              "id": "duality",
-              "title": "Duality",
-              "author": "Dr. Natalia Jagielska",
-              "authorLicense": "https://natalia-jagielska.weebly.com/",
-              "previewUrl": null,
-              "dayUrl": "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/duality/duality-day.svg",
-              "nightUrl": "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/duality/duality-night.svg",
-              "jxlUrl": null,
-              "primaryFormat": "svg",
-              "hasLightbox": true,
-              "previewNightUrl": null
             },
             {
               "id": "prey",
