@@ -8,14 +8,7 @@ pagination_next: introduction
 
 For end users a system as reliable as a Chromebook with near-zero maintenance while providing developers with a powerful [cloud-native development mode](bluefin-dx). Built with next-generation technology, for people who need their machines to get work done.
 
-<img
-  src="/img/bluefin-hero.webp"
-  alt="Bluefin desktop screenshot"
-  width="1920"
-  height="1080"
-  fetchpriority="high"
-  loading="eager"
-/>
+![Bluefin desktop screenshot](/img/bluefin-hero.webp)
 
 ## Is Bluefin for You?
 
