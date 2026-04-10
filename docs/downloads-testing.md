@@ -55,6 +55,12 @@ The AI workstation with Nvidia and CUDA.\
 | Bluefin GDX | Nvidia        | [📥 bluefin-gdx-lts-x86_64.iso](https://projectbluefin.dev/bluefin-gdx-lts-x86_64.iso)   |         | [🔐 Verify](https://projectbluefin.dev/bluefin-gdx-lts-x86_64.iso-CHECKSUM)  |
 | Bluefin GDX | ARM (aarch64) | [📥 bluefin-gdx-lts-aarch64.iso](https://projectbluefin.dev/bluefin-gdx-lts-aarch64.iso) |         | [🔐 Verify](https://projectbluefin.dev/bluefin-gdx-lts-aarch64.iso-CHECKSUM) |
 
+## Bluefin Dakotaraptor
+
+| Version     | GPU           | Download                                                                                 | Torrent | Checksum                                                                     |
+| ----------- | ------------- | ---------------------------------------------------------------------------------------- | ------- | ---------------------------------------------------------------------------- |
+| latest      | AMD/Intel     | [📥 dakota-live-latest.iso](https://projectbluefin.dev/dakota-live-latest.iso)) | | | 
+
 ## Verifying Downloads with Checksums
 
 **Checksums** allow you to verify that your download completed successfully and wasn't corrupted or tampered with. After downloading an ISO, you can compare its checksum to the official checksum file to ensure integrity. While optional, verification is recommended for important installations.
