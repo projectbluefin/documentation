@@ -57,9 +57,11 @@ The AI workstation with Nvidia and CUDA.\
 
 ## Bluefin Dakotaraptor
 
+Dakota is in Alpha, take appropriate precautions: 
+
 | Version     | GPU           | Download                                                                                 | Torrent | Checksum                                                                     |
 | ----------- | ------------- | ---------------------------------------------------------------------------------------- | ------- | ---------------------------------------------------------------------------- |
-| latest      | AMD/Intel     | [📥 dakota-live-latest.iso](https://projectbluefin.dev/dakota-live-latest.iso)) | | | 
+| latest      | AMD/Intel     | [📥 dakota-live-latest.iso](https://projectbluefin.dev/dakota-live-latest.iso) | | | 
 
 ## Verifying Downloads with Checksums
 
