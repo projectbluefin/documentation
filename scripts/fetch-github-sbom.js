@@ -570,6 +570,7 @@ function extractPackageVersions(sbomPath) {
     systemd: null,
     bootc: null,
     fedora: null,
+    pipewire: null,
     /** Flat name→version map of every RPM in the image */
     allPackages: /** @type {Record<string, string>} */ ({}),
   };
@@ -606,6 +607,9 @@ function extractPackageVersions(sbomPath) {
         break;
       case "bootc":
         if (!result.bootc) result.bootc = stripEpoch(String(version));
+        break;
+      case "pipewire":
+        if (!result.pipewire) result.pipewire = stripEpoch(String(version));
         break;
       case "fedora-release-common": {
         if (!result.fedora) {
