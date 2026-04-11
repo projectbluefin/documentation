@@ -18,7 +18,8 @@
 /* ── Mascot art (::after pseudo, matching ImagesCatalog pattern) ── */
 
 .cardStable::after,
-.cardLts::after {
+.cardLts::after,
+.cardDakota::after {
   content: "";
   position: absolute;
   right: 1rem;
@@ -40,6 +41,10 @@
   background-image: url("/img/characters/achillobator.webp");
 }
 
+.cardDakota::after {
+  background-image: url("/img/characters/dakotaraptor.webp");
+}
+
 /* ── Stream accent borders ── */
 
 .cardStable {
@@ -48,6 +53,10 @@
 
 .cardLts {
   border-left: 3px solid #d97706;
+}
+
+.cardDakota {
+  border-left: 3px solid #7c3aed;
 }
 
 /* ── Header ────────────────────────────────────────────────────────────────── */
@@ -118,6 +127,18 @@
   border: 1px solid rgba(217, 119, 6, 0.35);
 }
 
+.badgeDaily {
+  background: rgba(59, 130, 246, 0.15);
+  color: #1d4ed8;
+  border: 1px solid rgba(59, 130, 246, 0.35);
+}
+
+.badgeDakota {
+  background: rgba(124, 58, 237, 0.15);
+  color: #6d28d9;
+  border: 1px solid rgba(124, 58, 237, 0.35);
+}
+
 /* ── Base version chip (Fedora / CentOS) ─────────────────────────────────────── */
 
 .baseChip {
@@ -138,6 +159,8 @@
   flex-wrap: wrap;
   gap: 0.45rem;
   margin-bottom: 0.6rem;
+  /* Leave room for mascot art on the right, matching .cardHeader */
+  padding-right: 130px;
 }
 
 .dxRow {
@@ -148,6 +171,8 @@
   align-items: center;
   gap: 0.45rem;
   margin-bottom: 0.75rem;
+  /* Leave room for mascot art on the right, matching .cardHeader */
+  padding-right: 130px;
 }
 
 .dxLabel {
@@ -429,7 +454,8 @@
   }
 
   .cardStable::after,
-  .cardLts::after {
+  .cardLts::after,
+  .cardDakota::after {
     width: 70px;
     height: 70px;
     opacity: 1;
@@ -442,5 +468,6 @@
   .chipsRow,
   .dxRow {
     gap: 0.35rem;
+    padding-right: 80px;
   }
 }

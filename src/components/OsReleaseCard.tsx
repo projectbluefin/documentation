@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Heading from "@theme/Heading";
 import type {
   OsReleaseEvent,
   ParsedMajorPackage,
@@ -175,8 +176,20 @@ interface OsReleaseCardProps {
 const OsReleaseCard: React.FC<OsReleaseCardProps> = ({ event }) => {
   const { release, dateMs, stream } = event;
   const isLts = stream === "lts";
-  const streamLabel = isLts ? "LTS" : "Stable";
-  const cardClass = `${styles.card} ${isLts ? styles.cardLts : styles.cardStable}`;
+  const isDaily = stream === "stable-daily";
+  const isDakota = stream === "dakota";
+
+  const streamLabel = isLts ? "LTS" : isDaily ? "Daily" : isDakota ? "Dakota" : "Stable";
+  const cardVariantClass = isLts ? styles.cardLts : isDakota ? styles.cardDakota : styles.cardStable;
+  const cardClass = `${styles.card} ${cardVariantClass}`;
+
+  const badgeClass = isLts
+    ? styles.badgeLts
+    : isDaily
+      ? styles.badgeDaily
+      : isDakota
+        ? styles.badgeDakota
+        : styles.badgeStable;
 
   // Key package chips (header row): subset of well-known packages.
   // Falls back to fullDiff when a name isn't in the curated majorPackages table.
@@ -206,6 +219,9 @@ const OsReleaseCard: React.FC<OsReleaseCardProps> = ({ event }) => {
 
   const cardId = `os-release-${release.tag}`;
 
+  const cardTitle = isLts ? "Bluefin LTS" : isDakota ? "Bluefin Dakota" : "Bluefin";
+  const imagesAnchor = isLts ? "bluefin-lts" : isDakota ? "bluefin-dakota" : "bluefin-stable";
+
   return (
     <article
       className={cardClass}
@@ -214,12 +230,13 @@ const OsReleaseCard: React.FC<OsReleaseCardProps> = ({ event }) => {
       {/* ── Header ── */}
       <div className={styles.cardHeader}>
         <div className={styles.titleRow}>
-          <h2 className={styles.cardTitle}>{isLts ? "Bluefin LTS" : "Bluefin"}</h2>
+          <Heading as="h2" className={styles.cardTitle}>{cardTitle}</Heading>
+          <span className={`${styles.streamBadge} ${badgeClass}`}>{streamLabel}</span>
         </div>
 
         <div className={styles.metaRow}>
           <span className={styles.releaseTag}>{release.tag}</span>
-          <span className={styles.releaseDate}>{formatDate(dateMs)}</span>
+          {dateMs > 0 && <span className={styles.releaseDate}>{formatDate(dateMs)}</span>}
           {release.fedoraVersion && (
             <span className={styles.baseChip}>Fedora {release.fedoraVersion}</span>
           )}
@@ -277,7 +294,7 @@ const OsReleaseCard: React.FC<OsReleaseCardProps> = ({ event }) => {
           View on GitHub →
         </a>
         <a
-          href={`/images#${isLts ? "bluefin-lts" : "bluefin-stable"}`}
+          href={`/images#${imagesAnchor}`}
           className={styles.viewLink}
         >
           Image details →

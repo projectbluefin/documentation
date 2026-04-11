@@ -30,8 +30,8 @@ export interface OsFeedData {
 
 // ── Parsed structures ─────────────────────────────────────────────────────────
 
-/** The two active Bluefin release streams. GTS is retired — skipped in parser. */
-export type OsStream = "stable" | "lts";
+/** The active Bluefin release streams. GTS is retired — skipped in parser. */
+export type OsStream = "stable" | "stable-daily" | "lts" | "dakota";
 
 /**
  * A package entry from the "Major packages" or "Major DX packages" section.
