@@ -56,6 +56,8 @@ export interface PackageVersions {
   bootc: string | null;
   /** e.g. "F43" derived from `fedora-release-common` */
   fedora: string | null;
+  /** e.g. "1.6.1-1.fc43" from the `pipewire` RPM */
+  pipewire: string | null;
   /**
    * Flat name→version map of every RPM artifact in the image.
    * Used by fetch-firehose.js to compute per-release package diffs.
