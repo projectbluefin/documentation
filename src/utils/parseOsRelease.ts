@@ -44,11 +44,16 @@ function isGtsItem(title: string): boolean {
 /**
  * Detect the release stream from the item title.
  * Returns null for retired GTS items or unrecognized title formats.
+ *
+ * Bluefin publishes daily automated builds tagged "stable-YYYYMMDD".
+ * All stable-* tags are mapped to "stable-daily" so they appear in the stream.
+ * The pinned "Current Versions" card synthesises a "stable" display from the
+ * latest stable-daily event in FirehoseFeed.tsx.
  */
 function detectStream(title: string): OsStream | null {
   if (isGtsItem(title)) return null;
   if (/^lts[.-]/i.test(title) || /\bLTS:/i.test(title)) return "lts";
-  if (/^(stable|beta|latest)-/i.test(title)) return "stable";
+  if (/^(stable|latest|beta)-/i.test(title)) return "stable-daily";
   return null;
 }
 
@@ -77,10 +82,17 @@ function extractCentosVersion(title: string): string | null {
  *   "lts.20251223: ..."               → "lts-20251223"
  */
 function extractTag(title: string, stream: OsStream): string {
-  // Standard prefix format: "stable-YYYYMMDD:", "lts-YYYYMMDD:", "lts.YYYYMMDD:"
+  // Standard prefix format: "stable-YYYYMMDD", "lts-YYYYMMDD", "lts.YYYYMMDD", "latest-YYYYMMDD"
   const prefixMatch = title.match(/^([a-z]+-[\d.]+)/i);
   if (prefixMatch) {
-    return prefixMatch[1].toLowerCase().replace(/^lts\.(\d{8})$/, "lts-$1");
+    let tag = prefixMatch[1].toLowerCase();
+    // Normalize legacy dot format
+    tag = tag.replace(/^lts\.(\d{8})$/, "lts-$1");
+    // Normalize latest- prefix → stable-daily-YYYYMMDD
+    tag = tag.replace(/^latest-(\d{8})$/, "stable-daily-$1");
+    // Normalize stable-YYYYMMDD → stable-daily-YYYYMMDD (matches OCI image tag :stable-daily)
+    tag = tag.replace(/^(?:stable|beta)-(\d{8}(\.\d+)?)$/, "stable-daily-$1");
+    return tag;
   }
   // LTS alternative format: "bluefin-lts LTS: YYYYMMDD (...)"
   const ltsAltMatch = title.match(/LTS:\s*(\d{8})/i);
@@ -88,7 +100,7 @@ function extractTag(title: string, stream: OsStream): string {
   return stream;
 }
 
-// ── Section extraction ────────────────────────────────────────────────────────
+// ── Section extraction (HTML) ─────────────────────────────────────────────────
 
 /**
  * Extract named sections from the release HTML.
@@ -107,6 +119,115 @@ function extractSections(html: string): Map<string, string> {
     sections.set(heading, m[2]);
   }
   return sections;
+}
+
+// ── Markdown parsers ──────────────────────────────────────────────────────────
+
+/** Strip Markdown inline formatting: bold, links, inline code. */
+function stripMd(text: string): string {
+  return text
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1") // [text](url) → text
+    .replace(/\*\*([^*]*)\*\*/g, "$1")        // **bold** → text
+    .replace(/`([^`]+)`/g, "$1")              // `code` → text
+    .trim();
+}
+
+/** Split a Markdown table row into trimmed cell strings. */
+function splitMdRow(line: string): string[] {
+  return line.replace(/^\||\|$/g, "").split("|").map((s) => s.trim());
+}
+
+/** Returns true if a row is a separator line (| --- | --- |). */
+function isMdSeparatorRow(cells: string[]): boolean {
+  return cells.every((c) => /^:?-+:?$/.test(c));
+}
+
+/**
+ * Extract named sections from Markdown release body.
+ * Returns a Map of section heading text → array of cell-arrays (one per data row).
+ * Heading links are stripped: "### [Dev Experience Images](url)" → "Dev Experience Images".
+ */
+function extractSectionsMd(content: string): Map<string, string[][]> {
+  const sections = new Map<string, string[][]>();
+  const lines = content.split("\n");
+  let currentHeading: string | null = null;
+  let currentRows: string[][] = [];
+
+  for (const line of lines) {
+    const headingMatch = line.match(/^###\s+(.*)/);
+    if (headingMatch) {
+      if (currentHeading !== null && currentRows.length > 0) {
+        sections.set(currentHeading, currentRows);
+      }
+      currentHeading = stripMd(headingMatch[1]);
+      currentRows = [];
+      continue;
+    }
+    if (currentHeading !== null && line.startsWith("|")) {
+      const cells = splitMdRow(line);
+      if (isMdSeparatorRow(cells)) continue; // skip | --- | rows
+      currentRows.push(cells);
+    }
+  }
+  if (currentHeading !== null && currentRows.length > 0) {
+    sections.set(currentHeading, currentRows);
+  }
+  return sections;
+}
+
+/** Parse Markdown 2-column [Name, Version] rows. */
+function parseTwoColTableMd(rows: string[][]): ParsedMajorPackage[] {
+  const results: ParsedMajorPackage[] = [];
+  for (const cells of rows) {
+    if (cells.length < 2) continue;
+    const name = stripMd(cells[0]);
+    if (!name || name === "Name") continue;
+    const versionRaw = stripMd(cells[1]);
+    const parts = versionRaw.split(/\s*➡️?\s*/u).map((s) => s.trim());
+    if (parts.length >= 2 && parts[0] && parts[parts.length - 1]) {
+      results.push({ name, version: parts[parts.length - 1], prevVersion: parts[0] });
+    } else {
+      results.push({ name, version: versionRaw, prevVersion: null });
+    }
+  }
+  return results;
+}
+
+/** Parse Markdown commits rows: [Hash, Subject] or [Hash, Subject, Author]. */
+function parseCommitsTableMd(rows: string[][]): ParsedCommit[] {
+  const results: ParsedCommit[] = [];
+  for (const cells of rows) {
+    if (cells.length < 2) continue;
+    const hashCell = cells[0];
+    // Extract URL from [text](url) in hash cell
+    const urlMatch = hashCell.match(/\(https:\/\/github\.com\/([^)]+)\)/);
+    const url = urlMatch ? `https://github.com/${urlMatch[1]}` : null;
+    const hash = stripMd(hashCell);
+    if (!hash || hash === "Hash") continue;
+    const subject = stripMd(cells[1]);
+    if (!subject) continue;
+    const author = cells[2] ? stripMd(cells[2]) || null : null;
+    results.push({ hash, url, subject, author });
+  }
+  return results;
+}
+
+/** Parse Markdown 4-column [emoji, Name, Previous, New] diff rows. */
+function parseFourColDiffTableMd(rows: string[][]): ParsedDiffEntry[] {
+  const results: ParsedDiffEntry[] = [];
+  for (const cells of rows) {
+    if (cells.length < 4) continue;
+    const emojiText = cells[0].trim();
+    const name = stripMd(cells[1]);
+    if (!name || name === "Name") continue;
+    const prevVersion = stripMd(cells[2]) || null;
+    const newVersion = stripMd(cells[3]) || null;
+    let indicator: ParsedDiffEntry["indicator"] = "changed";
+    if (emojiText.includes("✨") || (!prevVersion && newVersion)) indicator = "added";
+    else if (emojiText.includes("❌") || (prevVersion && !newVersion)) indicator = "removed";
+    results.push({ indicator, name, prevVersion, newVersion });
+  }
+  return results;
 }
 
 // ── Table parsers ─────────────────────────────────────────────────────────────
@@ -240,25 +361,37 @@ export function parseOsRelease(
   const stream = streamHint ?? detectStream(item.title);
   if (!stream) return null;
 
-  const sections = extractSections(item.content);
+  // GitHub Releases API returns Markdown; Atom feed returns HTML.
+  // Detect by presence of Markdown table separator rows.
+  const isMarkdown = /^\|[\s|:-]*---[\s|:-]*\|/m.test(item.content);
 
-  const majorPackages = parseTwoColTable(sections.get("Major packages") ?? "");
-
-  const dxTableHtml =
-    sections.get("Major DX packages") ??
-    sections.get("Major GDX packages") ??
-    "";
-  const dxPackages = parseTwoColTable(dxTableHtml);
-
-  const commitsHtml = sections.get("Commits") ?? "";
-  const commits = commitsHtml ? parseCommitsTable(commitsHtml) : [];
-
-  const fullDiffSectionNames = ["All Images", "Base Images", "Dev Experience Images"];
+  let majorPackages: ParsedMajorPackage[];
+  let dxPackages: ParsedMajorPackage[];
+  let commits: ParsedCommit[];
   const fullDiff: ParsedDiffEntry[] = [];
-  for (const heading of fullDiffSectionNames) {
-    const tableHtml = sections.get(heading);
-    if (tableHtml) {
-      fullDiff.push(...parseFourColDiffTable(tableHtml));
+
+  if (isMarkdown) {
+    const mdSections = extractSectionsMd(item.content);
+    majorPackages = parseTwoColTableMd(mdSections.get("Major packages") ?? []);
+    dxPackages = parseTwoColTableMd(
+      mdSections.get("Major DX packages") ?? mdSections.get("Major GDX packages") ?? [],
+    );
+    commits = parseCommitsTableMd(mdSections.get("Commits") ?? []);
+    for (const heading of ["All Images", "Base Images", "Dev Experience Images"]) {
+      const rows = mdSections.get(heading);
+      if (rows) fullDiff.push(...parseFourColDiffTableMd(rows));
+    }
+  } else {
+    const sections = extractSections(item.content);
+    majorPackages = parseTwoColTable(sections.get("Major packages") ?? "");
+    dxPackages = parseTwoColTable(
+      sections.get("Major DX packages") ?? sections.get("Major GDX packages") ?? "",
+    );
+    const commitsHtml = sections.get("Commits") ?? "";
+    commits = commitsHtml ? parseCommitsTable(commitsHtml) : [];
+    for (const heading of ["All Images", "Base Images", "Dev Experience Images"]) {
+      const tableHtml = sections.get(heading);
+      if (tableHtml) fullDiff.push(...parseFourColDiffTable(tableHtml));
     }
   }
 

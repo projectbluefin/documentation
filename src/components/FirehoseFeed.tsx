@@ -1,9 +1,10 @@
 import React, { useState, useMemo, useEffect } from "react";
+import Heading from "@theme/Heading";
 import firehoseData from "@site/static/data/firehose-apps.json";
 import bluefinReleasesData from "@site/static/feeds/bluefin-releases.json";
 import bluefinLtsReleasesData from "@site/static/feeds/bluefin-lts-releases.json";
 import type { FirehoseApp, FirehoseRelease, FirehoseFilterState } from "../types/firehose";
-import type { OsReleaseEvent, AppTimelineEvent } from "../types/os-feed";
+import type { OsReleaseEvent, AppTimelineEvent, FlatTimelineEvent } from "../types/os-feed";
 import { parseOsRelease } from "../utils/parseOsRelease";
 import FirehoseCard from "./FirehoseCard";
 import OsReleaseCard from "./OsReleaseCard";
@@ -28,29 +29,69 @@ export interface FlatRelease {
 
 // ── OS release events (parsed once at module scope) ───────────────────────────
 
+/**
+ * Parse all items from a feed into OsReleaseEvent[].
+ * streamHint overrides per-item stream detection (used for LTS feed which lacks
+ * stream-identifying prefixes on some historical entries).
+ */
 function loadOsEvents(
   feedData: typeof bluefinReleasesData,
-  stream: "stable" | "lts",
+  streamHint?: "lts",
 ): OsReleaseEvent[] {
   const events: OsReleaseEvent[] = [];
   for (const item of feedData.items ?? []) {
-    const release = parseOsRelease(item, stream);
-    if (!release) continue; // GTS entry or parse failure — skip
+    const release = parseOsRelease(item, streamHint);
+    if (!release) continue; // GTS entry or unrecognized format — skip
     const dateMs = new Date(item.pubDate).getTime();
     if (isNaN(dateMs)) continue;
-    events.push({ kind: "os", stream, dateMs, release });
+    events.push({ kind: "os", stream: release.stream, dateMs, release });
   }
   return events;
 }
 
-const STABLE_OS_EVENTS: OsReleaseEvent[] = loadOsEvents(bluefinReleasesData, "stable");
+// All parsed events from both feeds, sorted newest-first
+const BLUEFIN_OS_EVENTS: OsReleaseEvent[] = loadOsEvents(bluefinReleasesData);
 const LTS_OS_EVENTS: OsReleaseEvent[] = loadOsEvents(bluefinLtsReleasesData, "lts");
-const ALL_OS_EVENTS: OsReleaseEvent[] = [
-  // Most recent stable release only
-  ...(STABLE_OS_EVENTS.length > 0 ? [STABLE_OS_EVENTS[0]] : []),
-  // Most recent LTS release only
-  ...(LTS_OS_EVENTS.length > 0 ? [LTS_OS_EVENTS[0]] : []),
+const ALL_OS_STREAM_EVENTS: OsReleaseEvent[] = [
+  ...BLUEFIN_OS_EVENTS,
+  ...LTS_OS_EVENTS,
 ].sort((a, b) => b.dateMs - a.dateMs);
+
+// Dakota placeholder — upstream repo has no releases yet
+const DAKOTA_PLACEHOLDER_EVENT: OsReleaseEvent = {
+  kind: "os",
+  stream: "dakota",
+  dateMs: 0, // no date — placeholder
+  release: {
+    stream: "dakota",
+    tag: "dakota-alpha",
+    githubUrl: "https://github.com/projectbluefin/dakota",
+    fedoraVersion: null,
+    centosVersion: null,
+    majorPackages: [
+      { name: "Kernel", version: "TBD", prevVersion: null },
+      { name: "Gnome", version: "TBD", prevVersion: null },
+      { name: "Mesa", version: "TBD", prevVersion: null },
+    ],
+    dxPackages: [],
+    commits: [],
+    fullDiff: [],
+  },
+};
+
+// Pinned "Current Versions" cards: latest stable + latest LTS + Dakota placeholder.
+// All bluefin releases are stable-daily; synthesise a "stable"-streamed clone for
+// the pinned card so it shows the "Stable" badge while the stream shows "Daily".
+const PINNED_OS_EVENTS: OsReleaseEvent[] = (() => {
+  // Pinned Bluefin card: latest from the bluefin feed, displayed as "stable" stream
+  const pinnedStable: OsReleaseEvent | undefined = BLUEFIN_OS_EVENTS.length > 0
+    ? { ...BLUEFIN_OS_EVENTS[0], stream: "stable", release: { ...BLUEFIN_OS_EVENTS[0].release, stream: "stable" } }
+    : undefined;
+  // Pinned LTS card: latest from LTS feed
+  const pinnedLts: OsReleaseEvent | undefined = LTS_OS_EVENTS.length > 0 ? LTS_OS_EVENTS[0] : undefined;
+  return [pinnedStable, pinnedLts, DAKOTA_PLACEHOLDER_EVENT]
+    .filter((e): e is OsReleaseEvent => e !== undefined);
+})();
 
 /**
  * Flatten every app's releases array into individual events.
@@ -178,7 +219,7 @@ function Statistics({
         ))}
         {osEventCount > 0 && (
           <>
-            <dt>OS Releases</dt>
+            <dt>OS Releases in stream</dt>
             <dd>{osEventCount}</dd>
           </>
         )}
@@ -300,38 +341,55 @@ const FirehoseFeed: React.FC = () => {
     setFeaturedApp(getFeaturedApp(uniqueApps));
   }, [uniqueApps]);
 
-  // ── OS release events ───────────────────────────────────────────────────────
+  // ── OS stream events (filtered) ────────────────────────────────────────────
+  // All OS events for the Updates Stream (all streams, date-filtered).
+  // When packageType==="os", only OS events are shown (no apps).
+  // When showOsReleases===false, OS events are excluded from the stream.
 
-  const filteredOsEvents = useMemo((): OsReleaseEvent[] => {
-    if (!filters.showOsReleases) return [];
-    if (filters.updatedWithin === "all") return ALL_OS_EVENTS;
+  const showOsInStream = filters.showOsReleases || filters.packageType === "os";
+
+  const filteredOsStreamEvents = useMemo((): OsReleaseEvent[] => {
+    if (!showOsInStream) return [];
+    if (filters.updatedWithin === "all") return ALL_OS_STREAM_EVENTS;
     const maxAge = DAYS_MS[filters.updatedWithin];
     const now = Date.now();
-    return ALL_OS_EVENTS.filter((e) => now - e.dateMs <= maxAge);
-  }, [filters.showOsReleases, filters.updatedWithin]);
+    return ALL_OS_STREAM_EVENTS.filter((e) => e.dateMs > 0 && now - e.dateMs <= maxAge);
+  }, [showOsInStream, filters.updatedWithin]);
 
-  // How many OS events are hidden by the date filter (for inline notice)
+  // How many stream OS events are hidden by the date filter
   const hiddenOsCount = useMemo(
     () =>
-      filters.showOsReleases && filters.updatedWithin !== "all"
-        ? ALL_OS_EVENTS.length - filteredOsEvents.length
+      showOsInStream && filters.updatedWithin !== "all"
+        ? ALL_OS_STREAM_EVENTS.filter((e) => e.dateMs > 0).length - filteredOsStreamEvents.length
         : 0,
-    [filteredOsEvents, filters.showOsReleases, filters.updatedWithin],
+    [filteredOsStreamEvents, showOsInStream, filters.updatedWithin],
   );
 
-  // ── Grouped sections ───────────────────────────────────────────────────────
+  // ── Unified "Updates Stream" ───────────────────────────────────────────────
   //
-  // OS releases are pinned as the featured section. App updates follow as a
-  // secondary section, separated by a visual divider. Each section is sorted
-  // by date independently.
+  // OS releases and app updates merged into one chronological list.
+  // packageType==="os" shows only OS events; otherwise interleaved.
 
-  const osSection = filteredOsEvents; // already sorted by dateMs desc
-  const appSection = filteredUniqueApps
-    .map(({ app, latestMs }): AppTimelineEvent => ({ kind: "app", app, dateMs: latestMs }))
-    .sort((a, b) => b.dateMs - a.dateMs);
+  const appSection = useMemo(
+    () =>
+      filteredUniqueApps
+        .map(({ app, latestMs }): AppTimelineEvent => ({ kind: "app", app, dateMs: latestMs }))
+        .sort((a, b) => b.dateMs - a.dateMs),
+    [filteredUniqueApps],
+  );
 
-  const isEmpty = allEvents.length === 0 && ALL_OS_EVENTS.length === 0;
-  const feedEmpty = osSection.length === 0 && appSection.length === 0;
+  const unifiedStream = useMemo((): FlatTimelineEvent[] => {
+    const items: FlatTimelineEvent[] = [];
+    if (filters.packageType !== "os") {
+      items.push(...appSection);
+    }
+    items.push(...filteredOsStreamEvents);
+    items.sort((a, b) => b.dateMs - a.dateMs);
+    return items;
+  }, [filteredOsStreamEvents, appSection, filters.packageType]);
+
+  const isEmpty = allEvents.length === 0 && ALL_OS_STREAM_EVENTS.length === 0;
+  const feedEmpty = unifiedStream.length === 0;
 
   return (
     <div className={styles.layout}>
@@ -354,7 +412,7 @@ const FirehoseFeed: React.FC = () => {
           matchCount={filteredUniqueApps.length}
         />
         {!isEmpty && (
-          <Statistics uniqueApps={uniqueApps} osEventCount={ALL_OS_EVENTS.length} />
+          <Statistics uniqueApps={uniqueApps} osEventCount={ALL_OS_STREAM_EVENTS.length} />
         )}
       </aside>
 
@@ -388,40 +446,42 @@ const FirehoseFeed: React.FC = () => {
               pipeline runs every 6 hours — check back soon.
             </p>
           </div>
-        ) : feedEmpty ? (
-          <div className={styles.emptyState}>
-            <p>No items match the current filters.</p>
-            <button
-              className={styles.clearFiltersBtn}
-              onClick={() => setFilters(DEFAULT_FILTERS)}
-            >
-              Clear filters
-            </button>
-          </div>
         ) : (
           <>
-            {/* ── OS Releases — featured section ── */}
-            {osSection.length > 0 && (
-              <section className={styles.feedSection}>
-                <h2 className={styles.feedSectionHeading}>Bluefin OS Releases</h2>
-                {osSection.map((event) => (
-                  <OsReleaseCard key={`os-${event.release.tag}`} event={event} />
-                ))}
-              </section>
-            )}
+            {/* ── Current Versions — pinned cards, always visible ── */}
+            <section className={styles.feedSection}>
+              <Heading as="h2" className={styles.feedSectionHeading}>Current Versions</Heading>
+              {PINNED_OS_EVENTS.map((event) => (
+                <OsReleaseCard key={`pinned-${event.release.tag}`} event={event} />
+              ))}
+            </section>
 
-            {/* ── App Updates — secondary section ── */}
-            {appSection.length > 0 && (
+            {/* ── Updates Stream — unified chronological feed ── */}
+            {feedEmpty ? (
+              <div className={styles.emptyState}>
+                <p>No items match the current filters.</p>
+                <button
+                  className={styles.clearFiltersBtn}
+                  onClick={() => setFilters(DEFAULT_FILTERS)}
+                >
+                  Clear filters
+                </button>
+              </div>
+            ) : (
               <section className={styles.feedSection}>
                 <div className={styles.appSectionDivider}>
-                  <h2 className={styles.feedSectionHeading}>App Updates</h2>
+                  <Heading as="h2" className={styles.feedSectionHeading}>Updates Stream</Heading>
                   <span className={styles.appSectionHint}>
-                    Flatpak &amp; Homebrew packages included in Bluefin
+                    OS releases, Flatpak &amp; Homebrew packages included in Bluefin
                   </span>
                 </div>
-                {appSection.map((event) => (
-                  <FirehoseCard key={event.app.id} app={event.app} />
-                ))}
+                {unifiedStream.map((event) =>
+                  event.kind === "os" ? (
+                    <OsReleaseCard key={`stream-${event.release.tag}-${event.dateMs}`} event={event} />
+                  ) : (
+                    <FirehoseCard key={event.app.id} app={event.app} />
+                  ),
+                )}
               </section>
             )}
           </>
