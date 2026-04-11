@@ -45,15 +45,16 @@ function isGtsItem(title: string): boolean {
  * Detect the release stream from the item title.
  * Returns null for retired GTS items or unrecognized title formats.
  *
- * Bluefin publishes daily automated builds tagged "stable-YYYYMMDD".
- * All stable-* tags are mapped to "stable-daily" so they appear in the stream.
- * The pinned "Current Versions" card synthesises a "stable" display from the
- * latest stable-daily event in FirehoseFeed.tsx.
+ * Bluefin publishes weekly builds tagged "stable-YYYYMMDD" (GitHub Releases).
+ * These map to the "stable" stream.
+ * "stable-daily" is reserved for if/when a separate daily-tagged release
+ * series is published.
  */
 function detectStream(title: string): OsStream | null {
   if (isGtsItem(title)) return null;
   if (/^lts[.-]/i.test(title) || /\bLTS:/i.test(title)) return "lts";
-  if (/^(stable|latest|beta)-/i.test(title)) return "stable-daily";
+  if (/^(stable|beta)-/i.test(title)) return "stable";
+  if (/^latest-/i.test(title)) return "stable-daily";
   return null;
 }
 
@@ -90,8 +91,6 @@ function extractTag(title: string, stream: OsStream): string {
     tag = tag.replace(/^lts\.(\d{8})$/, "lts-$1");
     // Normalize latest- prefix → stable-daily-YYYYMMDD
     tag = tag.replace(/^latest-(\d{8})$/, "stable-daily-$1");
-    // Normalize stable-YYYYMMDD → stable-daily-YYYYMMDD (matches OCI image tag :stable-daily)
-    tag = tag.replace(/^(?:stable|beta)-(\d{8}(\.\d+)?)$/, "stable-daily-$1");
     return tag;
   }
   // LTS alternative format: "bluefin-lts LTS: YYYYMMDD (...)"
@@ -149,7 +148,7 @@ function isMdSeparatorRow(cells: string[]): boolean {
  */
 function extractSectionsMd(content: string): Map<string, string[][]> {
   const sections = new Map<string, string[][]>();
-  const lines = content.split("\n");
+  const lines = content.split(/\r?\n/);
   let currentHeading: string | null = null;
   let currentRows: string[][] = [];
 
@@ -367,15 +366,15 @@ export function parseOsRelease(
 
   let majorPackages: ParsedMajorPackage[];
   let dxPackages: ParsedMajorPackage[];
+  let gdxPackages: ParsedMajorPackage[];
   let commits: ParsedCommit[];
   const fullDiff: ParsedDiffEntry[] = [];
 
   if (isMarkdown) {
     const mdSections = extractSectionsMd(item.content);
     majorPackages = parseTwoColTableMd(mdSections.get("Major packages") ?? []);
-    dxPackages = parseTwoColTableMd(
-      mdSections.get("Major DX packages") ?? mdSections.get("Major GDX packages") ?? [],
-    );
+    dxPackages = parseTwoColTableMd(mdSections.get("Major DX packages") ?? []);
+    gdxPackages = parseTwoColTableMd(mdSections.get("Major GDX packages") ?? []);
     commits = parseCommitsTableMd(mdSections.get("Commits") ?? []);
     for (const heading of ["All Images", "Base Images", "Dev Experience Images"]) {
       const rows = mdSections.get(heading);
@@ -384,9 +383,8 @@ export function parseOsRelease(
   } else {
     const sections = extractSections(item.content);
     majorPackages = parseTwoColTable(sections.get("Major packages") ?? "");
-    dxPackages = parseTwoColTable(
-      sections.get("Major DX packages") ?? sections.get("Major GDX packages") ?? "",
-    );
+    dxPackages = parseTwoColTable(sections.get("Major DX packages") ?? "");
+    gdxPackages = parseTwoColTable(sections.get("Major GDX packages") ?? "");
     const commitsHtml = sections.get("Commits") ?? "";
     commits = commitsHtml ? parseCommitsTable(commitsHtml) : [];
     for (const heading of ["All Images", "Base Images", "Dev Experience Images"]) {
@@ -400,7 +398,7 @@ export function parseOsRelease(
   // Backfill: any majorPackage or dxPackage that changed but is absent from fullDiff
   // gets a synthetic "changed" entry so the collapsible list shows the full upgrade path.
   const fullDiffNames = new Set(fullDiff.map((e) => e.name.toLowerCase()));
-  for (const pkg of [...majorPackages, ...dxPackages]) {
+  for (const pkg of [...majorPackages, ...dxPackages, ...gdxPackages]) {
     if (pkg.prevVersion && !fullDiffNames.has(pkg.name.toLowerCase())) {
       fullDiff.unshift({
         indicator: "changed",
@@ -422,6 +420,7 @@ export function parseOsRelease(
     centosVersion: extractCentosVersion(item.title),
     majorPackages,
     dxPackages,
+    gdxPackages,
     commits,
     fullDiff,
   };

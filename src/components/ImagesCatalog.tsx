@@ -26,6 +26,10 @@ interface Product {
   org: string;
   summary: string;
   artwork: "bluefin" | "achillobator" | "dakotaraptor";
+  downloads: {
+    display: string;
+    source: "live" | "cache" | "unavailable";
+  };
   packagePageUrl: string;
   isoSectionLink?: string | null;
   streams: StreamInfo[];
@@ -62,6 +66,17 @@ interface ImagesCatalog {
   products: Product[];
 }
 
+function sourceText(source: "live" | "cache" | "unavailable", kind: string) {
+  if (source === "live") return `${kind}: live`;
+  if (source === "cache") return `${kind}: cache`;
+  return `${kind}: unavailable`;
+}
+
+function sourceClass(source: "live" | "cache" | "unavailable") {
+  if (source === "cache") return `${styles.statChip} ${styles.chipCache}`;
+  if (source === "unavailable") return `${styles.statChip} ${styles.chipUnavailable}`;
+  return styles.statChip;
+}
 
 function StreamList({
   streams,
@@ -257,6 +272,18 @@ export default function ImagesCatalogComponent(): React.JSX.Element {
           </section>
 
           <p className={styles.summary}>{product.summary}</p>
+
+          <div className={styles.statsRow}>
+            <span className={styles.statChip}>
+              <strong>Pulls:</strong> {product.downloads.display}
+            </span>
+            <span className={sourceClass(product.downloads.source)}>
+              {sourceText(product.downloads.source, "Downloads")}
+            </span>
+            <span className={sourceClass(product.metadataSource)}>
+              {sourceText(product.metadataSource, "Metadata")}
+            </span>
+          </div>
 
           <p className={styles.validationMeta}>
             Last validated: <strong>{lastValidated}</strong> · Last published: <strong>{lastPublished}</strong>

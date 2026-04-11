@@ -70,6 +70,7 @@ const CHIP_TO_SBOM: Array<{ chipName: string; displayName: string; field: keyof 
   { chipName: "bootc",    displayName: "bootc",    field: "bootc" },
   { chipName: "systemd",  displayName: "systemd",  field: "systemd" },
   { chipName: "pipewire", displayName: "pipewire", field: "pipewire" },
+  { chipName: "flatpak",  displayName: "flatpak",  field: "flatpak" },
 ];
 
 /**
@@ -122,9 +123,46 @@ function enrichFromSbom(events: OsReleaseEvent[]): OsReleaseEvent[] {
   });
 }
 
+/**
+ * LTS has no SBOM pipeline. Carry forward package versions last seen in fullDiff
+ * across the release history so each LTS card shows its most-recently-observed version.
+ * Processes events oldest→newest, maintaining a running "last known" state per package,
+ * then restores the original newest-first order.
+ */
+function enrichLtsFromHistory(events: OsReleaseEvent[]): OsReleaseEvent[] {
+  const TRACKED = ["systemd", "bootc", "pipewire", "flatpak"];
+  const sorted = [...events].sort((a, b) => a.dateMs - b.dateMs);
+  const running: Record<string, string> = {};
+
+  const enriched = sorted.map((event) => {
+    // Update running state from majorPackages listed in release notes
+    for (const pkg of event.release.majorPackages) {
+      const lower = pkg.name.toLowerCase();
+      if (TRACKED.includes(lower)) running[lower] = pkg.version;
+    }
+    // Update from fullDiff (packages that changed in this release)
+    for (const entry of event.release.fullDiff) {
+      const lower = entry.name.toLowerCase();
+      if (TRACKED.includes(lower) && entry.newVersion) running[lower] = entry.newVersion;
+    }
+
+    const existingNames = new Set(event.release.majorPackages.map((p) => p.name.toLowerCase()));
+    const toAdd: ParsedMajorPackage[] = [];
+    for (const name of TRACKED) {
+      if (!existingNames.has(name) && running[name]) {
+        toAdd.push({ name, version: running[name], prevVersion: null });
+      }
+    }
+    if (toAdd.length === 0) return event;
+    return { ...event, release: { ...event.release, majorPackages: [...event.release.majorPackages, ...toAdd] } };
+  });
+
+  return enriched.sort((a, b) => b.dateMs - a.dateMs);
+}
+
 // All parsed events from both feeds, enriched with SBOM package versions
 const BLUEFIN_OS_EVENTS: OsReleaseEvent[] = enrichFromSbom(loadOsEvents(bluefinReleasesData));
-const LTS_OS_EVENTS: OsReleaseEvent[] = enrichFromSbom(loadOsEvents(bluefinLtsReleasesData, "lts"));
+const LTS_OS_EVENTS: OsReleaseEvent[] = enrichLtsFromHistory(enrichFromSbom(loadOsEvents(bluefinLtsReleasesData, "lts")));
 const ALL_OS_STREAM_EVENTS: OsReleaseEvent[] = [
   ...BLUEFIN_OS_EVENTS,
   ...LTS_OS_EVENTS,
@@ -155,6 +193,7 @@ const DAKOTA_PLACEHOLDER_EVENT: OsReleaseEvent = {
       { name: "uutils-coreutils", version: "e7f2fd9", prevVersion: null },
     ],
     dxPackages: [],
+    gdxPackages: [],
     commits: [],
     fullDiff: [],
   },
@@ -164,10 +203,10 @@ const DAKOTA_PLACEHOLDER_EVENT: OsReleaseEvent = {
 // All bluefin releases are stable-daily; synthesise a "stable"-streamed clone for
 // the pinned card so it shows the "Stable" badge while the stream shows "Daily".
 const PINNED_OS_EVENTS: OsReleaseEvent[] = (() => {
-  // Pinned Bluefin card: latest from the bluefin feed, displayed as "stable" stream
-  const pinnedStable: OsReleaseEvent | undefined = BLUEFIN_OS_EVENTS.length > 0
-    ? { ...BLUEFIN_OS_EVENTS[0], stream: "stable", release: { ...BLUEFIN_OS_EVENTS[0].release, stream: "stable" } }
-    : undefined;
+  // Pinned Bluefin card: most recent weekly stable release (stream === "stable").
+  // stable-daily builds (latest-YYYYMMDD, if published) appear in the timeline only.
+  const pinnedStable: OsReleaseEvent | undefined =
+    BLUEFIN_OS_EVENTS.find((e) => e.stream === "stable") ?? BLUEFIN_OS_EVENTS[0];
   // Pinned LTS card: latest from LTS feed
   const pinnedLts: OsReleaseEvent | undefined = LTS_OS_EVENTS.length > 0 ? LTS_OS_EVENTS[0] : undefined;
   return [pinnedStable, pinnedLts, DAKOTA_PLACEHOLDER_EVENT]
