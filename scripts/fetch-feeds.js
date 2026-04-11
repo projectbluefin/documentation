@@ -2,12 +2,20 @@ const fs = require("fs");
 const path = require("path");
 
 /**
- * Fetch releases from the GitHub Releases API (paginated).
- * Falls back to the Atom feed if the API is unavailable or token is missing.
- *
- * Uses up to 100 releases per repo (covers ~3 months of daily + weekly releases).
- * Atom feed was limited to ~10 items, which caused stable releases to be pushed
- * out of the feed when daily releases dominated.
+ * Parse the `Link` response header and return the URL for rel="next", or null.
+ * Example header: <https://api.github.com/...?page=2>; rel="next", <...>; rel="last"
+ */
+function parseLinkNext(linkHeader) {
+  if (!linkHeader) return null;
+  const match = linkHeader.match(/<([^>]+)>;\s*rel="next"/);
+  return match ? match[1] : null;
+}
+
+/**
+ * Fetch releases from the GitHub Releases API with full pagination.
+ * Follows Link rel="next" headers until all pages are retrieved or the
+ * MAX_RELEASES cap is reached. Falls back to the Atom feed if the API is
+ * unavailable or token is missing.
  */
 async function fetchReleasesFromApi(owner, repo) {
   const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
@@ -17,27 +25,36 @@ async function fetchReleasesFromApi(owner, repo) {
   }
 
   const fetch = (await import("node-fetch")).default;
-  const perPage = 100;
-  const url = `https://api.github.com/repos/${owner}/${repo}/releases?per_page=${perPage}`;
+  const MAX_RELEASES = 500;
+  const headers = {
+    Authorization: `Bearer ${token}`,
+    Accept: "application/vnd.github+json",
+    "X-GitHub-Api-Version": "2022-11-28",
+  };
 
-  console.log(`Fetching releases API: ${url}`);
-  const response = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      Accept: "application/vnd.github+json",
-      "X-GitHub-Api-Version": "2022-11-28",
-    },
-  });
+  let allReleases = [];
+  let nextUrl = `https://api.github.com/repos/${owner}/${repo}/releases?per_page=100`;
 
-  if (!response.ok) {
-    console.warn(`GitHub API returned ${response.status} for ${owner}/${repo} — falling back to Atom`);
-    return null;
+  while (nextUrl && allReleases.length < MAX_RELEASES) {
+    console.log(`Fetching releases API: ${nextUrl}`);
+    const response = await fetch(nextUrl, { headers });
+
+    if (!response.ok) {
+      console.warn(`GitHub API returned ${response.status} for ${owner}/${repo} — falling back to Atom`);
+      return null;
+    }
+
+    const page = await response.json();
+    allReleases = allReleases.concat(page);
+    nextUrl = parseLinkNext(response.headers.get("link"));
   }
 
-  const releases = await response.json();
+  if (allReleases.length >= MAX_RELEASES) {
+    console.warn(`${owner}/${repo}: reached ${MAX_RELEASES}-release cap — some older releases may be omitted`);
+  }
 
   // Map GitHub API response to the same OsFeedItem shape used by the parsers
-  return releases
+  return allReleases
     .filter((r) => !r.draft)
     .map((r) => ({
       title: r.tag_name ?? "Unknown Release",
