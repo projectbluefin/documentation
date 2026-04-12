@@ -208,7 +208,7 @@ function loadStableDailyEventsFromSbom(): OsReleaseEvent[] {
 
     const packages = releaseData.packageVersions;
     const majorPackages: ParsedMajorPackage[] = [];
-    for (const { chipName, displayName, field } of CHIP_TO_SBOM) {
+    for (const { displayName, field } of CHIP_TO_SBOM) {
       const version = packages[field] as string | null | undefined;
       if (!version) continue;
       majorPackages.push({ name: displayName, version, prevVersion: null });
