@@ -22,6 +22,9 @@ const DAYS_MS: Record<string, number> = {
   "90d": 90 * 24 * 60 * 60 * 1000,
 };
 
+/** Rolling window for the Updates Stream — entries older than this are not shown. */
+const ROLLING_WINDOW_MS = 365 * 24 * 60 * 60 * 1000;
+
 /** A single release event flattened out of its parent app. */
 export interface FlatRelease {
   app: FirehoseApp;
@@ -241,11 +244,18 @@ function loadStableDailyEventsFromSbom(): OsReleaseEvent[] {
 const BLUEFIN_OS_EVENTS: OsReleaseEvent[] = enrichFromSbom(loadOsEvents(bluefinReleasesData));
 const STABLE_DAILY_OS_EVENTS: OsReleaseEvent[] = loadStableDailyEventsFromSbom();
 const LTS_OS_EVENTS: OsReleaseEvent[] = enrichLtsFromHistory(enrichFromSbom(loadOsEvents(bluefinLtsReleasesData, "lts")));
-const ALL_OS_STREAM_EVENTS: OsReleaseEvent[] = [
-  ...BLUEFIN_OS_EVENTS,
-  ...STABLE_DAILY_OS_EVENTS,
-  ...LTS_OS_EVENTS,
-].sort((a, b) => b.dateMs - a.dateMs);
+
+// Rolling 12-month window for the stream — pinned cards (PINNED_OS_EVENTS) are unaffected.
+const ALL_OS_STREAM_EVENTS: OsReleaseEvent[] = (() => {
+  const cutoff = Date.now() - ROLLING_WINDOW_MS;
+  return [
+    ...BLUEFIN_OS_EVENTS,
+    ...STABLE_DAILY_OS_EVENTS,
+    ...LTS_OS_EVENTS,
+  ]
+    .filter((e) => e.dateMs > cutoff)
+    .sort((a, b) => b.dateMs - a.dateMs);
+})();
 
 // Dakota placeholder — upstream repo has no releases yet; versions sourced from
 // BuildStream junction pins in ~/src/dakota/elements/*.bst (no SBOM pipeline).
@@ -520,10 +530,10 @@ const FirehoseFeed: React.FC = () => {
 
   // ── App events ──────────────────────────────────────────────────────────────
 
-  const allEvents: FlatRelease[] = useMemo(
-    () => flattenReleases(firehoseData.apps ?? []),
-    [],
-  );
+  const allEvents: FlatRelease[] = useMemo(() => {
+    const cutoff = Date.now() - ROLLING_WINDOW_MS;
+    return flattenReleases(firehoseData.apps ?? []).filter((e) => e.dateMs > cutoff);
+  }, []);
 
   const filteredEvents = useMemo(() => applyFilters(allEvents, filters), [allEvents, filters]);
 
