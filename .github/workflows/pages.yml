@@ -54,12 +54,15 @@ jobs:
             github-data-
 
       - name: Restore SBOM attestation cache (overrides general data cache)
+        # Primary key will never match (update-sbom-cache.yml runs as a separate workflow
+        # with a different run_id). The restore-keys fallback always applies, fetching
+        # the most recent nightly SBOM cache saved by update-sbom-cache.yml.
         uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
         with:
           path: |
             static/data/sbom-attestations.json
             static/data/sbom-attestations-frontend.json
-          key: github-data-sbom-fresh-${{ github.run_id }}
+          key: github-data-sbom-${{ github.run_id }}
           restore-keys: |
             github-data-sbom-
 

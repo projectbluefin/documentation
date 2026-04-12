@@ -107,7 +107,14 @@ function enrichFromSbom(events: OsReleaseEvent[]): OsReleaseEvent[] {
     if (!key) return event;
 
     const packages = SBOM_CACHE?.streams?.[key.streamId]?.releases?.[key.cacheKey]?.packageVersions;
-    if (!packages) return event;
+    if (!packages) {
+      // Expected during local dev (empty seed file) and for releases older than LOOKBACK_DAYS.
+      // In CI with a populated SBOM cache this should be rare — check update-sbom-cache.yml if frequent.
+      if (process.env.NODE_ENV !== "production") {
+        console.warn(`[SBOM] No cache entry for ${key.streamId}/${key.cacheKey} — using release notes`);
+      }
+      return event;
+    }
 
     const sbomChipNames = new Set(CHIP_TO_SBOM.map(({ chipName }) => chipName));
 
@@ -116,15 +123,17 @@ function enrichFromSbom(events: OsReleaseEvent[]): OsReleaseEvent[] {
       (p) => !sbomChipNames.has(p.name.toLowerCase())
     );
 
-    // For SBOM-tracked packages: SBOM version is authoritative; preserve prevVersion
-    // from release notes so the change indicator (↑) still works.
+    // For SBOM-tracked packages: SBOM version is authoritative; fall back to
+    // release notes version if SBOM has null (package not found in RPM database).
+    // Preserves prevVersion from release notes so the change indicator (↑) works.
     const sbomPackages: ParsedMajorPackage[] = [];
     for (const { chipName, displayName, field } of CHIP_TO_SBOM) {
-      const version = packages[field] as string | null | undefined;
-      if (!version) continue;
+      const sbomVersion = packages[field] as string | null | undefined;
       const fromNotes = event.release.majorPackages.find(
         (p) => p.name.toLowerCase() === chipName
       );
+      const version = sbomVersion ?? fromNotes?.version ?? null;
+      if (!version) continue; // neither SBOM nor release notes has this package — omit chip
       sbomPackages.push({ name: displayName, version, prevVersion: fromNotes?.prevVersion ?? null });
     }
 

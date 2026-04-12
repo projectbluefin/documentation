@@ -248,6 +248,67 @@ async function fetchReleaseTags(owner, repo) {
 }
 
 // ---------------------------------------------------------------------------
+// GHCR OCI distribution API — tag listing
+// ---------------------------------------------------------------------------
+
+/**
+ * Get a GHCR bearer token for the given org/package.
+ * Uses GITHUB_TOKEN/GH_TOKEN if available; falls back to anonymous (public images).
+ */
+async function getGhcrToken(org, pkg) {
+  const headers = { "User-Agent": "BluefinDocsSBOM/1.0" };
+  const ghToken = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
+  if (ghToken) {
+    const b64 = Buffer.from(`x-access-token:${ghToken}`).toString("base64");
+    headers.Authorization = `Basic ${b64}`;
+  }
+  const url = `https://ghcr.io/token?scope=repository:${org}/${pkg}:pull&service=ghcr.io`;
+  const res = await fetch(url, { headers });
+  if (!res.ok) {
+    throw new Error(`GHCR token exchange failed: HTTP ${res.status} — ${url}`);
+  }
+  const body = await res.json();
+  return body.token;
+}
+
+/**
+ * Fetch ALL tags for a GHCR package using the OCI distribution spec.
+ * Handles pagination via Link header.
+ *
+ * @param {string} org   GitHub org (e.g. "ublue-os")
+ * @param {string} pkg   Package name (e.g. "bluefin")
+ * @returns {Promise<string[]>} Full list of tag strings
+ */
+async function fetchGhcrTags(org, pkg) {
+  const token = await getGhcrToken(org, pkg);
+  const allTags = [];
+  let url = `https://ghcr.io/v2/${org}/${pkg}/tags/list?n=1000`;
+
+  while (url) {
+    const res = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "User-Agent": "BluefinDocsSBOM/1.0",
+      },
+    });
+    if (!res.ok) {
+      throw new Error(`GHCR tags/list failed: HTTP ${res.status} — ${url}`);
+    }
+    const body = await res.json();
+    if (Array.isArray(body.tags)) allTags.push(...body.tags);
+
+    // Follow pagination Link header per RFC 5988 / OCI distribution spec.
+    // Use a flexible regex (parameters in any order, optional quoting, case-insensitive)
+    // and resolve relative URLs against the response URL for spec compliance.
+    const linkHeader = res.headers.get("link") || "";
+    const nextMatch = linkHeader.match(/<([^>]+)>;[^<]*\brel=("?)next\2\b/i);
+    url = nextMatch ? new URL(nextMatch[1], res.url).href : null;
+  }
+
+  return allTags;
+}
+
+// ---------------------------------------------------------------------------
 // Tag filtering helpers
 // ---------------------------------------------------------------------------
 
@@ -728,41 +789,41 @@ function extractPackageVersions(sbomPath) {
 // ---------------------------------------------------------------------------
 
 /**
- * Find recent dated tags for a given stream prefix.
+/**
+ * Filter a list of GHCR tag strings to find recent dated tags for a given stream.
  *
- * @param {Array<{tagName: string, publishedAt: string|null}>} releaseTags
- *   Release tags from the GitHub Releases API (fetchReleaseTags output).
- * @param {object} spec  Stream spec from STREAM_SPECS.
- * @returns {Array<{tag: string, cacheKey: string, dateStr: string, imageRef: string, publishedAt: string|null}>}
- *   Most-recent first, limited to MAX_RELEASES within LOOKBACK_DAYS.
+ * @param {string[]} ghcrTags  Raw tag strings from fetchGhcrTags().
+ * @param {object}   spec      Stream spec from STREAM_SPECS.
+ * @returns {Array<{tag, cacheKey, dateStr, imageRef, publishedAt}>}
  */
-function findRecentTagsForStream(releaseTags, spec) {
+function findRecentTagsForStream(ghcrTags, spec) {
   const cutoff = Date.now() - LOOKBACK_DAYS * 24 * 60 * 60 * 1000;
   const found = [];
 
-  for (const { tagName, publishedAt } of releaseTags) {
-    const publishedMs = publishedAt ? Date.parse(publishedAt) : null;
-    if (publishedMs !== null && publishedMs < cutoff) continue;
-
+  for (const tagName of ghcrTags) {
     const normalised = normaliseLtsTag(tagName.toLowerCase());
     if (!normalised.startsWith(`${spec.streamPrefix}-`)) continue;
     const dateStr = extractDateFromTag(normalised);
     if (!dateStr) continue;
 
     // Enforce canonical tag: only exact `<streamPrefix>-YYYYMMDD` is accepted.
-    // Non-canonical variants like lts-hwe-testing-20260331 would normalise to
-    // lts-20260331 and silently overwrite valid canonical entries.
     const expectedCanonical = `${spec.streamPrefix}-${dateStr}`;
     if (normalised !== expectedCanonical) continue;
+
+    // Tags from GHCR have no publishedAt — derive from the date string.
+    const year = dateStr.slice(0, 4);
+    const month = dateStr.slice(4, 6);
+    const day = dateStr.slice(6, 8);
+    const publishedAt = `${year}-${month}-${day}T00:00:00Z`;
+    const publishedMs = Date.parse(publishedAt);
+    if (isNaN(publishedMs) || publishedMs < cutoff) continue;
 
     found.push({
       tag: normalised,
       cacheKey: buildCacheKey(spec.streamPrefix, dateStr),
       dateStr,
-      // Use the original tag name (not lowercased normalised) for the image ref
-      // so the GHCR manifest lookup uses the exact published tag.
       imageRef: `ghcr.io/${spec.org}/${spec.package}:${tagName}`,
-      publishedAt: publishedAt || null,
+      publishedAt,
     });
   }
 
@@ -776,8 +837,9 @@ function findRecentTagsForStream(releaseTags, spec) {
     }
   }
 
-  // Sort descending by date string (YYYYMMDD sorts lexicographically)
+  // Sort descending by dateStr (YYYYMMDD sorts lexicographically)
   unique.sort((a, b) => b.dateStr.localeCompare(a.dateStr));
+
   return unique.slice(0, MAX_RELEASES);
 }
 
@@ -785,24 +847,25 @@ function findRecentTagsForStream(releaseTags, spec) {
  * Build the result object for a single stream.
  *
  * @param {object} spec  Stream spec from STREAM_SPECS.
- * @param {Map<string, Array<{tagName: string, publishedAt: string|null}>>} releaseTagsByRepo
- *   Pre-fetched release tags keyed by "owner/repo" (spec.releasesRepo).
+ * @param {Map<string, string[]>} ghcrTagsByImage
+ *   Pre-fetched GHCR tag strings keyed by "org/package".
  * @param {object|null} existing  Existing cache for incremental updates.
  */
-async function processStream(spec, releaseTagsByRepo, existing) {
-  // If the releases repo fetch failed — preserve existing cache.
-  if (!releaseTagsByRepo.has(spec.releasesRepo)) {
+async function processStream(spec, ghcrTagsByImage, existing) {
+  const imageKey = `${spec.org}/${spec.package}`;
+  // If the GHCR tag fetch failed — preserve existing cache.
+  if (!ghcrTagsByImage.has(imageKey)) {
     if (existing?.streams?.[spec.id]) {
       console.log(
-        `  ${spec.id}: Releases API unavailable — keeping existing cache`,
+        `  ${spec.id}: GHCR tags unavailable — keeping existing cache`,
       );
       return existing.streams[spec.id];
     }
     // No existing cache to fall back to; return empty stream.
     return { id: spec.id, label: spec.label, org: spec.org, package: spec.package, streamPrefix: spec.streamPrefix, keyRepo: spec.keyRepo, keyless: spec.keyless, releases: {} };
   }
-  const releaseTags = releaseTagsByRepo.get(spec.releasesRepo);
-  const recentTags = findRecentTagsForStream(releaseTags, spec);
+  const ghcrTags = ghcrTagsByImage.get(imageKey);
+  const recentTags = findRecentTagsForStream(ghcrTags, spec);
 
   console.log(
     `  ${spec.id}: found ${recentTags.length} recent tagged releases`,
@@ -926,24 +989,24 @@ async function main() {
     }
   }
 
-  // Deduplicate releasesRepo values — multiple streams share the same repo
-  // (e.g. bluefin-stable and bluefin-dx-stable both use ublue-os/bluefin).
-  const uniqueRepos = new Set(STREAM_SPECS.map((s) => s.releasesRepo));
+  // Deduplicate by GHCR image — multiple streams share the same image
+  // (e.g. bluefin-stable and bluefin-dx-stable both pull from ublue-os/bluefin).
+  const uniqueImages = new Set(STREAM_SPECS.map((s) => `${s.org}/${s.package}`));
 
   console.log(
-    `Fetching release tags for ${uniqueRepos.size} repo(s)...`,
+    `Fetching GHCR tags for ${uniqueImages.size} image(s)...`,
   );
-  const releaseTagsByRepo = new Map();
-  for (const repoPath of uniqueRepos) {
-    const [owner, repo] = repoPath.split("/");
-    console.log(`  ${repoPath}`);
+  const ghcrTagsByImage = new Map();
+  for (const imageKey of uniqueImages) {
+    const [org, pkg] = imageKey.split("/");
+    console.log(`  ghcr.io/${imageKey}`);
     try {
-      const tags = await fetchReleaseTags(owner, repo);
-      releaseTagsByRepo.set(repoPath, tags);
-      console.log(`    ${tags.length} release tags fetched`);
+      const tags = await fetchGhcrTags(org, pkg);
+      ghcrTagsByImage.set(imageKey, tags);
+      console.log(`    ${tags.length} GHCR tags fetched`);
     } catch (err) {
-      console.error(`  Failed to fetch releases for ${repoPath}: ${err.message}`);
-      // Leave the key absent so processStream detects the fetch failure
+      console.error(`  Failed to fetch GHCR tags for ${imageKey}: ${err.message}`);
+      // Leave the key absent so processStream detects the failure
       // and preserves the existing cache instead of producing an empty stream.
     }
   }
@@ -953,7 +1016,7 @@ async function main() {
   for (const spec of STREAM_SPECS) {
     console.log(`\nProcessing stream: ${spec.id}`);
     try {
-      const result = await processStream(spec, releaseTagsByRepo, existing);
+      const result = await processStream(spec, ghcrTagsByImage, existing);
       streams[spec.id] = result;
     } catch (err) {
       console.error(`  Error processing ${spec.id}: ${err.message}`);
@@ -1027,4 +1090,6 @@ module.exports = {
   compareRpmVersions,
   extractPackageVersions,
   selectAmd64DigestFromManifest,
+  findRecentTagsForStream,
+  fetchGhcrTags,   // exported for integration testing
 };

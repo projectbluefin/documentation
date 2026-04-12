@@ -209,9 +209,10 @@ function enrichFromSbom(release, stream) {
   );
   const sbomPackages = [];
   for (const { chipName, displayName, field } of CHIP_TO_SBOM) {
-    const version = packages[field];
-    if (!version) continue;
+    const sbomVersion = packages[field];
     const fromNotes = release.majorPackages.find((p) => p.name.toLowerCase() === chipName);
+    const version = sbomVersion ?? fromNotes?.version ?? null;
+    if (!version) continue; // neither SBOM nor release notes has this package
     sbomPackages.push({ name: displayName, version, prevVersion: fromNotes?.prevVersion ?? null });
   }
   if (sbomPackages.length === 0) return release;
