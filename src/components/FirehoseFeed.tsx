@@ -84,9 +84,8 @@ function sbomKeyForRelease(tag: string, stream: string): { streamId: string; cac
   if (!dateMatch) return null;
   const date = dateMatch[1];
   if (stream === "lts") return { streamId: "bluefin-lts", cacheKey: `lts-${date}` };
-  if (stream === "stable" || stream === "stable-daily") {
-    return { streamId: "bluefin-stable", cacheKey: `stable-${date}` };
-  }
+  if (stream === "stable-daily") return { streamId: "bluefin-stable-daily", cacheKey: `stable-daily-${date}` };
+  if (stream === "stable") return { streamId: "bluefin-stable", cacheKey: `stable-${date}` };
   return null;
 }
 
@@ -182,11 +181,69 @@ function enrichLtsFromHistory(events: OsReleaseEvent[]): OsReleaseEvent[] {
   return enriched.sort((a, b) => b.dateMs - a.dateMs);
 }
 
+/**
+ * Synthesise OsReleaseEvent entries for stable-daily builds that exist only in
+ * GHCR (no GitHub Release). These are GHCR nightly builds tagged
+ * "stable-daily-YYYYMMDD" — they never appear in bluefin-releases.json so they
+ * would otherwise be invisible on the changelogs page.
+ *
+ * Package versions come directly from the SBOM cache so no enrichFromSbom pass
+ * is needed; the events are already fully populated.
+ */
+function loadStableDailyEventsFromSbom(): OsReleaseEvent[] {
+  const stream = SBOM_CACHE?.streams?.["bluefin-stable-daily"];
+  if (!stream?.releases) return [];
+
+  const events: OsReleaseEvent[] = [];
+  for (const [cacheKey, releaseData] of Object.entries(stream.releases)) {
+    if (!releaseData.packageVersions) continue;
+
+    const dateMatch = cacheKey.match(/(\d{8})$/);
+    if (!dateMatch) continue;
+    const dateStr = dateMatch[1];
+    const dateMs = Date.parse(
+      `${dateStr.slice(0, 4)}-${dateStr.slice(4, 6)}-${dateStr.slice(6, 8)}T00:00:00Z`,
+    );
+    if (isNaN(dateMs)) continue;
+
+    const packages = releaseData.packageVersions;
+    const majorPackages: ParsedMajorPackage[] = [];
+    for (const { chipName, displayName, field } of CHIP_TO_SBOM) {
+      const version = packages[field] as string | null | undefined;
+      if (!version) continue;
+      majorPackages.push({ name: displayName, version, prevVersion: null });
+    }
+    if (majorPackages.length === 0) continue;
+
+    events.push({
+      kind: "os",
+      stream: "stable-daily",
+      dateMs,
+      release: {
+        stream: "stable-daily",
+        tag: cacheKey,
+        githubUrl: "https://github.com/orgs/ublue-os/packages/container/package/bluefin",
+        fedoraVersion: packages.fedora ? packages.fedora.replace(/^F/, "") : null,
+        centosVersion: null,
+        majorPackages,
+        dxPackages: [],
+        gdxPackages: [],
+        commits: [],
+        fullDiff: [],
+      },
+    });
+  }
+
+  return events;
+}
+
 // All parsed events from both feeds, enriched with SBOM package versions
 const BLUEFIN_OS_EVENTS: OsReleaseEvent[] = enrichFromSbom(loadOsEvents(bluefinReleasesData));
+const STABLE_DAILY_OS_EVENTS: OsReleaseEvent[] = loadStableDailyEventsFromSbom();
 const LTS_OS_EVENTS: OsReleaseEvent[] = enrichLtsFromHistory(enrichFromSbom(loadOsEvents(bluefinLtsReleasesData, "lts")));
 const ALL_OS_STREAM_EVENTS: OsReleaseEvent[] = [
   ...BLUEFIN_OS_EVENTS,
+  ...STABLE_DAILY_OS_EVENTS,
   ...LTS_OS_EVENTS,
 ].sort((a, b) => b.dateMs - a.dateMs);
 

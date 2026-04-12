@@ -59,6 +59,14 @@ const MOCK_STABLE_SPEC = {
   keyless: true,
 };
 
+const MOCK_STABLE_DAILY_SPEC = {
+  id: "bluefin-stable-daily",
+  org: "ublue-os",
+  package: "bluefin",
+  streamPrefix: "stable-daily",
+  keyless: true,
+};
+
 // Fixed reference date used across all time-sensitive tests to avoid flakiness.
 // Must stay within LOOKBACK_DAYS (90 days) of any future test run — update when stale.
 const FIXED_RECENT_DATE = "20260412";
@@ -87,4 +95,27 @@ test("findRecentTagsForStream: deduplicates same date", () => {
   const ghcrTags = [`stable-${FIXED_RECENT_DATE}`, `stable-${FIXED_RECENT_DATE}`]; // duplicate
   const result = findRecentTagsForStream(ghcrTags, MOCK_STABLE_SPEC);
   assert.equal(result.length, 1, "duplicates must be removed");
+});
+
+test("findRecentTagsForStream: picks stable-daily-YYYYMMDD tags for stable-daily spec", () => {
+  const ghcrTags = [
+    `stable-daily-${FIXED_RECENT_DATE}`,
+    `stable-${FIXED_RECENT_DATE}`,              // different prefix (weekly stable) — must be excluded
+    `stable-daily-${FIXED_RECENT_DATE}-hwe`,    // non-canonical suffix — must be excluded
+    "latest-20260101",                          // unrelated prefix — must be excluded
+  ];
+  const result = findRecentTagsForStream(ghcrTags, MOCK_STABLE_DAILY_SPEC);
+  assert.equal(result.length, 1, "only the canonical stable-daily-YYYYMMDD tag should be found");
+  assert.equal(result[0].tag, `stable-daily-${FIXED_RECENT_DATE}`);
+  assert.equal(result[0].cacheKey, `stable-daily-${FIXED_RECENT_DATE}`);
+});
+
+test("findRecentTagsForStream: stable spec does not pick stable-daily tags", () => {
+  const ghcrTags = [
+    `stable-daily-${FIXED_RECENT_DATE}`,
+    `stable-${FIXED_RECENT_DATE}`,
+  ];
+  const result = findRecentTagsForStream(ghcrTags, MOCK_STABLE_SPEC);
+  assert.equal(result.length, 1, "stable spec must not pick stable-daily tags");
+  assert.equal(result[0].tag, `stable-${FIXED_RECENT_DATE}`);
 });

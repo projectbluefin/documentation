@@ -53,6 +53,7 @@ function isGtsItem(title: string): boolean {
 function detectStream(title: string): OsStream | null {
   if (isGtsItem(title)) return null;
   if (/^lts[.-]/i.test(title) || /\bLTS:/i.test(title)) return "lts";
+  if (/^stable-daily-/i.test(title)) return "stable-daily";
   if (/^(stable|beta)-/i.test(title)) return "stable";
   if (/^latest-/i.test(title)) return "stable-daily";
   return null;
@@ -83,6 +84,10 @@ function extractCentosVersion(title: string): string | null {
  *   "lts.20251223: ..."               → "lts-20251223"
  */
 function extractTag(title: string, stream: OsStream): string {
+  // Compound prefix format: "stable-daily-YYYYMMDD" (two word segments before the date)
+  const compoundMatch = title.match(/^([a-z]+-[a-z]+-\d{8})/i);
+  if (compoundMatch) return compoundMatch[1].toLowerCase();
+
   // Standard prefix format: "stable-YYYYMMDD", "lts-YYYYMMDD", "lts.YYYYMMDD", "latest-YYYYMMDD"
   const prefixMatch = title.match(/^([a-z]+-[\d.]+)/i);
   if (prefixMatch) {

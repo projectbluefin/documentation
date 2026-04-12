@@ -108,6 +108,15 @@ const STREAM_SPECS = [
     keyless: true,
   },
   {
+    id: "bluefin-stable-daily",
+    label: "Bluefin Stable Daily",
+    org: "ublue-os",
+    package: "bluefin",
+    streamPrefix: "stable-daily",
+    keyRepo: "ublue-os/bluefin",
+    keyless: true,
+  },
+  {
     id: "bluefin-latest",
     label: "Bluefin Latest",
     org: "ublue-os",

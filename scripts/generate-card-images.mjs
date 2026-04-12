@@ -186,9 +186,8 @@ function sbomKeyForRelease(tag, stream) {
   if (!dateMatch) return null;
   const date = dateMatch[1];
   if (stream === "lts") return { streamId: "bluefin-lts", cacheKey: `lts-${date}` };
-  if (stream === "stable" || stream === "stable-daily") {
-    return { streamId: "bluefin-stable", cacheKey: `stable-${date}` };
-  }
+  if (stream === "stable-daily") return { streamId: "bluefin-stable-daily", cacheKey: `stable-daily-${date}` };
+  if (stream === "stable") return { streamId: "bluefin-stable", cacheKey: `stable-${date}` };
   return null;
 }
 
