@@ -241,8 +241,12 @@ const OsReleaseCard: React.FC<OsReleaseCardProps> = ({ event }) => {
   const { siteConfig } = useDocusaurusContext();
   const BASE_URL = siteConfig.url;
   const embedSnippet = [
-    `[![${cardAlt}](${BASE_URL}/img/cards/${cardSlug}-light.png#gh-light-mode-only)](${BASE_URL}/changelogs)`,
-    `[![${cardAlt}](${BASE_URL}/img/cards/${cardSlug}-dark.png#gh-dark-mode-only)](${BASE_URL}/changelogs)`,
+    `<a href="${BASE_URL}/changelogs">`,
+    `  <picture>`,
+    `    <source media="(prefers-color-scheme: dark)" srcset="${BASE_URL}/img/cards/${cardSlug}-dark.png">`,
+    `    <img src="${BASE_URL}/img/cards/${cardSlug}-light.png" alt="${cardAlt}" width="800">`,
+    `  </picture>`,
+    `</a>`,
   ].join("\n");
 
   return (
