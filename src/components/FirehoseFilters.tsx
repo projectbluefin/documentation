@@ -173,19 +173,6 @@ const FirehoseFilters: React.FC<FirehoseFiltersProps> = ({
         </select>
       </section>
 
-      {/* Show Everything toggle */}
-      <section className={styles.filterSection}>
-        <label className={styles.checkLabel}>
-          <input
-            type="checkbox"
-            checked={filters.showEverything}
-            onChange={(e) =>
-              onFiltersChange({ ...filters, showEverything: e.target.checked })
-            }
-          />
-          <span>Show Everything</span>
-        </label>
-      </section>
     </aside>
   );
 };

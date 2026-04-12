@@ -564,8 +564,7 @@ const FirehoseFeed: React.FC = () => {
 
   // ── Unified "Updates Stream" ───────────────────────────────────────────────
   //
-  // OS releases are always primary. App entries (flatpak/homebrew) are shown
-  // only when showEverything is true OR when a specific app type filter is active.
+  // OS releases and app entries (flatpak/homebrew) are always shown together.
 
   const appSection = useMemo(
     () =>
@@ -575,21 +574,11 @@ const FirehoseFeed: React.FC = () => {
     [filteredUniqueApps],
   );
 
-  // Apps appear when: showEverything is on, OR a specific app type is selected
-  const showApps =
-    filters.showEverything ||
-    filters.packageType === "flatpak" ||
-    filters.packageType === "homebrew";
-
   const unifiedStream = useMemo((): FlatTimelineEvent[] => {
-    const items: FlatTimelineEvent[] = [];
-    if (showApps) {
-      items.push(...appSection);
-    }
-    items.push(...filteredOsStreamEvents);
+    const items: FlatTimelineEvent[] = [...appSection, ...filteredOsStreamEvents];
     items.sort((a, b) => b.dateMs - a.dateMs);
     return items;
-  }, [filteredOsStreamEvents, appSection, showApps]);
+  }, [filteredOsStreamEvents, appSection]);
 
   const isEmpty = allEvents.length === 0 && ALL_OS_STREAM_EVENTS.length === 0;
   const feedEmpty = unifiedStream.length === 0;
@@ -675,9 +664,7 @@ const FirehoseFeed: React.FC = () => {
                 <div className={styles.appSectionDivider}>
                   <Heading as="h2" className={styles.feedSectionHeading}>Updates Stream</Heading>
                   <span className={styles.appSectionHint}>
-                    {showApps
-                      ? "OS releases, Flatpak & Homebrew packages included in Bluefin"
-                      : "OS releases · check \"Show Everything\" to include Flatpak & Homebrew"}
+                    OS releases, Flatpak &amp; Homebrew packages included in Bluefin
                   </span>
                 </div>
                 {unifiedStream.map((event) =>
