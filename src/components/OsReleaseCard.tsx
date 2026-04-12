@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
+import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import Heading from "@theme/Heading";
 import type {
   OsReleaseEvent,
@@ -167,6 +168,28 @@ function VersionChip({ pkg }: { pkg: ParsedMajorPackage }) {
 
 const HEADER_CHIP_NAMES = ["Kernel", "HWE Kernel", "Gnome", "Mesa", "Podman", "Nvidia", "bootc", "systemd", "pipewire", "flatpak", "sudo-rs", "uutils-coreutils"];
 
+// ── Embed button ──────────────────────────────────────────────────────────────
+
+function EmbedButton({ snippet }: { snippet: string }) {
+  const [copied, setCopied] = useState(false);
+  const handleCopy = useCallback(() => {
+    navigator.clipboard.writeText(snippet).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }).catch(err => console.error("Failed to copy snippet:", err));
+  }, [snippet]);
+  return (
+    <button
+      type="button"
+      className={styles.embedButton}
+      onClick={handleCopy}
+      title="Copy embed snippet"
+    >
+      {copied ? "Copied!" : "Embed ↗"}
+    </button>
+  );
+}
+
 // ── Main component ────────────────────────────────────────────────────────────
 
 interface OsReleaseCardProps {
@@ -213,6 +236,14 @@ const OsReleaseCard: React.FC<OsReleaseCardProps> = ({ event }) => {
 
   const cardTitle = isLts ? "Bluefin LTS" : isDakota ? "Bluefin Dakota" : "Bluefin";
   const imagesAnchor = isLts ? "bluefin-lts" : isDakota ? "bluefin-dakota" : "bluefin-stable";
+  const cardSlug = isLts ? "bluefin-lts" : isDakota ? "dakota" : "bluefin";
+  const cardAlt = cardTitle;
+  const { siteConfig } = useDocusaurusContext();
+  const BASE_URL = siteConfig.url;
+  const embedSnippet = [
+    `[![${cardAlt}](${BASE_URL}/img/cards/${cardSlug}-light.png#gh-light-mode-only)](${BASE_URL}/changelogs)`,
+    `[![${cardAlt}](${BASE_URL}/img/cards/${cardSlug}-dark.png#gh-dark-mode-only)](${BASE_URL}/changelogs)`,
+  ].join("\n");
 
   return (
     <article
@@ -300,6 +331,7 @@ const OsReleaseCard: React.FC<OsReleaseCardProps> = ({ event }) => {
         >
           Image details →
         </a>
+        <EmbedButton snippet={embedSnippet} />
       </div>
     </article>
   );

@@ -31,3 +31,6 @@ yarn-error.log*
 QWEN.md
 .beads/
 test-results/
+
+# Generated card images (built during CI)
+static/img/cards/

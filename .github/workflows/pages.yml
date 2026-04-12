@@ -93,6 +93,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.PROJECT_READ_TOKEN }}
         run: node scripts/fetch-board-data.js
 
+      - name: Generate embeddable card images
+        run: npm run generate-card-images
+
       - name: Run TypeScript validation
         run: npm run typecheck
 

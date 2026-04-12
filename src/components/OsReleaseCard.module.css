@@ -433,6 +433,27 @@
   text-decoration: none;
 }
 
+.embedButton {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--ifm-color-primary);
+  background: none;
+  cursor: pointer;
+  padding: 0.2rem 0.6rem;
+  border: 1px solid var(--ifm-color-primary-lightest, rgba(0,0,0,0.15));
+  border-radius: 4px;
+  transition: background 0.15s;
+  font-family: inherit;
+}
+
+.embedButton:hover {
+  background: var(--ifm-color-primary-lightest, rgba(0,0,0,0.05));
+}
+
+.embedButton:active {
+  opacity: 0.75;
+}
+
 /* ── Shared ──────────────────────────────────────────────────────────────────── */
 
 .emptyNote {
