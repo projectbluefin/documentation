@@ -27,6 +27,38 @@
   margin-bottom: 0.75rem;
 }
 
+.releaseHeaderCollapsed {
+  margin-bottom: 0;
+}
+
+/* ── Collapse toggle ──────────────────────────────────────────────────────── */
+
+.collapseToggle {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--ifm-color-emphasis-500);
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  align-self: center;
+}
+
+.collapseToggle:hover {
+  color: var(--ifm-color-primary);
+}
+
+.collapseChevron {
+  font-size: 1.1rem;
+  transition: transform 0.2s;
+  display: inline-block;
+}
+
+.collapseChevronOpen {
+  transform: rotate(90deg);
+}
+
 .releaseIcon {
   width: 48px;
   height: 48px;
