@@ -433,7 +433,7 @@ const DEFAULT_FILTERS: FirehoseFilterState = {
   updatedWithin: "all",
   verifiedOnly: false,
   unverifiedOnly: false,
-  showOsReleases: true,
+  showEverything: false,
 };
 
 const FirehoseFeed: React.FC = () => {
@@ -461,34 +461,32 @@ const FirehoseFeed: React.FC = () => {
     setFeaturedApp(getFeaturedApp(uniqueApps));
   }, [uniqueApps]);
 
-  // ── OS stream events (filtered) ────────────────────────────────────────────
-  // All OS events for the Updates Stream (all streams, date-filtered).
-  // When packageType==="os", only OS events are shown (no apps).
-  // When showOsReleases===false, OS events are excluded from the stream.
-
-  const showOsInStream = filters.showOsReleases || filters.packageType === "os";
+  // ── OS stream events (filtered by date, always shown) ─────────────────────
 
   const filteredOsStreamEvents = useMemo((): OsReleaseEvent[] => {
-    if (!showOsInStream) return [];
+    // When filtering to a specific app type, OS events are hidden
+    if (filters.packageType === "flatpak" || filters.packageType === "homebrew") return [];
     if (filters.updatedWithin === "all") return ALL_OS_STREAM_EVENTS;
     const maxAge = DAYS_MS[filters.updatedWithin];
     const now = Date.now();
     return ALL_OS_STREAM_EVENTS.filter((e) => e.dateMs > 0 && now - e.dateMs <= maxAge);
-  }, [showOsInStream, filters.updatedWithin]);
+  }, [filters.packageType, filters.updatedWithin]);
 
   // How many stream OS events are hidden by the date filter
   const hiddenOsCount = useMemo(
     () =>
-      showOsInStream && filters.updatedWithin !== "all"
+      filters.updatedWithin !== "all" &&
+      filters.packageType !== "flatpak" &&
+      filters.packageType !== "homebrew"
         ? ALL_OS_STREAM_EVENTS.filter((e) => e.dateMs > 0).length - filteredOsStreamEvents.length
         : 0,
-    [filteredOsStreamEvents, showOsInStream, filters.updatedWithin],
+    [filteredOsStreamEvents, filters.packageType, filters.updatedWithin],
   );
 
   // ── Unified "Updates Stream" ───────────────────────────────────────────────
   //
-  // OS releases and app updates merged into one chronological list.
-  // packageType==="os" shows only OS events; otherwise interleaved.
+  // OS releases are always primary. App entries (flatpak/homebrew) are shown
+  // only when showEverything is true OR when a specific app type filter is active.
 
   const appSection = useMemo(
     () =>
@@ -498,15 +496,21 @@ const FirehoseFeed: React.FC = () => {
     [filteredUniqueApps],
   );
 
+  // Apps appear when: showEverything is on, OR a specific app type is selected
+  const showApps =
+    filters.showEverything ||
+    filters.packageType === "flatpak" ||
+    filters.packageType === "homebrew";
+
   const unifiedStream = useMemo((): FlatTimelineEvent[] => {
     const items: FlatTimelineEvent[] = [];
-    if (filters.packageType !== "os") {
+    if (showApps) {
       items.push(...appSection);
     }
     items.push(...filteredOsStreamEvents);
     items.sort((a, b) => b.dateMs - a.dateMs);
     return items;
-  }, [filteredOsStreamEvents, appSection, filters.packageType]);
+  }, [filteredOsStreamEvents, appSection, showApps]);
 
   const isEmpty = allEvents.length === 0 && ALL_OS_STREAM_EVENTS.length === 0;
   const feedEmpty = unifiedStream.length === 0;
@@ -592,14 +596,18 @@ const FirehoseFeed: React.FC = () => {
                 <div className={styles.appSectionDivider}>
                   <Heading as="h2" className={styles.feedSectionHeading}>Updates Stream</Heading>
                   <span className={styles.appSectionHint}>
-                    OS releases, Flatpak &amp; Homebrew packages included in Bluefin
+                    {showApps
+                      ? "OS releases, Flatpak & Homebrew packages included in Bluefin"
+                      : "OS releases · check \"Show Everything\" to include Flatpak & Homebrew"}
                   </span>
                 </div>
                 {unifiedStream.map((event) =>
                   event.kind === "os" ? (
                     <OsReleaseCard key={`stream-${event.release.tag}-${event.dateMs}`} event={event} />
                   ) : (
-                    <FirehoseCard key={event.app.id} app={event.app} />
+                    <div key={event.app.id} className={styles.appEntry}>
+                      <FirehoseCard app={event.app} />
+                    </div>
                   ),
                 )}
               </section>

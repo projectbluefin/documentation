@@ -67,7 +67,7 @@ const FirehoseFilters: React.FC<FirehoseFiltersProps> = ({
       updatedWithin: "all",
       verifiedOnly: false,
       unverifiedOnly: false,
-      showOsReleases: true,
+      showEverything: false,
     });
   }
 
@@ -173,18 +173,17 @@ const FirehoseFilters: React.FC<FirehoseFiltersProps> = ({
         </select>
       </section>
 
-      {/* OS Releases toggle */}
+      {/* Show Everything toggle */}
       <section className={styles.filterSection}>
-        <h3 className={styles.filterHeading}>OS Releases</h3>
         <label className={styles.checkLabel}>
           <input
             type="checkbox"
-            checked={filters.showOsReleases}
+            checked={filters.showEverything}
             onChange={(e) =>
-              onFiltersChange({ ...filters, showOsReleases: e.target.checked })
+              onFiltersChange({ ...filters, showEverything: e.target.checked })
             }
           />
-          <span>Show OS releases</span>
+          <span>Show Everything</span>
         </label>
       </section>
     </aside>
