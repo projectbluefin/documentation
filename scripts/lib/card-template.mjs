@@ -353,6 +353,41 @@ export function renderCard(release, stream, dateMs, theme, mascotDataUri) {
           )
         : null,
 
+      // ── Package changes + commits summary
+      (() => {
+        const { diffStats, commitCount } = release;
+        const hasDiff = diffStats && (diffStats.changed > 0 || diffStats.added > 0 || diffStats.removed > 0);
+        const hasCommits = commitCount > 0;
+        if (!hasDiff && !hasCommits) return null;
+
+        const diffParts = [];
+        if (diffStats?.changed > 0) diffParts.push(`${diffStats.changed} updated`);
+        if (diffStats?.added > 0) diffParts.push(`${diffStats.added} added`);
+        if (diffStats?.removed > 0) diffParts.push(`${diffStats.removed} removed`);
+
+        return h(
+          "div",
+          {
+            style: {
+              display: "flex",
+              flexDirection: "row",
+              gap: "14px",
+              marginBottom: "6px",
+            },
+          },
+          hasDiff
+            ? h("span", {
+                style: { fontSize: "11px", color: colors.textMuted },
+              }, `Package changes — ${diffParts.join(" · ")}`)
+            : null,
+          hasCommits
+            ? h("span", {
+                style: { fontSize: "11px", color: colors.textMuted },
+              }, `Commits (${commitCount})`)
+            : null
+        );
+      })(),
+
       // ── Footer
       h(
         "div",
