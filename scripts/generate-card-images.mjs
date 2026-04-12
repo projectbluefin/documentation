@@ -101,6 +101,23 @@ function parseTwoColTableMd(rows) {
   return results;
 }
 
+function parseDiffRows(rows) {
+  let added = 0, changed = 0, removed = 0;
+  for (const cells of rows) {
+    if (cells.length < 2) continue;
+    const indicator = cells[0].trim();
+    if (indicator.includes("✨") || indicator === "+") added++;
+    else if (indicator.includes("🔄") || indicator === "~") changed++;
+    else if (indicator.includes("❌") || indicator === "-") removed++;
+  }
+  return { added, changed, removed };
+}
+
+function parseCommitRows(rows) {
+  // Filter out the header row and count valid commit rows
+  return rows.filter(cells => cells.length >= 2 && cells[0] && cells[0] !== "Hash").length;
+}
+
 function parseFeedItem(item, streamHint) {
   const content = item.content ?? "";
   const isMarkdown = /^\|[\s|:-]*---[\s|:-]*\|/m.test(content);
@@ -111,6 +128,9 @@ function parseFeedItem(item, streamHint) {
   const dxPackages = parseTwoColTableMd(sections.get("Major DX packages") ?? []);
   const gdxPackages = parseTwoColTableMd(sections.get("Major GDX packages") ?? []);
   if (majorPackages.length === 0) return null;
+
+  const diffStats = parseDiffRows(sections.get("All Images") ?? []);
+  const commitCount = parseCommitRows(sections.get("Commits") ?? []);
 
   // Extract Fedora version from title e.g. "(F43.20260331, ...)"
   const fedoraMatch = item.title.match(/\(F(\d+)\./);
@@ -134,9 +154,68 @@ function parseFeedItem(item, streamHint) {
     majorPackages,
     dxPackages,
     gdxPackages,
+    diffStats,
+    commitCount,
     dateMs: isNaN(dateMs) ? 0 : dateMs,
     link: item.link,
   };
+}
+
+// ── SBOM enrichment (mirrors FirehoseFeed.tsx enrichFromSbom) ───────────────
+
+let SBOM_CACHE = null;
+try {
+  SBOM_CACHE = JSON.parse(readFileSync(join(ROOT, "static/data/sbom-attestations-frontend.json"), "utf8"));
+} catch {
+  // SBOM file absent or empty — enrichment silently skipped
+}
+
+const CHIP_TO_SBOM = [
+  { chipName: "kernel",   displayName: "Kernel",   field: "kernel" },
+  { chipName: "gnome",    displayName: "Gnome",    field: "gnome" },
+  { chipName: "mesa",     displayName: "Mesa",     field: "mesa" },
+  { chipName: "podman",   displayName: "Podman",   field: "podman" },
+  { chipName: "bootc",    displayName: "bootc",    field: "bootc" },
+  { chipName: "systemd",  displayName: "systemd",  field: "systemd" },
+  { chipName: "pipewire", displayName: "pipewire", field: "pipewire" },
+  { chipName: "flatpak",  displayName: "flatpak",  field: "flatpak" },
+];
+
+function sbomKeyForRelease(tag, stream) {
+  const dateMatch = tag.match(/(\d{8})/);
+  if (!dateMatch) return null;
+  const date = dateMatch[1];
+  if (stream === "lts") return { streamId: "bluefin-lts", cacheKey: `lts-${date}` };
+  if (stream === "stable" || stream === "stable-daily") {
+    return { streamId: "bluefin-stable", cacheKey: `stable-${date}` };
+  }
+  return null;
+}
+
+function enrichFromSbom(release, stream) {
+  if (!SBOM_CACHE) return release;
+  const key = sbomKeyForRelease(release.tag, stream);
+  if (!key) return release;
+
+  const packages = SBOM_CACHE?.streams?.[key.streamId]?.releases?.[key.cacheKey]?.packageVersions;
+  if (!packages) return release;
+
+  // SBOM-primary: SBOM version wins for tracked packages; prevVersion preserved from
+  // release notes for the gold change-indicator. Non-SBOM packages (Nvidia, HWE Kernel,
+  // DX, GDX, etc.) are kept from release notes unchanged.
+  const sbomChipNames = new Set(CHIP_TO_SBOM.map(({ chipName }) => chipName));
+  const nonSbomPackages = release.majorPackages.filter(
+    (p) => !sbomChipNames.has(p.name.toLowerCase())
+  );
+  const sbomPackages = [];
+  for (const { chipName, displayName, field } of CHIP_TO_SBOM) {
+    const version = packages[field];
+    if (!version) continue;
+    const fromNotes = release.majorPackages.find((p) => p.name.toLowerCase() === chipName);
+    sbomPackages.push({ name: displayName, version, prevVersion: fromNotes?.prevVersion ?? null });
+  }
+  if (sbomPackages.length === 0) return release;
+  return { ...release, majorPackages: [...sbomPackages, ...nonSbomPackages] };
 }
 
 // ── Load release data ────────────────────────────────────────────────────────
@@ -175,6 +254,8 @@ const DAKOTA_RELEASE = {
   ],
   dxPackages: [],
   gdxPackages: [],
+  diffStats: { added: 0, changed: 0, removed: 0 },
+  commitCount: 0,
   dateMs: 0,
   link: "https://github.com/projectbluefin/dakota",
 };
@@ -182,14 +263,17 @@ const DAKOTA_RELEASE = {
 // ── Main ─────────────────────────────────────────────────────────────────────
 
 async function main() {
-  const stableRelease = loadLatestRelease(
+  const stableRaw = loadLatestRelease(
     join(ROOT, "static/feeds/bluefin-releases.json"),
     "stable"
   );
-  const ltsRelease = loadLatestRelease(
+  const ltsRaw = loadLatestRelease(
     join(ROOT, "static/feeds/bluefin-lts-releases.json"),
     "lts"
   );
+
+  const stableRelease = stableRaw ? enrichFromSbom(stableRaw, "stable") : null;
+  const ltsRelease    = ltsRaw    ? enrichFromSbom(ltsRaw,    "lts")    : null;
 
   const cards = [
     { release: stableRelease, stream: "stable", slug: "bluefin" },
@@ -215,7 +299,7 @@ async function main() {
 
       const svg = await satori(element, { width: W, height: H, fonts });
 
-      const resvg = new Resvg(svg, { fitTo: { mode: "width", value: W } });
+      const resvg = new Resvg(svg, { fitTo: { mode: "width", value: W * 2 } });
       const pngData = resvg.render();
       const pngBuffer = pngData.asPng();
 

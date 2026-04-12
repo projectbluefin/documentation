@@ -237,10 +237,11 @@ function buildStreamFromSbom(
   command,
   sbomCache,
   nvidiaByTag,
+  historyDays = HISTORY_DAYS,
 ) {
   const stream = sbomCache?.streams?.[streamId];
   const releases = stream?.releases || {};
-  const cutoff = Date.now() - HISTORY_DAYS * 24 * 60 * 60 * 1000;
+  const cutoff = Date.now() - historyDays * 24 * 60 * 60 * 1000;
 
   const history = Object.entries(releases)
     .sort(([a], [b]) => b.localeCompare(a))
@@ -414,9 +415,9 @@ async function main() {
     return;
   }
 
-  // Load SBOM cache if available — used as an overlay on release-based rows.
-  // The Releases API is always the primary source of row data so the page is
-  // never empty when the SBOM cache is absent, empty, or stale.
+  // SBOM-primary policy: use SBOM as the authoritative source for kernel/mesa/GNOME.
+  // Releases are always fetched for NVIDIA (not in SBOM) and as fallback when SBOM
+  // is absent or empty for a stream.
   const sbomCache = readSbomCache(SBOM_FILE);
   const sbomLoaded =
     Boolean(sbomCache?.generatedAt) && Boolean(sbomCache?.streams);
@@ -429,95 +430,93 @@ async function main() {
     );
   } else {
     console.warn(
-      "SBOM attestation cache not found or empty — kernel/mesa/GNOME versions will be unavailable; NVIDIA from release bodies only.",
+      "SBOM attestation cache not found or empty — falling back to release notes for all versions.",
     );
   }
 
-  return Promise.all([
-    fetchReleases("ublue-os", "bluefin"),
-    fetchReleases("ublue-os", "bluefin-lts"),
-  ])
-    .then(([bluefinReleases, ltsReleases]) => {
-      const streams = [
-        buildStreamFromApi(
-          "bluefin-stable",
-          "Bluefin",
-          "Current stable stream from ublue-os/bluefin.",
-          "sudo bootc switch ghcr.io/ublue-os/bluefin:stable --enforce-container-sigpolicy",
-          bluefinReleases,
-          "stable-",
-          sbomCache,
-        ),
-        buildStreamFromApi(
-          "bluefin-lts",
-          "Bluefin LTS",
-          "Long-term support stream from ublue-os/bluefin-lts.",
-          "sudo bootc switch ghcr.io/ublue-os/bluefin:lts --enforce-container-sigpolicy",
-          ltsReleases,
-          "lts.",
-          sbomCache,
-          LTS_HISTORY_DAYS,
-        ),
-      ];
+  // Always fetch releases: NVIDIA versions are not in SBOM; also serves as fallback.
+  let bluefinReleases = [];
+  let ltsReleases = [];
+  try {
+    [bluefinReleases, ltsReleases] = await Promise.all([
+      fetchReleases("ublue-os", "bluefin"),
+      fetchReleases("ublue-os", "bluefin-lts"),
+    ]);
+  } catch (error) {
+    console.warn(
+      `GitHub releases API failed: ${error?.message || "unknown error"} — NVIDIA versions may be unavailable`,
+    );
+    // Attempt feed fallback for NVIDIA map
+    const bluefinFeed = readJsonIfExists(FEED_BLUEFIN, { items: [] });
+    const ltsFeed = readJsonIfExists(FEED_LTS, { items: [] });
+    bluefinReleases = bluefinFeed.items || [];
+    ltsReleases = ltsFeed.items || [];
+  }
 
-      const output = {
-        generatedAt: new Date().toISOString(),
-        cacheHours: CACHE_MAX_AGE_HOURS,
-        historyDays: HISTORY_DAYS,
-        streams,
-      };
+  const stableNvidiaByTag = buildNvidiaMap(bluefinReleases);
+  const ltsNvidiaByTag = buildNvidiaMap(ltsReleases);
 
-      if (!fs.existsSync(OUTPUT_DIR)) {
-        fs.mkdirSync(OUTPUT_DIR, { recursive: true });
-      }
+  const hasSbomStable =
+    sbomLoaded &&
+    Object.keys(sbomCache.streams?.["bluefin-stable"]?.releases || {}).length > 0;
+  const hasSbomLts =
+    sbomLoaded &&
+    Object.keys(sbomCache.streams?.["bluefin-lts"]?.releases || {}).length > 0;
 
-      fs.writeFileSync(OUTPUT_FILE, JSON.stringify(output, null, 2), "utf-8");
-      const sbomNote = sbomLoaded ? " (SBOM overlay applied)" : "";
-      console.log(`Driver versions data saved to ${OUTPUT_FILE}${sbomNote}`);
-    })
-    .catch((error) => {
-      console.warn(
-        `GitHub releases API failed, falling back to feeds: ${error?.message || "unknown error"}`,
+  const stableStream = hasSbomStable
+    ? buildStreamFromSbom(
+        "bluefin-stable",
+        "Bluefin",
+        "Current stable stream from ublue-os/bluefin.",
+        "sudo bootc switch ghcr.io/ublue-os/bluefin:stable --enforce-container-sigpolicy",
+        sbomCache,
+        stableNvidiaByTag,
+      )
+    : buildStreamFromApi(
+        "bluefin-stable",
+        "Bluefin",
+        "Current stable stream from ublue-os/bluefin.",
+        "sudo bootc switch ghcr.io/ublue-os/bluefin:stable --enforce-container-sigpolicy",
+        bluefinReleases,
+        "stable-",
+        sbomCache,
       );
-      const bluefinFeed = readJsonIfExists(FEED_BLUEFIN, { items: [] });
-      const ltsFeed = readJsonIfExists(FEED_LTS, { items: [] });
 
-      const streams = [
-        buildStream(
-          "bluefin-stable",
-          "Bluefin",
-          "Current stable stream from ublue-os/bluefin.",
-          "sudo bootc switch ghcr.io/ublue-os/bluefin:stable --enforce-container-sigpolicy",
-          bluefinFeed.items || [],
-          sbomCache,
-        ),
-        buildStream(
-          "bluefin-lts",
-          "Bluefin LTS",
-          "Long-term support stream from ublue-os/bluefin-lts.",
-          "sudo bootc switch ghcr.io/ublue-os/bluefin:lts --enforce-container-sigpolicy",
-          ltsFeed.items || [],
-          sbomCache,
-          LTS_HISTORY_DAYS,
-        ),
-      ];
-
-      const output = {
-        generatedAt: new Date().toISOString(),
-        cacheHours: CACHE_MAX_AGE_HOURS,
-        historyDays: HISTORY_DAYS,
-        streams,
-      };
-
-      if (!fs.existsSync(OUTPUT_DIR)) {
-        fs.mkdirSync(OUTPUT_DIR, { recursive: true });
-      }
-
-      fs.writeFileSync(OUTPUT_FILE, JSON.stringify(output, null, 2), "utf-8");
-      console.log(
-        `Driver versions data saved to ${OUTPUT_FILE} (feed fallback)`,
+  const ltsStream = hasSbomLts
+    ? buildStreamFromSbom(
+        "bluefin-lts",
+        "Bluefin LTS",
+        "Long-term support stream from ublue-os/bluefin-lts.",
+        "sudo bootc switch ghcr.io/ublue-os/bluefin:lts --enforce-container-sigpolicy",
+        sbomCache,
+        ltsNvidiaByTag,
+        LTS_HISTORY_DAYS,
+      )
+    : buildStreamFromApi(
+        "bluefin-lts",
+        "Bluefin LTS",
+        "Long-term support stream from ublue-os/bluefin-lts.",
+        "sudo bootc switch ghcr.io/ublue-os/bluefin:lts --enforce-container-sigpolicy",
+        ltsReleases,
+        "lts.",
+        sbomCache,
+        LTS_HISTORY_DAYS,
       );
-    });
+
+  const output = {
+    generatedAt: new Date().toISOString(),
+    cacheHours: CACHE_MAX_AGE_HOURS,
+    historyDays: HISTORY_DAYS,
+    streams: [stableStream, ltsStream],
+  };
+
+  if (!fs.existsSync(OUTPUT_DIR)) {
+    fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+  }
+
+  fs.writeFileSync(OUTPUT_FILE, JSON.stringify(output, null, 2), "utf-8");
+  const sbomNote = hasSbomStable || hasSbomLts ? " (SBOM-primary)" : " (release fallback)";
+  console.log(`Driver versions data saved to ${OUTPUT_FILE}${sbomNote}`);
 }
 
 if (require.main === module) {
@@ -528,6 +527,7 @@ if (require.main === module) {
 }
 
 module.exports = {
+  lookupSbomVersionsForTag,
   rowFromSbomRelease,
   buildStreamFromSbom,
 };

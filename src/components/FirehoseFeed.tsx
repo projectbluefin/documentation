@@ -92,8 +92,12 @@ function sbomKeyForRelease(tag: string, stream: string): { streamId: string; cac
 
 /**
  * Enrich each OS release event's majorPackages with versions from the SBOM cache.
- * Packages already present in majorPackages (from release notes) are kept as-is;
- * missing tracked packages are appended from SBOM packageVersions.
+ *
+ * SBOM-primary policy: for every package SBOM tracks (CHIP_TO_SBOM), the SBOM
+ * version is authoritative and overrides any version parsed from release notes.
+ * prevVersion (the gold change-indicator arrow) is preserved from release notes
+ * so the UI can still show what changed. Packages outside CHIP_TO_SBOM (Nvidia,
+ * HWE Kernel, DX, GDX) are kept from release notes unchanged.
  *
  * Only applies to stable/LTS events. Dakota uses hardcoded placeholders.
  */
@@ -105,20 +109,29 @@ function enrichFromSbom(events: OsReleaseEvent[]): OsReleaseEvent[] {
     const packages = SBOM_CACHE?.streams?.[key.streamId]?.releases?.[key.cacheKey]?.packageVersions;
     if (!packages) return event;
 
-    const existingNames = new Set(event.release.majorPackages.map((p) => p.name.toLowerCase()));
-    const toAdd: ParsedMajorPackage[] = [];
+    const sbomChipNames = new Set(CHIP_TO_SBOM.map(({ chipName }) => chipName));
 
+    // Keep non-SBOM packages (Nvidia, HWE Kernel, DX, GDX, etc.) from release notes.
+    const nonSbomPackages = event.release.majorPackages.filter(
+      (p) => !sbomChipNames.has(p.name.toLowerCase())
+    );
+
+    // For SBOM-tracked packages: SBOM version is authoritative; preserve prevVersion
+    // from release notes so the change indicator (↑) still works.
+    const sbomPackages: ParsedMajorPackage[] = [];
     for (const { chipName, displayName, field } of CHIP_TO_SBOM) {
-      if (existingNames.has(chipName)) continue;
       const version = packages[field] as string | null | undefined;
       if (!version) continue;
-      toAdd.push({ name: displayName, version, prevVersion: null });
+      const fromNotes = event.release.majorPackages.find(
+        (p) => p.name.toLowerCase() === chipName
+      );
+      sbomPackages.push({ name: displayName, version, prevVersion: fromNotes?.prevVersion ?? null });
     }
 
-    if (toAdd.length === 0) return event;
+    if (sbomPackages.length === 0) return event;
     return {
       ...event,
-      release: { ...event.release, majorPackages: [...event.release.majorPackages, ...toAdd] },
+      release: { ...event.release, majorPackages: [...sbomPackages, ...nonSbomPackages] },
     };
   });
 }

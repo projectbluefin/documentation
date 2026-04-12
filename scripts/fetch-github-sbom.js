@@ -401,9 +401,39 @@ async function verifyAttestation(imageRef, spec) {
 // ---------------------------------------------------------------------------
 
 /**
+ * Given a parsed OCI manifest (which may be a multi-arch index or a
+ * single-arch manifest) and the content digest of that manifest, return
+ * the digest of the linux/amd64 platform-specific image.
+ *
+ * - If `manifest` is a multi-arch index (has a `manifests` array with platform
+ *   descriptors), the digest of the linux/amd64 entry is returned.
+ * - Otherwise the content digest is returned unchanged (single-arch manifest).
+ *
+ * Syft attaches SBOM referrers to the platform-specific digest, not to the
+ * multi-arch index.  Using this digest ensures `oras discover` finds the SBOM.
+ *
+ * @param {object} manifest  – parsed manifest JSON
+ * @param {string} contentDigest  – sha256 digest of the manifest bytes
+ * @returns {string} amd64-specific digest, or contentDigest for single-arch
+ */
+function selectAmd64DigestFromManifest(manifest, contentDigest) {
+  if (Array.isArray(manifest?.manifests)) {
+    const amd64 = manifest.manifests.find(
+      (m) =>
+        m?.platform?.os === "linux" && m?.platform?.architecture === "amd64",
+    );
+    if (amd64?.digest) return amd64.digest;
+  }
+  return contentDigest;
+}
+
+/**
  * Download the Syft SBOM for an image from GHCR via oras.
  *
  * Steps:
+ *   0. Resolve the linux/amd64 platform-specific digest from the manifest
+ *      index (multi-arch images only) so that oras discover operates on the
+ *      correct platform-specific manifest where SBOM referrers are attached.
  *   1. oras discover --format json <imageRef>
  *      → find referrer with artifactType == "application/vnd.spdx+json"
  *   2. oras pull <repo>@<sbomDigest> --output <tmpdir>
@@ -415,11 +445,52 @@ async function downloadSbom(imageRef) {
   const repoRef = imageRef.replace(/:[^/]+$/, "");
   let tmpDir = null;
 
+  // Step 0: resolve the amd64-specific digest.
+  // Syft publishes SBOM referrers against the platform manifest, not the index.
+  // If the tag points to a multi-arch index, oras discover on the tag will
+  // find no referrers.  Resolving to the amd64 digest fixes this.
+  let resolvedRef = imageRef;
+  try {
+    const [rawResult, digestResult] = await Promise.all([
+      execFileAsync("oras", ["manifest", "fetch", imageRef], {
+        env: { ...process.env },
+        maxBuffer: 1024 * 1024,
+        timeout: 30000,
+      }),
+      execFileAsync(
+        "oras",
+        [
+          "manifest", "fetch",
+          "--format", "go-template",
+          "--template", "{{ .digest }}",
+          "--platform", "linux/amd64",
+          imageRef,
+        ],
+        { env: { ...process.env }, maxBuffer: 64 * 1024, timeout: 30000 },
+      ),
+    ]);
+    const manifest = JSON.parse(rawResult.stdout);
+    const amd64Digest = selectAmd64DigestFromManifest(
+      manifest,
+      digestResult.stdout.trim(),
+    );
+    if (amd64Digest && amd64Digest.startsWith("sha256:")) {
+      resolvedRef = `${repoRef}@${amd64Digest}`;
+      if (resolvedRef !== imageRef) {
+        console.log(
+          `    downloadSbom: resolved to amd64 digest ${amd64Digest.slice(0, 19)}...`,
+        );
+      }
+    }
+  } catch {
+    // Non-fatal: fall back to tag-based ref
+  }
+
   try {
     // Step 1: discover referrers
     const discoverResult = await execFileAsync(
       "oras",
-      ["discover", "--format", "json", imageRef],
+      ["discover", "--format", "json", resolvedRef],
       {
         env: { ...process.env },
         maxBuffer: 4 * 1024 * 1024,
@@ -444,7 +515,7 @@ async function downloadSbom(imageRef) {
     );
 
     if (!sbomReferrer) {
-      console.warn(`    downloadSbom: no SPDX referrer found for ${imageRef}`);
+      console.warn(`    downloadSbom: no SPDX referrer found for ${resolvedRef}`);
       return null;
     }
 
@@ -955,4 +1026,5 @@ module.exports = {
   stripEpoch,
   compareRpmVersions,
   extractPackageVersions,
+  selectAmd64DigestFromManifest,
 };
