@@ -26,10 +26,10 @@ interface Product {
   org: string;
   summary: string;
   artwork: "bluefin" | "achillobator" | "dakotaraptor";
-  downloads: {
+  downloads?: {
     display: string;
     source: "live" | "cache" | "unavailable";
-  };
+  } | null;
   packagePageUrl: string;
   isoSectionLink?: string | null;
   streams: StreamInfo[];
@@ -274,12 +274,16 @@ export default function ImagesCatalogComponent(): React.JSX.Element {
           <p className={styles.summary}>{product.summary}</p>
 
           <div className={styles.statsRow}>
-            <span className={styles.statChip}>
-              <strong>Pulls:</strong> {product.downloads.display}
-            </span>
-            <span className={sourceClass(product.downloads.source)}>
-              {sourceText(product.downloads.source, "Downloads")}
-            </span>
+            {product.downloads && (
+              <>
+                <span className={styles.statChip}>
+                  <strong>Pulls:</strong> {product.downloads.display}
+                </span>
+                <span className={sourceClass(product.downloads.source)}>
+                  {sourceText(product.downloads.source, "Downloads")}
+                </span>
+              </>
+            )}
             <span className={sourceClass(product.metadataSource)}>
               {sourceText(product.metadataSource, "Metadata")}
             </span>
