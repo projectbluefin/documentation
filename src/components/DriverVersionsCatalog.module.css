@@ -164,7 +164,7 @@
   inset: 0;
   border-radius: inherit;
   pointer-events: none;
-  mix-blend-mode: overlay;
+  mix-blend-mode: color-dodge;
   z-index: 1;
   background-image: linear-gradient(
     115deg,
@@ -208,7 +208,7 @@
   inset: 0;
   border-radius: inherit;
   pointer-events: none;
-  mix-blend-mode: overlay;
+  mix-blend-mode: color-dodge;
   z-index: 1;
   background-image: linear-gradient(
     115deg,
@@ -247,7 +247,7 @@
   inset: 0;
   border-radius: inherit;
   pointer-events: none;
-  mix-blend-mode: overlay;
+  mix-blend-mode: color-dodge;
   z-index: 1;
   background-image: linear-gradient(
     115deg,
@@ -286,7 +286,7 @@
   inset: 0;
   border-radius: inherit;
   pointer-events: none;
-  mix-blend-mode: overlay;
+  mix-blend-mode: color-dodge;
   z-index: 1;
   background-image: linear-gradient(
     115deg,
@@ -322,7 +322,7 @@
   line-height: 1.2;
   font-weight: 800;
   color: var(--ifm-color-emphasis-900);
-  overflow-wrap: anywhere;
+  word-break: break-word;
   position: relative;
   z-index: 2;
 }
@@ -422,7 +422,7 @@
   inset: 0;
   border-radius: inherit;
   pointer-events: none;
-  mix-blend-mode: overlay;
+  mix-blend-mode: color-dodge;
   z-index: 1;
   background-image: linear-gradient(
     115deg,
@@ -461,7 +461,7 @@
   inset: 0;
   border-radius: inherit;
   pointer-events: none;
-  mix-blend-mode: overlay;
+  mix-blend-mode: color-dodge;
   z-index: 1;
   background-image: linear-gradient(
     115deg,
@@ -537,7 +537,7 @@
   inset: 0;
   border-radius: inherit;
   pointer-events: none;
-  mix-blend-mode: overlay;
+  mix-blend-mode: color-dodge;
   z-index: 1;
   background-image: linear-gradient(
     115deg,
@@ -576,7 +576,7 @@
   inset: 0;
   border-radius: inherit;
   pointer-events: none;
-  mix-blend-mode: overlay;
+  mix-blend-mode: color-dodge;
   z-index: 1;
   background-image: linear-gradient(
     115deg,
@@ -645,7 +645,7 @@
 
 .rebaseInline code {
   display: block;
-  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .commandBlock :global(.theme-code-block) {
@@ -658,7 +658,7 @@
 .commandBlock :global(pre) {
   margin: 0;
   white-space: pre-wrap;
-  overflow-wrap: anywhere;
+  word-break: break-word;
   /* padding-right handled globally in custom.css */
 }
 
@@ -704,17 +704,5 @@
 .rebaseList code {
   display: inline-block;
   margin-top: 0.3rem;
-  overflow-wrap: anywhere;
-}
-
-/* Dark mode: restore color-dodge for maximum shimmer on dark backgrounds */
-[data-theme="dark"] .majorBump::after,
-[data-theme="dark"] .nvidiaMajorBump::after,
-[data-theme="dark"] .nvidiaMinorBump::after,
-[data-theme="dark"] .minorBump::after,
-[data-theme="dark"] .mesaMajorBump::after,
-[data-theme="dark"] .mesaMinorBump::after,
-[data-theme="dark"] .gnomeMajorBump::after,
-[data-theme="dark"] .gnomeMinorBump::after {
-  mix-blend-mode: color-dodge;
+  word-break: break-word;
 }

@@ -171,11 +171,11 @@ function buildRow(item, streamId) {
     releaseUrl: item?.link || null,
     publishedAt: parseDate(item?.pubDate || item?.updated || null),
     versions: {
-      kernel: null,
-      hweKernel: null,
-      mesa: null,
+      kernel: extractVersionFromMarkdown(content, ["Kernel"]),
+      hweKernel: extractVersionFromMarkdown(content, ["HWE Kernel"]),
+      mesa: extractVersionFromMarkdown(content, ["Mesa"]),
       nvidia: extractVersionFromMarkdown(content, ["Nvidia", "NVIDIA"]),
-      gnome: null,
+      gnome: extractVersionFromMarkdown(content, ["Gnome", "GNOME"]),
     },
   };
 }
@@ -195,7 +195,7 @@ function buildRowFromApiRelease(release, streamId) {
       hweKernel: null,
       mesa: null,
       nvidia: extractVersionFromMarkdown(body, ["Nvidia", "NVIDIA"]),
-      gnome: null,
+      gnome: extractVersionFromMarkdown(body, ["Gnome", "GNOME"]),
     },
   };
 }

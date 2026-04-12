@@ -81,8 +81,10 @@ export interface ParsedOsRelease {
   centosVersion: string | null;
   /** Entries from the "Major packages" table. */
   majorPackages: ParsedMajorPackage[];
-  /** Entries from the "Major DX packages" (or "Major GDX packages") table. */
+  /** Entries from the "Major DX packages" table (dev tools: Docker, VSCode, etc.). */
   dxPackages: ParsedMajorPackage[];
+  /** Entries from the "Major GDX packages" table (GPU extras: Nvidia, CUDA). Present on LTS only. */
+  gdxPackages: ParsedMajorPackage[];
   /** Commit list. Empty array if no commits section is present. */
   commits: ParsedCommit[];
   /**

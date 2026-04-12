@@ -165,7 +165,7 @@ function VersionChip({ pkg }: { pkg: ParsedMajorPackage }) {
 
 // ── Chip labels we surface in the header chips row ────────────────────────────
 
-const HEADER_CHIP_NAMES = ["Kernel", "HWE Kernel", "Gnome", "Mesa", "Podman", "Nvidia", "bootc", "systemd", "pipewire", "sudo-rs", "uutils-coreutils"];
+const HEADER_CHIP_NAMES = ["Kernel", "HWE Kernel", "Gnome", "Mesa", "Podman", "Nvidia", "bootc", "systemd", "pipewire", "flatpak", "sudo-rs", "uutils-coreutils"];
 
 // ── Main component ────────────────────────────────────────────────────────────
 
@@ -182,14 +182,6 @@ const OsReleaseCard: React.FC<OsReleaseCardProps> = ({ event }) => {
   const streamLabel = isLts ? "LTS" : isDaily ? "Daily" : isDakota ? "Dakota" : "Stable";
   const cardVariantClass = isLts ? styles.cardLts : isDakota ? styles.cardDakota : styles.cardStable;
   const cardClass = `${styles.card} ${cardVariantClass}`;
-
-  const badgeClass = isLts
-    ? styles.badgeLts
-    : isDaily
-      ? styles.badgeDaily
-      : isDakota
-        ? styles.badgeDakota
-        : styles.badgeStable;
 
   // Key package chips (header row): subset of well-known packages.
   // Falls back to fullDiff when a name isn't in the curated majorPackages table.
@@ -231,7 +223,6 @@ const OsReleaseCard: React.FC<OsReleaseCardProps> = ({ event }) => {
       <div className={styles.cardHeader}>
         <div className={styles.titleRow}>
           <Heading as="h2" className={styles.cardTitle}>{cardTitle}</Heading>
-          <span className={`${styles.streamBadge} ${badgeClass}`}>{streamLabel}</span>
         </div>
 
         <div className={styles.metaRow}>
@@ -260,6 +251,16 @@ const OsReleaseCard: React.FC<OsReleaseCardProps> = ({ event }) => {
         <div className={styles.dxRow}>
           <span className={styles.dxLabel}>DX</span>
           {release.dxPackages.map((pkg) => (
+            <VersionChip key={pkg.name} pkg={pkg} />
+          ))}
+        </div>
+      )}
+
+      {/* ── GDX packages (LTS only — Nvidia, CUDA) ── */}
+      {release.gdxPackages.length > 0 && (
+        <div className={styles.dxRow}>
+          <span className={styles.dxLabel}>GDX</span>
+          {release.gdxPackages.map((pkg) => (
             <VersionChip key={pkg.name} pkg={pkg} />
           ))}
         </div>
