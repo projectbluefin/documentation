@@ -252,8 +252,15 @@ const FirehoseCard: React.FC<FirehoseCardProps> = ({ app, defaultCollapsed = fal
       data-package-type={app.packageType}
     >
       <div className={styles.mainRelease}>
-        {/* ── Header: icon + title section ── */}
-        <div className={`${styles.releaseHeader} ${collapsed ? styles.releaseHeaderCollapsed : ""}`}>
+        {/* ── Header: icon + title section — clicking anywhere toggles collapsed ── */}
+        <div
+          className={`${styles.releaseHeader} ${collapsed ? styles.releaseHeaderCollapsed : ""} ${styles.releaseHeaderClickable}`}
+          onClick={() => setCollapsed((v) => !v)}
+          role="button"
+          tabIndex={0}
+          aria-expanded={!collapsed}
+          onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setCollapsed((v) => !v); } }}
+        >
           {app.icon ? (
             <img
               src={app.icon}
@@ -274,7 +281,7 @@ const FirehoseCard: React.FC<FirehoseCardProps> = ({ app, defaultCollapsed = fal
               {/* Name + version — left */}
               <h3 className={styles.releaseName}>
                 {primaryHref ? (
-                  <a href={primaryHref} target="_blank" rel="noopener noreferrer">
+                  <a href={primaryHref} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>
                     {app.name}
                     {displayVersion && (
                       <span className={styles.versionInline}> {displayVersion}</span>
@@ -299,7 +306,7 @@ const FirehoseCard: React.FC<FirehoseCardProps> = ({ app, defaultCollapsed = fal
                     —
                   </span>
                 )}
-                <div className={styles.metaBadges}>
+                <div className={styles.metaBadges} onClick={(e) => e.stopPropagation()}>
                   <PackageBadge type={app.packageType} />
                   {flathubIconLink}
                   {sourceIconLink}
@@ -307,14 +314,7 @@ const FirehoseCard: React.FC<FirehoseCardProps> = ({ app, defaultCollapsed = fal
               </div>
             </div>
           </div>
-          <button
-            className={styles.collapseToggle}
-            onClick={() => setCollapsed((v) => !v)}
-            aria-expanded={!collapsed}
-            aria-label={collapsed ? "Expand" : "Collapse"}
-          >
-            <span className={`${styles.collapseChevron} ${collapsed ? "" : styles.collapseChevronOpen}`}>›</span>
-          </button>
+          <span className={`${styles.collapseChevron} ${collapsed ? "" : styles.collapseChevronOpen}`} aria-hidden="true">›</span>
         </div>
 
         {/* ── Body (hidden when collapsed) ── */}
