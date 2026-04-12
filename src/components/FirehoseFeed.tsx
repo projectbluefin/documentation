@@ -685,7 +685,7 @@ const FirehoseFeed: React.FC = () => {
                     <OsReleaseCard key={`stream-${event.release.tag}-${event.dateMs}`} event={event} />
                   ) : (
                     <div key={event.app.id} className={styles.appEntry}>
-                      <FirehoseCard app={event.app} />
+                      <FirehoseCard app={event.app} defaultCollapsed={true} />
                     </div>
                   ),
                 )}
