@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-08T22:20:22Z",
+  "generatedAt": "2026-04-13T20:57:45Z",
   "projects": {
     "bluefin": {
       "label": "Bluefin",
@@ -322,6 +322,101 @@
               "primaryFormat": "svg",
               "hasLightbox": true,
               "previewNightUrl": null
+            },
+            {
+              "id": "duality",
+              "title": "Duality",
+              "author": "Dr. Natalia Jagielska",
+              "authorLicense": "https://natalia-jagielska.weebly.com/",
+              "previewUrl": null,
+              "previewNightUrl": null,
+              "dayUrl": "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/duality/duality-day.svg",
+              "nightUrl": null,
+              "jxlUrl": null,
+              "primaryFormat": "svg",
+              "hasLightbox": true,
+              "coAuthor": "Delphic Melody",
+              "coAuthorLink": "https://ko-fi.com/melodyofdelphi"
+            },
+            {
+              "id": "eyes",
+              "title": "Eyes",
+              "author": "Dr. Natalia Jagielska",
+              "authorLicense": "https://natalia-jagielska.weebly.com/",
+              "previewUrl": null,
+              "previewNightUrl": null,
+              "dayUrl": "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/eyes/eyes.svg",
+              "nightUrl": null,
+              "jxlUrl": null,
+              "primaryFormat": "svg",
+              "hasLightbox": true,
+              "coAuthor": "Delphic Melody",
+              "coAuthorLink": "https://ko-fi.com/melodyofdelphi"
+            },
+            {
+              "id": "xe_clouds",
+              "title": "Clouds",
+              "author": "Xe Iaso",
+              "authorLicense": "https://xeiaso.net/",
+              "previewUrl": "/img/artwork/thumbnails/bluefin-xe_clouds.webp",
+              "previewNightUrl": null,
+              "dayUrl": "/img/artwork/fullres/bluefin-xe_clouds.webp",
+              "nightUrl": null,
+              "jxlUrl": "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/bluefin/images/xe_clouds.jxl",
+              "primaryFormat": null,
+              "hasLightbox": true
+            },
+            {
+              "id": "xe_foothills",
+              "title": "LA Foothills",
+              "author": "Xe Iaso",
+              "authorLicense": "https://xeiaso.net/",
+              "previewUrl": "/img/artwork/thumbnails/bluefin-xe_foothills.webp",
+              "previewNightUrl": null,
+              "dayUrl": "/img/artwork/fullres/bluefin-xe_foothills.webp",
+              "nightUrl": null,
+              "jxlUrl": "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/bluefin/images/xe_foothills.jxl",
+              "primaryFormat": null,
+              "hasLightbox": true
+            },
+            {
+              "id": "xe_red_tulip",
+              "title": "Red Tulip",
+              "author": "Xe Iaso",
+              "authorLicense": "https://xeiaso.net/",
+              "previewUrl": "/img/artwork/thumbnails/bluefin-xe_red_tulip.webp",
+              "previewNightUrl": null,
+              "dayUrl": "/img/artwork/fullres/bluefin-xe_red_tulip.webp",
+              "nightUrl": null,
+              "jxlUrl": "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/bluefin/images/xe_red_tulip.jxl",
+              "primaryFormat": null,
+              "hasLightbox": true
+            },
+            {
+              "id": "xe_space_needle",
+              "title": "Space Needle",
+              "author": "Xe Iaso",
+              "authorLicense": "https://xeiaso.net/",
+              "previewUrl": "/img/artwork/thumbnails/bluefin-xe_space_needle.webp",
+              "previewNightUrl": null,
+              "dayUrl": "/img/artwork/fullres/bluefin-xe_space_needle.webp",
+              "nightUrl": null,
+              "jxlUrl": "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/bluefin/images/xe_space_needle.jxl",
+              "primaryFormat": null,
+              "hasLightbox": true
+            },
+            {
+              "id": "xe_sunset",
+              "title": "Sunset",
+              "author": "Xe Iaso",
+              "authorLicense": "https://xeiaso.net/",
+              "previewUrl": "/img/artwork/thumbnails/bluefin-xe_sunset.webp",
+              "previewNightUrl": null,
+              "dayUrl": "/img/artwork/fullres/bluefin-xe_sunset.webp",
+              "nightUrl": null,
+              "jxlUrl": "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/bluefin/images/xe_sunset.jxl",
+              "primaryFormat": null,
+              "hasLightbox": true
             }
           ]
         }

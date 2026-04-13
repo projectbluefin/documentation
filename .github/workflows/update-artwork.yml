@@ -67,10 +67,11 @@ jobs:
         id: pr-body
         run: |
           if [ -f ARTWORK_CHANGES.md ]; then
+            DELIMITER=$(openssl rand -hex 16)
             {
-              echo "body<<EOF"
+              echo "body<<${DELIMITER}"
               cat ARTWORK_CHANGES.md
-              echo "EOF"
+              echo "${DELIMITER}"
             } >> "$GITHUB_OUTPUT"
           else
             echo "body=Automated artwork sync from ublue-os/artwork" >> "$GITHUB_OUTPUT"

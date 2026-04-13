@@ -18,6 +18,9 @@
 !/static/data/artwork.json
 !/static/data/artwork-versions.json
 
+# Generated temp files
+ARTWORK_CHANGES.md
+
 # Misc
 .DS_Store
 .env.local

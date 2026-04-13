@@ -350,7 +350,9 @@ async function syncBluefinExtras(manifest, tree, changes) {
   const existingIds = new Set(collection.wallpapers.map((w) => w.id));
 
   // Collect top-level wallpaper directories (excluding the monthly dirs)
-  const SKIP_DIRS = new Set(["bluefin", "aurora", "bazzite"]);
+  // "bluefin-wallpapers-extra" is a packaging directory containing SVG source
+  // files for existing extras wallpapers — not a new wallpaper entry.
+  const SKIP_DIRS = new Set(["bluefin", "aurora", "bazzite", "bluefin-wallpapers-extra"]);
   const topLevelDirs = getSubdirNames(tree, "wallpapers");
   const newWallpapers = [];
 
