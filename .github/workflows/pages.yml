@@ -53,6 +53,13 @@ jobs:
             github-data-sbom-
             github-data-
 
+      - name: Restore curated artwork metadata (cache must not overwrite)
+        # The github-data cache restores the entire static/data/ directory, which
+        # overwrites artwork.json with a stale cached copy and loses manually curated
+        # fields (e.g. coAuthor). Restore the committed version from the checkout so
+        # hand-edited credits are always included in the build.
+        run: git checkout -- static/data/artwork.json
+
       - name: Restore SBOM attestation cache (overrides general data cache)
         # Primary key will never match (update-sbom-cache.yml runs as a separate workflow
         # with a different run_id). The restore-keys fallback always applies, fetching
