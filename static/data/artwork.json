@@ -281,21 +281,6 @@
               "previewNightUrl": null
             },
             {
-              "id": "duality-ultrawide",
-              "title": "Duality (Ultrawide)",
-              "author": "Dr. Natalia Jagielska",
-              "authorLicense": "https://natalia-jagielska.weebly.com/",
-              "coAuthor": "Delphic Melody",
-              "coAuthorLink": "https://ko-fi.com/melodyofdelphi",
-              "previewUrl": null,
-              "dayUrl": "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/duality-ultrawide/duality-ultrawide-day.svg",
-              "nightUrl": "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/duality-ultrawide/duality-ultrawide-night.svg",
-              "jxlUrl": null,
-              "primaryFormat": "svg",
-              "hasLightbox": true,
-              "previewNightUrl": null
-            },
-            {
               "id": "collapse",
               "title": "Collapse",
               "author": "Dr. Natalia Jagielska",
