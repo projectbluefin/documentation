@@ -88,12 +88,14 @@ function extractTag(title: string, stream: OsStream): string {
   const compoundMatch = title.match(/^([a-z]+-[a-z]+-\d{8})/i);
   if (compoundMatch) return compoundMatch[1].toLowerCase();
 
-  // Standard prefix format: "stable-YYYYMMDD", "lts-YYYYMMDD", "lts.YYYYMMDD", "latest-YYYYMMDD"
+  // Dot-separator format: "lts.YYYYMMDD" (new LTS release tag format as of 2026-04)
+  const dotSepMatch = title.match(/^([a-z]+)\.(\d{8})/i);
+  if (dotSepMatch) return `${dotSepMatch[1].toLowerCase()}-${dotSepMatch[2]}`;
+
+  // Standard prefix format: "stable-YYYYMMDD", "lts-YYYYMMDD", "latest-YYYYMMDD"
   const prefixMatch = title.match(/^([a-z]+-[\d.]+)/i);
   if (prefixMatch) {
     let tag = prefixMatch[1].toLowerCase();
-    // Normalize legacy dot format
-    tag = tag.replace(/^lts\.(\d{8})$/, "lts-$1");
     // Normalize latest- prefix → stable-daily-YYYYMMDD
     tag = tag.replace(/^latest-(\d{8})$/, "stable-daily-$1");
     return tag;
@@ -398,7 +400,14 @@ export function parseOsRelease(
     }
   }
 
-  if (majorPackages.length === 0 && fullDiff.length === 0) return null;
+  const tag = extractTag(item.title, stream);
+
+  // Drop items with no package data AND no dated tag — these are likely garbage entries
+  // or releases that predate the structured changelog format. Events with a dated tag
+  // are kept even if they have no release notes tables, because the SBOM pipeline will
+  // enrich them with authoritative package versions (kernel, gnome, mesa, etc.).
+  const hasDateTag = /\d{8}/.test(tag);
+  if (majorPackages.length === 0 && fullDiff.length === 0 && !hasDateTag) return null;
 
   // Backfill: any majorPackage or dxPackage that changed but is absent from fullDiff
   // gets a synthetic "changed" entry so the collapsible list shows the full upgrade path.
@@ -414,8 +423,6 @@ export function parseOsRelease(
       fullDiffNames.add(pkg.name.toLowerCase());
     }
   }
-
-  const tag = extractTag(item.title, stream);
 
   return {
     stream,
