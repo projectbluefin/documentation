@@ -50,7 +50,9 @@ jobs:
       - name: Restore existing SBOM data cache (for incremental updates)
         uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
         with:
-          path: static/data
+          path: |
+            static/data/sbom-attestations.json
+            static/data/sbom-attestations-frontend.json
           key: github-data-sbom-${{ github.run_id }}
           restore-keys: |
             github-data-sbom-
@@ -79,5 +81,7 @@ jobs:
       - name: Save SBOM data cache
         uses: actions/cache/save@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
         with:
-          path: static/data
+          path: |
+            static/data/sbom-attestations.json
+            static/data/sbom-attestations-frontend.json
           key: github-data-sbom-${{ github.run_id }}
