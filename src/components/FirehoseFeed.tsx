@@ -148,9 +148,17 @@ function enrichFromSbom(events: OsReleaseEvent[]): OsReleaseEvent[] {
 }
 
 /**
- * LTS has no SBOM pipeline. Carry forward package versions last seen in fullDiff
- * across the release history so each LTS card shows its most-recently-observed version.
- * Processes events oldest→newest, maintaining a running "last known" state per package,
+ * Carry forward package versions last seen in fullDiff across the LTS release
+ * history so each card shows its most-recently-observed version for packages
+ * not tracked by the primary SBOM path (e.g. releases older than LOOKBACK_DAYS,
+ * or packages SBOM tracks but release notes also list).
+ *
+ * Primary SBOM pipeline (enrichFromSbom) handles Kernel, GNOME, Mesa, Podman,
+ * bootc, systemd, pipewire, flatpak for releases within LOOKBACK_DAYS.
+ * This function is a fallback for older releases and carries forward the same
+ * TRACKED set from the release notes / fullDiff parser.
+ *
+ * Processes events oldest→newest, maintaining a running "last known" state,
  * then restores the original newest-first order.
  */
 function enrichLtsFromHistory(events: OsReleaseEvent[]): OsReleaseEvent[] {
