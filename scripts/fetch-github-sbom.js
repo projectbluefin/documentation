@@ -311,10 +311,13 @@ async function fetchGhcrTags(org, pkg) {
     if (Array.isArray(body.tags)) allTags.push(...body.tags);
 
     // Follow pagination Link header per RFC 5988 / OCI distribution spec.
-    // Use a flexible regex (parameters in any order, optional quoting, case-insensitive)
-    // and resolve relative URLs against the response URL for spec compliance.
+    // GHCR returns: </v2/.../tags/list?last=...&n=1000>; rel="next"
+    // The trailing \b after the optional quote fails to match because " is non-word
+    // and end-of-string is also non-word — so \b never fires, breaking pagination.
+    // Use a literal rel="next" match with an optional unquoted fallback.
     const linkHeader = res.headers.get("link") || "";
-    const nextMatch = linkHeader.match(/<([^>]+)>;[^<]*\brel=("?)next\2\b/i);
+    const nextMatch = linkHeader.match(/<([^>]+)>;\s*rel="next"/i)
+      ?? linkHeader.match(/<([^>]+)>;\s*rel=next(?:[^a-z]|$)/i);
     url = nextMatch ? new URL(nextMatch[1], res.url).href : null;
   }
 
