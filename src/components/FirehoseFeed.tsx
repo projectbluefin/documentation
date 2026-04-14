@@ -128,15 +128,23 @@ function enrichFromSbom(events: OsReleaseEvent[]): OsReleaseEvent[] {
     // For SBOM-tracked packages: SBOM version is authoritative; fall back to
     // release notes version if SBOM has null (package not found in RPM database).
     // Preserves prevVersion from release notes so the change indicator (↑) works.
+    // Priority: majorPackages prevVersion (2-col table) → fullDiff prevVersion (4-col diff table).
+    // fullDiff is checked because SBOM-tracked packages (e.g. bootc) often appear in the
+    // "All Images" diff table but NOT in the "Major packages" 2-col table, so fromNotes is
+    // undefined and prevVersion would silently become null without the fullDiff fallback.
     const sbomPackages: ParsedMajorPackage[] = [];
     for (const { chipName, displayName, field } of CHIP_TO_SBOM) {
       const sbomVersion = packages[field] as string | null | undefined;
       const fromNotes = event.release.majorPackages.find(
         (p) => p.name.toLowerCase() === chipName
       );
+      const fromDiff = event.release.fullDiff.find(
+        (d) => d.name.toLowerCase() === chipName
+      );
       const version = sbomVersion ?? fromNotes?.version ?? null;
       if (!version) continue; // neither SBOM nor release notes has this package — omit chip
-      sbomPackages.push({ name: displayName, version, prevVersion: fromNotes?.prevVersion ?? null });
+      const prevVersion = fromNotes?.prevVersion ?? fromDiff?.prevVersion ?? null;
+      sbomPackages.push({ name: displayName, version, prevVersion });
     }
 
     if (sbomPackages.length === 0) return event;
@@ -162,7 +170,7 @@ function enrichFromSbom(events: OsReleaseEvent[]): OsReleaseEvent[] {
  * then restores the original newest-first order.
  */
 function enrichLtsFromHistory(events: OsReleaseEvent[]): OsReleaseEvent[] {
-  const TRACKED = ["systemd", "bootc", "pipewire", "flatpak"];
+  const TRACKED = ["systemd", "bootc", "pipewire", "flatpak", "hwe kernel"];
   const sorted = [...events].sort((a, b) => a.dateMs - b.dateMs);
   const running: Record<string, string> = {};
 
