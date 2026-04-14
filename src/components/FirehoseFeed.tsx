@@ -192,6 +192,72 @@ function enrichLtsFromHistory(events: OsReleaseEvent[]): OsReleaseEvent[] {
   return enriched.sort((a, b) => b.dateMs - a.dateMs);
 }
 
+/** RPM package name → display label for the DX section chips */
+const DX_CHIP_MAP: Record<string, string> = {
+  "docker-ce": "Docker",
+  code: "VSCode",
+  incus: "Incus",
+};
+
+/** RPM package name → display label for the GDX section chips */
+const GDX_CHIP_MAP: Record<string, string> = {
+  "nvidia-driver": "Nvidia",
+  "nvidia-driver-cuda": "CUDA",
+};
+
+/**
+ * Enrich LTS events' dxPackages and gdxPackages from the bluefin-dx-lts /
+ * bluefin-gdx-lts SBOM allPackages maps.
+ *
+ * The "Major DX / GDX packages" tables are absent from lts.YYYYMMDD releases
+ * (new release format), so dxPackages/gdxPackages are empty after parse.
+ * This function fills them from authoritative SBOM data.
+ */
+function enrichLtsDxGdxFromSbom(events: OsReleaseEvent[]): OsReleaseEvent[] {
+  return events.map((event) => {
+    if (event.stream !== "lts") return event;
+
+    const dateMatch = event.release.tag.match(/(\d{8})/);
+    if (!dateMatch) return event;
+    const cacheKey = `lts-${dateMatch[1]}`;
+
+    const dxAllPkgs =
+      SBOM_CACHE?.streams?.["bluefin-dx-lts"]?.releases?.[cacheKey]?.packageVersions?.allPackages;
+    const gdxAllPkgs =
+      SBOM_CACHE?.streams?.["bluefin-gdx-lts"]?.releases?.[cacheKey]?.packageVersions?.allPackages;
+
+    const dxPackages = [...event.release.dxPackages];
+    if (dxAllPkgs) {
+      const existing = new Set(dxPackages.map((p) => p.name.toLowerCase()));
+      for (const [rpm, label] of Object.entries(DX_CHIP_MAP)) {
+        const version = dxAllPkgs[rpm];
+        if (version && !existing.has(label.toLowerCase())) {
+          dxPackages.push({ name: label, version, prevVersion: null });
+        }
+      }
+    }
+
+    const gdxPackages = [...event.release.gdxPackages];
+    if (gdxAllPkgs) {
+      const existing = new Set(gdxPackages.map((p) => p.name.toLowerCase()));
+      for (const [rpm, label] of Object.entries(GDX_CHIP_MAP)) {
+        const version = gdxAllPkgs[rpm];
+        if (version && !existing.has(label.toLowerCase())) {
+          gdxPackages.push({ name: label, version, prevVersion: null });
+        }
+      }
+    }
+
+    if (
+      dxPackages.length === event.release.dxPackages.length &&
+      gdxPackages.length === event.release.gdxPackages.length
+    ) {
+      return event;
+    }
+    return { ...event, release: { ...event.release, dxPackages, gdxPackages } };
+  });
+}
+
 /**
  * Synthesise OsReleaseEvent entries for stable-daily builds that exist only in
  * GHCR (no GitHub Release). These are GHCR nightly builds tagged
@@ -251,7 +317,9 @@ function loadStableDailyEventsFromSbom(): OsReleaseEvent[] {
 // All parsed events from both feeds, enriched with SBOM package versions
 const BLUEFIN_OS_EVENTS: OsReleaseEvent[] = enrichFromSbom(loadOsEvents(bluefinReleasesData));
 const STABLE_DAILY_OS_EVENTS: OsReleaseEvent[] = loadStableDailyEventsFromSbom();
-const LTS_OS_EVENTS: OsReleaseEvent[] = enrichLtsFromHistory(enrichFromSbom(loadOsEvents(bluefinLtsReleasesData, "lts")));
+const LTS_OS_EVENTS: OsReleaseEvent[] = enrichLtsDxGdxFromSbom(
+  enrichLtsFromHistory(enrichFromSbom(loadOsEvents(bluefinLtsReleasesData, "lts"))),
+);
 
 // Rolling 12-month window for the stream — pinned cards (PINNED_OS_EVENTS) are unaffected.
 const ALL_OS_STREAM_EVENTS: OsReleaseEvent[] = (() => {
