@@ -226,7 +226,7 @@ function enrichLtsDxGdxFromSbom(events: OsReleaseEvent[]): OsReleaseEvent[] {
     const gdxAllPkgs =
       SBOM_CACHE?.streams?.["bluefin-gdx-lts"]?.releases?.[cacheKey]?.packageVersions?.allPackages;
 
-    let dxPackages = [...event.release.dxPackages];
+    const dxPackages = [...event.release.dxPackages];
     if (dxAllPkgs) {
       const existing = new Set(dxPackages.map((p) => p.name.toLowerCase()));
       for (const [rpm, label] of Object.entries(DX_CHIP_MAP)) {
@@ -237,7 +237,7 @@ function enrichLtsDxGdxFromSbom(events: OsReleaseEvent[]): OsReleaseEvent[] {
       }
     }
 
-    let gdxPackages = [...event.release.gdxPackages];
+    const gdxPackages = [...event.release.gdxPackages];
     if (gdxAllPkgs) {
       const existing = new Set(gdxPackages.map((p) => p.name.toLowerCase()));
       for (const [rpm, label] of Object.entries(GDX_CHIP_MAP)) {
