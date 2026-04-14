@@ -19,13 +19,17 @@
  *  - Pagination: GitHub Releases API is paginated; we fetch all pages.
  *  - Failure modes: present:false = no attestation published;
  *                   verified:false = attestation exists but verification failed.
- *  - lts/gdx streams: no SBOMs yet. keyless:false, cosignKeyUrl set.
- *    present:false is the correct result — pipeline handles gracefully.
- *    When lts SBOMs are published they will be picked up automatically.
+ *  - lts/gdx streams: keyless:false (key-based signing, not OIDC keyless).
+ *    verifyAttestation() uses OIDC keyless → attestation.present:false is expected.
+ *    LTS SBOMs ARE published (spdx-json format via oras attach from reusable-build-image.yml).
+ *    downloadSbom() uses ORAS directly and works regardless of signing method.
+ *    extractPackageVersions() handles both Syft JSON and SPDX JSON formats.
+ *    Cache hit for lts/gdx uses packageVersions presence (not attestation.verified).
  *  - SBOM download: uses `oras discover` on the image tag to find the
  *    vnd.spdx+json referrer digest, then `oras pull` to download sbom.json
  *    into a temp directory.
- *    The Syft JSON is parsed for RPM artifacts to extract packageVersions.
+ *    Both Syft JSON (artifacts[]) and SPDX JSON (packages[]) formats are
+ *    parsed for RPM artifacts to extract packageVersions.
  *  - SBOM cache: keyed by image digest — if the digest hasn't changed AND
  *    packageVersions is non-null, the existing cache entry is reused.
  *  - NVIDIA: intentionally absent from SBOM (akmod, built outside the image).
@@ -694,7 +698,38 @@ function extractPackageVersions(sbomPath) {
     return null;
   }
 
-  const artifacts = sbom?.artifacts;
+  // Detect SBOM format.
+  //
+  // Syft JSON (stable/daily streams): top-level `artifacts` array; each entry
+  //   has a `type` field ("rpm", "deb", etc.).
+  //
+  // SPDX JSON (LTS/GDX streams): top-level `packages` array with `spdxVersion`
+  //   present; RPM packages are identified by a pkg:rpm/ PURL in externalRefs.
+  //   Normalise to the same {name, version, type} shape before processing.
+  let artifacts;
+  const isSpdx = Array.isArray(sbom?.packages) && typeof sbom?.spdxVersion === "string";
+  if (isSpdx) {
+    artifacts = (sbom.packages || [])
+      .filter((pkg) => {
+        const refs = pkg?.externalRefs || [];
+        return refs.some(
+          (r) =>
+            r?.referenceCategory === "PACKAGE-MANAGER" &&
+            r?.referenceLocator?.startsWith("pkg:rpm/"),
+        );
+      })
+      .map((pkg) => ({
+        name: pkg.name,
+        version: pkg.versionInfo,
+        type: "rpm",
+      }));
+    console.log(
+      `    extractPackageVersions: SPDX format (${sbom.spdxVersion}), ${artifacts.length} RPM packages`,
+    );
+  } else {
+    artifacts = sbom?.artifacts;
+  }
+
   if (!Array.isArray(artifacts)) {
     console.warn("    extractPackageVersions: no artifacts array in SBOM");
     return null;
@@ -893,16 +928,23 @@ async function processStream(spec, ghcrTagsByImage, existing) {
       Object.keys(existingEntry.packageVersions.allPackages).length > 0;
     const isVerified = existingEntry?.attestation?.verified === true;
 
-    if (!FORCE_REFRESH && isVerified && hasVersions && hasAllPackages) {
+    // For keyless streams: require attestation.verified AND packageVersions.
+    // For key-based streams (LTS/GDX): attestation.verified is always false because
+    // verifyAttestation() uses OIDC keyless — key-based signing never passes it.
+    // For these streams, treat having populated packageVersions as a valid cache hit.
+    const isCacheHit = !FORCE_REFRESH && hasVersions && hasAllPackages &&
+      (spec.keyless ? isVerified : true);
+
+    if (isCacheHit) {
       console.log(
-        `    ${cacheKey}: cache hit (verified, versions populated)`,
+        `    ${cacheKey}: cache hit (${spec.keyless ? "verified, " : ""}versions populated)`,
       );
       releases[cacheKey] = existingEntry;
       continue;
     }
 
-    // Partial cache hit: attestation already verified but SBOM not yet downloaded
-    // (or allPackages was missing from an older cache entry — re-download SBOM only)
+    // Partial cache hit: attestation already verified (keyless) but SBOM not yet downloaded,
+    // or allPackages was missing from an older cache entry — re-download SBOM only.
     let attestation;
     if (!FORCE_REFRESH && isVerified && (!hasVersions || (hasVersions && !hasAllPackages))) {
       console.log(
