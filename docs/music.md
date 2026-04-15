@@ -15,6 +15,11 @@ Bluefin in 2026 focuses on upstream projects and contributor growth.
 <div className={styles.extensionsGrid}>
 
 <MusicPlaylist 
+  title="Bluefin and the Syrens of Metal"
+  playlistId="PLhiPP9M5fgWFa09qMHJSA7ts93UsMG82Q"
+/>
+
+<MusicPlaylist 
   title="Bluefin and the Bazaar of Destiny"
   playlistId="PLhiPP9M5fgWFOhFgduxhleNTmfVSj9JmO"
 />
