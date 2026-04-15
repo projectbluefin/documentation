@@ -10,7 +10,7 @@ The Bluefin team releases music playlists regularly. Each song and album has a t
 
 ## Legendary Adventures
 
-Bluefin in 2025 focuses on upstream projects and contributor growth.
+Bluefin in 2026 focuses on upstream projects and contributor growth.
 
 <div className={styles.extensionsGrid}>
 
