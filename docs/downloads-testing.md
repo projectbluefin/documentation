@@ -63,6 +63,8 @@ Dakota is in Alpha, take appropriate precautions:
 | ----------- | ------------- | ---------------------------------------------------------------------------------------- | ------- | ---------------------------------------------------------------------------- |
 | latest      | AMD/Intel     | [📥 dakota-live-latest.iso](https://projectbluefin.dev/dakota-live-latest.iso) | | | 
 
+- [Backup ISO](https://projectbluefin.dev/dakota-live-20260415-fa525c1.iso)
+
 ## Verifying Downloads with Checksums
 
 **Checksums** allow you to verify that your download completed successfully and wasn't corrupted or tampered with. After downloading an ISO, you can compare its checksum to the official checksum file to ensure integrity. While optional, verification is recommended for important installations.
