@@ -10,6 +10,7 @@ import styles from "./FirehoseCard.module.css";
 
 interface FirehoseCardProps {
   app: FirehoseApp;
+  defaultCollapsed?: boolean;
 }
 
 function formatDate(iso: string): string {
@@ -172,8 +173,9 @@ function OsPackageDiff({ diff }: { diff: FirehosePackageDiff }) {
   );
 }
 
-const FirehoseCard: React.FC<FirehoseCardProps> = ({ app }) => {
+const FirehoseCard: React.FC<FirehoseCardProps> = ({ app, defaultCollapsed = false }) => {
   const [showOlder, setShowOlder] = useState(false);
+  const [collapsed, setCollapsed] = useState(defaultCollapsed);
 
   const latestRelease = app.releases?.[0];
   const olderReleases = app.releases?.slice(1) ?? [];
@@ -250,8 +252,15 @@ const FirehoseCard: React.FC<FirehoseCardProps> = ({ app }) => {
       data-package-type={app.packageType}
     >
       <div className={styles.mainRelease}>
-        {/* ── Header: icon + title section ── */}
-        <div className={styles.releaseHeader}>
+        {/* ── Header: icon + title section — clicking anywhere toggles collapsed ── */}
+        <div
+          className={`${styles.releaseHeader} ${collapsed ? styles.releaseHeaderCollapsed : ""} ${styles.releaseHeaderClickable}`}
+          onClick={() => setCollapsed((v) => !v)}
+          role="button"
+          tabIndex={0}
+          aria-expanded={!collapsed}
+          onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setCollapsed((v) => !v); } }}
+        >
           {app.icon ? (
             <img
               src={app.icon}
@@ -272,7 +281,7 @@ const FirehoseCard: React.FC<FirehoseCardProps> = ({ app }) => {
               {/* Name + version — left */}
               <h3 className={styles.releaseName}>
                 {primaryHref ? (
-                  <a href={primaryHref} target="_blank" rel="noopener noreferrer">
+                  <a href={primaryHref} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>
                     {app.name}
                     {displayVersion && (
                       <span className={styles.versionInline}> {displayVersion}</span>
@@ -297,7 +306,7 @@ const FirehoseCard: React.FC<FirehoseCardProps> = ({ app }) => {
                     —
                   </span>
                 )}
-                <div className={styles.metaBadges}>
+                <div className={styles.metaBadges} onClick={(e) => e.stopPropagation()}>
                   <PackageBadge type={app.packageType} />
                   {flathubIconLink}
                   {sourceIconLink}
@@ -305,84 +314,90 @@ const FirehoseCard: React.FC<FirehoseCardProps> = ({ app }) => {
               </div>
             </div>
           </div>
+          <span className={`${styles.collapseChevron} ${collapsed ? "" : styles.collapseChevronOpen}`} aria-hidden="true">›</span>
         </div>
 
-        {/* ── App ID (flatpak only) ── */}
-        {app.packageType === "flatpak" && app.id && (
-          <p className={styles.releaseAppId}>{app.id.replace(/^flatpak-/, "")}</p>
-        )}
-
-        {/* ── Homebrew install row ── */}
-        {brewInstall && (
-          <div className={styles.brewInstallRow}>
-            <code className={styles.brewCommand}>{brewInstall}</code>
-            <CopyButton command={brewInstall} />
-          </div>
-        )}
-
-        {/* ── Summary ── */}
-        {app.summary && (
-          <p className={styles.releaseSummary}>{app.summary}</p>
-        )}
-
-        {/* ── OS package version chips ── */}
-        {app.packageType === "os" && app.osInfo && (
-          <div className={styles.releaseNotes}>
-            <OsPackageChips
-              versions={{
-                fedora: app.osInfo.fedoraVersion ?? null,
-                kernel: app.osInfo.kernelVersion ?? null,
-                gnome: app.osInfo.gnomeVersion ?? null,
-                mesa: app.osInfo.mesaVersion ?? null,
-                podman: app.osInfo.majorPackages?.["Podman"] ?? null,
-                systemd: app.osInfo.majorPackages?.["systemd"] ?? null,
-                bootc: app.osInfo.majorPackages?.["bootc"] ?? null,
-              }}
-            />
-            {latestRelease?.packageDiff && (
-              <OsPackageDiff diff={latestRelease.packageDiff} />
+        {/* ── Body (hidden when collapsed) ── */}
+        {!collapsed && (
+          <>
+            {/* ── App ID (flatpak only) ── */}
+            {app.packageType === "flatpak" && app.id && (
+              <p className={styles.releaseAppId}>{app.id.replace(/^flatpak-/, "")}</p>
             )}
-            {latestRelease?.url && (
-              <a
-                href={latestRelease.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles.releaseLink}
-              >
-                View Releases on GitHub →
-              </a>
-            )}
-          </div>
-        )}
 
-        {/* ── Release notes (non-OS) ── */}
-        {app.packageType !== "os" && latestRelease?.description ? (
-          <div className={styles.releaseNotes}>
-            <div
-              className={styles.releaseDescription}
-              dangerouslySetInnerHTML={{ __html: latestRelease.description }}
-            />
-            {latestRelease.url && (
-              <a
-                href={latestRelease.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles.releaseLink}
-              >
-                View Full Release →
-              </a>
+            {/* ── Homebrew install row ── */}
+            {brewInstall && (
+              <div className={styles.brewInstallRow}>
+                <code className={styles.brewCommand}>{brewInstall}</code>
+                <CopyButton command={brewInstall} />
+              </div>
             )}
-          </div>
-        ) : app.packageType !== "os" && app.description && !latestRelease ? (
-          /* For apps with no release history, show package description if available */
-          <div className={styles.releaseNotes}>
-            <p className={styles.releaseDescription}>{app.description}</p>
-          </div>
-        ) : null}
+
+            {/* ── Summary ── */}
+            {app.summary && (
+              <p className={styles.releaseSummary}>{app.summary}</p>
+            )}
+
+            {/* ── OS package version chips ── */}
+            {app.packageType === "os" && app.osInfo && (
+              <div className={styles.releaseNotes}>
+                <OsPackageChips
+                  versions={{
+                    fedora: app.osInfo.fedoraVersion ?? null,
+                    kernel: app.osInfo.kernelVersion ?? null,
+                    gnome: app.osInfo.gnomeVersion ?? null,
+                    mesa: app.osInfo.mesaVersion ?? null,
+                    podman: app.osInfo.majorPackages?.["Podman"] ?? null,
+                    systemd: app.osInfo.majorPackages?.["systemd"] ?? null,
+                    bootc: app.osInfo.majorPackages?.["bootc"] ?? null,
+                  }}
+                />
+                {latestRelease?.packageDiff && (
+                  <OsPackageDiff diff={latestRelease.packageDiff} />
+                )}
+                {latestRelease?.url && (
+                  <a
+                    href={latestRelease.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.releaseLink}
+                  >
+                    View Releases on GitHub →
+                  </a>
+                )}
+              </div>
+            )}
+
+            {/* ── Release notes (non-OS) ── */}
+            {app.packageType !== "os" && latestRelease?.description ? (
+              <div className={styles.releaseNotes}>
+                <div
+                  className={styles.releaseDescription}
+                  dangerouslySetInnerHTML={{ __html: latestRelease.description }}
+                />
+                {latestRelease.url && (
+                  <a
+                    href={latestRelease.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.releaseLink}
+                  >
+                    View Full Release →
+                  </a>
+                )}
+              </div>
+            ) : app.packageType !== "os" && app.description && !latestRelease ? (
+              /* For apps with no release history, show package description if available */
+              <div className={styles.releaseNotes}>
+                <p className={styles.releaseDescription}>{app.description}</p>
+              </div>
+            ) : null}
+          </>
+        )}
       </div>
 
       {/* ── Older releases ── */}
-      {olderReleases.length > 0 && (
+      {!collapsed && olderReleases.length > 0 && (
         <div className={styles.olderReleasesSection}>
           <button
             className={styles.olderReleasesToggle}

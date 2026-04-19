@@ -123,7 +123,9 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
   );
   const totalHumanPRs = plannedItems.length + opportunisticItems.length;
   const totalPRs = totalHumanPRs + totalBotPRs;
-  const automationPercentage = ((totalBotPRs / totalPRs) * 100).toFixed(1);
+  const automationPercentage = totalPRs > 0
+    ? ((totalBotPRs / totalPRs) * 100).toFixed(1)
+    : "0.0";
 
   // Generate summary section as compact table
   const summary = `# Summary
@@ -949,6 +951,7 @@ function generateContributorsSection(contributors, newContributors) {
   let section = "## Contributors\n\n";
 
   // Section 1: New Contributors (highlighted, shown first)
+  // contributors and newContributors are pre-filtered by caller — no bots
   if (newContributors.length > 0) {
     section += `### New Lights\n\n`;
     section += `We welcome our newest Guardians to the project.\n\n`;

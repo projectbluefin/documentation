@@ -35,11 +35,12 @@ const sidebars: SidebarsConfig = {
       type: "category",
       label: "Project Information",
       collapsed: true,
-      items: [
-        "analytics",
-        "code-of-conduct",
-        "dinosaurs",
-        "downloads",
+       items: [
+         "analytics",
+         "artwork",
+         "code-of-conduct",
+         "dinosaurs",
+         "downloads",
         "driver-versions",
         "images",
         "FAQ",

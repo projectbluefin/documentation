@@ -35,6 +35,10 @@ const PLAYLISTS = [
     id: "PLhiPP9M5fgWFOhFgduxhleNTmfVSj9JmO",
     title: "Bluefin and the Bazaar of Destiny",
   },
+  {
+    id: "PLhiPP9M5fgWFa09qMHJSA7ts93UsMG82Q",
+    title: "Bluefin and the Syrens of Metal",
+  },
 ];
 
 /**

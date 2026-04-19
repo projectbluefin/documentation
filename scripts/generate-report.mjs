@@ -3,14 +3,19 @@
  * Monthly report generation script
  *
  * Fetches closed issues/PRs from monitored repositories, generates formatted markdown report, and writes to reports/ directory
- * Runs on the last day of each month
+ * Runs on the first Monday of each month, generating a report for the previous month
  *
  * Planned work: Issues/PRs from projectbluefin/common
  * Opportunistic work: Issues/PRs from other monitored repositories
  */
 
 import { fetchClosedItemsFromRepo } from "./lib/graphql-queries.mjs";
-import { identifyNewContributors, isBot } from "./lib/contributor-tracker.mjs";
+import {
+  identifyNewContributors,
+  isBot,
+  loadKnownContributors,
+  saveKnownContributors,
+} from "./lib/contributor-tracker.mjs";
 import { generateReportMarkdown } from "./lib/markdown-generator.mjs";
 import { getCategoryForLabel } from "./lib/label-mapping.mjs";
 import { MONITORED_REPOS } from "./lib/monitored-repos.mjs";
@@ -18,6 +23,27 @@ import { fetchBuildMetrics } from "./lib/build-metrics.mjs";
 import { fetchTapPromotions, fetchExperimentalAdditions } from "./lib/tap-promotions.mjs";
 import { format } from "date-fns";
 import { writeFile } from "fs/promises";
+
+const KNOWN_CONTRIBUTORS_CACHE = "scripts/data/known-contributors.json";
+const KNOWN_CONTRIBUTORS_SEED = "scripts/data/known-contributors-seed.json";
+
+/**
+ * Split an array into two arrays based on a predicate.
+ * Evaluates predicate exactly once per item.
+ *
+ * @template T
+ * @param {T[]} arr
+ * @param {(item: T) => boolean} pred
+ * @returns {[T[], T[]]} [passing, failing]
+ */
+function partition(arr, pred) {
+  const pass = [];
+  const fail = [];
+  for (const item of arr) {
+    (pred(item) ? pass : fail).push(item);
+  }
+  return [pass, fail];
+}
 
 /**
  * Structured logging with timestamps and levels
@@ -246,31 +272,21 @@ async function generateReport() {
       github.warning("This was a quiet period with no completed items");
     }
 
-    // Separate human contributions from bot activity (both planned and opportunistic)
-    const allItems = [...itemsInWindow, ...transformedOpportunisticItems];
-    const humanItems = allItems.filter(
-      (item) => !isBot(item.content?.author?.login || ""),
-    );
-    const botItems = allItems.filter((item) =>
-      isBot(item.content?.author?.login || ""),
-    );
-
-    // Separate planned vs opportunistic within human items
-    const plannedHumanItems = itemsInWindow.filter(
-      (item) => !isBot(item.content?.author?.login || ""),
-    );
-    const opportunisticHumanItems = transformedOpportunisticItems.filter(
-      (item) => !isBot(item.content?.author?.login || ""),
-    );
+    // Single bot filter pass — isBot evaluated once per item
+    const isHuman = (item) => !isBot(item.content?.author?.login || "");
+    const [plannedHumanItems, plannedBotItems] = partition(itemsInWindow, isHuman);
+    const [opportunisticHumanItems, opportunisticBotItems] = partition(transformedOpportunisticItems, isHuman);
+    const botItems = [...plannedBotItems, ...opportunisticBotItems];
 
     log.info(`Planned work (human): ${plannedHumanItems.length}`);
     log.info(`Opportunistic work (human): ${opportunisticHumanItems.length}`);
     log.info(`Bot contributions: ${botItems.length}`);
 
-    // Extract contributor usernames (human only, PRs only - people who wrote code)
+    // Extract contributor usernames (human PRs only)
+    const allHumanItems = [...plannedHumanItems, ...opportunisticHumanItems];
     const contributors = [
       ...new Set(
-        humanItems
+        allHumanItems
           .filter((item) => item.content?.__typename === "PullRequest")
           .map((item) => item.content?.author?.login)
           .filter((login) => login),
@@ -278,11 +294,13 @@ async function generateReport() {
     ];
     log.info(`Unique contributors (PR authors): ${contributors.length}`);
 
-    // Identify new contributors by querying historical contributions
+    // Load known contributors from cache, identify new ones (pure), save after report write
     log.info("Identifying new contributors...");
     let newContributors = [];
+    let knownSet = new Set();
     try {
-      newContributors = await identifyNewContributors(contributors, startDate);
+      knownSet = await loadKnownContributors(KNOWN_CONTRIBUTORS_CACHE, KNOWN_CONTRIBUTORS_SEED);
+      newContributors = identifyNewContributors(contributors, knownSet);
       if (newContributors.length > 0) {
         log.info(`New contributors this period: ${newContributors.join(", ")}`);
         github.notice(
@@ -292,7 +310,6 @@ async function generateReport() {
     } catch (error) {
       log.warn("New contributor detection failed, continuing without it");
       log.warn(`Error: ${error.message}`);
-      // Continue report generation even if contributor tracking fails
       newContributors = [];
     }
 
@@ -380,6 +397,15 @@ async function generateReport() {
     // Write to file
     const filename = `reports/${format(endDate, "yyyy-MM-dd")}-report.mdx`;
     await writeFile(filename, markdown, "utf8");
+
+    // Save known contributors cache AFTER successful write — prevents cache poisoning on failure
+    try {
+      const updatedSet = new Set([...knownSet, ...contributors]);
+      await saveKnownContributors(updatedSet, KNOWN_CONTRIBUTORS_CACHE);
+    } catch (error) {
+      log.warn("Failed to save known contributors cache — next run may re-identify some contributors as new");
+      log.warn(`Error: ${error.message}`);
+    }
 
     log.info(`✅ Report generated: ${filename}`);
     log.info(`   ${plannedHumanItems.length} planned work items`);

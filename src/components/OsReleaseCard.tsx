@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
+import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
+import Heading from "@theme/Heading";
 import type {
   OsReleaseEvent,
   ParsedMajorPackage,
@@ -164,7 +166,29 @@ function VersionChip({ pkg }: { pkg: ParsedMajorPackage }) {
 
 // ── Chip labels we surface in the header chips row ────────────────────────────
 
-const HEADER_CHIP_NAMES = ["Kernel", "Gnome", "Mesa", "Podman", "Nvidia", "bootc", "systemd", "pipewire"];
+const HEADER_CHIP_NAMES = ["Kernel", "HWE Kernel", "Gnome", "Mesa", "Podman", "Nvidia", "bootc", "systemd", "pipewire", "flatpak", "sudo-rs", "uutils-coreutils"];
+
+// ── Embed button ──────────────────────────────────────────────────────────────
+
+function EmbedButton({ snippet }: { snippet: string }) {
+  const [copied, setCopied] = useState(false);
+  const handleCopy = useCallback(() => {
+    navigator.clipboard.writeText(snippet).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }).catch(err => console.error("Failed to copy snippet:", err));
+  }, [snippet]);
+  return (
+    <button
+      type="button"
+      className={styles.embedButton}
+      onClick={handleCopy}
+      title="Copy embed snippet"
+    >
+      {copied ? "Copied!" : "Embed ↗"}
+    </button>
+  );
+}
 
 // ── Main component ────────────────────────────────────────────────────────────
 
@@ -175,8 +199,12 @@ interface OsReleaseCardProps {
 const OsReleaseCard: React.FC<OsReleaseCardProps> = ({ event }) => {
   const { release, dateMs, stream } = event;
   const isLts = stream === "lts";
-  const streamLabel = isLts ? "LTS" : "Stable";
-  const cardClass = `${styles.card} ${isLts ? styles.cardLts : styles.cardStable}`;
+  const isDaily = stream === "stable-daily";
+  const isDakota = stream === "dakota";
+
+  const streamLabel = isLts ? "LTS" : isDaily ? "Daily" : isDakota ? "Dakota" : "Stable";
+  const cardVariantClass = isLts ? styles.cardLts : isDakota ? styles.cardDakota : styles.cardStable;
+  const cardClass = `${styles.card} ${cardVariantClass}`;
 
   // Key package chips (header row): subset of well-known packages.
   // Falls back to fullDiff when a name isn't in the curated majorPackages table.
@@ -206,6 +234,21 @@ const OsReleaseCard: React.FC<OsReleaseCardProps> = ({ event }) => {
 
   const cardId = `os-release-${release.tag}`;
 
+  const cardTitle = isLts ? "Bluefin LTS" : isDakota ? "Bluefin Dakota" : "Bluefin";
+  const imagesAnchor = isLts ? "bluefin-lts" : isDakota ? "bluefin-dakota" : "bluefin-stable";
+  const cardSlug = isLts ? "bluefin-lts" : isDakota ? "dakota" : "bluefin";
+  const cardAlt = cardTitle;
+  const { siteConfig } = useDocusaurusContext();
+  const BASE_URL = siteConfig.url;
+  const embedSnippet = [
+    `<a href="${BASE_URL}/changelogs">`,
+    `  <picture>`,
+    `    <source media="(prefers-color-scheme: dark)" srcset="${BASE_URL}/img/cards/${cardSlug}-dark.png">`,
+    `    <img src="${BASE_URL}/img/cards/${cardSlug}-light.png" alt="${cardAlt}" width="800">`,
+    `  </picture>`,
+    `</a>`,
+  ].join("\n");
+
   return (
     <article
       className={cardClass}
@@ -214,12 +257,12 @@ const OsReleaseCard: React.FC<OsReleaseCardProps> = ({ event }) => {
       {/* ── Header ── */}
       <div className={styles.cardHeader}>
         <div className={styles.titleRow}>
-          <h2 className={styles.cardTitle}>{isLts ? "Bluefin LTS" : "Bluefin"}</h2>
+          <Heading as="h2" className={styles.cardTitle}>{cardTitle}</Heading>
         </div>
 
         <div className={styles.metaRow}>
           <span className={styles.releaseTag}>{release.tag}</span>
-          <span className={styles.releaseDate}>{formatDate(dateMs)}</span>
+          {dateMs > 0 && <span className={styles.releaseDate}>{formatDate(dateMs)}</span>}
           {release.fedoraVersion && (
             <span className={styles.baseChip}>Fedora {release.fedoraVersion}</span>
           )}
@@ -243,6 +286,16 @@ const OsReleaseCard: React.FC<OsReleaseCardProps> = ({ event }) => {
         <div className={styles.dxRow}>
           <span className={styles.dxLabel}>DX</span>
           {release.dxPackages.map((pkg) => (
+            <VersionChip key={pkg.name} pkg={pkg} />
+          ))}
+        </div>
+      )}
+
+      {/* ── GDX packages (LTS only — Nvidia, CUDA) ── */}
+      {release.gdxPackages.length > 0 && (
+        <div className={styles.dxRow}>
+          <span className={styles.dxLabel}>GDX</span>
+          {release.gdxPackages.map((pkg) => (
             <VersionChip key={pkg.name} pkg={pkg} />
           ))}
         </div>
@@ -277,11 +330,12 @@ const OsReleaseCard: React.FC<OsReleaseCardProps> = ({ event }) => {
           View on GitHub →
         </a>
         <a
-          href={`/images#${isLts ? "bluefin-lts" : "bluefin-stable"}`}
+          href={`/images#${imagesAnchor}`}
           className={styles.viewLink}
         >
           Image details →
         </a>
+        <EmbedButton snippet={embedSnippet} />
       </div>
     </article>
   );

@@ -11,6 +11,7 @@ const config: Config = {
 
   url: "https://docs.projectbluefin.io",
   baseUrl: "/",
+  trailingSlash: true,
 
   future: {
     experimental_faster: true,

@@ -27,6 +27,35 @@
   margin-bottom: 0.75rem;
 }
 
+.releaseHeaderCollapsed {
+  margin-bottom: 0;
+}
+
+/* ── Clickable header (collapse / expand) ─────────────────────────────────── */
+
+.releaseHeaderClickable {
+  cursor: pointer;
+}
+
+.releaseHeaderClickable:focus-visible {
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.collapseChevron {
+  font-size: 1.1rem;
+  transition: transform 0.2s;
+  display: inline-block;
+  flex-shrink: 0;
+  align-self: center;
+  color: var(--ifm-color-emphasis-500);
+}
+
+.collapseChevronOpen {
+  transform: rotate(90deg);
+}
+
 .releaseIcon {
   width: 48px;
   height: 48px;

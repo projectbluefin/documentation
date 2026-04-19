@@ -1,9 +1,12 @@
 import React, { useState, useMemo, useEffect } from "react";
+import Heading from "@theme/Heading";
 import firehoseData from "@site/static/data/firehose-apps.json";
 import bluefinReleasesData from "@site/static/feeds/bluefin-releases.json";
 import bluefinLtsReleasesData from "@site/static/feeds/bluefin-lts-releases.json";
 import type { FirehoseApp, FirehoseRelease, FirehoseFilterState } from "../types/firehose";
-import type { OsReleaseEvent, AppTimelineEvent } from "../types/os-feed";
+import type { OsReleaseEvent, AppTimelineEvent, FlatTimelineEvent, ParsedMajorPackage } from "../types/os-feed";
+import sbomAttestationsData from "@site/static/data/sbom-attestations-frontend.json";
+import type { SbomAttestationsData, PackageVersions } from "../types/sbom";
 import { parseOsRelease } from "../utils/parseOsRelease";
 import FirehoseCard from "./FirehoseCard";
 import OsReleaseCard from "./OsReleaseCard";
@@ -19,6 +22,9 @@ const DAYS_MS: Record<string, number> = {
   "90d": 90 * 24 * 60 * 60 * 1000,
 };
 
+/** Rolling window for the Updates Stream — entries older than this are not shown. */
+const ROLLING_WINDOW_MS = 365 * 24 * 60 * 60 * 1000;
+
 /** A single release event flattened out of its parent app. */
 export interface FlatRelease {
   app: FirehoseApp;
@@ -28,29 +34,357 @@ export interface FlatRelease {
 
 // ── OS release events (parsed once at module scope) ───────────────────────────
 
+/**
+ * Parse all items from a feed into OsReleaseEvent[].
+ * streamHint overrides per-item stream detection (used for LTS feed which lacks
+ * stream-identifying prefixes on some historical entries).
+ */
 function loadOsEvents(
   feedData: typeof bluefinReleasesData,
-  stream: "stable" | "lts",
+  streamHint?: "lts",
 ): OsReleaseEvent[] {
   const events: OsReleaseEvent[] = [];
   for (const item of feedData.items ?? []) {
-    const release = parseOsRelease(item, stream);
-    if (!release) continue; // GTS entry or parse failure — skip
+    const release = parseOsRelease(item, streamHint);
+    if (!release) continue; // GTS entry or unrecognized format — skip
     const dateMs = new Date(item.pubDate).getTime();
     if (isNaN(dateMs)) continue;
-    events.push({ kind: "os", stream, dateMs, release });
+    events.push({ kind: "os", stream: release.stream, dateMs, release });
   }
   return events;
 }
 
-const STABLE_OS_EVENTS: OsReleaseEvent[] = loadOsEvents(bluefinReleasesData, "stable");
-const LTS_OS_EVENTS: OsReleaseEvent[] = loadOsEvents(bluefinLtsReleasesData, "lts");
-const ALL_OS_EVENTS: OsReleaseEvent[] = [
-  // Most recent stable release only
-  ...(STABLE_OS_EVENTS.length > 0 ? [STABLE_OS_EVENTS[0]] : []),
-  // Most recent LTS release only
-  ...(LTS_OS_EVENTS.length > 0 ? [LTS_OS_EVENTS[0]] : []),
-].sort((a, b) => b.dateMs - a.dateMs);
+// ── SBOM enrichment ───────────────────────────────────────────────────────────
+//
+// All package version chips on OS release cards are sourced from the SBOM
+// attestation cache (Pipeline B — authoritative). Release notes data
+// (majorPackages from the HTML/Markdown parser) is supplemented by SBOM
+// but never used as the sole source for missing packages.
+// Dakota is the only stream that uses hardcoded placeholder versions.
+
+const SBOM_CACHE = sbomAttestationsData as unknown as SbomAttestationsData;
+
+/** Map from lowercase HEADER_CHIP_NAMES to their PackageVersions field. */
+const CHIP_TO_SBOM: Array<{ chipName: string; displayName: string; field: keyof PackageVersions }> = [
+  { chipName: "kernel",   displayName: "Kernel",   field: "kernel" },
+  { chipName: "gnome",    displayName: "Gnome",    field: "gnome" },
+  { chipName: "mesa",     displayName: "Mesa",     field: "mesa" },
+  { chipName: "podman",   displayName: "Podman",   field: "podman" },
+  { chipName: "bootc",    displayName: "bootc",    field: "bootc" },
+  { chipName: "systemd",  displayName: "systemd",  field: "systemd" },
+  { chipName: "pipewire", displayName: "pipewire", field: "pipewire" },
+  { chipName: "flatpak",  displayName: "flatpak",  field: "flatpak" },
+];
+
+/**
+ * Convert a ParsedOsRelease tag + stream to the SBOM cache key + stream ID.
+ *
+ * release.tag is normalised by parseOsRelease (e.g. "stable-daily-20260331"),
+ * but SBOM cacheKeys use the original GitHub release tag format ("stable-20260331").
+ */
+function sbomKeyForRelease(tag: string, stream: string): { streamId: string; cacheKey: string } | null {
+  const dateMatch = tag.match(/(\d{8})/);
+  if (!dateMatch) return null;
+  const date = dateMatch[1];
+  if (stream === "lts") return { streamId: "bluefin-lts", cacheKey: `lts-${date}` };
+  if (stream === "stable-daily") return { streamId: "bluefin-stable-daily", cacheKey: `stable-daily-${date}` };
+  if (stream === "stable") return { streamId: "bluefin-stable", cacheKey: `stable-${date}` };
+  return null;
+}
+
+/**
+ * Enrich each OS release event's majorPackages with versions from the SBOM cache.
+ *
+ * SBOM-primary policy: for every package SBOM tracks (CHIP_TO_SBOM), the SBOM
+ * version is authoritative and overrides any version parsed from release notes.
+ * prevVersion (the gold change-indicator arrow) is preserved from release notes
+ * so the UI can still show what changed. Packages outside CHIP_TO_SBOM (Nvidia,
+ * HWE Kernel, DX, GDX) are kept from release notes unchanged.
+ *
+ * Only applies to stable/LTS events. Dakota uses hardcoded placeholders.
+ */
+function enrichFromSbom(events: OsReleaseEvent[]): OsReleaseEvent[] {
+  return events.map((event) => {
+    const key = sbomKeyForRelease(event.release.tag, event.stream);
+    if (!key) return event;
+
+    const packages = SBOM_CACHE?.streams?.[key.streamId]?.releases?.[key.cacheKey]?.packageVersions;
+    if (!packages) {
+      // Expected during local dev (empty seed file) and for releases older than LOOKBACK_DAYS.
+      // In CI with a populated SBOM cache this should be rare — check update-sbom-cache.yml if frequent.
+      if (process.env.NODE_ENV !== "production") {
+        console.warn(`[SBOM] No cache entry for ${key.streamId}/${key.cacheKey} — using release notes`);
+      }
+      return event;
+    }
+
+    const sbomChipNames = new Set(CHIP_TO_SBOM.map(({ chipName }) => chipName));
+
+    // Keep non-SBOM packages (Nvidia, HWE Kernel, DX, GDX, etc.) from release notes.
+    const nonSbomPackages = event.release.majorPackages.filter(
+      (p) => !sbomChipNames.has(p.name.toLowerCase())
+    );
+
+    // For SBOM-tracked packages: SBOM version is authoritative; fall back to
+    // release notes version if SBOM has null (package not found in RPM database).
+    // Preserves prevVersion from release notes so the change indicator (↑) works.
+    // Priority: majorPackages prevVersion (2-col table) → fullDiff prevVersion (4-col diff table).
+    // fullDiff is checked because SBOM-tracked packages (e.g. bootc) often appear in the
+    // "All Images" diff table but NOT in the "Major packages" 2-col table, so fromNotes is
+    // undefined and prevVersion would silently become null without the fullDiff fallback.
+    const sbomPackages: ParsedMajorPackage[] = [];
+    for (const { chipName, displayName, field } of CHIP_TO_SBOM) {
+      const sbomVersion = packages[field] as string | null | undefined;
+      const fromNotes = event.release.majorPackages.find(
+        (p) => p.name.toLowerCase() === chipName
+      );
+      const fromDiff = event.release.fullDiff.find(
+        (d) => d.name.toLowerCase() === chipName
+      );
+      const version = sbomVersion ?? fromNotes?.version ?? null;
+      if (!version) continue; // neither SBOM nor release notes has this package — omit chip
+      const prevVersion = fromNotes?.prevVersion ?? fromDiff?.prevVersion ?? null;
+      sbomPackages.push({ name: displayName, version, prevVersion });
+    }
+
+    if (sbomPackages.length === 0) return event;
+    return {
+      ...event,
+      release: { ...event.release, majorPackages: [...sbomPackages, ...nonSbomPackages] },
+    };
+  });
+}
+
+/**
+ * Carry forward package versions last seen in fullDiff across the LTS release
+ * history so each card shows its most-recently-observed version for packages
+ * not tracked by the primary SBOM path (e.g. releases older than LOOKBACK_DAYS,
+ * or packages SBOM tracks but release notes also list).
+ *
+ * Primary SBOM pipeline (enrichFromSbom) handles Kernel, GNOME, Mesa, Podman,
+ * bootc, systemd, pipewire, flatpak for releases within LOOKBACK_DAYS.
+ * This function is a fallback for older releases and carries forward the same
+ * TRACKED set from the release notes / fullDiff parser.
+ *
+ * Processes events oldest→newest, maintaining a running "last known" state,
+ * then restores the original newest-first order.
+ */
+function enrichLtsFromHistory(events: OsReleaseEvent[]): OsReleaseEvent[] {
+  const TRACKED = ["systemd", "bootc", "pipewire", "flatpak", "hwe kernel"];
+  const sorted = [...events].sort((a, b) => a.dateMs - b.dateMs);
+  const running: Record<string, string> = {};
+
+  const enriched = sorted.map((event) => {
+    // Update running state from majorPackages listed in release notes
+    for (const pkg of event.release.majorPackages) {
+      const lower = pkg.name.toLowerCase();
+      if (TRACKED.includes(lower)) running[lower] = pkg.version;
+    }
+    // Update from fullDiff (packages that changed in this release)
+    for (const entry of event.release.fullDiff) {
+      const lower = entry.name.toLowerCase();
+      if (TRACKED.includes(lower) && entry.newVersion) running[lower] = entry.newVersion;
+    }
+
+    const existingNames = new Set(event.release.majorPackages.map((p) => p.name.toLowerCase()));
+    const toAdd: ParsedMajorPackage[] = [];
+    for (const name of TRACKED) {
+      if (!existingNames.has(name) && running[name]) {
+        toAdd.push({ name, version: running[name], prevVersion: null });
+      }
+    }
+    if (toAdd.length === 0) return event;
+    return { ...event, release: { ...event.release, majorPackages: [...event.release.majorPackages, ...toAdd] } };
+  });
+
+  return enriched.sort((a, b) => b.dateMs - a.dateMs);
+}
+
+/** RPM package name → display label for the DX section chips */
+const DX_CHIP_MAP: Record<string, string> = {
+  "docker-ce": "Docker",
+  code: "VSCode",
+  incus: "Incus",
+};
+
+/** RPM package name → display label for the GDX section chips */
+const GDX_CHIP_MAP: Record<string, string> = {
+  "nvidia-driver": "Nvidia",
+  "nvidia-driver-cuda": "CUDA",
+};
+
+/**
+ * Enrich LTS events' dxPackages and gdxPackages from the bluefin-dx-lts /
+ * bluefin-gdx-lts SBOM allPackages maps.
+ *
+ * The "Major DX / GDX packages" tables are absent from lts.YYYYMMDD releases
+ * (new release format), so dxPackages/gdxPackages are empty after parse.
+ * This function fills them from authoritative SBOM data.
+ */
+function enrichLtsDxGdxFromSbom(events: OsReleaseEvent[]): OsReleaseEvent[] {
+  return events.map((event) => {
+    if (event.stream !== "lts") return event;
+
+    const dateMatch = event.release.tag.match(/(\d{8})/);
+    if (!dateMatch) return event;
+    const cacheKey = `lts-${dateMatch[1]}`;
+
+    const dxAllPkgs =
+      SBOM_CACHE?.streams?.["bluefin-dx-lts"]?.releases?.[cacheKey]?.packageVersions?.allPackages;
+    const gdxAllPkgs =
+      SBOM_CACHE?.streams?.["bluefin-gdx-lts"]?.releases?.[cacheKey]?.packageVersions?.allPackages;
+
+    const dxPackages = [...event.release.dxPackages];
+    if (dxAllPkgs) {
+      const existing = new Set(dxPackages.map((p) => p.name.toLowerCase()));
+      for (const [rpm, label] of Object.entries(DX_CHIP_MAP)) {
+        const version = dxAllPkgs[rpm];
+        if (version && !existing.has(label.toLowerCase())) {
+          dxPackages.push({ name: label, version, prevVersion: null });
+        }
+      }
+    }
+
+    const gdxPackages = [...event.release.gdxPackages];
+    if (gdxAllPkgs) {
+      const existing = new Set(gdxPackages.map((p) => p.name.toLowerCase()));
+      for (const [rpm, label] of Object.entries(GDX_CHIP_MAP)) {
+        const version = gdxAllPkgs[rpm];
+        if (version && !existing.has(label.toLowerCase())) {
+          gdxPackages.push({ name: label, version, prevVersion: null });
+        }
+      }
+    }
+
+    if (
+      dxPackages.length === event.release.dxPackages.length &&
+      gdxPackages.length === event.release.gdxPackages.length
+    ) {
+      return event;
+    }
+    return { ...event, release: { ...event.release, dxPackages, gdxPackages } };
+  });
+}
+
+/**
+ * Synthesise OsReleaseEvent entries for stable-daily builds that exist only in
+ * GHCR (no GitHub Release). These are GHCR nightly builds tagged
+ * "stable-daily-YYYYMMDD" — they never appear in bluefin-releases.json so they
+ * would otherwise be invisible on the changelogs page.
+ *
+ * Package versions come directly from the SBOM cache so no enrichFromSbom pass
+ * is needed; the events are already fully populated.
+ */
+function loadStableDailyEventsFromSbom(): OsReleaseEvent[] {
+  const stream = SBOM_CACHE?.streams?.["bluefin-stable-daily"];
+  if (!stream?.releases) return [];
+
+  const events: OsReleaseEvent[] = [];
+  for (const [cacheKey, releaseData] of Object.entries(stream.releases)) {
+    if (!releaseData.packageVersions) continue;
+
+    const dateMatch = cacheKey.match(/(\d{8})$/);
+    if (!dateMatch) continue;
+    const dateStr = dateMatch[1];
+    const dateMs = Date.parse(
+      `${dateStr.slice(0, 4)}-${dateStr.slice(4, 6)}-${dateStr.slice(6, 8)}T00:00:00Z`,
+    );
+    if (isNaN(dateMs)) continue;
+
+    const packages = releaseData.packageVersions;
+    const majorPackages: ParsedMajorPackage[] = [];
+    for (const { displayName, field } of CHIP_TO_SBOM) {
+      const version = packages[field] as string | null | undefined;
+      if (!version) continue;
+      majorPackages.push({ name: displayName, version, prevVersion: null });
+    }
+    if (majorPackages.length === 0) continue;
+
+    events.push({
+      kind: "os",
+      stream: "stable-daily",
+      dateMs,
+      release: {
+        stream: "stable-daily",
+        tag: cacheKey,
+        githubUrl: "https://github.com/orgs/ublue-os/packages/container/package/bluefin",
+        fedoraVersion: packages.fedora ? packages.fedora.replace(/^F/, "") : null,
+        centosVersion: null,
+        majorPackages,
+        dxPackages: [],
+        gdxPackages: [],
+        commits: [],
+        fullDiff: [],
+      },
+    });
+  }
+
+  return events;
+}
+
+// All parsed events from both feeds, enriched with SBOM package versions
+const BLUEFIN_OS_EVENTS: OsReleaseEvent[] = enrichFromSbom(loadOsEvents(bluefinReleasesData));
+const STABLE_DAILY_OS_EVENTS: OsReleaseEvent[] = loadStableDailyEventsFromSbom();
+const LTS_OS_EVENTS: OsReleaseEvent[] = enrichLtsDxGdxFromSbom(
+  enrichLtsFromHistory(enrichFromSbom(loadOsEvents(bluefinLtsReleasesData, "lts"))),
+);
+
+// Rolling 12-month window for the stream — pinned cards (PINNED_OS_EVENTS) are unaffected.
+const ALL_OS_STREAM_EVENTS: OsReleaseEvent[] = (() => {
+  const cutoff = Date.now() - ROLLING_WINDOW_MS;
+  return [
+    ...BLUEFIN_OS_EVENTS,
+    ...STABLE_DAILY_OS_EVENTS,
+    ...LTS_OS_EVENTS,
+  ]
+    .filter((e) => e.dateMs > cutoff)
+    .sort((a, b) => b.dateMs - a.dateMs);
+})();
+
+// Dakota placeholder — upstream repo has no releases yet; versions sourced from
+// BuildStream junction pins in ~/src/dakota/elements/*.bst (no SBOM pipeline).
+// Update when junction refs change: freedesktop-sdk-25.08.8 + gnome-build-meta gnome-50
+const DAKOTA_PLACEHOLDER_EVENT: OsReleaseEvent = {
+  kind: "os",
+  stream: "dakota",
+  dateMs: 0, // no date — placeholder
+  release: {
+    stream: "dakota",
+    tag: "dakota-alpha",
+    githubUrl: "https://github.com/projectbluefin/dakota",
+    fedoraVersion: null,
+    centosVersion: null,
+    majorPackages: [
+      { name: "Kernel", version: "6.18.7", prevVersion: null },
+      { name: "Gnome", version: "50.0", prevVersion: null },
+      { name: "Mesa", version: "25.3.5", prevVersion: null },
+      { name: "Podman", version: "5.8.0", prevVersion: null },
+      { name: "bootc", version: "1.12.1", prevVersion: null },
+      { name: "systemd", version: "259.2", prevVersion: null },
+      { name: "pipewire", version: "1.6.1", prevVersion: null },
+      { name: "sudo-rs", version: "74e0db4", prevVersion: null },
+      { name: "uutils-coreutils", version: "e7f2fd9", prevVersion: null },
+    ],
+    dxPackages: [],
+    gdxPackages: [],
+    commits: [],
+    fullDiff: [],
+  },
+};
+
+// Pinned "Current Versions" cards: latest stable + latest LTS + Dakota placeholder.
+// All bluefin releases are stable-daily; synthesise a "stable"-streamed clone for
+// the pinned card so it shows the "Stable" badge while the stream shows "Daily".
+const PINNED_OS_EVENTS: OsReleaseEvent[] = (() => {
+  // Pinned Bluefin card: most recent weekly stable release (stream === "stable").
+  // stable-daily builds (latest-YYYYMMDD, if published) appear in the timeline only.
+  const pinnedStable: OsReleaseEvent | undefined =
+    BLUEFIN_OS_EVENTS.find((e) => e.stream === "stable") ?? BLUEFIN_OS_EVENTS[0];
+  // Pinned LTS card: latest from LTS feed
+  const pinnedLts: OsReleaseEvent | undefined = LTS_OS_EVENTS.length > 0 ? LTS_OS_EVENTS[0] : undefined;
+  return [pinnedStable, pinnedLts, DAKOTA_PLACEHOLDER_EVENT]
+    .filter((e): e is OsReleaseEvent => e !== undefined);
+})();
 
 /**
  * Flatten every app's releases array into individual events.
@@ -178,7 +512,7 @@ function Statistics({
         ))}
         {osEventCount > 0 && (
           <>
-            <dt>OS Releases</dt>
+            <dt>OS Releases in stream</dt>
             <dd>{osEventCount}</dd>
           </>
         )}
@@ -272,7 +606,7 @@ const DEFAULT_FILTERS: FirehoseFilterState = {
   updatedWithin: "all",
   verifiedOnly: false,
   unverifiedOnly: false,
-  showOsReleases: true,
+  showEverything: false,
 };
 
 const FirehoseFeed: React.FC = () => {
@@ -280,10 +614,10 @@ const FirehoseFeed: React.FC = () => {
 
   // ── App events ──────────────────────────────────────────────────────────────
 
-  const allEvents: FlatRelease[] = useMemo(
-    () => flattenReleases(firehoseData.apps ?? []),
-    [],
-  );
+  const allEvents: FlatRelease[] = useMemo(() => {
+    const cutoff = Date.now() - ROLLING_WINDOW_MS;
+    return flattenReleases(firehoseData.apps ?? []).filter((e) => e.dateMs > cutoff);
+  }, []);
 
   const filteredEvents = useMemo(() => applyFilters(allEvents, filters), [allEvents, filters]);
 
@@ -300,38 +634,48 @@ const FirehoseFeed: React.FC = () => {
     setFeaturedApp(getFeaturedApp(uniqueApps));
   }, [uniqueApps]);
 
-  // ── OS release events ───────────────────────────────────────────────────────
+  // ── OS stream events (filtered by date, always shown) ─────────────────────
 
-  const filteredOsEvents = useMemo((): OsReleaseEvent[] => {
-    if (!filters.showOsReleases) return [];
-    if (filters.updatedWithin === "all") return ALL_OS_EVENTS;
+  const filteredOsStreamEvents = useMemo((): OsReleaseEvent[] => {
+    // When filtering to a specific app type, OS events are hidden
+    if (filters.packageType === "flatpak" || filters.packageType === "homebrew") return [];
+    if (filters.updatedWithin === "all") return ALL_OS_STREAM_EVENTS;
     const maxAge = DAYS_MS[filters.updatedWithin];
     const now = Date.now();
-    return ALL_OS_EVENTS.filter((e) => now - e.dateMs <= maxAge);
-  }, [filters.showOsReleases, filters.updatedWithin]);
+    return ALL_OS_STREAM_EVENTS.filter((e) => e.dateMs > 0 && now - e.dateMs <= maxAge);
+  }, [filters.packageType, filters.updatedWithin]);
 
-  // How many OS events are hidden by the date filter (for inline notice)
+  // How many stream OS events are hidden by the date filter
   const hiddenOsCount = useMemo(
     () =>
-      filters.showOsReleases && filters.updatedWithin !== "all"
-        ? ALL_OS_EVENTS.length - filteredOsEvents.length
+      filters.updatedWithin !== "all" &&
+      filters.packageType !== "flatpak" &&
+      filters.packageType !== "homebrew"
+        ? ALL_OS_STREAM_EVENTS.filter((e) => e.dateMs > 0).length - filteredOsStreamEvents.length
         : 0,
-    [filteredOsEvents, filters.showOsReleases, filters.updatedWithin],
+    [filteredOsStreamEvents, filters.packageType, filters.updatedWithin],
   );
 
-  // ── Grouped sections ───────────────────────────────────────────────────────
+  // ── Unified "Updates Stream" ───────────────────────────────────────────────
   //
-  // OS releases are pinned as the featured section. App updates follow as a
-  // secondary section, separated by a visual divider. Each section is sorted
-  // by date independently.
+  // OS releases and app entries (flatpak/homebrew) are always shown together.
 
-  const osSection = filteredOsEvents; // already sorted by dateMs desc
-  const appSection = filteredUniqueApps
-    .map(({ app, latestMs }): AppTimelineEvent => ({ kind: "app", app, dateMs: latestMs }))
-    .sort((a, b) => b.dateMs - a.dateMs);
+  const appSection = useMemo(
+    () =>
+      filteredUniqueApps
+        .map(({ app, latestMs }): AppTimelineEvent => ({ kind: "app", app, dateMs: latestMs }))
+        .sort((a, b) => b.dateMs - a.dateMs),
+    [filteredUniqueApps],
+  );
 
-  const isEmpty = allEvents.length === 0 && ALL_OS_EVENTS.length === 0;
-  const feedEmpty = osSection.length === 0 && appSection.length === 0;
+  const unifiedStream = useMemo((): FlatTimelineEvent[] => {
+    const items: FlatTimelineEvent[] = [...appSection, ...filteredOsStreamEvents];
+    items.sort((a, b) => b.dateMs - a.dateMs);
+    return items;
+  }, [filteredOsStreamEvents, appSection]);
+
+  const isEmpty = allEvents.length === 0 && ALL_OS_STREAM_EVENTS.length === 0;
+  const feedEmpty = unifiedStream.length === 0;
 
   return (
     <div className={styles.layout}>
@@ -354,7 +698,7 @@ const FirehoseFeed: React.FC = () => {
           matchCount={filteredUniqueApps.length}
         />
         {!isEmpty && (
-          <Statistics uniqueApps={uniqueApps} osEventCount={ALL_OS_EVENTS.length} />
+          <Statistics uniqueApps={uniqueApps} osEventCount={ALL_OS_STREAM_EVENTS.length} />
         )}
       </aside>
 
@@ -388,40 +732,44 @@ const FirehoseFeed: React.FC = () => {
               pipeline runs every 6 hours — check back soon.
             </p>
           </div>
-        ) : feedEmpty ? (
-          <div className={styles.emptyState}>
-            <p>No items match the current filters.</p>
-            <button
-              className={styles.clearFiltersBtn}
-              onClick={() => setFilters(DEFAULT_FILTERS)}
-            >
-              Clear filters
-            </button>
-          </div>
         ) : (
           <>
-            {/* ── OS Releases — featured section ── */}
-            {osSection.length > 0 && (
-              <section className={styles.feedSection}>
-                <h2 className={styles.feedSectionHeading}>Bluefin OS Releases</h2>
-                {osSection.map((event) => (
-                  <OsReleaseCard key={`os-${event.release.tag}`} event={event} />
-                ))}
-              </section>
-            )}
+            {/* ── Current Versions — pinned cards, always visible ── */}
+            <section className={styles.feedSection}>
+              <Heading as="h2" className={styles.feedSectionHeading}>Current Versions</Heading>
+              {PINNED_OS_EVENTS.map((event) => (
+                <OsReleaseCard key={`pinned-${event.release.tag}`} event={event} />
+              ))}
+            </section>
 
-            {/* ── App Updates — secondary section ── */}
-            {appSection.length > 0 && (
+            {/* ── Updates Stream — unified chronological feed ── */}
+            {feedEmpty ? (
+              <div className={styles.emptyState}>
+                <p>No items match the current filters.</p>
+                <button
+                  className={styles.clearFiltersBtn}
+                  onClick={() => setFilters(DEFAULT_FILTERS)}
+                >
+                  Clear filters
+                </button>
+              </div>
+            ) : (
               <section className={styles.feedSection}>
                 <div className={styles.appSectionDivider}>
-                  <h2 className={styles.feedSectionHeading}>App Updates</h2>
+                  <Heading as="h2" className={styles.feedSectionHeading}>Updates Stream</Heading>
                   <span className={styles.appSectionHint}>
-                    Flatpak &amp; Homebrew packages included in Bluefin
+                    OS releases, Flatpak &amp; Homebrew packages included in Bluefin
                   </span>
                 </div>
-                {appSection.map((event) => (
-                  <FirehoseCard key={event.app.id} app={event.app} />
-                ))}
+                {unifiedStream.map((event) =>
+                  event.kind === "os" ? (
+                    <OsReleaseCard key={`stream-${event.release.tag}-${event.dateMs}`} event={event} />
+                  ) : (
+                    <div key={event.app.id} className={styles.appEntry}>
+                      <FirehoseCard app={event.app} defaultCollapsed={true} />
+                    </div>
+                  ),
+                )}
               </section>
             )}
           </>

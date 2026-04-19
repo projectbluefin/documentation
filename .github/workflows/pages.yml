@@ -53,13 +53,23 @@ jobs:
             github-data-sbom-
             github-data-
 
+      - name: Restore curated artwork metadata (cache must not overwrite)
+        # The github-data cache restores the entire static/data/ directory, which
+        # overwrites artwork.json with a stale cached copy and loses manually curated
+        # fields (e.g. coAuthor). Restore the committed version from the checkout so
+        # hand-edited credits are always included in the build.
+        run: git checkout -- static/data/artwork.json
+
       - name: Restore SBOM attestation cache (overrides general data cache)
+        # Primary key will never match (update-sbom-cache.yml runs as a separate workflow
+        # with a different run_id). The restore-keys fallback always applies, fetching
+        # the most recent nightly SBOM cache saved by update-sbom-cache.yml.
         uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
         with:
           path: |
             static/data/sbom-attestations.json
             static/data/sbom-attestations-frontend.json
-          key: github-data-sbom-fresh-${{ github.run_id }}
+          key: github-data-sbom-${{ github.run_id }}
           restore-keys: |
             github-data-sbom-
 
@@ -71,8 +81,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
           # Always re-fetch image metadata on every build so hasAttestation,
-          # versions, and security info stay current.
+          # versions, and security info stay current. IMAGES_REFRESH_HOURS: "0"
+          # forces the per-product inner cache to also refresh (it defaults to
+          # 336h and would otherwise serve stale nvidia tag data from GHA cache).
           IMAGES_CACHE_HOURS: "0"
+          IMAGES_REFRESH_HOURS: "0"
           # Always re-fetch driver versions on every build so GNOME/kernel/mesa
           # versions stay current. The data is small (GitHub API call) and the
           # script's internal 168h TTL would otherwise serve stale cached data.
@@ -90,6 +103,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.PROJECT_READ_TOKEN }}
         run: node scripts/fetch-board-data.js
 
+      - name: Generate embeddable card images
+        run: npm run generate-card-images
+
       - name: Run TypeScript validation
         run: npm run typecheck
 
@@ -103,7 +119,7 @@ jobs:
         run: npm run build
 
       - name: Upload Build Artifact
-        uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5
         with:
           path: build
 
