@@ -13,7 +13,7 @@ Today we celebrate a nice milestone for the project. Thanks to some awesome work
 
 - GNOME 50, Linux 6.19.11, Mesa 26.0.4, and the Freedesktop 25.08.9 libraries
 
-GNOME OS itself has moved on to GNOME 51 builds, so we are on a stable branch. I'm pretty sure we're the first ones to consume this thing so keep an eye out for issues. We're still recommending VMs but it's also running fine on bare metal given the following issues. Goal is beta late spring. 
+GNOME OS itself has moved on to GNOME 51 builds, so we are on a stable branch. I'm pretty sure we're the first ones to consume this thing so keep an eye out for issues. We're still recommending VMs but it's also running fine on bare metal given the gotchas below. Goal is beta late spring. 
 
 ![dakota](https://github.com/user-attachments/assets/4ff5c04e-c22e-4e45-8daa-18ddd5c66f00)
 
