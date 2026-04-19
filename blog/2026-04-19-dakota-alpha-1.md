@@ -40,7 +40,7 @@ Those of you with keen eyes might notice the new snazzy menu Dylan Taylor landed
 
 ## Thanks!
 
-- Jordan Pietridis, Valentin David, Adrian Vovk, and the rest of the GNOME OS team.
+- Jordan Petridis, Valentin David, Adrian Vovk, and the rest of the GNOME OS team.
     - Thanks for your patience and guidance!
 - Brian Ketelsen and James Reilly for porting the Vanilla OS installer to use bootc: [Tuna installer](https://github.com/tuna-os/tuna-installer). Yes, James' personal image is called Tuna OS lol. On the plus side at least it's not called Titanoboa.
   - This thing is quite cool and shaping up to be a decent generic `bootc` installer. Nice.
