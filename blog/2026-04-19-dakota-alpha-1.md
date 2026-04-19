@@ -17,7 +17,7 @@ GNOME OS itself has moved on to GNOME 51 builds, so we are on a stable branch. I
 
 ![dakota](https://github.com/user-attachments/assets/4ff5c04e-c22e-4e45-8daa-18ddd5c66f00)
 
-Those of you with keen eyes might notice the new snazzy menu Dylan Taylor landed. It's [Custom Command Menu](https://github.com/StorageB/custom-command-menu) and the upstream author was kind enough to accept our patch to put your hostname right there in your menu for a little bit of bling. We're working on bringing this to other Bluefins so sit tight. Lots of great customization options with this menu, I am enjoying it. 
+Those of you with keen eyes might notice the new snazzy menu Dylan Taylor landed. It's [Custom Command Menu](https://github.com/StorageB/custom-command-menu) and the upstream author was kind enough to accept our patch to put your hostname right there in your menu for a little bit of bling. We're working on bringing this to other Bluefins so sit tight. Lots of great customization options with this menu, I am enjoying it. You may have also noticed that we're using Ghostty here as the terminal. 
 
 ## Gotchas
 
