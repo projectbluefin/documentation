@@ -17,7 +17,7 @@ GNOME OS itself has moved on to GNOME 51 builds, so we are on a stable branch. I
 
 ![dakota](https://github.com/user-attachments/assets/4ff5c04e-c22e-4e45-8daa-18ddd5c66f00)
 
-Those of you with keen eyes might notice the new snazzy menu Dylan Taylor implemented. It's [Custom Command Menu](https://github.com/StorageB/custom-command-menu) and the upstream author was kind enough to accept our patch to put your hostname right there in your menu for a little bit of bling. We're working on bringing this to other Bluefins so sit tight. Lots of great customization options with this menu, I am enjoying it. 
+Those of you with keen eyes might notice the new snazzy menu Dylan Taylor landed. It's [Custom Command Menu](https://github.com/StorageB/custom-command-menu) and the upstream author was kind enough to accept our patch to put your hostname right there in your menu for a little bit of bling. We're working on bringing this to other Bluefins so sit tight. Lots of great customization options with this menu, I am enjoying it. 
 
 ## Gotchas
 
@@ -35,9 +35,9 @@ Those of you with keen eyes might notice the new snazzy menu Dylan Taylor implem
 
 - Jordan Pietridis, Valentin David, Adrian Vovk, and the rest of the GNOME OS team.
     - Thanks for your patience and guidance!
-- Brian Ketelsen and James Reilly for porting the Vanilla OS installer to use bootc: [Tuna installer](https://github.com/tuna-os/tuna-installer). Yes, James' personal image is called Tuna OS lol. On the plus side at least it's not called Titanoboa. 
+- Brian Ketelsen and James Reilly for porting the Vanilla OS installer to use bootc: [Tuna installer](https://github.com/tuna-os/tuna-installer). Yes, James' personal image is called Tuna OS lol. On the plus side at least it's not called Titanoboa.
   - This thing is quite cool and shaping up to be a decent generic `bootc` installer. Nice.
-- Thanks to all of you on the Discord who have been testing and reporting issues, it helps tremendously!
+- Thanks to all of you on the Discord who have been testing and reporting issues, it helps tremendously! Shout out to JumpyVi!
 
 ## Download
 
