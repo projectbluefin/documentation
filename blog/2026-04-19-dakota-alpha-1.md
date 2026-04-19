@@ -49,3 +49,5 @@ All issues appreciated! The end goal is for Dakota to "feel" like a regular Blue
 
 - [Dakota Issues](https://github.com/projectbluefin/dakota/issues)
 - [ISO Specific Issues](https://github.com/projectbluefin/dakota-iso/issues)
+
+### [Discussions](https://github.com/ublue-os/bluefin/discussions/4500)
