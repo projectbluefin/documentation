@@ -36,7 +36,10 @@ Those of you with keen eyes might notice the new snazzy menu Dylan Taylor landed
 - Some parts of the build are old, we have not automated bumping version numbers of components so that's being done manually right now. So if you find an old version of something we'll get to them eventually.
 - No Nvidia support. 
 - A sort of working ARM build, more to come. 
-- Pretty sure docker doesn't work. 
+- Pretty sure docker doesn't work.
+
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/UzhMA2Mw3Bc?si=a6PtI-QUnFFyhvIB" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ## Thanks!
 
