@@ -11,7 +11,7 @@ Today we celebrate a nice milestone for the project. Thanks to some awesome work
 
 "Dakotaraptor" is the codename for Bluefin based on GNOME OS. It is designed to deliver software from upstream sources and eschews the traditional Linux distribution model entirely. It's built with [Apache Buildstream](https://buildstream.build) and published as a `bootc` image.
 
-- GNOME 50, Linux 6.19.11, Mesa 26.0.4, and the Freedesktop 25.08.9 libraries. Rust coreutils and sudo-rs included out of the box. (Hi Jon!) 
+- GNOME 50, Linux 6.19.11, Mesa 26.0.4, and the Freedesktop 25.08.9 libraries. Rust uutils and sudo-rs included out of the box. (Hi Jon!) 
 
 GNOME OS itself has moved on to GNOME 51 builds, so we are on a stable branch. I'm pretty sure we're the first ones to consume this thing so keep an eye out for issues. We're still recommending VMs but it's also running fine on bare metal given the gotchas below. 
 
