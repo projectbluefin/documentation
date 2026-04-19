@@ -21,7 +21,7 @@ Those of you with keen eyes might notice the new snazzy menu Dylan Taylor landed
 
 ## Gotchas
 
-- LUKS is busted so skip the encryption step on install. 
+- LUKS is busted so skip the encryption step on install. James has a fix for this and it should be landing soon. 
 - Updates are one big layer. We're working on this actively and it's looking good but it will land later.
   - Updates will first come split up into 120 layers but will still be large.
   - At some point this late spring/early summer zstd:chunked support should land in `bootc` and then you'll start receiving delta updates. We'll announce when this is live. 
