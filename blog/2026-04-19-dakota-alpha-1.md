@@ -5,6 +5,8 @@ authors: castrojo
 tags: [announcements]
 ---
 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/UzhMA2Mw3Bc?si=a6PtI-QUnFFyhvIB" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 Today we celebrate a nice milestone for the project. Thanks to some awesome work by the team we have a mostly daily-driveable Alpha 1. GNOME 50 too!
 
 ## What is this?
