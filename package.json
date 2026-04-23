@@ -53,19 +53,19 @@
     "xml2js": "^0.6.2"
   },
   "devDependencies": {
-    "@docusaurus/eslint-plugin": "3.9.2",
-    "@docusaurus/module-type-aliases": "3.9.2",
-    "@docusaurus/tsconfig": "3.9.2",
-    "@docusaurus/types": "3.9.2",
-    "@fontsource/inter": "^5.2.8",
+    "@docusaurus/eslint-plugin": "3.10.0",
+    "@docusaurus/module-type-aliases": "3.10.0",
+    "@docusaurus/tsconfig": "3.10.0",
+    "@docusaurus/types": "3.10.0",
+    "@fontsource/inter": "5.2.8",
     "@playwright/test": "1.59.1",
-    "@resvg/resvg-js": "^2.6.2",
-    "@typescript-eslint/eslint-plugin": "8.58.0",
-    "@typescript-eslint/parser": "8.58.0",
+    "@resvg/resvg-js": "2.6.2",
+    "@typescript-eslint/eslint-plugin": "8.59.0",
+    "@typescript-eslint/parser": "8.59.0",
     "eslint": "8.57.1",
-    "prettier": "3.8.1",
-    "satori": "^0.26.0",
-    "typescript": "6.0.2"
+    "prettier": "3.8.3",
+    "satori": "0.26.0",
+    "typescript": "6.0.3"
   },
   "overrides": {
     "react": "^19.0.0",
