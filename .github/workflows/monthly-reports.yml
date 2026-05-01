@@ -79,8 +79,10 @@ jobs:
         run: |
           BRANCH_NAME="monthly-report/$(date +%Y-%m)"
           TODAY=$(date +%Y-%m-%d)
-          # force-with-lease safely overwrites the branch if it exists from a prior failed run
-          git push -u origin "$BRANCH_NAME" --force-with-lease
+          # --force is safe here because the workflow always resets the branch with
+          # git checkout -B, and actions/checkout shallow clones don't track the
+          # remote branch state, causing --force-with-lease to fail on re-runs.
+          git push -u origin "$BRANCH_NAME" --force
           # Only create the PR if one doesn't already exist for this branch
           if ! gh pr view "$BRANCH_NAME" --json number --jq '.number' > /dev/null 2>&1; then
             gh pr create \
