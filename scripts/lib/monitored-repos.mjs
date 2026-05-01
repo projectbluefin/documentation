@@ -15,6 +15,9 @@ export const MONITORED_REPOS = [
   "ublue-os/bluefin-lts",
   // Aurora excluded - KDE variant tracked separately (not Bluefin-focused)
 
+  // Artwork and visual assets
+  "ublue-os/artwork",
+
   // Homebrew taps
   "ublue-os/homebrew-tap",
   "ublue-os/homebrew-experimental-tap",
