@@ -86,29 +86,44 @@ const TITLE_PATTERNS = {
     /french|czech|german|spanish|italian|portuguese|russian|chinese|japanese/i,
   ],
   Documentation: [/\bdocs?\b/i, /documentation/i, /readme/i, /\bguide\b/i],
-  Ecosystem: [/flatpak/i, /bazaar/i, /flathub/i, /homebrew/i, /\bbrew\b/i],
   Desktop: [
     // GNOME desktop environment
     /\bgnome\b/i,
     /gnomeos/i,
     /dconf/i,
-    // KDE/Aurora desktop environment  
+    // KDE/Aurora desktop environment
     /\bkde\b/i,
     /\bplasma\b/i,
     /aurora/i,
     // Terminal enhancements (area/bling)
     /starship/i,
+    /ghostty/i,
     /terminal/i,
     /\bshell\b/i,
-    /\bbash\b/i,
+    /\bbash/i, // matches bash and bashrc
     /\bzsh\b/i,
     /prompt/i,
     /\bbling\b/i,
+    // GNOME apps and extensions
+    /\bnautilus\b/i,
+    /custom.?command.?menu/i,
+    /\bextensions?\b/i,
+    /\byelp\b/i,
     // Visual elements
+    /wallpaper/i,
     /\bfonts?\b/i,
     /\blogos?\b/i,
   ],
-  Hardware: [/kernel/i, /driver/i, /firmware/i, /nvidia/i, /\bgpu\b/i],
+  Hardware: [
+    /kernel/i,
+    /driver/i,
+    /firmware/i,
+    /\bfwupd\b/i,
+    /\befibootmgr\b/i,
+    /\boneplus\b/i,
+    /nvidia/i,
+    /\bgpu\b/i,
+  ],
   Infrastructure: [
     /\biso\b/i,
     /upstream/i,
@@ -120,6 +135,14 @@ const TITLE_PATTERNS = {
     /justfile/i,
     /actions/i,
     /chunkah/i,
+    /chunkif/i, // chunkify
+    /\brechunk\b/i,
+    /composefs/i,
+    /\bjunction\b/i,
+    /os-release/i,
+    /\boci\b/i,
+    /coreutils/i,
+    /\bbootc\b/i,
   ],
   Development: [
     /\bide\b/i,
@@ -130,12 +153,19 @@ const TITLE_PATTERNS = {
     /qemu/i,
     /\bvm\b/i,
   ],
+  Ecosystem: [/flatpak/i, /bazaar/i, /flathub/i, /homebrew/i, /\bbrew\b/i, /\bdistrobox\b/i],
   "System Services & Policies": [
     /systemd/i,
     /service/i,
     /\bpolicy\b/i,
     /polkit/i,
     /selinux/i,
+    /\btailscale\b/i,
+    /\bnetwork\b/i,
+    /keepalive/i,
+    /\buupd\b/i,
+    /\budisks?\b/i,
+    /\bresolv\b/i,
   ],
 };
 
@@ -144,8 +174,16 @@ const TITLE_PATTERNS = {
  */
 const REPO_CATEGORY_MAP = {
   "projectbluefin/documentation": "Documentation",
+  "projectbluefin/branding": "Desktop",
+  "projectbluefin/iso": "Infrastructure",
+  "projectbluefin/dakota": "Infrastructure",
+  "projectbluefin/common": "Infrastructure",
+  "projectbluefin/finpilot": "Development",
+  "ublue-os/bluefin": "Infrastructure",
+  "ublue-os/bluefin-lts": "Infrastructure",
   "ublue-os/homebrew-tap": "Ecosystem",
   "ublue-os/homebrew-experimental-tap": "Ecosystem",
+  "ublue-os/artwork": "Desktop",
 };
 
 /**
