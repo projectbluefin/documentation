@@ -112,7 +112,7 @@ async function fetchMergedPRs(repo, startDate, endDate) {
           first: 100
           after: $cursor
           states: MERGED
-          orderBy: {field: MERGED_AT, direction: DESC}
+          orderBy: {field: UPDATED_AT, direction: DESC}
         ) {
           pageInfo {
             hasNextPage
@@ -123,6 +123,7 @@ async function fetchMergedPRs(repo, startDate, endDate) {
             title
             url
             mergedAt
+            updatedAt
           }
         }
       }
@@ -146,10 +147,10 @@ async function fetchMergedPRs(repo, startDate, endDate) {
 
     allPRs = allPRs.concat(filteredPRs);
 
-    // Early-exit: results ordered MERGED_AT DESC — once oldest on page is before
-    // startDate, no further pages will have in-window PRs
+    // Early-exit: results ordered UPDATED_AT DESC — since updatedAt >= mergedAt,
+    // once oldest on page was last updated before startDate it was also merged before startDate
     const oldest = prs[prs.length - 1];
-    if (oldest && new Date(oldest.mergedAt) < startDate) {
+    if (oldest && new Date(oldest.updatedAt) < startDate) {
       break;
     }
 

@@ -336,7 +336,7 @@ const REPO_CLOSED_ISSUES_QUERY = `
 const REPO_MERGED_PRS_QUERY = `
   query($owner: String!, $name: String!, $cursor: String) {
     repository(owner: $owner, name: $name) {
-      pullRequests(first: 100, after: $cursor, states: MERGED, orderBy: {field: MERGED_AT, direction: DESC}) {
+      pullRequests(first: 100, after: $cursor, states: MERGED, orderBy: {field: UPDATED_AT, direction: DESC}) {
         pageInfo {
           hasNextPage
           endCursor
@@ -346,6 +346,7 @@ const REPO_MERGED_PRS_QUERY = `
           title
           url
           mergedAt
+          updatedAt
           labels(first: 10) {
             nodes {
               name
@@ -447,10 +448,11 @@ export async function fetchClosedItemsFromRepo(
       allItems.push(...mergedPRs);
       prsCursor = prs.pageInfo.endCursor;
 
-      // Early-exit: results are ordered MERGED_AT DESC, so once the oldest PR on
-      // this page was merged before startDate we won't find any more in-window PRs
+      // Early-exit: results are ordered UPDATED_AT DESC. Since updatedAt >= mergedAt,
+      // if the oldest PR on this page was last updated before startDate, it was also
+      // merged before startDate — no further pages will have in-window PRs.
       const oldestOnPage = prs.nodes[prs.nodes.length - 1];
-      if (oldestOnPage && new Date(oldestOnPage.mergedAt) < startDate) {
+      if (oldestOnPage && new Date(oldestOnPage.updatedAt) < startDate) {
         break;
       }
 
