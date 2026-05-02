@@ -267,6 +267,33 @@ function enrichLtsDxGdxFromSbom(events: OsReleaseEvent[]): OsReleaseEvent[] {
 }
 
 /**
+ * Override the "HWE Kernel" carry-forward value in LTS events with the
+ * authoritative version from the bluefin-lts-hwe SBOM stream.
+ *
+ * enrichLtsFromHistory carries "hwe kernel" forward from release notes, but
+ * LTS release notes have not included HWE Kernel since lts.20251223, causing
+ * the changelogs page to display a stale value. The SBOM stream always has the
+ * correct installed version.
+ */
+function enrichLtsHweKernelFromSbom(events: OsReleaseEvent[]): OsReleaseEvent[] {
+  return events.map((event) => {
+    if (event.stream !== "lts") return event;
+
+    const dateMatch = event.release.tag.match(/(\d{8})/);
+    if (!dateMatch) return event;
+    const hweKernel =
+      SBOM_CACHE?.streams?.["bluefin-lts-hwe"]?.releases?.[`lts-hwe-${dateMatch[1]}`]
+        ?.packageVersions?.kernel;
+    if (!hweKernel) return event;
+
+    const updatedPackages = event.release.majorPackages.map((pkg) =>
+      pkg.name.toLowerCase() === "hwe kernel" ? { ...pkg, version: hweKernel } : pkg,
+    );
+    return { ...event, release: { ...event.release, majorPackages: updatedPackages } };
+  });
+}
+
+/**
  * Synthesise OsReleaseEvent entries for stable-daily builds that exist only in
  * GHCR (no GitHub Release). These are GHCR nightly builds tagged
  * "stable-daily-YYYYMMDD" — they never appear in bluefin-releases.json so they
@@ -325,8 +352,10 @@ function loadStableDailyEventsFromSbom(): OsReleaseEvent[] {
 // All parsed events from both feeds, enriched with SBOM package versions
 const BLUEFIN_OS_EVENTS: OsReleaseEvent[] = enrichFromSbom(loadOsEvents(bluefinReleasesData));
 const STABLE_DAILY_OS_EVENTS: OsReleaseEvent[] = loadStableDailyEventsFromSbom();
-const LTS_OS_EVENTS: OsReleaseEvent[] = enrichLtsDxGdxFromSbom(
-  enrichLtsFromHistory(enrichFromSbom(loadOsEvents(bluefinLtsReleasesData, "lts"))),
+const LTS_OS_EVENTS: OsReleaseEvent[] = enrichLtsHweKernelFromSbom(
+  enrichLtsDxGdxFromSbom(
+    enrichLtsFromHistory(enrichFromSbom(loadOsEvents(bluefinLtsReleasesData, "lts"))),
+  ),
 );
 
 // Rolling 12-month window for the stream — pinned cards (PINNED_OS_EVENTS) are unaffected.

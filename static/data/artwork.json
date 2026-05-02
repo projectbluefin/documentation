@@ -509,7 +509,7 @@
         {
           "id": "aurora-wallpapers",
           "title": "Aurora Wallpapers",
-          "description": "The official Aurora wallpaper collection. All wallpapers are JXL format \u2014 open in a new tab to download.",
+          "description": "The official Aurora wallpaper collection. Wallpapers are primarily available in JXL format — open in a new tab to download.",
           "license": "Apache-2.0",
           "releaseUrl": "https://github.com/ublue-os/artwork/tree/main/wallpapers/aurora",
           "hasDayNight": false,

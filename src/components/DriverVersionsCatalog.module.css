@@ -332,6 +332,28 @@
   font-style: italic;
 }
 
+.pinnedTag {
+  display: inline-block;
+  margin-top: 0.35rem;
+  border: 1px solid #b45309;
+  border-radius: 999px;
+  padding: 0.08rem 0.42rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  background: #fef3c7;
+  color: #78350f;
+  position: relative;
+  z-index: 2;
+}
+
+[data-theme="dark"] .pinnedTag {
+  background: #451a03;
+  color: #fed7aa;
+  border-color: #c2410c;
+}
+
 .bumpTag {
   display: inline-block;
   margin-top: 0.35rem;

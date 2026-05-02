@@ -17,6 +17,7 @@
 !/static/data/firehose-apps.json
 !/static/data/artwork.json
 !/static/data/artwork-versions.json
+!/static/data/stream-pins.json
 # github-profiles.json is intentionally gitignored — it is populated at build
 # time by scripts/fetch-github-profiles.js and cached via GHA cache key
 # github-profiles-v1-* (see .github/workflows/update-github-profiles-cache.yml).
