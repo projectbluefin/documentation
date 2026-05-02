@@ -100,3 +100,19 @@ aside.col--3 + main {
 .markdown li > p {
   margin-bottom: 0.15rem;
 }
+
+/* ── Blog post subtitle ──────────────────────────────────────────────────── */
+/* Renders the `subtitle` frontmatter value, which Docusaurus 3 parses but   */
+/* does not display via the classic theme's BlogPostItem/Header component.   */
+.blog-post-subtitle {
+  font-size: 1.25rem;
+  font-style: italic;
+  color: var(--ifm-color-secondary-darkest, #606770);
+  margin-top: -0.5rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.4;
+}
+
+[data-theme="dark"] .blog-post-subtitle {
+  color: var(--ifm-color-secondary-lighter, #a0a8b0);
+}
