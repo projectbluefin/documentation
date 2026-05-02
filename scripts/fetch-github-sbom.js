@@ -216,6 +216,9 @@ const STREAM_SPECS = [
     keyRepo: "projectbluefin/dakota",
     keyless: true,
     usesLatestTag: true,
+    // Dakota uses `cosign sign` (keyless OIDC signature), not SLSA attestation.
+    // verifyAttestation() switches to `cosign verify` for this signing type.
+    signingType: "cosign-sign",
   },
 ];
 
@@ -425,9 +428,47 @@ async function orasLogin() {
  *
  * present:false  → no attestation found for this image
  * verified:false → attestation found but signature check failed
+ *
+ * For streams with signingType: "cosign-sign", the image is signed with
+ * `cosign sign` (not an SLSA attestation). Use `cosign verify` instead of
+ * `cosign verify-attestation` — a verified signature is equivalent to
+ * present:true / verified:true in the UI.
  */
 async function verifyAttestation(imageRef, spec) {
   const oidcIdentityRegexp = `^https://github.com/${spec.keyRepo}/.github/workflows/`;
+
+  // Dakota (and any stream with signingType: "cosign-sign") uses `cosign sign`
+  // which produces a keyless OIDC signature, not an SLSA attestation. Verify
+  // with `cosign verify` rather than `cosign verify-attestation`.
+  if (spec.signingType === "cosign-sign") {
+    const verifyArgs = [
+      "verify",
+      "--certificate-oidc-issuer",
+      OIDC_ISSUER,
+      "--certificate-identity-regexp",
+      oidcIdentityRegexp,
+      imageRef,
+    ];
+    try {
+      await execFileAsync("cosign", verifyArgs, {
+        env: { ...process.env },
+        maxBuffer: 1 * 1024 * 1024,
+      });
+      return { present: true, verified: true, predicateType: "cosign-sign", error: null };
+    } catch (err) {
+      const msg = (err.stderr || err.message || "").toLowerCase();
+      if (msg.includes("no matching signatures") || msg.includes("not found")) {
+        return { present: false, verified: false, predicateType: null, error: "no signature" };
+      }
+      return {
+        present: null,
+        verified: false,
+        predicateType: null,
+        errorKind: "tooling",
+        error: String(err.stderr || err.message),
+      };
+    }
+  }
 
   const args = [
     "verify-attestation",
