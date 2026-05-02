@@ -89,6 +89,7 @@ const ReleaseContributors: React.FC<ReleaseContributorsProps> = ({
             username={login}
             title={RoleTitles[role]}
             highlight={RoleHighlight[role]}
+            accentColor={RoleLegendColor[role]}
             sponsorUrl={donationUrl}
           />
         ))}

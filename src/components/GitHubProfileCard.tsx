@@ -21,6 +21,7 @@ interface GitHubProfileCardProps {
   title?: string;
   sponsorUrl?: string;
   highlight?: boolean | "gold" | "silver" | "diamond";
+  accentColor?: string;
 }
 
 const CACHE_KEY_PREFIX = "github_profile_";
@@ -139,6 +140,7 @@ const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
   title,
   sponsorUrl,
   highlight = false,
+  accentColor,
 }) => {
   const [user, setUser] = useState<GitHubUser | null>(null);
   const [loading, setLoading] = useState(true);
@@ -264,7 +266,10 @@ const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
       className={`${styles.card} ${highlightClass}`}
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
-      style={pointerStyles}
+      style={{
+        ...pointerStyles,
+        ...(accentColor ? { borderLeft: `4px solid ${accentColor}` } : {}),
+      }}
     >
       <a href={user.html_url} target="_blank" rel="noopener noreferrer">
         <img
