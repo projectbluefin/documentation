@@ -2,7 +2,7 @@ import React from "react";
 import styles from "./DocsFeatureGrid.module.css";
 
 interface DocsFeature {
-  icon: string;
+  icon?: string;
   title: string;
   href: string;
   description: string;
@@ -19,7 +19,7 @@ const DocsFeatureGrid: React.FC<DocsFeatureGridProps> = ({ features }) => (
     {features.map((f) => (
       <div key={f.href} className={styles.row}>
         <div className={styles.textSide}>
-          <span className={styles.icon}>{f.icon}</span>
+          {f.icon && <span className={styles.icon}>{f.icon}</span>}
           <a
             href={f.href}
             target="_blank"
