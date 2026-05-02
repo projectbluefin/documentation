@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-02T17:17:33.882Z",
+  "generatedAt": "2026-05-02T17:23:26.432Z",
   "cacheHours": 168,
   "refreshHours": 336,
   "staleDays": 30,
@@ -241,7 +241,7 @@
           "command": "sudo bootc switch ghcr.io/ublue-os/bluefin-dx:lts-hwe-testing --enforce-container-sigpolicy",
           "versions": {
             "gnome": "49.6-1.fc43",
-            "kernel": "6.19.12-200.fc43",
+            "kernel": "6.19.12-100.fc42",
             "nvidia": null,
             "fedora": "F43",
             "flatpak": "1.16.6-1.fc43",
@@ -256,7 +256,7 @@
           "command": "sudo bootc switch ghcr.io/ublue-os/bluefin-dx:lts-hwe-testing-50 --enforce-container-sigpolicy",
           "versions": {
             "gnome": "49.6-1.fc43",
-            "kernel": "6.19.12-200.fc43",
+            "kernel": "6.19.12-100.fc42",
             "nvidia": null,
             "fedora": "F43",
             "flatpak": "1.16.6-1.fc43",
@@ -444,7 +444,7 @@
           "command": "sudo bootc switch ghcr.io/ublue-os/bluefin:lts-hwe-testing --enforce-container-sigpolicy",
           "versions": {
             "gnome": "49.5-100.el10gnomeqr.el10",
-            "kernel": "6.17.12-200.fc42",
+            "kernel": "6.19.12-100.fc42",
             "nvidia": null,
             "fedora": null,
             "flatpak": "1.16.0-9.el10",
@@ -459,7 +459,7 @@
           "command": "sudo bootc switch ghcr.io/ublue-os/bluefin:lts-hwe-testing-50 --enforce-container-sigpolicy",
           "versions": {
             "gnome": "49.5-100.el10gnomeqr.el10",
-            "kernel": "6.17.12-200.fc42",
+            "kernel": "6.19.12-100.fc42",
             "nvidia": null,
             "fedora": null,
             "flatpak": "1.16.0-9.el10",
@@ -489,7 +489,7 @@
           "command": "sudo bootc switch ghcr.io/ublue-os/bluefin:lts-testing-50 --enforce-container-sigpolicy",
           "versions": {
             "gnome": "49.5-100.el10gnomeqr.el10",
-            "kernel": "6.12.0-224.el10",
+            "kernel": "6.19.12-100.fc42",
             "nvidia": null,
             "fedora": null,
             "flatpak": "1.16.0-9.el10",

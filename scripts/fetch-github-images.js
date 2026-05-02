@@ -401,6 +401,23 @@ async function buildStreamVersionInfo(
   // SBOM-only policy: fedora version is sourced from SBOM packageVersions.
   // Do not infer from release bodies or image labels.
 
+  // For testing streams, the SBOM cache points at the nearest stable stream
+  // (e.g. lts-hwe-testing → bluefin-lts-hwe) which may be several kernels
+  // behind. Read the actual kernel from the ostree.linux image label instead
+  // so the displayed kernel is always accurate.
+  if (streamTag.includes("-testing")) {
+    try {
+      const inspected = await inspectImage(imageRef, streamTag);
+      const ostreeLinux = inspected?.Labels?.["ostree.linux"];
+      if (ostreeLinux) {
+        // Strip architecture suffix: "6.19.12-100.fc42.x86_64" → "6.19.12-100.fc42"
+        versions.kernel = ostreeLinux.replace(/\.(x86_64|aarch64|arm64)$/, "");
+      }
+    } catch {
+      // keep SBOM kernel as fallback
+    }
+  }
+
   if (spec.versionOverrides) {
     versions.gnome = spec.versionOverrides.gnome ?? versions.gnome;
     versions.kernel = spec.versionOverrides.kernel ?? versions.kernel;
