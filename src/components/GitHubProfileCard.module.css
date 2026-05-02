@@ -4,7 +4,7 @@
   border-radius: 10px;
   padding: 0.5rem;
   display: flex;
-  gap: 0.6rem;
+  gap: 1rem;
   align-items: flex-start;
   transition: all 0.3s ease;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
