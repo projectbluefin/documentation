@@ -1,0 +1,598 @@
+{
+  "generatedAt": "2026-05-02T17:17:33.882Z",
+  "cacheHours": 168,
+  "refreshHours": 336,
+  "staleDays": 30,
+  "products": [
+    {
+      "id": "ublue-bluefin",
+      "name": "Bluefin",
+      "org": "ublue-os",
+      "package": "bluefin",
+      "summary": "Primary Bluefin desktop image for most systems.",
+      "artwork": "bluefin",
+      "imageRef": "ghcr.io/ublue-os/bluefin",
+      "packagePageUrl": "https://github.com/orgs/ublue-os/packages/container/package/bluefin",
+      "isoSectionLink": "/downloads#bluefin",
+      "streams": [
+        {
+          "label": "STABLE",
+          "tag": "stable",
+          "command": "sudo bootc switch ghcr.io/ublue-os/bluefin:stable --enforce-container-sigpolicy",
+          "versions": {
+            "gnome": "49.6-1.fc43",
+            "kernel": "6.19.12-200.fc43",
+            "nvidia": "595.71.05-1",
+            "fedora": "F43",
+            "flatpak": "1.16.6-1.fc43",
+            "mesa": "25.3.6-6.fc43",
+            "podman": "5.8.2-1.fc43"
+          },
+          "nvidiaCommand": "sudo bootc switch ghcr.io/ublue-os/bluefin-nvidia-open:stable --enforce-container-sigpolicy"
+        },
+        {
+          "label": "STABLE-DAILY",
+          "tag": "stable-daily",
+          "command": "sudo bootc switch ghcr.io/ublue-os/bluefin:stable-daily --enforce-container-sigpolicy",
+          "versions": {
+            "gnome": "49.6-1.fc43",
+            "kernel": "6.19.12-200.fc43",
+            "nvidia": null,
+            "fedora": "F43",
+            "flatpak": "1.16.6-1.fc43",
+            "mesa": "25.3.6-6.fc43",
+            "podman": "5.8.2-1.fc43"
+          },
+          "nvidiaCommand": "sudo bootc switch ghcr.io/ublue-os/bluefin-nvidia-open:stable-daily --enforce-container-sigpolicy"
+        },
+        {
+          "label": "LATEST",
+          "tag": "latest",
+          "command": "sudo bootc switch ghcr.io/ublue-os/bluefin:latest --enforce-container-sigpolicy",
+          "versions": {
+            "gnome": "50.1-2.fc44",
+            "kernel": "6.19.14-300.fc44",
+            "nvidia": null,
+            "fedora": "F44",
+            "flatpak": "1.17.6-1.fc44",
+            "mesa": "26.0.6-4.fc44",
+            "podman": "5.8.2-1.fc44"
+          },
+          "nvidiaCommand": "sudo bootc switch ghcr.io/ublue-os/bluefin-nvidia-open:latest --enforce-container-sigpolicy"
+        },
+        {
+          "label": "BETA",
+          "tag": "beta",
+          "command": "sudo bootc switch ghcr.io/ublue-os/bluefin:beta --enforce-container-sigpolicy",
+          "versions": {
+            "gnome": "49.6-1.fc43",
+            "kernel": "6.19.12-200.fc43",
+            "nvidia": null,
+            "fedora": "F43",
+            "flatpak": "1.16.6-1.fc43",
+            "mesa": "25.3.6-6.fc43",
+            "podman": "5.8.2-1.fc43"
+          },
+          "nvidiaCommand": "sudo bootc switch ghcr.io/ublue-os/bluefin-nvidia-open:beta --enforce-container-sigpolicy"
+        }
+      ],
+      "testingStreams": [],
+      "metadata": {
+        "digest": "sha256:0526819c01c14f45dafcaafbaca0ac432675c89b41f4e5f744d35b6123d1f10c",
+        "digestShort": "0526819c01c1",
+        "digestLink": "https://github.com/ublue-os/bluefin/releases/tag/stable-20260501#assets",
+        "architecture": "amd64",
+        "os": "linux",
+        "labels": {
+          "version": "43.20260501",
+          "revision": "c85f1517600bc68443d11e41a405c09c44ba9cf2",
+          "source": "https://raw.githubusercontent.com/ublue-os/bluefin/refs/heads/main/Containerfile",
+          "ostreeCommit": "0b7ed4f0ec6c36a57db1c5b12e8ea86b80da660c66f70988136aa46cf7ffe359"
+        }
+      },
+      "metadataSource": "live",
+      "versions": {
+        "gnome": "49.6-1.fc43",
+        "kernel": "6.19.12-200.fc43",
+        "nvidia": "595.71.05-1",
+        "release": {
+          "title": "stable-20260501: Stable (F43.20260501, #c85f151)",
+          "url": "https://github.com/ublue-os/bluefin/releases/tag/stable-20260501",
+          "assetsUrl": "https://github.com/ublue-os/bluefin/releases/tag/stable-20260501#assets"
+        }
+      },
+      "security": {
+        "cosignKeyUrl": null,
+        "verifyCommand": "cosign verify --certificate-oidc-issuer https://token.actions.githubusercontent.com --certificate-identity-regexp '^https://github.com/ublue-os/bluefin/.github/workflows/' ghcr.io/ublue-os/bluefin:stable",
+        "attestCommand": "cosign verify-attestation --type https://slsa.dev/provenance/v1 --certificate-oidc-issuer https://token.actions.githubusercontent.com --certificate-identity-regexp '^https://github.com/ublue-os/bluefin/.github/workflows/' ghcr.io/ublue-os/bluefin:stable",
+        "hasAttestation": true,
+        "sbomCommand": "oras discover ghcr.io/ublue-os/bluefin:stable"
+      },
+      "inspectTag": "stable",
+      "lastPublishedAt": "2026-05-01T02:15:49Z",
+      "stale": false,
+      "keepEvenIfStale": false
+    },
+    {
+      "id": "ublue-bluefin-dx",
+      "name": "Bluefin DX",
+      "org": "ublue-os",
+      "package": "bluefin-dx",
+      "summary": "Developer-focused Bluefin image with DX tooling.",
+      "artwork": "bluefin",
+      "imageRef": "ghcr.io/ublue-os/bluefin-dx",
+      "packagePageUrl": "https://github.com/orgs/ublue-os/packages/container/package/bluefin-dx",
+      "isoSectionLink": "/downloads#bluefin",
+      "streams": [
+        {
+          "label": "STABLE",
+          "tag": "stable",
+          "command": "sudo bootc switch ghcr.io/ublue-os/bluefin-dx:stable --enforce-container-sigpolicy",
+          "versions": {
+            "gnome": "49.6-1.fc43",
+            "kernel": "6.19.12-200.fc43",
+            "nvidia": "595.71.05-1",
+            "fedora": "F43",
+            "flatpak": "1.16.6-1.fc43",
+            "mesa": "25.3.6-6.fc43",
+            "podman": "5.8.2-1.fc43"
+          },
+          "nvidiaCommand": "sudo bootc switch ghcr.io/ublue-os/bluefin-dx-nvidia-open:stable --enforce-container-sigpolicy"
+        },
+        {
+          "label": "LATEST",
+          "tag": "latest",
+          "command": "sudo bootc switch ghcr.io/ublue-os/bluefin-dx:latest --enforce-container-sigpolicy",
+          "versions": {
+            "gnome": "50.1-2.fc44",
+            "kernel": "6.19.14-300.fc44",
+            "nvidia": null,
+            "fedora": "F44",
+            "flatpak": "1.17.6-1.fc44",
+            "mesa": "26.0.6-4.fc44",
+            "podman": "5.8.2-1.fc44"
+          },
+          "nvidiaCommand": "sudo bootc switch ghcr.io/ublue-os/bluefin-dx-nvidia-open:latest --enforce-container-sigpolicy"
+        },
+        {
+          "label": "BETA",
+          "tag": "beta",
+          "command": "sudo bootc switch ghcr.io/ublue-os/bluefin-dx:beta --enforce-container-sigpolicy",
+          "versions": {
+            "gnome": "49.6-1.fc43",
+            "kernel": "6.19.12-200.fc43",
+            "nvidia": null,
+            "fedora": "F43",
+            "flatpak": "1.16.6-1.fc43",
+            "mesa": "25.3.6-6.fc43",
+            "podman": "5.8.2-1.fc43"
+          },
+          "nvidiaCommand": "sudo bootc switch ghcr.io/ublue-os/bluefin-dx-nvidia-open:beta --enforce-container-sigpolicy"
+        }
+      ],
+      "testingStreams": [],
+      "metadata": {
+        "digest": "sha256:49bafb2ebc8ab3f7e159cd741151910fa89fce5bf5cae4c0f0c1c78b7f0f37a3",
+        "digestShort": "49bafb2ebc8a",
+        "digestLink": "https://github.com/ublue-os/bluefin/releases/tag/stable-20260501#assets",
+        "architecture": "amd64",
+        "os": "linux",
+        "labels": {
+          "version": "43.20260501",
+          "revision": "c85f1517600bc68443d11e41a405c09c44ba9cf2",
+          "source": "https://raw.githubusercontent.com/ublue-os/bluefin/refs/heads/main/Containerfile",
+          "ostreeCommit": "4ea866411c45ba8e5237d98b5d8e7641eaa16d342d3f61c8ed9ee0038546dfc5"
+        }
+      },
+      "metadataSource": "live",
+      "versions": {
+        "gnome": "49.6-1.fc43",
+        "kernel": "6.19.12-200.fc43",
+        "nvidia": "595.71.05-1",
+        "release": {
+          "title": "stable-20260501: Stable (F43.20260501, #c85f151)",
+          "url": "https://github.com/ublue-os/bluefin/releases/tag/stable-20260501",
+          "assetsUrl": "https://github.com/ublue-os/bluefin/releases/tag/stable-20260501#assets"
+        }
+      },
+      "security": {
+        "cosignKeyUrl": null,
+        "verifyCommand": "cosign verify --certificate-oidc-issuer https://token.actions.githubusercontent.com --certificate-identity-regexp '^https://github.com/ublue-os/bluefin/.github/workflows/' ghcr.io/ublue-os/bluefin-dx:stable",
+        "attestCommand": "cosign verify-attestation --type https://slsa.dev/provenance/v1 --certificate-oidc-issuer https://token.actions.githubusercontent.com --certificate-identity-regexp '^https://github.com/ublue-os/bluefin/.github/workflows/' ghcr.io/ublue-os/bluefin-dx:stable",
+        "hasAttestation": true,
+        "sbomCommand": "oras discover ghcr.io/ublue-os/bluefin-dx:stable"
+      },
+      "inspectTag": "stable",
+      "lastPublishedAt": "2026-05-01T02:15:49Z",
+      "stale": false,
+      "keepEvenIfStale": false
+    },
+    {
+      "id": "ublue-bluefin-dx-lts",
+      "name": "Bluefin DX LTS",
+      "org": "ublue-os",
+      "package": "bluefin-dx",
+      "summary": "Long-term support Bluefin DX stream.",
+      "artwork": "achillobator",
+      "imageRef": "ghcr.io/ublue-os/bluefin-dx",
+      "packagePageUrl": "https://github.com/orgs/ublue-os/packages/container/package/bluefin-dx",
+      "isoSectionLink": "/downloads#bluefin-lts",
+      "streams": [
+        {
+          "label": "LTS",
+          "tag": "lts",
+          "command": "sudo bootc switch ghcr.io/ublue-os/bluefin-dx:lts --enforce-container-sigpolicy",
+          "versions": {
+            "gnome": "49.5-100.el10gnomeqr.el10",
+            "kernel": "6.12.0-224.el10",
+            "nvidia": null,
+            "fedora": null,
+            "flatpak": "1.16.0-9.el10",
+            "mesa": "25.2.7-5.el10",
+            "podman": "5.8.0-2.el10"
+          },
+          "nvidiaCommand": "sudo bootc switch ghcr.io/ublue-os/bluefin-dx-nvidia-open:latest --enforce-container-sigpolicy"
+        }
+      ],
+      "testingStreams": [
+        {
+          "label": "lts-hwe-testing",
+          "tag": "lts-hwe-testing",
+          "command": "sudo bootc switch ghcr.io/ublue-os/bluefin-dx:lts-hwe-testing --enforce-container-sigpolicy",
+          "versions": {
+            "gnome": "49.6-1.fc43",
+            "kernel": "6.19.12-200.fc43",
+            "nvidia": null,
+            "fedora": "F43",
+            "flatpak": "1.16.6-1.fc43",
+            "mesa": "25.3.6-6.fc43",
+            "podman": "5.8.2-1.fc43"
+          },
+          "nvidiaCommand": null
+        },
+        {
+          "label": "lts-hwe-testing-50",
+          "tag": "lts-hwe-testing-50",
+          "command": "sudo bootc switch ghcr.io/ublue-os/bluefin-dx:lts-hwe-testing-50 --enforce-container-sigpolicy",
+          "versions": {
+            "gnome": "49.6-1.fc43",
+            "kernel": "6.19.12-200.fc43",
+            "nvidia": null,
+            "fedora": "F43",
+            "flatpak": "1.16.6-1.fc43",
+            "mesa": "25.3.6-6.fc43",
+            "podman": "5.8.2-1.fc43"
+          },
+          "nvidiaCommand": null
+        },
+        {
+          "label": "lts-testing",
+          "tag": "lts-testing",
+          "command": "sudo bootc switch ghcr.io/ublue-os/bluefin-dx:lts-testing --enforce-container-sigpolicy",
+          "versions": {
+            "gnome": "49.5-100.el10gnomeqr.el10",
+            "kernel": "6.12.0-224.el10",
+            "nvidia": null,
+            "fedora": null,
+            "flatpak": "1.16.0-9.el10",
+            "mesa": "25.2.7-5.el10",
+            "podman": "5.8.0-2.el10"
+          },
+          "nvidiaCommand": null
+        },
+        {
+          "label": "lts-testing-50",
+          "tag": "lts-testing-50",
+          "command": "sudo bootc switch ghcr.io/ublue-os/bluefin-dx:lts-testing-50 --enforce-container-sigpolicy",
+          "versions": {
+            "gnome": "49.5-100.el10gnomeqr.el10",
+            "kernel": "6.12.0-224.el10",
+            "nvidia": null,
+            "fedora": null,
+            "flatpak": "1.16.0-9.el10",
+            "mesa": "25.2.7-5.el10",
+            "podman": "5.8.0-2.el10"
+          },
+          "nvidiaCommand": null
+        }
+      ],
+      "metadata": {
+        "digest": "sha256:a1ef50a13ce1b80f9b69e1ebbe3f1c12b0bb4090bfd4ba05a58c2c87ac49e918",
+        "digestShort": "a1ef50a13ce1",
+        "digestLink": "https://github.com/ublue-os/bluefin-lts/releases/tag/lts.20260501#assets",
+        "architecture": "amd64",
+        "os": "linux",
+        "labels": {
+          "version": "stream10.1",
+          "revision": null,
+          "source": null,
+          "ostreeCommit": "dff49e20ceb0e0cc3c8ac5d2f577d9a7ade482fcb657acdc0796c44799536a2e"
+        }
+      },
+      "metadataSource": "live",
+      "versions": {
+        "gnome": "49.5-100.el10gnomeqr.el10",
+        "kernel": "6.12.0-224.el10",
+        "nvidia": null,
+        "release": {
+          "title": "lts.20260501: LTS.20260501 Release",
+          "url": "https://github.com/ublue-os/bluefin-lts/releases/tag/lts.20260501",
+          "assetsUrl": "https://github.com/ublue-os/bluefin-lts/releases/tag/lts.20260501#assets"
+        }
+      },
+      "security": {
+        "cosignKeyUrl": "https://raw.githubusercontent.com/ublue-os/bluefin-lts/main/cosign.pub",
+        "verifyCommand": "cosign verify --key https://raw.githubusercontent.com/ublue-os/bluefin-lts/main/cosign.pub ghcr.io/ublue-os/bluefin-dx:lts",
+        "attestCommand": "cosign verify-attestation --type https://slsa.dev/provenance/v1 --key https://raw.githubusercontent.com/ublue-os/bluefin-lts/main/cosign.pub ghcr.io/ublue-os/bluefin-dx:lts",
+        "hasAttestation": false,
+        "sbomCommand": "oras discover ghcr.io/ublue-os/bluefin-dx:lts"
+      },
+      "inspectTag": "lts",
+      "lastPublishedAt": "2026-05-02T02:45:33Z",
+      "stale": false,
+      "keepEvenIfStale": true
+    },
+    {
+      "id": "ublue-bluefin-gdx",
+      "name": "Bluefin GDX",
+      "org": "ublue-os",
+      "package": "bluefin-gdx",
+      "summary": "AI-focused GDX track with LTS roots.",
+      "artwork": "achillobator",
+      "imageRef": "ghcr.io/ublue-os/bluefin-gdx",
+      "packagePageUrl": "https://github.com/orgs/ublue-os/packages/container/package/bluefin-gdx",
+      "isoSectionLink": "/downloads#bluefin-gdx",
+      "streams": [
+        {
+          "label": "LTS",
+          "tag": "lts",
+          "command": "sudo bootc switch ghcr.io/ublue-os/bluefin-gdx:lts --enforce-container-sigpolicy",
+          "versions": {
+            "gnome": "49.5-100.el10gnomeqr.el10",
+            "kernel": "6.19.12-100.fc42",
+            "nvidia": null,
+            "fedora": null,
+            "flatpak": "1.16.0-9.el10",
+            "mesa": "25.2.7-5.el10",
+            "podman": "5.8.0-2.el10"
+          }
+        }
+      ],
+      "testingStreams": [
+        {
+          "label": "lts-testing",
+          "tag": "lts-testing",
+          "command": "sudo bootc switch ghcr.io/ublue-os/bluefin-gdx:lts-testing --enforce-container-sigpolicy",
+          "versions": {
+            "gnome": "49.5-100.el10gnomeqr.el10",
+            "kernel": "6.19.12-100.fc42",
+            "nvidia": null,
+            "fedora": null,
+            "flatpak": "1.16.0-9.el10",
+            "mesa": "25.2.7-5.el10",
+            "podman": "5.8.0-2.el10"
+          }
+        }
+      ],
+      "metadata": {
+        "digest": "sha256:334c16fd50900cd0e81d1acaa9ba043c88f126a255637931b2b40d184d6e7d5b",
+        "digestShort": "334c16fd5090",
+        "digestLink": "https://github.com/ublue-os/bluefin-lts/releases/tag/lts.20260501#assets",
+        "architecture": "amd64",
+        "os": "linux",
+        "labels": {
+          "version": "stream10.1",
+          "revision": null,
+          "source": null,
+          "ostreeCommit": "ac8d6172a44bf50d213bad2721e366a64afa3a3336b7fb0a38b2f631a92502d8"
+        }
+      },
+      "metadataSource": "live",
+      "versions": {
+        "gnome": "49.5-100.el10gnomeqr.el10",
+        "kernel": "6.19.12-100.fc42",
+        "nvidia": null,
+        "release": {
+          "title": "lts.20260501: LTS.20260501 Release",
+          "url": "https://github.com/ublue-os/bluefin-lts/releases/tag/lts.20260501",
+          "assetsUrl": "https://github.com/ublue-os/bluefin-lts/releases/tag/lts.20260501#assets"
+        }
+      },
+      "security": {
+        "cosignKeyUrl": "https://raw.githubusercontent.com/ublue-os/bluefin-lts/main/cosign.pub",
+        "verifyCommand": "cosign verify --key https://raw.githubusercontent.com/ublue-os/bluefin-lts/main/cosign.pub ghcr.io/ublue-os/bluefin-gdx:lts",
+        "attestCommand": "cosign verify-attestation --type https://slsa.dev/provenance/v1 --key https://raw.githubusercontent.com/ublue-os/bluefin-lts/main/cosign.pub ghcr.io/ublue-os/bluefin-gdx:lts",
+        "hasAttestation": false,
+        "sbomCommand": "oras discover ghcr.io/ublue-os/bluefin-gdx:lts"
+      },
+      "inspectTag": "lts",
+      "lastPublishedAt": "2026-05-02T02:45:33Z",
+      "stale": false,
+      "keepEvenIfStale": true
+    },
+    {
+      "id": "ublue-bluefin-lts",
+      "name": "Bluefin LTS",
+      "org": "ublue-os",
+      "package": "bluefin",
+      "summary": "Long-term support Bluefin stream.",
+      "artwork": "achillobator",
+      "imageRef": "ghcr.io/ublue-os/bluefin",
+      "packagePageUrl": "https://github.com/orgs/ublue-os/packages/container/package/bluefin",
+      "isoSectionLink": "/downloads#bluefin-lts",
+      "streams": [
+        {
+          "label": "LTS",
+          "tag": "lts",
+          "command": "sudo bootc switch ghcr.io/ublue-os/bluefin:lts --enforce-container-sigpolicy",
+          "versions": {
+            "gnome": "49.5-100.el10gnomeqr.el10",
+            "kernel": "6.12.0-224.el10",
+            "nvidia": null,
+            "fedora": null,
+            "flatpak": "1.16.0-9.el10",
+            "mesa": "25.2.7-5.el10",
+            "podman": "5.8.0-2.el10"
+          },
+          "nvidiaCommand": "sudo bootc switch ghcr.io/ublue-os/bluefin-nvidia-open:latest --enforce-container-sigpolicy"
+        }
+      ],
+      "testingStreams": [
+        {
+          "label": "lts-hwe-testing",
+          "tag": "lts-hwe-testing",
+          "command": "sudo bootc switch ghcr.io/ublue-os/bluefin:lts-hwe-testing --enforce-container-sigpolicy",
+          "versions": {
+            "gnome": "49.5-100.el10gnomeqr.el10",
+            "kernel": "6.17.12-200.fc42",
+            "nvidia": null,
+            "fedora": null,
+            "flatpak": "1.16.0-9.el10",
+            "mesa": "25.2.7-5.el10",
+            "podman": "5.8.0-2.el10"
+          },
+          "nvidiaCommand": null
+        },
+        {
+          "label": "lts-hwe-testing-50",
+          "tag": "lts-hwe-testing-50",
+          "command": "sudo bootc switch ghcr.io/ublue-os/bluefin:lts-hwe-testing-50 --enforce-container-sigpolicy",
+          "versions": {
+            "gnome": "49.5-100.el10gnomeqr.el10",
+            "kernel": "6.17.12-200.fc42",
+            "nvidia": null,
+            "fedora": null,
+            "flatpak": "1.16.0-9.el10",
+            "mesa": "25.2.7-5.el10",
+            "podman": "5.8.0-2.el10"
+          },
+          "nvidiaCommand": null
+        },
+        {
+          "label": "lts-testing",
+          "tag": "lts-testing",
+          "command": "sudo bootc switch ghcr.io/ublue-os/bluefin:lts-testing --enforce-container-sigpolicy",
+          "versions": {
+            "gnome": "49.5-100.el10gnomeqr.el10",
+            "kernel": "6.12.0-224.el10",
+            "nvidia": null,
+            "fedora": null,
+            "flatpak": "1.16.0-9.el10",
+            "mesa": "25.2.7-5.el10",
+            "podman": "5.8.0-2.el10"
+          },
+          "nvidiaCommand": null
+        },
+        {
+          "label": "lts-testing-50",
+          "tag": "lts-testing-50",
+          "command": "sudo bootc switch ghcr.io/ublue-os/bluefin:lts-testing-50 --enforce-container-sigpolicy",
+          "versions": {
+            "gnome": "49.5-100.el10gnomeqr.el10",
+            "kernel": "6.12.0-224.el10",
+            "nvidia": null,
+            "fedora": null,
+            "flatpak": "1.16.0-9.el10",
+            "mesa": "25.2.7-5.el10",
+            "podman": "5.8.0-2.el10"
+          },
+          "nvidiaCommand": null
+        }
+      ],
+      "metadata": {
+        "digest": "sha256:a8beeadd6471bdb27345e540a192fc6e1ca802faf6ec1c8efec63dd709167664",
+        "digestShort": "a8beeadd6471",
+        "digestLink": "https://github.com/ublue-os/bluefin-lts/releases/tag/lts.20260501#assets",
+        "architecture": "amd64",
+        "os": "linux",
+        "labels": {
+          "version": "stream10.1",
+          "revision": null,
+          "source": null,
+          "ostreeCommit": "ac63e01dde65c33d21a80b3d74cfb9c11f6cad815cc747ab6dfc36027b2cf6c5"
+        }
+      },
+      "metadataSource": "live",
+      "versions": {
+        "gnome": "49.5-100.el10gnomeqr.el10",
+        "kernel": "6.12.0-224.el10",
+        "nvidia": null,
+        "release": {
+          "title": "lts.20260501: LTS.20260501 Release",
+          "url": "https://github.com/ublue-os/bluefin-lts/releases/tag/lts.20260501",
+          "assetsUrl": "https://github.com/ublue-os/bluefin-lts/releases/tag/lts.20260501#assets"
+        }
+      },
+      "security": {
+        "cosignKeyUrl": "https://raw.githubusercontent.com/ublue-os/bluefin-lts/main/cosign.pub",
+        "verifyCommand": "cosign verify --key https://raw.githubusercontent.com/ublue-os/bluefin-lts/main/cosign.pub ghcr.io/ublue-os/bluefin:lts",
+        "attestCommand": "cosign verify-attestation --type https://slsa.dev/provenance/v1 --key https://raw.githubusercontent.com/ublue-os/bluefin-lts/main/cosign.pub ghcr.io/ublue-os/bluefin:lts",
+        "hasAttestation": false,
+        "sbomCommand": "oras discover ghcr.io/ublue-os/bluefin:lts"
+      },
+      "inspectTag": "lts",
+      "lastPublishedAt": "2026-05-02T02:45:33Z",
+      "stale": false,
+      "keepEvenIfStale": true
+    },
+    {
+      "id": "projectbluefin-dakota",
+      "name": "Project Bluefin Dakota",
+      "org": "projectbluefin",
+      "package": "dakota",
+      "summary": "Project Bluefin Dakota image stream.",
+      "artwork": "dakotaraptor",
+      "imageRef": "ghcr.io/projectbluefin/dakota",
+      "packagePageUrl": "https://github.com/orgs/projectbluefin/packages/container/package/dakota",
+      "isoSectionLink": null,
+      "streams": [
+        {
+          "label": "LATEST",
+          "tag": "latest",
+          "command": "sudo bootc switch ghcr.io/projectbluefin/dakota:latest --enforce-container-sigpolicy",
+          "versions": {
+            "gnome": "50.0",
+            "kernel": "6.19.11",
+            "nvidia": null,
+            "fedora": null,
+            "flatpak": "1.16.6",
+            "mesa": "26.0.5",
+            "podman": "5.8.2"
+          }
+        }
+      ],
+      "testingStreams": [],
+      "metadata": {
+        "digest": "sha256:75ee0b6da8f61d69cedb9000214dd41ed7f6f80c9522803204897b8e844bf74f",
+        "digestShort": "75ee0b6da8f6",
+        "digestLink": null,
+        "architecture": "amd64",
+        "os": "linux",
+        "labels": {
+          "version": "latest",
+          "revision": "b21d4adc526bc61d4af17b7a41464389d79f7ec5",
+          "source": "https://github.com/projectbluefin/dakota",
+          "ostreeCommit": null
+        }
+      },
+      "metadataSource": "live",
+      "versions": {
+        "gnome": "50.0",
+        "kernel": "6.19.11",
+        "nvidia": null,
+        "release": null
+      },
+      "security": {
+        "cosignKeyUrl": null,
+        "verifyCommand": "cosign verify --certificate-oidc-issuer https://token.actions.githubusercontent.com --certificate-identity-regexp '^https://github.com/projectbluefin/dakota/.github/workflows/' ghcr.io/projectbluefin/dakota:latest",
+        "attestCommand": "cosign verify-attestation --type https://slsa.dev/provenance/v1 --certificate-oidc-issuer https://token.actions.githubusercontent.com --certificate-identity-regexp '^https://github.com/projectbluefin/dakota/.github/workflows/' ghcr.io/projectbluefin/dakota:latest",
+        "hasAttestation": false,
+        "sbomCommand": "oras discover ghcr.io/projectbluefin/dakota:latest"
+      },
+      "inspectTag": "latest",
+      "lastPublishedAt": "2026-05-02T00:00:00Z",
+      "stale": false,
+      "keepEvenIfStale": false
+    }
+  ]
+}

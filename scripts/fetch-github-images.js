@@ -170,7 +170,13 @@ function sbomLatestCreatedAt(sbomCache, streamId) {
 function normalizeSbomStreamTag(streamTag) {
   if (!streamTag) return null;
   if (streamTag === "stable-daily") return "stable";
-  return streamTag;
+  // Normalize dot-separated tags (e.g. "lts.hwe") to dash-separated ("lts-hwe")
+  // and strip "-testing" suffix so testing streams look up the right SBOM stream:
+  //   "lts-hwe-testing" → "lts-hwe" → "bluefin-lts-hwe"
+  //   "lts-testing"     → "lts"     → "bluefin-lts"
+  return streamTag
+    .replace(/\./g, "-")
+    .replace(/-testing(-\d+)?$/, "");
 }
 
 function buildSbomStreamId(spec, streamTag) {
@@ -387,6 +393,9 @@ async function buildStreamVersionInfo(
     kernel: sbomVersions?.kernel || null,
     nvidia: parseFeedVersion(feedItem, ["Nvidia"]),
     fedora: sbomVersions?.fedora || null,
+    flatpak: sbomVersions?.flatpak || null,
+    mesa: sbomVersions?.mesa || null,
+    podman: sbomVersions?.podman || null,
   };
 
   // SBOM-only policy: fedora version is sourced from SBOM packageVersions.
@@ -397,6 +406,9 @@ async function buildStreamVersionInfo(
     versions.kernel = spec.versionOverrides.kernel ?? versions.kernel;
     versions.nvidia = spec.versionOverrides.nvidia ?? versions.nvidia;
     versions.fedora = spec.versionOverrides.fedora ?? versions.fedora;
+    versions.flatpak = spec.versionOverrides.flatpak ?? versions.flatpak;
+    versions.mesa = spec.versionOverrides.mesa ?? versions.mesa;
+    versions.podman = spec.versionOverrides.podman ?? versions.podman;
   }
 
   return versions;
