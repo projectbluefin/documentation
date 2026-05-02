@@ -93,3 +93,10 @@ aside.col--3 {
 aside.col--3 + main {
   --ifm-col-width: calc(8 / 12 * 100%);
 }
+
+/* ── Tight list items in blog posts ─────────────────────────────────────── */
+/* MDX wraps li content in <p> when items contain links/bold, adding extra   */
+/* paragraph margin. Collapse it so lists feel like plain tight Markdown.    */
+.markdown li > p {
+  margin-bottom: 0.15rem;
+}
