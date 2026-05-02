@@ -7,6 +7,7 @@ draft: true
 ---
 
 import WallpaperShowcase from "@site/src/components/WallpaperShowcase";
+import MusicPlaylist from "@site/src/components/MusicPlaylist";
 
 [TODO: opening paragraph]
 
@@ -76,6 +77,14 @@ sudo bootc switch --enforce-container-sigpolicy ghcr.io/ublue-os/$IMAGE_NAME:sta
 
 [TODO: intro sentence]
 
+export const lazyDays = [{
+  id: "lazy-days",
+  title: "Lazy Days",
+  author: "[TODO: artist name]",
+  authorUrl: "[TODO: artist URL]",
+  dayUrl: "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/lazy-days/lazy.jxl",
+}];
+
 export const leafCollector = [{
   id: "leaf-collector",
   title: "Leaf Collector",
@@ -108,6 +117,14 @@ export const eyes = [{
   dayUrl: "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/eyes/eyes.svg",
 }];
 
+### Lazy Days
+
+<WallpaperShowcase wallpapers={lazyDays} />
+
+[TODO: your text about Lazy Days]
+
+> **Note:** Lazy Days is a JXL wallpaper — if the preview doesn't render, you may need to supply a PNG/JPEG screenshot as `dayUrl`. JXL renders in Firefox; Chromium requires a flag.
+
 ### Leaf Collector
 
 <WallpaperShowcase wallpapers={leafCollector} />
@@ -125,6 +142,19 @@ export const eyes = [{
 <WallpaperShowcase wallpapers={eyes} />
 
 [TODO: your text about Eyes]
+
+---
+
+## Soundtrack
+
+[TODO: intro sentence — e.g. "Here's the soundtrack we've been building to..."]
+
+<MusicPlaylist
+  title="Bluefin and the Syrens of Metal"
+  playlistId="PLhiPP9M5fgWFa09qMHJSA7ts93UsMG82Q"
+/>
+
+[TODO: your text about the playlist]
 
 ---
 
