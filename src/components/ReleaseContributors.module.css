@@ -37,65 +37,21 @@
   flex-shrink: 0;
 }
 
+/* 3-column GitHubProfileCard grid — matches monthly reports style */
 .grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
 }
 
-.item {
-  margin: 0;
-}
-
-.link {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  text-decoration: none;
-  color: var(--ifm-color-emphasis-700);
-}
-
-.link:hover {
-  text-decoration: none;
-  color: var(--ifm-color-primary);
-}
-
-.avatar {
-  border-radius: 50%;
-  border: 2px solid var(--ring-color, var(--ifm-color-emphasis-300));
-  transition:
-    transform 0.15s ease,
-    border-color 0.15s ease,
-    box-shadow 0.15s ease;
-  margin: 0;
-}
-
-.link:hover .avatar {
-  transform: scale(1.15);
-  border-color: var(--ring-color, var(--ifm-color-primary));
-  box-shadow: 0 0 6px var(--ring-color, transparent);
-}
-
-.username {
-  font-size: 0.6rem;
-  max-width: 56px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  text-align: center;
-}
-
-@media (max-width: 600px) {
+@media (max-width: 900px) {
   .grid {
-    gap: 8px;
+    grid-template-columns: repeat(2, 1fr);
   }
+}
 
-  .avatar {
-    width: 36px;
-    height: 36px;
+@media (max-width: 540px) {
+  .grid {
+    grid-template-columns: 1fr;
   }
 }
