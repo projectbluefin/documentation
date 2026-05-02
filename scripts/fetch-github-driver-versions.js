@@ -73,6 +73,7 @@ const SBOM_STREAM_PREFIX = {
   "bluefin-stable":    "stable",
   "bluefin-latest":    "latest",
   "bluefin-lts":       "lts",
+  "bluefin-lts-hwe":   "lts-hwe",
   "bluefin-dx-stable": "stable",
   "bluefin-dx-latest": "latest",
   "bluefin-dx-lts":    "lts",
@@ -200,7 +201,7 @@ function buildRowFromApiRelease(release, streamId) {
   };
 }
 
-function rowFromSbomRelease(streamId, cacheKey, releaseEntry, nvidiaVersion) {
+function rowFromSbomRelease(streamId, cacheKey, releaseEntry, nvidiaVersion, hweKernel = null) {
   const pkg = releaseEntry?.packageVersions || {};
   const datePart = String(cacheKey || "").match(/(\d{8})$/)?.[1] || null;
   let publishedAt = null;
@@ -222,7 +223,7 @@ function rowFromSbomRelease(streamId, cacheKey, releaseEntry, nvidiaVersion) {
     publishedAt,
     versions: {
       kernel: pkg.kernel || null,
-      hweKernel: null,
+      hweKernel: hweKernel || null,
       mesa: pkg.mesa || null,
       nvidia: nvidiaVersion || null,
       gnome: pkg.gnome || null,
@@ -238,21 +239,33 @@ function buildStreamFromSbom(
   sbomCache,
   nvidiaByTag,
   historyDays = HISTORY_DAYS,
+  hweStreamId = null,
 ) {
   const stream = sbomCache?.streams?.[streamId];
   const releases = stream?.releases || {};
   const cutoff = Date.now() - historyDays * 24 * 60 * 60 * 1000;
 
+  const hweReleases = hweStreamId
+    ? sbomCache?.streams?.[hweStreamId]?.releases || {}
+    : {};
+
   const history = Object.entries(releases)
     .sort(([a], [b]) => b.localeCompare(a))
-    .map(([cacheKey, entry]) =>
-      rowFromSbomRelease(
+    .map(([cacheKey, entry]) => {
+      const dateMatch = cacheKey.match(/(\d{8})$/);
+      const hweKey = dateMatch && hweStreamId
+        ? `${SBOM_STREAM_PREFIX[hweStreamId]}-${dateMatch[1]}`
+        : null;
+      const hweEntry = hweKey ? hweReleases[hweKey] : null;
+      const hweKernel = hweEntry?.packageVersions?.kernel || null;
+      return rowFromSbomRelease(
         streamId,
         cacheKey,
         entry,
         nvidiaByTag?.[entry?.tag || cacheKey] || null,
-      ),
-    )
+        hweKernel,
+      );
+    })
     .filter((row) => {
       const parsed = Date.parse(row.publishedAt || "");
       if (Number.isNaN(parsed)) return false;
@@ -491,6 +504,7 @@ async function main() {
         sbomCache,
         ltsNvidiaByTag,
         LTS_HISTORY_DAYS,
+        "bluefin-lts-hwe",
       )
     : buildStreamFromApi(
         "bluefin-lts",

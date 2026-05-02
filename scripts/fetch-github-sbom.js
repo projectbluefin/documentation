@@ -142,6 +142,17 @@ const STREAM_SPECS = [
     cosignKeyUrl: COSIGN_KEY_LTS,
   },
   {
+    id: "bluefin-lts-hwe",
+    label: "Bluefin LTS HWE",
+    org: "ublue-os",
+    package: "bluefin",
+    releasesRepo: "ublue-os/bluefin-lts",
+    streamPrefix: "lts-hwe",
+    keyRepo: "ublue-os/bluefin-lts",
+    keyless: false,
+    cosignKeyUrl: COSIGN_KEY_LTS,
+  },
+  {
     id: "bluefin-dx-stable",
     label: "Bluefin DX Stable",
     org: "ublue-os",
@@ -342,12 +353,15 @@ function extractDateFromTag(tag) {
 }
 
 /**
- * Normalise an lts.YYYYMMDD tag (and any suffix) to lts-YYYYMMDD format.
- * Handles: lts.20260331 → lts-20260331
- *          lts.20260331-hwe → lts-20260331-hwe
+ * Normalise an lts*.YYYYMMDD tag to lts*-YYYYMMDD format.
+ * Handles: lts.20260331       → lts-20260331
+ *          lts.20260331-hwe   → lts-20260331-hwe
+ *          lts-hwe.20260501   → lts-hwe-20260501
  */
 function normaliseLtsTag(tag) {
-  return tag.replace(/^lts\.(\d{8})(.*)?$/, "lts-$1$2");
+  // lts.20260501       → lts-20260501
+  // lts-hwe.20260501   → lts-hwe-20260501
+  return tag.replace(/^(lts[a-z-]*)\.(\d{8})/, "$1-$2");
 }
 
 /**
