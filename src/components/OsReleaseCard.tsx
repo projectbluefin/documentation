@@ -179,7 +179,7 @@ function CommitsSection({ commits }: { commits: ParsedCommit[] }) {
 
 function VersionChip({ pkg, pinnedVersion }: { pkg: ParsedMajorPackage; pinnedVersion?: string | null }) {
   const changed = Boolean(pkg.prevVersion);
-  const isPinned = Boolean(pinnedVersion);
+  const isPinned = pinnedVersion != null && pkg.version === pinnedVersion;
   return (
     <span
       className={`${styles.versionChip} ${changed ? styles.chipChanged : ""} ${isPinned ? styles.chipPinned : ""}`}

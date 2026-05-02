@@ -37,7 +37,7 @@ async function fetchWorkflowContent(repo, filePath) {
       : {}),
   };
 
-  const response = await fetch(url, { headers });
+  const response = await fetch(url, { headers, signal: AbortSignal.timeout(15000) });
   if (!response.ok) {
     throw new Error(`GitHub API error for ${repo}/${filePath}: ${response.status} ${response.statusText}`);
   }
