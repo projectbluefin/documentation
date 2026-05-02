@@ -432,8 +432,8 @@
             {
               "id": "lazy-days",
               "title": "Lazy Days",
-              "author": null,
-              "authorLicense": null,
+              "author": "Jay Balamurugan",
+              "authorLicense": "https://kakapojay.com/",
               "previewUrl": "/img/artwork/thumbnails/bluefin-lazy-days.webp",
               "previewNightUrl": null,
               "dayUrl": "/img/artwork/fullres/bluefin-lazy-days.webp",
@@ -509,7 +509,7 @@
         {
           "id": "aurora-wallpapers",
           "title": "Aurora Wallpapers",
-          "description": "The official Aurora wallpaper collection. All wallpapers are JXL format — open in a new tab to download.",
+          "description": "The official Aurora wallpaper collection. All wallpapers are JXL format \u2014 open in a new tab to download.",
           "license": "Apache-2.0",
           "releaseUrl": "https://github.com/ublue-os/artwork/tree/main/wallpapers/aurora",
           "hasDayNight": false,
