@@ -17,12 +17,7 @@ import DocsFeatureGrid from "@site/src/components/blog/DocsFeatureGrid";
 
 <p className="blog-post-subtitle">A tale of three raptors</p>
 
-<MusicPlaylist
-  title="Bluefin and the Syrens of Metal"
-  playlistId="PLhiPP9M5fgWFa09qMHJSA7ts93UsMG82Q"
-/>
-
-[TODO: opening paragraph]
+This blog post is best consumed by listening to the soundtrack. 
 
 I am not going to lie I haven't been this excited about Bluefin since the start of the project. We find ourselves on the day of a major Fedora release with three fantastic options. 
 
@@ -38,22 +33,20 @@ First let's check the goodies in this release:
 
 <LatestOsReleaseCard stream="stable" />
 
-Now, I will start with the biggest news of all. Timothee Ravier has [announced new sealed base images](https://fedoramagazine.org/sealed-atomic-desktops-test-images/) for our use. This is the most fundamental change to this variant in it's 5-ish year history.
-
-[TODO: intro paragraph about the F44 rebase]
+Now, I will start with the biggest news of all. Timothee Ravier has [announced new sealed base images](https://fedoramagazine.org/sealed-atomic-desktops-test-images/) for our use. This is the most fundamental change to Bluefin in its 5-ish year history. If you've been worried about the lack of progress in `bootc` in Fedora then this one set of images from Timothee brings this to the forefront of Linux desktop tech. Our man from France was not going to let Dakotaraptor run away with it. Here's the list: 
 
 The new sealed bootable container images bring:
 
-- [**systemd-boot**](https://systemd.io/BOOT/) replaces GRUB as the bootloader — lighter, faster, and natively speaks the UEFI spec
-- [**Unified Kernel Images (UKI)**](https://uapi-group.org/specifications/specs/unified_kernel_image/) — kernel, initrd, and command line bundled into a single signed EFI binary; nothing can be tampered between storage and execution
-- [**composefs**](https://github.com/composefs/composefs) ([CNCF Sandbox Project](https://landscape.cncf.io/?item=runtime--container-runtime--composefs)) with [**fs-verity**](https://www.kernel.org/doc/html/latest/filesystems/fsverity.html) — every file in the OS image is cryptographically verified at read time, managed by [**bootc**](https://bootc-dev.github.io/bootc/experimental-composefs.html) ([CNCF Sandbox Project](https://landscape.cncf.io/?item=runtime--container-runtime--bootc))
+- [**systemd-boot**](https://systemd.io/BOOT/) replaces GRUB as the bootloader — GRUB is now an extinct species in our world. Goodbye old friend. 
+- [**Unified Kernel Images (UKI)**](https://uapi-group.org/specifications/specs/unified_kernel_image/) — kernel, initrd, and command line bundled into a single signed EFI binary. 
+- [**composefs**](https://github.com/composefs/composefs) with [**fs-verity**](https://www.kernel.org/doc/html/latest/filesystems/fsverity.html) — every file in the OS image is cryptographically verified at read time, [managed by bootc](https://bootc-dev.github.io/bootc/experimental-composefs.html)
 - **Full verified boot chain** from firmware → bootloader → kernel → OS image — see the [FOSDEM 2025 deep-dive](https://archive.fosdem.org/2025/schedule/event/fosdem-2025-5191--signed-sealed-and-delivered-with-ukis-and-composefs/) for how it all fits together
 - [**TPM-backed passwordless disk unlocking**](https://www.freedesktop.org/software/systemd/man/latest/systemd-cryptenroll.html) via `systemd-cryptenroll` — the headline user benefit; LUKS unlocking is bound to the verified boot state so no password prompt on a clean boot
 - Supports **UEFI on x86_64 and aarch64**
 
-- [GNOME 50 "Tokyo"](https://release.gnome.org/50/) — [TODO: highlight the key GNOME 50 feature you care about]
+- [GNOME 50](https://release.gnome.org/50/) — [TODO: highlight the key GNOME 50 feature you care about]
 
-{/* Swap src to your own recording when ready. Fallback: https://release.gnome.org/50/document-viewer-annotations.webp */}
+{/* Drop your GNOME 50 GIF here: static/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/gnome50-feature.gif */}
 <BlogFigure
   src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/gnome50-feature.gif"
   alt="GNOME 50 feature demonstration"
@@ -278,7 +271,12 @@ brew install --cask ublue-os/tap/bluefin-wallpapers-extra
 
 ## Release Soundtrack to Hunt By
 
-Full playlist: [Bluefin and the Syrens of Metal](https://www.youtube.com/playlist?list=PLhiPP9M5fgWFa09qMHJSA7ts93UsMG82Q)
+[TODO: intro sentence — e.g. "Here's the soundtrack we've been building to..."]
+
+<MusicPlaylist
+  title="Bluefin and the Syrens of Metal"
+  playlistId="PLhiPP9M5fgWFa09qMHJSA7ts93UsMG82Q"
+/>
 
 [TODO: your text about the playlist]
 
@@ -330,7 +328,6 @@ Full playlist: [Bluefin and the Syrens of Metal](https://www.youtube.com/playlis
     { login: "davidwritesxyz" },
     { login: "debackerl" },
     { login: "delphicmelody", role: "artist" },
-    { login: "dnkmmr69420" },
     { login: "dnoesgaard" },
     { login: "dragon28" },
     { login: "dragonbass13" },
