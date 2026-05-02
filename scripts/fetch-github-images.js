@@ -454,7 +454,7 @@ function buildSecurityInfo(spec, inspectTag) {
       verifyCommand: null,
       attestCommand: null,
       hasAttestation: false,
-      sbomCommand: `syft scan ${imageRef} -o spdx-json`,
+      sbomCommand: `oras discover ${imageRef}`,
     };
   }
 
@@ -464,7 +464,7 @@ function buildSecurityInfo(spec, inspectTag) {
       verifyCommand: `cosign verify --certificate-oidc-issuer ${OIDC_ISSUER} --certificate-identity-regexp '${OIDC_IDENTITY_PREFIX}' ${imageRef}`,
       attestCommand: `cosign verify-attestation --type ${SLSA_TYPE} --certificate-oidc-issuer ${OIDC_ISSUER} --certificate-identity-regexp '${OIDC_IDENTITY_PREFIX}' ${imageRef}`,
       hasAttestation: attestationLive,
-      sbomCommand: `syft scan ${imageRef} -o spdx-json`,
+      sbomCommand: `oras discover ${imageRef}`,
     };
   }
 
@@ -475,7 +475,7 @@ function buildSecurityInfo(spec, inspectTag) {
     verifyCommand: `cosign verify --key ${cosignKeyUrl} ${imageRef}`,
     attestCommand: `cosign verify-attestation --type ${SLSA_TYPE} --key ${cosignKeyUrl} ${imageRef}`,
     hasAttestation: false,
-    sbomCommand: `syft scan ${imageRef} -o spdx-json`,
+    sbomCommand: `oras discover ${imageRef}`,
   };
 }
 
