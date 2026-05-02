@@ -23,20 +23,20 @@ interface ReleaseContributorsProps {
   stats?: string;
 }
 
-const RoleTitles: Record<ContributorRole, string | undefined> = {
+const RoleTitles: Record<ContributorRole, string> = {
   maintainer: "Maintainer",
   "gnome-os": "GNOME OS Team",
   artist: "Artist",
   "bug-hunter": "Bug Hunter",
-  contributor: undefined,
+  contributor: "Contributor",
 };
 
 type HighlightType = boolean | "gold" | "silver" | "diamond";
 const RoleHighlight: Record<ContributorRole, HighlightType> = {
-  maintainer: false,
-  artist: false,
-  "gnome-os": false,
-  "bug-hunter": false,
+  maintainer: "gold",
+  artist: "diamond",
+  "gnome-os": "silver",
+  "bug-hunter": "gold",
   contributor: false,
 };
 
@@ -89,7 +89,7 @@ const ReleaseContributors: React.FC<ReleaseContributorsProps> = ({
             username={login}
             title={RoleTitles[role]}
             highlight={RoleHighlight[role]}
-            accentColor={RoleLegendColor[role]}
+            categoryColor={RoleLegendColor[role]}
             sponsorUrl={donationUrl}
           />
         ))}

@@ -21,7 +21,7 @@ interface GitHubProfileCardProps {
   title?: string;
   sponsorUrl?: string;
   highlight?: boolean | "gold" | "silver" | "diamond";
-  accentColor?: string;
+  categoryColor?: string;
 }
 
 const CACHE_KEY_PREFIX = "github_profile_";
@@ -140,7 +140,7 @@ const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
   title,
   sponsorUrl,
   highlight = false,
-  accentColor,
+  categoryColor,
 }) => {
   const [user, setUser] = useState<GitHubUser | null>(null);
   const [loading, setLoading] = useState(true);
@@ -266,10 +266,7 @@ const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
       className={`${styles.card} ${highlightClass}`}
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
-      style={{
-        ...pointerStyles,
-        ...(accentColor ? { borderLeft: `4px solid ${accentColor}` } : {}),
-      }}
+      style={pointerStyles}
     >
       <a href={user.html_url} target="_blank" rel="noopener noreferrer">
         <img
@@ -284,7 +281,15 @@ const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
             {user.name || user.login}
           </a>
         </h3>
-        {title && <p className={styles.title}>{title}</p>}
+        {title && (
+          <p className={styles.categoryChip}>
+            <span
+              className={styles.categoryDot}
+              style={categoryColor ? { background: categoryColor } : undefined}
+            />
+            {title}
+          </p>
+        )}
         {user.bio && <p className={styles.bio}>{user.bio}</p>}
         <div className={styles.stats}>
           <span>
@@ -294,21 +299,16 @@ const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
             <strong>{user.followers}</strong> followers
           </span>
         </div>
-        {(highlightType || sponsorUrl) && (
+        {sponsorUrl && (
           <div className={styles.buttonRow}>
-            {highlightType === "gold" && (
-              <div className={styles.badge}>★ New Light</div>
-            )}
-            {sponsorUrl && (
-              <a
-                href={sponsorUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles.sponsorButton}
-              >
-                ♥ Sponsor
-              </a>
-            )}
+            <a
+              href={sponsorUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.sponsorButton}
+            >
+              ♥ Sponsor
+            </a>
           </div>
         )}
       </div>

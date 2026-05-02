@@ -91,34 +91,6 @@
   flex-wrap: wrap;
 }
 
-/* New contributor badge - styled as a button to match sponsor button */
-.badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.35rem;
-  padding: 0.5rem 1rem;
-  background: linear-gradient(135deg, #ffd700, #ffed4e);
-  color: #8b7500;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  line-height: 1;
-  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.4);
-  transition: all 0.2s ease;
-  border: none;
-  cursor: default;
-  white-space: nowrap;
-  vertical-align: middle;
-  height: auto;
-  min-height: 36px;
-}
-
-.badge:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.5);
-  background: linear-gradient(135deg, #ffed4e, #ffd700);
-}
 
 .avatar {
   width: 96px;
@@ -149,11 +121,24 @@
   text-decoration: underline;
 }
 
-.title {
+.categoryChip {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
   margin: 0 0 0.75rem 0;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
+  font-weight: 600;
   color: var(--ifm-color-emphasis-700);
-  font-style: italic;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.categoryDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--ifm-color-emphasis-400);
 }
 
 .bio {
