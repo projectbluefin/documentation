@@ -4,6 +4,8 @@ import styles from "./MusicPlaylist.module.css";
 interface MusicPlaylistProps {
   title: string;
   playlistId: string;
+  /** When true (default), clicking the listen button toggles an inline YouTube embed */
+  embed?: boolean;
 }
 
 interface PlaylistMetadata {
@@ -39,10 +41,15 @@ const extractPlaylistId = (playlistIdOrUrl: string): string => {
   return playlistIdOrUrl;
 };
 
-const MusicPlaylist: React.FC<MusicPlaylistProps> = ({ title, playlistId }) => {
+const MusicPlaylist: React.FC<MusicPlaylistProps> = ({
+  title,
+  playlistId,
+  embed = true,
+}) => {
   const cleanPlaylistId = extractPlaylistId(playlistId);
   const [metadata, setMetadata] = useState<PlaylistMetadata | null>(null);
   const [imageError, setImageError] = useState(false);
+  const [playerOpen, setPlayerOpen] = useState(false);
 
   useEffect(() => {
     // Load metadata from the build-time generated JSON file
@@ -62,61 +69,83 @@ const MusicPlaylist: React.FC<MusicPlaylistProps> = ({ title, playlistId }) => {
   }, [cleanPlaylistId]);
 
   const playlistUrl = `https://www.youtube.com/playlist?list=${cleanPlaylistId}`;
+  const embedUrl = `https://www.youtube.com/embed/videoseries?list=${cleanPlaylistId}`;
   const thumbnailUrl = metadata?.thumbnailUrl || null;
 
+  const handleListenClick = () => {
+    if (embed) {
+      setPlayerOpen((prev) => !prev);
+    } else {
+      window.open(playlistUrl, "_blank", "noopener,noreferrer");
+    }
+  };
+
   return (
-    <div className={styles.playlistBox}>
-      <a
-        href={playlistUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={styles.playlistLink}
-      >
-        <div className={styles.thumbnailWrapper}>
-          {thumbnailUrl && !imageError ? (
-            <img
-              src={thumbnailUrl}
-              alt={title}
-              className={styles.thumbnail}
-              onError={() => setImageError(true)}
-            />
-          ) : (
-            <div className={styles.thumbnailPlaceholder}>
-              <svg
-                className={styles.playIcon}
-                viewBox="0 0 24 24"
-                fill="currentColor"
-              >
-                <path d="M8 5v14l11-7z" />
-              </svg>
-            </div>
-          )}
-          <div className={styles.playOverlay}>
-            <svg
-              className={styles.playIconLarge}
-              viewBox="0 0 24 24"
-              fill="currentColor"
-            >
-              <path d="M8 5v14l11-7z" />
+    <div className={styles.nowPlayingBar}>
+      {/* Thumbnail */}
+      <div className={styles.thumbnailWrapper}>
+        {thumbnailUrl && !imageError ? (
+          <img
+            src={thumbnailUrl}
+            alt={title}
+            className={styles.thumbnail}
+            onError={() => setImageError(true)}
+          />
+        ) : (
+          <div className={styles.thumbnailPlaceholder}>
+            {/* Music note icon */}
+            <svg viewBox="0 0 24 24" fill="currentColor" className={styles.musicIcon}>
+              <path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z" />
             </svg>
           </div>
-        </div>
-      </a>
-      <div className={styles.playlistInfo}>
-        <h4 className={styles.playlistTitle}>
-          <a
-            href={playlistUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.titleLink}
-          >
-            {title}
-          </a>
-        </h4>
-        {metadata?.description && (
-          <p className={styles.playlistDescription}>{metadata.description}</p>
         )}
       </div>
+
+      {/* Info */}
+      <div className={styles.info}>
+        <span className={styles.label}>🎵 Soundtrack</span>
+        <span className={styles.playlistTitle}>{title}</span>
+        {metadata?.description && (
+          <span className={styles.description}>{metadata.description}</span>
+        )}
+      </div>
+
+      {/* Action button */}
+      <button
+        type="button"
+        className={styles.listenButton}
+        onClick={handleListenClick}
+        aria-expanded={embed ? playerOpen : undefined}
+        aria-label={
+          embed
+            ? playerOpen
+              ? "Close player"
+              : "Listen on YouTube"
+            : "Open playlist on YouTube"
+        }
+      >
+        {embed ? (playerOpen ? "✕ Close player" : "▶ Listen") : "▶ Listen on YouTube"}
+      </button>
+
+      {/* Inline YouTube embed — animates open/close via CSS */}
+      {embed && (
+        <div
+          className={`${styles.embedWrapper} ${playerOpen ? styles.embedOpen : ""}`}
+          aria-hidden={!playerOpen}
+        >
+          {/* Only render the iframe once the player has been opened at least once,
+              to avoid loading YouTube until the reader wants it */}
+          {playerOpen && (
+            <iframe
+              src={embedUrl}
+              title={`${title} – YouTube playlist`}
+              className={styles.embedIframe}
+              allow="autoplay; encrypted-media"
+              allowFullScreen={false}
+            />
+          )}
+        </div>
+      )}
     </div>
   );
 };
