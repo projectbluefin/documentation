@@ -1,4 +1,4 @@
-/* ── Now Playing bar — sticky, two-zone layout ──────────────────────── */
+/* ── Now Playing bar — sticky, slim horizontal player ───────────────── */
 
 .nowPlayingBar {
   position: sticky;
@@ -6,10 +6,10 @@
   z-index: 100;
   display: flex;
   flex-direction: row;
-  align-items: flex-start;
+  align-items: center;
   gap: 0.75rem;
   width: 100%;
-  padding: 0.75rem 1rem;
+  padding: 0.6rem 1rem;
   margin-bottom: 1.5rem;
   background-color: var(--ifm-color-emphasis-100);
   border: 1px solid var(--ifm-color-emphasis-300);
@@ -17,16 +17,15 @@
   box-sizing: border-box;
 }
 
-/* ── Left zone: album thumbnail (56×56) ─────────────────────────────── */
+/* ── Left: album thumbnail (48×48) ──────────────────────────────────── */
 
 .thumbnailWrapper {
   flex-shrink: 0;
-  width: 56px;
-  height: 56px;
+  width: 48px;
+  height: 48px;
   border-radius: 6px;
   overflow: hidden;
   background-color: var(--ifm-color-emphasis-200);
-  /* when used as <a>, strip link decoration */
   display: block;
   text-decoration: none;
 }
@@ -52,46 +51,64 @@
 }
 
 .musicIcon {
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   color: white;
   opacity: 0.9;
 }
 
-/* ── Right zone: video + info ────────────────────────────────────────── */
+/* ── Middle: info (label + title) ────────────────────────────────────── */
 
-.videoZone {
+.infoZone {
   flex: 1 1 0;
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0.15rem;
 }
 
-/* 16:9 aspect-ratio container */
-.videoContainer {
-  width: 100%;
+.label {
+  flex-shrink: 0;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ifm-color-emphasis-600);
+}
+
+.playlistTitle {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--ifm-color-emphasis-900);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-decoration: none;
+}
+
+a.playlistTitle:hover {
+  text-decoration: underline;
+}
+
+/* ── Right: small 16:9 video (160×90px) ─────────────────────────────── */
+
+.videoWrapper {
+  flex-shrink: 0;
+  width: 160px;
   aspect-ratio: 16 / 9;
   border-radius: 4px;
   overflow: hidden;
   background-color: var(--ifm-color-emphasis-200);
-  /* fallback for older browsers that don't support aspect-ratio */
-  position: relative;
 }
 
 .videoIframe {
   width: 100%;
   height: 100%;
   border: none;
-  border-radius: 4px;
   display: block;
-  /* fill the aspect-ratio container */
-  position: absolute;
-  top: 0;
-  left: 0;
 }
 
-/* ── Info row (label + title) ────────────────────────────────────────── */
+/* ── embed=false fallback info row ───────────────────────────────────── */
 
 .infoRow {
   display: flex;
@@ -102,37 +119,15 @@
   overflow: hidden;
 }
 
-.label {
-  flex-shrink: 0;
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--ifm-color-emphasis-600);
-}
-
-.playlistTitle {
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: var(--ifm-color-emphasis-900);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  text-decoration: none; /* when used as <a> */
-}
-
-a.playlistTitle:hover {
-  text-decoration: underline;
-}
-
 /* ── Responsive ──────────────────────────────────────────────────────── */
 
-/* ≥600px: two-zone layout is the default above                          */
-
-/* <600px: hide thumbnail, video fills full width, title below           */
 @media (max-width: 599px) {
   .thumbnailWrapper {
     display: none;
+  }
+
+  .videoWrapper {
+    width: 120px;
   }
 
   .nowPlayingBar {
@@ -140,7 +135,7 @@ a.playlistTitle:hover {
   }
 
   .playlistTitle {
-    font-size: 0.875rem;
+    font-size: 0.8rem;
   }
 }
 

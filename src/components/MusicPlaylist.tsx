@@ -119,29 +119,29 @@ const MusicPlaylist: React.FC<MusicPlaylistProps> = ({
     );
   }
 
-  // ── embed=true (default) — two-zone layout ──────────────────────────────
+  // ── embed=true (default) — slim horizontal player ──────────────────────
   return (
     <div className={styles.nowPlayingBar}>
-      {/* Left zone: album thumbnail */}
+      {/* Left: album thumbnail */}
       <div className={styles.thumbnailWrapper}>{thumbnailEl}</div>
 
-      {/* Right zone: 16:9 video + info row */}
-      <div className={styles.videoZone}>
-        <div className={styles.videoContainer}>
-          {mounted && (
-            <iframe
-              src={embedUrl}
-              title={`${title} – YouTube playlist`}
-              className={styles.videoIframe}
-              allow="autoplay; encrypted-media; picture-in-picture"
-              allowFullScreen={false}
-            />
-          )}
-        </div>
-        <div className={styles.infoRow}>
-          <span className={styles.label}>🎵 SOUNDTRACK</span>
-          <span className={styles.playlistTitle}>{title}</span>
-        </div>
+      {/* Middle: label + title */}
+      <div className={styles.infoZone}>
+        <span className={styles.label}>🎵 SOUNDTRACK</span>
+        <span className={styles.playlistTitle}>{title}</span>
+      </div>
+
+      {/* Right: small fixed-width 16:9 video */}
+      <div className={styles.videoWrapper}>
+        {mounted && (
+          <iframe
+            src={embedUrl}
+            title={`${title} – YouTube playlist`}
+            className={styles.videoIframe}
+            allow="autoplay; encrypted-media; picture-in-picture"
+            allowFullScreen={false}
+          />
+        )}
       </div>
     </div>
   );
