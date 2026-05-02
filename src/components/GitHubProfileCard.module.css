@@ -5,7 +5,7 @@
   padding: 0.5rem;
   display: flex;
   gap: 1.4rem;
-  align-items: flex-start;
+  align-items: stretch;
   align-self: stretch;
   height: 100%;
   box-sizing: border-box;
