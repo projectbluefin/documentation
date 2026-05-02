@@ -69,7 +69,7 @@ const MusicPlaylist: React.FC<MusicPlaylistProps> = ({
   }, [cleanPlaylistId]);
 
   const playlistUrl = `https://www.youtube.com/playlist?list=${cleanPlaylistId}`;
-  const embedUrl = `https://www.youtube.com/embed/videoseries?list=${cleanPlaylistId}`;
+  const embedUrl = `https://www.youtube.com/embed/videoseries?list=${cleanPlaylistId}&autoplay=1&rel=0`;
   const thumbnailUrl = metadata?.thumbnailUrl || null;
 
   const handleListenClick = () => {
@@ -140,7 +140,7 @@ const MusicPlaylist: React.FC<MusicPlaylistProps> = ({
               src={embedUrl}
               title={`${title} – YouTube playlist`}
               className={styles.embedIframe}
-              allow="autoplay; encrypted-media"
+              allow="autoplay; encrypted-media; picture-in-picture"
               allowFullScreen={false}
             />
           )}

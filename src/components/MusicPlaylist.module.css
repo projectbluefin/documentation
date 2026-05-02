@@ -124,13 +124,13 @@
 }
 
 .embedOpen {
-  max-height: 90px; /* slightly taller than the 80px iframe to avoid clipping */
+  max-height: 210px; /* slightly taller than the 200px iframe to avoid clipping */
 }
 
 .embedIframe {
   display: block;
   width: 100%;
-  height: 80px;
+  height: 200px;
   border: none;
   border-radius: 0 0 6px 6px;
   margin-top: 0.5rem;
