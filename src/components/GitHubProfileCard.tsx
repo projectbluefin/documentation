@@ -292,13 +292,25 @@ const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
       onPointerLeave={handlePointerLeave}
       style={pointerStyles}
     >
-      <a href={user.html_url} target="_blank" rel="noopener noreferrer">
-        <img
-          src={user.avatar_url}
-          alt={`${user.name || user.login}'s avatar`}
-          className={styles.avatar}
-        />
-      </a>
+      <div className={styles.avatarCol}>
+        <a href={user.html_url} target="_blank" rel="noopener noreferrer">
+          <img
+            src={user.avatar_url}
+            alt={`${user.name || user.login}'s avatar`}
+            className={styles.avatar}
+          />
+        </a>
+        {effectiveSponsorUrl && (
+          <a
+            href={effectiveSponsorUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.sponsorButton}
+          >
+            {isGitHubSponsors ? "♥ Sponsor" : "♥ Support"}
+          </a>
+        )}
+      </div>
       <div className={styles.content}>
         <h3 className={styles.name}>
           <a href={user.html_url} target="_blank" rel="noopener noreferrer">
@@ -329,18 +341,6 @@ const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
             <strong>{user.followers}</strong> followers
           </span>
         </div>
-        {effectiveSponsorUrl && (
-          <div className={styles.buttonRow}>
-            <a
-              href={effectiveSponsorUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={styles.sponsorButton}
-            >
-              {isGitHubSponsors ? "♥ Sponsor" : "♥ Support"}
-            </a>
-          </div>
-        )}
       </div>
     </div>
   );
