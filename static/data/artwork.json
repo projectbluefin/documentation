@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-13T20:57:45Z",
+  "generatedAt": "2026-05-02T05:51:06Z",
   "projects": {
     "bluefin": {
       "label": "Bluefin",
@@ -402,6 +402,45 @@
               "jxlUrl": "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/bluefin/images/xe_sunset.jxl",
               "primaryFormat": null,
               "hasLightbox": true
+            },
+            {
+              "id": "duality-super-ultrawide",
+              "title": "Duality Super Ultrawide",
+              "author": null,
+              "authorLicense": null,
+              "previewUrl": null,
+              "previewNightUrl": null,
+              "dayUrl": "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/duality-super-ultrawide/duality-super-ultrawide-day.svg",
+              "nightUrl": null,
+              "jxlUrl": null,
+              "primaryFormat": "svg",
+              "hasLightbox": true
+            },
+            {
+              "id": "duality-ultrawide",
+              "title": "Duality Ultrawide",
+              "author": null,
+              "authorLicense": null,
+              "previewUrl": null,
+              "previewNightUrl": null,
+              "dayUrl": "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/duality-ultrawide/duality-ultrawide-day.svg",
+              "nightUrl": null,
+              "jxlUrl": null,
+              "primaryFormat": "svg",
+              "hasLightbox": true
+            },
+            {
+              "id": "lazy-days",
+              "title": "Lazy Days",
+              "author": null,
+              "authorLicense": null,
+              "previewUrl": "/img/artwork/thumbnails/bluefin-lazy-days.webp",
+              "previewNightUrl": null,
+              "dayUrl": "/img/artwork/fullres/bluefin-lazy-days.webp",
+              "nightUrl": null,
+              "jxlUrl": "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/lazy-days/lazy.jxl",
+              "primaryFormat": null,
+              "hasLightbox": true
             }
           ]
         }
@@ -470,7 +509,7 @@
         {
           "id": "aurora-wallpapers",
           "title": "Aurora Wallpapers",
-          "description": "The official Aurora wallpaper collection. All wallpapers are JXL format \u2014 open in a new tab to download.",
+          "description": "The official Aurora wallpaper collection. Wallpapers are primarily available in JXL format — open in a new tab to download.",
           "license": "Apache-2.0",
           "releaseUrl": "https://github.com/ublue-os/artwork/tree/main/wallpapers/aurora",
           "hasDayNight": false,
@@ -692,6 +731,19 @@
               "dayUrl": "/img/artwork/fullres/aurora-xe_sunset.webp",
               "nightUrl": null,
               "jxlUrl": "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/aurora/xe_sunset/contents/images/6000x4000.jxl",
+              "primaryFormat": null,
+              "hasLightbox": true,
+              "previewNightUrl": null
+            },
+            {
+              "id": "aurora-wallpaper-12",
+              "title": "Aurora Wallpaper 12",
+              "author": null,
+              "authorLicense": null,
+              "previewUrl": "/img/artwork/thumbnails/aurora-aurora-wallpaper-12.webp",
+              "dayUrl": "/img/artwork/fullres/aurora-aurora-wallpaper-12.webp",
+              "nightUrl": null,
+              "jxlUrl": "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/aurora/aurora-wallpaper-12/contents/images/3840x2160.jxl",
               "primaryFormat": null,
               "hasLightbox": true,
               "previewNightUrl": null
