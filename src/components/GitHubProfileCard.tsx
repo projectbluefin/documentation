@@ -138,7 +138,7 @@ const fetchGitHubProfile = async (username: string): Promise<GitHubUser> => {
 const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
   username,
   title,
-  sponsorUrl,
+  sponsorUrl = `https://github.com/sponsors/${username}`,
   highlight = false,
   categoryColor,
 }) => {
