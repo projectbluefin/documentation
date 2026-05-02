@@ -9,6 +9,8 @@ export type ContributorRole =
   | "aurora-maintainer"
   | "bazzite-maintainer"
   | "ucore-maintainer"
+  | "secureblue-maintainer"
+  | "zirconium-maintainer"
   | "artist"
   | "bluefin-artist"
   | "aurora-artist"
@@ -48,6 +50,8 @@ const RoleTitles: Record<ContributorRole, string> = {
   "aurora-maintainer": "Aurora Maintainer",
   "bazzite-maintainer": "Bazzite Maintainer",
   "ucore-maintainer": "uCore Maintainer",
+  "secureblue-maintainer": "secureblue Maintainer",
+  "zirconium-maintainer": "Zirconium Maintainer",
   "gnome-os": "GNOME OS Team",
   artist: "Artist",
   "bluefin-artist": "Bluefin Artist",
@@ -70,6 +74,8 @@ const RoleHighlight: Record<ContributorRole, HighlightType> = {
   "aurora-maintainer": "gold",
   "bazzite-maintainer": "gold",
   "ucore-maintainer": "gold",
+  "secureblue-maintainer": "gold",
+  "zirconium-maintainer": "gold",
   artist: "diamond",
   "bluefin-artist": "diamond",
   "aurora-artist": "diamond",
@@ -91,6 +97,8 @@ const RoleLegendColor: Record<ContributorRole, string> = {
   "aurora-maintainer": "#9333ea",
   "bazzite-maintainer": "#0ea5e9",
   "ucore-maintainer": "#16a34a",
+  "secureblue-maintainer": "#dc2626",
+  "zirconium-maintainer": "#6366f1",
   "gnome-os": "#4a86cf",
   artist: "#b15e9c",
   "bluefin-artist": "#b15e9c",
@@ -112,6 +120,8 @@ const RoleOrder: ContributorRole[] = [
   "aurora-maintainer",
   "bazzite-maintainer",
   "ucore-maintainer",
+  "secureblue-maintainer",
+  "zirconium-maintainer",
   "gnome-os",
   "artist",
   "bluefin-artist",
