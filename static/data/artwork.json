@@ -439,7 +439,7 @@
               "dayUrl": "/img/artwork/fullres/bluefin-lazy-days.webp",
               "nightUrl": null,
               "jxlUrl": "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/lazy-days/lazy.jxl",
-              "primaryFormat": "jxl",
+              "primaryFormat": null,
               "hasLightbox": true
             }
           ]
@@ -509,7 +509,7 @@
         {
           "id": "aurora-wallpapers",
           "title": "Aurora Wallpapers",
-          "description": "The official Aurora wallpaper collection. All wallpapers are JXL format — open in a new tab to download.",
+          "description": "The official Aurora wallpaper collection. Wallpapers are primarily available in JXL format — open in a new tab to download.",
           "license": "Apache-2.0",
           "releaseUrl": "https://github.com/ublue-os/artwork/tree/main/wallpapers/aurora",
           "hasDayNight": false,
