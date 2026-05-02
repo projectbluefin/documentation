@@ -117,7 +117,7 @@ const MusicPlaylist: React.FC<MusicPlaylistProps> = ({
           {thumbnailEl}
         </a>
         <div className={styles.infoRow}>
-          <span className={styles.label}>🎵 SOUNDTRACK</span>
+          <span className={styles.label}>🎵 RELEASE SOUNDTRACK TO HUNT BY</span>
           <a
             href={playlistUrl}
             target="_blank"
@@ -143,7 +143,7 @@ const MusicPlaylist: React.FC<MusicPlaylistProps> = ({
 
       {/* Middle: label + title + description */}
       <div className={styles.infoZone}>
-        <span className={styles.label}>🎵 SOUNDTRACK</span>
+        <span className={styles.label}>🎵 RELEASE SOUNDTRACK TO HUNT BY</span>
         <a
           href={metadata?.playlistUrl ?? playlistUrl}
           target="_blank"
@@ -309,7 +309,7 @@ const MusicPlaylist: React.FC<MusicPlaylistProps> = ({
           {thumbnailEl}
         </a>
         <div className={styles.infoRow}>
-          <span className={styles.label}>🎵 SOUNDTRACK</span>
+          <span className={styles.label}>🎵 RELEASE SOUNDTRACK TO HUNT BY</span>
           <a
             href={playlistUrl}
             target="_blank"
@@ -331,7 +331,7 @@ const MusicPlaylist: React.FC<MusicPlaylistProps> = ({
 
       {/* Middle: label + title + description */}
       <div className={styles.infoZone}>
-        <span className={styles.label}>🎵 SOUNDTRACK</span>
+        <span className={styles.label}>🎵 RELEASE SOUNDTRACK TO HUNT BY</span>
         <a
           href={metadata?.playlistUrl ?? playlistUrl}
           target="_blank"
