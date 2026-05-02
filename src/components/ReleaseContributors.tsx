@@ -1,6 +1,7 @@
 import React from "react";
 import GitHubProfileCard from "./GitHubProfileCard";
 import styles from "./ReleaseContributors.module.css";
+import profilesData from "@site/static/data/github-profiles.json";
 
 export type ContributorRole =
   | "maintainer"
@@ -146,8 +147,13 @@ const ReleaseContributors: React.FC<ReleaseContributorsProps> = ({
   title = "Bluefin Brought to You By",
   stats,
 }) => {
+  const displayName = (login: string): string => {
+    const profile = (profilesData as Record<string, { name?: string }>)[login];
+    return (profile?.name || login).toLowerCase();
+  };
+
   const sorted = [...contributors].sort((a, b) =>
-    a.login.toLowerCase().localeCompare(b.login.toLowerCase()),
+    displayName(a.login).localeCompare(displayName(b.login)),
   );
 
   return (

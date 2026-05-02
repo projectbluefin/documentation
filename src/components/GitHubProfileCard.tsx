@@ -14,6 +14,7 @@ interface GitHubUser {
   html_url: string;
   public_repos: number;
   followers: number;
+  company?: string | null;
   /** True if the user has an active GitHub Sponsors listing. */
   sponsorable?: boolean;
   /** Donation URL from GitHub social accounts (Ko-fi, Patreon, etc.), if any. */
@@ -146,6 +147,7 @@ const fetchGitHubProfile = async (username: string): Promise<GitHubUser> => {
       html_url: data.html_url,
       public_repos: data.public_repos,
       followers: data.followers,
+      company: data.company ?? null,
     };
   });
 };
@@ -321,6 +323,9 @@ const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
           </a>
         </h3>
         {nickname && <p className={styles.nickname}>{nickname}</p>}
+        {user.company && (
+          <p className={styles.company}>{user.company.replace(/^@/, "")}</p>
+        )}
         {/* Render chips: prefer `titles` array, fall back to legacy `title`+`categoryColor` */}
         {(titles && titles.length > 0
           ? titles

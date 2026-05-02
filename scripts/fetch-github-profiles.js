@@ -153,6 +153,7 @@ async function fetchProfile(username) {
       html_url: data.html_url,
       public_repos: data.public_repos,
       followers: data.followers,
+      company: data.company ?? null,
       sponsorable: false, // will be enriched by fetchSponsorableStatus
     };
   } catch (error) {

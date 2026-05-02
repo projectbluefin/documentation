@@ -142,6 +142,13 @@
   line-height: 1.3;
 }
 
+.company {
+  margin: 0 0 0.3rem 0;
+  font-size: 0.78rem;
+  color: var(--ifm-color-emphasis-500);
+  line-height: 1.3;
+}
+
 .categoryChip {
   display: flex;
   align-items: center;
