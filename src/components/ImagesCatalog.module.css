@@ -72,19 +72,6 @@
   color: var(--ifm-color-primary);
 }
 
-.registryBadge {
-  display: inline-block;
-  font-size: 0.74rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  padding: 0.2rem 0.5rem;
-  border-radius: 999px;
-  border: 1px solid var(--ifm-color-emphasis-300);
-  background: var(--ifm-color-emphasis-100);
-  color: var(--ifm-color-emphasis-800);
-}
-
 .summary {
   position: relative;
   z-index: 1;
@@ -154,7 +141,7 @@
 .focusSection {
   border: 1px solid var(--ifm-color-emphasis-300);
   border-radius: 12px;
-  padding: 0.7rem 0.8rem 0.8rem;
+  padding: 0.8rem;
 }
 
 .streamsSection {
@@ -295,6 +282,18 @@
   background: color-mix(in srgb, var(--ifm-color-primary) 6%, var(--ifm-background-color));
   padding: 0.35rem 0.45rem 0.45rem;
   overflow: hidden;
+}
+
+.securitySection :global(.tabs) {
+  margin-top: 0;
+  background: transparent;
+  padding: 0;
+}
+
+.securitySection :global(.tabs-container > .margin-top--md) {
+  margin-top: 0.25rem !important;
+  background: transparent;
+  padding: 0;
 }
 
 /* Streams widget: title + driver toggle + tabs as one unit */

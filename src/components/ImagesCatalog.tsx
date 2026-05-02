@@ -224,7 +224,7 @@ export default function ImagesCatalogComponent(): React.JSX.Element {
             <Heading as="h2" className={styles.cardTitle}>
               {product.name}
             </Heading>
-            <span className={styles.registryBadge}>{product.org}</span>
+
           </header>
 
           <section className={styles.linkRow}>
@@ -284,9 +284,11 @@ export default function ImagesCatalogComponent(): React.JSX.Element {
                 </span>
               </>
             )}
-            <span className={sourceClass(product.metadataSource)}>
-              {sourceText(product.metadataSource, "Metadata")}
-            </span>
+            {product.metadataSource !== "live" && (
+              <span className={sourceClass(product.metadataSource)}>
+                {sourceText(product.metadataSource, "Metadata")}
+              </span>
+            )}
           </div>
 
           <p className={styles.validationMeta}>
