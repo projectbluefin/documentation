@@ -45,12 +45,9 @@ const MusicPlaylist: React.FC<MusicPlaylistProps> = ({
   const cleanPlaylistId = extractPlaylistId(playlistId);
   const [metadata, setMetadata] = useState<PlaylistMetadata | null>(null);
   const [imageError, setImageError] = useState(false);
-  /**
-   * `mounted` is false during SSR / first paint so the YouTube iframe is never
-   * included in the server-rendered HTML. It flips to true after the first
-   * client-side render, allowing the iframe to mount without hydration mismatch.
-   */
   const [mounted, setMounted] = useState(false);
+  /** Once true, the iframe is rendered with autoplay=1 (requires user gesture) */
+  const [playing, setPlaying] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -141,9 +138,9 @@ const MusicPlaylist: React.FC<MusicPlaylistProps> = ({
         )}
       </div>
 
-      {/* Right: small fixed-width 16:9 video */}
+      {/* Right: video — poster+play until user clicks, then autoplay iframe */}
       <div className={styles.videoWrapper}>
-        {mounted && (
+        {mounted && playing ? (
           <iframe
             src={embedUrl}
             title={`${title} – YouTube playlist`}
@@ -151,6 +148,24 @@ const MusicPlaylist: React.FC<MusicPlaylistProps> = ({
             allow="autoplay; encrypted-media; picture-in-picture"
             allowFullScreen={false}
           />
+        ) : (
+          <button
+            className={styles.playButton}
+            onClick={() => setPlaying(true)}
+            aria-label={`Play ${title}`}
+            type="button"
+          >
+            {thumbnailUrl && !imageError ? (
+              <img src={thumbnailUrl} alt="" className={styles.posterImg} />
+            ) : (
+              <div className={styles.posterPlaceholder} />
+            )}
+            <span className={styles.playIcon}>
+              <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            </span>
+          </button>
         )}
       </div>
     </div>
