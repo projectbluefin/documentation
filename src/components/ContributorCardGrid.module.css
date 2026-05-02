@@ -8,41 +8,51 @@
   color: var(--ifm-color-emphasis-700);
 }
 
+/* Column-flow grid: auto-fill columns, 3 cards tall per column */
 .grid {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 160px);
   gap: 0.5rem;
 }
 
-/* Compact rectangular card: ~140px wide, ~72px tall */
+/* Tall card: 3 rows — avatar+login block + donation */
 .card {
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  width: 148px;
-  height: 72px;
-  padding: 0 0.75rem;
+  flex-direction: column;
+  width: 160px;
+  min-height: 110px;
   border-radius: 8px;
   border: 1px solid var(--ifm-color-emphasis-200);
   background: var(--ifm-card-background-color);
-  text-decoration: none;
-  color: var(--ifm-color-emphasis-900);
-  font-size: 0.78rem;
-  font-weight: 500;
   border-left-width: 4px;
-  transition:
-    transform 0.15s ease,
-    box-shadow 0.15s ease,
-    border-color 0.15s ease;
   overflow: hidden;
   flex-shrink: 0;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .card:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.profileLink {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.6rem 0.5rem 0.4rem;
+  flex: 1;
   text-decoration: none;
   color: var(--ifm-color-emphasis-900);
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+.profileLink:hover {
+  text-decoration: none;
+  color: var(--ifm-color-primary);
 }
 
 /* Role-specific left-border colors */
@@ -83,8 +93,8 @@
 }
 
 .avatar {
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   flex-shrink: 0;
   object-fit: cover;
@@ -94,8 +104,38 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  flex: 1;
+  width: 100%;
+  text-align: center;
   min-width: 0;
+  padding: 0 0.25rem;
+}
+
+/* Donation row — shown only when donationUrl is set */
+.donationLink {
+  display: block;
+  text-align: center;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #e05c7a;
+  background: rgba(224, 92, 122, 0.06);
+  border-top: 1px solid var(--ifm-color-emphasis-100);
+  padding: 0.25rem 0.5rem;
+  text-decoration: none;
+  transition: background 0.15s ease;
+}
+
+.donationLink:hover {
+  background: rgba(224, 92, 122, 0.15);
+  color: #e05c7a;
+  text-decoration: none;
+}
+
+/* Empty placeholder to preserve card height when no donation link */
+.donationPlaceholder {
+  display: block;
+  height: 26px;
+  border-top: 1px solid var(--ifm-color-emphasis-100);
+  background: var(--ifm-card-background-color);
 }
 
 /* Legend */
@@ -117,7 +157,6 @@
   flex-shrink: 0;
 }
 
-/* Reuse the role colors for the dot */
 .dot.roleMaintainer {
   background: #e6c200;
   border: none;
@@ -139,8 +178,11 @@
 }
 
 @media (max-width: 640px) {
+  .grid {
+    grid-template-columns: repeat(auto-fill, 140px);
+  }
+
   .card {
-    width: calc(50% - 0.25rem);
-    flex-shrink: 0;
+    width: 140px;
   }
 }

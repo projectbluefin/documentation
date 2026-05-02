@@ -6,6 +6,7 @@ type ContributorRole = "maintainer" | "artist" | "gnome-os" | "contributor";
 interface Contributor {
   login: string;
   role?: ContributorRole;
+  donationUrl?: string;
 }
 
 interface ContributorCardGridProps {
@@ -23,29 +24,44 @@ const roleClass: Record<ContributorRole, string> = {
 const ContributorCard: React.FC<{ contributor: Contributor }> = ({
   contributor,
 }) => {
-  const { login, role = "contributor" } = contributor;
+  const { login, role = "contributor", donationUrl } = contributor;
   const avatarUrl = `https://github.com/${login}.png?size=48`;
   const profileUrl = `https://github.com/${login}`;
   const cardClass = `${styles.card} ${styles[roleClass[role]]}`;
 
   return (
-    <a
-      href={profileUrl}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={cardClass}
-      title={`@${login} — ${role}`}
-    >
-      <img
-        src={avatarUrl}
-        alt={`${login} avatar`}
-        className={styles.avatar}
-        loading="lazy"
-        width={32}
-        height={32}
-      />
-      <span className={styles.login}>@{login}</span>
-    </a>
+    <div className={cardClass} title={`@${login} — ${role}`}>
+      <a
+        href={profileUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={styles.profileLink}
+      >
+        <img
+          src={avatarUrl}
+          alt={`${login} avatar`}
+          className={styles.avatar}
+          loading="lazy"
+          width={40}
+          height={40}
+        />
+        <span className={styles.login}>@{login}</span>
+      </a>
+      {donationUrl ? (
+        <a
+          href={donationUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={styles.donationLink}
+          title={`Support @${login}`}
+          onClick={(e) => e.stopPropagation()}
+        >
+          ♥ Support
+        </a>
+      ) : (
+        <span className={styles.donationPlaceholder} />
+      )}
+    </div>
   );
 };
 
