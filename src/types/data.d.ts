@@ -28,6 +28,8 @@ export interface GitHubUser {
   bio: string | null;
   public_repos: number;
   followers: number;
+  /** True if the user has an active GitHub Sponsors listing. */
+  sponsorable: boolean;
 }
 
 /**

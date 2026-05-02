@@ -153,11 +153,68 @@ async function fetchProfile(username) {
       html_url: data.html_url,
       public_repos: data.public_repos,
       followers: data.followers,
+      sponsorable: false, // will be enriched by fetchSponsorableStatus
     };
   } catch (error) {
     console.error(`Error fetching ${username}:`, error.message);
     return null;
   }
+}
+
+/**
+ * Batch-fetch hasSponsorsListing via GraphQL for up to 100 users per request.
+ * Returns a Set of logins that have an active sponsors listing.
+ */
+async function fetchSponsorableStatus(usernames) {
+  if (!GITHUB_TOKEN) {
+    console.warn("⚠️  No GitHub token — skipping sponsorable check, all set to false.");
+    return new Set();
+  }
+
+  const BATCH_SIZE = 100;
+  const sponsorable = new Set();
+
+  for (let i = 0; i < usernames.length; i += BATCH_SIZE) {
+    const batch = usernames.slice(i, i + BATCH_SIZE);
+    // Build aliased GraphQL query: u0: user(login: "foo") { hasSponsorsListing }
+    const fields = batch
+      .map((u, idx) => `u${idx}: user(login: ${JSON.stringify(u)}) { hasSponsorsListing }`)
+      .join("\n");
+    const query = `{ ${fields} }`;
+
+    try {
+      const res = await fetch("https://api.github.com/graphql", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "User-Agent": "Bluefin-Docs-Build",
+          Authorization: `Bearer ${GITHUB_TOKEN}`,
+        },
+        body: JSON.stringify({ query }),
+      });
+
+      if (!res.ok) {
+        console.error(`GraphQL sponsors batch failed: ${res.status}`);
+        continue;
+      }
+
+      const json = await res.json();
+      if (json.errors) {
+        console.warn("GraphQL errors:", json.errors.map((e) => e.message).join(", "));
+      }
+
+      batch.forEach((u, idx) => {
+        const key = `u${idx}`;
+        if (json.data?.[key]?.hasSponsorsListing) {
+          sponsorable.add(u.toLowerCase());
+        }
+      });
+    } catch (err) {
+      console.error("GraphQL sponsors batch error:", err.message);
+    }
+  }
+
+  return sponsorable;
 }
 
 async function fetchAllProfiles() {
@@ -211,6 +268,15 @@ async function fetchAllProfiles() {
   console.log(
     `\nSuccessfully fetched ${Object.keys(profiles).length}/${GITHUB_USERNAMES.length} profiles`,
   );
+
+  // Enrich with sponsorable status via a single batched GraphQL call
+  console.log("\nChecking GitHub Sponsors listings...");
+  const sponsorableSet = await fetchSponsorableStatus(GITHUB_USERNAMES);
+  for (const username of Object.keys(profiles)) {
+    profiles[username].sponsorable = sponsorableSet.has(username.toLowerCase());
+  }
+  const sponsorCount = Object.values(profiles).filter((p) => p.sponsorable).length;
+  console.log(`✓ ${sponsorCount} users have active GitHub Sponsors listings`);
 
   if (Object.keys(profiles).length === 0) {
     console.error(

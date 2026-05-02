@@ -138,7 +138,7 @@ const fetchGitHubProfile = async (username: string): Promise<GitHubUser> => {
 const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
   username,
   title,
-  sponsorUrl = `https://github.com/sponsors/${username}`,
+  sponsorUrl,
   highlight = false,
   categoryColor,
 }) => {
@@ -261,6 +261,11 @@ const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
           ? styles.diamondHighlight
           : "";
 
+  // Use explicit sponsorUrl prop, or auto-generate only if the user has an
+  // active GitHub Sponsors listing (from static data).
+  const effectiveSponsorUrl =
+    sponsorUrl ?? (user.sponsorable ? `https://github.com/sponsors/${user.login}` : null);
+
   return (
     <div
       className={`${styles.card} ${highlightClass}`}
@@ -299,10 +304,10 @@ const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
             <strong>{user.followers}</strong> followers
           </span>
         </div>
-        {sponsorUrl && (
+        {effectiveSponsorUrl && (
           <div className={styles.buttonRow}>
             <a
-              href={sponsorUrl}
+              href={effectiveSponsorUrl}
               target="_blank"
               rel="noopener noreferrer"
               className={styles.sponsorButton}
