@@ -78,6 +78,29 @@
 
 /* ── Responsive ──────────────────────────────────────────────────────── */
 
+
+/* ── Stream accent borders (match OsReleaseCard) ─────────────────────── */
+
+.accentStable {
+  border-left: 3px solid var(--ifm-color-primary);
+  padding-left: 1rem;
+}
+
+.accentLts {
+  border-left: 3px solid #d97706;
+  padding-left: 1rem;
+}
+
+.accentDakota {
+  border-left: 3px solid #7c3aed;
+  padding-left: 1rem;
+}
+
+.accentDefault {
+  border-left: 3px solid var(--ifm-color-emphasis-300);
+  padding-left: 1rem;
+}
+
 @media (max-width: 720px) {
   .row {
     flex-direction: column;
