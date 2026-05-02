@@ -18,6 +18,7 @@ export type ContributorRole =
   | "aurora-contributor"
   | "bazzite-contributor"
   | "ucore-contributor"
+  | "brew-contributor"
   | "contributor"
   | "bluefin-emeritus"
   | "ublue-emeritus";
@@ -56,6 +57,7 @@ const RoleTitles: Record<ContributorRole, string> = {
   "aurora-contributor": "Aurora Contributor",
   "bazzite-contributor": "Bazzite Contributor",
   "ucore-contributor": "uCore Contributor",
+  "brew-contributor": "Homebrew Tap Contributor",
   contributor: "Bluefin Contributor",
   "bluefin-emeritus": "Bluefin Maintainer Emeritus",
   "ublue-emeritus": "Universal Blue Maintainer Emeritus",
@@ -77,6 +79,7 @@ const RoleHighlight: Record<ContributorRole, HighlightType> = {
   "aurora-contributor": false,
   "bazzite-contributor": false,
   "ucore-contributor": false,
+  "brew-contributor": false,
   contributor: false,
   "bluefin-emeritus": "silver",
   "ublue-emeritus": "silver",
@@ -97,6 +100,7 @@ const RoleLegendColor: Record<ContributorRole, string> = {
   "aurora-contributor": "#9333ea",
   "bazzite-contributor": "#0ea5e9",
   "ucore-contributor": "#16a34a",
+  "brew-contributor": "#f59e0b",
   contributor: "var(--ifm-color-emphasis-300)",
   "bluefin-emeritus": "#8a9db5",
   "ublue-emeritus": "#6b9ac4",
@@ -119,6 +123,7 @@ const RoleOrder: ContributorRole[] = [
   "aurora-contributor",
   "bazzite-contributor",
   "ucore-contributor",
+  "brew-contributor",
   "contributor",
 ];
 
