@@ -35,6 +35,8 @@ interface GitHubProfileCardProps {
   titles?: CategoryChip[];
   sponsorUrl?: string;
   highlight?: boolean | "gold" | "silver" | "diamond";
+  /** Lore/nickname shown in italics below the display name. */
+  nickname?: string;
 }
 
 const CACHE_KEY_PREFIX = "github_profile_";
@@ -155,6 +157,7 @@ const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
   sponsorUrl,
   highlight = false,
   categoryColor,
+  nickname,
 }) => {
   const [user, setUser] = useState<GitHubUser | null>(null);
   const [loading, setLoading] = useState(true);
@@ -317,6 +320,7 @@ const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
             {user.name || user.login}
           </a>
         </h3>
+        {nickname && <p className={styles.nickname}>{nickname}</p>}
         {/* Render chips: prefer `titles` array, fall back to legacy `title`+`categoryColor` */}
         {(titles && titles.length > 0
           ? titles

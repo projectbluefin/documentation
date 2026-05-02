@@ -27,6 +27,8 @@ export interface ReleaseContributor {
   roles?: ContributorRole[];
   /** Optional donation/sponsor URL shown as ♥ Sponsor button on the card */
   donationUrl?: string;
+  /** Optional lore/nickname displayed on the card (italic, below the username) */
+  nickname?: string;
 }
 
 interface ReleaseContributorsProps {
@@ -165,6 +167,7 @@ const ReleaseContributors: React.FC<ReleaseContributorsProps> = ({
               }))}
               highlight={bestHighlight(roles)}
               sponsorUrl={contributor.donationUrl}
+              nickname={contributor.nickname}
             />
           );
         })}
