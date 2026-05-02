@@ -125,10 +125,20 @@ const MusicPlaylist: React.FC<MusicPlaylistProps> = ({
       {/* Left: album thumbnail */}
       <div className={styles.thumbnailWrapper}>{thumbnailEl}</div>
 
-      {/* Middle: label + title */}
+      {/* Middle: label + title + description */}
       <div className={styles.infoZone}>
         <span className={styles.label}>🎵 SOUNDTRACK</span>
-        <span className={styles.playlistTitle}>{title}</span>
+        <a
+          href={metadata?.playlistUrl ?? playlistUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={styles.playlistTitle}
+        >
+          {title}
+        </a>
+        {metadata?.description && (
+          <span className={styles.description}>{metadata.description}</span>
+        )}
       </div>
 
       {/* Right: small fixed-width 16:9 video */}
