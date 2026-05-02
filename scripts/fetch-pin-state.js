@@ -69,7 +69,12 @@ async function main() {
       }
 
       if (kernelPin) {
-        // Both HWE workflows should have the same pin; last-write wins (consistent).
+        const existing = streamPins[stream].hweKernel;
+        if (existing && existing !== kernelPin) {
+          throw new Error(
+            `Conflicting hweKernel pins for ${stream}: ${existing} vs ${kernelPin} (from ${filePath})`,
+          );
+        }
         streamPins[stream].hweKernel = kernelPin;
         console.log(`  ${stream} hweKernel pin: ${kernelPin}`);
       } else {
