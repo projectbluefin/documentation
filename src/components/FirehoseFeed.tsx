@@ -375,7 +375,7 @@ const DAKOTA_PLACEHOLDER_EVENT: OsReleaseEvent = {
 // Pinned "Current Versions" cards: latest stable + latest LTS + Dakota placeholder.
 // All bluefin releases are stable-daily; synthesise a "stable"-streamed clone for
 // the pinned card so it shows the "Stable" badge while the stream shows "Daily".
-const PINNED_OS_EVENTS: OsReleaseEvent[] = (() => {
+export const PINNED_OS_EVENTS: OsReleaseEvent[] = (() => {
   // Pinned Bluefin card: most recent weekly stable release (stream === "stable").
   // stable-daily builds (latest-YYYYMMDD, if published) appear in the timeline only.
   const pinnedStable: OsReleaseEvent | undefined =

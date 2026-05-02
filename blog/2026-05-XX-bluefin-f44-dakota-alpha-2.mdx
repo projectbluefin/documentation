@@ -1,5 +1,6 @@
 ---
 title: "Bluefin Fedora 44 and Dakota Alpha 2 Release Announcement"
+subtitle: "A tale of three raptors"
 slug: bluefin-f44-dakota-alpha-2
 authors: castrojo
 tags: [announcements, releases, dakota]
@@ -9,10 +10,13 @@ draft: true
 import WallpaperShowcase from "@site/src/components/WallpaperShowcase";
 import MusicPlaylist from "@site/src/components/MusicPlaylist";
 import ReleaseContributors from "@site/src/components/ReleaseContributors";
+import LatestOsReleaseCard from "@site/src/components/LatestOsReleaseCard";
 
 [TODO: opening paragraph]
 
 ## Bluefin on Fedora 44
+
+<LatestOsReleaseCard stream="stable" />
 
 [TODO: intro paragraph about the F44 rebase]
 
@@ -36,7 +40,24 @@ sudo bootc switch --enforce-container-sigpolicy ghcr.io/ublue-os/$IMAGE_NAME:sta
 
 ---
 
+## Bluefin LTS
+
+<LatestOsReleaseCard stream="lts" />
+
+[TODO: LTS update paragraph — what's new in this LTS cycle, who it's for]
+
+### How to update (LTS)
+
+```bash
+IMAGE_NAME=$(jq -r '.[\"image-name\"]' < /usr/share/ublue-os/image-info.json)
+sudo bootc switch --enforce-container-sigpolicy ghcr.io/ublue-os/$IMAGE_NAME:lts
+```
+
+---
+
 ## Dakota Alpha 2
+
+<LatestOsReleaseCard stream="dakota" />
 
 [TODO: intro paragraph]
 
