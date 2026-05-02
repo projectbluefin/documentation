@@ -2,7 +2,7 @@
 
 .nowPlayingBar {
   position: sticky;
-  top: 0;
+  top: var(--ifm-navbar-height);
   z-index: 100;
   display: flex;
   flex-direction: row;
