@@ -16,7 +16,8 @@ export type ContributorRole =
   | "bazzite-contributor"
   | "ucore-contributor"
   | "contributor"
-  | "bluefin-emeritus";
+  | "bluefin-emeritus"
+  | "ublue-emeritus";
 
 export interface ReleaseContributor {
   login: string;
@@ -50,6 +51,7 @@ const RoleTitles: Record<ContributorRole, string> = {
   "ucore-contributor": "uCore Contributor",
   contributor: "Bluefin Contributor",
   "bluefin-emeritus": "Bluefin Maintainer Emeritus",
+  "ublue-emeritus": "Universal Blue Maintainer Emeritus",
 };
 
 type HighlightType = boolean | "gold" | "silver" | "diamond";
@@ -68,6 +70,7 @@ const RoleHighlight: Record<ContributorRole, HighlightType> = {
   "ucore-contributor": false,
   contributor: false,
   "bluefin-emeritus": "silver",
+  "ublue-emeritus": "silver",
 };
 
 const RoleLegendColor: Record<ContributorRole, string> = {
@@ -85,6 +88,7 @@ const RoleLegendColor: Record<ContributorRole, string> = {
   "ucore-contributor": "#16a34a",
   contributor: "var(--ifm-color-emphasis-300)",
   "bluefin-emeritus": "#8a9db5",
+  "ublue-emeritus": "#6b9ac4",
 };
 
 const RoleOrder: ContributorRole[] = [
@@ -97,6 +101,7 @@ const RoleOrder: ContributorRole[] = [
   "artist",
   "bug-hunter",
   "bluefin-emeritus",
+  "ublue-emeritus",
   "ublue-contributor",
   "aurora-contributor",
   "bazzite-contributor",
