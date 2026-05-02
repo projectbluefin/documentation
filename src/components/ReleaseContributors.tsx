@@ -6,13 +6,17 @@ export type ContributorRole =
   | "maintainer"
   | "ublue-maintainer"
   | "aurora-maintainer"
+  | "bazzite-maintainer"
+  | "ucore-maintainer"
   | "artist"
   | "gnome-os"
   | "bug-hunter"
   | "ublue-contributor"
   | "aurora-contributor"
+  | "bazzite-contributor"
+  | "ucore-contributor"
   | "contributor"
-  | "emeritus";
+  | "bluefin-emeritus";
 
 export interface ReleaseContributor {
   login: string;
@@ -35,13 +39,17 @@ const RoleTitles: Record<ContributorRole, string> = {
   maintainer: "Bluefin Maintainer",
   "ublue-maintainer": "Universal Blue Maintainer",
   "aurora-maintainer": "Aurora Maintainer",
+  "bazzite-maintainer": "Bazzite Maintainer",
+  "ucore-maintainer": "uCore Maintainer",
   "gnome-os": "GNOME OS Team",
   artist: "Artist",
   "bug-hunter": "Bug Hunter",
   "ublue-contributor": "Universal Blue Contributor",
   "aurora-contributor": "Aurora Contributor",
+  "bazzite-contributor": "Bazzite Contributor",
+  "ucore-contributor": "uCore Contributor",
   contributor: "Bluefin Contributor",
-  emeritus: "Maintainer Emeritus",
+  "bluefin-emeritus": "Bluefin Maintainer Emeritus",
 };
 
 type HighlightType = boolean | "gold" | "silver" | "diamond";
@@ -49,38 +57,50 @@ const RoleHighlight: Record<ContributorRole, HighlightType> = {
   maintainer: "gold",
   "ublue-maintainer": "gold",
   "aurora-maintainer": "gold",
+  "bazzite-maintainer": "gold",
+  "ucore-maintainer": "gold",
   artist: "diamond",
   "gnome-os": "silver",
   "bug-hunter": "gold",
   "ublue-contributor": false,
   "aurora-contributor": false,
+  "bazzite-contributor": false,
+  "ucore-contributor": false,
   contributor: false,
-  emeritus: "silver",
+  "bluefin-emeritus": "silver",
 };
 
 const RoleLegendColor: Record<ContributorRole, string> = {
   maintainer: "#ffd700",
   "ublue-maintainer": "#1a7fd4",
   "aurora-maintainer": "#9333ea",
+  "bazzite-maintainer": "#0ea5e9",
+  "ucore-maintainer": "#16a34a",
   "gnome-os": "#4a86cf",
   artist: "#b15e9c",
   "bug-hunter": "#e67e22",
   "ublue-contributor": "#1a7fd4",
   "aurora-contributor": "#9333ea",
+  "bazzite-contributor": "#0ea5e9",
+  "ucore-contributor": "#16a34a",
   contributor: "var(--ifm-color-emphasis-300)",
-  emeritus: "#8a9db5",
+  "bluefin-emeritus": "#8a9db5",
 };
 
 const RoleOrder: ContributorRole[] = [
   "maintainer",
   "ublue-maintainer",
   "aurora-maintainer",
+  "bazzite-maintainer",
+  "ucore-maintainer",
   "gnome-os",
   "artist",
   "bug-hunter",
-  "emeritus",
+  "bluefin-emeritus",
   "ublue-contributor",
   "aurora-contributor",
+  "bazzite-contributor",
+  "ucore-contributor",
   "contributor",
 ];
 
@@ -123,28 +143,10 @@ const ReleaseContributors: React.FC<ReleaseContributorsProps> = ({
     a.login.toLowerCase().localeCompare(b.login.toLowerCase()),
   );
 
-  // Collect all roles actually used in this release
-  const usedRoles = new Set(contributors.flatMap((c) => effectiveRoles(c)));
-  // Legend: show each role at most once, skip contributor and unused roles
-  const legendRoles = RoleOrder.filter(
-    (r) => r !== "contributor" && usedRoles.has(r),
-  );
-
   return (
     <div className={styles.section}>
       <h2>{title}</h2>
       {stats && <p className={styles.stats}>{stats}</p>}
-      <div className={styles.legend}>
-        {legendRoles.map((role) => (
-          <span key={role} className={styles.legendItem}>
-            <span
-              className={styles.legendDot}
-              style={{ background: RoleLegendColor[role] }}
-            />
-            {RoleTitles[role]}
-          </span>
-        ))}
-      </div>
       <div className={styles.grid}>
         {sorted.map((contributor) => {
           const roles = effectiveRoles(contributor);
