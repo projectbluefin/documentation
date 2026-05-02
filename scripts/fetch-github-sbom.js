@@ -812,25 +812,47 @@ function extractBstPackageVersions(sbom) {
 // ---------------------------------------------------------------------------
 
 /**
- * Derive a YYYYMMDD date string from the org.opencontainers.image.created
- * annotation in an OCI manifest, fetched via `oras manifest fetch`.
- * Returns null if the annotation is absent or the fetch fails.
+ * Derive a YYYYMMDD date string from an OCI image's creation timestamp.
+ *
+ * Strategy (in order):
+ *  1. Manifest-level `annotations["org.opencontainers.image.created"]`
+ *  2. Image config blob `.created` field (bootc images store it here, not
+ *     in manifest annotations)
  *
  * @param {string} imageRef  Full image reference (e.g. ghcr.io/org/pkg:latest)
  * @returns {Promise<string|null>}  "YYYYMMDD" or null
  */
 async function getImageCreatedDate(imageRef) {
   try {
-    const result = await execFileAsync(
+    const manifestResult = await execFileAsync(
       "oras",
       ["manifest", "fetch", imageRef],
       { env: { ...process.env }, maxBuffer: 256 * 1024, timeout: 30000 },
     );
-    const manifest = JSON.parse(result.stdout);
-    const created = manifest?.annotations?.["org.opencontainers.image.created"];
-    if (!created) return null;
-    // ISO 8601 "2026-05-02T..." → "20260502"
-    return created.slice(0, 10).replace(/-/g, "");
+    const manifest = JSON.parse(manifestResult.stdout);
+
+    // Strategy 1: manifest-level annotation (common in Syft-attested images).
+    const annotationDate = manifest?.annotations?.["org.opencontainers.image.created"];
+    if (annotationDate) {
+      return annotationDate.slice(0, 10).replace(/-/g, "");
+    }
+
+    // Strategy 2: image config blob `.created` (bootc/BuildStream images).
+    const configDigest = manifest?.config?.digest;
+    if (!configDigest) return null;
+    const imageRepo = imageRef.split(":")[0];
+    const configResult = await execFileAsync(
+      "oras",
+      ["blob", "fetch", "--output", "-", `${imageRepo}@${configDigest}`],
+      { env: { ...process.env }, maxBuffer: 1024 * 1024, timeout: 30000 },
+    );
+    const config = JSON.parse(configResult.stdout);
+    const configDate = config?.created;
+    if (configDate) {
+      return configDate.slice(0, 10).replace(/-/g, "");
+    }
+
+    return null;
   } catch {
     return null;
   }
