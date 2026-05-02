@@ -105,16 +105,14 @@ function ReleaseNode({
     kernelMajor !== null &&
     previousKernelMajor !== null &&
     previousKernelMajor !== kernelMajor;
-  const kernelParts = majorMinor(row.versions.kernel);
-  const previousKernelParts = majorMinor(previousRow?.versions.kernel);
   const kernelMinorBump =
     !kernelMajorBump &&
-    kernelParts.major !== null &&
-    previousKernelParts.major !== null &&
-    kernelParts.minor !== null &&
-    previousKernelParts.minor !== null &&
-    kernelParts.major === previousKernelParts.major &&
-    kernelParts.minor !== previousKernelParts.minor;
+    kernelMajor !== null &&
+    previousKernelMajor !== null &&
+    kernelMajor === previousKernelMajor &&
+    !!row.versions.kernel &&
+    !!previousRow?.versions.kernel &&
+    row.versions.kernel !== previousRow.versions.kernel;
 
   const nvidiaMajor = majorNumber(row.versions.nvidia);
   const previousNvidiaMajor = majorNumber(previousRow?.versions.nvidia);
@@ -139,16 +137,14 @@ function ReleaseNode({
     mesaMajor !== null &&
     previousMesaMajor !== null &&
     previousMesaMajor !== mesaMajor;
-  const mesaParts = majorMinor(row.versions.mesa);
-  const previousMesaParts = majorMinor(previousRow?.versions.mesa);
   const mesaMinorBump =
     !mesaMajorBump &&
-    mesaParts.major !== null &&
-    previousMesaParts.major !== null &&
-    mesaParts.minor !== null &&
-    previousMesaParts.minor !== null &&
-    mesaParts.major === previousMesaParts.major &&
-    mesaParts.minor !== previousMesaParts.minor;
+    mesaMajor !== null &&
+    previousMesaMajor !== null &&
+    mesaMajor === previousMesaMajor &&
+    !!row.versions.mesa &&
+    !!previousRow?.versions.mesa &&
+    row.versions.mesa !== previousRow.versions.mesa;
 
   const gnomeMajor = majorNumber(row.versions.gnome);
   const previousGnomeMajor = majorNumber(previousRow?.versions.gnome);
@@ -296,7 +292,15 @@ export default function DriverVersionsCatalog({ streamId }: DriverVersionsCatalo
 
       {(() => {
         const latest = stream.latest;
-        const older = stream.history.slice(1);
+        const older = stream.history
+          .slice(1)
+          .filter(
+            (row) =>
+              row.versions.kernel ||
+              row.versions.nvidia ||
+              row.versions.mesa ||
+              row.versions.gnome,
+          );
 
         return (
           <section key={stream.id} className={styles.streamSection}>
