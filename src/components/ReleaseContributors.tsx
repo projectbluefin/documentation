@@ -15,7 +15,10 @@ export type ContributorRole =
 
 export interface ReleaseContributor {
   login: string;
+  /** Single role (backward-compat). Use `roles` for multiple titles. */
   role?: ContributorRole;
+  /** Multiple roles — person will show a chip for each. Takes priority over `role`. */
+  roles?: ContributorRole[];
   /** Optional donation/sponsor URL shown as ♥ Sponsor button on the card */
   donationUrl?: string;
 }
@@ -36,7 +39,7 @@ const RoleTitles: Record<ContributorRole, string> = {
   "bug-hunter": "Bug Hunter",
   "ublue-contributor": "Universal Blue Contributor",
   "aurora-contributor": "Aurora Contributor",
-  contributor: "Contributor",
+  contributor: "Bluefin Contributor",
 };
 
 type HighlightType = boolean | "gold" | "silver" | "diamond";
@@ -76,6 +79,36 @@ const RoleOrder: ContributorRole[] = [
   "contributor",
 ];
 
+type FoilLevel = "gold" | "silver" | "diamond" | "none";
+
+const HighlightPriority: Record<FoilLevel, number> = {
+  gold: 3,
+  diamond: 2,
+  silver: 1,
+  none: 0,
+};
+
+function toFoilLevel(h: HighlightType): FoilLevel {
+  if (!h) return "none";
+  if (h === true) return "gold";
+  return h;
+}
+
+/** Resolve the effective roles array (supports both `role` and `roles`). */
+function effectiveRoles(c: ReleaseContributor): ContributorRole[] {
+  if (c.roles && c.roles.length > 0) return c.roles;
+  return [c.role ?? "contributor"];
+}
+
+/** Pick the highest-priority foil type across all roles. */
+function bestHighlight(roles: ContributorRole[]): HighlightType {
+  const best = roles.reduce<FoilLevel>((best, r) => {
+    const level = toFoilLevel(RoleHighlight[r]);
+    return HighlightPriority[level] > HighlightPriority[best] ? level : best;
+  }, "none");
+  return best === "none" ? false : best;
+}
+
 const ReleaseContributors: React.FC<ReleaseContributorsProps> = ({
   contributors,
   title = "Bluefin Brought to You By",
@@ -103,16 +136,21 @@ const ReleaseContributors: React.FC<ReleaseContributorsProps> = ({
         ))}
       </div>
       <div className={styles.grid}>
-        {sorted.map(({ login, role = "contributor", donationUrl }) => (
-          <GitHubProfileCard
-            key={login}
-            username={login}
-            title={RoleTitles[role]}
-            highlight={RoleHighlight[role]}
-            categoryColor={RoleLegendColor[role]}
-            sponsorUrl={donationUrl}
-          />
-        ))}
+        {sorted.map((contributor) => {
+          const roles = effectiveRoles(contributor);
+          return (
+            <GitHubProfileCard
+              key={contributor.login}
+              username={contributor.login}
+              titles={roles.map((r) => ({
+                label: RoleTitles[r],
+                color: RoleLegendColor[r],
+              }))}
+              highlight={bestHighlight(roles)}
+              sponsorUrl={contributor.donationUrl}
+            />
+          );
+        })}
       </div>
     </div>
   );

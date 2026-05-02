@@ -20,12 +20,21 @@ interface GitHubUser {
   donationUrl?: string | null;
 }
 
+interface CategoryChip {
+  label: string;
+  color: string;
+}
+
 interface GitHubProfileCardProps {
   username: string;
+  /** Single chip (backward-compat). Use `titles` for multiple chips. */
   title?: string;
+  /** Color for the single `title` chip (backward-compat). */
+  categoryColor?: string;
+  /** Multiple category chips — each with label and dot color. */
+  titles?: CategoryChip[];
   sponsorUrl?: string;
   highlight?: boolean | "gold" | "silver" | "diamond";
-  categoryColor?: string;
 }
 
 const CACHE_KEY_PREFIX = "github_profile_";
@@ -142,6 +151,7 @@ const fetchGitHubProfile = async (username: string): Promise<GitHubUser> => {
 const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
   username,
   title,
+  titles,
   sponsorUrl,
   highlight = false,
   categoryColor,
@@ -295,15 +305,21 @@ const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
             {user.name || user.login}
           </a>
         </h3>
-        {title && (
-          <p className={styles.categoryChip}>
+        {/* Render chips: prefer `titles` array, fall back to legacy `title`+`categoryColor` */}
+        {(titles && titles.length > 0
+          ? titles
+          : title
+            ? [{ label: title, color: categoryColor ?? "" }]
+            : []
+        ).map(({ label, color }) => (
+          <p key={label} className={styles.categoryChip}>
             <span
               className={styles.categoryDot}
-              style={categoryColor ? { background: categoryColor } : undefined}
+              style={color ? { background: color } : undefined}
             />
-            {title}
+            {label}
           </p>
-        )}
+        ))}
         {user.bio && <p className={styles.bio}>{user.bio}</p>}
         <div className={styles.stats}>
           <span>
