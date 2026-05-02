@@ -16,6 +16,11 @@ import BlogFigure from "@site/src/components/blog/BlogFigure";
 
 <p className="blog-post-subtitle">A tale of three raptors</p>
 
+<MusicPlaylist
+  title="Bluefin and the Syrens of Metal"
+  playlistId="PLhiPP9M5fgWFa09qMHJSA7ts93UsMG82Q"
+/>
+
 [TODO: opening paragraph]
 
 I am not going to lie I haven't been this excited about Bluefin since the start of the project. We find ourselves on the day of a major Fedora release with three fantastic options. 
@@ -32,11 +37,6 @@ First let's check the goodies in this release:
 
 <LatestOsReleaseCard stream="stable" />
 
-<MusicPlaylist
-  title="Bluefin and the Syrens of Metal"
-  playlistId="PLhiPP9M5fgWFa09qMHJSA7ts93UsMG82Q"
-/>
-
 Now, I will start with the biggest news of all. Timothee Ravier has [announced new sealed base images](https://fedoramagazine.org/sealed-atomic-desktops-test-images/) for our use. This is the most fundamental change to this variant in it's 5-ish year history.
 
 [TODO: intro paragraph about the F44 rebase]
@@ -50,13 +50,13 @@ The new sealed bootable container images bring:
 - [**TPM-backed passwordless disk unlocking**](https://www.freedesktop.org/software/systemd/man/latest/systemd-cryptenroll.html) via `systemd-cryptenroll` — the headline user benefit; LUKS unlocking is bound to the verified boot state so no password prompt on a clean boot
 - Supports **UEFI on x86_64 and aarch64**
 
-- [GNOME 50](https://release.gnome.org/50/) — [TODO: highlight the key GNOME 50 feature you care about]
+- [GNOME 50 "Tokyo"](https://release.gnome.org/50/) — [TODO: highlight the key GNOME 50 feature you care about]
 
-{/* Drop your GNOME 50 GIF here: static/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/gnome50-feature.gif */}
+{/* Replace src with your own recording when ready — currently using the official GNOME 50 release screenshot */}
 <BlogFigure
-  src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/gnome50-feature.gif"
-  alt="GNOME 50 feature demonstration"
-  caption="[TODO: caption describing the GNOME 50 feature shown]"
+  src="https://release.gnome.org/50/document-viewer-annotations.webp"
+  alt="GNOME 50 Document Viewer with new annotation tools"
+  caption="GNOME 50 'Tokyo' — Document Viewer with overhauled annotations. Replace with your own GIF or MP4."
   maxWidth="720px"
 />
 - Linux 6.13, Mesa 25.1, Podman 5.5 — see the full [changelog](https://docs.projectbluefin.io/changelogs)
