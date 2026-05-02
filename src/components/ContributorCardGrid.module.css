@@ -1,0 +1,146 @@
+.wrapper {
+  margin: 1.5rem 0;
+}
+
+.title {
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* Compact rectangular card: ~140px wide, ~72px tall */
+.card {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 148px;
+  height: 72px;
+  padding: 0 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  background: var(--ifm-card-background-color);
+  text-decoration: none;
+  color: var(--ifm-color-emphasis-900);
+  font-size: 0.78rem;
+  font-weight: 500;
+  border-left-width: 4px;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    border-color 0.15s ease;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  text-decoration: none;
+  color: var(--ifm-color-emphasis-900);
+}
+
+/* Role-specific left-border colors */
+.roleMaintainer {
+  border-left-color: #e6c200;
+}
+
+.roleMaintainer:hover {
+  border-left-color: #ffd700;
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.25);
+}
+
+.roleArtist {
+  border-left-color: #9b59b6;
+}
+
+.roleArtist:hover {
+  border-left-color: #b87ac8;
+  box-shadow: 0 4px 12px rgba(155, 89, 182, 0.25);
+}
+
+.roleGnomeOs {
+  border-left-color: #3b8beb;
+}
+
+.roleGnomeOs:hover {
+  border-left-color: #5fa8ff;
+  box-shadow: 0 4px 12px rgba(59, 139, 235, 0.25);
+}
+
+.roleContributor {
+  border-left-color: var(--ifm-color-emphasis-300);
+}
+
+.roleContributor:hover {
+  border-left-color: var(--ifm-color-primary);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  object-fit: cover;
+}
+
+.login {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Legend */
+.legend {
+  margin-top: 0.75rem;
+  font-size: 0.8rem;
+  color: var(--ifm-color-emphasis-600);
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+}
+
+.dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+/* Reuse the role colors for the dot */
+.dot.roleMaintainer {
+  background: #e6c200;
+  border: none;
+}
+
+.dot.roleArtist {
+  background: #9b59b6;
+  border: none;
+}
+
+.dot.roleGnomeOs {
+  background: #3b8beb;
+  border: none;
+}
+
+.dot.roleContributor {
+  background: var(--ifm-color-emphasis-400);
+  border: none;
+}
+
+@media (max-width: 640px) {
+  .card {
+    width: calc(50% - 0.25rem);
+    flex-shrink: 0;
+  }
+}
