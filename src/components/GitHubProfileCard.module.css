@@ -6,6 +6,9 @@
   display: flex;
   gap: 1.4rem;
   align-items: flex-start;
+  align-self: stretch;
+  height: 100%;
+  box-sizing: border-box;
   transition: all 0.3s ease;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
@@ -112,6 +115,8 @@
 .content {
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .name {
@@ -159,7 +164,8 @@
 .stats {
   display: flex;
   gap: 1rem;
-  margin-bottom: 0.5rem;
+  margin-top: auto;
+  padding-top: 0.4rem;
   font-size: 0.85rem;
   color: var(--ifm-color-emphasis-700);
 }
