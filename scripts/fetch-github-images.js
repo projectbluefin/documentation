@@ -146,6 +146,25 @@ function lookupSbomVersions(sbomCache, streamId) {
   return lookupVersionsForStream(sbomCache, streamId);
 }
 
+/**
+ * For latest-tag streams (e.g. Dakota) the SBOM release keys are in the form
+ * "latest-YYYYMMDD".  Parse the most recent one to produce an ISO-8601 date
+ * that can be used as lastPublishedAt.
+ */
+function sbomLatestCreatedAt(sbomCache, streamId) {
+  const stream = sbomCache?.streams?.[streamId];
+  if (!stream?.releases) return null;
+  const dateKeys = Object.keys(stream.releases)
+    .map((key) => {
+      const m = /^latest-(\d{4})(\d{2})(\d{2})$/.exec(key);
+      return m ? `${m[1]}-${m[2]}-${m[3]}T00:00:00Z` : null;
+    })
+    .filter(Boolean)
+    .sort()
+    .reverse();
+  return dateKeys[0] || null;
+}
+
 function normalizeSbomStreamTag(streamTag) {
   if (!streamTag) return null;
   if (streamTag === "stable-daily") return "stable";
@@ -395,16 +414,22 @@ function attachNvidiaTestingCommands(streams, spec, nvidiaTagSet) {
 function buildSecurityInfo(spec, inspectTag) {
   const imageRef = `ghcr.io/${spec.org}/${spec.package}:${inspectTag}`;
 
-  // Mainline bluefin images (stable/latest/beta streams) use GitHub OIDC keyless signing.
+  // Mainline bluefin images (stable/latest/beta streams) use GitHub OIDC keyless signing
+  // with OCI-published SLSA attestations.
+  // Dakota uses keyless signing but SLSA attestations are published to the OCI registry
+  // only after projectbluefin/dakota#391 merges (push-to-registry: true).
   // LTS images use traditional key-based signing with cosign.pub from the lts repo.
-  // Dakota has no signing pipeline — commands are omitted.
-  const KEYLESS_REPOS = ["ublue-os/bluefin"];
+  const KEYLESS_REPOS = ["ublue-os/bluefin"]; // keyless + OCI attestation live
+  const KEYLESS_PENDING_ATTEST_REPOS = ["projectbluefin/dakota"]; // keyless, OCI attestation pending
   const KEY_REPOS = {
     "ublue-os/bluefin-lts":
       "https://raw.githubusercontent.com/ublue-os/bluefin-lts/main/cosign.pub",
   };
 
-  const isKeyless = KEYLESS_REPOS.includes(spec.keyRepo);
+  const isKeyless =
+    KEYLESS_REPOS.includes(spec.keyRepo) ||
+    KEYLESS_PENDING_ATTEST_REPOS.includes(spec.keyRepo);
+  const attestationLive = KEYLESS_REPOS.includes(spec.keyRepo);
   const cosignKeyUrl = KEY_REPOS[spec.keyRepo] || null;
   const hasNoPipeline = !isKeyless && !cosignKeyUrl;
 
@@ -432,7 +457,7 @@ function buildSecurityInfo(spec, inspectTag) {
       cosignKeyUrl: null,
       verifyCommand: `cosign verify --certificate-oidc-issuer ${OIDC_ISSUER} --certificate-identity-regexp '${OIDC_IDENTITY_PREFIX}' ${imageRef}`,
       attestCommand: `cosign verify-attestation --type ${SLSA_TYPE} --certificate-oidc-issuer ${OIDC_ISSUER} --certificate-identity-regexp '${OIDC_IDENTITY_PREFIX}' ${imageRef}`,
-      hasAttestation: true,
+      hasAttestation: attestationLive,
       sbomCommand: `syft scan ${imageRef} -o spdx-json`,
     };
   }
@@ -597,7 +622,11 @@ async function buildProduct(spec, feeds, cachedById, ageHours, sbomCache) {
     latestUpdatedAt(versions) || existing?.lastPublishedAt || null;
   const staleCutoff = Date.now() - STALE_DAYS * 24 * 60 * 60 * 1000;
   const stale = updatedAt ? Date.parse(updatedAt) < staleCutoff : false;
-  const lastPublishedAt = updatedAt || feedItem?.pubDate || null;
+  const lastPublishedAt =
+    updatedAt ||
+    feedItem?.pubDate ||
+    (spec.sbomStreamId ? sbomLatestCreatedAt(sbomCache, spec.sbomStreamId) : null) ||
+    null;
 
   return {
     id: spec.id,
