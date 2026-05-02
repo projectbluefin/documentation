@@ -7,7 +7,7 @@ tags: [announcements, releases, dakota]
 draft: true
 ---
 
-import WallpaperShowcase from "@site/src/components/WallpaperShowcase";
+import WallpaperFeatureGrid from "@site/src/components/blog/WallpaperFeatureGrid";
 import MusicPlaylist from "@site/src/components/MusicPlaylist";
 import ReleaseContributors from "@site/src/components/ReleaseContributors";
 import ContributorCardGrid from "@site/src/components/ContributorCardGrid";
@@ -143,69 +143,48 @@ sudo bootc switch --enforce-container-sigpolicy ghcr.io/ublue-os/$IMAGE_NAME:lts
 
 [TODO: intro sentence]
 
-export const lazyDays = [{
-  id: "lazy-days",
-  title: "Lazy Days",
-  author: "[TODO: artist name]",
-  authorUrl: "[TODO: artist URL]",
-  dayUrl: "/img/artwork/fullres/lazy-days.png",
-}];
-
-export const leafCollector = [{
-  id: "leaf-collector",
-  title: "Leaf Collector",
-  author: "Dr. Natalia Jagielska",
-  authorUrl: "https://natalia-jagielska.weebly.com/",
-  coAuthor: "Delphic Melody",
-  coAuthorUrl: "https://ko-fi.com/melodyofdelphi",
-  dayUrl: "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/leaf-collector/leaf-collector-day.svg",
-  nightUrl: "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/leaf-collector/leaf-collector-night.svg",
-}];
-
-export const duality = [{
-  id: "duality",
-  title: "Duality",
-  author: "Dr. Natalia Jagielska",
-  authorUrl: "https://natalia-jagielska.weebly.com/",
-  coAuthor: "Delphic Melody",
-  coAuthorUrl: "https://ko-fi.com/melodyofdelphi",
-  dayUrl: "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/duality/duality-day.svg",
-  nightUrl: "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/duality/duality-night.svg",
-}];
-
-export const eyes = [{
-  id: "eyes",
-  title: "Eyes",
-  author: "Dr. Natalia Jagielska",
-  authorUrl: "https://natalia-jagielska.weebly.com/",
-  coAuthor: "Delphic Melody",
-  coAuthorUrl: "https://ko-fi.com/melodyofdelphi",
-  dayUrl: "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/eyes/eyes.svg",
-}];
-
-### Lazy Days
-
-<WallpaperShowcase wallpapers={lazyDays} />
-
-[TODO: your text about Lazy Days]
-
-### Leaf Collector
-
-<WallpaperShowcase wallpapers={leafCollector} />
-
-[TODO: your text about Leaf Collector]
-
-### Duality
-
-<WallpaperShowcase wallpapers={duality} />
-
-[TODO: your text about Duality]
-
-### Eyes
-
-<WallpaperShowcase wallpapers={eyes} />
-
-[TODO: your text about Eyes]
+<WallpaperFeatureGrid wallpapers={[
+  {
+    id: "lazy-days",
+    title: "Lazy Days",
+    author: "[TODO: artist name]",
+    authorUrl: "[TODO: artist URL]",
+    dayUrl: "/img/artwork/fullres/lazy-days.png",
+    body: "[TODO: your text about Lazy Days]",
+  },
+  {
+    id: "leaf-collector",
+    title: "Leaf Collector",
+    author: "Dr. Natalia Jagielska",
+    authorUrl: "https://natalia-jagielska.weebly.com/",
+    coAuthor: "Delphic Melody",
+    coAuthorUrl: "https://ko-fi.com/melodyofdelphi",
+    dayUrl: "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/leaf-collector/leaf-collector-day.svg",
+    nightUrl: "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/leaf-collector/leaf-collector-night.svg",
+    body: "[TODO: your text about Leaf Collector]",
+  },
+  {
+    id: "duality",
+    title: "Duality",
+    author: "Dr. Natalia Jagielska",
+    authorUrl: "https://natalia-jagielska.weebly.com/",
+    coAuthor: "Delphic Melody",
+    coAuthorUrl: "https://ko-fi.com/melodyofdelphi",
+    dayUrl: "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/duality/duality-day.svg",
+    nightUrl: "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/duality/duality-night.svg",
+    body: "[TODO: your text about Duality]",
+  },
+  {
+    id: "eyes",
+    title: "Eyes",
+    author: "Dr. Natalia Jagielska",
+    authorUrl: "https://natalia-jagielska.weebly.com/",
+    coAuthor: "Delphic Melody",
+    coAuthorUrl: "https://ko-fi.com/melodyofdelphi",
+    dayUrl: "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/eyes/eyes.svg",
+    body: "[TODO: your text about Eyes]",
+  },
+]} />
 
 ### Install the Wallpapers
 
