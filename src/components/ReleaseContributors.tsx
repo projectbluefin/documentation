@@ -4,9 +4,13 @@ import styles from "./ReleaseContributors.module.css";
 
 export type ContributorRole =
   | "maintainer"
+  | "ublue-maintainer"
+  | "aurora-maintainer"
   | "artist"
   | "gnome-os"
   | "bug-hunter"
+  | "ublue-contributor"
+  | "aurora-contributor"
   | "contributor";
 
 export interface ReleaseContributor {
@@ -25,34 +29,50 @@ interface ReleaseContributorsProps {
 
 const RoleTitles: Record<ContributorRole, string> = {
   maintainer: "Maintainer",
+  "ublue-maintainer": "Universal Blue Maintainer",
+  "aurora-maintainer": "Aurora Maintainer",
   "gnome-os": "GNOME OS Team",
   artist: "Artist",
   "bug-hunter": "Bug Hunter",
+  "ublue-contributor": "Universal Blue Contributor",
+  "aurora-contributor": "Aurora Contributor",
   contributor: "Contributor",
 };
 
 type HighlightType = boolean | "gold" | "silver" | "diamond";
 const RoleHighlight: Record<ContributorRole, HighlightType> = {
   maintainer: "gold",
+  "ublue-maintainer": "gold",
+  "aurora-maintainer": "gold",
   artist: "diamond",
   "gnome-os": "silver",
   "bug-hunter": "gold",
+  "ublue-contributor": false,
+  "aurora-contributor": false,
   contributor: false,
 };
 
 const RoleLegendColor: Record<ContributorRole, string> = {
   maintainer: "#ffd700",
+  "ublue-maintainer": "#1a7fd4",
+  "aurora-maintainer": "#9333ea",
   "gnome-os": "#4a86cf",
   artist: "#b15e9c",
   "bug-hunter": "#e67e22",
+  "ublue-contributor": "#1a7fd4",
+  "aurora-contributor": "#9333ea",
   contributor: "var(--ifm-color-emphasis-300)",
 };
 
 const RoleOrder: ContributorRole[] = [
   "maintainer",
+  "ublue-maintainer",
+  "aurora-maintainer",
   "gnome-os",
   "artist",
   "bug-hunter",
+  "ublue-contributor",
+  "aurora-contributor",
   "contributor",
 ];
 
