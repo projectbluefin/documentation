@@ -8,6 +8,74 @@ draft: true
 
 import WallpaperShowcase from "@site/src/components/WallpaperShowcase";
 
+[TODO: opening paragraph]
+
+## Bluefin on Fedora 44
+
+[TODO: intro paragraph about the F44 rebase]
+
+- [GNOME 50](https://release.gnome.org/50/) — [TODO: highlight the key GNOME 50 feature you care about]
+- Linux 6.13, Mesa 25.1, Podman 5.5 — see the full [changelog](https://docs.projectbluefin.io/changelogs)
+- [Fedora 44 Release Notes](https://docs.fedoraproject.org/en-US/fedora/latest/release-notes/)
+
+### How to update
+
+Current Bluefin users will receive this automatically. You can also switch now:
+
+```bash
+# Get your current image name
+IMAGE_NAME=$(jq -r '.[\"image-name\"]' < /usr/share/ublue-os/image-info.json)
+
+# Switch to stable (F44)
+sudo bootc switch --enforce-container-sigpolicy ghcr.io/ublue-os/$IMAGE_NAME:stable
+```
+
+[TODO: anything else about the update path]
+
+---
+
+## Dakota Alpha 2
+
+[TODO: intro paragraph]
+
+- [GNOME 50](https://release.gnome.org/50/), Linux 6.13, Mesa 26.x, Freedesktop 25.08 libraries
+- [Custom Command Menu](https://github.com/StorageB/custom-command-menu) — hostname in the top bar
+- Ghostty as the default terminal
+
+[TODO: screenshot / banner image]
+
+### What changed since Alpha 1
+
+[TODO: your highlights]
+
+- [Passwordless sudo policy removed](https://github.com/projectbluefin/dakota/pull/374)
+- LUKS encryption works on install
+- [nvidia-container-toolkit](https://github.com/projectbluefin/dakota/issues/376) — [TODO: landed / still coming]
+- ARM build improvements
+- zstd:chunked delta updates — [TODO: landed / still coming]
+
+### Goals
+
+[TODO: your goals text]
+
+- Beta target: late spring; GA target: fall
+- Help GNOME OS upstream: [os.gnome.org](https://os.gnome.org/)
+
+### Gotchas
+
+[TODO: current alpha gotchas — verify against https://github.com/projectbluefin/dakota/issues]
+
+- [Open issues](https://github.com/projectbluefin/dakota/issues)
+- [ISO-specific issues](https://github.com/projectbluefin/dakota-iso/issues)
+
+[TODO: YouTube embed for Dakota Alpha 2 demo, if you have one]
+
+---
+
+## New Wallpapers
+
+[TODO: intro sentence]
+
 export const leafCollector = [{
   id: "leaf-collector",
   title: "Leaf Collector",
@@ -40,28 +108,51 @@ export const eyes = [{
   dayUrl: "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/eyes/eyes.svg",
 }];
 
-## Leaf Collector
+### Leaf Collector
 
 <WallpaperShowcase wallpapers={leafCollector} />
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+[TODO: your text about Leaf Collector]
 
-## Duality
+### Duality
 
 <WallpaperShowcase wallpapers={duality} />
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+[TODO: your text about Duality]
 
-## Eyes
+### Eyes
 
 <WallpaperShowcase wallpapers={eyes} />
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+[TODO: your text about Eyes]
 
-## How to Install
+---
 
-```bash
-brew install ublue-os/tap/bluefin-wallpapers-extra
-```
+## Thanks
 
-## Discussion
+[TODO: thank you paragraph]
+
+- [Jordan Petridis](https://github.com/jreidinger), [Valentin David](https://github.com/valentindavid), [Adrian Vovk](https://github.com/AdrianVovk), and the [GNOME OS team](https://os.gnome.org/)
+- [Brian Ketelsen](https://github.com/brianketelsen) and [James Reilly](https://github.com/jamesreilly5) for the [Tuna installer](https://github.com/tuna-os/tuna-installer)
+- [TODO: anyone else you want to thank]
+- Everyone on Discord testing and reporting issues!
+
+## Download
+
+### Bluefin
+
+[**→ projectbluefin.io**](https://projectbluefin.io)
+
+### Dakota Alpha 2
+
+- [dakota-live-latest.iso](https://projectbluefin.dev/dakota-live-latest.iso)
+
+### Filing Issues
+
+- [Bluefin issues](https://github.com/ublue-os/bluefin/issues)
+- [Dakota issues](https://github.com/projectbluefin/dakota/issues)
+- [Dakota ISO issues](https://github.com/projectbluefin/dakota-iso/issues)
+
+### [Discussions](https://github.com/ublue-os/bluefin/discussions)
+
+[TODO: create a new discussion and replace this link — last one was #4500 for Dakota Alpha 1]
