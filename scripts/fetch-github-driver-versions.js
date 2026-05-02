@@ -485,7 +485,7 @@ async function main() {
   const ltsStream = hasSbomLts
     ? buildStreamFromSbom(
         "bluefin-lts",
-        "Bluefin LTS",
+        "Bluefin LTS and GDX",
         "Long-term support stream from ublue-os/bluefin-lts.",
         "sudo bootc switch ghcr.io/ublue-os/bluefin:lts --enforce-container-sigpolicy",
         sbomCache,
@@ -494,7 +494,7 @@ async function main() {
       )
     : buildStreamFromApi(
         "bluefin-lts",
-        "Bluefin LTS",
+        "Bluefin LTS and GDX",
         "Long-term support stream from ublue-os/bluefin-lts.",
         "sudo bootc switch ghcr.io/ublue-os/bluefin:lts --enforce-container-sigpolicy",
         ltsReleases,
