@@ -77,6 +77,7 @@ const PRODUCT_SPECS = [
     nvidiaPackage: "bluefin-nvidia-open",
     nvidiaTagFallback: { lts: "latest" },
     allowTestingStreams: true,
+    keepEvenIfStale: true,
     isoSectionLink: "/downloads#bluefin-lts",
   },
   {
@@ -93,6 +94,7 @@ const PRODUCT_SPECS = [
     nvidiaPackage: "bluefin-dx-nvidia-open",
     nvidiaTagFallback: { lts: "latest" },
     allowTestingStreams: true,
+    keepEvenIfStale: true,
     isoSectionLink: "/downloads#bluefin-lts",
   },
   {
@@ -147,16 +149,16 @@ function lookupSbomVersions(sbomCache, streamId) {
 }
 
 /**
- * For latest-tag streams (e.g. Dakota) the SBOM release keys are in the form
- * "latest-YYYYMMDD".  Parse the most recent one to produce an ISO-8601 date
- * that can be used as lastPublishedAt.
+ * For streams whose SBOM release keys encode a date suffix (e.g. "stable-20260501",
+ * "lts-20260428", "latest-20260502"), parse the most recent one to produce an
+ * ISO-8601 date usable as lastPublishedAt.
  */
 function sbomLatestCreatedAt(sbomCache, streamId) {
   const stream = sbomCache?.streams?.[streamId];
   if (!stream?.releases) return null;
   const dateKeys = Object.keys(stream.releases)
     .map((key) => {
-      const m = /^latest-(\d{4})(\d{2})(\d{2})$/.exec(key);
+      const m = /(\d{4})(\d{2})(\d{2})$/.exec(key);
       return m ? `${m[1]}-${m[2]}-${m[3]}T00:00:00Z` : null;
     })
     .filter(Boolean)
@@ -253,7 +255,11 @@ function latestFeedItem(feeds, source) {
 
   const match = items.find((item) => {
     const title = (item.title || "").toLowerCase();
-    if (stream === "lts") return title.includes(" lts:");
+    if (stream === "lts") {
+      // Old format: "bluefin-lts lts: 20251223 ..."
+      // New format: "lts.20260501: lts.20260501 release"
+      return title.includes(" lts:") || /^lts\.\d{8}:/.test(title);
+    }
     return title.startsWith(`${stream}-`);
   });
 
@@ -618,15 +624,22 @@ async function buildProduct(spec, feeds, cachedById, ageHours, sbomCache) {
     metadata.digestLink = versionsFromFeed.release.assetsUrl;
   }
 
-  const updatedAt =
-    latestUpdatedAt(versions) || existing?.lastPublishedAt || null;
-  const staleCutoff = Date.now() - STALE_DAYS * 24 * 60 * 60 * 1000;
-  const stale = updatedAt ? Date.parse(updatedAt) < staleCutoff : false;
+  // Precedence for lastPublishedAt:
+  // 1. GHCR packages API timestamp (most authoritative, rarely available)
+  // 2. GitHub releases feed pubDate
+  // 3. SBOM cache date derived from release key (e.g. lts-20260501 → 2026-05-01)
+  // 4. Existing cached value (last resort — can be stale from an old run)
+  const updatedAt = latestUpdatedAt(versions) || null;
+  const sbomDate = spec.sbomStreamId ? sbomLatestCreatedAt(sbomCache, spec.sbomStreamId) : null;
   const lastPublishedAt =
     updatedAt ||
     feedItem?.pubDate ||
-    (spec.sbomStreamId ? sbomLatestCreatedAt(sbomCache, spec.sbomStreamId) : null) ||
+    sbomDate ||
+    existing?.lastPublishedAt ||
     null;
+  const staleCutoff = Date.now() - STALE_DAYS * 24 * 60 * 60 * 1000;
+  const bestDateForStale = updatedAt || feedItem?.pubDate || sbomDate || null;
+  const stale = bestDateForStale ? Date.parse(bestDateForStale) < staleCutoff : false;
 
   return {
     id: spec.id,
