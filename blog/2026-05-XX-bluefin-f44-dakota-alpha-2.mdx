@@ -12,16 +12,46 @@ import MusicPlaylist from "@site/src/components/MusicPlaylist";
 import ReleaseContributors from "@site/src/components/ReleaseContributors";
 import ContributorCardGrid from "@site/src/components/ContributorCardGrid";
 import LatestOsReleaseCard from "@site/src/components/LatestOsReleaseCard";
+import BlogFigure from "@site/src/components/blog/BlogFigure";
 
 [TODO: opening paragraph]
 
+I am not going to lie I haven't been this excited about Bluefin since the start of the project. We find ourselves on the day of a major Fedora release with three fantastic options. 
+
+I know what you're thinking (especially you McPhail). We got rid of Bluefin GTS and now the team decided to make another one. How many of these things are there it's like a string of Jurassic Park sequels. 
+
+First let's level set. The product is `Bluefin`. That's the default Fedora one. The other two are for different kinds of Linux nerds - we won't be adding Dakotaraptor the website or anything like that. However, let's nerd out for a bit and  explain how we got here.
+
+Also spoiler alert, we will be announcing some awesome _new news_ about our Fedora variant soon!
+
 ## Bluefin on Fedora 44
+
+First let's check the goodies in this release: 
 
 <LatestOsReleaseCard stream="stable" />
 
+Now, I will start with the biggest news of all. Timothee Ravier has [announced new sealed base images](https://fedoramagazine.org/sealed-atomic-desktops-test-images/) for our use. This is the most fundamental change to this variant in it's 5-ish year history.
+
 [TODO: intro paragraph about the F44 rebase]
 
+The new sealed bootable container images bring:
+
+- **systemd-boot** replaces GRUB as the bootloader
+- **Unified Kernel Images (UKI)** — kernel, initrd, and command line bundled and signed for Secure Boot
+- **composefs with fs-verity** — every file in the OS image is cryptographically verified at read time, managed by bootc
+- **Full verified boot chain** from firmware → bootloader → kernel → OS image, all Secure Boot signed
+- **TPM-backed passwordless disk unlocking** — the main user-visible benefit; unlocking is tied to the verified boot state
+- Supports **UEFI on x86_64 and aarch64**
+
 - [GNOME 50](https://release.gnome.org/50/) — [TODO: highlight the key GNOME 50 feature you care about]
+
+{/* Drop your GNOME 50 GIF here: static/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/gnome50-feature.gif */}
+<BlogFigure
+  src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/gnome50-feature.gif"
+  alt="GNOME 50 feature demonstration"
+  caption="[TODO: caption describing the GNOME 50 feature shown]"
+  maxWidth="720px"
+/>
 - Linux 6.13, Mesa 25.1, Podman 5.5 — see the full [changelog](https://docs.projectbluefin.io/changelogs)
 - [Fedora 44 Release Notes](https://docs.fedoraproject.org/en-US/fedora/latest/release-notes/)
 
@@ -67,6 +97,13 @@ sudo bootc switch --enforce-container-sigpolicy ghcr.io/ublue-os/$IMAGE_NAME:lts
 - Ghostty as the default terminal
 
 [TODO: screenshot / banner image]
+
+{/* Drop the Dakota banner GIF here: static/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/dakota-alpha-2-banner.gif */}
+<BlogFigure
+  src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/dakota-alpha-2-banner.gif"
+  alt="Dakota Alpha 2 desktop"
+  caption="[TODO: caption for Dakota banner]"
+/>
 
 ### What changed since Alpha 1
 
