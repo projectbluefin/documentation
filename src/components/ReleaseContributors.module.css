@@ -8,6 +8,12 @@
   margin-bottom: 0.75rem;
 }
 
+.stats {
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
 .legend {
   display: flex;
   flex-wrap: wrap;

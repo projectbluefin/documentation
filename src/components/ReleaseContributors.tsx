@@ -15,6 +15,8 @@ export interface ReleaseContributor {
 interface ReleaseContributorsProps {
   contributors: ReleaseContributor[];
   title?: string;
+  /** Stats sentence shown below the title, e.g. country/percentage info. */
+  stats?: string;
 }
 
 const RoleColors: Record<ContributorRole, string> = {
@@ -34,6 +36,7 @@ const RoleLabels: Record<ContributorRole, string> = {
 const ReleaseContributors: React.FC<ReleaseContributorsProps> = ({
   contributors,
   title = "Bluefin Brought to You By",
+  stats,
 }) => {
   const sorted = [...contributors].sort((a, b) =>
     a.login.toLowerCase().localeCompare(b.login.toLowerCase()),
@@ -42,6 +45,7 @@ const ReleaseContributors: React.FC<ReleaseContributorsProps> = ({
   return (
     <div className={styles.section}>
       <h2>{title}</h2>
+      {stats && <p className={styles.stats}>{stats}</p>}
       <div className={styles.legend}>
         {(Object.keys(RoleColors) as ContributorRole[])
           .filter((r) => r !== "contributor")
