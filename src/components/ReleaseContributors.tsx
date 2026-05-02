@@ -11,7 +11,8 @@ export type ContributorRole =
   | "bug-hunter"
   | "ublue-contributor"
   | "aurora-contributor"
-  | "contributor";
+  | "contributor"
+  | "emeritus";
 
 export interface ReleaseContributor {
   login: string;
@@ -40,6 +41,7 @@ const RoleTitles: Record<ContributorRole, string> = {
   "ublue-contributor": "Universal Blue Contributor",
   "aurora-contributor": "Aurora Contributor",
   contributor: "Bluefin Contributor",
+  emeritus: "Maintainer Emeritus",
 };
 
 type HighlightType = boolean | "gold" | "silver" | "diamond";
@@ -53,6 +55,7 @@ const RoleHighlight: Record<ContributorRole, HighlightType> = {
   "ublue-contributor": false,
   "aurora-contributor": false,
   contributor: false,
+  emeritus: "silver",
 };
 
 const RoleLegendColor: Record<ContributorRole, string> = {
@@ -65,6 +68,7 @@ const RoleLegendColor: Record<ContributorRole, string> = {
   "ublue-contributor": "#1a7fd4",
   "aurora-contributor": "#9333ea",
   contributor: "var(--ifm-color-emphasis-300)",
+  emeritus: "#8a9db5",
 };
 
 const RoleOrder: ContributorRole[] = [
@@ -74,6 +78,7 @@ const RoleOrder: ContributorRole[] = [
   "gnome-os",
   "artist",
   "bug-hunter",
+  "emeritus",
   "ublue-contributor",
   "aurora-contributor",
   "contributor",
@@ -118,7 +123,12 @@ const ReleaseContributors: React.FC<ReleaseContributorsProps> = ({
     a.login.toLowerCase().localeCompare(b.login.toLowerCase()),
   );
 
-  const legendRoles = RoleOrder.filter((r) => r !== "contributor");
+  // Collect all roles actually used in this release
+  const usedRoles = new Set(contributors.flatMap((c) => effectiveRoles(c)));
+  // Legend: show each role at most once, skip contributor and unused roles
+  const legendRoles = RoleOrder.filter(
+    (r) => r !== "contributor" && usedRoles.has(r),
+  );
 
   return (
     <div className={styles.section}>
