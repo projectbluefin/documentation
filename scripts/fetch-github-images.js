@@ -171,12 +171,8 @@ function normalizeSbomStreamTag(streamTag) {
   if (!streamTag) return null;
   if (streamTag === "stable-daily") return "stable";
   // Normalize dot-separated tags (e.g. "lts.hwe") to dash-separated ("lts-hwe")
-  // and strip "-testing" suffix so testing streams look up the right SBOM stream:
-  //   "lts-hwe-testing" → "lts-hwe" → "bluefin-lts-hwe"
-  //   "lts-testing"     → "lts"     → "bluefin-lts"
-  return streamTag
-    .replace(/\./g, "-")
-    .replace(/-testing(-\d+)?$/, "");
+  // so they map correctly to SBOM stream IDs like "bluefin-lts-hwe".
+  return streamTag.replace(/\./g, "-");
 }
 
 function buildSbomStreamId(spec, streamTag) {
@@ -242,11 +238,32 @@ function parseFeedVersion(feedItem, labels) {
 
 function sbomVersionsForStream(sbomCache, spec, streamTag) {
   if (!sbomCache || !spec) return null;
+
+  // First pass: try exact stream ID (dots → dashes, -testing preserved).
+  // Hits dedicated streams like bluefin-lts-hwe-testing, bluefin-lts-testing-50.
   const exactStreamId = buildSbomStreamId(spec, streamTag);
   if (exactStreamId) {
     const exact = lookupSbomVersions(sbomCache, exactStreamId);
     if (exact) return exact;
   }
+
+  // Second pass: strip -testing(-N)? suffix and retry.
+  // Fallback for testing streams without a dedicated SBOM entry:
+  //   lts-hwe-testing → lts-hwe → bluefin-lts-hwe
+  //   lts-testing     → lts     → bluefin-lts
+  const normalizedTag = normalizeSbomStreamTag(streamTag);
+  if (!normalizedTag) {
+    return fallbackSbomVersionsByPackage(sbomCache, spec);
+  }
+  const baseTag = normalizedTag.replace(/-testing(-\d+)?$/, "");
+  if (baseTag !== normalizedTag) {
+    const baseStreamId = buildSbomStreamId(spec, baseTag);
+    if (baseStreamId && baseStreamId !== exactStreamId) {
+      const base = lookupSbomVersions(sbomCache, baseStreamId);
+      if (base) return base;
+    }
+  }
+
   return fallbackSbomVersionsByPackage(sbomCache, spec);
 }
 
@@ -398,25 +415,8 @@ async function buildStreamVersionInfo(
     podman: sbomVersions?.podman || null,
   };
 
-  // SBOM-only policy: fedora version is sourced from SBOM packageVersions.
+  // SBOM-only policy: all version data sourced from SBOM packageVersions only.
   // Do not infer from release bodies or image labels.
-
-  // For testing streams, the SBOM cache points at the nearest stable stream
-  // (e.g. lts-hwe-testing → bluefin-lts-hwe) which may be several kernels
-  // behind. Read the actual kernel from the ostree.linux image label instead
-  // so the displayed kernel is always accurate.
-  if (streamTag.includes("-testing")) {
-    try {
-      const inspected = await inspectImage(imageRef, streamTag);
-      const ostreeLinux = inspected?.Labels?.["ostree.linux"];
-      if (ostreeLinux) {
-        // Strip architecture suffix: "6.19.12-100.fc42.x86_64" → "6.19.12-100.fc42"
-        versions.kernel = ostreeLinux.replace(/\.(x86_64|aarch64|arm64)$/, "");
-      }
-    } catch {
-      // keep SBOM kernel as fallback
-    }
-  }
 
   if (spec.versionOverrides) {
     versions.gnome = spec.versionOverrides.gnome ?? versions.gnome;
