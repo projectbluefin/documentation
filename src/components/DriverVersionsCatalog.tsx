@@ -260,7 +260,7 @@ interface DriverVersionsCatalogProps {
 export default function DriverVersionsCatalog({ streamId }: DriverVersionsCatalogProps): React.JSX.Element {
   const allStreams = Array.isArray(catalog.streams) ? catalog.streams : [];
   const stream = allStreams.find((entry) => entry.id === streamId);
-  const fallbackLabel = streamId === "bluefin-lts" ? "LTS" : "Stable";
+  const fallbackLabel = streamId === "bluefin-lts" ? "LTS and GDX" : "Stable";
 
   if (!stream && allStreams.length > 0) {
     return (
@@ -306,7 +306,7 @@ export default function DriverVersionsCatalog({ streamId }: DriverVersionsCatalo
           <section key={stream.id} className={styles.streamSection}>
             <header className={styles.streamHeader}>
               <span className={styles.streamMeta}>
-                {stream.source} · {stream.rowCount} releases in {streamId === "bluefin-lts" ? "LTS" : "Stable"} ·
+                {stream.source} · {stream.rowCount} releases in {streamId === "bluefin-lts" ? "LTS and GDX" : "Stable"} ·
                 updated {formatDate(catalog.generatedAt)}
               </span>
             </header>
