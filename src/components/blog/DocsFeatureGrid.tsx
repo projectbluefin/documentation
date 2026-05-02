@@ -6,6 +6,7 @@ interface DocsFeature {
   title: string;
   href: string;
   description: string;
+  body?: string;
   thumbnail?: string;
 }
 
@@ -14,27 +15,35 @@ interface DocsFeatureGridProps {
 }
 
 const DocsFeatureGrid: React.FC<DocsFeatureGridProps> = ({ features }) => (
-  <div className={styles.grid}>
+  <div className={styles.list}>
     {features.map((f) => (
-      <a
-        key={f.href}
-        href={f.href}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={`${styles.card} ${f.thumbnail ? styles.cardWithThumb : ""}`}
-      >
-        {f.thumbnail ? (
-          <div className={styles.thumb}>
-            <img src={f.thumbnail} alt={f.title} loading="lazy" />
-          </div>
-        ) : (
+      <div key={f.href} className={styles.row}>
+        <div className={styles.textSide}>
           <span className={styles.icon}>{f.icon}</span>
-        )}
-        <div className={styles.body}>
-          <span className={styles.title}>{f.title}</span>
-          <span className={styles.description}>{f.description}</span>
+          <a
+            href={f.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.title}
+          >
+            {f.title}
+          </a>
+          <p className={styles.description}>{f.description}</p>
+          {f.body && <p className={styles.body}>{f.body}</p>}
         </div>
-      </a>
+        {f.thumbnail && (
+          <a
+            href={f.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.thumbSide}
+            tabIndex={-1}
+            aria-hidden="true"
+          >
+            <img src={f.thumbnail} alt={f.title} loading="lazy" />
+          </a>
+        )}
+      </div>
     ))}
   </div>
 );
