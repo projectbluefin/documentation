@@ -1,8 +1,47 @@
 const fs = require("fs");
 const path = require("path");
+const yaml = require("js-yaml");
+const glob = require("glob");
 
-// List all GitHub usernames from donations.mdx
-const GITHUB_USERNAMES = [
+const REPO_ROOT = path.join(__dirname, "..");
+
+/**
+ * Collect all GitHub logins referenced anywhere in the site:
+ * 1. authors.yaml – socials.github field
+ * 2. blog/**\/*.{md,mdx} – inline `login: "username"` props (contributor grids)
+ * 3. Hardcoded list below (donations page, legacy)
+ */
+function discoverUsernames() {
+  const logins = new Set();
+
+  // 1. authors.yaml
+  const authorsFile = path.join(REPO_ROOT, "blog", "authors.yaml");
+  if (fs.existsSync(authorsFile)) {
+    const parsed = yaml.load(fs.readFileSync(authorsFile, "utf-8")) ?? {};
+    for (const author of Object.values(parsed)) {
+      const gh = author?.socials?.github;
+      if (gh) logins.add(gh);
+    }
+  }
+
+  // 2. Blog files – login: "username" prop
+  const blogFiles = glob.sync("blog/**/*.{md,mdx}", { cwd: REPO_ROOT });
+  const loginRe = /\blogin:\s*["']([A-Za-z0-9_-]+)["']/g;
+  for (const rel of blogFiles) {
+    const content = fs.readFileSync(path.join(REPO_ROOT, rel), "utf-8");
+    for (const match of content.matchAll(loginRe)) {
+      logins.add(match[1]);
+    }
+  }
+
+  // 3. Hardcoded additions (donations page, supporters, etc.)
+  for (const u of HARDCODED_USERNAMES) logins.add(u);
+
+  return Array.from(logins);
+}
+
+// Hardcoded list – donations.mdx and other pages not covered by blog scanning
+const HARDCODED_USERNAMES = [
   // Current Maintainers
   "ahmedadan",
   "befanyt",
@@ -115,6 +154,9 @@ const GITHUB_USERNAMES = [
 
 const OUTPUT_DIR = path.join(__dirname, "..", "static", "data");
 const OUTPUT_FILE = path.join(OUTPUT_DIR, "github-profiles.json");
+
+// Resolved at startup so the count is accurate in log output
+const GITHUB_USERNAMES = discoverUsernames();
 
 // Cache configuration
 const CACHE_MAX_AGE_HOURS = 24;
@@ -261,24 +303,49 @@ async function fetchSponsorableStatus(usernames) {
 }
 
 async function fetchAllProfiles() {
-  // Check if existing cache is fresh enough
-  if (fs.existsSync(OUTPUT_FILE)) {
-    const stats = fs.statSync(OUTPUT_FILE);
-    const ageHours = (Date.now() - stats.mtimeMs) / (1000 * 60 * 60);
+  const force = process.argv.includes("--force");
 
-    if (ageHours < CACHE_MAX_AGE_HOURS && !process.argv.includes("--force")) {
-      console.log(
-        `✓ Cache is ${ageHours.toFixed(1)}h old (max ${CACHE_MAX_AGE_HOURS}h). Skipping fetch.`,
-      );
-      console.log(`  Use --force flag to bypass cache and force fresh fetch.`);
-      return;
-    } else if (ageHours >= CACHE_MAX_AGE_HOURS) {
-      console.log(
-        `⏱️  Cache is ${ageHours.toFixed(1)}h old (max ${CACHE_MAX_AGE_HOURS}h). Fetching fresh data...`,
-      );
-    } else {
-      console.log("🔄 --force flag detected. Fetching fresh data...");
+  // Load existing cached profiles (if any) so we can do a delta fetch
+  let existingProfiles = {};
+  let cacheAgeHours = Infinity;
+  if (fs.existsSync(OUTPUT_FILE)) {
+    try {
+      existingProfiles = JSON.parse(fs.readFileSync(OUTPUT_FILE, "utf-8"));
+      const stats = fs.statSync(OUTPUT_FILE);
+      cacheAgeHours = (Date.now() - stats.mtimeMs) / (1000 * 60 * 60);
+    } catch {
+      existingProfiles = {};
     }
+  }
+
+  // Determine which usernames need fetching
+  // - --force: fetch everyone
+  // - cache fresh AND no missing: skip entirely
+  // - cache fresh BUT missing entries: fetch only the missing ones (delta)
+  // - cache stale: fetch everyone for a full refresh
+  const existingKeys = new Set(Object.keys(existingProfiles).map((k) => k.toLowerCase()));
+  const missing = GITHUB_USERNAMES.filter((u) => !existingKeys.has(u.toLowerCase()));
+
+  let usernamestoFetch;
+  if (force) {
+    console.log("🔄 --force flag detected. Fetching all profiles...");
+    usernamestoFetch = GITHUB_USERNAMES;
+  } else if (cacheAgeHours < CACHE_MAX_AGE_HOURS && missing.length === 0) {
+    console.log(
+      `✓ Cache is ${cacheAgeHours.toFixed(1)}h old and complete (${Object.keys(existingProfiles).length} profiles). Skipping fetch.`,
+    );
+    console.log(`  Use --force flag to bypass cache and force fresh fetch.`);
+    return;
+  } else if (cacheAgeHours < CACHE_MAX_AGE_HOURS && missing.length > 0) {
+    console.log(
+      `✓ Cache is ${cacheAgeHours.toFixed(1)}h old but missing ${missing.length} profile(s). Fetching delta...`,
+    );
+    usernamestoFetch = missing;
+  } else {
+    console.log(
+      `⏱️  Cache is ${cacheAgeHours === Infinity ? "absent" : `${cacheAgeHours.toFixed(1)}h old`} (max ${CACHE_MAX_AGE_HOURS}h). Fetching all profiles...`,
+    );
+    usernamestoFetch = GITHUB_USERNAMES;
   }
 
   if (!GITHUB_TOKEN) {
@@ -291,12 +358,12 @@ async function fetchAllProfiles() {
     console.log("✓ Using authenticated GitHub API access\n");
   }
 
-  console.log(`Fetching ${GITHUB_USERNAMES.length} GitHub profiles...`);
+  console.log(`Fetching ${usernamestoFetch.length} GitHub profiles (${GITHUB_USERNAMES.length} total discovered)...`);
 
-  const profiles = {};
+  // Start with existing profiles and overlay fresh fetches
+  const profiles = force ? {} : { ...existingProfiles };
 
-  // Fetch profiles with a small delay to avoid rate limiting
-  for (const username of GITHUB_USERNAMES) {
+  for (const username of usernamestoFetch) {
     console.log(`Fetching ${username}...`);
     const profile = await fetchProfile(username);
 
@@ -308,14 +375,25 @@ async function fetchAllProfiles() {
     await new Promise((resolve) => setTimeout(resolve, 100));
   }
 
-  console.log(
-    `\nSuccessfully fetched ${Object.keys(profiles).length}/${GITHUB_USERNAMES.length} profiles`,
-  );
+  const fetched = Object.keys(profiles).length;
+  console.log(`\nSuccessfully fetched ${usernamestoFetch.length} profiles (${fetched} total in cache)`);
 
-  // Enrich with sponsorable status and donation URLs via a single batched GraphQL call
+  // Validate: fail if we fetched fewer profiles than we expected
+  const failedCount = usernamestoFetch.length - usernamestoFetch.filter((u) => profiles[u]).length;
+  if (failedCount > 0) {
+    console.warn(`⚠️  ${failedCount} profile(s) could not be fetched (API errors or deleted accounts).`);
+  }
+  if (fetched === 0) {
+    console.error("\n❌ No profiles in output! Build will fail without profile data.");
+    process.exit(1);
+  }
+
+  // Enrich with sponsorable status and donation URLs via a single batched GraphQL call.
+  // Only re-check users we just fetched to avoid hammering GraphQL for the full set every delta run.
   console.log("\nChecking GitHub Sponsors listings and social donation accounts...");
-  const { sponsorable: sponsorableSet, donationUrls } = await fetchSponsorableStatus(GITHUB_USERNAMES);
-  for (const username of Object.keys(profiles)) {
+  const { sponsorable: sponsorableSet, donationUrls } = await fetchSponsorableStatus(usernamestoFetch);
+  for (const username of usernamestoFetch) {
+    if (!profiles[username]) continue;
     const lower = username.toLowerCase();
     profiles[username].sponsorable = sponsorableSet.has(lower);
     profiles[username].donationUrl = donationUrls.get(lower) ?? null;
@@ -325,22 +403,12 @@ async function fetchAllProfiles() {
   console.log(`✓ ${sponsorCount} users have active GitHub Sponsors listings`);
   console.log(`✓ ${donationCount} users have donation links from social accounts`);
 
-  if (Object.keys(profiles).length === 0) {
-    console.error(
-      "\n❌ No profiles fetched! Build will fail without profile data.",
-    );
-    console.error("   Please set a GitHub token and try again.");
-    process.exit(1);
-  }
-
   // Ensure output directory exists
   if (!fs.existsSync(OUTPUT_DIR)) {
     fs.mkdirSync(OUTPUT_DIR, { recursive: true });
   }
 
-  // Write to file
   fs.writeFileSync(OUTPUT_FILE, JSON.stringify(profiles, null, 2), "utf-8");
-
   console.log(`✓ Profiles saved to ${OUTPUT_FILE}`);
 }
 
