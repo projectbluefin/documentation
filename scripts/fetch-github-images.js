@@ -600,6 +600,7 @@ async function buildProduct(spec, feeds, cachedById, ageHours, sbomCache) {
     latestUpdatedAt(versions) || existing?.lastPublishedAt || null;
   const staleCutoff = Date.now() - STALE_DAYS * 24 * 60 * 60 * 1000;
   const stale = updatedAt ? Date.parse(updatedAt) < staleCutoff : false;
+  const lastPublishedAt = updatedAt || feedItem?.pubDate || null;
 
   return {
     id: spec.id,
@@ -618,7 +619,7 @@ async function buildProduct(spec, feeds, cachedById, ageHours, sbomCache) {
     versions: versionsFromFeed,
     security: buildSecurityInfo(spec, inspectTag),
     inspectTag,
-    lastPublishedAt: updatedAt,
+    lastPublishedAt: lastPublishedAt,
     stale,
     keepEvenIfStale: Boolean(spec.keepEvenIfStale),
   };
