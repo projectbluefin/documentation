@@ -236,6 +236,11 @@ const OsReleaseCard: React.FC<OsReleaseCardProps> = ({ event }) => {
 
   const cardTitle = isLts ? "Bluefin LTS" : isDakota ? "Bluefin Dakota" : "Bluefin";
   const imagesAnchor = isLts ? "bluefin-lts" : isDakota ? "bluefin-dakota" : "bluefin-stable";
+  const downloadUrl = !isDakota
+    ? isLts
+      ? "/downloads#bluefin-lts"
+      : "/downloads"
+    : null;
   const cardSlug = isLts ? "bluefin-lts" : isDakota ? "dakota" : "bluefin";
   const cardAlt = cardTitle;
   const { siteConfig } = useDocusaurusContext();
@@ -335,6 +340,11 @@ const OsReleaseCard: React.FC<OsReleaseCardProps> = ({ event }) => {
         >
           Image details →
         </a>
+        {downloadUrl && (
+          <a href={downloadUrl} className={styles.viewLink}>
+            Download →
+          </a>
+        )}
         <EmbedButton snippet={embedSnippet} />
       </div>
     </article>
