@@ -136,7 +136,8 @@ const MusicPlaylist: React.FC<MusicPlaylistProps> = ({
 
   // ── embed=true (default) — slim horizontal player ──────────────────────
   return (
-    <div className={styles.nowPlayingBar}>
+    <>
+      <div className={`${styles.nowPlayingBar} ${hasScrolled ? styles.scrolled : ""}`}>
       {/* Left: album thumbnail */}
       <div className={styles.thumbnailWrapper}>{thumbnailEl}</div>
 
@@ -199,6 +200,9 @@ const MusicPlaylist: React.FC<MusicPlaylistProps> = ({
         </button>
       )}
     </div>
+    {/* Spacer keeps content from sliding under the sticky bar when it locks */}
+    <div className={styles.stickySpacerBottom} />
+    </>
   );
 };
 

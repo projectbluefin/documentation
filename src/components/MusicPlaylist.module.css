@@ -10,11 +10,22 @@
   gap: 0.75rem;
   width: 100%;
   padding: 0.6rem 1rem;
-  margin-bottom: 1.5rem;
   background-color: var(--ifm-color-emphasis-100);
   border: 1px solid var(--ifm-color-emphasis-300);
   border-radius: 8px;
   box-sizing: border-box;
+  box-shadow: none;
+  transition: box-shadow 0.2s ease;
+}
+
+/* Shadow fades in once the bar is stuck to the top */
+.nowPlayingBar.scrolled {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+/* Spacer below the bar so content doesn't ride up underneath it */
+.stickySpacerBottom {
+  height: 1.5rem;
 }
 
 /* ── Left: album thumbnail (48×48) ──────────────────────────────────── */
