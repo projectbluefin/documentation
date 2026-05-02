@@ -28,7 +28,6 @@
 }
 
 .title {
-  font-size: 1rem;
   font-weight: 700;
   color: var(--ifm-color-emphasis-900);
   text-decoration: none;
@@ -41,7 +40,6 @@
 
 .description {
   margin: 0;
-  font-size: 0.875rem;
   font-weight: 500;
   color: var(--ifm-color-emphasis-700);
   line-height: 1.4;
@@ -49,7 +47,6 @@
 
 .body {
   margin: 0;
-  font-size: 0.85rem;
   color: var(--ifm-color-emphasis-600);
   line-height: 1.6;
 }
