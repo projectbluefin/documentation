@@ -33,8 +33,8 @@ const RoleTitles: Record<ContributorRole, string | undefined> = {
 
 type HighlightType = boolean | "gold" | "silver" | "diamond";
 const RoleHighlight: Record<ContributorRole, HighlightType> = {
-  maintainer: "gold",
-  artist: "silver",
+  maintainer: false,
+  artist: false,
   "gnome-os": false,
   "bug-hunter": false,
   contributor: false,
