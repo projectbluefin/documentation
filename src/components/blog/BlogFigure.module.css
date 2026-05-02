@@ -1,0 +1,19 @@
+.figure {
+  margin: 1.5rem auto;
+  text-align: center;
+}
+
+.image {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  display: block;
+}
+
+.caption {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--ifm-color-emphasis-600);
+  font-style: italic;
+}
