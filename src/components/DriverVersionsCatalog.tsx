@@ -3,7 +3,23 @@ import Link from "@docusaurus/Link";
 import Heading from "@theme/Heading";
 import CodeBlock from "@theme/CodeBlock";
 import driverVersionsData from "@site/static/data/driver-versions.json";
+import streamPinsData from "@site/static/data/stream-pins.json";
 import styles from "./DriverVersionsCatalog.module.css";
+
+interface StreamPins {
+  hweKernel?: string | null;
+  kernel?: string | null;
+  mesa?: string | null;
+  nvidia?: string | null;
+  gnome?: string | null;
+}
+
+interface PinsData {
+  generatedAt?: string;
+  streams?: Record<string, StreamPins>;
+}
+
+const pinsCatalog = streamPinsData as unknown as PinsData;
 
 interface VersionSet {
   kernel: string | null;
@@ -88,16 +104,20 @@ function ReleaseNode({
   row,
   previousRow,
   emphasize,
+  pins,
 }: {
   row: DriverRow;
   previousRow?: DriverRow;
   emphasize: boolean;
+  pins?: StreamPins | null;
 }) {
   const kernel = valueOrFallback(row.versions.kernel);
   const nvidia = valueOrFallback(row.versions.nvidia);
   const mesa = valueOrFallback(row.versions.mesa);
   const hwe = row.versions.hweKernel;
   const gnome = valueOrFallback(row.versions.gnome);
+
+  const hweIsPinned = Boolean(pins?.hweKernel && hwe && hwe === pins.hweKernel);
 
   const kernelMajor = majorNumber(row.versions.kernel);
   const previousKernelMajor = majorNumber(previousRow?.versions.kernel);
@@ -196,6 +216,14 @@ function ReleaseNode({
             <div className={styles.majorVersionCard}>
               <span className={styles.majorVersionLabel}>HWE Kernel</span>
               <VersionValue value={hwe} />
+              {hweIsPinned && (
+                <span
+                  className={styles.pinnedTag}
+                  title={`Pinned to ${pins!.hweKernel} by maintainer — not following upstream`}
+                >
+                  📌 Pinned
+                </span>
+              )}
             </div>
           )}
           <div
@@ -302,6 +330,8 @@ export default function DriverVersionsCatalog({ streamId }: DriverVersionsCatalo
               row.versions.gnome,
           );
 
+        const streamPins = pinsCatalog.streams?.[streamId] ?? null;
+
         return (
           <section key={stream.id} className={styles.streamSection}>
             <header className={styles.streamHeader}>
@@ -314,7 +344,7 @@ export default function DriverVersionsCatalog({ streamId }: DriverVersionsCatalo
             {latest ? (
               <>
                 <div className={styles.timeline}>
-                  <ReleaseNode row={latest} previousRow={older[0]} emphasize />
+                  <ReleaseNode row={latest} previousRow={older[0]} emphasize pins={streamPins} />
                 </div>
 
                 {older.length > 0 && (
@@ -325,6 +355,7 @@ export default function DriverVersionsCatalog({ streamId }: DriverVersionsCatalo
                         row={row}
                         previousRow={older[index + 1]}
                         emphasize={false}
+                        pins={streamPins}
                       />
                     ))}
                   </div>

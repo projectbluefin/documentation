@@ -200,6 +200,22 @@
   border-color: rgba(234, 179, 8, 0.4);
 }
 
+.chipPinned {
+  background: rgba(251, 191, 36, 0.08);
+  border-color: rgba(180, 83, 9, 0.35);
+}
+
+[data-theme="dark"] .chipPinned {
+  background: rgba(120, 53, 15, 0.25);
+  border-color: rgba(194, 65, 12, 0.5);
+}
+
+.chipPinnedIcon {
+  font-size: 0.72rem;
+  line-height: 1;
+  margin-left: 2px;
+}
+
 .chipLabel {
   font-weight: 600;
   color: var(--ifm-color-emphasis-700);

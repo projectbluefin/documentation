@@ -7,7 +7,38 @@ import type {
   ParsedCommit,
   ParsedDiffEntry,
 } from "../types/os-feed";
+import streamPinsData from "@site/static/data/stream-pins.json";
 import styles from "./OsReleaseCard.module.css";
+
+interface StreamPins {
+  hweKernel?: string | null;
+  kernel?: string | null;
+  mesa?: string | null;
+  nvidia?: string | null;
+  gnome?: string | null;
+}
+
+interface PinsData {
+  streams?: Record<string, StreamPins>;
+}
+
+/** Map OsReleaseEvent stream IDs to stream-pins.json stream keys. */
+const STREAM_TO_PIN_KEY: Record<string, string> = {
+  lts: "bluefin-lts",
+  stable: "bluefin-stable",
+  "stable-daily": "bluefin-stable",
+};
+
+/** Map chip display name (lowercase) to StreamPins field. */
+const CHIP_NAME_TO_PIN_KEY: Record<string, keyof StreamPins> = {
+  "hwe kernel": "hweKernel",
+  kernel: "kernel",
+  mesa: "mesa",
+  nvidia: "nvidia",
+  gnome: "gnome",
+};
+
+const pinsCatalog = streamPinsData as unknown as PinsData;
 
 // ── Date formatting ───────────────────────────────────────────────────────────
 
@@ -146,16 +177,26 @@ function CommitsSection({ commits }: { commits: ParsedCommit[] }) {
 
 // ── Version chip ──────────────────────────────────────────────────────────────
 
-function VersionChip({ pkg }: { pkg: ParsedMajorPackage }) {
+function VersionChip({ pkg, pinnedVersion }: { pkg: ParsedMajorPackage; pinnedVersion?: string | null }) {
   const changed = Boolean(pkg.prevVersion);
+  const isPinned = pinnedVersion != null && pkg.version === pinnedVersion;
   return (
     <span
-      className={`${styles.versionChip} ${changed ? styles.chipChanged : ""}`}
-      title={changed ? `Previously: ${pkg.prevVersion}` : undefined}
+      className={`${styles.versionChip} ${changed ? styles.chipChanged : ""} ${isPinned ? styles.chipPinned : ""}`}
+      title={
+        isPinned
+          ? `Pinned to ${pinnedVersion} by maintainer — not following upstream`
+          : changed
+            ? `Previously: ${pkg.prevVersion}`
+            : undefined
+      }
     >
       <span className={styles.chipLabel}>{pkg.name}</span>
       <span className={styles.chipValue}>{pkg.version}</span>
-      {changed && (
+      {isPinned && (
+        <span className={styles.chipPinnedIcon} aria-label="pinned">📌</span>
+      )}
+      {!isPinned && changed && (
         <span className={styles.chipUpdated} aria-label="updated">
           ↑
         </span>
@@ -205,6 +246,10 @@ const OsReleaseCard: React.FC<OsReleaseCardProps> = ({ event }) => {
   const streamLabel = isLts ? "LTS" : isDaily ? "Daily" : isDakota ? "Dakota" : "Stable";
   const cardVariantClass = isLts ? styles.cardLts : isDakota ? styles.cardDakota : styles.cardStable;
   const cardClass = `${styles.card} ${cardVariantClass}`;
+
+  // Pin lookup for this stream
+  const pinKey = STREAM_TO_PIN_KEY[stream] ?? null;
+  const streamPins: StreamPins | null = pinKey ? ((pinsCatalog.streams?.[pinKey] ?? null) as StreamPins | null) : null;
 
   // Key package chips (header row): subset of well-known packages.
   // Falls back to fullDiff when a name isn't in the curated majorPackages table.
@@ -275,9 +320,11 @@ const OsReleaseCard: React.FC<OsReleaseCardProps> = ({ event }) => {
       {/* ── Key package version chips ── */}
       {headerChips.length > 0 && (
         <div className={styles.chipsRow}>
-          {headerChips.map((pkg) => (
-            <VersionChip key={pkg.name} pkg={pkg} />
-          ))}
+          {headerChips.map((pkg) => {
+            const pinField = CHIP_NAME_TO_PIN_KEY[pkg.name.toLowerCase()];
+            const pinnedVersion = pinField ? streamPins?.[pinField] : null;
+            return <VersionChip key={pkg.name} pkg={pkg} pinnedVersion={pinnedVersion} />;
+          })}
         </div>
       )}
 
