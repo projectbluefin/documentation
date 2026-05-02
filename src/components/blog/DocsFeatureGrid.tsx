@@ -6,6 +6,7 @@ interface DocsFeature {
   title: string;
   href: string;
   description: string;
+  thumbnail?: string;
 }
 
 interface DocsFeatureGridProps {
@@ -20,9 +21,15 @@ const DocsFeatureGrid: React.FC<DocsFeatureGridProps> = ({ features }) => (
         href={f.href}
         target="_blank"
         rel="noopener noreferrer"
-        className={styles.card}
+        className={`${styles.card} ${f.thumbnail ? styles.cardWithThumb : ""}`}
       >
-        <span className={styles.icon}>{f.icon}</span>
+        {f.thumbnail ? (
+          <div className={styles.thumb}>
+            <img src={f.thumbnail} alt={f.title} loading="lazy" />
+          </div>
+        ) : (
+          <span className={styles.icon}>{f.icon}</span>
+        )}
         <div className={styles.body}>
           <span className={styles.title}>{f.title}</span>
           <span className={styles.description}>{f.description}</span>
