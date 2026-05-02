@@ -162,23 +162,52 @@ async function fetchProfile(username) {
 }
 
 /**
- * Batch-fetch hasSponsorsListing via GraphQL for up to 100 users per request.
- * Returns a Set of logins that have an active sponsors listing.
+ * Known donation platform provider names (matched case-insensitively against
+ * the `provider` field returned by GitHub's socialAccounts GraphQL field).
+ */
+const DONATION_PROVIDERS = [
+  "ko-fi",
+  "kofi",
+  "ko_fi",
+  "patreon",
+  "opencollective",
+  "open_collective",
+  "liberapay",
+  "buymeacoffee",
+  "buy_me_a_coffee",
+  "tidelift",
+  "paypal",
+];
+
+/**
+ * Batch-fetch hasSponsorsListing and socialAccounts via GraphQL for up to 100
+ * users per request.
+ *
+ * Returns:
+ *   sponsorable  – Set<string>         logins with an active GitHub Sponsors listing
+ *   donationUrls – Map<string, string>  login → first matched donation platform URL
  */
 async function fetchSponsorableStatus(usernames) {
   if (!GITHUB_TOKEN) {
     console.warn("⚠️  No GitHub token — skipping sponsorable check, all set to false.");
-    return new Set();
+    return { sponsorable: new Set(), donationUrls: new Map() };
   }
 
   const BATCH_SIZE = 100;
   const sponsorable = new Set();
+  const donationUrls = new Map();
 
   for (let i = 0; i < usernames.length; i += BATCH_SIZE) {
     const batch = usernames.slice(i, i + BATCH_SIZE);
-    // Build aliased GraphQL query: u0: user(login: "foo") { hasSponsorsListing }
+    // Build aliased GraphQL query including socialAccounts
     const fields = batch
-      .map((u, idx) => `u${idx}: user(login: ${JSON.stringify(u)}) { hasSponsorsListing }`)
+      .map(
+        (u, idx) =>
+          `u${idx}: user(login: ${JSON.stringify(u)}) {
+            hasSponsorsListing
+            socialAccounts(first: 10) { nodes { provider url } }
+          }`,
+      )
       .join("\n");
     const query = `{ ${fields} }`;
 
@@ -205,8 +234,21 @@ async function fetchSponsorableStatus(usernames) {
 
       batch.forEach((u, idx) => {
         const key = `u${idx}`;
-        if (json.data?.[key]?.hasSponsorsListing) {
+        const node = json.data?.[key];
+        if (!node) return;
+
+        if (node.hasSponsorsListing) {
           sponsorable.add(u.toLowerCase());
+        }
+
+        // Extract first donation platform URL from social accounts
+        const accounts = node.socialAccounts?.nodes ?? [];
+        for (const account of accounts) {
+          const provider = (account.provider ?? "").toLowerCase();
+          if (DONATION_PROVIDERS.includes(provider)) {
+            donationUrls.set(u.toLowerCase(), account.url);
+            break; // take the first match
+          }
         }
       });
     } catch (err) {
@@ -214,7 +256,7 @@ async function fetchSponsorableStatus(usernames) {
     }
   }
 
-  return sponsorable;
+  return { sponsorable, donationUrls };
 }
 
 async function fetchAllProfiles() {
@@ -269,14 +311,18 @@ async function fetchAllProfiles() {
     `\nSuccessfully fetched ${Object.keys(profiles).length}/${GITHUB_USERNAMES.length} profiles`,
   );
 
-  // Enrich with sponsorable status via a single batched GraphQL call
-  console.log("\nChecking GitHub Sponsors listings...");
-  const sponsorableSet = await fetchSponsorableStatus(GITHUB_USERNAMES);
+  // Enrich with sponsorable status and donation URLs via a single batched GraphQL call
+  console.log("\nChecking GitHub Sponsors listings and social donation accounts...");
+  const { sponsorable: sponsorableSet, donationUrls } = await fetchSponsorableStatus(GITHUB_USERNAMES);
   for (const username of Object.keys(profiles)) {
-    profiles[username].sponsorable = sponsorableSet.has(username.toLowerCase());
+    const lower = username.toLowerCase();
+    profiles[username].sponsorable = sponsorableSet.has(lower);
+    profiles[username].donationUrl = donationUrls.get(lower) ?? null;
   }
   const sponsorCount = Object.values(profiles).filter((p) => p.sponsorable).length;
+  const donationCount = Object.values(profiles).filter((p) => p.donationUrl).length;
   console.log(`✓ ${sponsorCount} users have active GitHub Sponsors listings`);
+  console.log(`✓ ${donationCount} users have donation links from social accounts`);
 
   if (Object.keys(profiles).length === 0) {
     console.error(

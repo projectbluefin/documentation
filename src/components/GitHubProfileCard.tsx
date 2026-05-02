@@ -14,6 +14,10 @@ interface GitHubUser {
   html_url: string;
   public_repos: number;
   followers: number;
+  /** True if the user has an active GitHub Sponsors listing. */
+  sponsorable?: boolean;
+  /** Donation URL from GitHub social accounts (Ko-fi, Patreon, etc.), if any. */
+  donationUrl?: string | null;
 }
 
 interface GitHubProfileCardProps {
@@ -262,9 +266,14 @@ const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
           : "";
 
   // Use explicit sponsorUrl prop, or auto-generate only if the user has an
-  // active GitHub Sponsors listing (from static data).
+  // active GitHub Sponsors listing (from static data), or fall back to a
+  // donation link from their GitHub social accounts.
+  const isGitHubSponsors = !!(sponsorUrl || user.sponsorable);
   const effectiveSponsorUrl =
-    sponsorUrl ?? (user.sponsorable ? `https://github.com/sponsors/${user.login}` : null);
+    sponsorUrl ??
+    (user.sponsorable
+      ? `https://github.com/sponsors/${user.login}`
+      : user.donationUrl ?? null);
 
   return (
     <div
@@ -312,7 +321,7 @@ const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
               rel="noopener noreferrer"
               className={styles.sponsorButton}
             >
-              ♥ Sponsor
+              {isGitHubSponsors ? "♥ Sponsor" : "♥ Support"}
             </a>
           </div>
         )}

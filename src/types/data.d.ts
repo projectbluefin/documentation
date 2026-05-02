@@ -30,6 +30,8 @@ export interface GitHubUser {
   followers: number;
   /** True if the user has an active GitHub Sponsors listing. */
   sponsorable: boolean;
+  /** Donation URL from GitHub social accounts (Ko-fi, Patreon, etc.), if any. */
+  donationUrl: string | null;
 }
 
 /**
