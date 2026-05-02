@@ -31,7 +31,7 @@ interface ReleaseContributorsProps {
 }
 
 const RoleTitles: Record<ContributorRole, string> = {
-  maintainer: "Maintainer",
+  maintainer: "Bluefin Maintainer",
   "ublue-maintainer": "Universal Blue Maintainer",
   "aurora-maintainer": "Aurora Maintainer",
   "gnome-os": "GNOME OS Team",
