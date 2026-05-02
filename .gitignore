@@ -17,6 +17,7 @@
 !/static/data/firehose-apps.json
 !/static/data/artwork.json
 !/static/data/artwork-versions.json
+!/static/data/stream-pins.json
 
 # Generated temp files
 ARTWORK_CHANGES.md
