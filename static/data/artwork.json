@@ -271,7 +271,7 @@
               "id": "sunrise",
               "title": "Sunrise",
               "author": "Amy",
-              "authorLicense": null,
+              "authorLicense": "https://www.atiusamy.com/links/",
               "previewUrl": null,
               "dayUrl": "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/sunrise/sunrise-day.svg",
               "nightUrl": "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/sunrise/sunrise-night.svg",
