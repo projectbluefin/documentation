@@ -204,6 +204,19 @@ const STREAM_SPECS = [
     keyRepo: "ublue-os/bluefin",
     keyless: true,
   },
+  {
+    id: "dakota-latest",
+    label: "Dakota Latest",
+    org: "projectbluefin",
+    package: "dakota",
+    // No releasesRepo: Dakota does not publish GitHub releases.
+    // No streamPrefix: uses the :latest floating tag, not date-based tags.
+    // usesLatestTag: true triggers a dedicated path in processStream() that
+    // bypasses findRecentTagsForStream() and works directly with :latest.
+    keyRepo: "projectbluefin/dakota",
+    keyless: true,
+    usesLatestTag: true,
+  },
 ];
 
 // ---------------------------------------------------------------------------
@@ -684,6 +697,244 @@ function stripEpoch(version) {
   return version.replace(/^\d+:/, "");
 }
 
+// ---------------------------------------------------------------------------
+// BST SPDX extraction (Dakota/BuildStream images)
+// ---------------------------------------------------------------------------
+
+/**
+ * Check whether a version string looks like a semantic version
+ * (starts with digits.digits, not a bare git SHA or empty).
+ * Used to filter BST SPDX packages: many packages have SHA or empty versionInfo.
+ *
+ * Examples that pass:  "50.0", "6.19.11", "26.0.5", "1.6.1", "5.8.2"
+ * Examples that fail:  "c9372e733d75cf...", "", undefined, "abc123"
+ */
+function isSemverLike(version) {
+  if (!version || typeof version !== "string") return false;
+  if (version.length > 40) return false; // likely a full git SHA
+  return /^\d+\.\d+/.test(version);
+}
+
+/**
+ * Maps a BST package name + BST element path suffix to a PackageVersions field.
+ * The suffix match uses endsWith() so it works across both freedesktop-sdk.bst:
+ * and gnome-build-meta.bst: junction prefixes.
+ *
+ * Order matters: the first matching entry wins.
+ */
+const BST_PACKAGE_MAP = [
+  { name: "gnome-shell", bstSuffix: "core/gnome-shell.bst", field: "gnome" },
+  // components/linux.bst is the actual running kernel; linux-headers.bst is build-only.
+  { name: "linux", bstSuffix: "components/linux.bst", field: "kernel" },
+  { name: "mesa", bstSuffix: "extensions/mesa/mesa.bst", field: "mesa" },
+  { name: "pipewire", bstSuffix: "components/pipewire-base.bst", field: "pipewire" },
+  { name: "podman", bstSuffix: "components/podman.bst", field: "podman" },
+  { name: "flatpak", bstSuffix: "components/flatpak.bst", field: "flatpak" },
+  {
+    name: "systemd",
+    bstSuffix: "core-deps/systemd-base.bst",
+    field: "systemd",
+  },
+];
+
+/**
+ * Extract package versions from a BuildStream SPDX (BST SPDX) object.
+ *
+ * BST SPDX differences from RPM SPDX:
+ *  - externalRefs use referenceType="bst-element" instead of pkg:rpm/ PURLs
+ *  - Multiple SPDX packages may share the same name (one per BST element that
+ *    produces that component, plus Rust crates with identical names)
+ *  - Disambiguation uses the bst-element referenceLocator path suffix
+ *  - No fedora-release package: fedora stays null (GNOME OS base, not Fedora)
+ *  - No epoch prefixes to strip
+ *
+ * @param {object} sbom  Parsed SPDX JSON object
+ * @returns {object}     PackageVersions with the same shape as RPM extraction
+ */
+function extractBstPackageVersions(sbom) {
+  const pkgs = sbom.packages || [];
+
+  const result = {
+    kernel: null,
+    gnome: null,
+    mesa: null,
+    podman: null,
+    systemd: null,
+    bootc: null,
+    fedora: null, // always null — Dakota is GNOME OS based, not Fedora
+    pipewire: null,
+    flatpak: null,
+    /** Flat name→version map for all BST components with semver versions. */
+    allPackages: /** @type {Record<string, string>} */ ({}),
+  };
+
+  for (const pkg of pkgs) {
+    const name = pkg?.name;
+    const ver = pkg?.versionInfo;
+    if (!name || !isSemverLike(ver)) continue;
+
+    const bstRefs = (pkg?.externalRefs || []).filter(
+      (r) => r?.referenceType === "bst-element",
+    );
+    if (bstRefs.length === 0) continue;
+
+    // Populate allPackages for every BST component with a semver version.
+    // Use the first semver version found per name (later entries may be aliases).
+    if (!result.allPackages[name]) {
+      result.allPackages[name] = ver;
+    }
+
+    // Map to named version fields using BST element path suffix.
+    for (const { name: mapName, bstSuffix, field } of BST_PACKAGE_MAP) {
+      if (name !== mapName) continue;
+      if (result[field]) continue; // already populated
+      const matchingRef = bstRefs.find((r) =>
+        r?.referenceLocator?.endsWith(bstSuffix),
+      );
+      if (matchingRef) {
+        result[field] = ver;
+      }
+    }
+  }
+
+  const populated = Object.keys(result.allPackages).length;
+  console.log(
+    `    extractPackageVersions: BST SPDX format (${sbom.spdxVersion}), ` +
+      `${populated} BST components with semver versions. ` +
+      `gnome=${result.gnome} kernel=${result.kernel} mesa=${result.mesa}`,
+  );
+
+  return result;
+}
+
+// ---------------------------------------------------------------------------
+// Latest-tag stream processing (Dakota)
+// ---------------------------------------------------------------------------
+
+/**
+ * Derive a YYYYMMDD date string from the org.opencontainers.image.created
+ * annotation in an OCI manifest, fetched via `oras manifest fetch`.
+ * Returns null if the annotation is absent or the fetch fails.
+ *
+ * @param {string} imageRef  Full image reference (e.g. ghcr.io/org/pkg:latest)
+ * @returns {Promise<string|null>}  "YYYYMMDD" or null
+ */
+async function getImageCreatedDate(imageRef) {
+  try {
+    const result = await execFileAsync(
+      "oras",
+      ["manifest", "fetch", imageRef],
+      { env: { ...process.env }, maxBuffer: 256 * 1024, timeout: 30000 },
+    );
+    const manifest = JSON.parse(result.stdout);
+    const created = manifest?.annotations?.["org.opencontainers.image.created"];
+    if (!created) return null;
+    // ISO 8601 "2026-05-02T..." → "20260502"
+    return created.slice(0, 10).replace(/-/g, "");
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Process a stream that uses a :latest floating tag instead of date-based tags.
+ * Used for Dakota, which pushes :latest on every scheduled/dispatch build but
+ * does not create YYYYMMDD-suffixed release tags.
+ *
+ * Cache key is derived from the image creation date annotation:
+ *   "latest-YYYYMMDD"  (e.g. "latest-20260502")
+ * Falls back to "latest-unknown" if the annotation is absent.
+ *
+ * @param {object}      spec      Stream spec with usesLatestTag: true
+ * @param {object|null} existing  Existing SBOM cache for incremental updates
+ */
+async function processLatestTagStream(spec, existing) {
+  const imageRef = `ghcr.io/${spec.org}/${spec.package}:latest`;
+  console.log(`  ${spec.id}: processing :latest tag (${imageRef})`);
+
+  const dateStr = await getImageCreatedDate(imageRef);
+  const cacheKey = dateStr ? `latest-${dateStr}` : "latest-unknown";
+  console.log(`  ${spec.id}: cache key = ${cacheKey}`);
+
+  const existingEntry = existing?.streams?.[spec.id]?.releases?.[cacheKey];
+  const hasVersions = existingEntry?.packageVersions != null;
+  const hasAllPackages =
+    existingEntry?.packageVersions?.allPackages != null &&
+    Object.keys(existingEntry.packageVersions.allPackages).length > 0;
+  const isVerified = existingEntry?.attestation?.verified === true;
+  const isCacheHit =
+    !FORCE_REFRESH && hasVersions && hasAllPackages && isVerified;
+
+  const releases = {};
+
+  if (isCacheHit) {
+    console.log(`  ${spec.id}: cache hit (verified, versions populated)`);
+    releases[cacheKey] = existingEntry;
+  } else {
+    console.log(`  ${spec.id}: verifying attestation for ${imageRef}`);
+    const rawAttestation = await verifyAttestation(imageRef, spec);
+    const attestation = {
+      present: rawAttestation.present,
+      verified: rawAttestation.verified,
+      predicateType: rawAttestation.predicateType,
+      slsaType: SLSA_TYPE,
+      ...(rawAttestation.errorKind !== undefined && {
+        errorKind: rawAttestation.errorKind,
+      }),
+      error: rawAttestation.error,
+    };
+
+    let packageVersions = null;
+    let sbomPath = null;
+    let tmpDir = null;
+    try {
+      sbomPath = await downloadSbom(imageRef);
+      if (sbomPath) {
+        tmpDir = path.dirname(sbomPath);
+        packageVersions = extractPackageVersions(sbomPath);
+        if (packageVersions) {
+          console.log(
+            `    ${cacheKey}: extracted packageVersions ` +
+              `(gnome: ${packageVersions.gnome}, kernel: ${packageVersions.kernel})`,
+          );
+        }
+      }
+    } catch (err) {
+      console.warn(
+        `    ${cacheKey}: SBOM download/parse error — ${err.message}`,
+      );
+    } finally {
+      if (tmpDir) {
+        try {
+          fs.rmSync(tmpDir, { recursive: true, force: true });
+        } catch {
+          // ignore cleanup errors
+        }
+      }
+    }
+
+    releases[cacheKey] = {
+      tag: "latest",
+      imageRef,
+      digest: null,
+      attestation,
+      packageVersions,
+      checkedAt: new Date().toISOString(),
+    };
+  }
+
+  return {
+    id: spec.id,
+    label: spec.label,
+    org: spec.org,
+    package: spec.package,
+    streamPrefix: "latest",
+    keyRepo: spec.keyRepo,
+    keyless: spec.keyless,
+    releases,
+  };
+}
+
 /**
  * Extract package versions from a Syft SBOM JSON file.
  * Returns a PackageVersions object or null on parse failure.
@@ -723,8 +974,24 @@ function extractPackageVersions(sbomPath) {
   // SPDX JSON (LTS/GDX streams): top-level `packages` array with `spdxVersion`
   //   present; RPM packages are identified by a pkg:rpm/ PURL in externalRefs.
   //   Normalise to the same {name, version, type} shape before processing.
-  let artifacts;
+  //
+  // BST SPDX (Dakota): SPDX with `bst-element` externalRefs instead of pkg:rpm/
+  //   PURLs. Generated by buildstream-sbom from the BuildStream element graph.
+  //   Packages represent BST elements, not RPM packages. Extraction uses
+  //   (name, BST element path suffix) pairs to disambiguate between components
+  //   that share a name (e.g. the `linux` kernel element vs. Rust `linux` crates).
   const isSpdx = Array.isArray(sbom?.packages) && typeof sbom?.spdxVersion === "string";
+  const isBstSpdx =
+    isSpdx &&
+    (sbom.packages || []).some((pkg) =>
+      (pkg?.externalRefs || []).some((r) => r?.referenceType === "bst-element"),
+    );
+
+  if (isBstSpdx) {
+    return extractBstPackageVersions(sbom);
+  }
+
+  let artifacts;
   if (isSpdx) {
     artifacts = (sbom.packages || [])
       .filter((pkg) => {
@@ -913,6 +1180,13 @@ function findRecentTagsForStream(ghcrTags, spec) {
  * @param {object|null} existing  Existing cache for incremental updates.
  */
 async function processStream(spec, ghcrTagsByImage, existing) {
+  // Dakota uses a :latest floating tag instead of date-based release tags.
+  // Delegate to the dedicated latest-tag processor which has different cache
+  // key logic and skips findRecentTagsForStream() entirely.
+  if (spec.usesLatestTag) {
+    return processLatestTagStream(spec, existing);
+  }
+
   const imageKey = `${spec.org}/${spec.package}`;
   // If the GHCR tag fetch failed — preserve existing cache.
   if (!ghcrTagsByImage.has(imageKey)) {
@@ -1157,6 +1431,8 @@ module.exports = {
   stripEpoch,
   compareRpmVersions,
   extractPackageVersions,
+  extractBstPackageVersions,
+  isSemverLike,
   selectAmd64DigestFromManifest,
   findRecentTagsForStream,
   fetchGhcrTags,   // exported for integration testing

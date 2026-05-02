@@ -119,14 +119,11 @@ const PRODUCT_SPECS = [
     summary: "Project Bluefin Dakota image stream.",
     streamOrder: ["latest"],
     versionSource: null,
-    sbomStreamId: null,
+    sbomStreamId: "dakota-latest",
     keyRepo: "projectbluefin/dakota",
     allowTestingStreams: false,
-    versionOverrides: {
-      gnome: "50",
-      kernel: "redacted",
-      fedora: null,
-    },
+    // No versionOverrides: versions come from the SBOM (BST SPDX format).
+    // fedora will be null — Dakota is GNOME OS based, not Fedora.
   },
 ];
 
