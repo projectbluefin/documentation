@@ -1,6 +1,6 @@
 ---
-title: "Bluefin Fedora 44 and Dakota Alpha 2 Release Announcement"
-subtitle: "A tale of three raptors"
+title: "Bluefin Spring 2026 Releases"
+subtitle: "A tale of three raptors with one mission"
 slug: bluefin-f44-dakota-alpha-2
 authors: castrojo
 tags: [announcements, releases, dakota]
@@ -15,296 +15,44 @@ import LatestOsReleaseCard from "@site/src/components/LatestOsReleaseCard";
 import BlogFigure from "@site/src/components/blog/BlogFigure";
 import DocsFeatureGrid from "@site/src/components/blog/DocsFeatureGrid";
 
-<p className="blog-post-subtitle">A tale of three raptors</p>
+<p className="blog-post-subtitle">A tale of three raptors with one mission</p>
 
 <MusicPlaylist
   title="Bluefin and the Syrens of Metal"
   playlistId="PLhiPP9M5fgWFa09qMHJSA7ts93UsMG82Q"
 />
 
-This blog post is best consumed by listening to the soundtrack. 
+I am not going to lie I haven't been this excited about Bluefin since the start of the project. We find ourselves on the day of a major Fedora release with three fantastic options. This spring is particularly relevant for us, with GNOME 50 being a particularly nice roll up of tech. 
 
-I am not going to lie I haven't been this excited about Bluefin since the start of the project. We find ourselves on the day of a major Fedora release with three fantastic options. 
+I know what you're thinking (especially you McPhail). We got rid of Bluefin GTS and now the team decided to make another one. How many of these things are there it's like a string of Jurassic Park sequels. First let's level set. The product is `Bluefin`. That's the default Fedora one. The other two are for different kinds of Linux nerds - we won't be adding Dakotaraptor the website or anything like that. 
 
-I know what you're thinking (especially you McPhail). We got rid of Bluefin GTS and now the team decided to make another one. How many of these things are there it's like a string of Jurassic Park sequels. 
-
-First let's level set. The product is `Bluefin`. That's the default Fedora one. The other two are for different kinds of Linux nerds - we won't be adding Dakotaraptor the website or anything like that. However, let's nerd out for a bit and  explain how we got here.
+However, we're nerds so let's take a look at the kettle and see what we've got.
 
 Also spoiler alert, we will be announcing some awesome _new news_ about our Fedora variant soon!
 
 ---
 
-## GNOME 50 "Tokyo"
+## GNOME 50 "Tokyo" comes to Bluefin
 
-[TODO: your take on GNOME 50 — what this release means for the desktop and why it's a milestone]
+GNOME 50, codenamed **Tokyo**, is the foundation of this release. If you're updating today you'll be on GNOME 50. 
 
-GNOME 50, codenamed **Tokyo**, is the foundation of this release. This cycle the GNOME team shipped meaningful improvements in every corner of the desktop — from accessibility and parental controls to display tech and community apps. Here's the full picture:
+[ screenshot ]
 
-- **Parental Controls** — Parents can now set daily screen-time limits and bedtime schedules for child accounts. The screen locks automatically when limits are reached. The Parental Controls app has been redesigned from scratch, and the groundwork for web content filtering is already in place. This is the first time GNOME has shipped screen-time management as a first-class feature.
-
-<BlogFigure
-  src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/parental-app-screenshot.webp"
-  alt="GNOME 50 Parental Controls app"
-  caption="The redesigned Parental Controls app — screen time limits, bedtime schedules, and automatic screen locking for child accounts."
-  maxWidth="720px"
-/>
-
-- **Accessibility** — Orca gets the biggest overhaul in years: a new preferences window, global settings that apply across all profiles, improved automatic language switching, better browse mode and braille display support, and Mouse Review now works on Wayland. A new **Reduced Motion** setting is also available for users who experience discomfort from desktop animations.
-
-<BlogFigure
-  src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/reduced-screenshot.webp"
-  alt="GNOME 50 Reduced Motion setting in Accessibility"
-  caption="The new Reduced Motion option in Accessibility settings."
-  maxWidth="720px"
-/>
-
-- **Document Annotation** — Evince's annotation tools are completely rewritten. You can now add text notes, freehand lines, and highlights directly from the main document view. The new editor includes a color picker, line thickness controls, and an eraser. No more hunting through menus to leave a note on a PDF.
-
-<BlogFigure
-  src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/document-viewer-annotations.webp"
-  alt="GNOME 50 Document Viewer annotation tools"
-  caption="Annotations are now a first-class feature in Document Viewer — text, lines, highlights, colors, and an eraser."
-  maxWidth="720px"
-/>
-
-- **Files** — Nautilus is faster and lighter across the board: thumbnails and icons load quicker, memory usage is down, and the UI has been polished throughout. Rename has been redesigned so the filename is pre-selected for immediate typing. File properties now open as pop-out windows. Search and pathbar handling are smarter, including multi-filter search and case-insensitive path completion.
-
-- **Calendar** — Event details now show an attendee list. Quick Add has been redesigned for faster event entry. Full ICS export is supported. First-day-of-week is now a proper system setting under Date & Time. Navigation is improved with arrow key support and hardware back/forward button handling.
-
-- **Remote Desktop** — Remote sessions now use hardware acceleration via Vulkan/VA-API for smoother, lower-power streaming. HiDPI scaling, camera redirection, and Kerberos authentication are all new additions — making remote desktop genuinely usable for both everyday and enterprise scenarios.
-
-- **Display** — VRR (variable refresh rate) and fractional scaling are now enabled by default on more hardware configurations. Cursor motion is lower-latency under VRR. NVIDIA stutter has been reduced. Color management v2 has landed, and HDR screen sharing is now supported.
-
-- **GNOME Circle New Apps** — The community delivered: **[Gradia](https://apps.gnome.org/Gradia/)** (screenshot annotation and editing), **[Constrict](https://apps.gnome.org/Constrict/)** (video compression to a target file size), **[Sessions](https://apps.gnome.org/Sessions/)** (Pomodoro timer), and **Sudoku** all join GNOME Circle this cycle.
-
-<BlogFigure
-  src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/gradia-screenshot.webp"
-  alt="Gradia — screenshot annotation app"
-  caption="Gradia joins GNOME Circle — annotate, frame, and polish screenshots before sharing them."
-  maxWidth="720px"
-/>
-
-<BlogFigure
-  src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/constrict-screenshot.webp"
-  alt="Constrict — video compression app"
-  caption="Constrict: set a target file size, pick a codec, done. Supports H.264, HEVC, AV1, and VP9."
-  maxWidth="720px"
-/>
-
-- **New GNOME Wallpapers** — GNOME 50 ships a set of fresh hand-crafted wallpapers, including one designed specifically with dark mode in mind.
-
-[Full GNOME 50 release notes →](https://release.gnome.org/50/)
+- [Full GNOME 50 release notes →](https://release.gnome.org/50/)
 
 <div style={{margin: "0.75rem 0"}}>
   <a href="https://donate.gnome.org/" style={{display: "inline-block", background: "#4A86CF", color: "white", padding: "0.6rem 1.4rem", borderRadius: "8px", fontWeight: "bold", textDecoration: "none"}}>💙 Donate to GNOME</a>
 </div>
 
-First let's check the goodies in this release: 
-
-<LatestOsReleaseCard stream="stable" />
-
-Now, I will start with the biggest news of all. Timothee Ravier has [announced new sealed base images](https://fedoramagazine.org/sealed-atomic-desktops-test-images/) for our use. This is the most fundamental change to Bluefin in its 5-ish year history. If you've been worried about the lack of progress in `bootc` in Fedora then this one set of images from Timothee brings this to the forefront of Linux desktop tech. Our man from France was not going to let Dakotaraptor run away with it. Here's the list: 
-
-The new sealed bootable container images bring:
-
-- [**systemd-boot**](https://systemd.io/BOOT/) replaces GRUB as the bootloader — GRUB is now an extinct species in our world. Goodbye old friend. 
-- [**Unified Kernel Images (UKI)**](https://uapi-group.org/specifications/specs/unified_kernel_image/) — kernel, initrd, and command line bundled into a single signed EFI binary. 
-- [**composefs**](https://github.com/composefs/composefs) with [**fs-verity**](https://www.kernel.org/doc/html/latest/filesystems/fsverity.html) — every file in the OS image is cryptographically verified at read time, [managed by bootc](https://bootc-dev.github.io/bootc/experimental-composefs.html)
-- **Full verified boot chain** from firmware → bootloader → kernel → OS image — see the [FOSDEM 2025 deep-dive](https://archive.fosdem.org/2025/schedule/event/fosdem-2025-5191--signed-sealed-and-delivered-with-ukis-and-composefs/) for how it all fits together
-- [**TPM-backed passwordless disk unlocking**](https://www.freedesktop.org/software/systemd/man/latest/systemd-cryptenroll.html) via `systemd-cryptenroll` — the headline user benefit; LUKS unlocking is bound to the verified boot state so no password prompt on a clean boot
-- Supports **UEFI on x86_64 and aarch64**
-
-- [GNOME 50](https://release.gnome.org/50/) — [TODO: highlight the key GNOME 50 feature you care about]
-
-{/* Drop your GNOME 50 GIF here: static/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/gnome50-feature.gif */}
-<BlogFigure
-  src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/gnome50-feature.gif"
-  alt="GNOME 50 feature demonstration"
-  caption="[TODO: caption describing the GNOME 50 feature shown]"
-  maxWidth="720px"
-/>
-- Linux 6.13, Mesa 25.1, Podman 5.5 — see the full [changelog](https://docs.projectbluefin.io/changelogs)
-- [Fedora 44 Release Notes](https://docs.fedoraproject.org/en-US/fedora/latest/release-notes/)
-
-Timothée Ravier's [What's New for Fedora Atomic Desktops in Fedora 44](https://tim.siosm.fr/blog/2026/04/28/fedora-atomic-desktops-44/) is essential reading for anyone curious about what changed upstream. A few highlights relevant to Bluefin users:
-
-- **FUSE 2 removed** — if you rely on AppImages that use the old runtime they may not work; reach for Flatpak alternatives where possible
-- **Legacy polkit `pkla` rules dropped** — the ecosystem has moved to the JavaScript-based format and this cleans up the last stragglers
-- **Unified Atomic Desktops documentation** now lives at [docs.fedoraproject.org/en-US/atomic-desktops](https://docs.fedoraproject.org/en-US/atomic-desktops/)
-- **Sealed bootable container images** in testing — the same work powering Bluefin's verified boot chain described above
-
-### How to update
-
-Current Bluefin users will receive this automatically. You can also switch now:
-
-```bash
-# Get your current image name
-IMAGE_NAME=$(jq -r '.[\"image-name\"]' < /usr/share/ublue-os/image-info.json)
-
-# Switch to stable (F44)
-sudo bootc switch --enforce-container-sigpolicy ghcr.io/ublue-os/$IMAGE_NAME:stable
-```
-
-[TODO: anything else about the update path]
-
----
-
-## Bluefin LTS
-
-<LatestOsReleaseCard stream="lts" />
-
-[TODO: LTS update paragraph — what's new in this LTS cycle, who it's for]
-
-### What's New in GNOME
-
-Bluefin LTS launched with GNOME 48. This release delivers two full GNOME upgrade cycles in one — [GNOME 49 "Brescia"](https://release.gnome.org/49/) and [GNOME 50 "Tokyo"](https://release.gnome.org/50/) — thanks to [@hanthor](https://github.com/hanthor)'s work backporting the full GNOME stack to the EL10 base. See the [March testing announcement](https://docs.projectbluefin.io/blog/bluefin-lts-gnome-49-50) for the backstory.
-
-### How to update (LTS)
-
-Bluefin LTS is maintained by [@hanthor](https://github.com/hanthor). If you rely on the LTS channel, consider supporting their work:
-
-<div style={{margin: "0.75rem 0"}}>
-  <a href="https://github.com/sponsors/hanthor" style={{display: "inline-block", background: "#db61a2", color: "white", padding: "0.6rem 1.4rem", borderRadius: "8px", fontWeight: "bold", textDecoration: "none"}}>💙 Sponsor hanthor on GitHub</a>
-</div>
-
-```bash
-IMAGE_NAME=$(jq -r '.[\"image-name\"]' < /usr/share/ublue-os/image-info.json)
-sudo bootc switch --enforce-container-sigpolicy ghcr.io/ublue-os/$IMAGE_NAME:lts
-```
-
----
-
-## Dakota Alpha 2
-
-<LatestOsReleaseCard stream="dakota" />
-
-[TODO: intro paragraph]
-
-- [GNOME 50](https://release.gnome.org/50/), Linux 6.13, Mesa 26.x, Freedesktop 25.08 libraries
-- [Custom Command Menu](https://github.com/StorageB/custom-command-menu) — hostname in the top bar
-- Ghostty as the default terminal
-
-[TODO: screenshot / banner image]
-
-{/* Drop the Dakota banner GIF here: static/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/dakota-alpha-2-banner.gif */}
-<BlogFigure
-  src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/dakota-alpha-2-banner.gif"
-  alt="Dakota Alpha 2 desktop"
-  caption="[TODO: caption for Dakota banner]"
-/>
-
-### What changed since Alpha 1
-
-[TODO: your highlights]
-
-- [Passwordless sudo policy removed](https://github.com/projectbluefin/dakota/pull/374)
-- LUKS encryption works on install
-- [nvidia-container-toolkit](https://github.com/projectbluefin/dakota/issues/376) — [TODO: landed / still coming]
-- ARM build improvements
-- zstd:chunked delta updates — [TODO: landed / still coming]
-
-### Goals
-
-[TODO: your goals text]
-
-- Beta target: late spring; GA target: fall
-- Help GNOME OS upstream: [os.gnome.org](https://os.gnome.org/)
-
-### Gotchas
-
-[TODO: current alpha gotchas — verify against https://github.com/projectbluefin/dakota/issues]
-
-- [Open issues](https://github.com/projectbluefin/dakota/issues)
-- [ISO-specific issues](https://github.com/projectbluefin/dakota-iso/issues)
-
-[TODO: YouTube embed for Dakota Alpha 2 demo, if you have one]
-
----
-
-## Bazaar
-
-[Bazaar](https://github.com/castrojo/bazaar) is a new GNOME app store built on Flatpak. It is currently a work in progress, but the goal is to build something that eclipses GNOME Software in Flatpak functionality. Current features include:
-
-- **Regex-powered search** — Search across all registered Flatpak remotes with a regex toggle and full keyboard navigation (`Ctrl+N/P` and `Ctrl+J/K` to move through results)
-- **Inline AppStream metadata** — Every app shows its icon, title, full description, license and FLOSS status, download size, remote name and icon, and homepage link — all pulled live from AppStream data
-- **Screenshots panel** — App screenshots are displayed inline and can be clicked to open in your system image viewer
-- **Browse by curated sections** — Configurable YAML-based section layout with banners, app grids, and custom CSS support — distributors can ship their own curated view
-- **Update detection** — Bazaar tracks installed Flatpak refs and surfaces apps with available updates in one place
-- **One-click installs and updates** — Flatpak transactions are queued and run from within the app, with an explicit "Are you sure?" confirmation before any install proceeds
-- **Launch installed apps** — Open any installed Flatpak directly from Bazaar without leaving the store
-- **Keyboard-first design** — The entire interface is navigable without a mouse; `Ctrl+Alt+N/P/J/K` variants work throughout
-
-[TODO: screenshot or GIF of Bazaar in action]
-
-<BlogFigure
-  src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/bazaar-screenshot.png"
-  alt="Bazaar app store"
-  caption="Bazaar — a Flatpak-focused app store for GNOME with regex search, inline AppStream metadata, and keyboard-first navigation."
-  maxWidth="720px"
-/>
-
-[TODO: your narrative about why Bazaar, what makes it different, and what's coming next]
-
-Bazaar is built by [@kolunmi](https://github.com/kolunmi) and [@AlexanderVanhee](https://github.com/AlexanderVanhee). If you want to see this project succeed, support them directly:
-
-<div style={{display: "flex", gap: "1rem", flexWrap: "wrap", margin: "1rem 0"}}>
-  <a href="https://ko-fi.com/kolunmi" style={{display: "inline-block", background: "#FF5E5B", color: "white", padding: "0.6rem 1.4rem", borderRadius: "8px", fontWeight: "bold", textDecoration: "none"}}>💙 Support kolunmi on Ko-fi</a>
-  <a href="https://ko-fi.com/alexandervanhee" style={{display: "inline-block", background: "#FF5E5B", color: "white", padding: "0.6rem 1.4rem", borderRadius: "8px", fontWeight: "bold", textDecoration: "none"}}>💙 Support Alexander on Ko-fi</a>
-</div>
-
----
-
-## What's in the Tap
-
-[TODO: your take on the production brew tap — why it exists, what it means to have a curated software ecosystem for a bootc-based Linux image]
-
-The [ublue-os/tap](https://github.com/ublue-os/homebrew-tap) is the production Homebrew tap for Bluefin — a curated collection of software packaged to work great on Bluefin. Run `ujust bbrew` to open the interactive browser and install anything from the tap in a few keystrokes.
-
-### Editors and IDEs
-
-- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/vscode.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[Visual Studio Code](https://code.visualstudio.com/)** — Microsoft's open-source code editor.
-- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/vscode-insiders.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[VS Code Insiders](https://code.visualstudio.com/insiders/)** — The daily preview build of VS Code with the newest features.
-- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/vscodium.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[VSCodium](https://vscodium.com/)** — VS Code binaries built without Microsoft telemetry or branding.
-- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/jetbrains.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[JetBrains Toolbox](https://www.jetbrains.com/toolbox-app/)** — Install, update, and manage every JetBrains IDE from one app.
-
-### System Tools
-
-- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/1password.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[1Password](https://1password.com/)** — The password manager. Full Linux GUI, system tray, and browser integration.
-- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/framework.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[framework-tool](https://github.com/FrameworkComputer/framework-tool)** — Official CLI for Framework laptop hardware: fan control, battery charge limits, charge LED mode, input module configuration, and firmware update checks.
-- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/gnome.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[heic-to-dynamic-gnome-wallpaper](https://github.com/undertuga/heic-to-dynamic-gnome-wallpaper)** — Convert macOS HEIC dynamic wallpapers into GNOME XML dynamic wallpapers that change with the time of day.
-- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/postmarketos.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[pmbootstrap](https://wiki.postmarketos.org/wiki/Pmbootstrap)** — The sophisticated chroot/build/flash tool for postmarketOS development and porting Linux to mobile devices.
-
-### Wallpaper Packs
-
-Extra wallpaper collections for every variant — install the ones that match your image:
-
-```bash
-brew install --cask ublue-os/tap/bluefin-wallpapers
-brew install --cask ublue-os/tap/bluefin-wallpapers-extra
-brew install --cask ublue-os/tap/aurora-wallpapers
-brew install --cask ublue-os/tap/bazzite-wallpapers
-brew install --cask ublue-os/tap/framework-wallpapers
-```
-
-[Browse the full tap on GitHub →](https://github.com/ublue-os/homebrew-tap)
-
----
-
 ## ASUS Support
 
-[TODO: your take on ASUS support — the community that asked for this, what it means for ROG/TUF/Zephyrus users, what you think about ASUS hardware on Linux]
+Asus support has always been a pain in the ass on Linux. In the past we had specialized images but the maintenance burden was too great. Thanks to improvements in Linux 6.19 and greater, as well as awesome work from the asus-linux community we can now better support Asus hardware. The [ublue-os/tap](https://github.com/ublue-os/homebrew-tap) ships `asusctl` and ROG Control Center — the standard ASUS Linux control stack. These packages will work on any Linux with at least a 6.19 kernel.  
 
-ASUS ROG, TUF, and Zephyrus laptops are now first-class citizens on Bluefin. The [ublue-os/tap](https://github.com/ublue-os/homebrew-tap) ships `asusctl` and ROG Control Center — the standard ASUS Linux control stack — packaged to work with Bluefin.
-
-**What you get:**
-
-- **Fan curve control** — per-profile fan curves for Performance, Balanced, and Quiet modes; customizable RPM targets per temperature point
-- **Keyboard RGB and Aura lighting** — full per-key RGB control, multi-zone effects, static, breathe, rainbow, strobing, and more — all manageable from the GUI or CLI
-- **Power profile switching** — toggle between Performance, Balanced, and Power Saver without a reboot
-- **Battery charge limit** — set a charge ceiling (e.g. 80%) to preserve long-term battery health; the limit persists across reboots
-- **GPU mode switching** — switch between Integrated, Hybrid, NVIDIA-only, and Compute modes from the system tray
-- **[TODO: rephrase — describes that system files land in `/opt/ublue-asusctl` (writable via `/var/opt`) and user state is XDG-compliant under `~/.local/share`; original used "immutable-filesystem-friendly" which is forbidden]**
-- **SELinux-aware install** — the package includes a setup script that handles policy modules automatically
+- Fan curve control — per-profile fan curves for Performance, Balanced, and Quiet modes; customizable RPM targets per temperature point
+- Keyboard RGB and Aura lighting — full per-key RGB control, multi-zone effects, static, breathe, rainbow, strobing, and more — all manageable from the GUI or CLI
+- Power profile switching — toggle between Performance, Balanced, and Power Saver without a reboot
+- Battery charge limit — set a charge ceiling (e.g. 80%) to preserve long-term battery health; the limit persists across reboots
+- GPU mode switching — switch between Integrated, Hybrid, NVIDIA-only, and Compute modes from the system tray
 
 **Install (order matters — system daemon first, then the GUI):**
 
@@ -320,19 +68,140 @@ systemctl --user daemon-reload
 systemctl --user enable --now asusd-user.service
 ```
 
-ROG Control Center lands in your system tray and gives you a full GUI for everything above — no terminal required after the initial setup.
+ROG Control Center lands in your system tray and gives you a full GUI for everything above — no terminal required after the initial setup. Someday we will automate this so you don't have to do any of this CLI mumbojumbo, but in the meantime kick the tyres and report back. Remember that these packages work on any Linux, so if you have a friend slumming it on Ubuntu they can use these too!
 
-[TODO: any ASUS hardware you've tested this on, known quirks, or what's coming next]
+## Bazaar
 
----
+[Bazaar](https://github.com/bazaar-org/bazaar/) is the application store on Bluefin systems. It is designed to bring the best of [Flathub](https://flathub.org) to your fingertips, with a focus on _directly supporting application authors_. It accomplishes this by focusing on highlighting donations to app authors and ensuring that you get those applications as soon as they are released upstream. No jank. 
+
+[TODO: screenshot or GIF of Bazaar in action]
+
+<BlogFigure
+  src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/bazaar-screenshot.png"
+  alt="Bazaar app store"
+  caption="Bazaar — a Flathub-focused app store for GNOME"
+  maxWidth="720px"
+/>
+
+Bazaar is built by [@kolunmi](https://github.com/kolunmi) and [@AlexanderVanhee](https://github.com/AlexanderVanhee). If you want to see this project succeed, support them directly:
+
+<div style={{display: "flex", gap: "1rem", flexWrap: "wrap", margin: "1rem 0"}}>
+  <a href="https://ko-fi.com/kolunmi" style={{display: "inline-block", background: "#FF5E5B", color: "white", padding: "0.6rem 1.4rem", borderRadius: "8px", fontWeight: "bold", textDecoration: "none"}}>💙 Support kolunmi on Ko-fi</a>
+  <a href="https://ko-fi.com/alexandervanhee" style={{display: "inline-block", background: "#FF5E5B", color: "white", padding: "0.6rem 1.4rem", borderRadius: "8px", fontWeight: "bold", textDecoration: "none"}}>💙 Support Alexander on Ko-fi</a>
+</div>
+
+## Bluefin
+
+Now on to Bluefin itself. First up is `bluefin:stable`. Here's the release card: 
+
+<LatestOsReleaseCard stream="stable" />
+
+And here are the release notes and announcements:
+
+- [Fedora 44 Release Notes](https://docs.fedoraproject.org/en-US/fedora/latest/release-notes/)
+- [What's New for Fedora Atomic Desktops in Fedora 44](https://tim.siosm.fr/blog/2026/04/28/fedora-atomic-desktops-44/)
+
+Timothée Ravier's post is particularly relevant for us: 
+
+- **FUSE 2 removed** — we don't support AppImages anyway but if you still care about these they may break even more. 
+- **Legacy polkit `pkla` rules dropped** — the ecosystem has moved to the JavaScript-based format and this cleans up the last stragglers
+- **Unified Atomic Desktops documentation** now lives at [docs.fedoraproject.org/en-US/atomic-desktops](https://docs.fedoraproject.org/en-US/atomic-desktops/)
+
+The biggest news of all is the [announcement of new sealed base images](https://fedoramagazine.org/sealed-atomic-desktops-test-images/). These will end up being the most fundamental change to Bluefin in its 5-ish year history. The new sealed bootable container images will bring us:
+
+- [systemd-boot](https://systemd.io/BOOT/) replaces GRUB as the bootloader — GRUB is now an extinct species in our world. Goodbye old friend. 
+- [Unified Kernel Images (UKI)](https://uapi-group.org/specifications/specs/unified_kernel_image/) — kernel, initrd, and command line bundled into a single signed EFI binary. 
+- [composefs](https://github.com/composefs/composefs) with [fs-verity](https://www.kernel.org/doc/html/latest/filesystems/fsverity.html) — every file in the OS image is cryptographically verified at read time and [managed by bootc](https://bootc-dev.github.io/bootc/experimental-composefs.html). We also say goodbye to ostree. With both projects now in the [Cloud Native Computing Foundation](https://cncf.io) we have a vendor neutral stack to base Bluefin on. Nice.
+- Full verified boot chain from firmware → bootloader → kernel → OS image — see the [FOSDEM 2025 deep-dive](https://archive.fosdem.org/2025/schedule/event/fosdem-2025-5191--signed-sealed-and-delivered-with-ukis-and-composefs/) for how it all fits together
+- [TPM-backed passwordless disk unlocking](https://www.freedesktop.org/software/systemd/man/latest/systemd-cryptenroll.html) via `systemd-cryptenroll` — the headline user benefit; LUKS unlocking is bound to the verified boot state so no password prompt on a clean boot
+- UEFI on x86_64 and aarch64 - Legacy BIOS support goes away too, but we don't support that anyway.
+
+Want all of these things? It will take some work to move Bluefin and Aurora to these new base images, and we're looking for people to help. If you've been worried about the lack of progress in `bootc` in Fedora then this one set of images brings us back to the forefront of Linux desktop tech. Our man from France was not going to let Dakotaraptor run away with it, so if you want to help make this dream a reality, now is the time to step up and volunteer!
+
+## Bluefin LTS
+
+Achillobator remains our Long Term Support option, here's the release card:
+
+<LatestOsReleaseCard stream="lts" />
+
+Bluefin LTS launched with GNOME 48 and has been updated to GNOME 49. This release delivers two full GNOME upgrade cycles in one — [GNOME 49](https://release.gnome.org/49/) and [GNOME 50](https://release.gnome.org/50/) are both available — thanks to [@hanthor](https://github.com/hanthor)'s work backporting the full GNOME stack to the EL10 base. See the [March testing announcement](https://docs.projectbluefin.io/blog/bluefin-lts-gnome-49-50) for all the details. 
+
+There's really not much to say here, the move to GNOME 49 wasn't as smooth as I'd like but as a result GNOME 50 will be much smoother. We will keep GNOME 50 in it's own set of branches and likely move LTS to GNOME 50 sometime this Fall. 
+
+Bluefin LTS is maintained by [@hanthor](https://github.com/hanthor). If you rely on the LTS channel, consider supporting his work:
+
+<div style={{margin: "0.75rem 0"}}>
+  <a href="https://github.com/sponsors/hanthor" style={{display: "inline-block", background: "#db61a2", color: "white", padding: "0.6rem 1.4rem", borderRadius: "8px", fontWeight: "bold", textDecoration: "none"}}>💙 Sponsor hanthor on GitHub</a>
+</div>
+
+## Bluefin Dakota Alpha 2
+
+And now for the mysterious raptor who keeps making waves:
+
+<LatestOsReleaseCard stream="dakota" />
+
+Dakota is our newest "distroles" raptor. No layering and an even more aggressive push away from legacy technologies. Just the best desktop we can ship, direct from GNOME and Freedesktop right to you, no compromises. Dakotaraptor is daily driveable and has become my daily driver. 
+
+- [GNOME 50](https://release.gnome.org/50/), Linux 6.13, Mesa 26.x, Freedesktop 25.08 libraries
+- systemd-boot, UKIs, UEFI only
+- Oxidized coreutils - same sudo-rs and uutils setup as Ubuntu - thanks to Canonical for funding this important work 
+- cpu v3 instructions
+- [Custom Command Menu](https://github.com/StorageB/custom-command-menu) — Dakota features a newly refined menu. We hope to bring this menu to other Bluefins over time. 
+- Ghostty as the default terminal
+
+Since Dakota is brand new there's no users to transition when we switch something. The `ptyxis` author is moving on from GNOME so we wish Christian Hergert well in his future endevours. We are switching to [Ghostty] as the default terminal. This has always been a fan favorite so we're starting with it fresh here.  
+
+### Changes since Alpha 1
+
+- LUKS encryption works on install
+- Full Nvidia Image
+  - [nvidia-container-toolkit](https://github.com/projectbluefin/dakota/issues/376) — [TODO: landed / still coming]
+- Efficient layering - this image uses the upstream chunkah tool for more efficient downloads. Note that the structures and tooling is in place, we expect efficient delta downloads to land sometime this summer, but everything is in place now. 
+- Linux 7.x kernel will land once some of the bootc issues with 7.x are resolved
+- Beta target: Probably a month or so; GA target: Fall 2026
+- Want to help? GNOME OS upstream is always looking for help: [os.gnome.org](https://os.gnome.org/)
+
+### Gotchas
+
+- [Open issues](https://github.com/projectbluefin/dakota/issues)
+- [ISO-specific issues](https://github.com/projectbluefin/dakota-iso/issues)
+
+**What now?** It has been an absolute pleasure working with [buildstream] over the past few weeks. The team has committed to the hardware necessary to make builds faster and the local development experience has been the best we've ever had. It has become clear and obvious to me that the combination of [buildstream] and [bootc] brings a level of automation and developer experience that will be tough to beat.
+
+**Here's the hot take**: If you look at all three raptors, all else being equal, the _best development experience_ and _best infrastructure_ always wins in this space. We have over a decade of cloud native industry experience to prove it, Kubernetes runs the world for a reason. This workflow is now in the linux desktop space. I firmly believe that buildstream/bootc combined with our gitops approach will deliver a fantastic product. 
+
+- Stay tuned for my talk at [LAS] where I will be discussing the applicaiton of cloud native development techniques to the desktop. The world has changed.
+
+Thanks to [Brian Ketelsen](https://github.com/brianketelsen) and [James Reilly](https://github.com/jamesreilly5) for the [Tuna installer](https://github.com/tuna-os/tuna-installer)
+
+Thanks to [Jordan Petridis](https://github.com/alatiera), [Valentin David](https://github.com/valentindavid), [Adrian Vovk](https://github.com/AdrianVovk), and the [GNOME OS team](https://os.gnome.org/) for their expertise and advisory roles - we couldn't do this without you!
+
+## Homebrew Applications
+
+The [ublue-os/tap](https://github.com/ublue-os/homebrew-tap) is the production Homebrew tap for Bluefin — a curated collection of software packaged to work great on all Linuxes. Run `ujust bbrew` to open the interactive browser and install anything from the tap in a few keystrokes. Here are the highlights of apps added over the last cycle: 
+
+### Editors and IDEs
+
+- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/vscode.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[Visual Studio Code](https://code.visualstudio.com/)** — Microsoft's open-source code editor.
+- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/vscode-insiders.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[VS Code Insiders](https://code.visualstudio.com/insiders/)** — The daily preview build of VS Code with the newest features.
+- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/vscodium.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[VSCodium](https://vscodium.com/)** — VS Code binaries built without Microsoft telemetry or branding.
+- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/jetbrains.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[JetBrains Toolbox](https://www.jetbrains.com/toolbox-app/)** — Install, update, and manage every JetBrains IDE from one app. This installs Jetbrains into your home directory as intended by Jetbrains.
+
+### System Tools
+
+- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/framework.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[framework-tool](https://github.com/FrameworkComputer/framework-tool)** — Official CLI for Framework laptop hardware: fan control, battery charge limits, charge LED mode, input module configuration, and firmware update checks.
+- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/gnome.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[heic-to-dynamic-gnome-wallpaper](https://github.com/undertuga/heic-to-dynamic-gnome-wallpaper)** — Convert macOS HEIC dynamic wallpapers into GNOME XML dynamic wallpapers that change with the time of day.
+- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/postmarketos.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[pmbootstrap](https://wiki.postmarketos.org/wiki/Pmbootstrap)** — The sophisticated chroot/build/flash tool for postmarketOS development and porting Linux to mobile devices.
+
+[Browse the full tap on GitHub →](https://github.com/ublue-os/homebrew-tap)
 
 ## Bluespeed
 
-[TODO: your narrative about Bluefin's AI story — the philosophy, why you shipped this, what kind of user it's for]
+Bluespeed is our catch all term for agent-centric tooling in Bluefin. It is a play on [RHEL Lightspeed], Red Hat's tooling in this area. We continue to collaborate with the team and ship their tooling, such as linux-mcp-server. Bluefin ships a full cloud and AI navite development platform ready to go. We default to a "Bring your own LLM" approach, with a focus on pushing towards an all-local opt-in approach for system troubleshooting. 
 
-Bluefin ships a full AI development and productivity platform ready to go. Whether you want to run models locally, connect to hosted APIs, write AI-powered tooling, or just have a capable assistant available at a keypress — everything is pre-wired and waiting.
+Our flagship tool is [Goose] from the [Agentic AI Foundation], which serves as our "portal" to other tooling. Here's what else is included. We recommend using the `ramalama` tool for model management. This features full GPU acceleration for NVIDIA and AMD GPUs to work with local models out of the box. Models and drivers are kept in containers for flexibility. It's an awesome set up, give it a shot! [Full AI setup guide →](https://docs.projectbluefin.io/ai)
 
-### AI Agents and Interfaces
+### AI Agents and Tools
 
 Run `ujust bbrew` to install any of these:
 
@@ -346,7 +215,7 @@ Run `ujust bbrew` to install any of these:
 - <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/ramalama.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[Ramalama](https://github.com/containers/ramalama)** — Goal of RamaLama is to make working with AI boring.
 - **[Alpaca](https://alpaca.zlatko.org/)** — A graphical LLM chat interface available as a Flatpak. Launch it instantly from anywhere with `Ctrl+Alt+Backspace`.
 
-### AI CLI Toolkit
+### AI CLI Tools
 
 Choose the `ai` menu in `ujust bbrew` to browse the full set of AI CLI tools:
 
@@ -368,34 +237,30 @@ Choose the `ai` menu in `ujust bbrew` to browse the full set of AI CLI tools:
 | [qwen-code](https://formulae.brew.sh/formula/qwen-code) | AI-powered command-line workflow tool for developers |
 | [whisper-cpp](https://formulae.brew.sh/formula/whisper-cpp) | Port of OpenAI's Whisper model in C/C++ |
 
-### System Integration
-
-- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/linux-mcp-server.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[linux-mcp-server](https://github.com/rhel-lightspeed/linux-mcp-server)** — MCP server that gives any AI agent live access to your system: OS info, processes, services, logs, network, and filesystem. Powers Ask Bluefin.
-- **GPU acceleration** — NVIDIA and AMD GPUs work with local models out of the box. No additional driver configuration is needed on a standard Bluefin install.
-
 [Full AI setup guide →](https://docs.projectbluefin.io/ai)
 
-### Troubleshooting _(Alpha Preview)_
+### Ask Bluefin _(Alpha)_
 
-[TODO: your vision for Ask Bluefin — what you wanted to build, why natural-language system diagnosis matters, where this is going]
+[Ask Bluefin](https://ask.projectbluefin.io) is a natural-language system assistant that can diagnose, explain, and help troubleshoot your machine using our community's data. 
 
-Ask Bluefin is a natural-language system assistant that can diagnose, explain, and help troubleshoot your machine using live system data — no Googling, no reading log files manually, no copying error messages into a search box.
+Ask is done in partnership with [Dosu](https://dosu.dev) - here's the gist. Ask Bluefin is trained on all of the documentation and source code for all of the tooling in Bluefin, Bluefin's source code, issues, documentation, and discussions. AND THAT'S IT. It is only trained on the code and docs. The results are usually much better than than a generic LLM, and light years ahead of Linux subreddits. (That's not a high bar, but let's have some goals). You can also use Ask Bluefin in it's [dedicated discussion forum] if you prefer it that way. 
 
-- **Natural language diagnostics** — Ask questions like "why is my fan running loud?" or "what process is eating my RAM?" and get real answers grounded in your actual current system state
-- **Powered by [linux-mcp-server](https://github.com/rhel-lightspeed/linux-mcp-server)** — gives the AI agent live read access to OS and kernel info, CPU, memory, and disk usage, running processes, systemd service status, journal logs, network interfaces, open ports, and filesystem details
-- **Bluefin knowledge base built in** — Dosu integration means the assistant already knows the Bluefin documentation, common issues, and community-reported workarounds. No API key required to access it.
-- **Works with any MCP-compatible agent** — Goose, OpenCode, and any client that supports the Model Context Protocol can connect to `linux-mcp-server` and get the same system access
-- **One-keystroke launch** — `Ctrl+Alt+Shift+G` opens the assistant directly from the desktop, no matter what you're doing
-- **Scales with your LLM choice** — use it with a local Ramalama model for fully offline diagnostics, or connect to a hosted API for more capable reasoning — same data, your choice of brain
-- **Alpha state** — Setup today is one `brew install`. The "Ask Bluefin" entry in the application menu is coming in a future release; the underlying capability is fully functional now.
+### Troubleshooting _(Alpha)_
+
+Proprietary operating systems are falling over each other trying to implement the worst possible anti-privacy features with AI. Of course they are, it's the nature of the beast. We take a different approach. If someone's going to invent this thing, then we're going to use it for good. Our first stab at this is to use it for a more natural goal - fix broken computers. (Computers are awful)
+
+[linux-mcp-server](https://github.com/rhel-lightspeed/linux-mcp-server) is an MCP server that gives any AI agent live read only access access to your system: OS info, processes, services, logs, network, and filesystem. When connected to [Goose] it gives your LLM access to the following featurs:
+
+- Natural language diagnostics — Ask questions like "why is my fan running loud?" or "what process is eating my RAM?" and get real answers grounded in your actual current system state
+- Bluefin knowledge base built in — Dosu integration means the assistant already knows the Bluefin documentation, common issues, and community-reported workarounds. No API key required to access it.
+- Works with any MCP-compatible agent — Goose, OpenCode, and any client that supports the Model Context Protocol can connect to `linux-mcp-server` and get the same system access
+- "Bring Your Own LLM" — use it with a local Ramalama model for fully offline diagnostics, or connect to a hosted API for more capable reasoning — same data, your choice. Current this works best with paid frontier models, but our team continues to experiment with the latest local models. It's only a matter of time, open always wins. 
 
 [Full troubleshooting guide →](https://docs.projectbluefin.io/troubleshooting)
 
----
-
 ## New Wallpapers
 
-[TODO: intro sentence]
+And now, finally, my favorite part of Bluefin, the artwork! 
 
 <WallpaperFeatureGrid wallpapers={[
   {
@@ -404,7 +269,7 @@ Ask Bluefin is a natural-language system assistant that can diagnose, explain, a
     author: "Jay Balamurugan",
     authorUrl: "https://kakapojay.com/",
     dayUrl: "/img/artwork/fullres/lazy-days.png",
-    body: "[TODO: your text about Lazy Days]",
+    body: "Jay joins the prestiguous list of paleoartists to render Bluefin.\n\n We tend to always think of dinosaurs as blood thirsty killers murdering constantly. But like real animals there are plenty of times when all you want to do is lay down. This rendition of Bluefin reflects a more chill day, a full belly, and no worries.\n\n Jay is a London-based science communicator, paleoartist, and television producer — her credits include [Earth](https://player.bbc.com/en/brand/earth), [Walking with Dinosaurs](https://www.bbcearth.com/shows/walking-with-dinosaurs), and [Evolution](https://www.bbc.co.uk/programmes/m001wf7q). You can follow her on [Bluesky](https://bsky.app/profile/kakapojay.bsky.social) and [Instagram](https://www.instagram.com/kakapo.jay/)",
   },
   {
     id: "sunrise",
@@ -413,7 +278,7 @@ Ask Bluefin is a natural-language system assistant that can diagnose, explain, a
     authorUrl: "https://www.atiusamy.com/links/",
     dayUrl: "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/sunrise/sunrise-day.svg",
     nightUrl: "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/sunrise/sunrise-night.svg",
-    body: "[TODO: your text about Amy's Sunrise]",
+    body: "Sunrise is an older wallpaper from Amy that we failed to ship and announce. Sorry about that Amy. Sunrise is now available for those of you that prefer your Bluefin smol.",
   },
   {
     id: "leaf-collector",
@@ -424,7 +289,7 @@ Ask Bluefin is a natural-language system assistant that can diagnose, explain, a
     coAuthorUrl: "https://ko-fi.com/melodyofdelphi",
     dayUrl: "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/leaf-collector/leaf-collector-day.svg",
     nightUrl: "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/leaf-collector/leaf-collector-night.svg",
-    body: "[TODO: your text about Leaf Collector]",
+    body: "Did you know birds once had teeth? Crazy I know.",
   },
   {
     id: "duality",
@@ -435,7 +300,7 @@ Ask Bluefin is a natural-language system assistant that can diagnose, explain, a
     coAuthorUrl: "https://ko-fi.com/melodyofdelphi",
     dayUrl: "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/duality/duality-day.svg",
     nightUrl: "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/duality/duality-night.svg",
-    body: "[TODO: your text about Duality]",
+    body: "Duality is a modified Leaf Collector designed for ultra wide monitors. It looks spectacular on 21:9 monitors.",
   },
   {
     id: "eyes",
@@ -445,7 +310,7 @@ Ask Bluefin is a natural-language system assistant that can diagnose, explain, a
     coAuthor: "Delphic Melody",
     coAuthorUrl: "https://ko-fi.com/melodyofdelphi",
     dayUrl: "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/eyes/eyes.svg",
-    body: "[TODO: your text about Eyes]",
+    body: "Our last wallpaper from Dr. J is one of my favorites. It feature a [microraptor] hunting a poor butterfly. Did she catch it? We'll leave that interpretation up to you.",
   },
 ]} />
 
@@ -453,31 +318,40 @@ Ask Bluefin is a natural-language system assistant that can diagnose, explain, a
 
 The default wallpapers ship automatically with Bluefin. The extra collection (Leaf Collector, Duality, Eyes, Lazy Days) is available via Homebrew:
 
-<div style={{margin: "0.5rem 0 1rem", display: "flex", flexDirection: "column", gap: "0.5rem"}}>
-  <code style={{fontFamily: "var(--ifm-font-family-monospace)", fontSize: "0.9rem", background: "var(--ifm-code-background)", border: "1px solid var(--ifm-color-emphasis-300)", borderRadius: "var(--ifm-code-border-radius)", padding: "0.2rem 0.6rem", color: "var(--ifm-code-color)", userSelect: "all", display: "inline-block"}}>brew install --cask ublue-os/tap/bluefin-wallpapers</code>
-  <code style={{fontFamily: "var(--ifm-font-family-monospace)", fontSize: "0.9rem", background: "var(--ifm-code-background)", border: "1px solid var(--ifm-color-emphasis-300)", borderRadius: "var(--ifm-code-border-radius)", padding: "0.2rem 0.6rem", color: "var(--ifm-code-color)", userSelect: "all", display: "inline-block"}}>brew install --cask ublue-os/tap/bluefin-wallpapers-extra</code>
-</div>
+```bash
+brew install --cask ublue-os/tap/bluefin-wallpapers-extra</code>
+```
 
----
+### Wallpaper Packs
+
+Extra wallpaper collections for every variant — install the ones that match your image. You only need the first one if you're not on Bluefin:
+
+```bash
+brew install --cask ublue-os/tap/bluefin-wallpapers
+brew install --cask ublue-os/tap/bluefin-wallpapers-extra
+brew install --cask ublue-os/tap/aurora-wallpapers
+brew install --cask ublue-os/tap/bazzite-wallpapers
+brew install --cask ublue-os/tap/framework-wallpapers
+```
 
 ## What's New on the Docs Site
 
-[TODO: intro sentence — e.g. "We've also been busy building out the documentation site..."]
+I spent most of my time working on documentation and we've been working pretty hard this cycle. Specifically around getting more information of what's in Bluefin so that we can be more transparent about what we ship:
 
 <DocsFeatureGrid features={[
   {
     title: "Changelogs",
     href: "https://docs.projectbluefin.io/changelogs",
     description: "Automated weekly changelogs for every image stream",
-    body: "[TODO: describe what the changelogs page gives users — e.g. 'Every week the build pipeline generates a full diff of every package, flatpak, and firmware change across all image streams. No more guessing what landed in your last update.']",
+    body: "This page will show you all of the versions and releases of every Bluefin. It is automatically generated from Bluefin's Software Bill of Materials (SBOM), so it will always show you what's on the image. This took way more work than we realized, but thanks to awesome tools such as [oras] and [cosign] we now have a nice way to show you what's in Bluefin. We also include the updates from the default homebrew and flatpaks shipped in Bluefin for convenience.",
     thumbnail: "/img/docs-features/changelogs.png",
     color: "stable"
   },
   {
     title: "Monthly Reports",
     href: "https://docs.projectbluefin.io/reports",
-    description: "Monthly contributor and ecosystem reports",
-    body: "[TODO: describe the monthly reports — e.g. 'Each month we publish a full contributor report showing who shipped what, which teams were most active, and how the project is trending. The data is live and regenerated from the GitHub API.']",
+    description: "Monthly Reports",
+    body: "This page aggregates all of the work from the volunteers that are landing in Bluefin. This report is generated monthly and features all of the contributors who work on Bluefin.",
     thumbnail: "/img/docs-features/reports.png",
     color: "lts"
   },
@@ -485,7 +359,7 @@ The default wallpapers ship automatically with Bluefin. The extra collection (Le
     title: "Images",
     href: "https://docs.projectbluefin.io/images",
     description: "Full matrix of available image variants",
-    body: "[TODO: describe the images page — e.g. 'The images page is the definitive guide to every available variant: Bluefin, Aurora, GDX, LTS, and the hardware-specific editions. Includes install commands, supported hardware, and which stream to pick for your use case.']",
+    body: "This page is a reference of all of the images we publish, and feautures rebase instructions if you need them. This includes the testing branches of every image (if they exist), and then Nvidia images.",
     thumbnail: "/img/docs-features/images.png",
     color: "stable"
   },
@@ -493,15 +367,15 @@ The default wallpapers ship automatically with Bluefin. The extra collection (Le
     title: "Driver Versions",
     href: "https://docs.projectbluefin.io/driver-versions",
     description: "GPU driver version tracker across streams",
-    body: "[TODO: describe the driver versions tracker — e.g. 'Tracks the NVIDIA, AMD, and Intel driver versions shipped in each image stream. If you want to know whether a specific driver landed before upgrading, this is the page to check.']",
+    body: "Ever update and get a regression? When was the last kernel update? When was the last time Uncle Jensen left us an unexpected gift? This page shows a matrix of major component version bumps so you can quickly see what updated when so you can at least make a better guess as to what past image you should rebase to. This page is clutch for troubleshooting.",
     thumbnail: "/img/docs-features/driver-versions.png",
     color: "dakota"
   },
   {
     title: "Music",
     href: "https://docs.projectbluefin.io/music",
-    description: "The Bluefin soundtrack playlist collection",
-    body: "[TODO: describe the music page — e.g. 'Every release ships with a curated soundtrack. The music page archives every playlist we have released, with notes on the artists and the vibe we were going for.']",
+    description: "The Bluefin Musical Experience",
+    body: "Every release ships with a curated soundtrack highlighting Bluefin's cloud native journey. The music page archives every playlist we have released, with notes on the artists and the vibe we were going for.']",
     thumbnail: "/img/docs-features/music.png",
     color: "lts"
   },
@@ -509,36 +383,13 @@ The default wallpapers ship automatically with Bluefin. The extra collection (Le
     title: "Artwork",
     href: "https://docs.projectbluefin.io/artwork",
     description: "Browse and download all wallpapers and artwork assets",
-    body: "[TODO: describe the artwork page — e.g. 'Full gallery of every wallpaper across all releases, with direct download links for the full-resolution originals. Includes artist credits and notes on how each piece was commissioned.']",
+    body: "Bluefin is not just software, the artwork of her world is just as important to us as the software. All of Bluefin's artists are compensated for their work.",
     thumbnail: "/img/docs-features/artwork.png",
     color: "dakota"
   }
 ]} />
 
----
 
-## Release Soundtrack to Hunt By
-
-[TODO: intro sentence — e.g. "Here's the soundtrack we've been building to..."]
-
-<MusicPlaylist
-  title="Bluefin and the Syrens of Metal"
-  playlistId="PLhiPP9M5fgWFa09qMHJSA7ts93UsMG82Q"
-/>
-
-[TODO: your text about the playlist]
-
----
-
-## Thanks {#brought-to-you-by}
-
-[TODO: thank you paragraph]
-
-- [Jay Balamurugan](https://kakapojay.com/) for creating the Lazy Days wallpaper. Jay is a London-based science communicator, paleoartist, and television producer — her credits include [Earth](https://player.bbc.com/en/brand/earth), [Walking with Dinosaurs](https://www.bbcearth.com/shows/walking-with-dinosaurs), and [Evolution](https://www.bbc.co.uk/programmes/m001wf7q). You can follow her on [Bluesky](https://bsky.app/profile/kakapojay.bsky.social) and [Instagram](https://www.instagram.com/kakapo.jay/) — [TODO: your words here]
-- [Jordan Petridis](https://github.com/alatiera), [Valentin David](https://github.com/valentindavid), [Adrian Vovk](https://github.com/AdrianVovk), and the [GNOME OS team](https://os.gnome.org/)
-- [Brian Ketelsen](https://github.com/brianketelsen) and [James Reilly](https://github.com/jamesreilly5) for the [Tuna installer](https://github.com/tuna-os/tuna-installer)
-- [TODO: anyone else you want to thank]
-- Everyone on Discord testing and reporting issues!
 
 <ReleaseContributors
   contributors={[
