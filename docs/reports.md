@@ -1,6 +1,6 @@
 ---
-sidebar_position: 6
 title: Monthly Reports
+slug: /about-reports
 ---
 
 # Monthly Reports
@@ -108,7 +108,7 @@ They now also include supply-chain-related highlights when present in release co
 ## Where to Find Reports
 
 - **Website:** Browse all reports at [/reports](/reports)
-- **RSS Feed:** Subscribe at [/reports/rss.xml](/reports/rss.xml)
+- **RSS Feed:** Subscribe at [/reports/rss.xml](pathname:///reports/rss.xml)
 - **Navigation:** Access via "Reports" link in main navigation
 
 ## Automated Generation
