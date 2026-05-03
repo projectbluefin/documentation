@@ -395,7 +395,9 @@ const DAKOTA_PLACEHOLDER_EVENT: OsReleaseEvent = {
       { name: "uutils-coreutils", version: "0.8.0", prevVersion: null },
     ],
     dxPackages: [],
-    gdxPackages: [],
+    gdxPackages: [
+      { name: "Nvidia", version: "595.71.05", prevVersion: null },
+    ],
     commits: [],
     fullDiff: [],
   },
