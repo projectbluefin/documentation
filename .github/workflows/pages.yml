@@ -73,6 +73,7 @@ jobs:
             github-profiles-v1-
 
       - name: Restore SBOM attestation cache
+        id: sbom-cache
         # Populated by update-sbom-cache.yml nightly at 04:00 UTC.
         # Primary key never matches; restore-keys fetches the latest entry.
         uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
@@ -83,6 +84,12 @@ jobs:
           key: github-data-sbom-${{ github.run_id }}
           restore-keys: |
             github-data-sbom-
+
+      - name: Fetch SBOM on cache miss
+        if: steps.sbom-cache.outputs.cache-hit != 'true'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node scripts/fetch-github-sbom.js
 
       - name: Check SBOM data freshness
         run: node scripts/check-sbom-staleness.js

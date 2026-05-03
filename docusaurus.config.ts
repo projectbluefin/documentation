@@ -73,20 +73,6 @@ const config: Config = {
 
   plugins: [
     [
-      "@1password/docusaurus-plugin-stored-data",
-      {
-        data: {
-          bluefinReleases: "https://github.com/ublue-os/bluefin/releases.atom",
-          bluefinLtsReleases:
-            "https://github.com/ublue-os/bluefin-lts/releases.atom",
-          bluefinDiscussions:
-            "https://github.com/ublue-os/bluefin/discussions.atom",
-          bluefinAnnouncements:
-            "https://github.com/ublue-os/bluefin/discussions.atom?discussions_q=is%3Aopen+label%3Aannouncements",
-        },
-      },
-    ],
-    [
       "@easyops-cn/docusaurus-search-local",
       {
         hashed: true,
