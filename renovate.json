@@ -37,8 +37,7 @@
   ],
   "vulnerabilityAlerts": {
     "enabled": true,
-    "automerge": true,
-    "matchUpdateTypes": ["patch", "minor"]
+    "automerge": true
   },
   "lockFileMaintenance": {
     "enabled": true,
@@ -48,7 +47,7 @@
   "customManagers": [
     {
       "customType": "regex",
-      "managerFilePatterns": ["/^static/data/artwork-versions\\.json$/"],
+      "fileMatch": ["/^static/data/artwork-versions\\.json$/"],
       "matchStrings": [
         "\"bluefin-wallpapers\":\\s*\"(?<currentValue>[0-9]{4}-[0-9]{2}-[0-9]{2})\""
       ],
@@ -60,7 +59,7 @@
     },
     {
       "customType": "regex",
-      "managerFilePatterns": ["/^static/data/artwork-versions\\.json$/"],
+      "fileMatch": ["/^static/data/artwork-versions\\.json$/"],
       "matchStrings": [
         "\"bluefin-wallpapers-extra\":\\s*\"(?<currentValue>[0-9]{4}-[0-9]{2}-[0-9]{2})\""
       ],
@@ -72,7 +71,7 @@
     },
     {
       "customType": "regex",
-      "managerFilePatterns": ["/^static/data/artwork-versions\\.json$/"],
+      "fileMatch": ["/^static/data/artwork-versions\\.json$/"],
       "matchStrings": [
         "\"aurora-wallpapers\":\\s*\"(?<currentValue>[0-9]{4}-[0-9]{2}-[0-9]{2})\""
       ],
@@ -84,7 +83,7 @@
     },
     {
       "customType": "regex",
-      "managerFilePatterns": ["/^static/data/artwork-versions\\.json$/"],
+      "fileMatch": ["/^static/data/artwork-versions\\.json$/"],
       "matchStrings": [
         "\"bazzite-wallpapers\":\\s*\"(?<currentValue>[0-9]{4}-[0-9]{2}-[0-9]{2})\""
       ],
