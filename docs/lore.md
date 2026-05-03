@@ -1,5 +1,6 @@
 ---
-unlisted: true
+title: Lore
+slug: /lore
 ---
 
 ![pair_scaled](/img/user-attachments/feaf2f80-b895-49ee-ac19-0ccd4f8857ca.png)
