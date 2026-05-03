@@ -15,20 +15,29 @@
 // ── Types ────────────────────────────────────────────────────────────────────
 
 export interface PackageVersions {
-  kernel?: string;
-  gnome?: string;
-  mesa?: string;
-  podman?: string;
-  systemd?: string;
-  [key: string]: string | undefined;
+  kernel?: string | null;
+  gnome?: string | null;
+  mesa?: string | null;
+  podman?: string | null;
+  systemd?: string | null;
+  [key: string]: string | null | undefined;
+}
+
+export interface Attestation {
+  present: boolean | null;
+  verified: boolean;
+  predicateType: string | null;
+  slsaType?: string;
+  errorKind?: string;
+  error: string | null;
 }
 
 export interface Release {
   tag: string;
   imageRef: string;
-  digest: string;
-  attestation: string;
-  packageVersions: PackageVersions;
+  digest: string | null;
+  attestation: Attestation;
+  packageVersions: PackageVersions | null;
   checkedAt: string;
 }
 
@@ -117,7 +126,7 @@ export function getLatestRelease(streamId: string): LatestRelease | null {
     kernel: pv.kernel ?? "unknown",
     gnome: pv.gnome ?? "unknown",
     mesa: pv.mesa ?? "unknown",
-    digest: release.digest,
+    digest: release.digest ?? "unknown",
     imageRef: release.imageRef,
     allVersions: pv,
   };
@@ -170,7 +179,7 @@ export function findStreamsByPackageVersion(
   const matches: string[] = [];
   for (const [streamId, stream] of Object.entries(data.streams)) {
     for (const release of Object.values(stream.releases)) {
-      if (release.packageVersions[packageName] === version) {
+      if (release.packageVersions?.[packageName] === version) {
         matches.push(streamId);
         break;
       }

@@ -53,7 +53,7 @@ function releaseToCard(streamId: string, tag: string, release: Release): FeedCar
     tag,
     date: release.checkedAt,
     imageRef: release.imageRef,
-    digest: release.digest,
+    digest: release.digest ?? "",
     chips,
     kind: "release",
   };

@@ -643,7 +643,7 @@ async function main() {
         stream: streamId,
         tag,
         date: entry.checkedAt,
-        digest: entry.digest?.slice(0, 19),
+        digest: entry.digest ? entry.digest.slice(0, 19) : null,
         kernel: pv.kernel || null,
         gnome: pv.gnome || null,
         mesa: pv.mesa || null,
