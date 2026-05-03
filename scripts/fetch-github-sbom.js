@@ -631,6 +631,28 @@ async function main() {
   const frontendOutput = { ...output, streams: frontendStreams };
   atomicWriteJson(FRONTEND_OUTPUT_FILE, frontendOutput);
   console.log(`SBOM frontend slim cache written to ${FRONTEND_OUTPUT_FILE}`);
+
+  // Write release-list.json — a lightweight index of all releases across streams,
+  // suitable for changelogs/feed pages without importing the full SBOM payload.
+  const RELEASE_LIST_FILE = path.join(path.dirname(OUTPUT_FILE), "release-list.json");
+  const releaseList = [];
+  for (const [streamId, stream] of Object.entries(streams)) {
+    for (const [tag, entry] of Object.entries(stream.releases || {})) {
+      const pv = entry.packageVersions || {};
+      releaseList.push({
+        stream: streamId,
+        tag,
+        date: entry.checkedAt,
+        digest: entry.digest ? entry.digest.slice(0, 19) : null,
+        kernel: pv.kernel || null,
+        gnome: pv.gnome || null,
+        mesa: pv.mesa || null,
+      });
+    }
+  }
+  releaseList.sort((a, b) => new Date(b.date) - new Date(a.date));
+  atomicWriteJson(RELEASE_LIST_FILE, { generatedAt: output.generatedAt, releases: releaseList });
+  console.log(`Release list written to ${RELEASE_LIST_FILE} (${releaseList.length} entries)`);
 }
 
 if (require.main === module) {
