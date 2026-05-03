@@ -6,6 +6,7 @@
     "docusaurus": "docusaurus",
     "start": "npm run fetch-data && docusaurus start --host 0.0.0.0",
     "build": "npm run fetch-data && docusaurus build",
+    "build:ci": "docusaurus build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
     "clear": "docusaurus clear",
@@ -47,7 +48,6 @@
     "clsx": "^2.0.0",
     "date-fns": "^4.1.0",
     "dompurify": "^3.4.2",
-    "node-fetch": "^3.3.2",
     "prism-react-renderer": "^2.3.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -66,6 +66,7 @@
     "@typescript-eslint/eslint-plugin": "8.58.0",
     "@typescript-eslint/parser": "8.58.0",
     "eslint": "8.57.1",
+    "node-fetch": "^3.3.2",
     "prettier": "3.8.1",
     "satori": "^0.26.0",
     "typescript": "6.0.2"

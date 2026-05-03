@@ -21,8 +21,8 @@ const config: Config = {
   },
 
   // GitHub pages deployment config.
-  organizationName: "ublue-os",
-  projectName: "bluefin",
+  organizationName: "projectbluefin",
+  projectName: "documentation",
 
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "throw",
@@ -115,7 +115,6 @@ const config: Config = {
           copyright: `Copyright © ${new Date().getFullYear()} Project Bluefin`,
         },
         // Enable table of contents in right sidebar
-        blogPostComponent: "@theme/BlogPostPage",
         showLastUpdateTime: false,
       },
     ],

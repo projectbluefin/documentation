@@ -404,7 +404,10 @@ async function fetchFirehoseData() {
     apps: allApps,
   };
 
-  fs.writeFileSync(OUTPUT_FILE, JSON.stringify(output, null, 2), "utf-8");
+  // Atomic write: write to temp file, then rename to prevent corruption on interruption
+  const tmpFile = OUTPUT_FILE + ".tmp";
+  fs.writeFileSync(tmpFile, JSON.stringify(output, null, 2), "utf-8");
+  fs.renameSync(tmpFile, OUTPUT_FILE);
 
   console.log(
     `✓ Firehose data saved: ${allApps.length} apps (${osApps.length} OS + ${remoteApps.length} other) to ${OUTPUT_FILE}`,
@@ -413,5 +416,5 @@ async function fetchFirehoseData() {
 
 fetchFirehoseData().catch((error) => {
   console.error("Fatal error in fetch-firehose:", error);
-  // Never fail the build — keep existing file
+  process.exitCode = 1;
 });

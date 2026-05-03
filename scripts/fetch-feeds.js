@@ -156,7 +156,7 @@ async function fetchAndSaveFeed(owner, repo, filename) {
     }
 
     fs.writeFileSync(
-      jsonPath,
+      jsonPath + ".tmp",
       JSON.stringify(
         {
           title: `${owner}/${repo} Releases`,
@@ -166,6 +166,7 @@ async function fetchAndSaveFeed(owner, repo, filename) {
         2,
       ),
     );
+    fs.renameSync(jsonPath + ".tmp", jsonPath);
 
     console.log(`Saved ${items.length} releases to ${jsonPath}`);
   } catch (error) {
@@ -179,7 +180,10 @@ async function main() {
 }
 
 if (require.main === module) {
-  main().catch(console.error);
+  main().catch((error) => {
+    console.error("Fatal error in fetch-feeds:", error);
+    process.exitCode = 1;
+  });
 }
 
 module.exports = { fetchAndSaveFeed };
