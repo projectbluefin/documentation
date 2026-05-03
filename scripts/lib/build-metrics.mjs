@@ -9,6 +9,15 @@
  */
 
 import { request } from "@octokit/request";
+import { createRequire } from "module";
+
+const require = createRequire(import.meta.url);
+const { retryWithBackoff: _retryWithBackoff } = require("./request-queue.js");
+
+/** Wrapper that passes the [build-metrics] label to the shared implementation. */
+function retryWithBackoff(fn, maxRetries = 3) {
+  return _retryWithBackoff(fn, { maxRetries, label: "[build-metrics]" });
+}
 
 /**
  * Workflow definitions to track
@@ -55,57 +64,6 @@ const requestWithAuth = request.defaults({
     authorization: `token ${process.env.GITHUB_TOKEN || process.env.GH_TOKEN}`,
   },
 });
-
-/**
- * Helper function to handle network retry with exponential backoff
- *
- * @param {Function} fn - Async function to retry
- * @param {number} maxRetries - Maximum retry attempts (default: 3)
- * @returns {Promise<any>} Result from successful function call
- */
-async function retryWithBackoff(fn, maxRetries = 3) {
-  let lastError;
-
-  for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    try {
-      return await fn();
-    } catch (error) {
-      lastError = error;
-
-      // Don't retry on authentication or rate limit errors
-      if (error.status === 401 || error.status === 403) {
-        console.warn(
-          `[build-metrics] Authentication/rate limit error: ${error.message}`,
-        );
-        throw error;
-      }
-
-      // Retry on network errors
-      const isNetworkError =
-        error.code === "ECONNRESET" ||
-        error.code === "ETIMEDOUT" ||
-        error.code === "ENOTFOUND" ||
-        error.code === "EAI_AGAIN" ||
-        error.message?.includes("socket hang up") ||
-        error.message?.includes("timeout");
-
-      if (isNetworkError && attempt < maxRetries) {
-        const delay = Math.pow(2, attempt) * 1000; // 2s, 4s, 8s
-        console.log(
-          `[build-metrics] Retry ${attempt}/${maxRetries} after network error: ${error.message || error.code}`,
-        );
-        console.log(`[build-metrics] Waiting ${delay}ms before retry...`);
-        await new Promise((resolve) => setTimeout(resolve, delay));
-        continue;
-      }
-
-      // If not a network error or max retries reached, throw
-      throw lastError;
-    }
-  }
-
-  throw lastError;
-}
 
 /**
  * Fetch workflow runs for a specific workflow within a date range

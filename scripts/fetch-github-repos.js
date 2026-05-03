@@ -1,5 +1,9 @@
 const fs = require("fs");
 const path = require("path");
+const {
+  sequentialFetchWithDelay,
+  githubHeaders,
+} = require("./lib/request-queue");
 
 // List all GitHub repos from projects.mdx
 const GITHUB_REPOS = [
@@ -68,14 +72,7 @@ const GITHUB_TOKEN = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
 
 async function fetchRepo(repoPath) {
   const url = `https://api.github.com/repos/${repoPath}`;
-
-  const headers = {
-    "User-Agent": "Bluefin-Docs-Build",
-  };
-
-  if (GITHUB_TOKEN) {
-    headers["Authorization"] = `Bearer ${GITHUB_TOKEN}`;
-  }
+  const headers = githubHeaders(GITHUB_TOKEN);
 
   try {
     const response = await fetch(url, { headers });
@@ -133,20 +130,15 @@ async function fetchAllRepos() {
 
   console.log(`Fetching ${GITHUB_REPOS.length} GitHub repos...`);
 
-  const repos = {};
+  const resultsMap = await sequentialFetchWithDelay(
+    GITHUB_REPOS,
+    async (repoPath) => {
+      console.log(`Fetching ${repoPath}...`);
+      return fetchRepo(repoPath);
+    },
+  );
 
-  // Fetch repos with a small delay to avoid rate limiting
-  for (const repoPath of GITHUB_REPOS) {
-    console.log(`Fetching ${repoPath}...`);
-    const repo = await fetchRepo(repoPath);
-
-    if (repo) {
-      repos[repoPath] = repo;
-    }
-
-    // Small delay to be nice to GitHub's API
-    await new Promise((resolve) => setTimeout(resolve, 100));
-  }
+  const repos = Object.fromEntries(resultsMap);
 
   console.log(
     `\nSuccessfully fetched ${Object.keys(repos).length}/${GITHUB_REPOS.length} repos`,
