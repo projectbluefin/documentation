@@ -11,7 +11,8 @@
  * Usage: node scripts/generate-card-images.mjs
  */
 
-import { readFileSync, mkdirSync, writeFileSync } from "fs";
+import { readFileSync, mkdirSync, writeFileSync, existsSync } from "fs";
+import { createHash } from "crypto";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 import satori from "satori";
@@ -260,6 +261,53 @@ const DAKOTA_RELEASE = {
   link: "https://github.com/projectbluefin/dakota",
 };
 
+// ── Content hashing ──────────────────────────────────────────────────────────
+
+const HASH_MANIFEST_PATH = join(ROOT, "static/data/card-hashes.json");
+
+/**
+ * Compute a SHA-256 hash of the release data + card-template source that
+ * determines the visual output of a card. If this hash hasn't changed,
+ * the generated PNG will be byte-identical — no need to regenerate.
+ */
+function computeCardHash(release, stream) {
+  const h = createHash("sha256");
+  // Include the enriched release data (determines card content)
+  h.update(JSON.stringify(release));
+  // Include stream (affects theme colors / mascot selection)
+  h.update(stream);
+  // Include the card-template source (layout/style changes invalidate cache)
+  try {
+    h.update(readFileSync(join(__dirname, "lib/card-template.mjs"), "utf8"));
+  } catch {
+    // If template can't be read, always regenerate
+    h.update(Date.now().toString());
+  }
+  return h.digest("hex");
+}
+
+function loadHashManifest() {
+  try {
+    return JSON.parse(readFileSync(HASH_MANIFEST_PATH, "utf8"));
+  } catch {
+    return {};
+  }
+}
+
+function saveHashManifest(manifest) {
+  mkdirSync(dirname(HASH_MANIFEST_PATH), { recursive: true });
+  writeFileSync(HASH_MANIFEST_PATH, JSON.stringify(manifest, null, 2) + "\n");
+}
+
+/**
+ * Check whether all expected output files for a card slug exist on disk.
+ */
+function cardFilesExist(outDir, slug) {
+  return ["light", "dark"].every((theme) =>
+    existsSync(join(outDir, `${slug}-${theme}.png`))
+  );
+}
+
 // ── Main ─────────────────────────────────────────────────────────────────────
 
 async function main() {
@@ -284,11 +332,25 @@ async function main() {
   const outDir = join(ROOT, "static/img/cards");
   mkdirSync(outDir, { recursive: true });
 
+  const prevManifest = loadHashManifest();
+  const nextManifest = {};
+
   let generated = 0;
+  let skipped = 0;
 
   for (const { release, stream, slug } of cards) {
     if (!release) {
       console.warn(`WARN: no release found for ${slug} — skipping`);
+      continue;
+    }
+
+    const contentHash = computeCardHash(release, stream);
+    nextManifest[slug] = contentHash;
+
+    // Cache hit: hash matches AND output files already exist on disk
+    if (prevManifest[slug] === contentHash && cardFilesExist(outDir, slug)) {
+      console.log(`  ⊘ ${slug} — unchanged (cache hit)`);
+      skipped++;
       continue;
     }
 
@@ -310,7 +372,12 @@ async function main() {
     }
   }
 
-  console.log(`\nGenerated ${generated} card images → static/img/cards/`);
+  // Persist the manifest for the next run
+  saveHashManifest(nextManifest);
+
+  const parts = [`Generated ${generated} card image(s)`];
+  if (skipped > 0) parts.push(`skipped ${skipped} (cached)`);
+  console.log(`\n${parts.join(", ")} → static/img/cards/`);
 }
 
 main().catch((err) => {
