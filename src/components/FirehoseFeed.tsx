@@ -5,7 +5,6 @@ import bluefinReleasesData from "@site/static/feeds/bluefin-releases.json";
 import bluefinLtsReleasesData from "@site/static/feeds/bluefin-lts-releases.json";
 import type { FirehoseApp, FirehoseRelease, FirehoseFilterState } from "../types/firehose";
 import type { OsReleaseEvent, AppTimelineEvent, FlatTimelineEvent, ParsedMajorPackage } from "../types/os-feed";
-import sbomAttestationsData from "@site/static/data/sbom-attestations-frontend.json";
 import type { SbomAttestationsData, PackageVersions } from "../types/sbom";
 import { parseOsRelease } from "../utils/parseOsRelease";
 import FirehoseCard from "./FirehoseCard";
@@ -62,7 +61,16 @@ function loadOsEvents(
 // but never used as the sole source for missing packages.
 // Dakota is the only stream that uses hardcoded placeholder versions.
 
-const SBOM_CACHE = sbomAttestationsData as unknown as SbomAttestationsData;
+// Lazy-loaded SBOM cache: the 104KB JSON is only parsed on first access,
+// deferring work from module-load time to first render.
+let _sbomCache: SbomAttestationsData | null = null;
+function getSbomCache(): SbomAttestationsData {
+  if (!_sbomCache) {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    _sbomCache = require("@site/static/data/sbom-attestations-frontend.json") as SbomAttestationsData;
+  }
+  return _sbomCache;
+}
 
 /** Map from lowercase HEADER_CHIP_NAMES to their PackageVersions field. */
 const CHIP_TO_SBOM: Array<{ chipName: string; displayName: string; field: keyof PackageVersions }> = [
@@ -108,7 +116,7 @@ function enrichFromSbom(events: OsReleaseEvent[]): OsReleaseEvent[] {
     const key = sbomKeyForRelease(event.release.tag, event.stream);
     if (!key) return event;
 
-    const packages = SBOM_CACHE?.streams?.[key.streamId]?.releases?.[key.cacheKey]?.packageVersions;
+    const packages = getSbomCache()?.streams?.[key.streamId]?.releases?.[key.cacheKey]?.packageVersions;
     if (!packages) {
       // Expected during local dev (empty seed file) and for releases older than LOOKBACK_DAYS.
       // In CI with a populated SBOM cache this should be rare — check update-sbom-cache.yml if frequent.
@@ -230,9 +238,9 @@ function enrichLtsDxGdxFromSbom(events: OsReleaseEvent[]): OsReleaseEvent[] {
     const cacheKey = `lts-${dateMatch[1]}`;
 
     const dxAllPkgs =
-      SBOM_CACHE?.streams?.["bluefin-dx-lts"]?.releases?.[cacheKey]?.packageVersions?.allPackages;
+      getSbomCache()?.streams?.["bluefin-dx-lts"]?.releases?.[cacheKey]?.packageVersions?.allPackages;
     const gdxAllPkgs =
-      SBOM_CACHE?.streams?.["bluefin-gdx-lts"]?.releases?.[cacheKey]?.packageVersions?.allPackages;
+      getSbomCache()?.streams?.["bluefin-gdx-lts"]?.releases?.[cacheKey]?.packageVersions?.allPackages;
 
     const dxPackages = [...event.release.dxPackages];
     if (dxAllPkgs) {
@@ -282,7 +290,7 @@ function enrichLtsHweKernelFromSbom(events: OsReleaseEvent[]): OsReleaseEvent[] 
     const dateMatch = event.release.tag.match(/(\d{8})/);
     if (!dateMatch) return event;
     const hweKernel =
-      SBOM_CACHE?.streams?.["bluefin-lts-hwe"]?.releases?.[`lts-hwe-${dateMatch[1]}`]
+      getSbomCache()?.streams?.["bluefin-lts-hwe"]?.releases?.[`lts-hwe-${dateMatch[1]}`]
         ?.packageVersions?.kernel;
     if (!hweKernel) return event;
 
@@ -303,7 +311,7 @@ function enrichLtsHweKernelFromSbom(events: OsReleaseEvent[]): OsReleaseEvent[] 
  * is needed; the events are already fully populated.
  */
 function loadStableDailyEventsFromSbom(): OsReleaseEvent[] {
-  const stream = SBOM_CACHE?.streams?.["bluefin-stable-daily"];
+  const stream = getSbomCache()?.streams?.["bluefin-stable-daily"];
   if (!stream?.releases) return [];
 
   const events: OsReleaseEvent[] = [];
@@ -349,26 +357,52 @@ function loadStableDailyEventsFromSbom(): OsReleaseEvent[] {
   return events;
 }
 
-// All parsed events from both feeds, enriched with SBOM package versions
-const BLUEFIN_OS_EVENTS: OsReleaseEvent[] = enrichFromSbom(loadOsEvents(bluefinReleasesData));
-const STABLE_DAILY_OS_EVENTS: OsReleaseEvent[] = loadStableDailyEventsFromSbom();
-const LTS_OS_EVENTS: OsReleaseEvent[] = enrichLtsHweKernelFromSbom(
-  enrichLtsDxGdxFromSbom(
-    enrichLtsFromHistory(enrichFromSbom(loadOsEvents(bluefinLtsReleasesData, "lts"))),
-  ),
-);
+// ── Lazy-initialized derived data ─────────────────────────────────────────────
+// All enrichment pipelines run on first access rather than at module load time.
+
+let _bluefinOsEvents: OsReleaseEvent[] | null = null;
+function getBluefinOsEvents(): OsReleaseEvent[] {
+  if (!_bluefinOsEvents) {
+    _bluefinOsEvents = enrichFromSbom(loadOsEvents(bluefinReleasesData));
+  }
+  return _bluefinOsEvents;
+}
+
+let _stableDailyOsEvents: OsReleaseEvent[] | null = null;
+function getStableDailyOsEvents(): OsReleaseEvent[] {
+  if (!_stableDailyOsEvents) {
+    _stableDailyOsEvents = loadStableDailyEventsFromSbom();
+  }
+  return _stableDailyOsEvents;
+}
+
+let _ltsOsEvents: OsReleaseEvent[] | null = null;
+function getLtsOsEvents(): OsReleaseEvent[] {
+  if (!_ltsOsEvents) {
+    _ltsOsEvents = enrichLtsHweKernelFromSbom(
+      enrichLtsDxGdxFromSbom(
+        enrichLtsFromHistory(enrichFromSbom(loadOsEvents(bluefinLtsReleasesData, "lts"))),
+      ),
+    );
+  }
+  return _ltsOsEvents;
+}
 
 // Rolling 12-month window for the stream — pinned cards (PINNED_OS_EVENTS) are unaffected.
-const ALL_OS_STREAM_EVENTS: OsReleaseEvent[] = (() => {
-  const cutoff = Date.now() - ROLLING_WINDOW_MS;
-  return [
-    ...BLUEFIN_OS_EVENTS,
-    ...STABLE_DAILY_OS_EVENTS,
-    ...LTS_OS_EVENTS,
-  ]
-    .filter((e) => e.dateMs > cutoff)
-    .sort((a, b) => b.dateMs - a.dateMs);
-})();
+let _allOsStreamEvents: OsReleaseEvent[] | null = null;
+function getAllOsStreamEvents(): OsReleaseEvent[] {
+  if (!_allOsStreamEvents) {
+    const cutoff = Date.now() - ROLLING_WINDOW_MS;
+    _allOsStreamEvents = [
+      ...getBluefinOsEvents(),
+      ...getStableDailyOsEvents(),
+      ...getLtsOsEvents(),
+    ]
+      .filter((e) => e.dateMs > cutoff)
+      .sort((a, b) => b.dateMs - a.dateMs);
+  }
+  return _allOsStreamEvents;
+}
 
 // Dakota placeholder — versions sourced from SBOM attestation on dakota-latest stream
 // and BST element pins. Update when junction refs change.
@@ -406,16 +440,41 @@ const DAKOTA_PLACEHOLDER_EVENT: OsReleaseEvent = {
 // Pinned "Current Versions" cards: latest stable + latest LTS + Dakota placeholder.
 // All bluefin releases are stable-daily; synthesise a "stable"-streamed clone for
 // the pinned card so it shows the "Stable" badge while the stream shows "Daily".
-export const PINNED_OS_EVENTS: OsReleaseEvent[] = (() => {
-  // Pinned Bluefin card: most recent weekly stable release (stream === "stable").
-  // stable-daily builds (latest-YYYYMMDD, if published) appear in the timeline only.
-  const pinnedStable: OsReleaseEvent | undefined =
-    BLUEFIN_OS_EVENTS.find((e) => e.stream === "stable") ?? BLUEFIN_OS_EVENTS[0];
-  // Pinned LTS card: latest from LTS feed
-  const pinnedLts: OsReleaseEvent | undefined = LTS_OS_EVENTS.length > 0 ? LTS_OS_EVENTS[0] : undefined;
-  return [pinnedStable, pinnedLts, DAKOTA_PLACEHOLDER_EVENT]
-    .filter((e): e is OsReleaseEvent => e !== undefined);
-})();
+let _pinnedOsEvents: OsReleaseEvent[] | null = null;
+function computePinnedOsEvents(): OsReleaseEvent[] {
+  if (!_pinnedOsEvents) {
+    const bluefin = getBluefinOsEvents();
+    const lts = getLtsOsEvents();
+    // Pinned Bluefin card: most recent weekly stable release (stream === "stable").
+    // stable-daily builds (latest-YYYYMMDD, if published) appear in the timeline only.
+    const pinnedStable: OsReleaseEvent | undefined =
+      bluefin.find((e) => e.stream === "stable") ?? bluefin[0];
+    // Pinned LTS card: latest from LTS feed
+    const pinnedLts: OsReleaseEvent | undefined = lts.length > 0 ? lts[0] : undefined;
+    _pinnedOsEvents = [pinnedStable, pinnedLts, DAKOTA_PLACEHOLDER_EVENT]
+      .filter((e): e is OsReleaseEvent => e !== undefined);
+  }
+  return _pinnedOsEvents;
+}
+
+// Exported as a Proxy so consumers can import PINNED_OS_EVENTS as a plain array
+// while the actual computation is deferred until first property access (render time).
+export const PINNED_OS_EVENTS: OsReleaseEvent[] = new Proxy([] as OsReleaseEvent[], {
+  get(_, prop, receiver) {
+    const target = computePinnedOsEvents();
+    const value = Reflect.get(target, prop, receiver);
+    return typeof value === "function" ? value.bind(target) : value;
+  },
+  has(_, prop) {
+    return prop in computePinnedOsEvents();
+  },
+  ownKeys() {
+    return Reflect.ownKeys(computePinnedOsEvents());
+  },
+  getOwnPropertyDescriptor(_, prop) {
+    return Object.getOwnPropertyDescriptor(computePinnedOsEvents(), prop);
+  },
+});
 
 /**
  * Flatten every app's releases array into individual events.
@@ -670,10 +729,10 @@ const FirehoseFeed: React.FC = () => {
   const filteredOsStreamEvents = useMemo((): OsReleaseEvent[] => {
     // When filtering to a specific app type, OS events are hidden
     if (filters.packageType === "flatpak" || filters.packageType === "homebrew") return [];
-    if (filters.updatedWithin === "all") return ALL_OS_STREAM_EVENTS;
+    if (filters.updatedWithin === "all") return getAllOsStreamEvents();
     const maxAge = DAYS_MS[filters.updatedWithin];
     const now = Date.now();
-    return ALL_OS_STREAM_EVENTS.filter((e) => e.dateMs > 0 && now - e.dateMs <= maxAge);
+    return getAllOsStreamEvents().filter((e) => e.dateMs > 0 && now - e.dateMs <= maxAge);
   }, [filters.packageType, filters.updatedWithin]);
 
   // How many stream OS events are hidden by the date filter
@@ -682,7 +741,7 @@ const FirehoseFeed: React.FC = () => {
       filters.updatedWithin !== "all" &&
       filters.packageType !== "flatpak" &&
       filters.packageType !== "homebrew"
-        ? ALL_OS_STREAM_EVENTS.filter((e) => e.dateMs > 0).length - filteredOsStreamEvents.length
+        ? getAllOsStreamEvents().filter((e) => e.dateMs > 0).length - filteredOsStreamEvents.length
         : 0,
     [filteredOsStreamEvents, filters.packageType, filters.updatedWithin],
   );
@@ -705,7 +764,7 @@ const FirehoseFeed: React.FC = () => {
     return items;
   }, [filteredOsStreamEvents, appSection]);
 
-  const isEmpty = allEvents.length === 0 && ALL_OS_STREAM_EVENTS.length === 0;
+  const isEmpty = allEvents.length === 0 && getAllOsStreamEvents().length === 0;
   const feedEmpty = unifiedStream.length === 0;
 
   return (
@@ -729,7 +788,7 @@ const FirehoseFeed: React.FC = () => {
           matchCount={filteredUniqueApps.length}
         />
         {!isEmpty && (
-          <Statistics uniqueApps={uniqueApps} osEventCount={ALL_OS_STREAM_EVENTS.length} />
+          <Statistics uniqueApps={uniqueApps} osEventCount={getAllOsStreamEvents().length} />
         )}
       </aside>
 

@@ -1557,8 +1557,10 @@ async function main() {
   for (const [streamId, stream] of Object.entries(streams)) {
     const slimReleases = {};
     for (const [key, entry] of Object.entries(stream.releases || {})) {
-      const { allPackages: _dropped, ...rest } = entry;
-      slimReleases[key] = rest;
+      // Strip allPackages from packageVersions — it's ~60KB per release and
+      // the frontend only needs the named versions (kernel, gnome, mesa, etc.)
+      const { allPackages: _dropped, ...slimPkgVersions } = entry.packageVersions || {};
+      slimReleases[key] = { ...entry, packageVersions: slimPkgVersions };
     }
     frontendStreams[streamId] = { ...stream, releases: slimReleases };
   }

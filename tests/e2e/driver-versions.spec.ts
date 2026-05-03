@@ -76,4 +76,27 @@ test.describe("Images page", () => {
     });
     await expect(bluefinCard.first()).toBeVisible();
   });
+
+  test("product cards show non-empty version or date info", async ({ page }) => {
+    await page.waitForFunction(
+      () => document.querySelectorAll("article[class*='card']").length > 0,
+      { timeout: 15_000 },
+    );
+    const cards = page.locator("article[class*='card']");
+    const count = await cards.count();
+    // At least one card should contain a version chip, date, or version label
+    let cardsWithData = 0;
+    for (let i = 0; i < count; i++) {
+      const card = cards.nth(i);
+      const text = await card.textContent();
+      // Check for version-like patterns (e.g. "6.19", "2026-04-01", "v42")
+      if (text && /\d+\.\d+|\d{4}-\d{2}-\d{2}|v\d+/.test(text)) {
+        cardsWithData++;
+      }
+    }
+    expect(
+      cardsWithData,
+      "at least one product card must show version or date data (not Unknown)",
+    ).toBeGreaterThan(0);
+  });
 });

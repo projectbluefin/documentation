@@ -1,0 +1,6 @@
+# Require review for workflow and infrastructure changes
+.github/workflows/ @castrojo
+scripts/ @castrojo
+docusaurus.config.ts @castrojo
+package.json @castrojo
+renovate.json @castrojo

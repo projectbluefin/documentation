@@ -38,13 +38,3 @@ declare module "@theme/useStoredFeed" {
   function useStoredFeed(key: string): ParsedFeed | null;
   export default useStoredFeed;
 }
-
-declare module "@theme/useStoredData" {
-  function useStoredData(key: string): any;
-  export default useStoredData;
-}
-
-declare module "@theme/useStoredJson" {
-  function useStoredJson(key: string): any;
-  export default useStoredJson;
-}

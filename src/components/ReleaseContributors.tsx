@@ -151,7 +151,7 @@ const ReleaseContributors: React.FC<ReleaseContributorsProps> = ({
   stats,
 }) => {
   const displayName = (login: string): string => {
-    const profile = (profilesData as Record<string, { name?: string }>)[login];
+    const profile = (profilesData as Record<string, { name?: string | null }>)[login];
     return (profile?.name || login).toLowerCase();
   };
 

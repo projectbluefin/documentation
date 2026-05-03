@@ -29,8 +29,9 @@ jobs:
       - name: Install Prince
         if: steps.cache-prince.outputs.cache-hit != 'true'
         run: |
-          curl https://www.princexml.com/download/prince-15.4.1-linux-generic-x86_64.tar.gz -O
-          tar zxf prince-15.4.1-linux-generic-x86_64.tar.gz
+          curl -fsSL https://www.princexml.com/download/prince-15.4.1-linux-generic-x86_64.tar.gz -o prince.tar.gz
+          echo "4b91241934bbfc11041e81313c0e6770b76154bae34f06053302052c2e078fdd  prince.tar.gz" | sha256sum --check
+          tar zxf prince.tar.gz
           cd prince-15.4.1-linux-generic-x86_64
           yes "" | sudo ./install.sh
 

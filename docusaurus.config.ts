@@ -17,12 +17,13 @@ const config: Config = {
     experimental_faster: true,
     v4: {
       removeLegacyPostBuildHeadAttribute: true,
+      useCssCascadeLayers: true,
     },
   },
 
   // GitHub pages deployment config.
-  organizationName: "ublue-os",
-  projectName: "bluefin",
+  organizationName: "projectbluefin",
+  projectName: "documentation",
 
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "throw",
@@ -72,20 +73,6 @@ const config: Config = {
 
   plugins: [
     [
-      "@1password/docusaurus-plugin-stored-data",
-      {
-        data: {
-          bluefinReleases: "https://github.com/ublue-os/bluefin/releases.atom",
-          bluefinLtsReleases:
-            "https://github.com/ublue-os/bluefin-lts/releases.atom",
-          bluefinDiscussions:
-            "https://github.com/ublue-os/bluefin/discussions.atom",
-          bluefinAnnouncements:
-            "https://github.com/ublue-os/bluefin/discussions.atom?discussions_q=is%3Aopen+label%3Aannouncements",
-        },
-      },
-    ],
-    [
       "@easyops-cn/docusaurus-search-local",
       {
         hashed: true,
@@ -115,10 +102,27 @@ const config: Config = {
           copyright: `Copyright © ${new Date().getFullYear()} Project Bluefin`,
         },
         // Enable table of contents in right sidebar
-        blogPostComponent: "@theme/BlogPostPage",
         showLastUpdateTime: false,
       },
     ],
+  ],
+
+  headTags: [
+    {
+      tagName: "meta",
+      attributes: {
+        "http-equiv": "Content-Security-Policy",
+        content: [
+          "default-src 'self'",
+          "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+          "style-src 'self' 'unsafe-inline'",
+          "img-src 'self' data: https:",
+          "font-src 'self' data:",
+          "connect-src 'self' https://api.github.com https://giscus.app",
+          "frame-src https://giscus.app https://www.youtube.com https://youtube.com",
+        ].join("; "),
+      },
+    },
   ],
 
   themeConfig: {

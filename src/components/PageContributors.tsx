@@ -135,7 +135,7 @@ const PageContributors: React.FC<PageContributorsProps> = ({ filePath }) => {
 
   useEffect(() => {
     // First, try pre-fetched build-time data
-    const buildData = contributorsData[filePath];
+    const buildData = (contributorsData as Record<string, typeof contributorsData[keyof typeof contributorsData]>)[filePath];
 
     if (buildData) {
       setContributors(buildData);

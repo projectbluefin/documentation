@@ -7,6 +7,7 @@ import type {
   FirehosePackageDiff,
 } from "../types/firehose";
 import styles from "./FirehoseCard.module.css";
+import { sanitizeHtml } from "../utils/sanitizeHtml";
 
 interface FirehoseCardProps {
   app: FirehoseApp;
@@ -373,7 +374,7 @@ const FirehoseCard: React.FC<FirehoseCardProps> = ({ app, defaultCollapsed = fal
               <div className={styles.releaseNotes}>
                 <div
                   className={styles.releaseDescription}
-                  dangerouslySetInnerHTML={{ __html: latestRelease.description }}
+                  dangerouslySetInnerHTML={{ __html: sanitizeHtml(latestRelease.description) }}
                 />
                 {latestRelease.url && (
                   <a
@@ -432,7 +433,7 @@ const FirehoseCard: React.FC<FirehoseCardProps> = ({ app, defaultCollapsed = fal
                   ) : release.description ? (
                     <div
                       className={styles.releaseDescription}
-                      dangerouslySetInnerHTML={{ __html: release.description }}
+                      dangerouslySetInnerHTML={{ __html: sanitizeHtml(release.description) }}
                     />
                   ) : null}
                 </div>

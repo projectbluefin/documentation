@@ -14,6 +14,11 @@ jobs:
   generate-report:
     runs-on: ubuntu-latest
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@fe104658747b27e96e4f7e80cd0a94068e53901d # v2.16.1
+        with:
+          egress-policy: audit
+
       - name: Checkout repository
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
 
@@ -49,12 +54,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm run generate-report
-        continue-on-error: true
-
-      - name: Check generation result
-        if: steps.generate.outcome == 'failure'
-        run: |
-          echo "::warning::Report generation encountered errors but will attempt commit"
 
       - name: Create feature branch
         run: |

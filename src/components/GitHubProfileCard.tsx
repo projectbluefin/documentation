@@ -10,7 +10,7 @@ interface GitHubUser {
   login: string;
   name: string;
   avatar_url: string;
-  bio: string;
+  bio: string | null;
   html_url: string;
   public_repos: number;
   followers: number;
@@ -193,10 +193,10 @@ const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
 
   useEffect(() => {
     // First, try pre-fetched build-time data
-    const profileData = profilesData[username];
+    const profileData = (profilesData as Record<string, typeof profilesData[keyof typeof profilesData]>)[username];
 
     if (profileData) {
-      setUser(profileData);
+      setUser(profileData as GitHubUser);
       setLoading(false);
       return;
     }

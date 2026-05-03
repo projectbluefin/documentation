@@ -16,6 +16,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
+permissions:
+  contents: read
+
 jobs:
   build:
     name: Build Docusaurus
@@ -35,36 +38,32 @@ jobs:
           node-version: 24
           cache: npm
 
-      - name: Cache node_modules
-        id: cache-node-modules
-        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
-        with:
-          path: node_modules
-          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            node-modules-${{ runner.os }}-
+      - name: Install dependencies
+        run: npm ci
 
       - name: Restore GitHub data cache
+        # Caches only files produced by fetch scripts. SBOM attestations,
+        # github-profiles, and artwork.json are managed by dedicated caches
+        # or the git checkout — they are intentionally excluded here so the
+        # broad restore never overwrites them.
         uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
         with:
-          path: static/data
+          path: |
+            static/data/artwork-versions.json
+            static/data/driver-versions.json
+            static/data/file-contributors.json
+            static/data/firehose-apps.json
+            static/data/github-repos.json
+            static/data/images.json
+            static/data/playlist-metadata.json
+            static/data/stream-pins.json
           key: github-data-${{ hashFiles('scripts/fetch-*.js') }}
           restore-keys: |
-            github-data-sbom-
             github-data-
 
-      - name: Restore curated artwork metadata (cache must not overwrite)
-        # The github-data cache restores the entire static/data/ directory, which
-        # overwrites artwork.json with a stale cached copy and loses manually curated
-        # fields (e.g. coAuthor). Restore the committed version from the checkout so
-        # hand-edited credits are always included in the build.
-        run: git checkout -- static/data/artwork.json
-
       - name: Restore GitHub profiles cache
-        # Primary key never matches (profiles workflow uses a different run_id).
-        # The restore-keys fallback fetches the most recent cache saved by
-        # update-github-profiles-cache.yml. Restored after the general data cache
-        # so it takes precedence over any stale profiles in the general cache.
+        # Populated by update-github-profiles-cache.yml in a separate workflow.
+        # Primary key never matches; restore-keys fetches the latest entry.
         uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
         with:
           path: static/data/github-profiles.json
@@ -72,10 +71,10 @@ jobs:
           restore-keys: |
             github-profiles-v1-
 
-      - name: Restore SBOM attestation cache (overrides general data cache)
-        # Primary key will never match (update-sbom-cache.yml runs as a separate workflow
-        # with a different run_id). The restore-keys fallback always applies, fetching
-        # the most recent nightly SBOM cache saved by update-sbom-cache.yml.
+      - name: Restore SBOM attestation cache
+        id: sbom-cache
+        # Populated by update-sbom-cache.yml nightly at 04:00 UTC.
+        # Primary key never matches; restore-keys fetches the latest entry.
         uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
         with:
           path: |
@@ -85,9 +84,14 @@ jobs:
           restore-keys: |
             github-data-sbom-
 
-      - name: Install dependencies
-        if: steps.cache-node-modules.outputs.cache-hit != 'true'
-        run: npm ci
+      - name: Fetch SBOM on cache miss
+        if: steps.sbom-cache.outputs.cache-hit != 'true'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node scripts/fetch-github-sbom.js
+
+      - name: Check SBOM data freshness
+        run: node scripts/check-sbom-staleness.js
 
       - name: Fetch data
         env:
@@ -111,17 +115,24 @@ jobs:
       - name: Generate embeddable card images
         run: npm run generate-card-images
 
-      - name: Run TypeScript validation
-        run: npm run typecheck
+      - name: Run unit tests
+        run: npm test
 
-      - name: Run ESLint validation
-        run: npm run lint
-
-      - name: Run Prettier check (warnings only)
-        run: npm run prettier-lint || true
+      - name: Run validation (typecheck + lint + prettier)
+        run: |
+          npm run typecheck &
+          npm run lint &
+          (npm run prettier-lint || true) &
+          wait
 
       - name: Build website
-        run: npm run build
+        run: npm run build:ci
+
+      - name: Run E2E tests
+        if: github.event_name == 'pull_request' || github.event_name == 'merge_group'
+        run: npx playwright install --with-deps chromium && npx playwright test
+        env:
+          PLAYWRIGHT_BASE_URL: http://localhost:3000
 
       - name: Upload Build Artifact
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5
