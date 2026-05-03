@@ -3,7 +3,7 @@
 **Repository:** `castrojo/documentation` (fork of `projectbluefin/documentation`)  
 **Deployed at:** <https://docs.projectbluefin.io/>  
 **Local path:** `/var/home/jorge/src/documentation`  
-**Framework:** Docusaurus 3.9.x (TypeScript), React 19, Node 24
+**Framework:** Docusaurus 3.10.x (TypeScript), React 19, Node 24
 
 ---
 
@@ -128,10 +128,11 @@ Runs automatically during `npm run start` and `npm run build`.
 | `fetch-playlist-metadata.js` | `static/data/playlist-metadata.json` | YouTube playlist thumbnails/descriptions |
 | `fetch-github-profiles.js` | `static/data/github-profiles.json` | GitHub user profiles (~80 users for donations page) |
 | `fetch-github-repos.js` | `static/data/github-repos.json` | GitHub repo stars/forks for projects page |
+| `fetch-contributors.js` | `static/data/file-contributors.json` | Per-file git contributors (used by DocItem/Footer) |
+| `fetch-pin-state.js` | `static/data/stream-pins.json` | Current pinned stream versions |
 | `fetch-github-driver-versions.js` | `static/data/driver-versions.json` | Kernel/Mesa/NVIDIA/GNOME version history per stream from GitHub releases |
 | `fetch-github-images.js` | `static/data/images.json` | OCI image catalog — streams, versions, bootc switch commands, download counts. Reads `sbom-attestations.json` and overlays package versions from SBOM data |
-| `fetch-contributors.js` | `static/data/file-contributors.json` | Per-file git contributors (used by DocItem/Footer) |
-| `fetch-board-data.js` | `static/data/board-changelog.json` | projectbluefin org project board data (requires PROJECT_READ_TOKEN with `project:read`) |
+| `fetch-firehose.js` | `static/data/firehose-apps.json` | Flatpak/app release data from castrojo/bluefin-releases; enriched with SBOM OS release entries |
 
 All scripts use a **24-hour file-mtime cache**: if the output JSON is younger than 24 hours, the fetch is skipped. Pass `--force` to bypass.
 
@@ -142,6 +143,15 @@ export GITHUB_TOKEN=$(gh auth token)
 npm run fetch-data
 ```
 
+The fetch-data chain runs in three phases (see `package.json`):
+
+```bash
+# Phase 1 (parallel): feeds, playlists, profiles, repos, contributors
+# Phase 2: pin-state (depends on feeds)
+# Phase 3 (parallel): driver-versions, images, firehose
+npm run fetch-data
+```
+
 Run individual scripts:
 
 ```bash
@@ -149,10 +159,11 @@ npm run fetch-feeds
 npm run fetch-playlists
 npm run fetch-github-profiles
 npm run fetch-github-repos
+npm run fetch-contributors
+npm run fetch-pin-state
 npm run fetch-github-driver-versions
 npm run fetch-github-images
-npm run fetch-contributors
-npm run fetch-board-data
+npm run fetch-firehose
 ```
 
 #### SBOM attestation pipeline (separate nightly workflow)
@@ -201,15 +212,20 @@ All other `static/data/*.json` and `static/feeds/*.json` files are gitignored an
 Triggers: PR to main, push to main, merge_group, workflow_dispatch, schedule (Sundays 6:50 UTC)
 
 Key steps:
-1. Restore `node_modules` cache (key: `package-lock.json` hash)
-2. **Restore GitHub data cache** — key `github-data-{scripts-hash}`, restore-keys include `github-data-sbom-` (picks up SBOM data from nightly workflow)
-3. `npm ci` (only on cache miss)
-4. `npm run fetch-data` (GITHUB_TOKEN: PROJECT_READ_TOKEN)
-5. TypeScript validation (BLOCKING)
-6. ESLint validation (BLOCKING)
-7. Prettier check (non-blocking)
-8. Build
-9. Upload pages artifact → deploy to GitHub Pages (main only)
+1. Restore `node_modules` cache (key: `npm` cache from setup-node)
+2. **Restore GitHub data cache** — key `github-data-{scripts-hash}`: artwork-versions, driver-versions, file-contributors, firehose-apps, github-repos, images, playlist-metadata, stream-pins
+3. **Restore GitHub profiles cache** — key `github-profiles-v1-` (populated by separate weekly workflow)
+4. **Restore SBOM attestation cache** — key `github-data-sbom-` (populated by nightly 04:00 UTC workflow)
+5. **Fetch SBOM on cache miss** — runs `fetch-github-sbom.js` directly if SBOM cache didn't hit (uses `github.token` only)
+6. `npm ci` (install)
+7. `npm run fetch-data` (uses `github.token` — no PAT required)
+8. **Restore card image cache** — key `card-images-{template-hash}`
+9. `npm run generate-card-images`
+10. `npm test` (unit tests)
+11. TypeScript + ESLint + Prettier validation (TS and ESLint are BLOCKING)
+12. Build (`npm run build:ci`)
+13. E2E Playwright tests — **only on `pull_request` and `merge_group`** (not on push to main)
+14. Upload pages artifact → deploy to GitHub Pages (main only)
 
 ### `update-sbom-cache.yml` — Nightly SBOM fetch
 
@@ -249,9 +265,10 @@ Runs `renovate-config-validator --strict`.
 |---|---|---|
 | `FeedItems.tsx` + `CommunityFeeds.tsx` | `changelogs.tsx` | `static/feeds/*.json` + `sbom-attestations.json` |
 | `PackageSummary.tsx` | `changelogs.tsx` | Derived from feeds via `src/config/packageConfig.ts` |
+| `FirehoseFeed.tsx` + `OsReleaseCard.tsx` | `changelogs.tsx` | `firehose-apps.json` (static import) + `sbom-attestations-frontend.json` (lazy) + `bluefin-releases.json`/`bluefin-lts-releases.json` (lazy) |
 | `ImagesCatalog.tsx` | `src/pages/images.tsx` | `static/data/images.json` (includes SBOM version overlays) |
 | `DriverVersionsCatalog.tsx` | `docs/driver-versions.mdx` | `static/data/driver-versions.json` |
-| `BoardChangelog.tsx` | `board.tsx` | `static/data/board-changelog.json` |
+| `ArtworkGallery.tsx` | `docs/artwork.mdx` | `fetch("/data/artwork.json")` — client-side fetch after hydration |
 | `GitHubProfileCard.tsx` | `docs/donations/*.mdx` | `static/data/github-profiles.json` |
 | `ProjectCard.tsx` | `docs/donations/projects.mdx` | `static/data/github-repos.json` (build-time) + GitHub API (runtime fallback) |
 | `GnomeExtensions.tsx` | `docs/extensions.mdx` | Live fetch from extensions.gnome.org at runtime |
@@ -341,13 +358,7 @@ Icon URLs: use `https://github.com/org-name.png` or `https://github.com/username
 
 ### cosign/oras not in standard build environment
 
-Do not add `fetch-sbom` to the `fetch-data` chain. `pages.yml` does not install cosign or oras.
-
-### PROJECT_READ_TOKEN scopes
-
-`fetch-board-data.js`: needs `project:read`
-
-The default `GITHUB_TOKEN` is insufficient for this. All other fetch scripts use only `github.token`.
+Do not add `fetch-sbom` to the `fetch-data` chain. `pages.yml` installs cosign/oras **only** in the nightly `update-sbom-cache.yml`. The `pages.yml` build handles cache miss with a direct `fetch-github-sbom.js` call but cosign+oras must still be present — this is handled by the workflow step, not by developers locally.
 
 ---
 
@@ -357,7 +368,6 @@ The default `GITHUB_TOKEN` is insufficient for this. All other fetch scripts use
 |---|---|---|
 | `npm install` fails with peer conflicts | React 19 peer dep | Use `npm install --legacy-peer-deps` |
 | Build fails on missing `sbom-attestations.json` | Gitignore misconfigured | Verify `!/static/data/sbom-attestations.json` in `.gitignore` |
-| `board-changelog.json` is empty `[]` | Missing PROJECT_READ_TOKEN | Export `PROJECT_READ_TOKEN` with `project:read` scope |
 | `images.json` missing SBOM package versions | SBOM cache not yet populated | Run `update-sbom-cache.yml` via workflow_dispatch on upstream |
 | TypeScript deprecation error on `baseUrl` | TypeScript 6 change | `tsconfig.json` has `"ignoreDeprecations": "6.0"` — already handled |
 | Prettier warnings on existing files | Pre-existing style drift | Non-blocking in CI; run `npm run prettier` to fix all at once |
