@@ -98,7 +98,7 @@ src/
 scripts/                # Data-fetch and utility scripts (see Data Pipeline section)
   lib/                  # Shared library modules for generate-report
 static/
-  data/                 # Auto-generated JSON (gitignored — except sbom-attestations.json seed)
+  data/                 # Auto-generated JSON (gitignored — except sbom-attestations.json and sbom-attestations-frontend.json)
   feeds/                # Auto-generated release feeds (gitignored)
   img/                  # Static images
 .github/
@@ -195,11 +195,14 @@ pages.yml (every build)
 
 #### Seed file note
 
-`static/data/sbom-attestations.json` is committed as an empty seed `{ "generatedAt": null, "streams": {} }` to allow the build to succeed before the first SBOM cache run. `FeedItems.tsx` imports it via a static TypeScript import, so the file must exist at build time.
+Both `static/data/sbom-attestations.json` and `static/data/sbom-attestations-frontend.json` are **committed with populated SBOM data** and tracked by gitignore exceptions:
 
-The `.gitignore` has `!/static/data/sbom-attestations.json` to keep the seed tracked.
+```
+!/static/data/sbom-attestations.json
+!/static/data/sbom-attestations-frontend.json
+```
 
-**Do not commit a populated version of this file** — it is managed entirely by the GHA cache.
+These files are updated by the nightly `update-sbom-cache.yml` workflow and committed when needed. Do NOT commit stale or locally-fetched versions — only CI-generated data should land here.
 
 All other `static/data/*.json` and `static/feeds/*.json` files are gitignored and must never be committed.
 
@@ -352,9 +355,9 @@ Icon URLs: use `https://github.com/org-name.png` or `https://github.com/username
 
 ## Known Issues
 
-### SBOM seed file (load-bearing committed JSON)
+### SBOM committed files (load-bearing tracked JSON)
 
-`static/data/sbom-attestations.json` is committed as an empty seed. This is required because `FeedItems.tsx` uses a static import — the Docusaurus build will fail if the file does not exist. The TypeScript ambient declaration in `src/types/sbom-attestations.d.ts` satisfies `tsc`, but the bundler still needs the file. Do not remove or rename it from git until a build-time fallback is implemented.
+Both `static/data/sbom-attestations.json` and `static/data/sbom-attestations-frontend.json` are committed to git and tracked via gitignore exceptions. These are populated files (not empty seeds). They are required at build time because `FeedItems.tsx` uses a static TypeScript import — the bundler needs the file to exist. The TypeScript ambient declaration in `src/types/sbom-attestations.d.ts` satisfies `tsc`. Do not remove or rename either file from git until a build-time fallback is implemented.
 
 ### cosign/oras not in standard build environment
 
@@ -367,7 +370,7 @@ Do not add `fetch-sbom` to the `fetch-data` chain. `pages.yml` installs cosign/o
 | Symptom | Cause | Fix |
 |---|---|---|
 | `npm install` fails with peer conflicts | React 19 peer dep | Use `npm install --legacy-peer-deps` |
-| Build fails on missing `sbom-attestations.json` | Gitignore misconfigured | Verify `!/static/data/sbom-attestations.json` in `.gitignore` |
+| Build fails on missing `sbom-attestations.json` | Gitignore misconfigured or file accidentally deleted | Verify `!/static/data/sbom-attestations.json` and `!/static/data/sbom-attestations-frontend.json` in `.gitignore`; restore from git if deleted (`git checkout HEAD -- static/data/sbom-attestations.json static/data/sbom-attestations-frontend.json`) |
 | `images.json` missing SBOM package versions | SBOM cache not yet populated | Run `update-sbom-cache.yml` via workflow_dispatch on upstream |
 | TypeScript deprecation error on `baseUrl` | TypeScript 6 change | `tsconfig.json` has `"ignoreDeprecations": "6.0"` — already handled |
 | Prettier warnings on existing files | Pre-existing style drift | Non-blocking in CI; run `npm run prettier` to fix all at once |
