@@ -1,6 +1,22 @@
 import React from "react";
 import styles from "./DocsFeatureGrid.module.css";
 
+// Render inline markdown links [text](url) as <a> elements.
+function renderMarkdownLinks(text: string): React.ReactNode[] {
+  const parts = text.split(/(\[[^\]]+\]\([^)]+\))/g);
+  return parts.map((part, i) => {
+    const m = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+    if (m) {
+      return (
+        <a key={i} href={m[2]} target="_blank" rel="noopener noreferrer">
+          {m[1]}
+        </a>
+      );
+    }
+    return part;
+  });
+}
+
 interface WallpaperEntry {
   id: string;
   title: string;
@@ -43,7 +59,7 @@ const WallpaperFeatureGrid: React.FC<{ wallpapers: WallpaperEntry[] }> = ({
               </>
             )}
           </p>
-          {w.body && <p className={styles.body}>{w.body}</p>}
+          {w.body && <p className={styles.body}>{renderMarkdownLinks(w.body)}</p>}
         </div>
         <a
           href={w.dayUrl}
