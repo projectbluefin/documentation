@@ -121,6 +121,24 @@ const config: Config = {
     ],
   ],
 
+  headTags: [
+    {
+      tagName: "meta",
+      attributes: {
+        "http-equiv": "Content-Security-Policy",
+        content: [
+          "default-src 'self'",
+          "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+          "style-src 'self' 'unsafe-inline'",
+          "img-src 'self' data: https:",
+          "font-src 'self' data:",
+          "connect-src 'self' https://api.github.com https://giscus.app",
+          "frame-src https://giscus.app https://www.youtube.com https://youtube.com",
+        ].join("; "),
+      },
+    },
+  ],
+
   themeConfig: {
     docs: {
       sidebar: {

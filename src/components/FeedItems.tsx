@@ -5,6 +5,7 @@ import sbomAttestationsData from "@site/static/data/sbom-attestations.json";
 import firehoseAppsData from "@site/static/data/firehose-apps.json";
 import type { SbomAttestationsData } from "../types/sbom";
 import type { FirehoseApp, FirehoseData, FirehoseRelease } from "../types/firehose";
+import { sanitizeHtml } from "../utils/sanitizeHtml";
 
 // Small inline copy button — renders a clipboard icon, shows a tick for 1.5s after copy
 const CopyButton: React.FC<{ text: string }> = ({ text }) => {
@@ -509,7 +510,7 @@ const FeedItems: React.FC<FeedItemsProps> = ({
                       {showDescription && itemDescription && (
                         <div
                           className={styles.feedItemDescription}
-                          dangerouslySetInnerHTML={{ __html: itemDescription }}
+                          dangerouslySetInnerHTML={{ __html: sanitizeHtml(itemDescription) }}
                         />
                       )}
                     </div>
@@ -537,7 +538,7 @@ const FeedItems: React.FC<FeedItemsProps> = ({
                     {showDescription && itemDescription && (
                       <div
                         className={styles.feedItemDescription}
-                        dangerouslySetInnerHTML={{ __html: itemDescription }}
+                        dangerouslySetInnerHTML={{ __html: sanitizeHtml(itemDescription) }}
                       />
                     )}
                   </div>
@@ -755,7 +756,7 @@ const CombinedFeedItems: React.FC<CombinedFeedItemsProps> = ({
                 {showDescription && itemDescription && (
                   <div
                     className={styles.feedItemDescription}
-                    dangerouslySetInnerHTML={{ __html: itemDescription }}
+                    dangerouslySetInnerHTML={{ __html: sanitizeHtml(itemDescription) }}
                   />
                 )}
               </div>

@@ -37,7 +37,8 @@
   ],
   "vulnerabilityAlerts": {
     "enabled": true,
-    "automerge": true
+    "automerge": true,
+    "matchUpdateTypes": ["patch", "minor"]
   },
   "lockFileMaintenance": {
     "enabled": true,

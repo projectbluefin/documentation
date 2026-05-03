@@ -234,6 +234,46 @@ function buildOsApp(spec, sbomCache) {
   };
 }
 
+/**
+ * Sanitize a remote app entry — only keep expected fields with expected types.
+ * This prevents a compromised upstream feed from injecting unexpected data shapes
+ * or oversized payloads into the site build.
+ */
+function sanitizeRemoteApp(app) {
+  const str = (v, maxLen = 5000) =>
+    typeof v === "string" ? v.slice(0, maxLen) : null;
+  const arr = (v) => (Array.isArray(v) ? v : []);
+
+  const sanitized = {
+    id: str(app.id, 200),
+    name: str(app.name, 200),
+    summary: str(app.summary, 500),
+    description: str(app.description),
+    icon: str(app.icon, 2000),
+    updatedAt: str(app.updatedAt, 30),
+    currentReleaseVersion: str(app.currentReleaseVersion, 100),
+    currentReleaseDate: str(app.currentReleaseDate, 30),
+    fetchedAt: str(app.fetchedAt, 30),
+    isVerified: typeof app.isVerified === "boolean" ? app.isVerified : false,
+    appSet: str(app.appSet, 50),
+    packageType: str(app.packageType, 50),
+  };
+
+  // Sanitize releases array — limit count and field sizes
+  sanitized.releases = arr(app.releases)
+    .slice(0, 50)
+    .map((r) => ({
+      version: str(r.version, 200),
+      title: str(r.title, 500),
+      date: str(r.date, 30),
+      description: str(r.description),
+      url: str(r.url, 2000),
+      type: str(r.type, 50),
+    }));
+
+  return sanitized;
+}
+
 async function fetchFirehoseData() {
   // Check if existing cache is fresh enough.
   // Always fetch if: cache is expired, --force is set, CACHE_MAX_AGE_HOURS=0,
@@ -295,9 +335,11 @@ async function fetchFirehoseData() {
     }
 
     // Strip any os/os-release entries from the remote feed — we own those now
-    remoteApps = data.apps.filter(
-      (app) => app.packageType !== "os" && app.packageType !== "os-release",
-    );
+    remoteApps = data.apps
+      .filter(
+        (app) => app.packageType !== "os" && app.packageType !== "os-release",
+      )
+      .map((app) => sanitizeRemoteApp(app));
     remoteMetadata = data.metadata || {};
 
     console.log(

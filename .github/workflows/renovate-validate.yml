@@ -6,6 +6,9 @@ on:
       - "**/renovate.json"
       - "**/renovate.json5"
 
+permissions:
+  contents: read
+
 jobs:
   validate:
     runs-on: ubuntu-latest
@@ -24,7 +27,7 @@ jobs:
           node-version: latest
 
       - name: Install dependencies
-        run: npm install -g renovate
+        run: npm install -g renovate@43.150.0
 
       - name: Validate Renovate config
         run: renovate-config-validator --strict
