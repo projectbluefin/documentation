@@ -378,7 +378,7 @@ const resolveItemLink = (item: FeedItem, feedId: string): string => {
         item.link.find((l) => l.$ && l.$.type === "text/html") ||
         item.link.find((l) => l.rel === "alternate") ||
         item.link[0];
-      itemLink = htmlLink?.href || htmlLink?.$.href || "";
+      itemLink = htmlLink?.href || htmlLink?.$?.href || "";
     } else {
       itemLink = (item.link as { href?: string }).href || "";
     }
@@ -439,9 +439,9 @@ const FeedItems: React.FC<FeedItemsProps> = ({
   filter,
 }) => {
   try {
-    const feedData: ParsedFeed = useStoredFeed(feedId);
+    const feedData: ParsedFeed | null = useStoredFeed(feedId);
 
-    let items: FeedItem[] = extractItems(feedData);
+    let items: FeedItem[] = feedData ? extractItems(feedData) : [];
 
     // Apply filter if provided
     if (filter) {
@@ -570,10 +570,10 @@ const CombinedFeedItems: React.FC<CombinedFeedItemsProps> = ({
 }) => {
   try {
     // Call useStoredFeed for each feed (hooks must be called unconditionally at top level)
-    const feedDataLts: ParsedFeed = useStoredFeed(
+    const feedDataLts: ParsedFeed | null = useStoredFeed(
       feeds[0]?.feedId ?? "bluefinLtsReleases",
     );
-    const feedDataStable: ParsedFeed = useStoredFeed(
+    const feedDataStable: ParsedFeed | null = useStoredFeed(
       feeds[1]?.feedId ?? "bluefinReleases",
     );
     const rawFeeds = [feedDataLts, feedDataStable];
@@ -581,7 +581,7 @@ const CombinedFeedItems: React.FC<CombinedFeedItemsProps> = ({
     // Tag each item with its source feedId + label, then merge
     type TaggedItem = FeedItem & { _feedId: string; _label: string };
     const tagged: TaggedItem[] = feeds.flatMap((feedMeta, i) => {
-      let items = extractItems(rawFeeds[i]);
+      let items = rawFeeds[i] ? extractItems(rawFeeds[i]!) : [];
       if (feedMeta.filter) items = items.filter(feedMeta.filter);
       return items.map((item) => ({
         ...item,
