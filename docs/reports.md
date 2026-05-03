@@ -1,6 +1,6 @@
 ---
-sidebar_position: 6
 title: Monthly Reports
+slug: /about-reports
 ---
 
 # Monthly Reports
