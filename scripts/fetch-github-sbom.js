@@ -1193,10 +1193,10 @@ function extractPackageVersions(sbomPath) {
     const version = pkg?.version;
     if (!name || !version) continue;
 
-    // Capture every RPM for diff computation, epoch-stripped.
+    // Capture every RPM for diff computation, epoch+release-stripped.
     // kernel is handled specially below (multi-version dedup) — skip here.
     if (name !== "kernel") {
-      result.allPackages[name] = stripEpoch(String(version));
+      result.allPackages[name] = stripRpmRelease(stripEpoch(String(version)));
     }
 
     switch (name) {
