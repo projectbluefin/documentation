@@ -149,13 +149,26 @@ function lookupSbomVersions(sbomCache, streamId) {
 }
 
 /**
- * For streams whose SBOM release keys encode a date suffix (e.g. "stable-20260501",
- * "lts-20260428", "latest-20260502"), parse the most recent one to produce an
- * ISO-8601 date usable as lastPublishedAt.
+ * Return the most recent checkedAt timestamp for a given SBOM stream.
+ *
+ * Prefers the precise checkedAt field stored on each release entry (set by
+ * the SBOM scraper at attestation-verification time).  Falls back to parsing
+ * the date suffix encoded in the release key (e.g. "stable-20260501") when
+ * checkedAt is unavailable.
  */
-function sbomLatestCreatedAt(sbomCache, streamId) {
+function sbomLatestCheckedAt(sbomCache, streamId) {
   const stream = sbomCache?.streams?.[streamId];
   if (!stream?.releases) return null;
+
+  // Primary: use the checkedAt field from the most recent release entry.
+  const checkedDates = Object.values(stream.releases)
+    .map((rel) => rel?.checkedAt)
+    .filter((ts) => typeof ts === "string" && ts.length > 0)
+    .sort()
+    .reverse();
+  if (checkedDates.length > 0) return checkedDates[0];
+
+  // Fallback: derive a midnight-UTC date from the release-key suffix.
   const dateKeys = Object.keys(stream.releases)
     .map((key) => {
       const m = /(\d{4})(\d{2})(\d{2})$/.exec(key);
@@ -508,36 +521,6 @@ function buildSecurityInfo(spec, inspectTag) {
   };
 }
 
-async function fetchPackageVersions(_org, _pkg) {
-  // Packages API requires packages:read PAT (cross-org GHCR) — not available with github.token.
-  // All callers handle an empty array gracefully; digest/tagged links fall back to release URLs.
-  return [];
-}
-
-function latestUpdatedAt(versions) {
-  const timestamps = versions
-    .map((entry) => Date.parse(entry.updated_at))
-    .filter((value) => !Number.isNaN(value));
-  if (!timestamps.length) return null;
-  return new Date(Math.max(...timestamps)).toISOString();
-}
-
-function findDigestLink(versions, digest) {
-  if (!digest) return null;
-  return versions.find((entry) => entry.name === digest)?.html_url || null;
-}
-
-function findTaggedVersionLink(versions, tag) {
-  if (!tag) return null;
-  for (const entry of versions) {
-    const tags = entry?.metadata?.container?.tags || [];
-    if (Array.isArray(tags) && tags.includes(tag) && entry.html_url) {
-      return entry.html_url;
-    }
-  }
-  return null;
-}
-
 function releaseInfoFromFeedItem(item) {
   if (!item) return null;
   return {
@@ -559,8 +542,6 @@ async function buildProduct(spec, feeds, cachedById, ageHours, sbomCache) {
   }
 
   const imageRef = `ghcr.io/${spec.org}/${spec.package}`;
-
-  const versions = await fetchPackageVersions(spec.org, spec.package);
 
   let tags = [];
   try {
@@ -620,11 +601,10 @@ async function buildProduct(spec, feeds, cachedById, ageHours, sbomCache) {
     const inspected = await inspectImage(imageRef, inspectTag);
     const labels = inspected.Labels || {};
     const digest = inspected.Digest || null;
-    const taggedLink = findTaggedVersionLink(versions, inspectTag);
     metadata = {
       digest,
       digestShort: digest ? digest.replace(/^sha256:/, "").slice(0, 12) : null,
-      digestLink: findDigestLink(versions, digest) || taggedLink,
+      digestLink: null,
       architecture: inspected.Architecture || null,
       os: inspected.Os || null,
       labels: {
@@ -654,20 +634,17 @@ async function buildProduct(spec, feeds, cachedById, ageHours, sbomCache) {
   }
 
   // Precedence for lastPublishedAt:
-  // 1. GHCR packages API timestamp (most authoritative, rarely available)
+  // 1. SBOM checkedAt timestamp (precise attestation-verification time)
   // 2. GitHub releases feed pubDate
-  // 3. SBOM cache date derived from release key (e.g. lts-20260501 → 2026-05-01)
-  // 4. Existing cached value (last resort — can be stale from an old run)
-  const updatedAt = latestUpdatedAt(versions) || null;
-  const sbomDate = spec.sbomStreamId ? sbomLatestCreatedAt(sbomCache, spec.sbomStreamId) : null;
+  // 3. Existing cached value (last resort — can be stale from an old run)
+  const sbomDate = spec.sbomStreamId ? sbomLatestCheckedAt(sbomCache, spec.sbomStreamId) : null;
   const lastPublishedAt =
-    updatedAt ||
-    feedItem?.pubDate ||
     sbomDate ||
+    feedItem?.pubDate ||
     existing?.lastPublishedAt ||
     null;
   const staleCutoff = Date.now() - STALE_DAYS * 24 * 60 * 60 * 1000;
-  const bestDateForStale = updatedAt || feedItem?.pubDate || sbomDate || null;
+  const bestDateForStale = sbomDate || feedItem?.pubDate || null;
   const stale = bestDateForStale ? Date.parse(bestDateForStale) < staleCutoff : false;
 
   return {
