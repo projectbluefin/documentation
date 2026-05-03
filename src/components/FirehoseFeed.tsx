@@ -1,28 +1,45 @@
 import React, { useState, useMemo, useEffect } from "react";
 import Heading from "@theme/Heading";
 import firehoseData from "@site/static/data/firehose-apps.json";
-import bluefinReleasesData from "@site/static/feeds/bluefin-releases.json";
-import bluefinLtsReleasesData from "@site/static/feeds/bluefin-lts-releases.json";
 import type { FirehoseApp, FirehoseRelease, FirehoseFilterState } from "../types/firehose";
-import type { OsReleaseEvent, AppTimelineEvent, FlatTimelineEvent, ParsedMajorPackage } from "../types/os-feed";
+import type { OsReleaseEvent, AppTimelineEvent, FlatTimelineEvent, ParsedMajorPackage, OsStream, OsFeedItem } from "../types/os-feed";
 import type { SbomAttestationsData, PackageVersions } from "../types/sbom";
 import { parseOsRelease } from "../utils/parseOsRelease";
+import {
+  DAYS_MS,
+  ROLLING_WINDOW_MS,
+  CHIP_TO_SBOM,
+  DX_CHIP_MAP,
+  GDX_CHIP_MAP,
+  sbomKeyForRelease,
+  buildVersionChips,
+  sbomStreamToEvents,
+} from "../utils/firehoseHelpers";
 import FirehoseCard from "./FirehoseCard";
 import OsReleaseCard from "./OsReleaseCard";
 import FirehoseFilters from "./FirehoseFilters";
 import styles from "./FirehoseFeed.module.css";
 
-// ── Helpers ──────────────────────────────────────────────────────────────────
+// ── Lazy-loaded feed data ────────────────────────────────────────────────────
+// Defers 1.4MB of JSON parsing from module-load time to first access.
 
-const DAYS_MS: Record<string, number> = {
-  "1d": 1 * 24 * 60 * 60 * 1000,
-  "7d": 7 * 24 * 60 * 60 * 1000,
-  "30d": 30 * 24 * 60 * 60 * 1000,
-  "90d": 90 * 24 * 60 * 60 * 1000,
-};
+let _bluefinReleasesData: { items?: OsFeedItem[] } | null = null;
+function getBluefinReleasesData() {
+  if (!_bluefinReleasesData) {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    _bluefinReleasesData = require("@site/static/feeds/bluefin-releases.json");
+  }
+  return _bluefinReleasesData!;
+}
 
-/** Rolling window for the Updates Stream — entries older than this are not shown. */
-const ROLLING_WINDOW_MS = 365 * 24 * 60 * 60 * 1000;
+let _bluefinLtsReleasesData: { items?: OsFeedItem[] } | null = null;
+function getBluefinLtsReleasesData() {
+  if (!_bluefinLtsReleasesData) {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    _bluefinLtsReleasesData = require("@site/static/feeds/bluefin-lts-releases.json");
+  }
+  return _bluefinLtsReleasesData!;
+}
 
 /** A single release event flattened out of its parent app. */
 export interface FlatRelease {
@@ -31,21 +48,16 @@ export interface FlatRelease {
   dateMs: number;
 }
 
-// ── OS release events (parsed once at module scope) ───────────────────────────
+// ── OS release events ─────────────────────────────────────────────────────────
 
-/**
- * Parse all items from a feed into OsReleaseEvent[].
- * streamHint overrides per-item stream detection (used for LTS feed which lacks
- * stream-identifying prefixes on some historical entries).
- */
 function loadOsEvents(
-  feedData: typeof bluefinReleasesData,
+  feedData: { items?: OsFeedItem[] },
   streamHint?: "lts",
 ): OsReleaseEvent[] {
   const events: OsReleaseEvent[] = [];
   for (const item of feedData.items ?? []) {
     const release = parseOsRelease(item, streamHint);
-    if (!release) continue; // GTS entry or unrecognized format — skip
+    if (!release) continue;
     const dateMs = new Date(item.pubDate).getTime();
     if (isNaN(dateMs)) continue;
     events.push({ kind: "os", stream: release.stream, dateMs, release });
@@ -70,34 +82,6 @@ function getSbomCache(): SbomAttestationsData {
     _sbomCache = require("@site/static/data/sbom-attestations-frontend.json") as SbomAttestationsData;
   }
   return _sbomCache;
-}
-
-/** Map from lowercase HEADER_CHIP_NAMES to their PackageVersions field. */
-const CHIP_TO_SBOM: Array<{ chipName: string; displayName: string; field: keyof PackageVersions }> = [
-  { chipName: "kernel",   displayName: "Kernel",   field: "kernel" },
-  { chipName: "gnome",    displayName: "Gnome",    field: "gnome" },
-  { chipName: "mesa",     displayName: "Mesa",     field: "mesa" },
-  { chipName: "podman",   displayName: "Podman",   field: "podman" },
-  { chipName: "bootc",    displayName: "bootc",    field: "bootc" },
-  { chipName: "systemd",  displayName: "systemd",  field: "systemd" },
-  { chipName: "pipewire", displayName: "pipewire", field: "pipewire" },
-  { chipName: "flatpak",  displayName: "flatpak",  field: "flatpak" },
-];
-
-/**
- * Convert a ParsedOsRelease tag + stream to the SBOM cache key + stream ID.
- *
- * release.tag is normalised by parseOsRelease (e.g. "stable-daily-20260331"),
- * but SBOM cacheKeys use the original GitHub release tag format ("stable-20260331").
- */
-function sbomKeyForRelease(tag: string, stream: string): { streamId: string; cacheKey: string } | null {
-  const dateMatch = tag.match(/(\d{8})/);
-  if (!dateMatch) return null;
-  const date = dateMatch[1];
-  if (stream === "lts") return { streamId: "bluefin-lts", cacheKey: `lts-${date}` };
-  if (stream === "stable-daily") return { streamId: "bluefin-stable-daily", cacheKey: `stable-daily-${date}` };
-  if (stream === "stable") return { streamId: "bluefin-stable", cacheKey: `stable-${date}` };
-  return null;
 }
 
 /**
@@ -208,19 +192,6 @@ function enrichLtsFromHistory(events: OsReleaseEvent[]): OsReleaseEvent[] {
   return enriched.sort((a, b) => b.dateMs - a.dateMs);
 }
 
-/** RPM package name → display label for the DX section chips */
-const DX_CHIP_MAP: Record<string, string> = {
-  "docker-ce": "Docker",
-  code: "VSCode",
-  incus: "Incus",
-};
-
-/** RPM package name → display label for the GDX section chips */
-const GDX_CHIP_MAP: Record<string, string> = {
-  "nvidia-driver": "Nvidia",
-  "nvidia-driver-cuda": "CUDA",
-};
-
 /**
  * Enrich LTS events' dxPackages and gdxPackages from the bluefin-dx-lts /
  * bluefin-gdx-lts SBOM allPackages maps.
@@ -301,69 +272,13 @@ function enrichLtsHweKernelFromSbom(events: OsReleaseEvent[]): OsReleaseEvent[] 
   });
 }
 
-/**
- * Synthesise OsReleaseEvent entries for stable-daily builds that exist only in
- * GHCR (no GitHub Release). These are GHCR nightly builds tagged
- * "stable-daily-YYYYMMDD" — they never appear in bluefin-releases.json so they
- * would otherwise be invisible on the changelogs page.
- *
- * Package versions come directly from the SBOM cache so no enrichFromSbom pass
- * is needed; the events are already fully populated.
- */
-function loadStableDailyEventsFromSbom(): OsReleaseEvent[] {
-  const stream = getSbomCache()?.streams?.["bluefin-stable-daily"];
-  if (!stream?.releases) return [];
-
-  const events: OsReleaseEvent[] = [];
-  for (const [cacheKey, releaseData] of Object.entries(stream.releases)) {
-    if (!releaseData.packageVersions) continue;
-
-    const dateMatch = cacheKey.match(/(\d{8})$/);
-    if (!dateMatch) continue;
-    const dateStr = dateMatch[1];
-    const dateMs = Date.parse(
-      `${dateStr.slice(0, 4)}-${dateStr.slice(4, 6)}-${dateStr.slice(6, 8)}T00:00:00Z`,
-    );
-    if (isNaN(dateMs)) continue;
-
-    const packages = releaseData.packageVersions;
-    const majorPackages: ParsedMajorPackage[] = [];
-    for (const { displayName, field } of CHIP_TO_SBOM) {
-      const version = packages[field] as string | null | undefined;
-      if (!version) continue;
-      majorPackages.push({ name: displayName, version, prevVersion: null });
-    }
-    if (majorPackages.length === 0) continue;
-
-    events.push({
-      kind: "os",
-      stream: "stable-daily",
-      dateMs,
-      release: {
-        stream: "stable-daily",
-        tag: cacheKey,
-        githubUrl: "https://github.com/orgs/ublue-os/packages/container/package/bluefin",
-        fedoraVersion: packages.fedora ? packages.fedora.replace(/^F/, "") : null,
-        centosVersion: null,
-        majorPackages,
-        dxPackages: [],
-        gdxPackages: [],
-        commits: [],
-        fullDiff: [],
-      },
-    });
-  }
-
-  return events;
-}
-
 // ── Lazy-initialized derived data ─────────────────────────────────────────────
 // All enrichment pipelines run on first access rather than at module load time.
 
 let _bluefinOsEvents: OsReleaseEvent[] | null = null;
 function getBluefinOsEvents(): OsReleaseEvent[] {
   if (!_bluefinOsEvents) {
-    _bluefinOsEvents = enrichFromSbom(loadOsEvents(bluefinReleasesData));
+    _bluefinOsEvents = enrichFromSbom(loadOsEvents(getBluefinReleasesData()));
   }
   return _bluefinOsEvents;
 }
@@ -371,7 +286,12 @@ function getBluefinOsEvents(): OsReleaseEvent[] {
 let _stableDailyOsEvents: OsReleaseEvent[] | null = null;
 function getStableDailyOsEvents(): OsReleaseEvent[] {
   if (!_stableDailyOsEvents) {
-    _stableDailyOsEvents = loadStableDailyEventsFromSbom();
+    _stableDailyOsEvents = sbomStreamToEvents(
+      getSbomCache(),
+      "bluefin-stable-daily",
+      "stable-daily",
+      "https://github.com/orgs/ublue-os/packages/container/package/bluefin",
+    );
   }
   return _stableDailyOsEvents;
 }
@@ -381,7 +301,7 @@ function getLtsOsEvents(): OsReleaseEvent[] {
   if (!_ltsOsEvents) {
     _ltsOsEvents = enrichLtsHweKernelFromSbom(
       enrichLtsDxGdxFromSbom(
-        enrichLtsFromHistory(enrichFromSbom(loadOsEvents(bluefinLtsReleasesData, "lts"))),
+        enrichLtsFromHistory(enrichFromSbom(loadOsEvents(getBluefinLtsReleasesData(), "lts"))),
       ),
     );
   }
