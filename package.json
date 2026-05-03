@@ -23,7 +23,6 @@
     "fetch-github-driver-versions": "node scripts/fetch-github-driver-versions.js",
     "fetch-github-images": "node scripts/fetch-github-images.js",
     "fetch-contributors": "node scripts/fetch-contributors.js",
-    "fetch-board-data": "node scripts/fetch-board-data.js",
     "generate-report": "node scripts/generate-report.mjs",
     "fetch-sbom": "node scripts/fetch-github-sbom.js",
     "fetch-firehose": "node scripts/fetch-firehose.js",

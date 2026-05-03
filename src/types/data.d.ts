@@ -66,20 +66,6 @@ export interface GnomeExtension {
 }
 
 /**
- * Project board data from scripts/fetch-board-data.js
- * Used by: src/components/BoardChangelog.tsx
- */
-export interface BoardItem {
-  id: string;
-  title: string;
-  url: string;
-  createdAt: string;
-  updatedAt: string;
-  state: string;
-  labels: string[];
-}
-
-/**
  * File contributors from scripts/fetch-contributors.js
  * Used by: src/components/PageContributors.tsx
  * Structure: Record of file paths to contributor arrays
@@ -92,14 +78,3 @@ export interface FileContributor {
 
 export type FileContributorsData = Record<string, FileContributor[]>;
 
-/**
- * Board changelog items from scripts/fetch-board-data.js
- * Used by: src/components/BoardChangelog.tsx
- */
-export interface BoardChangelogItem {
-  date: string;
-  title: string;
-  url: string;
-  type: "issue" | "pr";
-  state: "open" | "closed" | "merged";
-}

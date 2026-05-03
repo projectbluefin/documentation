@@ -108,13 +108,6 @@ jobs:
           FIREHOSE_CACHE_HOURS: "0"
         run: npm run fetch-data
 
-      - name: Fetch board data
-        env:
-          # fetch-board-data.js requires project:read scope; only this step
-          # receives the elevated PAT — all other fetch scripts use github.token.
-          GITHUB_TOKEN: ${{ secrets.PROJECT_READ_TOKEN }}
-        run: node scripts/fetch-board-data.js
-
       - name: Generate embeddable card images
         run: npm run generate-card-images
 
