@@ -299,12 +299,6 @@ const STREAM_SPECS = [
     keyRepo: "projectbluefin/dakota",
     keyless: true,
     usesLatestTag: true,
-    // Dakota's publish.yml uses `cosign sign` (keyless OIDC) without push-to-registry: true
-    // on the SLSA attestation step, so the attestation is only in GitHub's internal store
-    // and not discoverable as an OCI referrer via cosign verify-attestation.
-    // TODO: Remove signingType once projectbluefin/dakota#391 (push-to-registry: true) merges;
-    //       then switch to standard keyless: true SLSA path (remove this signingType entirely).
-    signingType: "cosign-sign",
   },
 ];
 
