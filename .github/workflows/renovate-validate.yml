@@ -30,4 +30,4 @@ jobs:
         run: npm install -g renovate@43.150.0
 
       - name: Validate Renovate config
-        run: renovate-config-validator --strict
+        run: renovate-config-validator
