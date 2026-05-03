@@ -1,7 +1,7 @@
 ---
 title: "Bluefin Spring 2026 Releases"
 subtitle: "A tale of three raptors with one mission"
-slug: bluefin-f44-dakota-alpha-2
+slug: bluefin-spring-2026
 authors: castrojo
 tags: [announcements, releases, dakota]
 draft: true
