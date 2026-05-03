@@ -95,7 +95,7 @@ export interface SbomStream {
   keyless: boolean;
   /**
    * Map of cache key → release attestation result.
-   * Cache keys match the format produced by extractReleaseTag() in FeedItems.tsx:
+   * Cache keys match the format produced by extractReleaseTag() in utils/sbomRelease.ts:
    *   stable-YYYYMMDD, gts-YYYYMMDD, lts-YYYYMMDD, etc.
    */
   releases: Record<string, SbomRelease>;

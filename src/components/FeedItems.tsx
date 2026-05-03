@@ -1,11 +1,29 @@
 import React, { useState, useCallback, useMemo } from "react";
 import useStoredFeed from "@theme/useStoredFeed";
 import styles from "./FeedItems.module.css";
-import sbomAttestationsData from "@site/static/data/sbom-attestations.json";
+import sbomData from "@site/static/data/sbom-attestations-frontend.json";
 import firehoseAppsData from "@site/static/data/firehose-apps.json";
 import type { SbomAttestationsData } from "../types/sbom";
-import type { FirehoseApp, FirehoseData, FirehoseRelease } from "../types/firehose";
+import type { FirehoseApp, FirehoseData } from "../types/firehose";
 import { sanitizeHtml } from "../utils/sanitizeHtml";
+import {
+  getSupplyChainLinks,
+  extractVersionSummary,
+  getSbomRelease,
+  getPreviousRelease,
+  computePackageDiff,
+  extractMajorVersionBumps,
+  buildReleaseSummary,
+} from "../utils/sbomRelease";
+import type {
+  SupplyChainLinks,
+  VersionChange,
+  MajorVersionBump,
+  ReleaseSummary,
+} from "../utils/sbomRelease";
+
+// Cast the imported JSON to its proper type
+const sbomCache = sbomData as unknown as SbomAttestationsData;
 
 // Small inline copy button — renders a clipboard icon, shows a tick for 1.5s after copy
 const CopyButton: React.FC<{ text: string }> = ({ text }) => {
@@ -50,11 +68,6 @@ interface CombinedFeedItemsProps {
   title: string;
   maxItems?: number;
   showDescription?: boolean;
-}
-
-interface VersionChange {
-  name: string;
-  change: string;
 }
 
 // Local type definitions that match src/types/theme.d.ts
@@ -105,25 +118,6 @@ const formatLongDate = (dateString: string): string => {
   });
 };
 
-interface SupplyChainLinks {
-  packageTagUrl: string | null;
-  attestationVerified: boolean | null;
-  attestationPresent: boolean | null;
-}
-
-interface ReleaseSummary {
-  packageUpdates: number;
-  newPackages: number;
-  removedPackages: number;
-  majorBumps: number;
-}
-
-interface MajorVersionBump {
-  name: string;
-  from: string;
-  to: string;
-}
-
 const ActionLinkButton: React.FC<{ label: string; url: string }> = ({
   label,
   url,
@@ -149,27 +143,11 @@ const ActionLinkButton: React.FC<{ label: string; url: string }> = ({
   </span>
 );
 
+// ─── Firehose: NVIDIA version only (not available in SBOM) ───────────────────
+
 const FIREHOSE_APP_ID_BY_FEED_ID: Record<string, string> = {
   bluefinReleases: "bluefin-os-stable",
   bluefinLtsReleases: "bluefin-os-lts",
-};
-
-const extractReleaseTag = (title: string): string | null => {
-  const tagMatch = title.match(
-    /(stable-\d{8}|beta-\d{8}|latest-\d{8}|lts[-.]\d{8})/i,
-  );
-  if (tagMatch) {
-    // Normalise lts.YYYYMMDD → lts-YYYYMMDD to match cache key format
-    return tagMatch[1]
-      .toLowerCase()
-      .replace(/^lts\.(\d{8})$/, "lts-$1");
-  }
-
-  // LTS feed titles use "bluefin-lts LTS: YYYYMMDD (...)" format — extract date
-  const ltsDateMatch = title.match(/\bLTS:\s*(\d{8})\b/i);
-  if (ltsDateMatch) return `lts-${ltsDateMatch[1]}`;
-
-  return null;
 };
 
 const FIREHOSE_OS_APP_LOOKUP: Record<string, FirehoseApp> = (() => {
@@ -188,168 +166,27 @@ const normalizeReleaseDate = (value?: string | null): string | null => {
   return `${match[1]}-${match[2]}-${match[3]}`;
 };
 
-const getReleaseDateFromTag = (releaseTag: string | null): string | null => {
-  if (!releaseTag) return null;
-  const match = releaseTag.match(/(\d{8})$/);
-  if (!match) return null;
-  return match[1].replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3");
-};
-
-const getFirehoseRelease = (
-  feedId: string,
-  title: string,
-): { app: FirehoseApp; release: FirehoseRelease } | null => {
+/**
+ * Get NVIDIA driver version from firehose data (not present in SBOM).
+ * NVIDIA ships as an akmod built outside the image and is not in Syft scans.
+ */
+const getNvidiaVersionFromFirehose = (feedId: string, title: string): string | null => {
   const appId = FIREHOSE_APP_ID_BY_FEED_ID[feedId];
   if (!appId) return null;
   const app = FIREHOSE_OS_APP_LOOKUP[appId];
-  if (!app?.releases?.length) return null;
-
-  const releaseTag = extractReleaseTag(title);
-  const releaseDate = getReleaseDateFromTag(releaseTag);
-  if (!releaseDate) return null;
-
-  const release = app.releases.find((candidate) => {
-    const byVersion = normalizeReleaseDate(candidate.version) === releaseDate;
-    const byTitle = normalizeReleaseDate(candidate.title) === releaseDate;
-    const byDate = normalizeReleaseDate(candidate.date) === releaseDate;
-    return byVersion || byTitle || byDate;
-  });
-
-  if (!release) return null;
-  return { app, release };
-};
-
-const getSupplyChainLinks = (title: string, feedId?: string): SupplyChainLinks => {
-  const releaseTag = extractReleaseTag(title);
-
-  if (!releaseTag) {
-    return {
-      packageTagUrl: null,
-      attestationVerified: null,
-      attestationPresent: null,
-    };
-  }
-
-  // Look up attestation state from the SBOM cache.
-  // Cache keys match releaseTag format: stable-YYYYMMDD, latest-YYYYMMDD, lts-YYYYMMDD, etc.
-  //
-  // lts-YYYYMMDD keys appear in multiple streams (bluefin-lts, bluefin-dx-lts, bluefin-gdx-lts).
-  // Use feedId to prefer the correct stream family before falling back to any match.
-  const isLtsFeed = feedId === "bluefinLtsReleases";
-
-  let attestationVerified: boolean | null = null;
-  let attestationPresent: boolean | null = null;
-  const cache = sbomAttestationsData as unknown as SbomAttestationsData;
-  if (cache?.streams) {
-    const streamEntries = Object.entries(cache.streams);
-
-    // First pass: only streams that match the feed's LTS/non-LTS family.
-    const preferred = streamEntries.filter(([key]) =>
-      isLtsFeed ? key.includes("lts") : !key.includes("lts"),
-    );
-
-    const searchOrder = preferred.length > 0 ? preferred : streamEntries;
-
-    for (const [, stream] of searchOrder) {
-      const entry = stream.releases?.[releaseTag];
-      if (entry) {
-        attestationVerified = entry.attestation.verified ?? null;
-        attestationPresent = entry.attestation.present ?? null;
-        break;
-      }
-    }
-  }
-
-  return {
-    packageTagUrl: `https://github.com/orgs/ublue-os/packages/container/bluefin?tag=${encodeURIComponent(releaseTag)}`,
-    attestationVerified,
-    attestationPresent,
-  };
-};
-
-const parseMajorVersion = (value: string | null): number | null => {
-  if (!value) return null;
-  const match = value.match(/\d+/);
-  if (!match) return null;
-  return Number.parseInt(match[0], 10);
-};
-
-const extractMajorVersionBumpsFromFirehose = (
-  release: FirehoseRelease | null,
-): MajorVersionBump[] => {
-  if (!release?.packageDiff) return [];
-  return release.packageDiff.changed
-    .flatMap((pkg) => {
-      const fromMajor = parseMajorVersion(pkg.oldVersion);
-      const toMajor = parseMajorVersion(pkg.newVersion);
-      if (fromMajor === null || toMajor === null || toMajor <= fromMajor) {
-        return [];
-      }
-      return [
-        {
-          name: pkg.name,
-          from: pkg.oldVersion || "unknown",
-          to: pkg.newVersion || "unknown",
-        },
-      ];
-    })
-    .slice(0, 10);
-};
-
-const extractReleaseSummaryFromFirehose = (
-  release: FirehoseRelease | null,
-  majorVersionBumps: MajorVersionBump[],
-): ReleaseSummary | null => {
-  if (!release?.packageDiff) return null;
-  return {
-    packageUpdates: release.packageDiff.changed.length,
-    newPackages: release.packageDiff.added.length,
-    removedPackages: release.packageDiff.removed.length,
-    majorBumps: majorVersionBumps.length,
-  };
-};
-
-const getNvidiaVersionFromFirehose = (feedId: string, title: string): string | null => {
-  const firehoseRelease = getFirehoseRelease(feedId, title);
-  if (!firehoseRelease?.app.osInfo?.majorPackages) return null;
-  const majorPackages = firehoseRelease.app.osInfo.majorPackages;
-  // Explicit workaround path: NVIDIA is not present in SBOM packageVersions.
+  if (!app?.osInfo?.majorPackages) return null;
+  const majorPackages = app.osInfo.majorPackages;
   return majorPackages.NVIDIA || majorPackages.Nvidia || majorPackages.nvidia || null;
 };
 
-const SBOM_STREAM_BY_FEED_ID: Record<string, string> = {
-  bluefinReleases: "bluefin-stable",
-  bluefinLtsReleases: "bluefin-lts",
-};
-
-const extractVersionSummary = (title: string, feedId: string): VersionChange[] => {
-  const streamId = SBOM_STREAM_BY_FEED_ID[feedId];
-  const cacheKey = extractReleaseTag(title);
-  if (!streamId || !cacheKey) return [];
-
-  const cache = sbomAttestationsData as unknown as SbomAttestationsData;
-  const packages = cache?.streams?.[streamId]?.releases?.[cacheKey]?.packageVersions;
-  if (!packages) return [];
-
-  const changes: VersionChange[] = [];
-  if (packages.kernel) changes.push({ name: "Kernel", change: packages.kernel });
-  if (packages.gnome) changes.push({ name: "GNOME", change: packages.gnome });
-  if (packages.mesa) changes.push({ name: "Mesa", change: packages.mesa });
-  if (packages.podman) changes.push({ name: "Podman", change: packages.podman });
-  if (packages.systemd) changes.push({ name: "systemd", change: packages.systemd });
-  if (packages.bootc) changes.push({ name: "bootc", change: packages.bootc });
-  const nvidia = getNvidiaVersionFromFirehose(feedId, title);
-  if (nvidia) changes.push({ name: "NVIDIA", change: nvidia });
-
-  return changes;
-};
+// ─── Feed parsing helpers ────────────────────────────────────────────────────
 
 // Helper function to determine if a feed should show executive summaries
 const isReleaseFeed = (feedId: string): boolean => {
   return feedId === "bluefinReleases" || feedId === "bluefinLtsReleases";
 };
 
-// Helper to extract item items from a raw parsed feed
+// Helper to extract items from a raw parsed feed
 const extractItems = (feedData: ParsedFeed): FeedItem[] => {
   if (feedData?.rss?.channel?.item) {
     return Array.isArray(feedData.rss.channel.item)
@@ -413,12 +250,9 @@ const resolveItemLink = (item: FeedItem, feedId: string): string => {
 const formatReleaseTitle = (title: string, feedId: string): string => {
   if (feedId === "bluefinLtsReleases") {
     // For LTS releases: Replace "bluefin-lts LTS: " or "Bluefin LTS: " prefix with "lts-"
-    // Example: "bluefin-lts LTS: 20250910 (c10s, #cfd65ad)" -> "lts-20250910 (c10s, #cfd65ad)"
-    // Example: "Bluefin LTS: 20250808 (c10s)" -> "lts-20250808 (c10s)"
     return title.replace(/^(bluefin-lts|Bluefin) LTS: /, "lts-");
   } else if (feedId === "bluefinReleases") {
     // For stable releases: Keep "stable-" prefix, strip ": Stable" text, simplify Fedora version
-    // Example: "stable-20250907: Stable (F42.20250907, #921e6ba)" -> "stable-20250907 (F42 #921e6ba)"
     if (title.startsWith("stable-")) {
       return title.replace(
         /^(stable-[^:]+): Stable \(F(\d+)\.\d+, (#[^)]+)\)$/,
@@ -426,10 +260,49 @@ const formatReleaseTitle = (title: string, feedId: string): string => {
       );
     }
   }
-
-  // Return original title if no formatting rules apply
   return title;
 };
+
+// ─── Derived release data from SBOM ─────────────────────────────────────────
+
+interface DerivedReleaseData {
+  versionSummary: VersionChange[];
+  supplyChainLinks: SupplyChainLinks;
+  majorVersionBumps: MajorVersionBump[];
+  releaseSummary: ReleaseSummary | null;
+}
+
+/**
+ * Compute all release-specific derived data from the SBOM cache.
+ * This replaces the previous firehose-based computation for package diffs.
+ */
+const computeDerivedReleaseData = (
+  feedId: string,
+  title: string,
+): DerivedReleaseData => {
+  const nvidiaVersion = getNvidiaVersionFromFirehose(feedId, title);
+  const versionSummary = extractVersionSummary(
+    sbomCache,
+    title,
+    feedId,
+    nvidiaVersion,
+  );
+  const supplyChainLinks = getSupplyChainLinks(sbomCache, title, feedId);
+
+  // Compute package diff from consecutive SBOM releases
+  const currentRelease = getSbomRelease(sbomCache, feedId, title);
+  const previousRelease = getPreviousRelease(sbomCache, feedId, title);
+  const diff = computePackageDiff(
+    currentRelease?.packageVersions ?? null,
+    previousRelease?.packageVersions ?? null,
+  );
+  const majorVersionBumps = extractMajorVersionBumps(diff);
+  const releaseSummary = buildReleaseSummary(diff, majorVersionBumps);
+
+  return { versionSummary, supplyChainLinks, majorVersionBumps, releaseSummary };
+};
+
+// ─── FeedItems Component ─────────────────────────────────────────────────────
 
 const FeedItems: React.FC<FeedItemsProps> = ({
   feedId,
@@ -473,10 +346,14 @@ const FeedItems: React.FC<FeedItemsProps> = ({
                 ? item.content?.value
                 : item.content);
             const itemId = item.guid || item.id || itemLink || index;
-            const versionSummary =
-              isReleaseFeed(feedId)
-                ? extractVersionSummary(item.title, feedId)
-                : [];
+            const versionSummary = isReleaseFeed(feedId)
+              ? extractVersionSummary(
+                  sbomCache,
+                  item.title,
+                  feedId,
+                  getNvidiaVersionFromFirehose(feedId, item.title),
+                )
+              : [];
             const displayTitle = formatReleaseTitle(item.title, feedId);
 
             return (
@@ -560,6 +437,8 @@ const FeedItems: React.FC<FeedItemsProps> = ({
   }
 };
 
+// ─── CombinedFeedItems Component ─────────────────────────────────────────────
+
 // CombinedFeedItems — merges multiple feeds into one chronological list.
 // Each feed entry is tagged with a label badge so users can tell releases apart.
 const CombinedFeedItems: React.FC<CombinedFeedItemsProps> = ({
@@ -610,24 +489,19 @@ const CombinedFeedItems: React.FC<CombinedFeedItemsProps> = ({
               : item.content);
           const isRelease = isReleaseFeed(item._feedId);
           const displayTitle = formatReleaseTitle(item.title, item._feedId);
-          const supplyChainLinks = getSupplyChainLinks(displayTitle, item._feedId);
-          const firehoseRelease = isRelease
-            ? getFirehoseRelease(item._feedId, item.title)
+
+          // All release data now comes from SBOM cache directly
+          const derived = isRelease
+            ? computeDerivedReleaseData(item._feedId, item.title)
             : null;
-          const majorVersionBumps = extractMajorVersionBumpsFromFirehose(
-            firehoseRelease?.release || null,
-          );
-          const releaseSummary = extractReleaseSummaryFromFirehose(
-            firehoseRelease?.release || null,
-            majorVersionBumps,
-          );
+
           return {
             itemDescription,
             isRelease,
             displayTitle,
-            supplyChainLinks,
-            majorVersionBumps,
-            releaseSummary,
+            supplyChainLinks: derived?.supplyChainLinks ?? getSupplyChainLinks(sbomCache, displayTitle, item._feedId),
+            majorVersionBumps: derived?.majorVersionBumps ?? [],
+            releaseSummary: derived?.releaseSummary ?? null,
           };
         }),
       [displayItems.map((i) => i.guid || i.id).join(",")],
@@ -794,5 +668,4 @@ const CombinedFeedItems: React.FC<CombinedFeedItemsProps> = ({
 };
 
 export { CombinedFeedItems };
-
 export default FeedItems;
