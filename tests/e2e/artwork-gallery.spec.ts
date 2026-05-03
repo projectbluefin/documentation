@@ -213,7 +213,8 @@ test("brew install commands appear under each collection", async ({ page }) => {
 const THUMB_DIR = path.join(__dirname, "../../static/img/artwork/thumbnails");
 const FULLRES_DIR = path.join(__dirname, "../../static/img/artwork/fullres");
 const ARTWORK_JSON = path.join(__dirname, "../../static/data/artwork.json");
-const BASE_URL = "http://localhost:3000";
+// page.request.get() uses the baseURL from playwright.config.ts automatically
+// when given relative paths — no hardcoded BASE_URL needed.
 
 /** Run ffprobe to get pixel dimensions of a local image file. */
 function getImageDimensions(filepath: string): { width: number; height: number } {
@@ -408,7 +409,7 @@ test.describe("image HTTP responses", () => {
     await page.goto("/artwork");
     const failed: string[] = [];
     for (const url of thumbUrls) {
-      const res = await page.request.get(`${BASE_URL}${url}`);
+      const res = await page.request.get(url);
       if (res.status() !== 200) {
         failed.push(`${url}: HTTP ${res.status()}`);
       }
@@ -450,7 +451,7 @@ test.describe("image HTTP responses", () => {
     await page.goto("/artwork");
     const failed: string[] = [];
     for (const url of fullresUrls) {
-      const res = await page.request.get(`${BASE_URL}${url}`);
+      const res = await page.request.get(url);
       if (res.status() !== 200) {
         failed.push(`${url}: HTTP ${res.status()}`);
       }
