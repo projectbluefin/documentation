@@ -114,28 +114,6 @@ const RoleLegendColor: Record<ContributorRole, string> = {
   "ublue-emeritus": "#6b9ac4",
 };
 
-const RoleOrder: ContributorRole[] = [
-  "maintainer",
-  "ublue-maintainer",
-  "aurora-maintainer",
-  "bazzite-maintainer",
-  "ucore-maintainer",
-  "secureblue-maintainer",
-  "zirconium-maintainer",
-  "gnome-os",
-  "artist",
-  "bluefin-artist",
-  "aurora-artist",
-  "bug-hunter",
-  "bluefin-emeritus",
-  "ublue-emeritus",
-  "ublue-contributor",
-  "aurora-contributor",
-  "bazzite-contributor",
-  "ucore-contributor",
-  "brew-contributor",
-  "contributor",
-];
 
 type FoilLevel = "gold" | "silver" | "diamond" | "none";
 
