@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-02T17:29:13.733Z",
+  "generatedAt": "2026-05-03T19:31:57.819Z",
   "lookbackDays": 90,
   "maxReleasesPerStream": 10,
   "streams": {
@@ -193,16 +193,16 @@
           },
           "packageVersions": {
             "kernel": "6.18.13-200.fc43",
-            "gnome": "49.5-1.fc43",
-            "mesa": "25.3.6-1.fc43",
-            "podman": "5.8.1-1.fc43",
-            "systemd": "258.7-1.fc43",
-            "bootc": "1.13.0-2.fc43",
+            "gnome": "49.5",
+            "mesa": "25.3.6",
+            "podman": "5.8.1",
+            "systemd": "258.7",
+            "bootc": "1.13.0",
             "fedora": "F43",
-            "pipewire": "1.4.11-1.fc43",
-            "flatpak": "1.16.3-1.fc43"
+            "pipewire": "1.4.11",
+            "flatpak": "1.16.3"
           },
-          "checkedAt": "2026-05-02T17:26:35.280Z"
+          "checkedAt": "2026-05-03T19:29:09.054Z"
         },
         "stable-20260317": {
           "tag": "stable-20260317",
@@ -217,16 +217,16 @@
           },
           "packageVersions": {
             "kernel": "6.18.10-200.fc43",
-            "gnome": "49.4-2.fc43",
-            "mesa": "25.3.6-1.fc43",
-            "podman": "5.8.1-1.fc43",
-            "systemd": "258.7-1.fc43",
-            "bootc": "1.13.0-2.fc43",
+            "gnome": "49.4",
+            "mesa": "25.3.6",
+            "podman": "5.8.1",
+            "systemd": "258.7",
+            "bootc": "1.13.0",
             "fedora": "F43",
-            "pipewire": "1.4.10-1.fc43",
-            "flatpak": "1.16.3-1.fc43"
+            "pipewire": "1.4.10",
+            "flatpak": "1.16.3"
           },
-          "checkedAt": "2026-05-02T17:26:38.067Z"
+          "checkedAt": "2026-05-03T19:29:11.766Z"
         },
         "stable-20260312": {
           "tag": "stable-20260312",
@@ -241,16 +241,16 @@
           },
           "packageVersions": {
             "kernel": "6.18.10-200.fc43",
-            "gnome": "49.4-2.fc43",
-            "mesa": "25.3.6-1.fc43",
-            "podman": "5.8.0-1.fc43",
-            "systemd": "258.5-2.fc43",
-            "bootc": "1.13.0-2.fc43",
+            "gnome": "49.4",
+            "mesa": "25.3.6",
+            "podman": "5.8.0",
+            "systemd": "258.5",
+            "bootc": "1.13.0",
             "fedora": "F43",
-            "pipewire": "1.4.10-1.fc43",
-            "flatpak": "1.16.3-1.fc43"
+            "pipewire": "1.4.10",
+            "flatpak": "1.16.3"
           },
-          "checkedAt": "2026-05-02T17:26:41.034Z"
+          "checkedAt": "2026-05-03T19:29:14.502Z"
         }
       }
     },
@@ -263,6 +263,30 @@
       "keyRepo": "ublue-os/bluefin",
       "keyless": true,
       "releases": {
+        "stable-daily-20260503": {
+          "tag": "stable-daily-20260503",
+          "imageRef": "ghcr.io/ublue-os/bluefin:stable-daily-20260503",
+          "digest": null,
+          "attestation": {
+            "present": true,
+            "verified": true,
+            "predicateType": "https://slsa.dev/provenance/v1",
+            "slsaType": "https://slsa.dev/provenance/v1",
+            "error": null
+          },
+          "packageVersions": {
+            "kernel": "6.19.12-200.fc43",
+            "gnome": "49.6",
+            "mesa": "25.3.6",
+            "podman": "5.8.2",
+            "systemd": "258.7",
+            "bootc": "1.15.1",
+            "fedora": "F43",
+            "pipewire": "1.4.11",
+            "flatpak": "1.16.6"
+          },
+          "checkedAt": "2026-05-03T19:29:18.262Z"
+        },
         "stable-daily-20260502": {
           "tag": "stable-daily-20260502",
           "imageRef": "ghcr.io/ublue-os/bluefin:stable-daily-20260502",
@@ -478,30 +502,6 @@
             "flatpak": "1.16.6-1.fc43"
           },
           "checkedAt": "2026-05-02T03:23:04.557Z"
-        },
-        "stable-daily-20260422": {
-          "tag": "stable-daily-20260422",
-          "imageRef": "ghcr.io/ublue-os/bluefin:stable-daily-20260422",
-          "digest": null,
-          "attestation": {
-            "present": true,
-            "verified": true,
-            "predicateType": "https://slsa.dev/provenance/v1",
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": null
-          },
-          "packageVersions": {
-            "kernel": "6.19.10-200.fc43",
-            "gnome": "49.6-1.fc43",
-            "mesa": "25.3.6-6.fc43",
-            "podman": "5.8.2-1.fc43",
-            "systemd": "258.7-1.fc43",
-            "bootc": "1.15.0-1.fc43",
-            "fedora": "F43",
-            "pipewire": "1.4.11-1.fc43",
-            "flatpak": "1.16.6-1.fc43"
-          },
-          "checkedAt": "2026-05-02T03:23:07.755Z"
         }
       }
     },
@@ -514,6 +514,30 @@
       "keyRepo": "ublue-os/bluefin",
       "keyless": true,
       "releases": {
+        "latest-20260503": {
+          "tag": "latest-20260503",
+          "imageRef": "ghcr.io/ublue-os/bluefin:latest-20260503",
+          "digest": null,
+          "attestation": {
+            "present": true,
+            "verified": true,
+            "predicateType": "https://slsa.dev/provenance/v1",
+            "slsaType": "https://slsa.dev/provenance/v1",
+            "error": null
+          },
+          "packageVersions": {
+            "kernel": "6.19.14-300.fc44",
+            "gnome": "50.1",
+            "mesa": "26.0.6",
+            "podman": "5.8.2",
+            "systemd": "259.5",
+            "bootc": "1.15.1",
+            "fedora": "F44",
+            "pipewire": "1.6.4",
+            "flatpak": "1.17.6"
+          },
+          "checkedAt": "2026-05-03T19:29:21.515Z"
+        },
         "latest-20260502": {
           "tag": "latest-20260502",
           "imageRef": "ghcr.io/ublue-os/bluefin:latest-20260502",
@@ -729,30 +753,6 @@
             "flatpak": "1.16.6-1.fc43"
           },
           "checkedAt": "2026-05-02T03:23:42.328Z"
-        },
-        "latest-20260421": {
-          "tag": "latest-20260421",
-          "imageRef": "ghcr.io/ublue-os/bluefin:latest-20260421",
-          "digest": null,
-          "attestation": {
-            "present": true,
-            "verified": true,
-            "predicateType": "https://slsa.dev/provenance/v1",
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": null
-          },
-          "packageVersions": {
-            "kernel": "6.19.12-200.fc43",
-            "gnome": "49.6-1.fc43",
-            "mesa": "25.3.6-6.fc43",
-            "podman": "5.8.2-1.fc43",
-            "systemd": "258.7-1.fc43",
-            "bootc": "1.15.0-1.fc43",
-            "fedora": "F43",
-            "pipewire": "1.4.11-1.fc43",
-            "flatpak": "1.16.6-1.fc43"
-          },
-          "checkedAt": "2026-05-02T03:23:45.534Z"
         }
       }
     },
@@ -897,7 +897,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:26:43.336Z"
+          "checkedAt": "2026-05-03T19:29:23.306Z"
         },
         "lts-20260324": {
           "tag": "lts-20260324",
@@ -911,7 +911,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:26:44.950Z"
+          "checkedAt": "2026-05-03T19:29:24.867Z"
         },
         "lts-20260317": {
           "tag": "lts-20260317",
@@ -925,7 +925,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:26:47.365Z"
+          "checkedAt": "2026-05-03T19:29:26.431Z"
         },
         "lts-20260310": {
           "tag": "lts-20260310",
@@ -939,7 +939,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:26:48.950Z"
+          "checkedAt": "2026-05-03T19:29:27.974Z"
         },
         "lts-20260308": {
           "tag": "lts-20260308",
@@ -953,7 +953,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:26:50.490Z"
+          "checkedAt": "2026-05-03T19:29:30.035Z"
         }
       }
     },
@@ -1122,7 +1122,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:26:52.120Z"
+          "checkedAt": "2026-05-03T19:29:31.592Z"
         },
         "lts-hwe-20260324": {
           "tag": "lts-hwe-20260324",
@@ -1136,7 +1136,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:26:53.683Z"
+          "checkedAt": "2026-05-03T19:29:33.137Z"
         },
         "lts-hwe-20260317": {
           "tag": "lts-hwe-20260317",
@@ -1150,7 +1150,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:26:56.186Z"
+          "checkedAt": "2026-05-03T19:29:34.865Z"
         },
         "lts-hwe-20260310": {
           "tag": "lts-hwe-20260310",
@@ -1164,7 +1164,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:26:57.723Z"
+          "checkedAt": "2026-05-03T19:29:36.473Z"
         }
       }
     },
@@ -1177,6 +1177,20 @@
       "keyRepo": "ublue-os/bluefin-lts",
       "keyless": false,
       "releases": {
+        "lts-hwe-testing-20260503": {
+          "tag": "lts-hwe-testing-20260503",
+          "imageRef": "ghcr.io/ublue-os/bluefin:lts-hwe-testing.20260503",
+          "digest": null,
+          "attestation": {
+            "present": false,
+            "verified": false,
+            "predicateType": null,
+            "slsaType": "https://slsa.dev/provenance/v1",
+            "error": "no attestation"
+          },
+          "packageVersions": {},
+          "checkedAt": "2026-05-03T19:29:38.450Z"
+        },
         "lts-hwe-testing-20260502": {
           "tag": "lts-hwe-testing-20260502",
           "imageRef": "ghcr.io/ublue-os/bluefin:lts-hwe-testing.20260502",
@@ -1189,7 +1203,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:26:59.463Z"
+          "checkedAt": "2026-05-03T19:29:40.025Z"
         },
         "lts-hwe-testing-20260501": {
           "tag": "lts-hwe-testing-20260501",
@@ -1203,7 +1217,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:27:02.108Z"
+          "checkedAt": "2026-05-03T19:29:41.819Z"
         },
         "lts-hwe-testing-20260430": {
           "tag": "lts-hwe-testing-20260430",
@@ -1217,7 +1231,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:27:03.757Z"
+          "checkedAt": "2026-05-03T19:29:43.372Z"
         },
         "lts-hwe-testing-20260429": {
           "tag": "lts-hwe-testing-20260429",
@@ -1231,7 +1245,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:27:06.137Z"
+          "checkedAt": "2026-05-03T19:29:45.727Z"
         },
         "lts-hwe-testing-20260427": {
           "tag": "lts-hwe-testing-20260427",
@@ -1245,7 +1259,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:27:07.950Z"
+          "checkedAt": "2026-05-03T19:29:47.414Z"
         },
         "lts-hwe-testing-20260426": {
           "tag": "lts-hwe-testing-20260426",
@@ -1259,7 +1273,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:27:09.671Z"
+          "checkedAt": "2026-05-03T19:29:48.986Z"
         },
         "lts-hwe-testing-20260425": {
           "tag": "lts-hwe-testing-20260425",
@@ -1273,7 +1287,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:27:11.333Z"
+          "checkedAt": "2026-05-03T19:29:50.804Z"
         },
         "lts-hwe-testing-20260421": {
           "tag": "lts-hwe-testing-20260421",
@@ -1287,7 +1301,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:27:12.937Z"
+          "checkedAt": "2026-05-03T19:29:52.612Z"
         },
         "lts-hwe-testing-20260420": {
           "tag": "lts-hwe-testing-20260420",
@@ -1301,21 +1315,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:27:14.541Z"
-        },
-        "lts-hwe-testing-20260419": {
-          "tag": "lts-hwe-testing-20260419",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts-hwe-testing.20260419",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {},
-          "checkedAt": "2026-05-02T17:27:16.138Z"
+          "checkedAt": "2026-05-03T19:29:54.205Z"
         }
       }
     },
@@ -1328,6 +1328,20 @@
       "keyRepo": "ublue-os/bluefin-lts",
       "keyless": false,
       "releases": {
+        "lts-hwe-testing-50-20260503": {
+          "tag": "lts-hwe-testing-50-20260503",
+          "imageRef": "ghcr.io/ublue-os/bluefin:lts-hwe-testing-50-20260503",
+          "digest": null,
+          "attestation": {
+            "present": false,
+            "verified": false,
+            "predicateType": null,
+            "slsaType": "https://slsa.dev/provenance/v1",
+            "error": "no attestation"
+          },
+          "packageVersions": {},
+          "checkedAt": "2026-05-03T19:29:55.751Z"
+        },
         "lts-hwe-testing-50-20260502": {
           "tag": "lts-hwe-testing-50-20260502",
           "imageRef": "ghcr.io/ublue-os/bluefin:lts-hwe-testing-50-20260502",
@@ -1340,7 +1354,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:27:17.696Z"
+          "checkedAt": "2026-05-03T19:29:57.707Z"
         },
         "lts-hwe-testing-50-20260501": {
           "tag": "lts-hwe-testing-50-20260501",
@@ -1354,7 +1368,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:27:19.443Z"
+          "checkedAt": "2026-05-03T19:29:59.247Z"
         },
         "lts-hwe-testing-50-20260430": {
           "tag": "lts-hwe-testing-50-20260430",
@@ -1368,7 +1382,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:27:21.026Z"
+          "checkedAt": "2026-05-03T19:30:00.800Z"
         },
         "lts-hwe-testing-50-20260429": {
           "tag": "lts-hwe-testing-50-20260429",
@@ -1382,7 +1396,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:27:22.768Z"
+          "checkedAt": "2026-05-03T19:30:02.393Z"
         },
         "lts-hwe-testing-50-20260427": {
           "tag": "lts-hwe-testing-50-20260427",
@@ -1396,7 +1410,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:27:24.617Z"
+          "checkedAt": "2026-05-03T19:30:04.137Z"
         },
         "lts-hwe-testing-50-20260426": {
           "tag": "lts-hwe-testing-50-20260426",
@@ -1410,7 +1424,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:27:26.227Z"
+          "checkedAt": "2026-05-03T19:30:05.707Z"
         },
         "lts-hwe-testing-50-20260425": {
           "tag": "lts-hwe-testing-50-20260425",
@@ -1424,7 +1438,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:27:27.841Z"
+          "checkedAt": "2026-05-03T19:30:07.287Z"
         },
         "lts-hwe-testing-50-20260421": {
           "tag": "lts-hwe-testing-50-20260421",
@@ -1438,7 +1452,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:27:29.498Z"
+          "checkedAt": "2026-05-03T19:30:09.375Z"
         },
         "lts-hwe-testing-50-20260420": {
           "tag": "lts-hwe-testing-50-20260420",
@@ -1452,21 +1466,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:27:31.223Z"
-        },
-        "lts-hwe-testing-50-20260419": {
-          "tag": "lts-hwe-testing-50-20260419",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts-hwe-testing-50-20260419",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {},
-          "checkedAt": "2026-05-02T17:27:32.802Z"
+          "checkedAt": "2026-05-03T19:30:11.126Z"
         }
       }
     },
@@ -1479,6 +1479,20 @@
       "keyRepo": "ublue-os/bluefin-lts",
       "keyless": false,
       "releases": {
+        "lts-testing-50-20260503": {
+          "tag": "lts-testing-50-20260503",
+          "imageRef": "ghcr.io/ublue-os/bluefin:lts-testing-50-20260503",
+          "digest": null,
+          "attestation": {
+            "present": false,
+            "verified": false,
+            "predicateType": null,
+            "slsaType": "https://slsa.dev/provenance/v1",
+            "error": "no attestation"
+          },
+          "packageVersions": {},
+          "checkedAt": "2026-05-03T19:30:12.657Z"
+        },
         "lts-testing-50-20260502": {
           "tag": "lts-testing-50-20260502",
           "imageRef": "ghcr.io/ublue-os/bluefin:lts-testing-50-20260502",
@@ -1491,7 +1505,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:27:34.377Z"
+          "checkedAt": "2026-05-03T19:30:15.962Z"
         },
         "lts-testing-50-20260501": {
           "tag": "lts-testing-50-20260501",
@@ -1505,7 +1519,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:27:36.259Z"
+          "checkedAt": "2026-05-03T19:30:18.282Z"
         },
         "lts-testing-50-20260430": {
           "tag": "lts-testing-50-20260430",
@@ -1519,7 +1533,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:27:37.819Z"
+          "checkedAt": "2026-05-03T19:30:19.829Z"
         },
         "lts-testing-50-20260429": {
           "tag": "lts-testing-50-20260429",
@@ -1533,7 +1547,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:27:39.527Z"
+          "checkedAt": "2026-05-03T19:30:21.588Z"
         },
         "lts-testing-50-20260427": {
           "tag": "lts-testing-50-20260427",
@@ -1547,7 +1561,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:27:41.642Z"
+          "checkedAt": "2026-05-03T19:30:23.109Z"
         },
         "lts-testing-50-20260426": {
           "tag": "lts-testing-50-20260426",
@@ -1561,7 +1575,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:27:43.238Z"
+          "checkedAt": "2026-05-03T19:30:24.654Z"
         },
         "lts-testing-50-20260425": {
           "tag": "lts-testing-50-20260425",
@@ -1575,7 +1589,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:27:44.768Z"
+          "checkedAt": "2026-05-03T19:30:26.383Z"
         },
         "lts-testing-50-20260421": {
           "tag": "lts-testing-50-20260421",
@@ -1589,7 +1603,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:27:46.489Z"
+          "checkedAt": "2026-05-03T19:30:28.291Z"
         },
         "lts-testing-50-20260420": {
           "tag": "lts-testing-50-20260420",
@@ -1603,21 +1617,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:27:48.591Z"
-        },
-        "lts-testing-50-20260419": {
-          "tag": "lts-testing-50-20260419",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts-testing-50-20260419",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {},
-          "checkedAt": "2026-05-02T17:27:51.192Z"
+          "checkedAt": "2026-05-03T19:30:29.998Z"
         }
       }
     },
@@ -1811,16 +1811,16 @@
           },
           "packageVersions": {
             "kernel": "6.18.13-200.fc43",
-            "gnome": "49.5-1.fc43",
-            "mesa": "25.3.6-1.fc43",
-            "podman": "5.8.1-1.fc43",
-            "systemd": "258.7-1.fc43",
-            "bootc": "1.13.0-2.fc43",
+            "gnome": "49.5",
+            "mesa": "25.3.6",
+            "podman": "5.8.1",
+            "systemd": "258.7",
+            "bootc": "1.13.0",
             "fedora": "F43",
-            "pipewire": "1.4.11-1.fc43",
-            "flatpak": "1.16.3-1.fc43"
+            "pipewire": "1.4.11",
+            "flatpak": "1.16.3"
           },
-          "checkedAt": "2026-05-02T17:27:54.989Z"
+          "checkedAt": "2026-05-03T19:30:33.118Z"
         },
         "stable-20260317": {
           "tag": "stable-20260317",
@@ -1835,16 +1835,16 @@
           },
           "packageVersions": {
             "kernel": "6.18.10-200.fc43",
-            "gnome": "49.4-2.fc43",
-            "mesa": "25.3.6-1.fc43",
-            "podman": "5.8.1-1.fc43",
-            "systemd": "258.7-1.fc43",
-            "bootc": "1.13.0-2.fc43",
+            "gnome": "49.4",
+            "mesa": "25.3.6",
+            "podman": "5.8.1",
+            "systemd": "258.7",
+            "bootc": "1.13.0",
             "fedora": "F43",
-            "pipewire": "1.4.10-1.fc43",
-            "flatpak": "1.16.3-1.fc43"
+            "pipewire": "1.4.10",
+            "flatpak": "1.16.3"
           },
-          "checkedAt": "2026-05-02T17:27:57.981Z"
+          "checkedAt": "2026-05-03T19:30:36.002Z"
         },
         "stable-20260312": {
           "tag": "stable-20260312",
@@ -1859,16 +1859,16 @@
           },
           "packageVersions": {
             "kernel": "6.18.10-200.fc43",
-            "gnome": "49.4-2.fc43",
-            "mesa": "25.3.6-1.fc43",
-            "podman": "5.8.0-1.fc43",
-            "systemd": "258.5-2.fc43",
-            "bootc": "1.13.0-2.fc43",
+            "gnome": "49.4",
+            "mesa": "25.3.6",
+            "podman": "5.8.0",
+            "systemd": "258.5",
+            "bootc": "1.13.0",
             "fedora": "F43",
-            "pipewire": "1.4.10-1.fc43",
-            "flatpak": "1.16.3-1.fc43"
+            "pipewire": "1.4.10",
+            "flatpak": "1.16.3"
           },
-          "checkedAt": "2026-05-02T17:28:03.782Z"
+          "checkedAt": "2026-05-03T19:30:39.093Z"
         }
       }
     },
@@ -1881,6 +1881,30 @@
       "keyRepo": "ublue-os/bluefin",
       "keyless": true,
       "releases": {
+        "latest-20260503": {
+          "tag": "latest-20260503",
+          "imageRef": "ghcr.io/ublue-os/bluefin-dx:latest-20260503",
+          "digest": null,
+          "attestation": {
+            "present": true,
+            "verified": true,
+            "predicateType": "https://slsa.dev/provenance/v1",
+            "slsaType": "https://slsa.dev/provenance/v1",
+            "error": null
+          },
+          "packageVersions": {
+            "kernel": "6.19.14-300.fc44",
+            "gnome": "50.1",
+            "mesa": "26.0.6",
+            "podman": "5.8.2",
+            "systemd": "259.5",
+            "bootc": "1.15.1",
+            "fedora": "F44",
+            "pipewire": "1.6.4",
+            "flatpak": "1.17.6"
+          },
+          "checkedAt": "2026-05-03T19:30:43.096Z"
+        },
         "latest-20260502": {
           "tag": "latest-20260502",
           "imageRef": "ghcr.io/ublue-os/bluefin-dx:latest-20260502",
@@ -2096,30 +2120,6 @@
             "flatpak": "1.16.6-1.fc43"
           },
           "checkedAt": "2026-05-02T03:26:23.758Z"
-        },
-        "latest-20260421": {
-          "tag": "latest-20260421",
-          "imageRef": "ghcr.io/ublue-os/bluefin-dx:latest-20260421",
-          "digest": null,
-          "attestation": {
-            "present": true,
-            "verified": true,
-            "predicateType": "https://slsa.dev/provenance/v1",
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": null
-          },
-          "packageVersions": {
-            "kernel": "6.19.12-200.fc43",
-            "gnome": "49.6-1.fc43",
-            "mesa": "25.3.6-6.fc43",
-            "podman": "5.8.2-1.fc43",
-            "systemd": "258.7-1.fc43",
-            "bootc": "1.15.0-1.fc43",
-            "fedora": "F43",
-            "pipewire": "1.4.11-1.fc43",
-            "flatpak": "1.16.6-1.fc43"
-          },
-          "checkedAt": "2026-05-02T03:26:29.575Z"
         }
       }
     },
@@ -2264,7 +2264,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:28:05.322Z"
+          "checkedAt": "2026-05-03T19:30:44.784Z"
         },
         "lts-20260324": {
           "tag": "lts-20260324",
@@ -2278,7 +2278,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:28:06.911Z"
+          "checkedAt": "2026-05-03T19:30:46.317Z"
         },
         "lts-20260317": {
           "tag": "lts-20260317",
@@ -2292,7 +2292,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:28:08.545Z"
+          "checkedAt": "2026-05-03T19:30:47.871Z"
         },
         "lts-20260310": {
           "tag": "lts-20260310",
@@ -2306,7 +2306,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:28:10.116Z"
+          "checkedAt": "2026-05-03T19:30:49.438Z"
         },
         "lts-20260308": {
           "tag": "lts-20260308",
@@ -2320,7 +2320,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:28:11.728Z"
+          "checkedAt": "2026-05-03T19:30:51.518Z"
         }
       }
     },
@@ -2333,6 +2333,20 @@
       "keyRepo": "ublue-os/bluefin-lts",
       "keyless": false,
       "releases": {
+        "lts-hwe-testing-20260503": {
+          "tag": "lts-hwe-testing-20260503",
+          "imageRef": "ghcr.io/ublue-os/bluefin-dx:lts-hwe-testing.20260503",
+          "digest": null,
+          "attestation": {
+            "present": false,
+            "verified": false,
+            "predicateType": null,
+            "slsaType": "https://slsa.dev/provenance/v1",
+            "error": "no attestation"
+          },
+          "packageVersions": {},
+          "checkedAt": "2026-05-03T19:30:53.066Z"
+        },
         "lts-hwe-testing-20260502": {
           "tag": "lts-hwe-testing-20260502",
           "imageRef": "ghcr.io/ublue-os/bluefin-dx:lts-hwe-testing.20260502",
@@ -2345,7 +2359,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:28:13.891Z"
+          "checkedAt": "2026-05-03T19:30:54.630Z"
         },
         "lts-hwe-testing-20260501": {
           "tag": "lts-hwe-testing-20260501",
@@ -2359,7 +2373,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:28:15.507Z"
+          "checkedAt": "2026-05-03T19:30:58.259Z"
         },
         "lts-hwe-testing-20260430": {
           "tag": "lts-hwe-testing-20260430",
@@ -2373,7 +2387,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:28:17.675Z"
+          "checkedAt": "2026-05-03T19:31:00.267Z"
         },
         "lts-hwe-testing-20260429": {
           "tag": "lts-hwe-testing-20260429",
@@ -2387,7 +2401,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:28:19.268Z"
+          "checkedAt": "2026-05-03T19:31:02.269Z"
         },
         "lts-hwe-testing-20260427": {
           "tag": "lts-hwe-testing-20260427",
@@ -2401,7 +2415,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:28:20.872Z"
+          "checkedAt": "2026-05-03T19:31:03.848Z"
         },
         "lts-hwe-testing-20260426": {
           "tag": "lts-hwe-testing-20260426",
@@ -2415,7 +2429,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:28:22.498Z"
+          "checkedAt": "2026-05-03T19:31:05.412Z"
         },
         "lts-hwe-testing-20260425": {
           "tag": "lts-hwe-testing-20260425",
@@ -2429,7 +2443,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:28:24.731Z"
+          "checkedAt": "2026-05-03T19:31:06.944Z"
         },
         "lts-hwe-testing-20260421": {
           "tag": "lts-hwe-testing-20260421",
@@ -2443,7 +2457,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:28:26.328Z"
+          "checkedAt": "2026-05-03T19:31:08.797Z"
         },
         "lts-hwe-testing-20260420": {
           "tag": "lts-hwe-testing-20260420",
@@ -2457,21 +2471,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:28:28.091Z"
-        },
-        "lts-hwe-testing-20260419": {
-          "tag": "lts-hwe-testing-20260419",
-          "imageRef": "ghcr.io/ublue-os/bluefin-dx:lts-hwe-testing.20260419",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {},
-          "checkedAt": "2026-05-02T17:28:29.692Z"
+          "checkedAt": "2026-05-03T19:31:10.402Z"
         }
       }
     },
@@ -2484,6 +2484,20 @@
       "keyRepo": "ublue-os/bluefin-lts",
       "keyless": false,
       "releases": {
+        "lts-hwe-testing-50-20260503": {
+          "tag": "lts-hwe-testing-50-20260503",
+          "imageRef": "ghcr.io/ublue-os/bluefin-dx:lts-hwe-testing-50-20260503",
+          "digest": null,
+          "attestation": {
+            "present": false,
+            "verified": false,
+            "predicateType": null,
+            "slsaType": "https://slsa.dev/provenance/v1",
+            "error": "no attestation"
+          },
+          "packageVersions": {},
+          "checkedAt": "2026-05-03T19:31:11.912Z"
+        },
         "lts-hwe-testing-50-20260502": {
           "tag": "lts-hwe-testing-50-20260502",
           "imageRef": "ghcr.io/ublue-os/bluefin-dx:lts-hwe-testing-50-20260502",
@@ -2496,7 +2510,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:28:31.269Z"
+          "checkedAt": "2026-05-03T19:31:13.442Z"
         },
         "lts-hwe-testing-50-20260501": {
           "tag": "lts-hwe-testing-50-20260501",
@@ -2510,7 +2524,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:28:33.056Z"
+          "checkedAt": "2026-05-03T19:31:14.978Z"
         },
         "lts-hwe-testing-50-20260430": {
           "tag": "lts-hwe-testing-50-20260430",
@@ -2524,7 +2538,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:28:34.698Z"
+          "checkedAt": "2026-05-03T19:31:16.550Z"
         },
         "lts-hwe-testing-50-20260429": {
           "tag": "lts-hwe-testing-50-20260429",
@@ -2538,7 +2552,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:28:36.829Z"
+          "checkedAt": "2026-05-03T19:31:18.114Z"
         },
         "lts-hwe-testing-50-20260427": {
           "tag": "lts-hwe-testing-50-20260427",
@@ -2552,7 +2566,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:28:38.489Z"
+          "checkedAt": "2026-05-03T19:31:21.215Z"
         },
         "lts-hwe-testing-50-20260426": {
           "tag": "lts-hwe-testing-50-20260426",
@@ -2566,7 +2580,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:28:40.162Z"
+          "checkedAt": "2026-05-03T19:31:22.815Z"
         },
         "lts-hwe-testing-50-20260425": {
           "tag": "lts-hwe-testing-50-20260425",
@@ -2580,7 +2594,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:28:41.782Z"
+          "checkedAt": "2026-05-03T19:31:24.480Z"
         },
         "lts-hwe-testing-50-20260421": {
           "tag": "lts-hwe-testing-50-20260421",
@@ -2594,7 +2608,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:28:43.444Z"
+          "checkedAt": "2026-05-03T19:31:26.017Z"
         },
         "lts-hwe-testing-50-20260420": {
           "tag": "lts-hwe-testing-50-20260420",
@@ -2608,21 +2622,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:28:45.073Z"
-        },
-        "lts-hwe-testing-50-20260419": {
-          "tag": "lts-hwe-testing-50-20260419",
-          "imageRef": "ghcr.io/ublue-os/bluefin-dx:lts-hwe-testing-50-20260419",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {},
-          "checkedAt": "2026-05-02T17:28:47.548Z"
+          "checkedAt": "2026-05-03T19:31:27.595Z"
         }
       }
     },
@@ -2635,6 +2635,20 @@
       "keyRepo": "ublue-os/bluefin-lts",
       "keyless": false,
       "releases": {
+        "lts-testing-50-20260503": {
+          "tag": "lts-testing-50-20260503",
+          "imageRef": "ghcr.io/ublue-os/bluefin-dx:lts-testing-50-20260503",
+          "digest": null,
+          "attestation": {
+            "present": false,
+            "verified": false,
+            "predicateType": null,
+            "slsaType": "https://slsa.dev/provenance/v1",
+            "error": "no attestation"
+          },
+          "packageVersions": {},
+          "checkedAt": "2026-05-03T19:31:29.978Z"
+        },
         "lts-testing-50-20260502": {
           "tag": "lts-testing-50-20260502",
           "imageRef": "ghcr.io/ublue-os/bluefin-dx:lts-testing-50-20260502",
@@ -2647,7 +2661,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:28:49.348Z"
+          "checkedAt": "2026-05-03T19:31:32.293Z"
         },
         "lts-testing-50-20260501": {
           "tag": "lts-testing-50-20260501",
@@ -2661,7 +2675,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:28:51.662Z"
+          "checkedAt": "2026-05-03T19:31:34.312Z"
         },
         "lts-testing-50-20260430": {
           "tag": "lts-testing-50-20260430",
@@ -2675,7 +2689,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:28:53.234Z"
+          "checkedAt": "2026-05-03T19:31:36.494Z"
         },
         "lts-testing-50-20260429": {
           "tag": "lts-testing-50-20260429",
@@ -2689,7 +2703,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:28:54.846Z"
+          "checkedAt": "2026-05-03T19:31:38.102Z"
         },
         "lts-testing-50-20260426": {
           "tag": "lts-testing-50-20260426",
@@ -2703,7 +2717,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:28:56.608Z"
+          "checkedAt": "2026-05-03T19:31:39.708Z"
         },
         "lts-testing-50-20260425": {
           "tag": "lts-testing-50-20260425",
@@ -2717,7 +2731,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:28:58.206Z"
+          "checkedAt": "2026-05-03T19:31:41.303Z"
         },
         "lts-testing-50-20260421": {
           "tag": "lts-testing-50-20260421",
@@ -2731,7 +2745,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:29:00.049Z"
+          "checkedAt": "2026-05-03T19:31:42.905Z"
         },
         "lts-testing-50-20260420": {
           "tag": "lts-testing-50-20260420",
@@ -2745,7 +2759,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:29:01.664Z"
+          "checkedAt": "2026-05-03T19:31:44.478Z"
         },
         "lts-testing-50-20260419": {
           "tag": "lts-testing-50-20260419",
@@ -2759,21 +2773,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:29:03.272Z"
-        },
-        "lts-testing-50-20260418": {
-          "tag": "lts-testing-50-20260418",
-          "imageRef": "ghcr.io/ublue-os/bluefin-dx:lts-testing-50-20260418",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {},
-          "checkedAt": "2026-05-02T17:29:05.181Z"
+          "checkedAt": "2026-05-03T19:31:46.274Z"
         }
       }
     },
@@ -2942,7 +2942,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:29:07.106Z"
+          "checkedAt": "2026-05-03T19:31:48.650Z"
         },
         "lts-20260308": {
           "tag": "lts-20260308",
@@ -2956,7 +2956,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:29:09.846Z"
+          "checkedAt": "2026-05-03T19:31:50.288Z"
         },
         "lts-20260302": {
           "tag": "lts-20260302",
@@ -2970,7 +2970,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:29:11.486Z"
+          "checkedAt": "2026-05-03T19:31:51.921Z"
         },
         "lts-20260224": {
           "tag": "lts-20260224",
@@ -2984,7 +2984,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-02T17:29:13.105Z"
+          "checkedAt": "2026-05-03T19:31:53.727Z"
         }
       }
     },
@@ -3007,14 +3007,14 @@
       "keyRepo": "projectbluefin/dakota",
       "keyless": true,
       "releases": {
-        "latest-20260502": {
+        "latest-20260503": {
           "tag": "latest",
           "imageRef": "ghcr.io/projectbluefin/dakota:latest",
           "digest": null,
           "attestation": {
             "present": true,
             "verified": true,
-            "predicateType": "cosign-sign",
+            "predicateType": "https://slsa.dev/provenance/v1",
             "slsaType": "https://slsa.dev/provenance/v1",
             "error": null
           },
@@ -3029,7 +3029,7 @@
             "pipewire": "1.6.1",
             "flatpak": "1.16.6"
           },
-          "checkedAt": "2026-05-02T16:42:11.937Z"
+          "checkedAt": "2026-05-03T19:31:57.819Z"
         }
       }
     }

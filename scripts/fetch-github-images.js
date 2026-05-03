@@ -47,6 +47,7 @@ const PRODUCT_SPECS = [
     nvidiaPackage: "bluefin-nvidia-open",
     allowTestingStreams: false,
     isoSectionLink: "/downloads#bluefin",
+    supportedArches: ["amd", "intel", "arm"],
   },
   {
     id: "ublue-bluefin-dx",
@@ -62,6 +63,7 @@ const PRODUCT_SPECS = [
     nvidiaPackage: "bluefin-dx-nvidia-open",
     allowTestingStreams: false,
     isoSectionLink: "/downloads#bluefin",
+    supportedArches: ["amd", "intel", "arm"],
   },
   {
     id: "ublue-bluefin-lts",
@@ -79,6 +81,7 @@ const PRODUCT_SPECS = [
     allowTestingStreams: true,
     keepEvenIfStale: true,
     isoSectionLink: "/downloads#bluefin-lts",
+    supportedArches: ["amd", "intel", "arm"],
   },
   {
     id: "ublue-bluefin-dx-lts",
@@ -96,6 +99,7 @@ const PRODUCT_SPECS = [
     allowTestingStreams: true,
     keepEvenIfStale: true,
     isoSectionLink: "/downloads#bluefin-lts",
+    supportedArches: ["amd", "intel", "arm"],
   },
   {
     id: "ublue-bluefin-gdx",
@@ -111,6 +115,7 @@ const PRODUCT_SPECS = [
     keepEvenIfStale: true,
     allowTestingStreams: true,
     isoSectionLink: "/downloads#bluefin-gdx",
+    supportedArches: ["nvidia", "arm"],
   },
   {
     id: "projectbluefin-dakota",
@@ -123,9 +128,12 @@ const PRODUCT_SPECS = [
     versionSource: null,
     sbomStreamId: "dakota-latest",
     keyRepo: "projectbluefin/dakota",
+    nvidiaPackage: "dakota-nvidia",
     allowTestingStreams: false,
     // No versionOverrides: versions come from the SBOM (BST SPDX format).
     // fedora will be null — Dakota is GNOME OS based, not Fedora.
+    supportedArches: ["amd", "intel"],
+    isoSectionLink: "/downloads-testing#dakotaraptor",
   },
 ];
 
@@ -657,6 +665,7 @@ async function buildProduct(spec, feeds, cachedById, ageHours, sbomCache) {
     imageRef,
     packagePageUrl: `https://github.com/orgs/${spec.org}/packages/container/package/${spec.package}`,
     isoSectionLink: spec.isoSectionLink || null,
+    supportedArches: spec.supportedArches || null,
     streams,
     testingStreams,
     metadata,

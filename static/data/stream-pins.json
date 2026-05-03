@@ -1,9 +1,7 @@
 {
-  "generatedAt": "2026-05-02T00:00:00Z",
+  "generatedAt": "2026-05-03T22:43:15.724Z",
   "streams": {
-    "bluefin-lts": {
-      "hweKernel": "6.19.12-100.fc42"
-    },
+    "bluefin-lts": {},
     "bluefin-stable": {}
   }
 }

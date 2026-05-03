@@ -72,11 +72,24 @@ function valueOrFallback(value: string | null | undefined, fallback = "N/A") {
   return value || fallback;
 }
 
+/**
+ * Strips RPM dist/release noise from a package version string for display.
+ * Kernels and apps both strip the entire -N.distTag release suffix.
+ *   "6.19.12-200.fc43" → "6.19.12"   (Fedora version shown via userspace marker)
+ *   "6.12.0-224.el10"  → "6.12.0"
+ *   "49.5-100.el10gnomeqr.el10" → "49.5"
+ *   "595.71.05-1"      → "595.71.05"
+ */
+function cleanVersion(value: string | null | undefined): string {
+  if (!value) return "";
+  return value.replace(/-\d+.*$/, "");
+}
+
 function VersionValue({ value }: { value: string | null | undefined }) {
   if (!value) {
     return <span className={`${styles.majorVersionValue} ${styles.versionMissing}`}>N/A</span>;
   }
-  return <span className={styles.majorVersionValue}>{value}</span>;
+  return <span className={styles.majorVersionValue}>{cleanVersion(value)}</span>;
 }
 
 function majorNumber(value: string | null | undefined) {
@@ -95,6 +108,47 @@ function majorMinor(value: string | null | undefined) {
   };
 }
 
+interface UserspaceInfo {
+  label: string;   // e.g. "Fedora 43 Userspace" or "CentOS Stream 10 Userspace"
+  key: string;     // e.g. "fc43" or "el10" — used for transition detection
+}
+
+/** Reads the BASE kernel to determine the userspace OS and version. */
+function extractUserspace(row: DriverRow): UserspaceInfo | null {
+  const base = row.versions.kernel ?? "";
+  const el = base.match(/\.el(\d+)/);
+  if (el) return { label: `CentOS Stream ${el[1]} Userspace`, key: `el${el[1]}` };
+  const fc = base.match(/\.fc(\d+)/);
+  if (fc) return { label: `Fedora ${fc[1]} Userspace`, key: `fc${fc[1]}` };
+  return null;
+}
+
+/** Extracts the numeric Fedora release from HWE kernel (used for HWE pin context only). */
+function extractFedoraRelease(row: DriverRow): number | null {
+  const kernelStr = row.versions.hweKernel ?? row.versions.kernel ?? "";
+  const m = kernelStr.match(/\.fc(\d+)/);
+  return m ? parseInt(m[1], 10) : null;
+}
+
+/** Banner shown at the transition point where the userspace version changed. */
+function UserspaceMarker({ toLabel, fromLabel }: { toLabel: string; fromLabel: string }) {
+  return (
+    <div className={styles.userspaceMarker}>
+      <span className={styles.userspaceMarkerLabel}>
+        ↑ {toLabel}
+      </span>
+      <div className={styles.userspaceMarkerLine} />
+      <span className={styles.userspaceMarkerCenter}>
+        {toLabel.replace("Userspace", "Release")}
+      </span>
+      <div className={styles.userspaceMarkerLine} />
+      <span className={`${styles.userspaceMarkerLabel} ${styles.userspaceMarkerLabelOld}`}>
+        ↓ {fromLabel}
+      </span>
+    </div>
+  );
+}
+
 function rebaseCommandForTag(tag: string) {
   const safeTag = /^[a-z0-9][a-z0-9._-]*$/i.test(tag) ? tag : "stable";
   return `sudo bootc switch --enforce-container-sigpolicy "ghcr.io/$(jq -r '.\"image-name\"' /usr/share/ublue-os/image-info.json):${safeTag}"`;
@@ -105,11 +159,15 @@ function ReleaseNode({
   previousRow,
   emphasize,
   pins,
+  isLts,
+  pinnedHweKernels,
 }: {
   row: DriverRow;
   previousRow?: DriverRow;
   emphasize: boolean;
   pins?: StreamPins | null;
+  isLts?: boolean;
+  pinnedHweKernels?: Set<string>;
 }) {
   const kernel = valueOrFallback(row.versions.kernel);
   const nvidia = valueOrFallback(row.versions.nvidia);
@@ -117,7 +175,12 @@ function ReleaseNode({
   const hwe = row.versions.hweKernel;
   const gnome = valueOrFallback(row.versions.gnome);
 
-  const hweIsPinned = Boolean(pins?.hweKernel && hwe && hwe === pins.hweKernel);
+  // Badge fires if: workflow pin matches (current pin) OR SBOM history shows
+  // this kernel version repeated across 2+ releases (historically pinned).
+  const hweIsPinned = Boolean(
+    (pins?.hweKernel && hwe && hwe === pins.hweKernel) ||
+    (hwe && pinnedHweKernels?.has(hwe)),
+  );
 
   const kernelMajor = majorNumber(row.versions.kernel);
   const previousKernelMajor = majorNumber(previousRow?.versions.kernel);
@@ -219,7 +282,7 @@ function ReleaseNode({
               {hweIsPinned && (
                 <span
                   className={styles.pinnedTag}
-                  title={`Pinned to ${pins!.hweKernel} by maintainer — not following upstream`}
+                  title={`Pinned to ${cleanVersion(pins!.hweKernel)} by maintainer — not following upstream`}
                 >
                   📌 Pinned
                 </span>
@@ -235,7 +298,7 @@ function ReleaseNode({
                   : `${styles.majorVersionCard} ${styles.nvidiaCard}`
             }
           >
-            <span className={styles.majorVersionLabel}>NVIDIA</span>
+            <span className={styles.majorVersionLabel}>{isLts ? "NVIDIA (GDX)" : "NVIDIA"}</span>
             <VersionValue value={nvidia} />
             {nvidiaMajorBump && <span className={styles.nvidiaBumpTag}>Major bump</span>}
             {nvidiaMinorBump && <span className={styles.nvidiaMinorTag}>Minor bump</span>}
@@ -282,13 +345,13 @@ function ReleaseNode({
 }
 
 interface DriverVersionsCatalogProps {
-  streamId: "bluefin-stable" | "bluefin-lts";
+  streamId: "bluefin-stable" | "bluefin-lts" | "dakota-latest";
 }
 
 export default function DriverVersionsCatalog({ streamId }: DriverVersionsCatalogProps): React.JSX.Element {
   const allStreams = Array.isArray(catalog.streams) ? catalog.streams : [];
   const stream = allStreams.find((entry) => entry.id === streamId);
-  const fallbackLabel = streamId === "bluefin-lts" ? "LTS and GDX" : "Stable";
+  const fallbackLabel = streamId === "bluefin-lts" ? "LTS and GDX" : streamId === "dakota-latest" ? "Dakotaraptor" : "Stable";
 
   if (!stream && allStreams.length > 0) {
     return (
@@ -332,32 +395,64 @@ export default function DriverVersionsCatalog({ streamId }: DriverVersionsCatalo
 
         const streamPins = pinsCatalog.streams?.[streamId] ?? null;
 
+        // Detect historically-pinned HWE kernels from SBOM data:
+        // a kernel version that appears in 2+ consecutive rows was held intentionally.
+        const allRows = stream.history.filter((r) => r.versions.hweKernel);
+        const hweCounts = new Map<string, number>();
+        for (const r of allRows) {
+          const v = r.versions.hweKernel!;
+          hweCounts.set(v, (hweCounts.get(v) ?? 0) + 1);
+        }
+        const pinnedHweKernels = new Set(
+          [...hweCounts.entries()].filter(([, count]) => count >= 2).map(([v]) => v),
+        );
+
+        const currentUserspace = latest ? extractUserspace(latest) : null;
+
         return (
           <section key={stream.id} className={styles.streamSection}>
             <header className={styles.streamHeader}>
               <span className={styles.streamMeta}>
-                {stream.source} · {stream.rowCount} releases in {streamId === "bluefin-lts" ? "LTS and GDX" : "Stable"} ·
+                {stream.source} · {stream.rowCount} releases in {streamId === "bluefin-lts" ? "LTS and GDX" : streamId === "dakota-latest" ? "Dakotaraptor" : "Stable"} ·
                 updated {formatDate(catalog.generatedAt)}
               </span>
+              {currentUserspace && (
+                <span className={styles.fedoraPill}>
+                  {currentUserspace.label}
+                </span>
+              )}
             </header>
 
             {latest ? (
               <>
                 <div className={styles.timeline}>
-                  <ReleaseNode row={latest} previousRow={older[0]} emphasize pins={streamPins} />
+                  <ReleaseNode row={latest} previousRow={older[0]} emphasize pins={streamPins} isLts={streamId === "bluefin-lts"} pinnedHweKernels={pinnedHweKernels} />
                 </div>
 
                 {older.length > 0 && (
                   <div className={styles.archiveTimeline}>
-                    {older.map((row, index) => (
-                      <ReleaseNode
-                        key={`${stream.id}-${row.tag}-${row.publishedAt || "na"}`}
-                        row={row}
-                        previousRow={older[index + 1]}
-                        emphasize={false}
-                        pins={streamPins}
-                      />
-                    ))}
+                    {older.map((row, index) => {
+                      const prevRow = index === 0 ? latest : older[index - 1];
+                      const prevUs = prevRow ? extractUserspace(prevRow) : null;
+                      const rowUs = extractUserspace(row);
+                      const showMarker = prevUs !== null && rowUs !== null && prevUs.key !== rowUs.key;
+                      return (
+                        <React.Fragment key={`${stream.id}-${row.tag}-${row.publishedAt || "na"}`}>
+                          {showMarker
+                            ? <UserspaceMarker toLabel={prevUs!.label} fromLabel={rowUs!.label} />
+                            : <div className={styles.releaseDivider} />
+                          }
+                          <ReleaseNode
+                            row={row}
+                            previousRow={older[index + 1]}
+                            emphasize={false}
+                            pins={streamPins}
+                            isLts={streamId === "bluefin-lts"}
+                            pinnedHweKernels={pinnedHweKernels}
+                          />
+                        </React.Fragment>
+                      );
+                    })}
                   </div>
                 )}
 

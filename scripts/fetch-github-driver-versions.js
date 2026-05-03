@@ -35,6 +35,7 @@ const FORCE_REFRESH = process.argv.includes("--force");
 const RELEASE_URL_BY_STREAM = {
   "bluefin-stable": "https://github.com/ublue-os/bluefin/releases",
   "bluefin-lts": "https://github.com/ublue-os/bluefin-lts/releases",
+  "dakota-latest": "https://github.com/projectbluefin/dakota/releases",
 };
 
 const RELEASE_REPO_BY_STREAM = {
@@ -79,6 +80,7 @@ const SBOM_STREAM_PREFIX = {
   "bluefin-dx-lts":    "lts",
   "bluefin-gdx-lts":   "lts",
   "bluefin-gdx-latest":"latest",
+  "dakota-latest":     "latest",
 };
 
 /**
@@ -517,11 +519,26 @@ async function main() {
         LTS_HISTORY_DAYS,
       );
 
+  const hasSbomDakota =
+    sbomLoaded &&
+    Object.keys(sbomCache.streams?.["dakota-latest"]?.releases || {}).length > 0;
+
+  const dakotaStream = hasSbomDakota
+    ? buildStreamFromSbom(
+        "dakota-latest",
+        "Dakotaraptor",
+        "GNOME OS-based image from projectbluefin/dakota.",
+        "sudo bootc switch --enforce-container-sigpolicy ghcr.io/projectbluefin/dakota:latest",
+        sbomCache,
+        {},
+      )
+    : null;
+
   const output = {
     generatedAt: new Date().toISOString(),
     cacheHours: CACHE_MAX_AGE_HOURS,
     historyDays: HISTORY_DAYS,
-    streams: [stableStream, ltsStream],
+    streams: [stableStream, ltsStream, ...(dakotaStream ? [dakotaStream] : [])],
   };
 
   if (!fs.existsSync(OUTPUT_DIR)) {
@@ -529,7 +546,7 @@ async function main() {
   }
 
   fs.writeFileSync(OUTPUT_FILE, JSON.stringify(output, null, 2), "utf-8");
-  const sbomNote = hasSbomStable || hasSbomLts ? " (SBOM-primary)" : " (release fallback)";
+  const sbomNote = hasSbomStable || hasSbomLts || hasSbomDakota ? " (SBOM-primary)" : " (release fallback)";
   console.log(`Driver versions data saved to ${OUTPUT_FILE}${sbomNote}`);
 }
 

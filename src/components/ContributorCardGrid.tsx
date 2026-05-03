@@ -6,7 +6,7 @@ type ContributorRole = "maintainer" | "artist" | "gnome-os" | "contributor";
 interface Contributor {
   login: string;
   role?: ContributorRole;
-  donationUrl?: string;
+  donationUrl?: string | null;
 }
 
 interface ContributorCardGridProps {
@@ -21,10 +21,19 @@ const roleClass: Record<ContributorRole, string> = {
   contributor: "roleContributor",
 };
 
+function normalizeDonationUrl(url: string | null | undefined): string | null {
+  if (!url) return null;
+  const trimmed = url.trim();
+  if (!trimmed) return null;
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  return `https://${trimmed}`;
+}
+
 const ContributorCard: React.FC<{ contributor: Contributor }> = ({
   contributor,
 }) => {
-  const { login, role = "contributor", donationUrl } = contributor;
+  const { login, role = "contributor", donationUrl: rawDonationUrl } = contributor;
+  const donationUrl = normalizeDonationUrl(rawDonationUrl);
   const avatarUrl = `https://github.com/${login}.png?size=48`;
   const profileUrl = `https://github.com/${login}`;
   const cardClass = `${styles.card} ${styles[roleClass[role]]}`;

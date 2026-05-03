@@ -132,6 +132,43 @@
   padding: 0.2rem 0.55rem;
   background: color-mix(in srgb, var(--ifm-background-color) 94%, var(--ifm-color-emphasis-100));
   font-size: 0.82rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.pillLogo {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+}
+
+.archBadges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.1rem;
+}
+
+.archBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--ifm-color-emphasis-700);
+  background: color-mix(in srgb, var(--ifm-color-emphasis-200) 50%, transparent);
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 999px;
+  padding: 0.12rem 0.45rem;
+  white-space: nowrap;
+}
+
+.archBadgeLogo {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
 }
 
 .section {
