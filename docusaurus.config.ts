@@ -14,7 +14,7 @@ const config: Config = {
   trailingSlash: true,
 
   future: {
-    experimental_faster: true,
+    faster: true,
     v4: {
       removeLegacyPostBuildHeadAttribute: true,
       useCssCascadeLayers: true,
