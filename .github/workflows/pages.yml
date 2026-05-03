@@ -114,6 +114,9 @@ jobs:
       - name: Generate embeddable card images
         run: npm run generate-card-images
 
+      - name: Run unit tests
+        run: npm test
+
       - name: Run TypeScript validation
         run: npm run typecheck
 
@@ -125,6 +128,12 @@ jobs:
 
       - name: Build website
         run: npm run build
+
+      - name: Run E2E tests
+        if: github.event_name == 'pull_request' || github.event_name == 'merge_group'
+        run: npx playwright install --with-deps chromium && npx playwright test
+        env:
+          PLAYWRIGHT_BASE_URL: http://localhost:3000
 
       - name: Upload Build Artifact
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5
