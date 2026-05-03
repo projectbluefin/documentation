@@ -33,13 +33,13 @@ Here is a short [runbook](/installation) for the Bluefin installation process. R
    sha256sum bluefin-stable-x86_64.iso
    ```
 
-3. **Compare with the official checksum file:**
+3. **Verify against the official checksum file:**
 
    ```bash
-   cat bluefin-stable-x86_64.iso-CHECKSUM
+   sha256sum -c bluefin-stable-x86_64.iso-CHECKSUM --ignore-missing
    ```
 
-4. **Verify they match:** The output from step 2 should match the hash in the CHECKSUM file. If they match, your download is verified and safe to use.
+4. **Confirm the result:** Look for `OK` in the output for your ISO file.
 
 **Example:**
 
@@ -48,9 +48,9 @@ Here is a short [runbook](/installation) for the Bluefin installation process. R
 $ sha256sum bluefin-stable-x86_64.iso
 a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef123456  bluefin-stable-x86_64.iso
 
-# Check official checksum
-$ cat bluefin-stable-x86_64.iso-CHECKSUM
-a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef123456  bluefin-stable-x86_64.iso
+# Verify against official checksum file
+$ sha256sum -c bluefin-stable-x86_64.iso-CHECKSUM --ignore-missing
+bluefin-stable-x86_64.iso: OK
 
 # 🦖 Rawr! Your download is verified
 ```
