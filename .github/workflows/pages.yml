@@ -112,6 +112,16 @@ jobs:
           FIREHOSE_CACHE_HOURS: "0"
         run: npm run fetch-data
 
+      - name: Restore card image cache
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
+        with:
+          path: |
+            static/img/cards
+            static/data/card-hashes.json
+          key: card-images-${{ hashFiles('scripts/generate-card-images.mjs', 'scripts/lib/card-template.mjs') }}
+          restore-keys: |
+            card-images-
+
       - name: Generate embeddable card images
         run: npm run generate-card-images
 
