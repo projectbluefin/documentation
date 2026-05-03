@@ -50,7 +50,6 @@ jobs:
         with:
           path: |
             static/data/artwork-versions.json
-            static/data/board-changelog.json
             static/data/driver-versions.json
             static/data/file-contributors.json
             static/data/firehose-apps.json
