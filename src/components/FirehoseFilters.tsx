@@ -91,6 +91,7 @@ const FirehoseFilters: React.FC<FirehoseFiltersProps> = ({
         <h3 className={styles.filterHeading}>Package Type</h3>
         <select
           className={styles.select}
+          aria-label="Package Type"
           value={filters.packageType}
           onChange={(e) =>
             onFiltersChange({
@@ -113,6 +114,7 @@ const FirehoseFilters: React.FC<FirehoseFiltersProps> = ({
           <h3 className={styles.filterHeading}>Category</h3>
           <select
             className={styles.select}
+            aria-label="Category"
             value={filters.category}
             onChange={(e) =>
               onFiltersChange({ ...filters, category: e.target.value })
@@ -134,6 +136,7 @@ const FirehoseFilters: React.FC<FirehoseFiltersProps> = ({
           <h3 className={styles.filterHeading}>App Set</h3>
           <select
             className={styles.select}
+            aria-label="App Set"
             value={filters.appSet}
             onChange={(e) =>
               onFiltersChange({
@@ -157,6 +160,7 @@ const FirehoseFilters: React.FC<FirehoseFiltersProps> = ({
         <h3 className={styles.filterHeading}>Updated</h3>
         <select
           className={styles.select}
+          aria-label="Updated within"
           value={filters.updatedWithin}
           onChange={(e) =>
             onFiltersChange({
