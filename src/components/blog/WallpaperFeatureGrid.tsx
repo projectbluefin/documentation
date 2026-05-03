@@ -2,18 +2,22 @@ import React from "react";
 import styles from "./DocsFeatureGrid.module.css";
 
 // Render inline markdown links [text](url) as <a> elements.
+// Use literal \n in body strings to insert line breaks between sentences.
 function renderMarkdownLinks(text: string): React.ReactNode[] {
-  const parts = text.split(/(\[[^\]]+\]\([^)]+\))/g);
-  return parts.map((part, i) => {
-    const m = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
-    if (m) {
-      return (
-        <a key={i} href={m[2]} target="_blank" rel="noopener noreferrer">
-          {m[1]}
-        </a>
-      );
-    }
-    return part;
+  const paragraphs = text.split("\\n");
+  return paragraphs.flatMap((para, pi) => {
+    const parts = para.split(/(\[[^\]]+\]\([^)]+\))/g).map((part, i) => {
+      const m = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+      if (m) {
+        return (
+          <a key={`${pi}-${i}`} href={m[2]} target="_blank" rel="noopener noreferrer">
+            {m[1]}
+          </a>
+        );
+      }
+      return part;
+    });
+    return pi === 0 ? parts : [<br key={`br-${pi}`} />, ...parts];
   });
 }
 
@@ -66,8 +70,7 @@ const WallpaperFeatureGrid: React.FC<{ wallpapers: WallpaperEntry[] }> = ({
           target="_blank"
           rel="noopener noreferrer"
           className={styles.thumbSide}
-          tabIndex={-1}
-          aria-hidden="true"
+          aria-label={`View ${w.title} wallpaper`}
         >
           <img src={w.dayUrl} alt={w.title} loading="lazy" />
         </a>

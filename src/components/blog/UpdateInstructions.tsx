@@ -6,8 +6,8 @@ type Variant = "stable" | "lts" | "dx" | "gdx";
 const TAG_MAP: Record<Variant, string> = {
   stable: "stable",
   lts: "lts",
-  dx: "stable-dx",
-  gdx: "stable-gdx",
+  dx: "stable",
+  gdx: "stable",
 };
 
 interface UpdateInstructionsProps {

@@ -283,12 +283,21 @@ const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
   // Use explicit sponsorUrl prop, or auto-generate only if the user has an
   // active GitHub Sponsors listing (from static data), or fall back to a
   // donation link from their GitHub social accounts.
-  const isGitHubSponsors = !!(sponsorUrl || user.sponsorable);
+  const isGitHubSponsors =
+    user.sponsorable ||
+    !!(sponsorUrl && sponsorUrl.includes("github.com/sponsors"));
+  const rawDonationUrl = user.donationUrl ?? null;
+  const safeDonationUrl =
+    rawDonationUrl &&
+    (rawDonationUrl.startsWith("https://") ||
+      rawDonationUrl.startsWith("http://"))
+      ? rawDonationUrl
+      : null;
   const effectiveSponsorUrl =
     sponsorUrl ??
     (user.sponsorable
       ? `https://github.com/sponsors/${user.login}`
-      : user.donationUrl ?? null);
+      : safeDonationUrl);
 
   return (
     <div
