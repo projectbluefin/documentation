@@ -69,7 +69,6 @@ const sidebars: SidebarsConfig = {
         "code-of-conduct",
         "analytics",
         "reports",
-        "lore",
         "dinosaurs",
         "artwork",
         "music",
