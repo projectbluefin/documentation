@@ -370,9 +370,9 @@ const ALL_OS_STREAM_EVENTS: OsReleaseEvent[] = (() => {
     .sort((a, b) => b.dateMs - a.dateMs);
 })();
 
-// Dakota placeholder — upstream repo has no releases yet; versions sourced from
-// BuildStream junction pins in ~/src/dakota/elements/*.bst (no SBOM pipeline).
-// Update when junction refs change: freedesktop-sdk-25.08.8 + gnome-build-meta gnome-50
+// Dakota placeholder — versions sourced from SBOM attestation on dakota-latest stream
+// and BST element pins. Update when junction refs change.
+// Last updated: freedesktop-sdk-25.08.10 + gnome-build-meta 50.1
 const DAKOTA_PLACEHOLDER_EVENT: OsReleaseEvent = {
   kind: "os",
   stream: "dakota",
@@ -384,15 +384,15 @@ const DAKOTA_PLACEHOLDER_EVENT: OsReleaseEvent = {
     fedoraVersion: null,
     centosVersion: null,
     majorPackages: [
-      { name: "Kernel", version: "6.18.7", prevVersion: null },
+      { name: "Kernel", version: "6.19.11", prevVersion: null },
       { name: "Gnome", version: "50.0", prevVersion: null },
-      { name: "Mesa", version: "25.3.5", prevVersion: null },
-      { name: "Podman", version: "5.8.0", prevVersion: null },
-      { name: "bootc", version: "1.12.1", prevVersion: null },
-      { name: "systemd", version: "259.2", prevVersion: null },
+      { name: "Mesa", version: "26.0.5", prevVersion: null },
+      { name: "Podman", version: "5.8.2", prevVersion: null },
+      { name: "bootc", version: "1.15.2", prevVersion: null },
+      { name: "systemd", version: "260.1", prevVersion: null },
       { name: "pipewire", version: "1.6.1", prevVersion: null },
-      { name: "sudo-rs", version: "74e0db4", prevVersion: null },
-      { name: "uutils-coreutils", version: "e7f2fd9", prevVersion: null },
+      { name: "sudo-rs", version: "0.2.13", prevVersion: null },
+      { name: "uutils-coreutils", version: "0.8.0", prevVersion: null },
     ],
     dxPackages: [],
     gdxPackages: [],
