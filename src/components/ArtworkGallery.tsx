@@ -1,127 +1,17 @@
 import React from "react";
 import { createPortal } from "react-dom";
-import Heading from "@theme/Heading";
 import styles from "./ArtworkGallery.module.css";
-
-interface ArtworkManifest {
-  generatedAt: string;
-  projects: {
-    bluefin: ProjectData;
-    bazzite: ProjectData;
-    aurora: ProjectData;
-  };
-}
-
-interface ProjectData {
-  label: string;
-  sourceUrl: string;
-  collections: WallpaperCollection[];
-}
-
-interface WallpaperCollection {
-  id: string;
-  title: string;
-  description: string;
-  license: string;
-  releaseUrl: string | null;
-  hasDayNight: boolean;
-  brewCask: string | null;
-  wallpapers: Wallpaper[];
-}
-
-interface Wallpaper {
-  id: string;
-  title: string | null;
-  author: string | null;
-  authorLicense: string | null;
-  coAuthor?: string | null;
-  coAuthorLink?: string | null;
-  previewUrl: string | null;
-  previewNightUrl: string | null;
-  dayUrl: string | null;
-  nightUrl: string | null;
-  jxlUrl: string | null;
-  primaryFormat: "png" | "jpg" | "svg" | "jxl" | null;
-  hasLightbox: boolean;
-}
-
-type Project = "bluefin" | "bazzite" | "aurora";
-type DayNightMode = "day" | "night";
-
-function displayTitle(title: string | null): string {
-  return title ?? "[ Redacted ]";
-}
-
-const MONTH_NAMES = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December",
-];
-
-function cardLabel(collectionId: string, wallpaperId: string, title: string | null): string {
-  if (collectionId === "bluefin-monthly") {
-    const match = wallpaperId.match(/^bluefin-(\d{2})$/);
-    if (match) {
-      const month = parseInt(match[1], 10);
-      if (month >= 1 && month <= 12) {
-        const titlePart = title ?? "[ Redacted ]";
-        return `${MONTH_NAMES[month - 1]} - ${titlePart}`;
-      }
-    }
-  }
-  return displayTitle(title);
-}
-
-function CreditDisplay({ wallpaper }: { wallpaper: Wallpaper }): React.JSX.Element {
-  if (!wallpaper.author) {
-    return <span>Author unknown</span>;
-  }
-
-  let authorNode: React.ReactNode;
-  if (wallpaper.authorLicense?.startsWith("http")) {
-    authorNode = (
-      <a href={wallpaper.authorLicense} target="_blank" rel="noopener noreferrer">
-        {wallpaper.author}
-      </a>
-    );
-  } else if (wallpaper.authorLicense) {
-    authorNode = <span>{wallpaper.author} · {wallpaper.authorLicense}</span>;
-  } else {
-    authorNode = <span>{wallpaper.author}</span>;
-  }
-
-  if (wallpaper.coAuthor && wallpaper.coAuthorLink) {
-    return (
-      <span>
-        {authorNode} and{" "}
-        <a href={wallpaper.coAuthorLink} target="_blank" rel="noopener noreferrer">
-          {wallpaper.coAuthor}
-        </a>
-      </span>
-    );
-  }
-
-  return <>{authorNode}</>;
-}
-
-function getPreferredImageUrl(wallpaper: Wallpaper, mode: DayNightMode): string | null {
-  if (mode === "night" && wallpaper.previewNightUrl) {
-    return wallpaper.previewNightUrl;
-  }
-  if (wallpaper.previewUrl) {
-    return wallpaper.previewUrl;
-  }
-  if (mode === "night") {
-    return wallpaper.nightUrl ?? wallpaper.dayUrl;
-  }
-  return wallpaper.dayUrl ?? wallpaper.nightUrl;
-}
-
-function getFullResolutionUrl(wallpaper: Wallpaper, mode: DayNightMode): string | null {
-  if (mode === "night" && wallpaper.nightUrl) {
-    return wallpaper.nightUrl;
-  }
-  return wallpaper.dayUrl ?? wallpaper.nightUrl;
-}
+import {
+  CollectionSection,
+  LightboxDialog,
+  ProjectSwitcher,
+} from "./artwork";
+import type {
+  ArtworkManifest,
+  DayNightMode,
+  LightboxContext,
+  Project,
+} from "./artwork";
 
 export default function ArtworkGallery(): React.JSX.Element {
   const [manifest, setManifest] = React.useState<ArtworkManifest | null>(null);
@@ -175,7 +65,7 @@ export default function ArtworkGallery(): React.JSX.Element {
 
   const activeProjectData = manifest?.projects?.[activeProject] ?? null;
 
-  const lightboxContext = React.useMemo(() => {
+  const lightboxContext: LightboxContext | null = React.useMemo(() => {
     if (!manifest || !lightbox) {
       return null;
     }
@@ -347,6 +237,18 @@ export default function ArtworkGallery(): React.JSX.Element {
     setLightbox(null);
   }, []);
 
+  const openLightbox = React.useCallback(
+    (cardKey: string, project: Project, collectionId: string, wallpaperId: string) => {
+      lastOpenedCardKeyRef.current = cardKey;
+      setLightbox({ project, collectionId, wallpaperId });
+    },
+    [],
+  );
+
+  const closeLightbox = React.useCallback(() => {
+    setLightbox(null);
+  }, []);
+
   if (isLoading) {
     return <div className={styles.galleryPage}>Loading artwork catalog...</div>;
   }
@@ -365,288 +267,44 @@ export default function ArtworkGallery(): React.JSX.Element {
     lightboxContext && lightboxContext.collection.hasDayNight
       ? getCollectionMode(lightbox?.project ?? activeProject, lightboxContext.collection.id)
       : "day";
-  const lightboxImageUrl = lightboxContext
-    ? (getFullResolutionUrl(lightboxContext.wallpaper, lightboxMode) ?? lightboxContext.wallpaper.previewUrl)
-    : null;
-  const lightboxTitle = lightboxContext ? displayTitle(lightboxContext.wallpaper.title) : "";
 
   return (
     <div className={styles.galleryPage}>
-      <div className={styles.projectSwitcher} role="tablist" aria-label="Artwork projects">
-        {(["bluefin", "bazzite", "aurora"] as Project[]).map((project) => {
-          const isActive = activeProject === project;
-          const label = manifest?.projects?.[project]?.label ?? project;
-          return (
-            <button
-              key={project}
-              type="button"
-              className={`button ${isActive ? "button--primary" : "button--secondary"}`}
-              aria-pressed={isActive}
-              onClick={() => switchProject(project)}
-            >
-              {label}
-            </button>
-          );
-        })}
+      <div className={styles.projectSwitcher}>
+        <ProjectSwitcher
+          manifest={manifest}
+          activeProject={activeProject}
+          onSwitch={switchProject}
+        />
       </div>
 
       {activeProjectData.collections.map((collection) => {
         const collectionMode = getCollectionMode(activeProject, collection.id);
         const collectionKey = `${activeProject}:${collection.id}`;
         return (
-          <section key={collectionKey}>
-            <div className={styles.collectionHeader}>
-              <Heading as="h3" className={styles.collectionTitle}>
-                {collection.title}
-              </Heading>
-              {collection.releaseUrl && (
-                <a
-                  className={styles.releaseLink}
-                  href={collection.releaseUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Release assets ↗
-                </a>
-              )}
-            </div>
-
-            {collection.description && <p>{collection.description}</p>}
-
-            {collection.brewCask && (
-              <div className={styles.brewInstall}>
-                <code className={styles.brewCmd}>brew install --cask {collection.brewCask}</code>
-              </div>
-            )}
-
-            {collection.hasDayNight && (
-              <div className={styles.dayNightToggle} role="group" aria-label={`${collection.title} day and night toggle`}>
-                <button
-                  type="button"
-                  className={`button button--sm ${collectionMode === "day" ? "button--primary" : "button--secondary"}`}
-                  aria-pressed={collectionMode === "day"}
-                  onClick={() => setCollectionMode(activeProject, collection.id, "day")}
-                >
-                  Day
-                </button>
-                <button
-                  type="button"
-                  className={`button button--sm ${collectionMode === "night" ? "button--primary" : "button--secondary"}`}
-                  aria-pressed={collectionMode === "night"}
-                  onClick={() => setCollectionMode(activeProject, collection.id, "night")}
-                >
-                  Night
-                </button>
-              </div>
-            )}
-
-            <div className={styles.grid}>
-              {collection.wallpapers.map((wallpaper) => {
-                const title = displayTitle(wallpaper.title);
-                const label = cardLabel(collection.id, wallpaper.id, wallpaper.title);
-                const cardKey = `${activeProject}:${collection.id}:${wallpaper.id}`;
-
-                if (!wallpaper.hasLightbox) {
-                  const nonLightboxUrl = wallpaper.jxlUrl ?? getFullResolutionUrl(wallpaper, collectionMode);
-                  const previewSrcNonLightbox = getPreferredImageUrl(wallpaper, collectionMode);
-                  const thumbContent = previewSrcNonLightbox ? (
-                    <img
-                      src={previewSrcNonLightbox}
-                      alt={title}
-                      className={styles.thumb}
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  ) : (
-                    <div className={styles.thumbPlaceholder}><span>{title}</span></div>
-                  );
-
-                  if (!nonLightboxUrl) {
-                    return (
-                      <div key={cardKey} className={styles.thumbCard}>
-                        {thumbContent}
-                        <div className={styles.cardMeta}>
-                          <strong>{label}</strong>
-                          <div className={styles.creditLine}><CreditDisplay wallpaper={wallpaper} /></div>
-                        </div>
-                      </div>
-                    );
-                  }
-
-                  return (
-                    <a
-                      key={cardKey}
-                      href={nonLightboxUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={`View ${title} — opens in new tab`}
-                      className={styles.thumbCard}
-                      title="Opens in a new tab — use your browser's Save As to download"
-                    >
-                      {thumbContent}
-                      <div className={styles.cardMeta}>
-                        <strong>{label}</strong>
-                        <div className={styles.creditLine}><CreditDisplay wallpaper={wallpaper} /></div>
-                      </div>
-                    </a>
-                  );
-                }
-
-                const previewSrc = getPreferredImageUrl(wallpaper, collectionMode);
-                return (
-                  <button
-                    key={cardKey}
-                    type="button"
-                    className={styles.thumbCard}
-                    onClick={() => {
-                      lastOpenedCardKeyRef.current = cardKey;
-                      setLightbox({
-                        project: activeProject,
-                        collectionId: collection.id,
-                        wallpaperId: wallpaper.id,
-                      });
-                    }}
-                    ref={(element) => {
-                      cardButtonRefs.current[cardKey] = element;
-                    }}
-                  >
-                    {previewSrc ? (
-                      <img
-                        className={styles.thumb}
-                        src={previewSrc}
-                        alt={title}
-                        loading="lazy"
-                        decoding="async"
-                      />
-                    ) : (
-                      <div className={styles.thumbPlaceholder}>
-                        <span>{title}</span>
-                      </div>
-                    )}
-                    <div className={styles.cardMeta}>
-                      <strong>{label}</strong>
-                      <div className={styles.creditLine}><CreditDisplay wallpaper={wallpaper} /></div>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          </section>
+          <CollectionSection
+            key={collectionKey}
+            collection={collection}
+            collectionMode={collectionMode}
+            activeProject={activeProject}
+            onSetMode={setCollectionMode}
+            onOpenLightbox={openLightbox}
+            cardButtonRefs={cardButtonRefs}
+          />
         );
       })}
 
       {lightboxContext && isMounted && createPortal(
-        <div className={styles.overlay} onClick={() => setLightbox(null)}>
-          <div
-            ref={dialogRef}
-            className={styles.lightboxInner}
-            role="dialog"
-            aria-modal="true"
-            aria-label="Wallpaper viewer"
-            onClick={(event) => event.stopPropagation()}
-          >
-            {/* Header row: day/night toggle (left) + close button (right) */}
-            <div className={styles.lightboxHeader}>
-              {lightboxContext.collection.hasDayNight && lightbox?.project ? (
-                <div className={styles.dayNightToggle} role="group" aria-label="Lightbox day and night toggle">
-                  <button
-                    type="button"
-                    className={`button button--sm ${lightboxMode === "day" ? "button--primary" : "button--secondary"}`}
-                    aria-pressed={lightboxMode === "day"}
-                    onClick={() => setCollectionMode(lightbox.project, lightboxContext.collection.id, "day")}
-                  >
-                    Day
-                  </button>
-                  <button
-                    type="button"
-                    className={`button button--sm ${lightboxMode === "night" ? "button--primary" : "button--secondary"}`}
-                    aria-pressed={lightboxMode === "night"}
-                    onClick={() => setCollectionMode(lightbox.project, lightboxContext.collection.id, "night")}
-                  >
-                    Night
-                  </button>
-                </div>
-              ) : (
-                <span />
-              )}
-              <button
-                ref={closeButtonRef}
-                type="button"
-                className="button button--secondary button--sm"
-                onClick={() => setLightbox(null)}
-              >
-                Close ×
-              </button>
-            </div>
-
-            {/* Image area — fills remaining space */}
-            <div className={styles.lightboxImageArea}>
-              {lightboxContext.lightboxWallpapers.length > 1 && (
-                <>
-                  <button
-                    type="button"
-                    className={`${styles.navBtn} ${styles.navPrev}`}
-                    aria-label="Previous"
-                    onClick={() => moveLightbox(-1)}
-                  >
-                    ‹
-                  </button>
-                  <button
-                    type="button"
-                    className={`${styles.navBtn} ${styles.navNext}`}
-                    aria-label="Next"
-                    onClick={() => moveLightbox(1)}
-                  >
-                    ›
-                  </button>
-                </>
-              )}
-              {lightboxImageUrl ? (
-                <img
-                  className={styles.lightboxImg}
-                  src={lightboxImageUrl}
-                  alt={lightboxTitle}
-                />
-              ) : (
-                <div className={styles.thumbPlaceholder}>
-                  <span>{lightboxTitle}</span>
-                </div>
-              )}
-            </div>
-
-            {/* Footer: title, credit, download links */}
-            <div className={styles.lightboxFooter}>
-              <div>
-                <strong>{lightboxTitle}</strong>
-                <div className={styles.creditLine}><CreditDisplay wallpaper={lightboxContext.wallpaper} /></div>
-              </div>
-              <div>
-                {lightboxImageUrl && (
-                  <a
-                    className={styles.downloadLink}
-                    href={lightboxImageUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    title="Opens in a new tab — use your browser's Save As to download"
-                  >
-                    Open full resolution ↗
-                  </a>
-                )}
-                {lightboxContext.wallpaper.jxlUrl && (
-                  <a
-                    className={styles.jxlLink}
-                    href={lightboxContext.wallpaper.jxlUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    title="Opens in a new tab — use your browser's Save As to download"
-                  >
-                    JXL ↗
-                  </a>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>,
+        <LightboxDialog
+          lightboxContext={lightboxContext}
+          lightboxProject={lightbox?.project ?? activeProject}
+          lightboxMode={lightboxMode}
+          dialogRef={dialogRef}
+          closeButtonRef={closeButtonRef}
+          onClose={closeLightbox}
+          onMove={moveLightbox}
+          onSetMode={setCollectionMode}
+        />,
         document.body
       )}
     </div>
