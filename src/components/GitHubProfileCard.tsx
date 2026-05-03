@@ -14,13 +14,30 @@ interface GitHubUser {
   html_url: string;
   public_repos: number;
   followers: number;
+  company?: string | null;
+  /** True if the user has an active GitHub Sponsors listing. */
+  sponsorable?: boolean;
+  /** Donation URL from GitHub social accounts (Ko-fi, Patreon, etc.), if any. */
+  donationUrl?: string | null;
+}
+
+interface CategoryChip {
+  label: string;
+  color: string;
 }
 
 interface GitHubProfileCardProps {
   username: string;
+  /** Single chip (backward-compat). Use `titles` for multiple chips. */
   title?: string;
+  /** Color for the single `title` chip (backward-compat). */
+  categoryColor?: string;
+  /** Multiple category chips — each with label and dot color. */
+  titles?: CategoryChip[];
   sponsorUrl?: string;
   highlight?: boolean | "gold" | "silver" | "diamond";
+  /** Lore/nickname shown in italics below the display name. */
+  nickname?: string;
 }
 
 const CACHE_KEY_PREFIX = "github_profile_";
@@ -130,6 +147,7 @@ const fetchGitHubProfile = async (username: string): Promise<GitHubUser> => {
       html_url: data.html_url,
       public_repos: data.public_repos,
       followers: data.followers,
+      company: data.company ?? null,
     };
   });
 };
@@ -137,8 +155,11 @@ const fetchGitHubProfile = async (username: string): Promise<GitHubUser> => {
 const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
   username,
   title,
+  titles,
   sponsorUrl,
   highlight = false,
+  categoryColor,
+  nickname,
 }) => {
   const [user, setUser] = useState<GitHubUser | null>(null);
   const [loading, setLoading] = useState(true);
@@ -259,6 +280,25 @@ const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
           ? styles.diamondHighlight
           : "";
 
+  // Use explicit sponsorUrl prop, or auto-generate only if the user has an
+  // active GitHub Sponsors listing (from static data), or fall back to a
+  // donation link from their GitHub social accounts.
+  const isGitHubSponsors =
+    user.sponsorable ||
+    !!(sponsorUrl && sponsorUrl.includes("github.com/sponsors"));
+  const rawDonationUrl = user.donationUrl ?? null;
+  const safeDonationUrl =
+    rawDonationUrl &&
+    (rawDonationUrl.startsWith("https://") ||
+      rawDonationUrl.startsWith("http://"))
+      ? rawDonationUrl
+      : null;
+  const effectiveSponsorUrl =
+    sponsorUrl ??
+    (user.sponsorable
+      ? `https://github.com/sponsors/${user.login}`
+      : safeDonationUrl);
+
   return (
     <div
       className={`${styles.card} ${highlightClass}`}
@@ -266,20 +306,50 @@ const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
       onPointerLeave={handlePointerLeave}
       style={pointerStyles}
     >
-      <a href={user.html_url} target="_blank" rel="noopener noreferrer">
-        <img
-          src={user.avatar_url}
-          alt={`${user.name || user.login}'s avatar`}
-          className={styles.avatar}
-        />
-      </a>
+      <div className={styles.avatarCol}>
+        <a href={user.html_url} target="_blank" rel="noopener noreferrer">
+          <img
+            src={user.avatar_url}
+            alt={`${user.name || user.login}'s avatar`}
+            className={styles.avatar}
+          />
+        </a>
+        {effectiveSponsorUrl && (
+          <a
+            href={effectiveSponsorUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.sponsorButton}
+          >
+            {isGitHubSponsors ? "♥ Sponsor" : "♥ Support"}
+          </a>
+        )}
+      </div>
       <div className={styles.content}>
         <h3 className={styles.name}>
           <a href={user.html_url} target="_blank" rel="noopener noreferrer">
             {user.name || user.login}
           </a>
         </h3>
-        {title && <p className={styles.title}>{title}</p>}
+        {nickname && <p className={styles.nickname}>{nickname}</p>}
+        {user.company && (
+          <p className={styles.company}>{user.company.replace(/^@/, "")}</p>
+        )}
+        {/* Render chips: prefer `titles` array, fall back to legacy `title`+`categoryColor` */}
+        {(titles && titles.length > 0
+          ? titles
+          : title
+            ? [{ label: title, color: categoryColor ?? "" }]
+            : []
+        ).map(({ label, color }) => (
+          <p key={label} className={styles.categoryChip}>
+            <span
+              className={styles.categoryDot}
+              style={color ? { background: color } : undefined}
+            />
+            {label}
+          </p>
+        ))}
         {user.bio && <p className={styles.bio}>{user.bio}</p>}
         <div className={styles.stats}>
           <span>
@@ -289,23 +359,6 @@ const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
             <strong>{user.followers}</strong> followers
           </span>
         </div>
-        {(highlightType || sponsorUrl) && (
-          <div className={styles.buttonRow}>
-            {highlightType === "gold" && (
-              <div className={styles.badge}>★ New Light</div>
-            )}
-            {sponsorUrl && (
-              <a
-                href={sponsorUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles.sponsorButton}
-              >
-                ♥ Sponsor
-              </a>
-            )}
-          </div>
-        )}
       </div>
     </div>
   );

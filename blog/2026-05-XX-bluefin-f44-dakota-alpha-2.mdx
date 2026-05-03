@@ -1,0 +1,779 @@
+---
+title: "Bluefin Fedora 44 and Dakota Alpha 2 Release Announcement"
+subtitle: "A tale of three raptors"
+slug: bluefin-f44-dakota-alpha-2
+authors: castrojo
+tags: [announcements, releases, dakota]
+draft: true
+---
+
+import WallpaperFeatureGrid from "@site/src/components/blog/WallpaperFeatureGrid";
+import MusicPlaylist from "@site/src/components/MusicPlaylist";
+import ReleaseContributors from "@site/src/components/ReleaseContributors";
+import ContributorCardGrid from "@site/src/components/ContributorCardGrid";
+import LatestOsReleaseCard from "@site/src/components/LatestOsReleaseCard";
+import BlogFigure from "@site/src/components/blog/BlogFigure";
+import DocsFeatureGrid from "@site/src/components/blog/DocsFeatureGrid";
+
+<p className="blog-post-subtitle">A tale of three raptors</p>
+
+<MusicPlaylist
+  title="Bluefin and the Syrens of Metal"
+  playlistId="PLhiPP9M5fgWFa09qMHJSA7ts93UsMG82Q"
+/>
+
+This blog post is best consumed by listening to the soundtrack. 
+
+I am not going to lie I haven't been this excited about Bluefin since the start of the project. We find ourselves on the day of a major Fedora release with three fantastic options. 
+
+I know what you're thinking (especially you McPhail). We got rid of Bluefin GTS and now the team decided to make another one. How many of these things are there it's like a string of Jurassic Park sequels. 
+
+First let's level set. The product is `Bluefin`. That's the default Fedora one. The other two are for different kinds of Linux nerds - we won't be adding Dakotaraptor the website or anything like that. However, let's nerd out for a bit and  explain how we got here.
+
+Also spoiler alert, we will be announcing some awesome _new news_ about our Fedora variant soon!
+
+---
+
+## GNOME 50 "Tokyo"
+
+[TODO: your take on GNOME 50 — what this release means for the desktop and why it's a milestone]
+
+GNOME 50, codenamed **Tokyo**, is the foundation of this release. This cycle the GNOME team shipped meaningful improvements in every corner of the desktop — from accessibility and parental controls to display tech and community apps. Here's the full picture:
+
+- **Parental Controls** — Parents can now set daily screen-time limits and bedtime schedules for child accounts. The screen locks automatically when limits are reached. The Parental Controls app has been redesigned from scratch, and the groundwork for web content filtering is already in place. This is the first time GNOME has shipped screen-time management as a first-class feature.
+
+<BlogFigure
+  src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/parental-app-screenshot.webp"
+  alt="GNOME 50 Parental Controls app"
+  caption="The redesigned Parental Controls app — screen time limits, bedtime schedules, and automatic screen locking for child accounts."
+  maxWidth="720px"
+/>
+
+- **Accessibility** — Orca gets the biggest overhaul in years: a new preferences window, global settings that apply across all profiles, improved automatic language switching, better browse mode and braille display support, and Mouse Review now works on Wayland. A new **Reduced Motion** setting is also available for users who experience discomfort from desktop animations.
+
+<BlogFigure
+  src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/reduced-screenshot.webp"
+  alt="GNOME 50 Reduced Motion setting in Accessibility"
+  caption="The new Reduced Motion option in Accessibility settings."
+  maxWidth="720px"
+/>
+
+- **Document Annotation** — Evince's annotation tools are completely rewritten. You can now add text notes, freehand lines, and highlights directly from the main document view. The new editor includes a color picker, line thickness controls, and an eraser. No more hunting through menus to leave a note on a PDF.
+
+<BlogFigure
+  src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/document-viewer-annotations.webp"
+  alt="GNOME 50 Document Viewer annotation tools"
+  caption="Annotations are now a first-class feature in Document Viewer — text, lines, highlights, colors, and an eraser."
+  maxWidth="720px"
+/>
+
+- **Files** — Nautilus is faster and lighter across the board: thumbnails and icons load quicker, memory usage is down, and the UI has been polished throughout. Rename has been redesigned so the filename is pre-selected for immediate typing. File properties now open as pop-out windows. Search and pathbar handling are smarter, including multi-filter search and case-insensitive path completion.
+
+- **Calendar** — Event details now show an attendee list. Quick Add has been redesigned for faster event entry. Full ICS export is supported. First-day-of-week is now a proper system setting under Date & Time. Navigation is improved with arrow key support and hardware back/forward button handling.
+
+- **Remote Desktop** — Remote sessions now use hardware acceleration via Vulkan/VA-API for smoother, lower-power streaming. HiDPI scaling, camera redirection, and Kerberos authentication are all new additions — making remote desktop genuinely usable for both everyday and enterprise scenarios.
+
+- **Display** — VRR (variable refresh rate) and fractional scaling are now enabled by default on more hardware configurations. Cursor motion is lower-latency under VRR. NVIDIA stutter has been reduced. Color management v2 has landed, and HDR screen sharing is now supported.
+
+- **GNOME Circle New Apps** — The community delivered: **[Gradia](https://apps.gnome.org/Gradia/)** (screenshot annotation and editing), **[Constrict](https://apps.gnome.org/Constrict/)** (video compression to a target file size), **[Sessions](https://apps.gnome.org/Sessions/)** (Pomodoro timer), and **Sudoku** all join GNOME Circle this cycle.
+
+<BlogFigure
+  src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/gradia-screenshot.webp"
+  alt="Gradia — screenshot annotation app"
+  caption="Gradia joins GNOME Circle — annotate, frame, and polish screenshots before sharing them."
+  maxWidth="720px"
+/>
+
+<BlogFigure
+  src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/constrict-screenshot.webp"
+  alt="Constrict — video compression app"
+  caption="Constrict: set a target file size, pick a codec, done. Supports H.264, HEVC, AV1, and VP9."
+  maxWidth="720px"
+/>
+
+- **New GNOME Wallpapers** — GNOME 50 ships a set of fresh hand-crafted wallpapers, including one designed specifically with dark mode in mind.
+
+[Full GNOME 50 release notes →](https://release.gnome.org/50/)
+
+<div style={{margin: "0.75rem 0"}}>
+  <a href="https://donate.gnome.org/" style={{display: "inline-block", background: "#4A86CF", color: "white", padding: "0.6rem 1.4rem", borderRadius: "8px", fontWeight: "bold", textDecoration: "none"}}>💙 Donate to GNOME</a>
+</div>
+
+First let's check the goodies in this release: 
+
+<LatestOsReleaseCard stream="stable" />
+
+Now, I will start with the biggest news of all. Timothee Ravier has [announced new sealed base images](https://fedoramagazine.org/sealed-atomic-desktops-test-images/) for our use. This is the most fundamental change to Bluefin in its 5-ish year history. If you've been worried about the lack of progress in `bootc` in Fedora then this one set of images from Timothee brings this to the forefront of Linux desktop tech. Our man from France was not going to let Dakotaraptor run away with it. Here's the list: 
+
+The new sealed bootable container images bring:
+
+- [**systemd-boot**](https://systemd.io/BOOT/) replaces GRUB as the bootloader — GRUB is now an extinct species in our world. Goodbye old friend. 
+- [**Unified Kernel Images (UKI)**](https://uapi-group.org/specifications/specs/unified_kernel_image/) — kernel, initrd, and command line bundled into a single signed EFI binary. 
+- [**composefs**](https://github.com/composefs/composefs) with [**fs-verity**](https://www.kernel.org/doc/html/latest/filesystems/fsverity.html) — every file in the OS image is cryptographically verified at read time, [managed by bootc](https://bootc-dev.github.io/bootc/experimental-composefs.html)
+- **Full verified boot chain** from firmware → bootloader → kernel → OS image — see the [FOSDEM 2025 deep-dive](https://archive.fosdem.org/2025/schedule/event/fosdem-2025-5191--signed-sealed-and-delivered-with-ukis-and-composefs/) for how it all fits together
+- [**TPM-backed passwordless disk unlocking**](https://www.freedesktop.org/software/systemd/man/latest/systemd-cryptenroll.html) via `systemd-cryptenroll` — the headline user benefit; LUKS unlocking is bound to the verified boot state so no password prompt on a clean boot
+- Supports **UEFI on x86_64 and aarch64**
+
+- [GNOME 50](https://release.gnome.org/50/) — [TODO: highlight the key GNOME 50 feature you care about]
+
+{/* Drop your GNOME 50 GIF here: static/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/gnome50-feature.gif */}
+<BlogFigure
+  src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/gnome50-feature.gif"
+  alt="GNOME 50 feature demonstration"
+  caption="[TODO: caption describing the GNOME 50 feature shown]"
+  maxWidth="720px"
+/>
+- Linux 6.13, Mesa 25.1, Podman 5.5 — see the full [changelog](https://docs.projectbluefin.io/changelogs)
+- [Fedora 44 Release Notes](https://docs.fedoraproject.org/en-US/fedora/latest/release-notes/)
+
+Timothée Ravier's [What's New for Fedora Atomic Desktops in Fedora 44](https://tim.siosm.fr/blog/2026/04/28/fedora-atomic-desktops-44/) is essential reading for anyone curious about what changed upstream. A few highlights relevant to Bluefin users:
+
+- **FUSE 2 removed** — if you rely on AppImages that use the old runtime they may not work; reach for Flatpak alternatives where possible
+- **Legacy polkit `pkla` rules dropped** — the ecosystem has moved to the JavaScript-based format and this cleans up the last stragglers
+- **Unified Atomic Desktops documentation** now lives at [docs.fedoraproject.org/en-US/atomic-desktops](https://docs.fedoraproject.org/en-US/atomic-desktops/)
+- **Sealed bootable container images** in testing — the same work powering Bluefin's verified boot chain described above
+
+### How to update
+
+Current Bluefin users will receive this automatically. You can also switch now:
+
+```bash
+# Get your current image name
+IMAGE_NAME=$(jq -r '.[\"image-name\"]' < /usr/share/ublue-os/image-info.json)
+
+# Switch to stable (F44)
+sudo bootc switch --enforce-container-sigpolicy ghcr.io/ublue-os/$IMAGE_NAME:stable
+```
+
+[TODO: anything else about the update path]
+
+---
+
+## Bluefin LTS
+
+<LatestOsReleaseCard stream="lts" />
+
+[TODO: LTS update paragraph — what's new in this LTS cycle, who it's for]
+
+### What's New in GNOME
+
+Bluefin LTS launched with GNOME 48. This release delivers two full GNOME upgrade cycles in one — [GNOME 49 "Brescia"](https://release.gnome.org/49/) and [GNOME 50 "Tokyo"](https://release.gnome.org/50/) — thanks to [@hanthor](https://github.com/hanthor)'s work backporting the full GNOME stack to the EL10 base. See the [March testing announcement](https://docs.projectbluefin.io/blog/bluefin-lts-gnome-49-50) for the backstory.
+
+### How to update (LTS)
+
+Bluefin LTS is maintained by [@hanthor](https://github.com/hanthor). If you rely on the LTS channel, consider supporting their work:
+
+<div style={{margin: "0.75rem 0"}}>
+  <a href="https://github.com/sponsors/hanthor" style={{display: "inline-block", background: "#db61a2", color: "white", padding: "0.6rem 1.4rem", borderRadius: "8px", fontWeight: "bold", textDecoration: "none"}}>💙 Sponsor hanthor on GitHub</a>
+</div>
+
+```bash
+IMAGE_NAME=$(jq -r '.[\"image-name\"]' < /usr/share/ublue-os/image-info.json)
+sudo bootc switch --enforce-container-sigpolicy ghcr.io/ublue-os/$IMAGE_NAME:lts
+```
+
+---
+
+## Dakota Alpha 2
+
+<LatestOsReleaseCard stream="dakota" />
+
+[TODO: intro paragraph]
+
+- [GNOME 50](https://release.gnome.org/50/), Linux 6.13, Mesa 26.x, Freedesktop 25.08 libraries
+- [Custom Command Menu](https://github.com/StorageB/custom-command-menu) — hostname in the top bar
+- Ghostty as the default terminal
+
+[TODO: screenshot / banner image]
+
+{/* Drop the Dakota banner GIF here: static/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/dakota-alpha-2-banner.gif */}
+<BlogFigure
+  src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/dakota-alpha-2-banner.gif"
+  alt="Dakota Alpha 2 desktop"
+  caption="[TODO: caption for Dakota banner]"
+/>
+
+### What changed since Alpha 1
+
+[TODO: your highlights]
+
+- [Passwordless sudo policy removed](https://github.com/projectbluefin/dakota/pull/374)
+- LUKS encryption works on install
+- [nvidia-container-toolkit](https://github.com/projectbluefin/dakota/issues/376) — [TODO: landed / still coming]
+- ARM build improvements
+- zstd:chunked delta updates — [TODO: landed / still coming]
+
+### Goals
+
+[TODO: your goals text]
+
+- Beta target: late spring; GA target: fall
+- Help GNOME OS upstream: [os.gnome.org](https://os.gnome.org/)
+
+### Gotchas
+
+[TODO: current alpha gotchas — verify against https://github.com/projectbluefin/dakota/issues]
+
+- [Open issues](https://github.com/projectbluefin/dakota/issues)
+- [ISO-specific issues](https://github.com/projectbluefin/dakota-iso/issues)
+
+[TODO: YouTube embed for Dakota Alpha 2 demo, if you have one]
+
+---
+
+## Bazaar
+
+[Bazaar](https://github.com/castrojo/bazaar) is a new GNOME app store built on Flatpak. It is currently a work in progress, but the goal is to build something that eclipses GNOME Software in Flatpak functionality. Current features include:
+
+- **Regex-powered search** — Search across all registered Flatpak remotes with a regex toggle and full keyboard navigation (`Ctrl+N/P` and `Ctrl+J/K` to move through results)
+- **Inline AppStream metadata** — Every app shows its icon, title, full description, license and FLOSS status, download size, remote name and icon, and homepage link — all pulled live from AppStream data
+- **Screenshots panel** — App screenshots are displayed inline and can be clicked to open in your system image viewer
+- **Browse by curated sections** — Configurable YAML-based section layout with banners, app grids, and custom CSS support — distributors can ship their own curated view
+- **Update detection** — Bazaar tracks installed Flatpak refs and surfaces apps with available updates in one place
+- **One-click installs and updates** — Flatpak transactions are queued and run from within the app, with an explicit "Are you sure?" confirmation before any install proceeds
+- **Launch installed apps** — Open any installed Flatpak directly from Bazaar without leaving the store
+- **Keyboard-first design** — The entire interface is navigable without a mouse; `Ctrl+Alt+N/P/J/K` variants work throughout
+
+[TODO: screenshot or GIF of Bazaar in action]
+
+<BlogFigure
+  src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/bazaar-screenshot.png"
+  alt="Bazaar app store"
+  caption="Bazaar — a Flatpak-focused app store for GNOME with regex search, inline AppStream metadata, and keyboard-first navigation."
+  maxWidth="720px"
+/>
+
+[TODO: your narrative about why Bazaar, what makes it different, and what's coming next]
+
+Bazaar is built by [@kolunmi](https://github.com/kolunmi) and [@AlexanderVanhee](https://github.com/AlexanderVanhee). If you want to see this project succeed, support them directly:
+
+<div style={{display: "flex", gap: "1rem", flexWrap: "wrap", margin: "1rem 0"}}>
+  <a href="https://ko-fi.com/kolunmi" style={{display: "inline-block", background: "#FF5E5B", color: "white", padding: "0.6rem 1.4rem", borderRadius: "8px", fontWeight: "bold", textDecoration: "none"}}>💙 Support kolunmi on Ko-fi</a>
+  <a href="https://ko-fi.com/alexandervanhee" style={{display: "inline-block", background: "#FF5E5B", color: "white", padding: "0.6rem 1.4rem", borderRadius: "8px", fontWeight: "bold", textDecoration: "none"}}>💙 Support Alexander on Ko-fi</a>
+</div>
+
+---
+
+## What's in the Tap
+
+[TODO: your take on the production brew tap — why it exists, what it means to have a curated software ecosystem for a bootc-based Linux image]
+
+The [ublue-os/tap](https://github.com/ublue-os/homebrew-tap) is the production Homebrew tap for Bluefin — a curated collection of software packaged to work great on Bluefin. Run `ujust bbrew` to open the interactive browser and install anything from the tap in a few keystrokes.
+
+### Editors and IDEs
+
+- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/vscode.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[Visual Studio Code](https://code.visualstudio.com/)** — Microsoft's open-source code editor.
+- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/vscode-insiders.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[VS Code Insiders](https://code.visualstudio.com/insiders/)** — The daily preview build of VS Code with the newest features.
+- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/vscodium.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[VSCodium](https://vscodium.com/)** — VS Code binaries built without Microsoft telemetry or branding.
+- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/jetbrains.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[JetBrains Toolbox](https://www.jetbrains.com/toolbox-app/)** — Install, update, and manage every JetBrains IDE from one app.
+
+### System Tools
+
+- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/1password.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[1Password](https://1password.com/)** — The password manager. Full Linux GUI, system tray, and browser integration.
+- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/framework.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[framework-tool](https://github.com/FrameworkComputer/framework-tool)** — Official CLI for Framework laptop hardware: fan control, battery charge limits, charge LED mode, input module configuration, and firmware update checks.
+- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/gnome.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[heic-to-dynamic-gnome-wallpaper](https://github.com/undertuga/heic-to-dynamic-gnome-wallpaper)** — Convert macOS HEIC dynamic wallpapers into GNOME XML dynamic wallpapers that change with the time of day.
+- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/postmarketos.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[pmbootstrap](https://wiki.postmarketos.org/wiki/Pmbootstrap)** — The sophisticated chroot/build/flash tool for postmarketOS development and porting Linux to mobile devices.
+
+### Wallpaper Packs
+
+Extra wallpaper collections for every variant — install the ones that match your image:
+
+```bash
+brew install --cask ublue-os/tap/bluefin-wallpapers
+brew install --cask ublue-os/tap/bluefin-wallpapers-extra
+brew install --cask ublue-os/tap/aurora-wallpapers
+brew install --cask ublue-os/tap/bazzite-wallpapers
+brew install --cask ublue-os/tap/framework-wallpapers
+```
+
+[Browse the full tap on GitHub →](https://github.com/ublue-os/homebrew-tap)
+
+---
+
+## ASUS Support
+
+[TODO: your take on ASUS support — the community that asked for this, what it means for ROG/TUF/Zephyrus users, what you think about ASUS hardware on Linux]
+
+ASUS ROG, TUF, and Zephyrus laptops are now first-class citizens on Bluefin. The [ublue-os/tap](https://github.com/ublue-os/homebrew-tap) ships `asusctl` and ROG Control Center — the standard ASUS Linux control stack — packaged to work with Bluefin.
+
+**What you get:**
+
+- **Fan curve control** — per-profile fan curves for Performance, Balanced, and Quiet modes; customizable RPM targets per temperature point
+- **Keyboard RGB and Aura lighting** — full per-key RGB control, multi-zone effects, static, breathe, rainbow, strobing, and more — all manageable from the GUI or CLI
+- **Power profile switching** — toggle between Performance, Balanced, and Power Saver without a reboot
+- **Battery charge limit** — set a charge ceiling (e.g. 80%) to preserve long-term battery health; the limit persists across reboots
+- **GPU mode switching** — switch between Integrated, Hybrid, NVIDIA-only, and Compute modes from the system tray
+- **[TODO: rephrase — describes that system files land in `/opt/ublue-asusctl` (writable via `/var/opt`) and user state is XDG-compliant under `~/.local/share`; original used "immutable-filesystem-friendly" which is forbidden]**
+- **SELinux-aware install** — the package includes a setup script that handles policy modules automatically
+
+**Install (order matters — system daemon first, then the GUI):**
+
+```bash
+# Step 1: system daemon — handles hardware access and power management
+brew install --cask ublue-os/tap/asusctl-linux
+sudo systemctl enable --now asusd.service asus-shutdown.service
+sudo udevadm control --reload && sudo udevadm trigger
+
+# Step 2: GUI and user daemon
+brew install --cask ublue-os/tap/rog-control-center-linux
+systemctl --user daemon-reload
+systemctl --user enable --now asusd-user.service
+```
+
+ROG Control Center lands in your system tray and gives you a full GUI for everything above — no terminal required after the initial setup.
+
+[TODO: any ASUS hardware you've tested this on, known quirks, or what's coming next]
+
+---
+
+## Bluespeed
+
+[TODO: your narrative about Bluefin's AI story — the philosophy, why you shipped this, what kind of user it's for]
+
+Bluefin ships a full AI development and productivity platform ready to go. Whether you want to run models locally, connect to hosted APIs, write AI-powered tooling, or just have a capable assistant available at a keypress — everything is pre-wired and waiting.
+
+### AI Agents and Interfaces
+
+Run `ujust bbrew` to install any of these:
+
+- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/goose.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[Goose](https://block.github.io/goose/)** — The primary AI agent in Bluefin, from the [Agentic AI Foundation (AAIF)](https://aaif.io/). Open source, extensible AI agent that goes beyond code suggestions.
+- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/lmstudio.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[LM Studio](https://lmstudio.ai/)** — Discover, download, and run local LLMs.
+- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/antigravity.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[Antigravity](https://antigravity.ai/)** — AI Coding Agent IDE.
+- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/cursor.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[Cursor](https://cursor.com/)** — Write, edit, and chat about your code with AI.
+- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/craft-agents.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[Craft Agents](https://agents.craft.do/)** — Work with most powerful agents in the world, with the UX they deserve.
+- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/opencode.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[OpenCode Desktop](https://opencode.ai/)** — Open source AI coding agent desktop client.
+- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/emdash.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[Emdash](https://emdash.sh/)** — Agentic development environment for running multiple coding agents in parallel.
+- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/ramalama.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[Ramalama](https://github.com/containers/ramalama)** — Goal of RamaLama is to make working with AI boring.
+- **[Alpaca](https://alpaca.zlatko.org/)** — A graphical LLM chat interface available as a Flatpak. Launch it instantly from anywhere with `Ctrl+Alt+Backspace`.
+
+### AI CLI Toolkit
+
+Choose the `ai` menu in `ujust bbrew` to browse the full set of AI CLI tools:
+
+| Tool | Description |
+|---|---|
+| [aichat](https://github.com/sigoden/aichat) | All-in-one AI-Powered CLI Chat & Copilot |
+| [block-goose-cli](https://formulae.brew.sh/formula/block-goose-cli) | Open source, extensible AI agent that goes beyond code suggestions |
+| [claude-code](https://formulae.brew.sh/cask/claude-code) | Terminal-based AI coding assistant |
+| [codex](https://formulae.brew.sh/cask/codex) | OpenAI's coding agent that runs in your terminal |
+| [copilot-cli](https://formulae.brew.sh/cask/copilot-cli) | Brings the power of Copilot coding agent directly to your terminal |
+| [crush](https://github.com/charmbracelet/crush) | A powerful terminal-based AI assistant for developers, providing intelligent coding assistance directly in your terminal. |
+| [gemini-cli](https://formulae.brew.sh/formula/gemini-cli) | Interact with Google Gemini AI models from the command-line |
+| [Jan](https://jan.ai/) | Offline AI chat tool |
+| [kimi-cli](https://formulae.brew.sh/formula/kimi-cli) | CLI agent for MoonshotAI Kimi platform |
+| [llm](https://formulae.brew.sh/formula/llm) | Access large language models from the command-line |
+| [llmfit](https://formulae.brew.sh/formula/llmfit) | Find what models run on your hardware |
+| [mistral-vibe](https://formulae.brew.sh/formula/mistral-vibe) | Minimal CLI coding agent |
+| [opencode](https://formulae.brew.sh/formula/opencode) | AI coding agent, built for the terminal |
+| [qwen-code](https://formulae.brew.sh/formula/qwen-code) | AI-powered command-line workflow tool for developers |
+| [whisper-cpp](https://formulae.brew.sh/formula/whisper-cpp) | Port of OpenAI's Whisper model in C/C++ |
+
+### System Integration
+
+- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/linux-mcp-server.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[linux-mcp-server](https://github.com/rhel-lightspeed/linux-mcp-server)** — MCP server that gives any AI agent live access to your system: OS info, processes, services, logs, network, and filesystem. Powers Ask Bluefin.
+- **GPU acceleration** — NVIDIA and AMD GPUs work with local models out of the box. No additional driver configuration is needed on a standard Bluefin install.
+
+[Full AI setup guide →](https://docs.projectbluefin.io/ai)
+
+### Troubleshooting _(Alpha Preview)_
+
+[TODO: your vision for Ask Bluefin — what you wanted to build, why natural-language system diagnosis matters, where this is going]
+
+Ask Bluefin is a natural-language system assistant that can diagnose, explain, and help troubleshoot your machine using live system data — no Googling, no reading log files manually, no copying error messages into a search box.
+
+- **Natural language diagnostics** — Ask questions like "why is my fan running loud?" or "what process is eating my RAM?" and get real answers grounded in your actual current system state
+- **Powered by [linux-mcp-server](https://github.com/rhel-lightspeed/linux-mcp-server)** — gives the AI agent live read access to OS and kernel info, CPU, memory, and disk usage, running processes, systemd service status, journal logs, network interfaces, open ports, and filesystem details
+- **Bluefin knowledge base built in** — Dosu integration means the assistant already knows the Bluefin documentation, common issues, and community-reported workarounds. No API key required to access it.
+- **Works with any MCP-compatible agent** — Goose, OpenCode, and any client that supports the Model Context Protocol can connect to `linux-mcp-server` and get the same system access
+- **One-keystroke launch** — `Ctrl+Alt+Shift+G` opens the assistant directly from the desktop, no matter what you're doing
+- **Scales with your LLM choice** — use it with a local Ramalama model for fully offline diagnostics, or connect to a hosted API for more capable reasoning — same data, your choice of brain
+- **Alpha state** — Setup today is one `brew install`. The "Ask Bluefin" entry in the application menu is coming in a future release; the underlying capability is fully functional now.
+
+[Full troubleshooting guide →](https://docs.projectbluefin.io/troubleshooting)
+
+---
+
+## New Wallpapers
+
+[TODO: intro sentence]
+
+<WallpaperFeatureGrid wallpapers={[
+  {
+    id: "lazy-days",
+    title: "Lazy Days",
+    author: "Jay Balamurugan",
+    authorUrl: "https://kakapojay.com/",
+    dayUrl: "/img/artwork/fullres/lazy-days.png",
+    body: "[TODO: your text about Lazy Days]",
+  },
+  {
+    id: "sunrise",
+    title: "Sunrise",
+    author: "Amy",
+    authorUrl: "https://www.atiusamy.com/links/",
+    dayUrl: "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/sunrise/sunrise-day.svg",
+    nightUrl: "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/sunrise/sunrise-night.svg",
+    body: "[TODO: your text about Amy's Sunrise]",
+  },
+  {
+    id: "leaf-collector",
+    title: "Leaf Collector",
+    author: "Dr. Natalia Jagielska",
+    authorUrl: "https://natalia-jagielska.weebly.com/",
+    coAuthor: "Delphic Melody",
+    coAuthorUrl: "https://ko-fi.com/melodyofdelphi",
+    dayUrl: "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/leaf-collector/leaf-collector-day.svg",
+    nightUrl: "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/leaf-collector/leaf-collector-night.svg",
+    body: "[TODO: your text about Leaf Collector]",
+  },
+  {
+    id: "duality",
+    title: "Duality",
+    author: "Dr. Natalia Jagielska",
+    authorUrl: "https://natalia-jagielska.weebly.com/",
+    coAuthor: "Delphic Melody",
+    coAuthorUrl: "https://ko-fi.com/melodyofdelphi",
+    dayUrl: "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/duality/duality-day.svg",
+    nightUrl: "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/duality/duality-night.svg",
+    body: "[TODO: your text about Duality]",
+  },
+  {
+    id: "eyes",
+    title: "Eyes",
+    author: "Dr. Natalia Jagielska",
+    authorUrl: "https://natalia-jagielska.weebly.com/",
+    coAuthor: "Delphic Melody",
+    coAuthorUrl: "https://ko-fi.com/melodyofdelphi",
+    dayUrl: "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/eyes/eyes.svg",
+    body: "[TODO: your text about Eyes]",
+  },
+]} />
+
+### Install the Wallpapers
+
+The default wallpapers ship automatically with Bluefin. The extra collection (Leaf Collector, Duality, Eyes, Lazy Days) is available via Homebrew:
+
+<div style={{margin: "0.5rem 0 1rem", display: "flex", flexDirection: "column", gap: "0.5rem"}}>
+  <code style={{fontFamily: "var(--ifm-font-family-monospace)", fontSize: "0.9rem", background: "var(--ifm-code-background)", border: "1px solid var(--ifm-color-emphasis-300)", borderRadius: "var(--ifm-code-border-radius)", padding: "0.2rem 0.6rem", color: "var(--ifm-code-color)", userSelect: "all", display: "inline-block"}}>brew install --cask ublue-os/tap/bluefin-wallpapers</code>
+  <code style={{fontFamily: "var(--ifm-font-family-monospace)", fontSize: "0.9rem", background: "var(--ifm-code-background)", border: "1px solid var(--ifm-color-emphasis-300)", borderRadius: "var(--ifm-code-border-radius)", padding: "0.2rem 0.6rem", color: "var(--ifm-code-color)", userSelect: "all", display: "inline-block"}}>brew install --cask ublue-os/tap/bluefin-wallpapers-extra</code>
+</div>
+
+---
+
+## What's New on the Docs Site
+
+[TODO: intro sentence — e.g. "We've also been busy building out the documentation site..."]
+
+<DocsFeatureGrid features={[
+  {
+    title: "Changelogs",
+    href: "https://docs.projectbluefin.io/changelogs",
+    description: "Automated weekly changelogs for every image stream",
+    body: "[TODO: describe what the changelogs page gives users — e.g. 'Every week the build pipeline generates a full diff of every package, flatpak, and firmware change across all image streams. No more guessing what landed in your last update.']",
+    thumbnail: "/img/docs-features/changelogs.png",
+    color: "stable"
+  },
+  {
+    title: "Monthly Reports",
+    href: "https://docs.projectbluefin.io/reports",
+    description: "Monthly contributor and ecosystem reports",
+    body: "[TODO: describe the monthly reports — e.g. 'Each month we publish a full contributor report showing who shipped what, which teams were most active, and how the project is trending. The data is live and regenerated from the GitHub API.']",
+    thumbnail: "/img/docs-features/reports.png",
+    color: "lts"
+  },
+  {
+    title: "Images",
+    href: "https://docs.projectbluefin.io/images",
+    description: "Full matrix of available image variants",
+    body: "[TODO: describe the images page — e.g. 'The images page is the definitive guide to every available variant: Bluefin, Aurora, GDX, LTS, and the hardware-specific editions. Includes install commands, supported hardware, and which stream to pick for your use case.']",
+    thumbnail: "/img/docs-features/images.png",
+    color: "stable"
+  },
+  {
+    title: "Driver Versions",
+    href: "https://docs.projectbluefin.io/driver-versions",
+    description: "GPU driver version tracker across streams",
+    body: "[TODO: describe the driver versions tracker — e.g. 'Tracks the NVIDIA, AMD, and Intel driver versions shipped in each image stream. If you want to know whether a specific driver landed before upgrading, this is the page to check.']",
+    thumbnail: "/img/docs-features/driver-versions.png",
+    color: "dakota"
+  },
+  {
+    title: "Music",
+    href: "https://docs.projectbluefin.io/music",
+    description: "The Bluefin soundtrack playlist collection",
+    body: "[TODO: describe the music page — e.g. 'Every release ships with a curated soundtrack. The music page archives every playlist we have released, with notes on the artists and the vibe we were going for.']",
+    thumbnail: "/img/docs-features/music.png",
+    color: "lts"
+  },
+  {
+    title: "Artwork",
+    href: "https://docs.projectbluefin.io/artwork",
+    description: "Browse and download all wallpapers and artwork assets",
+    body: "[TODO: describe the artwork page — e.g. 'Full gallery of every wallpaper across all releases, with direct download links for the full-resolution originals. Includes artist credits and notes on how each piece was commissioned.']",
+    thumbnail: "/img/docs-features/artwork.png",
+    color: "dakota"
+  }
+]} />
+
+---
+
+## Release Soundtrack to Hunt By
+
+[TODO: intro sentence — e.g. "Here's the soundtrack we've been building to..."]
+
+<MusicPlaylist
+  title="Bluefin and the Syrens of Metal"
+  playlistId="PLhiPP9M5fgWFa09qMHJSA7ts93UsMG82Q"
+/>
+
+[TODO: your text about the playlist]
+
+---
+
+## Thanks {#brought-to-you-by}
+
+[TODO: thank you paragraph]
+
+- [Jay Balamurugan](https://kakapojay.com/) for creating the Lazy Days wallpaper. Jay is a London-based science communicator, paleoartist, and television producer — her credits include [Earth](https://player.bbc.com/en/brand/earth), [Walking with Dinosaurs](https://www.bbcearth.com/shows/walking-with-dinosaurs), and [Evolution](https://www.bbc.co.uk/programmes/m001wf7q). You can follow her on [Bluesky](https://bsky.app/profile/kakapojay.bsky.social) and [Instagram](https://www.instagram.com/kakapo.jay/) — [TODO: your words here]
+- [Jordan Petridis](https://github.com/alatiera), [Valentin David](https://github.com/valentindavid), [Adrian Vovk](https://github.com/AdrianVovk), and the [GNOME OS team](https://os.gnome.org/)
+- [Brian Ketelsen](https://github.com/brianketelsen) and [James Reilly](https://github.com/jamesreilly5) for the [Tuna installer](https://github.com/tuna-os/tuna-installer)
+- [TODO: anyone else you want to thank]
+- Everyone on Discord testing and reporting issues!
+
+<ReleaseContributors
+  contributors={[
+    { login: "ahmedadan", roles: ["maintainer", "ublue-contributor", "brew-contributor"] },
+    { login: "akeeton", roles: ["ublue-contributor"] },
+    { login: "alatiera", roles: ["maintainer", "ublue-contributor", "gnome-os"] },
+    { login: "AlexanderVanhee", roles: ["contributor"] },
+    { login: "AlexNPavel", roles: ["ublue-contributor"] },
+    { login: "anacierdem" },
+    { login: "andrzejroskowicz" },
+    { login: "AnthonyStainer", roles: ["contributor"] },
+    { login: "apwiggins" },
+    { login: "arvindautar" },
+    { login: "AtiusAmy", roles: ["ublue-contributor", "bluefin-artist"] },
+    { login: "AtomHare", roles: ["ublue-contributor"] },
+    { login: "awkorama" },
+    { login: "bdflemin", roles: ["ublue-contributor"] },
+    { login: "befanyt", roles: ["ublue-contributor", "contributor"] },
+    { login: "bketelsen", roles: ["ublue-maintainer", "aurora-maintainer", "bluefin-emeritus", "ucore-contributor", "brew-contributor"], nickname: "Architect of the Final Shape" },
+    { login: "Bira-oliverio" },
+    { login: "Blackstep590" },
+    { login: "bronson", roles: ["ublue-contributor", "ucore-contributor"] },
+    { login: "bsherman", roles: ["ublue-maintainer", "aurora-maintainer", "ucore-maintainer", "bluefin-emeritus"] },
+    { login: "buggerman", roles: ["ublue-contributor"] },
+    { login: "carpediem29" },
+    { login: "castrojo", roles: ["maintainer", "ublue-emeritus", "bazzite-contributor", "ucore-contributor", "brew-contributor"], nickname: "[ Redacted ]" },
+    { login: "CEN90" },
+    { login: "chandeleer1698", roles: ["ublue-contributor", "bluefin-artist", "aurora-artist"] },
+    { login: "cmars" },
+    { login: "coxde", roles: ["ublue-contributor", "ucore-contributor"] },
+    { login: "d3spairx", roles: ["contributor"] },
+    { login: "daegalus", roles: ["maintainer", "brew-contributor"] },
+    { login: "daice2k" },
+    { login: "danielhowardpuckett-lgtm" },
+    { login: "DarkGhostHunter" },
+    { login: "davestgermain" },
+    { login: "davidwritesxyz" },
+    { login: "debackerl" },
+    { login: "delphicmelody", role: "bluefin-artist" },
+    { login: "dnoesgaard" },
+    { login: "dragon28" },
+    { login: "dragonbass13" },
+    { login: "dreamyukii", roles: ["ublue-contributor", "aurora-contributor", "bazzite-contributor", "brew-contributor"] },
+    { login: "dtg01100", roles: ["ublue-contributor", "brew-contributor"] },
+    { login: "dx4homelab" },
+    { login: "dylanmtaylor", roles: ["ublue-contributor", "bazzite-contributor", "ucore-contributor"] },
+    { login: "dylanvdmerwe" },
+    { login: "edermats32" },
+    { login: "eltorrero", roles: ["contributor"] },
+    { login: "ExistingPerson08", roles: ["ublue-contributor"] },
+    { login: "EyeCantCU", roles: ["ublue-contributor", "bazzite-maintainer", "bluefin-emeritus"] },
+    { login: "fiftydinar", roles: ["ublue-contributor", "aurora-contributor", "bazzite-contributor"] },
+    { login: "fizzyizzy05", roles: ["contributor"] },
+    { login: "FlammLex" },
+    { login: "fonnesbeck" },
+    { login: "francoism90", role: "ucore-contributor" },
+    { login: "GarciaLnk", roles: ["ublue-contributor"] },
+    { login: "gbrsni", roles: ["ublue-contributor"] },
+    { login: "gerblesh", roles: ["ublue-contributor"] },
+    { login: "gichiba" },
+    { login: "goozkan" },
+    { login: "h1zardian", roles: ["contributor"] },
+    { login: "hanthor", roles: ["maintainer", "ublue-contributor", "brew-contributor"], nickname: "Herald of Finality" },
+    { login: "hawkticehurst" },
+    { login: "hecknt", roles: ["zirconium-maintainer"] },
+    { login: "HikariKnight", roles: ["ublue-maintainer", "aurora-maintainer", "bazzite-maintainer"] },
+    { login: "inffy", roles: ["maintainer", "ublue-maintainer", "aurora-maintainer", "brew-contributor"] },
+    { login: "istvan-derda", roles: ["ublue-contributor"] },
+    { login: "JarrColl" },
+    { login: "jfmongrain", roles: ["contributor"] },
+    { login: "JimOswick", roles: ["contributor"] },
+    { login: "joshyorko", roles: ["ublue-contributor"] },
+    { login: "jumpyvi", roles: ["ublue-contributor", "brew-contributor"] },
+    { login: "kalebepalacio" },
+    { login: "KiKaraage", roles: ["ublue-contributor", "brew-contributor"] },
+    { login: "klmcwhirter" },
+    { login: "KotlinGeekDev" },
+    { login: "kriszentner", roles: ["contributor"] },
+    { login: "KyleGospo", roles: ["ublue-maintainer", "aurora-maintainer", "bazzite-maintainer", "ucore-contributor"], nickname: "The First Knife" },
+    { login: "leafyoung", roles: ["contributor"] },
+    { login: "ledif", roles: ["ublue-maintainer", "aurora-maintainer"] },
+    { login: "lkdm" },
+    { login: "LorbusChris", roles: ["ublue-contributor"] },
+    { login: "louhitar", roles: ["contributor"] },
+    { login: "m2Giles", roles: ["ublue-maintainer", "aurora-maintainer", "bazzite-contributor", "ucore-contributor"] },
+    { login: "madsiur" },
+    { login: "malgam" },
+    { login: "maphew" },
+    { login: "mattbuys" },
+    { login: "matthewbegun" },
+    { login: "max-miller1204" },
+    { login: "Mestar71" },
+    { login: "mgajda" },
+    { login: "mheuvel-dev", roles: ["ublue-contributor"] },
+    { login: "Micro856", roles: ["contributor"] },
+    { login: "MineGene" },
+    { login: "mjdescy" },
+    { login: "mmartinortiz", roles: ["contributor"] },
+    { login: "NahsiN", roles: ["contributor"] },
+    { login: "nicknamenamenick", roles: ["ublue-maintainer", "aurora-maintainer", "bazzite-contributor"] },
+    { login: "NiHaiden", roles: ["ublue-contributor", "aurora-artist"] },
+    { login: "nikodunk", roles: ["ublue-contributor", "ucore-contributor", "contributor"] },
+    { login: "noelmiller", roles: ["ublue-maintainer", "aurora-maintainer", "bazzite-maintainer"] },
+    { login: "orangesunny" },
+    { login: "p5", roles: ["maintainer", "ublue-maintainer", "aurora-maintainer"] },
+    { login: "passthejoe", roles: ["contributor"] },
+    { login: "pauldoo", roles: ["ublue-contributor"] },
+    { login: "RaduAvramescu", roles: ["contributor"] },
+    { login: "Raindrac", roles: ["ublue-contributor", "aurora-contributor"] },
+    { login: "Readpato", roles: ["contributor"] },
+    { login: "renner0e", roles: ["maintainer", "aurora-maintainer", "ublue-maintainer", "bazzite-contributor", "brew-contributor"] },
+    { login: "repires", roles: ["ublue-contributor", "contributor"] },
+    { login: "RoyalOughtness", roles: ["ublue-contributor", "secureblue-maintainer"] },
+    { login: "rrenomeron", roles: ["ublue-contributor"] },
+    { login: "rwaltr", roles: ["contributor"] },
+    { login: "salaniz", roles: ["ublue-contributor"] },
+    { login: "salim-b", roles: ["ublue-contributor"] },
+    { login: "sebjag", roles: ["contributor"] },
+    { login: "serandel", roles: ["ublue-contributor"] },
+    { login: "sideeffffect", roles: ["contributor"] },
+    { login: "spasche", roles: ["contributor"] },
+    { login: "StorageB" },
+    { login: "theMimolet", roles: ["ublue-contributor"] },
+    { login: "tingweiwan", roles: ["ublue-contributor"] },
+    { login: "tobiasmicheler", roles: ["ublue-contributor"] },
+    { login: "travier", roles: ["ublue-contributor", "contributor", "ucore-contributor"] },
+    { login: "tulilirockz", roles: ["maintainer", "ublue-maintainer", "aurora-maintainer", "zirconium-maintainer"], nickname: "Executor of The Final Shape" },
+    { login: "tunix", roles: ["contributor"] },
+    { login: "valentindavid", role: "gnome-os" },
+    { login: "valerie-tar-gz", roles: ["ublue-contributor", "bazzite-contributor"] },
+    { login: "wommy", roles: ["contributor"] },
+    { login: "Zeglius", roles: ["ublue-contributor", "bazzite-maintainer"] },
+    { login: "zeroby0" },
+  ]}
+/>
+## Chatterbox
+
+These community members participated in [GitHub Discussions](https://github.com/ublue-os/bluefin/discussions) over the last six months. Asking questions, sharing tips, helping newcomers, and keeping the conversation going is just as valuable as code.
+
+<ContributorCardGrid
+  contributors={[
+    { login: "agriffis" },
+    { login: "AlexFullmoon" },
+    { login: "anders322github" },
+    { login: "azacio" },
+    { login: "blfpd" },
+    { login: "bsiegel" },
+    { login: "ccrpc-fjunge" },
+    { login: "ClixTW" },
+    { login: "code-mph" },
+    { login: "CodingKoalaGeneral", roles: ["ublue-contributor"] },
+    { login: "D4RK0N3dev" },
+    { login: "decksdark628" },
+    { login: "deepdowntraumahound" },
+    { login: "DFeise" },
+    { login: "droplinxuser" },
+    { login: "ehames" },
+    { login: "ehsanullahjan" },
+    { login: "fkromer" },
+    { login: "gabenavarro" },
+    { login: "gtaranti" },
+    { login: "hellpe" },
+    { login: "IkaLorei" },
+    { login: "indolering" },
+    { login: "inktvis75" },
+    { login: "Jackthompson-mat" },
+    { login: "jamie-dainton" },
+    { login: "JaviLib" },
+    { login: "jeffam" },
+    { login: "jiesou" },
+    { login: "joelhickok" },
+    { login: "jorti" },
+    { login: "JSUNFGH" },
+    { login: "karypid" },
+    { login: "kwag" },
+    { login: "lbssousa" },
+    { login: "lparolari" },
+    { login: "m1tm4n404" },
+    { login: "masakk1" },
+    { login: "miabbott", roles: ["ublue-contributor"] },
+    { login: "montymalik" },
+    { login: "morrolinux" },
+    { login: "mpolsinelli" },
+    { login: "murphym18" },
+    { login: "parkan" },
+    { login: "Pfritts" },
+    { login: "pisiest" },
+    { login: "PJansky" },
+    { login: "prototact" },
+    { login: "PunkPangolin" },
+    { login: "RedLanternTech" },
+    { login: "sanmue" },
+    { login: "sillybilly10" },
+    { login: "skymoo" },
+    { login: "sprintcowboy" },
+    { login: "starfreck" },
+    { login: "tails618" },
+    { login: "TheodoreLogN" },
+    { login: "therealknewman" },
+    { login: "tifriis208" },
+    { login: "ToughDBlue" },
+    { login: "umibozu83" },
+    { login: "victoitor" },
+    { login: "victorwsyy321-stack" },
+    { login: "viktorpopp" },
+    { login: "visnudeva" },
+    { login: "VlastimilHudecek" },
+    { login: "wegweg7979" },
+    { login: "wepantech" },
+    { login: "ximian" },
+    { login: "Xtrems876" },
+    { login: "YoavRheims" },
+    { login: "ZeroXMK" },
+    { login: "zilexa" },
+    { login: "znmeb" },
+  ]}
+/>
+
+
+## Download
+
+### Bluefin
+
+[**→ projectbluefin.io**](https://projectbluefin.io)
+
+### Dakota Alpha 2
+
+- [dakota-live-latest.iso](https://projectbluefin.dev/dakota-live-latest.iso)
+
+### Filing Issues
+
+- [Bluefin issues](https://github.com/ublue-os/bluefin/issues)
+- [Dakota issues](https://github.com/projectbluefin/dakota/issues)
+- [Dakota ISO issues](https://github.com/projectbluefin/dakota-iso/issues)
+
+### [Discussions](https://github.com/ublue-os/bluefin/discussions)
+
+[TODO: create a new discussion and replace this link — last one was #4500 for Dakota Alpha 1]

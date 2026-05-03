@@ -77,6 +77,7 @@ const PRODUCT_SPECS = [
     nvidiaPackage: "bluefin-nvidia-open",
     nvidiaTagFallback: { lts: "latest" },
     allowTestingStreams: true,
+    keepEvenIfStale: true,
     isoSectionLink: "/downloads#bluefin-lts",
   },
   {
@@ -93,6 +94,7 @@ const PRODUCT_SPECS = [
     nvidiaPackage: "bluefin-dx-nvidia-open",
     nvidiaTagFallback: { lts: "latest" },
     allowTestingStreams: true,
+    keepEvenIfStale: true,
     isoSectionLink: "/downloads#bluefin-lts",
   },
   {
@@ -119,14 +121,11 @@ const PRODUCT_SPECS = [
     summary: "Project Bluefin Dakota image stream.",
     streamOrder: ["latest"],
     versionSource: null,
-    sbomStreamId: null,
+    sbomStreamId: "dakota-latest",
     keyRepo: "projectbluefin/dakota",
     allowTestingStreams: false,
-    versionOverrides: {
-      gnome: "50",
-      kernel: "redacted",
-      fedora: null,
-    },
+    // No versionOverrides: versions come from the SBOM (BST SPDX format).
+    // fedora will be null — Dakota is GNOME OS based, not Fedora.
   },
 ];
 
@@ -149,10 +148,31 @@ function lookupSbomVersions(sbomCache, streamId) {
   return lookupVersionsForStream(sbomCache, streamId);
 }
 
+/**
+ * For streams whose SBOM release keys encode a date suffix (e.g. "stable-20260501",
+ * "lts-20260428", "latest-20260502"), parse the most recent one to produce an
+ * ISO-8601 date usable as lastPublishedAt.
+ */
+function sbomLatestCreatedAt(sbomCache, streamId) {
+  const stream = sbomCache?.streams?.[streamId];
+  if (!stream?.releases) return null;
+  const dateKeys = Object.keys(stream.releases)
+    .map((key) => {
+      const m = /(\d{4})(\d{2})(\d{2})$/.exec(key);
+      return m ? `${m[1]}-${m[2]}-${m[3]}T00:00:00Z` : null;
+    })
+    .filter(Boolean)
+    .sort()
+    .reverse();
+  return dateKeys[0] || null;
+}
+
 function normalizeSbomStreamTag(streamTag) {
   if (!streamTag) return null;
   if (streamTag === "stable-daily") return "stable";
-  return streamTag;
+  // Normalize dot-separated tags (e.g. "lts.hwe") to dash-separated ("lts-hwe")
+  // so they map correctly to SBOM stream IDs like "bluefin-lts-hwe".
+  return streamTag.replace(/\./g, "-");
 }
 
 function buildSbomStreamId(spec, streamTag) {
@@ -218,11 +238,32 @@ function parseFeedVersion(feedItem, labels) {
 
 function sbomVersionsForStream(sbomCache, spec, streamTag) {
   if (!sbomCache || !spec) return null;
+
+  // First pass: try exact stream ID (dots → dashes, -testing preserved).
+  // Hits dedicated streams like bluefin-lts-hwe-testing, bluefin-lts-testing-50.
   const exactStreamId = buildSbomStreamId(spec, streamTag);
   if (exactStreamId) {
     const exact = lookupSbomVersions(sbomCache, exactStreamId);
     if (exact) return exact;
   }
+
+  // Second pass: strip -testing(-N)? suffix and retry.
+  // Fallback for testing streams without a dedicated SBOM entry:
+  //   lts-hwe-testing → lts-hwe → bluefin-lts-hwe
+  //   lts-testing     → lts     → bluefin-lts
+  const normalizedTag = normalizeSbomStreamTag(streamTag);
+  if (!normalizedTag) {
+    return fallbackSbomVersionsByPackage(sbomCache, spec);
+  }
+  const baseTag = normalizedTag.replace(/-testing(-\d+)?$/, "");
+  if (baseTag !== normalizedTag) {
+    const baseStreamId = buildSbomStreamId(spec, baseTag);
+    if (baseStreamId && baseStreamId !== exactStreamId) {
+      const base = lookupSbomVersions(sbomCache, baseStreamId);
+      if (base) return base;
+    }
+  }
+
   return fallbackSbomVersionsByPackage(sbomCache, spec);
 }
 
@@ -237,7 +278,11 @@ function latestFeedItem(feeds, source) {
 
   const match = items.find((item) => {
     const title = (item.title || "").toLowerCase();
-    if (stream === "lts") return title.includes(" lts:");
+    if (stream === "lts") {
+      // Old format: "bluefin-lts lts: 20251223 ..."
+      // New format: "lts.20260501: lts.20260501 release"
+      return title.includes(" lts:") || /^lts\.\d{8}:/.test(title);
+    }
     return title.startsWith(`${stream}-`);
   });
 
@@ -365,9 +410,12 @@ async function buildStreamVersionInfo(
     kernel: sbomVersions?.kernel || null,
     nvidia: parseFeedVersion(feedItem, ["Nvidia"]),
     fedora: sbomVersions?.fedora || null,
+    flatpak: sbomVersions?.flatpak || null,
+    mesa: sbomVersions?.mesa || null,
+    podman: sbomVersions?.podman || null,
   };
 
-  // SBOM-only policy: fedora version is sourced from SBOM packageVersions.
+  // SBOM-only policy: all version data sourced from SBOM packageVersions only.
   // Do not infer from release bodies or image labels.
 
   if (spec.versionOverrides) {
@@ -375,6 +423,9 @@ async function buildStreamVersionInfo(
     versions.kernel = spec.versionOverrides.kernel ?? versions.kernel;
     versions.nvidia = spec.versionOverrides.nvidia ?? versions.nvidia;
     versions.fedora = spec.versionOverrides.fedora ?? versions.fedora;
+    versions.flatpak = spec.versionOverrides.flatpak ?? versions.flatpak;
+    versions.mesa = spec.versionOverrides.mesa ?? versions.mesa;
+    versions.podman = spec.versionOverrides.podman ?? versions.podman;
   }
 
   return versions;
@@ -398,16 +449,22 @@ function attachNvidiaTestingCommands(streams, spec, nvidiaTagSet) {
 function buildSecurityInfo(spec, inspectTag) {
   const imageRef = `ghcr.io/${spec.org}/${spec.package}:${inspectTag}`;
 
-  // Mainline bluefin images (stable/latest/beta streams) use GitHub OIDC keyless signing.
+  // Mainline bluefin images (stable/latest/beta streams) use GitHub OIDC keyless signing
+  // with OCI-published SLSA attestations.
+  // Dakota uses keyless signing but SLSA attestations are published to the OCI registry
+  // only after projectbluefin/dakota#391 merges (push-to-registry: true).
   // LTS images use traditional key-based signing with cosign.pub from the lts repo.
-  // Dakota has no signing pipeline — commands are omitted.
-  const KEYLESS_REPOS = ["ublue-os/bluefin"];
+  const KEYLESS_REPOS = ["ublue-os/bluefin"]; // keyless + OCI attestation live
+  const KEYLESS_PENDING_ATTEST_REPOS = ["projectbluefin/dakota"]; // keyless, OCI attestation pending
   const KEY_REPOS = {
     "ublue-os/bluefin-lts":
       "https://raw.githubusercontent.com/ublue-os/bluefin-lts/main/cosign.pub",
   };
 
-  const isKeyless = KEYLESS_REPOS.includes(spec.keyRepo);
+  const isKeyless =
+    KEYLESS_REPOS.includes(spec.keyRepo) ||
+    KEYLESS_PENDING_ATTEST_REPOS.includes(spec.keyRepo);
+  const attestationLive = KEYLESS_REPOS.includes(spec.keyRepo);
   const cosignKeyUrl = KEY_REPOS[spec.keyRepo] || null;
   const hasNoPipeline = !isKeyless && !cosignKeyUrl;
 
@@ -426,7 +483,7 @@ function buildSecurityInfo(spec, inspectTag) {
       verifyCommand: null,
       attestCommand: null,
       hasAttestation: false,
-      sbomCommand: `syft scan ${imageRef} -o spdx-json`,
+      sbomCommand: `oras discover ${imageRef}`,
     };
   }
 
@@ -435,8 +492,8 @@ function buildSecurityInfo(spec, inspectTag) {
       cosignKeyUrl: null,
       verifyCommand: `cosign verify --certificate-oidc-issuer ${OIDC_ISSUER} --certificate-identity-regexp '${OIDC_IDENTITY_PREFIX}' ${imageRef}`,
       attestCommand: `cosign verify-attestation --type ${SLSA_TYPE} --certificate-oidc-issuer ${OIDC_ISSUER} --certificate-identity-regexp '${OIDC_IDENTITY_PREFIX}' ${imageRef}`,
-      hasAttestation: true,
-      sbomCommand: `syft scan ${imageRef} -o spdx-json`,
+      hasAttestation: attestationLive,
+      sbomCommand: `oras discover ${imageRef}`,
     };
   }
 
@@ -447,7 +504,7 @@ function buildSecurityInfo(spec, inspectTag) {
     verifyCommand: `cosign verify --key ${cosignKeyUrl} ${imageRef}`,
     attestCommand: `cosign verify-attestation --type ${SLSA_TYPE} --key ${cosignKeyUrl} ${imageRef}`,
     hasAttestation: false,
-    sbomCommand: `syft scan ${imageRef} -o spdx-json`,
+    sbomCommand: `oras discover ${imageRef}`,
   };
 }
 
@@ -596,11 +653,22 @@ async function buildProduct(spec, feeds, cachedById, ageHours, sbomCache) {
     metadata.digestLink = versionsFromFeed.release.assetsUrl;
   }
 
-  const updatedAt =
-    latestUpdatedAt(versions) || existing?.lastPublishedAt || null;
+  // Precedence for lastPublishedAt:
+  // 1. GHCR packages API timestamp (most authoritative, rarely available)
+  // 2. GitHub releases feed pubDate
+  // 3. SBOM cache date derived from release key (e.g. lts-20260501 → 2026-05-01)
+  // 4. Existing cached value (last resort — can be stale from an old run)
+  const updatedAt = latestUpdatedAt(versions) || null;
+  const sbomDate = spec.sbomStreamId ? sbomLatestCreatedAt(sbomCache, spec.sbomStreamId) : null;
+  const lastPublishedAt =
+    updatedAt ||
+    feedItem?.pubDate ||
+    sbomDate ||
+    existing?.lastPublishedAt ||
+    null;
   const staleCutoff = Date.now() - STALE_DAYS * 24 * 60 * 60 * 1000;
-  const stale = updatedAt ? Date.parse(updatedAt) < staleCutoff : false;
-  const lastPublishedAt = updatedAt || feedItem?.pubDate || null;
+  const bestDateForStale = updatedAt || feedItem?.pubDate || sbomDate || null;
+  const stale = bestDateForStale ? Date.parse(bestDateForStale) < staleCutoff : false;
 
   return {
     id: spec.id,

@@ -17,6 +17,9 @@ interface StreamInfo {
     kernel?: string | null;
     nvidia?: string | null;
     fedora?: string | null;
+    flatpak?: string | null;
+    mesa?: string | null;
+    podman?: string | null;
   } | null;
 }
 
@@ -47,6 +50,9 @@ interface Product {
     gnome?: string | null;
     kernel?: string | null;
     nvidia?: string | null;
+    flatpak?: string | null;
+    mesa?: string | null;
+    podman?: string | null;
     release?: {
       url?: string | null;
     } | null;
@@ -104,6 +110,21 @@ function StreamList({
             {(preferNvidia || entry.versions?.nvidia) && (
               <span className={styles.versionPill}>
                 <strong>NVIDIA</strong> {entry.versions?.nvidia || "Unknown"}
+              </span>
+            )}
+            {entry.versions?.flatpak && (
+              <span className={styles.versionPill}>
+                <strong>Flatpak</strong> {entry.versions.flatpak}
+              </span>
+            )}
+            {entry.versions?.mesa && (
+              <span className={styles.versionPill}>
+                <strong>Mesa</strong> {entry.versions.mesa}
+              </span>
+            )}
+            {entry.versions?.podman && (
+              <span className={styles.versionPill}>
+                <strong>Podman</strong> {entry.versions.podman}
               </span>
             )}
           </div>
@@ -363,6 +384,21 @@ export default function ImagesCatalogComponent(): React.JSX.Element {
                             <span className={styles.versionPill}>
                               <strong>NVIDIA</strong> {entry.versions?.nvidia || "Unknown"}
                             </span>
+                            {entry.versions?.flatpak && (
+                              <span className={styles.versionPill}>
+                                <strong>Flatpak</strong> {entry.versions.flatpak}
+                              </span>
+                            )}
+                            {entry.versions?.mesa && (
+                              <span className={styles.versionPill}>
+                                <strong>Mesa</strong> {entry.versions.mesa}
+                              </span>
+                            )}
+                            {entry.versions?.podman && (
+                              <span className={styles.versionPill}>
+                                <strong>Podman</strong> {entry.versions.podman}
+                              </span>
+                            )}
                           </div>
               <CodeBlock language="bash">{entry.nvidiaCommand}</CodeBlock>
                         </>
@@ -381,6 +417,21 @@ export default function ImagesCatalogComponent(): React.JSX.Element {
                           {entry.versions?.nvidia && (
                             <span className={styles.versionPill}>
                               <strong>NVIDIA</strong> {entry.versions.nvidia}
+                            </span>
+                          )}
+                          {entry.versions?.flatpak && (
+                            <span className={styles.versionPill}>
+                              <strong>Flatpak</strong> {entry.versions.flatpak}
+                            </span>
+                          )}
+                          {entry.versions?.mesa && (
+                            <span className={styles.versionPill}>
+                              <strong>Mesa</strong> {entry.versions.mesa}
+                            </span>
+                          )}
+                          {entry.versions?.podman && (
+                            <span className={styles.versionPill}>
+                              <strong>Podman</strong> {entry.versions.podman}
                             </span>
                           )}
                         </div>
@@ -417,7 +468,7 @@ export default function ImagesCatalogComponent(): React.JSX.Element {
               values={[
                 { label: "Verify Signature", value: "verify-signature" },
                 { label: "Verify Provenance", value: "verify-provenance" },
-                { label: "Generate SBOM", value: "generate-sbom" },
+                { label: "Inspect SBOM", value: "generate-sbom" },
               ]}
             >
               <TabItem value="verify-signature">
@@ -449,9 +500,9 @@ export default function ImagesCatalogComponent(): React.JSX.Element {
               </TabItem>
               <TabItem value="generate-sbom">
                 <p className={styles.tabCopy}>
-                  SBOM generation gives you a component inventory for audits, policy checks, and vulnerability triage workflows.
+                  SBOMs are published alongside each image as OCI referrers. Use oras to inspect attached artifacts and pull the SBOM for audits, policy checks, and vulnerability triage.
                   {" "}
-                  <Link to="https://github.com/anchore/syft" target="_blank" rel="noopener noreferrer">
+                  <Link to="https://oras.land/docs/" target="_blank" rel="noopener noreferrer">
                     Learn more
                   </Link>
                   .

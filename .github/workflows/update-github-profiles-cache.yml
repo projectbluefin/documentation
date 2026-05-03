@@ -1,0 +1,83 @@
+name: Update GitHub Profiles Cache
+
+on:
+  schedule:
+    - cron: "0 6 * * *" # 06:00 UTC daily
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "blog/**"
+      - "blog/authors.yaml"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+permissions:
+  contents: read
+
+jobs:
+  update-profiles-cache:
+    name: Fetch and cache GitHub profiles
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@fe104658747b27e96e4f7e80cd0a94068e53901d # v2.16.1
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Cache node_modules
+        id: cache-node-modules
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            node-modules-${{ runner.os }}-
+
+      - name: Install dependencies
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        run: npm ci
+
+      - name: Restore existing profiles cache (for incremental updates)
+        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
+        with:
+          path: static/data/github-profiles.json
+          key: github-profiles-v1-${{ github.run_id }}
+          restore-keys: |
+            github-profiles-v1-
+
+      - name: Fetch GitHub profiles
+        # --force ensures a full refresh on the scheduled/push run so company,
+        # sponsorable, and donation fields stay current, not just delta-patched.
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node scripts/fetch-github-profiles.js --force
+
+      - name: Validate profiles output
+        run: |
+          count=$(node -e "const d=require('./static/data/github-profiles.json'); console.log(Object.keys(d).length)")
+          echo "Profiles in cache: $count"
+          if [ "$count" -lt 50 ]; then
+            echo "::error::Profile count ($count) is suspiciously low — aborting cache save"
+            exit 1
+          fi
+
+      - name: Save GitHub profiles cache
+        uses: actions/cache/save@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
+        with:
+          path: static/data/github-profiles.json
+          key: github-profiles-v1-${{ github.run_id }}

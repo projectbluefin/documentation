@@ -41,7 +41,7 @@ interface Wallpaper {
   dayUrl: string | null;
   nightUrl: string | null;
   jxlUrl: string | null;
-  primaryFormat: "png" | "jpg" | "svg" | null;
+  primaryFormat: "png" | "jpg" | "svg" | "jxl" | null;
   hasLightbox: boolean;
 }
 

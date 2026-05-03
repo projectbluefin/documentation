@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-02T05:51:06Z",
+  "generatedAt": "2026-05-02T05:46:44Z",
   "projects": {
     "bluefin": {
       "label": "Bluefin",
@@ -271,7 +271,7 @@
               "id": "sunrise",
               "title": "Sunrise",
               "author": "Amy",
-              "authorLicense": null,
+              "authorLicense": "https://www.atiusamy.com/links/",
               "previewUrl": null,
               "dayUrl": "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/sunrise/sunrise-day.svg",
               "nightUrl": "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/sunrise/sunrise-night.svg",
@@ -432,14 +432,14 @@
             {
               "id": "lazy-days",
               "title": "Lazy Days",
-              "author": null,
-              "authorLicense": null,
+              "author": "Jay Balamurugan",
+              "authorLicense": "https://kakapojay.com/",
               "previewUrl": "/img/artwork/thumbnails/bluefin-lazy-days.webp",
               "previewNightUrl": null,
               "dayUrl": "/img/artwork/fullres/bluefin-lazy-days.webp",
               "nightUrl": null,
               "jxlUrl": "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/lazy-days/lazy.jxl",
-              "primaryFormat": null,
+              "primaryFormat": "jxl",
               "hasLightbox": true
             }
           ]

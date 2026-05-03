@@ -82,3 +82,41 @@ a[rel*="noopener"]::after {
 [class*="buttonGroup"] button:focus-visible {
   opacity: 1 !important;
 }
+
+/* ── Blog sidebar: narrow from col--3 to col--2 equivalent ───────────────── */
+/* aside.col--3 is only used by BlogSidebar/Desktop — safe to target globally */
+aside.col--3 {
+  --ifm-col-width: calc(2 / 12 * 100%);
+}
+
+/* Widen the blog post content column to absorb the reclaimed space */
+aside.col--3 + main {
+  --ifm-col-width: calc(8 / 12 * 100%);
+}
+
+/* ── Tight list items in blog posts ─────────────────────────────────────── */
+/* MDX wraps li content in <p> when items contain links/bold, adding extra   */
+/* paragraph margin. Collapse it so lists feel like plain tight Markdown.    */
+.markdown li > p {
+  margin-bottom: 0.15rem;
+}
+
+/* ── Blog post subtitle ──────────────────────────────────────────────────── */
+/* Renders the `subtitle` frontmatter value, which Docusaurus 3 parses but   */
+/* does not display via the classic theme's BlogPostItem/Header component.   */
+.blog-post-subtitle {
+  font-size: 1.5rem;
+  font-weight: 300;
+  font-style: italic;
+  letter-spacing: 0.015em;
+  color: var(--ifm-color-emphasis-700);
+  margin-top: 2.5rem;
+  margin-bottom: 2rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--ifm-color-emphasis-200);
+  line-height: 1.4;
+}
+
+[data-theme="dark"] .blog-post-subtitle {
+  color: var(--ifm-color-emphasis-500);
+}

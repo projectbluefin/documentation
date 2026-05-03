@@ -60,6 +60,18 @@ jobs:
         # hand-edited credits are always included in the build.
         run: git checkout -- static/data/artwork.json
 
+      - name: Restore GitHub profiles cache
+        # Primary key never matches (profiles workflow uses a different run_id).
+        # The restore-keys fallback fetches the most recent cache saved by
+        # update-github-profiles-cache.yml. Restored after the general data cache
+        # so it takes precedence over any stale profiles in the general cache.
+        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
+        with:
+          path: static/data/github-profiles.json
+          key: github-profiles-v1-${{ github.run_id }}
+          restore-keys: |
+            github-profiles-v1-
+
       - name: Restore SBOM attestation cache (overrides general data cache)
         # Primary key will never match (update-sbom-cache.yml runs as a separate workflow
         # with a different run_id). The restore-keys fallback always applies, fetching
@@ -95,13 +107,6 @@ jobs:
           # without this the cache check sees a fresh mtime and skips the fetch.
           FIREHOSE_CACHE_HOURS: "0"
         run: npm run fetch-data
-
-      - name: Fetch board data
-        env:
-          # fetch-board-data.js requires project:read scope; only this step
-          # receives the elevated PAT — all other fetch scripts use github.token.
-          GITHUB_TOKEN: ${{ secrets.PROJECT_READ_TOKEN }}
-        run: node scripts/fetch-board-data.js
 
       - name: Generate embeddable card images
         run: npm run generate-card-images

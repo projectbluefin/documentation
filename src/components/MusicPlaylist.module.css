@@ -1,50 +1,54 @@
-.playlistBox {
-  background-color: var(--ifm-background-color);
-  border-radius: 8px;
+/* ── Now Playing bar — sticky, slim horizontal player ───────────────── */
+
+.nowPlayingBar {
+  position: sticky;
+  top: var(--ifm-navbar-height);
+  z-index: 100;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.6rem 1rem;
+  background-color: var(--ifm-color-emphasis-100);
   border: 1px solid var(--ifm-color-emphasis-300);
-  overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: all 0.2s ease;
+  border-radius: 8px;
+  box-sizing: border-box;
+  box-shadow: none;
+  transition: box-shadow 0.2s ease;
 }
 
-.playlistBox:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  transform: translateY(-2px);
-  border-color: var(--ifm-color-primary);
+/* Shadow fades in once the bar is stuck to the top */
+.nowPlayingBar.scrolled {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
 }
 
-.playlistLink {
-  display: block;
-  text-decoration: none;
-  color: inherit;
+/* Spacer below the bar so content doesn't ride up underneath it */
+.stickySpacerBottom {
+  height: 3rem;
 }
+
+/* ── Left: album thumbnail (48×48) ──────────────────────────────────── */
 
 .thumbnailWrapper {
-  position: relative;
-  width: 100%;
-  padding-bottom: 100%; /* 1:1 aspect ratio */
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 6px;
   overflow: hidden;
   background-color: var(--ifm-color-emphasis-200);
+  display: block;
+  text-decoration: none;
 }
 
 .thumbnail {
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.2s ease;
-}
-
-.playlistBox:hover .thumbnail {
-  transform: scale(1.05);
+  display: block;
 }
 
 .thumbnailPlaceholder {
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
   display: flex;
@@ -57,90 +61,184 @@
   );
 }
 
-.playIcon {
-  width: 60px;
-  height: 60px;
+.musicIcon {
+  width: 24px;
+  height: 24px;
   color: white;
-  opacity: 0.8;
+  opacity: 0.9;
 }
 
-.playOverlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+/* ── Middle: info (label + title) ────────────────────────────────────── */
+
+.infoZone {
+  flex: 1 1 0;
+  min-width: 0;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(0, 0, 0, 0);
-  transition: background-color 0.2s ease;
+  flex-direction: column;
+  gap: 0.15rem;
 }
 
-.playlistBox:hover .playOverlay {
-  background-color: rgba(0, 0, 0, 0.3);
-}
-
-.playIconLarge {
-  width: 80px;
-  height: 80px;
-  color: white;
-  opacity: 0;
-  transform: scale(0.8);
-  transition: all 0.2s ease;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-}
-
-.playlistBox:hover .playIconLarge {
-  opacity: 1;
-  transform: scale(1);
-}
-
-.playlistInfo {
-  padding: 1rem;
+.label {
+  flex-shrink: 0;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ifm-color-emphasis-600);
 }
 
 .playlistTitle {
-  margin: 0 0 0.5rem 0;
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--ifm-color-emphasis-800);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--ifm-color-emphasis-900);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-decoration: none;
+}
+
+a.playlistTitle:hover {
+  text-decoration: underline;
+}
+
+.description {
+  font-size: 0.75rem;
+  color: var(--ifm-color-emphasis-600);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   line-height: 1.3;
 }
 
-.titleLink {
-  color: var(--ifm-color-emphasis-800);
-  text-decoration: none;
-  transition: color 0.2s ease;
+/* ── Right: small 16:9 video / play button (160×90px) ───────────────── */
+
+.videoWrapper {
+  flex-shrink: 0;
+  width: 160px;
+  aspect-ratio: 16 / 9;
+  border-radius: 4px;
+  overflow: hidden;
+  background-color: var(--ifm-color-emphasis-200);
+  position: relative;
 }
 
-.titleLink:hover {
-  color: var(--ifm-color-primary);
+.videoIframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
 }
 
-.playlistDescription {
-  margin: 0;
-  font-size: 0.85rem;
-  color: var(--ifm-color-emphasis-600);
-  line-height: 1.4;
+/* Poster + play button (shown before user clicks play) */
+.playButton {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  background: #000;
+  display: block;
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .playlistInfo {
-    padding: 0.75rem;
+.posterImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  opacity: 0.75;
+  transition: opacity 0.15s;
+}
+
+.playButton:hover .posterImg {
+  opacity: 0.55;
+}
+
+.posterPlaceholder {
+  width: 100%;
+  height: 100%;
+  background: var(--ifm-color-emphasis-300);
+}
+
+.playIcon {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.playIcon svg {
+  background: var(--ifm-color-primary);
+  border-radius: 50%;
+  padding: 6px;
+  width: 40px;
+  height: 40px;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.playButton:hover .playIcon svg {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+/* ── Dismiss button (appears after scrolling) ────────────────────────── */
+
+.dismissButton {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ifm-color-emphasis-500);
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin-left: 0.25rem;
+  transition: color 0.15s, background 0.15s;
+}
+
+.dismissButton:hover {
+  color: var(--ifm-color-emphasis-900);
+  background: var(--ifm-color-emphasis-200);
+}
+
+/* ── embed=false fallback info row ───────────────────────────────────── */
+
+.infoRow {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 0.5rem;
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────── */
+
+@media (max-width: 599px) {
+  .thumbnailWrapper {
+    display: none;
+  }
+
+  .videoWrapper {
+    width: 120px;
+  }
+
+  .nowPlayingBar {
+    padding: 0.5rem 0.75rem;
   }
 
   .playlistTitle {
-    font-size: 0.9rem;
-  }
-
-  .playlistDescription {
     font-size: 0.8rem;
   }
-
-  .playIconLarge {
-    width: 60px;
-    height: 60px;
-  }
 }
+
