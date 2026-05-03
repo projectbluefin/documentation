@@ -6,6 +6,29 @@ import TabItem from "@theme/TabItem";
 import CodeBlock from "@theme/CodeBlock";
 import styles from "./ImagesCatalog.module.css";
 
+const ARCH_LOGO: Record<string, { src: string; alt: string }> = {
+  amd:    { src: "/img/gpu/amd.svg",    alt: "AMD" },
+  intel:  { src: "/img/gpu/intel.svg",  alt: "Intel" },
+  nvidia: { src: "/img/gpu/nvidia.svg", alt: "NVIDIA" },
+  arm:    { src: "/img/gpu/arm.svg",    alt: "ARM" },
+};
+
+function ArchBadges({ arches }: { arches: string[] }) {
+  return (
+    <div className={styles.archBadges}>
+      {arches.map((arch) => {
+        const logo = ARCH_LOGO[arch];
+        if (!logo) return null;
+        return (
+          <span key={arch} className={styles.archBadge} title={logo.alt}>
+            <img src={logo.src} alt={logo.alt} className={styles.archBadgeLogo} />
+            <span>{logo.alt}</span>
+          </span>
+        );
+      })}
+    </div>
+  );
+}
 
 interface StreamInfo {
   label: string;
@@ -29,6 +52,7 @@ interface Product {
   org: string;
   summary: string;
   artwork: "bluefin" | "achillobator" | "dakotaraptor";
+  supportedArches?: string[] | null;
   downloads?: {
     display: string;
     source: "live" | "cache" | "unavailable";
@@ -109,6 +133,7 @@ function StreamList({
             </span>
             {(preferNvidia || entry.versions?.nvidia) && (
               <span className={styles.versionPill}>
+                <img src="/img/gpu/nvidia.svg" alt="NVIDIA" className={styles.pillLogo} />
                 <strong>NVIDIA</strong> {entry.versions?.nvidia || "Unknown"}
               </span>
             )}
@@ -245,7 +270,9 @@ export default function ImagesCatalogComponent(): React.JSX.Element {
             <Heading as="h2" className={styles.cardTitle}>
               {product.name}
             </Heading>
-
+            {product.supportedArches && product.supportedArches.length > 0 && (
+              <ArchBadges arches={product.supportedArches} />
+            )}
           </header>
 
           <section className={styles.linkRow}>
@@ -382,6 +409,7 @@ export default function ImagesCatalogComponent(): React.JSX.Element {
                               <strong>Linux</strong> {entry.versions?.kernel || "Unknown"}
                             </span>
                             <span className={styles.versionPill}>
+                              <img src="/img/gpu/nvidia.svg" alt="NVIDIA" className={styles.pillLogo} />
                               <strong>NVIDIA</strong> {entry.versions?.nvidia || "Unknown"}
                             </span>
                             {entry.versions?.flatpak && (
@@ -416,6 +444,7 @@ export default function ImagesCatalogComponent(): React.JSX.Element {
                           </span>
                           {entry.versions?.nvidia && (
                             <span className={styles.versionPill}>
+                              <img src="/img/gpu/nvidia.svg" alt="NVIDIA" className={styles.pillLogo} />
                               <strong>NVIDIA</strong> {entry.versions.nvidia}
                             </span>
                           )}

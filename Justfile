@@ -5,8 +5,9 @@ build:
 
 # Fast local dev — skips fetch-data, assumes static/feeds and static/data are already present.
 # Use this for hot-reload iteration. Run `just serve` once first to populate cached data.
-dev:
-    npx docusaurus start --host 0.0.0.0
+# Pass extra args: `just dev --port 3001`
+dev *ARGS:
+    npx docusaurus start --host 0.0.0.0 {{ARGS}}
 
 # Full start: fetch all data then launch dev server.
 serve:
@@ -31,6 +32,10 @@ fetch-images-force:
 # Run TypeScript type check
 typecheck:
     npm run typecheck
+
+# Clear Docusaurus build cache — fixes rspack "Dependency with ID not found" panics
+clear:
+    npx docusaurus clear
 
 # Run Playwright e2e tests against the local dev server (reuses existing if running)
 test:

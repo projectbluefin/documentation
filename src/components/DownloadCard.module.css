@@ -1,0 +1,299 @@
+/* ── Card shell ─────────────────────────────────────────────────────────────── */
+
+.card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 12px;
+  background: var(--ifm-background-color);
+  margin-bottom: 1.5rem;
+  transition: box-shadow 0.2s;
+}
+
+.card:hover {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.09);
+}
+
+/* ── Mascot art ── */
+
+.cardBluefin::after,
+.cardLts::after,
+.cardGdx::after,
+.cardDakota::after {
+  content: "";
+  position: absolute;
+  right: 1.25rem;
+  top: 1rem;
+  width: 110px;
+  height: 110px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: right top;
+  pointer-events: none;
+  opacity: 0.9;
+}
+
+.cardBluefin::after  { background-image: url("/img/characters/bluefin-small.webp"); }
+.cardLts::after,
+.cardGdx::after      { background-image: url("/img/characters/achillobator.webp"); height: 110px; background-position: right top; }
+.cardDakota::after   { background-image: url("/img/characters/dakotaraptor.webp"); }
+
+/* ── Stream accent borders ── */
+
+.cardBluefin { border-left: 3px solid var(--ifm-color-primary); }
+.cardLts     { border-left: 3px solid #d97706; }
+.cardGdx     { border-left: 3px solid #7c3aed; }
+.cardDakota  { border-left: 3px solid #7c3aed; }
+
+/* ── Header ── */
+
+.cardHeader {
+  position: relative;
+  z-index: 1;
+  padding: 1.25rem 1.5rem 1rem;
+  padding-right: 140px;
+}
+
+.cardLts .cardHeader,
+.cardGdx .cardHeader {
+  min-height: 155px;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.4rem;
+}
+
+.cardTitle {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--ifm-color-primary);
+  margin: 0 0 0.4rem;
+  line-height: 1.2;
+}
+
+.cardDescription {
+  font-size: 0.9rem;
+  color: var(--ifm-color-emphasis-700);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.cardDescription a {
+  color: var(--ifm-color-primary);
+  font-weight: 500;
+}
+
+/* ── Entry list ── */
+
+.entries {
+  position: relative;
+  z-index: 1;
+  padding: 0 1.5rem 1rem;
+}
+
+.entry {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0.75rem 0;
+}
+
+.section {
+  border-top: 1px dashed var(--ifm-color-emphasis-200);
+  margin-top: 0.25rem;
+  padding-top: 0.25rem;
+}
+
+.sectionLabel {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--ifm-color-emphasis-500);
+  padding: 0.5rem 0 0.15rem;
+}
+
+/* ── Col 1: filename ── */
+
+.entryFilename {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.isoName {
+  font-size: 0.78rem;
+  font-family: var(--ifm-font-family-monospace);
+  color: var(--ifm-color-emphasis-700);
+  word-break: break-all;
+}
+
+/* ── Col 2: GPU label ── */
+
+.entryGpu {
+  flex: 0 0 auto;
+  width: 130px;
+}
+
+.gpuLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.gpuLine {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ifm-color-emphasis-800);
+  white-space: nowrap;
+}
+
+.gpuLogo {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
+/* ── Recommended badge ── */
+
+.recommendedBadge {
+  display: inline-block;
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.18rem 0.5rem;
+  border-radius: 999px;
+  background: rgba(34, 197, 94, 0.12);
+  color: #15803d;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  flex-shrink: 0;
+}
+
+[data-theme="dark"] .recommendedBadge {
+  background: rgba(34, 197, 94, 0.1);
+  color: #4ade80;
+  border-color: rgba(34, 197, 94, 0.3);
+}
+
+/* ── Col 3: action buttons ── */
+
+.entryButtons {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.downloadButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: var(--ifm-color-primary);
+  color: #fff !important;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 0.4rem 1rem;
+  border-radius: 6px;
+  text-decoration: none !important;
+  transition: background 0.15s, transform 0.1s;
+  white-space: nowrap;
+  min-width: 130px;
+  justify-content: center;
+}
+
+.downloadButton:hover {
+  background: var(--ifm-color-primary-dark);
+  transform: translateY(-1px);
+  text-decoration: none !important;
+}
+
+.downloadButton:active {
+  transform: translateY(0);
+}
+
+.secondaryLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.8rem;
+  color: var(--ifm-color-emphasis-700) !important;
+  text-decoration: none !important;
+  padding: 0.35rem 0.65rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 5px;
+  white-space: nowrap;
+  transition: background 0.15s, border-color 0.15s;
+  min-width: 82px;
+  justify-content: center;
+}
+
+.secondaryLink:hover {
+  background: var(--ifm-color-emphasis-100);
+  border-color: var(--ifm-color-emphasis-400);
+  color: var(--ifm-color-emphasis-900) !important;
+  text-decoration: none !important;
+}
+
+.secondaryLinkDisabled {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.8rem;
+  color: var(--ifm-color-emphasis-400) !important;
+  padding: 0.35rem 0.65rem;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 5px;
+  white-space: nowrap;
+  min-width: 82px;
+  justify-content: center;
+  cursor: default;
+  opacity: 0.5;
+}
+
+.filenameCaption {
+  display: none;
+}
+
+/* ── Responsive ── */
+
+@media (max-width: 680px) {
+  .cardHeader {
+    padding-right: 90px;
+  }
+
+  .cardBluefin::after,
+  .cardLts::after,
+  .cardGdx::after,
+  .cardDakota::after {
+    width: 70px;
+    height: 70px;
+  }
+
+  .entry {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .entryFilename {
+    flex: 1 1 100%;
+  }
+
+  .entryGpu {
+    width: auto;
+  }
+
+  .entryButtons {
+    justify-content: flex-start;
+  }
+}
