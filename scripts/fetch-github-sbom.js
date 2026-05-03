@@ -807,6 +807,23 @@ function stripEpoch(version) {
   return version.replace(/^\d+:/, "");
 }
 
+/**
+ * Strip RPM release/dist suffix from non-kernel version strings.
+ * RPM NEVRA: Name-Epoch:Version-Release.Dist — after stripEpoch we have "Version-Release.Dist".
+ * For display purposes only the upstream Version matters (e.g. "49.5", not "49.5-100.el10gnomeqr.el10").
+ * Kernel versions intentionally retain their release ("6.12.0-224.el10") since the build
+ * number and dist tag are part of the kernel's meaningful identity.
+ *
+ * @param {string} version - already epoch-stripped RPM version string
+ * @returns {string}
+ */
+function stripRpmRelease(version) {
+  if (!version) return version;
+  const dash = version.indexOf("-");
+  if (dash === -1) return version;
+  return version.slice(0, dash);
+}
+
 // ---------------------------------------------------------------------------
 // BST SPDX extraction (Dakota/BuildStream images)
 // ---------------------------------------------------------------------------
@@ -1187,25 +1204,25 @@ function extractPackageVersions(sbomPath) {
         kernelVersions.push(stripEpoch(String(version)));
         break;
       case "gnome-shell":
-        if (!result.gnome) result.gnome = stripEpoch(String(version));
+        if (!result.gnome) result.gnome = stripRpmRelease(stripEpoch(String(version)));
         break;
       case "mesa-filesystem":
-        if (!result.mesa) result.mesa = stripEpoch(String(version));
+        if (!result.mesa) result.mesa = stripRpmRelease(stripEpoch(String(version)));
         break;
       case "podman":
-        if (!result.podman) result.podman = stripEpoch(String(version));
+        if (!result.podman) result.podman = stripRpmRelease(stripEpoch(String(version)));
         break;
       case "systemd":
-        if (!result.systemd) result.systemd = stripEpoch(String(version));
+        if (!result.systemd) result.systemd = stripRpmRelease(stripEpoch(String(version)));
         break;
       case "bootc":
-        if (!result.bootc) result.bootc = stripEpoch(String(version));
+        if (!result.bootc) result.bootc = stripRpmRelease(stripEpoch(String(version)));
         break;
       case "pipewire":
-        if (!result.pipewire) result.pipewire = stripEpoch(String(version));
+        if (!result.pipewire) result.pipewire = stripRpmRelease(stripEpoch(String(version)));
         break;
       case "flatpak":
-        if (!result.flatpak) result.flatpak = stripEpoch(String(version));
+        if (!result.flatpak) result.flatpak = stripRpmRelease(stripEpoch(String(version)));
         break;
       case "fedora-release-common": {
         if (!result.fedora) {
