@@ -83,6 +83,20 @@ test.describe("B1 — homepage hero image", () => {
     const hero = page.locator("article img").first();
     await expect(hero).toBeVisible({ timeout: 10_000 });
 
+    // Wait for the image to fully decode — naturalWidth/Height are 0 until
+    // the browser finishes decoding the image data.
+    await hero.evaluate(
+      (node) =>
+        new Promise<void>((resolve) => {
+          const img = node as HTMLImageElement;
+          if (img.naturalWidth > 0) return resolve();
+          if (img.complete) return resolve(); // decoded but possibly broken
+          img.addEventListener("load", () => resolve(), { once: true });
+          // Safety timeout so we don't hang forever
+          setTimeout(resolve, 5_000);
+        })
+    );
+
     const metrics = await hero.evaluate((node) => {
       const img = node as HTMLImageElement;
       const rect = img.getBoundingClientRect();
@@ -93,6 +107,15 @@ test.describe("B1 — homepage hero image", () => {
         naturalHeight: img.naturalHeight,
       };
     });
+
+    expect(
+      metrics.naturalWidth,
+      "Hero image naturalWidth is 0 — image did not decode in time"
+    ).toBeGreaterThan(0);
+    expect(
+      metrics.naturalHeight,
+      "Hero image naturalHeight is 0 — image did not decode in time"
+    ).toBeGreaterThan(0);
 
     const naturalRatio = metrics.naturalWidth / metrics.naturalHeight;
     const renderedRatio = metrics.renderedWidth / metrics.renderedHeight;
