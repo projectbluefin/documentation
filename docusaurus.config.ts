@@ -17,6 +17,7 @@ const config: Config = {
     experimental_faster: true,
     v4: {
       removeLegacyPostBuildHeadAttribute: true,
+      useCssCascadeLayers: true,
     },
   },
 
