@@ -212,7 +212,7 @@ All other `static/data/*.json` and `static/feeds/*.json` files are gitignored an
 
 ### `pages.yml` — Build and deploy
 
-Triggers: PR to main, push to main, merge_group, workflow_dispatch, schedule (Sundays 6:50 UTC)
+Triggers: PR to main, push to main, merge_group, workflow_dispatch, schedule (daily 07:00 UTC)
 
 Key steps:
 1. Restore `node_modules` cache (key: `npm` cache from setup-node)
@@ -229,6 +229,12 @@ Key steps:
 12. Build (`npm run build:ci`)
 13. E2E Playwright tests — **only on `pull_request` and `merge_group`** (not on push to main)
 14. Upload pages artifact → deploy to GitHub Pages (main only)
+
+### `e2e-tests.yml` — Standalone E2E CI
+
+Triggers: PR to main, **push to main** (separate from pages.yml E2E step)
+
+Runs a full build + Playwright test on every push to main and every PR. Uploads `playwright-report/` artifact on failure. Uses `github.token` only. Does NOT deploy.
 
 ### `update-sbom-cache.yml` — Nightly SBOM fetch
 
@@ -269,7 +275,7 @@ Runs `renovate-config-validator --strict`.
 | `FeedItems.tsx` + `CommunityFeeds.tsx` | `changelogs.tsx` | `static/feeds/*.json` + `sbom-attestations.json` |
 | `PackageSummary.tsx` | `changelogs.tsx` | Derived from feeds via `src/config/packageConfig.ts` |
 | `FirehoseFeed.tsx` + `OsReleaseCard.tsx` | `changelogs.tsx` | `firehose-apps.json` (static import) + `sbom-attestations-frontend.json` (lazy) + `bluefin-releases.json`/`bluefin-lts-releases.json` (lazy) |
-| `ImagesCatalog.tsx` | `src/pages/images.tsx` | `static/data/images.json` (includes SBOM version overlays) |
+| `ImagesCatalog.tsx` | `docs/images.md` (`/images` route) | `static/data/images.json` (includes SBOM version overlays) |
 | `DriverVersionsCatalog.tsx` | `docs/driver-versions.mdx` | `static/data/driver-versions.json` |
 | `ArtworkGallery.tsx` | `docs/artwork.mdx` | `fetch("/data/artwork.json")` — client-side fetch after hydration |
 | `GitHubProfileCard.tsx` | `docs/donations/*.mdx` | `static/data/github-profiles.json` |

@@ -16,7 +16,7 @@
  *   /installation  Perf 98  A11y 97  LCP 1.7s   CLS 0
  *   /artwork       Perf 88  A11y 87  LCP 1.5s   CLS 0.233
  *   /changelogs    Perf 75  A11y 83  LCP 4.2s   CLS 0.044
- *   /board         Perf 99  A11y 98  LCP 1.1s   CLS 0
+ *   /images        n/a (page added after baseline — /board was removed)
  *   /driver-versions Perf 98 A11y 100 LCP 1.6s  CLS 0
  *   /reports/2026/03 Perf 99 A11y 91 LCP 1.2s   CLS 0.005
  *   /blog          Perf 76  A11y 89  LCP 2.6s   CLS 0
@@ -285,7 +285,7 @@ test.describe("smoke — no JS errors on representative pages", () => {
     "/installation",
     "/artwork",
     "/changelogs",
-    "/board",
+    "/images",
     "/driver-versions",
     "/reports/2026/03",
     "/blog",
