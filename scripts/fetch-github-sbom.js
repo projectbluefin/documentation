@@ -41,12 +41,32 @@
 "use strict";
 
 const fs = require("fs");
-const os = require("os");
 const path = require("path");
-const { execFile } = require("child_process");
-const { promisify } = require("util");
 
-const execFileAsync = promisify(execFile);
+// ---------------------------------------------------------------------------
+// Module imports
+// ---------------------------------------------------------------------------
+
+const {
+  SLSA_TYPE,
+  orasLogin,
+  verifyAttestation,
+  downloadSbom,
+  fetchGhcrTags,
+  selectAmd64DigestFromManifest,
+  getImageCreatedDate,
+} = require("./lib/sbom/api");
+
+const {
+  extractPackageVersions,
+  findRecentTagsForStream,
+  stripEpoch,
+  compareRpmVersions,
+} = require("./lib/sbom/parser");
+
+const { extractBstPackageVersions, isSemverLike } = require("./lib/sbom/bst");
+const { buildSlimFrontendStreams } = require("./lib/sbom/slim");
+const { atomicWriteJson } = require("./lib/sbom/writer");
 
 // ---------------------------------------------------------------------------
 // Configuration
@@ -81,9 +101,6 @@ const LOOKBACK_DAYS = Number(process.env.SBOM_LOOKBACK_DAYS || 90);
 const MAX_RELEASES = Number(process.env.SBOM_MAX_RELEASES || 10);
 
 const FORCE_REFRESH = process.argv.includes("--force");
-
-const SLSA_TYPE = "https://slsa.dev/provenance/v1";
-const OIDC_ISSUER = "https://token.actions.githubusercontent.com";
 
 /**
  * Streams to scan.  keyRepo drives the OIDC identity regexp used by cosign.
@@ -292,698 +309,8 @@ const STREAM_SPECS = [
 ];
 
 // ---------------------------------------------------------------------------
-// HTTP helpers (same pattern as fetch-github-images.js)
-// ---------------------------------------------------------------------------
-
-async function fetchText(url, extraHeaders = {}) {
-  const headers = {
-    "User-Agent": "BluefinDocsSBOM/1.0",
-    ...extraHeaders,
-  };
-  const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
-  // Only attach the GitHub token for api.github.com requests — not for ghcr.io
-  if (token && url.includes("api.github.com")) {
-    headers.Authorization = `Bearer ${token}`;
-  }
-
-  const response = await fetch(url, { headers });
-  if (!response.ok) {
-    throw new Error(`HTTP ${response.status} ${response.statusText} — ${url}`);
-  }
-  return response.text();
-}
-
-async function fetchJson(url, extraHeaders = {}) {
-  const text = await fetchText(url, extraHeaders);
-  return JSON.parse(text);
-}
-
-// ---------------------------------------------------------------------------
-// GitHub Releases API — paginated tag listing (no PAT needed)
-// ---------------------------------------------------------------------------
-
-/**
- * Fetch all release tag names for a given owner/repo using the Releases API.
- * Uses standard github.token — no cross-org packages:read scope required.
- * Returns an array of { tagName, publishedAt } objects.
- */
-async function fetchReleaseTags(owner, repo) {
-  const tags = [];
-  let page = 1;
-  // eslint-disable-next-line no-constant-condition
-  while (true) {
-    const url = `https://api.github.com/repos/${owner}/${repo}/releases?per_page=100&page=${page}`;
-    let batch;
-    try {
-      batch = await fetchJson(url);
-    } catch (err) {
-      throw new Error(
-        `Releases API page ${page} for ${owner}/${repo} failed: ${err.message}`,
-      );
-    }
-    if (!Array.isArray(batch) || batch.length === 0) break;
-    for (const release of batch) {
-      if (release.tag_name) {
-        tags.push({
-          tagName: release.tag_name,
-          publishedAt: release.published_at || release.created_at || null,
-        });
-      }
-    }
-    if (batch.length < 100) break;
-    page++;
-  }
-  return tags;
-}
-
-// ---------------------------------------------------------------------------
-// GHCR OCI distribution API — tag listing
-// ---------------------------------------------------------------------------
-
-/**
- * Get a GHCR bearer token for the given org/package.
- * Uses GITHUB_TOKEN/GH_TOKEN if available; falls back to anonymous (public images).
- */
-async function getGhcrToken(org, pkg) {
-  const headers = { "User-Agent": "BluefinDocsSBOM/1.0" };
-  const ghToken = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
-  if (ghToken) {
-    const b64 = Buffer.from(`x-access-token:${ghToken}`).toString("base64");
-    headers.Authorization = `Basic ${b64}`;
-  }
-  const url = `https://ghcr.io/token?scope=repository:${org}/${pkg}:pull&service=ghcr.io`;
-  const res = await fetch(url, { headers });
-  if (!res.ok) {
-    throw new Error(`GHCR token exchange failed: HTTP ${res.status} — ${url}`);
-  }
-  const body = await res.json();
-  return body.token;
-}
-
-/**
- * Fetch ALL tags for a GHCR package using the OCI distribution spec.
- * Handles pagination via Link header.
- *
- * @param {string} org   GitHub org (e.g. "ublue-os")
- * @param {string} pkg   Package name (e.g. "bluefin")
- * @returns {Promise<string[]>} Full list of tag strings
- */
-async function fetchGhcrTags(org, pkg) {
-  const token = await getGhcrToken(org, pkg);
-  const allTags = [];
-  let url = `https://ghcr.io/v2/${org}/${pkg}/tags/list?n=1000`;
-
-  while (url) {
-    const res = await fetch(url, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "User-Agent": "BluefinDocsSBOM/1.0",
-      },
-    });
-    if (!res.ok) {
-      throw new Error(`GHCR tags/list failed: HTTP ${res.status} — ${url}`);
-    }
-    const body = await res.json();
-    if (Array.isArray(body.tags)) allTags.push(...body.tags);
-
-    // Follow pagination Link header per RFC 5988 / OCI distribution spec.
-    // GHCR returns: </v2/.../tags/list?last=...&n=1000>; rel="next"
-    // The trailing \b after the optional quote fails to match because " is non-word
-    // and end-of-string is also non-word — so \b never fires, breaking pagination.
-    // Use a literal rel="next" match with an optional unquoted fallback.
-    const linkHeader = res.headers.get("link") || "";
-    const nextMatch = linkHeader.match(/<([^>]+)>;\s*rel="next"/i)
-      ?? linkHeader.match(/<([^>]+)>;\s*rel=next(?:[^a-z]|$)/i);
-    url = nextMatch ? new URL(nextMatch[1], res.url).href : null;
-  }
-
-  return allTags;
-}
-
-// ---------------------------------------------------------------------------
-// Tag filtering helpers
-// ---------------------------------------------------------------------------
-
-/**
- * Extract the YYYYMMDD date from a GHCR tag.
- * Handles patterns:
- *   stable-20260331    → 20260331
- *   lts-20260331       → 20260331
- *   lts.20260331       → 20260331
- *   lts-hwe-testing-20260331 → 20260331
- */
-function extractDateFromTag(tag) {
-  const match = tag.match(/[.-](\d{8})$/);
-  return match ? match[1] : null;
-}
-
-/**
- * Normalise an lts*.YYYYMMDD tag to lts*-YYYYMMDD format.
- * Handles: lts.20260331       → lts-20260331
- *          lts.20260331-hwe   → lts-20260331-hwe
- *          lts-hwe.20260501   → lts-hwe-20260501
- */
-function normaliseLtsTag(tag) {
-  // lts.20260501       → lts-20260501
-  // lts-hwe.20260501   → lts-hwe-20260501
-  return tag.replace(/^(lts[a-z-]*)\.(\d{8})/, "$1-$2");
-}
-
-/**
- * Build the stream-prefixed cache key used in FeedItems.tsx.
- * extractReleaseTag() in FeedItems produces: stable-YYYYMMDD, gts-YYYYMMDD,
- * lts-YYYYMMDD, etc.
- */
-function buildCacheKey(streamPrefix, dateStr) {
-  return `${streamPrefix}-${dateStr}`;
-}
-
-// ---------------------------------------------------------------------------
-// cosign verification
-// ---------------------------------------------------------------------------
-
-/**
- * Best-effort GHCR login for ORAS.
- * Uses GITHUB_TOKEN/GH_TOKEN if available; otherwise no-op (anonymous mode).
- */
-async function orasLogin() {
-  const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
-  if (!token) return;
-
-  // x-access-token works for GITHUB_TOKEN in Actions.
-  // For local dev with a PAT, set ORAS_USERNAME to your GitHub username.
-  const username = process.env.ORAS_USERNAME || "x-access-token";
-
-  try {
-    await execFileAsync(
-      "oras",
-      ["login", "ghcr.io", "-u", username, "--password-stdin"],
-      {
-        input: token,
-        env: { ...process.env },
-        timeout: 15000,
-      },
-    );
-    console.log("oras: logged in to ghcr.io");
-  } catch (err) {
-    // Login failure is non-fatal — oras may still work for public images
-    console.warn(`oras: login failed (continuing anonymously) — ${err.message}`);
-  }
-}
-
-/**
- * Attempt cosign verify-attestation for an image digest.
- * Returns { present, verified, predicateType, error }.
- *
- * present:false  → no attestation found for this image
- * verified:false → attestation found but signature check failed
- *
- * For streams with signingType: "cosign-sign", the image is signed with
- * `cosign sign` (not an SLSA attestation). Use `cosign verify` instead of
- * `cosign verify-attestation` — a verified signature is equivalent to
- * present:true / verified:true in the UI.
- */
-async function verifyAttestation(imageRef, spec) {
-  const oidcIdentityRegexp = `^https://github.com/${spec.keyRepo}/.github/workflows/`;
-
-  // Dakota (and any stream with signingType: "cosign-sign") uses `cosign sign`
-  // which produces a keyless OIDC signature, not an SLSA attestation. Verify
-  // with `cosign verify` rather than `cosign verify-attestation`.
-  if (spec.signingType === "cosign-sign") {
-    const verifyArgs = [
-      "verify",
-      "--certificate-oidc-issuer",
-      OIDC_ISSUER,
-      "--certificate-identity-regexp",
-      oidcIdentityRegexp,
-      imageRef,
-    ];
-    try {
-      await execFileAsync("cosign", verifyArgs, {
-        env: { ...process.env },
-        maxBuffer: 1 * 1024 * 1024,
-      });
-      return { present: true, verified: true, predicateType: "cosign-sign", error: null };
-    } catch (err) {
-      const msg = (err.stderr || err.message || "").toLowerCase();
-      if (msg.includes("no matching signatures") || msg.includes("not found")) {
-        return { present: false, verified: false, predicateType: null, error: "no signature" };
-      }
-      return {
-        present: null,
-        verified: false,
-        predicateType: null,
-        errorKind: "tooling",
-        error: String(err.stderr || err.message),
-      };
-    }
-  }
-
-  const args = [
-    "verify-attestation",
-    "--type",
-    SLSA_TYPE,
-    "--certificate-oidc-issuer",
-    OIDC_ISSUER,
-    "--certificate-identity-regexp",
-    oidcIdentityRegexp,
-    imageRef,
-  ];
-
-  let stdout = "";
-  try {
-    const result = await execFileAsync("cosign", args, {
-      env: { ...process.env },
-      maxBuffer: 4 * 1024 * 1024,
-    });
-    stdout = result.stdout;
-  } catch (err) {
-    const msg = (err.stderr || err.message || "").toLowerCase();
-    // cosign exits non-zero when no attestation exists
-    if (
-      msg.includes("no matching attestations") ||
-      msg.includes("no attestations") ||
-      msg.includes("not found")
-    ) {
-      return {
-        present: false,
-        verified: false,
-        predicateType: null,
-        error: "no attestation",
-      };
-    }
-    // Unexpected tooling/registry/auth failure — do NOT claim present: true.
-    // Callers use present: false (no attestation) vs present: null (error/unknown)
-    // to distinguish absence from verification failure.
-    return {
-      present: null,
-      verified: false,
-      predicateType: null,
-      errorKind: "tooling",
-      error: String(err.stderr || err.message),
-    };
-  }
-
-  // cosign outputs NDJSON (one JSON object per line) on stdout only;
-  // stderr carries status messages ("Verification OK") that must not be parsed.
-  const lines = stdout
-    .split("\n")
-    .map((l) => l.trim())
-    .filter((l) => l.startsWith("{"));
-
-  let predicateType = null;
-  for (const line of lines) {
-    try {
-      const obj = JSON.parse(line);
-      // Each NDJSON object has a payload field (base64-encoded)
-      if (obj.payload) {
-        const decoded = Buffer.from(obj.payload, "base64").toString("utf-8");
-        const inner = JSON.parse(decoded);
-        predicateType = inner?.predicateType || inner?.predicate_type || null;
-        break;
-      }
-    } catch {
-      // skip malformed lines
-    }
-  }
-
-  return { present: true, verified: true, predicateType, error: null };
-}
-
-// ---------------------------------------------------------------------------
-// SBOM download via oras
-// ---------------------------------------------------------------------------
-
-/**
- * Given a parsed OCI manifest (which may be a multi-arch index or a
- * single-arch manifest) and the content digest of that manifest, return
- * the digest of the linux/amd64 platform-specific image.
- *
- * - If `manifest` is a multi-arch index (has a `manifests` array with platform
- *   descriptors), the digest of the linux/amd64 entry is returned.
- * - Otherwise the content digest is returned unchanged (single-arch manifest).
- *
- * Syft attaches SBOM referrers to the platform-specific digest, not to the
- * multi-arch index.  Using this digest ensures `oras discover` finds the SBOM.
- *
- * @param {object} manifest  – parsed manifest JSON
- * @param {string} contentDigest  – sha256 digest of the manifest bytes
- * @returns {string} amd64-specific digest, or contentDigest for single-arch
- */
-function selectAmd64DigestFromManifest(manifest, contentDigest) {
-  if (Array.isArray(manifest?.manifests)) {
-    const amd64 = manifest.manifests.find(
-      (m) =>
-        m?.platform?.os === "linux" && m?.platform?.architecture === "amd64",
-    );
-    if (amd64?.digest) return amd64.digest;
-  }
-  return contentDigest;
-}
-
-/**
- * Download the Syft SBOM for an image from GHCR via oras.
- *
- * Steps:
- *   0. Resolve the linux/amd64 platform-specific digest from the manifest
- *      index (multi-arch images only) so that oras discover operates on the
- *      correct platform-specific manifest where SBOM referrers are attached.
- *   1. oras discover --format json <imageRef>
- *      → find referrer with artifactType == "application/vnd.spdx+json"
- *   2. oras pull <repo>@<sbomDigest> --output <tmpdir>
- *   3. Return path to the pulled sbom.json
- *
- * Returns null on any error (caller treats packageVersions as null).
- */
-async function downloadSbom(imageRef) {
-  const repoRef = imageRef.replace(/:[^/]+$/, "");
-  let tmpDir = null;
-
-  // Step 0: resolve the amd64-specific digest.
-  // Syft publishes SBOM referrers against the platform manifest, not the index.
-  // If the tag points to a multi-arch index, oras discover on the tag will
-  // find no referrers.  Resolving to the amd64 digest fixes this.
-  let resolvedRef = imageRef;
-  try {
-    const [rawResult, digestResult] = await Promise.all([
-      execFileAsync("oras", ["manifest", "fetch", imageRef], {
-        env: { ...process.env },
-        maxBuffer: 1024 * 1024,
-        timeout: 30000,
-      }),
-      execFileAsync(
-        "oras",
-        [
-          "manifest", "fetch",
-          "--format", "go-template",
-          "--template", "{{ .digest }}",
-          "--platform", "linux/amd64",
-          imageRef,
-        ],
-        { env: { ...process.env }, maxBuffer: 64 * 1024, timeout: 30000 },
-      ),
-    ]);
-    const manifest = JSON.parse(rawResult.stdout);
-    const amd64Digest = selectAmd64DigestFromManifest(
-      manifest,
-      digestResult.stdout.trim(),
-    );
-    if (amd64Digest && amd64Digest.startsWith("sha256:")) {
-      resolvedRef = `${repoRef}@${amd64Digest}`;
-      if (resolvedRef !== imageRef) {
-        console.log(
-          `    downloadSbom: resolved to amd64 digest ${amd64Digest.slice(0, 19)}...`,
-        );
-      }
-    }
-  } catch {
-    // Non-fatal: fall back to tag-based ref
-  }
-
-  try {
-    // Step 1: discover referrers
-    const discoverResult = await execFileAsync(
-      "oras",
-      ["discover", "--format", "json", resolvedRef],
-      {
-        env: { ...process.env },
-        maxBuffer: 4 * 1024 * 1024,
-        timeout: 60000,
-      },
-    );
-
-    let referrers = [];
-    try {
-      const discovered = JSON.parse(discoverResult.stdout);
-      // oras discover --format json returns { manifests: [...] }
-      referrers = discovered?.manifests || discovered?.referrers || [];
-    } catch {
-      console.warn("    downloadSbom: failed to parse oras discover output");
-      return null;
-    }
-
-    const sbomReferrer = referrers.find(
-      (r) =>
-        r?.artifactType === "application/vnd.spdx+json" ||
-        r?.mediaType === "application/vnd.spdx+json",
-    );
-
-    if (!sbomReferrer) {
-      console.warn(`    downloadSbom: no SPDX referrer found for ${resolvedRef}`);
-      return null;
-    }
-
-    const sbomDigest = sbomReferrer.digest;
-    if (!sbomDigest) {
-      console.warn("    downloadSbom: referrer has no digest");
-      return null;
-    }
-
-    // Step 2: pull SBOM into temp directory
-    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "bluefin-sbom-"));
-    const sbomRef = `${repoRef}@${sbomDigest}`;
-
-    await execFileAsync("oras", ["pull", sbomRef, "--output", tmpDir], {
-      env: { ...process.env },
-      maxBuffer: 8 * 1024 * 1024,
-      timeout: 120000,
-    });
-
-    // SBOM file may be named sbom.json or spdx.json
-    const candidates = ["sbom.json", "spdx.json"];
-    for (const candidate of candidates) {
-      const candidate_path = path.join(tmpDir, candidate);
-      if (fs.existsSync(candidate_path)) {
-        return candidate_path;
-      }
-    }
-
-    // Fallback: find first .json file in tmpdir
-    const files = fs.readdirSync(tmpDir).filter((f) => f.endsWith(".json"));
-    if (files.length > 0) {
-      return path.join(tmpDir, files[0]);
-    }
-
-    console.warn("    downloadSbom: no JSON file found after oras pull");
-    return null;
-  } catch (err) {
-    console.warn(`    downloadSbom: error — ${err.message}`);
-    return null;
-  }
-  // Note: tmpDir cleanup happens in the caller (extractPackageVersions wrapper)
-}
-
-/**
- * Compare two RPM-style version strings numerically by segment.
- * Returns negative if a < b, positive if a > b, 0 if equal.
- * Example: "6.18.2-200.fc43" vs "6.18.13-200.fc43" → "6.18.2" < "6.18.13"
- */
-function compareRpmVersions(a, b) {
-  // Split on non-alphanumeric boundaries, compare each segment numerically if possible
-  const segA = a.split(/[.\-~]/).filter(Boolean);
-  const segB = b.split(/[.\-~]/).filter(Boolean);
-  const len = Math.max(segA.length, segB.length);
-  for (let i = 0; i < len; i++) {
-    const sa = segA[i] || "0";
-    const sb = segB[i] || "0";
-    const na = parseInt(sa, 10);
-    const nb = parseInt(sb, 10);
-    if (!isNaN(na) && !isNaN(nb)) {
-      if (na !== nb) return na - nb;
-    } else {
-      const cmp = sa.localeCompare(sb);
-      if (cmp !== 0) return cmp;
-    }
-  }
-  return 0;
-}
-
-/**
- * Strip RPM epoch prefix ("1:") from a version string.
- * "1:25.3.6-6.fc43" → "25.3.6-6.fc43"
- */
-function stripEpoch(version) {
-  if (!version) return version;
-  return version.replace(/^\d+:/, "");
-}
-
-/**
- * Strip RPM release/dist suffix from non-kernel version strings.
- * RPM NEVRA: Name-Epoch:Version-Release.Dist — after stripEpoch we have "Version-Release.Dist".
- * For display purposes only the upstream Version matters (e.g. "49.5", not "49.5-100.el10gnomeqr.el10").
- * Kernel versions intentionally retain their release ("6.12.0-224.el10") since the build
- * number and dist tag are part of the kernel's meaningful identity.
- *
- * @param {string} version - already epoch-stripped RPM version string
- * @returns {string}
- */
-function stripRpmRelease(version) {
-  if (!version) return version;
-  const dash = version.indexOf("-");
-  if (dash === -1) return version;
-  return version.slice(0, dash);
-}
-
-// ---------------------------------------------------------------------------
-// BST SPDX extraction (Dakota/BuildStream images)
-// ---------------------------------------------------------------------------
-
-/**
- * Check whether a version string looks like a semantic version
- * (starts with digits.digits, not a bare git SHA or empty).
- * Used to filter BST SPDX packages: many packages have SHA or empty versionInfo.
- *
- * Examples that pass:  "50.0", "6.19.11", "26.0.5", "1.6.1", "5.8.2"
- * Examples that fail:  "c9372e733d75cf...", "", undefined, "abc123"
- */
-function isSemverLike(version) {
-  if (!version || typeof version !== "string") return false;
-  if (version.length > 40) return false; // likely a full git SHA
-  return /^\d+\.\d+/.test(version);
-}
-
-/**
- * Maps a BST package name + BST element path suffix to a PackageVersions field.
- * The suffix match uses endsWith() so it works across both freedesktop-sdk.bst:
- * and gnome-build-meta.bst: junction prefixes.
- *
- * Order matters: the first matching entry wins.
- */
-const BST_PACKAGE_MAP = [
-  { name: "gnome-shell", bstSuffix: "core/gnome-shell.bst", field: "gnome" },
-  // components/linux.bst is the actual running kernel; linux-headers.bst is build-only.
-  { name: "linux", bstSuffix: "components/linux.bst", field: "kernel" },
-  { name: "mesa", bstSuffix: "extensions/mesa/mesa.bst", field: "mesa" },
-  { name: "pipewire", bstSuffix: "components/pipewire-base.bst", field: "pipewire" },
-  { name: "podman", bstSuffix: "components/podman.bst", field: "podman" },
-  { name: "flatpak", bstSuffix: "components/flatpak.bst", field: "flatpak" },
-  {
-    name: "systemd",
-    bstSuffix: "core-deps/systemd-base.bst",
-    field: "systemd",
-  },
-];
-
-/**
- * Extract package versions from a BuildStream SPDX (BST SPDX) object.
- *
- * BST SPDX differences from RPM SPDX:
- *  - externalRefs use referenceType="bst-element" instead of pkg:rpm/ PURLs
- *  - Multiple SPDX packages may share the same name (one per BST element that
- *    produces that component, plus Rust crates with identical names)
- *  - Disambiguation uses the bst-element referenceLocator path suffix
- *  - No fedora-release package: fedora stays null (GNOME OS base, not Fedora)
- *  - No epoch prefixes to strip
- *
- * @param {object} sbom  Parsed SPDX JSON object
- * @returns {object}     PackageVersions with the same shape as RPM extraction
- */
-function extractBstPackageVersions(sbom) {
-  const pkgs = sbom.packages || [];
-
-  const result = {
-    kernel: null,
-    gnome: null,
-    mesa: null,
-    podman: null,
-    systemd: null,
-    bootc: null,
-    fedora: null, // always null — Dakota is GNOME OS based, not Fedora
-    pipewire: null,
-    flatpak: null,
-    /** Flat name→version map for all BST components with semver versions. */
-    allPackages: /** @type {Record<string, string>} */ ({}),
-  };
-
-  for (const pkg of pkgs) {
-    const name = pkg?.name;
-    const ver = pkg?.versionInfo;
-    if (!name || !isSemverLike(ver)) continue;
-
-    const bstRefs = (pkg?.externalRefs || []).filter(
-      (r) => r?.referenceType === "bst-element",
-    );
-    if (bstRefs.length === 0) continue;
-
-    // Populate allPackages for every BST component with a semver version.
-    // Use the first semver version found per name (later entries may be aliases).
-    if (!result.allPackages[name]) {
-      result.allPackages[name] = ver;
-    }
-
-    // Map to named version fields using BST element path suffix.
-    for (const { name: mapName, bstSuffix, field } of BST_PACKAGE_MAP) {
-      if (name !== mapName) continue;
-      if (result[field]) continue; // already populated
-      const matchingRef = bstRefs.find((r) =>
-        r?.referenceLocator?.endsWith(bstSuffix),
-      );
-      if (matchingRef) {
-        result[field] = ver;
-      }
-    }
-  }
-
-  const populated = Object.keys(result.allPackages).length;
-  console.log(
-    `    extractPackageVersions: BST SPDX format (${sbom.spdxVersion}), ` +
-      `${populated} BST components with semver versions. ` +
-      `gnome=${result.gnome} kernel=${result.kernel} mesa=${result.mesa}`,
-  );
-
-  return result;
-}
-
-// ---------------------------------------------------------------------------
 // Latest-tag stream processing (Dakota)
 // ---------------------------------------------------------------------------
-
-/**
- * Derive a YYYYMMDD date string from an OCI image's creation timestamp.
- *
- * Strategy (in order):
- *  1. Manifest-level `annotations["org.opencontainers.image.created"]`
- *  2. Image config blob `.created` field (bootc images store it here, not
- *     in manifest annotations)
- *
- * @param {string} imageRef  Full image reference (e.g. ghcr.io/org/pkg:latest)
- * @returns {Promise<string|null>}  "YYYYMMDD" or null
- */
-async function getImageCreatedDate(imageRef) {
-  try {
-    const manifestResult = await execFileAsync(
-      "oras",
-      ["manifest", "fetch", imageRef],
-      { env: { ...process.env }, maxBuffer: 256 * 1024, timeout: 30000 },
-    );
-    const manifest = JSON.parse(manifestResult.stdout);
-
-    // Strategy 1: manifest-level annotation (common in Syft-attested images).
-    const annotationDate = manifest?.annotations?.["org.opencontainers.image.created"];
-    if (annotationDate) {
-      return annotationDate.slice(0, 10).replace(/-/g, "");
-    }
-
-    // Strategy 2: image config blob `.created` (bootc/BuildStream images).
-    const configDigest = manifest?.config?.digest;
-    if (!configDigest) return null;
-    const imageRepo = imageRef.split(":")[0];
-    const configResult = await execFileAsync(
-      "oras",
-      ["blob", "fetch", "--output", "-", `${imageRepo}@${configDigest}`],
-      { env: { ...process.env }, maxBuffer: 1024 * 1024, timeout: 30000 },
-    );
-    const config = JSON.parse(configResult.stdout);
-    const configDate = config?.created;
-    if (configDate) {
-      return configDate.slice(0, 10).replace(/-/g, "");
-    }
-
-    return null;
-  } catch {
-    return null;
-  }
-}
 
 /**
  * Process a stream that uses a :latest floating tag instead of date-based tags.
@@ -1084,241 +411,9 @@ async function processLatestTagStream(spec, existing) {
   };
 }
 
-/**
- * Extract package versions from a Syft SBOM JSON file.
- * Returns a PackageVersions object or null on parse failure.
- *
- * Package mapping:
- *   kernel   → name == "kernel", pick lowest semver (booted kernel, not the newer alongside)
- *   gnome    → name == "gnome-shell"
- *   mesa     → name == "mesa-filesystem", strip epoch prefix
- *   podman   → name == "podman"
- *   systemd  → name == "systemd"
- *   bootc    → name == "bootc"
- *   fedora   → name == "fedora-release-common", extract leading digits → "F" + digits
- *
- * Also collects allPackages: a flat {name: version} map of every RPM artifact.
- * This enables per-release diff computation in fetch-firehose.js without
- * additional network calls at build time.
- */
-function extractPackageVersions(sbomPath) {
-  if (!sbomPath) return null;
-
-  let sbom;
-  try {
-    const raw = fs.readFileSync(sbomPath, "utf-8");
-    sbom = JSON.parse(raw);
-  } catch (err) {
-    console.warn(
-      `    extractPackageVersions: failed to parse SBOM — ${err.message}`,
-    );
-    return null;
-  }
-
-  // Detect SBOM format.
-  //
-  // Syft JSON (stable/daily streams): top-level `artifacts` array; each entry
-  //   has a `type` field ("rpm", "deb", etc.).
-  //
-  // SPDX JSON (LTS/GDX streams): top-level `packages` array with `spdxVersion`
-  //   present; RPM packages are identified by a pkg:rpm/ PURL in externalRefs.
-  //   Normalise to the same {name, version, type} shape before processing.
-  //
-  // BST SPDX (Dakota): SPDX with `bst-element` externalRefs instead of pkg:rpm/
-  //   PURLs. Generated by buildstream-sbom from the BuildStream element graph.
-  //   Packages represent BST elements, not RPM packages. Extraction uses
-  //   (name, BST element path suffix) pairs to disambiguate between components
-  //   that share a name (e.g. the `linux` kernel element vs. Rust `linux` crates).
-  const isSpdx = Array.isArray(sbom?.packages) && typeof sbom?.spdxVersion === "string";
-  const isBstSpdx =
-    isSpdx &&
-    (sbom.packages || []).some((pkg) =>
-      (pkg?.externalRefs || []).some((r) => r?.referenceType === "bst-element"),
-    );
-
-  if (isBstSpdx) {
-    return extractBstPackageVersions(sbom);
-  }
-
-  let artifacts;
-  if (isSpdx) {
-    artifacts = (sbom.packages || [])
-      .filter((pkg) => {
-        const refs = pkg?.externalRefs || [];
-        return refs.some(
-          (r) =>
-            r?.referenceCategory === "PACKAGE-MANAGER" &&
-            r?.referenceLocator?.startsWith("pkg:rpm/"),
-        );
-      })
-      .map((pkg) => ({
-        name: pkg.name,
-        version: pkg.versionInfo,
-        type: "rpm",
-      }));
-    console.log(
-      `    extractPackageVersions: SPDX format (${sbom.spdxVersion}), ${artifacts.length} RPM packages`,
-    );
-  } else {
-    artifacts = sbom?.artifacts;
-  }
-
-  if (!Array.isArray(artifacts)) {
-    console.warn("    extractPackageVersions: no artifacts array in SBOM");
-    return null;
-  }
-
-  // Only RPM artifacts
-  const rpms = artifacts.filter((a) => a?.type === "rpm");
-
-  const result = {
-    kernel: null,
-    gnome: null,
-    mesa: null,
-    podman: null,
-    systemd: null,
-    bootc: null,
-    fedora: null,
-    pipewire: null,
-    flatpak: null,
-    /** Flat name→version map of every RPM in the image */
-    allPackages: /** @type {Record<string, string>} */ ({}),
-  };
-
-  // Collect all kernel versions to pick the lowest (booted kernel)
-  const kernelVersions = [];
-
-  for (const pkg of rpms) {
-    const name = pkg?.name;
-    const version = pkg?.version;
-    if (!name || !version) continue;
-
-    // Capture every RPM for diff computation, epoch+release-stripped.
-    // kernel is handled specially below (multi-version dedup) — skip here.
-    if (name !== "kernel") {
-      result.allPackages[name] = stripRpmRelease(stripEpoch(String(version)));
-    }
-
-    switch (name) {
-      case "kernel":
-        kernelVersions.push(stripEpoch(String(version)));
-        break;
-      case "gnome-shell":
-        if (!result.gnome) result.gnome = stripRpmRelease(stripEpoch(String(version)));
-        break;
-      case "mesa-filesystem":
-        if (!result.mesa) result.mesa = stripRpmRelease(stripEpoch(String(version)));
-        break;
-      case "podman":
-        if (!result.podman) result.podman = stripRpmRelease(stripEpoch(String(version)));
-        break;
-      case "systemd":
-        if (!result.systemd) result.systemd = stripRpmRelease(stripEpoch(String(version)));
-        break;
-      case "bootc":
-        if (!result.bootc) result.bootc = stripRpmRelease(stripEpoch(String(version)));
-        break;
-      case "pipewire":
-        if (!result.pipewire) result.pipewire = stripRpmRelease(stripEpoch(String(version)));
-        break;
-      case "flatpak":
-        if (!result.flatpak) result.flatpak = stripRpmRelease(stripEpoch(String(version)));
-        break;
-      case "fedora-release-common": {
-        if (!result.fedora) {
-          // Strip any epoch prefix, then extract leading integer
-          const stripped = stripEpoch(String(version));
-          const fedoraMatch = stripped.match(/^(\d+)/);
-          if (fedoraMatch) {
-            result.fedora = `F${fedoraMatch[1]}`;
-          }
-        }
-        break;
-      }
-    }
-  }
-
-  // Pick the lowest kernel version (the booted kernel, not a newer pending update)
-  if (kernelVersions.length === 0) {
-    console.warn("    extractPackageVersions: no kernel RPM found in SBOM");
-  } else {
-    if (kernelVersions.length > 1) {
-      console.log(
-        `    extractPackageVersions: found ${kernelVersions.length} kernel versions, picking lowest`,
-      );
-    }
-    kernelVersions.sort(compareRpmVersions);
-    result.kernel = kernelVersions[0];
-    // Write the correctly-picked (lowest/booted) kernel into allPackages so diff
-    // comparisons use the same value as the displayed chip.
-    result.allPackages["kernel"] = stripEpoch(kernelVersions[0]);
-  }
-
-  console.log(
-    `    extractPackageVersions: captured ${Object.keys(result.allPackages).length} RPM packages`,
-  );
-
-  return result;
-}
-
 // ---------------------------------------------------------------------------
 // Per-stream scanning
 // ---------------------------------------------------------------------------
-
-/**
-/**
- * Filter a list of GHCR tag strings to find recent dated tags for a given stream.
- *
- * @param {string[]} ghcrTags  Raw tag strings from fetchGhcrTags().
- * @param {object}   spec      Stream spec from STREAM_SPECS.
- * @returns {Array<{tag, cacheKey, dateStr, imageRef, publishedAt}>}
- */
-function findRecentTagsForStream(ghcrTags, spec) {
-  const cutoff = Date.now() - LOOKBACK_DAYS * 24 * 60 * 60 * 1000;
-  const found = [];
-
-  for (const tagName of ghcrTags) {
-    const normalised = normaliseLtsTag(tagName.toLowerCase());
-    if (!normalised.startsWith(`${spec.streamPrefix}-`)) continue;
-    const dateStr = extractDateFromTag(normalised);
-    if (!dateStr) continue;
-
-    // Enforce canonical tag: only exact `<streamPrefix>-YYYYMMDD` is accepted.
-    const expectedCanonical = `${spec.streamPrefix}-${dateStr}`;
-    if (normalised !== expectedCanonical) continue;
-
-    // Tags from GHCR have no publishedAt — derive from the date string.
-    const year = dateStr.slice(0, 4);
-    const month = dateStr.slice(4, 6);
-    const day = dateStr.slice(6, 8);
-    const publishedAt = `${year}-${month}-${day}T00:00:00Z`;
-    const publishedMs = Date.parse(publishedAt);
-    if (isNaN(publishedMs) || publishedMs < cutoff) continue;
-
-    found.push({
-      tag: normalised,
-      cacheKey: buildCacheKey(spec.streamPrefix, dateStr),
-      dateStr,
-      imageRef: `ghcr.io/${spec.org}/${spec.package}:${tagName}`,
-      publishedAt,
-    });
-  }
-
-  // Deduplicate by cacheKey (keep first/most-recent encounter)
-  const seen = new Set();
-  const unique = [];
-  for (const entry of found) {
-    if (!seen.has(entry.cacheKey)) {
-      seen.add(entry.cacheKey);
-      unique.push(entry);
-    }
-  }
-
-  // Sort descending by dateStr (YYYYMMDD sorts lexicographically)
-  unique.sort((a, b) => b.dateStr.localeCompare(a.dateStr));
-
-  return unique.slice(0, MAX_RELEASES);
-}
 
 /**
  * Build the result object for a single stream.
@@ -1330,8 +425,6 @@ function findRecentTagsForStream(ghcrTags, spec) {
  */
 async function processStream(spec, ghcrTagsByImage, existing) {
   // Dakota uses a :latest floating tag instead of date-based release tags.
-  // Delegate to the dedicated latest-tag processor which has different cache
-  // key logic and skips findRecentTagsForStream() entirely.
   if (spec.usesLatestTag) {
     return processLatestTagStream(spec, existing);
   }
@@ -1358,20 +451,13 @@ async function processStream(spec, ghcrTagsByImage, existing) {
   const releases = {};
   for (const { tag, cacheKey, imageRef } of recentTags) {
     // Cache hit: reuse if digest matches AND packageVersions is already populated.
-    // If packageVersions is null (e.g. SBOM download previously failed), retry.
     const existingEntry = existing?.streams?.[spec.id]?.releases?.[cacheKey];
     const hasVersions = existingEntry?.packageVersions != null;
-    // allPackages may be absent from entries cached before this feature was added —
-    // treat missing allPackages as a cache miss so the SBOM is re-downloaded.
     const hasAllPackages =
       existingEntry?.packageVersions?.allPackages != null &&
       Object.keys(existingEntry.packageVersions.allPackages).length > 0;
     const isVerified = existingEntry?.attestation?.verified === true;
 
-    // For keyless streams: require attestation.verified AND packageVersions.
-    // For key-based streams (LTS/GDX): attestation.verified is always false because
-    // verifyAttestation() uses OIDC keyless — key-based signing never passes it.
-    // For these streams, treat having populated packageVersions as a valid cache hit.
     const isCacheHit = !FORCE_REFRESH && hasVersions && hasAllPackages &&
       (spec.keyless ? isVerified : true);
 
@@ -1383,8 +469,7 @@ async function processStream(spec, ghcrTagsByImage, existing) {
       continue;
     }
 
-    // Partial cache hit: attestation already verified (keyless) but SBOM not yet downloaded,
-    // or allPackages was missing from an older cache entry — re-download SBOM only.
+    // Partial cache hit: attestation already verified (keyless) but SBOM not yet downloaded.
     let attestation;
     if (!FORCE_REFRESH && isVerified && (!hasVersions || (hasVersions && !hasAllPackages))) {
       console.log(
@@ -1481,7 +566,6 @@ async function main() {
   }
 
   // Deduplicate by GHCR image — multiple streams share the same image
-  // (e.g. bluefin-stable and bluefin-dx-stable both pull from ublue-os/bluefin).
   const uniqueImages = new Set(STREAM_SPECS.map((s) => `${s.org}/${s.package}`));
 
   console.log(
@@ -1497,8 +581,6 @@ async function main() {
       console.log(`    ${tags.length} GHCR tags fetched`);
     } catch (err) {
       console.error(`  Failed to fetch GHCR tags for ${imageKey}: ${err.message}`);
-      // Leave the key absent so processStream detects the failure
-      // and preserves the existing cache instead of producing an empty stream.
     }
   }
 
@@ -1519,10 +601,7 @@ async function main() {
     }
   }
 
-  // Empty-cache guard: if every stream produced zero releases, something is
-  // wrong (likely all Releases API fetches failed). Exit non-zero so the GHA
-  // workflow marks the step as failed instead of silently overwriting with an
-  // empty cache.
+  // Empty-cache guard
   const totalReleases = Object.values(streams).reduce(
     (sum, s) => sum + Object.keys(s?.releases || {}).length,
     0,
@@ -1543,31 +622,14 @@ async function main() {
     streams,
   };
 
-  // Atomic write: write to temp file then rename to avoid truncated JSON on interrupt
-  const outDir = path.dirname(OUTPUT_FILE);
-  if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
-  const tmpFile = OUTPUT_FILE + ".tmp";
-  fs.writeFileSync(tmpFile, JSON.stringify(output, null, 2), "utf-8");
-  fs.renameSync(tmpFile, OUTPUT_FILE);
+  // Write full SBOM cache
+  atomicWriteJson(OUTPUT_FILE, output);
   console.log(`\nSBOM attestation cache written to ${OUTPUT_FILE}`);
 
-  // Write slim frontend copy — strips allPackages from every release so the
-  // JS bundle only includes packageVersions + attestation (not full RPM lists).
-  const frontendStreams = {};
-  for (const [streamId, stream] of Object.entries(streams)) {
-    const slimReleases = {};
-    for (const [key, entry] of Object.entries(stream.releases || {})) {
-      // Strip allPackages from packageVersions — it's ~60KB per release and
-      // the frontend only needs the named versions (kernel, gnome, mesa, etc.)
-      const { allPackages: _dropped, ...slimPkgVersions } = entry.packageVersions || {};
-      slimReleases[key] = { ...entry, packageVersions: slimPkgVersions };
-    }
-    frontendStreams[streamId] = { ...stream, releases: slimReleases };
-  }
+  // Write slim frontend copy — strips allPackages from every release
+  const frontendStreams = buildSlimFrontendStreams(streams);
   const frontendOutput = { ...output, streams: frontendStreams };
-  const tmpFrontend = FRONTEND_OUTPUT_FILE + ".tmp";
-  fs.writeFileSync(tmpFrontend, JSON.stringify(frontendOutput, null, 2), "utf-8");
-  fs.renameSync(tmpFrontend, FRONTEND_OUTPUT_FILE);
+  atomicWriteJson(FRONTEND_OUTPUT_FILE, frontendOutput);
   console.log(`SBOM frontend slim cache written to ${FRONTEND_OUTPUT_FILE}`);
 }
 
