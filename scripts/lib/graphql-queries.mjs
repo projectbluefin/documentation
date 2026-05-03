@@ -5,6 +5,10 @@
  */
 
 import { graphql } from "@octokit/graphql";
+import { createRequire } from "module";
+
+const require = createRequire(import.meta.url);
+const { retryWithBackoff } = require("./request-queue.js");
 
 /**
  * GraphQL query definition for Projects V2
@@ -106,54 +110,6 @@ const graphqlWithAuth = graphql.defaults({
     authorization: `token ${process.env.GITHUB_TOKEN || process.env.GH_TOKEN}`,
   },
 });
-
-/**
- * Helper function to handle network retry with exponential backoff
- *
- * @param {Function} fn - Async function to retry
- * @param {number} maxRetries - Maximum retry attempts (default: 3)
- * @returns {Promise<any>} Result from successful function call
- */
-async function retryWithBackoff(fn, maxRetries = 3) {
-  let lastError;
-
-  for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    try {
-      return await fn();
-    } catch (error) {
-      lastError = error;
-
-      // Don't retry on authentication or rate limit errors
-      if (error.status === 401 || error.status === 403) {
-        throw error;
-      }
-
-      // Retry on network errors
-      const isNetworkError =
-        error.code === "ECONNRESET" ||
-        error.code === "ETIMEDOUT" ||
-        error.code === "ENOTFOUND" ||
-        error.code === "EAI_AGAIN" ||
-        error.message?.includes("socket hang up") ||
-        error.message?.includes("timeout");
-
-      if (isNetworkError && attempt < maxRetries) {
-        const delay = Math.pow(2, attempt) * 1000; // 2s, 4s, 8s
-        console.log(
-          `Retry ${attempt}/${maxRetries} after network error: ${error.message || error.code}`,
-        );
-        console.log(`Waiting ${delay}ms before retry...`);
-        await new Promise((resolve) => setTimeout(resolve, delay));
-        continue;
-      }
-
-      // If not a network error or max retries reached, throw
-      throw error;
-    }
-  }
-
-  throw lastError;
-}
 
 /**
  * Fetch project items with pagination support and retry logic

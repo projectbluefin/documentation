@@ -2,6 +2,10 @@ const fs = require("fs");
 const path = require("path");
 const yaml = require("js-yaml");
 const glob = require("glob");
+const {
+  sequentialFetchWithDelay,
+  githubHeaders,
+} = require("./lib/request-queue");
 
 const REPO_ROOT = path.join(__dirname, "..");
 
@@ -166,14 +170,7 @@ const GITHUB_TOKEN = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
 
 async function fetchProfile(username) {
   const url = `https://api.github.com/users/${username}`;
-
-  const headers = {
-    "User-Agent": "Bluefin-Docs-Build",
-  };
-
-  if (GITHUB_TOKEN) {
-    headers["Authorization"] = `Bearer ${GITHUB_TOKEN}`;
-  }
+  const headers = githubHeaders(GITHUB_TOKEN);
 
   try {
     const response = await fetch(url, { headers });
@@ -363,16 +360,15 @@ async function fetchAllProfiles() {
   // Start with existing profiles and overlay fresh fetches
   const profiles = force ? {} : { ...existingProfiles };
 
-  for (const username of usernamestoFetch) {
-    console.log(`Fetching ${username}...`);
-    const profile = await fetchProfile(username);
-
-    if (profile) {
-      profiles[username] = profile;
-    }
-
-    // Small delay to be nice to GitHub's API
-    await new Promise((resolve) => setTimeout(resolve, 100));
+  const fetchedMap = await sequentialFetchWithDelay(
+    usernamestoFetch,
+    async (username) => {
+      console.log(`Fetching ${username}...`);
+      return fetchProfile(username);
+    },
+  );
+  for (const [username, profile] of fetchedMap) {
+    profiles[username] = profile;
   }
 
   const fetched = Object.keys(profiles).length;

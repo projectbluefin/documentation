@@ -1,5 +1,9 @@
 const fs = require("fs");
 const path = require("path");
+const {
+  sequentialFetchWithDelay,
+  githubHeaders,
+} = require("./lib/request-queue");
 
 const OUTPUT_DIR = path.join(__dirname, "..", "static", "data");
 const OUTPUT_FILE = path.join(OUTPUT_DIR, "file-contributors.json");
@@ -37,14 +41,7 @@ function isBotAccount(login) {
 
 async function fetchCommits(filePath) {
   const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/commits?path=${filePath}`;
-
-  const headers = {
-    "User-Agent": "Bluefin-Docs-Build",
-  };
-
-  if (GITHUB_TOKEN) {
-    headers["Authorization"] = `Bearer ${GITHUB_TOKEN}`;
-  }
+  const headers = githubHeaders(GITHUB_TOKEN);
 
   try {
     const response = await fetch(url, { headers });
@@ -145,21 +142,17 @@ async function fetchAllContributors() {
     `Found ${allFiles.length} files to process (${docFiles.length} docs, ${blogFiles.length} blog)`,
   );
 
-  const contributorsData = {};
-  let successCount = 0;
+  const resultsMap = await sequentialFetchWithDelay(
+    allFiles,
+    async (filePath) => {
+      console.log(`Fetching contributors for ${filePath}...`);
+      const contributors = await fetchCommits(filePath);
+      return contributors.length > 0 ? contributors : null;
+    },
+  );
 
-  for (const filePath of allFiles) {
-    console.log(`Fetching contributors for ${filePath}...`);
-    const contributors = await fetchCommits(filePath);
-
-    if (contributors.length > 0) {
-      contributorsData[filePath] = contributors;
-      successCount++;
-    }
-
-    // Small delay to be nice to GitHub's API
-    await new Promise((resolve) => setTimeout(resolve, 100));
-  }
+  const contributorsData = Object.fromEntries(resultsMap);
+  const successCount = resultsMap.size;
 
   console.log(
     `\nSuccessfully fetched contributors for ${successCount}/${allFiles.length} files`,
