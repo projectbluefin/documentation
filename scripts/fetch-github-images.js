@@ -47,7 +47,7 @@ const PRODUCT_SPECS = [
     nvidiaPackage: "bluefin-nvidia-open",
     allowTestingStreams: false,
     isoSectionLink: "/downloads#bluefin",
-    supportedArches: ["amd", "intel", "arm"],
+    supportedArches: ["amd", "intel"],
   },
   {
     id: "ublue-bluefin-dx",
@@ -63,7 +63,7 @@ const PRODUCT_SPECS = [
     nvidiaPackage: "bluefin-dx-nvidia-open",
     allowTestingStreams: false,
     isoSectionLink: "/downloads#bluefin",
-    supportedArches: ["amd", "intel", "arm"],
+    supportedArches: ["amd", "intel"],
   },
   {
     id: "ublue-bluefin-lts",
@@ -81,7 +81,7 @@ const PRODUCT_SPECS = [
     allowTestingStreams: true,
     keepEvenIfStale: true,
     isoSectionLink: "/downloads#bluefin-lts",
-    supportedArches: ["amd", "intel", "arm"],
+    supportedArches: ["amd", "intel"],
   },
   {
     id: "ublue-bluefin-dx-lts",
@@ -99,7 +99,7 @@ const PRODUCT_SPECS = [
     allowTestingStreams: true,
     keepEvenIfStale: true,
     isoSectionLink: "/downloads#bluefin-lts",
-    supportedArches: ["amd", "intel", "arm"],
+    supportedArches: ["amd", "intel"],
   },
   {
     id: "ublue-bluefin-gdx",
@@ -115,7 +115,7 @@ const PRODUCT_SPECS = [
     keepEvenIfStale: true,
     allowTestingStreams: true,
     isoSectionLink: "/downloads#bluefin-gdx",
-    supportedArches: ["nvidia", "arm"],
+    supportedArches: ["nvidia"],
   },
   {
     id: "projectbluefin-dakota",
