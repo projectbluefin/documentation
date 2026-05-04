@@ -120,3 +120,31 @@ aside.col--3 + main {
 [data-theme="dark"] .blog-post-subtitle {
   color: var(--ifm-color-emphasis-500);
 }
+
+/* ── Uniform page scrolling — no independent sidebar scrollbars ─────────── */
+/* Docusaurus defaults give the doc sidebar viewport and both the TOC and    */
+/* blog sidebar their own overflow-y: auto scroll containers. This makes the  */
+/* page scroll non-uniformly. Override to a single unified scroll.           */
+
+/* Doc left sidebar — sticky viewport container */
+.theme-doc-sidebar-container > div {
+  max-height: none !important;
+  overflow-y: visible !important;
+}
+
+/* Doc left sidebar — inner nav.menu */
+nav.menu.thin-scrollbar {
+  overflow-y: visible !important;
+}
+
+/* Doc right sidebar (TOC) */
+.theme-doc-toc-desktop {
+  max-height: none !important;
+  overflow-y: visible !important;
+}
+
+/* Blog left sidebar */
+aside.col--3 nav.thin-scrollbar {
+  max-height: none !important;
+  overflow-y: visible !important;
+}
