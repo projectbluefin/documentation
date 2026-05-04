@@ -289,6 +289,16 @@ const STREAM_SPECS = [
     keyless: true,
   },
   {
+    id: "bluefin-nvidia-open-stable",
+    label: "Bluefin Nvidia Open Stable",
+    org: "ublue-os",
+    package: "bluefin-nvidia-open",
+    releasesRepo: "ublue-os/bluefin",
+    streamPrefix: "stable",
+    keyRepo: "ublue-os/bluefin",
+    keyless: true,
+  },
+  {
     id: "dakota-latest",
     label: "Dakota Latest",
     org: "projectbluefin",
