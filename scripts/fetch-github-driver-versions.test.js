@@ -5,6 +5,7 @@ const {
   lookupSbomVersionsForTag,
   rowFromSbomRelease,
   buildStreamFromSbom,
+  buildNvidiaMapFromSbomStream,
   buildGdxNvidiaByTagFromSbom,
 } = require("./fetch-github-driver-versions.js");
 
@@ -111,4 +112,32 @@ test("buildGdxNvidiaByTagFromSbom builds nvidia map from GDX packageVersions", (
   assert.equal(map["lts-20260502"], "595.71.05");
   assert.equal(map["lts-20260425"], "570.144.03");
   assert.equal(map["lts-20260418"], undefined, "no nvidia entry when packageVersions.nvidia is absent");
+});
+
+test("buildNvidiaMapFromSbomStream builds nvidia map from bluefin-nvidia-open-stable", () => {
+  const cache = {
+    streams: {
+      "bluefin-nvidia-open-stable": {
+        releases: {
+          "stable-20260501": {
+            tag: "stable-20260501",
+            packageVersions: { kernel: "6.14.4-300", nvidia: "595.71.05" },
+          },
+          "stable-20260425": {
+            tag: "stable-20260425",
+            packageVersions: { kernel: "6.14.3-300", nvidia: "570.144.03" },
+          },
+          "stable-20260418": {
+            tag: "stable-20260418",
+            packageVersions: { kernel: "6.14.2-300" },
+          },
+        },
+      },
+    },
+  };
+
+  const map = buildNvidiaMapFromSbomStream(cache, "bluefin-nvidia-open-stable");
+  assert.equal(map["stable-20260501"], "595.71.05");
+  assert.equal(map["stable-20260425"], "570.144.03");
+  assert.equal(map["stable-20260418"], undefined, "no nvidia entry when packageVersions.nvidia is absent");
 });

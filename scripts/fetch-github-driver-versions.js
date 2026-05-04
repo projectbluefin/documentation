@@ -150,16 +150,13 @@ function buildStreamFromSbom(
 }
 
 /**
- * Build an nvidia version lookup map from bluefin-gdx-lts SBOM data.
- * After parser.js extracts nvidia-driver, packageVersions.nvidia is populated
- * for each GDX release. Returns a {cacheKey: version} map keyed by the same
- * date keys used in the LTS stream (e.g. "lts-20260502"), so buildStreamFromSbom
- * for the LTS stream can use it as nvidiaByTag.
+ * Build an nvidia version lookup map keyed by date tag from a named SBOM stream.
  * @param {object} sbomCache
+ * @param {string} streamId  e.g. "bluefin-gdx-lts" or "bluefin-nvidia-open-stable"
  * @returns {Record<string, string>}
  */
-function buildGdxNvidiaByTagFromSbom(sbomCache) {
-  const releases = sbomCache?.streams?.["bluefin-gdx-lts"]?.releases || {};
+function buildNvidiaMapFromSbomStream(sbomCache, streamId) {
+  const releases = sbomCache?.streams?.[streamId]?.releases || {};
   const map = {};
   for (const [cacheKey, entry] of Object.entries(releases)) {
     const version = entry?.packageVersions?.nvidia;
@@ -169,6 +166,19 @@ function buildGdxNvidiaByTagFromSbom(sbomCache) {
     if (tag && tag !== cacheKey) map[tag] = version;
   }
   return map;
+}
+
+/**
+ * Build an nvidia version lookup map from bluefin-gdx-lts SBOM data.
+ * After parser.js extracts nvidia-driver, packageVersions.nvidia is populated
+ * for each GDX release. Returns a {cacheKey: version} map keyed by the same
+ * date keys used in the LTS stream (e.g. "lts-20260502"), so buildStreamFromSbom
+ * for the LTS stream can use it as nvidiaByTag.
+ * @param {object} sbomCache
+ * @returns {Record<string, string>}
+ */
+function buildGdxNvidiaByTagFromSbom(sbomCache) {
+  return buildNvidiaMapFromSbomStream(sbomCache, "bluefin-gdx-lts");
 }
 
 async function main() {
@@ -199,13 +209,16 @@ async function main() {
   const gdxNvidiaByTag = buildGdxNvidiaByTagFromSbom(sbomCache);
   console.log(`GDX nvidia map: ${Object.keys(gdxNvidiaByTag).length} entries`);
 
+  const nvidiaOpenStableByTag = buildNvidiaMapFromSbomStream(sbomCache, "bluefin-nvidia-open-stable");
+  console.log(`Nvidia-open stable map: ${Object.keys(nvidiaOpenStableByTag).length} entries`);
+
   const stableStream = buildStreamFromSbom(
     "bluefin-stable",
     "Bluefin",
     "Current stable stream from ublue-os/bluefin.",
     "sudo bootc switch ghcr.io/ublue-os/bluefin:stable --enforce-container-sigpolicy",
     sbomCache,
-    {},
+    nvidiaOpenStableByTag,
   );
 
   const ltsStream = buildStreamFromSbom(
@@ -258,5 +271,6 @@ module.exports = {
   lookupSbomVersionsForTag,
   rowFromSbomRelease,
   buildStreamFromSbom,
+  buildNvidiaMapFromSbomStream,
   buildGdxNvidiaByTagFromSbom,
 };

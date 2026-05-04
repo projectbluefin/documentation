@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-03T19:31:57.819Z",
+  "generatedAt": "2026-05-04T02:24:59.393Z",
   "lookbackDays": 90,
   "maxReleasesPerStream": 10,
   "streams": {
@@ -25,16 +25,17 @@
           },
           "packageVersions": {
             "kernel": "6.19.12-200.fc43",
-            "gnome": "49.6-1.fc43",
-            "mesa": "25.3.6-6.fc43",
-            "podman": "5.8.2-1.fc43",
-            "systemd": "258.7-1.fc43",
-            "bootc": "1.15.1-1.fc43",
+            "gnome": "49.6",
+            "mesa": "25.3.6",
+            "podman": "5.8.2",
+            "systemd": "258.7",
+            "bootc": "1.15.1",
             "fedora": "F43",
-            "pipewire": "1.4.11-1.fc43",
-            "flatpak": "1.16.6-1.fc43"
+            "pipewire": "1.4.11",
+            "flatpak": "1.16.6",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:21:43.852Z"
+          "checkedAt": "2026-05-04T02:16:10.522Z"
         },
         "stable-20260428": {
           "tag": "stable-20260428",
@@ -49,16 +50,17 @@
           },
           "packageVersions": {
             "kernel": "6.19.10-200.fc43",
-            "gnome": "49.6-1.fc43",
-            "mesa": "25.3.6-6.fc43",
-            "podman": "5.8.2-1.fc43",
-            "systemd": "258.7-1.fc43",
-            "bootc": "1.15.1-1.fc43",
+            "gnome": "49.6",
+            "mesa": "25.3.6",
+            "podman": "5.8.2",
+            "systemd": "258.7",
+            "bootc": "1.15.1",
             "fedora": "F43",
-            "pipewire": "1.4.11-1.fc43",
-            "flatpak": "1.16.6-1.fc43"
+            "pipewire": "1.4.11",
+            "flatpak": "1.16.6",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:21:48.143Z"
+          "checkedAt": "2026-05-04T02:16:13.921Z"
         },
         "stable-20260421": {
           "tag": "stable-20260421",
@@ -73,16 +75,17 @@
           },
           "packageVersions": {
             "kernel": "6.19.10-200.fc43",
-            "gnome": "49.6-1.fc43",
-            "mesa": "25.3.6-6.fc43",
-            "podman": "5.8.2-1.fc43",
-            "systemd": "258.7-1.fc43",
-            "bootc": "1.15.0-1.fc43",
+            "gnome": "49.6",
+            "mesa": "25.3.6",
+            "podman": "5.8.2",
+            "systemd": "258.7",
+            "bootc": "1.15.0",
             "fedora": "F43",
-            "pipewire": "1.4.11-1.fc43",
-            "flatpak": "1.16.6-1.fc43"
+            "pipewire": "1.4.11",
+            "flatpak": "1.16.6",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:21:52.430Z"
+          "checkedAt": "2026-05-04T02:16:17.272Z"
         },
         "stable-20260414": {
           "tag": "stable-20260414",
@@ -97,16 +100,17 @@
           },
           "packageVersions": {
             "kernel": "6.19.7-200.fc43",
-            "gnome": "49.5-1.fc43",
-            "mesa": "25.3.6-6.fc43",
-            "podman": "5.8.1-1.fc43",
-            "systemd": "258.7-1.fc43",
-            "bootc": "1.15.0-1.fc43",
+            "gnome": "49.5",
+            "mesa": "25.3.6",
+            "podman": "5.8.1",
+            "systemd": "258.7",
+            "bootc": "1.15.0",
             "fedora": "F43",
-            "pipewire": "1.4.11-1.fc43",
-            "flatpak": "1.16.6-1.fc43"
+            "pipewire": "1.4.11",
+            "flatpak": "1.16.6",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:21:56.481Z"
+          "checkedAt": "2026-05-04T02:16:22.317Z"
         },
         "stable-20260408": {
           "tag": "stable-20260408",
@@ -121,16 +125,17 @@
           },
           "packageVersions": {
             "kernel": "6.19.7-200.fc43",
-            "gnome": "49.5-1.fc43",
-            "mesa": "25.3.6-6.fc43",
-            "podman": "5.8.1-1.fc43",
-            "systemd": "258.7-1.fc43",
-            "bootc": "1.14.1-1.fc43",
+            "gnome": "49.5",
+            "mesa": "25.3.6",
+            "podman": "5.8.1",
+            "systemd": "258.7",
+            "bootc": "1.14.1",
             "fedora": "F43",
-            "pipewire": "1.4.11-1.fc43",
-            "flatpak": "1.16.3-1.fc43"
+            "pipewire": "1.4.11",
+            "flatpak": "1.16.3",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:22:04.954Z"
+          "checkedAt": "2026-05-04T02:16:26.776Z"
         },
         "stable-20260407": {
           "tag": "stable-20260407",
@@ -145,16 +150,17 @@
           },
           "packageVersions": {
             "kernel": "6.19.7-200.fc43",
-            "gnome": "49.5-1.fc43",
-            "mesa": "25.3.6-6.fc43",
-            "podman": "5.8.1-1.fc43",
-            "systemd": "258.7-1.fc43",
-            "bootc": "1.14.1-1.fc43",
+            "gnome": "49.5",
+            "mesa": "25.3.6",
+            "podman": "5.8.1",
+            "systemd": "258.7",
+            "bootc": "1.14.1",
             "fedora": "F43",
-            "pipewire": "1.4.11-1.fc43",
-            "flatpak": "1.16.3-1.fc43"
+            "pipewire": "1.4.11",
+            "flatpak": "1.16.3",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:22:08.769Z"
+          "checkedAt": "2026-05-04T02:16:30.412Z"
         },
         "stable-20260331": {
           "tag": "stable-20260331",
@@ -169,16 +175,17 @@
           },
           "packageVersions": {
             "kernel": "6.18.13-200.fc43",
-            "gnome": "49.5-1.fc43",
-            "mesa": "25.3.6-6.fc43",
-            "podman": "5.8.1-1.fc43",
-            "systemd": "258.7-1.fc43",
-            "bootc": "1.14.1-1.fc43",
+            "gnome": "49.5",
+            "mesa": "25.3.6",
+            "podman": "5.8.1",
+            "systemd": "258.7",
+            "bootc": "1.14.1",
             "fedora": "F43",
-            "pipewire": "1.4.11-1.fc43",
-            "flatpak": "1.16.3-1.fc43"
+            "pipewire": "1.4.11",
+            "flatpak": "1.16.3",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:22:14.194Z"
+          "checkedAt": "2026-05-04T02:16:33.856Z"
         },
         "stable-20260324": {
           "tag": "stable-20260324",
@@ -200,9 +207,10 @@
             "bootc": "1.13.0",
             "fedora": "F43",
             "pipewire": "1.4.11",
-            "flatpak": "1.16.3"
+            "flatpak": "1.16.3",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-03T19:29:09.054Z"
+          "checkedAt": "2026-05-04T02:16:37.096Z"
         },
         "stable-20260317": {
           "tag": "stable-20260317",
@@ -224,9 +232,10 @@
             "bootc": "1.13.0",
             "fedora": "F43",
             "pipewire": "1.4.10",
-            "flatpak": "1.16.3"
+            "flatpak": "1.16.3",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-03T19:29:11.766Z"
+          "checkedAt": "2026-05-04T02:16:43.638Z"
         },
         "stable-20260312": {
           "tag": "stable-20260312",
@@ -248,9 +257,10 @@
             "bootc": "1.13.0",
             "fedora": "F43",
             "pipewire": "1.4.10",
-            "flatpak": "1.16.3"
+            "flatpak": "1.16.3",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-03T19:29:14.502Z"
+          "checkedAt": "2026-05-04T02:16:46.425Z"
         }
       }
     },
@@ -283,9 +293,10 @@
             "bootc": "1.15.1",
             "fedora": "F43",
             "pipewire": "1.4.11",
-            "flatpak": "1.16.6"
+            "flatpak": "1.16.6",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-03T19:29:18.262Z"
+          "checkedAt": "2026-05-04T02:16:49.904Z"
         },
         "stable-daily-20260502": {
           "tag": "stable-daily-20260502",
@@ -300,16 +311,17 @@
           },
           "packageVersions": {
             "kernel": "6.19.12-200.fc43",
-            "gnome": "49.6-1.fc43",
-            "mesa": "25.3.6-6.fc43",
-            "podman": "5.8.2-1.fc43",
-            "systemd": "258.7-1.fc43",
-            "bootc": "1.15.1-1.fc43",
+            "gnome": "49.6",
+            "mesa": "25.3.6",
+            "podman": "5.8.2",
+            "systemd": "258.7",
+            "bootc": "1.15.1",
             "fedora": "F43",
-            "pipewire": "1.4.11-1.fc43",
-            "flatpak": "1.16.6-1.fc43"
+            "pipewire": "1.4.11",
+            "flatpak": "1.16.6",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:22:33.447Z"
+          "checkedAt": "2026-05-04T02:16:53.492Z"
         },
         "stable-daily-20260501": {
           "tag": "stable-daily-20260501",
@@ -324,16 +336,17 @@
           },
           "packageVersions": {
             "kernel": "6.19.12-200.fc43",
-            "gnome": "49.6-1.fc43",
-            "mesa": "25.3.6-6.fc43",
-            "podman": "5.8.2-1.fc43",
-            "systemd": "258.7-1.fc43",
-            "bootc": "1.15.1-1.fc43",
+            "gnome": "49.6",
+            "mesa": "25.3.6",
+            "podman": "5.8.2",
+            "systemd": "258.7",
+            "bootc": "1.15.1",
             "fedora": "F43",
-            "pipewire": "1.4.11-1.fc43",
-            "flatpak": "1.16.6-1.fc43"
+            "pipewire": "1.4.11",
+            "flatpak": "1.16.6",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:22:36.809Z"
+          "checkedAt": "2026-05-04T02:16:57.964Z"
         },
         "stable-daily-20260429": {
           "tag": "stable-daily-20260429",
@@ -348,16 +361,17 @@
           },
           "packageVersions": {
             "kernel": "6.19.11-200.fc43",
-            "gnome": "49.6-1.fc43",
-            "mesa": "25.3.6-6.fc43",
-            "podman": "5.8.2-1.fc43",
-            "systemd": "258.7-1.fc43",
-            "bootc": "1.15.1-1.fc43",
+            "gnome": "49.6",
+            "mesa": "25.3.6",
+            "podman": "5.8.2",
+            "systemd": "258.7",
+            "bootc": "1.15.1",
             "fedora": "F43",
-            "pipewire": "1.4.11-1.fc43",
-            "flatpak": "1.16.6-1.fc43"
+            "pipewire": "1.4.11",
+            "flatpak": "1.16.6",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:22:40.452Z"
+          "checkedAt": "2026-05-04T02:17:01.669Z"
         },
         "stable-daily-20260428": {
           "tag": "stable-daily-20260428",
@@ -372,16 +386,17 @@
           },
           "packageVersions": {
             "kernel": "6.19.10-200.fc43",
-            "gnome": "49.6-1.fc43",
-            "mesa": "25.3.6-6.fc43",
-            "podman": "5.8.2-1.fc43",
-            "systemd": "258.7-1.fc43",
-            "bootc": "1.15.1-1.fc43",
+            "gnome": "49.6",
+            "mesa": "25.3.6",
+            "podman": "5.8.2",
+            "systemd": "258.7",
+            "bootc": "1.15.1",
             "fedora": "F43",
-            "pipewire": "1.4.11-1.fc43",
-            "flatpak": "1.16.6-1.fc43"
+            "pipewire": "1.4.11",
+            "flatpak": "1.16.6",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:22:44.586Z"
+          "checkedAt": "2026-05-04T02:17:06.570Z"
         },
         "stable-daily-20260427": {
           "tag": "stable-daily-20260427",
@@ -396,16 +411,17 @@
           },
           "packageVersions": {
             "kernel": "6.19.10-200.fc43",
-            "gnome": "49.6-1.fc43",
-            "mesa": "25.3.6-6.fc43",
-            "podman": "5.8.2-1.fc43",
-            "systemd": "258.7-1.fc43",
-            "bootc": "1.15.1-1.fc43",
+            "gnome": "49.6",
+            "mesa": "25.3.6",
+            "podman": "5.8.2",
+            "systemd": "258.7",
+            "bootc": "1.15.1",
             "fedora": "F43",
-            "pipewire": "1.4.11-1.fc43",
-            "flatpak": "1.16.6-1.fc43"
+            "pipewire": "1.4.11",
+            "flatpak": "1.16.6",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:22:49.660Z"
+          "checkedAt": "2026-05-04T02:17:09.964Z"
         },
         "stable-daily-20260426": {
           "tag": "stable-daily-20260426",
@@ -420,16 +436,17 @@
           },
           "packageVersions": {
             "kernel": "6.19.10-200.fc43",
-            "gnome": "49.6-1.fc43",
-            "mesa": "25.3.6-6.fc43",
-            "podman": "5.8.2-1.fc43",
-            "systemd": "258.7-1.fc43",
-            "bootc": "1.15.1-1.fc43",
+            "gnome": "49.6",
+            "mesa": "25.3.6",
+            "podman": "5.8.2",
+            "systemd": "258.7",
+            "bootc": "1.15.1",
             "fedora": "F43",
-            "pipewire": "1.4.11-1.fc43",
-            "flatpak": "1.16.6-1.fc43"
+            "pipewire": "1.4.11",
+            "flatpak": "1.16.6",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:22:54.081Z"
+          "checkedAt": "2026-05-04T02:17:13.267Z"
         },
         "stable-daily-20260425": {
           "tag": "stable-daily-20260425",
@@ -444,16 +461,17 @@
           },
           "packageVersions": {
             "kernel": "6.19.10-200.fc43",
-            "gnome": "49.6-1.fc43",
-            "mesa": "25.3.6-6.fc43",
-            "podman": "5.8.2-1.fc43",
-            "systemd": "258.7-1.fc43",
-            "bootc": "1.15.1-1.fc43",
+            "gnome": "49.6",
+            "mesa": "25.3.6",
+            "podman": "5.8.2",
+            "systemd": "258.7",
+            "bootc": "1.15.1",
             "fedora": "F43",
-            "pipewire": "1.4.11-1.fc43",
-            "flatpak": "1.16.6-1.fc43"
+            "pipewire": "1.4.11",
+            "flatpak": "1.16.6",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:22:57.370Z"
+          "checkedAt": "2026-05-04T02:17:17.340Z"
         },
         "stable-daily-20260424": {
           "tag": "stable-daily-20260424",
@@ -468,16 +486,17 @@
           },
           "packageVersions": {
             "kernel": "6.19.10-200.fc43",
-            "gnome": "49.6-1.fc43",
-            "mesa": "25.3.6-6.fc43",
-            "podman": "5.8.2-1.fc43",
-            "systemd": "258.7-1.fc43",
-            "bootc": "1.15.1-1.fc43",
+            "gnome": "49.6",
+            "mesa": "25.3.6",
+            "podman": "5.8.2",
+            "systemd": "258.7",
+            "bootc": "1.15.1",
             "fedora": "F43",
-            "pipewire": "1.4.11-1.fc43",
-            "flatpak": "1.16.6-1.fc43"
+            "pipewire": "1.4.11",
+            "flatpak": "1.16.6",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:23:00.716Z"
+          "checkedAt": "2026-05-04T02:17:20.866Z"
         },
         "stable-daily-20260423": {
           "tag": "stable-daily-20260423",
@@ -492,16 +511,17 @@
           },
           "packageVersions": {
             "kernel": "6.19.10-200.fc43",
-            "gnome": "49.6-1.fc43",
-            "mesa": "25.3.6-6.fc43",
-            "podman": "5.8.2-1.fc43",
-            "systemd": "258.7-1.fc43",
-            "bootc": "1.15.1-1.fc43",
+            "gnome": "49.6",
+            "mesa": "25.3.6",
+            "podman": "5.8.2",
+            "systemd": "258.7",
+            "bootc": "1.15.1",
             "fedora": "F43",
-            "pipewire": "1.4.11-1.fc43",
-            "flatpak": "1.16.6-1.fc43"
+            "pipewire": "1.4.11",
+            "flatpak": "1.16.6",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:23:04.557Z"
+          "checkedAt": "2026-05-04T02:17:24.107Z"
         }
       }
     },
@@ -534,9 +554,10 @@
             "bootc": "1.15.1",
             "fedora": "F44",
             "pipewire": "1.6.4",
-            "flatpak": "1.17.6"
+            "flatpak": "1.17.6",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-03T19:29:21.515Z"
+          "checkedAt": "2026-05-04T02:17:28.690Z"
         },
         "latest-20260502": {
           "tag": "latest-20260502",
@@ -551,16 +572,17 @@
           },
           "packageVersions": {
             "kernel": "6.19.14-300.fc44",
-            "gnome": "50.1-2.fc44",
-            "mesa": "26.0.6-4.fc44",
-            "podman": "5.8.2-1.fc44",
-            "systemd": "259.5-1.fc44",
-            "bootc": "1.15.1-1.fc44",
+            "gnome": "50.1",
+            "mesa": "26.0.6",
+            "podman": "5.8.2",
+            "systemd": "259.5",
+            "bootc": "1.15.1",
             "fedora": "F44",
-            "pipewire": "1.6.4-1.fc44",
-            "flatpak": "1.17.6-1.fc44"
+            "pipewire": "1.6.4",
+            "flatpak": "1.17.6",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:23:11.194Z"
+          "checkedAt": "2026-05-04T02:17:31.999Z"
         },
         "latest-20260429": {
           "tag": "latest-20260429",
@@ -575,16 +597,17 @@
           },
           "packageVersions": {
             "kernel": "6.19.14-200.fc43",
-            "gnome": "49.6-1.fc43",
-            "mesa": "25.3.6-6.fc43",
-            "podman": "5.8.2-1.fc43",
-            "systemd": "258.7-1.fc43",
-            "bootc": "1.15.1-1.fc43",
+            "gnome": "49.6",
+            "mesa": "25.3.6",
+            "podman": "5.8.2",
+            "systemd": "258.7",
+            "bootc": "1.15.1",
             "fedora": "F43",
-            "pipewire": "1.4.11-1.fc43",
-            "flatpak": "1.16.6-1.fc43"
+            "pipewire": "1.4.11",
+            "flatpak": "1.16.6",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:23:15.703Z"
+          "checkedAt": "2026-05-04T02:17:40.457Z"
         },
         "latest-20260428": {
           "tag": "latest-20260428",
@@ -599,16 +622,17 @@
           },
           "packageVersions": {
             "kernel": "6.19.13-200.fc43",
-            "gnome": "49.6-1.fc43",
-            "mesa": "25.3.6-6.fc43",
-            "podman": "5.8.2-1.fc43",
-            "systemd": "258.7-1.fc43",
-            "bootc": "1.15.1-1.fc43",
+            "gnome": "49.6",
+            "mesa": "25.3.6",
+            "podman": "5.8.2",
+            "systemd": "258.7",
+            "bootc": "1.15.1",
             "fedora": "F43",
-            "pipewire": "1.4.11-1.fc43",
-            "flatpak": "1.16.6-1.fc43"
+            "pipewire": "1.4.11",
+            "flatpak": "1.16.6",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:23:18.868Z"
+          "checkedAt": "2026-05-04T02:17:44.461Z"
         },
         "latest-20260427": {
           "tag": "latest-20260427",
@@ -623,16 +647,17 @@
           },
           "packageVersions": {
             "kernel": "6.19.13-200.fc43",
-            "gnome": "49.6-1.fc43",
-            "mesa": "25.3.6-6.fc43",
-            "podman": "5.8.2-1.fc43",
-            "systemd": "258.7-1.fc43",
-            "bootc": "1.15.1-1.fc43",
+            "gnome": "49.6",
+            "mesa": "25.3.6",
+            "podman": "5.8.2",
+            "systemd": "258.7",
+            "bootc": "1.15.1",
             "fedora": "F43",
-            "pipewire": "1.4.11-1.fc43",
-            "flatpak": "1.16.6-1.fc43"
+            "pipewire": "1.4.11",
+            "flatpak": "1.16.6",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:23:22.253Z"
+          "checkedAt": "2026-05-04T02:17:47.768Z"
         },
         "latest-20260426": {
           "tag": "latest-20260426",
@@ -647,16 +672,17 @@
           },
           "packageVersions": {
             "kernel": "6.19.13-200.fc43",
-            "gnome": "49.6-1.fc43",
-            "mesa": "25.3.6-6.fc43",
-            "podman": "5.8.2-1.fc43",
-            "systemd": "258.7-1.fc43",
-            "bootc": "1.15.1-1.fc43",
+            "gnome": "49.6",
+            "mesa": "25.3.6",
+            "podman": "5.8.2",
+            "systemd": "258.7",
+            "bootc": "1.15.1",
             "fedora": "F43",
-            "pipewire": "1.4.11-1.fc43",
-            "flatpak": "1.16.6-1.fc43"
+            "pipewire": "1.4.11",
+            "flatpak": "1.16.6",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:23:27.419Z"
+          "checkedAt": "2026-05-04T02:17:51.858Z"
         },
         "latest-20260425": {
           "tag": "latest-20260425",
@@ -671,16 +697,17 @@
           },
           "packageVersions": {
             "kernel": "6.19.13-200.fc43",
-            "gnome": "49.6-1.fc43",
-            "mesa": "25.3.6-6.fc43",
-            "podman": "5.8.2-1.fc43",
-            "systemd": "258.7-1.fc43",
-            "bootc": "1.15.1-1.fc43",
+            "gnome": "49.6",
+            "mesa": "25.3.6",
+            "podman": "5.8.2",
+            "systemd": "258.7",
+            "bootc": "1.15.1",
             "fedora": "F43",
-            "pipewire": "1.4.11-1.fc43",
-            "flatpak": "1.16.6-1.fc43"
+            "pipewire": "1.4.11",
+            "flatpak": "1.16.6",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:23:30.788Z"
+          "checkedAt": "2026-05-04T02:17:55.614Z"
         },
         "latest-20260424": {
           "tag": "latest-20260424",
@@ -695,16 +722,17 @@
           },
           "packageVersions": {
             "kernel": "6.19.12-200.fc43",
-            "gnome": "49.6-1.fc43",
-            "mesa": "25.3.6-6.fc43",
-            "podman": "5.8.2-1.fc43",
-            "systemd": "258.7-1.fc43",
-            "bootc": "1.15.1-1.fc43",
+            "gnome": "49.6",
+            "mesa": "25.3.6",
+            "podman": "5.8.2",
+            "systemd": "258.7",
+            "bootc": "1.15.1",
             "fedora": "F43",
-            "pipewire": "1.4.11-1.fc43",
-            "flatpak": "1.16.6-1.fc43"
+            "pipewire": "1.4.11",
+            "flatpak": "1.16.6",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:23:36.010Z"
+          "checkedAt": "2026-05-04T02:18:00.089Z"
         },
         "latest-20260423": {
           "tag": "latest-20260423",
@@ -719,16 +747,17 @@
           },
           "packageVersions": {
             "kernel": "6.19.12-200.fc43",
-            "gnome": "49.6-1.fc43",
-            "mesa": "25.3.6-6.fc43",
-            "podman": "5.8.2-1.fc43",
-            "systemd": "258.7-1.fc43",
-            "bootc": "1.15.1-1.fc43",
+            "gnome": "49.6",
+            "mesa": "25.3.6",
+            "podman": "5.8.2",
+            "systemd": "258.7",
+            "bootc": "1.15.1",
             "fedora": "F43",
-            "pipewire": "1.4.11-1.fc43",
-            "flatpak": "1.16.6-1.fc43"
+            "pipewire": "1.4.11",
+            "flatpak": "1.16.6",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:23:39.206Z"
+          "checkedAt": "2026-05-04T02:18:03.938Z"
         },
         "latest-20260422": {
           "tag": "latest-20260422",
@@ -743,16 +772,17 @@
           },
           "packageVersions": {
             "kernel": "6.19.12-200.fc43",
-            "gnome": "49.6-1.fc43",
-            "mesa": "25.3.6-6.fc43",
-            "podman": "5.8.2-1.fc43",
-            "systemd": "258.7-1.fc43",
-            "bootc": "1.15.0-1.fc43",
+            "gnome": "49.6",
+            "mesa": "25.3.6",
+            "podman": "5.8.2",
+            "systemd": "258.7",
+            "bootc": "1.15.0",
             "fedora": "F43",
-            "pipewire": "1.4.11-1.fc43",
-            "flatpak": "1.16.6-1.fc43"
+            "pipewire": "1.4.11",
+            "flatpak": "1.16.6",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:23:42.328Z"
+          "checkedAt": "2026-05-04T02:18:07.441Z"
         }
       }
     },
@@ -778,16 +808,17 @@
           },
           "packageVersions": {
             "kernel": "6.12.0-224.el10",
-            "gnome": "49.5-100.el10gnomeqr.el10",
-            "mesa": "25.2.7-5.el10",
-            "podman": "5.8.0-2.el10",
-            "systemd": "257-23.el10",
-            "bootc": "1.14.1-1.el10",
+            "gnome": "49.5",
+            "mesa": "25.2.7",
+            "podman": "5.8.0",
+            "systemd": "257",
+            "bootc": "1.14.1",
             "fedora": null,
-            "pipewire": "1.4.9-1.el10",
-            "flatpak": "1.16.0-9.el10"
+            "pipewire": "1.4.9",
+            "flatpak": "1.16.0",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:23:51.390Z"
+          "checkedAt": "2026-05-04T02:18:11.325Z"
         },
         "lts-20260428": {
           "tag": "lts-20260428",
@@ -802,16 +833,17 @@
           },
           "packageVersions": {
             "kernel": "6.12.0-224.el10",
-            "gnome": "49.5-100.el10gnomeqr.el10",
-            "mesa": "25.2.7-5.el10",
-            "podman": "5.8.0-2.el10",
-            "systemd": "257-23.el10",
-            "bootc": "1.14.1-1.el10",
+            "gnome": "49.5",
+            "mesa": "25.2.7",
+            "podman": "5.8.0",
+            "systemd": "257",
+            "bootc": "1.14.1",
             "fedora": null,
-            "pipewire": "1.4.9-1.el10",
-            "flatpak": "1.16.0-9.el10"
+            "pipewire": "1.4.9",
+            "flatpak": "1.16.0",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:23:55.211Z"
+          "checkedAt": "2026-05-04T02:18:15.161Z"
         },
         "lts-20260421": {
           "tag": "lts-20260421",
@@ -826,16 +858,17 @@
           },
           "packageVersions": {
             "kernel": "6.12.0-218.el10",
-            "gnome": "49.5-100.el10gnomeqr.el10",
-            "mesa": "25.2.7-5.el10",
-            "podman": "5.8.0-2.el10",
-            "systemd": "257-23.el10",
-            "bootc": "1.14.1-1.el10",
+            "gnome": "49.5",
+            "mesa": "25.2.7",
+            "podman": "5.8.0",
+            "systemd": "257",
+            "bootc": "1.14.1",
             "fedora": null,
-            "pipewire": "1.4.9-1.el10",
-            "flatpak": "1.16.0-9.el10"
+            "pipewire": "1.4.9",
+            "flatpak": "1.16.0",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:23:58.689Z"
+          "checkedAt": "2026-05-04T02:18:20.115Z"
         },
         "lts-20260414": {
           "tag": "lts-20260414",
@@ -850,16 +883,17 @@
           },
           "packageVersions": {
             "kernel": "6.12.0-218.el10",
-            "gnome": "49.5-100.el10gnomeqr.el10",
-            "mesa": "25.2.7-5.el10",
-            "podman": "5.8.0-2.el10",
-            "systemd": "257-23.el10",
-            "bootc": "1.14.1-1.el10",
+            "gnome": "49.5",
+            "mesa": "25.2.7",
+            "podman": "5.8.0",
+            "systemd": "257",
+            "bootc": "1.14.1",
             "fedora": null,
-            "pipewire": "1.4.9-1.el10",
-            "flatpak": "1.16.0-9.el10"
+            "pipewire": "1.4.9",
+            "flatpak": "1.16.0",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:24:03.765Z"
+          "checkedAt": "2026-05-04T02:18:24.572Z"
         },
         "lts-20260407": {
           "tag": "lts-20260407",
@@ -874,16 +908,17 @@
           },
           "packageVersions": {
             "kernel": "6.12.0-218.el10",
-            "gnome": "49.5-100.el10gnomeqr.el10",
-            "mesa": "25.2.7-5.el10",
-            "podman": "5.8.0-2.el10",
-            "systemd": "257-23.el10",
-            "bootc": "1.14.1-1.el10",
+            "gnome": "49.5",
+            "mesa": "25.2.7",
+            "podman": "5.8.0",
+            "systemd": "257",
+            "bootc": "1.14.1",
             "fedora": null,
-            "pipewire": "1.4.9-1.el10",
-            "flatpak": "1.16.0-9.el10"
+            "pipewire": "1.4.9",
+            "flatpak": "1.16.0",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:24:08.965Z"
+          "checkedAt": "2026-05-04T02:18:29.176Z"
         },
         "lts-20260331": {
           "tag": "lts-20260331",
@@ -897,7 +932,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:29:23.306Z"
+          "checkedAt": "2026-05-04T02:18:31.732Z"
         },
         "lts-20260324": {
           "tag": "lts-20260324",
@@ -911,7 +946,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:29:24.867Z"
+          "checkedAt": "2026-05-04T02:18:33.589Z"
         },
         "lts-20260317": {
           "tag": "lts-20260317",
@@ -925,7 +960,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:29:26.431Z"
+          "checkedAt": "2026-05-04T02:18:35.714Z"
         },
         "lts-20260310": {
           "tag": "lts-20260310",
@@ -939,7 +974,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:29:27.974Z"
+          "checkedAt": "2026-05-04T02:18:37.279Z"
         },
         "lts-20260308": {
           "tag": "lts-20260308",
@@ -953,7 +988,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:29:30.035Z"
+          "checkedAt": "2026-05-04T02:18:39.659Z"
         }
       }
     },
@@ -979,16 +1014,17 @@
           },
           "packageVersions": {
             "kernel": "6.17.12-200.fc42",
-            "gnome": "49.5-100.el10gnomeqr.el10",
-            "mesa": "25.2.7-5.el10",
-            "podman": "5.8.0-2.el10",
-            "systemd": "257-23.el10",
-            "bootc": "1.14.1-1.el10",
+            "gnome": "49.5",
+            "mesa": "25.2.7",
+            "podman": "5.8.0",
+            "systemd": "257",
+            "bootc": "1.14.1",
             "fedora": null,
-            "pipewire": "1.4.9-1.el10",
-            "flatpak": "1.16.0-9.el10"
+            "pipewire": "1.4.9",
+            "flatpak": "1.16.0",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T16:41:32.294Z"
+          "checkedAt": "2026-05-04T02:18:44.744Z"
         },
         "lts-hwe-20260501": {
           "tag": "lts-hwe-20260501",
@@ -1003,16 +1039,17 @@
           },
           "packageVersions": {
             "kernel": "6.17.12-200.fc42",
-            "gnome": "49.5-100.el10gnomeqr.el10",
-            "mesa": "25.2.7-5.el10",
-            "podman": "5.8.0-2.el10",
-            "systemd": "257-23.el10",
-            "bootc": "1.14.1-1.el10",
+            "gnome": "49.5",
+            "mesa": "25.2.7",
+            "podman": "5.8.0",
+            "systemd": "257",
+            "bootc": "1.14.1",
             "fedora": null,
-            "pipewire": "1.4.9-1.el10",
-            "flatpak": "1.16.0-9.el10"
+            "pipewire": "1.4.9",
+            "flatpak": "1.16.0",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:24:24.279Z"
+          "checkedAt": "2026-05-04T02:18:48.365Z"
         },
         "lts-hwe-20260428": {
           "tag": "lts-hwe-20260428",
@@ -1027,16 +1064,17 @@
           },
           "packageVersions": {
             "kernel": "6.17.12-200.fc42",
-            "gnome": "49.5-100.el10gnomeqr.el10",
-            "mesa": "25.2.7-5.el10",
-            "podman": "5.8.0-2.el10",
-            "systemd": "257-23.el10",
-            "bootc": "1.14.1-1.el10",
+            "gnome": "49.5",
+            "mesa": "25.2.7",
+            "podman": "5.8.0",
+            "systemd": "257",
+            "bootc": "1.14.1",
             "fedora": null,
-            "pipewire": "1.4.9-1.el10",
-            "flatpak": "1.16.0-9.el10"
+            "pipewire": "1.4.9",
+            "flatpak": "1.16.0",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:24:29.213Z"
+          "checkedAt": "2026-05-04T02:18:52.962Z"
         },
         "lts-hwe-20260421": {
           "tag": "lts-hwe-20260421",
@@ -1051,16 +1089,17 @@
           },
           "packageVersions": {
             "kernel": "6.17.12-200.fc42",
-            "gnome": "49.5-100.el10gnomeqr.el10",
-            "mesa": "25.2.7-5.el10",
-            "podman": "5.8.0-2.el10",
-            "systemd": "257-23.el10",
-            "bootc": "1.14.1-1.el10",
+            "gnome": "49.5",
+            "mesa": "25.2.7",
+            "podman": "5.8.0",
+            "systemd": "257",
+            "bootc": "1.14.1",
             "fedora": null,
-            "pipewire": "1.4.9-1.el10",
-            "flatpak": "1.16.0-9.el10"
+            "pipewire": "1.4.9",
+            "flatpak": "1.16.0",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:24:33.995Z"
+          "checkedAt": "2026-05-04T02:18:58.624Z"
         },
         "lts-hwe-20260414": {
           "tag": "lts-hwe-20260414",
@@ -1075,16 +1114,17 @@
           },
           "packageVersions": {
             "kernel": "6.17.12-200.fc42",
-            "gnome": "49.5-100.el10gnomeqr.el10",
-            "mesa": "25.2.7-5.el10",
-            "podman": "5.8.0-2.el10",
-            "systemd": "257-23.el10",
-            "bootc": "1.14.1-1.el10",
+            "gnome": "49.5",
+            "mesa": "25.2.7",
+            "podman": "5.8.0",
+            "systemd": "257",
+            "bootc": "1.14.1",
             "fedora": null,
-            "pipewire": "1.4.9-1.el10",
-            "flatpak": "1.16.0-9.el10"
+            "pipewire": "1.4.9",
+            "flatpak": "1.16.0",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:24:38.165Z"
+          "checkedAt": "2026-05-04T02:19:02.203Z"
         },
         "lts-hwe-20260407": {
           "tag": "lts-hwe-20260407",
@@ -1099,16 +1139,17 @@
           },
           "packageVersions": {
             "kernel": "6.17.12-200.fc42",
-            "gnome": "49.5-100.el10gnomeqr.el10",
-            "mesa": "25.2.7-5.el10",
-            "podman": "5.8.0-2.el10",
-            "systemd": "257-23.el10",
-            "bootc": "1.14.1-1.el10",
+            "gnome": "49.5",
+            "mesa": "25.2.7",
+            "podman": "5.8.0",
+            "systemd": "257",
+            "bootc": "1.14.1",
             "fedora": null,
-            "pipewire": "1.4.9-1.el10",
-            "flatpak": "1.16.0-9.el10"
+            "pipewire": "1.4.9",
+            "flatpak": "1.16.0",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:24:42.168Z"
+          "checkedAt": "2026-05-04T02:19:07.464Z"
         },
         "lts-hwe-20260331": {
           "tag": "lts-hwe-20260331",
@@ -1122,7 +1163,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:29:31.592Z"
+          "checkedAt": "2026-05-04T02:19:09.071Z"
         },
         "lts-hwe-20260324": {
           "tag": "lts-hwe-20260324",
@@ -1136,7 +1177,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:29:33.137Z"
+          "checkedAt": "2026-05-04T02:19:10.679Z"
         },
         "lts-hwe-20260317": {
           "tag": "lts-hwe-20260317",
@@ -1150,7 +1191,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:29:34.865Z"
+          "checkedAt": "2026-05-04T02:19:14.163Z"
         },
         "lts-hwe-20260310": {
           "tag": "lts-hwe-20260310",
@@ -1164,7 +1205,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:29:36.473Z"
+          "checkedAt": "2026-05-04T02:19:16.124Z"
         }
       }
     },
@@ -1189,7 +1230,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:29:38.450Z"
+          "checkedAt": "2026-05-04T02:19:19.279Z"
         },
         "lts-hwe-testing-20260502": {
           "tag": "lts-hwe-testing-20260502",
@@ -1203,7 +1244,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:29:40.025Z"
+          "checkedAt": "2026-05-04T02:19:21.527Z"
         },
         "lts-hwe-testing-20260501": {
           "tag": "lts-hwe-testing-20260501",
@@ -1217,7 +1258,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:29:41.819Z"
+          "checkedAt": "2026-05-04T02:19:24.383Z"
         },
         "lts-hwe-testing-20260430": {
           "tag": "lts-hwe-testing-20260430",
@@ -1231,7 +1272,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:29:43.372Z"
+          "checkedAt": "2026-05-04T02:19:25.919Z"
         },
         "lts-hwe-testing-20260429": {
           "tag": "lts-hwe-testing-20260429",
@@ -1245,7 +1286,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:29:45.727Z"
+          "checkedAt": "2026-05-04T02:19:27.495Z"
         },
         "lts-hwe-testing-20260427": {
           "tag": "lts-hwe-testing-20260427",
@@ -1259,7 +1300,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:29:47.414Z"
+          "checkedAt": "2026-05-04T02:19:29.045Z"
         },
         "lts-hwe-testing-20260426": {
           "tag": "lts-hwe-testing-20260426",
@@ -1273,7 +1314,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:29:48.986Z"
+          "checkedAt": "2026-05-04T02:19:31.552Z"
         },
         "lts-hwe-testing-20260425": {
           "tag": "lts-hwe-testing-20260425",
@@ -1287,7 +1328,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:29:50.804Z"
+          "checkedAt": "2026-05-04T02:19:33.303Z"
         },
         "lts-hwe-testing-20260421": {
           "tag": "lts-hwe-testing-20260421",
@@ -1301,7 +1342,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:29:52.612Z"
+          "checkedAt": "2026-05-04T02:19:35.031Z"
         },
         "lts-hwe-testing-20260420": {
           "tag": "lts-hwe-testing-20260420",
@@ -1315,7 +1356,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:29:54.205Z"
+          "checkedAt": "2026-05-04T02:19:36.552Z"
         }
       }
     },
@@ -1340,7 +1381,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:29:55.751Z"
+          "checkedAt": "2026-05-04T02:19:38.477Z"
         },
         "lts-hwe-testing-50-20260502": {
           "tag": "lts-hwe-testing-50-20260502",
@@ -1354,7 +1395,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:29:57.707Z"
+          "checkedAt": "2026-05-04T02:19:40.086Z"
         },
         "lts-hwe-testing-50-20260501": {
           "tag": "lts-hwe-testing-50-20260501",
@@ -1368,7 +1409,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:29:59.247Z"
+          "checkedAt": "2026-05-04T02:19:42.323Z"
         },
         "lts-hwe-testing-50-20260430": {
           "tag": "lts-hwe-testing-50-20260430",
@@ -1382,7 +1423,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:30:00.800Z"
+          "checkedAt": "2026-05-04T02:19:43.916Z"
         },
         "lts-hwe-testing-50-20260429": {
           "tag": "lts-hwe-testing-50-20260429",
@@ -1396,7 +1437,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:30:02.393Z"
+          "checkedAt": "2026-05-04T02:19:45.789Z"
         },
         "lts-hwe-testing-50-20260427": {
           "tag": "lts-hwe-testing-50-20260427",
@@ -1410,7 +1451,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:30:04.137Z"
+          "checkedAt": "2026-05-04T02:19:47.727Z"
         },
         "lts-hwe-testing-50-20260426": {
           "tag": "lts-hwe-testing-50-20260426",
@@ -1424,7 +1465,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:30:05.707Z"
+          "checkedAt": "2026-05-04T02:19:49.835Z"
         },
         "lts-hwe-testing-50-20260425": {
           "tag": "lts-hwe-testing-50-20260425",
@@ -1438,7 +1479,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:30:07.287Z"
+          "checkedAt": "2026-05-04T02:19:52.627Z"
         },
         "lts-hwe-testing-50-20260421": {
           "tag": "lts-hwe-testing-50-20260421",
@@ -1452,7 +1493,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:30:09.375Z"
+          "checkedAt": "2026-05-04T02:19:54.292Z"
         },
         "lts-hwe-testing-50-20260420": {
           "tag": "lts-hwe-testing-50-20260420",
@@ -1466,7 +1507,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:30:11.126Z"
+          "checkedAt": "2026-05-04T02:19:55.907Z"
         }
       }
     },
@@ -1491,7 +1532,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:30:12.657Z"
+          "checkedAt": "2026-05-04T02:19:58.316Z"
         },
         "lts-testing-50-20260502": {
           "tag": "lts-testing-50-20260502",
@@ -1505,7 +1546,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:30:15.962Z"
+          "checkedAt": "2026-05-04T02:20:00.414Z"
         },
         "lts-testing-50-20260501": {
           "tag": "lts-testing-50-20260501",
@@ -1519,7 +1560,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:30:18.282Z"
+          "checkedAt": "2026-05-04T02:20:02.395Z"
         },
         "lts-testing-50-20260430": {
           "tag": "lts-testing-50-20260430",
@@ -1533,7 +1574,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:30:19.829Z"
+          "checkedAt": "2026-05-04T02:20:04.741Z"
         },
         "lts-testing-50-20260429": {
           "tag": "lts-testing-50-20260429",
@@ -1547,7 +1588,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:30:21.588Z"
+          "checkedAt": "2026-05-04T02:20:08.956Z"
         },
         "lts-testing-50-20260427": {
           "tag": "lts-testing-50-20260427",
@@ -1561,7 +1602,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:30:23.109Z"
+          "checkedAt": "2026-05-04T02:20:11.419Z"
         },
         "lts-testing-50-20260426": {
           "tag": "lts-testing-50-20260426",
@@ -1575,7 +1616,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:30:24.654Z"
+          "checkedAt": "2026-05-04T02:20:13.021Z"
         },
         "lts-testing-50-20260425": {
           "tag": "lts-testing-50-20260425",
@@ -1589,7 +1630,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:30:26.383Z"
+          "checkedAt": "2026-05-04T02:20:16.195Z"
         },
         "lts-testing-50-20260421": {
           "tag": "lts-testing-50-20260421",
@@ -1603,7 +1644,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:30:28.291Z"
+          "checkedAt": "2026-05-04T02:20:20.907Z"
         },
         "lts-testing-50-20260420": {
           "tag": "lts-testing-50-20260420",
@@ -1617,7 +1658,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:30:29.998Z"
+          "checkedAt": "2026-05-04T02:20:23.125Z"
         }
       }
     },
@@ -1643,16 +1684,17 @@
           },
           "packageVersions": {
             "kernel": "6.19.12-200.fc43",
-            "gnome": "49.6-1.fc43",
-            "mesa": "25.3.6-6.fc43",
-            "podman": "5.8.2-1.fc43",
-            "systemd": "258.7-1.fc43",
-            "bootc": "1.15.1-1.fc43",
+            "gnome": "49.6",
+            "mesa": "25.3.6",
+            "podman": "5.8.2",
+            "systemd": "258.7",
+            "bootc": "1.15.1",
             "fedora": "F43",
-            "pipewire": "1.4.11-1.fc43",
-            "flatpak": "1.16.6-1.fc43"
+            "pipewire": "1.4.11",
+            "flatpak": "1.16.6",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:24:56.428Z"
+          "checkedAt": "2026-05-04T02:20:26.608Z"
         },
         "stable-20260428": {
           "tag": "stable-20260428",
@@ -1667,16 +1709,17 @@
           },
           "packageVersions": {
             "kernel": "6.19.10-200.fc43",
-            "gnome": "49.6-1.fc43",
-            "mesa": "25.3.6-6.fc43",
-            "podman": "5.8.2-1.fc43",
-            "systemd": "258.7-1.fc43",
-            "bootc": "1.15.1-1.fc43",
+            "gnome": "49.6",
+            "mesa": "25.3.6",
+            "podman": "5.8.2",
+            "systemd": "258.7",
+            "bootc": "1.15.1",
             "fedora": "F43",
-            "pipewire": "1.4.11-1.fc43",
-            "flatpak": "1.16.6-1.fc43"
+            "pipewire": "1.4.11",
+            "flatpak": "1.16.6",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:25:00.360Z"
+          "checkedAt": "2026-05-04T02:20:31.317Z"
         },
         "stable-20260421": {
           "tag": "stable-20260421",
@@ -1691,16 +1734,17 @@
           },
           "packageVersions": {
             "kernel": "6.19.10-200.fc43",
-            "gnome": "49.6-1.fc43",
-            "mesa": "25.3.6-6.fc43",
-            "podman": "5.8.2-1.fc43",
-            "systemd": "258.7-1.fc43",
-            "bootc": "1.15.0-1.fc43",
+            "gnome": "49.6",
+            "mesa": "25.3.6",
+            "podman": "5.8.2",
+            "systemd": "258.7",
+            "bootc": "1.15.0",
             "fedora": "F43",
-            "pipewire": "1.4.11-1.fc43",
-            "flatpak": "1.16.6-1.fc43"
+            "pipewire": "1.4.11",
+            "flatpak": "1.16.6",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:25:04.233Z"
+          "checkedAt": "2026-05-04T02:20:35.250Z"
         },
         "stable-20260414": {
           "tag": "stable-20260414",
@@ -1715,16 +1759,17 @@
           },
           "packageVersions": {
             "kernel": "6.19.7-200.fc43",
-            "gnome": "49.5-1.fc43",
-            "mesa": "25.3.6-6.fc43",
-            "podman": "5.8.1-1.fc43",
-            "systemd": "258.7-1.fc43",
-            "bootc": "1.15.0-1.fc43",
+            "gnome": "49.5",
+            "mesa": "25.3.6",
+            "podman": "5.8.1",
+            "systemd": "258.7",
+            "bootc": "1.15.0",
             "fedora": "F43",
-            "pipewire": "1.4.11-1.fc43",
-            "flatpak": "1.16.6-1.fc43"
+            "pipewire": "1.4.11",
+            "flatpak": "1.16.6",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:25:08.637Z"
+          "checkedAt": "2026-05-04T02:20:39.035Z"
         },
         "stable-20260408": {
           "tag": "stable-20260408",
@@ -1739,16 +1784,17 @@
           },
           "packageVersions": {
             "kernel": "6.19.7-200.fc43",
-            "gnome": "49.5-1.fc43",
-            "mesa": "25.3.6-6.fc43",
-            "podman": "5.8.1-1.fc43",
-            "systemd": "258.7-1.fc43",
-            "bootc": "1.14.1-1.fc43",
+            "gnome": "49.5",
+            "mesa": "25.3.6",
+            "podman": "5.8.1",
+            "systemd": "258.7",
+            "bootc": "1.14.1",
             "fedora": "F43",
-            "pipewire": "1.4.11-1.fc43",
-            "flatpak": "1.16.3-1.fc43"
+            "pipewire": "1.4.11",
+            "flatpak": "1.16.3",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:25:14.369Z"
+          "checkedAt": "2026-05-04T02:20:44.346Z"
         },
         "stable-20260407": {
           "tag": "stable-20260407",
@@ -1763,16 +1809,17 @@
           },
           "packageVersions": {
             "kernel": "6.19.7-200.fc43",
-            "gnome": "49.5-1.fc43",
-            "mesa": "25.3.6-6.fc43",
-            "podman": "5.8.1-1.fc43",
-            "systemd": "258.7-1.fc43",
-            "bootc": "1.14.1-1.fc43",
+            "gnome": "49.5",
+            "mesa": "25.3.6",
+            "podman": "5.8.1",
+            "systemd": "258.7",
+            "bootc": "1.14.1",
             "fedora": "F43",
-            "pipewire": "1.4.11-1.fc43",
-            "flatpak": "1.16.3-1.fc43"
+            "pipewire": "1.4.11",
+            "flatpak": "1.16.3",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:25:17.910Z"
+          "checkedAt": "2026-05-04T02:20:48.712Z"
         },
         "stable-20260331": {
           "tag": "stable-20260331",
@@ -1787,16 +1834,17 @@
           },
           "packageVersions": {
             "kernel": "6.18.13-200.fc43",
-            "gnome": "49.5-1.fc43",
-            "mesa": "25.3.6-6.fc43",
-            "podman": "5.8.1-1.fc43",
-            "systemd": "258.7-1.fc43",
-            "bootc": "1.14.1-1.fc43",
+            "gnome": "49.5",
+            "mesa": "25.3.6",
+            "podman": "5.8.1",
+            "systemd": "258.7",
+            "bootc": "1.14.1",
             "fedora": "F43",
-            "pipewire": "1.4.11-1.fc43",
-            "flatpak": "1.16.3-1.fc43"
+            "pipewire": "1.4.11",
+            "flatpak": "1.16.3",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:25:22.126Z"
+          "checkedAt": "2026-05-04T02:20:54.138Z"
         },
         "stable-20260324": {
           "tag": "stable-20260324",
@@ -1818,9 +1866,10 @@
             "bootc": "1.13.0",
             "fedora": "F43",
             "pipewire": "1.4.11",
-            "flatpak": "1.16.3"
+            "flatpak": "1.16.3",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-03T19:30:33.118Z"
+          "checkedAt": "2026-05-04T02:20:57.053Z"
         },
         "stable-20260317": {
           "tag": "stable-20260317",
@@ -1842,9 +1891,10 @@
             "bootc": "1.13.0",
             "fedora": "F43",
             "pipewire": "1.4.10",
-            "flatpak": "1.16.3"
+            "flatpak": "1.16.3",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-03T19:30:36.002Z"
+          "checkedAt": "2026-05-04T02:21:00.732Z"
         },
         "stable-20260312": {
           "tag": "stable-20260312",
@@ -1866,9 +1916,10 @@
             "bootc": "1.13.0",
             "fedora": "F43",
             "pipewire": "1.4.10",
-            "flatpak": "1.16.3"
+            "flatpak": "1.16.3",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-03T19:30:39.093Z"
+          "checkedAt": "2026-05-04T02:21:03.789Z"
         }
       }
     },
@@ -1901,9 +1952,10 @@
             "bootc": "1.15.1",
             "fedora": "F44",
             "pipewire": "1.6.4",
-            "flatpak": "1.17.6"
+            "flatpak": "1.17.6",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-03T19:30:43.096Z"
+          "checkedAt": "2026-05-04T02:21:07.295Z"
         },
         "latest-20260502": {
           "tag": "latest-20260502",
@@ -1918,16 +1970,17 @@
           },
           "packageVersions": {
             "kernel": "6.19.14-300.fc44",
-            "gnome": "50.1-2.fc44",
-            "mesa": "26.0.6-4.fc44",
-            "podman": "5.8.2-1.fc44",
-            "systemd": "259.5-1.fc44",
-            "bootc": "1.15.1-1.fc44",
+            "gnome": "50.1",
+            "mesa": "26.0.6",
+            "podman": "5.8.2",
+            "systemd": "259.5",
+            "bootc": "1.15.1",
             "fedora": "F44",
-            "pipewire": "1.6.4-1.fc44",
-            "flatpak": "1.17.6-1.fc44"
+            "pipewire": "1.6.4",
+            "flatpak": "1.17.6",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:25:39.029Z"
+          "checkedAt": "2026-05-04T02:21:11.060Z"
         },
         "latest-20260429": {
           "tag": "latest-20260429",
@@ -1942,16 +1995,17 @@
           },
           "packageVersions": {
             "kernel": "6.19.13-200.fc43",
-            "gnome": "49.6-1.fc43",
-            "mesa": "25.3.6-6.fc43",
-            "podman": "5.8.2-1.fc43",
-            "systemd": "258.7-1.fc43",
-            "bootc": "1.15.1-1.fc43",
+            "gnome": "49.6",
+            "mesa": "25.3.6",
+            "podman": "5.8.2",
+            "systemd": "258.7",
+            "bootc": "1.15.1",
             "fedora": "F43",
-            "pipewire": "1.4.11-1.fc43",
-            "flatpak": "1.16.6-1.fc43"
+            "pipewire": "1.4.11",
+            "flatpak": "1.16.6",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:25:43.160Z"
+          "checkedAt": "2026-05-04T02:21:14.624Z"
         },
         "latest-20260428": {
           "tag": "latest-20260428",
@@ -1966,16 +2020,17 @@
           },
           "packageVersions": {
             "kernel": "6.19.13-200.fc43",
-            "gnome": "49.6-1.fc43",
-            "mesa": "25.3.6-6.fc43",
-            "podman": "5.8.2-1.fc43",
-            "systemd": "258.7-1.fc43",
-            "bootc": "1.15.1-1.fc43",
+            "gnome": "49.6",
+            "mesa": "25.3.6",
+            "podman": "5.8.2",
+            "systemd": "258.7",
+            "bootc": "1.15.1",
             "fedora": "F43",
-            "pipewire": "1.4.11-1.fc43",
-            "flatpak": "1.16.6-1.fc43"
+            "pipewire": "1.4.11",
+            "flatpak": "1.16.6",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:25:51.421Z"
+          "checkedAt": "2026-05-04T02:21:18.316Z"
         },
         "latest-20260427": {
           "tag": "latest-20260427",
@@ -1990,16 +2045,17 @@
           },
           "packageVersions": {
             "kernel": "6.19.13-200.fc43",
-            "gnome": "49.6-1.fc43",
-            "mesa": "25.3.6-6.fc43",
-            "podman": "5.8.2-1.fc43",
-            "systemd": "258.7-1.fc43",
-            "bootc": "1.15.1-1.fc43",
+            "gnome": "49.6",
+            "mesa": "25.3.6",
+            "podman": "5.8.2",
+            "systemd": "258.7",
+            "bootc": "1.15.1",
             "fedora": "F43",
-            "pipewire": "1.4.11-1.fc43",
-            "flatpak": "1.16.6-1.fc43"
+            "pipewire": "1.4.11",
+            "flatpak": "1.16.6",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:25:55.415Z"
+          "checkedAt": "2026-05-04T02:21:22.116Z"
         },
         "latest-20260426": {
           "tag": "latest-20260426",
@@ -2014,16 +2070,17 @@
           },
           "packageVersions": {
             "kernel": "6.19.13-200.fc43",
-            "gnome": "49.6-1.fc43",
-            "mesa": "25.3.6-6.fc43",
-            "podman": "5.8.2-1.fc43",
-            "systemd": "258.7-1.fc43",
-            "bootc": "1.15.1-1.fc43",
+            "gnome": "49.6",
+            "mesa": "25.3.6",
+            "podman": "5.8.2",
+            "systemd": "258.7",
+            "bootc": "1.15.1",
             "fedora": "F43",
-            "pipewire": "1.4.11-1.fc43",
-            "flatpak": "1.16.6-1.fc43"
+            "pipewire": "1.4.11",
+            "flatpak": "1.16.6",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:25:58.966Z"
+          "checkedAt": "2026-05-04T02:21:26.296Z"
         },
         "latest-20260425": {
           "tag": "latest-20260425",
@@ -2038,16 +2095,17 @@
           },
           "packageVersions": {
             "kernel": "6.19.13-200.fc43",
-            "gnome": "49.6-1.fc43",
-            "mesa": "25.3.6-6.fc43",
-            "podman": "5.8.2-1.fc43",
-            "systemd": "258.7-1.fc43",
-            "bootc": "1.15.1-1.fc43",
+            "gnome": "49.6",
+            "mesa": "25.3.6",
+            "podman": "5.8.2",
+            "systemd": "258.7",
+            "bootc": "1.15.1",
             "fedora": "F43",
-            "pipewire": "1.4.11-1.fc43",
-            "flatpak": "1.16.6-1.fc43"
+            "pipewire": "1.4.11",
+            "flatpak": "1.16.6",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:26:05.188Z"
+          "checkedAt": "2026-05-04T02:21:30.458Z"
         },
         "latest-20260424": {
           "tag": "latest-20260424",
@@ -2062,16 +2120,17 @@
           },
           "packageVersions": {
             "kernel": "6.19.12-200.fc43",
-            "gnome": "49.6-1.fc43",
-            "mesa": "25.3.6-6.fc43",
-            "podman": "5.8.2-1.fc43",
-            "systemd": "258.7-1.fc43",
-            "bootc": "1.15.1-1.fc43",
+            "gnome": "49.6",
+            "mesa": "25.3.6",
+            "podman": "5.8.2",
+            "systemd": "258.7",
+            "bootc": "1.15.1",
             "fedora": "F43",
-            "pipewire": "1.4.11-1.fc43",
-            "flatpak": "1.16.6-1.fc43"
+            "pipewire": "1.4.11",
+            "flatpak": "1.16.6",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:26:08.922Z"
+          "checkedAt": "2026-05-04T02:21:35.169Z"
         },
         "latest-20260423": {
           "tag": "latest-20260423",
@@ -2086,16 +2145,17 @@
           },
           "packageVersions": {
             "kernel": "6.19.12-200.fc43",
-            "gnome": "49.6-1.fc43",
-            "mesa": "25.3.6-6.fc43",
-            "podman": "5.8.2-1.fc43",
-            "systemd": "258.7-1.fc43",
-            "bootc": "1.15.1-1.fc43",
+            "gnome": "49.6",
+            "mesa": "25.3.6",
+            "podman": "5.8.2",
+            "systemd": "258.7",
+            "bootc": "1.15.1",
             "fedora": "F43",
-            "pipewire": "1.4.11-1.fc43",
-            "flatpak": "1.16.6-1.fc43"
+            "pipewire": "1.4.11",
+            "flatpak": "1.16.6",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:26:12.417Z"
+          "checkedAt": "2026-05-04T02:21:38.443Z"
         },
         "latest-20260422": {
           "tag": "latest-20260422",
@@ -2110,16 +2170,17 @@
           },
           "packageVersions": {
             "kernel": "6.19.12-200.fc43",
-            "gnome": "49.6-1.fc43",
-            "mesa": "25.3.6-6.fc43",
-            "podman": "5.8.2-1.fc43",
-            "systemd": "258.7-1.fc43",
-            "bootc": "1.15.0-1.fc43",
+            "gnome": "49.6",
+            "mesa": "25.3.6",
+            "podman": "5.8.2",
+            "systemd": "258.7",
+            "bootc": "1.15.0",
             "fedora": "F43",
-            "pipewire": "1.4.11-1.fc43",
-            "flatpak": "1.16.6-1.fc43"
+            "pipewire": "1.4.11",
+            "flatpak": "1.16.6",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:26:23.758Z"
+          "checkedAt": "2026-05-04T02:21:44.171Z"
         }
       }
     },
@@ -2145,16 +2206,17 @@
           },
           "packageVersions": {
             "kernel": "6.12.0-224.el10",
-            "gnome": "49.5-100.el10gnomeqr.el10",
-            "mesa": "25.2.7-5.el10",
-            "podman": "5.8.0-2.el10",
-            "systemd": "257-23.el10",
-            "bootc": "1.14.1-1.el10",
+            "gnome": "49.5",
+            "mesa": "25.2.7",
+            "podman": "5.8.0",
+            "systemd": "257",
+            "bootc": "1.14.1",
             "fedora": null,
-            "pipewire": "1.4.9-1.el10",
-            "flatpak": "1.16.0-9.el10"
+            "pipewire": "1.4.9",
+            "flatpak": "1.16.0",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:26:34.032Z"
+          "checkedAt": "2026-05-04T02:21:48.880Z"
         },
         "lts-20260428": {
           "tag": "lts-20260428",
@@ -2169,16 +2231,17 @@
           },
           "packageVersions": {
             "kernel": "6.12.0-224.el10",
-            "gnome": "49.5-100.el10gnomeqr.el10",
-            "mesa": "25.2.7-5.el10",
-            "podman": "5.8.0-2.el10",
-            "systemd": "257-23.el10",
-            "bootc": "1.14.1-1.el10",
+            "gnome": "49.5",
+            "mesa": "25.2.7",
+            "podman": "5.8.0",
+            "systemd": "257",
+            "bootc": "1.14.1",
             "fedora": null,
-            "pipewire": "1.4.9-1.el10",
-            "flatpak": "1.16.0-9.el10"
+            "pipewire": "1.4.9",
+            "flatpak": "1.16.0",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:26:38.490Z"
+          "checkedAt": "2026-05-04T02:21:53.626Z"
         },
         "lts-20260421": {
           "tag": "lts-20260421",
@@ -2193,16 +2256,17 @@
           },
           "packageVersions": {
             "kernel": "6.12.0-218.el10",
-            "gnome": "49.5-100.el10gnomeqr.el10",
-            "mesa": "25.2.7-5.el10",
-            "podman": "5.8.0-2.el10",
-            "systemd": "257-23.el10",
-            "bootc": "1.14.1-1.el10",
+            "gnome": "49.5",
+            "mesa": "25.2.7",
+            "podman": "5.8.0",
+            "systemd": "257",
+            "bootc": "1.14.1",
             "fedora": null,
-            "pipewire": "1.4.9-1.el10",
-            "flatpak": "1.16.0-9.el10"
+            "pipewire": "1.4.9",
+            "flatpak": "1.16.0",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:26:43.757Z"
+          "checkedAt": "2026-05-04T02:21:58.109Z"
         },
         "lts-20260414": {
           "tag": "lts-20260414",
@@ -2217,16 +2281,17 @@
           },
           "packageVersions": {
             "kernel": "6.12.0-218.el10",
-            "gnome": "49.5-100.el10gnomeqr.el10",
-            "mesa": "25.2.7-5.el10",
-            "podman": "5.8.0-2.el10",
-            "systemd": "257-23.el10",
-            "bootc": "1.14.1-1.el10",
+            "gnome": "49.5",
+            "mesa": "25.2.7",
+            "podman": "5.8.0",
+            "systemd": "257",
+            "bootc": "1.14.1",
             "fedora": null,
-            "pipewire": "1.4.9-1.el10",
-            "flatpak": "1.16.0-9.el10"
+            "pipewire": "1.4.9",
+            "flatpak": "1.16.0",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:26:48.358Z"
+          "checkedAt": "2026-05-04T02:22:02.721Z"
         },
         "lts-20260407": {
           "tag": "lts-20260407",
@@ -2241,16 +2306,17 @@
           },
           "packageVersions": {
             "kernel": "6.12.0-218.el10",
-            "gnome": "49.5-100.el10gnomeqr.el10",
-            "mesa": "25.2.7-5.el10",
-            "podman": "5.8.0-2.el10",
-            "systemd": "257-23.el10",
-            "bootc": "1.14.1-1.el10",
+            "gnome": "49.5",
+            "mesa": "25.2.7",
+            "podman": "5.8.0",
+            "systemd": "257",
+            "bootc": "1.14.1",
             "fedora": null,
-            "pipewire": "1.4.9-1.el10",
-            "flatpak": "1.16.0-9.el10"
+            "pipewire": "1.4.9",
+            "flatpak": "1.16.0",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-02T03:26:53.735Z"
+          "checkedAt": "2026-05-04T02:22:06.669Z"
         },
         "lts-20260331": {
           "tag": "lts-20260331",
@@ -2264,7 +2330,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:30:44.784Z"
+          "checkedAt": "2026-05-04T02:22:08.518Z"
         },
         "lts-20260324": {
           "tag": "lts-20260324",
@@ -2278,7 +2344,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:30:46.317Z"
+          "checkedAt": "2026-05-04T02:22:10.585Z"
         },
         "lts-20260317": {
           "tag": "lts-20260317",
@@ -2292,7 +2358,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:30:47.871Z"
+          "checkedAt": "2026-05-04T02:22:12.209Z"
         },
         "lts-20260310": {
           "tag": "lts-20260310",
@@ -2306,7 +2372,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:30:49.438Z"
+          "checkedAt": "2026-05-04T02:22:13.849Z"
         },
         "lts-20260308": {
           "tag": "lts-20260308",
@@ -2320,7 +2386,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:30:51.518Z"
+          "checkedAt": "2026-05-04T02:22:15.722Z"
         }
       }
     },
@@ -2345,7 +2411,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:30:53.066Z"
+          "checkedAt": "2026-05-04T02:22:18.670Z"
         },
         "lts-hwe-testing-20260502": {
           "tag": "lts-hwe-testing-20260502",
@@ -2359,7 +2425,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:30:54.630Z"
+          "checkedAt": "2026-05-04T02:22:20.593Z"
         },
         "lts-hwe-testing-20260501": {
           "tag": "lts-hwe-testing-20260501",
@@ -2373,7 +2439,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:30:58.259Z"
+          "checkedAt": "2026-05-04T02:22:22.286Z"
         },
         "lts-hwe-testing-20260430": {
           "tag": "lts-hwe-testing-20260430",
@@ -2387,7 +2453,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:31:00.267Z"
+          "checkedAt": "2026-05-04T02:22:24.634Z"
         },
         "lts-hwe-testing-20260429": {
           "tag": "lts-hwe-testing-20260429",
@@ -2401,7 +2467,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:31:02.269Z"
+          "checkedAt": "2026-05-04T02:22:27.182Z"
         },
         "lts-hwe-testing-20260427": {
           "tag": "lts-hwe-testing-20260427",
@@ -2415,7 +2481,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:31:03.848Z"
+          "checkedAt": "2026-05-04T02:22:28.807Z"
         },
         "lts-hwe-testing-20260426": {
           "tag": "lts-hwe-testing-20260426",
@@ -2429,7 +2495,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:31:05.412Z"
+          "checkedAt": "2026-05-04T02:22:32.004Z"
         },
         "lts-hwe-testing-20260425": {
           "tag": "lts-hwe-testing-20260425",
@@ -2443,7 +2509,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:31:06.944Z"
+          "checkedAt": "2026-05-04T02:22:34.137Z"
         },
         "lts-hwe-testing-20260421": {
           "tag": "lts-hwe-testing-20260421",
@@ -2457,7 +2523,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:31:08.797Z"
+          "checkedAt": "2026-05-04T02:22:35.762Z"
         },
         "lts-hwe-testing-20260420": {
           "tag": "lts-hwe-testing-20260420",
@@ -2471,7 +2537,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:31:10.402Z"
+          "checkedAt": "2026-05-04T02:22:37.634Z"
         }
       }
     },
@@ -2496,7 +2562,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:31:11.912Z"
+          "checkedAt": "2026-05-04T02:22:39.861Z"
         },
         "lts-hwe-testing-50-20260502": {
           "tag": "lts-hwe-testing-50-20260502",
@@ -2510,7 +2576,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:31:13.442Z"
+          "checkedAt": "2026-05-04T02:22:41.510Z"
         },
         "lts-hwe-testing-50-20260501": {
           "tag": "lts-hwe-testing-50-20260501",
@@ -2524,7 +2590,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:31:14.978Z"
+          "checkedAt": "2026-05-04T02:22:43.847Z"
         },
         "lts-hwe-testing-50-20260430": {
           "tag": "lts-hwe-testing-50-20260430",
@@ -2538,7 +2604,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:31:16.550Z"
+          "checkedAt": "2026-05-04T02:22:45.716Z"
         },
         "lts-hwe-testing-50-20260429": {
           "tag": "lts-hwe-testing-50-20260429",
@@ -2552,7 +2618,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:31:18.114Z"
+          "checkedAt": "2026-05-04T02:22:47.316Z"
         },
         "lts-hwe-testing-50-20260427": {
           "tag": "lts-hwe-testing-50-20260427",
@@ -2566,7 +2632,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:31:21.215Z"
+          "checkedAt": "2026-05-04T02:22:48.853Z"
         },
         "lts-hwe-testing-50-20260426": {
           "tag": "lts-hwe-testing-50-20260426",
@@ -2580,7 +2646,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:31:22.815Z"
+          "checkedAt": "2026-05-04T02:22:50.522Z"
         },
         "lts-hwe-testing-50-20260425": {
           "tag": "lts-hwe-testing-50-20260425",
@@ -2594,7 +2660,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:31:24.480Z"
+          "checkedAt": "2026-05-04T02:22:53.163Z"
         },
         "lts-hwe-testing-50-20260421": {
           "tag": "lts-hwe-testing-50-20260421",
@@ -2608,7 +2674,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:31:26.017Z"
+          "checkedAt": "2026-05-04T02:22:54.724Z"
         },
         "lts-hwe-testing-50-20260420": {
           "tag": "lts-hwe-testing-50-20260420",
@@ -2622,7 +2688,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:31:27.595Z"
+          "checkedAt": "2026-05-04T02:22:56.863Z"
         }
       }
     },
@@ -2647,7 +2713,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:31:29.978Z"
+          "checkedAt": "2026-05-04T02:22:58.633Z"
         },
         "lts-testing-50-20260502": {
           "tag": "lts-testing-50-20260502",
@@ -2661,7 +2727,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:31:32.293Z"
+          "checkedAt": "2026-05-04T02:23:00.208Z"
         },
         "lts-testing-50-20260501": {
           "tag": "lts-testing-50-20260501",
@@ -2675,7 +2741,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:31:34.312Z"
+          "checkedAt": "2026-05-04T02:23:01.858Z"
         },
         "lts-testing-50-20260430": {
           "tag": "lts-testing-50-20260430",
@@ -2689,7 +2755,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:31:36.494Z"
+          "checkedAt": "2026-05-04T02:23:03.423Z"
         },
         "lts-testing-50-20260429": {
           "tag": "lts-testing-50-20260429",
@@ -2703,7 +2769,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:31:38.102Z"
+          "checkedAt": "2026-05-04T02:23:05.932Z"
         },
         "lts-testing-50-20260426": {
           "tag": "lts-testing-50-20260426",
@@ -2717,7 +2783,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:31:39.708Z"
+          "checkedAt": "2026-05-04T02:23:08.746Z"
         },
         "lts-testing-50-20260425": {
           "tag": "lts-testing-50-20260425",
@@ -2731,7 +2797,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:31:41.303Z"
+          "checkedAt": "2026-05-04T02:23:10.728Z"
         },
         "lts-testing-50-20260421": {
           "tag": "lts-testing-50-20260421",
@@ -2745,7 +2811,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:31:42.905Z"
+          "checkedAt": "2026-05-04T02:23:12.644Z"
         },
         "lts-testing-50-20260420": {
           "tag": "lts-testing-50-20260420",
@@ -2759,7 +2825,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:31:44.478Z"
+          "checkedAt": "2026-05-04T02:23:14.892Z"
         },
         "lts-testing-50-20260419": {
           "tag": "lts-testing-50-20260419",
@@ -2773,7 +2839,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:31:46.274Z"
+          "checkedAt": "2026-05-04T02:23:19.420Z"
         }
       }
     },
@@ -2799,16 +2865,17 @@
           },
           "packageVersions": {
             "kernel": "6.19.12-100.fc42",
-            "gnome": "49.5-100.el10gnomeqr.el10",
-            "mesa": "25.2.7-5.el10",
-            "podman": "5.8.0-2.el10",
-            "systemd": "257-23.el10",
-            "bootc": "1.14.1-1.el10",
+            "gnome": "49.5",
+            "mesa": "25.2.7",
+            "podman": "5.8.0",
+            "systemd": "257",
+            "bootc": "1.14.1",
             "fedora": null,
-            "pipewire": "1.4.9-1.el10",
-            "flatpak": "1.16.0-9.el10"
+            "pipewire": "1.4.9",
+            "flatpak": "1.16.0",
+            "nvidia": "595.71.05"
           },
-          "checkedAt": "2026-05-02T16:42:01.673Z"
+          "checkedAt": "2026-05-04T02:23:24.398Z"
         },
         "lts-20260501": {
           "tag": "lts-20260501",
@@ -2823,16 +2890,17 @@
           },
           "packageVersions": {
             "kernel": "6.19.12-100.fc42",
-            "gnome": "49.5-100.el10gnomeqr.el10",
-            "mesa": "25.2.7-5.el10",
-            "podman": "5.8.0-2.el10",
-            "systemd": "257-23.el10",
-            "bootc": "1.14.1-1.el10",
+            "gnome": "49.5",
+            "mesa": "25.2.7",
+            "podman": "5.8.0",
+            "systemd": "257",
+            "bootc": "1.14.1",
             "fedora": null,
-            "pipewire": "1.4.9-1.el10",
-            "flatpak": "1.16.0-9.el10"
+            "pipewire": "1.4.9",
+            "flatpak": "1.16.0",
+            "nvidia": "595.71.05"
           },
-          "checkedAt": "2026-05-02T03:27:08.063Z"
+          "checkedAt": "2026-05-04T02:23:29.810Z"
         },
         "lts-20260428": {
           "tag": "lts-20260428",
@@ -2847,16 +2915,17 @@
           },
           "packageVersions": {
             "kernel": "6.19.10-100.fc42",
-            "gnome": "49.5-100.el10gnomeqr.el10",
-            "mesa": "25.2.7-5.el10",
-            "podman": "5.8.0-2.el10",
-            "systemd": "257-23.el10",
-            "bootc": "1.14.1-1.el10",
+            "gnome": "49.5",
+            "mesa": "25.2.7",
+            "podman": "5.8.0",
+            "systemd": "257",
+            "bootc": "1.14.1",
             "fedora": null,
-            "pipewire": "1.4.9-1.el10",
-            "flatpak": "1.16.0-9.el10"
+            "pipewire": "1.4.9",
+            "flatpak": "1.16.0",
+            "nvidia": "595.58.03"
           },
-          "checkedAt": "2026-05-02T03:27:13.322Z"
+          "checkedAt": "2026-05-04T02:23:35.118Z"
         },
         "lts-20260421": {
           "tag": "lts-20260421",
@@ -2871,16 +2940,17 @@
           },
           "packageVersions": {
             "kernel": "6.19.10-100.fc42",
-            "gnome": "49.5-100.el10gnomeqr.el10",
-            "mesa": "25.2.7-5.el10",
-            "podman": "5.8.0-2.el10",
-            "systemd": "257-23.el10",
-            "bootc": "1.14.1-1.el10",
+            "gnome": "49.5",
+            "mesa": "25.2.7",
+            "podman": "5.8.0",
+            "systemd": "257",
+            "bootc": "1.14.1",
             "fedora": null,
-            "pipewire": "1.4.9-1.el10",
-            "flatpak": "1.16.0-9.el10"
+            "pipewire": "1.4.9",
+            "flatpak": "1.16.0",
+            "nvidia": "595.58.03"
           },
-          "checkedAt": "2026-05-02T03:27:18.326Z"
+          "checkedAt": "2026-05-04T02:23:40.093Z"
         },
         "lts-20260414": {
           "tag": "lts-20260414",
@@ -2895,16 +2965,17 @@
           },
           "packageVersions": {
             "kernel": "6.19.7-100.fc42",
-            "gnome": "49.5-100.el10gnomeqr.el10",
-            "mesa": "25.2.7-5.el10",
-            "podman": "5.8.0-2.el10",
-            "systemd": "257-23.el10",
-            "bootc": "1.14.1-1.el10",
+            "gnome": "49.5",
+            "mesa": "25.2.7",
+            "podman": "5.8.0",
+            "systemd": "257",
+            "bootc": "1.14.1",
             "fedora": null,
-            "pipewire": "1.4.9-1.el10",
-            "flatpak": "1.16.0-9.el10"
+            "pipewire": "1.4.9",
+            "flatpak": "1.16.0",
+            "nvidia": "595.58.03"
           },
-          "checkedAt": "2026-05-02T03:27:22.616Z"
+          "checkedAt": "2026-05-04T02:23:45.057Z"
         },
         "lts-20260407": {
           "tag": "lts-20260407",
@@ -2919,16 +2990,17 @@
           },
           "packageVersions": {
             "kernel": "6.19.7-100.fc42",
-            "gnome": "49.5-100.el10gnomeqr.el10",
-            "mesa": "25.2.7-5.el10",
-            "podman": "5.8.0-2.el10",
-            "systemd": "257-23.el10",
-            "bootc": "1.14.1-1.el10",
+            "gnome": "49.5",
+            "mesa": "25.2.7",
+            "podman": "5.8.0",
+            "systemd": "257",
+            "bootc": "1.14.1",
             "fedora": null,
-            "pipewire": "1.4.9-1.el10",
-            "flatpak": "1.16.0-9.el10"
+            "pipewire": "1.4.9",
+            "flatpak": "1.16.0",
+            "nvidia": "595.58.03"
           },
-          "checkedAt": "2026-05-02T03:27:27.702Z"
+          "checkedAt": "2026-05-04T02:23:49.343Z"
         },
         "lts-20260331": {
           "tag": "lts-20260331",
@@ -2942,7 +3014,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:31:48.650Z"
+          "checkedAt": "2026-05-04T02:23:50.921Z"
         },
         "lts-20260308": {
           "tag": "lts-20260308",
@@ -2956,7 +3028,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:31:50.288Z"
+          "checkedAt": "2026-05-04T02:23:52.936Z"
         },
         "lts-20260302": {
           "tag": "lts-20260302",
@@ -2970,7 +3042,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:31:51.921Z"
+          "checkedAt": "2026-05-04T02:23:55.275Z"
         },
         "lts-20260224": {
           "tag": "lts-20260224",
@@ -2984,7 +3056,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-03T19:31:53.727Z"
+          "checkedAt": "2026-05-04T02:23:57.389Z"
         }
       }
     },
@@ -2997,6 +3069,267 @@
       "keyRepo": "ublue-os/bluefin",
       "keyless": true,
       "releases": {}
+    },
+    "bluefin-nvidia-open-stable": {
+      "id": "bluefin-nvidia-open-stable",
+      "label": "Bluefin Nvidia Open Stable",
+      "org": "ublue-os",
+      "package": "bluefin-nvidia-open",
+      "streamPrefix": "stable",
+      "keyRepo": "ublue-os/bluefin",
+      "keyless": true,
+      "releases": {
+        "stable-20260501": {
+          "tag": "stable-20260501",
+          "imageRef": "ghcr.io/ublue-os/bluefin-nvidia-open:stable-20260501",
+          "digest": null,
+          "attestation": {
+            "present": true,
+            "verified": true,
+            "predicateType": "https://slsa.dev/provenance/v1",
+            "slsaType": "https://slsa.dev/provenance/v1",
+            "error": null
+          },
+          "packageVersions": {
+            "kernel": "6.19.12-200.fc43",
+            "gnome": "49.6",
+            "mesa": "25.3.6",
+            "podman": "5.8.2",
+            "systemd": "258.7",
+            "bootc": "1.15.1",
+            "fedora": "F43",
+            "pipewire": "1.4.11",
+            "flatpak": "1.16.6",
+            "nvidia": "595.71.05"
+          },
+          "checkedAt": "2026-05-04T02:24:00.906Z"
+        },
+        "stable-20260428": {
+          "tag": "stable-20260428",
+          "imageRef": "ghcr.io/ublue-os/bluefin-nvidia-open:stable-20260428",
+          "digest": null,
+          "attestation": {
+            "present": true,
+            "verified": true,
+            "predicateType": "https://slsa.dev/provenance/v1",
+            "slsaType": "https://slsa.dev/provenance/v1",
+            "error": null
+          },
+          "packageVersions": {
+            "kernel": "6.19.10-200.fc43",
+            "gnome": "49.6",
+            "mesa": "25.3.6",
+            "podman": "5.8.2",
+            "systemd": "258.7",
+            "bootc": "1.15.1",
+            "fedora": "F43",
+            "pipewire": "1.4.11",
+            "flatpak": "1.16.6",
+            "nvidia": "595.58.03"
+          },
+          "checkedAt": "2026-05-04T02:24:05.334Z"
+        },
+        "stable-20260421": {
+          "tag": "stable-20260421",
+          "imageRef": "ghcr.io/ublue-os/bluefin-nvidia-open:stable-20260421",
+          "digest": null,
+          "attestation": {
+            "present": true,
+            "verified": true,
+            "predicateType": "https://slsa.dev/provenance/v1",
+            "slsaType": "https://slsa.dev/provenance/v1",
+            "error": null
+          },
+          "packageVersions": {
+            "kernel": "6.19.10-200.fc43",
+            "gnome": "49.6",
+            "mesa": "25.3.6",
+            "podman": "5.8.2",
+            "systemd": "258.7",
+            "bootc": "1.15.0",
+            "fedora": "F43",
+            "pipewire": "1.4.11",
+            "flatpak": "1.16.6",
+            "nvidia": "595.58.03"
+          },
+          "checkedAt": "2026-05-04T02:24:08.754Z"
+        },
+        "stable-20260414": {
+          "tag": "stable-20260414",
+          "imageRef": "ghcr.io/ublue-os/bluefin-nvidia-open:stable-20260414",
+          "digest": null,
+          "attestation": {
+            "present": true,
+            "verified": true,
+            "predicateType": "https://slsa.dev/provenance/v1",
+            "slsaType": "https://slsa.dev/provenance/v1",
+            "error": null
+          },
+          "packageVersions": {
+            "kernel": "6.19.7-200.fc43",
+            "gnome": "49.5",
+            "mesa": "25.3.6",
+            "podman": "5.8.1",
+            "systemd": "258.7",
+            "bootc": "1.15.0",
+            "fedora": "F43",
+            "pipewire": "1.4.11",
+            "flatpak": "1.16.6",
+            "nvidia": "595.58.03"
+          },
+          "checkedAt": "2026-05-04T02:24:12.235Z"
+        },
+        "stable-20260408": {
+          "tag": "stable-20260408",
+          "imageRef": "ghcr.io/ublue-os/bluefin-nvidia-open:stable-20260408",
+          "digest": null,
+          "attestation": {
+            "present": true,
+            "verified": true,
+            "predicateType": "https://slsa.dev/provenance/v1",
+            "slsaType": "https://slsa.dev/provenance/v1",
+            "error": null
+          },
+          "packageVersions": {
+            "kernel": "6.19.7-200.fc43",
+            "gnome": "49.5",
+            "mesa": "25.3.6",
+            "podman": "5.8.1",
+            "systemd": "258.7",
+            "bootc": "1.14.1",
+            "fedora": "F43",
+            "pipewire": "1.4.11",
+            "flatpak": "1.16.3",
+            "nvidia": "595.58.03"
+          },
+          "checkedAt": "2026-05-04T02:24:16.460Z"
+        },
+        "stable-20260407": {
+          "tag": "stable-20260407",
+          "imageRef": "ghcr.io/ublue-os/bluefin-nvidia-open:stable-20260407",
+          "digest": null,
+          "attestation": {
+            "present": true,
+            "verified": true,
+            "predicateType": "https://slsa.dev/provenance/v1",
+            "slsaType": "https://slsa.dev/provenance/v1",
+            "error": null
+          },
+          "packageVersions": {
+            "kernel": "6.19.7-200.fc43",
+            "gnome": "49.5",
+            "mesa": "25.3.6",
+            "podman": "5.8.1",
+            "systemd": "258.7",
+            "bootc": "1.14.1",
+            "fedora": "F43",
+            "pipewire": "1.4.11",
+            "flatpak": "1.16.3",
+            "nvidia": "595.58.03"
+          },
+          "checkedAt": "2026-05-04T02:24:20.079Z"
+        },
+        "stable-20260331": {
+          "tag": "stable-20260331",
+          "imageRef": "ghcr.io/ublue-os/bluefin-nvidia-open:stable-20260331",
+          "digest": null,
+          "attestation": {
+            "present": true,
+            "verified": true,
+            "predicateType": "https://slsa.dev/provenance/v1",
+            "slsaType": "https://slsa.dev/provenance/v1",
+            "error": null
+          },
+          "packageVersions": {
+            "kernel": "6.18.13-200.fc43",
+            "gnome": "49.5",
+            "mesa": "25.3.6",
+            "podman": "5.8.1",
+            "systemd": "258.7",
+            "bootc": "1.14.1",
+            "fedora": "F43",
+            "pipewire": "1.4.11",
+            "flatpak": "1.16.3",
+            "nvidia": "595.58.03"
+          },
+          "checkedAt": "2026-05-04T02:24:23.641Z"
+        },
+        "stable-20260324": {
+          "tag": "stable-20260324",
+          "imageRef": "ghcr.io/ublue-os/bluefin-nvidia-open:stable-20260324",
+          "digest": null,
+          "attestation": {
+            "present": false,
+            "verified": false,
+            "predicateType": null,
+            "slsaType": "https://slsa.dev/provenance/v1",
+            "error": "no attestation"
+          },
+          "packageVersions": {
+            "kernel": "6.18.13-200.fc43",
+            "gnome": "49.5",
+            "mesa": "25.3.6",
+            "podman": "5.8.1",
+            "systemd": "258.7",
+            "bootc": "1.13.0",
+            "fedora": "F43",
+            "pipewire": "1.4.11",
+            "flatpak": "1.16.3",
+            "nvidia": "595.45.04"
+          },
+          "checkedAt": "2026-05-04T02:24:48.974Z"
+        },
+        "stable-20260317": {
+          "tag": "stable-20260317",
+          "imageRef": "ghcr.io/ublue-os/bluefin-nvidia-open:stable-20260317",
+          "digest": null,
+          "attestation": {
+            "present": false,
+            "verified": false,
+            "predicateType": null,
+            "slsaType": "https://slsa.dev/provenance/v1",
+            "error": "no attestation"
+          },
+          "packageVersions": {
+            "kernel": "6.18.10-200.fc43",
+            "gnome": "49.4",
+            "mesa": "25.3.6",
+            "podman": "5.8.1",
+            "systemd": "258.7",
+            "bootc": "1.13.0",
+            "fedora": "F43",
+            "pipewire": "1.4.10",
+            "flatpak": "1.16.3",
+            "nvidia": "595.45.04"
+          },
+          "checkedAt": "2026-05-04T02:24:51.793Z"
+        },
+        "stable-20260312": {
+          "tag": "stable-20260312",
+          "imageRef": "ghcr.io/ublue-os/bluefin-nvidia-open:stable-20260312",
+          "digest": null,
+          "attestation": {
+            "present": false,
+            "verified": false,
+            "predicateType": null,
+            "slsaType": "https://slsa.dev/provenance/v1",
+            "error": "no attestation"
+          },
+          "packageVersions": {
+            "kernel": "6.18.10-200.fc43",
+            "gnome": "49.4",
+            "mesa": "25.3.6",
+            "podman": "5.8.0",
+            "systemd": "258.5",
+            "bootc": "1.13.0",
+            "fedora": "F43",
+            "pipewire": "1.4.10",
+            "flatpak": "1.16.3",
+            "nvidia": "595.45.04"
+          },
+          "checkedAt": "2026-05-04T02:24:54.885Z"
+        }
+      }
     },
     "dakota-latest": {
       "id": "dakota-latest",
@@ -3029,7 +3362,7 @@
             "pipewire": "1.6.1",
             "flatpak": "1.16.6"
           },
-          "checkedAt": "2026-05-03T19:31:57.819Z"
+          "checkedAt": "2026-05-04T02:24:59.393Z"
         }
       }
     }
