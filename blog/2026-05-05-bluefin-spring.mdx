@@ -151,14 +151,14 @@ Dakota is our newest "distroles" raptor. No layering and an even more aggressive
 - [Custom Command Menu](https://github.com/StorageB/custom-command-menu) — Dakota features a newly refined menu. We hope to bring this menu to other Bluefins over time. 
 - Ghostty as the default terminal
 
-Since Dakota is brand new there's no users to transition when we switch something. The `ptyxis` author is moving on from GNOME so we wish Christian Hergert well in his future endevours. We are switching to [Ghostty](https://ghostty.org/) as the default terminal. This has always been a fan favorite so we're starting with it fresh here.  
+Since Dakota is brand new there's no users to transition when we switch something. The `ptyxis` author is moving on from GNOME so we wish [Christian Hergert](https://gitlab.gnome.org/chergert) well in his future endevours. We are switching to [Ghostty](https://ghostty.org/) as the default terminal. This has always been a fan favorite so we're starting with it fresh here.  
 
 ### Changes since Alpha 1
 
 - LUKS encryption works on install
 - Full Nvidia Image
   - [nvidia-container-toolkit](https://github.com/projectbluefin/dakota/issues/376) — [TODO: landed / still coming]
-- Efficient layering - this image uses the upstream chunkah tool for more efficient downloads. Note that the structures and tooling is in place, we expect efficient delta downloads to land sometime this summer, but everything is in place now. 
+- Efficient layering - this image uses the upstream [chunkah](https://github.com/coreos/chunkah) tool for more efficient downloads. Note that the structures and tooling is in place, we expect efficient delta downloads to land sometime this summer, but everything is in place now. 
 - Linux 7.x kernel will land once some of the bootc issues with 7.x are resolved
 - Beta target: Probably a month or so; GA target: Fall 2026
 - Want to help? GNOME OS upstream is always looking for help: [os.gnome.org](https://os.gnome.org/)
@@ -203,7 +203,7 @@ The [ublue-os/tap](https://github.com/ublue-os/homebrew-tap) is the production H
 
 Bluespeed is our catch all term for agent-centric tooling in Bluefin. It is a play on [RHEL Lightspeed](https://www.redhat.com/en/technologies/linux-platforms/enterprise-linux/lightspeed), Red Hat's tooling in this area. We continue to collaborate with the team and ship their tooling, such as linux-mcp-server. Bluefin ships a full cloud and AI navite development platform ready to go. We default to a "Bring your own LLM" approach, with a focus on pushing towards an all-local opt-in approach for system troubleshooting. 
 
-Our flagship tool is [Goose](https://block.github.io/goose/) from the [Agentic AI Foundation](https://aaif.io/), which serves as our "portal" to other tooling. Here's what else is included. We recommend using the `ramalama` tool for model management. This features full GPU acceleration for NVIDIA and AMD GPUs to work with local models out of the box. Models and drivers are kept in containers for flexibility. It's an awesome set up, give it a shot! [Full AI setup guide →](https://docs.projectbluefin.io/ai)
+Our flagship tool is [Goose](https://block.github.io/goose/) from the [Agentic AI Foundation](https://aaif.io/), which serves as our "portal" to other tooling. Here's what else is included. We recommend using the [`ramalama`](https://ramalama.ai/) tool for model management. This features full GPU acceleration for NVIDIA and AMD GPUs to work with local models out of the box. Models and drivers are kept in containers for flexibility. It's an awesome set up, give it a shot! [Full AI setup guide →](https://docs.projectbluefin.io/ai)
 
 ### AI Agents and Tools
 
