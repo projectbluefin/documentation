@@ -311,6 +311,15 @@ const STREAM_SPECS = [
     keyless: true,
     usesLatestTag: true,
   },
+  {
+    id: "dakota-nvidia-latest",
+    label: "Dakota Nvidia Latest",
+    org: "projectbluefin",
+    package: "dakota-nvidia",
+    keyRepo: "projectbluefin/dakota",
+    keyless: true,
+    usesLatestTag: true,
+  },
 ];
 
 // ---------------------------------------------------------------------------

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-04T02:25:22.983Z",
+  "generatedAt": "2026-05-04T02:52:34.368Z",
   "cacheHours": 0,
   "historyDays": 90,
   "streams": [
@@ -348,7 +348,7 @@
           "kernel": "6.19.11",
           "hweKernel": null,
           "mesa": "26.0.5",
-          "nvidia": null,
+          "nvidia": "595.71.05",
           "gnome": "50.0"
         }
       },
@@ -363,7 +363,7 @@
             "kernel": "6.19.11",
             "hweKernel": null,
             "mesa": "26.0.5",
-            "nvidia": null,
+            "nvidia": "595.71.05",
             "gnome": "50.0"
           }
         }

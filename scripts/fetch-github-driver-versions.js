@@ -234,6 +234,8 @@ async function main() {
 
   const hasSbomDakota =
     Object.keys(sbomCache.streams?.["dakota-latest"]?.releases || {}).length > 0;
+  const dakotaNvidiaByTag = buildNvidiaMapFromSbomStream(sbomCache, "dakota-nvidia-latest");
+  console.log(`Dakota nvidia map: ${Object.keys(dakotaNvidiaByTag).length} entries`);
   const dakotaStream = hasSbomDakota
     ? buildStreamFromSbom(
         "dakota-latest",
@@ -241,7 +243,7 @@ async function main() {
         "GNOME OS-based image from projectbluefin/dakota.",
         "sudo bootc switch --enforce-container-sigpolicy ghcr.io/projectbluefin/dakota:latest",
         sbomCache,
-        {},
+        dakotaNvidiaByTag,
       )
     : null;
 
