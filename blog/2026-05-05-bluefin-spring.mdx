@@ -26,7 +26,7 @@ import DocsFeatureGrid from "@site/src/components/blog/DocsFeatureGrid";
 
 I am not going to lie I haven't been this excited about Bluefin since the start of the project. We find ourselves on the day of a major Fedora release with three fantastic options. This spring is particularly relevant for us, with GNOME 50 being a particularly nice roll up of tech. 
 
-I know what you're thinking (especially you McPhail). We got rid of Bluefin GTS and now the team decided to make another one. How many of these things are there it's like a string of Jurassic Park sequels. First let's level set. The product is `Bluefin`. That's the default Fedora one. The other two are for different kinds of Linux nerds - we won't be adding Dakotaraptor the website or anything like that. 
+I know what you're thinking (especially you [McPhail](https://gld.mcphail.uk/posts/how-to-perform-a-major-version-upgrade-on-bluefin/)). We got rid of Bluefin GTS and now the team decided to make another one. How many of these things are there it's like a string of Jurassic Park sequels. First let's level set. The product is `Bluefin`. That's the default Fedora one. The other two are for different kinds of Linux nerds - we won't be adding Dakotaraptor the website or anything like that. 
 
 However, we're nerds so let's take a look at the kettle and see what we've got.
 
@@ -151,7 +151,7 @@ Dakota is our newest "distroles" raptor. No layering and an even more aggressive
 - [Custom Command Menu](https://github.com/StorageB/custom-command-menu) — Dakota features a newly refined menu. We hope to bring this menu to other Bluefins over time. 
 - Ghostty as the default terminal
 
-Since Dakota is brand new there's no users to transition when we switch something. The `ptyxis` author is moving on from GNOME so we wish Christian Hergert well in his future endevours. We are switching to [Ghostty] as the default terminal. This has always been a fan favorite so we're starting with it fresh here.  
+Since Dakota is brand new there's no users to transition when we switch something. The `ptyxis` author is moving on from GNOME so we wish Christian Hergert well in his future endevours. We are switching to [Ghostty](https://ghostty.org/) as the default terminal. This has always been a fan favorite so we're starting with it fresh here.  
 
 ### Changes since Alpha 1
 
@@ -168,11 +168,11 @@ Since Dakota is brand new there's no users to transition when we switch somethin
 - [Open issues](https://github.com/projectbluefin/dakota/issues)
 - [ISO-specific issues](https://github.com/projectbluefin/dakota-iso/issues)
 
-**What now?** It has been an absolute pleasure working with [buildstream] over the past few weeks. The team has committed to the hardware necessary to make builds faster and the local development experience has been the best we've ever had. It has become clear and obvious to me that the combination of [buildstream] and [bootc] brings a level of automation and developer experience that will be tough to beat.
+**What now?** It has been an absolute pleasure working with [BuildStream](https://buildstream.build/) over the past few weeks. The team has committed to the hardware necessary to make builds faster and the local development experience has been the best we've ever had. It has become clear and obvious to me that the combination of [BuildStream](https://buildstream.build/) and [bootc](https://containers.github.io/bootc/) brings a level of automation and developer experience that will be tough to beat.
 
 **Here's the hot take**: If you look at all three raptors, all else being equal, the _best development experience_ and _best infrastructure_ always wins in this space. We have over a decade of cloud native industry experience to prove it, Kubernetes runs the world for a reason. This workflow is now in the linux desktop space. I firmly believe that buildstream/bootc combined with our gitops approach will deliver a fantastic product. 
 
-- Stay tuned for my talk at [LAS] where I will be discussing the applicaiton of cloud native development techniques to the desktop. The world has changed.
+- Stay tuned for my talk at [LAS](https://linuxappsummit.org/) where I will be discussing the applicaiton of cloud native development techniques to the desktop. The world has changed.
 
 Thanks to [Brian Ketelsen](https://github.com/brianketelsen) and [James Reilly](https://github.com/jamesreilly5) for the [Tuna installer](https://github.com/tuna-os/tuna-installer)
 
@@ -201,9 +201,9 @@ The [ublue-os/tap](https://github.com/ublue-os/homebrew-tap) is the production H
 
 ## Bluespeed
 
-Bluespeed is our catch all term for agent-centric tooling in Bluefin. It is a play on [RHEL Lightspeed], Red Hat's tooling in this area. We continue to collaborate with the team and ship their tooling, such as linux-mcp-server. Bluefin ships a full cloud and AI navite development platform ready to go. We default to a "Bring your own LLM" approach, with a focus on pushing towards an all-local opt-in approach for system troubleshooting. 
+Bluespeed is our catch all term for agent-centric tooling in Bluefin. It is a play on [RHEL Lightspeed](https://www.redhat.com/en/technologies/linux-platforms/enterprise-linux/lightspeed), Red Hat's tooling in this area. We continue to collaborate with the team and ship their tooling, such as linux-mcp-server. Bluefin ships a full cloud and AI navite development platform ready to go. We default to a "Bring your own LLM" approach, with a focus on pushing towards an all-local opt-in approach for system troubleshooting. 
 
-Our flagship tool is [Goose] from the [Agentic AI Foundation], which serves as our "portal" to other tooling. Here's what else is included. We recommend using the `ramalama` tool for model management. This features full GPU acceleration for NVIDIA and AMD GPUs to work with local models out of the box. Models and drivers are kept in containers for flexibility. It's an awesome set up, give it a shot! [Full AI setup guide →](https://docs.projectbluefin.io/ai)
+Our flagship tool is [Goose](https://block.github.io/goose/) from the [Agentic AI Foundation](https://aaif.io/), which serves as our "portal" to other tooling. Here's what else is included. We recommend using the `ramalama` tool for model management. This features full GPU acceleration for NVIDIA and AMD GPUs to work with local models out of the box. Models and drivers are kept in containers for flexibility. It's an awesome set up, give it a shot! [Full AI setup guide →](https://docs.projectbluefin.io/ai)
 
 ### AI Agents and Tools
 
