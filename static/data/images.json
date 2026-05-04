@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-03T23:24:17.918Z",
+  "generatedAt": "2026-05-04T00:01:41.394Z",
   "cacheHours": 168,
   "refreshHours": 336,
   "staleDays": 30,
@@ -16,8 +16,7 @@
       "isoSectionLink": "/downloads#bluefin",
       "supportedArches": [
         "amd",
-        "intel",
-        "arm"
+        "intel"
       ],
       "streams": [
         {
@@ -130,8 +129,7 @@
       "isoSectionLink": "/downloads#bluefin",
       "supportedArches": [
         "amd",
-        "intel",
-        "arm"
+        "intel"
       ],
       "streams": [
         {
@@ -229,8 +227,7 @@
       "isoSectionLink": "/downloads#bluefin-lts",
       "supportedArches": [
         "amd",
-        "intel",
-        "arm"
+        "intel"
       ],
       "streams": [
         {
@@ -354,8 +351,7 @@
       "packagePageUrl": "https://github.com/orgs/ublue-os/packages/container/package/bluefin-gdx",
       "isoSectionLink": "/downloads#bluefin-gdx",
       "supportedArches": [
-        "nvidia",
-        "arm"
+        "nvidia"
       ],
       "streams": [
         {
@@ -433,8 +429,7 @@
       "isoSectionLink": "/downloads#bluefin-lts",
       "supportedArches": [
         "amd",
-        "intel",
-        "arm"
+        "intel"
       ],
       "streams": [
         {
