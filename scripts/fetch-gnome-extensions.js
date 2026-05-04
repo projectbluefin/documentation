@@ -24,7 +24,7 @@ const EXTENSION_IDS = [
 
 const OUTPUT_JSON = path.join(__dirname, "../static/data/gnome-extensions.json");
 const OUTPUT_IMG_DIR = path.join(__dirname, "../static/img/extensions");
-const CACHE_HOURS = parseInt(process.env.GNOME_EXT_CACHE_HOURS ?? "168", 10); // 7-day default
+const CACHE_HOURS = parseInt(process.env.GNOME_EXT_CACHE_HOURS ?? "24", 10); // 24h repo policy default
 
 function isStale(filePath) {
   if (process.argv.includes("--force")) return true;
@@ -39,7 +39,12 @@ function isStale(filePath) {
 
 function fetchJSON(url) {
   return new Promise((resolve, reject) => {
-    https.get(url, (res) => {
+    const req = https.get(url, (res) => {
+      if (res.statusCode !== 200) {
+        res.resume();
+        reject(new Error(`HTTP ${res.statusCode} for ${url}`));
+        return;
+      }
       let data = "";
       res.on("data", (chunk) => (data += chunk));
       res.on("end", () => {
@@ -47,23 +52,32 @@ function fetchJSON(url) {
         catch (e) { reject(new Error(`JSON parse error for ${url}: ${e.message}`)); }
       });
     }).on("error", reject);
+    const timer = setTimeout(() => { req.destroy(new Error(`Timeout fetching ${url}`)); }, 15_000);
+    req.on("close", () => clearTimeout(timer));
   });
 }
 
-function downloadImage(url, destPath) {
+function downloadImage(url, destPath, redirectCount = 0) {
   return new Promise((resolve, reject) => {
-    const follow = (u) =>
-      https.get(u, (res) => {
-        if (res.statusCode === 301 || res.statusCode === 302) {
-          follow(res.headers.location);
-        } else {
-          const file = fs.createWriteStream(destPath);
-          res.pipe(file);
-          file.on("finish", () => { file.close(); resolve(destPath); });
-          file.on("error", reject);
-        }
-      }).on("error", reject);
-    follow(url);
+    if (redirectCount > 5) { reject(new Error(`Too many redirects for ${url}`)); return; }
+    const req = https.get(url, (res) => {
+      if (res.statusCode === 301 || res.statusCode === 302) {
+        res.resume();
+        downloadImage(res.headers.location, destPath, redirectCount + 1).then(resolve).catch(reject);
+        return;
+      }
+      if (res.statusCode < 200 || res.statusCode >= 300) {
+        res.resume();
+        reject(new Error(`HTTP ${res.statusCode} downloading ${url}`));
+        return;
+      }
+      const file = fs.createWriteStream(destPath);
+      res.pipe(file);
+      file.on("finish", () => { file.close(); resolve(destPath); });
+      file.on("error", (e) => { fs.unlink(destPath, () => {}); reject(e); });
+    }).on("error", reject);
+    const timer = setTimeout(() => { req.destroy(new Error(`Timeout downloading ${url}`)); }, 30_000);
+    req.on("close", () => clearTimeout(timer));
   });
 }
 
@@ -119,6 +133,14 @@ async function main() {
     } catch (e) {
       console.error(`  Failed to fetch extension ${pk}: ${e.message}`);
     }
+  }
+
+  if (extensions.length === 0) {
+    console.error("All extension fetches failed — aborting.");
+    process.exit(1);
+  }
+  if (extensions.length < EXTENSION_IDS.length) {
+    console.warn(`Warning: only ${extensions.length}/${EXTENSION_IDS.length} extensions fetched.`);
   }
 
   fs.writeFileSync(OUTPUT_JSON, JSON.stringify(extensions, null, 2));

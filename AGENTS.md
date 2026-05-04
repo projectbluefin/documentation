@@ -127,6 +127,7 @@ Runs automatically during `npm run start` and `npm run build`.
 | `fetch-github-profiles.js` | `static/data/github-profiles.json` | GitHub user profiles (~80 users for donations page) |
 | `fetch-github-repos.js` | `static/data/github-repos.json` | GitHub repo stars/forks for projects page |
 | `fetch-contributors.js` | `static/data/file-contributors.json` | Per-file git contributors (used by DocItem/Footer) |
+| `fetch-gnome-extensions.js` | `static/data/gnome-extensions.json`, `static/img/extensions/` | GNOME extension metadata + screenshots for `/tips/` page |
 | `fetch-pin-state.js` | `static/data/stream-pins.json` | Current pinned stream versions |
 | `fetch-github-driver-versions.js` | `static/data/driver-versions.json` | Kernel/Mesa/NVIDIA/GNOME version history per stream from GitHub releases |
 | `fetch-github-images.js` | `static/data/images.json` | OCI image catalog — streams, versions, bootc switch commands, download counts. Reads `sbom-attestations.json` and overlays package versions from SBOM data |
@@ -158,6 +159,7 @@ npm run fetch-playlists
 npm run fetch-github-profiles
 npm run fetch-github-repos
 npm run fetch-contributors
+npm run fetch-gnome-extensions
 npm run fetch-pin-state
 npm run fetch-github-driver-versions
 npm run fetch-github-images
@@ -195,7 +197,7 @@ pages.yml (every build)
 
 Both `static/data/sbom-attestations.json` and `static/data/sbom-attestations-frontend.json` are **committed with populated SBOM data** and tracked by gitignore exceptions:
 
-```
+```gitignore
 !/static/data/sbom-attestations.json
 !/static/data/sbom-attestations-frontend.json
 ```
