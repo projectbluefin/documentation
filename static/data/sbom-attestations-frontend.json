@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-04T02:24:59.393Z",
+  "generatedAt": "2026-05-04T02:52:20.473Z",
   "lookbackDays": 90,
   "maxReleasesPerStream": 10,
   "streams": {
@@ -35,7 +35,7 @@
             "flatpak": "1.16.6",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:16:10.522Z"
+          "checkedAt": "2026-05-04T02:43:59.805Z"
         },
         "stable-20260428": {
           "tag": "stable-20260428",
@@ -60,7 +60,7 @@
             "flatpak": "1.16.6",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:16:13.921Z"
+          "checkedAt": "2026-05-04T02:44:03.555Z"
         },
         "stable-20260421": {
           "tag": "stable-20260421",
@@ -85,7 +85,7 @@
             "flatpak": "1.16.6",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:16:17.272Z"
+          "checkedAt": "2026-05-04T02:44:07.280Z"
         },
         "stable-20260414": {
           "tag": "stable-20260414",
@@ -110,7 +110,7 @@
             "flatpak": "1.16.6",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:16:22.317Z"
+          "checkedAt": "2026-05-04T02:44:11.417Z"
         },
         "stable-20260408": {
           "tag": "stable-20260408",
@@ -135,7 +135,7 @@
             "flatpak": "1.16.3",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:16:26.776Z"
+          "checkedAt": "2026-05-04T02:44:14.753Z"
         },
         "stable-20260407": {
           "tag": "stable-20260407",
@@ -160,7 +160,7 @@
             "flatpak": "1.16.3",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:16:30.412Z"
+          "checkedAt": "2026-05-04T02:44:19.459Z"
         },
         "stable-20260331": {
           "tag": "stable-20260331",
@@ -185,7 +185,7 @@
             "flatpak": "1.16.3",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:16:33.856Z"
+          "checkedAt": "2026-05-04T02:44:25.809Z"
         },
         "stable-20260324": {
           "tag": "stable-20260324",
@@ -210,7 +210,7 @@
             "flatpak": "1.16.3",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:16:37.096Z"
+          "checkedAt": "2026-05-04T02:44:29.537Z"
         },
         "stable-20260317": {
           "tag": "stable-20260317",
@@ -235,7 +235,7 @@
             "flatpak": "1.16.3",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:16:43.638Z"
+          "checkedAt": "2026-05-04T02:44:33.192Z"
         },
         "stable-20260312": {
           "tag": "stable-20260312",
@@ -260,7 +260,7 @@
             "flatpak": "1.16.3",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:16:46.425Z"
+          "checkedAt": "2026-05-04T02:44:37.999Z"
         }
       }
     },
@@ -296,7 +296,7 @@
             "flatpak": "1.16.6",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:16:49.904Z"
+          "checkedAt": "2026-05-04T02:44:41.235Z"
         },
         "stable-daily-20260502": {
           "tag": "stable-daily-20260502",
@@ -321,7 +321,7 @@
             "flatpak": "1.16.6",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:16:53.492Z"
+          "checkedAt": "2026-05-04T02:44:44.652Z"
         },
         "stable-daily-20260501": {
           "tag": "stable-daily-20260501",
@@ -346,7 +346,7 @@
             "flatpak": "1.16.6",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:16:57.964Z"
+          "checkedAt": "2026-05-04T02:44:48.059Z"
         },
         "stable-daily-20260429": {
           "tag": "stable-daily-20260429",
@@ -371,7 +371,7 @@
             "flatpak": "1.16.6",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:17:01.669Z"
+          "checkedAt": "2026-05-04T02:44:51.244Z"
         },
         "stable-daily-20260428": {
           "tag": "stable-daily-20260428",
@@ -396,7 +396,7 @@
             "flatpak": "1.16.6",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:17:06.570Z"
+          "checkedAt": "2026-05-04T02:44:54.882Z"
         },
         "stable-daily-20260427": {
           "tag": "stable-daily-20260427",
@@ -421,7 +421,7 @@
             "flatpak": "1.16.6",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:17:09.964Z"
+          "checkedAt": "2026-05-04T02:44:59.118Z"
         },
         "stable-daily-20260426": {
           "tag": "stable-daily-20260426",
@@ -446,7 +446,7 @@
             "flatpak": "1.16.6",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:17:13.267Z"
+          "checkedAt": "2026-05-04T02:45:02.458Z"
         },
         "stable-daily-20260425": {
           "tag": "stable-daily-20260425",
@@ -471,7 +471,7 @@
             "flatpak": "1.16.6",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:17:17.340Z"
+          "checkedAt": "2026-05-04T02:45:07.195Z"
         },
         "stable-daily-20260424": {
           "tag": "stable-daily-20260424",
@@ -496,7 +496,7 @@
             "flatpak": "1.16.6",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:17:20.866Z"
+          "checkedAt": "2026-05-04T02:45:11.135Z"
         },
         "stable-daily-20260423": {
           "tag": "stable-daily-20260423",
@@ -521,7 +521,7 @@
             "flatpak": "1.16.6",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:17:24.107Z"
+          "checkedAt": "2026-05-04T02:45:18.049Z"
         }
       }
     },
@@ -557,7 +557,7 @@
             "flatpak": "1.17.6",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:17:28.690Z"
+          "checkedAt": "2026-05-04T02:45:21.859Z"
         },
         "latest-20260502": {
           "tag": "latest-20260502",
@@ -582,7 +582,7 @@
             "flatpak": "1.17.6",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:17:31.999Z"
+          "checkedAt": "2026-05-04T02:45:26.388Z"
         },
         "latest-20260429": {
           "tag": "latest-20260429",
@@ -607,7 +607,7 @@
             "flatpak": "1.16.6",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:17:40.457Z"
+          "checkedAt": "2026-05-04T02:45:29.605Z"
         },
         "latest-20260428": {
           "tag": "latest-20260428",
@@ -632,7 +632,7 @@
             "flatpak": "1.16.6",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:17:44.461Z"
+          "checkedAt": "2026-05-04T02:45:34.888Z"
         },
         "latest-20260427": {
           "tag": "latest-20260427",
@@ -657,7 +657,7 @@
             "flatpak": "1.16.6",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:17:47.768Z"
+          "checkedAt": "2026-05-04T02:45:41.437Z"
         },
         "latest-20260426": {
           "tag": "latest-20260426",
@@ -682,7 +682,7 @@
             "flatpak": "1.16.6",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:17:51.858Z"
+          "checkedAt": "2026-05-04T02:45:44.723Z"
         },
         "latest-20260425": {
           "tag": "latest-20260425",
@@ -707,7 +707,7 @@
             "flatpak": "1.16.6",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:17:55.614Z"
+          "checkedAt": "2026-05-04T02:45:52.932Z"
         },
         "latest-20260424": {
           "tag": "latest-20260424",
@@ -732,7 +732,7 @@
             "flatpak": "1.16.6",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:18:00.089Z"
+          "checkedAt": "2026-05-04T02:45:56.363Z"
         },
         "latest-20260423": {
           "tag": "latest-20260423",
@@ -757,7 +757,7 @@
             "flatpak": "1.16.6",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:18:03.938Z"
+          "checkedAt": "2026-05-04T02:46:01.855Z"
         },
         "latest-20260422": {
           "tag": "latest-20260422",
@@ -782,7 +782,7 @@
             "flatpak": "1.16.6",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:18:07.441Z"
+          "checkedAt": "2026-05-04T02:46:10.601Z"
         }
       }
     },
@@ -818,7 +818,7 @@
             "flatpak": "1.16.0",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:18:11.325Z"
+          "checkedAt": "2026-05-04T02:46:14.857Z"
         },
         "lts-20260428": {
           "tag": "lts-20260428",
@@ -843,7 +843,7 @@
             "flatpak": "1.16.0",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:18:15.161Z"
+          "checkedAt": "2026-05-04T02:46:19.010Z"
         },
         "lts-20260421": {
           "tag": "lts-20260421",
@@ -868,7 +868,7 @@
             "flatpak": "1.16.0",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:18:20.115Z"
+          "checkedAt": "2026-05-04T02:46:22.733Z"
         },
         "lts-20260414": {
           "tag": "lts-20260414",
@@ -893,7 +893,7 @@
             "flatpak": "1.16.0",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:18:24.572Z"
+          "checkedAt": "2026-05-04T02:46:27.246Z"
         },
         "lts-20260407": {
           "tag": "lts-20260407",
@@ -918,7 +918,7 @@
             "flatpak": "1.16.0",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:18:29.176Z"
+          "checkedAt": "2026-05-04T02:46:34.038Z"
         },
         "lts-20260331": {
           "tag": "lts-20260331",
@@ -932,7 +932,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:18:31.732Z"
+          "checkedAt": "2026-05-04T02:46:35.796Z"
         },
         "lts-20260324": {
           "tag": "lts-20260324",
@@ -946,7 +946,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:18:33.589Z"
+          "checkedAt": "2026-05-04T02:46:37.506Z"
         },
         "lts-20260317": {
           "tag": "lts-20260317",
@@ -960,7 +960,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:18:35.714Z"
+          "checkedAt": "2026-05-04T02:46:39.280Z"
         },
         "lts-20260310": {
           "tag": "lts-20260310",
@@ -974,7 +974,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:18:37.279Z"
+          "checkedAt": "2026-05-04T02:46:41.342Z"
         },
         "lts-20260308": {
           "tag": "lts-20260308",
@@ -988,7 +988,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:18:39.659Z"
+          "checkedAt": "2026-05-04T02:46:42.885Z"
         }
       }
     },
@@ -1024,7 +1024,7 @@
             "flatpak": "1.16.0",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:18:44.744Z"
+          "checkedAt": "2026-05-04T02:46:47.322Z"
         },
         "lts-hwe-20260501": {
           "tag": "lts-hwe-20260501",
@@ -1049,7 +1049,7 @@
             "flatpak": "1.16.0",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:18:48.365Z"
+          "checkedAt": "2026-05-04T02:46:51.871Z"
         },
         "lts-hwe-20260428": {
           "tag": "lts-hwe-20260428",
@@ -1074,7 +1074,7 @@
             "flatpak": "1.16.0",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:18:52.962Z"
+          "checkedAt": "2026-05-04T02:46:55.965Z"
         },
         "lts-hwe-20260421": {
           "tag": "lts-hwe-20260421",
@@ -1099,7 +1099,7 @@
             "flatpak": "1.16.0",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:18:58.624Z"
+          "checkedAt": "2026-05-04T02:47:02.146Z"
         },
         "lts-hwe-20260414": {
           "tag": "lts-hwe-20260414",
@@ -1124,7 +1124,7 @@
             "flatpak": "1.16.0",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:19:02.203Z"
+          "checkedAt": "2026-05-04T02:47:06.101Z"
         },
         "lts-hwe-20260407": {
           "tag": "lts-hwe-20260407",
@@ -1149,7 +1149,7 @@
             "flatpak": "1.16.0",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:19:07.464Z"
+          "checkedAt": "2026-05-04T02:47:10.025Z"
         },
         "lts-hwe-20260331": {
           "tag": "lts-hwe-20260331",
@@ -1163,7 +1163,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:19:09.071Z"
+          "checkedAt": "2026-05-04T02:47:11.682Z"
         },
         "lts-hwe-20260324": {
           "tag": "lts-hwe-20260324",
@@ -1177,7 +1177,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:19:10.679Z"
+          "checkedAt": "2026-05-04T02:47:13.282Z"
         },
         "lts-hwe-20260317": {
           "tag": "lts-hwe-20260317",
@@ -1191,7 +1191,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:19:14.163Z"
+          "checkedAt": "2026-05-04T02:47:15.230Z"
         },
         "lts-hwe-20260310": {
           "tag": "lts-hwe-20260310",
@@ -1205,7 +1205,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:19:16.124Z"
+          "checkedAt": "2026-05-04T02:47:17.826Z"
         }
       }
     },
@@ -1230,7 +1230,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:19:19.279Z"
+          "checkedAt": "2026-05-04T02:47:20.555Z"
         },
         "lts-hwe-testing-20260502": {
           "tag": "lts-hwe-testing-20260502",
@@ -1244,7 +1244,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:19:21.527Z"
+          "checkedAt": "2026-05-04T02:47:22.091Z"
         },
         "lts-hwe-testing-20260501": {
           "tag": "lts-hwe-testing-20260501",
@@ -1258,7 +1258,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:19:24.383Z"
+          "checkedAt": "2026-05-04T02:47:23.729Z"
         },
         "lts-hwe-testing-20260430": {
           "tag": "lts-hwe-testing-20260430",
@@ -1272,7 +1272,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:19:25.919Z"
+          "checkedAt": "2026-05-04T02:47:25.990Z"
         },
         "lts-hwe-testing-20260429": {
           "tag": "lts-hwe-testing-20260429",
@@ -1286,7 +1286,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:19:27.495Z"
+          "checkedAt": "2026-05-04T02:47:28.199Z"
         },
         "lts-hwe-testing-20260427": {
           "tag": "lts-hwe-testing-20260427",
@@ -1300,7 +1300,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:19:29.045Z"
+          "checkedAt": "2026-05-04T02:47:29.797Z"
         },
         "lts-hwe-testing-20260426": {
           "tag": "lts-hwe-testing-20260426",
@@ -1314,7 +1314,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:19:31.552Z"
+          "checkedAt": "2026-05-04T02:47:31.296Z"
         },
         "lts-hwe-testing-20260425": {
           "tag": "lts-hwe-testing-20260425",
@@ -1328,7 +1328,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:19:33.303Z"
+          "checkedAt": "2026-05-04T02:47:34.976Z"
         },
         "lts-hwe-testing-20260421": {
           "tag": "lts-hwe-testing-20260421",
@@ -1342,7 +1342,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:19:35.031Z"
+          "checkedAt": "2026-05-04T02:47:38.059Z"
         },
         "lts-hwe-testing-20260420": {
           "tag": "lts-hwe-testing-20260420",
@@ -1356,7 +1356,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:19:36.552Z"
+          "checkedAt": "2026-05-04T02:47:39.625Z"
         }
       }
     },
@@ -1381,7 +1381,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:19:38.477Z"
+          "checkedAt": "2026-05-04T02:47:41.161Z"
         },
         "lts-hwe-testing-50-20260502": {
           "tag": "lts-hwe-testing-50-20260502",
@@ -1395,7 +1395,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:19:40.086Z"
+          "checkedAt": "2026-05-04T02:47:42.692Z"
         },
         "lts-hwe-testing-50-20260501": {
           "tag": "lts-hwe-testing-50-20260501",
@@ -1409,7 +1409,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:19:42.323Z"
+          "checkedAt": "2026-05-04T02:47:44.251Z"
         },
         "lts-hwe-testing-50-20260430": {
           "tag": "lts-hwe-testing-50-20260430",
@@ -1423,7 +1423,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:19:43.916Z"
+          "checkedAt": "2026-05-04T02:47:45.823Z"
         },
         "lts-hwe-testing-50-20260429": {
           "tag": "lts-hwe-testing-50-20260429",
@@ -1437,7 +1437,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:19:45.789Z"
+          "checkedAt": "2026-05-04T02:47:47.768Z"
         },
         "lts-hwe-testing-50-20260427": {
           "tag": "lts-hwe-testing-50-20260427",
@@ -1451,7 +1451,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:19:47.727Z"
+          "checkedAt": "2026-05-04T02:47:49.299Z"
         },
         "lts-hwe-testing-50-20260426": {
           "tag": "lts-hwe-testing-50-20260426",
@@ -1465,7 +1465,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:19:49.835Z"
+          "checkedAt": "2026-05-04T02:47:51.672Z"
         },
         "lts-hwe-testing-50-20260425": {
           "tag": "lts-hwe-testing-50-20260425",
@@ -1479,7 +1479,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:19:52.627Z"
+          "checkedAt": "2026-05-04T02:47:53.233Z"
         },
         "lts-hwe-testing-50-20260421": {
           "tag": "lts-hwe-testing-50-20260421",
@@ -1493,7 +1493,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:19:54.292Z"
+          "checkedAt": "2026-05-04T02:47:55.570Z"
         },
         "lts-hwe-testing-50-20260420": {
           "tag": "lts-hwe-testing-50-20260420",
@@ -1507,7 +1507,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:19:55.907Z"
+          "checkedAt": "2026-05-04T02:47:58.100Z"
         }
       }
     },
@@ -1532,7 +1532,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:19:58.316Z"
+          "checkedAt": "2026-05-04T02:48:00.012Z"
         },
         "lts-testing-50-20260502": {
           "tag": "lts-testing-50-20260502",
@@ -1546,7 +1546,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:20:00.414Z"
+          "checkedAt": "2026-05-04T02:48:01.969Z"
         },
         "lts-testing-50-20260501": {
           "tag": "lts-testing-50-20260501",
@@ -1560,7 +1560,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:20:02.395Z"
+          "checkedAt": "2026-05-04T02:48:03.707Z"
         },
         "lts-testing-50-20260430": {
           "tag": "lts-testing-50-20260430",
@@ -1574,7 +1574,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:20:04.741Z"
+          "checkedAt": "2026-05-04T02:48:05.850Z"
         },
         "lts-testing-50-20260429": {
           "tag": "lts-testing-50-20260429",
@@ -1588,7 +1588,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:20:08.956Z"
+          "checkedAt": "2026-05-04T02:48:08.186Z"
         },
         "lts-testing-50-20260427": {
           "tag": "lts-testing-50-20260427",
@@ -1602,7 +1602,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:20:11.419Z"
+          "checkedAt": "2026-05-04T02:48:09.986Z"
         },
         "lts-testing-50-20260426": {
           "tag": "lts-testing-50-20260426",
@@ -1616,7 +1616,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:20:13.021Z"
+          "checkedAt": "2026-05-04T02:48:11.873Z"
         },
         "lts-testing-50-20260425": {
           "tag": "lts-testing-50-20260425",
@@ -1630,7 +1630,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:20:16.195Z"
+          "checkedAt": "2026-05-04T02:48:13.464Z"
         },
         "lts-testing-50-20260421": {
           "tag": "lts-testing-50-20260421",
@@ -1644,7 +1644,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:20:20.907Z"
+          "checkedAt": "2026-05-04T02:48:15.083Z"
         },
         "lts-testing-50-20260420": {
           "tag": "lts-testing-50-20260420",
@@ -1658,7 +1658,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:20:23.125Z"
+          "checkedAt": "2026-05-04T02:48:16.619Z"
         }
       }
     },
@@ -1694,7 +1694,7 @@
             "flatpak": "1.16.6",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:20:26.608Z"
+          "checkedAt": "2026-05-04T02:48:20.354Z"
         },
         "stable-20260428": {
           "tag": "stable-20260428",
@@ -1719,7 +1719,7 @@
             "flatpak": "1.16.6",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:20:31.317Z"
+          "checkedAt": "2026-05-04T02:48:23.663Z"
         },
         "stable-20260421": {
           "tag": "stable-20260421",
@@ -1744,7 +1744,7 @@
             "flatpak": "1.16.6",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:20:35.250Z"
+          "checkedAt": "2026-05-04T02:48:26.944Z"
         },
         "stable-20260414": {
           "tag": "stable-20260414",
@@ -1769,7 +1769,7 @@
             "flatpak": "1.16.6",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:20:39.035Z"
+          "checkedAt": "2026-05-04T02:48:30.912Z"
         },
         "stable-20260408": {
           "tag": "stable-20260408",
@@ -1794,7 +1794,7 @@
             "flatpak": "1.16.3",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:20:44.346Z"
+          "checkedAt": "2026-05-04T02:48:34.755Z"
         },
         "stable-20260407": {
           "tag": "stable-20260407",
@@ -1819,7 +1819,7 @@
             "flatpak": "1.16.3",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:20:48.712Z"
+          "checkedAt": "2026-05-04T02:48:40.418Z"
         },
         "stable-20260331": {
           "tag": "stable-20260331",
@@ -1844,7 +1844,7 @@
             "flatpak": "1.16.3",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:20:54.138Z"
+          "checkedAt": "2026-05-04T02:48:43.829Z"
         },
         "stable-20260324": {
           "tag": "stable-20260324",
@@ -1869,7 +1869,7 @@
             "flatpak": "1.16.3",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:20:57.053Z"
+          "checkedAt": "2026-05-04T02:48:46.688Z"
         },
         "stable-20260317": {
           "tag": "stable-20260317",
@@ -1894,7 +1894,7 @@
             "flatpak": "1.16.3",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:21:00.732Z"
+          "checkedAt": "2026-05-04T02:48:50.044Z"
         },
         "stable-20260312": {
           "tag": "stable-20260312",
@@ -1919,7 +1919,7 @@
             "flatpak": "1.16.3",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:21:03.789Z"
+          "checkedAt": "2026-05-04T02:48:53.298Z"
         }
       }
     },
@@ -1955,7 +1955,7 @@
             "flatpak": "1.17.6",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:21:07.295Z"
+          "checkedAt": "2026-05-04T02:48:56.597Z"
         },
         "latest-20260502": {
           "tag": "latest-20260502",
@@ -1980,7 +1980,7 @@
             "flatpak": "1.17.6",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:21:11.060Z"
+          "checkedAt": "2026-05-04T02:48:59.943Z"
         },
         "latest-20260429": {
           "tag": "latest-20260429",
@@ -2005,7 +2005,7 @@
             "flatpak": "1.16.6",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:21:14.624Z"
+          "checkedAt": "2026-05-04T02:49:03.444Z"
         },
         "latest-20260428": {
           "tag": "latest-20260428",
@@ -2030,7 +2030,7 @@
             "flatpak": "1.16.6",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:21:18.316Z"
+          "checkedAt": "2026-05-04T02:49:08.506Z"
         },
         "latest-20260427": {
           "tag": "latest-20260427",
@@ -2055,7 +2055,7 @@
             "flatpak": "1.16.6",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:21:22.116Z"
+          "checkedAt": "2026-05-04T02:49:11.984Z"
         },
         "latest-20260426": {
           "tag": "latest-20260426",
@@ -2080,7 +2080,7 @@
             "flatpak": "1.16.6",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:21:26.296Z"
+          "checkedAt": "2026-05-04T02:49:15.507Z"
         },
         "latest-20260425": {
           "tag": "latest-20260425",
@@ -2105,7 +2105,7 @@
             "flatpak": "1.16.6",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:21:30.458Z"
+          "checkedAt": "2026-05-04T02:49:18.800Z"
         },
         "latest-20260424": {
           "tag": "latest-20260424",
@@ -2130,7 +2130,7 @@
             "flatpak": "1.16.6",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:21:35.169Z"
+          "checkedAt": "2026-05-04T02:49:22.879Z"
         },
         "latest-20260423": {
           "tag": "latest-20260423",
@@ -2155,7 +2155,7 @@
             "flatpak": "1.16.6",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:21:38.443Z"
+          "checkedAt": "2026-05-04T02:49:27.082Z"
         },
         "latest-20260422": {
           "tag": "latest-20260422",
@@ -2180,7 +2180,7 @@
             "flatpak": "1.16.6",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:21:44.171Z"
+          "checkedAt": "2026-05-04T02:49:30.388Z"
         }
       }
     },
@@ -2216,7 +2216,7 @@
             "flatpak": "1.16.0",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:21:48.880Z"
+          "checkedAt": "2026-05-04T02:49:34.833Z"
         },
         "lts-20260428": {
           "tag": "lts-20260428",
@@ -2241,7 +2241,7 @@
             "flatpak": "1.16.0",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:21:53.626Z"
+          "checkedAt": "2026-05-04T02:49:40.611Z"
         },
         "lts-20260421": {
           "tag": "lts-20260421",
@@ -2266,7 +2266,7 @@
             "flatpak": "1.16.0",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:21:58.109Z"
+          "checkedAt": "2026-05-04T02:49:47.291Z"
         },
         "lts-20260414": {
           "tag": "lts-20260414",
@@ -2291,7 +2291,7 @@
             "flatpak": "1.16.0",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:22:02.721Z"
+          "checkedAt": "2026-05-04T02:49:51.197Z"
         },
         "lts-20260407": {
           "tag": "lts-20260407",
@@ -2316,7 +2316,7 @@
             "flatpak": "1.16.0",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:22:06.669Z"
+          "checkedAt": "2026-05-04T02:49:55.853Z"
         },
         "lts-20260331": {
           "tag": "lts-20260331",
@@ -2330,7 +2330,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:22:08.518Z"
+          "checkedAt": "2026-05-04T02:49:57.773Z"
         },
         "lts-20260324": {
           "tag": "lts-20260324",
@@ -2344,7 +2344,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:22:10.585Z"
+          "checkedAt": "2026-05-04T02:49:59.428Z"
         },
         "lts-20260317": {
           "tag": "lts-20260317",
@@ -2358,7 +2358,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:22:12.209Z"
+          "checkedAt": "2026-05-04T02:50:01.244Z"
         },
         "lts-20260310": {
           "tag": "lts-20260310",
@@ -2372,7 +2372,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:22:13.849Z"
+          "checkedAt": "2026-05-04T02:50:02.903Z"
         },
         "lts-20260308": {
           "tag": "lts-20260308",
@@ -2386,7 +2386,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:22:15.722Z"
+          "checkedAt": "2026-05-04T02:50:04.520Z"
         }
       }
     },
@@ -2411,7 +2411,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:22:18.670Z"
+          "checkedAt": "2026-05-04T02:50:06.080Z"
         },
         "lts-hwe-testing-20260502": {
           "tag": "lts-hwe-testing-20260502",
@@ -2425,7 +2425,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:22:20.593Z"
+          "checkedAt": "2026-05-04T02:50:07.903Z"
         },
         "lts-hwe-testing-20260501": {
           "tag": "lts-hwe-testing-20260501",
@@ -2439,7 +2439,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:22:22.286Z"
+          "checkedAt": "2026-05-04T02:50:09.520Z"
         },
         "lts-hwe-testing-20260430": {
           "tag": "lts-hwe-testing-20260430",
@@ -2453,7 +2453,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:22:24.634Z"
+          "checkedAt": "2026-05-04T02:50:11.099Z"
         },
         "lts-hwe-testing-20260429": {
           "tag": "lts-hwe-testing-20260429",
@@ -2467,7 +2467,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:22:27.182Z"
+          "checkedAt": "2026-05-04T02:50:12.664Z"
         },
         "lts-hwe-testing-20260427": {
           "tag": "lts-hwe-testing-20260427",
@@ -2481,7 +2481,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:22:28.807Z"
+          "checkedAt": "2026-05-04T02:50:14.340Z"
         },
         "lts-hwe-testing-20260426": {
           "tag": "lts-hwe-testing-20260426",
@@ -2495,7 +2495,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:22:32.004Z"
+          "checkedAt": "2026-05-04T02:50:15.869Z"
         },
         "lts-hwe-testing-20260425": {
           "tag": "lts-hwe-testing-20260425",
@@ -2509,7 +2509,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:22:34.137Z"
+          "checkedAt": "2026-05-04T02:50:17.627Z"
         },
         "lts-hwe-testing-20260421": {
           "tag": "lts-hwe-testing-20260421",
@@ -2523,7 +2523,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:22:35.762Z"
+          "checkedAt": "2026-05-04T02:50:19.437Z"
         },
         "lts-hwe-testing-20260420": {
           "tag": "lts-hwe-testing-20260420",
@@ -2537,7 +2537,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:22:37.634Z"
+          "checkedAt": "2026-05-04T02:50:21.390Z"
         }
       }
     },
@@ -2562,7 +2562,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:22:39.861Z"
+          "checkedAt": "2026-05-04T02:50:22.983Z"
         },
         "lts-hwe-testing-50-20260502": {
           "tag": "lts-hwe-testing-50-20260502",
@@ -2576,7 +2576,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:22:41.510Z"
+          "checkedAt": "2026-05-04T02:50:25.298Z"
         },
         "lts-hwe-testing-50-20260501": {
           "tag": "lts-hwe-testing-50-20260501",
@@ -2590,7 +2590,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:22:43.847Z"
+          "checkedAt": "2026-05-04T02:50:26.821Z"
         },
         "lts-hwe-testing-50-20260430": {
           "tag": "lts-hwe-testing-50-20260430",
@@ -2604,7 +2604,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:22:45.716Z"
+          "checkedAt": "2026-05-04T02:50:28.329Z"
         },
         "lts-hwe-testing-50-20260429": {
           "tag": "lts-hwe-testing-50-20260429",
@@ -2618,7 +2618,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:22:47.316Z"
+          "checkedAt": "2026-05-04T02:50:30.135Z"
         },
         "lts-hwe-testing-50-20260427": {
           "tag": "lts-hwe-testing-50-20260427",
@@ -2632,7 +2632,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:22:48.853Z"
+          "checkedAt": "2026-05-04T02:50:31.654Z"
         },
         "lts-hwe-testing-50-20260426": {
           "tag": "lts-hwe-testing-50-20260426",
@@ -2646,7 +2646,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:22:50.522Z"
+          "checkedAt": "2026-05-04T02:50:34.101Z"
         },
         "lts-hwe-testing-50-20260425": {
           "tag": "lts-hwe-testing-50-20260425",
@@ -2660,7 +2660,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:22:53.163Z"
+          "checkedAt": "2026-05-04T02:50:35.682Z"
         },
         "lts-hwe-testing-50-20260421": {
           "tag": "lts-hwe-testing-50-20260421",
@@ -2674,7 +2674,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:22:54.724Z"
+          "checkedAt": "2026-05-04T02:50:37.342Z"
         },
         "lts-hwe-testing-50-20260420": {
           "tag": "lts-hwe-testing-50-20260420",
@@ -2688,7 +2688,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:22:56.863Z"
+          "checkedAt": "2026-05-04T02:50:38.845Z"
         }
       }
     },
@@ -2713,7 +2713,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:22:58.633Z"
+          "checkedAt": "2026-05-04T02:50:41.189Z"
         },
         "lts-testing-50-20260502": {
           "tag": "lts-testing-50-20260502",
@@ -2727,7 +2727,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:23:00.208Z"
+          "checkedAt": "2026-05-04T02:50:44.073Z"
         },
         "lts-testing-50-20260501": {
           "tag": "lts-testing-50-20260501",
@@ -2741,7 +2741,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:23:01.858Z"
+          "checkedAt": "2026-05-04T02:50:45.752Z"
         },
         "lts-testing-50-20260430": {
           "tag": "lts-testing-50-20260430",
@@ -2755,7 +2755,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:23:03.423Z"
+          "checkedAt": "2026-05-04T02:50:47.493Z"
         },
         "lts-testing-50-20260429": {
           "tag": "lts-testing-50-20260429",
@@ -2769,7 +2769,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:23:05.932Z"
+          "checkedAt": "2026-05-04T02:50:50.887Z"
         },
         "lts-testing-50-20260426": {
           "tag": "lts-testing-50-20260426",
@@ -2783,7 +2783,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:23:08.746Z"
+          "checkedAt": "2026-05-04T02:50:52.473Z"
         },
         "lts-testing-50-20260425": {
           "tag": "lts-testing-50-20260425",
@@ -2797,7 +2797,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:23:10.728Z"
+          "checkedAt": "2026-05-04T02:50:54.880Z"
         },
         "lts-testing-50-20260421": {
           "tag": "lts-testing-50-20260421",
@@ -2811,7 +2811,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:23:12.644Z"
+          "checkedAt": "2026-05-04T02:50:56.636Z"
         },
         "lts-testing-50-20260420": {
           "tag": "lts-testing-50-20260420",
@@ -2825,7 +2825,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:23:14.892Z"
+          "checkedAt": "2026-05-04T02:50:58.796Z"
         },
         "lts-testing-50-20260419": {
           "tag": "lts-testing-50-20260419",
@@ -2839,7 +2839,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:23:19.420Z"
+          "checkedAt": "2026-05-04T02:51:02.059Z"
         }
       }
     },
@@ -2875,7 +2875,7 @@
             "flatpak": "1.16.0",
             "nvidia": "595.71.05"
           },
-          "checkedAt": "2026-05-04T02:23:24.398Z"
+          "checkedAt": "2026-05-04T02:51:08.102Z"
         },
         "lts-20260501": {
           "tag": "lts-20260501",
@@ -2900,7 +2900,7 @@
             "flatpak": "1.16.0",
             "nvidia": "595.71.05"
           },
-          "checkedAt": "2026-05-04T02:23:29.810Z"
+          "checkedAt": "2026-05-04T02:51:12.272Z"
         },
         "lts-20260428": {
           "tag": "lts-20260428",
@@ -2925,7 +2925,7 @@
             "flatpak": "1.16.0",
             "nvidia": "595.58.03"
           },
-          "checkedAt": "2026-05-04T02:23:35.118Z"
+          "checkedAt": "2026-05-04T02:51:16.221Z"
         },
         "lts-20260421": {
           "tag": "lts-20260421",
@@ -2950,7 +2950,7 @@
             "flatpak": "1.16.0",
             "nvidia": "595.58.03"
           },
-          "checkedAt": "2026-05-04T02:23:40.093Z"
+          "checkedAt": "2026-05-04T02:51:20.214Z"
         },
         "lts-20260414": {
           "tag": "lts-20260414",
@@ -2975,7 +2975,7 @@
             "flatpak": "1.16.0",
             "nvidia": "595.58.03"
           },
-          "checkedAt": "2026-05-04T02:23:45.057Z"
+          "checkedAt": "2026-05-04T02:51:24.961Z"
         },
         "lts-20260407": {
           "tag": "lts-20260407",
@@ -3000,7 +3000,7 @@
             "flatpak": "1.16.0",
             "nvidia": "595.58.03"
           },
-          "checkedAt": "2026-05-04T02:23:49.343Z"
+          "checkedAt": "2026-05-04T02:51:29.527Z"
         },
         "lts-20260331": {
           "tag": "lts-20260331",
@@ -3014,7 +3014,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:23:50.921Z"
+          "checkedAt": "2026-05-04T02:51:31.702Z"
         },
         "lts-20260308": {
           "tag": "lts-20260308",
@@ -3028,7 +3028,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:23:52.936Z"
+          "checkedAt": "2026-05-04T02:51:33.226Z"
         },
         "lts-20260302": {
           "tag": "lts-20260302",
@@ -3042,7 +3042,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:23:55.275Z"
+          "checkedAt": "2026-05-04T02:51:35.021Z"
         },
         "lts-20260224": {
           "tag": "lts-20260224",
@@ -3056,7 +3056,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:23:57.389Z"
+          "checkedAt": "2026-05-04T02:51:36.626Z"
         }
       }
     },
@@ -3102,7 +3102,7 @@
             "flatpak": "1.16.6",
             "nvidia": "595.71.05"
           },
-          "checkedAt": "2026-05-04T02:24:00.906Z"
+          "checkedAt": "2026-05-04T02:51:40.006Z"
         },
         "stable-20260428": {
           "tag": "stable-20260428",
@@ -3127,7 +3127,7 @@
             "flatpak": "1.16.6",
             "nvidia": "595.58.03"
           },
-          "checkedAt": "2026-05-04T02:24:05.334Z"
+          "checkedAt": "2026-05-04T02:51:44.367Z"
         },
         "stable-20260421": {
           "tag": "stable-20260421",
@@ -3152,7 +3152,7 @@
             "flatpak": "1.16.6",
             "nvidia": "595.58.03"
           },
-          "checkedAt": "2026-05-04T02:24:08.754Z"
+          "checkedAt": "2026-05-04T02:51:47.589Z"
         },
         "stable-20260414": {
           "tag": "stable-20260414",
@@ -3177,7 +3177,7 @@
             "flatpak": "1.16.6",
             "nvidia": "595.58.03"
           },
-          "checkedAt": "2026-05-04T02:24:12.235Z"
+          "checkedAt": "2026-05-04T02:51:51.128Z"
         },
         "stable-20260408": {
           "tag": "stable-20260408",
@@ -3202,7 +3202,7 @@
             "flatpak": "1.16.3",
             "nvidia": "595.58.03"
           },
-          "checkedAt": "2026-05-04T02:24:16.460Z"
+          "checkedAt": "2026-05-04T02:51:54.988Z"
         },
         "stable-20260407": {
           "tag": "stable-20260407",
@@ -3227,7 +3227,7 @@
             "flatpak": "1.16.3",
             "nvidia": "595.58.03"
           },
-          "checkedAt": "2026-05-04T02:24:20.079Z"
+          "checkedAt": "2026-05-04T02:51:58.850Z"
         },
         "stable-20260331": {
           "tag": "stable-20260331",
@@ -3252,7 +3252,7 @@
             "flatpak": "1.16.3",
             "nvidia": "595.58.03"
           },
-          "checkedAt": "2026-05-04T02:24:23.641Z"
+          "checkedAt": "2026-05-04T02:52:02.770Z"
         },
         "stable-20260324": {
           "tag": "stable-20260324",
@@ -3277,7 +3277,7 @@
             "flatpak": "1.16.3",
             "nvidia": "595.45.04"
           },
-          "checkedAt": "2026-05-04T02:24:48.974Z"
+          "checkedAt": "2026-05-04T02:52:05.929Z"
         },
         "stable-20260317": {
           "tag": "stable-20260317",
@@ -3302,7 +3302,7 @@
             "flatpak": "1.16.3",
             "nvidia": "595.45.04"
           },
-          "checkedAt": "2026-05-04T02:24:51.793Z"
+          "checkedAt": "2026-05-04T02:52:08.808Z"
         },
         "stable-20260312": {
           "tag": "stable-20260312",
@@ -3327,7 +3327,7 @@
             "flatpak": "1.16.3",
             "nvidia": "595.45.04"
           },
-          "checkedAt": "2026-05-04T02:24:54.885Z"
+          "checkedAt": "2026-05-04T02:52:11.773Z"
         }
       }
     },
@@ -3360,9 +3360,46 @@
             "bootc": null,
             "fedora": null,
             "pipewire": "1.6.1",
-            "flatpak": "1.16.6"
+            "flatpak": "1.16.6",
+            "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:24:59.393Z"
+          "checkedAt": "2026-05-04T02:52:16.139Z"
+        }
+      }
+    },
+    "dakota-nvidia-latest": {
+      "id": "dakota-nvidia-latest",
+      "label": "Dakota Nvidia Latest",
+      "org": "projectbluefin",
+      "package": "dakota-nvidia",
+      "streamPrefix": "latest",
+      "keyRepo": "projectbluefin/dakota",
+      "keyless": true,
+      "releases": {
+        "latest-20260503": {
+          "tag": "latest",
+          "imageRef": "ghcr.io/projectbluefin/dakota-nvidia:latest",
+          "digest": null,
+          "attestation": {
+            "present": true,
+            "verified": true,
+            "predicateType": "https://slsa.dev/provenance/v1",
+            "slsaType": "https://slsa.dev/provenance/v1",
+            "error": null
+          },
+          "packageVersions": {
+            "kernel": "6.19.11",
+            "gnome": "50.0",
+            "mesa": "26.0.5",
+            "podman": "5.8.2",
+            "systemd": "260.1",
+            "bootc": null,
+            "fedora": null,
+            "pipewire": "1.6.1",
+            "flatpak": "1.16.6",
+            "nvidia": "595.71.05"
+          },
+          "checkedAt": "2026-05-04T02:52:20.473Z"
         }
       }
     }

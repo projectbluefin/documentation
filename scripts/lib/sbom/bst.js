@@ -49,6 +49,12 @@ const BST_PACKAGE_MAP = [
     bstSuffix: "core-deps/systemd-base.bst",
     field: "systemd",
   },
+  // Dakota nvidia variant: upstream tarball is named NVIDIA-Linux-x86
+  {
+    name: "NVIDIA-Linux-x86",
+    bstSuffix: "bluefin-nvidia/nvidia-drivers.bst",
+    field: "nvidia",
+  },
 ];
 
 // ---------------------------------------------------------------------------
@@ -82,6 +88,7 @@ function extractBstPackageVersions(sbom) {
     fedora: null, // always null — Dakota is GNOME OS based, not Fedora
     pipewire: null,
     flatpak: null,
+    nvidia: null,
     /** Flat name→version map for all BST components with semver versions. */
     allPackages: /** @type {Record<string, string>} */ ({}),
   };
