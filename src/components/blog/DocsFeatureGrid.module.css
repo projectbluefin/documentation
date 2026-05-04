@@ -68,12 +68,28 @@
   transform: translateY(-2px);
 }
 
-.thumbSide img {
+/* Shared image sizing — applied via explicit class, not the img tag selector */
+.thumbImg,
+.thumbLight,
+.thumbDark {
   width: 100%;
   height: auto;
   display: block;
   object-fit: cover;
   object-position: top;
+}
+
+/* Theme-aware variants: hide dark by default, swap on dark mode */
+.thumbDark {
+  display: none;
+}
+
+[data-theme="dark"] .thumbLight {
+  display: none;
+}
+
+[data-theme="dark"] .thumbDark {
+  display: block;
 }
 
 /* ── Responsive ──────────────────────────────────────────────────────── */

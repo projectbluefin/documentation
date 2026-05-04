@@ -1,5 +1,4 @@
 import React from "react";
-import ThemedImage from "@theme/ThemedImage";
 import styles from "./DocsFeatureGrid.module.css";
 
 interface DocsFeature {
@@ -42,14 +41,29 @@ const DocsFeatureGrid: React.FC<DocsFeatureGridProps> = ({ features }) => (
             tabIndex={-1}
             aria-hidden="true"
           >
-            <ThemedImage
-              sources={{
-                light: f.thumbnail,
-                dark: f.thumbnailDark ?? f.thumbnail,
-              }}
-              alt={f.title}
-              loading="lazy"
-            />
+            {f.thumbnailDark ? (
+              <>
+                <img
+                  src={f.thumbnail}
+                  alt={f.title}
+                  loading="lazy"
+                  className={styles.thumbLight}
+                />
+                <img
+                  src={f.thumbnailDark}
+                  alt={f.title}
+                  loading="lazy"
+                  className={styles.thumbDark}
+                />
+              </>
+            ) : (
+              <img
+                src={f.thumbnail}
+                alt={f.title}
+                loading="lazy"
+                className={styles.thumbImg}
+              />
+            )}
           </a>
         )}
       </div>
