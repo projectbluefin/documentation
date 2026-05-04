@@ -32,8 +32,9 @@
  *    parsed for RPM artifacts to extract packageVersions.
  *  - SBOM cache: keyed by image digest — if the digest hasn't changed AND
  *    packageVersions is non-null, the existing cache entry is reused.
- *  - NVIDIA: intentionally absent from SBOM (akmod, built outside the image).
- *    Consumers fall back to releases/feeds for NVIDIA versions.
+ *  - NVIDIA: present in GDX (bluefin-gdx-lts) SBOM as nvidia-driver RPM.
+ *    Absent from base bluefin-stable/lts SBOMs (akmod, built separately).
+ *    fetch-github-driver-versions.js uses null for nvidia on stable/lts streams.
  *  - Atomic write: output is written to a temp file then renamed to avoid
  *    leaving a truncated JSON file if the process is interrupted.
  */
