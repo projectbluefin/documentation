@@ -72,7 +72,29 @@ const WallpaperFeatureGrid: React.FC<{ wallpapers: WallpaperEntry[] }> = ({
           className={styles.thumbSide}
           aria-label={`View ${w.title} wallpaper`}
         >
-          <img src={w.dayUrl} alt={w.title} loading="lazy" />
+          {w.nightUrl ? (
+            <>
+              <img
+                src={w.dayUrl}
+                alt={w.title}
+                loading="lazy"
+                className={styles.thumbLight}
+              />
+              <img
+                src={w.nightUrl}
+                alt={w.title}
+                loading="lazy"
+                className={styles.thumbDark}
+              />
+            </>
+          ) : (
+            <img
+              src={w.dayUrl}
+              alt={w.title}
+              loading="lazy"
+              className={styles.thumbImg}
+            />
+          )}
         </a>
       </div>
     ))}
