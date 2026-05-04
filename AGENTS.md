@@ -44,11 +44,10 @@ git push -u origin <type>/<short-description>
 
 Types: `feat`, `fix`, `docs`, `refactor`, `perf`, `ci`, `chore`
 
-AI agent attribution (required in every commit footer):
+AI agent attribution (required in every commit footer — exactly ONE trailer, no Co-authored-by):
 
 ```
 Assisted-by: Claude Sonnet 4.6 via GitHub Copilot
-Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>
 ```
 
 **Fork sync:** This is a fork of `projectbluefin/documentation`. Keep in sync:
@@ -85,8 +84,7 @@ src/
   components/           # React components (see Components section)
   config/               # packageConfig.ts — centralized package tracking
   pages/                # Custom Docusaurus pages
-    changelogs.tsx       # /changelogs page
-    board.tsx            # /board page
+    changelogs.tsx       # /changelogs page — only custom page, all others are docs/ MDX
   types/                # TypeScript type definitions
     sbom.ts              # SBOM attestation types
     sbom-attestations.d.ts  # Ambient module declaration (allows missing file at tsc time)
@@ -191,7 +189,7 @@ pages.yml (every build)
   → static/data/images.json
 ```
 
-**NVIDIA is intentionally absent from SBOM** — NVIDIA drivers are akmod packages built outside the OCI image. The site falls back to release feeds for NVIDIA versions.
+**NVIDIA sources:** GDX stream (`bluefin-gdx-lts`) includes nvidia-driver in its SBOM. Bluefin stable and LTS nvidia variants use release feed fallback — akmod packages are built outside the OCI image. Dakota nvidia uses `dakota-nvidia-latest` SBOM stream.
 
 #### Seed file note
 
@@ -356,6 +354,15 @@ To add a new project:
 3. Test: `npm run fetch-github-repos && npm run start`
 
 Icon URLs: use `https://github.com/org-name.png` or `https://github.com/username.png`.
+
+---
+
+## Active Worktrees (2026-05-04)
+
+| Worktree path | Branch | Purpose |
+|---|---|---|
+| `.worktrees/blog-announcement` | `feature/blog-f44-update-2` | Active blog post (bluefin-spring) + dark/light mode CSS fixes |
+| `.worktrees/sbom-flatpak-cache` | `fix/sbom-flatpak-cache` | SBOM flatpak cache re-extraction fix |
 
 ---
 
