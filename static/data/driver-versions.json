@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-03T23:11:05.211Z",
+  "generatedAt": "2026-05-04T01:27:37.477Z",
   "cacheHours": 168,
   "historyDays": 90,
   "streams": [
@@ -19,9 +19,9 @@
         "versions": {
           "kernel": "6.19.12-200.fc43",
           "hweKernel": null,
-          "mesa": "25.3.6-6.fc43",
-          "nvidia": "595.71.05-1",
-          "gnome": "49.6-1.fc43"
+          "mesa": "25.3.6",
+          "nvidia": null,
+          "gnome": "49.6"
         }
       },
       "history": [
@@ -34,9 +34,9 @@
           "versions": {
             "kernel": "6.19.12-200.fc43",
             "hweKernel": null,
-            "mesa": "25.3.6-6.fc43",
-            "nvidia": "595.71.05-1",
-            "gnome": "49.6-1.fc43"
+            "mesa": "25.3.6",
+            "nvidia": null,
+            "gnome": "49.6"
           }
         },
         {
@@ -48,9 +48,9 @@
           "versions": {
             "kernel": "6.19.10-200.fc43",
             "hweKernel": null,
-            "mesa": "25.3.6-6.fc43",
-            "nvidia": "595.58.03-1",
-            "gnome": "49.6-1.fc43"
+            "mesa": "25.3.6",
+            "nvidia": null,
+            "gnome": "49.6"
           }
         },
         {
@@ -62,9 +62,9 @@
           "versions": {
             "kernel": "6.19.10-200.fc43",
             "hweKernel": null,
-            "mesa": "25.3.6-6.fc43",
-            "nvidia": "595.58.03-1",
-            "gnome": "49.6-1.fc43"
+            "mesa": "25.3.6",
+            "nvidia": null,
+            "gnome": "49.6"
           }
         },
         {
@@ -76,9 +76,9 @@
           "versions": {
             "kernel": "6.19.7-200.fc43",
             "hweKernel": null,
-            "mesa": "25.3.6-6.fc43",
-            "nvidia": "595.58.03-1",
-            "gnome": "49.5-1.fc43"
+            "mesa": "25.3.6",
+            "nvidia": null,
+            "gnome": "49.5"
           }
         },
         {
@@ -90,9 +90,9 @@
           "versions": {
             "kernel": "6.19.7-200.fc43",
             "hweKernel": null,
-            "mesa": "25.3.6-6.fc43",
-            "nvidia": "595.58.03-1",
-            "gnome": "49.5-1.fc43"
+            "mesa": "25.3.6",
+            "nvidia": null,
+            "gnome": "49.5"
           }
         },
         {
@@ -104,9 +104,9 @@
           "versions": {
             "kernel": "6.19.7-200.fc43",
             "hweKernel": null,
-            "mesa": "25.3.6-6.fc43",
-            "nvidia": "595.58.03-1",
-            "gnome": "49.5-1.fc43"
+            "mesa": "25.3.6",
+            "nvidia": null,
+            "gnome": "49.5"
           }
         },
         {
@@ -118,9 +118,9 @@
           "versions": {
             "kernel": "6.18.13-200.fc43",
             "hweKernel": null,
-            "mesa": "25.3.6-6.fc43",
-            "nvidia": "595.58.03-1",
-            "gnome": "49.5-1.fc43"
+            "mesa": "25.3.6",
+            "nvidia": null,
+            "gnome": "49.5"
           }
         },
         {
@@ -133,7 +133,7 @@
             "kernel": "6.18.13-200.fc43",
             "hweKernel": null,
             "mesa": "25.3.6",
-            "nvidia": "595.45.04-4",
+            "nvidia": null,
             "gnome": "49.5"
           }
         },
@@ -147,7 +147,7 @@
             "kernel": "6.18.10-200.fc43",
             "hweKernel": null,
             "mesa": "25.3.6",
-            "nvidia": "595.45.04-4",
+            "nvidia": null,
             "gnome": "49.4"
           }
         },
@@ -161,7 +161,7 @@
             "kernel": "6.18.10-200.fc43",
             "hweKernel": null,
             "mesa": "25.3.6",
-            "nvidia": "595.45.04-3",
+            "nvidia": null,
             "gnome": "49.4"
           }
         }
@@ -183,9 +183,9 @@
         "versions": {
           "kernel": "6.12.0-224.el10",
           "hweKernel": "6.17.12-200.fc42",
-          "mesa": "25.2.7-5.el10",
-          "nvidia": null,
-          "gnome": "49.5-100.el10gnomeqr.el10"
+          "mesa": "25.2.7",
+          "nvidia": "595.71.05",
+          "gnome": "49.5"
         }
       },
       "history": [
@@ -198,9 +198,9 @@
           "versions": {
             "kernel": "6.12.0-224.el10",
             "hweKernel": "6.17.12-200.fc42",
-            "mesa": "25.2.7-5.el10",
-            "nvidia": null,
-            "gnome": "49.5-100.el10gnomeqr.el10"
+            "mesa": "25.2.7",
+            "nvidia": "595.71.05",
+            "gnome": "49.5"
           }
         },
         {
@@ -212,9 +212,9 @@
           "versions": {
             "kernel": "6.12.0-224.el10",
             "hweKernel": "6.17.12-200.fc42",
-            "mesa": "25.2.7-5.el10",
-            "nvidia": null,
-            "gnome": "49.5-100.el10gnomeqr.el10"
+            "mesa": "25.2.7",
+            "nvidia": "595.58.03",
+            "gnome": "49.5"
           }
         },
         {
@@ -226,9 +226,9 @@
           "versions": {
             "kernel": "6.12.0-218.el10",
             "hweKernel": "6.17.12-200.fc42",
-            "mesa": "25.2.7-5.el10",
-            "nvidia": null,
-            "gnome": "49.5-100.el10gnomeqr.el10"
+            "mesa": "25.2.7",
+            "nvidia": "595.58.03",
+            "gnome": "49.5"
           }
         },
         {
@@ -240,9 +240,9 @@
           "versions": {
             "kernel": "6.12.0-218.el10",
             "hweKernel": "6.17.12-200.fc42",
-            "mesa": "25.2.7-5.el10",
-            "nvidia": null,
-            "gnome": "49.5-100.el10gnomeqr.el10"
+            "mesa": "25.2.7",
+            "nvidia": "595.58.03",
+            "gnome": "49.5"
           }
         },
         {
@@ -254,9 +254,9 @@
           "versions": {
             "kernel": "6.12.0-218.el10",
             "hweKernel": "6.17.12-200.fc42",
-            "mesa": "25.2.7-5.el10",
-            "nvidia": null,
-            "gnome": "49.5-100.el10gnomeqr.el10"
+            "mesa": "25.2.7",
+            "nvidia": "595.58.03",
+            "gnome": "49.5"
           }
         },
         {

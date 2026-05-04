@@ -260,6 +260,7 @@ function extractPackageVersions(sbomPath) {
     fedora: null,
     pipewire: null,
     flatpak: null,
+    nvidia: null,
     /** Flat name→version map of every RPM in the image */
     allPackages: /** @type {Record<string, string>} */ ({}),
   };
@@ -302,6 +303,9 @@ function extractPackageVersions(sbomPath) {
         break;
       case "flatpak":
         if (!result.flatpak) result.flatpak = stripRpmRelease(stripEpoch(String(version)));
+        break;
+      case "nvidia-driver":
+        if (!result.nvidia) result.nvidia = stripRpmRelease(stripEpoch(String(version)));
         break;
       case "fedora-release-common": {
         if (!result.fedora) {
