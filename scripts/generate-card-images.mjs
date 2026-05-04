@@ -194,10 +194,19 @@ function sbomKeyForRelease(tag, stream) {
 
 function enrichFromSbom(release, stream) {
   if (!SBOM_CACHE) return release;
-  const key = sbomKeyForRelease(release.tag, stream);
-  if (!key) return release;
 
-  const packages = SBOM_CACHE?.streams?.[key.streamId]?.releases?.[key.cacheKey]?.packageVersions;
+  let packages;
+  if (stream === "dakota") {
+    // Dakota tag ("dakota-alpha") has no date — look up the latest entry in
+    // the dakota-latest SBOM stream directly instead of using a dated key.
+    const dakotaReleases = SBOM_CACHE?.streams?.["dakota-latest"]?.releases ?? {};
+    const latestKey = Object.keys(dakotaReleases).sort().reverse()[0];
+    packages = latestKey ? dakotaReleases[latestKey]?.packageVersions : undefined;
+  } else {
+    const key = sbomKeyForRelease(release.tag, stream);
+    if (!key) return release;
+    packages = SBOM_CACHE?.streams?.[key.streamId]?.releases?.[key.cacheKey]?.packageVersions;
+  }
   if (!packages) return release;
 
   // SBOM-primary: SBOM version wins for tracked packages; prevVersion preserved from
@@ -322,11 +331,12 @@ async function main() {
 
   const stableRelease = stableRaw ? enrichFromSbom(stableRaw, "stable") : null;
   const ltsRelease    = ltsRaw    ? enrichFromSbom(ltsRaw,    "lts")    : null;
+  const dakotaRelease = enrichFromSbom(DAKOTA_RELEASE, "dakota");
 
   const cards = [
-    { release: stableRelease, stream: "stable", slug: "bluefin" },
-    { release: ltsRelease,    stream: "lts",    slug: "bluefin-lts" },
-    { release: DAKOTA_RELEASE, stream: "dakota", slug: "dakota" },
+    { release: stableRelease,  stream: "stable", slug: "bluefin" },
+    { release: ltsRelease,     stream: "lts",    slug: "bluefin-lts" },
+    { release: dakotaRelease,  stream: "dakota", slug: "dakota" },
   ];
 
   const outDir = join(ROOT, "static/img/cards");
