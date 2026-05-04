@@ -85,7 +85,7 @@ jobs:
             github-data-sbom-
 
       - name: Fetch SBOM on cache miss
-        if: steps.sbom-cache.outputs.cache-hit != 'true'
+        if: steps.sbom-cache.outputs.cache-matched-key == ''
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: node scripts/fetch-github-sbom.js
