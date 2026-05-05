@@ -24,19 +24,19 @@ import DocsFeatureGrid from "@site/src/components/blog/DocsFeatureGrid";
   playlistId="PLhiPP9M5fgWFa09qMHJSA7ts93UsMG82Q"
 />
 
-I am not going to lie I haven't been this excited about Bluefin since the start of the project. We find ourselves on the day of a major Fedora release with three fantastic options. This spring is particularly relevant for us, with GNOME 50 being a particularly nice roll up of tech. 
+^^^ this post best enjoyed with heavy metal.
 
-I know what you're thinking (especially you [McPhail](https://gld.mcphail.uk/posts/how-to-perform-a-major-version-upgrade-on-bluefin/)). We got rid of Bluefin GTS and now the team decided to make another one. How many of these things are there it's like a string of Jurassic Park sequels. First let's level set. The product is `Bluefin`. That's the default Fedora one. The other two are for different kinds of Linux nerds - we won't be adding Dakotaraptor the website or anything like that. 
+I am not going to lie I haven't been this excited about Bluefin since the start of the project. This spring is particularly relevant for us, with GNOME 50 being a particularly nice roll up of tech. Linux 7.0, all good stuff. We find ourselves on the day of a major Fedora release with three fantastic options in a sea of options. Today isn't just about Fedora, it's about the state of the art for modern Linux desktops. Let's dive in!
 
-However, we're nerds so let's take a look at the kettle and see what we've got.
+First let's deal with the raptor in the room, we made another Bluefin. I know what you're thinking (especially you [McPhail](https://gld.mcphail.uk/posts/how-to-perform-a-major-version-upgrade-on-bluefin/)!). We got rid of Bluefin GTS and now the team decided to make another one. How many of these things are there, it's like a string of Jurassic Park sequels. First let's level set. The product is `Bluefin`. That's the default Fedora one. The other two are for different kinds of Linux nerds - your favorite murder chicken is safe. We remain a project designed for cloud native practicioners, so we offer the very best tech the desktop has to offer. I've also said that Linux distributions don't matter for years, and since some of you don't still believe me I suppose we'll keep making these things until people realize that it doesn't matter. 
 
-Also spoiler alert, we will be announcing some awesome _new news_ about our Fedora variant soon!
+But as I've alluded to in the past, we're learning to come out of the shadows more for people looking for a great desktop for every day use. We've purposely avoided this audience for a few reasons - mostly because normal people don't install operating systems. But now that we've got five years of production under our belt it's probably time to be louder. We're partnering with [Michael Tunnell](https://www.youtube.com/@michael_tunnell) on a set of video content that should me more appealing to the general computing audience. Expect that some time this summer!  
 
----
+Unfortunately for you this will be a long post, I found this app called [Speed of Sound](https://flathub.org/en/apps/io.speedofsound.SpeedOfSound), a speech to text app that makes writing long winded release announcements a breeze. 
 
 ## GNOME 50 "Tokyo" comes to Bluefin
 
-GNOME 50, codenamed **Tokyo**, is the foundation of this release. If you're updating today you'll be on GNOME 50. 
+GNOME 50, codenamed **Tokyo**, is the foundation of this release. If you're updating today you'll be on GNOME 50. It is opt-in in Bluefin LTS:
 
 [ screenshot ]
 
@@ -70,11 +70,15 @@ systemctl --user daemon-reload
 systemctl --user enable --now asusd-user.service
 ```
 
-ROG Control Center lands in your system tray and gives you a full GUI for everything above — no terminal required after the initial setup. Someday we will automate this so you don't have to do any of this CLI mumbojumbo, but in the meantime kick the tyres and report back. Remember that these packages work on any Linux, so if you have a friend slumming it on Ubuntu they can use these too!
+ROG Control Center lands in your system tray and gives you a full GUI for everything above — no terminal required after the initial setup. Someday we will automate this so you don't have to do any of this CLI mumbojumbo, but in the meantime kick the tyres and report back. Remember that these packages work on any Linux!
+
+This support has turned my 2022 G14 AMD Advantage Edition in a pretty great Linux laptop, it wasn't always like that!
 
 ## Bazaar
 
 [Bazaar](https://github.com/bazaar-org/bazaar/) is the application store on Bluefin systems. It is designed to bring the best of [Flathub](https://flathub.org) to your fingertips, with a focus on _directly supporting application authors_. It accomplishes this by focusing on highlighting donations to app authors and ensuring that you get those applications as soon as they are released upstream. No jank. 
+
+We're proud to ship this as our app store, and happy to show off a new feature. GNOME Extensions are now integrated into Bazaar, unifying the app and extension experience. We hope that by bringing Extensions into the donation and curation structure that it leads to more support for extension authors. And more crucially, help encourage people to get more involved in reviewing and curating Extensions in GNOME itself.
 
 [TODO: screenshot or GIF of Bazaar in action]
 
@@ -103,19 +107,23 @@ And here are the release notes and announcements:
 - [Fedora 44 Release Notes](https://docs.fedoraproject.org/en-US/fedora/latest/release-notes/)
 - [What's New for Fedora Atomic Desktops in Fedora 44](https://tim.siosm.fr/blog/2026/04/28/fedora-atomic-desktops-44/)
 
-Timothée Ravier's post is particularly relevant for us: 
+And that's it. I want to focus on what's coming next. 
 
-- **FUSE 2 removed** — we don't support AppImages anyway but if you still care about these they may break even more. 
-- **Legacy polkit `pkla` rules dropped** — the ecosystem has moved to the JavaScript-based format and this cleans up the last stragglers
-- **Unified Atomic Desktops documentation** now lives at [docs.fedoraproject.org/en-US/atomic-desktops](https://docs.fedoraproject.org/en-US/atomic-desktops/)
+## The Future of Bluefin and Fedora
 
-The biggest news of all is the [announcement of new sealed base images](https://fedoramagazine.org/sealed-atomic-desktops-test-images/). These will end up being the most fundamental change to Bluefin in its 5-ish year history. The new sealed bootable container images will bring us:
+Timothée Ravier's post is particularly relevant for us. 
+
+- FUSE 2 removed — we don't support AppImages anyway but if you still care about these they may break even more. 
+- Legacy polkit `pkla` rules dropped — the ecosystem has moved to the JavaScript-based format and this cleans up the last stragglers
+- Unified Atomic Desktops documentation now lives at [docs.fedoraproject.org/en-US/atomic-desktops](https://docs.fedoraproject.org/en-US/atomic-desktops/)
+
+And now the big one. The biggest news of all is the [announcement of new sealed base images](https://fedoramagazine.org/sealed-atomic-desktops-test-images/). These will end up being the most fundamental change to Bluefin in its 5-ish year history. The new sealed bootable container images will bring us:
 
 - [systemd-boot](https://systemd.io/BOOT/) replaces GRUB as the bootloader — GRUB is now an extinct species in our world. Goodbye old friend. 
 - [Unified Kernel Images (UKI)](https://uapi-group.org/specifications/specs/unified_kernel_image/) — kernel, initrd, and command line bundled into a single signed EFI binary. 
 - [composefs](https://github.com/composefs/composefs) with [fs-verity](https://www.kernel.org/doc/html/latest/filesystems/fsverity.html) — every file in the OS image is cryptographically verified at read time and [managed by bootc](https://bootc-dev.github.io/bootc/experimental-composefs.html). We also say goodbye to ostree. With both projects now in the [Cloud Native Computing Foundation](https://cncf.io) we have a vendor neutral stack to base Bluefin on. Nice.
 - Full verified boot chain from firmware → bootloader → kernel → OS image — see the [FOSDEM 2025 deep-dive](https://archive.fosdem.org/2025/schedule/event/fosdem-2025-5191--signed-sealed-and-delivered-with-ukis-and-composefs/) for how it all fits together
-- [TPM-backed passwordless disk unlocking](https://www.freedesktop.org/software/systemd/man/latest/systemd-cryptenroll.html) via `systemd-cryptenroll` — the headline user benefit; LUKS unlocking is bound to the verified boot state so no password prompt on a clean boot
+- [TPM-backed passwordless disk unlocking](https://www.freedesktop.org/software/systemd/man/latest/systemd-cryptenroll.html) via `systemd-cryptenroll` — LUKS unlocking is bound to the verified boot state so no password prompt on a clean boot
 - UEFI on x86_64 and aarch64 - Legacy BIOS support goes away too, but we don't support that anyway.
 
 Want all of these things? It will take some work to move Bluefin and Aurora to these new base images, and we're looking for people to help. If you've been worried about the lack of progress in `bootc` in Fedora then this one set of images brings us back to the forefront of Linux desktop tech. Our man from France was not going to let Dakotaraptor run away with it, so if you want to help make this dream a reality, now is the time to step up and volunteer!
@@ -138,16 +146,15 @@ Bluefin LTS is maintained by [@hanthor](https://github.com/hanthor). If you rely
 
 ## Bluefin Dakota Alpha 2
 
-And now for the mysterious raptor who keeps making waves:
+And now for the mysterious new raptor who keeps making waves:
 
 <LatestOsReleaseCard stream="dakota" />
 
-Dakota is our newest "distroles" raptor. No layering and an even more aggressive push away from legacy technologies. Just the best desktop we can ship, direct from GNOME and Freedesktop right to you, no compromises. Dakotaraptor is daily driveable and has become my daily driver. 
+Dakota is our newest "distroless" raptor. No layering and an even more aggressive push away from legacy technologies. Just the best desktop we can ship, direct from GNOME and Freedesktop right to you, no compromises. Dakotaraptor is daily driveable and has quickly exceeded all expectations.
 
-- [GNOME 50](https://release.gnome.org/50/), Linux 6.13, Mesa 26.x, Freedesktop 25.08 libraries
-- systemd-boot, UKIs, UEFI only
-- Oxidized coreutils - same sudo-rs and uutils setup as Ubuntu - thanks to Canonical for funding this important work 
-- cpu v3 instructions
+- [GNOME 50](https://release.gnome.org/50/), Linux 6.19, Mesa 26.x, and Freedesktop 25.08.10 libraries
+- systemd-boot, UKIs, UEFI only, compiled for the [x86-64-v3](https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels) architecture level
+- Oxidized coreutils - same sudo-rs and uutils [setup as Ubuntu](https://discourse.ubuntu.com/t/an-update-on-rust-coreutils/80773) - thanks to Canonical for funding this important work 
 - [Custom Command Menu](https://github.com/StorageB/custom-command-menu) — Dakota features a newly refined menu. We hope to bring this menu to other Bluefins over time. 
 - Ghostty as the default terminal
 
@@ -157,7 +164,7 @@ Since Dakota is brand new there's no users to transition when we switch somethin
 
 - LUKS encryption works on install
 - Full Nvidia Image
-  - [nvidia-container-toolkit](https://github.com/projectbluefin/dakota/issues/376) — [TODO: landed / still coming]
+  - [nvidia-container-toolkit](https://github.com/projectbluefin/dakota/issues/376)
 - Efficient layering - this image uses the upstream [chunkah](https://github.com/coreos/chunkah) tool for more efficient downloads. Note that the structures and tooling is in place, we expect efficient delta downloads to land sometime this summer, but everything is in place now. 
 - Linux 7.x kernel will land once some of the bootc issues with 7.x are resolved
 - Beta target: Probably a month or so; GA target: Fall 2026
@@ -170,21 +177,26 @@ Since Dakota is brand new there's no users to transition when we switch somethin
 
 **What now?** It has been an absolute pleasure working with [BuildStream](https://buildstream.build/) over the past few weeks. The team has committed to the hardware necessary to make builds faster and the local development experience has been the best we've ever had. It has become clear and obvious to me that the combination of [BuildStream](https://buildstream.build/) and [bootc](https://containers.github.io/bootc/) brings a level of automation and developer experience that will be tough to beat.
 
-**Here's the hot take**: If you look at all three raptors, all else being equal, the _best development experience_ and _best infrastructure_ always wins in this space. We have over a decade of cloud native industry experience to prove it, Kubernetes runs the world for a reason. This workflow is now in the linux desktop space. I firmly believe that buildstream/bootc combined with our gitops approach will deliver a fantastic product. 
+**Here's the hot take**: If you look at all three raptors, all else being equal, the _best development experience_ and _best infrastructure_ always wins in this space. We have over a decade of cloud native industry experience to prove it, Kubernetes runs the world for a reason. This workflow is now in the Linux desktop space. I firmly believe that buildstream/bootc combined with our gitops approach will deliver a fantastic product. 
 
-- Stay tuned for my talk at [LAS](https://linuxappsummit.org/) where I will be discussing the applicaiton of cloud native development techniques to the desktop. The world has changed.
+:::info[Prove it]
 
-Thanks to [Brian Ketelsen](https://github.com/brianketelsen) and [James Reilly](https://github.com/jamesreilly5) for the [Tuna installer](https://github.com/tuna-os/tuna-installer)
+- I will be discussing this in my talk at the Linux Application Summit: [Making our own Fate: Why GNOME and KDE need operating systems](https://conf.linuxappsummit.org/event/9/contributions/233/) - be there!
+
+:::
+
+
+Thanks to [Brian Ketelsen](https://github.com/brianketelsen) and [James Reilly](https://github.com/jamesreilly5) for the [Tuna installer](https://github.com/tuna-os/tuna-installer). Yes they called it the Tuna installer. Shrug.
 
 Thanks to [Jordan Petridis](https://github.com/alatiera), [Valentin David](https://github.com/valentindavid), [Adrian Vovk](https://github.com/AdrianVovk), and the [GNOME OS team](https://os.gnome.org/) for their expertise and advisory roles - we couldn't do this without you!
 
 ## Homebrew Applications
 
-The [ublue-os/tap](https://github.com/ublue-os/homebrew-tap) is the production Homebrew tap for Bluefin — a curated collection of software packaged to work great on all Linuxes. Run `ujust bbrew` to open the interactive browser and install anything from the tap in a few keystrokes. Here are the highlights of apps added over the last cycle: 
+The [ublue-os/tap](https://github.com/ublue-os/homebrew-tap) is the production Homebrew tap for Bluefin - a curated collection of software packaged to work great on all Linuxes. Run `ujust bbrew` to open the interactive browser and install anything from the tap in a few keystrokes. Here are the highlights of apps added over the last cycle: 
 
 ### Editors and IDEs
 
-- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/vscode.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[Visual Studio Code](https://code.visualstudio.com/)** — Microsoft's open-source code editor.
+- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/vscode.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[Visual Studio Code](https://code.visualstudio.com/)** — Microsoft's open-source code editor. You can now install this without needing to use a DX image
 - <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/vscode-insiders.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[VS Code Insiders](https://code.visualstudio.com/insiders/)** — The daily preview build of VS Code with the newest features.
 - <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/vscodium.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[VSCodium](https://vscodium.com/)** — VS Code binaries built without Microsoft telemetry or branding.
 - <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/jetbrains.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[JetBrains Toolbox](https://www.jetbrains.com/toolbox-app/)** — Install, update, and manage every JetBrains IDE from one app. This installs Jetbrains into your home directory as intended by Jetbrains.
@@ -201,9 +213,11 @@ The [ublue-os/tap](https://github.com/ublue-os/homebrew-tap) is the production H
 
 ## Bluespeed
 
-Bluespeed is our catch all term for agent-centric tooling in Bluefin. It is a play on [RHEL Lightspeed](https://www.redhat.com/en/technologies/linux-platforms/enterprise-linux/lightspeed), Red Hat's tooling in this area. We continue to collaborate with the team and ship their tooling, such as linux-mcp-server. Bluefin ships a full cloud and AI navite development platform ready to go. We default to a "Bring your own LLM" approach, with a focus on pushing towards an all-local opt-in approach for system troubleshooting. 
+Bluespeed is our catch all term for agent-centric tooling in Bluefin. It is a play on [RHEL Lightspeed](https://www.redhat.com/en/technologies/linux-platforms/enterprise-linux/lightspeed), Red Hat's tooling in this area. We continue to collaborate with the team and ship their tooling, such as linux-mcp-server. Bluefin ships a full cloud and AI native development platform ready to go. We default to a "Bring your own LLM" approach, with a focus on pushing towards an all-local opt-in approach for system troubleshooting. 
 
-Our flagship tool is [Goose](https://block.github.io/goose/) from the [Agentic AI Foundation](https://aaif.io/), which serves as our "portal" to other tooling. Here's what else is included. We recommend using the [`ramalama`](https://ramalama.ai/) tool for model management. This features full GPU acceleration for NVIDIA and AMD GPUs to work with local models out of the box. Models and drivers are kept in containers for flexibility. It's an awesome set up, give it a shot! [Full AI setup guide →](https://docs.projectbluefin.io/ai)
+Our flagship tool is [Goose](https://block.github.io/goose/) from the [Agentic AI Foundation](https://aaif.io/), which serves as our "portal" to other tooling. We recommend using the [`ramalama`](https://ramalama.ai/) tool for model management. This features full GPU acceleration for NVIDIA and AMD GPUs to work with local models out of the box. Models and drivers are kept in containers for flexibility. It's an awesome set up, give it a shot! 
+
+[Full AI setup guide →](https://docs.projectbluefin.io/ai)
 
 ### AI Agents and Tools
 
@@ -245,26 +259,30 @@ Choose the `ai` menu in `ujust bbrew` to browse the full set of AI CLI tools:
 
 ### Ask Bluefin _(Alpha)_
 
-[Ask Bluefin](https://ask.projectbluefin.io) is a natural-language system assistant that can diagnose, explain, and help troubleshoot your machine using our community's data. 
+[Ask Bluefin](https://ask.projectbluefin.io) is a natural-language system assistant that can diagnose, explain, and help troubleshoot your machine using our community's data. You can hit it up on [the website](https://ask.projectbluefin.io), the [dedicated discussion forum](https://github.com/ublue-os/bluefin/discussions/categories/dosu-help-section), the soon-to-come shortcut in the menu, and the soon-to-come Discord app. 
 
-Ask is done in partnership with [Dosu](https://dosu.dev) - here's the gist. Ask Bluefin is trained on all of the documentation and source code for all of the tooling in Bluefin, Bluefin's source code, issues, documentation, and discussions. AND THAT'S IT. It is only trained on the code and docs. The results are usually much better than than a generic LLM, and light years ahead of Linux subreddits. (That's not a high bar, but let's have some goals). You can also use Ask Bluefin in it's [dedicated discussion forum] if you prefer it that way. 
+Ask is done in partnership with [Dosu](https://dosu.dev) - here's the gist. Ask Bluefin is trained on all of the documentation and source code for all of the tooling in Bluefin, Bluefin's source code, issues, documentation, and discussions. Podman, bootc, vscode, systemd, etc. Everything on your system. AND THAT'S IT. It is only trained on the code and docs. The results are usually much better than than a generic LLM, and light years ahead of Linux subreddits. (That's not a high bar, but let's have some goals). I have it write service units for me, because the era of writing these by hand is now almost over.
+
+Dosu also runs an MCP server if you want to connect your clients to it or work on apps that can index our community's collective knowledge. 
 
 ### Troubleshooting _(Alpha)_
 
 Proprietary operating systems are falling over each other trying to implement the worst possible anti-privacy features with AI. Of course they are, it's the nature of the beast. We take a different approach. If someone's going to invent this thing, then we're going to use it for good. Our first stab at this is to use it for a more natural goal - fix broken computers. (Computers are awful)
 
-[linux-mcp-server](https://github.com/rhel-lightspeed/linux-mcp-server) is an MCP server that gives any AI agent live read only access access to your system: OS info, processes, services, logs, network, and filesystem. When connected to [Goose] it gives your LLM access to the following featurs:
+[linux-mcp-server](https://github.com/rhel-lightspeed/linux-mcp-server) is an MCP server that gives any AI agent live read only access access to your system: OS info, processes, services, logs, network, and filesystem. When connected to [Goose](https://github.com/block/goose) it gives your LLM access to the following featurs:
 
 - Natural language diagnostics — Ask questions like "why is my fan running loud?" or "what process is eating my RAM?" and get real answers grounded in your actual current system state
 - Bluefin knowledge base built in — Dosu integration means the assistant already knows the Bluefin documentation, common issues, and community-reported workarounds. No API key required to access it.
 - Works with any MCP-compatible agent — Goose, OpenCode, and any client that supports the Model Context Protocol can connect to `linux-mcp-server` and get the same system access
 - "Bring Your Own LLM" — use it with a local Ramalama model for fully offline diagnostics, or connect to a hosted API for more capable reasoning — same data, your choice. Current this works best with paid frontier models, but our team continues to experiment with the latest local models. It's only a matter of time, open always wins. 
 
+I became a fan when on a trip to the [Southern California Linux Expo](https://www.socallinuxexpo.org/scale/23x). My computer was acting weird. I had the tool diagnose the problem, ends up we had made an error in our swap config for Bluefin LTS. It confirmed the issue, and then linked me to the existing issue that someone had reported _a few hours before_. Clanker + Human confirmation found the issue. We rolled out a fix. _I am never going to diagnose a Linux machine by hand ever again_.
+
 [Full troubleshooting guide →](https://docs.projectbluefin.io/troubleshooting)
 
-## New Wallpapers
+## New Art
 
-And now, finally, my favorite part of Bluefin, the artwork! 
+And now, finally, my favorite part of Bluefin, the artwork! I'd like to thank the two new major donors who are funding two new future Bluefin renditions. The future is bright for more art!
 
 <WallpaperFeatureGrid wallpapers={[
   {
@@ -273,7 +291,7 @@ And now, finally, my favorite part of Bluefin, the artwork!
     author: "Jay Balamurugan",
     authorUrl: "https://kakapojay.com/",
     dayUrl: "/img/artwork/fullres/lazy-days.png",
-    body: "Jay joins the prestiguous list of paleoartists to render Bluefin.\n\n We tend to always think of dinosaurs as blood thirsty killers murdering constantly. But like real animals there are plenty of times when all you want to do is lay down. This rendition of Bluefin reflects a more chill day, a full belly, and no worries.\n\n Jay is a London-based science communicator, paleoartist, and television producer — her credits include [Earth](https://player.bbc.com/en/brand/earth), [Walking with Dinosaurs](https://www.bbcearth.com/shows/walking-with-dinosaurs), and [Evolution](https://www.bbc.co.uk/programmes/m001wf7q). You can follow her on [Bluesky](https://bsky.app/profile/kakapojay.bsky.social) and [Instagram](https://www.instagram.com/kakapo.jay/)",
+    body: "Jay joins the prestiguous list of paleoartists to render Bluefin. Jay is a London-based science communicator, paleoartist, and television producer — her credits include [Earth](https://player.bbc.com/en/brand/earth), [Walking with Dinosaurs](https://www.bbcearth.com/shows/walking-with-dinosaurs), and [Evolution](https://www.bbc.co.uk/programmes/m001wf7q). \n\nBluefin was first modelled in Blender, similar to the technique used in Walking With Dinosaurs, before the finishing work added the feathers. This is so cool!\n\nWe tend to always think of dinosaurs as blood thirsty killers murdering constantly. But like real animals there are plenty of times when all you want to do is lay down. This rendition of Bluefin reflects a more chill day, a full belly, and no worries.\n\nYou can follow her on [Bluesky](https://bsky.app/profile/kakapojay.bsky.social) and [Instagram](https://www.instagram.com/kakapo.jay/)."
   },
   {
     id: "sunrise",
@@ -282,7 +300,7 @@ And now, finally, my favorite part of Bluefin, the artwork!
     authorUrl: "https://www.atiusamy.com/links/",
     dayUrl: "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/sunrise/sunrise-day.svg",
     nightUrl: "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/sunrise/sunrise-night.svg",
-    body: "Sunrise is an older wallpaper from Amy that we failed to ship and announce. Sorry about that Amy. Sunrise is now available for those of you that prefer your Bluefin smol.",
+    body: "Sunrise is an older wallpaper from Amy that we failed to ship and announce. Sorry about that Amy. \n\nSunrise is now available for those of you that prefer your Bluefin smol.",
   },
   {
     id: "leaf-collector",
@@ -293,7 +311,7 @@ And now, finally, my favorite part of Bluefin, the artwork!
     coAuthorUrl: "https://ko-fi.com/melodyofdelphi",
     dayUrl: "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/leaf-collector/leaf-collector-day.svg",
     nightUrl: "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/leaf-collector/leaf-collector-night.svg",
-    body: "Did you know birds once had teeth? Crazy I know.",
+    body: "Did you know birds once had teeth? Crazy I know. This is another banger from Dr J and Delphic. Delphic has painstainkingly vectorized the original artwork so that we can enjoy this artwork on any size monitor.",
   },
   {
     id: "duality",
@@ -314,7 +332,7 @@ And now, finally, my favorite part of Bluefin, the artwork!
     coAuthor: "Delphic Melody",
     coAuthorUrl: "https://ko-fi.com/melodyofdelphi",
     dayUrl: "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/eyes/eyes.svg",
-    body: "Our last wallpaper from Dr. J is one of my favorites. It feature a [microraptor] hunting a poor butterfly. Did she catch it? We'll leave that interpretation up to you.",
+    body: "Our last wallpaper from Dr. J is one of my favorites. It features a [microraptor](https://en.wikipedia.org/wiki/Microraptor) hunting a poor butterfly. Did she catch it? We'll leave that interpretation up to you.",
   },
 ]} />
 
@@ -347,15 +365,15 @@ I spent most of my time working on documentation and we've been working pretty h
     title: "Changelogs",
     href: "https://docs.projectbluefin.io/changelogs",
     description: "Automated weekly changelogs for every image stream",
-    body: "This page will show you all of the versions and releases of every Bluefin. It is automatically generated from Bluefin's Software Bill of Materials (SBOM), so it will always show you what's on the image. This took way more work than we realized, but thanks to awesome tools such as [oras] and [cosign] we now have a nice way to show you what's in Bluefin. We also include the updates from the default homebrew and flatpaks shipped in Bluefin for convenience.",
+    body: "This page will show you all of the versions and releases of every Bluefin. It is automatically generated from Bluefin's Software Bill of Materials (SBOM), so it will always show you what's on the image. This took way more work than we realized, but thanks to awesome tools such as [oras](https://oras.land) and [cosign](https://github.com/sigstore/cosign) we now have a nice way to show you what's in Bluefin. We also include the updates from the default homebrew and flatpaks shipped in Bluefin for convenience.",
     thumbnail: "/img/docs-features/changelogs.png",
     thumbnailDark: "/img/docs-features/changelogs-dark.png",
   },
   {
     title: "Monthly Reports",
     href: "https://docs.projectbluefin.io/reports",
-    description: "Monthly Reports",
-    body: "This page aggregates all of the work from the volunteers that are landing in Bluefin. This report is generated monthly and features all of the contributors who work on Bluefin.",
+    description: "What's going on?",
+    body: "This page aggregates all of the work from the volunteers that are landing in Bluefin. This report is generated monthly and features all of the contributors who work on Bluefin. My favorite feature is it highlights people's first contribution as a milestone. Welcome aboard, Guardian.",
     thumbnail: "/img/docs-features/reports.png",
     thumbnailDark: "/img/docs-features/reports-dark.png",
   },
@@ -363,7 +381,7 @@ I spent most of my time working on documentation and we've been working pretty h
     title: "Images",
     href: "https://docs.projectbluefin.io/images",
     description: "Full matrix of available image variants",
-    body: "This page is a reference of all of the images we publish, and feautures rebase instructions if you need them. This includes the testing branches of every image (if they exist), and then Nvidia images.",
+    body: "This page is a reference of all of the images we publish, and feautures rebase instructions if you need them. This includes the testing branches of every image (if they exist), as well as the Nvidia images.",
     thumbnail: "/img/docs-features/images.png",
     thumbnailDark: "/img/docs-features/images-dark.png",
   },
@@ -387,23 +405,135 @@ I spent most of my time working on documentation and we've been working pretty h
     title: "Artwork",
     href: "https://docs.projectbluefin.io/artwork",
     description: "Browse and download all wallpapers and artwork assets",
-    body: "Bluefin is not just software, the artwork of her world is just as important to us as the software. All of Bluefin's artists are compensated for their work.",
+    body: "Bluefin is not just software, the artwork of her world is just as important to us as the software. All of Bluefin's artists are compensated for their work.\n\nAll of Aurora and Bazzite's wallpapers are also available here.",
     thumbnail: "/img/docs-features/artwork.png",
     thumbnailDark: "/img/docs-features/artwork-dark.png",
   },
   {
     title: "Downloads",
     href: "https://docs.projectbluefin.io/downloads",
-    description: "Download any Bluefin variant with checksum verification",
-    body: "The downloads page provides direct ISO links with checksums and torrents for every Bluefin variant — Bluefin, Achillobator LTS, GDX, and Dakotaraptor — with GPU-specific entries so you always grab the right image.",
+    description: "Refreshed Downloads Page",
+    body: "The downloads page provides direct ISO links with checksums and torrents for every Bluefin variant — Bluefin, Achillobator LTS, GDX, and Dakotaraptor — with GPU-specific entries so you always grab the right download when you need it!",
     thumbnail: "/img/docs-features/downloads.png",
     thumbnailDark: "/img/docs-features/downloads-dark.png",
   }
 ]} />
+## Metrics
+
+Charts! My favorite. Usage remains steady at about 3.5k weekly devices. 
+
+<img
+  className="countme-chart"
+  src="https://raw.githubusercontent.com/ublue-os/countme/refs/heads/main/growth_bluefins.svg"
+  alt="Bluefin CountMe growth chart"
+  width="1280"
+  height="720"
+  loading="lazy"
+/>
+
+### Contributor Community
+
+Unfortunately due to limitations in LFX, we can only track [one Bluefin repository](https://github.com/ublue-os/bluefin) - so the charts below reflect the reduction of contributions to the one monorepository. This is a bummer because we intentionally split the project up into more granular repositories. The work in all other Bluefin repositories is NOT tracked here. When we can aggregate all of the contributions across all repositories we will have better data. It's all in git so we will be able to come back and correct past charts. Here are the numbers anyway:
+
+<div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:'1rem', margin:'1.5rem 0'}}>
+  <div className="lfx-chart" style={{overflow:'hidden', borderRadius:'8px', height:'488px'}}>
+    <iframe src="https://insights.linuxfoundation.org/embed/project/ublue-os-bluefin?widget=active-contributors&startDate=2025-11-05&endDate=2026-05-04&timeRangeKey=past180days" style={{transform:'scale(0.75)', transformOrigin:'top left', width:'133%', height:'800px', border:'none'}} />
+  </div>
+  <div className="lfx-chart" style={{overflow:'hidden', borderRadius:'8px', height:'608px'}}>
+    <iframe src="https://insights.linuxfoundation.org/embed/project/ublue-os-bluefin?widget=contributions-outside-work-hours&startDate=2025-11-05&endDate=2026-05-04&timeRangeKey=past180days" style={{transform:'scale(0.75)', transformOrigin:'top left', width:'133%', height:'961px', border:'none'}} />
+  </div>
+  <div className="lfx-chart" style={{overflow:'hidden', borderRadius:'8px', height:'413px'}}>
+    <iframe src="https://insights.linuxfoundation.org/embed/project/ublue-os-bluefin?widget=active-days&startDate=2025-11-05&endDate=2026-05-04&timeRangeKey=past180days" style={{transform:'scale(0.75)', transformOrigin:'top left', width:'133%', height:'700px', border:'none'}} />
+  </div>
+  <div className="lfx-chart" style={{overflow:'hidden', borderRadius:'8px', height:'503px'}}>
+    <iframe src="https://insights.linuxfoundation.org/embed/project/ublue-os-bluefin?widget=commit-activities&startDate=2025-11-05&endDate=2026-05-04&timeRangeKey=past180days" style={{transform:'scale(0.75)', transformOrigin:'top left', width:'133%', height:'820px', border:'none'}} />
+  </div>
+  <div className="lfx-chart" style={{overflow:'hidden', borderRadius:'8px', height:'645px'}}>
+    <iframe src="https://insights.linuxfoundation.org/embed/project/ublue-os-bluefin?widget=pull-requests&startDate=2025-11-05&endDate=2026-05-04&timeRangeKey=past180days" style={{transform:'scale(0.75)', transformOrigin:'top left', width:'133%', height:'1010px', border:'none'}} />
+  </div>
+  <div className="lfx-chart" style={{overflow:'hidden', borderRadius:'8px', height:'430px'}}>
+    <iframe src="https://insights.linuxfoundation.org/embed/project/ublue-os-bluefin?widget=retention&startDate=2025-11-05&endDate=2026-05-04&timeRangeKey=past180days" style={{transform:'scale(0.75)', transformOrigin:'top left', width:'133%', height:'723px', border:'none'}} />
+  </div>
+</div>
+
+_Full report: [insights.linuxfoundation.org/project/ublue-os-bluefin](https://insights.linuxfoundation.org/project/ublue-os-bluefin)_
+
+[Full analytics →](https://docs.projectbluefin.io/analytics)
+
+## Why tho? A Call to Action to the Linux users
+
+After all that praise of an alpha product of all things, some may misconstrue this as abandonment of the other Bluefins or a lack of focus. Now let's talk about how we got here.
+
+:::info[Disclaimer]
+
+This section is my opinion and does not reflect the views of the team, but is instead a reflection of my 20+ year journey working in Linux.
+
+-- jorge
+
+:::
+
+We're a cloud native project, this is what seperates us from "immutables" or whatever thing people misclassify us as. `btrfs` snapshots and the `bootc` ecosystem are not in the same category whatsoever. But that is a blog for another day. We're a cloud native project, which means we inherit that culture. All software is terrible, and we will work on software every day, for hours and hours on end. For years. Decades. That means the software isn't as important as we think.
+
+### The Shoulders of Giants
+
+Bluefin's mission is _sustainaiblity_, that means people. Bluefin LTS is there so we have a reason to bring people like Carl George and Shaun McCance into our ecosystem. Without Bluefin LTS Red Hat would not have as much of a financial incentive to help us out. We drive `bootc` forward, they invest in the software and sell it as part of their product. It's the Circle of Life, but with Linux. Red Hat did afterall, give us [millions of dollars of engineering for free](https://youtu.be/K6-GMTq2T7s?si=cyEEnhbSPmQZdBB-&t=4837).
+
+Universal Blue would NOT exist without Timothee Ravier, it would be foolish to not have him on board. And despite my disdain for the busywork you all love to create with those RPMs, I would have never gotten to know [Benjamin Sherman](https://github.com/ublue-os/ucore) and [Kyle Gospo](https://bazzite.gg) if it wasn't for those acursed things. Bazzite would not exist without Fedora - but becoming friends with you all has been a _career highlight_. It's not about the software, it's about the friends we make along the way. Sounds like the kind of tripe the Linux Foundation loves to peddle. 
+
+It took lots of work to get Fedora back on track with `bootc`, afterall, this was intended to be a weekend project inbetween Fedora 39 and 40 to prove how easy it was. See? Look how easy that was! I'd like to personally thank Laura Santamaria, who is the one person I would pick as my MVP in keeping the `bootc` ecosystem healthy. Jef you're doing great, I'm sorry for riding you so hard over the past few months. Finally, basic reliability can come to the Linux desktop, and you helped make that happen. I don't plan on celebrating long, the bar has been so low, 2015 here we come! Now we can really push. 
+
+This brings us to Dakotaraptor. Why am I there? The people. Jordan and I are discussing our anger management issues by sitting around waiting for webkit to build - therapeutic. I've reconnected with old friends in GNOME and made new ones. Dakotaraptor has one foot in the `bootc` world and one in the UAPI world. _We will participate in both of those large ecosystems_; that brings in the largest group of talent. The CNCF Community via bootc, composefs, podman, and oras. The UAPI community bringing in the Linux userspace. Sounds great, let's go. Someone from Amutable please save me a shirt!
+
+It gets better, we've got the Open Gaming Collective's stewardship of the gaming technology. That Asus support wouldn't have happened without their collaborative approach. This brings in a bunch of people who are _experts_ in their fields. GloriousEggroll, the ChimeraOS folks, Bazzite, Fyra, and others. Those of you dunking on "gaming distros" can eat crow, because these folks are sending contributions to many upstreams to the software _you depend on_. The next time someone is dunking on Nobara ask that redditor how many contributions they themselves have to Open Source. It doesn't make any financial sense for any distribution to do this on their own, it's madness. And finally contributors and application authors are making their voices heard, and while we may not agree on the tech all the time - we do agree that there's no place for the gatekeeping attitude of the old Linux world. 
+
+### The Race to Sustainability
+
+Colin Walters describes communities like this as "Centers of Gravity" - and we're all in one gigantic galaxy, everyone pulling and pushing around different ecosystems. All made possible by open source tools, amazing. 
+
+Dakotaraptor will be my home raptor. Sure I love Bluefin LTS, but I don't actually believe that old model of Linux. I used to, and parts of me always will when I get a regression on new software, hah. It also pays for a large part of this - if you're going to insist on "older is better" then you might as well be on Bluefin. And I say this with love as I type this on a Bluefin LTS machine. Inside us there are two raptors.
+
+The reality is "better tested software is better". This is Dakotaraptor's single most competitive trait. We are going all in that GNOME can make a better _product_ by being the source of truth for everything. Feature development, bug fixes, and the big one: **TESTING**. And the libraries? The same battle tested ones used by Flathub. That gives us all summer to see how good this kernel can be, and that is our role in this new ecosystem. If you're looking for an awesome place to start your contributor journey with Open Source, starting with us and graduating to GNOME is a great place to begin. 
+
+The state of Dakota Alpha 2 is impressive considering how few people it took to make it. For us our job is to make Bluefin as thin of a config layer as we can, our opinions are mostly in userspace anyway. _It should be noted that this way is always cheapest_. It is always cheaper to fix things upstream closer to the source. It's called "shifting left", yes there's a term for it lol. Welcome to cloud native.
+
+There are those that will say that GNOME OS and KDE Linux make no sense, that's what distributions are supposed to do. I push back against that. 4% marketshare in 30 years is not a success story. I'll take my chances with GNOME, KDE, and the application authors who make the software we love. In a world of cloud native tooling and Buildstream - we're about to find out where the contributors end up. Best infrastructure wins. Fastest and cheapest development wins.
+
+If you're into GNOME work on GNOME OS, if you're on KDE work on KDE Linux. If you like Fedora work on that. Make a friend, donate to an app developer. 
+
+## Download
+
+Thanks to our awesome [ISO factory](https://github.com/projectbluefin/iso) we can now deliver fresh ISOs and both Anaconda and Tuna installer suck way less than before. You can find the weekly ISO builds on the [Downloads Testing](https://docs.projectbluefin.io/downloads-testing) page - these are automatically refreshed weekly. We've also set the timer to auto publish stable releases of the ISOs each month, so you're never too out of date. We're also now publishing torrents of the most popular images.
+
+### Bluefin, Bluefin LTS, and Bluefin GDX
+
+<DownloadSection />
+
+### Dakotaraptor Alpha 2
+
+<DownloadCard
+  variant="dakotaraptor"
+  title="Dakotaraptor Alpha 2"
+  description={<>Alpha testing ISO — not for production use. <a href="/downloads-testing#dakotaraptor">📖 Read the documentation</a>.</>}
+  entries={[
+    {
+      label: "AMD / Intel",
+      isoUrl: "https://projectbluefin.dev/dakota-live-latest.iso",
+      isoFilename: "dakota-live-latest.iso",
+      checksumUrl: "https://projectbluefin.dev/dakota-live-latest.iso-CHECKSUM",
+    },
+    {
+      label: "Nvidia",
+      isoUrl: "https://projectbluefin.dev/dakota-nvidia-live-latest.iso",
+      isoFilename: "dakota-nvidia-live-latest.iso",
+      checksumUrl: "https://projectbluefin.dev/dakota-nvidia-live-latest.iso-CHECKSUM",
+    },
+  ]}
+/>
 
 
 
 <ReleaseContributors
+  stats="Bluefin is a product built by a collection of contributors spanning multiple open source projects. Thanks to all of you who contributed! It feels good to know that the contributor list is such a large part of this announcement."
   contributors={[
     { login: "ahmedadan", roles: ["maintainer", "ublue-contributor", "brew-contributor"] },
     { login: "akeeton", roles: ["ublue-contributor"] },
@@ -459,7 +589,7 @@ I spent most of my time working on documentation and we've been working pretty h
     { login: "fonnesbeck" },
     { login: "francoism90", role: "ucore-contributor" },
     { login: "GarciaLnk", roles: ["ublue-contributor"] },
-    { login: "gbrsni", roles: ["ublue-contributor"] },
+    { login: "gbrsni", roles: ["countme-maintainer"], nickname: "Abscissa of Entropy" },
     { login: "gerblesh", roles: ["ublue-contributor"] },
     { login: "gichiba" },
     { login: "goozkan" },
@@ -480,13 +610,13 @@ I spent most of my time working on documentation and we've been working pretty h
     { login: "klmcwhirter" },
     { login: "KotlinGeekDev" },
     { login: "kriszentner", roles: ["contributor"] },
-    { login: "KyleGospo", roles: ["ublue-maintainer", "aurora-maintainer", "bazzite-maintainer", "ucore-contributor"], nickname: "The First Knife" },
+    { login: "KyleGospo", roles: ["ublue-maintainer", "aurora-maintainer", "bazzite-maintainer", "ucore-contributor", "bluefin-emeritus"], nickname: "The First Knife" },
     { login: "leafyoung", roles: ["contributor"] },
     { login: "ledif", roles: ["ublue-maintainer", "aurora-maintainer"] },
     { login: "lkdm" },
     { login: "LorbusChris", roles: ["ublue-contributor"] },
     { login: "louhitar", roles: ["contributor"] },
-    { login: "m2Giles", roles: ["ublue-maintainer", "aurora-maintainer", "bazzite-contributor", "ucore-contributor"] },
+    { login: "m2Giles", roles: ["maintainer", "ublue-maintainer", "aurora-maintainer", "bazzite-contributor", "ucore-contributor"] },
     { login: "madsiur" },
     { login: "malgam" },
     { login: "maphew" },
@@ -503,7 +633,7 @@ I spent most of my time working on documentation and we've been working pretty h
     { login: "NahsiN", roles: ["contributor"] },
     { login: "nicknamenamenick", roles: ["ublue-maintainer", "aurora-maintainer", "bazzite-contributor"] },
     { login: "NiHaiden", roles: ["ublue-contributor", "aurora-artist"] },
-    { login: "nikodunk", roles: ["ublue-contributor", "ucore-contributor", "contributor"] },
+    { login: "nikodunk", roles: ["ublue-contributor", "ucore-contributor", "contributor", "countme-maintainer"], nickname: "Ordinate of Stasis" },
     { login: "noelmiller", roles: ["ublue-maintainer", "aurora-maintainer", "bazzite-maintainer"] },
     { login: "orangesunny" },
     { login: "p5", roles: ["maintainer", "ublue-maintainer", "aurora-maintainer"] },
@@ -537,9 +667,9 @@ I spent most of my time working on documentation and we've been working pretty h
     { login: "zeroby0" },
   ]}
 />
-## Chatterbox
+## The Resonant Assembly
 
-These community members participated in [GitHub Discussions](https://github.com/ublue-os/bluefin/discussions) over the last six months. Asking questions, sharing tips, helping newcomers, and keeping the conversation going is just as valuable as code.
+These community members participated in [GitHub Discussions](https://github.com/ublue-os/bluefin/discussions) over the last six months. Asking questions, sharing tips, helping newcomers, and keeping the conversation going is just as valuable as code. Thank you for your help, it's important!
 
 <ContributorCardGrid
   contributors={[
@@ -620,65 +750,6 @@ These community members participated in [GitHub Discussions](https://github.com/
   ]}
 />
 
-
-## Metrics
-
-[TODO: prose intro about Bluefin's growth and instrumentation philosophy]
-
-### Downloads
-
-<img
-  src="https://raw.githubusercontent.com/ublue-os/countme/refs/heads/main/growth_bluefins.svg"
-  alt="Bluefin CountMe growth chart"
-  width="1280"
-  height="720"
-  loading="lazy"
-/>
-
-_Source: [Fedora CountMe](https://github.com/wgwoods/fedora-countme-data) — privacy-respecting install counting inherited from Fedora._
-
-### Community
-
-| Metric | Value |
-|--------|-------|
-| Active contributors (last quarter) | 26 |
-| Pull requests per month | 412 |
-| Active days (last 365) | 365 / 365 |
-| Median PR merge time | 1 day |
-| Contributions outside work hours | 68% |
-| GitHub stars | 2,649 |
-
-_Full report: [insights.linuxfoundation.org/project/ublue-os-bluefin](https://insights.linuxfoundation.org/project/ublue-os-bluefin)_
-
-[Full analytics →](https://docs.projectbluefin.io/analytics)
-
-## Download
-
-### Bluefin, Achillobator LTS, and GDX
-
-<DownloadSection />
-
-### Dakotaraptor Alpha 2
-
-<DownloadCard
-  variant="dakotaraptor"
-  title="Dakotaraptor Alpha 2"
-  description={<>Alpha testing ISO — not for production use. <a href="/downloads-testing#dakotaraptor">📖 Read the documentation</a>.</>}
-  entries={[
-    {
-      label: "AMD / Intel",
-      isoUrl: "https://projectbluefin.dev/dakota-live-latest.iso",
-      isoFilename: "dakota-live-latest.iso",
-      checksumUrl: "https://projectbluefin.dev/dakota-live-latest.iso-CHECKSUM",
-    },
-    {
-      label: "Nvidia",
-      isoUrl: "https://projectbluefin.dev/dakota-nvidia-live-latest.iso",
-      isoFilename: "dakota-nvidia-live-latest.iso",
-      checksumUrl: "https://projectbluefin.dev/dakota-nvidia-live-latest.iso-CHECKSUM",
-    },
-  ]}
-/>
 
 ### Filing Issues
 

@@ -143,8 +143,32 @@ nav.menu.thin-scrollbar {
   overflow-y: visible !important;
 }
 
-/* Blog left sidebar */
+/* Blog left sidebar — sticky, full-height list, pinned to top */
 aside.col--3 nav.thin-scrollbar {
+  position: sticky !important;
+  top: calc(var(--ifm-navbar-height) + 2rem) !important;
   max-height: none !important;
   overflow-y: visible !important;
+}
+
+/* Blog right sidebar (TOC) — viewport-constrained, scrollable within box  */
+/* Active section highlight via Docusaurus IntersectionObserver is preserved */
+.col--2 div.thin-scrollbar {
+  position: sticky !important;
+  top: calc(var(--ifm-navbar-height) + 2rem) !important;
+  max-height: calc(100vh - var(--ifm-navbar-height) - 3rem) !important;
+  overflow-y: auto !important;
+}
+
+/* ── LFX embed charts — dark mode inversion ───────────────────────────── */
+/* LFX has no native dark mode. invert(0.9) + hue-rotate(180deg) flips the   */
+/* background dark while preserving brand colours (blues stay blue).          */
+[data-theme="dark"] .lfx-chart iframe {
+  filter: invert(0.9) hue-rotate(180deg);
+  border-radius: 8px;
+}
+
+[data-theme="dark"] .countme-chart {
+  filter: invert(0.9) hue-rotate(180deg);
+  border-radius: 4px;
 }

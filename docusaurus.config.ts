@@ -119,7 +119,7 @@ const config: Config = {
           "img-src 'self' data: https:",
           "font-src 'self' data:",
           "connect-src 'self' https://api.github.com https://giscus.app",
-          "frame-src https://giscus.app https://www.youtube.com https://youtube.com",
+          "frame-src https://giscus.app https://www.youtube.com https://youtube.com https://insights.linuxfoundation.org",
         ].join("; "),
       },
     },

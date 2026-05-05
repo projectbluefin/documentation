@@ -1,10 +1,10 @@
 import React from "react";
-import styles from "./DocsFeatureGrid.module.css";
+import styles from "./WallpaperFeatureGrid.module.css";
 
 // Render inline markdown links [text](url) as <a> elements.
-// Use literal \n in body strings to insert line breaks between sentences.
+// Use \n in body strings to insert line breaks between sentences.
 function renderMarkdownLinks(text: string): React.ReactNode[] {
-  const paragraphs = text.split("\\n");
+  const paragraphs = text.split("\n");
   return paragraphs.flatMap((para, pi) => {
     const parts = para.split(/(\[[^\]]+\]\([^)]+\))/g).map((part, i) => {
       const m = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
@@ -39,32 +39,6 @@ const WallpaperFeatureGrid: React.FC<{ wallpapers: WallpaperEntry[] }> = ({
   <div className={styles.list}>
     {wallpapers.map((w) => (
       <div key={w.id} className={styles.row}>
-        <div className={styles.textSide}>
-          <span className={styles.title}>{w.title}</span>
-          <p className={styles.description}>
-            {"by "}
-            {w.authorUrl ? (
-              <a href={w.authorUrl} target="_blank" rel="noopener noreferrer">
-                {w.author}
-              </a>
-            ) : (
-              w.author
-            )}
-            {w.coAuthor && (
-              <>
-                {" and "}
-                {w.coAuthorUrl ? (
-                  <a href={w.coAuthorUrl} target="_blank" rel="noopener noreferrer">
-                    {w.coAuthor}
-                  </a>
-                ) : (
-                  w.coAuthor
-                )}
-              </>
-            )}
-          </p>
-          {w.body && <p className={styles.body}>{renderMarkdownLinks(w.body)}</p>}
-        </div>
         <a
           href={w.dayUrl}
           target="_blank"
@@ -96,6 +70,32 @@ const WallpaperFeatureGrid: React.FC<{ wallpapers: WallpaperEntry[] }> = ({
             />
           )}
         </a>
+        <div className={styles.textSide}>
+          <span className={styles.title}>{w.title}</span>
+          <p className={styles.description}>
+            {"by "}
+            {w.authorUrl ? (
+              <a href={w.authorUrl} target="_blank" rel="noopener noreferrer">
+                {w.author}
+              </a>
+            ) : (
+              w.author
+            )}
+            {w.coAuthor && (
+              <>
+                {" and "}
+                {w.coAuthorUrl ? (
+                  <a href={w.coAuthorUrl} target="_blank" rel="noopener noreferrer">
+                    {w.coAuthor}
+                  </a>
+                ) : (
+                  w.coAuthor
+                )}
+              </>
+            )}
+          </p>
+          {w.body && <p className={styles.body}>{renderMarkdownLinks(w.body)}</p>}
+        </div>
       </div>
     ))}
   </div>
