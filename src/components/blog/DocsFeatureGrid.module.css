@@ -29,12 +29,12 @@
 
 .title {
   font-weight: 700;
-  color: var(--ifm-color-emphasis-900);
+  color: var(--ifm-color-primary);
   text-decoration: none;
 }
 
 .title:hover {
-  color: var(--ifm-color-primary);
+  color: var(--ifm-color-primary-dark);
   text-decoration: underline;
 }
 

@@ -1,0 +1,307 @@
+---
+title: "Making Our Own Fate: Dakota Alpha 2"
+slug: making-our-own-fate
+authors: castrojo
+tags: [announcements]
+draft: true
+---
+import WallpaperFeatureGrid from "@site/src/components/blog/WallpaperFeatureGrid";
+import MusicPlaylist from "@site/src/components/MusicPlaylist";
+import ReleaseContributors from "@site/src/components/ReleaseContributors";
+import ContributorCardGrid from "@site/src/components/ContributorCardGrid";
+import LatestOsReleaseCard from "@site/src/components/LatestOsReleaseCard";
+import BlogFigure from "@site/src/components/blog/BlogFigure";
+import DownloadCard from "@site/src/components/DownloadCard";
+import DownloadSection from "@site/src/components/DownloadSection";
+import DocsFeatureGrid from "@site/src/components/blog/DocsFeatureGrid";
+import BlogSeries from "@site/src/components/blog/BlogSeries";
+import StoreCards from "@site/src/components/blog/StoreCards";
+
+<BlogSeries seriesId="bluefin-spring-2026" currentPart={3} />
+
+<p className="blog-post-subtitle">The Final Shape is here...</p>
+
+<MusicPlaylist
+  title="Bluefin and the Lost Tribe of Contributors"
+  playlistId="PLhiPP9M5fgWEuxjlfOEX3fwA-E60-E4TA"
+/>
+
+First let's deal with the raptor in the room, we made another Bluefin. I know what you're thinking (especially you [McPhail](https://gld.mcphail.uk/posts/how-to-perform-a-major-version-upgrade-on-bluefin/)!). We got rid of Bluefin GTS and now the team decided to make another one. How many of these things are there, it's like a string of Jurassic Park sequels. First let's level set. The product is `Bluefin`. That's the default Fedora one. 
+
+Your favorite murder chicken is safe. We don't expect normal people to know what Dakota is anymore than we expect them to know what a [Koenigsegg](https://www.koenigsegg.com) is. I can't even pronounce that name! We remain a project designed for cloud native practicioners, so we offer the very best tech the desktop has to offer. And there's good tech in buildstream and GNOME OS, there's a compelling set of options here.
+
+I've also said that Linux distributions don't matter for years, and since some of you don't still believe me I suppose we'll keep making these things until people realize that it doesn't matter. lol. 
+
+And now for the mysterious new raptor who keeps making waves:
+
+<LatestOsReleaseCard stream="dakota" />
+
+Dakota is our newest "distroless" raptor. It's built from source and directly published as a `bootc` image, no traditional package manager involved at all. 
+
+> Wait, this is just Gentoo.
+>
+> Chris Aniszczyk, CTO Linux Foundation and former Gentoo contributor
+
+Dakota features a more aggressive push away from legacy technologies, pure image mode only. Just the best desktop we can ship, direct from GNOME and Freedesktop right to you. We remove the concept of "the Linux distribution" being a platform and the top primitive, the Freedesktop libraries and Flathub are our platform. No compromises. Dakotaraptor is daily driveable and has quickly exceeded all expectations.
+
+
+- [GNOME 50](https://release.gnome.org/50/), Linux 6.19, Mesa 26.x, and Freedesktop 25.08.10 libraries
+- systemd-boot, UKIs, UEFI only, compiled for the [x86-64-v3](https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels) architecture level
+- Oxidized coreutils - same sudo-rs and uutils [setup as Ubuntu](https://discourse.ubuntu.com/t/an-update-on-rust-coreutils/80773) - thanks to Canonical for funding this important work 
+- [Custom Command Menu](https://github.com/StorageB/custom-command-menu) — Dakota features a newly refined menu. We hope to bring this menu to other Bluefins over time. 
+- Ghostty as the default terminal
+
+Since Dakota is brand new there's no users to transition when we switch something. The `ptyxis` author is moving on from GNOME so we wish [Christian Hergert](https://gitlab.gnome.org/chergert) well in his future endevours. We are switching to [Ghostty](https://ghostty.org/) as the default terminal. This has always been a fan favorite so we're starting with it fresh here.
+
+When I talked to Christian last we discussed having `ptyxis` just use a libghossty backend. This is not only totally possible but would be the ideal situation! **Someone please make this**. 
+
+### Changes since Alpha 1
+
+Thanks everyone who helped test, you've done a great job!
+
+- LUKS encryption works on install
+- Full Nvidia Image
+  - [nvidia-container-toolkit](https://github.com/projectbluefin/dakota/issues/376)
+- Efficient layering - this image uses the upstream [chunkah](https://github.com/coreos/chunkah) tool for more efficient downloads. We expect efficient delta downloads to land sometime this summer, but the infrastructure is in polace now
+- Linux 7.x kernel will land once some of the bootc issues with 7.x are resolved
+- Beta target: Probably a month or so; GA target: Fall 2026
+- Want to help? GNOME OS upstream is always looking for help: [os.gnome.org](https://os.gnome.org/)
+
+### Gotchas
+
+- [Open issues](https://github.com/projectbluefin/dakota/issues)
+- [ISO-specific issues](https://github.com/projectbluefin/dakota-iso/issues)
+
+And the big one. We cannot guarantee that this installation will be the final layout. GNOME OS is transitioning to `systemd-homed` eventually. That will mean either a manual transition or reinstallation. As such we likely will not go GA until this transition completes. We expect a lazy summer beta.
+
+**What now?** It has been an absolute pleasure working with [BuildStream](https://buildstream.build/) over the past few weeks. The team has committed to the hardware necessary to make builds faster and the local development experience has been the best we've ever had. It has become clear and obvious to me that the combination of [BuildStream](https://buildstream.build/) and [bootc](https://containers.github.io/bootc/) brings a level of automation and developer experience that will be tough to beat.
+
+**Here's the hot take**: If you look at all three raptors, all else being equal, the _best development experience_ and _best infrastructure_ always wins in this space. We have over a decade of cloud native industry experience to prove it, Kubernetes runs the world for a reason. This workflow is now in the Linux desktop space. I firmly believe that buildstream/bootc combined with our gitops approach will deliver a fantastic product. 
+
+Thanks to [Brian Ketelsen](https://github.com/brianketelsen) and [James Reilly](https://github.com/jamesreilly5) for the [Tuna installer](https://github.com/tuna-os/tuna-installer). Yes they called it the Tuna installer. lol.
+
+Thanks to [Jordan Petridis](https://github.com/alatiera), [Valentin David](https://github.com/valentindavid), [Adrian Vovk](https://github.com/AdrianVovk), and the [GNOME OS team](https://os.gnome.org/) for their expertise and advisory roles - we couldn't do this without you!
+
+
+## Why tho? A Call to Action
+
+After all that praise of an alpha product of all things, some may misconstrue this as abandonment of the other Bluefins or a lack of focus. Now let's talk about how we got here.
+
+:::info[Disclaimer]
+
+This section is my opinion and does not reflect the views of the team, but is instead a reflection of my 20+ year journey working in Linux.
+
+-- jorge
+
+:::
+
+We're a cloud native project, this is what seperates us from "immutables" or whatever thing people misclassify us as. `btrfs` snapshots and the `bootc` ecosystem are not in the same category whatsoever. But that is a blog for another day. We're a cloud native project, which means we inherit that culture. All software is terrible, and we will work on software every day, for hours and hours on end. For years. Decades. That means the software isn't as important as we think.
+
+### The Shoulders of Giants
+
+Bluefin's mission is _sustainaiblity_, that means people. Bluefin LTS is there so we have a reason to bring people like Carl George and Shaun McCance into our ecosystem. Without Bluefin LTS Red Hat would not have as much of a financial incentive to help us out. We drive `bootc` forward, they invest in the software and sell it as part of their product. It's the Circle of Life, but with Linux. Red Hat did afterall, give us [millions of dollars of engineering for free](https://youtu.be/K6-GMTq2T7s?si=cyEEnhbSPmQZdBB-&t=4837).
+
+Universal Blue would NOT exist without Timothee Ravier, it would be foolish to not have him on board. And despite my disdain for the busywork you all love to create with those RPMs, I would have never gotten to know [Benjamin Sherman](https://github.com/ublue-os/ucore) and [Kyle Gospo](https://bazzite.gg) if it wasn't for those acursed things. Bazzite would not exist without Fedora - but becoming friends with you all has been a _career highlight_. It's not about the software, it's about the friends we make along the way. Sounds like the kind of tripe the Linux Foundation loves to peddle. 
+
+This brings us to Dakotaraptor. Why am I there? The people. Jordan and I are discussing our anger management issues by sitting around waiting for webkit to build - therapeutic. I've reconnected with old friends in GNOME and made new ones. Dakotaraptor has one foot in the `bootc` world and one in the UAPI world. 
+
+:::info[Speeeeed]
+
+We will participate in both of those large ecosystems; that brings in the largest group of talent. Projects live and die based on the contributors that show up. We will always endevaour to work the best people at the cutting edge of Linux. We're ops people, mastery of all Linux is a requirement.
+
+:::
+
+The CNCF Community via bootc, composefs, podman, and oras. The UAPI community bringing in the Linux userspace. Sounds great, let's go. Someone from Amutable please save me a shirt!
+
+### Gamers
+
+It gets better, we've got the Open Gaming Collective's stewardship of the gaming technology. That Asus support wouldn't have happened without their collaborative approach. This brings in a bunch of people who are _experts_ in their fields. GloriousEggroll, the ChimeraOS folks, Bazzite, Fyra, and others. Those of you dunking on "gaming distros" can eat crow, because these folks are sending contributions to many upstreams to the software _you depend on_. The next time someone is dunking on Nobara ask that redditor how many contributions they themselves have to Open Source. It doesn't make any financial sense for any distribution to do this on their own, it's madness. And finally contributors and application authors are making their voices heard, and while we may not agree on the tech all the time - we do agree that there's no place for the gatekeeping attitude of the old Linux world. 
+
+### The Race to Sustainability
+
+Colin Walters describes communities like this as "Centers of Gravity" - and we're all in one gigantic galaxy, everyone pulling and pushing around different ecosystems. All made possible by open source tools, amazing. 
+
+Dakotaraptor will be my home raptor. Sure I love Bluefin LTS, but I don't actually believe that old model of Linux. I used to, and parts of me always will when I get a regression on new software, hah. It also pays for a large part of this - if you're going to insist on "older is better" then you might as well be on Bluefin. And I say this with love as I type this on a Bluefin LTS machine. Inside us there are two raptors.
+
+The reality is "better tested software is better". This is Dakotaraptor's single most competitive trait. We are going all in that GNOME can make a better _product_ by being the source of truth for everything. Feature development, bug fixes, and the big one: **TESTING**. And the libraries? The same battle tested ones used by Flathub. That gives us all summer to see how good this kernel can be, and that is our role in this new ecosystem. If you're looking for an awesome place to start your contributor journey with Open Source, starting with us and graduating to GNOME is a great place to begin. 
+
+The state of Dakota Alpha 2 is impressive considering how few people it took to make it. For us our job is to make Bluefin as thin of a config layer as we can, our opinions are mostly in userspace anyway. _It should be noted that this way is always cheapest_. It is always cheaper to fix things upstream closer to the source. It's called "shifting left", yes there's a term for it lol. Welcome to cloud native.
+
+### [It's here](https://www.youtube.com/watch?v=v3mXEsZIlmU)
+
+There are those that will say that GNOME OS and KDE Linux make no sense, that's what distributions are supposed to do. I push back against that. 4% marketshare in 30 years is not a success story. And the ones that **are** growing are designed to be used as reliable clients and not package manglers. 
+
+Timothee Ravier once said, people don't want distributions they want experiences. And these operating systems will prove it. No one will ever give you a better KDE experience than KDE. That wasn't true in the past because distributing software over the internet was hard. Now not only is it much easier, these organizations can start greenfield with the state of the art rather than trying to adapt old techniques to the new world.
+
+This has been a long time coming. Not because we're smart, but because this is the same thing that happened to Linux in cloud and mobile. I'll take my chances with GNOME, KDE, and the application authors who make the software we love. In a world of cloud native tooling and Buildstream - we're about to find out where the contributors end up. Best infrastructure wins. Fastest and cheapest development wins.
+
+If you're into GNOME work on GNOME OS, if you're on KDE work on KDE Linux. If you like Fedora work on that. Make a friend, donate to an app developer. 
+
+:::info[Prove it, nerd]
+
+- I will be discussing this in my talk at the Linux Application Summit: [Making our own Fate: Why GNOME and KDE need operating systems](https://conf.linuxappsummit.org/event/9/contributions/233/) - be there!
+
+:::
+
+This is of course, all from our point of view.
+
+GNOME OS would prefer we ship a DDI image. And some would prefer we don't exist at all and just sit as a `systemd-sysext` in GNOME OS. Sure, someone make one, we have buildstream, would you like fries with that? And with so many RPM-based people in the `bootc` world I am sure there are people who prefer that Bluefin just focus on being a Fedpra with batteries included and nothing else.
+
+But we are a forcing function - the dinosaurs are there to remind us that only the best survive the harshest ecosystems. This is especially true in the resourced starved Linux desktop ecosystem. We will continue to push. Some software is not going to make it. See you in the trenches, thanks!
+
+:::note[It really is just a conspiracy]
+
+We built Universal Blue. Aurora, Bazzite, and Bluefin, as a team.
+
+Then opportunites opened up for our contributors to work for organizations at the forefront of Linux. The Linux Foundation, Microsoft, Chainguard, Red Hat, and others. Driven to build around open standards but leaving room for commercial entitities to exist and thrive. And that's just the core team, as you can see from our contributor lists, the cloud native ecosystem is a significant center of gravity in open source.
+
+You have proven that **_enthusiasts matter_** and can shape the future of the desktop. Level up your skills and organizations looking for open source talent will take **you** seriously, and in today's brutally competitive job marketplace, expertise in open source matters.
+
+There's no right way to Linux, but there are certainly wrong ways to Linux. If you're new to Linux, welcome. We are your starter dungeon. We're your sysadmin team, nice to meet you, we've got your back. Greatness awaits. And also pain. Mostly pain.
+
+:::
+
+## Merch
+
+Celebrate the release of a new top predator with our stylish "Dakotaraptor Forever" shirt. 
+
+<StoreCards items={[
+  {
+    title: "Dakotaraptor Forever",
+    price: "$23.00",
+    imageUrl: "/img/store/dakotaraptor-forever-0.jpg",
+    productUrl: "https://projectbluefin.printful.me/product/dakotaraptor-forever",
+  },
+  {
+    title: "Bluefin Women's Rawr",
+    price: "$16.00",
+    imageUrl: "/img/store/bluefin-womens-rawr-0.jpg",
+    productUrl: "https://projectbluefin.printful.me/product/bluefin-womens-rawr",
+  },
+  {
+    title: "Universal Blue Polo Shirt",
+    price: "$60.50",
+    imageUrl: "/img/store/universal-blue-polo-1.jpg",
+    productUrl: "https://projectbluefin.printful.me/product/universal-blue-polo-shirt",
+  },
+]} />
+
+[Check out the rest on store.projectbluefin.io →](https://store.projectbluefin.io)
+
+## Download
+
+<DownloadCard
+  variant="dakotaraptor"
+  title="Dakotaraptor Alpha 2"
+  description={<>Alpha testing ISO — not for production use. <a href="/downloads-testing#dakotaraptor">📖 Read the documentation</a>.</>}
+  entries={[
+    {
+      label: "AMD / Intel",
+      isoUrl: "https://projectbluefin.dev/dakota-live-latest.iso",
+      isoFilename: "dakota-live-latest.iso",
+      checksumUrl: "https://projectbluefin.dev/dakota-live-latest.iso-CHECKSUM",
+    },
+    {
+      label: "Nvidia",
+      isoUrl: "https://projectbluefin.dev/dakota-nvidia-live-latest.iso",
+      isoFilename: "dakota-nvidia-live-latest.iso",
+      checksumUrl: "https://projectbluefin.dev/dakota-nvidia-live-latest.iso-CHECKSUM",
+    },
+  ]}
+/>
+
+
+## The Resonant Assembly
+
+One last group of people to thank. These community members participated in [GitHub Discussions](https://github.com/ublue-os/bluefin/discussions) over the last six months. Asking questions, sharing tips, helping newcomers, and keeping the conversation going is just as valuable as code. Thank you for your help, it's important!
+
+<ReleaseContributors
+  title="The Resonant Assembly"
+  contributors={[
+    { login: "agriffis" },
+    { login: "AlexFullmoon" },
+    { login: "anders322github" },
+    { login: "azacio" },
+    { login: "blfpd" },
+    { login: "bsiegel" },
+    { login: "ccrpc-fjunge" },
+    { login: "ClixTW" },
+    { login: "code-mph" },
+    { login: "CodingKoalaGeneral", roles: ["ublue-contributor"] },
+    { login: "D4RK0N3dev" },
+    { login: "decksdark628" },
+    { login: "deepdowntraumahound" },
+    { login: "DFeise" },
+    { login: "droplinxuser" },
+    { login: "ehames" },
+    { login: "ehsanullahjan" },
+    { login: "fkromer" },
+    { login: "gabenavarro" },
+    { login: "gtaranti" },
+    { login: "hellpe" },
+    { login: "IkaLorei" },
+    { login: "indolering" },
+    { login: "inktvis75" },
+    { login: "Jackthompson-mat" },
+    { login: "jamie-dainton" },
+    { login: "JaviLib" },
+    { login: "jeffam" },
+    { login: "jiesou" },
+    { login: "joelhickok" },
+    { login: "jorti" },
+    { login: "JSUNFGH" },
+    { login: "karypid" },
+    { login: "kwag" },
+    { login: "lbssousa" },
+    { login: "lparolari" },
+    { login: "m1tm4n404" },
+    { login: "masakk1" },
+    { login: "miabbott", roles: ["ublue-contributor"] },
+    { login: "montymalik" },
+    { login: "morrolinux" },
+    { login: "mpolsinelli" },
+    { login: "murphym18" },
+    { login: "parkan" },
+    { login: "Pfritts" },
+    { login: "pisiest" },
+    { login: "PJansky" },
+    { login: "prototact" },
+    { login: "PunkPangolin" },
+    { login: "RedLanternTech" },
+    { login: "sanmue" },
+    { login: "sillybilly10" },
+    { login: "skymoo" },
+    { login: "sprintcowboy" },
+    { login: "starfreck" },
+    { login: "tails618" },
+    { login: "TheodoreLogN" },
+    { login: "therealknewman" },
+    { login: "tifriis208" },
+    { login: "ToughDBlue" },
+    { login: "umibozu83" },
+    { login: "victoitor" },
+    { login: "victorwsyy321-stack" },
+    { login: "viktorpopp" },
+    { login: "visnudeva" },
+    { login: "VlastimilHudecek" },
+    { login: "wegweg7979" },
+    { login: "wepantech" },
+    { login: "ximian" },
+    { login: "Xtrems876" },
+    { login: "YoavRheims" },
+    { login: "ZeroXMK" },
+    { login: "zilexa" },
+    { login: "znmeb" },
+  ]}
+/>
+
+
+### Filing Issues
+
+- [Bluefin issues](https://github.com/ublue-os/bluefin/issues)
+- [Dakota issues](https://github.com/projectbluefin/dakota/issues)
+- [Dakota ISO issues](https://github.com/projectbluefin/dakota-iso/issues)
+
+### [Discussions](https://github.com/ublue-os/bluefin/discussions)
+
+[TODO: create a new discussion and replace this link — last one was #4500 for Dakota Alpha 1]

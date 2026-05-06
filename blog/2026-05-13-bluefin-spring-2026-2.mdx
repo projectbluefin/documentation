@@ -1,0 +1,335 @@
+---
+title: "Bluefin Spring 2026: Part of a Growing Ecosystem"
+slug: bluefin-spring-2026-2
+authors: castrojo
+tags: [announcements, releases, dakota]
+draft: true
+---
+import WallpaperFeatureGrid from "@site/src/components/blog/WallpaperFeatureGrid";
+import MusicPlaylist from "@site/src/components/MusicPlaylist";
+import ReleaseContributors from "@site/src/components/ReleaseContributors";
+import ContributorCardGrid from "@site/src/components/ContributorCardGrid";
+import LatestOsReleaseCard from "@site/src/components/LatestOsReleaseCard";
+import BlogFigure from "@site/src/components/blog/BlogFigure";
+import DownloadCard from "@site/src/components/DownloadCard";
+import DownloadSection from "@site/src/components/DownloadSection";
+import DocsFeatureGrid from "@site/src/components/blog/DocsFeatureGrid";
+import BlogSeries from "@site/src/components/blog/BlogSeries";
+import BrewOsChart from "@site/src/components/blog/BrewOsChart";
+
+<BlogSeries seriesId="bluefin-spring-2026" currentPart={2} />
+
+<p className="blog-post-subtitle">So many good things ...</p>
+
+<MusicPlaylist
+  title="Bluefin and Dakota"
+  playlistId="PLhiPP9M5fgWHRa6Gt0UKWGxr3F0qg9t1g"
+/>
+
+Today we'll be talking about the software we love to ship in Bluefin. 
+
+## Bazaar
+
+[Bazaar](https://github.com/bazaar-org/bazaar/) is the application store on Bluefin systems. It is designed to bring the best of [Flathub](https://flathub.org) to your fingertips, with a focus on _directly supporting application authors_. It accomplishes this by focusing on highlighting donations to app authors and ensuring that you get those applications as soon as they are released upstream. No jank. 
+
+We're proud to ship this as our app store. Flathub has over 1 billion downloads and 21% Year over Year growth. Nice.
+
+We're happy to show off a new feature. GNOME Extensions are now integrated into Bazaar, unifying the app and extension experience. We hope that by bringing Extensions into the donation and curation structure that it leads to more support for extension authors. And more crucially, help encourage people to get more involved in reviewing and curating Extensions in GNOME itself.
+
+[TODO: screenshot or GIF of Bazaar in action]
+
+<BlogFigure
+  src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/bazaar-screenshot.png"
+  alt="Bazaar app store"
+  caption="Bazaar — a Flathub-focused app store for GNOME"
+  maxWidth="720px"
+/>
+
+I'm sure someone will complain about scope. Yes, it is totally hypocritical to say "Packages suck! Throw it all away!" and then add this to Bazaar. There's prior art here, but mostly it's to get something out that's installed on tens of thousands of machines to highlight one thing.
+
+[ Add your favorite complaint about GNOME extensions here. Go ahead and take your time, we'll wait.]
+
+We have an Open Source contributor in duress. People will complain about GNOME, but we're an open source project, our job is to help. So we're putting Extensions in GNOME front and center - and we're going to force the issue. People will either step up and help maintain and curate, or they won't. 
+
+Bazaar is built by [@kolunmi](https://github.com/kolunmi) and [@AlexanderVanhee](https://github.com/AlexanderVanhee). If you want to see this project succeed, support them directly:
+
+<div style={{display: "flex", gap: "1rem", flexWrap: "wrap", margin: "1rem 0", justifyContent: "center"}}>
+  <a href="https://ko-fi.com/kolunmi" style={{display: "inline-block", background: "#FF5E5B", color: "white", padding: "0.6rem 1.4rem", borderRadius: "8px", fontWeight: "bold", textDecoration: "none"}}>💙 Support kolunmi on Ko-fi</a>
+  <a href="https://ko-fi.com/alexandervanhee" style={{display: "inline-block", background: "#FF5E5B", color: "white", padding: "0.6rem 1.4rem", borderRadius: "8px", fontWeight: "bold", textDecoration: "none"}}>💙 Support Alexander on Ko-fi</a>
+</div>
+
+## Homebrew Applications
+
+The [ublue-os/tap](https://github.com/ublue-os/homebrew-tap) is the production Homebrew tap for Bluefin - a curated collection of software packaged to work great on all Linuxes. Run `ujust bbrew` to open the interactive browser and install anything from the tap in a few keystrokes. Here are the highlights of apps added over the last cycle: 
+
+### Editors and IDEs
+
+- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/vscode.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[Visual Studio Code](https://code.visualstudio.com/)** — Microsoft's open-source code editor. You can now install this without needing to use a DX image
+- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/vscode-insiders.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[VS Code Insiders](https://code.visualstudio.com/insiders/)** — The daily preview build of VS Code with the newest features.
+- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/vscodium.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[VSCodium](https://vscodium.com/)** — VS Code binaries built without Microsoft telemetry or branding.
+- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/jetbrains.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[JetBrains Toolbox](https://www.jetbrains.com/toolbox-app/)** — Install, update, and manage every JetBrains IDE from one app. This installs Jetbrains into your home directory as intended by Jetbrains.
+
+### System Tools
+
+- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/framework.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[framework-tool](https://github.com/FrameworkComputer/framework-tool)** — Official CLI for Framework laptop hardware: fan control, battery charge limits, charge LED mode, input module configuration, and firmware update checks.
+- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/gnome.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[heic-to-dynamic-gnome-wallpaper](https://github.com/undertuga/heic-to-dynamic-gnome-wallpaper)** — Convert macOS HEIC dynamic wallpapers into GNOME XML dynamic wallpapers that change with the time of day.
+- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/postmarketos.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[pmbootstrap](https://wiki.postmarketos.org/wiki/Pmbootstrap)** — The sophisticated chroot/build/flash tool for postmarketOS development and porting Linux to mobile devices.
+- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/asusctl.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[asusctl](https://gitlab.com/asus-linux/asusctl)** — CLI and daemon for ASUS hardware: fan curves, battery charge limits, keyboard LEDs, GPU mode switching, and more.
+- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/rog-control-center.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[ROG Control Center](https://gitlab.com/asus-linux/asusctl)** — GUI front-end for asusctl, providing a graphical interface for all ASUS ROG hardware controls.
+
+[Browse the full tap on GitHub →](https://github.com/ublue-os/homebrew-tap)
+
+<BrewOsChart topN={20} />
+
+## Bluespeed
+
+Bluespeed is our catch all term for agent-centric tooling in Bluefin. It is a play on [RHEL Lightspeed](https://www.redhat.com/en/technologies/linux-platforms/enterprise-linux/lightspeed), Red Hat's tooling in this area. We continue to collaborate with the team and ship their tooling, such as linux-mcp-server. Bluefin ships a full cloud and AI native development platform ready to go. We default to a "Bring your own LLM" approach, with a focus on pushing towards an all-local opt-in approach for system troubleshooting. 
+
+Our flagship tool is [Goose](https://block.github.io/goose/) from the [Agentic AI Foundation](https://aaif.io/), which serves as our "portal" to other tooling. We recommend using the [`ramalama`](https://ramalama.ai/) tool for model management. This features full GPU acceleration for NVIDIA and AMD GPUs to work with local models out of the box. Models and drivers are kept in containers for flexibility. It's an awesome set up, give it a shot! 
+
+[Full AI setup guide →](https://docs.projectbluefin.io/ai)
+
+### Agents and Tools
+
+Run `ujust bbrew` to install any of these:
+
+- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/goose.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[Goose](https://block.github.io/goose/)** — The primary AI agent in Bluefin, from the [Agentic AI Foundation (AAIF)](https://aaif.io/). Open source, extensible AI agent that goes beyond code suggestions.
+- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/lmstudio.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[LM Studio](https://lmstudio.ai/)** — Discover, download, and run local LLMs.
+- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/antigravity.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[Antigravity](https://antigravity.ai/)** — AI Coding Agent IDE.
+- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/cursor.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[Cursor](https://cursor.com/)** — Write, edit, and chat about your code with AI.
+- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/craft-agents.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[Craft Agents](https://agents.craft.do/)** — Work with most powerful agents in the world, with the UX they deserve.
+- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/opencode.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[OpenCode Desktop](https://opencode.ai/)** — Open source AI coding agent desktop client.
+- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/emdash.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[Emdash](https://emdash.sh/)** — Agentic development environment for running multiple coding agents in parallel.
+- <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/ramalama.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[Ramalama](https://github.com/containers/ramalama)** — Goal of RamaLama is to make working with AI boring.
+- **[Alpaca](https://alpaca.zlatko.org/)** — A graphical LLM chat interface available as a Flatpak. Launch it instantly from anywhere with `Ctrl+Alt+Backspace`.
+
+### Agent CLI Tools
+
+Choose the `ai` menu in `ujust bbrew` to browse the full set of AI CLI tools:
+
+| Tool | Description |
+|---|---|
+| [aichat](https://github.com/sigoden/aichat) | All-in-one AI-Powered CLI Chat & Copilot |
+| [block-goose-cli](https://formulae.brew.sh/formula/block-goose-cli) | Open source, extensible AI agent that goes beyond code suggestions |
+| [claude-code](https://formulae.brew.sh/cask/claude-code) | Terminal-based AI coding assistant |
+| [codex](https://formulae.brew.sh/cask/codex) | OpenAI's coding agent that runs in your terminal |
+| [copilot-cli](https://formulae.brew.sh/cask/copilot-cli) | Brings the power of Copilot coding agent directly to your terminal |
+| [crush](https://github.com/charmbracelet/crush) | A powerful terminal-based AI assistant for developers, providing intelligent coding assistance directly in your terminal. |
+| [gemini-cli](https://formulae.brew.sh/formula/gemini-cli) | Interact with Google Gemini AI models from the command-line |
+| [Jan](https://jan.ai/) | Offline AI chat tool |
+| [kimi-cli](https://formulae.brew.sh/formula/kimi-cli) | CLI agent for MoonshotAI Kimi platform |
+| [llm](https://formulae.brew.sh/formula/llm) | Access large language models from the command-line |
+| [llmfit](https://formulae.brew.sh/formula/llmfit) | Find what models run on your hardware |
+| [mistral-vibe](https://formulae.brew.sh/formula/mistral-vibe) | Minimal CLI coding agent |
+| [opencode](https://formulae.brew.sh/formula/opencode) | AI coding agent, built for the terminal |
+| [qwen-code](https://formulae.brew.sh/formula/qwen-code) | AI-powered command-line workflow tool for developers |
+| [whisper-cpp](https://formulae.brew.sh/formula/whisper-cpp) | Port of OpenAI's Whisper model in C/C++ |
+
+[Full AI setup guide →](https://docs.projectbluefin.io/ai)
+
+### Ask Bluefin _(Alpha)_
+
+[Ask Bluefin](https://ask.projectbluefin.io) is a natural-language system assistant that can diagnose, explain, and help troubleshoot your machine using our community's data. You can hit it up on [the website](https://ask.projectbluefin.io), the [dedicated discussion forum](https://github.com/ublue-os/bluefin/discussions/categories/dosu-help-section), the soon-to-come shortcut in the menu, and the soon-to-come Discord app. 
+
+Ask is done in partnership with [Dosu](https://dosu.dev) - here's the gist. Ask Bluefin is trained on all of the documentation and source code for all of the tooling in Bluefin, Bluefin's source code, issues, documentation, and discussions. Podman, bootc, vscode, systemd, etc. Everything on your system. AND THAT'S IT. It is only trained on the code and docs. The results are usually much better than than a generic LLM, and light years ahead of Linux subreddits. (That's not a high bar, but let's have some goals). I have it write service units for me, because the era of writing these by hand is now almost over.
+
+Dosu also runs an MCP server if you want to connect your clients to it or work on apps that can index our community's collective knowledge. 
+
+### Troubleshooting _(Alpha)_
+
+Proprietary operating systems are falling over each other trying to implement the worst possible anti-privacy features with AI. Of course they are, it's the nature of the beast. We take a different approach. If someone's going to invent this thing, then we're going to use it for good. Our first stab at this is to use it for a more natural goal - fix broken computers. (Computers are awful)
+
+[linux-mcp-server](https://github.com/rhel-lightspeed/linux-mcp-server) is an MCP server that gives any AI agent live read only access access to your system: OS info, processes, services, logs, network, and filesystem. When connected to [Goose](https://github.com/block/goose) it gives your LLM access to the following featurs:
+
+- "Bring Your Own LLM" — use it with a local Ramalama model for fully offline diagnostics, or connect to a hosted API for more capable reasoning — same data, your choice. Current this works best with paid frontier models, but also has been working great with the cheaper "fast models". Our team continues to experiment with the latest local models. Our final goal is for your computer to be able to diagnose itself with 100% local workflows on open weight models. Kyle Rankin in particular is going hard on this and has been making some incredible progress. It's only a matter of time, open always wins.
+- Natural language diagnostics — Ask questions like "why is my fan running loud?" or "what process is eating my RAM?" and get real answers grounded in your actual current system state
+- Works with any MCP-compatible agent — Goose, OpenCode, and any client that supports the Model Context Protocol can connect to `linux-mcp-server` and get the same system access
+- (Optional, requires setup) Bluefin knowledge base built in — Dosu integration means the assistant already knows the Bluefin documentation, common issues, and community-reported workarounds.
+
+I became a fan when on a trip to the [Southern California Linux Expo](https://www.socallinuxexpo.org/scale/23x). My computer was acting weird. I had the tool diagnose the problem, ends up we had made an error in our swap config for Bluefin LTS. It confirmed the issue, and then linked me to the existing issue that someone had reported _a few hours before_. Clanker + Human confirmation found the issue. We rolled out a fix. _I am never going to diagnose a Linux machine by hand ever again_.
+
+[Full troubleshooting guide →](https://docs.projectbluefin.io/troubleshooting)
+
+## New Art
+
+My favorite part of Bluefin, the artwork! I'd like to thank the two new major donors who are funding two new future Bluefin renditions. The future is bright for more art!
+
+<WallpaperFeatureGrid wallpapers={[
+  {
+    id: "lazy-days",
+    title: "Lazy Days",
+    author: "Jay Balamurugan",
+    authorUrl: "https://kakapojay.com/",
+    dayUrl: "/img/artwork/fullres/lazy-days.png",
+    body: "Jay joins the prestiguous list of paleoartists to render Bluefin. Jay is a London-based science communicator, paleoartist, and television producer — her credits include [Earth](https://player.bbc.com/en/brand/earth), [Walking with Dinosaurs](https://www.bbcearth.com/shows/walking-with-dinosaurs), and [Evolution](https://www.bbc.co.uk/programmes/m001wf7q). \n\nBluefin was first modelled in Blender, similar to the technique used in Walking With Dinosaurs, before the finishing work added the feathers. This is so cool! Dinosaurs are typically portrayed as blood thirsty killers murdering constantly. But like real animals there are plenty of times when all you want to do is lay down. This rendition of Bluefin reflects a more chill day, a full belly, and no worries.\n\nYou can follow her on [Bluesky](https://bsky.app/profile/kakapojay.bsky.social) and [Instagram](https://www.instagram.com/kakapo.jay/)."
+  },
+  {
+    id: "sunrise",
+    title: "Sunrise",
+    author: "Amy",
+    authorUrl: "https://www.atiusamy.com/links/",
+    dayUrl: "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/sunrise/sunrise-day.svg",
+    nightUrl: "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/sunrise/sunrise-night.svg",
+    body: "Sunrise is an older wallpaper from Amy that we failed to ship and announce. Sorry about that Amy! \n\nSunrise is now available for those of you that prefer your Bluefin smol.",
+  },
+  {
+    id: "leaf-collector",
+    title: "Leaf Collector",
+    author: "Dr. Natalia Jagielska",
+    authorUrl: "https://natalia-jagielska.weebly.com/",
+    coAuthor: "Delphic Melody",
+    coAuthorUrl: "https://ko-fi.com/melodyofdelphi",
+    dayUrl: "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/leaf-collector/leaf-collector-day.svg",
+    nightUrl: "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/leaf-collector/leaf-collector-night.svg",
+    body: "Did you know birds once had teeth? Crazy I know. This is another banger from Dr J and Delphic. Delphic has painstainkingly vectorized the original artwork so that we can enjoy this artwork on any size monitor.",
+  },
+  {
+    id: "duality",
+    title: "Duality",
+    author: "Dr. Natalia Jagielska",
+    authorUrl: "https://natalia-jagielska.weebly.com/",
+    coAuthor: "Delphic Melody",
+    coAuthorUrl: "https://ko-fi.com/melodyofdelphi",
+    dayUrl: "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/duality/duality-day.svg",
+    nightUrl: "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/duality/duality-night.svg",
+    body: "Duality is a modified Leaf Collector designed for ultra wide monitors. It looks spectacular on 21:9 monitors.",
+  },
+  {
+    id: "eyes",
+    title: "Eyes",
+    author: "Dr. Natalia Jagielska",
+    authorUrl: "https://natalia-jagielska.weebly.com/",
+    coAuthor: "Delphic Melody",
+    coAuthorUrl: "https://ko-fi.com/melodyofdelphi",
+    dayUrl: "https://raw.githubusercontent.com/ublue-os/artwork/main/wallpapers/eyes/eyes.svg",
+    body: "Our last wallpaper from Dr. J is one of my favorites. It features a [microraptor](https://en.wikipedia.org/wiki/Microraptor) hunting a poor butterfly. Did she catch it? We'll leave that interpretation up to you.",
+  },
+]} />
+
+### Install the Wallpapers
+
+The default wallpapers ship automatically with Bluefin. The extra collection (Leaf Collector, Duality, Eyes, Lazy Days) is available via Homebrew:
+
+```bash
+brew install --cask ublue-os/tap/bluefin-wallpapers-extra</code>
+```
+
+### Wallpaper Packs
+
+Extra wallpaper collections for every variant — install the ones that match your image. You only need the first one if you're not on Bluefin:
+
+```bash
+brew install --cask ublue-os/tap/bluefin-wallpapers
+brew install --cask ublue-os/tap/bluefin-wallpapers-extra
+brew install --cask ublue-os/tap/aurora-wallpapers
+brew install --cask ublue-os/tap/bazzite-wallpapers
+brew install --cask ublue-os/tap/framework-wallpapers
+```
+
+## Documentation Improvements
+
+We've been working pretty hard this cycle on the docs. Specifically around getting more information of what's in Bluefin so that we can be more transparent about what we ship:
+
+<DocsFeatureGrid features={[
+  {
+    title: "Changelogs",
+    href: "https://docs.projectbluefin.io/changelogs",
+    description: "Automated weekly changelogs for every image stream",
+    body: "This page will show you all of the versions and releases of every Bluefin. It is automatically generated from Bluefin's Software Bill of Materials (SBOM), so it will always show you what's on the image. This took way more work than we realized, but thanks to awesome tools such as [oras](https://oras.land) and [cosign](https://github.com/sigstore/cosign) we now have a nice way to show you what's in Bluefin. We also include the updates from the default homebrew and flatpaks shipped in Bluefin for convenience.",
+    thumbnail: "/img/docs-features/changelogs.png",
+    thumbnailDark: "/img/docs-features/changelogs-dark.png",
+  },
+  {
+    title: "Monthly Reports",
+    href: "https://docs.projectbluefin.io/reports",
+    description: "What's going on?",
+    body: "This page aggregates all of the work from the volunteers that are landing in Bluefin. This report is generated monthly and features all of the contributors who work on Bluefin. My favorite feature is it highlights people's first contribution as a milestone. Welcome aboard, Guardian.",
+    thumbnail: "/img/docs-features/reports.png",
+    thumbnailDark: "/img/docs-features/reports-dark.png",
+  },
+  {
+    title: "Images",
+    href: "https://docs.projectbluefin.io/images",
+    description: "Full matrix of available image variants",
+    body: "This page is a reference of all of the images we publish, and feautures rebase instructions if you need them. This includes the testing branches of every image (if they exist), as well as the Nvidia images.",
+    thumbnail: "/img/docs-features/images.png",
+    thumbnailDark: "/img/docs-features/images-dark.png",
+  },
+  {
+    title: "Driver Versions",
+    href: "https://docs.projectbluefin.io/driver-versions",
+    description: "GPU driver version tracker across streams",
+    body: "Ever update and get a regression? When was the last kernel update? When was the last time Uncle Jensen left us an unexpected gift? This page shows a matrix of major component version bumps so you can quickly see what updated when so you can at least make a better guess as to what past image you should rebase to. This page is clutch for troubleshooting.",
+    thumbnail: "/img/docs-features/driver-versions.png",
+    thumbnailDark: "/img/docs-features/driver-versions-dark.png",
+  },
+  {
+    title: "Music",
+    href: "https://docs.projectbluefin.io/music",
+    description: "Metal, Mayhem, and Melancholy",
+    body: "Every release ships with a curated soundtrack highlighting Bluefin's cloud native journey. The music page archives every playlist we have released, with notes on the artists and the vibe we were going for.",
+    thumbnail: "/img/docs-features/music.png",
+    thumbnailDark: "/img/docs-features/music-dark.png",
+  },
+  {
+    title: "Artwork",
+    href: "https://docs.projectbluefin.io/artwork",
+    description: "Browse and download all wallpapers and artwork assets",
+    body: "Bluefin is not just tech, the artwork of her world is just as important to us as the software.\n\nAll of Aurora and Bazzite's wallpapers are also available here, in dark and light variants. \n\nAll of Bluefin's artists are compensated for their work. Bluefin will never ship AI generated art.",
+    thumbnail: "/img/docs-features/artwork.png",
+    thumbnailDark: "/img/docs-features/artwork-dark.png",
+  },
+  {
+    title: "Downloads",
+    href: "https://docs.projectbluefin.io/downloads",
+    description: "Refreshed Downloads Page",
+    body: "The downloads page provides direct ISO links with checksums and torrents for every Bluefin variant — Bluefin, Bluefin LTS, and Dakotaraptor — with GPU-specific entries so you always grab the right download when you need it!",
+    thumbnail: "/img/docs-features/downloads.png",
+    thumbnailDark: "/img/docs-features/downloads-dark.png",
+  }
+]} />
+
+## Metrics
+
+Charts! My favorite. Usage remains steady at about 3.5k weekly devices. This feels about right for our target audience, but Bazzite is still 10x larger. And Ubuntu even more so. I've personally really never cared too much about this - you always need to make the contributor and team structure healthy before these numbers can ever go up.
+
+This is the year that Aurora and Bluefin will start to focus on this number.
+
+<img
+  className="countme-chart"
+  src="https://raw.githubusercontent.com/ublue-os/countme/refs/heads/main/growth_bluefins.svg"
+  alt="Bluefin CountMe growth chart"
+  width="1280"
+  height="720"
+  loading="lazy"
+/>
+
+### Contributor Community
+
+Unfortunately due to limitations in LFX, we can only track [one Bluefin repository](https://github.com/ublue-os/bluefin) - so the charts below reflect the reduction of contributions to the one monorepository. This is a bummer because we intentionally split the project up into more granular repositories. The work in all other Bluefin repositories is NOT tracked here. When we can aggregate all of the contributions across all repositories we will have better data. It's all in git so we will be able to come back and correct past charts. Here are the numbers anyway:
+
+<div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:'1rem', margin:'1.5rem 0'}}>
+  <div className="lfx-chart" style={{overflow:'hidden', borderRadius:'8px', height:'488px'}}>
+    <iframe src="https://insights.linuxfoundation.org/embed/project/ublue-os-bluefin?widget=active-contributors&startDate=2025-11-05&endDate=2026-05-04&timeRangeKey=past180days" style={{transform:'scale(0.75)', transformOrigin:'top left', width:'133%', height:'800px', border:'none'}} />
+  </div>
+  <div className="lfx-chart" style={{overflow:'hidden', borderRadius:'8px', height:'608px'}}>
+    <iframe src="https://insights.linuxfoundation.org/embed/project/ublue-os-bluefin?widget=contributions-outside-work-hours&startDate=2025-11-05&endDate=2026-05-04&timeRangeKey=past180days" style={{transform:'scale(0.75)', transformOrigin:'top left', width:'133%', height:'961px', border:'none'}} />
+  </div>
+  <div className="lfx-chart" style={{overflow:'hidden', borderRadius:'8px', height:'413px'}}>
+    <iframe src="https://insights.linuxfoundation.org/embed/project/ublue-os-bluefin?widget=active-days&startDate=2025-11-05&endDate=2026-05-04&timeRangeKey=past180days" style={{transform:'scale(0.75)', transformOrigin:'top left', width:'133%', height:'700px', border:'none'}} />
+  </div>
+  <div className="lfx-chart" style={{overflow:'hidden', borderRadius:'8px', height:'503px'}}>
+    <iframe src="https://insights.linuxfoundation.org/embed/project/ublue-os-bluefin?widget=commit-activities&startDate=2025-11-05&endDate=2026-05-04&timeRangeKey=past180days" style={{transform:'scale(0.75)', transformOrigin:'top left', width:'133%', height:'820px', border:'none'}} />
+  </div>
+  <div className="lfx-chart" style={{overflow:'hidden', borderRadius:'8px', height:'645px'}}>
+    <iframe src="https://insights.linuxfoundation.org/embed/project/ublue-os-bluefin?widget=pull-requests&startDate=2025-11-05&endDate=2026-05-04&timeRangeKey=past180days" style={{transform:'scale(0.75)', transformOrigin:'top left', width:'133%', height:'1010px', border:'none'}} />
+  </div>
+  <div className="lfx-chart" style={{overflow:'hidden', borderRadius:'8px', height:'430px'}}>
+    <iframe src="https://insights.linuxfoundation.org/embed/project/ublue-os-bluefin?widget=retention&startDate=2025-11-05&endDate=2026-05-04&timeRangeKey=past180days" style={{transform:'scale(0.75)', transformOrigin:'top left', width:'133%', height:'723px', border:'none'}} />
+  </div>
+</div>
+
+_Full report: [insights.linuxfoundation.org/project/ublue-os-bluefin](https://insights.linuxfoundation.org/project/ublue-os-bluefin)_
+
+[Full analytics →](https://docs.projectbluefin.io/analytics)
+

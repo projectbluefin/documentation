@@ -114,8 +114,8 @@ a.playlistTitle:hover {
 
 .videoWrapper {
   flex-shrink: 0;
-  width: 160px;
-  aspect-ratio: 16 / 9;
+  width: 90px;
+  height: 90px;
   border-radius: 4px;
   overflow: hidden;
   background-color: var(--ifm-color-emphasis-200);

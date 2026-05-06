@@ -1,0 +1,346 @@
+---
+title: "Bluefin Spring 2026: Fedora 44"
+slug: bluefin-spring-2026
+authors: castrojo
+tags: [announcements, releases]
+---
+import WallpaperFeatureGrid from "@site/src/components/blog/WallpaperFeatureGrid";
+import MusicPlaylist from "@site/src/components/MusicPlaylist";
+import ReleaseContributors from "@site/src/components/ReleaseContributors";
+import ContributorCardGrid from "@site/src/components/ContributorCardGrid";
+import LatestOsReleaseCard from "@site/src/components/LatestOsReleaseCard";
+import BlogFigure from "@site/src/components/blog/BlogFigure";
+import DownloadCard from "@site/src/components/DownloadCard";
+import DownloadSection from "@site/src/components/DownloadSection";
+import DocsFeatureGrid from "@site/src/components/blog/DocsFeatureGrid";
+import BlogSeries from "@site/src/components/blog/BlogSeries";
+import StoreCards from "@site/src/components/blog/StoreCards";
+
+
+<BlogSeries seriesId="bluefin-spring-2026" currentPart={1} />
+
+<p className="blog-post-subtitle">Two hats and a dromeosaur</p>
+
+
+
+<MusicPlaylist
+  title="Bluefin and the Syrens of Metal"
+  playlistId="PLhiPP9M5fgWFa09qMHJSA7ts93UsMG82Q"
+/>
+
+^^^ this post best enjoyed with heavy metal. 
+
+I found this app called [Speed of Sound](https://flathub.org/en/apps/io.speedofsound.SpeedOfSound), a speech to text app that makes writing long winded release announcements a breeze - so this is a series of blog posts over the next three days.
+
+I am not going to lie I haven't been this excited about Bluefin since the start of the project. This spring is particularly relevant for us, with GNOME 50 being a particularly nice roll up of tech. Linux 7.0, all good stuff. First more of a project update. As I've alluded to in the past, we're learning to come out of the shadows more for people looking for a great desktop for every day use. We've purposely avoided this audience for a few reasons - mostly because normal people don't install operating systems. 
+
+But now that we've got five years of production under our belt it's probably time to be louder. First we're partnering with [Michael Tunnell](https://www.youtube.com/@michael_tunnell) on a set of video content that should me more appealing to the general computing audience. Then you can expect more visible changes in our approach as we (as they say in the biz) "Go To Market". Expect that some time this summer!
+
+## Some backstory ...
+
+Some of you know that Bluefin wasn't really an accident - it's a distillation of decades of OSS experience [from a bunch of experienced people](https://docs.projectbluefin.io/donations/contributors#advisors-and-mentors). I am particularly priviledged to be exposed to this audience of open source gurus. Part of our appeal is we get you one step closer to knowing how Open Source actually works from the people doing it at the professional level. We're taking this teamwork based approach to the maintenance of our desktops. That's basically it. Here's the collective lessons we have learned: 
+
+- Digital Sovereignty: There is an actual demand for a Linux client that can be built, from the ground up and verified to the very end. We're not talking about what you would typically consider "an Ubuntu remix". It's gotta be at the top level of supply chain security and be deployable at scale. Only modern Linux can compete here. 
+- Bazzite proves that delivering to the 95% is a thing people want
+  - Ends up that there's _significantly_ more to gain by throwing away the old things holding Linux back than serving edge cases.
+- The Team: 
+  - Seven(!) people have gotten jobs through Universal Blue. 
+    - Chainguard, Red Hat, and Microsoft have all recognized the talent from _the enthusiast community_. Users like you have proven to the industry that _enthusiasts matter_.  
+  - It's not about what we're building these days, it's about what we're choosing to NOT build
+  - Ends up that the development techniques from Open Source infrastructure apply very well to people who love to _work together as a team_. You don't succeed in this business as an individual, you bring your individual talent to a team, and you succeed _together_.   
+- Efficient downloads are coming: It never made sense to push too hard with this limitation. Now it's not going to be an issue. I'll explain more in the third blog post. 
+ 
+I find digital sovereignty in particular to be interesting. The discussions around Linux are predictable. Once again people are fighting over who is going to ship the least-worst Debian. The discussion should be focused on _infrastructure_ and how you build it. You know who are really passionate about infrastructure? The European Cloud Native communities. The Kubernetes nerds expect and demand a modern Linux, and in order to deliver that you need world class infrastructure. The communities are mixing, and with modern tooling like `bootc` and buildstream the bare minimum standard for what constitutes a Linux desktop is about to go up substantially. So yeah, it's probably time to be louder.
+
+But enough preaching, let's go into how we plan to get you there!
+
+## GNOME 50 "Tokyo" comes to Bluefin
+
+GNOME 50, codenamed **Tokyo**, is the foundation of this release. If you're updating today you'll be on GNOME 50. It is opt-in in Bluefin LTS:
+
+[ screenshot ]
+
+- [Full GNOME 50 release notes →](https://release.gnome.org/50/)
+
+<div style={{margin: "0.75rem 0", display: "flex", justifyContent: "center"}}>
+  <a href="https://donate.gnome.org/" style={{display: "inline-block", background: "#4A86CF", color: "white", padding: "0.6rem 1.4rem", borderRadius: "8px", fontWeight: "bold", textDecoration: "none"}}>💙 Donate to GNOME</a>
+</div>
+
+## ASUS Support
+
+Asus support has always been a pain in the ass on Linux. In the past we had specialized images but the maintenance burden was too great. Thanks to improvements in Linux 6.19 and greater, as well as awesome work from the asus-linux community we can now better support Asus hardware. The [ublue-os/tap](https://github.com/ublue-os/homebrew-tap) ships `asusctl` and ROG Control Center — the standard ASUS Linux control stack. These packages will work on any Linux with at least a 6.19 kernel.  
+
+- Fan curve control — per-profile fan curves for Performance, Balanced, and Quiet modes; customizable RPM targets per temperature point
+- Keyboard RGB and Aura lighting — full per-key RGB control, multi-zone effects, static, breathe, rainbow, strobing, and more — all manageable from the GUI or CLI
+- Power profile switching — toggle between Performance, Balanced, and Power Saver without a reboot
+- Battery charge limit — set a charge ceiling (e.g. 80%) to preserve long-term battery health; the limit persists across reboots
+- GPU mode switching — switch between Integrated, Hybrid, NVIDIA-only, and Compute modes from the system tray
+
+**Install (order matters — system daemon first, then the GUI):**
+
+```bash
+# Step 1: system daemon — handles hardware access and power management
+brew install --cask ublue-os/tap/asusctl-linux
+sudo systemctl enable --now asusd.service asus-shutdown.service
+sudo udevadm control --reload && sudo udevadm trigger
+
+# Step 2: GUI and user daemon
+brew install --cask ublue-os/tap/rog-control-center-linux
+systemctl --user daemon-reload
+systemctl --user enable --now asusd-user.service
+```
+
+ROG Control Center lands in your system tray and gives you a full GUI for everything above — no terminal required after the initial setup. Someday we will automate this so you don't have to do any of this CLI mumbojumbo, but in the meantime kick the tyres and report back. Remember that these packages work on any Linux!
+
+This support has turned my 2022 G14 AMD Advantage Edition in a pretty great Linux laptop, it wasn't always like that!
+
+## Bluefin
+
+Now on to Bluefin itself. First up is `bluefin:stable`. Here's the release card: 
+
+<LatestOsReleaseCard stream="stable" />
+
+And here are the release notes and announcements:
+
+- [Fedora 44 Release Notes](https://docs.fedoraproject.org/en-US/fedora/latest/release-notes/)
+- [What's New for Fedora Atomic Desktops in Fedora 44](https://tim.siosm.fr/blog/2026/04/28/fedora-atomic-desktops-44/)
+
+And that's it. I want to focus on what's coming next. 
+
+## The Future of Bluefin and Fedora
+
+Timothée Ravier's post is particularly relevant for us. 
+
+- FUSE 2 removed — we don't support AppImages anyway but if you still care about these they may break even more. 
+- Legacy polkit `pkla` rules dropped — the ecosystem has moved to the JavaScript-based format and this cleans up the last stragglers
+- Unified Atomic Desktops documentation now lives at [docs.fedoraproject.org/en-US/atomic-desktops](https://docs.fedoraproject.org/en-US/atomic-desktops/)
+
+And now the big one. The biggest news of all is the [announcement of new sealed base images](https://fedoramagazine.org/sealed-atomic-desktops-test-images/). These will end up being the most fundamental change to Bluefin in its 5-ish year history. The new sealed bootable container images will bring us:
+
+- [systemd-boot](https://systemd.io/BOOT/) replaces GRUB as the bootloader — GRUB is now an extinct species in our world. Goodbye old friend. 
+- [Unified Kernel Images (UKI)](https://uapi-group.org/specifications/specs/unified_kernel_image/) — kernel, initrd, and command line bundled into a single signed EFI binary. 
+- [composefs](https://github.com/composefs/composefs) with [fs-verity](https://www.kernel.org/doc/html/latest/filesystems/fsverity.html) — every file in the OS image is cryptographically verified at read time and [managed by bootc](https://bootc-dev.github.io/bootc/experimental-composefs.html). We also say goodbye to ostree. With both projects now in the [Cloud Native Computing Foundation](https://cncf.io) we have a vendor neutral stack to base Bluefin on. Nice.
+- Full verified boot chain from firmware → bootloader → kernel → OS image — see the [FOSDEM 2025 deep-dive](https://archive.fosdem.org/2025/schedule/event/fosdem-2025-5191--signed-sealed-and-delivered-with-ukis-and-composefs/) for how it all fits together
+- [TPM-backed passwordless disk unlocking](https://www.freedesktop.org/software/systemd/man/latest/systemd-cryptenroll.html) via `systemd-cryptenroll` — LUKS unlocking is bound to the verified boot state so no password prompt on a clean boot
+- UEFI on x86_64 and aarch64 - Legacy BIOS support goes away too, but we don't support that anyway.
+
+Want all of these things? It will take some work to move Bluefin and Aurora to these new base images, and we're looking for people to help. If you've been worried about the lack of progress in `bootc` in Fedora then this one set of images brings us back to the forefront of Linux desktop tech. Our man from France was not going to let Dakotaraptor run away with it, so if you want to help make this dream a reality, now is the time to step up and volunteer!
+
+## Fedora Gets Back on Track
+
+The biggest improvement this cycle has been mostly invisible to you. Fedora's `bootc` efforts seem to have been finally resolved. It may come as a surprise to some of you that Fedora does not actually release an official `bootc` image. All of our work continues to be based on Timothee's unofficial images. For the first time it feels like Fedora have figured out what to do with `bootc`, and this removes a bunch of uncertainty for us. It has never made sense that Fedora would start off in the lead and end up behind the rest of the community with `bootc` adoption. 
+
+> Honestly I just work on Fedora to toss RPMs right at Jorge's smug cloud native face.
+>
+> -- John Bazzite 
+
+It took lots of work to get Fedora back on track with `bootc`, afterall, this was intended to be a weekend project inbetween Fedora 39 and 40 to prove how easy it was. See? Look how easy that was! 
+
+I'd like to personally thank Laura Santamaria, who is the one person I would pick as my MVP in keeping the `bootc` ecosystem healthy. Jef you're doing great, I'm sorry for riding you so hard over the past few months. 2015 here we come!
+
+They have a ton of work to do, so if this is your jam, now is the time to get involved. **Advise**: Don't fall for the "it'll only be one more cycle", that is a trap.
+
+## Bluefin LTS
+
+Now over to CentOS -- Achillobator remains our Long Term Support option, here's the release card:
+
+<LatestOsReleaseCard stream="lts" />
+
+Bluefin LTS launched with GNOME 48 and has been updated to GNOME 49. This release delivers two full GNOME upgrade cycles in one — [GNOME 49](https://release.gnome.org/49/) and [GNOME 50](https://release.gnome.org/50/) are both available — thanks to [@hanthor](https://github.com/hanthor)'s work backporting the full GNOME stack to the EL10 base. See the [March testing announcement](https://docs.projectbluefin.io/blog/bluefin-lts-gnome-49-50) for all the details. 
+
+There's really not much to say here, the move to GNOME 49 wasn't as smooth as I'd like but as a result GNOME 50 will be much smoother. We will keep GNOME 50 in it's own set of branches and likely move LTS to GNOME 50 sometime this Fall. 
+
+Bluefin LTS is maintained by [@hanthor](https://github.com/hanthor). If you rely on the LTS channel, consider supporting his work:
+
+<div style={{margin: "0.75rem 0", display: "flex", justifyContent: "center"}}>
+  <a href="https://github.com/sponsors/hanthor" style={{display: "inline-block", background: "#db61a2", color: "white", padding: "0.6rem 1.4rem", borderRadius: "8px", fontWeight: "bold", textDecoration: "none"}}>💙 Sponsor hanthor on GitHub</a>
+</div>
+
+## Merch
+
+Unfortunately selling outside the US is still a struggle, we'll continue looking at options. Our store is designed to highlight Bluefin's incredible artists! Proceeds from the store fund future artist work. We adjust the prices on all the other items in the store in order to make the kids shirt as cheap as possible. Rawr.
+
+<StoreCards items={[
+  {
+    title: "Bluefin Official Shirt",
+    price: "$25.50",
+    imageUrl: "/img/store/bluefin-shirt-1.jpg",
+    productUrl: "https://projectbluefin.printful.me/product/bluefin-official-shirt-68b3b18f23f1a",
+  },
+  {
+    title: "Reign of Achillobator Shirt",
+    price: "$22.50",
+    imageUrl: "/img/store/achillobator-shirt-0.jpg",
+    productUrl: "https://projectbluefin.printful.me/product/unisex-t-shirt-68adfb9021fe9",
+  },
+  {
+    title: "Wash Your Claws!",
+    price: "$10.00",
+    imageUrl: "/img/store/wash-your-claws.jpg",
+    productUrl: "https://projectbluefin.printful.me/product/wash-your-hands",
+  },
+  {
+    title: "Bluefin Pride",
+    price: "$16.50",
+    imageUrl: "/img/store/bluefin-pride-1.jpg",
+    productUrl: "https://projectbluefin.printful.me/product/bluefin-pride",
+  },
+  {
+    title: "Bluefin Murder Chicken",
+    price: "$20.50",
+    imageUrl: "/img/store/bluefin-murder-chicken-0.jpg",
+    productUrl: "https://projectbluefin.printful.me/product/bluefin-murder-chicken",
+  },
+  {
+    title: "Bluefin Kids",
+    price: "$16.50",
+    imageUrl: "/img/store/bluefin-kids-1.jpg",
+    productUrl: "https://projectbluefin.printful.me/product/bluefin-kids",
+  },
+]} />
+
+[Check out the rest on store.projectbluefin.io →](https://store.projectbluefin.io)
+
+## Download
+
+Thanks to our awesome [ISO factory](https://github.com/projectbluefin/iso) we can now deliver fresh ISOs and both Anaconda and Tuna installer suck way less than before. You can find the weekly ISO builds on the [Downloads Testing](https://docs.projectbluefin.io/downloads-testing) page - these are automatically refreshed weekly. We've also set the timer to auto publish stable releases of the ISOs each month, so you're never too out of date. We're also now publishing torrents of the most popular images. See you tomorrow for part 2 of our series!
+
+### Bluefin, Bluefin LTS, and Bluefin GDX
+
+<DownloadSection />
+
+<ReleaseContributors
+  stats="Bluefin is a product built by a collection of contributors spanning multiple open source projects. Thanks to all of you who contributed! It feels good to know that the contributor list is such a large part of this announcement."
+  contributors={[
+    { login: "ahmedadan", roles: ["maintainer", "ublue-contributor", "brew-contributor"] },
+    { login: "akeeton", roles: ["ublue-contributor"] },
+    { login: "alatiera", roles: ["maintainer", "ublue-contributor", "gnome-os"] },
+    { login: "AlexanderVanhee", roles: ["contributor"] },
+    { login: "AlexNPavel", roles: ["ublue-contributor"] },
+    { login: "anacierdem" },
+    { login: "andrzejroskowicz" },
+    { login: "AnthonyStainer", roles: ["contributor"] },
+    { login: "apwiggins" },
+    { login: "arvindautar" },
+    { login: "AtiusAmy", roles: ["ublue-contributor", "bluefin-artist"] },
+    { login: "AtomHare", roles: ["ublue-contributor"] },
+    { login: "awkorama" },
+    { login: "bdflemin", roles: ["ublue-contributor"] },
+    { login: "befanyt", roles: ["ublue-contributor", "contributor"] },
+    { login: "bketelsen", roles: ["ublue-maintainer", "aurora-maintainer", "bluefin-emeritus", "ucore-contributor", "brew-contributor"], nickname: "Architect of the Final Shape" },
+    { login: "Bira-oliverio" },
+    { login: "Blackstep590" },
+    { login: "bronson", roles: ["ublue-contributor", "ucore-contributor"] },
+    { login: "bsherman", roles: ["ublue-maintainer", "aurora-maintainer", "ucore-maintainer", "bluefin-emeritus"] },
+    { login: "buggerman", roles: ["ublue-contributor"] },
+    { login: "carpediem29" },
+    { login: "castrojo", roles: ["maintainer", "ublue-emeritus", "bazzite-contributor", "ucore-contributor", "brew-contributor"], nickname: "[ Redacted ]" },
+    { login: "CEN90" },
+    { login: "chandeleer1698", roles: ["ublue-contributor", "bluefin-artist", "aurora-artist"] },
+    { login: "cmars" },
+    { login: "coxde", roles: ["ublue-contributor", "ucore-contributor"] },
+    { login: "d3spairx", roles: ["contributor"] },
+    { login: "daegalus", roles: ["maintainer", "brew-contributor"] },
+    { login: "daice2k" },
+    { login: "danielhowardpuckett-lgtm" },
+    { login: "DarkGhostHunter" },
+    { login: "davestgermain" },
+    { login: "davidwritesxyz" },
+    { login: "debackerl" },
+    { login: "delphicmelody", role: "bluefin-artist" },
+    { login: "dnoesgaard" },
+    { login: "dragon28" },
+    { login: "dragonbass13" },
+    { login: "dreamyukii", roles: ["ublue-contributor", "aurora-contributor", "bazzite-contributor", "brew-contributor"] },
+    { login: "dtg01100", roles: ["ublue-contributor", "brew-contributor"] },
+    { login: "dx4homelab" },
+    { login: "dylanmtaylor", roles: ["ublue-contributor", "bazzite-contributor", "ucore-contributor"] },
+    { login: "dylanvdmerwe" },
+    { login: "edermats32" },
+    { login: "eltorrero", roles: ["contributor"] },
+    { login: "ExistingPerson08", roles: ["ublue-contributor"] },
+    { login: "EyeCantCU", roles: ["ublue-contributor", "bazzite-maintainer", "bluefin-emeritus"] },
+    { login: "fiftydinar", roles: ["ublue-contributor", "aurora-contributor", "bazzite-contributor"] },
+    { login: "fizzyizzy05", roles: ["contributor"] },
+    { login: "FlammLex" },
+    { login: "fonnesbeck" },
+    { login: "francoism90", role: "ucore-contributor" },
+    { login: "GarciaLnk", roles: ["ublue-contributor"] },
+    { login: "gbrsni", roles: ["countme-maintainer"], nickname: "Abscissa of Entropy" },
+    { login: "gerblesh", roles: ["ublue-contributor"] },
+    { login: "gichiba" },
+    { login: "goozkan" },
+    { login: "h1zardian", roles: ["contributor"] },
+    { login: "hanthor", roles: ["maintainer", "ublue-contributor", "brew-contributor"], nickname: "Herald of Finality" },
+    { login: "hawkticehurst" },
+    { login: "hecknt", roles: ["zirconium-maintainer"] },
+    { login: "HikariKnight", roles: ["ublue-maintainer", "aurora-maintainer", "bazzite-maintainer"] },
+    { login: "inffy", roles: ["maintainer", "ublue-maintainer", "aurora-maintainer", "brew-contributor"] },
+    { login: "istvan-derda", roles: ["ublue-contributor"] },
+    { login: "JarrColl" },
+    { login: "jfmongrain", roles: ["contributor"] },
+    { login: "JimOswick", roles: ["contributor"] },
+    { login: "joshyorko", roles: ["ublue-contributor"] },
+    { login: "jumpyvi", roles: ["ublue-contributor", "brew-contributor"] },
+    { login: "kalebepalacio" },
+    { login: "KiKaraage", roles: ["ublue-contributor", "brew-contributor"] },
+    { login: "klmcwhirter" },
+    { login: "KotlinGeekDev" },
+    { login: "kriszentner", roles: ["contributor"] },
+    { login: "KyleGospo", roles: ["ublue-maintainer", "aurora-maintainer", "bazzite-maintainer", "ucore-contributor", "bluefin-emeritus"], nickname: "The First Knife" },
+    { login: "leafyoung", roles: ["contributor"] },
+    { login: "ledif", roles: ["ublue-maintainer", "aurora-maintainer"] },
+    { login: "lkdm" },
+    { login: "LorbusChris", roles: ["ublue-contributor"] },
+    { login: "louhitar", roles: ["contributor"] },
+    { login: "m2Giles", roles: ["maintainer", "ublue-maintainer", "aurora-maintainer", "bazzite-contributor", "ucore-contributor"] },
+    { login: "madsiur" },
+    { login: "malgam" },
+    { login: "maphew" },
+    { login: "mattbuys" },
+    { login: "matthewbegun" },
+    { login: "max-miller1204" },
+    { login: "Mestar71" },
+    { login: "mgajda" },
+    { login: "mheuvel-dev", roles: ["ublue-contributor"] },
+    { login: "Micro856", roles: ["contributor"] },
+    { login: "MineGene" },
+    { login: "mjdescy" },
+    { login: "mmartinortiz", roles: ["contributor"] },
+    { login: "NahsiN", roles: ["contributor"] },
+    { login: "nicknamenamenick", roles: ["ublue-maintainer", "aurora-maintainer", "bazzite-contributor"] },
+    { login: "NiHaiden", roles: ["ublue-contributor", "aurora-artist"] },
+    { login: "nikodunk", roles: ["ublue-contributor", "ucore-contributor", "contributor", "countme-maintainer"], nickname: "Ordinate of Stasis" },
+    { login: "noelmiller", roles: ["ublue-maintainer", "aurora-maintainer", "bazzite-maintainer"] },
+    { login: "orangesunny" },
+    { login: "p5", roles: ["maintainer", "ublue-maintainer", "aurora-maintainer"] },
+    { login: "passthejoe", roles: ["contributor"] },
+    { login: "pauldoo", roles: ["ublue-contributor"] },
+    { login: "RaduAvramescu", roles: ["contributor"] },
+    { login: "Raindrac", roles: ["ublue-contributor", "aurora-contributor"] },
+    { login: "Readpato", roles: ["contributor"] },
+    { login: "renner0e", roles: ["maintainer", "aurora-maintainer", "ublue-maintainer", "bazzite-contributor", "brew-contributor"] },
+    { login: "repires", roles: ["ublue-contributor", "contributor"] },
+    { login: "RoyalOughtness", roles: ["ublue-contributor", "secureblue-maintainer"] },
+    { login: "rrenomeron", roles: ["ublue-contributor"] },
+    { login: "rwaltr", roles: ["contributor"] },
+    { login: "salaniz", roles: ["ublue-contributor"] },
+    { login: "salim-b", roles: ["ublue-contributor"] },
+    { login: "sebjag", roles: ["contributor"] },
+    { login: "serandel", roles: ["ublue-contributor"] },
+    { login: "sideeffffect", roles: ["contributor"] },
+    { login: "spasche", roles: ["contributor"] },
+    { login: "StorageB" },
+    { login: "theMimolet", roles: ["ublue-contributor"] },
+    { login: "tingweiwan", roles: ["ublue-contributor"] },
+    { login: "tobiasmicheler", roles: ["ublue-contributor"] },
+    { login: "travier", roles: ["ublue-contributor", "contributor", "ucore-contributor"] },
+    { login: "tulilirockz", roles: ["maintainer", "ublue-maintainer", "aurora-maintainer", "zirconium-maintainer"], nickname: "Executor of The Final Shape" },
+    { login: "tunix", roles: ["contributor"] },
+    { login: "valentindavid", role: "gnome-os" },
+    { login: "valerie-tar-gz", roles: ["ublue-contributor", "bazzite-contributor"] },
+    { login: "wommy", roles: ["contributor"] },
+    { login: "Zeglius", roles: ["ublue-contributor", "bazzite-maintainer"] },
+    { login: "zeroby0" },
+  ]}
+/>
