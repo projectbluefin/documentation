@@ -34,19 +34,20 @@ I found this app called [Speed of Sound](https://flathub.org/en/apps/io.speedofs
 
 I am not going to lie I haven't been this excited about Bluefin since the start of the project. This spring is particularly relevant for us, with GNOME 50 being a particularly nice roll up of tech. Linux 7.0, all good stuff. First more of a project update. As I've alluded to in the past, we're learning to come out of the shadows more for people looking for a great desktop for every day use. We've purposely avoided this audience for a few reasons - mostly because normal people don't install operating systems. 
 
-But now that we've got five years of production under our belt it's probably time to be louder. First we're partnering with [Michael Tunnell](https://www.youtube.com/@michael_tunnell) on a set of video content that should me more appealing to the general computing audience. Then you can expect more visible changes in our approach as we (as they say in the biz) "Go To Market". Expect that some time this summer!
+But now that we've got five years of production under our belt it's probably time to be louder. First we're partnering with [Michael Tunnell](https://www.youtube.com/@michael_tunnell) on a set of video content that should be more appealing to the general computing audience. Then you can expect more visible changes in our approach as we (as they say in the biz) "Go To Market". Expect that some time this summer!
 
 ## Some backstory ...
 
-Some of you know that Bluefin wasn't really an accident - it's a distillation of decades of OSS experience [from a bunch of experienced people](https://docs.projectbluefin.io/donations/contributors#advisors-and-mentors). I am particularly priviledged to be exposed to this audience of open source gurus. Part of our appeal is we get you one step closer to knowing how Open Source actually works from the people doing it at the professional level. We're taking this teamwork based approach to the maintenance of our desktops. That's basically it. Here's the collective lessons we have learned: 
+Some of you know that Bluefin wasn't really an accident - it's a distillation of decades of OSS experience [from a bunch of experienced people](https://docs.projectbluefin.io/donations/contributors#advisors-and-mentors). I am particularly priviledged to be exposed to this audience of open source gurus. Part of our appeal is we get you one step closer to knowing how Open Source actually works from the people doing it at the professional level. We're taking this team-work based approach to the maintenance of our desktops. That's basically it. Here are the collective lessons we have learned: 
 
 - Digital Sovereignty: There is an actual demand for a Linux client that can be built, from the ground up and verified to the very end. We're not talking about what you would typically consider "an Ubuntu remix". It's gotta be at the top level of supply chain security and be deployable at scale. Only modern Linux can compete here. 
 - Bazzite proves that delivering to the 95% is a thing people want
   - Ends up that there's _significantly_ more to gain by throwing away the old things holding Linux back than serving edge cases.
+- [Open Gaming Collective] has proven that different distributions can work together in a way that is conducive to get all of this stuff out of the little fiefdoms and into the upstream Linux kernel. And they're just getting started.
 - The Team: 
   - Seven(!) people have gotten jobs through Universal Blue. 
     - Chainguard, Red Hat, and Microsoft have all recognized the talent from _the enthusiast community_. Users like you have proven to the industry that _enthusiasts matter_.  
-  - It's not about what we're building these days, it's about what we're choosing to NOT build
+  - It's not about what we're building these days, it's about what we're choosing to NOT build.
   - Ends up that the development techniques from Open Source infrastructure apply very well to people who love to _work together as a team_. You don't succeed in this business as an individual, you bring your individual talent to a team, and you succeed _together_.   
 - Efficient downloads are coming: It never made sense to push too hard with this limitation. Now it's not going to be an issue. I'll explain more in the third blog post. 
  
@@ -75,6 +76,7 @@ Asus support has always been a pain in the ass on Linux. In the past we had spec
 - Power profile switching — toggle between Performance, Balanced, and Power Saver without a reboot
 - Battery charge limit — set a charge ceiling (e.g. 80%) to preserve long-term battery health; the limit persists across reboots
 - GPU mode switching — switch between Integrated, Hybrid, NVIDIA-only, and Compute modes from the system tray
+- This is in Bazzite's testing branch as `ujust asus` and we'll pick it up at some point. Sorry that you have to do this by hand:
 
 **Install (order matters — system daemon first, then the GUI):**
 
@@ -92,7 +94,7 @@ systemctl --user enable --now asusd-user.service
 
 ROG Control Center lands in your system tray and gives you a full GUI for everything above — no terminal required after the initial setup. Someday we will automate this so you don't have to do any of this CLI mumbojumbo, but in the meantime kick the tyres and report back. Remember that these packages work on any Linux!
 
-This support has turned my 2022 G14 AMD Advantage Edition in a pretty great Linux laptop, it wasn't always like that!
+This support has turned my 2022 G14 AMD Advantage Edition in a pretty great Linux laptop. It wasn't always like that!
 
 ## Bluefin
 
@@ -134,21 +136,21 @@ The biggest improvement this cycle has been mostly invisible to you. Fedora's `b
 >
 > -- John Bazzite 
 
-It took lots of work to get Fedora back on track with `bootc`, afterall, this was intended to be a weekend project inbetween Fedora 39 and 40 to prove how easy it was. See? Look how easy that was! 
+It took lots of work to get Fedora back on track with `bootc`, after all, Bluefin was intended to be a weekend project inbetween Fedora 39 and 40 to prove how easy it was. See? Look how easy that was! 
 
 I'd like to personally thank Laura Santamaria, who is the one person I would pick as my MVP in keeping the `bootc` ecosystem healthy. Jef you're doing great, I'm sorry for riding you so hard over the past few months. 2015 here we come!
 
-They have a ton of work to do, so if this is your jam, now is the time to get involved. **Advise**: Don't fall for the "it'll only be one more cycle", that is a trap.
+They have a ton of work to do, so if this is your jam, now is the time to get involved. Good timing too, looks like [Red Hat is hiring](https://redhat.wd5.myworkdayjobs.com/Jobs/job/Raleigh/Senior-Software-Engineer---Image-Builder-Service_R-055538-1). 
 
 ## Bluefin LTS
 
-Now over to CentOS -- Achillobator remains our Long Term Support option, here's the release card:
+Now over to CentOS -- _Achillobator giganticus_ remains our Long Term Support option, here's the release card:
 
 <LatestOsReleaseCard stream="lts" />
 
 Bluefin LTS launched with GNOME 48 and has been updated to GNOME 49. This release delivers two full GNOME upgrade cycles in one — [GNOME 49](https://release.gnome.org/49/) and [GNOME 50](https://release.gnome.org/50/) are both available — thanks to [@hanthor](https://github.com/hanthor)'s work backporting the full GNOME stack to the EL10 base. See the [March testing announcement](https://docs.projectbluefin.io/blog/bluefin-lts-gnome-49-50) for all the details. 
 
-There's really not much to say here, the move to GNOME 49 wasn't as smooth as I'd like but as a result GNOME 50 will be much smoother. We will keep GNOME 50 in it's own set of branches and likely move LTS to GNOME 50 sometime this Fall. 
+There's really not much to say here, the move to GNOME 49 wasn't as smooth as we'd like but as a result GNOME 50 is much smoother. We will keep GNOME 50 in it's own set of branches and likely move LTS to GNOME 50 sometime this Fall. 
 
 Bluefin LTS is maintained by [@hanthor](https://github.com/hanthor). If you rely on the LTS channel, consider supporting his work:
 

@@ -48,12 +48,12 @@ Dakota features a more aggressive push away from legacy technologies, pure image
 - [GNOME 50](https://release.gnome.org/50/), Linux 6.19, Mesa 26.x, and Freedesktop 25.08.10 libraries
 - systemd-boot, UKIs, UEFI only, compiled for the [x86-64-v3](https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels) architecture level
 - Oxidized coreutils - same sudo-rs and uutils [setup as Ubuntu](https://discourse.ubuntu.com/t/an-update-on-rust-coreutils/80773) - thanks to Canonical for funding this important work 
-- [Custom Command Menu](https://github.com/StorageB/custom-command-menu) — Dakota features a newly refined menu. We hope to bring this menu to other Bluefins over time. 
+- [Custom Command Menu](https://github.com/StorageB/custom-command-menu) — Dakota features a newly refined menu. We hope to bring this menu to other Bluefins over time. u
 - Ghostty as the default terminal
 
-Since Dakota is brand new there's no users to transition when we switch something. The `ptyxis` author is moving on from GNOME so we wish [Christian Hergert](https://gitlab.gnome.org/chergert) well in his future endevours. We are switching to [Ghostty](https://ghostty.org/) as the default terminal. This has always been a fan favorite so we're starting with it fresh here.
+Since Dakota is brand new there's no users to transition when we switch something. We are switching to [Ghostty](https://ghostty.org/) as the default terminal. This has always been a fan favorite so we're starting with it fresh here.
 
-When I talked to Christian last we discussed having `ptyxis` just use a libghossty backend. This is not only totally possible but would be the ideal situation! **Someone please make this**. 
+Last I talked to [Christian Hergert](https://gitlab.gnome.org/chergert) we discussed having `ptyxis` just use a `libghostty` backend. This is not only totally possible but would be the ideal situation! **Someone please make this**. 
 
 ### Changes since Alpha 1
 
@@ -78,10 +78,17 @@ And the big one. We cannot guarantee that this installation will be the final la
 
 **Here's the hot take**: If you look at all three raptors, all else being equal, the _best development experience_ and _best infrastructure_ always wins in this space. We have over a decade of cloud native industry experience to prove it, Kubernetes runs the world for a reason. This workflow is now in the Linux desktop space. I firmly believe that buildstream/bootc combined with our gitops approach will deliver a fantastic product. 
 
-Thanks to [Brian Ketelsen](https://github.com/brianketelsen) and [James Reilly](https://github.com/jamesreilly5) for the [Tuna installer](https://github.com/tuna-os/tuna-installer). Yes they called it the Tuna installer. lol.
+Thanks to [Brian Ketelsen](https://github.com/bketelsen) and [James Reilly](https://github.com/jamesreilly5) for the [Tuna installer](https://github.com/tuna-os/tuna-installer). Yes they called it the Tuna installer. lol.
 
 Thanks to [Jordan Petridis](https://github.com/alatiera), [Valentin David](https://github.com/valentindavid), [Adrian Vovk](https://github.com/AdrianVovk), and the [GNOME OS team](https://os.gnome.org/) for their expertise and advisory roles - we couldn't do this without you!
 
+## Bluefin's Download Diet: Introducing Chunkah
+
+Yes, they called the upstream rechunker "[Chunkah](https://github.com/coreos/chunkah)". A rechunker is a thing we use to take an image and reslice it into more chunks. `ghcr.io/projectbluefin/dakota` is sliced into 120 layers. It takes content of the image into account. The idea being if you have components that update often, they would be group together in layers, and things that don't get updated often are group together. 
+
+That means if your computer doesn't need that layer for that update, it doesn't get downloaded. Additionally partial zstd:chunked pulls will complement the layering. This will mean that your computer will also only download the parts of the layers it needs. When combined this finally brings efficient downloads to the bootc ecosystem. [Initial findings are looking good](https://github.com/coreos/chunkah/pull/107#issuecomment-4349283386). 
+
+These alpha images are rechunked by Chunkah, but unified storage does not work on the `composefs` backend to `bootc` yet so it's not done.
 
 ## Why tho? A Call to Action
 
@@ -95,15 +102,11 @@ This section is my opinion and does not reflect the views of the team, but is in
 
 :::
 
-We're a cloud native project, this is what seperates us from "immutables" or whatever thing people misclassify us as. `btrfs` snapshots and the `bootc` ecosystem are not in the same category whatsoever. But that is a blog for another day. We're a cloud native project, which means we inherit that culture. All software is terrible, and we will work on software every day, for hours and hours on end. For years. Decades. That means the software isn't as important as we think.
-
 ### The Shoulders of Giants
 
-Bluefin's mission is _sustainaiblity_, that means people. Bluefin LTS is there so we have a reason to bring people like Carl George and Shaun McCance into our ecosystem. Without Bluefin LTS Red Hat would not have as much of a financial incentive to help us out. We drive `bootc` forward, they invest in the software and sell it as part of their product. It's the Circle of Life, but with Linux. Red Hat did afterall, give us [millions of dollars of engineering for free](https://youtu.be/K6-GMTq2T7s?si=cyEEnhbSPmQZdBB-&t=4837).
+Bluefin's mission is _sustainaiblity_, that means people. Bluefin LTS is there so we have a reason to bring people like [Carl George] and [Shaun McCance] into our ecosystem. Without Bluefin LTS Red Hat would not have as much of a financial incentive to help us out. We drive `bootc` forward, they invest in the software and sell it as part of their product. It's the Circle of Life, but with Linux. Red Hat did afterall, give us [millions of dollars of engineering for free](https://youtu.be/K6-GMTq2T7s?si=cyEEnhbSPmQZdBB-&t=4837).
 
-Universal Blue would NOT exist without Timothee Ravier, it would be foolish to not have him on board. And despite my disdain for the busywork you all love to create with those RPMs, I would have never gotten to know [Benjamin Sherman](https://github.com/ublue-os/ucore) and [Kyle Gospo](https://bazzite.gg) if it wasn't for those acursed things. Bazzite would not exist without Fedora - but becoming friends with you all has been a _career highlight_. It's not about the software, it's about the friends we make along the way. Sounds like the kind of tripe the Linux Foundation loves to peddle. 
-
-This brings us to Dakotaraptor. Why am I there? The people. Jordan and I are discussing our anger management issues by sitting around waiting for webkit to build - therapeutic. I've reconnected with old friends in GNOME and made new ones. Dakotaraptor has one foot in the `bootc` world and one in the UAPI world. 
+Same thing with Fedora, it's our line to that center of gravity. It's not about the software, it's about the ecosystems we make along the way. Sounds like the kind of tripe the Linux Foundation loves to peddle. Dakotaraptor has one foot in the `bootc` world and one in the UAPI world. 
 
 :::info[Speeeeed]
 
@@ -111,15 +114,15 @@ We will participate in both of those large ecosystems; that brings in the larges
 
 :::
 
-The CNCF Community via bootc, composefs, podman, and oras. The UAPI community bringing in the Linux userspace. Sounds great, let's go. Someone from Amutable please save me a shirt!
+The CNCF Community via `bootc`, `composefs`, `podman`, and `oras`. The UAPI community bringing in the Linux userspace. Sounds great, let's go. Someone from Amutable please save me a shirt!
 
 ### Gamers
 
-It gets better, we've got the Open Gaming Collective's stewardship of the gaming technology. That Asus support wouldn't have happened without their collaborative approach. This brings in a bunch of people who are _experts_ in their fields. GloriousEggroll, the ChimeraOS folks, Bazzite, Fyra, and others. Those of you dunking on "gaming distros" can eat crow, because these folks are sending contributions to many upstreams to the software _you depend on_. The next time someone is dunking on Nobara ask that redditor how many contributions they themselves have to Open Source. It doesn't make any financial sense for any distribution to do this on their own, it's madness. And finally contributors and application authors are making their voices heard, and while we may not agree on the tech all the time - we do agree that there's no place for the gatekeeping attitude of the old Linux world. 
+It gets better, we've got the [Open Gaming Collective's] stewardship of the gaming technology. Having all the Asus things in the kernel and in one place means we can ship better support. And if you want to learn how to deal with hardware, this is the place you should participate in if you want to help move the needle. 
 
 ### The Race to Sustainability
 
-Colin Walters describes communities like this as "Centers of Gravity" - and we're all in one gigantic galaxy, everyone pulling and pushing around different ecosystems. All made possible by open source tools, amazing. 
+[Colin Walters] describes communities like this as "Centers of Gravity" - and we're all in one gigantic galaxy, everyone pulling and pushing around different ecosystems. All made possible by open source tools, amazing. 
 
 Dakotaraptor will be my home raptor. Sure I love Bluefin LTS, but I don't actually believe that old model of Linux. I used to, and parts of me always will when I get a regression on new software, hah. It also pays for a large part of this - if you're going to insist on "older is better" then you might as well be on Bluefin. And I say this with love as I type this on a Bluefin LTS machine. Inside us there are two raptors.
 
@@ -131,21 +134,21 @@ The state of Dakota Alpha 2 is impressive considering how few people it took to 
 
 There are those that will say that GNOME OS and KDE Linux make no sense, that's what distributions are supposed to do. I push back against that. 4% marketshare in 30 years is not a success story. And the ones that **are** growing are designed to be used as reliable clients and not package manglers. 
 
-Timothee Ravier once said, people don't want distributions they want experiences. And these operating systems will prove it. No one will ever give you a better KDE experience than KDE. That wasn't true in the past because distributing software over the internet was hard. Now not only is it much easier, these organizations can start greenfield with the state of the art rather than trying to adapt old techniques to the new world.
+[Timothee Ravier] once said, people don't want distributions they want experiences. And these operating systems will prove it. No one will ever give you a better KDE experience than KDE. That wasn't true in the past because distributing software over the internet was hard. Now not only is it much easier, these organizations can start greenfield with the state of the art rather than trying to adapt old techniques to the new world.
 
-This has been a long time coming. Not because we're smart, but because this is the same thing that happened to Linux in cloud and mobile. I'll take my chances with GNOME, KDE, and the application authors who make the software we love. In a world of cloud native tooling and Buildstream - we're about to find out where the contributors end up. Best infrastructure wins. Fastest and cheapest development wins.
+Best infrastructure wins. Fastest and cheapest development wins.
 
 If you're into GNOME work on GNOME OS, if you're on KDE work on KDE Linux. If you like Fedora work on that. Make a friend, donate to an app developer. 
 
 :::info[Prove it, nerd]
 
-- I will be discussing this in my talk at the Linux Application Summit: [Making our own Fate: Why GNOME and KDE need operating systems](https://conf.linuxappsummit.org/event/9/contributions/233/) - be there!
+I will be discussing this in my talk at the Linux Application Summit: [Making our own Fate: Why GNOME and KDE need operating systems](https://conf.linuxappsummit.org/event/9/contributions/233/) - be there!
 
 :::
 
 This is of course, all from our point of view.
 
-GNOME OS would prefer we ship a DDI image. And some would prefer we don't exist at all and just sit as a `systemd-sysext` in GNOME OS. Sure, someone make one, we have buildstream, would you like fries with that? And with so many RPM-based people in the `bootc` world I am sure there are people who prefer that Bluefin just focus on being a Fedpra with batteries included and nothing else.
+GNOME OS would prefer we ship a DDI image. And some would prefer we don't exist at all and just sit as a `systemd-sysext` in GNOME OS. Sure, someone make one, we have buildstream, would you like fries with that? And with so many RPM-based people in the `bootc` world I am sure there are people who prefer that Bluefin just focus on being a Fedora with batteries included and nothing else.
 
 But we are a forcing function - the dinosaurs are there to remind us that only the best survive the harshest ecosystems. This is especially true in the resourced starved Linux desktop ecosystem. We will continue to push. Some software is not going to make it. See you in the trenches, thanks!
 
