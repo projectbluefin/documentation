@@ -43,7 +43,7 @@ Some of you know that Bluefin wasn't really an accident - it's a distillation of
 - Digital Sovereignty: There is an actual demand for a Linux client that can be built, from the ground up and verified to the very end. We're not talking about what you would typically consider "an Ubuntu remix". It's gotta be at the top level of supply chain security and be deployable at scale. Only modern Linux can compete here. 
 - Bazzite proves that delivering to the 95% is a thing people want
   - Ends up that there's _significantly_ more to gain by throwing away the old things holding Linux back than serving edge cases.
-- [Open Gaming Collective] has proven that different distributions can work together in a way that is conducive to get all of this stuff out of the little fiefdoms and into the upstream Linux kernel. And they're just getting started.
+- [Open Gaming Collective](https://opengamingcollective.org/) has proven that different distributions can work together in a way that is conducive to get all of this stuff out of the little fiefdoms and into the upstream Linux kernel. And they're just getting started.
 - The Team: 
   - Seven(!) people have gotten jobs through Universal Blue. 
     - Chainguard, Red Hat, and Microsoft have all recognized the talent from _the enthusiast community_. Users like you have proven to the industry that _enthusiasts matter_.  
@@ -58,8 +58,6 @@ But enough preaching, let's go into how we plan to get you there!
 ## GNOME 50 "Tokyo" comes to Bluefin
 
 GNOME 50, codenamed **Tokyo**, is the foundation of this release. If you're updating today you'll be on GNOME 50. It is opt-in in Bluefin LTS:
-
-[ screenshot ]
 
 - [Full GNOME 50 release notes →](https://release.gnome.org/50/)
 
@@ -107,17 +105,11 @@ And here are the release notes and announcements:
 - [Fedora 44 Release Notes](https://docs.fedoraproject.org/en-US/fedora/latest/release-notes/)
 - [What's New for Fedora Atomic Desktops in Fedora 44](https://tim.siosm.fr/blog/2026/04/28/fedora-atomic-desktops-44/)
 
-And that's it. I want to focus on what's coming next. 
+And that's it. The usual stuff. I want to focus on what's coming next because Bluefin is going to change for the better.
 
 ## The Future of Bluefin and Fedora
 
-Timothée Ravier's post is particularly relevant for us. 
-
-- FUSE 2 removed — we don't support AppImages anyway but if you still care about these they may break even more. 
-- Legacy polkit `pkla` rules dropped — the ecosystem has moved to the JavaScript-based format and this cleans up the last stragglers
-- Unified Atomic Desktops documentation now lives at [docs.fedoraproject.org/en-US/atomic-desktops](https://docs.fedoraproject.org/en-US/atomic-desktops/)
-
-And now the big one. The biggest news of all is the [announcement of new sealed base images](https://fedoramagazine.org/sealed-atomic-desktops-test-images/). These will end up being the most fundamental change to Bluefin in its 5-ish year history. The new sealed bootable container images will bring us:
+Timothée Ravier's post is particularly relevant for us. The biggest news of all is the [announcement of new sealed base images](https://fedoramagazine.org/sealed-atomic-desktops-test-images/). These will end up being the most fundamental change to Bluefin in its 5-ish year history. The new sealed bootable container images will bring us:
 
 - [systemd-boot](https://systemd.io/BOOT/) replaces GRUB as the bootloader — GRUB is now an extinct species in our world. Goodbye old friend. 
 - [Unified Kernel Images (UKI)](https://uapi-group.org/specifications/specs/unified_kernel_image/) — kernel, initrd, and command line bundled into a single signed EFI binary. 
@@ -130,7 +122,7 @@ Want all of these things? It will take some work to move Bluefin and Aurora to t
 
 ## Fedora Gets Back on Track
 
-The biggest improvement this cycle has been mostly invisible to you. Fedora's `bootc` efforts seem to have been finally resolved. It may come as a surprise to some of you that Fedora does not actually release an official `bootc` image. All of our work continues to be based on Timothee's unofficial images. For the first time it feels like Fedora have figured out what to do with `bootc`, and this removes a bunch of uncertainty for us. It has never made sense that Fedora would start off in the lead and end up behind the rest of the community with `bootc` adoption. 
+The biggest improvement this cycle has been mostly invisible to you. Fedora's `bootc` efforts seem to have been finally resolved. It may come as a surprise to some of you that Fedora does not actually release an official `bootc` image. All of our work continues to be based on Timothee's unofficial images. For the first time it feels like Fedora have figured out what to do with `bootc`, and this removes a bunch of uncertainty for us. It has never made sense that Fedora would start off in the lead and end up behind the rest of the community with `bootc` adoption. This also means that if you're enjoying Aurora, Bazzite, Bluefin, Secureblue, or rocking your own custom image ... _quality is going to go up_.   
 
 > Honestly I just work on Fedora to toss RPMs right at Jorge's smug cloud native face.
 >
@@ -138,9 +130,27 @@ The biggest improvement this cycle has been mostly invisible to you. Fedora's `b
 
 It took lots of work to get Fedora back on track with `bootc`, after all, Bluefin was intended to be a weekend project inbetween Fedora 39 and 40 to prove how easy it was. See? Look how easy that was! 
 
-I'd like to personally thank Laura Santamaria, who is the one person I would pick as my MVP in keeping the `bootc` ecosystem healthy. Jef you're doing great, I'm sorry for riding you so hard over the past few months. 2015 here we come!
+I'd like to personally thank Laura Santamaria, for keeping the `bootc` ecosystem healthy.
 
 They have a ton of work to do, so if this is your jam, now is the time to get involved. Good timing too, looks like [Red Hat is hiring](https://redhat.wd5.myworkdayjobs.com/Jobs/job/Raleigh/Senior-Software-Engineer---Image-Builder-Service_R-055538-1). 
+
+And then this happened...
+
+## Dinosaurs and Hummingbirds
+
+> You know who is good at making "distroless images"? Distros.
+>
+> - Scott McCarty, Beacon of The Final Shape
+
+It seems [fedora hummingbird](https://discussion.fedoraproject.org/t/new-tag-for-hummingbird-special-interest-group/190129) has been revealed. Of course Red Hat built this, modern infra demands modern images. All they had to do was put a kernel in there. So they did. 
+
+I had heard the rumors. But it wasn't until I put two and two together and realized that Red Hat had quietly hired two Universal Blue core maintainers. They will be on the team building this. In the open, along with everybody else. This will take them some time to cook, there is a ton of work ahead. But it's closer than you think. I was able to cobble together a prototype in a day. Most of what you're about to see was grabbing the Fedora RPMs and cobbling it together. But it worked. It booted just fine. 
+
+<BlogFigure src="/img/blog/2026-05-12-bluefin-spring-2026/bluebird.png" alt="Bluebird — a Bluefin prototype running on Fedora Hummingbird" />
+
+This is also the reason why we're not doing the stable->testing->next plan. We'll likely do more one off testing branches, but work on the sealed images and Hummingbird will attract the right kind of nerds to make this interesting. And we've worked with this team before. A place for a cloud native in Fedora, I can't wait to see what Legends rise to the challenge.  
+
+As you can see, things are interesting in Fedora. Jef you're doing great, I'm sorry for riding you so hard over the past few months. Fedora has two avenues and a brand new sandbox to play in -- good to see some "Fedora First" flexing over there! 
 
 ## Bluefin LTS
 
