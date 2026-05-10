@@ -251,14 +251,26 @@ function enrichLtsDxGdxFromSbom(events: OsReleaseEvent[]): OsReleaseEvent[] {
  * dakota image, so a separate lookup is needed.
  */
 function enrichDakotaNvidiaFromSbom(events: OsReleaseEvent[]): OsReleaseEvent[] {
+  // Resolve the most-recent dakota-nvidia-latest release once, used as a
+  // fallback when the exact date key is absent (the nvidia build may lag
+  // the base image build by one nightly SBOM cycle).
+  const nvidiaStream = getSbomCache()?.streams?.["dakota-nvidia-latest"];
+  const latestNvidiaRelease = (() => {
+    if (!nvidiaStream?.releases) return null;
+    const keys = Object.keys(nvidiaStream.releases).sort().reverse();
+    return keys.length > 0 ? nvidiaStream.releases[keys[0]] : null;
+  })();
+
   return events.map((event) => {
     const dateMatch = event.release.tag.match(/(\d{8})/);
     if (!dateMatch) return event;
     const cacheKey = `latest-${dateMatch[1]}`;
     // Prefer the typed nvidia field that extractBstPackageVersions populates;
     // fall back to allPackages for forward-compat with any future SBOM format changes.
+    // If the exact date key is absent (nvidia build lags base by one cycle),
+    // fall back to the most-recent available nvidia entry.
     const nvidiaRelease =
-      getSbomCache()?.streams?.["dakota-nvidia-latest"]?.releases?.[cacheKey];
+      nvidiaStream?.releases?.[cacheKey] ?? latestNvidiaRelease;
     const nvidiaVersion =
       nvidiaRelease?.packageVersions?.nvidia ??
       nvidiaRelease?.packageVersions?.allPackages?.["NVIDIA-Linux-x86"] ??
