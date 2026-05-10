@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from "react";
 import Heading from "@theme/Heading";
 import firehoseData from "@site/static/data/firehose-apps.json";
 import type { FirehoseApp, FirehoseRelease, FirehoseFilterState } from "../types/firehose";
-import type { OsReleaseEvent, AppTimelineEvent, ParsedMajorPackage, OsStream, OsFeedItem } from "../types/os-feed";
+import type { OsReleaseEvent, AppTimelineEvent, FlatTimelineEvent, ParsedMajorPackage, OsStream, OsFeedItem } from "../types/os-feed";
 import type { SbomAttestationsData, PackageVersions } from "../types/sbom";
 import { parseOsRelease } from "../utils/parseOsRelease";
 import {
@@ -357,6 +357,36 @@ function getDakotaOsEvents(): OsReleaseEvent[] {
   return _dakotaOsEvents;
 }
 
+let _stableDailyOsEvents: OsReleaseEvent[] | null = null;
+function getStableDailyOsEvents(): OsReleaseEvent[] {
+  if (!_stableDailyOsEvents) {
+    _stableDailyOsEvents = sbomStreamToEvents(
+      getSbomCache(),
+      "bluefin-stable-daily",
+      "stable-daily",
+      "https://github.com/orgs/ublue-os/packages/container/package/bluefin",
+    );
+  }
+  return _stableDailyOsEvents;
+}
+
+// Rolling 12-month window for the OS release stream.
+let _allOsStreamEvents: OsReleaseEvent[] | null = null;
+function getAllOsStreamEvents(): OsReleaseEvent[] {
+  if (!_allOsStreamEvents) {
+    const cutoff = Date.now() - ROLLING_WINDOW_MS;
+    _allOsStreamEvents = [
+      ...getBluefinOsEvents(),
+      ...getStableDailyOsEvents(),
+      ...getLtsOsEvents(),
+      ...getDakotaOsEvents(),
+    ]
+      .filter((e) => e.dateMs > cutoff)
+      .sort((a, b) => b.dateMs - a.dateMs);
+  }
+  return _allOsStreamEvents;
+}
+
 // Dakota placeholder — versions sourced from SBOM attestation on dakota-latest stream
 // and BST element pins. Update when junction refs change.
 // Last updated: freedesktop-sdk-25.08.10 + gnome-build-meta 50.1
@@ -530,7 +560,12 @@ function getFeaturedApp(uniqueApps: UniqueApp[]): FirehoseApp | null {
 
 // ── Statistics panel ──────────────────────────────────────────────────────────
 
-function Statistics({ uniqueApps }: { uniqueApps: UniqueApp[] }) {
+interface StatisticsProps {
+  uniqueApps: UniqueApp[];
+  osEventCount: number;
+}
+
+function Statistics({ uniqueApps, osEventCount }: StatisticsProps) {
   const counts = useMemo(() => {
     const byType: Record<string, number> = {};
     for (const { app } of uniqueApps) {
@@ -547,10 +582,16 @@ function Statistics({ uniqueApps }: { uniqueApps: UniqueApp[] }) {
         <dd>{uniqueApps.length}</dd>
         {Object.entries(counts).map(([type, count]) => (
           <React.Fragment key={type}>
-            <dt>{type === "flatpak" ? "Flathub" : type === "homebrew" ? "Homebrew" : "OS Release"}</dt>
+            <dt>{type === "flatpak" ? "Flathub" : type === "homebrew" ? "Homebrew" : type}</dt>
             <dd>{count}</dd>
           </React.Fragment>
         ))}
+        {osEventCount > 0 && (
+          <>
+            <dt>OS Releases in stream</dt>
+            <dd>{osEventCount}</dd>
+          </>
+        )}
       </dl>
     </section>
   );
@@ -651,7 +692,10 @@ const FirehoseFeed: React.FC = () => {
 
   const allEvents: FlatRelease[] = useMemo(() => {
     const cutoff = Date.now() - ROLLING_WINDOW_MS;
-    return flattenReleases(firehoseData.apps ?? []).filter((e) => e.dateMs > cutoff);
+    // Exclude packageType "os" entries — those are text duplicates of the
+    // graphical OsReleaseCard entries already shown in the Updates Stream.
+    return flattenReleases(firehoseData.apps ?? [])
+      .filter((e) => e.dateMs > cutoff && e.app.packageType !== "os");
   }, []);
 
   const filteredEvents = useMemo(() => applyFilters(allEvents, filters), [allEvents, filters]);
@@ -669,9 +713,27 @@ const FirehoseFeed: React.FC = () => {
     setFeaturedApp(getFeaturedApp(uniqueApps));
   }, [uniqueApps]);
 
-  // ── Updates Stream — app events only (Flatpak + Homebrew) ──────────────────
-  // OS release history was removed from this stream — the pinned "Current
-  // Versions" cards above already surface the latest stable/LTS/Dakota state.
+  // ── OS stream events (filtered by date, always shown alongside app events) ─────
+
+  const filteredOsStreamEvents = useMemo((): OsReleaseEvent[] => {
+    if (filters.packageType === "flatpak" || filters.packageType === "homebrew") return [];
+    if (filters.updatedWithin === "all") return getAllOsStreamEvents();
+    const maxAge = DAYS_MS[filters.updatedWithin];
+    const now = Date.now();
+    return getAllOsStreamEvents().filter((e) => e.dateMs > 0 && now - e.dateMs <= maxAge);
+  }, [filters.packageType, filters.updatedWithin]);
+
+  const hiddenOsCount = useMemo(
+    () =>
+      filters.updatedWithin !== "all" &&
+      filters.packageType !== "flatpak" &&
+      filters.packageType !== "homebrew"
+        ? getAllOsStreamEvents().filter((e) => e.dateMs > 0).length - filteredOsStreamEvents.length
+        : 0,
+    [filteredOsStreamEvents, filters.packageType, filters.updatedWithin],
+  );
+
+  // ── Unified "Updates Stream" — OS releases + Flatpak/Homebrew app events ────
 
   const appSection = useMemo(
     () =>
@@ -681,8 +743,14 @@ const FirehoseFeed: React.FC = () => {
     [filteredUniqueApps],
   );
 
+  const unifiedStream = useMemo((): FlatTimelineEvent[] => {
+    const items: FlatTimelineEvent[] = [...appSection, ...filteredOsStreamEvents];
+    items.sort((a, b) => b.dateMs - a.dateMs);
+    return items;
+  }, [filteredOsStreamEvents, appSection]);
+
   const isEmpty = allEvents.length === 0;
-  const feedEmpty = appSection.length === 0;
+  const feedEmpty = unifiedStream.length === 0;
 
   return (
     <div className={styles.layout}>
@@ -705,12 +773,24 @@ const FirehoseFeed: React.FC = () => {
           matchCount={filteredUniqueApps.length}
         />
         {!isEmpty && (
-          <Statistics uniqueApps={uniqueApps} />
+          <Statistics uniqueApps={uniqueApps} osEventCount={getAllOsStreamEvents().length} />
         )}
       </aside>
 
       {/* ── Main feed ── */}
       <main className={styles.feedColumn}>
+        {hiddenOsCount > 0 && (
+          <p className={styles.osHiddenNotice}>
+            {hiddenOsCount} OS release{hiddenOsCount !== 1 ? "s" : ""} hidden by the
+            date filter.{" "}
+            <button
+              className={styles.clearFiltersBtn}
+              onClick={() => setFilters({ ...filters, updatedWithin: "all" })}
+            >
+              Show all
+            </button>
+          </p>
+        )}
         {/* Current Versions is SBOM-driven — always render regardless of firehose state */}
         <section className={styles.feedSection}>
           <Heading as="h2" className={styles.feedSectionHeading}>Current Versions</Heading>
@@ -751,14 +831,18 @@ const FirehoseFeed: React.FC = () => {
                 <div className={styles.appSectionDivider}>
                   <Heading as="h2" className={styles.feedSectionHeading}>Updates Stream</Heading>
                   <span className={styles.appSectionHint}>
-                    Flatpak &amp; Homebrew packages included in Bluefin
+                    OS releases, Flatpak &amp; Homebrew packages included in Bluefin
                   </span>
                 </div>
-                {appSection.map((event) => (
-                  <div key={event.app.id} className={styles.appEntry}>
-                    <FirehoseCard app={event.app} defaultCollapsed={true} />
-                  </div>
-                ))}
+                {unifiedStream.map((event) =>
+                  event.kind === "os" ? (
+                    <OsReleaseCard key={`stream-${event.stream}-${event.release.tag}-${event.dateMs}`} event={event} />
+                  ) : (
+                    <div key={event.app.id} className={styles.appEntry}>
+                      <FirehoseCard app={event.app} defaultCollapsed={true} />
+                    </div>
+                  ),
+                )}
               </section>
             )}
           </>
