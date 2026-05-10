@@ -246,6 +246,35 @@ function enrichLtsDxGdxFromSbom(events: OsReleaseEvent[]): OsReleaseEvent[] {
 }
 
 /**
+ * Overlay Nvidia version onto Dakota events from the dakota-nvidia-latest SBOM
+ * stream. The nvidia RPM lives in the -nvidia variant image, not the base
+ * dakota image, so a separate lookup is needed.
+ */
+function enrichDakotaNvidiaFromSbom(events: OsReleaseEvent[]): OsReleaseEvent[] {
+  return events.map((event) => {
+    const dateMatch = event.release.tag.match(/(\d{8})/);
+    if (!dateMatch) return event;
+    const cacheKey = `latest-${dateMatch[1]}`;
+    // Prefer the typed nvidia field that extractBstPackageVersions populates;
+    // fall back to allPackages for forward-compat with any future SBOM format changes.
+    const nvidiaRelease =
+      getSbomCache()?.streams?.["dakota-nvidia-latest"]?.releases?.[cacheKey];
+    const nvidiaVersion =
+      nvidiaRelease?.packageVersions?.nvidia ??
+      nvidiaRelease?.packageVersions?.allPackages?.["NVIDIA-Linux-x86"] ??
+      nvidiaRelease?.packageVersions?.allPackages?.["nvidia-driver"];
+    if (!nvidiaVersion) return event;
+    return {
+      ...event,
+      release: {
+        ...event.release,
+        gdxPackages: [{ name: "Nvidia", version: nvidiaVersion, prevVersion: null }],
+      },
+    };
+  });
+}
+
+/**
  * Override the "HWE Kernel" carry-forward value in LTS events with the
  * authoritative version from the bluefin-lts-hwe SBOM stream.
  *
@@ -308,6 +337,28 @@ function getLtsOsEvents(): OsReleaseEvent[] {
   return _ltsOsEvents;
 }
 
+let _dakotaOsEvents: OsReleaseEvent[] | null = null;
+function getDakotaOsEvents(): OsReleaseEvent[] {
+  if (!_dakotaOsEvents) {
+    // Rewrite "latest-YYYYMMDD" → "dakota-YYYYMMDD" for display in the card tag chip.
+    // enrichDakotaNvidiaFromSbom still works because it matches /(\d{8})/ from the tag.
+    const base = sbomStreamToEvents(
+      getSbomCache(),
+      "dakota-latest",
+      "dakota",
+      "https://github.com/projectbluefin/dakota",
+    ).map((event) => ({
+      ...event,
+      release: {
+        ...event.release,
+        tag: event.release.tag.replace(/^latest-/, "dakota-"),
+      },
+    }));
+    _dakotaOsEvents = enrichDakotaNvidiaFromSbom(base);
+  }
+  return _dakotaOsEvents;
+}
+
 // Rolling 12-month window for the stream — pinned cards (PINNED_OS_EVENTS) are unaffected.
 let _allOsStreamEvents: OsReleaseEvent[] | null = null;
 function getAllOsStreamEvents(): OsReleaseEvent[] {
@@ -317,6 +368,7 @@ function getAllOsStreamEvents(): OsReleaseEvent[] {
       ...getBluefinOsEvents(),
       ...getStableDailyOsEvents(),
       ...getLtsOsEvents(),
+      ...getDakotaOsEvents(),
     ]
       .filter((e) => e.dateMs > cutoff)
       .sort((a, b) => b.dateMs - a.dateMs);
@@ -371,7 +423,12 @@ function computePinnedOsEvents(): OsReleaseEvent[] {
       bluefin.find((e) => e.stream === "stable") ?? bluefin[0];
     // Pinned LTS card: latest from LTS feed
     const pinnedLts: OsReleaseEvent | undefined = lts.length > 0 ? lts[0] : undefined;
-    _pinnedOsEvents = [pinnedStable, pinnedLts, DAKOTA_PLACEHOLDER_EVENT]
+    // Prefer the most recent SBOM-sourced Dakota event for the pinned card so
+    // package versions stay current. Falls back to the hardcoded placeholder
+    // when SBOM data isn't available (local dev with empty seed file).
+    const dakota = getDakotaOsEvents();
+    const pinnedDakota: OsReleaseEvent = dakota.length > 0 ? dakota[0] : DAKOTA_PLACEHOLDER_EVENT;
+    _pinnedOsEvents = [pinnedStable, pinnedLts, pinnedDakota]
       .filter((e): e is OsReleaseEvent => e !== undefined);
   }
   return _pinnedOsEvents;

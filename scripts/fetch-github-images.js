@@ -127,6 +127,10 @@ const PRODUCT_SPECS = [
     streamOrder: ["latest"],
     versionSource: null,
     sbomStreamId: "dakota-latest",
+    // Nvidia driver lives only in the -nvidia variant image, which has its own
+    // SBOM stream. Source nvidia version from there rather than the release feed
+    // (Dakota has no GitHub releases feed).
+    nvidiaStreamId: "dakota-nvidia-latest",
     keyRepo: "projectbluefin/dakota",
     nvidiaPackage: "dakota-nvidia",
     allowTestingStreams: false,
@@ -447,6 +451,14 @@ async function buildStreamVersionInfo(
     versions.flatpak = spec.versionOverrides.flatpak ?? versions.flatpak;
     versions.mesa = spec.versionOverrides.mesa ?? versions.mesa;
     versions.podman = spec.versionOverrides.podman ?? versions.podman;
+  }
+
+  // For products with a dedicated nvidia SBOM stream (e.g. dakota-nvidia-latest),
+  // source the nvidia driver version from SBOM when the release feed returns null.
+  // Dakota has no GitHub releases feed, so parseFeedVersion always returns null.
+  if (versions.nvidia === null && spec.nvidiaStreamId) {
+    const nvidiaVersions = lookupSbomVersions(sbomCache, spec.nvidiaStreamId);
+    versions.nvidia = nvidiaVersions?.nvidia || null;
   }
 
   return versions;
