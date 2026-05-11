@@ -75,6 +75,12 @@ But enough preaching, let's go into how we plan to get you there!
 
 GNOME 50, codenamed **Tokyo**, is the foundation of this release. If you're updating today you'll be on GNOME 50. It is opt-in in Bluefin LTS:
 
+<BlogFigure
+  src="/img/blog/2026-05-12-bluefin-spring-2026/desktop.png"
+  alt="Bluefin desktop"
+  caption="CWT's Chickenstation"
+/>
+
 - [Full GNOME 50 release notes →](https://release.gnome.org/50/)
 
 <div style={{margin: "0.75rem 0", display: "flex", justifyContent: "center"}}>
@@ -83,7 +89,7 @@ GNOME 50, codenamed **Tokyo**, is the foundation of this release. If you're upda
 
 ## ASUS Support
 
-Asus support has always been a pain in the ass on Linux. In the past we had specialized images but the maintenance burden was too great. Thanks to improvements in Linux 6.19 and greater, as well as awesome work from the asus-linux community we can now better support Asus hardware. The [Asus Linux community] is a participant in the [Open Gaming Collective], which gives us the confidence that this will be well maintained over time. Thanks so much for your efforts!
+Asus support has always been a pain in the ass on Linux. In the past we had specialized images but the maintenance burden was too great. Thanks to improvements in Linux 6.19 and greater, as well as awesome work from the asus-linux community we can now better support Asus hardware. The [Asus Linux community](https://asus-linux.org/) is a participant in the [Open Gaming Collective](https://opengamingcollective.org/), which gives us the confidence that this will be well maintained over time. Thanks so much for your efforts!
 
  The [ublue-os/tap](https://github.com/ublue-os/homebrew-tap) ships `asusctl` and ROG Control Center — the standard ASUS Linux control stack. These packages will work on any Linux with at least a 6.19 kernel.  
 
@@ -138,7 +144,14 @@ Timothée Ravier's post is particularly relevant for us. The biggest news of all
 
 Want all of these things? It will take some work to move Bluefin and Aurora to these new base images, and we're looking for people to help. If you've been worried about the lack of progress in `bootc` in Fedora then this one set of images brings us back to the forefront of Linux desktop tech. Our man from France was not going to let Dakotaraptor run away with it, so if you want to help make this dream a reality, now is the time to step up and volunteer!
 
-## Fedora Gets Back on Track
+{/* TODO: move murdzjef.png to your preferred location in the post */}
+<BlogFigure
+  src="/img/blog/2026-05-12-bluefin-spring-2026/murdzjef.png"
+  alt="[TODO: alt text]"
+  caption="G. Murdzheff's desktop"
+/>
+
+## Fedora Accelerates
 
 The biggest improvement this cycle has been mostly invisible to you. Fedora's `bootc` efforts seem to have been finally resolved. It may come as a surprise to some of you that Fedora does not actually release an official `bootc` image. All of our work continues to be based on Timothee's unofficial images. For the first time it feels like Fedora have figured out what to do with `bootc`, and this removes a bunch of uncertainty for us. It has never made sense that Fedora would start off in the lead and end up behind the rest of the community with `bootc` adoption. This also means that if you're enjoying Aurora, Bazzite, Bluefin, Secureblue, or rocking your own custom image ... _quality is going to go up_.   
 
@@ -214,20 +227,6 @@ Unfortunately selling outside the US is still a struggle, we'll continue looking
 [Check out the rest on store.projectbluefin.io →](https://store.projectbluefin.io)
 
 ## Download
-
-{/* TODO: move desktop.png to your preferred location in the post */}
-<BlogFigure
-  src="/img/blog/2026-05-12-bluefin-spring-2026/desktop.png"
-  alt="Bluefin desktop"
-  caption="[TODO: credit]"
-/>
-
-{/* TODO: move murdzjef.png to your preferred location in the post */}
-<BlogFigure
-  src="/img/blog/2026-05-12-bluefin-spring-2026/murdzjef.png"
-  alt="[TODO: alt text]"
-  caption="[TODO: credit]"
-/>
 
 Thanks to our awesome [ISO factory](https://github.com/projectbluefin/iso) we can now deliver fresh ISOs and both Anaconda and Tuna installer suck way less than before. You can find the weekly ISO builds on the [Downloads Testing](https://docs.projectbluefin.io/downloads-testing) page - these are automatically refreshed weekly. We've also set the timer to auto publish stable releases of the ISOs each month, so you're never too out of date. We're also now publishing torrents of the most popular images. See you tomorrow for part 2 of our series!
 
