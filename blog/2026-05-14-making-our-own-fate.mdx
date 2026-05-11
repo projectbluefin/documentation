@@ -3,6 +3,7 @@ title: "Making Our Own Fate: Dakota Alpha 2"
 slug: making-our-own-fate
 authors: castrojo
 tags: [announcements]
+date: 2026-05-13T09:00:00-04:00
 draft: true
 ---
 import WallpaperFeatureGrid from "@site/src/components/blog/WallpaperFeatureGrid";
@@ -17,7 +18,7 @@ import DocsFeatureGrid from "@site/src/components/blog/DocsFeatureGrid";
 import BlogSeries from "@site/src/components/blog/BlogSeries";
 import StoreCards from "@site/src/components/blog/StoreCards";
 
-<BlogSeries seriesId="bluefin-spring-2026" currentPart={3} />
+<BlogSeries seriesId="bluefin-spring-2026" currentPart={4} />
 
 <p className="blog-post-subtitle">The Final Shape is here...</p>
 
@@ -80,11 +81,11 @@ And the big one. We cannot guarantee that this installation will be the final la
 
 Thanks to [Brian Ketelsen](https://github.com/bketelsen) and [James Reilly](https://github.com/jamesreilly5) for the [Tuna installer](https://github.com/tuna-os/tuna-installer). Yes they called it the Tuna installer. lol.
 
-Thanks to [Jordan Petridis](https://github.com/alatiera), [Valentin David](https://github.com/valentindavid), [Adrian Vovk](https://github.com/AdrianVovk), and the [GNOME OS team](https://os.gnome.org/) for their expertise and advisory roles - we couldn't do this without you!
+Thanks to [Jordan Petridis](https://github.com/alateira), [Valentin David](https://github.com/valentindavid), [Adrian Vovk](https://github.com/AdrianVovk), [Felicitas Pojtinger](https://github.com/pojntfx), and the [GNOME OS team](https://os.gnome.org/) for their expertise and advisory roles - we couldn't do this without you!
 
 ## Bluefin's Download Diet: Introducing Chunkah
 
-Yes, they called the upstream rechunker "[Chunkah](https://github.com/coreos/chunkah)". A rechunker is a thing we use to take an image and reslice it into more chunks. `ghcr.io/projectbluefin/dakota` is sliced into 120 layers. It takes content of the image into account. The idea being if you have components that update often, they would be group together in layers, and things that don't get updated often are group together. 
+Yes, they called the upstream rechunker "[Chunkah](https://github.com/coreos/chunkah)". A rechunker is a thing we use to take an image and reslice it into more chunks. `ghcr.io/projectbluefin/dakota` is sliced into 120 layers instead of one big unresumable download for updates. It also takes content of the image into account. The idea being if you have components that update often, they would be group together in layers, and things that don't get updated often are group together. 
 
 That means if your computer doesn't need that layer for that update, it doesn't get downloaded. Additionally partial zstd:chunked pulls will complement the layering. This will mean that your computer will also only download the parts of the layers it needs. When combined this finally brings efficient downloads to the bootc ecosystem. [Initial findings are looking good](https://github.com/coreos/chunkah/pull/107#issuecomment-4349283386). 
 
@@ -104,9 +105,9 @@ This section is my opinion and does not reflect the views of the team, but is in
 
 ### The Shoulders of Giants
 
-Bluefin's mission is _sustainaiblity_, that means people. Bluefin LTS is there so we have a reason to bring people like [Carl George] and [Shaun McCance] into our ecosystem. Without Bluefin LTS Red Hat would not have as much of a financial incentive to help us out. We drive `bootc` forward, they invest in the software and sell it as part of their product. It's the Circle of Life, but with Linux. Red Hat did afterall, give us [millions of dollars of engineering for free](https://youtu.be/K6-GMTq2T7s?si=cyEEnhbSPmQZdBB-&t=4837).
+Bluefin's mission is _sustainaiblity_, that means people. Bluefin LTS is there so we have a reason to bring people like [Carl George](https://github.com/carlwgeorge) and [Shaun McCance](https://github.com/shaunm) into our ecosystem. Without Bluefin LTS Red Hat would not have as much of a financial incentive to help us out. We drive `bootc` forward, they invest in the software and sell it as part of their product. It's the Circle of Life, but with Linux. Red Hat did afterall, give us [millions of dollars of engineering for free](https://youtu.be/K6-GMTq2T7s?si=cyEEnhbSPmQZdBB-&t=4837).
 
-Same thing with Fedora, it's our line to that center of gravity. It's not about the software, it's about the ecosystems we make along the way. Sounds like the kind of tripe the Linux Foundation loves to peddle. Dakotaraptor has one foot in the `bootc` world and one in the UAPI world. 
+Same thing with Fedora, it's our line to that center of gravity. And we have a new approach with Fedora Hummingbird, attracting more people. It's not about the software, it's about the ecosystems we make along the way. Sounds like the kind of tripe the Linux Foundation loves to peddle! Dakotaraptor has one foot in the `bootc` world and one in the UAPI world. 
 
 :::info[Speeeeed]
 
@@ -116,13 +117,9 @@ We will participate in both of those large ecosystems; that brings in the larges
 
 The CNCF Community via `bootc`, `composefs`, `podman`, and `oras`. The UAPI community bringing in the Linux userspace. Sounds great, let's go. Someone from Amutable please save me a shirt!
 
-### Gamers
-
-It gets better, we've got the [Open Gaming Collective's] stewardship of the gaming technology. Having all the Asus things in the kernel and in one place means we can ship better support. And if you want to learn how to deal with hardware, this is the place you should participate in if you want to help move the needle. 
-
 ### The Race to Sustainability
 
-[Colin Walters] describes communities like this as "Centers of Gravity" - and we're all in one gigantic galaxy, everyone pulling and pushing around different ecosystems. All made possible by open source tools, amazing. 
+[Colin Walters](https://github.com/cgwalters) describes communities like this as "Centers of Gravity" - and we're all in one gigantic galaxy, everyone pulling and pushing around different ecosystems. All made possible by open source tools, amazing. 
 
 Dakotaraptor will be my home raptor. Sure I love Bluefin LTS, but I don't actually believe that old model of Linux. I used to, and parts of me always will when I get a regression on new software, hah. It also pays for a large part of this - if you're going to insist on "older is better" then you might as well be on Bluefin. And I say this with love as I type this on a Bluefin LTS machine. Inside us there are two raptors.
 
@@ -134,7 +131,7 @@ The state of Dakota Alpha 2 is impressive considering how few people it took to 
 
 There are those that will say that GNOME OS and KDE Linux make no sense, that's what distributions are supposed to do. I push back against that. 4% marketshare in 30 years is not a success story. And the ones that **are** growing are designed to be used as reliable clients and not package manglers. 
 
-[Timothee Ravier] once said, people don't want distributions they want experiences. And these operating systems will prove it. No one will ever give you a better KDE experience than KDE. That wasn't true in the past because distributing software over the internet was hard. Now not only is it much easier, these organizations can start greenfield with the state of the art rather than trying to adapt old techniques to the new world.
+[Timothée Ravier](https://tim.siosm.fr/) once said, people don't want distributions they want experiences. And these operating systems will prove it. No one will ever give you a better KDE experience than KDE. That wasn't true in the past because distributing software over the internet was hard. Now not only is it much easier, these organizations can start greenfield with the state of the art rather than trying to adapt old techniques to the new world.
 
 Best infrastructure wins. Fastest and cheapest development wins.
 
@@ -163,6 +160,14 @@ You have proven that **_enthusiasts matter_** and can shape the future of the de
 There's no right way to Linux, but there are certainly wrong ways to Linux. If you're new to Linux, welcome. We are your starter dungeon. We're your sysadmin team, nice to meet you, we've got your back. Greatness awaits. And also pain. Mostly pain.
 
 :::
+
+## One more teaser ...
+
+I [annoyingly say no to most things](https://www.youtube.com/watch?v=K6-GMTq2T7s&t=2896s), we added this as a sustainability principle so that we wouldn't fall into a trap. [Saying No](https://mikemcquaid.com/saying-no/) is a great resource for this.
+
+But at some point it's so simple to drive buildstream that Ahmed whipped up an impressive prototype already:
+
+We've come to the point where one individual can produce a _consumer grade Linux desktop experience_. A COSMIC desktop built on the freedesktop SDK rocks, of course it does! And there's no "distro trap" here. There's no "Why are you making another one of these? Wasting resources!" because the bulk of the stuff is handled upstream. If this brings one person to fix stuff in the Freedesktop SDK for the entire community, it will be worth it!
 
 ## Merch
 
@@ -306,5 +311,3 @@ One last group of people to thank. These community members participated in [GitH
 - [Dakota ISO issues](https://github.com/projectbluefin/dakota-iso/issues)
 
 ### [Discussions](https://github.com/ublue-os/bluefin/discussions)
-
-[TODO: create a new discussion and replace this link — last one was #4500 for Dakota Alpha 1]

@@ -1,0 +1,34 @@
+---
+title: "The Dinosaur and the [ Redacted ]"
+slug: the-dinosaur-and-the-redacted
+authors: castrojo
+tags: [announcements]
+date: 2026-05-12T11:30:00-04:00
+draft: true
+---
+import BlogFigure from "@site/src/components/blog/BlogFigure";
+import BlogSeries from "@site/src/components/blog/BlogSeries";
+
+<BlogSeries seriesId="bluefin-spring-2026" currentPart={3} />
+
+## Dinosaurs and Hummingbirds
+
+> Hey, you know who is good at making "distroless images"? Distros.
+>
+> - Scott McCarty, Challenger of The Final Shape
+
+It seems [Fedora Hummingbird](https://discussion.fedoraproject.org/t/new-tag-for-hummingbird-special-interest-group/190129) has been revealed. Of course Red Hat built this, modern infra demands modern images. All they had to do was put a kernel in there. So they did. 
+
+I had heard the rumors. But it wasn't until I put two and two together and realized that Red Hat had quietly hired two Universal Blue core maintainers. They will be on the team building this. In the open, along with everybody else. This will take them some time to cook, there is a ton of work ahead. But it's closer than you think. I was able to cobble together a prototype in a day. Most of what you're about to see was grabbing the Fedora RPMs and and smelting it together. But it worked. It booted just fine. 
+
+<BlogFigure src="/img/blog/2026-05-12-bluefin-spring-2026/bluebird.png" alt="Bluebird — a Bluefin prototype running on Fedora Hummingbird" />
+
+This is also the reason why we're not doing the stable->testing->next plan. We'll likely do more one off testing branches, but work on the sealed images and Hummingbird will attract the right kind of nerds to make this interesting. I think it's cool that they're putting this in Fedora. You have the evolution of the tried and true way + a continuous integrated option that can be the prototype for a greenfield Silverblue and Kinoite. 
+
+## This does not exist
+
+Well, I got what I wanted, a CoreOS style base image to have a true "CoreOS Desktop". So is Fedora rolling or stable? Yes.
+
+I hope some of you step up and accept's Scott's challenge, we have an opportunity to do something brand new, chances like this don't come along often! A place for a cloud native in Fedora, I can't wait to see what Legends rise to the challenge.  
+
+

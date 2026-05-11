@@ -5,9 +5,12 @@ interface MusicPlaylistProps {
   title: string;
   playlistId: string;
   /**
-   * When true (default) an inline YouTube embed is rendered.
-   * When false, renders a linked thumbnail + title only (suitable for email/RSS).
+   * "bar"  (default) — slim sticky horizontal player; ideal for blog posts.
+   * "card" — square thumbnail card with hover overlay; ideal for the music page grid.
+   * "text" — linked thumbnail + title only, no embed (email/RSS fallback).
    */
+  variant?: "bar" | "card" | "text";
+  /** @deprecated Use variant="text" instead. */
   embed?: boolean;
 }
 
@@ -40,8 +43,12 @@ const extractPlaylistId = (playlistIdOrUrl: string): string => {
 const MusicPlaylist: React.FC<MusicPlaylistProps> = ({
   title,
   playlistId,
+  variant,
   embed = true,
 }) => {
+  // Resolve effective variant — honour legacy embed prop
+  const effectiveVariant: "bar" | "card" | "text" =
+    variant ?? (embed === false ? "text" : "bar");
   const cleanPlaylistId = extractPlaylistId(playlistId);
   const [metadata, setMetadata] = useState<PlaylistMetadata | null>(null);
   const [imageError, setImageError] = useState(false);
@@ -103,8 +110,8 @@ const MusicPlaylist: React.FC<MusicPlaylistProps> = ({
       </div>
     );
 
-  // ── embed=false fallback (email / RSS) ──────────────────────────────────
-  if (!embed) {
+  // ── variant="text" fallback (email / RSS) ──────────────────────────────────
+  if (effectiveVariant === "text") {
     return (
       <div className={styles.nowPlayingBar}>
         <a
@@ -126,6 +133,57 @@ const MusicPlaylist: React.FC<MusicPlaylistProps> = ({
           >
             {title}
           </a>
+        </div>
+      </div>
+    );
+  }
+
+  // ── variant="card" — square thumbnail card for music page grid ────────────
+  if (effectiveVariant === "card") {
+    return (
+      <div className={styles.playlistBox}>
+        <a
+          href={playlistUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={styles.playlistLink}
+        >
+          <div className={styles.thumbnailWrapper}>
+            {thumbnailUrl && !imageError ? (
+              <img
+                src={thumbnailUrl}
+                alt={title}
+                className={styles.thumbnail}
+                onError={() => setImageError(true)}
+              />
+            ) : (
+              <div className={styles.thumbnailPlaceholder}>
+                <svg className={styles.playIcon} viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              </div>
+            )}
+            <div className={styles.playOverlay}>
+              <svg className={styles.playIconLarge} viewBox="0 0 24 24" fill="currentColor">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            </div>
+          </div>
+        </a>
+        <div className={styles.playlistInfo}>
+          <h4 className={styles.playlistTitle}>
+            <a
+              href={playlistUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.titleLink}
+            >
+              {title}
+            </a>
+          </h4>
+          {metadata?.description && (
+            <p className={styles.playlistDescription}>{metadata.description}</p>
+          )}
         </div>
       </div>
     );
