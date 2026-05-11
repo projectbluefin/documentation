@@ -17,16 +17,19 @@ Bluefin in 2026 focuses on upstream projects and contributor growth.
 <MusicPlaylist 
   title="Bluefin and the Syrens of Metal"
   playlistId="PLhiPP9M5fgWFa09qMHJSA7ts93UsMG82Q"
+  variant="card"
 />
 
 <MusicPlaylist 
   title="Bluefin and the Bazaar of Destiny"
   playlistId="PLhiPP9M5fgWFOhFgduxhleNTmfVSj9JmO"
+  variant="card"
 />
 
 <MusicPlaylist 
   title="Bluefin and the Lost Tribe of Contributors"
   playlistId="PLhiPP9M5fgWEuxjlfOEX3fwA-E60-E4TA"
+  variant="card"
 />
 
 </div>
@@ -40,16 +43,19 @@ Bluefin forms partnerships with other legendary projects.
 <MusicPlaylist 
   title="Bluefin and Achillobator"
   playlistId="PLhiPP9M5fgWEZbkq6ZhaHA4b4UqLwZNxt"
+  variant="card"
 />
 
 <MusicPlaylist 
   title="Bluefin and Dakota"
   playlistId="PLhiPP9M5fgWHRa6Gt0UKWGxr3F0qg9t1g"
+  variant="card"
 />
 
 <MusicPlaylist 
   title="Bluefin and the Children of Jensen"
   playlistId="PLhiPP9M5fgWH4do22wEvgnoMUQLVYRIxt"
+  variant="card"
 />
 
 </div>
@@ -63,11 +69,13 @@ Bluefin was born in 2021.
 <MusicPlaylist 
   title="Bluefin and the Birth of Universal Blue"
   playlistId="PLhiPP9M5fgWHFlG3TS27gyOCQl4Dg115W"
+  variant="card"
 />
 
 <MusicPlaylist 
   title="Bluefin finds Her Way"
   playlistId="PLhiPP9M5fgWEvnp3w66WmcgiKvStzKXl9"
+  variant="card"
 />
 
 </div>

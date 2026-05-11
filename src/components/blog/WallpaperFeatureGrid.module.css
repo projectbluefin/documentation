@@ -1,0 +1,98 @@
+/* ── Newspaper-style float layout: image right, text wraps around it ── */
+
+.list {
+  margin: 1.5rem 0 2rem;
+}
+
+/* clearfix — contains the float without creating a BFC that would interfere */
+.row::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.row {
+  margin-bottom: 2rem;
+}
+
+.row:last-child {
+  margin-bottom: 0;
+}
+
+/* Float the image right — placed before textSide in DOM so text wraps around it */
+.thumbSide {
+  float: right;
+  width: 35%;
+  margin: 0 0 1rem 2rem;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  display: block;
+  transition: box-shadow 0.15s, transform 0.15s;
+}
+
+.thumbSide:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+/* Plain block — no BFC, so inline content wraps around the float */
+.textSide {
+  display: block;
+}
+
+/* Match original sizing exactly — no font-size override */
+.title {
+  display: block;
+  font-weight: 700;
+  color: var(--ifm-color-emphasis-900);
+  text-decoration: none;
+  margin-bottom: 0.4rem;
+}
+
+.description {
+  margin: 0 0 0.4rem;
+  font-weight: 500;
+  color: var(--ifm-font-color-base);
+  line-height: 1.4;
+}
+
+.body {
+  margin: 0;
+  color: var(--ifm-font-color-base);
+  line-height: 1.6;
+}
+
+/* ── Image variants ─────────────────────────────────────────────────── */
+
+.thumbImg,
+.thumbLight,
+.thumbDark {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  object-position: top;
+}
+
+.thumbDark {
+  display: none;
+}
+
+[data-theme="dark"] .thumbLight {
+  display: none;
+}
+
+[data-theme="dark"] .thumbDark {
+  display: block;
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────── */
+
+@media (max-width: 720px) {
+  .thumbSide {
+    float: none;
+    width: 100%;
+    margin: 0 0 1rem;
+  }
+}

@@ -23,7 +23,8 @@ export type ContributorRole =
   | "brew-contributor"
   | "contributor"
   | "bluefin-emeritus"
-  | "ublue-emeritus";
+  | "ublue-emeritus"
+  | "countme-maintainer";
 
 export interface ReleaseContributor {
   login: string;
@@ -65,6 +66,7 @@ const RoleTitles: Record<ContributorRole, string> = {
   contributor: "Bluefin Contributor",
   "bluefin-emeritus": "Bluefin Maintainer Emeritus",
   "ublue-emeritus": "Universal Blue Maintainer Emeritus",
+  "countme-maintainer": "Countme Maintainer",
 };
 
 type HighlightType = boolean | "gold" | "silver" | "diamond";
@@ -89,6 +91,7 @@ const RoleHighlight: Record<ContributorRole, HighlightType> = {
   contributor: false,
   "bluefin-emeritus": "silver",
   "ublue-emeritus": "silver",
+  "countme-maintainer": "diamond",
 };
 
 const RoleLegendColor: Record<ContributorRole, string> = {
@@ -112,6 +115,7 @@ const RoleLegendColor: Record<ContributorRole, string> = {
   contributor: "var(--ifm-color-emphasis-300)",
   "bluefin-emeritus": "#8a9db5",
   "ublue-emeritus": "#6b9ac4",
+  "countme-maintainer": "#22c55e",
 };
 
 

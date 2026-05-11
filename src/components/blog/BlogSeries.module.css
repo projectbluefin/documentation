@@ -1,0 +1,87 @@
+.container {
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-left: 3px solid var(--ifm-color-primary);
+  border-radius: 6px;
+  padding: 1rem 1.25rem;
+  margin: 0 0 2rem;
+  background: var(--ifm-background-surface-color);
+}
+
+.header {
+  margin: 0 0 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ifm-color-emphasis-600);
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.item {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.item::before {
+  content: counter(list-item) ".";
+  counter-increment: list-item;
+  font-size: 0.8rem;
+  color: var(--ifm-color-emphasis-500);
+  min-width: 1rem;
+}
+
+.list {
+  counter-reset: list-item;
+}
+
+.current .title {
+  font-weight: 700;
+  color: var(--ifm-font-color-base);
+}
+
+.upcoming .title {
+  color: var(--ifm-color-emphasis-500);
+}
+
+.link {
+  font-weight: 500;
+  color: var(--ifm-color-primary);
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ifm-color-primary);
+  background: var(--ifm-color-primary-lightest);
+  padding: 0.1rem 0.4rem;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+[data-theme="dark"] .badge {
+  background: color-mix(in srgb, var(--ifm-color-primary) 20%, transparent);
+}
+
+.date {
+  font-size: 0.8rem;
+  color: var(--ifm-color-emphasis-500);
+  white-space: nowrap;
+}

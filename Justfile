@@ -37,6 +37,13 @@ typecheck:
 clear:
     npx docusaurus clear
 
+# Safe dev: clears rspack persistent cache first, then starts hot-reload server.
+# Use this when dev crashes with signal 6 (SIGABRT) or "pack is released and deleted" errors.
+# Pass extra args: `just dev-safe --port 3001`
+dev-safe *ARGS:
+    npx docusaurus clear
+    npx docusaurus start --host 0.0.0.0 {{ARGS}}
+
 # Run Playwright e2e tests against the local dev server (reuses existing if running)
 test:
     npm run test:e2e

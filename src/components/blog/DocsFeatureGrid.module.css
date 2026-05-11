@@ -29,25 +29,25 @@
 
 .title {
   font-weight: 700;
-  color: var(--ifm-color-emphasis-900);
+  color: var(--ifm-color-primary);
   text-decoration: none;
 }
 
 .title:hover {
-  color: var(--ifm-color-primary);
+  color: var(--ifm-color-primary-dark);
   text-decoration: underline;
 }
 
 .description {
   margin: 0;
   font-weight: 500;
-  color: var(--ifm-color-emphasis-700);
+  color: var(--ifm-font-color-base);
   line-height: 1.4;
 }
 
 .body {
   margin: 0;
-  color: var(--ifm-color-emphasis-600);
+  color: var(--ifm-font-color-base);
   line-height: 1.6;
 }
 
@@ -68,12 +68,28 @@
   transform: translateY(-2px);
 }
 
-.thumbSide img {
+/* Shared image sizing — applied via explicit class, not the img tag selector */
+.thumbImg,
+.thumbLight,
+.thumbDark {
   width: 100%;
   height: auto;
   display: block;
   object-fit: cover;
   object-position: top;
+}
+
+/* Theme-aware variants: hide dark by default, swap on dark mode */
+.thumbDark {
+  display: none;
+}
+
+[data-theme="dark"] .thumbLight {
+  display: none;
+}
+
+[data-theme="dark"] .thumbDark {
+  display: block;
 }
 
 /* ── Responsive ──────────────────────────────────────────────────────── */

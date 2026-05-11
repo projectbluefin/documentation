@@ -8,6 +8,7 @@ interface DocsFeature {
   description: string;
   body?: string;
   thumbnail?: string;
+  thumbnailDark?: string;
 }
 
 interface DocsFeatureGridProps {
@@ -40,7 +41,29 @@ const DocsFeatureGrid: React.FC<DocsFeatureGridProps> = ({ features }) => (
             tabIndex={-1}
             aria-hidden="true"
           >
-            <img src={f.thumbnail} alt={f.title} loading="lazy" />
+            {f.thumbnailDark ? (
+              <>
+                <img
+                  src={f.thumbnail}
+                  alt={f.title}
+                  loading="lazy"
+                  className={styles.thumbLight}
+                />
+                <img
+                  src={f.thumbnailDark}
+                  alt={f.title}
+                  loading="lazy"
+                  className={styles.thumbDark}
+                />
+              </>
+            ) : (
+              <img
+                src={f.thumbnail}
+                alt={f.title}
+                loading="lazy"
+                className={styles.thumbImg}
+              />
+            )}
           </a>
         )}
       </div>
