@@ -158,7 +158,7 @@ const MusicPlaylist: React.FC<MusicPlaylistProps> = ({
               />
             ) : (
               <div className={styles.thumbnailPlaceholder}>
-                <svg className={styles.playIcon} viewBox="0 0 24 24" fill="currentColor">
+                <svg className={styles.cardPlayIcon} viewBox="0 0 24 24" fill="currentColor">
                   <path d="M8 5v14l11-7z" />
                 </svg>
               </div>
