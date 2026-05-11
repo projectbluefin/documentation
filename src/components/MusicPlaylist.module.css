@@ -63,6 +63,11 @@
 }
 
 .cardPlayIcon {
+  width: 60px;
+  height: 60px;
+  color: white;
+  opacity: 0.8;
+}
 
 .playOverlay {
   position: absolute;
