@@ -30,14 +30,14 @@ export const blogSeries: Record<string, BlogSeriesConfig> = {
         title: "Bluefin Spring 2026: Part of a Growing Ecosystem",
         slug: "bluefin-spring-2026-2",
         date: "May 12, 2026",
-        published: false,
+        published: true,
       },
       {
         part: 3,
-        title: "The Dinosaur and the [ Redacted ]",
-        slug: "the-dinosaur-and-the-redacted",
+        title: "The Dinosaur and the Hummingbird",
+        slug: "the-dinosaur-and-the-hummingbird",
         date: "May 12, 2026",
-        published: false,
+        published: true,
       },
       {
         part: 4,
