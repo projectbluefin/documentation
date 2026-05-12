@@ -359,12 +359,11 @@ Icon URLs: use `https://github.com/org-name.png` or `https://github.com/username
 
 ---
 
-## Active Worktrees (2026-05-04)
+## Active Worktrees (2026-05-12)
 
 | Worktree path | Branch | Purpose |
 |---|---|---|
-| `.worktrees/blog-announcement` | `feature/blog-f44-update-2` | Active blog post (bluefin-spring) + dark/light mode CSS fixes |
-| `.worktrees/sbom-flatpak-cache` | `fix/sbom-flatpak-cache` | SBOM flatpak cache re-extraction fix |
+| `.worktrees/blog-spring` | `feature/blog-f44-update-2` | Spring 2026 blog series — parts 2, 3, 4. Parts 1–3 published. Part 4 (`making-our-own-fate`) still `draft:true`. |
 
 ---
 
@@ -390,3 +389,5 @@ Do not add `fetch-sbom` to the `fetch-data` chain. `pages.yml` installs cosign/o
 | TypeScript deprecation error on `baseUrl` | TypeScript 6 change | `tsconfig.json` has `"ignoreDeprecations": "6.0"` — already handled |
 | Prettier warnings on existing files | Pre-existing style drift | Non-blocking in CI; run `npm run prettier` to fix all at once |
 | `contributors-history.json` corrupt | File corruption | Delete and re-run `npm run generate-report` to rebuild |
+| Build fails on missing component after blog PR | Blog post published without its supporting `src/` files | Run `git diff upstream/main --name-only` on the worktree branch and copy ALL changed `src/`, `scripts/`, and `static/` files — not just the MDX. Never include `.github/workflows/*.yml` in the same PR. |
+| Post not visible after merge | `draft: true` still in frontmatter | `grep -r "draft: true" blog/` — remove the line and push a fix PR |
