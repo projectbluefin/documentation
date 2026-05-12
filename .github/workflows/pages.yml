@@ -121,7 +121,7 @@ jobs:
           path: |
             static/img/cards
             static/data/card-hashes.json
-          key: card-images-${{ hashFiles('scripts/generate-card-images.mjs', 'scripts/lib/card-template.mjs') }}
+          key: card-images-${{ hashFiles('scripts/generate-card-images.mjs', 'scripts/lib/card-template.mjs', 'static/data/sbom-attestations-frontend.json') }}
           restore-keys: |
             card-images-
 
