@@ -246,58 +246,6 @@ function enrichLtsDxGdxFromSbom(events: OsReleaseEvent[]): OsReleaseEvent[] {
 }
 
 /**
- * Overlay Nvidia version onto Dakota events from the dakota-nvidia-latest SBOM
- * stream. The nvidia RPM lives in the -nvidia variant image, not the base
- * dakota image, so a separate lookup is needed.
- */
-function enrichDakotaNvidiaFromSbom(events: OsReleaseEvent[]): OsReleaseEvent[] {
-  // Resolve the most-recent dakota-nvidia-latest release once, used as a
-  // fallback when the exact date key is absent (the nvidia build may lag
-  // the base image build by one nightly SBOM cycle).
-  const nvidiaStream = getSbomCache()?.streams?.["dakota-nvidia-latest"];
-  const latestNvidiaRelease = (() => {
-    if (!nvidiaStream?.releases) return null;
-    const keys = Object.keys(nvidiaStream.releases).sort().reverse();
-    return keys.length > 0 ? nvidiaStream.releases[keys[0]] : null;
-  })();
-
-  return events.map((event) => {
-    const dateMatch = event.release.tag.match(/(\d{8})/);
-    if (!dateMatch) return event;
-    const cacheKey = `latest-${dateMatch[1]}`;
-    // Prefer the typed nvidia field that extractBstPackageVersions populates;
-    // fall back to allPackages for forward-compat with any future SBOM format changes.
-    // If the exact date key is absent (nvidia build lags base by one cycle),
-    // fall back to the most-recent available nvidia entry.
-    const nvidiaRelease =
-      nvidiaStream?.releases?.[cacheKey] ?? latestNvidiaRelease;
-    const nvidiaVersion =
-      nvidiaRelease?.packageVersions?.nvidia ??
-      nvidiaRelease?.packageVersions?.allPackages?.["NVIDIA-Linux-x86"] ??
-      nvidiaRelease?.packageVersions?.allPackages?.["nvidia-driver"];
-    if (!nvidiaVersion) return event;
-    return {
-      ...event,
-      release: {
-        ...event.release,
-        // Nvidia is a regular package chip on Dakota (no GDX variant).
-        // Merge into majorPackages: remove any stale Nvidia entry, then append.
-        majorPackages: [
-          ...event.release.majorPackages.filter(
-            (p) => p.name.toLowerCase() !== "nvidia",
-          ),
-          { name: "Nvidia", version: nvidiaVersion, prevVersion: null },
-        ],
-        // Also scrub any stale Nvidia from gdxPackages — Dakota has no GDX row.
-        gdxPackages: event.release.gdxPackages.filter(
-          (p) => p.name.toLowerCase() !== "nvidia",
-        ),
-      },
-    };
-  });
-}
-
-/**
  * Override the "HWE Kernel" carry-forward value in LTS events with the
  * authoritative version from the bluefin-lts-hwe SBOM stream.
  *
@@ -335,40 +283,6 @@ function getBluefinOsEvents(): OsReleaseEvent[] {
   return _bluefinOsEvents;
 }
 
-let _ltsOsEvents: OsReleaseEvent[] | null = null;
-function getLtsOsEvents(): OsReleaseEvent[] {
-  if (!_ltsOsEvents) {
-    _ltsOsEvents = enrichLtsHweKernelFromSbom(
-      enrichLtsDxGdxFromSbom(
-        enrichLtsFromHistory(enrichFromSbom(loadOsEvents(getBluefinLtsReleasesData(), "lts"))),
-      ),
-    );
-  }
-  return _ltsOsEvents;
-}
-
-let _dakotaOsEvents: OsReleaseEvent[] | null = null;
-function getDakotaOsEvents(): OsReleaseEvent[] {
-  if (!_dakotaOsEvents) {
-    // Rewrite "latest-YYYYMMDD" → "dakota-YYYYMMDD" for display in the card tag chip.
-    // enrichDakotaNvidiaFromSbom still works because it matches /(\d{8})/ from the tag.
-    const base = sbomStreamToEvents(
-      getSbomCache(),
-      "dakota-latest",
-      "dakota",
-      "https://github.com/projectbluefin/dakota",
-    ).map((event) => ({
-      ...event,
-      release: {
-        ...event.release,
-        tag: event.release.tag.replace(/^latest-/, "dakota-"),
-      },
-    }));
-    _dakotaOsEvents = enrichDakotaNvidiaFromSbom(base);
-  }
-  return _dakotaOsEvents;
-}
-
 let _stableDailyOsEvents: OsReleaseEvent[] | null = null;
 function getStableDailyOsEvents(): OsReleaseEvent[] {
   if (!_stableDailyOsEvents) {
@@ -382,7 +296,19 @@ function getStableDailyOsEvents(): OsReleaseEvent[] {
   return _stableDailyOsEvents;
 }
 
-// Rolling 12-month window for the OS release stream.
+let _ltsOsEvents: OsReleaseEvent[] | null = null;
+function getLtsOsEvents(): OsReleaseEvent[] {
+  if (!_ltsOsEvents) {
+    _ltsOsEvents = enrichLtsHweKernelFromSbom(
+      enrichLtsDxGdxFromSbom(
+        enrichLtsFromHistory(enrichFromSbom(loadOsEvents(getBluefinLtsReleasesData(), "lts"))),
+      ),
+    );
+  }
+  return _ltsOsEvents;
+}
+
+// Rolling 12-month window for the stream — pinned cards (PINNED_OS_EVENTS) are unaffected.
 let _allOsStreamEvents: OsReleaseEvent[] | null = null;
 function getAllOsStreamEvents(): OsReleaseEvent[] {
   if (!_allOsStreamEvents) {
@@ -391,7 +317,6 @@ function getAllOsStreamEvents(): OsReleaseEvent[] {
       ...getBluefinOsEvents(),
       ...getStableDailyOsEvents(),
       ...getLtsOsEvents(),
-      ...getDakotaOsEvents(),
     ]
       .filter((e) => e.dateMs > cutoff)
       .sort((a, b) => b.dateMs - a.dateMs);
@@ -422,10 +347,11 @@ const DAKOTA_PLACEHOLDER_EVENT: OsReleaseEvent = {
       { name: "pipewire", version: "1.6.1", prevVersion: null },
       { name: "sudo-rs", version: "0.2.13", prevVersion: null },
       { name: "uutils-coreutils", version: "0.8.0", prevVersion: null },
-      { name: "Nvidia", version: "595.71.05", prevVersion: null },
     ],
     dxPackages: [],
-    gdxPackages: [],
+    gdxPackages: [
+      { name: "Nvidia", version: "595.71.05", prevVersion: null },
+    ],
     commits: [],
     fullDiff: [],
   },
@@ -445,12 +371,7 @@ function computePinnedOsEvents(): OsReleaseEvent[] {
       bluefin.find((e) => e.stream === "stable") ?? bluefin[0];
     // Pinned LTS card: latest from LTS feed
     const pinnedLts: OsReleaseEvent | undefined = lts.length > 0 ? lts[0] : undefined;
-    // Prefer the most recent SBOM-sourced Dakota event for the pinned card so
-    // package versions stay current. Falls back to the hardcoded placeholder
-    // when SBOM data isn't available (local dev with empty seed file).
-    const dakota = getDakotaOsEvents();
-    const pinnedDakota: OsReleaseEvent = dakota.length > 0 ? dakota[0] : DAKOTA_PLACEHOLDER_EVENT;
-    _pinnedOsEvents = [pinnedStable, pinnedLts, pinnedDakota]
+    _pinnedOsEvents = [pinnedStable, pinnedLts, DAKOTA_PLACEHOLDER_EVENT]
       .filter((e): e is OsReleaseEvent => e !== undefined);
   }
   return _pinnedOsEvents;
@@ -572,12 +493,13 @@ function getFeaturedApp(uniqueApps: UniqueApp[]): FirehoseApp | null {
 
 // ── Statistics panel ──────────────────────────────────────────────────────────
 
-interface StatisticsProps {
+function Statistics({
+  uniqueApps,
+  osEventCount,
+}: {
   uniqueApps: UniqueApp[];
   osEventCount: number;
-}
-
-function Statistics({ uniqueApps, osEventCount }: StatisticsProps) {
+}) {
   const counts = useMemo(() => {
     const byType: Record<string, number> = {};
     for (const { app } of uniqueApps) {
@@ -594,7 +516,7 @@ function Statistics({ uniqueApps, osEventCount }: StatisticsProps) {
         <dd>{uniqueApps.length}</dd>
         {Object.entries(counts).map(([type, count]) => (
           <React.Fragment key={type}>
-            <dt>{type === "flatpak" ? "Flathub" : type === "homebrew" ? "Homebrew" : type}</dt>
+            <dt>{type === "flatpak" ? "Flathub" : type === "homebrew" ? "Homebrew" : "OS Release"}</dt>
             <dd>{count}</dd>
           </React.Fragment>
         ))}
@@ -704,10 +626,7 @@ const FirehoseFeed: React.FC = () => {
 
   const allEvents: FlatRelease[] = useMemo(() => {
     const cutoff = Date.now() - ROLLING_WINDOW_MS;
-    // Exclude packageType "os" entries — those are text duplicates of the
-    // graphical OsReleaseCard entries already shown in the Updates Stream.
-    return flattenReleases(firehoseData.apps ?? [])
-      .filter((e) => e.dateMs > cutoff && e.app.packageType !== "os");
+    return flattenReleases(firehoseData.apps ?? []).filter((e) => e.dateMs > cutoff);
   }, []);
 
   const filteredEvents = useMemo(() => applyFilters(allEvents, filters), [allEvents, filters]);
@@ -725,9 +644,10 @@ const FirehoseFeed: React.FC = () => {
     setFeaturedApp(getFeaturedApp(uniqueApps));
   }, [uniqueApps]);
 
-  // ── OS stream events (filtered by date, always shown alongside app events) ─────
+  // ── OS stream events (filtered by date, always shown) ─────────────────────
 
   const filteredOsStreamEvents = useMemo((): OsReleaseEvent[] => {
+    // When filtering to a specific app type, OS events are hidden
     if (filters.packageType === "flatpak" || filters.packageType === "homebrew") return [];
     if (filters.updatedWithin === "all") return getAllOsStreamEvents();
     const maxAge = DAYS_MS[filters.updatedWithin];
@@ -735,6 +655,7 @@ const FirehoseFeed: React.FC = () => {
     return getAllOsStreamEvents().filter((e) => e.dateMs > 0 && now - e.dateMs <= maxAge);
   }, [filters.packageType, filters.updatedWithin]);
 
+  // How many stream OS events are hidden by the date filter
   const hiddenOsCount = useMemo(
     () =>
       filters.updatedWithin !== "all" &&
@@ -745,7 +666,9 @@ const FirehoseFeed: React.FC = () => {
     [filteredOsStreamEvents, filters.packageType, filters.updatedWithin],
   );
 
-  // ── Unified "Updates Stream" — OS releases + Flatpak/Homebrew app events ────
+  // ── Unified "Updates Stream" ───────────────────────────────────────────────
+  //
+  // OS releases and app entries (flatpak/homebrew) are always shown together.
 
   const appSection = useMemo(
     () =>
@@ -761,7 +684,7 @@ const FirehoseFeed: React.FC = () => {
     return items;
   }, [filteredOsStreamEvents, appSection]);
 
-  const isEmpty = allEvents.length === 0;
+  const isEmpty = allEvents.length === 0 && getAllOsStreamEvents().length === 0;
   const feedEmpty = unifiedStream.length === 0;
 
   return (
@@ -791,6 +714,7 @@ const FirehoseFeed: React.FC = () => {
 
       {/* ── Main feed ── */}
       <main className={styles.feedColumn}>
+        {/* Inline notice when OS events are hidden by the date filter */}
         {hiddenOsCount > 0 && (
           <p className={styles.osHiddenNotice}>
             {hiddenOsCount} OS release{hiddenOsCount !== 1 ? "s" : ""} hidden by the
@@ -803,13 +727,6 @@ const FirehoseFeed: React.FC = () => {
             </button>
           </p>
         )}
-        {/* Current Versions is SBOM-driven — always render regardless of firehose state */}
-        <section className={styles.feedSection}>
-          <Heading as="h2" className={styles.feedSectionHeading}>Current Versions</Heading>
-          {PINNED_OS_EVENTS.map((event) => (
-            <OsReleaseCard key={`pinned-${event.release.tag}`} event={event} />
-          ))}
-        </section>
 
         {isEmpty ? (
           <div className={styles.emptyState}>
@@ -827,7 +744,15 @@ const FirehoseFeed: React.FC = () => {
           </div>
         ) : (
           <>
-            {/* ── Updates Stream — Flatpak & Homebrew app events ── */}
+            {/* ── Current Versions — pinned cards, always visible ── */}
+            <section className={styles.feedSection}>
+              <Heading as="h2" className={styles.feedSectionHeading}>Current Versions</Heading>
+              {PINNED_OS_EVENTS.map((event) => (
+                <OsReleaseCard key={`pinned-${event.release.tag}`} event={event} />
+              ))}
+            </section>
+
+            {/* ── Updates Stream — unified chronological feed ── */}
             {feedEmpty ? (
               <div className={styles.emptyState}>
                 <p>No items match the current filters.</p>
@@ -848,7 +773,7 @@ const FirehoseFeed: React.FC = () => {
                 </div>
                 {unifiedStream.map((event) =>
                   event.kind === "os" ? (
-                    <OsReleaseCard key={`stream-${event.stream}-${event.release.tag}-${event.dateMs}`} event={event} />
+                    <OsReleaseCard key={`stream-${event.release.tag}-${event.dateMs}`} event={event} />
                   ) : (
                     <div key={event.app.id} className={styles.appEntry}>
                       <FirehoseCard app={event.app} defaultCollapsed={true} />
