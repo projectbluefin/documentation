@@ -61,12 +61,6 @@ export interface PackageVersions {
   /** e.g. "1.17.3-1.fc43" from the `flatpak` RPM */
   flatpak: string | null;
   /**
-   * e.g. "595.71.05" from the `NVIDIA-Linux-x86` BST element (dakota-nvidia
-   * SBOM stream only). Null for all non-nvidia images and all Fedora-based
-   * streams (where nvidia is sourced from the release feed instead).
-   */
-  nvidia?: string | null;
-  /**
    * Flat name→version map of every RPM artifact in the image.
    * Used by fetch-firehose.js to compute per-release package diffs.
    * Absent (undefined) from cache entries written before this field was added.

@@ -57,11 +57,11 @@ export interface GnomeExtension {
   name: string;
   description: string;
   creator: string;
-  creatorUrl: string | null;
+  creatorUrl: string;
   url: string;
-  screenshot: string | null;
-  remoteScreenshot: string | null;
-  icon: string | null;
+  screenshot: string;
+  remoteScreenshot: string;
+  icon: string;
   donateUrl: string | null;
 }
 
