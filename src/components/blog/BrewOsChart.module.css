@@ -1,0 +1,107 @@
+.wrapper {
+  margin: 1.5rem 0 2rem;
+  font-size: 0.875rem;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.75rem;
+  color: var(--ifm-color-emphasis-600);
+  margin-bottom: 0.75rem;
+}
+
+.source {
+  font-size: 0.75rem;
+  color: var(--ifm-color-primary);
+}
+
+.chart {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 2rem 14rem 1fr 3.5rem;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.rank {
+  text-align: right;
+  color: var(--ifm-color-emphasis-500);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.label {
+  color: var(--ifm-font-color-base);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.8rem;
+}
+
+.barTrack {
+  background: var(--ifm-color-emphasis-200);
+  border-radius: 3px;
+  height: 14px;
+  overflow: hidden;
+}
+
+.bar {
+  height: 100%;
+  border-radius: 3px;
+  background: var(--ifm-color-emphasis-400);
+  transition: width 0.4s ease;
+}
+
+.pct {
+  text-align: right;
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--ifm-color-emphasis-600);
+}
+
+/* Universal Blue family — highlighted */
+.ublueRank {
+  color: var(--ifm-color-primary);
+  font-weight: 700;
+}
+
+.ublueLabel {
+  color: var(--ifm-color-primary);
+  font-weight: 700;
+}
+
+.ublueBar {
+  background: var(--ifm-color-primary);
+}
+
+.ubluePct {
+  color: var(--ifm-color-primary);
+  font-weight: 700;
+}
+
+.loading {
+  color: var(--ifm-color-emphasis-500);
+  font-style: italic;
+  padding: 1rem 0;
+}
+
+.error {
+  color: var(--ifm-color-warning);
+  font-size: 0.875rem;
+}
+
+@media (max-width: 600px) {
+  .row {
+    grid-template-columns: 2rem 1fr 4rem 3rem;
+  }
+  .label {
+    font-size: 0.75rem;
+  }
+}
