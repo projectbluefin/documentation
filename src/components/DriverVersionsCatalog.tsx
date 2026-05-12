@@ -124,7 +124,7 @@ function extractUserspace(row: DriverRow): UserspaceInfo | null {
 }
 
 /** Extracts the numeric Fedora release from HWE kernel (used for HWE pin context only). */
-function extractFedoraRelease(row: DriverRow): number | null {
+function _extractFedoraRelease(row: DriverRow): number | null {
   const kernelStr = row.versions.hweKernel ?? row.versions.kernel ?? "";
   const m = kernelStr.match(/\.fc(\d+)/);
   return m ? parseInt(m[1], 10) : null;

@@ -159,7 +159,7 @@ const FIREHOSE_OS_APP_LOOKUP: Record<string, FirehoseApp> = (() => {
   return lookup;
 })();
 
-const normalizeReleaseDate = (value?: string | null): string | null => {
+const _normalizeReleaseDate = (value?: string | null): string | null => {
   if (!value) return null;
   const match = value.match(/^(\d{4})-(\d{2})-(\d{2})/);
   if (!match) return null;
@@ -170,7 +170,7 @@ const normalizeReleaseDate = (value?: string | null): string | null => {
  * Get NVIDIA driver version from firehose data (not present in SBOM).
  * NVIDIA ships as an akmod built outside the image and is not in Syft scans.
  */
-const getNvidiaVersionFromFirehose = (feedId: string, title: string): string | null => {
+const getNvidiaVersionFromFirehose = (feedId: string, _title: string): string | null => {
   const appId = FIREHOSE_APP_ID_BY_FEED_ID[feedId];
   if (!appId) return null;
   const app = FIREHOSE_OS_APP_LOOKUP[appId];
