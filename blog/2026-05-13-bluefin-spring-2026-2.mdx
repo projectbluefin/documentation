@@ -41,7 +41,7 @@ We're proud to ship this as our app store. Flathub has over 1 billion downloads 
   maxWidth="720px"
 />
 
-We can't get there from here without a working delivery platform -- **please donate to Bazaar**. Built by [@kolunmi](https://github.com/kolunmi) and [@AlexanderVanhee](https://github.com/AlexanderVanhee).
+We can't get there from here without a working delivery platform — **please donate to Bazaar**. Built by [@kolunmi](https://github.com/kolunmi) and [@AlexanderVanhee](https://github.com/AlexanderVanhee).
 
 <div style={{display: "flex", gap: "1rem", flexWrap: "wrap", margin: "1rem 0", justifyContent: "center"}}>
   <a href="https://ko-fi.com/kolunmi" style={{display: "inline-block", background: "#FF5E5B", color: "white", padding: "0.6rem 1.4rem", borderRadius: "8px", fontWeight: "bold", textDecoration: "none"}}>💙 Support kolunmi on Ko-fi</a>
@@ -66,7 +66,6 @@ The [ublue-os/tap](https://github.com/ublue-os/homebrew-tap) is the production H
 - <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/postmarketos.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[pmbootstrap](https://wiki.postmarketos.org/wiki/Pmbootstrap)** — The sophisticated chroot/build/flash tool for postmarketOS development and porting Linux to mobile devices.
 - <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/asusctl.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[asusctl](https://gitlab.com/asus-linux/asusctl)** — CLI and daemon for ASUS hardware: fan curves, battery charge limits, keyboard LEDs, GPU mode switching, and more.
 - <img src="/img/blog/2026-05-XX-bluefin-f44-dakota-alpha-2/icons/rog-control-center.png" width="28" height="28" style={{verticalAlign:"middle", marginRight:"8px"}} alt="" />**[ROG Control Center](https://gitlab.com/asus-linux/asusctl)** — GUI front-end for asusctl, providing a graphical interface for all ASUS ROG hardware controls.
-
 
 The operating system usage is also interesting. One of the reasons we picked homebrew was to be in the same group as everyone else. It's also nice to know that we're helping represent Linux:
 
@@ -124,7 +123,7 @@ Choose the `ai` menu in `ujust bbrew` to browse the full set of AI CLI tools:
 
 [Ask Bluefin](https://ask.projectbluefin.io) is a natural-language system assistant that can diagnose, explain, and help troubleshoot your machine using our community's data. You can hit it up on [the website](https://ask.projectbluefin.io), the [dedicated discussion forum](https://github.com/ublue-os/bluefin/discussions/categories/dosu-help-section), the soon-to-come shortcut in the menu, and the soon-to-come Discord app. 
 
-Ask is done in partnership with [Dosu](https://dosu.dev) - here's the gist. Ask Bluefin is trained on all of the documentation and source code for all of the tooling in Bluefin, Bluefin's source code, issues, documentation, and discussions. Podman, bootc, vscode, systemd, etc. Everything on your system. AND THAT'S IT. It is only trained on the code and docs. The results are usually much better than than a generic LLM, and light years ahead of Linux subreddits. (That's not a high bar, but let's have some goals). I have it write service units for me, because the era of writing these by hand is now almost over.
+Ask is done in partnership with [Dosu](https://dosu.dev) - here's the gist. Ask Bluefin is trained on all of the documentation and source code for all of the tooling in Bluefin, Bluefin's source code, issues, documentation, and discussions. Podman, bootc, vscode, systemd, etc. Everything on your system. AND THAT'S IT. It is only trained on the code and docs. The results are usually much better than a generic LLM, and light years ahead of Linux subreddits. (That's not a high bar, but let's have some goals). I have it write service units for me, because the era of writing these by hand is now almost over.
 
 Dosu also runs an MCP server if you want to connect your clients to it or work on apps that can index our community's collective knowledge. 
 
@@ -132,7 +131,7 @@ Dosu also runs an MCP server if you want to connect your clients to it or work o
 
 Proprietary operating systems are falling over each other trying to implement the worst possible anti-privacy features with AI. Of course they are, it's the nature of the beast. We take a different approach. If someone's going to invent this thing, then we're going to use it for good. Our first stab at this is to use it for a more natural goal - fix broken computers. (Computers are awful)
 
-[linux-mcp-server](https://github.com/rhel-lightspeed/linux-mcp-server) is an MCP server that gives any AI agent live read only access access to your system: OS info, processes, services, logs, network, and filesystem. When connected to [Goose](https://github.com/block/goose) it gives your LLM access to the following featurs:
+[linux-mcp-server](https://github.com/rhel-lightspeed/linux-mcp-server) is an MCP server that gives any AI agent live read only access to your system: OS info, processes, services, logs, network, and filesystem. When connected to [Goose](https://github.com/block/goose) it gives your LLM access to the following features:
 
 - "Bring Your Own LLM" — use it with a local Ramalama model for fully offline diagnostics, or connect to a hosted API for more capable reasoning — same data, your choice. Current this works best with paid frontier models, but also has been working great with the cheaper "fast models". Our team continues to experiment with the latest local models. Our final goal is for your computer to be able to diagnose itself with 100% local workflows on open weight models. Kyle Rankin in particular is going hard on this and has been making some incredible progress. It's only a matter of time, open always wins.
 - Natural language diagnostics — Ask questions like "why is my fan running loud?" or "what process is eating my RAM?" and get real answers grounded in your actual current system state
@@ -204,7 +203,7 @@ My favorite part of Bluefin, the artwork! I'd like to thank the two new major do
 The default wallpapers ship automatically with Bluefin. The extra collection (Leaf Collector, Duality, Eyes, Lazy Days) is available via Homebrew:
 
 ```bash
-brew install --cask ublue-os/tap/bluefin-wallpapers-extra</code>
+brew install --cask ublue-os/tap/bluefin-wallpapers-extra
 ```
 
 ### Wallpaper Packs
@@ -228,7 +227,7 @@ We've been working pretty hard this cycle on the docs. Specifically around getti
     title: "Changelogs",
     href: "https://docs.projectbluefin.io/changelogs",
     description: "Automated weekly changelogs for every image stream",
-    body: "This page will show you all of the versions and releases of every Bluefin. It is automatically generated from Bluefin's Software Bill of Materials (SBOM), so it will always show you what's on the image. This took way more work than we realized, but thanks to awesome tools such as [oras](https://oras.land) and [cosign](https://github.com/sigstore/cosign) we now have a nice way to show you what's in Bluefin. We also include the updates from the default homebrew and flatpaks shipped in Bluefin for convenience.",
+    body: "This page will show you all of the versions and releases of every Bluefin. It is automatically generated from Bluefin's Software Bill of Materials (SBOM), so it will always show you what's on the image. This took way more work than we realized, but thanks to awesome tools such as <a href=\"https://oras.land\">oras</a> and <a href=\"https://github.com/sigstore/cosign\">cosign</a> we now have a nice way to show you what's in Bluefin. We also include the updates from the default homebrew and flatpaks shipped in Bluefin for convenience.",
     thumbnail: "/img/docs-features/changelogs.png",
     thumbnailDark: "/img/docs-features/changelogs-dark.png",
   },
@@ -244,7 +243,7 @@ We've been working pretty hard this cycle on the docs. Specifically around getti
     title: "Images",
     href: "https://docs.projectbluefin.io/images",
     description: "Full matrix of available image variants",
-    body: "This page is a reference of all of the images we publish, and feautures rebase instructions if you need them. This includes the testing branches of every image (if they exist), as well as the Nvidia images.",
+    body: "This page is a reference of all of the images we publish, and features rebase instructions if you need them. This includes the testing branches of every image (if they exist), as well as the Nvidia images.",
     thumbnail: "/img/docs-features/images.png",
     thumbnailDark: "/img/docs-features/images-dark.png",
   },
@@ -268,7 +267,7 @@ We've been working pretty hard this cycle on the docs. Specifically around getti
     title: "Artwork",
     href: "https://docs.projectbluefin.io/artwork",
     description: "Browse and download all wallpapers and artwork assets",
-    body: "Bluefin is not just tech, the artwork of her world is just as important to us as the software.\n\nAll of Aurora and Bazzite's wallpapers are also available here, in dark and light variants. \n\nAll of Bluefin's artists are compensated for their work. Bluefin will never ship AI generated art.",
+    body: "Bluefin is not just tech, the artwork of her world is just as important to us as the software.<br/><br/>All of Aurora and Bazzite's wallpapers are also available here, in dark and light variants.<br/><br/>All of Bluefin's artists are compensated for their work. Bluefin will never ship AI generated art.",
     thumbnail: "/img/docs-features/artwork.png",
     thumbnailDark: "/img/docs-features/artwork-dark.png",
   },
