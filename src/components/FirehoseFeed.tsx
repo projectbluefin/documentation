@@ -2,8 +2,8 @@ import React, { useState, useMemo, useEffect } from "react";
 import Heading from "@theme/Heading";
 import firehoseData from "@site/static/data/firehose-apps.json";
 import type { FirehoseApp, FirehoseRelease, FirehoseFilterState } from "../types/firehose";
-import type { OsReleaseEvent, AppTimelineEvent, FlatTimelineEvent, ParsedMajorPackage, OsStream, OsFeedItem } from "../types/os-feed";
-import type { SbomAttestationsData, PackageVersions } from "../types/sbom";
+import type { OsReleaseEvent, AppTimelineEvent, FlatTimelineEvent, ParsedMajorPackage, OsFeedItem } from "../types/os-feed";
+import type { SbomAttestationsData } from "../types/sbom";
 import { parseOsRelease } from "../utils/parseOsRelease";
 import {
   DAYS_MS,
@@ -12,7 +12,7 @@ import {
   DX_CHIP_MAP,
   GDX_CHIP_MAP,
   sbomKeyForRelease,
-  buildVersionChips,
+  buildVersionChips as _buildVersionChips,
   sbomStreamToEvents,
 } from "../utils/firehoseHelpers";
 import FirehoseCard from "./FirehoseCard";

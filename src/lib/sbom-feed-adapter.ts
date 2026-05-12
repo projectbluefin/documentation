@@ -10,7 +10,7 @@
  * components can consume sbom-adapter.ts directly.
  */
 
-import type { LatestRelease, Release, Stream } from "./sbom-adapter";
+import type { Release } from "./sbom-adapter";
 import { getStream, getStreamIds, getSbomData } from "./sbom-adapter";
 
 // ── Feed-compatible types ────────────────────────────────────────────────────

@@ -31,6 +31,7 @@ export function sanitizeHtml(dirty: string): string {
   }
   if (!purify) {
     // Lazy-load DOMPurify only in the browser
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     purify = require("dompurify") as typeof DOMPurifyType;
   }
   return purify.sanitize(dirty, {
