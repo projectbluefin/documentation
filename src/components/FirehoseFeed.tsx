@@ -71,7 +71,7 @@ function loadOsEvents(
 // attestation cache (Pipeline B — authoritative). Release notes data
 // (majorPackages from the HTML/Markdown parser) is supplemented by SBOM
 // but never used as the sole source for missing packages.
-// Dakota is the only stream that uses hardcoded placeholder versions.
+// Dakota versions are sourced live from the dakota-latest SBOM stream.
 
 // Lazy-loaded SBOM cache: the 104KB JSON is only parsed on first access,
 // deferring work from module-load time to first render.
@@ -93,7 +93,7 @@ function getSbomCache(): SbomAttestationsData {
  * so the UI can still show what changed. Packages outside CHIP_TO_SBOM (Nvidia,
  * HWE Kernel, DX, GDX) are kept from release notes unchanged.
  *
- * Only applies to stable/LTS events. Dakota uses hardcoded placeholders.
+ * Only applies to stable/LTS events. Dakota events are sourced separately via getDakotaOsEvent().
  */
 function enrichFromSbom(events: OsReleaseEvent[]): OsReleaseEvent[] {
   return events.map((event) => {
@@ -324,38 +324,59 @@ function getAllOsStreamEvents(): OsReleaseEvent[] {
   return _allOsStreamEvents;
 }
 
-// Dakota placeholder — versions sourced from SBOM attestation on dakota-latest stream
-// and BST element pins. Update when junction refs change.
-// Last updated: freedesktop-sdk-25.08.10 + gnome-build-meta 50.1
-const DAKOTA_PLACEHOLDER_EVENT: OsReleaseEvent = {
-  kind: "os",
-  stream: "dakota",
-  dateMs: 0, // no date — placeholder
-  release: {
-    stream: "dakota",
-    tag: "dakota-alpha",
-    githubUrl: "https://github.com/projectbluefin/dakota",
-    fedoraVersion: null,
-    centosVersion: null,
-    majorPackages: [
-      { name: "Kernel", version: "6.19.11", prevVersion: null },
-      { name: "Gnome", version: "50.0", prevVersion: null },
-      { name: "Mesa", version: "26.0.5", prevVersion: null },
-      { name: "Podman", version: "5.8.2", prevVersion: null },
-      { name: "bootc", version: "1.15.2", prevVersion: null },
-      { name: "systemd", version: "260.1", prevVersion: null },
-      { name: "pipewire", version: "1.6.1", prevVersion: null },
-      { name: "sudo-rs", version: "0.2.13", prevVersion: null },
-      { name: "uutils-coreutils", version: "0.8.0", prevVersion: null },
-    ],
-    dxPackages: [],
-    gdxPackages: [
-      { name: "Nvidia", version: "595.71.05", prevVersion: null },
-    ],
-    commits: [],
-    fullDiff: [],
-  },
-};
+// Dakota OS event — sourced live from the dakota-latest SBOM stream.
+// nvidia version is overlaid from dakota-nvidia-latest (separate stream).
+// Falls back to undefined (card hidden) if SBOM cache is not yet populated.
+const DAKOTA_GITHUB_URL = "https://github.com/projectbluefin/dakota";
+let _dakotaOsEvent: OsReleaseEvent | null | undefined = undefined;
+function getDakotaOsEvent(): OsReleaseEvent | undefined {
+  if (_dakotaOsEvent !== undefined) return _dakotaOsEvent ?? undefined;
+
+  const events = sbomStreamToEvents(
+    getSbomCache(),
+    "dakota-latest",
+    "dakota",
+    DAKOTA_GITHUB_URL,
+  );
+
+  if (events.length === 0) {
+    _dakotaOsEvent = null;
+    return undefined;
+  }
+
+  // Most recent SBOM release for the pinned card.
+  const latest = events.sort((a, b) => b.dateMs - a.dateMs)[0];
+
+  // Overlay nvidia version from the dakota-nvidia-latest stream.
+  // Prefer the release whose date matches; fall back to the newest available.
+  let nvidiaVersion: string | null = null;
+  const nvidiaReleases = getSbomCache()?.streams?.["dakota-nvidia-latest"]?.releases;
+  if (nvidiaReleases) {
+    const dateMatch = latest.release.tag.match(/(\d{8})/);
+    const exactKey = dateMatch ? `latest-${dateMatch[1]}` : null;
+    nvidiaVersion =
+      (exactKey && nvidiaReleases[exactKey]?.packageVersions?.nvidia) ??
+      Object.values(nvidiaReleases)
+        .map((r) => r?.packageVersions?.nvidia ?? null)
+        .find((v): v is string => v !== null) ??
+      null;
+  }
+
+  const nvidiaPackage: ParsedMajorPackage | null = nvidiaVersion
+    ? { name: "Nvidia", version: nvidiaVersion, prevVersion: null }
+    : null;
+
+  _dakotaOsEvent = {
+    ...latest,
+    release: {
+      ...latest.release,
+      majorPackages: nvidiaPackage
+        ? [...latest.release.majorPackages, nvidiaPackage]
+        : latest.release.majorPackages,
+    },
+  };
+  return _dakotaOsEvent;
+}
 
 // Pinned "Current Versions" cards: latest stable + latest LTS + Dakota placeholder.
 // All bluefin releases are stable-daily; synthesise a "stable"-streamed clone for
@@ -371,7 +392,7 @@ function computePinnedOsEvents(): OsReleaseEvent[] {
       bluefin.find((e) => e.stream === "stable") ?? bluefin[0];
     // Pinned LTS card: latest from LTS feed
     const pinnedLts: OsReleaseEvent | undefined = lts.length > 0 ? lts[0] : undefined;
-    _pinnedOsEvents = [pinnedStable, pinnedLts, DAKOTA_PLACEHOLDER_EVENT]
+    _pinnedOsEvents = [pinnedStable, pinnedLts, getDakotaOsEvent()]
       .filter((e): e is OsReleaseEvent => e !== undefined);
   }
   return _pinnedOsEvents;
