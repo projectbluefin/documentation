@@ -132,6 +132,25 @@ const DownloadSectionTesting: React.FC = () => (
           checksumUrl: `${BASE}/dakota-nvidia-live-latest.iso-CHECKSUM`,
         },
       ]}
+      sections={[
+        {
+          label: "Alpha 2",
+          entries: [
+            {
+              label: "AMD / Intel",
+              isoUrl: `${BASE}/dakota-live-alpha2.iso`,
+              isoFilename: "dakota-live-alpha2.iso",
+              checksumUrl: `${BASE}/dakota-live-alpha2.iso-CHECKSUM`,
+            },
+            {
+              label: "Nvidia",
+              isoUrl: `${BASE}/dakota-nvidia-live-alpha2.iso`,
+              isoFilename: "dakota-nvidia-live-alpha2.iso",
+              checksumUrl: `${BASE}/dakota-nvidia-live-alpha2.iso-CHECKSUM`,
+            },
+          ],
+        },
+      ]}
     />
   </>
 );
