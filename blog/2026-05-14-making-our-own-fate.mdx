@@ -46,7 +46,8 @@ Dakota features a more aggressive push away from legacy technologies, pure image
 - [GNOME 50](https://release.gnome.org/50/), Linux 6.19.x, Mesa 26.x, and [Freedesktop SDK] 25.08.11 libraries
 - systemd-boot, UKIs, UEFI only, compiled for the [x86-64-v3](https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels) architecture level
 - Oxidized coreutils - same sudo-rs and uutils [setup as Ubuntu](https://discourse.ubuntu.com/t/an-update-on-rust-coreutils/80773) - thanks to Canonical for funding this important work 
-- [Custom Command Menu](https://github.com/StorageB/custom-command-menu) — Dakota features a newly refined menu. We hope to bring this menu to other Bluefins over time. u
+- Mostly feature complete, it's a full Bluefin
+- [Custom Command Menu](https://github.com/StorageB/custom-command-menu) — Dakota features a newly refined menu. We hope to bring this menu to other Bluefins over time. 
 - Ghostty as the default terminal
 
 Since Dakota is brand new there's no users to transition when we switch something. We are switching to [Ghostty](https://ghostty.org/) as the default terminal. This has always been a fan favorite so we're starting with it fresh here.
@@ -60,7 +61,7 @@ Thanks everyone who helped test, you've done a great job!
 - LUKS encryption works on install
 - Full Nvidia Image
   - [nvidia-container-toolkit](https://github.com/projectbluefin/dakota/issues/376)
-- Efficient layering - this image uses the upstream [chunkah](https://github.com/coreos/chunkah) tool for more efficient downloads. We expect efficient delta downloads to land sometime this summer, but the infrastructure is in polace now
+- Efficient layering - this image uses the upstream [chunkah](https://github.com/coreos/chunkah) tool for more efficient downloads. We expect efficient delta downloads to land sometime this summer, but the infrastructure is in place now
 - Linux 7.x kernel will land once some of the bootc issues with 7.x are resolved
 - Beta target: Probably a month or so; GA target: Fall 2026
 - Want to help? GNOME OS upstream is always looking for help: [os.gnome.org](https://os.gnome.org/)
@@ -297,5 +298,5 @@ One last group of people to thank. These community members participated in [GitH
 
 ### [Discussion Thread](https://github.com/ublue-os/bluefin/discussions/4607)
 
-- [Freedesktop SDK]: https://freedesktop-sdk.io/
-- [Freedesktop SDK libraries]: https://freedesktop-sdk.io/
+[Freedesktop SDK]: https://freedesktop-sdk.io/
+[Freedesktop SDK libraries]: https://freedesktop-sdk.io/
