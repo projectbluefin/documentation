@@ -44,7 +44,7 @@ export const blogSeries: Record<string, BlogSeriesConfig> = {
         title: "Making Our Own Fate: Dakota Alpha 2",
         slug: "making-our-own-fate",
         date: "May 13, 2026",
-        published: false,
+        published: true,
       },
     ],
   },
