@@ -338,26 +338,36 @@ const STREAM_SPECS = [
  * @param {object|null} existing  Existing SBOM cache for incremental updates
  */
 async function processLatestTagStream(spec, existing) {
-  const imageRef = `ghcr.io/${spec.org}/${spec.package}:latest`;
-  console.log(`  ${spec.id}: processing :latest tag (${imageRef})`);
-
-  const dateStr = await getImageCreatedDate(imageRef);
-  const cacheKey = dateStr ? `latest-${dateStr}` : "latest-unknown";
-  console.log(`  ${spec.id}: cache key = ${cacheKey}`);
-
-  const existingEntry = existing?.streams?.[spec.id]?.releases?.[cacheKey];
-  const hasVersions = existingEntry?.packageVersions != null;
-  const hasAllPackages =
-    existingEntry?.packageVersions?.allPackages != null &&
-    Object.keys(existingEntry.packageVersions.allPackages).length > 0;
-  const isVerified = existingEntry?.attestation?.verified === true;
-  const isCacheHit =
-    !FORCE_REFRESH && hasVersions && hasAllPackages && isVerified;
-
-  // Seed releases from existing cache so history accumulates across nightly runs.
-  // Without this, every run discards all prior entries — leaving only today's key.
+  // Seed from existing cache — accumulates history across nightly runs.
   const existingReleases = existing?.streams?.[spec.id]?.releases || {};
   const releases = { ...existingReleases };
+
+  // Build the list of image refs to process: :latest plus the 10 most recent
+  // commit-SHA tags (each is a distinct tagged build pushed to GHCR).
+  const allTags = await fetchGhcrTags(spec.org, spec.package);
+  const commitTags = allTags
+    .filter((t) => /^[0-9a-f]{40}$/.test(t))
+    .slice(-10); // last 10 = most recently pushed
+  const imageRefs = [
+    `ghcr.io/${spec.org}/${spec.package}:latest`,
+    ...commitTags.map((t) => `ghcr.io/${spec.org}/${spec.package}:${t}`),
+  ];
+
+  for (const imageRef of imageRefs) {
+    const dateStr = await getImageCreatedDate(imageRef);
+    const cacheKey = dateStr ? `latest-${dateStr}` : null;
+    if (!cacheKey) continue;
+
+    const existingEntry = releases[cacheKey];
+    const hasVersions = existingEntry?.packageVersions != null;
+    const hasAllPackages =
+      existingEntry?.packageVersions?.allPackages != null &&
+      Object.keys(existingEntry.packageVersions.allPackages).length > 0;
+    const isVerified = existingEntry?.attestation?.verified === true;
+    const isCacheHit =
+      !FORCE_REFRESH && hasVersions && hasAllPackages && isVerified;
+
+    console.log(`  ${spec.id}: ${cacheKey}${isCacheHit ? " (cache hit)" : ""}`);
 
   if (isCacheHit) {
     releases[cacheKey] = existingEntry;
@@ -405,7 +415,7 @@ async function processLatestTagStream(spec, existing) {
     }
 
     releases[cacheKey] = {
-      tag: "latest",
+      tag: imageRef,
       imageRef,
       digest: null,
       attestation,
@@ -413,6 +423,7 @@ async function processLatestTagStream(spec, existing) {
       checkedAt: new Date().toISOString(),
     };
   }
+  } // end for imageRefs
 
   return {
     id: spec.id,
