@@ -303,22 +303,21 @@ const STREAM_SPECS = [
     label: "Dakota Latest",
     org: "projectbluefin",
     package: "dakota",
-    // No releasesRepo: Dakota does not publish GitHub releases.
-    // No streamPrefix: uses the :latest floating tag, not date-based tags.
-    // usesLatestTag: true triggers a dedicated path in processStream() that
-    // bypasses findRecentTagsForStream() and works directly with :latest.
+    // Date-stamped tags: latest.YYYYMMDD (normalised to latest-YYYYMMDD by normaliseLtsTag).
+    // Switched from usesLatestTag:true to streamPrefix:"latest" so all dated builds
+    // accumulate in history instead of only keeping the current :latest.
+    streamPrefix: "latest",
     keyRepo: "projectbluefin/dakota",
     keyless: true,
-    usesLatestTag: true,
   },
   {
     id: "dakota-nvidia-latest",
     label: "Dakota Nvidia Latest",
     org: "projectbluefin",
     package: "dakota-nvidia",
+    streamPrefix: "latest",
     keyRepo: "projectbluefin/dakota",
     keyless: true,
-    usesLatestTag: true,
   },
 ];
 
