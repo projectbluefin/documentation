@@ -414,7 +414,10 @@ async function processLatestTagStream(spec, existing) {
     }
 
     releases[cacheKey] = {
-      tag: imageRef,
+      // Store cacheKey as tag (e.g. "latest-20260514") so buildNvidiaMapFromSbomStream
+      // and the nvidiaByTag lookup in buildStreamFromSbom can match by cacheKey.
+      // Storing the full imageRef causes the lookup to fail (wrong image name).
+      tag: cacheKey,
       imageRef,
       digest: null,
       attestation,
