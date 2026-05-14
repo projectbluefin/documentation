@@ -4,6 +4,48 @@ import DownloadCard from "./DownloadCard";
 /** Testing ISOs from projectbluefin.dev */
 const BASE = "https://projectbluefin.dev";
 
+/** Dakotaraptor testing ISOs */
+export const DakotaSection: React.FC = () => (
+  <DownloadCard
+    variant="dakotaraptor"
+    title="Bluefin Dakotaraptor"
+    description="Dakota is in Alpha — take appropriate precautions."
+    entries={[
+      {
+        label: "AMD / Intel",
+        isoUrl: `${BASE}/dakota-live-latest.iso`,
+        isoFilename: "dakota-live-latest.iso",
+        checksumUrl: `${BASE}/dakota-live-latest.iso-CHECKSUM`,
+      },
+      {
+        label: "Nvidia",
+        isoUrl: `${BASE}/dakota-nvidia-live-latest.iso`,
+        isoFilename: "dakota-nvidia-live-latest.iso",
+        checksumUrl: `${BASE}/dakota-nvidia-live-latest.iso-CHECKSUM`,
+      },
+    ]}
+    sections={[
+      {
+        label: "Alpha 2",
+        entries: [
+          {
+            label: "AMD / Intel",
+            isoUrl: `${BASE}/dakota-live-alpha2.iso`,
+            isoFilename: "dakota-live-alpha2.iso",
+            checksumUrl: `${BASE}/dakota-live-alpha2.iso-CHECKSUM`,
+          },
+          {
+            label: "Nvidia",
+            isoUrl: `${BASE}/dakota-nvidia-live-alpha2.iso`,
+            isoFilename: "dakota-nvidia-live-alpha2.iso",
+            checksumUrl: `${BASE}/dakota-nvidia-live-alpha2.iso-CHECKSUM`,
+          },
+        ],
+      },
+    ]}
+  />
+);
+
 const DownloadSectionTesting: React.FC = () => (
   <>
     <DownloadCard
@@ -114,44 +156,6 @@ const DownloadSectionTesting: React.FC = () => (
       ]}
     />
 
-    <DownloadCard
-      variant="dakotaraptor"
-      title="Bluefin Dakotaraptor"
-      description="Dakota is in Alpha — take appropriate precautions."
-      entries={[
-        {
-          label: "AMD / Intel",
-          isoUrl: `${BASE}/dakota-live-latest.iso`,
-          isoFilename: "dakota-live-latest.iso",
-          checksumUrl: `${BASE}/dakota-live-latest.iso-CHECKSUM`,
-        },
-        {
-          label: "Nvidia",
-          isoUrl: `${BASE}/dakota-nvidia-live-latest.iso`,
-          isoFilename: "dakota-nvidia-live-latest.iso",
-          checksumUrl: `${BASE}/dakota-nvidia-live-latest.iso-CHECKSUM`,
-        },
-      ]}
-      sections={[
-        {
-          label: "Alpha 2",
-          entries: [
-            {
-              label: "AMD / Intel",
-              isoUrl: `${BASE}/dakota-live-alpha2.iso`,
-              isoFilename: "dakota-live-alpha2.iso",
-              checksumUrl: `${BASE}/dakota-live-alpha2.iso-CHECKSUM`,
-            },
-            {
-              label: "Nvidia",
-              isoUrl: `${BASE}/dakota-nvidia-live-alpha2.iso`,
-              isoFilename: "dakota-nvidia-live-alpha2.iso",
-              checksumUrl: `${BASE}/dakota-nvidia-live-alpha2.iso-CHECKSUM`,
-            },
-          ],
-        },
-      ]}
-    />
   </>
 );
 
