@@ -355,10 +355,12 @@ async function processLatestTagStream(spec, existing) {
   const isCacheHit =
     !FORCE_REFRESH && hasVersions && hasAllPackages && isVerified;
 
-  const releases = {};
+  // Seed releases from existing cache so history accumulates across nightly runs.
+  // Without this, every run discards all prior entries — leaving only today's key.
+  const existingReleases = existing?.streams?.[spec.id]?.releases || {};
+  const releases = { ...existingReleases };
 
   if (isCacheHit) {
-    console.log(`  ${spec.id}: cache hit (verified, versions populated)`);
     releases[cacheKey] = existingEntry;
   } else {
     console.log(`  ${spec.id}: verifying attestation for ${imageRef}`);

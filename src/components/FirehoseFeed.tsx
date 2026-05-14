@@ -310,6 +310,24 @@ function getLtsOsEvents(): OsReleaseEvent[] {
 
 // Rolling 12-month window for the stream — pinned cards (PINNED_OS_EVENTS) are unaffected.
 let _allOsStreamEvents: OsReleaseEvent[] | null = null;
+const DAKOTA_GITHUB_URL = "https://github.com/projectbluefin/dakota";
+
+// All Dakota SBOM releases — used in the Updates Stream (rolling history).
+// Accumulates as nightly CI fetches new :latest builds into the SBOM cache.
+let _dakotaStreamEvents: OsReleaseEvent[] | null = null;
+function getDakotaStreamEvents(): OsReleaseEvent[] {
+  if (!_dakotaStreamEvents) {
+    const cutoff = Date.now() - ROLLING_WINDOW_MS;
+    _dakotaStreamEvents = sbomStreamToEvents(
+      getSbomCache(),
+      "dakota-latest",
+      "dakota",
+      DAKOTA_GITHUB_URL,
+    ).filter((e) => e.dateMs > cutoff);
+  }
+  return _dakotaStreamEvents;
+}
+
 function getAllOsStreamEvents(): OsReleaseEvent[] {
   if (!_allOsStreamEvents) {
     const cutoff = Date.now() - ROLLING_WINDOW_MS;
@@ -317,17 +335,13 @@ function getAllOsStreamEvents(): OsReleaseEvent[] {
       ...getBluefinOsEvents(),
       ...getStableDailyOsEvents(),
       ...getLtsOsEvents(),
+      ...getDakotaStreamEvents(),
     ]
       .filter((e) => e.dateMs > cutoff)
       .sort((a, b) => b.dateMs - a.dateMs);
   }
   return _allOsStreamEvents;
 }
-
-// Dakota OS event — sourced live from the dakota-latest SBOM stream.
-// nvidia version is overlaid from dakota-nvidia-latest (separate stream).
-// Falls back to undefined (card hidden) if SBOM cache is not yet populated.
-const DAKOTA_GITHUB_URL = "https://github.com/projectbluefin/dakota";
 let _dakotaOsEvent: OsReleaseEvent | null | undefined = undefined;
 function getDakotaOsEvent(): OsReleaseEvent | undefined {
   if (_dakotaOsEvent !== undefined) return _dakotaOsEvent ?? undefined;
