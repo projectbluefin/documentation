@@ -369,7 +369,9 @@ async function processLatestTagStream(spec, existing) {
     console.log(`  ${spec.id}: ${cacheKey}${isCacheHit ? " (cache hit)" : ""}`);
 
   if (isCacheHit) {
-    releases[cacheKey] = existingEntry;
+    // Patch tag to cacheKey on cache hits — migrates old tag:imageRef entries
+    // so the nvidiaByTag lookup in buildStreamFromSbom works correctly.
+    releases[cacheKey] = { ...existingEntry, tag: cacheKey };
   } else {
     console.log(`  ${spec.id}: verifying attestation for ${imageRef}`);
     const rawAttestation = await verifyAttestation(imageRef, spec);
