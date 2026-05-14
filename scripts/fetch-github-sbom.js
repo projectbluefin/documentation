@@ -369,7 +369,9 @@ async function processLatestTagStream(spec, existing) {
     console.log(`  ${spec.id}: ${cacheKey}${isCacheHit ? " (cache hit)" : ""}`);
 
   if (isCacheHit) {
-    releases[cacheKey] = existingEntry;
+    // Update tag to cacheKey on every cache hit — idempotent migration from
+    // the old tag:imageRef format (which broke the nvidiaByTag lookup).
+    releases[cacheKey] = { ...existingEntry, tag: cacheKey };
   } else {
     console.log(`  ${spec.id}: verifying attestation for ${imageRef}`);
     const rawAttestation = await verifyAttestation(imageRef, spec);
@@ -414,7 +416,7 @@ async function processLatestTagStream(spec, existing) {
     }
 
     releases[cacheKey] = {
-      tag: imageRef,
+      tag: cacheKey,
       imageRef,
       digest: null,
       attestation,
