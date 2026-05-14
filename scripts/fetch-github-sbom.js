@@ -303,21 +303,20 @@ const STREAM_SPECS = [
     label: "Dakota Latest",
     org: "projectbluefin",
     package: "dakota",
-    // Date-stamped tags: latest.YYYYMMDD (normalised to latest-YYYYMMDD by normaliseLtsTag).
-    // Switched from usesLatestTag:true to streamPrefix:"latest" so all dated builds
-    // accumulate in history instead of only keeping the current :latest.
-    streamPrefix: "latest",
+    // Uses usesLatestTag:true — routes through processLatestTagStream() which
+    // fetches :latest plus the 10 most recent commit-SHA image tags for history.
     keyRepo: "projectbluefin/dakota",
     keyless: true,
+    usesLatestTag: true,
   },
   {
     id: "dakota-nvidia-latest",
     label: "Dakota Nvidia Latest",
     org: "projectbluefin",
     package: "dakota-nvidia",
-    streamPrefix: "latest",
     keyRepo: "projectbluefin/dakota",
     keyless: true,
+    usesLatestTag: true,
   },
 ];
 
