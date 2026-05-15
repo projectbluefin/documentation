@@ -1060,12 +1060,6 @@ sudo bootc switch ghcr.io/ublue-os/bluefin:stable
 sudo bootc switch ghcr.io/ublue-os/bluefin:latest
 ```
 
-**gts** (LTS):
-```bash
-# Rebase to GTS (Long Term Support)
-sudo bootc switch ghcr.io/ublue-os/bluefin:gts
-```
-
 ## Pinning Package Versions
 
 :::caution Temporary Workarounds Only
