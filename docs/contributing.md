@@ -153,8 +153,8 @@ We're making containers here with bash and a little bit of Python, it's not the 
 
 | Channel | Purpose | Update Frequency | Fedora Version |
 |---------|---------|------------------|----------------|
-| **latest** | Daily builds | Multiple times per day | 43 (current) |
-| **stable** | Weekly builds | Weekly | 43 |
+| **latest** | Daily builds | Multiple times per day | 44 (current) |
+| **stable** | Weekly builds | Weekly | 44 |
 
 ### Prerequisites
 
@@ -998,7 +998,7 @@ git push origin your-branch
 strategy:
   matrix:
     variant: [bluefin, bluefin-dx]
-    fedora: [42, 43]
+    fedora: [43, 44]
 ```
 
 ### Build Script Development
