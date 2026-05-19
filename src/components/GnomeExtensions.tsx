@@ -22,6 +22,7 @@ interface GnomeExtensionsProps {
 const GnomeExtensions: React.FC<GnomeExtensionsProps> = ({ extensionId }) => {
   const [extension, setExtension] = useState<ExtensionData | null>(null);
   const [imageError, setImageError] = useState(false);
+  const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
     fetch("/data/gnome-extensions.json")
@@ -34,18 +35,29 @@ const GnomeExtensions: React.FC<GnomeExtensionsProps> = ({ extensionId }) => {
       })
       .catch((error) => {
         console.error("Error loading extension metadata:", error);
+        setLoadError(true);
       });
   }, [extensionId]);
+
+  if (loadError) {
+    return (
+      <div className={styles.extensionBox}>
+        <div className={styles.extensionInfo}>
+          <p className={styles.extensionDescription}>Extension data unavailable.</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!extension) {
     return <div className={styles.extensionBox}>Loading...</div>;
   }
 
   const thumbnailUrl = extension.screenshot || extension.remoteScreenshot;
-  // Truncate description to first sentence or 150 chars
+  // Truncate to first line, then cap at 150 chars if still too long
+  const firstLine = (extension.description ?? "").split("\n")[0];
   const shortDescription =
-    extension.description.split("\n")[0].slice(0, 150) +
-    (extension.description.length > 150 ? "..." : "");
+    firstLine.length > 150 ? firstLine.slice(0, 150) + "..." : firstLine;
 
   return (
     <div className={styles.extensionBox}>
