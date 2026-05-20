@@ -109,12 +109,15 @@ extensions:
 
 The setup script defaults to Gemini CLI as the provider. To use a different one, run `goose configure` to switch.
 
-For local models, [LM Studio](https://lmstudio.ai/) and [Ramalama](https://github.com/containers/ramalama) both serve an OpenAI-compatible endpoint that Goose can point at — available from `ujust bbrew` → `ai`:
+For local models, [Ramalama](https://github.com/containers/ramalama) is the recommended option — it manages models as containers and serves an OpenAI-compatible endpoint:
 
-| Tool | Install | Endpoint |
-| ---- | ------- | -------- |
-| LM Studio | `brew install ublue-os/tap/lm-studio-linux` | `http://localhost:1234` |
-| Ramalama | `brew install ramalama` | `http://localhost:8080` |
+```bash
+brew install ramalama
+ramalama serve llama3.2
+# serves at http://localhost:8080
+```
+
+[LM Studio](https://lmstudio.ai/) is a graphical alternative (`brew install ublue-os/tap/lm-studio-linux`) that serves at `http://localhost:1234`. For hosted providers (OpenAI, Anthropic, Gemini, etc.), run `goose configure` to set your API key.
 
 **Step 4: Start Goose**
 
