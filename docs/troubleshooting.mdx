@@ -105,19 +105,40 @@ extensions:
     args: []
 ```
 
-**Step 3: Choose your LLM**
+**Step 3: Configure your LLM**
 
-The setup script defaults to Gemini CLI as the provider. To use a different one, run `goose configure` to switch.
+For most providers — Anthropic, OpenAI, Gemini, etc. — run `goose configure` and follow the prompts to enter your API key.
 
-For local models, [Ramalama](https://github.com/containers/ramalama) is the recommended option — it manages models as containers and serves an OpenAI-compatible endpoint:
+For local models, [Ramalama](https://github.com/containers/ramalama) is the recommended option. It manages models as containers and serves an OpenAI-compatible endpoint that Goose reaches via the `ollama` provider:
 
 ```bash
 brew install ramalama
 ramalama serve llama3.2
-# serves at http://localhost:8080
 ```
 
-[LM Studio](https://lmstudio.ai/) is a graphical alternative (`brew install ublue-os/tap/lm-studio-linux`) that serves at `http://localhost:1234`. For hosted providers (OpenAI, Anthropic, Gemini, etc.), run `goose configure` to set your API key.
+Then run `goose configure`, select **Ollama**, and set `OLLAMA_HOST` to `http://localhost:8080`.
+
+[LM Studio](https://lmstudio.ai/) (`brew install ublue-os/tap/lm-studio-linux`) is a graphical alternative — launch it, load a model, enable the local server, then select **LM Studio** in `goose configure`.
+
+:::tip[On the local network? Use Ghost.]
+
+Ghost is a shared local inference server running [Qwen3-35B](https://qwenlm.github.io/blog/qwen3/). No API key, no model download required. After `goose-mcp-setup`, run this to switch Goose over:
+
+```bash
+python3 -c "
+import re, pathlib
+p = pathlib.Path.home() / '.config/goose/config.yaml'
+c = p.read_text()
+c = re.sub(r'^GEMINI_CLI_COMMAND:.*\n', '', c, flags=re.MULTILINE)
+c = re.sub(r'^GOOSE_PROVIDER:.*', 'GOOSE_PROVIDER: openai', c, flags=re.MULTILINE)
+c = re.sub(r'^GOOSE_MODEL:.*', 'GOOSE_MODEL: unsloth/Qwen3.6-35B-A3B-GGUF', c, flags=re.MULTILINE)
+if 'OPENAI_HOST' not in c:
+    c = 'OPENAI_HOST: http://ghost.localdomain:8080\nOPENAI_API_KEY: not-needed\n' + c
+p.write_text(c); print('Done — Goose is now pointing at Ghost.')
+"
+```
+
+:::
 
 **Step 4: Start Goose**
 
