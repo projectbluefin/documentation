@@ -71,7 +71,7 @@ The configuration process differs depending on which AI client you're using:
 
 #### Goose Configuration
 
-**Step 1: Install MCP Servers**
+**Step 1: Install linux-mcp-server**
 
 ```bash
 brew install ublue-os/tap/linux-mcp-server
@@ -105,18 +105,11 @@ extensions:
     args: []
 ```
 
-**Step 3: Add Dosu (optional)**
+**Step 3: Choose your LLM**
 
-[Dosu](https://dosu.dev) gives the agent access to your knowledge base and documentation. Each user authenticates with their own account:
+Goose works with any LLM provider. For local models, use [LM Studio](https://lmstudio.ai/) (graphical) or [Ramalama](https://github.com/containers/ramalama) (CLI) — both are available from the [AI tools list](/ai#ai-command-line-tools). Either one serves an OpenAI-compatible endpoint at `http://localhost:1234` (LM Studio) or `http://localhost:8080` (Ramalama) that Goose can use as a provider.
 
-```bash
-brew tap dosu-ai/dosu
-brew install dosu
-dosu login
-dosu mcp add goose
-```
-
-`dosu mcp add goose` writes the Dosu extension entry into `~/.config/goose/config.yaml` automatically.
+For hosted providers (OpenAI, Anthropic, Gemini, etc.), run `goose configure` to set your API key.
 
 **Step 4: Start Goose**
 
@@ -196,3 +189,18 @@ Note: these are taken from the linux-server-mcp page but you get the idea:
   > "Check disk usage on `webserver1`."
 
 ![troubleshooting](/img/troubleshooting/troubleshooting-example.png)
+
+## Optional: Dosu Knowledge Base
+
+[Dosu](https://dosu.dev) is a knowledge management tool that gives the agent access to your team's documentation, GitHub threads, and knowledge base. It requires a free Dosu account.
+
+Install the CLI and authenticate:
+
+```bash
+brew tap dosu-ai/dosu
+brew install dosu
+dosu login
+dosu mcp add goose
+```
+
+`dosu mcp add goose` writes the Dosu extension entry into `~/.config/goose/config.yaml` automatically. Once added, you can ask Goose questions that draw on your org's docs alongside the live system data from `linux-mcp-server`.
