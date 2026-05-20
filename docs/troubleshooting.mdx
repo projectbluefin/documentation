@@ -107,9 +107,14 @@ extensions:
 
 **Step 3: Choose your LLM**
 
-Goose works with any LLM provider. For local models, use [LM Studio](https://lmstudio.ai/) (graphical) or [Ramalama](https://github.com/containers/ramalama) (CLI) — both are available from the [AI tools list](/ai#ai-command-line-tools). Either one serves an OpenAI-compatible endpoint at `http://localhost:1234` (LM Studio) or `http://localhost:8080` (Ramalama) that Goose can use as a provider.
+The setup script defaults to Gemini CLI as the provider. To use a different one, run `goose configure` to switch.
 
-For hosted providers (OpenAI, Anthropic, Gemini, etc.), run `goose configure` to set your API key.
+For local models, [LM Studio](https://lmstudio.ai/) and [Ramalama](https://github.com/containers/ramalama) both serve an OpenAI-compatible endpoint that Goose can point at — available from `ujust bbrew` → `ai`:
+
+| Tool | Install | Endpoint |
+| ---- | ------- | -------- |
+| LM Studio | `brew install ublue-os/tap/lm-studio-linux` | `http://localhost:1234` |
+| Ramalama | `brew install ramalama` | `http://localhost:8080` |
 
 **Step 4: Start Goose**
 
@@ -200,7 +205,27 @@ Install the CLI and authenticate:
 brew tap dosu-ai/dosu
 brew install dosu
 dosu login
-dosu mcp add goose
 ```
 
-`dosu mcp add goose` writes the Dosu extension entry into `~/.config/goose/config.yaml` automatically. Once added, you can ask Goose questions that draw on your org's docs alongside the live system data from `linux-mcp-server`.
+Goose is not yet a natively supported tool in Dosu's MCP integration. After logging in, use the manual config path to get your connection details:
+
+```bash
+dosu mcp add manual --show-secret
+```
+
+This prints your Dosu MCP URL and API key. Add them to `~/.config/goose/config.yaml` under `extensions`:
+
+```yaml
+extensions:
+  dosu:
+    enabled: true
+    type: streamable_http
+    name: dosu
+    description: Dosu knowledge base
+    uri: <url from dosu mcp add manual>
+    headers:
+      X-Dosu-API-Key: <key from dosu mcp add manual>
+    timeout: 30
+```
+
+Once added, you can ask Goose questions that draw on your org's docs alongside the live system data from `linux-mcp-server`.
