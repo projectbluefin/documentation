@@ -51,3 +51,12 @@ tulilirockz:
   image_url: https://github.com/tulilirockz.png
   socials:
     github: "tulilirockz"
+
+coxde:
+  name: Coda
+  page: true
+  title: Bluefin Contributor
+  url: https://github.com/coxde
+  image_url: https://github.com/coxde.png
+  socials:
+    github: "coxde"
