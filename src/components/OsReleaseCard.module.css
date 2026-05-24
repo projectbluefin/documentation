@@ -250,6 +250,7 @@
   border: 1px solid var(--ifm-color-emphasis-200);
   border-radius: 6px;
   padding: 0.35rem 0.75rem;
+  font-family: var(--ifm-font-family-base);
   font-size: 0.82rem;
   color: var(--ifm-color-emphasis-700);
   cursor: pointer;

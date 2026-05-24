@@ -59,6 +59,7 @@
 
 .select {
   width: 100%;
+  font-family: var(--ifm-font-family-base);
   font-size: 0.875rem;
   padding: 0.3rem 0.5rem;
   border: 1px solid var(--ifm-color-emphasis-300);
