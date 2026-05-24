@@ -172,3 +172,8 @@ aside.col--3 nav.thin-scrollbar {
   filter: invert(0.9) hue-rotate(180deg);
   border-radius: 4px;
 }
+
+/* Prevent Chromium form controls from falling back to Arial. */
+.navbar__search-input {
+  font-family: var(--ifm-font-family-base);
+}

@@ -342,6 +342,7 @@
   background: transparent;
   border: none;
   color: var(--ifm-color-primary);
+  font-family: var(--ifm-font-family-base);
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
