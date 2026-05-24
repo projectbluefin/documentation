@@ -19,6 +19,13 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Prepare Prince cache dirs
+        run: |
+          sudo mkdir -p /usr/local/lib/prince
+          sudo chown -R "$USER" /usr/local/lib/prince
+          sudo touch /usr/local/bin/prince
+          sudo chown "$USER" /usr/local/bin/prince
+
       - name: Cache Prince XML
         id: cache-prince
         uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
