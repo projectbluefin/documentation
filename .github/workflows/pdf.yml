@@ -33,7 +33,7 @@ jobs:
           path: |
             /usr/local/lib/prince
             /usr/local/bin/prince
-          key: prince-15.4.1-linux-x86_64
+          key: prince-15.4.1-linux-x86_64-v2
 
       - name: Install Prince
         if: steps.cache-prince.outputs.cache-hit != 'true'
@@ -45,7 +45,9 @@ jobs:
           yes "" | sudo ./install.sh
 
       - name: Build PDF
-        run: npx docusaurus-prince-pdf --toc -u https://docs.projectbluefin.io -o pdf/bluefin.pdf
+        run: |
+          mkdir -p pdf
+          npx docusaurus-prince-pdf --toc -u https://docs.projectbluefin.io -o pdf/bluefin.pdf
 
       - name: Upload results
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7
