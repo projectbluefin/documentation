@@ -104,7 +104,39 @@ Here is an example of using devcontainers to run agents inside containers for is
 
 ## Docker Model Runner
 
-[TBD]
+[Docker Model Runner](https://docs.docker.com/model-runner/) is Docker's built-in local LLM service, included in Bluefin alongside Ramalama. It runs models from [Docker Hub's AI catalog](https://hub.docker.com/catalogs/ai) and exposes an OpenAI-compatible API — no separate server setup required.
+
+### Basic Usage
+
+```bash
+# Pull a model from Docker Hub
+docker model pull ai/llama3.2
+
+# Run a model interactively
+docker model run ai/llama3.2
+
+# List downloaded models
+docker model ls
+
+# Remove a model
+docker model rm ai/llama3.2
+```
+
+### API Endpoint
+
+Docker Model Runner serves an OpenAI-compatible endpoint at `http://localhost:12434` that you can use with any tool that supports the OpenAI API format — Goose, aichat, VSCode extensions, and more.
+
+### Ramalama vs Docker Model Runner
+
+Both provide a local OpenAI-compatible API. Choose based on your workflow:
+
+| | Ramalama (`rl`) | Docker Model Runner |
+| --- | --- | --- |
+| Model sources | OCI registries, Ollama, HuggingFace | Docker Hub AI catalog |
+| Engine | Podman | Docker Engine |
+| Quick alias | `rl` | `docker model` |
+
+See the [Docker Model Runner documentation](https://docs.docker.com/model-runner/) for the full model catalog and configuration options.
 
 ## Alpaca Graphical Client
 
