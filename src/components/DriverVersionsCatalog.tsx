@@ -151,7 +151,7 @@ function UserspaceMarker({ toLabel, fromLabel }: { toLabel: string; fromLabel: s
 
 function rebaseCommandForTag(tag: string) {
   const safeTag = /^[a-z0-9][a-z0-9._-]*$/i.test(tag) ? tag : "stable";
-  return `sudo bootc switch --enforce-container-sigpolicy "ghcr.io/$(jq -r '.\"image-name\"' /usr/share/ublue-os/image-info.json):${safeTag}"`;
+  return `sudo bootc switch --enforce-container-sigpolicy "ghcr.io/ublue-os/$(jq -r '.\"image-name\"' /usr/share/ublue-os/image-info.json):${safeTag}"`;
 }
 
 function ReleaseNode({

@@ -69,121 +69,82 @@ Provides system diagnostics and monitoring tools:
 
 The configuration process differs depending on which AI client you're using:
 
-<Tabs groupId="ai-client">
-  <TabItem value="goose" label="Goose" default>
-
 #### Goose Configuration
 
-Goose stores MCP server configurations in `~/.config/goose/config.yaml`.
-
-**Step 1: Install MCP Servers**
+**Step 1: Install linux-mcp-server**
 
 ```bash
-# Install linux-mcp-server
 brew install ublue-os/tap/linux-mcp-server
 ```
 
 **Step 2: Configure Goose**
 
-Edit `~/.config/goose/config.yaml` and add the MCP servers under the `extensions` section:
+Run the setup script that ships with `linux-mcp-server`. If a config already exists it prints the snippet to add manually instead:
+
+```bash
+goose-mcp-setup
+```
+
+This creates `~/.config/goose/config.yaml` with the `linux-tools` extension pre-configured:
 
 ```yaml
 extensions:
-  linuxtools:
+  linux-tools:
     enabled: true
     type: stdio
-    name: linuxtools
-    description: Linux system diagnostics
+    name: linux-tools
+    description: Linux system administration and diagnostics
     cmd: /home/linuxbrew/.linuxbrew/bin/linux-mcp-server
+    envs:
+      LINUX_MCP_USER: <your-username>
+      LINUX_MCP_LOG_LEVEL: INFO
+      LINUX_MCP_SSH_KEY_PATH: ~/.ssh/id_ed25519
+    timeout: 30
+    bundled: null
+    available_tools: []
     args: []
-    envs: {}
-    timeout: 300
-
-  dosu:
-    enabled: true
-    type: streamable_http
-    name: Dosu
-    description: Dosu AI documentation assistant
-    uri: https://api.dosu.dev/v1/mcp
-    headers:
-      X-Deployment-ID: 83775020-c22e-485a-a222-987b2f5a3823
 ```
 
-**Step 3: Restart Goose**
+**Step 3: Configure your LLM**
 
-Restart Goose to load the MCP servers:
+For most providers — Anthropic, OpenAI, Gemini, etc. — run `goose configure` and follow the prompts to enter your API key.
+
+For local models, [Ramalama](https://github.com/containers/ramalama) is the recommended option. It manages models as containers and serves an OpenAI-compatible endpoint that Goose reaches via the `ollama` provider:
 
 ```bash
-# Exit Goose (Ctrl+D or /exit)
-# Start Goose again
-goose session start
+brew install ramalama
+ramalama serve qwen3:8b
 ```
 
-Goose will prompt you to authenticate with Dosu the first time it tries to use the extension. Follow the browser prompt to complete sign-in.
+Then run `goose configure`, select **Ollama**, and set `OLLAMA_HOST` to `http://localhost:8080`.
 
-**Note on Dosu Configuration:** The Bluefin documentation deployment UUID shown above can be shared amongst all Bluefin users - no API key required for read-only access to the documentation knowledge base.
+[LM Studio](https://lmstudio.ai/) (`brew install ublue-os/tap/lm-studio-linux`) is a graphical alternative — launch it, load a model, enable the local server, then select **LM Studio** in `goose configure`.
 
-  </TabItem>
-  <TabItem value="opencode" label="OpenCode">
+:::tip[On the local network? Use Ghost.]
 
-#### OpenCode Configuration
-
-OpenCode stores MCP server configurations in `~/.config/opencode/opencode.json`.
-
-**Step 1: Install MCP Servers**
+Ghost is a shared local inference server running [Qwen3-35B](https://qwenlm.github.io/blog/qwen3/). No API key, no model download required. After `goose-mcp-setup`, run this to switch Goose over:
 
 ```bash
-# Install linux-mcp-server
-brew install ublue-os/tap/linux-mcp-server
+python3 -c "
+import re, pathlib
+p = pathlib.Path.home() / '.config/goose/config.yaml'
+c = p.read_text()
+c = re.sub(r'^GEMINI_CLI_COMMAND:.*\n', '', c, flags=re.MULTILINE)
+c = re.sub(r'^GOOSE_PROVIDER:.*', 'GOOSE_PROVIDER: openai', c, flags=re.MULTILINE)
+c = re.sub(r'^GOOSE_MODEL:.*', 'GOOSE_MODEL: unsloth/Qwen3.6-35B-A3B-GGUF', c, flags=re.MULTILINE)
+if 'OPENAI_HOST' not in c:
+    c = 'OPENAI_HOST: http://ghost.localdomain:8080\nOPENAI_API_KEY: not-needed\n' + c
+p.write_text(c); print('Done — Goose is now pointing at Ghost.')
+"
 ```
 
-**Step 2: Configure OpenCode**
+:::
 
-Edit `~/.config/opencode/opencode.json` and add the MCP servers under the `mcp` key:
-
-```json
-{
-  "mcp": {
-    "linux-mcp-server": {
-      "type": "local",
-      "command": ["/home/linuxbrew/.linuxbrew/bin/linux-mcp-server"],
-      "enabled": true,
-      "environment": {
-        "LOG_LEVEL": "info"
-      }
-    },
-    "dosu": {
-      "type": "remote",
-      "url": "https://api.dosu.dev/v1/mcp",
-      "enabled": true,
-      "headers": {
-        "X-Deployment-ID": "83775020-c22e-485a-a222-987b2f5a3823"
-      }
-    }
-  }
-}
-```
-
-**Step 3: Authenticate with Dosu**
-
-Dosu requires a one-time OAuth login. Run:
+**Step 4: Start Goose**
 
 ```bash
-opencode mcp auth dosu
+goose session
 ```
-
-This opens your browser to complete the sign-in. After authorizing, OpenCode stores the token automatically — you won't need to repeat this step.
-
-**Step 4: Restart OpenCode**
-
-Close and reopen OpenCode to load the MCP servers. You can verify they're loaded by asking:
-
-> "What MCP servers are available?"
-
-**Note on Dosu Configuration:** The Bluefin documentation deployment UUID shown above can be shared amongst all Bluefin users - no API key required for read-only access to the documentation knowledge base.
-
-  </TabItem>
-</Tabs>
 
 ### Security Considerations
 
@@ -257,3 +218,38 @@ Note: these are taken from the linux-server-mcp page but you get the idea:
   > "Check disk usage on `webserver1`."
 
 ![troubleshooting](/img/troubleshooting/troubleshooting-example.png)
+
+## Optional: Dosu Knowledge Base
+
+[Dosu](https://dosu.dev) is a knowledge management tool that gives the agent access to your team's documentation, GitHub threads, and knowledge base. It requires a free Dosu account.
+
+Install the CLI and authenticate:
+
+```bash
+brew tap dosu-ai/dosu
+brew install dosu
+dosu login
+```
+
+Goose is not yet a natively supported tool in Dosu's MCP integration. After logging in, use the manual config path to get your connection details:
+
+```bash
+dosu mcp add manual --show-secret
+```
+
+This prints your Dosu MCP URL and API key. Add them to `~/.config/goose/config.yaml` under `extensions`:
+
+```yaml
+extensions:
+  dosu:
+    enabled: true
+    type: streamable_http
+    name: dosu
+    description: Dosu knowledge base
+    uri: <url from dosu mcp add manual>
+    headers:
+      X-Dosu-API-Key: <key from dosu mcp add manual>
+    timeout: 30
+```
+
+Once added, you can ask Goose questions that draw on your org's docs alongside the live system data from `linux-mcp-server`.

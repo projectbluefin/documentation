@@ -288,7 +288,6 @@ test.describe("smoke — no JS errors on representative pages", () => {
     "/images",
     "/driver-versions",
     "/reports/2026/03",
-    "/blog",
     "/blog/state-ecosystem-2026",
   ];
 

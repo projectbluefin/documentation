@@ -44,6 +44,7 @@ const BST_PACKAGE_MAP = [
   { name: "pipewire", bstSuffix: "components/pipewire-base.bst", field: "pipewire" },
   { name: "podman", bstSuffix: "components/podman.bst", field: "podman" },
   { name: "flatpak", bstSuffix: "components/flatpak.bst", field: "flatpak" },
+  { name: "bootc", bstSuffix: "gnomeos-deps/bootc.bst", field: "bootc" },
   {
     name: "systemd",
     bstSuffix: "core-deps/systemd-base.bst",

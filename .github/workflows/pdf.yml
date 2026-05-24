@@ -16,6 +16,15 @@ jobs:
           egress-policy: audit
 
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          persist-credentials: false
+
+      - name: Prepare Prince cache dirs
+        run: |
+          sudo mkdir -p /usr/local/lib/prince
+          sudo chown -R "$USER" /usr/local/lib/prince
+          sudo touch /usr/local/bin/prince
+          sudo chown "$USER" /usr/local/bin/prince
 
       - name: Cache Prince XML
         id: cache-prince

@@ -8,7 +8,7 @@ on:
 
 permissions:
   contents: write # For git commits
-  pull-requests: write # For creating PRs and enabling auto-merge
+  pull-requests: write # For creating PRs
 
 jobs:
   generate-report:
@@ -21,6 +21,8 @@ jobs:
 
       - name: Checkout repository
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          persist-credentials: false
 
       - name: Setup Node.js
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
@@ -77,6 +79,8 @@ jobs:
       - name: Push branch and create PR
         run: |
           BRANCH_NAME="monthly-report/$(date +%Y-%m)"
+          # Re-add credentials for the push (persist-credentials: false on checkout)
+          git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}"
           TODAY=$(date +%Y-%m-%d)
           # --force is safe here because the workflow always resets the branch with
           # git checkout -B, and actions/checkout shallow clones don't track the
@@ -109,12 +113,5 @@ jobs:
           else
             echo "PR already exists for $BRANCH_NAME — skipping creation"
           fi
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Enable auto-merge
-        run: |
-          BRANCH_NAME="monthly-report/$(date +%Y-%m)"
-          gh pr merge --auto --merge "$BRANCH_NAME"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
