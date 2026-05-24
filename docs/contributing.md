@@ -35,7 +35,9 @@ Bluefin is made via [lazy concensus](https://www.apache.org/foundation/glossary.
 
 ### Architecture
 
-Bluefin's customization are kept in OCI containers, and are then assembled with other containers and base images to create the different Bluefin images:
+Bluefin's customization are kept in OCI containers, and are then assembled with other containers and base images to create the different Bluefin images.
+
+See [**Understanding Bluefin's Architecture**](#understanding-bluefins-architecture) below for the full component diagram and assembly flow.
 
 ### Things to know before diving in
 
