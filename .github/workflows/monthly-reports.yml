@@ -8,7 +8,7 @@ on:
 
 permissions:
   contents: write # For git commits
-  pull-requests: write # For creating PRs and enabling auto-merge
+  pull-requests: write # For creating PRs
 
 jobs:
   generate-report:
@@ -109,12 +109,5 @@ jobs:
           else
             echo "PR already exists for $BRANCH_NAME — skipping creation"
           fi
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Enable auto-merge
-        run: |
-          BRANCH_NAME="monthly-report/$(date +%Y-%m)"
-          gh pr merge --auto --merge "$BRANCH_NAME"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
