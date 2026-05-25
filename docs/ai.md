@@ -60,18 +60,18 @@ The following AI-focused command-line tools are available via homebrew, install 
 
 Install [Ramalama](https://github.com/containers/ramalama) via `brew install ramalama`: manage local models and is the preferred default experience. It's for people who work with local models frequently and need advanced features. It offers the ability to pull models from huggingface, ollama, and any container registry. By default it pulls from ollama.com, check the [Ramalama documentation](https://github.com/containers/ramalama/tree/main/docs) for more information.
 
-Ramalama's command line experience is similar to Podman. Bluefin sets `rl` as an alias for `ramalama`, for brevity. Examples include:
+Ramalama's command line experience is similar to Podman. Examples include:
 
 ```
-rl pull llama3.2:latest
-rl run llama3.2
-rl run deepseek-r1
+ramalama pull llama3.2:latest
+ramalama run llama3.2
+ramalama run deepseek-r1
 ```
 
 You can also serve the models locally:
 
 ```
-rl serve deepseek-r1
+ramalama serve deepseek-r1
 ```
 
 Then go to `http://127.0.0.0:8080` in your browser.
@@ -130,11 +130,11 @@ Docker Model Runner serves an OpenAI-compatible endpoint at `http://localhost:12
 
 Both provide a local OpenAI-compatible API. Choose based on your workflow:
 
-| | Ramalama (`rl`) | Docker Model Runner |
+| | Ramalama | Docker Model Runner |
 | --- | --- | --- |
 | Model sources | OCI registries, Ollama, HuggingFace | Docker Hub AI catalog |
 | Engine | Podman | Docker Engine |
-| Quick alias | `rl` | `docker model` |
+| Quick command | `ramalama` | `docker model` |
 
 See the [Docker Model Runner documentation](https://docs.docker.com/model-runner/) for the full model catalog and configuration options.
 
