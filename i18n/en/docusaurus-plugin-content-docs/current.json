@@ -1,0 +1,38 @@
+{
+  "version.label": {
+    "message": "Next",
+    "description": "The label for version current"
+  },
+  "sidebar.baseSidebar.category.Getting Started": {
+    "message": "Getting Started",
+    "description": "The label for category 'Getting Started' in sidebar 'baseSidebar'"
+  },
+  "sidebar.baseSidebar.category.Using Bluefin": {
+    "message": "Using Bluefin",
+    "description": "The label for category 'Using Bluefin' in sidebar 'baseSidebar'"
+  },
+  "sidebar.baseSidebar.category.Developer Experience": {
+    "message": "Developer Experience",
+    "description": "The label for category 'Developer Experience' in sidebar 'baseSidebar'"
+  },
+  "sidebar.baseSidebar.category.Bluefin LTS": {
+    "message": "Bluefin LTS",
+    "description": "The label for category 'Bluefin LTS' in sidebar 'baseSidebar'"
+  },
+  "sidebar.baseSidebar.category.Hardware": {
+    "message": "Hardware",
+    "description": "The label for category 'Hardware' in sidebar 'baseSidebar'"
+  },
+  "sidebar.baseSidebar.category.About the Project": {
+    "message": "About the Project",
+    "description": "The label for category 'About the Project' in sidebar 'baseSidebar'"
+  },
+  "sidebar.baseSidebar.category.Contributing": {
+    "message": "Contributing",
+    "description": "The label for category 'Contributing' in sidebar 'baseSidebar'"
+  },
+  "sidebar.baseSidebar.category.Donations": {
+    "message": "Donations",
+    "description": "The label for category 'Donations' in sidebar 'baseSidebar'"
+  }
+}

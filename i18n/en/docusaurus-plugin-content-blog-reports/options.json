@@ -1,0 +1,14 @@
+{
+  "title": {
+    "message": "Monthly Reports",
+    "description": "The title for the blog used in SEO"
+  },
+  "description": {
+    "message": "Automated project activity reports from GitHub Project Board",
+    "description": "The description for the blog used in SEO"
+  },
+  "sidebar.title": {
+    "message": "Recent Reports",
+    "description": "The label for the left sidebar"
+  }
+}
