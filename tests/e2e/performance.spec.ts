@@ -288,6 +288,7 @@ test.describe("smoke — no JS errors on representative pages", () => {
     "/images",
     "/driver-versions",
     "/reports/2026/03",
+    "/blog",
     "/blog/state-ecosystem-2026",
   ];
 
@@ -296,7 +297,11 @@ test.describe("smoke — no JS errors on representative pages", () => {
       const errors: string[] = [];
       page.on("pageerror", (err) => errors.push(err.message));
       await page.goto(path);
-      await page.waitForLoadState("networkidle");
+      // Use "load" rather than "networkidle": the blog index page lazy-loads
+      // many post images which prevent networkidle from settling within 30 s.
+      // The pageerror listener above fires synchronously on any uncaught error,
+      // so "load" is sufficient to surface JS errors on all pages.
+      await page.waitForLoadState("load");
       expect(
         errors,
         `Uncaught JS errors on ${path}: ${errors.join("; ")}`
