@@ -30,7 +30,7 @@ const config: Config = {
 
   i18n: {
     defaultLocale: "en",
-    locales: ["en"],
+    locales: ["en", "de", "fr"],
   },
 
   markdown: {
@@ -197,6 +197,10 @@ const config: Config = {
         {
           href: "https://store.projectbluefin.io",
           label: "Store (US Only)",
+          position: "right",
+        },
+        {
+          type: "localeDropdown",
           position: "right",
         },
       ],

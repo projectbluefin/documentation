@@ -1,0 +1,42 @@
+{
+  "title": {
+    "message": "Bluefin",
+    "description": "The title in the navbar"
+  },
+  "logo.alt": {
+    "message": "Bluefin",
+    "description": "The alt text of navbar logo"
+  },
+  "item.label.Documentation": {
+    "message": "Documentation",
+    "description": "Navbar item with label Documentation"
+  },
+  "item.label.Ask Bluefin": {
+    "message": "Ask Bluefin",
+    "description": "Navbar item with label Ask Bluefin"
+  },
+  "item.label.Blog": {
+    "message": "Blog",
+    "description": "Navbar item with label Blog"
+  },
+  "item.label.Changelogs": {
+    "message": "Changelogs",
+    "description": "Navbar item with label Changelogs"
+  },
+  "item.label.Reports": {
+    "message": "Reports",
+    "description": "Navbar item with label Reports"
+  },
+  "item.label.Discussions": {
+    "message": "Discussions",
+    "description": "Navbar item with label Discussions"
+  },
+  "item.label.Feedback": {
+    "message": "Feedback",
+    "description": "Navbar item with label Feedback"
+  },
+  "item.label.Store (US Only)": {
+    "message": "Store (US Only)",
+    "description": "Navbar item with label Store (US Only)"
+  }
+}
