@@ -2,6 +2,17 @@
 
 Thank you for contributing to the Bluefin documentation! This guide covers how to contribute to **this documentation repository** specifically.
 
+## Good First Contributions
+
+New to contributing? Here are some great ways to get started:
+
+- **Fix a broken or outdated link** — If you find a link that no longer works or points to old information, submit a fix.
+- **Add a missing step to an existing guide** — If a guide assumes prior knowledge or skips a step, fill in the gap.
+- **Improve code block language tags** — Ensure every code block has a language tag (e.g., `bash`, `yaml`, `json`) for proper syntax highlighting.
+- **Check issues labeled ["good first issue"](https://github.com/projectbluefin/documentation/labels/good%20first%20issue)** — We tag beginner-friendly issues to help you find a place to start.
+
+If something confused you, it probably confuses others too. Don't hesitate to open an issue or PR for anything unclear.
+
 ## Content Scope
 
 ### What Belongs Here
