@@ -77,6 +77,12 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: "category",
+      label: "Knuckle",
+      collapsed: true,
+      items: ["knuckle"],
+    },
+    {
+      type: "category",
       label: "Contributing",
       collapsed: true,
       items: ["contributing", "local", "downloads-testing"],
