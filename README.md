@@ -11,10 +11,20 @@ These docs are pretty sparse on purpose as Bluefin's intended to be invisible. I
 
 ## Previewing your changes
 
-This project uses `just` as a command runner for convenience.
+This project uses [`just`](https://just.systems) as a command runner for convenience.
+Install it with `brew install just` or `cargo install just`.
 
-- `just serve`: Build and serve the documentation locally.
-- `just build`: Build the documentation.
+- `just serve`: Fetch all remote data, then build and serve the documentation locally.
+- `just dev`: Fast hot-reload dev server — skips data fetching (run `just serve` once first to populate the cache).
+- `just build`: Full production build (also fetches data).
+
+> **Note:** `just serve` and `npm run start` run data-fetch scripts that call the GitHub API.
+> Set `GITHUB_TOKEN` (or `GH_TOKEN`) in your environment to avoid rate-limit errors:
+> ```
+> export GITHUB_TOKEN=ghp_your_token_here
+> just serve
+> ```
+> A [fine-grained token](https://github.com/settings/tokens?type=beta) with read-only public repository access is sufficient.
 
 <details>
 <summary>Manual setup</summary>
@@ -63,4 +73,6 @@ This is typically caused by peer dependency conflicts during installation. To re
 ### Build Requirements
 
 - Node.js 20+ (see `package.json` engines field)
+- [`just`](https://just.systems) — `brew install just` or `cargo install just`
+- `GITHUB_TOKEN` or `GH_TOKEN` env var for data-fetch scripts (GitHub API calls)
 - This project uses npm for both local development and CI/CD builds
