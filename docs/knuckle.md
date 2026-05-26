@@ -31,19 +31,30 @@ Flatcar is in the [CNCF](https://cncf.io) — a vendor-neutral foundation that m
 
 1. **Download the installer ISO** from the [knuckle releases page](https://github.com/projectbluefin/knuckle/releases) — pick `knuckle-installer-stable.iso` for amd64 or the arm64 variant.
 
-2. **Write to USB** using your preferred tool:
+2. **Verify the ISO** (optional but recommended). Each release is signed with [cosign](https://docs.sigstore.dev/cosign/system_config/installation/) keyless signing via GitHub Actions OIDC. After downloading the ISO and its `.bundle` file:
+   ```bash
+   cosign verify-blob \
+     --bundle knuckle-installer-stable.iso.bundle \
+     --certificate-identity-regexp \
+       "https://github.com/projectbluefin/knuckle/.github/workflows/release.yml@refs/tags/.*" \
+     --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
+     knuckle-installer-stable.iso
+   ```
+   A `Verified OK` result confirms the ISO was produced by the official release workflow and has not been tampered with.
+
+3. **Write to USB** using your preferred tool:
    ```bash
    # Linux/macOS
    sudo dd if=knuckle-installer-stable.iso of=/dev/sdX bs=4M status=progress
    ```
    Or use [Fedora Media Writer](https://docs.fedoraproject.org/en-US/fedora/latest/preparing-boot-media/#_fedora_media_writer) / [Balena Etcher](https://etcher.balena.io/).
 
-3. **Boot** from the USB. Knuckle starts automatically and walks you through a 9-step guided wizard:
+4. **Boot** from the USB. Knuckle starts automatically and walks you through a 9-step guided wizard:
    - Welcome → Network → Storage → User → System Extensions → Update Strategy → Review → Install → Done
 
-4. **Follow the wizard.** You'll configure your hostname, timezone, disk, network, SSH keys (fetched from GitHub or entered manually), and any system extensions from the Flatcar Bakery.
+5. **Follow the wizard.** You'll configure your hostname, timezone, disk, network, SSH keys (fetched from GitHub or entered manually), and any system extensions from the Flatcar Bakery.
 
-5. **Review the generated Butane config** before confirming — then Knuckle handles the rest.
+6. **Review the generated Butane config** before confirming — then Knuckle handles the rest.
 
 After install, you'll have a pristine upstream Flatcar Linux system.
 
@@ -68,7 +79,8 @@ Minimal `install.json`:
       "username": "core",
       "ssh_keys": ["ssh-ed25519 AAAA..."]
     }
-  ]
+  ],
+  "update_strategy": "reboot"
 }
 ```
 
