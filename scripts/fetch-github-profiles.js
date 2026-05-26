@@ -408,7 +408,16 @@ async function fetchAllProfiles() {
   console.log(`✓ Profiles saved to ${OUTPUT_FILE}`);
 }
 
-fetchAllProfiles().catch((error) => {
-  console.error("Fatal error:", error);
-  process.exit(1);
-});
+if (require.main === module) {
+  fetchAllProfiles().catch((error) => {
+    console.error("Fatal error:", error);
+    process.exit(1);
+  });
+}
+
+module.exports = {
+  discoverUsernames,
+  fetchAllProfiles,
+  fetchProfile,
+  fetchSponsorableStatus,
+};

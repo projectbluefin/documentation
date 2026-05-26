@@ -741,7 +741,21 @@ async function main() {
   console.log(`Image data saved to ${OUTPUT_FILE}`);
 }
 
-main().catch((error) => {
-  console.error(error.message);
-  process.exit(1);
-});
+if (require.main === module) {
+  main().catch((error) => {
+    console.error(error.message);
+    process.exit(1);
+  });
+}
+
+module.exports = {
+  buildSbomStreamId,
+  buildSecurityInfo,
+  buildTestingStreams,
+  latestFeedItem,
+  normalizeSbomStreamTag,
+  normalizeTestingTag,
+  parseFeedVersion,
+  sbomLatestCheckedAt,
+  sbomVersionsForStream,
+};

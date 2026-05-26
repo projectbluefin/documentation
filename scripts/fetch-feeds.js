@@ -17,6 +17,53 @@ function parseLinkNext(linkHeader) {
  * MAX_RELEASES cap is reached. Falls back to the Atom feed if the API is
  * unavailable or token is missing.
  */
+function mapApiRelease(release) {
+  return {
+    title: release.tag_name ?? "Unknown Release",
+    link: release.html_url ?? "#",
+    pubDate: release.published_at ?? "",
+    contentSnippet: (release.body ?? "").substring(0, 200) + "...",
+    content: release.body ?? "",
+  };
+}
+
+function parseAtomEntry(entry) {
+  let link = "#";
+  if (entry.link && Array.isArray(entry.link)) {
+    const htmlLink = entry.link.find(
+      (l) => l.$ && l.$.type === "text/html",
+    );
+    link = htmlLink ? htmlLink.$.href : entry.link[0].$.href;
+  }
+
+  let content = "";
+  let contentSnippet = "";
+  if (
+    entry.content &&
+    Array.isArray(entry.content) &&
+    entry.content[0]
+  ) {
+    if (typeof entry.content[0] === "string") {
+      content = entry.content[0];
+      contentSnippet = content.substring(0, 200) + "...";
+    } else if (
+      entry.content[0]._ &&
+      typeof entry.content[0]._ === "string"
+    ) {
+      content = entry.content[0]._;
+      contentSnippet = content.substring(0, 200) + "...";
+    }
+  }
+
+  return {
+    title: entry.title ? entry.title[0] : "Unknown Release",
+    link,
+    pubDate: entry.updated ? entry.updated[0] : "",
+    contentSnippet,
+    content,
+  };
+}
+
 async function fetchReleasesFromApi(owner, repo) {
   const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
   if (!token) {
@@ -56,13 +103,7 @@ async function fetchReleasesFromApi(owner, repo) {
   // Map GitHub API response to the same OsFeedItem shape used by the parsers
   return allReleases
     .filter((r) => !r.draft)
-    .map((r) => ({
-      title: r.tag_name ?? "Unknown Release",
-      link: r.html_url ?? "#",
-      pubDate: r.published_at ?? "",
-      contentSnippet: (r.body ?? "").substring(0, 200) + "...",
-      content: r.body ?? "",
-    }));
+    .map((r) => mapApiRelease(r));
 }
 
 /**
@@ -88,42 +129,7 @@ async function fetchReleasesFromAtom(owner, repo) {
       const feed = result.feed;
       const entries = feed.entry || [];
 
-      const releases = entries.map((entry) => {
-        let link = "#";
-        if (entry.link && Array.isArray(entry.link)) {
-          const htmlLink = entry.link.find(
-            (l) => l.$ && l.$.type === "text/html",
-          );
-          link = htmlLink ? htmlLink.$.href : entry.link[0].$.href;
-        }
-
-        let content = "";
-        let contentSnippet = "";
-        if (
-          entry.content &&
-          Array.isArray(entry.content) &&
-          entry.content[0]
-        ) {
-          if (typeof entry.content[0] === "string") {
-            content = entry.content[0];
-            contentSnippet = content.substring(0, 200) + "...";
-          } else if (
-            entry.content[0]._ &&
-            typeof entry.content[0]._ === "string"
-          ) {
-            content = entry.content[0]._;
-            contentSnippet = content.substring(0, 200) + "...";
-          }
-        }
-
-        return {
-          title: entry.title ? entry.title[0] : "Unknown Release",
-          link,
-          pubDate: entry.updated ? entry.updated[0] : "",
-          contentSnippet,
-          content,
-        };
-      });
+      const releases = entries.map((entry) => parseAtomEntry(entry));
 
       resolve(releases);
     });
@@ -186,4 +192,9 @@ if (require.main === module) {
   });
 }
 
-module.exports = { fetchAndSaveFeed };
+module.exports = {
+  fetchAndSaveFeed,
+  mapApiRelease,
+  parseAtomEntry,
+  parseLinkNext,
+};

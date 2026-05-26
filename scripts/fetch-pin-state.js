@@ -55,6 +55,26 @@ function extractKernelPin(yamlContent) {
   return match ? match[1].trim() : null;
 }
 
+function applyKernelPin(streamPins, stream, kernelPin, filePath) {
+  if (!streamPins[stream]) {
+    streamPins[stream] = {};
+  }
+
+  if (!kernelPin) {
+    return streamPins;
+  }
+
+  const existing = streamPins[stream].hweKernel;
+  if (existing && existing !== kernelPin) {
+    throw new Error(
+      `Conflicting hweKernel pins for ${stream}: ${existing} vs ${kernelPin} (from ${filePath})`,
+    );
+  }
+
+  streamPins[stream].hweKernel = kernelPin;
+  return streamPins;
+}
+
 async function main() {
   const streamPins = {};
 
@@ -64,18 +84,9 @@ async function main() {
       const content = await fetchWorkflowContent(repo, filePath);
       const kernelPin = extractKernelPin(content);
 
-      if (!streamPins[stream]) {
-        streamPins[stream] = {};
-      }
+      applyKernelPin(streamPins, stream, kernelPin, filePath);
 
       if (kernelPin) {
-        const existing = streamPins[stream].hweKernel;
-        if (existing && existing !== kernelPin) {
-          throw new Error(
-            `Conflicting hweKernel pins for ${stream}: ${existing} vs ${kernelPin} (from ${filePath})`,
-          );
-        }
-        streamPins[stream].hweKernel = kernelPin;
         console.log(`  ${stream} hweKernel pin: ${kernelPin}`);
       } else {
         console.log(`  ${stream}: no kernel-pin found (floating)`);
@@ -102,7 +113,15 @@ async function main() {
   console.log(`Wrote ${OUTPUT_FILE}`);
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+if (require.main === module) {
+  main().catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
+}
+
+module.exports = {
+  applyKernelPin,
+  extractKernelPin,
+  fetchWorkflowContent,
+};

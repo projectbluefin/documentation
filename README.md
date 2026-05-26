@@ -2,21 +2,42 @@
 
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/ublue-os/bluefin-docs)
 
-These docs are pretty sparse on purpose as Bluefin's intended to be invisible. Ideally the docs should be able to be consumed in one sitting.
+These docs are intentionally concise because Bluefin aims to stay out of the way. The goal is to give contributors and users a short, opinionated reference for the parts of the Bluefin experience that are unique to this project.
+
+## Project overview
+
+This repository contains the Docusaurus site for Project Bluefin documentation. It combines end-user docs, contributor-facing project guidance, release notes, and generated data that powers dynamic pages like downloads, changelogs, and version dashboards.
+
+### What lives where
+
+- `docs/` contains the main documentation pages, including installation, troubleshooting, downloads, contributor guidance, developer experience, and FAQ content.
+- `blog/` contains release posts, announcements, status updates, and longer-form project storytelling.
+- `static/` contains assets served as-is, plus generated JSON data consumed by the site.
+- `scripts/` contains the fetch and generation scripts that build the data files used across the docs site.
+
+### Content map
+
+New contributors usually want one of these starting points:
+
+- `docs/installation.md`, `docs/introduction.md`, and `docs/downloads.mdx` for core end-user onboarding content
+- `docs/tips.mdx`, `docs/troubleshooting.mdx`, and `docs/FAQ.md` for support-oriented docs
+- `docs/contributing.md`, `docs/devcontainers.md`, and `docs/local.md` for contributor and developer workflow docs
+- `blog/` for release history, announcements, and project updates
 
 ## Guidelines
 
-- Docs linking to upstream documentation directly with a short summary is preferred.
-- There's likely a reason why something is undocumented.
+- Prefer linking upstream documentation with a short Bluefin-specific summary when the upstream project already owns the canonical docs.
+- Use this repo for Bluefin-specific workflows, defaults, policy, release information, and project guidance.
+- If something is undocumented, assume there may be a reason; check nearby docs and existing patterns before adding new content.
 
 ## Contributing to these docs
 
-This site covers Bluefin-specific workflows, defaults, and project guidance; for generic GNOME, Fedora, or upstream tooling docs, prefer linking upstream with a short Bluefin-specific summary.
+This site covers Bluefin-specific workflows, defaults, and project guidance. Generic GNOME, Fedora, or upstream-tooling documentation should usually stay upstream, with this site linking out and adding only the Bluefin-specific context contributors need.
 
 - `docs/` contains the main documentation pages for users and contributors.
 - `blog/` contains release posts, announcements, and longer-form updates.
 - `static/` contains unprocessed assets like images and other files served as-is by Docusaurus.
-- New docs pages should include Docusaurus frontmatter with `title`, `slug`, and `sidebar_position`, for example:
+- New docs pages should include Docusaurus frontmatter with at least `title` and `slug`; `sidebar_position` is recommended for pages that belong in a sidebar, for example:
 
 ```md
 ---

@@ -414,7 +414,18 @@ async function fetchFirehoseData() {
   );
 }
 
-fetchFirehoseData().catch((error) => {
-  console.error("Fatal error in fetch-firehose:", error);
-  process.exitCode = 1;
-});
+if (require.main === module) {
+  fetchFirehoseData().catch((error) => {
+    console.error("Fatal error in fetch-firehose:", error);
+    process.exitCode = 1;
+  });
+}
+
+module.exports = {
+  buildOsApp,
+  buildOsInfo,
+  computePackageDiff,
+  fetchFirehoseData,
+  sanitizeRemoteApp,
+  sortedReleases,
+};

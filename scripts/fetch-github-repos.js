@@ -161,7 +161,14 @@ async function fetchAllRepos() {
   console.log(`✓ Repos saved to ${OUTPUT_FILE}`);
 }
 
-fetchAllRepos().catch((error) => {
-  console.error("Fatal error:", error);
-  process.exit(1);
-});
+if (require.main === module) {
+  fetchAllRepos().catch((error) => {
+    console.error("Fatal error:", error);
+    process.exit(1);
+  });
+}
+
+module.exports = {
+  fetchAllRepos,
+  fetchRepo,
+};
