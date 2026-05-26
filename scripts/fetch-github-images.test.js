@@ -31,10 +31,7 @@ test("buildTestingStreams keeps supported testing families and deduplicates norm
     "unstable",
   ]);
 
-  assert.deepEqual(
-    streams.map((stream) => stream.tag),
-    ["lts-hwe-testing-1", "lts-testing"],
-  );
+  assert.deepEqual(streams.map((stream) => stream.tag), ["lts-hwe-testing-1"]);
   assert.match(streams[0].command, /ghcr\.io\/ublue-os\/bluefin:lts-hwe-testing-1/);
 });
 
