@@ -60,6 +60,8 @@ The following AI-focused command-line tools are available via homebrew, install 
 
 Install [Ramalama](https://github.com/containers/ramalama) via `brew install ramalama`: manage local models and is the preferred default experience. It's for people who work with local models frequently and need advanced features. It offers the ability to pull models from huggingface, ollama, and any container registry. By default it pulls from ollama.com, check the [Ramalama documentation](https://github.com/containers/ramalama/tree/main/docs) for more information.
 
+Use the full `ramalama` command in Bluefin, matching the upstream RamaLama documentation.
+
 Ramalama's command line experience is similar to Podman. Examples include:
 
 ```
