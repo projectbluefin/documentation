@@ -41,6 +41,98 @@ const PLAYLISTS = [
   },
 ];
 
+function decodeHtmlEntities(text) {
+  return text
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&amp;/g, "&");
+}
+
+function extractMetadataFromHtml(html) {
+  let ytInitialData = null;
+  const ytInitialDataMatch = html.match(/var ytInitialData = (\{[^<]*\});/);
+  if (ytInitialDataMatch) {
+    try {
+      ytInitialData = JSON.parse(ytInitialDataMatch[1]);
+    } catch {
+      ytInitialData = null;
+    }
+  }
+
+  let thumbnailUrl = null;
+  let description = "";
+
+  if (ytInitialData) {
+    try {
+      const sidebar = ytInitialData.sidebar?.playlistSidebarRenderer?.items;
+
+      if (sidebar && sidebar.length > 0) {
+        const primaryInfo = sidebar[0]?.playlistSidebarPrimaryInfoRenderer;
+
+        if (primaryInfo?.description?.simpleText) {
+          description = primaryInfo.description.simpleText;
+        }
+
+        if (
+          primaryInfo?.thumbnailRenderer?.playlistVideoThumbnailRenderer
+            ?.thumbnail?.thumbnails
+        ) {
+          const thumbnails =
+            primaryInfo.thumbnailRenderer.playlistVideoThumbnailRenderer
+              .thumbnail.thumbnails;
+          thumbnailUrl = thumbnails[thumbnails.length - 1]?.url;
+        }
+      }
+
+      if (!thumbnailUrl) {
+        const header = ytInitialData.header?.playlistHeaderRenderer;
+        if (
+          header?.playlistHeaderBanner?.heroPlaylistThumbnailRenderer
+            ?.thumbnail?.thumbnails
+        ) {
+          const thumbnails =
+            header.playlistHeaderBanner.heroPlaylistThumbnailRenderer
+              .thumbnail.thumbnails;
+          thumbnailUrl = thumbnails[thumbnails.length - 1]?.url;
+        }
+      }
+
+      if (!thumbnailUrl) {
+        const microformat =
+          ytInitialData.microformat?.microformatDataRenderer;
+        if (microformat?.thumbnail?.thumbnails) {
+          const thumbnails = microformat.thumbnail.thumbnails;
+          thumbnailUrl = thumbnails[thumbnails.length - 1]?.url;
+        }
+      }
+    } catch {
+      // Fall through to meta-tag parsing below.
+    }
+  }
+
+  if (!thumbnailUrl) {
+    const ogImageMatch = html.match(
+      /<meta property="og:image" content="([^"]+)"/,
+    );
+    if (ogImageMatch) {
+      thumbnailUrl = ogImageMatch[1];
+    }
+  }
+
+  if (!description) {
+    const descMatch = html.match(
+      /<meta property="og:description" content="([^"]+)"/,
+    );
+    if (descMatch) {
+      description = decodeHtmlEntities(descMatch[1]);
+    }
+  }
+
+  return { description, thumbnailUrl, ytInitialData };
+}
+
 /**
  * Fetch playlist metadata from YouTube by parsing ytInitialData
  * Gets the playlist cover art thumbnail (not the first video) and description
@@ -61,115 +153,27 @@ async function fetchPlaylistMetadata(playlistId, title) {
     }
 
     const html = await pageResponse.text();
-
-    // Extract ytInitialData JSON from the page
-    // This contains all the playlist metadata YouTube uses
-    let ytInitialData = null;
-
-    // Look for var ytInitialData = {...}; in the HTML
-    // We need to match the complete JSON object, handling nested braces
-    const ytInitialDataMatch = html.match(/var ytInitialData = (\{[^<]*\});/);
-    if (ytInitialDataMatch) {
-      try {
-        ytInitialData = JSON.parse(ytInitialDataMatch[1]);
-        console.log(`  ✓ Extracted ytInitialData`);
-      } catch (parseError) {
-        console.log(`  ✗ Failed to parse ytInitialData: ${parseError.message}`);
-      }
-    }
-
-    let thumbnailUrl = null;
-    let description = "";
+    const {
+      description: extractedDescription,
+      thumbnailUrl: extractedThumbnailUrl,
+      ytInitialData,
+    } = extractMetadataFromHtml(html);
 
     if (ytInitialData) {
-      // Navigate the complex JSON structure to find playlist metadata
-      try {
-        // Path to playlist metadata varies, but typically:
-        // ytInitialData.sidebar.playlistSidebarRenderer.items[0].playlistSidebarPrimaryInfoRenderer
-        const sidebar = ytInitialData.sidebar?.playlistSidebarRenderer?.items;
-
-        if (sidebar && sidebar.length > 0) {
-          const primaryInfo = sidebar[0]?.playlistSidebarPrimaryInfoRenderer;
-
-          // Get description
-          if (primaryInfo?.description?.simpleText) {
-            description = primaryInfo.description.simpleText;
-            console.log(
-              `  ✓ Description: ${String(description).substring(0, Math.min(60, String(description).length))}...`,
-            );
-          }
-
-          // Get thumbnail (playlist cover art)
-          if (
-            primaryInfo?.thumbnailRenderer?.playlistVideoThumbnailRenderer
-              ?.thumbnail?.thumbnails
-          ) {
-            const thumbnails =
-              primaryInfo.thumbnailRenderer.playlistVideoThumbnailRenderer
-                .thumbnail.thumbnails;
-            // Get the highest quality thumbnail (last one in the array)
-            thumbnailUrl = thumbnails[thumbnails.length - 1]?.url;
-            console.log(`  ✓ Found playlist cover art thumbnail`);
-          }
-        }
-
-        // Alternative path for thumbnails
-        if (!thumbnailUrl) {
-          const header = ytInitialData.header?.playlistHeaderRenderer;
-          if (
-            header?.playlistHeaderBanner?.heroPlaylistThumbnailRenderer
-              ?.thumbnail?.thumbnails
-          ) {
-            const thumbnails =
-              header.playlistHeaderBanner.heroPlaylistThumbnailRenderer
-                .thumbnail.thumbnails;
-            thumbnailUrl = thumbnails[thumbnails.length - 1]?.url;
-            console.log(`  ✓ Found playlist header thumbnail`);
-          }
-        }
-
-        // Another alternative for microformat (most reliable for cover art)
-        if (!thumbnailUrl) {
-          const microformat =
-            ytInitialData.microformat?.microformatDataRenderer;
-          if (microformat?.thumbnail?.thumbnails) {
-            const thumbnails = microformat.thumbnail.thumbnails;
-            thumbnailUrl = thumbnails[thumbnails.length - 1]?.url;
-            console.log(`  ✓ Found microformat thumbnail`);
-          }
-        }
-      } catch (navError) {
-        console.log(`  ✗ Error navigating ytInitialData: ${navError.message}`);
-      }
+      console.log(`  ✓ Extracted ytInitialData`);
     }
 
-    // Fallback to og:image if ytInitialData parsing failed
-    if (!thumbnailUrl) {
-      const ogImageMatch = html.match(
-        /<meta property="og:image" content="([^"]+)"/,
+    let thumbnailUrl = extractedThumbnailUrl;
+    let description = extractedDescription;
+
+    if (description) {
+      console.log(
+        `  ✓ Description: ${String(description).substring(0, Math.min(60, String(description).length))}...`,
       );
-      if (ogImageMatch) {
-        thumbnailUrl = ogImageMatch[1];
-        console.log(`  ✓ Fallback to og:image thumbnail`);
-      }
     }
 
-    // Fallback to meta description if ytInitialData parsing failed
-    if (!description) {
-      const descMatch = html.match(
-        /<meta property="og:description" content="([^"]+)"/,
-      );
-      if (descMatch) {
-        // Decode HTML entities in the correct order to prevent double-unescaping
-        // Replace &amp; last since other entities may contain it
-        description = descMatch[1]
-          .replace(/&quot;/g, '"')
-          .replace(/&#39;/g, "'")
-          .replace(/&lt;/g, "<")
-          .replace(/&gt;/g, ">")
-          .replace(/&amp;/g, "&");
-        console.log(`  ✓ Fallback to meta description`);
-      }
+    if (thumbnailUrl) {
+      console.log(`  ✓ Found playlist cover art thumbnail`);
     }
 
     let localThumbnailPath = null;
@@ -287,4 +291,8 @@ if (require.main === module) {
   main().catch(console.error);
 }
 
-module.exports = { fetchPlaylistMetadata };
+module.exports = {
+  decodeHtmlEntities,
+  extractMetadataFromHtml,
+  fetchPlaylistMetadata,
+};

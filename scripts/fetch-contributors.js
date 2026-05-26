@@ -181,7 +181,16 @@ async function fetchAllContributors() {
   console.log(`✓ Contributors data saved to ${OUTPUT_FILE}`);
 }
 
-fetchAllContributors().catch((error) => {
-  console.error("Fatal error:", error);
-  process.exit(1);
-});
+if (require.main === module) {
+  fetchAllContributors().catch((error) => {
+    console.error("Fatal error:", error);
+    process.exit(1);
+  });
+}
+
+module.exports = {
+  fetchAllContributors,
+  fetchCommits,
+  getAllMarkdownFiles,
+  isBotAccount,
+};

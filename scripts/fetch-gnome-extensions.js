@@ -81,6 +81,22 @@ function downloadImage(url, destPath, redirectCount = 0) {
   });
 }
 
+function buildExtensionRecord(pk, data, localScreenshot = null) {
+  return {
+    id: pk,
+    uuid: data.uuid,
+    name: data.name,
+    creator: data.creator,
+    creatorUrl: data.creator_url ? `https://extensions.gnome.org${data.creator_url}` : null,
+    description: data.description,
+    url: `https://extensions.gnome.org/extension/${pk}/`,
+    screenshot: localScreenshot,
+    remoteScreenshot: data.screenshot ? `https://extensions.gnome.org${data.screenshot}` : null,
+    icon: data.icon ? `https://extensions.gnome.org${data.icon}` : null,
+    donateUrl: data.donate_url || null,
+  };
+}
+
 async function fetchExtensionData(pk) {
   const url = `https://extensions.gnome.org/extension-info/?pk=${pk}`;
   console.log(`Fetching extension ${pk}...`);
@@ -106,19 +122,7 @@ async function fetchExtensionData(pk) {
     }
   }
 
-  return {
-    id: pk,
-    uuid: data.uuid,
-    name: data.name,
-    creator: data.creator,
-    creatorUrl: data.creator_url ? `https://extensions.gnome.org${data.creator_url}` : null,
-    description: data.description,
-    url: `https://extensions.gnome.org/extension/${pk}/`,
-    screenshot: localScreenshot,
-    remoteScreenshot: data.screenshot ? `https://extensions.gnome.org${data.screenshot}` : null,
-    icon: data.icon ? `https://extensions.gnome.org${data.icon}` : null,
-    donateUrl: data.donate_url || null,
-  };
+  return buildExtensionRecord(pk, data, localScreenshot);
 }
 
 async function main() {
@@ -147,4 +151,12 @@ async function main() {
   console.log(`\nWrote ${extensions.length} extensions to ${OUTPUT_JSON}`);
 }
 
-main().catch((e) => { console.error(e); process.exit(1); });
+if (require.main === module) {
+  main().catch((e) => { console.error(e); process.exit(1); });
+}
+
+module.exports = {
+  buildExtensionRecord,
+  fetchExtensionData,
+  isStale,
+};
