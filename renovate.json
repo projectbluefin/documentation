@@ -2,8 +2,7 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:recommended",
-    ":automergeMinor",
-    ":maintainLockFilesWeekly"
+    ":automergeMinor"
   ],
   "dependencyDashboard": true,
   "dependencyDashboardTitle": "Renovate Dashboard \ud83e\udd16",
