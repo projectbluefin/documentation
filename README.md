@@ -9,6 +9,25 @@ These docs are pretty sparse on purpose as Bluefin's intended to be invisible. I
 - Docs linking to upstream documentation directly with a short summary is preferred.
 - There's likely a reason why something is undocumented.
 
+## Contributing to these docs
+
+This site covers Bluefin-specific workflows, defaults, and project guidance; for generic GNOME, Fedora, or upstream tooling docs, prefer linking upstream with a short Bluefin-specific summary.
+
+- `docs/` contains the main documentation pages for users and contributors.
+- `blog/` contains release posts, announcements, and longer-form updates.
+- `static/` contains unprocessed assets like images and other files served as-is by Docusaurus.
+- New docs pages should include Docusaurus frontmatter with `title`, `slug`, and `sidebar_position`, for example:
+
+```md
+---
+title: My Page
+slug: /my-page
+sidebar_position: 1
+---
+```
+
+- For the broader Bluefin contribution workflow, start with [`docs/contributing.md`](docs/contributing.md).
+
 ## Previewing your changes
 
 This project uses [`just`](https://just.systems) as a command runner for convenience.
