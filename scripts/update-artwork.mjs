@@ -30,6 +30,13 @@ import { execSync } from "child_process";
 import { join, dirname, extname, basename } from "path";
 import { fileURLToPath } from "url";
 import os from "os";
+import {
+  findBazziteCandidates,
+  findBluefinExtraDirectoryCandidates,
+  findBluefinExtraJxlCandidates,
+  getSubdirNames,
+  getTreePaths,
+} from "./lib/update-artwork-detection.mjs";
 
 // ---------------------------------------------------------------------------
 // Paths
@@ -212,32 +219,6 @@ function writeManifest(manifest) {
 }
 
 // ---------------------------------------------------------------------------
-// Detection helpers
-// ---------------------------------------------------------------------------
-
-/**
- * Get all wallpaper paths from the repo tree as a Set (only blob/file entries).
- */
-function getTreePaths(tree) {
-  return new Set(tree.filter((e) => e.type === "blob").map((e) => e.path));
-}
-
-/**
- * Get the set of directory names under a given prefix in the tree.
- * Only returns immediate children (one level deep).
- */
-function getSubdirNames(tree, prefix) {
-  const dirs = new Set();
-  for (const entry of tree) {
-    if (!entry.path.startsWith(prefix + "/")) continue;
-    const rest = entry.path.slice(prefix.length + 1);
-    const firstSegment = rest.split("/")[0];
-    if (firstSegment) dirs.add(firstSegment);
-  }
-  return dirs;
-}
-
-// ---------------------------------------------------------------------------
 // Per-collection detection & processing
 // ---------------------------------------------------------------------------
 
@@ -349,40 +330,15 @@ async function syncBluefinExtras(manifest, tree, changes) {
 
   const existingIds = new Set(collection.wallpapers.map((w) => w.id));
 
-  // Collect top-level wallpaper directories (excluding the monthly dirs)
-  // "bluefin-wallpapers-extra" is a packaging directory containing SVG source
-  // files for existing extras wallpapers — not a new wallpaper entry.
-  const SKIP_DIRS = new Set(["bluefin", "aurora", "bazzite", "bluefin-wallpapers-extra"]);
-  const topLevelDirs = getSubdirNames(tree, "wallpapers");
   const newWallpapers = [];
 
-  for (const dirName of topLevelDirs) {
-    if (SKIP_DIRS.has(dirName)) continue;
-    if (existingIds.has(dirName)) continue;
-
+  for (const {
+    id: dirName,
+    ext,
+    outputName,
+    srcPath,
+  } of findBluefinExtraDirectoryCandidates(tree, existingIds)) {
     console.log(`  [bluefin-extras] New directory: wallpapers/${dirName}/`);
-
-    // Try to find a usable image in this directory.
-    // Prefer: .jxl > .png > .jpg > .svg
-    const dirFiles = [...getTreePaths(tree)].filter((p) =>
-      p.startsWith(`wallpapers/${dirName}/`)
-    );
-    const pick = (exts) =>
-      dirFiles.find((p) => exts.some((e) => p.toLowerCase().endsWith(e)));
-
-    const srcPath =
-      pick([".jxl"]) ||
-      pick([".png"]) ||
-      pick([".jpg", ".jpeg"]) ||
-      pick([".svg"]);
-
-    if (!srcPath) {
-      console.warn(`  [bluefin-extras] No image found in wallpapers/${dirName}/ — skipping`);
-      continue;
-    }
-
-    const ext = extname(srcPath).toLowerCase();
-    const outputName = `bluefin-${dirName}`;
 
     let previewUrl = null;
     let fullresWebpUrl = null;
@@ -428,22 +384,13 @@ async function syncBluefinExtras(manifest, tree, changes) {
     changes.push(`- **Bluefin Extra "${dirName}"** — new wallpaper directory (author TBD)`);
   }
 
-  // Also detect new JXL images added to wallpapers/bluefin/images/
-  // Exclude NN-bluefin-day/night JXLs — those are counterparts to the monthly
-  // PNG wallpapers already tracked in the bluefin-monthly collection.
-  const MONTHLY_JXL_RE = /^wallpapers\/bluefin\/images\/\d{2}-bluefin-(day|night)\.jxl$/i;
-  const bluefinJxls = [...getTreePaths(tree)].filter((p) =>
-    p.startsWith("wallpapers/bluefin/images/") &&
-    p.endsWith(".jxl") &&
-    !MONTHLY_JXL_RE.test(p)
-  );
-  for (const jxlPath of bluefinJxls) {
-    const slug = basename(jxlPath, ".jxl");
-    if (existingIds.has(slug)) continue;
-
+  for (const {
+    id: slug,
+    jxlPath,
+    outputName,
+  } of findBluefinExtraJxlCandidates(tree, existingIds)) {
     console.log(`  [bluefin-extras] New JXL: ${jxlPath}`);
 
-    const outputName = `bluefin-${slug}`;
     let previewUrl = null;
     let fullresWebpUrl = null;
 
@@ -567,61 +514,23 @@ async function syncBazzite(manifest, tree, changes) {
 
   const existingIds = new Set(collection.wallpapers.map((w) => w.id));
 
-  // Also index by the filename of the upstream source URL so we don't
-  // duplicate wallpapers that were added manually with a different ID
-  // convention (e.g. "bazzite-giants" for the file "Bazzite_Giants.jpg").
   const existingFilenames = new Set(
     collection.wallpapers.flatMap((w) => {
       const urls = [w.dayUrl, w.nightUrl, w.jxlUrl].filter(Boolean);
       return urls.map((u) => basename(u).toLowerCase());
     })
   );
-  // Skip .jxl pairs for files that already have a PNG/JPG counterpart
-  const bazziteFiles = [...getTreePaths(tree)].filter((p) =>
-    p.startsWith("wallpapers/bazzite/images/") &&
-    /\.(jpg|jpeg|png|jxl)$/i.test(p)
-  );
-
-  // Group by base name (without extension) to handle JXL + PNG pairs
-  /** @type {Map<string, { png?: string, jpg?: string, jxl?: string }>} */
-  const byBase = new Map();
-  for (const p of bazziteFiles) {
-    const ext = extname(p).toLowerCase().slice(1);
-    const base = basename(p, extname(p));
-    if (!byBase.has(base)) byBase.set(base, {});
-    byBase.get(base)[ext] = p;
-  }
-
   const newWallpapers = [];
 
-  for (const [base, variants] of byBase) {
-    // Derive a stable slug: lowercase, spaces+underscores → hyphens
-    const slug = base.toLowerCase().replace(/[\s_]+/g, "-");
-    const id = `bazzite-${slug}`;
-
-    if (existingIds.has(id)) continue;
-
-    // Also skip if any of the source filenames are already referenced in the
-    // manifest (handles manually-added entries with different ID conventions)
-    const fileBaseLower = base.toLowerCase();
-    const alreadyCovered = [...Object.values(variants)].some((p) =>
-      existingFilenames.has(basename(p).toLowerCase())
-    );
-    if (alreadyCovered) {
-      // Known file under a different manifest ID — skip silently
-      continue;
-    }
-
+  for (const {
+    id,
+    base,
+    jxlPath,
+    outputName,
+    primaryExt,
+    primaryPath,
+  } of findBazziteCandidates(tree, existingIds, existingFilenames)) {
     console.log(`  [bazzite] New wallpaper: ${id}`);
-
-    // Primary format preference: png > jpg > jxl
-    const primaryExt = variants.png ? "png"
-      : variants.jpg ? "jpg"
-      : variants.jpeg ? "jpg"
-      : "jxl";
-    const primaryPath = variants[primaryExt] ?? variants.jpeg ?? Object.values(variants)[0];
-    const jxlPath = variants.jxl ?? null;
-    const outputName = id;
 
     let previewUrl = null;
 
