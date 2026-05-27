@@ -155,6 +155,7 @@ This formats all files according to the project's style (80-char width, 2-space 
 - Open a [discussion](https://github.com/projectbluefin/documentation/discussions) for questions
 - Check existing [issues](https://github.com/projectbluefin/documentation/issues) for known topics
 - See the main [Contributor's Guide](/contributing) for broader project contribution info
+- To contribute translations, see [TRANSLATING.md](TRANSLATING.md)
 
 ---
 

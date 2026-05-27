@@ -4,6 +4,12 @@
 
 These docs are intentionally concise because Bluefin aims to stay out of the way. The goal is to give contributors and users a short, opinionated reference for the parts of the Bluefin experience that are unique to this project.
 
+## Prerequisites
+
+- **Node.js 20+** — see `package.json` `engines` field (`node >=20` is required)
+- **[`just`](https://just.systems)** — `brew install just` or `cargo install just`
+- **`GITHUB_TOKEN` or `GH_TOKEN`** — required for data-fetch scripts that call the GitHub API (a [fine-grained token](https://github.com/settings/tokens?type=beta) with read-only public repo access is sufficient)
+
 ## Project overview
 
 This repository contains the Docusaurus site for Project Bluefin documentation. It combines end-user docs, contributor-facing project guidance, release notes, and generated data that powers dynamic pages like downloads, changelogs, and version dashboards.
@@ -60,10 +66,12 @@ Install it with `brew install just` or `cargo install just`.
 
 > **Note:** `just serve` and `npm run start` run data-fetch scripts that call the GitHub API.
 > Set `GITHUB_TOKEN` (or `GH_TOKEN`) in your environment to avoid rate-limit errors:
+>
 > ```
 > export GITHUB_TOKEN=ghp_your_token_here
 > just serve
 > ```
+>
 > A [fine-grained token](https://github.com/settings/tokens?type=beta) with read-only public repository access is sufficient.
 
 <details>
@@ -109,10 +117,3 @@ This is typically caused by peer dependency conflicts during installation. To re
 1. Remove existing node_modules: `rm -rf node_modules`
 2. Install with legacy peer deps: `npm install --legacy-peer-deps`
 3. Try running the command again: `npm run start`
-
-### Build Requirements
-
-- Node.js 20+ (see `package.json` engines field)
-- [`just`](https://just.systems) — `brew install just` or `cargo install just`
-- `GITHUB_TOKEN` or `GH_TOKEN` env var for data-fetch scripts (GitHub API calls)
-- This project uses npm for both local development and CI/CD builds
