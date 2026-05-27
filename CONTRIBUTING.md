@@ -150,6 +150,12 @@ This formats all files according to the project's style (80-char width, 2-space 
 4. Follow the style guide above
 5. Run `npm run prettier` before committing
 
+## Translations
+
+The documentation supports multiple locales (`en`, `de`, `fr`) via Docusaurus i18n.
+
+To add or update translations, see **[TRANSLATING.md](TRANSLATING.md)** for step-by-step instructions including how to generate translation files, where they live, and how to add a new locale.
+
 ## Questions?
 
 - Open a [discussion](https://github.com/projectbluefin/documentation/discussions) for questions
