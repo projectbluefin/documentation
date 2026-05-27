@@ -77,6 +77,75 @@ Link to upstream docs for:
 - **Prefer absolute paths** for internal docs: `/introduction` not `./introduction.md`
 - Use descriptive link text: `[install Homebrew](/command-line)` not `[click here](link)`
 
+## Contribution Workflow
+
+### 1. Fork and clone
+
+1. Click **Fork** on the [repository page](https://github.com/projectbluefin/documentation).
+2. Clone your fork:
+   ```bash
+   git clone https://github.com/<your-username>/documentation.git
+   cd documentation
+   ```
+3. Add the upstream remote:
+   ```bash
+   git remote add upstream https://github.com/projectbluefin/documentation.git
+   ```
+
+### 2. Create a branch
+
+Always branch from `main`:
+
+```bash
+git checkout main
+git pull upstream main
+git checkout -b docs/my-improvement
+```
+
+Branch naming conventions:
+
+| Prefix   | Use for                              |
+| -------- | ------------------------------------ |
+| `docs/`  | New or updated documentation content |
+| `fix/`   | Fixing broken links, typos, errors   |
+| `feat/`  | New features or pages                |
+| `chore/` | Maintenance tasks (deps, config)     |
+
+### 3. Make your changes
+
+Edit or create `.md` or `.mdx` files in `docs/`. Follow the [Style Guide](#style-guide) below.
+
+Preview your changes locally:
+
+```bash
+npm install --legacy-peer-deps
+npm start
+```
+
+The site will be available at `http://localhost:3000`.
+
+### 4. Commit and push
+
+Run Prettier before committing (required):
+
+```bash
+npm run prettier
+```
+
+Then commit and push:
+
+```bash
+git add .
+git commit -m "docs: describe your change"
+git push origin docs/my-improvement
+```
+
+Commit message format: `<type>: <short description>` (e.g., `docs: add nvidia driver guide`, `fix: correct broken link in FAQ`).
+
+### 5. Open a pull request
+
+Go to your fork on GitHub and click **Compare & pull request**. Fill in the template, reference any related issues with `Fixes #<number>`, and submit.
+
 ## Local Development
 
 ### Prerequisites
