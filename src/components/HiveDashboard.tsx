@@ -88,7 +88,7 @@ interface OrgStats {
 // ── Constants ──────────────────────────────────────────────────────────────
 
 const SNAPSHOT_URL =
-  "https://raw.githubusercontent.com/kubestellar/docs/main/public/live/hive/bluefin/index.html";
+  "https://raw.githubusercontent.com/kubestellar/docs/main/public/live/hive/bluefin/snapshot.json";
 const GH_API = "https://api.github.com";
 const DAKOTA = "projectbluefin/dakota";
 const BUILD_WORKFLOW = "246164114";
@@ -105,70 +105,40 @@ const ACMM_LEVELS: Record<number, { label: string; desc: string; color: string }
   5: { label: "Self-Directing",      desc: "Agents define their own goals",           color: "#bc8cff" },
 };
 
-function parseSnapshotHtml(html: string): {
+function parseSnapshotJson(data: Record<string, unknown>): {
   snapshot: HiveSnapshot | null;
   config: HiveConfig | null;
 } {
   try {
-    const cfgMatch = html.match(/_cfg\s*=\s*(\{[^;]+\})/);
-    const config = cfgMatch
-      ? (JSON.parse(cfgMatch[1]) as HiveConfig)
-      : null;
-
-    // Extract agents array (same pattern as hive-status-sync workflow)
-    const agentsMatch = html.match(/"agents":\s*(\[.*?\])\s*,\s*"(?:governor|repos|token|hiveId)"/);
-    const agents: HiveAgent[] = agentsMatch ? (JSON.parse(agentsMatch[1]) as HiveAgent[]) : [];
-
-    // Extract timestamp + hiveId from render() opening
-    const tsMatch = html.match(/render\(\{"timestamp":"([^"]+)","hiveId":"([^"]+)"/);
-
-    // Extract ACMM level
-    const acmmMatch = html.match(/"acmmLevel":(\d+)/);
-    const acmmLevel = acmmMatch ? parseInt(acmmMatch[1]) : undefined;
-
-    // Extract advisory mode (SURGE / NORMAL etc)
-    const modeMatch = html.match(/"acmmLevel":\d+[^}]*"mode":"([^"]+)"/);
-    const acmmMode = modeMatch ? modeMatch[1] : undefined;
-
-    // Extract PR merge time stats
-    const medianMatch = html.match(/"median_minutes":(\d+)/);
-    const p90Match    = html.match(/"p90_minutes":(\d+)/);
-    const medianMergeMins = medianMatch ? parseInt(medianMatch[1]) : undefined;
-    const p90MergeMins    = p90Match    ? parseInt(p90Match[1])    : undefined;
-
-    // Count advisory items
-    const advisoryCount = (html.match(/"type":"[^"]+","severity":/g) ?? []).length;
-
-    // Extract advisory items from digest
-    const advisoryItems: AdvisoryItem[] = [];
-    const adItemRe = /"agent":"([^"]+)","timestamp":"([^"]+)","type":"([^"]+)","severity":"([^"]+)","title":"([^"]+)"/g;
-    let adM: RegExpExecArray | null;
-    while ((adM = adItemRe.exec(html)) !== null) {
-      advisoryItems.push({
-        agent:     adM[1],
-        timestamp: adM[2],
-        type:      adM[3],
-        severity:  adM[4] as AdvisoryItem["severity"],
-        title:     adM[5],
-      });
-    }
-
-    // Advisory issue number
-    const advisoryIssueM = html.match(/HIVE_ADVISORY_ISSUE='(\d+)'/);
-    const advisoryIssue = advisoryIssueM ? parseInt(advisoryIssueM[1]) : undefined;
+    const agents = (data.agents as HiveAgent[]) ?? [];
+    const governor = (data.governor as { mode?: string; issues?: number; prs?: number }) ?? {};
+    const agentMetrics = data.agentMetrics as { outreach?: { acmm?: number } } | undefined;
+    const issueToMerge = data.issueToMerge as { avg_minutes?: number; median_minutes?: number; p90_minutes?: number } | undefined;
+    const advisoryItems = (data.advisoryItems as AdvisoryItem[]) ?? [];
 
     const snapshot: HiveSnapshot = {
-      timestamp: tsMatch?.[1] ?? new Date().toISOString(),
-      hiveId:    tsMatch?.[2] ?? "",
+      timestamp:       (data.timestamp as string) ?? new Date().toISOString(),
+      hiveId:          (data.hiveId as string) ?? "",
       agents,
-      acmmLevel,
-      acmmMode,
-      medianMergeMins,
-      p90MergeMins,
-      advisoryCount: advisoryItems.length || advisoryCount,
+      acmmLevel:       agentMetrics?.outreach?.acmm ?? undefined,
+      acmmMode:        governor.mode,
+      medianMergeMins: issueToMerge?.median_minutes ?? issueToMerge?.avg_minutes,
+      p90MergeMins:    issueToMerge?.p90_minutes,
+      advisoryCount:   advisoryItems.length,
       advisoryItems,
-      advisoryIssue,
+      advisoryIssue:   (data.advisoryIssue as number) ?? undefined,
     };
+
+    // Derive config from repos array in the status JSON
+    const rawRepos = (data.repos as Array<{ full?: string; name?: string }>) ?? [];
+    const config: HiveConfig | null = rawRepos.length > 0 ? {
+      org:            (data.hiveId as string ?? "").replace(/^hive-[^-]+-/, "") || "projectbluefin",
+      primaryRepo:    rawRepos[0]?.full ?? "",
+      repos:          rawRepos.map((r) => r.full ?? r.name ?? "").filter(Boolean),
+      ai_author:      "",
+      eval_interval_s: 300,
+    } : null;
+
     return { snapshot, config };
   } catch {
     return { snapshot: null, config: null };
@@ -737,8 +707,8 @@ export default function HiveDashboard(): React.JSX.Element {
 
       // ── Snapshot (agents + config)
       if (snapRes.status === "fulfilled" && snapRes.value.ok) {
-        const html = await snapRes.value.text();
-        const { snapshot: snap, config: cfg } = parseSnapshotHtml(html);
+        const data = await snapRes.value.json() as Record<string, unknown>;
+        const { snapshot: snap, config: cfg } = parseSnapshotJson(data);
         if (snap) setSnapshot(snap);
         if (cfg) setConfig(cfg);
       }
