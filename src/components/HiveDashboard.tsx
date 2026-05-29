@@ -163,6 +163,8 @@ interface OrgStats {
 
 const SNAPSHOT_URL =
   "https://raw.githubusercontent.com/kubestellar/docs/main/public/live/hive/bluefin/snapshot.json";
+const SNAPSHOT_HTML_FALLBACK =
+  "https://raw.githubusercontent.com/kubestellar/docs/main/public/live/hive/bluefin/index.html";
 const GH_API = "https://api.github.com";
 const DAKOTA = "projectbluefin/dakota";
 const BUILD_WORKFLOW = "246164114";
@@ -246,6 +248,24 @@ async function fetchTimeout(url: string, ms = 12000): Promise<Response> {
     clearTimeout(t);
   }
 }
+
+// Try snapshot.json first; fall back to HTML snapshot (render({...}) pattern)
+// until kubestellar/hive publishes snapshot.json for the bluefin formation.
+async function fetchSnapshotData(): Promise<Record<string, unknown> | null> {
+  try {
+    const res = await fetchTimeout(SNAPSHOT_URL);
+    if (res.ok) return await res.json() as Record<string, unknown>;
+  } catch { /* fall through */ }
+  try {
+    const res = await fetchTimeout(SNAPSHOT_HTML_FALLBACK);
+    if (!res.ok) return null;
+    const html = await res.text();
+    const m = html.match(/render\((\{"timestamp"[\s\S]*?\})\);/);
+    if (m) return JSON.parse(m[1]) as Record<string, unknown>;
+  } catch { /* ignore */ }
+  return null;
+}
+
 
 function cleanSummaryLine(line: string): string {
   return line
@@ -1147,8 +1167,7 @@ export default function HiveDashboard(): React.JSX.Element {
     try {
       // Fan out all independent fetches
       const weekAgoISO = new Date(Date.now() - 7 * 24 * 3600 * 1000).toISOString().slice(0, 10);
-      const [snapRes, repoRes, ciRes, commitsRes, mergedRes, openedRes, closedRes] = await Promise.allSettled([
-        fetchTimeout(SNAPSHOT_URL),
+      const [repoRes, ciRes, commitsRes, mergedRes, openedRes, closedRes] = await Promise.allSettled([
         fetchTimeout(`${GH_API}/repos/${DAKOTA}`),
         fetchTimeout(
           `${GH_API}/repos/${DAKOTA}/actions/workflows/${BUILD_WORKFLOW}/runs?per_page=1&status=completed`,
@@ -1159,10 +1178,10 @@ export default function HiveDashboard(): React.JSX.Element {
         fetchTimeout(`${GH_API}/search/issues?q=org:projectbluefin+type:issue+closed:>${weekAgoISO}&per_page=1`),
       ]);
 
-      // ── Snapshot (agents + config)
-      if (snapRes.status === "fulfilled" && snapRes.value.ok) {
-        const data = await snapRes.value.json() as Record<string, unknown>;
-        const { snapshot: snap, config: cfg } = parseSnapshotJson(data);
+      // ── Snapshot (agents + config) — JSON first, HTML render() fallback
+      const snapData = await fetchSnapshotData();
+      if (snapData) {
+        const { snapshot: snap, config: cfg } = parseSnapshotJson(snapData);
         if (snap) setSnapshot(snap);
         if (cfg) setConfig(cfg);
       }
