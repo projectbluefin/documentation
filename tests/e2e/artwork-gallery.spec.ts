@@ -407,13 +407,13 @@ test.describe("image HTTP responses", () => {
     expect(thumbUrls.size, "must find thumbnail URLs to probe").toBeGreaterThan(0);
 
     await page.goto("/artwork");
-    const failed: string[] = [];
-    for (const url of thumbUrls) {
-      const res = await page.request.get(url);
-      if (res.status() !== 200) {
-        failed.push(`${url}: HTTP ${res.status()}`);
-      }
-    }
+    const results = await Promise.all(
+      [...thumbUrls].map(async (url) => {
+        const res = await page.request.get(url);
+        return res.status() !== 200 ? `${url}: HTTP ${res.status()}` : null;
+      })
+    );
+    const failed = results.filter((r): r is string => r !== null);
     expect(
       failed,
       `Thumbnail URLs that did not return HTTP 200: ${failed.join(", ")}`
@@ -449,13 +449,13 @@ test.describe("image HTTP responses", () => {
     expect(fullresUrls.size, "must find fullres URLs to probe").toBeGreaterThan(0);
 
     await page.goto("/artwork");
-    const failed: string[] = [];
-    for (const url of fullresUrls) {
-      const res = await page.request.get(url);
-      if (res.status() !== 200) {
-        failed.push(`${url}: HTTP ${res.status()}`);
-      }
-    }
+    const results = await Promise.all(
+      [...fullresUrls].map(async (url) => {
+        const res = await page.request.get(url);
+        return res.status() !== 200 ? `${url}: HTTP ${res.status()}` : null;
+      })
+    );
+    const failed = results.filter((r): r is string => r !== null);
     expect(
       failed,
       `Fullres URLs that did not return HTTP 200: ${failed.join(", ")}`

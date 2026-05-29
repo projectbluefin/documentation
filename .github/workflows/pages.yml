@@ -23,6 +23,7 @@ jobs:
   build:
     name: Build Docusaurus
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@fe104658747b27e96e4f7e80cd0a94068e53901d # v2.16.1
@@ -142,9 +143,20 @@ jobs:
       - name: Build website
         run: npm run build:ci
 
+      - name: Cache Playwright browsers
+        if: github.event_name == 'pull_request' || github.event_name == 'merge_group'
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-chromium-${{ hashFiles('package-lock.json') }}
+
+      - name: Install Playwright browsers
+        if: github.event_name == 'pull_request' || github.event_name == 'merge_group'
+        run: npx playwright install chromium
+
       - name: Run E2E tests
         if: github.event_name == 'pull_request' || github.event_name == 'merge_group'
-        run: npx playwright install --with-deps chromium && npx playwright test
+        run: npx playwright test
         env:
           PLAYWRIGHT_BASE_URL: http://localhost:3000
 
