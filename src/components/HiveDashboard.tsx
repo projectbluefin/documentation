@@ -1806,7 +1806,7 @@ export default function HiveDashboard(): React.JSX.Element {
                   AI Codebase Maturity Model
                 </Link>{" "}
                 (ACMM) — a six-level framework from AI-assisted coding to fully
-                autonomous development. This formation runs at Level 6.
+                autonomous development. The current level is shown live in the Formation Status panel above.
               </p>
               <div className={styles.aboutLinks}>
                 <Link href="https://kubestellar.io/live/hive/bluefin/">
