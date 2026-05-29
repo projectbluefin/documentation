@@ -1258,7 +1258,8 @@ export default function HiveDashboard(): React.JSX.Element {
       }
 
       // ── Commit sparkline (52-week participation)
-      if (commitsRes.status === "fulfilled" && commitsRes.value.ok) {
+      // GitHub returns 202 when stats are being computed — status 200 means real data
+      if (commitsRes.status === "fulfilled" && commitsRes.value.status === 200) {
         const commitData = (await commitsRes.value.json()) as { all?: number[] };
         if (Array.isArray(commitData.all)) setCommits(commitData.all.slice(-12));
       }
