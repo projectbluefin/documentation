@@ -260,8 +260,27 @@ async function fetchSnapshotData(): Promise<Record<string, unknown> | null> {
     const res = await fetchTimeout(SNAPSHOT_HTML_FALLBACK);
     if (!res.ok) return null;
     const html = await res.text();
-    const m = html.match(/render\((\{"timestamp"[\s\S]*?\})\);/);
-    if (m) return JSON.parse(m[1]) as Record<string, unknown>;
+    // build-snapshot.mjs embeds data as: render(JSON.stringify(data));
+    // Extract by walking chars and tracking string context (handles { } inside strings)
+    const marker = 'render({"timestamp"';
+    const markerIdx = html.indexOf(marker);
+    if (markerIdx < 0) return null;
+    const jsonStart = markerIdx + 'render('.length;
+    let depth = 0, inStr = false, esc = false;
+    for (let i = jsonStart; i < html.length; i++) {
+      const c = html[i];
+      if (esc) { esc = false; continue; }
+      if (c === '\\' && inStr) { esc = true; continue; }
+      if (c === '"') { inStr = !inStr; continue; }
+      if (inStr) continue;
+      if (c === '{') depth++;
+      else if (c === '}') {
+        if (--depth === 0) {
+          try { return JSON.parse(html.slice(jsonStart, i + 1)) as Record<string, unknown>; }
+          catch { return null; }
+        }
+      }
+    }
   } catch { /* ignore */ }
   return null;
 }
