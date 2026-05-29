@@ -622,9 +622,35 @@
   gap: 0.6rem;
 }
 
+.aboutReadingList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-top: 0.75rem;
+}
+
+.aboutReadingList a {
+  font-size: 0.8rem;
+  color: #58a6ff;
+  text-decoration: none;
+}
+
+.aboutReadingList a:hover {
+  text-decoration: underline;
+}
+
+.readingListLabel {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #484f58;
+  font-weight: 600;
+  margin-bottom: 0.2rem;
+}
+
 .roleRow {
   display: grid;
-  grid-template-columns: 1.5rem 5.5rem 1fr;
+  grid-template-columns: 5.5rem 1fr;
   gap: 0.5rem;
   align-items: center;
   font-size: 0.8rem;
@@ -1114,4 +1140,312 @@
   font-size: 0.85rem;
   font-style: italic;
   padding: 0.75rem 0;
+}
+
+
+/* ── New dense panels ─────────────────────────────────────────────────────── */
+.feedList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+}
+.feedItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid rgba(139, 148, 158, 0.16);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  text-decoration: none;
+  color: inherit;
+}
+.feedItem:hover {
+  border-color: rgba(88, 166, 255, 0.38);
+  background: rgba(88, 166, 255, 0.05);
+}
+.feedRepo {
+  flex: 0 0 auto;
+  padding: 0.2rem 0.55rem;
+  border: 1px solid rgba(88, 166, 255, 0.35);
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: lowercase;
+}
+.feedTitle {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 0.92rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.feedMeta {
+  flex: 0 0 auto;
+  color: #8b949e;
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+.contributorGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+}
+.contributorCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  width: 68px;
+  text-decoration: none;
+  color: inherit;
+}
+.contributorAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid rgba(88, 166, 255, 0.22);
+}
+.contributorName {
+  font-size: 0.72rem;
+  color: #c9d1d9;
+  text-align: center;
+  word-break: break-word;
+}
+.botCountChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.9rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(210, 153, 34, 0.12);
+  color: #d29922;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+.velocityRow {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 0.8rem;
+}
+.velocityNum {
+  font-size: clamp(2rem, 4vw, 2.7rem);
+  line-height: 1;
+  font-weight: 800;
+  color: #f0f6fc;
+}
+.miniLabel {
+  margin-top: 0.35rem;
+  color: #8b949e;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.velocityDelta {
+  margin-top: 0.85rem;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+.velocityDeltaUp { color: #f85149; }
+.velocityDeltaDown { color: #3fb950; }
+.velocityDeltaFlat { color: #8b949e; }
+.p0Alert {
+  margin-top: 0.75rem;
+  color: #f85149;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+.govMode {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 120px;
+  margin: 0.55rem 0 0.9rem;
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+.govModeSurge { color: #f85149; background: rgba(248, 81, 73, 0.12); }
+.govModeBusy { color: #d29922; background: rgba(210, 153, 34, 0.12); }
+.govModeQuiet { color: #58a6ff; background: rgba(88, 166, 255, 0.12); }
+.govModeIdle { color: #8b949e; background: rgba(139, 148, 158, 0.12); }
+.govThreshBar {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  overflow: hidden;
+  border-radius: 999px;
+  margin-top: 0.9rem;
+  border: 1px solid rgba(139, 148, 158, 0.2);
+}
+.govThreshZoneQuiet,
+.govThreshZoneBusy,
+.govThreshZoneSurge {
+  padding: 0.4rem 0;
+  text-align: center;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+.govThreshZoneQuiet { background: rgba(88, 166, 255, 0.14); color: #58a6ff; }
+.govThreshZoneBusy { background: rgba(210, 153, 34, 0.14); color: #d29922; }
+.govThreshZoneSurge { background: rgba(248, 81, 73, 0.14); color: #f85149; }
+.govThreshMarker {
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  width: 2px;
+  background: #f0f6fc;
+  box-shadow: 0 0 0 1px rgba(13, 17, 23, 0.6);
+}
+.govThreshLegend {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 0.45rem;
+  color: #8b949e;
+  font-size: 0.72rem;
+}
+.beadsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin: 0.75rem 0 1rem;
+  color: #c9d1d9;
+  font-weight: 700;
+}
+.cadenceTable {
+  display: grid;
+  gap: 0.45rem;
+}
+.cadenceHeader {
+  color: #8b949e;
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+}
+.cadenceRow {
+  display: grid;
+  grid-template-columns: minmax(110px, 1.4fr) repeat(4, minmax(80px, 1fr));
+  gap: 0.45rem;
+}
+.cadenceCell {
+  padding: 0.45rem 0.55rem;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(139, 148, 158, 0.12);
+  font-size: 0.78rem;
+}
+.cadenceCellActive {
+  border-color: rgba(88, 166, 255, 0.45);
+  background: rgba(88, 166, 255, 0.12);
+  color: #f0f6fc;
+  font-weight: 700;
+}
+.agentOfDayCard {
+  border-color: #d29922;
+  background: rgba(210, 153, 34, 0.1);
+}
+.agentOfDayHero {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.agentHeroEmoji {
+  font-size: 2.8rem;
+  line-height: 1;
+}
+.agentOfDayLabel {
+  color: #d29922;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.agentHeroName {
+  margin-top: 0.2rem;
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #f0f6fc;
+}
+.agentHeroMeta {
+  margin-top: 0.2rem;
+  color: #c9d1d9;
+  font-size: 0.84rem;
+}
+.agentOfDaySummary {
+  margin-top: 0.95rem;
+  display: grid;
+  gap: 0.45rem;
+  color: #f0f6fc;
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+.formationLogList {
+  display: grid;
+  gap: 0.55rem;
+}
+.formationLogEntry {
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  gap: 0.75rem;
+  padding: 0.55rem 0.65rem;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(139, 148, 158, 0.12);
+  font-size: 0.84rem;
+}
+.formationLogStamp {
+  color: #8b949e;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.healthList {
+  display: grid;
+  gap: 0.55rem;
+}
+.healthItem {
+  display: grid;
+  grid-template-columns: 12px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.55rem 0.65rem;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(139, 148, 158, 0.12);
+}
+.healthDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+.healthDotPass { background: #3fb950; box-shadow: 0 0 10px rgba(63, 185, 80, 0.45); }
+.healthDotFail { background: #f85149; box-shadow: 0 0 10px rgba(248, 81, 73, 0.45); }
+.healthDotWarn { background: #d29922; box-shadow: 0 0 10px rgba(210, 153, 34, 0.45); }
+
+@media (max-width: 900px) {
+  .feedItem,
+  .healthItem {
+    grid-template-columns: 1fr;
+  }
+  .feedItem {
+    flex-wrap: wrap;
+  }
+  .cadenceRow {
+    grid-template-columns: minmax(90px, 1.2fr) repeat(4, minmax(64px, 1fr));
+  }
+  .formationLogEntry {
+    grid-template-columns: 1fr;
+  }
 }
