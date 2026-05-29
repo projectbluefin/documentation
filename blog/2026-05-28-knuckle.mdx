@@ -1,0 +1,103 @@
+---
+title: "Knuckle: Flatcar Container Linux for the Home"
+slug: introducing-knuckle
+authors: castrojo
+tags: [announcements, server]
+date: 2026-05-28T09:00:00-04:00
+draft: false
+---
+import BlogFigure from "@site/src/components/blog/BlogFigure";
+
+{/* truncate */}
+
+Check out this announcement about [Azure Container Linux GA](https://opensource.microsoft.com/blog/2026/05/18/from-open-source-to-agentic-systems-microsoft-at-open-source-summit-north-america-2026/). I won't be talking about Azure Linux 4.0. That's the "distro".
+
+Let's talk about Flatcar Linux instead, which is in the CNCF and a perfect fit for us.
+
+## The Problem with Installing Flatcar (and CoreOS)
+
+Both [Flatcar Container Linux] and [Fedora CoreOS] use [Ignition] for first-boot provisioning — a powerful declarative system that requires you to write a complete JSON (or [Butane] YAML) config file *before* you can install. There is no interactive configuration during install it's pretty nerdy. For experienced Kubernetes operators this is fine, but for homelab users and folks new to container-native Linux it's annoying.
+
+It would be madness to create our own installer, so Knuckle just translates that stuff into something the Flatcar installer understands and then that's it. It's the real image. And we added some nice conveniences like choosing systexts.
+
+
+[Flatcar Container Linux]: https://www.flatcar.org/
+[Fedora CoreOS]: https://fedoraproject.org/coreos/
+[Ignition]: https://coreos.github.io/ignition/
+[Butane]: https://coreos.github.io/butane/
+
+## Enter Knuckle
+
+<BlogFigure
+  src="https://github.com/user-attachments/assets/802bb450-f48c-4186-a1d0-542535124bc5"
+  alt="Knuckle TUI installer — the guided wizard welcome screen"
+/>
+
+[**Knuckle**](https://github.com/projectbluefin/knuckle) is a TUI "installer" for [Flatcar Container Linux](https://www.flatcar.org/). It gives you an Ubuntu-server-style guided wizard that generates a valid [Ignition](https://coreos.github.io/ignition/) config and passes it to `flatcar-install` — no hand-crafted JSON required. Knuckle is *"basically Azure Container Linux (Home Edition)."* but it's the upstream unbranded one with not many strong opinions.
+
+We even wired in the sysexts and whatnot. 
+
+
+<BlogFigure
+  src="https://github.com/user-attachments/assets/86f0c439-4c27-4c04-a2fc-880d499f7c28"
+  alt="Knuckle sysext catalog — browse and select system extensions from the Flatcar Bakery during install"
+/>
+
+<BlogFigure
+  src="https://github.com/user-attachments/assets/0d4160da-8731-4a92-b103-98b901dd9c3d"
+  alt="Knuckle install progress — live progress bar while flatcar-install runs"
+/>
+
+> **Note:** Knuckle is pre-alpha software. It will wipe the target disk. UEFI-only; BIOS/legacy boot is not supported.
+
+## Why Flatcar?
+
+Flatcar is an awesome OS, here's a list. I like it because it offers different stability channels, making it easy to canary test on clusters, etc. But it's also a great building block to build your server on:
+
+- Read-only system partition — dm-verity protected; eliminates a whole class of vulnerabilities
+- Automatic atomic updates — using the same mechanism as Google ChromeOS; atomic rollbacks supported, this is actually built with Gentoo upstream!
+- System Extensions (sysexts) — Extend your server with the [Flatcar Bakery](https://flatcar.github.io/sysext-bakery/)
+- Ignition provisioning — declarative first-boot config, shared format with Fedora CoreOS
+- No package manager — user workloads run as containers (Docker, Kubernetes) or sysexts; the OS itself never drifts
+- CNCF governance — vendor-neutral, community-maintained, built to outlast any single company's interest
+- Production-proven at scale: Adobe (18,000+ nodes), STACKIT (20,000+ nodes, their customers' most popular OS choice), and [many more](https://www.flatcar.org/docs/latest/community/adopters/)
+
+People sometimes ask why we don't make a Server Edition. It's because we don't care about distributions it's all Kubernetes. :) This project is intended to spread the use of Flatcar Linux and Fedora CoreOS to the home enthusiast audience. My hope is that this will live somewhere upstream and acts as the thing that brings these operating systems into enthusiast homelabs. And even if it fails at that we can prove people want it.
+
+Knuckle is feature complete, we won't be adding whizbang features, it's vanilla only and will only ever support vanilla. However ...
+
+## Bluefin Server?
+
+Since this is all well designed cloud-native stuff "upstream + opinion = product". Digital Sovereignty isn't just for nations, so we're going to use the tools nations use to make our lives awesome: 
+
+- k8s configured for single node operation, easy to expand
+- Single webui to schedule whatever you want, say jellyfin, all the self-hosted stuff of your dreams
+- Out of the box gitops so you can operate the entire cluster from version control 
+- No CLI, No ssh, or kubectl access at all - entire cluster is API or MCP driven, magical tailscale integration
+- Standard industry gear, Kubernetes, Argo Workflows, k8s-mcp-server, bring your own workload
+
+Now THAT is an opinion! I have a version of this running in my lab now, and we'll keep iterating, so start with ideas. It's still early days but I'm sure many of you will start prototyping with Flatcar, sky's the limit!
+
+## Get Knuckle
+
+Download the installer ISOs from the [GitHub Releases page](https://github.com/projectbluefin/knuckle/releases/latest):
+
+| Architecture | Download |
+|---|---|
+| amd64 | [`knuckle-installer-stable-amd64.iso`](https://github.com/projectbluefin/knuckle/releases/latest) |
+| arm64 | [`knuckle-installer-stable-arm64.iso`](https://github.com/projectbluefin/knuckle/releases/latest) |
+
+SHA256 checksums and cosign signatures are published alongside each release.
+
+- SSH in as the `core` user with the key you configured
+- The OS updates itself automatically on the schedule you chose during install
+- Add software via sysexts (`/etc/extensions/`), containers (Docker/Kubernetes), or [distrobox](https://distrobox.it/)
+- Reprovision by re-running knuckle — no in-place mutation
+
+
+- [**GitHub: projectbluefin/knuckle**](https://github.com/projectbluefin/knuckle)
+- [Releases and changelog](https://github.com/projectbluefin/knuckle/releases)
+- [Headless config reference](https://github.com/projectbluefin/knuckle/blob/main/docs/HEADLESS-CONFIG.md)
+- [Security posture](https://github.com/projectbluefin/knuckle/blob/main/docs/SECURITY.md)
+- [Flatcar on Discord](https://discord.gg/flatcar)
+
