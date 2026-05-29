@@ -118,7 +118,7 @@ const config: Config = {
           "style-src 'self' 'unsafe-inline'",
           "img-src 'self' data: https:",
           "font-src 'self' data:",
-          "connect-src 'self' https://api.github.com https://giscus.app https://formulae.brew.sh",
+          "connect-src 'self' https://api.github.com https://raw.githubusercontent.com https://giscus.app https://formulae.brew.sh",
           "frame-src https://giscus.app https://www.youtube.com https://youtube.com https://insights.linuxfoundation.org",
         ].join("; "),
       },
