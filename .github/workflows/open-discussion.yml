@@ -1,0 +1,166 @@
+name: Open Discussion on New Blog Post
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "blog/**.md"
+      - "blog/**.mdx"
+
+permissions:
+  contents: read
+
+jobs:
+  open-discussion:
+    name: Create GitHub Discussion for new blog posts
+    runs-on: ubuntu-latest
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@fe104658747b27e96e4f7e80cd0a94068e53901d # v2.16.1
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+
+      - name: Open discussions for new blog posts
+        env:
+          GH_TOKEN: ${{ secrets.BLUEFIN_DISCUSSIONS_TOKEN }}
+          BEFORE_SHA: ${{ github.event.before }}
+          AFTER_SHA: ${{ github.sha }}
+        run: |
+          python3 << 'PYEOF'
+          import os, re, subprocess, json, sys
+
+          before = os.environ["BEFORE_SHA"]
+          after  = os.environ["AFTER_SHA"]
+          zero   = "0" * 40
+
+          if before == zero:
+              print("Initial push — skipping discussion creation")
+              sys.exit(0)
+
+          # Find new blog post files added in this push
+          result = subprocess.run(
+              ["git", "diff", "--name-only", "--diff-filter=A", before, after, "--", "blog/"],
+              capture_output=True, text=True
+          )
+          new_files = [f.strip() for f in result.stdout.strip().splitlines() if f.strip()]
+
+          if not new_files:
+              print("No new blog posts in this push")
+              sys.exit(0)
+
+          print(f"New blog post files: {new_files}")
+
+          for filepath in new_files:
+              if not os.path.exists(filepath):
+                  print(f"File not found (deleted?): {filepath}")
+                  continue
+
+              content = open(filepath).read()
+
+              # Extract YAML frontmatter
+              fm_match = re.match(r"^---\s*\n(.*?)\n---", content, re.DOTALL)
+              if not fm_match:
+                  print(f"No frontmatter in {filepath}, skipping")
+                  continue
+
+              fm = fm_match.group(1)
+
+              # Skip drafts
+              if re.search(r"^\s*draft:\s*true\s*$", fm, re.MULTILINE):
+                  print(f"Draft post, skipping: {filepath}")
+                  continue
+
+              # Extract title (handles quoted and unquoted values)
+              title_match = re.search(r'^title:\s*["\']?(.+?)["\']?\s*$', fm, re.MULTILINE)
+              if not title_match:
+                  print(f"No title in {filepath}, skipping")
+                  continue
+              title = title_match.group(1).strip().strip("\"'")
+
+              # Extract slug (fall back to filename-derived slug)
+              slug_match = re.search(r"^slug:\s*(.+)\s*$", fm, re.MULTILINE)
+              if slug_match:
+                  slug = slug_match.group(1).strip()
+              else:
+                  # e.g. blog/2026-05-28-knuckle.mdx -> knuckle
+                  stem = os.path.splitext(os.path.basename(filepath))[0]
+                  slug = re.sub(r"^\d{4}-\d{2}-\d{2}-", "", stem)
+
+              discussion_title = f"{title} | Bluefin"
+              post_url = f"https://docs.projectbluefin.io/blog/{slug}"
+
+              print(f"\nProcessing: {filepath}")
+              print(f"  Title:    {discussion_title}")
+              print(f"  Post URL: {post_url}")
+
+              # Check if a discussion with this exact title already exists
+              search_query = f'repo:ublue-os/bluefin type:discussion "{discussion_title}"'
+              search_gql = json.dumps({
+                  "query": """
+                    query($q: String!) {
+                      search(query: $q, type: DISCUSSION, first: 5) {
+                        nodes { ... on Discussion { title url } }
+                      }
+                    }
+                  """,
+                  "variables": {"q": search_query}
+              })
+              search_result = subprocess.run(
+                  ["gh", "api", "graphql", "--input", "-"],
+                  input=search_gql, capture_output=True, text=True
+              )
+              if search_result.returncode != 0:
+                  print(f"  Search failed: {search_result.stderr}")
+              else:
+                  data = json.loads(search_result.stdout)
+                  existing = data.get("data", {}).get("search", {}).get("nodes", [])
+                  exact_matches = [n for n in existing if n.get("title") == discussion_title]
+                  if exact_matches:
+                      print(f"  Discussion already exists: {exact_matches[0]['url']}")
+                      continue
+
+              # Create the discussion
+              body = (
+                  f"A new blog post is up: **[{title}]({post_url})**\n\n"
+                  "Read it and join the conversation below! 🦕"
+              )
+              create_gql = json.dumps({
+                  "query": """
+                    mutation($repoId: ID!, $catId: ID!, $title: String!, $body: String!) {
+                      createDiscussion(input: {
+                        repositoryId: $repoId
+                        categoryId: $catId
+                        title: $title
+                        body: $body
+                      }) {
+                        discussion { url }
+                      }
+                    }
+                  """,
+                  "variables": {
+                      "repoId": "R_kgDOJHEu4g",
+                      "catId": "DIC_kwDOJHEu4s4CtFFL",
+                      "title": discussion_title,
+                      "body": body
+                  }
+              })
+              create_result = subprocess.run(
+                  ["gh", "api", "graphql", "--input", "-"],
+                  input=create_gql, capture_output=True, text=True
+              )
+              if create_result.returncode != 0:
+                  print(f"  Failed to create discussion: {create_result.stderr}")
+              else:
+                  data = json.loads(create_result.stdout)
+                  errors = data.get("errors")
+                  if errors:
+                      print(f"  GraphQL errors: {errors}")
+                  else:
+                      url = data["data"]["createDiscussion"]["discussion"]["url"]
+                      print(f"  Discussion created: {url}")
+          PYEOF
