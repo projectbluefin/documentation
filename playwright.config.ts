@@ -6,9 +6,9 @@ const serveCommand = process.env.CI
 
 export default defineConfig({
   testDir: "./tests/e2e",
-  fullyParallel: false,
+  fullyParallel: true,
   retries: 0,
-  workers: 1,
+  workers: process.env.CI ? 4 : undefined,
   reporter: "list",
   use: {
     baseURL: "http://localhost:3000",

@@ -380,7 +380,7 @@ test.describe("aspect ratio integrity", () => {
 // ── Group 3: HTTP response validation ────────────────────────────────────────
 
 test.describe("image HTTP responses", () => {
-  test("all repo-hosted thumbnail URLs return HTTP 200", async ({ page }) => {
+  test("all repo-hosted thumbnail URLs return HTTP 200", async ({ request }) => {
     // Union of manifest-declared URLs and filesystem files (catches orphans too)
     const thumbUrls = new Set<string>();
 
@@ -406,12 +406,14 @@ test.describe("image HTTP responses", () => {
 
     expect(thumbUrls.size, "must find thumbnail URLs to probe").toBeGreaterThan(0);
 
-    await page.goto("/artwork");
+    const urlList = [...thumbUrls];
+    const results = await Promise.allSettled(urlList.map((url) => request.get(url)));
     const failed: string[] = [];
-    for (const url of thumbUrls) {
-      const res = await page.request.get(url);
-      if (res.status() !== 200) {
-        failed.push(`${url}: HTTP ${res.status()}`);
+    for (const [i, result] of results.entries()) {
+      if (result.status === "rejected") {
+        failed.push(`${urlList[i]}: request error`);
+      } else if (result.value.status() !== 200) {
+        failed.push(`${urlList[i]}: HTTP ${result.value.status()}`);
       }
     }
     expect(
@@ -420,7 +422,7 @@ test.describe("image HTTP responses", () => {
     ).toHaveLength(0);
   });
 
-  test("all repo-hosted fullres URLs return HTTP 200", async ({ page }) => {
+  test("all repo-hosted fullres URLs return HTTP 200", async ({ request }) => {
     const fullresUrls = new Set<string>();
 
     const manifest = JSON.parse(fs.readFileSync(ARTWORK_JSON, "utf8"));
@@ -448,12 +450,14 @@ test.describe("image HTTP responses", () => {
 
     expect(fullresUrls.size, "must find fullres URLs to probe").toBeGreaterThan(0);
 
-    await page.goto("/artwork");
+    const urlList = [...fullresUrls];
+    const results = await Promise.allSettled(urlList.map((url) => request.get(url)));
     const failed: string[] = [];
-    for (const url of fullresUrls) {
-      const res = await page.request.get(url);
-      if (res.status() !== 200) {
-        failed.push(`${url}: HTTP ${res.status()}`);
+    for (const [i, result] of results.entries()) {
+      if (result.status === "rejected") {
+        failed.push(`${urlList[i]}: request error`);
+      } else if (result.value.status() !== 200) {
+        failed.push(`${urlList[i]}: HTTP ${result.value.status()}`);
       }
     }
     expect(
