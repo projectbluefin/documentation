@@ -109,6 +109,69 @@ just build  # Build only
 docker compose up
 ```
 
+## Contribution Workflow
+
+New to open source? Here's the full flow from fork to merged PR.
+
+### 1. Fork and clone
+
+1. Click **Fork** on the [documentation repo](https://github.com/projectbluefin/documentation) to get your own copy.
+2. Clone your fork locally:
+
+```bash
+git clone https://github.com/<your-username>/documentation.git
+cd documentation
+```
+
+3. Add the upstream remote so you can pull in future changes:
+
+```bash
+git remote add upstream https://github.com/projectbluefin/documentation.git
+```
+
+### 2. Create a branch
+
+Always work on a feature branch — never commit directly to `main`:
+
+```bash
+git checkout -b docs/my-change
+```
+
+Use a short, descriptive name that reflects the change: `docs/fix-broken-links`, `docs/add-homebrew-guide`, `docs/update-installation-steps`.
+
+### 3. Make your changes
+
+Edit or create `.md` / `.mdx` files in `docs/`, `blog/`, or wherever is appropriate. Preview locally (`npm run start`) as you go.
+
+### 4. Format and check
+
+```bash
+npm run prettier        # REQUIRED before every commit
+npm run start           # verify the page renders correctly
+```
+
+### 5. Commit and push
+
+```bash
+git add .
+git commit -m "docs: brief description of what you changed"
+git push origin docs/my-change
+```
+
+### 6. Open a pull request
+
+Go to your fork on GitHub and click **Compare & pull request**. Fill in the PR template: explain what changed and why, and reference any related issue with `Fixes #N` or `Related to #N`.
+
+### Keeping your fork up to date
+
+Before starting a new branch, sync with upstream to avoid conflicts:
+
+```bash
+git fetch upstream
+git checkout main
+git merge upstream/main
+```
+
 ## Before Submitting
 
 ### Format Your Changes
