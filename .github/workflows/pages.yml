@@ -142,21 +142,65 @@ jobs:
       - name: Build website
         run: npm run build:ci
 
-      - name: Run E2E tests
-        if: false
-        run: npx playwright install --with-deps chromium && npx playwright test
-        env:
-          PLAYWRIGHT_BASE_URL: http://localhost:3000
+      - name: Upload build for E2E
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7
+        with:
+          name: docusaurus-build-${{ github.run_id }}
+          path: build
+          retention-days: 1
 
       - name: Upload Build Artifact
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5
         with:
           path: build
 
+  e2e:
+    name: E2E Tests
+    needs: build
+    if: github.event_name == 'pull_request' || github.event_name == 'merge_group' || github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@fe104658747b27e96e4f7e80cd0a94068e53901d # v2.16.1
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Download build artifact
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4
+        with:
+          name: docusaurus-build-${{ github.run_id }}
+          path: build
+
+      - name: Run Playwright tests
+        run: npx playwright test
+
+      - name: Upload Playwright report
+        if: ${{ !cancelled() && failure() }}
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14
+
   deploy:
     name: Deploy to GitHub Pages
     if: github.ref == 'refs/heads/main'
-    needs: build
+    needs: [build, e2e]
 
     # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
     permissions:
