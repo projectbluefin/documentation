@@ -176,7 +176,7 @@ A single test with 85% reliability cascaded failures across the system. This is 
 | ACMM level | What it corresponds to in Bluefin |
 |------------|-----------------------------------|
 | Instructed | `AGENTS.md`, `docs/SKILL.md`, `.github/skills/` files in each repo |
-| Measured | 255-scenario testsuite + 2-human production Environment gate |
+| Measured | 242-scenario testsuite + 2-human production Environment gate |
 | Adaptive | skill-drift check, skill-audit cron (Monday 09:00 UTC), Renovate automerge |
 | Self-Sustaining / Fully Autonomous | Stated direction; current state is partial — see "F1 car" section above |
 
@@ -280,7 +280,7 @@ flowchart TB
         dakota["projectbluefin/dakota\n(BuildStream / distroless)"]
     end
 
-    testsuite["projectbluefin/testsuite\n(255-scenario E2E gate)"]
+    testsuite["projectbluefin/testsuite\n(242-scenario E2E gate)"]
 
     bluefin -->|smoke gate| testsuite
     lts -->|smoke gate| testsuite
@@ -607,7 +607,7 @@ sudo just build-ghcr bluefin testing main
 
 ### What the testsuite covers
 
-[`projectbluefin/testsuite`](https://github.com/projectbluefin/testsuite) — 255 scenarios across 12 suites, running on standard `ubuntu-latest` GitHub Actions runners via QEMU + KVM. No self-hosted hardware required.
+[`projectbluefin/testsuite`](https://github.com/projectbluefin/testsuite) — 242 scenarios across 11 suites, running on standard `ubuntu-latest` GitHub Actions runners via QEMU + KVM. No self-hosted hardware required.
 
 | Suite | Scenarios | What it validates |
 |-------|:---------:|-------------------|
@@ -622,7 +622,6 @@ sudo just build-ghcr bluefin testing main
 | `security` | 15 | Image provenance, SELinux |
 | `lifecycle` | 13 | `bootc upgrade` + rollback |
 | `hardware` | 10 | Peripheral detection |
-| `flatcar` | 13 | Boot and lifecycle |
 
 Scenarios tagged `@quarantine` are present in the repo but excluded from the promotion gate. Do not remove a `@quarantine` tag until the scenario has a demonstrated pass rate suitable for blocking promotion.
 
