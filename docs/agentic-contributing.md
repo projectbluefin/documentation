@@ -242,6 +242,18 @@ flowchart LR
 | Any other `projectbluefin` repo | That repo's `.github/skills/` — create if absent |
 | Cross-cutting (affects multiple repos) | Local first, then open a propagation issue in `projectbluefin/actions` |
 
+### Where to find what needs review
+
+**[queue.projectbluefin.io](https://queue.projectbluefin.io/)** — the Clanker Control Panel — is the live view of everything waiting for a human decision across the org. It shows open PRs bucketed by review state with approval counts, and hive P0/P1 issues in a priority column.
+
+A **machine-readable reviewer briefing** is available at:
+
+**https://queue.projectbluefin.io/review-guide.md**
+
+This document covers: merge rules per repo, what to check in a PR, the four human gates (Design / Security / User Impact / Promotion), hive label taxonomy, repos tracked, and quick-reference shell commands. Agents and humans alike can `curl` this URL to get a structured, parseable briefing without scraping HTML.
+
+The raw data behind the dashboard is also machine-accessible at `https://queue.projectbluefin.io/data.json` (updated every 10 minutes).
+
 ### What humans check in review
 
 When reviewing an agent PR, verify:
