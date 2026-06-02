@@ -6,7 +6,7 @@ slug: /agentic-contributing
 # Agentic Bluefin — Contributor Guide
 
 :::info What this guide is for
-This guide explains how to contribute to `projectbluefin` — an agentic-first reboot of the Bluefin project. If you are looking for the legacy contributing guide (the one that talks about forking `ublue-os/bluefin`), that is still available at [/contributing](/contributing). This guide describes how things work now.
+This guide explains how to contribute to `projectbluefin` — an agentic-first reboot of the Bluefin project. If you are looking for the production contributing guide (the one that talks about forking `ublue-os/bluefin`), that is still available at [/contributing](/contributing). This guide describes how things will work, we have to test it more. 
 :::
 
 ## What Changed and Why
