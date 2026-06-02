@@ -1,9 +1,10 @@
 name: E2E Tests
 
 on:
-  push:
-    branches: [main]
-  pull_request:
+  # E2E tests are intentionally disabled on push/PR — the full Playwright suite
+  # takes too long and blocks deploys. Do NOT re-enable push/pull_request triggers
+  # without first reducing test time to under 5 minutes.
+  # See: https://github.com/projectbluefin/documentation/issues/904
   workflow_dispatch:
 
 concurrency:
