@@ -79,8 +79,8 @@ Bluefin is a combination of a set of configuration OCI containers which are then
 
 ### Images 
 
-- Bluefin stable: [@projectbluefin/bluefin](https://github.com/projectbluefin/bluefin) - generates Fedora-based Bluefin OCI container
-- Bluefin LTS [@projectbluefin/bluefin-lts](https://github.com/projectbluefin/bluefin-lts) - generates a CentOS-based Bluefin OCI container
+- Bluefin stable: [@ublue-os/bluefin](https://github.com/ublue-os/bluefin) - generates Fedora-based Bluefin OCI container
+- Bluefin LTS [@ublue-os/bluefin-lts](https://github.com/ublue-os/bluefin-lts) - generates a CentOS-based Bluefin OCI container
 - Bluefin distroless prototype (aka Dakotaraptor) [@ublue-os/dakota](https://github.com/projectbluefin/dakota) - generates a GNOME OS based Bluefin OCI container
 
 :::info Distroless
@@ -180,7 +180,7 @@ We're making containers here with bash and a little bit of Python, it's not the 
 
 1. **Fork the repository** on GitHub to your account:
    ```bash
-   # Navigate to https://github.com/projectbluefin/bluefin
+   # Navigate to https://github.com/ublue-os/bluefin
    # Click "Fork" in the upper right
    ```
 
@@ -192,7 +192,7 @@ We're making containers here with bash and a little bit of Python, it's not the 
 
 3. **Add upstream remote**:
    ```bash
-   git remote add upstream https://github.com/projectbluefin/bluefin.git
+   git remote add upstream https://github.com/ublue-os/bluefin.git
    git fetch upstream
    ```
 
@@ -202,8 +202,8 @@ We're making containers here with bash and a little bit of Python, it's not the 
    # Should show:
    # origin    https://github.com/YOUR_USERNAME/bluefin.git (fetch)
    # origin    https://github.com/YOUR_USERNAME/bluefin.git (push)
-   # upstream  https://github.com/projectbluefin/bluefin.git (fetch)
-   # upstream  https://github.com/projectbluefin/bluefin.git (push)
+   # upstream  https://github.com/ublue-os/bluefin.git (fetch)
+   # upstream  https://github.com/ublue-os/bluefin.git (push)
    ```
 
 ## Contribution Workflow
