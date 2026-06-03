@@ -27,6 +27,7 @@
     "fetch-gnome-extensions": "node scripts/fetch-gnome-extensions.js",
     "generate-report": "node scripts/generate-report.mjs",
     "fetch-sbom": "node scripts/fetch-github-sbom.js",
+    "fetch-hive-history": "node scripts/fetch-hive-history.js",
     "fetch-firehose": "node scripts/fetch-firehose.js",
     "generate-card-images": "node scripts/generate-card-images.mjs",
     "fetch-data": "npm run fetch-data:independent && npm run fetch-pin-state && npm run fetch-data:dependent",
