@@ -392,14 +392,17 @@ The snapshot HTML contains multiple `render(` calls. To find the real JSON paylo
 | Governor Timeline | snapshot `timeline[]` | 24h colored mode strip (surge/busy/quiet/idle) |
 | Token Budget | snapshot `governor.budgetPct` etc. | Progress bar, green/amber/red thresholds |
 | Nous / Strategy Lab | snapshot `nous` | Active experiment, snapshot progress, principle count |
-| Agent Formation | snapshot `agents[]` | Per-agent status, ACMM level, sparklines |
+| Frame Formation | snapshot `agents[]` | Per-Frame status, ACMM level, sparklines; each Frame shows 5 summary lines or top 3 advisory work items + a Destiny lore quote |
+| Frame of the Day | snapshot `agents[]` (most active) | 10 summary lines + 5 advisory work items + Frame quote |
+| What Frames Are Doing | snapshot `agents[]` (working only) | 5 full summary lines per active Frame |
+| What Frames Are Working On | `advisoryItems[]` | Advisory digest grouped by Frame |
 | Victory Log | snapshot `victories[]` | Recent hive wins |
 | Velocity Panel | GitHub PR search | 7/30-day merge rate sparklines |
 | Issue Queue | GitHub issues API | P0/P1/agent-ready bucketed |
 | Recently Merged | GitHub PR search (30 PRs) | Guardian/Ghost split, conventional commit badges |
-| Contributor Wall | `hive-history.json` contributors | Unique human contributors across all 15 repos |
+| Contributor Wall | `hive-history.json` contributors | Human contributors only (bots filtered via `isBotLogin()`); metric = repos active in, sorted by repo count desc |
 | Factory Trends | `hive-history.json` entries (last 72) | 6 sparklines: ACMM, budget, queue, advisories, merged/cycle, merge time |
-| Contributor Leaderboard | `hive-history.json` contributorStats | Tabs: All Time / This Month / This Week; top 25; milestone badges |
+| Contributor Leaderboard | `hive-history.json` contributorStats | Tabs: All Time / This Month / This Week; top 25; bots filtered; milestone badges |
 
 ### Destiny lore two-column layout
 
@@ -410,7 +413,7 @@ The snapshot HTML contains multiple `render(` calls. To find the real JSON paylo
 
 ### Contributor Leaderboard
 
-Tabs: All Time / This Month / This Week. Top 25 per tab. Shows rank, avatar, commit count, top repos, milestone badges.
+Tabs: All Time / This Month / This Week. Top 25 per tab. Shows rank, avatar, repos active in, top repos, milestone badges. Bots excluded via `isBotLogin()`.
 
 Milestone badge tiers (highest earned shown):
 
@@ -457,7 +460,16 @@ Weekly/monthly data (from GitHub `/stats/contributors`) accumulates after CI war
 - Ghosts accent: `#2563eb` / `#93c5fd` (sapphire)
 - Governor modes: surge=`#f85149` busy=`#d97706` quiet=`#3b82f6` idle=`#21262d`
 
-### Adding a new data panel
+### Frame quotes (Destiny lore)
+
+Frames (the dashboard's agents) display verbatim in-game Destiny dialogue from Destinypedia:
+
+- **Working Frames** get calm Benedict-99 lines: "Strength in Light.", "Traveler keep you safe.", etc.
+- **Idle Frames** get Sweeperbot existential lines: "Woe is me.", "All is lost....All. is. lost!", etc.
+
+Quote selection is hash-stable per Frame ID (`pickFrameQuote(id, working)`). Quotes appear at the bottom of each FrameCard, FrameOfDay, and FormationLog panel.
+
+
 
 1. Add interface fields to `HiveSnapshot` (types block ~L36-100)
 2. Extract in `parseSnapshotJson` (~L260-380)
