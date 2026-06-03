@@ -489,22 +489,33 @@ function StatCard({
   value,
   sub,
   accent,
+  spark,
+  sparkColor,
 }: {
   label: string;
   value: string | number;
   sub?: string;
   accent?: string;
+  spark?: number[];
+  sparkColor?: SparkColor;
 }) {
   return (
     <div className={styles.statCard}>
-      <div
-        className={styles.statValue}
-        style={accent ? { color: accent } : undefined}
-      >
-        {value}
+      <div className={styles.statCardBody}>
+        <div
+          className={styles.statValue}
+          style={accent ? { color: accent } : undefined}
+        >
+          {value}
+        </div>
+        <div className={styles.statLabel}>{label}</div>
+        {sub ? <div className={styles.statSub}>{sub}</div> : null}
+        {spark && spark.some((v) => v > 0) && (
+          <div className={styles.statSpark}>
+            <MiniSparkline data={spark} color={sparkColor} />
+          </div>
+        )}
       </div>
-      <div className={styles.statLabel}>{label}</div>
-      {sub ? <div className={styles.statSub}>{sub}</div> : null}
     </div>
   );
 }
@@ -592,6 +603,50 @@ function Sparkline({ data }: { data: number[] }) {
       <polyline points={linePts} className={styles.sparklineLine} />
     </svg>
   );
+}
+
+type SparkColor = "default" | "green" | "amber" | "purple";
+
+function MiniSparkline({ data, color = "default" }: { data: number[]; color?: SparkColor }) {
+  if (data.length < 2) return null;
+  const W = 100;
+  const H = 24;
+  const max = Math.max(...data, 1);
+  const pts = data.map((v, i) => {
+    const x = (i / (data.length - 1)) * W;
+    const y = H - 2 - (v / max) * (H - 6);
+    return `${x},${y}`;
+  });
+  const linePts = pts.join(" ");
+  const area = `M ${pts[0]} L ${pts.slice(1).join(" L ")} L ${W},${H} L 0,${H} Z`;
+  const colorCls = color === "green"
+    ? styles.miniSparklineGreen
+    : color === "amber"
+      ? styles.miniSparklineAmber
+      : color === "purple"
+        ? styles.miniSparklinePurple
+        : "";
+  return (
+    <svg
+      viewBox={`0 0 ${W} ${H}`}
+      className={`${styles.miniSparkline} ${colorCls}`}
+      aria-hidden="true"
+    >
+      <path d={area} className={styles.miniSparklineArea} />
+      <polyline points={linePts} className={styles.miniSparklineLine} />
+    </svg>
+  );
+}
+
+function victorySparkData(recent: VictoryItem[], days = 14): number[] {
+  const buckets = new Array(days).fill(0);
+  const now = Date.now();
+  for (const item of recent) {
+    const daysAgo = (now - new Date(item.updated_at).getTime()) / 86400000;
+    const idx = Math.min(Math.floor(daysAgo), days - 1);
+    if (idx >= 0) buckets[days - 1 - idx]++;
+  }
+  return buckets;
 }
 
 function _QueueBar({ ready, claimed, p0 }: QueueStats) {
@@ -755,20 +810,40 @@ function VelocityPanel({
         ? `down net ${net}`
         : "flat net 0";
 
+  const maxVal = Math.max(opened, closed, 1);
+  const openedH = Math.max((opened / maxVal) * 52, opened > 0 ? 4 : 0);
+  const closedH = Math.max((closed / maxVal) * 52, closed > 0 ? 4 : 0);
+
   return (
     <section className={styles.panel}>
       <Heading as="h2" className={styles.panelTitle}>
         Issue Velocity
       </Heading>
       <p className={styles.panelMeta}>Issues · last 7 days · projectbluefin org</p>
-      <div className={styles.velocityRow}>
+      <div className={styles.velocityBars}>
+        <div
+          className={`${styles.velocityBar} ${styles.velocityBarOpened}`}
+          style={{ height: `${openedH}px` }}
+          title={`${opened} opened`}
+        >
+          <span className={styles.velocityBarLabel}>{opened} opened</span>
+        </div>
+        <div
+          className={`${styles.velocityBar} ${styles.velocityBarClosed}`}
+          style={{ height: `${closedH}px` }}
+          title={`${closed} closed`}
+        >
+          <span className={styles.velocityBarLabel}>{closed} closed</span>
+        </div>
+      </div>
+      <div className={styles.velocityRow} style={{ marginTop: "1.5rem" }}>
         <div>
           <div className={styles.velocityNum}>{opened}</div>
-          <div className={styles.miniLabel}>opened this week</div>
+          <div className={styles.miniLabel}>opened</div>
         </div>
         <div>
           <div className={styles.velocityNum}>{closed}</div>
-          <div className={styles.miniLabel}>closed this week</div>
+          <div className={styles.miniLabel}>closed</div>
         </div>
       </div>
       <div
@@ -1410,11 +1485,12 @@ function VictoryLog({
     key: keyof Omit<QueueData["victories"], "startDate">;
     label: string;
     labelCls: string;
+    sparkColor: SparkColor;
     data: VictoryCategory;
   }> = [
-    { key: "dreams", label: "FEATURES", labelCls: styles.victoryCategoryFeatures, data: victories.dreams },
-    { key: "relief", label: "FIXED", labelCls: styles.victoryCategoryFixed, data: victories.relief },
-    { key: "toil", label: "AUTOMATED", labelCls: styles.victoryCategoryAutomated, data: victories.toil },
+    { key: "dreams", label: "FEATURES", labelCls: styles.victoryCategoryFeatures, sparkColor: "purple", data: victories.dreams },
+    { key: "relief", label: "FIXED", labelCls: styles.victoryCategoryFixed, sparkColor: "amber", data: victories.relief },
+    { key: "toil", label: "AUTOMATED", labelCls: styles.victoryCategoryAutomated, sparkColor: "green", data: victories.toil },
   ];
 
   return (
@@ -1426,41 +1502,49 @@ function VictoryLog({
         </p>
       </div>
       <div className={styles.victoryColumns}>
-        {cols.map(({ key, label, labelCls, data }) => (
-          <div key={key} className={styles.victoryCol}>
-            <div className={styles.victoryColHeader}>
-              <span className={`${styles.victoryCategoryLabel} ${labelCls}`}>
-                {label}
-              </span>
-              <span className={styles.victoryCount}>{data.count}</span>
-              <span className={styles.victoryCountSub}>this cycle</span>
-            </div>
-            <div className={styles.victoryList}>
-              {data.recent.slice(0, 5).map((item, i) => {
-                const repo = parseRepoName(item.repository_url);
-                return (
-                  <Link
-                    key={i}
-                    href={item.html_url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className={styles.victoryItem}
-                  >
-                    <span className={styles.victoryItemTitle}>
-                      {item.title.slice(0, 72)}
-                    </span>
-                    <div className={styles.victoryItemMeta}>
-                      <span className={styles.victoryItemRepo}>{repo}</span>
-                      <span className={styles.victoryItemAge}>
-                        {relTime(item.updated_at)}
+        {cols.map(({ key, label, labelCls, sparkColor, data }) => {
+          const spark = victorySparkData(data.recent, 14);
+          return (
+            <div key={key} className={styles.victoryCol}>
+              <div className={styles.victoryColHeader}>
+                <span className={`${styles.victoryCategoryLabel} ${labelCls}`}>
+                  {label}
+                </span>
+                <span className={styles.victoryCount}>{data.count}</span>
+                <span className={styles.victoryCountSub}>this cycle</span>
+              </div>
+              {spark.some((v) => v > 0) && (
+                <div className={styles.victorySpark}>
+                  <MiniSparkline data={spark} color={sparkColor} />
+                </div>
+              )}
+              <div className={styles.victoryList}>
+                {data.recent.slice(0, 5).map((item, i) => {
+                  const repo = parseRepoName(item.repository_url);
+                  return (
+                    <Link
+                      key={i}
+                      href={item.html_url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className={styles.victoryItem}
+                    >
+                      <span className={styles.victoryItemTitle}>
+                        {item.title.slice(0, 72)}
                       </span>
-                    </div>
-                  </Link>
-                );
-              })}
+                      <div className={styles.victoryItemMeta}>
+                        <span className={styles.victoryItemRepo}>{repo}</span>
+                        <span className={styles.victoryItemAge}>
+                          {relTime(item.updated_at)}
+                        </span>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
@@ -1791,6 +1875,40 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
           </div>
           <div className={styles.heroRight}>
             <LivePulse />
+            {commits.length > 1 && (
+              <div className={styles.heroSpark}>
+                <svg
+                  viewBox="0 0 100 28"
+                  className={styles.heroSparkline}
+                  aria-hidden="true"
+                >
+                  {(() => {
+                    const W = 100; const H = 28;
+                    const max = Math.max(...commits, 1);
+                    const pts = commits.map((v, i) => {
+                      const x = (i / (commits.length - 1)) * W;
+                      const y = H - 2 - (v / max) * (H - 6);
+                      return `${x},${y}`;
+                    });
+                    const area = `M ${pts[0]} L ${pts.slice(1).join(" L ")} L ${W},${H} L 0,${H} Z`;
+                    return (
+                      <>
+                        <path d={area} fill="rgba(63,185,80,0.12)" />
+                        <polyline
+                          points={pts.join(" ")}
+                          fill="none"
+                          stroke="#3fb950"
+                          strokeWidth="1.5"
+                          strokeLinejoin="round"
+                          strokeLinecap="round"
+                        />
+                      </>
+                    );
+                  })()}
+                </svg>
+                <span className={styles.heroSparkLabel}>{totalCommits} commits / 12w</span>
+              </div>
+            )}
             {snapshot?.acmmMode && (
               <span
                 className={`${styles.modeBadge} ${
@@ -1850,6 +1968,20 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
               }
               sub="features + fixes"
               accent="#3fb950"
+              spark={victorySparkData([
+                ...queueData.victories.dreams.recent,
+                ...queueData.victories.relief.recent,
+              ].sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()), 14)}
+              sparkColor="green"
+            />
+          )}
+          {commits.length > 1 && (
+            <StatCard
+              label="Commit Activity"
+              value={totalCommits}
+              sub="last 12 weeks"
+              spark={commits}
+              sparkColor="green"
             />
           )}
           {repos.length > 0 && (
