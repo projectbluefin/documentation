@@ -236,6 +236,16 @@ Triggers: PR to main, **push to main** (separate from pages.yml E2E step)
 
 Runs a full build + Playwright test on every push to main and every PR. Uploads `playwright-report/` artifact on failure. Uses `github.token` only. Does NOT deploy.
 
+### `update-hive-cache.yml` — Hive history pipeline
+
+Triggers: schedule (every 2h), workflow_dispatch
+
+Steps: checkout → setup-node → restore hive cache (incremental, key: `github-data-hive-`) → `npm run fetch-hive-history` → save cache → commit updated `static/data/hive-history.json`
+
+Permissions: `contents:write` — commits history file back to main.
+
+Fetches: Hive snapshot HTML, org contributor counts (all-time), contributor weekly stats (GitHub `/stats/contributors`, daily TTL), per-repo contributor breakdown. Appends snapshot entry every 2h (max 2016 entries / ~6 months rolling).
+
 ### `update-sbom-cache.yml` — Nightly SBOM fetch
 
 Triggers: schedule (04:00 UTC nightly), workflow_dispatch
@@ -284,6 +294,7 @@ Runs `renovate-config-validator --strict`.
 | `MusicPlaylist.tsx` | `docs/music.md` | `static/data/playlist-metadata.json` |
 | `PageContributors.tsx` | DocItem/Footer (all doc pages) | `static/data/file-contributors.json` |
 | `GiscusComments/` | Blog posts | GitHub Discussions via Giscus |
+| `HiveFactoryDashboard.tsx` | `src/pages/hive.tsx` (`/hive/`) | Client-side: snapshot HTML, queue API, GitHub API, `hive-history.json` |
 
 ### Changelog package tracking
 
@@ -341,6 +352,123 @@ export GITHUB_TOKEN=$(gh auth token)
 npm run generate-report
 npm run start   # preview at http://localhost:3000/reports
 ```
+
+---
+
+## Hive Factory Dashboard
+
+The Bluefin OS Factory live dashboard lives at `docs.projectbluefin.io/hive/`.
+
+- Source: `src/components/HiveFactoryDashboard.tsx` (~3200 lines) + `HiveFactoryDashboard.module.css`
+- Page wrapper: `src/pages/hive.tsx`
+- Title: **Bluefin Operating System Factory** (no "The") — subtitle unchanged
+- Tagline at page bottom: "Enslaving the Oppressors since 2026" (Destiny lore)
+
+### Data sources
+
+All data is fetched **client-side at runtime** — no build-time fetch for the hive snapshot.
+
+| Source | What it provides |
+|---|---|
+| Snapshot HTML at `raw.githubusercontent.com/kubestellar/docs/main/public/live/hive/bluefin/index.html` | Live hive state — governor mode, ACMM level, agent status, victories, advisories |
+| `queue.projectbluefin.io/data.json` | Guardians/Ghosts PR queue (regenerates every 10 min) |
+| GitHub API (`api.github.com`) | PR search (merged/open), org stats, commit activity |
+| `static/data/hive-history.json` | Historical snapshot entries, org-wide contributor stats |
+
+**`hive-history.json`** is a committed file (gitignore exception) updated every 2h by `.github/workflows/update-hive-cache.yml`. Script: `scripts/fetch-hive-history.js`.
+
+### Snapshot parsing
+
+The snapshot HTML contains multiple `render(` calls. To find the real JSON payload:
+- Scan all `render(` occurrences; pick the one where the next non-whitespace char is `{`
+- Top-level `acmmLevel` field is at the root — NOT `agentMetrics.outreach.acmm`
+
+### Panels
+
+| Panel | Data source | Notes |
+|---|---|---|
+| Hero / ACMM level | snapshot root `acmmLevel` | Mission timer, velocity sparkline |
+| Governor panel | snapshot `governor` | Mode, queue depth, thresholds |
+| Governor Timeline | snapshot `timeline[]` | 24h colored mode strip (surge/busy/quiet/idle) |
+| Token Budget | snapshot `governor.budgetPct` etc. | Progress bar, green/amber/red thresholds |
+| Nous / Strategy Lab | snapshot `nous` | Active experiment, snapshot progress, principle count |
+| Agent Formation | snapshot `agents[]` | Per-agent status, ACMM level, sparklines |
+| Victory Log | snapshot `victories[]` | Recent hive wins |
+| Velocity Panel | GitHub PR search | 7/30-day merge rate sparklines |
+| Issue Queue | GitHub issues API | P0/P1/agent-ready bucketed |
+| Recently Merged | GitHub PR search (30 PRs) | Guardian/Ghost split, conventional commit badges |
+| Contributor Wall | `hive-history.json` contributors | Unique human contributors across all 15 repos |
+| Factory Trends | `hive-history.json` entries (last 72) | 6 sparklines: ACMM, budget, queue, advisories, merged/cycle, merge time |
+| Contributor Leaderboard | `hive-history.json` contributorStats | Tabs: All Time / This Month / This Week; top 25; milestone badges |
+
+### Destiny lore two-column layout
+
+| Column | Title | Color | Contents |
+|---|---|---|---|
+| Left | Guardians | Warm gold `#d97706` | Human contributor PRs — the Light we carry |
+| Right | Ghosts | Sapphire `#2563eb` / `#93c5fd` | Agent-driven issues — the machines at work |
+
+### Contributor Leaderboard
+
+Tabs: All Time / This Month / This Week. Top 25 per tab. Shows rank, avatar, commit count, top repos, milestone badges.
+
+Milestone badge tiers (highest earned shown):
+
+| Badge | Threshold | Color |
+|---|---|---|
+| Mythic | 5000+ lifetime commits | `#ff7b72` |
+| Legend | 1000+ lifetime commits | `#f0883e` |
+| Elite | 500+ lifetime commits | `#bc8cff` |
+| Veteran | 100+ lifetime commits | `#58a6ff` |
+| Contributor | 10+ lifetime commits | `#3fb950` |
+| Sprint | 10+ commits this week | `#d29922` |
+| Rising | This week > 1.5x 4-week avg | `#3fb950` |
+| Multi-repo | Active in 3+ repos | `#a371f7` |
+
+Weekly/monthly data (from GitHub `/stats/contributors`) accumulates after CI warms the stats cache. Falls back to all-time view during warmup.
+
+### hive-history.json schema
+
+```json
+{
+  "entries": [{ "t": ms, "acmmLevel": 3, "govMode": "busy", "queue": 175, "agents": 6,
+                "runningAgents": 5, "advisories": 0, "budgetPct": null,
+                "mergedToday": null, "mergedThisWeek": null, "medianMergeMins": 801 }],
+  "contributors": { "login": totalCommits },
+  "contributorsByRepo": { "repo": { "login": commits } },
+  "lastContributorFetch": "ISO",
+  "contributorStats": {
+    "login": { "total": N, "lastWeek": N, "lastMonth": N, "last3Months": N, "byRepo": {"repo": commits} }
+  },
+  "lastWeeklyStatsFetch": "ISO"
+}
+```
+
+`contributorStats` is populated by `fetchContributorWeeklyStats()` in `fetch-hive-history.js` (daily TTL). GitHub's `/stats/contributors` returns HTTP 202 on cold cache — script retries with backoff.
+
+### Factory repos tracked (15)
+
+`bluefin`, `common`, `documentation`, `actions`, `bluefin-lts`, `dakota`, `bonedigger`, `bootc-installer`, `knuckle`, `testsuite`, `website`, `brew`, `iso`, `wolfictl`, `fisherman`
+
+### Theme constants
+
+- Background: `#0d1117`
+- Guardians accent: `#d97706` (amber)
+- Ghosts accent: `#2563eb` / `#93c5fd` (sapphire)
+- Governor modes: surge=`#f85149` busy=`#d97706` quiet=`#3b82f6` idle=`#21262d`
+
+### Adding a new data panel
+
+1. Add interface fields to `HiveSnapshot` (types block ~L36-100)
+2. Extract in `parseSnapshotJson` (~L260-380)
+3. Write the component (follow `GovernorTimeline` or `TokenBudgetPanel` as template)
+4. Add CSS to `HiveFactoryDashboard.module.css`
+5. Wire into JSX render (conditionally on data presence)
+6. `npm run typecheck && npm run lint` — both must pass
+
+**Never** add `fetch-sbom` or `fetch-data` to the hive pipeline — the snapshot is fetched client-side at runtime.
+
+**CSP:** `connect-src` in `docusaurus.config.ts` must include `raw.githubusercontent.com`, `queue.projectbluefin.io`, `api.github.com`.
 
 ---
 
