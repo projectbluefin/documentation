@@ -1,8 +1,8 @@
 # Bluefin Documentation — Agent Instructions
 
-**Repository:** `castrojo/documentation` (fork of `projectbluefin/documentation`)  
+**Repository:** `projectbluefin/documentation`  
 **Deployed at:** <https://docs.projectbluefin.io/>  
-**Local path:** `/var/home/jorge/src/documentation`  
+**Local setup:** Clone locally with `gh repo clone projectbluefin/documentation`  
 **Framework:** Docusaurus 3.10.x (TypeScript), React 19, Node 24
 
 ---
@@ -11,7 +11,7 @@
 
 ```bash
 # Install dependencies
-npm install
+npm install --legacy-peer-deps
 
 # Start dev server (fetches data automatically, hot-reload)
 npm run start
