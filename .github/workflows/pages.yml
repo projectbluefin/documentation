@@ -72,6 +72,16 @@ jobs:
           restore-keys: |
             github-profiles-v1-
 
+      - name: Restore Hive history cache
+        # Populated by update-hive-cache.yml every 2 hours.
+        # Primary key never matches; restore-keys fetches the latest entry.
+        uses: actions/cache/restore@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
+        with:
+          path: static/data/hive-history.json
+          key: hive-history-${{ github.run_id }}
+          restore-keys: |
+            hive-history-
+
       - name: Restore SBOM attestation cache
         id: sbom-cache
         # Populated by update-sbom-cache.yml nightly at 04:00 UTC.

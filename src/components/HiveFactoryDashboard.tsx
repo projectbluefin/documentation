@@ -187,6 +187,35 @@ interface RepoPRs {
   label: string;
 }
 
+// ── Hive history types ─────────────────────────────────────────────────────
+
+interface HiveHistoryEntry {
+  t: number;
+  acmmLevel?: number;
+  govMode?: string;
+  queue?: number;
+  agents?: number;
+  runningAgents?: number;
+  advisories?: number;
+  budgetPct?: number;
+  mergedToday?: number;
+  mergedThisWeek?: number;
+  medianMergeMins?: number;
+}
+
+interface OrgContributor {
+  login: string;
+  commits: number;
+  repos: string[];
+}
+
+interface HiveHistory {
+  entries: HiveHistoryEntry[];
+  contributors: Record<string, number>;
+  contributorsByRepo: Record<string, Record<string, number>>;
+  lastContributorFetch?: string;
+}
+
 // ── Queue types ────────────────────────────────────────────────────────────
 
 interface QueueLabel { name: string; color: string; }
@@ -352,7 +381,7 @@ function parseSnapshotJson(data: Record<string, unknown>): {
       beads,
       cadenceMatrix,
       health,
-      acmmLevel: agentMetrics?.outreach?.acmm ?? undefined,
+      acmmLevel: typeof data.acmmLevel === "number" ? data.acmmLevel : agentMetrics?.outreach?.acmm ?? undefined,
       acmmMode: governor.mode,
       medianMergeMins: issueToMerge?.median_minutes ?? issueToMerge?.avg_minutes,
       p90MergeMins: issueToMerge?.p90_minutes,
@@ -392,31 +421,44 @@ function parseSnapshotJson(data: Record<string, unknown>): {
 async function extractRenderJson(
   html: string,
 ): Promise<Record<string, unknown> | null> {
-  const idx = html.indexOf("render(");
-  if (idx === -1) return null;
-  const start = html.indexOf("{", idx);
-  if (start === -1) return null;
-  let depth = 0;
-  let inStr = false;
-  let strChar = "";
-  let escaped = false;
-  for (let i = start; i < html.length; i++) {
-    const ch = html[i];
-    if (escaped) { escaped = false; continue; }
-    if (ch === "\\" && inStr) { escaped = true; continue; }
-    if (inStr) { if (ch === strChar) inStr = false; continue; }
-    if (ch === '"' || ch === "'") { inStr = true; strChar = ch; continue; }
-    if (ch === "{") depth++;
-    else if (ch === "}") {
-      depth--;
-      if (depth === 0) {
-        try {
-          return JSON.parse(html.slice(start, i + 1)) as Record<string, unknown>;
-        } catch {
-          return null;
+  // Skip render(data) function definition and render(window._lastStatus) calls.
+  // Find the first render({...}) call with an object literal payload.
+  let searchFrom = 0;
+  while (searchFrom < html.length) {
+    const callIdx = html.indexOf("render(", searchFrom);
+    if (callIdx === -1) return null;
+    const afterParen = callIdx + 7;
+    // Skip whitespace to find what follows render(
+    let j = afterParen;
+    while (j < html.length && (html[j] === " " || html[j] === "\n" || html[j] === "\r")) j++;
+    if (html[j] !== "{") {
+      searchFrom = afterParen;
+      continue;
+    }
+    const start = j;
+    let depth = 0;
+    let inStr = false;
+    let strChar = "";
+    let escaped = false;
+    for (let i = start; i < html.length; i++) {
+      const ch = html[i];
+      if (escaped) { escaped = false; continue; }
+      if (ch === "\\" && inStr) { escaped = true; continue; }
+      if (inStr) { if (ch === strChar) inStr = false; continue; }
+      if (ch === '"' || ch === "'") { inStr = true; strChar = ch; continue; }
+      if (ch === "{") depth++;
+      else if (ch === "}") {
+        depth--;
+        if (depth === 0) {
+          try {
+            return JSON.parse(html.slice(start, i + 1)) as Record<string, unknown>;
+          } catch {
+            return null;
+          }
         }
       }
     }
+    return null;
   }
   return null;
 }
@@ -1085,32 +1127,67 @@ function NousPanel({ nous }: { nous: NousStatus }) {
   );
 }
 
-function ContributorWall({ prs }: { prs: MergedPR[] }) {
-  const humans: string[] = [];
-  for (const pr of prs) {
-    if (pr.isBot || humans.includes(pr.author)) continue;
-    humans.push(pr.author);
-    if (humans.length >= 20) break;
-  }
+function ContributorWall({
+  prs,
+  history,
+}: {
+  prs: MergedPR[];
+  history: HiveHistory | null;
+}) {
+  // Use org-wide history contributors if available; fall back to recent PRs
+  const orgContributors: OrgContributor[] = React.useMemo(() => {
+    if (history?.contributors && Object.keys(history.contributors).length > 0) {
+      const byRepo = history.contributorsByRepo ?? {};
+      return Object.entries(history.contributors)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 48)
+        .map(([login, commits]) => ({
+          login,
+          commits,
+          repos: Object.entries(byRepo)
+            .filter(([, rc]) => rc[login] != null)
+            .sort((a, b) => (b[1][login] ?? 0) - (a[1][login] ?? 0))
+            .map(([repo]) => repo),
+        }));
+    }
+    // fallback: derive from recent PRs
+    const seen = new Set<string>();
+    const out: OrgContributor[] = [];
+    for (const pr of prs) {
+      if (pr.isBot || seen.has(pr.author)) continue;
+      seen.add(pr.author);
+      out.push({ login: pr.author, commits: 0, repos: [pr.repo] });
+      if (out.length >= 20) break;
+    }
+    return out;
+  }, [history, prs]);
+
   const botCount = prs.filter((pr) => pr.isBot).length;
+  const isOrgWide = history?.contributors && Object.keys(history.contributors).length > 0;
+  const totalCommits = isOrgWide
+    ? Object.values(history!.contributors).reduce((s, n) => s + n, 0)
+    : null;
 
   return (
     <section className={styles.panel}>
       <Heading as="h2" className={styles.panelTitle}>
-        Contributor Wall
+        Factory Contributors
       </Heading>
       <p className={styles.panelMeta}>
-        Humans landing code in the latest merged queue
+        {isOrgWide
+          ? `${orgContributors.length} humans · ${totalCommits?.toLocaleString()} commits across all factory repos`
+          : "Humans landing code in the latest merged queue"}
       </p>
-      {humans.length > 0 ? (
+      {orgContributors.length > 0 ? (
         <div className={styles.contributorGrid}>
-          {humans.map((login) => (
+          {orgContributors.map(({ login, commits, repos }) => (
             <Link
               key={login}
               href={`https://github.com/${login}`}
               target="_blank"
               rel="noreferrer"
               className={styles.contributorCard}
+              title={repos.length > 0 ? `${login} · ${repos.slice(0, 3).join(", ")}` : login}
             >
               <img
                 src={`https://github.com/${login}.png?size=40`}
@@ -1119,6 +1196,9 @@ function ContributorWall({ prs }: { prs: MergedPR[] }) {
                 loading="lazy"
               />
               <span className={styles.contributorName}>{login}</span>
+              {commits > 0 && (
+                <span className={styles.contributorCommits}>{commits >= 1000 ? `${(commits / 1000).toFixed(1)}k` : commits}</span>
+              )}
             </Link>
           ))}
         </div>
@@ -1126,11 +1206,98 @@ function ContributorWall({ prs }: { prs: MergedPR[] }) {
         <div className={styles.empty}>Agents are running the show</div>
       )}
       {botCount > 0 ? (
-        <div className={styles.botCountChip}>{botCount} agent PRs</div>
+        <div className={styles.botCountChip}>{botCount} agent PRs in last batch</div>
       ) : null}
     </section>
   );
 }
+
+function HistoryTrends({ history }: { history: HiveHistory | null }) {
+  if (!history || history.entries.length < 2) return null;
+
+  const entries = history.entries.slice(-72); // last ~6 days (2h interval)
+
+  function sparkPoints(values: Array<number | undefined>, w: number, h: number): string {
+    const nums = values.map((v) => v ?? 0);
+    const max = Math.max(...nums, 1);
+    const step = w / Math.max(nums.length - 1, 1);
+    return nums.map((v, i) => `${i * step},${h - (v / max) * (h - 2) - 1}`).join(" ");
+  }
+
+  const acmm = entries.map((e) => e.acmmLevel);
+  const budget = entries.map((e) => e.budgetPct);
+  const queueDepth = entries.map((e) => e.queue);
+  const advisories = entries.map((e) => e.advisories);
+  const mergedDay = entries.map((e) => e.mergedToday);
+  const medianTime = entries.map((e) => e.medianMergeMins);
+
+  type SparkDef = {
+    label: string;
+    values: Array<number | undefined>;
+    color: string;
+    unit?: string;
+    latest?: number | undefined;
+  };
+
+  const sparks: SparkDef[] = [
+    { label: "ACMM Level", values: acmm, color: "#d29922", unit: "L", latest: acmm.at(-1) },
+    { label: "Budget Used", values: budget, color: "#f85149", unit: "%", latest: budget.at(-1) },
+    { label: "Queue Depth", values: queueDepth, color: "#58a6ff", unit: "", latest: queueDepth.at(-1) },
+    { label: "Advisories", values: advisories, color: "#bc8cff", unit: "", latest: advisories.at(-1) },
+    { label: "Merged / Cycle", values: mergedDay, color: "#3fb950", unit: "", latest: mergedDay.at(-1) },
+    { label: "Median Merge (m)", values: medianTime, color: "#f0883e", unit: "m", latest: medianTime.at(-1) },
+  ];
+
+  const W = 160;
+  const H = 36;
+
+  return (
+    <section className={styles.panel}>
+      <Heading as="h2" className={styles.panelTitle}>
+        Factory Trends
+      </Heading>
+      <p className={styles.panelMeta}>
+        Historical metrics · {entries.length} snapshots · last {Math.round(entries.length * 2)}h
+      </p>
+      <div className={styles.historyTrendsGrid}>
+        {sparks.map(({ label, values, color, unit, latest }) => {
+          const hasData = values.some((v) => v != null && v > 0);
+          return (
+            <div key={label} className={styles.historyTrendCard}>
+              <div className={styles.historyTrendLabel}>{label}</div>
+              <div className={styles.historyTrendValue} style={{ color }}>
+                {latest != null ? `${unit === "L" ? "L" : ""}${typeof latest === "number" ? latest : "—"}${unit && unit !== "L" ? unit : ""}` : "—"}
+              </div>
+              {hasData ? (
+                <svg
+                  viewBox={`0 0 ${W} ${H}`}
+                  className={styles.historySparkline}
+                  aria-hidden
+                >
+                  <polyline
+                    points={sparkPoints(values, W, H)}
+                    fill="none"
+                    stroke={color}
+                    strokeWidth="1.5"
+                    strokeLinejoin="round"
+                    strokeLinecap="round"
+                    opacity="0.85"
+                  />
+                </svg>
+              ) : (
+                <div className={styles.historySparklineEmpty}>accumulating data</div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+      <p className={styles.panelMeta} style={{ marginTop: "0.75rem" }}>
+        Updated every 2 hours by the cache pipeline
+      </p>
+    </section>
+  );
+}
+
 
 function VelocityPanel({
   velocity,
@@ -1902,6 +2069,7 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
   const [repoPRs, setRepoPRs] = useState<RepoPRs[]>([]);
   const [mergedPRs, setMergedPRs] = useState<MergedPR[]>([]);
   const [velocity, setVelocity] = useState<Velocity | null>(null);
+  const [hiveHistory, setHiveHistory] = useState<HiveHistory | null>(null);
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [refreshIn, setRefreshIn] = useState(REFRESH_SECS);
@@ -2101,6 +2269,14 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
       setLastUpdated(new Date());
       setRefreshIn(REFRESH_SECS);
     }
+  }, []);
+
+  // Fetch hive history (build-time JSON, no token required)
+  useEffect(() => {
+    fetch("/data/hive-history.json")
+      .then((r) => r.ok ? r.json() as Promise<HiveHistory> : null)
+      .then((data) => { if (data) setHiveHistory(data); })
+      .catch(() => {/* non-fatal */});
   }, []);
 
   useEffect(() => {
@@ -2491,7 +2667,8 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
 
         {/* Merged + Contributors */}
         <MergedPRFeed prs={mergedPRs} />
-        <ContributorWall prs={mergedPRs} />
+        <ContributorWall prs={mergedPRs} history={hiveHistory} />
+        <HistoryTrends history={hiveHistory} />
 
         {/* Velocity + Org stats */}
         <div className={styles.twoCol}>
