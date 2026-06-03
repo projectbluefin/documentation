@@ -33,6 +33,30 @@ interface AdvisoryItem {
   title: string;
 }
 
+interface HiveTimelineTick {
+  t: number;
+  mode: string;
+}
+
+interface NousStatus {
+  mode?: string;
+  scope?: string;
+  activeExperiment?: {
+    id: string;
+    progressPct: number;
+    elapsed: number;
+    ttlSec: number;
+  } | null;
+  snapshotCount?: number;
+  snapshotTarget?: number;
+  principleCount?: number;
+  hasRecommendations?: boolean;
+  phases?: {
+    governor?: { phase: string; iteration: number };
+    repo?: { phase: string; iteration: number };
+  };
+}
+
 interface HiveSnapshot {
   timestamp: string;
   hiveId: string;
@@ -48,6 +72,15 @@ interface HiveSnapshot {
   advisoryCount?: number;
   advisoryItems?: AdvisoryItem[];
   advisoryIssue?: number;
+  // Extended fields from full render() payload
+  budgetPct?: number;
+  budgetTotal?: number;
+  budgetUsed?: number;
+  governorQueue?: number;
+  governorTimeline?: HiveTimelineTick[];
+  nous?: NousStatus;
+  mergedToday?: number;
+  mergedThisWeek?: number;
 }
 
 interface HiveConfig {
@@ -262,6 +295,55 @@ function parseSnapshotJson(data: Record<string, unknown>): {
     } | undefined;
     const advisoryItems = (data.advisoryItems as AdvisoryItem[]) ?? [];
 
+    // Extended: token budget from governor or top-level
+    const govObj = isRecord(data.governor) ? data.governor : {};
+    const budgetPct =
+      typeof govObj.budgetPct === "number" ? govObj.budgetPct :
+      typeof data.budgetPct === "number" ? data.budgetPct : undefined;
+    const tokenBudget = isRecord(data.tokenBudget) ? data.tokenBudget :
+      isRecord(govObj.budget) ? govObj.budget : null;
+    const budgetTotal = typeof tokenBudget?.total === "number" ? tokenBudget.total :
+      typeof tokenBudget?.totalTokens === "number" ? (tokenBudget.totalTokens as number) : undefined;
+    const budgetUsed = typeof tokenBudget?.used === "number" ? tokenBudget.used :
+      budgetPct != null && budgetTotal != null ? Math.round(budgetPct / 100 * budgetTotal) : undefined;
+
+    // Extended: governor queue depth
+    const governorQueue = typeof govObj.queue === "number" ? govObj.queue :
+      typeof govObj.issues === "number" ? (govObj.issues as number) : undefined;
+
+    // Extended: governor timeline (24h mode strip)
+    const governorTimeline = Array.isArray(data.timeline)
+      ? (data.timeline as HiveTimelineTick[])
+      : Array.isArray(data.governorTimeline)
+        ? (data.governorTimeline as HiveTimelineTick[])
+        : undefined;
+
+    // Extended: Nous/Strategy Lab
+    const nousRaw = isRecord(data.nous) ? data.nous :
+      isRecord(data.nousStatus) ? data.nousStatus : null;
+    const nous: NousStatus | undefined = nousRaw ? {
+      mode: typeof nousRaw.mode === "string" ? nousRaw.mode : undefined,
+      scope: typeof nousRaw.scope === "string" ? nousRaw.scope : undefined,
+      activeExperiment: isRecord(nousRaw.activeExperiment)
+        ? {
+            id: String(nousRaw.activeExperiment.id ?? ""),
+            progressPct: typeof nousRaw.activeExperiment.progressPct === "number" ? nousRaw.activeExperiment.progressPct : 0,
+            elapsed: typeof nousRaw.activeExperiment.elapsed === "number" ? nousRaw.activeExperiment.elapsed : 0,
+            ttlSec: typeof nousRaw.activeExperiment.ttlSec === "number" ? nousRaw.activeExperiment.ttlSec : 0,
+          }
+        : null,
+      snapshotCount: typeof nousRaw.snapshotCount === "number" ? nousRaw.snapshotCount : undefined,
+      snapshotTarget: typeof nousRaw.snapshotTarget === "number" ? nousRaw.snapshotTarget : undefined,
+      principleCount: typeof nousRaw.principleCount === "number" ? nousRaw.principleCount : undefined,
+      hasRecommendations: typeof nousRaw.hasRecommendations === "boolean" ? nousRaw.hasRecommendations : undefined,
+      phases: isRecord(nousRaw.phases) ? (nousRaw.phases as NousStatus["phases"]) : undefined,
+    } : undefined;
+
+    // Extended: merge counts from snapshot
+    const mergeActivity = isRecord(data.mergeActivity) ? data.mergeActivity : null;
+    const mergedToday = typeof mergeActivity?.today === "number" ? mergeActivity.today : undefined;
+    const mergedThisWeek = typeof mergeActivity?.week === "number" ? mergeActivity.week : undefined;
+
     const snapshot: HiveSnapshot = {
       timestamp: (data.timestamp as string) ?? new Date().toISOString(),
       hiveId: (data.hiveId as string) ?? "",
@@ -277,6 +359,14 @@ function parseSnapshotJson(data: Record<string, unknown>): {
       advisoryCount: advisoryItems.length,
       advisoryItems,
       advisoryIssue: (data.advisoryIssue as number) ?? undefined,
+      budgetPct,
+      budgetTotal,
+      budgetUsed,
+      governorQueue,
+      governorTimeline,
+      nous,
+      mergedToday,
+      mergedThisWeek,
     };
 
     const rawRepos = (data.repos as Array<{ full?: string; name?: string }>) ?? [];
@@ -706,41 +796,290 @@ function PrQueueChart({ data }: { data: RepoPRs[] }) {
   );
 }
 
+function prTypeTag(title: string): { label: string; color: string } | null {
+  const m = title.match(/^(feat|fix|ci|chore|refactor|docs|perf|test|revert|build|style)[\s(!/:]?/i);
+  if (!m) return null;
+  const t = m[1].toLowerCase();
+  const map: Record<string, { label: string; color: string }> = {
+    feat: { label: "feat", color: "#3fb950" },
+    fix: { label: "fix", color: "#f85149" },
+    ci: { label: "ci", color: "#58a6ff" },
+    chore: { label: "chore", color: "#8b949e" },
+    refactor: { label: "refactor", color: "#d29922" },
+    docs: { label: "docs", color: "#bc8cff" },
+    perf: { label: "perf", color: "#f0883e" },
+    test: { label: "test", color: "#d97706" },
+    revert: { label: "revert", color: "#f85149" },
+    build: { label: "build", color: "#8b949e" },
+    style: { label: "style", color: "#8b949e" },
+  };
+  return map[t] ?? null;
+}
+
 function MergedPRFeed({ prs }: { prs: MergedPR[] }) {
+  const human = prs.filter((p) => !p.isBot);
+  const bots = prs.filter((p) => p.isBot);
+
+  function PRCard({ pr }: { pr: MergedPR }) {
+    const accent = repoAccent(pr.repo);
+    const tag = prTypeTag(pr.title);
+    return (
+      <Link
+        href={pr.url}
+        target="_blank"
+        rel="noreferrer"
+        className={styles.mergedCard}
+      >
+        <div className={styles.mergedCardTop}>
+          <span className={styles.mergedCardNum}>#{pr.number}</span>
+          <span
+            className={styles.mergedCardRepo}
+            style={{ color: accent, borderColor: `${accent}66` }}
+          >
+            {pr.repo}
+          </span>
+          {tag && (
+            <span
+              className={styles.mergedCardTag}
+              style={{ color: tag.color, borderColor: `${tag.color}44` }}
+            >
+              {tag.label}
+            </span>
+          )}
+          {pr.isBot && (
+            <span className={styles.mergedCardAgent}>agent</span>
+          )}
+        </div>
+        <span className={styles.mergedCardTitle}>{pr.title.slice(0, 90)}</span>
+        <div className={styles.mergedCardMeta}>
+          <span>{pr.isBot ? "hive[bot]" : pr.author}</span>
+          <span>{relTime(pr.updatedAt)}</span>
+        </div>
+      </Link>
+    );
+  }
+
+  return (
+    <section className={styles.panel}>
+      <Heading as="h2" className={styles.panelTitle}>Recently Merged</Heading>
+      <p className={styles.panelMeta}>
+        Latest {prs.length} merged PRs across projectbluefin &middot;{" "}
+        {human.length} human &middot; {bots.length} agent
+      </p>
+      {prs.length === 0 ? (
+        <div className={styles.empty}>No recently merged pull requests found.</div>
+      ) : (
+        <>
+          {human.length > 0 && (
+            <div className={styles.mergedSection}>
+              <div className={styles.mergedSectionLabel}>
+                Guardians &mdash; {human.length} human contributions
+              </div>
+              <div className={styles.mergedGrid}>
+                {human.map((pr) => <PRCard key={`${pr.repo}-${pr.number}`} pr={pr} />)}
+              </div>
+            </div>
+          )}
+          {bots.length > 0 && (
+            <div className={styles.mergedSection}>
+              <div className={styles.mergedSectionLabel} style={{ color: "#93c5fd" }}>
+                Ghosts &mdash; {bots.length} agent contributions
+              </div>
+              <div className={styles.mergedGrid}>
+                {bots.map((pr) => <PRCard key={`${pr.repo}-${pr.number}`} pr={pr} />)}
+              </div>
+            </div>
+          )}
+        </>
+      )}
+    </section>
+  );
+}
+
+// ── Governor timeline strip ────────────────────────────────────────────────
+
+const MODE_COLORS: Record<string, string> = {
+  surge: "#f85149",
+  busy: "#d97706",
+  quiet: "#3b82f6",
+  idle: "#21262d",
+  unknown: "#30363d",
+};
+
+function GovernorTimeline({ ticks }: { ticks: HiveTimelineTick[] }) {
+  if (ticks.length < 10) return null;
+  const sorted = [...ticks].sort((a, b) => a.t - b.t);
+  const start = sorted[0].t;
+  const end = sorted[sorted.length - 1].t;
+  const span = end - start || 1;
+
+  const modeCounts: Record<string, number> = {};
+  for (const t of sorted) {
+    const m = (t.mode ?? "unknown").toLowerCase();
+    modeCounts[m] = (modeCounts[m] ?? 0) + 1;
+  }
+  const dominant = Object.entries(modeCounts).sort((a, b) => b[1] - a[1])[0]?.[0] ?? "idle";
+  const dominantPct = Math.round(((modeCounts[dominant] ?? 0) / sorted.length) * 100);
+
   return (
     <section className={styles.panel}>
       <Heading as="h2" className={styles.panelTitle}>
-        Recently Merged
+        Governor Timeline &mdash; 24h Mode History
       </Heading>
-      <p className={styles.panelMeta}>Latest merged PRs across projectbluefin</p>
-      {prs.length > 0 ? (
-        <div className={styles.feedList}>
-          {prs.slice(0, 10).map((pr) => {
-            const accent = repoAccent(pr.repo);
-            return (
-              <Link
-                key={`${pr.repo}-${pr.number}`}
-                href={pr.url}
-                target="_blank"
-                rel="noreferrer"
-                className={styles.feedItem}
-              >
-                <span
-                  className={styles.feedRepo}
-                  style={{ color: accent, borderColor: accent }}
-                >
-                  {pr.repo}
-                </span>
-                <span className={styles.feedTitle}>{pr.title.slice(0, 80)}</span>
-                <span className={styles.feedMeta}>
-                  {pr.isBot ? "[agent]" : pr.author} · {relTime(pr.updatedAt)}
-                </span>
-              </Link>
-            );
-          })}
+      <p className={styles.panelMeta}>
+        Surge / busy / quiet / idle distribution &mdash; dominant: <strong style={{ color: MODE_COLORS[dominant] ?? "#8b949e" }}>{dominant}</strong> at {dominantPct}%
+      </p>
+      <div className={styles.timelineStrip} role="img" aria-label="24-hour governor mode timeline">
+        {sorted.map((tick, i) => {
+          const mode = (tick.mode ?? "unknown").toLowerCase();
+          const color = MODE_COLORS[mode] ?? MODE_COLORS.unknown;
+          const widthPct = i < sorted.length - 1
+            ? ((sorted[i + 1].t - tick.t) / span) * 100
+            : (1 / sorted.length) * 100;
+          return (
+            <div
+              key={tick.t}
+              className={styles.timelineTick}
+              style={{ width: `${widthPct}%`, background: color }}
+              title={`${mode} at ${new Date(tick.t).toLocaleTimeString()}`}
+            />
+          );
+        })}
+      </div>
+      <div className={styles.timelineLegend}>
+        {(["surge", "busy", "quiet", "idle"] as const).map((m) => (
+          modeCounts[m] ? (
+            <span key={m} className={styles.timelineLegendItem}>
+              <span className={styles.timelineDot} style={{ background: MODE_COLORS[m] }} />
+              {m} ({Math.round(((modeCounts[m] ?? 0) / sorted.length) * 100)}%)
+            </span>
+          ) : null
+        ))}
+      </div>
+    </section>
+  );
+}
+
+// ── Token budget panel ─────────────────────────────────────────────────────
+
+function TokenBudgetPanel({
+  pct,
+  total,
+  used,
+  mode,
+}: {
+  pct?: number;
+  total?: number;
+  used?: number;
+  mode?: string;
+}) {
+  if (pct == null) return null;
+  const safeMode = (mode ?? "idle").toLowerCase();
+  const danger = pct > 85;
+  const warn = pct > 65 && !danger;
+  const barColor = danger ? "#f85149" : warn ? "#d97706" : "#3fb950";
+  const remaining = total != null && used != null ? total - used : null;
+
+  return (
+    <section className={styles.panel}>
+      <Heading as="h2" className={styles.panelTitle}>Token Budget</Heading>
+      <p className={styles.panelMeta}>
+        Governor mode: <strong style={{ color: MODE_COLORS[safeMode] ?? "#8b949e" }}>{mode ?? "idle"}</strong>
+        {total != null && <> &middot; {total.toLocaleString()} tokens / period</>}
+      </p>
+      <div className={styles.budgetTrack}>
+        <div
+          className={styles.budgetBar}
+          style={{ width: `${Math.min(pct, 100)}%`, background: barColor }}
+        />
+      </div>
+      <div className={styles.budgetStats}>
+        <span style={{ color: barColor }}>{pct.toFixed(1)}% used</span>
+        {used != null && <span>{used.toLocaleString()} tokens consumed</span>}
+        {remaining != null && (
+          <span style={{ color: "#3fb950" }}>{remaining.toLocaleString()} remaining</span>
+        )}
+      </div>
+    </section>
+  );
+}
+
+// ── Nous / Strategy Lab panel ──────────────────────────────────────────────
+
+function NousPanel({ nous }: { nous: NousStatus }) {
+  const exp = nous.activeExperiment;
+  const snapPct = nous.snapshotTarget && nous.snapshotCount != null
+    ? Math.round((nous.snapshotCount / nous.snapshotTarget) * 100)
+    : null;
+
+  return (
+    <section className={styles.panel}>
+      <Heading as="h2" className={styles.panelTitle}>Strategy Lab (Nous)</Heading>
+      <p className={styles.panelMeta}>
+        Autonomous experiment engine &mdash; optimizing governor configuration
+      </p>
+      <div className={styles.nousGrid}>
+        <div className={styles.nousItem}>
+          <div className={styles.nousLabel}>Mode</div>
+          <div className={styles.nousValue} style={{ color: nous.mode === "auto" ? "#3fb950" : nous.mode === "suggest" ? "#d97706" : "#8b949e" }}>
+            {nous.mode ?? "observe"}
+          </div>
         </div>
-      ) : (
-        <div className={styles.empty}>No recently merged pull requests found.</div>
+        {nous.scope && (
+          <div className={styles.nousItem}>
+            <div className={styles.nousLabel}>Scope</div>
+            <div className={styles.nousValue}>{nous.scope}</div>
+          </div>
+        )}
+        {nous.principleCount != null && (
+          <div className={styles.nousItem}>
+            <div className={styles.nousLabel}>Principles</div>
+            <div className={styles.nousValue} style={{ color: "#bc8cff" }}>{nous.principleCount}</div>
+          </div>
+        )}
+        {nous.hasRecommendations && (
+          <div className={styles.nousItem}>
+            <div className={styles.nousLabel}>Status</div>
+            <div className={styles.nousValue} style={{ color: "#d97706" }}>Recommendations ready</div>
+          </div>
+        )}
+      </div>
+      {exp && (
+        <div className={styles.nousExperiment}>
+          <div className={styles.nousExpLabel}>Active experiment: <code>{exp.id}</code></div>
+          <div className={styles.budgetTrack}>
+            <div
+              className={styles.budgetBar}
+              style={{ width: `${exp.progressPct}%`, background: "#bc8cff" }}
+            />
+          </div>
+          <div className={styles.nousExpMeta}>
+            {exp.progressPct}% &middot; {Math.round(exp.elapsed / 60)}m elapsed of {Math.round(exp.ttlSec / 60)}m
+          </div>
+        </div>
+      )}
+      {snapPct != null && (
+        <div className={styles.nousSnapshot}>
+          <span className={styles.nousLabel}>Snapshot collection:</span>
+          <div className={styles.budgetTrack} style={{ marginTop: "0.4rem" }}>
+            <div className={styles.budgetBar} style={{ width: `${snapPct}%`, background: "#58a6ff" }} />
+          </div>
+          <div className={styles.nousExpMeta}>{nous.snapshotCount}/{nous.snapshotTarget} snapshots ({snapPct}%)</div>
+        </div>
+      )}
+      {nous.phases && (
+        <div className={styles.nousPhases}>
+          {nous.phases.governor && (
+            <span className={styles.nousPhaseItem}>
+              Governor: {nous.phases.governor.phase} i{nous.phases.governor.iteration}
+            </span>
+          )}
+          {nous.phases.repo && (
+            <span className={styles.nousPhaseItem}>
+              Repo: {nous.phases.repo.phase} i{nous.phases.repo.iteration}
+            </span>
+          )}
+        </div>
       )}
     </section>
   );
@@ -1591,7 +1930,7 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
         ),
         fetchTimeout(`${GH_API}/repos/${DAKOTA}/stats/participation`),
         fetchTimeout(
-          `${GH_API}/search/issues?q=org:projectbluefin+type:pr+is:merged&sort=updated&per_page=15`,
+          `${GH_API}/search/issues?q=org:projectbluefin+type:pr+is:merged&sort=updated&per_page=30`,
         ),
         fetchTimeout(
           `${GH_API}/search/issues?q=org:projectbluefin+type:issue+created:>${weekAgoISO}&per_page=1`,
@@ -2151,10 +2490,8 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
         )}
 
         {/* Merged + Contributors */}
-        <div className={styles.twoCol}>
-          <MergedPRFeed prs={mergedPRs} />
-          <ContributorWall prs={mergedPRs} />
-        </div>
+        <MergedPRFeed prs={mergedPRs} />
+        <ContributorWall prs={mergedPRs} />
 
         {/* Velocity + Org stats */}
         <div className={styles.twoCol}>
@@ -2183,6 +2520,26 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
         />
 
         {hasHealth ? <HealthPanel health={snapshot?.health} /> : null}
+
+        {/* Governor 24h timeline */}
+        {snapshot?.governorTimeline && snapshot.governorTimeline.length >= 10 && (
+          <GovernorTimeline ticks={snapshot.governorTimeline} />
+        )}
+
+        {/* Token budget */}
+        {snapshot?.budgetPct != null && (
+          <TokenBudgetPanel
+            pct={snapshot.budgetPct}
+            total={snapshot.budgetTotal}
+            used={snapshot.budgetUsed}
+            mode={snapshot.acmmMode ?? snapshot.governor?.mode}
+          />
+        )}
+
+        {/* Strategy Lab */}
+        {snapshot?.nous && (
+          <NousPanel nous={snapshot.nous} />
+        )}
 
         {/* About */}
         <section className={styles.panel}>

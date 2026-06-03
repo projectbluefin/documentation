@@ -1942,3 +1942,227 @@
   color: #8b949e;
   margin-left: auto;
 }
+
+/* ── Expanded MergedPRFeed ───────────────────────────────────────────────── */
+
+.mergedGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 0.6rem;
+  margin-bottom: 1.2rem;
+}
+
+.mergedSection {
+  margin-bottom: 1.2rem;
+}
+
+.mergedSectionLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #d97706;
+  margin-bottom: 0.6rem;
+}
+
+.mergedCard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.65rem 0.8rem;
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: border-color 0.15s;
+}
+.mergedCard:hover {
+  border-color: #58a6ff;
+  text-decoration: none;
+}
+
+.mergedCardTop {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.mergedCardNum {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #8b949e;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+}
+
+.mergedCardRepo {
+  font-size: 0.68rem;
+  border: 1px solid;
+  border-radius: 3px;
+  padding: 0.05rem 0.35rem;
+}
+
+.mergedCardTag {
+  font-size: 0.65rem;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  border: 1px solid;
+  border-radius: 3px;
+  padding: 0.05rem 0.3rem;
+}
+
+.mergedCardAgent {
+  font-size: 0.62rem;
+  background: #21262d;
+  color: #93c5fd;
+  border: 1px solid #2563eb44;
+  border-radius: 3px;
+  padding: 0.05rem 0.3rem;
+  margin-left: auto;
+}
+
+.mergedCardTitle {
+  font-size: 0.8rem;
+  color: #e6edf3;
+  line-height: 1.35;
+}
+
+.mergedCardMeta {
+  display: flex;
+  gap: 0.6rem;
+  font-size: 0.68rem;
+  color: #8b949e;
+  margin-top: 0.15rem;
+}
+
+/* ── Governor Timeline ───────────────────────────────────────────────────── */
+
+.timelineStrip {
+  display: flex;
+  width: 100%;
+  height: 20px;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid #30363d;
+  margin-bottom: 0.6rem;
+}
+
+.timelineTick {
+  height: 100%;
+  flex-shrink: 0;
+}
+
+.timelineLegend {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  font-size: 0.72rem;
+  color: #8b949e;
+}
+
+.timelineLegendItem {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.timelineDot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+/* ── Token Budget ────────────────────────────────────────────────────────── */
+
+.budgetTrack {
+  width: 100%;
+  height: 10px;
+  background: #21262d;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-bottom: 0.4rem;
+}
+
+.budgetBar {
+  height: 100%;
+  border-radius: 5px;
+  transition: width 0.4s ease;
+}
+
+.budgetStats {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.75rem;
+  color: #8b949e;
+  flex-wrap: wrap;
+}
+
+/* ── Nous / Strategy Lab ─────────────────────────────────────────────────── */
+
+.nousGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+
+.nousItem {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  padding: 0.6rem 0.8rem;
+}
+
+.nousLabel {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #8b949e;
+  margin-bottom: 0.2rem;
+}
+
+.nousValue {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #e6edf3;
+}
+
+.nousExperiment {
+  margin-bottom: 0.8rem;
+}
+
+.nousExpLabel {
+  font-size: 0.72rem;
+  color: #8b949e;
+  margin-bottom: 0.4rem;
+}
+
+.nousExpLabel code {
+  color: #bc8cff;
+  background: transparent;
+}
+
+.nousExpMeta {
+  font-size: 0.68rem;
+  color: #8b949e;
+  margin-top: 0.2rem;
+}
+
+.nousSnapshot {
+  margin-bottom: 0.8rem;
+}
+
+.nousPhases {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.nousPhaseItem {
+  font-size: 0.7rem;
+  background: #21262d;
+  border: 1px solid #30363d;
+  border-radius: 4px;
+  padding: 0.2rem 0.5rem;
+  color: #8b949e;
+}
