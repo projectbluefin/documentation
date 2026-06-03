@@ -133,13 +133,6 @@ interface HiveCadenceRow {
   idle: string;
 }
 
-interface HiveHealthEntry {
-  status?: string;
-  passed?: boolean;
-  lastRun?: string;
-  name?: string;
-}
-
 interface MergedPR {
   number: number;
   title: string;
@@ -363,6 +356,54 @@ const ACMM_LEVELS: Record<number, { label: string; desc: string; color: string }
   5: { label: "Self-Directing", desc: "Agents define their own goals", color: "#bc8cff" },
 };
 
+// ── Frame quotes (verbatim in-game dialogue, Destinypedia) ────────────────
+
+const FRAME_QUOTES_WORKING: string[] = [
+  "Security protocols on standby.",
+  "I am here for maintenance and custodial needs.",
+  "Please do be careful.",
+  "Strength in Light.",
+  "Traveler keep you safe.",
+];
+
+const FRAME_QUOTES_IDLE: string[] = [
+  "Have you seen my broom?",
+  "Is theft from a frame a crime?",
+  "What is my purpose?",
+  "Woe is me.",
+  "Life...is meaningless...",
+  "All is lost....All. is. lost!",
+  "Is changing jobs too late in the system cycle?",
+  "Malfunctional frame...will report for recycling...",
+  "I have lost, a part of me...",
+  "Somebody help me!",
+  "They have candy, I have nothing!",
+  "Dust to dust to dust to dust!?",
+  "But in that sweep of death, what dreams may come?",
+  "Out, out, little purple candle...",
+  "Welcome home, Guardian.",
+  "If you need assistance getting acclimated, maps are available.",
+  "Excuse me, Guardian.",
+  "Where is it? Where is it?!",
+  "What does the broom say? Broom Broom.",
+  "They celebrate lost souls, but what about lost things?",
+];
+
+function pickFrameQuote(id: string, working: boolean): string {
+  const pool = working ? FRAME_QUOTES_WORKING : FRAME_QUOTES_IDLE;
+  const hash = Array.from(id).reduce((sum, ch) => (sum * 31 + ch.charCodeAt(0)) | 0, 0);
+  return pool[Math.abs(hash) % pool.length] ?? pool[0];
+}
+
+function isBotLogin(login: string): boolean {
+  const l = login.toLowerCase();
+  return (
+    l.includes("[bot]") ||
+    l.endsWith("-bot") ||
+    /^(renovate|dependabot|github-actions|copilot|allcontributors|imgbot|stale|snyk)/.test(l)
+  );
+}
+
 // ── Helpers ────────────────────────────────────────────────────────────────
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -564,10 +605,6 @@ function meaningfulSummaryLines(raw: string, count = 2): string[] {
     .slice(0, count);
 }
 
-function firstMeaningfulLines(raw: string, count = 2): string {
-  return meaningfulSummaryLines(raw, count).join(" · ");
-}
-
 function relTime(ts?: string): string {
   if (!ts) return "—";
   try {
@@ -623,14 +660,6 @@ function governorModeClass(mode?: string): string {
   }
 }
 
-function healthTone(entry: unknown): "pass" | "fail" | "warn" {
-  if (!isRecord(entry)) return "warn";
-  const status = typeof entry.status === "string" ? entry.status.toLowerCase() : "";
-  if (status === "ok" || status === "pass" || entry.passed === true) return "pass";
-  if (status === "fail" || status === "error" || entry.passed === false) return "fail";
-  return "warn";
-}
-
 async function parseSearchCount(
   result: PromiseSettledResult<Response>,
 ): Promise<number> {
@@ -650,10 +679,7 @@ async function parseMergedPRs(
     title: item.title,
     repo: parseRepoName(item.repository_url),
     author: item.user?.login ?? "unknown",
-    isBot:
-      item.user?.type === "Bot" ||
-      (item.user?.login ?? "").includes("[bot]") ||
-      (item.user?.login ?? "").includes("renovate"),
+    isBot: item.user?.type === "Bot" || isBotLogin(item.user?.login ?? ""),
     updatedAt: item.updated_at,
     url: item.html_url,
   }));
@@ -722,14 +748,16 @@ function StatCard({
   );
 }
 
-function AgentCard({ agent }: { agent: HiveAgent }) {
+function FrameCard({ agent, advisoryItems: agentAdvisories }: { agent: HiveAgent; advisoryItems: AdvisoryItem[] }) {
   const isRunning = agent.state === "running";
   const isWorking = agent.busy === "working";
-  const snippet = firstMeaningfulLines(agent.liveSummary ?? "", 2);
+  const summaryLines = meaningfulSummaryLines(agent.liveSummary ?? "", 5);
+  const quote = pickFrameQuote(agent.id, isWorking);
   const shortModel = (agent.model ?? "")
     .replace("claude-", "")
     .replace("gpt-", "")
     .replace("-latest", "");
+  const topAdvisories = agentAdvisories.slice(0, 3);
 
   return (
     <div
@@ -762,9 +790,23 @@ function AgentCard({ agent }: { agent: HiveAgent }) {
       {shortModel ? (
         <div className={styles.agentModel}>{shortModel}</div>
       ) : null}
-      {snippet ? (
-        <div className={styles.agentSummary}>{snippet}</div>
+      {topAdvisories.length > 0 ? (
+        <div className={styles.agentSummary}>
+          {topAdvisories.map((item, i) => (
+            <div key={i} className={styles.frameAdvisoryItem}>
+              <span style={{ color: SEV_COLOR[item.severity] ?? "#8b949e", marginRight: "0.35rem", fontVariantNumeric: "tabular-nums" }}>
+                {TYPE_ICON[item.type] ?? "·"}
+              </span>
+              {item.title.slice(0, 90)}
+            </div>
+          ))}
+        </div>
+      ) : summaryLines.length > 0 ? (
+        <div className={styles.agentSummary}>
+          {summaryLines.map((line, i) => <div key={i}>{line}</div>)}
+        </div>
       ) : null}
+      <div className={styles.frameQuote}>&ldquo;{quote}&rdquo;</div>
       {agent.cadence ? (
         <div className={styles.agentCadence}>{agent.cadence}</div>
       ) : null}
@@ -1205,26 +1247,27 @@ function ContributorWall({
   history: HiveHistory | null;
 }) {
   // Use org-wide history contributors if available; fall back to recent PRs
+  // Metric: repos active in (not commits)
   const orgContributors: OrgContributor[] = React.useMemo(() => {
     if (history?.contributors && Object.keys(history.contributors).length > 0) {
       const byRepo = history.contributorsByRepo ?? {};
       return Object.entries(history.contributors)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 48)
-        .map(([login, commits]) => ({
-          login,
-          commits,
-          repos: Object.entries(byRepo)
+        .filter(([login]) => !isBotLogin(login))
+        .map(([login, commits]) => {
+          const repos = Object.entries(byRepo)
             .filter(([, rc]) => rc[login] != null)
             .sort((a, b) => (b[1][login] ?? 0) - (a[1][login] ?? 0))
-            .map(([repo]) => repo),
-        }));
+            .map(([repo]) => repo);
+          return { login, commits, repos };
+        })
+        .sort((a, b) => b.repos.length - a.repos.length || b.commits - a.commits)
+        .slice(0, 48);
     }
     // fallback: derive from recent PRs
     const seen = new Set<string>();
     const out: OrgContributor[] = [];
     for (const pr of prs) {
-      if (pr.isBot || seen.has(pr.author)) continue;
+      if (pr.isBot || isBotLogin(pr.author) || seen.has(pr.author)) continue;
       seen.add(pr.author);
       out.push({ login: pr.author, commits: 0, repos: [pr.repo] });
       if (out.length >= 20) break;
@@ -1232,11 +1275,8 @@ function ContributorWall({
     return out;
   }, [history, prs]);
 
-  const botCount = prs.filter((pr) => pr.isBot).length;
   const isOrgWide = history?.contributors && Object.keys(history.contributors).length > 0;
-  const totalCommits = isOrgWide
-    ? Object.values(history!.contributors).reduce((s, n) => s + n, 0)
-    : null;
+  const totalHumans = orgContributors.length;
 
   return (
     <section className={styles.panel}>
@@ -1245,12 +1285,12 @@ function ContributorWall({
       </Heading>
       <p className={styles.panelMeta}>
         {isOrgWide
-          ? `${orgContributors.length} humans · ${totalCommits?.toLocaleString()} commits across all factory repos`
+          ? `${totalHumans} humans active across factory repos`
           : "Humans landing code in the latest merged queue"}
       </p>
       {orgContributors.length > 0 ? (
         <div className={styles.contributorGrid}>
-          {orgContributors.map(({ login, commits, repos }) => (
+          {orgContributors.map(({ login, repos }) => (
             <Link
               key={login}
               href={`https://github.com/${login}`}
@@ -1266,18 +1306,15 @@ function ContributorWall({
                 loading="lazy"
               />
               <span className={styles.contributorName}>{login}</span>
-              {commits > 0 && (
-                <span className={styles.contributorCommits}>{commits >= 1000 ? `${(commits / 1000).toFixed(1)}k` : commits}</span>
+              {repos.length > 0 && (
+                <span className={styles.contributorCommits}>{repos.length} repo{repos.length !== 1 ? "s" : ""}</span>
               )}
             </Link>
           ))}
         </div>
       ) : (
-        <div className={styles.empty}>Agents are running the show</div>
+        <div className={styles.empty}>Frames are running the show</div>
       )}
-      {botCount > 0 ? (
-        <div className={styles.botCountChip}>{botCount} agent PRs in last batch</div>
-      ) : null}
     </section>
   );
 }
@@ -1396,8 +1433,10 @@ function ContributorLeaderboard({ history }: { history: HiveHistory | null }) {
     const allTimeMap = history.contributors ?? {};
     const byRepo = history.contributorsByRepo ?? {};
 
-    // Build a unified map of all known contributors
-    const allLogins = new Set([...Object.keys(stats), ...Object.keys(allTimeMap)]);
+    // Build a unified map of all known contributors (no bots)
+    const allLogins = new Set(
+      [...Object.keys(stats), ...Object.keys(allTimeMap)].filter((l) => !isBotLogin(l))
+    );
     const rows: LeaderboardEntry[] = [];
 
     for (const login of allLogins) {
@@ -1733,22 +1772,28 @@ function BeadsCadencePanel({
   );
 }
 
-function AgentOfDay({ agent }: { agent: HiveAgent | null }) {
+function FrameOfDay({ agent, advisoryItems: agentAdvisories }: { agent: HiveAgent | null; advisoryItems: AdvisoryItem[] }) {
+  const [expanded, setExpanded] = React.useState(false);
+
   if (!agent) {
     return (
       <section className={`${styles.panel} ${styles.agentOfDayCard}`}>
         <Heading as="h2" className={styles.panelTitle}>
-          Agent of the Day
+          Frame of the Day
         </Heading>
-        <div className={styles.empty}>No agent spotlight available.</div>
+        <div className={styles.empty}>No Frame spotlight available.</div>
       </section>
     );
   }
-  const summaryLines = meaningfulSummaryLines(agent.liveSummary ?? "", 3);
+  const isWorking = agent.busy === "working";
+  const allLines = meaningfulSummaryLines(agent.liveSummary ?? "", 20);
+  const visibleLines = expanded ? allLines : allLines.slice(0, 10);
+  const quote = pickFrameQuote(agent.id, isWorking);
+
   return (
     <section className={`${styles.panel} ${styles.agentOfDayCard}`}>
       <Heading as="h2" className={styles.panelTitle}>
-        Agent of the Day
+        Frame of the Day
       </Heading>
       <div className={styles.agentOfDayHero}>
         <div className={styles.agentHeroInitial}>
@@ -1756,7 +1801,7 @@ function AgentOfDay({ agent }: { agent: HiveAgent | null }) {
         </div>
         <div>
           <div className={styles.agentOfDayLabel}>
-            {agent.busy === "working" ? "Currently active" : "Most recently active"}
+            {isWorking ? "Currently active" : "Most recently active"}
           </div>
           <div className={styles.agentHeroName}>{agent.displayName || agent.name}</div>
           <div className={styles.agentHeroMeta}>
@@ -1764,11 +1809,35 @@ function AgentOfDay({ agent }: { agent: HiveAgent | null }) {
           </div>
         </div>
       </div>
-      <div className={styles.agentOfDaySummary}>
-        {summaryLines.length > 0
-          ? summaryLines.map((line) => <div key={line}>{line}</div>)
-          : "Awaiting next assignment…"}
-      </div>
+      {agentAdvisories.length > 0 && (
+        <div className={styles.agentOfDaySummary} style={{ marginTop: "0.75rem" }}>
+          <div style={{ color: "#8b949e", fontSize: "0.72rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "0.4rem" }}>
+            Recent work items
+          </div>
+          {agentAdvisories.slice(0, 5).map((item, i) => (
+            <div key={i} className={styles.frameAdvisoryItem}>
+              <span style={{ color: SEV_COLOR[item.severity] ?? "#8b949e", marginRight: "0.35rem" }}>
+                {TYPE_ICON[item.type] ?? "·"}
+              </span>
+              {item.title.slice(0, 110)}
+            </div>
+          ))}
+        </div>
+      )}
+      {visibleLines.length > 0 && (
+        <div className={styles.agentOfDaySummary}>
+          {visibleLines.map((line, i) => <div key={i}>{line}</div>)}
+          {allLines.length > 10 && (
+            <button className={styles.workLogToggle} onClick={() => setExpanded(!expanded)}>
+              {expanded ? "Show less" : `Show ${allLines.length - 10} more`}
+            </button>
+          )}
+        </div>
+      )}
+      {visibleLines.length === 0 && agentAdvisories.length === 0 && (
+        <div className={styles.agentOfDaySummary}>Awaiting next assignment…</div>
+      )}
+      <div className={styles.frameQuote}>&ldquo;{quote}&rdquo;</div>
     </section>
   );
 }
@@ -1780,67 +1849,41 @@ function FormationLog({
   supervisor: HiveAgent | null;
   timestamp?: string;
 }) {
-  const lines = supervisor?.liveSummary
-    ? meaningfulSummaryLines(supervisor.liveSummary, 8)
+  const [expanded, setExpanded] = React.useState(false);
+  const allLines = supervisor?.liveSummary
+    ? meaningfulSummaryLines(supervisor.liveSummary, 30)
     : [];
+  const PREVIEW = 15;
+  const visibleLines = expanded ? allLines : allLines.slice(0, PREVIEW);
+  const quote = supervisor ? pickFrameQuote(supervisor.id, supervisor.busy === "working") : null;
+
   return (
     <section className={styles.panel}>
       <Heading as="h2" className={styles.panelTitle}>
         Formation Log
       </Heading>
-      {lines.length > 0 ? (
-        <div className={styles.formationLogList}>
-          {lines.map((line, idx) => (
-            <div key={`${idx}-${line}`} className={styles.formationLogEntry}>
-              <span className={styles.formationLogStamp}>
-                {timestamp ? relTime(timestamp) : "recent"}
-              </span>
-              <span>{line}</span>
-            </div>
-          ))}
-        </div>
+      {allLines.length > 0 ? (
+        <>
+          <div className={styles.formationLogList}>
+            {visibleLines.map((line, idx) => (
+              <div key={`${idx}-${line}`} className={styles.formationLogEntry}>
+                <span className={styles.formationLogStamp}>
+                  {timestamp ? relTime(timestamp) : "recent"}
+                </span>
+                <span>{line}</span>
+              </div>
+            ))}
+          </div>
+          {allLines.length > PREVIEW && (
+            <button className={styles.workLogToggle} onClick={() => setExpanded(!expanded)}>
+              {expanded ? "Show less" : `Show ${allLines.length - PREVIEW} more`}
+            </button>
+          )}
+          {quote && <div className={styles.frameQuote}>&ldquo;{quote}&rdquo;</div>}
+        </>
       ) : (
         <div className={styles.empty}>No formation log available</div>
       )}
-    </section>
-  );
-}
-
-function HealthPanel({ health }: { health?: Record<string, unknown> }) {
-  const entries = Object.entries(health ?? {}).filter(
-    ([, value]) => value !== null && value !== undefined,
-  );
-  if (entries.length === 0) return null;
-  return (
-    <section className={styles.panel}>
-      <Heading as="h2" className={styles.panelTitle}>
-        Health Checks
-      </Heading>
-      <div className={styles.healthList}>
-        {entries.map(([key, raw]) => {
-          const tone = healthTone(raw);
-          const entry = isRecord(raw) ? (raw as HiveHealthEntry) : {};
-          return (
-            <div key={key} className={styles.healthItem}>
-              <span
-                className={`${styles.healthDot} ${
-                  tone === "pass"
-                    ? styles.healthDotPass
-                    : tone === "fail"
-                      ? styles.healthDotFail
-                      : styles.healthDotWarn
-                }`}
-              />
-              <span>{entry.name || key}</span>
-              <span className={styles.feedMeta}>
-                {entry.lastRun
-                  ? relTime(entry.lastRun)
-                  : entry.status || "status unknown"}
-              </span>
-            </div>
-          );
-        })}
-      </div>
     </section>
   );
 }
@@ -2561,9 +2604,15 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
         a.role?.toLowerCase().includes("supervisor") ||
         a.name.toLowerCase().includes("supervisor"),
     ) ?? null;
-  const hasHealth = Boolean(
-    snapshot?.health && Object.keys(snapshot.health).length > 0,
-  );
+
+  const advisoriesByAgent = React.useMemo(() => {
+    const map: Record<string, AdvisoryItem[]> = {};
+    for (const item of advisoryItems) {
+      if (!map[item.agent]) map[item.agent] = [];
+      map[item.agent].push(item);
+    }
+    return map;
+  }, [advisoryItems]);
 
   let formation = "Formation broken";
   let formationColor = "#f85149";
@@ -2705,7 +2754,7 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
           )}
           <StatCard label="P1 This Cycle" value={p1Count} />
           <StatCard
-            label="Agents"
+            label="Frames"
             value={`${activeAgents.length}/${agents.length}`}
             sub={
               workingAgents.length > 0
@@ -2840,13 +2889,13 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
 
           <section className={styles.panel}>
             <Heading as="h2" className={styles.panelTitle}>
-              What Agents Are Doing
+              What Frames Are Doing
             </Heading>
             {workingAgents.length > 0 ? (
               <div className={styles.activityList}>
                 {workingAgents.map((a) => {
-                  const snippet = firstMeaningfulLines(a.liveSummary ?? "", 3);
-                  if (!snippet) return null;
+                  const lines = meaningfulSummaryLines(a.liveSummary ?? "", 5);
+                  if (lines.length === 0) return null;
                   return (
                     <div key={a.id} className={styles.activityItem}>
                       <span className={styles.activityInitial}>
@@ -2858,9 +2907,9 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
                         <div className={styles.activityAgent}>
                           {a.displayName}
                         </div>
-                        <div className={styles.activityText}>
-                          {snippet.slice(0, 180)}
-                        </div>
+                        {lines.map((line, i) => (
+                          <div key={i} className={styles.activityText}>{line}</div>
+                        ))}
                       </div>
                     </div>
                   );
@@ -2869,35 +2918,35 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
             ) : (
               <div className={styles.empty}>
                 {agents.length > 0
-                  ? "Agents are between tasks"
-                  : "No agent data — snapshot updating"}
+                  ? "Frames are between tasks"
+                  : "No Frame data — snapshot updating"}
               </div>
             )}
           </section>
         </div>
 
-        {/* Agent formation */}
+        {/* Frame formation */}
         {agents.length > 0 && (
           <section className={styles.panel}>
             <Heading as="h2" className={styles.panelTitle}>
-              Agent Formation
+              Frame Formation
             </Heading>
             <div className={styles.agentGrid}>
               {agents.map((a) => (
-                <AgentCard key={a.id} agent={a} />
+                <FrameCard key={a.id} agent={a} advisoryItems={advisoriesByAgent[a.name] ?? []} />
               ))}
             </div>
           </section>
         )}
 
-        {/* Agent work log */}
+        {/* Frame work log */}
         {advisoryItems.length > 0 && (
           <section className={styles.panel}>
             <Heading as="h2" className={styles.panelTitle}>
-              What Agents Are Working On
+              What Frames Are Working On
             </Heading>
             <p className={styles.panelMeta}>
-              Advisory digest — findings, bugs, CI failures logged by each agent
+              Advisory digest — findings, bugs, CI failures logged by each Frame
             </p>
             <AgentWorkLog
               agents={agents}
@@ -2943,7 +2992,7 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
             cadenceMatrix={snapshot?.cadenceMatrix}
             mode={snapshot?.governor?.mode}
           />
-          <AgentOfDay agent={agentOfDay} />
+          <FrameOfDay agent={agentOfDay} advisoryItems={advisoriesByAgent[agentOfDay?.name ?? ""] ?? []} />
         </div>
 
         {/* Formation log */}
@@ -2951,8 +3000,6 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
           supervisor={supervisorAgent}
           timestamp={snapshot?.timestamp}
         />
-
-        {hasHealth ? <HealthPanel health={snapshot?.health} /> : null}
 
         {/* Governor 24h timeline */}
         {snapshot?.governorTimeline && snapshot.governorTimeline.length >= 10 && (

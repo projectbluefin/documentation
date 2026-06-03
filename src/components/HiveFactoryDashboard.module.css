@@ -498,6 +498,29 @@
   flex-wrap: wrap;
 }
 
+.frameQuote {
+  font-size: 0.7rem;
+  font-style: italic;
+  color: #484f58;
+  border-left: 2px solid #21262d;
+  padding-left: 0.5rem;
+  margin-top: 0.6rem;
+  line-height: 1.4;
+}
+
+.frameAdvisoryItem {
+  display: flex;
+  align-items: baseline;
+  gap: 0.2rem;
+  font-size: 0.73rem;
+  color: #8b949e;
+  line-height: 1.4;
+  padding: 0.15rem 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .agentTag {
   font-size: 0.6rem;
   color: #484f58;
