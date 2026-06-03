@@ -2221,3 +2221,190 @@
   font-style: italic;
   padding: 0.2rem 0;
 }
+
+/* ── Contributor Leaderboard ─────────────────────────────────────────────── */
+
+.lbTabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #21262d;
+  padding-bottom: 0.5rem;
+}
+
+.lbTab {
+  background: transparent;
+  border: 1px solid #30363d;
+  color: #8b949e;
+  font-size: 0.75rem;
+  font-family: inherit;
+  padding: 0.3rem 0.9rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.lbTab:hover {
+  border-color: #58a6ff;
+  color: #58a6ff;
+}
+
+.lbTabActive {
+  border-color: #d29922;
+  color: #d29922;
+  background: rgba(210, 153, 34, 0.1);
+}
+
+.lbTable {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  font-size: 0.8rem;
+}
+
+.lbHeader {
+  display: grid;
+  grid-template-columns: 2rem 1fr 6rem 10rem 1fr;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.3rem 0.5rem;
+  color: #484f58;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid #21262d;
+  margin-bottom: 0.25rem;
+}
+
+.lbRow {
+  display: grid;
+  grid-template-columns: 2rem 1fr 6rem 10rem 1fr;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.4rem 0.5rem;
+  border-radius: 6px;
+  text-decoration: none;
+  color: #c9d1d9;
+  transition: background 0.12s;
+}
+
+.lbRow:hover {
+  background: #161b22;
+  text-decoration: none;
+  color: #c9d1d9;
+}
+
+.lbColRank {
+  font-family: "JetBrains Mono", "Fira Code", monospace;
+  font-size: 0.7rem;
+  color: #484f58;
+  text-align: right;
+}
+
+.lbTopRank {
+  color: #d29922;
+  font-weight: 700;
+}
+
+.lbColUser {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.lbAvatar {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: 1px solid #21262d;
+}
+
+.lbLogin {
+  font-size: 0.8rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #58a6ff;
+}
+
+.lbColCommits {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.lbCommitCount {
+  font-family: "JetBrains Mono", "Fira Code", monospace;
+  font-size: 0.82rem;
+  color: #c9d1d9;
+  font-weight: 600;
+}
+
+.lbDelta {
+  font-size: 0.68rem;
+  font-family: "JetBrains Mono", "Fira Code", monospace;
+}
+
+.lbDeltaUp {
+  color: #3fb950;
+}
+
+.lbDeltaDown {
+  color: #f85149;
+}
+
+.lbColRepos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  align-items: center;
+}
+
+.lbRepoChip {
+  font-size: 0.65rem;
+  padding: 0.1rem 0.4rem;
+  background: #161b22;
+  border: 1px solid #21262d;
+  border-radius: 4px;
+  color: #8b949e;
+  white-space: nowrap;
+}
+
+.lbRepoMore {
+  font-size: 0.65rem;
+  color: #484f58;
+}
+
+.lbColBadges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  align-items: center;
+}
+
+.lbBadge {
+  font-size: 0.62rem;
+  padding: 0.1rem 0.45rem;
+  border: 1px solid;
+  border-radius: 20px;
+  font-family: "JetBrains Mono", "Fira Code", monospace;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  text-transform: uppercase;
+}
+
+@media (max-width: 768px) {
+  .lbHeader,
+  .lbRow {
+    grid-template-columns: 2rem 1fr 5rem;
+  }
+
+  .lbColRepos,
+  .lbColBadges {
+    display: none;
+  }
+}

@@ -209,14 +209,84 @@ interface OrgContributor {
   repos: string[];
 }
 
+interface ContributorStat {
+  total: number;
+  lastWeek: number;
+  lastMonth: number;
+  last3Months: number;
+  byRepo: Record<string, number>;
+}
+
 interface HiveHistory {
   entries: HiveHistoryEntry[];
   contributors: Record<string, number>;
   contributorsByRepo: Record<string, Record<string, number>>;
   lastContributorFetch?: string;
+  // Weekly windowed stats (populated by stats/contributors endpoint)
+  contributorStats?: Record<string, ContributorStat>;
+  lastWeeklyStatsFetch?: string;
 }
 
-// ── Queue types ────────────────────────────────────────────────────────────
+// ── Milestone badge definitions ───────────────────────────────────────────
+
+type MilestoneTier =
+  | "contributor"   // 10+ all-time commits
+  | "veteran"       // 100+ all-time commits
+  | "elite"         // 500+ all-time commits
+  | "legend"        // 1000+ all-time commits
+  | "mythic"        // 5000+ all-time commits
+  | "sprint"        // 10+ commits this week
+  | "rising"        // this week > rolling avg
+  | "cross";        // 3+ repos
+
+interface MilestoneBadge {
+  tier: MilestoneTier;
+  label: string;
+  title: string;
+  color: string;
+}
+
+function computeMilestones(
+  total: number,
+  lastWeek: number,
+  lastMonth: number,
+  repos: string[],
+): MilestoneBadge[] {
+  const badges: MilestoneBadge[] = [];
+
+  // All-time tier (only show the highest earned)
+  if (total >= 5000) {
+    badges.push({ tier: "mythic", label: "Mythic", title: "5000+ lifetime commits", color: "#ff7b72" });
+  } else if (total >= 1000) {
+    badges.push({ tier: "legend", label: "Legend", title: "1000+ lifetime commits", color: "#f0883e" });
+  } else if (total >= 500) {
+    badges.push({ tier: "elite", label: "Elite", title: "500+ lifetime commits", color: "#bc8cff" });
+  } else if (total >= 100) {
+    badges.push({ tier: "veteran", label: "Veteran", title: "100+ lifetime commits", color: "#58a6ff" });
+  } else if (total >= 10) {
+    badges.push({ tier: "contributor", label: "Contributor", title: "10+ lifetime commits", color: "#3fb950" });
+  }
+
+  // Activity badges
+  if (lastWeek >= 10) {
+    badges.push({ tier: "sprint", label: "Sprint", title: `${lastWeek} commits this week`, color: "#d29922" });
+  }
+
+  // Weekly vs monthly avg (rising star)
+  const weeklyAvg = lastMonth > 0 ? lastMonth / 4 : 0;
+  if (lastWeek > 0 && weeklyAvg > 0 && lastWeek > weeklyAvg * 1.5) {
+    badges.push({ tier: "rising", label: "Rising", title: "Trending up this week", color: "#3fb950" });
+  }
+
+  // Cross-formation
+  if (repos.length >= 3) {
+    badges.push({ tier: "cross", label: "Multi-repo", title: `Active in ${repos.length} repos`, color: "#a371f7" });
+  }
+
+  return badges;
+}
+
+
 
 interface QueueLabel { name: string; color: string; }
 
@@ -1298,6 +1368,191 @@ function HistoryTrends({ history }: { history: HiveHistory | null }) {
   );
 }
 
+// ── Contributor Leaderboard ───────────────────────────────────────────────
+
+type LeaderboardTab = "alltime" | "monthly" | "weekly";
+
+interface LeaderboardEntry {
+  rank: number;
+  login: string;
+  commits: number;
+  delta?: number;      // change vs previous window (weekly only)
+  repos: string[];
+  badges: MilestoneBadge[];
+  hasStats: boolean;
+}
+
+function ContributorLeaderboard({ history }: { history: HiveHistory | null }) {
+  const [tab, setTab] = React.useState<LeaderboardTab>("alltime");
+
+  const hasWeeklyStats =
+    history?.contributorStats != null &&
+    Object.keys(history.contributorStats).length > 0;
+
+  const ranked = React.useMemo((): LeaderboardEntry[] => {
+    if (!history) return [];
+
+    const stats = history.contributorStats ?? {};
+    const allTimeMap = history.contributors ?? {};
+    const byRepo = history.contributorsByRepo ?? {};
+
+    // Build a unified map of all known contributors
+    const allLogins = new Set([...Object.keys(stats), ...Object.keys(allTimeMap)]);
+    const rows: LeaderboardEntry[] = [];
+
+    for (const login of allLogins) {
+      const s = stats[login];
+      const allTime = s?.total ?? allTimeMap[login] ?? 0;
+      const lastWeek = s?.lastWeek ?? 0;
+      const lastMonth = s?.lastMonth ?? 0;
+      const last3Months = s?.last3Months ?? 0;
+
+      let commits = 0;
+      if (tab === "alltime") commits = allTime;
+      else if (tab === "monthly") commits = lastMonth;
+      else commits = lastWeek;
+
+      if (commits === 0) continue;
+
+      // Repos from stats.byRepo or contributorsByRepo
+      const repoMap = s?.byRepo ?? {};
+      const repos = Object.keys(
+        Object.keys(repoMap).length > 0
+          ? repoMap
+          : Object.fromEntries(
+              Object.entries(byRepo)
+                .filter(([, rc]) => rc[login] != null)
+                .map(([r, rc]) => [r, rc[login]])
+            ),
+      ).sort((a, b) => {
+        const ma = (repoMap[a] ?? byRepo[a]?.[login] ?? 0);
+        const mb = (repoMap[b] ?? byRepo[b]?.[login] ?? 0);
+        return mb - ma;
+      });
+
+      // Delta: for weekly tab, this week vs weekly avg of last month
+      let delta: number | undefined;
+      if (tab === "weekly" && lastMonth > 0) {
+        const avg = lastMonth / 4;
+        delta = Math.round(lastWeek - avg);
+      } else if (tab === "monthly" && last3Months > 0) {
+        const avg = last3Months / 3;
+        delta = Math.round(lastMonth - avg);
+      }
+
+      rows.push({
+        rank: 0,
+        login,
+        commits,
+        delta,
+        repos,
+        badges: computeMilestones(allTime, lastWeek, lastMonth, repos),
+        hasStats: s != null,
+      });
+    }
+
+    rows.sort((a, b) => b.commits - a.commits);
+    rows.forEach((r, i) => { r.rank = i + 1; });
+    return rows.slice(0, 25);
+  }, [history, tab]);
+
+  if (!history || ranked.length === 0) return null;
+
+  const lastUpdated = history.lastWeeklyStatsFetch
+    ? new Date(history.lastWeeklyStatsFetch).toLocaleDateString("en-US", { month: "short", day: "numeric" })
+    : null;
+
+  return (
+    <section className={styles.panel}>
+      <Heading as="h2" className={styles.panelTitle}>
+        Contributor Leaderboard
+      </Heading>
+      <p className={styles.panelMeta}>
+        Factory-wide commit rankings across all 15 repos
+        {lastUpdated ? ` · stats as of ${lastUpdated}` : ""}
+        {!hasWeeklyStats ? " · weekly/monthly windows accumulating" : ""}
+      </p>
+
+      <div className={styles.lbTabs}>
+        {(["alltime", "monthly", "weekly"] as LeaderboardTab[]).map((t) => (
+          <button
+            key={t}
+            className={`${styles.lbTab} ${tab === t ? styles.lbTabActive : ""}`}
+            onClick={() => setTab(t)}
+          >
+            {t === "alltime" ? "All Time" : t === "monthly" ? "This Month" : "This Week"}
+          </button>
+        ))}
+      </div>
+
+      <div className={styles.lbTable}>
+        <div className={styles.lbHeader}>
+          <span className={styles.lbColRank}>#</span>
+          <span className={styles.lbColUser}>Contributor</span>
+          <span className={styles.lbColCommits}>Commits</span>
+          <span className={styles.lbColRepos}>Repos</span>
+          <span className={styles.lbColBadges}>Milestones</span>
+        </div>
+        {ranked.map(({ rank, login, commits, delta, repos, badges }) => (
+          <Link
+            key={login}
+            href={`https://github.com/${login}`}
+            target="_blank"
+            rel="noreferrer"
+            className={styles.lbRow}
+          >
+            <span className={`${styles.lbColRank} ${rank <= 3 ? styles.lbTopRank : ""}`}>
+              {rank === 1 ? "01" : rank === 2 ? "02" : rank === 3 ? "03" : String(rank).padStart(2, "0")}
+            </span>
+            <span className={styles.lbColUser}>
+              <img
+                src={`https://github.com/${login}.png?size=24`}
+                alt={login}
+                className={styles.lbAvatar}
+                loading="lazy"
+              />
+              <span className={styles.lbLogin}>{login}</span>
+            </span>
+            <span className={styles.lbColCommits}>
+              <span className={styles.lbCommitCount}>
+                {commits >= 1000 ? `${(commits / 1000).toFixed(1)}k` : commits}
+              </span>
+              {delta != null && delta !== 0 && (
+                <span className={`${styles.lbDelta} ${delta > 0 ? styles.lbDeltaUp : styles.lbDeltaDown}`}>
+                  {delta > 0 ? `+${delta}` : delta}
+                </span>
+              )}
+            </span>
+            <span className={styles.lbColRepos}>
+              {repos.slice(0, 3).map((r) => (
+                <span key={r} className={styles.lbRepoChip}>{r}</span>
+              ))}
+              {repos.length > 3 && <span className={styles.lbRepoMore}>+{repos.length - 3}</span>}
+            </span>
+            <span className={styles.lbColBadges}>
+              {badges.map((b) => (
+                <span
+                  key={b.tier}
+                  className={styles.lbBadge}
+                  style={{ borderColor: b.color, color: b.color }}
+                  title={b.title}
+                >
+                  {b.label}
+                </span>
+              ))}
+            </span>
+          </Link>
+        ))}
+      </div>
+
+      {ranked.length >= 25 && (
+        <p className={styles.panelMeta} style={{ marginTop: "0.5rem" }}>
+          Showing top 25 of {Object.keys(history.contributors ?? {}).length} contributors
+        </p>
+      )}
+    </section>
+  );
+}
 
 function VelocityPanel({
   velocity,
@@ -2669,6 +2924,7 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
         <MergedPRFeed prs={mergedPRs} />
         <ContributorWall prs={mergedPRs} history={hiveHistory} />
         <HistoryTrends history={hiveHistory} />
+        <ContributorLeaderboard history={hiveHistory} />
 
         {/* Velocity + Org stats */}
         <div className={styles.twoCol}>

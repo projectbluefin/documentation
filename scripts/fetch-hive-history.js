@@ -4,15 +4,31 @@
  *
  * Runs every 2 hours via update-hive-cache.yml.
  * Appends a snapshot of key Hive metrics to static/data/hive-history.json.
- * Also refreshes all-time contributor stats from every active factory repo.
+ * Refreshes all-time contributor counts once per day (contributors endpoint).
+ * Refreshes weekly contributor stats once per day (stats/contributors endpoint).
  *
  * History file format:
  * {
  *   "entries": [ { t, acmmLevel, govMode, budgetPct, queue, agents, advisories,
  *                  mergedToday, mergedWeek, runningAgents } ... ],
+ *
+ *   // All-time totals from /contributors endpoint
  *   "contributors": { "login": totalCommits, ... },
  *   "contributorsByRepo": { "repo": { "login": commits } },
- *   "lastContributorFetch": "ISO timestamp"
+ *   "lastContributorFetch": "ISO timestamp",
+ *
+ *   // Weekly breakdown from /stats/contributors endpoint
+ *   // Enables monthly/weekly leaderboard windows
+ *   "contributorStats": {
+ *     "login": {
+ *       "total": 5680,
+ *       "lastWeek": 12,        // commits in last 7 days
+ *       "lastMonth": 45,       // commits in last 28 days (4 weeks)
+ *       "last3Months": 150,    // commits in last 91 days (13 weeks)
+ *       "byRepo": { "repo": commits }
+ *     }
+ *   },
+ *   "lastWeeklyStatsFetch": "ISO timestamp"
  * }
  */
 
@@ -26,8 +42,11 @@ const OUTPUT_FILE = path.join(__dirname, "../static/data/hive-history.json");
 // 14 days at one entry per 2h = 168 entries
 const MAX_ENTRIES = 168;
 
-// Refresh contributor stats at most once every 6 hours
-const CONTRIBUTOR_TTL_MS = 6 * 60 * 60 * 1000;
+// Refresh all-time contributor counts once per day
+const CONTRIBUTOR_TTL_MS = 24 * 60 * 60 * 1000;
+
+// Refresh weekly stats once per day (stats/contributors is expensive: 1 req/repo)
+const WEEKLY_STATS_TTL_MS = 24 * 60 * 60 * 1000;
 
 // All active factory repos
 const FACTORY_REPOS = [
@@ -224,6 +243,92 @@ async function fetchContributors() {
   return { totals, byRepo };
 }
 
+/**
+ * Fetch weekly contributor stats via /repos/{owner}/{repo}/stats/contributors.
+ * Returns lastWeek / lastMonth / last3Months windows per contributor.
+ *
+ * The endpoint may return 202 while GitHub computes stats. We retry up to 3 times
+ * with a 2-second back-off per repo.
+ *
+ * Returns: { [login]: { total, lastWeek, lastMonth, last3Months, byRepo: { repo: commits } } }
+ */
+async function fetchContributorWeeklyStats() {
+  const nowSec = Math.floor(Date.now() / 1000);
+  const weekAgo = nowSec - 7 * 86400;
+  const monthAgo = nowSec - 28 * 86400;  // 4 weeks
+  const threeMonthsAgo = nowSec - 91 * 86400;  // 13 weeks
+
+  // stats[login] = { total, lastWeek, lastMonth, last3Months, byRepo }
+  const stats = {};
+
+  await Promise.allSettled(
+    FACTORY_REPOS.map(async (repo) => {
+      const url = `${GH_API}/repos/projectbluefin/${repo}/stats/contributors`;
+      let attempts = 0;
+      let data = null;
+      while (attempts < 4) {
+        attempts++;
+        let res;
+        try {
+          res = await fetch(url, { headers: ghHeaders() });
+        } catch {
+          break;
+        }
+        if (res.status === 404 || res.status === 403 || res.status === 204) break;
+        if (res.status === 202) {
+          // GitHub is computing stats — wait and retry
+          await new Promise((r) => setTimeout(r, 2000 * attempts));
+          continue;
+        }
+        if (!res.ok) break;
+        try {
+          data = await res.json();
+        } catch {
+          break;
+        }
+        break;
+      }
+      if (!Array.isArray(data)) return;
+
+      for (const entry of data) {
+        const login = entry?.author?.login;
+        if (!login) continue;
+        if (login.endsWith("[bot]") || BOT_LOGINS.has(login)) continue;
+        const total = typeof entry.total === "number" ? entry.total : 0;
+        if (total === 0) continue;
+
+        // Sum weekly commit counts for each time window
+        let lastWeek = 0;
+        let lastMonth = 0;
+        let last3Months = 0;
+        if (Array.isArray(entry.weeks)) {
+          for (const w of entry.weeks) {
+            const wt = typeof w.w === "number" ? w.w : 0;
+            const wc = typeof w.c === "number" ? w.c : 0;
+            if (wc === 0) continue;
+            if (wt >= weekAgo) lastWeek += wc;
+            if (wt >= monthAgo) lastMonth += wc;
+            if (wt >= threeMonthsAgo) last3Months += wc;
+          }
+        }
+
+        if (!stats[login]) {
+          stats[login] = { total: 0, lastWeek: 0, lastMonth: 0, last3Months: 0, byRepo: {} };
+        }
+        stats[login].total += total;
+        stats[login].lastWeek += lastWeek;
+        stats[login].lastMonth += lastMonth;
+        stats[login].last3Months += last3Months;
+        if (total > 0) {
+          stats[login].byRepo[repo] = (stats[login].byRepo[repo] || 0) + total;
+        }
+      }
+    })
+  );
+
+  return stats;
+}
+
 function loadHistory() {
   try {
     if (fs.existsSync(OUTPUT_FILE)) {
@@ -236,7 +341,9 @@ function loadHistory() {
     entries: [],
     contributors: {},
     contributorsByRepo: {},
+    contributorStats: {},
     lastContributorFetch: null,
+    lastWeeklyStatsFetch: null,
   };
 }
 
@@ -247,6 +354,7 @@ async function main() {
   if (!Array.isArray(history.entries)) history.entries = [];
   if (!history.contributors) history.contributors = {};
   if (!history.contributorsByRepo) history.contributorsByRepo = {};
+  if (!history.contributorStats) history.contributorStats = {};
 
   // ── Fetch hive snapshot ──────────────────────────────────────────────────
   let metrics = null;
@@ -279,14 +387,14 @@ async function main() {
     );
   }
 
-  // ── Refresh contributor stats if stale ───────────────────────────────────
+  // ── Refresh all-time contributor counts (daily) ───────────────────────────
   const lastFetch = history.lastContributorFetch
     ? new Date(history.lastContributorFetch).getTime()
     : 0;
   const needsContributorRefresh = Date.now() - lastFetch > CONTRIBUTOR_TTL_MS;
 
   if (needsContributorRefresh) {
-    console.log("[hive-history] Fetching contributor stats from factory repos...");
+    console.log("[hive-history] Fetching all-time contributor counts from factory repos...");
     try {
       const { totals, byRepo } = await fetchContributors();
       history.contributors = totals;
@@ -301,7 +409,31 @@ async function main() {
       console.warn(`[hive-history] Contributor fetch failed: ${err.message}`);
     }
   } else {
-    console.log("[hive-history] Contributor stats still fresh, skipping fetch");
+    console.log("[hive-history] All-time contributor counts still fresh, skipping");
+  }
+
+  // ── Refresh weekly contributor stats (daily) ─────────────────────────────
+  const lastWeeklyFetch = history.lastWeeklyStatsFetch
+    ? new Date(history.lastWeeklyStatsFetch).getTime()
+    : 0;
+  const needsWeeklyRefresh = Date.now() - lastWeeklyFetch > WEEKLY_STATS_TTL_MS;
+
+  if (needsWeeklyRefresh) {
+    console.log("[hive-history] Fetching weekly contributor stats (stats/contributors)...");
+    try {
+      const stats = await fetchContributorWeeklyStats();
+      history.contributorStats = stats;
+      history.lastWeeklyStatsFetch = new Date().toISOString();
+      const count = Object.keys(stats).length;
+      const activeThisWeek = Object.values(stats).filter((s) => s.lastWeek > 0).length;
+      console.log(
+        `[hive-history] Weekly stats: ${count} contributors, ${activeThisWeek} active this week`,
+      );
+    } catch (err) {
+      console.warn(`[hive-history] Weekly stats fetch failed: ${err.message}`);
+    }
+  } else {
+    console.log("[hive-history] Weekly contributor stats still fresh, skipping");
   }
 
   // ── Write output ─────────────────────────────────────────────────────────
