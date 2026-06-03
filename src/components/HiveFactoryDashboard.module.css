@@ -802,6 +802,16 @@
   color: #58a6ff;
 }
 
+.factoryTagline {
+  text-align: center;
+  padding: 1rem 0 0.5rem;
+  font-size: 0.7rem;
+  color: #30363d;
+  font-family: "SFMono-Regular", Consolas, monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 /* ── Org stats panel ───────────────────────────────────────────────────────── */
 .orgGrid {
   display: grid;
