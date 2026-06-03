@@ -57,11 +57,13 @@
 }
 
 .heroH1 {
-  font-size: 1.75rem;
-  font-weight: 700;
-  color: #e6edf3;
-  margin: 0 0 0.2rem;
-  line-height: 1.1;
+  font-size: clamp(1.4rem, 3vw, 2rem) !important;
+  font-weight: 800 !important;
+  color: #e6edf3 !important;
+  margin: 0 0 0.25rem !important;
+  line-height: 1.1 !important;
+  letter-spacing: -0.025em;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif !important;
 }
 
 .heroSub {
@@ -198,6 +200,11 @@
   transform: translateY(-1px);
 }
 
+.statCardBody {
+  flex: 1;
+  min-width: 0;
+}
+
 .statIcon {
   font-size: 1.4rem;
   flex-shrink: 0;
@@ -222,6 +229,114 @@
   font-size: 0.7rem;
   color: #8b949e;
   margin-top: 2px;
+}
+
+.statSpark {
+  margin-top: 0.4rem;
+}
+
+/* ── Mini sparkline (inline, small) ──────────────────────────────────────── */
+.miniSparkline {
+  display: block;
+  width: 100%;
+  height: 24px;
+  overflow: visible;
+}
+
+.miniSparklineArea {
+  fill: rgba(88, 166, 255, 0.12);
+}
+
+.miniSparklineLine {
+  fill: none;
+  stroke: #58a6ff;
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.miniSparklineGreen .miniSparklineLine {
+  stroke: #3fb950;
+}
+.miniSparklineGreen .miniSparklineArea {
+  fill: rgba(63, 185, 80, 0.12);
+}
+
+.miniSparklineAmber .miniSparklineLine {
+  stroke: #d97706;
+}
+.miniSparklineAmber .miniSparklineArea {
+  fill: rgba(217, 119, 6, 0.12);
+}
+
+.miniSparklinePurple .miniSparklineLine {
+  stroke: #a371f7;
+}
+.miniSparklinePurple .miniSparklineArea {
+  fill: rgba(163, 113, 247, 0.12);
+}
+
+/* Hero commit spark */
+.heroSpark {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.heroSparkline {
+  width: 100px;
+  height: 28px;
+  display: block;
+}
+
+.heroSparkLabel {
+  font-size: 0.6rem;
+  color: #484f58;
+  font-family: "SFMono-Regular", Consolas, monospace;
+  letter-spacing: 0.04em;
+}
+
+/* Victory sparkline */
+.victorySpark {
+  margin: 0.5rem 0 0.25rem;
+  width: 100%;
+}
+
+/* Velocity bars */
+.velocityBars {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-end;
+  height: 60px;
+  margin: 0.75rem 0 0.5rem;
+}
+
+.velocityBar {
+  flex: 1;
+  border-radius: 3px 3px 0 0;
+  min-height: 4px;
+  transition: opacity 0.15s;
+  position: relative;
+}
+
+.velocityBarOpened {
+  background: rgba(248, 81, 73, 0.7);
+}
+
+.velocityBarClosed {
+  background: rgba(63, 185, 80, 0.7);
+}
+
+.velocityBarLabel {
+  position: absolute;
+  bottom: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.6rem;
+  color: #6e7681;
+  white-space: nowrap;
+  font-family: "SFMono-Regular", Consolas, monospace;
 }
 
 /* ── Panels ─────────────────────────────────────────────────────────────── */
