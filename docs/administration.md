@@ -56,7 +56,7 @@ Bluefin offers images based on the current version of Fedora, as well as a CentO
 `latest`: For users who want the very latest Fedora has to offer, an ungated Linux kernel, daily updates, full open throttle. 🔥 This stream is purposely left unbranded and is not meant for general purpose use.
 :::
 
-You can choose from three rolling tags, or lock to a specific version of Fedora. Check the [release notes](https://github.com/ublue-os/bluefin/releases) for specific version information:
+You can choose from three rolling tags, or lock to a specific version of Fedora. Check the [release notes](https://github.com/projectbluefin/bluefin/releases) for specific version information:
 
 |                      | `stable` (default) or `stable-daily` | `latest`                   |
 | -------------------- | ------------------------------------ | -------------------------- |
@@ -112,18 +112,18 @@ sudo bootc status
 and look for the image you are on, it should look something like this:
 
 ```
-Current staged image: ghcr.io/ublue-os/bluefin:stable
+Current staged image: ghcr.io/projectbluefin/bluefin:stable
     Image version: 40.20241101.0 (2024-11-02 05:46:53.714 UTC)
     Image digest: sha256:cb57c75f7d700773ed6f54e4ba5550235a647fc9251e69345b1113cfd81dc884
-Current booted image: ghcr.io/ublue-os/bluefin:stable
+Current booted image: ghcr.io/projectbluefin/bluefin:stable
     Image version: 40.20241030.0 (2024-10-31 05:47:14.513 UTC)
     Image digest: sha256:5536b3511f38a57c7f71fd499b616671ef67043f155313f714f8c92a0f8d1e7c
 Current rollback state is native ostree
 ```
 
-The `ghcr.io/ublue-os/bluefin:stable` is the important part, with `bluefin` being the image name, and the `:stable` being the image tag. That is the image you are currently on. Look for `:stable`, `:latest`, or in certain cases the version like `:40` or `:41`.
+The `ghcr.io/projectbluefin/bluefin:stable` is the important part, with `bluefin` being the image name, and the `:stable` being the image tag. That is the image you are currently on. Look for `:stable`, `:latest`, or in certain cases the version like `:40` or `:41`.
 
-**Pro Tip**: Bluefin's [release notes](https://github.com/ublue-os/bluefin/releases) contain the stream switching instructions at the bottom of each release. This is useful if you're trying to nail down a regression in a specific package version.
+**Pro Tip**: Bluefin's [release notes](https://github.com/projectbluefin/bluefin/releases) contain the stream switching instructions at the bottom of each release. This is useful if you're trying to nail down a regression in a specific package version.
 
 Use the `bootc switch` command to move to a newer or older version:
 
@@ -134,31 +134,31 @@ Use the `bootc switch` command to move to a newer or older version:
 <summary>In this example you're rebasing to `:stable`, which is the latest stable release of Fedora (currently 41). The `--enforce-container-sigpolicy` is important to ensure you're checking the signature of the produced image:</summary>
 
 ```sh
-sudo bootc switch ghcr.io/ublue-os/bluefin:stable --enforce-container-sigpolicy
+sudo bootc switch ghcr.io/projectbluefin/bluefin:stable --enforce-container-sigpolicy
 ```
 
 Explicit version tags of the Fedora release are available for users who wish to handle their upgrade cycle manually:
 
 ```sh
-sudo bootc switch ghcr.io/ublue-os/bluefin:40 --enforce-container-sigpolicy
+sudo bootc switch ghcr.io/projectbluefin/bluefin:40 --enforce-container-sigpolicy
 ```
 
 Additionally rebasing to a specific date tag is encouraged if you need to "pin" to a specific day or version:
 
 ```sh
-sudo bootc switch ghcr.io/ublue-os/bluefin:stable-20241027 --enforce-container-sigpolicy
+sudo bootc switch ghcr.io/projectbluefin/bluefin:stable-20241027 --enforce-container-sigpolicy
 ```
 
 If you use an nvidia machine, remember that the `-nvidia-open` is important! (This is why it's important to note the image name when you ran that previous status command:
 
 ```sh
-sudo bootc switch ghcr.io/ublue-os/bluefin-nvidia-open:stable --enforce-container-sigpolicy
+sudo bootc switch ghcr.io/projectbluefin/bluefin-nvidia-open:stable --enforce-container-sigpolicy
 ```
 
 Use the `skopeo inspect` command to query information from an image:
 
 ```sh
-skopeo inspect docker://ghcr.io/ublue-os/bluefin
+skopeo inspect docker://ghcr.io/projectbluefin/bluefin
 ```
 
 </details>
@@ -318,12 +318,12 @@ This feature is incomplete and needs contributors to make it a reality
 
 :::
 
-Bluefin and Aurora include Cockpit for machine management. We're hoping to include more out-of-the-box management templates, please [check this issue](https://github.com/ublue-os/bluefin/issues/271) if you're interested in volunteering.
+Bluefin and Aurora include Cockpit for machine management. We're hoping to include more out-of-the-box management templates, please [check this issue](https://github.com/projectbluefin/bluefin/issues/271) if you're interested in volunteering.
 
 ## Verification
 
-These images are signed with sigstore's [cosign](https://docs.sigstore.dev/cosign/overview/). You can verify the signature by downloading the `cosign.pub` key from [this repo](https://github.com/ublue-os/bluefin) and running the following command:
+These images are signed with sigstore's [cosign](https://docs.sigstore.dev/cosign/overview/). You can verify the signature by downloading the `cosign.pub` key from [this repo](https://github.com/projectbluefin/bluefin) and running the following command:
 
 ```sh
-cosign verify --key cosign.pub ghcr.io/ublue-os/bluefin
+cosign verify --key cosign.pub ghcr.io/projectbluefin/bluefin
 ```

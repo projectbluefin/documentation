@@ -13,7 +13,7 @@ Bluefin is cloud native, so all the tooling can be run locally or on any server.
 
 First clone the repo:
 
-`git clone https://github.com/ublue-os/bluefin.git`
+`git clone https://github.com/projectbluefin/bluefin.git`
 
 The `Justfile` at the root of the repo is used to build the images and ISOs, here's some examples:
 
