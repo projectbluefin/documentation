@@ -2199,6 +2199,183 @@
   margin-top: 0.1rem;
 }
 
+/* ── Community Showcase ─────────────────────────────────────────────────── */
+
+.communityStats {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  padding: 0.75rem 1rem;
+  background: rgba(88, 166, 255, 0.06);
+  border: 1px solid rgba(88, 166, 255, 0.18);
+  border-radius: 8px;
+}
+
+.communityStatItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+}
+
+.communityStatValue {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #58a6ff;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+
+.communityStatLabel {
+  font-size: 0.7rem;
+  color: #8b949e;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.communityStatDivider {
+  width: 1px;
+  height: 2rem;
+  background: rgba(88, 166, 255, 0.2);
+  flex-shrink: 0;
+}
+
+.communitySpotlightLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #d97706;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 0 0 0.75rem 0;
+}
+
+.communitySpotlight {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.spotlightCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.85rem 0.5rem 0.75rem;
+  background: #161b22;
+  border: 1px solid rgba(88, 166, 255, 0.18);
+  border-radius: 10px;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, background 0.15s, transform 0.1s;
+}
+
+.spotlightCard:hover {
+  border-color: rgba(88, 166, 255, 0.55);
+  background: rgba(88, 166, 255, 0.07);
+  transform: translateY(-2px);
+  text-decoration: none;
+  color: inherit;
+}
+
+.spotlightAvatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 2px solid rgba(88, 166, 255, 0.35);
+}
+
+.spotlightName {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #c9d1d9;
+  text-align: center;
+  word-break: break-word;
+  margin-top: 0.15rem;
+}
+
+.spotlightCommits {
+  font-size: 0.68rem;
+  color: #58a6ff;
+  font-variant-numeric: tabular-nums;
+}
+
+.spotlightRepos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem;
+  justify-content: center;
+  margin-top: 0.2rem;
+}
+
+.spotlightRepoChip {
+  font-size: 0.58rem;
+  padding: 0.1rem 0.35rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+  color: #8b949e;
+  white-space: nowrap;
+  max-width: 64px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.spotlightBadge {
+  font-size: 0.58rem;
+  font-weight: 600;
+  padding: 0.1rem 0.4rem;
+  border: 1px solid;
+  border-radius: 999px;
+  margin-top: 0.15rem;
+  letter-spacing: 0.03em;
+}
+
+.communityShowMore {
+  margin-top: 0.85rem;
+  padding: 0.4rem 1rem;
+  background: transparent;
+  border: 1px solid rgba(88, 166, 255, 0.3);
+  border-radius: 6px;
+  color: #58a6ff;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.communityShowMore:hover {
+  background: rgba(88, 166, 255, 0.08);
+  border-color: rgba(88, 166, 255, 0.6);
+}
+
+/* ── Leaderboard accumulating state ────────────────────────────────────── */
+
+.lbAccumulating {
+  color: #d29922;
+  font-style: italic;
+}
+
+.lbTabDisabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.lbTabPending {
+  color: #d29922;
+  margin-left: 0.15rem;
+}
+
+.lbFallbackNote {
+  font-size: 0.78rem;
+  color: #d29922;
+  padding: 0.4rem 0.75rem;
+  background: rgba(210, 153, 34, 0.08);
+  border: 1px solid rgba(210, 153, 34, 0.25);
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+}
+
 /* ── History Trends ──────────────────────────────────────────────────────── */
 
 .historyTrendsGrid {
