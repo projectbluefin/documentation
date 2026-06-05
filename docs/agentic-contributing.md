@@ -27,16 +27,15 @@ For a full technical comparison of what changed between `ublue-os/bluefin` and `
 
 The agentic factory is fast and capable. It is also new, and in places it is not finished.
 
-**What is operational as of 2026-06-02:**
+**What is operational as of 2026-06-04:**
 - Keyless signing, merge queue, fast PR validation (1–2 min)
-- `post-testing-e2e.yml` running against the testsuite
+- `pr-smoke.yml` — full image build + smoke test for PRs that touch build-affecting paths
+- `post-testing-e2e.yml` — runs `smoke,common` suites against every `main` push
+- `nightly.yml` — nightly `smoke,common,vanilla-gnome` baseline run against `:latest`
 - `weekly-testing-promotion.yml` with 2-human Environment gate
 - `projectbluefin/actions` shared CI library consumed by `bluefin` and `bluefin-lts`
 - `bonedigger` issue lifecycle bot
-
-**What is operational but currently unstable:**
-- The post-testing e2e run **is failing** (testsuite stabilizing as of 2026-06-02). The promotion gate correctly blocked untested images — it is working as intended, but the tests themselves need work.
-- Many test scenarios are tagged `@quarantine`: they are written and committed but not stable enough to gate promotion.
+- AI Moderator (`moderator.yml`) — spam detection and moderation on issues and PR comments
 
 **What is deferred:**
 - `projectbluefin/actions` consumption by `dakota` (tracked in [projectbluefin/actions#16](https://github.com/projectbluefin/actions/issues/16))
@@ -99,7 +98,7 @@ flowchart TB
 
 ### Components
 
-**[KubeStellar Hive](https://kubestellar.io/live/hive/bluefin/)** is the orchestration layer. It manages 6 repositories in the `projectbluefin` org. You can watch it work in real time at [kubestellar.io/live/hive/bluefin/](https://kubestellar.io/live/hive/bluefin/).
+**[KubeStellar Hive](https://kubestellar.io/live/hive/bluefin/)** is the orchestration layer. It manages 8 repositories in the `projectbluefin` org (`bluefin`, `bluefin-lts`, `common`, `dakota`, `actions`, `renovate-config`, `bonedigger`, `knuckle`). You can watch it work in real time at [kubestellar.io/live/hive/bluefin/](https://kubestellar.io/live/hive/bluefin/).
 
 **[bonedigger](https://github.com/projectbluefin/bonedigger)** is the client + lifecycle bot. On Bluefin systems, users run `ujust report` — the agent collects system diagnostics that are hard for humans to gather manually, scrubs PII on-device, and files an issue to the relevant image repository. The GitHub Actions lifecycle bot then manages the pipeline: `filed → approved → queued → claimed → done`.
 
@@ -176,9 +175,9 @@ A single test with 85% reliability cascaded failures across the system. This is 
 | ACMM level | What it corresponds to in Bluefin |
 |------------|-----------------------------------|
 | Instructed | `AGENTS.md`, `docs/SKILL.md`, `.github/skills/` files in each repo |
-| Measured | 242-scenario testsuite + 2-human production Environment gate |
-| Adaptive | skill-drift check, skill-audit cron (Monday 09:00 UTC), Renovate automerge |
-| Self-Sustaining / Fully Autonomous | Stated direction; current state is partial — see "F1 car" section above |
+| Measured | Multi-suite testsuite + nightly baseline + 2-human production Environment gate |
+| Adaptive | skill-drift check, skill-audit cron (Monday 09:00 UTC), Renovate automerge, AI Moderator, `hive-progress-sync.yml` |
+| Self-Sustaining / Fully Autonomous | Active trajectory; KubeStellar Hive managing 8 repos with kubestellar-bot dispatching agents |
 
 The human's role at every level is the same: decide what to build, decide what to reject, define what "good" means. Anderson's paper is explicit on this: "Human oversight remains the source of decisions about what to build, what to reject, and defining quality standards."
 
@@ -274,17 +273,20 @@ A PR that touches CI, build, or packaging without a skill file update is a yello
 | [projectbluefin/bluefin](https://github.com/projectbluefin/bluefin) | Main OS image (Fedora-based) | Design decisions, PR review, `testing`-branch fixes |
 | [projectbluefin/bluefin-lts](https://github.com/projectbluefin/bluefin-lts) | LTS variant (CentOS Stream 10 / bootc) | Same; LTS-specific hardware or lifecycle concerns |
 | [projectbluefin/common](https://github.com/projectbluefin/common) | Shared OCI layer — desktop config, ujust, GNOME opinions | Shared behavior that applies to all variants |
+| [projectbluefin/aurorafin-shared](https://github.com/projectbluefin/aurorafin-shared) | Shared system files for Aurora and Bluefin | Cross-project shared configuration |
 | [projectbluefin/dakota](https://github.com/projectbluefin/dakota) | Distroless prototype (Dakotaraptor, BuildStream) | Experimental; actions integration deferred |
-| [projectbluefin/actions](https://github.com/projectbluefin/actions) | Shared CI library — 9 composite actions, canonical skills hub | CI/actions improvements; skill file propagation |
+| [projectbluefin/actions](https://github.com/projectbluefin/actions) | Shared CI library — 10 composite actions, canonical skills hub | CI/actions improvements; skill file propagation |
 | [projectbluefin/bonedigger](https://github.com/projectbluefin/bonedigger) | Client reporting + issue lifecycle bot | Client UX, lifecycle bot behavior |
 
 ```mermaid
 flowchart TB
     common["projectbluefin/common\n(shared OCI layer)"]
+    shared["projectbluefin/aurorafin-shared\n(Aurora+Bluefin shared config)"]
 
     common --> bluefin
     common --> lts
     common --> dakota
+    shared --> bluefin
 
     subgraph images["Image Repos"]
         bluefin["projectbluefin/bluefin\n(Fedora-based)"]
@@ -292,7 +294,7 @@ flowchart TB
         dakota["projectbluefin/dakota\n(BuildStream / distroless)"]
     end
 
-    testsuite["projectbluefin/testsuite\n(242-scenario E2E gate)"]
+    testsuite["projectbluefin/testsuite\n(E2E gate)"]
 
     bluefin -->|smoke gate| testsuite
     lts -->|smoke gate| testsuite
@@ -302,6 +304,7 @@ flowchart TB
     stable --> iso
 
     style common fill:#2d3a5a
+    style shared fill:#2d3a5a
     style images fill:#3a4a2a
     style testsuite fill:#4a3a2a
 ```
@@ -311,10 +314,14 @@ flowchart TB
 | Repo | Role |
 |------|------|
 | [projectbluefin/housekeeping](https://github.com/projectbluefin/housekeeping) | Org-wide maintenance workflows |
+| [projectbluefin/renovate-config](https://github.com/projectbluefin/renovate-config) | Self-hosted Renovate configuration — GitHub App auth, no PATs |
 | [projectbluefin/testsuite](https://github.com/projectbluefin/testsuite) | QA pipeline — Argo Workflows + KubeVirt + AT-SPI tests |
 | [projectbluefin/testing-lab](https://github.com/projectbluefin/testing-lab) | Homelab QA pipeline |
 | [projectbluefin/bluespeed](https://github.com/projectbluefin/bluespeed) | KubeStellar homelab factory |
 | [projectbluefin/iso](https://github.com/projectbluefin/iso) | ISO builds |
+| [projectbluefin/dakota-iso](https://github.com/projectbluefin/dakota-iso) | Bootable UEFI live ISO for Dakota |
+| [projectbluefin/bootc-installer](https://github.com/projectbluefin/bootc-installer) | libadwaita bootc installer (fork of Vanilla OS installer) |
+| [projectbluefin/finpilot](https://github.com/projectbluefin/finpilot) | Build your own custom Bluefin |
 
 ### Consuming repos (remain in ublue-os)
 
@@ -335,23 +342,28 @@ What happens to a change between `git push` and `:stable`:
 flowchart TB
     pr["PR opened\nagainst testing branch"]
 
-    pr --> validation["pr-validation.yml\n1–2 min\nshellcheck + actionlint\n+ pre-commit"]
+    pr --> validation["pr-validation.yml\n1–2 min\njust check + shellcheck\n+ hadolint + pre-commit\n+ bats unit tests"]
 
-    validation -->|passes| build["build-image-testing.yml\nBuilds all variants in parallel\n~26 min wall time\nPath-filtered: non-image changes skip"]
+    pr --> smoke_check{"Touches build\npath?"}
+    smoke_check -->|yes| prsmoke["pr-smoke.yml\nFull image build\n+ smoke suite\nRuns in parallel"]
 
-    build -->|digests uploaded as artifacts| e2e["post-testing-e2e.yml\nSmoke suite: 82 scenarios\nQEMU VM + AT-SPI + SSH\nBlocks if any scenario fails"]
+    validation -->|passes, merge_group| build["build-image-testing.yml\n(Testing Images)\nBuilds all variants\n~26 min wall time\nTriggered by push to main"]
 
-    e2e -->|on success| merge["Squash merge\nto testing branch"]
+    build -->|digests published| e2e["post-testing-e2e.yml\nsmoke + common suites\nQEMU VM + AT-SPI\nBlocks promotion"]
 
-    merge -->|Tuesday 06:00 UTC| promotion["weekly-testing-promotion.yml\n1. Locks testing HEAD SHA\n2. Verifies passing post-testing-e2e for that SHA\n3. Runs developer + vanilla-gnome suites\n4. Requires 2 human approvals in GitHub\n   production Environment\n5. skopeo copy :testing@digest → :stable"]
+    e2e -->|on success| merge["Squash merge\nto testing branch\n→ fast-forwards main"]
+
+    merge -->|Tuesday 06:00 UTC| promotion["weekly-testing-promotion.yml\n1. Locks main HEAD SHA\n2. Verifies passing post-testing-e2e for that SHA\n3. Runs developer + vanilla-gnome + software + common\n4. Requires 2 human approvals in GitHub\n   production Environment\n5. skopeo copy :testing@digest → :stable/:latest"]
 
     promotion --> stable[":stable / :latest\nSHA-locked\nDigest at start = digest at end"]
 
     validation -->|fails| reject1["PR blocked\nFix and push"]
-    e2e -->|fails| reject2["testing branch not promoted\nSmoke failure is visible in PR"]
-    promotion -->|e2e missing or < 2 approvals| reject3["Promotion blocked\nNo image ships"]
+    prsmoke -->|fails| reject2["Build or smoke failure\nBlocks high-risk Renovate automerge"]
+    e2e -->|fails| reject3["main not promoted\nSmoke failure visible in repo"]
+    promotion -->|e2e missing or < 2 approvals| reject4["Promotion blocked\nNo image ships"]
 
     style validation fill:#2d4a2d
+    style prsmoke fill:#2d3a5a
     style build fill:#2d3a5a
     style e2e fill:#4a3a2a
     style promotion fill:#4a2a2a
@@ -362,16 +374,18 @@ flowchart TB
 
 | Stage | What it checks | What blocks it |
 |-------|---------------|----------------|
-| `pr-validation.yml` (~1–2 min) | `just check`, shellcheck, actionlint, pre-commit hooks | Any lint failure |
-| `build-image-testing.yml` (~26 min) | Full image build, all variants; path-filtered for non-image changes | Build failure |
-| `post-testing-e2e.yml` | 82 GNOME Shell scenarios in a QEMU VM via AT-SPI | Any scenario fails |
-| `weekly-testing-promotion.yml` | e2e passed for the locked SHA; 51 extended scenarios; 2 human approvals in GitHub Environment | Missing e2e pass, fewer than 2 approvals, or SHA drift |
+| `pr-validation.yml` (~1–2 min) | `just check`, shellcheck, hadolint, pre-commit, bats unit tests | Any lint failure |
+| `pr-smoke.yml` (build-affecting PRs only) | Full image build + smoke test suite — runs when Containerfile, Justfile, image-versions.yml, build_files/, or system_files/ change | Build failure or smoke scenario failure |
+| `build-image-testing.yml` (~26 min) | Full image build, all variants; triggered by push to `main` | Build failure |
+| `post-testing-e2e.yml` | `smoke,common` suites in a QEMU VM via AT-SPI | Any scenario fails |
+| `weekly-testing-promotion.yml` | e2e passed for locked SHA; `developer,vanilla-gnome,software,common` suites; 2 human approvals in GitHub Environment | Missing e2e pass, fewer than 2 approvals, or SHA drift |
+| `nightly.yml` (02:00 UTC daily) | `smoke,common,vanilla-gnome` suites against `:latest` — vanilla-gnome baseline distinguishes Bluefin-specific regressions from upstream GNOME issues | Advisory; does not block merges |
 
 ### What "`:stable`" means under the new model
 
 An image tagged `:stable` has:
-1. Passed 82 automated smoke scenarios in a virtual machine running the exact image being promoted
-2. Passed 51 additional developer and vanilla-gnome scenarios
+1. Passed `smoke,common` automated scenarios in a virtual machine running the exact image being promoted
+2. Passed `developer`, `vanilla-gnome`, `software`, and `common` suites in the weekly promotion run
 3. Been approved by two distinct maintainers via the GitHub `production` Environment (machine-enforced — the job cannot start without both)
 4. Been copied from `:testing` to `:stable` by digest, not by tag — the SHA you receive is the SHA that was tested
 
@@ -433,23 +447,32 @@ stateDiagram-v2
 gh pr create --repo projectbluefin/bluefin --base testing
 ```
 
+### Branch roles
+
+There are two branch roles to keep straight in the CI configuration:
+
+- **Contribution branch:** `testing` — all PRs land here via squash merge
+- **Image build branch:** `main` — image builds trigger on pushes to `main`; `testing` merges advance `main`
+
+This means the `build-image-testing.yml` trigger is on `main`, while `pr-validation.yml` targets `testing`. PRs merged to `testing` cause `main` to advance, which then triggers image builds and the post-merge e2e gate.
+
 ### Streams
 
-| Stream | Tag | Built from | Who uses it |
-|--------|-----|-----------|-------------|
-| Testing | `:testing` | `testing` branch — every merge | Developers, testers |
-| Latest | `:latest` | `latest` branch — weekly promotion | Enthusiasts |
-| Stable | `:stable` | `stable` branch — weekly + emergency manual | Regular users |
+| Stream | Tag | Who uses it |
+|--------|-----|-------------|
+| Testing | `:testing` | Built from every push to `main`; developers and testers |
+| Latest | `:latest` | Weekly promotion from `main` via `skopeo copy` | Enthusiasts |
+| Stable | `:stable` | Weekly promotion from `main` via `skopeo copy` + 2-human gate | Regular users |
 
 ### Promotion cadence
 
 Every Tuesday at 06:00 UTC, `weekly-testing-promotion.yml`:
-1. Locks the `testing` HEAD SHA
+1. Locks the `main` HEAD SHA
 2. Verifies that `post-testing-e2e.yml` succeeded for that exact SHA
-3. Runs the extended developer + vanilla-gnome suites
+3. Runs the extended `developer,vanilla-gnome,software,common` suites
 4. Waits for 2 distinct human approvals in the GitHub `production` Environment
-5. Fast-forwards `latest` and `stable` branches to `testing`
-6. Triggers `stable` and `latest` image builds
+5. Copies `:testing@<digest>` → `:latest` and `:stable` via `skopeo copy` (digest-locked, no rebuild)
+6. Pushes to `latest` and `stable` branches, triggering downstream builds
 
 If the e2e verification step finds no passing run for the locked SHA, the workflow exits 1. No image ships.
 
@@ -577,6 +600,10 @@ The skill-drift check will post an advisory warning automatically when it detect
 
 ## Testing Your Change
 
+### Automatic smoke testing on build-affecting PRs
+
+PRs that touch `Containerfile`, `Justfile`, `image-versions.yml`, `build_files/`, or `system_files/` automatically trigger `pr-smoke.yml`, which builds the image and runs the smoke suite. Results appear as a required check on the PR. You do not need to do anything — the check runs automatically.
+
 ### The `/e2e` command
 
 On any open PR, a maintainer can comment:
@@ -590,7 +617,7 @@ This triggers `e2e-dispatch.yml`, which:
 2. Runs smoke + developer + vanilla-gnome suites against it
 3. Posts results back to the PR
 
-Use this before requesting review on any change that touches the image (Containerfile, build scripts, system files).
+Use this for extended testing on changes where `pr-smoke.yml` alone is insufficient.
 
 ### Switching to a PR image
 
@@ -619,21 +646,23 @@ sudo just build-ghcr bluefin testing main
 
 ### What the testsuite covers
 
-[`projectbluefin/testsuite`](https://github.com/projectbluefin/testsuite) — 242 scenarios across 11 suites, running on standard `ubuntu-latest` GitHub Actions runners via QEMU + KVM. No self-hosted hardware required.
+[`projectbluefin/testsuite`](https://github.com/projectbluefin/testsuite) — running on standard `ubuntu-latest` GitHub Actions runners via QEMU + KVM. No self-hosted hardware required.
 
-| Suite | Scenarios | What it validates |
-|-------|:---------:|-------------------|
-| `smoke` | 82 | GNOME Shell via AT-SPI, app launches, lock screen, workspaces, regressions |
-| `common` | 32 | Shell env, dconf/GSettings defaults, desktop entries |
-| `developer` | 19 | Homebrew round-trip, Podman |
-| `dx` | 15 | Developer Experience tools |
-| `software` | 12 | Flatpak operations |
-| `vanilla-gnome` | 12 | GNOME core without Bluefin customizations |
-| `bazzite` | 20 | Bazzite-specific extensions |
-| `nvidia` | 12 | GPU driver and runtime |
-| `security` | 15 | Image provenance, SELinux |
-| `lifecycle` | 13 | `bootc upgrade` + rollback |
-| `hardware` | 10 | Peripheral detection |
+| Suite | What it validates | Used in |
+|-------|-------------------|---------|
+| `smoke` | GNOME Shell via AT-SPI, app launches, lock screen, workspaces, regressions | post-testing-e2e, pr-smoke, nightly, weekly promotion |
+| `common` | Shell env, dconf/GSettings defaults, desktop entries, signing | post-testing-e2e, nightly, weekly promotion |
+| `developer` | Homebrew round-trip, Podman, Ptyxis | weekly promotion |
+| `dx` | Developer Experience tools | optional |
+| `flatcar` | Flatcar/CoreOS-mode boot and lifecycle | optional |
+| `software` | Flatpak operations, Bazaar | weekly promotion |
+| `vanilla-gnome` | GNOME core without Bluefin customizations — distinguishes Bluefin regressions from upstream GNOME issues | nightly, weekly promotion |
+| `bazzite` | Bazzite-specific extensions and shell | optional |
+| `nvidia` | GPU driver and runtime | optional |
+| `security` | Image provenance, SELinux | optional |
+| `lifecycle` | `bootc upgrade` + rollback + migration | optional |
+| `hardware` | Peripheral detection | optional |
+| `unit` | Unit tests for scripts and tooling | PR validation only — intentionally excluded from image path gates |
 
 Scenarios tagged `@quarantine` are present in the repo but excluded from the promotion gate. Do not remove a `@quarantine` tag until the scenario has a demonstrated pass rate suitable for blocking promotion.
 
@@ -648,7 +677,7 @@ Renovate runs on a self-hosted configuration from [`projectbluefin/renovate-conf
 - GitHub Actions SHA pins (updating commit hashes with version comments)
 - Container image digest updates in `image-versions.yml`
 
-**Automerge:** `renovate-automerge.yml` automatically merges passing Renovate PRs for low-risk updates (digest bumps where package list is unchanged). These represent a large fraction of all commits.
+**Automerge:** `renovate-automerge.yml` automatically merges passing Renovate PRs for low-risk updates (digest bumps where package list is unchanged). High-risk Renovate PRs (labeled `renovate/high-risk`) wait for `pr-smoke.yml` to pass before automerge. These automated updates represent a large fraction of all commits.
 
 **When Renovate conflicts with your PR:**
 
@@ -718,6 +747,10 @@ All contributors follow the [Universal Blue Code of Conduct](https://github.com/
 
 ## Glossary
 
+**nightly** — `nightly.yml` — runs at 02:00 UTC daily against `:latest`. Runs `smoke,common,vanilla-gnome` suites. The vanilla-gnome baseline separates Bluefin-specific regressions (smoke fails, vanilla-gnome passes) from upstream GNOME regressions (both fail). Advisory; does not block merges.
+
+**pr-smoke** — `pr-smoke.yml` — full image build + smoke test triggered automatically on PRs that touch build-affecting paths (Containerfile, Justfile, image-versions.yml, build_files/, system_files/). Required check for high-risk Renovate automerge. Distinct from `/e2e` dispatch.
+
 **ACMM** — AI Codebase Maturity Model. A 5-to-6-level framework (Anderson, arXiv:2604.09388) describing how codebases evolve from AI-assisted to fully autonomous. Each level is defined by its feedback loop topology.
 
 **Assisted-by** — Required commit footer for any AI-assisted contribution: `Assisted-by: <Model Name> via <Tool Name>`.
@@ -738,8 +771,8 @@ All contributors follow the [Universal Blue Code of Conduct](https://github.com/
 
 **skill-drift** — The gap between what a skill file documents and what the code currently does. Detected by the `skill-drift-check.yml` workflow (advisory PR warning) and the `skill-audit.yml` cron (Monday 09:00 UTC, opens issues).
 
-**testing stream** — The `:testing` tag. Built from the `testing` branch on every merge. This is what developers and testers run. All PRs target this branch.
+**testing stream** — The `:testing` tag. Built from every push to `main` (which advances when PRs merge to `testing`). This is what developers and testers run. All PRs target the `testing` branch.
 
-**two-human gate** — The `production` GitHub Environment configuration requiring 2 distinct maintainer approvals before the `weekly-testing-promotion.yml` job that copies `:testing → :stable` can execute.
+**two-human gate** — The `production` GitHub Environment configuration requiring 2 distinct maintainer approvals before the `weekly-testing-promotion.yml` job that copies `:testing → :stable/:latest` can execute.
 
 **ujust report / confirm / verify** — The three data-donation commands. `report` files a new issue with diagnostics. `confirm` records another real-world reproduction. `verify` closes the loop after a fix ships.
