@@ -43,7 +43,7 @@ We picked the cloud native pattern because local development in containers trans
 
 The pattern in `bluefin-dx` (and `aurora-dx`) centers around [devcontainers](https://containers.dev). Since devcontainers live in the project's git repository, they can be deployed on any operating system: Linux, macOS, or Windows (via WSL). This facilitates "distributed by default" development and avoids Linux users being "the odd one out" when working with teammates on other operating systems.
 
-Each project includes a declarative environment intended to start the user with a "best practice" cloud-native workflow out of the box. The [Ultimate Guide to Dev Containers]([https://www.daytona.io/dotfiles/ultimate-guide-to-dev-containers](https://web.archive.org/web/20260204190305/https://www.daytona.io/dotfiles/ultimate-guide-to-dev-containers)) has a good write-up on the advantages of using devcontainers. This means that the development environment is kept in version control instead of coupled to the host.
+Each project includes a declarative environment intended to start the user with a "best practice" cloud-native workflow out of the box. The [Ultimate Guide to Dev Containers] (https://web.archive.org/web/20260204190305/https://www.daytona.io/dotfiles/ultimate-guide-to-dev-containers) has a good write-up on the advantages of using devcontainers. This means that the development environment is kept in version control instead of coupled to the host.
 
 Homebrew can also be used to install development tools. However, it is recommended to avoid that and declare the project's dependencies in version control. It's so convenient sometimes, [it's okay](https://www.youtube.com/shorts/lKwavoyaaFA).
 
