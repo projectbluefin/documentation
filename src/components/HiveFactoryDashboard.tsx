@@ -324,9 +324,20 @@ interface QueueData {
 
 // ── Constants ──────────────────────────────────────────────────────────────
 
+// Hosted Knuckle instance — the canonical source; behind GitHub OAuth (hive.kubestellar.io).
+// Requests are sent with credentials:include so authenticated hive users get live data.
+// All fetches fall back gracefully when the user is not logged in.
+const HOSTED_INSTANCE_URL =
+  "https://hosted-projectbluefin-knuckle-gjvq.hive.kubestellar.io";
+
+// Snapshot HTML is still served from the public GitHub raw URL
+// (hosted instance snapshot endpoint is auth-gated; raw.githubusercontent.com is public)
 const SNAPSHOT_HTML_URL =
   "https://raw.githubusercontent.com/kubestellar/docs/main/public/live/hive/bluefin/index.html";
-const QUEUE_URL = "https://queue.projectbluefin.io/data.json";
+
+// Queue data: try the hosted instance first (credentials:include), fall back to public mirror
+const QUEUE_URL_HOSTED = `${HOSTED_INSTANCE_URL}/data.json`;
+const QUEUE_URL_FALLBACK = "https://queue.projectbluefin.io/data.json";
 const GH_API = "https://api.github.com";
 const DAKOTA = "projectbluefin/dakota";
 const BUILD_WORKFLOW = "246164114";
@@ -574,14 +585,32 @@ async function extractRenderJson(
   return null;
 }
 
-async function fetchTimeout(url: string, ms = 12000): Promise<Response> {
+async function fetchTimeout(url: string, ms = 12000, opts?: RequestInit): Promise<Response> {
   const ctrl = new AbortController();
   const t = setTimeout(() => ctrl.abort(), ms);
   try {
-    return await fetch(url, { signal: ctrl.signal });
+    return await fetch(url, { signal: ctrl.signal, ...opts });
   } finally {
     clearTimeout(t);
   }
+}
+
+// Fetch queue data from the hosted instance first (works when the user has an active
+// hive.kubestellar.io session), falling back to the public mirror.
+async function fetchQueueData(): Promise<QueueData | null> {
+  try {
+    const r = await fetchTimeout(QUEUE_URL_HOSTED, 6000, { credentials: "include" });
+    if (r.ok) return (await r.json()) as QueueData;
+  } catch {
+    // not logged in or network error — fall through
+  }
+  try {
+    const r = await fetchTimeout(QUEUE_URL_FALLBACK, 10000);
+    if (r.ok) return (await r.json()) as QueueData;
+  } catch {
+    // both sources unavailable
+  }
+  return null;
 }
 
 function cleanSummaryLine(line: string): string {
@@ -1246,8 +1275,9 @@ function ContributorWall({
   prs: MergedPR[];
   history: HiveHistory | null;
 }) {
-  // Use org-wide history contributors if available; fall back to recent PRs
-  // Metric: repos active in (not commits)
+  const [showAll, setShowAll] = React.useState(false);
+
+  // Build sorted contributor list: all-time commits descending
   const orgContributors: OrgContributor[] = React.useMemo(() => {
     if (history?.contributors && Object.keys(history.contributors).length > 0) {
       const byRepo = history.contributorsByRepo ?? {};
@@ -1260,8 +1290,7 @@ function ContributorWall({
             .map(([repo]) => repo);
           return { login, commits, repos };
         })
-        .sort((a, b) => b.repos.length - a.repos.length || b.commits - a.commits)
-        .slice(0, 48);
+        .sort((a, b) => b.commits - a.commits);
     }
     // fallback: derive from recent PRs
     const seen = new Set<string>();
@@ -1276,45 +1305,161 @@ function ContributorWall({
   }, [history, prs]);
 
   const isOrgWide = history?.contributors && Object.keys(history.contributors).length > 0;
-  const totalHumans = orgContributors.length;
+  const totalCommits = isOrgWide
+    ? Object.values(history!.contributors).reduce((s, n) => s + n, 0)
+    : 0;
+
+  const SPOTLIGHT_COUNT = 12;
+  const GRID_INITIAL = 60;
+  const spotlight = orgContributors.slice(0, SPOTLIGHT_COUNT);
+  const rest = orgContributors.slice(SPOTLIGHT_COUNT);
+  const visibleRest = showAll ? rest : rest.slice(0, GRID_INITIAL);
+
+  const stats = history?.contributorStats ?? {};
 
   return (
     <section className={styles.panel}>
       <Heading as="h2" className={styles.panelTitle}>
-        Factory Contributors
+        Factory Community
       </Heading>
-      <p className={styles.panelMeta}>
-        {isOrgWide
-          ? `${totalHumans} humans active across factory repos`
-          : "Humans landing code in the latest merged queue"}
-      </p>
-      {orgContributors.length > 0 ? (
-        <div className={styles.contributorGrid}>
-          {orgContributors.map(({ login, repos }) => (
-            <Link
-              key={login}
-              href={`https://github.com/${login}`}
-              target="_blank"
-              rel="noreferrer"
-              className={styles.contributorCard}
-              title={repos.length > 0 ? `${login} · ${repos.slice(0, 3).join(", ")}` : login}
-            >
-              <img
-                src={`https://github.com/${login}.png?size=40`}
-                alt={login}
-                className={styles.contributorAvatar}
-                loading="lazy"
-              />
-              <span className={styles.contributorName}>{login}</span>
-              {repos.length > 0 && (
-                <span className={styles.contributorCommits}>{repos.length} repo{repos.length !== 1 ? "s" : ""}</span>
-              )}
-            </Link>
-          ))}
+
+      {isOrgWide && (
+        <div className={styles.communityStats}>
+          <div className={styles.communityStatItem}>
+            <span className={styles.communityStatValue}>{orgContributors.length}</span>
+            <span className={styles.communityStatLabel}>contributors</span>
+          </div>
+          <div className={styles.communityStatDivider} />
+          <div className={styles.communityStatItem}>
+            <span className={styles.communityStatValue}>
+              {Object.keys(history?.contributorsByRepo ?? {}).length}
+            </span>
+            <span className={styles.communityStatLabel}>repos</span>
+          </div>
+          <div className={styles.communityStatDivider} />
+          <div className={styles.communityStatItem}>
+            <span className={styles.communityStatValue}>
+              {totalCommits >= 1000
+                ? `${(totalCommits / 1000).toFixed(1)}k`
+                : totalCommits}
+            </span>
+            <span className={styles.communityStatLabel}>total commits</span>
+          </div>
         </div>
-      ) : (
+      )}
+
+      {!isOrgWide && (
+        <p className={styles.panelMeta}>Humans landing code in the latest merged queue</p>
+      )}
+
+      {/* ── Spotlight: top contributors ───────────────────────────────── */}
+      {spotlight.length > 0 && (
+        <>
+          <p className={styles.communitySpotlightLabel}>✦ Top Contributors</p>
+          <div className={styles.communitySpotlight}>
+            {spotlight.map(({ login, commits, repos }) => {
+              const s = stats[login];
+              const allTime = s?.total ?? commits;
+              const lastWeek = s?.lastWeek ?? 0;
+              const lastMonth = s?.lastMonth ?? 0;
+              const badges = computeMilestones(allTime, lastWeek, lastMonth, repos);
+              const topBadge = badges[0];
+              return (
+                <Link
+                  key={login}
+                  href={`https://github.com/${login}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className={styles.spotlightCard}
+                  title={repos.slice(0, 3).join(", ")}
+                >
+                  <img
+                    src={`https://github.com/${login}.png?size=64`}
+                    alt={login}
+                    className={styles.spotlightAvatar}
+                    loading="lazy"
+                  />
+                  <span className={styles.spotlightName}>{login}</span>
+                  <span className={styles.spotlightCommits}>
+                    {commits >= 1000 ? `${(commits / 1000).toFixed(1)}k` : commits} commits
+                  </span>
+                  {repos.length > 0 && (
+                    <div className={styles.spotlightRepos}>
+                      {repos.slice(0, 2).map((r) => (
+                        <span key={r} className={styles.spotlightRepoChip}>{r}</span>
+                      ))}
+                    </div>
+                  )}
+                  {topBadge && (
+                    <span
+                      className={styles.spotlightBadge}
+                      style={{ borderColor: topBadge.color, color: topBadge.color }}
+                    >
+                      {topBadge.label}
+                    </span>
+                  )}
+                </Link>
+              );
+            })}
+          </div>
+        </>
+      )}
+
+      {/* ── Full community grid ───────────────────────────────────────── */}
+      {rest.length > 0 && (
+        <>
+          <p className={styles.communitySpotlightLabel} style={{ marginTop: "1.5rem" }}>
+            Community
+          </p>
+          <div className={styles.contributorGrid}>
+            {visibleRest.map(({ login, commits, repos }) => (
+              <Link
+                key={login}
+                href={`https://github.com/${login}`}
+                target="_blank"
+                rel="noreferrer"
+                className={styles.contributorCard}
+                title={repos.length > 0 ? `${login} · ${repos.slice(0, 3).join(", ")}` : login}
+              >
+                <img
+                  src={`https://github.com/${login}.png?size=40`}
+                  alt={login}
+                  className={styles.contributorAvatar}
+                  loading="lazy"
+                />
+                <span className={styles.contributorName}>{login}</span>
+                {commits > 0 && (
+                  <span className={styles.contributorCommits}>
+                    {commits >= 1000 ? `${(commits / 1000).toFixed(1)}k` : commits}
+                  </span>
+                )}
+              </Link>
+            ))}
+          </div>
+          {!showAll && rest.length > GRID_INITIAL && (
+            <button
+              className={styles.communityShowMore}
+              onClick={() => setShowAll(true)}
+            >
+              Show all {rest.length} contributors
+            </button>
+          )}
+        </>
+      )}
+
+      {orgContributors.length === 0 && (
         <div className={styles.empty}>Frames are running the show</div>
       )}
+
+      <p className={styles.panelMeta} style={{ marginTop: "1rem" }}>
+        <Link
+          href="https://github.com/orgs/projectbluefin/people"
+          target="_blank"
+          rel="noreferrer"
+        >
+          View all on GitHub →
+        </Link>
+      </p>
     </section>
   );
 }
@@ -1501,6 +1646,10 @@ function ContributorLeaderboard({ history }: { history: HiveHistory | null }) {
     ? new Date(history.lastWeeklyStatsFetch).toLocaleDateString("en-US", { month: "short", day: "numeric" })
     : null;
 
+  const activeTab = (tab === "monthly" || tab === "weekly") && !hasWeeklyStats
+    ? "alltime"
+    : tab;
+
   return (
     <section className={styles.panel}>
       <Heading as="h2" className={styles.panelTitle}>
@@ -1509,20 +1658,34 @@ function ContributorLeaderboard({ history }: { history: HiveHistory | null }) {
       <p className={styles.panelMeta}>
         Factory-wide commit rankings across all 15 repos
         {lastUpdated ? ` · stats as of ${lastUpdated}` : ""}
-        {!hasWeeklyStats ? " · weekly/monthly windows accumulating" : ""}
+        {!hasWeeklyStats && (
+          <span className={styles.lbAccumulating}>
+            {" "}· Weekly &amp; monthly data accumulating — check back soon
+          </span>
+        )}
       </p>
 
       <div className={styles.lbTabs}>
         {(["alltime", "monthly", "weekly"] as LeaderboardTab[]).map((t) => (
           <button
             key={t}
-            className={`${styles.lbTab} ${tab === t ? styles.lbTabActive : ""}`}
+            className={`${styles.lbTab} ${tab === t ? styles.lbTabActive : ""} ${!hasWeeklyStats && t !== "alltime" ? styles.lbTabDisabled : ""}`}
             onClick={() => setTab(t)}
+            title={!hasWeeklyStats && t !== "alltime" ? "Weekly stats accumulating" : undefined}
           >
             {t === "alltime" ? "All Time" : t === "monthly" ? "This Month" : "This Week"}
+            {!hasWeeklyStats && t !== "alltime" && (
+              <span className={styles.lbTabPending}> ○</span>
+            )}
           </button>
         ))}
       </div>
+
+      {!hasWeeklyStats && activeTab === "alltime" && (tab === "monthly" || tab === "weekly") && (
+        <p className={styles.lbFallbackNote}>
+          Showing all-time rankings — weekly/monthly commit windows are still accumulating.
+        </p>
+      )}
 
       <div className={styles.lbTable}>
         <div className={styles.lbHeader}>
@@ -2171,7 +2334,7 @@ function GuardiansColumn({ prs }: { prs: QueueData["prs"] | null }) {
           {items.length > 8 && (
             <div className={styles.prTierEmpty}>
               +{items.length - 8} more &mdash; {" "}
-              <Link href="https://queue.projectbluefin.io/">see all</Link>
+              <Link href={HOSTED_INSTANCE_URL}>see all</Link>
             </div>
           )}
         </div>
@@ -2389,7 +2552,7 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
         closedRes,
       ] = await Promise.allSettled([
         fetchTimeout(SNAPSHOT_HTML_URL),
-        fetchTimeout(QUEUE_URL),
+        fetchQueueData(),
         fetchTimeout(`${GH_API}/repos/${DAKOTA}`),
         fetchTimeout(
           `${GH_API}/repos/${DAKOTA}/actions/workflows/${BUILD_WORKFLOW}/runs?per_page=1&status=completed`,
@@ -2417,9 +2580,9 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
         }
       }
 
-      // Queue data
-      if (queueRes.status === "fulfilled" && queueRes.value.ok) {
-        const qd = (await queueRes.value.json()) as QueueData;
+      // Queue data (hosted instance → public fallback)
+      if (queueRes.status === "fulfilled" && queueRes.value != null) {
+        const qd = queueRes.value;
         setQueueData(qd);
         // Derive legacy queue stats for QueueBar
         const p0Count = qd.issues.p0.length;
@@ -3093,6 +3256,10 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
             Data:{" "}
             <Link href="https://kubestellar.io/live/hive/bluefin/">
               Hive snapshot
+            </Link>{" "}
+            +{" "}
+            <Link href={HOSTED_INSTANCE_URL}>
+              hosted.hive
             </Link>{" "}
             +{" "}
             <Link href="https://queue.projectbluefin.io/">
