@@ -29,7 +29,7 @@ export const DakotaSection: React.FC = () => (
         label: "Alpha 3",
         entries: [
           {
-            label: "AMD / Intel",
+            label: "AMD / Intel + Nvidia",
             isoUrl: `${BASE}/dakota-live-alpha3.iso`,
             isoFilename: "dakota-live-alpha3.iso",
             checksumUrl: `${BASE}/dakota-live-alpha3.iso-CHECKSUM`,
