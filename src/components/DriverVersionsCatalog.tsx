@@ -282,7 +282,7 @@ function ReleaseNode({
               {hweIsPinned && (
                 <span
                   className={styles.pinnedTag}
-                  title={`Pinned to ${cleanVersion(pins!.hweKernel)} by maintainer — not following upstream`}
+                  title={`Pinned to ${cleanVersion(pins?.hweKernel ?? hwe)} by maintainer — not following upstream`}
                 >
                   📌 Pinned
                 </span>
