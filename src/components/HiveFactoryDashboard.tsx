@@ -249,14 +249,14 @@ interface HiveHistory {
 // ── Milestone badge definitions ───────────────────────────────────────────
 
 type MilestoneTier =
-  | "contributor"   // 10+ all-time commits
-  | "veteran"       // 100+ all-time commits
-  | "elite"         // 500+ all-time commits
-  | "legend"        // 1000+ all-time commits
-  | "mythic"        // 5000+ all-time commits
-  | "sprint"        // 10+ commits this week
-  | "rising"        // this week > rolling avg
-  | "cross";        // 3+ repos
+  | "contributor"   // 2+ repos
+  | "builder"       // 3+ repos
+  | "anchor"        // 5+ repos
+  | "legend"        // 7+ repos
+  | "cornerstone"   // 10+ repos
+  | "active"        // active this week
+  | "rising"        // trending up this week
+  | "cross";        // kept for compat
 
 interface MilestoneBadge {
   tier: MilestoneTier;
@@ -266,40 +266,34 @@ interface MilestoneBadge {
 }
 
 function computeMilestones(
-  total: number,
+  repoCount: number,
   lastWeek: number,
   lastMonth: number,
-  repos: string[],
 ): MilestoneBadge[] {
   const badges: MilestoneBadge[] = [];
 
-  // All-time tier (only show the highest earned)
-  if (total >= 5000) {
-    badges.push({ tier: "mythic", label: "Mythic", title: "5000+ lifetime commits", color: "#ff7b72" });
-  } else if (total >= 1000) {
-    badges.push({ tier: "legend", label: "Legend", title: "1000+ lifetime commits", color: "#f0883e" });
-  } else if (total >= 500) {
-    badges.push({ tier: "elite", label: "Elite", title: "500+ lifetime commits", color: "#bc8cff" });
-  } else if (total >= 100) {
-    badges.push({ tier: "veteran", label: "Veteran", title: "100+ lifetime commits", color: "#58a6ff" });
-  } else if (total >= 10) {
-    badges.push({ tier: "contributor", label: "Contributor", title: "10+ lifetime commits", color: "#3fb950" });
+  // Breadth tier — only the highest earned (commits don't matter in the age of AI)
+  if (repoCount >= 10) {
+    badges.push({ tier: "cornerstone", label: "Cornerstone", title: "Active across 10+ projects", color: "#ff7b72" });
+  } else if (repoCount >= 7) {
+    badges.push({ tier: "legend", label: "Legend", title: "Active across 7+ projects", color: "#f0883e" });
+  } else if (repoCount >= 5) {
+    badges.push({ tier: "anchor", label: "Anchor", title: "Active across 5+ projects", color: "#bc8cff" });
+  } else if (repoCount >= 3) {
+    badges.push({ tier: "builder", label: "Builder", title: "Active across 3+ projects", color: "#a371f7" });
+  } else if (repoCount >= 2) {
+    badges.push({ tier: "contributor", label: "Contributor", title: "Active across 2+ projects", color: "#3fb950" });
   }
 
-  // Activity badges
-  if (lastWeek >= 10) {
-    badges.push({ tier: "sprint", label: "Sprint", title: `${lastWeek} commits this week`, color: "#d29922" });
+  // Activity recency
+  if (lastWeek > 0) {
+    badges.push({ tier: "active", label: "Active", title: "Active this week", color: "#d29922" });
   }
 
-  // Weekly vs monthly avg (rising star)
+  // Rising trend
   const weeklyAvg = lastMonth > 0 ? lastMonth / 4 : 0;
   if (lastWeek > 0 && weeklyAvg > 0 && lastWeek > weeklyAvg * 1.5) {
     badges.push({ tier: "rising", label: "Rising", title: "Trending up this week", color: "#3fb950" });
-  }
-
-  // Cross-formation
-  if (repos.length >= 3) {
-    badges.push({ tier: "cross", label: "Multi-repo", title: `Active in ${repos.length} repos`, color: "#a371f7" });
   }
 
   return badges;
@@ -1303,7 +1297,7 @@ function ContributorWall({
 }) {
   const [showAll, setShowAll] = React.useState(false);
 
-  // Build sorted contributor list: all-time commits descending
+  // Build sorted contributor list: breadth-first (repos active in), not commit count
   const orgContributors: OrgContributor[] = React.useMemo(() => {
     if (history?.contributors && Object.keys(history.contributors).length > 0) {
       const byRepo = history.contributorsByRepo ?? {};
@@ -1316,7 +1310,7 @@ function ContributorWall({
             .map(([repo]) => repo);
           return { login, commits, repos };
         })
-        .sort((a, b) => b.commits - a.commits);
+        .sort((a, b) => b.repos.length - a.repos.length || b.commits - a.commits);
     }
     // fallback: derive from recent PRs
     const seen = new Set<string>();
@@ -1331,8 +1325,8 @@ function ContributorWall({
   }, [history, prs]);
 
   const isOrgWide = history?.contributors && Object.keys(history.contributors).length > 0;
-  const totalCommits = isOrgWide
-    ? Object.values(history!.contributors).reduce((s, n) => s + n, 0)
+  const activeThisMonth = isOrgWide
+    ? Object.values(history?.contributorStats ?? {}).filter((s) => (s.lastMonth ?? 0) > 0).length
     : 0;
 
   const SPOTLIGHT_COUNT = 12;
@@ -1365,11 +1359,11 @@ function ContributorWall({
           <div className={styles.communityStatDivider} />
           <div className={styles.communityStatItem}>
             <span className={styles.communityStatValue}>
-              {totalCommits >= 1000
-                ? `${(totalCommits / 1000).toFixed(1)}k`
-                : totalCommits}
+              {activeThisMonth > 0 ? activeThisMonth : orgContributors.length}
             </span>
-            <span className={styles.communityStatLabel}>total commits</span>
+            <span className={styles.communityStatLabel}>
+              {activeThisMonth > 0 ? "active this month" : "total"}
+            </span>
           </div>
         </div>
       )}
@@ -1383,12 +1377,11 @@ function ContributorWall({
         <>
           <p className={styles.communitySpotlightLabel}>✦ Top Contributors</p>
           <div className={styles.communitySpotlight}>
-            {spotlight.map(({ login, commits, repos }) => {
+            {spotlight.map(({ login, repos }) => {
               const s = stats[login];
-              const allTime = s?.total ?? commits;
               const lastWeek = s?.lastWeek ?? 0;
               const lastMonth = s?.lastMonth ?? 0;
-              const badges = computeMilestones(allTime, lastWeek, lastMonth, repos);
+              const badges = computeMilestones(repos.length, lastWeek, lastMonth);
               const topBadge = badges[0];
               return (
                 <Link
@@ -1407,7 +1400,7 @@ function ContributorWall({
                   />
                   <span className={styles.spotlightName}>{login}</span>
                   <span className={styles.spotlightCommits}>
-                    {commits >= 1000 ? `${(commits / 1000).toFixed(1)}k` : commits} commits
+                    {repos.length} {repos.length === 1 ? "project" : "projects"}
                   </span>
                   {repos.length > 0 && (
                     <div className={styles.spotlightRepos}>
@@ -1438,7 +1431,7 @@ function ContributorWall({
             Community
           </p>
           <div className={styles.contributorGrid}>
-            {visibleRest.map(({ login, commits, repos }) => (
+            {visibleRest.map(({ login, repos }) => (
               <Link
                 key={login}
                 href={`https://github.com/${login}`}
@@ -1454,9 +1447,9 @@ function ContributorWall({
                   loading="lazy"
                 />
                 <span className={styles.contributorName}>{login}</span>
-                {commits > 0 && (
+                {repos.length > 0 && (
                   <span className={styles.contributorCommits}>
-                    {commits >= 1000 ? `${(commits / 1000).toFixed(1)}k` : commits}
+                    {repos.length}p
                   </span>
                 )}
               </Link>
@@ -1583,8 +1576,7 @@ type LeaderboardTab = "alltime" | "monthly" | "weekly";
 interface LeaderboardEntry {
   rank: number;
   login: string;
-  commits: number;
-  delta?: number;      // change vs previous window (weekly only)
+  projects: number;    // repos.length — breadth of engagement
   repos: string[];
   badges: MilestoneBadge[];
   hasStats: boolean;
@@ -1612,17 +1604,12 @@ function ContributorLeaderboard({ history }: { history: HiveHistory | null }) {
 
     for (const login of allLogins) {
       const s = stats[login];
-      const allTime = s?.total ?? allTimeMap[login] ?? 0;
       const lastWeek = s?.lastWeek ?? 0;
       const lastMonth = s?.lastMonth ?? 0;
-      const last3Months = s?.last3Months ?? 0;
 
-      let commits = 0;
-      if (tab === "alltime") commits = allTime;
-      else if (tab === "monthly") commits = lastMonth;
-      else commits = lastWeek;
-
-      if (commits === 0) continue;
+      // Filter by activity window (commits used only as an activity signal, not a metric)
+      if (tab === "weekly" && lastWeek === 0) continue;
+      if (tab === "monthly" && lastMonth === 0) continue;
 
       // Repos from stats.byRepo or contributorsByRepo
       const repoMap = s?.byRepo ?? {};
@@ -1640,28 +1627,20 @@ function ContributorLeaderboard({ history }: { history: HiveHistory | null }) {
         return mb - ma;
       });
 
-      // Delta: for weekly tab, this week vs weekly avg of last month
-      let delta: number | undefined;
-      if (tab === "weekly" && lastMonth > 0) {
-        const avg = lastMonth / 4;
-        delta = Math.round(lastWeek - avg);
-      } else if (tab === "monthly" && last3Months > 0) {
-        const avg = last3Months / 3;
-        delta = Math.round(lastMonth - avg);
-      }
+      if (repos.length === 0) continue;
 
       rows.push({
         rank: 0,
         login,
-        commits,
-        delta,
+        projects: repos.length,
         repos,
-        badges: computeMilestones(allTime, lastWeek, lastMonth, repos),
+        badges: computeMilestones(repos.length, lastWeek, lastMonth),
         hasStats: s != null,
       });
     }
 
-    rows.sort((a, b) => b.commits - a.commits);
+    // Sort by breadth (projects), tiebreak by recency
+    rows.sort((a, b) => b.projects - a.projects);
     rows.forEach((r, i) => { r.rank = i + 1; });
     return rows.slice(0, 25);
   }, [history, tab]);
@@ -1679,14 +1658,14 @@ function ContributorLeaderboard({ history }: { history: HiveHistory | null }) {
   return (
     <section className={styles.panel}>
       <Heading as="h2" className={styles.panelTitle}>
-        Contributor Leaderboard
+        Community Builders
       </Heading>
       <p className={styles.panelMeta}>
-        Factory-wide commit rankings across all 15 repos
+        Ranked by breadth of engagement — projects contributed to across the factory
         {lastUpdated ? ` · stats as of ${lastUpdated}` : ""}
         {!hasWeeklyStats && (
           <span className={styles.lbAccumulating}>
-            {" "}· Weekly &amp; monthly data accumulating — check back soon
+            {" "}· Activity windows accumulating — check back soon
           </span>
         )}
       </p>
@@ -1697,9 +1676,9 @@ function ContributorLeaderboard({ history }: { history: HiveHistory | null }) {
             key={t}
             className={`${styles.lbTab} ${tab === t ? styles.lbTabActive : ""} ${!hasWeeklyStats && t !== "alltime" ? styles.lbTabDisabled : ""}`}
             onClick={() => setTab(t)}
-            title={!hasWeeklyStats && t !== "alltime" ? "Weekly stats accumulating" : undefined}
+            title={!hasWeeklyStats && t !== "alltime" ? "Activity data accumulating" : undefined}
           >
-            {t === "alltime" ? "All Time" : t === "monthly" ? "This Month" : "This Week"}
+            {t === "alltime" ? "All Time" : t === "monthly" ? "Active Month" : "Active Week"}
             {!hasWeeklyStats && t !== "alltime" && (
               <span className={styles.lbTabPending}> ○</span>
             )}
@@ -1709,7 +1688,7 @@ function ContributorLeaderboard({ history }: { history: HiveHistory | null }) {
 
       {!hasWeeklyStats && activeTab === "alltime" && (tab === "monthly" || tab === "weekly") && (
         <p className={styles.lbFallbackNote}>
-          Showing all-time rankings — weekly/monthly commit windows are still accumulating.
+          Showing all-time contributors — activity windows are still accumulating.
         </p>
       )}
 
@@ -1717,11 +1696,11 @@ function ContributorLeaderboard({ history }: { history: HiveHistory | null }) {
         <div className={styles.lbHeader}>
           <span className={styles.lbColRank}>#</span>
           <span className={styles.lbColUser}>Contributor</span>
-          <span className={styles.lbColCommits}>Commits</span>
+          <span className={styles.lbColCommits}>Projects</span>
           <span className={styles.lbColRepos}>Repos</span>
           <span className={styles.lbColBadges}>Milestones</span>
         </div>
-        {ranked.map(({ rank, login, commits, delta, repos, badges }) => (
+        {ranked.map(({ rank, login, projects, repos, badges }) => (
           <Link
             key={login}
             href={`https://github.com/${login}`}
@@ -1742,14 +1721,7 @@ function ContributorLeaderboard({ history }: { history: HiveHistory | null }) {
               <span className={styles.lbLogin}>{login}</span>
             </span>
             <span className={styles.lbColCommits}>
-              <span className={styles.lbCommitCount}>
-                {commits >= 1000 ? `${(commits / 1000).toFixed(1)}k` : commits}
-              </span>
-              {delta != null && delta !== 0 && (
-                <span className={`${styles.lbDelta} ${delta > 0 ? styles.lbDeltaUp : styles.lbDeltaDown}`}>
-                  {delta > 0 ? `+${delta}` : delta}
-                </span>
-              )}
+              <span className={styles.lbCommitCount}>{projects}</span>
             </span>
             <span className={styles.lbColRepos}>
               {repos.slice(0, 3).map((r) => (
@@ -2628,9 +2600,7 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
   const [dakotaStats, setDakotaStats] = useState<DakotaStats | null>(null);
   const [queue, setQueue] = useState<QueueStats | null>(null);
   const [queueData, setQueueData] = useState<QueueData | null>(null);
-  const [commits, setCommits] = useState<number[]>([]);
   const [orgStats, setOrgStats] = useState<OrgStats | null>(null);
-  const [repoPRs, setRepoPRs] = useState<RepoPRs[]>([]);
   const [mergedPRs, setMergedPRs] = useState<MergedPR[]>([]);
   const [velocity, setVelocity] = useState<Velocity | null>(null);
   const [hiveHistory, setHiveHistory] = useState<HiveHistory | null>(null);
@@ -2655,7 +2625,6 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
         queueRes,
         repoRes,
         ciRes,
-        commitsRes,
         mergedRes,
         openedRes,
         closedRes,
@@ -2666,7 +2635,6 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
         fetchTimeout(
           `${GH_API}/repos/${DAKOTA}/actions/workflows/${BUILD_WORKFLOW}/runs?per_page=1&status=completed`,
         ),
-        fetchTimeout(`${GH_API}/repos/${DAKOTA}/stats/participation`),
         fetchTimeout(
           `${GH_API}/search/issues?q=org:projectbluefin+type:pr+is:merged&sort=updated&per_page=30`,
         ),
@@ -2751,14 +2719,6 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
         });
       }
 
-      // Commit sparkline
-      if (commitsRes.status === "fulfilled" && commitsRes.value.ok) {
-        const commitData =
-          (await commitsRes.value.json()) as { all?: number[] };
-        if (Array.isArray(commitData.all))
-          setCommits(commitData.all.slice(-12));
-      }
-
       // Org-wide stats
       try {
         const weekAgo = new Date(Date.now() - 7 * 86400000)
@@ -2802,39 +2762,6 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
       } catch {
         /* non-fatal */
       }
-
-      // Per-repo PR breakdown
-      const HIVE_REPOS = [
-        "knuckle",
-        "documentation",
-        "testsuite",
-        "dakota",
-        "dakota-iso",
-      ];
-      const HIVE_BOT = "kubestellar-hive[bot]";
-      const prResults = await Promise.allSettled(
-        HIVE_REPOS.map((r) =>
-          fetchTimeout(
-            `${GH_API}/repos/projectbluefin/${r}/pulls?state=open&per_page=100`,
-          ),
-        ),
-      );
-      const rPRs: RepoPRs[] = [];
-      for (let i = 0; i < HIVE_REPOS.length; i++) {
-        const res = prResults[i];
-        if (res.status === "fulfilled" && res.value.ok) {
-          const prs = (await res.value.json()) as Array<{
-            user: { login: string };
-          }>;
-          rPRs.push({
-            repo: HIVE_REPOS[i],
-            total: prs.length,
-            agentPRs: prs.filter((p) => p.user.login === HIVE_BOT).length,
-            label: HIVE_REPOS[i],
-          });
-        }
-      }
-      setRepoPRs(rPRs);
 
       // Supplementary production stats + column data (non-blocking, best-effort)
       try {
@@ -2991,7 +2918,6 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
     formationColor = "#d29922";
   }
 
-  const totalCommits = commits.reduce((a, b) => a + b, 0);
   const p0Count = queueData?.issues.p0.length ?? 0;
   const p1Count = queueData?.issues.p1.length ?? 0;
   const prsNeedingReview =
@@ -3061,40 +2987,6 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
           </div>
           <div className={styles.heroRight}>
             <LivePulse />
-            {commits.length > 1 && (
-              <div className={styles.heroSpark}>
-                <svg
-                  viewBox="0 0 100 28"
-                  className={styles.heroSparkline}
-                  aria-hidden="true"
-                >
-                  {(() => {
-                    const W = 100; const H = 28;
-                    const max = Math.max(...commits, 1);
-                    const pts = commits.map((v, i) => {
-                      const x = (i / (commits.length - 1)) * W;
-                      const y = H - 2 - (v / max) * (H - 6);
-                      return `${x},${y}`;
-                    });
-                    const area = `M ${pts[0]} L ${pts.slice(1).join(" L ")} L ${W},${H} L 0,${H} Z`;
-                    return (
-                      <>
-                        <path d={area} fill="rgba(63,185,80,0.12)" />
-                        <polyline
-                          points={pts.join(" ")}
-                          fill="none"
-                          stroke="#3fb950"
-                          strokeWidth="1.5"
-                          strokeLinejoin="round"
-                          strokeLinecap="round"
-                        />
-                      </>
-                    );
-                  })()}
-                </svg>
-                <span className={styles.heroSparkLabel}>{totalCommits} commits / 12w</span>
-              </div>
-            )}
             {snapshot?.acmmMode && (
               <span
                 className={`${styles.modeBadge} ${
@@ -3158,15 +3050,6 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
                 ...queueData.victories.dreams.recent,
                 ...queueData.victories.relief.recent,
               ].sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()), 14)}
-              sparkColor="green"
-            />
-          )}
-          {commits.length > 1 && (
-            <StatCard
-              label="Commit Activity"
-              value={totalCommits}
-              sub="last 12 weeks"
-              spark={commits}
               sparkColor="green"
             />
           )}
@@ -3239,83 +3122,6 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
         {/* Victory Log */}
         <VictoryLog victories={queueData?.victories ?? null} />
 
-        {/* Commit activity + What agents are doing */}
-        <div className={styles.twoCol}>
-          <section className={styles.panel}>
-            <Heading as="h2" className={styles.panelTitle}>
-              Commit Activity
-            </Heading>
-            <p className={styles.panelMeta}>
-              Last 12 weeks &middot; projectbluefin/dakota
-            </p>
-            {commits.length > 1 ? (
-              <div className={styles.sparkWrap}>
-                <Sparkline data={commits} />
-                <div className={styles.sparkLabels}>
-                  <span>12 weeks ago</span>
-                  <span className={styles.sparkTotal}>
-                    {totalCommits} commits
-                  </span>
-                  <span>now</span>
-                </div>
-                <div className={styles.sparkBar}>
-                  {commits.map((v, i) => {
-                    const max = Math.max(...commits, 1);
-                    const h = Math.max((v / max) * 40, v > 0 ? 3 : 1);
-                    return (
-                      <div
-                        key={i}
-                        className={styles.sparkBarItem}
-                        style={{ height: `${h}px` }}
-                        title={`Week ${i + 1}: ${v} commits`}
-                      />
-                    );
-                  })}
-                </div>
-              </div>
-            ) : (
-              <div className={styles.empty}>Fetching data…</div>
-            )}
-          </section>
-
-          <section className={styles.panel}>
-            <Heading as="h2" className={styles.panelTitle}>
-              What Frames Are Doing
-            </Heading>
-            {workingAgents.length > 0 ? (
-              <div className={styles.activityList}>
-                {workingAgents.map((a) => {
-                  const lines = meaningfulSummaryLines(a.liveSummary ?? "", 5);
-                  if (lines.length === 0) return null;
-                  return (
-                    <div key={a.id} className={styles.activityItem}>
-                      <span className={styles.activityInitial}>
-                        {(a.displayName || a.name)
-                          .slice(0, 1)
-                          .toUpperCase()}
-                      </span>
-                      <div>
-                        <div className={styles.activityAgent}>
-                          {a.displayName}
-                        </div>
-                        {lines.map((line, i) => (
-                          <div key={i} className={styles.activityText}>{line}</div>
-                        ))}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className={styles.empty}>
-                {agents.length > 0
-                  ? "Frames are between tasks"
-                  : "No Frame data — snapshot updating"}
-              </div>
-            )}
-          </section>
-        </div>
-
         {/* Frame formation */}
         {agents.length > 0 && (
           <section className={styles.panel}>
@@ -3345,18 +3151,6 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
               advisoryIssue={snapshot?.advisoryIssue}
               config={config}
             />
-          </section>
-        )}
-
-        {/* PR queue chart */}
-        {repoPRs.length > 0 && (
-          <section className={styles.panel}>
-            <Heading as="h2" className={styles.panelTitle}>PR Queue</Heading>
-            <p className={styles.panelMeta}>
-              Open pull requests across formation repos &middot; [agent] = hive
-              agent authored
-            </p>
-            <PrQueueChart data={repoPRs} />
           </section>
         )}
 
