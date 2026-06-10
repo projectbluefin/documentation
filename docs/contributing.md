@@ -79,8 +79,8 @@ Bluefin is a combination of a set of configuration OCI containers which are then
 
 ### Images 
 
-- Bluefin stable: [@ublue-os/bluefin](https://github.com/ublue-os/bluefin) - generates Fedora-based Bluefin OCI container
-- Bluefin LTS [@ublue-os/bluefin-lts](https://github.com/ublue-os/bluefin-lts) - generates a CentOS-based Bluefin OCI container
+- Bluefin stable: [@ublue-os/bluefin](https://github.com/projectbluefin/bluefin) - generates Fedora-based Bluefin OCI container
+- Bluefin LTS [@ublue-os/bluefin-lts](https://github.com/projectbluefin/bluefin-lts) - generates a CentOS-based Bluefin OCI container
 - Bluefin distroless prototype (aka Dakotaraptor) [@ublue-os/dakota](https://github.com/projectbluefin/dakota) - generates a GNOME OS based Bluefin OCI container
 
 :::info Distroless
@@ -180,7 +180,7 @@ We're making containers here with bash and a little bit of Python, it's not the 
 
 1. **Fork the repository** on GitHub to your account:
    ```bash
-   # Navigate to https://github.com/ublue-os/bluefin
+   # Navigate to https://github.com/projectbluefin/bluefin
    # Click "Fork" in the upper right
    ```
 
@@ -192,7 +192,7 @@ We're making containers here with bash and a little bit of Python, it's not the 
 
 3. **Add upstream remote**:
    ```bash
-   git remote add upstream https://github.com/ublue-os/bluefin.git
+   git remote add upstream https://github.com/projectbluefin/bluefin.git
    git fetch upstream
    ```
 
@@ -202,8 +202,8 @@ We're making containers here with bash and a little bit of Python, it's not the 
    # Should show:
    # origin    https://github.com/YOUR_USERNAME/bluefin.git (fetch)
    # origin    https://github.com/YOUR_USERNAME/bluefin.git (push)
-   # upstream  https://github.com/ublue-os/bluefin.git (fetch)
-   # upstream  https://github.com/ublue-os/bluefin.git (push)
+   # upstream  https://github.com/projectbluefin/bluefin.git (fetch)
+   # upstream  https://github.com/projectbluefin/bluefin.git (push)
    ```
 
 ## Contribution Workflow
@@ -491,14 +491,14 @@ Every PR generates a test image. You can rebase to it:
 ```bash
 # Find the PR number (e.g., #3322)
 # Rebase to the PR image
-sudo bootc switch ghcr.io/ublue-os/bluefin:pr-3322
+sudo bootc switch ghcr.io/projectbluefin/bluefin:pr-3322
 
 # Reboot to test
 sudo systemctl reboot
 
 # If it works, leave feedback on the PR
 # If it doesn't work, revert to stable
-sudo bootc switch ghcr.io/ublue-os/bluefin:stable
+sudo bootc switch ghcr.io/projectbluefin/bluefin:stable
 sudo systemctl reboot
 ```
 
@@ -556,7 +556,7 @@ jq empty packages.json && echo "Valid JSON" || echo "Invalid JSON"
    ```
 
 2. **Open PR on GitHub**:
-   - Navigate to https://github.com/ublue-os/bluefin
+   - Navigate to https://github.com/projectbluefin/bluefin
    - Click "Pull requests" → "New pull request"
    - Click "compare across forks"
    - Select your fork and branch
@@ -1053,13 +1053,13 @@ Bluefin uses continuous delivery:
 **stable** (Weekly):
 ```bash
 # Rebase to stable
-sudo bootc switch ghcr.io/ublue-os/bluefin:stable
+sudo bootc switch ghcr.io/projectbluefin/bluefin:stable
 ```
 
 **latest** (Daily):
 ```bash
 # Rebase to latest
-sudo bootc switch ghcr.io/ublue-os/bluefin:latest
+sudo bootc switch ghcr.io/projectbluefin/bluefin:latest
 ```
 
 ## Pinning Package Versions
@@ -1136,7 +1136,7 @@ xargs flatpak --system -y install --or-update < /etc/ublue-os/system-flatpaks.li
 # Developer mode Flatpaks are installed if developer mode is enabled
 xargs flatpak --system -y install --or-update < /etc/ublue-os/system-flatpaks-dx.list
 ```
-[Reference](https://github.com/ublue-os/bluefin/blob/3ddc76eaf5536f7340e34b2242131c2f7a455bd1/just/bluefin-system.just)
+[Reference](https://github.com/projectbluefin/bluefin/blob/3ddc76eaf5536f7340e34b2242131c2f7a455bd1/just/bluefin-system.just)
 
 ## Featuring Flatpaks in Bazaar
 
@@ -1158,7 +1158,7 @@ Each section (e.g., "Bluefin Recommends", "Browsers", "Media") contains an `appi
 3. Optionally, create a new section if your application fits a new category.
 4. Submit a pull request with your changes. The Bazaar maintainers will review and merge as appropriate.
 
-[Reference](https://github.com/ublue-os/bluefin/blob/3ddc76eaf5536f7340e34b2242131c2f7a455bd1/system_files/shared/usr/share/ublue-os/bazaar/config.yaml)
+[Reference](https://github.com/projectbluefin/bluefin/blob/3ddc76eaf5536f7340e34b2242131c2f7a455bd1/system_files/shared/usr/share/ublue-os/bazaar/config.yaml)
 
 ## Lifecycle Management
 
