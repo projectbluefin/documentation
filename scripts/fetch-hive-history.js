@@ -442,7 +442,15 @@ async function main() {
   console.log(`[hive-history] Wrote ${OUTPUT_FILE}`);
 }
 
-main().catch((err) => {
-  console.error("[hive-history] Fatal:", err);
-  process.exit(1);
-});
+// ── Test exports ──────────────────────────────────────────────────────────────
+if (typeof module !== "undefined") {
+  module.exports = { extractRenderData, extractMetrics, safeNum };
+}
+
+// Run main only when executed directly (not when required by tests).
+if (require.main === module) {
+  main().catch((err) => {
+    console.error("[hive-history] Fatal:", err);
+    process.exit(1);
+  });
+}
