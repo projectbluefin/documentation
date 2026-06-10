@@ -161,6 +161,32 @@ interface GitHubSearchIssueItem {
   user?: { login?: string; type?: string };
   updated_at: string;
   html_url: string;
+  labels?: Array<{ name: string; color: string }>;
+  comments?: number;
+  draft?: boolean;
+}
+
+interface CommunityDiscussion {
+  number: number;
+  title: string;
+  html_url: string;
+  repository_url?: string;
+  updated_at: string;
+  labels?: QueueLabel[];
+  comments?: number;
+  user?: { login?: string };
+}
+
+interface AgentAssistedPR {
+  number: number;
+  title: string;
+  html_url: string;
+  repository_url?: string;
+  updated_at: string;
+  labels?: QueueLabel[];
+  user?: { login?: string };
+  draft?: boolean;
+  agentType: "hive" | "copilot";
 }
 
 interface OrgStats {
@@ -2296,77 +2322,104 @@ function OrgStatsPanel({ stats }: { stats: OrgStats }) {
 
 // ── New: Guardians column ──────────────────────────────────────────────────
 
-function GuardiansColumn({ prs }: { prs: QueueData["prs"] | null }) {
-  if (!prs) {
+// ── Guardians column — Community discussions ───────────────────────────────
+
+const EPIC_LABELS = new Set(["epic", "type:epic", "kind:epic", "feature:epic"]);
+const SKIP_LABEL_PREFIXES_GUARDIAN = ["queue/", "hive/", "source:", "priority/", "type:epic", "kind:epic"];
+
+function guardianVisibleLabels(labels?: QueueLabel[]): QueueLabel[] {
+  return (labels ?? []).filter(
+    (l) =>
+      !SKIP_LABEL_PREFIXES_GUARDIAN.some((p) => l.name.toLowerCase().startsWith(p)) &&
+      !EPIC_LABELS.has(l.name.toLowerCase()),
+  ).slice(0, 3);
+}
+
+function isEpic(labels?: QueueLabel[]): boolean {
+  return (labels ?? []).some((l) => EPIC_LABELS.has(l.name.toLowerCase()));
+}
+
+function GuardiansColumn({ discussions }: { discussions: CommunityDiscussion[] | null }) {
+  if (!discussions) {
     return (
       <div className={`${styles.destinyCol} ${styles.guardiansCol}`}>
         <div>
           <p className={styles.destinyColTitle + " " + styles.guardiansColTitle}>Guardians</p>
-          <p className={styles.destinyColSubtitle}>Human contributor pull requests</p>
+          <p className={styles.destinyColSubtitle}>Community conversations</p>
         </div>
         <div className={styles.empty}>Loading…</div>
       </div>
     );
   }
 
-  const tiers: Array<{
-    key: keyof QueueData["prs"];
-    label: string;
-    labelCls: string;
-    items: QueuePR[];
-  }> = [
-    { key: "approved", label: "APPROVED", labelCls: styles.prTierLabelApproved, items: prs.approved },
-    { key: "required", label: "NEEDS REVIEW", labelCls: styles.prTierLabelRequired, items: prs.required },
-    { key: "none", label: "NO REVIEWS", labelCls: styles.prTierLabelNone, items: prs.none },
+  const epics = discussions.filter((d) => isEpic(d.labels));
+  const active = discussions.filter((d) => !isEpic(d.labels));
+
+  function DiscussionCard({ item }: { item: CommunityDiscussion }) {
+    const repo = parseRepoName(item.repository_url, item.html_url);
+    const lbls = guardianVisibleLabels(item.labels);
+    return (
+      <Link
+        href={item.html_url}
+        target="_blank"
+        rel="noreferrer"
+        className={styles.issueCard}
+      >
+        <span className={styles.issueCardTitle}>{item.title.slice(0, 90)}</span>
+        <div className={styles.issueCardMeta}>
+          <span className={styles.issueCardRepo}>{repo}</span>
+          {(item.comments ?? 0) > 0 && (
+            <span className={styles.commentCount}>
+              {item.comments} comment{item.comments !== 1 ? "s" : ""}
+            </span>
+          )}
+          {lbls.map((l) => (
+            <span
+              key={l.name}
+              className={styles.issueLabel}
+              style={{
+                background: `#${l.color}22`,
+                color: `#${l.color}`,
+                border: `1px solid #${l.color}44`,
+              }}
+            >
+              {l.name}
+            </span>
+          ))}
+          <span className={styles.issueCardAge}>{relTime(item.updated_at)}</span>
+        </div>
+      </Link>
+    );
+  }
+
+  const tiers: Array<{ label: string; labelCls: string; items: CommunityDiscussion[]; empty: string }> = [
+    { label: "EPICS", labelCls: styles.prTierLabelEpic, items: epics, empty: "No open epics" },
+    { label: "ACTIVE DISCUSSIONS", labelCls: styles.prTierLabelNone, items: active, empty: "Queue clear" },
   ];
 
   return (
     <div className={`${styles.destinyCol} ${styles.guardiansCol}`}>
       <div>
         <p className={styles.destinyColTitle + " " + styles.guardiansColTitle}>Guardians</p>
-        <p className={styles.destinyColSubtitle}>Human contributor pull requests — the Light we carry</p>
+        <p className={styles.destinyColSubtitle}>
+          Community conversations &mdash; sorted by latest activity
+        </p>
       </div>
-      {tiers.map(({ key, label, labelCls, items }) => (
-        <div key={key} className={styles.prTier}>
+      {tiers.map(({ label, labelCls, items, empty }) => (
+        <div key={label} className={styles.prTier}>
           <div className={styles.prTierHeader}>
             <span className={`${styles.prTierLabel} ${labelCls}`}>{label}</span>
             <span className={styles.prTierCount}>{items.length}</span>
           </div>
           {items.length === 0 ? (
-            <div className={styles.prTierEmpty}>None</div>
+            <div className={styles.prTierEmpty}>{empty}</div>
           ) : (
-            items.slice(0, 8).map((pr, i) => {
-              const repo = parseRepoName(pr.repository_url);
-              const approvals = pr._reviews?.approved ?? 0;
-              return (
-                <Link
-                  key={i}
-                  href={pr.html_url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className={styles.prCard}
-                >
-                  <span className={styles.prCardTitle}>
-                    {pr.title.slice(0, 80)}
-                  </span>
-                  <div className={styles.prCardMeta}>
-                    <span className={styles.prCardRepo}>{repo}</span>
-                    {approvals > 0 && (
-                      <span className={styles.prCardApprovals}>
-                        {approvals} approved
-                      </span>
-                    )}
-                    <span className={styles.prCardAge}>{relTime(pr.updated_at)}</span>
-                  </div>
-                </Link>
-              );
-            })
+            items.slice(0, 10).map((item) => (
+              <DiscussionCard key={item.html_url} item={item} />
+            ))
           )}
-          {items.length > 8 && (
-            <div className={styles.prTierEmpty}>
-              +{items.length - 8} more &mdash; {" "}
-              <Link href={HOSTED_INSTANCE_URL}>see all</Link>
-            </div>
+          {items.length > 10 && (
+            <div className={styles.prTierEmpty}>+{items.length - 10} more</div>
           )}
         </div>
       ))}
@@ -2374,98 +2427,117 @@ function GuardiansColumn({ prs }: { prs: QueueData["prs"] | null }) {
   );
 }
 
-// ── New: Ghosts column ─────────────────────────────────────────────────────
+// ── Ghosts column — Agent-assisted PRs ────────────────────────────────────
 
-function GhostsColumn({ issues }: { issues: QueueData["issues"] | null }) {
-  if (!issues) {
+const SKIP_LABEL_PREFIXES_GHOST = ["source:", "hive/", "queue/", "priority/"];
+
+function ghostVisibleLabels(labels?: QueueLabel[]): QueueLabel[] {
+  return (labels ?? []).filter(
+    (l) => !SKIP_LABEL_PREFIXES_GHOST.some((p) => l.name.toLowerCase().startsWith(p)),
+  ).slice(0, 3);
+}
+
+function GhostsColumn({
+  hivePRs,
+  copilotPRs,
+}: {
+  hivePRs: AgentAssistedPR[] | null;
+  copilotPRs: AgentAssistedPR[] | null;
+}) {
+  const loading = hivePRs === null && copilotPRs === null;
+
+  if (loading) {
     return (
       <div className={`${styles.destinyCol} ${styles.ghostsCol}`}>
         <div>
           <p className={styles.destinyColTitle + " " + styles.ghostsColTitle}>Ghosts</p>
-          <p className={styles.destinyColSubtitle}>Agent-driven issues and work queue</p>
+          <p className={styles.destinyColSubtitle}>Agent-assisted pull requests</p>
         </div>
         <div className={styles.empty}>Loading…</div>
       </div>
     );
   }
 
-  const SKIP_LABEL_PREFIXES = ["hive/", "priority/", "queue/"];
-
-  function visibleLabels(labels?: QueueLabel[]): QueueLabel[] {
-    return (labels ?? []).filter(
-      (l) => !SKIP_LABEL_PREFIXES.some((p) => l.name.startsWith(p)),
+  // Merge + deduplicate by html_url; hive entries win on conflict
+  const allPRs = React.useMemo(() => {
+    const seen = new Set<string>();
+    const merged: AgentAssistedPR[] = [];
+    for (const pr of hivePRs ?? []) {
+      if (!seen.has(pr.html_url)) { seen.add(pr.html_url); merged.push(pr); }
+    }
+    for (const pr of copilotPRs ?? []) {
+      if (!seen.has(pr.html_url)) { seen.add(pr.html_url); merged.push(pr); }
+    }
+    return merged.sort(
+      (a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime(),
     );
-  }
-
-  const tiers: Array<{
-    key: keyof QueueData["issues"];
-    label: string;
-    labelCls: string;
-    items: QueueIssue[];
-  }> = [
-    { key: "p0", label: "P0", labelCls: styles.issueTierLabelP0, items: issues.p0 },
-    { key: "p1", label: "P1", labelCls: styles.issueTierLabelP1, items: issues.p1 },
-  ];
+  }, [hivePRs, copilotPRs]);
 
   return (
     <div className={`${styles.destinyCol} ${styles.ghostsCol}`}>
       <div>
         <p className={styles.destinyColTitle + " " + styles.ghostsColTitle}>Ghosts</p>
-        <p className={styles.destinyColSubtitle}>Agent-driven issues — the machines at work</p>
+        <p className={styles.destinyColSubtitle}>
+          Agent-assisted pull requests &mdash; the machines at work
+        </p>
       </div>
-      {tiers.map(({ key, label, labelCls, items }) => (
-        <div key={key} className={styles.prTier}>
-          <div className={styles.prTierHeader}>
-            <span className={`${styles.prTierLabel} ${labelCls}`}>{label}</span>
-            <span className={styles.prTierCount}>{items.length}</span>
-          </div>
-          {items.length === 0 ? (
-            <div className={styles.prTierEmpty}>
-              {key === "p0" ? "No blockers" : "Queue clear"}
-            </div>
-          ) : (
-            items.slice(0, 8).map((issue, i) => {
-              const repo = parseRepoName(issue.repository_url);
-              const lbls = visibleLabels(issue.labels).slice(0, 3);
-              return (
-                <Link
-                  key={i}
-                  href={issue.html_url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className={styles.issueCard}
-                >
-                  <span className={styles.issueCardTitle}>
-                    {issue.title.slice(0, 80)}
-                  </span>
-                  <div className={styles.issueCardMeta}>
-                    <span className={styles.issueCardRepo}>{repo}</span>
-                    {lbls.map((l) => (
-                      <span
-                        key={l.name}
-                        className={styles.issueLabel}
-                        style={{
-                          background: `#${l.color}22`,
-                          color: `#${l.color}`,
-                          border: `1px solid #${l.color}44`,
-                        }}
-                      >
-                        {l.name}
-                      </span>
-                    ))}
-                    <span className={styles.issueCardAge}>
-                      {relTime(issue.updated_at)}
-                    </span>
-                  </div>
-                </Link>
-              );
-            })
-          )}
-          {items.length > 8 && (
-            <div className={styles.prTierEmpty}>+{items.length - 8} more</div>
-          )}
+      <div className={styles.prTier}>
+        <div className={styles.prTierHeader}>
+          <span className={`${styles.prTierLabel} ${styles.prTierLabelAgent}`}>OPEN</span>
+          <span className={styles.prTierCount}>{allPRs.length}</span>
         </div>
-      ))}
+        {allPRs.length === 0 ? (
+          <div className={styles.prTierEmpty}>No open agent PRs</div>
+        ) : (
+          allPRs.slice(0, 15).map((pr) => {
+            const repo = parseRepoName(pr.repository_url, pr.html_url);
+            const lbls = ghostVisibleLabels(pr.labels);
+            return (
+              <Link
+                key={pr.html_url}
+                href={pr.html_url}
+                target="_blank"
+                rel="noreferrer"
+                className={styles.prCard}
+              >
+                <span className={styles.prCardTitle}>
+                  {pr.draft && <span className={styles.prDraftBadge}>Draft</span>}
+                  {pr.title.slice(0, 85)}
+                </span>
+                <div className={styles.prCardMeta}>
+                  <span className={styles.prCardRepo}>{repo}</span>
+                  <span
+                    className={
+                      pr.agentType === "hive"
+                        ? styles.agentTypeBadgeHive
+                        : styles.agentTypeBadgeCopilot
+                    }
+                  >
+                    {pr.agentType === "hive" ? "hive" : "copilot"}
+                  </span>
+                  {lbls.map((l) => (
+                    <span
+                      key={l.name}
+                      className={styles.issueLabel}
+                      style={{
+                        background: `#${l.color}22`,
+                        color: `#${l.color}`,
+                        border: `1px solid #${l.color}44`,
+                      }}
+                    >
+                      {l.name}
+                    </span>
+                  ))}
+                  <span className={styles.prCardAge}>{relTime(pr.updated_at)}</span>
+                </div>
+              </Link>
+            );
+          })
+        )}
+        {allPRs.length > 15 && (
+          <div className={styles.prTierEmpty}>+{allPRs.length - 15} more</div>
+        )}
+      </div>
     </div>
   );
 }
@@ -2565,6 +2637,9 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
   const [testBuilds, setTestBuilds] = useState<number | null>(null);
   const [tapPromotions, setTapPromotions] = useState<number | null>(null);
   const [agentMergedCount, setAgentMergedCount] = useState<number | null>(null);
+  const [communityDiscussions, setCommunityDiscussions] = useState<CommunityDiscussion[] | null>(null);
+  const [hivePRsList, setHivePRsList] = useState<AgentAssistedPR[] | null>(null);
+  const [copilotPRsList, setCopilotPRsList] = useState<AgentAssistedPR[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [refreshIn, setRefreshIn] = useState(REFRESH_SECS);
@@ -2760,12 +2835,12 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
       }
       setRepoPRs(rPRs);
 
-      // Supplementary production stats (non-blocking, best-effort)
+      // Supplementary production stats + column data (non-blocking, best-effort)
       try {
         const monthAgoISO = new Date(Date.now() - 30 * 24 * 3600 * 1000)
           .toISOString()
           .slice(0, 10);
-        const [testRes, promosRes, agentMergedRes] = await Promise.allSettled([
+        const [testRes, promosRes, agentMergedRes, discussRes, hivePRRes, copilotPRRes] = await Promise.allSettled([
           // Successful CI runs in the hardware test suite this week
           fetchTimeout(
             `${GH_API}/repos/projectbluefin/testsuite/actions/runs?status=success&per_page=1`,
@@ -2777,6 +2852,18 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
           // PRs merged by the hive agent this week (agent output rate)
           fetchTimeout(
             `${GH_API}/search/issues?q=org:projectbluefin+type:pr+is:merged+author:kubestellar-hive%5Bbot%5D+merged:>${weekAgoISO}&per_page=1`,
+          ),
+          // Community discussions — open issues, excluding agent queue items, sorted by activity
+          fetchTimeout(
+            `${GH_API}/search/issues?q=org:projectbluefin+type:issue+is:open+-label:queue%2Fagent-ready+-label:source%3Aagent&sort=updated&order=desc&per_page=25`,
+          ),
+          // Ghosts: PRs authored by the hive agent bot
+          fetchTimeout(
+            `${GH_API}/search/issues?q=org:projectbluefin+type:pr+is:open+author:kubestellar-hive%5Bbot%5D&sort=updated&order=desc&per_page=25`,
+          ),
+          // Ghosts: PRs labeled source:agent (Copilot-assisted, not just hive-bot)
+          fetchTimeout(
+            `${GH_API}/search/issues?q=org:projectbluefin+type:pr+is:open+label:source%3Aagent&sort=updated&order=desc&per_page=25`,
           ),
         ]);
         if (testRes.status === "fulfilled" && testRes.value.ok) {
@@ -2790,6 +2877,53 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
         if (agentMergedRes.status === "fulfilled" && agentMergedRes.value.ok) {
           const d = (await agentMergedRes.value.json()) as GitHubSearchResponse<unknown>;
           setAgentMergedCount(d.total_count ?? 0);
+        }
+        if (discussRes.status === "fulfilled" && discussRes.value.ok) {
+          const d = (await discussRes.value.json()) as GitHubSearchResponse<GitHubSearchIssueItem>;
+          setCommunityDiscussions(
+            (d.items ?? []).map((i) => ({
+              number: i.number,
+              title: i.title,
+              html_url: i.html_url,
+              repository_url: i.repository_url,
+              updated_at: i.updated_at,
+              labels: (i.labels ?? []).map((l) => ({ name: l.name, color: l.color })),
+              comments: i.comments,
+              user: i.user ? { login: i.user.login } : undefined,
+            })),
+          );
+        }
+        if (hivePRRes.status === "fulfilled" && hivePRRes.value.ok) {
+          const d = (await hivePRRes.value.json()) as GitHubSearchResponse<GitHubSearchIssueItem>;
+          setHivePRsList(
+            (d.items ?? []).map((i) => ({
+              number: i.number,
+              title: i.title,
+              html_url: i.html_url,
+              repository_url: i.repository_url,
+              updated_at: i.updated_at,
+              labels: (i.labels ?? []).map((l) => ({ name: l.name, color: l.color })),
+              user: i.user ? { login: i.user.login } : undefined,
+              draft: i.draft,
+              agentType: "hive" as const,
+            })),
+          );
+        }
+        if (copilotPRRes.status === "fulfilled" && copilotPRRes.value.ok) {
+          const d = (await copilotPRRes.value.json()) as GitHubSearchResponse<GitHubSearchIssueItem>;
+          setCopilotPRsList(
+            (d.items ?? []).map((i) => ({
+              number: i.number,
+              title: i.title,
+              html_url: i.html_url,
+              repository_url: i.repository_url,
+              updated_at: i.updated_at,
+              labels: (i.labels ?? []).map((l) => ({ name: l.name, color: l.color })),
+              user: i.user ? { login: i.user.login } : undefined,
+              draft: i.draft,
+              agentType: "copilot" as const,
+            })),
+          );
         }
       } catch {
         /* non-fatal */
@@ -3097,8 +3231,8 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
 
         {/* Guardians / Ghosts */}
         <div className={styles.destinyColumns}>
-          <GuardiansColumn prs={queueData?.prs ?? null} />
-          <GhostsColumn issues={queueData?.issues ?? null} />
+          <GuardiansColumn discussions={communityDiscussions} />
+          <GhostsColumn hivePRs={hivePRsList} copilotPRs={copilotPRsList} />
         </div>
 
         {/* Victory Log */}

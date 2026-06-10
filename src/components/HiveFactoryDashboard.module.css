@@ -1720,6 +1720,66 @@
   border: 1px solid rgba(139, 148, 158, 0.2);
 }
 
+.prTierLabelEpic {
+  background: rgba(217, 119, 6, 0.15);
+  color: #d97706;
+  border: 1px solid rgba(217, 119, 6, 0.35);
+}
+
+.prTierLabelAgent {
+  background: rgba(147, 197, 253, 0.12);
+  color: #93c5fd;
+  border: 1px solid rgba(147, 197, 253, 0.25);
+}
+
+.agentTypeBadgeHive {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 0.1rem 0.4rem;
+  border-radius: 3px;
+  background: rgba(217, 119, 6, 0.15);
+  color: #d97706;
+  border: 1px solid rgba(217, 119, 6, 0.3);
+  text-transform: uppercase;
+}
+
+.agentTypeBadgeCopilot {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 0.1rem 0.4rem;
+  border-radius: 3px;
+  background: rgba(37, 99, 235, 0.15);
+  color: #93c5fd;
+  border: 1px solid rgba(37, 99, 235, 0.3);
+  text-transform: uppercase;
+}
+
+.prDraftBadge {
+  display: inline-block;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 0.05rem 0.35rem;
+  border-radius: 3px;
+  background: rgba(139, 148, 158, 0.15);
+  color: #8b949e;
+  border: 1px solid rgba(139, 148, 158, 0.25);
+  margin-right: 0.4rem;
+  vertical-align: middle;
+  text-transform: uppercase;
+}
+
+.commentCount {
+  font-size: 0.68rem;
+  color: #8b949e;
+  background: rgba(139, 148, 158, 0.1);
+  border: 1px solid rgba(139, 148, 158, 0.15);
+  border-radius: 3px;
+  padding: 0.1rem 0.4rem;
+}
+
 .prTierCount {
   font-size: 0.75rem;
   color: #8b949e;
