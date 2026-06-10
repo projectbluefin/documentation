@@ -349,8 +349,9 @@ async function fetchAllProfiles() {
     console.warn(
       "⚠️  No GitHub token found. Set GITHUB_TOKEN or GH_TOKEN environment variable.",
     );
-    console.warn("   This script may hit rate limits without authentication.");
-    console.warn("   Get a token at: https://github.com/settings/tokens\n");
+    console.warn("   Get a token at: https://github.com/settings/tokens");
+    console.warn("   Skipping fetch — no changes written.\n");
+    process.exit(0);
   } else {
     console.log("✓ Using authenticated GitHub API access\n");
   }
