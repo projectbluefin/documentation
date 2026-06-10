@@ -35,8 +35,14 @@
 const fs = require("fs");
 const path = require("path");
 
-const SNAPSHOT_HTML_URL =
-  "https://raw.githubusercontent.com/kubestellar/docs/main/public/live/hive/bluefin/index.html";
+// Snapshot data comes from the hosted Knuckle /api/status endpoint.
+// The old raw.githubusercontent.com HTML snapshot (bluefin/index.html) is no longer published.
+// HIVE_API_TOKEN: optional Bearer token for CI — if unset, snapshot fetch is skipped gracefully.
+const HOSTED_INSTANCE_URL =
+  "https://hosted-projectbluefin-knuckle-gjvq.hive.kubestellar.io";
+const SNAPSHOT_API_URL = `${HOSTED_INSTANCE_URL}/api/status`;
+const HIVE_API_TOKEN = process.env.HIVE_API_TOKEN || "";
+
 const OUTPUT_FILE = path.join(__dirname, "../static/data/hive-history.json");
 
 // 14 days at one entry per 2h = 168 entries
@@ -358,20 +364,31 @@ async function main() {
 
   // ── Fetch hive snapshot ──────────────────────────────────────────────────
   let metrics = null;
-  try {
-    console.log("[hive-history] Fetching snapshot HTML...");
-    const html = await fetchText(SNAPSHOT_HTML_URL);
-    const data = extractRenderData(html);
-    if (data) {
-      metrics = extractMetrics(data);
-      console.log(
-        `[hive-history] Snapshot parsed: ACMM L${metrics?.acmmLevel ?? "?"}, mode=${metrics?.govMode ?? "?"}`,
-      );
-    } else {
-      console.warn("[hive-history] Could not extract render() data from HTML");
+  if (!HIVE_API_TOKEN) {
+    console.log("[hive-history] HIVE_API_TOKEN not set — skipping snapshot fetch");
+  } else {
+    try {
+      console.log("[hive-history] Fetching /api/status...");
+      const res = await fetch(SNAPSHOT_API_URL, {
+        headers: {
+          ...ghHeaders(),
+          Authorization: `Bearer ${HIVE_API_TOKEN}`,
+          Accept: "application/json",
+        },
+        signal: AbortSignal.timeout(15000),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        metrics = extractMetrics(data);
+        console.log(
+          `[hive-history] Snapshot parsed: ACMM L${metrics?.acmmLevel ?? "?"}, mode=${metrics?.govMode ?? "?"}`,
+        );
+      } else {
+        console.warn(`[hive-history] /api/status returned HTTP ${res.status} — skipping snapshot`);
+      }
+    } catch (err) {
+      console.warn(`[hive-history] Snapshot fetch failed: ${err.message}`);
     }
-  } catch (err) {
-    console.warn(`[hive-history] Snapshot fetch failed: ${err.message}`);
   }
 
   // ── Append history entry ─────────────────────────────────────────────────

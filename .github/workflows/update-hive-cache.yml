@@ -58,6 +58,7 @@ jobs:
       - name: Fetch Hive history snapshot + contributor stats
         env:
           GITHUB_TOKEN: ${{ github.token }}
+          HIVE_API_TOKEN: ${{ secrets.HIVE_API_TOKEN }}
         run: node scripts/fetch-hive-history.js
 
       - name: Validate Hive history output

@@ -356,10 +356,10 @@ interface QueueData {
 const HOSTED_INSTANCE_URL =
   "https://hosted-projectbluefin-knuckle-gjvq.hive.kubestellar.io";
 
-// Snapshot HTML is still served from the public GitHub raw URL
-// (hosted instance snapshot endpoint is auth-gated; raw.githubusercontent.com is public)
-const SNAPSHOT_HTML_URL =
-  "https://raw.githubusercontent.com/kubestellar/docs/main/public/live/hive/bluefin/index.html";
+// Snapshot: fetch /api/status directly from the hosted Knuckle instance.
+// Credentials are included so authenticated hive users get live governor/agent data.
+// The old raw.githubusercontent.com HTML snapshot is no longer published.
+const SNAPSHOT_API_URL = `${HOSTED_INSTANCE_URL}/api/status`;
 
 // Queue data: try the hosted instance first (credentials:include), fall back to public mirror
 const QUEUE_URL_HOSTED = `${HOSTED_INSTANCE_URL}/data.json`;
@@ -2660,7 +2660,7 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
         openedRes,
         closedRes,
       ] = await Promise.allSettled([
-        fetchTimeout(SNAPSHOT_HTML_URL),
+        fetchTimeout(SNAPSHOT_API_URL, 12000, { credentials: "include" }),
         fetchQueueData(),
         fetchTimeout(`${GH_API}/repos/${DAKOTA}`),
         fetchTimeout(
@@ -2678,14 +2678,15 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
         ),
       ]);
 
-      // Hive snapshot from embedded HTML
+      // Hive snapshot — /api/status returns JSON directly (same shape as old render() payload)
       if (htmlRes.status === "fulfilled" && htmlRes.value.ok) {
-        const html = await htmlRes.value.text();
-        const data = await extractRenderJson(html);
-        if (data) {
+        try {
+          const data = (await htmlRes.value.json()) as Record<string, unknown>;
           const { snapshot: snap, config: cfg } = parseSnapshotJson(data);
           if (snap) setSnapshot(snap);
           if (cfg) setConfig(cfg);
+        } catch {
+          /* non-fatal — snapshot unavailable when not logged in */
         }
       }
 
