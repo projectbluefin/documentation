@@ -442,7 +442,11 @@ async function main() {
   console.log(`[hive-history] Wrote ${OUTPUT_FILE}`);
 }
 
-main().catch((err) => {
+if (require.main === module) {
+  main().catch((err) => {
   console.error("[hive-history] Fatal:", err);
   process.exit(1);
-});
+  });
+}
+
+module.exports = { extractRenderData, extractMetrics, safeNum, loadHistory, MAX_ENTRIES };
