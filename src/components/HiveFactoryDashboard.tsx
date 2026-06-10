@@ -1836,10 +1836,28 @@ function GovernorPanel({ governor }: { governor?: HiveGovernor }) {
   const busy = governor?.thresholds?.busy ?? Math.max(quiet + 1, depth, 1);
   const surge = governor?.thresholds?.surge ?? Math.max(busy + 1, depth, 1);
   const maxDepth = Math.max(surge, depth, 1);
-  const quietWidth = Math.max((quiet / maxDepth) * 100, 18);
-  const busyWidth = Math.max(((busy - quiet) / maxDepth) * 100, 18);
-  const surgeWidth = Math.max(100 - quietWidth - busyWidth, 18);
-  const markerLeft = Math.min((depth / maxDepth) * 100, 100);
+
+  // Proportional zone widths — no forced minimums so marker always aligns with zones.
+  // Labels are hidden when a zone is too narrow to show text.
+  const quietPct = (quiet / maxDepth) * 100;
+  const busyPct = ((busy - quiet) / maxDepth) * 100;
+  const surgePct = 100 - quietPct - busyPct;
+
+  // Marker is placed inside the correct zone, proportionally within it.
+  let markerLeft: number;
+  if (depth <= quiet) {
+    markerLeft = quiet > 0 ? (depth / quiet) * quietPct : 0;
+  } else if (depth <= busy) {
+    markerLeft = quietPct + ((depth - quiet) / Math.max(busy - quiet, 1)) * busyPct;
+  } else {
+    markerLeft = quietPct + busyPct + ((depth - busy) / Math.max(maxDepth - busy, 1)) * surgePct;
+  }
+  markerLeft = Math.min(markerLeft, 99.5);
+
+  const modeColor =
+    { surge: "#f85149", busy: "#d97706", quiet: "#58a6ff", idle: "#8b949e" }[
+      (governor?.mode ?? "idle").toLowerCase()
+    ] ?? "#8b949e";
 
   return (
     <section className={styles.panel}>
@@ -1852,40 +1870,53 @@ function GovernorPanel({ governor }: { governor?: HiveGovernor }) {
       <div className={styles.kv}>
         <span>Queue depth</span>
         <strong>
-          {issues} issues + {prs} PRs in queue
+          {issues} issues + {prs} PRs &mdash; {depth} total
         </strong>
       </div>
-      <div className={styles.govThreshBar}>
+      <div className={styles.govThreshOuter}>
+        {/* Floating depth label above the marker */}
         <div
-          className={styles.govThreshZoneQuiet}
-          style={{ width: `${quietWidth}%` }}
+          className={styles.govThreshMarkerLabel}
+          style={{ left: `${markerLeft}%`, color: modeColor }}
+          aria-hidden="true"
         >
-          QUIET
+          {depth}
         </div>
-        <div
-          className={styles.govThreshZoneBusy}
-          style={{ width: `${busyWidth}%` }}
-        >
-          BUSY
+        <div className={styles.govThreshBar}>
+          <div
+            className={styles.govThreshZoneQuiet}
+            style={{ width: `${quietPct}%` }}
+          >
+            {quietPct >= 10 ? "QUIET" : ""}
+          </div>
+          <div
+            className={styles.govThreshZoneBusy}
+            style={{ width: `${busyPct}%` }}
+          >
+            {busyPct >= 10 ? "BUSY" : ""}
+          </div>
+          <div
+            className={styles.govThreshZoneSurge}
+            style={{ width: `${surgePct}%` }}
+          >
+            {surgePct >= 10 ? "SURGE" : ""}
+          </div>
+          <span
+            className={styles.govThreshMarker}
+            style={{ left: `${markerLeft}%`, background: modeColor }}
+          />
         </div>
-        <div
-          className={styles.govThreshZoneSurge}
-          style={{ width: `${surgeWidth}%` }}
-        >
-          SURGE
-        </div>
-        <span
-          className={styles.govThreshMarker}
-          style={{ left: `calc(${markerLeft}% - 1px)` }}
-        />
       </div>
       <div className={styles.govThreshLegend}>
         <span>Q &le; {quiet}</span>
         <span>B &le; {busy}</span>
         <span>S &ge; {surge}</span>
+        <span style={{ marginLeft: "auto", color: modeColor, fontWeight: 700 }}>
+          current: {depth}
+        </span>
       </div>
       <p className={styles.panelMeta}>
-        Next kick: {" "}
+        Next kick:{" "}
         {governor?.nextKick ? relTime(governor.nextKick) : "—"}
       </p>
     </section>
@@ -2531,6 +2562,9 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
   const [mergedPRs, setMergedPRs] = useState<MergedPR[]>([]);
   const [velocity, setVelocity] = useState<Velocity | null>(null);
   const [hiveHistory, setHiveHistory] = useState<HiveHistory | null>(null);
+  const [testBuilds, setTestBuilds] = useState<number | null>(null);
+  const [tapPromotions, setTapPromotions] = useState<number | null>(null);
+  const [agentMergedCount, setAgentMergedCount] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [refreshIn, setRefreshIn] = useState(REFRESH_SECS);
@@ -2725,6 +2759,41 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
         }
       }
       setRepoPRs(rPRs);
+
+      // Supplementary production stats (non-blocking, best-effort)
+      try {
+        const monthAgoISO = new Date(Date.now() - 30 * 24 * 3600 * 1000)
+          .toISOString()
+          .slice(0, 10);
+        const [testRes, promosRes, agentMergedRes] = await Promise.allSettled([
+          // Successful CI runs in the hardware test suite this week
+          fetchTimeout(
+            `${GH_API}/repos/projectbluefin/testsuite/actions/runs?status=success&per_page=1`,
+          ),
+          // PRs merged to the production homebrew tap this month (promotions)
+          fetchTimeout(
+            `${GH_API}/search/issues?q=repo:ublue-os/homebrew-tap+type:pr+is:merged+merged:>${monthAgoISO}&per_page=1`,
+          ),
+          // PRs merged by the hive agent this week (agent output rate)
+          fetchTimeout(
+            `${GH_API}/search/issues?q=org:projectbluefin+type:pr+is:merged+author:kubestellar-hive%5Bbot%5D+merged:>${weekAgoISO}&per_page=1`,
+          ),
+        ]);
+        if (testRes.status === "fulfilled" && testRes.value.ok) {
+          const d = (await testRes.value.json()) as { total_count?: number };
+          setTestBuilds(d.total_count ?? 0);
+        }
+        if (promosRes.status === "fulfilled" && promosRes.value.ok) {
+          const d = (await promosRes.value.json()) as GitHubSearchResponse<unknown>;
+          setTapPromotions(d.total_count ?? 0);
+        }
+        if (agentMergedRes.status === "fulfilled" && agentMergedRes.value.ok) {
+          const d = (await agentMergedRes.value.json()) as GitHubSearchResponse<unknown>;
+          setAgentMergedCount(d.total_count ?? 0);
+        }
+      } catch {
+        /* non-fatal */
+      }
     } finally {
       setLoading(false);
       setLastUpdated(new Date());
@@ -2966,6 +3035,30 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
               sparkColor="green"
             />
           )}
+          {agentMergedCount != null && agentMergedCount > 0 && (
+            <StatCard
+              label="Agent Merged"
+              value={agentMergedCount}
+              sub="PRs this week"
+              accent="#58a6ff"
+            />
+          )}
+          {testBuilds != null && (
+            <StatCard
+              label="Test Builds"
+              value={testBuilds}
+              sub="passed in testsuite"
+              accent="#3fb950"
+            />
+          )}
+          {tapPromotions != null && tapPromotions > 0 && (
+            <StatCard
+              label="Promoted"
+              value={tapPromotions}
+              sub="to production tap / 30d"
+              accent="#bc8cff"
+            />
+          )}
           {repos.length > 0 && (
             <StatCard label="Repos" value={repos.length} sub="in formation" />
           )}
@@ -2999,6 +3092,9 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
           })()}
         </div>
 
+        {/* Governor — moved to top for prominence */}
+        <GovernorPanel governor={snapshot?.governor} />
+
         {/* Guardians / Ghosts */}
         <div className={styles.destinyColumns}>
           <GuardiansColumn prs={queueData?.prs ?? null} />
@@ -3007,9 +3103,6 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
 
         {/* Victory Log */}
         <VictoryLog victories={queueData?.victories ?? null} />
-
-        {/* Governor */}
-        <GovernorPanel governor={snapshot?.governor} />
 
         {/* Commit activity + What agents are doing */}
         <div className={styles.twoCol}>

@@ -1428,14 +1428,40 @@
 .govModeBusy { color: #d29922; background: rgba(210, 153, 34, 0.12); }
 .govModeQuiet { color: #58a6ff; background: rgba(88, 166, 255, 0.12); }
 .govModeIdle { color: #8b949e; background: rgba(139, 148, 158, 0.12); }
+.govThreshOuter {
+  position: relative;
+  margin-top: 0.9rem;
+  padding-top: 1.5rem; /* room for the floating depth label */
+}
+.govThreshMarkerLabel {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.govThreshMarkerLabel::after {
+  content: "";
+  display: block;
+  width: 0;
+  height: 0;
+  margin: 2px auto 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid currentColor;
+}
 .govThreshBar {
   position: relative;
   display: flex;
   align-items: stretch;
   overflow: hidden;
   border-radius: 999px;
-  margin-top: 0.9rem;
+  margin-top: 0; /* spacing now handled by govThreshOuter */
   border: 1px solid rgba(139, 148, 158, 0.2);
+  height: 28px; /* taller bar for better readability */
 }
 .govThreshZoneQuiet,
 .govThreshZoneBusy,
@@ -1445,17 +1471,19 @@
   font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.06em;
+  overflow: hidden;
+  white-space: nowrap;
 }
 .govThreshZoneQuiet { background: rgba(88, 166, 255, 0.14); color: #58a6ff; }
 .govThreshZoneBusy { background: rgba(210, 153, 34, 0.14); color: #d29922; }
 .govThreshZoneSurge { background: rgba(248, 81, 73, 0.14); color: #f85149; }
 .govThreshMarker {
   position: absolute;
-  top: -2px;
-  bottom: -2px;
-  width: 2px;
-  background: #f0f6fc;
-  box-shadow: 0 0 0 1px rgba(13, 17, 23, 0.6);
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  transform: translateX(-50%);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.6);
 }
 .govThreshLegend {
   display: flex;
