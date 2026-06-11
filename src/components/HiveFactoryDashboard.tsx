@@ -3151,12 +3151,14 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
           </div>
         </div>
 
-        {/* ── Intelligence Zone: Guardians | Ghosts | Recently Merged ── */}
-        <div className={styles.intelligenceZone}>
+        {/* ── Destiny columns: Guardians | Ghosts ── */}
+        <div className={styles.destinyColumns}>
           <GuardiansColumn discussions={communityDiscussions} />
           <GhostsColumn hivePRs={hivePRsList} copilotPRs={copilotPRsList} />
-          <MergedPRFeed prs={mergedPRs} />
         </div>
+
+        {/* ── Recently Merged (full width) ── */}
+        <MergedPRFeed prs={mergedPRs} />
 
         {/* ── Registry Task Leaderboard ── */}
         {registryData?.leaderboard && registryData.leaderboard.length > 0 && (
