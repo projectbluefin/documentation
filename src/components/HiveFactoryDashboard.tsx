@@ -400,8 +400,8 @@ const HOSTED_INSTANCE_URL =
   "https://hosted-projectbluefin-knuckle-gjvq.hive.kubestellar.io";
 
 // Public registry — no auth required, updated every ~15 min by the hub
-const REGISTRY_URL = "https://hive.kubestellar.io/api/registry";
-const REGISTRY_ORG = "projectbluefin";
+// Registry data is fetched at build time via scripts/fetch-registry-data.js
+// and served from /data/registry-data.json (avoids browser CORS block on live API)
 
 // Snapshot: fetch /api/status directly from the hosted Knuckle instance.
 // Credentials are included so authenticated hive users get live governor/agent data.
@@ -1920,7 +1920,6 @@ function GovernorPanel({ governor, registry }: { governor?: HiveGovernor; regist
   const sparkMax = Math.max(...sparkVals, 1);
 
   const hasData = governor != null || registry != null;
-  if (!hasData) return null;
 
   return (
     <section className={styles.panel}>
@@ -2717,7 +2716,6 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
         mergedRes,
         openedRes,
         closedRes,
-        registryRes,
       ] = await Promise.allSettled([
         fetchTimeout(SNAPSHOT_API_URL, 12000, { credentials: "include" }),
         fetchQueueData(),
@@ -2734,17 +2732,7 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
         fetchTimeout(
           `${GH_API}/search/issues?q=org:projectbluefin+type:issue+closed:>${weekAgoISO}&per_page=1`,
         ),
-        fetchTimeout(REGISTRY_URL, 10000),
       ]);
-
-      // Public registry — no auth, always available
-      if (registryRes.status === "fulfilled" && registryRes.value.ok) {
-        try {
-          const regData = (await registryRes.value.json()) as { hives?: RegistryEntry[] };
-          const entry = regData.hives?.find((h) => h.org === REGISTRY_ORG) ?? null;
-          if (entry) setRegistryData(entry);
-        } catch { /* non-fatal */ }
-      }
 
       // Hive snapshot — /api/status returns JSON directly (same shape as old render() payload)
       if (htmlRes.status === "fulfilled" && htmlRes.value.ok) {
@@ -2968,6 +2956,14 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
     fetch("/data/hive-history.json")
       .then((r) => r.ok ? r.json() as Promise<HiveHistory> : null)
       .then((data) => { if (data) setHiveHistory(data); })
+      .catch(() => {/* non-fatal */});
+  }, []);
+
+  // Fetch registry data (baked at build time — avoids CORS block on live API)
+  useEffect(() => {
+    fetch("/data/registry-data.json")
+      .then((r) => r.ok ? r.json() as Promise<RegistryEntry | null> : null)
+      .then((data) => { if (data) setRegistryData(data); })
       .catch(() => {/* non-fatal */});
   }, []);
 
