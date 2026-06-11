@@ -176,12 +176,20 @@
   font-family: "SFMono-Regular", Consolas, monospace;
 }
 
-/* ── Stats row ──────────────────────────────────────────────────────────── */
+/* ── Stats row — always fixed 6 columns ─────────────────────────────────── */
 .statsRow {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  grid-template-columns: repeat(6, 1fr);
   gap: 0.875rem;
   margin-bottom: 1.75rem;
+}
+
+@media (max-width: 1100px) {
+  .statsRow { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 600px) {
+  .statsRow { grid-template-columns: repeat(2, 1fr); }
 }
 
 .statCard {
@@ -375,6 +383,43 @@
   .twoCol {
     grid-template-columns: 1fr;
   }
+}
+
+/* ── Factory floor (asymmetric 2-col: main | sidebar) ───────────────────── */
+.factoryFloor {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .factoryFloor { grid-template-columns: 1fr; }
+}
+
+/* Sidebar stack inside factory floor right column */
+.factorySidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* ── Intelligence zone (3 equal columns) ────────────────────────────────── */
+.intelligenceZone {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .intelligenceZone { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 640px) {
+  .intelligenceZone { grid-template-columns: 1fr; }
 }
 
 /* ── Agent grid ─────────────────────────────────────────────────────────── */
@@ -953,6 +998,21 @@
   border-color: rgba(245, 158, 11, 0.4);
   background: rgba(245, 158, 11, 0.08);
   box-shadow: 0 0 8px rgba(245, 158, 11, 0.2);
+}
+.modeBusy {
+  color: #d97706;
+  border-color: rgba(217, 119, 6, 0.4);
+  background: rgba(217, 119, 6, 0.08);
+}
+.modeQuiet {
+  color: #3b82f6;
+  border-color: rgba(59, 130, 246, 0.3);
+  background: rgba(59, 130, 246, 0.06);
+}
+.modeIdle {
+  color: #484f58;
+  border-color: rgba(72, 79, 88, 0.3);
+  background: rgba(72, 79, 88, 0.04);
 }
 .modeNormal {
   color: #58a6ff;
