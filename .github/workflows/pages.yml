@@ -58,6 +58,8 @@ jobs:
             static/data/images.json
             static/data/playlist-metadata.json
             static/data/stream-pins.json
+            static/data/registry-data.json
+            static/data/hive-live-data.json
           key: github-data-${{ hashFiles('scripts/fetch-*.js') }}
           restore-keys: |
             github-data-
@@ -124,6 +126,9 @@ jobs:
           # page shows current releases. The committed seed is an empty array;
           # without this the cache check sees a fresh mtime and skips the fetch.
           FIREHOSE_CACHE_HOURS: "0"
+          # Always re-fetch hive live data (Guardians, Ghosts, PRs, stats) on
+          # every build so the factory dashboard shows current GitHub state.
+          HIVE_LIVE_CACHE_HOURS: "0"
         run: npm run fetch-data
 
       - name: Restore card image cache
