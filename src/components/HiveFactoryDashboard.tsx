@@ -6,9 +6,58 @@ import styles from "./HiveFactoryDashboard.module.css";
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
-interface HiveAgent {
+// ── Public registry (hive.kubestellar.io/api/registry) — no auth needed ──────
+
+interface RegistryAgent {
   name: string;
+  state: string; // "running" | "paused" | "idle"
+}
+
+interface RegistryHealthCheck {
+  name: string;
+  status: string; // "pass" | "fail" | "warn"
+  detail?: string;
+}
+
+interface RegistryLeaderboardEntry {
+  github_username: string;
+  avatar_url: string;
+  trust_tier: string;
+  tasks_completed: number;
+  tasks_failed: number;
+  active: boolean;
+}
+
+interface RegistryTimeSeries {
+  t: number; // unix seconds
+  v: number;
+}
+
+interface RegistryEntry {
   id: string;
+  org: string;
+  name: string;
+  acmmLevel: number;
+  agentCount: number;
+  governorMode: string;
+  actionableIssues: number;
+  actionablePRs: number;
+  totalTokens24h: number;
+  contributorCount: number;
+  activeContributors: number;
+  online: boolean;
+  version?: string;
+  agents: RegistryAgent[];
+  health: { status: string; checks: RegistryHealthCheck[]; fails: number; warns: number };
+  leaderboard: RegistryLeaderboardEntry[];
+  issueHistory: RegistryTimeSeries[];
+  prHistory: RegistryTimeSeries[];
+  lastHeartbeat?: string;
+}
+
+interface HiveAgent {
+  id: string;
+  name?: string;
   displayName: string;
   role: string;
   emoji: string;
@@ -349,6 +398,10 @@ interface QueueData {
 // All fetches fall back gracefully when the user is not logged in.
 const HOSTED_INSTANCE_URL =
   "https://hosted-projectbluefin-knuckle-gjvq.hive.kubestellar.io";
+
+// Public registry — no auth required, updated every ~15 min by the hub
+const REGISTRY_URL = "https://hive.kubestellar.io/api/registry";
+const REGISTRY_ORG = "projectbluefin";
 
 // Snapshot: fetch /api/status directly from the hosted Knuckle instance.
 // Credentials are included so authenticated hive users get live governor/agent data.
@@ -816,7 +869,7 @@ function FrameCard({ agent, advisoryItems: agentAdvisories }: { agent: HiveAgent
     >
       <div className={styles.agentCardHeader}>
         <span className={styles.agentInitial}>
-          {(agent.displayName || agent.name).slice(0, 1).toUpperCase()}
+          {(agent.displayName || agent.name || "?").slice(0, 1).toUpperCase()}
         </span>
         <div className={styles.agentMeta}>
           <span className={styles.agentName}>
@@ -1825,23 +1878,27 @@ function VelocityPanel({
   );
 }
 
-function GovernorPanel({ governor }: { governor?: HiveGovernor }) {
-  const mode = (governor?.mode ?? "idle").toUpperCase();
-  const issues = governor?.issues ?? 0;
-  const prs = governor?.prs ?? 0;
+function GovernorPanel({ governor, registry }: { governor?: HiveGovernor; registry?: RegistryEntry | null }) {
+  // Use registry data as fallback when full snapshot governor isn't available
+  const rawMode = governor?.mode ?? registry?.governorMode ?? "idle";
+  const mode = rawMode.toUpperCase();
+
+  // Queue depth: prefer full governor data, fall back to registry actionable counts
+  const issues = governor?.issues ?? registry?.actionableIssues ?? 0;
+  const prs = governor?.prs ?? registry?.actionablePRs ?? 0;
   const depth = issues + prs;
-  const quiet = governor?.thresholds?.quiet ?? 0;
-  const busy = governor?.thresholds?.busy ?? Math.max(quiet + 1, depth, 1);
-  const surge = governor?.thresholds?.surge ?? Math.max(busy + 1, depth, 1);
+
+  // Thresholds: use snapshot values if present, otherwise derive from registry mode + current depth
+  const hasRealThresholds = governor?.thresholds?.quiet != null;
+  const quiet = governor?.thresholds?.quiet ?? 20;
+  const busy  = governor?.thresholds?.busy  ?? 50;
+  const surge = governor?.thresholds?.surge ?? Math.max(busy + 1, depth + 1, 80);
   const maxDepth = Math.max(surge, depth, 1);
 
-  // Proportional zone widths — no forced minimums so marker always aligns with zones.
-  // Labels are hidden when a zone is too narrow to show text.
   const quietPct = (quiet / maxDepth) * 100;
-  const busyPct = ((busy - quiet) / maxDepth) * 100;
+  const busyPct  = ((busy - quiet) / maxDepth) * 100;
   const surgePct = 100 - quietPct - busyPct;
 
-  // Marker is placed inside the correct zone, proportionally within it.
   let markerLeft: number;
   if (depth <= quiet) {
     markerLeft = quiet > 0 ? (depth / quiet) * quietPct : 0;
@@ -1854,25 +1911,35 @@ function GovernorPanel({ governor }: { governor?: HiveGovernor }) {
 
   const modeColor =
     { surge: "#f85149", busy: "#d97706", quiet: "#58a6ff", idle: "#8b949e" }[
-      (governor?.mode ?? "idle").toLowerCase()
+      rawMode.toLowerCase()
     ] ?? "#8b949e";
+
+  // Issue history sparkline from registry
+  const issueHistory = registry?.issueHistory ?? [];
+  const sparkVals = issueHistory.slice(-48).map((e) => e.v);
+  const sparkMax = Math.max(...sparkVals, 1);
+
+  const hasData = governor != null || registry != null;
+  if (!hasData) return null;
 
   return (
     <section className={styles.panel}>
       <Heading as="h2" className={styles.panelTitle}>
         Governor
       </Heading>
-      <div className={`${styles.govMode} ${governorModeClass(governor?.mode)}`}>
+      <div className={`${styles.govMode} ${governorModeClass(rawMode)}`}>
         {mode}
       </div>
       <div className={styles.kv}>
         <span>Queue depth</span>
         <strong>
           {issues} issues + {prs} PRs &mdash; {depth} total
+          {!hasRealThresholds && registry && (
+            <span style={{ color: "#484f58", fontWeight: 400, fontSize: "0.7rem" }}> (registry)</span>
+          )}
         </strong>
       </div>
       <div className={styles.govThreshOuter}>
-        {/* Floating depth label above the marker */}
         <div
           className={styles.govThreshMarkerLabel}
           style={{ left: `${markerLeft}%`, color: modeColor }}
@@ -1881,28 +1948,16 @@ function GovernorPanel({ governor }: { governor?: HiveGovernor }) {
           {depth}
         </div>
         <div className={styles.govThreshBar}>
-          <div
-            className={styles.govThreshZoneQuiet}
-            style={{ width: `${quietPct}%` }}
-          >
+          <div className={styles.govThreshZoneQuiet} style={{ width: `${quietPct}%` }}>
             {quietPct >= 10 ? "QUIET" : ""}
           </div>
-          <div
-            className={styles.govThreshZoneBusy}
-            style={{ width: `${busyPct}%` }}
-          >
+          <div className={styles.govThreshZoneBusy} style={{ width: `${busyPct}%` }}>
             {busyPct >= 10 ? "BUSY" : ""}
           </div>
-          <div
-            className={styles.govThreshZoneSurge}
-            style={{ width: `${surgePct}%` }}
-          >
+          <div className={styles.govThreshZoneSurge} style={{ width: `${surgePct}%` }}>
             {surgePct >= 10 ? "SURGE" : ""}
           </div>
-          <span
-            className={styles.govThreshMarker}
-            style={{ left: `${markerLeft}%`, background: modeColor }}
-          />
+          <span className={styles.govThreshMarker} style={{ left: `${markerLeft}%`, background: modeColor }} />
         </div>
       </div>
       <div className={styles.govThreshLegend}>
@@ -1916,7 +1971,40 @@ function GovernorPanel({ governor }: { governor?: HiveGovernor }) {
       <p className={styles.panelMeta}>
         Next kick:{" "}
         {governor?.nextKick ? relTime(governor.nextKick) : "—"}
+        {registry?.lastHeartbeat && (
+          <> &middot; heartbeat {relTime(registry.lastHeartbeat)}</>
+        )}
       </p>
+
+      {/* Issue queue history sparkline */}
+      {sparkVals.length > 4 && (
+        <div style={{ marginTop: "0.75rem" }}>
+          <div style={{ fontSize: "0.65rem", color: "#484f58", marginBottom: "3px", fontFamily: "monospace", letterSpacing: "0.04em" }}>
+            ISSUE QUEUE — LAST {sparkVals.length} READINGS
+          </div>
+          <svg viewBox={`0 0 ${sparkVals.length * 4} 32`} style={{ width: "100%", height: "32px", display: "block" }} aria-hidden="true">
+            {(() => {
+              const W = sparkVals.length * 4; const H = 32;
+              const pts = sparkVals.map((v, i) => {
+                const x = (i / (sparkVals.length - 1)) * W;
+                const y = H - 2 - (v / sparkMax) * (H - 6);
+                return `${x},${y}`;
+              });
+              const area = `M 0,${H} L ${pts[0]} L ${pts.slice(1).join(" L ")} L ${W},${H} Z`;
+              return (
+                <>
+                  <path d={area} fill={`${modeColor}22`} />
+                  <polyline points={pts.join(" ")} fill="none" stroke={modeColor} strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" />
+                </>
+              );
+            })()}
+          </svg>
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.6rem", color: "#484f58", fontFamily: "monospace" }}>
+            <span>{sparkVals[0]}</span>
+            <span style={{ color: modeColor }}>{sparkVals[sparkVals.length - 1]} now</span>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
@@ -1989,7 +2077,7 @@ function FrameOfDay({ agent, advisoryItems: agentAdvisories }: { agent: HiveAgen
       </Heading>
       <div className={styles.agentOfDayHero}>
         <div className={styles.agentHeroInitial}>
-          {(agent.displayName || agent.name).slice(0, 1).toUpperCase()}
+          {(agent.displayName || agent.name || "?").slice(0, 1).toUpperCase()}
         </div>
         <div>
           <div className={styles.agentOfDayLabel}>
@@ -2115,8 +2203,8 @@ function AgentWorkLog({
   return (
     <div className={styles.workLog}>
       {agents.map((agent) => {
-        const agentItems = byAgent[agent.name] ?? [];
-        const isExpandedAgent = expanded === agent.name;
+        const agentItems = byAgent[agent.name ?? agent.id] ?? [];
+        const isExpandedAgent = expanded === (agent.name ?? agent.id);
         const visible = isExpandedAgent ? agentItems : agentItems.slice(0, 3);
         const repos = [
           ...new Set(
@@ -2182,7 +2270,7 @@ function AgentWorkLog({
                   <button
                     className={styles.workLogToggle}
                     onClick={() =>
-                      setExpanded(isExpandedAgent ? null : agent.name)
+                      setExpanded(isExpandedAgent ? null : (agent.name ?? agent.id))
                     }
                   >
                     {isExpandedAgent
@@ -2601,6 +2689,7 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
   const [queue, setQueue] = useState<QueueStats | null>(null);
   const [queueData, setQueueData] = useState<QueueData | null>(null);
   const [orgStats, setOrgStats] = useState<OrgStats | null>(null);
+  const [registryData, setRegistryData] = useState<RegistryEntry | null>(null);
   const [mergedPRs, setMergedPRs] = useState<MergedPR[]>([]);
   const [velocity, setVelocity] = useState<Velocity | null>(null);
   const [hiveHistory, setHiveHistory] = useState<HiveHistory | null>(null);
@@ -2628,6 +2717,7 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
         mergedRes,
         openedRes,
         closedRes,
+        registryRes,
       ] = await Promise.allSettled([
         fetchTimeout(SNAPSHOT_API_URL, 12000, { credentials: "include" }),
         fetchQueueData(),
@@ -2644,7 +2734,17 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
         fetchTimeout(
           `${GH_API}/search/issues?q=org:projectbluefin+type:issue+closed:>${weekAgoISO}&per_page=1`,
         ),
+        fetchTimeout(REGISTRY_URL, 10000),
       ]);
+
+      // Public registry — no auth, always available
+      if (registryRes.status === "fulfilled" && registryRes.value.ok) {
+        try {
+          const regData = (await registryRes.value.json()) as { hives?: RegistryEntry[] };
+          const entry = regData.hives?.find((h) => h.org === REGISTRY_ORG) ?? null;
+          if (entry) setRegistryData(entry);
+        } catch { /* non-fatal */ }
+      }
 
       // Hive snapshot — /api/status returns JSON directly (same shape as old render() payload)
       if (htmlRes.status === "fulfilled" && htmlRes.value.ok) {
@@ -2896,7 +2996,7 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
     agents.find(
       (a) =>
         a.role?.toLowerCase().includes("supervisor") ||
-        a.name.toLowerCase().includes("supervisor"),
+        (a.name ?? "").toLowerCase().includes("supervisor"),
     ) ?? null;
 
   const advisoriesByAgent = React.useMemo(() => {
@@ -2987,8 +3087,8 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
           </div>
           <div className={styles.heroRight}>
             <LivePulse />
-            {snapshot?.acmmMode && (() => {
-              const mode = snapshot.acmmMode!.toUpperCase();
+            {(snapshot?.acmmMode ?? registryData?.governorMode) && (() => {
+              const mode = (snapshot?.acmmMode ?? registryData?.governorMode)!.toUpperCase();
               const cls = mode === "SURGE" ? styles.modeSurge
                 : mode === "BUSY" ? styles.modeBusy
                 : mode === "QUIET" ? styles.modeQuiet
@@ -3004,21 +3104,41 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
         <div className={styles.statsRow}>
           <StatCard
             label={p0Count > 0 ? `P0 / P1 Issues` : "P1 This Cycle"}
-            value={p0Count > 0 ? `${p0Count}+${p1Count}` : p1Count}
+            value={p0Count > 0 ? `${p0Count}+${p1Count}` : p1Count > 0 ? p1Count : (registryData?.actionableIssues ?? "—")}
             accent={p0Count > 0 ? "#f85149" : undefined}
-            sub={p0Count > 0 ? `${p0Count} blocker${p0Count > 1 ? "s" : ""}` : undefined}
+            sub={p0Count > 0 ? `${p0Count} blocker${p0Count > 1 ? "s" : ""}` : p1Count > 0 ? undefined : (registryData?.actionableIssues != null ? "actionable (registry)" : undefined)}
           />
+          {(() => {
+            const framesVal = agents.length > 0
+              ? `${activeAgents.length}/${agents.length}`
+              : registryData?.agentCount != null
+                ? `${registryData.agents?.filter(a => a.state !== "paused" && a.state !== "idle").length ?? "?"}/${registryData.agentCount}`
+                : "—";
+            const framesSub = agents.length > 0
+              ? (workingAgents.length > 0 ? `${workingAgents.length} working` : "standing by")
+              : registryData?.agentCount != null
+                ? "registry"
+                : "no snapshot";
+            return (
+              <StatCard
+                label="Frames"
+                value={framesVal}
+                sub={framesSub}
+                accent={formationColor}
+              />
+            );
+          })()}
           <StatCard
-            label="Frames"
-            value={agents.length > 0 ? `${activeAgents.length}/${agents.length}` : "—"}
-            sub={workingAgents.length > 0 ? `${workingAgents.length} working` : agents.length > 0 ? "standing by" : "no snapshot"}
-            accent={formationColor}
-          />
-          <StatCard
-            label="Approved PRs"
-            value={queueData?.prs.approved.length ?? "—"}
-            sub="ready to merge"
-            accent={queueData && queueData.prs.approved.length > 0 ? "#3fb950" : undefined}
+            label="ACMM Level"
+            value={snapshot?.acmmLevel ?? registryData?.acmmLevel ?? "—"}
+            sub={(() => {
+              const lvl = snapshot?.acmmLevel ?? registryData?.acmmLevel;
+              return lvl != null ? (ACMM_LEVELS[lvl]?.label ?? `Level ${lvl}`) : "capability level";
+            })()}
+            accent={(() => {
+              const lvl = snapshot?.acmmLevel ?? registryData?.acmmLevel;
+              return lvl != null ? ACMM_LEVELS[lvl]?.color : undefined;
+            })()}
           />
           <StatCard
             label="Shipped This Cycle"
@@ -3061,17 +3181,35 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
             {agents.length > 0 ? (
               <div className={styles.agentGrid}>
                 {agents.map((a) => (
-                  <FrameCard key={a.id} agent={a} advisoryItems={advisoriesByAgent[a.name] ?? []} />
+                  <FrameCard key={a.id} agent={a} advisoryItems={advisoriesByAgent[a.name ?? a.id] ?? []} />
                 ))}
+              </div>
+            ) : registryData?.agents && registryData.agents.length > 0 ? (
+              <div className={styles.agentGrid}>
+                {registryData.agents.map((ra) => {
+                  const synth: HiveAgent = {
+                    id: ra.name,
+                    displayName: ra.name.charAt(0).toUpperCase() + ra.name.slice(1),
+                    role: ra.state ?? "unknown",
+                    emoji: "🤖",
+                    color: ra.state === "working" ? "#3fb950" : ra.state === "paused" ? "#f85149" : "#58a6ff",
+                    state: ra.state ?? "idle",
+                    busy: ra.state === "working" ? "working" : "idle",
+                    paused: ra.state === "paused",
+                  };
+                  return (
+                    <FrameCard key={ra.name} agent={synth} advisoryItems={[]} />
+                  );
+                })}
               </div>
             ) : (
               <div className={styles.empty}>No Frame data — snapshot updating</div>
             )}
           </section>
 
-          {/* Right: Governor + Victory Log + What Frames Are Working On */}
+          {/* Right: Governor + Victory Log + What Frames Are Working On + Health */}
           <div className={styles.factorySidebar}>
-            <GovernorPanel governor={snapshot?.governor} />
+            <GovernorPanel governor={snapshot?.governor} registry={registryData} />
             <VictoryLog victories={queueData?.victories ?? null} />
             {advisoryItems.length > 0 && (
               <section className={styles.panel}>
@@ -3089,6 +3227,43 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
                 />
               </section>
             )}
+            {/* Registry Health Checks */}
+            {registryData?.health?.checks && registryData.health.checks.length > 0 && (
+              <section className={styles.panel}>
+                <Heading as="h2" className={styles.panelTitle}>
+                  System Health
+                </Heading>
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem", marginTop: "0.5rem" }}>
+                  {registryData.health.checks.map((chk) => (
+                    <div key={chk.name} style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.8rem" }}>
+                      <span style={{
+                        width: 8, height: 8, borderRadius: "50%", flexShrink: 0,
+                        background: chk.status === "ok" ? "#3fb950" : chk.status === "warn" ? "#d97706" : "#f85149",
+                      }} />
+                      <span style={{ color: "#e6edf3", textTransform: "capitalize" }}>{chk.name.replace(/_/g, " ")}</span>
+                      <span style={{ marginLeft: "auto", color: chk.status === "ok" ? "#3fb950" : chk.status === "warn" ? "#d97706" : "#f85149", fontFamily: "monospace", fontWeight: 700, fontSize: "0.7rem" }}>
+                        {chk.status.toUpperCase()}
+                      </span>
+                      {chk.detail && (
+                        <span style={{ color: "#484f58", fontSize: "0.68rem", maxWidth: "8rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={chk.detail}>
+                          {chk.detail}
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                {registryData.online != null && (
+                  <p className={styles.panelMeta} style={{ marginTop: "0.5rem" }}>
+                    Registry: <span style={{ color: registryData.online ? "#3fb950" : "#f85149", fontWeight: 700 }}>
+                      {registryData.online ? "ONLINE" : "OFFLINE"}
+                    </span>
+                    {registryData.lastHeartbeat && (
+                      <> &middot; heartbeat {relTime(registryData.lastHeartbeat)}</>
+                    )}
+                  </p>
+                )}
+              </section>
+            )}
           </div>
         </div>
 
@@ -3098,6 +3273,49 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
           <GhostsColumn hivePRs={hivePRsList} copilotPRs={copilotPRsList} />
           <MergedPRFeed prs={mergedPRs} />
         </div>
+
+        {/* ── Registry Task Leaderboard ── */}
+        {registryData?.leaderboard && registryData.leaderboard.length > 0 && (
+          <section className={styles.panel}>
+            <Heading as="h2" className={styles.panelTitle}>
+              Task Leaderboard
+            </Heading>
+            <p className={styles.panelMeta}>
+              Tasks completed by each contributor via the hive registry &mdash; updated live
+            </p>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: "0.5rem", marginTop: "0.75rem" }}>
+              {registryData.leaderboard
+                .sort((a, b) => b.tasks_completed - a.tasks_completed)
+                .slice(0, 12)
+                .map((entry, idx) => (
+                  <div key={entry.github_username} style={{
+                    display: "flex", alignItems: "center", gap: "0.5rem",
+                    background: "#161b22", borderRadius: "6px", padding: "0.4rem 0.6rem",
+                    border: idx === 0 ? "1px solid #d97706" : "1px solid #21262d",
+                  }}>
+                    <span style={{ fontSize: "0.7rem", color: "#484f58", fontFamily: "monospace", width: "1.2rem", flexShrink: 0 }}>
+                      #{idx + 1}
+                    </span>
+                    <img
+                      src={entry.avatar_url || `https://github.com/${entry.github_username}.png?size=32`}
+                      alt={entry.github_username}
+                      width={24} height={24}
+                      style={{ borderRadius: "50%", flexShrink: 0 }}
+                    />
+                    <span style={{ fontSize: "0.8rem", color: "#e6edf3", flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      {entry.github_username}
+                    </span>
+                    <span style={{
+                      fontSize: "0.75rem", fontWeight: 700, fontFamily: "monospace",
+                      color: idx === 0 ? "#d97706" : idx < 3 ? "#3fb950" : "#58a6ff",
+                    }}>
+                      {entry.tasks_completed}
+                    </span>
+                  </div>
+                ))}
+            </div>
+          </section>
+        )}
 
         {/* ── Community ── */}
         <ContributorWall prs={mergedPRs} history={hiveHistory} />
@@ -3125,7 +3343,7 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
             cadenceMatrix={snapshot?.cadenceMatrix}
             mode={snapshot?.governor?.mode}
           />
-          <FrameOfDay agent={agentOfDay} advisoryItems={advisoriesByAgent[agentOfDay?.name ?? ""] ?? []} />
+          <FrameOfDay agent={agentOfDay} advisoryItems={advisoriesByAgent[agentOfDay?.name ?? agentOfDay?.id ?? ""] ?? []} />
         </div>
 
         {/* Formation log */}
