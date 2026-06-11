@@ -2716,6 +2716,9 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
         mergedRes,
         openedRes,
         closedRes,
+        discussRes,
+        hivePRRes,
+        copilotPRRes,
       ] = await Promise.allSettled([
         fetchTimeout(SNAPSHOT_API_URL, 12000, { credentials: "include" }),
         fetchQueueData(),
@@ -2731,6 +2734,18 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
         ),
         fetchTimeout(
           `${GH_API}/search/issues?q=org:projectbluefin+type:issue+closed:>${weekAgoISO}&per_page=1`,
+        ),
+        // Guardians: open community issues, sorted by latest activity
+        fetchTimeout(
+          `${GH_API}/search/issues?q=org:projectbluefin+type:issue+is:open+-label:queue%2Fagent-ready+-label:source%3Aagent&sort=updated&order=desc&per_page=25`,
+        ),
+        // Ghosts: PRs authored by the hive bot
+        fetchTimeout(
+          `${GH_API}/search/issues?q=org:projectbluefin+type:pr+is:open+author:kubestellar-hive%5Bbot%5D&sort=updated&order=desc&per_page=25`,
+        ),
+        // Ghosts: PRs labeled source:agent (Copilot-assisted)
+        fetchTimeout(
+          `${GH_API}/search/issues?q=org:projectbluefin+type:pr+is:open+label:source%3Aagent&sort=updated&order=desc&per_page=25`,
         ),
       ]);
 
@@ -2762,6 +2777,66 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
       const opened = await parseSearchCount(openedRes);
       const closed = await parseSearchCount(closedRes);
       setVelocity({ opened, closed });
+
+      // Guardians: community discussions (from main batch — guaranteed before rate limit)
+      let localHivePRs: AgentAssistedPR[] = [];
+      let localCopilotPRs: AgentAssistedPR[] = [];
+
+      if (discussRes.status === "fulfilled" && discussRes.value.ok) {
+        const d = (await discussRes.value.json()) as GitHubSearchResponse<GitHubSearchIssueItem>;
+        setCommunityDiscussions(
+          (d.items ?? []).map((i) => ({
+            number: i.number,
+            title: i.title,
+            html_url: i.html_url,
+            repository_url: i.repository_url,
+            updated_at: i.updated_at,
+            labels: (i.labels ?? []).map((l) => ({ name: l.name, color: l.color })),
+            comments: i.comments,
+            user: i.user ? { login: i.user.login } : undefined,
+          })),
+        );
+      } else {
+        setCommunityDiscussions([]); // show empty state rather than loading spinner
+      }
+
+      // Ghosts: hive-bot PRs (from main batch)
+      if (hivePRRes.status === "fulfilled" && hivePRRes.value.ok) {
+        const d = (await hivePRRes.value.json()) as GitHubSearchResponse<GitHubSearchIssueItem>;
+        localHivePRs = (d.items ?? []).map((i) => ({
+          number: i.number,
+          title: i.title,
+          html_url: i.html_url,
+          repository_url: i.repository_url,
+          updated_at: i.updated_at,
+          labels: (i.labels ?? []).map((l) => ({ name: l.name, color: l.color })),
+          user: i.user ? { login: i.user.login } : undefined,
+          draft: i.draft,
+          agentType: "hive" as const,
+        }));
+        setHivePRsList(localHivePRs);
+      } else {
+        setHivePRsList([]);
+      }
+
+      // Ghosts: source:agent PRs (from main batch)
+      if (copilotPRRes.status === "fulfilled" && copilotPRRes.value.ok) {
+        const d = (await copilotPRRes.value.json()) as GitHubSearchResponse<GitHubSearchIssueItem>;
+        localCopilotPRs = (d.items ?? []).map((i) => ({
+          number: i.number,
+          title: i.title,
+          html_url: i.html_url,
+          repository_url: i.repository_url,
+          updated_at: i.updated_at,
+          labels: (i.labels ?? []).map((l) => ({ name: l.name, color: l.color })),
+          user: i.user ? { login: i.user.login } : undefined,
+          draft: i.draft,
+          agentType: "copilot" as const,
+        }));
+        setCopilotPRsList(localCopilotPRs);
+      } else {
+        setCopilotPRsList([]);
+      }
 
       // Repo stats + CI
       if (repoRes.status === "fulfilled" && repoRes.value.ok) {
@@ -2807,56 +2882,30 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
         });
       }
 
-      // Org-wide stats
+      // Org-wide stats — derived from already-fetched data (no extra API calls)
+      // Avoids burning the 10 req/min unauthenticated search rate limit
       try {
-        const weekAgo = new Date(Date.now() - 7 * 86400000)
-          .toISOString()
-          .slice(0, 10);
-        const orgQueries: [string, string][] = [
-          ["openIssues", `org:projectbluefin+state:open+type:issue`],
-          ["openPRs", `org:projectbluefin+state:open+type:pr`],
-          ["mergedThisWeek", `org:projectbluefin+type:pr+merged:>${weekAgo}`],
-          ["agentReadyIssues", `org:projectbluefin+label:queue%2Fagent-ready+state:open`],
-          ["agentOpenPRs", `org:projectbluefin+author:kubestellar-hive%5Bbot%5D+state:open+type:pr`],
-          ["sourceAgentOpen", `org:projectbluefin+label:source%3Aagent+state:open`],
-        ];
         const orgRepoRes = await fetchTimeout(`${GH_API}/orgs/projectbluefin`);
         const orgRepo = orgRepoRes.ok ? ((await orgRepoRes.json()) as { public_repos?: number }) : {};
-        const counts: Record<string, number> = {};
-        for (const [key, q] of orgQueries) {
-          try {
-            const res = await fetchTimeout(
-              `${GH_API}/search/issues?q=${q}&per_page=1`,
-            );
-            if (res.ok) {
-              const d = (await res.json()) as GitHubSearchResponse<unknown>;
-              counts[key] = d.total_count ?? 0;
-            } else {
-              counts[key] = 0;
-            }
-          } catch {
-            counts[key] = 0;
-          }
-        }
         setOrgStats({
           totalRepos: orgRepo.public_repos ?? 0,
-          openIssues: counts.openIssues ?? 0,
-          openPRs: counts.openPRs ?? 0,
-          mergedThisWeek: counts.mergedThisWeek ?? 0,
-          agentReadyIssues: counts.agentReadyIssues ?? 0,
-          agentOpenPRs: counts.agentOpenPRs ?? 0,
-          sourceAgentOpen: counts.sourceAgentOpen ?? 0,
+          openIssues: 0,   // not fetched to preserve rate limit
+          openPRs: 0,      // not fetched to preserve rate limit
+          mergedThisWeek: closed,
+          agentReadyIssues: 0, // not fetched to preserve rate limit
+          agentOpenPRs: localHivePRs.length,
+          sourceAgentOpen: localCopilotPRs.length,
         });
       } catch {
         /* non-fatal */
       }
 
-      // Supplementary production stats + column data (non-blocking, best-effort)
+      // Supplementary production stats (non-blocking, best-effort — 3 search calls)
       try {
         const monthAgoISO = new Date(Date.now() - 30 * 24 * 3600 * 1000)
           .toISOString()
           .slice(0, 10);
-        const [testRes, promosRes, agentMergedRes, discussRes, hivePRRes, copilotPRRes] = await Promise.allSettled([
+        const [testRes, promosRes, agentMergedRes] = await Promise.allSettled([
           // Successful CI runs in the hardware test suite this week
           fetchTimeout(
             `${GH_API}/repos/projectbluefin/testsuite/actions/runs?status=success&per_page=1`,
@@ -2868,18 +2917,6 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
           // PRs merged by the hive agent this week (agent output rate)
           fetchTimeout(
             `${GH_API}/search/issues?q=org:projectbluefin+type:pr+is:merged+author:kubestellar-hive%5Bbot%5D+merged:>${weekAgoISO}&per_page=1`,
-          ),
-          // Community discussions — open issues, excluding agent queue items, sorted by activity
-          fetchTimeout(
-            `${GH_API}/search/issues?q=org:projectbluefin+type:issue+is:open+-label:queue%2Fagent-ready+-label:source%3Aagent&sort=updated&order=desc&per_page=25`,
-          ),
-          // Ghosts: PRs authored by the hive agent bot
-          fetchTimeout(
-            `${GH_API}/search/issues?q=org:projectbluefin+type:pr+is:open+author:kubestellar-hive%5Bbot%5D&sort=updated&order=desc&per_page=25`,
-          ),
-          // Ghosts: PRs labeled source:agent (Copilot-assisted, not just hive-bot)
-          fetchTimeout(
-            `${GH_API}/search/issues?q=org:projectbluefin+type:pr+is:open+label:source%3Aagent&sort=updated&order=desc&per_page=25`,
           ),
         ]);
         if (testRes.status === "fulfilled" && testRes.value.ok) {
@@ -2893,53 +2930,6 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
         if (agentMergedRes.status === "fulfilled" && agentMergedRes.value.ok) {
           const d = (await agentMergedRes.value.json()) as GitHubSearchResponse<unknown>;
           setAgentMergedCount(d.total_count ?? 0);
-        }
-        if (discussRes.status === "fulfilled" && discussRes.value.ok) {
-          const d = (await discussRes.value.json()) as GitHubSearchResponse<GitHubSearchIssueItem>;
-          setCommunityDiscussions(
-            (d.items ?? []).map((i) => ({
-              number: i.number,
-              title: i.title,
-              html_url: i.html_url,
-              repository_url: i.repository_url,
-              updated_at: i.updated_at,
-              labels: (i.labels ?? []).map((l) => ({ name: l.name, color: l.color })),
-              comments: i.comments,
-              user: i.user ? { login: i.user.login } : undefined,
-            })),
-          );
-        }
-        if (hivePRRes.status === "fulfilled" && hivePRRes.value.ok) {
-          const d = (await hivePRRes.value.json()) as GitHubSearchResponse<GitHubSearchIssueItem>;
-          setHivePRsList(
-            (d.items ?? []).map((i) => ({
-              number: i.number,
-              title: i.title,
-              html_url: i.html_url,
-              repository_url: i.repository_url,
-              updated_at: i.updated_at,
-              labels: (i.labels ?? []).map((l) => ({ name: l.name, color: l.color })),
-              user: i.user ? { login: i.user.login } : undefined,
-              draft: i.draft,
-              agentType: "hive" as const,
-            })),
-          );
-        }
-        if (copilotPRRes.status === "fulfilled" && copilotPRRes.value.ok) {
-          const d = (await copilotPRRes.value.json()) as GitHubSearchResponse<GitHubSearchIssueItem>;
-          setCopilotPRsList(
-            (d.items ?? []).map((i) => ({
-              number: i.number,
-              title: i.title,
-              html_url: i.html_url,
-              repository_url: i.repository_url,
-              updated_at: i.updated_at,
-              labels: (i.labels ?? []).map((l) => ({ name: l.name, color: l.color })),
-              user: i.user ? { login: i.user.login } : undefined,
-              draft: i.draft,
-              agentType: "copilot" as const,
-            })),
-          );
         }
       } catch {
         /* non-fatal */
