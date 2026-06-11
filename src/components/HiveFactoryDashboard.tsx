@@ -2987,178 +2987,126 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
           </div>
           <div className={styles.heroRight}>
             <LivePulse />
-            {snapshot?.acmmMode && (
-              <span
-                className={`${styles.modeBadge} ${
-                  snapshot.acmmMode === "SURGE"
-                    ? styles.modeSurge
-                    : styles.modeNormal
-                }`}
-              >
-                {snapshot.acmmMode}
-              </span>
-            )}
+            {snapshot?.acmmMode && (() => {
+              const mode = snapshot.acmmMode!.toUpperCase();
+              const cls = mode === "SURGE" ? styles.modeSurge
+                : mode === "BUSY" ? styles.modeBusy
+                : mode === "QUIET" ? styles.modeQuiet
+                : mode === "IDLE" ? styles.modeIdle
+                : styles.modeNormal;
+              return <span className={`${styles.modeBadge} ${cls}`}>{mode}</span>;
+            })()}
             {dakotaStats && <CiBadge status={dakotaStats.ciStatus} />}
           </div>
         </header>
 
-        {/* Stats strip */}
+        {/* Stats strip — always 6 canonical tiles */}
         <div className={styles.statsRow}>
-          {p0Count > 0 && (
-            <StatCard
-              label="P0 Blockers"
-              value={p0Count}
-              accent="#f85149"
-            />
-          )}
-          <StatCard label="P1 This Cycle" value={p1Count} />
+          <StatCard
+            label={p0Count > 0 ? `P0 / P1 Issues` : "P1 This Cycle"}
+            value={p0Count > 0 ? `${p0Count}+${p1Count}` : p1Count}
+            accent={p0Count > 0 ? "#f85149" : undefined}
+            sub={p0Count > 0 ? `${p0Count} blocker${p0Count > 1 ? "s" : ""}` : undefined}
+          />
           <StatCard
             label="Frames"
-            value={`${activeAgents.length}/${agents.length}`}
-            sub={
-              workingAgents.length > 0
-                ? `${workingAgents.length} working`
-                : "standing by"
-            }
+            value={agents.length > 0 ? `${activeAgents.length}/${agents.length}` : "—"}
+            sub={workingAgents.length > 0 ? `${workingAgents.length} working` : agents.length > 0 ? "standing by" : "no snapshot"}
             accent={formationColor}
           />
-          {prsNeedingReview > 0 && (
-            <StatCard
-              label="PRs Need Review"
-              value={prsNeedingReview}
-              accent="#d97706"
-            />
-          )}
-          {queueData && (
-            <StatCard
-              label="Approved PRs"
-              value={queueData.prs.approved.length}
-              sub="ready to merge"
-              accent="#3fb950"
-            />
-          )}
-          {queueData && (
-            <StatCard
-              label="Shipped This Cycle"
-              value={
-                (queueData.victories.dreams.count ?? 0) +
-                (queueData.victories.relief.count ?? 0)
-              }
-              sub="features + fixes"
-              accent="#3fb950"
-              spark={victorySparkData([
-                ...queueData.victories.dreams.recent,
-                ...queueData.victories.relief.recent,
-              ].sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()), 14)}
-              sparkColor="green"
-            />
-          )}
-          {agentMergedCount != null && agentMergedCount > 0 && (
-            <StatCard
-              label="Agent Merged"
-              value={agentMergedCount}
-              sub="PRs this week"
-              accent="#58a6ff"
-            />
-          )}
-          {testBuilds != null && (
-            <StatCard
-              label="Test Builds"
-              value={testBuilds}
-              sub="passed in testsuite"
-              accent="#3fb950"
-            />
-          )}
-          {tapPromotions != null && tapPromotions > 0 && (
-            <StatCard
-              label="Promoted"
-              value={tapPromotions}
-              sub="to production tap / 30d"
-              accent="#bc8cff"
-            />
-          )}
-          {repos.length > 0 && (
-            <StatCard label="Repos" value={repos.length} sub="in formation" />
-          )}
-          {snapshot?.medianMergeMins != null && (
-            <StatCard
-              label="Merge Time"
-              value={
-                snapshot.medianMergeMins < 60
-                  ? `${snapshot.medianMergeMins}m`
-                  : `${Math.round((snapshot.medianMergeMins / 60) * 10) / 10}h`
-              }
-              sub="median PR cycle"
-              accent="#39d2c0"
-            />
-          )}
-          {snapshot?.acmmLevel != null && (() => {
-            const info =
-              ACMM_LEVELS[snapshot.acmmLevel!] ?? {
-                label: "Unknown",
-                desc: "",
-                color: "#8b949e",
-              };
-            return (
-              <StatCard
-                label="ACMM Level"
-                value={`L${snapshot.acmmLevel}`}
-                sub={info.label}
-                accent={info.color}
-              />
-            );
-          })()}
+          <StatCard
+            label="Approved PRs"
+            value={queueData?.prs.approved.length ?? "—"}
+            sub="ready to merge"
+            accent={queueData && queueData.prs.approved.length > 0 ? "#3fb950" : undefined}
+          />
+          <StatCard
+            label="Shipped This Cycle"
+            value={queueData
+              ? (queueData.victories.dreams.count ?? 0) + (queueData.victories.relief.count ?? 0)
+              : "—"}
+            sub="features + fixes"
+            accent="#3fb950"
+            spark={queueData ? victorySparkData([
+              ...queueData.victories.dreams.recent,
+              ...queueData.victories.relief.recent,
+            ].sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()), 14) : undefined}
+            sparkColor="green"
+          />
+          <StatCard
+            label="Test Builds"
+            value={testBuilds ?? "—"}
+            sub="passed in testsuite"
+            accent={testBuilds != null && testBuilds > 0 ? "#3fb950" : undefined}
+          />
+          <StatCard
+            label="Merge Time"
+            value={snapshot?.medianMergeMins != null
+              ? snapshot.medianMergeMins < 60
+                ? `${snapshot.medianMergeMins}m`
+                : `${Math.round((snapshot.medianMergeMins / 60) * 10) / 10}h`
+              : "—"}
+            sub="median PR cycle"
+            accent={snapshot?.medianMergeMins != null ? "#39d2c0" : undefined}
+          />
         </div>
 
-        {/* Governor — moved to top for prominence */}
-        <GovernorPanel governor={snapshot?.governor} />
+        {/* ── Factory Floor: Frame Formation (left) + sidebar (right) ── */}
+        <div className={styles.factoryFloor}>
+          {/* Left: Frame Formation — the factory floor */}
+          <section className={styles.panel}>
+            <Heading as="h2" className={styles.panelTitle}>
+              Factory Floor — Live
+            </Heading>
+            {agents.length > 0 ? (
+              <div className={styles.agentGrid}>
+                {agents.map((a) => (
+                  <FrameCard key={a.id} agent={a} advisoryItems={advisoriesByAgent[a.name] ?? []} />
+                ))}
+              </div>
+            ) : (
+              <div className={styles.empty}>No Frame data — snapshot updating</div>
+            )}
+          </section>
 
-        {/* Guardians / Ghosts */}
-        <div className={styles.destinyColumns}>
+          {/* Right: Governor + Victory Log + What Frames Are Working On */}
+          <div className={styles.factorySidebar}>
+            <GovernorPanel governor={snapshot?.governor} />
+            <VictoryLog victories={queueData?.victories ?? null} />
+            {advisoryItems.length > 0 && (
+              <section className={styles.panel}>
+                <Heading as="h2" className={styles.panelTitle}>
+                  What Frames Are Working On
+                </Heading>
+                <p className={styles.panelMeta}>
+                  Advisory digest — findings, bugs, CI failures logged by each Frame
+                </p>
+                <AgentWorkLog
+                  agents={agents}
+                  items={advisoryItems}
+                  advisoryIssue={snapshot?.advisoryIssue}
+                  config={config}
+                />
+              </section>
+            )}
+          </div>
+        </div>
+
+        {/* ── Intelligence Zone: Guardians | Ghosts | Recently Merged ── */}
+        <div className={styles.intelligenceZone}>
           <GuardiansColumn discussions={communityDiscussions} />
           <GhostsColumn hivePRs={hivePRsList} copilotPRs={copilotPRsList} />
+          <MergedPRFeed prs={mergedPRs} />
         </div>
 
-        {/* Victory Log */}
-        <VictoryLog victories={queueData?.victories ?? null} />
-
-        {/* Frame formation */}
-        {agents.length > 0 && (
-          <section className={styles.panel}>
-            <Heading as="h2" className={styles.panelTitle}>
-              Frame Formation
-            </Heading>
-            <div className={styles.agentGrid}>
-              {agents.map((a) => (
-                <FrameCard key={a.id} agent={a} advisoryItems={advisoriesByAgent[a.name] ?? []} />
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Frame work log */}
-        {advisoryItems.length > 0 && (
-          <section className={styles.panel}>
-            <Heading as="h2" className={styles.panelTitle}>
-              What Frames Are Working On
-            </Heading>
-            <p className={styles.panelMeta}>
-              Advisory digest — findings, bugs, CI failures logged by each Frame
-            </p>
-            <AgentWorkLog
-              agents={agents}
-              items={advisoryItems}
-              advisoryIssue={snapshot?.advisoryIssue}
-              config={config}
-            />
-          </section>
-        )}
-
-        {/* Merged + Contributors */}
-        <MergedPRFeed prs={mergedPRs} />
+        {/* ── Community ── */}
         <ContributorWall prs={mergedPRs} history={hiveHistory} />
-        <HistoryTrends history={hiveHistory} />
-        <ContributorLeaderboard history={hiveHistory} />
+
+        {/* ── History Zone: Trends | Community Builders ── */}
+        <div className={styles.twoCol}>
+          <HistoryTrends history={hiveHistory} />
+          <ContributorLeaderboard history={hiveHistory} />
+        </div>
 
         {/* Velocity + Org stats */}
         <div className={styles.twoCol}>
