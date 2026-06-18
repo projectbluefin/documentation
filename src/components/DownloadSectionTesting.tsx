@@ -12,44 +12,21 @@ export const DakotaSection: React.FC = () => (
     description="Dakota is in Alpha — take appropriate precautions."
     entries={[
       {
-        label: "AMD / Intel",
+        label: "AMD / Intel + Nvidia (Unified)",
         isoUrl: `${BASE}/dakota-live-latest.iso`,
         isoFilename: "dakota-live-latest.iso",
         checksumUrl: `${BASE}/dakota-live-latest.iso-CHECKSUM`,
       },
-      {
-        label: "Nvidia",
-        isoUrl: `${BASE}/dakota-nvidia-live-latest.iso`,
-        isoFilename: "dakota-nvidia-live-latest.iso",
-        checksumUrl: `${BASE}/dakota-nvidia-live-latest.iso-CHECKSUM`,
-      },
     ]}
     sections={[
       {
-        label: "Alpha 3",
+        label: "Alpha 4",
         entries: [
           {
-            label: "AMD / Intel + Nvidia",
-            isoUrl: `${BASE}/dakota-live-alpha3.iso`,
-            isoFilename: "dakota-live-alpha3.iso",
-            checksumUrl: `${BASE}/dakota-live-alpha3.iso-CHECKSUM`,
-          },
-        ],
-      },
-      {
-        label: "Alpha 2",
-        entries: [
-          {
-            label: "AMD / Intel",
-            isoUrl: `${BASE}/dakota-live-alpha2.iso`,
-            isoFilename: "dakota-live-alpha2.iso",
-            checksumUrl: `${BASE}/dakota-live-alpha2.iso-CHECKSUM`,
-          },
-          {
-            label: "Nvidia",
-            isoUrl: `${BASE}/dakota-nvidia-live-alpha2.iso`,
-            isoFilename: "dakota-nvidia-live-alpha2.iso",
-            checksumUrl: `${BASE}/dakota-nvidia-live-alpha2.iso-CHECKSUM`,
+            label: "AMD / Intel + Nvidia (Unified)",
+            isoUrl: `${BASE}/dakota-live-alpha4.iso`,
+            isoFilename: "dakota-live-alpha4.iso",
+            checksumUrl: `${BASE}/dakota-live-alpha4.iso-CHECKSUM`,
           },
         ],
       },
