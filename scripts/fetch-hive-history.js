@@ -39,8 +39,8 @@ const SNAPSHOT_HTML_URL =
   "https://raw.githubusercontent.com/kubestellar/docs/main/public/live/hive/bluefin/index.html";
 const OUTPUT_FILE = path.join(__dirname, "../static/data/hive-history.json");
 
-// 14 days at one entry per 2h = 168 entries
-const MAX_ENTRIES = 168;
+// ~6 months at one entry per 2h = 2016 entries
+const MAX_ENTRIES = 2016;
 
 // Refresh all-time contributor counts once per day
 const CONTRIBUTOR_TTL_MS = 24 * 60 * 60 * 1000;

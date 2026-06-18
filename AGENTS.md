@@ -392,7 +392,7 @@ The snapshot HTML contains multiple `render(` calls. To find the real JSON paylo
 | Governor Timeline | snapshot `timeline[]` | 24h colored mode strip (surge/busy/quiet/idle) |
 | Token Budget | snapshot `governor.budgetPct` etc. | Progress bar, green/amber/red thresholds |
 | Nous / Strategy Lab | snapshot `nous` | Active experiment, snapshot progress, principle count |
-| Agent Formation | snapshot `agents[]` | Per-agent status, ACMM level, sparklines |
+| Frame Formation | snapshot `agents[]` | Per-Frame status, ACMM level, sparklines |
 | Victory Log | snapshot `victories[]` | Recent hive wins |
 | Velocity Panel | GitHub PR search | 7/30-day merge rate sparklines |
 | Issue Queue | GitHub issues API | P0/P1/agent-ready bucketed |
@@ -464,7 +464,7 @@ Weekly/monthly data (from GitHub `/stats/contributors`) accumulates after CI war
 3. Write the component (follow `GovernorTimeline` or `TokenBudgetPanel` as template)
 4. Add CSS to `HiveFactoryDashboard.module.css`
 5. Wire into JSX render (conditionally on data presence)
-6. `npm run typecheck && npm run lint` — both must pass
+6. `npm run typecheck && npm run lint && npm run build` — all must pass
 
 **Never** add `fetch-sbom` or `fetch-data` to the hive pipeline — the snapshot is fetched client-side at runtime.
 

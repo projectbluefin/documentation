@@ -2634,7 +2634,7 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
     return (
       <Layout
         title="Bluefin Operating System Factory"
-        description="Community Driven Agentic OS Development — live AI agent dashboard for projectbluefin"
+        description="Community Driven Agentic OS Development — live Frame dashboard for projectbluefin"
       >
         <div className={styles.dashboard}>
           <div className={styles.loadingWrap}>
@@ -2650,7 +2650,7 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
   return (
     <Layout
       title="Bluefin Operating System Factory"
-      description="Community Driven Agentic OS Development — live AI agent dashboard for projectbluefin"
+      description="Community Driven Agentic OS Development — live Frame dashboard for projectbluefin"
     >
       <div className={styles.dashboard}>
         {/* Hero */}
@@ -2662,7 +2662,7 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
                   Bluefin Operating System Factory
                 </Heading>
                 <p className={styles.heroSub}>
-                  Community Driven Agentic OS Development &mdash; live AI agent
+                  Community Driven Agentic OS Development &mdash; live Frame
                   dashboard for{" "}
                   <Link
                     href="https://github.com/projectbluefin"
