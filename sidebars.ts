@@ -44,7 +44,7 @@ const sidebars: SidebarsConfig = {
       type: "category",
       label: "Developer Experience",
       collapsed: true,
-      items: ["bluefin-dx", "devcontainers"],
+      items: ["bluefin-dx"],
     },
     {
       type: "category",
@@ -68,7 +68,7 @@ const sidebars: SidebarsConfig = {
       type: "category",
       label: "Contributing",
       collapsed: true,
-      items: ["agentic-contributing", "contributing", "local", "downloads-testing"],
+      items: ["agentic-contributing", "downloads-testing"],
     },
     {
       type: "category",

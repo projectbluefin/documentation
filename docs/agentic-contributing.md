@@ -6,7 +6,7 @@ slug: /agentic-contributing
 # Agentic Bluefin — Contributor Guide
 
 :::info What this guide is for
-This guide explains how to contribute to `projectbluefin` — an agentic-first reboot of the Bluefin project. If you are looking for the production contributing guide (the one that talks about forking `ublue-os/bluefin`), that is still available at [/contributing](/contributing). This guide describes how things will work, we have to test it more. 
+This guide explains how to contribute to `projectbluefin` — the agentic factory that builds Bluefin. AI agents implement work; humans approve design, review PRs, and run the gates that machine enforcement cannot replace.
 :::
 
 ## What Changed and Why
@@ -23,27 +23,26 @@ For a full technical comparison of what changed between `ublue-os/bluefin` and `
 
 ---
 
-## This Is an F1 Car, Not a Sedan
+## The Factory Is Running
 
-The agentic factory is fast and capable. It is also new, and in places it is not finished.
+The agentic factory is operational and shipping weekly.
 
-**What is operational as of 2026-06-04:**
+**What is operational:**
 - Keyless signing, merge queue, fast PR validation (1–2 min)
 - `pr-smoke.yml` — full image build + smoke test for PRs that touch build-affecting paths
 - `post-testing-e2e.yml` — runs `smoke,common` suites against every `main` push
 - `nightly.yml` — nightly `smoke,common,vanilla-gnome` baseline run against `:latest`
 - `weekly-testing-promotion.yml` with 2-human Environment gate
-- `projectbluefin/actions` shared CI library consumed by `bluefin` and `bluefin-lts`
+- `projectbluefin/actions` shared CI library consumed by `bluefin`, `bluefin-lts`, and `dakota`
 - `bonedigger` issue lifecycle bot
 - AI Moderator (`moderator.yml`) — spam detection and moderation on issues and PR comments
 
-**What is deferred:**
-- `projectbluefin/actions` consumption by `dakota` (tracked in [projectbluefin/actions#16](https://github.com/projectbluefin/actions/issues/16))
+**Still in progress:**
 - ARM builds — wired in CI, disabled pending akmods ARM support
 
 **What this means for you as a contributor:**
 
-You will find rough edges. The system is intentionally moving fast. When something breaks, the correct response is to file an issue and fix it, not to conclude that the approach is broken. The design assumption is that the gates (2-human approval + e2e + SHA-lock) protect users even while individual components are still maturing.
+The system is intentionally moving fast. When something breaks, the correct response is to file an issue and fix it. The design assumption is that the gates (2-human approval + e2e + SHA-lock) protect users even while individual components are still maturing.
 
 ---
 
@@ -274,7 +273,7 @@ A PR that touches CI, build, or packaging without a skill file update is a yello
 | [projectbluefin/bluefin-lts](https://github.com/projectbluefin/bluefin-lts) | LTS variant (CentOS Stream 10 / bootc) | Same; LTS-specific hardware or lifecycle concerns |
 | [projectbluefin/common](https://github.com/projectbluefin/common) | Shared OCI layer — desktop config, ujust, GNOME opinions | Shared behavior that applies to all variants |
 | [projectbluefin/aurorafin-shared](https://github.com/projectbluefin/aurorafin-shared) | Shared system files for Aurora and Bluefin | Cross-project shared configuration |
-| [projectbluefin/dakota](https://github.com/projectbluefin/dakota) | Distroless prototype (Dakotaraptor, BuildStream) | Experimental; actions integration deferred |
+| [projectbluefin/dakota](https://github.com/projectbluefin/dakota) | Distroless prototype (Dakotaraptor, BuildStream) | Experimental; actions library wired in |
 | [projectbluefin/actions](https://github.com/projectbluefin/actions) | Shared CI library — 10 composite actions, canonical skills hub | CI/actions improvements; skill file propagation |
 | [projectbluefin/bonedigger](https://github.com/projectbluefin/bonedigger) | Client reporting + issue lifecycle bot | Client UX, lifecycle bot behavior |
 
