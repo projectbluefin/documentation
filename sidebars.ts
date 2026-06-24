@@ -6,17 +6,6 @@ const sidebars: SidebarsConfig = {
   baseSidebar: [
     {
       type: "category",
-      label: "Platform",
-      collapsed: false,
-      items: [
-        "images",
-        "driver-versions",
-        "supply-chain",
-        "analytics",
-      ],
-    },
-    {
-      type: "category",
       label: "Getting Started",
       collapsed: false,
       items: [
@@ -37,6 +26,8 @@ const sidebars: SidebarsConfig = {
         "gaming",
         "ai",
         "command-line",
+        "images",
+        "driver-versions",
         "troubleshooting",
       ],
     },
@@ -68,7 +59,7 @@ const sidebars: SidebarsConfig = {
       type: "category",
       label: "Contributing",
       collapsed: true,
-      items: ["agentic-contributing", "downloads-testing"],
+      items: ["contributing", "agentic-contributing", "downloads-testing"],
     },
     {
       type: "category",
@@ -78,11 +69,13 @@ const sidebars: SidebarsConfig = {
         "mission",
         "values",
         "code-of-conduct",
+        "supply-chain",
+        "analytics",
+        "reports",
         "dinosaurs",
         "artwork",
         "music",
         "press-kit",
-        "reports",
       ],
     },
     {
