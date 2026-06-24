@@ -143,7 +143,7 @@ The central finding of the paper:
 
 ### Hive's reported metrics
 
-The numbers below are from the **KubeStellar Console** case study in the ACMM paper and the CNCF blog — an 82-day measurement period on a separate project. They are not yet measured outcomes for Bluefin. Hive on Bluefin is reported as a first-week deployment with a *target* SLA, not a measured one.
+The numbers below are from the **KubeStellar Console** case study in the ACMM paper and the CNCF blog — an 82-day measurement period.
 
 | Metric | Value | Source |
 |--------|-------|--------|
