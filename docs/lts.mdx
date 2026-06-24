@@ -38,7 +38,7 @@ Bluefin LTS ships with Linux 6.12.0, which is the kernel for the lifetime of rel
 
 ### Differences from Bluefin
 
-- There may be instances when something from Bluefin is not implemented in Bluefin LTS. Please [file an issue](https://github.com/ublue-os/bluefin-lts/issues) and tag it with `parity` and the team will investigate. They'll never match _exactly_ but we can get the important ones done
+- There may be instances when something from Bluefin is not implemented in Bluefin LTS. Please [file an issue](https://github.com/projectbluefin/bluefin-lts/issues) and tag it with `parity` and the team will investigate. They'll never match _exactly_ but we can get the important ones done
 - Appimages are hard unsupported (those fuse packages aren't even in CentOS)
 - Local Layering is not supported
 
@@ -60,7 +60,7 @@ Do NOT rebase to this image from an existing Bluefin, Aurora, Bazzite, or Fedora
 
 ### Images
 
-- [Repository](https://github.com/ublue-os/bluefin-lts)
+- [Repository](https://github.com/projectbluefin/bluefin-lts)
 
 The following images and tags are available:
 
@@ -105,17 +105,17 @@ If there are other ways to set this up on MacOS please considering sending a pul
 To build locally and then spit out a VM:
 
 ```bash
-git clone https://github.com/ublue-os/bluefin-lts
+git clone https://github.com/projectbluefin/bluefin-lts
 cd bluefin-lts
 just build
-just build-qcow2 ghcr.io/ublue-os/bluefin:lts # if you want to build an ISO just change qcow2 to iso instead
+just build-qcow2 ghcr.io/projectbluefin/bluefin:lts # if you want to build an ISO just change qcow2 to iso instead
 ```
 
 The [qcow2](https://qemu-project.gitlab.io/qemu/system/images.html) file will be written to the `output/` directory. Default username and password are `centos`/`centos`
 
 #### Hibernation Enabled by Default
 
-Hibernation is on by default in a suspend-then-hibernate configuration. Here is the [exact config](https://github.com/ublue-os/bluefin-lts/blob/c0c8e2166cb5d0c4dd511ab3f677450c2cf8de0c/build_scripts/40-services.sh#L6). The device will suspend then go into hibernation after two hours. See the [systemd-sleep.conf](https://www.freedesktop.org/software/systemd/man/latest/systemd-sleep.conf.html) documentation.
+Hibernation is on by default in a suspend-then-hibernate configuration. Here is the [exact config](https://github.com/projectbluefin/bluefin-lts/blob/c0c8e2166cb5d0c4dd511ab3f677450c2cf8de0c/build_scripts/40-services.sh#L6). The device will suspend then go into hibernation after two hours. See the [systemd-sleep.conf](https://www.freedesktop.org/software/systemd/man/latest/systemd-sleep.conf.html) documentation.
 
 Note that secureboot and hibernation are mutually exclusive. We do not yet offer secureboot enabled images of Bluefin LTS, if you need that functionality now we recommend the normal Bluefin images.
 
