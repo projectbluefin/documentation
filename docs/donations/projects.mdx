@@ -8,6 +8,83 @@ import ProjectCard from "@site/src/components/ProjectCard";
 
 If your software is included in Bluefin and missing from this list, please send a pull request to add it!
 
+## Built With Cloud Native
+
+These are the [CNCF](https://www.cncf.io/) and [OpenSSF](https://openssf.org/) projects that **build, sign, test, and ship** every Bluefin release. Not bundled for users — the actual infrastructure running the factory.
+
+<div
+  style={{
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))",
+    gap: "1.5rem",
+    marginBottom: "2rem",
+  }}
+>
+  <ProjectCard
+    name="KubeStellar"
+    description="CNCF Sandbox. The orchestration engine powering the Bluefin Hive — the agentic factory that autonomously builds, tests, and ships every release."
+    icon="https://github.com/kubestellar.png"
+    githubRepo="kubestellar/kubestellar"
+    sponsorUrl="https://www.cncf.io/projects/kubestellar/"
+  />
+  <ProjectCard
+    name="k3s"
+    description="CNCF Sandbox. Lightweight Kubernetes running the Hive cluster. All factory agents, CI orchestration, and test infrastructure live here."
+    icon="https://github.com/k3s-io.png"
+    githubRepo="k3s-io/k3s"
+    sponsorUrl="https://www.cncf.io/projects/k3s/"
+  />
+  <ProjectCard
+    name="KubeVirt"
+    description="CNCF Incubating. Runs full virtual machines inside the Hive cluster for end-to-end image testing in the Bluefin lab."
+    icon="https://github.com/kubevirt.png"
+    githubRepo="kubevirt/kubevirt"
+    sponsorUrl="https://www.cncf.io/projects/kubevirt/"
+  />
+  <ProjectCard
+    name="Sigstore / cosign"
+    description="CNCF Graduated. Every Bluefin image is keylessly signed with cosign using OIDC identity. No long-lived secrets, verifiable by anyone."
+    icon="https://github.com/sigstore.png"
+    githubRepo="sigstore/cosign"
+    sponsorUrl="https://www.cncf.io/projects/sigstore/"
+  />
+  <ProjectCard
+    name="ORAS"
+    description="CNCF Incubating. OCI Registry As Storage — attaches and retrieves Syft SBOMs and SLSA provenance attestations to every release in GHCR."
+    icon="https://github.com/oras-project.png"
+    githubRepo="oras-project/oras"
+    sponsorUrl="https://www.cncf.io/projects/oras/"
+  />
+  <ProjectCard
+    name="containerd"
+    description="CNCF Graduated. The container runtime running inside the k3s Hive cluster, powering every agent workload and test job."
+    icon="https://github.com/containerd.png"
+    githubRepo="containerd/containerd"
+    sponsorUrl="https://www.cncf.io/projects/containerd/"
+  />
+  <ProjectCard
+    name="OpenSSF Scorecard"
+    description="Automated supply-chain security checks run on every repository in the projectbluefin organization via GitHub Actions."
+    icon="https://github.com/ossf.png"
+    githubRepo="ossf/scorecard"
+    sponsorUrl="https://openssf.org/projects/scorecard/"
+  />
+  <ProjectCard
+    name="SLSA"
+    description="All Bluefin images ship with SLSA Build Level 2 provenance attestations, generated automatically at build time and verifiable via cosign."
+    icon="https://github.com/slsa-framework.png"
+    githubRepo="slsa-framework/slsa"
+    sponsorUrl="https://slsa.dev/"
+  />
+  <ProjectCard
+    name="Syft"
+    description="Anchore's open source SBOM generator. Creates Software Bills of Materials for every Bluefin release, attached to GHCR via ORAS and surfaced in the docs."
+    icon="https://github.com/anchore.png"
+    githubRepo="anchore/syft"
+    sponsorUrl="https://github.com/anchore/syft"
+  />
+</div>
+
 ## Desktop Environment
 
 <div
@@ -111,7 +188,7 @@ If your software is included in Bluefin and missing from this list, please send 
     description="Native Linux app store and software center"
     sponsorUrl="https://github.com/sponsors/ranfdev"
     icon="https://github.com/ranfdev.png"
-    githubRepo="nickvision-apps/cavalier"
+    githubRepo="ranfdev/DistroShelf"
   />
   <ProjectCard
     name="Warehouse"

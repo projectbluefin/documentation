@@ -5,8 +5,18 @@ const {
   githubHeaders,
 } = require("./lib/request-queue");
 
-// List all GitHub repos from projects.mdx
 const GITHUB_REPOS = [
+  // Built With Cloud Native (CNCF + OpenSSF — what makes Bluefin)
+  "kubestellar/kubestellar",
+  "k3s-io/k3s",
+  "kubevirt/kubevirt",
+  "sigstore/cosign",
+  "oras-project/oras",
+  "containerd/containerd",
+  "ossf/scorecard",
+  "slsa-framework/slsa",
+  "anchore/syft",
+
   // Desktop Environment
   "GNOME/gnome-shell",
 
@@ -20,7 +30,7 @@ const GITHUB_REPOS = [
 
   // Flatpak Applications
   "kolunmi/bazaar",
-  "nickvision-apps/cavalier",
+  "ranfdev/DistroShelf",
   "flattool/warehouse",
   "flattool/ignition",
   "tchx84/Flatseal",
