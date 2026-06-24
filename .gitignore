@@ -43,3 +43,4 @@ test-results/
 
 # Generated card images (built during CI)
 static/img/cards/
+.worktrees/
