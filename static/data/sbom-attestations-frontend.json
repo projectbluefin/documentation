@@ -1,195 +1,20 @@
 {
-  "generatedAt": "2026-05-04T02:52:20.473Z",
+  "generatedAt": "2026-06-24T08:27:44.188Z",
   "lookbackDays": 90,
   "maxReleasesPerStream": 10,
   "streams": {
     "bluefin-stable": {
       "id": "bluefin-stable",
       "label": "Bluefin Stable",
-      "org": "ublue-os",
+      "org": "projectbluefin",
       "package": "bluefin",
       "streamPrefix": "stable",
-      "keyRepo": "ublue-os/bluefin",
+      "keyRepo": "projectbluefin/bluefin",
       "keyless": true,
       "releases": {
-        "stable-20260501": {
-          "tag": "stable-20260501",
-          "imageRef": "ghcr.io/ublue-os/bluefin:stable-20260501",
-          "digest": null,
-          "attestation": {
-            "present": true,
-            "verified": true,
-            "predicateType": "https://slsa.dev/provenance/v1",
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": null
-          },
-          "packageVersions": {
-            "kernel": "6.19.12-200.fc43",
-            "gnome": "49.6",
-            "mesa": "25.3.6",
-            "podman": "5.8.2",
-            "systemd": "258.7",
-            "bootc": "1.15.1",
-            "fedora": "F43",
-            "pipewire": "1.4.11",
-            "flatpak": "1.16.6",
-            "nvidia": null
-          },
-          "checkedAt": "2026-05-04T02:43:59.805Z"
-        },
-        "stable-20260428": {
-          "tag": "stable-20260428",
-          "imageRef": "ghcr.io/ublue-os/bluefin:stable-20260428",
-          "digest": null,
-          "attestation": {
-            "present": true,
-            "verified": true,
-            "predicateType": "https://slsa.dev/provenance/v1",
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": null
-          },
-          "packageVersions": {
-            "kernel": "6.19.10-200.fc43",
-            "gnome": "49.6",
-            "mesa": "25.3.6",
-            "podman": "5.8.2",
-            "systemd": "258.7",
-            "bootc": "1.15.1",
-            "fedora": "F43",
-            "pipewire": "1.4.11",
-            "flatpak": "1.16.6",
-            "nvidia": null
-          },
-          "checkedAt": "2026-05-04T02:44:03.555Z"
-        },
-        "stable-20260421": {
-          "tag": "stable-20260421",
-          "imageRef": "ghcr.io/ublue-os/bluefin:stable-20260421",
-          "digest": null,
-          "attestation": {
-            "present": true,
-            "verified": true,
-            "predicateType": "https://slsa.dev/provenance/v1",
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": null
-          },
-          "packageVersions": {
-            "kernel": "6.19.10-200.fc43",
-            "gnome": "49.6",
-            "mesa": "25.3.6",
-            "podman": "5.8.2",
-            "systemd": "258.7",
-            "bootc": "1.15.0",
-            "fedora": "F43",
-            "pipewire": "1.4.11",
-            "flatpak": "1.16.6",
-            "nvidia": null
-          },
-          "checkedAt": "2026-05-04T02:44:07.280Z"
-        },
-        "stable-20260414": {
-          "tag": "stable-20260414",
-          "imageRef": "ghcr.io/ublue-os/bluefin:stable-20260414",
-          "digest": null,
-          "attestation": {
-            "present": true,
-            "verified": true,
-            "predicateType": "https://slsa.dev/provenance/v1",
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": null
-          },
-          "packageVersions": {
-            "kernel": "6.19.7-200.fc43",
-            "gnome": "49.5",
-            "mesa": "25.3.6",
-            "podman": "5.8.1",
-            "systemd": "258.7",
-            "bootc": "1.15.0",
-            "fedora": "F43",
-            "pipewire": "1.4.11",
-            "flatpak": "1.16.6",
-            "nvidia": null
-          },
-          "checkedAt": "2026-05-04T02:44:11.417Z"
-        },
-        "stable-20260408": {
-          "tag": "stable-20260408",
-          "imageRef": "ghcr.io/ublue-os/bluefin:stable-20260408",
-          "digest": null,
-          "attestation": {
-            "present": true,
-            "verified": true,
-            "predicateType": "https://slsa.dev/provenance/v1",
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": null
-          },
-          "packageVersions": {
-            "kernel": "6.19.7-200.fc43",
-            "gnome": "49.5",
-            "mesa": "25.3.6",
-            "podman": "5.8.1",
-            "systemd": "258.7",
-            "bootc": "1.14.1",
-            "fedora": "F43",
-            "pipewire": "1.4.11",
-            "flatpak": "1.16.3",
-            "nvidia": null
-          },
-          "checkedAt": "2026-05-04T02:44:14.753Z"
-        },
-        "stable-20260407": {
-          "tag": "stable-20260407",
-          "imageRef": "ghcr.io/ublue-os/bluefin:stable-20260407",
-          "digest": null,
-          "attestation": {
-            "present": true,
-            "verified": true,
-            "predicateType": "https://slsa.dev/provenance/v1",
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": null
-          },
-          "packageVersions": {
-            "kernel": "6.19.7-200.fc43",
-            "gnome": "49.5",
-            "mesa": "25.3.6",
-            "podman": "5.8.1",
-            "systemd": "258.7",
-            "bootc": "1.14.1",
-            "fedora": "F43",
-            "pipewire": "1.4.11",
-            "flatpak": "1.16.3",
-            "nvidia": null
-          },
-          "checkedAt": "2026-05-04T02:44:19.459Z"
-        },
-        "stable-20260331": {
-          "tag": "stable-20260331",
-          "imageRef": "ghcr.io/ublue-os/bluefin:stable-20260331",
-          "digest": null,
-          "attestation": {
-            "present": true,
-            "verified": true,
-            "predicateType": "https://slsa.dev/provenance/v1",
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": null
-          },
-          "packageVersions": {
-            "kernel": "6.18.13-200.fc43",
-            "gnome": "49.5",
-            "mesa": "25.3.6",
-            "podman": "5.8.1",
-            "systemd": "258.7",
-            "bootc": "1.14.1",
-            "fedora": "F43",
-            "pipewire": "1.4.11",
-            "flatpak": "1.16.3",
-            "nvidia": null
-          },
-          "checkedAt": "2026-05-04T02:44:25.809Z"
-        },
-        "stable-20260324": {
-          "tag": "stable-20260324",
-          "imageRef": "ghcr.io/ublue-os/bluefin:stable-20260324",
+        "stable-20260606": {
+          "tag": "stable-20260606",
+          "imageRef": "ghcr.io/projectbluefin/bluefin:stable-20260606",
           "digest": null,
           "attestation": {
             "present": false,
@@ -198,84 +23,48 @@
             "slsaType": "https://slsa.dev/provenance/v1",
             "error": "no attestation"
           },
-          "packageVersions": {
-            "kernel": "6.18.13-200.fc43",
-            "gnome": "49.5",
-            "mesa": "25.3.6",
-            "podman": "5.8.1",
-            "systemd": "258.7",
-            "bootc": "1.13.0",
-            "fedora": "F43",
-            "pipewire": "1.4.11",
-            "flatpak": "1.16.3",
-            "nvidia": null
-          },
-          "checkedAt": "2026-05-04T02:44:29.537Z"
+          "packageVersions": {},
+          "checkedAt": "2026-06-24T08:24:30.370Z"
         },
-        "stable-20260317": {
-          "tag": "stable-20260317",
-          "imageRef": "ghcr.io/ublue-os/bluefin:stable-20260317",
+        "stable-20260531": {
+          "tag": "stable-20260531",
+          "imageRef": "ghcr.io/projectbluefin/bluefin:stable-20260531",
           "digest": null,
           "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
+            "present": true,
+            "verified": true,
+            "predicateType": "https://slsa.dev/provenance/v1",
             "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
+            "error": null
           },
           "packageVersions": {
-            "kernel": "6.18.10-200.fc43",
-            "gnome": "49.4",
-            "mesa": "25.3.6",
-            "podman": "5.8.1",
-            "systemd": "258.7",
-            "bootc": "1.13.0",
-            "fedora": "F43",
-            "pipewire": "1.4.10",
-            "flatpak": "1.16.3",
+            "kernel": "7.0.8-200.fc44",
+            "gnome": "50.1",
+            "mesa": "26.0.8",
+            "podman": "5.8.2",
+            "systemd": "259.5",
+            "bootc": "1.15.2",
+            "fedora": "F44",
+            "pipewire": "1.6.6",
+            "flatpak": "1.17.7",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:44:33.192Z"
-        },
-        "stable-20260312": {
-          "tag": "stable-20260312",
-          "imageRef": "ghcr.io/ublue-os/bluefin:stable-20260312",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {
-            "kernel": "6.18.10-200.fc43",
-            "gnome": "49.4",
-            "mesa": "25.3.6",
-            "podman": "5.8.0",
-            "systemd": "258.5",
-            "bootc": "1.13.0",
-            "fedora": "F43",
-            "pipewire": "1.4.10",
-            "flatpak": "1.16.3",
-            "nvidia": null
-          },
-          "checkedAt": "2026-05-04T02:44:37.999Z"
+          "checkedAt": "2026-06-24T08:24:35.666Z"
         }
       }
     },
     "bluefin-stable-daily": {
       "id": "bluefin-stable-daily",
       "label": "Bluefin Stable Daily",
-      "org": "ublue-os",
+      "org": "projectbluefin",
       "package": "bluefin",
       "streamPrefix": "stable-daily",
-      "keyRepo": "ublue-os/bluefin",
+      "keyRepo": "projectbluefin/bluefin",
       "keyless": true,
       "releases": {
-        "stable-daily-20260503": {
-          "tag": "stable-daily-20260503",
-          "imageRef": "ghcr.io/ublue-os/bluefin:stable-daily-20260503",
+        "stable-daily-20260606": {
+          "tag": "stable-daily-20260606",
+          "imageRef": "ghcr.io/projectbluefin/bluefin:stable-daily-20260606",
           "digest": null,
           "attestation": {
             "present": true,
@@ -285,47 +74,36 @@
             "error": null
           },
           "packageVersions": {
-            "kernel": "6.19.12-200.fc43",
-            "gnome": "49.6",
-            "mesa": "25.3.6",
+            "kernel": "7.0.8-200.fc44",
+            "gnome": "50.2",
+            "mesa": "26.0.8",
             "podman": "5.8.2",
-            "systemd": "258.7",
-            "bootc": "1.15.1",
-            "fedora": "F43",
-            "pipewire": "1.4.11",
-            "flatpak": "1.16.6",
+            "systemd": "259.6",
+            "bootc": "1.15.2",
+            "fedora": "F44",
+            "pipewire": "1.6.6",
+            "flatpak": "1.17.7",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:44:41.235Z"
+          "checkedAt": "2026-06-24T08:24:41.228Z"
         },
-        "stable-daily-20260502": {
-          "tag": "stable-daily-20260502",
-          "imageRef": "ghcr.io/ublue-os/bluefin:stable-daily-20260502",
+        "stable-daily-20260604": {
+          "tag": "stable-daily-20260604",
+          "imageRef": "ghcr.io/projectbluefin/bluefin:stable-daily-20260604",
           "digest": null,
           "attestation": {
-            "present": true,
-            "verified": true,
-            "predicateType": "https://slsa.dev/provenance/v1",
+            "present": false,
+            "verified": false,
+            "predicateType": null,
             "slsaType": "https://slsa.dev/provenance/v1",
-            "error": null
+            "error": "no attestation"
           },
-          "packageVersions": {
-            "kernel": "6.19.12-200.fc43",
-            "gnome": "49.6",
-            "mesa": "25.3.6",
-            "podman": "5.8.2",
-            "systemd": "258.7",
-            "bootc": "1.15.1",
-            "fedora": "F43",
-            "pipewire": "1.4.11",
-            "flatpak": "1.16.6",
-            "nvidia": null
-          },
-          "checkedAt": "2026-05-04T02:44:44.652Z"
+          "packageVersions": {},
+          "checkedAt": "2026-06-24T08:24:44.061Z"
         },
-        "stable-daily-20260501": {
-          "tag": "stable-daily-20260501",
-          "imageRef": "ghcr.io/ublue-os/bluefin:stable-daily-20260501",
+        "stable-daily-20260531": {
+          "tag": "stable-daily-20260531",
+          "imageRef": "ghcr.io/projectbluefin/bluefin:stable-daily-20260531",
           "digest": null,
           "attestation": {
             "present": true,
@@ -335,22 +113,22 @@
             "error": null
           },
           "packageVersions": {
-            "kernel": "6.19.12-200.fc43",
-            "gnome": "49.6",
-            "mesa": "25.3.6",
+            "kernel": "7.0.8-200.fc44",
+            "gnome": "50.1",
+            "mesa": "26.0.8",
             "podman": "5.8.2",
-            "systemd": "258.7",
-            "bootc": "1.15.1",
-            "fedora": "F43",
-            "pipewire": "1.4.11",
-            "flatpak": "1.16.6",
+            "systemd": "259.5",
+            "bootc": "1.15.2",
+            "fedora": "F44",
+            "pipewire": "1.6.6",
+            "flatpak": "1.17.7",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:44:48.059Z"
+          "checkedAt": "2026-06-24T08:24:48.909Z"
         },
-        "stable-daily-20260429": {
-          "tag": "stable-daily-20260429",
-          "imageRef": "ghcr.io/ublue-os/bluefin:stable-daily-20260429",
+        "stable-daily-20260530": {
+          "tag": "stable-daily-20260530",
+          "imageRef": "ghcr.io/projectbluefin/bluefin:stable-daily-20260530",
           "digest": null,
           "attestation": {
             "present": true,
@@ -360,183 +138,33 @@
             "error": null
           },
           "packageVersions": {
-            "kernel": "6.19.11-200.fc43",
-            "gnome": "49.6",
-            "mesa": "25.3.6",
+            "kernel": "7.0.10-201.fc44",
+            "gnome": "50.1",
+            "mesa": "26.0.7",
             "podman": "5.8.2",
-            "systemd": "258.7",
-            "bootc": "1.15.1",
-            "fedora": "F43",
-            "pipewire": "1.4.11",
-            "flatpak": "1.16.6",
+            "systemd": "259.5",
+            "bootc": "1.15.2",
+            "fedora": "F44",
+            "pipewire": "1.6.6",
+            "flatpak": "1.17.7",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:44:51.244Z"
-        },
-        "stable-daily-20260428": {
-          "tag": "stable-daily-20260428",
-          "imageRef": "ghcr.io/ublue-os/bluefin:stable-daily-20260428",
-          "digest": null,
-          "attestation": {
-            "present": true,
-            "verified": true,
-            "predicateType": "https://slsa.dev/provenance/v1",
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": null
-          },
-          "packageVersions": {
-            "kernel": "6.19.10-200.fc43",
-            "gnome": "49.6",
-            "mesa": "25.3.6",
-            "podman": "5.8.2",
-            "systemd": "258.7",
-            "bootc": "1.15.1",
-            "fedora": "F43",
-            "pipewire": "1.4.11",
-            "flatpak": "1.16.6",
-            "nvidia": null
-          },
-          "checkedAt": "2026-05-04T02:44:54.882Z"
-        },
-        "stable-daily-20260427": {
-          "tag": "stable-daily-20260427",
-          "imageRef": "ghcr.io/ublue-os/bluefin:stable-daily-20260427",
-          "digest": null,
-          "attestation": {
-            "present": true,
-            "verified": true,
-            "predicateType": "https://slsa.dev/provenance/v1",
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": null
-          },
-          "packageVersions": {
-            "kernel": "6.19.10-200.fc43",
-            "gnome": "49.6",
-            "mesa": "25.3.6",
-            "podman": "5.8.2",
-            "systemd": "258.7",
-            "bootc": "1.15.1",
-            "fedora": "F43",
-            "pipewire": "1.4.11",
-            "flatpak": "1.16.6",
-            "nvidia": null
-          },
-          "checkedAt": "2026-05-04T02:44:59.118Z"
-        },
-        "stable-daily-20260426": {
-          "tag": "stable-daily-20260426",
-          "imageRef": "ghcr.io/ublue-os/bluefin:stable-daily-20260426",
-          "digest": null,
-          "attestation": {
-            "present": true,
-            "verified": true,
-            "predicateType": "https://slsa.dev/provenance/v1",
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": null
-          },
-          "packageVersions": {
-            "kernel": "6.19.10-200.fc43",
-            "gnome": "49.6",
-            "mesa": "25.3.6",
-            "podman": "5.8.2",
-            "systemd": "258.7",
-            "bootc": "1.15.1",
-            "fedora": "F43",
-            "pipewire": "1.4.11",
-            "flatpak": "1.16.6",
-            "nvidia": null
-          },
-          "checkedAt": "2026-05-04T02:45:02.458Z"
-        },
-        "stable-daily-20260425": {
-          "tag": "stable-daily-20260425",
-          "imageRef": "ghcr.io/ublue-os/bluefin:stable-daily-20260425",
-          "digest": null,
-          "attestation": {
-            "present": true,
-            "verified": true,
-            "predicateType": "https://slsa.dev/provenance/v1",
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": null
-          },
-          "packageVersions": {
-            "kernel": "6.19.10-200.fc43",
-            "gnome": "49.6",
-            "mesa": "25.3.6",
-            "podman": "5.8.2",
-            "systemd": "258.7",
-            "bootc": "1.15.1",
-            "fedora": "F43",
-            "pipewire": "1.4.11",
-            "flatpak": "1.16.6",
-            "nvidia": null
-          },
-          "checkedAt": "2026-05-04T02:45:07.195Z"
-        },
-        "stable-daily-20260424": {
-          "tag": "stable-daily-20260424",
-          "imageRef": "ghcr.io/ublue-os/bluefin:stable-daily-20260424",
-          "digest": null,
-          "attestation": {
-            "present": true,
-            "verified": true,
-            "predicateType": "https://slsa.dev/provenance/v1",
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": null
-          },
-          "packageVersions": {
-            "kernel": "6.19.10-200.fc43",
-            "gnome": "49.6",
-            "mesa": "25.3.6",
-            "podman": "5.8.2",
-            "systemd": "258.7",
-            "bootc": "1.15.1",
-            "fedora": "F43",
-            "pipewire": "1.4.11",
-            "flatpak": "1.16.6",
-            "nvidia": null
-          },
-          "checkedAt": "2026-05-04T02:45:11.135Z"
-        },
-        "stable-daily-20260423": {
-          "tag": "stable-daily-20260423",
-          "imageRef": "ghcr.io/ublue-os/bluefin:stable-daily-20260423",
-          "digest": null,
-          "attestation": {
-            "present": true,
-            "verified": true,
-            "predicateType": "https://slsa.dev/provenance/v1",
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": null
-          },
-          "packageVersions": {
-            "kernel": "6.19.10-200.fc43",
-            "gnome": "49.6",
-            "mesa": "25.3.6",
-            "podman": "5.8.2",
-            "systemd": "258.7",
-            "bootc": "1.15.1",
-            "fedora": "F43",
-            "pipewire": "1.4.11",
-            "flatpak": "1.16.6",
-            "nvidia": null
-          },
-          "checkedAt": "2026-05-04T02:45:18.049Z"
+          "checkedAt": "2026-06-24T08:24:54.040Z"
         }
       }
     },
     "bluefin-latest": {
       "id": "bluefin-latest",
       "label": "Bluefin Latest",
-      "org": "ublue-os",
+      "org": "projectbluefin",
       "package": "bluefin",
       "streamPrefix": "latest",
-      "keyRepo": "ublue-os/bluefin",
+      "keyRepo": "projectbluefin/bluefin",
       "keyless": true,
       "releases": {
-        "latest-20260503": {
-          "tag": "latest-20260503",
-          "imageRef": "ghcr.io/ublue-os/bluefin:latest-20260503",
+        "latest-20260531": {
+          "tag": "latest-20260531",
+          "imageRef": "ghcr.io/projectbluefin/bluefin:latest-20260531",
           "digest": null,
           "attestation": {
             "present": true,
@@ -546,22 +174,22 @@
             "error": null
           },
           "packageVersions": {
-            "kernel": "6.19.14-300.fc44",
+            "kernel": "7.0.10-201.fc44",
             "gnome": "50.1",
-            "mesa": "26.0.6",
+            "mesa": "26.0.8",
             "podman": "5.8.2",
             "systemd": "259.5",
-            "bootc": "1.15.1",
+            "bootc": "1.15.2",
             "fedora": "F44",
-            "pipewire": "1.6.4",
-            "flatpak": "1.17.6",
+            "pipewire": "1.6.6",
+            "flatpak": "1.17.7",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:45:21.859Z"
+          "checkedAt": "2026-06-24T08:24:59.381Z"
         },
-        "latest-20260502": {
-          "tag": "latest-20260502",
-          "imageRef": "ghcr.io/ublue-os/bluefin:latest-20260502",
+        "latest-20260530": {
+          "tag": "latest-20260530",
+          "imageRef": "ghcr.io/projectbluefin/bluefin:latest-20260530",
           "digest": null,
           "attestation": {
             "present": true,
@@ -571,233 +199,33 @@
             "error": null
           },
           "packageVersions": {
-            "kernel": "6.19.14-300.fc44",
+            "kernel": "7.0.10-201.fc44",
             "gnome": "50.1",
-            "mesa": "26.0.6",
+            "mesa": "26.0.7",
             "podman": "5.8.2",
             "systemd": "259.5",
-            "bootc": "1.15.1",
+            "bootc": "1.15.2",
             "fedora": "F44",
-            "pipewire": "1.6.4",
-            "flatpak": "1.17.6",
+            "pipewire": "1.6.6",
+            "flatpak": "1.17.7",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:45:26.388Z"
-        },
-        "latest-20260429": {
-          "tag": "latest-20260429",
-          "imageRef": "ghcr.io/ublue-os/bluefin:latest-20260429",
-          "digest": null,
-          "attestation": {
-            "present": true,
-            "verified": true,
-            "predicateType": "https://slsa.dev/provenance/v1",
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": null
-          },
-          "packageVersions": {
-            "kernel": "6.19.14-200.fc43",
-            "gnome": "49.6",
-            "mesa": "25.3.6",
-            "podman": "5.8.2",
-            "systemd": "258.7",
-            "bootc": "1.15.1",
-            "fedora": "F43",
-            "pipewire": "1.4.11",
-            "flatpak": "1.16.6",
-            "nvidia": null
-          },
-          "checkedAt": "2026-05-04T02:45:29.605Z"
-        },
-        "latest-20260428": {
-          "tag": "latest-20260428",
-          "imageRef": "ghcr.io/ublue-os/bluefin:latest-20260428",
-          "digest": null,
-          "attestation": {
-            "present": true,
-            "verified": true,
-            "predicateType": "https://slsa.dev/provenance/v1",
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": null
-          },
-          "packageVersions": {
-            "kernel": "6.19.13-200.fc43",
-            "gnome": "49.6",
-            "mesa": "25.3.6",
-            "podman": "5.8.2",
-            "systemd": "258.7",
-            "bootc": "1.15.1",
-            "fedora": "F43",
-            "pipewire": "1.4.11",
-            "flatpak": "1.16.6",
-            "nvidia": null
-          },
-          "checkedAt": "2026-05-04T02:45:34.888Z"
-        },
-        "latest-20260427": {
-          "tag": "latest-20260427",
-          "imageRef": "ghcr.io/ublue-os/bluefin:latest-20260427",
-          "digest": null,
-          "attestation": {
-            "present": true,
-            "verified": true,
-            "predicateType": "https://slsa.dev/provenance/v1",
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": null
-          },
-          "packageVersions": {
-            "kernel": "6.19.13-200.fc43",
-            "gnome": "49.6",
-            "mesa": "25.3.6",
-            "podman": "5.8.2",
-            "systemd": "258.7",
-            "bootc": "1.15.1",
-            "fedora": "F43",
-            "pipewire": "1.4.11",
-            "flatpak": "1.16.6",
-            "nvidia": null
-          },
-          "checkedAt": "2026-05-04T02:45:41.437Z"
-        },
-        "latest-20260426": {
-          "tag": "latest-20260426",
-          "imageRef": "ghcr.io/ublue-os/bluefin:latest-20260426",
-          "digest": null,
-          "attestation": {
-            "present": true,
-            "verified": true,
-            "predicateType": "https://slsa.dev/provenance/v1",
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": null
-          },
-          "packageVersions": {
-            "kernel": "6.19.13-200.fc43",
-            "gnome": "49.6",
-            "mesa": "25.3.6",
-            "podman": "5.8.2",
-            "systemd": "258.7",
-            "bootc": "1.15.1",
-            "fedora": "F43",
-            "pipewire": "1.4.11",
-            "flatpak": "1.16.6",
-            "nvidia": null
-          },
-          "checkedAt": "2026-05-04T02:45:44.723Z"
-        },
-        "latest-20260425": {
-          "tag": "latest-20260425",
-          "imageRef": "ghcr.io/ublue-os/bluefin:latest-20260425",
-          "digest": null,
-          "attestation": {
-            "present": true,
-            "verified": true,
-            "predicateType": "https://slsa.dev/provenance/v1",
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": null
-          },
-          "packageVersions": {
-            "kernel": "6.19.13-200.fc43",
-            "gnome": "49.6",
-            "mesa": "25.3.6",
-            "podman": "5.8.2",
-            "systemd": "258.7",
-            "bootc": "1.15.1",
-            "fedora": "F43",
-            "pipewire": "1.4.11",
-            "flatpak": "1.16.6",
-            "nvidia": null
-          },
-          "checkedAt": "2026-05-04T02:45:52.932Z"
-        },
-        "latest-20260424": {
-          "tag": "latest-20260424",
-          "imageRef": "ghcr.io/ublue-os/bluefin:latest-20260424",
-          "digest": null,
-          "attestation": {
-            "present": true,
-            "verified": true,
-            "predicateType": "https://slsa.dev/provenance/v1",
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": null
-          },
-          "packageVersions": {
-            "kernel": "6.19.12-200.fc43",
-            "gnome": "49.6",
-            "mesa": "25.3.6",
-            "podman": "5.8.2",
-            "systemd": "258.7",
-            "bootc": "1.15.1",
-            "fedora": "F43",
-            "pipewire": "1.4.11",
-            "flatpak": "1.16.6",
-            "nvidia": null
-          },
-          "checkedAt": "2026-05-04T02:45:56.363Z"
-        },
-        "latest-20260423": {
-          "tag": "latest-20260423",
-          "imageRef": "ghcr.io/ublue-os/bluefin:latest-20260423",
-          "digest": null,
-          "attestation": {
-            "present": true,
-            "verified": true,
-            "predicateType": "https://slsa.dev/provenance/v1",
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": null
-          },
-          "packageVersions": {
-            "kernel": "6.19.12-200.fc43",
-            "gnome": "49.6",
-            "mesa": "25.3.6",
-            "podman": "5.8.2",
-            "systemd": "258.7",
-            "bootc": "1.15.1",
-            "fedora": "F43",
-            "pipewire": "1.4.11",
-            "flatpak": "1.16.6",
-            "nvidia": null
-          },
-          "checkedAt": "2026-05-04T02:46:01.855Z"
-        },
-        "latest-20260422": {
-          "tag": "latest-20260422",
-          "imageRef": "ghcr.io/ublue-os/bluefin:latest-20260422",
-          "digest": null,
-          "attestation": {
-            "present": true,
-            "verified": true,
-            "predicateType": "https://slsa.dev/provenance/v1",
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": null
-          },
-          "packageVersions": {
-            "kernel": "6.19.12-200.fc43",
-            "gnome": "49.6",
-            "mesa": "25.3.6",
-            "podman": "5.8.2",
-            "systemd": "258.7",
-            "bootc": "1.15.0",
-            "fedora": "F43",
-            "pipewire": "1.4.11",
-            "flatpak": "1.16.6",
-            "nvidia": null
-          },
-          "checkedAt": "2026-05-04T02:46:10.601Z"
+          "checkedAt": "2026-06-24T08:25:04.991Z"
         }
       }
     },
     "bluefin-lts": {
       "id": "bluefin-lts",
       "label": "Bluefin LTS",
-      "org": "ublue-os",
+      "org": "projectbluefin",
       "package": "bluefin",
       "streamPrefix": "lts",
-      "keyRepo": "ublue-os/bluefin-lts",
+      "keyRepo": "projectbluefin/bluefin-lts",
       "keyless": false,
       "releases": {
-        "lts-20260501": {
-          "tag": "lts-20260501",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts.20260501",
+        "lts-20260602": {
+          "tag": "lts-20260602",
+          "imageRef": "ghcr.io/projectbluefin/bluefin:lts.20260602",
           "digest": null,
           "attestation": {
             "present": false,
@@ -807,22 +235,22 @@
             "error": "no attestation"
           },
           "packageVersions": {
-            "kernel": "6.12.0-224.el10",
+            "kernel": "6.12.0-233.el10",
             "gnome": "49.5",
             "mesa": "25.2.7",
-            "podman": "5.8.0",
+            "podman": "5.8.2",
             "systemd": "257",
-            "bootc": "1.14.1",
+            "bootc": "1.15.2",
             "fedora": null,
-            "pipewire": "1.4.9",
+            "pipewire": "1.4.11",
             "flatpak": "1.16.0",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:46:14.857Z"
+          "checkedAt": "2026-06-24T08:25:11.263Z"
         },
-        "lts-20260428": {
-          "tag": "lts-20260428",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts.20260428",
+        "lts-20260531": {
+          "tag": "lts-20260531",
+          "imageRef": "ghcr.io/projectbluefin/bluefin:lts.20260531",
           "digest": null,
           "attestation": {
             "present": false,
@@ -832,22 +260,22 @@
             "error": "no attestation"
           },
           "packageVersions": {
-            "kernel": "6.12.0-224.el10",
+            "kernel": "6.12.0-231.el10",
             "gnome": "49.5",
             "mesa": "25.2.7",
-            "podman": "5.8.0",
+            "podman": "5.8.2",
             "systemd": "257",
-            "bootc": "1.14.1",
+            "bootc": "1.15.2",
             "fedora": null,
-            "pipewire": "1.4.9",
+            "pipewire": "1.4.11",
             "flatpak": "1.16.0",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:46:19.010Z"
+          "checkedAt": "2026-06-24T08:25:17.653Z"
         },
-        "lts-20260421": {
-          "tag": "lts-20260421",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts.20260421",
+        "lts-20260530": {
+          "tag": "lts-20260530",
+          "imageRef": "ghcr.io/projectbluefin/bluefin:lts.20260530",
           "digest": null,
           "attestation": {
             "present": false,
@@ -857,153 +285,33 @@
             "error": "no attestation"
           },
           "packageVersions": {
-            "kernel": "6.12.0-218.el10",
+            "kernel": "6.12.0-231.el10",
             "gnome": "49.5",
             "mesa": "25.2.7",
-            "podman": "5.8.0",
+            "podman": "5.8.2",
             "systemd": "257",
-            "bootc": "1.14.1",
+            "bootc": "1.15.2",
             "fedora": null,
-            "pipewire": "1.4.9",
+            "pipewire": "1.4.11",
             "flatpak": "1.16.0",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:46:22.733Z"
-        },
-        "lts-20260414": {
-          "tag": "lts-20260414",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts.20260414",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {
-            "kernel": "6.12.0-218.el10",
-            "gnome": "49.5",
-            "mesa": "25.2.7",
-            "podman": "5.8.0",
-            "systemd": "257",
-            "bootc": "1.14.1",
-            "fedora": null,
-            "pipewire": "1.4.9",
-            "flatpak": "1.16.0",
-            "nvidia": null
-          },
-          "checkedAt": "2026-05-04T02:46:27.246Z"
-        },
-        "lts-20260407": {
-          "tag": "lts-20260407",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts.20260407",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {
-            "kernel": "6.12.0-218.el10",
-            "gnome": "49.5",
-            "mesa": "25.2.7",
-            "podman": "5.8.0",
-            "systemd": "257",
-            "bootc": "1.14.1",
-            "fedora": null,
-            "pipewire": "1.4.9",
-            "flatpak": "1.16.0",
-            "nvidia": null
-          },
-          "checkedAt": "2026-05-04T02:46:34.038Z"
-        },
-        "lts-20260331": {
-          "tag": "lts-20260331",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts.20260331",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {},
-          "checkedAt": "2026-05-04T02:46:35.796Z"
-        },
-        "lts-20260324": {
-          "tag": "lts-20260324",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts.20260324",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {},
-          "checkedAt": "2026-05-04T02:46:37.506Z"
-        },
-        "lts-20260317": {
-          "tag": "lts-20260317",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts.20260317",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {},
-          "checkedAt": "2026-05-04T02:46:39.280Z"
-        },
-        "lts-20260310": {
-          "tag": "lts-20260310",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts.20260310",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {},
-          "checkedAt": "2026-05-04T02:46:41.342Z"
-        },
-        "lts-20260308": {
-          "tag": "lts-20260308",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts.20260308",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {},
-          "checkedAt": "2026-05-04T02:46:42.885Z"
+          "checkedAt": "2026-06-24T08:25:24.169Z"
         }
       }
     },
     "bluefin-lts-hwe": {
       "id": "bluefin-lts-hwe",
       "label": "Bluefin LTS HWE",
-      "org": "ublue-os",
+      "org": "projectbluefin",
       "package": "bluefin",
       "streamPrefix": "lts-hwe",
-      "keyRepo": "ublue-os/bluefin-lts",
+      "keyRepo": "projectbluefin/bluefin-lts",
       "keyless": false,
       "releases": {
-        "lts-hwe-20260502": {
-          "tag": "lts-hwe-20260502",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts-hwe.20260502",
+        "lts-hwe-20260602": {
+          "tag": "lts-hwe-20260602",
+          "imageRef": "ghcr.io/projectbluefin/bluefin:lts-hwe.20260602",
           "digest": null,
           "attestation": {
             "present": false,
@@ -1013,22 +321,22 @@
             "error": "no attestation"
           },
           "packageVersions": {
-            "kernel": "6.17.12-200.fc42",
+            "kernel": "7.0.8-100.fc43",
             "gnome": "49.5",
             "mesa": "25.2.7",
-            "podman": "5.8.0",
+            "podman": "5.8.2",
             "systemd": "257",
-            "bootc": "1.14.1",
+            "bootc": "1.15.2",
             "fedora": null,
-            "pipewire": "1.4.9",
+            "pipewire": "1.4.11",
             "flatpak": "1.16.0",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:46:47.322Z"
+          "checkedAt": "2026-06-24T08:25:30.763Z"
         },
-        "lts-hwe-20260501": {
-          "tag": "lts-hwe-20260501",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts-hwe.20260501",
+        "lts-hwe-20260531": {
+          "tag": "lts-hwe-20260531",
+          "imageRef": "ghcr.io/projectbluefin/bluefin:lts-hwe.20260531",
           "digest": null,
           "attestation": {
             "present": false,
@@ -1038,22 +346,22 @@
             "error": "no attestation"
           },
           "packageVersions": {
-            "kernel": "6.17.12-200.fc42",
+            "kernel": "7.0.8-100.fc43",
             "gnome": "49.5",
             "mesa": "25.2.7",
-            "podman": "5.8.0",
+            "podman": "5.8.2",
             "systemd": "257",
-            "bootc": "1.14.1",
+            "bootc": "1.15.2",
             "fedora": null,
-            "pipewire": "1.4.9",
+            "pipewire": "1.4.11",
             "flatpak": "1.16.0",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:46:51.871Z"
+          "checkedAt": "2026-06-24T08:25:37.197Z"
         },
-        "lts-hwe-20260428": {
-          "tag": "lts-hwe-20260428",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts-hwe.20260428",
+        "lts-hwe-20260530": {
+          "tag": "lts-hwe-20260530",
+          "imageRef": "ghcr.io/projectbluefin/bluefin:lts-hwe.20260530",
           "digest": null,
           "attestation": {
             "present": false,
@@ -1063,164 +371,33 @@
             "error": "no attestation"
           },
           "packageVersions": {
-            "kernel": "6.17.12-200.fc42",
+            "kernel": "7.0.8-100.fc43",
             "gnome": "49.5",
             "mesa": "25.2.7",
-            "podman": "5.8.0",
+            "podman": "5.8.2",
             "systemd": "257",
-            "bootc": "1.14.1",
+            "bootc": "1.15.2",
             "fedora": null,
-            "pipewire": "1.4.9",
+            "pipewire": "1.4.11",
             "flatpak": "1.16.0",
             "nvidia": null
           },
-          "checkedAt": "2026-05-04T02:46:55.965Z"
-        },
-        "lts-hwe-20260421": {
-          "tag": "lts-hwe-20260421",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts-hwe.20260421",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {
-            "kernel": "6.17.12-200.fc42",
-            "gnome": "49.5",
-            "mesa": "25.2.7",
-            "podman": "5.8.0",
-            "systemd": "257",
-            "bootc": "1.14.1",
-            "fedora": null,
-            "pipewire": "1.4.9",
-            "flatpak": "1.16.0",
-            "nvidia": null
-          },
-          "checkedAt": "2026-05-04T02:47:02.146Z"
-        },
-        "lts-hwe-20260414": {
-          "tag": "lts-hwe-20260414",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts-hwe.20260414",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {
-            "kernel": "6.17.12-200.fc42",
-            "gnome": "49.5",
-            "mesa": "25.2.7",
-            "podman": "5.8.0",
-            "systemd": "257",
-            "bootc": "1.14.1",
-            "fedora": null,
-            "pipewire": "1.4.9",
-            "flatpak": "1.16.0",
-            "nvidia": null
-          },
-          "checkedAt": "2026-05-04T02:47:06.101Z"
-        },
-        "lts-hwe-20260407": {
-          "tag": "lts-hwe-20260407",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts-hwe.20260407",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {
-            "kernel": "6.17.12-200.fc42",
-            "gnome": "49.5",
-            "mesa": "25.2.7",
-            "podman": "5.8.0",
-            "systemd": "257",
-            "bootc": "1.14.1",
-            "fedora": null,
-            "pipewire": "1.4.9",
-            "flatpak": "1.16.0",
-            "nvidia": null
-          },
-          "checkedAt": "2026-05-04T02:47:10.025Z"
-        },
-        "lts-hwe-20260331": {
-          "tag": "lts-hwe-20260331",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts-hwe.20260331",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {},
-          "checkedAt": "2026-05-04T02:47:11.682Z"
-        },
-        "lts-hwe-20260324": {
-          "tag": "lts-hwe-20260324",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts-hwe.20260324",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {},
-          "checkedAt": "2026-05-04T02:47:13.282Z"
-        },
-        "lts-hwe-20260317": {
-          "tag": "lts-hwe-20260317",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts-hwe.20260317",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {},
-          "checkedAt": "2026-05-04T02:47:15.230Z"
-        },
-        "lts-hwe-20260310": {
-          "tag": "lts-hwe-20260310",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts-hwe.20260310",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {},
-          "checkedAt": "2026-05-04T02:47:17.826Z"
+          "checkedAt": "2026-06-24T08:25:43.509Z"
         }
       }
     },
     "bluefin-lts-hwe-testing": {
       "id": "bluefin-lts-hwe-testing",
       "label": "Bluefin LTS HWE Testing",
-      "org": "ublue-os",
+      "org": "projectbluefin",
       "package": "bluefin",
       "streamPrefix": "lts-hwe-testing",
-      "keyRepo": "ublue-os/bluefin-lts",
+      "keyRepo": "projectbluefin/bluefin-lts",
       "keyless": false,
       "releases": {
-        "lts-hwe-testing-20260503": {
-          "tag": "lts-hwe-testing-20260503",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts-hwe-testing.20260503",
+        "lts-hwe-testing-20260531": {
+          "tag": "lts-hwe-testing-20260531",
+          "imageRef": "ghcr.io/projectbluefin/bluefin:lts-hwe-testing.20260531",
           "digest": null,
           "attestation": {
             "present": false,
@@ -1230,11 +407,11 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:47:20.555Z"
+          "checkedAt": "2026-06-24T08:25:45.955Z"
         },
-        "lts-hwe-testing-20260502": {
-          "tag": "lts-hwe-testing-20260502",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts-hwe-testing.20260502",
+        "lts-hwe-testing-20260530": {
+          "tag": "lts-hwe-testing-20260530",
+          "imageRef": "ghcr.io/projectbluefin/bluefin:lts-hwe-testing.20260530",
           "digest": null,
           "attestation": {
             "present": false,
@@ -1244,134 +421,22 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:47:22.091Z"
-        },
-        "lts-hwe-testing-20260501": {
-          "tag": "lts-hwe-testing-20260501",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts-hwe-testing.20260501",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {},
-          "checkedAt": "2026-05-04T02:47:23.729Z"
-        },
-        "lts-hwe-testing-20260430": {
-          "tag": "lts-hwe-testing-20260430",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts-hwe-testing.20260430",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {},
-          "checkedAt": "2026-05-04T02:47:25.990Z"
-        },
-        "lts-hwe-testing-20260429": {
-          "tag": "lts-hwe-testing-20260429",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts-hwe-testing.20260429",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {},
-          "checkedAt": "2026-05-04T02:47:28.199Z"
-        },
-        "lts-hwe-testing-20260427": {
-          "tag": "lts-hwe-testing-20260427",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts-hwe-testing.20260427",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {},
-          "checkedAt": "2026-05-04T02:47:29.797Z"
-        },
-        "lts-hwe-testing-20260426": {
-          "tag": "lts-hwe-testing-20260426",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts-hwe-testing.20260426",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {},
-          "checkedAt": "2026-05-04T02:47:31.296Z"
-        },
-        "lts-hwe-testing-20260425": {
-          "tag": "lts-hwe-testing-20260425",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts-hwe-testing.20260425",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {},
-          "checkedAt": "2026-05-04T02:47:34.976Z"
-        },
-        "lts-hwe-testing-20260421": {
-          "tag": "lts-hwe-testing-20260421",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts-hwe-testing.20260421",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {},
-          "checkedAt": "2026-05-04T02:47:38.059Z"
-        },
-        "lts-hwe-testing-20260420": {
-          "tag": "lts-hwe-testing-20260420",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts-hwe-testing.20260420",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {},
-          "checkedAt": "2026-05-04T02:47:39.625Z"
+          "checkedAt": "2026-06-24T08:25:48.447Z"
         }
       }
     },
     "bluefin-lts-hwe-testing-50": {
       "id": "bluefin-lts-hwe-testing-50",
       "label": "Bluefin LTS HWE Testing 50",
-      "org": "ublue-os",
+      "org": "projectbluefin",
       "package": "bluefin",
       "streamPrefix": "lts-hwe-testing-50",
-      "keyRepo": "ublue-os/bluefin-lts",
+      "keyRepo": "projectbluefin/bluefin-lts",
       "keyless": false,
       "releases": {
-        "lts-hwe-testing-50-20260503": {
-          "tag": "lts-hwe-testing-50-20260503",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts-hwe-testing-50-20260503",
+        "lts-hwe-testing-50-20260530": {
+          "tag": "lts-hwe-testing-50-20260530",
+          "imageRef": "ghcr.io/projectbluefin/bluefin:lts-hwe-testing-50-20260530",
           "digest": null,
           "attestation": {
             "present": false,
@@ -1381,148 +446,22 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:47:41.161Z"
-        },
-        "lts-hwe-testing-50-20260502": {
-          "tag": "lts-hwe-testing-50-20260502",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts-hwe-testing-50-20260502",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {},
-          "checkedAt": "2026-05-04T02:47:42.692Z"
-        },
-        "lts-hwe-testing-50-20260501": {
-          "tag": "lts-hwe-testing-50-20260501",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts-hwe-testing-50-20260501",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {},
-          "checkedAt": "2026-05-04T02:47:44.251Z"
-        },
-        "lts-hwe-testing-50-20260430": {
-          "tag": "lts-hwe-testing-50-20260430",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts-hwe-testing-50-20260430",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {},
-          "checkedAt": "2026-05-04T02:47:45.823Z"
-        },
-        "lts-hwe-testing-50-20260429": {
-          "tag": "lts-hwe-testing-50-20260429",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts-hwe-testing-50-20260429",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {},
-          "checkedAt": "2026-05-04T02:47:47.768Z"
-        },
-        "lts-hwe-testing-50-20260427": {
-          "tag": "lts-hwe-testing-50-20260427",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts-hwe-testing-50-20260427",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {},
-          "checkedAt": "2026-05-04T02:47:49.299Z"
-        },
-        "lts-hwe-testing-50-20260426": {
-          "tag": "lts-hwe-testing-50-20260426",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts-hwe-testing-50-20260426",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {},
-          "checkedAt": "2026-05-04T02:47:51.672Z"
-        },
-        "lts-hwe-testing-50-20260425": {
-          "tag": "lts-hwe-testing-50-20260425",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts-hwe-testing-50-20260425",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {},
-          "checkedAt": "2026-05-04T02:47:53.233Z"
-        },
-        "lts-hwe-testing-50-20260421": {
-          "tag": "lts-hwe-testing-50-20260421",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts-hwe-testing-50-20260421",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {},
-          "checkedAt": "2026-05-04T02:47:55.570Z"
-        },
-        "lts-hwe-testing-50-20260420": {
-          "tag": "lts-hwe-testing-50-20260420",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts-hwe-testing-50-20260420",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {},
-          "checkedAt": "2026-05-04T02:47:58.100Z"
+          "checkedAt": "2026-06-24T08:25:51.100Z"
         }
       }
     },
     "bluefin-lts-testing-50": {
       "id": "bluefin-lts-testing-50",
       "label": "Bluefin LTS Testing 50",
-      "org": "ublue-os",
+      "org": "projectbluefin",
       "package": "bluefin",
       "streamPrefix": "lts-testing-50",
-      "keyRepo": "ublue-os/bluefin-lts",
+      "keyRepo": "projectbluefin/bluefin-lts",
       "keyless": false,
       "releases": {
-        "lts-testing-50-20260503": {
-          "tag": "lts-testing-50-20260503",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts-testing-50-20260503",
+        "lts-testing-50-20260530": {
+          "tag": "lts-testing-50-20260530",
+          "imageRef": "ghcr.io/projectbluefin/bluefin:lts-testing-50-20260530",
           "digest": null,
           "attestation": {
             "present": false,
@@ -1532,133 +471,7 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:48:00.012Z"
-        },
-        "lts-testing-50-20260502": {
-          "tag": "lts-testing-50-20260502",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts-testing-50-20260502",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {},
-          "checkedAt": "2026-05-04T02:48:01.969Z"
-        },
-        "lts-testing-50-20260501": {
-          "tag": "lts-testing-50-20260501",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts-testing-50-20260501",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {},
-          "checkedAt": "2026-05-04T02:48:03.707Z"
-        },
-        "lts-testing-50-20260430": {
-          "tag": "lts-testing-50-20260430",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts-testing-50-20260430",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {},
-          "checkedAt": "2026-05-04T02:48:05.850Z"
-        },
-        "lts-testing-50-20260429": {
-          "tag": "lts-testing-50-20260429",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts-testing-50-20260429",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {},
-          "checkedAt": "2026-05-04T02:48:08.186Z"
-        },
-        "lts-testing-50-20260427": {
-          "tag": "lts-testing-50-20260427",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts-testing-50-20260427",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {},
-          "checkedAt": "2026-05-04T02:48:09.986Z"
-        },
-        "lts-testing-50-20260426": {
-          "tag": "lts-testing-50-20260426",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts-testing-50-20260426",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {},
-          "checkedAt": "2026-05-04T02:48:11.873Z"
-        },
-        "lts-testing-50-20260425": {
-          "tag": "lts-testing-50-20260425",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts-testing-50-20260425",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {},
-          "checkedAt": "2026-05-04T02:48:13.464Z"
-        },
-        "lts-testing-50-20260421": {
-          "tag": "lts-testing-50-20260421",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts-testing-50-20260421",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {},
-          "checkedAt": "2026-05-04T02:48:15.083Z"
-        },
-        "lts-testing-50-20260420": {
-          "tag": "lts-testing-50-20260420",
-          "imageRef": "ghcr.io/ublue-os/bluefin:lts-testing-50-20260420",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {},
-          "checkedAt": "2026-05-04T02:48:16.619Z"
+          "checkedAt": "2026-06-24T08:25:53.445Z"
         }
       }
     },
@@ -2846,165 +1659,15 @@
     "bluefin-gdx-lts": {
       "id": "bluefin-gdx-lts",
       "label": "Bluefin GDX LTS",
-      "org": "ublue-os",
+      "org": "projectbluefin",
       "package": "bluefin-gdx",
       "streamPrefix": "lts",
-      "keyRepo": "ublue-os/bluefin-lts",
+      "keyRepo": "projectbluefin/bluefin-lts",
       "keyless": false,
       "releases": {
-        "lts-20260502": {
-          "tag": "lts-20260502",
-          "imageRef": "ghcr.io/ublue-os/bluefin-gdx:lts.20260502",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {
-            "kernel": "6.19.12-100.fc42",
-            "gnome": "49.5",
-            "mesa": "25.2.7",
-            "podman": "5.8.0",
-            "systemd": "257",
-            "bootc": "1.14.1",
-            "fedora": null,
-            "pipewire": "1.4.9",
-            "flatpak": "1.16.0",
-            "nvidia": "595.71.05"
-          },
-          "checkedAt": "2026-05-04T02:51:08.102Z"
-        },
-        "lts-20260501": {
-          "tag": "lts-20260501",
-          "imageRef": "ghcr.io/ublue-os/bluefin-gdx:lts.20260501",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {
-            "kernel": "6.19.12-100.fc42",
-            "gnome": "49.5",
-            "mesa": "25.2.7",
-            "podman": "5.8.0",
-            "systemd": "257",
-            "bootc": "1.14.1",
-            "fedora": null,
-            "pipewire": "1.4.9",
-            "flatpak": "1.16.0",
-            "nvidia": "595.71.05"
-          },
-          "checkedAt": "2026-05-04T02:51:12.272Z"
-        },
-        "lts-20260428": {
-          "tag": "lts-20260428",
-          "imageRef": "ghcr.io/ublue-os/bluefin-gdx:lts.20260428",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {
-            "kernel": "6.19.10-100.fc42",
-            "gnome": "49.5",
-            "mesa": "25.2.7",
-            "podman": "5.8.0",
-            "systemd": "257",
-            "bootc": "1.14.1",
-            "fedora": null,
-            "pipewire": "1.4.9",
-            "flatpak": "1.16.0",
-            "nvidia": "595.58.03"
-          },
-          "checkedAt": "2026-05-04T02:51:16.221Z"
-        },
-        "lts-20260421": {
-          "tag": "lts-20260421",
-          "imageRef": "ghcr.io/ublue-os/bluefin-gdx:lts.20260421",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {
-            "kernel": "6.19.10-100.fc42",
-            "gnome": "49.5",
-            "mesa": "25.2.7",
-            "podman": "5.8.0",
-            "systemd": "257",
-            "bootc": "1.14.1",
-            "fedora": null,
-            "pipewire": "1.4.9",
-            "flatpak": "1.16.0",
-            "nvidia": "595.58.03"
-          },
-          "checkedAt": "2026-05-04T02:51:20.214Z"
-        },
-        "lts-20260414": {
-          "tag": "lts-20260414",
-          "imageRef": "ghcr.io/ublue-os/bluefin-gdx:lts.20260414",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {
-            "kernel": "6.19.7-100.fc42",
-            "gnome": "49.5",
-            "mesa": "25.2.7",
-            "podman": "5.8.0",
-            "systemd": "257",
-            "bootc": "1.14.1",
-            "fedora": null,
-            "pipewire": "1.4.9",
-            "flatpak": "1.16.0",
-            "nvidia": "595.58.03"
-          },
-          "checkedAt": "2026-05-04T02:51:24.961Z"
-        },
-        "lts-20260407": {
-          "tag": "lts-20260407",
-          "imageRef": "ghcr.io/ublue-os/bluefin-gdx:lts.20260407",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {
-            "kernel": "6.19.7-100.fc42",
-            "gnome": "49.5",
-            "mesa": "25.2.7",
-            "podman": "5.8.0",
-            "systemd": "257",
-            "bootc": "1.14.1",
-            "fedora": null,
-            "pipewire": "1.4.9",
-            "flatpak": "1.16.0",
-            "nvidia": "595.58.03"
-          },
-          "checkedAt": "2026-05-04T02:51:29.527Z"
-        },
-        "lts-20260331": {
-          "tag": "lts-20260331",
-          "imageRef": "ghcr.io/ublue-os/bluefin-gdx:lts.20260331",
+        "lts-20260606": {
+          "tag": "lts-20260606",
+          "imageRef": "ghcr.io/projectbluefin/bluefin-gdx:lts-20260606",
           "digest": null,
           "attestation": {
             "present": false,
@@ -3014,59 +1677,17 @@
             "error": "no attestation"
           },
           "packageVersions": {},
-          "checkedAt": "2026-05-04T02:51:31.702Z"
-        },
-        "lts-20260308": {
-          "tag": "lts-20260308",
-          "imageRef": "ghcr.io/ublue-os/bluefin-gdx:lts.20260308",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {},
-          "checkedAt": "2026-05-04T02:51:33.226Z"
-        },
-        "lts-20260302": {
-          "tag": "lts-20260302",
-          "imageRef": "ghcr.io/ublue-os/bluefin-gdx:lts.20260302",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {},
-          "checkedAt": "2026-05-04T02:51:35.021Z"
-        },
-        "lts-20260224": {
-          "tag": "lts-20260224",
-          "imageRef": "ghcr.io/ublue-os/bluefin-gdx:lts.20260224",
-          "digest": null,
-          "attestation": {
-            "present": false,
-            "verified": false,
-            "predicateType": null,
-            "slsaType": "https://slsa.dev/provenance/v1",
-            "error": "no attestation"
-          },
-          "packageVersions": {},
-          "checkedAt": "2026-05-04T02:51:36.626Z"
+          "checkedAt": "2026-06-24T08:25:57.568Z"
         }
       }
     },
     "bluefin-gdx-latest": {
       "id": "bluefin-gdx-latest",
       "label": "Bluefin GDX Latest",
-      "org": "ublue-os",
+      "org": "projectbluefin",
       "package": "bluefin-gdx",
       "streamPrefix": "latest",
-      "keyRepo": "ublue-os/bluefin",
+      "keyRepo": "projectbluefin/bluefin",
       "keyless": true,
       "releases": {}
     },
@@ -3364,6 +1985,59 @@
             "nvidia": null
           },
           "checkedAt": "2026-05-04T02:52:16.139Z"
+        },
+        "latest-20260608": {
+          "tag": "latest-20260608",
+          "imageRef": "ghcr.io/projectbluefin/dakota:latest",
+          "digest": null,
+          "attestation": {
+            "present": true,
+            "verified": true,
+            "predicateType": "https://slsa.dev/provenance/v1",
+            "slsaType": "https://slsa.dev/provenance/v1",
+            "error": null
+          },
+          "packageVersions": {
+            "kernel": "7.0.7",
+            "gnome": "50.2",
+            "mesa": "26.0.6",
+            "podman": "5.8.2",
+            "systemd": "260.2",
+            "bootc": "1.15.2",
+            "fedora": null,
+            "pipewire": "1.6.1",
+            "flatpak": "1.16.6",
+            "nvidia": null
+          },
+          "checkedAt": "2026-06-24T08:26:03.499Z"
+        },
+        "latest-20260620": {
+          "tag": "latest-20260620",
+          "imageRef": "ghcr.io/projectbluefin/dakota:8ed312a2ba9003d953f2305b0e1824a433f65eb8",
+          "digest": null,
+          "attestation": {
+            "present": true,
+            "verified": true,
+            "predicateType": "https://slsa.dev/provenance/v1",
+            "slsaType": "https://slsa.dev/provenance/v1",
+            "error": null
+          },
+          "packageVersions": {},
+          "checkedAt": "2026-06-24T08:26:44.939Z"
+        },
+        "latest-20260621": {
+          "tag": "latest-20260621",
+          "imageRef": "ghcr.io/projectbluefin/dakota:a96c4d609f6ce82e019474878bf2931d9b1b9ed4",
+          "digest": null,
+          "attestation": {
+            "present": true,
+            "verified": true,
+            "predicateType": "https://slsa.dev/provenance/v1",
+            "slsaType": "https://slsa.dev/provenance/v1",
+            "error": null
+          },
+          "packageVersions": {},
+          "checkedAt": "2026-06-24T08:26:49.590Z"
         }
       }
     },
@@ -3400,6 +2074,59 @@
             "nvidia": "595.71.05"
           },
           "checkedAt": "2026-05-04T02:52:20.473Z"
+        },
+        "latest-20260530": {
+          "tag": "latest-20260530",
+          "imageRef": "ghcr.io/projectbluefin/dakota-nvidia:latest",
+          "digest": null,
+          "attestation": {
+            "present": true,
+            "verified": true,
+            "predicateType": "https://slsa.dev/provenance/v1",
+            "slsaType": "https://slsa.dev/provenance/v1",
+            "error": null
+          },
+          "packageVersions": {
+            "kernel": "7.0.7",
+            "gnome": "50.1",
+            "mesa": "26.0.6",
+            "podman": "5.8.2",
+            "systemd": "260.1",
+            "bootc": "1.15.2",
+            "fedora": null,
+            "pipewire": "1.6.1",
+            "flatpak": "1.16.6",
+            "nvidia": "595.71.05"
+          },
+          "checkedAt": "2026-06-24T08:26:56.826Z"
+        },
+        "latest-20260620": {
+          "tag": "latest-20260620",
+          "imageRef": "ghcr.io/projectbluefin/dakota-nvidia:8ed312a2ba9003d953f2305b0e1824a433f65eb8",
+          "digest": null,
+          "attestation": {
+            "present": true,
+            "verified": true,
+            "predicateType": "https://slsa.dev/provenance/v1",
+            "slsaType": "https://slsa.dev/provenance/v1",
+            "error": null
+          },
+          "packageVersions": {},
+          "checkedAt": "2026-06-24T08:27:39.518Z"
+        },
+        "latest-20260621": {
+          "tag": "latest-20260621",
+          "imageRef": "ghcr.io/projectbluefin/dakota-nvidia:a96c4d609f6ce82e019474878bf2931d9b1b9ed4",
+          "digest": null,
+          "attestation": {
+            "present": true,
+            "verified": true,
+            "predicateType": "https://slsa.dev/provenance/v1",
+            "slsaType": "https://slsa.dev/provenance/v1",
+            "error": null
+          },
+          "packageVersions": {},
+          "checkedAt": "2026-06-24T08:27:44.188Z"
         }
       }
     }
