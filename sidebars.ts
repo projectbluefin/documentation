@@ -11,6 +11,7 @@ const sidebars: SidebarsConfig = {
       items: [
         "images",
         "driver-versions",
+        "supply-chain",
         "analytics",
       ],
     },
