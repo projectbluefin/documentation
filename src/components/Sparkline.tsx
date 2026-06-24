@@ -35,10 +35,8 @@ export default function Sparkline({
   });
 
   const linePts = pts.join(" ");
-  const fill =
-    areaColor === "none"
-      ? "none"
-      : (areaColor ?? "rgba(88, 166, 255, 0.10)");
+  // ponytail: callers pass explicit areaColor; default "transparent" avoids color mismatch
+  const fill = areaColor === "none" || areaColor === undefined ? "transparent" : areaColor;
   const area = `M ${pts[0]} L ${pts.slice(1).join(" L ")} L ${width},${height} L 0,${height} Z`;
 
   return (
@@ -49,7 +47,7 @@ export default function Sparkline({
       aria-hidden="true"
       style={{ display: "inline-block", verticalAlign: "middle", overflow: "visible" }}
     >
-      {fill !== "none" && <path d={area} fill={fill} />}
+      {fill !== "transparent" && <path d={area} fill={fill} />}
       <polyline
         points={linePts}
         fill="none"

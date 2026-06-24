@@ -439,7 +439,7 @@ export default function DriverVersionsCatalog({ streamId }: DriverVersionsCatalo
                 const hweSpark = versionSparkData(stream.history, "hweKernel");
                 const mesaSpark = versionSparkData(stream.history, "mesa");
                 const gnomeSpark = versionSparkData(stream.history, "gnome");
-                if (kernelSpark.length < 2 && mesaSpark.length < 2) return null;
+                if (kernelSpark.length < 2 && hweSpark.length < 2 && mesaSpark.length < 2 && gnomeSpark.length < 2) return null;
                 return (
                   <div className={styles.versionTrends}>
                     {kernelSpark.length >= 2 && (
