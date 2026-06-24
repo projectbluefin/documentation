@@ -286,7 +286,8 @@ Runs `renovate-config-validator --strict`.
 | `PackageSummary.tsx` | `changelogs.tsx` | Derived from feeds via `src/config/packageConfig.ts` |
 | `FirehoseFeed.tsx` + `OsReleaseCard.tsx` | `changelogs.tsx` | `firehose-apps.json` (static import) + `sbom-attestations-frontend.json` (lazy) + `bluefin-releases.json`/`bluefin-lts-releases.json` (lazy) |
 | `ImagesCatalog.tsx` | `docs/images.md` (`/images` route) | `static/data/images.json` (includes SBOM version overlays) |
-| `DriverVersionsCatalog.tsx` | `docs/driver-versions.mdx` | `static/data/driver-versions.json` |
+| `DriverVersionsCatalog.tsx` | `docs/driver-versions.mdx` | `static/data/driver-versions.json` — shows per-stream Kernel/HWE/Mesa/GNOME version trend sparklines |
+| `Sparkline.tsx` | Reusable utility — used in DriverVersionsCatalog, available anywhere | `number[]` prop — zero-dep inline SVG, SSR-safe. Props: `data`, `width`, `height`, `color`, `areaColor` |
 | `ArtworkGallery.tsx` | `docs/artwork.mdx` | `fetch("/data/artwork.json")` — client-side fetch after hydration |
 | `GitHubProfileCard.tsx` | `docs/donations/*.mdx` | `static/data/github-profiles.json` |
 | `ProjectCard.tsx` | `docs/donations/projects.mdx` | `static/data/github-repos.json` (build-time) + GitHub API (runtime fallback) |
@@ -497,13 +498,28 @@ To add a new project:
 
 Icon URLs: use `https://github.com/org-name.png` or `https://github.com/username.png`.
 
+**CNCF section policy:** `docs/donations/projects.mdx` has a "Built With Cloud Native" section at the top. It lists only projects used **to build, sign, test, and ship** Bluefin (KubeStellar, k3s, KubeVirt, cosign, ORAS, containerd, Scorecard, SLSA, Syft). Do NOT add Brewfile user tools here — those are things Bluefin ships for users, not what makes Bluefin.
+
 ---
 
-## Active Worktrees (2026-05-12)
+## Sparkline component
 
-| Worktree path | Branch | Purpose |
-|---|---|---|
-| `.worktrees/blog-spring` | `feature/blog-f44-update-2` | Spring 2026 blog series — parts 2, 3, 4. Parts 1–3 published. Part 4 (`making-our-own-fate`) still `draft:true`. |
+`src/components/Sparkline.tsx` — reusable zero-dependency inline SVG sparkline. SSR-safe, no new deps.
+
+```tsx
+import Sparkline from '@site/src/components/Sparkline';
+<Sparkline data={[10, 20, 15, 30, 25, 40]} width={120} height={28} color="#3fb950" areaColor="rgba(63,185,80,0.10)" />
+```
+
+Props: `data: number[]`, `width?` (default 120), `height?` (default 28), `color?` (default `#58a6ff`), `areaColor?` (default transparent — pass explicit `rgba(...)` for fill).
+
+Returns `null` if `data.length < 2`. Normalizes data to min/max range with 2px padding.
+
+---
+
+## Active Worktrees
+
+No active worktrees. The blog-spring worktree (`.worktrees/blog-spring`) has all posts merged to main as of May 2026 and can be removed with `git worktree remove .worktrees/blog-spring`.
 
 ---
 
