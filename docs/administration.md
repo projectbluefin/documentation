@@ -318,7 +318,7 @@ This feature is incomplete and needs contributors to make it a reality
 
 :::
 
-Bluefin and Aurora include Cockpit for machine management. We're hoping to include more out-of-the-box management templates, please [check this issue](https://github.com/ublue-os/bluefin/issues/271) if you're interested in volunteering.
+Bluefin and Aurora include Cockpit for machine management. We're hoping to include more out-of-the-box management templates, please [check this issue](https://github.com/projectbluefin/bluefin/issues) if you're interested in volunteering.
 
 ## Verification
 

@@ -30,10 +30,10 @@ In the menu select "Ask Bluefin" to use the chat agent.
 
 <Tabs groupId="operating-systems">
   <TabItem value="linux" label="Linux" default>
-    ```brew install ublue-os/tap/linux-mcp-server ```
+    ```brew install rhel-lightspeed/tap/linux-mcp-server ```
   </TabItem>
   <TabItem value="macos" label="macOS">
-    ```brew install ublue-os/tap/linux-mcp-server ```
+    ```brew install rhel-lightspeed/tap/linux-mcp-server ```
   </TabItem>
 </Tabs>
 
@@ -56,7 +56,7 @@ Provides system diagnostics and monitoring tools:
 - Network diagnostics
 - File system inspection
 
-**Repository**: [ublue-os/linux-mcp-server](https://github.com/rhel-lightspeed/linux-mcp-server)
+**Repository**: [rhel-lightspeed/linux-mcp-server](https://github.com/rhel-lightspeed/linux-mcp-server)
 
 ### MCP Configuration
 
@@ -67,7 +67,7 @@ The configuration process differs depending on which AI client you're using:
 **Step 1: Install linux-mcp-server**
 
 ```bash
-brew install ublue-os/tap/linux-mcp-server
+brew install rhel-lightspeed/tap/linux-mcp-server
 ```
 
 **Step 2: Configure Goose**
@@ -111,7 +111,7 @@ ramalama serve qwen3:8b
 
 Then run `goose configure`, select **Ollama**, and set `OLLAMA_HOST` to `http://localhost:8080`.
 
-[LM Studio](https://lmstudio.ai/) (`brew install ublue-os/tap/lm-studio-linux`) is a graphical alternative — launch it, load a model, enable the local server, then select **LM Studio** in `goose configure`.
+[LM Studio](https://lmstudio.ai/) (`brew install lm-studio`) is a graphical alternative — launch it, load a model, enable the local server, then select **LM Studio** in `goose configure`.
 
 :::tip[On the local network? Use Ghost.]
 

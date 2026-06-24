@@ -4,9 +4,9 @@ author: Chris Lauretano
 slug: /t2-mac
 ---
 
-This is an addendum to the [Bluefin installation runbook](/introduction.md) for T2 Macs, supporting the project's goal of sustainability by enabling Bluefin installation on the final generation of Intel Macs (2018-2020). Apple ends support for them after 2024.
+This is an addendum to the [Bluefin installation runbook](/installation) for T2 Macs, supporting the project's goal of sustainability by enabling Bluefin installation on the final generation of Intel Macs (2018-2020). Apple ends support for them after 2024.
 
-Please read the original [Bluefin installation runbook](/introduction.md) as the contents of it are not reproduced here. Section Headings match up where possible.
+Please read the original [Bluefin installation runbook](/installation) as the contents of it are not reproduced here. Section Headings match up where possible.
 
 ## Day 0 - Planning
 
@@ -120,13 +120,13 @@ In a terminal, you'll install several packages and enable some daemons needed to
 3. After a reboot, ensure t2fanrd is running with `systemctl status t2fanrd`. Fan speed curves can be managed by editing `/etc/t2fanrd.conf`. See [T2FanRD](https://github.com/GnomedDev/T2FanRD) for details.
 
 4. Enable T2-appropriate kernel arguments.
-   In a terminal, run: `rpm-ostree kargs --append-if-missing=intel_iommu=on --append-if-missing=iommu=pt --append-if-missing=mem_sleep_default=s2idle` and reboot when prompted.
+   In a terminal, run: `sudo bootc kargs --append intel_iommu=on --append iommu=pt --append mem_sleep_default=s2idle` and reboot when prompted.
 
 ### Day 2-3 Post-Install Refinement for T2
 
 #### Allow internal keyboard during early boot (LUKS encryption unlock)
 
-Enable initramfs regeneration. This will enable dracut to run during upgrades, allowing us to configure the apple-bce module to load during early boot. `rpm-ostree initramfs enable` --Note that initramfs generation adds a fair bit of local CPU time after normal rpm-ostree upgrade processing happens.
+Enable initramfs regeneration. This will enable dracut to run during upgrades, allowing us to configure the apple-bce module to load during early boot. `sudo bootc initramfs --enable` --Note that initramfs generation adds a fair bit of local CPU time after normal rpm-ostree upgrade processing happens.
 
 - If layering T2 packages, create a config file that loads the apple-bce module: `echo "force_drivers+=\" apple-bce \"" | sudo tee /etc/dracut.conf.d/t2linux-modules.conf`
 

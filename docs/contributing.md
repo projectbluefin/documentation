@@ -918,7 +918,7 @@ git push origin your-branch --force-with-lease
 
 ### Code of Conduct
 
-All contributors must follow the [Universal Blue Code of Conduct](https://github.com/ublue-os/main?tab=coc-ov-file#readme).
+All contributors must follow the [Bluefin Code of Conduct](/code-of-conduct).
 
 **Key Points:**
 - Be respectful and inclusive

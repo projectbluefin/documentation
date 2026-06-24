@@ -5,7 +5,7 @@ slug: /local
 
 # Using the devcontainer
 
-Follow the [ublue-os/devcontainer](https://github.com/ublue-os/devcontainer) documentation.
+Follow the [projectbluefin/bluefin](https://github.com/projectbluefin/bluefin) documentation.
 
 # Building Bluefin
 
@@ -14,20 +14,6 @@ Bluefin is cloud native, so all the tooling can be run locally or on any server.
 First clone the repo:
 
 `git clone https://github.com/projectbluefin/bluefin.git`
-
-:::warning
-`origin` in this repo points to `ublue-os/bluefin` (the upstream source). Always push to `projectbluefin` explicitly:
-
-```bash
-git push projectbluefin your-branch-name
-```
-
-Or install the push guard hook after cloning:
-
-```bash
-bash .github/scripts/install-hooks.sh
-```
-:::
 
 The `Justfile` at the root of the repo is used to build the images. The general pattern is:
 
