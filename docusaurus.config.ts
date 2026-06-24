@@ -177,6 +177,11 @@ const config: Config = {
           position: "right",
         },
         {
+          to: "/hive",
+          label: "Hive",
+          position: "right",
+        },
+        {
           href: "https://github.com/ublue-os/bluefin/discussions",
           label: "Discussions",
           position: "right",
