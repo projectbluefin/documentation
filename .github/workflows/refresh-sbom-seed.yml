@@ -1,0 +1,94 @@
+name: Refresh SBOM Seed Files
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+  pull-requests: write
+  packages: read
+
+jobs:
+  refresh-sbom-seed:
+    name: Fetch fresh SBOM data and open PR
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@fe104658747b27e96e4f7e80cd0a94068e53901d # v2.16.1
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Cache node_modules
+        id: cache-node-modules
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            node-modules-${{ runner.os }}-
+
+      - name: Install dependencies
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        run: npm ci
+
+      - name: Install cosign
+        uses: sigstore/cosign-installer@cad07c2e89fa2edd6e2d7bab4c1aa38e53f76003 # v4.1.1
+
+      - name: Install oras
+        uses: oras-project/setup-oras@38de303aac69abb66f3e6255b7198bff35f323e3 # v2.0.0
+
+      - name: Fetch fresh SBOM attestation data
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: npm run fetch-sbom
+
+      - name: Validate SBOM data is non-empty
+        run: |
+          node -e "
+            const fs = require('fs');
+            const data = JSON.parse(fs.readFileSync('static/data/sbom-attestations.json', 'utf8'));
+            const count = Object.values(data.streams || {}).reduce((acc, s) => acc + Object.keys(s.releases || {}).length, 0);
+            console.log('Total releases in SBOM data:', count);
+            if (count === 0) { console.error('ERROR: SBOM data is empty'); process.exit(1); }
+          "
+
+      - name: Create PR with updated seed files
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          BRANCH="chore/sbom-seed-$(date +%Y%m%d)"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git add static/data/sbom-attestations.json static/data/sbom-attestations-frontend.json
+          if git diff --cached --quiet; then
+            echo "No changes to SBOM seed files — nothing to PR."
+            exit 0
+          fi
+          git commit -m "chore(sbom): refresh SBOM attestation seed files from projectbluefin
+
+Automated refresh via refresh-sbom-seed.yml workflow.
+Seed files now reflect current projectbluefin image data."
+          git push origin "$BRANCH"
+          gh pr create \
+            --base main \
+            --head "$BRANCH" \
+            --title "chore(sbom): refresh SBOM attestation seed files" \
+            --body "Automated refresh of the committed SBOM seed files (sbom-attestations.json and sbom-attestations-frontend.json) from the current projectbluefin image data.
+
+These seed files are used as a fallback when the GHA cache is cold. This PR ensures they reflect the projectbluefin org after the migration from ublue-os."
