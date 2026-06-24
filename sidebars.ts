@@ -2,18 +2,18 @@ import type { SidebarsConfig } from "@docusaurus/plugin-content-docs";
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
-/**
- * Creating a sidebar enables you to:
- - create an ordered group of docs
- - render a sidebar for each doc of that group
- - provide next/previous navigation
-
- The sidebars can be generated from the filesystem, or explicitly defined here.
-
- Create as many sidebars as you want.
- */
 const sidebars: SidebarsConfig = {
   baseSidebar: [
+    {
+      type: "category",
+      label: "Platform",
+      collapsed: false,
+      items: [
+        "images",
+        "driver-versions",
+        "analytics",
+      ],
+    },
     {
       type: "category",
       label: "Getting Started",
@@ -36,8 +36,6 @@ const sidebars: SidebarsConfig = {
         "gaming",
         "ai",
         "command-line",
-        "images",
-        "driver-versions",
         "troubleshooting",
       ],
     },
@@ -61,22 +59,6 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: "category",
-      label: "About the Project",
-      collapsed: true,
-      items: [
-        "mission",
-        "values",
-        "code-of-conduct",
-        "analytics",
-        "reports",
-        "dinosaurs",
-        "artwork",
-        "music",
-        "press-kit",
-      ],
-    },
-    {
-      type: "category",
       label: "Knuckle",
       collapsed: true,
       items: ["knuckle"],
@@ -86,6 +68,21 @@ const sidebars: SidebarsConfig = {
       label: "Contributing",
       collapsed: true,
       items: ["agentic-contributing", "contributing", "local", "downloads-testing"],
+    },
+    {
+      type: "category",
+      label: "About the Project",
+      collapsed: true,
+      items: [
+        "mission",
+        "values",
+        "code-of-conduct",
+        "dinosaurs",
+        "artwork",
+        "music",
+        "press-kit",
+        "reports",
+      ],
     },
     {
       type: "category",
