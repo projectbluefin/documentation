@@ -5,7 +5,7 @@ slug: /knuckle
 
 # Knuckle
 
-**Knuckle** is an interactive TUI installer for [Flatcar Container Linux](https://www.flatcar.org/) — the CNCF-hosted, container-optimized OS. It gives you an Ubuntu-style guided install experience without requiring you to write Ignition configs by hand. No opinion included, but we'll bundle Knuckle with something else in the future. :)
+**Knuckle** is an interactive TUI installer for [Flatcar Container Linux](https://www.flatcar.org/) — the CNCF-hosted, container-optimized OS. It gives you an Ubuntu-style guided install experience without requiring you to write Ignition configs by hand.
 
 :::info[Early release]
 Knuckle is pre-alpha. All feedback and contributions are welcome at [projectbluefin/knuckle](https://github.com/projectbluefin/knuckle).

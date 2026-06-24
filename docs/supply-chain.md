@@ -21,16 +21,16 @@ Bluefin uses two signing methods depending on the stream:
 ### Verify a keyless image (stable / latest)
 
 ```bash
-cosign verify ghcr.io/ublue-os/bluefin:stable \
-  --certificate-identity-regexp="https://github.com/ublue-os/bluefin/.github/workflows/build.yml" \
+cosign verify ghcr.io/projectbluefin/bluefin:stable \
+  --certificate-identity-regexp="https://github.com/projectbluefin/bluefin/.github/workflows/build.yml" \
   --certificate-oidc-issuer=https://token.actions.githubusercontent.com
 ```
 
 ### Verify an LTS image (key-based)
 
 ```bash
-curl -O https://raw.githubusercontent.com/ublue-os/bluefin-lts/main/cosign.pub
-cosign verify ghcr.io/ublue-os/bluefin:lts --key cosign.pub
+curl -O https://raw.githubusercontent.com/projectbluefin/bluefin-lts/main/cosign.pub
+cosign verify ghcr.io/projectbluefin/bluefin:lts --key cosign.pub
 ```
 
 ### Verify Dakota
@@ -50,9 +50,9 @@ Keyless streams include [SLSA v1](https://slsa.dev/provenance/v1) provenance att
 Fetch and inspect provenance:
 
 ```bash
-cosign verify-attestation ghcr.io/ublue-os/bluefin:stable \
+cosign verify-attestation ghcr.io/projectbluefin/bluefin:stable \
   --type slsaprovenance1 \
-  --certificate-identity-regexp="https://github.com/ublue-os/bluefin/.github/workflows/build.yml" \
+  --certificate-identity-regexp="https://github.com/projectbluefin/bluefin/.github/workflows/build.yml" \
   --certificate-oidc-issuer=https://token.actions.githubusercontent.com | jq -r '.payload' | base64 -d | jq
 ```
 
@@ -64,7 +64,7 @@ Fetch the SBOM for any image:
 
 ```bash
 # Install oras: https://oras.land
-oras discover --artifact-type application/vnd.syft+json ghcr.io/ublue-os/bluefin:stable
+oras discover --artifact-type application/vnd.syft+json ghcr.io/projectbluefin/bluefin:stable
 ```
 
 ## OpenSSF Scorecard

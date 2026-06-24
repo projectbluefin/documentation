@@ -83,6 +83,26 @@ Like all Universal Blue images, switching is atomic, allowing for clean switchin
 
 The most current [Docker Engine](https://docs.docker.com/engine/) is included by default and is set up to be the default container runtime for VSCode Using [docker compose](https://danielquinn.org/blog/developing-with-docker/) is also a great way to get started in container development and is an option if devcontainers don't fit your style. Note, Docker Desktop is not available, use Podman Desktop for graphical container management.
 
+### Using Podman with Dev Containers
+
+The Dev Containers extension defaults to Docker. To switch it to Podman, add these settings to VS Code:
+
+```json
+"dev.containers.dockerComposePath": "podman-compose"
+"dev.containers.dockerPath": "podman"
+"dev.containers.dockerSocketPath": "/run/user/1000/podman/podman.sock"
+```
+
+Run `systemctl --user status podman.socket` to confirm the socket path for your user ID. For rootful Podman, use `/run/podman/podman.sock`.
+
+**SELinux troubleshooting:** If your devcontainer fails to start with SELinux access errors (check `ausearch -m avc -ts recent`), run `restorecon -R -v $HOME/.local/share`. For volume mount errors, run `restorecon -R -v /path/to/your/project`. As a last resort only, you can disable SELinux labeling for a specific container in `.devcontainer/devcontainer.json`:
+
+```json
+{
+  "runArgs": ["--security-opt", "label=disable"]
+}
+```
+
 ## Podman and Podman Desktop
 
 ![Podman Desktop](/img/user-attachments/69f64ed1-7fcc-4040-9a3d-12b71308da1b.png)
