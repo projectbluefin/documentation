@@ -80,15 +80,10 @@ jobs:
             echo "No changes to SBOM seed files — nothing to PR."
             exit 0
           fi
-          git commit -m "chore(sbom): refresh SBOM attestation seed files from projectbluefin
-
-Automated refresh via refresh-sbom-seed.yml workflow.
-Seed files now reflect current projectbluefin image data."
+          git commit -m "chore(sbom): refresh SBOM attestation seed files from projectbluefin"
           git push origin "$BRANCH"
           gh pr create \
             --base main \
             --head "$BRANCH" \
             --title "chore(sbom): refresh SBOM attestation seed files" \
-            --body "Automated refresh of the committed SBOM seed files (sbom-attestations.json and sbom-attestations-frontend.json) from the current projectbluefin image data.
-
-These seed files are used as a fallback when the GHA cache is cold. This PR ensures they reflect the projectbluefin org after the migration from ublue-os."
+            --body "Automated refresh of the committed SBOM seed files from current projectbluefin image data. These seed files are last-resort fallbacks used when the GHA cache is cold."
