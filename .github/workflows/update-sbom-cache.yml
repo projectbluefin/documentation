@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 permissions:
-  contents: read
+  contents: write
   packages: read
 
 jobs:
@@ -28,7 +28,6 @@ jobs:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
         with:
           fetch-depth: 0
-          persist-credentials: false
 
       - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
         with:
@@ -86,3 +85,15 @@ jobs:
             static/data/sbom-attestations.json
             static/data/sbom-attestations-frontend.json
           key: github-data-sbom-${{ github.run_id }}
+
+      - name: Commit updated SBOM seed files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet static/data/sbom-attestations.json static/data/sbom-attestations-frontend.json; then
+            echo "No changes to SBOM seed files — skipping commit."
+          else
+            git add static/data/sbom-attestations.json static/data/sbom-attestations-frontend.json
+            git commit -m "chore(sbom): update SBOM attestation seed files [skip ci]"
+            git push origin HEAD:main
+          fi
