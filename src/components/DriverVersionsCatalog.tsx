@@ -4,6 +4,7 @@ import Heading from "@theme/Heading";
 import CodeBlock from "@theme/CodeBlock";
 import driverVersionsData from "@site/static/data/driver-versions.json";
 import streamPinsData from "@site/static/data/stream-pins.json";
+import Sparkline from "@site/src/components/Sparkline";
 import styles from "./DriverVersionsCatalog.module.css";
 
 interface StreamPins {
@@ -106,6 +107,18 @@ function majorMinor(value: string | null | undefined) {
     major: Number.parseInt(match[1], 10),
     minor: Number.parseInt(match[2], 10),
   };
+}
+
+/** Extracts a sortable version number (major*1000+minor) for each history row,
+ *  oldest-first, suitable for feeding into a Sparkline. */
+function versionSparkData(history: DriverRow[], field: keyof VersionSet): number[] {
+  return [...history]
+    .reverse()
+    .map((r) => {
+      const { major, minor } = majorMinor(r.versions[field] as string | null);
+      return major !== null && minor !== null ? major * 1000 + minor : null;
+    })
+    .filter((v): v is number => v !== null);
 }
 
 interface UserspaceInfo {
@@ -421,6 +434,41 @@ export default function DriverVersionsCatalog({ streamId }: DriverVersionsCatalo
                   {currentUserspace.label}
                 </span>
               )}
+              {(() => {
+                const kernelSpark = versionSparkData(stream.history, "kernel");
+                const hweSpark = versionSparkData(stream.history, "hweKernel");
+                const mesaSpark = versionSparkData(stream.history, "mesa");
+                const gnomeSpark = versionSparkData(stream.history, "gnome");
+                if (kernelSpark.length < 2 && mesaSpark.length < 2) return null;
+                return (
+                  <div className={styles.versionTrends}>
+                    {kernelSpark.length >= 2 && (
+                      <span className={styles.trendChip} title="Kernel version trend across last releases">
+                        <span className={styles.trendLabel}>Kernel</span>
+                        <Sparkline data={kernelSpark} width={72} height={20} color="#3fb950" areaColor="rgba(63,185,80,0.10)" />
+                      </span>
+                    )}
+                    {hweSpark.length >= 2 && (
+                      <span className={styles.trendChip} title="HWE kernel version trend">
+                        <span className={styles.trendLabel}>HWE</span>
+                        <Sparkline data={hweSpark} width={72} height={20} color="#a371f7" areaColor="rgba(163,113,247,0.10)" />
+                      </span>
+                    )}
+                    {mesaSpark.length >= 2 && (
+                      <span className={styles.trendChip} title="Mesa version trend across last releases">
+                        <span className={styles.trendLabel}>Mesa</span>
+                        <Sparkline data={mesaSpark} width={72} height={20} color="#58a6ff" areaColor="rgba(88,166,255,0.10)" />
+                      </span>
+                    )}
+                    {gnomeSpark.length >= 2 && (
+                      <span className={styles.trendChip} title="GNOME version trend across last releases">
+                        <span className={styles.trendLabel}>GNOME</span>
+                        <Sparkline data={gnomeSpark} width={72} height={20} color="#d97706" areaColor="rgba(217,119,6,0.10)" />
+                      </span>
+                    )}
+                  </div>
+                );
+              })()}
             </header>
 
             {latest ? (

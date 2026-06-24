@@ -817,6 +817,33 @@
   border-color: color-mix(in srgb, #4a9eff 30%, transparent);
 }
 
+/* ── Version trend sparklines in stream header ───────────────────────────── */
+.versionTrends {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.trendChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  background: var(--ifm-color-emphasis-100);
+  border: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.trendLabel {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ifm-color-emphasis-600);
+  white-space: nowrap;
+}
+
 /* ── Userspace marker center upgrade badge ──────────────────────────────── */
 .userspaceMarkerCenter {
   flex-shrink: 0;
