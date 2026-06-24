@@ -102,7 +102,8 @@ const config: Config = {
           copyright: `Copyright © ${new Date().getFullYear()} Project Bluefin`,
         },
         // Enable table of contents in right sidebar
-        showLastUpdateTime: false,
+        showLastUpdateTime: true,
+        showLastUpdateAuthor: false,
       },
     ],
   ],

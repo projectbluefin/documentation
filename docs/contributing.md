@@ -79,9 +79,9 @@ Bluefin is a combination of a set of configuration OCI containers which are then
 
 ### Images 
 
-- Bluefin stable: [@ublue-os/bluefin](https://github.com/projectbluefin/bluefin) - generates Fedora-based Bluefin OCI container
-- Bluefin LTS [@ublue-os/bluefin-lts](https://github.com/projectbluefin/bluefin-lts) - generates a CentOS-based Bluefin OCI container
-- Bluefin distroless prototype (aka Dakotaraptor) [@ublue-os/dakota](https://github.com/projectbluefin/dakota) - generates a GNOME OS based Bluefin OCI container
+- Bluefin stable: [@projectbluefin/bluefin](https://github.com/projectbluefin/bluefin) - generates Fedora-based Bluefin OCI container
+- Bluefin LTS [@projectbluefin/bluefin-lts](https://github.com/projectbluefin/bluefin-lts) - generates a CentOS-based Bluefin OCI container
+- Bluefin distroless prototype (aka Dakotaraptor) [@projectbluefin/dakota](https://github.com/projectbluefin/dakota) - generates a GNOME OS based Bluefin OCI container
 
 :::info Distroless
 This is opposite of the traditional Linux distribution model, the value is in the other OCI layers, not the base image. This is what we mean by "distributions don't matter", since you can use any base image it's just another choice in the long list of decisions we have to make. It's still _important_, it just doesn't matter. And since you can source software from anywhere, the idea of "who gets you the same software better" doesn't make much sense when you can just automate that.
