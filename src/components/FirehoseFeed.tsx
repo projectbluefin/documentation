@@ -290,7 +290,7 @@ function getStableDailyOsEvents(): OsReleaseEvent[] {
       getSbomCache(),
       "bluefin-stable-daily",
       "stable-daily",
-      "https://github.com/orgs/ublue-os/packages/container/package/bluefin",
+      "https://github.com/orgs/projectbluefin/packages/container/package/bluefin",
     );
   }
   return _stableDailyOsEvents;
@@ -623,17 +623,17 @@ function RssLinks() {
           </a>
         </li>
         <li>
-          <a href="https://github.com/ublue-os/bluefin/releases.atom" target="_blank" rel="noopener noreferrer">
+          <a href="https://github.com/projectbluefin/bluefin/releases.atom" target="_blank" rel="noopener noreferrer">
             Releases Atom
           </a>
         </li>
         <li>
-          <a href="https://github.com/ublue-os/bluefin-lts/releases.atom" target="_blank" rel="noopener noreferrer">
+          <a href="https://github.com/projectbluefin/bluefin-lts/releases.atom" target="_blank" rel="noopener noreferrer">
             LTS Releases Atom
           </a>
         </li>
         <li>
-          <a href="https://github.com/ublue-os/bluefin/discussions.atom" target="_blank" rel="noopener noreferrer">
+          <a href="https://github.com/projectbluefin/bluefin/discussions.atom" target="_blank" rel="noopener noreferrer">
             Discussions Atom
           </a>
         </li>

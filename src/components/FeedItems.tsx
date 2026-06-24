@@ -227,9 +227,9 @@ const resolveItemLink = (item: FeedItem, feedId: string): string => {
     if (idMatch) {
       const [, , tag] = idMatch;
       if (feedId === "bluefinReleases") {
-        itemLink = `https://github.com/ublue-os/bluefin/releases/tag/${tag}`;
+        itemLink = `https://github.com/projectbluefin/bluefin/releases/tag/${tag}`;
       } else if (feedId === "bluefinLtsReleases") {
-        itemLink = `https://github.com/ublue-os/bluefin-lts/releases/tag/${tag}`;
+        itemLink = `https://github.com/projectbluefin/bluefin-lts/releases/tag/${tag}`;
       }
     } else {
       const discussionMatch = item.id.match(
@@ -239,7 +239,7 @@ const resolveItemLink = (item: FeedItem, feedId: string): string => {
         discussionMatch &&
         (feedId === "bluefinDiscussions" || feedId === "bluefinAnnouncements")
       ) {
-        itemLink = `https://github.com/ublue-os/bluefin/discussions/${discussionMatch[1]}`;
+        itemLink = `https://github.com/projectbluefin/bluefin/discussions/${discussionMatch[1]}`;
       }
     }
   }

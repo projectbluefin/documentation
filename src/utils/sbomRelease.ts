@@ -138,7 +138,7 @@ export const getSupplyChainLinks = (
   }
 
   return {
-    packageTagUrl: `https://github.com/orgs/ublue-os/packages/container/bluefin?tag=${encodeURIComponent(releaseTag)}`,
+    packageTagUrl: `https://github.com/orgs/projectbluefin/packages/container/bluefin?tag=${encodeURIComponent(releaseTag)}`,
     attestationVerified,
     attestationPresent,
   };

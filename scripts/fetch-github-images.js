@@ -36,14 +36,14 @@ const PRODUCT_SPECS = [
   {
     id: "ublue-bluefin",
     name: "Bluefin",
-    org: "ublue-os",
+    org: "projectbluefin",
     package: "bluefin",
     artwork: "bluefin",
     summary: "Primary Bluefin desktop image for most systems.",
     streamOrder: ["stable", "stable-daily", "latest", "beta"],
     versionSource: { feed: "bluefin", stream: "stable" },
     sbomStreamId: "bluefin-stable",
-    keyRepo: "ublue-os/bluefin",
+    keyRepo: "projectbluefin/bluefin",
     nvidiaPackage: "bluefin-nvidia-open",
     allowTestingStreams: false,
     isoSectionLink: "/downloads#bluefin",
@@ -52,14 +52,14 @@ const PRODUCT_SPECS = [
   {
     id: "ublue-bluefin-dx",
     name: "Bluefin DX",
-    org: "ublue-os",
+    org: "projectbluefin",
     package: "bluefin-dx",
     artwork: "bluefin",
     summary: "Developer-focused Bluefin image with DX tooling.",
     streamOrder: ["stable", "latest", "beta"],
     versionSource: { feed: "bluefin", stream: "stable" },
     sbomStreamId: "bluefin-dx-stable",
-    keyRepo: "ublue-os/bluefin",
+    keyRepo: "projectbluefin/bluefin",
     nvidiaPackage: "bluefin-dx-nvidia-open",
     allowTestingStreams: false,
     isoSectionLink: "/downloads#bluefin",
@@ -68,14 +68,14 @@ const PRODUCT_SPECS = [
   {
     id: "ublue-bluefin-lts",
     name: "Bluefin LTS",
-    org: "ublue-os",
+    org: "projectbluefin",
     package: "bluefin",
     artwork: "achillobator",
     summary: "Long-term support Bluefin stream.",
     streamOrder: ["lts"],
     versionSource: { feed: "lts", stream: "lts" },
     sbomStreamId: "bluefin-lts",
-    keyRepo: "ublue-os/bluefin-lts",
+    keyRepo: "projectbluefin/bluefin-lts",
     nvidiaPackage: "bluefin-nvidia-open",
     nvidiaTagFallback: { lts: "latest" },
     allowTestingStreams: true,
@@ -86,14 +86,14 @@ const PRODUCT_SPECS = [
   {
     id: "ublue-bluefin-dx-lts",
     name: "Bluefin DX LTS",
-    org: "ublue-os",
+    org: "projectbluefin",
     package: "bluefin-dx",
     artwork: "achillobator",
     summary: "Long-term support Bluefin DX stream.",
     streamOrder: ["lts"],
     versionSource: { feed: "lts", stream: "lts" },
     sbomStreamId: "bluefin-dx-lts",
-    keyRepo: "ublue-os/bluefin-lts",
+    keyRepo: "projectbluefin/bluefin-lts",
     nvidiaPackage: "bluefin-dx-nvidia-open",
     nvidiaTagFallback: { lts: "latest" },
     allowTestingStreams: true,
@@ -104,14 +104,14 @@ const PRODUCT_SPECS = [
   {
     id: "ublue-bluefin-gdx",
     name: "Bluefin GDX",
-    org: "ublue-os",
+    org: "projectbluefin",
     package: "bluefin-gdx",
     artwork: "achillobator",
     summary: "AI-focused GDX track with LTS roots.",
     streamOrder: ["lts", "latest", "beta"],
     versionSource: { feed: "lts", stream: "lts" },
     sbomStreamId: "bluefin-gdx-lts",
-    keyRepo: "ublue-os/bluefin-lts",
+    keyRepo: "projectbluefin/bluefin-lts",
     keepEvenIfStale: true,
     allowTestingStreams: true,
     isoSectionLink: "/downloads#bluefin-gdx",
@@ -475,11 +475,11 @@ function buildSecurityInfo(spec, inspectTag) {
   // Dakota uses keyless signing but SLSA attestations are published to the OCI registry
   // only after projectbluefin/dakota#391 merges (push-to-registry: true).
   // LTS images use traditional key-based signing with cosign.pub from the lts repo.
-  const KEYLESS_REPOS = ["ublue-os/bluefin"]; // keyless + OCI attestation live
+  const KEYLESS_REPOS = ["projectbluefin/bluefin"]; // keyless + OCI attestation live
   const KEYLESS_PENDING_ATTEST_REPOS = ["projectbluefin/dakota"]; // keyless, OCI attestation pending
   const KEY_REPOS = {
-    "ublue-os/bluefin-lts":
-      "https://raw.githubusercontent.com/ublue-os/bluefin-lts/main/cosign.pub",
+    "projectbluefin/bluefin-lts":
+      "https://raw.githubusercontent.com/projectbluefin/bluefin-lts/main/cosign.pub",
   };
 
   const isKeyless =

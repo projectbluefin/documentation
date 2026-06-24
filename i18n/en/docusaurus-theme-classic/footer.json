@@ -27,10 +27,6 @@
     "message": "Bazzite",
     "description": "The label of footer link with label=Bazzite linking to https://bazzite.gg/"
   },
-  "link.item.label.uCore": {
-    "message": "uCore",
-    "description": "The label of footer link with label=uCore linking to https://github.com/ublue-os/ucore"
-  },
   "link.item.label.Universal Blue": {
     "message": "Universal Blue",
     "description": "The label of footer link with label=Universal Blue linking to https://universal-blue.org"
@@ -41,7 +37,7 @@
   },
   "link.item.label.Discussions": {
     "message": "Discussions",
-    "description": "The label of footer link with label=Discussions linking to https://github.com/ublue-os/bluefin/discussions"
+    "description": "The label of footer link with label=Discussions linking to https://github.com/projectbluefin/bluefin/discussions"
   },
   "link.item.label.Discord": {
     "message": "Discord",
@@ -65,15 +61,15 @@
   },
   "link.item.label.Releases Feed": {
     "message": "Releases Feed",
-    "description": "The label of footer link with label=Releases Feed linking to https://github.com/ublue-os/bluefin/releases.atom"
+    "description": "The label of footer link with label=Releases Feed linking to https://github.com/projectbluefin/bluefin/releases.atom"
   },
   "link.item.label.LTS Releases Feed": {
     "message": "LTS Releases Feed",
-    "description": "The label of footer link with label=LTS Releases Feed linking to https://github.com/ublue-os/bluefin-lts/releases.atom"
+    "description": "The label of footer link with label=LTS Releases Feed linking to https://github.com/projectbluefin/bluefin-lts/releases.atom"
   },
   "link.item.label.Discussions Feed": {
     "message": "Discussions Feed",
-    "description": "The label of footer link with label=Discussions Feed linking to https://github.com/ublue-os/bluefin/discussions.atom"
+    "description": "The label of footer link with label=Discussions Feed linking to https://github.com/projectbluefin/bluefin/discussions.atom"
   },
   "link.item.label.Open Issues": {
     "message": "Open Issues",
@@ -93,11 +89,11 @@
   },
   "link.item.label.Bluefin": {
     "message": "Bluefin",
-    "description": "The label of footer link with label=Bluefin linking to https://github.com/ublue-os/bluefin"
+    "description": "The label of footer link with label=Bluefin linking to https://github.com/projectbluefin/bluefin"
   },
   "link.item.label.Bluefin LTS": {
     "message": "Bluefin LTS",
-    "description": "The label of footer link with label=Bluefin LTS linking to https://github.com/ublue-os/bluefin-lts"
+    "description": "The label of footer link with label=Bluefin LTS linking to https://github.com/projectbluefin/bluefin-lts"
   },
   "link.item.label.Documentation": {
     "message": "Documentation",
@@ -109,7 +105,7 @@
   },
   "link.item.label.Report Issue": {
     "message": "Report Issue",
-    "description": "The label of footer link with label=Report Issue linking to https://github.com/ublue-os/bluefin/issues/new/choose"
+    "description": "The label of footer link with label=Report Issue linking to https://github.com/projectbluefin/bluefin/issues/new/choose"
   },
   "copyright": {
     "message": "Copyright © 2026 Project Bluefin and Universal Blue",
