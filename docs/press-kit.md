@@ -13,7 +13,7 @@ Thanks for generating content about Bluefin and Universal Blue! This document wi
 
 # Bluefin Terminology
 
-The name of the project is `Project Bluefin` but usually shortened to just `Bluefin`. It is built with [Universal Blue](https://universal-blue.org), which publishes base images that Bluefin uses. These in turn are derived from Fedora's Silverblue images. Universal Blue is the parent organization of [Bluefin](https://projectbluefin.io), [Bazzite](https://bazzite.gg), [Aurora](https://getaurora.dev), and [uCore](https://github.com/ublue-os/ucore). It also acts as the GitHub organization.
+The name of the project is `Project Bluefin` but usually shortened to just `Bluefin`. Bluefin is published under the [projectbluefin](https://github.com/projectbluefin) GitHub organization and is built using shared infrastructure from [Universal Blue](https://universal-blue.org). Universal Blue is the community umbrella that also hosts [Bazzite](https://bazzite.gg), [Aurora](https://getaurora.dev), and [uCore](https://github.com/ublue-os/ucore).
 
 ## Proper Usage
 
@@ -48,11 +48,11 @@ Also when dealing with communicating to end users, we want the word Universal to
 
 # Governance
 
-All Universal Blue images share governance structures and are modelled after cloud native projects such as Kubernetes:
+Bluefin is modelled after cloud native projects such as Kubernetes:
 
-- [Mission](https://universal-blue.org/mission.html)
-- [Values](https://universal-blue.org/values.html)
-- [Membership](https://universal-blue.org/membership.html)
+- [Mission](/mission)
+- [Values](/values)
+- [Code of Conduct](/code-of-conduct)
 
 # Contacts
 
