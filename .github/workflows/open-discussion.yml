@@ -99,7 +99,7 @@ jobs:
               print(f"  Post URL: {post_url}")
 
               # Check if a discussion with this exact title already exists
-              search_query = f'repo:ublue-os/bluefin type:discussion "{discussion_title}"'
+              search_query = f'repo:projectbluefin/bluefin type:discussion "{discussion_title}"'
               search_gql = json.dumps({
                   "query": """
                     query($q: String!) {

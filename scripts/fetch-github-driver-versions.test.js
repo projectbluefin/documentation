@@ -73,7 +73,7 @@ test("buildStreamFromSbom sorts newest-first and marks source sbom", () => {
     "bluefin-stable",
     "Bluefin",
     "Current stable stream.",
-    "sudo bootc switch ghcr.io/ublue-os/bluefin:stable --enforce-container-sigpolicy",
+    "sudo bootc switch ghcr.io/projectbluefin/bluefin:stable --enforce-container-sigpolicy",
     cache,
     {
       "stable-20260331": "595.58.03-1",

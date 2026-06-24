@@ -55,7 +55,7 @@ test("compareRpmVersions compares numeric segments correctly", () => {
 
 const MOCK_STABLE_SPEC = {
   id: "bluefin-stable",
-  org: "ublue-os",
+  org: "projectbluefin",
   package: "bluefin",
   streamPrefix: "stable",
   keyless: true,
@@ -63,7 +63,7 @@ const MOCK_STABLE_SPEC = {
 
 const MOCK_STABLE_DAILY_SPEC = {
   id: "bluefin-stable-daily",
-  org: "ublue-os",
+  org: "projectbluefin",
   package: "bluefin",
   streamPrefix: "stable-daily",
   keyless: true,

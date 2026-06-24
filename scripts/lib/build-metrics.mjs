@@ -27,31 +27,31 @@ const TRACKED_WORKFLOWS = [
   // ublue-os/bluefin workflows
   {
     name: "bluefin:stable",
-    repo: "ublue-os/bluefin",
+    repo: "projectbluefin/bluefin",
     workflowId: 125772764,
   },
-  { name: "bluefin:latest", repo: "ublue-os/bluefin", workflowId: 146755607 },
+  { name: "bluefin:latest", repo: "projectbluefin/bluefin", workflowId: 146755607 },
 
   // ublue-os/bluefin-lts workflows
-  { name: "bluefin:lts", repo: "ublue-os/bluefin-lts", workflowId: 141565346 },
+  { name: "bluefin:lts", repo: "projectbluefin/bluefin-lts", workflowId: 141565346 },
   {
     name: "bluefin:lts-hwe",
-    repo: "ublue-os/bluefin-lts",
+    repo: "projectbluefin/bluefin-lts",
     workflowId: 177905245,
   },
   {
     name: "bluefin-dx:lts",
-    repo: "ublue-os/bluefin-lts",
+    repo: "projectbluefin/bluefin-lts",
     workflowId: 141565344,
   },
   {
     name: "bluefin-gdx:lts",
-    repo: "ublue-os/bluefin-lts",
+    repo: "projectbluefin/bluefin-lts",
     workflowId: 141733516,
   },
   {
     name: "bluefin-dx:lts-hwe",
-    repo: "ublue-os/bluefin-lts",
+    repo: "projectbluefin/bluefin-lts",
     workflowId: 141569417,
   },
 ];

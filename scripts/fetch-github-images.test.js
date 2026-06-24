@@ -17,7 +17,7 @@ test("normalizeTestingTag strips architecture and date suffixes", () => {
 test("buildTestingStreams keeps supported testing families and deduplicates normalized tags", () => {
   const spec = {
     allowTestingStreams: true,
-    org: "ublue-os",
+    org: "projectbluefin",
     package: "bluefin",
   };
 
@@ -32,12 +32,12 @@ test("buildTestingStreams keeps supported testing families and deduplicates norm
   ]);
 
   assert.deepEqual(streams.map((stream) => stream.tag), ["lts-hwe-testing-1"]);
-  assert.match(streams[0].command, /ghcr\.io\/ublue-os\/bluefin:lts-hwe-testing-1/);
+  assert.match(streams[0].command, /ghcr\.io\/projectbluefin\/bluefin:lts-hwe-testing-1/);
 });
 
 test("sbomVersionsForStream falls back from testing stream to base stream", () => {
   const spec = {
-    org: "ublue-os",
+    org: "projectbluefin",
     package: "bluefin",
     sbomStreamId: "bluefin-lts",
   };
@@ -45,7 +45,7 @@ test("sbomVersionsForStream falls back from testing stream to base stream", () =
     streams: {
       "bluefin-lts": {
         id: "bluefin-lts",
-        org: "ublue-os",
+        org: "projectbluefin",
         package: "bluefin",
         releases: {
           "lts-20260401": {
@@ -64,7 +64,7 @@ test("sbomVersionsForStream falls back from testing stream to base stream", () =
 
 test("buildSecurityInfo returns keyless verification commands for keyless repos", () => {
   const info = buildSecurityInfo(
-    { keyRepo: "ublue-os/bluefin", org: "ublue-os", package: "bluefin" },
+    { keyRepo: "projectbluefin/bluefin", org: "projectbluefin", package: "bluefin" },
     "stable",
   );
 

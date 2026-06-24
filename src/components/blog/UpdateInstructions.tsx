@@ -20,7 +20,7 @@ const UpdateInstructions: React.FC<UpdateInstructionsProps> = ({
   const tag = TAG_MAP[variant];
   const code =
     `IMAGE_NAME=$(jq -r '."image-name"' < /usr/share/ublue-os/image-info.json)\n` +
-    `sudo bootc switch --enforce-container-sigpolicy ghcr.io/ublue-os/$IMAGE_NAME:${tag}`;
+    `sudo bootc switch --enforce-container-sigpolicy ghcr.io/projectbluefin/$IMAGE_NAME:${tag}`;
 
   return (
     <div>

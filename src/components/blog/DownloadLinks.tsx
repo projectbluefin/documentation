@@ -34,7 +34,7 @@ const DownloadLinks: React.FC<DownloadLinksProps> = ({
       <h3>Filing Issues</h3>
       <ul>
         <li>
-          <a href="https://github.com/ublue-os/bluefin/issues">
+          <a href="https://github.com/projectbluefin/bluefin/issues">
             Bluefin issues
           </a>
         </li>

@@ -19,14 +19,14 @@ const LTS_HISTORY_DAYS = Number(
 const FORCE_REFRESH = process.argv.includes("--force");
 
 const RELEASE_URL_BY_STREAM = {
-  "bluefin-stable": "https://github.com/ublue-os/bluefin/releases",
-  "bluefin-lts": "https://github.com/ublue-os/bluefin-lts/releases",
+  "bluefin-stable": "https://github.com/projectbluefin/bluefin/releases",
+  "bluefin-lts": "https://github.com/projectbluefin/bluefin-lts/releases",
   "dakota-latest": "https://github.com/projectbluefin/dakota/releases",
 };
 
 const RELEASE_REPO_BY_STREAM = {
-  "bluefin-stable": "ublue-os/bluefin",
-  "bluefin-lts": "ublue-os/bluefin-lts",
+  "bluefin-stable": "projectbluefin/bluefin",
+  "bluefin-lts": "projectbluefin/bluefin-lts",
 };
 
 /**
@@ -215,8 +215,8 @@ async function main() {
   const stableStream = buildStreamFromSbom(
     "bluefin-stable",
     "Bluefin",
-    "Current stable stream from ublue-os/bluefin.",
-    "sudo bootc switch ghcr.io/ublue-os/bluefin:stable --enforce-container-sigpolicy",
+    "Current stable stream from projectbluefin/bluefin.",
+    "sudo bootc switch ghcr.io/projectbluefin/bluefin:stable --enforce-container-sigpolicy",
     sbomCache,
     nvidiaOpenStableByTag,
   );
@@ -224,8 +224,8 @@ async function main() {
   const ltsStream = buildStreamFromSbom(
     "bluefin-lts",
     "Bluefin LTS and GDX",
-    "Long-term support stream from ublue-os/bluefin-lts.",
-    "sudo bootc switch ghcr.io/ublue-os/bluefin:lts --enforce-container-sigpolicy",
+    "Long-term support stream from projectbluefin/bluefin-lts.",
+    "sudo bootc switch ghcr.io/projectbluefin/bluefin:lts --enforce-container-sigpolicy",
     sbomCache,
     gdxNvidiaByTag,
     LTS_HISTORY_DAYS,

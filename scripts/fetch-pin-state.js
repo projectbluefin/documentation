@@ -16,12 +16,12 @@ const OUTPUT_FILE = path.join(__dirname, "..", "static", "data", "stream-pins.js
 
 const WORKFLOWS_TO_CHECK = [
   {
-    repo: "ublue-os/bluefin-lts",
+    repo: "projectbluefin/bluefin-lts",
     path: ".github/workflows/build-regular-hwe.yml",
     stream: "bluefin-lts",
   },
   {
-    repo: "ublue-os/bluefin-lts",
+    repo: "projectbluefin/bluefin-lts",
     path: ".github/workflows/build-dx-hwe.yml",
     stream: "bluefin-lts",
   },

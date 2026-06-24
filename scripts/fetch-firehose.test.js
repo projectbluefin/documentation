@@ -48,7 +48,7 @@ test("buildOsApp picks the newest populated release and computes package diffs",
     appId: "bluefin-os-stable",
     name: "Bluefin OS (Stable)",
     summary: "Stable track",
-    ghReleasesUrl: "https://github.com/ublue-os/bluefin/releases",
+    ghReleasesUrl: "https://github.com/projectbluefin/bluefin/releases",
   };
   const sbomCache = {
     streams: {

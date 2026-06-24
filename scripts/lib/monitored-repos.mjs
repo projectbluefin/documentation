@@ -11,8 +11,8 @@
  */
 export const MONITORED_REPOS = [
   // Core Bluefin repositories
-  "ublue-os/bluefin",
-  "ublue-os/bluefin-lts",
+  "projectbluefin/bluefin",
+  "projectbluefin/bluefin-lts",
   // Aurora excluded - KDE variant tracked separately (not Bluefin-focused)
 
   // Artwork and visual assets

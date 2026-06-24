@@ -181,8 +181,8 @@ async function fetchAndSaveFeed(owner, repo, filename) {
 }
 
 async function main() {
-  await fetchAndSaveFeed("ublue-os", "bluefin", "bluefin-releases.json");
-  await fetchAndSaveFeed("ublue-os", "bluefin-lts", "bluefin-lts-releases.json");
+  await fetchAndSaveFeed("projectbluefin", "bluefin", "bluefin-releases.json");
+  await fetchAndSaveFeed("projectbluefin", "bluefin-lts", "bluefin-lts-releases.json");
 }
 
 if (require.main === module) {
