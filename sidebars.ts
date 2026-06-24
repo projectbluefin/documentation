@@ -23,7 +23,6 @@ const sidebars: SidebarsConfig = {
       items: [
         "administration",
         "tips",
-        "gaming",
         "ai",
         "command-line",
         "images",
