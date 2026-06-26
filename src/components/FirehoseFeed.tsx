@@ -633,7 +633,7 @@ function RssLinks() {
           </a>
         </li>
         <li>
-          <a href="https://github.com/projectbluefin/bluefin/discussions.atom" target="_blank" rel="noopener noreferrer">
+          <a href="https://github.com/ublue-os/bluefin/discussions.atom" target="_blank" rel="noopener noreferrer">
             Discussions Atom
           </a>
         </li>
