@@ -16,7 +16,7 @@
     "typecheck": "tsc",
     "prettier": "prettier --write .",
     "prettier-lint": "prettier --check .",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint": "eslint .",
     "fetch-feeds": "node scripts/fetch-feeds.js",
     "fetch-playlists": "node scripts/fetch-playlist-metadata.js",
     "fetch-github-profiles": "node scripts/fetch-github-profiles.js",
