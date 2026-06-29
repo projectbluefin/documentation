@@ -37,7 +37,7 @@
   },
   "link.item.label.Discussions": {
     "message": "Discussions",
-    "description": "The label of footer link with label=Discussions linking to https://github.com/projectbluefin/bluefin/discussions"
+    "description": "The label of footer link with label=Discussions linking to https://github.com/ublue-os/bluefin/discussions"
   },
   "link.item.label.Discord": {
     "message": "Discord",
@@ -69,7 +69,7 @@
   },
   "link.item.label.Discussions Feed": {
     "message": "Discussions Feed",
-    "description": "The label of footer link with label=Discussions Feed linking to https://github.com/projectbluefin/bluefin/discussions.atom"
+    "description": "The label of footer link with label=Discussions Feed linking to https://github.com/ublue-os/bluefin/discussions.atom"
   },
   "link.item.label.Open Issues": {
     "message": "Open Issues",

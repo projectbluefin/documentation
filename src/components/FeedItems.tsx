@@ -239,7 +239,7 @@ const resolveItemLink = (item: FeedItem, feedId: string): string => {
         discussionMatch &&
         (feedId === "bluefinDiscussions" || feedId === "bluefinAnnouncements")
       ) {
-        itemLink = `https://github.com/projectbluefin/bluefin/discussions/${discussionMatch[1]}`;
+        itemLink = `https://github.com/ublue-os/bluefin/discussions/${discussionMatch[1]}`;
       }
     }
   }

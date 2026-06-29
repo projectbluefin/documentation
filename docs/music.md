@@ -8,6 +8,26 @@ import styles from '@site/src/components/ExtensionsGrid.module.css';
 
 The Bluefin team releases music playlists regularly. Each song and album has a theme and reason for being included. How do the songs speak to you?
 
+## The War of Generations
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+
+<div className={styles.extensionsGrid}>
+
+<MusicPlaylist 
+  title="Bluefin: Harbringer"
+  playlistId="PLDrClbL5OBKY"
+  variant="card"
+/>
+
+<MusicPlaylist 
+  title="Bluefin: Seven Days to the Wolves"
+  playlistId="PLA78oiE-RGAE"
+  variant="card"
+/>
+
+</div>
+
 ## Legendary Adventures
 
 Bluefin in 2026 focuses on upstream projects and contributor growth.

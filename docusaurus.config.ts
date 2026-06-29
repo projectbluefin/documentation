@@ -183,7 +183,7 @@ const config: Config = {
           position: "right",
         },
         {
-          href: "https://github.com/projectbluefin/bluefin/discussions",
+          href: "https://github.com/ublue-os/bluefin/discussions",
           label: "Discussions",
           position: "right",
         },
@@ -232,7 +232,7 @@ const config: Config = {
             },
             {
               label: "Discussions",
-              href: "https://github.com/projectbluefin/bluefin/discussions",
+              href: "https://github.com/ublue-os/bluefin/discussions",
             },
             {
               label: "Discord",
@@ -269,7 +269,7 @@ const config: Config = {
             },
             {
               label: "Discussions Feed",
-              href: "https://github.com/projectbluefin/bluefin/discussions.atom",
+              href: "https://github.com/ublue-os/bluefin/discussions.atom",
             },
           ],
         },

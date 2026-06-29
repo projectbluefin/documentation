@@ -8,6 +8,14 @@ const YOUTUBE_REQUEST_DELAY_MS = 1500; // Delay between requests to be respectfu
 // Descriptions will be fetched from YouTube at build time
 const PLAYLISTS = [
   {
+    id: "PLDrClbL5OBKY",
+    title: "Bluefin: Harbringer",
+  },
+  {
+    id: "PLA78oiE-RGAE",
+    title: "Bluefin: Seven Days to the Wolves",
+  },
+  {
     id: "PLhiPP9M5fgWHFlG3TS27gyOCQl4Dg115W",
     title: "Bluefin and the Birth of Universal Blue",
   },
