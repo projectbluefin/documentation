@@ -79,6 +79,7 @@ test("buildStreamFromSbom sorts newest-first and marks source sbom", () => {
       "stable-20260331": "595.58.03-1",
       "stable-20260324": "595.45.04-4",
     },
+    9999, // Use huge lookback historyDays to prevent age filtering in test
   );
 
   assert.equal(stream.source, "sbom");
