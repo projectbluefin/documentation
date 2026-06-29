@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styles from "./MusicPlaylist.module.css";
+import playlistMetadata from "@site/static/data/playlist-metadata.json";
 
 interface MusicPlaylistProps {
   title: string;
@@ -76,17 +77,8 @@ const MusicPlaylist: React.FC<MusicPlaylistProps> = ({
   }, []);
 
   useEffect(() => {
-    // Metadata JSON is generated at build time and cached by the browser, so
-    // multiple component instances share the same in-flight request automatically.
-    fetch("/data/playlist-metadata.json")
-      .then((res) => res.json())
-      .then((data: PlaylistMetadata[]) => {
-        const found = data.find((item) => item.id === cleanPlaylistId);
-        if (found) setMetadata(found);
-      })
-      .catch((err) => {
-        console.error("Error loading playlist metadata:", err);
-      });
+    const found = (playlistMetadata as PlaylistMetadata[]).find((item) => item.id === cleanPlaylistId);
+    if (found) setMetadata(found);
   }, [cleanPlaylistId]);
 
   const playlistUrl = `https://www.youtube.com/playlist?list=${cleanPlaylistId}`;
