@@ -8,7 +8,7 @@ import styles from '@site/src/components/ExtensionsGrid.module.css';
 
 The Bluefin team releases music playlists regularly. Each song and album has a theme and reason for being included. How do the songs speak to you?
 
-## War of Generations
+## The Tomorrow Exile
 
 The people are out of time, the end is coming. Bluefin and her friends go to war ... 
 
