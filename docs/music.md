@@ -27,12 +27,6 @@ The people are out of time, the end is coming. Bluefin and her friends go to war
 />
 
 <MusicPlaylist 
-  title="Harbringer: Requiem"
-  playlistId="PLhiPP9M5fgWE-xZ4l6hF_-3ESen1x-FNY"
-  variant="card"
-/>
-
-<MusicPlaylist 
   title="The Forbidden Factory"
   playlistId="PLbORkyQL0Pe8"
   variant="card"
@@ -85,8 +79,8 @@ Bluefin forms partnerships with other legendary projects.
 />
 
 <MusicPlaylist 
-  title="Bluefin and the Children of Jensen"
-  playlistId="PLhiPP9M5fgWH4do22wEvgnoMUQLVYRIxt"
+  title="Harbringer: Requiem"
+  playlistId="PLhiPP9M5fgWE-xZ4l6hF_-3ESen1x-FNY"
   variant="card"
 />
 
@@ -107,6 +101,12 @@ Bluefin was born in 2021.
 <MusicPlaylist 
   title="Bluefin finds Her Way"
   playlistId="PLhiPP9M5fgWEvnp3w66WmcgiKvStzKXl9"
+  variant="card"
+/>
+
+<MusicPlaylist 
+  title="Bluefin and the Children of Jensen"
+  playlistId="PLhiPP9M5fgWH4do22wEvgnoMUQLVYRIxt"
   variant="card"
 />
 
