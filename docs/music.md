@@ -28,7 +28,7 @@ The people are out of time, the end is coming. Bluefin and her friends go to war
 
 </div>
 
-## Legendary Adventures
+## Allies from The Light
 
 Bluefin in 1H2026 focuses on upstream projects and contributor growth.
 
@@ -47,14 +47,14 @@ Bluefin in 1H2026 focuses on upstream projects and contributor growth.
 />
 
 <MusicPlaylist 
-  title="Bluefin and the Lost Tribe of Contributors"
+  title="Bluefin and the Lost Tribe"
   playlistId="PLhiPP9M5fgWEuxjlfOEX3fwA-E60-E4TA"
   variant="card"
 />
 
 </div>
 
-## Forming the Kettle
+## The Kettle of Lost Time
 
 Bluefin forms partnerships with other legendary projects.
 
