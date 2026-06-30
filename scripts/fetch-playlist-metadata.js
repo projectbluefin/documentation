@@ -9,11 +9,19 @@ const YOUTUBE_REQUEST_DELAY_MS = 1500; // Delay between requests to be respectfu
 const PLAYLISTS = [
   {
     id: "PLDrClbL5OBKY",
-    title: "Bluefin: Harbringer",
+    title: "Harbringer: All Shall Burn",
   },
   {
     id: "PLA78oiE-RGAE",
-    title: "Bluefin: Seven Days to the Wolves",
+    title: "Seven Days to the Wolves",
+  },
+  {
+    id: "PLhiPP9M5fgWE-xZ4l6hF_-3ESen1x-FNY",
+    title: "Harbringer: Requiem",
+  },
+  {
+    id: "PLbORkyQL0Pe8",
+    title: "The Forbidden Factory",
   },
   {
     id: "PLhiPP9M5fgWHFlG3TS27gyOCQl4Dg115W",

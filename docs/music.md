@@ -8,21 +8,33 @@ import styles from '@site/src/components/ExtensionsGrid.module.css';
 
 The Bluefin team releases music playlists regularly. Each song and album has a theme and reason for being included. How do the songs speak to you?
 
-## The War of Generations
+## Seven Days to the Wolves
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
 
 <div className={styles.extensionsGrid}>
 
 <MusicPlaylist 
-  title="Bluefin: Harbringer"
+  title="Seven Days to the Wolves"
+  playlistId="PLA78oiE-RGAE"
+  variant="card"
+/>
+
+<MusicPlaylist 
+  title="Harbringer: All Shall Burn"
   playlistId="PLDrClbL5OBKY"
   variant="card"
 />
 
 <MusicPlaylist 
-  title="Bluefin: Seven Days to the Wolves"
-  playlistId="PLA78oiE-RGAE"
+  title="Harbringer: Requiem"
+  playlistId="PLhiPP9M5fgWE-xZ4l6hF_-3ESen1x-FNY"
+  variant="card"
+/>
+
+<MusicPlaylist 
+  title="The Forbidden Factory"
+  playlistId="PLbORkyQL0Pe8"
   variant="card"
 />
 
