@@ -8,9 +8,9 @@ import styles from '@site/src/components/ExtensionsGrid.module.css';
 
 The Bluefin team releases music playlists regularly. Each song and album has a theme and reason for being included. How do the songs speak to you?
 
-## The War of Generations
+## War of Generations
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+The people are out of time, the end is coming. Bluefin and her friends go to war ... 
 
 <div className={styles.extensionsGrid}>
 
@@ -30,7 +30,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor i
 
 ## Legendary Adventures
 
-Bluefin in 2026 focuses on upstream projects and contributor growth.
+Bluefin in 1H2026 focuses on upstream projects and contributor growth.
 
 <div className={styles.extensionsGrid}>
 
