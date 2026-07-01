@@ -66,7 +66,7 @@
     "@docusaurus/types": "3.10.1",
     "@fontsource/inter": "5.2.8",
     "@resvg/resvg-js": "2.6.2",
-    "@types/dompurify": "3.0.5",
+    "@types/dompurify": "3.2.0",
     "@types/react-dom": "19.2.3",
     "@typescript-eslint/eslint-plugin": "8.62.0",
     "@typescript-eslint/parser": "8.62.0",
