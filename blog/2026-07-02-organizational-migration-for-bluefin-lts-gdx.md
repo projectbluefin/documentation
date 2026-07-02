@@ -38,7 +38,7 @@ Wow that's ugly! Now you see why we hid it, but you get the idea, start thinking
 
 These images [use chunka](https://github.com/coreos/chunkah) to create smaller layers, and LTS was already svelte. This brings us in full upstream alignment with `bootc`.
 
-- Signing: We moved from keys to Keyless OIDC (Fulcio/Rekor), ensuring [that my shame will live on in the past](https://www.youtube.com/watch?v=4yVj_c9oJd0). This is nice for custom image builders too, no more pub key in your root and pasting in github secrets to get going. Savage.
+- Signing: We moved from keys to Keyless OIDC (Fulcio/Rekor), ensuring [that my shame will live on in the past](https://www.youtube.com/watch?v=4yVj_c9oJd0). This is nice for custom image builders too, no more pub key in your root and pasting in github secrets to get going. Savage. Not fully implemented yet, but still working on it. 
 - SBOM: Each image has full SBOMs etc, I'm still working on these, but both of these steps are modelled after proper usage according to upstream. The docs, website, and `ujust changelog` will source from these if they aren't already.
 
 The end state is any version of anything that you see on the website should be what's on the latest image and not manually updated.
