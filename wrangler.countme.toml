@@ -1,0 +1,7 @@
+name = "projectbluefin-countme"
+main = "workers/countme-proxy/index.mjs"
+compatibility_date = "2026-07-01"
+
+workers_dev = false
+
+route = { pattern = "countme.projectbluefin.io/*", zone_name = "projectbluefin.io" }
