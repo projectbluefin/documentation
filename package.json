@@ -51,6 +51,7 @@
     "clsx": "^2.0.0",
     "date-fns": "^4.1.0",
     "dompurify": "^3.4.2",
+    "echarts": "^6.1.0",
     "glob": "^7.2.3",
     "prism-react-renderer": "^2.3.0",
     "react": "^19.0.0",

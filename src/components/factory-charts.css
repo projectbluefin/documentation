@@ -1,0 +1,49 @@
+.factory-charts {
+  --factory-ink: #101827;
+  --factory-border: rgba(148, 163, 184, 0.18);
+
+  margin: 2.5rem 0 3rem;
+  padding: 1.25rem;
+  border: 1px solid var(--factory-border);
+  border-radius: 14px;
+  background: linear-gradient(145deg, #101827 0%, #172235 100%);
+  box-shadow: 0 18px 50px rgba(15, 23, 42, 0.16);
+}
+
+.factory-charts__eyebrow {
+  margin: 0 0 1rem;
+  color: #94a3b8;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.factory-charts__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.factory-chart {
+  min-height: 340px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.55);
+}
+
+@media (max-width: 700px) {
+  .factory-charts {
+    margin-inline: -0.5rem;
+    padding: 0.8rem;
+  }
+
+  .factory-charts__grid {
+    display: block;
+  }
+
+  .factory-chart {
+    min-height: 300px;
+    margin-bottom: 0.8rem;
+  }
+}

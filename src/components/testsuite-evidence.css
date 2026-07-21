@@ -1,0 +1,57 @@
+.testsuite-evidence {
+  margin: 2rem 0 2.5rem;
+  padding: 1rem;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 14px;
+  background: linear-gradient(145deg, #101827 0%, #172235 100%);
+}
+
+.testsuite-evidence__runs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.testsuite-evidence__run {
+  display: block;
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 10px;
+  background: #0f172a;
+  color: #cbd5e1;
+  text-decoration: none;
+}
+
+.testsuite-evidence__run:hover {
+  color: #f8fafc;
+  border-color: rgba(148, 163, 184, 0.45);
+}
+
+.testsuite-evidence__run img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  object-position: top;
+}
+
+.testsuite-evidence__run span {
+  display: block;
+  padding: 0.7rem 0.85rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.testsuite-evidence__run--success span {
+  color: #86efac;
+}
+
+.testsuite-evidence__run--failure span {
+  color: #fda4af;
+}
+
+@media (max-width: 700px) {
+  .testsuite-evidence__runs {
+    grid-template-columns: 1fr;
+  }
+}

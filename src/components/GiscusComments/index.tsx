@@ -11,7 +11,7 @@ export default function GiscusComments(): React.ReactElement {
     >
       <Giscus
         id="comments"
-        repo="projectbluefin/bluefin"
+        repo="ublue-os/bluefin"
         repoId="R_kgDOJHEu4g"
         category="Discussions"
         categoryId="DIC_kwDOJHEu4s4CtFFL"
