@@ -49,6 +49,11 @@ function createMetalinkResponse(request) {
   );
 }
 
+function normalizePathname(pathname) {
+  const trimmed = pathname.replace(/\/+$/, "");
+  return trimmed === "" ? "/" : trimmed;
+}
+
 export function mapRequestPath(pathname) {
   return ROUTES[normalizePathname(pathname)] || null;
 }
@@ -63,11 +68,6 @@ export function createPendingProjectbluefinSvg() {
   <line x1="70" y1="560" x2="1210" y2="360" stroke="#58a6ff" stroke-width="4" stroke-dasharray="12 10" opacity="0.75"/>
   <text x="70" y="620" fill="#8b949e" font-size="24" font-family="Inter, Segoe UI, Arial, sans-serif">Legacy data available at /sources/ublue-os/bluefin/growth.svg</text>
 </svg>`;
-}
-
-function normalizePathname(pathname) {
-  const trimmed = pathname.replace(/\/+$/, "");
-  return trimmed === "" ? "/" : trimmed;
 }
 
 function isProjectBluefinPrimary(pathname) {
