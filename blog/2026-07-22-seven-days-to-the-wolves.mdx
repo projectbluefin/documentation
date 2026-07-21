@@ -1,0 +1,260 @@
+---
+title: "Five Years of Bluefin"
+slug: five-years-of-bluefin
+authors: castrojo
+tags: [announcements, birthday]
+date: 2026-07-21T12:09:23-04:00
+---
+
+import FactoryCharts from "@site/src/components/FactoryCharts";
+import TestsuiteEvidence from "@site/src/components/TestsuiteEvidence";
+
+### Seven Days to the Wolves
+
+First let's celebrate. It's five years of Bluefin and Universal Blue! Thanks for riding with us. Starting later this year you can join Bluefin, Rafael, and the rest of cloud native as Bluefin comes [to your hands](https://makemeacomic.com/).
+
+We're proud to announce _Seven Days to the Wolves_, a comic and musical series set in an alternate future where Maintainer-Guardians fight alongside users for survival. We hope to expand this into the world's first _cloud-native musical_ to be performed live at KubeCon (We have goals!).
+
+In the meantime, enjoy this multi-hour metal maelstrom of death and destruction. `#stopjohnbazzite`
+
+<a
+  href="https://wolves.projectbluefin.io/"
+  target="_blank"
+  rel="noopener noreferrer"
+></a>
+
+> ### [BLUEFIN: SEVEN DAYS TO THE WOLVES](https://wolves.projectbluefin.io/)
+
+> _Will you be ready when they come?_
+>
+<a href="https://wolves.projectbluefin.io/" target="_blank" rel="noopener noreferrer"></a>
+
+Parts of the story will be dropping over the next few years and will star some of your favorite OSS heroes!
+
+{/* truncate */}
+
+<img
+  src="/img/blog/2026-07-22-seven-days-to-the-wolves/bluefin-server-wolves-screenshot.png"
+  width="720"
+  alt="Bluefin Server showcase with the Seven Days to the Wolves player"
+/>
+
+## The Great Migration
+
+We're in the process to moving to [the factory](https://factory.projectbluefin.io) to build Bluefin. This process is opt in and will be a transparent to most of you. The TLDR is you'll see your image name change from `gchr.io/ublue-os/bluefin` to `projectbluefin/bluefin`.
+
+It's midsummer so not a bunch of changes on the images. We'll work on this in 2H2026 so for now there's no need to worry, just chill and enjoy your Linux!
+
+## Bluefin
+
+<img
+  align="left"
+  src="/img/characters/bluefin-yolo.png"
+  width="320"
+  alt="Bluefin"
+/>
+
+Let's start with Bluefin.
+
+The new [Bluefin](https://github.com/projectbluefin/bluefin) is a tad smaller. We're dropping the dedicated DX images, everything we support is in brew now and is operating system agnostic. We aim to ship the most popular developer environments in cloud native and hope you give us feedback on things. `ujust devmode` is the CLI and remains unchanged.
+
+Don't expect many changes here other than moving to [sealed images](https://tim.siosm.fr/blog/2026/04/28/sealed-atomic-desktops-test-images/) at some point. `projectbluefin/bluefin:next` is in place if anyone wants to start working on that.
+
+Anyone who is interested in driving forward with the Fedora base images is encouraged to work here. This is also the first time this Bluefin has an aarch64 version!
+
+- [Bluefin Repo](https://github.com/projectbluefin/bluefin)
+
+## Bluefin LTS
+
+<img
+  align="right"
+  src="/img/characters/achillobator.png"
+  width="240"
+  alt="Bluefin Achillobator"
+/>
+
+[Bluefin LTS](https://github.com/projectbluefin/bluefin-lts) has also moved over to the factory. Bluefin GDX users have been moved here already. Nothing to report, though we turned off the ISO downloads to the old versions so people don't get confused. Once everything is set here we'll relaunch new ISOs.
+
+Not much to say here, I'm mostly here for the fuzzy brown guy. Bluefin GDX has been retired as an image, the proper Nvidia tools are on the nvidia images themselves, and most of what was "GDX" is now in userspace with brew and containers, enjoy!
+
+- [Bluefin LTS repo](https://github.com/projectbluefin/bluefin-lts)
+
+## Dakota
+
+<img
+  align="left"
+  src="/img/characters/chonky-dakosaurus-bluefin.png"
+  width="400"
+  alt="Bluefin Dakosaurus"
+/>
+
+[Dakota](https://github.com/projectbluefin/dakota) is our latest and most sophisticated raptor, featuring the cutting edge of Linux desktop development. It's built from GNOME OS using [BuildStream](https://buildstream.build/).
+
+Most of the work I've been involved with this cycle has been working on this. (And failing lol). Ahmed and Jordan just got the builds online and we'll probably do another alpha later this month. Things are really great here and I spent some time with the GNOME OS and systemd folks in Berlin this summer to ensure we're on the right track.
+
+James and I worked on the ISOs this cycle, and we finally have one unified ISO that covers Nvidia/AMD/Intel on one ISO. Needless to say this is my raptor of choice and I'm hoping to play with more builds this weekend. Once the builders are up I'll start work on Bluefin's "game mode", offering the very best of [OpenGamingCollective's tech](https://github.com/OpenGamingCollective).
+
+- [Dakota repo](https://github.com/projectbluefin/dakota)
+
+## Bluefin and The Forbidden Factory
+
+The "factory" is a culmination of everything we've been building. I guess it'd be the equivalent of "Universal Blue 4.0". It's simultaneously the most important change in Bluefin's history, and the most invisible! Also spoiler alert it's the second comic!
+
+It's a combination of the server OS, FSDK containers, Kubernetes, Argo, BuildStream with Buildbarn, and everything you need to build Bluefin "on the spot". Basically, instead of "the OS" consider the entire toolchain "the product". Unlike the old methods, this new factory is all about leveraging clankers and putting them to work effectively [via hive](https://hosted-projectbluefin-knuckle-gjvq.hive.kubestellar.io/).
+
+<img
+  src="/img/characters/bluefin-dinosaur-pack.png"
+  width="340"
+  alt="Bluefin dinosaur group"
+  style={{ display: "block", margin: "0 auto" }}
+/>
+
+The Factory is a result over about a year of convergence with many groups. We've assembled GNOME 50 desktop tests and have started work on KDE. We test everything in this thing. Each test runs through a full suite. Checks everything, network, apps, and other functionality. We can finally automatically test everything and then post a screenshot at the end of the test.
+
+:::info[Fully automated testing]
+
+The screenshot you see on the Bluefin releases will be the real release on your computer. Every default app will be tested and will have evidence backing it up. If a e2e test doesn't pass, no Bluefin that day. Computer running weird? Run `ujust report` and submit the issue and a clanker will go figure that crap out. Life's too short.
+
+:::
+
+And not just Bluefin. We're throwing everything at this thing. Aurora, Bazzite, Fedora Silverblue, Zirconium, GNOME OS. Every time there's a published image we run a battery of tests on it. We are not yet doing visual recognition - this is to catch visual regressions. Right now we're just hoping someone on a testing build is paying attention. It's encouraging to see members from bootc and the UAPI Group working in this space. The idea is to have a completely manageable, reproducible, and sovereign system to run _everything_, not just a few desktop images.
+
+The [Factory dashboard](https://factory.projectbluefin.io/) is one of the best ways to see whether an image is actually ready to ship. This is meant to expose more broken things before they reach you. Check out the [Hummingbird public meeting](https://discussion.fedoraproject.org/t/hummingbird-community-meeting-23-july-2026) this Thursday, where I hope to present on the components in more detail!
+
+I'll also be doing a complete factory tour and explaining our experiences with agentic development. I look forward to moving faster here! I spent a good deal of time on the charts:
+
+<FactoryCharts />
+
+The dashboard is live, so those numbers will move after this post ships. The [Factory dashboard](https://factory.projectbluefin.io/) and its [underlying data](https://factory.projectbluefin.io/data/factory-stats.json) are the sources for this snapshot. We'll continue to add information here over time!
+
+## Freedesktop SDK Containers (Alpha)
+
+Every factory needs purpose-built containers. Since the goal is a fully offline, self-contained build system, we built our own — carved from [freedesktop-sdk](https://freedesktop-sdk.freedesktop.org/) components using the distroless playbook. 90% of "distroless" is deleting all the docs and not providing shells. We're able to do this quite easily with BuildStream
+
+:::info[BuildStream is amazing]
+
+I was able to make a mostly functional OS in about 45m with BuildStream. Bluefin will continue to move in this direction since it's clearly got the community momentum we're looking for.
+
+:::
+
+The current images range from a ~40 MB distroless base (glibc, coreutils, CA certs, tzdata) up through distroless Python, Buildah, and Skopeo variants. I also made an omnibus `lab-runner` with kubectl and a few other tools in one convenient package and a shell for ops work. Two prototypes are worth calling out:
+
+Homebrew nspawn container — a Homebrew developer environment packaged as a `systemd-nspawn` machine image rather than an OCI image. The systemd folks think this approach is worth investigating, and this is the result of some beer drinking in Berlin. I haven't tried it yet but if you're one of those distrobox-adjacent folks it might be interesting for you.
+
+All images are keyless-signed with Sigstore Cosign and include BuildStream-native SBOMs. Tags track the FSDK point release. The actions are easy to copy — fork and go, no key wrangling required. I am finding the base images to be quite good, and in general I find the fsdk containers to be a nice alternative to Chainguard and other distroless images. For us the benefits are simple, these are the same libraries as the operating system so it doesn't cost us much to make these.
+
+- [fsdk-containers repository](https://github.com/projectbluefin/fsdk-containers)
+- [Release v25.08.13](https://github.com/projectbluefin/fsdk-containers/releases/tag/v25.08.13)
+- [Discussion thread](https://github.com/ublue-os/bluefin/discussions/4835)
+
+## Bluefin Server (Alpha)
+
+[Bluefin Server v25.08.13](https://projectbluefin.io/server/) targets the same space as Flatcar Container Linux, Fedora CoreOS, and Talos — but is built from scratch with [BuildStream 2](https://buildstream.build/) from `freedesktop-sdk` components. This one was kind of an accident. I needed a server OS for the new homelab and there wasn't an easy way to get a newer kernel in Flatcar. Since we have BuildStream, making this was pretty straightforward. This is basically the Dakota setup without the desktop.
+
+The OS payload is a compressed XFS DDI filesystem deployed by an offline, systemd-native installer. This is using systemd's new interactive installer. Burn it to disk and run through it and then you're done.
+
+Key properties:
+
+- DDI image-based updates with atomic rollbacks via `systemd-sysupdate`
+- Minimal, distroless rootfs — going to shoot for no shell by default with a GUI but we'll see how far we get on that
+- k3s for kubernetes available as a `systemd-sysext`
+- GPG-verified `SHA256SUMS`, BuildStream-native SBOMs, keyless signing throughout, all that crap
+- Currently on the GNOME Desktop kernel but I am shopping around, since we're using UKIs swapping out kernels is easy
+
+Alpha 1 is live. Beta comes after the 26.08 FSDK bump next month. KubeStellar dashboard integration is in progress but not ready yet.
+
+- [Bluefin Server page](https://projectbluefin.io/server/)
+- [Server repository](https://github.com/projectbluefin/server/)
+- [Alpha 1 release](https://github.com/projectbluefin/server/releases)
+- [Discussion thread](https://github.com/ublue-os/bluefin/discussions/4838)
+
+## Testsuite: Full Desktop and Image Coverage
+
+Bluefin's [automated test suite](https://github.com/projectbluefin/testsuite) is the quality gate between an image build and promotion. It runs headless Wayland desktop sessions in QEMU on standard GitHub Actions runners and can be supplemented with any hardware.
+
+### What it covers
+
+Here's what we've got working on so far. Shoutout to Christian Schaller at Red Hat for guidance:
+
+- `smoke` — core GNOME, Settings, MIME handlers, accessibility, desktop identity, Orca, input methods, keyboard layouts, XWayland, ScreenCast, screenshot portals, Online Accounts, and printing
+- `common` — portable SSH health checks for Flatpak, portals, polkit, shell behavior, immutability, and system health
+- `vanilla-gnome` — upstream GNOME OS baseline
+- `developer` — Homebrew and Ptyxis on developer variants
+- `dx` — VS Code, distrobox, JupyterLab, and mise
+- `software` — Bazaar app-store behavior and Flatpak CLI health
+- `lifecycle` — bootc upgrade, rollback, and migration
+- `security` — Cosign signature verification
+- `hardware` — udev rules and emulated peripherals
+- `bazzite` — Bazzite-specific extensions
+- `flatcar` — Flatcar OS boot and lifecycle
+
+The `smoke` and `common` suites are designed to run against any GNOME bootc image so feel free to take it for a spin.
+
+### How it works
+
+- [Behave](https://behave.readthedocs.io/) runs the [Gherkin](https://cucumber.io/docs/gherkin/) scenarios and step bindings
+- [qecore-headless](https://github.com/projectbluefin/qecore) bootstraps the Wayland and D-Bus session
+- [Dogtail](https://gitlab.gnome.org/GNOME/dogtail) drives the accessibility tree through [AT-SPI](https://wiki.gnome.org/Accessibility)
+- [gnome-ponytail-daemon](https://github.com/projectbluefin/gnome-ponytail-daemon) provides coordinate injection for Wayland
+- GNOME Shell Eval handles the GNOME 50+ top-bar fallback
+- Shared SSH steps assert system state from outside the VM
+- Dynamic suite sharding distributes large smoke and common runs
+- Coverage counts and screenshots publish to the Live Build Health Dashboard
+
+We'll continue to expand it as some tests are better than others.
+
+### Reusable integration
+
+Image projects can call the reusable `e2e.yml` workflow or the `gnome-e2e@v1` composite action with an OCI image, selected suites, a test ref, optional native-app skipping, Flatpak screenshot IDs, `zstd:chunked` coverage, VM memory, CPU count, and disk cleanup. The suite also provides [reusable ISO validation](https://github.com/projectbluefin/testsuite/tree/main/docs) for downstream projects. None of this has been tested outside of myself so if you're diving in get ready to get dirty!
+
+Local development uses Python 3.14 with `behave`, `qecore`, and `dogtail`; full GUI runs require a live Wayland and AT-SPI session. The repository includes Argo and KubeVirt plumbing, a coverage dashboard, Codecov reporting, Flatpak caching, and the container images used by the test jobs. (The whole enchilada!)
+
+<TestsuiteEvidence />
+
+### Does this mean I'll get less bugs?
+
+Yes and no. Most of these aren't blocking yet. A few of them catch issues you've reported in old-bluefin. Some of them give us capabilities we've never had, like mass upgrade testing.
+
+If we had perfect Linux tests no one would ship because the entire desktop stack is a tyre fire lol. However with better, more automated testing we can get to where we need to be!
+
+### Suncatcher
+
+Bonus wallpaper from Natalia and Delphic!
+
+<a
+  href="https://projectbluefin.io/img/wallpapers/wolves/showcase/suncatcher.png"
+  target="_blank"
+  rel="noopener noreferrer"
+>
+  <img
+    src="https://projectbluefin.io/img/wallpapers/wolves/showcase/suncatcher.png"
+    width="720"
+    alt="Suncatcher artwork from Seven Days to the Wolves"
+    loading="lazy"
+  />
+</a>
+
+## The Lab, Actions, and Finpilot
+
+[projectbluefin/lab](https://github.com/projectbluefin/lab) is the "everyday" part of the lab. It contains everything I am running in the homelab to test Bluefin, etc. It runs image and ISO tests in KubeVirt, handles graphical checks on the lab hardware, and collects screenshots and results that can be attached to a build. That lets us validate the thing people actually install, not just the container build that produced it. These tests are additive and listed on the website.
+
+We're adding these as _gates_, which means when a contributor merges something it will land in a testing branch. Then as part of the release processes all of these tests run. The lab repo is for people who want to add their homelabs to help with Bluefin. It's messy in there, but if you know K8s, help is always wanted!
+
+The intent is for these to be driven by GitOps, which means no access control or people connecting to remote servers, your agent either opportunistically finds work or is assigned work from hive. [Lab repo](https://github.com/projectbluefin/lab)
+
+[projectbluefin/actions](https://github.com/projectbluefin/actions) is the shared build layer behind the factory. Repositories can use the same workflows for bootc image builds, multi-architecture publishing, signing, SBOMs, and release metadata instead of each project inventing its own supply-chain plumbing. This is the sort of infrastructure that is invisible when it works, but it is what makes the rest of the factory repeatable. These actions are all new and heavily centralized, so if you want your custom image to use the latest tech, check out this repo.
+
+[finpilot](https://github.com/projectbluefin/finpilot) is still there and now has a new maintainer! This hasn't been integrated into the factory but it's working pretty great. [finpilot repository](https://github.com/projectbluefin/finpilot)
+
+## What's next
+
+<img
+  src="/img/characters/chonky-utahraptor-bluefin.png"
+  width="400"
+  alt="Bluefin Utahraptor"
+  style={{ display: "block", margin: "0 auto" }}
+/>
+
+The 26.08 FSDK release is next month and Dakota's looking to move to beta so there's plenty to do. In the meantime enjoy your day and rock out to some Wolves metal! Then we cycle into Fall.
+
+As always thanks for joining us and keep on rocking! Feel free to ask questions, we covered a ton!
