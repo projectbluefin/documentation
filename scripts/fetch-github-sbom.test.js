@@ -69,9 +69,9 @@ const MOCK_STABLE_DAILY_SPEC = {
   keyless: true,
 };
 
-// Fixed reference date used across all time-sensitive tests to avoid flakiness.
+  // Fixed reference date used across all time-sensitive tests to avoid flakiness.
 // Must stay within LOOKBACK_DAYS (90 days) of any future test run — update when stale.
-const FIXED_RECENT_DATE = "20260412";
+const FIXED_RECENT_DATE = "20260721";
 
 test("findRecentTagsForStream: picks stable-YYYYMMDD tags from GHCR list", () => {
   const ghcrTags = [

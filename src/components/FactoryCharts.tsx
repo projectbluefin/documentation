@@ -1,6 +1,25 @@
-import { useEffect, useRef } from "react";
-import * as echarts from "echarts";
+import React, { useEffect, useRef } from "react";
+import * as echarts from "echarts/core";
+import { PieChart, LineChart, BarChart } from "echarts/charts";
+import {
+  TitleComponent,
+  TooltipComponent,
+  LegendComponent,
+  GridComponent,
+} from "echarts/components";
+import { CanvasRenderer } from "echarts/renderers";
 import "./factory-charts.css";
+
+echarts.use([
+  PieChart,
+  LineChart,
+  BarChart,
+  TitleComponent,
+  TooltipComponent,
+  LegendComponent,
+  GridComponent,
+  CanvasRenderer,
+]);
 
 type FactoryChartsProps = {
   snapshot?: string;

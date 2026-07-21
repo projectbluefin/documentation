@@ -1,10 +1,16 @@
+const LEGACY_BLUEFIN_CHART_URL =
+  "https://raw.githubusercontent.com/ublue-os/countme/main/growth_bluefins.svg";
+const PROJECTBLUEFIN_CHART_URL =
+  "https://raw.githubusercontent.com/projectbluefin/countme/main/growth_bluefins.svg";
+
 const ROUTES = {
-  "/growth_bluefins.svg":
-    "https://raw.githubusercontent.com/ublue-os/countme/main/growth_bluefins.svg",
-  "/sources/ublue-os/bluefin/growth.svg":
-    "https://raw.githubusercontent.com/ublue-os/countme/main/growth_bluefins.svg",
-  "/sources/projectbluefin/bluefin/growth.svg":
-    "https://raw.githubusercontent.com/projectbluefin/countme/main/growth_bluefins.svg",
+  "/": PROJECTBLUEFIN_CHART_URL,
+  "/growth.svg": PROJECTBLUEFIN_CHART_URL,
+  "/growth_bluefins.svg": LEGACY_BLUEFIN_CHART_URL,
+  "/sources/ublue-os/bluefin/growth.svg": LEGACY_BLUEFIN_CHART_URL,
+  "/sources/projectbluefin/bluefin/growth.svg": PROJECTBLUEFIN_CHART_URL,
+  "/bluefin/growth.svg": PROJECTBLUEFIN_CHART_URL,
+  "/bluefin-lts/growth.svg": PROJECTBLUEFIN_CHART_URL,
   "/badge-endpoints/bluefin.json":
     "https://raw.githubusercontent.com/ublue-os/countme/main/badge-endpoints/bluefin.json",
   "/badge-endpoints/bluefin-lts.json":
@@ -13,13 +19,38 @@ const ROUTES = {
 
 function baseHeaders(extra = {}) {
   return {
+    "access-control-allow-origin": "*",
     "cache-control": "public, max-age=3600",
     ...extra,
   };
 }
 
+function isMetalinkRequest(pathname) {
+  return pathname === "/metalink" || pathname === "/metalink/";
+}
+
+function createMetalinkResponse(request) {
+  const url = new URL(request.url);
+  const repo = url.searchParams.get("repo") || "unknown";
+  const tag = url.searchParams.get("tag") || "unknown";
+  const flavor = url.searchParams.get("flavor") || "unknown";
+  const arch = url.searchParams.get("arch") || "unknown";
+  const countme = url.searchParams.get("countme") || "unknown";
+
+  return new Response(
+    `countme accepted for repo=${repo} tag=${tag} flavor=${flavor} arch=${arch} countme=${countme}\n`,
+    {
+      status: 200,
+      headers: baseHeaders({
+        "content-type": "text/plain;charset=UTF-8",
+        "cache-control": "no-store",
+      }),
+    },
+  );
+}
+
 export function mapRequestPath(pathname) {
-  return ROUTES[pathname] || null;
+  return ROUTES[normalizePathname(pathname)] || null;
 }
 
 export function createPendingProjectbluefinSvg() {
@@ -34,25 +65,53 @@ export function createPendingProjectbluefinSvg() {
 </svg>`;
 }
 
+function normalizePathname(pathname) {
+  const trimmed = pathname.replace(/\/+$/, "");
+  return trimmed === "" ? "/" : trimmed;
+}
+
 function isProjectBluefinPrimary(pathname) {
-  return pathname === "/sources/projectbluefin/bluefin/growth.svg";
+  const normalized = normalizePathname(pathname);
+  return [
+    "/",
+    "/growth.svg",
+    "/sources/projectbluefin/bluefin/growth.svg",
+    "/bluefin/growth.svg",
+    "/bluefin-lts/growth.svg",
+  ].includes(normalized);
+}
+
+function resolveChartTarget(pathname) {
+  const normalized = normalizePathname(pathname);
+
+  if (normalized === "/" || normalized === "/growth.svg" || normalized.endsWith("/growth.svg")) {
+    return PROJECTBLUEFIN_CHART_URL;
+  }
+
+  return mapRequestPath(normalized);
 }
 
 async function proxyRequest(request) {
   const url = new URL(request.url);
-  const upstream = mapRequestPath(url.pathname);
-
-  if (!upstream) {
-    return new Response("not found", {
-      status: 404,
-      headers: baseHeaders({ "content-type": "text/plain;charset=UTF-8" }),
-    });
-  }
+  const pathname = normalizePathname(url.pathname);
 
   if (request.method !== "GET" && request.method !== "HEAD") {
     return new Response("method not allowed", {
       status: 405,
       headers: baseHeaders({ allow: "GET, HEAD" }),
+    });
+  }
+
+  if (isMetalinkRequest(pathname)) {
+    return createMetalinkResponse(request);
+  }
+
+  const upstream = resolveChartTarget(pathname);
+
+  if (!upstream) {
+    return new Response("not found", {
+      status: 404,
+      headers: baseHeaders({ "content-type": "text/plain;charset=UTF-8" }),
     });
   }
 
@@ -70,7 +129,7 @@ async function proxyRequest(request) {
     });
   }
 
-  if (isProjectBluefinPrimary(url.pathname)) {
+  if (isProjectBluefinPrimary(pathname)) {
     return new Response(createPendingProjectbluefinSvg(), {
       status: 200,
       headers: baseHeaders({ "content-type": "image/svg+xml; charset=UTF-8" }),

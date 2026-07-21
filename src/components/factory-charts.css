@@ -1,6 +1,7 @@
 .factory-charts {
   --factory-ink: #101827;
   --factory-border: rgba(148, 163, 184, 0.18);
+
   margin: 2.5rem 0 3rem;
   padding: 1.25rem;
   border: 1px solid var(--factory-border);

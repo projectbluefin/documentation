@@ -37,11 +37,8 @@ jobs:
       - name: Run CountMe worker tests
         run: node --test scripts/countme-worker.test.js
 
-      - name: Install Wrangler
-        run: npm install -g wrangler@latest
-
       - name: Deploy CountMe worker
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: wrangler deploy --config wrangler.countme.toml
+        run: npx wrangler@latest deploy --config wrangler.countme.toml

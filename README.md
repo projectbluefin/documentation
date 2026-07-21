@@ -102,6 +102,87 @@ Then make sure to format all your files with Prettier!
 npm run prettier
 ```
 
+## CountMe worker operations
+
+The documentation repo also hosts the public CountMe endpoint at `https://countme.projectbluefin.io/`.
+This service is a small Cloudflare Worker that serves CountMe chart images and accepts telemetry pings for Dakota.
+
+### What the worker does
+
+- Serves CountMe chart SVGs for the root host and a few compatibility paths.
+- Accepts `/metalink` GET requests from telemetry clients.
+- Returns a placeholder SVG when the Project Bluefin chart artifact is not yet available from `projectbluefin/countme`.
+
+### Source files
+
+- `workers/countme-proxy/index.mjs` — Worker implementation
+- `wrangler.countme.toml` — Wrangler config and route binding
+- `scripts/countme-worker.test.js` — regression tests for the worker behavior
+
+### Deployment model
+
+The worker is deployed as a Cloudflare Worker behind the `countme.projectbluefin.io` hostname.
+Deployment is done with Wrangler from this repo:
+
+```bash
+cd /var/home/jorge/src/documentation
+npx wrangler deploy --config wrangler.countme.toml
+```
+
+The worker is attached to the `projectbluefin.io` zone via the route configured in `wrangler.countme.toml`.
+
+### Operational flow for future agents
+
+1. Make code changes in `workers/countme-proxy/index.mjs`.
+2. Add or update coverage in `scripts/countme-worker.test.js`.
+3. Run the focused checks:
+
+```bash
+cd /var/home/jorge/src/documentation
+node --test scripts/countme-worker.test.js
+npx eslint workers/countme-proxy/index.mjs scripts/countme-worker.test.js
+```
+
+4. Deploy the worker:
+
+```bash
+cd /var/home/jorge/src/documentation
+npx wrangler deploy --config wrangler.countme.toml
+```
+
+5. Smoke-test the live service:
+
+```bash
+curl -i 'https://countme.projectbluefin.io/metalink?repo=dakota&tag=latest&flavor=default&arch=x86_64&countme=3'
+curl -i 'https://countme.projectbluefin.io/growth.svg'
+curl -i 'https://countme.projectbluefin.io/'
+```
+
+### Security and maintenance posture
+
+This service is intentionally lightweight and public-facing.
+Current characteristics:
+
+- No secrets, database, or authentication layer.
+- No private user data is processed.
+- Only `GET` and `HEAD` methods are accepted for the public endpoints.
+- The worker fetches public upstream SVGs from GitHub raw URLs and returns a brief placeholder SVG when the Project Bluefin artifact is not yet available.
+- Cloudflare TLS and route protection provide the baseline edge security; the worker itself is not currently protected by API auth or per-client access controls.
+
+Maintenance expectations:
+
+- Keep the worker logic simple and dependency-light.
+- Prefer updating the upstream source mapping and fallback behavior in the repo over making dashboard-only changes.
+- Re-run tests before every deployment.
+- If the upstream artifact becomes available from `projectbluefin/countme`, update the worker to prefer it for the root-hosted chart routes.
+- If operational abuse or telemetry misuse appears, add rate limiting and request validation before expanding the endpoint surface.
+
+### Update policy
+
+- The source of truth is the repository, not the Cloudflare dashboard.
+- Any change to behavior, route mapping, fallback content, or telemetry handling should be made in the repo and deployed with Wrangler.
+- Rollbacks should be handled by redeploying an earlier known-good worker version from the repo or from Wrangler deployment history.
+
 ## Troubleshooting
 
 ### "Cannot find module 'xml2js'" error
