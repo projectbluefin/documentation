@@ -4,7 +4,6 @@ slug: why-im-all-in-on-agentic-development
 authors: castrojo
 tags: [community, video, ai]
 date: 2026-07-23T16:48:00-04:00
-draft: true
 ---
 
 Is AI good or bad for open source? This is 52 minutes of me explaining what I've learned on this.
