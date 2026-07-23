@@ -6,7 +6,7 @@ tags: [community, video, ai]
 date: 2026-07-23T16:48:00-04:00
 ---
 
-Is AI good or bad for open source? This is 52 minutes of me explaining what I've learned on this.
+Is AI good or bad for open source? This is 58 minutes of me explaining what I've learned on this.
 
 <iframe
   width="560"
@@ -25,4 +25,4 @@ Our value to our users is that we give you Linux as designed by the professional
 
 We choose not to let people dictate to us how to use our computers. The science is out. The experts have spoken. I've been fortunate to have access to Greg K-H during his time, and we spent a long time discussing how this affects our communities. And he's right. The damn things are finding bugs. And I'm tired of Linux's bullshit. And I mean that in a loving manner. 90% of this crap is passing a 0 or 1 to some silly argument because Asus hates you.
 
-We've got new territory to explore and we're moving quickly. My lesson from six months of AI is "[Seven Days to the Wolves](https://wolves.projectbluefin.io)". Where will we be when they come? I've been doing this job a long time and it took me fifty-two minutes of Puerto Rican mansplaining and a cloud-native symphonic metal musical to explain it. LOL. 
+We've got new territory to explore and we're moving quickly. My lesson from six months of AI is "[Seven Days to the Wolves](https://wolves.projectbluefin.io)". Where will we be when they come? I've been doing this job a long time and it took me fifty-eight minutes of Puerto Rican mansplaining and a cloud-native symphonic metal musical to explain it. LOL. 
