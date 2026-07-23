@@ -1,5 +1,5 @@
 ---
-title: "Why I'm all in on Agentic development"
+title: "Why Bluefin is all in on agentic development"
 slug: why-im-all-in-on-agentic-development
 authors: castrojo
 tags: [community, video, ai]
