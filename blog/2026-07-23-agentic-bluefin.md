@@ -1,6 +1,6 @@
 ---
 title: "Why Bluefin is all in on agentic development"
-slug: why-im-all-in-on-agentic-development
+slug: bluefin-agentic-development
 authors: castrojo
 tags: [community, video, ai]
 date: 2026-07-23T16:48:00-04:00
