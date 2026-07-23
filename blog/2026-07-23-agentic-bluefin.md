@@ -19,7 +19,7 @@ Is AI good or bad for open source? This is 52 minutes of me explaining what I've
   allowfullscreen
 ></iframe>
 
-If you're here for the hot take: [Are we really all on the same side](https://www.youtube.com/live/FzitMVel4Ss?si=x9Wbzssb5kZvyIbT\u0026t=1268)? There are two worlds in Linux. What reddit/masto/youtube thinks "Linux" is. And then how Linux actually is.
+If you're here for the hot take: [Are we really all on the same side](https://www.youtube.com/live/FzitMVel4Ss?si=5PF3Ybe9isNyWl_t&t=1253)? There are two worlds in Linux. What reddit/masto/youtube thinks "Linux" is. And then how Linux actually is.
 
 Our value to our users is that we give you Linux as designed by the professionals. The flex is leveraging the collective knowledge of the community. New users have been led to believe that shipping three-year-old kernels and old software is the right way to consume Linux. Good luck with that. When it comes to my Linux, we listen to Lennart. We do listen to GNOME developers. Linux is about choice. We choose a well-designed system and thank the UNIX gods every day that we don't have to deal with that stuff.
 
