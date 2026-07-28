@@ -1,0 +1,168 @@
+---
+title: "Bluefin's Sausage Factory"
+slug: bluefins-sausage-factory
+authors: castrojo
+tags: [development, cloud-native]
+date: 2026-07-27T21:06:00-04:00
+draft: true
+---
+
+import MusicPlaylist from "@site/src/components/MusicPlaylist";
+import BlogFigure from "@site/src/components/blog/BlogFigure";
+
+<MusicPlaylist title="The Forbidden Factory" playlistId="PLbORkyQL0Pe8" />
+
+If you want to understand how a modern Linux distribution is made, you eventually have to look at the "sausage factory" - the intricate pipeline of code repositories, build systems, test suites, and orchestrators that turn raw source files into something you can boot on physical hardware.
+
+Supakeen posted [The Fedora 45 Sausage Factory](https://supakeen.com/weblog/the-fedora-45-sausage-factory/), and the curtain was pulled back on [Fedora](https://fedoraproject.org/)'s use of `dist-git`, Koji, Bodhi, Pungi, and openQA to make Fedora.
+
+People are asking "what's the equivalent of this in Bluefin?" Most of this stuff sounds like a Pacific Rim sequel, so let's take a look. We are currently in the process of moving away from our own legacy sausage factory to Bluefin's final destination: _Kubernetes_.
+
+- [`projectbluefin/common`](https://github.com/projectbluefin/common): The shared "org brain" containing system configurations, desktop defaults, documentation, and foundational OCI layers. When most of you think "Bluefin", it's in here.
+- Image repos ([`bluefin`](https://github.com/projectbluefin/bluefin), [`bluefin-lts`](https://github.com/projectbluefin/bluefin-lts), [`dakota`](https://github.com/projectbluefin/dakota)): Derivative image definitions that consume `common` and layer specific desktop experiences or lifecycle variants.
+- Instead of spec files and tarballs, Bluefin's definitions rely on `Containerfile` directives and declarative package manifests. But in some cases you may still find a vestigial inline package install in a script.
+
+## Under the Hood: The OCI Toolchain
+
+I've read comments on Reddit that think that all of this is [GitHub-specific](https://github.com/features/actions). GHA is there because we're lazy. At the end of the day, all of Bluefin is locally buildable on any service. And on any OS: you can build Bluefin on Macs and Windows too. Each repo has its own `Justfile` covering different tasks.
+
+The entire point of cloud native is that you should be able to build the thing anywhere. If you get confused by "cloud native", try to remember "API Native" instead. Let's look at some standard OCI things:
+
+```text
+  [ git ]                [ buildah ]               [ podman ]                 [ skopeo & bootc ]
+Declarative Config  --->  Daemonless Layer    --->   Local Execution     --->   Registry Transport
+& Tracking               Composition                & Inspection               & Host OS Deployment
+```
+
+- [`git`](https://git-scm.com/): Tracks everything. This is the single source of truth. This is called declarative config and has all the config files.
+
+Linux distributions talk about "rolling vs. stable" - this doesn't make sense in modern Linux. The entire thing is a git branch. It's what you _choose to ship_.
+
+You need to ship the entire git branch. That means releases AND rolling tags, feature branches, testing branches, "test this crazy thing here temporarily branches", all of that. `git` is fully open source and not under the control of any single vendor. When the Bluefin factory is cooking things that used to take months now take hours: 
+
+<BlogFigure
+  src="/img/blog/2026-07-27-bluefins-sausage-factory/ogc-gaming-kernel-stack.png"
+  alt="Fastfetch terminal output showing the Dakota NVIDIA gaming image and OGC gaming kernel"
+  caption="OGC Gaming kernel and stack on Bluefin Dakota"
+/>
+
+- [`buildah`](https://buildah.io/) (Daemonless Builder): Assembles container layers statelessly without requiring a background daemon or root privileges on host runners. `buildah` is a CNCF Sandbox project and not under the control of any single vendor.
+
+- [`podman`](https://podman.io/) (Local Validation): Enables local parity. Developers can run `podman run` locally to inspect built layers before pushing code. `podman` is a CNCF Sandbox project and not under the control of any single vendor.
+
+- [`skopeo`](https://github.com/containers/skopeo) (Transport & Tags): Handles low-level OCI manifest operations - copying images directly between registries, inspecting layers, and managing release tags. `skopeo` is a CNCF Sandbox project and not under the control of any single vendor.
+
+- [`bootc`](https://github.com/containers/bootc) (Target Deployment): Bridges standard OCI container images directly to the target machine's disk. It handles kernel handoff, transactional filesystem updates, and automatic rollbacks. You're not going to believe it ... `bootc` is a CNCF Sandbox project and not under the control of any single vendor.
+
+## Practical Walkthrough: Adding an Application
+
+Let's add a new application. Let's say the control panel we've all been missing. [Brian Ketelsen](https://brian.dev/), Father of Bluefin and now control panel connoisseur has blessed us with this:  
+
+<BlogFigure
+  src="/img/blog/2026-07-27-bluefins-sausage-factory/chairlift-applications.png"
+  alt="ChairLift applications screen showing Flatpak and Homebrew management"
+  caption="ChairLift’s Applications view."
+/>
+
+<BlogFigure
+  src="/img/blog/2026-07-27-bluefins-sausage-factory/chairlift-maintenance.png"
+  alt="ChairLift maintenance screen showing Homebrew and Flatpak cleanup tools"
+  caption="ChairLift’s Maintenance view."
+/>
+
+<BlogFigure
+  src="/img/blog/2026-07-27-bluefins-sausage-factory/chairlift-updates.png"
+  alt="ChairLift updates screen showing Flatpak and Homebrew updates"
+  caption="ChairLift’s Updates view."
+/>
+
+He's been rolling with this in his custom image. And if you're like me you probably want that thing right now. Here's the [Git repo](https://github.com/frostyard/chairlift). Not distribution specific either, Brian's images are based on Debian. See how weird it is to classify things the old way? Who cares. It doesn't even ship on the image it ships in homebrew lol. 
+
+In Bluefin, adding an application comes down to choosing **where** the change belongs in the repository tree:
+
+### Option A: At the Shared Level (`projectbluefin/common`)
+
+This is 95% of it. Someone saw a new app in Flathub and wants to feature it, or we need to swap out a component when an app gets deprecated, etc. Chairlift will go here.
+
+- Contributor: edit a central [`Brewfile`](https://brew.sh/) (for Homebrew CLI utilities or [Flatpak](https://flathub.org/) desktop apps).
+
+### Option B: At the Image Level (`bluefin`, `bluefin-lts`, `dakota`)
+
+- Contributor: edit an image-specific build script (e.g., `build/10-build.sh` executing [`dnf5`](https://github.com/rpm-software-management/dnf5) `install -y <package>`) or a `bst` definition file.
+
+This is usually system-level stuff, or may be things the user doesn't see that we deal with. For example, NVIDIA drivers on all three are installed differently. Or if your hardware acceleration breaks, etc. Anything that touches the metal, like that OGC kernel. 
+
+## Change Processes
+
+We have a lazy consensus model - in the early days of Universal Blue we had full-blown specs and it looked similar to what you see in Fedora today. These days you can file a bug in `common` and if maintainers have consensus, we do it.
+
+This can cause friction for new users who do not understand Bluefin's mission. An open process doesn't mean a free-for-all. It also means we force work OUT of the org. For example, in Dakota we'll be prototyping zswap configs, but -
+
+However, the entire process is in the air. Six months ago I would have told you, "if you didn't file a bug, I don't care; you didn't put in any effort, so I won't either." Now I can point an agent to my entire Discord and slurp out months of people's actual bugs and get actionable feedback.
+
+This is why IMO the best thing we could invest will be `ujust report`. We make it easier for people to submit their technical data, opt-in. But that is a post for another day!
+
+## Two Eras of OS Engineering
+
+Fedora's sausage factory is a masterclass in classical Linux release engineering. But we are a small project and cannot afford such complexity.
+
+And then you would say, "But Bluefin is Fedora/CentOS, you can't make Bluefin without it." And you'd be right! And then the other half of the room would say, "Listen to the k8s guy talk about complexity!" And they would also be right!
+
+The last bit is [BuildStream](https://buildstream.apache.org/), which effectively replaces just about everything in that Fedora diagram with a single, simple CLI tool. BuildStream is hosted at the Apache Foundation.
+
+# The Final Shape
+
+### Shove your Linux dreams in git
+
+If you're a developer, the entirety of your existence lives in git.
+
+- Anything you want, any version you want, we're going with GNOME OS versions first
+- But then add things like OGC kernels, nicer Mesa, etc. We're finishing up the Dakota gaming image now and there will be a nice GUI to make all of your lives happier.
+
+This is GitOps, so forking, etc. is encouraged. Pretend you can get a Bluefin for every possible iteration (because you can!) Some of you will think this is about images, but most of you will do the smart thing and swap out Brewfiles and "top 10 kickass Flatpaks" and so on. Both of these ecosystems are distribution-agnostic.
+
+### A vendor-neutral, well-maintained toolchain makes your dream real
+
+You know when I say "distroless", "cloud native", "the Kubernetes moment", and all of that stuff? And then people laugh? This is what I mean. Moving away entirely from the concept of distribution tooling to commodity tools.
+
+It's down to `git`, `bst`, and `bootc`. BuildStream can output your dream in one go. THE ENTIRE MIDDLE PART GOES AWAY. No intermediary format - it goes right to a format that we can run tests on, scan, etc. You don't need "distro builders"; you just need normal containers!
+
+I could give a sysadmin these three tools and a laptop with the right creds and publish Bluefin, and none of you would notice.
+
+### The DevOps Part
+
+So on the one hand, we have The Final Shape. It's clear what I think: we optimize for correctness in Linux first, your shitty VPN RPM be damned.
+
+What Fedora Hummingbird brings to the table is to take all of that operational knowledge Fedora has, and then bring THAT into the container-native space. They are, after all, building a Linux distribution.
+
+Which is also why we say we're not a Linux distribution. Dakotaraptor was born into cloud native. It will never have to deal with COPRs or akmods or any of that stuff. It will just have what it needs with a handful of tools and infrastructure.
+
+I would argue our appeal is that we start from the success of Kubernetes. I have now experienced BuildStream with Buildbarn and Kubernetes.
+
+- From a technical perspective, it excels at everything we need it for and I have yet to see anything even in the same ballpark.
+- From a cost perspective, it's unbeatable. Every infrastructure provider in the world sells K8s, and everyone's laptop has `podman`.
+- Contributors
+
+That last one. Millions and millions of developers know this tooling already. This is a great opportunity to meld the distribution processes with new people coming in at Hummingbird Factory level.
+
+Our message to contributors remains the same. Use the tools everyone else is using - _bias towards trusted vendor-neutral organizations_. I have annoyingly pointed out which of these tools are hosted by the CNCF and the Apache Foundation. This is what "Cloud Native Linux" is.
+
+### This is not a dunk
+
+I liken Fedora to last year's McLaren. When it comes to traditional Linux distros, you'd have a tough time beating Fedora. And just about everything you hate about it has nothing to do with the tech and probably the policies.
+
+This is why [Fedora Hummingbird](https://fedoraproject.org/wiki/Hummingbird)'s factory is appealing to me. As you can tell, I can't shut up about it.
+
+But things change, and every year the users demand the spectacle. Fedora Hummingbird is a ton of well-funded enterprise tech - they've got wind tunnels, an awesome factory, engineers fighting to be the best. Inserting all of that Fedora operational DevOps knowledge into a modern Hummingbird design would slay.
+
+Fedora Hummingbird is built with this same collection of CNCF and Apache projects. Combined with other open source projects, many of which are controlled by a single vendor, but have years of enterprise pedigree with billions of dollars worth of ecosystem to show for it.
+
+:::info[Loop closed ...]
+
+Mastery of these tools is in high demand. Even if you skip all of the operating system parts, all of these skills are useful for much more. The desktop is but a sliver of places you'll find these tools.
+
+Some will grab RPMs and debs, some will grab `bst`. All will need Kubernetes.
+
+:::
+
+We should encourage this, all in the name of sport! Sharing about 95% of the tooling and the people. Let's not forget that Ubuntu's putting in some great laps!
