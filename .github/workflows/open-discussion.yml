@@ -11,6 +11,7 @@ on:
 
 permissions:
   contents: read
+  discussions: write
 
 jobs:
   open-discussion:
@@ -28,7 +29,7 @@ jobs:
 
       - name: Open discussions for new blog posts
         env:
-          GH_TOKEN: ${{ secrets.BLUEFIN_DISCUSSIONS_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
           BEFORE_SHA: ${{ github.event.before }}
           AFTER_SHA: ${{ github.sha }}
         run: |
