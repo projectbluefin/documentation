@@ -59,3 +59,15 @@ bluefin-stable-x86_64.iso: OK
 
 # 🦖 Rawr! Your download is verified
 ```
+## Installer bug reporting setup and running
+
+1. Before installing - enabling `ujust report`:
+    - Connect the running live system to the network.
+    - Open Firefox and log into GitHub.
+    - Open a terminal and do `brew install gh`.
+    - Do a command line authentication: `gh auth login`. Use the browser method.
+2. After a failed install:
+    - Use the Screenshot tool to capture relevant screenshots.
+    - In the terminal, do `ujust report`. When the report is complete, use `ESC` to terminate.
+    - The browser should automatically open to a new issue in the appropriate repo. Just fill it in.
+
