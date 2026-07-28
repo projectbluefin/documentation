@@ -14,30 +14,6 @@ import BlogFigure from "@site/src/components/blog/BlogFigure";
 
 If you want to understand how a modern Linux distribution is made, you eventually have to look at the "sausage factory" - the intricate pipeline of code repositories, build systems, test suites, and orchestrators that turn raw source files into something you can boot on physical hardware.
 
-<BlogFigure
-  src="/img/blog/2026-07-27-bluefins-sausage-factory/ogc-gaming-kernel-stack.png"
-  alt="Fastfetch terminal output showing the Dakota NVIDIA gaming image and OGC gaming kernel"
-  caption="OGC Gaming kernel and stack"
-/>
-
-<BlogFigure
-  src="/img/blog/2026-07-27-bluefins-sausage-factory/chairlift-applications.png"
-  alt="ChairLift applications screen showing Flatpak and Homebrew management"
-  caption="ChairLift’s Applications view."
-/>
-
-<BlogFigure
-  src="/img/blog/2026-07-27-bluefins-sausage-factory/chairlift-maintenance.png"
-  alt="ChairLift maintenance screen showing Homebrew and Flatpak cleanup tools"
-  caption="ChairLift’s Maintenance view."
-/>
-
-<BlogFigure
-  src="/img/blog/2026-07-27-bluefins-sausage-factory/chairlift-updates.png"
-  alt="ChairLift updates screen showing Flatpak and Homebrew updates"
-  caption="ChairLift’s Updates view."
-/>
-
 Supakeen posted [The Fedora 45 Sausage Factory](https://supakeen.com/weblog/the-fedora-45-sausage-factory/), and the curtain was pulled back on [Fedora](https://fedoraproject.org/)'s use of `dist-git`, Koji, Bodhi, Pungi, and openQA to make Fedora.
 
 People are asking "what's the equivalent of this in Bluefin?" Most of this stuff sounds like a Pacific Rim sequel, so let's take a look. We are currently in the process of moving away from our own legacy sausage factory to Bluefin's final destination: _Kubernetes_.
@@ -62,7 +38,13 @@ Declarative Config  --->  Daemonless Layer    --->   Local Execution     --->   
 
 Linux distributions talk about "rolling vs. stable" - this doesn't make sense in modern Linux. The entire thing is a git branch. It's what you _choose to ship_.
 
-You need to ship the entire git branch. That means releases AND rolling tags, feature branches, testing branches, "test this crazy thing here temporarily branches", all of that. `git` is fully open source and not under the control of any single vendor.
+You need to ship the entire git branch. That means releases AND rolling tags, feature branches, testing branches, "test this crazy thing here temporarily branches", all of that. `git` is fully open source and not under the control of any single vendor. When the Bluefin factory is cooking things that used to take months now take hours: 
+
+<BlogFigure
+  src="/img/blog/2026-07-27-bluefins-sausage-factory/ogc-gaming-kernel-stack.png"
+  alt="Fastfetch terminal output showing the Dakota NVIDIA gaming image and OGC gaming kernel"
+  caption="OGC Gaming kernel and stack on Bluefin Dakota"
+/>
 
 - [`buildah`](https://buildah.io/) (Daemonless Builder): Assembles container layers statelessly without requiring a background daemon or root privileges on host runners. `buildah` is a CNCF Sandbox project and not under the control of any single vendor.
 
@@ -74,19 +56,39 @@ You need to ship the entire git branch. That means releases AND rolling tags, fe
 
 ## Practical Walkthrough: Adding an Application
 
-In Bluefin, adding an application comes down to choosing **where** the change belongs in the repository tree:
+Let's add a new application. Let's say the control panel we've all been missing. [Brian Ketelsen](https://brian.dev/), Father of Bluefin and now control panel connoisseur has blessed us with this:  
+
+<BlogFigure
+  src="/img/blog/2026-07-27-bluefins-sausage-factory/chairlift-applications.png"
+  alt="ChairLift applications screen showing Flatpak and Homebrew management"
+  caption="ChairLift’s Applications view."
+/>
+
+<BlogFigure
+  src="/img/blog/2026-07-27-bluefins-sausage-factory/chairlift-maintenance.png"
+  alt="ChairLift maintenance screen showing Homebrew and Flatpak cleanup tools"
+  caption="ChairLift’s Maintenance view."
+/>
+
+<BlogFigure
+  src="/img/blog/2026-07-27-bluefins-sausage-factory/chairlift-updates.png"
+  alt="ChairLift updates screen showing Flatpak and Homebrew updates"
+  caption="ChairLift’s Updates view."
+/>
+
+He's been rolling with this in his custom image. And if you're like me you probably want that thing right now. In Bluefin, adding an application comes down to choosing **where** the change belongs in the repository tree:
 
 ### Option A: At the Shared Level (`projectbluefin/common`)
 
-This is 95% of it. Someone saw a new app in Flathub and wants to feature it, or we need to swap out a component when an app gets deprecated, etc.
+This is 95% of it. Someone saw a new app in Flathub and wants to feature it, or we need to swap out a component when an app gets deprecated, etc. Chairlift will go here.
 
 - Contributor: edit a central [`Brewfile`](https://brew.sh/) (for Homebrew CLI utilities or [Flatpak](https://flathub.org/) desktop apps).
 
 ### Option B: At the Image Level (`bluefin`, `bluefin-lts`, `dakota`)
 
-- Contributor: edit an image-specific build script (e.g., `build/10-build.sh` executing [`dnf5`](https://github.com/rpm-software-management/dnf5) `install -y <package>`) or definition file.
+- Contributor: edit an image-specific build script (e.g., `build/10-build.sh` executing [`dnf5`](https://github.com/rpm-software-management/dnf5) `install -y <package>`) or a `bst` definition file.
 
-This is usually system-level stuff, or may be things the user doesn't see that we deal with. For example, NVIDIA drivers on all three are installed differently. Or if your hardware acceleration breaks, etc. Anything that touches the metal, like kernels and stuff.
+This is usually system-level stuff, or may be things the user doesn't see that we deal with. For example, NVIDIA drivers on all three are installed differently. Or if your hardware acceleration breaks, etc. Anything that touches the metal, like that OGC kernel. 
 
 ## Change Processes
 
