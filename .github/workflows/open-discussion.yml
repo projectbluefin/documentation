@@ -7,6 +7,7 @@ on:
     paths:
       - "blog/**.md"
       - "blog/**.mdx"
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -32,21 +33,31 @@ jobs:
           AFTER_SHA: ${{ github.sha }}
         run: |
           python3 << 'PYEOF'
-          import os, re, subprocess, json, sys
+          import hashlib, os, re, subprocess, json, sys
 
           before = os.environ["BEFORE_SHA"]
           after  = os.environ["AFTER_SHA"]
+          event  = os.environ.get("GITHUB_EVENT_NAME")
           zero   = "0" * 40
 
-          if before == zero:
-              print("Initial push — skipping discussion creation")
-              sys.exit(0)
+          if event == "workflow_dispatch":
+              # Backfill discussions for already-published posts, including posts
+              # that were committed as drafts and published later.
+              result = subprocess.run(
+                  ["git", "ls-files", "blog/*.md", "blog/*.mdx"],
+                  capture_output=True, text=True
+              )
+          else:
+              if before == zero:
+                  print("Initial push — skipping discussion creation")
+                  sys.exit(0)
 
-          # Find new blog post files added in this push
-          result = subprocess.run(
-              ["git", "diff", "--name-only", "--diff-filter=A", before, after, "--", "blog/"],
-              capture_output=True, text=True
-          )
+              # Include modified files so removing `draft: true` creates a
+              # discussion even when the post was added in an earlier commit.
+              result = subprocess.run(
+                  ["git", "diff", "--name-only", "--diff-filter=AM", before, after, "--", "blog/"],
+                  capture_output=True, text=True
+              )
           new_files = [f.strip() for f in result.stdout.strip().splitlines() if f.strip()]
 
           if not new_files:
@@ -99,7 +110,7 @@ jobs:
               print(f"  Post URL: {post_url}")
 
               # Check if a discussion with this exact title already exists
-              search_query = f'repo:projectbluefin/bluefin type:discussion "{discussion_title}"'
+              search_query = f'repo:ublue-os/bluefin type:discussion "{discussion_title}"'
               search_gql = json.dumps({
                   "query": """
                     query($q: String!) {
@@ -125,9 +136,13 @@ jobs:
                       continue
 
               # Create the discussion
+              # Giscus strict matching looks for this hash in the discussion body.
+              # Keep it aligned with the `og:title` mapping in GiscusComments.
+              giscus_hash = hashlib.sha1(discussion_title.encode()).hexdigest()
               body = (
                   f"A new blog post is up: **[{title}]({post_url})**\n\n"
-                  "Read it and join the conversation below! 🦕"
+                  "Read it and join the conversation below! 🦕\n\n"
+                  f"<!-- sha1: {giscus_hash} -->"
               )
               create_gql = json.dumps({
                   "query": """
