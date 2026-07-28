@@ -8,10 +8,35 @@ draft: true
 ---
 
 import MusicPlaylist from "@site/src/components/MusicPlaylist";
+import BlogFigure from "@site/src/components/blog/BlogFigure";
 
 <MusicPlaylist title="The Forbidden Factory" playlistId="PLbORkyQL0Pe8" />
 
 If you want to understand how a modern Linux distribution is made, you eventually have to look at the "sausage factory" - the intricate pipeline of code repositories, build systems, test suites, and orchestrators that turn raw source files into something you can boot on physical hardware.
+
+<BlogFigure
+  src="/img/blog/2026-07-27-bluefins-sausage-factory/system-optimization.png"
+  alt="Bluefin system optimization screen showing optimization tools coming soon"
+  caption="Bluefin’s OCI-based build pipeline, from source to bootable image."
+/>
+
+<BlogFigure
+  src="/img/blog/2026-07-27-bluefins-sausage-factory/chairlift-applications.png"
+  alt="ChairLift applications screen showing Flatpak and Homebrew management"
+  caption="ChairLift’s Applications view."
+/>
+
+<BlogFigure
+  src="/img/blog/2026-07-27-bluefins-sausage-factory/chairlift-maintenance.png"
+  alt="ChairLift maintenance screen showing Homebrew and Flatpak cleanup tools"
+  caption="ChairLift’s Maintenance view."
+/>
+
+<BlogFigure
+  src="/img/blog/2026-07-27-bluefins-sausage-factory/chairlift-updates.png"
+  alt="ChairLift updates screen showing Flatpak and Homebrew updates"
+  caption="ChairLift’s Updates view."
+/>
 
 Supakeen posted [The Fedora 45 Sausage Factory](https://supakeen.com/weblog/the-fedora-45-sausage-factory/), and the curtain was pulled back on [Fedora](https://fedoraproject.org/)'s use of `dist-git`, Koji, Bodhi, Pungi, and openQA to make Fedora.
 
@@ -46,8 +71,6 @@ You need to ship the entire git branch. That means releases AND rolling tags, fe
 - [`skopeo`](https://github.com/containers/skopeo) (Transport & Tags): Handles low-level OCI manifest operations - copying images directly between registries, inspecting layers, and managing release tags. `skopeo` is a CNCF Sandbox project and not under the control of any single vendor.
 
 - [`bootc`](https://github.com/containers/bootc) (Target Deployment): Bridges standard OCI container images directly to the target machine's disk. It handles kernel handoff, transactional filesystem updates, and automatic rollbacks. You're not going to believe it ... `bootc` is a CNCF Sandbox project and not under the control of any single vendor.
-
-
 
 ## Practical Walkthrough: Adding an Application
 
