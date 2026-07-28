@@ -136,6 +136,12 @@ as `/img/example.webp`. Use an existing asset slot and existing component. Do no
 edit image dimensions, layout rules, responsive behavior, or asset presentation to
 accommodate a new file.
 
+Blog images live under `static/img/blog/<post-slug>/`. When a post ships the wrong
+screenshot, overwrite the file in place and keep the existing filename so the
+`BlogFigure` `src`, `alt`, and `caption` stay valid. Only edit the MDX when the
+`alt` or `caption` no longer describes the new image. Do not add a second figure to
+work around a wrong one.
+
 Do not commit generated files from `static/data/` or `static/feeds/` unless the
 file is a tracked CI seed explicitly listed in `.gitignore`. The SBOM seed files
 are load-bearing and must remain present:
@@ -174,12 +180,32 @@ changing design code during a content task.
 
 ## Git and scope rules
 
-Work on a topic branch. Do not push directly to `main`. Keep the change limited to
-content files and the required metadata or data source. Do not include unrelated
-working-tree changes.
+Work on a topic branch by default. Do not push directly to `main` on your own
+initiative. Keep the change limited to content files and the required metadata or
+data source. Do not include unrelated working-tree changes.
 
 Before committing, inspect the exact staged paths and run the checks above. Use a
 Conventional Commit such as `docs: update dinosaur character list`.
+
+### Remotes and production
+
+`upstream` is `projectbluefin/documentation` and is the production repository.
+`origin` may be a personal fork; a fork branch never reaches production. Confirm
+with `git remote -v` before pushing and target `upstream` for anything that must
+ship.
+
+Production is <https://docs.projectbluefin.io/>, deployed by
+`.github/workflows/pages.yml` on every push to `upstream/main`. There is no
+separate publish step. When a maintainer explicitly asks for a production update,
+land the change on `upstream/main`; otherwise open a pull request.
+
+Verify a live asset with a cache-busted request, because the CDN serves the old
+copy for a while after a successful deploy:
+
+```bash
+curl -s -o /dev/null -w "%{http_code} %{size_download}\n" \
+  "https://docs.projectbluefin.io/img/blog/<post>/<file>.png?cb=$RANDOM"
+```
 
 The repository also contains a CountMe Cloudflare Worker under
 `workers/countme-proxy/`. It is a separate public service, not site content. Do
