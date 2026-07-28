@@ -26,6 +26,15 @@ The shipped entry point is `build/index.html`. It is generated output. Never edi
 The documentation site uses the root route for the docs plugin. Production routes
 are defined by `sidebars.ts` and the source files in `docs/`.
 
+## Blog discussion automation
+
+`.github/workflows/open-discussion.yml` creates the matching Giscus Discussion in
+`ublue-os/bluefin`. It uses the existing repository secret
+`BLUEFIN_DISCUSSIONS_TOKEN`; do not introduce a new token, GitHub App, or
+cross-repository credential scheme. The secret must have Discussion write access
+in `ublue-os/bluefin`. If it is unavailable, the workflow must fail explicitly
+rather than report success without creating a discussion.
+
 - **Getting Started:** `docs/index.md`, `introduction.md`, `downloads.mdx`,
   `installation.md`, `FAQ.md`
 - **Using Bluefin:** `administration.md`, `tips.mdx`, `ai.md`, `command-line.md`,
