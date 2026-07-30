@@ -60,17 +60,6 @@ Then select "Use Custom Command" and then add the shell you want to use:
 
 ![Ptyxis → Preferences → Profiles → A Profile Setting → Edit... → Shell → Custom Command](/img/user-attachments/8eb039db-7ec1-4847-b3d7-496d69fe9538.png)
 
-### Using `bluefin-cli` with alternate shells
-
-You can enable `bluefin-cli` for `fish` or `zsh` by pre-pending an override to the `$SHELL` variable to the command with:
-
-```
-SHELL=fish ujust bluefin-cli
-SHELL=zsh ujust bluefin-cli
-# Or do it all at once from bash with
-ujust bluefin-cli && SHELL=fish ujust bluefin-cli && SHELL=zsh ujust bluefin-cli
-```
-
 ## Fonts
 
 Homebrew is also used for installing fonts, browse [this page](https://formulae.brew.sh/cask-font/) and install your favorite fonts. They will be copied into `~/.local/share/fonts`
