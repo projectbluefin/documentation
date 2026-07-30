@@ -21,69 +21,6 @@ Generally speaking, if you need a tool or utility, use homebrew. If you need a l
 
 :::
 
-### `bluefin-cli`
-
-`ujust bluefin-cli` will install Bluefin's opt-in command line experience using modern tools with great features that make us more efficient. It is designed to be turned on and off.
-
-:::tip[A greenfield terminal experience]
-
-We love our command line tools. This is intended to be a rendition of what a brand new terminal experience would look like with modern tooling. The traditional tooling is always a toggle away. Keep up with the cool kids without sacrificing your "known good" kit.
-
-:::
-
-The following applications are installed when you run `ujust bluefin-cli`:
-
-| Name                                                                  | Description                                                           |
-| --------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| [atuin](https://formulae.brew.sh/formula/atuin)                       | Improved shell history for zsh, bash, fish and nushell (Off by default) |
-| [bat](https://formulae.brew.sh/formula/bat)                           | Clone of cat(1) with syntax highlighting and Git integration          |
-| [bash-preexec](https://formulae.brew.sh/formula/bash-preexec)         | Bash preexec and precmd functions à la Zsh                            |
-| [bbrew](https://formulae.brew.sh/formula/bbrew)                       | TUI for Homebrew package management                                   |
-| [chezmoi](https://formulae.brew.sh/formula/chezmoi)                   | Manage your dotfiles across multiple diverse machines, securely       |
-| [direnv](https://formulae.brew.sh/formula/direnv)                     | Load/unload environment variables based on $PWD                       |
-| [dysk](https://formulae.brew.sh/formula/dysk)                         | Get information on your mounted disks                                 |
-| [eza](https://formulae.brew.sh/formula/eza)                           | Modern, maintained replacement for ls                                 |
-| [fd](https://formulae.brew.sh/formula/fd)                             | Simple, fast and user-friendly alternative to find                    |
-| [gh](https://formulae.brew.sh/formula/gh)                             | GitHub command-line tool                                              |
-| [glab](https://formulae.brew.sh/formula/glab)                         | Open-source GitLab command-line tool                                  |
-| [rg](https://formulae.brew.sh/formula/ripgrep)                        | Search tool like grep and The Silver Searcher (ripgrep)               |
-| [starship](https://formulae.brew.sh/formula/starship)                 | Cross-shell prompt for astronauts                                     |
-| [shellcheck](https://formulae.brew.sh/formula/shellcheck)             | Static analysis and lint tool, for (ba)sh scripts                     |
-| [stress-ng](https://formulae.brew.sh/formula/stress-ng)               | Stress test a computer system in various selectable ways              |
-| [tealdeer](https://formulae.brew.sh/formula/tealdeer)                 | Very fast implementation of tldr in Rust                              |
-| [trash-cli](https://formulae.brew.sh/formula/trash-cli)               | Command-line interface to the freedesktop.org trashcan                |
-| [television](https://formulae.brew.sh/formula/television)             | General purpose fuzzy finder TUI                                      |
-| [uutils-coreutils](https://formulae.brew.sh/formula/uutils-coreutils) | Cross-platform Rust rewrite of the GNU coreutils                      |
-| [ugrep](https://formulae.brew.sh/formula/ugrep)                       | Ultra fast grep with query UI, fuzzy search, archive search, and more |
-| [yq](https://formulae.brew.sh/formula/yq)                             | Process YAML, JSON, XML, CSV and properties documents from the CLI    |
-| [zoxide](https://formulae.brew.sh/formula/zoxide)                     | Shell extension to navigate your filesystem faster                    |
-
-The community may add new tools over time, re-running `ujust bluefin-cli` will pull in the new tools.
-
-:::tip
-
-What greatness have I been missing? Being set in my old, tired ways.
-
--- Bill Childers (Probably, this quote is made up)
-
-:::
-
-![image](/img/user-attachments/89be8151-5b57-4b71-bbe5-988bef2d6798.jpg)
-
-## `bluefin-cli` for Mac and Windows (WSL)
-
-On a Mac or Windows machine? Want to play with the Bluefin user experience on your native operating system? No problem! We have an early alpha `bluefin-cli` cross-platform app brewing at `brew install ublue-os/tap/bluefin-cli` it should work on MacOS, any Linux, Windows (WSL+PowerShell). you can use it to grab Bluefin artwork and to bring all this Bluefin command line goodness to a terminal near you. Please [open issues with feedback](https://github.com/hanthor/bluefin-cli/issues/new)
-
-### Bold Brew
-
-[Bold Brew](https://bold-brew.com/) (`bbrew`) is included as a text based user interface (TUI) to Brew. This application features full package management for homebrew in a nice nerdy interface:
-
-![boldbrew](/img/user-attachments/d07c0455-2514-4b73-bdd5-51eec50b570d.png)
-
-Bold Brew also acts as a launcher for Bluefin's included curated Brewfiles. Run `ujust bbrew` to select a file to browse and install applications from:
-
-![bbrew](/img/user-attachments/b713c96e-cbf1-45f6-91b0-2399b44c389a.png)
-
 ### Message of the Day and `fastfetch`
 
 The project prefers to have functional bling that is slick but it must also serve a purpose. New terminals (<kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Enter</kbd>) display a message of the day with some basic information:
