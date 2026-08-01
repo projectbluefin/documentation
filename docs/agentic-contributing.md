@@ -175,7 +175,7 @@ A single test with 85% reliability cascaded failures across the system. This is 
 |------------|-----------------------------------|
 | Instructed | `AGENTS.md`, `docs/SKILL.md`, `.github/skills/` files in each repo |
 | Measured | Multi-suite testsuite + nightly baseline + 2-human production Environment gate |
-| Adaptive | skill-drift check, skill-audit cron (Monday 09:00 UTC), Renovate automerge, AI Moderator, `hive-progress-sync.yml` |
+| Adaptive | Renovate automerge, AI Moderator, `hive-progress-sync.yml` |
 | Self-Sustaining / Fully Autonomous | Active trajectory; KubeStellar Hive managing 8 repos with kubestellar-bot dispatching agents |
 
 The human's role at every level is the same: decide what to build, decide what to reject, define what "good" means. Anderson's paper is explicit on this: "Human oversight remains the source of decisions about what to build, what to reject, and defining quality standards."
@@ -259,7 +259,7 @@ When reviewing an agent PR, verify:
 - Is the learning described in that update real and non-obvious?
 - If a skill file exists for the area worked in, was it updated?
 
-A PR that touches CI, build, or packaging without a skill file update is a yellow flag. The skill-drift check will post an advisory warning automatically; your job is to decide whether the omission is justified.
+A PR that touches CI, build, or packaging without a skill file update is a yellow flag. Nothing flags it automatically — the skill-drift check was retired — so this is a judgement the reviewer has to make.
 
 ---
 
@@ -576,7 +576,7 @@ Look at `.github/skills/` in the PR diff. Ask:
 - If yes, is there a skill file covering this area?
 - If yes, was it updated in this PR?
 
-The skill-drift check will post an advisory warning automatically when it detects code changes without a skill update. Your job is to decide if the omission is justified (e.g., a one-liner fix with nothing non-obvious) or a gap that will cost a future agent time.
+Nothing warns you automatically about code changes landing without a skill update; the skill-drift check was retired. When you spot one, decide whether the omission is justified (a one-liner with nothing non-obvious) or a gap that will cost a future agent time.
 
 ### Red flags
 
@@ -768,7 +768,7 @@ All contributors follow the [Universal Blue Code of Conduct](https://github.com/
 
 **skill file** — A Markdown file in `.github/skills/` documenting non-obvious patterns, workarounds, and conventions. Required to be updated (or created) in the same PR as the work that discovered the learning.
 
-**skill-drift** — The gap between what a skill file documents and what the code currently does. Detected by the `skill-drift-check.yml` workflow (advisory PR warning) and the `skill-audit.yml` cron (Monday 09:00 UTC, opens issues).
+**skill-drift** — The gap between what a skill file documents and what the code currently does. Formerly detected by the `skill-drift-check.yml` workflow and the `skill-audit.yml` cron; both were retired after the check decayed into a no-op that always passed. It is now caught in review and by the self-repair loop.
 
 **testing stream** — The `:testing` tag. Built from every push to `main` (which advances when PRs merge to `testing`). This is what developers and testers run. All PRs target the `testing` branch.
 
