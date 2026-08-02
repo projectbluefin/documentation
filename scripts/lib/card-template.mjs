@@ -124,18 +124,29 @@ function versionChip(name, version, colors, prevVersion) {
  * @param {number} dateMs   – epoch ms (0 = no date)
  * @param {"light"|"dark"} theme
  * @param {string} mascotDataUri – PNG as data URI
+ * @param {string} [titleOverride] – release-specific title
+ * @param {string[]} [headerPackageNames] – package names to display as header chips
  * @returns Satori element tree
  */
-export function renderCard(release, stream, dateMs, theme, mascotDataUri) {
+export function renderCard(
+  release,
+  stream,
+  dateMs,
+  theme,
+  mascotDataUri,
+  titleOverride,
+  headerPackageNames
+) {
   const colors = THEMES[theme];
   const accentColor = primary(stream, colors);
 
   const title =
-    stream === "lts"
+    titleOverride ||
+    (stream === "lts"
       ? "Bluefin LTS"
       : stream === "dakota"
       ? "Bluefin Dakota"
-      : "Bluefin";
+      : "Bluefin");
 
   const dateStr =
     dateMs > 0
@@ -154,7 +165,7 @@ export function renderCard(release, stream, dateMs, theme, mascotDataUri) {
     "sudo-rs", "uutils-coreutils",
   ];
 
-  const headerChips = HEADER_NAMES.flatMap((name) => {
+  const headerChips = (headerPackageNames ?? HEADER_NAMES).flatMap((name) => {
     const pkg = (release.majorPackages ?? []).find(
       (p) => p.name.toLowerCase() === name.toLowerCase()
     );

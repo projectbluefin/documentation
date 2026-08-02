@@ -1,0 +1,67 @@
+name: Render release card
+description: Render deterministic light and dark release cards from an immutable release context. Requires Node 24.
+
+inputs:
+  context-path:
+    description: Required path to the release-context JSON, relative to the caller workspace.
+    required: true
+  output-dir:
+    description: Required output directory for release-card.png and release-card-dark.png, relative to the caller workspace.
+    required: true
+
+outputs:
+  light-path:
+    description: Absolute path to release-card.png in the caller workspace.
+    value: ${{ steps.render.outputs.light-path }}
+  dark-path:
+    description: Absolute path to release-card-dark.png in the caller workspace.
+    value: ${{ steps.render.outputs.dark-path }}
+
+runs:
+  using: composite
+  steps:
+    - id: render
+      shell: bash
+      env:
+        CONTEXT_PATH: ${{ inputs.context-path }}
+        OUTPUT_DIR: ${{ inputs.output-dir }}
+      run: |
+        set -euo pipefail
+
+        repository_root="$(cd "${GITHUB_ACTION_PATH}/../../.." && pwd)"
+        workspace_root="$(cd "${GITHUB_WORKSPACE}" && pwd)"
+
+        resolve_workspace_path() {
+          local input_path="$1"
+          if [[ -z "${input_path}" || "${input_path}" = /* ]]; then
+            echo "Action paths must be non-empty and relative to GITHUB_WORKSPACE." >&2
+            exit 1
+          fi
+
+          local resolved_path
+          resolved_path="$(realpath -m -- "${workspace_root}/${input_path}")"
+          case "${resolved_path}" in
+            "${workspace_root}"/*) printf '%s\n' "${resolved_path}" ;;
+            *)
+              echo "Action paths must remain within GITHUB_WORKSPACE." >&2
+              exit 1
+              ;;
+          esac
+        }
+
+        context_path="$(resolve_workspace_path "${CONTEXT_PATH}")"
+        output_dir="$(resolve_workspace_path "${OUTPUT_DIR}")"
+
+        cd "${repository_root}"
+        npm ci
+        node "${repository_root}/scripts/render-release-card.mjs" \
+          --context "${context_path}" \
+          --output-dir "${output_dir}"
+
+        light_path="${output_dir}/release-card.png"
+        dark_path="${output_dir}/release-card-dark.png"
+        [[ -s "${light_path}" && -s "${dark_path}" ]]
+        {
+          printf 'light-path=%s\n' "${light_path}"
+          printf 'dark-path=%s\n' "${dark_path}"
+        } >> "${GITHUB_OUTPUT}"
