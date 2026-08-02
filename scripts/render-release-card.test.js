@@ -48,6 +48,39 @@ function testDirectory() {
   return mkdtempSync(join(process.cwd(), "scripts", ".release-card-test-"));
 }
 
+function renderedElementText(node) {
+  if (typeof node === "string") return node;
+  if (!node) return "";
+  if (Array.isArray(node)) return node.map(renderedElementText).join("\n");
+  return renderedElementText(node?.props?.children);
+}
+
+function renderedDateInTimeZone(timeZone) {
+  const script = `
+    import { createReleaseCardElement } from "./scripts/render-release-card.mjs";
+    const context = JSON.parse(process.env.RELEASE_CONTEXT);
+    function text(node) {
+      if (typeof node === "string") return node;
+      if (!node) return "";
+      if (Array.isArray(node)) return node.map(text).join("\\n");
+      return text(node?.props?.children);
+    }
+    console.log(text(createReleaseCardElement(context, "light")));
+  `;
+  return execFileSync(
+    process.execPath,
+    ["--input-type=module", "--eval", script],
+    {
+      cwd: process.cwd(),
+      env: {
+        ...process.env,
+        RELEASE_CONTEXT: JSON.stringify(bluefinContext),
+        TZ: timeZone,
+      },
+    },
+  ).toString();
+}
+
 async function renderFixture(context) {
   const { renderReleaseCards } = await import("./render-release-card.mjs");
   const directory = testDirectory();
@@ -70,7 +103,7 @@ for (const [name, context] of [
   ["Dakota", dakotaContext],
 ]) {
   test(`${name} release context renders distinct, non-blank light and dark cards`, async () => {
-    const { validatePngBuffer, releaseCardText } =
+    const { createReleaseCardElement, validatePngBuffer } =
       await import("./render-release-card.mjs");
     const fixture = await renderFixture(context);
     try {
@@ -89,7 +122,9 @@ for (const [name, context] of [
       assert.ok(darkInfo.nonTransparentPixels > 0);
       assert.notDeepEqual(fixture.light, fixture.dark);
 
-      const text = releaseCardText(context);
+      const text = renderedElementText(
+        createReleaseCardElement(context, "light"),
+      );
       assert.match(text, new RegExp(context.tag));
       for (const component of context.components) {
         assert.match(text, new RegExp(component.version));
@@ -118,6 +153,25 @@ test("invalid release context fails before image creation", async () => {
   } finally {
     rmSync(directory, { recursive: true, force: true });
   }
+});
+
+test("published_at requires a timezone-qualified ISO-8601 timestamp", async () => {
+  const { validateReleaseContext } = await import("./render-release-card.mjs");
+  assert.throws(
+    () =>
+      validateReleaseContext({
+        ...bluefinContext,
+        published_at: "2026-08-02T00:00:00",
+      }),
+    /timezone-qualified ISO-8601 timestamp/,
+  );
+});
+
+test("rendered dates are invariant across process time zones", () => {
+  const losAngeles = renderedDateInTimeZone("America/Los_Angeles");
+  const tokyo = renderedDateInTimeZone("Asia/Tokyo");
+  assert.equal(losAngeles, tokyo);
+  assert.match(losAngeles, /August 2, 2026/);
 });
 
 test("command-line renderer writes the documented output names", () => {

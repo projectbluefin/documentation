@@ -10,6 +10,8 @@ import { H, renderCard, W } from "./lib/card-template.mjs";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const PNG_SIGNATURE = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
+const TIMEZONE_ISO_8601 =
+  /^(\d{4})-(\d{2})-(\d{2})T(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d{1,3})?)?(?:Z|[+-](?:[01]\d|2[0-3]):[0-5]\d)$/;
 
 function fail(message) {
   throw new Error(`Invalid release card context: ${message}`);
@@ -37,6 +39,23 @@ function nonNegativeInteger(value, path) {
   return value;
 }
 
+function validatePublishedAt(value) {
+  const timestamp = requiredString(value, "published_at");
+  const match = TIMEZONE_ISO_8601.exec(timestamp);
+  if (!match) {
+    fail("published_at must be a timezone-qualified ISO-8601 timestamp");
+  }
+
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  const daysInMonth = new Date(Date.UTC(year, month, 0)).getUTCDate();
+  if (month < 1 || month > 12 || day < 1 || day > daysInMonth) {
+    fail("published_at must be a valid calendar date");
+  }
+  return timestamp;
+}
+
 export function validateReleaseContext(input) {
   if (!input || typeof input !== "object" || Array.isArray(input)) {
     fail("must be a JSON object");
@@ -47,10 +66,7 @@ export function validateReleaseContext(input) {
     fail("product must be bluefin or dakota");
   }
 
-  const publishedAt = requiredString(input.published_at, "published_at");
-  if (!Number.isFinite(Date.parse(publishedAt))) {
-    fail("published_at must be an ISO-8601 timestamp");
-  }
+  const publishedAt = validatePublishedAt(input.published_at);
 
   if (
     !Array.isArray(input.components) ||
@@ -184,30 +200,30 @@ function templateRelease(context) {
   };
 }
 
-export function releaseCardText(input) {
+function cardElement(context, theme, root) {
+  const { fonts, mascotDataUri } = loadAssets(root, context.product);
+  const stream = context.product === "dakota" ? "dakota" : "stable";
+  return {
+    element: renderCard(
+      templateRelease(context),
+      stream,
+      Date.parse(context.published_at),
+      theme,
+      mascotDataUri,
+      context.project_name,
+      context.components.map((component) => component.label),
+    ),
+    fonts,
+  };
+}
+
+export function createReleaseCardElement(input, theme, { root = ROOT } = {}) {
   const context = validateReleaseContext(input);
-  return [
-    context.project_name,
-    context.tag,
-    ...context.components.flatMap((component) => [
-      component.label,
-      component.version,
-    ]),
-  ].join("\n");
+  return cardElement(context, theme, root).element;
 }
 
 async function renderTheme(context, theme, root) {
-  const { fonts, mascotDataUri } = loadAssets(root, context.product);
-  const stream = context.product === "dakota" ? "dakota" : "stable";
-  const element = renderCard(
-    templateRelease(context),
-    stream,
-    Date.parse(context.published_at),
-    theme,
-    mascotDataUri,
-    context.project_name,
-    context.components.map((component) => component.label),
-  );
+  const { element, fonts } = cardElement(context, theme, root);
   const svg = await satori(element, { width: W, height: H, fonts });
   const rendered = new Resvg(svg, {
     fitTo: { mode: "width", value: W * 2 },
