@@ -1,0 +1,720 @@
+---
+title: "Jovial July 2026"
+date: 2026-07-31
+slug: /2026/07
+tags: [monthly-report, project-activity]
+---
+
+import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
+
+
+# Summary
+
+| | |
+|--------|-------|
+| **Total Items** | 82 (19 planned, 63 opportunistic) |
+| **Automation** | 83.1% (403 bot PRs out of 485 total PRs) |
+| **Contributors** | 15 total, 0 new |
+
+
+## Desktop
+
+![area/gnome](https://img.shields.io/badge/area%2Fgnome-28A745?style=flat-square) ![area/aurora](https://img.shields.io/badge/area%2Faurora-1D76DB?style=flat-square) ![area/bling](https://img.shields.io/badge/area%2Fbling-F9C74F?style=flat-square)
+
+*GNOME desktop environment, Aurora variant (KDE), and terminal enhancements*
+
+#### Planned Work
+
+- feat: add brewfile for common fonts by [@​theMimolet](https://github.com/theMimolet) in [#891](https://github.com/projectbluefin/common/pull/891)
+- fix(gnome): disable blur-my-shell popup blur by default by [@​castrojo](https://github.com/castrojo) in [#813](https://github.com/projectbluefin/common/pull/813)
+- fix(bluefin): set image and video MIME defaults to shipped GNOME apps by [@​castrojo](https://github.com/castrojo) in [#824](https://github.com/projectbluefin/common/pull/824)
+
+#### Opportunistic Work
+
+- test: cover GNOME extension build stages by [@​castrojo](https://github.com/castrojo) in [#864](https://github.com/projectbluefin/bluefin/pull/864)
+- feat: add cloud dancer files by [@​delphicmelody](https://github.com/delphicmelody) in [#97](https://github.com/ublue-os/artwork/pull/97)
+
+##### Dakota (GNOME OS Prototype)
+
+- fix: restore Bluefin dinosaur avatars in GNOME user-account picker by [@​castrojo](https://github.com/castrojo) in [#1241](https://github.com/projectbluefin/dakota/pull/1241)
+
+---
+
+## Development
+
+![area/dx](https://img.shields.io/badge/area%2Fdx-17A2B8?style=flat-square)
+
+*Development tools and IDE integrations*
+
+#### Planned Work
+
+- chore(deps): update golang:alpine docker digest to 9097beb by [@​castrojo](https://github.com/castrojo) in [#829](https://github.com/projectbluefin/common/pull/829)
+
+#### Opportunistic Work
+
+> Status: _ChillOps_
+
+### Homebrew
+
+#### New Applications
+
+The following applications were added to our Homebrew taps this month:
+
+| Application | Description | Status |
+|-------------|-------------|--------|
+| [**1password-cli-linux**](https://github.com/ublue-os/homebrew-tap/pull/486) | Command-line interface for 1Password | ![Stable](https://img.shields.io/badge/stable-blue?style=flat-square) |
+| [**claude-desktop-linux**](https://github.com/ublue-os/homebrew-experimental-tap/pull/483) | Anthropic's official Claude AI desktop app | ![Experimental](https://img.shields.io/badge/experimental-orange?style=flat-square) |
+| [**devpod-linux**](https://github.com/ublue-os/homebrew-experimental-tap/pull/469) | Reproducible developer environments using dev containers | ![Experimental](https://img.shields.io/badge/experimental-orange?style=flat-square) |
+
+Use `ujust bbrew` to browse and install these packages. Follow [the tap instructions](https://github.com/ublue-os/homebrew-tap) if you want to do it by hand.
+
+#### Package Updates
+
+![Production Tap](https://img.shields.io/badge/production--tap-37%20updates-blue?style=flat-square) ![Experimental Tap](https://img.shields.io/badge/experimental--tap-19%20updates-orange?style=flat-square)
+
+**56 automated updates** this month via GitHub Actions. Homebrew tap version bumps ensure Bluefin users always have access to the latest stable releases.
+
+##### Quick Summary
+
+| Tap | Updates |
+|-----|---------|
+| production-tap | 37 |
+| experimental-tap | 19 |
+
+<details>
+<summary>View all production-tap updates (37)</summary>
+
+| Package | Versions | PR |
+|---------|----------|-----|
+| goose-linux | 1.41.0 → 1.45.0 (5 updates) | [#522](https://github.com/ublue-os/homebrew-tap/pull/522) |
+| antigravity-cli-linux | 1.1.4 → 1.1.8 (5 updates) | [#515](https://github.com/ublue-os/homebrew-tap/pull/515) |
+| jetbrains-toolbox-linux | 3.6.1.85592 → 3.6.3.86383 (3 updates) | [#519](https://github.com/ublue-os/homebrew-tap/pull/519) |
+| visual-studio-code-linux | 1.129.1 → 1.131.0 (3 updates) | [#520](https://github.com/ublue-os/homebrew-tap/pull/520) |
+| antigravity-linux | 2.3.1 → 2.4.3 (3 updates) | [#517](https://github.com/ublue-os/homebrew-tap/pull/517) |
+| 1password-gui-linux | 8.12.28 → 8.12.30 (2 updates) | [#516](https://github.com/ublue-os/homebrew-tap/pull/516) |
+| lm-studio-linux | 0.4.19 → 0.4.20 (2 updates) | [#501](https://github.com/ublue-os/homebrew-tap/pull/501) |
+| antigravity-ide-linux | 2.1.1 | [#490](https://github.com/ublue-os/homebrew-tap/pull/490) |
+| vscodium-linux | 1.126.04524 | [#493](https://github.com/ublue-os/homebrew-tap/pull/493) |
+| framework-tool | 0.6.5 | [#475](https://github.com/ublue-os/homebrew-tap/pull/475) |
+
+</details>
+
+<details>
+<summary>View all experimental-tap updates (19)</summary>
+
+| Package | Versions | PR |
+|---------|----------|-----|
+| zed-linux | 1.10.3 → 1.13.1 (5 updates) | [#491](https://github.com/ublue-os/homebrew-experimental-tap/pull/491) |
+| emdash-linux | 1.1.38 → 1.1.40 (2 updates) | [#481](https://github.com/ublue-os/homebrew-experimental-tap/pull/481) |
+| craft-agents-linux | 0.11.1 → 0.11.2 (2 updates) | [#484](https://github.com/ublue-os/homebrew-experimental-tap/pull/484) |
+| dockerd-linux | 29.6.2 | [#480](https://github.com/ublue-os/homebrew-experimental-tap/pull/480) |
+
+</details>
+
+---
+
+## Ecosystem
+
+![area/brew](https://img.shields.io/badge/area%2Fbrew-E8590C?style=flat-square) ![area/bluespeed](https://img.shields.io/badge/area%2Fbluespeed-1D76DB?style=flat-square) ![area/flatpak](https://img.shields.io/badge/area%2Fflatpak-9333EA?style=flat-square)
+
+*Homebrew packages, AI/ML tools (Bluespeed), and Flatpak applications*
+
+#### Planned Work
+
+- feat(bazaar): add Freelens to curated developer tools by [@​elephantum](https://github.com/elephantum) in [#804](https://github.com/projectbluefin/common/pull/804)
+- feat(brew): add rancher-cli & rancher-machine to k8s-tools by [@​KiKaraage](https://github.com/KiKaraage) in [#809](https://github.com/projectbluefin/common/pull/809)
+- test: cover OEM brew hook by [@​castrojo](https://github.com/castrojo) in [#841](https://github.com/projectbluefin/common/pull/841)
+
+#### Opportunistic Work
+
+- Fix antigravity asar json header by [@​Tichael](https://github.com/Tichael) in [#496](https://github.com/ublue-os/homebrew-tap/pull/496)
+- Fix Antigravity URLs by [@​Tichael](https://github.com/Tichael) in [#494](https://github.com/ublue-os/homebrew-tap/pull/494)
+- Fix sha256 Linux Casks evaluation by [@​Tichael](https://github.com/Tichael) in [#487](https://github.com/ublue-os/homebrew-tap/pull/487)
+- Add 1password-cli-linux cask by [@​tunix](https://github.com/tunix) in [#486](https://github.com/ublue-os/homebrew-tap/pull/486)
+- fix: migrate OpenCode Desktop to Electron ver, bump to 1.18.9 by [@​KiKaraage](https://github.com/KiKaraage) in [#487](https://github.com/ublue-os/homebrew-experimental-tap/pull/487)
+- feat: add claude-desktop-linux (1.24012.9) by [@​KiKaraage](https://github.com/KiKaraage) in [#483](https://github.com/ublue-os/homebrew-experimental-tap/pull/483)
+- feat: add devpod-linux by [@​hanthor](https://github.com/hanthor) in [#469](https://github.com/ublue-os/homebrew-experimental-tap/pull/469)
+- Bump distrobox2 to rc3 by [@​jumpyvi](https://github.com/jumpyvi) in [#458](https://github.com/ublue-os/homebrew-experimental-tap/pull/458)
+
+---
+
+## System Services & Policies
+
+![area/services](https://img.shields.io/badge/area%2Fservices-4A90E2?style=flat-square) ![area/policy](https://img.shields.io/badge/area%2Fpolicy-5B8BC1?style=flat-square)
+
+*Systemd services and system-level policies*
+
+#### Planned Work
+
+> Status: _ChillOps_
+
+#### Opportunistic Work
+
+- [quality] add BATS unit tests for 20-packages.sh and 40-services.sh by [@​clubanderson](https://github.com/clubanderson) in [#441](https://github.com/projectbluefin/bluefin-lts/pull/441)
+
+---
+
+## Hardware
+
+![area/hardware](https://img.shields.io/badge/area%2Fhardware-F59E0B?style=flat-square) ![area/nvidia](https://img.shields.io/badge/area%2Fnvidia-76B900?style=flat-square) ![aarch64](https://img.shields.io/badge/aarch64-F59E0B?style=flat-square)
+
+*Hardware support, drivers, NVIDIA GPU, and ARM64 architecture*
+
+#### Planned Work
+
+> Status: _ChillOps_
+
+#### Opportunistic Work
+
+- refactor(build): rewrite kernel-akmods orchestration in Python by [@​castrojo](https://github.com/castrojo) in [#914](https://github.com/projectbluefin/bluefin/pull/914)
+- fix(kernel): default LTS to HWE/CoreOS stable by [@​castrojo](https://github.com/castrojo) in [#405](https://github.com/projectbluefin/bluefin-lts/pull/405)
+- feat(build): add NVIDIA example and clarify script activation by [@​Siddhj2206](https://github.com/Siddhj2206) in [#164](https://github.com/projectbluefin/finpilot/pull/164)
+
+##### Dakota (GNOME OS Prototype)
+
+- fix(nvidia): preserve Mesa GBM on hybrid GPUs by [@​ahmedadan](https://github.com/ahmedadan) in [#1239](https://github.com/projectbluefin/dakota/pull/1239)
+- feat(gaming): add gaming variant and adopt the OGC kernel for all variants by [@​ahmedadan](https://github.com/ahmedadan) in [#1212](https://github.com/projectbluefin/dakota/pull/1212)
+- fix(kernel): enable ATH12K across variants by [@​daegalus](https://github.com/daegalus) in [#1226](https://github.com/projectbluefin/dakota/pull/1226)
+
+---
+
+## Infrastructure
+
+![area/iso](https://img.shields.io/badge/area%2Fiso-A0522D?style=flat-square) ![area/upstream](https://img.shields.io/badge/area%2Fupstream-5CB85C?style=flat-square) ![area/buildstream](https://img.shields.io/badge/area%2Fbuildstream-0066FF?style=flat-square) ![area/finpilot](https://img.shields.io/badge/area%2Ffinpilot-7C3AED?style=flat-square) ![area/just](https://img.shields.io/badge/area%2Fjust-E99695?style=flat-square) ![area/testing](https://img.shields.io/badge/area%2Ftesting-F59E0B?style=flat-square)
+
+*ISO images, upstream integration, build systems, and testing frameworks*
+
+#### Planned Work
+
+- feat(brew): re-enable ChairLift bootc staging via system-integration split by [@​castrojo](https://github.com/castrojo) in [#892](https://github.com/projectbluefin/common/pull/892)
+- fix(framework): remove obsolete hid_sensor_hub karg by [@​castrojo](https://github.com/castrojo) in [#896](https://github.com/projectbluefin/common/pull/896)
+- feat(ujust): streamline report submission by [@​castrojo](https://github.com/castrojo) in [#895](https://github.com/projectbluefin/common/pull/895)
+- feat(ujust): confirm existing issue reports by [@​castrojo](https://github.com/castrojo) in [#842](https://github.com/projectbluefin/common/pull/842)
+- fix(containerfile): use per-file raw fetches for game-devices-udev by [@​castrojo](https://github.com/castrojo) in [#825](https://github.com/projectbluefin/common/pull/825)
+- fix(ci): make merge queue lane build-only in build.yml by [@​castrojo](https://github.com/castrojo) in [#826](https://github.com/projectbluefin/common/pull/826)
+- chore(deps): update actions/cache action to v6.1.0 by [@​castrojo](https://github.com/castrojo) in [#830](https://github.com/projectbluefin/common/pull/830)
+- chore(deps): update homebrew/actions digest to 841d750 by [@​castrojo](https://github.com/castrojo) in [#831](https://github.com/projectbluefin/common/pull/831)
+- fix(ujust): select LTS changelog repository by [@​castrojo](https://github.com/castrojo) in [#840](https://github.com/projectbluefin/common/pull/840)
+
+#### Opportunistic Work
+
+- ci(execute-release): enable release e2e gate for stable promotion by [@​castrojo](https://github.com/castrojo) in [#837](https://github.com/projectbluefin/bluefin/pull/837)
+- fix(hardware): mitigate Framework Core Ultra ucsi_acpi s2idle resume failures by [@​castrojo](https://github.com/castrojo) in [#910](https://github.com/projectbluefin/bluefin/pull/910)
+- fix(sleep): disable psmouse wakeup on HP ZBook Ultra G1a + add missing 20-framework.sh hook by [@​castrojo](https://github.com/castrojo) in [#912](https://github.com/projectbluefin/bluefin/pull/912)
+- fix(ci): mirror validate to merge-group queue head by [@​castrojo](https://github.com/castrojo) in [#760](https://github.com/projectbluefin/bluefin/pull/760)
+- fix(release): use build SBOM artifact for stable notes by [@​castrojo](https://github.com/castrojo) in [#764](https://github.com/projectbluefin/bluefin/pull/764)
+- feat(iso): embed stable Titanoboa contract by [@​castrojo](https://github.com/castrojo) in [#828](https://github.com/projectbluefin/bluefin/pull/828)
+- fix(qa): include Wayland test dependencies by [@​castrojo](https://github.com/castrojo) in [#830](https://github.com/projectbluefin/bluefin/pull/830)
+- test: cover changelog generation by [@​castrojo](https://github.com/castrojo) in [#866](https://github.com/projectbluefin/bluefin/pull/866)
+- test: cover image validation gate by [@​castrojo](https://github.com/castrojo) in [#868](https://github.com/projectbluefin/bluefin/pull/868)
+- ci(lab): publish PR results through MergeRaptor by [@​castrojo](https://github.com/castrojo) in [#902](https://github.com/projectbluefin/bluefin/pull/902)
+- fix(ci): publish multi-architecture testing manifests by [@​castrojo](https://github.com/castrojo) in [#433](https://github.com/projectbluefin/bluefin-lts/pull/433)
+- fix(ci): assemble and sign multi-arch manifest list for testing stream by [@​castrojo](https://github.com/castrojo) in [#452](https://github.com/projectbluefin/bluefin-lts/pull/452)
+- fix(ci): authenticate cross-repo discussion creation by [@​castrojo](https://github.com/castrojo) in [#1014](https://github.com/projectbluefin/documentation/pull/1014)
+- fix(ci): authenticate discussion backfill workflow by [@​castrojo](https://github.com/castrojo) in [#1013](https://github.com/projectbluefin/documentation/pull/1013)
+- test(iso): add artifact-backed stable installer E2E by [@​castrojo](https://github.com/castrojo) in [#68](https://github.com/projectbluefin/iso/pull/68)
+
+##### Dakota (GNOME OS Prototype)
+
+- fix(changelog): guard glow dependency and fix release-tag regex by [@​Xarianne](https://github.com/Xarianne) in [#1231](https://github.com/projectbluefin/dakota/pull/1231)
+- fix(ci): enqueue with app token so merge groups dispatch checks by [@​ahmedadan](https://github.com/ahmedadan) in [#1233](https://github.com/projectbluefin/dakota/pull/1233)
+- fix(publish): pass push digests downstream instead of re-reading GHCR tags by [@​ahmedadan](https://github.com/ahmedadan) in [#1232](https://github.com/projectbluefin/dakota/pull/1232)
+- chore(ci): delete .github/workflows/actionadon.yml by [@​castrojo](https://github.com/castrojo) in [#1229](https://github.com/projectbluefin/dakota/pull/1229)
+- feat(zswap): transition from zram to optimized zswap configuration by [@​castrojo](https://github.com/castrojo) in [#1131](https://github.com/projectbluefin/dakota/pull/1131)
+- fix(ci): align scorecard push trigger with default branch by [@​castrojo](https://github.com/castrojo) in [#1138](https://github.com/projectbluefin/dakota/pull/1138)
+- fix(ci): align standard builds with upstream caches by [@​ahmedadan](https://github.com/ahmedadan) in [#1160](https://github.com/projectbluefin/dakota/pull/1160)
+- fix(ci): wait for GHCR image visibility by [@​castrojo](https://github.com/castrojo) in [#1180](https://github.com/projectbluefin/dakota/pull/1180)
+- fix(ci): publish dakota:aarch64 + add aarch64 boot gate (Asahi M0) by [@​hanthor](https://github.com/hanthor) in [#1190](https://github.com/projectbluefin/dakota/pull/1190)
+- fix(bluefin): make optional common profile removal idempotent by [@​castrojo](https://github.com/castrojo) in [#1197](https://github.com/projectbluefin/dakota/pull/1197)
+- fix(build): set GOROOT for remote Go builds by [@​castrojo](https://github.com/castrojo) in [#1198](https://github.com/projectbluefin/dakota/pull/1198)
+- fix(bluefin): disable binary stripping on sudo-rs to preserve setuid bit by [@​castrojo](https://github.com/castrojo) in [#1209](https://github.com/projectbluefin/dakota/pull/1209)
+- ci: publish lab results through MergeRaptor checks by [@​castrojo](https://github.com/castrojo) in [#1210](https://github.com/projectbluefin/dakota/pull/1210)
+- ci: make CAS warm-up pull non-fatal and fit a seeded cache by [@​ahmedadan](https://github.com/ahmedadan) in [#1215](https://github.com/projectbluefin/dakota/pull/1215)
+- ci: fit the artifact push timeout to full image uploads by [@​ahmedadan](https://github.com/ahmedadan) in [#1216](https://github.com/projectbluefin/dakota/pull/1216)
+- ci(build): route x86 variants through BuildBox remote execution by [@​ahmedadan](https://github.com/ahmedadan) in [#1227](https://github.com/projectbluefin/dakota/pull/1227)
+
+---
+
+## Documentation
+
+![kind/documentation](https://img.shields.io/badge/kind%2Fdocumentation-0066FF?style=flat-square)
+
+*Documentation improvements and additions*
+
+#### Planned Work
+
+- docs(skills): fix skill-drift staleness, split lab-testing, build real skill catalog by [@​castrojo](https://github.com/castrojo) in [#890](https://github.com/projectbluefin/common/pull/890)
+- ci: add docs-hygiene pre-commit checks by [@​castrojo](https://github.com/castrojo) in [#838](https://github.com/projectbluefin/common/pull/838)
+- docs: document clanker-queue label and human-advisor repo model by [@​castrojo](https://github.com/castrojo) in [#880](https://github.com/projectbluefin/common/pull/880)
+
+#### Opportunistic Work
+
+- docs(qa): clarify ponytail package contract by [@​castrojo](https://github.com/castrojo) in [#832](https://github.com/projectbluefin/bluefin/pull/832)
+- docs: overhaul agent documentation by [@​castrojo](https://github.com/castrojo) in [#862](https://github.com/projectbluefin/bluefin/pull/862)
+- docs(ci): enforce existing discussion token contract by [@​castrojo](https://github.com/castrojo) in [#1015](https://github.com/projectbluefin/documentation/pull/1015)
+- fix: create Giscus discussions for published blog posts by [@​castrojo](https://github.com/castrojo) in [#1012](https://github.com/projectbluefin/documentation/pull/1012)
+- docs: add Bluefin sausage factory draft by [@​castrojo](https://github.com/castrojo) in [#1011](https://github.com/projectbluefin/documentation/pull/1011)
+- Update downloads-testing.mdx by [@​znmeb](https://github.com/znmeb) in [#1010](https://github.com/projectbluefin/documentation/pull/1010)
+- docs: publish agentic development post by [@​castrojo](https://github.com/castrojo) in [#1008](https://github.com/projectbluefin/documentation/pull/1008)
+- docs: add agentic development blog draft by [@​castrojo](https://github.com/castrojo) in [#1007](https://github.com/projectbluefin/documentation/pull/1007)
+- docs: publish Five Years of Bluefin article by [@​castrojo](https://github.com/castrojo) in [#1004](https://github.com/projectbluefin/documentation/pull/1004)
+- fix(countme): deploy worker with zone route by [@​castrojo](https://github.com/castrojo) in [#1001](https://github.com/projectbluefin/documentation/pull/1001)
+- docs(blog): publish Bluefin LTS/GDX migration post by [@​castrojo](https://github.com/castrojo) in [#998](https://github.com/projectbluefin/documentation/pull/998)
+- fix(brew): rsync @ublue-os/brew files and clarify Homebrew setup docs (#131) by [@​Siddhj2206](https://github.com/Siddhj2206) in [#138](https://github.com/projectbluefin/finpilot/pull/138)
+
+##### Dakota (GNOME OS Prototype)
+
+- docs(skills): document verification path for testsuite-owned E2E failures by [@​castrojo](https://github.com/castrojo) in [#1240](https://github.com/projectbluefin/dakota/pull/1240)
+- docs(skills): add merge-queue sequential queuing lesson by [@​castrojo](https://github.com/castrojo) in [#1203](https://github.com/projectbluefin/dakota/pull/1203)
+
+---
+
+## Tech Debt
+
+![kind/tech-debt](https://img.shields.io/badge/kind%2Ftech-debt-D4A259?style=flat-square) ![kind/parity](https://img.shields.io/badge/kind%2Fparity-9333EA?style=flat-square)
+
+*Maintenance work and feature parity between variants*
+
+> Status: _ChillOps_
+
+---
+
+## Automation
+
+![kind/automation](https://img.shields.io/badge/kind%2Fautomation-5B8BC1?style=flat-square) ![kind/github-action](https://img.shields.io/badge/kind%2Fgithub-action-2088FF?style=flat-square) ![kind/renovate](https://img.shields.io/badge/kind%2Frenovate-3B82F6?style=flat-square)
+
+*CI/CD pipelines, GitHub Actions, and automated dependency updates*
+
+> Status: _ChillOps_
+
+---
+
+## Localization
+
+![kind/translation](https://img.shields.io/badge/kind%2Ftranslation-8B5CF6?style=flat-square)
+
+*Translation and internationalization work*
+
+> Status: _ChillOps_
+
+---
+
+## Bot Activity
+
+**Automation Percentage:** 83.1% (403 bot PRs out of 485 total PRs)
+
+| Repository | Bot PRs | % of Total |
+|------------|---------|------------|
+| bluefin | 152 | 31.3% |
+| finpilot | 70 | 14.4% |
+| dakota | 49 | 10.1% |
+| bluefin-lts | 48 | 9.9% |
+| common | 20 | 4.1% |
+| documentation | 7 | 1.4% |
+| iso | 1 | 0.2% |
+
+<details>
+<summary>View bot activity details</summary>
+
+- chore(deps): update docker/login-action digest to dbcb813 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/common#888](https://github.com/projectbluefin/common/pull/888)
+- chore(deps): update taiki-e/install-action digest - abandoned by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/common#801](https://github.com/projectbluefin/common/pull/801)
+- chore(deps): update docker/login-action digest to c99871d by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/common#810](https://github.com/projectbluefin/common/pull/810)
+- chore(deps): update github/codeql-action digest to 54f647b by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/common#811](https://github.com/projectbluefin/common/pull/811)
+- chore(deps): update docker.io/library/golang:alpine docker digest to 9097beb by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/common#816](https://github.com/projectbluefin/common/pull/816)
+- chore(deps): update docker.io/library/golang:alpine docker digest to 0178a64 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/common#832](https://github.com/projectbluefin/common/pull/832)
+- chore(deps): update docker/login-action digest to af1e73f by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/common#833](https://github.com/projectbluefin/common/pull/833)
+- chore(deps): update github/codeql-action digest to 7188fc3 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/common#834](https://github.com/projectbluefin/common/pull/834)
+- chore(deps): update golang:alpine docker digest to 0178a64 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/common#835](https://github.com/projectbluefin/common/pull/835)
+- chore(deps): update actions/checkout action to v7.0.1 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/common#844](https://github.com/projectbluefin/common/pull/844)
+- chore(deps): update actions/checkout digest to 3d3c42e by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/common#843](https://github.com/projectbluefin/common/pull/843)
+- chore(deps): update github/codeql-action digest to e064762 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/common#850](https://github.com/projectbluefin/common/pull/850)
+- chore(deps): update github/codeql-action digest to e4fba86 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/common#851](https://github.com/projectbluefin/common/pull/851)
+- chore(deps): update docker/login-action digest to 06fb636 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/common#856](https://github.com/projectbluefin/common/pull/856)
+- chore(deps): update redhat-actions/buildah-build action to v3 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/common#858](https://github.com/projectbluefin/common/pull/858)
+- chore(deps): update ossf/scorecard-action action to v2.4.4 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/common#857](https://github.com/projectbluefin/common/pull/857)
+- chore(deps): update redhat-actions/push-to-registry action to v3 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/common#859](https://github.com/projectbluefin/common/pull/859)
+- chore(deps): update docker/login-action digest to abd2ef4 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/common#860](https://github.com/projectbluefin/common/pull/860)
+- chore(deps): update redhat-actions/buildah-build digest to 3a51aad by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/common#867](https://github.com/projectbluefin/common/pull/867)
+- chore(deps): update docker/login-action digest to 371161b by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/common#868](https://github.com/projectbluefin/common/pull/868)
+- ci(promote): bluefin testing → main 2026-07-31 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#938](https://github.com/projectbluefin/bluefin/pull/938)
+- ci(promote): bluefin testing → main 2026-07-30 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#936](https://github.com/projectbluefin/bluefin/pull/936)
+- ci(promote): bluefin testing → main 2026-07-30 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#933](https://github.com/projectbluefin/bluefin/pull/933)
+- ci(promote): bluefin testing → main 2026-07-29 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#931](https://github.com/projectbluefin/bluefin/pull/931)
+- ci(promote): bluefin testing → main 2026-07-29 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#927](https://github.com/projectbluefin/bluefin/pull/927)
+- ci(promote): bluefin testing → main 2026-07-29 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#926](https://github.com/projectbluefin/bluefin/pull/926)
+- ci(promote): bluefin testing → main 2026-07-29 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#924](https://github.com/projectbluefin/bluefin/pull/924)
+- ci(promote): bluefin testing → main 2026-07-29 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#922](https://github.com/projectbluefin/bluefin/pull/922)
+- ci(promote): bluefin testing → main 2026-07-01 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#745](https://github.com/projectbluefin/bluefin/pull/745)
+- ci(promote): bluefin testing → main 2026-07-01 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#761](https://github.com/projectbluefin/bluefin/pull/761)
+- ci(promote): bluefin testing → main 2026-07-01 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#763](https://github.com/projectbluefin/bluefin/pull/763)
+- ci(promote): bluefin testing → main 2026-07-01 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#765](https://github.com/projectbluefin/bluefin/pull/765)
+- ci(promote): bluefin testing → main 2026-07-01 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#767](https://github.com/projectbluefin/bluefin/pull/767)
+- ci(promote): bluefin testing → main 2026-07-01 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#769](https://github.com/projectbluefin/bluefin/pull/769)
+- ci(promote): bluefin testing → main 2026-07-02 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#772](https://github.com/projectbluefin/bluefin/pull/772)
+- ci(promote): bluefin testing → main 2026-07-02 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#774](https://github.com/projectbluefin/bluefin/pull/774)
+- ci(promote): bluefin testing → main 2026-07-03 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#776](https://github.com/projectbluefin/bluefin/pull/776)
+- ci(promote): bluefin testing → main 2026-07-03 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#778](https://github.com/projectbluefin/bluefin/pull/778)
+- ci(promote): bluefin testing → main 2026-07-04 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#780](https://github.com/projectbluefin/bluefin/pull/780)
+- ci(promote): bluefin testing → main 2026-07-04 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#782](https://github.com/projectbluefin/bluefin/pull/782)
+- ci(promote): bluefin testing → main 2026-07-05 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#784](https://github.com/projectbluefin/bluefin/pull/784)
+- ci(promote): bluefin testing → main 2026-07-05 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#786](https://github.com/projectbluefin/bluefin/pull/786)
+- ci(promote): bluefin testing → main 2026-07-06 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#788](https://github.com/projectbluefin/bluefin/pull/788)
+- ci(promote): bluefin testing → main 2026-07-06 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#790](https://github.com/projectbluefin/bluefin/pull/790)
+- ci(promote): bluefin testing → main 2026-07-07 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#792](https://github.com/projectbluefin/bluefin/pull/792)
+- ci(promote): bluefin testing → main 2026-07-08 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#795](https://github.com/projectbluefin/bluefin/pull/795)
+- ci(promote): bluefin testing → main 2026-07-08 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#797](https://github.com/projectbluefin/bluefin/pull/797)
+- ci(promote): bluefin testing → main 2026-07-08 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#799](https://github.com/projectbluefin/bluefin/pull/799)
+- ci(promote): bluefin testing → main 2026-07-09 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#801](https://github.com/projectbluefin/bluefin/pull/801)
+- ci(promote): bluefin testing → main 2026-07-10 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#803](https://github.com/projectbluefin/bluefin/pull/803)
+- ci(promote): bluefin testing → main 2026-07-11 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#805](https://github.com/projectbluefin/bluefin/pull/805)
+- ci(promote): bluefin testing → main 2026-07-11 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#807](https://github.com/projectbluefin/bluefin/pull/807)
+- ci(promote): bluefin testing → main 2026-07-12 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#809](https://github.com/projectbluefin/bluefin/pull/809)
+- ci(promote): bluefin testing → main 2026-07-12 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#811](https://github.com/projectbluefin/bluefin/pull/811)
+- ci(promote): bluefin testing → main 2026-07-13 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#813](https://github.com/projectbluefin/bluefin/pull/813)
+- ci(promote): bluefin testing → main 2026-07-14 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#815](https://github.com/projectbluefin/bluefin/pull/815)
+- ci(promote): bluefin testing → main 2026-07-14 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#817](https://github.com/projectbluefin/bluefin/pull/817)
+- ci(promote): bluefin testing → main 2026-07-15 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#819](https://github.com/projectbluefin/bluefin/pull/819)
+- ci(promote): bluefin testing → main 2026-07-16 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#821](https://github.com/projectbluefin/bluefin/pull/821)
+- ci(promote): bluefin testing → main 2026-07-16 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#823](https://github.com/projectbluefin/bluefin/pull/823)
+- ci(promote): bluefin testing → main 2026-07-17 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#825](https://github.com/projectbluefin/bluefin/pull/825)
+- ci(promote): bluefin testing → main 2026-07-18 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#827](https://github.com/projectbluefin/bluefin/pull/827)
+- ci(promote): bluefin testing → main 2026-07-18 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#829](https://github.com/projectbluefin/bluefin/pull/829)
+- ci(promote): bluefin testing → main 2026-07-19 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#831](https://github.com/projectbluefin/bluefin/pull/831)
+- ci(promote): bluefin testing → main 2026-07-19 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#834](https://github.com/projectbluefin/bluefin/pull/834)
+- ci(promote): bluefin testing → main 2026-07-19 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#836](https://github.com/projectbluefin/bluefin/pull/836)
+- ci(promote): bluefin testing → main 2026-07-19 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#840](https://github.com/projectbluefin/bluefin/pull/840)
+- ci(promote): bluefin testing → main 2026-07-20 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#843](https://github.com/projectbluefin/bluefin/pull/843)
+- ci(promote): bluefin testing → main 2026-07-20 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#846](https://github.com/projectbluefin/bluefin/pull/846)
+- ci(promote): bluefin testing → main 2026-07-20 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#847](https://github.com/projectbluefin/bluefin/pull/847)
+- ci(promote): bluefin testing → main 2026-07-20 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#849](https://github.com/projectbluefin/bluefin/pull/849)
+- ci(promote): bluefin testing → main 2026-07-20 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#851](https://github.com/projectbluefin/bluefin/pull/851)
+- ci(promote): bluefin testing → main 2026-07-20 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#854](https://github.com/projectbluefin/bluefin/pull/854)
+- ci(promote): bluefin testing → main 2026-07-20 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#855](https://github.com/projectbluefin/bluefin/pull/855)
+- ci(promote): bluefin testing → main 2026-07-20 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#858](https://github.com/projectbluefin/bluefin/pull/858)
+- ci(promote): bluefin testing → main 2026-07-20 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#861](https://github.com/projectbluefin/bluefin/pull/861)
+- ci(promote): bluefin testing → main 2026-07-20 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#863](https://github.com/projectbluefin/bluefin/pull/863)
+- ci(promote): bluefin testing → main 2026-07-20 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#865](https://github.com/projectbluefin/bluefin/pull/865)
+- ci(promote): bluefin testing → main 2026-07-20 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#867](https://github.com/projectbluefin/bluefin/pull/867)
+- ci(promote): bluefin testing → main 2026-07-20 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#869](https://github.com/projectbluefin/bluefin/pull/869)
+- ci(promote): bluefin testing → main 2026-07-21 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#872](https://github.com/projectbluefin/bluefin/pull/872)
+- ci(promote): bluefin testing → main 2026-07-21 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#874](https://github.com/projectbluefin/bluefin/pull/874)
+- ci(promote): bluefin testing → main 2026-07-21 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#876](https://github.com/projectbluefin/bluefin/pull/876)
+- ci(promote): bluefin testing → main 2026-07-21 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#878](https://github.com/projectbluefin/bluefin/pull/878)
+- ci(promote): bluefin testing → main 2026-07-21 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#881](https://github.com/projectbluefin/bluefin/pull/881)
+- ci(promote): bluefin testing → main 2026-07-22 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#883](https://github.com/projectbluefin/bluefin/pull/883)
+- ci(promote): bluefin testing → main 2026-07-22 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#885](https://github.com/projectbluefin/bluefin/pull/885)
+- ci(promote): bluefin testing → main 2026-07-23 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#887](https://github.com/projectbluefin/bluefin/pull/887)
+- ci(promote): bluefin testing → main 2026-07-23 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#889](https://github.com/projectbluefin/bluefin/pull/889)
+- ci(promote): bluefin testing → main 2026-07-23 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#891](https://github.com/projectbluefin/bluefin/pull/891)
+- ci(promote): bluefin testing → main 2026-07-24 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#894](https://github.com/projectbluefin/bluefin/pull/894)
+- ci(promote): bluefin testing → main 2026-07-24 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#897](https://github.com/projectbluefin/bluefin/pull/897)
+- ci(promote): bluefin testing → main 2026-07-25 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#899](https://github.com/projectbluefin/bluefin/pull/899)
+- ci(promote): bluefin testing → main 2026-07-26 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#901](https://github.com/projectbluefin/bluefin/pull/901)
+- ci(promote): bluefin testing → main 2026-07-26 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#904](https://github.com/projectbluefin/bluefin/pull/904)
+- ci(promote): bluefin testing → main 2026-07-27 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#906](https://github.com/projectbluefin/bluefin/pull/906)
+- ci(promote): bluefin testing → main 2026-07-27 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#907](https://github.com/projectbluefin/bluefin/pull/907)
+- ci(promote): bluefin testing → main 2026-07-28 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#909](https://github.com/projectbluefin/bluefin/pull/909)
+- ci(promote): bluefin testing → main 2026-07-28 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin#918](https://github.com/projectbluefin/bluefin/pull/918)
+- chore(deps): update ghcr.io/projectbluefin/common:latest docker digest to 057313c by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#937](https://github.com/projectbluefin/bluefin/pull/937)
+- chore(deps): update github/codeql-action digest to f205ea1 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#935](https://github.com/projectbluefin/bluefin/pull/935)
+- chore(deps): update ghcr.io/projectbluefin/common:latest docker digest to f7934f2 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#932](https://github.com/projectbluefin/bluefin/pull/932)
+- chore(deps): update projectbluefin/testsuite digest to 439f8d7 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#930](https://github.com/projectbluefin/bluefin/pull/930)
+- chore(deps): update projectbluefin/testsuite digest to 0ba17ce by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#925](https://github.com/projectbluefin/bluefin/pull/925)
+- chore(deps): update projectbluefin/testsuite digest to c900852 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#923](https://github.com/projectbluefin/bluefin/pull/923)
+- chore(deps): update ghcr.io/projectbluefin/common:latest docker digest to d0a9ca4 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#920](https://github.com/projectbluefin/bluefin/pull/920)
+- chore(deps): update projectbluefin/testsuite digest to 9941fc1 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#921](https://github.com/projectbluefin/bluefin/pull/921)
+- chore(deps): update projectbluefin/testsuite digest to ecf2eb7 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#762](https://github.com/projectbluefin/bluefin/pull/762)
+- chore(deps): update ghcr.io/projectbluefin/common:latest docker digest to 6c7b21d by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#766](https://github.com/projectbluefin/bluefin/pull/766)
+- chore(deps): update projectbluefin/testsuite digest to f060f65 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#768](https://github.com/projectbluefin/bluefin/pull/768)
+- chore(deps): update github/codeql-action digest to 54f647b by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#770](https://github.com/projectbluefin/bluefin/pull/770)
+- chore(deps): update projectbluefin/testsuite digest to 999da28 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#771](https://github.com/projectbluefin/bluefin/pull/771)
+- chore(deps): update projectbluefin/testsuite digest to 0b5a120 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#773](https://github.com/projectbluefin/bluefin/pull/773)
+- chore(deps): update projectbluefin/testsuite digest to 9cbb083 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#775](https://github.com/projectbluefin/bluefin/pull/775)
+- chore(deps): update projectbluefin/testsuite digest to 38217f9 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#777](https://github.com/projectbluefin/bluefin/pull/777)
+- chore(deps): update ghcr.io/projectbluefin/common:latest docker digest to be5dc61 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#779](https://github.com/projectbluefin/bluefin/pull/779)
+- chore(deps): update projectbluefin/testsuite digest to 6c544bf by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#781](https://github.com/projectbluefin/bluefin/pull/781)
+- chore(deps): update ghcr.io/ublue-os/brew:latest docker digest to c8cddbc by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#783](https://github.com/projectbluefin/bluefin/pull/783)
+- chore(deps): update projectbluefin/testsuite digest to bf2f18f by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#785](https://github.com/projectbluefin/bluefin/pull/785)
+- chore(deps): update projectbluefin/testsuite digest to 02d3abb by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#787](https://github.com/projectbluefin/bluefin/pull/787)
+- chore(deps): update ghcr.io/projectbluefin/common:latest docker digest to 653b75f by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#789](https://github.com/projectbluefin/bluefin/pull/789)
+- chore(deps): update projectbluefin/testsuite digest to e59bc86 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#791](https://github.com/projectbluefin/bluefin/pull/791)
+- chore(deps): update projectbluefin/testsuite digest to bcb4b5f by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#794](https://github.com/projectbluefin/bluefin/pull/794)
+- chore(deps): update github/codeql-action digest to 99df26d by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#796](https://github.com/projectbluefin/bluefin/pull/796)
+- chore(deps): update ghcr.io/ublue-os/brew:latest docker digest to 13b3c31 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#798](https://github.com/projectbluefin/bluefin/pull/798)
+- chore(deps): update projectbluefin/testsuite digest to 33ce7cf by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#800](https://github.com/projectbluefin/bluefin/pull/800)
+- chore(deps): update projectbluefin/testsuite digest to 23fb082 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#802](https://github.com/projectbluefin/bluefin/pull/802)
+- chore(deps): update projectbluefin/testsuite digest to 5b644a4 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#804](https://github.com/projectbluefin/bluefin/pull/804)
+- chore(deps): update projectbluefin/testsuite digest to 5500b84 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#806](https://github.com/projectbluefin/bluefin/pull/806)
+- chore(deps): update ghcr.io/ublue-os/brew:latest docker digest to c6f6775 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#808](https://github.com/projectbluefin/bluefin/pull/808)
+- chore(deps): update projectbluefin/testsuite digest to 739a560 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#810](https://github.com/projectbluefin/bluefin/pull/810)
+- chore(deps): update projectbluefin/testsuite digest to 5b86390 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#812](https://github.com/projectbluefin/bluefin/pull/812)
+- chore(deps): update projectbluefin/testsuite digest to 106a7e8 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#814](https://github.com/projectbluefin/bluefin/pull/814)
+- chore(deps): update projectbluefin/testsuite digest to 4d7befb by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#816](https://github.com/projectbluefin/bluefin/pull/816)
+- chore(deps): update projectbluefin/testsuite digest to 0fbcae5 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#818](https://github.com/projectbluefin/bluefin/pull/818)
+- chore(deps): update projectbluefin/testsuite digest to 02fb232 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#820](https://github.com/projectbluefin/bluefin/pull/820)
+- chore(deps): update github/codeql-action digest to 7188fc3 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#822](https://github.com/projectbluefin/bluefin/pull/822)
+- chore(deps): update projectbluefin/testsuite digest to 02747b2 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#824](https://github.com/projectbluefin/bluefin/pull/824)
+- chore(deps): update projectbluefin/testsuite digest to f1e88bb by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#826](https://github.com/projectbluefin/bluefin/pull/826)
+- chore(deps): update ghcr.io/ublue-os/brew:latest docker digest to 14ad3ac by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#833](https://github.com/projectbluefin/bluefin/pull/833)
+- chore(deps): update projectbluefin/testsuite digest to a98ae60 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#835](https://github.com/projectbluefin/bluefin/pull/835)
+- chore(deps): update ghcr.io/projectbluefin/common:latest docker digest to b750909 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#838](https://github.com/projectbluefin/bluefin/pull/838)
+- chore(deps): update projectbluefin/testsuite digest to 2355f4b by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#839](https://github.com/projectbluefin/bluefin/pull/839)
+- chore(deps): update ghcr.io/projectbluefin/common:latest docker digest to d9a4da4 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#841](https://github.com/projectbluefin/bluefin/pull/841)
+- chore(deps): update projectbluefin/testsuite digest to c63c45d by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#842](https://github.com/projectbluefin/bluefin/pull/842)
+- chore(deps): update projectbluefin/testsuite digest to 4f55126 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#845](https://github.com/projectbluefin/bluefin/pull/845)
+- chore(deps): update projectbluefin/testsuite digest to 1e98833 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#848](https://github.com/projectbluefin/bluefin/pull/848)
+- chore(deps): update projectbluefin/testsuite digest to 98c9851 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#850](https://github.com/projectbluefin/bluefin/pull/850)
+- chore(deps): update ghcr.io/projectbluefin/common:latest docker digest to 80f5aea by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#852](https://github.com/projectbluefin/bluefin/pull/852)
+- chore(deps): update projectbluefin/testsuite digest to d002449 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#853](https://github.com/projectbluefin/bluefin/pull/853)
+- chore(deps): update actions/checkout digest to 3d3c42e by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#856](https://github.com/projectbluefin/bluefin/pull/856)
+- chore(deps): update ghcr.io/projectbluefin/common:latest docker digest to 2dfc002 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#857](https://github.com/projectbluefin/bluefin/pull/857)
+- chore(deps): update projectbluefin/testsuite digest to 589fb4f by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#859](https://github.com/projectbluefin/bluefin/pull/859)
+- chore(deps): update actions/checkout action to v7.0.1 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#860](https://github.com/projectbluefin/bluefin/pull/860)
+- chore(deps): update projectbluefin/testsuite digest to 2c1d781 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#871](https://github.com/projectbluefin/bluefin/pull/871)
+- chore(deps): update projectbluefin/testsuite digest to f749209 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#873](https://github.com/projectbluefin/bluefin/pull/873)
+- chore(deps): update projectbluefin/testsuite digest to 82aeaaf by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#875](https://github.com/projectbluefin/bluefin/pull/875)
+- chore(deps): update github/codeql-action digest to e064762 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#877](https://github.com/projectbluefin/bluefin/pull/877)
+- chore(deps): update dependency pre-commit to v4.6.1 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#880](https://github.com/projectbluefin/bluefin/pull/880)
+- chore(deps): update github/codeql-action digest to e4fba86 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#882](https://github.com/projectbluefin/bluefin/pull/882)
+- chore(deps): update projectbluefin/testsuite digest to 4879278 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#884](https://github.com/projectbluefin/bluefin/pull/884)
+- chore(deps): update projectbluefin/testsuite digest to dc53285 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#886](https://github.com/projectbluefin/bluefin/pull/886)
+- chore(deps): update projectbluefin/testsuite digest to e2ec151 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#888](https://github.com/projectbluefin/bluefin/pull/888)
+- chore(deps): update ossf/scorecard-action action to v2.4.4 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#890](https://github.com/projectbluefin/bluefin/pull/890)
+- chore(deps): update projectbluefin/testsuite digest to 7c1b096 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#893](https://github.com/projectbluefin/bluefin/pull/893)
+- chore(deps): update projectbluefin/testsuite digest to b06faad by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#896](https://github.com/projectbluefin/bluefin/pull/896)
+- chore(deps): update projectbluefin/testsuite digest to 5a22d1e by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#898](https://github.com/projectbluefin/bluefin/pull/898)
+- chore(deps): update ghcr.io/ublue-os/brew:latest docker digest to 07799df by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#900](https://github.com/projectbluefin/bluefin/pull/900)
+- chore(deps): update projectbluefin/testsuite digest to d64e62e by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#903](https://github.com/projectbluefin/bluefin/pull/903)
+- chore(deps): update projectbluefin/testsuite digest to 06b5a24 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#905](https://github.com/projectbluefin/bluefin/pull/905)
+- chore(deps): update projectbluefin/testsuite digest to 2cad49b by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#908](https://github.com/projectbluefin/bluefin/pull/908)
+- chore(deps): update projectbluefin/testsuite digest to df44004 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin#917](https://github.com/projectbluefin/bluefin/pull/917)
+- chore(deps): update docker/login-action digest to dbcb813 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin-lts#461](https://github.com/projectbluefin/bluefin-lts/pull/461)
+- chore(deps): update ghcr.io/projectbluefin/common:latest docker digest to 1da3904 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin-lts#481](https://github.com/projectbluefin/bluefin-lts/pull/481)
+- chore(deps): update quay.io/centos-bootc/centos-bootc:c10s docker digest to 8686592 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin-lts#480](https://github.com/projectbluefin/bluefin-lts/pull/480)
+- chore(deps): update quay.io/centos-bootc/centos-bootc:c10s docker digest to f4e09b1 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin-lts#476](https://github.com/projectbluefin/bluefin-lts/pull/476)
+- chore(deps): update ghcr.io/projectbluefin/common:latest docker digest to 0e11203 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin-lts#468](https://github.com/projectbluefin/bluefin-lts/pull/468)
+- chore(deps): update ghcr.io/projectbluefin/common:latest docker digest to c97ab87 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin-lts#463](https://github.com/projectbluefin/bluefin-lts/pull/463)
+- chore(deps): update quay.io/centos-bootc/centos-bootc:c10s docker digest to 06f4983 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin-lts#464](https://github.com/projectbluefin/bluefin-lts/pull/464)
+- chore(deps): update quay.io/centos-bootc/centos-bootc:c10s docker digest to d26edbe by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin-lts#404](https://github.com/projectbluefin/bluefin-lts/pull/404)
+- chore(deps): update ghcr.io/projectbluefin/common:latest docker digest to 6a37be2 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin-lts#407](https://github.com/projectbluefin/bluefin-lts/pull/407)
+- chore(deps): update quay.io/centos-bootc/centos-bootc:c10s docker digest to 95397e8 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin-lts#409](https://github.com/projectbluefin/bluefin-lts/pull/409)
+- chore(deps): update docker/login-action digest to af1e73f by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin-lts#408](https://github.com/projectbluefin/bluefin-lts/pull/408)
+- chore(deps): update ghcr.io/projectbluefin/common:latest docker digest to 8e8a9b1 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin-lts#410](https://github.com/projectbluefin/bluefin-lts/pull/410)
+- chore(deps): update ghcr.io/ublue-os/brew:latest docker digest to c8cddbc by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin-lts#411](https://github.com/projectbluefin/bluefin-lts/pull/411)
+- chore(deps): update ghcr.io/projectbluefin/common:latest docker digest to 25ea88d by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin-lts#412](https://github.com/projectbluefin/bluefin-lts/pull/412)
+- chore(deps): update ghcr.io/ublue-os/brew:latest docker digest to 13b3c31 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin-lts#416](https://github.com/projectbluefin/bluefin-lts/pull/416)
+- chore(deps): update ghcr.io/ublue-os/brew:latest docker digest to c6f6775 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin-lts#419](https://github.com/projectbluefin/bluefin-lts/pull/419)
+- chore(deps): update ghcr.io/ublue-os/brew:latest docker digest to 14ad3ac by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin-lts#422](https://github.com/projectbluefin/bluefin-lts/pull/422)
+- chore(deps): update ghcr.io/projectbluefin/common:latest docker digest to 94945cc by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin-lts#425](https://github.com/projectbluefin/bluefin-lts/pull/425)
+- chore(deps): update ghcr.io/projectbluefin/common:latest docker digest to f8e551e by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin-lts#424](https://github.com/projectbluefin/bluefin-lts/pull/424)
+- chore(deps): update actions/setup-python action to v7 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin-lts#426](https://github.com/projectbluefin/bluefin-lts/pull/426)
+- chore(deps): update ghcr.io/projectbluefin/common:latest docker digest to a7673de by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin-lts#429](https://github.com/projectbluefin/bluefin-lts/pull/429)
+- chore(deps): update actions/checkout digest to 3d3c42e by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin-lts#431](https://github.com/projectbluefin/bluefin-lts/pull/431)
+- chore(deps): update ghcr.io/projectbluefin/common:latest docker digest to 633ae6e by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin-lts#432](https://github.com/projectbluefin/bluefin-lts/pull/432)
+- chore(deps): update quay.io/centos-bootc/centos-bootc:c10s docker digest to 7e0eccb by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin-lts#438](https://github.com/projectbluefin/bluefin-lts/pull/438)
+- chore(deps): update quay.io/centos-bootc/centos-bootc:c10s docker digest to 197e2f0 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin-lts#443](https://github.com/projectbluefin/bluefin-lts/pull/443)
+- chore(deps): update dependency sigstore/cosign to v3.1.2 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin-lts#444](https://github.com/projectbluefin/bluefin-lts/pull/444)
+- chore(deps): update docker/login-action digest to abd2ef4 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin-lts#446](https://github.com/projectbluefin/bluefin-lts/pull/446)
+- chore(deps): update quay.io/centos-bootc/centos-bootc:c10s docker digest to 02d16a5 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin-lts#445](https://github.com/projectbluefin/bluefin-lts/pull/445)
+- chore(deps): update quay.io/centos-bootc/centos-bootc:c10s docker digest to 02fac3f by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin-lts#447](https://github.com/projectbluefin/bluefin-lts/pull/447)
+- chore(deps): update redhat-actions/buildah-build action to v3 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin-lts#449](https://github.com/projectbluefin/bluefin-lts/pull/449)
+- chore(deps): update redhat-actions/push-to-registry action to v3 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin-lts#450](https://github.com/projectbluefin/bluefin-lts/pull/450)
+- chore(deps): update ghcr.io/ublue-os/brew:latest docker digest to 07799df by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/bluefin-lts#453](https://github.com/projectbluefin/bluefin-lts/pull/453)
+- ci(promote): bluefin-lts testing → main 2026-07-31 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin-lts#482](https://github.com/projectbluefin/bluefin-lts/pull/482)
+- ci(promote): bluefin-lts testing → main 2026-07-30 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin-lts#479](https://github.com/projectbluefin/bluefin-lts/pull/479)
+- ci(promote): bluefin-lts testing → main 2026-07-29 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin-lts#465](https://github.com/projectbluefin/bluefin-lts/pull/465)
+- ci(promote): bluefin-lts testing → main 2026-07-06 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin-lts#402](https://github.com/projectbluefin/bluefin-lts/pull/402)
+- ci(promote): bluefin-lts testing → main 2026-07-06 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin-lts#413](https://github.com/projectbluefin/bluefin-lts/pull/413)
+- ci(promote): bluefin-lts testing → main 2026-07-06 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin-lts#414](https://github.com/projectbluefin/bluefin-lts/pull/414)
+- ci(promote): bluefin-lts testing → main 2026-07-06 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin-lts#415](https://github.com/projectbluefin/bluefin-lts/pull/415)
+- ci(promote): bluefin-lts testing → main 2026-07-09 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin-lts#417](https://github.com/projectbluefin/bluefin-lts/pull/417)
+- ci(promote): bluefin-lts testing → main 2026-07-12 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin-lts#420](https://github.com/projectbluefin/bluefin-lts/pull/420)
+- ci(promote): bluefin-lts testing → main 2026-07-19 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin-lts#423](https://github.com/projectbluefin/bluefin-lts/pull/423)
+- ci(promote): bluefin-lts testing → main 2026-07-20 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin-lts#427](https://github.com/projectbluefin/bluefin-lts/pull/427)
+- ci(promote): bluefin-lts testing → main 2026-07-27 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin-lts#439](https://github.com/projectbluefin/bluefin-lts/pull/439)
+- ci(promote): bluefin-lts testing → main 2026-07-27 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin-lts#457](https://github.com/projectbluefin/bluefin-lts/pull/457)
+- ci(promote): bluefin-lts testing → main 2026-07-27 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin-lts#458](https://github.com/projectbluefin/bluefin-lts/pull/458)
+- ci(promote): bluefin-lts testing → main 2026-07-27 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin-lts#459](https://github.com/projectbluefin/bluefin-lts/pull/459)
+- ci(promote): bluefin-lts testing → main 2026-07-28 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/bluefin-lts#460](https://github.com/projectbluefin/bluefin-lts/pull/460)
+- chore(deps): update all non-major dependencies by [@​renovate](https://github.com/renovate) in [projectbluefin/documentation#996](https://github.com/projectbluefin/documentation/pull/996)
+- chore(deps): lock file maintenance by [@​renovate](https://github.com/renovate) in [projectbluefin/documentation#999](https://github.com/projectbluefin/documentation/pull/999)
+- chore(deps): update mcr.microsoft.com/devcontainers/typescript-node docker tag to v5 by [@​renovate](https://github.com/renovate) in [projectbluefin/documentation#997](https://github.com/projectbluefin/documentation/pull/997)
+- chore(deps): pin dependencies by [@​renovate](https://github.com/renovate) in [projectbluefin/documentation#983](https://github.com/projectbluefin/documentation/pull/983)
+- chore(deps): lock file maintenance by [@​renovate](https://github.com/renovate) in [projectbluefin/documentation#965](https://github.com/projectbluefin/documentation/pull/965)
+- chore(deps): update actions/setup-node action to v7 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/documentation#1002](https://github.com/projectbluefin/documentation/pull/1002)
+- docs(reports): Monthly report for July 2026 by [@​github-actions](https://github.com/github-actions) in [projectbluefin/documentation#995](https://github.com/projectbluefin/documentation/pull/995)
+- chore(deps): update github actions to v7 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/iso#64](https://github.com/projectbluefin/iso/pull/64)
+- chore(deps): update xdg-terminal-exec: v0.14.2-0 -> v0.14.3-0 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/dakota#1252](https://github.com/projectbluefin/dakota/pull/1252)
+- chore(deps): update common: v2026.07-57 -> v2026.07-63 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/dakota#1243](https://github.com/projectbluefin/dakota/pull/1243)
+- chore(deps): update taiki-e/install-action digest to 6a1bd70 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/dakota#1250](https://github.com/projectbluefin/dakota/pull/1250)
+- chore(deps): update github/codeql-action action to v4.37.4 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/dakota#1244](https://github.com/projectbluefin/dakota/pull/1244)
+- chore(deps): update taiki-e/install-action digest to 065d6a0 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/dakota#1235](https://github.com/projectbluefin/dakota/pull/1235)
+- chore(deps): update actions/download-artifact action to v8 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/dakota#1234](https://github.com/projectbluefin/dakota/pull/1234)
+- chore(deps): update bootc: v1.16.5-0 -> v1.16.6-0 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/dakota#1220](https://github.com/projectbluefin/dakota/pull/1220)
+- chore(deps): update common: v2026.07-51 -> v2026.07-57 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/dakota#1219](https://github.com/projectbluefin/dakota/pull/1219)
+- chore(deps): update app-indicators extension by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/dakota#1206](https://github.com/projectbluefin/dakota/pull/1206)
+- chore(deps): update tailscale 1.98.9 -> 1.98.10 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/dakota#1230](https://github.com/projectbluefin/dakota/pull/1230)
+- chore(deps): update actions/checkout action to v7 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/dakota#1047](https://github.com/projectbluefin/dakota/pull/1047)
+- chore(deps): update core junctions (next branch) by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/dakota#1128](https://github.com/projectbluefin/dakota/pull/1128)
+- chore(deps): update tailscale 1.98.3 -> 1.98.8 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/dakota#1129](https://github.com/projectbluefin/dakota/pull/1129)
+- chore(deps): update common: v2026.06-437 -> v2026.07-11 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/dakota#1130](https://github.com/projectbluefin/dakota/pull/1130)
+- chore(deps): update core junctions (next branch) by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/dakota#1133](https://github.com/projectbluefin/dakota/pull/1133)
+- chore(deps): update bootc: v1.16.2-0 -> v1.16.3-0 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/dakota#1134](https://github.com/projectbluefin/dakota/pull/1134)
+- chore(deps): update github/codeql-action action to v4.36.3 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/dakota#1135](https://github.com/projectbluefin/dakota/pull/1135)
+- chore(deps): update taiki-e/install-action digest to c93ccc0 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/dakota#1137](https://github.com/projectbluefin/dakota/pull/1137)
+- chore(deps): update taiki-e/install-action digest to 4684b84 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/dakota#1139](https://github.com/projectbluefin/dakota/pull/1139)
+- chore(deps): update core junctions (next branch) by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/dakota#1140](https://github.com/projectbluefin/dakota/pull/1140)
+- chore(deps): update taiki-e/install-action digest to 5041467 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/dakota#1141](https://github.com/projectbluefin/dakota/pull/1141)
+- chore(deps): update github/codeql-action action to v4.37.0 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/dakota#1144](https://github.com/projectbluefin/dakota/pull/1144)
+- chore(deps): update taiki-e/install-action digest to 5ebac0d by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/dakota#1145](https://github.com/projectbluefin/dakota/pull/1145)
+- chore(deps): update taiki-e/install-action digest to c7eb173 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/dakota#1147](https://github.com/projectbluefin/dakota/pull/1147)
+- chore(deps): update taiki-e/install-action digest to 2ca9b94 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/dakota#1148](https://github.com/projectbluefin/dakota/pull/1148)
+- chore(deps): update core junctions (gnome-build-meta + freedesktop-sdk) by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/dakota#1149](https://github.com/projectbluefin/dakota/pull/1149)
+- chore(deps): update brew by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/dakota#1150](https://github.com/projectbluefin/dakota/pull/1150)
+- chore(deps): update oras-project/setup-oras action to v2.0.1 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/dakota#1151](https://github.com/projectbluefin/dakota/pull/1151)
+- chore(deps): update taiki-e/install-action digest to 43aecc8 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/dakota#1152](https://github.com/projectbluefin/dakota/pull/1152)
+- chore(deps): update core junctions (next branch) by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/dakota#1154](https://github.com/projectbluefin/dakota/pull/1154)
+- chore(deps): update bootc: v1.16.2-0 -> v1.16.4-0 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/dakota#1156](https://github.com/projectbluefin/dakota/pull/1156)
+- chore(deps): update common: v2026.06-437 -> v2026.07-33 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/dakota#1155](https://github.com/projectbluefin/dakota/pull/1155)
+- chore(deps): update brew by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/dakota#1157](https://github.com/projectbluefin/dakota/pull/1157)
+- chore(deps): update taiki-e/install-action digest to ed67fa3 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/dakota#1164](https://github.com/projectbluefin/dakota/pull/1164)
+- chore(deps): update github/codeql-action action to v4.37.1 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/dakota#1165](https://github.com/projectbluefin/dakota/pull/1165)
+- chore(deps): update core junctions (next branch) by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/dakota#1166](https://github.com/projectbluefin/dakota/pull/1166)
+- chore(deps): update taiki-e/install-action digest to 07b4745 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/dakota#1167](https://github.com/projectbluefin/dakota/pull/1167)
+- chore(deps): update actions/checkout digest to d23441a by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/dakota#1177](https://github.com/projectbluefin/dakota/pull/1177)
+- chore(deps): update taiki-e/install-action digest to a6b2e2d by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/dakota#1178](https://github.com/projectbluefin/dakota/pull/1178)
+- chore(deps): update common: v2026.07-33 -> v2026.07-51 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/dakota#1181](https://github.com/projectbluefin/dakota/pull/1181)
+- chore(deps): update github/codeql-action action to v4.37.2 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/dakota#1183](https://github.com/projectbluefin/dakota/pull/1183)
+- chore(deps): update github/codeql-action action to v4.37.3 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/dakota#1187](https://github.com/projectbluefin/dakota/pull/1187)
+- chore(deps): update taiki-e/install-action digest to c44f6b0 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/dakota#1188](https://github.com/projectbluefin/dakota/pull/1188)
+- chore(deps): update taiki-e/install-action digest to 7572810 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/dakota#1194](https://github.com/projectbluefin/dakota/pull/1194)
+- chore(deps): update ossf/scorecard-action action to v2.4.4 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/dakota#1195](https://github.com/projectbluefin/dakota/pull/1195)
+- chore(deps): update taiki-e/install-action digest to 3d7d7cd by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/dakota#1199](https://github.com/projectbluefin/dakota/pull/1199)
+- chore(deps): update taiki-e/install-action digest to 41049aa by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/dakota#1205](https://github.com/projectbluefin/dakota/pull/1205)
+- chore(deps): update taiki-e/install-action digest to 18b1216 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/dakota#1221](https://github.com/projectbluefin/dakota/pull/1221)
+- chore: regenerate chunkah filemap and fakecap manifest by [@​github-actions](https://github.com/github-actions) in [projectbluefin/dakota#1132](https://github.com/projectbluefin/dakota/pull/1132)
+- chore(deps): update homebrew/actions digest to 5037c6f by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#207](https://github.com/projectbluefin/finpilot/pull/207)
+- chore(deps): update homebrew/actions digest to b76d541 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#206](https://github.com/projectbluefin/finpilot/pull/206)
+- chore(deps): update quay.io/fedora-ostree-desktops/silverblue:44 docker digest to 0f124e8 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#205](https://github.com/projectbluefin/finpilot/pull/205)
+- chore(deps): update projectbluefin/actions digest to b2e1879 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#204](https://github.com/projectbluefin/finpilot/pull/204)
+- chore(deps): update quay.io/fedora-ostree-desktops/silverblue:44 docker digest to 281a973 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#203](https://github.com/projectbluefin/finpilot/pull/203)
+- chore(deps): update projectbluefin/actions digest to 48f68c4 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#202](https://github.com/projectbluefin/finpilot/pull/202)
+- chore(deps): update renovatebot/github-action action to v46.2.0 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#201](https://github.com/projectbluefin/finpilot/pull/201)
+- chore(deps): update homebrew/actions digest to 9651e3c by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#199](https://github.com/projectbluefin/finpilot/pull/199)
+- chore(deps): update projectbluefin/actions digest to b41f21e by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#200](https://github.com/projectbluefin/finpilot/pull/200)
+- chore(deps): update docker/login-action digest to dbcb813 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#198](https://github.com/projectbluefin/finpilot/pull/198)
+- chore(deps): update homebrew/actions digest to 9e4e8a5 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#197](https://github.com/projectbluefin/finpilot/pull/197)
+- chore(deps): update quay.io/fedora-ostree-desktops/silverblue:44 docker digest to 0c9f2d2 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#196](https://github.com/projectbluefin/finpilot/pull/196)
+- chore(deps): update actions/checkout action to v7 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#106](https://github.com/projectbluefin/finpilot/pull/106)
+- chore(deps): update quay.io/fedora-ostree-desktops/silverblue:44 docker digest to 4aebdd6 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#135](https://github.com/projectbluefin/finpilot/pull/135)
+- chore(deps): update homebrew/actions digest to 64bb52c by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#136](https://github.com/projectbluefin/finpilot/pull/136)
+- chore(deps): update projectbluefin/actions digest to d8f871c by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#137](https://github.com/projectbluefin/finpilot/pull/137)
+- chore(deps): update quay.io/fedora-ostree-desktops/silverblue:44 docker digest to 8041af9 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#140](https://github.com/projectbluefin/finpilot/pull/140)
+- chore(deps): update docker/login-action digest to c99871d by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#141](https://github.com/projectbluefin/finpilot/pull/141)
+- chore(deps): update quay.io/fedora-ostree-desktops/silverblue:44 docker digest to d852a87 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#142](https://github.com/projectbluefin/finpilot/pull/142)
+- chore(deps): update homebrew/actions digest to b141687 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#143](https://github.com/projectbluefin/finpilot/pull/143)
+- chore(deps): update docker/login-action digest to af1e73f by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#144](https://github.com/projectbluefin/finpilot/pull/144)
+- chore(deps): update homebrew/actions digest to 097625b by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#145](https://github.com/projectbluefin/finpilot/pull/145)
+- chore(deps): update quay.io/fedora-ostree-desktops/silverblue:44 docker digest to c4d4608 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#146](https://github.com/projectbluefin/finpilot/pull/146)
+- chore(deps): update quay.io/fedora-ostree-desktops/silverblue:44 docker digest to 9939444 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#147](https://github.com/projectbluefin/finpilot/pull/147)
+- chore(deps): update quay.io/fedora-ostree-desktops/silverblue:44 docker digest to 62c3eb0 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#148](https://github.com/projectbluefin/finpilot/pull/148)
+- chore(deps): update renovatebot/github-action action to v46.1.18 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#149](https://github.com/projectbluefin/finpilot/pull/149)
+- chore(deps): update projectbluefin/actions digest to 8fd476d by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#150](https://github.com/projectbluefin/finpilot/pull/150)
+- chore(deps): update quay.io/fedora-ostree-desktops/silverblue:44 docker digest to 24c1fe7 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#151](https://github.com/projectbluefin/finpilot/pull/151)
+- chore(deps): update quay.io/fedora-ostree-desktops/silverblue:44 docker digest to c510c76 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#153](https://github.com/projectbluefin/finpilot/pull/153)
+- chore(deps): update projectbluefin/actions digest to d8f871c by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#152](https://github.com/projectbluefin/finpilot/pull/152)
+- chore(deps): update homebrew/actions digest to d47240b by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#154](https://github.com/projectbluefin/finpilot/pull/154)
+- chore(deps): update quay.io/fedora-ostree-desktops/silverblue:44 docker digest to e28f140 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#155](https://github.com/projectbluefin/finpilot/pull/155)
+- chore(deps): update homebrew/actions digest to 24728b7 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#156](https://github.com/projectbluefin/finpilot/pull/156)
+- chore(deps): update quay.io/fedora-ostree-desktops/silverblue:44 docker digest to 92230e4 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#157](https://github.com/projectbluefin/finpilot/pull/157)
+- chore(deps): update homebrew/actions digest to d74d143 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#158](https://github.com/projectbluefin/finpilot/pull/158)
+- chore(deps): update homebrew/actions digest to 18fcb8e by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#159](https://github.com/projectbluefin/finpilot/pull/159)
+- chore(deps): update quay.io/fedora-ostree-desktops/silverblue:44 docker digest to 5fdd743 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#161](https://github.com/projectbluefin/finpilot/pull/161)
+- chore(deps): update quay.io/fedora-ostree-desktops/silverblue:44 docker digest to 36e5bca by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#162](https://github.com/projectbluefin/finpilot/pull/162)
+- chore(deps): update renovatebot/github-action action to v46.1.19 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#163](https://github.com/projectbluefin/finpilot/pull/163)
+- chore(deps): update quay.io/fedora-ostree-desktops/silverblue:44 docker digest to 3b719cf by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#165](https://github.com/projectbluefin/finpilot/pull/165)
+- chore(deps): update actions/setup-node digest to 2499707 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#166](https://github.com/projectbluefin/finpilot/pull/166)
+- chore(deps): update quay.io/fedora-ostree-desktops/silverblue:44 docker digest to 99966d7 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#167](https://github.com/projectbluefin/finpilot/pull/167)
+- chore(deps): update actions/setup-node action to v7 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#168](https://github.com/projectbluefin/finpilot/pull/168)
+- chore(deps): update homebrew/actions digest to 100978d by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#169](https://github.com/projectbluefin/finpilot/pull/169)
+- chore(deps): update homebrew/actions digest to df4b091 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#170](https://github.com/projectbluefin/finpilot/pull/170)
+- chore(deps): update quay.io/fedora-ostree-desktops/silverblue:44 docker digest to f57e3b0 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#171](https://github.com/projectbluefin/finpilot/pull/171)
+- chore(deps): update quay.io/fedora-ostree-desktops/silverblue:44 docker digest to c7ce1fb by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#172](https://github.com/projectbluefin/finpilot/pull/172)
+- chore(deps): update quay.io/fedora-ostree-desktops/silverblue:44 docker digest to c927396 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#173](https://github.com/projectbluefin/finpilot/pull/173)
+- chore(deps): update quay.io/fedora-ostree-desktops/silverblue:44 docker digest to c959d94 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#174](https://github.com/projectbluefin/finpilot/pull/174)
+- chore(deps): update renovatebot/github-action action to v46.1.20 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#175](https://github.com/projectbluefin/finpilot/pull/175)
+- chore(deps): update projectbluefin/actions digest to 9f3b74b by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#176](https://github.com/projectbluefin/finpilot/pull/176)
+- chore(deps): update actions/checkout digest to 3d3c42e by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#177](https://github.com/projectbluefin/finpilot/pull/177)
+- chore(deps): update projectbluefin/actions digest to 72f37be by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#178](https://github.com/projectbluefin/finpilot/pull/178)
+- chore(deps): update quay.io/fedora-ostree-desktops/silverblue:44 docker digest to 820c8d9 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#179](https://github.com/projectbluefin/finpilot/pull/179)
+- chore(deps): update quay.io/fedora-ostree-desktops/silverblue:44 docker digest to f284a9f by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#181](https://github.com/projectbluefin/finpilot/pull/181)
+- chore(deps): update projectbluefin/actions digest to ae3c457 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#180](https://github.com/projectbluefin/finpilot/pull/180)
+- chore(deps): update quay.io/fedora-ostree-desktops/silverblue:44 docker digest to 32bcfd3 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#182](https://github.com/projectbluefin/finpilot/pull/182)
+- chore(deps): update docker/login-action digest to 06fb636 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#183](https://github.com/projectbluefin/finpilot/pull/183)
+- chore(deps): update quay.io/fedora-ostree-desktops/silverblue:44 docker digest to 2b8f827 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#184](https://github.com/projectbluefin/finpilot/pull/184)
+- chore(deps): update homebrew/actions digest to f78b979 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#185](https://github.com/projectbluefin/finpilot/pull/185)
+- chore(deps): update docker/login-action digest to abd2ef4 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#186](https://github.com/projectbluefin/finpilot/pull/186)
+- chore(deps): update projectbluefin/actions digest to edf8773 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#187](https://github.com/projectbluefin/finpilot/pull/187)
+- chore(deps): update quay.io/fedora-ostree-desktops/silverblue:44 docker digest to af7726f by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#188](https://github.com/projectbluefin/finpilot/pull/188)
+- chore(deps): update quay.io/fedora-ostree-desktops/silverblue:44 docker digest to 93ca467 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#189](https://github.com/projectbluefin/finpilot/pull/189)
+- chore(deps): update quay.io/fedora-ostree-desktops/silverblue:44 docker digest to 86944f1 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#190](https://github.com/projectbluefin/finpilot/pull/190)
+- chore(deps): update renovatebot/github-action action to v46.1.21 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#191](https://github.com/projectbluefin/finpilot/pull/191)
+- chore(deps): update homebrew/actions digest to 15d0b66 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#192](https://github.com/projectbluefin/finpilot/pull/192)
+- chore(deps): update quay.io/fedora-ostree-desktops/silverblue:44 docker digest to f8387f0 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#193](https://github.com/projectbluefin/finpilot/pull/193)
+- chore(deps): update docker/login-action digest to 371161b by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#194](https://github.com/projectbluefin/finpilot/pull/194)
+- chore(deps): update homebrew/actions digest to 9af03b7 by [@​mergeraptor](https://github.com/mergeraptor) in [projectbluefin/finpilot#195](https://github.com/projectbluefin/finpilot/pull/195)
+
+</details>
+
+## Contributors
+
+### Wayfinders
+
+> "Define yourself by your actions."
+> 
+> —Lord Saladin
+
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem', marginBottom: '2rem' }}>
+
+<GitHubProfileCard username="castrojo" sponsorUrl="https://github.com/sponsors/castrojo" />
+
+<GitHubProfileCard username="theMimolet" />
+
+<GitHubProfileCard username="elephantum" />
+
+<GitHubProfileCard username="KiKaraage" />
+
+<GitHubProfileCard username="clubanderson" />
+
+<GitHubProfileCard username="delphicmelody" />
+
+<GitHubProfileCard username="Tichael" />
+
+<GitHubProfileCard username="tunix" />
+
+<GitHubProfileCard username="hanthor" sponsorUrl="https://github.com/sponsors/hanthor" />
+
+<GitHubProfileCard username="jumpyvi" />
+
+<GitHubProfileCard username="znmeb" />
+
+<GitHubProfileCard username="ahmedadan" sponsorUrl="https://github.com/sponsors/ahmedadan" />
+
+<GitHubProfileCard username="Xarianne" />
+
+<GitHubProfileCard username="daegalus" sponsorUrl="https://github.com/sponsors/daegalus" />
+
+<GitHubProfileCard username="Siddhj2206" />
+
+</div>
+
+---
+
+*Want to see the latest OS releases? Check out the [Changelogs](/changelogs). For announcements and deep dives, read our [Blog](/blog).*
+
+*This report was automatically generated from [todo.projectbluefin.io](https://todo.projectbluefin.io).*
+
+---
+
+*Generated on 2026-08-02*  
+[View Project Board](https://todo.projectbluefin.io) | [Report an Issue](https://github.com/projectbluefin/common/issues/new)
