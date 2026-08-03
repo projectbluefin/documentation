@@ -68,7 +68,7 @@ And I'm sure I missed some.
 
 ## How to Get It
 
-There will be a GUI for this soon, in the meantime enjoy!
+There will be a GUI for this soon, in the meantime enjoy! You **can't** rebase to this from another image, if you're not on dakota already you need to reinstall. 
 
 | Image         | Stream  | Command                                                                 |
 | ------------- | ------- | ----------------------------------------------------------------------- |
