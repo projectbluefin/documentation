@@ -1,14 +1,14 @@
 ---
-title: "Dakota Alpha 5"
+title: "Bluefin Gaming Mode and Dakota Alpha 5"
 slug: dakota-alpha-5
 authors: castrojo
-tags: [development, video]
+tags: [development]
 date: 2026-08-02T20:41:00-04:00
 ---
 
 Guardians ... a new Dakota arrives, likely our last before beta. @ahmedadan brings us an example of the power we can wield with [BuildStream](https://buildstream.build/) and The Final Shape. (Ask him about his COSMIC image!)
 
-First off, after a monthlong outage the builder is back in business and we now have enough institutional knowledge to make getting a new one and swapping it in easier. Improvements in the tooling in general has helped. And my homelab is doing from-source builds in 8 minutes, that's 4 minutes faster than assembling RPMs.
+The builder is back in business and we now have enough institutional knowledge to make getting a new one and swapping it in easier. Improvements in the tooling in general has helped. And my homelab is doing from-source builds in 8 minutes, that's 4 minutes faster than assembling RPMs. We intend to make it trivial for anyone to deploy these on any modern infra. Buildstream and Kubernetes is a beautiful thing. 
 
 The world has changed! Here's the good stuff.
 
@@ -25,7 +25,7 @@ The world has changed! Here's the good stuff.
 
 ## What it comes with
 
-First let's get the versioning out of the way, for any [freedesktop-sdk](https://gitlab.com/freedesktop-sdk/freedesktop-sdk) project that we use we'll version it after it. In this case, 25.08.11. The 11th release of the August 2025 major update. 26.08 is our next update. Yes, that's next month. :)
+First let's get the versioning out of the way. Since we're based on [freedesktop-sdk](https://gitlab.com/freedesktop-sdk/freedesktop-sdk) project we'll use their version. In this case, 25.08.11. The 11th release of the August 2025 major update. 26.08 is our next update. Yes, that's next month. :) Bluefin will remain versionless and tested as a whole, you'll just switch aggressiveness with game mode if you want:
 
 - Kernel: 7.0.11
 - Game Mode Kernel: 7.1.4-ogc1
