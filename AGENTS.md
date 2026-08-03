@@ -35,6 +35,12 @@ cross-repository credential scheme. The secret must have Discussion write access
 in `ublue-os/bluefin`. If it is unavailable, the workflow must fail explicitly
 rather than report success without creating a discussion.
 
+Follow [`docs/skills/giscus-discussions.md`](docs/skills/giscus-discussions.md)
+when verifying, recovering, or archiving a blog discussion. Restore the existing
+secret and rerun the workflow first; a maintainer may use the documented
+GraphQL recovery only when the post is live and the normal workflow cannot
+create the discussion.
+
 - **Getting Started:** `docs/index.md`, `introduction.md`, `downloads.mdx`,
   `installation.md`, `FAQ.md`
 - **Using Bluefin:** `administration.md`, `tips.mdx`, `ai.md`, `command-line.md`,
