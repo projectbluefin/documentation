@@ -27,14 +27,13 @@ The world has changed! Here's the good stuff.
 
 First let's get the versioning out of the way. Since we're based on [freedesktop-sdk](https://gitlab.com/freedesktop-sdk/freedesktop-sdk) project we'll use their version. In this case, 25.08.11. The 11th release of the August 2025 major update. 26.08 is our next update. Yes, that's next month. :) Bluefin will remain versionless and tested as a whole, you'll just switch aggressiveness with game mode if you want:
 
-- Kernel: 7.0.11
-- Game Mode Kernel: 7.1.4-ogc1
-- GNOME Shell: 50.3
-- freedesktop-sdk: 25.08.11
-- bootc: 1.16.6
-- systemd: 260.2
-- Podman: 5.8.2
-- Flatpak: 1.18.0
+- Kernel: `7.0.11`
+- Game Mode Kernel: `7.1.4-ogc1`
+- GNOME Shell: `50.3`
+- freedesktop-sdk: `25.08.11`
+- bootc: `1.16.6`
+- systemd: `260.2`
+- Flatpak: `1.18.0`
 - :testing GNOME 50 development builds
 - :stable Publishing daily if tests pass, moving to every other day for beta, weekly for GA
 - :next GNOME 51 rolling builds, currently busted.
