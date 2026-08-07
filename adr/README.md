@@ -38,6 +38,7 @@ delete, so the reasoning stays readable.
 
 ## Index
 
-| ADR                                        | Title                             | Status   |
-| ------------------------------------------ | --------------------------------- | -------- |
-| [0001](0001-agent-design-authorization.md) | Agent design change authorization | Accepted |
+| ADR                                        | Title                                               | Status   |
+| ------------------------------------------ | --------------------------------------------------- | -------- |
+| [0001](0001-agent-design-authorization.md) | Agent design change authorization                   | Accepted |
+| [0002](0002-factory-page.md)               | Rename /hive to /factory and absorb factory content | Accepted |

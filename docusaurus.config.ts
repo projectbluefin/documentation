@@ -178,8 +178,8 @@ const config: Config = {
           position: "right",
         },
         {
-          to: "/hive",
-          label: "Hive",
+          to: "/factory",
+          label: "Factory",
           position: "right",
         },
         {
