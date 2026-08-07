@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import Layout from "@theme/Layout";
 import Link from "@docusaurus/Link";
 import Heading from "@theme/Heading";
+import Sparkline from "./Sparkline";
 import styles from "./HiveFactoryDashboard.module.css";
 
 // ── Types ──────────────────────────────────────────────────────────────────
@@ -48,7 +49,12 @@ interface RegistryEntry {
   online: boolean;
   version?: string;
   agents: RegistryAgent[];
-  health: { status: string; checks: RegistryHealthCheck[]; fails: number; warns: number };
+  health: {
+    status: string;
+    checks: RegistryHealthCheck[];
+    fails: number;
+    warns: number;
+  };
   leaderboard: RegistryLeaderboardEntry[];
   issueHistory: RegistryTimeSeries[];
   prHistory: RegistryTimeSeries[];
@@ -316,14 +322,14 @@ interface HiveHistory {
 // ── Milestone badge definitions ───────────────────────────────────────────
 
 type MilestoneTier =
-  | "contributor"   // 2+ repos
-  | "builder"       // 3+ repos
-  | "anchor"        // 5+ repos
-  | "legend"        // 7+ repos
-  | "cornerstone"   // 10+ repos
-  | "active"        // active this week
-  | "rising"        // trending up this week
-  | "cross";        // kept for compat
+  | "contributor" // 2+ repos
+  | "builder" // 3+ repos
+  | "anchor" // 5+ repos
+  | "legend" // 7+ repos
+  | "cornerstone" // 10+ repos
+  | "active" // active this week
+  | "rising" // trending up this week
+  | "cross"; // kept for compat
 
 interface MilestoneBadge {
   tier: MilestoneTier;
@@ -341,34 +347,70 @@ function computeMilestones(
 
   // Breadth tier — only the highest earned (commits don't matter in the age of AI)
   if (repoCount >= 10) {
-    badges.push({ tier: "cornerstone", label: "Cornerstone", title: "Active across 10+ projects", color: "#ff7b72" });
+    badges.push({
+      tier: "cornerstone",
+      label: "Cornerstone",
+      title: "Active across 10+ projects",
+      color: "#ff7b72",
+    });
   } else if (repoCount >= 7) {
-    badges.push({ tier: "legend", label: "Legend", title: "Active across 7+ projects", color: "#f0883e" });
+    badges.push({
+      tier: "legend",
+      label: "Legend",
+      title: "Active across 7+ projects",
+      color: "#f0883e",
+    });
   } else if (repoCount >= 5) {
-    badges.push({ tier: "anchor", label: "Anchor", title: "Active across 5+ projects", color: "#bc8cff" });
+    badges.push({
+      tier: "anchor",
+      label: "Anchor",
+      title: "Active across 5+ projects",
+      color: "#bc8cff",
+    });
   } else if (repoCount >= 3) {
-    badges.push({ tier: "builder", label: "Builder", title: "Active across 3+ projects", color: "#a371f7" });
+    badges.push({
+      tier: "builder",
+      label: "Builder",
+      title: "Active across 3+ projects",
+      color: "#a371f7",
+    });
   } else if (repoCount >= 2) {
-    badges.push({ tier: "contributor", label: "Contributor", title: "Active across 2+ projects", color: "#3fb950" });
+    badges.push({
+      tier: "contributor",
+      label: "Contributor",
+      title: "Active across 2+ projects",
+      color: "#3fb950",
+    });
   }
 
   // Activity recency
   if (lastWeek > 0) {
-    badges.push({ tier: "active", label: "Active", title: "Active this week", color: "#d29922" });
+    badges.push({
+      tier: "active",
+      label: "Active",
+      title: "Active this week",
+      color: "#d29922",
+    });
   }
 
   // Rising trend
   const weeklyAvg = lastMonth > 0 ? lastMonth / 4 : 0;
   if (lastWeek > 0 && weeklyAvg > 0 && lastWeek > weeklyAvg * 1.5) {
-    badges.push({ tier: "rising", label: "Rising", title: "Trending up this week", color: "#3fb950" });
+    badges.push({
+      tier: "rising",
+      label: "Rising",
+      title: "Trending up this week",
+      color: "#3fb950",
+    });
   }
 
   return badges;
 }
 
-
-
-interface QueueLabel { name: string; color: string; }
+interface QueueLabel {
+  name: string;
+  color: string;
+}
 
 interface QueueIssue {
   title: string;
@@ -394,7 +436,10 @@ interface VictoryItem {
   updated_at: string;
 }
 
-interface VictoryCategory { count: number; recent: VictoryItem[]; }
+interface VictoryCategory {
+  count: number;
+  recent: VictoryItem[];
+}
 
 interface QueueData {
   generated: string;
@@ -450,12 +495,35 @@ const TYPE_ICON: Record<string, string> = {
   refactor: "ref",
 };
 
-const ACMM_LEVELS: Record<number, { label: string; desc: string; color: string }> = {
-  1: { label: "Triage Assist", desc: "Scanner reads and reports", color: "#8b949e" },
-  2: { label: "Advisory", desc: "Agents suggest, humans act", color: "#58a6ff" },
-  3: { label: "Supervised Autonomy", desc: "Agents act, supervisor monitors", color: "#d29922" },
-  4: { label: "Full Autonomy", desc: "Agents operate independently", color: "#f0883e" },
-  5: { label: "Self-Directing", desc: "Agents define their own goals", color: "#bc8cff" },
+const ACMM_LEVELS: Record<
+  number,
+  { label: string; desc: string; color: string }
+> = {
+  1: {
+    label: "Triage Assist",
+    desc: "Scanner reads and reports",
+    color: "#8b949e",
+  },
+  2: {
+    label: "Advisory",
+    desc: "Agents suggest, humans act",
+    color: "#58a6ff",
+  },
+  3: {
+    label: "Supervised Autonomy",
+    desc: "Agents act, supervisor monitors",
+    color: "#d29922",
+  },
+  4: {
+    label: "Full Autonomy",
+    desc: "Agents operate independently",
+    color: "#f0883e",
+  },
+  5: {
+    label: "Self-Directing",
+    desc: "Agents define their own goals",
+    color: "#bc8cff",
+  },
 };
 
 // ── Frame quotes (verbatim in-game dialogue, Destinypedia) ────────────────
@@ -493,7 +561,10 @@ const FRAME_QUOTES_IDLE: string[] = [
 
 function pickFrameQuote(id: string, working: boolean): string {
   const pool = working ? FRAME_QUOTES_WORKING : FRAME_QUOTES_IDLE;
-  const hash = Array.from(id).reduce((sum, ch) => (sum * 31 + ch.charCodeAt(0)) | 0, 0);
+  const hash = Array.from(id).reduce(
+    (sum, ch) => (sum * 31 + ch.charCodeAt(0)) | 0,
+    0,
+  );
   return pool[Math.abs(hash) % pool.length] ?? pool[0];
 }
 
@@ -502,7 +573,9 @@ function isBotLogin(login: string): boolean {
   return (
     l.includes("[bot]") ||
     l.endsWith("-bot") ||
-    /^(renovate|dependabot|github-actions|copilot|allcontributors|imgbot|stale|snyk)/.test(l)
+    /^(renovate|dependabot|github-actions|copilot|allcontributors|imgbot|stale|snyk)/.test(
+      l,
+    )
   );
 }
 
@@ -521,37 +594,62 @@ function parseSnapshotJson(data: Record<string, unknown>): {
     const governor = (data.governor as HiveGovernor) ?? {};
     const beads = isRecord(data.beads)
       ? {
-          workers: typeof data.beads.workers === "number" ? data.beads.workers : 0,
-          supervisor: typeof data.beads.supervisor === "number" ? data.beads.supervisor : 0,
+          workers:
+            typeof data.beads.workers === "number" ? data.beads.workers : 0,
+          supervisor:
+            typeof data.beads.supervisor === "number"
+              ? data.beads.supervisor
+              : 0,
         }
       : undefined;
     const cadenceMatrix = Array.isArray(data.cadenceMatrix)
       ? (data.cadenceMatrix as HiveCadenceRow[])
       : undefined;
     const health = isRecord(data.health) ? data.health : undefined;
-    const agentMetrics = data.agentMetrics as { outreach?: { acmm?: number } } | undefined;
-    const issueToMerge = data.issueToMerge as {
-      avg_minutes?: number;
-      median_minutes?: number;
-      p90_minutes?: number;
-    } | undefined;
+    const agentMetrics = data.agentMetrics as
+      { outreach?: { acmm?: number } } | undefined;
+    const issueToMerge = data.issueToMerge as
+      | {
+          avg_minutes?: number;
+          median_minutes?: number;
+          p90_minutes?: number;
+        }
+      | undefined;
     const advisoryItems = (data.advisoryItems as AdvisoryItem[]) ?? [];
 
     // Extended: token budget from governor or top-level
     const govObj = isRecord(data.governor) ? data.governor : {};
     const budgetPct =
-      typeof govObj.budgetPct === "number" ? govObj.budgetPct :
-      typeof data.budgetPct === "number" ? data.budgetPct : undefined;
-    const tokenBudget = isRecord(data.tokenBudget) ? data.tokenBudget :
-      isRecord(govObj.budget) ? govObj.budget : null;
-    const budgetTotal = typeof tokenBudget?.total === "number" ? tokenBudget.total :
-      typeof tokenBudget?.totalTokens === "number" ? (tokenBudget.totalTokens as number) : undefined;
-    const budgetUsed = typeof tokenBudget?.used === "number" ? tokenBudget.used :
-      budgetPct != null && budgetTotal != null ? Math.round(budgetPct / 100 * budgetTotal) : undefined;
+      typeof govObj.budgetPct === "number"
+        ? govObj.budgetPct
+        : typeof data.budgetPct === "number"
+          ? data.budgetPct
+          : undefined;
+    const tokenBudget = isRecord(data.tokenBudget)
+      ? data.tokenBudget
+      : isRecord(govObj.budget)
+        ? govObj.budget
+        : null;
+    const budgetTotal =
+      typeof tokenBudget?.total === "number"
+        ? tokenBudget.total
+        : typeof tokenBudget?.totalTokens === "number"
+          ? (tokenBudget.totalTokens as number)
+          : undefined;
+    const budgetUsed =
+      typeof tokenBudget?.used === "number"
+        ? tokenBudget.used
+        : budgetPct != null && budgetTotal != null
+          ? Math.round((budgetPct / 100) * budgetTotal)
+          : undefined;
 
     // Extended: governor queue depth
-    const governorQueue = typeof govObj.queue === "number" ? govObj.queue :
-      typeof govObj.issues === "number" ? (govObj.issues as number) : undefined;
+    const governorQueue =
+      typeof govObj.queue === "number"
+        ? govObj.queue
+        : typeof govObj.issues === "number"
+          ? (govObj.issues as number)
+          : undefined;
 
     // Extended: governor timeline (24h mode strip)
     const governorTimeline = Array.isArray(data.timeline)
@@ -561,30 +659,64 @@ function parseSnapshotJson(data: Record<string, unknown>): {
         : undefined;
 
     // Extended: Nous/Strategy Lab
-    const nousRaw = isRecord(data.nous) ? data.nous :
-      isRecord(data.nousStatus) ? data.nousStatus : null;
-    const nous: NousStatus | undefined = nousRaw ? {
-      mode: typeof nousRaw.mode === "string" ? nousRaw.mode : undefined,
-      scope: typeof nousRaw.scope === "string" ? nousRaw.scope : undefined,
-      activeExperiment: isRecord(nousRaw.activeExperiment)
-        ? {
-            id: String(nousRaw.activeExperiment.id ?? ""),
-            progressPct: typeof nousRaw.activeExperiment.progressPct === "number" ? nousRaw.activeExperiment.progressPct : 0,
-            elapsed: typeof nousRaw.activeExperiment.elapsed === "number" ? nousRaw.activeExperiment.elapsed : 0,
-            ttlSec: typeof nousRaw.activeExperiment.ttlSec === "number" ? nousRaw.activeExperiment.ttlSec : 0,
-          }
-        : null,
-      snapshotCount: typeof nousRaw.snapshotCount === "number" ? nousRaw.snapshotCount : undefined,
-      snapshotTarget: typeof nousRaw.snapshotTarget === "number" ? nousRaw.snapshotTarget : undefined,
-      principleCount: typeof nousRaw.principleCount === "number" ? nousRaw.principleCount : undefined,
-      hasRecommendations: typeof nousRaw.hasRecommendations === "boolean" ? nousRaw.hasRecommendations : undefined,
-      phases: isRecord(nousRaw.phases) ? (nousRaw.phases as NousStatus["phases"]) : undefined,
-    } : undefined;
+    const nousRaw = isRecord(data.nous)
+      ? data.nous
+      : isRecord(data.nousStatus)
+        ? data.nousStatus
+        : null;
+    const nous: NousStatus | undefined = nousRaw
+      ? {
+          mode: typeof nousRaw.mode === "string" ? nousRaw.mode : undefined,
+          scope: typeof nousRaw.scope === "string" ? nousRaw.scope : undefined,
+          activeExperiment: isRecord(nousRaw.activeExperiment)
+            ? {
+                id: String(nousRaw.activeExperiment.id ?? ""),
+                progressPct:
+                  typeof nousRaw.activeExperiment.progressPct === "number"
+                    ? nousRaw.activeExperiment.progressPct
+                    : 0,
+                elapsed:
+                  typeof nousRaw.activeExperiment.elapsed === "number"
+                    ? nousRaw.activeExperiment.elapsed
+                    : 0,
+                ttlSec:
+                  typeof nousRaw.activeExperiment.ttlSec === "number"
+                    ? nousRaw.activeExperiment.ttlSec
+                    : 0,
+              }
+            : null,
+          snapshotCount:
+            typeof nousRaw.snapshotCount === "number"
+              ? nousRaw.snapshotCount
+              : undefined,
+          snapshotTarget:
+            typeof nousRaw.snapshotTarget === "number"
+              ? nousRaw.snapshotTarget
+              : undefined,
+          principleCount:
+            typeof nousRaw.principleCount === "number"
+              ? nousRaw.principleCount
+              : undefined,
+          hasRecommendations:
+            typeof nousRaw.hasRecommendations === "boolean"
+              ? nousRaw.hasRecommendations
+              : undefined,
+          phases: isRecord(nousRaw.phases)
+            ? (nousRaw.phases as NousStatus["phases"])
+            : undefined,
+        }
+      : undefined;
 
     // Extended: merge counts from snapshot
-    const mergeActivity = isRecord(data.mergeActivity) ? data.mergeActivity : null;
-    const mergedToday = typeof mergeActivity?.today === "number" ? mergeActivity.today : undefined;
-    const mergedThisWeek = typeof mergeActivity?.week === "number" ? mergeActivity.week : undefined;
+    const mergeActivity = isRecord(data.mergeActivity)
+      ? data.mergeActivity
+      : null;
+    const mergedToday =
+      typeof mergeActivity?.today === "number"
+        ? mergeActivity.today
+        : undefined;
+    const mergedThisWeek =
+      typeof mergeActivity?.week === "number" ? mergeActivity.week : undefined;
 
     const snapshot: HiveSnapshot = {
       timestamp: (data.timestamp as string) ?? new Date().toISOString(),
@@ -594,9 +726,13 @@ function parseSnapshotJson(data: Record<string, unknown>): {
       beads,
       cadenceMatrix,
       health,
-      acmmLevel: typeof data.acmmLevel === "number" ? data.acmmLevel : agentMetrics?.outreach?.acmm ?? undefined,
+      acmmLevel:
+        typeof data.acmmLevel === "number"
+          ? data.acmmLevel
+          : (agentMetrics?.outreach?.acmm ?? undefined),
       acmmMode: governor.mode,
-      medianMergeMins: issueToMerge?.median_minutes ?? issueToMerge?.avg_minutes,
+      medianMergeMins:
+        issueToMerge?.median_minutes ?? issueToMerge?.avg_minutes,
       p90MergeMins: issueToMerge?.p90_minutes,
       advisoryCount: advisoryItems.length,
       advisoryItems,
@@ -611,12 +747,13 @@ function parseSnapshotJson(data: Record<string, unknown>): {
       mergedThisWeek,
     };
 
-    const rawRepos = (data.repos as Array<{ full?: string; name?: string }>) ?? [];
+    const rawRepos =
+      (data.repos as Array<{ full?: string; name?: string }>) ?? [];
     const config: HiveConfig | null =
       rawRepos.length > 0
         ? {
             org:
-              (data.hiveId as string ?? "").replace(/^hive-[^-]+-/, "") ||
+              ((data.hiveId as string) ?? "").replace(/^hive-[^-]+-/, "") ||
               "projectbluefin",
             primaryRepo: rawRepos[0]?.full ?? "",
             repos: rawRepos.map((r) => r.full ?? r.name ?? "").filter(Boolean),
@@ -643,7 +780,11 @@ async function extractRenderJson(
     const afterParen = callIdx + 7;
     // Skip whitespace to find what follows render(
     let j = afterParen;
-    while (j < html.length && (html[j] === " " || html[j] === "\n" || html[j] === "\r")) j++;
+    while (
+      j < html.length &&
+      (html[j] === " " || html[j] === "\n" || html[j] === "\r")
+    )
+      j++;
     if (html[j] !== "{") {
       searchFrom = afterParen;
       continue;
@@ -655,16 +796,32 @@ async function extractRenderJson(
     let escaped = false;
     for (let i = start; i < html.length; i++) {
       const ch = html[i];
-      if (escaped) { escaped = false; continue; }
-      if (ch === "\\" && inStr) { escaped = true; continue; }
-      if (inStr) { if (ch === strChar) inStr = false; continue; }
-      if (ch === '"' || ch === "'") { inStr = true; strChar = ch; continue; }
+      if (escaped) {
+        escaped = false;
+        continue;
+      }
+      if (ch === "\\" && inStr) {
+        escaped = true;
+        continue;
+      }
+      if (inStr) {
+        if (ch === strChar) inStr = false;
+        continue;
+      }
+      if (ch === '"' || ch === "'") {
+        inStr = true;
+        strChar = ch;
+        continue;
+      }
       if (ch === "{") depth++;
       else if (ch === "}") {
         depth--;
         if (depth === 0) {
           try {
-            return JSON.parse(html.slice(start, i + 1)) as Record<string, unknown>;
+            return JSON.parse(html.slice(start, i + 1)) as Record<
+              string,
+              unknown
+            >;
           } catch {
             return null;
           }
@@ -676,7 +833,11 @@ async function extractRenderJson(
   return null;
 }
 
-async function fetchTimeout(url: string, ms = 12000, opts?: RequestInit): Promise<Response> {
+async function fetchTimeout(
+  url: string,
+  ms = 12000,
+  opts?: RequestInit,
+): Promise<Response> {
   const ctrl = new AbortController();
   const t = setTimeout(() => ctrl.abort(), ms);
   try {
@@ -690,7 +851,9 @@ async function fetchTimeout(url: string, ms = 12000, opts?: RequestInit): Promis
 // hive.kubestellar.io session), falling back to the public mirror.
 async function fetchQueueData(): Promise<QueueData | null> {
   try {
-    const r = await fetchTimeout(QUEUE_URL_HOSTED, 6000, { credentials: "include" });
+    const r = await fetchTimeout(QUEUE_URL_HOSTED, 6000, {
+      credentials: "include",
+    });
     if (r.ok) return (await r.json()) as QueueData;
   } catch {
     // not logged in or network error — fall through
@@ -749,7 +912,14 @@ function parseRepoName(...sources: Array<string | undefined>): string {
 }
 
 function repoAccent(repo: string): string {
-  const palette = ["#58a6ff", "#3fb950", "#d29922", "#bc8cff", "#f85149", "#f0883e"];
+  const palette = [
+    "#58a6ff",
+    "#3fb950",
+    "#d29922",
+    "#bc8cff",
+    "#f85149",
+    "#f0883e",
+  ];
   const hash = Array.from(repo).reduce((sum, ch) => sum + ch.charCodeAt(0), 0);
   return palette[hash % palette.length] ?? "#58a6ff";
 }
@@ -760,23 +930,29 @@ function pickAgentOfDay(agents: HiveAgent[]): HiveAgent | null {
     .sort(
       (a, b) =>
         (b.restarts ?? 0) - (a.restarts ?? 0) ||
-        new Date(b.lastKick ?? 0).getTime() - new Date(a.lastKick ?? 0).getTime(),
+        new Date(b.lastKick ?? 0).getTime() -
+          new Date(a.lastKick ?? 0).getTime(),
     );
   if (working[0]) return working[0];
   return (
     [...agents].sort(
       (a, b) =>
-        new Date(b.lastKick ?? 0).getTime() - new Date(a.lastKick ?? 0).getTime(),
+        new Date(b.lastKick ?? 0).getTime() -
+        new Date(a.lastKick ?? 0).getTime(),
     )[0] ?? null
   );
 }
 
 function governorModeClass(mode?: string): string {
   switch ((mode ?? "idle").toLowerCase()) {
-    case "surge": return styles.govModeSurge;
-    case "busy": return styles.govModeBusy;
-    case "quiet": return styles.govModeQuiet;
-    default: return styles.govModeIdle;
+    case "surge":
+      return styles.govModeSurge;
+    case "busy":
+      return styles.govModeBusy;
+    case "quiet":
+      return styles.govModeQuiet;
+    default:
+      return styles.govModeIdle;
   }
 }
 
@@ -843,7 +1019,13 @@ function StatCard({
   );
 }
 
-function FrameCard({ agent, advisoryItems: agentAdvisories }: { agent: HiveAgent; advisoryItems: AdvisoryItem[] }) {
+function FrameCard({
+  agent,
+  advisoryItems: agentAdvisories,
+}: {
+  agent: HiveAgent;
+  advisoryItems: AdvisoryItem[];
+}) {
   const isRunning = agent.state === "running";
   const isWorking = agent.busy === "working";
   const summaryLines = meaningfulSummaryLines(agent.liveSummary ?? "", 5);
@@ -889,7 +1071,13 @@ function FrameCard({ agent, advisoryItems: agentAdvisories }: { agent: HiveAgent
         <div className={styles.agentSummary}>
           {topAdvisories.map((item, i) => (
             <div key={i} className={styles.frameAdvisoryItem}>
-              <span style={{ color: SEV_COLOR[item.severity] ?? "#8b949e", marginRight: "0.35rem", fontVariantNumeric: "tabular-nums" }}>
+              <span
+                style={{
+                  color: SEV_COLOR[item.severity] ?? "#8b949e",
+                  marginRight: "0.35rem",
+                  fontVariantNumeric: "tabular-nums",
+                }}
+              >
                 {TYPE_ICON[item.type] ?? "·"}
               </span>
               {item.title.slice(0, 90)}
@@ -898,7 +1086,9 @@ function FrameCard({ agent, advisoryItems: agentAdvisories }: { agent: HiveAgent
         </div>
       ) : summaryLines.length > 0 ? (
         <div className={styles.agentSummary}>
-          {summaryLines.map((line, i) => <div key={i}>{line}</div>)}
+          {summaryLines.map((line, i) => (
+            <div key={i}>{line}</div>
+          ))}
         </div>
       ) : null}
       <div className={styles.frameQuote}>&ldquo;{quote}&rdquo;</div>
@@ -920,60 +1110,40 @@ function CiBadge({ status }: { status: DakotaStats["ciStatus"] }) {
   return <span className={`${styles.ciBadge} ${cls}`}>{label}</span>;
 }
 
-function Sparkline({ data }: { data: number[] }) {
-  if (data.length < 2) return null;
-  const W = 120;
-  const H = 36;
-  const max = Math.max(...data, 1);
-  const pts = data.map((v, i) => {
-    const x = (i / (data.length - 1)) * W;
-    const y = H - 6 - (v / max) * (H - 12);
-    return `${x},${y}`;
-  });
-  const linePts = pts.join(" ");
-  const area = `M ${pts[0]} L ${pts.slice(1).join(" L ")} L ${W},${H} L 0,${H} Z`;
-  return (
-    <svg
-      viewBox={`0 0 ${W} ${H}`}
-      className={styles.sparkline}
-      aria-hidden="true"
-    >
-      <path d={area} className={styles.sparklineArea} />
-      <polyline points={linePts} className={styles.sparklineLine} />
-    </svg>
-  );
-}
-
 type SparkColor = "default" | "green" | "amber" | "purple";
 
-function MiniSparkline({ data, color = "default" }: { data: number[]; color?: SparkColor }) {
-  if (data.length < 2) return null;
-  const W = 100;
-  const H = 24;
-  const max = Math.max(...data, 1);
-  const pts = data.map((v, i) => {
-    const x = (i / (data.length - 1)) * W;
-    const y = H - 2 - (v / max) * (H - 6);
-    return `${x},${y}`;
-  });
-  const linePts = pts.join(" ");
-  const area = `M ${pts[0]} L ${pts.slice(1).join(" L ")} L ${W},${H} L 0,${H} Z`;
-  const colorCls = color === "green"
-    ? styles.miniSparklineGreen
-    : color === "amber"
-      ? styles.miniSparklineAmber
-      : color === "purple"
-        ? styles.miniSparklinePurple
-        : "";
+const SPARK_HEX: Record<SparkColor, string> = {
+  default: "#58a6ff",
+  green: "#3fb950",
+  amber: "#d29922",
+  purple: "#bc8cff",
+};
+
+function MiniSparkline({
+  data,
+  color = "default",
+}: {
+  data: number[];
+  color?: SparkColor;
+}) {
+  const colorCls =
+    color === "green"
+      ? styles.miniSparklineGreen
+      : color === "amber"
+        ? styles.miniSparklineAmber
+        : color === "purple"
+          ? styles.miniSparklinePurple
+          : "";
   return (
-    <svg
-      viewBox={`0 0 ${W} ${H}`}
+    <Sparkline
+      data={data}
+      variant="line"
+      scale="zero"
+      width={100}
+      height={24}
+      color={SPARK_HEX[color]}
       className={`${styles.miniSparkline} ${colorCls}`}
-      aria-hidden="true"
-    >
-      <path d={area} className={styles.miniSparklineArea} />
-      <polyline points={linePts} className={styles.miniSparklineLine} />
-    </svg>
+    />
   );
 }
 
@@ -1009,9 +1179,7 @@ function _QueueBar({ ready, claimed, p0 }: QueueStats) {
       <div className={styles.queueBarLegend}>
         <span className={styles.queueClaimedLegend}>{claimed} claimed</span>
         <span className={styles.queueReadyLegend}>{ready} ready</span>
-        {p0 > 0 && (
-          <span className={styles.queueP0Legend}>{p0} P0</span>
-        )}
+        {p0 > 0 && <span className={styles.queueP0Legend}>{p0} P0</span>}
       </div>
     </div>
   );
@@ -1046,7 +1214,9 @@ function PrQueueChart({ data }: { data: RepoPRs[] }) {
 }
 
 function prTypeTag(title: string): { label: string; color: string } | null {
-  const m = title.match(/^(feat|fix|ci|chore|refactor|docs|perf|test|revert|build|style)[\s(!/:]?/i);
+  const m = title.match(
+    /^(feat|fix|ci|chore|refactor|docs|perf|test|revert|build|style)[\s(!/:]?/i,
+  );
   if (!m) return null;
   const t = m[1].toLowerCase();
   const map: Record<string, { label: string; color: string }> = {
@@ -1095,9 +1265,7 @@ function MergedPRFeed({ prs }: { prs: MergedPR[] }) {
               {tag.label}
             </span>
           )}
-          {pr.isBot && (
-            <span className={styles.mergedCardAgent}>agent</span>
-          )}
+          {pr.isBot && <span className={styles.mergedCardAgent}>agent</span>}
         </div>
         <span className={styles.mergedCardTitle}>{pr.title.slice(0, 90)}</span>
         <div className={styles.mergedCardMeta}>
@@ -1110,13 +1278,17 @@ function MergedPRFeed({ prs }: { prs: MergedPR[] }) {
 
   return (
     <section className={styles.panel}>
-      <Heading as="h2" className={styles.panelTitle}>Recently Merged</Heading>
+      <Heading as="h2" className={styles.panelTitle}>
+        Recently Merged
+      </Heading>
       <p className={styles.panelMeta}>
         Latest {prs.length} merged PRs across projectbluefin &middot;{" "}
         {human.length} human &middot; {bots.length} agent
       </p>
       {prs.length === 0 ? (
-        <div className={styles.empty}>No recently merged pull requests found.</div>
+        <div className={styles.empty}>
+          No recently merged pull requests found.
+        </div>
       ) : (
         <>
           {human.length > 0 && (
@@ -1125,17 +1297,24 @@ function MergedPRFeed({ prs }: { prs: MergedPR[] }) {
                 Guardians &mdash; {human.length} human contributions
               </div>
               <div className={styles.mergedGrid}>
-                {human.map((pr) => <PRCard key={`${pr.repo}-${pr.number}`} pr={pr} />)}
+                {human.map((pr) => (
+                  <PRCard key={`${pr.repo}-${pr.number}`} pr={pr} />
+                ))}
               </div>
             </div>
           )}
           {bots.length > 0 && (
             <div className={styles.mergedSection}>
-              <div className={styles.mergedSectionLabel} style={{ color: "#93c5fd" }}>
+              <div
+                className={styles.mergedSectionLabel}
+                style={{ color: "#93c5fd" }}
+              >
                 Ghosts &mdash; {bots.length} agent contributions
               </div>
               <div className={styles.mergedGrid}>
-                {bots.map((pr) => <PRCard key={`${pr.repo}-${pr.number}`} pr={pr} />)}
+                {bots.map((pr) => (
+                  <PRCard key={`${pr.repo}-${pr.number}`} pr={pr} />
+                ))}
               </div>
             </div>
           )}
@@ -1167,8 +1346,11 @@ function GovernorTimeline({ ticks }: { ticks: HiveTimelineTick[] }) {
     const m = (t.mode ?? "unknown").toLowerCase();
     modeCounts[m] = (modeCounts[m] ?? 0) + 1;
   }
-  const dominant = Object.entries(modeCounts).sort((a, b) => b[1] - a[1])[0]?.[0] ?? "idle";
-  const dominantPct = Math.round(((modeCounts[dominant] ?? 0) / sorted.length) * 100);
+  const dominant =
+    Object.entries(modeCounts).sort((a, b) => b[1] - a[1])[0]?.[0] ?? "idle";
+  const dominantPct = Math.round(
+    ((modeCounts[dominant] ?? 0) / sorted.length) * 100,
+  );
 
   return (
     <section className={styles.panel}>
@@ -1176,15 +1358,24 @@ function GovernorTimeline({ ticks }: { ticks: HiveTimelineTick[] }) {
         Governor Timeline &mdash; 24h Mode History
       </Heading>
       <p className={styles.panelMeta}>
-        Surge / busy / quiet / idle distribution &mdash; dominant: <strong style={{ color: MODE_COLORS[dominant] ?? "#8b949e" }}>{dominant}</strong> at {dominantPct}%
+        Surge / busy / quiet / idle distribution &mdash; dominant:{" "}
+        <strong style={{ color: MODE_COLORS[dominant] ?? "#8b949e" }}>
+          {dominant}
+        </strong>{" "}
+        at {dominantPct}%
       </p>
-      <div className={styles.timelineStrip} role="img" aria-label="24-hour governor mode timeline">
+      <div
+        className={styles.timelineStrip}
+        role="img"
+        aria-label="24-hour governor mode timeline"
+      >
         {sorted.map((tick, i) => {
           const mode = (tick.mode ?? "unknown").toLowerCase();
           const color = MODE_COLORS[mode] ?? MODE_COLORS.unknown;
-          const widthPct = i < sorted.length - 1
-            ? ((sorted[i + 1].t - tick.t) / span) * 100
-            : (1 / sorted.length) * 100;
+          const widthPct =
+            i < sorted.length - 1
+              ? ((sorted[i + 1].t - tick.t) / span) * 100
+              : (1 / sorted.length) * 100;
           return (
             <div
               key={tick.t}
@@ -1196,14 +1387,17 @@ function GovernorTimeline({ ticks }: { ticks: HiveTimelineTick[] }) {
         })}
       </div>
       <div className={styles.timelineLegend}>
-        {(["surge", "busy", "quiet", "idle"] as const).map((m) => (
+        {(["surge", "busy", "quiet", "idle"] as const).map((m) =>
           modeCounts[m] ? (
             <span key={m} className={styles.timelineLegendItem}>
-              <span className={styles.timelineDot} style={{ background: MODE_COLORS[m] }} />
+              <span
+                className={styles.timelineDot}
+                style={{ background: MODE_COLORS[m] }}
+              />
               {m} ({Math.round(((modeCounts[m] ?? 0) / sorted.length) * 100)}%)
             </span>
-          ) : null
-        ))}
+          ) : null,
+        )}
       </div>
     </section>
   );
@@ -1231,10 +1425,17 @@ function TokenBudgetPanel({
 
   return (
     <section className={styles.panel}>
-      <Heading as="h2" className={styles.panelTitle}>Token Budget</Heading>
+      <Heading as="h2" className={styles.panelTitle}>
+        Token Budget
+      </Heading>
       <p className={styles.panelMeta}>
-        Governor mode: <strong style={{ color: MODE_COLORS[safeMode] ?? "#8b949e" }}>{mode ?? "idle"}</strong>
-        {total != null && <> &middot; {total.toLocaleString()} tokens / period</>}
+        Governor mode:{" "}
+        <strong style={{ color: MODE_COLORS[safeMode] ?? "#8b949e" }}>
+          {mode ?? "idle"}
+        </strong>
+        {total != null && (
+          <> &middot; {total.toLocaleString()} tokens / period</>
+        )}
       </p>
       <div className={styles.budgetTrack}>
         <div
@@ -1246,7 +1447,9 @@ function TokenBudgetPanel({
         <span style={{ color: barColor }}>{pct.toFixed(1)}% used</span>
         {used != null && <span>{used.toLocaleString()} tokens consumed</span>}
         {remaining != null && (
-          <span style={{ color: "#3fb950" }}>{remaining.toLocaleString()} remaining</span>
+          <span style={{ color: "#3fb950" }}>
+            {remaining.toLocaleString()} remaining
+          </span>
         )}
       </div>
     </section>
@@ -1257,20 +1460,33 @@ function TokenBudgetPanel({
 
 function NousPanel({ nous }: { nous: NousStatus }) {
   const exp = nous.activeExperiment;
-  const snapPct = nous.snapshotTarget && nous.snapshotCount != null
-    ? Math.round((nous.snapshotCount / nous.snapshotTarget) * 100)
-    : null;
+  const snapPct =
+    nous.snapshotTarget && nous.snapshotCount != null
+      ? Math.round((nous.snapshotCount / nous.snapshotTarget) * 100)
+      : null;
 
   return (
     <section className={styles.panel}>
-      <Heading as="h2" className={styles.panelTitle}>Strategy Lab (Nous)</Heading>
+      <Heading as="h2" className={styles.panelTitle}>
+        Strategy Lab (Nous)
+      </Heading>
       <p className={styles.panelMeta}>
         Autonomous experiment engine &mdash; optimizing governor configuration
       </p>
       <div className={styles.nousGrid}>
         <div className={styles.nousItem}>
           <div className={styles.nousLabel}>Mode</div>
-          <div className={styles.nousValue} style={{ color: nous.mode === "auto" ? "#3fb950" : nous.mode === "suggest" ? "#d97706" : "#8b949e" }}>
+          <div
+            className={styles.nousValue}
+            style={{
+              color:
+                nous.mode === "auto"
+                  ? "#3fb950"
+                  : nous.mode === "suggest"
+                    ? "#d97706"
+                    : "#8b949e",
+            }}
+          >
             {nous.mode ?? "observe"}
           </div>
         </div>
@@ -1283,19 +1499,25 @@ function NousPanel({ nous }: { nous: NousStatus }) {
         {nous.principleCount != null && (
           <div className={styles.nousItem}>
             <div className={styles.nousLabel}>Principles</div>
-            <div className={styles.nousValue} style={{ color: "#bc8cff" }}>{nous.principleCount}</div>
+            <div className={styles.nousValue} style={{ color: "#bc8cff" }}>
+              {nous.principleCount}
+            </div>
           </div>
         )}
         {nous.hasRecommendations && (
           <div className={styles.nousItem}>
             <div className={styles.nousLabel}>Status</div>
-            <div className={styles.nousValue} style={{ color: "#d97706" }}>Recommendations ready</div>
+            <div className={styles.nousValue} style={{ color: "#d97706" }}>
+              Recommendations ready
+            </div>
           </div>
         )}
       </div>
       {exp && (
         <div className={styles.nousExperiment}>
-          <div className={styles.nousExpLabel}>Active experiment: <code>{exp.id}</code></div>
+          <div className={styles.nousExpLabel}>
+            Active experiment: <code>{exp.id}</code>
+          </div>
           <div className={styles.budgetTrack}>
             <div
               className={styles.budgetBar}
@@ -1303,7 +1525,8 @@ function NousPanel({ nous }: { nous: NousStatus }) {
             />
           </div>
           <div className={styles.nousExpMeta}>
-            {exp.progressPct}% &middot; {Math.round(exp.elapsed / 60)}m elapsed of {Math.round(exp.ttlSec / 60)}m
+            {exp.progressPct}% &middot; {Math.round(exp.elapsed / 60)}m elapsed
+            of {Math.round(exp.ttlSec / 60)}m
           </div>
         </div>
       )}
@@ -1311,16 +1534,22 @@ function NousPanel({ nous }: { nous: NousStatus }) {
         <div className={styles.nousSnapshot}>
           <span className={styles.nousLabel}>Snapshot collection:</span>
           <div className={styles.budgetTrack} style={{ marginTop: "0.4rem" }}>
-            <div className={styles.budgetBar} style={{ width: `${snapPct}%`, background: "#58a6ff" }} />
+            <div
+              className={styles.budgetBar}
+              style={{ width: `${snapPct}%`, background: "#58a6ff" }}
+            />
           </div>
-          <div className={styles.nousExpMeta}>{nous.snapshotCount}/{nous.snapshotTarget} snapshots ({snapPct}%)</div>
+          <div className={styles.nousExpMeta}>
+            {nous.snapshotCount}/{nous.snapshotTarget} snapshots ({snapPct}%)
+          </div>
         </div>
       )}
       {nous.phases && (
         <div className={styles.nousPhases}>
           {nous.phases.governor && (
             <span className={styles.nousPhaseItem}>
-              Governor: {nous.phases.governor.phase} i{nous.phases.governor.iteration}
+              Governor: {nous.phases.governor.phase} i
+              {nous.phases.governor.iteration}
             </span>
           )}
           {nous.phases.repo && (
@@ -1356,7 +1585,9 @@ function ContributorWall({
             .map(([repo]) => repo);
           return { login, commits, repos };
         })
-        .sort((a, b) => b.repos.length - a.repos.length || b.commits - a.commits);
+        .sort(
+          (a, b) => b.repos.length - a.repos.length || b.commits - a.commits,
+        );
     }
     // fallback: derive from recent PRs
     const seen = new Set<string>();
@@ -1370,9 +1601,12 @@ function ContributorWall({
     return out;
   }, [history, prs]);
 
-  const isOrgWide = history?.contributors && Object.keys(history.contributors).length > 0;
+  const isOrgWide =
+    history?.contributors && Object.keys(history.contributors).length > 0;
   const activeThisMonth = isOrgWide
-    ? Object.values(history?.contributorStats ?? {}).filter((s) => (s.lastMonth ?? 0) > 0).length
+    ? Object.values(history?.contributorStats ?? {}).filter(
+        (s) => (s.lastMonth ?? 0) > 0,
+      ).length
     : 0;
 
   const SPOTLIGHT_COUNT = 12;
@@ -1392,7 +1626,9 @@ function ContributorWall({
       {isOrgWide && (
         <div className={styles.communityStats}>
           <div className={styles.communityStatItem}>
-            <span className={styles.communityStatValue}>{orgContributors.length}</span>
+            <span className={styles.communityStatValue}>
+              {orgContributors.length}
+            </span>
             <span className={styles.communityStatLabel}>contributors</span>
           </div>
           <div className={styles.communityStatDivider} />
@@ -1415,7 +1651,9 @@ function ContributorWall({
       )}
 
       {!isOrgWide && (
-        <p className={styles.panelMeta}>Humans landing code in the latest merged queue</p>
+        <p className={styles.panelMeta}>
+          Humans landing code in the latest merged queue
+        </p>
       )}
 
       {/* ── Spotlight: top contributors ───────────────────────────────── */}
@@ -1427,7 +1665,11 @@ function ContributorWall({
               const s = stats[login];
               const lastWeek = s?.lastWeek ?? 0;
               const lastMonth = s?.lastMonth ?? 0;
-              const badges = computeMilestones(repos.length, lastWeek, lastMonth);
+              const badges = computeMilestones(
+                repos.length,
+                lastWeek,
+                lastMonth,
+              );
               const topBadge = badges[0];
               return (
                 <Link
@@ -1451,14 +1693,19 @@ function ContributorWall({
                   {repos.length > 0 && (
                     <div className={styles.spotlightRepos}>
                       {repos.slice(0, 2).map((r) => (
-                        <span key={r} className={styles.spotlightRepoChip}>{r}</span>
+                        <span key={r} className={styles.spotlightRepoChip}>
+                          {r}
+                        </span>
                       ))}
                     </div>
                   )}
                   {topBadge && (
                     <span
                       className={styles.spotlightBadge}
-                      style={{ borderColor: topBadge.color, color: topBadge.color }}
+                      style={{
+                        borderColor: topBadge.color,
+                        color: topBadge.color,
+                      }}
                     >
                       {topBadge.label}
                     </span>
@@ -1473,7 +1720,10 @@ function ContributorWall({
       {/* ── Full community grid ───────────────────────────────────────── */}
       {rest.length > 0 && (
         <>
-          <p className={styles.communitySpotlightLabel} style={{ marginTop: "1.5rem" }}>
+          <p
+            className={styles.communitySpotlightLabel}
+            style={{ marginTop: "1.5rem" }}
+          >
             Community
           </p>
           <div className={styles.contributorGrid}>
@@ -1484,7 +1734,11 @@ function ContributorWall({
                 target="_blank"
                 rel="noreferrer"
                 className={styles.contributorCard}
-                title={repos.length > 0 ? `${login} · ${repos.slice(0, 3).join(", ")}` : login}
+                title={
+                  repos.length > 0
+                    ? `${login} · ${repos.slice(0, 3).join(", ")}`
+                    : login
+                }
               >
                 <img
                   src={`https://github.com/${login}.png?size=40`}
@@ -1534,13 +1788,6 @@ function HistoryTrends({ history }: { history: HiveHistory | null }) {
 
   const entries = history.entries.slice(-72); // last ~6 days (2h interval)
 
-  function sparkPoints(values: Array<number | undefined>, w: number, h: number): string {
-    const nums = values.map((v) => v ?? 0);
-    const max = Math.max(...nums, 1);
-    const step = w / Math.max(nums.length - 1, 1);
-    return nums.map((v, i) => `${i * step},${h - (v / max) * (h - 2) - 1}`).join(" ");
-  }
-
   const acmm = entries.map((e) => e.acmmLevel);
   const budget = entries.map((e) => e.budgetPct);
   const queueDepth = entries.map((e) => e.queue);
@@ -1557,12 +1804,48 @@ function HistoryTrends({ history }: { history: HiveHistory | null }) {
   };
 
   const sparks: SparkDef[] = [
-    { label: "ACMM Level", values: acmm, color: "#d29922", unit: "L", latest: acmm.at(-1) },
-    { label: "Budget Used", values: budget, color: "#f85149", unit: "%", latest: budget.at(-1) },
-    { label: "Queue Depth", values: queueDepth, color: "#58a6ff", unit: "", latest: queueDepth.at(-1) },
-    { label: "Advisories", values: advisories, color: "#bc8cff", unit: "", latest: advisories.at(-1) },
-    { label: "Merged / Cycle", values: mergedDay, color: "#3fb950", unit: "", latest: mergedDay.at(-1) },
-    { label: "Median Merge (m)", values: medianTime, color: "#f0883e", unit: "m", latest: medianTime.at(-1) },
+    {
+      label: "ACMM Level",
+      values: acmm,
+      color: "#d29922",
+      unit: "L",
+      latest: acmm.at(-1),
+    },
+    {
+      label: "Budget Used",
+      values: budget,
+      color: "#f85149",
+      unit: "%",
+      latest: budget.at(-1),
+    },
+    {
+      label: "Queue Depth",
+      values: queueDepth,
+      color: "#58a6ff",
+      unit: "",
+      latest: queueDepth.at(-1),
+    },
+    {
+      label: "Advisories",
+      values: advisories,
+      color: "#bc8cff",
+      unit: "",
+      latest: advisories.at(-1),
+    },
+    {
+      label: "Merged / Cycle",
+      values: mergedDay,
+      color: "#3fb950",
+      unit: "",
+      latest: mergedDay.at(-1),
+    },
+    {
+      label: "Median Merge (m)",
+      values: medianTime,
+      color: "#f0883e",
+      unit: "m",
+      latest: medianTime.at(-1),
+    },
   ];
 
   const W = 160;
@@ -1574,35 +1857,38 @@ function HistoryTrends({ history }: { history: HiveHistory | null }) {
         Factory Trends
       </Heading>
       <p className={styles.panelMeta}>
-        Historical metrics · {entries.length} snapshots · last {Math.round(entries.length * 2)}h
+        Historical metrics · {entries.length} snapshots · last{" "}
+        {Math.round(entries.length * 2)}h
       </p>
       <div className={styles.historyTrendsGrid}>
         {sparks.map(({ label, values, color, unit, latest }) => {
-          const hasData = values.some((v) => v != null && v > 0);
+          // A genuinely zero series is news, not absence — it draws a flat line
+          // at the baseline. Only a shortage of real points suppresses the graphic.
+          const hasData = values.filter((v) => v != null).length >= 2;
           return (
             <div key={label} className={styles.historyTrendCard}>
               <div className={styles.historyTrendLabel}>{label}</div>
               <div className={styles.historyTrendValue} style={{ color }}>
-                {latest != null ? `${unit === "L" ? "L" : ""}${typeof latest === "number" ? latest : "—"}${unit && unit !== "L" ? unit : ""}` : "—"}
+                {latest != null
+                  ? `${unit === "L" ? "L" : ""}${typeof latest === "number" ? latest : "—"}${unit && unit !== "L" ? unit : ""}`
+                  : "—"}
               </div>
               {hasData ? (
-                <svg
-                  viewBox={`0 0 ${W} ${H}`}
+                <Sparkline
+                  data={values.map((v) => (v == null ? null : v))}
+                  variant="line"
+                  scale="zero"
+                  width={W}
+                  height={H}
+                  color={color}
+                  showEnd
+                  label={`${label}: now ${latest ?? "unknown"}${unit && unit !== "L" ? unit : ""}, over ${entries.length} snapshots`}
                   className={styles.historySparkline}
-                  aria-hidden
-                >
-                  <polyline
-                    points={sparkPoints(values, W, H)}
-                    fill="none"
-                    stroke={color}
-                    strokeWidth="1.5"
-                    strokeLinejoin="round"
-                    strokeLinecap="round"
-                    opacity="0.85"
-                  />
-                </svg>
+                />
               ) : (
-                <div className={styles.historySparklineEmpty}>accumulating data</div>
+                <div className={styles.historySparklineEmpty}>
+                  accumulating data
+                </div>
               )}
             </div>
           );
@@ -1622,7 +1908,7 @@ type LeaderboardTab = "alltime" | "monthly" | "weekly";
 interface LeaderboardEntry {
   rank: number;
   login: string;
-  projects: number;    // repos.length — breadth of engagement
+  projects: number; // repos.length — breadth of engagement
   repos: string[];
   badges: MilestoneBadge[];
   hasStats: boolean;
@@ -1644,7 +1930,9 @@ function ContributorLeaderboard({ history }: { history: HiveHistory | null }) {
 
     // Build a unified map of all known contributors (no bots)
     const allLogins = new Set(
-      [...Object.keys(stats), ...Object.keys(allTimeMap)].filter((l) => !isBotLogin(l))
+      [...Object.keys(stats), ...Object.keys(allTimeMap)].filter(
+        (l) => !isBotLogin(l),
+      ),
     );
     const rows: LeaderboardEntry[] = [];
 
@@ -1665,11 +1953,11 @@ function ContributorLeaderboard({ history }: { history: HiveHistory | null }) {
           : Object.fromEntries(
               Object.entries(byRepo)
                 .filter(([, rc]) => rc[login] != null)
-                .map(([r, rc]) => [r, rc[login]])
+                .map(([r, rc]) => [r, rc[login]]),
             ),
       ).sort((a, b) => {
-        const ma = (repoMap[a] ?? byRepo[a]?.[login] ?? 0);
-        const mb = (repoMap[b] ?? byRepo[b]?.[login] ?? 0);
+        const ma = repoMap[a] ?? byRepo[a]?.[login] ?? 0;
+        const mb = repoMap[b] ?? byRepo[b]?.[login] ?? 0;
         return mb - ma;
       });
 
@@ -1687,19 +1975,25 @@ function ContributorLeaderboard({ history }: { history: HiveHistory | null }) {
 
     // Sort by breadth (projects), tiebreak by recency
     rows.sort((a, b) => b.projects - a.projects);
-    rows.forEach((r, i) => { r.rank = i + 1; });
+    rows.forEach((r, i) => {
+      r.rank = i + 1;
+    });
     return rows.slice(0, 25);
   }, [history, tab]);
 
   if (!history || ranked.length === 0) return null;
 
   const lastUpdated = history.lastWeeklyStatsFetch
-    ? new Date(history.lastWeeklyStatsFetch).toLocaleDateString("en-US", { month: "short", day: "numeric" })
+    ? new Date(history.lastWeeklyStatsFetch).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      })
     : null;
 
-  const activeTab = (tab === "monthly" || tab === "weekly") && !hasWeeklyStats
-    ? "alltime"
-    : tab;
+  const activeTab =
+    (tab === "monthly" || tab === "weekly") && !hasWeeklyStats
+      ? "alltime"
+      : tab;
 
   return (
     <section className={styles.panel}>
@@ -1707,11 +2001,13 @@ function ContributorLeaderboard({ history }: { history: HiveHistory | null }) {
         Community Builders
       </Heading>
       <p className={styles.panelMeta}>
-        Ranked by breadth of engagement — projects contributed to across the factory
+        Ranked by breadth of engagement — projects contributed to across the
+        factory
         {lastUpdated ? ` · stats as of ${lastUpdated}` : ""}
         {!hasWeeklyStats && (
           <span className={styles.lbAccumulating}>
-            {" "}· Activity windows accumulating — check back soon
+            {" "}
+            · Activity windows accumulating — check back soon
           </span>
         )}
       </p>
@@ -1722,9 +2018,17 @@ function ContributorLeaderboard({ history }: { history: HiveHistory | null }) {
             key={t}
             className={`${styles.lbTab} ${tab === t ? styles.lbTabActive : ""} ${!hasWeeklyStats && t !== "alltime" ? styles.lbTabDisabled : ""}`}
             onClick={() => setTab(t)}
-            title={!hasWeeklyStats && t !== "alltime" ? "Activity data accumulating" : undefined}
+            title={
+              !hasWeeklyStats && t !== "alltime"
+                ? "Activity data accumulating"
+                : undefined
+            }
           >
-            {t === "alltime" ? "All Time" : t === "monthly" ? "Active Month" : "Active Week"}
+            {t === "alltime"
+              ? "All Time"
+              : t === "monthly"
+                ? "Active Month"
+                : "Active Week"}
             {!hasWeeklyStats && t !== "alltime" && (
               <span className={styles.lbTabPending}> ○</span>
             )}
@@ -1732,11 +2036,14 @@ function ContributorLeaderboard({ history }: { history: HiveHistory | null }) {
         ))}
       </div>
 
-      {!hasWeeklyStats && activeTab === "alltime" && (tab === "monthly" || tab === "weekly") && (
-        <p className={styles.lbFallbackNote}>
-          Showing all-time contributors — activity windows are still accumulating.
-        </p>
-      )}
+      {!hasWeeklyStats &&
+        activeTab === "alltime" &&
+        (tab === "monthly" || tab === "weekly") && (
+          <p className={styles.lbFallbackNote}>
+            Showing all-time contributors — activity windows are still
+            accumulating.
+          </p>
+        )}
 
       <div className={styles.lbTable}>
         <div className={styles.lbHeader}>
@@ -1754,8 +2061,16 @@ function ContributorLeaderboard({ history }: { history: HiveHistory | null }) {
             rel="noreferrer"
             className={styles.lbRow}
           >
-            <span className={`${styles.lbColRank} ${rank <= 3 ? styles.lbTopRank : ""}`}>
-              {rank === 1 ? "01" : rank === 2 ? "02" : rank === 3 ? "03" : String(rank).padStart(2, "0")}
+            <span
+              className={`${styles.lbColRank} ${rank <= 3 ? styles.lbTopRank : ""}`}
+            >
+              {rank === 1
+                ? "01"
+                : rank === 2
+                  ? "02"
+                  : rank === 3
+                    ? "03"
+                    : String(rank).padStart(2, "0")}
             </span>
             <span className={styles.lbColUser}>
               <img
@@ -1771,9 +2086,13 @@ function ContributorLeaderboard({ history }: { history: HiveHistory | null }) {
             </span>
             <span className={styles.lbColRepos}>
               {repos.slice(0, 3).map((r) => (
-                <span key={r} className={styles.lbRepoChip}>{r}</span>
+                <span key={r} className={styles.lbRepoChip}>
+                  {r}
+                </span>
               ))}
-              {repos.length > 3 && <span className={styles.lbRepoMore}>+{repos.length - 3}</span>}
+              {repos.length > 3 && (
+                <span className={styles.lbRepoMore}>+{repos.length - 3}</span>
+              )}
             </span>
             <span className={styles.lbColBadges}>
               {badges.map((b) => (
@@ -1793,7 +2112,8 @@ function ContributorLeaderboard({ history }: { history: HiveHistory | null }) {
 
       {ranked.length >= 25 && (
         <p className={styles.panelMeta} style={{ marginTop: "0.5rem" }}>
-          Showing top 25 of {Object.keys(history.contributors ?? {}).length} contributors
+          Showing top 25 of {Object.keys(history.contributors ?? {}).length}{" "}
+          contributors
         </p>
       )}
     </section>
@@ -1811,11 +2131,7 @@ function VelocityPanel({
   const closed = velocity?.closed ?? 0;
   const net = opened - closed;
   const deltaLabel =
-    net > 0
-      ? `up net +${net}`
-      : net < 0
-        ? `down net ${net}`
-        : "flat net 0";
+    net > 0 ? `up net +${net}` : net < 0 ? `down net ${net}` : "flat net 0";
 
   const maxVal = Math.max(opened, closed, 1);
   const openedH = Math.max((opened / maxVal) * 52, opened > 0 ? 4 : 0);
@@ -1826,7 +2142,9 @@ function VelocityPanel({
       <Heading as="h2" className={styles.panelTitle}>
         Issue Velocity
       </Heading>
-      <p className={styles.panelMeta}>Issues · last 7 days · projectbluefin org</p>
+      <p className={styles.panelMeta}>
+        Issues · last 7 days · projectbluefin org
+      </p>
       <div className={styles.velocityBars}>
         <div
           className={`${styles.velocityBar} ${styles.velocityBarOpened}`}
@@ -1871,7 +2189,13 @@ function VelocityPanel({
   );
 }
 
-function GovernorPanel({ governor, registry }: { governor?: HiveGovernor; registry?: RegistryEntry | null }) {
+function GovernorPanel({
+  governor,
+  registry,
+}: {
+  governor?: HiveGovernor;
+  registry?: RegistryEntry | null;
+}) {
   // Use registry data as fallback when full snapshot governor isn't available
   const rawMode = governor?.mode ?? registry?.governorMode ?? "idle";
   const mode = rawMode.toUpperCase();
@@ -1884,21 +2208,26 @@ function GovernorPanel({ governor, registry }: { governor?: HiveGovernor; regist
   // Thresholds: use snapshot values if present, otherwise derive from registry mode + current depth
   const hasRealThresholds = governor?.thresholds?.quiet != null;
   const quiet = governor?.thresholds?.quiet ?? 20;
-  const busy  = governor?.thresholds?.busy  ?? 50;
-  const surge = governor?.thresholds?.surge ?? Math.max(busy + 1, depth + 1, 80);
+  const busy = governor?.thresholds?.busy ?? 50;
+  const surge =
+    governor?.thresholds?.surge ?? Math.max(busy + 1, depth + 1, 80);
   const maxDepth = Math.max(surge, depth, 1);
 
   const quietPct = (quiet / maxDepth) * 100;
-  const busyPct  = ((busy - quiet) / maxDepth) * 100;
+  const busyPct = ((busy - quiet) / maxDepth) * 100;
   const surgePct = 100 - quietPct - busyPct;
 
   let markerLeft: number;
   if (depth <= quiet) {
     markerLeft = quiet > 0 ? (depth / quiet) * quietPct : 0;
   } else if (depth <= busy) {
-    markerLeft = quietPct + ((depth - quiet) / Math.max(busy - quiet, 1)) * busyPct;
+    markerLeft =
+      quietPct + ((depth - quiet) / Math.max(busy - quiet, 1)) * busyPct;
   } else {
-    markerLeft = quietPct + busyPct + ((depth - busy) / Math.max(maxDepth - busy, 1)) * surgePct;
+    markerLeft =
+      quietPct +
+      busyPct +
+      ((depth - busy) / Math.max(maxDepth - busy, 1)) * surgePct;
   }
   markerLeft = Math.min(markerLeft, 99.5);
 
@@ -1907,10 +2236,16 @@ function GovernorPanel({ governor, registry }: { governor?: HiveGovernor; regist
       rawMode.toLowerCase()
     ] ?? "#8b949e";
 
-  // Issue history sparkline from registry
+  // Issue history sparkline from registry. The registry publishes ~672 points at
+  // 16-minute resolution; render the whole window rather than the last 48.
   const issueHistory = registry?.issueHistory ?? [];
-  const sparkVals = issueHistory.slice(-48).map((e) => e.v);
-  const sparkMax = Math.max(...sparkVals, 1);
+  const sparkVals = issueHistory.map((e) => e.v);
+  const sparkSpanHours =
+    issueHistory.length > 1
+      ? Math.round(
+          (issueHistory[issueHistory.length - 1].t - issueHistory[0].t) / 3600,
+        )
+      : 0;
 
   const hasData = governor != null || registry != null;
 
@@ -1927,7 +2262,12 @@ function GovernorPanel({ governor, registry }: { governor?: HiveGovernor; regist
         <strong>
           {issues} issues + {prs} PRs &mdash; {depth} total
           {!hasRealThresholds && registry && (
-            <span style={{ color: "#484f58", fontWeight: 400, fontSize: "0.7rem" }}> (registry)</span>
+            <span
+              style={{ color: "#484f58", fontWeight: 400, fontSize: "0.7rem" }}
+            >
+              {" "}
+              (registry)
+            </span>
           )}
         </strong>
       </div>
@@ -1940,16 +2280,28 @@ function GovernorPanel({ governor, registry }: { governor?: HiveGovernor; regist
           {depth}
         </div>
         <div className={styles.govThreshBar}>
-          <div className={styles.govThreshZoneQuiet} style={{ width: `${quietPct}%` }}>
+          <div
+            className={styles.govThreshZoneQuiet}
+            style={{ width: `${quietPct}%` }}
+          >
             {quietPct >= 10 ? "QUIET" : ""}
           </div>
-          <div className={styles.govThreshZoneBusy} style={{ width: `${busyPct}%` }}>
+          <div
+            className={styles.govThreshZoneBusy}
+            style={{ width: `${busyPct}%` }}
+          >
             {busyPct >= 10 ? "BUSY" : ""}
           </div>
-          <div className={styles.govThreshZoneSurge} style={{ width: `${surgePct}%` }}>
+          <div
+            className={styles.govThreshZoneSurge}
+            style={{ width: `${surgePct}%` }}
+          >
             {surgePct >= 10 ? "SURGE" : ""}
           </div>
-          <span className={styles.govThreshMarker} style={{ left: `${markerLeft}%`, background: modeColor }} />
+          <span
+            className={styles.govThreshMarker}
+            style={{ left: `${markerLeft}%`, background: modeColor }}
+          />
         </div>
       </div>
       <div className={styles.govThreshLegend}>
@@ -1961,8 +2313,7 @@ function GovernorPanel({ governor, registry }: { governor?: HiveGovernor; regist
         </span>
       </div>
       <p className={styles.panelMeta}>
-        Next kick:{" "}
-        {governor?.nextKick ? relTime(governor.nextKick) : "—"}
+        Next kick: {governor?.nextKick ? relTime(governor.nextKick) : "—"}
         {registry?.lastHeartbeat && (
           <> &middot; heartbeat {relTime(registry.lastHeartbeat)}</>
         )}
@@ -1971,29 +2322,46 @@ function GovernorPanel({ governor, registry }: { governor?: HiveGovernor; regist
       {/* Issue queue history sparkline */}
       {sparkVals.length > 4 && (
         <div style={{ marginTop: "0.75rem" }}>
-          <div style={{ fontSize: "0.65rem", color: "#484f58", marginBottom: "3px", fontFamily: "monospace", letterSpacing: "0.04em" }}>
-            ISSUE QUEUE — LAST {sparkVals.length} READINGS
+          <div
+            style={{
+              fontSize: "0.65rem",
+              color: "#484f58",
+              marginBottom: "3px",
+              fontFamily: "monospace",
+              letterSpacing: "0.04em",
+            }}
+          >
+            ISSUE QUEUE — {sparkVals.length} READINGS
+            {sparkSpanHours > 0 ? ` · ${sparkSpanHours}H` : ""}
           </div>
-          <svg viewBox={`0 0 ${sparkVals.length * 4} 32`} style={{ width: "100%", height: "32px", display: "block" }} aria-hidden="true">
-            {(() => {
-              const W = sparkVals.length * 4; const H = 32;
-              const pts = sparkVals.map((v, i) => {
-                const x = (i / (sparkVals.length - 1)) * W;
-                const y = H - 2 - (v / sparkMax) * (H - 6);
-                return `${x},${y}`;
-              });
-              const area = `M 0,${H} L ${pts[0]} L ${pts.slice(1).join(" L ")} L ${W},${H} Z`;
-              return (
-                <>
-                  <path d={area} fill={`${modeColor}22`} />
-                  <polyline points={pts.join(" ")} fill="none" stroke={modeColor} strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" />
-                </>
-              );
-            })()}
-          </svg>
-          <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.6rem", color: "#484f58", fontFamily: "monospace" }}>
-            <span>{sparkVals[0]}</span>
-            <span style={{ color: modeColor }}>{sparkVals[sparkVals.length - 1]} now</span>
+          <Sparkline
+            data={sparkVals}
+            variant="line"
+            scale="zero"
+            width={Math.max(sparkVals.length, 120)}
+            height={32}
+            color={modeColor}
+            areaColor={`${modeColor}22`}
+            band={hasRealThresholds ? [quiet, busy] : undefined}
+            showEnd
+            showExtremes
+            label={`Issue queue depth over ${sparkSpanHours} hours: now ${sparkVals[sparkVals.length - 1]}, lowest ${Math.min(...sparkVals)}, highest ${Math.max(...sparkVals)}.`}
+            className={styles.governorSpark}
+          />
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              fontSize: "0.6rem",
+              color: "#484f58",
+              fontFamily: "monospace",
+            }}
+          >
+            <span>{Math.min(...sparkVals)} min</span>
+            <span style={{ color: modeColor }}>
+              {sparkVals[sparkVals.length - 1]} now
+            </span>
+            <span>{Math.max(...sparkVals)} max</span>
           </div>
         </div>
       )}
@@ -2024,18 +2392,50 @@ function BeadsCadencePanel({
         <div className={styles.cadenceTable}>
           <div className={`${styles.cadenceRow} ${styles.cadenceHeader}`}>
             <span className={styles.cadenceCell}>Agent</span>
-            <span className={`${styles.cadenceCell} ${currentMode === "surge" ? styles.cadenceCellActive : ""}`}>SURGE</span>
-            <span className={`${styles.cadenceCell} ${currentMode === "busy" ? styles.cadenceCellActive : ""}`}>BUSY</span>
-            <span className={`${styles.cadenceCell} ${currentMode === "quiet" ? styles.cadenceCellActive : ""}`}>QUIET</span>
-            <span className={`${styles.cadenceCell} ${currentMode === "idle" ? styles.cadenceCellActive : ""}`}>IDLE</span>
+            <span
+              className={`${styles.cadenceCell} ${currentMode === "surge" ? styles.cadenceCellActive : ""}`}
+            >
+              SURGE
+            </span>
+            <span
+              className={`${styles.cadenceCell} ${currentMode === "busy" ? styles.cadenceCellActive : ""}`}
+            >
+              BUSY
+            </span>
+            <span
+              className={`${styles.cadenceCell} ${currentMode === "quiet" ? styles.cadenceCellActive : ""}`}
+            >
+              QUIET
+            </span>
+            <span
+              className={`${styles.cadenceCell} ${currentMode === "idle" ? styles.cadenceCellActive : ""}`}
+            >
+              IDLE
+            </span>
           </div>
           {cadenceMatrix.map((row) => (
             <div key={row.agent} className={styles.cadenceRow}>
               <span className={styles.cadenceCell}>{row.agent}</span>
-              <span className={`${styles.cadenceCell} ${currentMode === "surge" ? styles.cadenceCellActive : ""}`}>{row.surge}</span>
-              <span className={`${styles.cadenceCell} ${currentMode === "busy" ? styles.cadenceCellActive : ""}`}>{row.busy}</span>
-              <span className={`${styles.cadenceCell} ${currentMode === "quiet" ? styles.cadenceCellActive : ""}`}>{row.quiet}</span>
-              <span className={`${styles.cadenceCell} ${currentMode === "idle" ? styles.cadenceCellActive : ""}`}>{row.idle}</span>
+              <span
+                className={`${styles.cadenceCell} ${currentMode === "surge" ? styles.cadenceCellActive : ""}`}
+              >
+                {row.surge}
+              </span>
+              <span
+                className={`${styles.cadenceCell} ${currentMode === "busy" ? styles.cadenceCellActive : ""}`}
+              >
+                {row.busy}
+              </span>
+              <span
+                className={`${styles.cadenceCell} ${currentMode === "quiet" ? styles.cadenceCellActive : ""}`}
+              >
+                {row.quiet}
+              </span>
+              <span
+                className={`${styles.cadenceCell} ${currentMode === "idle" ? styles.cadenceCellActive : ""}`}
+              >
+                {row.idle}
+              </span>
             </div>
           ))}
         </div>
@@ -2044,7 +2444,13 @@ function BeadsCadencePanel({
   );
 }
 
-function FrameOfDay({ agent, advisoryItems: agentAdvisories }: { agent: HiveAgent | null; advisoryItems: AdvisoryItem[] }) {
+function FrameOfDay({
+  agent,
+  advisoryItems: agentAdvisories,
+}: {
+  agent: HiveAgent | null;
+  advisoryItems: AdvisoryItem[];
+}) {
   const [expanded, setExpanded] = React.useState(false);
 
   if (!agent) {
@@ -2075,20 +2481,39 @@ function FrameOfDay({ agent, advisoryItems: agentAdvisories }: { agent: HiveAgen
           <div className={styles.agentOfDayLabel}>
             {isWorking ? "Currently active" : "Most recently active"}
           </div>
-          <div className={styles.agentHeroName}>{agent.displayName || agent.name}</div>
+          <div className={styles.agentHeroName}>
+            {agent.displayName || agent.name}
+          </div>
           <div className={styles.agentHeroMeta}>
             {agent.role || "Generalist"} · {agent.model || "Unknown model"}
           </div>
         </div>
       </div>
       {agentAdvisories.length > 0 && (
-        <div className={styles.agentOfDaySummary} style={{ marginTop: "0.75rem" }}>
-          <div style={{ color: "#8b949e", fontSize: "0.72rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "0.4rem" }}>
+        <div
+          className={styles.agentOfDaySummary}
+          style={{ marginTop: "0.75rem" }}
+        >
+          <div
+            style={{
+              color: "#8b949e",
+              fontSize: "0.72rem",
+              fontWeight: 700,
+              textTransform: "uppercase",
+              letterSpacing: "0.06em",
+              marginBottom: "0.4rem",
+            }}
+          >
             Recent work items
           </div>
           {agentAdvisories.slice(0, 5).map((item, i) => (
             <div key={i} className={styles.frameAdvisoryItem}>
-              <span style={{ color: SEV_COLOR[item.severity] ?? "#8b949e", marginRight: "0.35rem" }}>
+              <span
+                style={{
+                  color: SEV_COLOR[item.severity] ?? "#8b949e",
+                  marginRight: "0.35rem",
+                }}
+              >
                 {TYPE_ICON[item.type] ?? "·"}
               </span>
               {item.title.slice(0, 110)}
@@ -2098,16 +2523,23 @@ function FrameOfDay({ agent, advisoryItems: agentAdvisories }: { agent: HiveAgen
       )}
       {visibleLines.length > 0 && (
         <div className={styles.agentOfDaySummary}>
-          {visibleLines.map((line, i) => <div key={i}>{line}</div>)}
+          {visibleLines.map((line, i) => (
+            <div key={i}>{line}</div>
+          ))}
           {allLines.length > 10 && (
-            <button className={styles.workLogToggle} onClick={() => setExpanded(!expanded)}>
+            <button
+              className={styles.workLogToggle}
+              onClick={() => setExpanded(!expanded)}
+            >
               {expanded ? "Show less" : `Show ${allLines.length - 10} more`}
             </button>
           )}
         </div>
       )}
       {visibleLines.length === 0 && agentAdvisories.length === 0 && (
-        <div className={styles.agentOfDaySummary}>Awaiting next assignment…</div>
+        <div className={styles.agentOfDaySummary}>
+          Awaiting next assignment…
+        </div>
       )}
       <div className={styles.frameQuote}>&ldquo;{quote}&rdquo;</div>
     </section>
@@ -2127,7 +2559,9 @@ function FormationLog({
     : [];
   const PREVIEW = 15;
   const visibleLines = expanded ? allLines : allLines.slice(0, PREVIEW);
-  const quote = supervisor ? pickFrameQuote(supervisor.id, supervisor.busy === "working") : null;
+  const quote = supervisor
+    ? pickFrameQuote(supervisor.id, supervisor.busy === "working")
+    : null;
 
   return (
     <section className={styles.panel}>
@@ -2147,11 +2581,18 @@ function FormationLog({
             ))}
           </div>
           {allLines.length > PREVIEW && (
-            <button className={styles.workLogToggle} onClick={() => setExpanded(!expanded)}>
-              {expanded ? "Show less" : `Show ${allLines.length - PREVIEW} more`}
+            <button
+              className={styles.workLogToggle}
+              onClick={() => setExpanded(!expanded)}
+            >
+              {expanded
+                ? "Show less"
+                : `Show ${allLines.length - PREVIEW} more`}
             </button>
           )}
-          {quote && <div className={styles.frameQuote}>&ldquo;{quote}&rdquo;</div>}
+          {quote && (
+            <div className={styles.frameQuote}>&ldquo;{quote}&rdquo;</div>
+          )}
         </>
       ) : (
         <div className={styles.empty}>No formation log available</div>
@@ -2179,7 +2620,8 @@ function AgentWorkLog({
   }
   for (const key of Object.keys(byAgent)) {
     byAgent[key].sort(
-      (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+      (a, b) =>
+        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
     );
   }
 
@@ -2222,7 +2664,9 @@ function AgentWorkLog({
                   </div>
                 )}
               </div>
-              <span className={styles.workLogCount}>{agentItems.length} items</span>
+              <span className={styles.workLogCount}>
+                {agentItems.length} items
+              </span>
             </div>
             {visible.length > 0 && (
               <div className={styles.workLogItems}>
@@ -2241,7 +2685,9 @@ function AgentWorkLog({
                           <span className={styles.workLogSev} style={{ color }}>
                             {item.severity}
                           </span>
-                          <span className={styles.workLogType}>{item.type}</span>
+                          <span className={styles.workLogType}>
+                            {item.type}
+                          </span>
                           {repo && (
                             <Link
                               href={`https://github.com/${org}/${repo}`}
@@ -2262,7 +2708,9 @@ function AgentWorkLog({
                   <button
                     className={styles.workLogToggle}
                     onClick={() =>
-                      setExpanded(isExpandedAgent ? null : (agent.name ?? agent.id))
+                      setExpanded(
+                        isExpandedAgent ? null : (agent.name ?? agent.id),
+                      )
                     }
                   >
                     {isExpandedAgent
@@ -2334,20 +2782,34 @@ function OrgStatsPanel({ stats }: { stats: OrgStats }) {
             href="https://github.com/issues?q=org%3Aprojectbluefin+label%3Aqueue%2Fagent-ready+state%3Aopen"
             className={styles.orgAgentRow}
           >
-            <span className={styles.orgAgentRowDot} style={{ background: "#3fb950" }} />
+            <span
+              className={styles.orgAgentRowDot}
+              style={{ background: "#3fb950" }}
+            />
             <span className={styles.orgAgentRowLabel}>Agent-ready</span>
-            <span className={styles.orgAgentRowCount} style={{ color: "#3fb950" }}>
+            <span
+              className={styles.orgAgentRowCount}
+              style={{ color: "#3fb950" }}
+            >
               {stats.agentReadyIssues}
             </span>
-            <span className={styles.orgAgentRowSub}>issues awaiting pickup</span>
+            <span className={styles.orgAgentRowSub}>
+              issues awaiting pickup
+            </span>
           </Link>
           <Link
             href="https://github.com/issues?q=org%3Aprojectbluefin+author%3Akubestellar-hive%5Bbot%5D+state%3Aopen+type%3Apr"
             className={styles.orgAgentRow}
           >
-            <span className={styles.orgAgentRowDot} style={{ background: "#58a6ff" }} />
+            <span
+              className={styles.orgAgentRowDot}
+              style={{ background: "#58a6ff" }}
+            />
             <span className={styles.orgAgentRowLabel}>Agent PRs open</span>
-            <span className={styles.orgAgentRowCount} style={{ color: "#58a6ff" }}>
+            <span
+              className={styles.orgAgentRowCount}
+              style={{ color: "#58a6ff" }}
+            >
               {stats.agentOpenPRs}
             </span>
             <span className={styles.orgAgentRowSub}>awaiting review</span>
@@ -2356,9 +2818,15 @@ function OrgStatsPanel({ stats }: { stats: OrgStats }) {
             href="https://github.com/issues?q=org%3Aprojectbluefin+label%3Asource%3Aagent+state%3Aopen"
             className={styles.orgAgentRow}
           >
-            <span className={styles.orgAgentRowDot} style={{ background: "#f59e0b" }} />
+            <span
+              className={styles.orgAgentRowDot}
+              style={{ background: "#f59e0b" }}
+            />
             <span className={styles.orgAgentRowLabel}>Agent-sourced</span>
-            <span className={styles.orgAgentRowCount} style={{ color: "#f59e0b" }}>
+            <span
+              className={styles.orgAgentRowCount}
+              style={{ color: "#f59e0b" }}
+            >
               {stats.sourceAgentOpen}
             </span>
             <span className={styles.orgAgentRowSub}>open items</span>
@@ -2377,26 +2845,44 @@ function OrgStatsPanel({ stats }: { stats: OrgStats }) {
 // ── Guardians column — Community discussions ───────────────────────────────
 
 const EPIC_LABELS = new Set(["epic", "type:epic", "kind:epic", "feature:epic"]);
-const SKIP_LABEL_PREFIXES_GUARDIAN = ["queue/", "hive/", "source:", "priority/", "type:epic", "kind:epic"];
+const SKIP_LABEL_PREFIXES_GUARDIAN = [
+  "queue/",
+  "hive/",
+  "source:",
+  "priority/",
+  "type:epic",
+  "kind:epic",
+];
 
 function guardianVisibleLabels(labels?: QueueLabel[]): QueueLabel[] {
-  return (labels ?? []).filter(
-    (l) =>
-      !SKIP_LABEL_PREFIXES_GUARDIAN.some((p) => l.name.toLowerCase().startsWith(p)) &&
-      !EPIC_LABELS.has(l.name.toLowerCase()),
-  ).slice(0, 3);
+  return (labels ?? [])
+    .filter(
+      (l) =>
+        !SKIP_LABEL_PREFIXES_GUARDIAN.some((p) =>
+          l.name.toLowerCase().startsWith(p),
+        ) && !EPIC_LABELS.has(l.name.toLowerCase()),
+    )
+    .slice(0, 3);
 }
 
 function isEpic(labels?: QueueLabel[]): boolean {
   return (labels ?? []).some((l) => EPIC_LABELS.has(l.name.toLowerCase()));
 }
 
-function GuardiansColumn({ discussions }: { discussions: CommunityDiscussion[] | null }) {
+function GuardiansColumn({
+  discussions,
+}: {
+  discussions: CommunityDiscussion[] | null;
+}) {
   if (!discussions) {
     return (
       <div className={`${styles.destinyCol} ${styles.guardiansCol}`}>
         <div>
-          <p className={styles.destinyColTitle + " " + styles.guardiansColTitle}>Guardians</p>
+          <p
+            className={styles.destinyColTitle + " " + styles.guardiansColTitle}
+          >
+            Guardians
+          </p>
           <p className={styles.destinyColSubtitle}>Community conversations</p>
         </div>
         <div className={styles.empty}>Loading…</div>
@@ -2438,21 +2924,40 @@ function GuardiansColumn({ discussions }: { discussions: CommunityDiscussion[] |
               {l.name}
             </span>
           ))}
-          <span className={styles.issueCardAge}>{relTime(item.updated_at)}</span>
+          <span className={styles.issueCardAge}>
+            {relTime(item.updated_at)}
+          </span>
         </div>
       </Link>
     );
   }
 
-  const tiers: Array<{ label: string; labelCls: string; items: CommunityDiscussion[]; empty: string }> = [
-    { label: "EPICS", labelCls: styles.prTierLabelEpic, items: epics, empty: "No open epics" },
-    { label: "ACTIVE DISCUSSIONS", labelCls: styles.prTierLabelNone, items: active, empty: "Queue clear" },
+  const tiers: Array<{
+    label: string;
+    labelCls: string;
+    items: CommunityDiscussion[];
+    empty: string;
+  }> = [
+    {
+      label: "EPICS",
+      labelCls: styles.prTierLabelEpic,
+      items: epics,
+      empty: "No open epics",
+    },
+    {
+      label: "ACTIVE DISCUSSIONS",
+      labelCls: styles.prTierLabelNone,
+      items: active,
+      empty: "Queue clear",
+    },
   ];
 
   return (
     <div className={`${styles.destinyCol} ${styles.guardiansCol}`}>
       <div>
-        <p className={styles.destinyColTitle + " " + styles.guardiansColTitle}>Guardians</p>
+        <p className={styles.destinyColTitle + " " + styles.guardiansColTitle}>
+          Guardians
+        </p>
         <p className={styles.destinyColSubtitle}>
           Community conversations &mdash; sorted by latest activity
         </p>
@@ -2466,9 +2971,9 @@ function GuardiansColumn({ discussions }: { discussions: CommunityDiscussion[] |
           {items.length === 0 ? (
             <div className={styles.prTierEmpty}>{empty}</div>
           ) : (
-            items.slice(0, 10).map((item) => (
-              <DiscussionCard key={item.html_url} item={item} />
-            ))
+            items
+              .slice(0, 10)
+              .map((item) => <DiscussionCard key={item.html_url} item={item} />)
           )}
           {items.length > 10 && (
             <div className={styles.prTierEmpty}>+{items.length - 10} more</div>
@@ -2484,9 +2989,14 @@ function GuardiansColumn({ discussions }: { discussions: CommunityDiscussion[] |
 const SKIP_LABEL_PREFIXES_GHOST = ["source:", "hive/", "queue/", "priority/"];
 
 function ghostVisibleLabels(labels?: QueueLabel[]): QueueLabel[] {
-  return (labels ?? []).filter(
-    (l) => !SKIP_LABEL_PREFIXES_GHOST.some((p) => l.name.toLowerCase().startsWith(p)),
-  ).slice(0, 3);
+  return (labels ?? [])
+    .filter(
+      (l) =>
+        !SKIP_LABEL_PREFIXES_GHOST.some((p) =>
+          l.name.toLowerCase().startsWith(p),
+        ),
+    )
+    .slice(0, 3);
 }
 
 function GhostsColumn({
@@ -2502,8 +3012,12 @@ function GhostsColumn({
     return (
       <div className={`${styles.destinyCol} ${styles.ghostsCol}`}>
         <div>
-          <p className={styles.destinyColTitle + " " + styles.ghostsColTitle}>Ghosts</p>
-          <p className={styles.destinyColSubtitle}>Agent-assisted pull requests</p>
+          <p className={styles.destinyColTitle + " " + styles.ghostsColTitle}>
+            Ghosts
+          </p>
+          <p className={styles.destinyColSubtitle}>
+            Agent-assisted pull requests
+          </p>
         </div>
         <div className={styles.empty}>Loading…</div>
       </div>
@@ -2515,27 +3029,38 @@ function GhostsColumn({
     const seen = new Set<string>();
     const merged: AgentAssistedPR[] = [];
     for (const pr of hivePRs ?? []) {
-      if (!seen.has(pr.html_url)) { seen.add(pr.html_url); merged.push(pr); }
+      if (!seen.has(pr.html_url)) {
+        seen.add(pr.html_url);
+        merged.push(pr);
+      }
     }
     for (const pr of copilotPRs ?? []) {
-      if (!seen.has(pr.html_url)) { seen.add(pr.html_url); merged.push(pr); }
+      if (!seen.has(pr.html_url)) {
+        seen.add(pr.html_url);
+        merged.push(pr);
+      }
     }
     return merged.sort(
-      (a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime(),
+      (a, b) =>
+        new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime(),
     );
   }, [hivePRs, copilotPRs]);
 
   return (
     <div className={`${styles.destinyCol} ${styles.ghostsCol}`}>
       <div>
-        <p className={styles.destinyColTitle + " " + styles.ghostsColTitle}>Ghosts</p>
+        <p className={styles.destinyColTitle + " " + styles.ghostsColTitle}>
+          Ghosts
+        </p>
         <p className={styles.destinyColSubtitle}>
           Agent-assisted pull requests &mdash; the machines at work
         </p>
       </div>
       <div className={styles.prTier}>
         <div className={styles.prTierHeader}>
-          <span className={`${styles.prTierLabel} ${styles.prTierLabelAgent}`}>OPEN</span>
+          <span className={`${styles.prTierLabel} ${styles.prTierLabelAgent}`}>
+            OPEN
+          </span>
           <span className={styles.prTierCount}>{allPRs.length}</span>
         </div>
         {allPRs.length === 0 ? (
@@ -2553,7 +3078,9 @@ function GhostsColumn({
                 className={styles.prCard}
               >
                 <span className={styles.prCardTitle}>
-                  {pr.draft && <span className={styles.prDraftBadge}>Draft</span>}
+                  {pr.draft && (
+                    <span className={styles.prDraftBadge}>Draft</span>
+                  )}
                   {pr.title.slice(0, 85)}
                 </span>
                 <div className={styles.prCardMeta}>
@@ -2580,7 +3107,9 @@ function GhostsColumn({
                       {l.name}
                     </span>
                   ))}
-                  <span className={styles.prCardAge}>{relTime(pr.updated_at)}</span>
+                  <span className={styles.prCardAge}>
+                    {relTime(pr.updated_at)}
+                  </span>
                 </div>
               </Link>
             );
@@ -2610,9 +3139,27 @@ function VictoryLog({
     sparkColor: SparkColor;
     data: VictoryCategory;
   }> = [
-    { key: "dreams", label: "FEATURES", labelCls: styles.victoryCategoryFeatures, sparkColor: "purple", data: victories.dreams },
-    { key: "relief", label: "FIXED", labelCls: styles.victoryCategoryFixed, sparkColor: "amber", data: victories.relief },
-    { key: "toil", label: "AUTOMATED", labelCls: styles.victoryCategoryAutomated, sparkColor: "green", data: victories.toil },
+    {
+      key: "dreams",
+      label: "FEATURES",
+      labelCls: styles.victoryCategoryFeatures,
+      sparkColor: "purple",
+      data: victories.dreams,
+    },
+    {
+      key: "relief",
+      label: "FIXED",
+      labelCls: styles.victoryCategoryFixed,
+      sparkColor: "amber",
+      data: victories.relief,
+    },
+    {
+      key: "toil",
+      label: "AUTOMATED",
+      labelCls: styles.victoryCategoryAutomated,
+      sparkColor: "green",
+      data: victories.toil,
+    },
   ];
 
   return (
@@ -2688,9 +3235,15 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
   const [testBuilds, setTestBuilds] = useState<number | null>(null);
   const [tapPromotions, setTapPromotions] = useState<number | null>(null);
   const [agentMergedCount, setAgentMergedCount] = useState<number | null>(null);
-  const [communityDiscussions, setCommunityDiscussions] = useState<CommunityDiscussion[] | null>(null);
-  const [hivePRsList, setHivePRsList] = useState<AgentAssistedPR[] | null>(null);
-  const [copilotPRsList, setCopilotPRsList] = useState<AgentAssistedPR[] | null>(null);
+  const [communityDiscussions, setCommunityDiscussions] = useState<
+    CommunityDiscussion[] | null
+  >(null);
+  const [hivePRsList, setHivePRsList] = useState<AgentAssistedPR[] | null>(
+    null,
+  );
+  const [copilotPRsList, setCopilotPRsList] = useState<
+    AgentAssistedPR[] | null
+  >(null);
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [refreshIn, setRefreshIn] = useState(REFRESH_SECS);
@@ -2700,12 +3253,7 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
       // Only fetch live/private data that can't be baked at build time:
       // snapshot (auth-gated), queue (public, changes every 10m), dakota CI (REST not search)
       // All GitHub Search API calls are in hive-live-data.json (build-time, authenticated).
-      const [
-        htmlRes,
-        queueRes,
-        repoRes,
-        ciRes,
-      ] = await Promise.allSettled([
+      const [htmlRes, queueRes, repoRes, ciRes] = await Promise.allSettled([
         fetchTimeout(SNAPSHOT_API_URL, 12000, { credentials: "include" }),
         fetchQueueData(),
         fetchTimeout(`${GH_API}/repos/${DAKOTA}`),
@@ -2778,23 +3326,31 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
   // Fetch hive history (build-time JSON, no token required)
   useEffect(() => {
     fetch("/data/hive-history.json")
-      .then((r) => r.ok ? r.json() as Promise<HiveHistory> : null)
-      .then((data) => { if (data) setHiveHistory(data); })
-      .catch(() => {/* non-fatal */});
+      .then((r) => (r.ok ? (r.json() as Promise<HiveHistory>) : null))
+      .then((data) => {
+        if (data) setHiveHistory(data);
+      })
+      .catch(() => {
+        /* non-fatal */
+      });
   }, []);
 
   // Fetch registry data (baked at build time — avoids CORS block on live API)
   useEffect(() => {
     fetch("/data/registry-data.json")
-      .then((r) => r.ok ? r.json() as Promise<RegistryEntry | null> : null)
-      .then((data) => { if (data) setRegistryData(data); })
-      .catch(() => {/* non-fatal */});
+      .then((r) => (r.ok ? (r.json() as Promise<RegistryEntry | null>) : null))
+      .then((data) => {
+        if (data) setRegistryData(data);
+      })
+      .catch(() => {
+        /* non-fatal */
+      });
   }, []);
 
   // Fetch hive live data (GitHub Search API data baked at build time using GITHUB_TOKEN)
   useEffect(() => {
     fetch("/data/hive-live-data.json")
-      .then((r) => r.ok ? r.json() as Promise<HiveLiveData> : null)
+      .then((r) => (r.ok ? (r.json() as Promise<HiveLiveData>) : null))
       .then((data) => {
         if (!data) return;
         setMergedPRs(
@@ -2849,10 +3405,13 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
         if (data.velocity) setVelocity(data.velocity);
         if (data.testBuilds != null) setTestBuilds(data.testBuilds);
         if (data.tapPromotions != null) setTapPromotions(data.tapPromotions);
-        if (data.agentMergedCount != null) setAgentMergedCount(data.agentMergedCount);
+        if (data.agentMergedCount != null)
+          setAgentMergedCount(data.agentMergedCount);
         if (data.orgStats) setOrgStats(data.orgStats);
       })
-      .catch(() => {/* non-fatal — dashboard degrades gracefully */});
+      .catch(() => {
+        /* non-fatal — dashboard degrades gracefully */
+      });
   }, []);
 
   useEffect(() => {
@@ -2915,9 +3474,7 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
       >
         <div className={styles.dashboard}>
           <div className={styles.loadingWrap}>
-            <div className={styles.loadingText}>
-              Connecting to the factory…
-            </div>
+            <div className={styles.loadingText}>Connecting to the factory…</div>
           </div>
         </div>
       </Layout>
@@ -2952,10 +3509,7 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
             </div>
             {agents.length > 0 && (
               <div className={styles.formationRow}>
-                <HealthBar
-                  active={activeAgents.length}
-                  total={agents.length}
-                />
+                <HealthBar active={activeAgents.length} total={agents.length} />
                 <span
                   className={styles.formationLabel}
                   style={{ color: formationColor }}
@@ -2971,15 +3525,24 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
           </div>
           <div className={styles.heroRight}>
             <LivePulse />
-            {(snapshot?.acmmMode ?? registryData?.governorMode) && (() => {
-              const mode = (snapshot?.acmmMode ?? registryData?.governorMode)!.toUpperCase();
-              const cls = mode === "SURGE" ? styles.modeSurge
-                : mode === "BUSY" ? styles.modeBusy
-                : mode === "QUIET" ? styles.modeQuiet
-                : mode === "IDLE" ? styles.modeIdle
-                : styles.modeNormal;
-              return <span className={`${styles.modeBadge} ${cls}`}>{mode}</span>;
-            })()}
+            {(snapshot?.acmmMode ?? registryData?.governorMode) &&
+              (() => {
+                const mode = (snapshot?.acmmMode ??
+                  registryData?.governorMode)!.toUpperCase();
+                const cls =
+                  mode === "SURGE"
+                    ? styles.modeSurge
+                    : mode === "BUSY"
+                      ? styles.modeBusy
+                      : mode === "QUIET"
+                        ? styles.modeQuiet
+                        : mode === "IDLE"
+                          ? styles.modeIdle
+                          : styles.modeNormal;
+                return (
+                  <span className={`${styles.modeBadge} ${cls}`}>{mode}</span>
+                );
+              })()}
             {dakotaStats && <CiBadge status={dakotaStats.ciStatus} />}
           </div>
         </header>
@@ -2988,21 +3551,39 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
         <div className={styles.statsRow}>
           <StatCard
             label={p0Count > 0 ? `P0 / P1 Issues` : "P1 This Cycle"}
-            value={p0Count > 0 ? `${p0Count}+${p1Count}` : p1Count > 0 ? p1Count : (registryData?.actionableIssues ?? "—")}
+            value={
+              p0Count > 0
+                ? `${p0Count}+${p1Count}`
+                : p1Count > 0
+                  ? p1Count
+                  : (registryData?.actionableIssues ?? "—")
+            }
             accent={p0Count > 0 ? "#f85149" : undefined}
-            sub={p0Count > 0 ? `${p0Count} blocker${p0Count > 1 ? "s" : ""}` : p1Count > 0 ? undefined : (registryData?.actionableIssues != null ? "actionable (registry)" : undefined)}
+            sub={
+              p0Count > 0
+                ? `${p0Count} blocker${p0Count > 1 ? "s" : ""}`
+                : p1Count > 0
+                  ? undefined
+                  : registryData?.actionableIssues != null
+                    ? "actionable (registry)"
+                    : undefined
+            }
           />
           {(() => {
-            const framesVal = agents.length > 0
-              ? `${activeAgents.length}/${agents.length}`
-              : registryData?.agentCount != null
-                ? `${registryData.agents?.filter(a => a.state !== "paused" && a.state !== "idle").length ?? "?"}/${registryData.agentCount}`
-                : "—";
-            const framesSub = agents.length > 0
-              ? (workingAgents.length > 0 ? `${workingAgents.length} working` : "standing by")
-              : registryData?.agentCount != null
-                ? "registry"
-                : "no snapshot";
+            const framesVal =
+              agents.length > 0
+                ? `${activeAgents.length}/${agents.length}`
+                : registryData?.agentCount != null
+                  ? `${registryData.agents?.filter((a) => a.state !== "paused" && a.state !== "idle").length ?? "?"}/${registryData.agentCount}`
+                  : "—";
+            const framesSub =
+              agents.length > 0
+                ? workingAgents.length > 0
+                  ? `${workingAgents.length} working`
+                  : "standing by"
+                : registryData?.agentCount != null
+                  ? "registry"
+                  : "no snapshot";
             return (
               <StatCard
                 label="Frames"
@@ -3017,7 +3598,9 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
             value={snapshot?.acmmLevel ?? registryData?.acmmLevel ?? "—"}
             sub={(() => {
               const lvl = snapshot?.acmmLevel ?? registryData?.acmmLevel;
-              return lvl != null ? (ACMM_LEVELS[lvl]?.label ?? `Level ${lvl}`) : "capability level";
+              return lvl != null
+                ? (ACMM_LEVELS[lvl]?.label ?? `Level ${lvl}`)
+                : "capability level";
             })()}
             accent={(() => {
               const lvl = snapshot?.acmmLevel ?? registryData?.acmmLevel;
@@ -3026,30 +3609,48 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
           />
           <StatCard
             label="Shipped This Cycle"
-            value={queueData
-              ? (queueData.victories.dreams.count ?? 0) + (queueData.victories.relief.count ?? 0)
-              : "—"}
+            value={
+              queueData
+                ? (queueData.victories.dreams.count ?? 0) +
+                  (queueData.victories.relief.count ?? 0)
+                : "—"
+            }
             sub="features + fixes"
             accent="#3fb950"
-            spark={queueData ? victorySparkData([
-              ...queueData.victories.dreams.recent,
-              ...queueData.victories.relief.recent,
-            ].sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()), 14) : undefined}
+            spark={
+              queueData
+                ? victorySparkData(
+                    [
+                      ...queueData.victories.dreams.recent,
+                      ...queueData.victories.relief.recent,
+                    ].sort(
+                      (a, b) =>
+                        new Date(b.updated_at).getTime() -
+                        new Date(a.updated_at).getTime(),
+                    ),
+                    14,
+                  )
+                : undefined
+            }
             sparkColor="green"
           />
           <StatCard
             label="Test Builds"
             value={testBuilds ?? "—"}
             sub="passed in testsuite"
-            accent={testBuilds != null && testBuilds > 0 ? "#3fb950" : undefined}
+            accent={
+              testBuilds != null && testBuilds > 0 ? "#3fb950" : undefined
+            }
           />
           <StatCard
             label="Merge Time"
-            value={snapshot?.medianMergeMins != null
-              ? snapshot.medianMergeMins < 60
-                ? `${snapshot.medianMergeMins}m`
-                : `${Math.round((snapshot.medianMergeMins / 60) * 10) / 10}h`
-              : "—"}
+            value={
+              snapshot?.medianMergeMins != null
+                ? snapshot.medianMergeMins < 60
+                  ? `${snapshot.medianMergeMins}m`
+                  : `${Math.round((snapshot.medianMergeMins / 60) * 10) / 10}h`
+                : "—"
+            }
             sub="median PR cycle"
             accent={snapshot?.medianMergeMins != null ? "#39d2c0" : undefined}
           />
@@ -3065,7 +3666,11 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
             {agents.length > 0 ? (
               <div className={styles.agentGrid}>
                 {agents.map((a) => (
-                  <FrameCard key={a.id} agent={a} advisoryItems={advisoriesByAgent[a.name ?? a.id] ?? []} />
+                  <FrameCard
+                    key={a.id}
+                    agent={a}
+                    advisoryItems={advisoriesByAgent[a.name ?? a.id] ?? []}
+                  />
                 ))}
               </div>
             ) : registryData?.agents && registryData.agents.length > 0 ? (
@@ -3073,10 +3678,16 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
                 {registryData.agents.map((ra) => {
                   const synth: HiveAgent = {
                     id: ra.name,
-                    displayName: ra.name.charAt(0).toUpperCase() + ra.name.slice(1),
+                    displayName:
+                      ra.name.charAt(0).toUpperCase() + ra.name.slice(1),
                     role: ra.state ?? "unknown",
                     emoji: "🤖",
-                    color: ra.state === "working" ? "#3fb950" : ra.state === "paused" ? "#f85149" : "#58a6ff",
+                    color:
+                      ra.state === "working"
+                        ? "#3fb950"
+                        : ra.state === "paused"
+                          ? "#f85149"
+                          : "#58a6ff",
                     state: ra.state ?? "idle",
                     busy: ra.state === "working" ? "working" : "idle",
                     paused: ra.state === "paused",
@@ -3087,13 +3698,18 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
                 })}
               </div>
             ) : (
-              <div className={styles.empty}>No Frame data — snapshot updating</div>
+              <div className={styles.empty}>
+                No Frame data — snapshot updating
+              </div>
             )}
           </section>
 
           {/* Right: Governor + Victory Log + What Frames Are Working On + Health */}
           <div className={styles.factorySidebar}>
-            <GovernorPanel governor={snapshot?.governor} registry={registryData} />
+            <GovernorPanel
+              governor={snapshot?.governor}
+              registry={registryData}
+            />
             <VictoryLog victories={queueData?.victories ?? null} />
             {advisoryItems.length > 0 && (
               <section className={styles.panel}>
@@ -3101,7 +3717,8 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
                   What Frames Are Working On
                 </Heading>
                 <p className={styles.panelMeta}>
-                  Advisory digest — findings, bugs, CI failures logged by each Frame
+                  Advisory digest — findings, bugs, CI failures logged by each
+                  Frame
                 </p>
                 <AgentWorkLog
                   agents={agents}
@@ -3112,42 +3729,111 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
               </section>
             )}
             {/* Registry Health Checks */}
-            {registryData?.health?.checks && registryData.health.checks.length > 0 && (
-              <section className={styles.panel}>
-                <Heading as="h2" className={styles.panelTitle}>
-                  System Health
-                </Heading>
-                <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem", marginTop: "0.5rem" }}>
-                  {registryData.health.checks.map((chk) => (
-                    <div key={chk.name} style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.8rem" }}>
-                      <span style={{
-                        width: 8, height: 8, borderRadius: "50%", flexShrink: 0,
-                        background: chk.status === "ok" ? "#3fb950" : chk.status === "warn" ? "#d97706" : "#f85149",
-                      }} />
-                      <span style={{ color: "#e6edf3", textTransform: "capitalize" }}>{chk.name.replace(/_/g, " ")}</span>
-                      <span style={{ marginLeft: "auto", color: chk.status === "ok" ? "#3fb950" : chk.status === "warn" ? "#d97706" : "#f85149", fontFamily: "monospace", fontWeight: 700, fontSize: "0.7rem" }}>
-                        {chk.status.toUpperCase()}
-                      </span>
-                      {chk.detail && (
-                        <span style={{ color: "#484f58", fontSize: "0.68rem", maxWidth: "8rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={chk.detail}>
-                          {chk.detail}
+            {registryData?.health?.checks &&
+              registryData.health.checks.length > 0 && (
+                <section className={styles.panel}>
+                  <Heading as="h2" className={styles.panelTitle}>
+                    System Health
+                  </Heading>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "0.35rem",
+                      marginTop: "0.5rem",
+                    }}
+                  >
+                    {registryData.health.checks.map((chk) => (
+                      <div
+                        key={chk.name}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "0.5rem",
+                          fontSize: "0.8rem",
+                        }}
+                      >
+                        <span
+                          style={{
+                            width: 8,
+                            height: 8,
+                            borderRadius: "50%",
+                            flexShrink: 0,
+                            background:
+                              chk.status === "ok"
+                                ? "#3fb950"
+                                : chk.status === "warn"
+                                  ? "#d97706"
+                                  : "#f85149",
+                          }}
+                        />
+                        <span
+                          style={{
+                            color: "#e6edf3",
+                            textTransform: "capitalize",
+                          }}
+                        >
+                          {chk.name.replace(/_/g, " ")}
                         </span>
+                        <span
+                          style={{
+                            marginLeft: "auto",
+                            color:
+                              chk.status === "ok"
+                                ? "#3fb950"
+                                : chk.status === "warn"
+                                  ? "#d97706"
+                                  : "#f85149",
+                            fontFamily: "monospace",
+                            fontWeight: 700,
+                            fontSize: "0.7rem",
+                          }}
+                        >
+                          {chk.status.toUpperCase()}
+                        </span>
+                        {chk.detail && (
+                          <span
+                            style={{
+                              color: "#484f58",
+                              fontSize: "0.68rem",
+                              maxWidth: "8rem",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
+                            }}
+                            title={chk.detail}
+                          >
+                            {chk.detail}
+                          </span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                  {registryData.online != null && (
+                    <p
+                      className={styles.panelMeta}
+                      style={{ marginTop: "0.5rem" }}
+                    >
+                      Registry:{" "}
+                      <span
+                        style={{
+                          color: registryData.online ? "#3fb950" : "#f85149",
+                          fontWeight: 700,
+                        }}
+                      >
+                        {registryData.online ? "ONLINE" : "OFFLINE"}
+                      </span>
+                      {registryData.lastHeartbeat && (
+                        <>
+                          {" "}
+                          &middot; heartbeat{" "}
+                          {relTime(registryData.lastHeartbeat)}
+                        </>
                       )}
-                    </div>
-                  ))}
-                </div>
-                {registryData.online != null && (
-                  <p className={styles.panelMeta} style={{ marginTop: "0.5rem" }}>
-                    Registry: <span style={{ color: registryData.online ? "#3fb950" : "#f85149", fontWeight: 700 }}>
-                      {registryData.online ? "ONLINE" : "OFFLINE"}
-                    </span>
-                    {registryData.lastHeartbeat && (
-                      <> &middot; heartbeat {relTime(registryData.lastHeartbeat)}</>
-                    )}
-                  </p>
-                )}
-              </section>
-            )}
+                    </p>
+                  )}
+                </section>
+              )}
           </div>
         </div>
 
@@ -3167,34 +3853,80 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
               Task Leaderboard
             </Heading>
             <p className={styles.panelMeta}>
-              Tasks completed by each contributor via the hive registry &mdash; updated live
+              Tasks completed by each contributor via the hive registry &mdash;
+              updated live
             </p>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: "0.5rem", marginTop: "0.75rem" }}>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
+                gap: "0.5rem",
+                marginTop: "0.75rem",
+              }}
+            >
               {registryData.leaderboard
                 .sort((a, b) => b.tasks_completed - a.tasks_completed)
                 .slice(0, 12)
                 .map((entry, idx) => (
-                  <div key={entry.github_username} style={{
-                    display: "flex", alignItems: "center", gap: "0.5rem",
-                    background: "#161b22", borderRadius: "6px", padding: "0.4rem 0.6rem",
-                    border: idx === 0 ? "1px solid #d97706" : "1px solid #21262d",
-                  }}>
-                    <span style={{ fontSize: "0.7rem", color: "#484f58", fontFamily: "monospace", width: "1.2rem", flexShrink: 0 }}>
+                  <div
+                    key={entry.github_username}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.5rem",
+                      background: "#161b22",
+                      borderRadius: "6px",
+                      padding: "0.4rem 0.6rem",
+                      border:
+                        idx === 0 ? "1px solid #d97706" : "1px solid #21262d",
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: "0.7rem",
+                        color: "#484f58",
+                        fontFamily: "monospace",
+                        width: "1.2rem",
+                        flexShrink: 0,
+                      }}
+                    >
                       #{idx + 1}
                     </span>
                     <img
-                      src={entry.avatar_url || `https://github.com/${entry.github_username}.png?size=32`}
+                      src={
+                        entry.avatar_url ||
+                        `https://github.com/${entry.github_username}.png?size=32`
+                      }
                       alt={entry.github_username}
-                      width={24} height={24}
+                      width={24}
+                      height={24}
                       style={{ borderRadius: "50%", flexShrink: 0 }}
                     />
-                    <span style={{ fontSize: "0.8rem", color: "#e6edf3", flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    <span
+                      style={{
+                        fontSize: "0.8rem",
+                        color: "#e6edf3",
+                        flex: 1,
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
                       {entry.github_username}
                     </span>
-                    <span style={{
-                      fontSize: "0.75rem", fontWeight: 700, fontFamily: "monospace",
-                      color: idx === 0 ? "#d97706" : idx < 3 ? "#3fb950" : "#58a6ff",
-                    }}>
+                    <span
+                      style={{
+                        fontSize: "0.75rem",
+                        fontWeight: 700,
+                        fontFamily: "monospace",
+                        color:
+                          idx === 0
+                            ? "#d97706"
+                            : idx < 3
+                              ? "#3fb950"
+                              : "#58a6ff",
+                      }}
+                    >
                       {entry.tasks_completed}
                     </span>
                   </div>
@@ -3229,7 +3961,12 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
             cadenceMatrix={snapshot?.cadenceMatrix}
             mode={snapshot?.governor?.mode}
           />
-          <FrameOfDay agent={agentOfDay} advisoryItems={advisoriesByAgent[agentOfDay?.name ?? agentOfDay?.id ?? ""] ?? []} />
+          <FrameOfDay
+            agent={agentOfDay}
+            advisoryItems={
+              advisoriesByAgent[agentOfDay?.name ?? agentOfDay?.id ?? ""] ?? []
+            }
+          />
         </div>
 
         {/* Formation log */}
@@ -3239,9 +3976,10 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
         />
 
         {/* Governor 24h timeline */}
-        {snapshot?.governorTimeline && snapshot.governorTimeline.length >= 10 && (
-          <GovernorTimeline ticks={snapshot.governorTimeline} />
-        )}
+        {snapshot?.governorTimeline &&
+          snapshot.governorTimeline.length >= 10 && (
+            <GovernorTimeline ticks={snapshot.governorTimeline} />
+          )}
 
         {/* Token budget */}
         {snapshot?.budgetPct != null && (
@@ -3254,9 +3992,7 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
         )}
 
         {/* Strategy Lab */}
-        {snapshot?.nous && (
-          <NousPanel nous={snapshot.nous} />
-        )}
+        {snapshot?.nous && <NousPanel nous={snapshot.nous} />}
 
         {/* About */}
         <section className={styles.panel}>
@@ -3289,10 +4025,10 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
                   Full Hive Dashboard
                 </Link>
                 <Link href={`https://github.com/${DAKOTA}`}>Dakota Repo</Link>
-                <Link href="https://github.com/kubestellar/hive">Hive Project</Link>
-                <Link href="https://arxiv.org/abs/2604.09388">
-                  ACMM Paper
+                <Link href="https://github.com/kubestellar/hive">
+                  Hive Project
                 </Link>
+                <Link href="https://arxiv.org/abs/2604.09388">ACMM Paper</Link>
                 <Link href="https://www.cncf.io/blog/2026/05/14/when-ai-agents-become-contributors-how-kubestellar-reached-81-pr-acceptance/">
                   CNCF Blog
                 </Link>
@@ -3331,16 +4067,11 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
             <Link href="https://kubestellar.io/live/hive/bluefin/">
               Hive snapshot
             </Link>{" "}
-            +{" "}
-            <Link href={HOSTED_INSTANCE_URL}>
-              hosted.hive
-            </Link>{" "}
-            +{" "}
+            + <Link href={HOSTED_INSTANCE_URL}>hosted.hive</Link> +{" "}
             <Link href="https://queue.projectbluefin.io/">
               queue.projectbluefin.io
             </Link>{" "}
-            +{" "}
-            <Link href="https://docs.github.com/en/rest">GitHub API</Link>
+            + <Link href="https://docs.github.com/en/rest">GitHub API</Link>
           </div>
         </footer>
         <div className={styles.factoryTagline}>

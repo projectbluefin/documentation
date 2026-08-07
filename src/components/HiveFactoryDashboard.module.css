@@ -7,8 +7,8 @@
 .dashboard {
   background: #0d1117;
   color: #e6edf3;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui,
-    sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
   min-height: 100vh;
   padding: 2rem 2.5rem 3rem;
   /* Break out of Docusaurus container centering while staying full-width */
@@ -63,7 +63,8 @@
   margin: 0 0 0.25rem !important;
   line-height: 1.1 !important;
   letter-spacing: -0.025em;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif !important;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif !important;
 }
 
 .heroSub {
@@ -185,11 +186,15 @@
 }
 
 @media (max-width: 1100px) {
-  .statsRow { grid-template-columns: repeat(3, 1fr); }
+  .statsRow {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 @media (max-width: 600px) {
-  .statsRow { grid-template-columns: repeat(2, 1fr); }
+  .statsRow {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .statCard {
@@ -200,7 +205,9 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  transition: border-color 0.15s, transform 0.15s;
+  transition:
+    border-color 0.15s,
+    transform 0.15s;
 }
 
 .statCard:hover {
@@ -395,7 +402,9 @@
 }
 
 @media (max-width: 1024px) {
-  .factoryFloor { grid-template-columns: 1fr; }
+  .factoryFloor {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Sidebar stack inside factory floor right column */
@@ -415,11 +424,15 @@
 }
 
 @media (max-width: 1024px) {
-  .intelligenceZone { grid-template-columns: 1fr 1fr; }
+  .intelligenceZone {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 @media (max-width: 640px) {
-  .intelligenceZone { grid-template-columns: 1fr; }
+  .intelligenceZone {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* ── Agent grid ─────────────────────────────────────────────────────────── */
@@ -435,7 +448,9 @@
   border-left: 3px solid var(--ac, #58a6ff);
   border-radius: 8px;
   padding: 0.9rem;
-  transition: transform 0.15s, box-shadow 0.15s;
+  transition:
+    transform 0.15s,
+    box-shadow 0.15s;
 }
 
 .agentCard:hover {
@@ -741,7 +756,9 @@
   font-size: 0.8rem;
   color: #8b949e;
   text-decoration: none;
-  transition: border-color 0.15s, color 0.15s;
+  transition:
+    border-color 0.15s,
+    color 0.15s;
 }
 .repoChip:hover {
   border-color: #58a6ff;
@@ -791,7 +808,9 @@
   padding: 4px 12px;
   border: 1px solid rgba(88, 166, 255, 0.25);
   border-radius: 20px;
-  transition: border-color 0.15s, background 0.15s;
+  transition:
+    border-color 0.15s,
+    background 0.15s;
 }
 .aboutLinks a:hover {
   border-color: #58a6ff;
@@ -887,9 +906,12 @@
   gap: 2rem;
 }
 @media (max-width: 700px) {
-  .orgGrid { grid-template-columns: 1fr; }
+  .orgGrid {
+    grid-template-columns: 1fr;
+  }
 }
-.orgOverview {}
+.orgOverview {
+}
 .orgStats {
   display: flex;
   align-items: center;
@@ -927,7 +949,8 @@
   letter-spacing: 0.05em;
   text-align: center;
 }
-.orgAgentActivity {}
+.orgAgentActivity {
+}
 .orgAgentRows {
   display: flex;
   flex-direction: column;
@@ -1028,8 +1051,12 @@
   align-items: start;
 }
 @media (max-width: 640px) {
-  .acmmRow { grid-template-columns: 3rem 1fr; }
-  .acmmScale { grid-column: 1 / -1; }
+  .acmmRow {
+    grid-template-columns: 3rem 1fr;
+  }
+  .acmmScale {
+    grid-column: 1 / -1;
+  }
 }
 .acmmLevelBig {
   font-size: 2.5rem;
@@ -1091,8 +1118,8 @@
 }
 .acmmStepActive {
   font-weight: 700;
-  background: rgba(255,255,255,0.04);
-  box-shadow: 0 0 8px rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.1);
 }
 .acmmStepPast {
   opacity: 0.6;
@@ -1101,7 +1128,6 @@
   color: #30363d;
   border-color: #21262d;
 }
-
 
 .loadingWrap {
   display: flex;
@@ -1154,7 +1180,9 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.prRepoLabel:hover { color: #58a6ff; }
+.prRepoLabel:hover {
+  color: #58a6ff;
+}
 .prBarWrap {
   display: flex;
   align-items: center;
@@ -1199,8 +1227,12 @@
   margin-top: 0.25rem;
   padding-left: 108px;
 }
-.prLegendHuman { color: #58a6ff; }
-.prLegendAgent { color: #3fb950; }
+.prLegendHuman {
+  color: #58a6ff;
+}
+.prLegendAgent {
+  color: #3fb950;
+}
 
 /* ── Agent work log ──────────────────────────────────────────────────────── */
 .workLog {
@@ -1212,14 +1244,20 @@
   border-bottom: 1px solid #21262d;
   padding: 0.875rem 0;
 }
-.workLogAgent:last-child { border-bottom: none; }
+.workLogAgent:last-child {
+  border-bottom: none;
+}
 .workLogHeader {
   display: flex;
   align-items: flex-start;
   gap: 0.6rem;
   margin-bottom: 0.5rem;
 }
-.workLogEmoji { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+.workLogEmoji {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
 .workLogAgentMeta {
   flex: 1;
   display: flex;
@@ -1246,7 +1284,10 @@
   text-decoration: none;
   font-family: "SFMono-Regular", Consolas, monospace;
 }
-.workLogRepoChip:hover { border-color: #f59e0b; text-decoration: none; }
+.workLogRepoChip:hover {
+  border-color: #f59e0b;
+  text-decoration: none;
+}
 .workLogCount {
   font-size: 0.7rem;
   color: #484f58;
@@ -1268,7 +1309,11 @@
   border-radius: 6px;
   border: 1px solid #21262d;
 }
-.workLogIcon { font-size: 0.85rem; flex-shrink: 0; margin-top: 1px; }
+.workLogIcon {
+  font-size: 0.85rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
 .workLogItemBody {
   display: flex;
   flex-direction: column;
@@ -1306,7 +1351,9 @@
   text-decoration: none;
   font-family: "SFMono-Regular", Consolas, monospace;
 }
-.workLogRepo:hover { text-decoration: underline; }
+.workLogRepo:hover {
+  text-decoration: underline;
+}
 .workLogTime {
   font-size: 0.62rem;
   color: #484f58;
@@ -1322,9 +1369,14 @@
   padding: 3px 10px;
   cursor: pointer;
   margin-top: 0.25rem;
-  transition: border-color 0.15s, color 0.15s;
+  transition:
+    border-color 0.15s,
+    color 0.15s;
 }
-.workLogToggle:hover { border-color: #58a6ff; color: #58a6ff; }
+.workLogToggle:hover {
+  border-color: #58a6ff;
+  color: #58a6ff;
+}
 .workLogEmpty {
   font-size: 0.75rem;
   color: #484f58;
@@ -1340,7 +1392,9 @@
   color: #58a6ff;
   text-decoration: none;
 }
-.workLogDigestLink:hover { text-decoration: underline; }
+.workLogDigestLink:hover {
+  text-decoration: underline;
+}
 
 /* ── Empty state ─────────────────────────────────────────────────────────── */
 .empty {
@@ -1349,7 +1403,6 @@
   font-style: italic;
   padding: 0.75rem 0;
 }
-
 
 /* ── New dense panels ─────────────────────────────────────────────────────── */
 .feedList {
@@ -1462,9 +1515,15 @@
   font-size: 0.88rem;
   font-weight: 700;
 }
-.velocityDeltaUp { color: #f85149; }
-.velocityDeltaDown { color: #3fb950; }
-.velocityDeltaFlat { color: #8b949e; }
+.velocityDeltaUp {
+  color: #f85149;
+}
+.velocityDeltaDown {
+  color: #3fb950;
+}
+.velocityDeltaFlat {
+  color: #8b949e;
+}
 .p0Alert {
   margin-top: 0.75rem;
   color: #f85149;
@@ -1484,10 +1543,22 @@
   font-weight: 800;
   letter-spacing: 0.08em;
 }
-.govModeSurge { color: #f85149; background: rgba(248, 81, 73, 0.12); }
-.govModeBusy { color: #d29922; background: rgba(210, 153, 34, 0.12); }
-.govModeQuiet { color: #58a6ff; background: rgba(88, 166, 255, 0.12); }
-.govModeIdle { color: #8b949e; background: rgba(139, 148, 158, 0.12); }
+.govModeSurge {
+  color: #f85149;
+  background: rgba(248, 81, 73, 0.12);
+}
+.govModeBusy {
+  color: #d29922;
+  background: rgba(210, 153, 34, 0.12);
+}
+.govModeQuiet {
+  color: #58a6ff;
+  background: rgba(88, 166, 255, 0.12);
+}
+.govModeIdle {
+  color: #8b949e;
+  background: rgba(139, 148, 158, 0.12);
+}
 .govThreshOuter {
   position: relative;
   margin-top: 0.9rem;
@@ -1534,9 +1605,18 @@
   overflow: hidden;
   white-space: nowrap;
 }
-.govThreshZoneQuiet { background: rgba(88, 166, 255, 0.14); color: #58a6ff; }
-.govThreshZoneBusy { background: rgba(210, 153, 34, 0.14); color: #d29922; }
-.govThreshZoneSurge { background: rgba(248, 81, 73, 0.14); color: #f85149; }
+.govThreshZoneQuiet {
+  background: rgba(88, 166, 255, 0.14);
+  color: #58a6ff;
+}
+.govThreshZoneBusy {
+  background: rgba(210, 153, 34, 0.14);
+  color: #d29922;
+}
+.govThreshZoneSurge {
+  background: rgba(248, 81, 73, 0.14);
+  color: #f85149;
+}
 .govThreshMarker {
   position: absolute;
   top: 0;
@@ -1666,9 +1746,18 @@
   height: 10px;
   border-radius: 50%;
 }
-.healthDotPass { background: #3fb950; box-shadow: 0 0 10px rgba(63, 185, 80, 0.45); }
-.healthDotFail { background: #f85149; box-shadow: 0 0 10px rgba(248, 81, 73, 0.45); }
-.healthDotWarn { background: #d29922; box-shadow: 0 0 10px rgba(210, 153, 34, 0.45); }
+.healthDotPass {
+  background: #3fb950;
+  box-shadow: 0 0 10px rgba(63, 185, 80, 0.45);
+}
+.healthDotFail {
+  background: #f85149;
+  box-shadow: 0 0 10px rgba(248, 81, 73, 0.45);
+}
+.healthDotWarn {
+  background: #d29922;
+  box-shadow: 0 0 10px rgba(210, 153, 34, 0.45);
+}
 
 @media (max-width: 900px) {
   .feedItem,
@@ -2166,7 +2255,7 @@
   font-size: 0.72rem;
   font-weight: 700;
   color: #8b949e;
-  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-family: "SF Mono", "Fira Code", monospace;
 }
 
 .mergedCardRepo {
@@ -2178,7 +2267,7 @@
 
 .mergedCardTag {
   font-size: 0.65rem;
-  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-family: "SF Mono", "Fira Code", monospace;
   border: 1px solid;
   border-radius: 3px;
   padding: 0.05rem 0.3rem;
@@ -2419,7 +2508,10 @@
   border-radius: 10px;
   text-decoration: none;
   color: inherit;
-  transition: border-color 0.15s, background 0.15s, transform 0.1s;
+  transition:
+    border-color 0.15s,
+    background 0.15s,
+    transform 0.1s;
 }
 
 .spotlightCard:hover {
@@ -2492,7 +2584,9 @@
   color: #58a6ff;
   font-size: 0.8rem;
   cursor: pointer;
-  transition: background 0.15s, border-color 0.15s;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
 }
 
 .communityShowMore:hover {
@@ -2758,4 +2852,10 @@
   .lbColBadges {
     display: none;
   }
+}
+
+.governorSpark {
+  width: 100%;
+  height: 32px;
+  display: block;
 }
