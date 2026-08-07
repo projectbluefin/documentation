@@ -1,8 +1,11 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import Layout from "@theme/Layout";
 import Link from "@docusaurus/Link";
+import { useHistory, useLocation } from "@docusaurus/router";
 import Heading from "@theme/Heading";
 import Sparkline from "./Sparkline";
+import type { SparklinePoint, SparklineVariant } from "./Sparkline";
+import ActivityCalendar from "./ActivityCalendar";
 import styles from "./HiveFactoryDashboard.module.css";
 
 // ── Types ──────────────────────────────────────────────────────────────────
@@ -58,6 +61,9 @@ interface RegistryEntry {
   leaderboard: RegistryLeaderboardEntry[];
   issueHistory: RegistryTimeSeries[];
   prHistory: RegistryTimeSeries[];
+  prsMerged90d?: number;
+  prsRejected90d?: number;
+  cvesClosed?: number;
   lastHeartbeat?: string;
 }
 
@@ -307,6 +313,12 @@ interface ContributorStat {
   lastMonth: number;
   last3Months: number;
   byRepo: Record<string, number>;
+  /**
+   * Commits per week, oldest-first, at most 52, aligned index-for-index with
+   * `HiveHistory.contributorWeekStarts`. Empty for contributors outside the
+   * top-100 series cap — empty means "not collected", not "no commits".
+   */
+  weeks?: number[];
 }
 
 interface HiveHistory {
@@ -316,7 +328,67 @@ interface HiveHistory {
   lastContributorFetch?: string;
   // Weekly windowed stats (populated by stats/contributors endpoint)
   contributorStats?: Record<string, ContributorStat>;
+  /** Shared week grid: unix seconds of each week start, oldest-first. */
+  contributorWeekStarts?: number[];
   lastWeeklyStatsFetch?: string;
+}
+
+// ── Factory build statistics (static/data/factory-stats.json) ──────────────
+
+/**
+ * "running" is the no-verdict bucket, not "executing right now": cancelled and
+ * skipped runs land there too. It is never folded into failures — that mapping
+ * is exactly what makes the lab dashboard read as an outage while 94% of builds
+ * pass (projectbluefin/lab#616).
+ */
+type FactoryRunStatus = "passed" | "failed" | "running";
+
+interface FactoryRun {
+  t: number; // unix seconds
+  status: FactoryRunStatus;
+  durationMin: number | null;
+}
+
+interface FactoryLane {
+  id: string;
+  label: string;
+  repo: string;
+  runs: FactoryRun[];
+  total: number;
+  passed: number;
+  failed: number;
+  running: number;
+  /** passed / (passed + failed), in-flight excluded. null when nothing finished. */
+  successRate: number | null;
+  medianDurationMin: number | null;
+  unavailable: boolean;
+  stateReason: string | null;
+}
+
+interface FactoryDaily {
+  date: string; // ISO yyyy-mm-dd
+  passed: number;
+  failed: number;
+}
+
+interface FactoryTotals {
+  total: number;
+  passed: number;
+  failed: number;
+  running: number;
+  successRate: number | null;
+  medianDurationMin: number | null;
+  averageDurationMin: number | null;
+}
+
+interface FactoryStats {
+  generatedAt: string;
+  window: { days: number; from: string; to: string };
+  lanes: FactoryLane[];
+  totals: FactoryTotals;
+  daily: FactoryDaily[];
+  unavailable: boolean;
+  stateReason: string | null;
 }
 
 // ── Milestone badge definitions ───────────────────────────────────────────
@@ -1912,6 +1984,15 @@ interface LeaderboardEntry {
   repos: string[];
   badges: MilestoneBadge[];
   hasStats: boolean;
+  /** Commits per week, oldest-first. Empty when the series was not collected. */
+  weeks: number[];
+}
+
+/** UTC day for a unix-second week start. Deterministic across build machines. */
+function weekStartLabel(seconds?: number): string {
+  if (typeof seconds !== "number" || !Number.isFinite(seconds))
+    return "unknown";
+  return new Date(seconds * 1000).toISOString().slice(0, 10);
 }
 
 function ContributorLeaderboard({ history }: { history: HiveHistory | null }) {
@@ -1970,6 +2051,7 @@ function ContributorLeaderboard({ history }: { history: HiveHistory | null }) {
         repos,
         badges: computeMilestones(repos.length, lastWeek, lastMonth),
         hasStats: s != null,
+        weeks: Array.isArray(s?.weeks) ? s.weeks : [],
       });
     }
 
@@ -1983,6 +2065,15 @@ function ContributorLeaderboard({ history }: { history: HiveHistory | null }) {
 
   if (!history || ranked.length === 0) return null;
 
+  const weekStarts = history.contributorWeekStarts ?? [];
+  const seriesRows = ranked.filter((r) => r.weeks.length > 0);
+  // One scale for the whole column. These rows are small multiples: per-row
+  // autoscaling would draw a two-commit week and a two-hundred-commit week as
+  // the same mountain range.
+  const weekDomain: [number, number] = [
+    0,
+    Math.max(1, ...seriesRows.flatMap((r) => r.weeks)),
+  ];
   const lastUpdated = history.lastWeeklyStatsFetch
     ? new Date(history.lastWeeklyStatsFetch).toLocaleDateString("en-US", {
         month: "short",
@@ -2002,7 +2093,9 @@ function ContributorLeaderboard({ history }: { history: HiveHistory | null }) {
       </Heading>
       <p className={styles.panelMeta}>
         Ranked by breadth of engagement — projects contributed to across the
-        factory
+        factory. Each row carries {weekStarts.length || "no"} weeks of commits
+        on one shared 0&ndash;{weekDomain[1]} scale, so the rows compare
+        directly
         {lastUpdated ? ` · stats as of ${lastUpdated}` : ""}
         {!hasWeeklyStats && (
           <span className={styles.lbAccumulating}>
@@ -2050,64 +2143,91 @@ function ContributorLeaderboard({ history }: { history: HiveHistory | null }) {
           <span className={styles.lbColRank}>#</span>
           <span className={styles.lbColUser}>Contributor</span>
           <span className={styles.lbColCommits}>Projects</span>
+          <span className={styles.lbColActivity}>Weekly commits</span>
           <span className={styles.lbColRepos}>Repos</span>
           <span className={styles.lbColBadges}>Milestones</span>
         </div>
-        {ranked.map(({ rank, login, projects, repos, badges }) => (
-          <Link
-            key={login}
-            href={`https://github.com/${login}`}
-            target="_blank"
-            rel="noreferrer"
-            className={styles.lbRow}
-          >
-            <span
-              className={`${styles.lbColRank} ${rank <= 3 ? styles.lbTopRank : ""}`}
+        {ranked.map(({ rank, login, projects, repos, badges, weeks }) => {
+          const current = weeks.length ? weeks[weeks.length - 1] : null;
+          const totalCommits = weeks.reduce((a, b) => a + b, 0);
+          const from = weekStartLabel(weekStarts[0]);
+          const to = weekStartLabel(weekStarts[weeks.length - 1]);
+          return (
+            <Link
+              key={login}
+              href={`https://github.com/${login}`}
+              target="_blank"
+              rel="noreferrer"
+              className={styles.lbRow}
             >
-              {rank === 1
-                ? "01"
-                : rank === 2
-                  ? "02"
-                  : rank === 3
-                    ? "03"
-                    : String(rank).padStart(2, "0")}
-            </span>
-            <span className={styles.lbColUser}>
-              <img
-                src={`https://github.com/${login}.png?size=24`}
-                alt={login}
-                className={styles.lbAvatar}
-                loading="lazy"
-              />
-              <span className={styles.lbLogin}>{login}</span>
-            </span>
-            <span className={styles.lbColCommits}>
-              <span className={styles.lbCommitCount}>{projects}</span>
-            </span>
-            <span className={styles.lbColRepos}>
-              {repos.slice(0, 3).map((r) => (
-                <span key={r} className={styles.lbRepoChip}>
-                  {r}
+              <span
+                className={`${styles.lbColRank} ${rank <= 3 ? styles.lbTopRank : ""}`}
+              >
+                {rank === 1
+                  ? "01"
+                  : rank === 2
+                    ? "02"
+                    : rank === 3
+                      ? "03"
+                      : String(rank).padStart(2, "0")}
+              </span>
+              <span className={styles.lbColUser}>
+                <img
+                  src={`https://github.com/${login}.png?size=24`}
+                  alt={login}
+                  className={styles.lbAvatar}
+                  loading="lazy"
+                />
+                <span className={styles.lbLogin}>{login}</span>
+              </span>
+              <span className={styles.lbColCommits}>
+                <span className={styles.lbCommitCount}>{projects}</span>
+              </span>
+              <span className={styles.lbColActivity}>
+                {/* Word-sized graphic in a table cell, with its current value
+                    printed beside it. An uncollected series says so instead of
+                    drawing a flat line that would read as "no commits". */}
+                <Sparkline
+                  data={weeks}
+                  variant="line"
+                  domain={weekDomain}
+                  width={64}
+                  height={16}
+                  color="#58a6ff"
+                  showEnd
+                  emptyLabel="no series"
+                  className={styles.lbSparkline}
+                  label={`${login}: commits per week from ${from} to ${to}, ${totalCommits} in total, ${current ?? 0} in the latest week, on a shared 0 to ${weekDomain[1]} scale.`}
+                />
+                <span className={styles.lbSparkValue}>
+                  {current != null ? current : "—"}
                 </span>
-              ))}
-              {repos.length > 3 && (
-                <span className={styles.lbRepoMore}>+{repos.length - 3}</span>
-              )}
-            </span>
-            <span className={styles.lbColBadges}>
-              {badges.map((b) => (
-                <span
-                  key={b.tier}
-                  className={styles.lbBadge}
-                  style={{ borderColor: b.color, color: b.color }}
-                  title={b.title}
-                >
-                  {b.label}
-                </span>
-              ))}
-            </span>
-          </Link>
-        ))}
+              </span>
+              <span className={styles.lbColRepos}>
+                {repos.slice(0, 3).map((r) => (
+                  <span key={r} className={styles.lbRepoChip}>
+                    {r}
+                  </span>
+                ))}
+                {repos.length > 3 && (
+                  <span className={styles.lbRepoMore}>+{repos.length - 3}</span>
+                )}
+              </span>
+              <span className={styles.lbColBadges}>
+                {badges.map((b) => (
+                  <span
+                    key={b.tier}
+                    className={styles.lbBadge}
+                    style={{ borderColor: b.color, color: b.color }}
+                    title={b.title}
+                  >
+                    {b.label}
+                  </span>
+                ))}
+              </span>
+            </Link>
+          );
+        })}
       </div>
 
       {ranked.length >= 25 && (
@@ -3219,6 +3339,962 @@ function VictoryLog({
   );
 }
 
+// ── Tabs ───────────────────────────────────────────────────────────────────
+
+type FactoryTab = "live" | "health";
+
+const TAB_PARAM = "tab";
+
+const TABS: Array<{ id: FactoryTab; label: string; hint: string }> = [
+  {
+    id: "live",
+    label: "Live",
+    hint: "Hive orchestration — agents, governor, queue, advisories, merges",
+  },
+  {
+    id: "health",
+    label: "Factory health",
+    hint: "Build, release and image status",
+  },
+];
+
+/**
+ * Reads the selected tab out of the URL query string.
+ *
+ * Safe during static generation: it never touches `window`. On the server
+ * `location.search` is empty, so the pre-rendered default is deterministic and
+ * the client picks the shared view up from the URL on hydration.
+ */
+function parseTab(search: string): FactoryTab | null {
+  const raw = new URLSearchParams(search).get(TAB_PARAM);
+  return raw === "live" || raw === "health" ? raw : null;
+}
+
+// ── Severity ───────────────────────────────────────────────────────────────
+
+type Severity = "ok" | "watch" | "alert" | "unknown";
+
+/**
+ * Severity is one hue at different intensities, paired with a distinct glyph,
+ * so the reading survives colour blindness and greyscale printing. The red/green
+ * pair is deliberately not used here.
+ */
+const SEVERITY: Record<
+  Severity,
+  { color: string; glyph: string; word: string }
+> = {
+  ok: { color: "hsl(38, 26%, 55%)", glyph: "●", word: "Nominal" },
+  watch: { color: "hsl(38, 80%, 56%)", glyph: "▲", word: "Watch" },
+  alert: { color: "hsl(38, 100%, 68%)", glyph: "■", word: "Alert" },
+  unknown: { color: "hsl(38, 6%, 45%)", glyph: "○", word: "Unknown" },
+};
+
+// ── Factory Vitals ─────────────────────────────────────────────────────────
+
+const VITAL_W = 168;
+const VITAL_H = 40;
+
+interface VitalCell {
+  key: string;
+  label: string;
+  /** Always printed. A sparkline never appears without its current value. */
+  value: string;
+  note: string;
+  data: SparklinePoint[];
+  variant: SparklineVariant;
+  /** Shared across every cell that measures the same thing. */
+  domain?: [number, number];
+  target?: number;
+  color: string;
+  a11y: string;
+  showEnd?: boolean;
+  showExtremes?: boolean;
+}
+
+function seriesValues(points?: RegistryTimeSeries[]): number[] {
+  return (points ?? []).map((p) => p.v);
+}
+
+/**
+ * Sums two registry series by timestamp. A sample missing from either side
+ * becomes a gap rather than a zero, so a collection outage cannot masquerade as
+ * an empty queue.
+ */
+function alignedSum(
+  a: RegistryTimeSeries[],
+  b: RegistryTimeSeries[],
+): SparklinePoint[] {
+  const byT = new Map(b.map((p) => [p.t, p.v]));
+  return a.map((p) => {
+    const other = byT.get(p.t);
+    return typeof other === "number" ? p.v + other : null;
+  });
+}
+
+function spanHours(points: RegistryTimeSeries[]): number {
+  if (points.length < 2) return 0;
+  return Math.round((points[points.length - 1].t - points[0].t) / 3600);
+}
+
+function fmtCount(n: number): string {
+  return n >= 1000 ? `${(n / 1000).toFixed(1)}k` : String(n);
+}
+
+/**
+ * Proportional win/loss strip. The 90-day merge outcome is published as two
+ * totals with no ordering, so the marks encode the split and the caption says
+ * so — they are not a chronology.
+ */
+function outcomeMarks(won: number, lost: number, marks = 48): SparklinePoint[] {
+  const total = won + lost;
+  if (total <= 0) return [];
+  const up = Math.round((won / total) * marks);
+  return Array.from({ length: marks }, (_, i) => (i < up ? 1 : -1));
+}
+
+function buildVitals(
+  registry: RegistryEntry | null,
+  history: HiveHistory | null,
+  snapshot: HiveSnapshot | null,
+): { cells: VitalCell[]; workMax: number } {
+  const issues = registry?.issueHistory ?? [];
+  const prs = registry?.prHistory ?? [];
+  const issueVals = seriesValues(issues);
+  const prVals = seriesValues(prs);
+  const totalVals = alignedSum(issues, prs);
+
+  // One domain for every series that counts open work items. Without it each
+  // cell autoscales to its own range and a queue of 12 looks like a queue of
+  // 200 — the single fastest way to make this grid beautiful and false.
+  const workMax = Math.max(
+    1,
+    ...issueVals,
+    ...prVals,
+    ...totalVals.filter((v): v is number => typeof v === "number"),
+  );
+  const workDomain: [number, number] = [0, workMax];
+  const hours = spanHours(issues.length ? issues : prs);
+  const window = hours > 0 ? `${hours} h window` : "no window yet";
+
+  const entries = history?.entries ?? [];
+  const acmmSeries = entries.map((e) => e.acmmLevel ?? null);
+  const budgetSeries = entries.map((e) => e.budgetPct ?? null);
+  const acmmNow = snapshot?.acmmLevel ?? registry?.acmmLevel ?? null;
+  const budgetNow = snapshot?.budgetPct ?? null;
+
+  const mergeMins =
+    snapshot?.medianMergeMins ??
+    entries.map((e) => e.medianMergeMins).filter((v) => v != null)[0] ??
+    null;
+
+  const merged90 = registry?.prsMerged90d ?? 0;
+  const rejected90 = registry?.prsRejected90d ?? 0;
+  const outcomes90 = merged90 + rejected90;
+
+  const checks = registry?.health?.checks ?? [];
+  const passing = checks.filter((c) => c.status === "ok").length;
+
+  const contributors = registry?.contributorCount ?? 0;
+  const activeContributors = registry?.activeContributors ?? 0;
+
+  const cells: VitalCell[] = [
+    {
+      key: "issues",
+      label: "Actionable issues",
+      value: issueVals.length ? String(issueVals[issueVals.length - 1]) : "—",
+      note: `${issueVals.length} readings · ${window}`,
+      data: issueVals,
+      variant: "line",
+      domain: workDomain,
+      color: "#58a6ff",
+      showEnd: true,
+      showExtremes: true,
+      a11y: `Actionable issues over ${hours} hours: now ${issueVals[issueVals.length - 1] ?? "unknown"}, scale 0 to ${workMax}.`,
+    },
+    {
+      key: "prs",
+      label: "Actionable PRs",
+      value: prVals.length ? String(prVals[prVals.length - 1]) : "—",
+      note: `${prVals.length} readings · ${window}`,
+      data: prVals,
+      variant: "line",
+      domain: workDomain,
+      color: "#bc8cff",
+      showEnd: true,
+      showExtremes: true,
+      a11y: `Actionable pull requests over ${hours} hours: now ${prVals[prVals.length - 1] ?? "unknown"}, scale 0 to ${workMax}.`,
+    },
+    (() => {
+      const last = [...totalVals]
+        .reverse()
+        .find((v): v is number => typeof v === "number");
+      return {
+        key: "work",
+        label: "Total open work",
+        value: last != null ? String(last) : "—",
+        note: `issues + PRs · same scale as above`,
+        data: totalVals,
+        variant: "line" as const,
+        domain: workDomain,
+        color: "#39d2c0",
+        showEnd: true,
+        showExtremes: true,
+        a11y: `Total open work over ${hours} hours: now ${last ?? "unknown"}, scale 0 to ${workMax}.`,
+      };
+    })(),
+    {
+      key: "outcomes",
+      label: "PR outcomes · 90 d",
+      value:
+        outcomes90 > 0 ? `${Math.round((merged90 / outcomes90) * 100)}%` : "—",
+      note:
+        outcomes90 > 0
+          ? `${merged90} merged / ${rejected90} closed · each mark ≈ ${Math.max(1, Math.round(outcomes90 / 48))} PRs, proportion not sequence`
+          : "no 90-day outcome data",
+      data: outcomeMarks(merged90, rejected90),
+      variant: "winloss",
+      color: "#d29922",
+      a11y: `Pull request outcomes over 90 days: ${merged90} merged, ${rejected90} closed without merging.`,
+    },
+    {
+      key: "mergetime",
+      label: "Median merge time",
+      value:
+        mergeMins != null
+          ? mergeMins < 60
+            ? `${mergeMins}m`
+            : `${Math.round((mergeMins / 60) * 10) / 10}h`
+          : "—",
+      note:
+        mergeMins != null
+          ? `target 30m · currently ${Math.round(mergeMins / 30)}× the target`
+          : "target 30m · no measurement",
+      data: mergeMins != null ? [mergeMins] : [],
+      variant: "bullet",
+      domain: [0, Math.max(60, (mergeMins ?? 0) * 1.15)],
+      target: 30,
+      color: "#f0883e",
+      a11y: `Median merge time ${mergeMins ?? "unknown"} minutes against a 30 minute target.`,
+    },
+    {
+      key: "acmm",
+      label: "ACMM level",
+      value: acmmNow != null ? `L${acmmNow}` : "—",
+      note:
+        acmmSeries.filter((v) => v != null).length >= 2
+          ? `${acmmSeries.length} snapshots`
+          : "history accumulating",
+      data: acmmSeries,
+      variant: "line",
+      domain: [0, 5],
+      color: "#d29922",
+      showEnd: true,
+      a11y: `AI codebase maturity level, now ${acmmNow ?? "unknown"} on a 0 to 5 scale.`,
+    },
+    {
+      key: "budget",
+      label: "Token budget used",
+      value: budgetNow != null ? `${Math.round(budgetNow)}%` : "—",
+      note:
+        registry?.totalTokens24h != null
+          ? `${fmtCount(Math.round(registry.totalTokens24h / 1000))}k tokens in 24 h`
+          : "budget history accumulating",
+      data: budgetSeries,
+      variant: "line",
+      domain: [0, 100],
+      color: "#f85149",
+      showEnd: true,
+      a11y: `Token budget used, now ${budgetNow != null ? Math.round(budgetNow) : "unknown"} percent of the daily allowance.`,
+    },
+    {
+      key: "checks",
+      label: "Health checks passing",
+      value: checks.length ? `${passing}/${checks.length}` : "—",
+      note: checks.length
+        ? `${registry?.health?.fails ?? 0} failing · ${registry?.health?.warns ?? 0} warning`
+        : "registry health unavailable",
+      data: checks.length ? [passing] : [],
+      variant: "bullet",
+      domain: [0, Math.max(checks.length, 1)],
+      target: checks.length || undefined,
+      color: "#3fb950",
+      a11y: `${passing} of ${checks.length} registry health checks passing.`,
+    },
+    {
+      key: "contributors",
+      label: "Contributors active",
+      value: contributors ? `${activeContributors}/${contributors}` : "—",
+      note: contributors
+        ? "compute contributed to the hive right now"
+        : "registry contributor data unavailable",
+      data: contributors ? [activeContributors] : [],
+      variant: "bullet",
+      domain: [0, Math.max(contributors, 1)],
+      target: contributors || undefined,
+      color: "#58a6ff",
+      a11y: `${activeContributors} of ${contributors} registered contributors are active.`,
+    },
+  ];
+
+  return { cells, workMax };
+}
+
+function FactoryVitals({
+  registry,
+  history,
+  snapshot,
+}: {
+  registry: RegistryEntry | null;
+  history: HiveHistory | null;
+  snapshot: HiveSnapshot | null;
+}) {
+  const { cells, workMax } = useMemo(
+    () => buildVitals(registry, history, snapshot),
+    [registry, history, snapshot],
+  );
+
+  const populated = cells.filter((c) =>
+    c.data.some((v) => typeof v === "number"),
+  ).length;
+
+  return (
+    <section className={styles.panel}>
+      <Heading as="h2" className={styles.panelTitle}>
+        Factory Vitals
+      </Heading>
+      <p className={styles.panelMeta}>
+        Small multiples. The three open-work charts share one 0&ndash;{workMax}{" "}
+        scale so their heights are comparable &mdash; {populated} of{" "}
+        {cells.length} vitals have data.
+      </p>
+      <div className={styles.vitalsGrid}>
+        {cells.map((cell) => (
+          <div key={cell.key} className={styles.vitalCard}>
+            <div className={styles.vitalLabel}>{cell.label}</div>
+            <div className={styles.vitalValue} style={{ color: cell.color }}>
+              {cell.value}
+            </div>
+            <div className={styles.vitalSpark}>
+              <Sparkline
+                data={cell.data}
+                variant={cell.variant}
+                domain={cell.domain}
+                target={cell.target}
+                width={VITAL_W}
+                height={VITAL_H}
+                color={cell.color}
+                showEnd={cell.showEnd}
+                showExtremes={cell.showExtremes}
+                emptyLabel="accumulating data"
+                label={cell.a11y}
+                className={styles.vitalSparkline}
+              />
+            </div>
+            <div className={styles.vitalNote}>{cell.note}</div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+// ── Factory health (static/data/factory-stats.json) ────────────────────────
+
+/** Runs charted per lane. Enough to show shape, short enough to stay word-sized. */
+const LANE_RUN_WINDOW = 24;
+const LANE_SPARK_W = 168;
+const LANE_SPARK_H = 34;
+const DAILY_SPARK_W = 240;
+const DAILY_SPARK_H = 46;
+const MS_PER_DAY = 86_400_000;
+
+/** Severity from a success rate. `null` is "unknown", never "alert". */
+function laneSeverity(rate: number | null): Severity {
+  if (rate == null) return "unknown";
+  if (rate >= 95) return "ok";
+  if (rate >= 85) return "watch";
+  return "alert";
+}
+
+/**
+ * Durations of the charted runs. A run without a verdict contributes a gap, so
+ * an in-flight or cancelled build never reads as a zero-minute build.
+ */
+function laneDurations(lane: FactoryLane): SparklinePoint[] {
+  return recentRuns(lane).map((r) =>
+    r.status === "passed" || r.status === "failed" ? r.durationMin : null,
+  );
+}
+
+/** passed = win, failed = loss, no verdict = gap. Never a loss. */
+function laneOutcomes(lane: FactoryLane): SparklinePoint[] {
+  return recentRuns(lane).map((r) =>
+    r.status === "passed" ? 1 : r.status === "failed" ? -1 : null,
+  );
+}
+
+function recentRuns(lane: FactoryLane): FactoryRun[] {
+  return (lane.runs ?? []).slice(-LANE_RUN_WINDOW);
+}
+
+/**
+ * One duration scale for every lane card. The cards are small multiples: with
+ * per-lane autoscaling a 20-minute lane and a 220-minute lane draw the same
+ * picture, which is the difference between the most useful panel on this page
+ * and the most misleading one (adr/0002, sparkline rule 2).
+ *
+ * The floor is 0 so bar and line heights read as magnitude, not just shape.
+ */
+function laneDurationDomain(lanes: FactoryLane[]): [number, number] {
+  const all = lanes.flatMap((lane) =>
+    laneDurations(lane).filter((v): v is number => typeof v === "number"),
+  );
+  return [0, Math.max(1, ...all)];
+}
+
+/** `null` means nothing finished, which is not zero minutes. */
+function fmtMinutes(mins: number | null): string {
+  if (mins == null) return "not measured yet";
+  return mins < 60 ? `${mins} min` : `${Math.round((mins / 60) * 10) / 10} h`;
+}
+
+/** UTC midnight for an ISO `yyyy-mm-dd`, or null. Matches ActivityCalendar. */
+function isoToUtc(iso: string): number | null {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso ?? "");
+  if (!m) return null;
+  return Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+}
+
+/**
+ * Week columns needed to cover exactly the observed span, Sunday-first — the
+ * same grid ActivityCalendar builds. The default of 53 would frame eight days
+ * of data inside a year of dashed "no data" cells and imply a record that was
+ * never kept.
+ */
+function weeksForSpan(firstIso: string, lastIso: string): number {
+  const first = isoToUtc(firstIso);
+  const last = isoToUtc(lastIso);
+  if (first == null || last == null || last < first) return 1;
+  const firstCol = first - new Date(first).getUTCDay() * MS_PER_DAY;
+  const lastCol = last - new Date(last).getUTCDay() * MS_PER_DAY;
+  const cols = Math.round((lastCol - firstCol) / (7 * MS_PER_DAY)) + 1;
+  return Math.min(Math.max(cols, 1), 53);
+}
+
+/**
+ * Build-activity heatmap over the rolling window that `factory-stats.json`
+ * actually covers. The caption states the span because the calendar form
+ * usually implies a year.
+ */
+function BuildActivityCalendar({ stats }: { stats: FactoryStats }) {
+  const daily = stats.daily ?? [];
+  const days = daily.map((d) => ({
+    date: d.date,
+    value: (d.passed ?? 0) + (d.failed ?? 0),
+  }));
+  const observed = days.filter((d) => isoToUtc(d.date) != null);
+  const values = observed.map((d) => d.value);
+  const total = values.reduce((a, b) => a + b, 0);
+  // Explicit, so the colour ramp does not shift meaning between builds.
+  const maxValue = Math.max(1, ...values);
+  const first = observed[0]?.date ?? "";
+  const last = observed[observed.length - 1]?.date ?? "";
+  const weeks = weeksForSpan(first, last);
+  const busiest = observed.reduce<{ date: string; value: number } | null>(
+    (best, d) => (best == null || d.value > best.value ? d : best),
+    null,
+  );
+
+  return (
+    <section className={styles.panel}>
+      <Heading as="h2" className={styles.panelTitle}>
+        Build activity
+      </Heading>
+      <p className={styles.panelMeta}>
+        One square per day, {observed.length} days from {first} to {last} — the
+        rolling {stats.window?.days ?? 7}-day window this data covers, {weeks}{" "}
+        week {weeks === 1 ? "column" : "columns"}, not a year. Intensity is
+        builds that reached a verdict, on a fixed 0&ndash;
+        {maxValue} scale. A dashed square is a day with no record; a faint solid
+        square is a day that genuinely ran nothing.
+      </p>
+      {observed.length > 0 ? (
+        <ActivityCalendar
+          data={observed}
+          weeks={weeks}
+          endDate={last || undefined}
+          maxValue={maxValue}
+          unit="builds"
+          color="hsl(38, 80%, 56%)"
+          cellSize={14}
+          cellGap={4}
+          legend
+          className={styles.buildCalendar}
+          emptyLabel="accumulating data"
+          label={`Build activity for the ${observed.length} days ending ${last}: ${total} builds reached a verdict, busiest day ${busiest?.date ?? "unknown"} with ${busiest?.value ?? 0}.`}
+        />
+      ) : (
+        <p className={styles.unavailableNote}>
+          No daily build outcomes in this window yet.
+        </p>
+      )}
+    </section>
+  );
+}
+
+function LaneCard({
+  lane,
+  domain,
+}: {
+  lane: FactoryLane;
+  domain: [number, number];
+}) {
+  const sev = SEVERITY[laneSeverity(lane.successRate)];
+  const runs = recentRuns(lane);
+  const durations = laneDurations(lane);
+  const outcomes = laneOutcomes(lane);
+  const verdicts = lane.passed + lane.failed;
+
+  if (lane.unavailable) {
+    return (
+      <div className={styles.laneCard}>
+        <div className={styles.laneHead}>
+          <span className={styles.laneName}>{lane.label}</span>
+          <span
+            className={styles.laneGlyph}
+            style={{ color: SEVERITY.unknown.color }}
+          >
+            {SEVERITY.unknown.glyph}
+          </span>
+        </div>
+        <div className={styles.laneUnavailable}>
+          Unavailable — {lane.stateReason ?? "no reason reported"}
+        </div>
+        <div className={styles.laneNote}>
+          <Link href={`https://github.com/${lane.repo}/actions`}>
+            {lane.repo}
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={styles.laneCard}>
+      <div className={styles.laneHead}>
+        <span className={styles.laneName}>{lane.label}</span>
+        <span className={styles.laneGlyph} style={{ color: sev.color }}>
+          {sev.glyph} {sev.word}
+        </span>
+      </div>
+
+      <div className={styles.laneValue} style={{ color: sev.color }}>
+        {lane.successRate != null ? `${lane.successRate}%` : "no verdict yet"}
+      </div>
+      <div className={styles.laneNote}>
+        {lane.successRate != null
+          ? `of ${verdicts} finished runs passed`
+          : "nothing finished in this window"}
+      </div>
+
+      <dl className={styles.laneCounts}>
+        <div className={styles.laneCount}>
+          <dt>passed</dt>
+          <dd>{lane.passed}</dd>
+        </div>
+        <div className={styles.laneCount}>
+          <dt>failed</dt>
+          <dd>{lane.failed}</dd>
+        </div>
+        <div className={styles.laneCount}>
+          {/* Cancelled and skipped runs live here too, so "running now" would
+              be a lie — and counting them as failures would be a bigger one. */}
+          <dt>in flight / no verdict</dt>
+          <dd>{lane.running}</dd>
+        </div>
+      </dl>
+
+      <div className={styles.laneSparkRow}>
+        <span className={styles.laneSparkLabel}>
+          {lane.medianDurationMin != null
+            ? `median ${fmtMinutes(lane.medianDurationMin)}`
+            : "no completed run to measure"}
+        </span>
+        <Sparkline
+          data={durations}
+          variant="line"
+          domain={domain}
+          width={LANE_SPARK_W}
+          height={LANE_SPARK_H}
+          color={sev.color}
+          showEnd
+          showExtremes
+          emptyLabel="accumulating data"
+          className={styles.laneSparkline}
+          label={`${lane.label} build duration for the last ${runs.length} runs, in minutes, on a shared ${domain[0]} to ${domain[1]} minute scale. Median ${lane.medianDurationMin ?? "unknown"} minutes. Runs without a verdict are gaps.`}
+        />
+      </div>
+
+      <div className={styles.laneSparkRow}>
+        <span className={styles.laneSparkLabel}>last {runs.length} runs</span>
+        <Sparkline
+          data={outcomes}
+          variant="winloss"
+          width={LANE_SPARK_W}
+          height={20}
+          color={sev.color}
+          emptyLabel="accumulating data"
+          className={styles.laneSparkline}
+          label={`${lane.label} outcomes for the last ${runs.length} runs: ${lane.passed} passed, ${lane.failed} failed, ${lane.running} with no verdict shown as gaps.`}
+        />
+      </div>
+
+      <div className={styles.laneNote}>
+        <Link href={`https://github.com/${lane.repo}/actions`}>
+          {lane.repo}
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+function DailyOutcomes({ stats }: { stats: FactoryStats }) {
+  const daily = stats.daily ?? [];
+  if (daily.length === 0) return null;
+
+  const passed = daily.map((d) => d.passed ?? 0);
+  const failed = daily.map((d) => d.failed ?? 0);
+  // Both strips count runs per day, so they share one scale. Failures look tiny
+  // against passes because they are tiny; rescaling them would say otherwise.
+  const domain: [number, number] = [0, Math.max(1, ...passed, ...failed)];
+  const lastDay = daily[daily.length - 1];
+
+  return (
+    <div className={styles.dailyGrid}>
+      <div className={styles.dailyCell}>
+        <div className={styles.laneSparkLabel}>Passed per day</div>
+        <div className={styles.dailyValue} style={{ color: SEVERITY.ok.color }}>
+          {lastDay.passed}
+        </div>
+        <Sparkline
+          data={passed}
+          variant="bars"
+          domain={domain}
+          width={DAILY_SPARK_W}
+          height={DAILY_SPARK_H}
+          color={SEVERITY.ok.color}
+          className={styles.laneSparkline}
+          emptyLabel="accumulating data"
+          label={`Builds passing per day over ${daily.length} days, shared scale 0 to ${domain[1]}. Most recent day ${lastDay.date}: ${lastDay.passed}.`}
+        />
+      </div>
+      <div className={styles.dailyCell}>
+        <div className={styles.laneSparkLabel}>Failed per day</div>
+        <div
+          className={styles.dailyValue}
+          style={{ color: SEVERITY.alert.color }}
+        >
+          {lastDay.failed}
+        </div>
+        <Sparkline
+          data={failed}
+          variant="bars"
+          domain={domain}
+          width={DAILY_SPARK_W}
+          height={DAILY_SPARK_H}
+          color={SEVERITY.alert.color}
+          className={styles.laneSparkline}
+          emptyLabel="accumulating data"
+          label={`Builds failing per day over ${daily.length} days, on the same 0 to ${domain[1]} scale as the passing chart. Most recent day ${lastDay.date}: ${lastDay.failed}.`}
+        />
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Rolling build health per publishing lane.
+ *
+ * `stats === null` while the fetch is in flight and during static generation;
+ * `missing` means the file was not published with this build (it is generated,
+ * and gitignored, so a fresh clone has none). Both say so out loud: a panel
+ * that quietly renders less is indistinguishable from a healthy one.
+ */
+function FactoryHealth({
+  stats,
+  missing,
+}: {
+  stats: FactoryStats | null;
+  missing: boolean;
+}) {
+  const domain = useMemo(() => laneDurationDomain(stats?.lanes ?? []), [stats]);
+
+  if (stats == null || stats.unavailable) {
+    const reason =
+      stats?.stateReason ??
+      (missing
+        ? "static/data/factory-stats.json was not published with this build — it is generated at build time from the GitHub Actions API."
+        : null);
+    return (
+      <section className={styles.panel}>
+        <Heading as="h2" className={styles.panelTitle}>
+          Factory health
+        </Heading>
+        <p className={styles.panelMeta}>
+          Rolling build health for the image-publishing lanes.
+        </p>
+        <p className={styles.unavailableNote}>
+          {reason == null
+            ? "Loading build statistics…"
+            : `Unavailable — ${reason}`}
+          {reason != null ? (
+            <>
+              {" "}
+              Nothing here is failing; the data is missing. Build outcomes stay
+              visible in the published{" "}
+              <Link href="https://github.com/projectbluefin">
+                repository actions
+              </Link>
+              .
+            </>
+          ) : null}
+        </p>
+      </section>
+    );
+  }
+
+  const t = stats.totals;
+  const generated = stats.generatedAt ? stats.generatedAt.slice(0, 16) : null;
+  const chartedLanes = (stats.lanes ?? []).filter(
+    (lane) =>
+      !lane.unavailable &&
+      laneDurations(lane).some((v) => typeof v === "number"),
+  ).length;
+
+  return (
+    <section className={styles.panel}>
+      <Heading as="h2" className={styles.panelTitle}>
+        Factory health
+      </Heading>
+      <p className={styles.panelMeta}>
+        {t.total} publishing runs in the last {stats.window?.days ?? 7} days ·{" "}
+        {t.passed} passed · {t.failed} failed · {t.running} in flight or with no
+        verdict ·{" "}
+        {t.successRate != null
+          ? `${t.successRate}% of finished runs passed`
+          : "no finished runs yet, so no success rate"}{" "}
+        ·{" "}
+        {t.medianDurationMin != null
+          ? `median ${fmtMinutes(t.medianDurationMin)}, mean ${fmtMinutes(t.averageDurationMin)}`
+          : "no completed runs, so no duration"}
+        {generated ? ` · collected ${generated}Z` : ""}. Cancelled and skipped
+        runs count as “no verdict”, never as failures.
+      </p>
+
+      <div className={styles.laneGrid}>
+        {(stats.lanes ?? []).map((lane) => (
+          <LaneCard key={lane.id} lane={lane} domain={domain} />
+        ))}
+      </div>
+
+      <p className={styles.panelMeta} style={{ margin: "1rem 0 0.5rem" }}>
+        {chartedLanes > 0
+          ? `The ${chartedLanes} duration charts above share one 0-${domain[1]} minute scale, so their heights compare directly.`
+          : "No lane has a completed run to chart yet."}{" "}
+        The daily outcome bars below share a second scale of their own.
+      </p>
+      <DailyOutcomes stats={stats} />
+    </section>
+  );
+}
+
+// ── Status strip ───────────────────────────────────────────────────────────
+
+interface SourceState {
+  key: string;
+  label: string;
+  live: boolean;
+  detail: string;
+}
+
+function computeVerdict(input: {
+  snapshot: HiveSnapshot | null;
+  registry: RegistryEntry | null;
+  queueData: QueueData | null;
+  agents: HiveAgent[];
+  activeAgents: number;
+  p0: number;
+  depth: number;
+}): { level: Severity; headline: string; detail: string } {
+  const { snapshot, registry, queueData, agents, activeAgents, p0, depth } =
+    input;
+  const known = snapshot != null || registry != null || queueData != null;
+  if (!known) {
+    return {
+      level: "unknown",
+      headline: "Status unavailable",
+      detail:
+        "No source answered — the hive snapshot, the public registry and the queue feed are all unreachable.",
+    };
+  }
+
+  const fails = registry?.health?.fails ?? 0;
+  const warns = registry?.health?.warns ?? 0;
+  const mode = (
+    snapshot?.acmmMode ??
+    registry?.governorMode ??
+    ""
+  ).toUpperCase();
+  const formationThin =
+    agents.length > 0 && activeAgents < Math.ceil(agents.length * 0.6);
+
+  let level: Severity = "ok";
+  if (p0 > 0 || fails > 0 || registry?.online === false) {
+    level = "alert";
+  } else if (warns > 0 || formationThin || mode === "SURGE") {
+    level = "watch";
+  }
+
+  const parts: string[] = [];
+  if (agents.length > 0) {
+    parts.push(`${activeAgents}/${agents.length} agents running`);
+  } else if (registry?.agentCount != null) {
+    parts.push(`${registry.agentCount} agents registered`);
+  }
+  if (mode) parts.push(`governor ${mode}`);
+  if (depth > 0) parts.push(`${depth} items queued`);
+  if (p0 > 0) parts.push(`${p0} P0 blocker${p0 > 1 ? "s" : ""}`);
+  if (fails > 0)
+    parts.push(`${fails} health check${fails > 1 ? "s" : ""} failing`);
+  else if (warns > 0)
+    parts.push(`${warns} health warning${warns > 1 ? "s" : ""}`);
+
+  const headline =
+    level === "alert"
+      ? "Needs attention"
+      : level === "watch"
+        ? "Running warm"
+        : "Building normally";
+
+  return {
+    level,
+    headline,
+    detail: parts.length ? parts.join(" · ") : "Partial data only.",
+  };
+}
+
+function StatusStrip({
+  verdict,
+  sources,
+  children,
+}: {
+  verdict: { level: Severity; headline: string; detail: string };
+  sources: SourceState[];
+  children: React.ReactNode;
+}) {
+  const sev = SEVERITY[verdict.level];
+  const offline = sources.filter((s) => !s.live);
+  return (
+    <section className={styles.statusStrip} aria-label="Factory status">
+      <div className={styles.statusHeadline}>
+        <span className={styles.statusGlyph} style={{ color: sev.color }}>
+          {sev.glyph}
+        </span>
+        <span className={styles.statusWord} style={{ color: sev.color }}>
+          {verdict.headline}
+        </span>
+        <span className={styles.statusDetail}>{verdict.detail}</span>
+      </div>
+      {children}
+      <div className={styles.sourceRow}>
+        {sources.map((s) => {
+          const style = s.live ? SEVERITY.ok : SEVERITY.unknown;
+          return (
+            <span
+              key={s.key}
+              className={styles.sourceChip}
+              style={{ color: style.color, borderColor: style.color }}
+              title={s.detail}
+            >
+              <span aria-hidden="true">{style.glyph}</span> {s.label}
+              <span className={styles.sourceState}>
+                {s.live ? "live" : "unavailable"}
+              </span>
+            </span>
+          );
+        })}
+        {offline.length > 0 && (
+          <span className={styles.sourceNote}>
+            {offline.length} of {sources.length} sources are not reporting;
+            panels fed by them say so rather than rendering less.
+          </span>
+        )}
+      </div>
+    </section>
+  );
+}
+
+function TabBar({
+  active,
+  onSelect,
+  pathname,
+  search,
+  availability,
+}: {
+  active: FactoryTab;
+  onSelect: (tab: FactoryTab) => void;
+  pathname: string;
+  search: string;
+  availability: Record<FactoryTab, boolean>;
+}) {
+  const href = (id: FactoryTab) => {
+    const params = new URLSearchParams(search);
+    params.set(TAB_PARAM, id);
+    return `${pathname}?${params.toString()}`;
+  };
+  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+    const i = TABS.findIndex((t) => t.id === active);
+    const next =
+      TABS[(i + (e.key === "ArrowRight" ? 1 : -1) + TABS.length) % TABS.length];
+    e.preventDefault();
+    onSelect(next.id);
+  };
+  return (
+    <div
+      className={styles.tabBar}
+      role="tablist"
+      aria-label="Factory views"
+      onKeyDown={onKeyDown}
+    >
+      {TABS.map((t) => (
+        <Link
+          key={t.id}
+          role="tab"
+          id={`factory-tab-${t.id}`}
+          // `pathname` already carries the site baseUrl.
+          to={href(t.id)}
+          autoAddBaseUrl={false}
+          aria-selected={active === t.id}
+          aria-controls={`factory-panel-${t.id}`}
+          title={t.hint}
+          className={`${styles.tabButton} ${
+            active === t.id ? styles.tabButtonActive : ""
+          }`}
+        >
+          {t.label}
+          {!availability[t.id] && (
+            <span className={styles.tabEmptyDot} title="no data yet">
+              {" "}
+              ○
+            </span>
+          )}
+        </Link>
+      ))}
+    </div>
+  );
+}
+
 // ── Main component ─────────────────────────────────────────────────────────
 
 export default function HiveFactoryDashboard(): React.JSX.Element {
@@ -3232,6 +4308,10 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
   const [mergedPRs, setMergedPRs] = useState<MergedPR[]>([]);
   const [velocity, setVelocity] = useState<Velocity | null>(null);
   const [hiveHistory, setHiveHistory] = useState<HiveHistory | null>(null);
+  const [factoryStats, setFactoryStats] = useState<FactoryStats | null>(null);
+  // Distinguishes "still fetching" from "the file is not there", so the panel
+  // can name the reason instead of spinning forever.
+  const [factoryStatsMissing, setFactoryStatsMissing] = useState(false);
   const [testBuilds, setTestBuilds] = useState<number | null>(null);
   const [tapPromotions, setTapPromotions] = useState<number | null>(null);
   const [agentMergedCount, setAgentMergedCount] = useState<number | null>(null);
@@ -3344,6 +4424,22 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
       })
       .catch(() => {
         /* non-fatal */
+      });
+  }, []);
+
+  // Fetch factory build statistics (baked at build time by
+  // scripts/fetch-factory-stats.js). The file is generated and gitignored, so a
+  // build that never ran the fetch simply has none — that degrades to a visible
+  // unavailable panel rather than to a page that looks healthy with less on it.
+  useEffect(() => {
+    fetch("/data/factory-stats.json")
+      .then((r) => (r.ok ? (r.json() as Promise<FactoryStats | null>) : null))
+      .then((data) => {
+        if (data && Array.isArray(data.lanes)) setFactoryStats(data);
+        else setFactoryStatsMissing(true);
+      })
+      .catch(() => {
+        setFactoryStatsMissing(true);
       });
   }, []);
 
@@ -3466,6 +4562,104 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
   const prsNeedingReview =
     (queueData?.prs.required.length ?? 0) + (queueData?.prs.none.length ?? 0);
 
+  // ── Tab state, carried in the URL so a view can be linked ────────────────
+  // `useLocation` comes from the router, not from `window`, so this evaluates
+  // identically during static generation (where `search` is empty).
+  const location = useLocation();
+  const routerHistory = useHistory();
+  const urlTab = useMemo(() => parseTab(location.search), [location.search]);
+
+  const selectTab = useCallback(
+    (tab: FactoryTab) => {
+      const params = new URLSearchParams(location.search);
+      params.set(TAB_PARAM, tab);
+      // push, not replace: the back button returns to the previous view.
+      routerHistory.push({
+        pathname: location.pathname,
+        search: `?${params.toString()}`,
+        hash: location.hash,
+      });
+    },
+    [routerHistory, location.pathname, location.search, location.hash],
+  );
+
+  const liveHasContent =
+    agents.length > 0 ||
+    (registryData?.agents?.length ?? 0) > 0 ||
+    advisoryItems.length > 0 ||
+    mergedPRs.length > 0 ||
+    queueData != null ||
+    registryData != null ||
+    snapshot != null;
+
+  const healthHasContent =
+    registryData != null ||
+    factoryStats != null ||
+    factoryStatsMissing ||
+    (hiveHistory?.entries.length ?? 0) > 0 ||
+    velocity != null ||
+    orgStats != null ||
+    mergedPRs.length > 0;
+
+  const availability: Record<FactoryTab, boolean> = {
+    live: liveHasContent,
+    health: healthHasContent,
+  };
+
+  // An empty tab is never the default: if Live has nothing to show but Factory
+  // health does, the page opens on Factory health. An explicit `?tab=` always
+  // wins, because a shared link must resolve to the view it names.
+  const defaultTab: FactoryTab =
+    liveHasContent || !healthHasContent ? "live" : "health";
+  const activeTab: FactoryTab = urlTab ?? defaultTab;
+
+  const queueDepth =
+    (snapshot?.governor?.issues ?? registryData?.actionableIssues ?? 0) +
+    (snapshot?.governor?.prs ?? registryData?.actionablePRs ?? 0);
+
+  const verdict = computeVerdict({
+    snapshot,
+    registry: registryData,
+    queueData,
+    agents,
+    activeAgents: activeAgents.length,
+    p0: p0Count,
+    depth: queueDepth,
+  });
+
+  const sources: SourceState[] = [
+    {
+      key: "snapshot",
+      label: "Hive snapshot",
+      live: snapshot != null,
+      detail: "Live agent state from the hosted hive. Requires a session.",
+    },
+    {
+      key: "registry",
+      label: "Registry",
+      live: registryData != null,
+      detail: "Public hive registry — queue history, leaderboard, health.",
+    },
+    {
+      key: "queue",
+      label: "Queue",
+      live: queueData != null,
+      detail: "Work queue feed — P0/P1 issues and review load.",
+    },
+    {
+      key: "live",
+      label: "GitHub activity",
+      live: mergedPRs.length > 0 || orgStats != null,
+      detail: "Merged PRs, discussions and org statistics.",
+    },
+    {
+      key: "history",
+      label: "History",
+      live: (hiveHistory?.entries.length ?? 0) > 1,
+      detail: "Rolling snapshots used for the trend charts.",
+    },
+  ];
+
   if (loading) {
     return (
       <Layout
@@ -3547,452 +4741,539 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
           </div>
         </header>
 
-        {/* Stats strip — always 6 canonical tiles */}
-        <div className={styles.statsRow}>
-          <StatCard
-            label={p0Count > 0 ? `P0 / P1 Issues` : "P1 This Cycle"}
-            value={
-              p0Count > 0
-                ? `${p0Count}+${p1Count}`
-                : p1Count > 0
-                  ? p1Count
-                  : (registryData?.actionableIssues ?? "—")
-            }
-            accent={p0Count > 0 ? "#f85149" : undefined}
-            sub={
-              p0Count > 0
-                ? `${p0Count} blocker${p0Count > 1 ? "s" : ""}`
-                : p1Count > 0
-                  ? undefined
-                  : registryData?.actionableIssues != null
-                    ? "actionable (registry)"
-                    : undefined
-            }
-          />
-          {(() => {
-            const framesVal =
-              agents.length > 0
-                ? `${activeAgents.length}/${agents.length}`
-                : registryData?.agentCount != null
-                  ? `${registryData.agents?.filter((a) => a.state !== "paused" && a.state !== "idle").length ?? "?"}/${registryData.agentCount}`
-                  : "—";
-            const framesSub =
-              agents.length > 0
-                ? workingAgents.length > 0
-                  ? `${workingAgents.length} working`
-                  : "standing by"
-                : registryData?.agentCount != null
-                  ? "registry"
-                  : "no snapshot";
-            return (
-              <StatCard
-                label="Frames"
-                value={framesVal}
-                sub={framesSub}
-                accent={formationColor}
-              />
-            );
-          })()}
-          <StatCard
-            label="ACMM Level"
-            value={snapshot?.acmmLevel ?? registryData?.acmmLevel ?? "—"}
-            sub={(() => {
-              const lvl = snapshot?.acmmLevel ?? registryData?.acmmLevel;
-              return lvl != null
-                ? (ACMM_LEVELS[lvl]?.label ?? `Level ${lvl}`)
-                : "capability level";
-            })()}
-            accent={(() => {
-              const lvl = snapshot?.acmmLevel ?? registryData?.acmmLevel;
-              return lvl != null ? ACMM_LEVELS[lvl]?.color : undefined;
-            })()}
-          />
-          <StatCard
-            label="Shipped This Cycle"
-            value={
-              queueData
-                ? (queueData.victories.dreams.count ?? 0) +
-                  (queueData.victories.relief.count ?? 0)
-                : "—"
-            }
-            sub="features + fixes"
-            accent="#3fb950"
-            spark={
-              queueData
-                ? victorySparkData(
-                    [
-                      ...queueData.victories.dreams.recent,
-                      ...queueData.victories.relief.recent,
-                    ].sort(
-                      (a, b) =>
-                        new Date(b.updated_at).getTime() -
-                        new Date(a.updated_at).getTime(),
-                    ),
-                    14,
-                  )
-                : undefined
-            }
-            sparkColor="green"
-          />
-          <StatCard
-            label="Test Builds"
-            value={testBuilds ?? "—"}
-            sub="passed in testsuite"
-            accent={
-              testBuilds != null && testBuilds > 0 ? "#3fb950" : undefined
-            }
-          />
-          <StatCard
-            label="Merge Time"
-            value={
-              snapshot?.medianMergeMins != null
-                ? snapshot.medianMergeMins < 60
-                  ? `${snapshot.medianMergeMins}m`
-                  : `${Math.round((snapshot.medianMergeMins / 60) * 10) / 10}h`
-                : "—"
-            }
-            sub="median PR cycle"
-            accent={snapshot?.medianMergeMins != null ? "#39d2c0" : undefined}
-          />
-        </div>
-
-        {/* ── Factory Floor: Frame Formation (left) + sidebar (right) ── */}
-        <div className={styles.factoryFloor}>
-          {/* Left: Frame Formation — the factory floor */}
-          <section className={styles.panel}>
-            <Heading as="h2" className={styles.panelTitle}>
-              Factory Floor — Live
-            </Heading>
-            {agents.length > 0 ? (
-              <div className={styles.agentGrid}>
-                {agents.map((a) => (
-                  <FrameCard
-                    key={a.id}
-                    agent={a}
-                    advisoryItems={advisoriesByAgent[a.name ?? a.id] ?? []}
-                  />
-                ))}
-              </div>
-            ) : registryData?.agents && registryData.agents.length > 0 ? (
-              <div className={styles.agentGrid}>
-                {registryData.agents.map((ra) => {
-                  const synth: HiveAgent = {
-                    id: ra.name,
-                    displayName:
-                      ra.name.charAt(0).toUpperCase() + ra.name.slice(1),
-                    role: ra.state ?? "unknown",
-                    emoji: "🤖",
-                    color:
-                      ra.state === "working"
-                        ? "#3fb950"
-                        : ra.state === "paused"
-                          ? "#f85149"
-                          : "#58a6ff",
-                    state: ra.state ?? "idle",
-                    busy: ra.state === "working" ? "working" : "idle",
-                    paused: ra.state === "paused",
-                  };
-                  return (
-                    <FrameCard key={ra.name} agent={synth} advisoryItems={[]} />
-                  );
-                })}
-              </div>
-            ) : (
-              <div className={styles.empty}>
-                No Frame data — snapshot updating
-              </div>
-            )}
-          </section>
-
-          {/* Right: Governor + Victory Log + What Frames Are Working On + Health */}
-          <div className={styles.factorySidebar}>
-            <GovernorPanel
-              governor={snapshot?.governor}
-              registry={registryData}
+        {/* Status strip — always visible, above the tabs. It answers
+            "how is Bluefin doing?" with no interaction, from whatever
+            sources answered. */}
+        <StatusStrip verdict={verdict} sources={sources}>
+          <div className={styles.statsRow}>
+            <StatCard
+              label={p0Count > 0 ? `P0 / P1 Issues` : "P1 This Cycle"}
+              value={
+                p0Count > 0
+                  ? `${p0Count}+${p1Count}`
+                  : p1Count > 0
+                    ? p1Count
+                    : (registryData?.actionableIssues ?? "—")
+              }
+              accent={p0Count > 0 ? "#f85149" : undefined}
+              sub={
+                p0Count > 0
+                  ? `${p0Count} blocker${p0Count > 1 ? "s" : ""}`
+                  : p1Count > 0
+                    ? undefined
+                    : registryData?.actionableIssues != null
+                      ? "actionable (registry)"
+                      : undefined
+              }
             />
-            <VictoryLog victories={queueData?.victories ?? null} />
-            {advisoryItems.length > 0 && (
+            {(() => {
+              const framesVal =
+                agents.length > 0
+                  ? `${activeAgents.length}/${agents.length}`
+                  : registryData?.agentCount != null
+                    ? `${registryData.agents?.filter((a) => a.state !== "paused" && a.state !== "idle").length ?? "?"}/${registryData.agentCount}`
+                    : "—";
+              const framesSub =
+                agents.length > 0
+                  ? workingAgents.length > 0
+                    ? `${workingAgents.length} working`
+                    : "standing by"
+                  : registryData?.agentCount != null
+                    ? "registry"
+                    : "no snapshot";
+              return (
+                <StatCard
+                  label="Frames"
+                  value={framesVal}
+                  sub={framesSub}
+                  accent={formationColor}
+                />
+              );
+            })()}
+            <StatCard
+              label="ACMM Level"
+              value={snapshot?.acmmLevel ?? registryData?.acmmLevel ?? "—"}
+              sub={(() => {
+                const lvl = snapshot?.acmmLevel ?? registryData?.acmmLevel;
+                return lvl != null
+                  ? (ACMM_LEVELS[lvl]?.label ?? `Level ${lvl}`)
+                  : "capability level";
+              })()}
+              accent={(() => {
+                const lvl = snapshot?.acmmLevel ?? registryData?.acmmLevel;
+                return lvl != null ? ACMM_LEVELS[lvl]?.color : undefined;
+              })()}
+            />
+            <StatCard
+              label="Shipped This Cycle"
+              value={
+                queueData
+                  ? (queueData.victories.dreams.count ?? 0) +
+                    (queueData.victories.relief.count ?? 0)
+                  : "—"
+              }
+              sub="features + fixes"
+              accent="#3fb950"
+              spark={
+                queueData
+                  ? victorySparkData(
+                      [
+                        ...queueData.victories.dreams.recent,
+                        ...queueData.victories.relief.recent,
+                      ].sort(
+                        (a, b) =>
+                          new Date(b.updated_at).getTime() -
+                          new Date(a.updated_at).getTime(),
+                      ),
+                      14,
+                    )
+                  : undefined
+              }
+              sparkColor="green"
+            />
+            <StatCard
+              label="Test Builds"
+              value={testBuilds ?? "—"}
+              sub="passed in testsuite"
+              accent={
+                testBuilds != null && testBuilds > 0 ? "#3fb950" : undefined
+              }
+            />
+            <StatCard
+              label="Merge Time"
+              value={
+                snapshot?.medianMergeMins != null
+                  ? snapshot.medianMergeMins < 60
+                    ? `${snapshot.medianMergeMins}m`
+                    : `${Math.round((snapshot.medianMergeMins / 60) * 10) / 10}h`
+                  : "—"
+              }
+              sub="median PR cycle"
+              accent={snapshot?.medianMergeMins != null ? "#39d2c0" : undefined}
+            />
+          </div>
+        </StatusStrip>
+
+        <TabBar
+          active={activeTab}
+          onSelect={selectTab}
+          pathname={location.pathname}
+          search={location.search}
+          availability={availability}
+        />
+
+        {activeTab === "live" && (
+          <div
+            id="factory-panel-live"
+            role="tabpanel"
+            aria-labelledby="factory-tab-live"
+            className={styles.tabPanel}
+          >
+            {!liveHasContent && (
               <section className={styles.panel}>
                 <Heading as="h2" className={styles.panelTitle}>
-                  What Frames Are Working On
+                  Live hive state unavailable
                 </Heading>
                 <p className={styles.panelMeta}>
-                  Advisory digest — findings, bugs, CI failures logged by each
-                  Frame
+                  Neither the hosted hive snapshot nor the public registry
+                  answered, so agent state, governor mode and queue depth are
+                  unknown right now — not empty. The status strip above shows
+                  which sources are reporting.
                 </p>
-                <AgentWorkLog
-                  agents={agents}
-                  items={advisoryItems}
-                  advisoryIssue={snapshot?.advisoryIssue}
-                  config={config}
-                />
               </section>
             )}
-            {/* Registry Health Checks */}
-            {registryData?.health?.checks &&
-              registryData.health.checks.length > 0 && (
-                <section className={styles.panel}>
-                  <Heading as="h2" className={styles.panelTitle}>
-                    System Health
-                  </Heading>
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "0.35rem",
-                      marginTop: "0.5rem",
-                    }}
-                  >
-                    {registryData.health.checks.map((chk) => (
+
+            {/* ── Factory Floor: Frame Formation (left) + sidebar (right) ── */}
+            <div className={styles.factoryFloor}>
+              {/* Left: Frame Formation — the factory floor */}
+              <section className={styles.panel}>
+                <Heading as="h2" className={styles.panelTitle}>
+                  Factory Floor — Live
+                </Heading>
+                {agents.length > 0 ? (
+                  <div className={styles.agentGrid}>
+                    {agents.map((a) => (
+                      <FrameCard
+                        key={a.id}
+                        agent={a}
+                        advisoryItems={advisoriesByAgent[a.name ?? a.id] ?? []}
+                      />
+                    ))}
+                  </div>
+                ) : registryData?.agents && registryData.agents.length > 0 ? (
+                  <div className={styles.agentGrid}>
+                    {registryData.agents.map((ra) => {
+                      const synth: HiveAgent = {
+                        id: ra.name,
+                        displayName:
+                          ra.name.charAt(0).toUpperCase() + ra.name.slice(1),
+                        role: ra.state ?? "unknown",
+                        emoji: "🤖",
+                        color:
+                          ra.state === "working"
+                            ? "#3fb950"
+                            : ra.state === "paused"
+                              ? "#f85149"
+                              : "#58a6ff",
+                        state: ra.state ?? "idle",
+                        busy: ra.state === "working" ? "working" : "idle",
+                        paused: ra.state === "paused",
+                      };
+                      return (
+                        <FrameCard
+                          key={ra.name}
+                          agent={synth}
+                          advisoryItems={[]}
+                        />
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className={styles.empty}>
+                    No Frame data — snapshot updating
+                  </div>
+                )}
+              </section>
+
+              {/* Right: Governor + Victory Log + What Frames Are Working On + Health */}
+              <div className={styles.factorySidebar}>
+                <GovernorPanel
+                  governor={snapshot?.governor}
+                  registry={registryData}
+                />
+                <VictoryLog victories={queueData?.victories ?? null} />
+                {advisoryItems.length > 0 && (
+                  <section className={styles.panel}>
+                    <Heading as="h2" className={styles.panelTitle}>
+                      What Frames Are Working On
+                    </Heading>
+                    <p className={styles.panelMeta}>
+                      Advisory digest — findings, bugs, CI failures logged by
+                      each Frame
+                    </p>
+                    <AgentWorkLog
+                      agents={agents}
+                      items={advisoryItems}
+                      advisoryIssue={snapshot?.advisoryIssue}
+                      config={config}
+                    />
+                  </section>
+                )}
+                {/* Registry Health Checks */}
+                {registryData?.health?.checks &&
+                  registryData.health.checks.length > 0 && (
+                    <section className={styles.panel}>
+                      <Heading as="h2" className={styles.panelTitle}>
+                        System Health
+                      </Heading>
                       <div
-                        key={chk.name}
                         style={{
                           display: "flex",
-                          alignItems: "center",
-                          gap: "0.5rem",
-                          fontSize: "0.8rem",
+                          flexDirection: "column",
+                          gap: "0.35rem",
+                          marginTop: "0.5rem",
                         }}
                       >
-                        <span
-                          style={{
-                            width: 8,
-                            height: 8,
-                            borderRadius: "50%",
-                            flexShrink: 0,
-                            background:
-                              chk.status === "ok"
-                                ? "#3fb950"
-                                : chk.status === "warn"
-                                  ? "#d97706"
-                                  : "#f85149",
-                          }}
-                        />
-                        <span
-                          style={{
-                            color: "#e6edf3",
-                            textTransform: "capitalize",
-                          }}
+                        {registryData.health.checks.map((chk) => (
+                          <div
+                            key={chk.name}
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "0.5rem",
+                              fontSize: "0.8rem",
+                            }}
+                          >
+                            <span
+                              style={{
+                                width: 8,
+                                height: 8,
+                                borderRadius: "50%",
+                                flexShrink: 0,
+                                background:
+                                  chk.status === "ok"
+                                    ? "#3fb950"
+                                    : chk.status === "warn"
+                                      ? "#d97706"
+                                      : "#f85149",
+                              }}
+                            />
+                            <span
+                              style={{
+                                color: "#e6edf3",
+                                textTransform: "capitalize",
+                              }}
+                            >
+                              {chk.name.replace(/_/g, " ")}
+                            </span>
+                            <span
+                              style={{
+                                marginLeft: "auto",
+                                color:
+                                  chk.status === "ok"
+                                    ? "#3fb950"
+                                    : chk.status === "warn"
+                                      ? "#d97706"
+                                      : "#f85149",
+                                fontFamily: "monospace",
+                                fontWeight: 700,
+                                fontSize: "0.7rem",
+                              }}
+                            >
+                              {chk.status.toUpperCase()}
+                            </span>
+                            {chk.detail && (
+                              <span
+                                style={{
+                                  color: "#484f58",
+                                  fontSize: "0.68rem",
+                                  maxWidth: "8rem",
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                  whiteSpace: "nowrap",
+                                }}
+                                title={chk.detail}
+                              >
+                                {chk.detail}
+                              </span>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                      {registryData.online != null && (
+                        <p
+                          className={styles.panelMeta}
+                          style={{ marginTop: "0.5rem" }}
                         >
-                          {chk.name.replace(/_/g, " ")}
-                        </span>
-                        <span
-                          style={{
-                            marginLeft: "auto",
-                            color:
-                              chk.status === "ok"
-                                ? "#3fb950"
-                                : chk.status === "warn"
-                                  ? "#d97706"
-                                  : "#f85149",
-                            fontFamily: "monospace",
-                            fontWeight: 700,
-                            fontSize: "0.7rem",
-                          }}
-                        >
-                          {chk.status.toUpperCase()}
-                        </span>
-                        {chk.detail && (
+                          Registry:{" "}
                           <span
                             style={{
+                              color: registryData.online
+                                ? "#3fb950"
+                                : "#f85149",
+                              fontWeight: 700,
+                            }}
+                          >
+                            {registryData.online ? "ONLINE" : "OFFLINE"}
+                          </span>
+                          {registryData.lastHeartbeat && (
+                            <>
+                              {" "}
+                              &middot; heartbeat{" "}
+                              {relTime(registryData.lastHeartbeat)}
+                            </>
+                          )}
+                        </p>
+                      )}
+                    </section>
+                  )}
+              </div>
+            </div>
+
+            {/* ── Destiny columns: Guardians | Ghosts ── */}
+            <div className={styles.destinyColumns}>
+              <GuardiansColumn discussions={communityDiscussions} />
+              <GhostsColumn hivePRs={hivePRsList} copilotPRs={copilotPRsList} />
+            </div>
+
+            {/* ── Recently Merged (full width) ── */}
+            <MergedPRFeed prs={mergedPRs} />
+
+            {/* ── Registry Task Leaderboard ── */}
+            {registryData?.leaderboard &&
+              registryData.leaderboard.length > 0 && (
+                <section className={styles.panel}>
+                  <Heading as="h2" className={styles.panelTitle}>
+                    Task Leaderboard
+                  </Heading>
+                  <p className={styles.panelMeta}>
+                    Tasks completed by each contributor via the hive registry
+                    &mdash; updated live
+                  </p>
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns:
+                        "repeat(auto-fill, minmax(180px, 1fr))",
+                      gap: "0.5rem",
+                      marginTop: "0.75rem",
+                    }}
+                  >
+                    {registryData.leaderboard
+                      .sort((a, b) => b.tasks_completed - a.tasks_completed)
+                      .slice(0, 12)
+                      .map((entry, idx) => (
+                        <div
+                          key={entry.github_username}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "0.5rem",
+                            background: "#161b22",
+                            borderRadius: "6px",
+                            padding: "0.4rem 0.6rem",
+                            border:
+                              idx === 0
+                                ? "1px solid #d97706"
+                                : "1px solid #21262d",
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontSize: "0.7rem",
                               color: "#484f58",
-                              fontSize: "0.68rem",
-                              maxWidth: "8rem",
+                              fontFamily: "monospace",
+                              width: "1.2rem",
+                              flexShrink: 0,
+                            }}
+                          >
+                            #{idx + 1}
+                          </span>
+                          <img
+                            src={
+                              entry.avatar_url ||
+                              `https://github.com/${entry.github_username}.png?size=32`
+                            }
+                            alt={entry.github_username}
+                            width={24}
+                            height={24}
+                            style={{ borderRadius: "50%", flexShrink: 0 }}
+                          />
+                          <span
+                            style={{
+                              fontSize: "0.8rem",
+                              color: "#e6edf3",
+                              flex: 1,
                               overflow: "hidden",
                               textOverflow: "ellipsis",
                               whiteSpace: "nowrap",
                             }}
-                            title={chk.detail}
                           >
-                            {chk.detail}
+                            {entry.github_username}
                           </span>
-                        )}
-                      </div>
-                    ))}
+                          <span
+                            style={{
+                              fontSize: "0.75rem",
+                              fontWeight: 700,
+                              fontFamily: "monospace",
+                              color:
+                                idx === 0
+                                  ? "#d97706"
+                                  : idx < 3
+                                    ? "#3fb950"
+                                    : "#58a6ff",
+                            }}
+                          >
+                            {entry.tasks_completed}
+                          </span>
+                        </div>
+                      ))}
                   </div>
-                  {registryData.online != null && (
-                    <p
-                      className={styles.panelMeta}
-                      style={{ marginTop: "0.5rem" }}
-                    >
-                      Registry:{" "}
-                      <span
-                        style={{
-                          color: registryData.online ? "#3fb950" : "#f85149",
-                          fontWeight: 700,
-                        }}
-                      >
-                        {registryData.online ? "ONLINE" : "OFFLINE"}
-                      </span>
-                      {registryData.lastHeartbeat && (
-                        <>
-                          {" "}
-                          &middot; heartbeat{" "}
-                          {relTime(registryData.lastHeartbeat)}
-                        </>
-                      )}
-                    </p>
-                  )}
                 </section>
               )}
-          </div>
-        </div>
 
-        {/* ── Destiny columns: Guardians | Ghosts ── */}
-        <div className={styles.destinyColumns}>
-          <GuardiansColumn discussions={communityDiscussions} />
-          <GhostsColumn hivePRs={hivePRsList} copilotPRs={copilotPRsList} />
-        </div>
-
-        {/* ── Recently Merged (full width) ── */}
-        <MergedPRFeed prs={mergedPRs} />
-
-        {/* ── Registry Task Leaderboard ── */}
-        {registryData?.leaderboard && registryData.leaderboard.length > 0 && (
-          <section className={styles.panel}>
-            <Heading as="h2" className={styles.panelTitle}>
-              Task Leaderboard
-            </Heading>
-            <p className={styles.panelMeta}>
-              Tasks completed by each contributor via the hive registry &mdash;
-              updated live
-            </p>
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
-                gap: "0.5rem",
-                marginTop: "0.75rem",
-              }}
-            >
-              {registryData.leaderboard
-                .sort((a, b) => b.tasks_completed - a.tasks_completed)
-                .slice(0, 12)
-                .map((entry, idx) => (
-                  <div
-                    key={entry.github_username}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "0.5rem",
-                      background: "#161b22",
-                      borderRadius: "6px",
-                      padding: "0.4rem 0.6rem",
-                      border:
-                        idx === 0 ? "1px solid #d97706" : "1px solid #21262d",
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontSize: "0.7rem",
-                        color: "#484f58",
-                        fontFamily: "monospace",
-                        width: "1.2rem",
-                        flexShrink: 0,
-                      }}
-                    >
-                      #{idx + 1}
-                    </span>
-                    <img
-                      src={
-                        entry.avatar_url ||
-                        `https://github.com/${entry.github_username}.png?size=32`
-                      }
-                      alt={entry.github_username}
-                      width={24}
-                      height={24}
-                      style={{ borderRadius: "50%", flexShrink: 0 }}
-                    />
-                    <span
-                      style={{
-                        fontSize: "0.8rem",
-                        color: "#e6edf3",
-                        flex: 1,
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                      }}
-                    >
-                      {entry.github_username}
-                    </span>
-                    <span
-                      style={{
-                        fontSize: "0.75rem",
-                        fontWeight: 700,
-                        fontFamily: "monospace",
-                        color:
-                          idx === 0
-                            ? "#d97706"
-                            : idx < 3
-                              ? "#3fb950"
-                              : "#58a6ff",
-                      }}
-                    >
-                      {entry.tasks_completed}
-                    </span>
-                  </div>
-                ))}
+            {/* Beads + Agent of Day */}
+            <div className={styles.twoCol}>
+              <BeadsCadencePanel
+                beads={snapshot?.beads}
+                cadenceMatrix={snapshot?.cadenceMatrix}
+                mode={snapshot?.governor?.mode}
+              />
+              <FrameOfDay
+                agent={agentOfDay}
+                advisoryItems={
+                  advisoriesByAgent[agentOfDay?.name ?? agentOfDay?.id ?? ""] ??
+                  []
+                }
+              />
             </div>
-          </section>
+
+            {/* Formation log */}
+            <FormationLog
+              supervisor={supervisorAgent}
+              timestamp={snapshot?.timestamp}
+            />
+
+            {/* Governor 24h timeline */}
+            {snapshot?.governorTimeline &&
+              snapshot.governorTimeline.length >= 10 && (
+                <GovernorTimeline ticks={snapshot.governorTimeline} />
+              )}
+
+            {/* Token budget */}
+            {snapshot?.budgetPct != null && (
+              <TokenBudgetPanel
+                pct={snapshot.budgetPct}
+                total={snapshot.budgetTotal}
+                used={snapshot.budgetUsed}
+                mode={snapshot.acmmMode ?? snapshot.governor?.mode}
+              />
+            )}
+
+            {/* Strategy Lab */}
+            {snapshot?.nous && <NousPanel nous={snapshot.nous} />}
+          </div>
         )}
 
-        {/* ── Community ── */}
-        <ContributorWall prs={mergedPRs} history={hiveHistory} />
+        {activeTab === "health" && (
+          <div
+            id="factory-panel-health"
+            role="tabpanel"
+            aria-labelledby="factory-tab-health"
+            className={styles.tabPanel}
+          >
+            {/* ── Factory Vitals: small multiples on shared domains ── */}
+            <FactoryVitals
+              registry={registryData}
+              history={hiveHistory}
+              snapshot={snapshot}
+            />
 
-        {/* ── History Zone: Trends | Community Builders ── */}
-        <div className={styles.twoCol}>
-          <HistoryTrends history={hiveHistory} />
-          <ContributorLeaderboard history={hiveHistory} />
-        </div>
+            {/* ── Build activity over the window the data actually covers ── */}
+            {factoryStats != null && !factoryStats.unavailable ? (
+              <BuildActivityCalendar stats={factoryStats} />
+            ) : null}
 
-        {/* Velocity + Org stats */}
-        <div className={styles.twoCol}>
-          <VelocityPanel velocity={velocity} p0={queue?.p0} />
-          {orgStats ? (
+            {/* ── Rolling build health per publishing lane ── */}
+            <FactoryHealth stats={factoryStats} missing={factoryStatsMissing} />
+
+            {/* Release verdicts and image freshness are still not published by
+                this site. Saying so is required: a dashboard that silently
+                renders less is indistinguishable from a healthy one with less
+                to report. */}
             <section className={styles.panel}>
-              <OrgStatsPanel stats={orgStats} />
+              <Heading as="h2" className={styles.panelTitle}>
+                Release &amp; image status
+              </Heading>
+              <p className={styles.panelMeta}>
+                Per-lane release verdicts and image freshness are not published
+                by this site yet — build outcomes above are, release judgements
+                are not. Nothing here is failing; the data simply does not
+                exist. Until then, published images are listed in the{" "}
+                <Link href="/images">image catalog</Link>.
+              </p>
             </section>
-          ) : null}
-        </div>
 
-        {/* Beads + Agent of Day */}
-        <div className={styles.twoCol}>
-          <BeadsCadencePanel
-            beads={snapshot?.beads}
-            cadenceMatrix={snapshot?.cadenceMatrix}
-            mode={snapshot?.governor?.mode}
-          />
-          <FrameOfDay
-            agent={agentOfDay}
-            advisoryItems={
-              advisoriesByAgent[agentOfDay?.name ?? agentOfDay?.id ?? ""] ?? []
-            }
-          />
-        </div>
+            {/* ── Community ── */}
+            <ContributorWall prs={mergedPRs} history={hiveHistory} />
 
-        {/* Formation log */}
-        <FormationLog
-          supervisor={supervisorAgent}
-          timestamp={snapshot?.timestamp}
-        />
+            {/* ── History Zone: Trends | Community Builders ── */}
+            <div className={styles.twoCol}>
+              <HistoryTrends history={hiveHistory} />
+              <ContributorLeaderboard history={hiveHistory} />
+            </div>
 
-        {/* Governor 24h timeline */}
-        {snapshot?.governorTimeline &&
-          snapshot.governorTimeline.length >= 10 && (
-            <GovernorTimeline ticks={snapshot.governorTimeline} />
-          )}
-
-        {/* Token budget */}
-        {snapshot?.budgetPct != null && (
-          <TokenBudgetPanel
-            pct={snapshot.budgetPct}
-            total={snapshot.budgetTotal}
-            used={snapshot.budgetUsed}
-            mode={snapshot.acmmMode ?? snapshot.governor?.mode}
-          />
+            {/* Velocity + Org stats */}
+            <div className={styles.twoCol}>
+              <VelocityPanel velocity={velocity} p0={queue?.p0} />
+              {orgStats ? (
+                <section className={styles.panel}>
+                  <OrgStatsPanel stats={orgStats} />
+                </section>
+              ) : null}
+            </div>
+          </div>
         )}
-
-        {/* Strategy Lab */}
-        {snapshot?.nous && <NousPanel nous={snapshot.nous} />}
 
         {/* About */}
         <section className={styles.panel}>

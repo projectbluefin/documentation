@@ -25,9 +25,21 @@
  *       "lastWeek": 12,        // commits in last 7 days
  *       "lastMonth": 45,       // commits in last 28 days (4 weeks)
  *       "last3Months": 150,    // commits in last 91 days (13 weeks)
- *       "byRepo": { "repo": commits }
+ *       "byRepo": { "repo": commits },
+ *       "weeks": [0, 3, 7, ...] // commits per week, oldest-first, summed across
+ *                               // every tracked repo. Aligned index-for-index
+ *                               // with the top-level contributorWeekStarts
+ *                               // grid (at most 52 entries, one per week).
+ *                               // Empty array when the contributor has no
+ *                               // commits in the window or no series was kept.
  *     }
  *   },
+ *
+ *   // Shared week grid for contributorStats[*].weeks — unix seconds of each
+ *   // week start, oldest-first, at most 52 entries. Index i of any weeks[]
+ *   // array refers to contributorWeekStarts[i].
+ *   "contributorWeekStarts": [1735689600, ...],
+ *
  *   "lastWeeklyStatsFetch": "ISO timestamp"
  * }
  */
@@ -53,6 +65,15 @@ const CONTRIBUTOR_TTL_MS = 24 * 60 * 60 * 1000;
 
 // Refresh weekly stats once per day (stats/contributors is expensive: 1 req/repo)
 const WEEKLY_STATS_TTL_MS = 24 * 60 * 60 * 1000;
+
+// GitHub's stats/contributors endpoint returns 52 weekly buckets per contributor.
+const MAX_WEEKS = 52;
+
+// hive-history.json is a tracked CI seed, so the weekly series is capped:
+// only the top N contributors by commits inside the 52-week window keep a
+// `weeks` array. Everyone else gets an empty array. 100 comfortably covers any
+// leaderboard view (only ~33 contributors are active in a given year).
+const MAX_WEEKLY_SERIES = 100;
 
 // All active factory repos
 const FACTORY_REPOS = [
@@ -133,10 +154,23 @@ function extractRenderData(html) {
     let escaped = false;
     for (let i = start; i < html.length; i++) {
       const ch = html[i];
-      if (escaped) { escaped = false; continue; }
-      if (ch === "\\" && inStr) { escaped = true; continue; }
-      if (inStr) { if (ch === strChar) inStr = false; continue; }
-      if (ch === '"' || ch === "'") { inStr = true; strChar = ch; continue; }
+      if (escaped) {
+        escaped = false;
+        continue;
+      }
+      if (ch === "\\" && inStr) {
+        escaped = true;
+        continue;
+      }
+      if (inStr) {
+        if (ch === strChar) inStr = false;
+        continue;
+      }
+      if (ch === '"' || ch === "'") {
+        inStr = true;
+        strChar = ch;
+        continue;
+      }
       if (ch === "{") depth++;
       else if (ch === "}") {
         depth--;
@@ -168,21 +202,17 @@ function extractMetrics(data) {
   const agents = Array.isArray(data.agents) ? data.agents : [];
   const mergeActivity =
     (typeof data.mergeActivity === "object" && data.mergeActivity) || {};
-  const advisoryItems = Array.isArray(data.advisoryItems) ? data.advisoryItems : [];
+  const advisoryItems = Array.isArray(data.advisoryItems)
+    ? data.advisoryItems
+    : [];
 
   return {
     acmmLevel: safeNum(data.acmmLevel),
     govMode: typeof gov.mode === "string" ? gov.mode : undefined,
-    budgetPct:
-      safeNum(gov.budgetPct) ??
-      safeNum(data.budgetPct),
-    budgetTotal:
-      safeNum(govBudget.totalTokens) ??
-      safeNum(govBudget.total),
+    budgetPct: safeNum(gov.budgetPct) ?? safeNum(data.budgetPct),
+    budgetTotal: safeNum(govBudget.totalTokens) ?? safeNum(govBudget.total),
     budgetUsed: safeNum(govBudget.used),
-    queue:
-      safeNum(gov.queue) ??
-      safeNum(gov.issues),
+    queue: safeNum(gov.queue) ?? safeNum(gov.issues),
     agents: agents.length,
     runningAgents: agents.filter((a) => !a.paused).length,
     advisories: advisoryItems.length,
@@ -190,8 +220,8 @@ function extractMetrics(data) {
     mergedWeek: safeNum(mergeActivity.week),
     medianMergeMins: safeNum(
       typeof data.issueToMerge === "object" && data.issueToMerge
-        ? data.issueToMerge.median_minutes ?? data.issueToMerge.avg_minutes
-        : undefined
+        ? (data.issueToMerge.median_minutes ?? data.issueToMerge.avg_minutes)
+        : undefined,
     ),
   };
 }
@@ -218,7 +248,8 @@ async function fetchContributors() {
         } catch {
           break;
         }
-        if (res.status === 404 || res.status === 403 || res.status === 204) break;
+        if (res.status === 404 || res.status === 403 || res.status === 204)
+          break;
         if (!res.ok) break;
         let contributors;
         try {
@@ -243,29 +274,151 @@ async function fetchContributors() {
       if (Object.keys(repoMap).length > 0) {
         byRepo[repo] = repoMap;
       }
-    })
+    }),
   );
 
   return { totals, byRepo };
 }
 
 /**
+ * Time-window cut-offs (unix seconds) used to bucket weekly commit counts.
+ */
+function computeStatsWindows(nowMs = Date.now()) {
+  const nowSec = Math.floor(nowMs / 1000);
+  return {
+    weekAgo: nowSec - 7 * 86400,
+    monthAgo: nowSec - 28 * 86400, // 4 weeks
+    threeMonthsAgo: nowSec - 91 * 86400, // 13 weeks
+  };
+}
+
+/**
+ * Mutable accumulator shared by every repo response.
+ *
+ *   stats      — per-login aggregates written straight to contributorStats
+ *   weeks      — per-login { [weekStartSeconds]: commits }, summed across repos
+ *   weekStarts — every week-start timestamp seen, forming the shared x-axis grid
+ */
+function createStatsAccumulator() {
+  return { stats: {}, weeks: {}, weekStarts: {} };
+}
+
+/**
+ * Fold one repo's /stats/contributors response into the accumulator.
+ * Pure apart from mutating `acc`; safe to call in any order.
+ */
+function accumulateRepoStats(acc, repo, data, windows) {
+  if (!Array.isArray(data)) return acc;
+  const { weekAgo, monthAgo, threeMonthsAgo } = windows;
+
+  for (const entry of data) {
+    const login = entry?.author?.login;
+    if (!login) continue;
+    if (login.endsWith("[bot]") || BOT_LOGINS.has(login)) continue;
+    const total = typeof entry.total === "number" ? entry.total : 0;
+    if (total === 0) continue;
+
+    // Sum weekly commit counts for each time window
+    let lastWeek = 0;
+    let lastMonth = 0;
+    let last3Months = 0;
+    if (Array.isArray(entry.weeks)) {
+      for (const w of entry.weeks) {
+        const wt = typeof w?.w === "number" ? w.w : 0;
+        const wc = typeof w?.c === "number" ? w.c : 0;
+        if (wt > 0) acc.weekStarts[wt] = true;
+        if (wc === 0) continue;
+        if (wt >= weekAgo) lastWeek += wc;
+        if (wt >= monthAgo) lastMonth += wc;
+        if (wt >= threeMonthsAgo) last3Months += wc;
+        if (wt > 0) {
+          if (!acc.weeks[login]) acc.weeks[login] = {};
+          acc.weeks[login][wt] = (acc.weeks[login][wt] || 0) + wc;
+        }
+      }
+    }
+
+    if (!acc.stats[login]) {
+      acc.stats[login] = {
+        total: 0,
+        lastWeek: 0,
+        lastMonth: 0,
+        last3Months: 0,
+        byRepo: {},
+      };
+    }
+    acc.stats[login].total += total;
+    acc.stats[login].lastWeek += lastWeek;
+    acc.stats[login].lastMonth += lastMonth;
+    acc.stats[login].last3Months += last3Months;
+    acc.stats[login].byRepo[repo] =
+      (acc.stats[login].byRepo[repo] || 0) + total;
+  }
+
+  return acc;
+}
+
+/**
+ * Attach the weekly commit series to each contributor.
+ *
+ * Every series is aligned to one shared grid (`weekStarts`, oldest-first, at most
+ * MAX_WEEKS entries) so index i means the same week in every row. Contributors
+ * with no commits in the window — or outside the top `maxSeries` most active in
+ * that window — get an empty array, which keeps the tracked seed file small.
+ */
+function finalizeContributorStats(
+  acc,
+  { maxWeeks = MAX_WEEKS, maxSeries = MAX_WEEKLY_SERIES } = {},
+) {
+  const stats = acc.stats;
+  const weekStarts = Object.keys(acc.weekStarts)
+    .map(Number)
+    .filter((n) => Number.isFinite(n) && n > 0)
+    .sort((a, b) => a - b)
+    .slice(-maxWeeks);
+
+  const series = {};
+  for (const login of Object.keys(stats)) {
+    const buckets = acc.weeks[login];
+    const row = buckets ? weekStarts.map((ts) => buckets[ts] || 0) : [];
+    series[login] = row.some((n) => n > 0) ? row : [];
+  }
+
+  // Rank by commits inside the window so the most recently active contributors
+  // keep their sparkline when the cap bites, not just the all-time veterans.
+  const ranked = Object.keys(series)
+    .filter((login) => series[login].length > 0)
+    .sort((a, b) => {
+      const sum = (l) => series[l].reduce((s, n) => s + n, 0);
+      return (
+        sum(b) - sum(a) ||
+        (stats[b].total || 0) - (stats[a].total || 0) ||
+        a.localeCompare(b)
+      );
+    });
+  const withSeries = new Set(ranked.slice(0, maxSeries));
+
+  for (const login of Object.keys(stats)) {
+    stats[login].weeks = withSeries.has(login) ? series[login] : [];
+  }
+
+  return { stats, weekStarts };
+}
+
+/**
  * Fetch weekly contributor stats via /repos/{owner}/{repo}/stats/contributors.
- * Returns lastWeek / lastMonth / last3Months windows per contributor.
+ * Returns lastWeek / lastMonth / last3Months windows per contributor plus the
+ * raw weekly commit series (see finalizeContributorStats).
  *
  * The endpoint may return 202 while GitHub computes stats. We retry up to 3 times
  * with a 2-second back-off per repo.
  *
- * Returns: { [login]: { total, lastWeek, lastMonth, last3Months, byRepo: { repo: commits } } }
+ * Returns: { stats: { [login]: { total, lastWeek, lastMonth, last3Months, byRepo, weeks } },
+ *            weekStarts: number[] }
  */
 async function fetchContributorWeeklyStats() {
-  const nowSec = Math.floor(Date.now() / 1000);
-  const weekAgo = nowSec - 7 * 86400;
-  const monthAgo = nowSec - 28 * 86400;  // 4 weeks
-  const threeMonthsAgo = nowSec - 91 * 86400;  // 13 weeks
-
-  // stats[login] = { total, lastWeek, lastMonth, last3Months, byRepo }
-  const stats = {};
+  const windows = computeStatsWindows();
+  const acc = createStatsAccumulator();
 
   await Promise.allSettled(
     FACTORY_REPOS.map(async (repo) => {
@@ -280,7 +433,8 @@ async function fetchContributorWeeklyStats() {
         } catch {
           break;
         }
-        if (res.status === 404 || res.status === 403 || res.status === 204) break;
+        if (res.status === 404 || res.status === 403 || res.status === 204)
+          break;
         if (res.status === 202) {
           // GitHub is computing stats — wait and retry
           await new Promise((r) => setTimeout(r, 2000 * attempts));
@@ -294,45 +448,11 @@ async function fetchContributorWeeklyStats() {
         }
         break;
       }
-      if (!Array.isArray(data)) return;
-
-      for (const entry of data) {
-        const login = entry?.author?.login;
-        if (!login) continue;
-        if (login.endsWith("[bot]") || BOT_LOGINS.has(login)) continue;
-        const total = typeof entry.total === "number" ? entry.total : 0;
-        if (total === 0) continue;
-
-        // Sum weekly commit counts for each time window
-        let lastWeek = 0;
-        let lastMonth = 0;
-        let last3Months = 0;
-        if (Array.isArray(entry.weeks)) {
-          for (const w of entry.weeks) {
-            const wt = typeof w.w === "number" ? w.w : 0;
-            const wc = typeof w.c === "number" ? w.c : 0;
-            if (wc === 0) continue;
-            if (wt >= weekAgo) lastWeek += wc;
-            if (wt >= monthAgo) lastMonth += wc;
-            if (wt >= threeMonthsAgo) last3Months += wc;
-          }
-        }
-
-        if (!stats[login]) {
-          stats[login] = { total: 0, lastWeek: 0, lastMonth: 0, last3Months: 0, byRepo: {} };
-        }
-        stats[login].total += total;
-        stats[login].lastWeek += lastWeek;
-        stats[login].lastMonth += lastMonth;
-        stats[login].last3Months += last3Months;
-        if (total > 0) {
-          stats[login].byRepo[repo] = (stats[login].byRepo[repo] || 0) + total;
-        }
-      }
-    })
+      accumulateRepoStats(acc, repo, data, windows);
+    }),
   );
 
-  return stats;
+  return finalizeContributorStats(acc);
 }
 
 function loadHistory() {
@@ -348,6 +468,7 @@ function loadHistory() {
     contributors: {},
     contributorsByRepo: {},
     contributorStats: {},
+    contributorWeekStarts: [],
     lastContributorFetch: null,
     lastWeeklyStatsFetch: null,
   };
@@ -361,11 +482,15 @@ async function main() {
   if (!history.contributors) history.contributors = {};
   if (!history.contributorsByRepo) history.contributorsByRepo = {};
   if (!history.contributorStats) history.contributorStats = {};
+  if (!Array.isArray(history.contributorWeekStarts))
+    history.contributorWeekStarts = [];
 
   // ── Fetch hive snapshot ──────────────────────────────────────────────────
   let metrics = null;
   if (!HIVE_API_TOKEN) {
-    console.log("[hive-history] HIVE_API_TOKEN not set — skipping snapshot fetch");
+    console.log(
+      "[hive-history] HIVE_API_TOKEN not set — skipping snapshot fetch",
+    );
   } else {
     try {
       console.log("[hive-history] Fetching /api/status...");
@@ -384,7 +509,9 @@ async function main() {
           `[hive-history] Snapshot parsed: ACMM L${metrics?.acmmLevel ?? "?"}, mode=${metrics?.govMode ?? "?"}`,
         );
       } else {
-        console.warn(`[hive-history] /api/status returned HTTP ${res.status} — skipping snapshot`);
+        console.warn(
+          `[hive-history] /api/status returned HTTP ${res.status} — skipping snapshot`,
+        );
       }
     } catch (err) {
       console.warn(`[hive-history] Snapshot fetch failed: ${err.message}`);
@@ -411,7 +538,9 @@ async function main() {
   const needsContributorRefresh = Date.now() - lastFetch > CONTRIBUTOR_TTL_MS;
 
   if (needsContributorRefresh) {
-    console.log("[hive-history] Fetching all-time contributor counts from factory repos...");
+    console.log(
+      "[hive-history] Fetching all-time contributor counts from factory repos...",
+    );
     try {
       const { totals, byRepo } = await fetchContributors();
       history.contributors = totals;
@@ -426,7 +555,9 @@ async function main() {
       console.warn(`[hive-history] Contributor fetch failed: ${err.message}`);
     }
   } else {
-    console.log("[hive-history] All-time contributor counts still fresh, skipping");
+    console.log(
+      "[hive-history] All-time contributor counts still fresh, skipping",
+    );
   }
 
   // ── Refresh weekly contributor stats (daily) ─────────────────────────────
@@ -436,21 +567,31 @@ async function main() {
   const needsWeeklyRefresh = Date.now() - lastWeeklyFetch > WEEKLY_STATS_TTL_MS;
 
   if (needsWeeklyRefresh) {
-    console.log("[hive-history] Fetching weekly contributor stats (stats/contributors)...");
+    console.log(
+      "[hive-history] Fetching weekly contributor stats (stats/contributors)...",
+    );
     try {
       const stats = await fetchContributorWeeklyStats();
-      history.contributorStats = stats;
+      history.contributorStats = stats.stats;
+      history.contributorWeekStarts = stats.weekStarts;
       history.lastWeeklyStatsFetch = new Date().toISOString();
-      const count = Object.keys(stats).length;
-      const activeThisWeek = Object.values(stats).filter((s) => s.lastWeek > 0).length;
+      const count = Object.keys(stats.stats).length;
+      const activeThisWeek = Object.values(stats.stats).filter(
+        (s) => s.lastWeek > 0,
+      ).length;
+      const withSeries = Object.values(stats.stats).filter(
+        (s) => Array.isArray(s.weeks) && s.weeks.length > 0,
+      ).length;
       console.log(
-        `[hive-history] Weekly stats: ${count} contributors, ${activeThisWeek} active this week`,
+        `[hive-history] Weekly stats: ${count} contributors, ${activeThisWeek} active this week, ${withSeries} with a ${stats.weekStarts.length}-week series`,
       );
     } catch (err) {
       console.warn(`[hive-history] Weekly stats fetch failed: ${err.message}`);
     }
   } else {
-    console.log("[hive-history] Weekly contributor stats still fresh, skipping");
+    console.log(
+      "[hive-history] Weekly contributor stats still fresh, skipping",
+    );
   }
 
   // ── Write output ─────────────────────────────────────────────────────────
@@ -459,7 +600,20 @@ async function main() {
   console.log(`[hive-history] Wrote ${OUTPUT_FILE}`);
 }
 
-main().catch((err) => {
-  console.error("[hive-history] Fatal:", err);
-  process.exit(1);
-});
+if (require.main === module) {
+  main().catch((err) => {
+    console.error("[hive-history] Fatal:", err);
+    process.exit(1);
+  });
+}
+
+module.exports = {
+  accumulateRepoStats,
+  computeStatsWindows,
+  createStatsAccumulator,
+  extractMetrics,
+  extractRenderData,
+  finalizeContributorStats,
+  MAX_WEEKLY_SERIES,
+  MAX_WEEKS,
+};

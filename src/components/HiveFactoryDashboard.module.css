@@ -2711,7 +2711,7 @@
 
 .lbHeader {
   display: grid;
-  grid-template-columns: 2rem 1fr 6rem 10rem 1fr;
+  grid-template-columns: 2rem 1fr 5rem 7rem 9rem 1fr;
   gap: 0.5rem;
   align-items: center;
   padding: 0.3rem 0.5rem;
@@ -2725,7 +2725,7 @@
 
 .lbRow {
   display: grid;
-  grid-template-columns: 2rem 1fr 6rem 10rem 1fr;
+  grid-template-columns: 2rem 1fr 5rem 7rem 9rem 1fr;
   gap: 0.5rem;
   align-items: center;
   padding: 0.4rem 0.5rem;
@@ -2845,7 +2845,7 @@
 @media (max-width: 768px) {
   .lbHeader,
   .lbRow {
-    grid-template-columns: 2rem 1fr 5rem;
+    grid-template-columns: 2rem 1fr 4rem 7rem;
   }
 
   .lbColRepos,
@@ -2858,4 +2858,359 @@
   width: 100%;
   height: 32px;
   display: block;
+}
+
+/* ── Status strip (always visible, above the tabs) ───────────────────────── */
+.statusStrip {
+  background: #161b22;
+  border: 1px solid #21262d;
+  border-radius: 10px;
+  padding: 1rem 1.25rem 1.1rem;
+  margin-bottom: 1.25rem;
+}
+
+.statusHeadline {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.9rem;
+}
+
+.statusGlyph {
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
+.statusWord {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.statusDetail {
+  font-size: 0.8rem;
+  color: #8b949e;
+  font-family: "SFMono-Regular", Consolas, monospace;
+}
+
+.statusStrip .statsRow {
+  margin-bottom: 0.9rem;
+}
+
+.sourceRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  border-top: 1px solid #21262d;
+  padding-top: 0.75rem;
+}
+
+.sourceChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.68rem;
+  font-family: "SFMono-Regular", Consolas, monospace;
+  border: 1px solid;
+  border-radius: 20px;
+  padding: 0.12rem 0.55rem;
+  white-space: nowrap;
+}
+
+.sourceState {
+  color: #6e7681;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.sourceNote {
+  font-size: 0.7rem;
+  color: #6e7681;
+  margin-left: 0.25rem;
+}
+
+/* ── Tabs ────────────────────────────────────────────────────────────────── */
+.tabBar {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 1px solid #21262d;
+  margin-bottom: 1.25rem;
+}
+
+.tabButton {
+  display: inline-block;
+  padding: 0.55rem 1.1rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #8b949e;
+  text-decoration: none;
+  border: 1px solid transparent;
+  border-bottom: 2px solid transparent;
+  border-radius: 8px 8px 0 0;
+  transition:
+    color 0.15s,
+    border-color 0.15s,
+    background 0.15s;
+}
+
+.tabButton:hover {
+  color: #e6edf3;
+  text-decoration: none;
+  background: rgba(88, 166, 255, 0.06);
+}
+
+.tabButtonActive {
+  color: #e6edf3;
+  background: #161b22;
+  border-color: #21262d;
+  border-bottom-color: hsl(38, 80%, 56%);
+}
+
+.tabEmptyDot {
+  color: hsl(38, 6%, 45%);
+  font-size: 0.7rem;
+}
+
+.tabPanel {
+  display: block;
+}
+
+/* ── Factory Vitals (small multiples) ────────────────────────────────────── */
+.vitalsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 0.75rem;
+}
+
+.vitalCard {
+  background: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  padding: 0.7rem 0.85rem 0.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  /* Identical boxes: small multiples only read as a set when they share a shape. */
+  min-height: 132px;
+}
+
+.vitalLabel {
+  font-size: 0.68rem;
+  color: #8b949e;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.vitalValue {
+  font-size: 1.3rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.vitalSpark {
+  height: 40px;
+  display: flex;
+  align-items: center;
+}
+
+.vitalSparkline {
+  width: 100%;
+  height: 40px;
+  display: block;
+  overflow: visible;
+  font-size: 0.65rem;
+  color: #484f58;
+  font-style: italic;
+}
+
+.vitalNote {
+  font-size: 0.62rem;
+  color: #6e7681;
+  line-height: 1.35;
+  margin-top: auto;
+}
+
+/* ── Build activity calendar ─────────────────────────────────────────────── */
+.buildCalendar {
+  max-width: 100%;
+  height: auto;
+  color: #6e7681;
+  font-size: 0.7rem;
+  font-style: italic;
+}
+
+/* ── Factory health lanes (small multiples on a shared duration scale) ───── */
+.laneGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 0.75rem;
+}
+
+.laneCard {
+  background: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  padding: 0.7rem 0.85rem 0.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  /* Identical boxes: small multiples only read as a set when they share a shape. */
+  min-height: 250px;
+}
+
+.laneHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.laneName {
+  font-size: 0.72rem;
+  color: #8b949e;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.laneGlyph {
+  font-size: 0.62rem;
+  font-family: "JetBrains Mono", "Fira Code", monospace;
+  white-space: nowrap;
+}
+
+.laneValue {
+  font-size: 1.3rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.laneNote {
+  font-size: 0.62rem;
+  color: #6e7681;
+  line-height: 1.35;
+}
+
+.laneUnavailable {
+  font-size: 0.7rem;
+  color: #8b949e;
+  line-height: 1.4;
+  border-left: 2px solid #30363d;
+  padding-left: 0.5rem;
+}
+
+.laneCounts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin: 0.15rem 0 0;
+}
+
+.laneCount {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.laneCount dt {
+  font-size: 0.58rem;
+  color: #6e7681;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.laneCount dd {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: #c9d1d9;
+  font-family: "JetBrains Mono", "Fira Code", monospace;
+}
+
+.laneSparkRow {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  margin-top: auto;
+}
+
+.laneSparkLabel {
+  font-size: 0.6rem;
+  color: #6e7681;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.laneSparkline {
+  width: 100%;
+  display: block;
+  overflow: visible;
+  font-size: 0.65rem;
+  color: #484f58;
+  font-style: italic;
+}
+
+/* ── Daily outcome bars ──────────────────────────────────────────────────── */
+.dailyGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0.75rem;
+}
+
+.dailyCell {
+  background: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  padding: 0.7rem 0.85rem 0.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.dailyValue {
+  font-size: 1.1rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.unavailableNote {
+  font-size: 0.78rem;
+  color: #8b949e;
+  line-height: 1.5;
+  margin: 0;
+  border-left: 2px solid #30363d;
+  padding-left: 0.65rem;
+}
+
+/* ── Leaderboard activity column ─────────────────────────────────────────── */
+.lbColActivity {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.62rem;
+  color: #484f58;
+  font-style: italic;
+}
+
+.lbSparkline {
+  display: inline-block;
+  overflow: visible;
+  font-size: 0.62rem;
+  color: #484f58;
+  font-style: italic;
+}
+
+.lbSparkValue {
+  font-family: "JetBrains Mono", "Fira Code", monospace;
+  font-size: 0.68rem;
+  font-style: normal;
+  color: #8b949e;
+  font-variant-numeric: tabular-nums;
 }

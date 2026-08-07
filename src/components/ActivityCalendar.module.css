@@ -1,0 +1,26 @@
+/*
+ * Colour that must respond to the light/dark theme lives here, not in inline SVG
+ * attributes: a CSS custom property works when applied through a class, but not
+ * as an attribute value inside inline SVG. Cell fills stay prop-driven so a
+ * calendar can be tinted per panel.
+ */
+
+.calendar {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.axisLabel {
+  fill: var(--ifm-color-emphasis-600);
+  font-size: 9px;
+  font-family: var(--ifm-font-family-base);
+  dominant-baseline: auto;
+}
+
+.empty {
+  color: var(--ifm-color-emphasis-600);
+  font-size: 0.85rem;
+  font-style: italic;
+}
