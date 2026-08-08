@@ -96,7 +96,7 @@ export const FACTORY_ROUTES: FactoryRoute[] = [
     path: "/factory/userspace",
     id: "userspace",
     label: "Userspace",
-    hint: "The userspace stack: base images, runtimes and toolboxes",
+    hint: "The userspace stack: base images and runtimes",
     datasets: ["ghcrPackages", "flathub"],
   },
   {

@@ -143,7 +143,7 @@ export default function MetricsPanels({
   );
 }
 
-// ── Panel 1: Active devices ────────────────────────────────────────────────
+// ── Panel 1: Weekly countme check-ins ──────────────────────────────────────
 
 function ActiveDevices({
   countme,
@@ -159,7 +159,7 @@ function ActiveDevices({
   if (countme.reason || (!countme.loading && !countme.data)) {
     return (
       <Unavailable
-        what="Active devices"
+        what="Weekly countme check-ins"
         reason={
           countme.reason ?? "countme data is not available in this environment."
         }
@@ -168,13 +168,16 @@ function ActiveDevices({
   }
   if (countme.loading || !countme.data) {
     return (
-      <Unavailable what="Active devices" reason="Loading adoption data…" />
+      <Unavailable
+        what="Weekly countme check-ins"
+        reason="Loading adoption data…"
+      />
     );
   }
   if (countme.data.unavailable) {
     return (
       <Unavailable
-        what="Active devices"
+        what="Weekly countme check-ins"
         reason={countme.data.stateReason ?? "Data unavailable."}
       />
     );
@@ -216,7 +219,7 @@ function ActiveDevices({
 
   return (
     <section className={styles.section}>
-      <h2 className={styles.heading}>Active devices</h2>
+      <h2 className={styles.heading}>Weekly countme check-ins</h2>
       <div className={styles.currentValue}>
         {fmt(currentBluefin)} Bluefin · {fmt(currentLts)} LTS
       </div>
@@ -234,8 +237,8 @@ function ActiveDevices({
       </div>
       <EChart
         option={option}
-        title="Weekly active devices"
-        summary={`Bluefin: ${fmt(currentBluefin)} devices this week. LTS: ${fmt(currentLts)}.`}
+        title="Weekly countme check-ins"
+        summary={`Bluefin: ${fmt(currentBluefin)} countme check-ins this week. LTS: ${fmt(currentLts)}. countme is a Fedora-side weekly check-in estimate, not a literal device count.`}
         points={realPoints}
         minPoints={2}
         tableCaption="Weekly countme hits for Bluefin and Bluefin LTS"
@@ -320,12 +323,12 @@ function EcosystemShare({
       <h2 className={styles.heading}>Ecosystem share</h2>
       <EChart
         option={option}
-        title="Immutable desktop ecosystem share"
-        summary={`Latest week across ${slices.length} peer distributions (excluding Fedora, which dwarfs the rest and is not a peer immutable desktop).`}
+        title="Cloud-native desktop ecosystem share"
+        summary={`Latest week across ${slices.length} peer cloud-native desktops (excluding Fedora, which dwarfs the rest and is the shared base rather than a peer image).`}
         points={realPoints}
         minPoints={2}
         height={320}
-        tableCaption="Weekly countme hits by distribution"
+        tableCaption="Weekly countme hits by image"
       />
     </section>
   );

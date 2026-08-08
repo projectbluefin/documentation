@@ -52,22 +52,8 @@ const GHCR_FIXTURE = {
         },
       ],
     },
-    {
-      name: "toolbox-ubuntu",
-      family: "toolbox",
-      versionCount: 10,
-      streams: [
-        {
-          tag: "latest",
-          publishedAt: "2026-08-03T00:00:00Z",
-          ageDays: 3,
-          state: "fresh",
-          stateReason: null,
-        },
-      ],
-    },
   ],
-  familyCounts: { userspace: 3, toolbox: 1 },
+  familyCounts: { userspace: 3 },
   unavailable: false,
   stateReason: null,
 };
@@ -254,9 +240,4 @@ test("rendering is deterministic", () => {
 test("flatpak versions chart is rendered", () => {
   const html = render(GHCR_FIXTURE, FLATHUB_FIXTURE);
   assert.ok(html.includes("Flatpak runtime versions on Bluefin"));
-});
-
-test("toolbox section renders toolbox images", () => {
-  const html = render(GHCR_FIXTURE, FLATHUB_FIXTURE);
-  assert.ok(html.includes("toolbox-ubuntu"));
 });

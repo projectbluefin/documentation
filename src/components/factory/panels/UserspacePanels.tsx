@@ -102,7 +102,6 @@ export default function UserspacePanels({
 
   const packages = ghcr.data?.packages ?? [];
   const userspacePackages = packages.filter((p) => p.family === "userspace");
-  const toolboxPackages = packages.filter((p) => p.family === "toolbox");
 
   const userspaceStreams = userspacePackages.flatMap((p) =>
     p.streams.map((st) => ({ pkg: p.name, ...st })),
@@ -113,7 +112,6 @@ export default function UserspacePanels({
   const recentlyPublished = userspaceStreams.filter(
     (s) => s.ageDays !== null && s.ageDays <= 7,
   ).length;
-  const toolboxCount = toolboxPackages.length;
   const arches = new Set(userspacePackages.map((p) => archOf(p.name)));
 
   // Inventory table, sorted oldest first
@@ -192,12 +190,6 @@ export default function UserspacePanels({
         </div>
         <div className={styles.kpi}>
           <span className={styles.kpiValue}>
-            {FX_SEVERITY.ok.glyph} {toolboxCount}
-          </span>
-          <span className={styles.kpiLabel}>Toolbox images</span>
-        </div>
-        <div className={styles.kpi}>
-          <span className={styles.kpiValue}>
             {FX_SEVERITY.ok.glyph} {arches.size}
           </span>
           <span className={styles.kpiLabel}>Architectures</span>
@@ -248,7 +240,7 @@ export default function UserspacePanels({
         <EChart
           option={fpOption}
           title="Flatpak runtime versions on Bluefin"
-          summary={`${fpVersions.length} runtime versions detected. This distribution is Bluefin-specific and available nowhere else on the site.`}
+          summary={`${fpVersions.length} runtime versions detected. This dataset is Bluefin-specific and available nowhere else on the site.`}
           points={fpVersions.length}
         />
       ) : (
@@ -260,37 +252,6 @@ export default function UserspacePanels({
             "Flathub data unavailable."
           }
         />
-      )}
-
-      {/* Toolbox images */}
-      <h2 className={styles.sectionHeading}>Toolbox images</h2>
-      {toolboxPackages.length === 0 ? (
-        <Unavailable
-          what="Toolbox images"
-          reason="No toolbox images found in the package inventory."
-        />
-      ) : (
-        <div className={styles.cardGrid}>
-          {toolboxPackages.flatMap((p) =>
-            p.streams.map((st) => {
-              const sev = severityOf(st.state);
-              return (
-                <div key={`${p.name}-${st.tag}`} className={styles.card}>
-                  <div className={styles.cardName}>
-                    {p.name}:{st.tag}
-                  </div>
-                  <div className={styles.cardAge}>
-                    {FX_SEVERITY[sev].glyph}{" "}
-                    {st.ageDays !== null ? `${st.ageDays}d` : "awaiting"}
-                  </div>
-                  {st.state !== "fresh" && st.stateReason && (
-                    <div className={styles.cardReason}>{st.stateReason}</div>
-                  )}
-                </div>
-              );
-            }),
-          )}
-        </div>
       )}
 
       {/* Where the rest lives */}

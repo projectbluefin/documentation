@@ -490,7 +490,7 @@ test("pie slices carry absolute numbers, not just percentages", () => {
   });
   // The pie option should include the absolute value in the label formatter
   const pieMatch = html.match(
-    /data-title="Immutable desktop ecosystem share"[^>]*data-option="([^"]*)"/,
+    /data-title="Cloud-native desktop ecosystem share"[^>]*data-option="([^"]*)"/,
   );
   assert.ok(pieMatch, "pie chart should exist");
   const optStr = pieMatch[1].replace(/&quot;/g, '"').replace(/&amp;/g, "&");
@@ -579,7 +579,7 @@ test("unavailable dora does not prevent countme panel rendering", () => {
     scorecard: SCORECARD,
   });
   // Countme panel should still render
-  assert.ok(html.includes("Active devices"));
+  assert.ok(html.includes("Weekly countme check-ins"));
   // Dora should show unavailable
   assert.ok(html.includes("Delivery frequency"));
 });

@@ -278,8 +278,8 @@ export default function ApplicationsPanels({
             {(bluefinOs.share * 100).toFixed(3)}% of all Flathub downloads
           </div>
           <EChart
-            title="Bluefin Flathub downloads by Fedora version"
-            summary={`${formatNumber(bluefinOs.downloads)} total downloads across ${Object.keys(bluefinOs.versions).length} Fedora versions.`}
+            title="Bluefin Flathub downloads by base version"
+            summary={`${formatNumber(bluefinOs.downloads)} total downloads across ${Object.keys(bluefinOs.versions).length} Bluefin base versions.`}
             points={Object.keys(bluefinOs.versions).length}
             minPoints={1}
             height={220}
@@ -321,7 +321,7 @@ export default function ApplicationsPanels({
       {/* 5. Peer comparison (log scale) */}
       {flReady && peerEntries.length > 0 ? (
         <EChart
-          title="Bluefin vs peer immutable distributions on Flathub (log scale)"
+          title="Bluefin vs peer cloud-native desktops on Flathub (log scale)"
           summary={`Bluefin: ${formatNumber(bluefinOs?.downloads ?? 0)}. Bazzite and Fedora are 1–2 orders of magnitude larger; a logarithmic scale is used so all bars remain visible.`}
           points={peerEntries.length}
           minPoints={2}

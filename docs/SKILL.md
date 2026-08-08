@@ -10,6 +10,7 @@ Task → skill. Load only what the task needs.
 | If your task is…                                      | Load                                                                                        |
 | ----------------------------------------------------- | ------------------------------------------------------------------------------------------- |
 | Adding or changing a React component                  | [`skills/component-testing.md`](skills/component-testing.md)                                |
+| Editing `/factory` dashboard panels or copy           | [`skills/factory-dashboard-content.md`](skills/factory-dashboard-content.md)                |
 | Verifying, recovering, or archiving a blog discussion | [`skills/giscus-discussions.md`](skills/giscus-discussions.md)                              |
 | Writing back what you learned                         | [`skills/skill-improvement.md`](skills/skill-improvement.md)                                |
 | Anything else                                         | [`../AGENTS.md`](https://github.com/projectbluefin/documentation/blob/main/AGENTS.md) first |

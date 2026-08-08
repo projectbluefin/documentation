@@ -38,11 +38,6 @@ test("classifyFamily: userspace", () => {
   assert.equal(classifyFamily("lab-runner-aarch64"), "userspace");
 });
 
-test("classifyFamily: toolbox", () => {
-  assert.equal(classifyFamily("bluefin-toolbox"), "toolbox");
-  assert.equal(classifyFamily("ubuntu-toolbox"), "toolbox");
-});
-
 test("classifyFamily: tooling", () => {
   assert.equal(classifyFamily("testsuite/desktop-screenshot"), "tooling");
   assert.equal(classifyFamily("common"), "tooling");
@@ -190,7 +185,7 @@ test("the fallback lane list covers the families the views report on", () => {
   // packages fails there. Without a fallback the Images and Userspace views
   // would be empty in production while looking fine locally.
   const families = new Set(FALLBACK_LANES.map(classifyFamily));
-  for (const f of ["os", "userspace", "toolbox"]) {
+  for (const f of ["os", "userspace"]) {
     assert.ok(families.has(f), `fallback lanes cover no ${f} image`);
   }
 });
