@@ -28,7 +28,12 @@
  *      ancestor selector unmatchable: [data-theme="light"] .me-card becomes
  *      #tab-leaderboard [data-theme="light"] .me-card, and data-theme lives on
  *      <html>, above the scope.
- *   6. 128 KiB cap, 5 minute cache.
+ *   6. Two selectors are rejected outright, cause unknown but observed
+ *      repeatedly: the bare `.me-card` root and `.me-card .me-card__band`.
+ *      Sibling selectors with identical declarations survive, so it is the
+ *      selector and not the properties. The band tint is applied through
+ *      `.me-card__toprow` instead.
+ *   7. 128 KiB cap, 5 minute cache.
  *
  * Consequences, and why this file looks the way it does:
  *
@@ -48,13 +53,9 @@
  * rgba(92,123,209,…) washes composite correctly over either surface.
  */
 
-.me-card {
-  border-color: rgba(92, 123, 209, 0.38);
-}
-
-.me-card .me-card__band {
-  background-color: rgba(92, 123, 209, 0.08);
+.me-card .me-card__toprow {
   border-bottom: 1px solid rgba(92, 123, 209, 0.38);
+  padding-bottom: 12px;
 }
 
 .me-card .me-medallion {
