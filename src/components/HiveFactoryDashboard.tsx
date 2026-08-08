@@ -4,6 +4,7 @@ import Link from "@docusaurus/Link";
 import { useHistory, useLocation } from "@docusaurus/router";
 import Heading from "@theme/Heading";
 import Sparkline from "./Sparkline";
+import { FX_SEVERITY, type SeverityLevel } from "./factory/chartTheme";
 import type { SparklinePoint, SparklineVariant } from "./Sparkline";
 import ActivityCalendar from "./ActivityCalendar";
 import styles from "./HiveFactoryDashboard.module.css";
@@ -4297,7 +4298,20 @@ function TabBar({
 
 // ── Main component ─────────────────────────────────────────────────────────
 
-export default function HiveFactoryDashboard(): React.JSX.Element {
+/* ── State ───────────────────────────────────────────────────────────────── */
+
+/**
+ * Everything the /factory routes read from the hive.
+ *
+ * Extracted from the former single 5,364-line component so eight routes can
+ * share one set of fetches instead of each mounting its own. Authorized by
+ * adr/0003-factory-two-level-navigation.md.
+ */
+export interface FactoryState {
+  [key: string]: unknown;
+}
+
+export function useFactoryState() {
   const [snapshot, setSnapshot] = useState<HiveSnapshot | null>(null);
   const [config, setConfig] = useState<HiveConfig | null>(null);
   const [dakotaStats, setDakotaStats] = useState<DakotaStats | null>(null);
@@ -4547,15 +4561,19 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
     return map;
   }, [advisoryItems]);
 
+  // Severity is one hue at four intensities plus a glyph, never a red/green
+  // pair (adr/0003, carrying ADR 0002's rule 3 forward).
   let formation = "Formation broken";
-  let formationColor = "#f85149";
+  let formationLevel: SeverityLevel = "alert";
   if (activeAgents.length >= Math.ceil(agents.length * 0.6)) {
     formation = "Formation coherent";
-    formationColor = "#3fb950";
+    formationLevel = "ok";
   } else if (activeAgents.length >= 1) {
     formation = "Coverage reduced";
-    formationColor = "#d29922";
+    formationLevel = "watch";
   }
+  const formationColor = FX_SEVERITY[formationLevel].color;
+  const formationGlyph = FX_SEVERITY[formationLevel].glyph;
 
   const p0Count = queueData?.issues.p0.length ?? 0;
   const p1Count = queueData?.issues.p1.length ?? 0;
@@ -4659,706 +4677,789 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
       detail: "Rolling snapshots used for the trend charts.",
     },
   ];
+  return {
+    snapshot,
+    config,
+    dakotaStats,
+    queue,
+    queueData,
+    orgStats,
+    registryData,
+    mergedPRs,
+    velocity,
+    hiveHistory,
+    factoryStats,
+    factoryStatsMissing,
+    testBuilds,
+    communityDiscussions,
+    hivePRsList,
+    copilotPRsList,
+    loading,
+    lastUpdated,
+    refreshIn,
+    agents,
+    activeAgents,
+    workingAgents,
+    supervisorAgent,
+    agentOfDay,
+    advisoryItems,
+    advisoriesByAgent,
+    p0Count,
+    p1Count,
+    verdict,
+    sources,
+    formation,
+    formationColor,
+    formationGlyph,
+    liveHasContent,
+  };
+}
 
-  if (loading) {
-    return (
-      <Layout
-        title="Bluefin Operating System Factory"
-        description="Community Driven Agentic OS Development — live AI agent dashboard for projectbluefin"
-      >
-        <div className={styles.dashboard}>
-          <div className={styles.loadingWrap}>
-            <div className={styles.loadingText}>Connecting to the factory…</div>
-          </div>
-        </div>
-      </Layout>
-    );
-  }
+export type FactoryLive = ReturnType<typeof useFactoryState>;
 
+/**
+ * The page identity and formation bar. Persistent on every /factory route.
+ */
+export function FactoryHero({ s }: { s: FactoryLive }): React.JSX.Element {
+  const {
+    snapshot,
+    dakotaStats,
+    registryData,
+    agents,
+    activeAgents,
+    workingAgents,
+    formation,
+    formationColor,
+  } = s;
   return (
-    <Layout
-      title="Bluefin Operating System Factory"
-      description="Community Driven Agentic OS Development — live AI agent dashboard for projectbluefin"
-    >
-      <div className={styles.dashboard}>
-        {/* Hero */}
-        <header className={styles.hero}>
-          <div className={styles.heroLeft}>
-            <div className={styles.heroTitle}>
-              <div>
-                <Heading as="h1" className={styles.heroH1}>
-                  Bluefin Operating System Factory
-                </Heading>
-                <p className={styles.heroSub}>
-                  Community Driven Agentic OS Development &mdash; live AI agent
-                  dashboard for{" "}
-                  <Link
-                    href="https://github.com/projectbluefin"
-                    className={styles.heroLink}
-                  >
-                    projectbluefin
-                  </Link>
-                </p>
-              </div>
-            </div>
-            {agents.length > 0 && (
-              <div className={styles.formationRow}>
-                <HealthBar active={activeAgents.length} total={agents.length} />
-                <span
-                  className={styles.formationLabel}
-                  style={{ color: formationColor }}
+    <>
+      {/* Hero */}
+      <header className={styles.hero}>
+        <div className={styles.heroLeft}>
+          <div className={styles.heroTitle}>
+            <div>
+              <Heading as="h1" className={styles.heroH1}>
+                Bluefin Operating System Factory
+              </Heading>
+              <p className={styles.heroSub}>
+                Community Driven Agentic OS Development &mdash; live AI agent
+                dashboard for{" "}
+                <Link
+                  href="https://github.com/projectbluefin"
+                  className={styles.heroLink}
                 >
-                  {formation} &middot; {activeAgents.length}/{agents.length}{" "}
-                  active
-                  {workingAgents.length > 0 && (
-                    <> &middot; {workingAgents.length} working</>
-                  )}
-                </span>
-              </div>
-            )}
+                  projectbluefin
+                </Link>
+              </p>
+            </div>
           </div>
-          <div className={styles.heroRight}>
-            <LivePulse />
-            {(snapshot?.acmmMode ?? registryData?.governorMode) &&
-              (() => {
-                const mode = (snapshot?.acmmMode ??
-                  registryData?.governorMode)!.toUpperCase();
-                const cls =
-                  mode === "SURGE"
-                    ? styles.modeSurge
-                    : mode === "BUSY"
-                      ? styles.modeBusy
-                      : mode === "QUIET"
-                        ? styles.modeQuiet
-                        : mode === "IDLE"
-                          ? styles.modeIdle
-                          : styles.modeNormal;
-                return (
-                  <span className={`${styles.modeBadge} ${cls}`}>{mode}</span>
-                );
-              })()}
-            {dakotaStats && <CiBadge status={dakotaStats.ciStatus} />}
-          </div>
-        </header>
-
-        {/* Status strip — always visible, above the tabs. It answers
-            "how is Bluefin doing?" with no interaction, from whatever
-            sources answered. */}
-        <StatusStrip verdict={verdict} sources={sources}>
-          <div className={styles.statsRow}>
-            <StatCard
-              label={p0Count > 0 ? `P0 / P1 Issues` : "P1 This Cycle"}
-              value={
-                p0Count > 0
-                  ? `${p0Count}+${p1Count}`
-                  : p1Count > 0
-                    ? p1Count
-                    : (registryData?.actionableIssues ?? "—")
-              }
-              accent={p0Count > 0 ? "#f85149" : undefined}
-              sub={
-                p0Count > 0
-                  ? `${p0Count} blocker${p0Count > 1 ? "s" : ""}`
-                  : p1Count > 0
-                    ? undefined
-                    : registryData?.actionableIssues != null
-                      ? "actionable (registry)"
-                      : undefined
-              }
-            />
-            {(() => {
-              const framesVal =
-                agents.length > 0
-                  ? `${activeAgents.length}/${agents.length}`
-                  : registryData?.agentCount != null
-                    ? `${registryData.agents?.filter((a) => a.state !== "paused" && a.state !== "idle").length ?? "?"}/${registryData.agentCount}`
-                    : "—";
-              const framesSub =
-                agents.length > 0
-                  ? workingAgents.length > 0
-                    ? `${workingAgents.length} working`
-                    : "standing by"
-                  : registryData?.agentCount != null
-                    ? "registry"
-                    : "no snapshot";
+          {agents.length > 0 && (
+            <div className={styles.formationRow}>
+              <HealthBar active={activeAgents.length} total={agents.length} />
+              <span
+                className={styles.formationLabel}
+                style={{ color: formationColor }}
+              >
+                {formation} &middot; {activeAgents.length}/{agents.length}{" "}
+                active
+                {workingAgents.length > 0 && (
+                  <> &middot; {workingAgents.length} working</>
+                )}
+              </span>
+            </div>
+          )}
+        </div>
+        <div className={styles.heroRight}>
+          <LivePulse />
+          {(snapshot?.acmmMode ?? registryData?.governorMode) &&
+            (() => {
+              const mode = (snapshot?.acmmMode ??
+                registryData?.governorMode)!.toUpperCase();
+              const cls =
+                mode === "SURGE"
+                  ? styles.modeSurge
+                  : mode === "BUSY"
+                    ? styles.modeBusy
+                    : mode === "QUIET"
+                      ? styles.modeQuiet
+                      : mode === "IDLE"
+                        ? styles.modeIdle
+                        : styles.modeNormal;
               return (
-                <StatCard
-                  label="Frames"
-                  value={framesVal}
-                  sub={framesSub}
-                  accent={formationColor}
-                />
+                <span className={`${styles.modeBadge} ${cls}`}>{mode}</span>
               );
             })()}
-            <StatCard
-              label="ACMM Level"
-              value={snapshot?.acmmLevel ?? registryData?.acmmLevel ?? "—"}
-              sub={(() => {
-                const lvl = snapshot?.acmmLevel ?? registryData?.acmmLevel;
-                return lvl != null
-                  ? (ACMM_LEVELS[lvl]?.label ?? `Level ${lvl}`)
-                  : "capability level";
-              })()}
-              accent={(() => {
-                const lvl = snapshot?.acmmLevel ?? registryData?.acmmLevel;
-                return lvl != null ? ACMM_LEVELS[lvl]?.color : undefined;
-              })()}
-            />
-            <StatCard
-              label="Shipped This Cycle"
-              value={
-                queueData
-                  ? (queueData.victories.dreams.count ?? 0) +
-                    (queueData.victories.relief.count ?? 0)
-                  : "—"
-              }
-              sub="features + fixes"
-              accent="#3fb950"
-              spark={
-                queueData
-                  ? victorySparkData(
-                      [
-                        ...queueData.victories.dreams.recent,
-                        ...queueData.victories.relief.recent,
-                      ].sort(
-                        (a, b) =>
-                          new Date(b.updated_at).getTime() -
-                          new Date(a.updated_at).getTime(),
-                      ),
-                      14,
-                    )
-                  : undefined
-              }
-              sparkColor="green"
-            />
-            <StatCard
-              label="Test Builds"
-              value={testBuilds ?? "—"}
-              sub="passed in testsuite"
-              accent={
-                testBuilds != null && testBuilds > 0 ? "#3fb950" : undefined
-              }
-            />
-            <StatCard
-              label="Merge Time"
-              value={
-                snapshot?.medianMergeMins != null
-                  ? snapshot.medianMergeMins < 60
-                    ? `${snapshot.medianMergeMins}m`
-                    : `${Math.round((snapshot.medianMergeMins / 60) * 10) / 10}h`
-                  : "—"
-              }
-              sub="median PR cycle"
-              accent={snapshot?.medianMergeMins != null ? "#39d2c0" : undefined}
-            />
-          </div>
-        </StatusStrip>
+          {dakotaStats && <CiBadge status={dakotaStats.ciStatus} />}
+        </div>
+      </header>
+    </>
+  );
+}
 
-        <TabBar
-          active={activeTab}
-          onSelect={selectTab}
-          pathname={location.pathname}
-          search={location.search}
-          availability={availability}
-        />
-
-        {activeTab === "live" && (
-          <div
-            id="factory-panel-live"
-            role="tabpanel"
-            aria-labelledby="factory-tab-live"
-            className={styles.tabPanel}
-          >
-            {!liveHasContent && (
-              <section className={styles.panel}>
-                <Heading as="h2" className={styles.panelTitle}>
-                  Live hive state unavailable
-                </Heading>
-                <p className={styles.panelMeta}>
-                  Neither the hosted hive snapshot nor the public registry
-                  answered, so agent state, governor mode and queue depth are
-                  unknown right now — not empty. The status strip above shows
-                  which sources are reporting.
-                </p>
-              </section>
-            )}
-
-            {/* ── Factory Floor: Frame Formation (left) + sidebar (right) ── */}
-            <div className={styles.factoryFloor}>
-              {/* Left: Frame Formation — the factory floor */}
-              <section className={styles.panel}>
-                <Heading as="h2" className={styles.panelTitle}>
-                  Factory Floor — Live
-                </Heading>
-                {agents.length > 0 ? (
-                  <div className={styles.agentGrid}>
-                    {agents.map((a) => (
-                      <FrameCard
-                        key={a.id}
-                        agent={a}
-                        advisoryItems={advisoriesByAgent[a.name ?? a.id] ?? []}
-                      />
-                    ))}
-                  </div>
-                ) : registryData?.agents && registryData.agents.length > 0 ? (
-                  <div className={styles.agentGrid}>
-                    {registryData.agents.map((ra) => {
-                      const synth: HiveAgent = {
-                        id: ra.name,
-                        displayName:
-                          ra.name.charAt(0).toUpperCase() + ra.name.slice(1),
-                        role: ra.state ?? "unknown",
-                        emoji: "🤖",
-                        color:
-                          ra.state === "working"
-                            ? "#3fb950"
-                            : ra.state === "paused"
-                              ? "#f85149"
-                              : "#58a6ff",
-                        state: ra.state ?? "idle",
-                        busy: ra.state === "working" ? "working" : "idle",
-                        paused: ra.state === "paused",
-                      };
-                      return (
-                        <FrameCard
-                          key={ra.name}
-                          agent={synth}
-                          advisoryItems={[]}
-                        />
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <div className={styles.empty}>
-                    No Frame data — snapshot updating
-                  </div>
-                )}
-              </section>
-
-              {/* Right: Governor + Victory Log + What Frames Are Working On + Health */}
-              <div className={styles.factorySidebar}>
-                <GovernorPanel
-                  governor={snapshot?.governor}
-                  registry={registryData}
-                />
-                <VictoryLog victories={queueData?.victories ?? null} />
-                {advisoryItems.length > 0 && (
-                  <section className={styles.panel}>
-                    <Heading as="h2" className={styles.panelTitle}>
-                      What Frames Are Working On
-                    </Heading>
-                    <p className={styles.panelMeta}>
-                      Advisory digest — findings, bugs, CI failures logged by
-                      each Frame
-                    </p>
-                    <AgentWorkLog
-                      agents={agents}
-                      items={advisoryItems}
-                      advisoryIssue={snapshot?.advisoryIssue}
-                      config={config}
-                    />
-                  </section>
-                )}
-                {/* Registry Health Checks */}
-                {registryData?.health?.checks &&
-                  registryData.health.checks.length > 0 && (
-                    <section className={styles.panel}>
-                      <Heading as="h2" className={styles.panelTitle}>
-                        System Health
-                      </Heading>
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          gap: "0.35rem",
-                          marginTop: "0.5rem",
-                        }}
-                      >
-                        {registryData.health.checks.map((chk) => (
-                          <div
-                            key={chk.name}
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: "0.5rem",
-                              fontSize: "0.8rem",
-                            }}
-                          >
-                            <span
-                              style={{
-                                width: 8,
-                                height: 8,
-                                borderRadius: "50%",
-                                flexShrink: 0,
-                                background:
-                                  chk.status === "ok"
-                                    ? "#3fb950"
-                                    : chk.status === "warn"
-                                      ? "#d97706"
-                                      : "#f85149",
-                              }}
-                            />
-                            <span
-                              style={{
-                                color: "#e6edf3",
-                                textTransform: "capitalize",
-                              }}
-                            >
-                              {chk.name.replace(/_/g, " ")}
-                            </span>
-                            <span
-                              style={{
-                                marginLeft: "auto",
-                                color:
-                                  chk.status === "ok"
-                                    ? "#3fb950"
-                                    : chk.status === "warn"
-                                      ? "#d97706"
-                                      : "#f85149",
-                                fontFamily: "monospace",
-                                fontWeight: 700,
-                                fontSize: "0.7rem",
-                              }}
-                            >
-                              {chk.status.toUpperCase()}
-                            </span>
-                            {chk.detail && (
-                              <span
-                                style={{
-                                  color: "#808893",
-                                  fontSize: "0.68rem",
-                                  maxWidth: "8rem",
-                                  overflow: "hidden",
-                                  textOverflow: "ellipsis",
-                                  whiteSpace: "nowrap",
-                                }}
-                                title={chk.detail}
-                              >
-                                {chk.detail}
-                              </span>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                      {registryData.online != null && (
-                        <p
-                          className={styles.panelMeta}
-                          style={{ marginTop: "0.5rem" }}
-                        >
-                          Registry:{" "}
-                          <span
-                            style={{
-                              color: registryData.online
-                                ? "#3fb950"
-                                : "#f85149",
-                              fontWeight: 700,
-                            }}
-                          >
-                            {registryData.online ? "ONLINE" : "OFFLINE"}
-                          </span>
-                          {registryData.lastHeartbeat && (
-                            <>
-                              {" "}
-                              &middot; heartbeat{" "}
-                              {relTime(registryData.lastHeartbeat)}
-                            </>
-                          )}
-                        </p>
-                      )}
-                    </section>
-                  )}
-              </div>
-            </div>
-
-            {/* ── Destiny columns: Guardians | Ghosts ── */}
-            <div className={styles.destinyColumns}>
-              <GuardiansColumn discussions={communityDiscussions} />
-              <GhostsColumn hivePRs={hivePRsList} copilotPRs={copilotPRsList} />
-            </div>
-
-            {/* ── Recently Merged (full width) ── */}
-            <MergedPRFeed prs={mergedPRs} />
-
-            {/* ── Registry Task Leaderboard ── */}
-            {registryData?.leaderboard &&
-              registryData.leaderboard.length > 0 && (
-                <section className={styles.panel}>
-                  <Heading as="h2" className={styles.panelTitle}>
-                    Task Leaderboard
-                  </Heading>
-                  <p className={styles.panelMeta}>
-                    Tasks completed by each contributor via the hive registry
-                    &mdash; updated live
-                  </p>
-                  <div
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns:
-                        "repeat(auto-fill, minmax(180px, 1fr))",
-                      gap: "0.5rem",
-                      marginTop: "0.75rem",
-                    }}
-                  >
-                    {registryData.leaderboard
-                      .sort((a, b) => b.tasks_completed - a.tasks_completed)
-                      .slice(0, 12)
-                      .map((entry, idx) => (
-                        <div
-                          key={entry.github_username}
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "0.5rem",
-                            background: "#161b22",
-                            borderRadius: "6px",
-                            padding: "0.4rem 0.6rem",
-                            border:
-                              idx === 0
-                                ? "1px solid #d97706"
-                                : "1px solid #21262d",
-                          }}
-                        >
-                          <span
-                            style={{
-                              fontSize: "0.7rem",
-                              color: "#808893",
-                              fontFamily: "monospace",
-                              width: "1.2rem",
-                              flexShrink: 0,
-                            }}
-                          >
-                            #{idx + 1}
-                          </span>
-                          <img
-                            src={
-                              entry.avatar_url ||
-                              `https://github.com/${entry.github_username}.png?size=32`
-                            }
-                            alt={entry.github_username}
-                            width={24}
-                            height={24}
-                            style={{ borderRadius: "50%", flexShrink: 0 }}
-                          />
-                          <span
-                            style={{
-                              fontSize: "0.8rem",
-                              color: "#e6edf3",
-                              flex: 1,
-                              overflow: "hidden",
-                              textOverflow: "ellipsis",
-                              whiteSpace: "nowrap",
-                            }}
-                          >
-                            {entry.github_username}
-                          </span>
-                          <span
-                            style={{
-                              fontSize: "0.75rem",
-                              fontWeight: 700,
-                              fontFamily: "monospace",
-                              color:
-                                idx === 0
-                                  ? "#d97706"
-                                  : idx < 3
-                                    ? "#3fb950"
-                                    : "#58a6ff",
-                            }}
-                          >
-                            {entry.tasks_completed}
-                          </span>
-                        </div>
-                      ))}
-                  </div>
-                </section>
-              )}
-
-            {/* Beads + Agent of Day */}
-            <div className={styles.twoCol}>
-              <BeadsCadencePanel
-                beads={snapshot?.beads}
-                cadenceMatrix={snapshot?.cadenceMatrix}
-                mode={snapshot?.governor?.mode}
+/**
+ * How is Bluefin doing, answered without any interaction. Persistent on every route.
+ */
+export function FactoryStatusStrip({
+  s,
+}: {
+  s: FactoryLive;
+}): React.JSX.Element {
+  const {
+    snapshot,
+    queueData,
+    registryData,
+    testBuilds,
+    agents,
+    activeAgents,
+    workingAgents,
+    p0Count,
+    p1Count,
+    verdict,
+    sources,
+    formationColor,
+  } = s;
+  return (
+    <>
+      {/* Status strip — always visible, above the tabs. It answers
+          "how is Bluefin doing?" with no interaction, from whatever
+          sources answered. */}
+      <StatusStrip verdict={verdict} sources={sources}>
+        <div className={styles.statsRow}>
+          <StatCard
+            label={p0Count > 0 ? `P0 / P1 Issues` : "P1 This Cycle"}
+            value={
+              p0Count > 0
+                ? `${p0Count}+${p1Count}`
+                : p1Count > 0
+                  ? p1Count
+                  : (registryData?.actionableIssues ?? "—")
+            }
+            accent={p0Count > 0 ? "#f85149" : undefined}
+            sub={
+              p0Count > 0
+                ? `${p0Count} blocker${p0Count > 1 ? "s" : ""}`
+                : p1Count > 0
+                  ? undefined
+                  : registryData?.actionableIssues != null
+                    ? "actionable (registry)"
+                    : undefined
+            }
+          />
+          {(() => {
+            const framesVal =
+              agents.length > 0
+                ? `${activeAgents.length}/${agents.length}`
+                : registryData?.agentCount != null
+                  ? `${registryData.agents?.filter((a) => a.state !== "paused" && a.state !== "idle").length ?? "?"}/${registryData.agentCount}`
+                  : "—";
+            const framesSub =
+              agents.length > 0
+                ? workingAgents.length > 0
+                  ? `${workingAgents.length} working`
+                  : "standing by"
+                : registryData?.agentCount != null
+                  ? "registry"
+                  : "no snapshot";
+            return (
+              <StatCard
+                label="Frames"
+                value={framesVal}
+                sub={framesSub}
+                accent={formationColor}
               />
-              <FrameOfDay
-                agent={agentOfDay}
-                advisoryItems={
-                  advisoriesByAgent[agentOfDay?.name ?? agentOfDay?.id ?? ""] ??
-                  []
-                }
-              />
-            </div>
+            );
+          })()}
+          <StatCard
+            label="ACMM Level"
+            value={snapshot?.acmmLevel ?? registryData?.acmmLevel ?? "—"}
+            sub={(() => {
+              const lvl = snapshot?.acmmLevel ?? registryData?.acmmLevel;
+              return lvl != null
+                ? (ACMM_LEVELS[lvl]?.label ?? `Level ${lvl}`)
+                : "capability level";
+            })()}
+            accent={(() => {
+              const lvl = snapshot?.acmmLevel ?? registryData?.acmmLevel;
+              return lvl != null ? ACMM_LEVELS[lvl]?.color : undefined;
+            })()}
+          />
+          <StatCard
+            label="Shipped This Cycle"
+            value={
+              queueData
+                ? (queueData.victories.dreams.count ?? 0) +
+                  (queueData.victories.relief.count ?? 0)
+                : "—"
+            }
+            sub="features + fixes"
+            accent="#3fb950"
+            spark={
+              queueData
+                ? victorySparkData(
+                    [
+                      ...queueData.victories.dreams.recent,
+                      ...queueData.victories.relief.recent,
+                    ].sort(
+                      (a, b) =>
+                        new Date(b.updated_at).getTime() -
+                        new Date(a.updated_at).getTime(),
+                    ),
+                    14,
+                  )
+                : undefined
+            }
+            sparkColor="green"
+          />
+          <StatCard
+            label="Test Builds"
+            value={testBuilds ?? "—"}
+            sub="passed in testsuite"
+            accent={
+              testBuilds != null && testBuilds > 0 ? "#3fb950" : undefined
+            }
+          />
+          <StatCard
+            label="Merge Time"
+            value={
+              snapshot?.medianMergeMins != null
+                ? snapshot.medianMergeMins < 60
+                  ? `${snapshot.medianMergeMins}m`
+                  : `${Math.round((snapshot.medianMergeMins / 60) * 10) / 10}h`
+                : "—"
+            }
+            sub="median PR cycle"
+            accent={snapshot?.medianMergeMins != null ? "#39d2c0" : undefined}
+          />
+        </div>
+      </StatusStrip>
+    </>
+  );
+}
 
-            {/* Formation log */}
-            <FormationLog
-              supervisor={supervisorAgent}
-              timestamp={snapshot?.timestamp}
-            />
-
-            {/* Governor 24h timeline */}
-            {snapshot?.governorTimeline &&
-              snapshot.governorTimeline.length >= 10 && (
-                <GovernorTimeline ticks={snapshot.governorTimeline} />
-              )}
-
-            {/* Token budget */}
-            {snapshot?.budgetPct != null && (
-              <TokenBudgetPanel
-                pct={snapshot.budgetPct}
-                total={snapshot.budgetTotal}
-                used={snapshot.budgetUsed}
-                mode={snapshot.acmmMode ?? snapshot.governor?.mode}
-              />
-            )}
-
-            {/* Strategy Lab */}
-            {snapshot?.nous && <NousPanel nous={snapshot.nous} />}
-          </div>
-        )}
-
-        {activeTab === "health" && (
-          <div
-            id="factory-panel-health"
-            role="tabpanel"
-            aria-labelledby="factory-tab-health"
-            className={styles.tabPanel}
-          >
-            {/* ── Factory Vitals: small multiples on shared domains ── */}
-            <FactoryVitals
-              registry={registryData}
-              history={hiveHistory}
-              snapshot={snapshot}
-            />
-
-            {/* ── Build activity over the window the data actually covers ── */}
-            {factoryStats != null && !factoryStats.unavailable ? (
-              <BuildActivityCalendar stats={factoryStats} />
-            ) : null}
-
-            {/* ── Rolling build health per publishing lane ── */}
-            <FactoryHealth stats={factoryStats} missing={factoryStatsMissing} />
-
-            {/* Release verdicts and image freshness are still not published by
-                this site. Saying so is required: a dashboard that silently
-                renders less is indistinguishable from a healthy one with less
-                to report. */}
-            <section className={styles.panel}>
-              <Heading as="h2" className={styles.panelTitle}>
-                Release &amp; image status
-              </Heading>
-              <p className={styles.panelMeta}>
-                Per-lane release verdicts and image freshness are not published
-                by this site yet — build outcomes above are, release judgements
-                are not. Nothing here is failing; the data simply does not
-                exist. Until then, published images are listed in the{" "}
-                <Link href="/images">image catalog</Link>.
-              </p>
-            </section>
-
-            {/* ── Community ── */}
-            <ContributorWall prs={mergedPRs} history={hiveHistory} />
-
-            {/* ── History Zone: Trends | Community Builders ── */}
-            <div className={styles.twoCol}>
-              <HistoryTrends history={hiveHistory} />
-              <ContributorLeaderboard history={hiveHistory} />
-            </div>
-
-            {/* Velocity + Org stats */}
-            <div className={styles.twoCol}>
-              <VelocityPanel velocity={velocity} p0={queue?.p0} />
-              {orgStats ? (
-                <section className={styles.panel}>
-                  <OrgStatsPanel stats={orgStats} />
-                </section>
-              ) : null}
-            </div>
-          </div>
-        )}
-
-        {/* About */}
+/**
+ * Hive orchestration: agents, governor, queue, advisories and what just shipped.
+ */
+export function LiveSection({ s }: { s: FactoryLive }): React.JSX.Element {
+  const {
+    snapshot,
+    config,
+    queue,
+    queueData,
+    registryData,
+    agents,
+    supervisorAgent,
+    agentOfDay,
+    advisoryItems,
+    advisoriesByAgent,
+    sources,
+    liveHasContent,
+  } = s;
+  return (
+    <>
+      {!liveHasContent && (
         <section className={styles.panel}>
           <Heading as="h2" className={styles.panelTitle}>
-            About the Factory
+            Live hive state unavailable
           </Heading>
-          <div className={styles.aboutGrid}>
-            <div className={styles.aboutText}>
-              <p>
-                Project Bluefin is built and maintained by this formation.
-                Autonomous agents triage issues, write fixes, review pull
-                requests, and keep CI green — around the clock, across every
-                repository in the formation.
-              </p>
-              <p>
-                <strong>Hive</strong> is an open-source AI agent orchestration
-                system by Andy Anderson. The system implements the{" "}
-                <Link href="https://arxiv.org/abs/2604.09388">
-                  AI Codebase Maturity Model
-                </Link>{" "}
-                (ACMM) — a framework from AI-assisted coding to fully autonomous
-                development.
-              </p>
-              <p>
-                No one has ever built an agentic OS like this before. This
-                dashboard is the control surface.
-              </p>
-              <div className={styles.aboutLinks}>
-                <Link href="https://kubestellar.io/live/hive/bluefin/">
-                  Full Hive Dashboard
-                </Link>
-                <Link href={`https://github.com/${DAKOTA}`}>Dakota Repo</Link>
-                <Link href="https://github.com/kubestellar/hive">
-                  Hive Project
-                </Link>
-                <Link href="https://arxiv.org/abs/2604.09388">ACMM Paper</Link>
-                <Link href="https://www.cncf.io/blog/2026/05/14/when-ai-agents-become-contributors-how-kubestellar-reached-81-pr-acceptance/">
-                  CNCF Blog
-                </Link>
-              </div>
-            </div>
-            <div className={styles.agentRoles}>
-              {[
-                { n: "Supervisor", d: "Monitors all agents, detects stalls" },
-                { n: "Scanner", d: "Triages issues, dispatches fixes" },
-                { n: "Reviewer", d: "Code review, quality checks" },
-                { n: "Architect", d: "Cross-cutting RFCs, new features" },
-                { n: "Outreach", d: "Community engagement, coverage tracking" },
-              ].map(({ n, d }) => (
-                <div key={n} className={styles.roleRow}>
-                  <span className={styles.roleName}>{n}</span>
-                  <span className={styles.roleDesc}>{d}</span>
-                </div>
+          <p className={styles.panelMeta}>
+            Neither the hosted hive snapshot nor the public registry answered,
+            so agent state, governor mode and queue depth are unknown right now
+            — not empty. The status strip above shows which sources are
+            reporting.
+          </p>
+        </section>
+      )}
+
+      {/* ── Factory Floor: Frame Formation (left) + sidebar (right) ── */}
+      <div className={styles.factoryFloor}>
+        {/* Left: Frame Formation — the factory floor */}
+        <section className={styles.panel}>
+          <Heading as="h2" className={styles.panelTitle}>
+            Factory Floor — Live
+          </Heading>
+          {agents.length > 0 ? (
+            <div className={styles.agentGrid}>
+              {agents.map((a) => (
+                <FrameCard
+                  key={a.id}
+                  agent={a}
+                  advisoryItems={advisoriesByAgent[a.name ?? a.id] ?? []}
+                />
               ))}
             </div>
-          </div>
+          ) : registryData?.agents && registryData.agents.length > 0 ? (
+            <div className={styles.agentGrid}>
+              {registryData.agents.map((ra) => {
+                const synth: HiveAgent = {
+                  id: ra.name,
+                  displayName:
+                    ra.name.charAt(0).toUpperCase() + ra.name.slice(1),
+                  role: ra.state ?? "unknown",
+                  emoji: "🤖",
+                  color:
+                    ra.state === "working"
+                      ? "#3fb950"
+                      : ra.state === "paused"
+                        ? "#f85149"
+                        : "#58a6ff",
+                  state: ra.state ?? "idle",
+                  busy: ra.state === "working" ? "working" : "idle",
+                  paused: ra.state === "paused",
+                };
+                return (
+                  <FrameCard key={ra.name} agent={synth} advisoryItems={[]} />
+                );
+              })}
+            </div>
+          ) : (
+            <div className={styles.empty}>
+              No Frame data — snapshot updating
+            </div>
+          )}
         </section>
 
-        {/* Footer */}
-        <footer className={styles.dashFooter}>
-          <div className={styles.footerLeft}>
-            {lastUpdated && (
-              <span>
-                Updated {lastUpdated.toLocaleTimeString()} &middot; Next refresh
-                in {Math.floor(refreshIn / 60)}:
-                {String(refreshIn % 60).padStart(2, "0")}
-              </span>
+        {/* Right: Governor + Victory Log + What Frames Are Working On + Health */}
+        <div className={styles.factorySidebar}>
+          <GovernorPanel
+            governor={snapshot?.governor}
+            registry={registryData}
+          />
+          <VictoryLog victories={queueData?.victories ?? null} />
+          {advisoryItems.length > 0 && (
+            <section className={styles.panel}>
+              <Heading as="h2" className={styles.panelTitle}>
+                What Frames Are Working On
+              </Heading>
+              <p className={styles.panelMeta}>
+                Advisory digest — findings, bugs, CI failures logged by each
+                Frame
+              </p>
+              <AgentWorkLog
+                agents={agents}
+                items={advisoryItems}
+                advisoryIssue={snapshot?.advisoryIssue}
+                config={config}
+              />
+            </section>
+          )}
+          {/* Registry Health Checks */}
+          {registryData?.health?.checks &&
+            registryData.health.checks.length > 0 && (
+              <section className={styles.panel}>
+                <Heading as="h2" className={styles.panelTitle}>
+                  System Health
+                </Heading>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "0.35rem",
+                    marginTop: "0.5rem",
+                  }}
+                >
+                  {registryData.health.checks.map((chk) => (
+                    <div
+                      key={chk.name}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.5rem",
+                        fontSize: "0.8rem",
+                      }}
+                    >
+                      <span
+                        style={{
+                          width: 8,
+                          height: 8,
+                          borderRadius: "50%",
+                          flexShrink: 0,
+                          background:
+                            chk.status === "ok"
+                              ? "#3fb950"
+                              : chk.status === "warn"
+                                ? "#d97706"
+                                : "#f85149",
+                        }}
+                      />
+                      <span
+                        style={{
+                          color: "#e6edf3",
+                          textTransform: "capitalize",
+                        }}
+                      >
+                        {chk.name.replace(/_/g, " ")}
+                      </span>
+                      <span
+                        style={{
+                          marginLeft: "auto",
+                          color:
+                            chk.status === "ok"
+                              ? "#3fb950"
+                              : chk.status === "warn"
+                                ? "#d97706"
+                                : "#f85149",
+                          fontFamily: "monospace",
+                          fontWeight: 700,
+                          fontSize: "0.7rem",
+                        }}
+                      >
+                        {chk.status.toUpperCase()}
+                      </span>
+                      {chk.detail && (
+                        <span
+                          style={{
+                            color: "#808893",
+                            fontSize: "0.68rem",
+                            maxWidth: "8rem",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                          }}
+                          title={chk.detail}
+                        >
+                          {chk.detail}
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                {registryData.online != null && (
+                  <p
+                    className={styles.panelMeta}
+                    style={{ marginTop: "0.5rem" }}
+                  >
+                    Registry:{" "}
+                    <span
+                      style={{
+                        color: registryData.online ? "#3fb950" : "#f85149",
+                        fontWeight: 700,
+                      }}
+                    >
+                      {registryData.online ? "ONLINE" : "OFFLINE"}
+                    </span>
+                    {registryData.lastHeartbeat && (
+                      <>
+                        {" "}
+                        &middot; heartbeat {relTime(registryData.lastHeartbeat)}
+                      </>
+                    )}
+                  </p>
+                )}
+              </section>
             )}
-          </div>
-          <div className={styles.footerRight}>
-            Data:{" "}
-            <Link href="https://kubestellar.io/live/hive/bluefin/">
-              Hive snapshot
-            </Link>{" "}
-            + <Link href={HOSTED_INSTANCE_URL}>hosted.hive</Link> +{" "}
-            <Link href="https://queue.projectbluefin.io/">
-              queue.projectbluefin.io
-            </Link>{" "}
-            + <Link href="https://docs.github.com/en/rest">GitHub API</Link>
-          </div>
-        </footer>
-        <div className={styles.factoryTagline}>
-          Enslaving the Oppressors since 2026
         </div>
       </div>
-    </Layout>
+
+      {/* Beads + Agent of Day */}
+      <div className={styles.twoCol}>
+        <BeadsCadencePanel
+          beads={snapshot?.beads}
+          cadenceMatrix={snapshot?.cadenceMatrix}
+          mode={snapshot?.governor?.mode}
+        />
+        <FrameOfDay
+          agent={agentOfDay}
+          advisoryItems={
+            advisoriesByAgent[agentOfDay?.name ?? agentOfDay?.id ?? ""] ?? []
+          }
+        />
+      </div>
+
+      {/* Formation log */}
+      <FormationLog
+        supervisor={supervisorAgent}
+        timestamp={snapshot?.timestamp}
+      />
+
+      {/* Governor 24h timeline */}
+      {snapshot?.governorTimeline && snapshot.governorTimeline.length >= 10 && (
+        <GovernorTimeline ticks={snapshot.governorTimeline} />
+      )}
+
+      {/* Token budget */}
+      {snapshot?.budgetPct != null && (
+        <TokenBudgetPanel
+          pct={snapshot.budgetPct}
+          total={snapshot.budgetTotal}
+          used={snapshot.budgetUsed}
+          mode={snapshot.acmmMode ?? snapshot.governor?.mode}
+        />
+      )}
+
+      {/* Strategy Lab */}
+      {snapshot?.nous && <NousPanel nous={snapshot.nous} />}
+    </>
+  );
+}
+
+/**
+ * Contributors, leaderboards, discussions and merged work.
+ */
+export function CommunitySection({ s }: { s: FactoryLive }): React.JSX.Element {
+  const {
+    queue,
+    orgStats,
+    registryData,
+    mergedPRs,
+    velocity,
+    hiveHistory,
+    communityDiscussions,
+    hivePRsList,
+    copilotPRsList,
+  } = s;
+  return (
+    <>
+      {/* ── Destiny columns: Guardians | Ghosts ── */}
+      <div className={styles.destinyColumns}>
+        <GuardiansColumn discussions={communityDiscussions} />
+        <GhostsColumn hivePRs={hivePRsList} copilotPRs={copilotPRsList} />
+      </div>
+
+      {/* ── Recently Merged (full width) ── */}
+      <MergedPRFeed prs={mergedPRs} />
+
+      {/* ── Registry Task Leaderboard ── */}
+      {registryData?.leaderboard && registryData.leaderboard.length > 0 && (
+        <section className={styles.panel}>
+          <Heading as="h2" className={styles.panelTitle}>
+            Task Leaderboard
+          </Heading>
+          <p className={styles.panelMeta}>
+            Tasks completed by each contributor via the hive registry &mdash;
+            updated live
+          </p>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
+              gap: "0.5rem",
+              marginTop: "0.75rem",
+            }}
+          >
+            {registryData.leaderboard
+              .sort((a, b) => b.tasks_completed - a.tasks_completed)
+              .slice(0, 12)
+              .map((entry, idx) => (
+                <div
+                  key={entry.github_username}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                    background: "#161b22",
+                    borderRadius: "6px",
+                    padding: "0.4rem 0.6rem",
+                    border:
+                      idx === 0 ? "1px solid #d97706" : "1px solid #21262d",
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: "0.7rem",
+                      color: "#808893",
+                      fontFamily: "monospace",
+                      width: "1.2rem",
+                      flexShrink: 0,
+                    }}
+                  >
+                    #{idx + 1}
+                  </span>
+                  <img
+                    src={
+                      entry.avatar_url ||
+                      `https://github.com/${entry.github_username}.png?size=32`
+                    }
+                    alt={entry.github_username}
+                    width={24}
+                    height={24}
+                    style={{ borderRadius: "50%", flexShrink: 0 }}
+                  />
+                  <span
+                    style={{
+                      fontSize: "0.8rem",
+                      color: "#e6edf3",
+                      flex: 1,
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {entry.github_username}
+                  </span>
+                  <span
+                    style={{
+                      fontSize: "0.75rem",
+                      fontWeight: 700,
+                      fontFamily: "monospace",
+                      color:
+                        idx === 0 ? "#d97706" : idx < 3 ? "#3fb950" : "#58a6ff",
+                    }}
+                  >
+                    {entry.tasks_completed}
+                  </span>
+                </div>
+              ))}
+          </div>
+        </section>
+      )}
+
+      {/* ── Community ── */}
+      <ContributorWall prs={mergedPRs} history={hiveHistory} />
+
+      {/* ── History Zone: Trends | Community Builders ── */}
+      <div className={styles.twoCol}>
+        <HistoryTrends history={hiveHistory} />
+        <ContributorLeaderboard history={hiveHistory} />
+      </div>
+
+      {/* Velocity + Org stats */}
+      <div className={styles.twoCol}>
+        <VelocityPanel velocity={velocity} p0={queue?.p0} />
+        {orgStats ? (
+          <section className={styles.panel}>
+            <OrgStatsPanel stats={orgStats} />
+          </section>
+        ) : null}
+      </div>
+    </>
+  );
+}
+
+/**
+ * Build health, activity and daily outcomes per publishing lane.
+ */
+export function BuildsSection({ s }: { s: FactoryLive }): React.JSX.Element {
+  const { factoryStats, factoryStatsMissing } = s;
+  return (
+    <>
+      {/* ── Build activity over the window the data actually covers ── */}
+      {factoryStats != null && !factoryStats.unavailable ? (
+        <BuildActivityCalendar stats={factoryStats} />
+      ) : null}
+
+      {/* ── Rolling build health per publishing lane ── */}
+      <FactoryHealth stats={factoryStats} missing={factoryStatsMissing} />
+    </>
+  );
+}
+
+/**
+ * Small multiples of the factory's key measures, on shared domains.
+ */
+export function VitalsSection({ s }: { s: FactoryLive }): React.JSX.Element {
+  const { snapshot, registryData, hiveHistory } = s;
+  return (
+    <>
+      {/* ── Factory Vitals: small multiples on shared domains ── */}
+      <FactoryVitals
+        registry={registryData}
+        history={hiveHistory}
+        snapshot={snapshot}
+      />
+    </>
+  );
+}
+
+/**
+ * What this system is. Persistent on every /factory route.
+ */
+export function FactoryAbout({ s }: { s: FactoryLive }): React.JSX.Element {
+  const { agents, formation } = s;
+  return (
+    <>
+      {/* About */}
+      <section className={styles.panel}>
+        <Heading as="h2" className={styles.panelTitle}>
+          About the Factory
+        </Heading>
+        <div className={styles.aboutGrid}>
+          <div className={styles.aboutText}>
+            <p>
+              Project Bluefin is built and maintained by this formation.
+              Autonomous agents triage issues, write fixes, review pull
+              requests, and keep CI green — around the clock, across every
+              repository in the formation.
+            </p>
+            <p>
+              <strong>Hive</strong> is an open-source AI agent orchestration
+              system by Andy Anderson. The system implements the{" "}
+              <Link href="https://arxiv.org/abs/2604.09388">
+                AI Codebase Maturity Model
+              </Link>{" "}
+              (ACMM) — a framework from AI-assisted coding to fully autonomous
+              development.
+            </p>
+            <p>
+              No one has ever built an agentic OS like this before. This
+              dashboard is the control surface.
+            </p>
+            <div className={styles.aboutLinks}>
+              <Link href="https://kubestellar.io/live/hive/bluefin/">
+                Full Hive Dashboard
+              </Link>
+              <Link href={`https://github.com/${DAKOTA}`}>Dakota Repo</Link>
+              <Link href="https://github.com/kubestellar/hive">
+                Hive Project
+              </Link>
+              <Link href="https://arxiv.org/abs/2604.09388">ACMM Paper</Link>
+              <Link href="https://www.cncf.io/blog/2026/05/14/when-ai-agents-become-contributors-how-kubestellar-reached-81-pr-acceptance/">
+                CNCF Blog
+              </Link>
+            </div>
+          </div>
+          <div className={styles.agentRoles}>
+            {[
+              { n: "Supervisor", d: "Monitors all agents, detects stalls" },
+              { n: "Scanner", d: "Triages issues, dispatches fixes" },
+              { n: "Reviewer", d: "Code review, quality checks" },
+              { n: "Architect", d: "Cross-cutting RFCs, new features" },
+              { n: "Outreach", d: "Community engagement, coverage tracking" },
+            ].map(({ n, d }) => (
+              <div key={n} className={styles.roleRow}>
+                <span className={styles.roleName}>{n}</span>
+                <span className={styles.roleDesc}>{d}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}
+
+/**
+ * Provenance: what produced these numbers and when.
+ */
+export function FactoryFooter({ s }: { s: FactoryLive }): React.JSX.Element {
+  const { snapshot, queue, lastUpdated, refreshIn } = s;
+  return (
+    <>
+      {/* Footer */}
+      <footer className={styles.dashFooter}>
+        <div className={styles.footerLeft}>
+          {lastUpdated && (
+            <span>
+              Updated {lastUpdated.toLocaleTimeString()} &middot; Next refresh
+              in {Math.floor(refreshIn / 60)}:
+              {String(refreshIn % 60).padStart(2, "0")}
+            </span>
+          )}
+        </div>
+        <div className={styles.footerRight}>
+          Data:{" "}
+          <Link href="https://kubestellar.io/live/hive/bluefin/">
+            Hive snapshot
+          </Link>{" "}
+          + <Link href={HOSTED_INSTANCE_URL}>hosted.hive</Link> +{" "}
+          <Link href="https://queue.projectbluefin.io/">
+            queue.projectbluefin.io
+          </Link>{" "}
+          + <Link href="https://docs.github.com/en/rest">GitHub API</Link>
+        </div>
+      </footer>
+      <div className={styles.factoryTagline}>
+        Enslaving the Oppressors since 2026
+      </div>
+    </>
   );
 }
