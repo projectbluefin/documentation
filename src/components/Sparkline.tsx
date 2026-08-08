@@ -29,8 +29,15 @@ interface SparklineProps {
    * resolve if it were written into an SVG presentation attribute.
    */
   color?: string;
-  /** Area fill under the line. "none" or omitted disables it. */
+  /**
+   * Area fill under the line. "none" or omitted disables it.
+   * Use `"currentColor"` with `areaOpacity` to fade the line's own colour —
+   * an SVG fill attribute cannot resolve a var(), so a token must arrive via
+   * the CSS `color` property and be painted with currentColor.
+   */
   areaColor?: string;
+  /** Opacity for the area fill. Only meaningful with `areaColor`. */
+  areaOpacity?: number;
   /** Applied to the <svg>, so colors can come from a CSS module instead of props. */
   className?: string;
   /** Filled dot on the last point, so the eye lands on "now". */
@@ -98,6 +105,7 @@ export default function Sparkline({
   height = 28,
   color = "currentColor",
   areaColor,
+  areaOpacity,
   className,
   showEnd = false,
   showExtremes = false,
@@ -290,6 +298,7 @@ export default function Sparkline({
                 key={k}
                 d={`M ${run.map((p) => `${x(p.i).toFixed(1)},${y(p.v).toFixed(1)}`).join(" L ")} L ${x(run[run.length - 1].i).toFixed(1)},${height} L ${x(run[0].i).toFixed(1)},${height} Z`}
                 fill={fill}
+                fillOpacity={areaOpacity}
               />
             ))
         : null}

@@ -98,6 +98,32 @@ test("the tab bar sticks under the site navbar", () => {
   );
 });
 
+test("no CSS token is concatenated with a hex alpha suffix", () => {
+  // `${modeColor}22` was valid when modeColor was `#f85149`, producing an
+  // 8-digit hex. After tokenisation it produced "var(--fx-sev-alert)22", which
+  // is not a colour, so the SVG fill fell back to solid black and painted a
+  // rectangle over the governor sparkline in production.
+  const offenders = [];
+  for (const rel of themed) {
+    const src = fs.readFileSync(path.join(repo, rel), "utf8");
+    src.split("\n").forEach((line, i) => {
+      if (/var\(--[a-z0-9-]+\)\s*[0-9a-f]{2}(?![0-9a-f%])/i.test(line)) {
+        offenders.push(`${rel}:${i + 1}`);
+      }
+      // The template-literal form of the same mistake. `#${hex}22` is fine —
+      // that is a raw six-digit value gaining an alpha pair.
+      if (/(?<!#)\$\{[A-Za-z_$][\w$.]*\}[0-9a-f]{2}`/.test(line)) {
+        offenders.push(`${rel}:${i + 1}`);
+      }
+    });
+  }
+  assert.deepEqual(
+    offenders,
+    [],
+    `a token is not a hex colour; use currentColor with an opacity:\n${offenders.join("\n")}`,
+  );
+});
+
 test("Sparkline paints with currentColor so tokens resolve", () => {
   // var() does not resolve in an SVG presentation attribute; it does resolve
   // in the CSS `color` property, which currentColor then picks up.

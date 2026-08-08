@@ -2277,7 +2277,7 @@
   font-size: 0.62rem;
   background: var(--fx-surface-3);
   color: var(--fx-accent-soft);
-  border: 1px solid var(--fx-accent-dim) 44;
+  border: 1px solid color-mix(in srgb, var(--fx-accent-dim) 27%, transparent);
   border-radius: 3px;
   padding: 0.05rem 0.3rem;
   margin-left: auto;

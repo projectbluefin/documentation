@@ -1218,14 +1218,20 @@ function MergedPRFeed({ prs }: { prs: MergedPR[] }) {
           <span className={styles.mergedCardNum}>#{pr.number}</span>
           <span
             className={styles.mergedCardRepo}
-            style={{ color: accent, borderColor: `${accent}66` }}
+            style={{
+              color: accent,
+              borderColor: `color-mix(in srgb, ${accent} 40%, transparent)`,
+            }}
           >
             {pr.repo}
           </span>
           {tag && (
             <span
               className={styles.mergedCardTag}
-              style={{ color: tag.color, borderColor: `${tag.color}44` }}
+              style={{
+                color: tag.color,
+                borderColor: `color-mix(in srgb, ${tag.color} 27%, transparent)`,
+              }}
             >
               {tag.label}
             </span>
@@ -2136,7 +2142,8 @@ function GovernorPanel({
             width={Math.max(sparkVals.length, 120)}
             height={32}
             color={modeColor}
-            areaColor={`${modeColor}22`}
+            areaColor="currentColor"
+            areaOpacity={0.13}
             band={hasRealThresholds ? [quiet, busy] : undefined}
             showEnd
             showExtremes
