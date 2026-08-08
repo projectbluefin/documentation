@@ -32,8 +32,12 @@ examples from this repository:
 - A tracked data seed cannot use file mtime as a cache key, because `git
 checkout` stamps every tracked file with the current time and the TTL never
   expires in CI. This cost a shipped build before it was caught.
+- **Run prettier before the final test run, not after.** Formatting rewraps
+  long lines, so any assertion that reads whole lines can pass locally and then
+  fail in CI. This broke a production deploy once already; the fix is to parse
+  the thing you are asserting on rather than its layout.
 
-Both are invisible from the source alone. Both would be paid again by the next
+Each is invisible from the source alone. Each would be paid again by the next
 agent. That is the bar.
 
 ## What does not earn one
