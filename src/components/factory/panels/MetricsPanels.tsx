@@ -166,7 +166,11 @@ function ActiveDevices({
       />
     );
   }
-  if (countme.loading || !countme.data) return null;
+  if (countme.loading || !countme.data) {
+    return (
+      <Unavailable what="Active devices" reason="Loading adoption data…" />
+    );
+  }
   if (countme.data.unavailable) {
     return (
       <Unavailable
@@ -261,7 +265,11 @@ function EcosystemShare({
       />
     );
   }
-  if (countme.loading || !countme.data) return null;
+  if (countme.loading || !countme.data) {
+    return (
+      <Unavailable what="Ecosystem share" reason="Loading adoption data…" />
+    );
+  }
   if (countme.data.unavailable) {
     return (
       <Unavailable
@@ -272,7 +280,14 @@ function EcosystemShare({
   }
 
   const latest = countme.data.weeks[countme.data.weeks.length - 1];
-  if (!latest) return null;
+  if (!latest) {
+    return (
+      <Unavailable
+        what="Ecosystem share"
+        reason="No week has been recorded yet, so there is no share to divide."
+      />
+    );
+  }
 
   const slices: Array<{ name: string; value: number }> = [];
   const peers = ["bluefin", "bluefin-lts", "aurora", "bazzite"] as const;
@@ -331,7 +346,11 @@ function HomebrewPanel({
       />
     );
   }
-  if (brew.loading || !brew.data) return null;
+  if (brew.loading || !brew.data) {
+    return (
+      <Unavailable what="Homebrew usage" reason="Loading Homebrew analytics…" />
+    );
+  }
   if (brew.data.unavailable) {
     return (
       <Unavailable
@@ -421,7 +440,14 @@ function HomebrewPanel({
         <tbody>
           {windowKeys.map((wk) => {
             const win = brew.data!.windows[wk];
-            if (!win) return null;
+            if (!win) {
+              return (
+                <tr key={wk}>
+                  <th scope="row">{wk}</th>
+                  <td colSpan={3}>not reported</td>
+                </tr>
+              );
+            }
             const bf = win.rows.find((r) => r.id === "bluefin");
             const lt = win.rows.find((r) => r.id === "bluefin-lts");
             return (
@@ -462,7 +488,11 @@ function DeliveryFrequency({
       />
     );
   }
-  if (dora.loading || !dora.data) return null;
+  if (dora.loading || !dora.data) {
+    return (
+      <Unavailable what="Delivery frequency" reason="Loading delivery data…" />
+    );
+  }
   if (dora.data.unavailable) {
     return (
       <Unavailable
@@ -564,7 +594,14 @@ function SecurityPosture({
       />
     );
   }
-  if (scorecard.loading || !scorecard.data) return null;
+  if (scorecard.loading || !scorecard.data) {
+    return (
+      <Unavailable
+        what="Security posture"
+        reason="Loading OpenSSF Scorecard data…"
+      />
+    );
+  }
   if (scorecard.data.unavailable) {
     return (
       <Unavailable
@@ -720,7 +757,11 @@ function PerLaneBreakdown({
       />
     );
   }
-  if (countme.loading || !countme.data) return null;
+  if (countme.loading || !countme.data) {
+    return (
+      <Unavailable what="Per-lane breakdown" reason="Loading adoption data…" />
+    );
+  }
   if (countme.data.unavailable) {
     return (
       <Unavailable
@@ -731,7 +772,14 @@ function PerLaneBreakdown({
   }
 
   const { weeks, variants } = countme.data;
-  if (weeks.length === 0) return null;
+  if (weeks.length === 0) {
+    return (
+      <Unavailable
+        what="Per-lane breakdown"
+        reason="Accumulating data — the countme seed has no complete week yet."
+      />
+    );
+  }
 
   // Compute shared domain across all variants
   let domainMin = Infinity;

@@ -230,7 +230,12 @@ export default function ApplicationsPanels({
         </div>
       ) : fhReason ? (
         <Unavailable what="Application stats" reason={fhReason} />
-      ) : null}
+      ) : (
+        <Unavailable
+          what="Application stats"
+          reason="Loading the application catalog…"
+        />
+      )}
 
       {/* 3. Release cadence */}
       {fhReady && cadence && cadence.months.length > 0 ? (
@@ -256,7 +261,9 @@ export default function ApplicationsPanels({
         />
       ) : fhReason ? (
         <Unavailable what="Release cadence" reason={fhReason} />
-      ) : null}
+      ) : (
+        <Unavailable what="Release cadence" reason="Loading release history…" />
+      )}
 
       {/* 4. Flathub downloads attributed to Bluefin */}
       {flReady && bluefinOs ? (
@@ -304,7 +311,12 @@ export default function ApplicationsPanels({
         />
       ) : flReason ? (
         <Unavailable what="Flathub attribution" reason={flReason} />
-      ) : null}
+      ) : (
+        <Unavailable
+          what="Flathub attribution"
+          reason="Loading Flathub data…"
+        />
+      )}
 
       {/* 5. Peer comparison (log scale) */}
       {flReady && peerEntries.length > 0 ? (
@@ -334,7 +346,9 @@ export default function ApplicationsPanels({
             ],
           }}
         />
-      ) : null}
+      ) : (
+        <Unavailable what="Peer comparison" reason="Loading Flathub data…" />
+      )}
 
       {/* 6. Flathub platform context — downloads per day */}
       {flReady && flathub.downloadsPerDay.length > 0 ? (
@@ -366,7 +380,12 @@ export default function ApplicationsPanels({
             ],
           }}
         />
-      ) : null}
+      ) : (
+        <Unavailable
+          what="Flathub platform downloads"
+          reason="Loading Flathub data…"
+        />
+      )}
 
       {/* 7. App catalog table */}
       {fhReady && sortedApps.length > 0 ? (
@@ -407,7 +426,12 @@ export default function ApplicationsPanels({
             </tbody>
           </table>
         </div>
-      ) : null}
+      ) : (
+        <Unavailable
+          what="Application catalog"
+          reason="Loading the application catalog…"
+        />
+      )}
 
       {/* 8. GNOME extensions */}
       {extReady && extensions.length > 0 ? (
@@ -433,7 +457,12 @@ export default function ApplicationsPanels({
         </div>
       ) : extReason ? (
         <Unavailable what="GNOME extensions" reason={extReason} />
-      ) : null}
+      ) : (
+        <Unavailable
+          what="GNOME extensions"
+          reason="Loading the extension inventory…"
+        />
+      )}
     </>
   );
 }
