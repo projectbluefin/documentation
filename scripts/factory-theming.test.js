@@ -57,6 +57,16 @@ test("tokens derive from Infima rather than redefining a palette", () => {
     path.join(repo, "src/components/factory/tokens.css"),
     "utf8",
   );
+  // Parse declarations, not lines: prettier wraps a long value across several
+  // lines, so a line-based assertion passes locally and then fails in CI after
+  // formatting — which is exactly how this test first broke.
+  const flat = src.replace(/\/\*[\s\S]*?\*\//g, " ").replace(/\s+/g, " ");
+  const decls = new Map();
+  for (const chunk of flat.split(";")) {
+    const m = /(--fx-[a-z0-9-]+)\s*:\s*(.+)/i.exec(chunk);
+    if (m) decls.set(m[1], m[2].trim());
+  }
+
   for (const token of [
     "--fx-bg",
     "--fx-surface",
@@ -66,11 +76,11 @@ test("tokens derive from Infima rather than redefining a palette", () => {
     "--fx-accent",
     "--fx-font",
   ]) {
-    const line = src.split("\n").find((l) => l.trim().startsWith(`${token}:`));
-    assert.ok(line, `${token} is missing`);
+    const value = decls.get(token);
+    assert.ok(value, `${token} is missing`);
     assert.ok(
-      line.includes("var(--ifm-"),
-      `${token} must derive from an Infima variable, got: ${line.trim()}`,
+      value.includes("var(--ifm-"),
+      `${token} must derive from an Infima variable, got: ${value}`,
     );
   }
 });
