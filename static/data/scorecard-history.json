@@ -1,0 +1,229 @@
+{
+  "generatedAt": "2026-08-08T01:30:05.953Z",
+  "source": "https://api.securityscorecards.dev/projects/github.com/{repo}",
+  "repos": [
+    {
+      "repo": "projectbluefin/bluefin",
+      "current": {
+        "date": "2026-08-08T00:27:03Z",
+        "score": 4.5,
+        "checks": [
+          {
+            "name": "Code-Review",
+            "score": 0,
+            "reason": "Found 0/30 approved changesets -- score normalized to 0"
+          },
+          {
+            "name": "Maintained",
+            "score": 0,
+            "reason": "project was created within the last 90 days. Please review its contents carefully"
+          },
+          {
+            "name": "Dependency-Update-Tool",
+            "score": 10,
+            "reason": "update tool detected"
+          },
+          {
+            "name": "Dangerous-Workflow",
+            "score": 10,
+            "reason": "no dangerous workflow patterns detected"
+          },
+          {
+            "name": "Packaging",
+            "score": null,
+            "reason": "packaging workflow not detected"
+          },
+          {
+            "name": "Security-Policy",
+            "score": 10,
+            "reason": "security policy file detected"
+          },
+          {
+            "name": "Binary-Artifacts",
+            "score": 10,
+            "reason": "no binaries found in the repo"
+          },
+          {
+            "name": "Pinned-Dependencies",
+            "score": 3,
+            "reason": "dependency not pinned by hash detected -- score normalized to 3"
+          },
+          {
+            "name": "Token-Permissions",
+            "score": 0,
+            "reason": "detected GitHub workflow tokens with excessive permissions"
+          },
+          {
+            "name": "CII-Best-Practices",
+            "score": 0,
+            "reason": "no effort to earn an OpenSSF best practices badge detected"
+          },
+          {
+            "name": "Signed-Releases",
+            "score": 0,
+            "reason": "Project has not signed or included provenance with any releases."
+          },
+          {
+            "name": "License",
+            "score": 10,
+            "reason": "license file detected"
+          },
+          {
+            "name": "Vulnerabilities",
+            "score": 8,
+            "reason": "2 existing vulnerabilities detected"
+          },
+          {
+            "name": "Fuzzing",
+            "score": 0,
+            "reason": "project is not fuzzed"
+          },
+          {
+            "name": "Branch-Protection",
+            "score": 4,
+            "reason": "branch protection is not maximal on development and all release branches"
+          },
+          {
+            "name": "Contributors",
+            "score": 10,
+            "reason": "project has 5 contributing companies or organizations"
+          },
+          {
+            "name": "SAST",
+            "score": 0,
+            "reason": "SAST tool is not run on all commits -- score normalized to 0"
+          },
+          {
+            "name": "CI-Tests",
+            "score": 0,
+            "reason": "0 out of 29 merged PRs checked by a CI test -- score normalized to 0"
+          }
+        ]
+      },
+      "history": [
+        {
+          "date": "2026-08-08T00:27:03Z",
+          "score": 4.5
+        }
+      ],
+      "unavailable": false,
+      "stateReason": null
+    },
+    {
+      "repo": "projectbluefin/bluefin-lts",
+      "current": null,
+      "history": [],
+      "unavailable": true,
+      "stateReason": "HTTP 404 for projectbluefin/bluefin-lts"
+    },
+    {
+      "repo": "projectbluefin/dakota",
+      "current": {
+        "date": "2026-08-07T18:30:58Z",
+        "score": 6.3,
+        "checks": [
+          {
+            "name": "Security-Policy",
+            "score": 10,
+            "reason": "security policy file detected"
+          },
+          {
+            "name": "Dependency-Update-Tool",
+            "score": 10,
+            "reason": "update tool detected"
+          },
+          {
+            "name": "Code-Review",
+            "score": 2,
+            "reason": "Found 5/22 approved changesets -- score normalized to 2"
+          },
+          {
+            "name": "Packaging",
+            "score": null,
+            "reason": "packaging workflow not detected"
+          },
+          {
+            "name": "Maintained",
+            "score": 10,
+            "reason": "30 commit(s) and 4 issue activity found in the last 90 days -- score normalized to 10"
+          },
+          {
+            "name": "Binary-Artifacts",
+            "score": 10,
+            "reason": "no binaries found in the repo"
+          },
+          {
+            "name": "Dangerous-Workflow",
+            "score": 10,
+            "reason": "no dangerous workflow patterns detected"
+          },
+          {
+            "name": "Token-Permissions",
+            "score": 0,
+            "reason": "detected GitHub workflow tokens with excessive permissions"
+          },
+          {
+            "name": "CII-Best-Practices",
+            "score": 0,
+            "reason": "no effort to earn an OpenSSF best practices badge detected"
+          },
+          {
+            "name": "Pinned-Dependencies",
+            "score": 6,
+            "reason": "dependency not pinned by hash detected -- score normalized to 6"
+          },
+          {
+            "name": "Vulnerabilities",
+            "score": 10,
+            "reason": "0 existing vulnerabilities detected"
+          },
+          {
+            "name": "Fuzzing",
+            "score": 0,
+            "reason": "project is not fuzzed"
+          },
+          {
+            "name": "Signed-Releases",
+            "score": 0,
+            "reason": "Project has not signed or included provenance with any releases."
+          },
+          {
+            "name": "License",
+            "score": 10,
+            "reason": "license file detected"
+          },
+          {
+            "name": "Branch-Protection",
+            "score": 3,
+            "reason": "branch protection is not maximal on development and all release branches"
+          },
+          {
+            "name": "SAST",
+            "score": 7,
+            "reason": "SAST tool detected but not run on all commits"
+          },
+          {
+            "name": "CI-Tests",
+            "score": 10,
+            "reason": "29 out of 29 merged PRs checked by a CI test -- score normalized to 10"
+          },
+          {
+            "name": "Contributors",
+            "score": 10,
+            "reason": "project has 10 contributing companies or organizations"
+          }
+        ]
+      },
+      "history": [
+        {
+          "date": "2026-08-07T18:30:58Z",
+          "score": 6.3
+        }
+      ],
+      "unavailable": false,
+      "stateReason": null
+    }
+  ],
+  "unavailable": false,
+  "stateReason": null
+}
