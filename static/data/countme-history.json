@@ -1,0 +1,224 @@
+{
+  "generatedAt": "2026-08-08T01:33:01.390Z",
+  "source": "https://data-analysis.fedoraproject.org/csv-reports/countme/totals.csv",
+  "unit": "weekly countme hits",
+  "variants": [
+    "bluefin",
+    "bluefin-lts",
+    "aurora",
+    "bazzite",
+    "fedora"
+  ],
+  "weeks": [
+    {
+      "week": "2026-02-02",
+      "fedora": 13445453,
+      "bazzite": 326983,
+      "bluefin": 22194,
+      "aurora": 14850,
+      "bluefin-lts": 214
+    },
+    {
+      "week": "2026-02-09",
+      "fedora": 13527830,
+      "bluefin": 21987,
+      "bazzite": 379776,
+      "aurora": 15880,
+      "bluefin-lts": 297
+    },
+    {
+      "week": "2026-02-16",
+      "fedora": 13220425,
+      "bazzite": 373206,
+      "bluefin": 23002,
+      "aurora": 15882,
+      "bluefin-lts": 350
+    },
+    {
+      "week": "2026-02-23",
+      "fedora": 13605614,
+      "bazzite": 344234,
+      "bluefin": 23643,
+      "aurora": 15923,
+      "bluefin-lts": 263
+    },
+    {
+      "week": "2026-03-02",
+      "fedora": 13839641,
+      "bazzite": 384314,
+      "aurora": 16055,
+      "bluefin": 23350,
+      "bluefin-lts": 368
+    },
+    {
+      "week": "2026-03-09",
+      "fedora": 14120113,
+      "bazzite": 417442,
+      "bluefin": 25813,
+      "aurora": 17053,
+      "bluefin-lts": 315
+    },
+    {
+      "week": "2026-03-16",
+      "fedora": 14118971,
+      "bazzite": 367156,
+      "bluefin": 24437,
+      "aurora": 16280,
+      "bluefin-lts": 365
+    },
+    {
+      "week": "2026-03-23",
+      "fedora": 14167015,
+      "bazzite": 391189,
+      "aurora": 15674,
+      "bluefin": 23889,
+      "bluefin-lts": 348
+    },
+    {
+      "week": "2026-03-30",
+      "fedora": 13736759,
+      "bazzite": 421204,
+      "aurora": 15414,
+      "bluefin": 24877,
+      "bluefin-lts": 357
+    },
+    {
+      "week": "2026-04-06",
+      "fedora": 13989182,
+      "bluefin": 24333,
+      "bazzite": 403766,
+      "aurora": 16925,
+      "bluefin-lts": 347
+    },
+    {
+      "week": "2026-04-13",
+      "fedora": 14269943,
+      "bluefin": 23912,
+      "bazzite": 411706,
+      "aurora": 16182,
+      "bluefin-lts": 359
+    },
+    {
+      "week": "2026-04-20",
+      "fedora": 14489066,
+      "bazzite": 410699,
+      "aurora": 16516,
+      "bluefin": 23456,
+      "bluefin-lts": 286
+    },
+    {
+      "week": "2026-04-27",
+      "fedora": 15705818,
+      "aurora": 17476,
+      "bazzite": 481560,
+      "bluefin": 24343,
+      "bluefin-lts": 365
+    },
+    {
+      "week": "2026-05-04",
+      "fedora": 14508015,
+      "bazzite": 442509,
+      "bluefin": 24863,
+      "aurora": 17022,
+      "bluefin-lts": 285
+    },
+    {
+      "week": "2026-05-11",
+      "fedora": 14223648,
+      "bazzite": 468063,
+      "aurora": 17857,
+      "bluefin": 25254,
+      "bluefin-lts": 263
+    },
+    {
+      "week": "2026-05-18",
+      "fedora": 13600373,
+      "bazzite": 409703,
+      "bluefin": 23021,
+      "aurora": 16782,
+      "bluefin-lts": 291
+    },
+    {
+      "week": "2026-05-25",
+      "fedora": 13215212,
+      "bazzite": 397800,
+      "aurora": 16425,
+      "bluefin": 24520,
+      "bluefin-lts": 304
+    },
+    {
+      "week": "2026-06-01",
+      "fedora": 13311243,
+      "bazzite": 438770,
+      "aurora": 16476,
+      "bluefin": 23928,
+      "bluefin-lts": 571
+    },
+    {
+      "week": "2026-06-08",
+      "fedora": 13296327,
+      "bluefin": 23190,
+      "bazzite": 449435,
+      "aurora": 16072,
+      "bluefin-lts": 399
+    },
+    {
+      "week": "2026-06-15",
+      "fedora": 13119792,
+      "bazzite": 409916,
+      "aurora": 17212,
+      "bluefin": 23619,
+      "bluefin-lts": 548
+    },
+    {
+      "week": "2026-06-22",
+      "fedora": 13159269,
+      "bluefin": 23518,
+      "bazzite": 417276,
+      "aurora": 16734,
+      "bluefin-lts": 613
+    },
+    {
+      "week": "2026-06-29",
+      "fedora": 13088214,
+      "bazzite": 479437,
+      "aurora": 17048,
+      "bluefin": 23868,
+      "bluefin-lts": 399
+    },
+    {
+      "week": "2026-07-06",
+      "fedora": 13158703,
+      "bazzite": 437689,
+      "aurora": 16551,
+      "bluefin": 23620,
+      "bluefin-lts": 386
+    },
+    {
+      "week": "2026-07-13",
+      "fedora": 13052189,
+      "bluefin": 23187,
+      "bazzite": 483064,
+      "aurora": 16448,
+      "bluefin-lts": 475
+    },
+    {
+      "week": "2026-07-20",
+      "fedora": 13102496,
+      "bazzite": 495653,
+      "aurora": 16566,
+      "bluefin": 24079,
+      "bluefin-lts": 390
+    },
+    {
+      "week": "2026-07-27",
+      "fedora": 13230935,
+      "bluefin": 23737,
+      "bazzite": 483371,
+      "aurora": 17451,
+      "bluefin-lts": 622
+    }
+  ],
+  "unavailable": false,
+  "stateReason": null
+}
