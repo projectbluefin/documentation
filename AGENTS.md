@@ -1,297 +1,230 @@
-# Bluefin Documentation Agent Guide
+# projectbluefin/documentation — Agent Operating Contract
 
-**Repository:** `projectbluefin/documentation`
+This repository builds <https://docs.projectbluefin.io/>. It is a Docusaurus
+3.10 site (TypeScript, React 19, Node 24) and it is part of the Project Bluefin
+factory.
 
-**Production site:** <https://docs.projectbluefin.io/>
+## The first rule
 
-**Framework:** Docusaurus 3.10.x, TypeScript, React 19, Node 24
+**The maintainer's instruction is decisive.** When a maintainer tells you to
+ship, merge, deploy, or land something, do it. Do not re-ask, do not restate the
+risk, and do not treat a default in this document as outranking a direct
+instruction. A default answers "what do I do absent direction"; it does not
+survive contact with direction.
 
-This guide governs what an agent may change in this repository and how that change
-gets authorized, validated, and shipped. Read the boundary first — it decides
-whether you may act at all.
+If an instruction is genuinely ambiguous, ask **once**, then act.
 
-## The boundary
+## Read order
 
-This repository has two modes of work. Every task is in exactly one of them.
+1. This file — repo rules, build commands, and boundaries.
+2. [`docs/SKILL.md`](docs/SKILL.md) — find the skill for your task and load it.
+3. `projectbluefin/common` — factory-wide contracts, as a shared sidecar. It
+   never overrides this repository's local authority.
 
-### Default mode: content only
+## Build, test, and lint
 
-Unless a task carries an approved design decision (below), you edit **content
-only**.
+```bash
+npm install --legacy-peer-deps   # once
+npm run typecheck                # tsc
+npm run lint                     # eslint . — 0 errors required; warnings pre-exist
+npm test                         # node --test scripts/*.test.js
+npm run build                    # fetch-data, then docusaurus build
+npm run build:ci                 # build without refetching data
+```
 
-**Content** is prose, frontmatter, links, alt text and captions, blog metadata,
-authors, report text, static asset files placed in an existing asset slot, and
-registered content items added to an existing component in that component's
-existing format.
+Run the smallest set that covers the change. `npm run build` fetches remote data
+first; set `GITHUB_TOKEN` or `GH_TOKEN` when the fetch scripts need authenticated
+GitHub access. `just dev` gives a fast local preview once data exists.
 
-**Design** is layout, CSS, component behavior, animation, page structure, JSX or
-HTML structure, routes, navigation, data shapes, fetch timing, API endpoints, and
-fallback behavior.
+**Formatting is per-path.** `npm run prettier-lint` runs `prettier --check .`
+across a repository where roughly 150 files already fail; it cannot pass and is
+not a usable gate. Format only what you touched:
 
-In default mode, do not change design to satisfy a content request. If the request
-cannot be completed without a design change, **stop and escalate** — do not
-approximate it with markup, inline styles, or a parallel component.
+```bash
+npx prettier --write <paths you changed>
+```
 
-### Authorized mode: design changes with a written decision
+Do not reformat files your task did not touch.
 
-A design change is permitted when — and only when — it traces to an **approved
-design decision** recorded in `adr/`. That record is the authorization. Without
-it, you are in default mode.
+## Git, branches, and shipping
 
-When implementing an approved decision:
+**Pure upstream development. There are no forks in this workflow.**
 
-- Implement what the decision specifies, and nothing beyond it.
-- Cite the decision file in the commit body and the pull request description.
-- If implementation reveals that the decision is wrong, incomplete, or impossible,
-  **stop and report back**. Do not amend the decision yourself and do not
-  improvise around it.
+`origin` is `git@github.com:projectbluefin/documentation.git`. Every branch —
+`renovate/*`, `monthly-report/*`, and feature branches alike — lives on that
+repository. Never push a topic branch to a personal fork and never open a
+cross-fork pull request.
 
-This mode exists so that approved design work can be delegated. It is not a
-loophole: an agent may not author its own authorization, and "the maintainer said
-so in chat" is not a design decision. The record must exist in `adr/` before code
-is written.
+```bash
+git remote -v                       # confirm origin is projectbluefin
+git push origin <branch>
+gh pr create --repo projectbluefin/documentation --head <branch>
+```
 
-### Escalating
+**This repository has a merge queue.** `gh pr merge --squash` enqueues; the
+queue lands the commit. `--delete-branch` is rejected while the queue is
+enabled, so omit it and delete the branch after the merge completes.
 
-To escalate, state plainly: what was requested, which specific design element it
-requires, why it cannot be done as content, and the options you can see. Do not
-pick one and build it. A maintainer turns that into an `adr/` record, or declines
-it.
+**Deployment is the merge.** `.github/workflows/pages.yml` publishes
+<https://docs.projectbluefin.io/> on every push to `main`. There is no separate
+publish step. Merging is shipping.
 
-See `adr/README.md` for the format and `adr/0001-agent-design-authorization.md`
-for the decision that established this model.
+The CDN serves the previous copy for a while, so verify a live change with a
+cache-busted request:
+
+```bash
+curl -s -o /dev/null -w "%{http_code}\n" \
+  "https://docs.projectbluefin.io/<path>?cb=$RANDOM"
+```
+
+### Doc-only push exception
+
+Changes touching only `docs/**`, `blog/**`, `reports/**`, `adr/**`, or
+`AGENTS.md` may be pushed straight to `main` without a PR. Verify first:
+
+```bash
+git diff --cached --name-only
+```
+
+**Everything else takes a branch and a PR targeting `main`.**
+
+## Trust the Machines
+
+The factory is automation-first. Workflows, branches, assignees, projects, PR
+linkages, and the merge queue carry live state. Do not simulate workflow state
+by hand or invent transitions that do not exist in the checkout.
+
+- Read source before asserting project-internal facts — image names, tags,
+  routes, workflow outputs. Use `gh api` to inspect workflows, not memory.
+- Verify a route exists in `docusaurus.config.ts` or `sidebars.ts` before
+  documenting it.
+- Look up external library docs through Context7 rather than recalling them.
+
+## Human decision gates
+
+Stop and ask before **Security**, **cross-repo Breakage**, or a change whose
+shape the maintainer has not seen. Design decisions of consequence are recorded
+in [`adr/`](adr/README.md) so the reasoning survives — see
+[`adr/0001-agent-design-authorization.md`](adr/0001-agent-design-authorization.md).
+
+An ADR is a **record**, not a turnstile. Write one for a decision worth
+remembering. Never let a missing ADR stall work a maintainer has asked for.
+
+`adr/` sits at the repository root on purpose: the docs plugin is mounted at
+`routeBasePath: "/"`, so anything under `docs/` publishes.
+
+## What agents may touch
+
+- `docs/`, `blog/`, `reports/`, `adr/` — content and design records.
+- `src/` — components, pages, CSS modules.
+- `scripts/` — build-time data pipelines and their `*.test.js` files.
+- `static/img/` — site assets.
+- `docusaurus.config.ts`, `sidebars.ts`, `package.json`, `.github/workflows/`.
+
+## What agents must not touch
+
+- Any `ublue-os/*` repository — read-only, no writes of any kind.
+- `workers/countme-proxy/` during a documentation task; it is a separate public
+  Cloudflare Worker service with its own tests and deployment.
+- Generated data under `static/data/`, except the tracked seeds listed in
+  `.gitignore`. Never hand-edit generated output.
+- `build/` — generated, gitignored, and never a reference for what exists.
+- Org or app credential pairs. Use `GITHUB_TOKEN` or a provisioned GitHub App.
 
 ## Repository map
 
-Source of truth is the repository, not the built site. `build/` is generated
-output and is gitignored — never read it as a reference for what exists, and never
-edit it. Routes come from `docusaurus.config.ts`, `sidebars.ts`, and the files in
-`docs/` and `src/pages/`.
+| Area              | Location                                                        |
+| ----------------- | --------------------------------------------------------------- |
+| Docs pages        | `docs/` — mounted at `/`, so **every file publishes**           |
+| Blog              | `blog/` — authors in `blog/authors.yaml`                        |
+| Monthly reports   | `reports/`                                                      |
+| Custom pages      | `src/pages/`                                                    |
+| Components        | `src/components/`                                               |
+| Factory dashboard | `src/pages/factory/`, `src/components/factory/`                 |
+| Data pipelines    | `scripts/fetch-*.js` → `static/data/*.json`                     |
+| Design records    | `adr/` — internal, never published                              |
+| Agent skills      | `docs/skills/` — note these publish, like everything in `docs/` |
 
-The docs plugin is mounted at `routeBasePath: "/"`. **Every file under `docs/`
-becomes a published page.** Never put internal notes, planning documents, or
-design records in `docs/` — that is why `adr/` sits at the repository root.
+## Data pipelines
 
-| Area                             | Location                                                                                             |
-| -------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| Getting Started                  | `docs/index.md`, `introduction.md`, `downloads.mdx`, `installation.md`, `FAQ.md`                     |
-| Using Bluefin                    | `docs/administration.md`, `tips.mdx`, `ai.md`, `command-line.md`, `images.md`, `troubleshooting.mdx` |
-| Developer Experience             | `docs/bluefin-dx.md`, `bluefin-gdx.mdx`                                                              |
-| Specialized editions             | `docs/lts.mdx`, `t2-mac.md`, `knuckle.md`                                                            |
-| Community                        | contribution, testing, donations, artwork, music, and related pages listed in `sidebars.ts`          |
-| Blog                             | `blog/`                                                                                              |
-| Monthly reports                  | `reports/` (mounted at `/reports`)                                                                   |
-| Agent skill guides               | `docs/skills/` — note these publish, like everything under `docs/`                                   |
-| Custom pages                     | `src/pages/` (`changelogs.tsx`, `hive.tsx`)                                                          |
-| Design decisions (not published) | `adr/`                                                                                               |
+Every dataset is regenerated here from its **original public source**. Nothing
+reads `projectbluefin/lab` or any lab-cluster service.
 
-The production navbar also exposes Ask Bluefin, Blog, Changelogs, Reports, Hive,
-Discussions, Feedback, and Store. Confirm a route in `docusaurus.config.ts` or
-`sidebars.ts` before documenting it. Do not add a route or navigation item for a
-feature that is not present in the source.
+Rules for every `scripts/fetch-*.js`:
 
-## Editing content pages
+- Export the pure functions so `scripts/*.test.js` can exercise them offline.
+- **Never fail the build.** No throw, no non-zero exit, no silently empty file.
+  On error, write `{ unavailable: true, stateReason }` and exit 0.
+- **An in-flight CI run is never a failure.** Anything without a terminal
+  conclusion is pending. Reuse `classifyRun` from `scripts/lib/gh.js`.
+- A missing value is `null` — a gap. A real `0` stays `0`. "Steady at zero" and
+  "no data" are different claims.
+- Never emit a host address, an internal URL, or a token.
+- **Tracked seeds are judged by their `generatedAt`, not file mtime.** A git
+  checkout stamps every tracked file with the current time, so an mtime TTL
+  never expires in CI. Use `scripts/lib/seed-cache.js`.
 
-Edit Markdown or MDX in `docs/`. Preserve existing frontmatter and page structure
-unless the task is specifically about content metadata. Keep existing components
-and their props. Do not replace an existing component with handwritten markup.
+## Presentation rules
 
-Writing conventions:
+These apply to any chart, sparkline, or status panel:
 
-- One H1, with H2 sections below it.
-- Imperative instructions for procedures.
-- Fenced code blocks with a language tag.
-- Link to upstream documentation instead of copying generic Linux, GNOME, Flatpak,
-  Podman, Distrobox, or Fedora reference material.
-- State Bluefin-specific defaults and exceptions here.
-- Short paragraphs. Remove claims the source does not support.
+1. A graphic never appears without its current value as a number.
+2. Small multiples share one domain; per-series autoscaling makes every cell
+   look identical regardless of value.
+3. Severity is one hue at varying intensity **plus a glyph** — never hue alone,
+   never a red/green pair.
+4. Gaps are drawn as gaps, never interpolated and never coerced to zero.
+5. Below a minimum point count, render `accumulating data`.
+6. **Unavailability is visible.** A panel that lacks data says so, with a
+   reason. A panel that returns `null` disappears, and a dashboard that quietly
+   renders less is indistinguishable from a healthy one with less to report.
 
-Do not add a new page when an existing page owns the topic. An approved new page
-needs the source file, frontmatter, and a `sidebars.ts` entry — added without
-changing sidebar styling or component behavior.
+`scripts/panel-unavailability.test.js` enforces rule 6 mechanically.
 
-## Blog posts and reports
+## PR rules
 
-Blog posts live in `blog/`. Edits change prose and metadata only; do not change
-blog layout, post components, or CSS to present new content. Keep frontmatter
-valid, and register new authors in `blog/authors.yaml`.
+- Conventional Commits title (`feat:`, `fix:`, `docs:`, `ci:`, `refactor:`).
+- One logical change per PR.
+- Skill doc updated in the same PR when implementation context changed.
+- AI-authored commits carry both attribution trailers:
 
-Do not use future dates as a publishing mechanism. Keep an unfinished post
-`draft: true` or `unlisted: true`, and remove the flag when it should ship.
+  ```
+  Assisted-by: <Model> via GitHub Copilot
+  Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>
+  ```
 
-Monthly reports in `reports/` are generated by the report workflow. Edit one only
-when the task explicitly concerns generated report content, and never rewrite the
-generator to reword a single report.
+- Inspect the exact staged paths before committing; never sweep in unrelated
+  working-tree changes.
+- After pushing, verify CI:
+  `gh run list --repo projectbluefin/documentation --limit 5`.
 
-## Dinosaurs and artwork
+## Self-Improvement
 
-The dinosaur character page is `docs/dinosaurs.md`. To add a character, edit only
-that file, following the existing section format:
+Every session: ship the work AND update the relevant skill file in
+`docs/skills/`. Same PR. Not a follow-up.
 
-1. Add the heading.
-2. Add `Name`, `Role`, and `Species` fields.
-3. Add the supplied image with Markdown image syntax.
-4. Add the species link when one exists.
-5. Preserve the page's existing order and wording style.
+Banned:
 
-Do not edit `src/components/ArtworkGallery.tsx`, its CSS, or any other component
-to add a character, and do not invent a new card, grid, animation, image
-placement, or metadata field. A supplied asset that needs new visual treatment is
-a design change — escalate it.
+- No changelog files. Delete `IMPROVEMENTS.md`, `CHANGELOG.md`, `SESSION.md` if
+  found.
+- No session notes committed to the repo. Session state lives in the agent's
+  session folder.
+- No "append here" docs. Route to `docs/skills/` instead.
 
-The artwork gallery is `docs/artwork.mdx`, backed by generated
-`static/data/artwork.json`. Do not hand-edit that data unless the task explicitly
-changes the generator or the registered artwork source.
+Before marking work done:
 
-## Data-backed pages
+- [ ] Discovered a workaround, pattern, or convention?
+- [ ] Skill file updated (or created)?
+- [ ] Committed in this same PR?
 
-These pages render fetched or generated data. Edit the source and pipeline, never
-generated output. Content edits must not alter components, CSS, fetch timing, API
-endpoints, or fallback behavior. If the content does not fit the existing data
-shape, that is a design decision — escalate it.
+## Canonical sources
 
-| Page or feature | Source or component                                                    | Data                                 |
-| --------------- | ---------------------------------------------------------------------- | ------------------------------------ |
-| Changelogs      | `src/pages/changelogs.tsx`                                             | release feeds and SBOM data          |
-| Images          | `docs/images.md`, `src/components/ImagesCatalog.tsx`                   | `static/data/images.json`            |
-| Driver versions | `docs/driver-versions.mdx`, `src/components/DriverVersionsCatalog.tsx` | `static/data/driver-versions.json`   |
-| Artwork         | `docs/artwork.mdx`, `src/components/ArtworkGallery.tsx`                | `static/data/artwork.json`           |
-| Music           | `docs/music.md`, `src/components/MusicPlaylist.tsx`                    | `static/data/playlist-metadata.json` |
-| Donations       | `docs/donations/*.mdx`, profile and project components                 | GitHub profile and repo data         |
-| Hive            | `src/pages/hive.tsx` → `src/components/HiveFactoryDashboard.tsx`       | see below                            |
-
-### Hive specifics
-
-`src/pages/hive.tsx` renders `HiveFactoryDashboard` only.
-`src/components/HiveDashboard.tsx` is **not imported anywhere** and does not ship;
-do not treat it as live code or update it to match a change elsewhere.
-
-`HiveFactoryDashboard` reads three build-time files and one runtime source:
-
-| Source                            | Produced by                                                          | Tracked in git |
-| --------------------------------- | -------------------------------------------------------------------- | -------------- |
-| `static/data/hive-history.json`   | `scripts/fetch-hive-history.js` (needs `HIVE_API_TOKEN`)             | yes, CI seed   |
-| `static/data/registry-data.json`  | `scripts/fetch-registry-data.js`                                     | no             |
-| `static/data/hive-live-data.json` | `scripts/fetch-hive-live-data.js` (needs `GITHUB_TOKEN`)             | no             |
-| Queue data                        | hosted instance, falling back to `queue.projectbluefin.io/data.json` | n/a            |
-
-Every one of these degrades silently to an unavailable state by design. Because
-two of the three files are untracked, **local builds and production fail
-differently** — verify a data-related change in both rather than assuming a clean
-local render means production is fine.
-
-## Static assets
-
-Put site assets in `static/img/` and reference them with root-relative paths such
-as `/img/example.webp`. Use an existing asset slot and existing component. Do not
-change image dimensions, layout rules, responsive behavior, or asset presentation
-to accommodate a new file.
-
-Blog images live under `static/img/blog/<post-slug>/`. When a post ships the wrong
-screenshot, overwrite the file in place and keep the filename so the `BlogFigure`
-`src`, `alt`, and `caption` stay valid. Edit the MDX only when `alt` or `caption`
-no longer describes the new image. Never add a second figure to work around a
-wrong one.
-
-`/static/data/*.json` is gitignored except for explicitly listed CI seeds. Do not
-commit generated data or `static/feeds/` output. The SBOM seeds are load-bearing
-and must remain present:
-
-- `static/data/sbom-attestations.json`
-- `static/data/sbom-attestations-frontend.json`
-
-## Automation
-
-`.github/workflows/open-discussion.yml` creates the matching Giscus Discussion in
-`ublue-os/bluefin` — the same repository `src/components/GiscusComments` points
-at. It uses the existing repository secret `BLUEFIN_DISCUSSIONS_TOKEN`; do not
-introduce a new token, GitHub App, or cross-repository credential scheme. The
-secret needs Discussion write access in `ublue-os/bluefin`. If it is unavailable,
-the workflow must fail explicitly rather than report success without creating a
-discussion.
-
-Follow [`docs/skills/giscus-discussions.md`](docs/skills/giscus-discussions.md)
-when verifying, recovering, or archiving a blog discussion. Restore the existing
-secret and rerun the workflow first; a maintainer may use the documented GraphQL
-recovery only when the post is live and the normal workflow cannot create the
-discussion.
-
-`workers/countme-proxy/` is a separate public Cloudflare Worker service, not site
-content. Do not touch it during a documentation or artwork task. If a worker task
-is explicit, follow its tests and deployment instructions in `README.md`, and do
-not change site design as part of that work.
-
-## Build and validation
-
-Validation confirms content renders in the existing production design. It is not a
-license to change layout, styling, components, or behavior.
-
-Install dependencies once:
-
-```bash
-npm install --legacy-peer-deps
-```
-
-Run the lightest checks that cover the edit. For most content changes:
-
-```bash
-npx prettier --check <paths you changed>   # see the note below
-npm run typecheck                          # tsc
-npm run lint                               # eslint .
-npm test                                   # node --test scripts/*.test.js
-npm run build                              # fetches data, then docusaurus build
-```
-
-**Formatting:** `npm run prettier-lint` runs `prettier --check .` across the whole
-repository, where roughly 150 files already fail. It cannot pass, and it is not a
-usable gate. Check only the paths you changed, and format them with
-`npx prettier --write <paths>`. Do not reformat files your task did not touch — a
-repo-wide `npm run prettier` would bury your change in an unreviewable diff.
-
-**Components:** `npm test` covers `scripts/*.test.js` only, but presentational
-components can be tested there too without adding tooling. See
-[`docs/skills/component-testing.md`](docs/skills/component-testing.md).
-
-`npm run build` fetches remote data first. Set `GITHUB_TOKEN` or `GH_TOKEN` when
-the fetch scripts need authenticated GitHub API access. For a fast local preview
-once data exists, use `just dev` from the `Justfile`.
-
-Review the rendered page after building and confirm the requested prose, link,
-image, or registered item appears. Do not fix a rendering problem by changing
-design code during a content task — that is an escalation.
-
-## Git, remotes, and production
-
-Work on a topic branch. Do not push directly to `main` on your own initiative.
-Keep the change limited to content files and the required metadata or data source,
-and never sweep in unrelated working-tree changes. Inspect the exact staged paths
-before committing, and use a Conventional Commit such as
-`docs: update dinosaur character list`.
-
-`upstream` is `projectbluefin/documentation` — production. `origin` may be a
-personal fork, and a fork branch never reaches production. Confirm with
-`git remote -v` before pushing, and target `upstream` for anything that must ship.
-
-`.github/workflows/pages.yml` deploys <https://docs.projectbluefin.io/> on every
-push to `upstream/main`; there is no separate publish step. When a maintainer
-explicitly asks for a production update, land it on `upstream/main`. Otherwise
-open a pull request.
-
-The CDN serves the old copy for a while after a successful deploy, so verify a
-live asset with a cache-busted request:
-
-```bash
-curl -s -o /dev/null -w "%{http_code} %{size_download}\n" \
-  "https://docs.projectbluefin.io/img/blog/<post>/<file>.png?cb=$RANDOM"
-```
-
-## Before changing anything
-
-1. Read the target file and its nearby component or configuration.
-2. Confirm the route exists in `docusaurus.config.ts` or `sidebars.ts`.
-3. Search git history when an existing content pattern has unclear ownership.
-4. Decide which mode you are in. If the task needs design and no `adr/` record
-   authorizes it, escalate instead of guessing.
-
-Do not create a parallel design, and do not widen a data shape to make content
-fit.
+| Topic                     | Source                                                                   |
+| ------------------------- | ------------------------------------------------------------------------ |
+| Task → skill router       | [`docs/SKILL.md`](docs/SKILL.md)                                         |
+| Skill improvement mandate | [`docs/skills/skill-improvement.md`](docs/skills/skill-improvement.md)   |
+| Component testing         | [`docs/skills/component-testing.md`](docs/skills/component-testing.md)   |
+| Giscus discussions        | [`docs/skills/giscus-discussions.md`](docs/skills/giscus-discussions.md) |
+| Design records            | [`adr/README.md`](adr/README.md)                                         |
+| Factory model, cross-repo | `projectbluefin/common` → `docs/factory/agentic-model.md`                |
+| Factory onboarding        | `projectbluefin/common` → `docs/skills/factory-onboarding.md`            |
