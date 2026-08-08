@@ -768,14 +768,22 @@ caps it at 128 KiB.
 
 To write your own, copy
 [`static/hive/leaderboard.css`](https://github.com/projectbluefin/documentation/blob/main/static/hive/leaderboard.css)
-and change the four `--bf-*` values at the top. Two rules matter:
+and change the four `--bf-*` values at the top. Three constraints are real, and
+each was verified against the live sanitizer rather than assumed:
 
-- **No `@import` and no `url()`.** Both are stripped server-side, because a
-  stylesheet that can fetch is a stylesheet that can exfiltrate. Keep the theme
-  to colour, gradient and spacing.
-- **Style both themes.** The hive ships light and dark via
-  `[data-theme="light"]`. A theme that only looks right in dark mode is a theme
-  that looks broken to half its readers.
+- **No `@import` and no `url()`.** Both are stripped, because a stylesheet that
+  can fetch is a stylesheet that can exfiltrate.
+- **No at-rules at all.** `@media` does not survive, so you cannot branch on
+  `prefers-color-scheme` or `prefers-reduced-motion`.
+- **No ancestor selectors.** Every rule is scoped by prepending
+  `#tab-leaderboard`, so `[data-theme="light"] .me-card` becomes
+  `#tab-leaderboard [data-theme="light"] .me-card`. The hive sets `data-theme`
+  on `<html>`, an ancestor of that scope, so such a rule can never match.
+
+Together those mean **a theme cannot branch on light versus dark**. Pick one
+palette that clears contrast on both of the hive's surfaces — `#161b22` and
+`#f6f8fa` — rather than writing rules that are silently discarded. Bluefin's
+theme uses `#5c7bd1`, which reaches 4.29:1 and 3.79:1 respectively.
 
 An unfetchable or invalid stylesheet falls back to the default with a notice, so
 a mistake here degrades quietly rather than breaking the page.

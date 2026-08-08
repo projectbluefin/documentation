@@ -8,69 +8,64 @@
  * Omit @main to track HEAD. See projectbluefin/documentation#1024 and
  * kubestellar/hive#2612 for the design.
  *
- * ── Constraints this file is written to ──────────────────────────────────────
- * The hive fetches this server-side from raw.githubusercontent.com, sanitizes
- * it, and caps it at 128 KiB. The sanitizer strips @import and any url() to an
- * external origin, so this theme is deliberately self-contained: no web fonts,
- * no remote images, no network of any kind. Everything below is colour,
- * gradient and spacing.
+ * ── What the server-side sanitizer actually does ─────────────────────────────
+ * Verified against the live hive on 2026-08-08 by fetching
+ * /api/leaderboard/style?src=... and reading what came back. This is not
+ * guesswork, and it constrains everything below:
  *
- * ── What it themes ──────────────────────────────────────────────────────────
- * The hive's built-in styles are palette variations that set --me-accent and
- * --me-accent-soft on .me-card. This follows that contract rather than
- * overriding the card's structure, so it keeps working when the hive changes
- * its markup.
+ *   1. @import and url() are stripped, so a theme cannot fetch and therefore
+ *      cannot exfiltrate. No web fonts, no remote images.
+ *   2. ALL at-rules are dropped, @media included. A @media block simply does
+ *      not survive, so prefers-color-scheme and prefers-reduced-motion cannot
+ *      be used here.
+ *   3. Every rule is scoped by prepending `#tab-leaderboard ` to its selector.
+ *      That correctly scopes `.me-card` to `#tab-leaderboard .me-card`, but it
+ *      makes an ancestor selector unusable: `[data-theme="light"] .me-card`
+ *      becomes `#tab-leaderboard [data-theme="light"] .me-card`, and since the
+ *      hive sets data-theme on <html> — an ancestor of the scope, not a
+ *      descendant — that rule can never match.
+ *   4. The payload is capped at 128 KiB.
  *
- * It carries Bluefin's own brand blue from the documentation site
- * (src/css/custom.css): #4a69bd in light, #8a97f7 in dark. Those are the same
- * two values docs.projectbluefin.io uses for --ifm-color-primary, so a
- * contributor's card matches the project they are contributing to.
+ * Consequence: this theme cannot branch on light versus dark. So it does not
+ * try. It uses ONE palette chosen to clear WCAG on both of the hive's surfaces,
+ * which is the honest way to satisfy a constraint rather than shipping rules
+ * that are silently discarded.
  *
- * ── Both themes ─────────────────────────────────────────────────────────────
- * The hive ships light and dark via [data-theme="light"]. So does this. A
- * theme that only looks right in dark mode is the defect that
- * projectbluefin/documentation#1003 was filed about; it is not repeated here.
+ * ── The palette ─────────────────────────────────────────────────────────────
+ * #5c7bd1 is Bluefin's own --ifm-color-primary-light from the documentation
+ * site (src/css/custom.css), and it is the brand value that survives both
+ * surfaces: 4.29:1 on the hive's dark surface (#161b22) and 3.79:1 on its light
+ * one (#f6f8fa). Both clear the 3:1 required of large text and non-text UI,
+ * which is all this colour is used for.
+ *
+ * #364d8d carries white text at 8.07:1 for the one filled button.
+ *
+ * The washes are low-alpha tints of the same hue. Alpha compositing means they
+ * read as a faint blue lift on a dark surface and a faint blue tint on a light
+ * one, without either being specified.
  */
 
-/* ── Dark, the hive default ──────────────────────────────────────────────── */
-
 .me-card {
-  --bf-brand: #8a97f7;
-  --bf-brand-deep: #4a69bd;
-  --bf-brand-wash: rgba(138, 151, 247, 0.14);
-  --bf-brand-edge: rgba(138, 151, 247, 0.34);
+  --bf-brand: #5c7bd1;
+  --bf-brand-deep: #364d8d;
+  --bf-brand-wash: rgba(92, 123, 209, 0.12);
+  --bf-brand-edge: rgba(92, 123, 209, 0.38);
 
-  /* The contract the built-in styles use. Setting these is what tints the
-     medallion ring, the milestone chips and the stat numerals. */
+  /* The contract the hive's built-in styles use: they are palette variations
+     over these two variables. Setting them rather than overriding the card's
+     structure is what keeps this working when the hive changes its markup. */
   --me-accent: var(--bf-brand);
   --me-accent-soft: var(--bf-brand-wash);
 
   border-color: var(--bf-brand-edge);
 }
 
-/* ── Light ───────────────────────────────────────────────────────────────── */
-
-[data-theme="light"] .me-card {
-  --bf-brand: #4a69bd;
-  --bf-brand-deep: #364d8d;
-  --bf-brand-wash: rgba(74, 105, 189, 0.1);
-  --bf-brand-edge: rgba(74, 105, 189, 0.28);
-}
-
-/* ── The band ────────────────────────────────────────────────────────────── */
-
-/* A quiet vertical wash rather than a saturated fill: the card is a person's
-   record, not a banner. The gradient resolves against the hive's own surface
-   variable, so it stays correct in both themes and if the hive restyles its
-   surfaces. */
 .me-card .me-card__band {
   background:
     linear-gradient(180deg, var(--bf-brand-wash) 0%, transparent 100%),
     var(--cc-surface, transparent);
   border-bottom: 1px solid var(--bf-brand-edge);
 }
-
-/* ── Identity ────────────────────────────────────────────────────────────── */
 
 .me-card .me-medallion {
   box-shadow: 0 0 0 2px var(--bf-brand-edge);
@@ -80,8 +75,6 @@
   letter-spacing: -0.01em;
 }
 
-/* The rank pill is the one place a stronger tint earns its keep: it is the
-   single number a reader looks for first. */
 .me-card .me-rankpill {
   background: var(--bf-brand-wash);
   border: 1px solid var(--bf-brand-edge);
@@ -92,10 +85,6 @@
   color: var(--bf-brand);
 }
 
-/* ── Numbers ─────────────────────────────────────────────────────────────── */
-
-/* Tabular figures so the three stats read as a column rather than shimmering
-   against each other at different digit widths. */
 .me-card .me-statgrid .lb-primary {
   color: var(--bf-brand);
   font-variant-numeric: tabular-nums;
@@ -104,8 +93,6 @@
 .me-card .me-stat__lbl {
   letter-spacing: 0.02em;
 }
-
-/* ── Sections and chips ──────────────────────────────────────────────────── */
 
 .me-card .me-sec__title {
   color: var(--cc-text-2, inherit);
@@ -117,8 +104,6 @@
   border-color: var(--bf-brand-edge);
 }
 
-/* ── Call to action ──────────────────────────────────────────────────────── */
-
 .me-card .me-share {
   background: var(--bf-brand-deep);
   border: 1px solid var(--bf-brand-edge);
@@ -128,13 +113,9 @@
 .me-card .me-share:hover,
 .me-card .me-share:focus-visible {
   background: var(--bf-brand);
-  color: #0d1117;
+  color: #ffffff;
 }
 
-/* ── Leaderboard rows ────────────────────────────────────────────────────── */
-
-/* Only the viewer's own row is tinted. Colouring every row would compete with
-   the rank ordering, which is the information the table exists to convey. */
 .lb-row--me {
   background: var(--bf-brand-wash);
   border-left: 3px solid var(--bf-brand);
@@ -143,14 +124,4 @@
 .lb-row--me .lb-rank,
 .lb-row--me .lb-primary {
   color: var(--bf-brand);
-}
-
-/* ── Motion ──────────────────────────────────────────────────────────────── */
-
-@media (prefers-reduced-motion: reduce) {
-  .me-card,
-  .me-card * {
-    animation: none !important;
-    transition: none !important;
-  }
 }

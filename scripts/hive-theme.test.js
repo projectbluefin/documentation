@@ -52,27 +52,63 @@ test("the theme drives the documented --me-* contract", () => {
   assert.ok(/--me-accent-soft\s*:/.test(code));
 });
 
-test("the theme carries Bluefin's brand blue from the docs site", () => {
-  // Same values as --ifm-color-primary in src/css/custom.css, so a
-  // contributor's card matches the project.
+test("the theme carries a Bluefin brand blue from the docs site", () => {
+  // #5c7bd1 is --ifm-color-primary-light in src/css/custom.css, so a
+  // contributor's card matches the project rather than an invented palette.
   const custom = fs.readFileSync(
     path.join(__dirname, "..", "src", "css", "custom.css"),
     "utf8",
   );
-  for (const brand of ["#4a69bd", "#8a97f7"]) {
-    assert.ok(css.includes(brand), `theme is missing ${brand}`);
-    assert.ok(custom.includes(brand), `custom.css no longer defines ${brand}`);
+  assert.ok(css.includes("#5c7bd1"), "theme is missing the brand blue");
+  assert.ok(custom.includes("#5c7bd1"), "custom.css no longer defines it");
+});
+
+test("no at-rule — the sanitizer drops every one", () => {
+  // Verified live: the @media block in the first version of this theme did not
+  // survive the round trip. A rule that is silently discarded is worse than no
+  // rule, because it reads as handled.
+  assert.ok(
+    !/@[a-z-]+\s/i.test(code),
+    "an at-rule cannot survive sanitization",
+  );
+});
+
+test("no ancestor selector — scoping makes them unmatchable", () => {
+  // The hive prepends `#tab-leaderboard ` to every selector, so
+  // `[data-theme="light"] .me-card` becomes
+  // `#tab-leaderboard [data-theme="light"] .me-card`. data-theme lives on
+  // <html>, an ancestor of the scope, so that rule can never match. Light and
+  // dark must therefore share one palette.
+  assert.ok(!code.includes("[data-theme"), "data-theme cannot match here");
+});
+
+test("the palette clears WCAG on both hive surfaces", () => {
+  // One palette has to work on #161b22 and #f6f8fa, because the theme cannot
+  // branch. 3:1 is the bar: the brand colour is used for large numerals,
+  // borders and non-text UI only.
+  const lin = (c) => {
+    const v = c / 255;
+    return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
+  };
+  const lum = (hex) => {
+    const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
+    return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
+  };
+  const ratio = (a, b) => {
+    const [x, y] = [lum(a) + 0.05, lum(b) + 0.05];
+    return Math.max(x, y) / Math.min(x, y);
+  };
+
+  const brand = /--bf-brand:\s*(#[0-9a-f]{6})/i.exec(code)[1];
+  for (const surface of ["#161b22", "#f6f8fa"]) {
+    const r = ratio(brand, surface);
+    assert.ok(r >= 3, `${brand} on ${surface} is ${r.toFixed(2)}:1, needs 3`);
   }
-});
 
-test("the theme styles both light and dark", () => {
-  // The hive ships light and dark via [data-theme="light"]. A dark-only theme
-  // is the defect #1003 was filed about.
-  assert.ok(code.includes('[data-theme="light"]'));
-});
-
-test("the theme honours prefers-reduced-motion", () => {
-  assert.ok(code.includes("prefers-reduced-motion"));
+  // The one filled button carries white text.
+  const deep = /--bf-brand-deep:\s*(#[0-9a-f]{6})/i.exec(code)[1];
+  const white = ratio("#ffffff", deep);
+  assert.ok(white >= 4.5, `white on ${deep} is ${white.toFixed(2)}:1`);
 });
 
 test("every brace is balanced, so the sanitizer sees valid CSS", () => {
