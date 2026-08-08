@@ -5222,11 +5222,11 @@ export function CommunitySection({ s }: { s: FactoryLive }): React.JSX.Element {
       {registryData?.leaderboard && registryData.leaderboard.length > 0 && (
         <section className={styles.panel}>
           <Heading as="h2" className={styles.panelTitle}>
-            Task Leaderboard
+            Hive Task Leaderboard
           </Heading>
           <p className={styles.panelMeta}>
-            Tasks completed by each contributor via the hive registry &mdash;
-            updated live
+            Tasks completed via the hive registry &mdash; a different measure
+            from Community Builders below, which counts commits. Updated live
           </p>
           <div
             style={{
