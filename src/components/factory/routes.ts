@@ -45,9 +45,9 @@ export interface FactoryRoute {
 export const FACTORY_ROUTES: FactoryRoute[] = [
   {
     path: "/factory",
-    id: "overview",
-    label: "Overview",
-    hint: "Agents, governor, queue, advisories and what just shipped",
+    id: "hive",
+    label: "Hive",
+    hint: "Live hive orchestration — agents, governor, queue and advisories",
     datasets: ["registry", "hiveLive"],
   },
   {

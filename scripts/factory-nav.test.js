@@ -68,7 +68,7 @@ test("landingPath is the first tab", () => {
 
 test("routeFor tolerates a trailing slash and an unknown path", () => {
   assert.equal(routes.routeFor("/factory/builds/").id, "builds");
-  assert.equal(routes.routeFor("/factory/").id, "overview");
+  assert.equal(routes.routeFor("/factory/").id, "hive");
   assert.equal(routes.routeFor("/somewhere-else"), undefined);
 });
 

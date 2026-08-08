@@ -59,14 +59,17 @@ test("no panel component returns null from a top-level guard", () => {
   );
 });
 
-test("every panel imports the Unavailable component or delegates to a section", () => {
+test("every data-loading panel can report unavailability", () => {
+  // The rule binds panels that fetch. A purely static panel has no data to be
+  // missing, so requiring it to import Unavailable would be cargo cult.
   for (const file of panelFiles) {
     const src = fs.readFileSync(file, "utf8");
+    if (!src.includes("useDataset")) continue;
     const delegates = /from "\.\.\/\.\.\/HiveFactoryDashboard"/.test(src);
     const hasUnavailable = /Unavailable/.test(src);
     assert.ok(
       hasUnavailable || delegates,
-      `${path.basename(file)} can neither report unavailability nor delegate`,
+      `${path.basename(file)} loads data but cannot report it missing`,
     );
   }
 });

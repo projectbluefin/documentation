@@ -61,7 +61,7 @@ test("every view renders as a peer in one row", () => {
   // Unified factory: the hive is not split from builds, tests or adoption.
   const html = render("/factory");
   for (const label of [
-    "Overview",
+    "Hive",
     "Images",
     "Builds",
     "Tests",
