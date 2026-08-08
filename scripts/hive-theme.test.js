@@ -19,6 +19,21 @@ const css = fs.readFileSync(THEME, "utf8");
 /** Declarations only — comments explain the constraints and would false-positive. */
 const code = css.replace(/\/\*[\s\S]*?\*\//g, "");
 
+test("the stylesheet contains no comment at all", () => {
+  // The scoping prefixer is string-based and does not understand comments: it
+  // prepends `#tab-leaderboard ` to the comment, and the selector that follows
+  // is absorbed into it. A header comment cost the first two rules; interleaved
+  // comments cost one each. Documentation lives in static/hive/README.md.
+  assert.ok(!css.includes("/*"), "a comment takes down the rule after it");
+});
+
+test("the theme is documented beside itself", () => {
+  assert.ok(
+    fs.existsSync(path.join(__dirname, "..", "static", "hive", "README.md")),
+    "the constraints have to be written down somewhere, just not in the CSS",
+  );
+});
+
 test("the theme exists at the path the hive is pointed at", () => {
   // The ?style= parameter encodes this path. Moving the file breaks every
   // contributor's saved URL, so the location is part of the contract.
