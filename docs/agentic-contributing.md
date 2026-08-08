@@ -17,7 +17,7 @@ The reboot took 4–5 days in late May 2026. As Jorge describes it:
 
 > I did a 4-5 day sprint to rebuild Bluefin with agents. Lots of AI smart people helped me like Andy Anderson, who really explained this. Then it just became obvious. Bluefin 2.0.
 >
-> — Jorge Castro, *[THEPATTERN](https://github.com/projectbluefin/bluefin/blob/main/THEPATTERN.md)*
+> — Jorge Castro, _[THEPATTERN](https://github.com/projectbluefin/bluefin/blob/main/THEPATTERN.md)_
 
 For a full technical comparison of what changed between `ublue-os/bluefin` and `projectbluefin/bluefin`, see **[THEPATTERN.md](https://github.com/projectbluefin/bluefin/blob/main/THEPATTERN.md)**.
 
@@ -28,6 +28,7 @@ For a full technical comparison of what changed between `ublue-os/bluefin` and `
 The agentic factory is operational and shipping weekly.
 
 **What is operational:**
+
 - Keyless signing, merge queue, fast PR validation (1–2 min)
 - `pr-smoke.yml` — full image build + smoke test for PRs that touch build-affecting paths
 - `post-testing-e2e.yml` — runs `smoke,common` suites against every `main` push
@@ -38,6 +39,7 @@ The agentic factory is operational and shipping weekly.
 - AI Moderator (`moderator.yml`) — spam detection and moderation on issues and PR comments
 
 **Still in progress:**
+
 - ARM builds — wired in CI, disabled pending akmods ARM support
 
 **What this means for you as a contributor:**
@@ -112,11 +114,11 @@ flowchart TB
 :::info Sources
 The facts in this section come from primary sources. Read them rather than relying on this summary.
 
-- Anderson, A. *The AI Codebase Maturity Model: From Assisted Coding to Fully Autonomous Systems.* [arXiv:2604.09388](https://arxiv.org/abs/2604.09388)
-- CNCF blog (2026-05-14): [*When AI agents become contributors: How KubeStellar reached 81% PR acceptance*](https://www.cncf.io/blog/2026/05/14/when-ai-agents-become-contributors-how-kubestellar-reached-81-pr-acceptance/)
-- The New Stack (2026): [*Beyond prompting: How KubeStellar reached 81% PR acceptance with AI agents*](https://thenewstack.io/ai-codebase-maturity-model/)
+- Anderson, A. _The AI Codebase Maturity Model: From Assisted Coding to Fully Autonomous Systems._ [arXiv:2604.09388](https://arxiv.org/abs/2604.09388)
+- CNCF blog (2026-05-14): [_When AI agents become contributors: How KubeStellar reached 81% PR acceptance_](https://www.cncf.io/blog/2026/05/14/when-ai-agents-become-contributors-how-kubestellar-reached-81-pr-acceptance/)
+- The New Stack (2026): [_Beyond prompting: How KubeStellar reached 81% PR acceptance with AI agents_](https://thenewstack.io/ai-codebase-maturity-model/)
 - [projectbluefin-dot-github/AGENTS.md](https://github.com/projectbluefin/.github/blob/main/AGENTS.md) — org operating model
-:::
+  :::
 
 ### Andy Anderson and the ACMM
 
@@ -124,14 +126,14 @@ KubeStellar Hive was designed by **Andy Anderson** — Senior Platform Engineer 
 
 The ACMM describes how codebases evolve from basic AI-assisted coding toward fully autonomous systems. The model is structured around 5 progressive levels (arXiv:2604.09388), with a 6th "Fully Autonomous" level introduced for Hive in the paper's Section 5:
 
-| Level | Name | Defining feedback loop |
-|-------|------|------------------------|
-| 1 | **Assisted** | AI as sophisticated autocomplete — no persistent context or artifacts |
-| 2 | **Instructed** | Explicit preferences encoded in files (CLAUDE.md, AGENTS.md, copilot-instructions.md) yielding reproducible consistency |
-| 3 | **Measured** | Test suites, coverage metrics, and continuous monitoring infrastructure provide quantitative evaluation |
-| 4 | **Adaptive** | Automated responses close feedback loops — auto-tuning, dynamic prioritization, error triage |
-| 5 | **Self-Sustaining** | The codebase becomes a living specification encoding policy and priorities; agents implement with minimal human intervention |
-| 6 | **Fully Autonomous** | Hive — the reference implementation (introduced in paper §5) |
+| Level | Name                 | Defining feedback loop                                                                                                       |
+| ----- | -------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| 1     | **Assisted**         | AI as sophisticated autocomplete — no persistent context or artifacts                                                        |
+| 2     | **Instructed**       | Explicit preferences encoded in files (CLAUDE.md, AGENTS.md, copilot-instructions.md) yielding reproducible consistency      |
+| 3     | **Measured**         | Test suites, coverage metrics, and continuous monitoring infrastructure provide quantitative evaluation                      |
+| 4     | **Adaptive**         | Automated responses close feedback loops — auto-tuning, dynamic prioritization, error triage                                 |
+| 5     | **Self-Sustaining**  | The codebase becomes a living specification encoding policy and priorities; agents implement with minimal human intervention |
+| 6     | **Fully Autonomous** | Hive — the reference implementation (introduced in paper §5)                                                                 |
 
 From the abstract:
 
@@ -145,17 +147,17 @@ The central finding of the paper:
 
 The numbers below are from the **KubeStellar Console** case study in the ACMM paper and the CNCF blog — an 82-day measurement period.
 
-| Metric | Value | Source |
-|--------|-------|--------|
-| PR acceptance rate | 81% | CNCF blog, arXiv |
-| Code coverage | 91% across 12 shards | CNCF blog |
-| CI/CD workflows | 63 | CNCF blog |
-| Nightly test suites | 32 | CNCF blog |
-| Bug-to-merged-fix | under 30 minutes | CNCF blog |
-| PR throughput gain (Level 2 → Level 6) | 5× | arXiv abstract |
-| Issue throughput gain (Level 2 → Level 6) | 37× | arXiv abstract |
-| Hive Bluefin SLA target | < 30 min issue-filed to PR-merged | arXiv abstract |
-| Hive Bluefin scope | 6 repositories | arXiv abstract |
+| Metric                                    | Value                             | Source           |
+| ----------------------------------------- | --------------------------------- | ---------------- |
+| PR acceptance rate                        | 81%                               | CNCF blog, arXiv |
+| Code coverage                             | 91% across 12 shards              | CNCF blog        |
+| CI/CD workflows                           | 63                                | CNCF blog        |
+| Nightly test suites                       | 32                                | CNCF blog        |
+| Bug-to-merged-fix                         | under 30 minutes                  | CNCF blog        |
+| PR throughput gain (Level 2 → Level 6)    | 5×                                | arXiv abstract   |
+| Issue throughput gain (Level 2 → Level 6) | 37×                               | arXiv abstract   |
+| Hive Bluefin SLA target                   | < 30 min issue-filed to PR-merged | arXiv abstract   |
+| Hive Bluefin scope                        | 6 repositories                    | arXiv abstract   |
 
 Specific automations Hive performs (from CNCF blog): repository triage every 15 minutes; PR build monitoring every 60 seconds; error-recovery with exponential backoff; hourly analytics queries for error spikes.
 
@@ -165,17 +167,17 @@ Cross-agent memory continuity in Hive is handled by a system called **Beads** (a
 
 From the case study (CNCF blog):
 
-> *"A flaky test in autonomous workflow is erosion of trust model."*
+> _"A flaky test in autonomous workflow is erosion of trust model."_
 
 A single test with 85% reliability cascaded failures across the system. This is why the Bluefin testsuite uses `@quarantine` tags for scenarios that are written but not deterministic — a flaky gate is worse than no gate.
 
 ### How the ACMM maps to Bluefin's current implementation
 
-| ACMM level | What it corresponds to in Bluefin |
-|------------|-----------------------------------|
-| Instructed | `AGENTS.md`, `docs/SKILL.md`, `.github/skills/` files in each repo |
-| Measured | Multi-suite testsuite + nightly baseline + 2-human production Environment gate |
-| Adaptive | Renovate automerge, AI Moderator, `hive-progress-sync.yml` |
+| ACMM level                         | What it corresponds to in Bluefin                                                            |
+| ---------------------------------- | -------------------------------------------------------------------------------------------- |
+| Instructed                         | `AGENTS.md`, `docs/SKILL.md`, `.github/skills/` files in each repo                           |
+| Measured                           | Multi-suite testsuite + nightly baseline + 2-human production Environment gate               |
+| Adaptive                           | Renovate automerge, AI Moderator, `hive-progress-sync.yml`                                   |
 | Self-Sustaining / Fully Autonomous | Active trajectory; KubeStellar Hive managing 8 repos with kubestellar-bot dispatching agents |
 
 The human's role at every level is the same: decide what to build, decide what to reject, define what "good" means. Anderson's paper is explicit on this: "Human oversight remains the source of decisions about what to build, what to reject, and defining quality standards."
@@ -186,12 +188,12 @@ The human's role at every level is the same: decide what to build, decide what t
 
 Agents implement autonomously **except** at these four gates. Stop and request human input when you hit one. If you are a human contributor reviewing an agent PR, these are the moments your judgment is most needed.
 
-| Gate | When it triggers | What to do |
-|------|-----------------|------------|
-| **Design Gate** | Architecture changes, new subsystem design, behavioral changes visible to users | Open a draft PR or issue with the proposal. Wait for explicit approval before building. |
-| **Security Gate** | Auth, signing, supply chain, secrets handling, COPR/third-party sources | Stop. Post plainly what you found and what you are proposing. Do not implement until a maintainer approves. |
-| **Breakage Gate** | Cross-repo breaking changes — removing/renaming inputs, changing defaults that affect consuming repos | Enumerate the affected repos. Open an issue before touching code. |
-| **Merge Gate** | Final PR approval — always human | Agents do not approve their own PRs. Two distinct humans for production builds (machine-enforced). |
+| Gate              | When it triggers                                                                                      | What to do                                                                                                  |
+| ----------------- | ----------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| **Design Gate**   | Architecture changes, new subsystem design, behavioral changes visible to users                       | Open a draft PR or issue with the proposal. Wait for explicit approval before building.                     |
+| **Security Gate** | Auth, signing, supply chain, secrets handling, COPR/third-party sources                               | Stop. Post plainly what you found and what you are proposing. Do not implement until a maintainer approves. |
+| **Breakage Gate** | Cross-repo breaking changes — removing/renaming inputs, changing defaults that affect consuming repos | Enumerate the affected repos. Open an issue before touching code.                                           |
+| **Merge Gate**    | Final PR approval — always human                                                                      | Agents do not approve their own PRs. Two distinct humans for production builds (machine-enforced).          |
 
 When in doubt, open a draft PR with your implementation and ask explicitly. The system prefers over-communication at gates to silent autonomous action.
 
@@ -222,22 +224,24 @@ flowchart LR
 ### What qualifies as a learning worth writing back
 
 **Write it:**
+
 - A workaround for an upstream bug (include component + issue link)
 - A non-obvious pattern required for correctness
 - A convention that is not obvious from the code
 - Something discovered by trial and error
 
 **Do not write it:**
+
 - One-off task notes ("use commit message X for this PR")
 - Obvious things any developer would know
 - Ephemeral state ("currently broken, fix pending")
 
 ### Where skill files live
 
-| You are working in | Write to |
-|--------------------|----------|
-| `projectbluefin/actions` | `docs/skills/` (Copilot CLI) AND `.github/skills/` (Cloud Agent) |
-| Any other `projectbluefin` repo | That repo's `.github/skills/` — create if absent |
+| You are working in                     | Write to                                                               |
+| -------------------------------------- | ---------------------------------------------------------------------- |
+| `projectbluefin/actions`               | `docs/skills/` (Copilot CLI) AND `.github/skills/` (Cloud Agent)       |
+| Any other `projectbluefin` repo        | That repo's `.github/skills/` — create if absent                       |
 | Cross-cutting (affects multiple repos) | Local first, then open a propagation issue in `projectbluefin/actions` |
 
 ### Where to find what needs review
@@ -255,6 +259,7 @@ The raw data behind the dashboard is also machine-accessible at `https://queue.p
 ### What humans check in review
 
 When reviewing an agent PR, verify:
+
 - Did the agent commit a `.github/skills/` update in this same PR?
 - Is the learning described in that update real and non-obvious?
 - If a skill file exists for the area worked in, was it updated?
@@ -267,15 +272,15 @@ A PR that touches CI, build, or packaging without a skill file update is a yello
 
 ### Core image repos
 
-| Repo | Role | What humans contribute |
-|------|------|----------------------|
-| [projectbluefin/bluefin](https://github.com/projectbluefin/bluefin) | Main OS image (Fedora-based) | Design decisions, PR review, `testing`-branch fixes |
-| [projectbluefin/bluefin-lts](https://github.com/projectbluefin/bluefin-lts) | LTS variant (CentOS Stream 10 / bootc) | Same; LTS-specific hardware or lifecycle concerns |
-| [projectbluefin/common](https://github.com/projectbluefin/common) | Shared OCI layer — desktop config, ujust, GNOME opinions | Shared behavior that applies to all variants |
-| [projectbluefin/aurorafin-shared](https://github.com/projectbluefin/aurorafin-shared) | Shared system files for Aurora and Bluefin | Cross-project shared configuration |
-| [projectbluefin/dakota](https://github.com/projectbluefin/dakota) | Distroless prototype (Dakotaraptor, BuildStream) | Experimental; actions library wired in |
-| [projectbluefin/actions](https://github.com/projectbluefin/actions) | Shared CI library — 10 composite actions, canonical skills hub | CI/actions improvements; skill file propagation |
-| [projectbluefin/bonedigger](https://github.com/projectbluefin/bonedigger) | Client reporting + issue lifecycle bot | Client UX, lifecycle bot behavior |
+| Repo                                                                                  | Role                                                           | What humans contribute                              |
+| ------------------------------------------------------------------------------------- | -------------------------------------------------------------- | --------------------------------------------------- |
+| [projectbluefin/bluefin](https://github.com/projectbluefin/bluefin)                   | Main OS image (Fedora-based)                                   | Design decisions, PR review, `testing`-branch fixes |
+| [projectbluefin/bluefin-lts](https://github.com/projectbluefin/bluefin-lts)           | LTS variant (CentOS Stream 10 / bootc)                         | Same; LTS-specific hardware or lifecycle concerns   |
+| [projectbluefin/common](https://github.com/projectbluefin/common)                     | Shared OCI layer — desktop config, ujust, GNOME opinions       | Shared behavior that applies to all variants        |
+| [projectbluefin/aurorafin-shared](https://github.com/projectbluefin/aurorafin-shared) | Shared system files for Aurora and Bluefin                     | Cross-project shared configuration                  |
+| [projectbluefin/dakota](https://github.com/projectbluefin/dakota)                     | Distroless prototype (Dakotaraptor, BuildStream)               | Experimental; actions library wired in              |
+| [projectbluefin/actions](https://github.com/projectbluefin/actions)                   | Shared CI library — 10 composite actions, canonical skills hub | CI/actions improvements; skill file propagation     |
+| [projectbluefin/bonedigger](https://github.com/projectbluefin/bonedigger)             | Client reporting + issue lifecycle bot                         | Client UX, lifecycle bot behavior                   |
 
 ```mermaid
 flowchart TB
@@ -310,23 +315,23 @@ flowchart TB
 
 ### Infrastructure repos
 
-| Repo | Role |
-|------|------|
-| [projectbluefin/housekeeping](https://github.com/projectbluefin/housekeeping) | Org-wide maintenance workflows |
+| Repo                                                                                | Role                                                          |
+| ----------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| [projectbluefin/housekeeping](https://github.com/projectbluefin/housekeeping)       | Org-wide maintenance workflows                                |
 | [projectbluefin/renovate-config](https://github.com/projectbluefin/renovate-config) | Self-hosted Renovate configuration — GitHub App auth, no PATs |
-| [projectbluefin/testsuite](https://github.com/projectbluefin/testsuite) | QA pipeline — Argo Workflows + KubeVirt + AT-SPI tests |
-| [projectbluefin/testing-lab](https://github.com/projectbluefin/testing-lab) | Homelab QA pipeline |
-| [projectbluefin/bluespeed](https://github.com/projectbluefin/bluespeed) | KubeStellar homelab factory |
-| [projectbluefin/iso](https://github.com/projectbluefin/iso) | ISO builds |
-| [projectbluefin/dakota-iso](https://github.com/projectbluefin/dakota-iso) | Bootable UEFI live ISO for Dakota |
-| [projectbluefin/bootc-installer](https://github.com/projectbluefin/bootc-installer) | libadwaita bootc installer (fork of Vanilla OS installer) |
-| [projectbluefin/finpilot](https://github.com/projectbluefin/finpilot) | Build your own custom Bluefin |
+| [projectbluefin/testsuite](https://github.com/projectbluefin/testsuite)             | QA pipeline — Argo Workflows + KubeVirt + AT-SPI tests        |
+| [projectbluefin/testing-lab](https://github.com/projectbluefin/testing-lab)         | Homelab QA pipeline                                           |
+| [projectbluefin/bluespeed](https://github.com/projectbluefin/bluespeed)             | KubeStellar homelab factory                                   |
+| [projectbluefin/iso](https://github.com/projectbluefin/iso)                         | ISO builds                                                    |
+| [projectbluefin/dakota-iso](https://github.com/projectbluefin/dakota-iso)           | Bootable UEFI live ISO for Dakota                             |
+| [projectbluefin/bootc-installer](https://github.com/projectbluefin/bootc-installer) | libadwaita bootc installer (fork of Vanilla OS installer)     |
+| [projectbluefin/finpilot](https://github.com/projectbluefin/finpilot)               | Build your own custom Bluefin                                 |
 
 ### Consuming repos (remain in ublue-os)
 
-| Repo | Role |
-|------|------|
-| [ublue-os/aurora](https://github.com/ublue-os/aurora) | KDE variant |
+| Repo                                                    | Role           |
+| ------------------------------------------------------- | -------------- |
+| [ublue-os/aurora](https://github.com/ublue-os/aurora)   | KDE variant    |
 | [ublue-os/bazzite](https://github.com/ublue-os/bazzite) | Gaming variant |
 
 Aurora and Bazzite consume `projectbluefin/common` but are maintained in the `ublue-os` org. Agent PRs to `ublue-os/*` follow each repo's own AGENTS.md.
@@ -371,18 +376,19 @@ flowchart TB
 
 ### What each stage checks
 
-| Stage | What it checks | What blocks it |
-|-------|---------------|----------------|
-| `pr-validation.yml` (~1–2 min) | `just check`, shellcheck, hadolint, pre-commit, bats unit tests | Any lint failure |
-| `pr-smoke.yml` (build-affecting PRs only) | Full image build + smoke test suite — runs when Containerfile, Justfile, image-versions.yml, build_files/, or system_files/ change | Build failure or smoke scenario failure |
-| `build-image-testing.yml` (~26 min) | Full image build, all variants; triggered by push to `main` | Build failure |
-| `post-testing-e2e.yml` | `smoke,common` suites in a QEMU VM via AT-SPI | Any scenario fails |
-| `weekly-testing-promotion.yml` | e2e passed for locked SHA; `developer,vanilla-gnome,software,common` suites; 2 human approvals in GitHub Environment | Missing e2e pass, fewer than 2 approvals, or SHA drift |
-| `nightly.yml` (02:00 UTC daily) | `smoke,common,vanilla-gnome` suites against `:latest` — vanilla-gnome baseline distinguishes Bluefin-specific regressions from upstream GNOME issues | Advisory; does not block merges |
+| Stage                                     | What it checks                                                                                                                                       | What blocks it                                         |
+| ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| `pr-validation.yml` (~1–2 min)            | `just check`, shellcheck, hadolint, pre-commit, bats unit tests                                                                                      | Any lint failure                                       |
+| `pr-smoke.yml` (build-affecting PRs only) | Full image build + smoke test suite — runs when Containerfile, Justfile, image-versions.yml, build_files/, or system_files/ change                   | Build failure or smoke scenario failure                |
+| `build-image-testing.yml` (~26 min)       | Full image build, all variants; triggered by push to `main`                                                                                          | Build failure                                          |
+| `post-testing-e2e.yml`                    | `smoke,common` suites in a QEMU VM via AT-SPI                                                                                                        | Any scenario fails                                     |
+| `weekly-testing-promotion.yml`            | e2e passed for locked SHA; `developer,vanilla-gnome,software,common` suites; 2 human approvals in GitHub Environment                                 | Missing e2e pass, fewer than 2 approvals, or SHA drift |
+| `nightly.yml` (02:00 UTC daily)           | `smoke,common,vanilla-gnome` suites against `:latest` — vanilla-gnome baseline distinguishes Bluefin-specific regressions from upstream GNOME issues | Advisory; does not block merges                        |
 
 ### What "`:stable`" means under the new model
 
 An image tagged `:stable` has:
+
 1. Passed `smoke,common` automated scenarios in a virtual machine running the exact image being promoted
 2. Passed `developer`, `vanilla-gnome`, `software`, and `common` suites in the weekly promotion run
 3. Been approved by two distinct maintainers via the GitHub `production` Environment (machine-enforced — the job cannot start without both)
@@ -428,11 +434,11 @@ stateDiagram-v2
 
 ### Lifecycle bot commands
 
-| Command | Who | Effect |
-|---------|-----|--------|
-| `/approve` | Maintainers only | Moves issue from `filed` → `queued` |
-| `/claim` | Anyone | Moves issue from `queued` → `claimed`; assigns to commenter |
-| `/unclaim` | Assignee | Returns issue from `claimed` → `queued` |
+| Command    | Who              | Effect                                                      |
+| ---------- | ---------------- | ----------------------------------------------------------- |
+| `/approve` | Maintainers only | Moves issue from `filed` → `queued`                         |
+| `/claim`   | Anyone           | Moves issue from `queued` → `claimed`; assigns to commenter |
+| `/unclaim` | Assignee         | Returns issue from `claimed` → `queued`                     |
 
 ---
 
@@ -457,15 +463,16 @@ This means the `build-image-testing.yml` trigger is on `main`, while `pr-validat
 
 ### Streams
 
-| Stream | Tag | Who uses it |
-|--------|-----|-------------|
-| Testing | `:testing` | Built from every push to `main`; developers and testers |
-| Latest | `:latest` | Weekly promotion from `main` via `skopeo copy` | Enthusiasts |
-| Stable | `:stable` | Weekly promotion from `main` via `skopeo copy` + 2-human gate | Regular users |
+| Stream  | Tag        | Who uses it                                                   |
+| ------- | ---------- | ------------------------------------------------------------- |
+| Testing | `:testing` | Built from every push to `main`; developers and testers       |
+| Latest  | `:latest`  | Weekly promotion from `main` via `skopeo copy`                | Enthusiasts   |
+| Stable  | `:stable`  | Weekly promotion from `main` via `skopeo copy` + 2-human gate | Regular users |
 
 ### Promotion cadence
 
 Every Tuesday at 06:00 UTC, `weekly-testing-promotion.yml`:
+
 1. Locks the `main` HEAD SHA
 2. Verifies that `post-testing-e2e.yml` succeeded for that exact SHA
 3. Runs the extended `developer,vanilla-gnome,software,common` suites
@@ -494,6 +501,7 @@ gh search issues --owner projectbluefin --state open
 ```
 
 Also see:
+
 - [todo.projectbluefin.io](https://todo.projectbluefin.io/) — work that is new or in progress
 - [done.projectbluefin.io](https://done.projectbluefin.io/) — recently completed work
 
@@ -565,6 +573,7 @@ This is the human's most important contribution to an agentic project. Agents im
 ### What good evidence looks like
 
 Before requesting review, an agent PR should include:
+
 - A link to a CI run, workflow run, or test output that exercises the change
 - If no automated test exists, a description of how the change was manually verified
 - A skill file update committed in the same PR (not a follow-up)
@@ -572,6 +581,7 @@ Before requesting review, an agent PR should include:
 ### The skill file check
 
 Look at `.github/skills/` in the PR diff. Ask:
+
 - Did this change touch CI, build scripts, or non-obvious configuration?
 - If yes, is there a skill file covering this area?
 - If yes, was it updated in this PR?
@@ -580,12 +590,12 @@ Nothing warns you automatically about code changes landing without a skill updat
 
 ### Red flags
 
-| Signal | What it means |
-|--------|--------------|
-| PR description is a diff summary | Agent narrated what it did, not why; the why belongs in the commit message |
-| No CI run linked, no verification | Evidence of work is missing; do not approve |
-| Non-trivial CI change with no skill update | Future agents will repeat the same trial-and-error |
-| `@quarantine` tag removed without a measured pass rate | Premature — a flaky gate is worse than no gate |
+| Signal                                                 | What it means                                                              |
+| ------------------------------------------------------ | -------------------------------------------------------------------------- |
+| PR description is a diff summary                       | Agent narrated what it did, not why; the why belongs in the commit message |
+| No CI run linked, no verification                      | Evidence of work is missing; do not approve                                |
+| Non-trivial CI change with no skill update             | Future agents will repeat the same trial-and-error                         |
+| `@quarantine` tag removed without a measured pass rate | Premature — a flaky gate is worse than no gate                             |
 
 ### PR comment policy
 
@@ -612,6 +622,7 @@ On any open PR, a maintainer can comment:
 ```
 
 This triggers `e2e-dispatch.yml`, which:
+
 1. Builds the PR image
 2. Runs smoke + developer + vanilla-gnome suites against it
 3. Posts results back to the PR
@@ -647,21 +658,21 @@ sudo just build-ghcr bluefin testing main
 
 [`projectbluefin/testsuite`](https://github.com/projectbluefin/testsuite) — running on standard `ubuntu-latest` GitHub Actions runners via QEMU + KVM. No self-hosted hardware required.
 
-| Suite | What it validates | Used in |
-|-------|-------------------|---------|
-| `smoke` | GNOME Shell via AT-SPI, app launches, lock screen, workspaces, regressions | post-testing-e2e, pr-smoke, nightly, weekly promotion |
-| `common` | Shell env, dconf/GSettings defaults, desktop entries, signing | post-testing-e2e, nightly, weekly promotion |
-| `developer` | Homebrew round-trip, Podman, Ptyxis | weekly promotion |
-| `dx` | Developer Experience tools | optional |
-| `flatcar` | Flatcar/CoreOS-mode boot and lifecycle | optional |
-| `software` | Flatpak operations, Bazaar | weekly promotion |
-| `vanilla-gnome` | GNOME core without Bluefin customizations — distinguishes Bluefin regressions from upstream GNOME issues | nightly, weekly promotion |
-| `bazzite` | Bazzite-specific extensions and shell | optional |
-| `nvidia` | GPU driver and runtime | optional |
-| `security` | Image provenance, SELinux | optional |
-| `lifecycle` | `bootc upgrade` + rollback + migration | optional |
-| `hardware` | Peripheral detection | optional |
-| `unit` | Unit tests for scripts and tooling | PR validation only — intentionally excluded from image path gates |
+| Suite           | What it validates                                                                                        | Used in                                                           |
+| --------------- | -------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| `smoke`         | GNOME Shell via AT-SPI, app launches, lock screen, workspaces, regressions                               | post-testing-e2e, pr-smoke, nightly, weekly promotion             |
+| `common`        | Shell env, dconf/GSettings defaults, desktop entries, signing                                            | post-testing-e2e, nightly, weekly promotion                       |
+| `developer`     | Homebrew round-trip, Podman, Ptyxis                                                                      | weekly promotion                                                  |
+| `dx`            | Developer Experience tools                                                                               | optional                                                          |
+| `flatcar`       | Flatcar/CoreOS-mode boot and lifecycle                                                                   | optional                                                          |
+| `software`      | Flatpak operations, Bazaar                                                                               | weekly promotion                                                  |
+| `vanilla-gnome` | GNOME core without Bluefin customizations — distinguishes Bluefin regressions from upstream GNOME issues | nightly, weekly promotion                                         |
+| `bazzite`       | Bazzite-specific extensions and shell                                                                    | optional                                                          |
+| `nvidia`        | GPU driver and runtime                                                                                   | optional                                                          |
+| `security`      | Image provenance, SELinux                                                                                | optional                                                          |
+| `lifecycle`     | `bootc upgrade` + rollback + migration                                                                   | optional                                                          |
+| `hardware`      | Peripheral detection                                                                                     | optional                                                          |
+| `unit`          | Unit tests for scripts and tooling                                                                       | PR validation only — intentionally excluded from image path gates |
 
 Scenarios tagged `@quarantine` are present in the repo but excluded from the promotion gate. Do not remove a `@quarantine` tag until the scenario has a demonstrated pass rate suitable for blocking promotion.
 
@@ -672,6 +683,7 @@ Scenarios tagged `@quarantine` are present in the repo but excluded from the pro
 Renovate runs on a self-hosted configuration from [`projectbluefin/renovate-config`](https://github.com/projectbluefin/renovate-config) — GitHub App auth, no PATs.
 
 **What Renovate automates:**
+
 - Base image digest bumps (Containerfile ARG digest pins)
 - GitHub Actions SHA pins (updating commit hashes with version comments)
 - Container image digest updates in `image-versions.yml`
@@ -721,12 +733,12 @@ See [github.com/orgs/projectbluefin/people](https://github.com/orgs/projectbluef
 
 ### Where to participate
 
-| Channel | Use for |
-|---------|---------|
-| [GitHub Issues](https://github.com/projectbluefin/bluefin/issues) | Bug reports, feature requests, permanent record of decisions |
-| [community.projectbluefin.io](https://community.projectbluefin.io/) | Long-form discussion, support questions |
-| Discord | Quick questions, real-time debugging — see [docs.projectbluefin.io/communications](https://docs.projectbluefin.io/communications/) for the link |
-| [pullrequests.projectbluefin.io](https://pullrequests.projectbluefin.io) | PRs that need review — even read-only review is valuable |
+| Channel                                                                  | Use for                                                                                                                                         |
+| ------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| [GitHub Issues](https://github.com/projectbluefin/bluefin/issues)        | Bug reports, feature requests, permanent record of decisions                                                                                    |
+| [community.projectbluefin.io](https://community.projectbluefin.io/)      | Long-form discussion, support questions                                                                                                         |
+| Discord                                                                  | Quick questions, real-time debugging — see [docs.projectbluefin.io/communications](https://docs.projectbluefin.io/communications/) for the link |
+| [pullrequests.projectbluefin.io](https://pullrequests.projectbluefin.io) | PRs that need review — even read-only review is valuable                                                                                        |
 
 ### Issue capture discipline
 
@@ -737,6 +749,36 @@ Discord is for rapid iteration. GitHub is for permanent knowledge. After a Disco
 3. Cross-reference the issue from Discord so future searchers find it
 
 Discord messages disappear from search. GitHub issues do not.
+
+### Theming your hive profile card
+
+The hive's leaderboard can load a stylesheet from a public GitHub repository, so
+your contributor card can carry the project's colours instead of a generic
+palette. Bluefin publishes one:
+
+```text
+https://hosted-projectbluefin-knuckle-gjvq.hive.kubestellar.io/contribute/leaderboard?style=projectbluefin/documentation/static/hive/leaderboard.css@main
+```
+
+The `?style=` parameter takes `owner/repo/path/theme.css@ref`. Omit `@ref` to
+track the repository's default branch. The hive fetches the file server-side
+from `raw.githubusercontent.com`, which keeps its Content-Security-Policy intact
+and keeps your IP address away from third parties, then sanitizes the result and
+caps it at 128 KiB.
+
+To write your own, copy
+[`static/hive/leaderboard.css`](https://github.com/projectbluefin/documentation/blob/main/static/hive/leaderboard.css)
+and change the four `--bf-*` values at the top. Two rules matter:
+
+- **No `@import` and no `url()`.** Both are stripped server-side, because a
+  stylesheet that can fetch is a stylesheet that can exfiltrate. Keep the theme
+  to colour, gradient and spacing.
+- **Style both themes.** The hive ships light and dark via
+  `[data-theme="light"]`. A theme that only looks right in dark mode is a theme
+  that looks broken to half its readers.
+
+An unfetchable or invalid stylesheet falls back to the default with a notice, so
+a mistake here degrades quietly rather than breaking the page.
 
 ### Code of conduct
 
