@@ -1,0 +1,107 @@
+/*
+ * Two-level navigation for /factory.
+ * Authorized by adr/0003-factory-two-level-navigation.md.
+ *
+ * Every value here answers a measured defect in the previous tab bar, which was
+ * 0.78rem, uppercase, #8b949e with no background fill, a 2px active underline
+ * and a sub-44px target, sitting ~400px down a 1080p viewport. Readers reached
+ * content before they reached navigation.
+ */
+
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--fx-bg);
+  border-bottom: 1px solid var(--fx-border);
+  margin-bottom: var(--fx-space-5);
+}
+
+.primaryRow {
+  display: flex;
+  gap: var(--fx-space-2);
+  padding: var(--fx-space-2) 0 0;
+}
+
+.primaryTab {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  padding: var(--fx-space-2) var(--fx-space-5);
+  border-radius: var(--fx-radius-md) var(--fx-radius-md) 0 0;
+  font-size: var(--fx-text-md);
+  font-weight: var(--fx-weight-bold);
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--fx-text-muted);
+  background: transparent;
+  border: 1px solid transparent;
+  border-bottom: none;
+  transition: var(--fx-transition);
+}
+
+.primaryTab:hover {
+  color: var(--fx-text);
+  background: var(--fx-surface);
+  text-decoration: none;
+}
+
+.primaryTabActive,
+.primaryTabActive:hover {
+  color: var(--fx-text-strong);
+  background: var(--fx-surface-2);
+  border-color: var(--fx-border);
+}
+
+.secondaryRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--fx-space-1);
+  padding: var(--fx-space-2);
+  background: var(--fx-surface-2);
+  border-radius: 0 var(--fx-radius-md) var(--fx-radius-md) var(--fx-radius-md);
+}
+
+.secondaryTab {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  padding: var(--fx-space-2) var(--fx-space-4);
+  border-radius: var(--fx-radius-pill);
+  font-size: var(--fx-text-sm);
+  font-weight: var(--fx-weight-medium);
+  color: var(--fx-text-muted);
+  transition: var(--fx-transition);
+}
+
+.secondaryTab:hover {
+  color: var(--fx-text);
+  background: var(--fx-surface-3);
+  text-decoration: none;
+}
+
+/* The active secondary is a filled pill, not an underline: at this size an
+   underline is not enough to read as "you are here" across seven peers. */
+.secondaryTabActive,
+.secondaryTabActive:hover {
+  color: var(--fx-bg);
+  background: var(--fx-sev-watch);
+  font-weight: var(--fx-weight-bold);
+}
+
+.primaryTab:focus-visible,
+.secondaryTab:focus-visible {
+  outline: 2px solid var(--fx-accent);
+  outline-offset: 2px;
+}
+
+@media (max-width: 600px) {
+  .primaryTab {
+    padding-inline: var(--fx-space-3);
+  }
+
+  .secondaryRow {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+  }
+}
