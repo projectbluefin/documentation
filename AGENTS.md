@@ -248,6 +248,10 @@ usable gate. Check only the paths you changed, and format them with
 `npx prettier --write <paths>`. Do not reformat files your task did not touch — a
 repo-wide `npm run prettier` would bury your change in an unreviewable diff.
 
+**Components:** `npm test` covers `scripts/*.test.js` only, but presentational
+components can be tested there too without adding tooling. See
+[`docs/skills/component-testing.md`](docs/skills/component-testing.md).
+
 `npm run build` fetches remote data first. Set `GITHUB_TOKEN` or `GH_TOKEN` when
 the fetch scripts need authenticated GitHub API access. For a fast local preview
 once data exists, use `just dev` from the `Justfile`.
