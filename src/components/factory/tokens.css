@@ -1,0 +1,80 @@
+/*
+ * Design tokens for /factory. Authorized by adr/0003-factory-two-level-navigation.md.
+ *
+ * Scoped to .fxRoot rather than :root so the dashboard's dark surface does not
+ * leak into the rest of the documentation site, which is theme-aware.
+ *
+ * Contrast note: every grey here clears WCAG AA for body text on all three
+ * surfaces. --fx-text-faint is #808893, the darkest grey in this hue that
+ * still measures >= 4.5:1 on --fx-surface-2 (4.52:1), so the muted/faint
+ * hierarchy survives without an inaccessible step. The former #484f58
+ * measured 2.7:1 and #6e7681 measured 3.5-4.1:1; both are removed rather than
+ * kept as tokens, so neither can come back by accident.
+ */
+.fxRoot {
+  --fx-bg: #0d1117;
+  --fx-surface: #161b22;
+  --fx-surface-2: #1c2128;
+  --fx-surface-3: #21262d;
+  --fx-border: #30363d;
+
+  --fx-text: #e6edf3;
+  --fx-text-strong: #f0f6fc;
+  --fx-text-muted: #8b949e;
+  --fx-text-faint: #808893;
+
+  --fx-accent: #58a6ff;
+  --fx-accent-dim: #388bfd;
+
+  /* Severity is one hue at four intensities. Never encode severity by hue,
+     and never pair red with green. Glyphs live in FX_SEVERITY. */
+  --fx-sev-unknown: hsl(38, 6%, 45%);
+  --fx-sev-ok: hsl(38, 26%, 55%);
+  --fx-sev-watch: hsl(38, 80%, 56%);
+  --fx-sev-alert: hsl(38, 100%, 68%);
+
+  /* Categorical series colours for multi-series charts. Distinguished by hue
+     *and* by dash pattern in chartTheme.ts, so the reading survives greyscale. */
+  --fx-cat-1: #58a6ff;
+  --fx-cat-2: #bc8cff;
+  --fx-cat-3: #39d2c0;
+  --fx-cat-4: #f0883e;
+  --fx-cat-5: #79b8ff;
+  --fx-cat-6: #a371f7;
+
+  --fx-space-1: 0.25rem;
+  --fx-space-2: 0.5rem;
+  --fx-space-3: 0.75rem;
+  --fx-space-4: 1rem;
+  --fx-space-5: 1.5rem;
+  --fx-space-6: 2rem;
+  --fx-space-7: 3rem;
+
+  --fx-radius-sm: 4px;
+  --fx-radius-md: 8px;
+  --fx-radius-lg: 12px;
+  --fx-radius-pill: 999px;
+
+  --fx-text-xs: 0.75rem;
+  --fx-text-sm: 0.875rem;
+  --fx-text-md: 1rem;
+  --fx-text-lg: 1.25rem;
+  --fx-text-xl: 1.75rem;
+
+  --fx-weight-normal: 400;
+  --fx-weight-medium: 500;
+  --fx-weight-bold: 700;
+  --fx-weight-black: 800;
+
+  --fx-transition: 160ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fxRoot,
+  .fxRoot * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

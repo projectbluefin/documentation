@@ -2383,7 +2383,7 @@ function GovernorPanel({
           {issues} issues + {prs} PRs &mdash; {depth} total
           {!hasRealThresholds && registry && (
             <span
-              style={{ color: "#484f58", fontWeight: 400, fontSize: "0.7rem" }}
+              style={{ color: "#808893", fontWeight: 400, fontSize: "0.7rem" }}
             >
               {" "}
               (registry)
@@ -2445,7 +2445,7 @@ function GovernorPanel({
           <div
             style={{
               fontSize: "0.65rem",
-              color: "#484f58",
+              color: "#808893",
               marginBottom: "3px",
               fontFamily: "monospace",
               letterSpacing: "0.04em",
@@ -2473,7 +2473,7 @@ function GovernorPanel({
               display: "flex",
               justifyContent: "space-between",
               fontSize: "0.6rem",
-              color: "#484f58",
+              color: "#808893",
               fontFamily: "monospace",
             }}
           >
@@ -5025,7 +5025,7 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
                             {chk.detail && (
                               <span
                                 style={{
-                                  color: "#484f58",
+                                  color: "#808893",
                                   fontSize: "0.68rem",
                                   maxWidth: "8rem",
                                   overflow: "hidden",
@@ -5121,7 +5121,7 @@ export default function HiveFactoryDashboard(): React.JSX.Element {
                           <span
                             style={{
                               fontSize: "0.7rem",
-                              color: "#484f58",
+                              color: "#808893",
                               fontFamily: "monospace",
                               width: "1.2rem",
                               flexShrink: 0,
