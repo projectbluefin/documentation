@@ -36,6 +36,11 @@ checkout` stamps every tracked file with the current time and the TTL never
   long lines, so any assertion that reads whole lines can pass locally and then
   fail in CI. This broke a production deploy once already; the fix is to parse
   the thing you are asserting on rather than its layout.
+- When a service transforms what you publish, **fetch the transformed result
+  back and diff it against the source**. The hive sanitizes a custom stylesheet
+  server-side; four rounds of "looks right in the repository" shipped a theme
+  that rendered as a no-op, and only the diff showed which rules had been
+  silently discarded and why.
 
 Each is invisible from the source alone. Each would be paid again by the next
 agent. That is the bar.
