@@ -768,22 +768,32 @@ caps it at 128 KiB.
 
 To write your own, copy
 [`static/hive/leaderboard.css`](https://github.com/projectbluefin/documentation/blob/main/static/hive/leaderboard.css)
-and change the four `--bf-*` values at the top. Three constraints are real, and
-each was verified against the live sanitizer rather than assumed:
+and change the colours. The sanitizer is stricter than it first appears, and
+each of these was verified by fetching the sanitized result back and diffing it
+against what was sent. It rejects a whole rule if any declaration in it is
+disallowed:
 
-- **No `@import` and no `url()`.** Both are stripped, because a stylesheet that
-  can fetch is a stylesheet that can exfiltrate.
-- **No at-rules at all.** `@media` does not survive, so you cannot branch on
+- **No `@import` and no `url()`.** A stylesheet that can fetch is a stylesheet
+  that can exfiltrate.
+- **No at-rules at all**, `@media` included. You cannot branch on
   `prefers-color-scheme` or `prefers-reduced-motion`.
-- **No ancestor selectors.** Every rule is scoped by prepending
-  `#tab-leaderboard`, so `[data-theme="light"] .me-card` becomes
-  `#tab-leaderboard [data-theme="light"] .me-card`. The hive sets `data-theme`
-  on `<html>`, an ancestor of that scope, so such a rule can never match.
+- **No custom properties.** A rule containing `--anything: value` is dropped
+  whole, so a theme cannot define its own variables — and cannot set
+  `--me-accent` either, even though that is how the hive's built-in styles
+  work. Use literal colours.
+- **No gradients.** `linear-gradient()` does not survive.
+- **No ancestor selectors.** Rules are scoped by prepending `#tab-leaderboard`,
+  so `[data-theme="light"] .me-card` becomes
+  `#tab-leaderboard [data-theme="light"] .me-card`, and the hive sets
+  `data-theme` on `<html>` — above that scope, so it can never match.
 
-Together those mean **a theme cannot branch on light versus dark**. Pick one
-palette that clears contrast on both of the hive's surfaces — `#161b22` and
-`#f6f8fa` — rather than writing rules that are silently discarded. Bluefin's
-theme uses `#5c7bd1`, which reaches 4.29:1 and 3.79:1 respectively.
+The last two together mean **a theme cannot branch on light versus dark**. Pick
+one palette that clears contrast on both hive surfaces, `#161b22` and
+`#f6f8fa`, rather than writing rules that are silently discarded. Bluefin's
+theme uses `#5c7bd1` at 4.29:1 and 3.79:1 respectively.
+
+Changes take up to five minutes to appear: the hive caches the fetched
+stylesheet with `max-age=300`.
 
 An unfetchable or invalid stylesheet falls back to the default with a notice, so
 a mistake here degrades quietly rather than breaking the page.

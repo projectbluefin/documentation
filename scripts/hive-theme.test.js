@@ -44,12 +44,12 @@ test("no remote origin is referenced", () => {
   assert.ok(!/https?:\/\//i.test(code));
 });
 
-test("the theme drives the documented --me-* contract", () => {
-  // The hive's built-in styles are palette variations over these two
-  // variables. Following that contract is what keeps the theme working when
-  // the hive changes its markup.
-  assert.ok(/--me-accent\s*:/.test(code));
-  assert.ok(/--me-accent-soft\s*:/.test(code));
+test("the theme does NOT try to drive the --me-* contract", () => {
+  // The hive's built-in styles are palette variations over --me-accent, but a
+  // *custom* theme cannot use that mechanism: the sanitizer drops any rule
+  // declaring a custom property, so setting --me-accent silently does nothing.
+  // Verified live 2026-08-08. Reported upstream as a documentation gap.
+  assert.ok(!/--me-accent/.test(code), "setting --me-accent is a no-op here");
 });
 
 test("the theme carries a Bluefin brand blue from the docs site", () => {
@@ -61,6 +61,21 @@ test("the theme carries a Bluefin brand blue from the docs site", () => {
   );
   assert.ok(css.includes("#5c7bd1"), "theme is missing the brand blue");
   assert.ok(custom.includes("#5c7bd1"), "custom.css no longer defines it");
+});
+
+test("no custom property is declared — the sanitizer drops the whole rule", () => {
+  // Verified live: the rule defining --bf-* was discarded, leaving every other
+  // rule referencing variables that no longer existed. The theme rendered as a
+  // no-op while looking correct in the repository.
+  assert.ok(!/^\s*--[a-z-]+\s*:/im.test(code), "declare no custom properties");
+});
+
+test("no var() is referenced, since nothing can define one", () => {
+  assert.ok(!/var\(/.test(code), "use literal values");
+});
+
+test("no gradient — it does not survive sanitization either", () => {
+  assert.ok(!/gradient\(/i.test(code));
 });
 
 test("no at-rule — the sanitizer drops every one", () => {
@@ -99,16 +114,22 @@ test("the palette clears WCAG on both hive surfaces", () => {
     return Math.max(x, y) / Math.min(x, y);
   };
 
-  const brand = /--bf-brand:\s*(#[0-9a-f]{6})/i.exec(code)[1];
-  for (const surface of ["#161b22", "#f6f8fa"]) {
-    const r = ratio(brand, surface);
-    assert.ok(r >= 3, `${brand} on ${surface} is ${r.toFixed(2)}:1, needs 3`);
+  // Every literal hex in the file has to survive both surfaces, except the
+  // white that sits on the one filled button.
+  const hexes = [...new Set(code.match(/#[0-9a-f]{6}/gi) || [])].map((h) =>
+    h.toLowerCase(),
+  );
+  const BUTTON_BG = "#364d8d";
+  for (const hex of hexes) {
+    if (hex === "#ffffff" || hex === BUTTON_BG) continue;
+    for (const surface of ["#161b22", "#f6f8fa"]) {
+      const r = ratio(hex, surface);
+      assert.ok(r >= 3, `${hex} on ${surface} is ${r.toFixed(2)}:1, needs 3`);
+    }
   }
 
-  // The one filled button carries white text.
-  const deep = /--bf-brand-deep:\s*(#[0-9a-f]{6})/i.exec(code)[1];
-  const white = ratio("#ffffff", deep);
-  assert.ok(white >= 4.5, `white on ${deep} is ${white.toFixed(2)}:1`);
+  const white = ratio("#ffffff", BUTTON_BG);
+  assert.ok(white >= 4.5, `white on ${BUTTON_BG} is ${white.toFixed(2)}:1`);
 });
 
 test("every brace is balanced, so the sanitizer sees valid CSS", () => {

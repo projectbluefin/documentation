@@ -6,69 +6,59 @@
  *   /contribute/leaderboard?style=projectbluefin/documentation/static/hive/leaderboard.css@main
  *
  * Omit @main to track HEAD. See projectbluefin/documentation#1024 and
- * kubestellar/hive#2612 for the design.
+ * kubestellar/hive#2612.
  *
  * ── What the server-side sanitizer actually does ─────────────────────────────
  * Verified against the live hive on 2026-08-08 by fetching
- * /api/leaderboard/style?src=... and reading what came back. This is not
- * guesswork, and it constrains everything below:
+ * /api/leaderboard/style?src=... and diffing what came back against what was
+ * sent. Not guesswork. It rejects a whole rule if any declaration in it is
+ * disallowed, and it disallows more than the documentation implies:
  *
- *   1. @import and url() are stripped, so a theme cannot fetch and therefore
- *      cannot exfiltrate. No web fonts, no remote images.
- *   2. ALL at-rules are dropped, @media included. A @media block simply does
- *      not survive, so prefers-color-scheme and prefers-reduced-motion cannot
- *      be used here.
- *   3. Every rule is scoped by prepending `#tab-leaderboard ` to its selector.
- *      That correctly scopes `.me-card` to `#tab-leaderboard .me-card`, but it
- *      makes an ancestor selector unusable: `[data-theme="light"] .me-card`
- *      becomes `#tab-leaderboard [data-theme="light"] .me-card`, and since the
- *      hive sets data-theme on <html> — an ancestor of the scope, not a
- *      descendant — that rule can never match.
- *   4. The payload is capped at 128 KiB.
+ *   1. @import and url() — stripped, so a theme cannot fetch and therefore
+ *      cannot exfiltrate.
+ *   2. Every at-rule, @media included. prefers-color-scheme and
+ *      prefers-reduced-motion are unavailable.
+ *   3. Custom property DECLARATIONS. A rule containing `--anything: value` is
+ *      dropped whole. A theme therefore cannot define its own variables, and
+ *      cannot override --me-accent either, even though that is how the hive's
+ *      own built-in styles work.
+ *   4. linear-gradient(), and presumably other value functions beyond a small
+ *      allowlist.
+ *   5. Selectors are scoped by prepending `#tab-leaderboard `, which makes an
+ *      ancestor selector unmatchable: [data-theme="light"] .me-card becomes
+ *      #tab-leaderboard [data-theme="light"] .me-card, and data-theme lives on
+ *      <html>, above the scope.
+ *   6. 128 KiB cap, 5 minute cache.
  *
- * Consequence: this theme cannot branch on light versus dark. So it does not
- * try. It uses ONE palette chosen to clear WCAG on both of the hive's surfaces,
- * which is the honest way to satisfy a constraint rather than shipping rules
- * that are silently discarded.
+ * Consequences, and why this file looks the way it does:
+ *
+ *   - Every colour is a literal. Variables would be silently discarded, and a
+ *     rule that is silently discarded is worse than one that was never written,
+ *     because it reads as handled.
+ *   - There is no light/dark branch, because rule 5 forbids one. A single
+ *     palette clears contrast on both hive surfaces instead.
  *
  * ── The palette ─────────────────────────────────────────────────────────────
- * #5c7bd1 is Bluefin's own --ifm-color-primary-light from the documentation
- * site (src/css/custom.css), and it is the brand value that survives both
- * surfaces: 4.29:1 on the hive's dark surface (#161b22) and 3.79:1 on its light
- * one (#f6f8fa). Both clear the 3:1 required of large text and non-text UI,
- * which is all this colour is used for.
+ * #5c7bd1 is Bluefin's --ifm-color-primary-light from src/css/custom.css, and
+ * it is the brand value that survives both surfaces: 4.29:1 on the hive's dark
+ * surface (#161b22) and 3.79:1 on its light one (#f6f8fa). Both clear the 3:1
+ * required of large text and non-text UI, which is all it is used for.
  *
  * #364d8d carries white text at 8.07:1 for the one filled button.
- *
- * The washes are low-alpha tints of the same hue. Alpha compositing means they
- * read as a faint blue lift on a dark surface and a faint blue tint on a light
- * one, without either being specified.
+ * rgba(92,123,209,…) washes composite correctly over either surface.
  */
 
 .me-card {
-  --bf-brand: #5c7bd1;
-  --bf-brand-deep: #364d8d;
-  --bf-brand-wash: rgba(92, 123, 209, 0.12);
-  --bf-brand-edge: rgba(92, 123, 209, 0.38);
-
-  /* The contract the hive's built-in styles use: they are palette variations
-     over these two variables. Setting them rather than overriding the card's
-     structure is what keeps this working when the hive changes its markup. */
-  --me-accent: var(--bf-brand);
-  --me-accent-soft: var(--bf-brand-wash);
-
-  border-color: var(--bf-brand-edge);
+  border-color: rgba(92, 123, 209, 0.38);
 }
 
 .me-card .me-card__band {
-  background:
-    linear-gradient(180deg, var(--bf-brand-wash) 0%, transparent 100%),
-    var(--cc-surface, transparent);
-  border-bottom: 1px solid var(--bf-brand-edge);
+  background-color: rgba(92, 123, 209, 0.08);
+  border-bottom: 1px solid rgba(92, 123, 209, 0.38);
 }
 
 .me-card .me-medallion {
-  box-shadow: 0 0 0 2px var(--bf-brand-edge);
+  box-shadow: 0 0 0 2px rgba(92, 123, 209, 0.38);
 }
 
 .me-card .me-id__name {
@@ -76,17 +66,17 @@
 }
 
 .me-card .me-rankpill {
-  background: var(--bf-brand-wash);
-  border: 1px solid var(--bf-brand-edge);
+  background-color: rgba(92, 123, 209, 0.12);
+  border: 1px solid rgba(92, 123, 209, 0.38);
   border-radius: 12px;
 }
 
 .me-card .me-rankpill__num {
-  color: var(--bf-brand);
+  color: #5c7bd1;
 }
 
 .me-card .me-statgrid .lb-primary {
-  color: var(--bf-brand);
+  color: #5c7bd1;
   font-variant-numeric: tabular-nums;
 }
 
@@ -95,33 +85,32 @@
 }
 
 .me-card .me-sec__title {
-  color: var(--cc-text-2, inherit);
-  border-bottom: 1px solid var(--bf-brand-edge);
+  border-bottom: 1px solid rgba(92, 123, 209, 0.38);
   padding-bottom: 4px;
 }
 
 .me-card .me-chips > * {
-  border-color: var(--bf-brand-edge);
+  border-color: rgba(92, 123, 209, 0.38);
 }
 
 .me-card .me-share {
-  background: var(--bf-brand-deep);
-  border: 1px solid var(--bf-brand-edge);
+  background-color: #364d8d;
+  border: 1px solid rgba(92, 123, 209, 0.38);
   color: #ffffff;
 }
 
 .me-card .me-share:hover,
 .me-card .me-share:focus-visible {
-  background: var(--bf-brand);
+  background-color: #5c7bd1;
   color: #ffffff;
 }
 
 .lb-row--me {
-  background: var(--bf-brand-wash);
-  border-left: 3px solid var(--bf-brand);
+  background-color: rgba(92, 123, 209, 0.12);
+  border-left: 3px solid #5c7bd1;
 }
 
 .lb-row--me .lb-rank,
 .lb-row--me .lb-primary {
-  color: var(--bf-brand);
+  color: #5c7bd1;
 }
