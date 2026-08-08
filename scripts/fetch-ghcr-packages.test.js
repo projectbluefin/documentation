@@ -2,11 +2,13 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import {
-  classifyFamily,
-  freshnessState,
-  pickStreams,
+  FALLBACK_LANES,
   buildPackage,
   buildPayload,
+  classifyFamily,
+  fallbackTagsOf,
+  freshnessState,
+  pickStreams,
 } from "./fetch-ghcr-packages.js";
 
 function version(tags, createdAt = "2026-08-01T10:00:00Z") {
@@ -179,4 +181,41 @@ test("buildPayload unavailable mode", () => {
   assert.equal(payload.unavailable, true);
   assert.equal(payload.stateReason, "no token");
   assert.deepEqual(payload.packages, []);
+});
+
+/* ── Public-registry fallback ─────────────────────────────────────────────── */
+
+test("the fallback lane list covers the families the views report on", () => {
+  // CI's default github.token is repository-scoped, so listing an org's
+  // packages fails there. Without a fallback the Images and Userspace views
+  // would be empty in production while looking fine locally.
+  const families = new Set(FALLBACK_LANES.map(classifyFamily));
+  for (const f of ["os", "userspace", "toolbox"]) {
+    assert.ok(families.has(f), `fallback lanes cover no ${f} image`);
+  }
+});
+
+test("no fallback lane is an internal image", () => {
+  // -cache and -pr images are build plumbing and are not reported.
+  for (const name of FALLBACK_LANES) {
+    assert.notEqual(classifyFamily(name), "internal", name);
+  }
+});
+
+test("fallbackTagsOf keeps reported streams and drops cosign artefacts", () => {
+  assert.deepEqual(
+    fallbackTagsOf([
+      "stable",
+      "testing",
+      "sha256-abc.sig",
+      "sha256-abc.att",
+      "44-20260530",
+      "gts",
+    ]),
+    ["stable", "testing", "gts"],
+  );
+});
+
+test("fallbackTagsOf returns an empty list rather than throwing on no tags", () => {
+  assert.deepEqual(fallbackTagsOf([]), []);
 });

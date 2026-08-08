@@ -23,7 +23,11 @@
 import { writeFileSync, existsSync, statSync, mkdirSync } from "fs";
 import { resolve, dirname } from "path";
 import { fileURLToPath, pathToFileURL } from "url";
+import { execFile } from "child_process";
+import { promisify } from "util";
 import { githubToken, ghFetch, ghPaginate, ageDays } from "./lib/gh.js";
+
+const execFileAsync = promisify(execFile);
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const OUT = resolve(__dirname, "../static/data/ghcr-packages.json");
@@ -185,6 +189,89 @@ export function buildPayload(
 
 // ── Main ────────────────────────────────────────────────────────────────
 
+/**
+ * Lanes queried anonymously from the public GHCR registry when the GitHub
+ * Packages API is unavailable.
+ *
+ * The Packages API needs a token carrying `read:packages`, and CI's default
+ * `github.token` is repository-scoped, so listing an organisation's packages
+ * fails there. The images themselves are public, so the registry answers
+ * anonymously — which is the more original source anyway. This list is the
+ * lanes the Images and Userspace views actually report on; the API path, when
+ * it works, still discovers everything.
+ */
+export const FALLBACK_LANES = [
+  "bluefin",
+  "bluefin-lts",
+  "bluefin-lts-hwe",
+  "bluefin-nvidia",
+  "bluefin-lts-hwe-nvidia",
+  "dakota",
+  "dakota-nvidia",
+  "bluefin-toolbox",
+  "ubuntu-toolbox",
+  "base",
+  "static",
+  "skopeo",
+  "buildah",
+  "qemu-img",
+  "lab-runner",
+  "brew",
+  "common",
+  "testsuite",
+];
+
+/** Tags worth an inspect call. Everything else is noise or a cosign artefact. */
+export function fallbackTagsOf(tags) {
+  const wanted = [];
+  for (const tag of tags) {
+    if (COSIGN_TAG.test(tag)) continue;
+    if (REPORTED_TAGS.has(tag)) wanted.push(tag);
+  }
+  return wanted;
+}
+
+/**
+ * Reads one lane from the public registry with skopeo, which is already a
+ * build dependency of scripts/fetch-github-images.js.
+ *
+ * Returns version-shaped records so buildPackage can consume them unchanged.
+ */
+async function registryVersions(org, name) {
+  const ref = `docker://ghcr.io/${org}/${name}`;
+  let tags;
+  try {
+    const { stdout } = await execFileAsync("skopeo", ["list-tags", ref], {
+      timeout: 60_000,
+      maxBuffer: 32 * 1024 * 1024,
+    });
+    tags = JSON.parse(stdout).Tags ?? [];
+  } catch {
+    return null;
+  }
+
+  const versions = [];
+  for (const tag of fallbackTagsOf(tags)) {
+    try {
+      const { stdout } = await execFileAsync(
+        "skopeo",
+        ["inspect", "--no-tags", `${ref}:${tag}`],
+        { timeout: 60_000, maxBuffer: 32 * 1024 * 1024 },
+      );
+      const info = JSON.parse(stdout);
+      if (!info.Created) continue;
+      versions.push({
+        name: info.Digest,
+        created_at: info.Created,
+        metadata: { container: { tags: [tag] } },
+      });
+    } catch {
+      // A tag that cannot be inspected is a gap, not a failure of the lane.
+    }
+  }
+  return versions;
+}
+
 async function main() {
   const cacheTtlHours = parseFloat(process.env.GHCR_CACHE_HOURS ?? "6");
   const force = process.argv.includes("--force");
@@ -200,25 +287,9 @@ async function main() {
   }
 
   const token = githubToken();
-  if (!token) {
-    console.warn(
-      "fetch-ghcr-packages: no GITHUB_TOKEN/GH_TOKEN — writing unavailable payload",
-    );
-    const payload = buildPayload([], {
-      generatedAt: new Date().toISOString(),
-      orgs: ORGS,
-      unavailable: true,
-      stateReason:
-        "GITHUB_TOKEN or GH_TOKEN with read:packages scope is required to list GHCR packages",
-    });
-    mkdirSync(dirname(OUT), { recursive: true });
-    writeFileSync(OUT, JSON.stringify(payload, null, 2) + "\n");
-    return;
-  }
-
   const allPackages = [];
 
-  for (const org of ORGS) {
+  for (const org of token ? ORGS : []) {
     let pkgList;
     try {
       pkgList = await ghPaginate(
@@ -258,15 +329,42 @@ async function main() {
     }
   }
 
+  // Fall back to the public registry when the Packages API produced nothing.
+  // CI's default github.token is repository-scoped, so listing an org's
+  // packages fails there — but the images are public, so skopeo answers
+  // anonymously. Without this the Images and Userspace views would be empty in
+  // production while looking fine locally.
+  let source = "github-packages-api";
+  if (allPackages.length === 0) {
+    source = "public-registry";
+    console.warn(
+      "fetch-ghcr-packages: Packages API returned nothing — falling back to " +
+        "anonymous registry reads for the reported lanes",
+    );
+    for (const org of ORGS) {
+      for (const name of FALLBACK_LANES) {
+        const versions = await registryVersions(org, name);
+        if (versions === null) continue;
+        allPackages.push(buildPackage({ name }, versions));
+      }
+    }
+  }
+
   const payload = buildPayload(allPackages, {
     generatedAt: new Date().toISOString(),
     orgs: ORGS,
+    unavailable: allPackages.length === 0,
+    stateReason:
+      allPackages.length === 0
+        ? "Neither the GitHub Packages API nor anonymous registry reads returned any lane."
+        : null,
   });
+  payload.source = source;
 
   mkdirSync(dirname(OUT), { recursive: true });
   writeFileSync(OUT, JSON.stringify(payload, null, 2) + "\n");
   console.log(
-    `fetch-ghcr-packages: wrote ${OUT} (${payload.packages.length} packages, families: ${JSON.stringify(payload.familyCounts)})`,
+    `fetch-ghcr-packages: wrote ${OUT} (${payload.packages.length} packages via ${source}, families: ${JSON.stringify(payload.familyCounts)})`,
   );
 }
 
