@@ -18,15 +18,10 @@
  * Usage: node scripts/fetch-scorecard.js [--force]
  */
 
-import {
-  writeFileSync,
-  readFileSync,
-  existsSync,
-  statSync,
-  mkdirSync,
-} from "fs";
+import { writeFileSync, readFileSync, existsSync, mkdirSync } from "fs";
 import { resolve, dirname } from "path";
 import { fileURLToPath, pathToFileURL } from "url";
+import { seedIsFresh, seedAgeMs } from "./lib/seed-cache.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const OUT = resolve(__dirname, "../static/data/scorecard-history.json");
@@ -130,14 +125,16 @@ async function main() {
   const cacheTtlHours = parseFloat(process.env.SCORECARD_CACHE_HOURS ?? "24");
   const force = process.argv.includes("--force");
 
-  if (!force && existsSync(OUT)) {
-    const age = Date.now() - statSync(OUT).mtimeMs;
-    if (age < cacheTtlHours * 60 * 60 * 1000) {
-      console.log(
-        `fetch-scorecard: cache fresh (${Math.round(age / 60000)}m old), skipping`,
-      );
-      return;
-    }
+  // Freshness comes from the payload's own generatedAt, not file mtime: this
+  // seed is tracked, and git checkout stamps every tracked file with the
+  // current time, so mtime would report "1m old" on every CI run and the seed
+  // would never refresh. See scripts/lib/seed-cache.js.
+  if (!force && seedIsFresh(OUT, cacheTtlHours)) {
+    const age = seedAgeMs(OUT);
+    console.log(
+      `fetch-scorecard: seed generated ${Math.round((age ?? 0) / 60000)}m ago, skipping`,
+    );
+    return;
   }
 
   const seed = readSeed();

@@ -1,17 +1,22 @@
 {
-  "generatedAt": "2026-08-08T01:30:05.953Z",
+  "generatedAt": "2026-08-08T14:16:38.580Z",
   "source": "https://api.securityscorecards.dev/projects/github.com/{repo}",
   "repos": [
     {
       "repo": "projectbluefin/bluefin",
       "current": {
-        "date": "2026-08-08T00:27:03Z",
+        "date": "2026-08-08T06:30:29Z",
         "score": 4.5,
         "checks": [
           {
             "name": "Code-Review",
             "score": 0,
             "reason": "Found 0/30 approved changesets -- score normalized to 0"
+          },
+          {
+            "name": "Security-Policy",
+            "score": 10,
+            "reason": "security policy file detected"
           },
           {
             "name": "Maintained",
@@ -34,9 +39,9 @@
             "reason": "packaging workflow not detected"
           },
           {
-            "name": "Security-Policy",
-            "score": 10,
-            "reason": "security policy file detected"
+            "name": "Token-Permissions",
+            "score": 0,
+            "reason": "detected GitHub workflow tokens with excessive permissions"
           },
           {
             "name": "Binary-Artifacts",
@@ -49,14 +54,14 @@
             "reason": "dependency not pinned by hash detected -- score normalized to 3"
           },
           {
-            "name": "Token-Permissions",
-            "score": 0,
-            "reason": "detected GitHub workflow tokens with excessive permissions"
-          },
-          {
             "name": "CII-Best-Practices",
             "score": 0,
             "reason": "no effort to earn an OpenSSF best practices badge detected"
+          },
+          {
+            "name": "Vulnerabilities",
+            "score": 8,
+            "reason": "2 existing vulnerabilities detected"
           },
           {
             "name": "Signed-Releases",
@@ -67,11 +72,6 @@
             "name": "License",
             "score": 10,
             "reason": "license file detected"
-          },
-          {
-            "name": "Vulnerabilities",
-            "score": 8,
-            "reason": "2 existing vulnerabilities detected"
           },
           {
             "name": "Fuzzing",
@@ -104,6 +104,10 @@
         {
           "date": "2026-08-08T00:27:03Z",
           "score": 4.5
+        },
+        {
+          "date": "2026-08-08T06:30:29Z",
+          "score": 4.5
         }
       ],
       "unavailable": false,
@@ -119,7 +123,7 @@
     {
       "repo": "projectbluefin/dakota",
       "current": {
-        "date": "2026-08-07T18:30:58Z",
+        "date": "2026-08-08T06:23:48Z",
         "score": 6.3,
         "checks": [
           {
@@ -128,9 +132,9 @@
             "reason": "security policy file detected"
           },
           {
-            "name": "Dependency-Update-Tool",
+            "name": "Maintained",
             "score": 10,
-            "reason": "update tool detected"
+            "reason": "30 commit(s) and 3 issue activity found in the last 90 days -- score normalized to 10"
           },
           {
             "name": "Code-Review",
@@ -138,19 +142,19 @@
             "reason": "Found 5/22 approved changesets -- score normalized to 2"
           },
           {
+            "name": "Binary-Artifacts",
+            "score": 10,
+            "reason": "no binaries found in the repo"
+          },
+          {
             "name": "Packaging",
             "score": null,
             "reason": "packaging workflow not detected"
           },
           {
-            "name": "Maintained",
+            "name": "Dependency-Update-Tool",
             "score": 10,
-            "reason": "30 commit(s) and 4 issue activity found in the last 90 days -- score normalized to 10"
-          },
-          {
-            "name": "Binary-Artifacts",
-            "score": 10,
-            "reason": "no binaries found in the repo"
+            "reason": "update tool detected"
           },
           {
             "name": "Dangerous-Workflow",
@@ -163,9 +167,14 @@
             "reason": "detected GitHub workflow tokens with excessive permissions"
           },
           {
-            "name": "CII-Best-Practices",
-            "score": 0,
-            "reason": "no effort to earn an OpenSSF best practices badge detected"
+            "name": "Vulnerabilities",
+            "score": 10,
+            "reason": "0 existing vulnerabilities detected"
+          },
+          {
+            "name": "License",
+            "score": 10,
+            "reason": "license file detected"
           },
           {
             "name": "Pinned-Dependencies",
@@ -173,14 +182,9 @@
             "reason": "dependency not pinned by hash detected -- score normalized to 6"
           },
           {
-            "name": "Vulnerabilities",
-            "score": 10,
-            "reason": "0 existing vulnerabilities detected"
-          },
-          {
-            "name": "Fuzzing",
+            "name": "CII-Best-Practices",
             "score": 0,
-            "reason": "project is not fuzzed"
+            "reason": "no effort to earn an OpenSSF best practices badge detected"
           },
           {
             "name": "Signed-Releases",
@@ -188,9 +192,9 @@
             "reason": "Project has not signed or included provenance with any releases."
           },
           {
-            "name": "License",
-            "score": 10,
-            "reason": "license file detected"
+            "name": "Fuzzing",
+            "score": 0,
+            "reason": "project is not fuzzed"
           },
           {
             "name": "Branch-Protection",
@@ -217,6 +221,10 @@
       "history": [
         {
           "date": "2026-08-07T18:30:58Z",
+          "score": 6.3
+        },
+        {
+          "date": "2026-08-08T06:23:48Z",
           "score": 6.3
         }
       ],
