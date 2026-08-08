@@ -303,7 +303,9 @@ export default function UserspacePanels({
           authenticated access to the lab cluster.
         </p>
         <p>
-          <Link to="https://lab.projectbluefin.io">Lab site →</Link>
+          <Link to="https://github.com/projectbluefin/lab">
+            projectbluefin/lab →
+          </Link>
         </p>
       </div>
     </div>
