@@ -234,7 +234,7 @@
 
 .statLabel {
   font-size: 0.7rem;
-  color: #6e7681;
+  color: #808893;
   margin-top: 3px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -307,7 +307,7 @@
 
 .heroSparkLabel {
   font-size: 0.6rem;
-  color: #484f58;
+  color: #808893;
   font-family: "SFMono-Regular", Consolas, monospace;
   letter-spacing: 0.04em;
 }
@@ -349,7 +349,7 @@
   left: 50%;
   transform: translateX(-50%);
   font-size: 0.6rem;
-  color: #6e7681;
+  color: #808893;
   white-space: nowrap;
   font-family: "SFMono-Regular", Consolas, monospace;
 }
@@ -374,7 +374,7 @@
 
 .panelMeta {
   font-size: 0.75rem;
-  color: #484f58;
+  color: #808893;
   margin: 0 0 1rem;
 }
 
@@ -531,7 +531,7 @@
 
 .agentModel {
   font-size: 0.6rem;
-  color: #484f58;
+  color: #808893;
   background: #0d1117;
   padding: 2px 6px;
   border-radius: 4px;
@@ -542,7 +542,7 @@
 
 .agentSnippet {
   font-size: 0.75rem;
-  color: #6e7681;
+  color: #808893;
   line-height: 1.45;
   font-style: italic;
   margin-bottom: 0.5rem;
@@ -561,7 +561,7 @@
 .frameQuote {
   font-size: 0.7rem;
   font-style: italic;
-  color: #484f58;
+  color: #808893;
   border-left: 2px solid #21262d;
   padding-left: 0.5rem;
   margin-top: 0.6rem;
@@ -583,7 +583,7 @@
 
 .agentTag {
   font-size: 0.6rem;
-  color: #484f58;
+  color: #808893;
   background: #0d1117;
   padding: 2px 7px;
   border-radius: 4px;
@@ -621,7 +621,7 @@
   display: flex;
   justify-content: space-between;
   font-size: 0.65rem;
-  color: #484f58;
+  color: #808893;
   font-family: "SFMono-Regular", Consolas, monospace;
 }
 
@@ -845,7 +845,7 @@
   font-size: 0.72rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #484f58;
+  color: #808893;
   font-weight: 600;
   margin-bottom: 0.2rem;
 }
@@ -864,7 +864,7 @@
 }
 
 .roleDesc {
-  color: #6e7681;
+  color: #808893;
 }
 
 /* ── Footer ─────────────────────────────────────────────────────────────── */
@@ -877,7 +877,7 @@
   flex-wrap: wrap;
   gap: 0.5rem;
   font-size: 0.72rem;
-  color: #484f58;
+  color: #808893;
   font-family: "SFMono-Regular", Consolas, monospace;
 }
 
@@ -944,7 +944,7 @@
 }
 .orgStatLabel {
   font-size: 0.65rem;
-  color: #6e7681;
+  color: #808893;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   text-align: center;
@@ -993,11 +993,11 @@
 }
 .orgAgentRowSub {
   font-size: 0.7rem;
-  color: #484f58;
+  color: #808893;
 }
 .orgAgentTotal {
   font-size: 0.75rem;
-  color: #484f58;
+  color: #808893;
   text-align: center;
   padding: 0.4rem;
   border-top: 1px solid #21262d;
@@ -1033,7 +1033,7 @@
   background: rgba(59, 130, 246, 0.06);
 }
 .modeIdle {
-  color: #484f58;
+  color: #808893;
   border-color: rgba(72, 79, 88, 0.3);
   background: rgba(72, 79, 88, 0.04);
 }
@@ -1081,7 +1081,7 @@
 }
 .acmmStat {
   font-size: 0.78rem;
-  color: #6e7681;
+  color: #808893;
   margin-top: 0.35rem;
 }
 .acmmStat strong {
@@ -1290,7 +1290,7 @@
 }
 .workLogCount {
   font-size: 0.7rem;
-  color: #484f58;
+  color: #808893;
   font-family: "SFMono-Regular", Consolas, monospace;
   flex-shrink: 0;
 }
@@ -1339,7 +1339,7 @@
 }
 .workLogType {
   font-size: 0.62rem;
-  color: #484f58;
+  color: #808893;
   font-family: "SFMono-Regular", Consolas, monospace;
   background: #0d1117;
   padding: 1px 5px;
@@ -1356,7 +1356,7 @@
 }
 .workLogTime {
   font-size: 0.62rem;
-  color: #484f58;
+  color: #808893;
   font-family: "SFMono-Regular", Consolas, monospace;
   margin-left: auto;
 }
@@ -1379,7 +1379,7 @@
 }
 .workLogEmpty {
   font-size: 0.75rem;
-  color: #484f58;
+  color: #808893;
   font-style: italic;
   margin-left: 1.7rem;
 }
@@ -1398,7 +1398,7 @@
 
 /* ── Empty state ─────────────────────────────────────────────────────────── */
 .empty {
-  color: #484f58;
+  color: #808893;
   font-size: 0.85rem;
   font-style: italic;
   padding: 0.75rem 0;
@@ -1997,7 +1997,7 @@
 
 .prTierEmpty {
   font-size: 0.8rem;
-  color: #484f58;
+  color: #808893;
   padding: 0.5rem 0;
 }
 
@@ -2662,7 +2662,7 @@
 
 .historySparklineEmpty {
   font-size: 0.65rem;
-  color: #484f58;
+  color: #808893;
   font-style: italic;
   padding: 0.2rem 0;
 }
@@ -2715,7 +2715,7 @@
   gap: 0.5rem;
   align-items: center;
   padding: 0.3rem 0.5rem;
-  color: #484f58;
+  color: #808893;
   font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -2744,7 +2744,7 @@
 .lbColRank {
   font-family: "JetBrains Mono", "Fira Code", monospace;
   font-size: 0.7rem;
-  color: #484f58;
+  color: #808893;
   text-align: right;
 }
 
@@ -2821,7 +2821,7 @@
 
 .lbRepoMore {
   font-size: 0.65rem;
-  color: #484f58;
+  color: #808893;
 }
 
 .lbColBadges {
@@ -2920,14 +2920,14 @@
 }
 
 .sourceState {
-  color: #6e7681;
+  color: #808893;
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
 
 .sourceNote {
   font-size: 0.7rem;
-  color: #6e7681;
+  color: #808893;
   margin-left: 0.25rem;
 }
 
@@ -3024,13 +3024,13 @@
   display: block;
   overflow: visible;
   font-size: 0.65rem;
-  color: #484f58;
+  color: #808893;
   font-style: italic;
 }
 
 .vitalNote {
   font-size: 0.62rem;
-  color: #6e7681;
+  color: #808893;
   line-height: 1.35;
   margin-top: auto;
 }
@@ -3039,7 +3039,7 @@
 .buildCalendar {
   max-width: 100%;
   height: auto;
-  color: #6e7681;
+  color: #808893;
   font-size: 0.7rem;
   font-style: italic;
 }
@@ -3092,7 +3092,7 @@
 
 .laneNote {
   font-size: 0.62rem;
-  color: #6e7681;
+  color: #808893;
   line-height: 1.35;
 }
 
@@ -3119,7 +3119,7 @@
 
 .laneCount dt {
   font-size: 0.58rem;
-  color: #6e7681;
+  color: #808893;
   text-transform: uppercase;
   letter-spacing: 0.03em;
 }
@@ -3142,7 +3142,7 @@
 
 .laneSparkLabel {
   font-size: 0.6rem;
-  color: #6e7681;
+  color: #808893;
   text-transform: uppercase;
   letter-spacing: 0.03em;
 }
@@ -3152,7 +3152,7 @@
   display: block;
   overflow: visible;
   font-size: 0.65rem;
-  color: #484f58;
+  color: #808893;
   font-style: italic;
 }
 
@@ -3195,7 +3195,7 @@
   align-items: center;
   gap: 0.35rem;
   font-size: 0.62rem;
-  color: #484f58;
+  color: #808893;
   font-style: italic;
 }
 
@@ -3203,7 +3203,7 @@
   display: inline-block;
   overflow: visible;
   font-size: 0.62rem;
-  color: #484f58;
+  color: #808893;
   font-style: italic;
 }
 
@@ -3213,4 +3213,19 @@
   font-style: normal;
   color: #8b949e;
   font-variant-numeric: tabular-nums;
+}
+
+/*
+ * Reduced motion. Authorized by adr/0003-factory-two-level-navigation.md.
+ *
+ * .pulseDot and .loadingBee both run `infinite` animations with no guard, which
+ * is a WCAG 2.3.3 problem for readers who ask the platform not to animate. The
+ * dot keeps its colour and the bee keeps its glyph, so neither carries meaning
+ * that only the motion conveyed.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .pulseDot,
+  .loadingBee {
+    animation: none;
+  }
 }
