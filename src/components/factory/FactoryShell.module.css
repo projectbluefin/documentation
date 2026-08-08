@@ -9,9 +9,15 @@
   background: var(--fx-bg);
   color: var(--fx-text);
   min-height: 60vh;
-  padding: var(--fx-space-5) var(--fx-space-4) var(--fx-space-7);
-  max-width: 1360px;
+  padding-bottom: var(--fx-space-7);
+}
+
+/* Content column. The nav is a sibling and deliberately full-bleed, so the
+   centring lives here rather than on .shell. */
+.body {
+  max-width: var(--ifm-container-width-xl, 1440px);
   margin-inline: auto;
+  padding: var(--fx-space-5) var(--fx-space-4) 0;
 }
 
 .panelGrid {

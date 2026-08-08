@@ -22,7 +22,12 @@ interface SparklineProps {
   domain?: [number, number];
   width?: number;
   height?: number;
-  /** Stroke color — named CSS colors or hex; CSS custom properties do not work in inline SVG. */
+  /**
+   * Stroke and fill colour, applied as the CSS `color` property on the `<svg>`
+   * so the shapes can paint with `currentColor`. Any CSS colour works,
+   * including a custom property such as `var(--fx-accent)` — which would *not*
+   * resolve if it were written into an SVG presentation attribute.
+   */
   color?: string;
   /** Area fill under the line. "none" or omitted disables it. */
   areaColor?: string;
@@ -91,7 +96,7 @@ export default function Sparkline({
   domain,
   width = 120,
   height = 28,
-  color = "#58a6ff",
+  color = "currentColor",
   areaColor,
   className,
   showEnd = false,
@@ -134,6 +139,10 @@ export default function Sparkline({
       display: "inline-block",
       verticalAlign: "middle",
       overflow: "visible" as const,
+      // `color` is a CSS property, so a var() token resolves here. The shapes
+      // below paint with currentColor; an SVG presentation attribute such as
+      // stroke="var(--x)" would not resolve and would render nothing.
+      color,
     },
     ...a11y,
   };
@@ -144,7 +153,7 @@ export default function Sparkline({
       y={Math.min(y(band[0]), y(band[1]))}
       width={width}
       height={Math.max(Math.abs(y(band[0]) - y(band[1])), 1)}
-      fill={color}
+      fill="currentColor"
       opacity={0.12}
     />
   ) : null;
@@ -164,7 +173,7 @@ export default function Sparkline({
             y={mid - barH / 2}
             width={Math.max(x(band[1]) - x(band[0]), 1)}
             height={barH}
-            fill={color}
+            fill="currentColor"
             opacity={0.12}
           />
         ) : (
@@ -173,7 +182,7 @@ export default function Sparkline({
             y={mid - barH / 2}
             width={width}
             height={barH}
-            fill={color}
+            fill="currentColor"
             opacity={0.1}
           />
         )}
@@ -182,7 +191,7 @@ export default function Sparkline({
           y={mid - barH / 4}
           width={Math.max(x(value), 1)}
           height={barH / 2}
-          fill={color}
+          fill="currentColor"
         />
         {typeof target === "number" ? (
           <line
@@ -219,7 +228,7 @@ export default function Sparkline({
                 y={win ? mid - h : mid}
                 width={barW}
                 height={h}
-                fill={color}
+                fill="currentColor"
                 opacity={win ? 1 : 0.4}
               />
             );
@@ -232,7 +241,7 @@ export default function Sparkline({
               y={top}
               width={barW}
               height={Math.max(height - pad - top, 1)}
-              fill={color}
+              fill="currentColor"
             />
           );
         })}
@@ -267,7 +276,7 @@ export default function Sparkline({
           x2={width}
           y1={y(target)}
           y2={y(target)}
-          stroke={color}
+          stroke="currentColor"
           strokeWidth={1}
           strokeDasharray="3 2"
           opacity={0.6}
@@ -293,7 +302,7 @@ export default function Sparkline({
               .map((p) => `${x(p.i).toFixed(1)},${y(p.v).toFixed(1)}`)
               .join(" ")}
             fill="none"
-            stroke={color}
+            stroke="currentColor"
             strokeWidth="1.5"
             strokeLinejoin="round"
             strokeLinecap="round"
@@ -306,7 +315,7 @@ export default function Sparkline({
             cy={y(minPt.v)}
             r={1.8}
             fill="none"
-            stroke={color}
+            stroke="currentColor"
             strokeWidth={1}
           />
           <circle
@@ -314,13 +323,13 @@ export default function Sparkline({
             cy={y(maxPt.v)}
             r={1.8}
             fill="none"
-            stroke={color}
+            stroke="currentColor"
             strokeWidth={1}
           />
         </>
       ) : null}
       {showEnd ? (
-        <circle cx={x(endPt.i)} cy={y(endPt.v)} r={2.2} fill={color} />
+        <circle cx={x(endPt.i)} cy={y(endPt.v)} r={2.2} fill="currentColor" />
       ) : null}
     </svg>
   );

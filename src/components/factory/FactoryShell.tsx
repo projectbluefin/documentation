@@ -59,23 +59,30 @@ export default function FactoryShell({
       description="Community Driven Agentic OS Development — live dashboard for projectbluefin"
     >
       <div className={`fxRoot ${styles.shell}`}>
-        <FactoryHero s={s} />
-        <FactoryStatusStrip s={s} />
-
+        {/* The tab bar is the first thing in the page and sticks under the site
+            navbar, so navigation is never below the fold and reads as chrome. */}
         <FactoryNav pathname={route.path} />
+
+        <div className={styles.body}>
+          <FactoryHero s={s} />
+          <FactoryStatusStrip s={s} />
+        </div>
 
         <div
           id="fx-panel"
           role="tabpanel"
-          aria-labelledby={`fx-secondary-${route.id}`}
+          aria-labelledby={`fx-tab-${route.id}`}
+          className={styles.body}
         >
           <FactoryDataProvider datasets={route.datasets}>
             {children(s)}
           </FactoryDataProvider>
         </div>
 
-        <FactoryAbout s={s} />
-        <FactoryFooter s={s} />
+        <div className={styles.body}>
+          <FactoryAbout s={s} />
+          <FactoryFooter s={s} />
+        </div>
       </div>
     </Layout>
   );

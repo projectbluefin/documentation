@@ -424,35 +424,35 @@ function computeMilestones(
       tier: "cornerstone",
       label: "Cornerstone",
       title: "Active across 10+ projects",
-      color: "#ff7b72",
+      color: "var(--fx-sev-alert)",
     });
   } else if (repoCount >= 7) {
     badges.push({
       tier: "legend",
       label: "Legend",
       title: "Active across 7+ projects",
-      color: "#f0883e",
+      color: "var(--fx-sev-watch)",
     });
   } else if (repoCount >= 5) {
     badges.push({
       tier: "anchor",
       label: "Anchor",
       title: "Active across 5+ projects",
-      color: "#bc8cff",
+      color: "var(--fx-cat-2)",
     });
   } else if (repoCount >= 3) {
     badges.push({
       tier: "builder",
       label: "Builder",
       title: "Active across 3+ projects",
-      color: "#a371f7",
+      color: "var(--fx-cat-2)",
     });
   } else if (repoCount >= 2) {
     badges.push({
       tier: "contributor",
       label: "Contributor",
       title: "Active across 2+ projects",
-      color: "#3fb950",
+      color: "var(--fx-sev-ok)",
     });
   }
 
@@ -462,7 +462,7 @@ function computeMilestones(
       tier: "active",
       label: "Active",
       title: "Active this week",
-      color: "#d29922",
+      color: "var(--fx-sev-watch)",
     });
   }
 
@@ -473,7 +473,7 @@ function computeMilestones(
       tier: "rising",
       label: "Rising",
       title: "Trending up this week",
-      color: "#3fb950",
+      color: "var(--fx-sev-ok)",
     });
   }
 
@@ -553,9 +553,9 @@ const BUILD_WORKFLOW = "246164114";
 const REFRESH_SECS = 300;
 
 const SEV_COLOR: Record<string, string> = {
-  high: "#f85149",
-  medium: "#d29922",
-  low: "#8b949e",
+  high: "var(--fx-sev-alert)",
+  medium: "var(--fx-sev-watch)",
+  low: "var(--fx-text-muted)",
 };
 
 const TYPE_ICON: Record<string, string> = {
@@ -575,27 +575,27 @@ const ACMM_LEVELS: Record<
   1: {
     label: "Triage Assist",
     desc: "Scanner reads and reports",
-    color: "#8b949e",
+    color: "var(--fx-text-muted)",
   },
   2: {
     label: "Advisory",
     desc: "Agents suggest, humans act",
-    color: "#58a6ff",
+    color: "var(--fx-accent)",
   },
   3: {
     label: "Supervised Autonomy",
     desc: "Agents act, supervisor monitors",
-    color: "#d29922",
+    color: "var(--fx-sev-watch)",
   },
   4: {
     label: "Full Autonomy",
     desc: "Agents operate independently",
-    color: "#f0883e",
+    color: "var(--fx-sev-watch)",
   },
   5: {
     label: "Self-Directing",
     desc: "Agents define their own goals",
-    color: "#bc8cff",
+    color: "var(--fx-cat-2)",
   },
 };
 
@@ -986,15 +986,15 @@ function parseRepoName(...sources: Array<string | undefined>): string {
 
 function repoAccent(repo: string): string {
   const palette = [
-    "#58a6ff",
-    "#3fb950",
-    "#d29922",
-    "#bc8cff",
-    "#f85149",
-    "#f0883e",
+    "var(--fx-accent)",
+    "var(--fx-sev-ok)",
+    "var(--fx-sev-watch)",
+    "var(--fx-cat-2)",
+    "var(--fx-sev-alert)",
+    "var(--fx-sev-watch)",
   ];
   const hash = Array.from(repo).reduce((sum, ch) => sum + ch.charCodeAt(0), 0);
-  return palette[hash % palette.length] ?? "#58a6ff";
+  return palette[hash % palette.length] ?? "var(--fx-accent)";
 }
 
 function pickAgentOfDay(agents: HiveAgent[]): HiveAgent | null {
@@ -1092,86 +1092,6 @@ function StatCard({
   );
 }
 
-function FrameCard({
-  agent,
-  advisoryItems: agentAdvisories,
-}: {
-  agent: HiveAgent;
-  advisoryItems: AdvisoryItem[];
-}) {
-  const isRunning = agent.state === "running";
-  const isWorking = agent.busy === "working";
-  const summaryLines = meaningfulSummaryLines(agent.liveSummary ?? "", 5);
-  const quote = pickFrameQuote(agent.id, isWorking);
-  const shortModel = (agent.model ?? "")
-    .replace("claude-", "")
-    .replace("gpt-", "")
-    .replace("-latest", "");
-  const topAdvisories = agentAdvisories.slice(0, 3);
-
-  return (
-    <div
-      className={`${styles.agentCard} ${
-        isRunning ? styles.agentCardActive : styles.agentCardIdle
-      }`}
-    >
-      <div className={styles.agentCardHeader}>
-        <span className={styles.agentInitial}>
-          {(agent.displayName || agent.name || "?").slice(0, 1).toUpperCase()}
-        </span>
-        <div className={styles.agentMeta}>
-          <span className={styles.agentName}>
-            {agent.displayName || agent.name}
-          </span>
-          <span className={styles.agentRole}>{agent.role}</span>
-        </div>
-        <span
-          className={`${styles.agentState} ${
-            isWorking
-              ? styles.agentStateWorking
-              : isRunning
-                ? styles.agentStateRunning
-                : styles.agentStatePaused
-          }`}
-        >
-          {isWorking ? "working" : isRunning ? "running" : "paused"}
-        </span>
-      </div>
-      {shortModel ? (
-        <div className={styles.agentModel}>{shortModel}</div>
-      ) : null}
-      {topAdvisories.length > 0 ? (
-        <div className={styles.agentSummary}>
-          {topAdvisories.map((item, i) => (
-            <div key={i} className={styles.frameAdvisoryItem}>
-              <span
-                style={{
-                  color: SEV_COLOR[item.severity] ?? "#8b949e",
-                  marginRight: "0.35rem",
-                  fontVariantNumeric: "tabular-nums",
-                }}
-              >
-                {TYPE_ICON[item.type] ?? "·"}
-              </span>
-              {item.title.slice(0, 90)}
-            </div>
-          ))}
-        </div>
-      ) : summaryLines.length > 0 ? (
-        <div className={styles.agentSummary}>
-          {summaryLines.map((line, i) => (
-            <div key={i}>{line}</div>
-          ))}
-        </div>
-      ) : null}
-      <div className={styles.frameQuote}>&ldquo;{quote}&rdquo;</div>
-      {agent.cadence ? (
-        <div className={styles.agentCadence}>{agent.cadence}</div>
-      ) : null}
-    </div>
-  );
-}
-
 function CiBadge({ status }: { status: DakotaStats["ciStatus"] }) {
   const map = {
     success: { label: "CI PASS", cls: styles.ciBadgePass },
@@ -1186,10 +1106,10 @@ function CiBadge({ status }: { status: DakotaStats["ciStatus"] }) {
 type SparkColor = "default" | "green" | "amber" | "purple";
 
 const SPARK_HEX: Record<SparkColor, string> = {
-  default: "#58a6ff",
-  green: "#3fb950",
-  amber: "#d29922",
-  purple: "#bc8cff",
+  default: "var(--fx-accent)",
+  green: "var(--fx-sev-ok)",
+  amber: "var(--fx-sev-watch)",
+  purple: "var(--fx-cat-2)",
 };
 
 function MiniSparkline({
@@ -1258,34 +1178,6 @@ function _QueueBar({ ready, claimed, p0 }: QueueStats) {
   );
 }
 
-function PrQueueChart({ data }: { data: RepoPRs[] }) {
-  const max = Math.max(...data.map((d) => d.total), 1);
-  return (
-    <div className={styles.prQueueChart}>
-      {data.map((d) => {
-        const pct = (d.total / max) * 100;
-        const agentPct = d.total > 0 ? (d.agentPRs / d.total) * 100 : 0;
-        return (
-          <div key={d.repo} className={styles.prQueueRow}>
-            <span className={styles.prQueueLabel}>{d.label}</span>
-            <div className={styles.prQueueTrack}>
-              <div
-                className={styles.prQueueHuman}
-                style={{ width: `${pct - agentPct * (pct / 100)}%` }}
-              />
-              <div
-                className={styles.prQueueAgent}
-                style={{ width: `${agentPct * (pct / 100)}%` }}
-              />
-            </div>
-            <span className={styles.prQueueCount}>{d.total}</span>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
 function prTypeTag(title: string): { label: string; color: string } | null {
   const m = title.match(
     /^(feat|fix|ci|chore|refactor|docs|perf|test|revert|build|style)[\s(!/:]?/i,
@@ -1293,17 +1185,17 @@ function prTypeTag(title: string): { label: string; color: string } | null {
   if (!m) return null;
   const t = m[1].toLowerCase();
   const map: Record<string, { label: string; color: string }> = {
-    feat: { label: "feat", color: "#3fb950" },
-    fix: { label: "fix", color: "#f85149" },
-    ci: { label: "ci", color: "#58a6ff" },
-    chore: { label: "chore", color: "#8b949e" },
-    refactor: { label: "refactor", color: "#d29922" },
-    docs: { label: "docs", color: "#bc8cff" },
-    perf: { label: "perf", color: "#f0883e" },
-    test: { label: "test", color: "#d97706" },
-    revert: { label: "revert", color: "#f85149" },
-    build: { label: "build", color: "#8b949e" },
-    style: { label: "style", color: "#8b949e" },
+    feat: { label: "feat", color: "var(--fx-sev-ok)" },
+    fix: { label: "fix", color: "var(--fx-sev-alert)" },
+    ci: { label: "ci", color: "var(--fx-accent)" },
+    chore: { label: "chore", color: "var(--fx-text-muted)" },
+    refactor: { label: "refactor", color: "var(--fx-sev-watch)" },
+    docs: { label: "docs", color: "var(--fx-cat-2)" },
+    perf: { label: "perf", color: "var(--fx-sev-watch)" },
+    test: { label: "test", color: "var(--fx-sev-watch)" },
+    revert: { label: "revert", color: "var(--fx-sev-alert)" },
+    build: { label: "build", color: "var(--fx-text-muted)" },
+    style: { label: "style", color: "var(--fx-text-muted)" },
   };
   return map[t] ?? null;
 }
@@ -1380,7 +1272,7 @@ function MergedPRFeed({ prs }: { prs: MergedPR[] }) {
             <div className={styles.mergedSection}>
               <div
                 className={styles.mergedSectionLabel}
-                style={{ color: "#93c5fd" }}
+                style={{ color: "var(--fx-accent-soft)" }}
               >
                 Ghosts &mdash; {bots.length} agent contributions
               </div>
@@ -1400,241 +1292,16 @@ function MergedPRFeed({ prs }: { prs: MergedPR[] }) {
 // ── Governor timeline strip ────────────────────────────────────────────────
 
 const MODE_COLORS: Record<string, string> = {
-  surge: "#f85149",
-  busy: "#d97706",
-  quiet: "#3b82f6",
-  idle: "#21262d",
-  unknown: "#30363d",
+  surge: "var(--fx-sev-alert)",
+  busy: "var(--fx-sev-watch)",
+  quiet: "var(--fx-accent)",
+  idle: "var(--fx-surface-3)",
+  unknown: "var(--fx-border)",
 };
-
-function GovernorTimeline({ ticks }: { ticks: HiveTimelineTick[] }) {
-  if (ticks.length < 10) return null;
-  const sorted = [...ticks].sort((a, b) => a.t - b.t);
-  const start = sorted[0].t;
-  const end = sorted[sorted.length - 1].t;
-  const span = end - start || 1;
-
-  const modeCounts: Record<string, number> = {};
-  for (const t of sorted) {
-    const m = (t.mode ?? "unknown").toLowerCase();
-    modeCounts[m] = (modeCounts[m] ?? 0) + 1;
-  }
-  const dominant =
-    Object.entries(modeCounts).sort((a, b) => b[1] - a[1])[0]?.[0] ?? "idle";
-  const dominantPct = Math.round(
-    ((modeCounts[dominant] ?? 0) / sorted.length) * 100,
-  );
-
-  return (
-    <section className={styles.panel}>
-      <Heading as="h2" className={styles.panelTitle}>
-        Governor Timeline &mdash; 24h Mode History
-      </Heading>
-      <p className={styles.panelMeta}>
-        Surge / busy / quiet / idle distribution &mdash; dominant:{" "}
-        <strong style={{ color: MODE_COLORS[dominant] ?? "#8b949e" }}>
-          {dominant}
-        </strong>{" "}
-        at {dominantPct}%
-      </p>
-      <div
-        className={styles.timelineStrip}
-        role="img"
-        aria-label="24-hour governor mode timeline"
-      >
-        {sorted.map((tick, i) => {
-          const mode = (tick.mode ?? "unknown").toLowerCase();
-          const color = MODE_COLORS[mode] ?? MODE_COLORS.unknown;
-          const widthPct =
-            i < sorted.length - 1
-              ? ((sorted[i + 1].t - tick.t) / span) * 100
-              : (1 / sorted.length) * 100;
-          return (
-            <div
-              key={tick.t}
-              className={styles.timelineTick}
-              style={{ width: `${widthPct}%`, background: color }}
-              title={`${mode} at ${new Date(tick.t).toLocaleTimeString()}`}
-            />
-          );
-        })}
-      </div>
-      <div className={styles.timelineLegend}>
-        {(["surge", "busy", "quiet", "idle"] as const).map((m) =>
-          modeCounts[m] ? (
-            <span key={m} className={styles.timelineLegendItem}>
-              <span
-                className={styles.timelineDot}
-                style={{ background: MODE_COLORS[m] }}
-              />
-              {m} ({Math.round(((modeCounts[m] ?? 0) / sorted.length) * 100)}%)
-            </span>
-          ) : null,
-        )}
-      </div>
-    </section>
-  );
-}
 
 // ── Token budget panel ─────────────────────────────────────────────────────
 
-function TokenBudgetPanel({
-  pct,
-  total,
-  used,
-  mode,
-}: {
-  pct?: number;
-  total?: number;
-  used?: number;
-  mode?: string;
-}) {
-  if (pct == null) return null;
-  const safeMode = (mode ?? "idle").toLowerCase();
-  const danger = pct > 85;
-  const warn = pct > 65 && !danger;
-  const barColor = danger ? "#f85149" : warn ? "#d97706" : "#3fb950";
-  const remaining = total != null && used != null ? total - used : null;
-
-  return (
-    <section className={styles.panel}>
-      <Heading as="h2" className={styles.panelTitle}>
-        Token Budget
-      </Heading>
-      <p className={styles.panelMeta}>
-        Governor mode:{" "}
-        <strong style={{ color: MODE_COLORS[safeMode] ?? "#8b949e" }}>
-          {mode ?? "idle"}
-        </strong>
-        {total != null && (
-          <> &middot; {total.toLocaleString()} tokens / period</>
-        )}
-      </p>
-      <div className={styles.budgetTrack}>
-        <div
-          className={styles.budgetBar}
-          style={{ width: `${Math.min(pct, 100)}%`, background: barColor }}
-        />
-      </div>
-      <div className={styles.budgetStats}>
-        <span style={{ color: barColor }}>{pct.toFixed(1)}% used</span>
-        {used != null && <span>{used.toLocaleString()} tokens consumed</span>}
-        {remaining != null && (
-          <span style={{ color: "#3fb950" }}>
-            {remaining.toLocaleString()} remaining
-          </span>
-        )}
-      </div>
-    </section>
-  );
-}
-
 // ── Nous / Strategy Lab panel ──────────────────────────────────────────────
-
-function NousPanel({ nous }: { nous: NousStatus }) {
-  const exp = nous.activeExperiment;
-  const snapPct =
-    nous.snapshotTarget && nous.snapshotCount != null
-      ? Math.round((nous.snapshotCount / nous.snapshotTarget) * 100)
-      : null;
-
-  return (
-    <section className={styles.panel}>
-      <Heading as="h2" className={styles.panelTitle}>
-        Strategy Lab (Nous)
-      </Heading>
-      <p className={styles.panelMeta}>
-        Autonomous experiment engine &mdash; optimizing governor configuration
-      </p>
-      <div className={styles.nousGrid}>
-        <div className={styles.nousItem}>
-          <div className={styles.nousLabel}>Mode</div>
-          <div
-            className={styles.nousValue}
-            style={{
-              color:
-                nous.mode === "auto"
-                  ? "#3fb950"
-                  : nous.mode === "suggest"
-                    ? "#d97706"
-                    : "#8b949e",
-            }}
-          >
-            {nous.mode ?? "observe"}
-          </div>
-        </div>
-        {nous.scope && (
-          <div className={styles.nousItem}>
-            <div className={styles.nousLabel}>Scope</div>
-            <div className={styles.nousValue}>{nous.scope}</div>
-          </div>
-        )}
-        {nous.principleCount != null && (
-          <div className={styles.nousItem}>
-            <div className={styles.nousLabel}>Principles</div>
-            <div className={styles.nousValue} style={{ color: "#bc8cff" }}>
-              {nous.principleCount}
-            </div>
-          </div>
-        )}
-        {nous.hasRecommendations && (
-          <div className={styles.nousItem}>
-            <div className={styles.nousLabel}>Status</div>
-            <div className={styles.nousValue} style={{ color: "#d97706" }}>
-              Recommendations ready
-            </div>
-          </div>
-        )}
-      </div>
-      {exp && (
-        <div className={styles.nousExperiment}>
-          <div className={styles.nousExpLabel}>
-            Active experiment: <code>{exp.id}</code>
-          </div>
-          <div className={styles.budgetTrack}>
-            <div
-              className={styles.budgetBar}
-              style={{ width: `${exp.progressPct}%`, background: "#bc8cff" }}
-            />
-          </div>
-          <div className={styles.nousExpMeta}>
-            {exp.progressPct}% &middot; {Math.round(exp.elapsed / 60)}m elapsed
-            of {Math.round(exp.ttlSec / 60)}m
-          </div>
-        </div>
-      )}
-      {snapPct != null && (
-        <div className={styles.nousSnapshot}>
-          <span className={styles.nousLabel}>Snapshot collection:</span>
-          <div className={styles.budgetTrack} style={{ marginTop: "0.4rem" }}>
-            <div
-              className={styles.budgetBar}
-              style={{ width: `${snapPct}%`, background: "#58a6ff" }}
-            />
-          </div>
-          <div className={styles.nousExpMeta}>
-            {nous.snapshotCount}/{nous.snapshotTarget} snapshots ({snapPct}%)
-          </div>
-        </div>
-      )}
-      {nous.phases && (
-        <div className={styles.nousPhases}>
-          {nous.phases.governor && (
-            <span className={styles.nousPhaseItem}>
-              Governor: {nous.phases.governor.phase} i
-              {nous.phases.governor.iteration}
-            </span>
-          )}
-          {nous.phases.repo && (
-            <span className={styles.nousPhaseItem}>
-              Repo: {nous.phases.repo.phase} i{nous.phases.repo.iteration}
-            </span>
-          )}
-        </div>
-      )}
-    </section>
-  );
-}
 
 function ContributorWall({
   prs,
@@ -1880,42 +1547,42 @@ function HistoryTrends({ history }: { history: HiveHistory | null }) {
     {
       label: "ACMM Level",
       values: acmm,
-      color: "#d29922",
+      color: "var(--fx-sev-watch)",
       unit: "L",
       latest: acmm.at(-1),
     },
     {
       label: "Budget Used",
       values: budget,
-      color: "#f85149",
+      color: "var(--fx-sev-alert)",
       unit: "%",
       latest: budget.at(-1),
     },
     {
       label: "Queue Depth",
       values: queueDepth,
-      color: "#58a6ff",
+      color: "var(--fx-accent)",
       unit: "",
       latest: queueDepth.at(-1),
     },
     {
       label: "Advisories",
       values: advisories,
-      color: "#bc8cff",
+      color: "var(--fx-cat-2)",
       unit: "",
       latest: advisories.at(-1),
     },
     {
       label: "Merged / Cycle",
       values: mergedDay,
-      color: "#3fb950",
+      color: "var(--fx-sev-ok)",
       unit: "",
       latest: mergedDay.at(-1),
     },
     {
       label: "Median Merge (m)",
       values: medianTime,
-      color: "#f0883e",
+      color: "var(--fx-sev-watch)",
       unit: "m",
       latest: medianTime.at(-1),
     },
@@ -2194,7 +1861,7 @@ function ContributorLeaderboard({ history }: { history: HiveHistory | null }) {
                   domain={weekDomain}
                   width={64}
                   height={16}
-                  color="#58a6ff"
+                  color="var(--fx-accent)"
                   showEnd
                   emptyLabel="no series"
                   className={styles.lbSparkline}
@@ -2353,9 +2020,12 @@ function GovernorPanel({
   markerLeft = Math.min(markerLeft, 99.5);
 
   const modeColor =
-    { surge: "#f85149", busy: "#d97706", quiet: "#58a6ff", idle: "#8b949e" }[
-      rawMode.toLowerCase()
-    ] ?? "#8b949e";
+    {
+      surge: "var(--fx-sev-alert)",
+      busy: "var(--fx-sev-watch)",
+      quiet: "var(--fx-accent)",
+      idle: "var(--fx-text-muted)",
+    }[rawMode.toLowerCase()] ?? "var(--fx-text-muted)";
 
   // Issue history sparkline from registry. The registry publishes ~672 points at
   // 16-minute resolution; render the whole window rather than the last 48.
@@ -2384,7 +2054,11 @@ function GovernorPanel({
           {issues} issues + {prs} PRs &mdash; {depth} total
           {!hasRealThresholds && registry && (
             <span
-              style={{ color: "#808893", fontWeight: 400, fontSize: "0.7rem" }}
+              style={{
+                color: "var(--fx-text-faint)",
+                fontWeight: 400,
+                fontSize: "0.7rem",
+              }}
             >
               {" "}
               (registry)
@@ -2446,7 +2120,7 @@ function GovernorPanel({
           <div
             style={{
               fontSize: "0.65rem",
-              color: "#808893",
+              color: "var(--fx-text-faint)",
               marginBottom: "3px",
               fontFamily: "monospace",
               letterSpacing: "0.04em",
@@ -2474,7 +2148,7 @@ function GovernorPanel({
               display: "flex",
               justifyContent: "space-between",
               fontSize: "0.6rem",
-              color: "#808893",
+              color: "var(--fx-text-faint)",
               fontFamily: "monospace",
             }}
           >
@@ -2485,238 +2159,6 @@ function GovernorPanel({
             <span>{Math.max(...sparkVals)} max</span>
           </div>
         </div>
-      )}
-    </section>
-  );
-}
-
-function BeadsCadencePanel({
-  beads,
-  cadenceMatrix,
-  mode,
-}: {
-  beads?: HiveBeads;
-  cadenceMatrix?: HiveCadenceRow[];
-  mode?: string;
-}) {
-  const currentMode = (mode ?? "idle").toLowerCase();
-  return (
-    <section className={styles.panel}>
-      <Heading as="h2" className={styles.panelTitle}>
-        Beads + Cadence
-      </Heading>
-      <div className={styles.beadsRow}>
-        <span>{beads?.workers ?? 0} worker tasks</span>
-        <span>{beads?.supervisor ?? 0} supervisor tasks</span>
-      </div>
-      {cadenceMatrix?.length ? (
-        <div className={styles.cadenceTable}>
-          <div className={`${styles.cadenceRow} ${styles.cadenceHeader}`}>
-            <span className={styles.cadenceCell}>Agent</span>
-            <span
-              className={`${styles.cadenceCell} ${currentMode === "surge" ? styles.cadenceCellActive : ""}`}
-            >
-              SURGE
-            </span>
-            <span
-              className={`${styles.cadenceCell} ${currentMode === "busy" ? styles.cadenceCellActive : ""}`}
-            >
-              BUSY
-            </span>
-            <span
-              className={`${styles.cadenceCell} ${currentMode === "quiet" ? styles.cadenceCellActive : ""}`}
-            >
-              QUIET
-            </span>
-            <span
-              className={`${styles.cadenceCell} ${currentMode === "idle" ? styles.cadenceCellActive : ""}`}
-            >
-              IDLE
-            </span>
-          </div>
-          {cadenceMatrix.map((row) => (
-            <div key={row.agent} className={styles.cadenceRow}>
-              <span className={styles.cadenceCell}>{row.agent}</span>
-              <span
-                className={`${styles.cadenceCell} ${currentMode === "surge" ? styles.cadenceCellActive : ""}`}
-              >
-                {row.surge}
-              </span>
-              <span
-                className={`${styles.cadenceCell} ${currentMode === "busy" ? styles.cadenceCellActive : ""}`}
-              >
-                {row.busy}
-              </span>
-              <span
-                className={`${styles.cadenceCell} ${currentMode === "quiet" ? styles.cadenceCellActive : ""}`}
-              >
-                {row.quiet}
-              </span>
-              <span
-                className={`${styles.cadenceCell} ${currentMode === "idle" ? styles.cadenceCellActive : ""}`}
-              >
-                {row.idle}
-              </span>
-            </div>
-          ))}
-        </div>
-      ) : null}
-    </section>
-  );
-}
-
-function FrameOfDay({
-  agent,
-  advisoryItems: agentAdvisories,
-}: {
-  agent: HiveAgent | null;
-  advisoryItems: AdvisoryItem[];
-}) {
-  const [expanded, setExpanded] = React.useState(false);
-
-  if (!agent) {
-    return (
-      <section className={`${styles.panel} ${styles.agentOfDayCard}`}>
-        <Heading as="h2" className={styles.panelTitle}>
-          Frame of the Day
-        </Heading>
-        <div className={styles.empty}>No Frame spotlight available.</div>
-      </section>
-    );
-  }
-  const isWorking = agent.busy === "working";
-  const allLines = meaningfulSummaryLines(agent.liveSummary ?? "", 20);
-  const visibleLines = expanded ? allLines : allLines.slice(0, 10);
-  const quote = pickFrameQuote(agent.id, isWorking);
-
-  return (
-    <section className={`${styles.panel} ${styles.agentOfDayCard}`}>
-      <Heading as="h2" className={styles.panelTitle}>
-        Frame of the Day
-      </Heading>
-      <div className={styles.agentOfDayHero}>
-        <div className={styles.agentHeroInitial}>
-          {(agent.displayName || agent.name || "?").slice(0, 1).toUpperCase()}
-        </div>
-        <div>
-          <div className={styles.agentOfDayLabel}>
-            {isWorking ? "Currently active" : "Most recently active"}
-          </div>
-          <div className={styles.agentHeroName}>
-            {agent.displayName || agent.name}
-          </div>
-          <div className={styles.agentHeroMeta}>
-            {agent.role || "Generalist"} · {agent.model || "Unknown model"}
-          </div>
-        </div>
-      </div>
-      {agentAdvisories.length > 0 && (
-        <div
-          className={styles.agentOfDaySummary}
-          style={{ marginTop: "0.75rem" }}
-        >
-          <div
-            style={{
-              color: "#8b949e",
-              fontSize: "0.72rem",
-              fontWeight: 700,
-              textTransform: "uppercase",
-              letterSpacing: "0.06em",
-              marginBottom: "0.4rem",
-            }}
-          >
-            Recent work items
-          </div>
-          {agentAdvisories.slice(0, 5).map((item, i) => (
-            <div key={i} className={styles.frameAdvisoryItem}>
-              <span
-                style={{
-                  color: SEV_COLOR[item.severity] ?? "#8b949e",
-                  marginRight: "0.35rem",
-                }}
-              >
-                {TYPE_ICON[item.type] ?? "·"}
-              </span>
-              {item.title.slice(0, 110)}
-            </div>
-          ))}
-        </div>
-      )}
-      {visibleLines.length > 0 && (
-        <div className={styles.agentOfDaySummary}>
-          {visibleLines.map((line, i) => (
-            <div key={i}>{line}</div>
-          ))}
-          {allLines.length > 10 && (
-            <button
-              className={styles.workLogToggle}
-              onClick={() => setExpanded(!expanded)}
-            >
-              {expanded ? "Show less" : `Show ${allLines.length - 10} more`}
-            </button>
-          )}
-        </div>
-      )}
-      {visibleLines.length === 0 && agentAdvisories.length === 0 && (
-        <div className={styles.agentOfDaySummary}>
-          Awaiting next assignment…
-        </div>
-      )}
-      <div className={styles.frameQuote}>&ldquo;{quote}&rdquo;</div>
-    </section>
-  );
-}
-
-function FormationLog({
-  supervisor,
-  timestamp,
-}: {
-  supervisor: HiveAgent | null;
-  timestamp?: string;
-}) {
-  const [expanded, setExpanded] = React.useState(false);
-  const allLines = supervisor?.liveSummary
-    ? meaningfulSummaryLines(supervisor.liveSummary, 30)
-    : [];
-  const PREVIEW = 15;
-  const visibleLines = expanded ? allLines : allLines.slice(0, PREVIEW);
-  const quote = supervisor
-    ? pickFrameQuote(supervisor.id, supervisor.busy === "working")
-    : null;
-
-  return (
-    <section className={styles.panel}>
-      <Heading as="h2" className={styles.panelTitle}>
-        Formation Log
-      </Heading>
-      {allLines.length > 0 ? (
-        <>
-          <div className={styles.formationLogList}>
-            {visibleLines.map((line, idx) => (
-              <div key={`${idx}-${line}`} className={styles.formationLogEntry}>
-                <span className={styles.formationLogStamp}>
-                  {timestamp ? relTime(timestamp) : "recent"}
-                </span>
-                <span>{line}</span>
-              </div>
-            ))}
-          </div>
-          {allLines.length > PREVIEW && (
-            <button
-              className={styles.workLogToggle}
-              onClick={() => setExpanded(!expanded)}
-            >
-              {expanded
-                ? "Show less"
-                : `Show ${allLines.length - PREVIEW} more`}
-            </button>
-          )}
-          {quote && (
-            <div className={styles.frameQuote}>&ldquo;{quote}&rdquo;</div>
-          )}
-        </>
-      ) : (
-        <div className={styles.empty}>No formation log available</div>
       )}
     </section>
   );
@@ -2793,7 +2235,8 @@ function AgentWorkLog({
               <div className={styles.workLogItems}>
                 {visible.map((item, i) => {
                   const icon = TYPE_ICON[item.type] ?? "?";
-                  const color = SEV_COLOR[item.severity] ?? "#8b949e";
+                  const color =
+                    SEV_COLOR[item.severity] ?? "var(--fx-text-muted)";
                   const repo = repoFromTitle(item.title);
                   return (
                     <div key={i} className={styles.workLogItem}>
@@ -2887,7 +2330,10 @@ function OrgStatsPanel({ stats }: { stats: OrgStats }) {
           </div>
           <div className={styles.orgStatDivider} />
           <div className={styles.orgStat}>
-            <span className={styles.orgStatValue} style={{ color: "#3fb950" }}>
+            <span
+              className={styles.orgStatValue}
+              style={{ color: "var(--fx-sev-ok)" }}
+            >
               {stats.mergedThisWeek}
             </span>
             <span className={styles.orgStatLabel}>merged this week</span>
@@ -2905,12 +2351,12 @@ function OrgStatsPanel({ stats }: { stats: OrgStats }) {
           >
             <span
               className={styles.orgAgentRowDot}
-              style={{ background: "#3fb950" }}
+              style={{ background: "var(--fx-sev-ok)" }}
             />
             <span className={styles.orgAgentRowLabel}>Agent-ready</span>
             <span
               className={styles.orgAgentRowCount}
-              style={{ color: "#3fb950" }}
+              style={{ color: "var(--fx-sev-ok)" }}
             >
               {stats.agentReadyIssues}
             </span>
@@ -2924,12 +2370,12 @@ function OrgStatsPanel({ stats }: { stats: OrgStats }) {
           >
             <span
               className={styles.orgAgentRowDot}
-              style={{ background: "#58a6ff" }}
+              style={{ background: "var(--fx-accent)" }}
             />
             <span className={styles.orgAgentRowLabel}>Agent PRs open</span>
             <span
               className={styles.orgAgentRowCount}
-              style={{ color: "#58a6ff" }}
+              style={{ color: "var(--fx-accent)" }}
             >
               {stats.agentOpenPRs}
             </span>
@@ -2941,12 +2387,12 @@ function OrgStatsPanel({ stats }: { stats: OrgStats }) {
           >
             <span
               className={styles.orgAgentRowDot}
-              style={{ background: "#f59e0b" }}
+              style={{ background: "var(--fx-sev-watch)" }}
             />
             <span className={styles.orgAgentRowLabel}>Agent-sourced</span>
             <span
               className={styles.orgAgentRowCount}
-              style={{ color: "#f59e0b" }}
+              style={{ color: "var(--fx-sev-watch)" }}
             >
               {stats.sourceAgentOpen}
             </span>
@@ -3507,7 +2953,7 @@ function buildVitals(
       data: issueVals,
       variant: "line",
       domain: workDomain,
-      color: "#58a6ff",
+      color: "var(--fx-accent)",
       showEnd: true,
       showExtremes: true,
       a11y: `Actionable issues over ${hours} hours: now ${issueVals[issueVals.length - 1] ?? "unknown"}, scale 0 to ${workMax}.`,
@@ -3520,7 +2966,7 @@ function buildVitals(
       data: prVals,
       variant: "line",
       domain: workDomain,
-      color: "#bc8cff",
+      color: "var(--fx-cat-2)",
       showEnd: true,
       showExtremes: true,
       a11y: `Actionable pull requests over ${hours} hours: now ${prVals[prVals.length - 1] ?? "unknown"}, scale 0 to ${workMax}.`,
@@ -3537,7 +2983,7 @@ function buildVitals(
         data: totalVals,
         variant: "line" as const,
         domain: workDomain,
-        color: "#39d2c0",
+        color: "var(--fx-sev-ok)",
         showEnd: true,
         showExtremes: true,
         a11y: `Total open work over ${hours} hours: now ${last ?? "unknown"}, scale 0 to ${workMax}.`,
@@ -3554,7 +3000,7 @@ function buildVitals(
           : "no 90-day outcome data",
       data: outcomeMarks(merged90, rejected90),
       variant: "winloss",
-      color: "#d29922",
+      color: "var(--fx-sev-watch)",
       a11y: `Pull request outcomes over 90 days: ${merged90} merged, ${rejected90} closed without merging.`,
     },
     {
@@ -3574,7 +3020,7 @@ function buildVitals(
       variant: "bullet",
       domain: [0, Math.max(60, (mergeMins ?? 0) * 1.15)],
       target: 30,
-      color: "#f0883e",
+      color: "var(--fx-sev-watch)",
       a11y: `Median merge time ${mergeMins ?? "unknown"} minutes against a 30 minute target.`,
     },
     {
@@ -3588,7 +3034,7 @@ function buildVitals(
       data: acmmSeries,
       variant: "line",
       domain: [0, 5],
-      color: "#d29922",
+      color: "var(--fx-sev-watch)",
       showEnd: true,
       a11y: `AI codebase maturity level, now ${acmmNow ?? "unknown"} on a 0 to 5 scale.`,
     },
@@ -3603,7 +3049,7 @@ function buildVitals(
       data: budgetSeries,
       variant: "line",
       domain: [0, 100],
-      color: "#f85149",
+      color: "var(--fx-sev-alert)",
       showEnd: true,
       a11y: `Token budget used, now ${budgetNow != null ? Math.round(budgetNow) : "unknown"} percent of the daily allowance.`,
     },
@@ -3618,7 +3064,7 @@ function buildVitals(
       variant: "bullet",
       domain: [0, Math.max(checks.length, 1)],
       target: checks.length || undefined,
-      color: "#3fb950",
+      color: "var(--fx-sev-ok)",
       a11y: `${passing} of ${checks.length} registry health checks passing.`,
     },
     {
@@ -3632,7 +3078,7 @@ function buildVitals(
       variant: "bullet",
       domain: [0, Math.max(contributors, 1)],
       target: contributors || undefined,
-      color: "#58a6ff",
+      color: "var(--fx-accent)",
       a11y: `${activeContributors} of ${contributors} registered contributors are active.`,
     },
   ];
@@ -4235,67 +3681,6 @@ function StatusStrip({
   );
 }
 
-function TabBar({
-  active,
-  onSelect,
-  pathname,
-  search,
-  availability,
-}: {
-  active: FactoryTab;
-  onSelect: (tab: FactoryTab) => void;
-  pathname: string;
-  search: string;
-  availability: Record<FactoryTab, boolean>;
-}) {
-  const href = (id: FactoryTab) => {
-    const params = new URLSearchParams(search);
-    params.set(TAB_PARAM, id);
-    return `${pathname}?${params.toString()}`;
-  };
-  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
-    const i = TABS.findIndex((t) => t.id === active);
-    const next =
-      TABS[(i + (e.key === "ArrowRight" ? 1 : -1) + TABS.length) % TABS.length];
-    e.preventDefault();
-    onSelect(next.id);
-  };
-  return (
-    <div
-      className={styles.tabBar}
-      role="tablist"
-      aria-label="Factory views"
-      onKeyDown={onKeyDown}
-    >
-      {TABS.map((t) => (
-        <Link
-          key={t.id}
-          role="tab"
-          id={`factory-tab-${t.id}`}
-          // `pathname` already carries the site baseUrl.
-          to={href(t.id)}
-          autoAddBaseUrl={false}
-          aria-selected={active === t.id}
-          aria-controls={`factory-panel-${t.id}`}
-          title={t.hint}
-          className={`${styles.tabButton} ${
-            active === t.id ? styles.tabButtonActive : ""
-          }`}
-        >
-          {t.label}
-          {!availability[t.id] && (
-            <span className={styles.tabEmptyDot} title="no data yet">
-              {" "}
-              ○
-            </span>
-          )}
-        </Link>
-      ))}
-    </div>
-  );
-}
-
 // ── Main component ─────────────────────────────────────────────────────────
 
 /* ── State ───────────────────────────────────────────────────────────────── */
@@ -4834,7 +4219,7 @@ export function FactoryStatusStrip({
                   ? p1Count
                   : (registryData?.actionableIssues ?? "—")
             }
-            accent={p0Count > 0 ? "#f85149" : undefined}
+            accent={p0Count > 0 ? "var(--fx-sev-alert)" : undefined}
             sub={
               p0Count > 0
                 ? `${p0Count} blocker${p0Count > 1 ? "s" : ""}`
@@ -4892,7 +4277,7 @@ export function FactoryStatusStrip({
                 : "—"
             }
             sub="features + fixes"
-            accent="#3fb950"
+            accent="var(--fx-sev-ok)"
             spark={
               queueData
                 ? victorySparkData(
@@ -4915,7 +4300,9 @@ export function FactoryStatusStrip({
             value={testBuilds ?? "—"}
             sub="passed in testsuite"
             accent={
-              testBuilds != null && testBuilds > 0 ? "#3fb950" : undefined
+              testBuilds != null && testBuilds > 0
+                ? "var(--fx-sev-ok)"
+                : undefined
             }
           />
           <StatCard
@@ -4928,7 +4315,9 @@ export function FactoryStatusStrip({
                 : "—"
             }
             sub="median PR cycle"
-            accent={snapshot?.medianMergeMins != null ? "#39d2c0" : undefined}
+            accent={
+              snapshot?.medianMergeMins != null ? "var(--fx-sev-ok)" : undefined
+            }
           />
         </div>
       </StatusStrip>
@@ -4970,224 +4359,125 @@ export function LiveSection({ s }: { s: FactoryLive }): React.JSX.Element {
         </section>
       )}
 
-      {/* ── Factory Floor: Frame Formation (left) + sidebar (right) ── */}
-      <div className={styles.factoryFloor}>
-        {/* Left: Frame Formation — the factory floor */}
+      <GovernorPanel governor={snapshot?.governor} registry={registryData} />
+      <VictoryLog victories={queueData?.victories ?? null} />
+      {advisoryItems.length > 0 && (
         <section className={styles.panel}>
           <Heading as="h2" className={styles.panelTitle}>
-            Factory Floor — Live
+            What Frames Are Working On
           </Heading>
-          {agents.length > 0 ? (
-            <div className={styles.agentGrid}>
-              {agents.map((a) => (
-                <FrameCard
-                  key={a.id}
-                  agent={a}
-                  advisoryItems={advisoriesByAgent[a.name ?? a.id] ?? []}
-                />
-              ))}
-            </div>
-          ) : registryData?.agents && registryData.agents.length > 0 ? (
-            <div className={styles.agentGrid}>
-              {registryData.agents.map((ra) => {
-                const synth: HiveAgent = {
-                  id: ra.name,
-                  displayName:
-                    ra.name.charAt(0).toUpperCase() + ra.name.slice(1),
-                  role: ra.state ?? "unknown",
-                  emoji: "🤖",
-                  color:
-                    ra.state === "working"
-                      ? "#3fb950"
-                      : ra.state === "paused"
-                        ? "#f85149"
-                        : "#58a6ff",
-                  state: ra.state ?? "idle",
-                  busy: ra.state === "working" ? "working" : "idle",
-                  paused: ra.state === "paused",
-                };
-                return (
-                  <FrameCard key={ra.name} agent={synth} advisoryItems={[]} />
-                );
-              })}
-            </div>
-          ) : (
-            <div className={styles.empty}>
-              No Frame data — snapshot updating
-            </div>
-          )}
-        </section>
-
-        {/* Right: Governor + Victory Log + What Frames Are Working On + Health */}
-        <div className={styles.factorySidebar}>
-          <GovernorPanel
-            governor={snapshot?.governor}
-            registry={registryData}
+          <p className={styles.panelMeta}>
+            Advisory digest — findings, bugs, CI failures logged by each Frame
+          </p>
+          <AgentWorkLog
+            agents={agents}
+            items={advisoryItems}
+            advisoryIssue={snapshot?.advisoryIssue}
+            config={config}
           />
-          <VictoryLog victories={queueData?.victories ?? null} />
-          {advisoryItems.length > 0 && (
-            <section className={styles.panel}>
-              <Heading as="h2" className={styles.panelTitle}>
-                What Frames Are Working On
-              </Heading>
-              <p className={styles.panelMeta}>
-                Advisory digest — findings, bugs, CI failures logged by each
-                Frame
-              </p>
-              <AgentWorkLog
-                agents={agents}
-                items={advisoryItems}
-                advisoryIssue={snapshot?.advisoryIssue}
-                config={config}
-              />
-            </section>
-          )}
-          {/* Registry Health Checks */}
-          {registryData?.health?.checks &&
-            registryData.health.checks.length > 0 && (
-              <section className={styles.panel}>
-                <Heading as="h2" className={styles.panelTitle}>
-                  System Health
-                </Heading>
+        </section>
+      )}
+      {/* Registry Health Checks */}
+      {registryData?.health?.checks &&
+        registryData.health.checks.length > 0 && (
+          <section className={styles.panel}>
+            <Heading as="h2" className={styles.panelTitle}>
+              System Health
+            </Heading>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "0.35rem",
+                marginTop: "0.5rem",
+              }}
+            >
+              {registryData.health.checks.map((chk) => (
                 <div
+                  key={chk.name}
                   style={{
                     display: "flex",
-                    flexDirection: "column",
-                    gap: "0.35rem",
-                    marginTop: "0.5rem",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                    fontSize: "0.8rem",
                   }}
                 >
-                  {registryData.health.checks.map((chk) => (
-                    <div
-                      key={chk.name}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "0.5rem",
-                        fontSize: "0.8rem",
-                      }}
-                    >
-                      <span
-                        style={{
-                          width: 8,
-                          height: 8,
-                          borderRadius: "50%",
-                          flexShrink: 0,
-                          background:
-                            chk.status === "ok"
-                              ? "#3fb950"
-                              : chk.status === "warn"
-                                ? "#d97706"
-                                : "#f85149",
-                        }}
-                      />
-                      <span
-                        style={{
-                          color: "#e6edf3",
-                          textTransform: "capitalize",
-                        }}
-                      >
-                        {chk.name.replace(/_/g, " ")}
-                      </span>
-                      <span
-                        style={{
-                          marginLeft: "auto",
-                          color:
-                            chk.status === "ok"
-                              ? "#3fb950"
-                              : chk.status === "warn"
-                                ? "#d97706"
-                                : "#f85149",
-                          fontFamily: "monospace",
-                          fontWeight: 700,
-                          fontSize: "0.7rem",
-                        }}
-                      >
-                        {chk.status.toUpperCase()}
-                      </span>
-                      {chk.detail && (
-                        <span
-                          style={{
-                            color: "#808893",
-                            fontSize: "0.68rem",
-                            maxWidth: "8rem",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            whiteSpace: "nowrap",
-                          }}
-                          title={chk.detail}
-                        >
-                          {chk.detail}
-                        </span>
-                      )}
-                    </div>
-                  ))}
-                </div>
-                {registryData.online != null && (
-                  <p
-                    className={styles.panelMeta}
-                    style={{ marginTop: "0.5rem" }}
+                  <span
+                    style={{
+                      width: 8,
+                      height: 8,
+                      borderRadius: "50%",
+                      flexShrink: 0,
+                      background:
+                        chk.status === "ok"
+                          ? "var(--fx-sev-ok)"
+                          : chk.status === "warn"
+                            ? "var(--fx-sev-watch)"
+                            : "var(--fx-sev-alert)",
+                    }}
+                  />
+                  <span
+                    style={{
+                      color: "var(--fx-text)",
+                      textTransform: "capitalize",
+                    }}
                   >
-                    Registry:{" "}
+                    {chk.name.replace(/_/g, " ")}
+                  </span>
+                  <span
+                    style={{
+                      marginLeft: "auto",
+                      color:
+                        chk.status === "ok"
+                          ? "var(--fx-sev-ok)"
+                          : chk.status === "warn"
+                            ? "var(--fx-sev-watch)"
+                            : "var(--fx-sev-alert)",
+                      fontFamily: "monospace",
+                      fontWeight: 700,
+                      fontSize: "0.7rem",
+                    }}
+                  >
+                    {chk.status.toUpperCase()}
+                  </span>
+                  {chk.detail && (
                     <span
                       style={{
-                        color: registryData.online ? "#3fb950" : "#f85149",
-                        fontWeight: 700,
+                        color: "var(--fx-text-faint)",
+                        fontSize: "0.68rem",
+                        maxWidth: "8rem",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
                       }}
+                      title={chk.detail}
                     >
-                      {registryData.online ? "ONLINE" : "OFFLINE"}
+                      {chk.detail}
                     </span>
-                    {registryData.lastHeartbeat && (
-                      <>
-                        {" "}
-                        &middot; heartbeat {relTime(registryData.lastHeartbeat)}
-                      </>
-                    )}
-                  </p>
+                  )}
+                </div>
+              ))}
+            </div>
+            {registryData.online != null && (
+              <p className={styles.panelMeta} style={{ marginTop: "0.5rem" }}>
+                Registry:{" "}
+                <span
+                  style={{
+                    color: registryData.online
+                      ? "var(--fx-sev-ok)"
+                      : "var(--fx-sev-alert)",
+                    fontWeight: 700,
+                  }}
+                >
+                  {registryData.online ? "ONLINE" : "OFFLINE"}
+                </span>
+                {registryData.lastHeartbeat && (
+                  <> &middot; heartbeat {relTime(registryData.lastHeartbeat)}</>
                 )}
-              </section>
+              </p>
             )}
-        </div>
-      </div>
-
-      {/* Beads + Agent of Day */}
-      <div className={styles.twoCol}>
-        <BeadsCadencePanel
-          beads={snapshot?.beads}
-          cadenceMatrix={snapshot?.cadenceMatrix}
-          mode={snapshot?.governor?.mode}
-        />
-        <FrameOfDay
-          agent={agentOfDay}
-          advisoryItems={
-            advisoriesByAgent[agentOfDay?.name ?? agentOfDay?.id ?? ""] ?? []
-          }
-        />
-      </div>
-
-      {/* Formation log */}
-      <FormationLog
-        supervisor={supervisorAgent}
-        timestamp={snapshot?.timestamp}
-      />
-
-      {/* Governor 24h timeline */}
-      {snapshot?.governorTimeline && snapshot.governorTimeline.length >= 10 && (
-        <GovernorTimeline ticks={snapshot.governorTimeline} />
-      )}
-
-      {/* Token budget */}
-      {snapshot?.budgetPct != null && (
-        <TokenBudgetPanel
-          pct={snapshot.budgetPct}
-          total={snapshot.budgetTotal}
-          used={snapshot.budgetUsed}
-          mode={snapshot.acmmMode ?? snapshot.governor?.mode}
-        />
-      )}
-
-      {/* Strategy Lab */}
-      {snapshot?.nous && <NousPanel nous={snapshot.nous} />}
+          </section>
+        )}
     </>
   );
 }
@@ -5246,17 +4536,19 @@ export function CommunitySection({ s }: { s: FactoryLive }): React.JSX.Element {
                     display: "flex",
                     alignItems: "center",
                     gap: "0.5rem",
-                    background: "#161b22",
+                    background: "var(--fx-surface)",
                     borderRadius: "6px",
                     padding: "0.4rem 0.6rem",
                     border:
-                      idx === 0 ? "1px solid #d97706" : "1px solid #21262d",
+                      idx === 0
+                        ? "1px solid var(--fx-sev-watch)"
+                        : "1px solid var(--fx-surface-3)",
                   }}
                 >
                   <span
                     style={{
                       fontSize: "0.7rem",
-                      color: "#808893",
+                      color: "var(--fx-text-faint)",
                       fontFamily: "monospace",
                       width: "1.2rem",
                       flexShrink: 0,
@@ -5277,7 +4569,7 @@ export function CommunitySection({ s }: { s: FactoryLive }): React.JSX.Element {
                   <span
                     style={{
                       fontSize: "0.8rem",
-                      color: "#e6edf3",
+                      color: "var(--fx-text)",
                       flex: 1,
                       overflow: "hidden",
                       textOverflow: "ellipsis",
@@ -5292,7 +4584,11 @@ export function CommunitySection({ s }: { s: FactoryLive }): React.JSX.Element {
                       fontWeight: 700,
                       fontFamily: "monospace",
                       color:
-                        idx === 0 ? "#d97706" : idx < 3 ? "#3fb950" : "#58a6ff",
+                        idx === 0
+                          ? "var(--fx-sev-watch)"
+                          : idx < 3
+                            ? "var(--fx-sev-ok)"
+                            : "var(--fx-accent)",
                     }}
                   >
                     {entry.tasks_completed}

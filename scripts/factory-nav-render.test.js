@@ -57,56 +57,48 @@ const render = (pathname) =>
 
 const count = (haystack, needle) => haystack.split(needle).length - 1;
 
-test("both primaries always render", () => {
+test("every view renders as a peer in one row", () => {
+  // Unified factory: the hive is not split from builds, tests or adoption.
   const html = render("/factory");
-  assert.ok(html.includes(">Live<"));
-  assert.ok(html.includes(">Factory<"));
+  for (const label of [
+    "Overview",
+    "Images",
+    "Builds",
+    "Tests",
+    "Applications",
+    "Metrics",
+    "Userspace",
+    "Community",
+  ]) {
+    assert.ok(html.includes(`>${label}<`), label);
+  }
 });
 
-test("only the active primary's secondary row renders", () => {
-  const live = render("/factory");
-  assert.ok(live.includes(">Community<"));
-  assert.ok(!live.includes(">Userspace<"));
-
-  const factory = render("/factory/builds");
-  assert.ok(factory.includes(">Userspace<"));
-  assert.ok(!factory.includes(">Community<"));
+test("there is exactly one tablist, not a two-level split", () => {
+  const html = render("/factory/builds");
+  assert.equal(count(html, 'role="tablist"'), 1);
+  assert.ok(html.includes('aria-label="Factory views"'));
 });
 
-test("exactly one tab in each row is aria-selected", () => {
-  const html = render("/factory/metrics");
-  assert.equal(count(html, 'aria-selected="true"'), 2);
+test("exactly one tab is aria-selected", () => {
+  assert.equal(count(render("/factory/metrics"), 'aria-selected="true"'), 1);
 });
 
 test("only the selected tab is in the tab order", () => {
-  // WAI-ARIA roving tabindex: one tabindex="0" per tablist.
+  // WAI-ARIA roving tabindex: one stop for the whole bar.
   const html = render("/factory/tests");
-  assert.equal(count(html, 'tabindex="0"'), 2);
-  assert.ok(count(html, 'tabindex="-1"') >= 5);
-});
-
-test("an inactive primary links to its own landing route", () => {
-  const html = render("/factory");
-  assert.ok(html.includes('href="/factory/images"'));
+  assert.equal(count(html, 'tabindex="0"'), 1);
+  assert.equal(count(html, 'tabindex="-1"'), 7);
 });
 
 test("every tab is a real link, so it works without JavaScript", () => {
-  // 2 primaries + 2 live secondaries
-  assert.equal(count(render("/factory"), "<a "), 4);
+  assert.equal(count(render("/factory"), "<a "), 8);
 });
 
-test("both rows are labelled tablists", () => {
-  const html = render("/factory");
-  assert.equal(count(html, 'role="tablist"'), 2);
-  assert.ok(html.includes('aria-label="Factory sections"'));
-  assert.ok(html.includes('aria-label="Live views"'));
-});
-
-test("an unknown pathname still renders a usable nav", () => {
-  // Never throw and never render a nav with nothing selected.
+test("an unknown pathname still renders a usable bar", () => {
   const html = render("/factory/does-not-exist");
-  assert.equal(count(html, 'aria-selected="true"'), 2);
-  assert.equal(count(html, 'tabindex="0"'), 2);
+  assert.equal(count(html, 'aria-selected="true"'), 1);
+  assert.equal(count(html, 'tabindex="0"'), 1);
 });
 
 test("rendering is deterministic", () => {

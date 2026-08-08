@@ -37,35 +37,39 @@ test("every route path starts with /factory and has no trailing slash", () => {
 });
 
 test("the eight agreed routes exist, in the agreed order", () => {
+  // One unified row. The hive is not split out; every view is a peer.
   assert.deepEqual(
     routes.FACTORY_ROUTES.map((r) => r.path),
     [
       "/factory",
-      "/factory/community",
       "/factory/images",
       "/factory/builds",
       "/factory/tests",
       "/factory/applications",
       "/factory/metrics",
       "/factory/userspace",
+      "/factory/community",
     ],
   );
 });
 
-test("each primary owns at least one secondary", () => {
-  assert.ok(routes.secondaryFor("live").length >= 1);
-  assert.ok(routes.secondaryFor("factory").length >= 1);
+test("the navigation has exactly one level", () => {
+  // A two-level split reappearing would mean the hive was separated again.
+  assert.equal(routes.PRIMARIES, undefined);
+  assert.equal(routes.secondaryFor, undefined);
+  for (const r of routes.FACTORY_ROUTES) {
+    assert.equal(r.primary, undefined, r.path);
+  }
 });
 
-test("a primary lands on its first secondary", () => {
-  assert.equal(routes.landingFor("live"), "/factory");
-  assert.equal(routes.landingFor("factory"), "/factory/images");
+test("landingPath is the first tab", () => {
+  assert.equal(routes.landingPath(), "/factory");
 });
 
-test("primaryOf tolerates a trailing slash and an unknown path", () => {
-  assert.equal(routes.primaryOf("/factory/builds/"), "factory");
-  assert.equal(routes.primaryOf("/factory/"), "live");
-  assert.equal(routes.primaryOf("/somewhere-else"), "live");
+test("routeFor tolerates a trailing slash and an unknown path", () => {
+  assert.equal(routes.routeFor("/factory/builds/").id, "builds");
+  assert.equal(routes.routeFor("/factory/").id, "overview");
+  assert.equal(routes.routeFor("/somewhere-else"), undefined);
 });
 
 test("no route declares a dataset the context does not know", () => {
