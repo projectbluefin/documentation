@@ -1,0 +1,103 @@
+/*
+ * The persistent frame around every /factory route, plus the two shared
+ * primitives every panel uses: the chart figure and the unavailable state.
+ *
+ * Authorized by adr/0003-factory-two-level-navigation.md.
+ */
+
+.shell {
+  background: var(--fx-bg);
+  color: var(--fx-text);
+  min-height: 60vh;
+  padding: var(--fx-space-5) var(--fx-space-4) var(--fx-space-7);
+  max-width: 1360px;
+  margin-inline: auto;
+}
+
+.panelGrid {
+  display: grid;
+  gap: var(--fx-space-5);
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+}
+
+.chartFigure {
+  margin: 0 0 var(--fx-space-5);
+  padding: var(--fx-space-4);
+  background: var(--fx-surface);
+  border: 1px solid var(--fx-border);
+  border-radius: var(--fx-radius-lg);
+}
+
+.chartCaption {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fx-space-1);
+  margin-bottom: var(--fx-space-3);
+}
+
+.chartTitle {
+  font-size: var(--fx-text-md);
+  font-weight: var(--fx-weight-bold);
+  color: var(--fx-text-strong);
+}
+
+/* Rule 1: the number always accompanies the graphic. */
+.chartSummary {
+  font-size: var(--fx-text-sm);
+  color: var(--fx-text-muted);
+}
+
+.chartCanvas {
+  width: 100%;
+}
+
+.chartEmpty {
+  display: grid;
+  place-items: center;
+  color: var(--fx-text-muted);
+  font-size: var(--fx-text-sm);
+  border: 1px dashed var(--fx-border);
+  border-radius: var(--fx-radius-md);
+}
+
+.chartData {
+  margin-top: var(--fx-space-3);
+  font-size: var(--fx-text-xs);
+  color: var(--fx-text-muted);
+}
+
+.chartData summary {
+  cursor: pointer;
+}
+
+.chartData table {
+  width: 100%;
+  margin-top: var(--fx-space-2);
+  display: block;
+  max-height: 18rem;
+  overflow: auto;
+}
+
+.unavailable {
+  display: flex;
+  gap: var(--fx-space-3);
+  align-items: flex-start;
+  padding: var(--fx-space-4);
+  background: var(--fx-surface);
+  border: 1px solid var(--fx-border);
+  border-left: 3px solid var(--fx-sev-unknown);
+  border-radius: var(--fx-radius-md);
+  margin-bottom: var(--fx-space-4);
+}
+
+.unavailableGlyph {
+  color: var(--fx-sev-unknown);
+  font-size: var(--fx-text-lg);
+  line-height: 1;
+}
+
+.unavailableReason {
+  margin: var(--fx-space-1) 0 0;
+  font-size: var(--fx-text-sm);
+  color: var(--fx-text-muted);
+}

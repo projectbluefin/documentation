@@ -1,0 +1,116 @@
+/*
+ * Styles for ApplicationsPanels.
+ * Uses --fx-* tokens from tokens.css; never hard-codes a colour.
+ */
+
+.framing {
+  font-size: var(--fx-text-sm);
+  color: var(--fx-text-muted);
+  margin-bottom: var(--fx-space-5);
+}
+
+.kpiStrip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--fx-space-4);
+  margin-bottom: var(--fx-space-5);
+}
+
+.kpiCard {
+  flex: 1 1 140px;
+  padding: var(--fx-space-3) var(--fx-space-4);
+  background: var(--fx-surface);
+  border: 1px solid var(--fx-border);
+  border-radius: var(--fx-radius-md);
+}
+
+.kpiValue {
+  font-size: var(--fx-text-xl);
+  font-weight: var(--fx-weight-bold);
+  color: var(--fx-text-strong);
+}
+
+.kpiLabel {
+  font-size: var(--fx-text-xs);
+  color: var(--fx-text-muted);
+  margin-top: var(--fx-space-1);
+}
+
+.bigNumber {
+  font-size: var(--fx-text-2xl);
+  font-weight: var(--fx-weight-bold);
+  color: var(--fx-text-strong);
+}
+
+.bigLabel {
+  font-size: var(--fx-text-sm);
+  color: var(--fx-text-muted);
+}
+
+.section {
+  margin-bottom: var(--fx-space-5);
+}
+
+.heading {
+  font-size: var(--fx-text-lg);
+  font-weight: var(--fx-weight-bold);
+  color: var(--fx-text-strong);
+  margin-bottom: var(--fx-space-3);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fx-text-sm);
+  margin-bottom: var(--fx-space-5);
+}
+
+.table th,
+.table td {
+  padding: var(--fx-space-2) var(--fx-space-3);
+  text-align: left;
+  border-bottom: 1px solid var(--fx-border);
+}
+
+.table th {
+  color: var(--fx-text-muted);
+  font-weight: var(--fx-weight-medium);
+}
+
+.table td {
+  color: var(--fx-text);
+}
+
+.extGrid {
+  display: grid;
+  gap: var(--fx-space-3);
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  margin-bottom: var(--fx-space-5);
+}
+
+.extCard {
+  padding: var(--fx-space-3) var(--fx-space-4);
+  background: var(--fx-surface);
+  border: 1px solid var(--fx-border);
+  border-radius: var(--fx-radius-md);
+}
+
+.extName {
+  font-weight: var(--fx-weight-medium);
+  color: var(--fx-text);
+}
+
+.extCreator {
+  font-size: var(--fx-text-xs);
+  color: var(--fx-text-muted);
+  margin-top: var(--fx-space-1);
+}
+
+.link {
+  color: var(--fx-accent);
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}

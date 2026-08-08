@@ -1,0 +1,154 @@
+/*
+ * Styles for TestsPanels and BuildsPanels.
+ * Uses --fx-* tokens from tokens.css; never hard-codes a colour.
+ */
+
+.section {
+  margin-bottom: var(--fx-space-5);
+}
+
+.kpiStrip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--fx-space-4);
+  margin-bottom: var(--fx-space-5);
+}
+
+.kpiCard {
+  flex: 1 1 140px;
+  padding: var(--fx-space-3) var(--fx-space-4);
+  background: var(--fx-surface);
+  border: 1px solid var(--fx-border);
+  border-radius: var(--fx-radius-md);
+}
+
+.kpiValue {
+  font-size: var(--fx-text-xl);
+  font-weight: var(--fx-weight-bold);
+  color: var(--fx-text-strong);
+}
+
+.kpiLabel {
+  font-size: var(--fx-text-xs);
+  color: var(--fx-text-muted);
+  margin-top: var(--fx-space-1);
+}
+
+.triageList {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--fx-space-5);
+}
+
+.triageItem {
+  display: flex;
+  align-items: center;
+  gap: var(--fx-space-3);
+  padding: var(--fx-space-3) var(--fx-space-4);
+  background: var(--fx-surface);
+  border: 1px solid var(--fx-border);
+  border-radius: var(--fx-radius-md);
+  margin-bottom: var(--fx-space-2);
+}
+
+.triageGlyph {
+  font-size: var(--fx-text-lg);
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.triageLabel {
+  font-weight: var(--fx-weight-medium);
+  color: var(--fx-text);
+}
+
+.triageReason {
+  font-size: var(--fx-text-sm);
+  color: var(--fx-text-muted);
+}
+
+.triageEmpty {
+  padding: var(--fx-space-4);
+  background: var(--fx-surface);
+  border: 1px solid var(--fx-border);
+  border-radius: var(--fx-radius-md);
+  color: var(--fx-text-muted);
+  margin-bottom: var(--fx-space-5);
+}
+
+.sparklineGrid {
+  display: grid;
+  gap: var(--fx-space-3);
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  margin-bottom: var(--fx-space-5);
+}
+
+.sparklineRow {
+  display: flex;
+  align-items: center;
+  gap: var(--fx-space-3);
+  padding: var(--fx-space-2) var(--fx-space-3);
+  background: var(--fx-surface);
+  border: 1px solid var(--fx-border);
+  border-radius: var(--fx-radius-sm);
+}
+
+.sparklineLabel {
+  font-size: var(--fx-text-sm);
+  color: var(--fx-text);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sparklineRate {
+  font-size: var(--fx-text-sm);
+  font-weight: var(--fx-weight-medium);
+  color: var(--fx-text-strong);
+  white-space: nowrap;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fx-text-sm);
+  margin-bottom: var(--fx-space-5);
+}
+
+.table th,
+.table td {
+  padding: var(--fx-space-2) var(--fx-space-3);
+  text-align: left;
+  border-bottom: 1px solid var(--fx-border);
+}
+
+.table th {
+  color: var(--fx-text-muted);
+  font-weight: var(--fx-weight-medium);
+}
+
+.table td {
+  color: var(--fx-text);
+}
+
+.inflightNote {
+  font-size: var(--fx-text-sm);
+  color: var(--fx-text-muted);
+  margin-bottom: var(--fx-space-3);
+}
+
+.chartGrid {
+  display: grid;
+  gap: var(--fx-space-4);
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  margin-bottom: var(--fx-space-5);
+}
+
+.heading {
+  font-size: var(--fx-text-lg);
+  font-weight: var(--fx-weight-bold);
+  color: var(--fx-text-strong);
+  margin-bottom: var(--fx-space-3);
+}

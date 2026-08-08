@@ -18,6 +18,11 @@ concurrency:
 
 permissions:
   contents: read
+  # The GHCR package inventory feeds /factory/images and /factory/userspace.
+  # The default token is repository-scoped, so listing an organisation's
+  # packages can still fail; fetch-ghcr-packages.js falls back to anonymous
+  # reads of the public registry when it does.
+  packages: read
 
 jobs:
   build:

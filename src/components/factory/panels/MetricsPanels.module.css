@@ -1,0 +1,160 @@
+/*
+ * Styles for MetricsPanels.
+ * Uses --fx-* tokens from tokens.css; never hard-codes a colour.
+ */
+
+.section {
+  margin-bottom: var(--fx-space-6);
+}
+
+.heading {
+  font-size: var(--fx-text-lg);
+  font-weight: var(--fx-weight-bold);
+  color: var(--fx-text-strong);
+  margin-bottom: var(--fx-space-3);
+}
+
+.rangeToggle {
+  display: inline-flex;
+  gap: 0;
+  margin-bottom: var(--fx-space-4);
+  border: 1px solid var(--fx-border);
+  border-radius: var(--fx-radius-pill);
+  overflow: hidden;
+}
+
+.rangeBtn {
+  padding: var(--fx-space-1) var(--fx-space-3);
+  font-size: var(--fx-text-xs);
+  background: transparent;
+  color: var(--fx-text-muted);
+  border: none;
+  cursor: pointer;
+  transition:
+    background var(--fx-transition),
+    color var(--fx-transition);
+}
+
+.rangeBtn:hover {
+  color: var(--fx-text);
+}
+
+.rangeBtnActive {
+  background: var(--fx-surface-3);
+  color: var(--fx-text-strong);
+  font-weight: var(--fx-weight-medium);
+}
+
+.bigNumber {
+  font-size: var(--fx-text-xl);
+  font-weight: var(--fx-weight-black);
+  color: var(--fx-text-strong);
+}
+
+.bigLabel {
+  font-size: var(--fx-text-sm);
+  color: var(--fx-text-muted);
+  margin-top: var(--fx-space-1);
+}
+
+.kpiStrip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--fx-space-4);
+  margin-bottom: var(--fx-space-5);
+}
+
+.kpiCard {
+  flex: 1 1 140px;
+  padding: var(--fx-space-3) var(--fx-space-4);
+  background: var(--fx-surface);
+  border: 1px solid var(--fx-border);
+  border-radius: var(--fx-radius-md);
+}
+
+.kpiValue {
+  font-size: var(--fx-text-xl);
+  font-weight: var(--fx-weight-bold);
+  color: var(--fx-text-strong);
+}
+
+.kpiLabel {
+  font-size: var(--fx-text-xs);
+  color: var(--fx-text-muted);
+  margin-top: var(--fx-space-1);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fx-text-sm);
+  margin-bottom: var(--fx-space-5);
+}
+
+.table th,
+.table td {
+  padding: var(--fx-space-2) var(--fx-space-3);
+  text-align: left;
+  border-bottom: 1px solid var(--fx-border);
+}
+
+.table th {
+  color: var(--fx-text-muted);
+  font-weight: var(--fx-weight-medium);
+}
+
+.table td {
+  color: var(--fx-text);
+}
+
+.laneTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fx-text-sm);
+  margin-bottom: var(--fx-space-5);
+}
+
+.laneTable th,
+.laneTable td {
+  padding: var(--fx-space-2) var(--fx-space-3);
+  text-align: left;
+  border-bottom: 1px solid var(--fx-border);
+}
+
+.laneTable th {
+  color: var(--fx-text-muted);
+  font-weight: var(--fx-weight-medium);
+}
+
+.laneTable td {
+  color: var(--fx-text);
+}
+
+.laneValue {
+  font-weight: var(--fx-weight-medium);
+  color: var(--fx-text-strong);
+}
+
+.leadTimeNote {
+  font-size: var(--fx-text-sm);
+  color: var(--fx-text-muted);
+  padding: var(--fx-space-3) var(--fx-space-4);
+  background: var(--fx-surface);
+  border: 1px solid var(--fx-border);
+  border-radius: var(--fx-radius-md);
+  margin-bottom: var(--fx-space-4);
+}
+
+.scoreBlock {
+  display: flex;
+  align-items: center;
+  gap: var(--fx-space-4);
+  margin-bottom: var(--fx-space-4);
+}
+
+.currentValue {
+  font-size: var(--fx-text-xl);
+  font-weight: var(--fx-weight-bold);
+  color: var(--fx-text-strong);
+  margin-bottom: var(--fx-space-2);
+}
