@@ -4684,13 +4684,10 @@ export function FactoryAbout({ s }: { s: FactoryLive }): React.JSX.Element {
               repository in the formation.
             </p>
             <p>
-              <strong>Hive</strong> is an open-source AI agent orchestration
-              system by Andy Anderson. The system implements the{" "}
-              <Link href="https://arxiv.org/abs/2604.09388">
-                AI Codebase Maturity Model
-              </Link>{" "}
-              (ACMM) — a framework from AI-assisted coding to fully autonomous
-              development.
+              <strong>Hive</strong> is an open source AI agent orchestration
+              system that is part of{" "}
+              <Link href="https://kubestellar.io/">KubeStellar</Link>, a CNCF
+              Sandbox Project.
             </p>
             <p>
               No one has ever built an agentic OS like this before. This
