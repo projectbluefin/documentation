@@ -158,3 +158,11 @@
   color: var(--fx-text-strong);
   margin-bottom: var(--fx-space-2);
 }
+
+/* A caveat that belongs with the number, not buried in the chart summary. */
+.note {
+  font-size: var(--fx-text-xs);
+  color: var(--fx-text-muted);
+  max-width: 68ch;
+  margin-bottom: var(--fx-space-3);
+}

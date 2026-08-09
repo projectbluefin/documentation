@@ -43,3 +43,4 @@ delete, so the reasoning stays readable.
 | [0001](0001-agent-design-authorization.md)   | Agent design change authorization                              | Accepted |
 | [0002](0002-factory-page.md)                 | Rename /hive to /factory and absorb factory content            | Accepted |
 | [0003](0003-factory-two-level-navigation.md) | Two-level navigation for /factory and first-party chart parity | Accepted |
+| [0004](0004-countme-counting-method.md)      | Countme is counted the way ublue-os/countme counts it          | Accepted |

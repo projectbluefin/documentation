@@ -8,49 +8,53 @@ const { renderToStaticMarkup } = require("react-dom/server");
 
 // ── Fixtures ───────────────────────────────────────────────────────────────
 
+// Magnitudes here are the corrected ones (see ADR 0004). They are roughly what
+// ublue-os/countme publishes, so a fixture that drifts back toward the old
+// inflated numbers is a signal the counting rule regressed.
 const COUNTME_FULL = {
-  unit: "weekly countme hits",
+  unit: "estimated weekly active systems",
+  method: "ublue-countme-v1",
   variants: ["bluefin", "bluefin-lts", "aurora", "bazzite", "fedora"],
   weeks: [
     {
       week: "2026-06-29",
-      bluefin: 20000,
-      "bluefin-lts": 500,
-      aurora: 15000,
-      bazzite: 400000,
-      fedora: 13000000,
+      bluefin: 3563,
+      "bluefin-lts": 104,
+      aurora: 2716,
+      bazzite: 85959,
+      fedora: 1068523,
     },
     {
       week: "2026-07-06",
-      bluefin: 21000,
-      "bluefin-lts": 550,
-      aurora: 15500,
-      bazzite: 410000,
-      fedora: 13100000,
+      bluefin: 3508,
+      "bluefin-lts": 76,
+      aurora: 2667,
+      bazzite: 86025,
+      fedora: 1101818,
     },
     {
       week: "2026-07-13",
-      bluefin: 22000,
-      "bluefin-lts": 580,
-      aurora: 16000,
-      bazzite: 420000,
-      fedora: 13200000,
+      bluefin: 3555,
+      "bluefin-lts": 123,
+      aurora: 2688,
+      bazzite: 86626,
+      fedora: 1070454,
     },
     {
       week: "2026-07-20",
-      bluefin: 23000,
-      "bluefin-lts": 600,
-      aurora: 16500,
-      bazzite: 450000,
-      fedora: 13200000,
+      bluefin: 4095,
+      "bluefin-lts": 100,
+      aurora: 2669,
+      bazzite: 88548,
+      fedora: 1073642,
     },
     {
       week: "2026-07-27",
-      bluefin: 23737,
-      "bluefin-lts": 622,
-      aurora: 17451,
-      bazzite: 483371,
-      fedora: 13230935,
+      bluefin: 3761,
+      "bluefin-lts": 159,
+      aurora: 2826,
+      bazzite: 89550,
+      fedora: 1102473,
     },
   ],
   unavailable: false,
@@ -579,7 +583,7 @@ test("unavailable dora does not prevent countme panel rendering", () => {
     scorecard: SCORECARD,
   });
   // Countme panel should still render
-  assert.ok(html.includes("Weekly countme check-ins"));
+  assert.ok(html.includes("Weekly active devices"));
   // Dora should show unavailable
   assert.ok(html.includes("Delivery frequency"));
 });

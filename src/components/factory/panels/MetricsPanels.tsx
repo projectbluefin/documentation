@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Link from "@docusaurus/Link";
 import Unavailable from "../Unavailable";
 import EChart from "../EChart";
 import { gapSafe, seriesColor, seriesDash } from "../chartTheme";
@@ -143,7 +144,7 @@ export default function MetricsPanels({
   );
 }
 
-// ── Panel 1: Weekly countme check-ins ──────────────────────────────────────
+// ── Panel 1: Weekly active devices ─────────────────────────────────────────
 
 function ActiveDevices({
   countme,
@@ -159,7 +160,7 @@ function ActiveDevices({
   if (countme.reason || (!countme.loading && !countme.data)) {
     return (
       <Unavailable
-        what="Weekly countme check-ins"
+        what="Weekly active devices"
         reason={
           countme.reason ?? "countme data is not available in this environment."
         }
@@ -169,7 +170,7 @@ function ActiveDevices({
   if (countme.loading || !countme.data) {
     return (
       <Unavailable
-        what="Weekly countme check-ins"
+        what="Weekly active devices"
         reason="Loading adoption data…"
       />
     );
@@ -177,7 +178,7 @@ function ActiveDevices({
   if (countme.data.unavailable) {
     return (
       <Unavailable
-        what="Weekly countme check-ins"
+        what="Weekly active devices"
         reason={countme.data.stateReason ?? "Data unavailable."}
       />
     );
@@ -219,10 +220,17 @@ function ActiveDevices({
 
   return (
     <section className={styles.section}>
-      <h2 className={styles.heading}>Weekly countme check-ins</h2>
+      <h2 className={styles.heading}>Weekly active devices</h2>
       <div className={styles.currentValue}>
         {fmt(currentBluefin)} Bluefin · {fmt(currentLts)} LTS
       </div>
+      <p className={styles.note}>
+        Counted the same way as the{" "}
+        <Link href="https://github.com/ublue-os/countme">ublue-os/countme</Link>{" "}
+        charts and README badges. Bluefin LTS is CentOS Stream based and reaches
+        Fedora&rsquo;s counter only through EPEL, so its line undercounts and is
+        not comparable like-for-like.
+      </p>
       <div className={styles.rangeToggle}>
         {(["30d", "90d", "365d", "all"] as Range[]).map((r) => (
           <button
@@ -237,11 +245,11 @@ function ActiveDevices({
       </div>
       <EChart
         option={option}
-        title="Weekly countme check-ins"
-        summary={`Bluefin: ${fmt(currentBluefin)} countme check-ins this week. LTS: ${fmt(currentLts)}. countme is a Fedora-side weekly check-in estimate, not a literal device count.`}
+        title="Weekly active devices"
+        summary={`Bluefin: ${fmt(currentBluefin)} active devices this week. LTS: ${fmt(currentLts)}. countme is a Fedora-side weekly estimate that only sees systems which ran dnf that week, and it can be turned off, so this is an estimate rather than a census. Bluefin LTS is visible only via EPEL and undercounts.`}
         points={realPoints}
         minPoints={2}
-        tableCaption="Weekly countme hits for Bluefin and Bluefin LTS"
+        tableCaption="Weekly active devices for Bluefin and Bluefin LTS"
       />
     </section>
   );
@@ -321,14 +329,19 @@ function EcosystemShare({
   return (
     <section className={styles.section}>
       <h2 className={styles.heading}>Ecosystem share</h2>
+      <p className={styles.note}>
+        Bluefin LTS is included for completeness, but it is CentOS Stream based
+        and countme sees it only through EPEL, so its slice is an undercount
+        rather than a like-for-like share.
+      </p>
       <EChart
         option={option}
         title="Cloud-native desktop ecosystem share"
-        summary={`Latest week across ${slices.length} peer cloud-native desktops (excluding Fedora, which dwarfs the rest and is the shared base rather than a peer image).`}
+        summary={`Latest week across ${slices.length} peer cloud-native desktops (excluding Fedora, which dwarfs the rest and is the shared base rather than a peer image). Bluefin LTS is visible only via EPEL and is undercounted.`}
         points={realPoints}
         minPoints={2}
         height={320}
-        tableCaption="Weekly countme hits by image"
+        tableCaption="Weekly active devices by image"
       />
     </section>
   );
