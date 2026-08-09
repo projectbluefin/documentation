@@ -63,7 +63,6 @@ const DATED_STREAM_TAG = /^(stable|testing|latest|nightly|beta|gts|lts)-\d{8}/;
  */
 export function classifyFamily(name) {
   if (name.endsWith("-cache") || name.endsWith("-pr")) return "internal";
-  if (name.endsWith("-toolbox")) return "toolbox";
   if (name.startsWith("bluefin") || name.startsWith("dakota")) return "os";
   if (
     name.startsWith("base") ||
@@ -208,8 +207,6 @@ export const FALLBACK_LANES = [
   "bluefin-lts-hwe-nvidia",
   "dakota",
   "dakota-nvidia",
-  "bluefin-toolbox",
-  "ubuntu-toolbox",
   "base",
   "static",
   "skopeo",

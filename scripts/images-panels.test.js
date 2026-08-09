@@ -25,20 +25,6 @@ const FIXTURE_FULL = {
       ],
     },
     {
-      name: "toolbox-ubuntu",
-      family: "toolbox",
-      versionCount: 10,
-      streams: [
-        {
-          tag: "latest",
-          publishedAt: "2026-07-20T00:00:00Z",
-          ageDays: 17,
-          state: "stale",
-          stateReason: "Expected within 7 days",
-        },
-      ],
-    },
-    {
       name: "awaiting-image",
       family: "os",
       versionCount: 0,
@@ -67,7 +53,7 @@ const FIXTURE_FULL = {
       ],
     },
   ],
-  familyCounts: { os: 2, toolbox: 1, internal: 1 },
+  familyCounts: { os: 2, internal: 1 },
   unavailable: false,
   stateReason: null,
 };
