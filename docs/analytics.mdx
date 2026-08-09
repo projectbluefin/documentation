@@ -27,6 +27,34 @@ The Fedora countme service is on by default in Fedora, and Bluefin inherits that
 - [countme](https://github.com/wgwoods/fedora-countme-data)
 - [How to turn it off](https://coreos.github.io/rpm-ostree/countme/)
 
+### How the numbers are counted
+
+The chart above and the [Factory metrics view](/factory/metrics) are both derived
+from Fedora's published `totals.csv` using the rules in
+[ublue-os/countme](https://github.com/ublue-os/countme), which is the project's
+canonical implementation. Two of those rules matter for reading the numbers:
+
+- **A hit is not a device.** DNF sends a countme request once a week for _each
+  repository_ that has it enabled, so a machine with the base, updates, openh264
+  and source repos produces four hits. Counting devices means restricting to the
+  single base `fedora-N` repo that each system has exactly one of.
+- **Not every row is the same measurement.** Rows carrying `sys_age = -1` are a
+  separate legacy unique-IP estimate that Fedora computes in a second pass and
+  writes into the same file. They are excluded.
+
+Two weeks are skipped outright: the partial week at the end of 2024, and the week
+of the July 2025 Fedora infrastructure migration, which shows a ~40% drop that
+reflects the migration rather than a loss of users.
+
+Countme is an estimate, not a census. It only sees systems that actually ran dnf
+during the week, it can be turned off, and systems behind a mirror that does not
+forward the request are invisible.
+
+**Bluefin LTS is not comparable to the others.** It is CentOS Stream based, so it
+has no `fedora-N` repo and reaches Fedora's counter only through EPEL. Fedora's
+own infrastructure treats EPEL countme figures as an undercount. Read the LTS
+line as a floor, not as a share of the same population.
+
 ## Homebrew
 
 Homebrew analytics are on by default. To turn them off:

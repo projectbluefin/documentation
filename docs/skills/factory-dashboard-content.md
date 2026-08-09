@@ -32,19 +32,48 @@ do **not** and were removed. If removing a lane empties a whole UI section,
 remove the section too — a permanently-empty panel that says "no data found"
 misleads readers into thinking there is a gap.
 
-## countme is check-ins, not devices
+## countme: match ublue-os/countme, and never trust the seed on its own
 
 The adoption numbers come from Fedora's public countme totals CSV
 (`scripts/fetch-countme.js` → `static/data/countme-history.json`, a tracked
-seed). Two things to remember:
+seed).
 
-- The values are **real**. Before "fixing" a suspicious number, verify against
-  source: `node scripts/fetch-countme.js --force` re-derives the file from
-  Fedora's CSV. If the diff is empty, the committed data is correct — relabel or
-  reinterpret rather than editing the seed.
-- countme is a weekly **check-in estimate**, not a device census. Label the panel
-  "countme check-ins", never "active devices", so a low number (e.g. new LTS) is
-  not read as a literal install base.
+**The canonical implementation is [`ublue-os/countme`](https://github.com/ublue-os/countme),
+not this repository.** It produces the `growth_*.svg` charts embedded on
+`/analytics` and the "Active Users" badges in project READMEs. Our script exists
+only because those outputs are a rendered chart and a single latest number, while
+the dashboard needs the weekly series as data. The counting rules in
+`scripts/fetch-countme.js` are ported from that project's `data_processing.py`
+and are documented in our file header. **If a number here disagrees with the
+badge there, this repository is wrong.** Check it:
+
+```bash
+curl -s https://raw.githubusercontent.com/ublue-os/countme/main/badge-endpoints/bluefin.json
+```
+
+The two rules that are easy to get wrong, and were wrong until ADR 0004:
+
+- **A hit is not a device.** DNF sends countme once a week for _each_
+  countme-enabled repo, so one machine appears under ~19 repo tags. Restrict to
+  the base `^fedora-[0-9]+$` repo. Bluefin LTS is exempt — it is CentOS Stream
+  based, has no `fedora-N` repo, and is counted across its EPEL repos.
+- **`sys_age = -1` is a different metric, not a subtotal.** `mirrors-countme`
+  runs a second pass (`BucketSelectUniqueIP`) that writes a legacy unique-IP
+  estimate into the same table under that sentinel. Summing it with the real
+  `sys_age` 1–4 rows stacks two metrics together.
+
+"Weekly active devices" is now the correct label, matching the upstream chart
+title. Bluefin LTS must carry its EPEL caveat wherever it is charted.
+
+### An empty re-derive diff does not mean the data is right
+
+This file previously advised that re-running the fetcher and seeing no diff
+proved the committed data correct, and that a suspicious number should be
+relabelled rather than investigated. That advice was wrong and it is why a 6×
+overcount survived: re-running a script only confirms the script is
+deterministic, never that its arithmetic is right. When a number looks
+implausible, check it against an **independent** source — here, the project's own
+published badge — before concluding the data is fine.
 
 ## Charts render to canvas
 
