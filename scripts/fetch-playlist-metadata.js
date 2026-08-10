@@ -16,6 +16,10 @@ const PLAYLISTS = [
     title: "Seven Days to the Wolves",
   },
   {
+    id: "PLhiPP9M5fgWETQZheRqv2ue5bv-zZNpK5",
+    title: "The Gardener and the Winnower",
+  },
+  {
     id: "PLhiPP9M5fgWE-xZ4l6hF_-3ESen1x-FNY",
     title: "Harbringer: Requiem",
   },
