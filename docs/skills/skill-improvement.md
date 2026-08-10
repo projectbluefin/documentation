@@ -41,6 +41,11 @@ checkout` stamps every tracked file with the current time and the TTL never
   server-side; four rounds of "looks right in the repository" shipped a theme
   that rendered as a no-op, and only the diff showed which rules had been
   silently discarded and why.
+- Music playlist metadata is ignored build output, while cached playlist
+  thumbnails under `static/img/playlists/` are tracked. Adding a playlist
+  requires updating both `docs/music.md` and the `PLAYLISTS` list in
+  `scripts/fetch-playlist-metadata.js`, running `npm run fetch-playlists`, and
+  committing only the new thumbnail.
 
 Each is invisible from the source alone. Each would be paid again by the next
 agent. That is the bar.
