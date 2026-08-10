@@ -2,7 +2,7 @@
 name: skill-improvement
 description: >-
   The two-output rule for this repository: every session ships the work and the
-  learning. Load when finishing a task, when you hit a workaround worth
+  learning. Use when finishing a task, when you hit a workaround worth
   remembering, or when tempted to write a changelog.
 ---
 
@@ -10,6 +10,29 @@ description: >-
 
 The factory gets smarter only if agents write back what they learn. Without
 that, every session starts from zero.
+
+## When to Use
+
+- Use when finishing a non-trivial implementation, fix, or documentation task.
+- Use when a workaround, convention, or failure mode would be expensive for the
+  next agent to rediscover.
+- Use before creating a changelog or session note to route the learning to a
+  maintained skill instead.
+
+## When NOT to Use
+
+- Do not use for read-only research or audits that produce no repository output.
+- Do not record facts that are obvious from the source, task-specific status,
+  or personal and sensitive information.
+
+## Core Process
+
+1. Ship the requested work and verify it.
+2. Extract one reusable, non-obvious lesson from the work.
+3. Put that lesson in the smallest relevant `docs/skills/` file.
+4. Commit the skill update with the work in the same pull request.
+5. Re-read the skill as a new agent and remove status reports, dates, and
+   resolved issue lists.
 
 ## The two-output rule
 
@@ -50,6 +73,14 @@ checkout` stamps every tracked file with the current time and the TTL never
 Each is invisible from the source alone. Each would be paid again by the next
 agent. That is the bar.
 
+## Red Flags
+
+- The session ends with implementation changes but no skill update.
+- A skill contains dates, resolved work items, live status, or a running
+  backlog.
+- The learning is a summary of changed files rather than an operating rule.
+- A future agent would need to infer the workaround from commit history.
+
 ## What does not earn one
 
 A restatement of what the code already says. A summary of a task. A list of
@@ -68,6 +99,14 @@ a skill.
 - **"Append here" instructions.** Any document inviting an append is a
   hallucination magnet. Route to `docs/skills/<file>.md` instead.
 
+## Verification
+
+- [ ] The skill has frontmatter with a name and trigger-bearing description.
+- [ ] The skill explains when to use it and when not to use it.
+- [ ] The skill contains a numbered core process.
+- [ ] The learning is timeless, reusable, and free of session state.
+- [ ] The skill update is committed with the implementation.
+
 ## Before marking work done
 
 - [ ] Discovered a workaround, pattern, or convention?
@@ -80,3 +119,8 @@ a skill.
 [docs.projectbluefin.io](https://docs.projectbluefin.io/). Skills are written for a public audience.
 Internal design reasoning belongs in `adr/` at the repository root, which does
 not publish.
+
+## Sources
+
+- `/addyosmani/agent-skills` via Context7: canonical skill anatomy and section
+  requirements.
