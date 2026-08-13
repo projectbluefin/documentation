@@ -11,6 +11,7 @@ Task → skill. Load only what the task needs.
 | ----------------------------------------------------- | ------------------------------------------------------------------------------------------- |
 | Adding or changing a React component                  | [`skills/component-testing.md`](skills/component-testing.md)                                |
 | Editing `/factory` dashboard panels or copy           | [`skills/factory-dashboard-content.md`](skills/factory-dashboard-content.md)                |
+| Changing the generated release card PNGs              | [`skills/release-card-images.md`](skills/release-card-images.md)                            |
 | Verifying, recovering, or archiving a blog discussion | [`skills/giscus-discussions.md`](skills/giscus-discussions.md)                              |
 | Landing a pull request, or proving a change is live   | [`skills/shipping-and-verifying.md`](skills/shipping-and-verifying.md)                      |
 | Writing back what you learned                         | [`skills/skill-improvement.md`](skills/skill-improvement.md)                                |

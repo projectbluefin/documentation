@@ -21,6 +21,7 @@ import { renderCard, W, H } from "./lib/card-template.mjs";
 import {
   enrichFromSbom,
   parseFeedItem,
+  buildDakotaRelease,
 } from "./lib/card-feed-parser.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -74,30 +75,9 @@ function loadLatestRelease(feedPath, streamHint) {
   return null;
 }
 
-// Dakota: hardcoded placeholder (no releases yet — same as FirehoseFeed.tsx)
-const DAKOTA_RELEASE = {
-  stream: "dakota",
-  tag: "dakota-alpha",
-  fedoraVersion: null,
-  centosVersion: null,
-  majorPackages: [
-    { name: "Kernel",            version: "6.18.7",  prevVersion: null },
-    { name: "Gnome",             version: "50.0",    prevVersion: null },
-    { name: "Mesa",              version: "25.3.5",  prevVersion: null },
-    { name: "Podman",            version: "5.8.0",   prevVersion: null },
-    { name: "bootc",             version: "1.12.1",  prevVersion: null },
-    { name: "systemd",           version: "259.2",   prevVersion: null },
-    { name: "pipewire",          version: "1.6.1",   prevVersion: null },
-    { name: "sudo-rs",           version: "74e0db4", prevVersion: null },
-    { name: "uutils-coreutils",  version: "e7f2fd9", prevVersion: null },
-  ],
-  dxPackages: [],
-  gdxPackages: [],
-  diffStats: { added: 0, changed: 0, removed: 0 },
-  commitCount: 0,
-  dateMs: 0,
-  link: "https://github.com/projectbluefin/dakota",
-};
+// Dakota has no release-notes feed; its versions come from the SBOM
+// attestation cache — the same source the site's pinned Dakota card uses.
+// See buildDakotaRelease() in lib/card-feed-parser.mjs.
 
 // ── Content hashing ──────────────────────────────────────────────────────────
 
@@ -161,10 +141,15 @@ async function main() {
   const stableRelease = stableRaw ? enrichFromSbom(stableRaw, "stable", SBOM_CACHE) : null;
   const ltsRelease = ltsRaw ? enrichFromSbom(ltsRaw, "lts", SBOM_CACHE) : null;
 
+  const dakotaRelease = buildDakotaRelease(SBOM_CACHE);
+  if (!dakotaRelease) {
+    console.warn("WARN: no Dakota data in the SBOM cache — dakota card not regenerated");
+  }
+
   const cards = [
     { release: stableRelease, stream: "stable", slug: "bluefin" },
     { release: ltsRelease,    stream: "lts",    slug: "bluefin-lts" },
-    { release: DAKOTA_RELEASE, stream: "dakota", slug: "dakota" },
+    { release: dakotaRelease, stream: "dakota", slug: "dakota" },
   ];
 
   const outDir = join(ROOT, "static/img/cards");
