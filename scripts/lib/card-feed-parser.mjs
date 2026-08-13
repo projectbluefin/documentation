@@ -133,6 +133,87 @@ export function sbomKeyForRelease(tag, stream) {
   return null;
 }
 
+export const DAKOTA_LINK = "https://github.com/projectbluefin/dakota";
+
+/**
+ * Build the Dakota release card data from the SBOM attestation cache.
+ *
+ * Mirrors getDakotaOsEvent() in src/components/FirehoseFeed.tsx: the newest
+ * `dakota-latest` entry that carries package versions, with the Nvidia version
+ * overlaid from `dakota-nvidia-latest`. Returns null when the cache has no
+ * usable Dakota data.
+ */
+export function buildDakotaRelease(sbomCache) {
+  const releases = sbomCache?.streams?.["dakota-latest"]?.releases;
+  if (!releases) return null;
+
+  let latest = null;
+  for (const [cacheKey, releaseData] of Object.entries(releases)) {
+    const packages = releaseData?.packageVersions;
+    if (!packages) continue;
+    const dateMatch = cacheKey.match(/(\d{8})/);
+    if (!dateMatch) continue;
+    const date = dateMatch[1];
+    const dateMs = Date.parse(
+      `${date.slice(0, 4)}-${date.slice(4, 6)}-${date.slice(6, 8)}T00:00:00Z`,
+    );
+    if (Number.isNaN(dateMs)) continue;
+
+    const majorPackages = [];
+    for (const { displayName, field } of CHIP_TO_SBOM) {
+      const version = packages[field];
+      if (!version) continue;
+      majorPackages.push({ name: displayName, version, prevVersion: null });
+    }
+    if (majorPackages.length === 0) continue;
+
+    if (!latest || dateMs > latest.dateMs) {
+      latest = { cacheKey, date, dateMs, majorPackages, packages };
+    }
+  }
+
+  if (!latest) return null;
+
+  // Overlay Nvidia from the dakota-nvidia-latest stream: prefer the matching
+  // date, then fall back to the newest entry that reports a version.
+  const nvidiaReleases =
+    sbomCache?.streams?.["dakota-nvidia-latest"]?.releases ?? {};
+  let nvidiaVersion =
+    nvidiaReleases[`latest-${latest.date}`]?.packageVersions?.nvidia ?? null;
+  if (!nvidiaVersion) {
+    for (const key of Object.keys(nvidiaReleases).sort().reverse()) {
+      const version = nvidiaReleases[key]?.packageVersions?.nvidia;
+      if (version) {
+        nvidiaVersion = version;
+        break;
+      }
+    }
+  }
+
+  const majorPackages = nvidiaVersion
+    ? [
+        ...latest.majorPackages,
+        { name: "Nvidia", version: nvidiaVersion, prevVersion: null },
+      ]
+    : latest.majorPackages;
+
+  return {
+    stream: "dakota",
+    tag: latest.cacheKey,
+    fedoraVersion: latest.packages.fedora
+      ? String(latest.packages.fedora).replace(/^F/, "")
+      : null,
+    centosVersion: null,
+    majorPackages,
+    dxPackages: [],
+    gdxPackages: [],
+    diffStats: { added: 0, changed: 0, removed: 0 },
+    commitCount: 0,
+    dateMs: latest.dateMs,
+    link: DAKOTA_LINK,
+  };
+}
+
 export function enrichFromSbom(release, stream, sbomCache) {
   if (!sbomCache) return release;
   const key = sbomKeyForRelease(release.tag, stream);

@@ -34,6 +34,20 @@ The people are out of time, the end is coming. Bluefin and her friends go to war
 
 </div>
 
+## Unveiling
+
+[ Redacted ]
+
+<div className={styles.extensionsGrid}>
+
+<MusicPlaylist
+  title="The Gardener and the Winnower"
+  playlistId="PLhiPP9M5fgWETQZheRqv2ue5bv-zZNpK5"
+  variant="card"
+/>
+
+</div>
+
 ## Allies from The Light
 
 Bluefin in 1H2026 focuses on upstream projects and contributor growth.
