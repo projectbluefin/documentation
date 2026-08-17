@@ -73,6 +73,19 @@ checkout` stamps every tracked file with the current time and the TTL never
 Each is invisible from the source alone. Each would be paid again by the next
 agent. That is the bar.
 
+## Common Rationalizations
+
+| Rationalization                                         | Reality                                                                           |
+| ------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| "I'll write the skill up in a follow-up PR."            | You won't, and the next agent pays the same cost. Same PR or it did not happen.   |
+| "This was obvious, it doesn't need writing down."       | You found it by trial and error. That is the definition of not obvious.           |
+| "There's no skill file for this area."                  | Then create one. A missing file is the gap, not the excuse.                       |
+| "I know this library well enough to skip Context7."     | Training data on library APIs goes stale silently. Fetch it and cite the ID.      |
+| "The existing skill is close enough."                   | Audit it against the spec in [`../SKILL.md`](../SKILL.md). Missing Red Flags and  |
+|                                                         | Verification are the usual gaps.                                                  |
+| "I'll note it in a changelog file instead."             | Changelog files are banned here. Git history has the what; skills carry the rule. |
+| "The mistake was mine, not the docs' — nothing to fix." | If the docs did not prevent it, the docs have a gap. Write the rule that would.   |
+
 ## Red Flags
 
 - The session ends with implementation changes but no skill update.

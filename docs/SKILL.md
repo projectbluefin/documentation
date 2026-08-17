@@ -7,9 +7,16 @@ slug: /SKILL
 
 Task → skill. Load only what the task needs.
 
+**Read this first, whatever the task:** published prose is human-authored.
+Agents format, structure, and embed it — they never invent narrative, history,
+motivation, or first-person statements under a maintainer's byline. See
+[`AGENTS.md`](https://github.com/projectbluefin/documentation/blob/main/AGENTS.md)
+→ _Never write in a maintainer's voice_. That rule outranks any writing
+guidance in a general-purpose design or content skill you have loaded.
+
 | If your task is…                                      | Load                                                                                        |
 | ----------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| Writing or editing a blog post                        | [`skills/blog-posts.md`](skills/blog-posts.md)                                              |
+| Writing, editing, or embedding in a blog post         | [`skills/blog-posts.md`](skills/blog-posts.md)                                              |
 | Adding or changing a React component                  | [`skills/component-testing.md`](skills/component-testing.md)                                |
 | Editing `/factory` dashboard panels or copy           | [`skills/factory-dashboard-content.md`](skills/factory-dashboard-content.md)                |
 | Changing the generated release card PNGs              | [`skills/release-card-images.md`](skills/release-card-images.md)                            |
@@ -27,6 +34,22 @@ authoritative; this page only routes.
 A skill earns a file when it is non-obvious, repeatable, and would otherwise be
 rediscovered by the next agent. One page per skill, in `docs/skills/`, added to
 the table above in the same pull request.
+
+Every skill file carries front matter with a `name` and a `description`
+containing "Use when" trigger phrases, then these sections:
+
+```
+## When to Use              triggering conditions
+## When NOT to Use          exclusions, with links to the skill that does apply
+## Core Process             the numbered workflow
+## Common Rationalizations  the excuse, and why it is wrong
+## Red Flags                concrete signs the skill is being violated
+## Verification             checkable exit criteria
+## Sources                  files, and Context7 library IDs for verified content
+```
+
+Technical claims about a library, framework, or CLI are verified through
+Context7 before they land, and the library ID is recorded under `## Sources`.
 
 Note that `docs/` is mounted at `routeBasePath: "/"`, so **everything here
 publishes to [docs.projectbluefin.io](https://docs.projectbluefin.io/)**. Write skills for a public
