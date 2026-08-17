@@ -1,5 +1,10 @@
 ---
-title: Factory dashboard content
+name: factory-dashboard-content
+description: >-
+  Write and verify copy, data, and charts on the /factory dashboard. Use when
+  editing a factory panel title or summary, adding a lane or image to the
+  dashboard, touching countme adoption numbers, or styling an ECharts chart in
+  src/components/factory/.
 ---
 
 # Factory dashboard content
@@ -8,6 +13,20 @@ The `/factory` dashboard (`src/components/HiveFactoryDashboard.tsx` and the pane
 under `src/components/factory/panels/`) reports on Bluefin with live data. Chart
 titles, summaries and captions are public-facing copy, so they follow the same
 rules as any other page — plus a few that are specific to this data.
+
+## When to Use
+
+- Editing a panel title, summary, caption, or `Unavailable` reason.
+- Adding or removing an image lane on the dashboard.
+- Changing countme adoption numbers or their labels.
+- Styling an ECharts chart under `src/components/factory/`.
+
+## When NOT to Use
+
+- The embeddable release card PNGs — see
+  [`release-card-images.md`](release-card-images.md).
+- Data-pipeline contracts in general — those are in
+  [`AGENTS.md`](https://github.com/projectbluefin/documentation/blob/main/AGENTS.md) → _Data pipelines_.
 
 ## Brand terminology in panel copy
 
@@ -75,14 +94,34 @@ deterministic, never that its arithmetic is right. When a number looks
 implausible, check it against an **independent** source — here, the project's own
 published badge — before concluding the data is fine.
 
-## Charts render to canvas
+## Charts follow the site theme
 
-`src/components/factory/chartTheme.ts` hardcodes a dark palette on purpose:
-ECharts renders to canvas, where `var(--fx-*)` custom properties do not resolve.
-`factory-theming.test.js` guards the banned severity pairs. HTML/CSS chrome
-themes for light/dark via `factory/tokens.css`, but making the charts themselves
-theme-reactive is a separate effort — do not sprinkle one-off hex values into a
-single panel expecting it to follow the site theme.
+`src/components/factory/chartTheme.ts` reads the `--fx-*` tokens off the live
+DOM with `getComputedStyle`. ECharts paints to canvas, where `var(--fx-*)` in a
+style string does **not** resolve — that fact was previously used to justify a
+hardcoded dark palette, which then survived the light-mode switch and left axis
+labels near-white on white. `getComputedStyle` resolves custom properties fine,
+so read them rather than duplicating them.
+
+Rules:
+
+- **Never put a hex literal in a chart option.** Use `useSeverityColors()` for
+  severity series and `useChartColors()` for label/text colours, both from
+  `src/components/factory/useFactoryTheme.ts`. `factory-theming.test.js` fails
+  the build on a hex in any panel.
+- **Axis styling is applied per-axis**, by `applyAxisTheme()` in `EChart`.
+  `categoryAxis` / `valueAxis` are _theme_ keys that ECharts only honours via
+  `registerTheme`; putting them in an option object does nothing at all, silently.
+- **Severity tokens branch on theme.** `tokens.css` carries the light-mode
+  intensities and a `[data-theme="dark"] .fxRoot` block overrides them. The
+  light set is dark by design — that is what gives it contrast on white, and
+  exactly what makes it vanish on the dark surface.
+- `EChart` repaints on `data-theme` changes via a `MutationObserver`. A chart is
+  painted once; without that, toggling the theme leaves the old palette on the
+  canvas until something else changes the option.
+
+**Check both themes before claiming a visual fix.** A dashboard that is only
+ever opened in dark mode hides half its contrast bugs.
 
 ## Tests pin the copy
 
@@ -90,3 +129,39 @@ Panel tests assert on rendered titles and headings
 (`scripts/*-panels.test.js`). When you change a chart `title`, section heading,
 or `Unavailable` `what=` string, update the matching assertion in the same
 change.
+
+## Common Rationalizations
+
+| Rationalization                                    | Reality                                                                           |
+| -------------------------------------------------- | --------------------------------------------------------------------------------- |
+| "'Immutable distro' is what everyone calls it."    | The press kit bans it and the thing does not exist. Bluefin is a bootc image.     |
+| "I need a grouping term, I'll coin one."           | Coined terms publish as fact. Use the press kit's vocabulary or none.             |
+| "Re-ran the fetcher, no diff — the data is right." | That proves determinism, not arithmetic. Check an independent source.             |
+| "The number looks off, I'll relabel the chart."    | Relabelling hid a 6× overcount. Investigate the arithmetic instead.               |
+| "A hex is fine, it's just this one series."        | `factory-theming.test.js` fails the build, and it survives the next theme switch. |
+| "Looks good in dark mode."                         | Half the contrast bugs only appear in light. Check both.                          |
+| "An empty panel is harmless."                      | It reads as a real gap in the data. Remove the section instead.                   |
+
+## Red Flags
+
+- The words "immutable distribution", "immutable desktop", or any invented
+  grouping term in panel copy.
+- A hex colour literal in a chart option anywhere under `src/components/factory/`.
+- `categoryAxis` or `valueAxis` set inside an option object rather than applied
+  by `applyAxisTheme()`.
+- A lane in `FALLBACK_LANES` for an image the `projectbluefin` org does not own.
+- A countme series summed across all repo tags, or including `sys_age = -1`.
+- A panel that renders nothing rather than saying it is unavailable and why.
+- A changed chart title with no matching update in `scripts/*-panels.test.js`.
+
+## Verification
+
+- [ ] `node --test scripts/factory-theming.test.js scripts/tests-panels.test.js`
+      passes.
+- [ ] Panel copy matches [`/press-kit`](/press-kit) vocabulary.
+- [ ] Adoption numbers agree with the upstream badge from
+      [`ublue-os/countme`](https://github.com/ublue-os/countme).
+- [ ] The dashboard was opened in **both** light and dark mode.
+- [ ] Every unavailable panel states a reason —
+      `scripts/panel-unavailability.test.js` passes.
+- [ ] No new empty sections.

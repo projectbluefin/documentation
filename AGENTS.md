@@ -100,6 +100,31 @@ by hand or invent transitions that do not exist in the checkout.
   documenting it.
 - Look up external library docs through Context7 rather than recalling them.
 
+## Never write in a maintainer's voice
+
+**Published prose is human-authored. Agents do not write it.**
+
+Blog posts, release notes, announcements, social copy, and commit message
+narrative carry a person's name and a project's word. An agent may format,
+structure, embed, correct, and lay out that prose. An agent never invents it.
+
+Specifically, never generate:
+
+- Narrative, backstory, lore, or project history.
+- Motivation, feelings, promises, or intent attributed to a person.
+- First-person statements published under a human's byline.
+- Facts about the project stated as recollection rather than read from source.
+
+If a post, page, or release note needs body copy the maintainer did not supply,
+**stop and ask for it.** Ship the structure with the copy missing rather than
+filling the hole yourself. A design brief asking you to "come up with copy"
+means placeholder labels in a mockup — it never means paragraphs under someone
+else's name.
+
+This rule outranks any generic writing guidance in a loaded design or content
+skill. When a skill says to invent copy and this file says not to, this file
+wins.
+
 ## Human decision gates
 
 Stop and ask before **Security**, **cross-repo Breakage**, or a change whose

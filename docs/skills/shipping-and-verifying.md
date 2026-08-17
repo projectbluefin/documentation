@@ -20,6 +20,12 @@ check that silently proves nothing.
 - Two pull requests are stacked and both need to land.
 - You need to confirm a change is live, not merely merged.
 
+## When NOT to Use
+
+- Doc-only changes to `docs/**`, `blog/**`, `reports/**`, `adr/**`, or
+  `AGENTS.md` — those push straight to `main`, no pull request or queue.
+- Deciding _what_ to change. This skill covers landing and proving it.
+
 ## A green pull request that will not enqueue
 
 `gh pr merge` reports only `The merge strategy for main is set by the merge
@@ -127,3 +133,36 @@ means the cleanup already happened; only the local branch remains:
 ```bash
 git branch -D <branch>
 ```
+
+## Common Rationalizations
+
+| Rationalization                             | Reality                                                                         |
+| ------------------------------------------- | ------------------------------------------------------------------------------- |
+| "All checks are green, so it will merge."   | `BLOCKED` with green checks is a ruleset problem. Read the ruleset.             |
+| "The build passed, so the change is live."  | `Deploy to GitHub Pages` skips on pull requests. It only publishes from `main`. |
+| "I loaded the page and saw it."             | The CDN serves the old copy. Request it cache-busted.                           |
+| "`gh run watch` finished, so it succeeded." | Watch can exit without a conclusion. Confirm with `gh run view`.                |
+| "I'll squash the stack into one merge."     | Stacked pull requests merge, not squash — squashing orphans the child.          |
+| "`--delete-branch` will tidy it up."        | The queue rejects it. Delete the local branch after the merge lands.            |
+
+## Red Flags
+
+- Reporting a change as shipped without a cache-busted request against
+  `docs.projectbluefin.io`.
+- Concluding a run succeeded from `gh run watch` output alone.
+- Retrying `gh pr merge` repeatedly instead of reading the ruleset once.
+- Treating a green pull-request check as a deploy.
+- Passing `--delete-branch` while the merge queue is enabled.
+
+## Verification
+
+- [ ] The pull request actually entered the queue and the queue landed it.
+- [ ] `gh run list --branch main` shows the `Deploy to GitHub Pages` run for
+      that commit with `conclusion: success`.
+- [ ] The live URL was fetched with a cache buster and returned the new content:
+
+  ```bash
+  curl -s "https://docs.projectbluefin.io/<path>?cb=$RANDOM" | grep "<marker>"
+  ```
+
+- [ ] The local branch is deleted; the remote one was removed by the merge.

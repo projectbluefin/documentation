@@ -1,5 +1,10 @@
 ---
-title: Release card images
+name: release-card-images
+description: >-
+  Generate and debug the embeddable release card PNGs served from
+  /img/cards/. Use when a card shows a stale or missing version, when adding a
+  card for a new image stream, when changing card layout, or when
+  scripts/generate-card-images.mjs skips a slug.
 ---
 
 # Release card images
@@ -14,6 +19,20 @@ https://docs.projectbluefin.io/img/cards/{bluefin,bluefin-lts,dakota}-{light,dar
 The PNGs are gitignored and regenerated during the CI build, so **a card is only
 as fresh as the data source it reads**. A card that reads a constant will look
 correct forever and be wrong within a month.
+
+## When to Use
+
+- A published card shows the wrong version, or no version.
+- Adding a card for a new image stream.
+- Changing `scripts/lib/card-template.mjs` layout or styling.
+- The generator logs a skipped slug during the build.
+
+## When NOT to Use
+
+- Panels and charts on `/factory` — see
+  [`factory-dashboard-content.md`](factory-dashboard-content.md).
+- The pinned release cards rendered in React on `/changelogs` — those are
+  components, though they must agree with the PNGs (see below).
 
 ## Every card reads a live source
 
@@ -65,3 +84,35 @@ so `scripts/generate-card-images.test.js` can exercise it offline:
 ```bash
 node --test scripts/generate-card-images.test.js
 ```
+
+## Common Rationalizations
+
+| Rationalization                                         | Reality                                                                             |
+| ------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| "The newest SBOM entry is the one to use."              | The newest entry is often `packageVersions: {}`. Pick the newest entry with data.   |
+| "I'll hardcode the version until the feed is fixed."    | A constant renders correct today and wrong next month, with nothing to catch it.    |
+| "No data — I'll fall back to the last known version."   | No data means no card. A stale card is a false claim; a missing one is honest.      |
+| "The card renders locally, so it's right."              | The tracked seed lags production. Render against the live JSON before believing it. |
+| "I updated the PNG, the `/changelogs` card can follow." | They publish the same claim. Disagreeing sources are a bug in both.                 |
+
+## Red Flags
+
+- A version string literal anywhere in `scripts/lib/card-template.mjs` or the
+  generator.
+- A fallback that substitutes an older release when the SBOM lookup is empty.
+- A committed `static/data/sbom-attestations-frontend.json` that came from the
+  live-site swap instead of the tracked seed.
+- `buildDakotaRelease()` changed without the matching change to
+  `getDakotaOsEvent()` in `src/components/FirehoseFeed.tsx`.
+- Parsing logic added directly to the generator rather than to the exported
+  functions in `scripts/lib/card-feed-parser.mjs`.
+
+## Verification
+
+- [ ] `node --test scripts/generate-card-images.test.js` passes.
+- [ ] Every card's version came from a live source, not a literal.
+- [ ] An empty SBOM lookup skips the slug rather than emitting a stale card.
+- [ ] The Dakota PNG and the `/changelogs` pinned card report the same version.
+- [ ] `static/data/sbom-attestations-frontend.json` is restored to the tracked
+      seed — `git status` shows it unmodified.
+- [ ] The rendered PNG was actually opened and looked at, in both light and dark.
