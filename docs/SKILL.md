@@ -9,6 +9,7 @@ Task → skill. Load only what the task needs.
 
 | If your task is…                                      | Load                                                                                        |
 | ----------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Writing or editing a blog post                        | [`skills/blog-posts.md`](skills/blog-posts.md)                                              |
 | Adding or changing a React component                  | [`skills/component-testing.md`](skills/component-testing.md)                                |
 | Editing `/factory` dashboard panels or copy           | [`skills/factory-dashboard-content.md`](skills/factory-dashboard-content.md)                |
 | Changing the generated release card PNGs              | [`skills/release-card-images.md`](skills/release-card-images.md)                            |
