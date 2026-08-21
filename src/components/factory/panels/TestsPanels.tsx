@@ -10,7 +10,6 @@ import {
   FX_SEVERITY,
   FX_COLORS,
 } from "../chartTheme";
-import type { FactoryLive } from "../../HiveFactoryDashboard";
 import styles from "./panels.module.css";
 
 /* ---------- data shapes ---------- */
@@ -82,12 +81,7 @@ function dayKey(ts: number): string {
 }
 
 /* ---------- component ---------- */
-export default function TestsPanels({
-  s,
-}: {
-  s: FactoryLive;
-}): React.JSX.Element {
-  void s;
+export default function TestsPanels(): React.JSX.Element {
   const { data, loading, reason } = useDataset<TestRunsPayload>("testRuns");
 
   if (loading) {

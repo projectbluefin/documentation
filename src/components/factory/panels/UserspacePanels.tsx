@@ -4,7 +4,6 @@ import Unavailable from "../Unavailable";
 import EChart from "../EChart";
 import { useDataset } from "../FactoryDataContext";
 import { FX_SEVERITY, gapSafe, type SeverityLevel } from "../chartTheme";
-import type { FactoryLive } from "../../HiveFactoryDashboard";
 import styles from "./ImagesPanels.module.css";
 
 // ── Data shapes ────────────────────────────────────────────────────────────
@@ -69,12 +68,7 @@ function archOf(name: string): string {
   return "multi-arch";
 }
 
-export default function UserspacePanels({
-  s,
-}: {
-  s: FactoryLive;
-}): React.JSX.Element {
-  void s;
+export default function UserspacePanels(): React.JSX.Element {
   const ghcr = useDataset<GhcrData>("ghcrPackages");
   const flathub = useDataset<FlathubData>("flathub");
 

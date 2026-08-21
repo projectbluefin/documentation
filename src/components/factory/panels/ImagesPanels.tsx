@@ -4,7 +4,6 @@ import Unavailable from "../Unavailable";
 import EChart from "../EChart";
 import { useDataset } from "../FactoryDataContext";
 import { FX_SEVERITY, gapSafe, type SeverityLevel } from "../chartTheme";
-import type { FactoryLive } from "../../HiveFactoryDashboard";
 import styles from "./ImagesPanels.module.css";
 
 // ── Data shape from ghcr-packages.json ─────────────────────────────────────
@@ -48,12 +47,7 @@ function severityOf(state: string): SeverityLevel {
   }
 }
 
-export default function ImagesPanels({
-  s,
-}: {
-  s: FactoryLive;
-}): React.JSX.Element {
-  void s;
+export default function ImagesPanels(): React.JSX.Element {
   const { data, loading, reason } = useDataset<GhcrData>("ghcrPackages");
 
   if (loading) {

@@ -5,7 +5,6 @@ import EChart from "../EChart";
 import { gapSafe, seriesColor, seriesDash } from "../chartTheme";
 import { useDataset } from "../FactoryDataContext";
 import Sparkline from "../../Sparkline";
-import type { FactoryLive } from "../../HiveFactoryDashboard";
 import styles from "./MetricsPanels.module.css";
 
 // ── Data shapes ────────────────────────────────────────────────────────────
@@ -120,13 +119,7 @@ function pct(n: number): string {
 
 // ── Component ──────────────────────────────────────────────────────────────
 
-export default function MetricsPanels({
-  s,
-}: {
-  s: FactoryLive;
-}): React.JSX.Element {
-  void s;
-
+export default function MetricsPanels(): React.JSX.Element {
   const countme = useDataset<CountmeData>("countme");
   const brew = useDataset<BrewData>("brew");
   const dora = useDataset<DoraData>("dora");

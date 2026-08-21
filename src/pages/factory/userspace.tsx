@@ -5,7 +5,7 @@ import UserspacePanels from "../../components/factory/panels/UserspacePanels";
 export default function FactoryUserspacePage(): React.JSX.Element {
   return (
     <FactoryShell pathname="/factory/userspace">
-      {(s) => <UserspacePanels s={s} />}
+      {() => <UserspacePanels />}
     </FactoryShell>
   );
 }
