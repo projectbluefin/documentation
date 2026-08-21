@@ -71,7 +71,6 @@ async function fetchReleasesFromApi(owner, repo) {
     return null;
   }
 
-  const fetch = (await import("node-fetch")).default;
   const MAX_RELEASES = 500;
   const headers = {
     Authorization: `Bearer ${token}`,
@@ -112,7 +111,6 @@ async function fetchReleasesFromApi(owner, repo) {
  */
 async function fetchReleasesFromAtom(owner, repo) {
   const { parseString } = require("xml2js");
-  const fetch = (await import("node-fetch")).default;
   const url = `https://github.com/${owner}/${repo}/releases.atom`;
 
   console.log(`Fetching Atom feed: ${url}`);

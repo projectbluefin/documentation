@@ -28,7 +28,11 @@ import { writeFileSync, existsSync, statSync, mkdirSync } from "fs";
 import { resolve, dirname } from "path";
 import { fileURLToPath, pathToFileURL } from "url";
 import { ghPaginate, githubToken, classifyRun } from "./lib/gh.js";
-import { isPublishRun, runDurationMin } from "./fetch-factory-stats.js";
+import { isPublishRun, runDurationMin, median } from "./fetch-factory-stats.js";
+
+// Re-exported so existing importers of "./fetch-dora.js" keep working;
+// fetch-factory-stats.js owns the single implementation.
+export { median };
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const OUT = resolve(__dirname, "../static/data/dora.json");
@@ -43,17 +47,6 @@ const REPOS = [
 /** Extract YYYY-MM from an ISO timestamp. */
 export function monthKey(iso) {
   return iso.slice(0, 7);
-}
-
-/** Median of a sorted-numeric list; null when empty. */
-export function median(values) {
-  const nums = (values ?? [])
-    .filter((n) => Number.isFinite(n))
-    .sort((a, b) => a - b);
-  if (nums.length === 0) return null;
-  const mid = Math.floor(nums.length / 2);
-  const v = nums.length % 2 === 0 ? (nums[mid - 1] + nums[mid]) / 2 : nums[mid];
-  return Math.round(v);
 }
 
 /**

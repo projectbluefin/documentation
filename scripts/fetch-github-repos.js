@@ -179,6 +179,5 @@ if (require.main === module) {
 }
 
 module.exports = {
-  fetchAllRepos,
   fetchRepo,
 };

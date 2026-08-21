@@ -1,7 +1,6 @@
 const fs = require("fs");
 const path = require("path");
 const yaml = require("js-yaml");
-const glob = require("glob");
 const {
   sequentialFetchWithDelay,
   githubHeaders,
@@ -29,7 +28,7 @@ function discoverUsernames() {
   }
 
   // 2. Blog files – login: "username" prop
-  const blogFiles = glob.sync("blog/**/*.{md,mdx}", { cwd: REPO_ROOT });
+  const blogFiles = fs.globSync("blog/**/*.{md,mdx}", { cwd: REPO_ROOT });
   const loginRe = /\blogin:\s*["']([A-Za-z0-9_-]+)["']/g;
   for (const rel of blogFiles) {
     const content = fs.readFileSync(path.join(REPO_ROOT, rel), "utf-8");
@@ -418,7 +417,5 @@ if (require.main === module) {
 
 module.exports = {
   discoverUsernames,
-  fetchAllProfiles,
   fetchProfile,
-  fetchSponsorableStatus,
 };

@@ -425,7 +425,5 @@ module.exports = {
   buildOsApp,
   buildOsInfo,
   computePackageDiff,
-  fetchFirehoseData,
   sanitizeRemoteApp,
-  sortedReleases,
 };

@@ -1,8 +1,19 @@
 import React, { useState, useMemo, useEffect } from "react";
+import { formatISO } from "date-fns";
 import Heading from "@theme/Heading";
 import firehoseData from "@site/static/data/firehose-apps.json";
-import type { FirehoseApp, FirehoseRelease, FirehoseFilterState } from "../types/firehose";
-import type { OsReleaseEvent, AppTimelineEvent, FlatTimelineEvent, ParsedMajorPackage, OsFeedItem } from "../types/os-feed";
+import type {
+  FirehoseApp,
+  FirehoseRelease,
+  FirehoseFilterState,
+} from "../types/firehose";
+import type {
+  OsReleaseEvent,
+  AppTimelineEvent,
+  FlatTimelineEvent,
+  ParsedMajorPackage,
+  OsFeedItem,
+} from "../types/os-feed";
 import type { SbomAttestationsData } from "../types/sbom";
 import { parseOsRelease } from "../utils/parseOsRelease";
 import {
@@ -78,6 +89,7 @@ function loadOsEvents(
 let _sbomCache: SbomAttestationsData | null = null;
 function getSbomCache(): SbomAttestationsData {
   if (!_sbomCache) {
+    // prettier-ignore
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     _sbomCache = require("@site/static/data/sbom-attestations-frontend.json") as SbomAttestationsData;
   }
@@ -100,12 +112,16 @@ function enrichFromSbom(events: OsReleaseEvent[]): OsReleaseEvent[] {
     const key = sbomKeyForRelease(event.release.tag, event.stream);
     if (!key) return event;
 
-    const packages = getSbomCache()?.streams?.[key.streamId]?.releases?.[key.cacheKey]?.packageVersions;
+    const packages =
+      getSbomCache()?.streams?.[key.streamId]?.releases?.[key.cacheKey]
+        ?.packageVersions;
     if (!packages) {
       // Expected during local dev (empty seed file) and for releases older than LOOKBACK_DAYS.
       // In CI with a populated SBOM cache this should be rare — check update-sbom-cache.yml if frequent.
       if (process.env.NODE_ENV !== "production") {
-        console.warn(`[SBOM] No cache entry for ${key.streamId}/${key.cacheKey} — using release notes`);
+        console.warn(
+          `[SBOM] No cache entry for ${key.streamId}/${key.cacheKey} — using release notes`,
+        );
       }
       return event;
     }
@@ -114,7 +130,7 @@ function enrichFromSbom(events: OsReleaseEvent[]): OsReleaseEvent[] {
 
     // Keep non-SBOM packages (Nvidia, HWE Kernel, DX, GDX, etc.) from release notes.
     const nonSbomPackages = event.release.majorPackages.filter(
-      (p) => !sbomChipNames.has(p.name.toLowerCase())
+      (p) => !sbomChipNames.has(p.name.toLowerCase()),
     );
 
     // For SBOM-tracked packages: SBOM version is authoritative; fall back to
@@ -128,21 +144,25 @@ function enrichFromSbom(events: OsReleaseEvent[]): OsReleaseEvent[] {
     for (const { chipName, displayName, field } of CHIP_TO_SBOM) {
       const sbomVersion = packages[field] as string | null | undefined;
       const fromNotes = event.release.majorPackages.find(
-        (p) => p.name.toLowerCase() === chipName
+        (p) => p.name.toLowerCase() === chipName,
       );
       const fromDiff = event.release.fullDiff.find(
-        (d) => d.name.toLowerCase() === chipName
+        (d) => d.name.toLowerCase() === chipName,
       );
       const version = sbomVersion ?? fromNotes?.version ?? null;
       if (!version) continue; // neither SBOM nor release notes has this package — omit chip
-      const prevVersion = fromNotes?.prevVersion ?? fromDiff?.prevVersion ?? null;
+      const prevVersion =
+        fromNotes?.prevVersion ?? fromDiff?.prevVersion ?? null;
       sbomPackages.push({ name: displayName, version, prevVersion });
     }
 
     if (sbomPackages.length === 0) return event;
     return {
       ...event,
-      release: { ...event.release, majorPackages: [...sbomPackages, ...nonSbomPackages] },
+      release: {
+        ...event.release,
+        majorPackages: [...sbomPackages, ...nonSbomPackages],
+      },
     };
   });
 }
@@ -175,10 +195,13 @@ function enrichLtsFromHistory(events: OsReleaseEvent[]): OsReleaseEvent[] {
     // Update from fullDiff (packages that changed in this release)
     for (const entry of event.release.fullDiff) {
       const lower = entry.name.toLowerCase();
-      if (TRACKED.includes(lower) && entry.newVersion) running[lower] = entry.newVersion;
+      if (TRACKED.includes(lower) && entry.newVersion)
+        running[lower] = entry.newVersion;
     }
 
-    const existingNames = new Set(event.release.majorPackages.map((p) => p.name.toLowerCase()));
+    const existingNames = new Set(
+      event.release.majorPackages.map((p) => p.name.toLowerCase()),
+    );
     const toAdd: ParsedMajorPackage[] = [];
     for (const name of TRACKED) {
       if (!existingNames.has(name) && running[name]) {
@@ -186,7 +209,13 @@ function enrichLtsFromHistory(events: OsReleaseEvent[]): OsReleaseEvent[] {
       }
     }
     if (toAdd.length === 0) return event;
-    return { ...event, release: { ...event.release, majorPackages: [...event.release.majorPackages, ...toAdd] } };
+    return {
+      ...event,
+      release: {
+        ...event.release,
+        majorPackages: [...event.release.majorPackages, ...toAdd],
+      },
+    };
   });
 
   return enriched.sort((a, b) => b.dateMs - a.dateMs);
@@ -209,9 +238,11 @@ function enrichLtsDxGdxFromSbom(events: OsReleaseEvent[]): OsReleaseEvent[] {
     const cacheKey = `lts-${dateMatch[1]}`;
 
     const dxAllPkgs =
-      getSbomCache()?.streams?.["bluefin-dx-lts"]?.releases?.[cacheKey]?.packageVersions?.allPackages;
+      getSbomCache()?.streams?.["bluefin-dx-lts"]?.releases?.[cacheKey]
+        ?.packageVersions?.allPackages;
     const gdxAllPkgs =
-      getSbomCache()?.streams?.["bluefin-gdx-lts"]?.releases?.[cacheKey]?.packageVersions?.allPackages;
+      getSbomCache()?.streams?.["bluefin-gdx-lts"]?.releases?.[cacheKey]
+        ?.packageVersions?.allPackages;
 
     const dxPackages = [...event.release.dxPackages];
     if (dxAllPkgs) {
@@ -254,21 +285,29 @@ function enrichLtsDxGdxFromSbom(events: OsReleaseEvent[]): OsReleaseEvent[] {
  * the changelogs page to display a stale value. The SBOM stream always has the
  * correct installed version.
  */
-function enrichLtsHweKernelFromSbom(events: OsReleaseEvent[]): OsReleaseEvent[] {
+function enrichLtsHweKernelFromSbom(
+  events: OsReleaseEvent[],
+): OsReleaseEvent[] {
   return events.map((event) => {
     if (event.stream !== "lts") return event;
 
     const dateMatch = event.release.tag.match(/(\d{8})/);
     if (!dateMatch) return event;
     const hweKernel =
-      getSbomCache()?.streams?.["bluefin-lts-hwe"]?.releases?.[`lts-hwe-${dateMatch[1]}`]
-        ?.packageVersions?.kernel;
+      getSbomCache()?.streams?.["bluefin-lts-hwe"]?.releases?.[
+        `lts-hwe-${dateMatch[1]}`
+      ]?.packageVersions?.kernel;
     if (!hweKernel) return event;
 
     const updatedPackages = event.release.majorPackages.map((pkg) =>
-      pkg.name.toLowerCase() === "hwe kernel" ? { ...pkg, version: hweKernel } : pkg,
+      pkg.name.toLowerCase() === "hwe kernel"
+        ? { ...pkg, version: hweKernel }
+        : pkg,
     );
-    return { ...event, release: { ...event.release, majorPackages: updatedPackages } };
+    return {
+      ...event,
+      release: { ...event.release, majorPackages: updatedPackages },
+    };
   });
 }
 
@@ -301,7 +340,9 @@ function getLtsOsEvents(): OsReleaseEvent[] {
   if (!_ltsOsEvents) {
     _ltsOsEvents = enrichLtsHweKernelFromSbom(
       enrichLtsDxGdxFromSbom(
-        enrichLtsFromHistory(enrichFromSbom(loadOsEvents(getBluefinLtsReleasesData(), "lts"))),
+        enrichLtsFromHistory(
+          enrichFromSbom(loadOsEvents(getBluefinLtsReleasesData(), "lts")),
+        ),
       ),
     );
   }
@@ -364,7 +405,8 @@ function getDakotaOsEvent(): OsReleaseEvent | undefined {
   // Overlay nvidia version from the dakota-nvidia-latest stream.
   // Prefer the release whose date matches; fall back to the newest available.
   let nvidiaVersion: string | null = null;
-  const nvidiaReleases = getSbomCache()?.streams?.["dakota-nvidia-latest"]?.releases;
+  const nvidiaReleases =
+    getSbomCache()?.streams?.["dakota-nvidia-latest"]?.releases;
   if (nvidiaReleases) {
     const dateMatch = latest.release.tag.match(/(\d{8})/);
     const exactKey = dateMatch ? `latest-${dateMatch[1]}` : null;
@@ -405,31 +447,36 @@ function computePinnedOsEvents(): OsReleaseEvent[] {
     const pinnedStable: OsReleaseEvent | undefined =
       bluefin.find((e) => e.stream === "stable") ?? bluefin[0];
     // Pinned LTS card: latest from LTS feed
-    const pinnedLts: OsReleaseEvent | undefined = lts.length > 0 ? lts[0] : undefined;
-    _pinnedOsEvents = [pinnedStable, pinnedLts, getDakotaOsEvent()]
-      .filter((e): e is OsReleaseEvent => e !== undefined);
+    const pinnedLts: OsReleaseEvent | undefined =
+      lts.length > 0 ? lts[0] : undefined;
+    _pinnedOsEvents = [pinnedStable, pinnedLts, getDakotaOsEvent()].filter(
+      (e): e is OsReleaseEvent => e !== undefined,
+    );
   }
   return _pinnedOsEvents;
 }
 
 // Exported as a Proxy so consumers can import PINNED_OS_EVENTS as a plain array
 // while the actual computation is deferred until first property access (render time).
-export const PINNED_OS_EVENTS: OsReleaseEvent[] = new Proxy([] as OsReleaseEvent[], {
-  get(_, prop, receiver) {
-    const target = computePinnedOsEvents();
-    const value = Reflect.get(target, prop, receiver);
-    return typeof value === "function" ? value.bind(target) : value;
+export const PINNED_OS_EVENTS: OsReleaseEvent[] = new Proxy(
+  [] as OsReleaseEvent[],
+  {
+    get(_, prop, receiver) {
+      const target = computePinnedOsEvents();
+      const value = Reflect.get(target, prop, receiver);
+      return typeof value === "function" ? value.bind(target) : value;
+    },
+    has(_, prop) {
+      return prop in computePinnedOsEvents();
+    },
+    ownKeys() {
+      return Reflect.ownKeys(computePinnedOsEvents());
+    },
+    getOwnPropertyDescriptor(_, prop) {
+      return Object.getOwnPropertyDescriptor(computePinnedOsEvents(), prop);
+    },
   },
-  has(_, prop) {
-    return prop in computePinnedOsEvents();
-  },
-  ownKeys() {
-    return Reflect.ownKeys(computePinnedOsEvents());
-  },
-  getOwnPropertyDescriptor(_, prop) {
-    return Object.getOwnPropertyDescriptor(computePinnedOsEvents(), prop);
-  },
-});
+);
 
 /**
  * Flatten every app's releases array into individual events.
@@ -451,12 +498,16 @@ function flattenReleases(apps: FirehoseApp[]): FlatRelease[] {
   return events;
 }
 
-function applyFilters(events: FlatRelease[], f: FirehoseFilterState): FlatRelease[] {
+function applyFilters(
+  events: FlatRelease[],
+  f: FirehoseFilterState,
+): FlatRelease[] {
   const now = Date.now();
   return events.filter(({ app, dateMs }) => {
     if (f.verifiedOnly && !app.isVerified) return false;
     if (f.unverifiedOnly && app.isVerified) return false;
-    if (f.packageType !== "all" && app.packageType !== f.packageType) return false;
+    if (f.packageType !== "all" && app.packageType !== f.packageType)
+      return false;
     if (f.appSet !== "all" && app.appSet !== f.appSet) return false;
     if (f.category !== "all") {
       if (!app.categories || !app.categories.includes(f.category)) return false;
@@ -517,7 +568,7 @@ function getFeaturedApp(uniqueApps: UniqueApp[]): FirehoseApp | null {
   if (eligible.length === 0) return null;
 
   // Deterministic hash from today's date string
-  const dateKey = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
+  const dateKey = formatISO(new Date(), { representation: "date" }); // "YYYY-MM-DD"
   let hash = 0;
   for (let i = 0; i < dateKey.length; i++) {
     hash = (hash * 31 + dateKey.charCodeAt(i)) & 0xffffffff;
@@ -551,7 +602,13 @@ function Statistics({
         <dd>{uniqueApps.length}</dd>
         {Object.entries(counts).map(([type, count]) => (
           <React.Fragment key={type}>
-            <dt>{type === "flatpak" ? "Flathub" : type === "homebrew" ? "Homebrew" : "OS Release"}</dt>
+            <dt>
+              {type === "flatpak"
+                ? "Flathub"
+                : type === "homebrew"
+                  ? "Homebrew"
+                  : "OS Release"}
+            </dt>
             <dd>{count}</dd>
           </React.Fragment>
         ))}
@@ -618,22 +675,38 @@ function RssLinks() {
       <h3 className={styles.sidebarHeading}>Subscribe</h3>
       <ul className={styles.rssList}>
         <li>
-          <a href="https://docs.projectbluefin.io/blog/rss.xml" target="_blank" rel="noopener noreferrer">
+          <a
+            href="https://docs.projectbluefin.io/blog/rss.xml"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             Blog RSS
           </a>
         </li>
         <li>
-          <a href="https://github.com/projectbluefin/bluefin/releases.atom" target="_blank" rel="noopener noreferrer">
+          <a
+            href="https://github.com/projectbluefin/bluefin/releases.atom"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             Releases Atom
           </a>
         </li>
         <li>
-          <a href="https://github.com/projectbluefin/bluefin-lts/releases.atom" target="_blank" rel="noopener noreferrer">
+          <a
+            href="https://github.com/projectbluefin/bluefin-lts/releases.atom"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             LTS Releases Atom
           </a>
         </li>
         <li>
-          <a href="https://github.com/ublue-os/bluefin/discussions.atom" target="_blank" rel="noopener noreferrer">
+          <a
+            href="https://github.com/ublue-os/bluefin/discussions.atom"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             Discussions Atom
           </a>
         </li>
@@ -661,12 +734,20 @@ const FirehoseFeed: React.FC = () => {
 
   const allEvents: FlatRelease[] = useMemo(() => {
     const cutoff = Date.now() - ROLLING_WINDOW_MS;
-    return flattenReleases(firehoseData.apps ?? []).filter((e) => e.dateMs > cutoff);
+    return flattenReleases(firehoseData.apps ?? []).filter(
+      (e) => e.dateMs > cutoff,
+    );
   }, []);
 
-  const filteredEvents = useMemo(() => applyFilters(allEvents, filters), [allEvents, filters]);
+  const filteredEvents = useMemo(
+    () => applyFilters(allEvents, filters),
+    [allEvents, filters],
+  );
 
-  const uniqueApps: UniqueApp[] = useMemo(() => toUniqueApps(allEvents), [allEvents]);
+  const uniqueApps: UniqueApp[] = useMemo(
+    () => toUniqueApps(allEvents),
+    [allEvents],
+  );
 
   const filteredUniqueApps: UniqueApp[] = useMemo(
     () => toUniqueApps(filteredEvents),
@@ -683,11 +764,14 @@ const FirehoseFeed: React.FC = () => {
 
   const filteredOsStreamEvents = useMemo((): OsReleaseEvent[] => {
     // When filtering to a specific app type, OS events are hidden
-    if (filters.packageType === "flatpak" || filters.packageType === "homebrew") return [];
+    if (filters.packageType === "flatpak" || filters.packageType === "homebrew")
+      return [];
     if (filters.updatedWithin === "all") return getAllOsStreamEvents();
     const maxAge = DAYS_MS[filters.updatedWithin];
     const now = Date.now();
-    return getAllOsStreamEvents().filter((e) => e.dateMs > 0 && now - e.dateMs <= maxAge);
+    return getAllOsStreamEvents().filter(
+      (e) => e.dateMs > 0 && now - e.dateMs <= maxAge,
+    );
   }, [filters.packageType, filters.updatedWithin]);
 
   // How many stream OS events are hidden by the date filter
@@ -696,7 +780,8 @@ const FirehoseFeed: React.FC = () => {
       filters.updatedWithin !== "all" &&
       filters.packageType !== "flatpak" &&
       filters.packageType !== "homebrew"
-        ? getAllOsStreamEvents().filter((e) => e.dateMs > 0).length - filteredOsStreamEvents.length
+        ? getAllOsStreamEvents().filter((e) => e.dateMs > 0).length -
+          filteredOsStreamEvents.length
         : 0,
     [filteredOsStreamEvents, filters.packageType, filters.updatedWithin],
   );
@@ -708,13 +793,20 @@ const FirehoseFeed: React.FC = () => {
   const appSection = useMemo(
     () =>
       filteredUniqueApps
-        .map(({ app, latestMs }): AppTimelineEvent => ({ kind: "app", app, dateMs: latestMs }))
+        .map(({ app, latestMs }): AppTimelineEvent => ({
+          kind: "app",
+          app,
+          dateMs: latestMs,
+        }))
         .sort((a, b) => b.dateMs - a.dateMs),
     [filteredUniqueApps],
   );
 
   const unifiedStream = useMemo((): FlatTimelineEvent[] => {
-    const items: FlatTimelineEvent[] = [...appSection, ...filteredOsStreamEvents];
+    const items: FlatTimelineEvent[] = [
+      ...appSection,
+      ...filteredOsStreamEvents,
+    ];
     items.sort((a, b) => b.dateMs - a.dateMs);
     return items;
   }, [filteredOsStreamEvents, appSection]);
@@ -730,8 +822,12 @@ const FirehoseFeed: React.FC = () => {
         <section className={styles.sidebarInfoLinks}>
           <h3 className={styles.sidebarHeading}>More Information</h3>
           <nav className={styles.sidebarQuickLinks}>
-            <a href="/images" className={styles.sidebarQuickLink}>Images catalog →</a>
-            <a href="/driver-versions" className={styles.sidebarQuickLink}>Driver versions →</a>
+            <a href="/images" className={styles.sidebarQuickLink}>
+              Images catalog →
+            </a>
+            <a href="/driver-versions" className={styles.sidebarQuickLink}>
+              Driver versions →
+            </a>
           </nav>
         </section>
         <RssLinks />
@@ -743,7 +839,10 @@ const FirehoseFeed: React.FC = () => {
           matchCount={filteredUniqueApps.length}
         />
         {!isEmpty && (
-          <Statistics uniqueApps={uniqueApps} osEventCount={getAllOsStreamEvents().length} />
+          <Statistics
+            uniqueApps={uniqueApps}
+            osEventCount={getAllOsStreamEvents().length}
+          />
         )}
       </aside>
 
@@ -752,8 +851,8 @@ const FirehoseFeed: React.FC = () => {
         {/* Inline notice when OS events are hidden by the date filter */}
         {hiddenOsCount > 0 && (
           <p className={styles.osHiddenNotice}>
-            {hiddenOsCount} OS release{hiddenOsCount !== 1 ? "s" : ""} hidden by the
-            date filter.{" "}
+            {hiddenOsCount} OS release{hiddenOsCount !== 1 ? "s" : ""} hidden by
+            the date filter.{" "}
             <button
               className={styles.clearFiltersBtn}
               onClick={() => setFilters({ ...filters, updatedWithin: "all" })}
@@ -781,9 +880,14 @@ const FirehoseFeed: React.FC = () => {
           <>
             {/* ── Current Versions — pinned cards, always visible ── */}
             <section className={styles.feedSection}>
-              <Heading as="h2" className={styles.feedSectionHeading}>Current Versions</Heading>
+              <Heading as="h2" className={styles.feedSectionHeading}>
+                Current Versions
+              </Heading>
               {PINNED_OS_EVENTS.map((event) => (
-                <OsReleaseCard key={`pinned-${event.release.tag}`} event={event} />
+                <OsReleaseCard
+                  key={`pinned-${event.release.tag}`}
+                  event={event}
+                />
               ))}
             </section>
 
@@ -801,14 +905,20 @@ const FirehoseFeed: React.FC = () => {
             ) : (
               <section className={styles.feedSection}>
                 <div className={styles.appSectionDivider}>
-                  <Heading as="h2" className={styles.feedSectionHeading}>Updates Stream</Heading>
+                  <Heading as="h2" className={styles.feedSectionHeading}>
+                    Updates Stream
+                  </Heading>
                   <span className={styles.appSectionHint}>
-                    OS releases, Flatpak &amp; Homebrew packages included in Bluefin
+                    OS releases, Flatpak &amp; Homebrew packages included in
+                    Bluefin
                   </span>
                 </div>
                 {unifiedStream.map((event) =>
                   event.kind === "os" ? (
-                    <OsReleaseCard key={`stream-${event.release.tag}-${event.dateMs}`} event={event} />
+                    <OsReleaseCard
+                      key={`stream-${event.release.tag}-${event.dateMs}`}
+                      event={event}
+                    />
                   ) : (
                     <div key={event.app.id} className={styles.appEntry}>
                       <FirehoseCard app={event.app} defaultCollapsed={true} />

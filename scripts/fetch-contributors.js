@@ -78,26 +78,18 @@ async function fetchCommits(filePath) {
   }
 }
 
-function getAllMarkdownFiles(dir, baseDir = dir) {
-  const files = [];
-  const entries = fs.readdirSync(dir, { withFileTypes: true });
-
-  for (const entry of entries) {
-    const fullPath = path.join(dir, entry.name);
-
-    if (entry.isDirectory()) {
-      files.push(...getAllMarkdownFiles(fullPath, baseDir));
-    } else if (
-      entry.isFile() &&
-      (entry.name.endsWith(".md") || entry.name.endsWith(".mdx"))
-    ) {
+function getAllMarkdownFiles(dir) {
+  return fs
+    .readdirSync(dir, { recursive: true })
+    .filter((name) => name.endsWith(".md") || name.endsWith(".mdx"))
+    .map((name) => {
       // Get relative path from repo root
-      const relativePath = path.relative(path.join(__dirname, ".."), fullPath);
-      files.push(relativePath.replace(/\\/g, "/"));
-    }
-  }
-
-  return files;
+      const relativePath = path.relative(
+        path.join(__dirname, ".."),
+        path.join(dir, name),
+      );
+      return relativePath.replace(/\\/g, "/");
+    });
 }
 
 async function fetchAllContributors() {
@@ -189,8 +181,6 @@ if (require.main === module) {
 }
 
 module.exports = {
-  fetchAllContributors,
-  fetchCommits,
   getAllMarkdownFiles,
   isBotAccount,
 };
