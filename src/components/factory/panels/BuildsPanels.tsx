@@ -1,4 +1,5 @@
 import React from "react";
+import { formatISO } from "date-fns";
 import { BuildsSection, type FactoryLive } from "../../HiveFactoryDashboard";
 import Unavailable from "../Unavailable";
 import EChart from "../EChart";
@@ -104,7 +105,7 @@ export default function BuildsPanels({
     const p95 = percentile(sortedDur, 0.95);
 
     const xData = terminalRuns.map((r) =>
-      new Date(r.t * 1000).toISOString().slice(0, 10),
+      formatISO(new Date(r.t * 1000), { representation: "date" }),
     );
     const yData = gapSafe(durations);
     const points = yData.filter((v) => v !== null).length;

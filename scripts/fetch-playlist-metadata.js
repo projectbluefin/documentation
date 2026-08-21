@@ -164,8 +164,6 @@ async function fetchPlaylistMetadata(playlistId, title) {
   const playlistUrl = `https://www.youtube.com/playlist?list=${playlistId}`;
 
   try {
-    const fetch = (await import("node-fetch")).default;
-
     // Fetch the playlist page HTML
     const pageResponse = await fetch(playlistUrl);
     if (!pageResponse.ok) {
@@ -314,5 +312,4 @@ if (require.main === module) {
 module.exports = {
   decodeHtmlEntities,
   extractMetadataFromHtml,
-  fetchPlaylistMetadata,
 };

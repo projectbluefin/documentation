@@ -12,12 +12,7 @@ import { request } from "@octokit/request";
 import { createRequire } from "module";
 
 const require = createRequire(import.meta.url);
-const { retryWithBackoff: _retryWithBackoff } = require("./request-queue.js");
-
-/** Wrapper that passes the [build-metrics] label to the shared implementation. */
-function retryWithBackoff(fn, maxRetries = 3) {
-  return _retryWithBackoff(fn, { maxRetries, label: "[build-metrics]" });
-}
+const { retryWithBackoff } = require("./request-queue.js");
 
 /**
  * Workflow definitions to track
@@ -86,19 +81,22 @@ async function fetchWorkflowRuns(owner, repo, workflowId, startDate, endDate) {
 
   try {
     while (true) {
-      const response = await retryWithBackoff(async () => {
-        return await requestWithAuth(
-          "GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs",
-          {
-            owner,
-            repo,
-            workflow_id: workflowId,
-            created: `${startDateStr}..${endDateStr}`,
-            per_page: perPage,
-            page,
-          },
-        );
-      });
+      const response = await retryWithBackoff(
+        async () => {
+          return await requestWithAuth(
+            "GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs",
+            {
+              owner,
+              repo,
+              workflow_id: workflowId,
+              created: `${startDateStr}..${endDateStr}`,
+              per_page: perPage,
+              page,
+            },
+          );
+        },
+        { maxRetries: 3, label: "[build-metrics]" },
+      );
 
       runs.push(...response.data.workflow_runs);
 

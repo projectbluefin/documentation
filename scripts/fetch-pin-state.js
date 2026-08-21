@@ -123,5 +123,4 @@ if (require.main === module) {
 module.exports = {
   applyKernelPin,
   extractKernelPin,
-  fetchWorkflowContent,
 };

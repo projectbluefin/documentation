@@ -106,14 +106,11 @@ function buildCacheKey(streamPrefix, dateStr) {
  *
  * @param {string[]} ghcrTags  Raw tag strings from fetchGhcrTags().
  * @param {object}   spec      Stream spec from STREAM_SPECS.
- * @param {object}   [opts]    Options.
- * @param {number}   [opts.lookbackDays]  How many calendar days to look back (default: 90).
- * @param {number}   [opts.maxReleases]   Max releases to return (default: 10).
  * @returns {Array<{tag, cacheKey, dateStr, imageRef, publishedAt}>}
  */
-function findRecentTagsForStream(ghcrTags, spec, opts = {}) {
-  const lookbackDays = opts.lookbackDays || Number(process.env.SBOM_LOOKBACK_DAYS || 90);
-  const maxReleases = opts.maxReleases || Number(process.env.SBOM_MAX_RELEASES || 10);
+function findRecentTagsForStream(ghcrTags, spec) {
+  const lookbackDays = Number(process.env.SBOM_LOOKBACK_DAYS || 90);
+  const maxReleases = Number(process.env.SBOM_MAX_RELEASES || 10);
   const cutoff = Date.now() - lookbackDays * 24 * 60 * 60 * 1000;
   const found = [];
 

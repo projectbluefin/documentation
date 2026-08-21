@@ -114,80 +114,6 @@ function ghHeaders() {
   return h;
 }
 
-async function fetchText(url) {
-  const res = await fetch(url, { headers: ghHeaders() });
-  if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
-  return res.text();
-}
-
-// fetchJson kept as utility for potential future use
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function fetchJson(url) {
-  const res = await fetch(url, { headers: ghHeaders() });
-  if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
-  return res.json();
-}
-
-/**
- * Extract the render({...}) JSON blob from the hive index.html.
- * Mirrors the string-aware brace-balancing in HiveFactoryDashboard.tsx,
- * but skips function-definition occurrences by looking for render({"
- */
-function extractRenderData(html) {
-  // Find render({"  — the actual data call, not the function definition
-  let searchFrom = 0;
-  while (searchFrom < html.length) {
-    const idx = html.indexOf("render(", searchFrom);
-    if (idx === -1) return null;
-    // The character immediately after render( must be { to be a data payload
-    const afterParen = html.indexOf("{", idx + 7);
-    // Make sure there's nothing but whitespace between render( and {
-    const between = html.slice(idx + 7, afterParen);
-    if (afterParen === -1 || between.trim() !== "") {
-      searchFrom = idx + 7;
-      continue;
-    }
-    const start = afterParen;
-    let depth = 0;
-    let inStr = false;
-    let strChar = "";
-    let escaped = false;
-    for (let i = start; i < html.length; i++) {
-      const ch = html[i];
-      if (escaped) {
-        escaped = false;
-        continue;
-      }
-      if (ch === "\\" && inStr) {
-        escaped = true;
-        continue;
-      }
-      if (inStr) {
-        if (ch === strChar) inStr = false;
-        continue;
-      }
-      if (ch === '"' || ch === "'") {
-        inStr = true;
-        strChar = ch;
-        continue;
-      }
-      if (ch === "{") depth++;
-      else if (ch === "}") {
-        depth--;
-        if (depth === 0) {
-          try {
-            return JSON.parse(html.slice(start, i + 1));
-          } catch {
-            return null;
-          }
-        }
-      }
-    }
-    searchFrom = idx + 7;
-  }
-  return null;
-}
-
 function safeNum(v) {
   return typeof v === "number" && isFinite(v) ? v : undefined;
 }
@@ -612,7 +538,6 @@ module.exports = {
   computeStatsWindows,
   createStatsAccumulator,
   extractMetrics,
-  extractRenderData,
   finalizeContributorStats,
   MAX_WEEKLY_SERIES,
   MAX_WEEKS,

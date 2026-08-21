@@ -77,8 +77,6 @@ const config: Config = {
       {
         hashed: true,
         docsRouteBasePath: "/",
-        indexBlog: true,
-        indexDocs: true,
       },
     ],
     [
@@ -103,7 +101,6 @@ const config: Config = {
         },
         // Enable table of contents in right sidebar
         showLastUpdateTime: true,
-        showLastUpdateAuthor: false,
       },
     ],
   ],
@@ -127,11 +124,6 @@ const config: Config = {
   ],
 
   themeConfig: {
-    docs: {
-      sidebar: {
-        hideable: false,
-      },
-    },
     metadata: [
       {
         name: "keywords",

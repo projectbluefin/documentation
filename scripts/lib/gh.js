@@ -22,9 +22,9 @@ export function githubToken() {
   return process.env.GITHUB_TOKEN || process.env.GH_TOKEN || null;
 }
 
-function headers(token, accept) {
+function headers(token) {
   const h = {
-    accept: accept || "application/vnd.github+json",
+    accept: "application/vnd.github+json",
     "x-github-api-version": "2022-11-28",
     "user-agent": "projectbluefin-documentation-factory",
   };
@@ -36,9 +36,9 @@ function headers(token, accept) {
  * One request. Throws on a non-2xx so the caller's try/catch can write an
  * explicit unavailable payload; it never returns a partial success.
  */
-export async function ghFetch(path, { token = githubToken(), accept } = {}) {
+export async function ghFetch(path, { token = githubToken() } = {}) {
   const url = path.startsWith("http") ? path : `${GH_API}${path}`;
-  const res = await fetch(url, { headers: headers(token, accept) });
+  const res = await fetch(url, { headers: headers(token) });
   if (!res.ok) {
     const hint =
       res.status === 401 || res.status === 403
@@ -57,8 +57,9 @@ export async function ghFetch(path, { token = githubToken(), accept } = {}) {
  */
 export async function ghPaginate(
   path,
-  { token = githubToken(), maxPages = 5, perPage = 100, select } = {},
+  { token = githubToken(), maxPages = 5, select } = {},
 ) {
+  const perPage = 100;
   const out = [];
   for (let page = 1; page <= maxPages; page += 1) {
     const sep = path.includes("?") ? "&" : "?";

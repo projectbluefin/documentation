@@ -3,8 +3,9 @@ import Unavailable from "../Unavailable";
 import EChart from "../EChart";
 import { useDataset } from "../FactoryDataContext";
 import { gapSafe, seriesColor, seriesDash } from "../chartTheme";
-import type { FactoryLive } from "../../HiveFactoryDashboard";
+import { formatISO } from "date-fns";
 import styles from "./ApplicationsPanels.module.css";
+import panelStyles from "./panels.module.css";
 
 /* ---------- Data shapes ---------- */
 
@@ -123,7 +124,7 @@ function formatDate(iso: string | null): string {
   if (!iso) return "";
   const d = new Date(iso);
   if (isNaN(d.getTime())) return "";
-  return d.toISOString().slice(0, 10);
+  return formatISO(d, { representation: "date" });
 }
 
 function formatNumber(n: number): string {
@@ -141,13 +142,7 @@ function sourceUrl(app: FirehoseApp): string | null {
 
 /* ---------- Component ---------- */
 
-export default function ApplicationsPanels({
-  s,
-}: {
-  s: FactoryLive;
-}): React.JSX.Element {
-  void s;
-
+export default function ApplicationsPanels(): React.JSX.Element {
   const {
     data: firehose,
     loading: fhLoading,
@@ -203,29 +198,31 @@ export default function ApplicationsPanels({
 
       {/* 2. KPI strip */}
       {fhReady ? (
-        <div className={styles.kpiStrip}>
-          <div className={styles.kpiCard}>
-            <div className={styles.kpiValue}>{firehose.stats.appsTotal}</div>
-            <div className={styles.kpiLabel}>apps tracked</div>
+        <div className={panelStyles.kpiStrip}>
+          <div className={panelStyles.kpiCard}>
+            <div className={panelStyles.kpiValue}>
+              {firehose.stats.appsTotal}
+            </div>
+            <div className={panelStyles.kpiLabel}>apps tracked</div>
           </div>
-          <div className={styles.kpiCard}>
-            <div className={styles.kpiValue}>
+          <div className={panelStyles.kpiCard}>
+            <div className={panelStyles.kpiValue}>
               {firehose.stats.totalReleases}
             </div>
-            <div className={styles.kpiLabel}>releases tracked</div>
+            <div className={panelStyles.kpiLabel}>releases tracked</div>
           </div>
-          <div className={styles.kpiCard}>
-            <div className={styles.kpiValue}>
+          <div className={panelStyles.kpiCard}>
+            <div className={panelStyles.kpiValue}>
               {firehose.stats.appsWithChangelogs}
             </div>
-            <div className={styles.kpiLabel}>apps with changelogs</div>
+            <div className={panelStyles.kpiLabel}>apps with changelogs</div>
           </div>
-          <div className={styles.kpiCard}>
-            <div className={styles.kpiValue}>
+          <div className={panelStyles.kpiCard}>
+            <div className={panelStyles.kpiValue}>
               {firehose.stats.appsWithGitHubRepo +
                 firehose.stats.appsWithGitLabRepo}
             </div>
-            <div className={styles.kpiLabel}>apps with source repo</div>
+            <div className={panelStyles.kpiLabel}>apps with source repo</div>
           </div>
         </div>
       ) : fhReason ? (
@@ -267,8 +264,8 @@ export default function ApplicationsPanels({
 
       {/* 4. Flathub downloads attributed to Bluefin */}
       {flReady && bluefinOs ? (
-        <div className={styles.section}>
-          <h2 className={styles.heading}>
+        <div className={panelStyles.section}>
+          <h2 className={panelStyles.heading}>
             Flathub downloads attributed to Bluefin
           </h2>
           <div className={styles.bigNumber}>
@@ -389,9 +386,9 @@ export default function ApplicationsPanels({
 
       {/* 7. App catalog table */}
       {fhReady && sortedApps.length > 0 ? (
-        <div className={styles.section}>
-          <h2 className={styles.heading}>App catalog</h2>
-          <table className={styles.table}>
+        <div className={panelStyles.section}>
+          <h2 className={panelStyles.heading}>App catalog</h2>
+          <table className={panelStyles.table}>
             <thead>
               <tr>
                 <th>Name</th>
@@ -435,8 +432,8 @@ export default function ApplicationsPanels({
 
       {/* 8. GNOME extensions */}
       {extReady && extensions.length > 0 ? (
-        <div className={styles.section}>
-          <h2 className={styles.heading}>GNOME extensions</h2>
+        <div className={panelStyles.section}>
+          <h2 className={panelStyles.heading}>GNOME extensions</h2>
           <div className={styles.extGrid}>
             {extensions.map((ext) => (
               <div key={ext.uuid} className={styles.extCard}>

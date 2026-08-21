@@ -5,7 +5,7 @@ import ApplicationsPanels from "../../components/factory/panels/ApplicationsPane
 export default function FactoryApplicationsPage(): React.JSX.Element {
   return (
     <FactoryShell pathname="/factory/applications">
-      {(s) => <ApplicationsPanels s={s} />}
+      {() => <ApplicationsPanels />}
     </FactoryShell>
   );
 }

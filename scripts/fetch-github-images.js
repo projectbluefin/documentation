@@ -214,10 +214,6 @@ function fallbackSbomVersionsByPackage(sbomCache, spec) {
   return null;
 }
 
-function readCache() {
-  return readJsonIfExists(OUTPUT_FILE, null);
-}
-
 function cacheAgeHours() {
   if (!fs.existsSync(OUTPUT_FILE)) return Number.POSITIVE_INFINITY;
   const stats = fs.statSync(OUTPUT_FILE);
@@ -688,7 +684,7 @@ async function main() {
     return;
   }
 
-  const existing = readCache();
+  const existing = readJsonIfExists(OUTPUT_FILE, null);
   const cachedById = new Map(
     (existing?.products || []).map((product) => [product.id, product]),
   );
@@ -749,13 +745,9 @@ if (require.main === module) {
 }
 
 module.exports = {
-  buildSbomStreamId,
   buildSecurityInfo,
   buildTestingStreams,
-  latestFeedItem,
-  normalizeSbomStreamTag,
   normalizeTestingTag,
   parseFeedVersion,
-  sbomLatestCheckedAt,
   sbomVersionsForStream,
 };

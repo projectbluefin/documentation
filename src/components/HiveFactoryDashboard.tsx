@@ -5,7 +5,7 @@ import { useHistory, useLocation } from "@docusaurus/router";
 import Heading from "@theme/Heading";
 import Sparkline from "./Sparkline";
 import { FX_SEVERITY, type SeverityLevel } from "./factory/chartTheme";
-import type { SparklinePoint, SparklineVariant } from "./Sparkline";
+import type { SparklinePoint } from "./Sparkline";
 import ActivityCalendar from "./ActivityCalendar";
 import styles from "./HiveFactoryDashboard.module.css";
 
@@ -273,8 +273,6 @@ interface HiveLiveData {
   copilotPRs: HiveLiveItem[];
   velocity: { opened: number; closed: number };
   testBuilds: number;
-  tapPromotions: number;
-  agentMergedCount: number;
   orgStats: {
     totalRepos: number;
     openIssues: number;
@@ -2843,315 +2841,6 @@ const SEVERITY: Record<
   unknown: { color: "hsl(38, 6%, 45%)", glyph: "○", word: "Unknown" },
 };
 
-// ── Factory Vitals ─────────────────────────────────────────────────────────
-
-const VITAL_W = 168;
-const VITAL_H = 40;
-
-interface VitalCell {
-  key: string;
-  label: string;
-  /** Always printed. A sparkline never appears without its current value. */
-  value: string;
-  note: string;
-  data: SparklinePoint[];
-  variant: SparklineVariant;
-  /** Shared across every cell that measures the same thing. */
-  domain?: [number, number];
-  target?: number;
-  color: string;
-  a11y: string;
-  showEnd?: boolean;
-  showExtremes?: boolean;
-}
-
-function seriesValues(points?: RegistryTimeSeries[]): number[] {
-  return (points ?? []).map((p) => p.v);
-}
-
-/**
- * Sums two registry series by timestamp. A sample missing from either side
- * becomes a gap rather than a zero, so a collection outage cannot masquerade as
- * an empty queue.
- */
-function alignedSum(
-  a: RegistryTimeSeries[],
-  b: RegistryTimeSeries[],
-): SparklinePoint[] {
-  const byT = new Map(b.map((p) => [p.t, p.v]));
-  return a.map((p) => {
-    const other = byT.get(p.t);
-    return typeof other === "number" ? p.v + other : null;
-  });
-}
-
-function spanHours(points: RegistryTimeSeries[]): number {
-  if (points.length < 2) return 0;
-  return Math.round((points[points.length - 1].t - points[0].t) / 3600);
-}
-
-function fmtCount(n: number): string {
-  return n >= 1000 ? `${(n / 1000).toFixed(1)}k` : String(n);
-}
-
-/**
- * Proportional win/loss strip. The 90-day merge outcome is published as two
- * totals with no ordering, so the marks encode the split and the caption says
- * so — they are not a chronology.
- */
-function outcomeMarks(won: number, lost: number, marks = 48): SparklinePoint[] {
-  const total = won + lost;
-  if (total <= 0) return [];
-  const up = Math.round((won / total) * marks);
-  return Array.from({ length: marks }, (_, i) => (i < up ? 1 : -1));
-}
-
-function buildVitals(
-  registry: RegistryEntry | null,
-  history: HiveHistory | null,
-  snapshot: HiveSnapshot | null,
-): { cells: VitalCell[]; workMax: number } {
-  const issues = registry?.issueHistory ?? [];
-  const prs = registry?.prHistory ?? [];
-  const issueVals = seriesValues(issues);
-  const prVals = seriesValues(prs);
-  const totalVals = alignedSum(issues, prs);
-
-  // One domain for every series that counts open work items. Without it each
-  // cell autoscales to its own range and a queue of 12 looks like a queue of
-  // 200 — the single fastest way to make this grid beautiful and false.
-  const workMax = Math.max(
-    1,
-    ...issueVals,
-    ...prVals,
-    ...totalVals.filter((v): v is number => typeof v === "number"),
-  );
-  const workDomain: [number, number] = [0, workMax];
-  const hours = spanHours(issues.length ? issues : prs);
-  const window = hours > 0 ? `${hours} h window` : "no window yet";
-
-  const entries = history?.entries ?? [];
-  const acmmSeries = entries.map((e) => e.acmmLevel ?? null);
-  const budgetSeries = entries.map((e) => e.budgetPct ?? null);
-  const acmmNow = snapshot?.acmmLevel ?? registry?.acmmLevel ?? null;
-  const budgetNow = snapshot?.budgetPct ?? null;
-
-  const mergeMins =
-    snapshot?.medianMergeMins ??
-    entries.map((e) => e.medianMergeMins).filter((v) => v != null)[0] ??
-    null;
-
-  const merged90 = registry?.prsMerged90d ?? 0;
-  const rejected90 = registry?.prsRejected90d ?? 0;
-  const outcomes90 = merged90 + rejected90;
-
-  const checks = registry?.health?.checks ?? [];
-  const passing = checks.filter((c) => c.status === "ok").length;
-
-  const contributors = registry?.contributorCount ?? 0;
-  const activeContributors = registry?.activeContributors ?? 0;
-
-  const cells: VitalCell[] = [
-    {
-      key: "issues",
-      label: "Actionable issues",
-      value: issueVals.length ? String(issueVals[issueVals.length - 1]) : "—",
-      note: `${issueVals.length} readings · ${window}`,
-      data: issueVals,
-      variant: "line",
-      domain: workDomain,
-      color: "var(--fx-accent)",
-      showEnd: true,
-      showExtremes: true,
-      a11y: `Actionable issues over ${hours} hours: now ${issueVals[issueVals.length - 1] ?? "unknown"}, scale 0 to ${workMax}.`,
-    },
-    {
-      key: "prs",
-      label: "Actionable PRs",
-      value: prVals.length ? String(prVals[prVals.length - 1]) : "—",
-      note: `${prVals.length} readings · ${window}`,
-      data: prVals,
-      variant: "line",
-      domain: workDomain,
-      color: "var(--fx-cat-2)",
-      showEnd: true,
-      showExtremes: true,
-      a11y: `Actionable pull requests over ${hours} hours: now ${prVals[prVals.length - 1] ?? "unknown"}, scale 0 to ${workMax}.`,
-    },
-    (() => {
-      const last = [...totalVals]
-        .reverse()
-        .find((v): v is number => typeof v === "number");
-      return {
-        key: "work",
-        label: "Total open work",
-        value: last != null ? String(last) : "—",
-        note: `issues + PRs · same scale as above`,
-        data: totalVals,
-        variant: "line" as const,
-        domain: workDomain,
-        color: "var(--fx-sev-ok)",
-        showEnd: true,
-        showExtremes: true,
-        a11y: `Total open work over ${hours} hours: now ${last ?? "unknown"}, scale 0 to ${workMax}.`,
-      };
-    })(),
-    {
-      key: "outcomes",
-      label: "PR outcomes · 90 d",
-      value:
-        outcomes90 > 0 ? `${Math.round((merged90 / outcomes90) * 100)}%` : "—",
-      note:
-        outcomes90 > 0
-          ? `${merged90} merged / ${rejected90} closed · each mark ≈ ${Math.max(1, Math.round(outcomes90 / 48))} PRs, proportion not sequence`
-          : "no 90-day outcome data",
-      data: outcomeMarks(merged90, rejected90),
-      variant: "winloss",
-      color: "var(--fx-sev-watch)",
-      a11y: `Pull request outcomes over 90 days: ${merged90} merged, ${rejected90} closed without merging.`,
-    },
-    {
-      key: "mergetime",
-      label: "Median merge time",
-      value:
-        mergeMins != null
-          ? mergeMins < 60
-            ? `${mergeMins}m`
-            : `${Math.round((mergeMins / 60) * 10) / 10}h`
-          : "—",
-      note:
-        mergeMins != null
-          ? `target 30m · currently ${Math.round(mergeMins / 30)}× the target`
-          : "target 30m · no measurement",
-      data: mergeMins != null ? [mergeMins] : [],
-      variant: "bullet",
-      domain: [0, Math.max(60, (mergeMins ?? 0) * 1.15)],
-      target: 30,
-      color: "var(--fx-sev-watch)",
-      a11y: `Median merge time ${mergeMins ?? "unknown"} minutes against a 30 minute target.`,
-    },
-    {
-      key: "acmm",
-      label: "ACMM level",
-      value: acmmNow != null ? `L${acmmNow}` : "—",
-      note:
-        acmmSeries.filter((v) => v != null).length >= 2
-          ? `${acmmSeries.length} snapshots`
-          : "history accumulating",
-      data: acmmSeries,
-      variant: "line",
-      domain: [0, 5],
-      color: "var(--fx-sev-watch)",
-      showEnd: true,
-      a11y: `AI codebase maturity level, now ${acmmNow ?? "unknown"} on a 0 to 5 scale.`,
-    },
-    {
-      key: "budget",
-      label: "Token budget used",
-      value: budgetNow != null ? `${Math.round(budgetNow)}%` : "—",
-      note:
-        registry?.totalTokens24h != null
-          ? `${fmtCount(Math.round(registry.totalTokens24h / 1000))}k tokens in 24 h`
-          : "budget history accumulating",
-      data: budgetSeries,
-      variant: "line",
-      domain: [0, 100],
-      color: "var(--fx-sev-alert)",
-      showEnd: true,
-      a11y: `Token budget used, now ${budgetNow != null ? Math.round(budgetNow) : "unknown"} percent of the daily allowance.`,
-    },
-    {
-      key: "checks",
-      label: "Health checks passing",
-      value: checks.length ? `${passing}/${checks.length}` : "—",
-      note: checks.length
-        ? `${registry?.health?.fails ?? 0} failing · ${registry?.health?.warns ?? 0} warning`
-        : "registry health unavailable",
-      data: checks.length ? [passing] : [],
-      variant: "bullet",
-      domain: [0, Math.max(checks.length, 1)],
-      target: checks.length || undefined,
-      color: "var(--fx-sev-ok)",
-      a11y: `${passing} of ${checks.length} registry health checks passing.`,
-    },
-    {
-      key: "contributors",
-      label: "Contributors active",
-      value: contributors ? `${activeContributors}/${contributors}` : "—",
-      note: contributors
-        ? "compute contributed to the hive right now"
-        : "registry contributor data unavailable",
-      data: contributors ? [activeContributors] : [],
-      variant: "bullet",
-      domain: [0, Math.max(contributors, 1)],
-      target: contributors || undefined,
-      color: "var(--fx-accent)",
-      a11y: `${activeContributors} of ${contributors} registered contributors are active.`,
-    },
-  ];
-
-  return { cells, workMax };
-}
-
-function FactoryVitals({
-  registry,
-  history,
-  snapshot,
-}: {
-  registry: RegistryEntry | null;
-  history: HiveHistory | null;
-  snapshot: HiveSnapshot | null;
-}) {
-  const { cells, workMax } = useMemo(
-    () => buildVitals(registry, history, snapshot),
-    [registry, history, snapshot],
-  );
-
-  const populated = cells.filter((c) =>
-    c.data.some((v) => typeof v === "number"),
-  ).length;
-
-  return (
-    <section className={styles.panel}>
-      <Heading as="h2" className={styles.panelTitle}>
-        Factory Vitals
-      </Heading>
-      <p className={styles.panelMeta}>
-        Small multiples. The three open-work charts share one 0&ndash;{workMax}{" "}
-        scale so their heights are comparable &mdash; {populated} of{" "}
-        {cells.length} vitals have data.
-      </p>
-      <div className={styles.vitalsGrid}>
-        {cells.map((cell) => (
-          <div key={cell.key} className={styles.vitalCard}>
-            <div className={styles.vitalLabel}>{cell.label}</div>
-            <div className={styles.vitalValue} style={{ color: cell.color }}>
-              {cell.value}
-            </div>
-            <div className={styles.vitalSpark}>
-              <Sparkline
-                data={cell.data}
-                variant={cell.variant}
-                domain={cell.domain}
-                target={cell.target}
-                width={VITAL_W}
-                height={VITAL_H}
-                color={cell.color}
-                showEnd={cell.showEnd}
-                showExtremes={cell.showExtremes}
-                emptyLabel="accumulating data"
-                label={cell.a11y}
-                className={styles.vitalSparkline}
-              />
-            </div>
-            <div className={styles.vitalNote}>{cell.note}</div>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
 // ── Factory health (static/data/factory-stats.json) ────────────────────────
 
 /** Runs charted per lane. Enough to show shape, short enough to stay word-sized. */
@@ -3699,10 +3388,6 @@ function StatusStrip({
  * share one set of fetches instead of each mounting its own. Authorized by
  * adr/0003-factory-two-level-navigation.md.
  */
-export interface FactoryState {
-  [key: string]: unknown;
-}
-
 export function useFactoryState() {
   const [snapshot, setSnapshot] = useState<HiveSnapshot | null>(null);
   const [config, setConfig] = useState<HiveConfig | null>(null);
@@ -3719,8 +3404,6 @@ export function useFactoryState() {
   // can name the reason instead of spinning forever.
   const [factoryStatsMissing, setFactoryStatsMissing] = useState(false);
   const [testBuilds, setTestBuilds] = useState<number | null>(null);
-  const [tapPromotions, setTapPromotions] = useState<number | null>(null);
-  const [agentMergedCount, setAgentMergedCount] = useState<number | null>(null);
   const [communityDiscussions, setCommunityDiscussions] = useState<
     CommunityDiscussion[] | null
   >(null);
@@ -3730,7 +3413,6 @@ export function useFactoryState() {
   const [copilotPRsList, setCopilotPRsList] = useState<
     AgentAssistedPR[] | null
   >(null);
-  const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [refreshIn, setRefreshIn] = useState(REFRESH_SECS);
 
@@ -3803,7 +3485,6 @@ export function useFactoryState() {
         });
       }
     } finally {
-      setLoading(false);
       setLastUpdated(new Date());
       setRefreshIn(REFRESH_SECS);
     }
@@ -3906,9 +3587,6 @@ export function useFactoryState() {
         );
         if (data.velocity) setVelocity(data.velocity);
         if (data.testBuilds != null) setTestBuilds(data.testBuilds);
-        if (data.tapPromotions != null) setTapPromotions(data.tapPromotions);
-        if (data.agentMergedCount != null)
-          setAgentMergedCount(data.agentMergedCount);
         if (data.orgStats) setOrgStats(data.orgStats);
       })
       .catch(() => {
@@ -3965,12 +3643,9 @@ export function useFactoryState() {
     formationLevel = "watch";
   }
   const formationColor = FX_SEVERITY[formationLevel].color;
-  const formationGlyph = FX_SEVERITY[formationLevel].glyph;
 
   const p0Count = queueData?.issues.p0.length ?? 0;
   const p1Count = queueData?.issues.p1.length ?? 0;
-  const prsNeedingReview =
-    (queueData?.prs.required.length ?? 0) + (queueData?.prs.none.length ?? 0);
 
   // ── Tab state, carried in the URL so a view can be linked ────────────────
   // `useLocation` comes from the router, not from `window`, so this evaluates
@@ -4086,7 +3761,6 @@ export function useFactoryState() {
     communityDiscussions,
     hivePRsList,
     copilotPRsList,
-    loading,
     lastUpdated,
     refreshIn,
     agents,
@@ -4102,7 +3776,6 @@ export function useFactoryState() {
     sources,
     formation,
     formationColor,
-    formationGlyph,
     liveHasContent,
   };
 }
@@ -4642,23 +4315,6 @@ export function BuildsSection({ s }: { s: FactoryLive }): React.JSX.Element {
 
       {/* ── Rolling build health per publishing lane ── */}
       <FactoryHealth stats={factoryStats} missing={factoryStatsMissing} />
-    </>
-  );
-}
-
-/**
- * Small multiples of the factory's key measures, on shared domains.
- */
-export function VitalsSection({ s }: { s: FactoryLive }): React.JSX.Element {
-  const { snapshot, registryData, hiveHistory } = s;
-  return (
-    <>
-      {/* ── Factory Vitals: small multiples on shared domains ── */}
-      <FactoryVitals
-        registry={registryData}
-        history={hiveHistory}
-        snapshot={snapshot}
-      />
     </>
   );
 }

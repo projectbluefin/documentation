@@ -20,71 +20,6 @@ const SLSA_TYPE = "https://slsa.dev/provenance/v1";
 const OIDC_ISSUER = "https://token.actions.githubusercontent.com";
 
 // ---------------------------------------------------------------------------
-// HTTP helpers
-// ---------------------------------------------------------------------------
-
-async function fetchText(url, extraHeaders = {}) {
-  const headers = {
-    "User-Agent": "BluefinDocsSBOM/1.0",
-    ...extraHeaders,
-  };
-  const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
-  // Only attach the GitHub token for api.github.com requests — not for ghcr.io
-  if (token && url.includes("api.github.com")) {
-    headers.Authorization = `Bearer ${token}`;
-  }
-
-  const response = await fetch(url, { headers });
-  if (!response.ok) {
-    throw new Error(`HTTP ${response.status} ${response.statusText} — ${url}`);
-  }
-  return response.text();
-}
-
-async function fetchJson(url, extraHeaders = {}) {
-  const text = await fetchText(url, extraHeaders);
-  return JSON.parse(text);
-}
-
-// ---------------------------------------------------------------------------
-// GitHub Releases API — paginated tag listing
-// ---------------------------------------------------------------------------
-
-/**
- * Fetch all release tag names for a given owner/repo using the Releases API.
- * Uses standard github.token — no cross-org packages:read scope required.
- * Returns an array of { tagName, publishedAt } objects.
- */
-async function fetchReleaseTags(owner, repo) {
-  const tags = [];
-  let page = 1;
-  // eslint-disable-next-line no-constant-condition
-  while (true) {
-    const url = `https://api.github.com/repos/${owner}/${repo}/releases?per_page=100&page=${page}`;
-    let batch;
-    try {
-      batch = await fetchJson(url);
-    } catch (err) {
-      throw new Error(
-        `Releases API page ${page} for ${owner}/${repo} failed: ${err.message}`,
-      );
-    }
-    if (!Array.isArray(batch) || batch.length === 0) break;
-    for (const release of batch) {
-      if (release.tag_name) {
-        tags.push({
-          tagName: release.tag_name,
-          publishedAt: release.published_at || release.created_at || null,
-        });
-      }
-    }
-    if (batch.length < 100) break;
-    page++;
-  }
-  return tags;
-}
-
-// ---------------------------------------------------------------------------
 // GHCR OCI distribution API — tag listing
 // ---------------------------------------------------------------------------
 
@@ -507,9 +442,6 @@ async function getImageCreatedDate(imageRef) {
 module.exports = {
   SLSA_TYPE,
   OIDC_ISSUER,
-  fetchText,
-  fetchJson,
-  fetchReleaseTags,
   getGhcrToken,
   fetchGhcrTags,
   orasLogin,

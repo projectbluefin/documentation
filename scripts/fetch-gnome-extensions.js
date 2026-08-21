@@ -157,6 +157,5 @@ if (require.main === module) {
 
 module.exports = {
   buildExtensionRecord,
-  fetchExtensionData,
   isStale,
 };
