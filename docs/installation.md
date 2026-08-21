@@ -21,9 +21,10 @@ Bluefin is purposely designed to follow the state of the art of Linux developmen
 
 ### Tier 1 - The best experience
 
-A Tier 1 configuration is considered fully supported. These configurations receive the highest level of coverage and are prioritized. 
+A Tier 1 configuration is considered fully supported. These configurations receive the highest level of coverage and are prioritized.
 
 #### Requirements
+
 - Linux friendly hardware (no external kernel modules required)
   - Linux laptop vendors may or may not fall under this tier.
   - "Our hardware is fully supported in the upstream Linux kernel" ← good
@@ -31,16 +32,18 @@ A Tier 1 configuration is considered fully supported. These configurations recei
 - Software packaged for modern Linuxes (Flatpak for desktop apps, containers for development, etc)
 
 #### Users can expect
-- The most reliable and intended Bluefin experience 
+
+- The most reliable and intended Bluefin experience
 
 **Recommendation:** Bluefin
 
 ### Tier 2 - You're probably ok
 
-A Tier 2 configuration is not fully supported and may contain compromises due to hardware or software choices. 
-It can mostly work but may need post-install configuration. Some of these work fine but are put here because the software is delivered by the vendor and not something the team can control like Nvidia drivers. 
+A Tier 2 configuration is not fully supported and may contain compromises due to hardware or software choices.
+It can mostly work but may need post-install configuration. Some of these work fine but are put here because the software is delivered by the vendor and not something the team can control like Nvidia drivers.
 
 #### Requirements
+
 - NVidia GPUs on desktops
 - Some Linux laptop vendors may fall under this tier
   - Might have good kernel support but needs an external module for a fan controller or some other component
@@ -50,16 +53,17 @@ It can mostly work but may need post-install configuration. Some of these work f
 #### Users can expect
 
 - Unreliable upgrades and manual system maintenance
-    * The team typically does not take these configurations into account when testing.
-- Generally works fine day to day 
+  - The team typically does not take these configurations into account when testing.
+- Generally works fine day to day
 
 **Recommendation:** Try Bluefin and see how it runs. Some people make custom images, investigation may be needed.
 
 ### Tier 3 - Who knows?
 
-Tier 3 is mostly unsupported - it may work perfectly or be a disaster. 
+Tier 3 is mostly unsupported - it may work perfectly or be a disaster.
 
 #### Requirements
+
 - Known problematic hardware (Asus and Apple laptops)
 - Dual GPU laptops with Nvidia hardware
 - Old school "good luck with this!" packaging formats
@@ -70,10 +74,10 @@ Tier 3 is mostly unsupported - it may work perfectly or be a disaster.
 #### Users can expect
 
 - Unreliable upgrades and manual system maintenance
-    * The team typically does not take these configurations into account when testing.
+  - The team typically does not take these configurations into account when testing.
 - "Flaky support" - wireless may or may not work occasionally, suspend/resume issues, etc.
 
-**Recommendation:** Ubuntu or a custom image. 
+**Recommendation:** Ubuntu or a custom image.
 
 ## System Requirements
 
@@ -200,7 +204,7 @@ Bluefin strives to make maintenance as straightforward as possible, however many
   - `ujust changelogs` will show incoming changes and updates coming from Fedora
   - `ujust bios` will reboot the machine and enter the BIOS/UEFI menu. This is useful for booting into a Windows drive
 - Subscribe to the [blog](/blog)
-- Understand [rebase and rollback procedures](/administration.md#switching-between-streams)
+- Understand [rebase and rollback procedures](/administration#switching-between-streams)
 - Use the [Warehouse application](https://github.com/flattool/warehouse) to manage Flatpak lifecycle:
   - Pin to an old version or rollback
   - Easily remove applications at once

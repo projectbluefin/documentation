@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import Layout from "@theme/Layout";
 import Link from "@docusaurus/Link";
-import { useHistory, useLocation } from "@docusaurus/router";
 import Heading from "@theme/Heading";
 import Sparkline from "./Sparkline";
 import { FX_SEVERITY, type SeverityLevel } from "./factory/chartTheme";
@@ -2791,37 +2790,6 @@ function VictoryLog({
   );
 }
 
-// ── Tabs ───────────────────────────────────────────────────────────────────
-
-type FactoryTab = "live" | "health";
-
-const TAB_PARAM = "tab";
-
-const TABS: Array<{ id: FactoryTab; label: string; hint: string }> = [
-  {
-    id: "live",
-    label: "Live",
-    hint: "Hive orchestration — agents, governor, queue, advisories, merges",
-  },
-  {
-    id: "health",
-    label: "Factory health",
-    hint: "Build, release and image status",
-  },
-];
-
-/**
- * Reads the selected tab out of the URL query string.
- *
- * Safe during static generation: it never touches `window`. On the server
- * `location.search` is empty, so the pre-rendered default is deterministic and
- * the client picks the shared view up from the URL on hydration.
- */
-function parseTab(search: string): FactoryTab | null {
-  const raw = new URLSearchParams(search).get(TAB_PARAM);
-  return raw === "live" || raw === "health" ? raw : null;
-}
-
 // ── Severity ───────────────────────────────────────────────────────────────
 
 type Severity = "ok" | "watch" | "alert" | "unknown";
@@ -3647,27 +3615,6 @@ export function useFactoryState() {
   const p0Count = queueData?.issues.p0.length ?? 0;
   const p1Count = queueData?.issues.p1.length ?? 0;
 
-  // ── Tab state, carried in the URL so a view can be linked ────────────────
-  // `useLocation` comes from the router, not from `window`, so this evaluates
-  // identically during static generation (where `search` is empty).
-  const location = useLocation();
-  const routerHistory = useHistory();
-  const urlTab = useMemo(() => parseTab(location.search), [location.search]);
-
-  const selectTab = useCallback(
-    (tab: FactoryTab) => {
-      const params = new URLSearchParams(location.search);
-      params.set(TAB_PARAM, tab);
-      // push, not replace: the back button returns to the previous view.
-      routerHistory.push({
-        pathname: location.pathname,
-        search: `?${params.toString()}`,
-        hash: location.hash,
-      });
-    },
-    [routerHistory, location.pathname, location.search, location.hash],
-  );
-
   const liveHasContent =
     agents.length > 0 ||
     (registryData?.agents?.length ?? 0) > 0 ||
@@ -3676,27 +3623,6 @@ export function useFactoryState() {
     queueData != null ||
     registryData != null ||
     snapshot != null;
-
-  const healthHasContent =
-    registryData != null ||
-    factoryStats != null ||
-    factoryStatsMissing ||
-    (hiveHistory?.entries.length ?? 0) > 0 ||
-    velocity != null ||
-    orgStats != null ||
-    mergedPRs.length > 0;
-
-  const availability: Record<FactoryTab, boolean> = {
-    live: liveHasContent,
-    health: healthHasContent,
-  };
-
-  // An empty tab is never the default: if Live has nothing to show but Factory
-  // health does, the page opens on Factory health. An explicit `?tab=` always
-  // wins, because a shared link must resolve to the view it names.
-  const defaultTab: FactoryTab =
-    liveHasContent || !healthHasContent ? "live" : "health";
-  const activeTab: FactoryTab = urlTab ?? defaultTab;
 
   const queueDepth =
     (snapshot?.governor?.issues ?? registryData?.actionableIssues ?? 0) +
