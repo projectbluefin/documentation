@@ -26,7 +26,9 @@ check that silently proves nothing.
   `AGENTS.md` — those push straight to `main`, no pull request or queue.
 - Deciding _what_ to change. This skill covers landing and proving it.
 
-## A green pull request that will not enqueue
+## Core Process
+
+### A green pull request that will not enqueue
 
 `gh pr merge` reports only `The merge strategy for main is set by the merge
 queue`, the queue stays empty, and the pull request sits at `BLOCKED`. That
@@ -60,7 +62,7 @@ a maintainer's call — ask, do not assume.
 gh pr merge <n> --repo projectbluefin/documentation --merge --admin
 ```
 
-## Stacked pull requests: merge, do not squash
+### Stacked pull requests: merge, do not squash
 
 When the second branch is built on the first, its branch literally contains the
 first branch's commit. Squash-merging the base creates a _new_ commit with the
@@ -71,7 +73,7 @@ its own work.
 Merge the base first, then wait — GitHub reports `mergeable: UNKNOWN` for a few
 seconds afterwards while it recomputes, and acting on `UNKNOWN` is guesswork.
 
-## Verifying that a change is actually live
+### Verifying that a change is actually live
 
 Fetching the page and grepping for your text is **not** a verification. It
 produces false negatives that look exactly like success.
@@ -109,7 +111,7 @@ Two supporting habits:
 - The CDN serves the previous copy briefly, so add `?cb=$RANDOM` to page
   requests. Hashed asset paths change per build and need no cache-buster.
 
-## Do not mistake a passing build for a deploy
+### Do not mistake a passing build for a deploy
 
 `Deploy to GitHub Pages` reports `skipping` on pull requests; it only runs on
 `main`. A green check on a pull request means the site _built_, not that it
@@ -124,7 +126,7 @@ gh run view <id> --repo projectbluefin/documentation \
 `gh run watch --compact` streams build warnings and can exit without printing a
 conclusion. Confirm with `gh run view` rather than trusting the tail of a watch.
 
-## Cleanup
+### Cleanup
 
 The merge deletes the remote branch automatically, so `git push origin --delete`
 afterwards fails with `remote ref does not exist`. That error is expected and
@@ -166,3 +168,12 @@ git branch -D <branch>
   ```
 
 - [ ] The local branch is deleted; the remote one was removed by the merge.
+
+## Sources
+
+- `.github/workflows/pages.yml` — deploys on every push to `main`; skips on
+  pull requests.
+- `gh api repos/projectbluefin/documentation/rules/branches/main` — the
+  ruleset; `require_last_push_approval` is the self-authored-PR trap.
+- [`AGENTS.md`](https://github.com/projectbluefin/documentation/blob/main/AGENTS.md)
+  → _Git, branches, and shipping_ — merge queue and doc-only push exception.

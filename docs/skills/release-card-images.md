@@ -34,7 +34,9 @@ correct forever and be wrong within a month.
 - The pinned release cards rendered in React on `/changelogs` — those are
   components, though they must agree with the PNGs (see below).
 
-## Every card reads a live source
+## Core Process
+
+### Every card reads a live source
 
 | Card          | Source                                                     |
 | ------------- | ---------------------------------------------------------- |
@@ -56,7 +58,7 @@ Two traps in the SBOM cache:
 - **No data means no card, not a stale card.** When the cache yields nothing,
   the generator warns and skips the slug rather than falling back to a constant.
 
-## Regenerating and eyeballing a card
+### Regenerating and eyeballing a card
 
 The tracked SBOM seed is deliberately small, so local output may lag the live
 site. To render exactly what production renders:
@@ -76,7 +78,7 @@ Then view `static/img/cards/dakota-light.png`. Never commit the swapped seed.
 re-rendered when its release data or `scripts/lib/card-template.mjs` changes.
 Delete the entry if you need to force a re-render.
 
-## Tests
+### Tests
 
 Parsing lives in `scripts/lib/card-feed-parser.mjs` as pure exported functions
 so `scripts/generate-card-images.test.js` can exercise it offline:
@@ -116,3 +118,14 @@ node --test scripts/generate-card-images.test.js
 - [ ] `static/data/sbom-attestations-frontend.json` is restored to the tracked
       seed — `git status` shows it unmodified.
 - [ ] The rendered PNG was actually opened and looked at, in both light and dark.
+
+## Sources
+
+- `scripts/generate-card-images.mjs` — the generator; warns and skips a slug on
+  empty data rather than falling back.
+- `scripts/lib/card-feed-parser.mjs` — pure exported parsing functions,
+  including `buildDakotaRelease()`.
+- `scripts/lib/card-template.mjs` — card layout; a change busts the
+  `card-hashes.json` cache.
+- `src/components/FirehoseFeed.tsx` → `getDakotaOsEvent()` — the React-side
+  Dakota source the PNG must agree with.

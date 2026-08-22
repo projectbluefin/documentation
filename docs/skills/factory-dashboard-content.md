@@ -28,7 +28,9 @@ rules as any other page — plus a few that are specific to this data.
 - Data-pipeline contracts in general — those are in
   [`AGENTS.md`](https://github.com/projectbluefin/documentation/blob/main/AGENTS.md) → _Data pipelines_.
 
-## Brand terminology in panel copy
+## Core Process
+
+### Brand terminology in panel copy
 
 Panel titles and summaries must follow [`/press-kit`](/press-kit). In practice:
 
@@ -42,7 +44,7 @@ Panel titles and summaries must follow [`/press-kit`](/press-kit). In practice:
 - Do not invent grouping terms. "peer immutable distributions" was made up;
   "peer cloud-native desktops" is accurate.
 
-## Only projectbluefin images belong on the dashboard
+### Only projectbluefin images belong on the dashboard
 
 The GHCR inventory (`scripts/fetch-ghcr-packages.js`) reports images owned by the
 `projectbluefin` org only. When adding a lane to `FALLBACK_LANES`, confirm the
@@ -51,7 +53,7 @@ do **not** and were removed. If removing a lane empties a whole UI section,
 remove the section too — a permanently-empty panel that says "no data found"
 misleads readers into thinking there is a gap.
 
-## countme: match ublue-os/countme, and never trust the seed on its own
+### countme: match ublue-os/countme, and never trust the seed on its own
 
 The adoption numbers come from Fedora's public countme totals CSV
 (`scripts/fetch-countme.js` → `static/data/countme-history.json`, a tracked
@@ -84,7 +86,7 @@ The two rules that are easy to get wrong, and were wrong until ADR 0004:
 "Weekly active devices" is now the correct label, matching the upstream chart
 title. Bluefin LTS must carry its EPEL caveat wherever it is charted.
 
-### An empty re-derive diff does not mean the data is right
+#### An empty re-derive diff does not mean the data is right
 
 This file previously advised that re-running the fetcher and seeing no diff
 proved the committed data correct, and that a suspicious number should be
@@ -94,7 +96,7 @@ deterministic, never that its arithmetic is right. When a number looks
 implausible, check it against an **independent** source — here, the project's own
 published badge — before concluding the data is fine.
 
-## Charts follow the site theme
+### Charts follow the site theme
 
 `src/components/factory/chartTheme.ts` reads the `--fx-*` tokens off the live
 DOM with `getComputedStyle`. ECharts paints to canvas, where `var(--fx-*)` in a
@@ -123,7 +125,7 @@ Rules:
 **Check both themes before claiming a visual fix.** A dashboard that is only
 ever opened in dark mode hides half its contrast bugs.
 
-## Tests pin the copy
+### Tests pin the copy
 
 Panel tests assert on rendered titles and headings
 (`scripts/*-panels.test.js`). When you change a chart `title`, section heading,
@@ -165,3 +167,16 @@ change.
 - [ ] Every unavailable panel states a reason —
       `scripts/panel-unavailability.test.js` passes.
 - [ ] No new empty sections.
+
+## Sources
+
+- [`/press-kit`](/press-kit) — brand vocabulary for panel copy.
+- [`ublue-os/countme`](https://github.com/ublue-os/countme) — canonical
+  counting implementation; `data_processing.py` is the reference for
+  `scripts/fetch-countme.js`.
+- `scripts/fetch-countme.js`, `scripts/fetch-ghcr-packages.js` — data
+  pipelines; counting rules documented in their file headers.
+- `src/components/factory/chartTheme.ts`,
+  `src/components/factory/useFactoryTheme.ts` — theme-token plumbing.
+- [`adr/0004-countme-counting-method.md`](https://github.com/projectbluefin/documentation/blob/main/adr/0004-countme-counting-method.md)
+  — why a hit is not a device and `sys_age = -1` is excluded.

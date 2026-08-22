@@ -88,6 +88,33 @@ git diff --cached --name-only
 
 **Everything else takes a branch and a PR targeting `main`.**
 
+## Factory hard rules
+
+`projectbluefin/common` → `docs/factory/agentic-model.md` is the source of
+truth for cross-repo rules; it outranks anything here on factory-wide matters.
+The rules that bind this repository daily:
+
+- **Ask before opening PRs.** Present the plan and the diff, get explicit
+  maintainer approval, then open. The doc-only push exception above is the
+  pre-approved path; Renovate PRs are pre-approved by common policy.
+- **Check for existing PRs before opening.**
+  `gh pr list --repo projectbluefin/documentation --state open --search "<topic>"`
+  Comment on a duplicate rather than opening another.
+- **`just check` before every commit** (typecheck + lint + test). If the
+  recipe is missing, run the three `npm` commands above directly.
+- **Never create secrets, PATs, tokens, or app credentials** — not in
+  workflows, not as suggestions, not as `secrets.NEW_THING` references. Humans
+  decide when a new secret is needed; that is a security gate, not a
+  convention.
+- **Sensitive paths need maintainer review before merge:**
+  `.github/workflows/` and `Justfile`.
+- **The standard is the codebase itself.** Before choosing a tool or pattern,
+  grep what production already uses and follow it.
+- **Capture gaps in the factory.** When you find something broken or missing,
+  file an issue in `projectbluefin/common` describing scope, impact, and what
+  "fixed" looks like. Do not self-triage into a queue; do not park it in a
+  static doc — docs are operating procedure, not backlogs.
+
 ## Trust the Machines
 
 The factory is automation-first. Workflows, branches, assignees, projects, PR
@@ -144,7 +171,9 @@ remembering. Never let a missing ADR stall work a maintainer has asked for.
 - `src/` — components, pages, CSS modules.
 - `scripts/` — build-time data pipelines and their `*.test.js` files.
 - `static/img/` — site assets.
-- `docusaurus.config.ts`, `sidebars.ts`, `package.json`, `.github/workflows/`.
+- `docusaurus.config.ts`, `sidebars.ts`, `package.json`, `.github/workflows/`
+  (workflows and `Justfile` are sensitive paths — maintainer review before
+  merge, per the factory hard rules).
 
 ## What agents must not touch
 
@@ -154,7 +183,8 @@ remembering. Never let a missing ADR stall work a maintainer has asked for.
 - Generated data under `static/data/`, except the tracked seeds listed in
   `.gitignore`. Never hand-edit generated output.
 - `build/` — generated, gitignored, and never a reference for what exists.
-- Org or app credential pairs. Use `GITHUB_TOKEN` or a provisioned GitHub App.
+- Org or app credential pairs — see the secrets prohibition in the factory
+  hard rules. Use `GITHUB_TOKEN` or a provisioned GitHub App.
 
 ## Repository map
 
