@@ -47,6 +47,7 @@ const sidebars: SidebarsConfig = {
         "lts",
         "t2-mac",
         "knuckle",
+        "dakota",
       ],
     },
     {

@@ -1,0 +1,92 @@
+---
+title: Dakota — Bluefin on GNOME OS
+slug: /dakota
+---
+
+import { DakotaSection } from "@site/src/components/DownloadSectionTesting";
+import DriverVersionsCatalog from "@site/src/components/DriverVersionsCatalog";
+
+# Dakota
+
+**Dakota** (_Dakotaraptor steini_) is Bluefin built on [GNOME OS](https://os.gnome.org/), assembled entirely from source with [Apache BuildStream](https://buildstream.build/) and published as a `bootc` image. It eschews the traditional Linux distribution model — there are no RPMs — and is designed to deliver software directly from upstream sources.
+
+:::info[Alpha]
+Dakota is in alpha. [Filing issues](https://github.com/projectbluefin/dakota/issues) is the whole point — every user running Dakota is part of a structured feedback loop back into upstream GNOME, freedesktop, and the kernel.
+:::
+
+## Download and install
+
+<DakotaSection />
+
+You **cannot** rebase to Dakota from another image — if you're not on Dakota already, you need to reinstall from the ISO.
+
+Each image is signed with [cosign](https://docs.sigstore.dev/cosign/system_config/installation/) keyless signing via GitHub Actions OIDC. Verify with:
+
+```bash
+cosign verify ghcr.io/projectbluefin/dakota:latest \
+  --certificate-identity-regexp="https://github.com/projectbluefin/dakota/.github/workflows/build.yml" \
+  --certificate-oidc-issuer=https://token.actions.githubusercontent.com
+```
+
+## Image streams
+
+Dakota uses the [freedesktop-sdk](https://gitlab.com/freedesktop-sdk/freedesktop-sdk) version as its base version (e.g. 25.08.11 is the 11th release of the August 2025 major update).
+
+| Tag        | Stream  | What it is                                                                |
+| ---------- | ------- | ------------------------------------------------------------------------- |
+| `:stable`  | Stable  | GNOME 50 — production. Mon/Wed/Fri automated promotion from `:testing`.   |
+| `:testing` | Dev     | GNOME 50 — daily builds from the `testing` branch. Boot-check gated.      |
+| `:next`    | Rolling | GNOME master — the bleeding edge. Tracks gnome-build-meta `master` daily. |
+| `:btw`     | Rolling | Alias for `:next`.                                                        |
+
+```bash
+# Switch to the rolling stream
+sudo bootc switch ghcr.io/projectbluefin/dakota:next
+```
+
+### Gaming streams
+
+The game mode images add the [Open Gaming Collective kernel](https://github.com/OpenGamingCollective/linux) (sched_ext, ntsync), Steam with 32-bit compatibility libraries and controller udev rules, gamescope and the Steam Big Picture gamescope session, GameMode / MangoHud / vkBasalt, InputPlumber, and first-boot Flathub installs of Lutris, Heroic, Bottles, ProtonPlus, Protontricks, and GOverlay. The `dakota:btw` alias is also offered for the gaming kernel stream.
+
+| Image         | Stream  | Command                                                                 |
+| ------------- | ------- | ----------------------------------------------------------------------- |
+| Gaming        | Stable  | `sudo bootc switch ghcr.io/projectbluefin/dakota-gaming:stable`         |
+| Gaming        | Testing | `sudo bootc switch ghcr.io/projectbluefin/dakota-gaming:testing`        |
+| NVIDIA Gaming | Stable  | `sudo bootc switch ghcr.io/projectbluefin/dakota-nvidia-gaming:stable`  |
+| NVIDIA Gaming | Testing | `sudo bootc switch ghcr.io/projectbluefin/dakota-nvidia-gaming:testing` |
+
+## The feedback loop
+
+When something breaks on your hardware, three commands flow the evidence back upstream:
+
+| Command                 | What it does                                                                                       |
+| ----------------------- | -------------------------------------------------------------------------------------------------- |
+| `ujust report`          | Captures your system state and opens a pre-filled issue.                                           |
+| `ujust confirm <issue>` | Tells the team your hardware hits the same bug — adds a hardware fingerprint, no duplicate filing. |
+| `ujust verify <issue>`  | After a fix ships in a nightly, confirms it works on your machine.                                 |
+
+No telemetry, no phone-home. Every report is reviewed by you before it leaves your machine, lives in a gist you own, and can be deleted anytime. When three users independently run `ujust verify` on a fix, that issue closes with real confidence. See the full [feedback loop design](https://github.com/projectbluefin/dakota/blob/testing/docs/feedback-loop.md).
+
+## Under the hood
+
+- **Boot**: `systemd-boot`, UKIs, memory-safe defaults (sudo-rs, uutils-coreutils), Ghostty as the terminal.
+- **Swap**: zswap backed by a disk swapfile at `/var/swap/swapfile` (sized `min(RAM / 2, 8 GiB)`), instead of GNOME OS's zram device. Kernel arguments live in `/usr/lib/bootc/kargs.d/20-zswap.toml` so `bootc` applies them on image switches and upgrades: `zswap.enabled=1`, `zswap.compressor=zstd`, `zswap.max_pool_percent=20`, `zswap.shrinker_enabled=1`, `vm.swappiness=100`.
+- **Architecture**: the build is defined declaratively in BuildStream elements; see [oci-assembly.md](https://github.com/projectbluefin/dakota/blob/testing/docs/oci-assembly.md) and [patches.md](https://github.com/projectbluefin/dakota/blob/testing/docs/patches.md) in the dakota repo.
+
+## Current versions
+
+<DriverVersionsCatalog streamId="dakota-latest" />
+
+## Known gaps
+
+- The installation path is still being worked on.
+- Upgrades and rollbacks need more hardening.
+
+See the [open issues](https://github.com/projectbluefin/dakota/issues) for where things stand. ISO-specific issues go to [projectbluefin/dakota-iso](https://github.com/projectbluefin/dakota-iso/issues).
+
+## Further reading
+
+- [projectbluefin/dakota](https://github.com/projectbluefin/dakota) — README, image streams, contributor workflow in AGENTS.md
+- Repo docs: [build](https://github.com/projectbluefin/dakota/blob/testing/docs/build.md), [CI](https://github.com/projectbluefin/dakota/blob/testing/docs/ci.md), [workflow](https://github.com/projectbluefin/dakota/blob/testing/docs/workflow.md), [feedback loop](https://github.com/projectbluefin/dakota/blob/testing/docs/feedback-loop.md)
+- Blog: [Dakota Alpha 1](/blog/dakota-alpha-1) · [Gaming Mode and Dakota Alpha 5](/blog/dakota-alpha-5)
+- [GNOME OS](https://os.gnome.org/) · [BuildStream](https://buildstream.build/) · [freedesktop-sdk](https://gitlab.com/freedesktop-sdk/freedesktop-sdk)
