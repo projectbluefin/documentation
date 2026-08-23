@@ -33,6 +33,11 @@ fetch-images-force:
 typecheck:
     npm run typecheck
 
+# Pre-commit gate per projectbluefin/common: typecheck + lint + unit tests
+check: typecheck
+    npm run lint
+    npm test
+
 # Clear Docusaurus build cache — fixes rspack "Dependency with ID not found" panics
 clear:
     npx docusaurus clear

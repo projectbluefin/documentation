@@ -19,6 +19,7 @@ guidance in a general-purpose design or content skill you have loaded.
 | Writing, editing, or embedding in a blog post         | [`skills/blog-posts.md`](skills/blog-posts.md)                                              |
 | Adding or changing a React component                  | [`skills/component-testing.md`](skills/component-testing.md)                                |
 | Editing `/factory` dashboard panels or copy           | [`skills/factory-dashboard-content.md`](skills/factory-dashboard-content.md)                |
+| Adding a top-level page for a variant (dakota, lts…)  | [`skills/variant-docs-pages.md`](skills/variant-docs-pages.md)                              |
 | Changing the generated release card PNGs              | [`skills/release-card-images.md`](skills/release-card-images.md)                            |
 | Verifying, recovering, or archiving a blog discussion | [`skills/giscus-discussions.md`](skills/giscus-discussions.md)                              |
 | Landing a pull request, or proving a change is live   | [`skills/shipping-and-verifying.md`](skills/shipping-and-verifying.md)                      |
