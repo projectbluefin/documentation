@@ -60,6 +60,13 @@ labels in a mockup. It is not authorization to write paragraphs as the author.
    `static/img/blog/<YYYY-MM-DD-slug>/`. Never hotlink a CDN — the post has to
    survive the source account, the CDN, and the link rotting.
 
+   For a YouTube-only stub, fetch the canonical title from the oEmbed endpoint.
+   If `maxresdefault.jpg` returns HTTP 200, save it under the post's
+   `static/img/blog/<YYYY-MM-DD-slug>/` directory and use that local path as the
+   front-matter `image`; otherwise save the oEmbed `thumbnail_url`. When the
+   maintainer supplied no prose, the body may contain only the standard
+   accessible YouTube iframe.
+
 3. **Write the front matter.**
 
    ```yaml
