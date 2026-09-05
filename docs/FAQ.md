@@ -127,6 +127,12 @@ Your layout may be already included with Fedora, but you need to list extended k
 
 ## How do I set up an Input Method Editor (IME)?
 
+### Option 1: GNOME Keyboard Settings
+
+Add an input source in keyboard settings: [GNOME Help > Keyboard Layouts](https://help.gnome.org/gnome-help/keyboard-layouts.html)
+
+### Option 2: Fcitx5 (Flatpak)
+
 1. Install [Fcitx5](https://flathub.org/en/apps/org.fcitx.Fcitx5):
 
 ```bash
