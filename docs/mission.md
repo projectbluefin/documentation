@@ -17,6 +17,8 @@ Accelerate operating system development by integrating with the cloud native eco
   - A base OS image
 - Take a "distroless" approach to images, the project should be invisible
 - Actively encourage upstream contribution by intentionally limiting scope to ensure that our users understand the importance of supporting Flathub and Homebrew.
+- Actively onboard new contributors into open source by providing onramps to training opportunities, mentorship programs, and a variety of contribution opportunities via various open source organizations. Starting with the CNCF/Linux Foundation and hopefully expand to more!
+  - Actively advocate for Apache Buildstream, bootc, podman, kubernetes, and other tools that designed to be distribution agnostic.
 
 ## Community and Project
 
@@ -39,3 +41,4 @@ Accelerate operating system development by integrating with the cloud native eco
 - The project is mostly feature complete and not making major changes. Not quite "maintenance mode" but also not significantly adding code. The team front loads saying "No" to keep the project lean.
 - The goal is to give people what they want with a focus on sustainability and maintenance, more like "My expert linux friend set this up for me" than a fork or derivative.
 - Members of the team have multiple decades of linux distro experience, distros are hard, so the team is not making a "Linux distro."
+
