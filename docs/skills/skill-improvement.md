@@ -65,6 +65,11 @@ examples from this repository:
 - A tracked data seed cannot use file mtime as a cache key, because `git
 checkout` stamps every tracked file with the current time and the TTL never
   expires in CI. This cost a shipped build before it was caught.
+- For generated multi-stream caches, freshness and provenance are separate
+  checks: parse the payload's `generatedAt`, then require every stream the
+  current upstream data would emit and verify each stream's source marker
+  before short-circuiting. A newly populated optional stream must invalidate a
+  fresh older cache until the output is rebuilt.
 - **Run prettier before the final test run, not after.** Formatting rewraps
   long lines, so any assertion that reads whole lines can pass locally and then
   fail in CI. This broke a production deploy once already; the fix is to parse
