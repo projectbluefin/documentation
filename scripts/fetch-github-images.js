@@ -279,7 +279,12 @@ function latestFeedItem(feeds, source) {
     if (stream === "lts") {
       // Old format: "bluefin-lts lts: 20251223 ..."
       // New format: "lts.20260501: lts.20260501 release"
-      return title.includes(" lts:") || /^lts\.\d{8}:/.test(title);
+      // Current format: "stable-20260807: LTS"
+      return (
+        title.includes(" lts:") ||
+        /^lts\.\d{8}:/.test(title) ||
+        /^stable-\d{8}:\s*lts\b/.test(title)
+      );
     }
     return title.startsWith(`${stream}-`);
   });

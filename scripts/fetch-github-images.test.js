@@ -173,6 +173,25 @@ test("release metadata preserves the release asset URL", () => {
     release.assetsUrl,
     "https://github.com/projectbluefin/bluefin/releases/tag/stable-20260906#assets",
   );
+
+  const ltsRelease = releaseInfoFromSource(
+    {
+      lts: {
+        items: [
+          {
+            title: "stable-20260906: LTS",
+            link: "https://github.com/projectbluefin/bluefin-lts/releases/tag/stable-20260906",
+          },
+        ],
+      },
+    },
+    { feed: "lts", stream: "lts" },
+  );
+
+  assert.equal(
+    ltsRelease.url,
+    "https://github.com/projectbluefin/bluefin-lts/releases/tag/stable-20260906",
+  );
 });
 
 test("buildUnavailableOutput exposes an explicit fallback state", () => {
