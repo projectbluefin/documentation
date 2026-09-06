@@ -114,11 +114,10 @@ checkout` stamps every tracked file with the current time and the TTL never
   replacing a good cache. An aggregate release count can hide a partial run
   where only an optional stream succeeded, so preserve the last complete cache
   until the primary data is present.
-- Third-party Homebrew taps on Linux require `brew trust <tap>` before `brew
-install` can load their formulae; documenting `brew tap` alone causes
-  untrusted tap refusal errors on user installs. Internal cluster or lab
-  endpoints (such as lab-only inference hosts) must never appear in public
-  documentation.
+- Troubleshooting and system diagnostics use `ublue-os/tap/linux-mcp-server`
+  and Goose, automated on Bluefin via `ujust probe`. Keep diagnostics zero-auth
+  and local-first; external SaaS accounts and internal cluster/lab endpoints
+  must never appear in public troubleshooting documentation.
 
 Each is invisible from the source alone. Each would be paid again by the next
 agent. That is the bar.
