@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-06T18:59:44.490Z",
+  "generatedAt": "2026-09-06T23:03:42.206Z",
   "cacheHours": 168,
   "refreshHours": 336,
   "staleDays": 30,
@@ -36,9 +36,9 @@
           "nvidiaCommand": "sudo bootc switch ghcr.io/projectbluefin/bluefin-nvidia:stable --enforce-container-sigpolicy"
         },
         {
-          "label": "STABLE-DAILY",
-          "tag": "stable-daily",
-          "command": "sudo bootc switch ghcr.io/projectbluefin/bluefin:stable-daily --enforce-container-sigpolicy",
+          "label": "TESTING",
+          "tag": "testing",
+          "command": "sudo bootc switch ghcr.io/projectbluefin/bluefin:testing --enforce-container-sigpolicy",
           "versions": {
             "gnome": "50.1",
             "kernel": "7.0.8-200.fc44",
@@ -48,22 +48,7 @@
             "mesa": "26.0.8",
             "podman": "5.8.2"
           },
-          "nvidiaCommand": null
-        },
-        {
-          "label": "LATEST",
-          "tag": "latest",
-          "command": "sudo bootc switch ghcr.io/projectbluefin/bluefin:latest --enforce-container-sigpolicy",
-          "versions": {
-            "gnome": "50.1",
-            "kernel": "7.0.10-201.fc44",
-            "nvidia": "595.71.05",
-            "fedora": "F44",
-            "flatpak": "1.17.7",
-            "mesa": "26.0.8",
-            "podman": "5.8.2"
-          },
-          "nvidiaCommand": "sudo bootc switch ghcr.io/projectbluefin/bluefin-nvidia:latest --enforce-container-sigpolicy"
+          "nvidiaCommand": "sudo bootc switch ghcr.io/projectbluefin/bluefin-nvidia:testing --enforce-container-sigpolicy"
         }
       ],
       "testingStreams": [],
@@ -252,9 +237,9 @@
       ],
       "streams": [
         {
-          "label": "LATEST",
-          "tag": "latest",
-          "command": "sudo bootc switch ghcr.io/projectbluefin/dakota:latest --enforce-container-sigpolicy",
+          "label": "STABLE",
+          "tag": "stable",
+          "command": "sudo bootc switch ghcr.io/projectbluefin/dakota:stable --enforce-container-sigpolicy",
           "versions": {
             "gnome": "50.2",
             "kernel": "7.0.7",
@@ -264,19 +249,34 @@
             "mesa": "26.0.6",
             "podman": "5.8.2"
           },
-          "nvidiaCommand": null
+          "nvidiaCommand": "sudo bootc switch ghcr.io/projectbluefin/dakota-nvidia:stable --enforce-container-sigpolicy"
+        },
+        {
+          "label": "TESTING",
+          "tag": "testing",
+          "command": "sudo bootc switch ghcr.io/projectbluefin/dakota:testing --enforce-container-sigpolicy",
+          "versions": {
+            "gnome": "50.2",
+            "kernel": "7.0.7",
+            "nvidia": "595.71.05",
+            "fedora": null,
+            "flatpak": "1.16.6",
+            "mesa": "26.0.6",
+            "podman": "5.8.2"
+          },
+          "nvidiaCommand": "sudo bootc switch ghcr.io/projectbluefin/dakota-nvidia:testing --enforce-container-sigpolicy"
         }
       ],
       "testingStreams": [],
       "metadata": {
-        "digest": "sha256:06f5511bca3ce5b44cb9069c2f34d77823b300ae7aada9e177075e986103b28e",
-        "digestShort": "06f5511bca3c",
+        "digest": "sha256:a6916e9e298e1b86d2002232ac83cb377ab603aa39de1252789c01e8c34a5ac6",
+        "digestShort": "a6916e9e298e",
         "digestLink": "https://github.com/projectbluefin/dakota/releases#assets",
         "architecture": "amd64",
         "os": "linux",
         "labels": {
           "version": "latest",
-          "revision": "5e32a3528befb0d60a42cfa3ccd8c8b90e999be6",
+          "revision": "cb7d1c577379a9354c6725d2c72ef2373070b8e4",
           "source": "https://github.com/projectbluefin/dakota",
           "ostreeCommit": null
         }
@@ -295,12 +295,12 @@
       },
       "security": {
         "cosignKeyUrl": null,
-        "verifyCommand": "cosign verify --certificate-oidc-issuer https://token.actions.githubusercontent.com --certificate-identity-regexp '^https://github.com/projectbluefin/dakota/.github/workflows/' ghcr.io/projectbluefin/dakota:latest",
-        "attestCommand": "cosign verify-attestation --type https://slsa.dev/provenance/v1 --certificate-oidc-issuer https://token.actions.githubusercontent.com --certificate-identity-regexp '^https://github.com/projectbluefin/dakota/.github/workflows/' ghcr.io/projectbluefin/dakota:latest",
+        "verifyCommand": "cosign verify --certificate-oidc-issuer https://token.actions.githubusercontent.com --certificate-identity-regexp '^https://github.com/projectbluefin/dakota/.github/workflows/' ghcr.io/projectbluefin/dakota:stable",
+        "attestCommand": "cosign verify-attestation --type https://slsa.dev/provenance/v1 --certificate-oidc-issuer https://token.actions.githubusercontent.com --certificate-identity-regexp '^https://github.com/projectbluefin/dakota/.github/workflows/' ghcr.io/projectbluefin/dakota:stable",
         "hasAttestation": false,
-        "sbomCommand": "oras discover ghcr.io/projectbluefin/dakota:latest"
+        "sbomCommand": "oras discover ghcr.io/projectbluefin/dakota:stable"
       },
-      "inspectTag": "latest",
+      "inspectTag": "stable",
       "lastPublishedAt": "2026-06-24T08:26:49.590Z",
       "stale": true,
       "keepEvenIfStale": true

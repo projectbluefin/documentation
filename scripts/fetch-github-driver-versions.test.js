@@ -10,6 +10,7 @@ const {
   buildStreamFromSbom,
   buildNvidiaMapFromSbomStream,
   buildLtsNvidiaByTagFromSbom,
+  resolveCompanionNvidia,
   handleUnavailableCache,
   cacheAgeHours,
   isValidCachedOutput,
@@ -306,4 +307,270 @@ test("buildNvidiaMapFromSbomStream looks up Utah testing NVIDIA versions", () =>
   const map = buildNvidiaMapFromSbomStream(cache, "utah-nvidia-testing");
 
   assert.equal(map["testing-20260906"], "595.71.05");
+});
+
+test("buildStreamFromSbom filters out release entries where all versions are null", () => {
+  const cache = {
+    streams: {
+      "bluefin-stable": {
+        releases: {
+          "stable-20260606": {
+            tag: "stable-20260606",
+            packageVersions: null,
+          },
+          "stable-20260605": {
+            tag: "stable-20260605",
+            packageVersions: {
+              kernel: null,
+              mesa: null,
+              gnome: null,
+              nvidia: null,
+            },
+          },
+          "stable-20260531": {
+            tag: "stable-20260531",
+            packageVersions: {
+              kernel: "7.0.8-200.fc44",
+              mesa: "26.0.8",
+              gnome: "50.1",
+            },
+          },
+        },
+      },
+    },
+  };
+
+  const stream = buildStreamFromSbom(
+    "bluefin-stable",
+    "Bluefin",
+    "Current stable stream.",
+    "sudo bootc switch ghcr.io/projectbluefin/bluefin:stable --enforce-container-sigpolicy",
+    cache,
+    {},
+    9999,
+  );
+
+  assert.equal(stream.rowCount, 1);
+  assert.equal(stream.latest?.tag, "stable-20260531");
+  assert.equal(stream.latest?.versions.kernel, "7.0.8-200.fc44");
+  assert.equal(stream.history.length, 1);
+});
+
+test("resolveCompanionNvidia matches exact tag, date, or closest prior companion date", () => {
+  const nvidiaByTag = {
+    "stable-20260501": "595.71.05",
+    "stable-20260420": "595.60.01",
+    "stable-20260410": "595.50.00",
+  };
+
+  // 1. Exact tag match
+  assert.equal(
+    resolveCompanionNvidia(
+      nvidiaByTag,
+      { tag: "stable-20260501" },
+      "stable-20260501",
+    ),
+    "595.71.05",
+  );
+
+  // 2. Exact date match with different stream prefix
+  assert.equal(
+    resolveCompanionNvidia(
+      nvidiaByTag,
+      { tag: "lts-20260501" },
+      "lts-20260501",
+    ),
+    "595.71.05",
+  );
+
+  // 3. Fallback to closest prior companion date (release is 2026-05-31, newest companion is 2026-05-01)
+  assert.equal(
+    resolveCompanionNvidia(
+      nvidiaByTag,
+      { tag: "stable-20260531" },
+      "stable-20260531",
+    ),
+    "595.71.05",
+  );
+
+  // 4. Release between two companion dates (2026-04-25 -> gets 2026-04-20)
+  assert.equal(
+    resolveCompanionNvidia(
+      nvidiaByTag,
+      { tag: "stable-20260425" },
+      "stable-20260425",
+    ),
+    "595.60.01",
+  );
+});
+
+test("resolveCompanionNvidia falls back to latest companion release within reasonable proximity", () => {
+  const nvidiaByTag = {
+    "stable-20260505": "595.71.05",
+  };
+
+  // Release on 2026-05-01, companion built 4 days later on 2026-05-05 (within 30 days)
+  assert.equal(
+    resolveCompanionNvidia(
+      nvidiaByTag,
+      { tag: "stable-20260501" },
+      "stable-20260501",
+    ),
+    "595.71.05",
+  );
+
+  // Release on 2026-01-01, companion built 124 days later (beyond 30 days)
+  assert.equal(
+    resolveCompanionNvidia(
+      nvidiaByTag,
+      { tag: "stable-20260101" },
+      "stable-20260101",
+    ),
+    null,
+  );
+});
+
+test("buildLtsNvidiaByTagFromSbom falls back to bluefin-nvidia-open-stable when LTS streams have no entries", () => {
+  const cache = {
+    streams: {
+      "bluefin-lts-nvidia": { releases: {} },
+      "bluefin-gdx-lts": {
+        releases: {
+          "lts-20260606": {
+            tag: "lts-20260606",
+            packageVersions: null,
+          },
+        },
+      },
+      "bluefin-nvidia-open-stable": {
+        releases: {
+          "stable-20260501": {
+            tag: "stable-20260501",
+            packageVersions: { nvidia: "595.71.05" },
+          },
+        },
+      },
+    },
+  };
+
+  const map = buildLtsNvidiaByTagFromSbom(cache);
+  assert.equal(map["stable-20260501"], "595.71.05");
+});
+
+test("buildStreamFromSbom retains at least 5 newest valid rows when withinCutoff.length < 5", () => {
+  const releases = {};
+  for (let i = 1; i <= 8; i++) {
+    const month = String(i).padStart(2, "0");
+    const key = `stable-2025${month}15`;
+    releases[key] = {
+      tag: key,
+      packageVersions: { kernel: `6.18.${i}-200` },
+    };
+  }
+  const cache = {
+    streams: {
+      "bluefin-stable": { releases },
+    },
+  };
+
+  // With a small historyDays (e.g. 1 day), withinCutoff has 0 rows (< 5).
+  // It must retain at least the 5 newest valid rows.
+  const stream = buildStreamFromSbom(
+    "bluefin-stable",
+    "Bluefin",
+    "Current stable stream.",
+    "command",
+    cache,
+    {},
+    1,
+  );
+
+  assert.equal(stream.rowCount, 5);
+  assert.equal(stream.history.length, 5);
+  assert.equal(stream.latest?.tag, "stable-20250815");
+  assert.equal(stream.history[4]?.tag, "stable-20250415");
+});
+
+test("buildStreamFromSbom retains all rows within cutoff when withinCutoff.length >= 5", () => {
+  const releases = {};
+  for (let i = 1; i <= 7; i++) {
+    const month = String(i).padStart(2, "0");
+    const key = `stable-2026${month}15`;
+    releases[key] = {
+      tag: key,
+      packageVersions: { kernel: `6.18.${i}-200` },
+    };
+  }
+  const cache = {
+    streams: {
+      "bluefin-stable": { releases },
+    },
+  };
+
+  const stream = buildStreamFromSbom(
+    "bluefin-stable",
+    "Bluefin",
+    "Current stable stream.",
+    "command",
+    cache,
+    {},
+    9999, // All 7 releases are within cutoff
+  );
+
+  assert.equal(stream.rowCount, 7);
+  assert.equal(stream.history.length, 7);
+  assert.equal(stream.latest?.tag, "stable-20260715");
+});
+
+test("buildStreamFromSbom handles utah-testing with 0 releases gracefully", () => {
+  const cache = {
+    streams: {
+      "utah-testing": {
+        releases: {},
+      },
+    },
+  };
+
+  const stream = buildStreamFromSbom(
+    "utah-testing",
+    "Utah",
+    "Project Hummingbird-based image from projectbluefin/utah.",
+    "sudo bootc switch --enforce-container-sigpolicy ghcr.io/projectbluefin/utah:testing",
+    cache,
+    {},
+  );
+
+  assert.equal(stream.id, "utah-testing");
+  assert.equal(stream.rowCount, 0);
+  assert.equal(stream.latest, null);
+  assert.deepEqual(stream.history, []);
+});
+
+test("buildStreamFromSbom handles utah-testing where all releases have null versions", () => {
+  const cache = {
+    streams: {
+      "utah-testing": {
+        releases: {
+          "testing-20260906": {
+            tag: "testing-20260906",
+            packageVersions: null,
+          },
+        },
+      },
+    },
+  };
+
+  const stream = buildStreamFromSbom(
+    "utah-testing",
+    "Utah",
+    "Project Hummingbird-based image from projectbluefin/utah.",
+    "sudo bootc switch --enforce-container-sigpolicy ghcr.io/projectbluefin/utah:testing",
+    cache,
+    {},
+  );
+
+  assert.equal(stream.id, "utah-testing");
+  assert.equal(stream.rowCount, 0);
+  assert.equal(stream.latest, null);
+  assert.deepEqual(stream.history, []);
 });

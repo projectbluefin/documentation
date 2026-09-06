@@ -4,24 +4,33 @@ tags:
 custom_edit_url: null
 ---
 
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
 import DriverVersionsCatalog from "@site/src/components/DriverVersionsCatalog";
 
 # Driver Versions
 
 Sometimes the raptor just gets you. This page tracks major driver versions across Bluefin releases to help users identify and switch to specific driver versions. Good for ruling out major components. Remember to rebase back to the release stream later if you want to see if your issue gets fixed, use `ujust rebase-helper` for that. Good luck, you got this.
 
-## Bluefin
+<Tabs groupId="driver-stream" queryString>
+  <TabItem value="bluefin" label="Bluefin" default>
+    <DriverVersionsCatalog streamId="bluefin-stable" showRebootStep={false} />
+  </TabItem>
+  <TabItem value="bluefin-lts" label="Bluefin LTS">
+    <DriverVersionsCatalog streamId="bluefin-lts" showRebootStep={false} />
+  </TabItem>
+  <TabItem value="dakota" label="Dakota">
+    <DriverVersionsCatalog streamId="dakota-latest" showRebootStep={false} />
+  </TabItem>
+  <TabItem value="utah" label="Utah">
+    <DriverVersionsCatalog streamId="utah-testing" showRebootStep={false} />
+  </TabItem>
+</Tabs>
 
-<DriverVersionsCatalog streamId="bluefin-stable" />
+## Final Step: Reboot
 
-## Bluefin LTS
+After running one of the per-release rebase commands above, reboot to activate the deployment:
 
-<DriverVersionsCatalog streamId="bluefin-lts" />
-
-## Dakota
-
-<DriverVersionsCatalog streamId="dakota-latest" />
-
-## Utah
-
-<DriverVersionsCatalog streamId="utah-testing" />
+```bash
+sudo systemctl reboot
+```

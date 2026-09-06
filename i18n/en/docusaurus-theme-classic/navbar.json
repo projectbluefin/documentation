@@ -11,10 +11,6 @@
     "message": "Documentation",
     "description": "Navbar item with label Documentation"
   },
-  "item.label.Ask Bluefin": {
-    "message": "Ask Bluefin",
-    "description": "Navbar item with label Ask Bluefin"
-  },
   "item.label.Blog": {
     "message": "Blog",
     "description": "Navbar item with label Blog"

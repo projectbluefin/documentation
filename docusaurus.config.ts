@@ -187,11 +187,6 @@ const config: Config = {
           label: "Documentation",
         },
         {
-          href: "https://ask.projectbluefin.io",
-          label: "Ask Bluefin",
-          position: "left",
-        },
-        {
           to: "blog",
           label: "Blog",
           position: "right",
