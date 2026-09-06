@@ -739,12 +739,12 @@ See [github.com/orgs/projectbluefin/people](https://github.com/orgs/projectbluef
 
 ### Where to participate
 
-| Channel                                                                  | Use for                                                                                                                                         |
-| ------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| [GitHub Issues](https://github.com/projectbluefin/bluefin/issues)        | Bug reports, feature requests, permanent record of decisions                                                                                    |
-| [community.projectbluefin.io](https://community.projectbluefin.io/)      | Long-form discussion, support questions                                                                                                         |
-| Discord                                                                  | Quick questions, real-time debugging — see [docs.projectbluefin.io/communications](https://docs.projectbluefin.io/communications/) for the link |
-| [pullrequests.projectbluefin.io](https://pullrequests.projectbluefin.io) | PRs that need review — even read-only review is valuable                                                                                        |
+| Channel                                                                  | Use for                                                                                  |
+| ------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------- |
+| [GitHub Issues](https://github.com/projectbluefin/bluefin/issues)        | Bug reports, feature requests, permanent record of decisions                             |
+| [community.projectbluefin.io](https://community.projectbluefin.io/)      | Long-form discussion, support questions                                                  |
+| [Discord](https://discord.gg/XUC8cANVHy)                                 | Quick questions, real-time debugging — join our [Discord](https://discord.gg/XUC8cANVHy) |
+| [pullrequests.projectbluefin.io](https://pullrequests.projectbluefin.io) | PRs that need review — even read-only review is valuable                                 |
 
 ### Issue capture discipline
 

@@ -2,7 +2,9 @@
 title: Contributor's Guide
 slug: /contributing
 ---
+
 # Bluefin Contributor's Guide
+
 ### Welcome to [contribute.projectbluefin.io](https://contribute.projectbluefin.io)
 
 This guide provides detailed instructions for contributing to [Bluefin](https://projectbluefin.io). Whether you're fixing bugs, adding features, or improving documentation, this guide will help you contribute effectively using the workflows established by the Bluefin team.
@@ -31,7 +33,7 @@ Bluefin is made via [lazy concensus](https://www.apache.org/foundation/glossary.
   - Things that need to happen but aren't claimed or specced out
   - Or transient things that don't need much planning like "Improve contributor guide" or "Fix up this just recipe". These are things that are identified as being needed but don't need much planning, "just send a sysadmin" style tasks.
 - Convert a Draft task into an issue to design and specify something
-  - Design and spec are for the good of the project and don't come with an implementation commitment. 
+  - Design and spec are for the good of the project and don't come with an implementation commitment.
 
 ### Architecture
 
@@ -46,6 +48,7 @@ See [**Understanding Bluefin's Architecture**](#understanding-bluefins-architect
 ### Lazy Consensus Model
 
 Bluefin follows a loose [Apache Lazy Consensus](https://community.apache.org/committers/decisionMaking.html):
+
 - Assume consensus unless objections raised
 - Allow time for feedback (account for timezones/holidays)
 - Opinionated decisions encouraged
@@ -53,7 +56,7 @@ Bluefin follows a loose [Apache Lazy Consensus](https://community.apache.org/com
 
 Bluefin is a predator and may snap at you occasionally, and is opinionated for a reason:
 
-- The userspace is mostly stable, we are not planning on making major changes to the layout - it's just the Ubuntu desktop. 
+- The userspace is mostly stable, we are not planning on making major changes to the layout - it's just the Ubuntu desktop.
 - Our **infrastructure velocity** comes from infrastructure work
   - This is the projects main focus because you can't deliver a product without the best infrastructure, [bootc](https://github.com/bootc-dev/bootc) is cloud native tech, we choose to build on it for a reason.
   - If you're "The Linux person on a Kubernetes platform team" this is the place for you
@@ -100,41 +103,41 @@ flowchart TB
         branding["<strong>@projectbluefin/branding</strong><br/>Branding Assets"]
         artwork["<strong>@ublue-os/artwork</strong><br/>Artwork Assets"]
     end
-    
+
     subgraph base["Base Environments"]
         fedora["<strong>Fedora bootc</strong><br/>Workstation Base"]
         centos["<strong>CentOS Stream 10</strong><br/>Enterprise Base"]
         gnome_base["<strong>GNOME OS</strong><br/>BuildStream Elements"]
         hummingbird["<strong>Fedora Hummingbird</strong><br/>Minimal Base"]
     end
-    
+
     subgraph images["Target Images"]
         bluefin["Bluefin<br/>:stable / :testing"]
         lts["Bluefin LTS<br/>:lts / :lts-hwe / bluefin-gdx"]
         dakota["Dakota<br/>:stable / :testing / :next"]
         utah["Utah<br/>:testing (GNOME 51)"]
     end
-    
+
     common --> fedora
     common --> centos
     common --> gnome_base
     common --> hummingbird
-    
+
     branding --> fedora
     branding --> centos
     branding --> gnome_base
     branding --> hummingbird
-    
+
     artwork --> fedora
     artwork --> centos
     artwork --> gnome_base
     artwork --> hummingbird
-    
+
     fedora --> bluefin
     centos --> lts
     gnome_base --> dakota
     hummingbird --> utah
-    
+
     style oci fill:#708ee3
     style base fill:#4a69bd
     style images fill:#8a97f7
@@ -147,6 +150,7 @@ Bluefin uses OCI container images as the distribution mechanism. Every commit to
 ### Build System
 
 Bluefin images are built using:
+
 - **Containerfile**: Defines the base image layers and build arguments
 - **Build scripts**: Located in `build_files/` directory, organized by stage
 - **GitHub Actions**: Automated workflows in `.github/workflows/`
@@ -156,26 +160,29 @@ We're making containers here with bash and a little bit of Python, it's not the 
 
 ### Release Channels
 
-| Channel | Purpose | Update Frequency | Fedora Version |
-|---------|---------|------------------|----------------|
-| **latest** | Daily builds | Multiple times per day | 43 (current) |
-| **stable** | Weekly builds | Weekly | 43 |
+| Channel    | Purpose       | Update Frequency       | Fedora Version |
+| ---------- | ------------- | ---------------------- | -------------- |
+| **latest** | Daily builds  | Multiple times per day | 43 (current)   |
+| **stable** | Weekly builds | Weekly                 | 43             |
 
 ### Prerequisites
 
 **Required Knowledge:**
+
 - Git workflow basics
 - Container concepts (Podman/Docker)
 - Bash scripting fundamentals
 - GitHub Actions basics (for CI/CD changes)
 
 **Required Tools:**
-- git 
+
+- git
 - Text editor (VS Code, vim, etc.)
 - GitHub account with 2FA enabled
 - Podman or Docker (for local builds)
 
 **Optional but Recommended:**
+
 - Bluefin installation (for testing)
 - Involvement the issues and understanding the problem before committing
 
@@ -186,18 +193,21 @@ If you are contributing as part of the core agentic factory team on `projectblue
 :::
 
 1. **Fork the repository** on GitHub to your account:
+
    ```bash
    # Navigate to https://github.com/projectbluefin/bluefin
    # Click "Fork" in the upper right
    ```
 
 2. **Clone your fork**:
+
    ```bash
    git clone https://github.com/YOUR_USERNAME/bluefin.git
    cd bluefin
    ```
 
 3. **Add upstream remote**:
+
    ```bash
    git remote add upstream https://github.com/projectbluefin/bluefin.git
    git fetch upstream
@@ -231,12 +241,14 @@ If you are contributing as part of the core agentic factory team on `projectblue
 ### Branching Strategy
 
 1. **Always branch from main**:
+
    ```bash
    git checkout main
    git pull upstream main
    ```
 
 2. **Create a descriptive feature branch**:
+
    ```bash
    # For a bug fix
    git checkout -b fix/cockpit-startup-crash
@@ -287,19 +299,18 @@ bluefin/
 **1. Adding a Package**
 
 Edit `packages.json`:
+
 ```bash
 vim packages.json
 ```
 
 Add your package to the appropriate array:
+
 ```json
 {
   "all": {
     "include": {
-      "rpm": [
-        "existing-package",
-        "your-new-package"
-      ]
+      "rpm": ["existing-package", "your-new-package"]
     }
   }
 }
@@ -308,11 +319,13 @@ Add your package to the appropriate array:
 **3. Adding a Just Recipe**
 
 Create or edit a file in `just/`:
+
 ```bash
 vim just/60-custom.just
 ```
 
 Add your recipe:
+
 ```make
 # Install custom development tool
 install-custom-tool:
@@ -325,6 +338,7 @@ install-custom-tool:
 **4. Modifying Build Scripts**
 
 Build scripts are numbered by execution order. Common scripts:
+
 - `04-packages.sh`: Package installation
 - `05-override-install.sh`: RPM overrides
 - `07-base-image-changes.sh`: System modifications
@@ -335,6 +349,7 @@ Always test your changes with a local build (see Testing section).
 **5. Adding Flatpaks**
 
 Edit the appropriate flatpak list file:
+
 ```bash
 # For all Bluefin variants
 edit flatpaks/bluefin-list.txt
@@ -344,6 +359,7 @@ edit flatpaks/bluefin-dx-list.txt
 ```
 
 Add Flatpak IDs (one per line):
+
 ```
 com.example.NewApp
 ```
@@ -355,6 +371,7 @@ Bluefin uses [Conventional Commits](https://www.conventionalcommits.org/) enforc
 :::
 
 **Format:**
+
 ```
 <type>(<scope>): <subject>
 
@@ -364,6 +381,7 @@ Bluefin uses [Conventional Commits](https://www.conventionalcommits.org/) enforc
 ```
 
 **Types:**
+
 - `feat`: New feature
 - `fix`: Bug fix
 - `docs`: Documentation changes
@@ -396,6 +414,7 @@ and are no longer needed with the updated kernel modules."
 ```
 
 **Commit Message Tips:**
+
 - Keep subject line under 72 characters
 - Use imperative mood ("add" not "added" or "adds")
 - Don't end subject line with a period
@@ -415,7 +434,6 @@ Example:
 ```text
 Assisted-by: Claude 4.5 Opus via GitHub Copilot
 ```
-
 
 ### Making the Commit
 
@@ -467,6 +485,7 @@ podman build -t bluefin-test:latest .
 **Option 2: GitHub Actions Build** (Use PR builds)
 
 When you open a PR, GitHub Actions automatically builds your changes. Check the Actions tab for:
+
 - Build logs
 - Success/failure status
 - Build artifacts
@@ -510,6 +529,7 @@ ujust install-custom-tool
 ### Linting and Validation
 
 **Shell Script Linting:**
+
 ```bash
 # Install shellcheck if not present
 brew install shellcheck
@@ -519,12 +539,14 @@ shellcheck build_files/base/*.sh
 ```
 
 **Container Linting:**
+
 ```bash
 # Use hadolint for Containerfile
 podman run --rm -i hadolint/hadolint < Containerfile
 ```
 
 **JSON Validation:**
+
 ```bash
 # Validate packages.json
 jq empty packages.json && echo "Valid JSON" || echo "Invalid JSON"
@@ -544,6 +566,7 @@ jq empty packages.json && echo "Valid JSON" || echo "Invalid JSON"
 ### Creating the PR
 
 1. **Push your branch** (if not already done):
+
    ```bash
    git push origin your-branch-name
    ```
@@ -559,9 +582,11 @@ jq empty packages.json && echo "Valid JSON" || echo "Invalid JSON"
 
 ```markdown
 ## Description
+
 Brief description of what this PR does.
 
 ## Type of Change
+
 - [ ] Bug fix
 - [ ] New feature
 - [ ] Documentation update
@@ -569,17 +594,20 @@ Brief description of what this PR does.
 - [ ] Build/CI improvement
 
 ## Testing Done
+
 - Local build: Yes/No
 - Tested on running system: Yes/No
 - Just recipes tested: Yes/No
 
 ## Related Issues
+
 Fixes #123
 ```
 
 ### PR Review Process
 
 **What Happens Next:**
+
 1. **Automated checks run**: CI builds your changes
 2. **Size label applied**: PR size labeled automatically (XS, S, M, L, XL)
 3. **Maintainer review**: Usually within 24-48 hours
@@ -589,6 +617,7 @@ Fixes #123
 **During Review:**
 
 If changes are requested:
+
 ```bash
 # Make the requested changes
 vim path/to/file
@@ -626,21 +655,24 @@ These workflows are for more experienced contributors. New contributors should f
 
 ### Working with Renovate Bot
 
-We strive to automate as much as we can, which means lazily spending our time watching the machine hum. Renovate runs every 30 minutes, and when a change is made in upstream Universal Blue everything rebuilds, it takes about an 30 minutes to 2 hours for a merged fix or feature to go live, depending on where in the chain the fix was needed. 
+We strive to automate as much as we can, which means lazily spending our time watching the machine hum. Renovate runs every 30 minutes, and when a change is made in upstream Universal Blue everything rebuilds, it takes about an 30 minutes to 2 hours for a merged fix or feature to go live, depending on where in the chain the fix was needed.
 
 **Understanding Renovate:**
+
 - Renovate creates PRs for dependency updates automatically
 - Updates include: base images, GitHub Actions, container digests
 - Auto-merge is enabled for low-risk updates
 - Accounts for 60% of all commits
 
 **Common Renovate PRs:**
+
 ```
 chore(deps): update ghcr.io/projectbluefin/common digest to abc123
 chore(deps): update softprops/action-gh-release digest to def456
 ```
 
 **When Renovate Conflicts with Your PR:**
+
 ```bash
 # Rebase on latest main
 git checkout your-branch
@@ -732,11 +764,13 @@ Contributors come from diverse backgrounds. Whether you're a DevOps engineer, ar
 ### For Cloud Native/DevOps Engineers
 
 **Container Build Optimization:**
+
 - Improve Containerfile layer caching
 - Optimize build scripts for speed
 - Reduce image size
 
 **CI/CD Improvements:**
+
 - Optimize GitHub Actions workflows
 - Add build parallelization
 - Improve artifact handling
@@ -745,6 +779,7 @@ Contributors come from diverse backgrounds. Whether you're a DevOps engineer, ar
 ### For Maintainers
 
 **UDEV Rules:**
+
 - Submit hardware enablement rules
 - Test on various hardware
 - Document hardware requirements
@@ -752,12 +787,14 @@ Contributors come from diverse backgrounds. Whether you're a DevOps engineer, ar
 ### For Shell Script Developers
 
 **Build Script Improvements:**
+
 - Enhance error handling
 - Add progress indicators
 - Improve script modularity
 - Make more use of `gum`, `glow` for a nice CLI user experieance
 
 **Just Recipe Development:**
+
 - Maintain ujust commands
 - Improve existing recipes
 - Add user-friendly aliases, etc.
@@ -765,6 +802,7 @@ Contributors come from diverse backgrounds. Whether you're a DevOps engineer, ar
 ### For Documentation Writers
 
 **Documentation Standards:**
+
 - Use clear, concise language
 - Avoid terms like "simply" or "easy" ([justsimply.dev](https://justsimply.dev/))
 - Include practical examples
@@ -783,21 +821,25 @@ Stuck? Check this section first. Most problems have been encountered before and 
 ### Build Failures
 
 **Problem:** Build fails with package conflict
+
 ```
 Error: package foo conflicts with bar
 ```
 
 **Solution:**
+
 1. Check if package is already included elsewhere
 2. Add exclusion to packages.json
 3. Check COPR repository compatibility
 
 **Problem:** Git error during build
+
 ```
 fatal: unable to access 'https://github.com/': Could not resolve host
 ```
 
 **Solution:**
+
 1. Check network connectivity in build environment
 2. Verify GitHub Actions has network access
 3. Check if rate-limited by GitHub
@@ -805,11 +847,13 @@ fatal: unable to access 'https://github.com/': Could not resolve host
 ### Local Testing Issues
 
 **Problem:** Podman build fails with permission error
+
 ```
 Error: writing blob: adding layer with blob: permissions denied
 ```
 
 **Solution:**
+
 ```bash
 # Run with appropriate permissions
 sudo podman build -t test .
@@ -819,11 +863,13 @@ podman system migrate
 ```
 
 **Problem:** Out of disk space during build
+
 ```
 Error: no space left on device
 ```
 
 **Solution:**
+
 ```bash
 # Clean up podman storage
 podman system prune -a
@@ -835,11 +881,13 @@ df -h
 ### PR Issues
 
 **Problem:** CI check failing - Conventional Commit validation
+
 ```
 ❌ Commit message does not follow Conventional Commits format
 ```
 
 **Solution:**
+
 ```bash
 # Amend the commit message
 git commit --amend
@@ -849,11 +897,13 @@ git push origin your-branch --force-with-lease
 ```
 
 **Problem:** Merge conflict with main
+
 ```
 CONFLICT (content): Merge conflict in packages.json
 ```
 
 **Solution:**
+
 ```bash
 # Fetch latest upstream
 git fetch upstream
@@ -877,16 +927,19 @@ git push origin your-branch --force-with-lease
 ### Communication Channels
 
 **GitHub Issues:**
+
 - Primary venue for bug reports and feature requests
 - Use issue templates when available
 - Search existing issues before creating new ones
 
 **Discord:**
+
 - Real-time chat for quick questions
-- Discord: Check [the documentation](https://docs.projectbluefin.io/communications/) for the server link
+- Join the [Bluefin Discord](https://discord.gg/XUC8cANVHy)
 - **Remember:** Discord is for chat, not permanent documentation
 
 **Discussion Forum:**
+
 - [community.projectbluefin.io](https://community.projectbluefin.io/)
 - Long-form discussions
 - Support questions
@@ -895,6 +948,7 @@ git push origin your-branch --force-with-lease
 ### Communication Best Practices
 
 **DO:**
+
 - ✅ Ask questions in issues for permanent record
 - ✅ Search before asking
 - ✅ Provide context and details
@@ -903,6 +957,7 @@ git push origin your-branch --force-with-lease
 - ✅ Thank contributors
 
 **DON'T:**
+
 - ❌ Use Discord for bug reports (file issues instead)
 - ❌ Expect immediate responses
 - ❌ Ping maintainers directly unless urgent
@@ -914,6 +969,7 @@ git push origin your-branch --force-with-lease
 All contributors must follow the [Bluefin Code of Conduct](/code-of-conduct).
 
 **Key Points:**
+
 - Be respectful and inclusive
 - Welcome newcomers
 - Focus on constructive feedback
@@ -928,18 +984,21 @@ Use Discord for rapid debugging, but always capture solutions in GitHub issues. 
 From the contributing guide philosophy:
 
 **The "Issue Capture" Pattern:**
+
 1. **Use Discord for rapid iteration** - Debug quickly in chat
 2. **Capture to text editor** - Copy important findings as you go
 3. **File an issue** - Create permanent record of solution
 4. **Edit and improve** - Clean up the issue description later
 
 **Why This Matters:**
+
 - Solves the problem once for everyone
 - Creates searchable documentation
 - Prevents asking the same question twice
 - Builds institutional knowledge
 
 **Example Flow:**
+
 ```
 Discord: "Hey, package X is failing to install"
   ↓ (quick back-and-forth debugging)
@@ -957,6 +1016,7 @@ GitHub Issue: "Package X fails on Fedora 42 due to Y dependency"
 ### GitHub Actions Workflows
 
 **Workflow Structure:**
+
 - `build-image-*.yml`: Per-channel build triggers
 - `reusable-build.yml`: Shared build logic
 - `clean.yml`: Artifact cleanup
@@ -999,6 +1059,7 @@ strategy:
 ### Build Script Development
 
 **Script Organization:**
+
 - `00-09`: Early stage (kernel, repos, packages)
 - `10-16`: Mid stage (configuration, additions)
 - `17-19`: Late stage (cleanup, initramfs)
@@ -1036,22 +1097,25 @@ podman run --rm -it \
 ### Understanding Releases
 
 Bluefin uses continuous delivery:
+
 - **Daily builds**: Automatic, no manual release
 - **Version format**: `42.20251012.1` (Fedora.YYYYMMDD.build)
 - **Multiple builds per day**: Various channels updated independently
 
 ### Release Channels
 
-**stable** (Weekly):
+**stable**:
+
 ```bash
 # Rebase to stable
 sudo bootc switch ghcr.io/projectbluefin/bluefin:stable
 ```
 
-**latest** (Daily):
+**testing**:
+
 ```bash
-# Rebase to latest
-sudo bootc switch ghcr.io/projectbluefin/bluefin:latest
+# Rebase to testing
+sudo bootc switch ghcr.io/projectbluefin/bluefin:testing
 ```
 
 ## Pinning Package Versions
@@ -1065,6 +1129,7 @@ Sometimes upstream Fedora has a regression requiring a temporary pin.
 **Add a Pin:**
 
 Edit the appropriate Containerfile section:
+
 ```dockerfile
 # Revert to older version of ostree to fix Flatpak installations
 RUN rpm-ostree override replace \
@@ -1072,6 +1137,7 @@ RUN rpm-ostree override replace \
 ```
 
 **Document the Pin:**
+
 ```bash
 # Add comment explaining:
 # - What's pinned
@@ -1083,6 +1149,7 @@ RUN rpm-ostree override replace \
 **Remove a Pin:**
 
 Wait 24-48 hours after Fedora releases a fix (for rebuild propagation), then:
+
 ```bash
 # Remove the override
 git diff Containerfile
@@ -1122,12 +1189,14 @@ To propose changes (add, update, or remove Flatpaks):
 2. Submit a pull request with your changes. Maintainers will review and merge as appropriate.
 
 During system provisioning or updates, Bluefin installs or updates all Flatpaks listed in these files using the following logic:
+
 ```bash
 flatpak remote-add --if-not-exists --system flathub https://flathub.org/repo/flathub.flatpakrepo
 xargs flatpak --system -y install --or-update < /etc/ublue-os/system-flatpaks.list
 # Developer mode Flatpaks are installed if developer mode is enabled
 xargs flatpak --system -y install --or-update < /etc/ublue-os/system-flatpaks-dx.list
 ```
+
 [Reference](https://github.com/projectbluefin/bluefin/blob/3ddc76eaf5536f7340e34b2242131c2f7a455bd1/just/bluefin-system.just)
 
 ## Featuring Flatpaks in Bazaar
@@ -1145,7 +1214,7 @@ Each section (e.g., "Bluefin Recommends", "Browsers", "Media") contains an `appi
        appids:
          - org.mozilla.firefox
          - org.gnome.Calculator
-         - com.example.YourApp   # <-- Add your app here
+         - com.example.YourApp # <-- Add your app here
    ```
 3. Optionally, create a new section if your application fits a new category.
 4. Submit a pull request with your changes. The Bazaar maintainers will review and merge as appropriate.
@@ -1178,6 +1247,7 @@ Each section (e.g., "Bluefin Recommends", "Browsers", "Media") contains an `appi
 ### When to Report Upstream
 
 If you find a bug that:
+
 - Exists in vanilla Fedora Atomic Desktops
 - Is not caused by Bluefin modifications
 - Affects the base Fedora system
@@ -1185,6 +1255,7 @@ If you find a bug that:
 ### How to Report Upstream
 
 1. **Reproduce on upstream Fedora** (if possible):
+
    ```bash
    # Test if the issue occurs on upstream Fedora Atomic / bootc
    ```
@@ -1203,6 +1274,7 @@ If you find a bug that:
 ### Becoming a Maintainer
 
 Contributing regularly and demonstrating expertise may lead to maintainer status. Qualities valued:
+
 - Consistent quality contributions
 - Good communication
 - Helpful to other contributors
@@ -1213,13 +1285,12 @@ Contributing regularly and demonstrating expertise may lead to maintainer status
 
 - [Current Core Team](https://github.com/orgs/projectbluefin/people)
 
-
 ## Additional Resources
 
 ### Documentation
 
 - [Bluefin Documentation](https://docs.projectbluefin.io/)
-- [Building Locally](https://docs.projectbluefin.io/local)
+- [Agentic Contributor Guide](/agentic-contributing)
 - [Universal Blue Guide](https://universal-blue.org/guide/)
 - [bootc Documentation](https://bootc-dev.github.io/bootc/)
 

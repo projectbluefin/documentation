@@ -252,7 +252,13 @@ brew install ramalama
 ramalama serve qwen3:8b
 ```
 
-Then in `goose configure`, select **Ollama** and set `OLLAMA_HOST` to `http://localhost:8080`.
+Configure Goose to use your local model in `~/.config/goose/config.yaml`:
+
+```yaml
+GOOSE_PROVIDER: ollama
+GOOSE_MODEL: qwen3:8b
+OLLAMA_HOST: http://localhost:8080
+```
 
 [LM Studio](https://lmstudio.ai/) (`brew install lm-studio`) is a graphical alternative — load a model, start the local server, and select **LM Studio** in `goose configure`.
 
