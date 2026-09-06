@@ -98,6 +98,8 @@ interface Product {
 interface ImagesCatalog {
   generatedAt?: string;
   products: Product[];
+  unavailable?: boolean;
+  stateReason?: string;
 }
 
 function sourceText(source: "live" | "cache" | "unavailable", kind: string) {
@@ -111,6 +113,50 @@ function sourceClass(source: "live" | "cache" | "unavailable") {
   if (source === "unavailable")
     return `${styles.statChip} ${styles.chipUnavailable}`;
   return styles.statChip;
+}
+
+export function StreamVersionPills({
+  versions,
+  showNvidia,
+}: {
+  versions?: StreamInfo["versions"];
+  showNvidia: boolean;
+}) {
+  return (
+    <div className={styles.streamVersionPills}>
+      <span className={styles.versionPill}>
+        <strong>GNOME</strong> {versions?.gnome || "Unknown"}
+      </span>
+      <span className={styles.versionPill}>
+        <strong>Linux</strong> {versions?.kernel || "Unknown"}
+      </span>
+      {(showNvidia || versions?.nvidia) && (
+        <span className={styles.versionPill}>
+          <img
+            src="/img/gpu/nvidia.svg"
+            alt="NVIDIA"
+            className={styles.pillLogo}
+          />
+          <strong>NVIDIA</strong> {versions?.nvidia || "Unknown"}
+        </span>
+      )}
+      {versions?.flatpak && (
+        <span className={styles.versionPill}>
+          <strong>Flatpak</strong> {versions.flatpak}
+        </span>
+      )}
+      {versions?.mesa && (
+        <span className={styles.versionPill}>
+          <strong>Mesa</strong> {versions.mesa}
+        </span>
+      )}
+      {versions?.podman && (
+        <span className={styles.versionPill}>
+          <strong>Podman</strong> {versions.podman}
+        </span>
+      )}
+    </div>
+  );
 }
 
 function StreamList({
@@ -129,39 +175,10 @@ function StreamList({
       {streams.map((entry) => (
         <li key={`${entry.tag}-${entry.command}`}>
           <span className={styles.streamTag}>{entry.label}</span>
-          <div className={styles.streamVersionPills}>
-            <span className={styles.versionPill}>
-              <strong>GNOME</strong> {entry.versions?.gnome || "Unknown"}
-            </span>
-            <span className={styles.versionPill}>
-              <strong>Linux</strong> {entry.versions?.kernel || "Unknown"}
-            </span>
-            {(preferNvidia || entry.versions?.nvidia) && (
-              <span className={styles.versionPill}>
-                <img
-                  src="/img/gpu/nvidia.svg"
-                  alt="NVIDIA"
-                  className={styles.pillLogo}
-                />
-                <strong>NVIDIA</strong> {entry.versions?.nvidia || "Unknown"}
-              </span>
-            )}
-            {entry.versions?.flatpak && (
-              <span className={styles.versionPill}>
-                <strong>Flatpak</strong> {entry.versions.flatpak}
-              </span>
-            )}
-            {entry.versions?.mesa && (
-              <span className={styles.versionPill}>
-                <strong>Mesa</strong> {entry.versions.mesa}
-              </span>
-            )}
-            {entry.versions?.podman && (
-              <span className={styles.versionPill}>
-                <strong>Podman</strong> {entry.versions.podman}
-              </span>
-            )}
-          </div>
+          <StreamVersionPills
+            versions={entry.versions}
+            showNvidia={preferNvidia}
+          />
           {preferNvidia ? (
             entry.nvidiaCommand ? (
               <CodeBlock language="bash">{entry.nvidiaCommand}</CodeBlock>
@@ -199,20 +216,49 @@ function formatDate(value?: string | null) {
   });
 }
 
-export default function ImagesCatalogComponent(): React.JSX.Element {
-  const [catalog, setCatalog] = React.useState<ImagesCatalog>({ products: [] });
+interface ImagesCatalogProps {
+  initialCatalog?: ImagesCatalog;
+}
+
+export default function ImagesCatalogComponent({
+  initialCatalog,
+}: ImagesCatalogProps = {}): React.JSX.Element {
+  const [catalog, setCatalog] = React.useState<ImagesCatalog>(
+    initialCatalog ?? { products: [] },
+  );
 
   React.useEffect(() => {
     let mounted = true;
     fetch("/data/images.json")
-      .then((response) => (response.ok ? response.json() : null))
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`request failed with status ${response.status}`);
+        }
+        return response.json();
+      })
       .then((data) => {
-        if (!mounted || !data || !Array.isArray(data.products)) return;
+        if (!mounted) return;
+        if (!data || !Array.isArray(data.products)) {
+          setCatalog({
+            products: [],
+            unavailable: true,
+            stateReason: "Image catalog response was invalid.",
+          });
+          return;
+        }
         setCatalog(data as ImagesCatalog);
       })
-      .catch(() => {
+      .catch((error: unknown) => {
         if (!mounted) return;
-        setCatalog({ products: [] });
+        const reason =
+          error instanceof Error
+            ? `Image catalog request failed: ${error.message}`
+            : "Image catalog request failed.";
+        setCatalog({
+          products: [],
+          unavailable: true,
+          stateReason: reason,
+        });
       });
     return () => {
       mounted = false;
@@ -223,6 +269,21 @@ export default function ImagesCatalogComponent(): React.JSX.Element {
   const [nvidiaModeByProduct, setNvidiaModeByProduct] = React.useState<
     Record<string, boolean>
   >({});
+
+  if (catalog.unavailable) {
+    return (
+      <div className={styles.imagesPage}>
+        <div className="alert alert--warning" role="status">
+          <Heading as="h2">Image catalog unavailable</Heading>
+          <p>
+            {catalog.stateReason ||
+              "Image catalog data is currently unavailable."}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   const bluefinProducts = products.filter(
     (product) =>
       product.id === "projectbluefin-bluefin" || product.name === "Bluefin",
@@ -432,42 +493,10 @@ export default function ImagesCatalogComponent(): React.JSX.Element {
                       {nvidiaEnabled ? (
                         entry.nvidiaCommand ? (
                           <>
-                            <div className={styles.streamVersionPills}>
-                              <span className={styles.versionPill}>
-                                <strong>GNOME</strong>{" "}
-                                {entry.versions?.gnome || "Unknown"}
-                              </span>
-                              <span className={styles.versionPill}>
-                                <strong>Linux</strong>{" "}
-                                {entry.versions?.kernel || "Unknown"}
-                              </span>
-                              <span className={styles.versionPill}>
-                                <img
-                                  src="/img/gpu/nvidia.svg"
-                                  alt="NVIDIA"
-                                  className={styles.pillLogo}
-                                />
-                                <strong>NVIDIA</strong>{" "}
-                                {entry.versions?.nvidia || "Unknown"}
-                              </span>
-                              {entry.versions?.flatpak && (
-                                <span className={styles.versionPill}>
-                                  <strong>Flatpak</strong>{" "}
-                                  {entry.versions.flatpak}
-                                </span>
-                              )}
-                              {entry.versions?.mesa && (
-                                <span className={styles.versionPill}>
-                                  <strong>Mesa</strong> {entry.versions.mesa}
-                                </span>
-                              )}
-                              {entry.versions?.podman && (
-                                <span className={styles.versionPill}>
-                                  <strong>Podman</strong>{" "}
-                                  {entry.versions.podman}
-                                </span>
-                              )}
-                            </div>
+                            <StreamVersionPills
+                              versions={entry.versions}
+                              showNvidia
+                            />
                             <CodeBlock language="bash">
                               {entry.nvidiaCommand}
                             </CodeBlock>
@@ -479,42 +508,10 @@ export default function ImagesCatalogComponent(): React.JSX.Element {
                         )
                       ) : (
                         <>
-                          <div className={styles.streamVersionPills}>
-                            <span className={styles.versionPill}>
-                              <strong>GNOME</strong>{" "}
-                              {entry.versions?.gnome || "Unknown"}
-                            </span>
-                            <span className={styles.versionPill}>
-                              <strong>Linux</strong>{" "}
-                              {entry.versions?.kernel || "Unknown"}
-                            </span>
-                            {entry.versions?.nvidia && (
-                              <span className={styles.versionPill}>
-                                <img
-                                  src="/img/gpu/nvidia.svg"
-                                  alt="NVIDIA"
-                                  className={styles.pillLogo}
-                                />
-                                <strong>NVIDIA</strong> {entry.versions.nvidia}
-                              </span>
-                            )}
-                            {entry.versions?.flatpak && (
-                              <span className={styles.versionPill}>
-                                <strong>Flatpak</strong>{" "}
-                                {entry.versions.flatpak}
-                              </span>
-                            )}
-                            {entry.versions?.mesa && (
-                              <span className={styles.versionPill}>
-                                <strong>Mesa</strong> {entry.versions.mesa}
-                              </span>
-                            )}
-                            {entry.versions?.podman && (
-                              <span className={styles.versionPill}>
-                                <strong>Podman</strong> {entry.versions.podman}
-                              </span>
-                            )}
-                          </div>
+                          <StreamVersionPills
+                            versions={entry.versions}
+                            showNvidia={false}
+                          />
                           <CodeBlock language="bash">{entry.command}</CodeBlock>
                         </>
                       )}

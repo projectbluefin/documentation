@@ -13,6 +13,8 @@ const path = require("node:path");
 const {
   STREAM_SPECS,
   handleEmptyCache,
+  hasPrimaryReleaseData,
+  isValidSbomCache,
   reportMainError,
   selectAmd64DigestFromManifest,
   stripEpoch,
@@ -81,6 +83,73 @@ test("handleEmptyCache writes unavailable fallbacks without throwing", () => {
   } finally {
     rmSync(paths.directory, { recursive: true, force: true });
   }
+});
+
+test("handleEmptyCache rejects empty and malformed existing caches", () => {
+  const paths = makeOutputPaths();
+  try {
+    for (const existing of [
+      {},
+      { streams: {} },
+      { streams: { "bluefin-stable": { releases: [] } } },
+      { unavailable: true, streams: { "bluefin-stable": { releases: {} } } },
+    ]) {
+      const output = handleEmptyCache(existing, paths);
+      assert.equal(output.unavailable, true);
+      assert.deepEqual(
+        JSON.parse(readFileSync(paths.outputFile, "utf-8")),
+        output,
+      );
+    }
+  } finally {
+    rmSync(paths.directory, { recursive: true, force: true });
+  }
+});
+
+test("isValidSbomCache requires a release-bearing stream", () => {
+  assert.equal(isValidSbomCache({}), false);
+  assert.equal(isValidSbomCache({ streams: {} }), false);
+  assert.equal(
+    isValidSbomCache({
+      streams: { "bluefin-stable": { releases: {} } },
+    }),
+    false,
+  );
+  assert.equal(
+    isValidSbomCache({
+      streams: {
+        "bluefin-stable": {
+          releases: { "stable-20260906": { tag: "stable-20260906" } },
+        },
+      },
+    }),
+    true,
+  );
+});
+
+test("hasPrimaryReleaseData rejects partial stream results", () => {
+  assert.equal(
+    hasPrimaryReleaseData({
+      "bluefin-stable": {
+        releases: { "stable-20260906": {} },
+      },
+      "bluefin-lts": {
+        releases: {},
+      },
+    }),
+    false,
+  );
+  assert.equal(
+    hasPrimaryReleaseData({
+      "bluefin-stable": {
+        releases: { "stable-20260906": {} },
+      },
+      "bluefin-lts": {
+        releases: { "lts-20260906": {} },
+      },
+    }),
+    true,
+  );
 });
 
 test("reportMainError writes unavailable fallbacks when the cache is missing", () => {

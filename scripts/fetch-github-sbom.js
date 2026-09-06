@@ -110,6 +110,9 @@ const FORCE_REFRESH = process.argv.includes("--force");
 
 const EMPTY_RELEASES_REASON =
   "GitHub SBOM data unavailable: all configured streams produced zero releases.";
+const PRIMARY_RELEASE_STREAM_IDS = ["bluefin-stable", "bluefin-lts"];
+const PARTIAL_RELEASES_REASON =
+  "GitHub SBOM data unavailable: primary streams produced no releases.";
 
 /**
  * Streams to scan.  keyRepo drives the OIDC identity regexp used by cosign.
@@ -666,8 +669,8 @@ function writeUnavailableOutputs(
  * @param {object} [files] output paths, overridden by tests
  * @returns {object} preserved or newly written fallback payload
  */
-function handleEmptyCache(existing, files) {
-  if (existing) {
+function handleEmptyCache(existing, files, reason = EMPTY_RELEASES_REASON) {
+  if (isValidSbomCache(existing)) {
     console.warn(
       "Warning: all streams produced zero releases. " +
         "Preserving the existing SBOM cache.",
@@ -675,13 +678,47 @@ function handleEmptyCache(existing, files) {
     return existing;
   }
 
-  const output = buildUnavailableOutput();
+  const output = buildUnavailableOutput(reason);
   console.warn(
     "Warning: all streams produced zero releases. " +
       "Writing unavailable SBOM fallback.",
   );
   writeUnavailableOutputs(output, files);
   return output;
+}
+
+function hasReleaseData(stream) {
+  const releases = stream?.releases;
+  return (
+    releases &&
+    typeof releases === "object" &&
+    !Array.isArray(releases) &&
+    Object.keys(releases).length > 0
+  );
+}
+
+function isValidSbomCache(cache) {
+  const streams = cache?.streams;
+  if (
+    !cache ||
+    typeof cache !== "object" ||
+    Array.isArray(cache) ||
+    cache.unavailable ||
+    !streams ||
+    typeof streams !== "object" ||
+    Array.isArray(streams) ||
+    Object.keys(streams).length === 0
+  ) {
+    return false;
+  }
+
+  return Object.values(streams).some(hasReleaseData);
+}
+
+function hasPrimaryReleaseData(streams) {
+  return PRIMARY_RELEASE_STREAM_IDS.every((streamId) =>
+    hasReleaseData(streams?.[streamId]),
+  );
 }
 
 function reportMainError(err, files = {}) {
@@ -760,8 +797,12 @@ async function main() {
     (sum, s) => sum + Object.keys(s?.releases || {}).length,
     0,
   );
-  if (totalReleases === 0) {
-    handleEmptyCache(existing);
+  if (totalReleases === 0 || !hasPrimaryReleaseData(streams)) {
+    handleEmptyCache(
+      existing,
+      undefined,
+      totalReleases === 0 ? EMPTY_RELEASES_REASON : PARTIAL_RELEASES_REASON,
+    );
     return;
   }
 
@@ -817,6 +858,8 @@ module.exports = {
   STREAM_SPECS,
   buildUnavailableOutput,
   handleEmptyCache,
+  hasPrimaryReleaseData,
+  isValidSbomCache,
   reportMainError,
   stripEpoch,
   compareRpmVersions,

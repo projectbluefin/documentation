@@ -11,9 +11,11 @@ const {
   buildTestingStreams,
   buildUnavailableOutput,
   cacheAgeHours,
+  handleUnavailableCache,
   isCurrentImageCatalog,
   main,
   normalizeTestingTag,
+  reportMainError,
   releaseInfoFromSource,
   sbomVersionsForStream,
 } = require("./fetch-github-images.js");
@@ -310,4 +312,66 @@ test("buildSecurityInfo returns keyless verification commands for keyless repos"
   assert.equal(info.hasAttestation, true);
   assert.match(info.verifyCommand, /certificate-identity-regexp/);
   assert.match(info.attestCommand, /https:\/\/slsa\.dev\/provenance\/v1/);
+});
+
+test("buildSecurityInfo returns keyless verification commands for Utah", () => {
+  const info = buildSecurityInfo(
+    {
+      keyRepo: "projectbluefin/utah",
+      org: "projectbluefin",
+      package: "utah",
+    },
+    "testing",
+  );
+
+  assert.equal(info.cosignKeyUrl, null);
+  assert.equal(info.hasAttestation, true);
+  assert.match(info.verifyCommand, /certificate-oidc-issuer/);
+  assert.match(info.attestCommand, /certificate-identity-regexp/);
+});
+
+test("handleUnavailableCache preserves a valid SBOM-derived image catalog", () => {
+  const directory = mkdtempSync(path.join(os.tmpdir(), "fetch-github-images-"));
+  const outputFile = path.join(directory, "images.json");
+  const existing = {
+    generatedAt: new Date().toISOString(),
+    products: completeCachedProducts(),
+  };
+
+  try {
+    writeFileSync(outputFile, JSON.stringify(existing), "utf-8");
+
+    const output = handleUnavailableCache(
+      existing,
+      "SBOM cache not available",
+      outputFile,
+    );
+
+    assert.deepEqual(output, existing);
+    assert.deepEqual(JSON.parse(readFileSync(outputFile, "utf-8")), existing);
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
+});
+
+test("reportMainError preserves a valid SBOM-derived image catalog", () => {
+  const directory = mkdtempSync(path.join(os.tmpdir(), "fetch-github-images-"));
+  const outputFile = path.join(directory, "images.json");
+  const existing = {
+    generatedAt: new Date().toISOString(),
+    products: completeCachedProducts(),
+  };
+  const originalError = console.error;
+
+  try {
+    writeFileSync(outputFile, JSON.stringify(existing), "utf-8");
+    console.error = () => {};
+
+    reportMainError(new Error("upstream failure"), outputFile);
+
+    assert.deepEqual(JSON.parse(readFileSync(outputFile, "utf-8")), existing);
+  } finally {
+    console.error = originalError;
+    rmSync(directory, { recursive: true, force: true });
+  }
 });

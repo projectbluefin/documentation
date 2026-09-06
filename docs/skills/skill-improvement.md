@@ -110,6 +110,10 @@ checkout` stamps every tracked file with the current time and the TTL never
   non-empty `streams` object. A structurally valid but unpopulated cache must
   produce an explicit unavailable payload with a no-release reason instead of
   generating products whose versions are all null.
+- Multi-stream SBOM fetches must validate the required primary streams before
+  replacing a good cache. An aggregate release count can hide a partial run
+  where only an optional stream succeeded, so preserve the last complete cache
+  until the primary data is present.
 
 Each is invisible from the source alone. Each would be paid again by the next
 agent. That is the bar.

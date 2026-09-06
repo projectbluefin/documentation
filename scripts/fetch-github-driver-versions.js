@@ -260,16 +260,20 @@ function buildNvidiaMapFromSbomStream(sbomCache, streamId) {
 }
 
 /**
- * Build an nvidia version lookup map from bluefin-gdx-lts SBOM data.
- * After parser.js extracts nvidia-driver, packageVersions.nvidia is populated
- * for each GDX release. Returns a {cacheKey: version} map keyed by the same
- * date keys used in the LTS stream (e.g. "lts-20260502"), so buildStreamFromSbom
- * for the LTS stream can use it as nvidiaByTag.
+ * Build the NVIDIA lookup map used by the LTS stream.
+ * Prefer the dedicated LTS NVIDIA stream and fall back to the legacy stream
+ * while older SBOM caches are still in circulation.
  * @param {object} sbomCache
  * @returns {Record<string, string>}
  */
-function buildGdxNvidiaByTagFromSbom(sbomCache) {
-  return buildNvidiaMapFromSbomStream(sbomCache, "bluefin-gdx-lts");
+function buildLtsNvidiaByTagFromSbom(sbomCache) {
+  const ltsNvidia = buildNvidiaMapFromSbomStream(
+    sbomCache,
+    "bluefin-lts-nvidia",
+  );
+  return Object.keys(ltsNvidia).length > 0
+    ? ltsNvidia
+    : buildNvidiaMapFromSbomStream(sbomCache, "bluefin-gdx-lts");
 }
 
 async function main() {
@@ -310,8 +314,8 @@ async function main() {
     return;
   }
 
-  const gdxNvidiaByTag = buildGdxNvidiaByTagFromSbom(sbomCache);
-  console.log(`GDX nvidia map: ${Object.keys(gdxNvidiaByTag).length} entries`);
+  const ltsNvidiaByTag = buildLtsNvidiaByTagFromSbom(sbomCache);
+  console.log(`LTS nvidia map: ${Object.keys(ltsNvidiaByTag).length} entries`);
 
   const nvidiaOpenStableByTag = buildNvidiaMapFromSbomStream(
     sbomCache,
@@ -332,11 +336,11 @@ async function main() {
 
   const ltsStream = buildStreamFromSbom(
     "bluefin-lts",
-    "Bluefin LTS and GDX",
+    "Bluefin LTS",
     "Long-term support stream from projectbluefin/bluefin-lts.",
     "sudo bootc switch ghcr.io/projectbluefin/bluefin:lts --enforce-container-sigpolicy",
     sbomCache,
-    gdxNvidiaByTag,
+    ltsNvidiaByTag,
     LTS_HISTORY_DAYS,
     "bluefin-lts-hwe",
   );
@@ -411,7 +415,7 @@ module.exports = {
   rowFromSbomRelease,
   buildStreamFromSbom,
   buildNvidiaMapFromSbomStream,
-  buildGdxNvidiaByTagFromSbom,
+  buildLtsNvidiaByTagFromSbom,
   cacheAgeHours,
   isValidCachedOutput,
   handleUnavailableCache,

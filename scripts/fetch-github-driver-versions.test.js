@@ -9,7 +9,7 @@ const {
   rowFromSbomRelease,
   buildStreamFromSbom,
   buildNvidiaMapFromSbomStream,
-  buildGdxNvidiaByTagFromSbom,
+  buildLtsNvidiaByTagFromSbom,
   handleUnavailableCache,
   cacheAgeHours,
   isValidCachedOutput,
@@ -155,7 +155,7 @@ test("handleUnavailableCache writes an explicit fallback", () => {
   }
 });
 
-test("buildGdxNvidiaByTagFromSbom builds nvidia map from GDX packageVersions", () => {
+test("buildLtsNvidiaByTagFromSbom falls back to legacy LTS packageVersions", () => {
   const cache = {
     streams: {
       "bluefin-gdx-lts": {
@@ -177,7 +177,7 @@ test("buildGdxNvidiaByTagFromSbom builds nvidia map from GDX packageVersions", (
     },
   };
 
-  const map = buildGdxNvidiaByTagFromSbom(cache);
+  const map = buildLtsNvidiaByTagFromSbom(cache);
   assert.equal(map["lts-20260502"], "595.71.05");
   assert.equal(map["lts-20260425"], "570.144.03");
   assert.equal(
@@ -185,6 +185,33 @@ test("buildGdxNvidiaByTagFromSbom builds nvidia map from GDX packageVersions", (
     undefined,
     "no nvidia entry when packageVersions.nvidia is absent",
   );
+});
+
+test("buildLtsNvidiaByTagFromSbom prefers the dedicated LTS NVIDIA stream", () => {
+  const cache = {
+    streams: {
+      "bluefin-lts-nvidia": {
+        releases: {
+          "lts-20260502": {
+            tag: "lts-20260502",
+            packageVersions: { nvidia: "595.71.05" },
+          },
+        },
+      },
+      "bluefin-gdx-lts": {
+        releases: {
+          "lts-20260502": {
+            tag: "lts-20260502",
+            packageVersions: { nvidia: "570.144.03" },
+          },
+        },
+      },
+    },
+  };
+
+  const map = buildLtsNvidiaByTagFromSbom(cache);
+
+  assert.equal(map["lts-20260502"], "595.71.05");
 });
 
 test("buildNvidiaMapFromSbomStream builds nvidia map from bluefin-nvidia-open-stable", () => {

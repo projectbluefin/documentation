@@ -53,6 +53,8 @@ interface DriverStream {
 interface DriverCatalog {
   generatedAt?: string;
   streams?: DriverStream[];
+  unavailable?: boolean;
+  stateReason?: string;
 }
 
 const catalog = driverVersionsData as unknown as DriverCatalog;
@@ -190,7 +192,6 @@ function ReleaseNode({
   previousRow,
   emphasize,
   pins,
-  isLts,
   pinnedHweKernels,
 }: {
   stream: DriverStream;
@@ -198,7 +199,6 @@ function ReleaseNode({
   previousRow?: DriverRow;
   emphasize: boolean;
   pins?: StreamPins | null;
-  isLts?: boolean;
   pinnedHweKernels?: Set<string>;
 }) {
   const kernel = valueOrFallback(row.versions.kernel);
@@ -347,9 +347,7 @@ function ReleaseNode({
                   : `${styles.majorVersionCard} ${styles.nvidiaCard}`
             }
           >
-            <span className={styles.majorVersionLabel}>
-              {isLts ? "NVIDIA (GDX)" : "NVIDIA"}
-            </span>
+            <span className={styles.majorVersionLabel}>NVIDIA</span>
             <VersionValue value={nvidia} />
             {nvidiaMajorBump && (
               <span className={styles.nvidiaBumpTag}>Major bump</span>
@@ -413,16 +411,38 @@ function ReleaseNode({
 
 interface DriverVersionsCatalogProps {
   streamId: "bluefin-stable" | "bluefin-lts" | "dakota-latest" | "utah-testing";
+  catalogOverride?: DriverCatalog;
 }
 
 export default function DriverVersionsCatalog({
   streamId,
+  catalogOverride,
 }: DriverVersionsCatalogProps): React.JSX.Element {
-  const allStreams = Array.isArray(catalog.streams) ? catalog.streams : [];
+  const activeCatalog = catalogOverride ?? catalog;
+
+  if (activeCatalog.unavailable) {
+    return (
+      <div className={styles.timelinePage}>
+        <section className={styles.streamSection}>
+          <div className="alert alert--warning" role="status">
+            <Heading as="h2">Driver versions unavailable</Heading>
+            <p>
+              {activeCatalog.stateReason ||
+                "Driver version data is currently unavailable."}
+            </p>
+          </div>
+        </section>
+      </div>
+    );
+  }
+
+  const allStreams = Array.isArray(activeCatalog.streams)
+    ? activeCatalog.streams
+    : [];
   const stream = allStreams.find((entry) => entry.id === streamId);
   const fallbackLabel =
     streamId === "bluefin-lts"
-      ? "LTS and GDX"
+      ? "Bluefin LTS"
       : streamId === "dakota-latest"
         ? "Dakotaraptor"
         : streamId === "utah-testing"
@@ -498,7 +518,7 @@ export default function DriverVersionsCatalog({
             <header className={styles.streamHeader}>
               <span className={styles.streamMeta}>
                 {stream.source} · {stream.rowCount} releases in {fallbackLabel}{" "}
-                · updated {formatDate(catalog.generatedAt)}
+                · updated {formatDate(activeCatalog.generatedAt)}
               </span>
               {currentUserspace && (
                 <span className={styles.fedoraPill}>
@@ -593,7 +613,6 @@ export default function DriverVersionsCatalog({
                     previousRow={older[0]}
                     emphasize
                     pins={streamPins}
-                    isLts={streamId === "bluefin-lts"}
                     pinnedHweKernels={pinnedHweKernels}
                   />
                 </div>
@@ -626,7 +645,6 @@ export default function DriverVersionsCatalog({
                             previousRow={older[index + 1]}
                             emphasize={false}
                             pins={streamPins}
-                            isLts={streamId === "bluefin-lts"}
                             pinnedHweKernels={pinnedHweKernels}
                           />
                         </React.Fragment>

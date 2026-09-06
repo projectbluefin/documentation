@@ -453,7 +453,7 @@ function buildSecurityInfo(spec, inspectTag) {
   // Dakota uses keyless signing but SLSA attestations are published to the OCI registry
   // only after projectbluefin/dakota#391 merges (push-to-registry: true).
   // LTS images use traditional key-based signing with cosign.pub from the lts repo.
-  const KEYLESS_REPOS = ["projectbluefin/bluefin"]; // keyless + OCI attestation live
+  const KEYLESS_REPOS = ["projectbluefin/bluefin", "projectbluefin/utah"]; // keyless + OCI attestation live
   const KEYLESS_PENDING_ATTEST_REPOS = ["projectbluefin/dakota"]; // keyless, OCI attestation pending
   const KEY_REPOS = {
     "projectbluefin/bluefin-lts":
@@ -691,9 +691,10 @@ async function main({ outputFile = OUTPUT_FILE, sbomFile = SBOM_FILE } = {}) {
     const reason = hasStreams
       ? SBOM_NO_RELEASE_DATA_REASON
       : SBOM_UNAVAILABLE_REASON;
-    const output = buildUnavailableOutput(reason);
-    writeOutput(output, outputFile);
-    console.log(`Image data unavailable: ${reason}.`);
+    const output = handleUnavailableCache(existing, reason, outputFile);
+    if (output.unavailable) {
+      console.log(`Image data unavailable: ${reason}.`);
+    }
     return;
   }
 
@@ -771,12 +772,30 @@ function buildUnavailableOutput(reason = SBOM_UNAVAILABLE_REASON) {
   };
 }
 
+function handleUnavailableCache(
+  existing,
+  reason = SBOM_UNAVAILABLE_REASON,
+  outputFile = OUTPUT_FILE,
+) {
+  if (isCurrentImageCatalog(existing)) {
+    console.warn(
+      "SBOM cache unavailable. Preserving existing SBOM-derived image catalog.",
+    );
+    return existing;
+  }
+
+  const output = buildUnavailableOutput(reason);
+  writeOutput(output, outputFile);
+  return output;
+}
+
 function reportMainError(error, outputFile = OUTPUT_FILE) {
   const message = error instanceof Error ? error.message : String(error);
   console.error(`fetch-github-images: ${message}`);
   try {
-    writeOutput(
-      buildUnavailableOutput(`Image catalog fetch failed: ${message}`),
+    handleUnavailableCache(
+      readJsonIfExists(outputFile, null),
+      `Image catalog fetch failed: ${message}`,
       outputFile,
     );
   } catch (writeError) {
@@ -799,6 +818,7 @@ module.exports = {
   buildTestingStreams,
   buildUnavailableOutput,
   cacheAgeHours,
+  handleUnavailableCache,
   hasUsableSbomData,
   isCurrentImageCatalog,
   main,
