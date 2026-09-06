@@ -66,3 +66,25 @@ test("docusaurus.config.ts uses new wordmark in navbar and raptor favicon", () =
     "navbar title must be empty string so wordmark is not duplicated",
   );
 });
+
+test("docs/press-kit.md documents Bluefin wordmark and color rules", () => {
+  const pressKitPath = path.join(repoRoot, "docs/press-kit.md");
+  const content = fs.readFileSync(pressKitPath, "utf8");
+
+  assert.ok(
+    content.includes("bluefin-wordmark"),
+    "press-kit must reference bluefin-wordmark",
+  );
+  assert.ok(
+    content.includes("#4285f4"),
+    "press-kit must specify brand accent color #4285f4",
+  );
+  assert.ok(
+    content.includes("Audiowide"),
+    "press-kit must document Audiowide typography",
+  );
+  assert.ok(
+    content.includes("Science Gothic"),
+    "press-kit must document Science Gothic typography",
+  );
+});

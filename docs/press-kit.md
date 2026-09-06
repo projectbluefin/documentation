@@ -58,11 +58,43 @@ Bluefin is modelled after cloud native projects such as Kubernetes:
 
 [Contact Jorge Castro](https://www.ypsidanger.com/contact/) if you have any questions, we love working with content creators!
 
-# Logos
+# Logos & Wordmarks
 
-## Primary Logo
+## Primary Emblem
 
-Bluefin's logo is a _Deinonychus antirrhopus_ named "Bluefin". This is the primary logo:
+Bluefin's emblem is a _Deinonychus antirrhopus_ named "Bluefin":
+
+<p align="center">
+  <img src="/img/favicon.svg" alt="Bluefin Raptor Emblem" width="128" height="128" />
+</p>
+
+## Wordmark
+
+The official Bluefin wordmark combines `BLUE` in the **Audiowide** font with the `fin` ligature set in **Science Gothic** using the `#4285f4` brand accent color.
+
+### Dark Background Variant (Default)
+
+Used on dark backgrounds with white lettering and `#4285f4` ligature:
+
+<p align="center" style={{background: '#1a1b26', padding: '24px', borderRadius: '8px'}}>
+  <img src="/img/bluefin-wordmark.svg" alt="Bluefin Wordmark (Dark)" width="260" />
+</p>
+
+- [Download bluefin-wordmark.svg](/img/bluefin-wordmark.svg)
+
+### Light Background Variant
+
+Used on light backgrounds with dark lettering and `#4285f4` ligature:
+
+<p align="center" style={{background: '#f8fafc', padding: '24px', borderRadius: '8px'}}>
+  <img src="/img/bluefin-wordmark-light.svg" alt="Bluefin Wordmark (Light)" width="260" />
+</p>
+
+- [Download bluefin-wordmark-light.svg](/img/bluefin-wordmark-light.svg)
+
+### Legacy Logo Deprecation
+
+The legacy square glassmorphic Universal Blue `u` logo is deprecated and dropped from all primary Bluefin branding. Bluefin uses the raptor emblem and the official Bluefin wordmark.
 
 Feel free to use any of the other [dinosaurs](/dinosaurs) for additional artwork.
 Please do not distort or modify the artwork or logos, including spacing, color, elements, and scaling.
