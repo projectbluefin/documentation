@@ -38,6 +38,7 @@ const sidebars: SidebarsConfig = {
       items: [
         "contributing",
         "agentic-contributing",
+        "contributors",
         "downloads-testing",
         {
           type: "category",
@@ -47,7 +48,7 @@ const sidebars: SidebarsConfig = {
             type: "doc",
             id: "donations/index",
           },
-          items: ["donations/contributors", "donations/projects"],
+          items: ["donations/projects"],
         },
         "mission",
         "values",

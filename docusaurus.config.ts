@@ -100,6 +100,10 @@ const config: Config = {
             to: "/command-line",
             from: "/tips",
           },
+          {
+            to: "/contributors",
+            from: "/donations/contributors",
+          },
         ],
       },
     ],
