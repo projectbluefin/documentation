@@ -89,6 +89,11 @@ checkout` stamps every tracked file with the current time and the TTL never
   normal empty-result branch can still leave consumers without a valid
   generated artifact. A silently empty file makes unavailable data look healthy
   and can still break consumers that expect the generated artifact to exist.
+- Dependent SBOM consumers must preserve only generated outputs explicitly
+  marked `source: "sbom"` when the upstream cache is unavailable. Preserving a
+  legacy feed/API-derived output would keep the build green while violating
+  the source-of-truth contract; otherwise write an explicit unavailable
+  payload.
 
 Each is invisible from the source alone. Each would be paid again by the next
 agent. That is the bar.

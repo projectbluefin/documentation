@@ -17,16 +17,21 @@ const LTS_HISTORY_DAYS = Number(
   process.env.DRIVER_VERSIONS_LTS_HISTORY_DAYS || 365,
 );
 const FORCE_REFRESH = process.argv.includes("--force");
+const SBOM_UNAVAILABLE_REASON =
+  "SBOM attestation cache not found or empty — run fetch-github-sbom.js first";
 
 const RELEASE_URL_BY_STREAM = {
   "bluefin-stable": "https://github.com/projectbluefin/bluefin/releases",
   "bluefin-lts": "https://github.com/projectbluefin/bluefin-lts/releases",
   "dakota-latest": "https://github.com/projectbluefin/dakota/releases",
+  "utah-testing": "https://github.com/projectbluefin/utah/releases",
 };
 
 const RELEASE_REPO_BY_STREAM = {
   "bluefin-stable": "projectbluefin/bluefin",
   "bluefin-lts": "projectbluefin/bluefin-lts",
+  "dakota-latest": "projectbluefin/dakota",
+  "utah-testing": "projectbluefin/utah",
 };
 
 /**
@@ -48,16 +53,16 @@ function lookupSbomVersionsForTag(sbomCache, sbomStreamId, cacheKey) {
  * Explicit map is used instead of string manipulation to be unambiguous:
  */
 const SBOM_STREAM_PREFIX = {
-  "bluefin-stable":    "stable",
-  "bluefin-latest":    "latest",
-  "bluefin-lts":       "lts",
-  "bluefin-lts-hwe":   "lts-hwe",
+  "bluefin-stable": "stable",
+  "bluefin-latest": "latest",
+  "bluefin-lts": "lts",
+  "bluefin-lts-hwe": "lts-hwe",
   "bluefin-dx-stable": "stable",
   "bluefin-dx-latest": "latest",
-  "bluefin-dx-lts":    "lts",
-  "bluefin-gdx-lts":   "lts",
-  "bluefin-gdx-latest":"latest",
-  "dakota-latest":     "latest",
+  "bluefin-dx-lts": "lts",
+  "bluefin-gdx-lts": "lts",
+  "bluefin-gdx-latest": "latest",
+  "dakota-latest": "latest",
 };
 
 function cacheAgeHours() {
@@ -66,12 +71,76 @@ function cacheAgeHours() {
   return (Date.now() - stats.mtimeMs) / (1000 * 60 * 60);
 }
 
-function rowFromSbomRelease(streamId, cacheKey, releaseEntry, nvidiaVersion, hweKernel = null) {
+function readJsonIfExists(filePath, fallback = null) {
+  if (!fs.existsSync(filePath)) return fallback;
+  try {
+    return JSON.parse(fs.readFileSync(filePath, "utf-8"));
+  } catch {
+    return fallback;
+  }
+}
+
+function writeOutput(output, outputFile = OUTPUT_FILE) {
+  const outputDir = path.dirname(outputFile);
+  if (!fs.existsSync(outputDir)) {
+    fs.mkdirSync(outputDir, { recursive: true });
+  }
+  fs.writeFileSync(outputFile, JSON.stringify(output, null, 2), "utf-8");
+}
+
+function buildUnavailableOutput(reason = SBOM_UNAVAILABLE_REASON) {
+  return {
+    generatedAt: new Date().toISOString(),
+    cacheHours: CACHE_MAX_AGE_HOURS,
+    historyDays: HISTORY_DAYS,
+    streams: [],
+    unavailable: true,
+    stateReason: reason,
+  };
+}
+
+function isSbomOutput(output) {
+  return (
+    !output?.unavailable &&
+    Array.isArray(output?.streams) &&
+    output.streams.length > 0 &&
+    output.streams.every((stream) => stream?.source === "sbom")
+  );
+}
+
+function handleUnavailableCache(
+  reason = SBOM_UNAVAILABLE_REASON,
+  outputFile = OUTPUT_FILE,
+) {
+  const existing = readJsonIfExists(outputFile);
+  if (isSbomOutput(existing)) {
+    console.warn(
+      "SBOM attestation cache unavailable. Preserving existing SBOM-derived driver versions.",
+    );
+    return existing;
+  }
+
+  const output = buildUnavailableOutput(reason);
+  writeOutput(output, outputFile);
+  console.warn(`Driver versions unavailable: ${reason}`);
+  return output;
+}
+
+function rowFromSbomRelease(
+  streamId,
+  cacheKey,
+  releaseEntry,
+  nvidiaVersion,
+  hweKernel = null,
+) {
   const pkg = releaseEntry?.packageVersions || {};
   const datePart = String(cacheKey || "").match(/(\d{8})$/)?.[1] || null;
   let publishedAt = null;
   if (datePart) {
-    publishedAt = datePart.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3T00:00:00.000Z");
+    publishedAt = datePart.replace(
+      /(\d{4})(\d{2})(\d{2})/,
+      "$1-$2-$3T00:00:00.000Z",
+    );
   }
 
   return {
@@ -118,9 +187,10 @@ function buildStreamFromSbom(
     .sort(([a], [b]) => b.localeCompare(a))
     .map(([cacheKey, entry]) => {
       const dateMatch = cacheKey.match(/(\d{8})$/);
-      const hweKey = dateMatch && hweStreamId
-        ? `${SBOM_STREAM_PREFIX[hweStreamId]}-${dateMatch[1]}`
-        : null;
+      const hweKey =
+        dateMatch && hweStreamId
+          ? `${SBOM_STREAM_PREFIX[hweStreamId]}-${dateMatch[1]}`
+          : null;
       const hweEntry = hweKey ? hweReleases[hweKey] : null;
       const hweKernel = hweEntry?.packageVersions?.kernel || null;
       return rowFromSbomRelease(
@@ -191,17 +261,25 @@ async function main() {
   }
 
   const sbomCache = readSbomCache(SBOM_FILE);
-  const sbomLoaded =
-    Boolean(sbomCache?.generatedAt) && Boolean(sbomCache?.streams);
+  const hasSbomStreams =
+    sbomCache?.streams &&
+    typeof sbomCache.streams === "object" &&
+    !Array.isArray(sbomCache.streams);
+  const sbomLoaded = Boolean(sbomCache?.generatedAt) && Boolean(hasSbomStreams);
   if (!sbomLoaded) {
-    throw new Error(
-      "SBOM attestation cache not found or empty — run fetch-github-sbom.js first",
-    );
+    handleUnavailableCache();
+    return;
   }
 
   const populated = Object.values(sbomCache.streams).filter(
     (s) => Object.keys(s?.releases || {}).length > 0,
   ).length;
+  if (populated === 0) {
+    handleUnavailableCache(
+      "SBOM attestation cache contains no release data — run fetch-github-sbom.js first",
+    );
+    return;
+  }
   console.log(
     `SBOM attestation cache loaded (${populated}/${Object.keys(sbomCache.streams).length} streams have release data).`,
   );
@@ -209,8 +287,13 @@ async function main() {
   const gdxNvidiaByTag = buildGdxNvidiaByTagFromSbom(sbomCache);
   console.log(`GDX nvidia map: ${Object.keys(gdxNvidiaByTag).length} entries`);
 
-  const nvidiaOpenStableByTag = buildNvidiaMapFromSbomStream(sbomCache, "bluefin-nvidia-open-stable");
-  console.log(`Nvidia-open stable map: ${Object.keys(nvidiaOpenStableByTag).length} entries`);
+  const nvidiaOpenStableByTag = buildNvidiaMapFromSbomStream(
+    sbomCache,
+    "bluefin-nvidia-open-stable",
+  );
+  console.log(
+    `Nvidia-open stable map: ${Object.keys(nvidiaOpenStableByTag).length} entries`,
+  );
 
   const stableStream = buildStreamFromSbom(
     "bluefin-stable",
@@ -233,9 +316,15 @@ async function main() {
   );
 
   const hasSbomDakota =
-    Object.keys(sbomCache.streams?.["dakota-latest"]?.releases || {}).length > 0;
-  const dakotaNvidiaByTag = buildNvidiaMapFromSbomStream(sbomCache, "dakota-nvidia-latest");
-  console.log(`Dakota nvidia map: ${Object.keys(dakotaNvidiaByTag).length} entries`);
+    Object.keys(sbomCache.streams?.["dakota-latest"]?.releases || {}).length >
+    0;
+  const dakotaNvidiaByTag = buildNvidiaMapFromSbomStream(
+    sbomCache,
+    "dakota-nvidia-latest",
+  );
+  console.log(
+    `Dakota nvidia map: ${Object.keys(dakotaNvidiaByTag).length} entries`,
+  );
   const dakotaStream = hasSbomDakota
     ? buildStreamFromSbom(
         "dakota-latest",
@@ -247,32 +336,55 @@ async function main() {
       )
     : null;
 
+  const hasSbomUtah =
+    Object.keys(sbomCache.streams?.["utah-testing"]?.releases || {}).length > 0;
+  const utahNvidiaByTag = buildNvidiaMapFromSbomStream(
+    sbomCache,
+    "utah-nvidia-testing",
+  );
+  console.log(
+    `Utah nvidia map: ${Object.keys(utahNvidiaByTag).length} entries`,
+  );
+  const utahStream = hasSbomUtah
+    ? buildStreamFromSbom(
+        "utah-testing",
+        "Utah",
+        "Project Hummingbird-based image from projectbluefin/utah.",
+        "sudo bootc switch --enforce-container-sigpolicy ghcr.io/projectbluefin/utah:testing",
+        sbomCache,
+        utahNvidiaByTag,
+      )
+    : null;
+
   const output = {
     generatedAt: new Date().toISOString(),
     cacheHours: CACHE_MAX_AGE_HOURS,
     historyDays: HISTORY_DAYS,
-    streams: [stableStream, ltsStream, ...(dakotaStream ? [dakotaStream] : [])],
+    streams: [
+      stableStream,
+      ltsStream,
+      ...(dakotaStream ? [dakotaStream] : []),
+      ...(utahStream ? [utahStream] : []),
+    ],
   };
 
-  if (!fs.existsSync(OUTPUT_DIR)) {
-    fs.mkdirSync(OUTPUT_DIR, { recursive: true });
-  }
-
-  fs.writeFileSync(OUTPUT_FILE, JSON.stringify(output, null, 2), "utf-8");
+  writeOutput(output);
   console.log(`Driver versions data saved to ${OUTPUT_FILE} (SBOM-only)`);
 }
 
 if (require.main === module) {
   main().catch((err) => {
     console.error(err);
-    process.exit(1);
+    handleUnavailableCache(`Driver versions generation failed: ${err.message}`);
   });
 }
 
 module.exports = {
+  buildUnavailableOutput,
   lookupSbomVersionsForTag,
   rowFromSbomRelease,
   buildStreamFromSbom,
   buildNvidiaMapFromSbomStream,
   buildGdxNvidiaByTagFromSbom,
+  handleUnavailableCache,
 };

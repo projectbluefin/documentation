@@ -1,5 +1,8 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const os = require("node:os");
+const path = require("node:path");
 
 const {
   lookupSbomVersionsForTag,
@@ -7,6 +10,7 @@ const {
   buildStreamFromSbom,
   buildNvidiaMapFromSbomStream,
   buildGdxNvidiaByTagFromSbom,
+  handleUnavailableCache,
 } = require("./fetch-github-driver-versions.js");
 
 test("lookupSbomVersionsForTag returns packageVersions by stream and key", () => {
@@ -58,11 +62,19 @@ test("buildStreamFromSbom sorts newest-first and marks source sbom", () => {
         releases: {
           "stable-20260324": {
             tag: "stable-20260324",
-            packageVersions: { kernel: "6.18.12-200", mesa: "25.3.6-4", gnome: "49.5-1" },
+            packageVersions: {
+              kernel: "6.18.12-200",
+              mesa: "25.3.6-4",
+              gnome: "49.5-1",
+            },
           },
           "stable-20260331": {
             tag: "stable-20260331",
-            packageVersions: { kernel: "6.18.13-200", mesa: "25.3.6-6", gnome: "49.5-1" },
+            packageVersions: {
+              kernel: "6.18.13-200",
+              mesa: "25.3.6-6",
+              gnome: "49.5-1",
+            },
           },
         },
       },
@@ -85,6 +97,60 @@ test("buildStreamFromSbom sorts newest-first and marks source sbom", () => {
   assert.equal(stream.source, "sbom");
   assert.equal(stream.latest?.tag, "stable-20260331");
   assert.equal(stream.latest?.versions.kernel, "6.18.13-200");
+});
+
+test("buildStreamFromSbom builds Utah testing stream", () => {
+  const cache = {
+    streams: {
+      "utah-testing": {
+        releases: {
+          "testing-20260906": {
+            tag: "testing-20260906",
+            packageVersions: {
+              kernel: "6.18.13-200.fc43",
+              mesa: "25.3.6",
+              gnome: "50.0",
+            },
+          },
+        },
+      },
+    },
+  };
+
+  const stream = buildStreamFromSbom(
+    "utah-testing",
+    "Utah",
+    "Project Hummingbird-based image from projectbluefin/utah.",
+    "sudo bootc switch --enforce-container-sigpolicy ghcr.io/projectbluefin/utah:testing",
+    cache,
+    { "testing-20260906": "595.71.05" },
+    9999,
+  );
+
+  assert.equal(stream.id, "utah-testing");
+  assert.equal(stream.name, "Utah");
+  assert.equal(
+    stream.latest?.releaseUrl,
+    "https://github.com/projectbluefin/utah/releases/tag/testing-20260906",
+  );
+  assert.equal(stream.latest?.versions.kernel, "6.18.13-200.fc43");
+  assert.equal(stream.latest?.versions.nvidia, "595.71.05");
+});
+
+test("handleUnavailableCache writes an explicit fallback", () => {
+  const directory = fs.mkdtempSync(
+    path.join(os.tmpdir(), "driver-versions-test-"),
+  );
+  const outputFile = path.join(directory, "driver-versions.json");
+
+  try {
+    const output = handleUnavailableCache("SBOM cache unavailable", outputFile);
+    assert.equal(output.unavailable, true);
+    assert.equal(output.stateReason, "SBOM cache unavailable");
+    assert.deepEqual(JSON.parse(fs.readFileSync(outputFile, "utf-8")), output);
+  } finally {
+    fs.rmSync(directory, { recursive: true, force: true });
+  }
 });
 
 test("buildGdxNvidiaByTagFromSbom builds nvidia map from GDX packageVersions", () => {
@@ -112,7 +178,11 @@ test("buildGdxNvidiaByTagFromSbom builds nvidia map from GDX packageVersions", (
   const map = buildGdxNvidiaByTagFromSbom(cache);
   assert.equal(map["lts-20260502"], "595.71.05");
   assert.equal(map["lts-20260425"], "570.144.03");
-  assert.equal(map["lts-20260418"], undefined, "no nvidia entry when packageVersions.nvidia is absent");
+  assert.equal(
+    map["lts-20260418"],
+    undefined,
+    "no nvidia entry when packageVersions.nvidia is absent",
+  );
 });
 
 test("buildNvidiaMapFromSbomStream builds nvidia map from bluefin-nvidia-open-stable", () => {
@@ -140,5 +210,9 @@ test("buildNvidiaMapFromSbomStream builds nvidia map from bluefin-nvidia-open-st
   const map = buildNvidiaMapFromSbomStream(cache, "bluefin-nvidia-open-stable");
   assert.equal(map["stable-20260501"], "595.71.05");
   assert.equal(map["stable-20260425"], "570.144.03");
-  assert.equal(map["stable-20260418"], undefined, "no nvidia entry when packageVersions.nvidia is absent");
+  assert.equal(
+    map["stable-20260418"],
+    undefined,
+    "no nvidia entry when packageVersions.nvidia is absent",
+  );
 });
