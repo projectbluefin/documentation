@@ -1,8 +1,19 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
+const {
+  existsSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} = require("node:fs");
+const os = require("node:os");
+const path = require("node:path");
 
 const {
   STREAM_SPECS,
+  handleEmptyCache,
+  reportMainError,
   selectAmd64DigestFromManifest,
   stripEpoch,
   compareRpmVersions,
@@ -10,6 +21,79 @@ const {
   extractBstPackageVersions,
   isSemverLike,
 } = require("./fetch-github-sbom.js");
+
+function makeOutputPaths() {
+  const directory = mkdtempSync(path.join(os.tmpdir(), "fetch-github-sbom-"));
+  return {
+    directory,
+    outputFile: path.join(directory, "sbom-attestations.json"),
+    frontendOutputFile: path.join(directory, "sbom-attestations-frontend.json"),
+    releaseListFile: path.join(directory, "release-list.json"),
+  };
+}
+
+test("handleEmptyCache preserves an existing cache", () => {
+  const paths = makeOutputPaths();
+  try {
+    const existing = {
+      generatedAt: "2026-09-06T00:00:00.000Z",
+      streams: {
+        "bluefin-stable": {
+          releases: { "stable-20260906": { tag: "stable-20260906" } },
+        },
+      },
+    };
+    writeFileSync(paths.outputFile, JSON.stringify(existing), "utf-8");
+
+    assert.deepEqual(handleEmptyCache(existing, paths), existing);
+    assert.deepEqual(
+      JSON.parse(readFileSync(paths.outputFile, "utf-8")),
+      existing,
+    );
+    assert.equal(existsSync(paths.frontendOutputFile), false);
+    assert.equal(existsSync(paths.releaseListFile), false);
+  } finally {
+    rmSync(paths.directory, { recursive: true, force: true });
+  }
+});
+
+test("handleEmptyCache writes unavailable fallbacks without throwing", () => {
+  const paths = makeOutputPaths();
+  try {
+    const output = handleEmptyCache(null, paths);
+    assert.equal(output.unavailable, true);
+    assert.match(output.stateReason, /zero releases/);
+    assert.deepEqual(
+      JSON.parse(readFileSync(paths.outputFile, "utf-8")),
+      output,
+    );
+    assert.deepEqual(
+      JSON.parse(readFileSync(paths.frontendOutputFile, "utf-8")),
+      output,
+    );
+
+    const releaseList = JSON.parse(
+      readFileSync(paths.releaseListFile, "utf-8"),
+    );
+    assert.equal(releaseList.unavailable, true);
+    assert.equal(releaseList.stateReason, output.stateReason);
+    assert.deepEqual(releaseList.releases, []);
+  } finally {
+    rmSync(paths.directory, { recursive: true, force: true });
+  }
+});
+
+test("reportMainError logs errors without failing", () => {
+  const messages = [];
+  const originalError = console.error;
+  console.error = (message) => messages.push(message);
+  try {
+    assert.doesNotThrow(() => reportMainError(new Error("test failure")));
+  } finally {
+    console.error = originalError;
+  }
+  assert.deepEqual(messages, ["fetch-github-sbom: test failure"]);
+});
 
 test("selectAmd64DigestFromManifest picks linux/amd64 from multi-arch index", () => {
   const manifest = {

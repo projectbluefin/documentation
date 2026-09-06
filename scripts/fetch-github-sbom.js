@@ -95,6 +95,11 @@ const FRONTEND_OUTPUT_FILE = path.join(
   "sbom-attestations-frontend.json",
 );
 
+const RELEASE_LIST_FILE = path.join(
+  path.dirname(OUTPUT_FILE),
+  "release-list.json",
+);
+
 // How many calendar days of releases to scan per stream.
 const LOOKBACK_DAYS = Number(process.env.SBOM_LOOKBACK_DAYS || 90);
 
@@ -102,6 +107,9 @@ const LOOKBACK_DAYS = Number(process.env.SBOM_LOOKBACK_DAYS || 90);
 const MAX_RELEASES = Number(process.env.SBOM_MAX_RELEASES || 10);
 
 const FORCE_REFRESH = process.argv.includes("--force");
+
+const EMPTY_RELEASES_REASON =
+  "GitHub SBOM data unavailable: all configured streams produced zero releases.";
 
 /**
  * Streams to scan.  keyRepo drives the OIDC identity regexp used by cosign.
@@ -611,6 +619,75 @@ async function processStream(spec, ghcrTagsByImage, existing) {
 // Main
 // ---------------------------------------------------------------------------
 
+/**
+ * Build the explicit fallback payload used when no cache exists and every
+ * stream produced zero releases.
+ */
+function buildUnavailableOutput(reason = EMPTY_RELEASES_REASON) {
+  return {
+    generatedAt: new Date().toISOString(),
+    lookbackDays: LOOKBACK_DAYS,
+    maxReleasesPerStream: MAX_RELEASES,
+    streams: {},
+    unavailable: true,
+    stateReason: reason,
+  };
+}
+
+/**
+ * Write all generated SBOM artifacts for an unavailable run.
+ *
+ * @param {object} output fallback SBOM payload
+ * @param {object} [files] output paths, overridden by tests
+ */
+function writeUnavailableOutputs(
+  output,
+  {
+    outputFile = OUTPUT_FILE,
+    frontendOutputFile = FRONTEND_OUTPUT_FILE,
+    releaseListFile = RELEASE_LIST_FILE,
+  } = {},
+) {
+  atomicWriteJson(outputFile, output);
+  atomicWriteJson(frontendOutputFile, output);
+  atomicWriteJson(releaseListFile, {
+    generatedAt: output.generatedAt,
+    releases: [],
+    unavailable: true,
+    stateReason: output.stateReason,
+  });
+}
+
+/**
+ * Preserve an existing cache, or write an explicit unavailable fallback when
+ * no cache is available.
+ *
+ * @param {object|null} existing parsed existing cache
+ * @param {object} [files] output paths, overridden by tests
+ * @returns {object} preserved or newly written fallback payload
+ */
+function handleEmptyCache(existing, files) {
+  if (existing) {
+    console.warn(
+      "Warning: all streams produced zero releases. " +
+        "Preserving the existing SBOM cache.",
+    );
+    return existing;
+  }
+
+  const output = buildUnavailableOutput();
+  console.warn(
+    "Warning: all streams produced zero releases. " +
+      "Writing unavailable SBOM fallback.",
+  );
+  writeUnavailableOutputs(output, files);
+  return output;
+}
+
+function reportMainError(err) {
+  console.error(`fetch-github-sbom: ${err.message}`);
+}
+
 async function main() {
   if (!process.env.GITHUB_TOKEN && !process.env.GH_TOKEN) {
     console.warn(
@@ -673,12 +750,8 @@ async function main() {
     0,
   );
   if (totalReleases === 0) {
-    console.error(
-      "Error: all streams produced zero releases. " +
-        "This indicates a Releases API failure. " +
-        "Refusing to overwrite cache with empty data.",
-    );
-    process.exit(1);
+    handleEmptyCache(existing);
+    return;
   }
 
   const output = {
@@ -700,10 +773,6 @@ async function main() {
 
   // Write release-list.json — a lightweight index of all releases across streams,
   // suitable for changelogs/feed pages without importing the full SBOM payload.
-  const RELEASE_LIST_FILE = path.join(
-    path.dirname(OUTPUT_FILE),
-    "release-list.json",
-  );
   const releaseList = [];
   for (const [streamId, stream] of Object.entries(streams)) {
     for (const [tag, entry] of Object.entries(stream.releases || {})) {
@@ -730,14 +799,14 @@ async function main() {
 }
 
 if (require.main === module) {
-  main().catch((err) => {
-    console.error(err.message);
-    process.exit(1);
-  });
+  main().catch(reportMainError);
 }
 
 module.exports = {
   STREAM_SPECS,
+  buildUnavailableOutput,
+  handleEmptyCache,
+  reportMainError,
   stripEpoch,
   compareRpmVersions,
   extractPackageVersions,
