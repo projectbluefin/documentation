@@ -152,6 +152,14 @@ const config: Config = {
   ],
 
   themeConfig: {
+    announcementBar: {
+      id: "docs_major_update_oct_2026",
+      content:
+        "The documentation is going through a major update, expected completion October 2026",
+      backgroundColor: "#2c4075",
+      textColor: "#ffffff",
+      isCloseable: true,
+    },
     metadata: [
       {
         name: "keywords",
