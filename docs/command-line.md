@@ -81,7 +81,7 @@ Here are GNOME extensions that the maintainers recommend to round out your deskt
 <GnomeExtensions extensionId={6000} />
 <GnomeExtensions extensionId={7065} />
 
-For a Tailscale GUI, we recommend the [official systray application](https://tailscale.com/kb/1597/linux-systray): `tailscale configure systray --enable-startup=systemd` and reboot.
+For a Tailscale GUI, we recommend the [official systray application](https://tailscale.com/docs/features/client/linux-systray): `tailscale configure systray --enable-startup=systemd` and reboot.
 
 </div>
 

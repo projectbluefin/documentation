@@ -28,7 +28,7 @@ Start small! Documentation improvements or simple additions are great first cont
 Bluefin is made via [lazy concensus](https://www.apache.org/foundation/glossary.html#LazyConsensus), which means that we trend towards "Just Do It" because if it was too crazy someone would say something. This is a nice casual way to open source, and is inspired by [Kubernetes](https://kubernetes.dev).
 
 - Check [todo.projectbluefin.io](https://todo.projectbluefin.io/) to check work that is either new or in progress
-- Check [done.projectbluefin.io](https://done.projectbluefin.io/) to check work that has recently been completed
+- Check [Reports](/reports) to check work that has recently been completed
 - Items in Draft are
   - Things that need to happen but aren't claimed or specced out
   - Or transient things that don't need much planning like "Improve contributor guide" or "Fix up this just recipe". These are things that are identified as being needed but don't need much planning, "just send a sysadmin" style tasks.
@@ -1261,7 +1261,7 @@ If you find a bug that:
    ```
 
 2. **Report to Fedora**:
-   - Upstream tracker: [Fedora Atomic Desktops Issue Tracker](https://gitlab.com/fedora/ostree/sig/-/issues)
+   - Upstream tracker: [Fedora Atomic Desktops Issue Tracker](https://forge.fedoraproject.org/atomic-desktops/tracker/issues)
    - Include: Fedora version, steps to reproduce, logs
 
 3. **Link in Bluefin Issue**:
@@ -1291,8 +1291,8 @@ Contributing regularly and demonstrating expertise may lead to maintainer status
 
 - [Bluefin Documentation](https://docs.projectbluefin.io/)
 - [Agentic Contributor Guide](/agentic-contributing)
-- [Universal Blue Guide](https://universal-blue.org/guide/)
-- [bootc Documentation](https://bootc-dev.github.io/bootc/)
+- [Universal Blue](https://universal-blue.org/)
+- [bootc Documentation](https://bootc.dev/bootc/)
 
 ### Tooling
 

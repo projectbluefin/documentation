@@ -58,14 +58,14 @@ Bluefin offers images based on the current version of Fedora, as well as a CentO
 
 You can choose from three rolling tags, or lock to a specific version of Fedora. Check the [release notes](https://github.com/projectbluefin/bluefin/releases) for specific version information:
 
-|                      | `stable` (default) or `stable-daily` | `latest`                   |
-| -------------------- | ------------------------------------ | -------------------------- |
-| Fedora Version:      | 43                                   | 43                         |
-| GNOME Version:       | 49                                   | 49                         |
-| Target User:         | All Users                            |                            |
-| System Updates:      | Weekly or Daily                      | Daily                      |
-| Application Updates: | Twice a Day                          | Twice a Day                |
-| Kernel:              | Gated                                | Ungated                    |
+|                      | `stable` (default) or `stable-daily` | `latest`    |
+| -------------------- | ------------------------------------ | ----------- |
+| Fedora Version:      | 43                                   | 43          |
+| GNOME Version:       | 49                                   | 49          |
+| Target User:         | All Users                            |             |
+| System Updates:      | Weekly or Daily                      | Daily       |
+| Application Updates: | Twice a Day                          | Twice a Day |
+| Kernel:              | Gated                                | Ungated     |
 
 **Note:** [Bluefin LTS](/lts) and [GDX](/gdx) not shown here, refer to their respective documentation for more details.
 
@@ -75,7 +75,7 @@ The major difference between `latest` and `stable` is the kernel cadence and whe
 
 The `stable` tag features a gated kernel. This kernel follows the same version as the [Fedora CoreOS stable stream](https://fedoraproject.org/coreos/release-notes?arch=x86_64&stream=stable), which is a slower cadence than default Fedora Silverblue. The Universal Blue team may temporarily pin to a specific kernel in order to avoid regressions that may affect users.
 
-Adding and editing kernel boot arguments is handled by `bootc kargs`. Check the [upstream documentation](https://bootc-dev.github.io/bootc/bootc-kargs.html) for more information.
+Adding and editing kernel boot arguments is handled by `bootc kargs`. Check the [upstream documentation](https://bootc.dev/bootc/building/kernel-arguments.html) for more information.
 
 :::info[It's all just Bluefin]
 
@@ -97,7 +97,7 @@ Or select `date` and choose an older image.
 
 #### Switching between streams manually
 
-Bluefin uses [`bootc`](https://bootc-dev.github.io/bootc/) to manage the operating system image. To inspect your current and staged deployments, run:
+Bluefin uses [`bootc`](https://bootc.dev/bootc/) to manage the operating system image. To inspect your current and staged deployments, run:
 
 ```sh
 sudo bootc status
@@ -170,15 +170,15 @@ skopeo inspect docker://ghcr.io/projectbluefin/bluefin:stable
 
 This will show all the available tags and useful metadata like image and kernel versions.
 
-Check the [bootc documentation](https://bootc-dev.github.io/bootc/) for more information.
+Check the [bootc documentation](https://bootc.dev/bootc/) for more information.
 
 ## Virtual Private Networks (VPN)
 
 [Tailscale](https://tailscale.com) is included by default to provide VPN services for both desktop and development use cases. [Tailscale is pretty useful](https://blog.6nok.org/tailscale-is-pretty-useful/).
 
-- [Using Tailscale with Mullvad](https://tailscale.com/kb/1258/mullvad-exit-nodes) - provides the best out of the box experience
-- [Using Tailscale with Docker](https://tailscale.com/kb/1282/docker) - for development
-- [Using the system tray with tailscale](https://tailscale.com/kb/1597/linux-systray) - follow this for setting up the tailscale icon in the system tray. Note that `wl-clipboard` is already included on the system so you do not need to install that.
+- [Using Tailscale with Mullvad](https://tailscale.com/docs/features/exit-nodes/mullvad-exit-nodes) - provides the best out of the box experience
+- [Using Tailscale with Docker](https://tailscale.com/docs/features/containers/docker) - for development
+- [Using the system tray with tailscale](https://tailscale.com/docs/features/client/linux-systray) - follow this for setting up the tailscale icon in the system tray. Note that `wl-clipboard` is already included on the system so you do not need to install that.
 - Tailscale's [YouTube channel](https://www.youtube.com/@Tailscale) has lots of great tips and tricks
 - Good VPN providers may provide Wireguard configurations that can be imported directly into the Network Manager, check their documentation for more information:
   - [NordVPN](https://support.nordvpn.com/hc/en-us/articles/20347784574097-Connecting-to-NordVPN-Linux-Network-Manager)
@@ -258,7 +258,7 @@ Bluefin includes curated CLI tool collections. These commands install curated co
 | `ujust bios-info`              | Display BIOS/UEFI information (manufacturer, product name, version, release date)                                                                                                                                 |
 | `ujust device-info`            | Sends the status, flatpak list, and system info to the CentOS pastebin, and returns the URL to the terminal. This allows the end user to conveniently paste the URL with their info so others can help them debug |
 | `ujust rebase-helper`          | Interactive assistant to switch between streams, rebase to different images, or roll back to a previous version                                                                                                   |
-| `ujust clean-system`           | Clean up unused containers, volumes, and flatpak runtimes                                                                                                                         |
+| `ujust clean-system`           | Clean up unused containers, volumes, and flatpak runtimes                                                                                                                                                         |
 | `ujust check-idle-power-draw`  | Measure your system's idle power consumption using powerstat                                                                                                                                                      |
 | `ujust check-local-overrides`  | Show files that differ between `/usr/etc` and `/etc` to identify local customizations                                                                                                                             |
 | `ujust logs-this-boot`         | Show all system log messages from the current boot                                                                                                                                                                |
@@ -318,7 +318,7 @@ Bluefin and Aurora include Cockpit for machine management. We're hoping to inclu
 
 ## Verification
 
-These images are signed with sigstore's [cosign](https://docs.sigstore.dev/cosign/overview/). You can verify the signature by downloading the `cosign.pub` key from [this repo](https://github.com/projectbluefin/bluefin) and running the following command:
+These images are signed with sigstore's [cosign](https://docs.sigstore.dev/cosign/). You can verify the signature by downloading the `cosign.pub` key from [this repo](https://github.com/projectbluefin/bluefin) and running the following command:
 
 ```sh
 cosign verify --key cosign.pub ghcr.io/projectbluefin/bluefin

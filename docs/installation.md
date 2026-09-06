@@ -175,7 +175,7 @@ Most pain points can be addressed directly by planning ahead of time. Note that 
 - Read this documentation in its entirety, here's some associated upstream documentation:
   - [Homebrew](https://docs.brew.sh/) ([Donate](https://github.com/Homebrew/brew#donations))
   - [Flathub](https://docs.flathub.org/)
-  - [bootc](https://bootc-dev.github.io/bootc/)
+  - [bootc](https://bootc.dev/bootc/)
 
 ### Developers
 
@@ -195,7 +195,7 @@ Download the right ISO from [the website](https://projectbluefin.io/#scene-picke
 - Install the operating system
   - Use the entire disk with automatic partitioning
   - (Optional): [Set up Secure Boot](#secure-boot)
-  - (Optional): `ujust rebase-helper` to move to `:stable` or `:latest`
+  - (Optional): `ujust rebase-helper` to move to `:stable` or `:testing`
 - Set up, test, and **verify backups** - While the system image is reproducible data, your user data in your home folder still needs to be backed up. Bluefin ships with two backup utilities depending on your preference. They are installed as Flatpaks so you can remove the one you don't use. `rclone` ([Donate](https://github.com/sponsors/rclone)) and `restic` ([Donate](https://github.com/sponsors/restic)) are also preinstalled if you prefer command line tools
   - [Deja Dup](https://apps.gnome.org/DejaDup/) ([Donate](https://liberapay.com/DejaDup))
   - [Pika Backup](https://apps.gnome.org/PikaBackup/) ([Donate](https://opencollective.com/pika-backup))

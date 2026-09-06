@@ -108,7 +108,7 @@ Here is an example of using devcontainers to run agents inside containers for is
 
 ## Docker Model Runner
 
-[Docker Model Runner](https://docs.docker.com/model-runner/) is Docker's built-in local LLM service, included in Bluefin alongside Ramalama. It runs models from [Docker Hub's AI catalog](https://hub.docker.com/catalogs/ai) and exposes an OpenAI-compatible API — no separate server setup required.
+[Docker Model Runner](https://docs.docker.com/model-runner/) is Docker's built-in local LLM service, included in Bluefin alongside Ramalama. It runs models from [Docker Hub's AI catalog](https://hub.docker.com/u/ai) and exposes an OpenAI-compatible API — no separate server setup required.
 
 ### Basic Usage
 
@@ -134,17 +134,17 @@ Docker Model Runner serves an OpenAI-compatible endpoint at `http://localhost:12
 
 Both provide a local OpenAI-compatible API. Choose based on your workflow:
 
-| | Ramalama | Docker Model Runner |
-| --- | --- | --- |
+|               | Ramalama                            | Docker Model Runner   |
+| ------------- | ----------------------------------- | --------------------- |
 | Model sources | OCI registries, Ollama, HuggingFace | Docker Hub AI catalog |
-| Engine | Podman | Docker Engine |
-| Quick command | `ramalama` | `docker model` |
+| Engine        | Podman                              | Docker Engine         |
+| Quick command | `ramalama`                          | `docker model`        |
 
 See the [Docker Model Runner documentation](https://docs.docker.com/model-runner/) for the full model catalog and configuration options.
 
 ## Alpaca Graphical Client
 
-For light chatbot usage we recommend that users [install Alpaca](https://flathub.org/apps/com.jeffser.Alpaca) to manage and chat with your LLM models from within a native desktop application. Alpaca supports Nvidia and AMD[^1] acceleration natively.
+For light chatbot usage we recommend that users [install Alpaca](https://flathub.org/en/apps/com.jeffser.Alpaca) to manage and chat with your LLM models from within a native desktop application. Alpaca supports Nvidia and AMD[^1] acceleration natively.
 
 :::tip[Only a keystroke away]
 

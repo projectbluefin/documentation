@@ -7,7 +7,7 @@ import DriverVersionsCatalog from "@site/src/components/DriverVersionsCatalog";
 
 # Utah
 
-**Utah** (_Utahraptor ostrommaysi_) is Bluefin built on [Fedora Hummingbird](https://packages.redhat.com), which provides a hardened, fast-moving bootable base without a desktop. Utah adds the desktop layer: Bluefin's package contract and the GNOME 51 desktop stack built from verified upstream sources via `projectbluefin/utah-packages`.
+**Utah** (_Utahraptor ostrommaysi_) is Bluefin built on [Fedora Hummingbird](https://fedoramagazine.org/fedora-hummingbird-linux-taking-the-hummingbird-model-to-the-full-os/), which provides a hardened, fast-moving bootable base without a desktop. Utah adds the desktop layer: Bluefin's package contract and the GNOME 51 desktop stack built from verified upstream sources via `projectbluefin/utah-packages`.
 
 :::info[Pre-alpha]
 Utah is an experimental pre-alpha build in active development. No public ISOs are published yet; it is designed for developers and contributors testing Hummingbird and GNOME 51 integration. Track progress and file issues at [projectbluefin/utah](https://github.com/projectbluefin/utah/issues).
@@ -17,19 +17,19 @@ Utah is an experimental pre-alpha build in active development. No public ISOs ar
 
 Utah is composed across two coordinated repositories:
 
-| Repository | Role |
-| --- | --- |
-| [`projectbluefin/utah`](https://github.com/projectbluefin/utah) | Composes the bootc OS image with Bluefin's package contract and desktop services. |
+| Repository                                                                        | Role                                                                                             |
+| --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| [`projectbluefin/utah`](https://github.com/projectbluefin/utah)                   | Composes the bootc OS image with Bluefin's package contract and desktop services.                |
 | [`projectbluefin/utah-packages`](https://github.com/projectbluefin/utah-packages) | Builds GNOME 51 and the desktop stack from verified upstream sources, published as an OCI layer. |
 
 ## Image Streams
 
 Utah defines four flavors matching Bluefin's standard targets: `utah`, `utah-nvidia`, `utah-gaming`, and `utah-nvidia-gaming`.
 
-| Tag | Stream | Description |
-| ---: | ---: | --- |
-| `:testing` | Dev | Daily development build from the `testing` branch. |
-| `:stable` | Stable | Promoted from `:testing` following automated validation. |
+|        Tag | Stream | Description                                              |
+| ---------: | -----: | -------------------------------------------------------- |
+| `:testing` |    Dev | Daily development build from the `testing` branch.       |
+|  `:stable` | Stable | Promoted from `:testing` following automated validation. |
 
 ```bash
 # Switch to the Utah testing stream
@@ -57,4 +57,4 @@ sudo bootc switch ghcr.io/projectbluefin/utah:testing --enforce-container-sigpol
 
 - [projectbluefin/utah Repository](https://github.com/projectbluefin/utah)
 - [projectbluefin/utah-packages Repository](https://github.com/projectbluefin/utah-packages)
-- [Fedora Hummingbird Documentation](https://packages.redhat.com)
+- [Fedora Hummingbird Announcement](https://fedoramagazine.org/fedora-hummingbird-linux-taking-the-hummingbird-model-to-the-full-os/)

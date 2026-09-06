@@ -137,9 +137,9 @@ For CLI warriors you can manage your containers with the Terminal's built-in con
 
 ![image](/img/user-attachments/2a4dc4b5-f1a8-4781-80a4-92ea4dfeeb97.png)
 
-The included [Terminal](https://gitlab.gnome.org/chergert/ptyxis) includes a host terminal so that you can quickly switch between containers and the host.
+The included [Terminal](https://gitlab.gnome.org/GNOME/ptyxis) includes a host terminal so that you can quickly switch between containers and the host.
 
-- The default terminal is [Ptyxis](https://gitlab.gnome.org/chergert/ptyxis), which includes built in integration of distrobox containers. It is aliased as "Terminal" in the menu. It is mapped to <kbd>Ctrl</kbd>-<kbd>Alt</kbd>-<kbd>Enter</kbd> by default for quick launch
+- The default terminal is [Ptyxis](https://gitlab.gnome.org/GNOME/ptyxis), which includes built in integration of distrobox containers. It is aliased as "Terminal" in the menu. It is mapped to <kbd>Ctrl</kbd>-<kbd>Alt</kbd>-<kbd>Enter</kbd> by default for quick launch
 - [Podman Desktop](https://flathub.org/apps/io.podman_desktop.PodmanDesktop) - Containers and Kubernetes for application developers
 - [Pods](https://flathub.org/apps/com.github.marhkb.Pods) is also a great way to manage your containers graphically
 

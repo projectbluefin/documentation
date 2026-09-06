@@ -113,7 +113,7 @@ See the [T2-Atomic](https://github.com/lauretano/t2-atomic) readme for details o
 
 In a terminal, you'll install several packages and enable some daemons needed to run your T2. You'll install t2fanrd rust-tiny-dfr for touchbar management, and t2linux-audio for basic T2 audio support
 
-1. Install SharpenedBlade's T2Linux copr: `sudo curl -o /etc/yum.repos.d/sharpenedblade-t2linux-fedora-40.repo https://copr.fedorainfracloud.org/coprs/sharpenedblade/t2linux/repo/fedora-40/sharpenedblade-t2linux-fedora-40.repo`
+1. Install SharpenedBlade's T2Linux copr: `sudo curl -o /etc/yum.repos.d/sharpenedblade-t2linux-fedora-43.repo https://copr.fedorainfracloud.org/coprs/sharpenedblade/t2linux/repo/fedora-43/sharpenedblade-t2linux-fedora-43.repo`
 
 2. Install T2-specific packages: `sudo dnf install t2fanrd rust-tiny-dfr t2linux-audio` and reboot when prompted.
 
@@ -154,11 +154,11 @@ To prevent the system from sleeping, we'll configure systemd to ignore the lid s
 1. In a terminal, run:
 
 ```
-sudo mkdir -p /etc/systemd/login.conf.d
-sudo touch /etc/systemd/login.conf.d/t2-lidswitch.conf
+sudo mkdir -p /etc/systemd/logind.conf.d
+sudo touch /etc/systemd/logind.conf.d/t2-lidswitch.conf
 ```
 
-2. Edit `/etc/systemd/login.conf.d/t2-lidswitch.conf` to have the following contents, which will override the default system-wide config in `/usr/lib/systemd/logind.conf`:
+2. Edit `/etc/systemd/logind.conf.d/t2-lidswitch.conf` to have the following contents, which will override the default system-wide config in `/usr/lib/systemd/logind.conf`:
 
 ```
 [Login]
@@ -176,9 +176,7 @@ HandleLidSwitchDocked=ignore
 
 ##### T2-Atomic:
 
-The file `/etc/systemd/login.conf.d/t2-lidswitch.conf` should exist with the same settings seen above. It disables the lid switch (remember to shut your laptop down!) and sets the power button action to shut down as well.
-
-###
+The file `/etc/systemd/logind.conf.d/t2-lidswitch.conf` should exist with the same settings seen above. It disables the lid switch (remember to shut your laptop down!) and sets the power button action to shut down as well.
 
 #### Disable T2 USB Ethernet Notification Spam
 

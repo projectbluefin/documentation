@@ -17,9 +17,9 @@ The reboot took 4–5 days in late May 2026. As Jorge describes it:
 
 > I did a 4-5 day sprint to rebuild Bluefin with agents. Lots of AI smart people helped me like Andy Anderson, who really explained this. Then it just became obvious. Bluefin 2.0.
 >
-> — Jorge Castro, _[THEPATTERN](https://github.com/projectbluefin/bluefin/blob/main/THEPATTERN.md)_
+> — Jorge Castro, _[THEPATTERN](https://github.com/projectbluefin/bluefin/blob/0c41935a077b5fbb8d8367ffe14770f361e78ed2/THEPATTERN.md)_
 
-For a full technical comparison of what changed between `ublue-os/bluefin` and `projectbluefin/bluefin`, see **[THEPATTERN.md](https://github.com/projectbluefin/bluefin/blob/main/THEPATTERN.md)**.
+For a full technical comparison of what changed between `ublue-os/bluefin` and `projectbluefin/bluefin`, see **[THEPATTERN.md](https://github.com/projectbluefin/bluefin/blob/0c41935a077b5fbb8d8367ffe14770f361e78ed2/THEPATTERN.md)**.
 
 ---
 
@@ -503,7 +503,7 @@ gh search issues --owner projectbluefin --state open
 Also see:
 
 - [todo.projectbluefin.io](https://todo.projectbluefin.io/) — work that is new or in progress
-- [done.projectbluefin.io](https://done.projectbluefin.io/) — recently completed work
+- [Reports](/reports) — recently completed work
 
 ### Before opening a PR
 
@@ -806,7 +806,7 @@ a mistake here degrades quietly rather than breaking the page.
 
 ### Code of conduct
 
-All contributors follow the [Universal Blue Code of Conduct](https://github.com/ublue-os/main?tab=coc-ov-file#readme).
+All contributors follow the [Bluefin Code of Conduct](/code-of-conduct).
 
 ---
 
