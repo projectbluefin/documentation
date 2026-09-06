@@ -1,5 +1,8 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
+const { mkdtempSync, readFileSync, rmSync } = require("node:fs");
+const os = require("node:os");
+const path = require("node:path");
 
 const {
   PRODUCT_SPECS,
@@ -9,9 +12,20 @@ const {
   buildUnavailableOutput,
   cacheAgeHours,
   isCurrentImageCatalog,
+  main,
   normalizeTestingTag,
+  releaseInfoFromSource,
   sbomVersionsForStream,
 } = require("./fetch-github-images.js");
+
+function completeCachedProducts() {
+  return PRODUCT_SPECS.map((spec) => ({
+    id: spec.id,
+    org: "projectbluefin",
+    versionSource: "sbom",
+    versions: { source: "sbom" },
+  }));
+}
 
 test("PRODUCT_SPECS defines only the 4 projectbluefin image products", () => {
   const productIds = PRODUCT_SPECS.map((spec) => spec.id);
@@ -75,18 +89,89 @@ test("cacheAgeHours uses generatedAt instead of the file mtime", () => {
   assert.ok(Math.abs(cacheAgeHours({ generatedAt }) - 10) < 0.2);
 });
 
-test("image cache validity rejects retired products", () => {
+test("image cache validity rejects empty and incomplete product sets", () => {
+  const products = completeCachedProducts();
+
+  assert.equal(isCurrentImageCatalog({ products: [] }), false);
   assert.equal(
     isCurrentImageCatalog({
-      products: [{ id: "ublue-bluefin", org: "projectbluefin" }],
+      products: products.filter(
+        (product) => product.id !== "projectbluefin-utah",
+      ),
     }),
     false,
   );
+  assert.equal(isCurrentImageCatalog({ products }), true);
+});
+
+test("image cache validity rejects retired products", () => {
+  const products = completeCachedProducts();
+
   assert.equal(
     isCurrentImageCatalog({
-      products: [{ id: "projectbluefin-bluefin", org: "projectbluefin" }],
+      products: [{ ...products[0], id: "ublue-bluefin" }, ...products.slice(1)],
     }),
-    true,
+    false,
+  );
+});
+
+test("image cache validity requires SBOM provenance", () => {
+  const products = completeCachedProducts();
+
+  const unmarked = products.map((product) => ({
+    ...product,
+    versionSource: "release-feed",
+    versions: {},
+  }));
+  assert.equal(isCurrentImageCatalog({ products: unmarked }), false);
+
+  const versionsMarked = products.map(({ versionSource, ...product }) => ({
+    ...product,
+    versions: { source: "sbom" },
+  }));
+  assert.equal(isCurrentImageCatalog({ products: versionsMarked }), true);
+});
+
+test("main writes an unavailable catalog when the SBOM cache is missing", async () => {
+  const directory = mkdtempSync(path.join(os.tmpdir(), "fetch-github-images-"));
+  const outputFile = path.join(directory, "images.json");
+  try {
+    await main({
+      outputFile,
+      sbomFile: path.join(directory, "missing-sbom.json"),
+    });
+
+    const output = JSON.parse(readFileSync(outputFile, "utf-8"));
+    assert.equal(output.unavailable, true);
+    assert.equal(output.stateReason, "SBOM cache not available");
+    assert.deepEqual(output.products, []);
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
+});
+
+test("release metadata preserves the release asset URL", () => {
+  const release = releaseInfoFromSource(
+    {
+      bluefin: {
+        items: [
+          {
+            title: "stable-20260906: Stable",
+            link: "https://github.com/projectbluefin/bluefin/releases/tag/stable-20260906",
+          },
+        ],
+      },
+    },
+    { feed: "bluefin", stream: "stable" },
+  );
+
+  assert.equal(
+    release.url,
+    "https://github.com/projectbluefin/bluefin/releases/tag/stable-20260906",
+  );
+  assert.equal(
+    release.assetsUrl,
+    "https://github.com/projectbluefin/bluefin/releases/tag/stable-20260906#assets",
   );
 });
 

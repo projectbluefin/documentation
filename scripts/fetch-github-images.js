@@ -31,8 +31,8 @@ const CACHE_MAX_AGE_HOURS = Number(process.env.IMAGES_CACHE_HOURS || 168);
 const REFRESH_HOURS = Number(process.env.IMAGES_REFRESH_HOURS || 336);
 const STALE_DAYS = Number(process.env.IMAGES_STALE_DAYS || 30);
 const FORCE_REFRESH = process.argv.includes("--force");
-const SBOM_UNAVAILABLE_REASON =
-  "SBOM attestation cache not found or empty — versions remain unavailable";
+const SBOM_VERSION_SOURCE = "sbom";
+const SBOM_UNAVAILABLE_REASON = "SBOM cache not available";
 
 const PRODUCT_SPECS = [
   {
@@ -43,7 +43,8 @@ const PRODUCT_SPECS = [
     artwork: "bluefin",
     summary: "Primary Bluefin desktop image for most systems.",
     streamOrder: ["stable", "stable-daily", "latest", "beta"],
-    versionSource: null,
+    versionSource: SBOM_VERSION_SOURCE,
+    releaseSource: { feed: "bluefin", stream: "stable" },
     sbomStreamId: "bluefin-stable",
     keyRepo: "projectbluefin/bluefin",
     nvidiaPackage: "bluefin-nvidia",
@@ -59,7 +60,8 @@ const PRODUCT_SPECS = [
     artwork: "achillobator",
     summary: "Long-term support Bluefin stream.",
     streamOrder: ["lts"],
-    versionSource: null,
+    versionSource: SBOM_VERSION_SOURCE,
+    releaseSource: { feed: "lts", stream: "lts" },
     sbomStreamId: "bluefin-lts",
     keyRepo: "projectbluefin/bluefin-lts",
     nvidiaPackage: "bluefin-lts-nvidia",
@@ -76,7 +78,10 @@ const PRODUCT_SPECS = [
     artwork: "dakotaraptor",
     summary: "Project Bluefin Dakota image stream built with BuildStream.",
     streamOrder: ["latest"],
-    versionSource: null,
+    versionSource: SBOM_VERSION_SOURCE,
+    releaseSource: {
+      url: "https://github.com/projectbluefin/dakota/releases",
+    },
     sbomStreamId: "dakota-latest",
     keyRepo: "projectbluefin/dakota",
     nvidiaPackage: "dakota-nvidia",
@@ -95,7 +100,10 @@ const PRODUCT_SPECS = [
     summary:
       "Project Bluefin Utah image stream built with Fedora Hummingbird technology.",
     streamOrder: ["testing"],
-    versionSource: null,
+    versionSource: SBOM_VERSION_SOURCE,
+    releaseSource: {
+      url: "https://github.com/projectbluefin/utah/releases",
+    },
     sbomStreamId: "utah-testing",
     keyRepo: "projectbluefin/utah",
     nvidiaPackage: "utah-nvidia",
@@ -191,13 +199,25 @@ function cacheAgeHours(output = readJsonIfExists(OUTPUT_FILE, null)) {
   return (Date.now() - generatedAt) / (1000 * 60 * 60);
 }
 
+function isSbomSourcedProduct(product) {
+  return (
+    product?.versionSource === SBOM_VERSION_SOURCE ||
+    product?.versions?.source === SBOM_VERSION_SOURCE ||
+    product?.metadata?.versionSource === SBOM_VERSION_SOURCE
+  );
+}
+
 function isCurrentImageCatalog(output) {
   if (output?.unavailable || !Array.isArray(output?.products)) return false;
-  const productIds = new Set(PRODUCT_SPECS.map((spec) => spec.id));
-  return output.products.every(
-    (product) =>
-      product?.org === "projectbluefin" && productIds.has(product?.id),
+  if (output.products.length !== PRODUCT_SPECS.length) return false;
+
+  const productsById = new Map(
+    output.products.map((product) => [product?.id, product]),
   );
+  return PRODUCT_SPECS.every((spec) => {
+    const product = productsById.get(spec.id);
+    return product?.org === "projectbluefin" && isSbomSourcedProduct(product);
+  });
 }
 
 function normalizeTestingTag(raw) {
@@ -249,7 +269,9 @@ function latestFeedItem(feeds, source) {
   // misrepresent daily-only images as stable releases. Return null so callers
   // render unknown values instead.
   if (source.stream === "stable-daily") return null;
-  const items = source.feed === "lts" ? feeds.lts.items : feeds.bluefin.items;
+  const items =
+    source.feed === "lts" ? feeds?.lts?.items : feeds?.bluefin?.items;
+  if (!Array.isArray(items)) return null;
   const stream = source.stream;
 
   const match = items.find((item) => {
@@ -473,9 +495,25 @@ function releaseInfoFromFeedItem(item) {
   };
 }
 
+function releaseInfoFromSource(feeds, source) {
+  if (!source) return null;
+  if (source.url) {
+    return {
+      title: source.title || null,
+      url: source.url,
+      assetsUrl: source.assetsUrl || `${source.url}#assets`,
+    };
+  }
+  return releaseInfoFromFeedItem(latestFeedItem(feeds, source));
+}
+
 async function buildProduct(spec, feeds, cachedById, ageHours, sbomCache) {
   const existing = cachedById.get(spec.id) || null;
-  const shouldRefresh = FORCE_REFRESH || !existing || ageHours >= REFRESH_HOURS;
+  const shouldRefresh =
+    FORCE_REFRESH ||
+    !existing ||
+    ageHours >= REFRESH_HOURS ||
+    !isSbomSourcedProduct(existing);
 
   if (!shouldRefresh && existing) {
     return {
@@ -563,17 +601,18 @@ async function buildProduct(spec, feeds, cachedById, ageHours, sbomCache) {
     metadataSource = metadata ? "cache" : "unavailable";
   }
 
-  const feedItem = latestFeedItem(feeds, spec.versionSource);
+  const feedItem = latestFeedItem(feeds, spec.releaseSource);
   const sbomVersions = sbomVersionsForStream(
     sbomCache,
     spec,
-    spec.versionSource?.stream,
+    spec.streamOrder[0],
   );
   const versions = {
+    source: SBOM_VERSION_SOURCE,
     gnome: sbomVersions?.gnome || null,
     kernel: sbomVersions?.kernel || null,
     nvidia: sbomVersions?.nvidia || null,
-    release: releaseInfoFromFeedItem(feedItem),
+    release: releaseInfoFromSource(feeds, spec.releaseSource),
   };
 
   if (metadata && !metadata.digestLink && versions.release?.assetsUrl) {
@@ -600,6 +639,7 @@ async function buildProduct(spec, feeds, cachedById, ageHours, sbomCache) {
     name: spec.name,
     org: spec.org,
     package: spec.package,
+    versionSource: spec.versionSource,
     summary: spec.summary,
     artwork: spec.artwork,
     imageRef,
@@ -619,8 +659,22 @@ async function buildProduct(spec, feeds, cachedById, ageHours, sbomCache) {
   };
 }
 
-async function main() {
-  const existing = readJsonIfExists(OUTPUT_FILE, null);
+async function main({ outputFile = OUTPUT_FILE, sbomFile = SBOM_FILE } = {}) {
+  const existing = readJsonIfExists(outputFile, null);
+  const sbomCache = readSbomCache(sbomFile);
+  if (
+    !sbomCache ||
+    !sbomCache.streams ||
+    typeof sbomCache.streams !== "object" ||
+    Array.isArray(sbomCache.streams) ||
+    Object.keys(sbomCache.streams).length === 0
+  ) {
+    const output = buildUnavailableOutput(SBOM_UNAVAILABLE_REASON);
+    writeOutput(output, outputFile);
+    console.log(`Image data unavailable: ${SBOM_UNAVAILABLE_REASON}.`);
+    return;
+  }
+
   const ageHours = cacheAgeHours(existing);
   if (
     isCurrentImageCatalog(existing) &&
@@ -640,14 +694,7 @@ async function main() {
     bluefin: readJsonIfExists(FEED_BLUEFIN, { items: [] }),
     lts: readJsonIfExists(FEED_LTS, { items: [] }),
   };
-  const sbomCache = readSbomCache(SBOM_FILE);
-  if (sbomCache) {
-    console.log("SBOM attestation cache loaded.");
-  } else {
-    console.log(
-      `SBOM attestation cache not found — ${SBOM_UNAVAILABLE_REASON}.`,
-    );
-  }
+  console.log("SBOM attestation cache loaded.");
 
   const products = [];
   for (const spec of PRODUCT_SPECS) {
@@ -678,8 +725,8 @@ async function main() {
     products,
   };
 
-  writeOutput(output);
-  console.log(`Image data saved to ${OUTPUT_FILE}`);
+  writeOutput(output, outputFile);
+  console.log(`Image data saved to ${outputFile}`);
 }
 
 function writeOutput(output, outputFile = OUTPUT_FILE) {
@@ -731,7 +778,9 @@ module.exports = {
   buildUnavailableOutput,
   cacheAgeHours,
   isCurrentImageCatalog,
+  main,
   normalizeTestingTag,
   reportMainError,
+  releaseInfoFromSource,
   sbomVersionsForStream,
 };

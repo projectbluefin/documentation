@@ -101,9 +101,11 @@ checkout` stamps every tracked file with the current time and the TTL never
   payload.
 - Image catalogs should route every displayed version field, including NVIDIA,
   through the SBOM stream lookup. Release feeds may still provide links or
-  timestamps, but they must not provide versions; when product IDs change,
-  reject fresh caches containing retired IDs instead of trusting `generatedAt`
-  alone.
+  timestamps, but they must not provide versions. Cache short-circuiting must
+  require the complete current product set and an explicit SBOM provenance
+  marker; missing SBOM input must produce an unavailable payload instead of a
+  catalog filled with null versions. Keep release URLs in separate metadata so
+  they survive source-of-truth migrations.
 
 Each is invisible from the source alone. Each would be paid again by the next
 agent. That is the bar.
