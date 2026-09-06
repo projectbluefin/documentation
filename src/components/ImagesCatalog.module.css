@@ -57,6 +57,10 @@
   opacity: 1;
 }
 
+.cardUtah {
+  border-left: 4px solid var(--ifm-color-warning);
+}
+
 .cardHeader {
   position: relative;
   z-index: 1;
@@ -130,7 +134,11 @@
   border: 1px solid var(--ifm-color-emphasis-300);
   border-radius: 999px;
   padding: 0.2rem 0.55rem;
-  background: color-mix(in srgb, var(--ifm-background-color) 94%, var(--ifm-color-emphasis-100));
+  background: color-mix(
+    in srgb,
+    var(--ifm-background-color) 94%,
+    var(--ifm-color-emphasis-100)
+  );
   font-size: 0.82rem;
   display: inline-flex;
   align-items: center;
@@ -158,7 +166,11 @@
   font-size: 0.72rem;
   font-weight: 600;
   color: var(--ifm-color-emphasis-700);
-  background: color-mix(in srgb, var(--ifm-color-emphasis-200) 50%, transparent);
+  background: color-mix(
+    in srgb,
+    var(--ifm-color-emphasis-200) 50%,
+    transparent
+  );
   border: 1px solid var(--ifm-color-emphasis-300);
   border-radius: 999px;
   padding: 0.12rem 0.45rem;
@@ -273,7 +285,11 @@
   margin-top: 0.45rem;
   border: 1px solid var(--ifm-color-emphasis-300);
   border-radius: 8px;
-  background: color-mix(in srgb, var(--ifm-background-color) 94%, var(--ifm-color-emphasis-100));
+  background: color-mix(
+    in srgb,
+    var(--ifm-background-color) 94%,
+    var(--ifm-color-emphasis-100)
+  );
   padding: 0.5rem 0.65rem;
 }
 
@@ -311,12 +327,15 @@
   word-break: break-all;
 }
 
-
 .section :global(.tabs) {
   margin-top: 0.35rem;
   border: 0;
   border-radius: 10px;
-  background: color-mix(in srgb, var(--ifm-color-primary) 6%, var(--ifm-background-color));
+  background: color-mix(
+    in srgb,
+    var(--ifm-color-primary) 6%,
+    var(--ifm-background-color)
+  );
   padding: 0.35rem 0.45rem 0.45rem;
   overflow: hidden;
 }
@@ -352,7 +371,11 @@
 
 .section :global(.tabs-container > .margin-top--md) {
   margin-top: 0.35rem !important;
-  background: color-mix(in srgb, var(--ifm-color-primary) 6%, var(--ifm-background-color));
+  background: color-mix(
+    in srgb,
+    var(--ifm-color-primary) 6%,
+    var(--ifm-background-color)
+  );
   padding: 0.35rem 0.35rem 0.2rem;
 }
 
@@ -361,11 +384,19 @@
 }
 
 .section :global(.tabs__item--active) {
-  background: color-mix(in srgb, var(--ifm-color-primary) 14%, var(--ifm-background-color));
+  background: color-mix(
+    in srgb,
+    var(--ifm-color-primary) 14%,
+    var(--ifm-background-color)
+  );
 }
 
 .section :global(.tabs-container > .margin-top--md code) {
-  background: color-mix(in srgb, var(--ifm-color-primary) 10%, var(--ifm-background-color));
+  background: color-mix(
+    in srgb,
+    var(--ifm-color-primary) 10%,
+    var(--ifm-background-color)
+  );
   border: 0;
 }
 

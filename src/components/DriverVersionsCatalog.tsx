@@ -88,9 +88,15 @@ function cleanVersion(value: string | null | undefined): string {
 
 function VersionValue({ value }: { value: string | null | undefined }) {
   if (!value) {
-    return <span className={`${styles.majorVersionValue} ${styles.versionMissing}`}>N/A</span>;
+    return (
+      <span className={`${styles.majorVersionValue} ${styles.versionMissing}`}>
+        N/A
+      </span>
+    );
   }
-  return <span className={styles.majorVersionValue}>{cleanVersion(value)}</span>;
+  return (
+    <span className={styles.majorVersionValue}>{cleanVersion(value)}</span>
+  );
 }
 
 function majorNumber(value: string | null | undefined) {
@@ -100,7 +106,8 @@ function majorNumber(value: string | null | undefined) {
 }
 
 function majorMinor(value: string | null | undefined) {
-  if (!value) return { major: null as number | null, minor: null as number | null };
+  if (!value)
+    return { major: null as number | null, minor: null as number | null };
   const match = value.match(/(\d+)\.(\d+)/);
   if (!match) return { major: null, minor: null };
   return {
@@ -111,7 +118,10 @@ function majorMinor(value: string | null | undefined) {
 
 /** Extracts a sortable version number (major*1000+minor) for each history row,
  *  oldest-first, suitable for feeding into a Sparkline. */
-function versionSparkData(history: DriverRow[], field: keyof VersionSet): number[] {
+function versionSparkData(
+  history: DriverRow[],
+  field: keyof VersionSet,
+): number[] {
   return [...history]
     .reverse()
     .map((r) => {
@@ -122,15 +132,16 @@ function versionSparkData(history: DriverRow[], field: keyof VersionSet): number
 }
 
 interface UserspaceInfo {
-  label: string;   // e.g. "Fedora 43 Userspace" or "CentOS Stream 10 Userspace"
-  key: string;     // e.g. "fc43" or "el10" — used for transition detection
+  label: string; // e.g. "Fedora 43 Userspace" or "CentOS Stream 10 Userspace"
+  key: string; // e.g. "fc43" or "el10" — used for transition detection
 }
 
 /** Reads the BASE kernel to determine the userspace OS and version. */
 function extractUserspace(row: DriverRow): UserspaceInfo | null {
   const base = row.versions.kernel ?? "";
   const el = base.match(/\.el(\d+)/);
-  if (el) return { label: `CentOS Stream ${el[1]} Userspace`, key: `el${el[1]}` };
+  if (el)
+    return { label: `CentOS Stream ${el[1]} Userspace`, key: `el${el[1]}` };
   const fc = base.match(/\.fc(\d+)/);
   if (fc) return { label: `Fedora ${fc[1]} Userspace`, key: `fc${fc[1]}` };
   return null;
@@ -144,30 +155,37 @@ function _extractFedoraRelease(row: DriverRow): number | null {
 }
 
 /** Banner shown at the transition point where the userspace version changed. */
-function UserspaceMarker({ toLabel, fromLabel }: { toLabel: string; fromLabel: string }) {
+function UserspaceMarker({
+  toLabel,
+  fromLabel,
+}: {
+  toLabel: string;
+  fromLabel: string;
+}) {
   return (
     <div className={styles.userspaceMarker}>
-      <span className={styles.userspaceMarkerLabel}>
-        ↑ {toLabel}
-      </span>
+      <span className={styles.userspaceMarkerLabel}>↑ {toLabel}</span>
       <div className={styles.userspaceMarkerLine} />
       <span className={styles.userspaceMarkerCenter}>
         {toLabel.replace("Userspace", "Release")}
       </span>
       <div className={styles.userspaceMarkerLine} />
-      <span className={`${styles.userspaceMarkerLabel} ${styles.userspaceMarkerLabelOld}`}>
+      <span
+        className={`${styles.userspaceMarkerLabel} ${styles.userspaceMarkerLabelOld}`}
+      >
         ↓ {fromLabel}
       </span>
     </div>
   );
 }
 
-function rebaseCommandForTag(tag: string) {
-  const safeTag = /^[a-z0-9][a-z0-9._-]*$/i.test(tag) ? tag : "stable";
-  return `sudo bootc switch --enforce-container-sigpolicy "ghcr.io/projectbluefin/$(jq -r '.\"image-name\"' /usr/share/ublue-os/image-info.json):${safeTag}"`;
+function buildRebaseCommand(stream: DriverStream, tag: string): string {
+  const safeTag = tag.replace(/[^a-zA-Z0-9_.-]/g, "");
+  return `sudo bootc switch --enforce-container-sigpolicy ghcr.io/projectbluefin/${stream.id.replace(/-.*/, "")}:${safeTag}`;
 }
 
 function ReleaseNode({
+  stream,
   row,
   previousRow,
   emphasize,
@@ -175,6 +193,7 @@ function ReleaseNode({
   isLts,
   pinnedHweKernels,
 }: {
+  stream: DriverStream;
   row: DriverRow;
   previousRow?: DriverRow;
   emphasize: boolean;
@@ -261,16 +280,29 @@ function ReleaseNode({
 
   return (
     <article className={styles.timelineNode}>
-      <div className={emphasize ? `${styles.nodeBody} ${styles.nodeBodyLatest}` : styles.nodeBody}>
+      <div
+        className={
+          emphasize
+            ? `${styles.nodeBody} ${styles.nodeBodyLatest}`
+            : styles.nodeBody
+        }
+      >
         <header className={styles.nodeHeader}>
           {row.releaseUrl ? (
-            <Link to={row.releaseUrl} target="_blank" rel="noopener noreferrer" className={styles.releaseTagLink}>
+            <Link
+              to={row.releaseUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.releaseTagLink}
+            >
               <strong className={styles.releaseTag}>{row.tag}</strong>
             </Link>
           ) : (
             <strong className={styles.releaseTag}>{row.tag}</strong>
           )}
-          <span className={styles.releaseDate}>{formatDate(row.publishedAt)}</span>
+          <span className={styles.releaseDate}>
+            {formatDate(row.publishedAt)}
+          </span>
         </header>
 
         <div className={styles.majorVersions}>
@@ -285,8 +317,12 @@ function ReleaseNode({
           >
             <span className={styles.majorVersionLabel}>Kernel</span>
             <VersionValue value={kernel} />
-            {kernelMajorBump && <span className={styles.bumpTag}>Major bump</span>}
-            {kernelMinorBump && <span className={styles.minorTag}>Minor bump</span>}
+            {kernelMajorBump && (
+              <span className={styles.bumpTag}>Major bump</span>
+            )}
+            {kernelMinorBump && (
+              <span className={styles.minorTag}>Minor bump</span>
+            )}
           </div>
           {hwe !== null && (
             <div className={styles.majorVersionCard}>
@@ -311,10 +347,16 @@ function ReleaseNode({
                   : `${styles.majorVersionCard} ${styles.nvidiaCard}`
             }
           >
-            <span className={styles.majorVersionLabel}>{isLts ? "NVIDIA (GDX)" : "NVIDIA"}</span>
+            <span className={styles.majorVersionLabel}>
+              {isLts ? "NVIDIA (GDX)" : "NVIDIA"}
+            </span>
             <VersionValue value={nvidia} />
-            {nvidiaMajorBump && <span className={styles.nvidiaBumpTag}>Major bump</span>}
-            {nvidiaMinorBump && <span className={styles.nvidiaMinorTag}>Minor bump</span>}
+            {nvidiaMajorBump && (
+              <span className={styles.nvidiaBumpTag}>Major bump</span>
+            )}
+            {nvidiaMinorBump && (
+              <span className={styles.nvidiaMinorTag}>Minor bump</span>
+            )}
           </div>
           <div
             className={
@@ -327,8 +369,12 @@ function ReleaseNode({
           >
             <span className={styles.majorVersionLabel}>Mesa</span>
             <VersionValue value={mesa} />
-            {mesaMajorBump && <span className={styles.mesaBumpTag}>Major bump</span>}
-            {mesaMinorBump && <span className={styles.mesaMinorTag}>Minor bump</span>}
+            {mesaMajorBump && (
+              <span className={styles.mesaBumpTag}>Major bump</span>
+            )}
+            {mesaMinorBump && (
+              <span className={styles.mesaMinorTag}>Minor bump</span>
+            )}
           </div>
           <div
             className={
@@ -341,15 +387,23 @@ function ReleaseNode({
           >
             <span className={styles.majorVersionLabel}>GNOME</span>
             <VersionValue value={gnome} />
-            {gnomeMajorBump && <span className={styles.gnomeBumpTag}>Major bump</span>}
-            {gnomeMinorBump && <span className={styles.gnomeMinorTag}>Minor bump</span>}
+            {gnomeMajorBump && (
+              <span className={styles.gnomeBumpTag}>Major bump</span>
+            )}
+            {gnomeMinorBump && (
+              <span className={styles.gnomeMinorTag}>Minor bump</span>
+            )}
           </div>
         </div>
 
         <div className={styles.rebaseInline}>
-          <span className={styles.rebaseInlineLabel}>Rebase to this release</span>
+          <span className={styles.rebaseInlineLabel}>
+            Rebase to this release
+          </span>
           <div className={styles.commandBlock}>
-            <CodeBlock language="bash">{rebaseCommandForTag(row.tag)}</CodeBlock>
+            <CodeBlock language="bash">
+              {buildRebaseCommand(stream, row.tag)}
+            </CodeBlock>
           </div>
         </div>
       </div>
@@ -358,13 +412,22 @@ function ReleaseNode({
 }
 
 interface DriverVersionsCatalogProps {
-  streamId: "bluefin-stable" | "bluefin-lts" | "dakota-latest";
+  streamId: "bluefin-stable" | "bluefin-lts" | "dakota-latest" | "utah-testing";
 }
 
-export default function DriverVersionsCatalog({ streamId }: DriverVersionsCatalogProps): React.JSX.Element {
+export default function DriverVersionsCatalog({
+  streamId,
+}: DriverVersionsCatalogProps): React.JSX.Element {
   const allStreams = Array.isArray(catalog.streams) ? catalog.streams : [];
   const stream = allStreams.find((entry) => entry.id === streamId);
-  const fallbackLabel = streamId === "bluefin-lts" ? "LTS and GDX" : streamId === "dakota-latest" ? "Dakotaraptor" : "Stable";
+  const fallbackLabel =
+    streamId === "bluefin-lts"
+      ? "LTS and GDX"
+      : streamId === "dakota-latest"
+        ? "Dakotaraptor"
+        : streamId === "utah-testing"
+          ? "Utah"
+          : "Stable";
 
   if (!stream && allStreams.length > 0) {
     return (
@@ -375,16 +438,22 @@ export default function DriverVersionsCatalog({ streamId }: DriverVersionsCatalo
         </aside>
         <section className={styles.streamSection}>
           <header className={styles.streamHeader}>
-            <span className={styles.streamMeta}>cache · 0 releases in {fallbackLabel}</span>
+            <span className={styles.streamMeta}>
+              cache · 0 releases in {fallbackLabel}
+            </span>
           </header>
-          <p className={styles.emptyText}>No releases in the last 90 days for this stream.</p>
+          <p className={styles.emptyText}>
+            No releases in the last 90 days for this stream.
+          </p>
         </section>
       </div>
     );
   }
 
   if (!stream) {
-    return <p className={styles.emptyText}>No driver version data available yet.</p>;
+    return (
+      <p className={styles.emptyText}>No driver version data available yet.</p>
+    );
   }
 
   return (
@@ -417,7 +486,9 @@ export default function DriverVersionsCatalog({ streamId }: DriverVersionsCatalo
           hweCounts.set(v, (hweCounts.get(v) ?? 0) + 1);
         }
         const pinnedHweKernels = new Set(
-          [...hweCounts.entries()].filter(([, count]) => count >= 2).map(([v]) => v),
+          [...hweCounts.entries()]
+            .filter(([, count]) => count >= 2)
+            .map(([v]) => v),
         );
 
         const currentUserspace = latest ? extractUserspace(latest) : null;
@@ -426,8 +497,8 @@ export default function DriverVersionsCatalog({ streamId }: DriverVersionsCatalo
           <section key={stream.id} className={styles.streamSection}>
             <header className={styles.streamHeader}>
               <span className={styles.streamMeta}>
-                {stream.source} · {stream.rowCount} releases in {streamId === "bluefin-lts" ? "LTS and GDX" : streamId === "dakota-latest" ? "Dakotaraptor" : "Stable"} ·
-                updated {formatDate(catalog.generatedAt)}
+                {stream.source} · {stream.rowCount} releases in {fallbackLabel}{" "}
+                · updated {formatDate(catalog.generatedAt)}
               </span>
               {currentUserspace && (
                 <span className={styles.fedoraPill}>
@@ -439,31 +510,73 @@ export default function DriverVersionsCatalog({ streamId }: DriverVersionsCatalo
                 const hweSpark = versionSparkData(stream.history, "hweKernel");
                 const mesaSpark = versionSparkData(stream.history, "mesa");
                 const gnomeSpark = versionSparkData(stream.history, "gnome");
-                if (kernelSpark.length < 2 && hweSpark.length < 2 && mesaSpark.length < 2 && gnomeSpark.length < 2) return null;
+                if (
+                  kernelSpark.length < 2 &&
+                  hweSpark.length < 2 &&
+                  mesaSpark.length < 2 &&
+                  gnomeSpark.length < 2
+                )
+                  return null;
                 return (
                   <div className={styles.versionTrends}>
                     {kernelSpark.length >= 2 && (
-                      <span className={styles.trendChip} title="Kernel version trend across last releases">
+                      <span
+                        className={styles.trendChip}
+                        title="Kernel version trend across last releases"
+                      >
                         <span className={styles.trendLabel}>Kernel</span>
-                        <Sparkline data={kernelSpark} width={72} height={20} color="#3fb950" areaColor="rgba(63,185,80,0.10)" />
+                        <Sparkline
+                          data={kernelSpark}
+                          width={72}
+                          height={20}
+                          color="#3fb950"
+                          areaColor="rgba(63,185,80,0.10)"
+                        />
                       </span>
                     )}
                     {hweSpark.length >= 2 && (
-                      <span className={styles.trendChip} title="HWE kernel version trend">
+                      <span
+                        className={styles.trendChip}
+                        title="HWE kernel version trend"
+                      >
                         <span className={styles.trendLabel}>HWE</span>
-                        <Sparkline data={hweSpark} width={72} height={20} color="#a371f7" areaColor="rgba(163,113,247,0.10)" />
+                        <Sparkline
+                          data={hweSpark}
+                          width={72}
+                          height={20}
+                          color="#a371f7"
+                          areaColor="rgba(163,113,247,0.10)"
+                        />
                       </span>
                     )}
                     {mesaSpark.length >= 2 && (
-                      <span className={styles.trendChip} title="Mesa version trend across last releases">
+                      <span
+                        className={styles.trendChip}
+                        title="Mesa version trend across last releases"
+                      >
                         <span className={styles.trendLabel}>Mesa</span>
-                        <Sparkline data={mesaSpark} width={72} height={20} color="#58a6ff" areaColor="rgba(88,166,255,0.10)" />
+                        <Sparkline
+                          data={mesaSpark}
+                          width={72}
+                          height={20}
+                          color="#58a6ff"
+                          areaColor="rgba(88,166,255,0.10)"
+                        />
                       </span>
                     )}
                     {gnomeSpark.length >= 2 && (
-                      <span className={styles.trendChip} title="GNOME version trend across last releases">
+                      <span
+                        className={styles.trendChip}
+                        title="GNOME version trend across last releases"
+                      >
                         <span className={styles.trendLabel}>GNOME</span>
-                        <Sparkline data={gnomeSpark} width={72} height={20} color="#d97706" areaColor="rgba(217,119,6,0.10)" />
+                        <Sparkline
+                          data={gnomeSpark}
+                          width={72}
+                          height={20}
+                          color="#d97706"
+                          areaColor="rgba(217,119,6,0.10)"
+                        />
                       </span>
                     )}
                   </div>
@@ -474,7 +587,15 @@ export default function DriverVersionsCatalog({ streamId }: DriverVersionsCatalo
             {latest ? (
               <>
                 <div className={styles.timeline}>
-                  <ReleaseNode row={latest} previousRow={older[0]} emphasize pins={streamPins} isLts={streamId === "bluefin-lts"} pinnedHweKernels={pinnedHweKernels} />
+                  <ReleaseNode
+                    stream={stream}
+                    row={latest}
+                    previousRow={older[0]}
+                    emphasize
+                    pins={streamPins}
+                    isLts={streamId === "bluefin-lts"}
+                    pinnedHweKernels={pinnedHweKernels}
+                  />
                 </div>
 
                 {older.length > 0 && (
@@ -483,14 +604,24 @@ export default function DriverVersionsCatalog({ streamId }: DriverVersionsCatalo
                       const prevRow = index === 0 ? latest : older[index - 1];
                       const prevUs = prevRow ? extractUserspace(prevRow) : null;
                       const rowUs = extractUserspace(row);
-                      const showMarker = prevUs !== null && rowUs !== null && prevUs.key !== rowUs.key;
+                      const showMarker =
+                        prevUs !== null &&
+                        rowUs !== null &&
+                        prevUs.key !== rowUs.key;
                       return (
-                        <React.Fragment key={`${stream.id}-${row.tag}-${row.publishedAt || "na"}`}>
-                          {showMarker
-                            ? <UserspaceMarker toLabel={prevUs!.label} fromLabel={rowUs!.label} />
-                            : <div className={styles.releaseDivider} />
-                          }
+                        <React.Fragment
+                          key={`${stream.id}-${row.tag}-${row.publishedAt || "na"}`}
+                        >
+                          {showMarker ? (
+                            <UserspaceMarker
+                              toLabel={prevUs!.label}
+                              fromLabel={rowUs!.label}
+                            />
+                          ) : (
+                            <div className={styles.releaseDivider} />
+                          )}
                           <ReleaseNode
+                            stream={stream}
                             row={row}
                             previousRow={older[index + 1]}
                             emphasize={false}
@@ -510,16 +641,21 @@ export default function DriverVersionsCatalog({ streamId }: DriverVersionsCatalo
                   </Heading>
                   <ol className={styles.rebaseList}>
                     <li>
-                      After running one of the per-release rebase commands above, reboot to activate the deployment:
+                      After running one of the per-release rebase commands
+                      above, reboot to activate the deployment:
                       <div className={styles.commandBlock}>
-                        <CodeBlock language="bash">sudo systemctl reboot</CodeBlock>
+                        <CodeBlock language="bash">
+                          sudo systemctl reboot
+                        </CodeBlock>
                       </div>
                     </li>
                   </ol>
                 </section>
               </>
             ) : (
-              <p className={styles.emptyText}>No release rows parsed for this stream yet.</p>
+              <p className={styles.emptyText}>
+                No release rows parsed for this stream yet.
+              </p>
             )}
           </section>
         );
