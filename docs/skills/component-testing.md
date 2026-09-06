@@ -40,6 +40,10 @@ memory and rendered to a string inside that same runner.
   produces non-interactive HTML and does not run effects, so a data-fetching
   dashboard renders as its loading state and the test proves nothing. Extract
   the presentational part and test that.
+- **A catalog schema is changing.** Verify the component's identifiers and
+  grouping logic against the producer's output contract, then regenerate
+  `static/data/` through its pipeline. Never hand-edit generated catalog data
+  to make a component test pass.
 - **You want to assert on user interaction.** There is no DOM and no event
   simulation here. Test the pure logic instead, or verify through a build.
 - **The behaviour is already covered by `tsc`.** Do not write a test that only

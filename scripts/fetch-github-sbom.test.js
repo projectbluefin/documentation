@@ -1,7 +1,21 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
+const {
+  existsSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} = require("node:fs");
+const os = require("node:os");
+const path = require("node:path");
 
 const {
+  STREAM_SPECS,
+  handleEmptyCache,
+  hasPrimaryReleaseData,
+  isValidSbomCache,
+  reportMainError,
   selectAmd64DigestFromManifest,
   stripEpoch,
   compareRpmVersions,
@@ -9,6 +23,203 @@ const {
   extractBstPackageVersions,
   isSemverLike,
 } = require("./fetch-github-sbom.js");
+
+function makeOutputPaths() {
+  const directory = mkdtempSync(path.join(os.tmpdir(), "fetch-github-sbom-"));
+  return {
+    directory,
+    outputFile: path.join(directory, "sbom-attestations.json"),
+    frontendOutputFile: path.join(directory, "sbom-attestations-frontend.json"),
+    releaseListFile: path.join(directory, "release-list.json"),
+  };
+}
+
+test("handleEmptyCache preserves an existing cache", () => {
+  const paths = makeOutputPaths();
+  try {
+    const existing = {
+      generatedAt: "2026-09-06T00:00:00.000Z",
+      streams: {
+        "bluefin-stable": {
+          releases: { "stable-20260906": { tag: "stable-20260906" } },
+        },
+      },
+    };
+    writeFileSync(paths.outputFile, JSON.stringify(existing), "utf-8");
+
+    assert.deepEqual(handleEmptyCache(existing, paths), existing);
+    assert.deepEqual(
+      JSON.parse(readFileSync(paths.outputFile, "utf-8")),
+      existing,
+    );
+    assert.equal(existsSync(paths.frontendOutputFile), false);
+    assert.equal(existsSync(paths.releaseListFile), false);
+  } finally {
+    rmSync(paths.directory, { recursive: true, force: true });
+  }
+});
+
+test("handleEmptyCache writes unavailable fallbacks without throwing", () => {
+  const paths = makeOutputPaths();
+  try {
+    const output = handleEmptyCache(null, paths);
+    assert.equal(output.unavailable, true);
+    assert.match(output.stateReason, /zero releases/);
+    assert.deepEqual(
+      JSON.parse(readFileSync(paths.outputFile, "utf-8")),
+      output,
+    );
+    assert.deepEqual(
+      JSON.parse(readFileSync(paths.frontendOutputFile, "utf-8")),
+      output,
+    );
+
+    const releaseList = JSON.parse(
+      readFileSync(paths.releaseListFile, "utf-8"),
+    );
+    assert.equal(releaseList.unavailable, true);
+    assert.equal(releaseList.stateReason, output.stateReason);
+    assert.deepEqual(releaseList.releases, []);
+  } finally {
+    rmSync(paths.directory, { recursive: true, force: true });
+  }
+});
+
+test("handleEmptyCache rejects empty and malformed existing caches", () => {
+  const paths = makeOutputPaths();
+  try {
+    for (const existing of [
+      {},
+      { streams: {} },
+      { streams: { "bluefin-stable": { releases: [] } } },
+      { unavailable: true, streams: { "bluefin-stable": { releases: {} } } },
+    ]) {
+      const output = handleEmptyCache(existing, paths);
+      assert.equal(output.unavailable, true);
+      assert.deepEqual(
+        JSON.parse(readFileSync(paths.outputFile, "utf-8")),
+        output,
+      );
+    }
+  } finally {
+    rmSync(paths.directory, { recursive: true, force: true });
+  }
+});
+
+test("isValidSbomCache requires a release-bearing stream", () => {
+  assert.equal(isValidSbomCache({}), false);
+  assert.equal(isValidSbomCache({ streams: {} }), false);
+  assert.equal(
+    isValidSbomCache({
+      streams: { "bluefin-stable": { releases: {} } },
+    }),
+    false,
+  );
+  assert.equal(
+    isValidSbomCache({
+      streams: {
+        "bluefin-stable": {
+          releases: { "stable-20260906": { tag: "stable-20260906" } },
+        },
+      },
+    }),
+    true,
+  );
+});
+
+test("hasPrimaryReleaseData rejects partial stream results", () => {
+  assert.equal(
+    hasPrimaryReleaseData({
+      "bluefin-stable": {
+        releases: { "stable-20260906": {} },
+      },
+      "bluefin-lts": {
+        releases: {},
+      },
+    }),
+    false,
+  );
+  assert.equal(
+    hasPrimaryReleaseData({
+      "bluefin-stable": {
+        releases: { "stable-20260906": {} },
+      },
+      "bluefin-lts": {
+        releases: { "lts-20260906": {} },
+      },
+    }),
+    true,
+  );
+});
+
+test("reportMainError writes unavailable fallbacks when the cache is missing", () => {
+  const paths = makeOutputPaths();
+  const messages = [];
+  const warnings = [];
+  const originalError = console.error;
+  const originalWarn = console.warn;
+  try {
+    console.error = (message) => messages.push(message);
+    console.warn = (message) => warnings.push(message);
+    assert.doesNotThrow(() =>
+      reportMainError(new Error("test failure"), paths),
+    );
+
+    assert.deepEqual(messages, ["fetch-github-sbom: test failure"]);
+    assert.deepEqual(warnings, [
+      "Warning: all streams produced zero releases. Writing unavailable SBOM fallback.",
+    ]);
+    const output = JSON.parse(readFileSync(paths.outputFile, "utf-8"));
+    assert.equal(output.unavailable, true);
+    assert.equal(
+      JSON.parse(readFileSync(paths.frontendOutputFile, "utf-8")).unavailable,
+      true,
+    );
+    assert.equal(
+      JSON.parse(readFileSync(paths.releaseListFile, "utf-8")).unavailable,
+      true,
+    );
+  } finally {
+    console.error = originalError;
+    console.warn = originalWarn;
+    rmSync(paths.directory, { recursive: true, force: true });
+  }
+});
+
+test("reportMainError preserves an existing cache", () => {
+  const paths = makeOutputPaths();
+  const existing = {
+    generatedAt: "2026-09-06T00:00:00.000Z",
+    streams: {
+      "bluefin-stable": {
+        releases: { "stable-20260906": { tag: "stable-20260906" } },
+      },
+    },
+  };
+  const messages = [];
+  const originalError = console.error;
+  const originalWarn = console.warn;
+  try {
+    console.error = (message) => messages.push(message);
+    console.warn = () => {};
+    writeFileSync(paths.outputFile, JSON.stringify(existing), "utf-8");
+    assert.doesNotThrow(() =>
+      reportMainError(new Error("test failure"), paths),
+    );
+
+    assert.deepEqual(messages, ["fetch-github-sbom: test failure"]);
+    assert.deepEqual(
+      JSON.parse(readFileSync(paths.outputFile, "utf-8")),
+      existing,
+    );
+    assert.equal(existsSync(paths.frontendOutputFile), false);
+    assert.equal(existsSync(paths.releaseListFile), false);
+  } finally {
+    console.error = originalError;
+    console.warn = originalWarn;
+    rmSync(paths.directory, { recursive: true, force: true });
+  }
+});
 
 test("selectAmd64DigestFromManifest picks linux/amd64 from multi-arch index", () => {
   const manifest = {
@@ -69,19 +280,61 @@ const MOCK_STABLE_DAILY_SPEC = {
   keyless: true,
 };
 
+test("STREAM_SPECS contains utah-testing and utah-nvidia-testing", () => {
+  const utahSpec = STREAM_SPECS.find((s) => s.id === "utah-testing");
+  const utahNvidiaSpec = STREAM_SPECS.find(
+    (s) => s.id === "utah-nvidia-testing",
+  );
+
+  assert.ok(utahSpec, "utah-testing spec must exist");
+  assert.equal(utahSpec.org, "projectbluefin");
+  assert.equal(utahSpec.package, "utah");
+  assert.equal(utahSpec.streamPrefix, "testing");
+
+  assert.ok(utahNvidiaSpec, "utah-nvidia-testing spec must exist");
+  assert.equal(utahNvidiaSpec.org, "projectbluefin");
+  assert.equal(utahNvidiaSpec.package, "utah-nvidia");
+  assert.equal(utahNvidiaSpec.streamPrefix, "testing");
+});
+
 // Dynamic reference date based on current time to avoid lookback window flakiness.
 const now = new Date();
 const FIXED_RECENT_DATE = now.toISOString().split("T")[0].replace(/-/g, "");
 
+test("findRecentTagsForStream: picks testing-YYYYMMDD tags for Utah streams", () => {
+  const ghcrTags = [
+    `testing-${FIXED_RECENT_DATE}`,
+    `testing-${FIXED_RECENT_DATE}-hwe`,
+    `stable-${FIXED_RECENT_DATE}`,
+  ];
+
+  for (const streamId of ["utah-testing", "utah-nvidia-testing"]) {
+    const spec = STREAM_SPECS.find((s) => s.id === streamId);
+    const result = findRecentTagsForStream(ghcrTags, spec);
+
+    assert.equal(
+      result.length,
+      1,
+      `${streamId} should only match the canonical testing tag`,
+    );
+    assert.equal(result[0].tag, `testing-${FIXED_RECENT_DATE}`);
+    assert.equal(result[0].cacheKey, `testing-${FIXED_RECENT_DATE}`);
+  }
+});
+
 test("findRecentTagsForStream: picks stable-YYYYMMDD tags from GHCR list", () => {
   const ghcrTags = [
     `stable-${FIXED_RECENT_DATE}`,
-    "latest-20260101",                        // different stream prefix — must be excluded
-    `stable-${FIXED_RECENT_DATE}-hwe`,        // non-canonical suffix — must be excluded
-    "v1.0.0",                                 // no date — must be excluded
+    "latest-20260101", // different stream prefix — must be excluded
+    `stable-${FIXED_RECENT_DATE}-hwe`, // non-canonical suffix — must be excluded
+    "v1.0.0", // no date — must be excluded
   ];
   const result = findRecentTagsForStream(ghcrTags, MOCK_STABLE_SPEC);
-  assert.equal(result.length, 1, "only the canonical stable-YYYYMMDD tag should be found");
+  assert.equal(
+    result.length,
+    1,
+    "only the canonical stable-YYYYMMDD tag should be found",
+  );
   assert.equal(result[0].tag, `stable-${FIXED_RECENT_DATE}`);
   assert.equal(result[0].cacheKey, `stable-${FIXED_RECENT_DATE}`);
 });
@@ -94,7 +347,10 @@ test("findRecentTagsForStream: excludes tags older than LOOKBACK_DAYS", () => {
 });
 
 test("findRecentTagsForStream: deduplicates same date", () => {
-  const ghcrTags = [`stable-${FIXED_RECENT_DATE}`, `stable-${FIXED_RECENT_DATE}`]; // duplicate
+  const ghcrTags = [
+    `stable-${FIXED_RECENT_DATE}`,
+    `stable-${FIXED_RECENT_DATE}`,
+  ]; // duplicate
   const result = findRecentTagsForStream(ghcrTags, MOCK_STABLE_SPEC);
   assert.equal(result.length, 1, "duplicates must be removed");
 });
@@ -102,12 +358,16 @@ test("findRecentTagsForStream: deduplicates same date", () => {
 test("findRecentTagsForStream: picks stable-daily-YYYYMMDD tags for stable-daily spec", () => {
   const ghcrTags = [
     `stable-daily-${FIXED_RECENT_DATE}`,
-    `stable-${FIXED_RECENT_DATE}`,              // different prefix (weekly stable) — must be excluded
-    `stable-daily-${FIXED_RECENT_DATE}-hwe`,    // non-canonical suffix — must be excluded
-    "latest-20260101",                          // unrelated prefix — must be excluded
+    `stable-${FIXED_RECENT_DATE}`, // different prefix (weekly stable) — must be excluded
+    `stable-daily-${FIXED_RECENT_DATE}-hwe`, // non-canonical suffix — must be excluded
+    "latest-20260101", // unrelated prefix — must be excluded
   ];
   const result = findRecentTagsForStream(ghcrTags, MOCK_STABLE_DAILY_SPEC);
-  assert.equal(result.length, 1, "only the canonical stable-daily-YYYYMMDD tag should be found");
+  assert.equal(
+    result.length,
+    1,
+    "only the canonical stable-daily-YYYYMMDD tag should be found",
+  );
   assert.equal(result[0].tag, `stable-daily-${FIXED_RECENT_DATE}`);
   assert.equal(result[0].cacheKey, `stable-daily-${FIXED_RECENT_DATE}`);
 });
@@ -264,7 +524,11 @@ test("extractBstPackageVersions: linux-headers.bst does not set kernel", () => {
     ],
   };
   const result = extractBstPackageVersions(headersOnlySpdx);
-  assert.equal(result.kernel, null, "linux-headers must not be mapped to kernel");
+  assert.equal(
+    result.kernel,
+    null,
+    "linux-headers must not be mapped to kernel",
+  );
 });
 
 test("extractBstPackageVersions: mesa picks extensions/mesa/mesa.bst", () => {

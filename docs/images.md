@@ -10,4 +10,7 @@ pagination_prev: null
 
 import ImagesCatalog from "@site/src/components/ImagesCatalog";
 
+The catalog covers the four Project Bluefin image families: **Bluefin**,
+**Bluefin LTS**, **Dakota**, and **Utah**.
+
 <ImagesCatalog />

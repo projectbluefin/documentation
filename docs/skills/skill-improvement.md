@@ -65,6 +65,11 @@ examples from this repository:
 - A tracked data seed cannot use file mtime as a cache key, because `git
 checkout` stamps every tracked file with the current time and the TTL never
   expires in CI. This cost a shipped build before it was caught.
+- For generated multi-stream caches, freshness and provenance are separate
+  checks: parse the payload's `generatedAt`, then require every stream the
+  current upstream data would emit and verify each stream's source marker
+  before short-circuiting. A newly populated optional stream must invalidate a
+  fresh older cache until the output is rebuilt.
 - **Run prettier before the final test run, not after.** Formatting rewraps
   long lines, so any assertion that reads whole lines can pass locally and then
   fail in CI. This broke a production deploy once already; the fix is to parse
@@ -79,6 +84,36 @@ checkout` stamps every tracked file with the current time and the TTL never
   requires updating both `docs/music.md` and the `PLAYLISTS` list in
   `scripts/fetch-playlist-metadata.js`, running `npm run fetch-playlists`, and
   committing only the new thumbnail.
+- Stream registries are easier to keep correct when exported as a test seam;
+  pair each new GHCR stream with a canonical dated-tag fixture so configuration
+  and tag matching are verified together.
+- Build-time data fetchers must degrade successfully when upstream data is
+  missing: preserve a valid cache, otherwise write an explicit
+  `unavailable: true` and `stateReason` payload. The top-level error handler
+  must use that same fallback path before returning exit 0; handling only the
+  normal empty-result branch can still leave consumers without a valid
+  generated artifact. A silently empty file makes unavailable data look healthy
+  and can still break consumers that expect the generated artifact to exist.
+- Dependent SBOM consumers must preserve only generated outputs explicitly
+  marked `source: "sbom"` when the upstream cache is unavailable. Preserving a
+  legacy feed/API-derived output would keep the build green while violating
+  the source-of-truth contract; otherwise write an explicit unavailable
+  payload.
+- Image catalogs should route every displayed version field, including NVIDIA,
+  through the SBOM stream lookup. Release feeds may still provide links or
+  timestamps, but they must not provide versions. Cache short-circuiting must
+  require the complete current product set and an explicit SBOM provenance
+  marker; missing SBOM input must produce an unavailable payload instead of a
+  catalog filled with null versions. Keep release URLs in separate metadata so
+  they survive source-of-truth migrations.
+- SBOM cache validation must require at least one release entry, not just a
+  non-empty `streams` object. A structurally valid but unpopulated cache must
+  produce an explicit unavailable payload with a no-release reason instead of
+  generating products whose versions are all null.
+- Multi-stream SBOM fetches must validate the required primary streams before
+  replacing a good cache. An aggregate release count can hide a partial run
+  where only an optional stream succeeded, so preserve the last complete cache
+  until the primary data is present.
 
 Each is invisible from the source alone. Each would be paid again by the next
 agent. That is the bar.
@@ -147,3 +182,5 @@ not publish.
 
 - `/addyosmani/agent-skills` via Context7: canonical skill anatomy and section
   requirements.
+- `scripts/fetch-github-sbom.js` and `scripts/fetch-github-sbom.test.js`: GHCR
+  stream configuration and tag-matching tests.

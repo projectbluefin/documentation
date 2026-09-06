@@ -31,91 +31,48 @@ const CACHE_MAX_AGE_HOURS = Number(process.env.IMAGES_CACHE_HOURS || 168);
 const REFRESH_HOURS = Number(process.env.IMAGES_REFRESH_HOURS || 336);
 const STALE_DAYS = Number(process.env.IMAGES_STALE_DAYS || 30);
 const FORCE_REFRESH = process.argv.includes("--force");
+const SBOM_VERSION_SOURCE = "sbom";
+const SBOM_UNAVAILABLE_REASON = "SBOM cache not available";
+const SBOM_NO_RELEASE_DATA_REASON = "SBOM cache contains no release data";
 
 const PRODUCT_SPECS = [
   {
-    id: "ublue-bluefin",
+    id: "projectbluefin-bluefin",
     name: "Bluefin",
     org: "projectbluefin",
     package: "bluefin",
     artwork: "bluefin",
     summary: "Primary Bluefin desktop image for most systems.",
     streamOrder: ["stable", "stable-daily", "latest", "beta"],
-    versionSource: { feed: "bluefin", stream: "stable" },
+    versionSource: SBOM_VERSION_SOURCE,
+    releaseSource: { feed: "bluefin", stream: "stable" },
     sbomStreamId: "bluefin-stable",
+    nvidiaSbomStreamId: "bluefin-nvidia-open-stable",
     keyRepo: "projectbluefin/bluefin",
-    nvidiaPackage: "bluefin-nvidia-open",
+    nvidiaPackage: "bluefin-nvidia",
     allowTestingStreams: false,
     isoSectionLink: "/downloads#bluefin",
     supportedArches: ["amd", "intel"],
   },
   {
-    id: "ublue-bluefin-dx",
-    name: "Bluefin DX",
-    org: "projectbluefin",
-    package: "bluefin-dx",
-    artwork: "bluefin",
-    summary: "Developer-focused Bluefin image with DX tooling.",
-    streamOrder: ["stable", "latest", "beta"],
-    versionSource: { feed: "bluefin", stream: "stable" },
-    sbomStreamId: "bluefin-dx-stable",
-    keyRepo: "projectbluefin/bluefin",
-    nvidiaPackage: "bluefin-dx-nvidia-open",
-    allowTestingStreams: false,
-    isoSectionLink: "/downloads#bluefin",
-    supportedArches: ["amd", "intel"],
-  },
-  {
-    id: "ublue-bluefin-lts",
+    id: "projectbluefin-bluefin-lts",
     name: "Bluefin LTS",
     org: "projectbluefin",
     package: "bluefin",
     artwork: "achillobator",
     summary: "Long-term support Bluefin stream.",
     streamOrder: ["lts"],
-    versionSource: { feed: "lts", stream: "lts" },
+    versionSource: SBOM_VERSION_SOURCE,
+    releaseSource: { feed: "lts", stream: "lts" },
     sbomStreamId: "bluefin-lts",
+    nvidiaSbomStreamId: "bluefin-lts-nvidia",
+    nvidiaSbomFallbackStreamId: "bluefin-gdx-lts",
     keyRepo: "projectbluefin/bluefin-lts",
-    nvidiaPackage: "bluefin-nvidia-open",
-    nvidiaTagFallback: { lts: "latest" },
+    nvidiaPackage: "bluefin-lts-nvidia",
     allowTestingStreams: true,
     keepEvenIfStale: true,
     isoSectionLink: "/downloads#bluefin-lts",
     supportedArches: ["amd", "intel"],
-  },
-  {
-    id: "ublue-bluefin-dx-lts",
-    name: "Bluefin DX LTS",
-    org: "projectbluefin",
-    package: "bluefin-dx",
-    artwork: "achillobator",
-    summary: "Long-term support Bluefin DX stream.",
-    streamOrder: ["lts"],
-    versionSource: { feed: "lts", stream: "lts" },
-    sbomStreamId: "bluefin-dx-lts",
-    keyRepo: "projectbluefin/bluefin-lts",
-    nvidiaPackage: "bluefin-dx-nvidia-open",
-    nvidiaTagFallback: { lts: "latest" },
-    allowTestingStreams: true,
-    keepEvenIfStale: true,
-    isoSectionLink: "/downloads#bluefin-lts",
-    supportedArches: ["amd", "intel"],
-  },
-  {
-    id: "ublue-bluefin-gdx",
-    name: "Bluefin GDX",
-    org: "projectbluefin",
-    package: "bluefin-gdx",
-    artwork: "achillobator",
-    summary: "AI-focused GDX track with LTS roots.",
-    streamOrder: ["lts", "latest", "beta"],
-    versionSource: { feed: "lts", stream: "lts" },
-    sbomStreamId: "bluefin-gdx-lts",
-    keyRepo: "projectbluefin/bluefin-lts",
-    keepEvenIfStale: true,
-    allowTestingStreams: true,
-    isoSectionLink: "/downloads#bluefin-gdx",
-    supportedArches: ["nvidia"],
   },
   {
     id: "projectbluefin-dakota",
@@ -123,10 +80,14 @@ const PRODUCT_SPECS = [
     org: "projectbluefin",
     package: "dakota",
     artwork: "dakotaraptor",
-    summary: "Project Bluefin Dakota image stream.",
+    summary: "Project Bluefin Dakota image stream built with BuildStream.",
     streamOrder: ["latest"],
-    versionSource: null,
+    versionSource: SBOM_VERSION_SOURCE,
+    releaseSource: {
+      url: "https://github.com/projectbluefin/dakota/releases",
+    },
     sbomStreamId: "dakota-latest",
+    nvidiaSbomStreamId: "dakota-nvidia-latest",
     keyRepo: "projectbluefin/dakota",
     nvidiaPackage: "dakota-nvidia",
     allowTestingStreams: false,
@@ -134,6 +95,27 @@ const PRODUCT_SPECS = [
     // fedora will be null — Dakota is GNOME OS based, not Fedora.
     supportedArches: ["amd", "intel"],
     isoSectionLink: "/downloads-testing#dakotaraptor",
+  },
+  {
+    id: "projectbluefin-utah",
+    name: "Project Bluefin Utah",
+    org: "projectbluefin",
+    package: "utah",
+    artwork: "bluefin",
+    summary:
+      "Project Bluefin Utah image stream built with Fedora Hummingbird technology.",
+    streamOrder: ["testing"],
+    versionSource: SBOM_VERSION_SOURCE,
+    releaseSource: {
+      url: "https://github.com/projectbluefin/utah/releases",
+    },
+    sbomStreamId: "utah-testing",
+    nvidiaSbomStreamId: "utah-nvidia-testing",
+    keyRepo: "projectbluefin/utah",
+    nvidiaPackage: "utah-nvidia",
+    allowTestingStreams: false,
+    supportedArches: ["amd", "intel"],
+    isoSectionLink: null,
   },
 ];
 
@@ -144,6 +126,21 @@ function readJsonIfExists(filePath, fallback) {
   } catch {
     return fallback;
   }
+}
+
+function hasUsableSbomData(sbomCache) {
+  const streams = sbomCache?.streams;
+  if (!streams || typeof streams !== "object" || Array.isArray(streams)) {
+    return false;
+  }
+
+  return Object.values(streams).some(
+    (stream) =>
+      stream?.releases &&
+      typeof stream.releases === "object" &&
+      !Array.isArray(stream.releases) &&
+      Object.keys(stream.releases).length > 0,
+  );
 }
 
 /**
@@ -199,7 +196,10 @@ function normalizeSbomStreamTag(streamTag) {
 function buildSbomStreamId(spec, streamTag) {
   const normalizedTag = normalizeSbomStreamTag(streamTag);
   if (!spec?.sbomStreamId || !normalizedTag) return null;
-  return spec.sbomStreamId.replace(/-(stable|latest|lts|beta)$/, `-${normalizedTag}`);
+  return spec.sbomStreamId.replace(
+    /-(stable|latest|lts|beta)$/,
+    `-${normalizedTag}`,
+  );
 }
 
 function fallbackSbomVersionsByPackage(sbomCache, spec) {
@@ -214,10 +214,31 @@ function fallbackSbomVersionsByPackage(sbomCache, spec) {
   return null;
 }
 
-function cacheAgeHours() {
-  if (!fs.existsSync(OUTPUT_FILE)) return Number.POSITIVE_INFINITY;
-  const stats = fs.statSync(OUTPUT_FILE);
-  return (Date.now() - stats.mtimeMs) / (1000 * 60 * 60);
+function cacheAgeHours(output = readJsonIfExists(OUTPUT_FILE, null)) {
+  const generatedAt = Date.parse(output?.generatedAt || "");
+  if (Number.isNaN(generatedAt)) return Number.POSITIVE_INFINITY;
+  return (Date.now() - generatedAt) / (1000 * 60 * 60);
+}
+
+function isSbomSourcedProduct(product) {
+  return (
+    product?.versionSource === SBOM_VERSION_SOURCE ||
+    product?.versions?.source === SBOM_VERSION_SOURCE ||
+    product?.metadata?.versionSource === SBOM_VERSION_SOURCE
+  );
+}
+
+function isCurrentImageCatalog(output) {
+  if (output?.unavailable || !Array.isArray(output?.products)) return false;
+  if (output.products.length !== PRODUCT_SPECS.length) return false;
+
+  const productsById = new Map(
+    output.products.map((product) => [product?.id, product]),
+  );
+  return PRODUCT_SPECS.every((spec) => {
+    const product = productsById.get(spec.id);
+    return product?.org === "projectbluefin" && isSbomSourcedProduct(product);
+  });
 }
 
 function normalizeTestingTag(raw) {
@@ -230,27 +251,6 @@ function normalizeTestingTag(raw) {
     .replace(/\.-/g, "-")
     .replace(/-\./g, "-")
     .replace(/(^[.-]+|[.-]+$)/g, "");
-}
-
-function parseFeedVersion(feedItem, labels) {
-  if (!feedItem || !feedItem.content) return null;
-  for (const label of labels) {
-    const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    const regex = new RegExp(
-      `<td><strong>${escaped}<\\/strong><\\/td>\\s*<td>([^<]+)<\\/td>`,
-      "i",
-    );
-    const match = feedItem.content.match(regex);
-    if (!match || !match[1]) continue;
-    const raw = match[1].trim();
-    const parts = raw
-      .split("➡️")
-      .map((entry) => entry.trim())
-      .filter(Boolean);
-    return parts.length > 0 ? parts[parts.length - 1] : raw;
-  }
-
-  return null;
 }
 
 function sbomVersionsForStream(sbomCache, spec, streamTag) {
@@ -290,7 +290,9 @@ function latestFeedItem(feeds, source) {
   // misrepresent daily-only images as stable releases. Return null so callers
   // render unknown values instead.
   if (source.stream === "stable-daily") return null;
-  const items = source.feed === "lts" ? feeds.lts.items : feeds.bluefin.items;
+  const items =
+    source.feed === "lts" ? feeds?.lts?.items : feeds?.bluefin?.items;
+  if (!Array.isArray(items)) return null;
   const stream = source.stream;
 
   const match = items.find((item) => {
@@ -298,7 +300,12 @@ function latestFeedItem(feeds, source) {
     if (stream === "lts") {
       // Old format: "bluefin-lts lts: 20251223 ..."
       // New format: "lts.20260501: lts.20260501 release"
-      return title.includes(" lts:") || /^lts\.\d{8}:/.test(title);
+      // Current format: "stable-20260807: LTS"
+      return (
+        title.includes(" lts:") ||
+        /^lts\.\d{8}:/.test(title) ||
+        /^stable-\d{8}:\s*lts\b/.test(title)
+      );
     }
     return title.startsWith(`${stream}-`);
   });
@@ -384,7 +391,7 @@ function buildTestingStreams(spec, tags) {
     if (lower.includes("stream10")) continue;
     if (/(^|-)10(-|$)/.test(lower)) continue;
 
-    // LTS/GDX-only testing families.
+    // LTS-only testing families.
     const isLtsTestingFamily =
       /^lts-testing(?:-\d+)?$/.test(lower) ||
       /^lts-hwe-testing(?:-\d+)?$/.test(lower) ||
@@ -408,6 +415,35 @@ function buildTestingStreams(spec, tags) {
     }));
 }
 
+function lookupNvidiaVersionFromSbom(sbomCache, streamId) {
+  if (!sbomCache || !streamId) return null;
+  const stream = sbomCache.streams?.[streamId];
+  if (!stream?.releases) return null;
+  const keys = Object.keys(stream.releases).sort().reverse();
+  for (const k of keys) {
+    const v = stream.releases[k]?.packageVersions?.nvidia;
+    if (v) return v;
+  }
+  return null;
+}
+
+function resolveNvidiaVersion(spec, sbomCache, baseNvidia) {
+  if (baseNvidia) return baseNvidia;
+  if (!sbomCache || !spec) return null;
+  if (spec.nvidiaSbomStreamId) {
+    const v = lookupNvidiaVersionFromSbom(sbomCache, spec.nvidiaSbomStreamId);
+    if (v) return v;
+  }
+  if (spec.nvidiaSbomFallbackStreamId) {
+    const v = lookupNvidiaVersionFromSbom(
+      sbomCache,
+      spec.nvidiaSbomFallbackStreamId,
+    );
+    if (v) return v;
+  }
+  return null;
+}
+
 async function buildStreamVersionInfo(
   spec,
   imageRef,
@@ -416,36 +452,16 @@ async function buildStreamVersionInfo(
   sbomCache,
 ) {
   const sbomVersions = sbomVersionsForStream(sbomCache, spec, streamTag);
-  const feedKey = streamTag === "lts" ? "lts" : streamTag;
-  const feedSource = spec.versionSource
-    ? { feed: spec.versionSource.feed, stream: feedKey }
-    : null;
-  const feedItem = latestFeedItem(feeds, feedSource);
 
-  const versions = {
+  return {
     gnome: sbomVersions?.gnome || null,
     kernel: sbomVersions?.kernel || null,
-    nvidia: parseFeedVersion(feedItem, ["Nvidia"]),
+    nvidia: resolveNvidiaVersion(spec, sbomCache, sbomVersions?.nvidia),
     fedora: sbomVersions?.fedora || null,
     flatpak: sbomVersions?.flatpak || null,
     mesa: sbomVersions?.mesa || null,
     podman: sbomVersions?.podman || null,
   };
-
-  // SBOM-only policy: all version data sourced from SBOM packageVersions only.
-  // Do not infer from release bodies or image labels.
-
-  if (spec.versionOverrides) {
-    versions.gnome = spec.versionOverrides.gnome ?? versions.gnome;
-    versions.kernel = spec.versionOverrides.kernel ?? versions.kernel;
-    versions.nvidia = spec.versionOverrides.nvidia ?? versions.nvidia;
-    versions.fedora = spec.versionOverrides.fedora ?? versions.fedora;
-    versions.flatpak = spec.versionOverrides.flatpak ?? versions.flatpak;
-    versions.mesa = spec.versionOverrides.mesa ?? versions.mesa;
-    versions.podman = spec.versionOverrides.podman ?? versions.podman;
-  }
-
-  return versions;
 }
 
 function attachNvidiaTestingCommands(streams, spec, nvidiaTagSet) {
@@ -471,7 +487,7 @@ function buildSecurityInfo(spec, inspectTag) {
   // Dakota uses keyless signing but SLSA attestations are published to the OCI registry
   // only after projectbluefin/dakota#391 merges (push-to-registry: true).
   // LTS images use traditional key-based signing with cosign.pub from the lts repo.
-  const KEYLESS_REPOS = ["projectbluefin/bluefin"]; // keyless + OCI attestation live
+  const KEYLESS_REPOS = ["projectbluefin/bluefin", "projectbluefin/utah"]; // keyless + OCI attestation live
   const KEYLESS_PENDING_ATTEST_REPOS = ["projectbluefin/dakota"]; // keyless, OCI attestation pending
   const KEY_REPOS = {
     "projectbluefin/bluefin-lts":
@@ -486,7 +502,7 @@ function buildSecurityInfo(spec, inspectTag) {
   const hasNoPipeline = !isKeyless && !cosignKeyUrl;
 
   // Keyless: GitHub OIDC / Sigstore — certificate-based, no public key file.
-  // The OIDC identity is derived from keyRepo so LTS/GDX variants resolve to their own
+  // The OIDC identity is derived from keyRepo so LTS variants resolve to their own
   // workflow repo automatically. We use --certificate-identity-regexp with a ^ anchor so
   // any workflow file under .github/workflows/ in the signing repo is accepted (the exact
   // workflow filename may differ across streams).
@@ -514,7 +530,7 @@ function buildSecurityInfo(spec, inspectTag) {
     };
   }
 
-  // Key-based signing (LTS, GDX): signatures exist but SLSA attestations are not yet published.
+  // Key-based signing (LTS): signatures exist but SLSA attestations are not yet published.
   // The command is included so users can run it in the future when attestations are implemented.
   return {
     cosignKeyUrl,
@@ -534,9 +550,25 @@ function releaseInfoFromFeedItem(item) {
   };
 }
 
+function releaseInfoFromSource(feeds, source) {
+  if (!source) return null;
+  if (source.url) {
+    return {
+      title: source.title || null,
+      url: source.url,
+      assetsUrl: source.assetsUrl || `${source.url}#assets`,
+    };
+  }
+  return releaseInfoFromFeedItem(latestFeedItem(feeds, source));
+}
+
 async function buildProduct(spec, feeds, cachedById, ageHours, sbomCache) {
   const existing = cachedById.get(spec.id) || null;
-  const shouldRefresh = FORCE_REFRESH || !existing || ageHours >= REFRESH_HOURS;
+  const shouldRefresh =
+    FORCE_REFRESH ||
+    !existing ||
+    ageHours >= REFRESH_HOURS ||
+    !isSbomSourcedProduct(existing);
 
   if (!shouldRefresh && existing) {
     return {
@@ -624,38 +656,45 @@ async function buildProduct(spec, feeds, cachedById, ageHours, sbomCache) {
     metadataSource = metadata ? "cache" : "unavailable";
   }
 
-  const feedItem = latestFeedItem(feeds, spec.versionSource);
-  const sbomVersions = sbomVersionsForStream(sbomCache, spec, spec.versionSource?.stream);
-  const versionsFromFeed = {
+  const feedItem = latestFeedItem(feeds, spec.releaseSource);
+  const sbomVersions = sbomVersionsForStream(
+    sbomCache,
+    spec,
+    spec.streamOrder[0],
+  );
+  const versions = {
+    source: SBOM_VERSION_SOURCE,
     gnome: sbomVersions?.gnome || null,
     kernel: sbomVersions?.kernel || null,
-    nvidia: parseFeedVersion(feedItem, ["Nvidia"]),
-    release: releaseInfoFromFeedItem(feedItem),
+    nvidia: resolveNvidiaVersion(spec, sbomCache, sbomVersions?.nvidia),
+    release: releaseInfoFromSource(feeds, spec.releaseSource),
   };
 
-  if (metadata && !metadata.digestLink && versionsFromFeed.release?.assetsUrl) {
-    metadata.digestLink = versionsFromFeed.release.assetsUrl;
+  if (metadata && !metadata.digestLink && versions.release?.assetsUrl) {
+    metadata.digestLink = versions.release.assetsUrl;
   }
 
   // Precedence for lastPublishedAt:
   // 1. SBOM checkedAt timestamp (precise attestation-verification time)
   // 2. GitHub releases feed pubDate
   // 3. Existing cached value (last resort — can be stale from an old run)
-  const sbomDate = spec.sbomStreamId ? sbomLatestCheckedAt(sbomCache, spec.sbomStreamId) : null;
+  const sbomDate = spec.sbomStreamId
+    ? sbomLatestCheckedAt(sbomCache, spec.sbomStreamId)
+    : null;
   const lastPublishedAt =
-    sbomDate ||
-    feedItem?.pubDate ||
-    existing?.lastPublishedAt ||
-    null;
+    sbomDate || feedItem?.pubDate || existing?.lastPublishedAt || null;
   const staleCutoff = Date.now() - STALE_DAYS * 24 * 60 * 60 * 1000;
   const bestDateForStale = sbomDate || feedItem?.pubDate || null;
-  const stale = bestDateForStale ? Date.parse(bestDateForStale) < staleCutoff : false;
+  const stale = bestDateForStale
+    ? Date.parse(bestDateForStale) < staleCutoff
+    : false;
 
   return {
     id: spec.id,
     name: spec.name,
     org: spec.org,
     package: spec.package,
+    versionSource: spec.versionSource,
     summary: spec.summary,
     artwork: spec.artwork,
     imageRef,
@@ -666,7 +705,7 @@ async function buildProduct(spec, feeds, cachedById, ageHours, sbomCache) {
     testingStreams,
     metadata,
     metadataSource,
-    versions: versionsFromFeed,
+    versions,
     security: buildSecurityInfo(spec, inspectTag),
     inspectTag,
     lastPublishedAt: lastPublishedAt,
@@ -675,16 +714,36 @@ async function buildProduct(spec, feeds, cachedById, ageHours, sbomCache) {
   };
 }
 
-async function main() {
-  const ageHours = cacheAgeHours();
-  if (ageHours < CACHE_MAX_AGE_HOURS && !FORCE_REFRESH) {
+async function main({ outputFile = OUTPUT_FILE, sbomFile = SBOM_FILE } = {}) {
+  const existing = readJsonIfExists(outputFile, null);
+  const sbomCache = readSbomCache(sbomFile);
+  if (!hasUsableSbomData(sbomCache)) {
+    const hasStreams =
+      sbomCache?.streams &&
+      typeof sbomCache.streams === "object" &&
+      !Array.isArray(sbomCache.streams);
+    const reason = hasStreams
+      ? SBOM_NO_RELEASE_DATA_REASON
+      : SBOM_UNAVAILABLE_REASON;
+    const output = handleUnavailableCache(existing, reason, outputFile);
+    if (output.unavailable) {
+      console.log(`Image data unavailable: ${reason}.`);
+    }
+    return;
+  }
+
+  const ageHours = cacheAgeHours(existing);
+  if (
+    isCurrentImageCatalog(existing) &&
+    ageHours < CACHE_MAX_AGE_HOURS &&
+    !FORCE_REFRESH
+  ) {
     console.log(
       `Cache is ${ageHours.toFixed(1)}h old (max ${CACHE_MAX_AGE_HOURS}h). Skipping fetch.`,
     );
     return;
   }
 
-  const existing = readJsonIfExists(OUTPUT_FILE, null);
   const cachedById = new Map(
     (existing?.products || []).map((product) => [product.id, product]),
   );
@@ -692,14 +751,7 @@ async function main() {
     bluefin: readJsonIfExists(FEED_BLUEFIN, { items: [] }),
     lts: readJsonIfExists(FEED_LTS, { items: [] }),
   };
-  const sbomCache = readSbomCache(SBOM_FILE);
-  if (sbomCache) {
-    console.log("SBOM attestation cache loaded.");
-  } else {
-    console.log(
-      "SBOM attestation cache not found — versions will fall back to feeds.",
-    );
-  }
+  console.log("SBOM attestation cache loaded.");
 
   const products = [];
   for (const spec of PRODUCT_SPECS) {
@@ -730,24 +782,82 @@ async function main() {
     products,
   };
 
-  if (!fs.existsSync(OUTPUT_DIR)) fs.mkdirSync(OUTPUT_DIR, { recursive: true });
-  const TMP_FILE = OUTPUT_FILE + ".tmp";
-  fs.writeFileSync(TMP_FILE, JSON.stringify(output, null, 2), "utf-8");
-  fs.renameSync(TMP_FILE, OUTPUT_FILE);
-  console.log(`Image data saved to ${OUTPUT_FILE}`);
+  writeOutput(output, outputFile);
+  console.log(`Image data saved to ${outputFile}`);
+}
+
+function writeOutput(output, outputFile = OUTPUT_FILE) {
+  const outputDir = path.dirname(outputFile);
+  if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
+  const temporaryFile = `${outputFile}.tmp`;
+  fs.writeFileSync(temporaryFile, JSON.stringify(output, null, 2), "utf-8");
+  fs.renameSync(temporaryFile, outputFile);
+}
+
+function buildUnavailableOutput(reason = SBOM_UNAVAILABLE_REASON) {
+  return {
+    generatedAt: new Date().toISOString(),
+    cacheHours: CACHE_MAX_AGE_HOURS,
+    refreshHours: REFRESH_HOURS,
+    staleDays: STALE_DAYS,
+    products: [],
+    unavailable: true,
+    stateReason: reason,
+  };
+}
+
+function handleUnavailableCache(
+  existing,
+  reason = SBOM_UNAVAILABLE_REASON,
+  outputFile = OUTPUT_FILE,
+) {
+  if (isCurrentImageCatalog(existing)) {
+    console.warn(
+      "SBOM cache unavailable. Preserving existing SBOM-derived image catalog.",
+    );
+    return existing;
+  }
+
+  const output = buildUnavailableOutput(reason);
+  writeOutput(output, outputFile);
+  return output;
+}
+
+function reportMainError(error, outputFile = OUTPUT_FILE) {
+  const message = error instanceof Error ? error.message : String(error);
+  console.error(`fetch-github-images: ${message}`);
+  try {
+    handleUnavailableCache(
+      readJsonIfExists(outputFile, null),
+      `Image catalog fetch failed: ${message}`,
+      outputFile,
+    );
+  } catch (writeError) {
+    const writeMessage =
+      writeError instanceof Error ? writeError.message : String(writeError);
+    console.error(
+      `fetch-github-images: failed to write unavailable output: ${writeMessage}`,
+    );
+  }
 }
 
 if (require.main === module) {
-  main().catch((error) => {
-    console.error(error.message);
-    process.exit(1);
-  });
+  main().catch((error) => reportMainError(error));
 }
 
 module.exports = {
+  PRODUCT_SPECS,
   buildSecurityInfo,
+  buildStreamVersionInfo,
   buildTestingStreams,
+  buildUnavailableOutput,
+  cacheAgeHours,
+  handleUnavailableCache,
+  hasUsableSbomData,
+  isCurrentImageCatalog,
+  main,
   normalizeTestingTag,
-  parseFeedVersion,
+  reportMainError,
+  releaseInfoFromSource,
   sbomVersionsForStream,
 };
