@@ -8,8 +8,19 @@ image: mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm
 # Preinstall tools and dependencies to speed up the coding agent
 onCreateCommand: |
   # Install Bun package manager (used by this project instead of npm)
+  # Pinned version + SHA-256 verification — never pipe a remote installer
+  # straight into a shell (supply-chain risk).
   echo "Installing Bun package manager..."
-  curl -fsSL https://bun.sh/install | bash
+  BUN_VERSION="1.4.2"
+  BUN_SHA256="36368faef7527875d5ffa52e53cd48021741f2a83eb6208a8dd64068d422a913"
+  curl -fsSL "https://github.com/oven-sh/bun/releases/download/bun-v${BUN_VERSION}/bun-linux-x64.zip" -o /tmp/bun.zip
+  echo "${BUN_SHA256}  /tmp/bun.zip" | sha256sum --check
+  mkdir -p "$HOME/.bun"
+  unzip -o /tmp/bun.zip -d /tmp/bun-extract
+  mv /tmp/bun-extract/bun-linux-x64 "$HOME/.bun/bin"
+  chmod +x "$HOME/.bun/bin/bun"
+  ln -sf "$HOME/.bun/bin/bun" "$HOME/.bun/bin/bunx"
+  rm -rf /tmp/bun.zip /tmp/bun-extract
 
   # Add bun to PATH for current session
   export PATH="$HOME/.bun/bin:$PATH"
