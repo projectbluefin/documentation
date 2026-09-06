@@ -13,8 +13,8 @@ const DownloadSection: React.FC = () => (
       description={
         <>
           The default experience for users.{" "}
-          <a href="/introduction">📖 Read the documentation</a> to learn about
-          features and differences.
+          <a href="/">📖 Read the documentation</a> to learn about features and
+          differences.
         </>
       }
       entries={[

@@ -17,8 +17,8 @@ test("isBotAccount detects exact bot names bot suffixes and bot substrings", () 
 test("getAllMarkdownFiles returns repo-relative markdown paths", () => {
   const files = getAllMarkdownFiles(path.join(__dirname, "..", "docs"));
 
-  assert.ok(files.includes("docs/introduction.md"));
-  assert.ok(files.includes("docs/tips.mdx"));
+  assert.ok(files.includes("docs/index.md"));
+  assert.ok(files.includes("docs/installation.md"));
   assert.ok(files.every((file) => file.startsWith("docs/")));
   assert.ok(files.every((file) => /\.mdx?$/.test(file)));
 });

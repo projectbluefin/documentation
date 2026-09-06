@@ -64,7 +64,7 @@ Tier 3 is mostly unsupported - it may work perfectly or be a disaster.
 
 #### Requirements
 
-- Known problematic hardware (Asus and Apple laptops)
+- Known problematic hardware (Asus and Apple laptops). For 2018–2020 Intel Macs with the T2 security chip, see the community [T2 Mac Installation Guide](/t2-mac).
 - Dual GPU laptops with Nvidia hardware
 - Old school "good luck with this!" packaging formats
   - .run files, tarballs, and Appimages
@@ -87,7 +87,7 @@ Review the [Fedora Silverblue installation instructions](https://docs.fedoraproj
   - Use of Ventoy is **unsupported**
 - Older BIOS-based systems are **unsupported**; only UEFI systems are supported
 - Dual booting off of the same disk is **unsupported**; use a dedicated drive for another operating system and use your BIOS to choose another OS to boot off of
-  - Bluefin supports an [installation on an external drive](/tips/#bluefin-to-go-using-an-external-drive) if you want to try it on bare metal before committing
+  - Bluefin supports an [installation on an external drive](#alternative-bluefin-to-go-external-drive) if you want to try it on bare metal before committing
 - We **strongly recommend** using automated partitioning during installation; there are [known issues](https://docs.fedoraproject.org/en-US/fedora-silverblue/installation/) with manual partitioning on Atomic systems and it is unnecessary to set up unless you are on a multi-disk system
 - A stock Bluefin installation is 11GB. Bluefin with developer mode enabled (`bluefin-dx`) is 19GB
 
@@ -122,6 +122,27 @@ This is how much disk space each image of Bluefin by default, this includes the 
 Bluefin ships with an extensive cloud-native development stack. These workloads typically scale out to replicate entire clusters of computers and demand more resources than typical workloads.
 
 _These requirements ensure smooth operation of Bluefin's integrated development workflow and container-first architecture._
+
+## Alternative: Bluefin to Go (External Drive)
+
+You can install Bluefin on an external drive to get a portable Bluefin installation:
+
+![bluefin-drive](/img/user-attachments/f3ea0252-b0ba-4c68-8566-68cfbdbfc6b2.png)
+
+**Don't forget to select full disk encryption during installation!**
+
+Use Cases:
+
+- Great way to try Linux; if you like it, move the drive into your main machine without needing to reinstall.
+- Or buy a new drive for your PC and put your existing OS in an external case as a backup.
+- Temporarily repurposing a machine or trying out hardware before purchasing.
+- Sharing a PC without arguing about Linux.
+- Homelab and portable development setups.
+- Add a Bluefin DX drive to a docked [Bazzite-powered](https://bazzite.gg) handheld.
+
+### Windows to Go
+
+You can also do the inverse: use [Rufus](https://rufus.ie) to install Windows onto an external drive in [Windows to Go](https://en.wikipedia.org/wiki/Windows_To_Go) mode for firmware updates or rare Windows-only software.
 
 ## Day 0: Planning
 

@@ -1,13 +1,133 @@
 ---
-title: Troubleshooting
+title: Troubleshooting & FAQ
 slug: /troubleshooting
 ---
 
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 
+# Troubleshooting & FAQ
+
+## Quick Diagnostics & System Recovery
+
+Bluefin is designed to be pristine and reliable, but when things go wrong, image-based systems provide simple rollback and reset primitives.
+
+### System Rollback
+
+If a kernel or OS update causes an issue, reboot into the previous deployment or roll back:
+
+```bash
+# Roll back to previous deployment
+sudo bootc rollback
+```
+
+Reboot to apply. To inspect current and previous deployment states:
+
+```bash
+sudo bootc status
+```
+
+### Resetting GNOME & Extensions
+
+If desktop extensions or shell tweaks cause graphical issues or freezes:
+
+```bash
+# Reset GNOME Shell and extensions to Bluefin defaults
+ujust reset-gnome
+```
+
+### Cleaning Disk Space & Unused Runtimes
+
+```bash
+# Clean up dangling containers and unused Flatpak runtimes
+ujust clean-system
+```
+
+### Keyboard Layout & Input Issues
+
+#### Switching Keyboard Layouts Conflicts with Search Light
+
+GNOME's default switching shortcut (<kbd>Super</kbd>+<kbd>Space</kbd>) conflicts with Search Light. To customize:
+
+1. Open **Settings** → **Keyboard** → **Keyboard Shortcuts** → **View and Customize Shortcuts**.
+2. Click **Typing**.
+3. Set **Switch to next input source** to your preferred combination (e.g. <kbd>Shift</kbd>+<kbd>Alt</kbd>).
+
+#### Extended Keyboard Layouts (e.g. EurKEY)
+
+1. Open **Gnome Tweaks** → **Keyboard** → toggle **Show Extended Input Sources** to **On**.
+2. Log out and back in.
+3. Open **Settings** → **Keyboard** → add new input source with **+** → click **More...** and search for your layout.
+
+#### Input Method Editor (IME / Fcitx5)
+
+For standard keyboard layouts, see [GNOME Help > Keyboard Layouts](https://help.gnome.org/gnome-help/keyboard-layouts.html). For Asian languages or other complex input methods:
+
+1. Install Fcitx5: `flatpak install org.fcitx.Fcitx5`
+2. Install the [kimpanel](https://extensions.gnome.org/extension/261/kimpanel/) GNOME extension.
+3. Install your language addon (e.g. `flatpak install org.fcitx.Fcitx5.Addon.ChineseAddons`).
+4. Configure input methods in Fcitx5 settings. Use <kbd>Ctrl</kbd>+<kbd>Space</kbd> to toggle. See the [Fcitx wiki](https://fcitx-im.org/wiki/Using_Fcitx_5_on_Wayland#GNOME) for details.
+
+---
+
+## Frequently Asked Questions
+
+### Am I holding Bluefin wrong?
+
+![Don't hold Bluefin wrong](/img/user-attachments/6d03851b-5d42-4235-9e1c-3dde7c455946.png)
+
+You can always do what you want, but Bluefin is designed with a specific workflow in mind:
+
+- **Containerize your developer environments** rather than commingling them with the OS. Define them per project in `devcontainer.json` files managed by Git.
+- **Stick to Flatpaks and Homebrew.** The ideal is to leave the core OS image unchanged.
+- **Follow XDG standards** for overriding files. `/etc`, `/var`, `/usr/local`, and `/opt` are writable. Most per-user overrides live in `~/.config` and `~/.local`.
+- **Isolate old-school jank in containers.** Mangling packages directly on the host is an anti-pattern.
+- **Don’t overthink rebooting.** Shut down or reboot your PC when you're done using it so staged OS updates apply automatically.
+- **Hardware matters.** Bluefin works best on Linux-friendly hardware.
+
+:::tip
+
+I have Become Legend.
+
+-- [Dominus Ghaul](https://www.youtube.com/watch?v=Og-2axO4Bi0)
+
+:::
+
+### So who is this for?
+
+Bluefin strongly believes that users should be introduced to Linux via a modern desktop. The market rejected previous-generation Linux desktop conventions, while modern models like ChromeOS and Android succeeded. **95% of users will be fine using their browser and Flatpaks.** Bluefin is designed as a zero-maintenance general purpose OS for that 95%, while giving developers cloud-native tooling out of the box.
+
+### What about codecs?
+
+Everything you need is included out of the box via Universal Blue.
+
+### What's the deal with Homebrew?
+
+See [Homebrew is Great on Linux](https://www.ypsidanger.com/homebrew-is-great-on-linux/). Homebrew manages CLI utilities without touching the base image or requiring `sudo`.
+
+### Why are there multiple Bluefin images?
+
+Bluefin strives to be the same across all images — the difference is update cadence and specialized tooling:
+
+- **Bluefin**: Current Fedora base with gated kernel for general desktop use.
+- **Bluefin LTS**: CentOS Stream 10 base with 3–5 year lifespan for enterprise stability.
+- **Bluefin Server**: FSDK-based, DDI-first minimal server OS.
+- **Bluefin DX / GDX**: Developer and AI workstation with containers, devcontainers, and Nvidia CUDA.
+
+### What's with all the Ubuntu influence?
+
+Three of the co-creators of Bluefin worked on Ubuntu at Canonical. Bluefin brings back the classic Ubuntu desktop spirit ("Linux for Human Beings") built on top of modern cloud-native container infrastructure.
+
+### Should I trust you?
+
+Everything is built in public, signed with Cosign / GPG, and published via GitHub Actions. See [Jorge Castro's bio](https://www.ypsidanger.com/about/) for background.
+
+---
+
+## Ask Bluefin & Automated Diagnostics
+
 :::info
-This feature is in Alpha. The menu feature doesn't exist yet. 
+This feature is in Alpha. The menu feature doesn't exist yet.
 :::
 
 - [Bluefin AI page](/ai) - gives this page more context on our plans for Bluespeed
@@ -18,13 +138,9 @@ In the menu select "Ask Bluefin" to use the chat agent.
 
 > "Ask Bluefin", is a custom operating system agent. For you new users, a system designed to help you learn Linux, without the toil of digging through the internet or being told that you installed the wrong Linux distribution. "Ask Bluefin" is trained on the operating system and its documentation, so it's always learning from the source of truth and tweaked by the community. For you Linux veterans, a power diagnostic tool for your local PC, with built in integration to your servers and cluster ...
 
-`Ctrl`-`Alt`-`Shift`- `g` will invoke a quicklaunch so that you can invoke the help agent with one keystroke: 
+`Ctrl`-`Alt`-`Shift`- `g` will invoke a quicklaunch so that you can invoke the help agent with one keystroke:
 
-<img
-  src="/img/goose-quick-launch.png"
-  alt="Goose quick launch"
-/>
-
+<img src="/img/goose-quick-launch.png" alt="Goose quick launch" />
 
 ### Installation
 

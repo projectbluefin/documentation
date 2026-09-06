@@ -1,0 +1,52 @@
+---
+title: Bluefin Server
+slug: /server
+---
+
+# Bluefin Server
+
+**Bluefin Server** is an FSDK-based, image-based, DDI-first Linux server operating system. It targets the same use-case space as Flatcar Container Linux, Fedora CoreOS, and Talos, but is built from scratch with [BuildStream 2](https://buildstream.build/) from [freedesktop-sdk](https://freedesktop-sdk.freedesktop.org/) components.
+
+:::info[Early release]
+Bluefin Server is in active development. Track progress, file issues, and participate at [projectbluefin/server](https://github.com/projectbluefin/server).
+:::
+
+## Architecture & Principles
+
+Bluefin Server is **[DDI first](https://0pointer.net/blog/fitting-everything-together.html)** (Discoverable Disk Images): the OS payload is a compressed XFS DDI filesystem image deployed by an offline, systemd-native installer.
+
+- **Image-based updates and atomic rollbacks** via A/B partition slots and `systemd-sysupdate`.
+- **DDI-first delivery** — the installer embeds the OS payload as a data partition; no network connection is required at install time.
+- **Minimal, distroless OS image** — no shell in the running rootfs by default.
+- **systemd-native installer** — `systemd-sysinstall` provides the interactive terminal UI and `systemd-repart` handles partitioning and block-copy DDI placement.
+- **Kubernetes ready** — optional `k3s` is provided as a `systemd-sysext` so the base operating system stays completely distroless.
+
+## Quick Start & Testing
+
+For local development and testing, you only need `podman` and [`just`](https://github.com/casey/just). BuildStream runs inside the FSDK `bst2` container:
+
+```bash
+git clone https://github.com/projectbluefin/server.git
+cd server
+just validate              # resolve element dependency graph
+just show-me-the-future    # end-to-end QEMU installer smoke test
+```
+
+## Downloads & Releases
+
+Official release artifacts are published on GitHub Releases:
+
+1. **Download release images** from the [Bluefin Server releases page](https://github.com/projectbluefin/server/releases).
+2. **Available artifacts**:
+   - `bluefin-server-installer-*.raw.zst`: Bootable installer image.
+   - `bluefin-server-ddi-*.raw.zst`: Standalone DDI system image.
+   - `k3s-*.raw.zst`: Optional Kubernetes system extension.
+   - `bluefin-server-*.efi`: Unified kernel image (UKI).
+3. **Release Trust & Verification**:
+   - Releases include GPG-signed `SHA256SUMS` manifests for cryptographic verification.
+
+## Further Reading
+
+- [projectbluefin/server Repository](https://github.com/projectbluefin/server)
+- [Systemd Discoverable Disk Images Specification](https://uapi-group.org/specifications/specs/discoverable_disk_image/)
+- [Freedesktop SDK](https://freedesktop-sdk.freedesktop.org/)

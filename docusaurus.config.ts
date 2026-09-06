@@ -47,6 +47,7 @@ const config: Config = {
           sidebarPath: "./sidebars.ts",
           // Disables the landing page
           routeBasePath: "/",
+          exclude: ["skills/**", "SKILL.md"],
           editUrl: "https://github.com/projectbluefin/documentation/tree/main",
         },
         blog: {
@@ -77,6 +78,29 @@ const config: Config = {
       {
         hashed: true,
         docsRouteBasePath: "/",
+      },
+    ],
+    [
+      "@docusaurus/plugin-client-redirects",
+      {
+        redirects: [
+          {
+            to: "/",
+            from: "/introduction",
+          },
+          {
+            to: "/troubleshooting",
+            from: ["/FAQ", "/faq"],
+          },
+          {
+            to: "/server",
+            from: "/knuckle",
+          },
+          {
+            to: "/command-line",
+            from: "/tips",
+          },
+        ],
       },
     ],
     [
@@ -275,6 +299,27 @@ const config: Config = {
             {
               label: "Contributor's Guide",
               href: "https://contribute.projectbluefin.io",
+            },
+          ],
+        },
+        {
+          title: "Media & Lore",
+          items: [
+            {
+              label: "Dinosaurs",
+              to: "/dinosaurs",
+            },
+            {
+              label: "Artwork",
+              to: "/artwork",
+            },
+            {
+              label: "Music",
+              to: "/music",
+            },
+            {
+              label: "Press Kit",
+              to: "/press-kit",
             },
           ],
         },

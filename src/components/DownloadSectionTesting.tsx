@@ -43,8 +43,8 @@ const DownloadSectionTesting: React.FC = () => (
       description={
         <>
           The most current testing build, based on the latest Fedora.{" "}
-          <a href="/introduction">📖 Read the documentation</a> to learn about
-          features and differences.
+          <a href="/">📖 Read the documentation</a> to learn about features and
+          differences.
         </>
       }
       entries={[
@@ -143,7 +143,6 @@ const DownloadSectionTesting: React.FC = () => (
         },
       ]}
     />
-
   </>
 );
 

@@ -1,39 +1,64 @@
 ---
+name: variant-docs-pages
 title: Variant docs pages
-description: Use when adding or updating a top-level docs page for a Bluefin variant or sibling project (bluefin-lts, dakota, knuckle, and future editions) — page structure, component embedding, sidebar placement, and the shipping constraints that differ from ordinary docs edits.
+version: "1.1"
+last_updated: "2026-09-06"
+id: variant-docs-pages
+one_line_purpose: Author and maintain top-level docs pages for image variants.
+entry_point: docs/skills/variant-docs-pages.md
+category: meta
+status: active
+tags: [variants, pages, dakota, lts, server]
+description: >-
+  Author and maintain top-level docs pages for Bluefin image families under
+  docs/. Use when adding or updating landing pages for variants like dakota,
+  lts, or server, including sidebar placement and component embedding.
+metadata:
+  type: procedure
 ---
 
 # Variant docs pages
 
 A "variant page" is the single landing page for one OS image family:
-`/lts`, `/knuckle`, `/dakota`. The reader arrived from the repo README or a
+`/lts`, `/server`, `/dakota`. The reader arrived from the repo README or a
 blog announcement and wants: what is this, how do I get it, what can break.
 
-## Structure
+## When to Use
 
-Model on `docs/knuckle.md` (static) or `docs/dakota.mdx` (embeds components):
+- Adding or updating a top-level docs page for an image variant or sibling project.
+- Embedding download sections or driver version tables on variant pages.
+- Adding a new variant entry into `sidebars.ts`.
 
-1. Frontmatter `title` and explicit `slug: /<name>` — the page lives at the
-   site root, not under a category path.
-2. One-paragraph identity: what it is, what it's built on, status callout
-   (`:::info` for alpha/pre-alpha).
-3. Download/install. Embed `<DakotaSection />` from
+## When NOT to Use
+
+- Blog announcements for new releases — see [`blog-posts.md`](blog-posts.md).
+- Dashboard panels under `/factory` — see [`factory-dashboard-content.md`](factory-dashboard-content.md).
+
+## Core Process
+
+Model on `docs/server.mdx` (static) or `docs/dakota.mdx` (embeds components):
+
+1. **Frontmatter**: Set `title` and explicit `slug: /<name>` so the page lives at
+   the site root, not under a category path.
+2. **One-paragraph identity**: State what it is, what it's built on, and status
+   callout (`:::info` for alpha/pre-alpha).
+3. **Download/install**: Embed `<DakotaSection />` from
    `src/components/DownloadSectionTesting.tsx` when ISOs exist instead of
    hand-writing ISO links — the component is the single source for URLs and
    checksums.
-4. Image streams table with `bootc switch` commands.
-5. Known gaps + issue tracker links.
-6. Live versions via `<DriverVersionsCatalog streamId="…" />` when the stream
-   has a catalog (see `docs/driver-versions.mdx` for valid streamIds).
-7. "Further reading" links out to repo `docs/` — deep technical content lives
-   in the variant's repo, never copied here (it would rot).
+4. **Image streams table**: Provide exact `bootc switch` commands.
+5. **Known gaps**: Link to relevant upstream/downstream issue trackers.
+6. **Live versions**: Use `<DriverVersionsCatalog streamId="…" />` when the
+   stream has a catalog (see `docs/driver-versions.mdx` for valid streamIds).
+7. **Further reading**: Link out to repo `docs/` — deep technical content lives
+   in the variant's repo, never copied here.
 
-Facts only, read from the repo and blog sources. Do not invent narrative or
-motivation prose — see _Never write in a maintainer's voice_ in AGENTS.md.
+Facts only, read from repo and blog sources. Do not invent narrative or
+motivation prose — see _Never write in a maintainer's voice_ in `AGENTS.md`.
 
 ## Sidebar
 
-Add the doc id to the "Specialized Editions & Hardware" category in
+Add the doc id to the "Get Bluefin" category in
 `sidebars.ts`. The doc id is the filename without extension.
 
 ## Gotchas
@@ -44,17 +69,33 @@ Add the doc id to the "Specialized Editions & Hardware" category in
   `docs/**`, `blog/**`, `reports/**`, `adr/**` only — a page that adds itself
   to the sidebar always ships via PR.
 - **Prettier whole-file hazard**: `npx prettier --write sidebars.ts`
-  reformats unrelated lines (prettier config drift vs. the committed file).
-  Make the one-line sidebar edit by hand and leave the rest of the file
-  byte-identical; only `--write` the new page file.
-- Verify with `npm run build:ci` and check `build/<slug>/index.html` exists
-  and contains the expected strings — the minifier warnings on other pages
-  are pre-existing noise.
+  reformats unrelated lines. Make the one-line sidebar edit by hand and leave
+  the rest byte-identical; only `--write` the new page file.
 
-## Checklist
+## Common Rationalizations
 
-- [ ] Page uses `.mdx` if it embeds components, explicit `slug` set
-- [ ] Download section reuses the existing DownloadCard component, not raw links
-- [ ] Sidebar diff is exactly one line
-- [ ] `npm run build:ci` succeeds; `build/<slug>/index.html` spot-checked
-- [ ] PR (not direct push) because `sidebars.ts` changed
+| Rationalization                                                   | Reality                                                              |
+| ----------------------------------------------------------------- | -------------------------------------------------------------------- |
+| "I will write an introductory story for why this variant exists." | Agents format facts; maintainers author narrative. Ask or omit.      |
+| "I can push directly to main because I touched docs/."            | Touching `sidebars.ts` voids the doc-only push exception; open a PR. |
+| "I'll hardcode the ISO links."                                    | Reusable download components keep hashes and links in sync.          |
+
+## Red Flags
+
+- Invented paragraphs about project history or maintainer intentions.
+- Direct push to `main` when `sidebars.ts` was modified.
+- Hardcoded download links that duplicate component data.
+
+## Verification
+
+- [ ] Page uses `.mdx` if it embeds components, explicit `slug` set.
+- [ ] Download section reuses existing DownloadCard component, not raw links.
+- [ ] Sidebar diff is exactly one line.
+- [ ] `npm run build:ci` succeeds; `build/<slug>/index.html` verified.
+- [ ] PR (not direct push) opened when `sidebars.ts` changed.
+
+## Sources
+
+- `docs/dakota.mdx`, `docs/knuckle.md`, `docs/lts.mdx`
+- `sidebars.ts`
+- [`AGENTS.md`](https://github.com/projectbluefin/documentation/blob/main/AGENTS.md)
