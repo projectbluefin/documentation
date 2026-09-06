@@ -88,3 +88,38 @@ test("docs/press-kit.md documents Bluefin wordmark and color rules", () => {
     "press-kit must document Science Gothic typography",
   );
 });
+
+test("navbar i18n translation and css suppress duplicate title", () => {
+  const i18nPath = path.join(
+    repoRoot,
+    "i18n/en/docusaurus-theme-classic/navbar.json",
+  );
+  if (fs.existsSync(i18nPath)) {
+    const i18n = JSON.parse(fs.readFileSync(i18nPath, "utf8"));
+    assert.equal(
+      i18n.title?.message,
+      "",
+      "navbar i18n title message must be empty",
+    );
+  }
+
+  const cssPath = path.join(repoRoot, "src/css/custom.css");
+  const css = fs.readFileSync(cssPath, "utf8");
+  assert.ok(
+    css.includes(".navbar__title"),
+    "custom.css must style .navbar__title",
+  );
+  assert.ok(
+    css.includes("display: none"),
+    "custom.css must hide .navbar__title",
+  );
+
+  const buildIndexPath = path.join(repoRoot, "build/index.html");
+  if (fs.existsSync(buildIndexPath)) {
+    const html = fs.readFileSync(buildIndexPath, "utf8");
+    assert.ok(
+      !html.includes('<b class="navbar__title text--truncate">Bluefin</b>'),
+      "built index.html must not render duplicate Bluefin text title",
+    );
+  }
+});

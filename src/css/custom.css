@@ -248,3 +248,7 @@ aside.col--3 nav.thin-scrollbar {
   max-width: none;
   display: block;
 }
+
+.navbar__title {
+  display: none !important;
+}
