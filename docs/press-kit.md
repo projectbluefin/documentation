@@ -80,7 +80,7 @@ Used on dark backgrounds with white lettering and `#4285f4` ligature:
   <img src="/img/bluefin-wordmark.svg" alt="Bluefin Wordmark (Dark)" width="260" />
 </p>
 
-- [Download bluefin-wordmark.svg](/img/bluefin-wordmark.svg)
+- <a href="/img/bluefin-wordmark.svg" download="bluefin-wordmark.svg">Download bluefin-wordmark.svg</a>
 
 ### Light Background Variant
 
@@ -90,7 +90,7 @@ Used on light backgrounds with dark lettering and `#4285f4` ligature:
   <img src="/img/bluefin-wordmark-light.svg" alt="Bluefin Wordmark (Light)" width="260" />
 </p>
 
-- [Download bluefin-wordmark-light.svg](/img/bluefin-wordmark-light.svg)
+- <a href="/img/bluefin-wordmark-light.svg" download="bluefin-wordmark-light.svg">Download bluefin-wordmark-light.svg</a>
 
 ### Legacy Logo Deprecation
 

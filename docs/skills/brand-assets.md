@@ -56,7 +56,7 @@ primary branding.
 ## Verification
 
 - `node --test scripts/brand-assets.test.js` passes.
-- `scripts/skills-hygiene.test.js` passes.
+- `npm test` passes.
 - Light and dark theme toggle displays correct contrast wordmark.
 
 ## Sources
