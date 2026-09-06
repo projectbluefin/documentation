@@ -95,77 +95,82 @@ Or select `date` and choose an older image.
 
 ![`ujust rebase-helper` - date](/img/user-attachments/567061da-036d-4779-873e-154a5a833e67.png)
 
-#### Switching between tags manually
+#### Switching between streams manually
 
-Here are the manual commands with `rpm-ostree`, it is recommended to become familiar with them if you find yourself rebasing often. Before changing a stream it is recommended to remove any locally layered packages:
-
-```sh
-rpm-ostree reset
-```
-
-Then run a status:
+Bluefin uses [`bootc`](https://bootc-dev.github.io/bootc/) to manage the operating system image. To inspect your current and staged deployments, run:
 
 ```sh
 sudo bootc status
 ```
 
-and look for the image you are on, it should look something like this:
+This displays your booted image, staged update (if any), and rollback target:
 
 ```
 Current staged image: ghcr.io/projectbluefin/bluefin:stable
-    Image version: 40.20241101.0 (2024-11-02 05:46:53.714 UTC)
-    Image digest: sha256:cb57c75f7d700773ed6f54e4ba5550235a647fc9251e69345b1113cfd81dc884
+    Image version: 43.20260901.0
+    Image digest: sha256:...
 Current booted image: ghcr.io/projectbluefin/bluefin:stable
-    Image version: 40.20241030.0 (2024-10-31 05:47:14.513 UTC)
-    Image digest: sha256:5536b3511f38a57c7f71fd499b616671ef67043f155313f714f8c92a0f8d1e7c
-Current rollback state is native ostree
+    Image version: 43.20260825.0
+    Image digest: sha256:...
 ```
 
-The `ghcr.io/projectbluefin/bluefin:stable` is the important part, with `bluefin` being the image name, and the `:stable` being the image tag. That is the image you are currently on. Look for `:stable`, `:latest`, or in certain cases the version like `:40` or `:41`.
+The `ghcr.io/projectbluefin/bluefin:stable` reference indicates the image and stream tag. Look for `:stable`, `:latest`, or pinned date tags.
 
-**Pro Tip**: Bluefin's [release notes](https://github.com/projectbluefin/bluefin/releases) contain the stream switching instructions at the bottom of each release. This is useful if you're trying to nail down a regression in a specific package version.
+If you have locally layered packages, reset them before switching streams:
 
-Use the `bootc switch` command to move to a newer or older version:
+```sh
+rpm-ostree reset
+```
 
-#### Manual Rebase Examples
+**Pro Tip**: Bluefin's [release notes](https://github.com/projectbluefin/bluefin/releases) contain stream switching instructions for each release.
+
+Use the `bootc switch` command to move to a different stream:
+
+#### Manual Switch Examples
 
 <details>
 
-<summary>In this example you're rebasing to `:stable`, which is the latest stable release of Fedora (currently 41). The `--enforce-container-sigpolicy` is important to ensure you're checking the signature of the produced image:</summary>
+<summary>Switching to `:stable`. The `--enforce-container-sigpolicy` flag ensures signature validation for the target image:</summary>
 
 ```sh
 sudo bootc switch ghcr.io/projectbluefin/bluefin:stable --enforce-container-sigpolicy
 ```
 
-Explicit version tags of the Fedora release are available for users who wish to handle their upgrade cycle manually:
+Switching to `:testing`:
 
 ```sh
-sudo bootc switch ghcr.io/projectbluefin/bluefin:40 --enforce-container-sigpolicy
+sudo bootc switch ghcr.io/projectbluefin/bluefin:testing --enforce-container-sigpolicy
 ```
 
-Additionally rebasing to a specific date tag is encouraged if you need to "pin" to a specific day or version:
+Switching to NVIDIA hardware images:
 
 ```sh
-sudo bootc switch ghcr.io/projectbluefin/bluefin:stable-20241027 --enforce-container-sigpolicy
+sudo bootc switch ghcr.io/projectbluefin/bluefin-nvidia:stable --enforce-container-sigpolicy
 ```
 
-If you use an nvidia machine, remember that the `-nvidia-open` is important! (This is why it's important to note the image name when you ran that previous status command:
+Pinning to a specific date tag:
 
 ```sh
-sudo bootc switch ghcr.io/projectbluefin/bluefin-nvidia-open:stable --enforce-container-sigpolicy
+sudo bootc switch ghcr.io/projectbluefin/bluefin:stable-20260825 --enforce-container-sigpolicy
 ```
 
-Use the `skopeo inspect` command to query information from an image:
+Roll back to the previous deployment:
 
 ```sh
-skopeo inspect docker://ghcr.io/projectbluefin/bluefin
+sudo bootc rollback
+```
+
+Use `skopeo inspect` to query image metadata and available tags:
+
+```sh
+skopeo inspect docker://ghcr.io/projectbluefin/bluefin:stable
 ```
 
 </details>
 
 This will show all the available tags and useful metadata like image and kernel versions.
 
-Check the [Fedora Silverblue User Guide](https://docs.fedoraproject.org/en-US/fedora-silverblue/) for more information.
+Check the [bootc documentation](https://bootc-dev.github.io/bootc/) for more information.
 
 ## Virtual Private Networks (VPN)
 
@@ -185,39 +190,31 @@ There are also VPN providers on Flathub which will offer a good experience:
 
 Other VPN providers that are not explicitly mentioned here may a poor packaging experience and are not recommended. If your VPN provider falls into this category then exporting the wireguard configuration and importing it manually may be the best approach.
 
-## Enabling Local Layering
+## Local Layering
 
-Local Layering is [adding individual packages](https://coreos.github.io/rpm-ostree/administrator-handbook/#hybrid-imagepackaging-via-package-layering) onto the system.
+Adding packages directly onto the host image is discouraged in Bluefin. The operating system is designed to remain pristine and reproducible as an OCI image managed by `bootc`.
 
-Generally speaking this is an anti-pattern in Bluefin as the end goal is to move away from the package based model entirely, however sometimes you just need something. Toggling this back to `true` is just the user's acknowledgement that this will entail manual maintenance as a reminder and that the experience isn't as nice.
+Workloads should be isolated in containers (via Distrobox or Devcontainers), CLI tools installed via Homebrew, and graphical applications installed from Flathub.
 
-:::info
+If you must temporarily layer a host package:
 
-For some users this minimal amount of maintenance is still much smaller than what they are used to and they gladly make that tradeoff. Well played.
-
-:::
-
-You can toggle this setting in `/etc/rpm-ostreed.conf`:
-
-```
-LockLayering=false
+```sh
+rpm-ostree install <package>
 ```
 
-From the manpage:
+To remove all layered packages and return to the pure image baseline:
 
->     LockLayering=
->       Controls whether any mutation of the base OSTree commit is supported (for
->       example, package overlays or overrides, initramfs overlays or regeneration).
->       Defaults to false.
+```sh
+rpm-ostree reset
+```
 
-`rpm-ostree reset` and a reboot will always bring the system back to pure image mode, making temporary compromises to get work done is perfectly fine.
+Reboot to apply.
 
-| Probably Fine        | Don't Do It       |
-| -------------------- | ----------------- |
-| VPN Client           | Steam             |
-| Third party software | Developer Tooling |
-
-Local layering does significantly increase update time, but by default all Bluefin systems update in the background anyway and the result will mostly be invisible. Problems will generally occur if you are using a third party repository that doesn't align with what's happening in the Fedora archive at the time. Your mileage may vary.
+| Recommended Alternative | Avoid Layering on Host |
+| ----------------------- | ---------------------- |
+| Flatpak apps            | Graphical desktop apps |
+| Homebrew CLI tools      | Host utilities         |
+| Distrobox / Containers  | Developer runtimes     |
 
 ## Overwriting System Defaults
 
@@ -244,12 +241,11 @@ Pro tip, keep your own tasks and aliases in `~/.Justfile`, and they are also han
 
 ### Curated Tool Bundles
 
-Bluefin includes curated CLI tools shared as Brewfiles. These commands install curated collections of tools via Homebrew:
+Bluefin includes curated CLI tool collections. These commands install curated collections of tools via Homebrew:
 
 | Command             | Description                                                                                                                 |
 | ------------------- | --------------------------------------------------------------------------------------------------------------------------- |
 | `ujust bluefin-cli` | Modern CLI tools: atuin, bat, chezmoi, direnv, eza, fd, gh, glab, ripgrep, starship, tealdeer, television, zoxide, and more |
-| `ujust bbrew`       | Launch [Bold Brew](https://bold-brew.com/) to select Brewfile bundles                                                       |
 
 ### System Commands
 
@@ -262,7 +258,7 @@ Bluefin includes curated CLI tools shared as Brewfiles. These commands install c
 | `ujust bios-info`              | Display BIOS/UEFI information (manufacturer, product name, version, release date)                                                                                                                                 |
 | `ujust device-info`            | Sends the status, flatpak list, and system info to the CentOS pastebin, and returns the URL to the terminal. This allows the end user to conveniently paste the URL with their info so others can help them debug |
 | `ujust rebase-helper`          | Interactive assistant to switch between streams, rebase to different images, or roll back to a previous version                                                                                                   |
-| `ujust clean-system`           | Clean up unused containers, volumes, flatpak runtimes, and rpm-ostree deployments                                                                                                                                 |
+| `ujust clean-system`           | Clean up unused containers, volumes, and flatpak runtimes                                                                                                                         |
 | `ujust check-idle-power-draw`  | Measure your system's idle power consumption using powerstat                                                                                                                                                      |
 | `ujust check-local-overrides`  | Show files that differ between `/usr/etc` and `/etc` to identify local customizations                                                                                                                             |
 | `ujust logs-this-boot`         | Show all system log messages from the current boot                                                                                                                                                                |

@@ -181,7 +181,7 @@ or via command line: `flatpak install flathub org.virt_manager.virt_manager org.
 
 ## Kubernetes
 
-Run `ujust bbrew` and select `k8s-tools` to install a common set of tools used by Kubernetes administrators. Or install these individually:
+Install a common set of tools used by Kubernetes administrators via Homebrew (`brew install <name>`):
 
 | Name                                                     | Description                                                                                                     |
 | -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
@@ -204,7 +204,7 @@ For access to the full suite of [Cloud Native Computing Foundation](https://l.cn
 
 ## Fonts
 
-Run `ujust bbrew` and select `fonts` to install the following collection of well-curated Mono fonts. Or install these individually. Check the [homebrew website](https://formulae.brew.sh/cask-font/) to add more fonts, or use the included [Embellish](https://flathub.org/en/apps/io.github.getnf.embellish) tool.
+Install curated developer fonts via Homebrew (`brew install --cask <font-name>`), or use the included [Embellish](https://flathub.org/en/apps/io.github.getnf.embellish) tool:
 
 | Name                                                                                          |
 | --------------------------------------------------------------------------------------------- |
@@ -218,3 +218,15 @@ Run `ujust bbrew` and select `fonts` to install the following collection of well
 | [Ubuntu Nerd Font](https://formulae.brew.sh/cask/font-ubuntu-nerd-font)                       |
 | [FiraCode Nerd Font](https://formulae.brew.sh/cask/font-fira-code-nerd-font)                  |
 | [0xProto Nerd Font](https://formulae.brew.sh/cask/font-0xproto-nerd-font)                     |
+
+# Building Custom Images with Finpilot
+
+If you want to create your own customized, bootable `bootc` operating system image based on Bluefin:
+
+- **[finpilot](https://github.com/projectbluefin/finpilot)** provides an official template repository for building custom Linux images.
+- Implements a multi-stage container build architecture for layered packages, configuration files, and desktop customizations.
+- Includes GitHub Actions workflows for automated builds, keyless image signing via Cosign, and publishing to GitHub Container Registry (GHCR).
+- To deploy your custom image, switch with:
+  ```bash
+  sudo bootc switch ghcr.io/<your-username>/<your-image>:latest --enforce-container-sigpolicy
+  ```

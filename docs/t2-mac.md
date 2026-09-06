@@ -126,7 +126,7 @@ In a terminal, you'll install several packages and enable some daemons needed to
 
 #### Allow internal keyboard during early boot (LUKS encryption unlock)
 
-Enable initramfs regeneration. This will enable dracut to run during upgrades, allowing us to configure the apple-bce module to load during early boot. `sudo bootc initramfs --enable` --Note that initramfs generation adds a fair bit of local CPU time after normal rpm-ostree upgrade processing happens.
+Enable initramfs regeneration. This will enable dracut to run during upgrades, allowing us to configure the apple-bce module to load during early boot. `sudo bootc initramfs --enable` --Note that initramfs generation adds local CPU time during image updates.
 
 - If layering T2 packages, create a config file that loads the apple-bce module: `echo "force_drivers+=\" apple-bce \"" | sudo tee /etc/dracut.conf.d/t2linux-modules.conf`
 

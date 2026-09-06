@@ -8,11 +8,11 @@ one_line_purpose: Author and maintain top-level docs pages for image variants.
 entry_point: docs/skills/variant-docs-pages.md
 category: meta
 status: active
-tags: [variants, pages, dakota, lts, server]
+tags: [variants, pages, dakota, lts, server, utah]
 description: >-
   Author and maintain top-level docs pages for Bluefin image families under
   docs/. Use when adding or updating landing pages for variants like dakota,
-  lts, or server, including sidebar placement and component embedding.
+  lts, server, or utah, including sidebar placement and component embedding.
 metadata:
   type: procedure
 ---
@@ -96,6 +96,6 @@ Add the doc id to the "Get Bluefin" category in
 
 ## Sources
 
-- `docs/dakota.mdx`, `docs/knuckle.md`, `docs/lts.mdx`
+- `docs/dakota.mdx`, `docs/lts.mdx`, `docs/server.mdx`, `docs/utah.mdx`
 - `sidebars.ts`
 - [`AGENTS.md`](https://github.com/projectbluefin/documentation/blob/main/AGENTS.md)

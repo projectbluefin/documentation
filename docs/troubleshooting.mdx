@@ -43,6 +43,18 @@ ujust reset-gnome
 ujust clean-system
 ```
 
+### Reporting Bugs and Verifying Fixes
+
+When something breaks or you hit an issue on your machine, three commands flow diagnostics directly to maintainers:
+
+| Command | What it does |
+| --- | --- |
+| `ujust report` | Captures system diagnostics, scrubs sensitive data locally, and opens a pre-filled GitHub issue. |
+| `ujust confirm <issue>` | Confirms your hardware hits an existing issue — adds a hardware fingerprint without creating duplicates. |
+| `ujust verify <issue>` | After a fix lands in a newer image, confirms the issue is resolved on your hardware. |
+
+Every report is displayed for your review before submission, stored in a gist you own, and never uses automated background telemetry.
+
 ### Keyboard Layout & Input Issues
 
 #### Switching Keyboard Layouts Conflicts with Search Light

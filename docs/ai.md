@@ -13,18 +13,20 @@ Bluefin's focus in AI is providing a generic API endpoint to the operating syste
 
 :::
 
-## Bluespeed
+## AI Architecture and Tooling
 
-"Bluespeed" is our collection of Bluefin's [developer experience](/bluefin-dx) tools and support for AI development workflows. We do this via community managed set of tool recommendations and configuration. We believe that the operating system should have more API endpoints for AI.
+Bluefin provides open, user-controlled API endpoints to the operating system for AI workflows. We do this via a community-managed set of tool recommendations and configuration:
 
-- "Bring your own LLM" aproach, it should be easy to switch between local models and hosted ones
+- "Bring your own LLM" approach, it should be easy to switch between local models and hosted ones
   - [Goose](https://block.github.io/goose/) as the primary interface to hosted and local models
 - Accelerate open standards in AI by shipping tools from the [Agentic AI Foundation](https://aaif.io/), [CNCF](https://cncf.io), and other foundations
 - Local LLM service management
-  - Model management via `ramalama` and Docker Model, your choice
+  - Model management via `ramalama` and Docker Model Runner, your choice
 - GPU Acceleration for both Nvidia and AMD are included out of the box and usually do not require any extra setup
-- Highlight great AI/ML applications on FlatHub in our curated section in the App Store
+- Highlight great AI/ML applications on Flathub in our curated section in the App Store
 - A great reason to [sell more swag](https://store.projectbluefin.io)
+
+For deploying reproducible homelab and multi-node AI/observability infrastructure, see [Bluespeed](https://github.com/projectbluefin/bluespeed), Bluefin's homelab factory powered by KubeStellar, Flatcar, and [Knuckle](https://github.com/projectbluefin/knuckle).
 
 We work closely with the [RHEL Lightspeed team](https://github.com/rhel-lightspeed) by shipping their code, giving feedback, and pushing the envelope where we can.
 
@@ -36,7 +38,7 @@ The [AI Lab extension](https://developers.redhat.com/products/podman-desktop/pod
 
 ## AI Command Line Tools
 
-The following AI-focused command-line tools are available via homebrew, install individually or use this command to install them all: `ujust bbrew` and choose the `ai` menu option:
+The following AI-focused command-line tools are available via Homebrew (`brew install <name>`):
 
 | Name                                                                | Description                                                      |
 | ------------------------------------------------------------------- | ---------------------------------------------------------------- |

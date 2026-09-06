@@ -81,15 +81,15 @@ Tier 3 is mostly unsupported - it may work perfectly or be a disaster.
 
 ## System Requirements
 
-Review the [Fedora Silverblue installation instructions](https://docs.fedoraproject.org/en-US/fedora-silverblue/installation/). Some differences to consider:
+Review the following considerations before installing Bluefin:
 
 - Use the [Fedora Media Writer](https://docs.fedoraproject.org/en-US/fedora/latest/preparing-boot-media/#_fedora_media_writer) to create installation media. Other creation methods may not work properly
   - Use of Ventoy is **unsupported**
 - Older BIOS-based systems are **unsupported**; only UEFI systems are supported
 - Dual booting off of the same disk is **unsupported**; use a dedicated drive for another operating system and use your BIOS to choose another OS to boot off of
   - Bluefin supports an [installation on an external drive](#alternative-bluefin-to-go-external-drive) if you want to try it on bare metal before committing
-- We **strongly recommend** using automated partitioning during installation; there are [known issues](https://docs.fedoraproject.org/en-US/fedora-silverblue/installation/) with manual partitioning on Atomic systems and it is unnecessary to set up unless you are on a multi-disk system
-- A stock Bluefin installation is 11GB. Bluefin with developer mode enabled (`bluefin-dx`) is 19GB
+- We **strongly recommend** using automated partitioning during installation; manual partitioning is unnecessary unless you are on a multi-disk system
+- A stock Bluefin installation is ~12.4 GB (~17.4 GB with developer mode enabled)
 
 ### Quick Reference
 

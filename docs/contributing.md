@@ -73,15 +73,17 @@ Bluefin is a combination of a set of configuration OCI containers which are then
 ### Bluefin OCI containers
 
 - Bluefin common: [@projectbluefin/common](https://github.com/projectbluefin/common) - Most of Bluefin's opinion is here
-  - ujust, motd, service units, GNOME and CLI configuration, application choices, etc. Most things that have to do with the workload should live in this repo
-- [@ublue-os/artwork](https://github.com/ublue-os/artwork) - Art assets
-- Homebrew via an OCI: [@ublue-os/brew](https://github.com/ublue-os/brew) and associated [@ublue-os/homebrew-tap](https://github.com/ublue-os/homebrew-tap)
+  - ujust, motd, service units, GNOME and CLI configuration, application choices, etc. Most things that have to do with the workload live in this repo
+- [@projectbluefin/branding](https://github.com/projectbluefin/branding) - Branding and visual assets
+- [@ublue-os/artwork](https://github.com/ublue-os/artwork) - Shared artwork assets
 
-### Images 
+### Images
 
-- Bluefin stable: [@projectbluefin/bluefin](https://github.com/projectbluefin/bluefin) - generates Fedora-based Bluefin OCI container
-- Bluefin LTS [@projectbluefin/bluefin-lts](https://github.com/projectbluefin/bluefin-lts) - generates a CentOS-based Bluefin OCI container
-- Bluefin distroless prototype (aka Dakotaraptor) [@projectbluefin/dakota](https://github.com/projectbluefin/dakota) - generates a GNOME OS based Bluefin OCI container
+- Bluefin: [@projectbluefin/bluefin](https://github.com/projectbluefin/bluefin) - Fedora-based workstation OCI image
+- Bluefin LTS: [@projectbluefin/bluefin-lts](https://github.com/projectbluefin/bluefin-lts) - CentOS Stream 10-based workstation OCI image
+- Dakota: [@projectbluefin/dakota](https://github.com/projectbluefin/dakota) - GNOME OS / Apache BuildStream distroless workstation
+- Utah: [@projectbluefin/utah](https://github.com/projectbluefin/utah) - Fedora Hummingbird with GNOME 51 desktop stack
+- Bluefin Server: [@projectbluefin/server](https://github.com/projectbluefin/server) - FSDK-based DDI-first server OS
 
 :::info Distroless
 This is opposite of the traditional Linux distribution model, the value is in the other OCI layers, not the base image. This is what we mean by "distributions don't matter", since you can use any base image it's just another choice in the long list of decisions we have to make. It's still _important_, it just doesn't matter. And since you can source software from anywhere, the idea of "who gets you the same software better" doesn't make much sense when you can just automate that.
@@ -89,48 +91,49 @@ This is opposite of the traditional Linux distribution model, the value is in th
 
 ## Understanding Bluefin's Architecture
 
-The different components are then assembled in this order. This is done via GitHub actions and heavy use of Renovate to automate the entire build process:
+The different components are then assembled in this order. This is done via GitHub Actions and automated workflows:
 
 ```mermaid
 flowchart TB
-    subgraph oci["Bluefin OCI Containers"]
-        common["<strong>@projectbluefin/common</strong><br/>Desktop Configuration<br/>Shared with Aurora"]
-        brew["<strong>@ublue-os/brew</strong><br/>Homebrew Integration<br/>Shared with Aurora and Bazzite"]
-        artwork["<strong>@ublue-os/artwork</strong><br/>Artwork<br/>Shared with Aurora and Bazzite"]
+    subgraph oci["Configuration & Shared Layers"]
+        common["<strong>@projectbluefin/common</strong><br/>Desktop Configuration<br/>ujust, service units, configs"]
         branding["<strong>@projectbluefin/branding</strong><br/>Branding Assets"]
+        artwork["<strong>@ublue-os/artwork</strong><br/>Artwork Assets"]
     end
     
-    subgraph base["Base Images"]
-        ublue["<strong>Universal Blue</strong><br/>Base Image<br/>Shared with Bazzite GNOME"]
-        centos["<strong>CentOS Stream</strong><br/>Base Image"]
-        gnome_base["<strong>GNOME OS</strong><br/>Base Image"]
+    subgraph base["Base Environments"]
+        fedora["<strong>Fedora bootc</strong><br/>Workstation Base"]
+        centos["<strong>CentOS Stream 10</strong><br/>Enterprise Base"]
+        gnome_base["<strong>GNOME OS</strong><br/>BuildStream Elements"]
+        hummingbird["<strong>Fedora Hummingbird</strong><br/>Minimal Base"]
     end
     
-    subgraph images["Final Images"]
-        bluefin["bluefin:stable"]
-        lts["bluefin:lts<br/>bluefin:lts-hwe<br/>bluefin-gdx"]
-        distroless["Dakotaraptor Prototype<br/>bluefin:distroless"]
+    subgraph images["Target Images"]
+        bluefin["Bluefin<br/>:stable / :testing"]
+        lts["Bluefin LTS<br/>:lts / :lts-hwe / bluefin-gdx"]
+        dakota["Dakota<br/>:stable / :testing / :next"]
+        utah["Utah<br/>:testing (GNOME 51)"]
     end
     
-    common --> ublue
+    common --> fedora
     common --> centos
     common --> gnome_base
+    common --> hummingbird
     
-    brew --> ublue
-    brew --> centos
-    brew --> gnome_base
-    
-    artwork --> ublue
-    artwork --> centos
-    artwork --> gnome_base
-    
-    branding --> ublue
+    branding --> fedora
     branding --> centos
     branding --> gnome_base
+    branding --> hummingbird
     
-    ublue --> bluefin
+    artwork --> fedora
+    artwork --> centos
+    artwork --> gnome_base
+    artwork --> hummingbird
+    
+    fedora --> bluefin
     centos --> lts
-    gnome_base --> distroless
+    gnome_base --> dakota
+    hummingbird --> utah
     
     style oci fill:#708ee3
     style base fill:#4a69bd
@@ -177,6 +180,10 @@ We're making containers here with bash and a little bit of Python, it's not the 
 - Involvement the issues and understanding the problem before committing
 
 ### Fork and Clone
+
+:::info[Factory and Agentic Contributions]
+If you are contributing as part of the core agentic factory team on `projectbluefin` repositories, pure upstream development applies: all feature branches are created directly on `origin` (no personal forks) and follow the gates in [Agentic Contributing](/agentic-contributing). External community contributors without direct repository push access should continue using GitHub's standard fork-and-pull-request workflow below.
+:::
 
 1. **Fork the repository** on GitHub to your account:
    ```bash
@@ -376,7 +383,7 @@ git commit -m "fix: remove cockpit and brew setup functions"
 git commit -m "feat: add bazaar flatpak to default installation"
 
 # Chore with scope
-git commit -m "chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to 9168d7d"
+git commit -m "chore(deps): update ghcr.io/projectbluefin/common digest to 9168d7d"
 
 # Documentation
 git commit -m "docs: explain hat wobble"
@@ -447,31 +454,17 @@ Always test your changes locally or via PR builds before merging. Broken builds 
 
 ### Local Build Testing
 
-**Option 1: Full Container Build** (Recommended for maintainers)
+**Option 1: Container Build**
 
 ```bash
-# Build the base image
+# Build locally with just
+just build
+
+# Or build with podman directly
 podman build -t bluefin-test:latest .
-
-# Build with specific arguments
-podman build \
-  --build-arg FEDORA_MAJOR_VERSION=42 \
-  --build-arg IMAGE_NAME=bluefin \
-  -t bluefin-test:latest \
-  .
 ```
 
-**Option 2: Script Testing** (Faster for script changes)
-
-```bash
-# Test a specific build script
-podman run --rm -it \
-  -v "$(pwd)/build_files:/build_files:ro" \
-  ghcr.io/ublue-os/silverblue-main:42 \
-  bash /build_files/base/04-packages.sh
-```
-
-**Option 3: GitHub Actions Build** (Use PR builds)
+**Option 2: GitHub Actions Build** (Use PR builds)
 
 When you open a PR, GitHub Actions automatically builds your changes. Check the Actions tab for:
 - Build logs
@@ -643,7 +636,7 @@ We strive to automate as much as we can, which means lazily spending our time wa
 
 **Common Renovate PRs:**
 ```
-chore(deps): update ghcr.io/ublue-os/silverblue-main:latest docker digest to abc123
+chore(deps): update ghcr.io/projectbluefin/common digest to abc123
 chore(deps): update softprops/action-gh-release digest to def456
 ```
 
@@ -1031,11 +1024,10 @@ echo "::endgroup::"
 # Direct execution (for simple scripts)
 bash -x build_files/base/04-packages.sh
 
-# Container execution (more realistic)
+# Container execution (testing within the base image)
 podman run --rm -it \
   -v "$(pwd):/workspace:ro" \
-  -e FEDORA_MAJOR_VERSION=42 \
-  ghcr.io/ublue-os/silverblue-main:42 \
+  ghcr.io/projectbluefin/bluefin:testing \
   bash /workspace/build_files/base/04-packages.sh
 ```
 
@@ -1186,20 +1178,19 @@ Each section (e.g., "Bluefin Recommends", "Browsers", "Media") contains an `appi
 ### When to Report Upstream
 
 If you find a bug that:
-- Exists in vanilla Fedora Silverblue/Kinoite
+- Exists in vanilla Fedora Atomic Desktops
 - Is not caused by Bluefin modifications
-- Affects the base Fedora Atomic system
+- Affects the base Fedora system
 
 ### How to Report Upstream
 
-1. **Reproduce on vanilla Fedora** (if possible):
+1. **Reproduce on upstream Fedora** (if possible):
    ```bash
-   # Boot vanilla Fedora Silverblue
-   # Test if the issue occurs there
+   # Test if the issue occurs on upstream Fedora Atomic / bootc
    ```
 
 2. **Report to Fedora**:
-   - Upstream tracker: [fedora-silverblue/issue-tracker](https://github.com/fedora-silverblue/issue-tracker/issues)
+   - Upstream tracker: [Fedora Atomic Desktops Issue Tracker](https://gitlab.com/fedora/ostree/sig/-/issues)
    - Include: Fedora version, steps to reproduce, logs
 
 3. **Link in Bluefin Issue**:
@@ -1230,7 +1221,7 @@ Contributing regularly and demonstrating expertise may lead to maintainer status
 - [Bluefin Documentation](https://docs.projectbluefin.io/)
 - [Building Locally](https://docs.projectbluefin.io/local)
 - [Universal Blue Guide](https://universal-blue.org/guide/)
-- [Fedora Atomic Documentation](https://docs.fedoraproject.org/en-US/fedora-silverblue/)
+- [bootc Documentation](https://bootc-dev.github.io/bootc/)
 
 ### Tooling
 

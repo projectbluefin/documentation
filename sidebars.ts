@@ -15,6 +15,7 @@ const sidebars: SidebarsConfig = {
         "server",
         "lts",
         "dakota",
+        "utah",
         "images",
         "driver-versions",
       ],
