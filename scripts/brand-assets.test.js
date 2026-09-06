@@ -44,3 +44,25 @@ test("static/img/logo.svg does not contain legacy ublue 'u' path", () => {
     "logo.svg must not contain legacy ublue 'u' path",
   );
 });
+
+test("docusaurus.config.ts uses new wordmark in navbar and raptor favicon", () => {
+  const configPath = path.join(repoRoot, "docusaurus.config.ts");
+  const content = fs.readFileSync(configPath, "utf8");
+
+  assert.ok(
+    content.includes('favicon: "img/favicon.svg"'),
+    "favicon must point to img/favicon.svg",
+  );
+  assert.ok(
+    content.includes('src: "img/bluefin-wordmark-light.svg"'),
+    "navbar logo src must be light wordmark",
+  );
+  assert.ok(
+    content.includes('srcDark: "img/bluefin-wordmark-dark.svg"'),
+    "navbar logo srcDark must be dark wordmark",
+  );
+  assert.ok(
+    content.includes('title: ""'),
+    "navbar title must be empty string so wordmark is not duplicated",
+  );
+});

@@ -235,3 +235,16 @@ aside.col--3 nav.thin-scrollbar {
     min-height: 0;
   }
 }
+
+/* ── Navbar wordmark ────────────────────────────────────────────────────── */
+.navbar__logo {
+  height: 2rem;
+  margin-right: 1rem;
+}
+
+.navbar__logo img {
+  height: 100%;
+  width: auto;
+  max-width: none;
+  display: block;
+}

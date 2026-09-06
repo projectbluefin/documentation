@@ -7,7 +7,7 @@ import type * as Preset from "@docusaurus/preset-classic";
 const config: Config = {
   title: "Bluefin",
   tagline: "Bluefin Documentation",
-  favicon: "img/logo.svg",
+  favicon: "img/favicon.svg",
 
   url: "https://docs.projectbluefin.io",
   baseUrl: "/",
@@ -172,10 +172,11 @@ const config: Config = {
     // Social card that shows up on discord when you share it
     image: "img/meta.png",
     navbar: {
-      title: "Bluefin",
+      title: "",
       logo: {
         alt: "Bluefin",
-        src: "img/logo.svg",
+        src: "img/bluefin-wordmark-light.svg",
+        srcDark: "img/bluefin-wordmark-dark.svg",
         href: "https://projectbluefin.io",
       },
       items: [
