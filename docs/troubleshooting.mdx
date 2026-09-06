@@ -32,8 +32,8 @@ sudo bootc status
 If desktop extensions or shell tweaks cause graphical issues or freezes:
 
 ```bash
-# Reset GNOME Shell and extensions to Bluefin defaults
-ujust reset-gnome
+# Reset GNOME Shell and extensions to system defaults
+dconf reset -f /org/gnome/
 ```
 
 ### Cleaning Disk Space & Unused Runtimes
@@ -47,11 +47,11 @@ ujust clean-system
 
 When something breaks or you hit an issue on your machine, three commands flow diagnostics directly to maintainers:
 
-| Command | What it does |
-| --- | --- |
-| `ujust report` | Captures system diagnostics, scrubs sensitive data locally, and opens a pre-filled GitHub issue. |
+| Command                 | What it does                                                                                             |
+| ----------------------- | -------------------------------------------------------------------------------------------------------- |
+| `ujust report`          | Captures system diagnostics, scrubs sensitive data locally, and opens a pre-filled GitHub issue.         |
 | `ujust confirm <issue>` | Confirms your hardware hits an existing issue — adds a hardware fingerprint without creating duplicates. |
-| `ujust verify <issue>` | After a fix lands in a newer image, confirms the issue is resolved on your hardware. |
+| `ujust verify <issue>`  | After a fix lands in a newer image, confirms the issue is resolved on your hardware.                     |
 
 Every report is displayed for your review before submission, stored in a gist you own, and never uses automated background telemetry.
 
@@ -154,24 +154,49 @@ In the menu select "Ask Bluefin" to use the chat agent.
 
 <img src="/img/goose-quick-launch.png" alt="Goose quick launch" />
 
-### Installation
+### Out-of-the-Box Setup: `ujust probe`
+
+Bluefin includes built-in automation to set up and launch an AI troubleshooting session:
+
+```bash
+ujust probe
+```
+
+Running `ujust probe` automatically:
+
+1. Verifies Goose is installed (or prompts you to install it via Homebrew).
+2. Installs `ublue-os/tap/linux-mcp-server` if it is not already present.
+3. Automatically writes the Goose configuration with `linux-tools` enabled via `goose-mcp-setup`.
+4. Checks for a configured LLM provider and starts the session.
+
+### Manual Installation & Configuration
+
+If you prefer to install manually or are setting this up on macOS:
 
 <Tabs groupId="operating-systems">
-  <TabItem value="linux" label="Linux" default>
-    ```brew install rhel-lightspeed/tap/linux-mcp-server ```
+  <TabItem value="linux" label="Bluefin / Linux" default>
+
+```bash
+brew install ublue-os/tap/linux-mcp-server
+goose-mcp-setup
+```
+
   </TabItem>
   <TabItem value="macos" label="macOS">
-    ```brew install rhel-lightspeed/tap/linux-mcp-server ```
+
+```bash
+brew install ublue-os/tap/linux-mcp-server
+goose-mcp-setup
+```
+
+:::note
+On macOS, `linux-mcp-server` inspects a remote Linux host over SSH. Set `LINUX_MCP_HOST: <host>` in your `~/.config/goose/config.yaml` envs.
+:::
+
   </TabItem>
 </Tabs>
 
-This installs linux-mcp-server, the Goose client, and our config. Follow the instructions in the terminal, then continue with the configuration steps below for MCP setup and your preferred LLM provider.
-
-# Configuration
-
-:::info
-You need to install and configure the MCP servers to use this. Pull requests to automate this welcome!
-:::
+Installing `ublue-os/tap/linux-mcp-server` installs `linux-mcp-server`, the Goose client (`block-goose-cli`), and `goose-mcp-setup`.
 
 #### linux-mcp-server
 
@@ -186,27 +211,11 @@ Provides system diagnostics and monitoring tools:
 
 **Repository**: [rhel-lightspeed/linux-mcp-server](https://github.com/rhel-lightspeed/linux-mcp-server)
 
-### MCP Configuration
+### Configuration Steps
 
-The configuration process differs depending on which AI client you're using:
+#### Step 1: Configure Goose Extension
 
-#### Goose Configuration
-
-**Step 1: Install linux-mcp-server**
-
-```bash
-brew install rhel-lightspeed/tap/linux-mcp-server
-```
-
-**Step 2: Configure Goose**
-
-Run the setup script that ships with `linux-mcp-server`. If a config already exists it prints the snippet to add manually instead:
-
-```bash
-goose-mcp-setup
-```
-
-This creates `~/.config/goose/config.yaml` with the `linux-tools` extension pre-configured:
+Running `goose-mcp-setup` creates `~/.config/goose/config.yaml` with the `linux-tools` extension pre-configured:
 
 ```yaml
 extensions:
@@ -226,11 +235,11 @@ extensions:
     args: []
 ```
 
-**Step 3: Configure your LLM**
+#### Step 2: Configure your LLM Provider
 
-For most providers — Anthropic, OpenAI, Gemini, etc. — run `goose configure` and follow the prompts to enter your API key.
+For hosted providers (Anthropic, OpenAI, Gemini, etc.), run `goose configure` and follow the prompts to select your provider and enter your API key.
 
-For local models, [Ramalama](https://github.com/containers/ramalama) is the recommended option. It manages models as containers and serves an OpenAI-compatible endpoint that Goose reaches via the `ollama` provider. Use the full `ramalama` command here, matching the upstream RamaLama docs:
+For local models, [Ramalama](https://github.com/containers/ramalama) is the recommended option. It manages models as containers and serves an OpenAI-compatible endpoint that Goose reaches via the `ollama` provider:
 
 ```bash
 brew install ramalama
@@ -241,29 +250,13 @@ Then run `goose configure`, select **Ollama**, and set `OLLAMA_HOST` to `http://
 
 [LM Studio](https://lmstudio.ai/) (`brew install lm-studio`) is a graphical alternative — launch it, load a model, enable the local server, then select **LM Studio** in `goose configure`.
 
-:::tip[On the local network? Use Ghost.]
+#### Step 3: Start Troubleshooting
 
-Ghost is a shared local inference server running [Qwen3-35B](https://qwenlm.github.io/blog/qwen3/). No API key, no model download required. After `goose-mcp-setup`, run this to switch Goose over:
-
-```bash
-python3 -c "
-import re, pathlib
-p = pathlib.Path.home() / '.config/goose/config.yaml'
-c = p.read_text()
-c = re.sub(r'^GEMINI_CLI_COMMAND:.*\n', '', c, flags=re.MULTILINE)
-c = re.sub(r'^GOOSE_PROVIDER:.*', 'GOOSE_PROVIDER: openai', c, flags=re.MULTILINE)
-c = re.sub(r'^GOOSE_MODEL:.*', 'GOOSE_MODEL: unsloth/Qwen3.6-35B-A3B-GGUF', c, flags=re.MULTILINE)
-if 'OPENAI_HOST' not in c:
-    c = 'OPENAI_HOST: http://ghost.localdomain:8080\nOPENAI_API_KEY: not-needed\n' + c
-p.write_text(c); print('Done — Goose is now pointing at Ghost.')
-"
-```
-
-:::
-
-**Step 4: Start Goose**
+Start an interactive session:
 
 ```bash
+ujust probe
+# or directly:
 goose session
 ```
 
@@ -326,6 +319,7 @@ Note: these are taken from the linux-server-mcp page but you get the idea:
 | **Disk Partitions** | `list_block_devices` | "Show me the partition layout."        |
 | **Large Folders**   | `list_directories`   | "Find the largest folders in /var."    |
 | **Recent Changes**  | `list_files`         | "What files in /etc changed recently?" |
+| **Read File**       | `read_file`          | "Read /etc/fstab."                     |
 
 ### Pro Tips
 
@@ -348,17 +342,22 @@ Install the CLI and authenticate:
 
 ```bash
 brew tap dosu-ai/dosu
+brew trust dosu-ai/dosu
 brew install dosu
 dosu login
 ```
 
-Goose is not yet a natively supported tool in Dosu's MCP integration. After logging in, use the manual config path to get your connection details:
+:::note
+Homebrew on Linux requires trusting third-party taps with `brew trust <tap>` before installing formulae.
+:::
+
+Goose connects to Dosu via MCP using its HTTP transport. After logging in, use the manual config path to get your connection details:
 
 ```bash
 dosu mcp add manual --show-secret
 ```
 
-This prints your Dosu MCP URL and API key. Add them to `~/.config/goose/config.yaml` under `extensions`:
+This prints your Dosu MCP endpoint URL and API key. Add them to `~/.config/goose/config.yaml` under `extensions`:
 
 ```yaml
 extensions:
@@ -367,10 +366,17 @@ extensions:
     type: streamable_http
     name: dosu
     description: Dosu knowledge base
-    uri: <url from dosu mcp add manual>
+    uri: <Endpoint from dosu mcp add manual>
     headers:
-      X-Dosu-API-Key: <key from dosu mcp add manual>
+      X-Dosu-API-Key: <Header value from dosu mcp add manual>
     timeout: 30
 ```
 
 Once added, you can ask Goose questions that draw on your org's docs alongside the live system data from `linux-mcp-server`.
+
+If you use other AI tools such as GitHub Copilot CLI, Claude Code, Cursor, or VS Code, Dosu can configure them directly:
+
+```bash
+dosu mcp add copilot
+# or: dosu mcp add claude, dosu mcp add cursor, dosu mcp add vscode
+```
