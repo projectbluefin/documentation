@@ -2,6 +2,7 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 
 const {
+  STREAM_SPECS,
   selectAmd64DigestFromManifest,
   stripEpoch,
   compareRpmVersions,
@@ -69,19 +70,61 @@ const MOCK_STABLE_DAILY_SPEC = {
   keyless: true,
 };
 
+test("STREAM_SPECS contains utah-testing and utah-nvidia-testing", () => {
+  const utahSpec = STREAM_SPECS.find((s) => s.id === "utah-testing");
+  const utahNvidiaSpec = STREAM_SPECS.find(
+    (s) => s.id === "utah-nvidia-testing",
+  );
+
+  assert.ok(utahSpec, "utah-testing spec must exist");
+  assert.equal(utahSpec.org, "projectbluefin");
+  assert.equal(utahSpec.package, "utah");
+  assert.equal(utahSpec.streamPrefix, "testing");
+
+  assert.ok(utahNvidiaSpec, "utah-nvidia-testing spec must exist");
+  assert.equal(utahNvidiaSpec.org, "projectbluefin");
+  assert.equal(utahNvidiaSpec.package, "utah-nvidia");
+  assert.equal(utahNvidiaSpec.streamPrefix, "testing");
+});
+
 // Dynamic reference date based on current time to avoid lookback window flakiness.
 const now = new Date();
 const FIXED_RECENT_DATE = now.toISOString().split("T")[0].replace(/-/g, "");
 
+test("findRecentTagsForStream: picks testing-YYYYMMDD tags for Utah streams", () => {
+  const ghcrTags = [
+    `testing-${FIXED_RECENT_DATE}`,
+    `testing-${FIXED_RECENT_DATE}-hwe`,
+    `stable-${FIXED_RECENT_DATE}`,
+  ];
+
+  for (const streamId of ["utah-testing", "utah-nvidia-testing"]) {
+    const spec = STREAM_SPECS.find((s) => s.id === streamId);
+    const result = findRecentTagsForStream(ghcrTags, spec);
+
+    assert.equal(
+      result.length,
+      1,
+      `${streamId} should only match the canonical testing tag`,
+    );
+    assert.equal(result[0].tag, `testing-${FIXED_RECENT_DATE}`);
+    assert.equal(result[0].cacheKey, `testing-${FIXED_RECENT_DATE}`);
+  }
+});
+
 test("findRecentTagsForStream: picks stable-YYYYMMDD tags from GHCR list", () => {
   const ghcrTags = [
     `stable-${FIXED_RECENT_DATE}`,
-    "latest-20260101",                        // different stream prefix — must be excluded
-    `stable-${FIXED_RECENT_DATE}-hwe`,        // non-canonical suffix — must be excluded
-    "v1.0.0",                                 // no date — must be excluded
+    "latest-20260101", // different stream prefix — must be excluded
+    `stable-${FIXED_RECENT_DATE}-hwe`, // non-canonical suffix — must be excluded
+    "v1.0.0", // no date — must be excluded
   ];
   const result = findRecentTagsForStream(ghcrTags, MOCK_STABLE_SPEC);
-  assert.equal(result.length, 1, "only the canonical stable-YYYYMMDD tag should be found");
+  assert.equal(
+    result.length,
+    1,
+    "only the canonical stable-YYYYMMDD tag should be found",
+  );
   assert.equal(result[0].tag, `stable-${FIXED_RECENT_DATE}`);
   assert.equal(result[0].cacheKey, `stable-${FIXED_RECENT_DATE}`);
 });
@@ -94,7 +137,10 @@ test("findRecentTagsForStream: excludes tags older than LOOKBACK_DAYS", () => {
 });
 
 test("findRecentTagsForStream: deduplicates same date", () => {
-  const ghcrTags = [`stable-${FIXED_RECENT_DATE}`, `stable-${FIXED_RECENT_DATE}`]; // duplicate
+  const ghcrTags = [
+    `stable-${FIXED_RECENT_DATE}`,
+    `stable-${FIXED_RECENT_DATE}`,
+  ]; // duplicate
   const result = findRecentTagsForStream(ghcrTags, MOCK_STABLE_SPEC);
   assert.equal(result.length, 1, "duplicates must be removed");
 });
@@ -102,12 +148,16 @@ test("findRecentTagsForStream: deduplicates same date", () => {
 test("findRecentTagsForStream: picks stable-daily-YYYYMMDD tags for stable-daily spec", () => {
   const ghcrTags = [
     `stable-daily-${FIXED_RECENT_DATE}`,
-    `stable-${FIXED_RECENT_DATE}`,              // different prefix (weekly stable) — must be excluded
-    `stable-daily-${FIXED_RECENT_DATE}-hwe`,    // non-canonical suffix — must be excluded
-    "latest-20260101",                          // unrelated prefix — must be excluded
+    `stable-${FIXED_RECENT_DATE}`, // different prefix (weekly stable) — must be excluded
+    `stable-daily-${FIXED_RECENT_DATE}-hwe`, // non-canonical suffix — must be excluded
+    "latest-20260101", // unrelated prefix — must be excluded
   ];
   const result = findRecentTagsForStream(ghcrTags, MOCK_STABLE_DAILY_SPEC);
-  assert.equal(result.length, 1, "only the canonical stable-daily-YYYYMMDD tag should be found");
+  assert.equal(
+    result.length,
+    1,
+    "only the canonical stable-daily-YYYYMMDD tag should be found",
+  );
   assert.equal(result[0].tag, `stable-daily-${FIXED_RECENT_DATE}`);
   assert.equal(result[0].cacheKey, `stable-daily-${FIXED_RECENT_DATE}`);
 });
@@ -264,7 +314,11 @@ test("extractBstPackageVersions: linux-headers.bst does not set kernel", () => {
     ],
   };
   const result = extractBstPackageVersions(headersOnlySpdx);
-  assert.equal(result.kernel, null, "linux-headers must not be mapped to kernel");
+  assert.equal(
+    result.kernel,
+    null,
+    "linux-headers must not be mapped to kernel",
+  );
 });
 
 test("extractBstPackageVersions: mesa picks extensions/mesa/mesa.bst", () => {

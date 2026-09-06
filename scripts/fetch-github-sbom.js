@@ -299,6 +299,26 @@ const STREAM_SPECS = [
     keyless: true,
   },
   {
+    id: "utah-testing",
+    label: "Utah Testing",
+    org: "projectbluefin",
+    package: "utah",
+    releasesRepo: "projectbluefin/utah",
+    streamPrefix: "testing",
+    keyRepo: "projectbluefin/utah",
+    keyless: true,
+  },
+  {
+    id: "utah-nvidia-testing",
+    label: "Utah Nvidia Testing",
+    org: "projectbluefin",
+    package: "utah-nvidia",
+    releasesRepo: "projectbluefin/utah",
+    streamPrefix: "testing",
+    keyRepo: "projectbluefin/utah",
+    keyless: true,
+  },
+  {
     id: "dakota-latest",
     label: "Dakota Latest",
     org: "projectbluefin",
@@ -344,9 +364,7 @@ async function processLatestTagStream(spec, existing) {
   // Build the list of image refs to process: :latest plus the 10 most recent
   // commit-SHA tags (each is a distinct tagged build pushed to GHCR).
   const allTags = await fetchGhcrTags(spec.org, spec.package);
-  const commitTags = allTags
-    .filter((t) => /^[0-9a-f]{40}$/.test(t))
-    .slice(-10); // last 10 = most recently pushed
+  const commitTags = allTags.filter((t) => /^[0-9a-f]{40}$/.test(t)).slice(-10); // last 10 = most recently pushed
   const imageRefs = [
     `ghcr.io/${spec.org}/${spec.package}:latest`,
     ...commitTags.map((t) => `ghcr.io/${spec.org}/${spec.package}:${t}`),
@@ -368,65 +386,65 @@ async function processLatestTagStream(spec, existing) {
 
     console.log(`  ${spec.id}: ${cacheKey}${isCacheHit ? " (cache hit)" : ""}`);
 
-  if (isCacheHit) {
-    // Patch tag to cacheKey on cache hits — migrates old tag:imageRef entries
-    // so the nvidiaByTag lookup in buildStreamFromSbom works correctly.
-    releases[cacheKey] = { ...existingEntry, tag: cacheKey };
-  } else {
-    console.log(`  ${spec.id}: verifying attestation for ${imageRef}`);
-    const rawAttestation = await verifyAttestation(imageRef, spec);
-    const attestation = {
-      present: rawAttestation.present,
-      verified: rawAttestation.verified,
-      predicateType: rawAttestation.predicateType,
-      slsaType: SLSA_TYPE,
-      ...(rawAttestation.errorKind !== undefined && {
-        errorKind: rawAttestation.errorKind,
-      }),
-      error: rawAttestation.error,
-    };
+    if (isCacheHit) {
+      // Patch tag to cacheKey on cache hits — migrates old tag:imageRef entries
+      // so the nvidiaByTag lookup in buildStreamFromSbom works correctly.
+      releases[cacheKey] = { ...existingEntry, tag: cacheKey };
+    } else {
+      console.log(`  ${spec.id}: verifying attestation for ${imageRef}`);
+      const rawAttestation = await verifyAttestation(imageRef, spec);
+      const attestation = {
+        present: rawAttestation.present,
+        verified: rawAttestation.verified,
+        predicateType: rawAttestation.predicateType,
+        slsaType: SLSA_TYPE,
+        ...(rawAttestation.errorKind !== undefined && {
+          errorKind: rawAttestation.errorKind,
+        }),
+        error: rawAttestation.error,
+      };
 
-    let packageVersions = null;
-    let sbomPath = null;
-    let tmpDir = null;
-    try {
-      sbomPath = await downloadSbom(imageRef);
-      if (sbomPath) {
-        tmpDir = path.dirname(sbomPath);
-        packageVersions = extractPackageVersions(sbomPath);
-        if (packageVersions) {
-          console.log(
-            `    ${cacheKey}: extracted packageVersions ` +
-              `(gnome: ${packageVersions.gnome}, kernel: ${packageVersions.kernel})`,
-          );
+      let packageVersions = null;
+      let sbomPath = null;
+      let tmpDir = null;
+      try {
+        sbomPath = await downloadSbom(imageRef);
+        if (sbomPath) {
+          tmpDir = path.dirname(sbomPath);
+          packageVersions = extractPackageVersions(sbomPath);
+          if (packageVersions) {
+            console.log(
+              `    ${cacheKey}: extracted packageVersions ` +
+                `(gnome: ${packageVersions.gnome}, kernel: ${packageVersions.kernel})`,
+            );
+          }
+        }
+      } catch (err) {
+        console.warn(
+          `    ${cacheKey}: SBOM download/parse error — ${err.message}`,
+        );
+      } finally {
+        if (tmpDir) {
+          try {
+            fs.rmSync(tmpDir, { recursive: true, force: true });
+          } catch {
+            // ignore cleanup errors
+          }
         }
       }
-    } catch (err) {
-      console.warn(
-        `    ${cacheKey}: SBOM download/parse error — ${err.message}`,
-      );
-    } finally {
-      if (tmpDir) {
-        try {
-          fs.rmSync(tmpDir, { recursive: true, force: true });
-        } catch {
-          // ignore cleanup errors
-        }
-      }
+
+      releases[cacheKey] = {
+        // Store cacheKey as tag (e.g. "latest-20260514") so buildNvidiaMapFromSbomStream
+        // and the nvidiaByTag lookup in buildStreamFromSbom can match by cacheKey.
+        // Storing the full imageRef causes the lookup to fail (wrong image name).
+        tag: cacheKey,
+        imageRef,
+        digest: null,
+        attestation,
+        packageVersions,
+        checkedAt: new Date().toISOString(),
+      };
     }
-
-    releases[cacheKey] = {
-      // Store cacheKey as tag (e.g. "latest-20260514") so buildNvidiaMapFromSbomStream
-      // and the nvidiaByTag lookup in buildStreamFromSbom can match by cacheKey.
-      // Storing the full imageRef causes the lookup to fail (wrong image name).
-      tag: cacheKey,
-      imageRef,
-      digest: null,
-      attestation,
-      packageVersions,
-      checkedAt: new Date().toISOString(),
-    };
-  }
   } // end for imageRefs
 
   return {
@@ -469,7 +487,16 @@ async function processStream(spec, ghcrTagsByImage, existing) {
       return existing.streams[spec.id];
     }
     // No existing cache to fall back to; return empty stream.
-    return { id: spec.id, label: spec.label, org: spec.org, package: spec.package, streamPrefix: spec.streamPrefix, keyRepo: spec.keyRepo, keyless: spec.keyless, releases: {} };
+    return {
+      id: spec.id,
+      label: spec.label,
+      org: spec.org,
+      package: spec.package,
+      streamPrefix: spec.streamPrefix,
+      keyRepo: spec.keyRepo,
+      keyless: spec.keyless,
+      releases: {},
+    };
   }
   const ghcrTags = ghcrTagsByImage.get(imageKey);
   const recentTags = findRecentTagsForStream(ghcrTags, spec);
@@ -488,7 +515,10 @@ async function processStream(spec, ghcrTagsByImage, existing) {
       Object.keys(existingEntry.packageVersions.allPackages).length > 0;
     const isVerified = existingEntry?.attestation?.verified === true;
 
-    const isCacheHit = !FORCE_REFRESH && hasVersions && hasAllPackages &&
+    const isCacheHit =
+      !FORCE_REFRESH &&
+      hasVersions &&
+      hasAllPackages &&
       (spec.keyless ? isVerified : true);
 
     if (isCacheHit) {
@@ -501,7 +531,11 @@ async function processStream(spec, ghcrTagsByImage, existing) {
 
     // Partial cache hit: attestation already verified (keyless) but SBOM not yet downloaded.
     let attestation;
-    if (!FORCE_REFRESH && isVerified && (!hasVersions || (hasVersions && !hasAllPackages))) {
+    if (
+      !FORCE_REFRESH &&
+      isVerified &&
+      (!hasVersions || (hasVersions && !hasAllPackages))
+    ) {
       console.log(
         `    ${cacheKey}: attestation cached, fetching SBOM packageVersions`,
       );
@@ -596,11 +630,11 @@ async function main() {
   }
 
   // Deduplicate by GHCR image — multiple streams share the same image
-  const uniqueImages = new Set(STREAM_SPECS.map((s) => `${s.org}/${s.package}`));
-
-  console.log(
-    `Fetching GHCR tags for ${uniqueImages.size} image(s)...`,
+  const uniqueImages = new Set(
+    STREAM_SPECS.map((s) => `${s.org}/${s.package}`),
   );
+
+  console.log(`Fetching GHCR tags for ${uniqueImages.size} image(s)...`);
   const ghcrTagsByImage = new Map();
   for (const imageKey of uniqueImages) {
     const [org, pkg] = imageKey.split("/");
@@ -610,7 +644,9 @@ async function main() {
       ghcrTagsByImage.set(imageKey, tags);
       console.log(`    ${tags.length} GHCR tags fetched`);
     } catch (err) {
-      console.error(`  Failed to fetch GHCR tags for ${imageKey}: ${err.message}`);
+      console.error(
+        `  Failed to fetch GHCR tags for ${imageKey}: ${err.message}`,
+      );
     }
   }
 
@@ -639,8 +675,8 @@ async function main() {
   if (totalReleases === 0) {
     console.error(
       "Error: all streams produced zero releases. " +
-      "This indicates a Releases API failure. " +
-      "Refusing to overwrite cache with empty data.",
+        "This indicates a Releases API failure. " +
+        "Refusing to overwrite cache with empty data.",
     );
     process.exit(1);
   }
@@ -664,7 +700,10 @@ async function main() {
 
   // Write release-list.json — a lightweight index of all releases across streams,
   // suitable for changelogs/feed pages without importing the full SBOM payload.
-  const RELEASE_LIST_FILE = path.join(path.dirname(OUTPUT_FILE), "release-list.json");
+  const RELEASE_LIST_FILE = path.join(
+    path.dirname(OUTPUT_FILE),
+    "release-list.json",
+  );
   const releaseList = [];
   for (const [streamId, stream] of Object.entries(streams)) {
     for (const [tag, entry] of Object.entries(stream.releases || {})) {
@@ -681,8 +720,13 @@ async function main() {
     }
   }
   releaseList.sort((a, b) => new Date(b.date) - new Date(a.date));
-  atomicWriteJson(RELEASE_LIST_FILE, { generatedAt: output.generatedAt, releases: releaseList });
-  console.log(`Release list written to ${RELEASE_LIST_FILE} (${releaseList.length} entries)`);
+  atomicWriteJson(RELEASE_LIST_FILE, {
+    generatedAt: output.generatedAt,
+    releases: releaseList,
+  });
+  console.log(
+    `Release list written to ${RELEASE_LIST_FILE} (${releaseList.length} entries)`,
+  );
 }
 
 if (require.main === module) {
@@ -693,6 +737,7 @@ if (require.main === module) {
 }
 
 module.exports = {
+  STREAM_SPECS,
   stripEpoch,
   compareRpmVersions,
   extractPackageVersions,
@@ -700,5 +745,5 @@ module.exports = {
   isSemverLike,
   selectAmd64DigestFromManifest,
   findRecentTagsForStream,
-  fetchGhcrTags,   // exported for integration testing
+  fetchGhcrTags, // exported for integration testing
 };

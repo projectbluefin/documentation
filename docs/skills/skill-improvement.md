@@ -79,6 +79,9 @@ checkout` stamps every tracked file with the current time and the TTL never
   requires updating both `docs/music.md` and the `PLAYLISTS` list in
   `scripts/fetch-playlist-metadata.js`, running `npm run fetch-playlists`, and
   committing only the new thumbnail.
+- Stream registries are easier to keep correct when exported as a test seam;
+  pair each new GHCR stream with a canonical dated-tag fixture so configuration
+  and tag matching are verified together.
 
 Each is invisible from the source alone. Each would be paid again by the next
 agent. That is the bar.
@@ -147,3 +150,5 @@ not publish.
 
 - `/addyosmani/agent-skills` via Context7: canonical skill anatomy and section
   requirements.
+- `scripts/fetch-github-sbom.js` and `scripts/fetch-github-sbom.test.js`: GHCR
+  stream configuration and tag-matching tests.
