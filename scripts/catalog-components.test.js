@@ -44,6 +44,9 @@ function loadComponent(tsxPath, overrides = {}) {
       if (id === "@site/src/components/Sparkline") {
         return { __esModule: true, default: () => null };
       }
+      if (id.startsWith("@site/")) {
+        return require(path.join(__dirname, "..", id.replace(/^@site\//, "")));
+      }
       return require(id);
     },
     mod,

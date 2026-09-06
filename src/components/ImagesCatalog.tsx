@@ -4,6 +4,7 @@ import Heading from "@theme/Heading";
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 import CodeBlock from "@theme/CodeBlock";
+import staticImagesData from "@site/static/data/images.json";
 import styles from "./ImagesCatalog.module.css";
 
 const ARCH_LOGO: Record<string, { src: string; alt: string }> = {
@@ -224,7 +225,7 @@ export default function ImagesCatalogComponent({
   initialCatalog,
 }: ImagesCatalogProps = {}): React.JSX.Element {
   const [catalog, setCatalog] = React.useState<ImagesCatalog>(
-    initialCatalog ?? { products: [] },
+    initialCatalog ?? (staticImagesData as unknown as ImagesCatalog),
   );
 
   React.useEffect(() => {
@@ -239,25 +240,34 @@ export default function ImagesCatalogComponent({
       .then((data) => {
         if (!mounted) return;
         if (!data || !Array.isArray(data.products)) {
-          setCatalog({
-            products: [],
-            unavailable: true,
-            stateReason: "Image catalog response was invalid.",
-          });
+          setCatalog((current) =>
+            current.products && current.products.length > 0
+              ? current
+              : {
+                  products: [],
+                  unavailable: true,
+                  stateReason: "Image catalog response was invalid.",
+                },
+          );
           return;
         }
         setCatalog(data as ImagesCatalog);
       })
       .catch((error: unknown) => {
         if (!mounted) return;
-        const reason =
-          error instanceof Error
-            ? `Image catalog request failed: ${error.message}`
-            : "Image catalog request failed.";
-        setCatalog({
-          products: [],
-          unavailable: true,
-          stateReason: reason,
+        setCatalog((current) => {
+          if (current.products && current.products.length > 0) {
+            return current;
+          }
+          const reason =
+            error instanceof Error
+              ? `Image catalog request failed: ${error.message}`
+              : "Image catalog request failed.";
+          return {
+            products: [],
+            unavailable: true,
+            stateReason: reason,
+          };
         });
       });
     return () => {

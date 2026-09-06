@@ -51,8 +51,9 @@ const PRODUCT_SPECS = [
     keyRepo: "projectbluefin/bluefin",
     nvidiaPackage: "bluefin-nvidia",
     allowTestingStreams: false,
-    isoSectionLink: "/downloads#bluefin",
+    isoSectionLink: "/downloads",
     supportedArches: ["amd", "intel"],
+    keepEvenIfStale: true,
   },
   {
     id: "projectbluefin-bluefin-lts",
@@ -71,7 +72,7 @@ const PRODUCT_SPECS = [
     nvidiaPackage: "bluefin-lts-nvidia",
     allowTestingStreams: true,
     keepEvenIfStale: true,
-    isoSectionLink: "/downloads#bluefin-lts",
+    isoSectionLink: "/downloads",
     supportedArches: ["amd", "intel"],
   },
   {
@@ -95,6 +96,7 @@ const PRODUCT_SPECS = [
     // fedora will be null — Dakota is GNOME OS based, not Fedora.
     supportedArches: ["amd", "intel"],
     isoSectionLink: "/downloads-testing#dakotaraptor",
+    keepEvenIfStale: true,
   },
   {
     id: "projectbluefin-utah",
@@ -116,6 +118,7 @@ const PRODUCT_SPECS = [
     allowTestingStreams: false,
     supportedArches: ["amd", "intel"],
     isoSectionLink: null,
+    keepEvenIfStale: true,
   },
 ];
 
@@ -347,31 +350,43 @@ function buildTopStreams(spec, tagSet) {
       });
     }
   }
+  if (top.length === 0 && spec.streamOrder.length > 0) {
+    const fallbackTag = spec.streamOrder[0];
+    top.push({
+      label: fallbackTag.toUpperCase(),
+      tag: fallbackTag,
+      command: `sudo bootc switch ghcr.io/${spec.org}/${spec.package}:${fallbackTag} --enforce-container-sigpolicy`,
+      versions: null,
+    });
+  }
   return top;
 }
 
 function attachNvidiaCommands(streams, spec, nvidiaTagSet) {
-  if (!spec.nvidiaPackage || !nvidiaTagSet) return streams;
+  if (!spec.nvidiaPackage) return streams;
 
   return streams.map((entry) => {
     let nvidiaTag = null;
 
-    if (nvidiaTagSet.has(entry.tag)) {
+    if (nvidiaTagSet && nvidiaTagSet.has(entry.tag)) {
       nvidiaTag = entry.tag;
     } else if (
       spec.nvidiaTagFallback?.[entry.tag] &&
-      nvidiaTagSet.has(spec.nvidiaTagFallback[entry.tag])
+      nvidiaTagSet?.has(spec.nvidiaTagFallback[entry.tag])
     ) {
       nvidiaTag = spec.nvidiaTagFallback[entry.tag];
+    } else if (nvidiaTagSet && nvidiaTagSet.size === 0) {
+      // Package exists but has no release tag matching entry.tag
+      nvidiaTag = entry.tag;
     }
 
-    if (!nvidiaTag) {
+    if (!nvidiaTag && nvidiaTagSet && !nvidiaTagSet.has(entry.tag)) {
       return { ...entry, nvidiaCommand: null };
     }
 
     return {
       ...entry,
-      nvidiaCommand: `sudo bootc switch ghcr.io/${spec.org}/${spec.nvidiaPackage}:${nvidiaTag} --enforce-container-sigpolicy`,
+      nvidiaCommand: `sudo bootc switch ghcr.io/${spec.org}/${spec.nvidiaPackage}:${nvidiaTag || entry.tag} --enforce-container-sigpolicy`,
     };
   });
 }

@@ -303,7 +303,7 @@ const STREAM_SPECS = [
     id: "bluefin-nvidia-open-stable",
     label: "Bluefin Nvidia Open Stable",
     org: "projectbluefin",
-    package: "bluefin-nvidia-open",
+    package: "bluefin-nvidia",
     releasesRepo: "projectbluefin/bluefin",
     streamPrefix: "stable",
     keyRepo: "projectbluefin/bluefin",

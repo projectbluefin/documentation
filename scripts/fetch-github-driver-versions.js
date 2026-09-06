@@ -204,7 +204,7 @@ function buildStreamFromSbom(
     ? sbomCache?.streams?.[hweStreamId]?.releases || {}
     : {};
 
-  const history = Object.entries(releases)
+  const allRows = Object.entries(releases)
     .sort(([a], [b]) => b.localeCompare(a))
     .map(([cacheKey, entry]) => {
       const dateMatch = cacheKey.match(/(\d{8})$/);
@@ -224,9 +224,13 @@ function buildStreamFromSbom(
     })
     .filter((row) => {
       const parsed = Date.parse(row.publishedAt || "");
-      if (Number.isNaN(parsed)) return false;
-      return parsed >= cutoff;
+      return !Number.isNaN(parsed);
     });
+
+  const withinCutoff = allRows.filter(
+    (row) => Date.parse(row.publishedAt) >= cutoff,
+  );
+  const history = withinCutoff.length > 0 ? withinCutoff : allRows.slice(0, 5);
 
   return {
     id: streamId,
