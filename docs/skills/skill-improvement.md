@@ -82,6 +82,11 @@ checkout` stamps every tracked file with the current time and the TTL never
 - Stream registries are easier to keep correct when exported as a test seam;
   pair each new GHCR stream with a canonical dated-tag fixture so configuration
   and tag matching are verified together.
+- Build-time data fetchers must degrade successfully when upstream data is
+  missing: preserve a valid cache, otherwise write an explicit
+  `unavailable: true` and `stateReason` payload, and keep the top-level error
+  handler at exit 0. A silently empty file makes unavailable data look healthy
+  and can still break consumers that expect the generated artifact to exist.
 
 Each is invisible from the source alone. Each would be paid again by the next
 agent. That is the bar.
