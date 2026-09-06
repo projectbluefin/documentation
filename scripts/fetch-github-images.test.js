@@ -1,6 +1,6 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { mkdtempSync, readFileSync, rmSync } = require("node:fs");
+const { mkdtempSync, readFileSync, rmSync, writeFileSync } = require("node:fs");
 const os = require("node:os");
 const path = require("node:path");
 
@@ -144,6 +144,35 @@ test("main writes an unavailable catalog when the SBOM cache is missing", async 
     const output = JSON.parse(readFileSync(outputFile, "utf-8"));
     assert.equal(output.unavailable, true);
     assert.equal(output.stateReason, "SBOM cache not available");
+    assert.deepEqual(output.products, []);
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
+});
+
+test("main writes an unavailable catalog when SBOM streams have no releases", async () => {
+  const directory = mkdtempSync(path.join(os.tmpdir(), "fetch-github-images-"));
+  const outputFile = path.join(directory, "images.json");
+  const sbomFile = path.join(directory, "sbom-attestations.json");
+  try {
+    writeFileSync(
+      sbomFile,
+      JSON.stringify({
+        generatedAt: new Date().toISOString(),
+        streams: {
+          "bluefin-stable": { releases: {} },
+          "bluefin-lts": { releases: {} },
+          "dakota-latest": { releases: {} },
+          "utah-testing": { releases: {} },
+        },
+      }),
+    );
+
+    await main({ outputFile, sbomFile });
+
+    const output = JSON.parse(readFileSync(outputFile, "utf-8"));
+    assert.equal(output.unavailable, true);
+    assert.equal(output.stateReason, "SBOM cache contains no release data");
     assert.deepEqual(output.products, []);
   } finally {
     rmSync(directory, { recursive: true, force: true });

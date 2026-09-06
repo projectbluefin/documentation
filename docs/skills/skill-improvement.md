@@ -106,6 +106,10 @@ checkout` stamps every tracked file with the current time and the TTL never
   marker; missing SBOM input must produce an unavailable payload instead of a
   catalog filled with null versions. Keep release URLs in separate metadata so
   they survive source-of-truth migrations.
+- SBOM cache validation must require at least one release entry, not just a
+  non-empty `streams` object. A structurally valid but unpopulated cache must
+  produce an explicit unavailable payload with a no-release reason instead of
+  generating products whose versions are all null.
 
 Each is invisible from the source alone. Each would be paid again by the next
 agent. That is the bar.

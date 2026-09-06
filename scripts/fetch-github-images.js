@@ -33,6 +33,7 @@ const STALE_DAYS = Number(process.env.IMAGES_STALE_DAYS || 30);
 const FORCE_REFRESH = process.argv.includes("--force");
 const SBOM_VERSION_SOURCE = "sbom";
 const SBOM_UNAVAILABLE_REASON = "SBOM cache not available";
+const SBOM_NO_RELEASE_DATA_REASON = "SBOM cache contains no release data";
 
 const PRODUCT_SPECS = [
   {
@@ -120,6 +121,21 @@ function readJsonIfExists(filePath, fallback) {
   } catch {
     return fallback;
   }
+}
+
+function hasUsableSbomData(sbomCache) {
+  const streams = sbomCache?.streams;
+  if (!streams || typeof streams !== "object" || Array.isArray(streams)) {
+    return false;
+  }
+
+  return Object.values(streams).some(
+    (stream) =>
+      stream?.releases &&
+      typeof stream.releases === "object" &&
+      !Array.isArray(stream.releases) &&
+      Object.keys(stream.releases).length > 0,
+  );
 }
 
 /**
@@ -667,16 +683,17 @@ async function buildProduct(spec, feeds, cachedById, ageHours, sbomCache) {
 async function main({ outputFile = OUTPUT_FILE, sbomFile = SBOM_FILE } = {}) {
   const existing = readJsonIfExists(outputFile, null);
   const sbomCache = readSbomCache(sbomFile);
-  if (
-    !sbomCache ||
-    !sbomCache.streams ||
-    typeof sbomCache.streams !== "object" ||
-    Array.isArray(sbomCache.streams) ||
-    Object.keys(sbomCache.streams).length === 0
-  ) {
-    const output = buildUnavailableOutput(SBOM_UNAVAILABLE_REASON);
+  if (!hasUsableSbomData(sbomCache)) {
+    const hasStreams =
+      sbomCache?.streams &&
+      typeof sbomCache.streams === "object" &&
+      !Array.isArray(sbomCache.streams);
+    const reason = hasStreams
+      ? SBOM_NO_RELEASE_DATA_REASON
+      : SBOM_UNAVAILABLE_REASON;
+    const output = buildUnavailableOutput(reason);
     writeOutput(output, outputFile);
-    console.log(`Image data unavailable: ${SBOM_UNAVAILABLE_REASON}.`);
+    console.log(`Image data unavailable: ${reason}.`);
     return;
   }
 
@@ -782,6 +799,7 @@ module.exports = {
   buildTestingStreams,
   buildUnavailableOutput,
   cacheAgeHours,
+  hasUsableSbomData,
   isCurrentImageCatalog,
   main,
   normalizeTestingTag,
