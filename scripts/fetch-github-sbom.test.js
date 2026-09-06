@@ -83,16 +83,73 @@ test("handleEmptyCache writes unavailable fallbacks without throwing", () => {
   }
 });
 
-test("reportMainError logs errors without failing", () => {
+test("reportMainError writes unavailable fallbacks when the cache is missing", () => {
+  const paths = makeOutputPaths();
   const messages = [];
+  const warnings = [];
   const originalError = console.error;
-  console.error = (message) => messages.push(message);
+  const originalWarn = console.warn;
   try {
-    assert.doesNotThrow(() => reportMainError(new Error("test failure")));
+    console.error = (message) => messages.push(message);
+    console.warn = (message) => warnings.push(message);
+    assert.doesNotThrow(() =>
+      reportMainError(new Error("test failure"), paths),
+    );
+
+    assert.deepEqual(messages, ["fetch-github-sbom: test failure"]);
+    assert.deepEqual(warnings, [
+      "Warning: all streams produced zero releases. Writing unavailable SBOM fallback.",
+    ]);
+    const output = JSON.parse(readFileSync(paths.outputFile, "utf-8"));
+    assert.equal(output.unavailable, true);
+    assert.equal(
+      JSON.parse(readFileSync(paths.frontendOutputFile, "utf-8")).unavailable,
+      true,
+    );
+    assert.equal(
+      JSON.parse(readFileSync(paths.releaseListFile, "utf-8")).unavailable,
+      true,
+    );
   } finally {
     console.error = originalError;
+    console.warn = originalWarn;
+    rmSync(paths.directory, { recursive: true, force: true });
   }
-  assert.deepEqual(messages, ["fetch-github-sbom: test failure"]);
+});
+
+test("reportMainError preserves an existing cache", () => {
+  const paths = makeOutputPaths();
+  const existing = {
+    generatedAt: "2026-09-06T00:00:00.000Z",
+    streams: {
+      "bluefin-stable": {
+        releases: { "stable-20260906": { tag: "stable-20260906" } },
+      },
+    },
+  };
+  const messages = [];
+  const originalError = console.error;
+  const originalWarn = console.warn;
+  try {
+    console.error = (message) => messages.push(message);
+    console.warn = () => {};
+    writeFileSync(paths.outputFile, JSON.stringify(existing), "utf-8");
+    assert.doesNotThrow(() =>
+      reportMainError(new Error("test failure"), paths),
+    );
+
+    assert.deepEqual(messages, ["fetch-github-sbom: test failure"]);
+    assert.deepEqual(
+      JSON.parse(readFileSync(paths.outputFile, "utf-8")),
+      existing,
+    );
+    assert.equal(existsSync(paths.frontendOutputFile), false);
+    assert.equal(existsSync(paths.releaseListFile), false);
+  } finally {
+    console.error = originalError;
+    console.warn = originalWarn;
+    rmSync(paths.directory, { recursive: true, force: true });
+  }
 });
 
 test("selectAmd64DigestFromManifest picks linux/amd64 from multi-arch index", () => {

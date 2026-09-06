@@ -684,7 +684,18 @@ function handleEmptyCache(existing, files) {
   return output;
 }
 
-function reportMainError(err) {
+function reportMainError(err, files = {}) {
+  const outputFile = files.outputFile || OUTPUT_FILE;
+  let existing = null;
+  if (fs.existsSync(outputFile)) {
+    try {
+      existing = JSON.parse(fs.readFileSync(outputFile, "utf-8"));
+    } catch {
+      console.warn("Existing cache unreadable; writing unavailable fallback.");
+    }
+  }
+
+  handleEmptyCache(existing, files);
   console.error(`fetch-github-sbom: ${err.message}`);
 }
 

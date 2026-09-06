@@ -84,8 +84,10 @@ checkout` stamps every tracked file with the current time and the TTL never
   and tag matching are verified together.
 - Build-time data fetchers must degrade successfully when upstream data is
   missing: preserve a valid cache, otherwise write an explicit
-  `unavailable: true` and `stateReason` payload, and keep the top-level error
-  handler at exit 0. A silently empty file makes unavailable data look healthy
+  `unavailable: true` and `stateReason` payload. The top-level error handler
+  must use that same fallback path before returning exit 0; handling only the
+  normal empty-result branch can still leave consumers without a valid
+  generated artifact. A silently empty file makes unavailable data look healthy
   and can still break consumers that expect the generated artifact to exist.
 
 Each is invisible from the source alone. Each would be paid again by the next
