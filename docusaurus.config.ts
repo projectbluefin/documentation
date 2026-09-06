@@ -47,7 +47,7 @@ const config: Config = {
           sidebarPath: "./sidebars.ts",
           // Disables the landing page
           routeBasePath: "/",
-          exclude: ["skills/**", "SKILL.md"],
+          exclude: ["skills/**", "SKILL.md", "superpowers/**"],
           editUrl: "https://github.com/projectbluefin/documentation/tree/main",
         },
         blog: {
