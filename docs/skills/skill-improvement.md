@@ -99,6 +99,11 @@ checkout` stamps every tracked file with the current time and the TTL never
   legacy feed/API-derived output would keep the build green while violating
   the source-of-truth contract; otherwise write an explicit unavailable
   payload.
+- Image catalogs should route every displayed version field, including NVIDIA,
+  through the SBOM stream lookup. Release feeds may still provide links or
+  timestamps, but they must not provide versions; when product IDs change,
+  reject fresh caches containing retired IDs instead of trusting `generatedAt`
+  alone.
 
 Each is invisible from the source alone. Each would be paid again by the next
 agent. That is the bar.
