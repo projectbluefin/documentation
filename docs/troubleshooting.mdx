@@ -237,18 +237,24 @@ extensions:
 
 #### Step 2: Configure your LLM Provider
 
-For hosted providers (Anthropic, OpenAI, Gemini, etc.), run `goose configure` and follow the prompts to select your provider and enter your API key.
+Goose supports both hosted providers and local models. Run:
 
-For local models, [Ramalama](https://github.com/containers/ramalama) is the recommended option. It manages models as containers and serves an OpenAI-compatible endpoint that Goose reaches via the `ollama` provider:
+```bash
+goose configure
+```
+
+- **GitHub Copilot**: Select `GitHub Copilot` to authenticate directly with your GitHub account.
+- **Hosted APIs**: Select Anthropic, OpenAI, Gemini, etc., and enter your API key when prompted.
+- **Local Models**: [Ramalama](https://github.com/containers/ramalama) manages models as containers and serves an OpenAI-compatible endpoint:
 
 ```bash
 brew install ramalama
 ramalama serve qwen3:8b
 ```
 
-Then run `goose configure`, select **Ollama**, and set `OLLAMA_HOST` to `http://localhost:8080`.
+Then in `goose configure`, select **Ollama** and set `OLLAMA_HOST` to `http://localhost:8080`.
 
-[LM Studio](https://lmstudio.ai/) (`brew install lm-studio`) is a graphical alternative — launch it, load a model, enable the local server, then select **LM Studio** in `goose configure`.
+[LM Studio](https://lmstudio.ai/) (`brew install lm-studio`) is a graphical alternative — load a model, start the local server, and select **LM Studio** in `goose configure`.
 
 #### Step 3: Start Troubleshooting
 
