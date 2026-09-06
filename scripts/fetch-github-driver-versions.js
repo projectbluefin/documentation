@@ -358,7 +358,7 @@ async function main() {
   const dakotaStream = hasSbomDakota
     ? buildStreamFromSbom(
         "dakota-latest",
-        "Dakotaraptor",
+        "Dakota",
         "GNOME OS-based image from projectbluefin/dakota.",
         "sudo bootc switch --enforce-container-sigpolicy ghcr.io/projectbluefin/dakota:latest",
         sbomCache,

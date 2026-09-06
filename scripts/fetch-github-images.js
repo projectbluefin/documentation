@@ -47,6 +47,7 @@ const PRODUCT_SPECS = [
     versionSource: SBOM_VERSION_SOURCE,
     releaseSource: { feed: "bluefin", stream: "stable" },
     sbomStreamId: "bluefin-stable",
+    nvidiaSbomStreamId: "bluefin-nvidia-open-stable",
     keyRepo: "projectbluefin/bluefin",
     nvidiaPackage: "bluefin-nvidia",
     allowTestingStreams: false,
@@ -57,13 +58,15 @@ const PRODUCT_SPECS = [
     id: "projectbluefin-bluefin-lts",
     name: "Bluefin LTS",
     org: "projectbluefin",
-    package: "bluefin-lts",
+    package: "bluefin",
     artwork: "achillobator",
     summary: "Long-term support Bluefin stream.",
     streamOrder: ["lts"],
     versionSource: SBOM_VERSION_SOURCE,
     releaseSource: { feed: "lts", stream: "lts" },
     sbomStreamId: "bluefin-lts",
+    nvidiaSbomStreamId: "bluefin-lts-nvidia",
+    nvidiaSbomFallbackStreamId: "bluefin-gdx-lts",
     keyRepo: "projectbluefin/bluefin-lts",
     nvidiaPackage: "bluefin-lts-nvidia",
     allowTestingStreams: true,
@@ -84,6 +87,7 @@ const PRODUCT_SPECS = [
       url: "https://github.com/projectbluefin/dakota/releases",
     },
     sbomStreamId: "dakota-latest",
+    nvidiaSbomStreamId: "dakota-nvidia-latest",
     keyRepo: "projectbluefin/dakota",
     nvidiaPackage: "dakota-nvidia",
     allowTestingStreams: false,
@@ -106,6 +110,7 @@ const PRODUCT_SPECS = [
       url: "https://github.com/projectbluefin/utah/releases",
     },
     sbomStreamId: "utah-testing",
+    nvidiaSbomStreamId: "utah-nvidia-testing",
     keyRepo: "projectbluefin/utah",
     nvidiaPackage: "utah-nvidia",
     allowTestingStreams: false,
@@ -410,6 +415,35 @@ function buildTestingStreams(spec, tags) {
     }));
 }
 
+function lookupNvidiaVersionFromSbom(sbomCache, streamId) {
+  if (!sbomCache || !streamId) return null;
+  const stream = sbomCache.streams?.[streamId];
+  if (!stream?.releases) return null;
+  const keys = Object.keys(stream.releases).sort().reverse();
+  for (const k of keys) {
+    const v = stream.releases[k]?.packageVersions?.nvidia;
+    if (v) return v;
+  }
+  return null;
+}
+
+function resolveNvidiaVersion(spec, sbomCache, baseNvidia) {
+  if (baseNvidia) return baseNvidia;
+  if (!sbomCache || !spec) return null;
+  if (spec.nvidiaSbomStreamId) {
+    const v = lookupNvidiaVersionFromSbom(sbomCache, spec.nvidiaSbomStreamId);
+    if (v) return v;
+  }
+  if (spec.nvidiaSbomFallbackStreamId) {
+    const v = lookupNvidiaVersionFromSbom(
+      sbomCache,
+      spec.nvidiaSbomFallbackStreamId,
+    );
+    if (v) return v;
+  }
+  return null;
+}
+
 async function buildStreamVersionInfo(
   spec,
   imageRef,
@@ -422,7 +456,7 @@ async function buildStreamVersionInfo(
   return {
     gnome: sbomVersions?.gnome || null,
     kernel: sbomVersions?.kernel || null,
-    nvidia: sbomVersions?.nvidia || null,
+    nvidia: resolveNvidiaVersion(spec, sbomCache, sbomVersions?.nvidia),
     fedora: sbomVersions?.fedora || null,
     flatpak: sbomVersions?.flatpak || null,
     mesa: sbomVersions?.mesa || null,
@@ -632,7 +666,7 @@ async function buildProduct(spec, feeds, cachedById, ageHours, sbomCache) {
     source: SBOM_VERSION_SOURCE,
     gnome: sbomVersions?.gnome || null,
     kernel: sbomVersions?.kernel || null,
-    nvidia: sbomVersions?.nvidia || null,
+    nvidia: resolveNvidiaVersion(spec, sbomCache, sbomVersions?.nvidia),
     release: releaseInfoFromSource(feeds, spec.releaseSource),
   };
 

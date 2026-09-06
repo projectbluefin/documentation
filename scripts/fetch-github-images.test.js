@@ -85,6 +85,50 @@ test("buildStreamVersionInfo extracts nvidia and packages strictly from SBOM", a
   assert.equal(versions.mesa, "25.3.6");
 });
 
+test("buildStreamVersionInfo falls back to companion nvidia SBOM stream when base stream has no nvidia", async () => {
+  const spec = {
+    id: "projectbluefin-bluefin",
+    org: "projectbluefin",
+    package: "bluefin",
+    sbomStreamId: "bluefin-stable",
+    nvidiaSbomStreamId: "bluefin-nvidia-open-stable",
+  };
+  const sbomCache = {
+    streams: {
+      "bluefin-stable": {
+        releases: {
+          "stable-20260906": {
+            packageVersions: {
+              gnome: "49.5",
+              kernel: "6.18.13-200.fc43",
+              nvidia: null,
+              mesa: "25.3.6",
+            },
+          },
+        },
+      },
+      "bluefin-nvidia-open-stable": {
+        releases: {
+          "stable-20260906": {
+            packageVersions: {
+              nvidia: "595.71.05",
+            },
+          },
+        },
+      },
+    },
+  };
+
+  const versions = await buildStreamVersionInfo(
+    spec,
+    "ghcr.io/projectbluefin/bluefin",
+    "stable",
+    null,
+    sbomCache,
+  );
+  assert.equal(versions.nvidia, "595.71.05");
+});
+
 test("cacheAgeHours uses generatedAt instead of the file mtime", () => {
   const generatedAt = new Date(Date.now() - 10 * 60 * 60 * 1000).toISOString();
 
