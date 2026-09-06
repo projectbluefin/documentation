@@ -58,7 +58,7 @@ motivation prose — see _Never write in a maintainer's voice_ in `AGENTS.md`.
 
 ## Sidebar
 
-Add the doc id to the "Get Bluefin" category in
+Add the doc id to the `Images` category inside "Get Bluefin" in
 `sidebars.ts`. The doc id is the filename without extension.
 
 ## Gotchas
