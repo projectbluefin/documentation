@@ -1,10 +1,19 @@
 ---
 name: giscus-discussions
+version: "1.1"
+last_updated: "2026-09-06"
+id: giscus-discussions
+one_line_purpose: Verify, recover, and archive blog Giscus discussion threads.
+entry_point: docs/skills/giscus-discussions.md
+category: meta
+status: active
+tags: [giscus, github-discussions, blog, comments]
 description: >-
   Verify, recover, and archive Bluefin blog Giscus Discussions. Use when a
   published blog post has no comments, the Open Discussion on New Blog Post
   workflow fails, or a source Discussion must be replaced by its blog post.
 metadata:
+  type: procedure
   context7-sources:
     - /websites/github_en_graphql
 ---

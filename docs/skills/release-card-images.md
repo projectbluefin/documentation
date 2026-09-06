@@ -1,10 +1,20 @@
 ---
 name: release-card-images
+version: "1.1"
+last_updated: "2026-09-06"
+id: release-card-images
+one_line_purpose: Generate and debug embeddable release card PNG images.
+entry_point: docs/skills/release-card-images.md
+category: meta
+status: active
+tags: [release-cards, images, satori, badges]
 description: >-
-  Generate and debug the embeddable release card PNGs served from
-  /img/cards/. Use when a card shows a stale or missing version, when adding a
-  card for a new image stream, when changing card layout, or when
-  scripts/generate-card-images.mjs skips a slug.
+  Generate and debug the embeddable release card PNGs served from /img/cards/.
+  Use when a card shows stale or missing version data, when adding a card for a
+  new image stream, when changing card layout, or when generate-card-images skips
+  a slug.
+metadata:
+  type: procedure
 ---
 
 # Release card images

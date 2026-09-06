@@ -1,12 +1,19 @@
 ---
 name: component-testing
+version: "1.1"
+last_updated: "2026-09-06"
+id: component-testing
+one_line_purpose: Unit-test React components in-memory using node --test.
+entry_point: docs/skills/component-testing.md
+category: test-authoring
+status: active
+tags: [components, testing, react, node-test]
 description: >-
-  Unit-test React presentational components in this repository using the
-  existing node --test runner, with no new test tooling. Use when adding or
-  changing a component under src/components/, when a component encodes a
-  correctness or honesty rule that must not regress, or when tempted to install
-  Jest, Vitest, or Testing Library.
+  Unit-test React components using the repository node --test runner without
+  extra test tooling. Use when adding or changing components under
+  src/components/, testing correctness rules, or verifying render output.
 metadata:
+  type: procedure
   context7-sources:
     - /microsoft/typescript-website
     - /reactjs/react.dev

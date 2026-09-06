@@ -24,6 +24,7 @@ guidance in a general-purpose design or content skill you have loaded.
 | Verifying, recovering, or archiving a blog discussion | [`skills/giscus-discussions.md`](skills/giscus-discussions.md)                              |
 | Landing a pull request, or proving a change is live   | [`skills/shipping-and-verifying.md`](skills/shipping-and-verifying.md)                      |
 | Writing back what you learned                         | [`skills/skill-improvement.md`](skills/skill-improvement.md)                                |
+| Authoring a new skill                                 | [`skills/write-a-skill.md`](skills/write-a-skill.md)                                        |
 | Anything else                                         | [`../AGENTS.md`](https://github.com/projectbluefin/documentation/blob/main/AGENTS.md) first |
 
 Repository rules, build commands, git workflow, data-pipeline contracts and

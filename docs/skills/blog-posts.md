@@ -1,10 +1,19 @@
 ---
 name: blog-posts
+version: "1.1"
+last_updated: "2026-09-06"
+id: blog-posts
+one_line_purpose: Format, embed, and validate Bluefin blog posts under blog/.
+entry_point: docs/skills/blog-posts.md
+category: meta
+status: active
+tags: [blog, authoring, mdx, embeds]
 description: >-
   Author, format, and embed content in Bluefin blog posts under blog/. Use when
-  writing or editing a blog post, turning a social post into a blog entry,
-  embedding a Bluesky post, adding images to a post, or when a build reports
-  "No p element in scope but a p end tag seen".
+  editing a blog post, converting a social post to blog format, embedding
+  Bluesky posts, adding images, or fixing MDX minifier paragraph errors.
+metadata:
+  type: procedure
 ---
 
 # Blog posts
@@ -21,28 +30,24 @@ component. Authors resolve from `blog/authors.yaml`.
 
 ## When NOT to Use
 
-- Monthly reports — those live in `reports/` with their own generator.
-- Comment threads on a published post — see
-  [`giscus-discussions.md`](giscus-discussions.md).
-- Getting a merged post live — see
-  [`shipping-and-verifying.md`](shipping-and-verifying.md).
+- Monthly reports — live in `reports/` with their own generator.
+- Comment threads on a published post — see [`giscus-discussions.md`](giscus-discussions.md).
+- Getting a merged post live — see [`shipping-and-verifying.md`](shipping-and-verifying.md).
 
 ## The copy is not yours to write
 
 **An agent formats a post. An agent does not author it.**
 
 This is the repository-wide rule in [`AGENTS.md`](https://github.com/projectbluefin/documentation/blob/main/AGENTS.md) →
-_Never write in a maintainer's voice_, and it bites hardest here, because a blog
-post is mostly prose and the temptation is to fill the page.
+_Never write in a maintainer's voice_. A blog post is mostly prose and the
+temptation is to fill the page:
 
 - The maintainer supplies the words. You supply the structure.
 - Never invent narrative, lore, project history, motivation, or a promise.
 - Never write a first-person sentence that will publish under someone's byline.
-- If the post needs copy that was not supplied, **ask.** Ship the post with the
-  embed and the front matter and a hole where the prose goes.
+- If copy is missing, **ask.** Ship structure/embeds with an empty body hole.
 
-A general-purpose design skill that says "come up with copy" is talking about
-labels in a mockup. It is not authorization to write paragraphs as the author.
+A design skill saying "come up with copy" refers to mockups, not authorship.
 
 ## Core Process
 
@@ -99,7 +104,6 @@ Verified against the Docusaurus v3 migration docs:
 
 ```markdown
 <div>Some **Markdown** content</div>
-
 <div>
   Some **Markdown** content
 </div>
@@ -109,9 +113,7 @@ compiles to:
 
 ```html
 <div>Some <strong>Markdown</strong> content</div>
-<div>
-  <p>Some <strong>Markdown</strong> content</p>
-</div>
+<div><p>Some <strong>Markdown</strong> content</p></div>
 ```
 
 So this, which is what Prettier produces once the line passes 80 characters:
@@ -175,8 +177,7 @@ For images and video, use `src/components/blog/BlogFigure.tsx` — it renders
 ## Red Flags
 
 - A paragraph in the post that no human wrote or approved.
-- A first-person sentence, a promise, or a claim about project history that you
-  composed.
+- A first-person sentence, promise, or project history claim you composed.
 - A post body that grew while you were "just embedding" something.
 - `src=` pointing at `cdn.bsky.app`, `pbs.twimg.com`, or any remote host.
 - A `<p>`, `<span>`, or `<em>` JSX element split across lines in `.mdx`.
@@ -190,12 +191,10 @@ For images and video, use `src/components/blog/BlogFigure.tsx` — it renders
 - [ ] Front matter has `title`, `slug`, `authors`, `tags`, `date`, and `image`.
 - [ ] No single-element JSX line exceeds 80 characters.
 - [ ] `npx prettier --check` passes on the files you touched.
-- [ ] `npm run build:ci` emits no warnings naming your page path — a clean exit
-      code alone is not enough.
+- [ ] `npm run build:ci` emits no warnings naming your page path.
 
 ## Sources
 
-- Context7: `/websites/docusaurus_io_3_9_2` — MDX truncation markers, JSX and
-  Markdown interleaving, blog front matter fields.
+- Context7: `/websites/docusaurus_io_3_9_2` (MDX truncation, JSX interleaving, blog front matter).
 - `src/components/blog/BlueskyPost.tsx`, `src/components/blog/BlogFigure.tsx`
 - [`AGENTS.md`](https://github.com/projectbluefin/documentation/blob/main/AGENTS.md) → _Never write in a maintainer's voice_

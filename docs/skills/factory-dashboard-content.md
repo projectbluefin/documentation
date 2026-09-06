@@ -1,10 +1,20 @@
 ---
 name: factory-dashboard-content
+version: "1.1"
+last_updated: "2026-09-06"
+id: factory-dashboard-content
+one_line_purpose: Write and verify copy, data, and charts on /factory.
+entry_point: docs/skills/factory-dashboard-content.md
+category: meta
+status: active
+tags: [factory, dashboard, echarts, theming]
 description: >-
   Write and verify copy, data, and charts on the /factory dashboard. Use when
   editing a factory panel title or summary, adding a lane or image to the
   dashboard, touching countme adoption numbers, or styling an ECharts chart in
   src/components/factory/.
+metadata:
+  type: procedure
 ---
 
 # Factory dashboard content
@@ -107,10 +117,9 @@ so read them rather than duplicating them.
 
 Rules:
 
-- **Never put a hex literal in a chart option.** Use `useSeverityColors()` for
-  severity series and `useChartColors()` for label/text colours, both from
-  `src/components/factory/useFactoryTheme.ts`. `factory-theming.test.js` fails
-  the build on a hex in any panel.
+- **Never put a hex literal in a chart option.** Use `FX_SEVERITY` for severity
+  series and `FX_COLORS` from `src/components/factory/chartTheme.ts`.
+  `factory-theming.test.js` fails the build on a hex in themed components.
 - **Axis styling is applied per-axis**, by `applyAxisTheme()` in `EChart`.
   `categoryAxis` / `valueAxis` are _theme_ keys that ECharts only honours via
   `registerTheme`; putting them in an option object does nothing at all, silently.

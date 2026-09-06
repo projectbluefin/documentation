@@ -25,15 +25,15 @@ For a full technical comparison of what changed between `ublue-os/bluefin` and `
 
 ## The Factory Is Running
 
-The agentic factory is operational and shipping weekly.
+The agentic factory is operational and shipping daily.
 
 **What is operational:**
 
 - Keyless signing, merge queue, fast PR validation (1–2 min)
 - `pr-smoke.yml` — full image build + smoke test for PRs that touch build-affecting paths
-- `post-testing-e2e.yml` — runs `smoke,common` suites against every `main` push
+- `post-testing-e2e.yml` — runs `smoke,common` suites against every push to `testing`
 - `nightly.yml` — nightly `smoke,common,vanilla-gnome` baseline run against `:latest`
-- `weekly-testing-promotion.yml` with 2-human Environment gate
+- `promote-testing-to-main.yml` — daily automated promotion PR into merge queue; `execute-release.yml` publishes `:stable` on push to `main`
 - `projectbluefin/actions` shared CI library consumed by `bluefin`, `bluefin-lts`, and `dakota`
 - `bonedigger` issue lifecycle bot
 - AI Moderator (`moderator.yml`) — spam detection and moderation on issues and PR comments
@@ -315,17 +315,17 @@ flowchart TB
 
 ### Infrastructure repos
 
-| Repo                                                                                | Role                                                          |
-| ----------------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| [projectbluefin/housekeeping](https://github.com/projectbluefin/housekeeping)       | Org-wide maintenance workflows                                |
-| [projectbluefin/renovate-config](https://github.com/projectbluefin/renovate-config) | Self-hosted Renovate configuration — GitHub App auth, no PATs |
-| [projectbluefin/testsuite](https://github.com/projectbluefin/testsuite)             | QA pipeline — Argo Workflows + KubeVirt + AT-SPI tests        |
-| [projectbluefin/testing-lab](https://github.com/projectbluefin/testing-lab)         | Homelab QA pipeline                                           |
-| [projectbluefin/bluespeed](https://github.com/projectbluefin/bluespeed)             | KubeStellar homelab factory                                   |
-| [projectbluefin/iso](https://github.com/projectbluefin/iso)                         | ISO builds                                                    |
-| [projectbluefin/dakota-iso](https://github.com/projectbluefin/dakota-iso)           | Bootable UEFI live ISO for Dakota                             |
-| [projectbluefin/bootc-installer](https://github.com/projectbluefin/bootc-installer) | libadwaita bootc installer (fork of Vanilla OS installer)     |
-| [projectbluefin/finpilot](https://github.com/projectbluefin/finpilot)               | Build your own custom Bluefin                                 |
+| Repo                                                                                | Role                                                                   |
+| ----------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| [projectbluefin/actions](https://github.com/projectbluefin/actions)                 | Shared CI actions and org-wide automation (housekeeping is deprecated) |
+| [projectbluefin/renovate-config](https://github.com/projectbluefin/renovate-config) | Self-hosted Renovate configuration — GitHub App auth, no PATs          |
+| [projectbluefin/testsuite](https://github.com/projectbluefin/testsuite)             | QA pipeline — Argo Workflows + KubeVirt + AT-SPI tests                 |
+| [projectbluefin/testing-lab](https://github.com/projectbluefin/testing-lab)         | Homelab QA pipeline                                                    |
+| [projectbluefin/bluespeed](https://github.com/projectbluefin/bluespeed)             | KubeStellar homelab factory                                            |
+| [projectbluefin/iso](https://github.com/projectbluefin/iso)                         | ISO builds                                                             |
+| [projectbluefin/dakota-iso](https://github.com/projectbluefin/dakota-iso)           | Bootable UEFI live ISO for Dakota                                      |
+| [projectbluefin/bootc-installer](https://github.com/projectbluefin/bootc-installer) | libadwaita bootc installer (fork of Vanilla OS installer)              |
+| [projectbluefin/finpilot](https://github.com/projectbluefin/finpilot)               | Build your own custom Bluefin                                          |
 
 ### Consuming repos (remain in ublue-os)
 
@@ -334,7 +334,7 @@ flowchart TB
 | [ublue-os/aurora](https://github.com/ublue-os/aurora)   | KDE variant    |
 | [ublue-os/bazzite](https://github.com/ublue-os/bazzite) | Gaming variant |
 
-Aurora and Bazzite consume `projectbluefin/common` but are maintained in the `ublue-os` org. Agent PRs to `ublue-os/*` follow each repo's own AGENTS.md.
+Aurora and Bazzite consume `projectbluefin/common` but are maintained in the `ublue-os` org. Note the org-wide hard rule: agents must **never** create issues, PRs, comments, or write actions targeting any `ublue-os/*` repository (read-only `gh api` inspections are permitted).
 
 ---
 
@@ -351,47 +351,50 @@ flowchart TB
     pr --> smoke_check{"Touches build\npath?"}
     smoke_check -->|yes| prsmoke["pr-smoke.yml\nFull image build\n+ smoke suite\nRuns in parallel"]
 
-    validation -->|passes, merge_group| build["build-image-testing.yml\n(Testing Images)\nBuilds all variants\n~26 min wall time\nTriggered by push to main"]
+    validation -->|passes, merge_group| merge["Squash merge\nto testing branch"]
+
+    merge --> build["build.yml\n(Testing Images)\nBuilds all variants\n~26 min wall time\nTriggered by push to testing"]
 
     build -->|digests published| e2e["post-testing-e2e.yml\nsmoke + common suites\nQEMU VM + AT-SPI\nBlocks promotion"]
 
-    e2e -->|on success| merge["Squash merge\nto testing branch\n→ fast-forwards main"]
+    e2e -->|on success| promotion["promote-testing-to-main.yml\n1. Daily 04:00 UTC / on push\n2. Locks testing HEAD SHA\n3. Opens/updates PR to main\n4. Merge queue auto-merges\n   (0 approvals required)"]
 
-    merge -->|Tuesday 06:00 UTC| promotion["weekly-testing-promotion.yml\n1. Locks main HEAD SHA\n2. Verifies passing post-testing-e2e for that SHA\n3. Runs developer + vanilla-gnome + software + common\n4. Requires 2 human approvals in GitHub\n   production Environment\n5. skopeo copy :testing@digest → :stable/:latest"]
+    promotion --> release["execute-release.yml\nTriggered by push to main\nskopeo copy :testing@digest → :stable/:latest\nDigest-locked"]
 
-    promotion --> stable[":stable / :latest\nSHA-locked\nDigest at start = digest at end"]
+    release --> stable[":stable / :latest\nSHA-locked\nDigest at start = digest at end"]
 
     validation -->|fails| reject1["PR blocked\nFix and push"]
     prsmoke -->|fails| reject2["Build or smoke failure\nBlocks high-risk Renovate automerge"]
-    e2e -->|fails| reject3["main not promoted\nSmoke failure visible in repo"]
-    promotion -->|e2e missing or < 2 approvals| reject4["Promotion blocked\nNo image ships"]
+    e2e -->|fails| reject3["Promotion blocked\nSmoke failure visible in repo"]
 
     style validation fill:#2d4a2d
     style prsmoke fill:#2d3a5a
     style build fill:#2d3a5a
     style e2e fill:#4a3a2a
     style promotion fill:#4a2a2a
+    style release fill:#2a4a2a
     style stable fill:#2a4a2a
 ```
 
 ### What each stage checks
 
-| Stage                                     | What it checks                                                                                                                                       | What blocks it                                         |
-| ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
-| `pr-validation.yml` (~1–2 min)            | `just check`, shellcheck, hadolint, pre-commit, bats unit tests                                                                                      | Any lint failure                                       |
-| `pr-smoke.yml` (build-affecting PRs only) | Full image build + smoke test suite — runs when Containerfile, Justfile, image-versions.yml, build_files/, or system_files/ change                   | Build failure or smoke scenario failure                |
-| `build-image-testing.yml` (~26 min)       | Full image build, all variants; triggered by push to `main`                                                                                          | Build failure                                          |
-| `post-testing-e2e.yml`                    | `smoke,common` suites in a QEMU VM via AT-SPI                                                                                                        | Any scenario fails                                     |
-| `weekly-testing-promotion.yml`            | e2e passed for locked SHA; `developer,vanilla-gnome,software,common` suites; 2 human approvals in GitHub Environment                                 | Missing e2e pass, fewer than 2 approvals, or SHA drift |
-| `nightly.yml` (02:00 UTC daily)           | `smoke,common,vanilla-gnome` suites against `:latest` — vanilla-gnome baseline distinguishes Bluefin-specific regressions from upstream GNOME issues | Advisory; does not block merges                        |
+| Stage                                           | What it checks                                                                                                                                       | What blocks it                     |
+| ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------- |
+| `pr-validation.yml` (~1–2 min)                  | `just check`, shellcheck, hadolint, pre-commit, bats unit tests                                                                                      | Any lint failure                   |
+| `pr-smoke.yml` (build-affecting PRs only)       | Full image build + smoke test suite — runs when Containerfile, Justfile, image-versions.yml, build_files/, or system_files/ change                   | Build failure or smoke failure     |
+| `build.yml` (~26 min)                           | Full image build, all variants; triggered by push to `testing`                                                                                       | Build failure                      |
+| `post-testing-e2e.yml`                          | `smoke,common` suites in a QEMU VM via AT-SPI                                                                                                        | Any scenario fails                 |
+| `promote-testing-to-main.yml` (daily 04:00 UTC) | Locks testing SHA, verifies e2e, opens squash PR to `main`; auto-merges via merge queue (0 approvals required)                                       | Missing e2e pass or merge conflict |
+| `execute-release.yml`                           | Fires on push to `main`; `skopeo copy :testing@<digest> → :latest, :stable`                                                                          | Copy or release failure            |
+| `nightly.yml` (02:00 UTC daily)                 | `smoke,common,vanilla-gnome` suites against `:latest` — vanilla-gnome baseline distinguishes Bluefin-specific regressions from upstream GNOME issues | Advisory; does not block merges    |
 
 ### What "`:stable`" means under the new model
 
 An image tagged `:stable` has:
 
 1. Passed `smoke,common` automated scenarios in a virtual machine running the exact image being promoted
-2. Passed `developer`, `vanilla-gnome`, `software`, and `common` suites in the weekly promotion run
-3. Been approved by two distinct maintainers via the GitHub `production` Environment (machine-enforced — the job cannot start without both)
+2. Been built and validated on the `testing` branch
+3. Been promoted to `main` via the automated merge queue
 4. Been copied from `:testing` to `:stable` by digest, not by tag — the SHA you receive is the SHA that was tested
 
 ---
@@ -454,33 +457,30 @@ gh pr create --repo projectbluefin/bluefin --base testing
 
 ### Branch roles
 
-There are two branch roles to keep straight in the CI configuration:
+There are two primary branch roles in the image-producing repositories:
 
-- **Contribution branch:** `testing` — all PRs land here via squash merge
-- **Image build branch:** `main` — image builds trigger on pushes to `main`; `testing` merges advance `main`
-
-This means the `build-image-testing.yml` trigger is on `main`, while `pr-validation.yml` targets `testing`. PRs merged to `testing` cause `main` to advance, which then triggers image builds and the post-merge e2e gate.
+- **Contribution branch:** `testing` — all content PRs target and land on `testing` via squash merge. Image builds trigger on push to `testing` and publish the `:testing` tag.
+- **Stable release branch:** `main` — `main` receives squash-merge promotion commits from the automated `auto/promote-testing-to-main` PRs. Push to `main` triggers `execute-release.yml` to publish `:stable` and `:latest`.
 
 ### Streams
 
-| Stream  | Tag        | Who uses it                                                   |
-| ------- | ---------- | ------------------------------------------------------------- |
-| Testing | `:testing` | Built from every push to `main`; developers and testers       |
-| Latest  | `:latest`  | Weekly promotion from `main` via `skopeo copy`                | Enthusiasts   |
-| Stable  | `:stable`  | Weekly promotion from `main` via `skopeo copy` + 2-human gate | Regular users |
+| Stream  | Tag        | Who uses it                                                |
+| ------- | ---------- | ---------------------------------------------------------- |
+| Testing | `:testing` | Built from every push to `testing`; developers and testers |
+| Latest  | `:latest`  | Daily promotion from `main` via `skopeo copy`              | Enthusiasts   |
+| Stable  | `:stable`  | Daily promotion from `main` via `skopeo copy`              | Regular users |
 
 ### Promotion cadence
 
-Every Tuesday at 06:00 UTC, `weekly-testing-promotion.yml`:
+Daily at 04:00 UTC (and on push to `testing`), `promote-testing-to-main.yml`:
 
-1. Locks the `main` HEAD SHA
+1. Locks the `testing` HEAD SHA
 2. Verifies that `post-testing-e2e.yml` succeeded for that exact SHA
-3. Runs the extended `developer,vanilla-gnome,software,common` suites
-4. Waits for 2 distinct human approvals in the GitHub `production` Environment
-5. Copies `:testing@<digest>` → `:latest` and `:stable` via `skopeo copy` (digest-locked, no rebuild)
-6. Pushes to `latest` and `stable` branches, triggering downstream builds
+3. Opens or updates `auto/promote-testing-to-main` PR targeting `main`
+4. The PR enters the merge queue and auto-merges once required checks pass (0 approvals required)
+5. `execute-release.yml` fires on push to `main` and copies `:testing@<digest>` → `:latest` and `:stable` via `skopeo copy` (digest-locked, no rebuild)
 
-If the e2e verification step finds no passing run for the locked SHA, the workflow exits 1. No image ships.
+If the e2e verification step finds no passing run for the locked SHA, the promotion workflow does not open/advance a PR. No image ships.
 
 ### Merge method
 
@@ -538,10 +538,11 @@ docs(skills): document dnf-cache key format
 
 ### AI attribution
 
-If any AI tool wrote or assisted any part of this commit, the footer is required:
+If any AI tool wrote or assisted any part of this commit, both trailers are required:
 
 ```
-Assisted-by: Claude Opus 4.7 via GitHub Copilot
+Assisted-by: <Model> via GitHub Copilot
+Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>
 ```
 
 This applies to humans using AI tools, not just agents running autonomously.
@@ -660,13 +661,13 @@ sudo just build-ghcr bluefin testing main
 
 | Suite           | What it validates                                                                                        | Used in                                                           |
 | --------------- | -------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| `smoke`         | GNOME Shell via AT-SPI, app launches, lock screen, workspaces, regressions                               | post-testing-e2e, pr-smoke, nightly, weekly promotion             |
-| `common`        | Shell env, dconf/GSettings defaults, desktop entries, signing                                            | post-testing-e2e, nightly, weekly promotion                       |
-| `developer`     | Homebrew round-trip, Podman, Ptyxis                                                                      | weekly promotion                                                  |
+| `smoke`         | GNOME Shell via AT-SPI, app launches, lock screen, workspaces, regressions                               | post-testing-e2e, pr-smoke, nightly                               |
+| `common`        | Shell env, dconf/GSettings defaults, desktop entries, signing                                            | post-testing-e2e, nightly                                         |
+| `developer`     | Homebrew round-trip, Podman, Ptyxis                                                                      | testsuite baseline                                                |
 | `dx`            | Developer Experience tools                                                                               | optional                                                          |
 | `flatcar`       | Flatcar/CoreOS-mode boot and lifecycle                                                                   | optional                                                          |
-| `software`      | Flatpak operations, Bazaar                                                                               | weekly promotion                                                  |
-| `vanilla-gnome` | GNOME core without Bluefin customizations — distinguishes Bluefin regressions from upstream GNOME issues | nightly, weekly promotion                                         |
+| `software`      | Flatpak operations, Bazaar                                                                               | testsuite baseline                                                |
+| `vanilla-gnome` | GNOME core without Bluefin customizations — distinguishes Bluefin regressions from upstream GNOME issues | nightly                                                           |
 | `bazzite`       | Bazzite-specific extensions and shell                                                                    | optional                                                          |
 | `nvidia`        | GPU driver and runtime                                                                                   | optional                                                          |
 | `security`      | Image provenance, SELinux                                                                                | optional                                                          |
@@ -707,13 +708,18 @@ git push origin your-branch --force-with-lease
 
 ---
 
-## Becoming a Maintainer and Approver
+## Becoming a Maintainer
 
-### The production gate requires two humans
+### Human decision gates in the automated factory
 
-The `weekly-testing-promotion.yml` workflow runs inside a GitHub Environment named `production`. That Environment has `required_reviewers: 2`. The build job that runs `skopeo copy :testing@<digest> → :stable` **cannot start** until two distinct maintainers click Approve in the GitHub UI. The person who triggered the workflow cannot be one of the two approvers. Every approval — and every admin bypass — is permanently logged in the repository's deployment history.
+While daily promotions through the merge queue are automated when tests pass, human maintainers remain the ultimate decision gate across the factory:
 
-Being an approver means being personally responsible for what ships to `:stable` users that week. The gate is enforced, but the judgment behind the approval is yours.
+- **Design decisions**: Significant architectural choices are recorded in `adr/` and reviewed by maintainers before implementation.
+- **Security reviews**: Secrets, tokens, credentials, and sensitive permissions are strictly controlled by humans.
+- **Sensitive path review**: Changes touching `.github/workflows/`, `Justfile`, and `build_files/` require maintainer approval.
+- **Merge queue oversight**: Managing queues, resolving blockers, and approving manual releases.
+
+Being a maintainer means exercising judgment over architecture and safety while letting automation handle routine execution.
 
 ### Qualities
 
@@ -812,7 +818,7 @@ All contributors follow the [Universal Blue Code of Conduct](https://github.com/
 
 **ACMM** — AI Codebase Maturity Model. A 5-to-6-level framework (Anderson, arXiv:2604.09388) describing how codebases evolve from AI-assisted to fully autonomous. Each level is defined by its feedback loop topology.
 
-**Assisted-by** — Required commit footer for any AI-assisted contribution: `Assisted-by: <Model Name> via <Tool Name>`.
+**Assisted-by** — Required commit trailer for any AI-assisted contribution, paired with the Copilot Co-authored-by trailer.
 
 **Beads** — KubeStellar Hive's system for cross-agent memory continuity (arXiv:2604.09388).
 
@@ -826,12 +832,12 @@ All contributors follow the [Universal Blue Code of Conduct](https://github.com/
 
 **SHA-lock** — The promotion workflow's property that the image digest at the start of promotion must equal the digest at the end. Prevents a rebuild from silently changing what was tested.
 
-**skill file** — A Markdown file in `.github/skills/` documenting non-obvious patterns, workarounds, and conventions. Required to be updated (or created) in the same PR as the work that discovered the learning.
+**skill file** — A Markdown file in `docs/skills/` (or `.github/skills/`) documenting non-obvious patterns, workarounds, and conventions. Required to be updated (or created) in the same PR as the work that discovered the learning.
 
 **skill-drift** — The gap between what a skill file documents and what the code currently does. Formerly detected by the `skill-drift-check.yml` workflow and the `skill-audit.yml` cron; both were retired after the check decayed into a no-op that always passed. It is now caught in review and by the self-repair loop.
 
-**testing stream** — The `:testing` tag. Built from every push to `main` (which advances when PRs merge to `testing`). This is what developers and testers run. All PRs target the `testing` branch.
+**testing stream** — The `:testing` tag. Built from every push to `testing`. This is what developers and testers run. All PRs target the `testing` branch.
 
-**two-human gate** — The `production` GitHub Environment configuration requiring 2 distinct maintainer approvals before the `weekly-testing-promotion.yml` job that copies `:testing → :stable/:latest` can execute.
+**promotion gate** — The automated `promote-testing-to-main.yml` daily workflow that verifies passing e2e runs on `testing`, opens a squash PR to `main`, and auto-merges via the merge queue.
 
 **ujust report / confirm / verify** — The three data-donation commands. `report` files a new issue with diagnostics. `confirm` records another real-world reproduction. `verify` closes the loop after a fix ships.

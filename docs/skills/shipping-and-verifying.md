@@ -1,10 +1,19 @@
 ---
 name: shipping-and-verifying
+version: "1.1"
+last_updated: "2026-09-06"
+id: shipping-and-verifying
+one_line_purpose: Land changes on main and verify live deployment on docs site.
+entry_point: docs/skills/shipping-and-verifying.md
+category: ci-ops
+status: active
+tags: [shipping, deployment, merge-queue, verification]
 description: >-
   Land a change on main and prove it reached docs.projectbluefin.io. Use when a
-  pull request will not enter the merge queue, when merging a stack of two
-  related pull requests, or when checking whether an edit is actually live —
-  especially anything rendered by the /factory dashboard.
+  pull request cannot enter the merge queue, when merging stacked pull requests,
+  or when verifying a live change across cache boundaries.
+metadata:
+  type: procedure
 ---
 
 # Shipping and verifying

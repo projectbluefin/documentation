@@ -1,9 +1,19 @@
 ---
 name: skill-improvement
+version: "1.1"
+last_updated: "2026-09-06"
+id: skill-improvement
+one_line_purpose: Capture learnings and durable patterns into docs/skills/.
+entry_point: docs/skills/skill-improvement.md
+category: meta
+status: active
+tags: [skills, improvement, documentation, conventions]
 description: >-
   The two-output rule for this repository: every session ships the work and the
   learning. Use when finishing a task, when you hit a workaround worth
   remembering, or when tempted to write a changelog.
+metadata:
+  type: policy
 ---
 
 # Skill improvement
