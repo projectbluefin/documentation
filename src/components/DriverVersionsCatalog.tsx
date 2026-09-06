@@ -409,14 +409,26 @@ function ReleaseNode({
   );
 }
 
+function hasValidVersions(row: DriverRow | null | undefined): boolean {
+  if (!row?.versions) return false;
+  return Boolean(
+    row.versions.kernel ||
+    row.versions.nvidia ||
+    row.versions.mesa ||
+    row.versions.gnome,
+  );
+}
+
 interface DriverVersionsCatalogProps {
   streamId: "bluefin-stable" | "bluefin-lts" | "dakota-latest" | "utah-testing";
   catalogOverride?: DriverCatalog;
+  showRebootStep?: boolean;
 }
 
 export default function DriverVersionsCatalog({
   streamId,
   catalogOverride,
+  showRebootStep = true,
 }: DriverVersionsCatalogProps): React.JSX.Element {
   const activeCatalog = catalogOverride ?? catalog;
 
@@ -449,32 +461,62 @@ export default function DriverVersionsCatalog({
           ? "Utah"
           : "Stable";
 
-  if (!stream && allStreams.length > 0) {
+  if (!stream) {
     return (
-      <div className={styles.timelinePage}>
-        <aside className={styles.archiveRail} aria-hidden="true">
-          <span className={styles.archiveNow}>Now</span>
-          <span className={styles.archivePast}>Past</span>
-        </aside>
-        <section className={styles.streamSection}>
-          <header className={styles.streamHeader}>
-            <span className={styles.streamMeta}>
-              cache · 0 releases in {fallbackLabel}
-            </span>
-          </header>
-          <p className={styles.emptyText}>
-            No releases in the last 90 days for this stream.
-          </p>
-        </section>
+      <div className={styles.emptyCard} role="status">
+        <p className={styles.emptyText}>
+          No driver version data is published for this stream yet.
+        </p>
       </div>
     );
   }
 
-  if (!stream) {
+  const validHistory = Array.isArray(stream.history)
+    ? stream.history.filter(hasValidVersions)
+    : [];
+
+  const latest = hasValidVersions(stream.latest)
+    ? stream.latest!
+    : (validHistory[0] ?? null);
+
+  if (!latest) {
     return (
-      <p className={styles.emptyText}>No driver version data available yet.</p>
+      <div className={styles.emptyCard} role="status">
+        <p className={styles.emptyText}>
+          No driver version data is published for this stream yet.
+        </p>
+      </div>
     );
   }
+
+  const older = validHistory.filter(
+    (row) => row !== latest && (!latest.tag || row.tag !== latest.tag),
+  );
+
+  const streamPins = pinsCatalog.streams?.[streamId] ?? null;
+
+  // Detect historically-pinned HWE kernels from SBOM data:
+  // a kernel version that appears in 2+ consecutive rows was held intentionally.
+  const allRows = (stream.history || []).filter((r) => r?.versions?.hweKernel);
+  const hweCounts = new Map<string, number>();
+  for (const r of allRows) {
+    const v = r.versions.hweKernel!;
+    hweCounts.set(v, (hweCounts.get(v) ?? 0) + 1);
+  }
+  const pinnedHweKernels = new Set(
+    [...hweCounts.entries()].filter(([, count]) => count >= 2).map(([v]) => v),
+  );
+
+  const currentUserspace = extractUserspace(latest);
+  const kernelSpark = versionSparkData(stream.history, "kernel");
+  const hweSpark = versionSparkData(stream.history, "hweKernel");
+  const mesaSpark = versionSparkData(stream.history, "mesa");
+  const gnomeSpark = versionSparkData(stream.history, "gnome");
+  const showTrends =
+    kernelSpark.length >= 2 ||
+    hweSpark.length >= 2 ||
+    mesaSpark.length >= 2 ||
+    gnomeSpark.length >= 2;
 
   return (
     <div className={styles.timelinePage}>
@@ -483,201 +525,143 @@ export default function DriverVersionsCatalog({
         <span className={styles.archivePast}>Past</span>
       </aside>
 
-      {(() => {
-        const latest = stream.latest;
-        const older = stream.history
-          .slice(1)
-          .filter(
-            (row) =>
-              row.versions.kernel ||
-              row.versions.nvidia ||
-              row.versions.mesa ||
-              row.versions.gnome,
-          );
-
-        const streamPins = pinsCatalog.streams?.[streamId] ?? null;
-
-        // Detect historically-pinned HWE kernels from SBOM data:
-        // a kernel version that appears in 2+ consecutive rows was held intentionally.
-        const allRows = stream.history.filter((r) => r.versions.hweKernel);
-        const hweCounts = new Map<string, number>();
-        for (const r of allRows) {
-          const v = r.versions.hweKernel!;
-          hweCounts.set(v, (hweCounts.get(v) ?? 0) + 1);
-        }
-        const pinnedHweKernels = new Set(
-          [...hweCounts.entries()]
-            .filter(([, count]) => count >= 2)
-            .map(([v]) => v),
-        );
-
-        const currentUserspace = latest ? extractUserspace(latest) : null;
-
-        return (
-          <section key={stream.id} className={styles.streamSection}>
-            <header className={styles.streamHeader}>
-              <span className={styles.streamMeta}>
-                {stream.source} · {stream.rowCount} releases in {fallbackLabel}{" "}
-                · updated {formatDate(activeCatalog.generatedAt)}
-              </span>
-              {currentUserspace && (
-                <span className={styles.fedoraPill}>
-                  {currentUserspace.label}
+      <section key={stream.id} className={styles.streamSection}>
+        <header className={styles.streamHeader}>
+          <span className={styles.streamMeta}>
+            {stream.source} · {stream.rowCount} releases in {fallbackLabel} ·
+            updated {formatDate(activeCatalog.generatedAt)}
+          </span>
+          {currentUserspace && (
+            <span className={styles.fedoraPill}>{currentUserspace.label}</span>
+          )}
+          {showTrends && (
+            <div className={styles.versionTrends}>
+              {kernelSpark.length >= 2 && (
+                <span
+                  className={styles.trendChip}
+                  title="Kernel version trend across last releases"
+                >
+                  <span className={styles.trendLabel}>Kernel</span>
+                  <Sparkline
+                    data={kernelSpark}
+                    width={72}
+                    height={20}
+                    color="#3fb950"
+                    areaColor="rgba(63,185,80,0.10)"
+                  />
                 </span>
               )}
-              {(() => {
-                const kernelSpark = versionSparkData(stream.history, "kernel");
-                const hweSpark = versionSparkData(stream.history, "hweKernel");
-                const mesaSpark = versionSparkData(stream.history, "mesa");
-                const gnomeSpark = versionSparkData(stream.history, "gnome");
-                if (
-                  kernelSpark.length < 2 &&
-                  hweSpark.length < 2 &&
-                  mesaSpark.length < 2 &&
-                  gnomeSpark.length < 2
-                )
-                  return null;
-                return (
-                  <div className={styles.versionTrends}>
-                    {kernelSpark.length >= 2 && (
-                      <span
-                        className={styles.trendChip}
-                        title="Kernel version trend across last releases"
-                      >
-                        <span className={styles.trendLabel}>Kernel</span>
-                        <Sparkline
-                          data={kernelSpark}
-                          width={72}
-                          height={20}
-                          color="#3fb950"
-                          areaColor="rgba(63,185,80,0.10)"
-                        />
-                      </span>
-                    )}
-                    {hweSpark.length >= 2 && (
-                      <span
-                        className={styles.trendChip}
-                        title="HWE kernel version trend"
-                      >
-                        <span className={styles.trendLabel}>HWE</span>
-                        <Sparkline
-                          data={hweSpark}
-                          width={72}
-                          height={20}
-                          color="#a371f7"
-                          areaColor="rgba(163,113,247,0.10)"
-                        />
-                      </span>
-                    )}
-                    {mesaSpark.length >= 2 && (
-                      <span
-                        className={styles.trendChip}
-                        title="Mesa version trend across last releases"
-                      >
-                        <span className={styles.trendLabel}>Mesa</span>
-                        <Sparkline
-                          data={mesaSpark}
-                          width={72}
-                          height={20}
-                          color="#58a6ff"
-                          areaColor="rgba(88,166,255,0.10)"
-                        />
-                      </span>
-                    )}
-                    {gnomeSpark.length >= 2 && (
-                      <span
-                        className={styles.trendChip}
-                        title="GNOME version trend across last releases"
-                      >
-                        <span className={styles.trendLabel}>GNOME</span>
-                        <Sparkline
-                          data={gnomeSpark}
-                          width={72}
-                          height={20}
-                          color="#d97706"
-                          areaColor="rgba(217,119,6,0.10)"
-                        />
-                      </span>
-                    )}
-                  </div>
-                );
-              })()}
-            </header>
+              {hweSpark.length >= 2 && (
+                <span
+                  className={styles.trendChip}
+                  title="HWE kernel version trend"
+                >
+                  <span className={styles.trendLabel}>HWE</span>
+                  <Sparkline
+                    data={hweSpark}
+                    width={72}
+                    height={20}
+                    color="#a371f7"
+                    areaColor="rgba(163,113,247,0.10)"
+                  />
+                </span>
+              )}
+              {mesaSpark.length >= 2 && (
+                <span
+                  className={styles.trendChip}
+                  title="Mesa version trend across last releases"
+                >
+                  <span className={styles.trendLabel}>Mesa</span>
+                  <Sparkline
+                    data={mesaSpark}
+                    width={72}
+                    height={20}
+                    color="#58a6ff"
+                    areaColor="rgba(88,166,255,0.10)"
+                  />
+                </span>
+              )}
+              {gnomeSpark.length >= 2 && (
+                <span
+                  className={styles.trendChip}
+                  title="GNOME version trend across last releases"
+                >
+                  <span className={styles.trendLabel}>GNOME</span>
+                  <Sparkline
+                    data={gnomeSpark}
+                    width={72}
+                    height={20}
+                    color="#d97706"
+                    areaColor="rgba(217,119,6,0.10)"
+                  />
+                </span>
+              )}
+            </div>
+          )}
+        </header>
 
-            {latest ? (
-              <>
-                <div className={styles.timeline}>
+        <div className={styles.timeline}>
+          <ReleaseNode
+            stream={stream}
+            row={latest}
+            previousRow={older[0]}
+            emphasize
+            pins={streamPins}
+            pinnedHweKernels={pinnedHweKernels}
+          />
+        </div>
+
+        {older.length > 0 && (
+          <div className={styles.archiveTimeline}>
+            {older.map((row, index) => {
+              const prevRow = index === 0 ? latest : older[index - 1];
+              const prevUs = prevRow ? extractUserspace(prevRow) : null;
+              const rowUs = extractUserspace(row);
+              const showMarker =
+                prevUs !== null && rowUs !== null && prevUs.key !== rowUs.key;
+              return (
+                <React.Fragment
+                  key={`${stream.id}-${row.tag}-${row.publishedAt || "na"}`}
+                >
+                  {showMarker ? (
+                    <UserspaceMarker
+                      toLabel={prevUs!.label}
+                      fromLabel={rowUs!.label}
+                    />
+                  ) : (
+                    <div className={styles.releaseDivider} />
+                  )}
                   <ReleaseNode
                     stream={stream}
-                    row={latest}
-                    previousRow={older[0]}
-                    emphasize
+                    row={row}
+                    previousRow={older[index + 1]}
+                    emphasize={false}
                     pins={streamPins}
                     pinnedHweKernels={pinnedHweKernels}
                   />
+                </React.Fragment>
+              );
+            })}
+          </div>
+        )}
+
+        {showRebootStep && (
+          <section className={styles.rebaseSection}>
+            <Heading as="h3" className={styles.rebaseTitle}>
+              Final Step: Reboot
+            </Heading>
+            <ol className={styles.rebaseList}>
+              <li>
+                After running one of the per-release rebase commands above,
+                reboot to activate the deployment:
+                <div className={styles.commandBlock}>
+                  <CodeBlock language="bash">sudo systemctl reboot</CodeBlock>
                 </div>
-
-                {older.length > 0 && (
-                  <div className={styles.archiveTimeline}>
-                    {older.map((row, index) => {
-                      const prevRow = index === 0 ? latest : older[index - 1];
-                      const prevUs = prevRow ? extractUserspace(prevRow) : null;
-                      const rowUs = extractUserspace(row);
-                      const showMarker =
-                        prevUs !== null &&
-                        rowUs !== null &&
-                        prevUs.key !== rowUs.key;
-                      return (
-                        <React.Fragment
-                          key={`${stream.id}-${row.tag}-${row.publishedAt || "na"}`}
-                        >
-                          {showMarker ? (
-                            <UserspaceMarker
-                              toLabel={prevUs!.label}
-                              fromLabel={rowUs!.label}
-                            />
-                          ) : (
-                            <div className={styles.releaseDivider} />
-                          )}
-                          <ReleaseNode
-                            stream={stream}
-                            row={row}
-                            previousRow={older[index + 1]}
-                            emphasize={false}
-                            pins={streamPins}
-                            pinnedHweKernels={pinnedHweKernels}
-                          />
-                        </React.Fragment>
-                      );
-                    })}
-                  </div>
-                )}
-
-                <section className={styles.rebaseSection}>
-                  <Heading as="h3" className={styles.rebaseTitle}>
-                    Final Step: Reboot
-                  </Heading>
-                  <ol className={styles.rebaseList}>
-                    <li>
-                      After running one of the per-release rebase commands
-                      above, reboot to activate the deployment:
-                      <div className={styles.commandBlock}>
-                        <CodeBlock language="bash">
-                          sudo systemctl reboot
-                        </CodeBlock>
-                      </div>
-                    </li>
-                  </ol>
-                </section>
-              </>
-            ) : (
-              <p className={styles.emptyText}>
-                No release rows parsed for this stream yet.
-              </p>
-            )}
+              </li>
+            </ol>
           </section>
-        );
-      })()}
+        )}
+      </section>
     </div>
   );
 }

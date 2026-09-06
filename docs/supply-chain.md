@@ -13,10 +13,10 @@ Every Bluefin image is signed and attested at build time. You can verify any ima
 
 Bluefin uses two signing methods depending on the stream:
 
-| Paradigm | Streams | Verification |
-|---|---|---|
+| Paradigm                    | Streams                                     | Verification                                |
+| --------------------------- | ------------------------------------------- | ------------------------------------------- |
 | **Keyless (OIDC/Sigstore)** | `stable`, `latest`, `dx`, `gdx`, all Dakota | `cosign verify` with Rekor transparency log |
-| **Key-based** | `lts`, `lts-hwe` and all LTS variants | `cosign verify` with repo public key |
+| **Key-based**               | `lts`, `lts-hwe` and all LTS variants       | `cosign verify` with repo public key        |
 
 ### Verify a keyless image (stable / latest)
 
@@ -36,12 +36,12 @@ cosign verify ghcr.io/projectbluefin/bluefin:lts --key cosign.pub
 ### Verify Dakota
 
 ```bash
-cosign verify ghcr.io/projectbluefin/dakota:latest \
+cosign verify ghcr.io/projectbluefin/dakota:stable \
   --certificate-identity-regexp="https://github.com/projectbluefin/dakota/.github/workflows/build.yml" \
   --certificate-oidc-issuer=https://token.actions.githubusercontent.com
 ```
 
-Substitute your specific tag (e.g. `stable-20260501`) for `stable` / `lts` / `latest` to pin to a known-good release.
+Substitute your specific tag (e.g. `stable-20260501`) for `stable` / `lts` to pin to a known-good release.
 
 ## SLSA provenance
 
@@ -73,12 +73,12 @@ Source repositories are scored weekly by [OpenSSF Scorecard](https://securitysco
 
 ## Toolchain
 
-| Tool | Role |
-|---|---|
+| Tool                                         | Role                                       |
+| -------------------------------------------- | ------------------------------------------ |
 | [cosign](https://github.com/sigstore/cosign) | Image signing and attestation verification |
-| [ORAS](https://oras.land) | OCI artifact push/pull (SBOMs, provenance) |
-| [Syft](https://github.com/anchore/syft) | SBOM generation |
-| [SLSA](https://slsa.dev) | Provenance specification |
-| [Scorecard](https://securityscorecards.dev) | Repository security posture scoring |
+| [ORAS](https://oras.land)                    | OCI artifact push/pull (SBOMs, provenance) |
+| [Syft](https://github.com/anchore/syft)      | SBOM generation                            |
+| [SLSA](https://slsa.dev)                     | Provenance specification                   |
+| [Scorecard](https://securityscorecards.dev)  | Repository security posture scoring        |
 
 These are all part of the [CNCF / OpenSSF](https://openssf.org) ecosystem and are highlighted on the [Projects](/donations/projects) page.

@@ -8,22 +8,17 @@ const sidebars: SidebarsConfig = {
       type: "category",
       label: "Get Bluefin",
       collapsed: false,
-      items: [
-        "index",
-        "downloads",
-        "installation",
-        {
-          type: "category",
-          label: "Images",
-          collapsed: false,
-          link: {
-            type: "doc",
-            id: "images",
-          },
-          items: ["server", "lts", "dakota", "utah"],
-        },
-        "driver-versions",
-      ],
+      items: ["index", "downloads", "installation", "driver-versions"],
+    },
+    {
+      type: "category",
+      label: "Images",
+      collapsed: false,
+      link: {
+        type: "doc",
+        id: "images",
+      },
+      items: ["server", "lts", "dakota", "utah"],
     },
     {
       type: "category",

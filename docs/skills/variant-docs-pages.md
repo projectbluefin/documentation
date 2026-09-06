@@ -56,10 +56,16 @@ Model on `docs/server.mdx` (static) or `docs/dakota.mdx` (embeds components):
 Facts only, read from repo and blog sources. Do not invent narrative or
 motivation prose — see _Never write in a maintainer's voice_ in `AGENTS.md`.
 
+## Image Streams Policy
+
+Images pages and catalog pipelines track only **`stable`** and **`testing`**
+streams. Never track `:latest`. Use `sudo bootc switch --enforce-container-sigpolicy ghcr.io/projectbluefin/<family>:stable`
+for stable switch instructions.
+
 ## Sidebar
 
-Add the doc id to the `Images` category inside "Get Bluefin" in
-`sidebars.ts`. The doc id is the filename without extension.
+Add the doc id to the `Images` category in `sidebars.ts`. The doc id
+is the filename without extension.
 
 ## Gotchas
 

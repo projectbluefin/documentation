@@ -164,3 +164,128 @@ test("StreamVersionPills centralizes optional NVIDIA and package pills", () => {
   });
   assert.ok(!withoutNvidia.includes("NVIDIA"));
 });
+
+test("DriverVersionsCatalog guards against empty releases and selects newest valid row", () => {
+  const nullLatestCatalog = {
+    generatedAt: "2026-09-06T00:00:00.000Z",
+    streams: [
+      {
+        id: "bluefin-stable",
+        name: "Bluefin",
+        subtitle: "Current stable stream",
+        command: "sudo bootc switch ghcr.io/projectbluefin/bluefin:stable",
+        source: "sbom",
+        rowCount: 2,
+        latest: {
+          stream: "bluefin-stable",
+          tag: "stable-20260606",
+          title: "stable-20260606",
+          releaseUrl: null,
+          publishedAt: "2026-06-06T00:00:00.000Z",
+          versions: {
+            kernel: null,
+            hweKernel: null,
+            mesa: null,
+            nvidia: null,
+            gnome: null,
+          },
+        },
+        history: [
+          {
+            stream: "bluefin-stable",
+            tag: "stable-20260606",
+            title: "stable-20260606",
+            releaseUrl: null,
+            publishedAt: "2026-06-06T00:00:00.000Z",
+            versions: {
+              kernel: null,
+              hweKernel: null,
+              mesa: null,
+              nvidia: null,
+              gnome: null,
+            },
+          },
+          {
+            stream: "bluefin-stable",
+            tag: "stable-20260531",
+            title: "stable-20260531",
+            releaseUrl: null,
+            publishedAt: "2026-05-31T00:00:00.000Z",
+            versions: {
+              kernel: "7.0.8-200.fc44",
+              hweKernel: null,
+              mesa: "26.0.8",
+              nvidia: null,
+              gnome: "50.1",
+            },
+          },
+        ],
+      },
+    ],
+  };
+
+  const html = render(DriverVersionsCatalog, {
+    streamId: "bluefin-stable",
+    catalogOverride: nullLatestCatalog,
+  });
+
+  assert.ok(html.includes("stable-20260531"));
+  assert.ok(html.includes("7.0.8"));
+  assert.ok(!html.includes("stable-20260606"));
+});
+
+test("DriverVersionsCatalog renders empty card without archiveRail for empty streams", () => {
+  const emptyCatalog = {
+    generatedAt: "2026-09-06T00:00:00.000Z",
+    streams: [
+      {
+        id: "dakota-latest",
+        name: "Dakota",
+        subtitle: "GNOME OS stream",
+        command: "sudo bootc switch ghcr.io/projectbluefin/dakota:latest",
+        source: "sbom",
+        rowCount: 0,
+        latest: null,
+        history: [],
+      },
+    ],
+  };
+
+  const html = render(DriverVersionsCatalog, {
+    streamId: "dakota-latest",
+    catalogOverride: emptyCatalog,
+  });
+
+  assert.ok(
+    html.includes("No driver version data is published for this stream yet."),
+  );
+  assert.ok(!html.includes("archiveRail"));
+
+  // Also test when streamId is completely missing from catalog
+  const missingHtml = render(DriverVersionsCatalog, {
+    streamId: "utah-testing",
+    catalogOverride: emptyCatalog,
+  });
+  assert.ok(
+    missingHtml.includes(
+      "No driver version data is published for this stream yet.",
+    ),
+  );
+  assert.ok(!missingHtml.includes("archiveRail"));
+});
+
+test("DriverVersionsCatalog showRebootStep prop controls reboot banner", () => {
+  const withReboot = render(DriverVersionsCatalog, {
+    streamId: "bluefin-lts",
+    catalogOverride: ltsCatalog,
+    showRebootStep: true,
+  });
+  assert.ok(withReboot.includes("Final Step: Reboot"));
+
+  const withoutReboot = render(DriverVersionsCatalog, {
+    streamId: "bluefin-lts",
+    catalogOverride: ltsCatalog,
+    showRebootStep: false,
+  });
+  assert.ok(!withoutReboot.includes("Final Step: Reboot"));
+});

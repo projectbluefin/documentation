@@ -23,7 +23,7 @@ You **cannot** rebase to Dakota from another image — if you're not on Dakota a
 Each image is signed with [cosign](https://docs.sigstore.dev/cosign/system_config/installation/) keyless signing via GitHub Actions OIDC. Verify with:
 
 ```bash
-cosign verify ghcr.io/projectbluefin/dakota:latest \
+cosign verify ghcr.io/projectbluefin/dakota:stable \
   --certificate-identity-regexp="https://github.com/projectbluefin/dakota/.github/workflows/build.yml" \
   --certificate-oidc-issuer=https://token.actions.githubusercontent.com
 ```

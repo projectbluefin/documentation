@@ -43,7 +43,7 @@ const PRODUCT_SPECS = [
     package: "bluefin",
     artwork: "bluefin",
     summary: "Primary Bluefin desktop image for most systems.",
-    streamOrder: ["stable", "stable-daily", "latest", "beta"],
+    streamOrder: ["stable", "testing"],
     versionSource: SBOM_VERSION_SOURCE,
     releaseSource: { feed: "bluefin", stream: "stable" },
     sbomStreamId: "bluefin-stable",
@@ -82,7 +82,7 @@ const PRODUCT_SPECS = [
     package: "dakota",
     artwork: "dakotaraptor",
     summary: "Project Bluefin Dakota image stream built with BuildStream.",
-    streamOrder: ["latest"],
+    streamOrder: ["stable", "testing"],
     versionSource: SBOM_VERSION_SOURCE,
     releaseSource: {
       url: "https://github.com/projectbluefin/dakota/releases",
@@ -644,7 +644,7 @@ async function buildProduct(spec, feeds, cachedById, ageHours, sbomCache) {
       sbomCache,
     );
   }
-  const inspectTag = streams[0]?.tag || "latest";
+  const inspectTag = streams[0]?.tag || "stable";
 
   let metadata = null;
   let metadataSource = "unavailable";

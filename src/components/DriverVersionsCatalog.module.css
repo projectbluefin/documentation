@@ -33,14 +33,19 @@
     color-mix(in srgb, #22d3ee 30%, transparent) 85%,
     transparent 100%
   );
-  box-shadow: 0 0 12px 2px color-mix(in srgb, var(--ifm-color-primary) 40%, transparent);
-  transition: width 160ms ease, box-shadow 160ms ease, filter 160ms ease;
+  box-shadow: 0 0 12px 2px
+    color-mix(in srgb, var(--ifm-color-primary) 40%, transparent);
+  transition:
+    width 160ms ease,
+    box-shadow 160ms ease,
+    filter 160ms ease;
 }
 
 .timelinePage:has(.archiveDetails[open]) .archiveRail::before {
   width: 7px;
   filter: saturate(1.2);
-  box-shadow: 0 0 12px 2px color-mix(in srgb, var(--ifm-color-primary) 35%, transparent);
+  box-shadow: 0 0 12px 2px
+    color-mix(in srgb, var(--ifm-color-primary) 35%, transparent);
 }
 
 .archiveNow,
@@ -226,12 +231,13 @@
 .nvidiaMinorBump {
   position: relative;
   overflow: hidden;
-  border: 2px solid color-mix(in srgb, #76b900 68%, var(--ifm-color-emphasis-300));
+  border: 2px solid
+    color-mix(in srgb, #76b900 68%, var(--ifm-color-emphasis-300));
   background: linear-gradient(
     135deg,
-    rgba(118, 185, 0, 0.10) 0%,
+    rgba(118, 185, 0, 0.1) 0%,
     rgba(140, 200, 0, 0.16) 50%,
-    rgba(118, 185, 0, 0.10) 100%
+    rgba(118, 185, 0, 0.1) 100%
   );
   box-shadow:
     0 4px 12px rgba(118, 185, 0, 0.18),
@@ -462,12 +468,13 @@
 .mesaMinorBump {
   position: relative;
   overflow: hidden;
-  border: 2px solid color-mix(in srgb, #e06020 68%, var(--ifm-color-emphasis-300));
+  border: 2px solid
+    color-mix(in srgb, #e06020 68%, var(--ifm-color-emphasis-300));
   background: linear-gradient(
     135deg,
-    rgba(224, 96, 32, 0.10) 0%,
+    rgba(224, 96, 32, 0.1) 0%,
     rgba(240, 120, 56, 0.16) 50%,
-    rgba(224, 96, 32, 0.10) 100%
+    rgba(224, 96, 32, 0.1) 100%
   );
   box-shadow:
     0 4px 12px rgba(224, 96, 32, 0.18),
@@ -577,12 +584,13 @@
 .gnomeMinorBump {
   position: relative;
   overflow: hidden;
-  border: 2px solid color-mix(in srgb, #3584e4 68%, var(--ifm-color-emphasis-300));
+  border: 2px solid
+    color-mix(in srgb, #3584e4 68%, var(--ifm-color-emphasis-300));
   background: linear-gradient(
     135deg,
-    rgba(53, 132, 228, 0.10) 0%,
+    rgba(53, 132, 228, 0.1) 0%,
     rgba(78, 160, 255, 0.16) 50%,
-    rgba(53, 132, 228, 0.10) 100%
+    rgba(53, 132, 228, 0.1) 100%
   );
   box-shadow:
     0 4px 12px rgba(53, 132, 228, 0.18),
@@ -684,6 +692,25 @@
   gap: 0;
 }
 
+.emptyCard {
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 10px;
+  background: color-mix(
+    in srgb,
+    var(--ifm-color-emphasis-200) 30%,
+    var(--ifm-background-color)
+  );
+  padding: 1.25rem 1.5rem;
+  margin: 0.75rem 0 1rem;
+}
+
+.emptyCard .emptyText {
+  margin: 0;
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
 .emptyText {
   margin: 0.65rem 0 0;
   color: var(--ifm-color-emphasis-600);
@@ -691,8 +718,9 @@
 
 .rebaseSection {
   margin-top: 0.9rem;
-  padding: 0.65rem;
+  padding: 0.85rem 1rem;
   border-radius: 10px;
+  border: 1px solid color-mix(in srgb, #2f9e7f 25%, transparent);
   background: color-mix(in srgb, #2f9e7f 6%, var(--ifm-background-color));
 }
 
@@ -767,13 +795,25 @@
 /* The "↓ Fedora 43" (older) label — muted */
 .userspaceMarkerLabelOld {
   color: var(--ifm-color-emphasis-600);
-  background: color-mix(in srgb, var(--ifm-color-emphasis-400) 8%, var(--ifm-background-color));
-  border-color: color-mix(in srgb, var(--ifm-color-emphasis-400) 30%, transparent);
+  background: color-mix(
+    in srgb,
+    var(--ifm-color-emphasis-400) 8%,
+    var(--ifm-background-color)
+  );
+  border-color: color-mix(
+    in srgb,
+    var(--ifm-color-emphasis-400) 30%,
+    transparent
+  );
 }
 
 [data-theme="dark"] .userspaceMarkerLabel {
   color: #7ec8ff;
-  background: color-mix(in srgb, #4a9eff 15%, var(--ifm-background-surface-color, #1a1a1a));
+  background: color-mix(
+    in srgb,
+    #4a9eff 15%,
+    var(--ifm-background-surface-color, #1a1a1a)
+  );
   border-color: color-mix(in srgb, #4a9eff 35%, transparent);
 }
 
@@ -813,7 +853,11 @@
 
 [data-theme="dark"] .fedoraPill {
   color: #7ec8ff;
-  background: color-mix(in srgb, #4a9eff 15%, var(--ifm-background-surface-color, #1a1a1a));
+  background: color-mix(
+    in srgb,
+    #4a9eff 15%,
+    var(--ifm-background-surface-color, #1a1a1a)
+  );
   border-color: color-mix(in srgb, #4a9eff 30%, transparent);
 }
 
