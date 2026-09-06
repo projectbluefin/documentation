@@ -65,12 +65,6 @@ const SBOM_STREAM_PREFIX = {
   "dakota-latest": "latest",
 };
 
-function cacheAgeHours() {
-  if (!fs.existsSync(OUTPUT_FILE)) return Number.POSITIVE_INFINITY;
-  const stats = fs.statSync(OUTPUT_FILE);
-  return (Date.now() - stats.mtimeMs) / (1000 * 60 * 60);
-}
-
 function readJsonIfExists(filePath, fallback = null) {
   if (!fs.existsSync(filePath)) return fallback;
   try {
@@ -78,6 +72,12 @@ function readJsonIfExists(filePath, fallback = null) {
   } catch {
     return fallback;
   }
+}
+
+function cacheAgeHours(output = readJsonIfExists(OUTPUT_FILE)) {
+  const generatedAt = Date.parse(output?.generatedAt || "");
+  if (Number.isNaN(generatedAt)) return Number.POSITIVE_INFINITY;
+  return (Date.now() - generatedAt) / (1000 * 60 * 60);
 }
 
 function writeOutput(output, outputFile = OUTPUT_FILE) {
@@ -105,6 +105,27 @@ function isSbomOutput(output) {
     Array.isArray(output?.streams) &&
     output.streams.length > 0 &&
     output.streams.every((stream) => stream?.source === "sbom")
+  );
+}
+
+function requiredStreamIds(sbomCache) {
+  const required = ["bluefin-stable", "bluefin-lts"];
+  for (const streamId of ["dakota-latest", "utah-testing"]) {
+    if (
+      Object.keys(sbomCache?.streams?.[streamId]?.releases || {}).length > 0
+    ) {
+      required.push(streamId);
+    }
+  }
+  return required;
+}
+
+function isValidCachedOutput(output, sbomCache) {
+  if (!isSbomOutput(output)) return false;
+
+  const cachedStreamIds = new Set(output.streams.map((stream) => stream?.id));
+  return requiredStreamIds(sbomCache).every((streamId) =>
+    cachedStreamIds.has(streamId),
   );
 }
 
@@ -252,14 +273,6 @@ function buildGdxNvidiaByTagFromSbom(sbomCache) {
 }
 
 async function main() {
-  const ageHours = cacheAgeHours();
-  if (ageHours < CACHE_MAX_AGE_HOURS && !FORCE_REFRESH) {
-    console.log(
-      `Driver versions cache is ${ageHours.toFixed(1)}h old (max ${CACHE_MAX_AGE_HOURS}h). Skipping fetch.`,
-    );
-    return;
-  }
-
   const sbomCache = readSbomCache(SBOM_FILE);
   const hasSbomStreams =
     sbomCache?.streams &&
@@ -283,6 +296,19 @@ async function main() {
   console.log(
     `SBOM attestation cache loaded (${populated}/${Object.keys(sbomCache.streams).length} streams have release data).`,
   );
+
+  const cachedOutput = readJsonIfExists(OUTPUT_FILE);
+  const ageHours = cacheAgeHours(cachedOutput);
+  if (
+    ageHours < CACHE_MAX_AGE_HOURS &&
+    !FORCE_REFRESH &&
+    isValidCachedOutput(cachedOutput, sbomCache)
+  ) {
+    console.log(
+      `Driver versions cache is ${ageHours.toFixed(1)}h old (max ${CACHE_MAX_AGE_HOURS}h). Skipping fetch.`,
+    );
+    return;
+  }
 
   const gdxNvidiaByTag = buildGdxNvidiaByTagFromSbom(sbomCache);
   console.log(`GDX nvidia map: ${Object.keys(gdxNvidiaByTag).length} entries`);
@@ -386,5 +412,7 @@ module.exports = {
   buildStreamFromSbom,
   buildNvidiaMapFromSbomStream,
   buildGdxNvidiaByTagFromSbom,
+  cacheAgeHours,
+  isValidCachedOutput,
   handleUnavailableCache,
 };

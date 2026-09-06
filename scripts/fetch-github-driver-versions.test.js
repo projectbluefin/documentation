@@ -11,6 +11,8 @@ const {
   buildNvidiaMapFromSbomStream,
   buildGdxNvidiaByTagFromSbom,
   handleUnavailableCache,
+  cacheAgeHours,
+  isValidCachedOutput,
 } = require("./fetch-github-driver-versions.js");
 
 test("lookupSbomVersionsForTag returns packageVersions by stream and key", () => {
@@ -215,4 +217,66 @@ test("buildNvidiaMapFromSbomStream builds nvidia map from bluefin-nvidia-open-st
     undefined,
     "no nvidia entry when packageVersions.nvidia is absent",
   );
+});
+
+test("cacheAgeHours uses generatedAt instead of the file mtime", () => {
+  const generatedAt = new Date(Date.now() - 10 * 60 * 60 * 1000).toISOString();
+
+  assert.ok(cacheAgeHours({ generatedAt }) >= 9.9);
+});
+
+test("isValidCachedOutput rejects a cache missing an SBOM-backed stream", () => {
+  const sbomCache = {
+    streams: {
+      "bluefin-stable": { releases: { "stable-20260906": {} } },
+      "bluefin-lts": { releases: { "lts-20260906": {} } },
+      "utah-testing": { releases: { "testing-20260906": {} } },
+    },
+  };
+  const cachedOutput = {
+    generatedAt: new Date().toISOString(),
+    streams: [
+      { id: "bluefin-stable", source: "sbom" },
+      { id: "bluefin-lts", source: "sbom" },
+    ],
+  };
+
+  assert.equal(isValidCachedOutput(cachedOutput, sbomCache), false);
+});
+
+test("isValidCachedOutput rejects a cache containing a non-SBOM stream", () => {
+  const sbomCache = {
+    streams: {
+      "bluefin-stable": { releases: { "stable-20260906": {} } },
+      "bluefin-lts": { releases: { "lts-20260906": {} } },
+    },
+  };
+  const cachedOutput = {
+    generatedAt: new Date().toISOString(),
+    streams: [
+      { id: "bluefin-stable", source: "sbom" },
+      { id: "bluefin-lts", source: "github" },
+    ],
+  };
+
+  assert.equal(isValidCachedOutput(cachedOutput, sbomCache), false);
+});
+
+test("buildNvidiaMapFromSbomStream looks up Utah testing NVIDIA versions", () => {
+  const cache = {
+    streams: {
+      "utah-nvidia-testing": {
+        releases: {
+          "testing-20260906": {
+            tag: "testing-20260906",
+            packageVersions: { nvidia: "595.71.05" },
+          },
+        },
+      },
+    },
+  };
+
+  const map = buildNvidiaMapFromSbomStream(cache, "utah-nvidia-testing");
+
+  assert.equal(map["testing-20260906"], "595.71.05");
 });
