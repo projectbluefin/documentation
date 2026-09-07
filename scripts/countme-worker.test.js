@@ -5,9 +5,10 @@ let createPendingProjectbluefinSvg;
 let fetchHandler;
 
 test.before(async () => {
+  const routes = await import("../workers/countme-proxy/routes.mjs");
   const mod = await import("../workers/countme-proxy/index.mjs");
-  mapRequestPath = mod.mapRequestPath;
-  createPendingProjectbluefinSvg = mod.createPendingProjectbluefinSvg;
+  mapRequestPath = routes.mapRequestPath;
+  createPendingProjectbluefinSvg = routes.createPendingProjectbluefinSvg;
   fetchHandler = mod.default.fetch;
 });
 
@@ -28,10 +29,22 @@ test("maps projectbluefin source route to projectbluefin countme artifact", () =
 });
 
 test("maps root-host chart aliases to projectbluefin countme artifact", () => {
-  assert.equal(mapRequestPath("/"), "https://raw.githubusercontent.com/projectbluefin/countme/main/growth_bluefins.svg");
-  assert.equal(mapRequestPath("/growth.svg"), "https://raw.githubusercontent.com/projectbluefin/countme/main/growth_bluefins.svg");
-  assert.equal(mapRequestPath("/bluefin/growth.svg"), "https://raw.githubusercontent.com/projectbluefin/countme/main/growth_bluefins.svg");
-  assert.equal(mapRequestPath("/bluefin-lts/growth.svg"), "https://raw.githubusercontent.com/projectbluefin/countme/main/growth_bluefins.svg");
+  assert.equal(
+    mapRequestPath("/"),
+    "https://raw.githubusercontent.com/projectbluefin/countme/main/growth_bluefins.svg",
+  );
+  assert.equal(
+    mapRequestPath("/growth.svg"),
+    "https://raw.githubusercontent.com/projectbluefin/countme/main/growth_bluefins.svg",
+  );
+  assert.equal(
+    mapRequestPath("/bluefin/growth.svg"),
+    "https://raw.githubusercontent.com/projectbluefin/countme/main/growth_bluefins.svg",
+  );
+  assert.equal(
+    mapRequestPath("/bluefin-lts/growth.svg"),
+    "https://raw.githubusercontent.com/projectbluefin/countme/main/growth_bluefins.svg",
+  );
 });
 
 test("maps Bluefin badge endpoints", () => {
@@ -64,6 +77,9 @@ test("accepts metalink pings from Dakota telemetry clients", async () => {
 
   assert.equal(response.status, 200);
   assert.equal(response.headers.get("cache-control"), "no-store");
-  assert.equal(response.headers.get("content-type"), "text/plain;charset=UTF-8");
+  assert.equal(
+    response.headers.get("content-type"),
+    "text/plain;charset=UTF-8",
+  );
   assert.match(await response.text(), /countme accepted/i);
 });
