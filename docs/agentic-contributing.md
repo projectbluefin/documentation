@@ -105,6 +105,8 @@ flowchart TB
 
 **kubestellar-bot** is the repo automation layer. It picks up queued issues, dispatches agents to implement fixes and improvements, and ships them back as PRs against the `testing` branch.
 
+**[Project Bluefin MCP](https://mcp.projectbluefin.io/mcp)** (`mcp.projectbluefin.io`) is the public Model Context Protocol endpoint for contributor agents. It provides tokenless access to the org knowledge base and live Hive factory state (`search_knowledge`, `get_factory_status`, `get_work_queue`).
+
 **You** are a human in this system. Your work is approving design, reviewing agent PRs, deciding what to reject, and running the gates that machine enforcement cannot replace.
 
 ---
@@ -504,6 +506,34 @@ Also see:
 
 - [todo.projectbluefin.io](https://todo.projectbluefin.io/) — work that is new or in progress
 - [Reports](/reports) — recently completed work
+- `get_work_queue()` on `https://mcp.projectbluefin.io/mcp` — live ready-to-implement queue directly from Hive
+
+### Agent context via MCP (`mcp.projectbluefin.io`)
+
+Contributor agents query the org knowledge base and factory state via the public MCP endpoint at `https://mcp.projectbluefin.io/mcp`. No token or account is required:
+
+```json
+{
+  "mcpServers": {
+    "projectbluefin": {
+      "type": "http",
+      "url": "https://mcp.projectbluefin.io/mcp"
+    }
+  }
+}
+```
+
+| Tool                                | Returns                                                                                        |
+| ----------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `search_knowledge(query, limit=10)` | Matching knowledge entries — patterns, coverage gaps, CI conventions across `projectbluefin/*` |
+| `get_factory_status()`              | Live hub health, active contributors, actionable items, per-tier limits                        |
+| `get_work_queue(limit=10)`          | Live ready-to-implement queue and triage counts                                                |
+
+Guidelines:
+
+- **Search on demand with specific keywords.** Never attempt to load the entire corpus; responses are capped at 25 entries to protect agent context.
+- **Read-only.** The endpoint surfaces Hive projections and knowledge entries. Hive alone handles task assignment.
+- **Offline fallback.** Local setups can query `~/agent.md` (refreshed via `~/.local/bin/sync-hive-kb`) using `grep`.
 
 ### Before opening a PR
 
@@ -827,6 +857,8 @@ All contributors follow the [Bluefin Code of Conduct](/code-of-conduct).
 **@quarantine** — Test scenario tag meaning the scenario is written and committed but excluded from promotion gates because its pass rate is not yet reliable enough.
 
 **kubestellar-bot** — The repo automation layer in KubeStellar Hive. Picks up queued issues, dispatches agents, ships PRs.
+
+**mcp.projectbluefin.io** — Public Model Context Protocol endpoint (`https://mcp.projectbluefin.io/mcp`) providing contributor agents with tokenless access to org knowledge (`search_knowledge`), live factory status (`get_factory_status`), and the Hive work queue (`get_work_queue`).
 
 **Hive** — KubeStellar Hive, the reference implementation for ACMM Level 6. Orchestrates the Bluefin agentic factory. Live dashboard: [kubestellar.io/live/hive/bluefin/](https://kubestellar.io/live/hive/bluefin/).
 

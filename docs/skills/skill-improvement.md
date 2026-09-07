@@ -118,6 +118,11 @@ checkout` stamps every tracked file with the current time and the TTL never
   and Goose, automated on Bluefin via `ujust probe`. Keep diagnostics zero-auth
   and local-first; external SaaS accounts and internal cluster/lab endpoints
   must never appear in public troubleshooting documentation.
+- Contributor agents query the org knowledge base and live Hive state via the
+  public MCP endpoint at `https://mcp.projectbluefin.io/mcp` (`search_knowledge`,
+  `get_factory_status`, `get_work_queue`). Searches must remain keyword-specific
+  and never dump the full corpus; results cap at 25 entries to protect agent
+  context windows.
 
 Each is invisible from the source alone. Each would be paid again by the next
 agent. That is the bar.
