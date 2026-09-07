@@ -58,7 +58,9 @@ the provided value is not of type 'function or ExportedHandler'.
 ```
 
 Export only the default handler (and genuine Durable Object classes). Keep
-constants module-local.
+constants module-local, or export pure helper logic from a separate module
+(e.g. `routes.mjs`) so unit tests can exercise them offline without leaking
+named exports on the Worker entrypoint.
 
 **`main` resolves relative to the config file, not the working directory.** An
 override config written to `/tmp` cannot use a repo-relative `main`. Use an
