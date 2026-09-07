@@ -1,0 +1,15 @@
+{
+  "name": "@projectbluefin/knowledge-mcp",
+  "private": true,
+  "type": "module",
+  "description": "Public MCP endpoint serving the Project Bluefin org knowledge base at mcp.projectbluefin.io",
+  "scripts": {
+    "test": "node --test scripts/build-index.test.mjs",
+    "build-index": "node scripts/build-index.mjs"
+  },
+  "dependencies": {
+    "agents": "^0.22.0",
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "zod": "^4.0.0"
+  }
+}

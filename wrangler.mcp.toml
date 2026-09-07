@@ -1,0 +1,19 @@
+name = "projectbluefin-knowledge-mcp"
+main = "workers/knowledge-mcp/src/index.js"
+compatibility_date = "2026-09-07"
+compatibility_flags = ["nodejs_compat"]
+
+workers_dev = false
+
+routes = [
+  { pattern = "mcp.projectbluefin.io/*", zone_name = "projectbluefin.io" }
+]
+
+# Holds the finished knowledge index. Written by the refresh workflow, never by
+# the Worker — the Worker is read-only.
+[[kv_namespaces]]
+binding = "KB"
+id = "8a2ea52c09f54138982d014ea6c06a54"
+
+[observability]
+enabled = true
