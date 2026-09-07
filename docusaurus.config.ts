@@ -202,8 +202,8 @@ const config: Config = {
           position: "right",
         },
         {
-          to: "/factory",
-          label: "Factory",
+          href: "https://hive.projectbluefin.io",
+          label: "Hive",
           position: "right",
         },
         {
