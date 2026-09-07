@@ -1,0 +1,4 @@
+node_modules/
+# Build artifact produced by scripts/build-index.mjs in CI; never committed.
+index.json
+.wrangler/
