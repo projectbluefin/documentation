@@ -17,6 +17,7 @@ guidance in a general-purpose design or content skill you have loaded.
 | If your task is…                                      | Load                                                                                        |
 | ----------------------------------------------------- | ------------------------------------------------------------------------------------------- |
 | Writing, editing, or embedding in a blog post         | [`skills/blog-posts.md`](skills/blog-posts.md)                                              |
+| Generating or maintaining automated monthly reports   | [`skills/monthly-reports.md`](skills/monthly-reports.md)                                    |
 | Adding or changing a React component                  | [`skills/component-testing.md`](skills/component-testing.md)                                |
 | Editing `/factory` dashboard panels or copy           | [`skills/factory-dashboard-content.md`](skills/factory-dashboard-content.md)                |
 | Adding a top-level page for a variant (dakota, lts…)  | [`skills/variant-docs-pages.md`](skills/variant-docs-pages.md)                              |

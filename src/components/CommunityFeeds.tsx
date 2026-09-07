@@ -22,8 +22,13 @@ const CommunityFeeds: React.FC = () => {
               The Firehose - track updates from Bluefin, Homebrew, and Flathub
             </p>
             <p className={styles.heroLinks}>
-              Need project-wide status? See <a href="/reports">Monthly Reports</a>{" "}
-              for delivery summaries from <a href="https://todo.projectbluefin.io">todo.projectbluefin.io</a>.
+              Need project-wide status? See{" "}
+              <a href="/blog/tags/monthly-report">Monthly Reports</a> for
+              delivery summaries from{" "}
+              <a href="https://todo.projectbluefin.io">
+                todo.projectbluefin.io
+              </a>
+              .
             </p>
           </div>
         </div>

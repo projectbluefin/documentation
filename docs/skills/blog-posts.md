@@ -30,7 +30,7 @@ component. Authors resolve from `blog/authors.yaml`.
 
 ## When NOT to Use
 
-- Monthly reports — live in `reports/` with their own generator.
+- Monthly reports — live in `blog/` as dinosaur-slug infograms generated via `scripts/generate-report.mjs`; see [`monthly-reports.md`](monthly-reports.md).
 - Comment threads on a published post — see [`giscus-discussions.md`](giscus-discussions.md).
 - Getting a merged post live — see [`shipping-and-verifying.md`](shipping-and-verifying.md).
 
@@ -113,7 +113,9 @@ compiles to:
 
 ```html
 <div>Some <strong>Markdown</strong> content</div>
-<div><p>Some <strong>Markdown</strong> content</p></div>
+<div>
+  <p>Some <strong>Markdown</strong> content</p>
+</div>
 ```
 
 So this, which is what Prettier produces once the line passes 80 characters:
