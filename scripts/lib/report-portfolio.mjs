@@ -40,6 +40,31 @@ export const REPORT_PORTFOLIO = [
     signals: ["activity"],
   },
   {
+    repository: "projectbluefin/common",
+    tier: "stable",
+    signals: ["activity"],
+  },
+  {
+    repository: "projectbluefin/documentation",
+    tier: "stable",
+    signals: ["activity"],
+  },
+  {
+    repository: "projectbluefin/branding",
+    tier: "stable",
+    signals: ["activity"],
+  },
+  {
+    repository: "projectbluefin/iso",
+    tier: "stable",
+    signals: ["activity"],
+  },
+  {
+    repository: "projectbluefin/finpilot",
+    tier: "stable",
+    signals: ["activity"],
+  },
+  {
     repository: "projectbluefin/utah",
     tier: "experimental",
     signals: ["activity"],
@@ -53,12 +78,12 @@ export const REPORT_PORTFOLIO = [
   {
     repository: "ublue-os/homebrew-tap",
     tier: "ecosystem",
-    signals: ["tap-promotions"],
+    signals: ["activity", "tap-promotions"],
   },
   {
     repository: "ublue-os/homebrew-experimental-tap",
     tier: "ecosystem",
-    signals: ["tap-promotions"],
+    signals: ["activity", "tap-promotions"],
   },
 ];
 
