@@ -25,3 +25,11 @@ export type {
   NewLightHero,
   ReportLeaderboardProps,
 } from "./ReportLeaderboard";
+
+export { default as ReportChart } from "./ReportChart";
+export type {
+  ReportChartDefinition,
+  ReportChartKind,
+  ReportChartProps,
+  ReportChartSeries,
+} from "./ReportChart";
