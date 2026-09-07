@@ -42,6 +42,11 @@ workers_dev = false
 routes = [{ pattern = "<sub>.projectbluefin.io/*", zone_name = "projectbluefin.io" }]
 ```
 
+For vanity cross-domain redirects (such as `hive.projectbluefin.io/*` to
+the hosted Hive instance on `*.hive.hivecommons.dev`), lightweight module
+workers (e.g. `hive-redirect`) handle path and search query forwarding via 301
+redirects.
+
 ## Failure modes that cost real time
 
 **Every named export is treated as an entrypoint.** A stray constant export

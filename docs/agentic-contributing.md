@@ -50,11 +50,11 @@ The system is intentionally moving fast. When something breaks, the correct resp
 
 ## The System You Are Joining
 
-Bluefin's agentic factory is orchestrated by **[KubeStellar Hive](https://kubestellar.io/live/hive/bluefin/)**, an AI-native continuous delivery system. The architecture looks like this:
+Bluefin's agentic factory is orchestrated by **[KubeStellar Hive](https://hive.projectbluefin.io/)**, an AI-native continuous delivery system. The architecture looks like this:
 
 ```mermaid
 flowchart TB
-    subgraph hive["KubeStellar Hive — kubestellar.io/live/hive/bluefin/"]
+    subgraph hive["KubeStellar Hive — hive.projectbluefin.io"]
         direction TB
         acmm["AI-native Continuous Maturity Model\nAI agents run at increasing autonomy levels"]
     end
@@ -99,7 +99,7 @@ flowchart TB
 
 ### Components
 
-**[KubeStellar Hive](https://kubestellar.io/live/hive/bluefin/)** is the orchestration layer. It manages 8 repositories in the `projectbluefin` org (`bluefin`, `bluefin-lts`, `common`, `dakota`, `actions`, `renovate-config`, `bonedigger`, `knuckle`). You can watch it work in real time at [kubestellar.io/live/hive/bluefin/](https://kubestellar.io/live/hive/bluefin/).
+**[KubeStellar Hive](https://hive.projectbluefin.io/)** is the orchestration layer. It manages 8 repositories in the `projectbluefin` org (`bluefin`, `bluefin-lts`, `common`, `dakota`, `actions`, `renovate-config`, `bonedigger`, `knuckle`). You can watch it work in real time at [hive.projectbluefin.io](https://hive.projectbluefin.io).
 
 **[bonedigger](https://github.com/projectbluefin/bonedigger)** is the client + lifecycle bot. On Bluefin systems, users run `ujust report` — the agent collects system diagnostics that are hard for humans to gather manually, scrubs PII on-device, and files an issue to the relevant image repository. The GitHub Actions lifecycle bot then manages the pipeline: `filed → approved → queued → claimed → done`.
 
@@ -793,7 +793,7 @@ your contributor card can carry the project's colours instead of a generic
 palette. Bluefin publishes one:
 
 ```text
-https://hosted-projectbluefin-knuckle-gjvq.hive.kubestellar.io/contribute/leaderboard?style=projectbluefin/documentation/static/hive/leaderboard.css@main
+https://hive.projectbluefin.io/contribute/leaderboard?style=projectbluefin/documentation/static/hive/leaderboard.css@main
 ```
 
 The `?style=` parameter takes `owner/repo/path/theme.css@ref`. Omit `@ref` to
@@ -860,7 +860,7 @@ All contributors follow the [Bluefin Code of Conduct](/code-of-conduct).
 
 **mcp.projectbluefin.io** — Public Model Context Protocol endpoint (`https://mcp.projectbluefin.io/mcp`) providing contributor agents with tokenless access to org knowledge (`search_knowledge`), live factory status (`get_factory_status`), and the Hive work queue (`get_work_queue`).
 
-**Hive** — KubeStellar Hive, the reference implementation for ACMM Level 6. Orchestrates the Bluefin agentic factory. Live dashboard: [kubestellar.io/live/hive/bluefin/](https://kubestellar.io/live/hive/bluefin/).
+**Hive** — KubeStellar Hive, the reference implementation for ACMM Level 6. Orchestrates the Bluefin agentic factory. Live dashboard: [hive.projectbluefin.io](https://hive.projectbluefin.io).
 
 **SHA-lock** — The promotion workflow's property that the image digest at the start of promotion must equal the digest at the end. Prevents a rebuild from silently changing what was tested.
 
