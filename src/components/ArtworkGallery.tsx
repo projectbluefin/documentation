@@ -1,11 +1,7 @@
 import React from "react";
 import { createPortal } from "react-dom";
 import styles from "./ArtworkGallery.module.css";
-import {
-  CollectionSection,
-  LightboxDialog,
-  ProjectSwitcher,
-} from "./artwork";
+import { CollectionSection, LightboxDialog, ProjectSwitcher } from "./artwork";
 import type {
   ArtworkManifest,
   DayNightMode,
@@ -19,15 +15,17 @@ export default function ArtworkGallery(): React.JSX.Element {
   const [loadError, setLoadError] = React.useState<string | null>(null);
   const [activeProject, setActiveProject] = React.useState<Project>("bluefin");
   const [isMounted, setIsMounted] = React.useState(false);
-  const [dayNightByCollection, setDayNightByCollection] = React.useState<Record<string, DayNightMode>>(
-    {},
-  );
+  const [dayNightByCollection, setDayNightByCollection] = React.useState<
+    Record<string, DayNightMode>
+  >({});
   const [lightbox, setLightbox] = React.useState<{
     project: Project;
     collectionId: string;
     wallpaperId: string;
   } | null>(null);
-  const cardButtonRefs = React.useRef<Record<string, HTMLButtonElement | null>>({});
+  const cardButtonRefs = React.useRef<Record<string, HTMLButtonElement | null>>(
+    {},
+  );
   const dialogRef = React.useRef<HTMLDivElement | null>(null);
   const closeButtonRef = React.useRef<HTMLButtonElement | null>(null);
   const lastOpenedCardKeyRef = React.useRef<string | null>(null);
@@ -43,7 +41,19 @@ export default function ArtworkGallery(): React.JSX.Element {
       .then((response) => (response.ok ? response.json() : null))
       .then((data) => {
         if (!mounted) return;
-        if (data && typeof data === "object" && data.projects) {
+        if (
+          data &&
+          typeof data === "object" &&
+          "unavailable" in data &&
+          data.unavailable
+        ) {
+          setManifest(null);
+          setLoadError(
+            "stateReason" in data && typeof data.stateReason === "string"
+              ? data.stateReason
+              : "Artwork data is currently unavailable.",
+          );
+        } else if (data && typeof data === "object" && data.projects) {
           setManifest(data as ArtworkManifest);
           setLoadError(null);
         } else {
@@ -71,13 +81,19 @@ export default function ArtworkGallery(): React.JSX.Element {
     }
 
     const projectData = manifest.projects[lightbox.project];
-    const collection = projectData.collections.find((item) => item.id === lightbox.collectionId);
+    const collection = projectData.collections.find(
+      (item) => item.id === lightbox.collectionId,
+    );
     if (!collection) {
       return null;
     }
 
-    const lightboxWallpapers = collection.wallpapers.filter((item) => item.hasLightbox);
-    const index = lightboxWallpapers.findIndex((item) => item.id === lightbox.wallpaperId);
+    const lightboxWallpapers = collection.wallpapers.filter(
+      (item) => item.hasLightbox,
+    );
+    const index = lightboxWallpapers.findIndex(
+      (item) => item.id === lightbox.wallpaperId,
+    );
     if (index < 0) {
       return null;
     }
@@ -187,7 +203,8 @@ export default function ArtworkGallery(): React.JSX.Element {
         ),
       ).filter(
         (element) =>
-          !element.hasAttribute("disabled") && element.getAttribute("aria-hidden") !== "true",
+          !element.hasAttribute("disabled") &&
+          element.getAttribute("aria-hidden") !== "true",
       );
 
       if (focusableElements.length === 0) {
@@ -238,7 +255,12 @@ export default function ArtworkGallery(): React.JSX.Element {
   }, []);
 
   const openLightbox = React.useCallback(
-    (cardKey: string, project: Project, collectionId: string, wallpaperId: string) => {
+    (
+      cardKey: string,
+      project: Project,
+      collectionId: string,
+      wallpaperId: string,
+    ) => {
       lastOpenedCardKeyRef.current = cardKey;
       setLightbox({ project, collectionId, wallpaperId });
     },
@@ -265,7 +287,10 @@ export default function ArtworkGallery(): React.JSX.Element {
 
   const lightboxMode =
     lightboxContext && lightboxContext.collection.hasDayNight
-      ? getCollectionMode(lightbox?.project ?? activeProject, lightboxContext.collection.id)
+      ? getCollectionMode(
+          lightbox?.project ?? activeProject,
+          lightboxContext.collection.id,
+        )
       : "day";
 
   return (
@@ -294,19 +319,21 @@ export default function ArtworkGallery(): React.JSX.Element {
         );
       })}
 
-      {lightboxContext && isMounted && createPortal(
-        <LightboxDialog
-          lightboxContext={lightboxContext}
-          lightboxProject={lightbox?.project ?? activeProject}
-          lightboxMode={lightboxMode}
-          dialogRef={dialogRef}
-          closeButtonRef={closeButtonRef}
-          onClose={closeLightbox}
-          onMove={moveLightbox}
-          onSetMode={setCollectionMode}
-        />,
-        document.body
-      )}
+      {lightboxContext &&
+        isMounted &&
+        createPortal(
+          <LightboxDialog
+            lightboxContext={lightboxContext}
+            lightboxProject={lightbox?.project ?? activeProject}
+            lightboxMode={lightboxMode}
+            dialogRef={dialogRef}
+            closeButtonRef={closeButtonRef}
+            onClose={closeLightbox}
+            onMove={moveLightbox}
+            onSetMode={setCollectionMode}
+          />,
+          document.body,
+        )}
     </div>
   );
 }

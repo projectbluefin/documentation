@@ -9,10 +9,17 @@
  * Usage: node scripts/fetch-pin-state.js
  */
 
-const fs = require("fs");
 const path = require("path");
+const { writeJson, writeUnavailable } = require("./lib/data-fallback");
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
 
-const OUTPUT_FILE = path.join(__dirname, "..", "static", "data", "stream-pins.json");
+const OUTPUT_FILE = path.join(
+  __dirname,
+  "..",
+  "static",
+  "data",
+  "stream-pins.json",
+);
 
 const WORKFLOWS_TO_CHECK = [
   {
@@ -32,14 +39,19 @@ async function fetchWorkflowContent(repo, filePath) {
   const headers = {
     "User-Agent": "bluefin-docs/fetch-pin-state",
     Accept: "application/vnd.github.v3+json",
-    ...(process.env.GITHUB_TOKEN
+    ...(GITHUB_TOKEN
       ? { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` }
       : {}),
   };
 
-  const response = await fetch(url, { headers, signal: AbortSignal.timeout(15000) });
+  const response = await fetch(url, {
+    headers,
+    signal: AbortSignal.timeout(15000),
+  });
   if (!response.ok) {
-    throw new Error(`GitHub API error for ${repo}/${filePath}: ${response.status} ${response.statusText}`);
+    throw new Error(
+      `GitHub API error for ${repo}/${filePath}: ${response.status} ${response.statusText}`,
+    );
   }
 
   const data = await response.json();
@@ -77,6 +89,7 @@ function applyKernelPin(streamPins, stream, kernelPin, filePath) {
 
 async function main() {
   const streamPins = {};
+  const failures = [];
 
   for (const { repo, path: filePath, stream } of WORKFLOWS_TO_CHECK) {
     try {
@@ -92,13 +105,15 @@ async function main() {
         console.log(`  ${stream}: no kernel-pin found (floating)`);
       }
     } catch (err) {
-      console.warn(`  Warning: could not fetch ${repo}/${filePath}: ${err.message}`);
+      const reason = `could not fetch ${repo}/${filePath}: ${err.message}`;
+      console.warn(`  Warning: ${reason}`);
+      failures.push(reason);
       // Non-fatal: keep any previously discovered pin for this stream.
     }
   }
 
   // Ensure all known streams appear in the output, even if empty (= all floating).
-  for (const stream of ["bluefin-stable"]) {
+  for (const stream of ["bluefin-stable", "bluefin-lts"]) {
     if (!streamPins[stream]) {
       streamPins[stream] = {};
     }
@@ -107,16 +122,26 @@ async function main() {
   const output = {
     generatedAt: new Date().toISOString(),
     streams: streamPins,
+    unavailable: failures.length > 0,
+    stateReason:
+      failures.length > 0
+        ? `Pin state was unavailable for ${failures.length} workflow(s): ${failures.join("; ")}`
+        : null,
   };
 
-  fs.writeFileSync(OUTPUT_FILE, JSON.stringify(output, null, 2) + "\n");
+  writeJson(OUTPUT_FILE, output);
   console.log(`Wrote ${OUTPUT_FILE}`);
 }
 
 if (require.main === module) {
   main().catch((err) => {
     console.error(err);
-    process.exit(1);
+    writeUnavailable(
+      OUTPUT_FILE,
+      `Pin state could not be generated: ${err.message}`,
+      { generatedAt: new Date().toISOString(), streams: {} },
+    );
+    process.exitCode = 0;
   });
 }
 

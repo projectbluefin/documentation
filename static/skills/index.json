@@ -1,0 +1,208 @@
+{
+  "generated_at": "2026-09-07T17:56:51.057Z",
+  "count": 11,
+  "skills": [
+    {
+      "id": "blog-posts",
+      "name": "blog-posts",
+      "description": "Author, format, and embed content in Bluefin blog posts under blog/. Use when editing a blog post, converting a social post to blog format, embedding Bluesky posts, adding images, or fixing MDX minifier paragraph errors.",
+      "one_line_purpose": "Format, embed, and validate Bluefin blog posts under blog/.",
+      "entry_point": "docs/skills/blog-posts.md",
+      "category": "meta",
+      "tags": [
+        "blog",
+        "authoring",
+        "mdx",
+        "embeds"
+      ],
+      "status": "active",
+      "triggers": [
+        "editing a blog post, converting a social post to blog format, embedding Bluesky posts, adding images, or fixing MDX minifier paragraph errors"
+      ]
+    },
+    {
+      "id": "brand-assets",
+      "name": "brand-assets",
+      "description": "Maintain and use Bluefin wordmarks, raptor emblem, and branding assets. Use when adding or updating logos, navbar branding, press kit graphics, or styling components with brand accent colors.",
+      "one_line_purpose": "Maintain and use Bluefin wordmarks, raptor emblem, and branding assets.",
+      "entry_point": "docs/skills/brand-assets.md",
+      "category": "meta",
+      "tags": [
+        "branding",
+        "wordmark",
+        "logo",
+        "svg",
+        "theme"
+      ],
+      "status": "active",
+      "triggers": [
+        "adding or updating logos, navbar branding, press kit graphics, or styling components with brand accent colors"
+      ]
+    },
+    {
+      "id": "cloudflare-workers",
+      "name": "cloudflare-workers",
+      "description": "Conventions and hard-won failure modes for the Workers this repository ships on projectbluefin.io subdomains. Use when adding, changing, or debugging a Worker, a wrangler config, or a Workers KV binding.",
+      "one_line_purpose": "Build and ship a Cloudflare Worker on a projectbluefin.io subdomain.",
+      "entry_point": "docs/skills/cloudflare-workers.md",
+      "category": "ci-ops",
+      "tags": [
+        "cloudflare",
+        "workers",
+        "wrangler",
+        "kv",
+        "mcp",
+        "subdomain"
+      ],
+      "status": "active",
+      "triggers": [
+        "adding, changing, or debugging a Worker, a wrangler config, or a Workers KV binding"
+      ]
+    },
+    {
+      "id": "component-testing",
+      "name": "component-testing",
+      "description": "Unit-test React components using the repository node --test runner without extra test tooling. Use when adding or changing components under src/components/, testing correctness rules, or verifying render output.",
+      "one_line_purpose": "Unit-test React components in-memory using node --test.",
+      "entry_point": "docs/skills/component-testing.md",
+      "category": "test-authoring",
+      "tags": [
+        "components",
+        "testing",
+        "react",
+        "node-test"
+      ],
+      "status": "active",
+      "triggers": [
+        "adding or changing components under src/components/, testing correctness rules, or verifying render output"
+      ]
+    },
+    {
+      "id": "factory-dashboard-content",
+      "name": "factory-dashboard-content",
+      "description": "Write and verify copy, data, and charts on the /factory dashboard. Use when editing a factory panel title or summary, adding a lane or image to the dashboard, touching countme adoption numbers, or styling an ECharts chart in src/components/factory/.",
+      "one_line_purpose": "Write and verify copy, data, and charts on /factory.",
+      "entry_point": "docs/skills/factory-dashboard-content.md",
+      "category": "meta",
+      "tags": [
+        "factory",
+        "dashboard",
+        "echarts",
+        "theming"
+      ],
+      "status": "active",
+      "triggers": [
+        "editing a factory panel title or summary, adding a lane or image to the dashboard, touching countme adoption numbers, or styling an ECharts chart in src/components/factory/"
+      ]
+    },
+    {
+      "id": "giscus-discussions",
+      "name": "giscus-discussions",
+      "description": "Verify, recover, and archive Bluefin blog Giscus Discussions. Use when a published blog post has no comments, the Open Discussion on New Blog Post workflow fails, or a source Discussion must be replaced by its blog post.",
+      "one_line_purpose": "Verify, recover, and archive blog Giscus discussion threads.",
+      "entry_point": "docs/skills/giscus-discussions.md",
+      "category": "meta",
+      "tags": [
+        "giscus",
+        "github-discussions",
+        "blog",
+        "comments"
+      ],
+      "status": "active",
+      "triggers": [
+        "a published blog post has no comments, the Open Discussion on New Blog Post workflow fails, or a source Discussion must be replaced by its blog post"
+      ]
+    },
+    {
+      "id": "release-card-images",
+      "name": "release-card-images",
+      "description": "Generate and debug the embeddable release card PNGs served from /img/cards/. Use when a card shows stale or missing version data, when adding a card for a new image stream, when changing card layout, or when generate-card-images skips a slug.",
+      "one_line_purpose": "Generate and debug embeddable release card PNG images.",
+      "entry_point": "docs/skills/release-card-images.md",
+      "category": "meta",
+      "tags": [
+        "release-cards",
+        "images",
+        "satori",
+        "badges"
+      ],
+      "status": "active",
+      "triggers": [
+        "a card shows stale or missing version data, when adding a card for a new image stream, when changing card layout, or when generate-card-images skips a slug"
+      ]
+    },
+    {
+      "id": "shipping-and-verifying",
+      "name": "shipping-and-verifying",
+      "description": "Land a change on main and prove it reached docs.projectbluefin.io. Use when a pull request cannot enter the merge queue, when merging stacked pull requests, or when verifying a live change across cache boundaries.",
+      "one_line_purpose": "Land changes on main and verify live deployment on docs site.",
+      "entry_point": "docs/skills/shipping-and-verifying.md",
+      "category": "ci-ops",
+      "tags": [
+        "shipping",
+        "deployment",
+        "merge-queue",
+        "verification"
+      ],
+      "status": "active",
+      "triggers": [
+        "a pull request cannot enter the merge queue, when merging stacked pull requests, or when verifying a live change across cache boundaries"
+      ]
+    },
+    {
+      "id": "skill-improvement",
+      "name": "skill-improvement",
+      "description": "The two-output rule for this repository: every session ships the work and the learning. Use when finishing a task, when you hit a workaround worth remembering, or when tempted to write a changelog.",
+      "one_line_purpose": "Capture learnings and durable patterns into docs/skills/.",
+      "entry_point": "docs/skills/skill-improvement.md",
+      "category": "meta",
+      "tags": [
+        "skills",
+        "improvement",
+        "documentation",
+        "conventions"
+      ],
+      "status": "active",
+      "triggers": [
+        "finishing a task, when you hit a workaround worth remembering, or when tempted to write a changelog"
+      ]
+    },
+    {
+      "id": "variant-docs-pages",
+      "name": "variant-docs-pages",
+      "description": "Author and maintain top-level docs pages for Bluefin image families under docs/. Use when adding or updating landing pages for variants like dakota, lts, server, or utah, including sidebar placement and component embedding.",
+      "one_line_purpose": "Author and maintain top-level docs pages for image variants.",
+      "entry_point": "docs/skills/variant-docs-pages.md",
+      "category": "meta",
+      "tags": [
+        "variants",
+        "pages",
+        "dakota",
+        "lts",
+        "server",
+        "utah"
+      ],
+      "status": "active",
+      "triggers": [
+        "adding or updating landing pages for variants like dakota, lts, server, or utah, including sidebar placement and component embedding"
+      ]
+    },
+    {
+      "id": "write-a-skill",
+      "name": "write-a-skill",
+      "description": "Author a new agent skill for projectbluefin/documentation. Covers front-matter, size budget, canonical linking, verification sections, and the skill-update mandate. Use when creating a new docs/skills/*.md file.",
+      "one_line_purpose": "Author a new skill doc following front-matter and size rules.",
+      "entry_point": "docs/skills/write-a-skill.md",
+      "category": "meta",
+      "tags": [
+        "skills",
+        "authoring",
+        "documentation"
+      ],
+      "status": "active",
+      "triggers": [
+        "creating a new docs/skills/*"
+      ]
+    }
+  ]
+}

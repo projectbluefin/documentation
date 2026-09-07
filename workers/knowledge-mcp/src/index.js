@@ -7,9 +7,10 @@
 // This Worker never parses the raw export — GitHub Actions does that and writes
 // the finished index to KV. See workers/knowledge-mcp/README.md.
 import { createMcpHandler } from "agents/mcp/server";
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { McpServer } from "@modelcontextprotocol/server";
 import { z } from "zod";
 import { parseKnowledge, searchEntries } from "./knowledge.mjs";
+import { QUICKSTARTS, REPOSITORY_MAPS } from "./onboarding.mjs";
 
 // NOTE: workerd treats every named export as a potential entrypoint, so
 // nothing but the default handler may be exported from this module.
@@ -32,26 +33,34 @@ async function loadIndex(env) {
   const now = Date.now();
   if (cache.index && now - cache.at < CACHE_TTL_MS) return cache.index;
   const index = await env.KB.get(INDEX_KEY, "json");
-  if (!index) throw new Error("knowledge index unavailable — indexer has not run yet");
+  if (!index)
+    throw new Error("knowledge index unavailable — indexer has not run yet");
   cache = { at: now, index };
   return index;
 }
 
 /** Hive's `/api/contribute/*` projections are public and read-only. */
 async function hub(path) {
-  const res = await fetch(`${HUB}${path}`, { headers: { accept: "application/json" } });
+  const res = await fetch(`${HUB}${path}`, {
+    headers: { accept: "application/json" },
+  });
   if (!res.ok) throw new Error(`hub ${path} returned ${res.status}`);
   return res.json();
 }
 
-const json = (value) => ({ content: [{ type: "text", text: JSON.stringify(value, null, 2) }] });
+const json = (value) => ({
+  content: [{ type: "text", text: JSON.stringify(value, null, 2) }],
+});
 const fail = (err) => ({
   content: [{ type: "text", text: `error: ${err.message}` }],
   isError: true,
 });
 
 function createServer(env) {
-  const server = new McpServer({ name: "projectbluefin-knowledge", version: "1.0.0" });
+  const server = new McpServer({
+    name: "projectbluefin-knowledge",
+    version: "1.0.0",
+  });
 
   server.registerTool(
     "search_knowledge",
@@ -61,14 +70,27 @@ function createServer(env) {
         "test-coverage gaps, CI conventions, and per-repository findings across " +
         "projectbluefin/*. Returns only matching entries, never the whole corpus.",
       inputSchema: {
-        query: z.string().min(2).describe("Keywords, e.g. 'bats coverage bluefin-lts'"),
-        limit: z.number().int().min(1).max(MAX_LIMIT).optional().describe("Max entries (default 10)"),
+        query: z
+          .string()
+          .min(2)
+          .describe("Keywords, e.g. 'bats coverage bluefin-lts'"),
+        limit: z
+          .number()
+          .int()
+          .min(1)
+          .max(MAX_LIMIT)
+          .optional()
+          .describe("Max entries (default 10)"),
       },
     },
     async ({ query, limit }) => {
       try {
         const index = await loadIndex(env);
-        const hits = searchEntries(index.entries, query, Math.min(limit ?? 10, MAX_LIMIT));
+        const hits = searchEntries(
+          index.entries,
+          query,
+          Math.min(limit ?? 10, MAX_LIMIT),
+        );
         return json({
           query,
           matched: hits.length,
@@ -111,7 +133,13 @@ function createServer(env) {
         "implement, and how work is grouped by triage level. Read-only — Hive alone " +
         "assigns work.",
       inputSchema: {
-        limit: z.number().int().min(1).max(MAX_LIMIT).optional().describe("Max queue items (default 10)"),
+        limit: z
+          .number()
+          .int()
+          .min(1)
+          .max(MAX_LIMIT)
+          .optional()
+          .describe("Max queue items (default 10)"),
       },
     },
     async ({ limit }) => {
@@ -136,6 +164,64 @@ function createServer(env) {
     },
   );
 
+  server.registerTool(
+    "get_index_status",
+    {
+      description:
+        "Return knowledge index operational health, record count, and timestamp without " +
+        "consuming search query quotas.",
+      inputSchema: {},
+    },
+    async () => {
+      try {
+        const index = await loadIndex(env);
+        return json({
+          status: "healthy",
+          count: index.count,
+          generated: index.generated,
+        });
+      } catch (err) {
+        return fail(err);
+      }
+    },
+  );
+
+  server.registerTool(
+    "get_quickstart",
+    {
+      description:
+        "Return concise onboarding checklists for Project Bluefin contributors.",
+      inputSchema: {
+        topic: z
+          .enum(["first-pr", "run-tests", "factory-gates", "branch-rules"])
+          .describe("Onboarding topic checklist"),
+      },
+    },
+    async ({ topic }) => {
+      const data = QUICKSTARTS[topic];
+      if (!data) return fail(new Error(`unknown topic '${topic}'`));
+      return json({ topic, ...data });
+    },
+  );
+
+  server.registerTool(
+    "get_repository_map",
+    {
+      description:
+        "Return high-level component map, entrypoints, and branch targets for a core Bluefin repository.",
+      inputSchema: {
+        repo: z
+          .enum(["bluefin", "bluefin-lts", "common", "dakota", "documentation"])
+          .describe("Repository name"),
+      },
+    },
+    async ({ repo }) => {
+      const data = REPOSITORY_MAPS[repo];
+      if (!data) return fail(new Error(`unknown repository '${repo}'`));
+      return json({ repo, ...data });
+    },
+  );
+
   return server;
 }
 
@@ -154,7 +240,8 @@ async function refreshIndex(env) {
     headers: { Authorization: `Bearer ${env.HIVE_TOKEN}` },
   });
   // Never echo the body on failure: it may carry an auth redirect.
-  if (!res.ok) throw new Error(`hub returned ${res.status} fetching knowledge export`);
+  if (!res.ok)
+    throw new Error(`hub returned ${res.status} fetching knowledge export`);
 
   const markdown = await res.text();
   if (markdown.includes("Knowledge base not yet available")) {
@@ -162,7 +249,8 @@ async function refreshIndex(env) {
   }
 
   const { entries, dropped, violations, total } = parseKnowledge(markdown);
-  if (entries.length === 0) throw new Error("refusing to publish an empty index");
+  if (entries.length === 0)
+    throw new Error("refusing to publish an empty index");
   if (violations.length > VIOLATION_CEILING) {
     throw new Error(
       `${violations.length} tripwire hits exceeds ceiling ${VIOLATION_CEILING} — ` +
@@ -209,6 +297,10 @@ export default {
     const handler = createMcpHandler(() => createServer(env), {
       route: "/mcp",
       allowedHostnames: ["mcp.projectbluefin.io", "localhost", "127.0.0.1"],
+      allowedOriginHostnames: ["docs.projectbluefin.io"],
+      corsOptions: {
+        origin: "https://docs.projectbluefin.io",
+      },
     });
     return handler(request, env, ctx);
   },

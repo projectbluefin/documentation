@@ -88,7 +88,12 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     if (!githubRepo) return;
 
     // First, try pre-fetched build-time data
-    const repoData = (reposData as Record<string, typeof reposData[keyof typeof reposData]>)[githubRepo];
+    const repoData = (
+      reposData as unknown as Record<
+        string,
+        (typeof reposData)[keyof typeof reposData]
+      >
+    )[githubRepo];
     if (repoData) {
       setStats(repoData);
       return;

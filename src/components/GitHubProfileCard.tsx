@@ -193,7 +193,12 @@ const GitHubProfileCard: React.FC<GitHubProfileCardProps> = ({
 
   useEffect(() => {
     // First, try pre-fetched build-time data
-    const profileData = (profilesData as Record<string, typeof profilesData[keyof typeof profilesData]>)[username];
+    const profileData = (
+      profilesData as unknown as Record<
+        string,
+        (typeof profilesData)[keyof typeof profilesData]
+      >
+    )[username];
 
     if (profileData) {
       setUser(profileData as GitHubUser);

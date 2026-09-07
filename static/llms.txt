@@ -1,0 +1,36 @@
+# Bluefin Documentation
+
+> Official Project Bluefin documentation for installing, using, developing, and contributing to Bluefin, including the agentic factory and machine-readable endpoints.
+
+## Get Bluefin
+- [Welcome to Bluefin](https://docs.projectbluefin.io/index.md): Project overview and architecture.
+- [Downloads](https://docs.projectbluefin.io/downloads.md): Installation runbooks and download guidance.
+- [Installation](https://docs.projectbluefin.io/installation.md): Step-by-step setup on supported hardware.
+- [Driver Versions](https://docs.projectbluefin.io/driver-versions.md): Hardware driver matrix and kernels.
+
+## Images
+- [Images](https://docs.projectbluefin.io/images.md): Catalog of Bluefin, LTS, Dakota, and Utah image families.
+- [Bluefin Server](https://docs.projectbluefin.io/server.md): Server and container-host documentation.
+- [Bluefin LTS](https://docs.projectbluefin.io/lts.md): Enterprise CentOS Stream 10 bootc image.
+- [Dakota](https://docs.projectbluefin.io/dakota.md): Distroless GNOME OS / BuildStream workstation.
+- [Utah](https://docs.projectbluefin.io/utah.md): Developer tooling and base layers.
+
+## User Guide
+- [Administrator's Guide](https://docs.projectbluefin.io/administration.md): Day-to-day operation, updates, and rollbacks.
+- [Command Line](https://docs.projectbluefin.io/command-line.md): ujust commands and terminal tools.
+- [Troubleshooting & FAQ](https://docs.projectbluefin.io/troubleshooting.md): Recovery procedures and common fixes.
+
+## Developer Guide
+- [Developer Mode](https://docs.projectbluefin.io/bluefin-dx.md): Cloud-native developer environments.
+- [AI and Machine Learning](https://docs.projectbluefin.io/ai.md): Local models, Ramalama, Goose, and AI tooling.
+- [Gaming Mode](https://docs.projectbluefin.io/bluefin-gdx.md): Steam, Deck, and gaming configuration.
+
+## Agentic Factory & Contribution
+- [Agentic Contributor Guide](https://docs.projectbluefin.io/agentic-contributing.md): Autonomous agent workflows and human gates.
+- [Contributor's Guide](https://docs.projectbluefin.io/contributing.md): General community contribution guidelines.
+- [Code of Conduct](https://docs.projectbluefin.io/code-of-conduct.md): Community standards and participation guidelines.
+- [Project Bluefin MCP](https://mcp.projectbluefin.io/mcp): Public read-only MCP endpoint for knowledge and queues.
+- [MCP Server Card](https://docs.projectbluefin.io/.well-known/mcp.json): Discovery metadata for AI tools.
+- [Machine-Readable Data](https://docs.projectbluefin.io/data/*.json): Static JSON data endpoints.
+- [Artwork Versions Schema](https://docs.projectbluefin.io/schemas/artwork-versions-schema.json): Public JSON Schema.
+- [Agent Skills Catalog](https://docs.projectbluefin.io/skills/index.json): Machine-readable skill catalog.

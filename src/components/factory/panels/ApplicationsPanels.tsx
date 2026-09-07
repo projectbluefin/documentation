@@ -71,6 +71,12 @@ interface GnomeExtension {
   donateUrl: string | null;
 }
 
+interface GnomeExtensionPayload {
+  extensions: GnomeExtension[];
+  unavailable?: boolean;
+  stateReason?: string | null;
+}
+
 /* ---------- Helpers ---------- */
 
 function monthKey(iso: string): string {
@@ -154,14 +160,24 @@ export default function ApplicationsPanels(): React.JSX.Element {
     reason: flReason,
   } = useDataset<FlathubData>("flathub");
   const {
-    data: extensions,
+    data: extensionData,
     loading: extLoading,
     reason: extReason,
-  } = useDataset<GnomeExtension[]>("gnomeExtensions");
+  } = useDataset<GnomeExtension[] | GnomeExtensionPayload>("gnomeExtensions");
 
   const fhReady = firehose && !fhLoading;
   const flReady = flathub && !flLoading && !flathub.unavailable;
-  const extReady = extensions && !extLoading;
+  const extensions = Array.isArray(extensionData)
+    ? extensionData
+    : (extensionData?.extensions ?? []);
+  const extensionUnavailable =
+    !Array.isArray(extensionData) && extensionData?.unavailable === true;
+  const extensionUnavailableReason =
+    !Array.isArray(extensionData) && extensionData?.stateReason
+      ? extensionData.stateReason
+      : "GNOME extension data is unavailable.";
+  const extReady =
+    !extLoading && !extensionUnavailable && extensionData !== null;
 
   /* Derived data */
   const cadence = fhReady ? releaseCadence(firehose.apps) : null;
@@ -452,6 +468,11 @@ export default function ApplicationsPanels(): React.JSX.Element {
             ))}
           </div>
         </div>
+      ) : extensionUnavailable ? (
+        <Unavailable
+          what="GNOME extensions"
+          reason={extensionUnavailableReason}
+        />
       ) : extReason ? (
         <Unavailable what="GNOME extensions" reason={extReason} />
       ) : (

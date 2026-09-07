@@ -46,6 +46,7 @@
 
 const fs = require("fs");
 const path = require("path");
+const { writeJson, writeUnavailable } = require("./lib/data-fallback");
 
 // Snapshot data comes from the hosted Knuckle /api/status endpoint.
 // The old raw.githubusercontent.com HTML snapshot (bluefin/index.html) is no longer published.
@@ -160,10 +161,14 @@ function extractMetrics(data) {
 async function fetchContributors() {
   const totals = {};
   const byRepo = {};
+  const failures = [];
+  let successfulRepos = 0;
 
-  await Promise.allSettled(
+  const results = await Promise.allSettled(
     FACTORY_REPOS.map(async (repo) => {
       const repoMap = {};
+      let hadValidPage = false;
+      let failureReason = null;
       let url = `${GH_API}/repos/projectbluefin/${repo}/contributors?per_page=100&anon=false`;
       let pages = 0;
       while (url && pages < 10) {
@@ -171,21 +176,32 @@ async function fetchContributors() {
         let res;
         try {
           res = await fetch(url, { headers: ghHeaders() });
-        } catch {
+        } catch (err) {
+          failureReason = err.message;
           break;
         }
-        if (res.status === 404 || res.status === 403 || res.status === 204)
+        if (res.status === 404 || res.status === 403 || res.status === 204) {
+          failureReason = `HTTP ${res.status}`;
           break;
-        if (!res.ok) break;
+        }
+        if (!res.ok) {
+          failureReason = `HTTP ${res.status}`;
+          break;
+        }
         let contributors;
         try {
           contributors = await res.json();
-        } catch {
+        } catch (err) {
+          failureReason = `invalid JSON: ${err.message}`;
           break;
         }
-        if (!Array.isArray(contributors)) break;
+        if (!Array.isArray(contributors)) {
+          failureReason = "response was not an array";
+          break;
+        }
+        hadValidPage = true;
         for (const c of contributors) {
-          if (!c.login) continue;
+          if (!c?.login) continue;
           // Skip any bot account (suffix [bot] or known bot logins)
           if (c.login.endsWith("[bot]") || BOT_LOGINS.has(c.login)) continue;
           const count = c.contributions || 0;
@@ -197,13 +213,32 @@ async function fetchContributors() {
         const nextMatch = link.match(/<([^>]+)>;\s*rel="next"/);
         url = nextMatch ? nextMatch[1] : null;
       }
+      if (url && pages >= 10 && !failureReason) {
+        failureReason = "pagination limit reached";
+      }
+      if (hadValidPage && !failureReason) {
+        successfulRepos++;
+      } else {
+        failures.push(`${repo}: ${failureReason || "no usable response"}`);
+      }
       if (Object.keys(repoMap).length > 0) {
         byRepo[repo] = repoMap;
       }
     }),
   );
+  for (const result of results) {
+    if (result.status === "rejected") {
+      failures.push(`unknown repository failure: ${result.reason?.message}`);
+    }
+  }
 
-  return { totals, byRepo };
+  return {
+    totals,
+    byRepo,
+    attemptedRepos: FACTORY_REPOS.length,
+    successfulRepos,
+    failures,
+  };
 }
 
 /**
@@ -345,46 +380,74 @@ function finalizeContributorStats(
 async function fetchContributorWeeklyStats() {
   const windows = computeStatsWindows();
   const acc = createStatsAccumulator();
+  const failures = [];
+  let successfulRepos = 0;
 
-  await Promise.allSettled(
+  const results = await Promise.allSettled(
     FACTORY_REPOS.map(async (repo) => {
       const url = `${GH_API}/repos/projectbluefin/${repo}/stats/contributors`;
       let attempts = 0;
       let data = null;
+      let failureReason = null;
       while (attempts < 4) {
         attempts++;
         let res;
         try {
           res = await fetch(url, { headers: ghHeaders() });
-        } catch {
+        } catch (err) {
+          failureReason = err.message;
           break;
         }
-        if (res.status === 404 || res.status === 403 || res.status === 204)
+        if (res.status === 404 || res.status === 403 || res.status === 204) {
+          failureReason = `HTTP ${res.status}`;
           break;
+        }
         if (res.status === 202) {
           // GitHub is computing stats — wait and retry
           await new Promise((r) => setTimeout(r, 2000 * attempts));
           continue;
         }
-        if (!res.ok) break;
+        if (!res.ok) {
+          failureReason = `HTTP ${res.status}`;
+          break;
+        }
         try {
           data = await res.json();
-        } catch {
+        } catch (err) {
+          failureReason = `invalid JSON: ${err.message}`;
           break;
         }
         break;
       }
-      accumulateRepoStats(acc, repo, data, windows);
+      if (Array.isArray(data)) {
+        successfulRepos++;
+        accumulateRepoStats(acc, repo, data, windows);
+      } else {
+        failures.push(`${repo}: ${failureReason || "no usable response"}`);
+      }
     }),
   );
+  for (const result of results) {
+    if (result.status === "rejected") {
+      failures.push(`unknown repository failure: ${result.reason?.message}`);
+    }
+  }
 
-  return finalizeContributorStats(acc);
+  return {
+    ...finalizeContributorStats(acc),
+    attemptedRepos: FACTORY_REPOS.length,
+    successfulRepos,
+    failures,
+  };
 }
 
 function loadHistory() {
   try {
     if (fs.existsSync(OUTPUT_FILE)) {
-      return JSON.parse(fs.readFileSync(OUTPUT_FILE, "utf8"));
+      const parsed = JSON.parse(fs.readFileSync(OUTPUT_FILE, "utf8"));
+      if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+        return parsed;
+      }
     }
   } catch {
     // ignore corrupt file — start fresh
@@ -400,10 +463,26 @@ function loadHistory() {
   };
 }
 
+function unavailableHistory(reason) {
+  const history = loadHistory();
+  if (!Array.isArray(history.entries)) history.entries = [];
+  if (!history.contributors) history.contributors = {};
+  if (!history.contributorsByRepo) history.contributorsByRepo = {};
+  if (!history.contributorStats) history.contributorStats = {};
+  if (!Array.isArray(history.contributorWeekStarts))
+    history.contributorWeekStarts = [];
+  return {
+    ...history,
+    unavailable: true,
+    stateReason: reason,
+  };
+}
+
 async function main() {
   console.log("[hive-history] Starting fetch...");
 
   const history = loadHistory();
+  const unavailableReasons = [];
   if (!Array.isArray(history.entries)) history.entries = [];
   if (!history.contributors) history.contributors = {};
   if (!history.contributorsByRepo) history.contributorsByRepo = {};
@@ -416,6 +495,9 @@ async function main() {
   if (!HIVE_API_TOKEN) {
     console.log(
       "[hive-history] HIVE_API_TOKEN not set — skipping snapshot fetch",
+    );
+    unavailableReasons.push(
+      "Hive snapshot unavailable because HIVE_API_TOKEN is not set.",
     );
   } else {
     try {
@@ -431,6 +513,11 @@ async function main() {
       if (res.ok) {
         const data = await res.json();
         metrics = extractMetrics(data);
+        if (!metrics) {
+          unavailableReasons.push(
+            "Hive snapshot response did not contain usable metrics.",
+          );
+        }
         console.log(
           `[hive-history] Snapshot parsed: ACMM L${metrics?.acmmLevel ?? "?"}, mode=${metrics?.govMode ?? "?"}`,
         );
@@ -438,9 +525,11 @@ async function main() {
         console.warn(
           `[hive-history] /api/status returned HTTP ${res.status} — skipping snapshot`,
         );
+        unavailableReasons.push(`Hive snapshot returned HTTP ${res.status}.`);
       }
     } catch (err) {
       console.warn(`[hive-history] Snapshot fetch failed: ${err.message}`);
+      unavailableReasons.push(`Hive snapshot fetch failed: ${err.message}`);
     }
   }
 
@@ -468,17 +557,32 @@ async function main() {
       "[hive-history] Fetching all-time contributor counts from factory repos...",
     );
     try {
-      const { totals, byRepo } = await fetchContributors();
-      history.contributors = totals;
-      history.contributorsByRepo = byRepo;
-      history.lastContributorFetch = new Date().toISOString();
-      const humanCount = Object.keys(totals).length;
-      const totalCommits = Object.values(totals).reduce((s, n) => s + n, 0);
-      console.log(
-        `[hive-history] Contributors: ${humanCount} humans, ${totalCommits} total commits`,
-      );
+      const result = await fetchContributors();
+      if (result.successfulRepos > 0) {
+        history.contributors = result.totals;
+        history.contributorsByRepo = result.byRepo;
+        history.lastContributorFetch = new Date().toISOString();
+        const humanCount = Object.keys(result.totals).length;
+        const totalCommits = Object.values(result.totals).reduce(
+          (s, n) => s + n,
+          0,
+        );
+        console.log(
+          `[hive-history] Contributors: ${humanCount} humans, ${totalCommits} total commits`,
+        );
+      } else {
+        unavailableReasons.push(
+          `Contributor data unavailable for all ${result.attemptedRepos} repositories.`,
+        );
+      }
+      if (result.failures.length > 0) {
+        unavailableReasons.push(
+          `Contributor data unavailable for ${result.failures.length} repository(s).`,
+        );
+      }
     } catch (err) {
       console.warn(`[hive-history] Contributor fetch failed: ${err.message}`);
+      unavailableReasons.push(`Contributor fetch failed: ${err.message}`);
     }
   } else {
     console.log(
@@ -498,21 +602,33 @@ async function main() {
     );
     try {
       const stats = await fetchContributorWeeklyStats();
-      history.contributorStats = stats.stats;
-      history.contributorWeekStarts = stats.weekStarts;
-      history.lastWeeklyStatsFetch = new Date().toISOString();
-      const count = Object.keys(stats.stats).length;
-      const activeThisWeek = Object.values(stats.stats).filter(
-        (s) => s.lastWeek > 0,
-      ).length;
-      const withSeries = Object.values(stats.stats).filter(
-        (s) => Array.isArray(s.weeks) && s.weeks.length > 0,
-      ).length;
-      console.log(
-        `[hive-history] Weekly stats: ${count} contributors, ${activeThisWeek} active this week, ${withSeries} with a ${stats.weekStarts.length}-week series`,
-      );
+      if (stats.successfulRepos > 0) {
+        history.contributorStats = stats.stats;
+        history.contributorWeekStarts = stats.weekStarts;
+        history.lastWeeklyStatsFetch = new Date().toISOString();
+        const count = Object.keys(stats.stats).length;
+        const activeThisWeek = Object.values(stats.stats).filter(
+          (s) => s.lastWeek > 0,
+        ).length;
+        const withSeries = Object.values(stats.stats).filter(
+          (s) => Array.isArray(s.weeks) && s.weeks.length > 0,
+        ).length;
+        console.log(
+          `[hive-history] Weekly stats: ${count} contributors, ${activeThisWeek} active this week, ${withSeries} with a ${stats.weekStarts.length}-week series`,
+        );
+      } else {
+        unavailableReasons.push(
+          `Weekly contributor data unavailable for all ${stats.attemptedRepos} repositories.`,
+        );
+      }
+      if (stats.failures.length > 0) {
+        unavailableReasons.push(
+          `Weekly contributor data unavailable for ${stats.failures.length} repository(s).`,
+        );
+      }
     } catch (err) {
       console.warn(`[hive-history] Weekly stats fetch failed: ${err.message}`);
+      unavailableReasons.push(`Weekly stats fetch failed: ${err.message}`);
     }
   } else {
     console.log(
@@ -521,15 +637,20 @@ async function main() {
   }
 
   // ── Write output ─────────────────────────────────────────────────────────
-  fs.mkdirSync(path.dirname(OUTPUT_FILE), { recursive: true });
-  fs.writeFileSync(OUTPUT_FILE, JSON.stringify(history, null, 2), "utf8");
+  history.generatedAt = new Date().toISOString();
+  history.unavailable = unavailableReasons.length > 0;
+  history.stateReason =
+    unavailableReasons.length > 0 ? unavailableReasons.join(" ") : null;
+  writeJson(OUTPUT_FILE, history);
   console.log(`[hive-history] Wrote ${OUTPUT_FILE}`);
 }
 
 if (require.main === module) {
   main().catch((err) => {
     console.error("[hive-history] Fatal:", err);
-    process.exit(1);
+    const reason = `Hive history could not be generated: ${err.message}`;
+    writeUnavailable(OUTPUT_FILE, reason, unavailableHistory(reason));
+    process.exitCode = 0;
   });
 }
 
@@ -541,4 +662,5 @@ module.exports = {
   finalizeContributorStats,
   MAX_WEEKLY_SERIES,
   MAX_WEEKS,
+  unavailableHistory,
 };

@@ -109,19 +109,18 @@ function extractMetadataFromHtml(html) {
       if (!thumbnailUrl) {
         const header = ytInitialData.header?.playlistHeaderRenderer;
         if (
-          header?.playlistHeaderBanner?.heroPlaylistThumbnailRenderer
-            ?.thumbnail?.thumbnails
+          header?.playlistHeaderBanner?.heroPlaylistThumbnailRenderer?.thumbnail
+            ?.thumbnails
         ) {
           const thumbnails =
-            header.playlistHeaderBanner.heroPlaylistThumbnailRenderer
-              .thumbnail.thumbnails;
+            header.playlistHeaderBanner.heroPlaylistThumbnailRenderer.thumbnail
+              .thumbnails;
           thumbnailUrl = thumbnails[thumbnails.length - 1]?.url;
         }
       }
 
       if (!thumbnailUrl) {
-        const microformat =
-          ytInitialData.microformat?.microformatDataRenderer;
+        const microformat = ytInitialData.microformat?.microformatDataRenderer;
         if (microformat?.thumbnail?.thumbnails) {
           const thumbnails = microformat.thumbnail.thumbnails;
           thumbnailUrl = thumbnails[thumbnails.length - 1]?.url;
@@ -312,4 +311,5 @@ if (require.main === module) {
 module.exports = {
   decodeHtmlEntities,
   extractMetadataFromHtml,
+  PLAYLISTS,
 };

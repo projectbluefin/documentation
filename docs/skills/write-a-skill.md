@@ -85,7 +85,7 @@ introduces a new domain or discovers a durable pattern must write or update one.
 ## Verification
 
 - [ ] All front-matter fields present and valid.
-- [ ] Description is <= 256 characters.
+- [ ] Description is at most 256 characters.
 - [ ] Body contains all required sections (`When to Use`, `When NOT to Use`, `Core Process`, `Common Rationalizations`, `Red Flags`, `Verification`, `Sources`).
 - [ ] `docs/SKILL.md` includes a markdown link to the new skill.
 - [ ] `npm test` passes all tests, including skill hygiene checks.

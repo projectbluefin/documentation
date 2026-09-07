@@ -4,6 +4,7 @@ const {
   sequentialFetchWithDelay,
   githubHeaders,
 } = require("./lib/request-queue");
+const { writeUnavailable } = require("./lib/data-fallback");
 
 const GITHUB_REPOS = [
   // Built With Cloud Native (CNCF + OpenSSF — what makes Bluefin)
@@ -129,11 +130,11 @@ async function fetchAllRepos() {
   }
 
   if (!GITHUB_TOKEN) {
-    console.warn(
-      "⚠️  No GitHub token found. Set GITHUB_TOKEN or GH_TOKEN environment variable.",
-    );
-    console.warn("   This script may hit rate limits without authentication.");
-    console.warn("   Get a token at: https://github.com/settings/tokens\n");
+    const reason =
+      "No GITHUB_TOKEN or GH_TOKEN environment variable is set; repository stats were not fetched.";
+    console.warn(`⚠️  ${reason}`);
+    writeUnavailable(OUTPUT_FILE, reason);
+    return;
   } else {
     console.log("✓ Using authenticated GitHub API access\n");
   }
@@ -149,6 +150,7 @@ async function fetchAllRepos() {
   );
 
   const repos = Object.fromEntries(resultsMap);
+  const failedCount = GITHUB_REPOS.length - resultsMap.size;
 
   console.log(
     `\nSuccessfully fetched ${Object.keys(repos).length}/${GITHUB_REPOS.length} repos`,
@@ -156,8 +158,16 @@ async function fetchAllRepos() {
 
   // Don't fail build if no repos fetched - the component will just not show stats
   if (Object.keys(repos).length === 0) {
-    console.warn("\n⚠️  No repos fetched! Stats will not be displayed.");
-    console.warn("   Please set a GitHub token and try again.");
+    const reason = "No repository data could be fetched from GitHub.";
+    console.warn(`\n⚠️  ${reason}`);
+    writeUnavailable(OUTPUT_FILE, reason, repos);
+    return;
+  }
+  if (failedCount > 0) {
+    const reason = `Repository data unavailable for ${failedCount} repo(s).`;
+    console.warn(`⚠️  ${reason}`);
+    writeUnavailable(OUTPUT_FILE, reason, repos);
+    return;
   }
 
   // Ensure output directory exists
@@ -174,7 +184,11 @@ async function fetchAllRepos() {
 if (require.main === module) {
   fetchAllRepos().catch((error) => {
     console.error("Fatal error:", error);
-    process.exit(1);
+    writeUnavailable(
+      OUTPUT_FILE,
+      `Repository data could not be generated: ${error.message}`,
+    );
+    process.exitCode = 0;
   });
 }
 

@@ -4,6 +4,7 @@ const {
   sequentialFetchWithDelay,
   githubHeaders,
 } = require("./lib/request-queue");
+const { writeUnavailable } = require("./lib/data-fallback");
 
 const OUTPUT_DIR = path.join(__dirname, "..", "static", "data");
 const OUTPUT_FILE = path.join(OUTPUT_DIR, "file-contributors.json");
@@ -50,7 +51,7 @@ async function fetchCommits(filePath) {
       console.error(
         `Failed to fetch commits for ${filePath}: ${response.status} ${response.statusText}`,
       );
-      return [];
+      return null;
     }
 
     const commits = await response.json();
@@ -74,7 +75,7 @@ async function fetchCommits(filePath) {
     return contributors;
   } catch (error) {
     console.error(`Error fetching commits for ${filePath}:`, error.message);
-    return [];
+    return null;
   }
 }
 
@@ -114,11 +115,11 @@ async function fetchAllContributors() {
   }
 
   if (!GITHUB_TOKEN) {
-    console.warn(
-      "⚠️  No GitHub token found. Set GITHUB_TOKEN or GH_TOKEN environment variable.",
-    );
-    console.warn("   This script may hit rate limits without authentication.");
-    console.warn("   Get a token at: https://github.com/settings/tokens\n");
+    const reason =
+      "No GITHUB_TOKEN or GH_TOKEN environment variable is set; contributor data was not fetched.";
+    console.warn(`⚠️  ${reason}`);
+    writeUnavailable(OUTPUT_FILE, reason);
+    return;
   } else {
     console.log("✓ Using authenticated GitHub API access\n");
   }
@@ -139,12 +140,13 @@ async function fetchAllContributors() {
     async (filePath) => {
       console.log(`Fetching contributors for ${filePath}...`);
       const contributors = await fetchCommits(filePath);
-      return contributors.length > 0 ? contributors : null;
+      return contributors;
     },
   );
 
   const contributorsData = Object.fromEntries(resultsMap);
   const successCount = resultsMap.size;
+  const failedCount = allFiles.length - successCount;
 
   console.log(
     `\nSuccessfully fetched contributors for ${successCount}/${allFiles.length} files`,
@@ -152,10 +154,16 @@ async function fetchAllContributors() {
 
   // Don't fail build if no contributors fetched - component will gracefully handle empty data
   if (successCount === 0) {
-    console.warn(
-      "\n⚠️  No contributors fetched! Contributors will not be displayed.",
-    );
-    console.warn("   Please set a GitHub token and try again.");
+    const reason = "No contributor data could be fetched from GitHub.";
+    console.warn(`\n⚠️  ${reason}`);
+    writeUnavailable(OUTPUT_FILE, reason, contributorsData);
+    return;
+  }
+  if (failedCount > 0) {
+    const reason = `Contributor data unavailable for ${failedCount} file(s).`;
+    console.warn(`⚠️  ${reason}`);
+    writeUnavailable(OUTPUT_FILE, reason, contributorsData);
+    return;
   }
 
   // Ensure output directory exists
@@ -176,7 +184,11 @@ async function fetchAllContributors() {
 if (require.main === module) {
   fetchAllContributors().catch((error) => {
     console.error("Fatal error:", error);
-    process.exit(1);
+    writeUnavailable(
+      OUTPUT_FILE,
+      `Contributor data could not be generated: ${error.message}`,
+    );
+    process.exitCode = 0;
   });
 }
 

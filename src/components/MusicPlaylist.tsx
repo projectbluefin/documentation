@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import styles from "./MusicPlaylist.module.css";
-import playlistMetadata from "@site/static/data/playlist-metadata.json";
 
 interface MusicPlaylistProps {
   title: string;
@@ -77,8 +76,45 @@ const MusicPlaylist: React.FC<MusicPlaylistProps> = ({
   }, []);
 
   useEffect(() => {
-    const found = (playlistMetadata as PlaylistMetadata[]).find((item) => item.id === cleanPlaylistId);
-    if (found) setMetadata(found);
+    let active = true;
+
+    // This file is generated and intentionally absent from a clean checkout.
+    // Load it at runtime so a missing, empty, or unavailable dataset falls
+    // back to the props-based playlist link and placeholder thumbnail below.
+    fetch("/data/playlist-metadata.json", { cache: "no-cache" })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`playlist metadata returned HTTP ${response.status}`);
+        }
+        return response.json() as Promise<unknown>;
+      })
+      .then((data) => {
+        if (!active) return;
+
+        const entries: unknown[] = Array.isArray(data)
+          ? data
+          : data &&
+              typeof data === "object" &&
+              "playlists" in data &&
+              Array.isArray(data.playlists)
+            ? data.playlists
+            : [];
+        const found = entries.find(
+          (item): item is PlaylistMetadata =>
+            item !== null &&
+            typeof item === "object" &&
+            "id" in item &&
+            item.id === cleanPlaylistId,
+        );
+        setMetadata(found ?? null);
+      })
+      .catch(() => {
+        if (active) setMetadata(null);
+      });
+
+    return () => {
+      active = false;
+    };
   }, [cleanPlaylistId]);
 
   const playlistUrl = `https://www.youtube.com/playlist?list=${cleanPlaylistId}`;
@@ -96,7 +132,11 @@ const MusicPlaylist: React.FC<MusicPlaylistProps> = ({
       />
     ) : (
       <div className={styles.thumbnailPlaceholder}>
-        <svg viewBox="0 0 24 24" fill="currentColor" className={styles.musicIcon}>
+        <svg
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          className={styles.musicIcon}
+        >
           <path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z" />
         </svg>
       </div>
@@ -150,13 +190,21 @@ const MusicPlaylist: React.FC<MusicPlaylistProps> = ({
               />
             ) : (
               <div className={styles.thumbnailPlaceholder}>
-                <svg className={styles.playIcon} viewBox="0 0 24 24" fill="currentColor">
+                <svg
+                  className={styles.playIcon}
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
                   <path d="M8 5v14l11-7z" />
                 </svg>
               </div>
             )}
             <div className={styles.playOverlay}>
-              <svg className={styles.playIconLarge} viewBox="0 0 24 24" fill="currentColor">
+              <svg
+                className={styles.playIconLarge}
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
                 <path d="M8 5v14l11-7z" />
               </svg>
             </div>
@@ -187,71 +235,78 @@ const MusicPlaylist: React.FC<MusicPlaylistProps> = ({
   // ── embed=true (default) — slim horizontal player ──────────────────────
   return (
     <>
-      <div className={`${styles.nowPlayingBar} ${hasScrolled ? styles.scrolled : ""}`}>
-      {/* Left: album thumbnail */}
-      <div className={styles.thumbnailWrapper}>{thumbnailEl}</div>
+      <div
+        className={`${styles.nowPlayingBar} ${hasScrolled ? styles.scrolled : ""}`}
+      >
+        {/* Left: album thumbnail */}
+        <div className={styles.thumbnailWrapper}>{thumbnailEl}</div>
 
-      {/* Middle: label + title + description */}
-      <div className={styles.infoZone}>
-        <span className={styles.label}>RELEASE SOUNDTRACK TO HUNT BY</span>
-        <a
-          href={metadata?.playlistUrl ?? playlistUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={styles.playlistTitle}
-        >
-          {title}
-        </a>
-        {metadata?.description && (
-          <span className={styles.description}>{metadata.description}</span>
-        )}
-      </div>
+        {/* Middle: label + title + description */}
+        <div className={styles.infoZone}>
+          <span className={styles.label}>RELEASE SOUNDTRACK TO HUNT BY</span>
+          <a
+            href={metadata?.playlistUrl ?? playlistUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.playlistTitle}
+          >
+            {title}
+          </a>
+          {metadata?.description && (
+            <span className={styles.description}>{metadata.description}</span>
+          )}
+        </div>
 
-      {/* Right: video — poster+play until user clicks, then autoplay iframe */}
-      <div className={styles.videoWrapper}>
-        {mounted && playing ? (
-          <iframe
-            src={embedUrl}
-            title={`${title} – YouTube playlist`}
-            className={styles.videoIframe}
-            allow="autoplay; encrypted-media; picture-in-picture"
-            allowFullScreen={false}
-          />
-        ) : (
+        {/* Right: video — poster+play until user clicks, then autoplay iframe */}
+        <div className={styles.videoWrapper}>
+          {mounted && playing ? (
+            <iframe
+              src={embedUrl}
+              title={`${title} – YouTube playlist`}
+              className={styles.videoIframe}
+              allow="autoplay; encrypted-media; picture-in-picture"
+              allowFullScreen={false}
+            />
+          ) : (
+            <button
+              className={styles.playButton}
+              onClick={() => setPlaying(true)}
+              aria-label={`Play ${title}`}
+              type="button"
+            >
+              {thumbnailUrl && !imageError ? (
+                <img src={thumbnailUrl} alt="" className={styles.posterImg} />
+              ) : (
+                <div className={styles.posterPlaceholder} />
+              )}
+              <span className={styles.playIcon}>
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  width="28"
+                  height="28"
+                >
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              </span>
+            </button>
+          )}
+        </div>
+
+        {/* Dismiss button — only visible after user starts scrolling */}
+        {hasScrolled && (
           <button
-            className={styles.playButton}
-            onClick={() => setPlaying(true)}
-            aria-label={`Play ${title}`}
+            className={styles.dismissButton}
+            onClick={() => setDismissed(true)}
+            aria-label="Close player"
             type="button"
           >
-            {thumbnailUrl && !imageError ? (
-              <img src={thumbnailUrl} alt="" className={styles.posterImg} />
-            ) : (
-              <div className={styles.posterPlaceholder} />
-            )}
-            <span className={styles.playIcon}>
-              <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28">
-                <path d="M8 5v14l11-7z" />
-              </svg>
-            </span>
+            ×
           </button>
         )}
       </div>
-
-      {/* Dismiss button — only visible after user starts scrolling */}
-      {hasScrolled && (
-        <button
-          className={styles.dismissButton}
-          onClick={() => setDismissed(true)}
-          aria-label="Close player"
-          type="button"
-        >
-          ×
-        </button>
-      )}
-    </div>
-    {/* Spacer keeps content from sliding under the sticky bar when it locks */}
-    <div className={styles.stickySpacerBottom} />
+      {/* Spacer keeps content from sliding under the sticky bar when it locks */}
+      <div className={styles.stickySpacerBottom} />
     </>
   );
 };

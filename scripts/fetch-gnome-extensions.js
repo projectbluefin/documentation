@@ -9,6 +9,7 @@
 const fs = require("fs");
 const path = require("path");
 const https = require("https");
+const { writeUnavailable } = require("./lib/data-fallback");
 
 const EXTENSION_IDS = [
   5724, // Battery Health Charging
@@ -22,7 +23,10 @@ const EXTENSION_IDS = [
   7065, // Tiling Shell
 ];
 
-const OUTPUT_JSON = path.join(__dirname, "../static/data/gnome-extensions.json");
+const OUTPUT_JSON = path.join(
+  __dirname,
+  "../static/data/gnome-extensions.json",
+);
 const OUTPUT_IMG_DIR = path.join(__dirname, "../static/img/extensions");
 const CACHE_HOURS = parseInt(process.env.GNOME_EXT_CACHE_HOURS ?? "24", 10); // 24h repo policy default
 
@@ -31,7 +35,9 @@ function isStale(filePath) {
   if (!fs.existsSync(filePath)) return true;
   const ageHours = (Date.now() - fs.statSync(filePath).mtimeMs) / 3_600_000;
   if (ageHours < CACHE_HOURS) {
-    console.log(`Cache is ${ageHours.toFixed(1)}h old (max ${CACHE_HOURS}h). Skipping fetch.`);
+    console.log(
+      `Cache is ${ageHours.toFixed(1)}h old (max ${CACHE_HOURS}h). Skipping fetch.`,
+    );
     return false;
   }
   return true;
@@ -39,44 +45,66 @@ function isStale(filePath) {
 
 function fetchJSON(url) {
   return new Promise((resolve, reject) => {
-    const req = https.get(url, (res) => {
-      if (res.statusCode !== 200) {
-        res.resume();
-        reject(new Error(`HTTP ${res.statusCode} for ${url}`));
-        return;
-      }
-      let data = "";
-      res.on("data", (chunk) => (data += chunk));
-      res.on("end", () => {
-        try { resolve(JSON.parse(data)); }
-        catch (e) { reject(new Error(`JSON parse error for ${url}: ${e.message}`)); }
-      });
-    }).on("error", reject);
-    const timer = setTimeout(() => { req.destroy(new Error(`Timeout fetching ${url}`)); }, 15_000);
+    const req = https
+      .get(url, (res) => {
+        if (res.statusCode !== 200) {
+          res.resume();
+          reject(new Error(`HTTP ${res.statusCode} for ${url}`));
+          return;
+        }
+        let data = "";
+        res.on("data", (chunk) => (data += chunk));
+        res.on("end", () => {
+          try {
+            resolve(JSON.parse(data));
+          } catch (e) {
+            reject(new Error(`JSON parse error for ${url}: ${e.message}`));
+          }
+        });
+      })
+      .on("error", reject);
+    const timer = setTimeout(() => {
+      req.destroy(new Error(`Timeout fetching ${url}`));
+    }, 15_000);
     req.on("close", () => clearTimeout(timer));
   });
 }
 
 function downloadImage(url, destPath, redirectCount = 0) {
   return new Promise((resolve, reject) => {
-    if (redirectCount > 5) { reject(new Error(`Too many redirects for ${url}`)); return; }
-    const req = https.get(url, (res) => {
-      if (res.statusCode === 301 || res.statusCode === 302) {
-        res.resume();
-        downloadImage(res.headers.location, destPath, redirectCount + 1).then(resolve).catch(reject);
-        return;
-      }
-      if (res.statusCode < 200 || res.statusCode >= 300) {
-        res.resume();
-        reject(new Error(`HTTP ${res.statusCode} downloading ${url}`));
-        return;
-      }
-      const file = fs.createWriteStream(destPath);
-      res.pipe(file);
-      file.on("finish", () => { file.close(); resolve(destPath); });
-      file.on("error", (e) => { fs.unlink(destPath, () => {}); reject(e); });
-    }).on("error", reject);
-    const timer = setTimeout(() => { req.destroy(new Error(`Timeout downloading ${url}`)); }, 30_000);
+    if (redirectCount > 5) {
+      reject(new Error(`Too many redirects for ${url}`));
+      return;
+    }
+    const req = https
+      .get(url, (res) => {
+        if (res.statusCode === 301 || res.statusCode === 302) {
+          res.resume();
+          downloadImage(res.headers.location, destPath, redirectCount + 1)
+            .then(resolve)
+            .catch(reject);
+          return;
+        }
+        if (res.statusCode < 200 || res.statusCode >= 300) {
+          res.resume();
+          reject(new Error(`HTTP ${res.statusCode} downloading ${url}`));
+          return;
+        }
+        const file = fs.createWriteStream(destPath);
+        res.pipe(file);
+        file.on("finish", () => {
+          file.close();
+          resolve(destPath);
+        });
+        file.on("error", (e) => {
+          fs.unlink(destPath, () => {});
+          reject(e);
+        });
+      })
+      .on("error", reject);
+    const timer = setTimeout(() => {
+      req.destroy(new Error(`Timeout downloading ${url}`));
+    }, 30_000);
     req.on("close", () => clearTimeout(timer));
   });
 }
@@ -87,13 +115,25 @@ function buildExtensionRecord(pk, data, localScreenshot = null) {
     uuid: data.uuid,
     name: data.name,
     creator: data.creator,
-    creatorUrl: data.creator_url ? `https://extensions.gnome.org${data.creator_url}` : null,
+    creatorUrl: data.creator_url
+      ? `https://extensions.gnome.org${data.creator_url}`
+      : null,
     description: data.description,
     url: `https://extensions.gnome.org/extension/${pk}/`,
     screenshot: localScreenshot,
-    remoteScreenshot: data.screenshot ? `https://extensions.gnome.org${data.screenshot}` : null,
+    remoteScreenshot: data.screenshot
+      ? `https://extensions.gnome.org${data.screenshot}`
+      : null,
     icon: data.icon ? `https://extensions.gnome.org${data.icon}` : null,
     donateUrl: data.donate_url || null,
+  };
+}
+
+function unavailableExtensions(reason, extensions = []) {
+  return {
+    extensions,
+    unavailable: true,
+    stateReason: reason,
   };
 }
 
@@ -131,20 +171,29 @@ async function main() {
   fs.mkdirSync(OUTPUT_IMG_DIR, { recursive: true });
 
   const extensions = [];
+  const failures = [];
   for (const pk of EXTENSION_IDS) {
     try {
       extensions.push(await fetchExtensionData(pk));
     } catch (e) {
       console.error(`  Failed to fetch extension ${pk}: ${e.message}`);
+      failures.push(`${pk}: ${e.message}`);
     }
   }
 
   if (extensions.length === 0) {
-    console.error("All extension fetches failed — aborting.");
-    process.exit(1);
+    const reason = `All GNOME extension fetches failed: ${failures.join("; ")}`;
+    console.warn(reason);
+    writeUnavailable(OUTPUT_JSON, reason, { extensions: [] });
+    return;
   }
-  if (extensions.length < EXTENSION_IDS.length) {
-    console.warn(`Warning: only ${extensions.length}/${EXTENSION_IDS.length} extensions fetched.`);
+  if (failures.length > 0) {
+    const reason =
+      `GNOME extension data unavailable for ${failures.length} extension(s): ` +
+      failures.join("; ");
+    console.warn(reason);
+    writeUnavailable(OUTPUT_JSON, reason, { extensions });
+    return;
   }
 
   fs.writeFileSync(OUTPUT_JSON, JSON.stringify(extensions, null, 2));
@@ -152,10 +201,19 @@ async function main() {
 }
 
 if (require.main === module) {
-  main().catch((e) => { console.error(e); process.exit(1); });
+  main().catch((e) => {
+    console.error(e);
+    writeUnavailable(
+      OUTPUT_JSON,
+      `GNOME extension data could not be generated: ${e.message}`,
+      { extensions: [] },
+    );
+    process.exitCode = 0;
+  });
 }
 
 module.exports = {
   buildExtensionRecord,
   isStale,
+  unavailableExtensions,
 };

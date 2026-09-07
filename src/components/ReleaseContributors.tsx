@@ -118,7 +118,6 @@ const RoleLegendColor: Record<ContributorRole, string> = {
   "countme-maintainer": "#22c55e",
 };
 
-
 type FoilLevel = "gold" | "silver" | "diamond" | "none";
 
 const HighlightPriority: Record<FoilLevel, number> = {
@@ -155,7 +154,9 @@ const ReleaseContributors: React.FC<ReleaseContributorsProps> = ({
   stats,
 }) => {
   const displayName = (login: string): string => {
-    const profile = (profilesData as Record<string, { name?: string | null }>)[login];
+    const profile = (
+      profilesData as unknown as Record<string, { name?: string | null }>
+    )[login];
     return (profile?.name || login).toLowerCase();
   };
 

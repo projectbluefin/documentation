@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const { writeUnavailable } = require("./lib/data-fallback");
 
 /**
  * Parse the `Link` response header and return the URL for rel="next", or null.
@@ -30,26 +31,17 @@ function mapApiRelease(release) {
 function parseAtomEntry(entry) {
   let link = "#";
   if (entry.link && Array.isArray(entry.link)) {
-    const htmlLink = entry.link.find(
-      (l) => l.$ && l.$.type === "text/html",
-    );
+    const htmlLink = entry.link.find((l) => l.$ && l.$.type === "text/html");
     link = htmlLink ? htmlLink.$.href : entry.link[0].$.href;
   }
 
   let content = "";
   let contentSnippet = "";
-  if (
-    entry.content &&
-    Array.isArray(entry.content) &&
-    entry.content[0]
-  ) {
+  if (entry.content && Array.isArray(entry.content) && entry.content[0]) {
     if (typeof entry.content[0] === "string") {
       content = entry.content[0];
       contentSnippet = content.substring(0, 200) + "...";
-    } else if (
-      entry.content[0]._ &&
-      typeof entry.content[0]._ === "string"
-    ) {
+    } else if (entry.content[0]._ && typeof entry.content[0]._ === "string") {
       content = entry.content[0]._;
       contentSnippet = content.substring(0, 200) + "...";
     }
@@ -67,7 +59,9 @@ function parseAtomEntry(entry) {
 async function fetchReleasesFromApi(owner, repo) {
   const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
   if (!token) {
-    console.warn(`No GITHUB_TOKEN — falling back to Atom feed for ${owner}/${repo}`);
+    console.warn(
+      `No GITHUB_TOKEN — falling back to Atom feed for ${owner}/${repo}`,
+    );
     return null;
   }
 
@@ -86,7 +80,9 @@ async function fetchReleasesFromApi(owner, repo) {
     const response = await fetch(nextUrl, { headers });
 
     if (!response.ok) {
-      console.warn(`GitHub API returned ${response.status} for ${owner}/${repo} — falling back to Atom`);
+      console.warn(
+        `GitHub API returned ${response.status} for ${owner}/${repo} — falling back to Atom`,
+      );
       return null;
     }
 
@@ -96,13 +92,13 @@ async function fetchReleasesFromApi(owner, repo) {
   }
 
   if (allReleases.length >= MAX_RELEASES) {
-    console.warn(`${owner}/${repo}: reached ${MAX_RELEASES}-release cap — some older releases may be omitted`);
+    console.warn(
+      `${owner}/${repo}: reached ${MAX_RELEASES}-release cap — some older releases may be omitted`,
+    );
   }
 
   // Map GitHub API response to the same OsFeedItem shape used by the parsers
-  return allReleases
-    .filter((r) => !r.draft)
-    .map((r) => mapApiRelease(r));
+  return allReleases.filter((r) => !r.draft).map((r) => mapApiRelease(r));
 }
 
 /**
@@ -143,7 +139,9 @@ async function fetchAndSaveFeed(owner, repo, filename) {
     const stat = fs.statSync(jsonPath);
     const ageMs = Date.now() - stat.mtimeMs;
     if (ageMs < 24 * 60 * 60 * 1000 && !process.argv.includes("--force")) {
-      console.log(`Cache hit: ${filename} (${Math.round(ageMs / 3600000)}h old) — skipping fetch`);
+      console.log(
+        `Cache hit: ${filename} (${Math.round(ageMs / 3600000)}h old) — skipping fetch`,
+      );
       return;
     }
   }
@@ -174,19 +172,43 @@ async function fetchAndSaveFeed(owner, repo, filename) {
 
     console.log(`Saved ${items.length} releases to ${jsonPath}`);
   } catch (error) {
-    console.error(`Error fetching ${owner}/${repo}:`, error);
+    const reason = `Release feed unavailable for ${owner}/${repo}: ${error.message}`;
+    console.error(reason);
+    writeUnavailable(jsonPath, reason, {
+      title: `${owner}/${repo} Releases`,
+      items: [],
+    });
+    console.warn(`Wrote unavailable feed to ${jsonPath}`);
   }
 }
 
 async function main() {
   await fetchAndSaveFeed("projectbluefin", "bluefin", "bluefin-releases.json");
-  await fetchAndSaveFeed("projectbluefin", "bluefin-lts", "bluefin-lts-releases.json");
+  await fetchAndSaveFeed(
+    "projectbluefin",
+    "bluefin-lts",
+    "bluefin-lts-releases.json",
+  );
 }
 
 if (require.main === module) {
   main().catch((error) => {
     console.error("Fatal error in fetch-feeds:", error);
-    process.exitCode = 1;
+    const reason = `Release feed pipeline could not be completed: ${error.message}`;
+    for (const [owner, repo, filename] of [
+      ["projectbluefin", "bluefin", "bluefin-releases.json"],
+      ["projectbluefin", "bluefin-lts", "bluefin-lts-releases.json"],
+    ]) {
+      writeUnavailable(
+        path.join(__dirname, "..", "static", "feeds", filename),
+        reason,
+        {
+          title: `${owner}/${repo} Releases`,
+          items: [],
+        },
+      );
+    }
+    process.exitCode = 0;
   });
 }
 

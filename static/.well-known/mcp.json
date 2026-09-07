@@ -1,0 +1,24 @@
+{
+  "$schema": "https://static.modelcontextprotocol.org/schemas/mcp-server-card/v1.json",
+  "version": "1.0",
+  "protocolVersion": "2024-11-05",
+  "serverInfo": {
+    "name": "projectbluefin-knowledge",
+    "title": "Project Bluefin Knowledge MCP",
+    "version": "1.0.0"
+  },
+  "description": "Public, read-only Project Bluefin organization knowledge base, live factory status, and contributor onboarding tools.",
+  "documentationUrl": "https://docs.projectbluefin.io/agentic-contributing.md",
+  "transport": {
+    "type": "streamable-http",
+    "endpoint": "https://mcp.projectbluefin.io/mcp"
+  },
+  "capabilities": {
+    "tools": {}
+  },
+  "authentication": {
+    "required": false,
+    "schemes": []
+  },
+  "tools": "dynamic"
+}

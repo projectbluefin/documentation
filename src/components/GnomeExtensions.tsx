@@ -22,20 +22,49 @@ interface GnomeExtensionsProps {
 const GnomeExtensions: React.FC<GnomeExtensionsProps> = ({ extensionId }) => {
   const [extension, setExtension] = useState<ExtensionData | null>(null);
   const [imageError, setImageError] = useState(false);
-  const [loadError, setLoadError] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
     fetch("/data/gnome-extensions.json")
-      .then((response) => response.json())
-      .then((data: ExtensionData[]) => {
-        const ext = data.find((item) => item.id === extensionId);
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`extension data returned HTTP ${response.status}`);
+        }
+        return response.json() as Promise<unknown>;
+      })
+      .then((data) => {
+        const extensions: ExtensionData[] = Array.isArray(data)
+          ? data
+          : data &&
+              typeof data === "object" &&
+              "extensions" in data &&
+              Array.isArray(data.extensions)
+            ? data.extensions
+            : [];
+        if (
+          data &&
+          typeof data === "object" &&
+          "unavailable" in data &&
+          data.unavailable
+        ) {
+          const reason =
+            "stateReason" in data && typeof data.stateReason === "string"
+              ? data.stateReason
+              : "Extension data unavailable.";
+          setLoadError(reason);
+          return;
+        }
+
+        const ext = extensions.find((item) => item.id === extensionId);
         if (ext) {
           setExtension(ext);
+        } else {
+          setLoadError("Extension data unavailable.");
         }
       })
       .catch((error) => {
         console.error("Error loading extension metadata:", error);
-        setLoadError(true);
+        setLoadError("Extension data unavailable.");
       });
   }, [extensionId]);
 
@@ -43,7 +72,7 @@ const GnomeExtensions: React.FC<GnomeExtensionsProps> = ({ extensionId }) => {
     return (
       <div className={styles.extensionBox}>
         <div className={styles.extensionInfo}>
-          <p className={styles.extensionDescription}>Extension data unavailable.</p>
+          <p className={styles.extensionDescription}>{loadError}</p>
         </div>
       </div>
     );

@@ -47,7 +47,7 @@ const config: Config = {
           sidebarPath: "./sidebars.ts",
           // Disables the landing page
           routeBasePath: "/",
-          exclude: ["skills/**", "SKILL.md", "superpowers/**"],
+          exclude: ["superpowers/**"],
           editUrl: "https://github.com/projectbluefin/documentation/tree/main",
         },
         blog: {
@@ -144,9 +144,17 @@ const config: Config = {
           "style-src 'self' 'unsafe-inline'",
           "img-src 'self' data: https:",
           "font-src 'self' data:",
-          "connect-src 'self' https://api.github.com https://raw.githubusercontent.com https://giscus.app https://formulae.brew.sh https://queue.projectbluefin.io https://hosted-projectbluefin-knuckle-gjvq.hive.kubestellar.io https://hive.kubestellar.io",
+          "connect-src 'self' https://api.github.com https://raw.githubusercontent.com https://giscus.app https://formulae.brew.sh https://queue.projectbluefin.io https://hosted-projectbluefin-knuckle-gjvq.hive.kubestellar.io https://hive.kubestellar.io https://mcp.projectbluefin.io",
           "frame-src https://giscus.app https://www.youtube.com https://youtube.com https://insights.linuxfoundation.org",
         ].join("; "),
+      },
+    },
+    {
+      tagName: "link",
+      attributes: {
+        rel: "describedby",
+        href: "/llms.txt",
+        type: "text/plain",
       },
     },
   ],

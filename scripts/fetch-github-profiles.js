@@ -5,6 +5,7 @@ const {
   sequentialFetchWithDelay,
   githubHeaders,
 } = require("./lib/request-queue");
+const { writeUnavailable } = require("./lib/data-fallback");
 
 const REPO_ROOT = path.join(__dirname, "..");
 
@@ -228,7 +229,9 @@ const DONATION_PROVIDERS = [
  */
 async function fetchSponsorableStatus(usernames) {
   if (!GITHUB_TOKEN) {
-    console.warn("⚠️  No GitHub token — skipping sponsorable check, all set to false.");
+    console.warn(
+      "⚠️  No GitHub token — skipping sponsorable check, all set to false.",
+    );
     return { sponsorable: new Set(), donationUrls: new Map() };
   }
 
@@ -268,7 +271,10 @@ async function fetchSponsorableStatus(usernames) {
 
       const json = await res.json();
       if (json.errors) {
-        console.warn("GraphQL errors:", json.errors.map((e) => e.message).join(", "));
+        console.warn(
+          "GraphQL errors:",
+          json.errors.map((e) => e.message).join(", "),
+        );
       }
 
       batch.forEach((u, idx) => {
@@ -307,6 +313,17 @@ async function fetchAllProfiles() {
   if (fs.existsSync(OUTPUT_FILE)) {
     try {
       existingProfiles = JSON.parse(fs.readFileSync(OUTPUT_FILE, "utf-8"));
+      if (
+        !existingProfiles ||
+        typeof existingProfiles !== "object" ||
+        Array.isArray(existingProfiles)
+      ) {
+        existingProfiles = {};
+      } else {
+        delete existingProfiles.generatedAt;
+        delete existingProfiles.unavailable;
+        delete existingProfiles.stateReason;
+      }
       const stats = fs.statSync(OUTPUT_FILE);
       cacheAgeHours = (Date.now() - stats.mtimeMs) / (1000 * 60 * 60);
     } catch {
@@ -319,8 +336,12 @@ async function fetchAllProfiles() {
   // - cache fresh AND no missing: skip entirely
   // - cache fresh BUT missing entries: fetch only the missing ones (delta)
   // - cache stale: fetch everyone for a full refresh
-  const existingKeys = new Set(Object.keys(existingProfiles).map((k) => k.toLowerCase()));
-  const missing = GITHUB_USERNAMES.filter((u) => !existingKeys.has(u.toLowerCase()));
+  const existingKeys = new Set(
+    Object.keys(existingProfiles).map((k) => k.toLowerCase()),
+  );
+  const missing = GITHUB_USERNAMES.filter(
+    (u) => !existingKeys.has(u.toLowerCase()),
+  );
 
   let usernamestoFetch;
   if (force) {
@@ -345,17 +366,18 @@ async function fetchAllProfiles() {
   }
 
   if (!GITHUB_TOKEN) {
-    console.warn(
-      "⚠️  No GitHub token found. Set GITHUB_TOKEN or GH_TOKEN environment variable.",
-    );
-    console.warn("   Get a token at: https://github.com/settings/tokens");
-    console.warn("   Skipping fetch — no changes written.\n");
-    process.exit(0);
+    const reason =
+      "No GITHUB_TOKEN or GH_TOKEN environment variable is set; GitHub profiles were not fetched.";
+    console.warn(`⚠️  ${reason}`);
+    writeUnavailable(OUTPUT_FILE, reason, existingProfiles);
+    return;
   } else {
     console.log("✓ Using authenticated GitHub API access\n");
   }
 
-  console.log(`Fetching ${usernamestoFetch.length} GitHub profiles (${GITHUB_USERNAMES.length} total discovered)...`);
+  console.log(
+    `Fetching ${usernamestoFetch.length} GitHub profiles (${GITHUB_USERNAMES.length} total discovered)...`,
+  );
 
   // Start with existing profiles and overlay fresh fetches
   const profiles = force ? {} : { ...existingProfiles };
@@ -372,32 +394,54 @@ async function fetchAllProfiles() {
   }
 
   const fetched = Object.keys(profiles).length;
-  console.log(`\nSuccessfully fetched ${usernamestoFetch.length} profiles (${fetched} total in cache)`);
+  console.log(
+    `\nSuccessfully fetched ${usernamestoFetch.length} profiles (${fetched} total in cache)`,
+  );
 
   // Validate: fail if we fetched fewer profiles than we expected
-  const failedCount = usernamestoFetch.length - usernamestoFetch.filter((u) => profiles[u]).length;
+  const failedCount =
+    usernamestoFetch.length -
+    usernamestoFetch.filter((u) => profiles[u]).length;
   if (failedCount > 0) {
-    console.warn(`⚠️  ${failedCount} profile(s) could not be fetched (API errors or deleted accounts).`);
+    console.warn(
+      `⚠️  ${failedCount} profile(s) could not be fetched (API errors or deleted accounts).`,
+    );
   }
   if (fetched === 0) {
-    console.error("\n❌ No profiles in output! Build will fail without profile data.");
-    process.exit(1);
+    const reason = "No GitHub profile data could be fetched.";
+    console.warn(`\n⚠️  ${reason}`);
+    writeUnavailable(OUTPUT_FILE, reason, profiles);
+    return;
+  }
+  if (failedCount > 0) {
+    const reason = `GitHub profile data unavailable for ${failedCount} profile(s).`;
+    writeUnavailable(OUTPUT_FILE, reason, profiles);
+    return;
   }
 
   // Enrich with sponsorable status and donation URLs via a single batched GraphQL call.
   // Only re-check users we just fetched to avoid hammering GraphQL for the full set every delta run.
-  console.log("\nChecking GitHub Sponsors listings and social donation accounts...");
-  const { sponsorable: sponsorableSet, donationUrls } = await fetchSponsorableStatus(usernamestoFetch);
+  console.log(
+    "\nChecking GitHub Sponsors listings and social donation accounts...",
+  );
+  const { sponsorable: sponsorableSet, donationUrls } =
+    await fetchSponsorableStatus(usernamestoFetch);
   for (const username of usernamestoFetch) {
     if (!profiles[username]) continue;
     const lower = username.toLowerCase();
     profiles[username].sponsorable = sponsorableSet.has(lower);
     profiles[username].donationUrl = donationUrls.get(lower) ?? null;
   }
-  const sponsorCount = Object.values(profiles).filter((p) => p.sponsorable).length;
-  const donationCount = Object.values(profiles).filter((p) => p.donationUrl).length;
+  const sponsorCount = Object.values(profiles).filter(
+    (p) => p.sponsorable,
+  ).length;
+  const donationCount = Object.values(profiles).filter(
+    (p) => p.donationUrl,
+  ).length;
   console.log(`✓ ${sponsorCount} users have active GitHub Sponsors listings`);
-  console.log(`✓ ${donationCount} users have donation links from social accounts`);
+  console.log(
+    `✓ ${donationCount} users have donation links from social accounts`,
+  );
 
   // Ensure output directory exists
   if (!fs.existsSync(OUTPUT_DIR)) {
@@ -411,7 +455,11 @@ async function fetchAllProfiles() {
 if (require.main === module) {
   fetchAllProfiles().catch((error) => {
     console.error("Fatal error:", error);
-    process.exit(1);
+    writeUnavailable(
+      OUTPUT_FILE,
+      `GitHub profile data could not be generated: ${error.message}`,
+    );
+    process.exitCode = 0;
   });
 }
 

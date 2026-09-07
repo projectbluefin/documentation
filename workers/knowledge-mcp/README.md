@@ -18,11 +18,14 @@ Point any MCP client at it — no account, no token:
 
 ## Tools
 
-| Tool | Returns |
-|---|---|
-| `search_knowledge(query, limit=10)` | Matching knowledge entries — patterns, coverage gaps, CI conventions across `projectbluefin/*` |
-| `get_factory_status()` | Live hub health, active contributors, actionable items, per-tier limits |
-| `get_work_queue(limit=10)` | Live ready-to-implement queue and triage counts |
+| Tool                                | Returns                                                                                                                     |
+| ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `search_knowledge(query, limit=10)` | Matching knowledge entries — patterns, coverage gaps, CI conventions across `projectbluefin/*`                              |
+| `get_factory_status()`              | Live hub health, active contributors, actionable items, per-tier limits                                                     |
+| `get_work_queue(limit=10)`          | Live ready-to-implement queue and triage counts                                                                             |
+| `get_index_status()`                | Live knowledge index count, timestamp, and health                                                                           |
+| `get_quickstart(topic)`             | Onboarding checklists: `first-pr`, `run-tests`, `factory-gates`, `branch-rules`                                             |
+| `get_repository_map(repo)`          | High-level component map, entrypoints, and branch targets for `bluefin`, `bluefin-lts`, `common`, `dakota`, `documentation` |
 
 Results are capped at 25 entries. The endpoint never returns the whole corpus:
 loading a ~470 KB export into an agent's context is the exact failure this
@@ -56,13 +59,13 @@ are withheld:
 1. **`security`-tagged entries** (54 of ~1710). Blanket-dropped rather than
    triaged one by one.
 2. **Tripwire hits** — entries matching vulnerability language
-   (`CVE-\d{4}`, `unpatched`, `exploit`, `evades`, `bypass`, …) that are *not*
+   (`CVE-\d{4}`, `unpatched`, `exploit`, `evades`, `bypass`, …) that are _not_
    tagged `security`. This caught two real unpatched-CVE entries that the tag
    had missed, which is the whole reason it exists.
 
 A tripwire hit withholds that one entry and reports it; it does not fail the
 run, because a single false positive must not be able to freeze the index. A
-*spike* past `VIOLATION_CEILING` (default 25) does fail the run — that means
+_spike_ past `VIOLATION_CEILING` (default 25) does fail the run — that means
 upstream tagging changed and a human should look.
 
 Withheld entries should be re-tagged upstream in Hive so they are classified at
