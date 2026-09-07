@@ -31,19 +31,21 @@ replaces (see `review/docs/skills/goose-context.md`).
 ## How it works
 
 ```
-GitHub Actions (*/10)  ──►  GET hub /api/v1/knowledge   [HIVE_TOKEN]
-                       ──►  parse + withhold + tripwire
-                       ──►  wrangler kv key put  ──►  Workers KV
-                                                        │
-             MCP client ──► mcp.projectbluefin.io/mcp ──┘   (Worker: read + filter)
-                            └─ factory tools ──► hub /api/contribute/*  (public)
+Cron Trigger (*/10)  ──►  GET hub /api/v1/knowledge   [HIVE_TOKEN secret]
+                     ──►  parse + withhold + tripwire
+                     ──►  KV
+                            │
+        MCP client ──► mcp.projectbluefin.io/mcp ──┘   (read + filter)
+                       └─ factory tools ──► hub /api/contribute/*  (public)
 ```
 
-**The parse runs in Actions, not the Worker.** Parsing the export costs roughly
-200 ms of CPU, which does not fit the free plan's 10 ms per-invocation cap.
-Moving it to CI keeps the endpoint on the free plan. The Worker only reads KV
-and filters, and caches the parsed index in module scope so a warm isolate does
-no parsing at all.
+**The Worker refreshes its own index.** A Cron Trigger gets the full CPU budget
+rather than the per-request cap, so the ~200 ms parse of the ~470 KB export runs
+there. The request path only reads KV and filters, and caches the parsed index
+in module scope, so a warm isolate does no parsing at all.
+
+There is no CI job, no `CLOUDFLARE_API_TOKEN`, no `CLOUDFLARE_ACCOUNT_ID`, and
+no GitHub secret in this design. `HIVE_TOKEN` is a Worker secret.
 
 ## What is withheld from the public index
 
@@ -82,36 +84,17 @@ do not use it directly for local runs.
 
 ## Deployment
 
-The endpoint is deployed and serving. It was published with `wrangler` directly:
-
 ```bash
-node scripts/build-index.mjs --out index.json
-wrangler kv key put knowledge-index --path index.json \
-  --binding KB --config ../../wrangler.mcp.toml --remote
+wrangler secret put HIVE_TOKEN --config ../../wrangler.mcp.toml
 wrangler deploy --config ../../wrangler.mcp.toml
 ```
 
-Two automation workflows (`deploy-knowledge-mcp.yml` and
-`refresh-knowledge-index.yml`) are **not** in this change. Creating files under
-`.github/workflows/` requires a token with the `workflow` scope, which GitHub
-enforces server-side and which an OAuth App token cannot carry, so they land
-separately.
+That is the whole deployment. The cron trigger is declared in
+`wrangler.mcp.toml` and refreshes the index every ten minutes; `scripts/build-index.mjs`
+remains for building an index by hand or inspecting what would be published.
 
-Until they exist, the index is refreshed by running the two commands above.
-
-Required repository secrets:
-
-| Secret | Used by | Purpose |
-|---|---|---|
-| `HIVE_TOKEN` | refresh | GitHub token the Hive hub accepts for `/api/v1/knowledge` |
-| `CLOUDFLARE_API_TOKEN` | both | Workers deploy + KV write |
-| `CLOUDFLARE_ACCOUNT_ID` | both | Target account |
-
-**These are not currently set on this repository or the organization.** That is
-also why `deploy-countme-worker.yml` has been failing on every run since at
-least 2026-07-21 — it fails deep inside a `wrangler` invocation, after a full
-install, which is why it went unnoticed. The knowledge-mcp workflows preflight
-their secrets and fail immediately with a named list instead.
+The only credential is the `HIVE_TOKEN` Worker secret — a GitHub token the Hive
+hub accepts for `/api/v1/knowledge`.
 
 ## Constraints
 
