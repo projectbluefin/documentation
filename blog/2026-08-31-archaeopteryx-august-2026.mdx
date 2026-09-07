@@ -3,24 +3,462 @@ title: "Archaeopteryx August 2026"
 date: 2026-08-31
 slug: archaeopteryx-august-2026
 authors: [bluefin]
-tags: [monthly-report, project-activity]
+tags: [monthly-report, project-activity, announcements]
 ---
 
-import GitHubProfileCard from "@site/src/components/GitHubProfileCard";
+import {
+  ReportHeroKPIs,
+  ReportLeaderboard,
+  ReportLaneHealth,
+  ReportDoraCadence,
+  ReportCountmeTrend,
+  ReportAutomationStats,
+} from '@site/src/components/reports';
+import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
+
 
 # Summary
 
-|                  |                                          |
-| ---------------- | ---------------------------------------- |
-| **Total Items**  | 218 (24 planned, 194 opportunistic)      |
-| **Automation**   | 61.6% (349 bot PRs out of 567 total PRs) |
-| **Contributors** | 17 total, 0 new                          |
+<ReportHeroKPIs
+  kpis={[
+  {
+    "label": "Merged PRs",
+    "value": 218,
+    "sublabel": "24 planned • 194 opportunistic"
+  },
+  {
+    "label": "Factory Automation",
+    "value": "61.6%",
+    "sublabel": "349 automated PRs out of 567 total"
+  },
+  {
+    "label": "Contributors",
+    "value": 17,
+    "sublabel": "0 first-time contributors",
+    "trendDirection": "neutral"
+  },
+  {
+    "label": "Factory Reliability",
+    "value": "93%",
+    "sublabel": "123 lane publish runs",
+    "trendDirection": "up"
+  },
+  {
+    "label": "Tap Additions",
+    "value": 14,
+    "sublabel": "2 production • 12 experimental"
+  },
+  {
+    "label": "Active Systems",
+    "value": "3,920",
+    "sublabel": "Weekly active systems (Countme)"
+  }
+]}
+/>
+
+<ReportLeaderboard
+  period="August 2026"
+  heroes={[
+  {
+    "rank": 1,
+    "login": "castrojo",
+    "avatarUrl": "https://github.com/castrojo.png?size=64",
+    "contributions": 69,
+    "projects": 6,
+    "repos": [
+      "common",
+      "bluefin",
+      "bluefin-lts",
+      "documentation",
+      "dakota",
+      "finpilot"
+    ],
+    "badge": {
+      "label": "Top Hero",
+      "color": "#F9C74F",
+      "title": "Month MVP"
+    },
+    "isNew": false
+  },
+  {
+    "rank": 2,
+    "login": "ahmedadan",
+    "avatarUrl": "https://github.com/ahmedadan.png?size=64",
+    "contributions": 66,
+    "projects": 5,
+    "repos": [
+      "common",
+      "bluefin",
+      "homebrew-tap",
+      "homebrew-experimental-tap",
+      "dakota"
+    ],
+    "badge": {
+      "label": "High Velocity",
+      "color": "#2AA198",
+      "title": "5+ Merged PRs"
+    },
+    "isNew": false
+  },
+  {
+    "rank": 3,
+    "login": "hanthor",
+    "avatarUrl": "https://github.com/hanthor.png?size=64",
+    "contributions": 21,
+    "projects": 6,
+    "repos": [
+      "common",
+      "bluefin",
+      "bluefin-lts",
+      "homebrew-experimental-tap",
+      "dakota",
+      "finpilot"
+    ],
+    "badge": {
+      "label": "High Velocity",
+      "color": "#2AA198",
+      "title": "5+ Merged PRs"
+    },
+    "isNew": false
+  },
+  {
+    "rank": 4,
+    "login": "Danathar",
+    "avatarUrl": "https://github.com/Danathar.png?size=64",
+    "contributions": 17,
+    "projects": 2,
+    "repos": [
+      "bluefin",
+      "dakota"
+    ],
+    "badge": {
+      "label": "High Velocity",
+      "color": "#2AA198",
+      "title": "5+ Merged PRs"
+    },
+    "isNew": false
+  },
+  {
+    "rank": 5,
+    "login": "mrbobbytables",
+    "avatarUrl": "https://github.com/mrbobbytables.png?size=64",
+    "contributions": 11,
+    "projects": 2,
+    "repos": [
+      "bluefin",
+      "dakota"
+    ],
+    "badge": {
+      "label": "High Velocity",
+      "color": "#2AA198",
+      "title": "5+ Merged PRs"
+    },
+    "isNew": false
+  },
+  {
+    "rank": 6,
+    "login": "kubestellar-hive",
+    "avatarUrl": "https://github.com/kubestellar-hive.png?size=64",
+    "contributions": 8,
+    "projects": 4,
+    "repos": [
+      "common",
+      "bluefin",
+      "dakota",
+      "finpilot"
+    ],
+    "badge": {
+      "label": "High Velocity",
+      "color": "#2AA198",
+      "title": "5+ Merged PRs"
+    },
+    "isNew": false
+  },
+  {
+    "rank": 7,
+    "login": "bketelsen",
+    "avatarUrl": "https://github.com/bketelsen.png?size=64",
+    "contributions": 8,
+    "projects": 3,
+    "repos": [
+      "bluefin",
+      "bluefin-lts",
+      "finpilot"
+    ],
+    "badge": {
+      "label": "High Velocity",
+      "color": "#2AA198",
+      "title": "5+ Merged PRs"
+    },
+    "isNew": false
+  },
+  {
+    "rank": 8,
+    "login": "Siddhj2206",
+    "avatarUrl": "https://github.com/Siddhj2206.png?size=64",
+    "contributions": 4,
+    "projects": 1,
+    "repos": [
+      "finpilot"
+    ],
+    "isNew": false
+  },
+  {
+    "rank": 9,
+    "login": "HuntedRaven7",
+    "avatarUrl": "https://github.com/HuntedRaven7.png?size=64",
+    "contributions": 3,
+    "projects": 3,
+    "repos": [
+      "common",
+      "bluefin-lts",
+      "homebrew-experimental-tap"
+    ],
+    "badge": {
+      "label": "Cross-Fleet",
+      "color": "#8A63D2",
+      "title": "Multi-Repo Impact"
+    },
+    "isNew": false
+  },
+  {
+    "rank": 10,
+    "login": "inffy",
+    "avatarUrl": "https://github.com/inffy.png?size=64",
+    "contributions": 2,
+    "projects": 2,
+    "repos": [
+      "homebrew-tap",
+      "homebrew-experimental-tap"
+    ],
+    "isNew": false
+  },
+  {
+    "rank": 11,
+    "login": "joshyorko",
+    "avatarUrl": "https://github.com/joshyorko.png?size=64",
+    "contributions": 2,
+    "projects": 2,
+    "repos": [
+      "common",
+      "bluefin"
+    ],
+    "isNew": false
+  },
+  {
+    "rank": 12,
+    "login": "rapenne-s",
+    "avatarUrl": "https://github.com/rapenne-s.png?size=64",
+    "contributions": 2,
+    "projects": 1,
+    "repos": [
+      "dakota"
+    ],
+    "isNew": false
+  },
+  {
+    "rank": 13,
+    "login": "dtg01100",
+    "avatarUrl": "https://github.com/dtg01100.png?size=64",
+    "contributions": 1,
+    "projects": 1,
+    "repos": [
+      "homebrew-tap"
+    ],
+    "isNew": false
+  },
+  {
+    "rank": 14,
+    "login": "Giklab",
+    "avatarUrl": "https://github.com/Giklab.png?size=64",
+    "contributions": 1,
+    "projects": 1,
+    "repos": [
+      "common"
+    ],
+    "isNew": false
+  },
+  {
+    "rank": 15,
+    "login": "lukaspieper",
+    "avatarUrl": "https://github.com/lukaspieper.png?size=64",
+    "contributions": 1,
+    "projects": 1,
+    "repos": [
+      "homebrew-experimental-tap"
+    ],
+    "isNew": false
+  },
+  {
+    "rank": 16,
+    "login": "theMimolet",
+    "avatarUrl": "https://github.com/theMimolet.png?size=64",
+    "contributions": 1,
+    "projects": 1,
+    "repos": [
+      "common"
+    ],
+    "isNew": false
+  },
+  {
+    "rank": 17,
+    "login": "tunix",
+    "avatarUrl": "https://github.com/tunix.png?size=64",
+    "contributions": 1,
+    "projects": 1,
+    "repos": [
+      "finpilot"
+    ],
+    "isNew": false
+  }
+]}
+  newLights={[]}
+/>
+
+<ReportLaneHealth
+  lanes={[
+  {
+    "id": "bluefin-testing",
+    "label": "Bluefin Testing",
+    "repo": "projectbluefin/bluefin",
+    "total": 8,
+    "passed": 0,
+    "failed": 3,
+    "running": 5,
+    "successRate": 0,
+    "medianDurationMin": 14,
+    "sparklineData": [
+      6,
+      1,
+      1
+    ]
+  },
+  {
+    "id": "bluefin-lts",
+    "label": "Bluefin LTS",
+    "repo": "projectbluefin/bluefin-lts",
+    "total": 30,
+    "passed": 0,
+    "failed": 0,
+    "running": 30,
+    "successRate": null,
+    "medianDurationMin": 0,
+    "sparklineData": [
+      1,
+      1,
+      1,
+      7,
+      11,
+      9
+    ]
+  },
+  {
+    "id": "dakota",
+    "label": "Dakota",
+    "repo": "projectbluefin/dakota",
+    "total": 85,
+    "passed": 71,
+    "failed": 2,
+    "running": 12,
+    "successRate": 97,
+    "medianDurationMin": 29,
+    "sparklineData": [
+      3,
+      4,
+      7,
+      9,
+      35,
+      16,
+      7,
+      4
+    ]
+  }
+]}
+/>
+
+<ReportDoraCadence
+  totalReleases={71}
+  deploymentsPerWeek="16.5"
+  changeFailureRate="7.0%"
+  medianLeadTimeHours="0.4h"
+/>
+
+<ReportCountmeTrend
+  currentTotal={3920}
+  previousTotal={3667}
+  historyPoints={[3561,3672,3606,3712,3780,3667,3584,3678,4195,3920]}
+  variants={[{"name":"Bluefin","count":3761,"color":"#1D76DB"},{"name":"Bluefin LTS","count":159,"color":"#2AA198"},{"name":"Aurora","count":2826,"color":"#8A63D2"}]}
+  sourceDate="2026-07-27"
+/>
+
+<ReportAutomationStats
+  totalPRs={567}
+  botPRs={349}
+  humanPRs={218}
+  automationPercentage="61.6"
+  repoBreakdown={[
+  {
+    "repo": "bluefin",
+    "count": 89,
+    "percentage": "15.7%"
+  },
+  {
+    "repo": "homebrew-experimental-tap",
+    "count": 65,
+    "percentage": "11.5%"
+  },
+  {
+    "repo": "homebrew-tap",
+    "count": 54,
+    "percentage": "9.5%"
+  },
+  {
+    "repo": "dakota",
+    "count": 46,
+    "percentage": "8.1%"
+  },
+  {
+    "repo": "finpilot",
+    "count": 35,
+    "percentage": "6.2%"
+  },
+  {
+    "repo": "bluefin-lts",
+    "count": 30,
+    "percentage": "5.3%"
+  },
+  {
+    "repo": "common",
+    "count": 26,
+    "percentage": "4.6%"
+  },
+  {
+    "repo": "documentation",
+    "count": 3,
+    "percentage": "0.5%"
+  },
+  {
+    "repo": "iso",
+    "count": 1,
+    "percentage": "0.2%"
+  }
+]}
+/>
+
+{/* truncate */}
+
+| | |
+|--------|-------|
+| **Total Items** | 218 (24 planned, 194 opportunistic) |
+| **Automation** | 61.6% (349 bot PRs out of 567 total PRs) |
+| **Contributors** | 17 total, 0 new |
+
 
 ## Desktop
 
 ![area/gnome](https://img.shields.io/badge/area%2Fgnome-28A745?style=flat-square) ![area/aurora](https://img.shields.io/badge/area%2Faurora-1D76DB?style=flat-square) ![area/bling](https://img.shields.io/badge/area%2Fbling-F9C74F?style=flat-square)
 
-_GNOME desktop environment, Aurora variant (KDE), and terminal enhancements_
+*GNOME desktop environment, Aurora variant (KDE), and terminal enhancements*
 
 #### Planned Work
 
@@ -46,7 +484,7 @@ _GNOME desktop environment, Aurora variant (KDE), and terminal enhancements_
 
 ![area/dx](https://img.shields.io/badge/area%2Fdx-17A2B8?style=flat-square)
 
-_Development tools and IDE integrations_
+*Development tools and IDE integrations*
 
 #### Planned Work
 
@@ -68,22 +506,22 @@ _Development tools and IDE integrations_
 
 The following applications were added to our Homebrew taps this month:
 
-| Application                                                                                    | Description                                                         | Status                                                                              |
-| ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| [**chatgpt-linux**](https://github.com/ublue-os/homebrew-experimental-tap/pull/504)            | OpenAI's official ChatGPT desktop app                               | ![Experimental](https://img.shields.io/badge/experimental-orange?style=flat-square) |
-| [**ghostty-linux**](https://github.com/ublue-os/homebrew-experimental-tap/pull/477)            | Fast, feature-rich, and native terminal emulator                    | ![Experimental](https://img.shields.io/badge/experimental-orange?style=flat-square) |
-| [**gitkraken-linux**](https://github.com/ublue-os/homebrew-experimental-tap/pull/495)          | Git client focusing on productivity                                 | ![Experimental](https://img.shields.io/badge/experimental-orange?style=flat-square) |
-| [**jetbrains-gateway-linux**](https://github.com/ublue-os/homebrew-experimental-tap/pull/470)  | Connect to remote development environments with JetBrains IDEs      | ![Experimental](https://img.shields.io/badge/experimental-orange?style=flat-square) |
-| [**kiro-cli-linux**](https://github.com/ublue-os/homebrew-experimental-tap/pull/478)           | Amazon Q Developer CLI - AI-powered command-line assistant          | ![Experimental](https://img.shields.io/badge/experimental-orange?style=flat-square) |
-| [**localwp-linux**](https://github.com/ublue-os/homebrew-experimental-tap/pull/471)            | Local WordPress development environment                             | ![Experimental](https://img.shields.io/badge/experimental-orange?style=flat-square) |
-| [**positron-linux**](https://github.com/ublue-os/homebrew-experimental-tap/pull/472)           | Next-generation data science IDE for R and Python                   | ![Experimental](https://img.shields.io/badge/experimental-orange?style=flat-square) |
-| [**proton-mail-bridge-linux**](https://github.com/ublue-os/homebrew-experimental-tap/pull/473) | Integrate Proton Mail with email clients via local IMAP/SMTP        | ![Experimental](https://img.shields.io/badge/experimental-orange?style=flat-square) |
-| [**tableplus-linux**](https://github.com/ublue-os/homebrew-experimental-tap/pull/474)          | Modern, native database GUI client supporting multiple databases    | ![Experimental](https://img.shields.io/badge/experimental-orange?style=flat-square) |
-| [**thorium-linux**](https://github.com/ublue-os/homebrew-experimental-tap/pull/475)            | Fast, privacy-hardened Chromium browser with compiler optimizations | ![Experimental](https://img.shields.io/badge/experimental-orange?style=flat-square) |
-| [**webex-linux**](https://github.com/ublue-os/homebrew-experimental-tap/pull/575)              | Calling, messaging, and meeting app by Cisco                        | ![Experimental](https://img.shields.io/badge/experimental-orange?style=flat-square) |
-| [**windsurf-linux**](https://github.com/ublue-os/homebrew-experimental-tap/pull/476)           | AI-powered IDE from Codeium/Cognition, formerly Windsurf Editor     | ![Experimental](https://img.shields.io/badge/experimental-orange?style=flat-square) |
-| [**zed-linux**](https://github.com/ublue-os/homebrew-tap/pull/539)                             | High-performance, multiplayer code editor                           | ![Stable](https://img.shields.io/badge/stable-blue?style=flat-square)               |
-| [**zed-linux**](https://github.com/ublue-os/homebrew-tap/pull/451)                             | High-performance, multiplayer code editor                           | ![Stable](https://img.shields.io/badge/stable-blue?style=flat-square)               |
+| Application | Description | Status |
+|-------------|-------------|--------|
+| [**chatgpt-linux**](https://github.com/ublue-os/homebrew-experimental-tap/pull/504) | OpenAI's official ChatGPT desktop app | ![Experimental](https://img.shields.io/badge/experimental-orange?style=flat-square) |
+| [**ghostty-linux**](https://github.com/ublue-os/homebrew-experimental-tap/pull/477) | Fast, feature-rich, and native terminal emulator | ![Experimental](https://img.shields.io/badge/experimental-orange?style=flat-square) |
+| [**gitkraken-linux**](https://github.com/ublue-os/homebrew-experimental-tap/pull/495) | Git client focusing on productivity | ![Experimental](https://img.shields.io/badge/experimental-orange?style=flat-square) |
+| [**jetbrains-gateway-linux**](https://github.com/ublue-os/homebrew-experimental-tap/pull/470) | Connect to remote development environments with JetBrains IDEs | ![Experimental](https://img.shields.io/badge/experimental-orange?style=flat-square) |
+| [**kiro-cli-linux**](https://github.com/ublue-os/homebrew-experimental-tap/pull/478) | Amazon Q Developer CLI - AI-powered command-line assistant | ![Experimental](https://img.shields.io/badge/experimental-orange?style=flat-square) |
+| [**localwp-linux**](https://github.com/ublue-os/homebrew-experimental-tap/pull/471) | Local WordPress development environment | ![Experimental](https://img.shields.io/badge/experimental-orange?style=flat-square) |
+| [**positron-linux**](https://github.com/ublue-os/homebrew-experimental-tap/pull/472) | Next-generation data science IDE for R and Python | ![Experimental](https://img.shields.io/badge/experimental-orange?style=flat-square) |
+| [**proton-mail-bridge-linux**](https://github.com/ublue-os/homebrew-experimental-tap/pull/473) | Integrate Proton Mail with email clients via local IMAP/SMTP | ![Experimental](https://img.shields.io/badge/experimental-orange?style=flat-square) |
+| [**tableplus-linux**](https://github.com/ublue-os/homebrew-experimental-tap/pull/474) | Modern, native database GUI client supporting multiple databases | ![Experimental](https://img.shields.io/badge/experimental-orange?style=flat-square) |
+| [**thorium-linux**](https://github.com/ublue-os/homebrew-experimental-tap/pull/475) | Fast, privacy-hardened Chromium browser with compiler optimizations | ![Experimental](https://img.shields.io/badge/experimental-orange?style=flat-square) |
+| [**webex-linux**](https://github.com/ublue-os/homebrew-experimental-tap/pull/575) | Calling, messaging, and meeting app by Cisco | ![Experimental](https://img.shields.io/badge/experimental-orange?style=flat-square) |
+| [**windsurf-linux**](https://github.com/ublue-os/homebrew-experimental-tap/pull/476) | AI-powered IDE from Codeium/Cognition, formerly Windsurf Editor | ![Experimental](https://img.shields.io/badge/experimental-orange?style=flat-square) |
+| [**zed-linux**](https://github.com/ublue-os/homebrew-tap/pull/539) | High-performance, multiplayer code editor | ![Stable](https://img.shields.io/badge/stable-blue?style=flat-square) |
+| [**zed-linux**](https://github.com/ublue-os/homebrew-tap/pull/451) | High-performance, multiplayer code editor | ![Stable](https://img.shields.io/badge/stable-blue?style=flat-square) |
 
 Use `ujust bbrew` to browse and install these packages. Follow [the tap instructions](https://github.com/ublue-os/homebrew-tap) if you want to do it by hand.
 
@@ -95,54 +533,54 @@ Use `ujust bbrew` to browse and install these packages. Follow [the tap instruct
 
 ##### Quick Summary
 
-| Tap              | Updates |
-| ---------------- | ------- |
-| production-tap   | 54      |
-| experimental-tap | 65      |
+| Tap | Updates |
+|-----|---------|
+| production-tap | 54 |
+| experimental-tap | 65 |
 
 <details>
 <summary>View all production-tap updates (54)</summary>
 
-| Package                  | Versions                              | PR                                                        |
-| ------------------------ | ------------------------------------- | --------------------------------------------------------- |
-| antigravity-cli-linux    | 1.1.10 → 1.1.22 (10 updates)          | [#597](https://github.com/ublue-os/homebrew-tap/pull/597) |
-| visual-studio-code-linux | 1.132.0 → 1.135.0 (5 updates)         | [#594](https://github.com/ublue-os/homebrew-tap/pull/594) |
-| zed-linux                | 1.15.0 → 1.17.2 (4 updates)           | [#596](https://github.com/ublue-os/homebrew-tap/pull/596) |
-| lm-studio-linux          | 0.4.21 → 0.4.23 (3 updates)           | [#601](https://github.com/ublue-os/homebrew-tap/pull/601) |
-| goose-linux              | 1.46.0 → 1.48.0 (3 updates)           | [#598](https://github.com/ublue-os/homebrew-tap/pull/598) |
-| jetbrains-toolbox-linux  | 3.6.4.86641 → 3.7.2.87231 (3 updates) | [#573](https://github.com/ublue-os/homebrew-tap/pull/573) |
-| 1password-gui-linux      | 8.12.32 → 8.12.34 (2 updates)         | [#591](https://github.com/ublue-os/homebrew-tap/pull/591) |
-| 1password-cli-linux      | 2.38.1 → 2.39.0 (2 updates)           | [#556](https://github.com/ublue-os/homebrew-tap/pull/556) |
-| antigravity-ide-linux    | 2.5.5                                 | [#552](https://github.com/ublue-os/homebrew-tap/pull/552) |
-| linux-mcp-server         | 1.5.0                                 | [#530](https://github.com/ublue-os/homebrew-tap/pull/530) |
-| antigravity-linux        | 2.5.0                                 | [#527](https://github.com/ublue-os/homebrew-tap/pull/527) |
+| Package | Versions | PR |
+|---------|----------|-----|
+| antigravity-cli-linux | 1.1.10 → 1.1.22 (10 updates) | [#597](https://github.com/ublue-os/homebrew-tap/pull/597) |
+| visual-studio-code-linux | 1.132.0 → 1.135.0 (5 updates) | [#594](https://github.com/ublue-os/homebrew-tap/pull/594) |
+| zed-linux | 1.15.0 → 1.17.2 (4 updates) | [#596](https://github.com/ublue-os/homebrew-tap/pull/596) |
+| lm-studio-linux | 0.4.21 → 0.4.23 (3 updates) | [#601](https://github.com/ublue-os/homebrew-tap/pull/601) |
+| goose-linux | 1.46.0 → 1.48.0 (3 updates) | [#598](https://github.com/ublue-os/homebrew-tap/pull/598) |
+| jetbrains-toolbox-linux | 3.6.4.86641 → 3.7.2.87231 (3 updates) | [#573](https://github.com/ublue-os/homebrew-tap/pull/573) |
+| 1password-gui-linux | 8.12.32 → 8.12.34 (2 updates) | [#591](https://github.com/ublue-os/homebrew-tap/pull/591) |
+| 1password-cli-linux | 2.38.1 → 2.39.0 (2 updates) | [#556](https://github.com/ublue-os/homebrew-tap/pull/556) |
+| antigravity-ide-linux | 2.5.5 | [#552](https://github.com/ublue-os/homebrew-tap/pull/552) |
+| linux-mcp-server | 1.5.0 | [#530](https://github.com/ublue-os/homebrew-tap/pull/530) |
+| antigravity-linux | 2.5.0 | [#527](https://github.com/ublue-os/homebrew-tap/pull/527) |
 
 </details>
 
 <details>
 <summary>View all experimental-tap updates (65)</summary>
 
-| Package                  | Versions                                 | PR                                                                     |
-| ------------------------ | ---------------------------------------- | ---------------------------------------------------------------------- |
-| chatgpt-linux            | 26.810.41047 → 26.825.51511 (13 updates) | [#599](https://github.com/ublue-os/homebrew-experimental-tap/pull/599) |
-| claude-desktop-linux     | 1.26832.0 → 1.40609.0 (9 updates)        | [#596](https://github.com/ublue-os/homebrew-experimental-tap/pull/596) |
-| opencode-desktop-linux   | 1.18.19 → 1.18.25 (6 updates)            | [#598](https://github.com/ublue-os/homebrew-experimental-tap/pull/598) |
-| cursor-linux             | 3.16.17 → 3.18.9 (6 updates)             | [#591](https://github.com/ublue-os/homebrew-experimental-tap/pull/591) |
-| kiro-cli-linux           | 2.19.0 → 2.20.1 (5 updates)              | [#592](https://github.com/ublue-os/homebrew-experimental-tap/pull/592) |
-| craft-agents-linux       | 0.11.4 → 0.12.1 (3 updates)              | [#587](https://github.com/ublue-os/homebrew-experimental-tap/pull/587) |
-| zed-linux                | 1.14.2 → 1.15.1 (3 updates)              | [#556](https://github.com/ublue-os/homebrew-experimental-tap/pull/556) |
-| emdash-linux             | 1.2.0 → 1.2.1 (2 updates)                | [#600](https://github.com/ublue-os/homebrew-experimental-tap/pull/600) |
-| goland-linux             | 2026.2.1 → 2026.2.1.1 (2 updates)        | [#558](https://github.com/ublue-os/homebrew-experimental-tap/pull/558) |
-| proton-mail-bridge-linux | 3.26.0                                   | [#589](https://github.com/ublue-os/homebrew-experimental-tap/pull/589) |
-| winboat                  | 0.9.2                                    | [#584](https://github.com/ublue-os/homebrew-experimental-tap/pull/584) |
-| datagrip-linux           | 2026.2.4                                 | [#564](https://github.com/ublue-os/homebrew-experimental-tap/pull/564) |
-| positron-linux           | 2026.08.2                                | [#571](https://github.com/ublue-os/homebrew-experimental-tap/pull/571) |
-| rider-linux              | 2026.2.1                                 | [#560](https://github.com/ublue-os/homebrew-experimental-tap/pull/560) |
-| intellij-idea-linux      | 2026.2.1                                 | [#548](https://github.com/ublue-os/homebrew-experimental-tap/pull/548) |
-| rubymine-linux           | 2026.2.1                                 | [#549](https://github.com/ublue-os/homebrew-experimental-tap/pull/549) |
-| bluefin-cli              | 0.10.7                                   | [#520](https://github.com/ublue-os/homebrew-experimental-tap/pull/520) |
-| gitkraken-linux          | 12.4.0                                   | [#506](https://github.com/ublue-os/homebrew-experimental-tap/pull/506) |
-| dockerd-linux            | 29.7.2                                   | [#502](https://github.com/ublue-os/homebrew-experimental-tap/pull/502) |
+| Package | Versions | PR |
+|---------|----------|-----|
+| chatgpt-linux | 26.810.41047 → 26.825.51511 (13 updates) | [#599](https://github.com/ublue-os/homebrew-experimental-tap/pull/599) |
+| claude-desktop-linux | 1.26832.0 → 1.40609.0 (9 updates) | [#596](https://github.com/ublue-os/homebrew-experimental-tap/pull/596) |
+| opencode-desktop-linux | 1.18.19 → 1.18.25 (6 updates) | [#598](https://github.com/ublue-os/homebrew-experimental-tap/pull/598) |
+| cursor-linux | 3.16.17 → 3.18.9 (6 updates) | [#591](https://github.com/ublue-os/homebrew-experimental-tap/pull/591) |
+| kiro-cli-linux | 2.19.0 → 2.20.1 (5 updates) | [#592](https://github.com/ublue-os/homebrew-experimental-tap/pull/592) |
+| craft-agents-linux | 0.11.4 → 0.12.1 (3 updates) | [#587](https://github.com/ublue-os/homebrew-experimental-tap/pull/587) |
+| zed-linux | 1.14.2 → 1.15.1 (3 updates) | [#556](https://github.com/ublue-os/homebrew-experimental-tap/pull/556) |
+| emdash-linux | 1.2.0 → 1.2.1 (2 updates) | [#600](https://github.com/ublue-os/homebrew-experimental-tap/pull/600) |
+| goland-linux | 2026.2.1 → 2026.2.1.1 (2 updates) | [#558](https://github.com/ublue-os/homebrew-experimental-tap/pull/558) |
+| proton-mail-bridge-linux | 3.26.0 | [#589](https://github.com/ublue-os/homebrew-experimental-tap/pull/589) |
+| winboat | 0.9.2 | [#584](https://github.com/ublue-os/homebrew-experimental-tap/pull/584) |
+| datagrip-linux | 2026.2.4 | [#564](https://github.com/ublue-os/homebrew-experimental-tap/pull/564) |
+| positron-linux | 2026.08.2 | [#571](https://github.com/ublue-os/homebrew-experimental-tap/pull/571) |
+| rider-linux | 2026.2.1 | [#560](https://github.com/ublue-os/homebrew-experimental-tap/pull/560) |
+| intellij-idea-linux | 2026.2.1 | [#548](https://github.com/ublue-os/homebrew-experimental-tap/pull/548) |
+| rubymine-linux | 2026.2.1 | [#549](https://github.com/ublue-os/homebrew-experimental-tap/pull/549) |
+| bluefin-cli | 0.10.7 | [#520](https://github.com/ublue-os/homebrew-experimental-tap/pull/520) |
+| gitkraken-linux | 12.4.0 | [#506](https://github.com/ublue-os/homebrew-experimental-tap/pull/506) |
+| dockerd-linux | 29.7.2 | [#502](https://github.com/ublue-os/homebrew-experimental-tap/pull/502) |
 
 </details>
 
@@ -152,7 +590,7 @@ Use `ujust bbrew` to browse and install these packages. Follow [the tap instruct
 
 ![area/brew](https://img.shields.io/badge/area%2Fbrew-E8590C?style=flat-square) ![area/bluespeed](https://img.shields.io/badge/area%2Fbluespeed-1D76DB?style=flat-square) ![area/flatpak](https://img.shields.io/badge/area%2Fflatpak-9333EA?style=flat-square)
 
-_Homebrew packages, AI/ML tools (Bluespeed), and Flatpak applications_
+*Homebrew packages, AI/ML tools (Bluespeed), and Flatpak applications*
 
 #### Planned Work
 
@@ -214,7 +652,7 @@ _Homebrew packages, AI/ML tools (Bluespeed), and Flatpak applications_
 
 ![area/services](https://img.shields.io/badge/area%2Fservices-4A90E2?style=flat-square) ![area/policy](https://img.shields.io/badge/area%2Fpolicy-5B8BC1?style=flat-square)
 
-_Systemd services and system-level policies_
+*Systemd services and system-level policies*
 
 #### Planned Work
 
@@ -230,7 +668,7 @@ _Systemd services and system-level policies_
 
 ![area/hardware](https://img.shields.io/badge/area%2Fhardware-F59E0B?style=flat-square) ![area/nvidia](https://img.shields.io/badge/area%2Fnvidia-76B900?style=flat-square) ![aarch64](https://img.shields.io/badge/aarch64-F59E0B?style=flat-square)
 
-_Hardware support, drivers, NVIDIA GPU, and ARM64 architecture_
+*Hardware support, drivers, NVIDIA GPU, and ARM64 architecture*
 
 #### Planned Work
 
@@ -255,7 +693,7 @@ _Hardware support, drivers, NVIDIA GPU, and ARM64 architecture_
 
 ![area/iso](https://img.shields.io/badge/area%2Fiso-A0522D?style=flat-square) ![area/upstream](https://img.shields.io/badge/area%2Fupstream-5CB85C?style=flat-square) ![area/buildstream](https://img.shields.io/badge/area%2Fbuildstream-0066FF?style=flat-square) ![area/finpilot](https://img.shields.io/badge/area%2Ffinpilot-7C3AED?style=flat-square) ![area/just](https://img.shields.io/badge/area%2Fjust-E99695?style=flat-square) ![area/testing](https://img.shields.io/badge/area%2Ftesting-F59E0B?style=flat-square)
 
-_ISO images, upstream integration, build systems, and testing frameworks_
+*ISO images, upstream integration, build systems, and testing frameworks*
 
 #### Planned Work
 
@@ -377,7 +815,7 @@ _ISO images, upstream integration, build systems, and testing frameworks_
 
 ![kind/documentation](https://img.shields.io/badge/kind%2Fdocumentation-0066FF?style=flat-square)
 
-_Documentation improvements and additions_
+*Documentation improvements and additions*
 
 #### Planned Work
 
@@ -438,7 +876,7 @@ _Documentation improvements and additions_
 
 ![kind/tech-debt](https://img.shields.io/badge/kind%2Ftech-debt-D4A259?style=flat-square) ![kind/parity](https://img.shields.io/badge/kind%2Fparity-9333EA?style=flat-square)
 
-_Maintenance work and feature parity between variants_
+*Maintenance work and feature parity between variants*
 
 > Status: _ChillOps_
 
@@ -448,7 +886,7 @@ _Maintenance work and feature parity between variants_
 
 ![kind/automation](https://img.shields.io/badge/kind%2Fautomation-5B8BC1?style=flat-square) ![kind/github-action](https://img.shields.io/badge/kind%2Fgithub-action-2088FF?style=flat-square) ![kind/renovate](https://img.shields.io/badge/kind%2Frenovate-3B82F6?style=flat-square)
 
-_CI/CD pipelines, GitHub Actions, and automated dependency updates_
+*CI/CD pipelines, GitHub Actions, and automated dependency updates*
 
 > Status: _ChillOps_
 
@@ -458,7 +896,7 @@ _CI/CD pipelines, GitHub Actions, and automated dependency updates_
 
 ![kind/translation](https://img.shields.io/badge/kind%2Ftranslation-8B5CF6?style=flat-square)
 
-_Translation and internationalization work_
+*Translation and internationalization work*
 
 > Status: _ChillOps_
 
@@ -468,15 +906,15 @@ _Translation and internationalization work_
 
 **Automation Percentage:** 61.6% (349 bot PRs out of 567 total PRs)
 
-| Repository    | Bot PRs | % of Total |
-| ------------- | ------- | ---------- |
-| bluefin       | 89      | 15.7%      |
-| dakota        | 46      | 8.1%       |
-| finpilot      | 35      | 6.2%       |
-| bluefin-lts   | 30      | 5.3%       |
-| common        | 26      | 4.6%       |
-| documentation | 3       | 0.5%       |
-| iso           | 1       | 0.2%       |
+| Repository | Bot PRs | % of Total |
+|------------|---------|------------|
+| bluefin | 89 | 15.7% |
+| dakota | 46 | 8.1% |
+| finpilot | 35 | 6.2% |
+| bluefin-lts | 30 | 5.3% |
+| common | 26 | 4.6% |
+| documentation | 3 | 0.5% |
+| iso | 1 | 0.2% |
 
 <details>
 <summary>View bot activity details</summary>
@@ -719,29 +1157,20 @@ _Translation and internationalization work_
 ### Wayfinders
 
 > "Define yourself by your actions."
->
+> 
 > —Lord Saladin
 
 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem', marginBottom: '2rem' }}>
 
 <GitHubProfileCard username="theMimolet" />
 
-<GitHubProfileCard
-  username="ahmedadan"
-  sponsorUrl="https://github.com/sponsors/ahmedadan"
-/>
+<GitHubProfileCard username="ahmedadan" sponsorUrl="https://github.com/sponsors/ahmedadan" />
 
-<GitHubProfileCard
-  username="castrojo"
-  sponsorUrl="https://github.com/sponsors/castrojo"
-/>
+<GitHubProfileCard username="castrojo" sponsorUrl="https://github.com/sponsors/castrojo" />
 
 <GitHubProfileCard username="HuntedRaven7" />
 
-<GitHubProfileCard
-  username="hanthor"
-  sponsorUrl="https://github.com/sponsors/hanthor"
-/>
+<GitHubProfileCard username="hanthor" sponsorUrl="https://github.com/sponsors/hanthor" />
 
 <GitHubProfileCard username="kubestellar-hive" />
 
@@ -757,10 +1186,7 @@ _Translation and internationalization work_
 
 <GitHubProfileCard username="dtg01100" />
 
-<GitHubProfileCard
-  username="inffy"
-  sponsorUrl="https://github.com/sponsors/inffy"
-/>
+<GitHubProfileCard username="inffy" sponsorUrl="https://github.com/sponsors/inffy" />
 
 <GitHubProfileCard username="lukaspieper" />
 
@@ -774,11 +1200,11 @@ _Translation and internationalization work_
 
 ---
 
-_Want to see the latest OS releases? Check out the [Changelogs](/changelogs). For announcements and deep dives, read our [Blog](/blog)._
+*Want to see the latest OS releases? Check out the [Changelogs](/changelogs). For announcements and deep dives, read our [Blog](/blog).*
 
-_This report was automatically generated from [todo.projectbluefin.io](https://todo.projectbluefin.io)._
+*This report was automatically generated from [todo.projectbluefin.io](https://todo.projectbluefin.io).*
 
 ---
 
-_Generated on 2026-09-06_  
+*Generated on 2026-09-07*  
 [View Project Board](https://todo.projectbluefin.io) | [Report an Issue](https://github.com/projectbluefin/common/issues/new)

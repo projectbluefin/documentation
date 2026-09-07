@@ -133,6 +133,7 @@ import {
   ReportHeroKPIs,
   ReportLeaderboard,
   ReportLaneHealth,
+  ReportDoraCadence,
   ReportCountmeTrend,
   ReportAutomationStats,
 } from '@site/src/components/reports';
@@ -282,6 +283,30 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
 />`;
   }
 
+  let doraJSX = "";
+  if (factoryStats && factoryStats.totals && factoryStats.totals.totalRuns > 0) {
+    const totalReleases = factoryStats.totals.passed || 0;
+    const deploymentsPerWeek = totalReleases > 0 ? (totalReleases / 4.3).toFixed(1) : "0";
+    const changeFailureRate =
+      factoryStats.totals.successRate !== null
+        ? `${(100 - factoryStats.totals.successRate).toFixed(1)}%`
+        : "0%";
+    const durations = (factoryStats.lanes || [])
+      .map((l) => l.medianDurationMin)
+      .filter((d) => typeof d === "number" && d > 0);
+    const medianLeadTimeHours =
+      durations.length > 0
+        ? `${(durations.reduce((a, b) => a + b, 0) / durations.length / 60).toFixed(1)}h`
+        : "N/A";
+
+    doraJSX = `<ReportDoraCadence
+  totalReleases={${totalReleases}}
+  deploymentsPerWeek="${deploymentsPerWeek}"
+  changeFailureRate="${changeFailureRate}"
+  medianLeadTimeHours="${medianLeadTimeHours}"
+/>`;
+  }
+
   // Generate summary section with rich infogram components
   const summary = `# Summary
 
@@ -291,9 +316,13 @@ ${leaderboardJSX}
 
 ${laneHealthJSX}
 
+${doraJSX}
+
 ${countmeJSX}
 
 ${automationStatsJSX}
+
+{/* truncate */}
 
 | | |
 |--------|-------|
