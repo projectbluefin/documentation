@@ -4,6 +4,9 @@
 # Production
 /build
 
+# Test coverage reports
+/coverage
+
 # Generated files
 .docusaurus
 .cache-loader
