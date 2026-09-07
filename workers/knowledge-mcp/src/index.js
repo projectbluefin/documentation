@@ -9,13 +9,16 @@
 import { createMcpHandler } from "agents/mcp/server";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { searchEntries } from "./knowledge.mjs";
+import { parseKnowledge, searchEntries } from "./knowledge.mjs";
 
 // NOTE: workerd treats every named export as a potential entrypoint, so
 // nothing but the default handler may be exported from this module.
 const INDEX_KEY = "knowledge-index";
 const HUB = "https://hosted-projectbluefin-knuckle-gjvq.hive.hivecommons.dev";
 const MAX_LIMIT = 25;
+// A false positive must not freeze the index, so a tripwire hit withholds one
+// entry. A spike means upstream tagging changed and is worth refusing to publish.
+const VIOLATION_CEILING = 25;
 
 // Workers isolates survive between requests, so the parsed index is kept in
 // module scope: JSON.parse of ~540 KB is the single most expensive thing this
@@ -136,7 +139,64 @@ function createServer(env) {
   return server;
 }
 
+/**
+ * Rebuild the published index from the Hive export.
+ *
+ * Runs on a Cron Trigger, which gets the full CPU budget rather than the
+ * per-request cap, so the ~200 ms parse of the ~470 KB export belongs here.
+ * Withholds security-tagged entries and tripwire hits before anything is
+ * written to KV, so unpublishable content never reaches the endpoint.
+ */
+async function refreshIndex(env) {
+  if (!env.HIVE_TOKEN) throw new Error("HIVE_TOKEN secret is not set");
+
+  const res = await fetch(`${HUB}/api/v1/knowledge`, {
+    headers: { Authorization: `Bearer ${env.HIVE_TOKEN}` },
+  });
+  // Never echo the body on failure: it may carry an auth redirect.
+  if (!res.ok) throw new Error(`hub returned ${res.status} fetching knowledge export`);
+
+  const markdown = await res.text();
+  if (markdown.includes("Knowledge base not yet available")) {
+    throw new Error("hub served its placeholder, not a knowledge base");
+  }
+
+  const { entries, dropped, violations, total } = parseKnowledge(markdown);
+  if (entries.length === 0) throw new Error("refusing to publish an empty index");
+  if (violations.length > VIOLATION_CEILING) {
+    throw new Error(
+      `${violations.length} tripwire hits exceeds ceiling ${VIOLATION_CEILING} — ` +
+        "upstream tagging likely changed; refusing to publish",
+    );
+  }
+
+  await env.KB.put(
+    INDEX_KEY,
+    JSON.stringify({
+      generated: new Date().toISOString(),
+      count: entries.length,
+      entries,
+    }),
+  );
+  cache = { at: 0, index: null }; // force this isolate to re-read
+
+  // Titles only. Bodies of suspected vuln entries do not belong in logs.
+  const summary = {
+    seen: total,
+    published: entries.length,
+    withheldSecurity: dropped,
+    withheldTripwire: violations.length,
+    tripwireTitles: violations.map((v) => v.title),
+  };
+  console.log("knowledge index refreshed", JSON.stringify(summary));
+  return summary;
+}
+
 export default {
+  async scheduled(_event, env, ctx) {
+    ctx.waitUntil(refreshIndex(env));
+  },
+
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
 

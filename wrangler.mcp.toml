@@ -17,3 +17,9 @@ id = "8a2ea52c09f54138982d014ea6c06a54"
 
 [observability]
 enabled = true
+
+# The Worker refreshes its own index. Cron Triggers get the full CPU budget
+# rather than the per-request cap, so the ~200ms parse of the ~470KB export runs
+# here. No CI job, no GitHub secret, no external credential.
+[triggers]
+crons = ["*/10 * * * *"]
