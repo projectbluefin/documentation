@@ -8,6 +8,7 @@ export default [
       "build/**",
       "node_modules/**",
       ".docusaurus/**",
+      ".worktrees/**",
       "static/data/*.json",
       "static/feeds/*.json",
     ],

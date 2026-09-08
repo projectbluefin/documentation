@@ -1,0 +1,316 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin: 1.5rem 0 2.5rem;
+}
+
+/* Legacy Bluefins Hero Chart */
+.heroCard {
+  background: var(--ifm-card-background-color, rgba(22, 27, 34, 0.75));
+  border: 1px solid var(--ifm-color-emphasis-200, rgba(48, 54, 61, 0.8));
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  position: relative;
+  overflow: hidden;
+}
+
+.heroCard::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #58a6ff, #39d2c0);
+}
+
+.heroHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.heroTitleGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.heroTitle {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--ifm-heading-color, #e6edf3);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0;
+}
+
+.heroSubtitle {
+  font-size: 0.85rem;
+  color: var(--ifm-color-emphasis-600, #8b949e);
+  margin: 0;
+}
+
+.heroKPI {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+}
+
+.heroNumber {
+  font-size: 2.25rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #58a6ff;
+  line-height: 1;
+}
+
+.heroMeta {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.75rem;
+  color: var(--ifm-color-emphasis-600, #8b949e);
+}
+
+.heroBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  background: rgba(88, 166, 255, 0.15);
+  color: #58a6ff;
+}
+
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.kpiCard {
+  background: var(--ifm-card-background-color, rgba(22, 27, 34, 0.7));
+  border: 1px solid var(--ifm-color-emphasis-200, rgba(48, 54, 61, 0.8));
+  border-radius: 10px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  transition:
+    transform 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.kpiCard:hover {
+  border-color: var(--ifm-color-primary);
+  transform: translateY(-2px);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.imageTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--ifm-heading-color, #e6edf3);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  background: rgba(88, 166, 255, 0.15);
+  color: var(--ifm-color-primary, #58a6ff);
+}
+
+.badgeGaming {
+  background: rgba(240, 136, 62, 0.15);
+  color: #f0883e;
+}
+
+.badgeEnterprise {
+  background: rgba(188, 140, 255, 0.15);
+  color: #bc8cff;
+}
+
+.badgeDesktop {
+  background: rgba(57, 210, 192, 0.15);
+  color: #39d2c0;
+}
+
+.countRow {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.countValue {
+  font-size: 1.85rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--ifm-heading-color, #e6edf3);
+}
+
+.sharePct {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--ifm-color-emphasis-700, #8b949e);
+}
+
+.cardDesc {
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: var(--ifm-color-emphasis-600, #8b949e);
+  margin: 0;
+}
+
+.cardSparkline {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px dashed var(--ifm-color-emphasis-200, rgba(48, 54, 61, 0.6));
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.sparklineLabel {
+  font-size: 0.75rem;
+  color: var(--ifm-color-emphasis-500, #808893);
+}
+
+/* Distribution bar */
+.shareSection {
+  background: var(--ifm-card-background-color, rgba(22, 27, 34, 0.7));
+  border: 1px solid var(--ifm-color-emphasis-200, rgba(48, 54, 61, 0.8));
+  border-radius: 10px;
+  padding: 1.25rem;
+}
+
+.sectionHeading {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+  color: var(--ifm-heading-color, #e6edf3);
+}
+
+.sectionSubtext {
+  font-size: 0.85rem;
+  color: var(--ifm-color-emphasis-600, #8b949e);
+  margin-bottom: 1rem;
+}
+
+.distributionBar {
+  display: flex;
+  height: 20px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(48, 54, 61, 0.5);
+  margin-bottom: 1rem;
+}
+
+.segment {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.shareLegend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.legendDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.legendLabel {
+  color: var(--ifm-heading-color, #e6edf3);
+  font-weight: 600;
+}
+
+.legendValue {
+  color: var(--ifm-color-emphasis-600, #8b949e);
+}
+
+/* Chart Card */
+.chartCard {
+  background: var(--ifm-card-background-color, rgba(22, 27, 34, 0.7));
+  border: 1px solid var(--ifm-color-emphasis-200, rgba(48, 54, 61, 0.8));
+  border-radius: 10px;
+  padding: 1.25rem;
+}
+
+.chartControls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.toggleGroup {
+  display: inline-flex;
+  border: 1px solid var(--ifm-color-emphasis-300, #30363d);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.toggleBtn {
+  background: transparent;
+  border: none;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--ifm-color-emphasis-700, #8b949e);
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    color 0.15s;
+}
+
+.toggleBtn:not(:last-child) {
+  border-right: 1px solid var(--ifm-color-emphasis-300, #30363d);
+}
+
+.toggleBtnActive {
+  background: var(--ifm-color-primary, #58a6ff);
+  color: #fff !important;
+}
+
+.toggleBtn:hover:not(.toggleBtnActive) {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--ifm-heading-color, #e6edf3);
+}
+
+.chartNote {
+  font-size: 0.8rem;
+  color: var(--ifm-color-emphasis-600, #8b949e);
+  margin-top: 0.75rem;
+  line-height: 1.4;
+}

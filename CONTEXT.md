@@ -40,3 +40,33 @@ _Avoid_: monthly report, activity report
 A public, externally sourced measurement that supplies context for a Report
 Snapshot while retaining its original measurement window and methodology.
 _Avoid_: factory metric, Countme telemetry
+
+## Countme
+
+**Countme**:
+The privacy-preserving weekly active-device estimation mechanism using coarse
+installation-age buckets and weekly client pings.
+_Avoid_: Telemetry, tracking, user analytics
+
+**CountMe Worker**:
+The Cloudflare Worker deployed at `countme.projectbluefin.io` that proxies
+canonical countme charts/badges and ingests client `/metalink` pings.
+_Avoid_: Telemetry server, collector daemon
+
+**CountMe Client**:
+The scheduled systemd service and timer running on Project Bluefin systems
+(`bluefin`, `bluefin-lts`, `dakota`) via `projectbluefin/common` that computes
+installation age and transmits anonymous weekly pings.
+_Avoid_: Telemetry agent, tracking daemon
+
+**Installation Age Bucket**:
+A coarse bucket (1: first week, 2: 2–4 weeks, 3: 5–24 weeks, 4: >24 weeks)
+matching Fedora mirrors-countme specifications to estimate cohort retention
+without unique host tracking.
+_Avoid_: User tenure, retention tracking, system age fingerprint
+
+**Opt-out Marker**:
+A filesystem presence flag (`/etc/projectbluefin/countme/disabled` or
+`/etc/dakota-countme/disabled`) checked by systemd units and client scripts to
+disable countme reporting.
+_Avoid_: Kill switch, telemetry bypass

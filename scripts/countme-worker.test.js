@@ -68,7 +68,7 @@ test("renders pending projectbluefin svg message", () => {
   assert.match(svg, /<svg/i);
 });
 
-test("accepts metalink pings from Dakota telemetry clients", async () => {
+test("accepts metalink pings from Dakota countme clients", async () => {
   const request = new Request(
     "https://countme.projectbluefin.io/metalink?repo=dakota&tag=latest&flavor=default&arch=x86_64&countme=3",
   );
@@ -81,5 +81,46 @@ test("accepts metalink pings from Dakota telemetry clients", async () => {
     response.headers.get("content-type"),
     "text/plain;charset=UTF-8",
   );
-  assert.match(await response.text(), /countme accepted/i);
+  assert.match(
+    await response.text(),
+    /countme accepted for repo=dakota tag=latest flavor=default arch=x86_64 countme=3/i,
+  );
+});
+
+test("accepts metalink pings from Bluefin countme clients", async () => {
+  const request = new Request(
+    "https://countme.projectbluefin.io/metalink?repo=bluefin&tag=stable&flavor=main&arch=x86_64&countme=2",
+  );
+
+  const response = await fetchHandler(request);
+
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get("cache-control"), "no-store");
+  assert.equal(
+    response.headers.get("content-type"),
+    "text/plain;charset=UTF-8",
+  );
+  assert.match(
+    await response.text(),
+    /countme accepted for repo=bluefin tag=stable flavor=main arch=x86_64 countme=2/i,
+  );
+});
+
+test("accepts metalink pings from Bluefin LTS countme clients", async () => {
+  const request = new Request(
+    "https://countme.projectbluefin.io/metalink?repo=bluefin-lts&tag=stable&flavor=main&arch=x86_64&countme=4",
+  );
+
+  const response = await fetchHandler(request);
+
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get("cache-control"), "no-store");
+  assert.equal(
+    response.headers.get("content-type"),
+    "text/plain;charset=UTF-8",
+  );
+  assert.match(
+    await response.text(),
+    /countme accepted for repo=bluefin-lts tag=stable flavor=main arch=x86_64 countme=4/i,
+  );
 });

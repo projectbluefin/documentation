@@ -91,6 +91,22 @@ unless the Worker directory ships its own `.gitignore`.
 `zod@^4`; pinning `zod@^3` fails `ERESOLVE`. Resolve the real versions rather
 than reaching for `--legacy-peer-deps`.
 
+## CountMe Worker (countme.projectbluefin.io)
+
+`workers/countme-proxy` handles two primary workloads:
+
+1. **Upstream Artifact Proxy:** Serves weekly growth charts (`/`, `/growth.svg`,
+   `/sources/projectbluefin/bluefin/growth.svg`) and shields.io badge endpoints
+   (`/badge-endpoints/{bluefin,bluefin-lts}.json`), falling back to a branded
+   pending SVG if projectbluefin artifacts have not yet populated.
+2. **Client Ingestion (`/metalink`):** Receives weekly anonymous countme pings
+   from Project Bluefin clients (`bluefin`, `bluefin-lts`, `dakota`).
+   - Query parameters: `repo` (e.g. `bluefin`, `bluefin-lts`, `dakota`), `tag`
+     (e.g. `stable`), `flavor` (e.g. `main`), `arch` (`x86_64`, `aarch64`),
+     `countme` (integer bucket 1–4).
+   - Responses are HTTP 200 with `cache-control: no-store`.
+   - The endpoint strictly disallows persistent machine identifiers or tokens.
+
 ## Verifying before deploy
 
 `wrangler dev` against an override config catches entrypoint and binding errors

@@ -38,9 +38,11 @@ delete, so the reasoning stays readable.
 
 ## Index
 
-| ADR                                          | Title                                                          | Status   |
-| -------------------------------------------- | -------------------------------------------------------------- | -------- |
-| [0001](0001-agent-design-authorization.md)   | Agent design change authorization                              | Accepted |
-| [0002](0002-factory-page.md)                 | Rename /hive to /factory and absorb factory content            | Accepted |
-| [0003](0003-factory-two-level-navigation.md) | Two-level navigation for /factory and first-party chart parity | Accepted |
-| [0004](0004-countme-counting-method.md)      | Countme is counted the way ublue-os/countme counts it          | Accepted |
+| ADR                                            | Title                                                                            | Status   |
+| ---------------------------------------------- | -------------------------------------------------------------------------------- | -------- |
+| [0001](0001-agent-design-authorization.md)     | Agent design change authorization                                                | Accepted |
+| [0002](0002-factory-page.md)                   | Rename /hive to /factory and absorb factory content                              | Accepted |
+| [0003](0003-factory-two-level-navigation.md)   | Two-level navigation for /factory and first-party chart parity                   | Accepted |
+| [0004](0004-countme-counting-method.md)        | Countme is counted the way ublue-os/countme counts it                            | Accepted |
+| [0005](0005-reports-2.0.md)                    | Reports 2.0 public monthly snapshot model                                        | Proposed |
+| [0006](0006-multi-client-countme-reporting.md) | Multi-client countme reporting via common services and countme.projectbluefin.io | Accepted |
