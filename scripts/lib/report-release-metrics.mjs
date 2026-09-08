@@ -76,6 +76,18 @@ function aggregateSource(entries, period) {
   return availableSource(null, period, sourceUrl);
 }
 
+function nextReleasePage(response) {
+  const raw =
+    typeof response?.headers?.get === "function"
+      ? response.headers.get("link")
+      : response?.headers?.link;
+  const next = String(raw ?? "")
+    .split(",")
+    .map((part) => part.trim())
+    .find((part) => /;\s*rel="?next"?/.test(part));
+  return next?.match(/<([^>]+)>/)?.[1] ?? null;
+}
+
 function normalizeRelease(repository, release, period) {
   const publishedAt = release?.published_at;
   if (!repository || !inReportWindow(publishedAt, period)) {
@@ -152,28 +164,37 @@ export async function fetchReleaseEvents(
     eligible.map(async ({ repository }) => {
       const url = releaseApiUrl(repository);
       try {
-        const response = await fetchImpl(url);
-        if (!response?.ok) {
-          return {
-            repository,
-            url,
-            unavailableReason: `HTTP ${response?.status ?? "unknown"}`,
-          };
-        }
+        let nextUrl = url;
+        const releases = [];
+        while (nextUrl) {
+          const response = await fetchImpl(nextUrl);
+          if (!response?.ok) {
+            return {
+              repository,
+              url,
+              releases,
+              unavailableReason: `HTTP ${response?.status ?? "unknown"}`,
+            };
+          }
 
-        const releases = await response.json();
-        if (!Array.isArray(releases)) {
-          return {
-            repository,
-            url,
-            unavailableReason: "GitHub releases response was not an array",
-          };
+          const page = await response.json();
+          if (!Array.isArray(page)) {
+            return {
+              repository,
+              url,
+              releases,
+              unavailableReason: "GitHub releases response was not an array",
+            };
+          }
+          releases.push(...page);
+          nextUrl = nextReleasePage(response);
         }
         return { repository, url, releases };
       } catch (error) {
         return {
           repository,
           url,
+          releases: [],
           unavailableReason:
             error instanceof Error ? error.message : String(error),
         };

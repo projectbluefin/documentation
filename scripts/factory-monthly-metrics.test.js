@@ -9,6 +9,7 @@ import {
   extractLeaderboardHeroes,
   FACTORY_LANES,
   fetchFactoryMonthlyStats,
+  extractCountmeMetricsFromPayload,
 } from "./lib/factory-monthly-metrics.mjs";
 import { REPORT_PORTFOLIO } from "./lib/report-portfolio.mjs";
 
@@ -177,6 +178,44 @@ test("extractCountmeMetrics returns null or data without throwing", () => {
   }
 });
 
+test("extractCountmeMetricsFromPayload preserves Countme gaps as null", () => {
+  const metrics = extractCountmeMetricsFromPayload(
+    {
+      unavailable: false,
+      weeks: [
+        { week: "2026-10-05", bluefin: 10, "bluefin-lts": 5 },
+        { week: "2026-10-12", bluefin: null, "bluefin-lts": 6 },
+        { week: "2026-10-19", bluefin: 12, "bluefin-lts": 7 },
+      ],
+    },
+    new Date("2026-10-01T00:00:00Z"),
+    new Date("2026-10-31T23:59:59Z"),
+  );
+
+  assert.equal(metrics.currentTotal, 19);
+  assert.equal(metrics.previousTotal, 15);
+  assert.deepEqual(metrics.historyPoints, [15, null, 19]);
+  assert.deepEqual(
+    metrics.variants.map((variant) => variant.count),
+    [12, 7, null],
+  );
+});
+
+test("extractCountmeMetricsFromPayload returns null for an unavailable payload", () => {
+  assert.equal(
+    extractCountmeMetricsFromPayload(
+      {
+        unavailable: true,
+        stateReason: "Countme request failed",
+        weeks: [{ week: "2026-10-05", bluefin: 10, "bluefin-lts": 5 }],
+      },
+      new Date("2026-10-01T00:00:00Z"),
+      new Date("2026-10-31T23:59:59Z"),
+    ),
+    null,
+  );
+});
+
 test("FACTORY_LANES contains only portfolio entries configured for lanes", () => {
   assert.deepEqual(
     FACTORY_LANES.map((lane) => lane.repo),
@@ -251,4 +290,27 @@ test("in-flight publishing runs are pending and never failed", async () => {
   assert.equal(lane.pending, 1);
   assert.equal(lane.successRate, 50);
   assert.equal(lane.medianDurationMin, 15);
+});
+
+test("publishing lanes expose a date-based delivery trend", async () => {
+  const result = await fetchFactoryMonthlyStats(
+    new Date("2026-10-01T00:00:00Z"),
+    new Date("2026-10-03T23:59:59Z"),
+    async () => ({
+      ok: true,
+      async json() {
+        return {
+          workflow_runs: [
+            apiRun({ run_started_at: "2026-10-01T10:00:00Z" }),
+            apiRun({ run_started_at: "2026-10-03T10:00:00Z" }),
+          ],
+        };
+      },
+    }),
+  );
+
+  assert.deepEqual(result.lanes[0].trend, {
+    labels: ["2026-10-01", "2026-10-02", "2026-10-03"],
+    values: [1, 0, 1],
+  });
 });

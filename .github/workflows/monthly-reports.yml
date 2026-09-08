@@ -55,7 +55,10 @@ jobs:
         id: generate
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npm run generate-report
+        run: |
+          npm run fetch-countme -- --force
+          npm run fetch-flathub-stats -- --force
+          npm run generate-report
 
       - name: Create feature branch
         run: |

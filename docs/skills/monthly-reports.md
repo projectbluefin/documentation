@@ -57,8 +57,11 @@ added.
 2. **Data dependencies:**
    The generator requires network access to GitHub GraphQL and REST APIs (using
    `GITHUB_TOKEN` or `GH_TOKEN`), reads local Countme statistics from
-   `static/data/countme-history.json`, and extracts runs from the configured
-   public publishing lanes.
+   `static/data/countme-history.json`, reads the refreshed Flathub snapshot from
+   `static/data/flathub-stats.json`, and extracts runs from the configured
+   public publishing lanes. The scheduled workflow runs both data fetchers with
+   `--force` before generating the report so a tracked or ignored local cache
+   cannot silently become the report's source window.
 
 3. **Output format:**
    The report is written to:
@@ -102,7 +105,9 @@ The generator writes the blog post first, then merges the snapshot into
 snapshots by month. The tracked seed is
 `scripts/data/report-history-seed.json`. The scheduled archive workflow commits
 the generated post together with the history, contributor cache, and
-`static/data/countme-history.json`.
+`static/data/countme-history.json`. Blog posts are created with an exclusive
+file write; rerunning a month whose post already exists fails instead of
+rewriting the public archive or its corresponding history.
 
 ## Portfolio and source rules
 
@@ -111,7 +116,9 @@ Only repositories listed in `scripts/lib/report-portfolio.mjs` contribute
 portfolio activity. Stable and Experimental entries remain labeled separately;
 unconfigured repositories, lab-cluster data, internal URLs, and tokens are
 excluded. `ublue-os/*` measurements are external ecosystem context rather than
-Project Bluefin portfolio activity.
+Project Bluefin portfolio activity: the configured Homebrew taps provide
+promotion measurements only, and no `ublue-os/*` repository enters activity or
+participation totals.
 
 Adapters use original public sources and retain a source record when a request
 is unavailable. A missing measurement is `null`, not zero. Publishing lanes
@@ -132,12 +139,22 @@ snapshot and its provenance remain available to server-rendered output.
 - Report adapters use original public endpoints only. A source record
   includes its public API URL and the exact report measurement window, whether
   the request is available or unavailable.
+- Release adapters follow the GitHub `Link` pagination chain before deciding
+  that a repository has no release event in the window; a failed later page
+  marks that repository source unavailable.
 - Release events contain release metadata only; never copy release bodies into
   an immutable report snapshot.
 - Every configured publishing lane remains in the result. A failed lane keeps
   its identity and reason while its measurements are `null`, not zero.
+- Delivery cadence is a date-based trend with one series per configured lane;
+  lane totals are not used as a substitute for a time axis.
 - Workflow runs without a terminal verdict are `pending`, not failed, and are
   excluded from the success-rate denominator.
+- Partial GitHub pagination makes participation unavailable rather than
+  presenting a human/automation split or leaderboard derived from an
+  incomplete result.
+- Countme and Flathub gaps remain `null` or unavailable. A missing variant,
+  failed refresh, or incomplete daily window is never coerced to zero.
 - Activity aggregation skips missing repository and category values instead of
   creating `"undefined"` buckets. Add adapter tests before implementation and
   observe the expected red test run before writing production code.
@@ -170,8 +187,10 @@ snapshot and its provenance remain available to server-rendered output.
 - `scripts/lib/factory-monthly-metrics.mjs`
 - `scripts/lib/report-history.mjs`
 - `scripts/lib/report-portfolio.mjs`
+- `scripts/lib/report-ecosystem-metrics.mjs`
 - `scripts/lib/report-snapshot.mjs`
 - `scripts/lib/markdown-generator.mjs`
 - `scripts/report-archive.test.js`
+- `scripts/report-ecosystem.test.js`
 - Context7 library ID: `apache/echarts`
 - `src/components/reports/`

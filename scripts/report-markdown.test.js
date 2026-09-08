@@ -278,6 +278,157 @@ test("participation totals separate human and bot pull requests", async () => {
   assert.equal(snapshot.participation.automation.currentValue, "2");
 });
 
+test("partial GitHub activity makes participation unavailable", async () => {
+  const { buildReportSnapshotPayload } = await reportGenerator;
+  const snapshot = buildReportSnapshotPayload({
+    startDate: new Date("2026-10-01T00:00:00.000Z"),
+    endDate: new Date("2026-10-31T23:59:59.999Z"),
+    plannedPRs: [
+      {
+        repository: "projectbluefin/common",
+        mergedAt: "2026-10-02T12:00:00Z",
+        labels: [],
+      },
+    ],
+    plannedPartial: true,
+    plannedError: "GitHub activity request failed",
+    botActivity: [{ repo: "projectbluefin/common", bot: "renovate", count: 1 }],
+    leaderboard: { heroes: [], newLights: [] },
+    history: { schemaVersion: 2, snapshots: [] },
+  });
+
+  assert.equal(snapshot.participation.automation, null);
+  assert.equal(snapshot.participation.leaderboard, null);
+  assert.match(snapshot.participation.unavailableReason, /request failed/);
+});
+
+test("delivery cadence charts a date-based trend for each lane", async () => {
+  const { buildReportSnapshotPayload } = await reportGenerator;
+  const snapshot = buildReportSnapshotPayload({
+    startDate: new Date("2026-10-01T00:00:00.000Z"),
+    endDate: new Date("2026-10-03T23:59:59.999Z"),
+    factoryStats: {
+      lanes: [
+        {
+          id: "bluefin-testing",
+          label: "Bluefin Testing",
+          repo: "projectbluefin/bluefin",
+          total: 2,
+          unavailableReason: null,
+          trend: {
+            labels: ["2026-10-01", "2026-10-02", "2026-10-03"],
+            values: [1, 0, 1],
+          },
+        },
+        {
+          id: "dakota",
+          label: "Dakota",
+          repo: "projectbluefin/dakota",
+          total: 1,
+          unavailableReason: null,
+          trend: {
+            labels: ["2026-10-01", "2026-10-02", "2026-10-03"],
+            values: [0, 1, 0],
+          },
+        },
+      ],
+    },
+    history: { schemaVersion: 2, snapshots: [] },
+  });
+
+  assert.deepEqual(snapshot.delivery.cadence.labels, [
+    "2026-10-01",
+    "2026-10-02",
+    "2026-10-03",
+  ]);
+  assert.deepEqual(
+    snapshot.delivery.cadence.series.map((series) => ({
+      id: series.id,
+      values: series.values,
+    })),
+    [
+      { id: "bluefin-testing", values: [1, 0, 1] },
+      { id: "dakota", values: [0, 1, 0] },
+    ],
+  );
+});
+
+test("snapshot activity ignores external ublue repositories", async () => {
+  const { buildReportSnapshotPayload } = await reportGenerator;
+  const snapshot = buildReportSnapshotPayload({
+    startDate: new Date("2026-10-01T00:00:00.000Z"),
+    endDate: new Date("2026-10-31T23:59:59.999Z"),
+    plannedPRs: [
+      {
+        repository: "projectbluefin/common",
+        mergedAt: "2026-10-02T12:00:00Z",
+        labels: [],
+      },
+    ],
+    opportunisticPRs: [
+      {
+        repository: "ublue-os/artwork",
+        mergedAt: "2026-10-03T12:00:00Z",
+        labels: [],
+      },
+    ],
+    history: { schemaVersion: 2, snapshots: [] },
+  });
+
+  assert.deepEqual(snapshot.activity.repositories.labels, [
+    "projectbluefin/common",
+  ]);
+  assert.equal(snapshot.participation.automation.currentValue, "1");
+});
+
+test("snapshot embeds the Flathub calendar-month trend", async () => {
+  const { buildReportSnapshotPayload } = await reportGenerator;
+  const snapshot = buildReportSnapshotPayload({
+    startDate: new Date("2026-10-01T00:00:00.000Z"),
+    endDate: new Date("2026-10-03T23:59:59.999Z"),
+    flathubStats: {
+      unavailable: false,
+      downloadsPerDay: [
+        { date: "2026-10-01", downloads: 100 },
+        { date: "2026-10-02", downloads: 200 },
+        { date: "2026-10-03", downloads: 300 },
+      ],
+    },
+    history: { schemaVersion: 2, snapshots: [] },
+  });
+
+  assert.equal(snapshot.ecosystem.flathub.currentValue, "600");
+  assert.equal(
+    snapshot.sources.find((source) => source.id === "flathub").status,
+    "available",
+  );
+});
+
+test("snapshot marks an incomplete Countme total unavailable", async () => {
+  const { buildReportSnapshotPayload } = await reportGenerator;
+  const snapshot = buildReportSnapshotPayload({
+    startDate: new Date("2026-10-01T00:00:00.000Z"),
+    endDate: new Date("2026-10-03T23:59:59.999Z"),
+    countmeStats: {
+      currentTotal: null,
+      previousTotal: 12,
+      historyPoints: [12, null],
+      sourceDate: "2026-10-03",
+    },
+    history: { schemaVersion: 2, snapshots: [] },
+  });
+
+  assert.equal(snapshot.ecosystem.countme, null);
+  assert.equal(
+    snapshot.sources.find((source) => source.id === "countme").status,
+    "unavailable",
+  );
+  assert.doesNotMatch(
+    JSON.stringify(snapshot.ecosystem),
+    /currentValue":"null"/,
+  );
+});
+
 test("release provenance keeps aggregate and repository-specific sources", async () => {
   const { buildReportSnapshotPayload } = await reportGenerator;
   const period = { start: "2026-10-01", end: "2026-10-31" };

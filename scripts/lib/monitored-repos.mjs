@@ -7,6 +7,8 @@
 
 import { REPORT_PORTFOLIO } from "./report-portfolio.mjs";
 
-export const MONITORED_REPOS = REPORT_PORTFOLIO.filter((entry) =>
-  entry.signals.includes("activity"),
+export const MONITORED_REPOS = REPORT_PORTFOLIO.filter(
+  (entry) =>
+    entry.signals.includes("activity") &&
+    entry.repository.startsWith("projectbluefin/"),
 ).map((entry) => entry.repository);

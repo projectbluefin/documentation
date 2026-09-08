@@ -4,7 +4,7 @@ import styles from "./ReportCountmeTrend.module.css";
 
 export interface VariantStat {
   name: string;
-  count: number;
+  count: number | null;
   color?: string;
 }
 
@@ -101,7 +101,9 @@ export default function ReportCountmeTrend({
               />
               <span className={styles.variantName}>{v.name}:</span>
               <span className={styles.variantCount}>
-                {v.count.toLocaleString()}
+                {v.count === null || v.count === undefined
+                  ? "no data"
+                  : v.count.toLocaleString()}
               </span>
             </div>
           ))}

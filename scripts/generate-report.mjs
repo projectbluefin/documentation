@@ -24,6 +24,10 @@ import { MONITORED_REPOS } from "./lib/monitored-repos.mjs";
 import { REPORT_PORTFOLIO } from "./lib/report-portfolio.mjs";
 import { buildReportSnapshot } from "./lib/report-snapshot.mjs";
 import {
+  buildFlathubReportMetrics,
+  readFlathubStats,
+} from "./lib/report-ecosystem-metrics.mjs";
+import {
   mergeReportHistory,
   readReportHistory,
 } from "./lib/report-history.mjs";
@@ -50,6 +54,11 @@ const GITHUB_GRAPHQL_URL = "https://api.github.com/graphql";
 const COUNTME_SOURCE_URL =
   "https://data-analysis.fedoraproject.org/csv-reports/countme/totals.csv";
 const FLATHUB_SOURCE_URL = "https://flathub.org/api/v2/stats";
+const REPORT_ACTIVITY_REPOSITORIES = new Set(
+  REPORT_PORTFOLIO.filter(
+    (entry) => entry.tier !== "ecosystem" && entry.signals.includes("activity"),
+  ).map((entry) => entry.repository),
+);
 const MONTH_NAMES = [
   "January",
   "February",
@@ -237,6 +246,14 @@ function withoutNestedHistory(snapshots) {
   });
 }
 
+export async function writeImmutableReport(
+  filename,
+  markdown,
+  write = writeFile,
+) {
+  await write(filename, markdown, { encoding: "utf8", flag: "wx" });
+}
+
 export function buildReportSnapshotPayload({
   startDate,
   endDate,
@@ -252,6 +269,7 @@ export function buildReportSnapshotPayload({
   releaseError,
   countmeStats,
   countmeError,
+  flathubStats,
   tapAdditions = { production: [], experimental: [] },
   tapError,
   botActivity,
@@ -260,7 +278,11 @@ export function buildReportSnapshotPayload({
 }) {
   const period = reportPeriod(startDate, endDate);
   const sourceWindow = periodSourceWindow(startDate, endDate);
-  const allPRs = [...plannedPRs, ...opportunisticPRs];
+  const allPRs = [...plannedPRs, ...opportunisticPRs].filter((item) => {
+    const repository =
+      item?.repository ?? item?.content?.repository?.nameWithOwner;
+    return REPORT_ACTIVITY_REPOSITORIES.has(repository);
+  });
   const activityMetrics = buildActivityMetrics(allPRs, period);
   const activityReason =
     plannedPartial || opportunisticPartial
@@ -439,6 +461,20 @@ export function buildReportSnapshotPayload({
     (!hasAvailableLane
       ? "No publishing-lane measurements are available."
       : null);
+  const cadenceLabels = [
+    ...new Set(
+      (factoryStats?.lanes ?? []).flatMap((lane) => lane.trend?.labels ?? []),
+    ),
+  ].sort();
+  const cadenceSeries = (factoryStats?.lanes ?? []).map((lane) => ({
+    id: lane.id,
+    label: lane.label,
+    values: cadenceLabels.map((label) => {
+      const index = lane.trend?.labels?.indexOf(label) ?? -1;
+      return index >= 0 ? (lane.trend.values[index] ?? null) : null;
+    }),
+  }));
+  const hasCadenceTrend = cadenceLabels.length > 0;
   const delivery = {
     lanes: factoryStats?.lanes ?? null,
     cadence: hasAvailableLane
@@ -452,14 +488,16 @@ export function buildReportSnapshotPayload({
           sourceUrl:
             "https://api.github.com/repos/projectbluefin/bluefin/actions/runs",
           sourceWindow,
-          labels: laneLabels,
-          series: [
-            {
-              id: "publish-runs",
-              label: "Publish runs",
-              values: laneValues,
-            },
-          ],
+          labels: hasCadenceTrend ? cadenceLabels : laneLabels,
+          series: hasCadenceTrend
+            ? cadenceSeries
+            : [
+                {
+                  id: "publish-runs",
+                  label: "Publish runs",
+                  values: laneValues,
+                },
+              ],
           minimumPoints: 1,
         })
       : null,
@@ -480,60 +518,82 @@ export function buildReportSnapshotPayload({
   );
   const totalHumanPRs = totalPRs - totalBotPRs;
   const automationValues = [totalHumanPRs, totalBotPRs];
+  const participationUnavailableReason =
+    plannedPartial || opportunisticPartial
+      ? activityReason || "GitHub participation data is partial."
+      : null;
   const participation = {
-    automation: chartDefinition({
-      id: "participation-automation",
-      kind: "stacked-bar",
-      title: "Human and automation activity",
-      currentValue: totalHumanPRs + totalBotPRs,
-      unit: "pull requests",
-      sourceLabel: "GitHub GraphQL",
-      sourceUrl: GITHUB_GRAPHQL_URL,
-      sourceWindow,
-      labels: ["Report period"],
-      series: [
-        { id: "human", label: "Human", values: [automationValues[0]] },
-        {
-          id: "automation",
-          label: "Automation",
-          values: [automationValues[1]],
-        },
-      ],
-      minimumPoints: 1,
-    }),
-    leaderboard,
+    automation: participationUnavailableReason
+      ? null
+      : chartDefinition({
+          id: "participation-automation",
+          kind: "stacked-bar",
+          title: "Human and automation activity",
+          currentValue: totalHumanPRs + totalBotPRs,
+          unit: "pull requests",
+          sourceLabel: "GitHub GraphQL",
+          sourceUrl: GITHUB_GRAPHQL_URL,
+          sourceWindow,
+          labels: ["Report period"],
+          series: [
+            { id: "human", label: "Human", values: [automationValues[0]] },
+            {
+              id: "automation",
+              label: "Automation",
+              values: [automationValues[1]],
+            },
+          ],
+          minimumPoints: 1,
+        }),
+    leaderboard: participationUnavailableReason ? null : leaderboard,
+    ...(participationUnavailableReason
+      ? { unavailableReason: participationUnavailableReason }
+      : {}),
   };
 
+  const countmeIncomplete =
+    countmeStats !== null &&
+    countmeStats !== undefined &&
+    (typeof countmeStats.currentTotal !== "number" ||
+      !Number.isFinite(countmeStats.currentTotal));
+  const countmeUnavailableReason =
+    countmeError ||
+    (countmeIncomplete
+      ? "Countme active-system measurement is incomplete."
+      : countmeStats
+        ? null
+        : "Countme data is unavailable.");
   const countmeSource = sourceRecord(
     "countme",
-    countmeStats ? "available" : "unavailable",
-    countmeError || "Countme data is unavailable.",
+    countmeStats && !countmeIncomplete ? "available" : "unavailable",
+    countmeUnavailableReason,
     COUNTME_SOURCE_URL,
     period,
   );
-  const countmeChart = countmeStats
-    ? chartDefinition({
-        id: "ecosystem-countme",
-        kind: "line",
-        title: "Countme active systems",
-        currentValue: countmeStats.currentTotal,
-        unit: "estimated weekly active systems",
-        sourceLabel: "Countme",
-        sourceUrl: COUNTME_SOURCE_URL,
-        sourceWindow: `Through ${countmeStats.sourceDate}`,
-        labels: countmeStats.historyPoints.map(
-          (_, index) => `week-${index + 1}`,
-        ),
-        series: [
-          {
-            id: "active-systems",
-            label: "Active systems",
-            values: countmeStats.historyPoints,
-          },
-        ],
-        minimumPoints: 1,
-      })
-    : null;
+  const countmeChart =
+    countmeStats && !countmeIncomplete
+      ? chartDefinition({
+          id: "ecosystem-countme",
+          kind: "line",
+          title: "Countme active systems",
+          currentValue: countmeStats.currentTotal,
+          unit: "estimated weekly active systems",
+          sourceLabel: "Countme",
+          sourceUrl: COUNTME_SOURCE_URL,
+          sourceWindow: `Through ${countmeStats.sourceDate}`,
+          labels: countmeStats.historyPoints.map(
+            (_, index) => `week-${index + 1}`,
+          ),
+          series: [
+            {
+              id: "active-systems",
+              label: "Active systems",
+              values: countmeStats.historyPoints,
+            },
+          ],
+          minimumPoints: 1,
+        })
+      : null;
   const tapSource = sourceRecord(
     "homebrew",
     tapError ? "unavailable" : "available",
@@ -560,18 +620,18 @@ export function buildReportSnapshotPayload({
         series: [{ id: "additions", label: "Additions", values: tapValues }],
         minimumPoints: 1,
       });
-  const flathubReason = "No configured public Flathub report source.";
+  const flathubMetrics = buildFlathubReportMetrics(flathubStats, period);
   const flathubSource = sourceRecord(
     "flathub",
-    "unavailable",
-    flathubReason,
+    flathubMetrics.chart ? "available" : "unavailable",
+    flathubMetrics.reason,
     FLATHUB_SOURCE_URL,
     period,
   );
   const ecosystem = {
     countme: countmeChart,
     homebrew: homebrewChart,
-    flathub: null,
+    flathub: flathubMetrics.chart,
     unavailableReason: [countmeSource, tapSource, flathubSource]
       .filter((source) => source.status === "unavailable")
       .map((source) => source.stateReason)
@@ -845,6 +905,16 @@ export async function generateReport() {
       // Continue report generation even if tap additions fail
     }
 
+    // Load the Flathub snapshot refreshed by the workflow before assembling
+    // this archive.
+    log.info("Loading Flathub statistics...");
+    let flathubStats = null;
+    try {
+      flathubStats = readFlathubStats();
+    } catch (error) {
+      log.warn(`Flathub statistics unavailable: ${error.message}`);
+    }
+
     // Fetch factory monthly stats
     log.info("Fetching factory publishing lane metrics...");
     let factoryStats = null;
@@ -933,6 +1003,7 @@ export async function generateReport() {
       releaseError,
       countmeStats,
       countmeError,
+      flathubStats,
       tapAdditions,
       tapError,
       botActivity,
@@ -971,7 +1042,7 @@ export async function generateReport() {
     // Write to blog directory
     const slug = getReportSlug(startDate);
     const filename = `blog/${endDate.toISOString().slice(0, 10)}-${slug}.mdx`;
-    await writeFile(filename, markdown, "utf8");
+    await writeImmutableReport(filename, markdown);
 
     // Persist history only after the immutable post has been written successfully.
     const nextHistory = mergeReportHistory(reportHistory, snapshot);

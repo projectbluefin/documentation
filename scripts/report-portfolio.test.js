@@ -33,27 +33,36 @@ test("the stable portfolio retains every previously monitored Project Bluefin re
   }
 });
 
-test("ecosystem Homebrew taps retain activity and promotion monitoring", () => {
+test("ecosystem Homebrew taps retain promotion monitoring without activity", () => {
   for (const repository of [
     "ublue-os/homebrew-tap",
     "ublue-os/homebrew-experimental-tap",
   ]) {
     const entry = findPortfolioEntry(repository);
     assert.equal(entry.tier, "ecosystem");
-    assert.deepEqual(entry.signals, ["activity", "tap-promotions"]);
+    assert.deepEqual(entry.signals, ["tap-promotions"]);
   }
 });
 
-test("MONITORED_REPOS retains the legacy activity coverage", () => {
+test("MONITORED_REPOS excludes external ublue activity", () => {
   for (const repository of [
     "projectbluefin/common",
     "projectbluefin/documentation",
     "projectbluefin/branding",
     "projectbluefin/iso",
     "projectbluefin/finpilot",
-    "ublue-os/homebrew-tap",
-    "ublue-os/homebrew-experimental-tap",
   ]) {
     assert.ok(MONITORED_REPOS.includes(repository), repository);
   }
+  assert.ok(
+    MONITORED_REPOS.every((repository) =>
+      repository.startsWith("projectbluefin/"),
+    ),
+  );
+  assert.equal(MONITORED_REPOS.includes("ublue-os/artwork"), false);
+  assert.equal(MONITORED_REPOS.includes("ublue-os/homebrew-tap"), false);
+  assert.equal(
+    MONITORED_REPOS.includes("ublue-os/homebrew-experimental-tap"),
+    false,
+  );
 });

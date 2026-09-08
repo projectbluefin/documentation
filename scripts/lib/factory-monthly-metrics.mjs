@@ -72,7 +72,19 @@ async function fetchLaneRuns(lane, startISO, endISO, fetchImpl, headers) {
   return runs;
 }
 
-function buildLaneMetrics(lane, runs, startMs, endMs) {
+function datesInclusive(start, end) {
+  const dates = [];
+  for (
+    let current = new Date(`${start}T00:00:00.000Z`);
+    current <= new Date(`${end}T00:00:00.000Z`);
+    current.setUTCDate(current.getUTCDate() + 1)
+  ) {
+    dates.push(current.toISOString().slice(0, 10));
+  }
+  return dates;
+}
+
+function buildLaneMetrics(lane, runs, startMs, endMs, startISO, endISO) {
   const publishRuns = (runs ?? []).filter((run) => {
     const created = Date.parse(run.run_started_at ?? run.created_at ?? "");
     return (
@@ -104,9 +116,8 @@ function buildLaneMetrics(lane, runs, startMs, endMs) {
     const day = (run.run_started_at ?? run.created_at ?? "").slice(0, 10);
     if (day) dailyCounts[day] = (dailyCounts[day] ?? 0) + 1;
   }
-  const sparklineData = Object.keys(dailyCounts)
-    .sort()
-    .map((day) => dailyCounts[day]);
+  const trendLabels = datesInclusive(startISO, endISO);
+  const trendValues = trendLabels.map((day) => dailyCounts[day] ?? 0);
 
   return {
     id: lane.id,
@@ -118,7 +129,11 @@ function buildLaneMetrics(lane, runs, startMs, endMs) {
     pending,
     successRate: successRate(passed, failed),
     medianDurationMin: median(durations),
-    sparklineData: sparklineData.length > 1 ? sparklineData : [passed, failed],
+    sparklineData: trendValues.length > 1 ? trendValues : [passed, failed],
+    trend: {
+      labels: trendLabels,
+      values: trendValues,
+    },
     unavailableReason: null,
   };
 }
@@ -135,6 +150,7 @@ function unavailableLane(lane, reason) {
     successRate: null,
     medianDurationMin: null,
     sparklineData: null,
+    trend: null,
     unavailableReason: reason,
   };
 }
@@ -173,7 +189,7 @@ export async function fetchFactoryMonthlyStats(
           fetchImpl,
           headers,
         );
-        return buildLaneMetrics(lane, runs, startMs, endMs);
+        return buildLaneMetrics(lane, runs, startMs, endMs, startISO, endISO);
       } catch (error) {
         const reason = error instanceof Error ? error.message : String(error);
         console.warn(`[factory-metrics] ${lane.repo} unavailable — ${reason}`);
@@ -213,53 +229,71 @@ export async function fetchFactoryMonthlyStats(
  * @param {Date} endDate
  * @returns {Object|null}
  */
+function numericOrNull(value) {
+  return typeof value === "number" && Number.isFinite(value) ? value : null;
+}
+
+function sumKnown(values) {
+  const numbers = values.map(numericOrNull);
+  return numbers.every((value) => value !== null)
+    ? numbers.reduce((sum, value) => sum + value, 0)
+    : null;
+}
+
+export function extractCountmeMetricsFromPayload(payload, startDate, endDate) {
+  if (payload?.unavailable === true) return null;
+
+  const weeks = Array.isArray(payload?.weeks) ? payload.weeks : [];
+  if (weeks.length === 0) return null;
+
+  const endISO = endDate.toISOString().split("T")[0];
+  const eligible = weeks
+    .filter((week) => typeof week?.week === "string" && week.week <= endISO)
+    .sort((left, right) => left.week.localeCompare(right.week));
+  if (eligible.length === 0) return null;
+
+  const latest = eligible[eligible.length - 1];
+  const previous =
+    eligible.length >= 5 ? eligible[eligible.length - 5] : eligible[0];
+  const recentWeeks = eligible.slice(-10);
+
+  return {
+    currentTotal: sumKnown([latest.bluefin, latest["bluefin-lts"]]),
+    previousTotal: sumKnown([previous.bluefin, previous["bluefin-lts"]]),
+    historyPoints: recentWeeks.map((week) =>
+      sumKnown([week.bluefin, week["bluefin-lts"]]),
+    ),
+    variants: [
+      {
+        name: "Bluefin",
+        count: numericOrNull(latest.bluefin),
+        color: "#1D76DB",
+      },
+      {
+        name: "Bluefin LTS",
+        count: numericOrNull(latest["bluefin-lts"]),
+        color: "#2AA198",
+      },
+      {
+        name: "Aurora",
+        count: numericOrNull(latest.aurora),
+        color: "#8A63D2",
+      },
+    ],
+    sourceDate: latest.week,
+  };
+}
+
 export function extractCountmeMetrics(startDate, endDate) {
-  if (!existsSync(COUNTME_PATH)) {
-    return null;
-  }
+  if (!existsSync(COUNTME_PATH)) return null;
 
   try {
     const raw = readFileSync(COUNTME_PATH, "utf8");
-    const parsed = JSON.parse(raw);
-    const weeks = parsed.weeks ?? [];
-    if (weeks.length === 0) return null;
-
-    const endISO = endDate.toISOString().split("T")[0];
-
-    // Filter weeks up to end date
-    const eligible = weeks.filter((w) => w.week <= endISO);
-    if (eligible.length === 0) return null;
-
-    const latest = eligible[eligible.length - 1];
-    const prev =
-      eligible.length >= 5 ? eligible[eligible.length - 5] : eligible[0];
-
-    const currentTotal = (latest.bluefin || 0) + (latest["bluefin-lts"] || 0);
-    const prevTotal = (prev.bluefin || 0) + (prev["bluefin-lts"] || 0);
-
-    // Get last 8-12 weeks of Bluefin totals for sparkline
-    const recentWeeks = eligible.slice(-10);
-    const historyPoints = recentWeeks.map(
-      (w) => (w.bluefin || 0) + (w["bluefin-lts"] || 0),
+    return extractCountmeMetricsFromPayload(
+      JSON.parse(raw),
+      startDate,
+      endDate,
     );
-
-    const variants = [
-      { name: "Bluefin", count: latest.bluefin || 0, color: "#1D76DB" },
-      {
-        name: "Bluefin LTS",
-        count: latest["bluefin-lts"] || 0,
-        color: "#2AA198",
-      },
-      { name: "Aurora", count: latest.aurora || 0, color: "#8A63D2" },
-    ];
-
-    return {
-      currentTotal,
-      previousTotal: prevTotal,
-      historyPoints,
-      variants,
-      sourceDate: latest.week,
-    };
   } catch (err) {
     console.warn(
       `[factory-metrics] Failed reading countme history: ${err.message}`,

@@ -155,3 +155,61 @@ test("fetchReleaseEvents preserves provenance for each release-enabled repositor
     window: PERIOD,
   });
 });
+
+test("fetchReleaseEvents follows GitHub release pagination", async () => {
+  const pageTwoUrl = `${RELEASES_URL}?page=2`;
+  const calls = [];
+  const result = await fetchReleaseEvents(
+    [RELEASE_ENTRY],
+    PERIOD,
+    async (url) => {
+      calls.push(url);
+      if (url === RELEASES_URL) {
+        return {
+          ok: true,
+          headers: {
+            get(name) {
+              assert.equal(name, "link");
+              return `<${pageTwoUrl}>; rel="next"`;
+            },
+          },
+          async json() {
+            return [
+              {
+                id: 201,
+                name: "First page release",
+                tag_name: "v1.0.0",
+                published_at: "2026-10-05T12:00:00Z",
+                html_url:
+                  "https://github.com/projectbluefin/bluefin/releases/tag/v1.0.0",
+              },
+            ];
+          },
+        };
+      }
+      assert.equal(url, pageTwoUrl);
+      return {
+        ok: true,
+        headers: { get: () => null },
+        async json() {
+          return [
+            {
+              id: 202,
+              name: "Second page release",
+              tag_name: "v0.9.0",
+              published_at: "2026-10-20T12:00:00Z",
+              html_url:
+                "https://github.com/projectbluefin/bluefin/releases/tag/v0.9.0",
+            },
+          ];
+        },
+      };
+    },
+  );
+
+  assert.deepEqual(calls, [RELEASES_URL, pageTwoUrl]);
+  assert.deepEqual(
+    result.events.map((event) => event.id),
+    [201, 202],
+  );
+});

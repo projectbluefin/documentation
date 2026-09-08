@@ -74,16 +74,16 @@ export const REPORT_PORTFOLIO = [
     tier: "experimental",
     signals: ["activity"],
   },
-  { repository: "ublue-os/artwork", tier: "ecosystem", signals: ["activity"] },
+  { repository: "ublue-os/artwork", tier: "ecosystem", signals: ["ecosystem"] },
   {
     repository: "ublue-os/homebrew-tap",
     tier: "ecosystem",
-    signals: ["activity", "tap-promotions"],
+    signals: ["tap-promotions"],
   },
   {
     repository: "ublue-os/homebrew-experimental-tap",
     tier: "ecosystem",
-    signals: ["activity", "tap-promotions"],
+    signals: ["tap-promotions"],
   },
 ];
 
