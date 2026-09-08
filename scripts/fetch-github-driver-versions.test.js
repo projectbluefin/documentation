@@ -6,6 +6,7 @@ const path = require("node:path");
 
 const {
   lookupSbomVersionsForTag,
+  translateToUpstreamReleaseTag,
   rowFromSbomRelease,
   buildStreamFromSbom,
   buildNvidiaMapFromSbomStream,
@@ -56,6 +57,42 @@ test("rowFromSbomRelease builds kernel/mesa/gnome from SBOM only", () => {
   assert.equal(row.versions.mesa, "25.3.6-6");
   assert.equal(row.versions.gnome, "49.5-1");
   assert.equal(row.versions.nvidia, "595.58.03-1");
+});
+
+test("translateToUpstreamReleaseTag maps LTS cache keys to stable tags", () => {
+  assert.equal(
+    translateToUpstreamReleaseTag("bluefin-lts", "lts-20260602"),
+    "stable-20260602",
+  );
+});
+
+test("translateToUpstreamReleaseTag leaves non-LTS tags unchanged", () => {
+  assert.equal(
+    translateToUpstreamReleaseTag("bluefin-stable", "stable-20260331"),
+    "stable-20260331",
+  );
+  assert.equal(
+    translateToUpstreamReleaseTag("utah-testing", "testing-20260906"),
+    "testing-20260906",
+  );
+});
+
+test("rowFromSbomRelease keeps the GHCR image tag but rewrites the LTS releaseUrl to the stable tag", () => {
+  const row = rowFromSbomRelease(
+    "bluefin-lts",
+    "lts-20260602",
+    {
+      tag: "lts-20260602",
+      packageVersions: { kernel: "6.12.0-233.el10" },
+    },
+    null,
+  );
+
+  assert.equal(row.tag, "lts-20260602");
+  assert.equal(
+    row.releaseUrl,
+    "https://github.com/projectbluefin/bluefin-lts/releases/tag/stable-20260602",
+  );
 });
 
 test("buildStreamFromSbom sorts newest-first and marks source sbom", () => {
