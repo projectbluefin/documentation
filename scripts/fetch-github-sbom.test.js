@@ -339,11 +339,60 @@ test("findRecentTagsForStream: picks stable-YYYYMMDD tags from GHCR list", () =>
   assert.equal(result[0].cacheKey, `stable-${FIXED_RECENT_DATE}`);
 });
 
-test("findRecentTagsForStream: excludes tags older than LOOKBACK_DAYS", () => {
+test("findRecentTagsForStream: excludes tags older than LOOKBACK_DAYS when recent tags exist", () => {
   const oldDate = "20200101"; // way in the past
-  const ghcrTags = [`stable-${oldDate}`];
+  const ghcrTags = [`stable-${FIXED_RECENT_DATE}`, `stable-${oldDate}`];
   const result = findRecentTagsForStream(ghcrTags, MOCK_STABLE_SPEC);
-  assert.equal(result.length, 0, "old tags must be excluded");
+  assert.equal(
+    result.length,
+    1,
+    "old tags must be excluded when recent tags exist",
+  );
+  assert.equal(result[0].tag, `stable-${FIXED_RECENT_DATE}`);
+});
+
+test("findRecentTagsForStream: retains latest-release fallback when lookback finds no releases", () => {
+  const oldDate1 = "20200101";
+  const oldDate2 = "20200201";
+  const ghcrTags = [`stable-${oldDate1}`, `stable-${oldDate2}`];
+  const result = findRecentTagsForStream(ghcrTags, MOCK_STABLE_SPEC);
+  assert.equal(
+    result.length,
+    1,
+    "retains latest release when lookback finds no releases",
+  );
+  assert.equal(result[0].tag, `stable-${oldDate2}`);
+  assert.equal(result[0].cacheKey, `stable-${oldDate2}`);
+});
+
+test("findRecentTagsForStream: recognizes version-qualified dated tags", () => {
+  const ghcrTags = [
+    `stable-44.${FIXED_RECENT_DATE}`,
+    `stable-44-${FIXED_RECENT_DATE}`,
+  ];
+  const result = findRecentTagsForStream(ghcrTags, MOCK_STABLE_SPEC);
+  assert.equal(result.length, 1);
+  assert.equal(result[0].cacheKey, `stable-${FIXED_RECENT_DATE}`);
+  assert.equal(result[0].dateStr, FIXED_RECENT_DATE);
+});
+
+test("findRecentTagsForStream: matches live probe with version-qualified tags and fallback", () => {
+  const probeTags = [
+    "stable-20260606",
+    "stable-44.20260606",
+    "testing-44.20260720",
+  ];
+  const stableResult = findRecentTagsForStream(probeTags, MOCK_STABLE_SPEC);
+  assert.equal(stableResult.length, 1);
+  assert.equal(stableResult[0].dateStr, "20260606");
+  assert.equal(stableResult[0].cacheKey, "stable-20260606");
+
+  const utahSpec = STREAM_SPECS.find((s) => s.id === "utah-testing");
+  const utahResult = findRecentTagsForStream(probeTags, utahSpec);
+  assert.equal(utahResult.length, 1);
+  assert.equal(utahResult[0].dateStr, "20260720");
+  assert.equal(utahResult[0].cacheKey, "testing-20260720");
+  assert.equal(utahResult[0].tag, "testing-44.20260720");
 });
 
 test("findRecentTagsForStream: deduplicates same date", () => {

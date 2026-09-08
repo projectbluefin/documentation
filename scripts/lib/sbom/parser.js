@@ -69,9 +69,11 @@ function stripRpmRelease(version) {
 /**
  * Extract the YYYYMMDD date from a GHCR tag.
  * Handles patterns:
- *   stable-20260331    → 20260331
- *   lts-20260331       → 20260331
- *   lts.20260331       → 20260331
+ *   stable-20260331          → 20260331
+ *   stable-44.20260606       → 20260606
+ *   testing-44.20260720      → 20260720
+ *   lts-20260331             → 20260331
+ *   lts.20260331             → 20260331
  *   lts-hwe-testing-20260331 → 20260331
  */
 function extractDateFromTag(tag) {
@@ -84,12 +86,17 @@ function extractDateFromTag(tag) {
  * Handles: lts.20260331       → lts-20260331
  *          lts.20260331-hwe   → lts-20260331-hwe
  *          lts-hwe.20260501   → lts-hwe-20260501
+ *          latest.20260501    → latest-20260501  (Dakota date-stamped tags)
+ *          lts.44.20260501    → lts-44.20260501
  */
 function normaliseLtsTag(tag) {
   // lts.20260501       → lts-20260501
   // lts-hwe.20260501   → lts-hwe-20260501
   // latest.20260501    → latest-20260501  (Dakota date-stamped tags)
-  return tag.replace(/^((?:lts|latest)[a-z-]*)\.(\d{8})/, "$1-$2");
+  return tag.replace(
+    /^((?:lts|latest)[a-z-]*)\.((?:v?\d+(?:\.\d+)*[.-])?\d{8})/,
+    "$1-$2",
+  );
 }
 
 /**
@@ -102,7 +109,17 @@ function buildCacheKey(streamPrefix, dateStr) {
 }
 
 /**
+ * Escape regular expression special characters in a string.
+ */
+function escapeRegExp(string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+/**
  * Filter a list of GHCR tag strings to find recent dated tags for a given stream.
+ * Recognizes exact `<streamPrefix>-YYYYMMDD` and version-qualified tags such as
+ * `<streamPrefix>-44.YYYYMMDD`. Retains a latest-release fallback when the
+ * fixed lookback window finds no releases.
  *
  * @param {string[]} ghcrTags  Raw tag strings from fetchGhcrTags().
  * @param {object}   spec      Stream spec from STREAM_SPECS.
@@ -112,17 +129,18 @@ function findRecentTagsForStream(ghcrTags, spec) {
   const lookbackDays = Number(process.env.SBOM_LOOKBACK_DAYS || 90);
   const maxReleases = Number(process.env.SBOM_MAX_RELEASES || 10);
   const cutoff = Date.now() - lookbackDays * 24 * 60 * 60 * 1000;
+  const escapedPrefix = escapeRegExp(spec.streamPrefix.toLowerCase());
+  const tagPattern = new RegExp(
+    `^${escapedPrefix}-(?:(v?\\d+(?:\\.\\d+)*)[.-])?(\\d{8})$`,
+  );
   const found = [];
 
   for (const tagName of ghcrTags) {
     const normalised = normaliseLtsTag(tagName.toLowerCase());
-    if (!normalised.startsWith(`${spec.streamPrefix}-`)) continue;
-    const dateStr = extractDateFromTag(normalised);
-    if (!dateStr) continue;
+    const match = normalised.match(tagPattern);
+    if (!match) continue;
 
-    // Enforce canonical tag: only exact `<streamPrefix>-YYYYMMDD` is accepted.
-    const expectedCanonical = `${spec.streamPrefix}-${dateStr}`;
-    if (normalised !== expectedCanonical) continue;
+    const dateStr = match[2];
 
     // Tags from GHCR have no publishedAt — derive from the date string.
     const year = dateStr.slice(0, 4);
@@ -130,7 +148,7 @@ function findRecentTagsForStream(ghcrTags, spec) {
     const day = dateStr.slice(6, 8);
     const publishedAt = `${year}-${month}-${day}T00:00:00Z`;
     const publishedMs = Date.parse(publishedAt);
-    if (isNaN(publishedMs) || publishedMs < cutoff) continue;
+    if (isNaN(publishedMs)) continue;
 
     found.push({
       tag: normalised,
@@ -138,6 +156,7 @@ function findRecentTagsForStream(ghcrTags, spec) {
       dateStr,
       imageRef: `ghcr.io/${spec.org}/${spec.package}:${tagName}`,
       publishedAt,
+      publishedMs,
     });
   }
 
@@ -154,7 +173,21 @@ function findRecentTagsForStream(ghcrTags, spec) {
   // Sort descending by dateStr (YYYYMMDD sorts lexicographically)
   unique.sort((a, b) => b.dateStr.localeCompare(a.dateStr));
 
-  return unique.slice(0, maxReleases);
+  // Filter within lookback window
+  const withinLookback = unique.filter((entry) => entry.publishedMs >= cutoff);
+
+  const selected =
+    withinLookback.length > 0
+      ? withinLookback.slice(0, maxReleases)
+      : unique.slice(0, 1);
+
+  return selected.map(({ tag, cacheKey, dateStr, imageRef, publishedAt }) => ({
+    tag,
+    cacheKey,
+    dateStr,
+    imageRef,
+    publishedAt,
+  }));
 }
 
 // ---------------------------------------------------------------------------
@@ -206,7 +239,8 @@ function extractPackageVersions(sbomPath) {
   //   Packages represent BST elements, not RPM packages. Extraction uses
   //   (name, BST element path suffix) pairs to disambiguate between components
   //   that share a name (e.g. the `linux` kernel element vs. Rust `linux` crates).
-  const isSpdx = Array.isArray(sbom?.packages) && typeof sbom?.spdxVersion === "string";
+  const isSpdx =
+    Array.isArray(sbom?.packages) && typeof sbom?.spdxVersion === "string";
   const isBstSpdx =
     isSpdx &&
     (sbom.packages || []).some((pkg) =>
@@ -282,28 +316,36 @@ function extractPackageVersions(sbomPath) {
         kernelVersions.push(stripEpoch(String(version)));
         break;
       case "gnome-shell":
-        if (!result.gnome) result.gnome = stripRpmRelease(stripEpoch(String(version)));
+        if (!result.gnome)
+          result.gnome = stripRpmRelease(stripEpoch(String(version)));
         break;
       case "mesa-filesystem":
-        if (!result.mesa) result.mesa = stripRpmRelease(stripEpoch(String(version)));
+        if (!result.mesa)
+          result.mesa = stripRpmRelease(stripEpoch(String(version)));
         break;
       case "podman":
-        if (!result.podman) result.podman = stripRpmRelease(stripEpoch(String(version)));
+        if (!result.podman)
+          result.podman = stripRpmRelease(stripEpoch(String(version)));
         break;
       case "systemd":
-        if (!result.systemd) result.systemd = stripRpmRelease(stripEpoch(String(version)));
+        if (!result.systemd)
+          result.systemd = stripRpmRelease(stripEpoch(String(version)));
         break;
       case "bootc":
-        if (!result.bootc) result.bootc = stripRpmRelease(stripEpoch(String(version)));
+        if (!result.bootc)
+          result.bootc = stripRpmRelease(stripEpoch(String(version)));
         break;
       case "pipewire":
-        if (!result.pipewire) result.pipewire = stripRpmRelease(stripEpoch(String(version)));
+        if (!result.pipewire)
+          result.pipewire = stripRpmRelease(stripEpoch(String(version)));
         break;
       case "flatpak":
-        if (!result.flatpak) result.flatpak = stripRpmRelease(stripEpoch(String(version)));
+        if (!result.flatpak)
+          result.flatpak = stripRpmRelease(stripEpoch(String(version)));
         break;
       case "nvidia-driver":
-        if (!result.nvidia) result.nvidia = stripRpmRelease(stripEpoch(String(version)));
+        if (!result.nvidia)
+          result.nvidia = stripRpmRelease(stripEpoch(String(version)));
         break;
       case "fedora-release-common": {
         if (!result.fedora) {
