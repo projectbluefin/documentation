@@ -1,6 +1,8 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 
+const generator = import("./lib/markdown-generator.mjs");
+
 const fixtureSnapshot = {
   schemaVersion: 2,
   period: { month: "2026-10", start: "2026-10-01", end: "2026-10-31" },
@@ -23,12 +25,29 @@ const fixtureSnapshot = {
   },
 };
 
-function chartMdx(snapshot) {
-  return `<ReportChart definition={${JSON.stringify(snapshot.activity.charts[0])}} />`;
-}
+test("the report generator keeps its section import and tag contract", async () => {
+  const { generateReportMarkdown } = await generator;
+  const markdown = generateReportMarkdown(
+    [],
+    [],
+    ["alice"],
+    [],
+    [],
+    new Date("2026-10-01T00:00:00Z"),
+    new Date("2026-10-31T23:59:59Z"),
+  );
 
-test("the MDX chart contract retains provenance and serializable table data", () => {
-  const markdown = chartMdx(fixtureSnapshot);
+  assert.match(markdown, /tags: \[monthly-report/);
+  assert.match(
+    markdown,
+    /import \{[\s\S]*ReportHeroKPIs[\s\S]*\} from '@site\/src\/components\/reports';/,
+  );
+  assert.match(markdown, /<ReportHeroKPIs[\s\S]*kpis=\{/);
+});
+
+test("the production chart-tag serializer retains provenance and table data", async () => {
+  const { generateReportChartTag } = await generator;
+  const markdown = generateReportChartTag(fixtureSnapshot.activity.charts[0]);
 
   assert.match(markdown, /<ReportChart/);
   assert.match(markdown, /sourceWindow/);

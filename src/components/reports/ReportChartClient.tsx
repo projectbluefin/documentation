@@ -33,6 +33,12 @@ const SERIES_VARIABLES = [
   "--report-chart-series-4",
 ];
 
+export interface EChartsModuleSet {
+  charts: Record<string, unknown>;
+  components: Record<string, unknown>;
+  renderers: Record<string, unknown>;
+}
+
 function cssVariable(
   styles_: CSSStyleDeclaration,
   name: string,
@@ -68,11 +74,9 @@ function finiteValue(value: number | null): number | null {
   return value === null || !Number.isFinite(value) ? null : value;
 }
 
-function chartModules(
+export function selectEChartsModules(
   kind: ReportChartKind,
-  charts: Record<string, unknown>,
-  components: Record<string, unknown>,
-  renderers: Record<string, unknown>,
+  { charts, components, renderers }: EChartsModuleSet,
 ): unknown[] {
   if (kind === "calendar") {
     return [
@@ -93,7 +97,7 @@ function chartModules(
   ];
 }
 
-function chartOption(
+export function buildReportChartOption(
   definition: ReportChartDefinition,
   theme: ChartTheme,
 ): Record<string, unknown> {
@@ -201,7 +205,7 @@ export interface ReportChartClientProps {
 
 export default function ReportChartClient({
   definition,
-}: ReportChartClientProps): React.JSX.Element {
+}: ReportChartClientProps): React.JSX.Element | null {
   const elementRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<EChartsInstance | null>(null);
   const definitionRef = useRef(definition);
@@ -237,18 +241,20 @@ export default function ReportChartClient({
 
       const core = coreModule as unknown as EChartsCore;
       core.use(
-        chartModules(
-          definitionRef.current.kind,
-          chartsModule as unknown as Record<string, unknown>,
-          componentsModule as unknown as Record<string, unknown>,
-          renderersModule as unknown as Record<string, unknown>,
-        ),
+        selectEChartsModules(definitionRef.current.kind, {
+          charts: chartsModule as unknown as Record<string, unknown>,
+          components: componentsModule as unknown as Record<string, unknown>,
+          renderers: renderersModule as unknown as Record<string, unknown>,
+        }),
       );
       chartRef.current = core.init(elementRef.current, undefined, {
         renderer: "canvas",
       });
       chartRef.current.setOption(
-        chartOption(definitionRef.current, readTheme(elementRef.current)),
+        buildReportChartOption(
+          definitionRef.current,
+          readTheme(elementRef.current),
+        ),
         true,
       );
       observer = new ResizeObserver(() => chartRef.current?.resize());
@@ -268,10 +274,15 @@ export default function ReportChartClient({
   useEffect(() => {
     if (!ready || !chartRef.current || !elementRef.current) return;
     chartRef.current.setOption(
-      chartOption(definitionRef.current, readTheme(elementRef.current)),
+      buildReportChartOption(
+        definitionRef.current,
+        readTheme(elementRef.current),
+      ),
       true,
     );
   }, [definitionKey, ready]);
+
+  if (!enoughData) return null;
 
   return (
     <div

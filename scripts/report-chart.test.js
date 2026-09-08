@@ -73,8 +73,30 @@ function loadChart() {
   return mod.exports;
 }
 
+function loadClient() {
+  const source = fs.readFileSync(CLIENT, "utf8");
+  const { outputText } = ts.transpileModule(source, {
+    compilerOptions: {
+      jsx: ts.JsxEmit.React,
+      target: ts.ScriptTarget.ES2020,
+      module: ts.ModuleKind.CommonJS,
+    },
+  });
+  const mod = { exports: {} };
+  const requireShim = (id) => (id.endsWith(".css") ? cssStub() : require(id));
+  new Function("require", "module", "exports", outputText)(
+    requireShim,
+    mod,
+    mod.exports,
+  );
+  return mod.exports;
+}
+
 const exported = loadChart();
 const ReportChart = exported.default;
+const clientExported = loadClient();
+const ReportChartClient = clientExported.default;
+const { buildReportChartOption, selectEChartsModules } = clientExported;
 
 const fixture = {
   id: "merges",
@@ -153,17 +175,89 @@ test("server rendering does not touch browser globals or run the client renderer
   }
 });
 
-test("the client renderer keeps the ECharts boundary browser-only and gap-safe", () => {
-  const source = fs.readFileSync(CLIENT, "utf8");
+test("the client option disables animation and preserves null gaps and zeroes", () => {
+  const option = buildReportChartOption(
+    {
+      ...fixture,
+      minimumPoints: 1,
+      labels: ["2026-10-01", "2026-10-02", "2026-10-03"],
+      series: [{ id: "merged", label: "Merged", values: [0, null, 12] }],
+    },
+    {
+      accent: "accent",
+      border: "border",
+      grid: "grid",
+      muted: "muted",
+      series: ["series-1"],
+      text: "text",
+    },
+  );
 
-  assert.match(source, /import\("echarts\/core"\)/);
-  assert.match(source, /import\("echarts\/charts"\)/);
-  assert.match(source, /import\("echarts\/components"\)/);
-  assert.match(source, /import\("echarts\/renderers"\)/);
-  assert.match(source, /connectNulls:\s*false/);
-  assert.match(source, /animation:\s*false/);
-  assert.match(source, /ResizeObserver/);
-  assert.match(source, /\.dispose\(\)/);
+  assert.equal(option.animation, false);
+  assert.deepEqual(option.series[0].data, [0, null, 12]);
+  assert.equal(option.series[0].connectNulls, false);
+});
+
+test("the client module registration selects only the kind-specific modules", () => {
+  const modules = {
+    charts: {
+      BarChart: "bar",
+      HeatmapChart: "heatmap",
+      LineChart: "line",
+    },
+    components: {
+      CalendarComponent: "calendar",
+      GridComponent: "grid",
+      LegendComponent: "legend",
+      TooltipComponent: "tooltip",
+      VisualMapComponent: "visual-map",
+    },
+    renderers: { CanvasRenderer: "canvas" },
+  };
+
+  assert.deepEqual(selectEChartsModules("line", modules), [
+    "line",
+    "grid",
+    "legend",
+    "tooltip",
+    "canvas",
+  ]);
+  assert.deepEqual(selectEChartsModules("grouped-bar", modules), [
+    "bar",
+    "grid",
+    "legend",
+    "tooltip",
+    "canvas",
+  ]);
+  assert.deepEqual(selectEChartsModules("stacked-bar", modules), [
+    "bar",
+    "grid",
+    "legend",
+    "tooltip",
+    "canvas",
+  ]);
+  assert.deepEqual(selectEChartsModules("lane-status", modules), [
+    "bar",
+    "grid",
+    "legend",
+    "tooltip",
+    "canvas",
+  ]);
+  assert.deepEqual(selectEChartsModules("calendar", modules), [
+    "heatmap",
+    "calendar",
+    "tooltip",
+    "visual-map",
+    "canvas",
+  ]);
+});
+
+test("the client renderer does not create an empty image below minimum history", () => {
+  const markup = renderToStaticMarkup(
+    React.createElement(ReportChartClient, { definition: fixture }),
+  );
+
+  assert.equal(markup, "");
 });
 
 test("chart styles follow the site theme and reduced-motion preference", () => {

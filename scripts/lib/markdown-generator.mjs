@@ -69,6 +69,20 @@ export function getReportSlug(date) {
 }
 
 /**
+ * Serialize one report chart definition as an MDX component tag.
+ *
+ * The report generator consumes this helper when Reports 2.0 snapshot
+ * integration is added; keeping serialization here makes the contract
+ * testable without changing the current positional generator API.
+ *
+ * @param {Object} definition - JSON-serializable ReportChartDefinition
+ * @returns {string} MDX ReportChart tag
+ */
+export function generateReportChartTag(definition) {
+  return `<ReportChart definition={${JSON.stringify(definition)}} />`;
+}
+
+/**
  * Generate complete report markdown
  *
  * @param {Array} plannedItems - Items from project board completed during period
