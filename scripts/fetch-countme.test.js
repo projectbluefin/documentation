@@ -123,6 +123,20 @@ test("normalizeVariant returns bluefin-lts for Bluefin LTS, not bluefin", () => 
   assert.notEqual(normalizeVariant("Bluefin LTS"), "bluefin");
 });
 
+test("normalizeVariant recognises Dakota without folding it into flagship Bluefin", () => {
+  assert.equal(normalizeVariant("Dakota"), "dakota");
+  assert.equal(normalizeVariant("bluefin-dakota"), "dakota");
+  assert.equal(normalizeVariant("Dakotaraptor"), "dakota");
+  assert.notEqual(normalizeVariant("bluefin-dakota"), "bluefin");
+});
+
+test("normalizeVariant recognises Utah without folding it into flagship Bluefin", () => {
+  assert.equal(normalizeVariant("Utah"), "utah");
+  assert.equal(normalizeVariant("bluefin-utah"), "utah");
+  assert.equal(normalizeVariant("Utahraptor"), "utah");
+  assert.notEqual(normalizeVariant("bluefin-utah"), "bluefin");
+});
+
 // ── aggregateWeeks ───────────────────────────────────────────────────────
 //
 // The rules under test are ported from ublue-os/countme:data_processing.py.
@@ -177,6 +191,29 @@ test("aggregateWeeks counts Bluefin LTS across its own repos, having no fedora-N
   ]);
   const weeks = aggregateWeeks(rows);
   assert.equal(weeks[0]["bluefin-lts"], 159);
+  assert.equal(weeks[0].bluefin, undefined);
+});
+
+test("aggregateWeeks counts Dakota across its own repos, having no fedora-N repo", () => {
+  // Dakota is GNOME OS assembled from source with Apache BuildStream — there
+  // are no RPMs, so it has no fedora-N repo to restrict to.
+  const rows = parseAll([
+    row({ os_name: "bluefin-dakota", repo_tag: "gnome-os", hits: 20 }),
+    row({ os_name: "bluefin-dakota", repo_tag: "gnome-os-testing", hits: 3 }),
+  ]);
+  const weeks = aggregateWeeks(rows);
+  assert.equal(weeks[0].dakota, 23);
+  assert.equal(weeks[0].bluefin, undefined);
+});
+
+test("aggregateWeeks counts Utah restricted to its fedora-N repo", () => {
+  const rows = parseAll([
+    row({ os_name: "bluefin-utah", repo_tag: "fedora-44", hits: 8 }),
+    // A non-base repo hit from the same system must not double count.
+    row({ os_name: "bluefin-utah", repo_tag: "updates-released-f44", hits: 8 }),
+  ]);
+  const weeks = aggregateWeeks(rows);
+  assert.equal(weeks[0].utah, 8);
   assert.equal(weeks[0].bluefin, undefined);
 });
 
