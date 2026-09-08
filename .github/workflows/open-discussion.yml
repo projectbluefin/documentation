@@ -108,7 +108,7 @@ jobs:
                   stem = os.path.splitext(os.path.basename(filepath))[0]
                   slug = re.sub(r"^\d{4}-\d{2}-\d{2}-", "", stem)
 
-              discussion_title = f"{title} | Bluefin"
+              discussion_title = title
               post_url = f"https://docs.projectbluefin.io/blog/{slug}"
 
               print(f"\nProcessing: {filepath}")
