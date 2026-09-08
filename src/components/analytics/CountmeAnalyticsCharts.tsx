@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from "react";
+import Link from "@docusaurus/Link";
 import Heading from "@theme/Heading";
 import EChart from "../factory/EChart";
 import Unavailable from "../factory/Unavailable";
@@ -14,6 +15,8 @@ export interface CountmeWeek {
   aurora?: number;
   bazzite?: number;
   fedora?: number;
+  dakota?: number;
+  utah?: number;
   [key: string]: string | number | undefined;
 }
 
@@ -28,68 +31,113 @@ export interface CountmeDataset {
   stateReason?: string | null;
 }
 
-type LegacyRange = "12w" | "24w" | "all";
+type HeroRange = "12w" | "24w" | "all";
+type HeroMode = "unified" | "split";
 type RangeOption = "4w" | "12w" | "all";
 type ViewMode = "workstations" | "all-ecosystem" | "with-fedora";
 
-const IMAGE_CONFIGS = [
-  {
-    id: "bazzite",
-    name: "Bazzite",
-    badge: "Gaming & Handhelds",
-    badgeClass: styles.badgeGaming,
-    desc: "Gaming-specialized image for Steam Deck, ROG Ally, Lenovo Legion Go, and gaming PCs.",
-    color: "#f0883e",
-  },
+interface ProjectBluefinImageSpec {
+  id: "bluefin" | "bluefin-lts" | "dakota" | "utah";
+  name: string;
+  badge: string;
+  edition: string;
+  stream: string;
+  desc: string;
+  color: string;
+  link: string;
+  status: "active" | "bootstrapping" | "provisioning";
+  statusText: string;
+}
+
+const BLUEFIN_FAMILY_IMAGES: ProjectBluefinImageSpec[] = [
   {
     id: "bluefin",
     name: "Bluefin",
-    badge: "Developer Workstation",
-    badgeClass: styles.badge,
-    desc: "Flagship cloud-native workstation with devcontainers, eBPF tooling, and dedicated developer ergonomics.",
+    badge: "Fedora bootc",
+    edition: "Flagship Workstation",
+    stream: ":stable (GNOME 50.1 / Linux 7.0)",
+    desc: "Flagship cloud-native developer workstation with devcontainers, eBPF tooling, and dedicated developer ergonomics.",
     color: "#58a6ff",
-  },
-  {
-    id: "aurora",
-    name: "Aurora",
-    badge: "KDE Plasma Desktop",
-    badgeClass: styles.badgeDesktop,
-    desc: "Cloud-native desktop featuring KDE Plasma, customized for speed and polished productivity.",
-    color: "#39d2c0",
+    link: "/downloads",
+    status: "active",
+    statusText: "Active Tracking",
   },
   {
     id: "bluefin-lts",
     name: "Bluefin LTS",
-    badge: "Enterprise Base",
-    badgeClass: styles.badgeEnterprise,
-    desc: "CentOS Stream 10-based release for long-term deployments (counted via EPEL; represents a floor).",
+    badge: "CentOS Stream 10 bootc",
+    edition: "Enterprise Workstation",
+    stream: ":lts (GNOME 47 / Linux 6.12 LTS)",
+    desc: "Long-term support release providing 10-year platform stability, certified enterprise kernel base, and rock-solid reliability.",
     color: "#bc8cff",
+    link: "/lts",
+    status: "active",
+    statusText: "Active Tracking",
   },
-] as const;
+  {
+    id: "dakota",
+    name: "Project Bluefin Dakota",
+    badge: "GNOME OS bootc",
+    edition: "Next-Gen BuildStream",
+    stream: ":stable & :testing (GNOME 50)",
+    desc: "Built from source with Apache BuildStream. Eschews traditional packaging for pure upstream GNOME delivering a direct feedback loop.",
+    color: "#39d2c0",
+    link: "/dakota",
+    status: "bootstrapping",
+    statusText: "Alpha · Telemetry Activating",
+  },
+  {
+    id: "utah",
+    name: "Project Bluefin Utah",
+    badge: "Hummingbird bootc",
+    edition: "Modular Hummingbird",
+    stream: ":testing (GNOME 51)",
+    desc: "Hardened minimal Fedora Hummingbird bootable base with Bluefin package contract and modular GNOME 51 desktop layer.",
+    color: "#f0883e",
+    link: "/utah",
+    status: "provisioning",
+    statusText: "Pre-alpha · Telemetry Provisioning",
+  },
+];
 
 export default function CountmeAnalyticsCharts(): React.JSX.Element {
   const data = countmeHistoryData as unknown as CountmeDataset;
   const weeks = data?.weeks || [];
 
-  const [legacyRange, setLegacyRange] = useState<LegacyRange>("all");
+  const [heroRange, setHeroRange] = useState<HeroRange>("all");
+  const [heroMode, setHeroMode] = useState<HeroMode>("unified");
   const [range, setRange] = useState<RangeOption>("12w");
   const [viewMode, setViewMode] = useState<ViewMode>("all-ecosystem");
 
   const latestWeek = weeks[weeks.length - 1] || ({} as CountmeWeek);
-  const currentBluefin = Number(latestWeek.bluefin) || 0;
+  const latestBluefin = Number(latestWeek.bluefin) || 0;
+  const latestBluefinLts = Number(latestWeek["bluefin-lts"]) || 0;
+  const latestDakota = Number(latestWeek.dakota) || 0;
+  const latestUtah = Number(latestWeek.utah) || 0;
+  const currentTotalBluefin =
+    latestBluefin + latestBluefinLts + latestDakota + latestUtah;
 
-  // Filtered weeks for Legacy Bluefins chart
-  const legacyFilteredWeeks = useMemo(() => {
-    if (legacyRange === "12w") return weeks.slice(-12);
-    if (legacyRange === "24w") return weeks.slice(-24);
+  // Filtered weeks for Hero Bluefin chart
+  const heroFilteredWeeks = useMemo(() => {
+    if (heroRange === "12w") return weeks.slice(-12);
+    if (heroRange === "24w") return weeks.slice(-24);
     return weeks;
-  }, [weeks, legacyRange]);
+  }, [weeks, heroRange]);
 
-  // First recorded bluefin count for delta computation
-  const initialBluefin = Number(weeks[0]?.bluefin) || currentBluefin;
+  // Delta calculation for Bluefin fleet
+  const firstWeek = weeks[0] || ({} as CountmeWeek);
+  const initialTotalBluefin =
+    (Number(firstWeek.bluefin) || 0) +
+      (Number(firstWeek["bluefin-lts"]) || 0) +
+      (Number(firstWeek.dakota) || 0) +
+      (Number(firstWeek.utah) || 0) || currentTotalBluefin;
+
   const bluefinDeltaPct =
-    initialBluefin > 0
-      ? (((currentBluefin - initialBluefin) / initialBluefin) * 100).toFixed(1)
+    initialTotalBluefin > 0
+      ? (
+          ((currentTotalBluefin - initialTotalBluefin) / initialTotalBluefin) *
+          100
+        ).toFixed(1)
       : "0.0";
 
   // Filtered weeks for comparative time-series charts
@@ -99,29 +147,31 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
     return weeks;
   }, [weeks, range]);
 
-  // Ecosystem totals (excluding Fedora base)
-  const peerImages = ["bazzite", "bluefin", "aurora", "bluefin-lts"] as const;
+  // Ecosystem totals (Bazzite + Total Bluefin fleet + Aurora)
   const peerTotal = useMemo(() => {
-    return peerImages.reduce(
-      (sum, key) => sum + (Number(latestWeek[key]) || 0),
-      0,
-    );
-  }, [latestWeek]);
+    const bazzite = Number(latestWeek.bazzite) || 0;
+    const aurora = Number(latestWeek.aurora) || 0;
+    return bazzite + currentTotalBluefin + aurora;
+  }, [latestWeek, currentTotalBluefin]);
 
   // Real finite point counts for EChart to prevent bypassing accumulating data
-  const realLegacyPoints = useMemo(() => {
-    return legacyFilteredWeeks.filter(
-      (w) => typeof w.bluefin === "number" && !Number.isNaN(w.bluefin),
+  const realHeroPoints = useMemo(() => {
+    return heroFilteredWeeks.filter(
+      (w) =>
+        (typeof w.bluefin === "number" && !Number.isNaN(w.bluefin)) ||
+        (typeof w["bluefin-lts"] === "number" &&
+          !Number.isNaN(w["bluefin-lts"])),
     ).length;
-  }, [legacyFilteredWeeks]);
+  }, [heroFilteredWeeks]);
 
   const realComparativePoints = useMemo(() => {
-    return filteredWeeks.filter((w) =>
-      peerImages.some(
-        (key) => typeof w[key] === "number" && !Number.isNaN(w[key]),
-      ),
+    return filteredWeeks.filter(
+      (w) =>
+        (typeof w.bazzite === "number" && !Number.isNaN(w.bazzite)) ||
+        (typeof w.bluefin === "number" && !Number.isNaN(w.bluefin)) ||
+        (typeof w.aurora === "number" && !Number.isNaN(w.aurora)),
     ).length;
-  }, [filteredWeeks, peerImages]);
+  }, [filteredWeeks]);
 
   // Shared domain for workstation small multiples
   const workstationDomain = useMemo<[number, number]>(() => {
@@ -140,11 +190,64 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
     return [Math.max(0, min), Math.max(100, max)];
   }, [weeks]);
 
-  // 1. "Legacy Bluefins" EChart option
-  const legacyChartOption = useMemo(() => {
-    const labels = legacyFilteredWeeks.map((w) => w.week);
-    const bluefinSeries = gapSafe(
-      legacyFilteredWeeks.map((w) => w.bluefin ?? null),
+  // 1. "Bluefin Systems (Total Fleet)" EChart option
+  const heroChartOption = useMemo(() => {
+    const labels = heroFilteredWeeks.map((w) => w.week);
+
+    if (heroMode === "split") {
+      const flagshipSeries = gapSafe(
+        heroFilteredWeeks.map((w) => w.bluefin ?? null),
+      );
+      const ltsSeries = gapSafe(
+        heroFilteredWeeks.map((w) => w["bluefin-lts"] ?? null),
+      );
+
+      return {
+        xAxis: {
+          type: "category",
+          data: labels,
+        },
+        yAxis: {
+          type: "value",
+          min: "dataMin",
+        },
+        series: [
+          {
+            name: "Bluefin Flagship",
+            type: "line",
+            data: flagshipSeries,
+            smooth: true,
+            showSymbol: true,
+            symbolSize: 6,
+            itemStyle: { color: "#58a6ff" },
+            lineStyle: { width: 3, color: "#58a6ff" },
+            connectNulls: false,
+          },
+          {
+            name: "Bluefin LTS",
+            type: "line",
+            data: ltsSeries,
+            smooth: true,
+            showSymbol: true,
+            symbolSize: 6,
+            itemStyle: { color: "#bc8cff" },
+            lineStyle: { width: 3, color: "#bc8cff", type: [6, 3] },
+            connectNulls: false,
+          },
+        ],
+      };
+    }
+
+    // Unified fleet total series
+    const totalSeries = gapSafe(
+      heroFilteredWeeks.map((w) => {
+        const bf = typeof w.bluefin === "number" ? w.bluefin : 0;
+        const lts = typeof w["bluefin-lts"] === "number" ? w["bluefin-lts"] : 0;
+        const dakota = typeof w.dakota === "number" ? w.dakota : 0;
+        const utah = typeof w.utah === "number" ? w.utah : 0;
+        const sum = bf + lts + dakota + utah;
+        return sum > 0 ? sum : null;
+      }),
     );
 
     return {
@@ -158,9 +261,9 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
       },
       series: [
         {
-          name: "Bluefin",
+          name: "Bluefin Family (All Systems)",
           type: "line",
-          data: bluefinSeries,
+          data: totalSeries,
           smooth: true,
           showSymbol: true,
           symbolSize: 6,
@@ -175,7 +278,7 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
               y2: 1,
               colorStops: [
                 { offset: 0, color: "rgba(88, 166, 255, 0.45)" },
-                { offset: 1, color: "rgba(88, 166, 255, 0.02)" },
+                { offset: 1, color: "rgba(57, 210, 192, 0.05)" },
               ],
             },
           },
@@ -183,7 +286,7 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
         },
       ],
     };
-  }, [legacyFilteredWeeks]);
+  }, [heroFilteredWeeks, heroMode]);
 
   // 2. Comparative EChart configuration
   const comparativeChartOption = useMemo(() => {
@@ -212,32 +315,54 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
       });
     }
 
-    seriesList.push(
-      {
-        name: "Bluefin",
+    if (viewMode === "workstations") {
+      seriesList.push(
+        {
+          name: "Bluefin Flagship",
+          type: "line",
+          data: gapSafe(filteredWeeks.map((w) => w.bluefin ?? null)),
+          connectNulls: false,
+          itemStyle: { color: seriesColor(0) },
+          lineStyle: { type: seriesDash(0) },
+        },
+        {
+          name: "Bluefin LTS",
+          type: "line",
+          data: gapSafe(filteredWeeks.map((w) => w["bluefin-lts"] ?? null)),
+          connectNulls: false,
+          itemStyle: { color: seriesColor(1) },
+          lineStyle: { type: seriesDash(1) },
+        },
+      );
+    } else {
+      // Total Bluefin family
+      seriesList.push({
+        name: "Bluefin Family",
         type: "line",
-        data: gapSafe(filteredWeeks.map((w) => w.bluefin ?? null)),
+        data: gapSafe(
+          filteredWeeks.map((w) => {
+            const sum =
+              (Number(w.bluefin) || 0) +
+              (Number(w["bluefin-lts"]) || 0) +
+              (Number(w.dakota) || 0) +
+              (Number(w.utah) || 0);
+            return sum > 0 ? sum : null;
+          }),
+        ),
         connectNulls: false,
         itemStyle: { color: seriesColor(0) },
         lineStyle: { type: seriesDash(0) },
-      },
-      {
-        name: "Aurora",
-        type: "line",
-        data: gapSafe(filteredWeeks.map((w) => w.aurora ?? null)),
-        connectNulls: false,
-        itemStyle: { color: seriesColor(2) },
-        lineStyle: { type: seriesDash(2) },
-      },
-      {
-        name: "Bluefin LTS",
-        type: "line",
-        data: gapSafe(filteredWeeks.map((w) => w["bluefin-lts"] ?? null)),
-        connectNulls: false,
-        itemStyle: { color: seriesColor(1) },
-        lineStyle: { type: seriesDash(1) },
-      },
-    );
+      });
+    }
+
+    seriesList.push({
+      name: "Aurora (KDE)",
+      type: "line",
+      data: gapSafe(filteredWeeks.map((w) => w.aurora ?? null)),
+      connectNulls: false,
+      itemStyle: { color: seriesColor(2) },
+      lineStyle: { type: seriesDash(2) },
+    });
 
     return {
       xAxis: { type: "category", data: labels },
@@ -259,25 +384,47 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
     );
   }
 
+  // Distribution calculations
+  const bazziteCount = Number(latestWeek.bazzite) || 0;
+  const auroraCount = Number(latestWeek.aurora) || 0;
+  const bazzitePct = peerTotal > 0 ? (bazziteCount / peerTotal) * 100 : 0;
+  const bluefinPct =
+    peerTotal > 0 ? (currentTotalBluefin / peerTotal) * 100 : 0;
+  const auroraPct = peerTotal > 0 ? (auroraCount / peerTotal) * 100 : 0;
+
   return (
     <div className={styles.container}>
-      {/* ── 1. Hero: Legacy Bluefins ────────────────────────────────────────── */}
+      {/* ── 1. Hero: Bluefin Systems (Total Fleet) ─────────────────────────── */}
       <div className={styles.heroCard}>
         <div className={styles.heroHeader}>
           <div className={styles.heroTitleGroup}>
             <Heading as="h3" className={styles.heroTitle}>
-              Legacy Bluefins
-              <span className={styles.heroBadge}>ublue-os historical</span>
+              Bluefin Systems
+              <span className={styles.heroBadge}>Source of Truth</span>
             </Heading>
             <p className={styles.heroSubtitle}>
-              Canonical weekly active systems curve ported from ublue-os/countme
-              methodology
+              Canonical weekly active systems across all Project Bluefin
+              workstation variants
             </p>
+            <div className={styles.heroSubBadges}>
+              <span
+                className={`${styles.heroSubBadge} ${styles.heroSubBadgeHighlight}`}
+              >
+                Flagship: {latestBluefin.toLocaleString()} (
+                {((latestBluefin / currentTotalBluefin) * 100).toFixed(1)}%)
+              </span>
+              <span className={styles.heroSubBadge}>
+                LTS: {latestBluefinLts.toLocaleString()} (
+                {((latestBluefinLts / currentTotalBluefin) * 100).toFixed(1)}%)
+              </span>
+              <span className={styles.heroSubBadge}>Dakota: Bootstrapping</span>
+              <span className={styles.heroSubBadge}>Utah: Provisioning</span>
+            </div>
           </div>
 
           <div className={styles.heroKPI}>
             <div className={styles.heroNumber}>
-              {currentBluefin.toLocaleString()}
+              {currentTotalBluefin.toLocaleString()}
             </div>
             <div className={styles.heroMeta}>
               <span style={{ fontWeight: 700, color: "#39d2c0" }}>
@@ -290,12 +437,29 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
 
         <div className={styles.chartControls}>
           <div className={styles.toggleGroup}>
-            {(["12w", "24w", "all"] as LegacyRange[]).map((r) => (
+            <button
+              type="button"
+              className={`${styles.toggleBtn} ${heroMode === "unified" ? styles.toggleBtnActive : ""}`}
+              onClick={() => setHeroMode("unified")}
+            >
+              Unified Fleet
+            </button>
+            <button
+              type="button"
+              className={`${styles.toggleBtn} ${heroMode === "split" ? styles.toggleBtnActive : ""}`}
+              onClick={() => setHeroMode("split")}
+            >
+              By Edition
+            </button>
+          </div>
+
+          <div className={styles.toggleGroup}>
+            {(["12w", "24w", "all"] as HeroRange[]).map((r) => (
               <button
                 key={r}
                 type="button"
-                className={`${styles.toggleBtn} ${legacyRange === r ? styles.toggleBtnActive : ""}`}
-                onClick={() => setLegacyRange(r)}
+                className={`${styles.toggleBtn} ${heroRange === r ? styles.toggleBtnActive : ""}`}
+                onClick={() => setHeroRange(r)}
               >
                 {r === "12w"
                   ? "12 Weeks"
@@ -308,24 +472,131 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
         </div>
 
         <EChart
-          option={legacyChartOption}
-          title="Legacy Bluefins"
-          summary={`Legacy Bluefins historical weekly active systems: currently ${currentBluefin.toLocaleString()} systems as of week ${latestWeek.week}, up ${bluefinDeltaPct}% across ${weeks.length} tracked weeks.`}
-          points={realLegacyPoints}
+          option={heroChartOption}
+          title="Bluefin Systems"
+          summary={`Project Bluefin weekly active systems: currently ${currentTotalBluefin.toLocaleString()} systems as of week ${latestWeek.week}, up ${bluefinDeltaPct}% across ${weeks.length} tracked weeks.`}
+          points={realHeroPoints}
           minPoints={2}
           height={320}
-          tableCaption="Legacy Bluefins weekly active systems history"
+          tableCaption="Project Bluefin weekly active systems history"
         />
 
         <div className={styles.chartNote}>
-          <strong>Lineage:</strong> This replaces the legacy matplotlib chart
-          with native interactive rendering while preserving exact numerical
-          parity with <code>ublue-os/countme:growth_bluefins.svg</code> and
-          project README badges.
+          <strong>Lineage:</strong> Single source of truth for Project Bluefin,
+          continuing the canonical baseline from <code>ublue-os/bluefin</code>.
         </div>
       </div>
 
-      {/* ── 2. Cloud-Native Ecosystem Overview ─────────────────────────────── */}
+      {/* ── 2. Project Bluefin Image Family ─────────────────────────────────── */}
+      <div className={styles.familySection}>
+        <div className={styles.sectionHeading}>
+          Project Bluefin Image Family
+        </div>
+        <div className={styles.sectionSubtext}>
+          Workstation operating system images built, maintained, and
+          instrumented by Project Bluefin
+        </div>
+
+        <div className={styles.familyGrid}>
+          {BLUEFIN_FAMILY_IMAGES.map((img) => {
+            const count =
+              img.id === "bluefin"
+                ? latestBluefin
+                : img.id === "bluefin-lts"
+                  ? latestBluefinLts
+                  : img.id === "dakota"
+                    ? latestDakota
+                    : latestUtah;
+
+            const isTracked = count > 0;
+            const history = isTracked
+              ? weeks.slice(-12).map((w) => (w[img.id] as number) ?? null)
+              : [];
+
+            return (
+              <div key={img.id} className={styles.familyCard}>
+                <div className={styles.familyCardHeader}>
+                  <div className={styles.familyCardTitleGroup}>
+                    <Heading as="h4" className={styles.familyName}>
+                      {img.name}
+                    </Heading>
+                    <span className={styles.familyEdition}>{img.edition}</span>
+                  </div>
+                  <span
+                    className={`${styles.statusPill} ${
+                      img.status === "active"
+                        ? styles.statusActive
+                        : styles.statusPending
+                    }`}
+                  >
+                    {img.statusText}
+                  </span>
+                </div>
+
+                <div className={styles.countRow}>
+                  <span className={styles.countValue}>
+                    {isTracked
+                      ? count.toLocaleString()
+                      : img.status === "bootstrapping"
+                        ? "Initial"
+                        : "Pending"}
+                  </span>
+                  {isTracked && currentTotalBluefin > 0 && (
+                    <span className={styles.sharePct}>
+                      {((count / currentTotalBluefin) * 100).toFixed(1)}% fleet
+                    </span>
+                  )}
+                </div>
+
+                <p className={styles.cardDesc}>{img.desc}</p>
+
+                <div className={styles.familyMetaRow}>
+                  <div className={styles.familyMetaItem}>
+                    <span className={styles.familyMetaLabel}>Base Stack</span>
+                    <span className={styles.familyMetaValue}>{img.badge}</span>
+                  </div>
+                  <div className={styles.familyMetaItem}>
+                    <span className={styles.familyMetaLabel}>Streams</span>
+                    <span className={styles.familyMetaValue}>{img.stream}</span>
+                  </div>
+                </div>
+
+                <div className={styles.cardSparkline}>
+                  <span className={styles.sparklineLabel}>
+                    {isTracked ? "12-week trend" : "Telemetry status"}
+                  </span>
+                  <Sparkline
+                    data={history}
+                    variant="line"
+                    domain={workstationDomain}
+                    width={220}
+                    height={32}
+                    color={img.color}
+                    areaColor="currentColor"
+                    areaOpacity={0.12}
+                    showEnd={isTracked}
+                    minPoints={2}
+                    emptyLabel={
+                      img.status === "bootstrapping"
+                        ? "accumulating telemetry"
+                        : "provisioning telemetry"
+                    }
+                    label={`${img.name} 12-week adoption trend: currently ${count.toLocaleString()}`}
+                  />
+                </div>
+
+                <div className={styles.familyFooter}>
+                  <Link to={img.link} className={styles.familyLink}>
+                    View {img.name} Details &rarr;
+                  </Link>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* ── 3. Cloud-Native Ecosystem Overview ─────────────────────────────── */}
       <div className={styles.shareSection}>
         <div className={styles.sectionHeading}>
           Cloud-Native Desktop Ecosystem
@@ -341,93 +612,56 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
           role="region"
           aria-label={`Desktop ecosystem distribution across ${peerTotal.toLocaleString()} systems`}
         >
-          {IMAGE_CONFIGS.map((cfg) => {
-            const count = Number(latestWeek[cfg.id]) || 0;
-            const pct = peerTotal > 0 ? (count / peerTotal) * 100 : 0;
-            return (
-              <div
-                key={cfg.id}
-                className={styles.segment}
-                style={{
-                  width: `${pct}%`,
-                  backgroundColor: cfg.color,
-                }}
-                title={`${cfg.name}: ${count.toLocaleString()} (${pct.toFixed(1)}%)`}
-              />
-            );
-          })}
+          <div
+            className={styles.segment}
+            style={{ width: `${bazzitePct}%`, backgroundColor: "#f0883e" }}
+            title={`Bazzite (Gaming): ${bazziteCount.toLocaleString()} (${bazzitePct.toFixed(1)}%)`}
+          />
+          <div
+            className={styles.segment}
+            style={{ width: `${bluefinPct}%`, backgroundColor: "#58a6ff" }}
+            title={`Bluefin Family: ${currentTotalBluefin.toLocaleString()} (${bluefinPct.toFixed(1)}%)`}
+          />
+          <div
+            className={styles.segment}
+            style={{ width: `${auroraPct}%`, backgroundColor: "#39d2c0" }}
+            title={`Aurora (KDE): ${auroraCount.toLocaleString()} (${auroraPct.toFixed(1)}%)`}
+          />
         </div>
 
         {/* Legend */}
         <div className={styles.shareLegend}>
-          {IMAGE_CONFIGS.map((cfg) => {
-            const count = Number(latestWeek[cfg.id]) || 0;
-            const pct =
-              peerTotal > 0 ? ((count / peerTotal) * 100).toFixed(1) : "0.0";
-            return (
-              <div key={cfg.id} className={styles.legendItem}>
-                <span
-                  className={styles.legendDot}
-                  style={{ backgroundColor: cfg.color }}
-                />
-                <span className={styles.legendLabel}>{cfg.name}:</span>
-                <span className={styles.legendValue}>
-                  {count.toLocaleString()} ({pct}%)
-                </span>
-              </div>
-            );
-          })}
+          <div className={styles.legendItem}>
+            <span
+              className={styles.legendDot}
+              style={{ backgroundColor: "#f0883e" }}
+            />
+            <span className={styles.legendLabel}>Bazzite (Gaming):</span>
+            <span className={styles.legendValue}>
+              {bazziteCount.toLocaleString()} ({bazzitePct.toFixed(1)}%)
+            </span>
+          </div>
+          <div className={styles.legendItem}>
+            <span
+              className={styles.legendDot}
+              style={{ backgroundColor: "#58a6ff" }}
+            />
+            <span className={styles.legendLabel}>Bluefin Family:</span>
+            <span className={styles.legendValue}>
+              {currentTotalBluefin.toLocaleString()} ({bluefinPct.toFixed(1)}%)
+            </span>
+          </div>
+          <div className={styles.legendItem}>
+            <span
+              className={styles.legendDot}
+              style={{ backgroundColor: "#39d2c0" }}
+            />
+            <span className={styles.legendLabel}>Aurora (KDE):</span>
+            <span className={styles.legendValue}>
+              {auroraCount.toLocaleString()} ({auroraPct.toFixed(1)}%)
+            </span>
+          </div>
         </div>
-      </div>
-
-      {/* ── 3. Image Breakdown Cards ────────────────────────────────────────── */}
-      <div className={styles.kpiGrid}>
-        {IMAGE_CONFIGS.map((cfg) => {
-          const count = Number(latestWeek[cfg.id]) || 0;
-          const pct =
-            peerTotal > 0 ? ((count / peerTotal) * 100).toFixed(1) : "0.0";
-          const history = weeks
-            .slice(-12)
-            .map((w) => (w[cfg.id] as number) ?? null);
-
-          // Shared domain for workstations, separate domain for high-scale gaming
-          const domain = cfg.id === "bazzite" ? undefined : workstationDomain;
-
-          return (
-            <div key={cfg.id} className={styles.kpiCard}>
-              <div className={styles.cardHeader}>
-                <span className={styles.imageTitle}>{cfg.name}</span>
-                <span className={`${styles.badge} ${cfg.badgeClass}`}>
-                  {cfg.badge}
-                </span>
-              </div>
-              <div className={styles.countRow}>
-                <span className={styles.countValue}>
-                  {count.toLocaleString()}
-                </span>
-                <span className={styles.sharePct}>{pct}%</span>
-              </div>
-              <p className={styles.cardDesc}>{cfg.desc}</p>
-              <div className={styles.cardSparkline}>
-                <span className={styles.sparklineLabel}>12-week trend</span>
-                <Sparkline
-                  data={history}
-                  variant="line"
-                  domain={domain}
-                  width={200}
-                  height={32}
-                  color={cfg.color}
-                  areaColor="currentColor"
-                  areaOpacity={0.12}
-                  showEnd={true}
-                  minPoints={2}
-                  emptyLabel="accumulating data"
-                  label={`${cfg.name} 12-week adoption trend: currently ${count.toLocaleString()}`}
-                />
-              </div>
-            </div>
-          );
-        })}
       </div>
 
       {/* ── 4. Interactive Comparative Trajectory ───────────────────────────── */}
@@ -446,7 +680,7 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
               className={`${styles.toggleBtn} ${viewMode === "workstations" ? styles.toggleBtnActive : ""}`}
               onClick={() => setViewMode("workstations")}
             >
-              Workstations (Bluefin & Aurora)
+              Workstations (Flagship, LTS & Aurora)
             </button>
             <button
               type="button"
@@ -478,7 +712,7 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
         <EChart
           option={comparativeChartOption}
           title="Comparative Image Trajectories"
-          summary={`Comparative adoption trajectories across cloud-native images over ${filteredWeeks.length} weeks. Latest week (${latestWeek.week}): Bazzite ${Number(latestWeek.bazzite || 0).toLocaleString()} (Gaming), Bluefin ${Number(latestWeek.bluefin || 0).toLocaleString()} (Workstation), Aurora ${Number(latestWeek.aurora || 0).toLocaleString()} (KDE), Bluefin LTS ${Number(latestWeek["bluefin-lts"] || 0).toLocaleString()} (CentOS EPEL floor).`}
+          summary={`Comparative adoption trajectories across cloud-native images over ${filteredWeeks.length} weeks. Latest week (${latestWeek.week}): Bazzite ${Number(latestWeek.bazzite || 0).toLocaleString()} (Gaming), Bluefin Family ${currentTotalBluefin.toLocaleString()} (Workstations), Aurora ${Number(latestWeek.aurora || 0).toLocaleString()} (KDE).`}
           points={realComparativePoints}
           minPoints={2}
           height={320}
@@ -486,11 +720,10 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
         />
 
         <div className={styles.chartNote}>
-          <strong>Methodology:</strong> Derived from Fedora Countme weekly
-          reporting using the canonical <code>ublue-countme-v1</code> counting
-          rules (one base repository per device, excluding legacy sys_age=-1
-          rows). Bluefin LTS is CentOS Stream based and counted via EPEL, which
-          acts as a lower-bound floor.
+          <strong>Methodology:</strong> Derived from weekly Countme telemetry
+          tracking with <code>ublue-countme-v1</code> baseline aggregation,
+          supplemented by first-party <code>countme.projectbluefin.io</code>{" "}
+          pings.
         </div>
       </div>
     </div>
