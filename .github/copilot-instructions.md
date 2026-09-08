@@ -32,3 +32,11 @@ data under `static/data/`.
 - Use focused `node --test scripts/<name>.test.js` checks during development.
   Run `just check` before every commit. Use `npm run build:ci` to validate a
   build without refetching remote data.
+
+## Learning capture
+
+- Every completed engineering task updates the smallest relevant
+  `docs/skills/` procedure when it yields a reusable lesson. If the lesson
+  changes how an agent investigates, validates, designs, or ships work, update
+  the applicable agent instructions in the same change. Neither update
+  substitutes for the other.

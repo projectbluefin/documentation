@@ -40,8 +40,11 @@ that, every session starts from zero.
 1. Ship the requested work and verify it.
 2. Extract one reusable, non-obvious lesson from the work.
 3. Put that lesson in the smallest relevant `docs/skills/` file.
-4. Commit the skill update with the work in the same pull request.
-5. Re-read the skill as a new agent and remove status reports, dates, and
+4. Update the applicable agent instruction file when the lesson changes how an
+   agent must investigate, validate, design, or ship work.
+5. Commit the skill and agent-instruction updates with the work in the same
+   pull request.
+6. Re-read the skill as a new agent and remove status reports, dates, and
    resolved issue lists.
 
 ## The two-output rule
@@ -49,10 +52,12 @@ that, every session starts from zero.
 Every session produces two outputs:
 
 1. **The work** — the PR, fix, or feature.
-2. **The learning** — what a future agent needs to know.
+2. **The learning** — what a future agent needs to know, in the relevant skill
+   and, when applicable, agent instructions.
 
 Output 1 without output 2 means the factory did not improve. The learning goes
-in `docs/skills/`, in the **same pull request**, never a follow-up.
+in `docs/skills/` and any applicable agent instructions, in the **same pull
+request**, never a follow-up.
 
 ## What earns a skill file
 
@@ -142,7 +147,8 @@ agent. That is the bar.
 
 ## Red Flags
 
-- The session ends with implementation changes but no skill update.
+- The session ends with implementation changes but no skill and agent
+  instruction updates when the lesson applies to both.
 - A skill contains dates, resolved work items, live status, or a running
   backlog.
 - The learning is a summary of changed files rather than an operating rule.
