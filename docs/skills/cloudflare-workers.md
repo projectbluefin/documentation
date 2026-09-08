@@ -58,7 +58,9 @@ the provided value is not of type 'function or ExportedHandler'.
 ```
 
 Export only the default handler (and genuine Durable Object classes). Keep
-constants module-local.
+constants module-local, or export pure helper logic from a separate module
+(e.g. `routes.mjs`) so unit tests can exercise them offline without leaking
+named exports on the Worker entrypoint.
 
 **`main` resolves relative to the config file, not the working directory.** An
 override config written to `/tmp` cannot use a repo-relative `main`. Use an
@@ -88,6 +90,22 @@ unless the Worker directory ships its own `.gitignore`.
 **Check peer ranges before writing a version.** `agents@0.22` requires
 `zod@^4`; pinning `zod@^3` fails `ERESOLVE`. Resolve the real versions rather
 than reaching for `--legacy-peer-deps`.
+
+## CountMe Worker (countme.projectbluefin.io)
+
+`workers/countme-proxy` handles two primary workloads:
+
+1. **Upstream Artifact Proxy:** Serves weekly growth charts (`/`, `/growth.svg`,
+   `/sources/projectbluefin/bluefin/growth.svg`) and shields.io badge endpoints
+   (`/badge-endpoints/{bluefin,bluefin-lts}.json`), falling back to a branded
+   pending SVG if projectbluefin artifacts have not yet populated.
+2. **Client Ingestion (`/metalink`):** Receives weekly anonymous countme pings
+   from Project Bluefin clients (`bluefin`, `bluefin-lts`, `dakota`).
+   - Query parameters: `repo` (e.g. `bluefin`, `bluefin-lts`, `dakota`), `tag`
+     (e.g. `stable`), `flavor` (e.g. `main`), `arch` (`x86_64`, `aarch64`),
+     `countme` (integer bucket 1–4).
+   - Responses are HTTP 200 with `cache-control: no-store`.
+   - The endpoint strictly disallows persistent machine identifiers or tokens.
 
 ## Verifying before deploy
 

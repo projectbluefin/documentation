@@ -79,6 +79,10 @@ added.
    - `<ReportDelivery>`: Publishing-lane outcomes, cadence, and release events.
    - `<ReportParticipation>`: Human and automation activity plus contributors.
    - `<ReportEcosystem>`: Countme, Homebrew, and Flathub source states.
+   - `<ReportLaneHealth>`: Publishing lane metrics (Testing, LTS, Dakota).
+   - `<ReportCountmeTrend>`: Weekly active systems telemetry and variant distribution.
+   - `<ReportAutomationStats>`: Factory autonomous vs human PR breakdown.
+   - `<ReportDoraCadence>`: Deployment cadence and velocity indicators.
 
 5. **Verify build and tests:**
    ```bash

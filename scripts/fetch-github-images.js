@@ -6,6 +6,7 @@ const {
   readSbomCache,
   lookupVersionsForStream,
 } = require("./lib/sbom-versions");
+const { trustForRepo } = require("./lib/signing-trust");
 
 const execFileAsync = promisify(execFile);
 
@@ -59,10 +60,10 @@ const PRODUCT_SPECS = [
     id: "projectbluefin-bluefin-lts",
     name: "Bluefin LTS",
     org: "projectbluefin",
-    package: "bluefin",
+    package: "bluefin-lts",
     artwork: "achillobator",
     summary: "Long-term support Bluefin stream.",
-    streamOrder: ["lts"],
+    streamOrder: ["stable", "testing"],
     versionSource: SBOM_VERSION_SOURCE,
     releaseSource: { feed: "lts", stream: "lts" },
     sbomStreamId: "bluefin-lts",
@@ -199,6 +200,9 @@ function normalizeSbomStreamTag(streamTag) {
 function buildSbomStreamId(spec, streamTag) {
   const normalizedTag = normalizeSbomStreamTag(streamTag);
   if (!spec?.sbomStreamId || !normalizedTag) return null;
+  if (spec.id === "projectbluefin-bluefin-lts" && normalizedTag === "stable") {
+    return spec.sbomStreamId;
+  }
   return spec.sbomStreamId.replace(
     /-(stable|latest|lts|beta)$/,
     `-${normalizedTag}`,
@@ -497,23 +501,15 @@ function attachNvidiaTestingCommands(streams, spec, nvidiaTagSet) {
 function buildSecurityInfo(spec, inspectTag) {
   const imageRef = `ghcr.io/${spec.org}/${spec.package}:${inspectTag}`;
 
-  // Mainline bluefin images (stable/latest/beta streams) use GitHub OIDC keyless signing
-  // with OCI-published SLSA attestations.
-  // Dakota uses keyless signing but SLSA attestations are published to the OCI registry
-  // only after projectbluefin/dakota#391 merges (push-to-registry: true).
-  // LTS images use traditional key-based signing with cosign.pub from the lts repo.
-  const KEYLESS_REPOS = ["projectbluefin/bluefin", "projectbluefin/utah"]; // keyless + OCI attestation live
-  const KEYLESS_PENDING_ATTEST_REPOS = ["projectbluefin/dakota"]; // keyless, OCI attestation pending
-  const KEY_REPOS = {
-    "projectbluefin/bluefin-lts":
-      "https://raw.githubusercontent.com/projectbluefin/bluefin-lts/main/cosign.pub",
-  };
+  // Signing policy per repo lives in scripts/lib/signing-trust.js — the single
+  // source of truth shared with fetch-github-sbom.js. Keeping it out of this
+  // function means a repo moving between keyless and key-based signing cannot
+  // leave the site publishing a verify command that no longer verifies.
+  const trust = trustForRepo(spec.keyRepo);
 
-  const isKeyless =
-    KEYLESS_REPOS.includes(spec.keyRepo) ||
-    KEYLESS_PENDING_ATTEST_REPOS.includes(spec.keyRepo);
-  const attestationLive = KEYLESS_REPOS.includes(spec.keyRepo);
-  const cosignKeyUrl = KEY_REPOS[spec.keyRepo] || null;
+  const isKeyless = Boolean(trust?.keyless);
+  const attestationLive = Boolean(trust?.keyless && trust?.attestationLive);
+  const cosignKeyUrl = trust?.cosignKeyUrl || null;
   const hasNoPipeline = !isKeyless && !cosignKeyUrl;
 
   // Keyless: GitHub OIDC / Sigstore — certificate-based, no public key file.
