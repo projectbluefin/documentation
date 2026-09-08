@@ -1,3 +1,184 @@
+.portal {
+  --portal-bg: #0c1016;
+  --portal-bg-rgb: 12, 16, 22;
+  --portal-border: #272727;
+  --portal-border-light: #616161;
+  --portal-text: #bdbdbd;
+  --portal-text-light: #ffffff;
+  --portal-blue-light: #8a97f7;
+  position: relative;
+  isolation: isolate;
+  overflow-x: clip;
+  background: var(--portal-bg);
+  color: var(--portal-text-light);
+}
+
+.sceneStack {
+  position: relative;
+  z-index: 10;
+  padding-bottom: 128px;
+}
+
+.landingScene,
+.contentScene {
+  position: relative;
+  min-height: 100dvh;
+  border-bottom: 1px solid var(--portal-border);
+}
+
+.landingScene {
+  display: grid;
+  align-items: center;
+  z-index: 50;
+}
+
+.landingGrid,
+.twoColumn,
+.developerLayout,
+.missionGrid {
+  width: min(1200px, 100%);
+  margin: 0 auto;
+  padding: 64px;
+}
+
+.landingGrid,
+.twoColumn,
+.developerLayout,
+.missionGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 40px;
+}
+
+.landingCopy {
+  text-align: center;
+  color: var(--portal-bg);
+  text-shadow: 1px 1px 1px rgb(0 0 0 / 25%);
+}
+
+.landingCopy p {
+  margin: 24px 0 30px;
+  font-size: 30px;
+  line-height: 1.3;
+}
+
+.wordmark {
+  display: block;
+  width: min(503px, 100%);
+  height: auto;
+  margin: 0 auto;
+  border: 0;
+}
+
+.heroCharacter {
+  display: block;
+  width: min(692px, 100%);
+  justify-self: center;
+  border: 0;
+}
+
+.primaryAction {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 24px;
+  border: 1px solid var(--portal-bg);
+  border-radius: 999px;
+  background: var(--portal-blue-light);
+  color: var(--portal-bg);
+  font-size: 18px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.primaryAction:focus-visible {
+  outline: 3px solid var(--portal-text-light);
+  outline-offset: 3px;
+}
+
+.contentScene {
+  display: grid;
+  align-items: center;
+}
+
+.sceneContent strong {
+  display: block;
+  color: var(--portal-text-light);
+  font-size: 20px;
+  font-weight: 400;
+  text-transform: uppercase;
+}
+
+.sceneContent h2 {
+  margin: 0 0 30px;
+  color: var(--portal-text-light);
+  font-size: clamp(64px, 7vw, 112px);
+  line-height: 0.95;
+  text-transform: uppercase;
+}
+
+.sceneContent p {
+  color: var(--portal-text-light);
+  font-size: 20px;
+  line-height: 1.6;
+}
+
+.userCharacter,
+.developerCharacter,
+.missionCharacter {
+  display: block;
+  width: 100%;
+  border: 0;
+}
+
+.userCharacter {
+  transform: translateX(10%) scale(1.2);
+}
+
+.developerLayout {
+  grid-template-columns: 3fr 2fr;
+}
+
+.developerCharacter {
+  width: min(756px, 120%);
+  transform: translateX(-10%);
+}
+
+.benefitGrid,
+.developerGrid {
+  display: grid;
+  margin-top: 40px;
+  border-top: 1px solid var(--portal-border-light);
+  border-bottom: 1px solid var(--portal-border-light);
+}
+
+.benefitGrid {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.developerGrid {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.benefitGrid p,
+.developerGrid p {
+  display: grid;
+  place-items: center;
+  min-height: 110px;
+  margin: 0;
+  padding: 20px;
+  border-right: 1px solid var(--portal-border-light);
+  text-align: center;
+  text-shadow: 1px 1px 2px rgb(var(--portal-bg-rgb) / 50%);
+}
+
+.benefitGrid p:last-child,
+.developerGrid p:nth-child(even) {
+  border-right: 0;
+}
+
 .parallaxViewport {
   position: fixed;
   inset: var(--ifm-navbar-height) 0 0;
@@ -16,7 +197,7 @@
   position: absolute;
   inset: 0;
   z-index: 100;
-  background: rgb(12 16 22 / 80%);
+  background: rgb(var(--portal-bg-rgb) / 80%);
   opacity: var(--portal-night-opacity, 0);
   backdrop-filter: hue-rotate(210deg) contrast(1.2);
 }
@@ -69,7 +250,99 @@
   animation: cloudsLeft 100s infinite linear;
 }
 
+.missionScene {
+  position: relative;
+  z-index: 10;
+  min-height: 110dvh;
+  background: var(--portal-bg);
+}
+
+.transition {
+  position: absolute;
+  right: 0;
+  bottom: 90%;
+  display: block;
+  width: 120%;
+  max-width: none;
+  border: 0;
+  transform: scaleX(-1);
+}
+
+.missionCharacter {
+  width: min(768px, 110%);
+}
+
 @media (max-width: 956px) {
+  .sceneStack {
+    padding-bottom: 64px;
+  }
+
+  .landingScene,
+  .contentScene {
+    min-height: 85dvh;
+    padding: 64px 0;
+  }
+
+  .landingGrid,
+  .twoColumn,
+  .developerLayout,
+  .missionGrid {
+    grid-template-columns: 1fr;
+    padding: 32px;
+  }
+
+  .landingGrid {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+
+  .landingCopy p {
+    font-size: 22px;
+  }
+
+  .heroCharacter {
+    width: 264px;
+  }
+
+  .sceneContent {
+    width: 100%;
+    text-align: center;
+  }
+
+  .sceneContent h2 {
+    font-size: 64px;
+  }
+
+  .sceneContent p {
+    font-size: 18px;
+  }
+
+  .userCharacter,
+  .developerCharacter,
+  .missionCharacter {
+    width: min(360px, 100%);
+    margin: 0 auto;
+    transform: none;
+  }
+
+  .benefitGrid,
+  .developerGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .benefitGrid p,
+  .developerGrid p,
+  .developerGrid p:nth-child(even) {
+    min-height: 0;
+    border-right: 0;
+    border-bottom: 1px solid var(--portal-border-light);
+  }
+
+  .benefitGrid p:last-child,
+  .developerGrid p:last-child {
+    border-bottom: 0;
+  }
+
   .desktopLayer {
     display: none;
   }
@@ -98,4 +371,9 @@
     animation: none !important;
     transform: none !important;
   }
+
+  .primaryAction {
+    scroll-behavior: auto;
+  }
 }
+
