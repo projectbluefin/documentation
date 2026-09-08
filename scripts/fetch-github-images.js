@@ -60,10 +60,10 @@ const PRODUCT_SPECS = [
     id: "projectbluefin-bluefin-lts",
     name: "Bluefin LTS",
     org: "projectbluefin",
-    package: "bluefin",
+    package: "bluefin-lts",
     artwork: "achillobator",
     summary: "Long-term support Bluefin stream.",
-    streamOrder: ["lts"],
+    streamOrder: ["stable", "testing"],
     versionSource: SBOM_VERSION_SOURCE,
     releaseSource: { feed: "lts", stream: "lts" },
     sbomStreamId: "bluefin-lts",
@@ -200,6 +200,9 @@ function normalizeSbomStreamTag(streamTag) {
 function buildSbomStreamId(spec, streamTag) {
   const normalizedTag = normalizeSbomStreamTag(streamTag);
   if (!spec?.sbomStreamId || !normalizedTag) return null;
+  if (spec.id === "projectbluefin-bluefin-lts" && normalizedTag === "stable") {
+    return spec.sbomStreamId;
+  }
   return spec.sbomStreamId.replace(
     /-(stable|latest|lts|beta)$/,
     `-${normalizedTag}`,

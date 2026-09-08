@@ -93,12 +93,12 @@
       "id": "projectbluefin-bluefin-lts",
       "name": "Bluefin LTS",
       "org": "projectbluefin",
-      "package": "bluefin",
+      "package": "bluefin-lts",
       "versionSource": "sbom",
       "summary": "Long-term support Bluefin stream.",
       "artwork": "achillobator",
-      "imageRef": "ghcr.io/projectbluefin/bluefin",
-      "packagePageUrl": "https://github.com/orgs/projectbluefin/packages/container/package/bluefin",
+      "imageRef": "ghcr.io/projectbluefin/bluefin-lts",
+      "packagePageUrl": "https://github.com/orgs/projectbluefin/packages/container/package/bluefin-lts",
       "isoSectionLink": "/downloads",
       "supportedArches": [
         "amd",
@@ -106,9 +106,9 @@
       ],
       "streams": [
         {
-          "label": "LTS",
-          "tag": "lts",
-          "command": "sudo bootc switch ghcr.io/projectbluefin/bluefin:lts --enforce-container-sigpolicy",
+          "label": "STABLE",
+          "tag": "stable",
+          "command": "sudo bootc switch ghcr.io/projectbluefin/bluefin-lts:stable --enforce-container-sigpolicy",
           "versions": {
             "gnome": "49.5",
             "kernel": "6.12.0-233.el10",
@@ -118,71 +118,25 @@
             "mesa": "25.2.7",
             "podman": "5.8.2"
           },
-          "nvidiaCommand": null
+          "nvidiaCommand": "sudo bootc switch ghcr.io/projectbluefin/bluefin-lts-nvidia:stable --enforce-container-sigpolicy"
+        },
+        {
+          "label": "TESTING",
+          "tag": "testing",
+          "command": "sudo bootc switch ghcr.io/projectbluefin/bluefin-lts:testing --enforce-container-sigpolicy",
+          "versions": {
+            "gnome": "49.5",
+            "kernel": "6.12.0-233.el10",
+            "nvidia": null,
+            "fedora": null,
+            "flatpak": "1.16.0",
+            "mesa": "25.2.7",
+            "podman": "5.8.2"
+          },
+          "nvidiaCommand": "sudo bootc switch ghcr.io/projectbluefin/bluefin-lts-nvidia:testing --enforce-container-sigpolicy"
         }
       ],
-      "testingStreams": [
-        {
-          "label": "lts-hwe-testing",
-          "tag": "lts-hwe-testing",
-          "command": "sudo bootc switch ghcr.io/projectbluefin/bluefin:lts-hwe-testing --enforce-container-sigpolicy",
-          "versions": {
-            "gnome": "49.5",
-            "kernel": "7.0.8-100.fc43",
-            "nvidia": null,
-            "fedora": null,
-            "flatpak": "1.16.0",
-            "mesa": "25.2.7",
-            "podman": "5.8.2"
-          },
-          "nvidiaCommand": null
-        },
-        {
-          "label": "lts-hwe-testing-50",
-          "tag": "lts-hwe-testing-50",
-          "command": "sudo bootc switch ghcr.io/projectbluefin/bluefin:lts-hwe-testing-50 --enforce-container-sigpolicy",
-          "versions": {
-            "gnome": "49.5",
-            "kernel": "7.0.8-100.fc43",
-            "nvidia": null,
-            "fedora": null,
-            "flatpak": "1.16.0",
-            "mesa": "25.2.7",
-            "podman": "5.8.2"
-          },
-          "nvidiaCommand": null
-        },
-        {
-          "label": "lts-testing",
-          "tag": "lts-testing",
-          "command": "sudo bootc switch ghcr.io/projectbluefin/bluefin:lts-testing --enforce-container-sigpolicy",
-          "versions": {
-            "gnome": "49.5",
-            "kernel": "6.12.0-233.el10",
-            "nvidia": null,
-            "fedora": null,
-            "flatpak": "1.16.0",
-            "mesa": "25.2.7",
-            "podman": "5.8.2"
-          },
-          "nvidiaCommand": null
-        },
-        {
-          "label": "lts-testing-50",
-          "tag": "lts-testing-50",
-          "command": "sudo bootc switch ghcr.io/projectbluefin/bluefin:lts-testing-50 --enforce-container-sigpolicy",
-          "versions": {
-            "gnome": "49.5",
-            "kernel": "6.12.0-233.el10",
-            "nvidia": null,
-            "fedora": null,
-            "flatpak": "1.16.0",
-            "mesa": "25.2.7",
-            "podman": "5.8.2"
-          },
-          "nvidiaCommand": null
-        }
-      ],
+      "testingStreams": [],
       "metadata": {
         "digest": "sha256:41a15d1bc6926775874396ed21c920807be7b632d685529f3d3954a4326b9722",
         "digestShort": "41a15d1bc692",
@@ -210,12 +164,12 @@
       },
       "security": {
         "cosignKeyUrl": "https://raw.githubusercontent.com/projectbluefin/bluefin-lts/main/cosign.pub",
-        "verifyCommand": "cosign verify --key https://raw.githubusercontent.com/projectbluefin/bluefin-lts/main/cosign.pub ghcr.io/projectbluefin/bluefin:lts",
-        "attestCommand": "cosign verify-attestation --type https://slsa.dev/provenance/v1 --key https://raw.githubusercontent.com/projectbluefin/bluefin-lts/main/cosign.pub ghcr.io/projectbluefin/bluefin:lts",
+        "verifyCommand": "cosign verify --key https://raw.githubusercontent.com/projectbluefin/bluefin-lts/main/cosign.pub ghcr.io/projectbluefin/bluefin-lts:stable",
+        "attestCommand": "cosign verify-attestation --type https://slsa.dev/provenance/v1 --key https://raw.githubusercontent.com/projectbluefin/bluefin-lts/main/cosign.pub ghcr.io/projectbluefin/bluefin-lts:stable",
         "hasAttestation": false,
-        "sbomCommand": "oras discover ghcr.io/projectbluefin/bluefin:lts"
+        "sbomCommand": "oras discover ghcr.io/projectbluefin/bluefin-lts:stable"
       },
-      "inspectTag": "lts",
+      "inspectTag": "stable",
       "lastPublishedAt": "2026-06-24T08:25:24.169Z",
       "stale": true,
       "keepEvenIfStale": true
