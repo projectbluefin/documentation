@@ -140,3 +140,78 @@ test("PortalCommunity statically renders documentation card, icons, and action l
   assert.ok(!source.includes("document."));
   assert.ok(!source.includes("useEffect"));
 });
+
+test("PortalFooter statically renders alumni, sponsors, powered-by, credits, and copyright", () => {
+  const componentPath = path.join(portalDir, "PortalFooter.tsx");
+  assert.ok(fs.existsSync(componentPath), "PortalFooter.tsx must exist");
+
+  const PortalFooter = loadModule(componentPath).default;
+  const html = renderToStaticMarkup(React.createElement(PortalFooter));
+
+  // Footer and Sections
+  assert.ok(html.includes('id="footer"'));
+  assert.ok(html.includes('id="alumni"'));
+  assert.ok(html.includes("Featuring alumni from companies like"));
+  assert.ok(html.includes('id="sponsors"'));
+  assert.ok(html.includes("Our sponsors"));
+
+  // Alumni logos (9 companies)
+  assert.ok(html.includes('src="/brands/alumni/anchore.svg"'));
+  assert.ok(html.includes('alt="Anchore"'));
+  assert.ok(html.includes('src="/brands/alumni/aws.svg"'));
+  assert.ok(html.includes('src="/brands/alumni/canonical.svg"'));
+  assert.ok(html.includes('src="/brands/alumni/chainguard.webp"'));
+  assert.ok(html.includes('src="/brands/alumni/cncf.svg"'));
+  assert.ok(html.includes('src="/brands/alumni/intel.svg"'));
+  assert.ok(html.includes('src="/brands/alumni/microsoft.svg"'));
+  assert.ok(html.includes('src="/brands/alumni/redhat.svg"'));
+  assert.ok(html.includes('src="/brands/alumni/vmware.svg"'));
+
+  // Sponsor logo
+  assert.ok(html.includes('src="/brands/sponsors/cloudflare.svg"'));
+  assert.ok(html.includes('alt="Cloudflare"'));
+
+  // Powered By
+  assert.ok(html.includes(">Powered By<"));
+  assert.ok(html.includes('src="/brands/bootc.svg"'));
+  assert.ok(html.includes('src="/brands/podman.svg"'));
+  assert.ok(html.includes('src="/brands/docker.svg"'));
+
+  // Built With / Universal Blue
+  assert.ok(html.includes("Project Bluefin is Built With"));
+  assert.ok(html.includes('href="https://universal-blue.org"'));
+  assert.ok(html.includes('src="/brands/universal-blue.svg"'));
+  assert.ok(html.includes("Welcome to indie Cloud Native."));
+
+  // Social
+  assert.ok(html.includes('href="https://github.com/ublue-os/bluefin"'));
+  assert.ok(html.includes("GitHub"));
+
+  // Credits
+  assert.ok(html.includes("All artwork built by humans."));
+  assert.ok(html.includes('href="https://dolansky.dev/"'));
+  assert.ok(html.includes("Jan Dolanský"));
+  assert.ok(html.includes('href="https://kylegospodneti.ch/"'));
+  assert.ok(html.includes("Kyle Gospodnetich"));
+  assert.ok(html.includes("Jacob Schnurr"));
+  assert.ok(html.includes("Delphic Melody"));
+  assert.ok(html.includes("DragonsofWales"));
+  assert.ok(html.includes("Tulip Blossom"));
+  assert.ok(html.includes("Dustin Kirkland"));
+  assert.ok(html.includes("Wayne Witzel"));
+  assert.ok(html.includes("Marco Ceppi"));
+
+  // Copyright with deterministic year
+  const currentYear = new Date().getUTCFullYear();
+  assert.ok(
+    html.includes(
+      `Copyright ${currentYear} © Project Bluefin and Universal Blue`,
+    ),
+  );
+
+  // Check no browser globals
+  const source = fs.readFileSync(componentPath, "utf8");
+  assert.ok(!source.includes("window."));
+  assert.ok(!source.includes("document."));
+  assert.ok(!source.includes("useEffect"));
+});
