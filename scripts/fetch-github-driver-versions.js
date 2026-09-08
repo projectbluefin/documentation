@@ -55,12 +55,12 @@ function lookupSbomVersionsForTag(sbomCache, sbomStreamId, cacheKey) {
 const SBOM_STREAM_PREFIX = {
   "bluefin-stable": "stable",
   "bluefin-latest": "latest",
-  "bluefin-lts": "lts",
-  "bluefin-lts-hwe": "lts-hwe",
+  "bluefin-lts": "stable",
+  "bluefin-lts-hwe": "stable-hwe",
   "bluefin-dx-stable": "stable",
   "bluefin-dx-latest": "latest",
-  "bluefin-dx-lts": "lts",
-  "bluefin-gdx-lts": "lts",
+  "bluefin-dx-lts": "stable",
+  "bluefin-gdx-lts": "stable",
   "bluefin-gdx-latest": "latest",
   "dakota-latest": "latest",
 };
