@@ -15,7 +15,7 @@ import { fileURLToPath } from "url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const OUT = resolve(__dirname, "../static/data/registry-data.json");
-const REGISTRY_URL = "https://hive.kubestellar.io/api/registry";
+const REGISTRY_URL = "https://hive.hivecommons.dev/api/registry";
 const TARGET_ORG = "projectbluefin";
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 const force = process.argv.includes("--force");
@@ -23,7 +23,9 @@ const force = process.argv.includes("--force");
 if (!force && existsSync(OUT)) {
   const age = Date.now() - statSync(OUT).mtimeMs;
   if (age < CACHE_TTL_MS) {
-    console.log(`fetch-registry-data: cache fresh (${Math.round(age / 60000)}m old), skipping`);
+    console.log(
+      `fetch-registry-data: cache fresh (${Math.round(age / 60000)}m old), skipping`,
+    );
     process.exit(0);
   }
 }
@@ -35,11 +37,15 @@ try {
   const data = await res.json();
   const entry = data.hives?.find((h) => h.org === TARGET_ORG) ?? null;
   if (!entry) {
-    console.warn(`fetch-registry-data: no entry for org=${TARGET_ORG}, writing null`);
+    console.warn(
+      `fetch-registry-data: no entry for org=${TARGET_ORG}, writing null`,
+    );
     writeFileSync(OUT, "null\n");
   } else {
     writeFileSync(OUT, JSON.stringify(entry, null, 2) + "\n");
-    console.log(`fetch-registry-data: wrote ${OUT} (acmmLevel=${entry.acmmLevel}, mode=${entry.governorMode})`);
+    console.log(
+      `fetch-registry-data: wrote ${OUT} (acmmLevel=${entry.acmmLevel}, mode=${entry.governorMode})`,
+    );
   }
 } catch (err) {
   console.error(`fetch-registry-data: fetch failed: ${err.message}`);
