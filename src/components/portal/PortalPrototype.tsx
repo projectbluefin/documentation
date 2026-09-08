@@ -2,6 +2,7 @@ import React from "react";
 import PortalParallax from "./PortalParallax";
 import PortalVideo from "./PortalVideo";
 import PortalBazaar from "./PortalBazaar";
+import PortalSectionPicker from "./PortalSectionPicker";
 import PortalCommunity from "./PortalCommunity";
 import PortalFooter from "./PortalFooter";
 import styles from "./PortalPrototype.module.css";
@@ -159,10 +160,13 @@ export default function PortalPrototype(): React.JSX.Element {
       </section>
 
       <PortalVideo />
+
       <PortalBazaar />
-      {/* Downstream insertion seam: Subproject 2 (PortalImageChooser) mounts here between Bazaar and Community */}
+
+      <PortalSectionPicker />
+
       <PortalCommunity />
-      {/* Downstream insertion seam: Subproject 3 (PortalFlock, PortalContributors, PortalNews) mounts here between Community and Footer */}
+
       <PortalFooter />
     </main>
   );

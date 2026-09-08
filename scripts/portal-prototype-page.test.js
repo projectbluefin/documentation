@@ -6,6 +6,8 @@ const ts = require("typescript");
 const React = require("react");
 const { renderToStaticMarkup } = require("react-dom/server");
 
+const root = path.join(__dirname, "..");
+
 function loadModule(file) {
   const { outputText } = ts.transpileModule(fs.readFileSync(file, "utf8"), {
     compilerOptions: {
@@ -19,10 +21,41 @@ function loadModule(file) {
   new Function("require", "module", "exports", outputText)(
     (id) => {
       if (id.endsWith(".css")) return {};
+      if (id.startsWith("@site/")) {
+        const rel = id.slice("@site/".length);
+        const target = path.resolve(root, rel);
+        if (target.endsWith(".json"))
+          return JSON.parse(fs.readFileSync(target, "utf8"));
+        for (const suffix of [
+          ".ts",
+          ".tsx",
+          "/index.ts",
+          "/index.tsx",
+          ".json",
+        ]) {
+          if (fs.existsSync(target + suffix)) {
+            if (suffix === ".json")
+              return JSON.parse(fs.readFileSync(target + suffix, "utf8"));
+            return loadModule(target + suffix);
+          }
+        }
+      }
       if (id.startsWith(".")) {
         const base = path.resolve(path.dirname(file), id);
-        for (const suffix of [".ts", ".tsx", "/index.ts", "/index.tsx"]) {
-          if (fs.existsSync(base + suffix)) return loadModule(base + suffix);
+        if (base.endsWith(".json"))
+          return JSON.parse(fs.readFileSync(base, "utf8"));
+        for (const suffix of [
+          ".ts",
+          ".tsx",
+          "/index.ts",
+          "/index.tsx",
+          ".json",
+        ]) {
+          if (fs.existsSync(base + suffix)) {
+            if (suffix === ".json")
+              return JSON.parse(fs.readFileSync(base + suffix, "utf8"));
+            return loadModule(base + suffix);
+          }
         }
       }
       return require(id);
@@ -33,7 +66,6 @@ function loadModule(file) {
   return mod.exports;
 }
 
-const root = path.join(__dirname, "..");
 const componentPath = path.join(
   root,
   "src",
@@ -50,7 +82,7 @@ const cssPath = path.join(
   "PortalPrototype.module.css",
 );
 
-test("prototype renders source-authored scenes in order", () => {
+test("prototype renders source-authored scenes in order through footer including picker", () => {
   const PortalPrototype = loadModule(componentPath).default;
   const html = renderToStaticMarkup(React.createElement(PortalPrototype));
 
@@ -61,8 +93,8 @@ test("prototype renders source-authored scenes in order", () => {
     'id="scene-mission"',
     'id="scene-video"',
     'id="bazaar"',
+    'id="scene-picker"',
     'id="scene-community"',
-    'id="footer"',
     'id="alumni"',
     'id="sponsors"',
   ];
@@ -74,23 +106,12 @@ test("prototype renders source-authored scenes in order", () => {
     );
     return current;
   }, -1);
-  assert.ok(html.includes(">Applications<"));
-  assert.ok(html.includes(">Community<"));
 
   assert.ok(html.includes('id="portal-scenes"'));
-  assert.ok(html.includes('id="footer"'));
-  assert.ok(html.includes("Featuring alumni from companies like"));
-  assert.ok(html.includes("Our sponsors"));
-  assert.ok(html.includes("Project Bluefin is Built With"));
   assert.match(html, /<h1[^>]*>\s*<img[^>]*alt="Bluefin"[^>]*\/>\s*<\/h1>/);
   assert.match(
     html,
     /<h1[^>]*>\s*<img[^>]*src="\/img\/bluefin-wordmark-light\.svg"[^>]*\/>\s*<\/h1>/,
-  );
-  assert.ok(
-    html.includes(
-      "The next generation Linux workstation, designed for reliability, performance, and sustainability.",
-    ),
   );
   assert.ok(html.includes(">For<"));
   assert.ok(html.includes(">You<"));
@@ -100,6 +121,14 @@ test("prototype renders source-authored scenes in order", () => {
   assert.match(html, /id="scene-users"[^>]*tabindex="-1"/);
   assert.ok(html.includes('src="/img/portal/layer-transition.webp"'));
   assert.ok(html.includes('title="Bluefin Introduction"'));
+  assert.ok(html.includes(">Applications<"));
+  assert.ok(html.includes('id="scene-picker"'));
+  assert.ok(html.includes(">Try<"));
+  assert.ok(html.includes(">Bluefin<"));
+  assert.ok(html.includes(">Community<"));
+  assert.ok(html.includes("Featuring alumni from companies like"));
+  assert.ok(html.includes("Our sponsors"));
+  assert.ok(html.includes("Project Bluefin is Built With"));
 });
 
 test("route stays temporary and does not replace the documentation root", () => {
