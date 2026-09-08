@@ -4303,7 +4303,7 @@ export function LeaderboardsSection(): React.JSX.Element {
       : null;
 
   return (
-    <>
+    <div className={styles.leaderboards}>
       <ContributionLinks />
       {hiveHistory ? (
         <div className={styles.twoCol}>
@@ -4333,7 +4333,7 @@ export function LeaderboardsSection(): React.JSX.Element {
           </p>
         </section>
       )}
-    </>
+    </div>
   );
 }
 
