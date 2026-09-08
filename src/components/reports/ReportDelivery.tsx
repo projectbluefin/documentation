@@ -71,7 +71,7 @@ export default function ReportDelivery(
         <p>Publishing-lane outcomes, cadence, duration, and release events.</p>
       </div>
 
-      <ReportLaneHealth lanes={lanes} />
+      <ReportLaneHealth lanes={lanes} unavailableReason={reason} />
 
       <div className={styles.sectionGrid}>
         <ChartSlot

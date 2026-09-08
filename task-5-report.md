@@ -56,3 +56,35 @@ node --test scripts/report-markdown.test.js scripts/report-chart.test.js
   release-note duplication were added. Generator wiring remains Task 6.
 - No push or pull request was made.
 - The implementation commit SHA is returned with the task completion status.
+
+## Reviewer fix round
+
+- `ReportDoraCadence` now treats a positive `pendingRuns` value as a visible
+  pending state and reports its count.
+- `ReportDelivery` passes its computed unavailable reason to
+  `ReportLaneHealth`.
+- The markdown fixture now records the Reports 2.0 section import and tag
+  contract for `ReportActivity`, `ReportDelivery`, `ReportParticipation`, and
+  `ReportEcosystem` without changing the positional generator API.
+
+### TDD evidence
+
+RED:
+
+```text
+node --test scripts/report-chart.test.js scripts/report-markdown.test.js
+```
+
+`19` passed, `2` failed: the new `pendingRuns` and lane-reason assertions
+failed against the pre-fix components.
+
+GREEN:
+
+```text
+node --test scripts/report-chart.test.js scripts/report-markdown.test.js
+```
+
+`21` passed, `0` failed.
+
+The focused fix also passes `git diff --check` and the changed-file Prettier
+check.

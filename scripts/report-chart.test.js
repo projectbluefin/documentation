@@ -140,6 +140,18 @@ const laneStub = {
       lanes?.map((lane) => lane.label).join(", ") || "lane state",
     ),
 };
+const laneReasonStub = {
+  __esModule: true,
+  default: ({ lanes, unavailableReason, stateReason }) =>
+    React.createElement(
+      "div",
+      {
+        "data-report-lanes": lanes?.length ?? 0,
+        "data-report-lane-reason": unavailableReason ?? stateReason ?? "",
+      },
+      "lane state",
+    ),
+};
 const leaderboardStub = {
   __esModule: true,
   default: ({ heroes }) =>
@@ -388,6 +400,25 @@ test("ReportDelivery renders lane outcomes, trends, releases, and changelogs", (
   assert.match(markup, /href="\/changelogs"/);
 });
 
+test("ReportDelivery forwards its unavailable reason to lane health", () => {
+  const markup = renderComponent(
+    "ReportDelivery",
+    {
+      lanes: null,
+      unavailableReason: "GitHub API returned HTTP 503",
+    },
+    {
+      "./ReportChart": chartStub,
+      "./ReportLaneHealth": laneReasonStub,
+    },
+  );
+
+  assert.match(
+    markup,
+    /data-report-lane-reason="GitHub API returned HTTP 503"/,
+  );
+});
+
 test("ReportParticipation renders automation and the current leaderboard", () => {
   const markup = renderComponent(
     "ReportParticipation",
@@ -539,4 +570,11 @@ test("ReportDoraCadence exposes unavailable and pending states without hiding ze
   });
   assert.match(measured, />0</);
   assert.match(measured, /pending/i);
+
+  const pendingRuns = renderComponent("ReportDoraCadence", {
+    totalReleases: 0,
+    pendingRuns: 2,
+  });
+  assert.match(pendingRuns, /Pending delivery measurements/);
+  assert.match(pendingRuns, /2 runs/);
 });

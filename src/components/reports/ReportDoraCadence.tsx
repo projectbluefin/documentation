@@ -32,8 +32,11 @@ export default function ReportDoraCadence({
     (value) => value !== undefined && value !== null,
   );
   const hasPending =
-    (typeof pending === "number" && pending > 0) || pending === true;
-  const pendingCount = typeof pending === "number" ? pending : pendingRuns;
+    (typeof pending === "number" && pending > 0) ||
+    pending === true ||
+    (typeof pendingRuns === "number" && pendingRuns > 0);
+  const pendingCount =
+    typeof pending === "number" && pending > 0 ? pending : pendingRuns;
   const reason = unavailableReason ?? stateReason;
 
   return (

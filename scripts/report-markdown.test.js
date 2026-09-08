@@ -25,6 +25,20 @@ const fixtureSnapshot = {
   },
 };
 
+const reportSectionsFixture = `
+import {
+  ReportActivity,
+  ReportDelivery,
+  ReportParticipation,
+  ReportEcosystem,
+} from '@site/src/components/reports';
+
+<ReportActivity snapshot={snapshot.activity} />
+<ReportDelivery snapshot={snapshot.delivery} />
+<ReportParticipation snapshot={snapshot.participation} />
+<ReportEcosystem snapshot={snapshot.ecosystem} />
+`;
+
 test("the report generator keeps its section import and tag contract", async () => {
   const { generateReportMarkdown } = await generator;
   const markdown = generateReportMarkdown(
@@ -43,6 +57,24 @@ test("the report generator keeps its section import and tag contract", async () 
     /import \{[\s\S]*ReportHeroKPIs[\s\S]*\} from '@site\/src\/components\/reports';/,
   );
   assert.match(markdown, /<ReportHeroKPIs[\s\S]*kpis=\{/);
+});
+
+test("the Reports 2.0 markdown fixture keeps section imports and tags", () => {
+  assert.match(
+    reportSectionsFixture,
+    /import \{[\s\S]*ReportActivity[\s\S]*ReportDelivery[\s\S]*ReportParticipation[\s\S]*ReportEcosystem[\s\S]*\} from '@site\/src\/components\/reports';/,
+  );
+  for (const section of [
+    "ReportActivity",
+    "ReportDelivery",
+    "ReportParticipation",
+    "ReportEcosystem",
+  ]) {
+    assert.match(
+      reportSectionsFixture,
+      new RegExp(`<${section} snapshot=\\{snapshot\\.[a-z]+\\} \\/>`),
+    );
+  }
 });
 
 test("the production chart-tag serializer retains provenance and table data", async () => {
