@@ -183,11 +183,11 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
     ).length;
   }, [filteredWeeks]);
 
-  // Shared domain for workstation small multiples
+  // Shared domain for workstation family small multiples (derived from rendered family images)
   const workstationDomain = useMemo<[number, number]>(() => {
     let min = Infinity;
     let max = -Infinity;
-    const workstationKeys = ["bluefin", "aurora", "bluefin-lts"] as const;
+    const workstationKeys = BLUEFIN_FAMILY_IMAGES.map((img) => img.id);
     for (const w of weeks) {
       for (const k of workstationKeys) {
         const val = w[k];
