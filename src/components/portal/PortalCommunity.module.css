@@ -93,7 +93,7 @@
   gap: 8px;
   padding: 12px 24px;
   border-radius: 4px;
-  background: #4285f4;
+  background: var(--portal-cta-bg, #0056b3);
   color: #ffffff;
   font-size: 14px;
   font-weight: 600;
@@ -101,10 +101,16 @@
   transition: background 0.3s ease;
 }
 
-.communityButton:hover {
-  background: #0056b3;
+.communityButton:hover,
+.communityButton:focus {
+  background: var(--portal-cta-hover-bg, #004494);
   color: #ffffff;
   text-decoration: none;
+}
+
+.communityButton:focus-visible {
+  outline: 3px solid var(--portal-text-light, #ffffff);
+  outline-offset: 3px;
 }
 
 .buttonIcon {

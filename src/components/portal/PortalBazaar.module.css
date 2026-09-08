@@ -111,7 +111,7 @@
   justify-content: center;
   padding: 16px 32px;
   border-radius: 4px;
-  background: #4285f4;
+  background: var(--portal-cta-bg, #0056b3);
   color: #ffffff;
   font-size: 16px;
   font-weight: 600;
@@ -119,10 +119,16 @@
   transition: background 0.3s ease;
 }
 
-.flathubButton:hover {
-  background: #0056b3;
+.flathubButton:hover,
+.flathubButton:focus {
+  background: var(--portal-cta-hover-bg, #004494);
   color: #ffffff;
   text-decoration: none;
+}
+
+.flathubButton:focus-visible {
+  outline: 3px solid var(--portal-text-light, #ffffff);
+  outline-offset: 3px;
 }
 
 @media (max-width: 768px) {

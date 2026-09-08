@@ -137,6 +137,7 @@ export default function PortalFooter(): React.JSX.Element {
               <img
                 src={UNIVERSAL_BLUE_BRAND.imageUrl}
                 alt={UNIVERSAL_BLUE_BRAND.altText}
+                loading="lazy"
               />
               <span>Universal Blue</span>
             </a>

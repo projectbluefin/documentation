@@ -1,5 +1,6 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
+const crypto = require("node:crypto");
 const fs = require("node:fs");
 const path = require("node:path");
 const ts = require("typescript");
@@ -30,27 +31,45 @@ const staticDataPath = path.join(
   "portalStaticData.ts",
 );
 
-test("static assets exist and are byte-identical to website source", () => {
-  const copiedAssets = [
-    "img/bazaar.svg",
-    "icons/docs.svg",
-    "brands/alumni/anchore.svg",
-    "brands/alumni/aws.svg",
-    "brands/alumni/canonical.svg",
-    "brands/alumni/chainguard.webp",
-    "brands/alumni/cncf.svg",
-    "brands/alumni/intel.svg",
-    "brands/alumni/microsoft.svg",
-    "brands/alumni/redhat.svg",
-    "brands/alumni/vmware.svg",
-    "brands/sponsors/cloudflare.svg",
-    "brands/bootc.svg",
-    "brands/podman.svg",
-    "brands/docker.svg",
-    "brands/universal-blue.svg",
-  ];
+const EXPECTED_ASSET_SHA256 = {
+  "img/bazaar.svg":
+    "185aee876fc16e749a7dd0b9b435d0cd9146c0426133312f3aa92ecd15d106cb",
+  "icons/docs.svg":
+    "fb3024904bcc938699a752caa0da94e847e307412147c78d2e40a17c7c0f2b1b",
+  "brands/alumni/anchore.svg":
+    "44ec2abc16967362abae6a0835f2ae5822906671909ea4ebff0fd94df6ce8925",
+  "brands/alumni/aws.svg":
+    "29933679fc1b15efd8817893d6346ea14ca1cc93580b2b274c6a2e6d2b42b815",
+  "brands/alumni/canonical.svg":
+    "f65021d4f0636ce917aef90f6105338322a765df34fd3419eb988e756aa95874",
+  "brands/alumni/chainguard.webp":
+    "07a38e3762687175568afc2890396e10ab89be8a0c9a2b1d0867ea42da35819e",
+  "brands/alumni/cncf.svg":
+    "967cee2327f2262a56d69f9f686745c6480b82cfd4ca7189e2c268d5e83ac9f8",
+  "brands/alumni/intel.svg":
+    "f756cc635cbf3a15ed80adc6d9e4bba114d7993e3d1fd536e7043b0bbc71f81e",
+  "brands/alumni/microsoft.svg":
+    "39c37b022a810fd604425a253459f43a235a636a3dd6a002115df717b41b02db",
+  "brands/alumni/redhat.svg":
+    "abf2eda6f61b26159e3bb9ae735015627e2ebb9fcf6a2c6f64cf4aa1535819a8",
+  "brands/alumni/vmware.svg":
+    "e3a1648aa53dfe69304ca7bbf4aa54910377106dc7eb7cd0e9e188d57acca37b",
+  "brands/sponsors/cloudflare.svg":
+    "7f352bc63cd2cba3ea4ed4e04ce55dae7d57538888a71ce509458aef31244dc3",
+  "brands/bootc.svg":
+    "6e7356932402a670bb0a52ae5429000393e5bc4d9c5c7f790d9d841e63456580",
+  "brands/podman.svg":
+    "0888833ae50088a1c18ba938a71087721e26e513ac823d94be25364075f64c51",
+  "brands/docker.svg":
+    "9a3dc62404129d731a24ead52df09042a01cb8d3ad2745790329e73347421186",
+  "brands/universal-blue.svg":
+    "da97ad81b874d9f977a074ab883752132323c618b14da6987a76f847d71de6b9",
+};
 
-  for (const relativePath of copiedAssets) {
+test("static assets exist and match checked-in SHA-256 hashes", () => {
+  for (const [relativePath, expectedHash] of Object.entries(
+    EXPECTED_ASSET_SHA256,
+  )) {
     const targetFile = path.join(docsRoot, "static", relativePath);
 
     assert.ok(
@@ -58,20 +77,27 @@ test("static assets exist and are byte-identical to website source", () => {
       `Target file must exist: ${targetFile}`,
     );
 
+    const targetBytes = fs.readFileSync(targetFile);
+    const targetHash = crypto
+      .createHash("sha256")
+      .update(targetBytes)
+      .digest("hex");
+    assert.equal(
+      targetHash,
+      expectedHash,
+      `Target file ${relativePath} must match expected SHA-256 hash`,
+    );
+
     if (fs.existsSync(websiteRoot)) {
       const sourceFile = path.join(websiteRoot, "public", relativePath);
-      assert.ok(
-        fs.existsSync(sourceFile),
-        `Source file must exist: ${sourceFile}`,
-      );
-
-      const targetBytes = fs.readFileSync(targetFile);
-      const sourceBytes = fs.readFileSync(sourceFile);
-      assert.deepEqual(
-        targetBytes,
-        sourceBytes,
-        `Target file ${relativePath} must be byte-identical to source`,
-      );
+      if (fs.existsSync(sourceFile)) {
+        const sourceBytes = fs.readFileSync(sourceFile);
+        assert.deepEqual(
+          targetBytes,
+          sourceBytes,
+          `Target file ${relativePath} must be byte-identical to source`,
+        );
+      }
     }
   }
 

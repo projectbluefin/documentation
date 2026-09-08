@@ -89,6 +89,8 @@ test("PortalBazaar statically renders app store copy, screenshot, and Flathub ac
   assert.ok(html.includes('href="https://flathub.org"'));
   assert.ok(html.includes('href="https://docs.brew.sh/Homebrew-on-Linux"'));
   assert.ok(html.includes('src="/img/bazaar.png"'));
+  assert.ok(html.includes('width="1270"'));
+  assert.ok(html.includes('height="950"'));
   assert.ok(
     html.includes('alt="Screenshot of Bluefin&#x27;s Flatpak Store, Bazaar"'),
   );
@@ -117,6 +119,7 @@ test("PortalCommunity statically renders documentation card, icons, and action l
   assert.ok(html.includes(">Community<"));
   assert.ok(html.includes('src="/icons/docs.svg"'));
   assert.ok(html.includes('alt="Bluefin Documentation"'));
+  assert.ok(html.includes('title="View Documentation"'));
   assert.ok(html.includes(">Documentation<"));
   assert.ok(
     html.includes(
@@ -181,6 +184,10 @@ test("PortalFooter statically renders alumni, sponsors, powered-by, credits, and
   assert.ok(html.includes("Project Bluefin is Built With"));
   assert.ok(html.includes('href="https://universal-blue.org"'));
   assert.ok(html.includes('src="/brands/universal-blue.svg"'));
+  assert.match(
+    html,
+    /<img[^>]*src="\/brands\/universal-blue\.svg"[^>]*loading="lazy"/,
+  );
   assert.ok(html.includes("Welcome to indie Cloud Native."));
 
   // Social
@@ -214,4 +221,52 @@ test("PortalFooter statically renders alumni, sponsors, powered-by, credits, and
   assert.ok(!source.includes("window."));
   assert.ok(!source.includes("document."));
   assert.ok(!source.includes("useEffect"));
+});
+
+test("Bazaar, Community CTAs, and Footer links maintain accessible contrast and visible focus rings", () => {
+  const bazaarCss = fs.readFileSync(
+    path.join(portalDir, "PortalBazaar.module.css"),
+    "utf8",
+  );
+  const communityCss = fs.readFileSync(
+    path.join(portalDir, "PortalCommunity.module.css"),
+    "utf8",
+  );
+  const footerCss = fs.readFileSync(
+    path.join(portalDir, "PortalFooter.module.css"),
+    "utf8",
+  );
+
+  // Inaccessible #4285f4 must not be used as button background or footer links
+  assert.ok(!bazaarCss.includes("#4285f4"));
+  assert.ok(!communityCss.includes("#4285f4"));
+  assert.ok(!footerCss.includes("#4285f4"));
+
+  // Accessible normal background fallback (#0056b3 has > 7:1 contrast on white)
+  assert.match(bazaarCss, /\.flathubButton\s*\{[^}]*#0056b3/);
+  assert.match(communityCss, /\.communityButton\s*\{[^}]*#0056b3/);
+
+  // Explicit visible focus rings
+  assert.match(
+    bazaarCss,
+    /\.flathubButton:focus-visible\s*\{[^}]*outline:\s*3px solid/,
+  );
+  assert.match(
+    communityCss,
+    /\.communityButton:focus-visible\s*\{[^}]*outline:\s*3px solid/,
+  );
+
+  // Accessible hover and focus state background
+  assert.match(bazaarCss, /\.flathubButton:hover[^}]*#004494/);
+  assert.match(communityCss, /\.communityButton:hover[^}]*#004494/);
+
+  // Footer links use scoped token variable with fallback
+  assert.match(
+    footerCss,
+    /\.rightCol a\s*\{[^}]*var\(--portal-blue-light,\s*#8a97f7\)/,
+  );
+  assert.match(
+    footerCss,
+    /\.socialLinks li a:hover\s*\{[^}]*var\(--portal-blue-light,\s*#8a97f7\)/,
+  );
 });

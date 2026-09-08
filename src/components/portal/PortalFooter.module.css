@@ -134,7 +134,7 @@
 }
 
 .rightCol a {
-  color: #4285f4;
+  color: var(--portal-blue-light, #8a97f7);
   font-weight: 700;
   text-decoration: none;
 }
@@ -162,7 +162,7 @@
 }
 
 .socialLinks li a:hover {
-  color: #4285f4;
+  color: var(--portal-blue-light, #8a97f7);
 }
 
 .socialLinks svg {

@@ -27,7 +27,7 @@ export default function PortalCommunity(): React.JSX.Element {
                 href={docsCard.docsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                title={docsCard.title}
+                title="View Documentation"
               >
                 <img
                   src={docsCard.iconSrc}

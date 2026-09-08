@@ -40,12 +40,16 @@ export default function PortalBazaar(): React.JSX.Element {
                 className={styles.screenshot}
                 src={BAZAAR_METADATA.screenshotSrc}
                 alt={BAZAAR_METADATA.screenshotAlt}
+                width="1270"
+                height="950"
                 loading="lazy"
               />
               <img
                 className={styles.bazaarIcon}
                 src={BAZAAR_METADATA.iconSrc}
                 alt={BAZAAR_METADATA.iconAlt}
+                width="64"
+                height="64"
                 loading="lazy"
               />
             </div>
