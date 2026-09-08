@@ -53,6 +53,70 @@ test("parseFeedItem extracts markdown package, diff, and commit data", async () 
   });
 });
 
+test("parseFeedItem extracts HTML release-table data (Atom feed fallback)", async () => {
+  const { parseFeedItem } = await import("./lib/card-feed-parser.mjs");
+
+  // Real shape produced when GitHub renders release Markdown to HTML, as
+  // returned by the Atom feed fallback (fetch-feeds.js) when GITHUB_TOKEN
+  // is unavailable and the REST API can't be used.
+  const item = {
+    title: "stable-20260401 (F43.20260401, #123)",
+    pubDate: "2026-04-01T00:00:00Z",
+    link: "https://example.com/release",
+    content: [
+      "<h3>Major packages</h3>",
+      "<table>",
+      "<thead><tr><th>Name</th><th>Version</th></tr></thead>",
+      "<tbody>",
+      "<tr><td><strong>Kernel</strong></td><td>6.14.0 ➡️ 6.15.0</td></tr>",
+      "<tr><td><strong>Mesa</strong></td><td>25.0</td></tr>",
+      "</tbody>",
+      "</table>",
+      "<h3>Major DX packages</h3>",
+      "<table>",
+      "<thead><tr><th>Name</th><th>Version</th></tr></thead>",
+      "<tbody>",
+      "<tr><td><strong>Devpod</strong></td><td>0.5 ➡️ 0.6</td></tr>",
+      "</tbody>",
+      "</table>",
+      "<h3>All Images</h3>",
+      "<table>",
+      "<thead><tr><th></th><th>Name</th><th>Previous</th><th>New</th></tr></thead>",
+      "<tbody>",
+      "<tr><td>✨</td><td>ghcr.io/example/new</td><td></td><td></td></tr>",
+      "<tr><td>🔄</td><td>ghcr.io/example/changed</td><td></td><td></td></tr>",
+      "<tr><td>❌</td><td>ghcr.io/example/removed</td><td></td><td></td></tr>",
+      "</tbody>",
+      "</table>",
+      "<h3>Commits</h3>",
+      "<table>",
+      "<thead><tr><th>Hash</th><th>Message</th></tr></thead>",
+      "<tbody>",
+      "<tr><td>abc123</td><td>Update kernel</td></tr>",
+      "<tr><td>def456</td><td>Update mesa</td></tr>",
+      "</tbody>",
+      "</table>",
+    ].join("\n"),
+  };
+
+  assert.deepEqual(parseFeedItem(item, "stable"), {
+    stream: "stable",
+    tag: "stable-20260401",
+    fedoraVersion: "43",
+    centosVersion: null,
+    majorPackages: [
+      { name: "Kernel", version: "6.15.0", prevVersion: "6.14.0" },
+      { name: "Mesa", version: "25.0", prevVersion: null },
+    ],
+    dxPackages: [{ name: "Devpod", version: "0.6", prevVersion: "0.5" }],
+    gdxPackages: [],
+    diffStats: { added: 1, changed: 1, removed: 1 },
+    commitCount: 2,
+    dateMs: Date.parse("2026-04-01T00:00:00Z"),
+    link: "https://example.com/release",
+  });
+});
+
 test("parseFeedItem returns null when markdown tables are missing major packages", async () => {
   const { parseFeedItem } = await import("./lib/card-feed-parser.mjs");
 

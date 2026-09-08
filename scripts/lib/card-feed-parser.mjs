@@ -72,12 +72,77 @@ export function parseCommitRows(rows) {
   return rows.filter((cells) => cells.length >= 2 && cells[0] && cells[0] !== "Hash").length;
 }
 
+/**
+ * Strip HTML tags and decode the handful of entities GitHub uses when
+ * rendering release notes (Atom feed content, or the release page itself).
+ */
+export function stripHtml(text) {
+  return text
+    .replace(/<[^>]+>/g, "")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#0?39;/g, "'")
+    .trim();
+}
+
+export function splitHtmlRow(rowHtml) {
+  const cells = [];
+  const cellRe = /<t[hd][^>]*>([\s\S]*?)<\/t[hd]>/gi;
+  let match;
+  while ((match = cellRe.exec(rowHtml))) {
+    cells.push(stripHtml(match[1]));
+  }
+  return cells;
+}
+
+/**
+ * Extract `### Heading` -> table-rows sections from an HTML release body
+ * (e.g. the GitHub Atom feed, which renders Markdown to HTML). Each heading
+ * is paired with the next <table> that appears before the following heading.
+ */
+export function extractSectionsHtml(content) {
+  const sections = new Map();
+  const headingRe = /<h[1-6][^>]*>([\s\S]*?)<\/h[1-6]>/gi;
+  const headings = [];
+  let hm;
+  while ((hm = headingRe.exec(content))) {
+    headings.push({ index: hm.index, end: headingRe.lastIndex, text: stripHtml(hm[1]) });
+  }
+
+  const tableRe = /<table[^>]*>([\s\S]*?)<\/table>/gi;
+  const tables = [];
+  let tm;
+  while ((tm = tableRe.exec(content))) {
+    tables.push({ index: tm.index, body: tm[1] });
+  }
+
+  for (let i = 0; i < headings.length; i++) {
+    const heading = headings[i];
+    const nextHeadingIndex = i + 1 < headings.length ? headings[i + 1].index : Infinity;
+    const table = tables.find((t) => t.index > heading.end && t.index < nextHeadingIndex);
+    if (!table) continue;
+
+    const rowRe = /<tr[^>]*>([\s\S]*?)<\/tr>/gi;
+    const rows = [];
+    let rm;
+    while ((rm = rowRe.exec(table.body))) {
+      const cells = splitHtmlRow(rm[1]);
+      if (cells.length > 0) rows.push(cells);
+    }
+    if (rows.length > 0) sections.set(heading.text, rows);
+  }
+  return sections;
+}
+
 export function parseFeedItem(item, streamHint) {
   const content = item.content ?? "";
   const isMarkdown = /^\|[\s|:-]*---[\s|:-]*\|/m.test(content);
-  if (!isMarkdown) return null;
+  const isHtml = !isMarkdown && /<table[^>]*>[\s\S]*<\/table>/i.test(content);
+  if (!isMarkdown && !isHtml) return null;
 
-  const sections = extractSectionsMd(content);
+  const sections = isHtml ? extractSectionsHtml(content) : extractSectionsMd(content);
   const majorPackages = parseTwoColTableMd(sections.get("Major packages") ?? []);
   const dxPackages = parseTwoColTableMd(sections.get("Major DX packages") ?? []);
   const gdxPackages = parseTwoColTableMd(sections.get("Major GDX packages") ?? []);
