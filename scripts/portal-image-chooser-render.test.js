@@ -100,20 +100,70 @@ const cssPath = path.join(
   "PortalSectionPicker.module.css",
 );
 
-const imagesData = JSON.parse(
-  fs.readFileSync(path.join(root, "static", "data", "images.json"), "utf8"),
-);
-const driverVersionsData = JSON.parse(
-  fs.readFileSync(
-    path.join(root, "static", "data", "driver-versions.json"),
-    "utf8",
-  ),
-);
+const deterministicCatalog = {
+  streams: {
+    stable: {
+      id: "stable",
+      title: "Bluefin",
+      subtitle: "For Everyone",
+      description:
+        "A modern desktop at the leading edge. Pick this if you're not sure.",
+      image: "/img/portal/characters/leaping.webp",
+      supportedArch: ["x86"],
+      recommended: true,
+      available: true,
+      versions: {
+        base: "Fedora 44",
+        gnome: "50.1",
+        kernel: "7.0.8-200.fc44",
+        mesa: "26.0.8",
+        nvidia: "595.71.05",
+        flatpak: "1.17.7",
+        podman: "5.8.2",
+      },
+    },
+    lts: {
+      id: "lts",
+      title: "Bluefin LTS",
+      subtitle: "For professionals and AI/ML engineers",
+      description:
+        "A long term support experience on an enterprise-grade foundation.",
+      image: "/img/portal/characters/achillobator.webp",
+      supportedArch: ["x86", "arm"],
+      recommended: false,
+      available: true,
+      versions: {
+        gnome: "49.5",
+        kernel: "6.12.0-233.el10",
+        hweKernel: "7.0.8-100.fc43",
+        flatpak: "1.16.0",
+        podman: "5.8.2",
+      },
+    },
+  },
+  ecosystem: [
+    {
+      id: "dakota",
+      title: "Dakota",
+      description: "The Final Form. Bluefin Perfected.",
+      href: "/dakota",
+      image: "/img/portal/characters/dakota.webp",
+      versionRows: [
+        { label: "Kernel", value: "7.0.7" },
+        { label: "GNOME", value: "50.2" },
+      ],
+    },
+  ],
+  wolvesCampaign: {
+    title: "Seven Days to the Wolves",
+    href: "https://projectbluefin.io/wolves/",
+    image: "/img/portal/wolves/Always%20There.webp",
+  },
+};
 
 test("image chooser renders initial release step with recommended badge, Flatpak, and Podman chips", () => {
-  const { adaptStreams } = loadModule(adapterPath);
   const PortalImageChooser = loadModule(chooserPath).default;
-  const catalog = adaptStreams(imagesData, driverVersionsData);
+  const catalog = deterministicCatalog;
 
   const html = renderToStaticMarkup(
     React.createElement(PortalImageChooser, { catalog }),
@@ -215,9 +265,8 @@ test("image chooser renders disabled release with unavailable badge and aria-dis
 });
 
 test("image chooser renders architecture step with back button and options", () => {
-  const { adaptStreams } = loadModule(adapterPath);
   const PortalImageChooser = loadModule(chooserPath).default;
-  const catalog = adaptStreams(imagesData, driverVersionsData);
+  const catalog = deterministicCatalog;
 
   const html = renderToStaticMarkup(
     React.createElement(PortalImageChooser, {
@@ -236,9 +285,8 @@ test("image chooser renders architecture step with back button and options", () 
 });
 
 test("image chooser renders download step with exact ISO and checksum URLs and doc links", () => {
-  const { adaptStreams } = loadModule(adapterPath);
   const PortalImageChooser = loadModule(chooserPath).default;
-  const catalog = adaptStreams(imagesData, driverVersionsData);
+  const catalog = deterministicCatalog;
 
   const html = renderToStaticMarkup(
     React.createElement(PortalImageChooser, {
@@ -290,10 +338,9 @@ test("scoped CSS provides reduced-motion, resilient container rules, and accessi
 });
 
 test("image chooser exposes polite live-region step announcement and tabindex=-1 on headings across all steps", () => {
-  const { adaptStreams } = loadModule(adapterPath);
   const chooserModule = loadModule(chooserPath);
   const PortalImageChooser = chooserModule.default;
-  const catalog = adaptStreams(imagesData, driverVersionsData);
+  const catalog = deterministicCatalog;
 
   // Release step
   const htmlRelease = renderToStaticMarkup(
@@ -403,9 +450,8 @@ test("image chooser exposes polite live-region step announcement and tabindex=-1
 });
 
 test("getStepAnnouncement pure helper covers forward, ARM direct-download, and Nvidia bypass states", () => {
-  const { adaptStreams } = loadModule(adapterPath);
   const { getStepAnnouncement } = loadModule(chooserPath);
-  const catalog = adaptStreams(imagesData, driverVersionsData);
+  const catalog = deterministicCatalog;
 
   // Step 1: Release
   assert.equal(
@@ -522,4 +568,73 @@ test("client-only ref and transition focus effect skips initial mount and avoids
     "effect must fall back to first control if no heading exists",
   );
   assert.match(source, /\},\s*\[step\]\);/, "effect must trigger on [step]");
+});
+
+test("regression: chooser render tests remain stable when rendered with different version numbers and canonical streams", () => {
+  const PortalImageChooser = loadModule(chooserPath).default;
+  const driftedCatalog = {
+    streams: {
+      stable: {
+        id: "stable",
+        title: "Bluefin",
+        subtitle: "For Everyone",
+        description: "Leading edge.",
+        image: "/img/portal/characters/leaping.webp",
+        supportedArch: ["x86"],
+        recommended: true,
+        available: true,
+        versions: {
+          base: "Fedora 99",
+          gnome: "99.0",
+          kernel: "99.0.0",
+          mesa: "99.0.0",
+          nvidia: "999.99.99",
+          flatpak: "9.9.9",
+          podman: "9.9.9",
+        },
+      },
+      lts: {
+        id: "lts",
+        title: "Bluefin LTS",
+        subtitle: "LTS",
+        description: "Enterprise foundation.",
+        image: "/img/portal/characters/achillobator.webp",
+        supportedArch: ["x86", "arm"],
+        recommended: false,
+        available: true,
+        versions: {
+          gnome: "88.0",
+          kernel: "88.0.0",
+          hweKernel: "99.0.0",
+          flatpak: "8.8.8",
+          podman: "8.8.8",
+        },
+      },
+    },
+    ecosystem: [],
+    wolvesCampaign: {
+      title: "Wolves",
+      href: "https://projectbluefin.io/wolves/",
+      image: "#",
+    },
+  };
+
+  const html = renderToStaticMarkup(
+    React.createElement(PortalImageChooser, { catalog: driftedCatalog }),
+  );
+
+  assert.ok(html.includes("RECOMMENDED"));
+  assert.ok(html.includes("Fedora 99"));
+  assert.ok(html.includes("99.0.0"));
+  assert.ok(html.includes("Flatpak:"));
+  assert.ok(html.includes("9.9.9"));
+  assert.ok(html.includes("Podman:"));
+  assert.ok(html.includes("9.9.9"));
+
+  const primaryHtml = renderToStaticMarkup(
+    React.createElement(PortalImageChooser, { catalog: deterministicCatalog }),
+  );
+  assert.ok(primaryHtml.includes("Fedora 44"));
+  assert.ok(primaryHtml.includes("1.17.7"));
+  assert.ok(primaryHtml.includes("5.8.2"));
 });

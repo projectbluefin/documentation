@@ -30,19 +30,100 @@ const adapterPath = path.join(
 );
 
 const root = path.join(__dirname, "..");
-const imagesData = JSON.parse(
-  fs.readFileSync(path.join(root, "static", "data", "images.json"), "utf8"),
-);
-const driverVersionsData = JSON.parse(
-  fs.readFileSync(
-    path.join(root, "static", "data", "driver-versions.json"),
-    "utf8",
-  ),
-);
 
-test("stream adapter extracts verified stream versions from documentation build data", () => {
+const deterministicImages = {
+  products: [
+    {
+      id: "projectbluefin-bluefin",
+      streams: [
+        {
+          tag: "stable",
+          versions: {
+            fedora: "F44",
+            gnome: "50.1",
+            kernel: "7.0.8-200.fc44",
+            mesa: "26.0.8",
+            nvidia: "595.71.05",
+            flatpak: "1.17.7",
+            podman: "5.8.2",
+          },
+        },
+      ],
+    },
+    {
+      id: "projectbluefin-bluefin-lts",
+      streams: [
+        {
+          tag: "stable",
+          versions: {
+            fedora: "el10",
+            gnome: "49.5",
+            kernel: "6.12.0-233.el10",
+            flatpak: "1.16.0",
+            podman: "5.8.2",
+          },
+        },
+      ],
+    },
+    {
+      id: "projectbluefin-dakota",
+      streams: [
+        {
+          tag: "stable",
+          versions: {
+            kernel: "7.0.7",
+            gnome: "50.2",
+            mesa: "26.0.6",
+          },
+        },
+      ],
+    },
+  ],
+};
+
+const deterministicDrivers = {
+  streams: [
+    {
+      id: "bluefin-stable",
+      latest: {
+        versions: {
+          gnome: "50.1",
+          kernel: "7.0.8-200.fc44",
+          mesa: "26.0.8",
+          nvidia: "595.71.05",
+          flatpak: "1.17.7",
+          podman: "5.8.2",
+        },
+      },
+    },
+    {
+      id: "bluefin-lts",
+      latest: {
+        versions: {
+          gnome: "49.5",
+          kernel: "6.12.0-233.el10",
+          hweKernel: "7.0.8-100.fc43",
+          flatpak: "1.16.0",
+          podman: "5.8.2",
+        },
+      },
+    },
+    {
+      id: "dakota-latest",
+      latest: {
+        versions: {
+          kernel: "7.0.7",
+          gnome: "50.2",
+          mesa: "26.0.6",
+        },
+      },
+    },
+  ],
+};
+
+test("stream adapter extracts verified stream versions from deterministic fixture", () => {
   const { adaptStreams } = loadTsModule(adapterPath);
-  const catalog = adaptStreams(imagesData, driverVersionsData);
+  const catalog = adaptStreams(deterministicImages, deterministicDrivers);
 
   assert.ok(catalog.streams.stable);
   assert.ok(catalog.streams.lts);
@@ -94,7 +175,7 @@ test("stream adapter sets available false and shows reason when stream is absent
 
 test("ecosystem cards link local routes and wolves links absolute url", () => {
   const { adaptStreams } = loadTsModule(adapterPath);
-  const catalog = adaptStreams(imagesData, driverVersionsData);
+  const catalog = adaptStreams(deterministicImages, deterministicDrivers);
 
   assert.equal(catalog.ecosystem.length, 3);
   const [dakota, server, utah] = catalog.ecosystem;
@@ -360,4 +441,146 @@ test("missing canonical stable tag makes stream unavailable even if driver versi
   );
   assert.equal(catalog.streams.stable.unavailableReason, "Will return");
   assert.equal(catalog.streams.stable.versions, undefined);
+});
+
+test("smoke test: stream adapter processes live static data files with structural invariants", () => {
+  const { adaptStreams } = loadTsModule(adapterPath);
+  const liveImages = JSON.parse(
+    fs.readFileSync(path.join(root, "static", "data", "images.json"), "utf8"),
+  );
+  const liveDrivers = JSON.parse(
+    fs.readFileSync(
+      path.join(root, "static", "data", "driver-versions.json"),
+      "utf8",
+    ),
+  );
+  const catalog = adaptStreams(liveImages, liveDrivers);
+
+  assert.ok(catalog.streams);
+  assert.ok(catalog.streams.stable);
+  assert.ok(catalog.streams.lts);
+  assert.equal(catalog.streams.stable.id, "stable");
+  assert.equal(catalog.streams.lts.id, "lts");
+  assert.equal(typeof catalog.streams.stable.available, "boolean");
+  assert.equal(typeof catalog.streams.lts.available, "boolean");
+  assert.ok(Array.isArray(catalog.streams.stable.supportedArch));
+  assert.ok(Array.isArray(catalog.streams.lts.supportedArch));
+  assert.equal(typeof catalog.streams.stable.recommended, "boolean");
+  assert.equal(typeof catalog.streams.lts.recommended, "boolean");
+  assert.ok(Array.isArray(catalog.ecosystem));
+  assert.ok(catalog.wolvesCampaign);
+  assert.equal(typeof catalog.wolvesCampaign.title, "string");
+  assert.equal(typeof catalog.wolvesCampaign.href, "string");
+  assert.ok(catalog.wolvesCampaign.href.startsWith("http"));
+});
+
+test("regression: exact tests remain stable when actual generated files contain different version numbers and canonical streams", () => {
+  const { adaptStreams } = loadTsModule(adapterPath);
+  const driftedImages = {
+    products: [
+      {
+        id: "projectbluefin-bluefin",
+        streams: [
+          {
+            tag: "stable",
+            versions: {
+              fedora: "F45",
+              gnome: "52.0",
+              kernel: "8.1.0-100.fc45",
+              mesa: "27.0.0",
+              nvidia: "615.00.00",
+              flatpak: "1.19.0",
+              podman: "6.0.0",
+            },
+          },
+        ],
+      },
+      {
+        id: "projectbluefin-bluefin-lts",
+        streams: [
+          {
+            tag: "stable",
+            versions: {
+              fedora: "el11",
+              gnome: "50.0",
+              kernel: "7.0.0-100.el11",
+              flatpak: "1.17.0",
+              podman: "6.0.0",
+            },
+          },
+        ],
+      },
+      {
+        id: "projectbluefin-dakota",
+        streams: [
+          {
+            tag: "stable",
+            versions: {
+              kernel: "8.0.0",
+              gnome: "52.0",
+              mesa: "27.0.0",
+            },
+          },
+        ],
+      },
+    ],
+  };
+  const driftedDrivers = {
+    streams: [
+      {
+        id: "bluefin-stable",
+        latest: {
+          versions: {
+            gnome: "52.0",
+            kernel: "8.1.0-100.fc45",
+            mesa: "27.0.0",
+            nvidia: "615.00.00",
+            flatpak: "1.19.0",
+            podman: "6.0.0",
+          },
+        },
+      },
+      {
+        id: "bluefin-lts",
+        latest: {
+          versions: {
+            gnome: "50.0",
+            kernel: "7.0.0-100.el11",
+            hweKernel: "8.1.0-50.fc45",
+            flatpak: "1.17.0",
+            podman: "6.0.0",
+          },
+        },
+      },
+    ],
+  };
+
+  const dynamicCatalog = adaptStreams(driftedImages, driftedDrivers);
+  assert.equal(dynamicCatalog.streams.stable.versions.gnome, "52.0");
+  assert.equal(dynamicCatalog.streams.stable.versions.base, "Fedora 45");
+  assert.equal(dynamicCatalog.streams.stable.versions.kernel, "8.1.0-100.fc45");
+  assert.equal(dynamicCatalog.streams.lts.versions.gnome, "50.0");
+  assert.equal(dynamicCatalog.streams.lts.versions.kernel, "7.0.0-100.el11");
+
+  // Prove deterministic fixture assertions remain completely unaffected
+  const deterministicCatalogResult = adaptStreams(
+    deterministicImages,
+    deterministicDrivers,
+  );
+  assert.equal(
+    deterministicCatalogResult.streams.stable.versions.gnome,
+    "50.1",
+  );
+  assert.equal(
+    deterministicCatalogResult.streams.stable.versions.base,
+    "Fedora 44",
+  );
+  assert.equal(
+    deterministicCatalogResult.streams.stable.versions.flatpak,
+    "1.17.7",
+  );
+  assert.equal(
+    deterministicCatalogResult.streams.stable.versions.podman,
+    "5.8.2",
+  );
 });
