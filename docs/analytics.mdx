@@ -22,40 +22,35 @@ The Fedora countme service is on by default in Fedora, and Bluefin inherits that
 - [countme](https://github.com/wgwoods/fedora-countme-data)
 - [How to turn it off](https://coreos.github.io/rpm-ostree/countme/)
 
-### How the numbers are counted
+### Single Source of Truth
 
-The chart above and the [Factory metrics view](/factory/metrics) are both derived
-from Fedora's published `totals.csv` using the rules in
-[ublue-os/countme](https://github.com/ublue-os/countme), which is the project's
-canonical implementation. Two of those rules matter for reading the numbers:
+The charts above serve as the single source of truth for the entire Project Bluefin
+workstation family, preserving direct historical continuity with the canonical
+baseline from `ublue-os/bluefin`.
 
-- **A hit is not a device.** DNF sends a countme request once a week for _each
-  repository_ that has it enabled, so a machine with the base, updates, openh264
-  and source repos produces four hits. Counting devices means restricting to the
-  single base `fedora-N` repo that each system has exactly one of.
-- **Not every row is the same measurement.** Rows carrying `sys_age = -1` are a
-  separate legacy unique-IP estimate that Fedora computes in a second pass and
-  writes into the same file. They are excluded.
+Active systems across all Project Bluefin images are combined into the unified
+Bluefin fleet view:
 
-Two weeks are skipped outright: the partial week at the end of 2024, and the week
-of the July 2025 Fedora infrastructure migration, which shows a ~40% drop that
-reflects the migration rather than a loss of users.
+- **Bluefin (Flagship Workstation):** Standard Fedora bootc cloud-native developer workstation.
+- **Bluefin LTS (Enterprise Workstation):** CentOS Stream 10 bootc long-term support release with 10-year platform stability.
+- **Project Bluefin Dakota (Next-Gen Workstation):** Assembled from source with Apache BuildStream on GNOME OS bootc.
+- **Project Bluefin Utah (Next-Gen Workstation):** Modular workstation on minimal Fedora Hummingbird bootc with GNOME 51 desktop layer.
 
-Countme is an estimate, not a census. It only sees systems that actually ran dnf
-during the week, it can be turned off, and systems behind a mirror that does not
-forward the request are invisible.
+### First-party Countme Service
 
-**Bluefin LTS is not comparable to the others.** It is CentOS Stream based, so it
-has no `fedora-N` repo and reaches Fedora's counter only through EPEL. Fedora's
-own infrastructure treats EPEL countme figures as an undercount. Read the LTS
-line as a floor, not as a share of the same population.
-
-### First-party CountMe Service
-
-In addition to upstream Fedora and ublue reporting, Project Bluefin images
-(`bluefin`, `bluefin-lts`, and `dakota`) participate in direct weekly countme
-reporting via `projectbluefin/common` systemd services targeting
+Project Bluefin images (`bluefin`, `bluefin-lts`, `dakota`, and `utah`) participate
+in direct weekly countme reporting via `projectbluefin/common` systemd services targeting
 `https://countme.projectbluefin.io/metalink`.
+
+- **Cohort measurement:** Uses installation age buckets (1: first week, 2: 2–4 weeks, 3: 5–24 weeks, 4: >24 weeks) calculated locally from an installation epoch timestamp.
+- **Privacy guarantees:** Transmits only image name, tag, flavor, architecture, and age bucket. No machine ID, IP address, username, or persistent identifier is sent or logged.
+- **How to opt out:** Create the disable marker file:
+
+```bash
+sudo install -d -m 0755 /etc/projectbluefin/countme && sudo touch /etc/projectbluefin/countme/disabled
+```
+
+(The legacy marker `/etc/dakota-countme/disabled` is also honored.)
 
 - **Cohort measurement:** Uses Fedora-style installation age buckets (1: first week, 2: 2–4 weeks, 3: 5–24 weeks, 4: >24 weeks) calculated locally from an installation epoch timestamp.
 - **Privacy guarantees:** Transmits only image name, tag, flavor, architecture, and age bucket. No machine ID, IP address, username, or persistent identifier is sent or logged.

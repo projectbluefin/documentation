@@ -77,7 +77,9 @@ async function proxyRequest(request) {
   }
 
   if (isProjectBluefinPrimary(pathname)) {
-    return new Response(createPendingProjectbluefinSvg(), {
+    const variantMatch = pathname.match(/^\/([^/]+)\/growth\.svg/);
+    const variant = variantMatch ? variantMatch[1] : "bluefin";
+    return new Response(createPendingProjectbluefinSvg(variant), {
       status: 200,
       headers: baseHeaders({ "content-type": "image/svg+xml; charset=UTF-8" }),
     });

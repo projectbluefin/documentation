@@ -90,6 +90,28 @@
   color: #58a6ff;
 }
 
+.heroSubBadges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.heroSubBadge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  background: rgba(48, 54, 61, 0.5);
+  color: var(--ifm-color-emphasis-700, #c9d1d9);
+  border: 1px solid var(--ifm-color-emphasis-200, rgba(48, 54, 61, 0.8));
+}
+
+.heroSubBadgeHighlight {
+  color: #58a6ff;
+  border-color: rgba(88, 166, 255, 0.4);
+}
+
 .kpiGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -313,4 +335,139 @@
   color: var(--ifm-color-emphasis-600, #8b949e);
   margin-top: 0.75rem;
   line-height: 1.4;
+}
+
+/* Family section */
+.familySection {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.familyGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.25rem;
+}
+
+.familyCard {
+  background: var(--ifm-card-background-color, rgba(22, 27, 34, 0.75));
+  border: 1px solid var(--ifm-color-emphasis-200, rgba(48, 54, 61, 0.8));
+  border-radius: 12px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  position: relative;
+  overflow: hidden;
+  transition:
+    transform 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.familyCard:hover {
+  transform: translateY(-2px);
+  border-color: var(--ifm-color-primary, #58a6ff);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.familyCardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.familyCardTitleGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.familyName {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--ifm-heading-color, #e6edf3);
+  margin: 0;
+}
+
+.familyEdition {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--ifm-color-emphasis-600, #8b949e);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.statusPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.statusActive {
+  background: rgba(57, 210, 192, 0.15);
+  color: #39d2c0;
+}
+
+.statusPending {
+  background: rgba(188, 140, 255, 0.15);
+  color: #bc8cff;
+}
+
+.familyMetaRow {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.6rem 0.75rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  font-size: 0.75rem;
+}
+
+.familyMetaItem {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.familyMetaLabel {
+  color: var(--ifm-color-emphasis-500, #8b949e);
+}
+
+.familyMetaValue {
+  color: var(--ifm-color-emphasis-800, #e6edf3);
+  font-weight: 600;
+  font-family: var(--ifm-font-family-monospace, monospace);
+  font-size: 0.75rem;
+}
+
+.familyFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: auto;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--ifm-color-emphasis-200, rgba(48, 54, 61, 0.6));
+}
+
+.familyLink {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--ifm-color-primary, #58a6ff);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.familyLink:hover {
+  text-decoration: underline;
 }

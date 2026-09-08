@@ -45,9 +45,17 @@ test("maps root-host chart aliases to projectbluefin countme artifact", () => {
     mapRequestPath("/bluefin-lts/growth.svg"),
     "https://raw.githubusercontent.com/projectbluefin/countme/main/growth_bluefins.svg",
   );
+  assert.equal(
+    mapRequestPath("/dakota/growth.svg"),
+    "https://raw.githubusercontent.com/projectbluefin/countme/main/growth_bluefins.svg",
+  );
+  assert.equal(
+    mapRequestPath("/utah/growth.svg"),
+    "https://raw.githubusercontent.com/projectbluefin/countme/main/growth_bluefins.svg",
+  );
 });
 
-test("maps Bluefin badge endpoints", () => {
+test("maps Bluefin, Dakota, and Utah badge endpoints", () => {
   assert.equal(
     mapRequestPath("/badge-endpoints/bluefin.json"),
     "https://raw.githubusercontent.com/ublue-os/countme/main/badge-endpoints/bluefin.json",
@@ -55,6 +63,14 @@ test("maps Bluefin badge endpoints", () => {
   assert.equal(
     mapRequestPath("/badge-endpoints/bluefin-lts.json"),
     "https://raw.githubusercontent.com/ublue-os/countme/main/badge-endpoints/bluefin-lts.json",
+  );
+  assert.equal(
+    mapRequestPath("/badge-endpoints/dakota.json"),
+    "https://raw.githubusercontent.com/projectbluefin/countme/main/badge-endpoints/dakota.json",
+  );
+  assert.equal(
+    mapRequestPath("/badge-endpoints/utah.json"),
+    "https://raw.githubusercontent.com/projectbluefin/countme/main/badge-endpoints/utah.json",
   );
 });
 
@@ -123,4 +139,33 @@ test("accepts metalink pings from Bluefin LTS countme clients", async () => {
     await response.text(),
     /countme accepted for repo=bluefin-lts tag=stable flavor=main arch=x86_64 countme=4/i,
   );
+});
+
+test("accepts metalink pings from Utah countme clients", async () => {
+  const request = new Request(
+    "https://countme.projectbluefin.io/metalink?repo=utah&tag=testing&flavor=default&arch=x86_64&countme=1",
+  );
+
+  const response = await fetchHandler(request);
+
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get("cache-control"), "no-store");
+  assert.equal(
+    response.headers.get("content-type"),
+    "text/plain;charset=UTF-8",
+  );
+  assert.match(
+    await response.text(),
+    /countme accepted for repo=utah tag=testing flavor=default arch=x86_64 countme=1/i,
+  );
+});
+
+test("renders pending projectbluefin svg message with specific variant", () => {
+  const dakotaSvg = createPendingProjectbluefinSvg("dakota");
+  assert.match(dakotaSvg, /projectbluefin\/dakota countme chart pending/i);
+  assert.match(dakotaSvg, /Dakota countme\.projectbluefin\.io configured/i);
+
+  const utahSvg = createPendingProjectbluefinSvg("utah");
+  assert.match(utahSvg, /projectbluefin\/utah countme chart pending/i);
+  assert.match(utahSvg, /Utah countme\.projectbluefin\.io configured/i);
 });
