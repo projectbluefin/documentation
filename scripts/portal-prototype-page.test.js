@@ -61,6 +61,7 @@ test("prototype renders source-authored scenes in order", () => {
     'id="scene-mission"',
     'id="scene-video"',
     'id="bazaar"',
+    'id="scene-community"',
   ];
   ids.reduce((previous, id) => {
     const current = html.indexOf(id);
@@ -71,6 +72,7 @@ test("prototype renders source-authored scenes in order", () => {
     return current;
   }, -1);
   assert.ok(html.includes(">Applications<"));
+  assert.ok(html.includes(">Community<"));
 
   assert.ok(html.includes('id="portal-scenes"'));
   assert.match(html, /<h1[^>]*>\s*<img[^>]*alt="Bluefin"[^>]*\/>\s*<\/h1>/);

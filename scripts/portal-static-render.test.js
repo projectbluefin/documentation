@@ -104,3 +104,39 @@ test("PortalBazaar statically renders app store copy, screenshot, and Flathub ac
   assert.ok(!source.includes("document."));
   assert.ok(!source.includes("useEffect"));
 });
+
+test("PortalCommunity statically renders documentation card, icons, and action links", () => {
+  const componentPath = path.join(portalDir, "PortalCommunity.tsx");
+  assert.ok(fs.existsSync(componentPath), "PortalCommunity.tsx must exist");
+
+  const PortalCommunity = loadModule(componentPath).default;
+  const html = renderToStaticMarkup(React.createElement(PortalCommunity));
+
+  assert.ok(html.includes('id="scene-community"'));
+  assert.ok(html.includes(">Our<"));
+  assert.ok(html.includes(">Community<"));
+  assert.ok(html.includes('src="/icons/docs.svg"'));
+  assert.ok(html.includes('alt="Bluefin Documentation"'));
+  assert.ok(html.includes(">Documentation<"));
+  assert.ok(
+    html.includes(
+      "Looking for support? View our documentation site for up-to-date guides on installation, general use, and troubleshooting.",
+    ),
+  );
+  assert.ok(html.includes('href="https://docs.projectbluefin.io"'));
+  assert.ok(html.includes("View Documentation"));
+  assert.ok(html.includes('href="https://discord.gg/WYCpGEM4sM"'));
+  assert.ok(html.includes("Join our Discord"));
+  assert.ok(
+    html.includes('href="https://github.com/ublue-os/bluefin/discussions"'),
+  );
+  assert.ok(html.includes("Discussions"));
+  // Verify SVG icons rendered
+  assert.equal(html.split("<svg").length - 1, 3);
+
+  // Check no browser globals
+  const source = fs.readFileSync(componentPath, "utf8");
+  assert.ok(!source.includes("window."));
+  assert.ok(!source.includes("document."));
+  assert.ok(!source.includes("useEffect"));
+});
