@@ -91,12 +91,16 @@ A design skill saying "come up with copy" refers to mockups, not authorship.
 
    `image` is the social card. Point it at a local path under `static/`.
 
-4. **Add the body only from supplied copy.** This site deliberately configures
+4. **Use supported author socials.** Do not add `gitlab` to an author record:
+   Docusaurus turns its value into a relative link and fails broken-link
+   validation. Reuse only social keys already present in `blog/authors.yaml`.
+
+5. **Add the body only from supplied copy.** This site deliberately configures
    `truncateMarker` to match nothing, so do not add inert marker comments to
    new posts. The Docusaurus untruncated-post warning is expected for every
    post, including posts that use the documented marker syntax.
 
-5. **Format only what you touched**, then build.
+6. **Format only what you touched**, then build.
 
    ```bash
    npx prettier --write blog/<file>.mdx

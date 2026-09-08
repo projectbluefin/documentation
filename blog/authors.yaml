@@ -67,3 +67,13 @@ bluefin:
   title: Automation & Factory
   url: https://github.com/projectbluefin
   image_url: https://github.com/projectbluefin.png
+
+sherman:
+  name: Benjamin Sherman
+  page: true
+  title: Bluefin Contributor
+  url: https://bsherman.dev
+  image_url: https://github.com/bsherman.png
+  socials:
+    github: "bsherman"
+    linkedin: "benjamingsherman"
