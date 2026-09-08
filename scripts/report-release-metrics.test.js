@@ -72,6 +72,13 @@ test("fetchReleaseEvents returns public release metadata with available provenan
       window: PERIOD,
     },
   ]);
+  assert.deepEqual(result.source, {
+    id: "github-releases",
+    status: "available",
+    stateReason: null,
+    url: RELEASES_URL,
+    window: PERIOD,
+  });
 });
 
 test("fetchReleaseEvents retains unavailable source provenance", async () => {
@@ -95,6 +102,13 @@ test("fetchReleaseEvents retains unavailable source provenance", async () => {
       window: PERIOD,
     },
   ]);
+  assert.deepEqual(result.source, {
+    id: "github-releases",
+    status: "unavailable",
+    stateReason: "HTTP 503",
+    url: RELEASES_URL,
+    window: PERIOD,
+  });
 });
 
 test("fetchReleaseEvents preserves provenance for each release-enabled repository", async () => {
@@ -133,4 +147,11 @@ test("fetchReleaseEvents preserves provenance for each release-enabled repositor
       window: PERIOD,
     },
   ]);
+  assert.deepEqual(result.source, {
+    id: "github-releases",
+    status: "unavailable",
+    stateReason: "HTTP 503",
+    url: "https://api.github.com/repos",
+    window: PERIOD,
+  });
 });

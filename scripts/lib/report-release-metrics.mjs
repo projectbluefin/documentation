@@ -54,6 +54,28 @@ function availableSource(repository, period, url) {
   };
 }
 
+function aggregateSource(entries, period) {
+  const sourceUrls = entries.map((entry) => entry.url).filter(Boolean);
+  const sourceUrl =
+    sourceUrls.length === 1 ? sourceUrls[0] : `${GITHUB_API}/repos`;
+  const failures = entries
+    .map((entry) => entry.unavailableReason)
+    .filter((reason) => typeof reason === "string" && reason.length > 0);
+
+  if (entries.length === 0) {
+    return unavailableSource(
+      null,
+      period,
+      sourceUrl,
+      "No configured public GitHub release source",
+    );
+  }
+  if (failures.length > 0) {
+    return unavailableSource(null, period, sourceUrl, failures.join("; "));
+  }
+  return availableSource(null, period, sourceUrl);
+}
+
 function normalizeRelease(repository, release, period) {
   const publishedAt = release?.published_at;
   if (!repository || !inReportWindow(publishedAt, period)) {
@@ -75,7 +97,7 @@ function normalizeRelease(repository, release, period) {
  *
  * @param {Array<{repository: string, url: string, releases?: Array, unavailableReason?: string}>} responses
  * @param {{start: string, end: string}} period
- * @returns {{events: Array, sources: Array}}
+ * @returns {{events: Array, source: object, sources: Array}}
  */
 export function normalizeReleaseEvents(responses, period) {
   const entries = responses ?? [];
@@ -112,7 +134,7 @@ export function normalizeReleaseEvents(responses, period) {
     );
   }
 
-  return { events, sources };
+  return { events, source: aggregateSource(entries, period), sources };
 }
 
 export async function fetchReleaseEvents(
