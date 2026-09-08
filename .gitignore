@@ -21,6 +21,7 @@
 !/static/data/hive-history.json
 !/static/data/countme-history.json
 !/static/data/scorecard-history.json
+!/static/data/update-churn.json
 # github-profiles.json is intentionally gitignored — it is populated at build
 # time by scripts/fetch-github-profiles.js and cached via GHA cache key
 # github-profiles-v1-* (see .github/workflows/update-github-profiles-cache.yml).

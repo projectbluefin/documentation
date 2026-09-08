@@ -24,6 +24,7 @@ guidance in a general-purpose design or content skill you have loaded.
 | Changing the generated release card PNGs              | [`skills/release-card-images.md`](skills/release-card-images.md)                            |
 | Updating logos, wordmarks, or brand assets            | [`skills/brand-assets.md`](skills/brand-assets.md)                                          |
 | Verifying, recovering, or archiving a blog discussion | [`skills/giscus-discussions.md`](skills/giscus-discussions.md)                              |
+| Measuring update churn or layer efficiency            | [`skills/update-churn-pipeline.md`](skills/update-churn-pipeline.md)                        |
 | Adding or debugging a Cloudflare Worker or subdomain  | [`skills/cloudflare-workers.md`](skills/cloudflare-workers.md)                              |
 | Landing a pull request, or proving a change is live   | [`skills/shipping-and-verifying.md`](skills/shipping-and-verifying.md)                      |
 | Writing back what you learned                         | [`skills/skill-improvement.md`](skills/skill-improvement.md)                                |

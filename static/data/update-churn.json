@@ -1,0 +1,198 @@
+{
+  "generatedAt": "2026-09-08T04:46:37.344Z",
+  "source": "GHCR OCI Manifests & Attestations",
+  "method": "oci-layer-diff-v1",
+  "unit": "MB",
+  "images": {
+    "bluefin": {
+      "id": "bluefin",
+      "name": "Bluefin",
+      "edition": "Flagship Workstation",
+      "package": "projectbluefin/bluefin",
+      "stream": "stable",
+      "unavailable": false,
+      "releases": [
+        {
+          "tag": "stable-daily-20260530",
+          "date": "2026-05-30",
+          "previousTag": null,
+          "downloadChurnMB": 3130.2,
+          "sharedMB": 0,
+          "totalMB": 3130.2,
+          "reuseEfficiencyPct": 0,
+          "totalLayers": 75,
+          "sharedLayers": 0,
+          "newLayers": 75,
+          "zstdLayers": 0,
+          "compressionFormat": "gzip",
+          "isBaseline": true
+        },
+        {
+          "tag": "stable-daily-20260531",
+          "date": "2026-05-31",
+          "previousTag": "stable-daily-20260530",
+          "downloadChurnMB": 3172.4,
+          "sharedMB": 0,
+          "totalMB": 3172.4,
+          "reuseEfficiencyPct": 0,
+          "totalLayers": 128,
+          "sharedLayers": 1,
+          "newLayers": 127,
+          "zstdLayers": 0,
+          "compressionFormat": "gzip",
+          "isBaseline": false
+        },
+        {
+          "tag": "stable-daily-20260604",
+          "date": "2026-06-04",
+          "previousTag": "stable-daily-20260531",
+          "downloadChurnMB": 3140.5,
+          "sharedMB": 0,
+          "totalMB": 3140.5,
+          "reuseEfficiencyPct": 0,
+          "totalLayers": 74,
+          "sharedLayers": 1,
+          "newLayers": 73,
+          "zstdLayers": 0,
+          "compressionFormat": "gzip",
+          "isBaseline": false
+        },
+        {
+          "tag": "stable-daily-20260606",
+          "date": "2026-06-06",
+          "previousTag": "stable-daily-20260604",
+          "downloadChurnMB": 1064.1,
+          "sharedMB": 2076.6,
+          "totalMB": 3140.7,
+          "reuseEfficiencyPct": 66.1,
+          "totalLayers": 74,
+          "sharedLayers": 54,
+          "newLayers": 20,
+          "zstdLayers": 0,
+          "compressionFormat": "gzip",
+          "isBaseline": false
+        },
+        {
+          "tag": "stable",
+          "date": "2026-09-08",
+          "previousTag": "stable-daily-20260606",
+          "downloadChurnMB": 4600,
+          "sharedMB": 0,
+          "totalMB": 4600,
+          "reuseEfficiencyPct": 0,
+          "totalLayers": 264,
+          "sharedLayers": 0,
+          "newLayers": 264,
+          "zstdLayers": 264,
+          "compressionFormat": "zstd-chunked",
+          "isBaseline": false
+        }
+      ]
+    },
+    "bluefin-lts": {
+      "id": "bluefin-lts",
+      "name": "Bluefin LTS",
+      "edition": "Enterprise Workstation",
+      "package": "projectbluefin/bluefin-lts",
+      "stream": "stable",
+      "unavailable": false,
+      "releases": [
+        {
+          "tag": "10-20260606",
+          "date": "2026-06-06",
+          "previousTag": null,
+          "downloadChurnMB": 2843.1,
+          "sharedMB": 0,
+          "totalMB": 2843.1,
+          "reuseEfficiencyPct": 0,
+          "totalLayers": 128,
+          "sharedLayers": 0,
+          "newLayers": 128,
+          "zstdLayers": 128,
+          "compressionFormat": "zstd-chunked",
+          "isBaseline": true
+        },
+        {
+          "tag": "stable",
+          "date": "2026-09-08",
+          "previousTag": "10-20260606",
+          "downloadChurnMB": 3075.5,
+          "sharedMB": 0,
+          "totalMB": 3075.5,
+          "reuseEfficiencyPct": 0,
+          "totalLayers": 68,
+          "sharedLayers": 0,
+          "newLayers": 68,
+          "zstdLayers": 68,
+          "compressionFormat": "zstd-chunked",
+          "isBaseline": false
+        }
+      ]
+    },
+    "dakota": {
+      "id": "dakota",
+      "name": "Project Bluefin Dakota",
+      "edition": "Next-Gen Workstation",
+      "package": "projectbluefin/dakota",
+      "stream": "stable",
+      "unavailable": false,
+      "releases": [
+        {
+          "tag": "latest.20260114",
+          "date": "2026-01-14",
+          "previousTag": null,
+          "downloadChurnMB": 2926.1,
+          "sharedMB": 0,
+          "totalMB": 2926.1,
+          "reuseEfficiencyPct": 0,
+          "totalLayers": 1,
+          "sharedLayers": 0,
+          "newLayers": 1,
+          "zstdLayers": 0,
+          "compressionFormat": "gzip",
+          "isBaseline": true
+        },
+        {
+          "tag": "latest.20260115",
+          "date": "2026-01-15",
+          "previousTag": "latest.20260114",
+          "downloadChurnMB": 2926.1,
+          "sharedMB": 0,
+          "totalMB": 2926.1,
+          "reuseEfficiencyPct": 0,
+          "totalLayers": 1,
+          "sharedLayers": 0,
+          "newLayers": 1,
+          "zstdLayers": 0,
+          "compressionFormat": "gzip",
+          "isBaseline": false
+        },
+        {
+          "tag": "stable",
+          "date": "2026-09-08",
+          "previousTag": "latest.20260115",
+          "downloadChurnMB": 2970.9,
+          "sharedMB": 0,
+          "totalMB": 2970.9,
+          "reuseEfficiencyPct": 0,
+          "totalLayers": 120,
+          "sharedLayers": 0,
+          "newLayers": 120,
+          "zstdLayers": 120,
+          "compressionFormat": "zstd-chunked",
+          "isBaseline": false
+        }
+      ]
+    },
+    "utah": {
+      "id": "utah",
+      "name": "Project Bluefin Utah",
+      "edition": "Modular Workstation",
+      "package": "projectbluefin/utah",
+      "stream": "testing",
+      "unavailable": true,
+      "stateReason": "No stable releases available yet — Project Bluefin Utah is under active development",
+      "releases": []
+    }
+  }
+}

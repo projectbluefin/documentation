@@ -4,6 +4,7 @@ slug: /analytics
 ---
 
 import CountmeAnalyticsCharts from "@site/src/components/analytics/CountmeAnalyticsCharts";
+import ImageChurnCharts from "@site/src/components/analytics/ImageChurnCharts";
 
 [![LFX Health Score](https://insights.linuxfoundation.org/api/badge/health-score?project=ublue-os-bluefin)](https://insights.linuxfoundation.org/project/ublue-os-bluefin)
 
@@ -51,6 +52,18 @@ sudo install -d -m 0755 /etc/projectbluefin/countme && sudo touch /etc/projectbl
 ```
 
 (The legacy marker `/etc/dakota-countme/disabled` is also honored.)
+
+## Update Churn & Compression Analytics
+
+Project Bluefin measures the download byte delta, layer reuse efficiency, and compression statistics between consecutive stable releases.
+Cloud-native bootc updates take advantage of OCI layer caching: layers whose SHA-256 digests
+remain unchanged between releases are already present on the client system and require zero download bandwidth.
+
+Using [Chunkah](https://github.com/coreos/chunkah) and the `zstd-chunked` container layer format,
+operating system updates are segmented into fine-grained package intervals. Rather than downloading a multi-gigabyte
+monolithic system image on every update, clients download only the specific chunks containing changed packages.
+
+<ImageChurnCharts />
 
 ## Homebrew
 
