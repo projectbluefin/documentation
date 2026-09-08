@@ -606,3 +606,150 @@
     transform: none !important;
   }
 }
+
+.sectionWrap {
+  padding: 60px 0;
+  width: 100%;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.pickerHeader {
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.pickerTag {
+  margin-bottom: 10px;
+}
+
+.pickerTag strong {
+  font-size: 20px;
+  font-weight: 400;
+  text-transform: uppercase;
+  color: #9ca3af;
+}
+
+.pickerTitle {
+  font-size: clamp(32px, 5vw, 48px);
+  font-weight: 700;
+  color: white;
+  margin: 0;
+}
+
+.pickerCard {
+  padding: 40px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 40px;
+}
+
+.cardContent p {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #d1d5db;
+  margin: 0 0 16px 0;
+}
+
+.cardContent p:last-child {
+  margin-bottom: 0;
+}
+
+.cardContent a {
+  font-weight: 700;
+  color: #60a5fa;
+  text-decoration: none;
+}
+
+.cardContent a:hover {
+  text-decoration: underline;
+}
+
+.wolvesDownloads {
+  margin-top: 60px;
+}
+
+.wolvesDownloadHeader {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.wolvesDownloadHeader h3 {
+  font-size: 20px;
+  font-weight: 400;
+  text-transform: uppercase;
+  color: #9ca3af;
+  margin: 0 0 10px 0;
+}
+
+.wolvesDownloadDescription p {
+  margin: 0 auto 16px auto;
+  max-width: 70ch;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #d1d5db;
+}
+
+.wolvesDownloadDescription a {
+  font-weight: 700;
+  color: #60a5fa;
+  text-decoration: none;
+}
+
+.wolvesDownloadDescription a:hover {
+  text-decoration: underline;
+}
+
+.productEcosystemGrid {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.productEcosystemCard {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+}
+
+.productEcosystemCardServer {
+  position: relative;
+  z-index: 2;
+  min-width: 0;
+  filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.45));
+}
+
+.productEcosystemConnector {
+  position: absolute;
+  z-index: 0;
+  inset: 50% 0 auto;
+  height: 2px;
+  background: #3b82f6;
+  box-shadow: 0 0 16px rgba(59, 130, 246, 0.45);
+  pointer-events: none;
+}
+
+.wolvesCampaignGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 24px;
+  margin-top: 24px;
+}
+
+@media (max-width: 956px) {
+  .productEcosystemGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .productEcosystemConnector {
+    inset: 0 auto 0 50%;
+    width: 2px;
+    height: auto;
+  }
+}
