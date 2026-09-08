@@ -60,3 +60,10 @@ coxde:
   image_url: https://github.com/coxde.png
   socials:
     github: "coxde"
+
+bluefin:
+  name: Project Bluefin
+  page: true
+  title: Automation & Factory
+  url: https://github.com/projectbluefin
+  image_url: https://github.com/projectbluefin.png

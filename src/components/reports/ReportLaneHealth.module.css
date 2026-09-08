@@ -1,0 +1,110 @@
+.container {
+  margin: 1.5rem 0 2rem 0;
+}
+
+.heading {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  color: var(--ifm-heading-color);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.card {
+  background: var(
+    --ifm-card-background-color,
+    var(--ifm-background-surface-color)
+  );
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 8px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.laneHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.laneLabel {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ifm-heading-color);
+  text-transform: capitalize;
+}
+
+.laneRepo {
+  font-size: 0.75rem;
+  color: var(--ifm-color-emphasis-600);
+  font-family: var(--ifm-font-family-monospace);
+}
+
+.rateBadge {
+  font-size: 0.875rem;
+  font-weight: 700;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+
+.rateHigh {
+  background: rgba(40, 167, 69, 0.12);
+  color: #28a745;
+}
+
+.rateMed {
+  background: rgba(255, 193, 7, 0.15);
+  color: #d39e00;
+}
+
+.rateLow {
+  background: rgba(220, 53, 69, 0.12);
+  color: #dc3545;
+}
+
+.statsRow {
+  display: flex;
+  justify-content: space-between;
+  margin: 0.75rem 0;
+  padding: 0.5rem 0;
+  border-top: 1px solid var(--ifm-color-emphasis-100);
+  border-bottom: 1px solid var(--ifm-color-emphasis-100);
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+}
+
+.statNum {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--ifm-heading-color);
+}
+
+.statLabel {
+  font-size: 0.75rem;
+  color: var(--ifm-color-emphasis-600);
+  text-transform: uppercase;
+}
+
+.sparklineWrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+}
+
+.sparklineLabel {
+  font-size: 0.75rem;
+  color: var(--ifm-color-emphasis-600);
+}

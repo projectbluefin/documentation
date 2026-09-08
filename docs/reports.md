@@ -107,9 +107,9 @@ They now also include supply-chain-related highlights when present in release co
 
 ## Where to Find Reports
 
-- **Website:** Browse all reports at [/reports](/reports)
-- **RSS Feed:** Subscribe at [/reports/rss.xml](pathname:///reports/rss.xml)
-- **Navigation:** Access via "Reports" link in main navigation
+- **Website:** Browse all reports on the [Bluefin Blog](/blog/tags/monthly-report/)
+- **RSS Feed:** Subscribe via the [Blog RSS Feed](pathname:///blog/rss.xml)
+- **Blog Tag:** Filter all monthly posts with [`#monthly-report`](/blog/tags/monthly-report/)
 
 ## Automated Generation
 

@@ -1,0 +1,93 @@
+.container {
+  background: var(
+    --ifm-card-background-color,
+    var(--ifm-background-surface-color)
+  );
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 8px;
+  padding: 1.25rem;
+  margin: 1.5rem 0 2rem 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+  color: var(--ifm-heading-color);
+}
+
+.subtitle {
+  font-size: 0.8rem;
+  color: var(--ifm-color-emphasis-600);
+  margin-bottom: 1rem;
+}
+
+.barTrack {
+  height: 12px;
+  background: var(--ifm-color-emphasis-200);
+  border-radius: 6px;
+  overflow: hidden;
+  display: flex;
+  margin-bottom: 0.75rem;
+}
+
+.botBar {
+  background: var(--ifm-color-primary);
+  height: 100%;
+}
+
+.humanBar {
+  background: #28a745;
+  height: 100%;
+}
+
+.barLegend {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.825rem;
+  margin-bottom: 1.25rem;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.legendDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+
+.repoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.75rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--ifm-color-emphasis-100);
+}
+
+.repoCard {
+  background: var(--ifm-color-emphasis-100);
+  padding: 0.6rem 0.8rem;
+  border-radius: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.repoName {
+  font-size: 0.825rem;
+  font-weight: 600;
+  color: var(--ifm-heading-color);
+  font-family: var(--ifm-font-family-monospace);
+}
+
+.repoCount {
+  font-size: 0.825rem;
+  font-weight: 700;
+  color: var(--ifm-color-primary);
+}

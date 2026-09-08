@@ -16,11 +16,23 @@ import {
   loadKnownContributors,
   saveKnownContributors,
 } from "./lib/contributor-tracker.mjs";
-import { generateReportMarkdown } from "./lib/markdown-generator.mjs";
+import {
+  generateReportMarkdown,
+  getReportSlug,
+} from "./lib/markdown-generator.mjs";
 import { getCategoryForLabel } from "./lib/label-mapping.mjs";
 import { MONITORED_REPOS } from "./lib/monitored-repos.mjs";
 import { fetchBuildMetrics } from "./lib/build-metrics.mjs";
-import { fetchTapPromotions, fetchExperimentalAdditions } from "./lib/tap-promotions.mjs";
+import {
+  fetchTapPromotions,
+  fetchExperimentalAdditions,
+} from "./lib/tap-promotions.mjs";
+import {
+  fetchFactoryMonthlyStats,
+  extractCountmeMetrics,
+  extractLeaderboardHeroes,
+} from "./lib/factory-monthly-metrics.mjs";
+
 import { format } from "date-fns";
 import { writeFile } from "fs/promises";
 
@@ -274,8 +286,14 @@ async function generateReport() {
 
     // Single bot filter pass — isBot evaluated once per item
     const isHuman = (item) => !isBot(item.content?.author?.login || "");
-    const [plannedHumanItems, plannedBotItems] = partition(itemsInWindow, isHuman);
-    const [opportunisticHumanItems, opportunisticBotItems] = partition(transformedOpportunisticItems, isHuman);
+    const [plannedHumanItems, plannedBotItems] = partition(
+      itemsInWindow,
+      isHuman,
+    );
+    const [opportunisticHumanItems, opportunisticBotItems] = partition(
+      transformedOpportunisticItems,
+      isHuman,
+    );
     const botItems = [...plannedBotItems, ...opportunisticBotItems];
 
     log.info(`Planned work (human): ${plannedHumanItems.length}`);
@@ -299,7 +317,10 @@ async function generateReport() {
     let newContributors = [];
     let knownSet = new Set();
     try {
-      knownSet = await loadKnownContributors(KNOWN_CONTRIBUTORS_CACHE, KNOWN_CONTRIBUTORS_SEED);
+      knownSet = await loadKnownContributors(
+        KNOWN_CONTRIBUTORS_CACHE,
+        KNOWN_CONTRIBUTORS_SEED,
+      );
       newContributors = identifyNewContributors(contributors, knownSet);
       if (newContributors.length > 0) {
         log.info(`New contributors this period: ${newContributors.join(", ")}`);
@@ -341,15 +362,19 @@ async function generateReport() {
     const tapAdditions = { production: [], experimental: [] };
     try {
       tapAdditions.production = await fetchTapPromotions(startDate, endDate);
-      tapAdditions.experimental = await fetchExperimentalAdditions(startDate, endDate);
-      
-      const totalAdditions = tapAdditions.production.length + tapAdditions.experimental.length;
+      tapAdditions.experimental = await fetchExperimentalAdditions(
+        startDate,
+        endDate,
+      );
+
+      const totalAdditions =
+        tapAdditions.production.length + tapAdditions.experimental.length;
 
       if (totalAdditions > 0) {
-        log.info(`✅ Tap additions found: ${tapAdditions.production.length} production, ${tapAdditions.experimental.length} experimental`);
-        github.notice(
-          `🍺 ${totalAdditions} new packages added to taps`,
+        log.info(
+          `✅ Tap additions found: ${tapAdditions.production.length} production, ${tapAdditions.experimental.length} experimental`,
         );
+        github.notice(`🍺 ${totalAdditions} new packages added to taps`);
       } else {
         log.info("No tap additions this period");
       }
@@ -357,6 +382,47 @@ async function generateReport() {
       log.warn("Tap additions fetch failed, continuing without it");
       log.warn(`Error: ${error.message}`);
       // Continue report generation even if tap additions fail
+    }
+
+    // Fetch factory monthly stats
+    log.info("Fetching factory publishing lane metrics...");
+    let factoryStats = null;
+    try {
+      factoryStats = await fetchFactoryMonthlyStats(startDate, endDate);
+      log.info(
+        `✅ Factory stats fetched: ${factoryStats.lanes.length} lanes tracked`,
+      );
+    } catch (error) {
+      log.warn(`Factory stats fetch failed: ${error.message}`);
+      factoryStats = null;
+    }
+
+    // Extract countme telemetry metrics
+    log.info("Extracting countme telemetry metrics...");
+    let countmeStats = null;
+    try {
+      countmeStats = extractCountmeMetrics(startDate, endDate);
+      if (countmeStats) {
+        log.info(
+          `✅ Countme telemetry extracted: ${countmeStats.currentTotal} active systems`,
+        );
+      }
+    } catch (error) {
+      log.warn(`Countme telemetry extraction failed: ${error.message}`);
+      countmeStats = null;
+    }
+
+    // Extract Hive leaderboard heroes and new lights
+    log.info("Extracting Hive leaderboard heroes...");
+    let leaderboard = null;
+    try {
+      leaderboard = extractLeaderboardHeroes(allHumanItems, newContributors);
+      log.info(
+        `✅ Leaderboard extracted: ${leaderboard.heroes.length} heroes, ${leaderboard.newLights.length} new lights`,
+      );
+    } catch (error) {
+      log.warn(`Leaderboard extraction failed: ${error.message}`);
+      leaderboard = null;
     }
 
     // Generate markdown
@@ -371,6 +437,9 @@ async function generateReport() {
       endDate,
       buildMetrics,
       tapAdditions,
+      factoryStats,
+      countmeStats,
+      leaderboard,
     );
 
     if (
@@ -379,10 +448,7 @@ async function generateReport() {
     ) {
       const warningSections = ["## Data Quality Warnings"];
       if (truncationWarnings.planned.length > 0) {
-        warningSections.push(
-          "### Planned Work",
-          ...truncationWarnings.planned,
-        );
+        warningSections.push("### Planned Work", ...truncationWarnings.planned);
       }
       if (truncationWarnings.opportunistic.length > 0) {
         warningSections.push(
@@ -394,8 +460,9 @@ async function generateReport() {
       markdown = markdown.replace("# Summary", `# Summary\n\n${warningBlock}`);
     }
 
-    // Write to file
-    const filename = `reports/${format(endDate, "yyyy-MM-dd")}-report.mdx`;
+    // Write to blog directory
+    const slug = getReportSlug(startDate);
+    const filename = `blog/${format(endDate, "yyyy-MM-dd")}-${slug}.mdx`;
     await writeFile(filename, markdown, "utf8");
 
     // Save known contributors cache AFTER successful write — prevents cache poisoning on failure
@@ -403,7 +470,9 @@ async function generateReport() {
       const updatedSet = new Set([...knownSet, ...contributors]);
       await saveKnownContributors(updatedSet, KNOWN_CONTRIBUTORS_CACHE);
     } catch (error) {
-      log.warn("Failed to save known contributors cache — next run may re-identify some contributors as new");
+      log.warn(
+        "Failed to save known contributors cache — next run may re-identify some contributors as new",
+      );
       log.warn(`Error: ${error.message}`);
     }
 
@@ -416,7 +485,8 @@ async function generateReport() {
     log.info(
       `   ${buildMetrics ? buildMetrics.images.length + " workflows tracked" : "Build metrics unavailable"}`,
     );
-    const totalAdditions = tapAdditions.production.length + tapAdditions.experimental.length;
+    const totalAdditions =
+      tapAdditions.production.length + tapAdditions.experimental.length;
     log.info(`   ${totalAdditions} tap additions`);
 
     // GitHub Actions summary annotation

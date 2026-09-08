@@ -1,14 +1,451 @@
 ---
 title: "Archaeopteryx August 2026"
 date: 2026-08-31
-slug: /2026/08
-tags: [monthly-report, project-activity]
+slug: archaeopteryx-august-2026
+authors: [bluefin]
+tags: [monthly-report, project-activity, announcements]
 ---
 
+import {
+  ReportHeroKPIs,
+  ReportLeaderboard,
+  ReportLaneHealth,
+  ReportDoraCadence,
+  ReportCountmeTrend,
+  ReportAutomationStats,
+} from '@site/src/components/reports';
 import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
 
 
 # Summary
+
+<ReportHeroKPIs
+  kpis={[
+  {
+    "label": "Merged PRs",
+    "value": 218,
+    "sublabel": "24 planned • 194 opportunistic"
+  },
+  {
+    "label": "Factory Automation",
+    "value": "61.6%",
+    "sublabel": "349 automated PRs out of 567 total"
+  },
+  {
+    "label": "Contributors",
+    "value": 17,
+    "sublabel": "0 first-time contributors",
+    "trendDirection": "neutral"
+  },
+  {
+    "label": "Factory Reliability",
+    "value": "93%",
+    "sublabel": "123 lane publish runs",
+    "trendDirection": "up"
+  },
+  {
+    "label": "Tap Additions",
+    "value": 14,
+    "sublabel": "2 production • 12 experimental"
+  },
+  {
+    "label": "Active Systems",
+    "value": "3,920",
+    "sublabel": "Weekly active systems (Countme)"
+  }
+]}
+/>
+
+<ReportLeaderboard
+  period="August 2026"
+  heroes={[
+  {
+    "rank": 1,
+    "login": "castrojo",
+    "avatarUrl": "https://github.com/castrojo.png?size=64",
+    "contributions": 69,
+    "projects": 6,
+    "repos": [
+      "common",
+      "bluefin",
+      "bluefin-lts",
+      "documentation",
+      "dakota",
+      "finpilot"
+    ],
+    "badge": {
+      "label": "Top Hero",
+      "color": "#F9C74F",
+      "title": "Month MVP"
+    },
+    "isNew": false
+  },
+  {
+    "rank": 2,
+    "login": "ahmedadan",
+    "avatarUrl": "https://github.com/ahmedadan.png?size=64",
+    "contributions": 66,
+    "projects": 5,
+    "repos": [
+      "common",
+      "bluefin",
+      "homebrew-tap",
+      "homebrew-experimental-tap",
+      "dakota"
+    ],
+    "badge": {
+      "label": "High Velocity",
+      "color": "#2AA198",
+      "title": "5+ Merged PRs"
+    },
+    "isNew": false
+  },
+  {
+    "rank": 3,
+    "login": "hanthor",
+    "avatarUrl": "https://github.com/hanthor.png?size=64",
+    "contributions": 21,
+    "projects": 6,
+    "repos": [
+      "common",
+      "bluefin",
+      "bluefin-lts",
+      "homebrew-experimental-tap",
+      "dakota",
+      "finpilot"
+    ],
+    "badge": {
+      "label": "High Velocity",
+      "color": "#2AA198",
+      "title": "5+ Merged PRs"
+    },
+    "isNew": false
+  },
+  {
+    "rank": 4,
+    "login": "Danathar",
+    "avatarUrl": "https://github.com/Danathar.png?size=64",
+    "contributions": 17,
+    "projects": 2,
+    "repos": [
+      "bluefin",
+      "dakota"
+    ],
+    "badge": {
+      "label": "High Velocity",
+      "color": "#2AA198",
+      "title": "5+ Merged PRs"
+    },
+    "isNew": false
+  },
+  {
+    "rank": 5,
+    "login": "mrbobbytables",
+    "avatarUrl": "https://github.com/mrbobbytables.png?size=64",
+    "contributions": 11,
+    "projects": 2,
+    "repos": [
+      "bluefin",
+      "dakota"
+    ],
+    "badge": {
+      "label": "High Velocity",
+      "color": "#2AA198",
+      "title": "5+ Merged PRs"
+    },
+    "isNew": false
+  },
+  {
+    "rank": 6,
+    "login": "kubestellar-hive",
+    "avatarUrl": "https://github.com/kubestellar-hive.png?size=64",
+    "contributions": 8,
+    "projects": 4,
+    "repos": [
+      "common",
+      "bluefin",
+      "dakota",
+      "finpilot"
+    ],
+    "badge": {
+      "label": "High Velocity",
+      "color": "#2AA198",
+      "title": "5+ Merged PRs"
+    },
+    "isNew": false
+  },
+  {
+    "rank": 7,
+    "login": "bketelsen",
+    "avatarUrl": "https://github.com/bketelsen.png?size=64",
+    "contributions": 8,
+    "projects": 3,
+    "repos": [
+      "bluefin",
+      "bluefin-lts",
+      "finpilot"
+    ],
+    "badge": {
+      "label": "High Velocity",
+      "color": "#2AA198",
+      "title": "5+ Merged PRs"
+    },
+    "isNew": false
+  },
+  {
+    "rank": 8,
+    "login": "Siddhj2206",
+    "avatarUrl": "https://github.com/Siddhj2206.png?size=64",
+    "contributions": 4,
+    "projects": 1,
+    "repos": [
+      "finpilot"
+    ],
+    "isNew": false
+  },
+  {
+    "rank": 9,
+    "login": "HuntedRaven7",
+    "avatarUrl": "https://github.com/HuntedRaven7.png?size=64",
+    "contributions": 3,
+    "projects": 3,
+    "repos": [
+      "common",
+      "bluefin-lts",
+      "homebrew-experimental-tap"
+    ],
+    "badge": {
+      "label": "Cross-Fleet",
+      "color": "#8A63D2",
+      "title": "Multi-Repo Impact"
+    },
+    "isNew": false
+  },
+  {
+    "rank": 10,
+    "login": "inffy",
+    "avatarUrl": "https://github.com/inffy.png?size=64",
+    "contributions": 2,
+    "projects": 2,
+    "repos": [
+      "homebrew-tap",
+      "homebrew-experimental-tap"
+    ],
+    "isNew": false
+  },
+  {
+    "rank": 11,
+    "login": "joshyorko",
+    "avatarUrl": "https://github.com/joshyorko.png?size=64",
+    "contributions": 2,
+    "projects": 2,
+    "repos": [
+      "common",
+      "bluefin"
+    ],
+    "isNew": false
+  },
+  {
+    "rank": 12,
+    "login": "rapenne-s",
+    "avatarUrl": "https://github.com/rapenne-s.png?size=64",
+    "contributions": 2,
+    "projects": 1,
+    "repos": [
+      "dakota"
+    ],
+    "isNew": false
+  },
+  {
+    "rank": 13,
+    "login": "dtg01100",
+    "avatarUrl": "https://github.com/dtg01100.png?size=64",
+    "contributions": 1,
+    "projects": 1,
+    "repos": [
+      "homebrew-tap"
+    ],
+    "isNew": false
+  },
+  {
+    "rank": 14,
+    "login": "Giklab",
+    "avatarUrl": "https://github.com/Giklab.png?size=64",
+    "contributions": 1,
+    "projects": 1,
+    "repos": [
+      "common"
+    ],
+    "isNew": false
+  },
+  {
+    "rank": 15,
+    "login": "lukaspieper",
+    "avatarUrl": "https://github.com/lukaspieper.png?size=64",
+    "contributions": 1,
+    "projects": 1,
+    "repos": [
+      "homebrew-experimental-tap"
+    ],
+    "isNew": false
+  },
+  {
+    "rank": 16,
+    "login": "theMimolet",
+    "avatarUrl": "https://github.com/theMimolet.png?size=64",
+    "contributions": 1,
+    "projects": 1,
+    "repos": [
+      "common"
+    ],
+    "isNew": false
+  },
+  {
+    "rank": 17,
+    "login": "tunix",
+    "avatarUrl": "https://github.com/tunix.png?size=64",
+    "contributions": 1,
+    "projects": 1,
+    "repos": [
+      "finpilot"
+    ],
+    "isNew": false
+  }
+]}
+  newLights={[]}
+/>
+
+<ReportLaneHealth
+  lanes={[
+  {
+    "id": "bluefin-testing",
+    "label": "Bluefin Testing",
+    "repo": "projectbluefin/bluefin",
+    "total": 8,
+    "passed": 0,
+    "failed": 3,
+    "running": 5,
+    "successRate": 0,
+    "medianDurationMin": 14,
+    "sparklineData": [
+      6,
+      1,
+      1
+    ]
+  },
+  {
+    "id": "bluefin-lts",
+    "label": "Bluefin LTS",
+    "repo": "projectbluefin/bluefin-lts",
+    "total": 30,
+    "passed": 0,
+    "failed": 0,
+    "running": 30,
+    "successRate": null,
+    "medianDurationMin": 0,
+    "sparklineData": [
+      1,
+      1,
+      1,
+      7,
+      11,
+      9
+    ]
+  },
+  {
+    "id": "dakota",
+    "label": "Dakota",
+    "repo": "projectbluefin/dakota",
+    "total": 85,
+    "passed": 71,
+    "failed": 2,
+    "running": 12,
+    "successRate": 97,
+    "medianDurationMin": 29,
+    "sparklineData": [
+      3,
+      4,
+      7,
+      9,
+      35,
+      16,
+      7,
+      4
+    ]
+  }
+]}
+/>
+
+<ReportDoraCadence
+  totalReleases={71}
+  deploymentsPerWeek="16.5"
+  changeFailureRate="7.0%"
+  medianLeadTimeHours="0.4h"
+/>
+
+<ReportCountmeTrend
+  currentTotal={3920}
+  previousTotal={3667}
+  historyPoints={[3561,3672,3606,3712,3780,3667,3584,3678,4195,3920]}
+  variants={[{"name":"Bluefin","count":3761,"color":"#1D76DB"},{"name":"Bluefin LTS","count":159,"color":"#2AA198"},{"name":"Aurora","count":2826,"color":"#8A63D2"}]}
+  sourceDate="2026-07-27"
+/>
+
+<ReportAutomationStats
+  totalPRs={567}
+  botPRs={349}
+  humanPRs={218}
+  automationPercentage="61.6"
+  repoBreakdown={[
+  {
+    "repo": "bluefin",
+    "count": 89,
+    "percentage": "15.7%"
+  },
+  {
+    "repo": "homebrew-experimental-tap",
+    "count": 65,
+    "percentage": "11.5%"
+  },
+  {
+    "repo": "homebrew-tap",
+    "count": 54,
+    "percentage": "9.5%"
+  },
+  {
+    "repo": "dakota",
+    "count": 46,
+    "percentage": "8.1%"
+  },
+  {
+    "repo": "finpilot",
+    "count": 35,
+    "percentage": "6.2%"
+  },
+  {
+    "repo": "bluefin-lts",
+    "count": 30,
+    "percentage": "5.3%"
+  },
+  {
+    "repo": "common",
+    "count": 26,
+    "percentage": "4.6%"
+  },
+  {
+    "repo": "documentation",
+    "count": 3,
+    "percentage": "0.5%"
+  },
+  {
+    "repo": "iso",
+    "count": 1,
+    "percentage": "0.2%"
+  }
+]}
+/>
+
+{/* truncate */}
 
 | | |
 |--------|-------|
@@ -769,5 +1206,5 @@ Use `ujust bbrew` to browse and install these packages. Follow [the tap instruct
 
 ---
 
-*Generated on 2026-09-06*  
+*Generated on 2026-09-07*  
 [View Project Board](https://todo.projectbluefin.io) | [Report an Issue](https://github.com/projectbluefin/common/issues/new)
