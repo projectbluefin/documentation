@@ -1,0 +1,83 @@
+---
+title: "Bluefin Server Alpha 2"
+slug: bluefin-server
+authors: bluefin
+tags: [announcements, server]
+date: 2026-09-07T22:11:44-04:00
+image: /img/blog/2026-09-07-bluefin-server/server-page.png
+---
+
+# Bluefin Server
+
+Alright, here it is, [Bluefin Server](https://projectbluefin.io/server/), this one actually boots. This is the base of the Bluefin Factory, the thing you'll build your homelab on. And in turn, your desktops or whatever you want. Kubernetes for the home.
+
+[![Bluefin Server](/img/blog/2026-09-07-bluefin-server/server-page.png)](https://projectbluefin.io/server/)
+
+An FSDK-based, image-based Linux server OS.\*\*
+
+To celebrate this milestone, enjoy the latest video, with some fresh lore!
+
+[![Bluefin and the Children of the Dark Army](/img/blog/2026-09-07-bluefin-server/youtube-thumbnail.jpg)](https://www.youtube.com/watch?v=Dzufk8X65W8)
+
+Bluefin Server targets the same use-case space as Flatcar Container Linux, Kairos,
+Fedora CoreOS, and Talos, but is built from scratch with
+[BuildStream 2](https://buildstream.build/) from
+[freedesktop-sdk](https://freedesktop-sdk.io/) (FSDK 26.08)
+components and uutils coreutils.
+
+It is designed to be installed and then managed entirely through the Kubestellar GUI. I'll be releasing point releases quickly over the next few days. After the install it will give you a web address, then you go to it on your computer. Then that's it, your perfect home server.
+
+Except the dashboards are empty. The more people we have making these the better, including a ZFS one! This variant will have ZFS support so now's the time to jump onboard!
+
+It is [DDI first](https://0pointer.net/blog/fitting-everything-together.html):
+the OS payload is a compressed XFS DDI filesystem image that is deployed by an
+offline, systemd-native installer.
+
+## Release status: Alpha
+
+Bluefin Server is currently in **Alpha**:
+
+- **Milestone status**: Phase A (reproducible build path, uutils, k0s sysext,
+  graph validation) is complete. Phase B (automated boot verification on lab
+  cluster) is in progress.
+- `systemd-sysupdate` should work, we're about to find out!
+  configurations.
+- **Readiness roadmap**: Track completed criteria and remaining gates toward
+  1.0 in
+  [`docs/MVP_1_0_READINESS.md`](https://github.com/projectbluefin/server/blob/main/docs/MVP_1_0_READINESS.md).
+
+## How this works
+
+- **A/B root rollback** — an MVP 1.0 gate: `50-root.transfer` names `root-a`
+  and `root-b`; the installer currently creates only `root-a`.
+- **DDI-first delivery** — the installer embeds the OS payload as a data
+  partition; no network is required at install time. This is basically Linux systemd style.
+- **Minimal, distroless OS image** — no shell in the running rootfs by default IS what we are shooting for. We'll probably fail at this lol.
+- **systemd-native installer** — `systemd-sysinstall` provides the interactive terminal UI and `systemd-repart` handles partitioning and block-copy DDI placement. Finally distro installers can all go die!
+- **Optional k0s as a `systemd-sysext`** so the base image stays distroless. We started with k3s but I want to see how this one goes, stripped down for the home.
+
+> **SSH ON:** SSH is enabled for cluster boot tests and remote debugging. It is scheduled for removal once diagnostics move to serial logs or a guest agent. See
+> [`docs/skills/factory-integration.md`](https://github.com/projectbluefin/server/blob/main/docs/skills/factory-integration.md).
+
+## Quick start
+
+Bare metal sorely needed! However this runs on any Linux, feel free to fire up a VM and start designing that dashboard! Once we get home assistant and all the goodies it'll be amazing! Thanks for checking it out!
+
+You need only `podman` and [just](https://github.com/casey/just). BuildStream
+runs inside the FSDK `bst2` container, so BuildStream is not installed locally.
+
+```sh
+just validate              # resolve the element graph
+just show-me-the-future    # end-to-end QEMU installer smoke test
+```
+
+See [`AGENTS.md`](https://github.com/projectbluefin/server/blob/main/AGENTS.md)
+for the full build command matrix, hard rules, and agent skill routing.
+
+## Contributing
+
+See
+[`CONTRIBUTING.md`](https://github.com/projectbluefin/server/blob/main/CONTRIBUTING.md)
+for the contributor checklist, Conventional Commit rules, and
+[`docs/skills/index.md`](https://github.com/projectbluefin/server/blob/main/docs/skills/index.md)
+for task-specific guidance.
