@@ -90,7 +90,7 @@ function loadRoutes() {
   return mod.exports;
 }
 
-test("Hive-only contributors have a hosted player record link", () => {
+test("contributor rows link to their hosted dossiers", () => {
   const { ContributorLeaderboard } = loadDashboard();
   assert.equal(
     typeof ContributorLeaderboard,
@@ -131,10 +131,14 @@ test("Hive-only contributors have a hosted player record link", () => {
 
   assert.match(html, /hive-only/);
   assert.match(html, /4 Hive tasks/);
-  assert.match(
-    html,
-    /href="https:\/\/hosted-projectbluefin-knuckle-gjvq\.hive\.hivecommons\.dev\/api\/leaderboard\/contributor\/hive-only"/,
-  );
+  for (const login of ["established", "hive-only"]) {
+    assert.match(
+      html,
+      new RegExp(
+        `href="https://hosted-projectbluefin-common-nmq5\\.hive\\.hivecommons\\.dev/contribute/dossier/${login}"`,
+      ),
+    );
+  }
 });
 
 test("leaderboards stay outside the Factory tab registry", () => {
@@ -188,7 +192,7 @@ test("the standalone page includes linked Hive task cards", () => {
   assert.match(html, /zulu-player/);
   assert.match(
     html,
-    /href="https:\/\/hosted-projectbluefin-knuckle-gjvq\.hive\.hivecommons\.dev\/api\/leaderboard\/contributor\/zulu-player"/,
+    /href="https:\/\/hosted-projectbluefin-common-nmq5\.hive\.hivecommons\.dev\/contribute\/dossier\/zulu-player"/,
   );
   const taskCards = html.slice(html.indexOf("Hive Task Leaderboard"));
   assert.ok(
