@@ -217,7 +217,7 @@ const config: Config = {
           position: "right",
         },
         {
-          to: "/factory/community",
+          to: "/leaderboards",
           label: "Leaderboards",
           position: "right",
         },
