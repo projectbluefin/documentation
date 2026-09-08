@@ -51,7 +51,7 @@ const path = require("path");
 // The old raw.githubusercontent.com HTML snapshot (bluefin/index.html) is no longer published.
 // HIVE_API_TOKEN: optional Bearer token for CI — if unset, snapshot fetch is skipped gracefully.
 const HOSTED_INSTANCE_URL =
-  "https://hosted-projectbluefin-knuckle-gjvq.hive.kubestellar.io";
+  "https://hosted-projectbluefin-knuckle-gjvq.hive.hivecommons.dev";
 const SNAPSHOT_API_URL = `${HOSTED_INSTANCE_URL}/api/status`;
 const HIVE_API_TOKEN = process.env.HIVE_API_TOKEN || "";
 
