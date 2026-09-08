@@ -32,7 +32,7 @@
  *    parsed for RPM artifacts to extract packageVersions.
  *  - SBOM cache: keyed by image digest — if the digest hasn't changed AND
  *    packageVersions is non-null, the existing cache entry is reused.
- *  - NVIDIA: present in GDX (bluefin-gdx-lts) SBOM as nvidia-driver RPM.
+ *  - NVIDIA: present in bluefin-lts-nvidia SBOM as nvidia-driver RPM.
  *    Absent from base bluefin-stable/lts SBOMs (akmod, built separately).
  *    fetch-github-driver-versions.js uses null for nvidia on stable/lts streams.
  *  - Atomic write: output is written to a temp file then renamed to avoid
@@ -203,76 +203,13 @@ const RAW_STREAM_SPECS = [
     keyRepo: "projectbluefin/bluefin-lts",
   },
   {
-    id: "bluefin-dx-stable",
-    label: "Bluefin DX Stable",
+    id: "bluefin-lts-nvidia",
+    label: "Bluefin LTS Nvidia",
     org: "projectbluefin",
-    package: "bluefin-dx",
-    releasesRepo: "projectbluefin/bluefin",
+    package: "bluefin-lts-nvidia",
+    releasesRepo: "projectbluefin/bluefin-lts",
     streamPrefix: "stable",
-    keyRepo: "projectbluefin/bluefin",
-  },
-  {
-    id: "bluefin-dx-latest",
-    label: "Bluefin DX Latest",
-    org: "projectbluefin",
-    package: "bluefin-dx",
-    releasesRepo: "projectbluefin/bluefin",
-    streamPrefix: "latest",
-    keyRepo: "projectbluefin/bluefin",
-  },
-  {
-    id: "bluefin-dx-lts",
-    label: "Bluefin DX LTS",
-    org: "projectbluefin",
-    package: "bluefin-dx",
-    releasesRepo: "projectbluefin/bluefin-lts",
-    streamPrefix: "lts",
     keyRepo: "projectbluefin/bluefin-lts",
-  },
-  {
-    id: "bluefin-dx-lts-hwe-testing",
-    label: "Bluefin DX LTS HWE Testing",
-    org: "projectbluefin",
-    package: "bluefin-dx",
-    releasesRepo: "projectbluefin/bluefin-lts",
-    streamPrefix: "lts-hwe-testing",
-    keyRepo: "projectbluefin/bluefin-lts",
-  },
-  {
-    id: "bluefin-dx-lts-hwe-testing-50",
-    label: "Bluefin DX LTS HWE Testing 50",
-    org: "projectbluefin",
-    package: "bluefin-dx",
-    releasesRepo: "projectbluefin/bluefin-lts",
-    streamPrefix: "lts-hwe-testing-50",
-    keyRepo: "projectbluefin/bluefin-lts",
-  },
-  {
-    id: "bluefin-dx-lts-testing-50",
-    label: "Bluefin DX LTS Testing 50",
-    org: "projectbluefin",
-    package: "bluefin-dx",
-    releasesRepo: "projectbluefin/bluefin-lts",
-    streamPrefix: "lts-testing-50",
-    keyRepo: "projectbluefin/bluefin-lts",
-  },
-  {
-    id: "bluefin-gdx-lts",
-    label: "Bluefin GDX LTS",
-    org: "projectbluefin",
-    package: "bluefin-gdx",
-    releasesRepo: "projectbluefin/bluefin-lts",
-    streamPrefix: "lts",
-    keyRepo: "projectbluefin/bluefin-lts",
-  },
-  {
-    id: "bluefin-gdx-latest",
-    label: "Bluefin GDX Latest",
-    org: "projectbluefin",
-    package: "bluefin-gdx",
-    releasesRepo: "projectbluefin/bluefin",
-    streamPrefix: "latest",
-    keyRepo: "projectbluefin/bluefin",
   },
   {
     id: "bluefin-nvidia-open-stable",
