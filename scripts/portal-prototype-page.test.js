@@ -94,10 +94,8 @@ test("route stays temporary and does not replace the documentation root", () => 
 test("scoped CSS clips artwork and defines mobile and reduced-motion paths", () => {
   const css = fs.readFileSync(cssPath, "utf8");
 
-  assert.match(
-    css,
-    /\.parallaxViewport\s*\{[^}]*overflow:\s*clip/s,
-  );
+  assert.match(css, /\.parallaxViewport\s*\{[^}]*overflow:\s*clip/s);
+  assert.match(css, /\.parallaxLayer\s*\{[^}]*position:\s*absolute/s);
   assert.match(css, /@media \(max-width:\s*956px\)/);
   assert.match(css, /@media \(prefers-reduced-motion:\s*reduce\)/);
   assert.ok(!css.includes("html {"));

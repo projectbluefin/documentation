@@ -131,6 +131,25 @@ assert.ok(
 assert.equal(render(props), render(props));
 ```
 
+## Effectful visual components
+
+`renderToStaticMarkup` does not run effects. For a component whose visible
+behavior depends on scrolling, resizing, media queries, or browser observers:
+
+1. Extract coordinate math and state transitions into a pure TypeScript module
+   and test that module with `node:test`.
+2. Static-render the component shell to prove deterministic, accessible SSR
+   markup and verify browser globals are deferred to `useEffect`.
+3. Run `npm run build:ci` to exercise Docusaurus server rendering and route
+   generation.
+4. Start `just dev --port 3000` and use local Chromium for the behavior only a
+   browser can prove: transforms, overflow, responsive visibility, focus, media
+   preferences, console errors, and hydration.
+
+Do not add a DOM test framework merely to simulate browser layout. Pure logic,
+static SSR output, the production build, and one local-browser check are the
+smallest complete test stack for this class of component.
+
 ## Common Rationalizations
 
 | Rationalization                          | Reality                                                                                                                                            |
