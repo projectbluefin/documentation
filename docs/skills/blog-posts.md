@@ -1,7 +1,7 @@
 ---
 name: blog-posts
-version: "1.2"
-last_updated: "2026-09-07"
+version: "1.3"
+last_updated: "2026-09-08"
 id: blog-posts
 one_line_purpose: Format, embed, and validate Bluefin blog posts under blog/.
 entry_point: docs/skills/blog-posts.md
@@ -65,7 +65,9 @@ A design skill saying "come up with copy" refers to mockups, not authorship.
    `static/img/blog/<YYYY-MM-DD-slug>/`. Never hotlink a CDN — the post has to
    survive the source account, the CDN, and the link rotting.
 
-   For a YouTube-only stub, fetch the canonical title from the oEmbed endpoint.
+   For a requested website screenshot, capture a fully rendered viewport, not
+   its Open Graph image or loading state. For a YouTube-only stub, fetch the
+   canonical title from the oEmbed endpoint.
    To find the most recent video without consuming YouTube Data API quota,
    retrieve `https://www.youtube.com/@<channel>/videos`, use its first video
    ID, then verify that ID with oEmbed. If `maxresdefault.jpg` returns HTTP 200,
