@@ -219,6 +219,36 @@ test("readReportHistory falls back to seed when history is missing, invalid JSON
   }
 });
 
+test("readReportHistory falls back to seed when a nested snapshot has incompatible schemaVersion or malformed shape", () => {
+  const seed = {
+    schemaVersion: 2,
+    snapshots: [{ period: { month: "2026-01" }, activity: { mergedPrs: 1 } }],
+  };
+
+  const malformedSnapshots = [
+    [{ schemaVersion: 1, period: { month: "2026-08" } }],
+    [{ schemaVersion: 3, period: { month: "2026-08" } }],
+    [{ period: {} }],
+    [{ period: { month: "" } }],
+    [{ period: { month: 123 } }],
+    [null],
+    ["not-an-object"],
+  ];
+
+  for (const snapshots of malformedSnapshots) {
+    const mockRead = (path) => {
+      if (path === "history.json") {
+        return JSON.stringify({ schemaVersion: 2, snapshots });
+      }
+      if (path === "seed.json") return JSON.stringify(seed);
+      throw new Error("unexpected path: " + path);
+    };
+
+    const result = readReportHistory("seed.json", "history.json", mockRead);
+    assert.deepEqual(result, seed);
+  }
+});
+
 test("readReportHistory reads seed directly when historyPath is not provided", () => {
   const seed = { schemaVersion: 2, snapshots: [] };
   const mockRead = (path) => {

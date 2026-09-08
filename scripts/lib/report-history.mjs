@@ -9,12 +9,28 @@ const DEFAULT_HISTORY_PATH = new URL(
   import.meta.url,
 );
 
+function isValidSnapshot(item) {
+  if (
+    !item ||
+    typeof item !== "object" ||
+    typeof item.period?.month !== "string" ||
+    !item.period.month
+  ) {
+    return false;
+  }
+  if (item.schemaVersion !== undefined && item.schemaVersion !== 2) {
+    return false;
+  }
+  return true;
+}
+
 function isValidHistory(payload) {
   return (
     payload !== null &&
     typeof payload === "object" &&
     payload.schemaVersion === 2 &&
-    Array.isArray(payload.snapshots)
+    Array.isArray(payload.snapshots) &&
+    payload.snapshots.every(isValidSnapshot)
   );
 }
 
@@ -51,7 +67,8 @@ export function mergeReportHistory(history, snapshot) {
     if (
       !item ||
       typeof item !== "object" ||
-      typeof item.period?.month !== "string"
+      typeof item.period?.month !== "string" ||
+      !item.period.month
     ) {
       throw new TypeError("Invalid history snapshot: missing period.month");
     }
