@@ -110,6 +110,17 @@ const BLUEFIN_FAMILY_IMAGES: ProjectBluefinImageSpec[] = [
   },
 ];
 
+/**
+ * Reads a variant's count for a week. Missing/null/non-finite stays `null`
+ * (a gap); a real reported `0` is preserved as `0`, never coerced away.
+ */
+function readCount(week: CountmeWeek | undefined, key: string): number | null {
+  const raw = week?.[key];
+  if (raw === undefined || raw === null) return null;
+  const num = Number(raw);
+  return Number.isFinite(num) ? num : null;
+}
+
 export default function CountmeAnalyticsCharts(): React.JSX.Element {
   const data = countmeHistoryData as unknown as CountmeDataset;
   const weeks = data?.weeks || [];
@@ -120,12 +131,15 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
   const [viewMode, setViewMode] = useState<ViewMode>("all-ecosystem");
 
   const latestWeek = weeks[weeks.length - 1] || ({} as CountmeWeek);
-  const latestBluefin = Number(latestWeek.bluefin) || 0;
-  const latestBluefinLts = Number(latestWeek["bluefin-lts"]) || 0;
-  const latestDakota = Number(latestWeek.dakota) || 0;
-  const latestUtah = Number(latestWeek.utah) || 0;
+  const latestBluefin = readCount(latestWeek, "bluefin");
+  const latestBluefinLts = readCount(latestWeek, "bluefin-lts");
+  const latestDakota = readCount(latestWeek, "dakota");
+  const latestUtah = readCount(latestWeek, "utah");
   const currentTotalBluefin =
-    latestBluefin + latestBluefinLts + latestDakota + latestUtah;
+    (latestBluefin ?? 0) +
+    (latestBluefinLts ?? 0) +
+    (latestDakota ?? 0) +
+    (latestUtah ?? 0);
 
   // Filtered weeks for Hero Bluefin chart
   const heroFilteredWeeks = useMemo(() => {
@@ -421,13 +435,20 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
                 className={`${styles.heroSubBadge} ${styles.heroSubBadgeHighlight}`}
               >
                 Flagship (projectbluefin/bluefin):{" "}
-                {latestBluefin.toLocaleString()} (
-                {((latestBluefin / currentTotalBluefin) * 100).toFixed(1)}%)
+                {(latestBluefin ?? 0).toLocaleString()} (
+                {(((latestBluefin ?? 0) / currentTotalBluefin) * 100).toFixed(
+                  1,
+                )}
+                %)
               </span>
               <span className={styles.heroSubBadge}>
                 LTS (projectbluefin/bluefin-lts):{" "}
-                {latestBluefinLts.toLocaleString()} (
-                {((latestBluefinLts / currentTotalBluefin) * 100).toFixed(1)}%)
+                {(latestBluefinLts ?? 0).toLocaleString()} (
+                {(
+                  ((latestBluefinLts ?? 0) / currentTotalBluefin) *
+                  100
+                ).toFixed(1)}
+                %)
               </span>
               <span className={styles.heroSubBadge}>Dakota: Bootstrapping</span>
               <span className={styles.heroSubBadge}>Utah: Provisioning</span>
@@ -521,9 +542,9 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
                     ? latestDakota
                     : latestUtah;
 
-            const isTracked = count > 0;
+            const isTracked = count !== null;
             const history = isTracked
-              ? weeks.slice(-12).map((w) => (w[img.id] as number) ?? null)
+              ? weeks.slice(-12).map((w) => readCount(w, img.id))
               : [];
 
             return (
@@ -548,13 +569,13 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
 
                 <div className={styles.countRow}>
                   <span className={styles.countValue}>
-                    {isTracked
+                    {count !== null
                       ? count.toLocaleString()
                       : img.status === "bootstrapping"
                         ? "Initial"
                         : "Pending"}
                   </span>
-                  {isTracked && currentTotalBluefin > 0 && (
+                  {count !== null && currentTotalBluefin > 0 && (
                     <span className={styles.sharePct}>
                       {((count / currentTotalBluefin) * 100).toFixed(1)}% fleet
                     </span>
@@ -606,7 +627,9 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
                         ? "accumulating countme data"
                         : "provisioning countme"
                     }
-                    label={`${img.name} 12-week adoption trend: currently ${count.toLocaleString()}`}
+                    label={`${img.name} 12-week adoption trend: currently ${
+                      count !== null ? count.toLocaleString() : "no data yet"
+                    }`}
                   />
                 </div>
 
