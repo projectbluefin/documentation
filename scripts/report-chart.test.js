@@ -92,11 +92,75 @@ function loadClient() {
   return mod.exports;
 }
 
+function loadComponent(tsxPath, stubs = {}) {
+  const source = fs.readFileSync(tsxPath, "utf8");
+  const { outputText } = ts.transpileModule(source, {
+    compilerOptions: {
+      jsx: ts.JsxEmit.React,
+      target: ts.ScriptTarget.ES2020,
+      module: ts.ModuleKind.CommonJS,
+    },
+  });
+  const mod = { exports: {} };
+  const requireShim = (id) => {
+    if (id.endsWith(".css")) return cssStub();
+    if (Object.hasOwn(stubs, id)) return stubs[id];
+    return require(id);
+  };
+  new Function("require", "module", "exports", outputText)(
+    requireShim,
+    mod,
+    mod.exports,
+  );
+  return mod.exports;
+}
+
 const exported = loadChart();
 const ReportChart = exported.default;
 const clientExported = loadClient();
 const ReportChartClient = clientExported.default;
 const { buildReportChartOption, selectEChartsModules } = clientExported;
+
+const COMPONENTS = path.join(REPO, "src", "components", "reports");
+const chartStub = {
+  __esModule: true,
+  default: ({ definition }) =>
+    React.createElement(
+      "div",
+      { "data-report-chart": definition.id },
+      definition.title,
+    ),
+};
+const laneStub = {
+  __esModule: true,
+  default: ({ lanes }) =>
+    React.createElement(
+      "div",
+      { "data-report-lanes": lanes?.length ?? 0 },
+      lanes?.map((lane) => lane.label).join(", ") || "lane state",
+    ),
+};
+const leaderboardStub = {
+  __esModule: true,
+  default: ({ heroes }) =>
+    React.createElement(
+      "div",
+      { "data-report-leaderboard": heroes?.length ?? 0 },
+      "leaderboard",
+    ),
+};
+const sparklineStub = {
+  __esModule: true,
+  default: () => React.createElement("svg", { "data-report-sparkline": true }),
+};
+
+function renderComponent(name, props, stubs = {}) {
+  const Component = loadComponent(
+    path.join(COMPONENTS, `${name}.tsx`),
+    stubs,
+  ).default;
+  return renderToStaticMarkup(React.createElement(Component, props));
+}
 
 const fixture = {
   id: "merges",
@@ -266,4 +330,213 @@ test("chart styles follow the site theme and reduced-motion preference", () => {
   assert.match(source, /var\(--ifm-/);
   assert.match(source, /prefers-reduced-motion/);
   assert.doesNotMatch(source, /#[0-9a-f]{6}\b/i);
+});
+
+function sectionChart(id, title = id) {
+  return {
+    id,
+    kind: "line",
+    title,
+    currentValue: "3",
+    unit: "items",
+    sourceLabel: "Fixture source",
+    sourceUrl: "https://example.com/source",
+    sourceWindow: "October 2026 UTC",
+    labels: ["2026-10-01"],
+    series: [{ id: `${id}-series`, label: "Items", values: [3] }],
+    minimumPoints: 1,
+  };
+}
+
+test("ReportActivity renders its three charts and explicit portfolio tiers", () => {
+  const markup = renderComponent(
+    "ReportActivity",
+    {
+      calendar: sectionChart("calendar", "Daily merges"),
+      repositories: sectionChart("repositories", "Repository activity"),
+      categories: sectionChart("categories", "Category distribution"),
+      stableRepositories: ["projectbluefin/bluefin"],
+      experimentalRepositories: ["projectbluefin/utah"],
+    },
+    { "./ReportChart": chartStub },
+  );
+
+  assert.equal((markup.match(/data-report-chart=/g) || []).length, 3);
+  assert.match(markup, /Stable portfolio/);
+  assert.match(markup, /projectbluefin\/bluefin/);
+  assert.match(markup, /Experimental portfolio/);
+  assert.match(markup, /projectbluefin\/utah/);
+});
+
+test("ReportDelivery renders lane outcomes, trends, releases, and changelogs", () => {
+  const markup = renderComponent(
+    "ReportDelivery",
+    {
+      lanes: [{ id: "bluefin", label: "Bluefin", pending: 1 }],
+      cadence: sectionChart("cadence", "Cadence and duration"),
+      releases: sectionChart("releases", "Release events"),
+    },
+    {
+      "./ReportChart": chartStub,
+      "./ReportLaneHealth": laneStub,
+    },
+  );
+
+  assert.match(markup, /data-report-lanes="1"/);
+  assert.match(markup, /data-report-chart="cadence"/);
+  assert.match(markup, /data-report-chart="releases"/);
+  assert.match(markup, /href="\/changelogs"/);
+});
+
+test("ReportParticipation renders automation and the current leaderboard", () => {
+  const markup = renderComponent(
+    "ReportParticipation",
+    {
+      automation: sectionChart("automation", "Human and automation activity"),
+      leaderboard: {
+        heroes: [
+          {
+            rank: 1,
+            login: "alice",
+            contributions: 3,
+          },
+        ],
+        newLights: [],
+      },
+    },
+    {
+      "./ReportChart": chartStub,
+      "./ReportLeaderboard": leaderboardStub,
+    },
+  );
+
+  assert.match(markup, /data-report-chart="automation"/);
+  assert.match(markup, /data-report-leaderboard="1"/);
+});
+
+test("ReportEcosystem renders Countme, Homebrew, and Flathub trends", () => {
+  const markup = renderComponent(
+    "ReportEcosystem",
+    {
+      countme: sectionChart("countme", "Countme trend"),
+      homebrew: sectionChart("homebrew", "Homebrew trend"),
+      flathub: sectionChart("flathub", "Flathub trend"),
+    },
+    { "./ReportChart": chartStub },
+  );
+
+  assert.match(markup, /Countme/);
+  assert.match(markup, /Homebrew/);
+  assert.match(markup, /Flathub/);
+  assert.equal((markup.match(/data-report-chart=/g) || []).length, 3);
+});
+
+test("ReportAutomationStats labels both series with one hue and glyphs", () => {
+  const markup = renderComponent("ReportAutomationStats", {
+    totalPRs: 10,
+    botPRs: 4,
+    humanPRs: 6,
+    automationPercentage: "40.0",
+  });
+
+  assert.match(markup, /◆/);
+  assert.match(markup, /◇/);
+  assert.doesNotMatch(markup, /#28a745/i);
+});
+
+test("ReportAutomationStats exposes an unavailable state instead of disappearing", () => {
+  const markup = renderComponent("ReportAutomationStats", {
+    totalPRs: null,
+    botPRs: 0,
+    humanPRs: 0,
+    automationPercentage: null,
+  });
+
+  assert.match(markup, /Automation data unavailable/);
+  assert.match(markup, /role="status"/);
+});
+
+test("ReportAutomationStats keeps an available zero period at zero width", () => {
+  const markup = renderComponent("ReportAutomationStats", {
+    totalPRs: 0,
+    botPRs: 0,
+    humanPRs: 0,
+    automationPercentage: "0.0",
+  });
+
+  assert.match(markup, /class="botBar" style="width:0%"/);
+  assert.match(markup, /class="humanBar" style="width:0%"/);
+});
+
+test("ReportCountmeTrend preserves zero and explains unavailable sources", () => {
+  const available = renderComponent(
+    "ReportCountmeTrend",
+    { currentTotal: 0, historyPoints: [0] },
+    { "../Sparkline": sparklineStub },
+  );
+  assert.match(available, />0</);
+  assert.doesNotMatch(available, /unavailable/i);
+
+  const unavailable = renderComponent(
+    "ReportCountmeTrend",
+    {
+      currentTotal: null,
+      historyPoints: [],
+      unavailableReason: "HTTP 503",
+    },
+    { "../Sparkline": sparklineStub },
+  );
+  assert.match(unavailable, /Data unavailable/);
+  assert.match(unavailable, /HTTP 503/);
+});
+
+test("ReportLaneHealth exposes pending and unavailable lane states", () => {
+  const markup = renderComponent(
+    "ReportLaneHealth",
+    {
+      lanes: [
+        {
+          id: "bluefin",
+          label: "Bluefin",
+          repo: "projectbluefin/bluefin",
+          total: null,
+          passed: null,
+          failed: null,
+          pending: null,
+          successRate: null,
+          medianDurationMin: null,
+          unavailableReason: "HTTP 503",
+        },
+        {
+          id: "dakota",
+          label: "Dakota",
+          repo: "projectbluefin/dakota",
+          total: 2,
+          passed: 1,
+          failed: 0,
+          pending: 1,
+          successRate: 100,
+          medianDurationMin: 5,
+        },
+      ],
+    },
+    { "../Sparkline": sparklineStub },
+  );
+
+  assert.match(markup, /unavailable/i);
+  assert.match(markup, /HTTP 503/);
+  assert.match(markup, /pending/i);
+});
+
+test("ReportDoraCadence exposes unavailable and pending states without hiding zero", () => {
+  const unavailable = renderComponent("ReportDoraCadence", {});
+  assert.match(unavailable, /Delivery data unavailable/);
+  assert.match(unavailable, /role="status"/);
+
+  const measured = renderComponent("ReportDoraCadence", {
+    totalReleases: 0,
+    pending: true,
+  });
+  assert.match(measured, />0</);
+  assert.match(measured, /pending/i);
 });

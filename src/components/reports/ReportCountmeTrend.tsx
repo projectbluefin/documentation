@@ -9,11 +9,13 @@ export interface VariantStat {
 }
 
 export interface ReportCountmeTrendProps {
-  currentTotal: number;
-  previousTotal?: number;
-  historyPoints: (number | null)[];
+  currentTotal: number | null;
+  previousTotal?: number | null;
+  historyPoints?: (number | null)[] | null;
   variants?: VariantStat[];
   sourceDate?: string;
+  unavailableReason?: string | null;
+  stateReason?: string | null;
 }
 
 export default function ReportCountmeTrend({
@@ -22,13 +24,24 @@ export default function ReportCountmeTrend({
   historyPoints,
   variants = [],
   sourceDate,
+  unavailableReason,
+  stateReason,
 }: ReportCountmeTrendProps): React.JSX.Element {
-  if (!currentTotal && historyPoints.length === 0) {
-    return <></>;
+  const reason = unavailableReason ?? stateReason;
+  if (reason || currentTotal === null || currentTotal === undefined) {
+    return (
+      <div className={styles.container} role="status">
+        <div className={styles.unavailable}>
+          <span aria-hidden="true">⚠</span>
+          <strong>Data unavailable</strong>
+          <span>{reason ?? "No Countme measurement is available."}</span>
+        </div>
+      </div>
+    );
   }
 
   const changePct =
-    previousTotal && previousTotal > 0
+    previousTotal !== null && previousTotal !== undefined && previousTotal > 0
       ? (((currentTotal - previousTotal) / previousTotal) * 100).toFixed(1)
       : null;
 
@@ -53,6 +66,7 @@ export default function ReportCountmeTrend({
                 isPositive ? styles.positive : styles.negative
               }`}
             >
+              {isPositive ? "↑" : "↓"}{" "}
               {isPositive ? `+${changePct}%` : `${changePct}%`} from previous
               period
             </div>

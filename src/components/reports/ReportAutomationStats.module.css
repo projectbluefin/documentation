@@ -38,8 +38,9 @@
 }
 
 .humanBar {
-  background: #28a745;
+  background: var(--ifm-color-primary);
   height: 100%;
+  opacity: 0.45;
 }
 
 .barLegend {
@@ -55,10 +56,23 @@
   gap: 0.4rem;
 }
 
-.legendDot {
-  width: 10px;
-  height: 10px;
-  border-radius: 3px;
+.legendGlyph {
+  width: 1rem;
+  color: var(--ifm-color-primary);
+  font-size: 0.9rem;
+  line-height: 1;
+  text-align: center;
+}
+
+.unavailable {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.unavailable strong {
+  color: var(--ifm-heading-color);
 }
 
 .repoGrid {

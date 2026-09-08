@@ -132,6 +132,108 @@
   color: var(--report-chart-muted);
 }
 
+.reportSection {
+  margin: 2rem 0;
+}
+
+.sectionHeader {
+  margin-bottom: 1rem;
+}
+
+.sectionHeader h2 {
+  margin-bottom: 0.25rem;
+}
+
+.sectionHeader p {
+  margin: 0;
+  color: var(--report-chart-muted);
+}
+
+.sectionGrid {
+  display: grid;
+  gap: 1rem;
+}
+
+.sectionPanel {
+  min-width: 0;
+}
+
+.sectionPanel > h3 {
+  margin: 0 0 0.5rem;
+  color: var(--report-chart-text);
+  font-size: 1rem;
+}
+
+.state {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0.9rem 1rem;
+  color: var(--report-chart-muted);
+  border: 1px dashed var(--report-chart-border);
+  border-radius: calc(var(--ifm-global-radius) * 0.75);
+}
+
+.state strong {
+  color: var(--report-chart-text);
+}
+
+.stateGlyph {
+  color: var(--report-chart-accent);
+  font-weight: 700;
+}
+
+.portfolioGrid {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.portfolioGroup {
+  padding: 1rem;
+  border: 1px solid var(--report-chart-border);
+  border-radius: calc(var(--ifm-global-radius) * 0.75);
+  background: var(--report-chart-surface);
+}
+
+.portfolioGroup h3 {
+  margin: 0 0 0.5rem;
+  color: var(--report-chart-text);
+  font-size: 1rem;
+}
+
+.portfolioList {
+  margin: 0;
+  padding-left: 1.25rem;
+  color: var(--report-chart-muted);
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.875rem;
+}
+
+.mutedState {
+  margin: 0;
+  color: var(--report-chart-muted);
+  font-style: italic;
+}
+
+.canonicalLink {
+  margin: 1rem 0 0;
+  color: var(--report-chart-muted);
+}
+
+.canonicalLink a {
+  color: var(--report-chart-accent);
+}
+
+@media (min-width: 800px) {
+  .sectionGrid,
+  .portfolioGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .chartFrame,
   .chartFrame * {

@@ -8,11 +8,13 @@ export interface RepoBotActivity {
 }
 
 export interface ReportAutomationStatsProps {
-  totalPRs: number;
-  botPRs: number;
-  humanPRs: number;
-  automationPercentage: string | number;
+  totalPRs: number | null;
+  botPRs: number | null;
+  humanPRs: number | null;
+  automationPercentage: string | number | null;
   repoBreakdown?: RepoBotActivity[];
+  unavailableReason?: string | null;
+  stateReason?: string | null;
 }
 
 export default function ReportAutomationStats({
@@ -21,16 +23,50 @@ export default function ReportAutomationStats({
   humanPRs,
   automationPercentage,
   repoBreakdown = [],
+  unavailableReason,
+  stateReason,
 }: ReportAutomationStatsProps): React.JSX.Element {
-  if (totalPRs === 0) {
-    return <></>;
+  if (
+    totalPRs === null ||
+    totalPRs === undefined ||
+    botPRs === null ||
+    botPRs === undefined ||
+    humanPRs === null ||
+    humanPRs === undefined ||
+    automationPercentage === null ||
+    automationPercentage === undefined
+  ) {
+    return (
+      <div className={styles.container} role="status">
+        <div className={styles.unavailable}>
+          <span aria-hidden="true">⚠</span>
+          <strong>Automation data unavailable</strong>
+          <span>
+            {unavailableReason ??
+              stateReason ??
+              "No source measurement is available."}
+          </span>
+        </div>
+      </div>
+    );
   }
 
   const botPct =
     typeof automationPercentage === "number"
       ? automationPercentage
       : parseFloat(automationPercentage);
-  const humanPct = Math.max(0, 100 - botPct);
+  if (!Number.isFinite(botPct)) {
+    return (
+      <div className={styles.container} role="status">
+        <div className={styles.unavailable}>
+          <span aria-hidden="true">⚠</span>
+          <strong>Automation data unavailable</strong>
+          <span>Automation percentage is not a number.</span>
+        </div>
+      </div>
+    );
+  }
+  const humanPct = totalPRs === 0 ? 0 : Math.max(0, 100 - botPct);
 
   return (
     <div className={styles.container}>
@@ -40,27 +76,33 @@ export default function ReportAutomationStats({
       </div>
 
       <div className={styles.barTrack}>
-        <div className={styles.botBar} style={{ width: `${botPct}%` }} />
-        <div className={styles.humanBar} style={{ width: `${humanPct}%` }} />
+        <div
+          className={styles.botBar}
+          style={{ width: `${botPct}%` }}
+          aria-label={`Automation: ${botPct}%`}
+        />
+        <div
+          className={styles.humanBar}
+          style={{ width: `${humanPct}%` }}
+          aria-label={`Human: ${humanPct.toFixed(1)}%`}
+        />
       </div>
 
       <div className={styles.barLegend}>
         <div className={styles.legendItem}>
-          <span
-            className={styles.legendDot}
-            style={{ background: "var(--ifm-color-primary)" }}
-          />
+          <span className={styles.legendGlyph} aria-hidden="true">
+            ◆
+          </span>
           <span>
-            <strong>Automation:</strong> {botPRs} PRs ({botPct}%)
+            <strong>◆ Automation:</strong> {botPRs} PRs ({botPct}%)
           </span>
         </div>
         <div className={styles.legendItem}>
-          <span
-            className={styles.legendDot}
-            style={{ background: "#28a745" }}
-          />
+          <span className={styles.legendGlyph} aria-hidden="true">
+            ◇
+          </span>
           <span>
-            <strong>Human:</strong> {humanPRs} PRs ({humanPct.toFixed(1)}%)
+            <strong>◇ Human:</strong> {humanPRs} PRs ({humanPct.toFixed(1)}%)
           </span>
         </div>
       </div>

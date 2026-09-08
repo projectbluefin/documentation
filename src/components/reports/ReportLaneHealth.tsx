@@ -6,27 +6,47 @@ export interface ReportLaneItem {
   id: string;
   label: string;
   repo: string;
-  total: number;
-  passed: number;
-  failed: number;
-  running?: number;
+  total: number | null;
+  passed: number | null;
+  failed: number | null;
+  pending?: number | null;
+  /** Legacy name accepted while snapshots migrate to the pending field. */
+  running?: number | null;
   successRate: number | null;
   medianDurationMin: number | null;
   /** Activity history points (e.g. daily runs or pass counts) for sparkline */
-  sparklineData?: (number | null)[];
+  sparklineData?: (number | null)[] | null;
+  unavailableReason?: string | null;
 }
 
 export interface ReportLaneHealthProps {
   title?: string;
-  lanes: ReportLaneItem[];
+  lanes: ReportLaneItem[] | null;
+  unavailableReason?: string | null;
+  stateReason?: string | null;
 }
 
 export default function ReportLaneHealth({
   title = "Factory Publishing Lanes",
   lanes,
+  unavailableReason,
+  stateReason,
 }: ReportLaneHealthProps): React.JSX.Element {
   if (!lanes || lanes.length === 0) {
-    return <></>;
+    return (
+      <div className={styles.container} role="status">
+        <h3 className={styles.heading}>{title}</h3>
+        <p className={styles.state}>
+          <span aria-hidden="true">⚠</span>
+          <strong>Lane data unavailable</strong>
+          <span>
+            {unavailableReason ??
+              stateReason ??
+              "No publishing-lane measurements are available."}
+          </span>
+        </p>
+      </div>
+    );
   }
 
   return (
@@ -35,6 +55,7 @@ export default function ReportLaneHealth({
       <div className={styles.grid}>
         {lanes.map((lane) => {
           const rate = lane.successRate;
+          const pending = lane.pending ?? lane.running;
           const rateClass =
             rate === null
               ? ""
@@ -58,20 +79,31 @@ export default function ReportLaneHealth({
                     {lane.repo}
                   </a>
                 </div>
-                {rate !== null && (
-                  <span className={`${styles.rateBadge} ${rateClass}`}>
-                    {rate}%
-                  </span>
-                )}
+                <span
+                  className={`${styles.rateBadge} ${rateClass}`}
+                  aria-label={
+                    rate === null
+                      ? `${lane.label}: no success-rate data`
+                      : `${lane.label}: ${rate}% success rate`
+                  }
+                >
+                  {rate === null
+                    ? "—"
+                    : `${rate >= 90 ? "✓" : rate >= 75 ? "△" : "!"} ${rate}%`}
+                </span>
               </div>
 
               <div className={styles.statsRow}>
                 <div className={styles.statItem}>
-                  <span className={styles.statNum}>{lane.passed}</span>
+                  <span className={styles.statNum}>
+                    {lane.passed === null ? "no data" : lane.passed}
+                  </span>
                   <span className={styles.statLabel}>Passed</span>
                 </div>
                 <div className={styles.statItem}>
-                  <span className={styles.statNum}>{lane.failed}</span>
+                  <span className={styles.statNum}>
+                    {lane.failed === null ? "no data" : lane.failed}
+                  </span>
                   <span className={styles.statLabel}>Failed</span>
                 </div>
                 <div className={styles.statItem}>
@@ -83,6 +115,19 @@ export default function ReportLaneHealth({
                   <span className={styles.statLabel}>Median Run</span>
                 </div>
               </div>
+
+              {pending !== null && pending !== undefined && pending > 0 && (
+                <p className={styles.pendingState} role="status">
+                  <span aria-hidden="true">⏳</span> Pending runs: {pending}
+                </p>
+              )}
+
+              {lane.unavailableReason && (
+                <p className={styles.unavailableState} role="status">
+                  <span aria-hidden="true">⚠</span> Unavailable:{" "}
+                  {lane.unavailableReason}
+                </p>
+              )}
 
               {lane.sparklineData && lane.sparklineData.length > 1 && (
                 <div className={styles.sparklineWrap}>
