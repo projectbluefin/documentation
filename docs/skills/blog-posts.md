@@ -1,7 +1,7 @@
 ---
 name: blog-posts
-version: "1.1"
-last_updated: "2026-09-06"
+version: "1.2"
+last_updated: "2026-09-08"
 id: blog-posts
 one_line_purpose: Format, embed, and validate Bluefin blog posts under blog/.
 entry_point: docs/skills/blog-posts.md
@@ -65,7 +65,9 @@ A design skill saying "come up with copy" refers to mockups, not authorship.
    `static/img/blog/<YYYY-MM-DD-slug>/`. Never hotlink a CDN — the post has to
    survive the source account, the CDN, and the link rotting.
 
-   For a YouTube-only stub, fetch the canonical title from the oEmbed endpoint.
+   For a requested website screenshot, capture a fully rendered viewport, not
+   its Open Graph image or loading state. For a YouTube-only stub, fetch the
+   canonical title from the oEmbed endpoint.
    If `maxresdefault.jpg` returns HTTP 200, save it under the post's
    `static/img/blog/<YYYY-MM-DD-slug>/` directory and use that local path as the
    front-matter `image`; otherwise save the oEmbed `thumbnail_url`. When the
