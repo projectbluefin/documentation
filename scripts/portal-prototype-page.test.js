@@ -59,14 +59,29 @@ test("prototype renders source-authored scenes in order", () => {
     'id="scene-users"',
     'id="scene-developers"',
     'id="scene-mission"',
+    'id="scene-video"',
+    'id="bazaar"',
+    'id="scene-community"',
+    'id="footer"',
+    'id="alumni"',
+    'id="sponsors"',
   ];
   ids.reduce((previous, id) => {
     const current = html.indexOf(id);
-    assert.ok(current > previous, `${id} must follow the previous scene`);
+    assert.ok(
+      current > previous,
+      `${id} must follow the previous scene in order`,
+    );
     return current;
   }, -1);
+  assert.ok(html.includes(">Applications<"));
+  assert.ok(html.includes(">Community<"));
 
   assert.ok(html.includes('id="portal-scenes"'));
+  assert.ok(html.includes('id="footer"'));
+  assert.ok(html.includes("Featuring alumni from companies like"));
+  assert.ok(html.includes("Our sponsors"));
+  assert.ok(html.includes("Project Bluefin is Built With"));
   assert.match(html, /<h1[^>]*>\s*<img[^>]*alt="Bluefin"[^>]*\/>\s*<\/h1>/);
   assert.match(
     html,
@@ -84,6 +99,7 @@ test("prototype renders source-authored scenes in order", () => {
   assert.ok(html.includes('href="#scene-users"'));
   assert.match(html, /id="scene-users"[^>]*tabindex="-1"/);
   assert.ok(html.includes('src="/img/portal/layer-transition.webp"'));
+  assert.ok(html.includes('title="Bluefin Introduction"'));
 });
 
 test("route stays temporary and does not replace the documentation root", () => {
