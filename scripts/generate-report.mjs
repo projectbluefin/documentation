@@ -20,8 +20,15 @@ import {
   generateReportMarkdown,
   getReportSlug,
 } from "./lib/markdown-generator.mjs";
-import { getCategoryForLabel } from "./lib/label-mapping.mjs";
 import { MONITORED_REPOS } from "./lib/monitored-repos.mjs";
+import { REPORT_PORTFOLIO } from "./lib/report-portfolio.mjs";
+import { buildReportSnapshot } from "./lib/report-snapshot.mjs";
+import {
+  mergeReportHistory,
+  readReportHistory,
+} from "./lib/report-history.mjs";
+import { buildActivityMetrics } from "./lib/report-activity-metrics.mjs";
+import { fetchReleaseEvents } from "./lib/report-release-metrics.mjs";
 import { fetchBuildMetrics } from "./lib/build-metrics.mjs";
 import {
   fetchTapPromotions,
@@ -35,9 +42,15 @@ import {
 
 import { format } from "date-fns";
 import { writeFile } from "fs/promises";
+import { pathToFileURL } from "url";
 
 const KNOWN_CONTRIBUTORS_CACHE = "scripts/data/known-contributors.json";
 const KNOWN_CONTRIBUTORS_SEED = "scripts/data/known-contributors-seed.json";
+const REPORT_HISTORY_PATH = "scripts/data/report-history.json";
+const GITHUB_GRAPHQL_URL = "https://api.github.com/graphql";
+const COUNTME_SOURCE_URL =
+  "https://data-analysis.fedoraproject.org/csv-reports/countme/totals.csv";
+const FLATHUB_SOURCE_URL = "https://flathub.org/api/v2/stats";
 
 /**
  * Split an array into two arrays based on a predicate.
@@ -143,10 +156,425 @@ function aggregateBotActivity(botItems) {
   return Object.values(activity);
 }
 
+function reportPeriod(startDate, endDate) {
+  return {
+    month: format(startDate, "yyyy-MM"),
+    start: format(startDate, "yyyy-MM-dd"),
+    end: format(endDate, "yyyy-MM-dd"),
+  };
+}
+
+function sourceRecord(id, status, stateReason, url, period, extra = {}) {
+  return {
+    id,
+    status,
+    stateReason: status === "available" ? null : stateReason || "Unavailable",
+    url,
+    window: { start: period.start, end: period.end },
+    ...extra,
+  };
+}
+
+function chartDefinition({
+  id,
+  kind,
+  title,
+  currentValue,
+  unit,
+  sourceLabel,
+  sourceUrl,
+  sourceWindow,
+  labels,
+  series,
+  minimumPoints = 1,
+}) {
+  return {
+    id,
+    kind,
+    title,
+    currentValue: String(currentValue),
+    unit,
+    sourceLabel,
+    sourceUrl,
+    sourceWindow,
+    labels: labels.length > 0 ? labels : [sourceWindow],
+    series,
+    minimumPoints,
+  };
+}
+
+function numericTotal(values) {
+  return values.reduce(
+    (total, value) => (typeof value === "number" ? total + value : total),
+    0,
+  );
+}
+
+function periodSourceWindow(startDate, endDate) {
+  return `${format(startDate, "MMMM yyyy")} UTC (${format(startDate, "yyyy-MM-dd")} to ${format(endDate, "yyyy-MM-dd")})`;
+}
+
+function withoutNestedHistory(snapshots) {
+  return snapshots.map((snapshot) => {
+    const copy = { ...snapshot };
+    delete copy.history;
+    return copy;
+  });
+}
+
+export function buildReportSnapshotPayload({
+  startDate,
+  endDate,
+  plannedPRs = [],
+  opportunisticPRs = [],
+  plannedPartial,
+  plannedError,
+  opportunisticPartial,
+  truncationWarnings = { planned: [], opportunistic: [] },
+  factoryStats,
+  factoryError,
+  releaseResult,
+  releaseError,
+  countmeStats,
+  countmeError,
+  tapAdditions = { production: [], experimental: [] },
+  tapError,
+  botActivity,
+  leaderboard,
+  history = { schemaVersion: 2, snapshots: [] },
+}) {
+  const period = reportPeriod(startDate, endDate);
+  const sourceWindow = periodSourceWindow(startDate, endDate);
+  const allPRs = [...plannedPRs, ...opportunisticPRs];
+  const activityMetrics = buildActivityMetrics(allPRs, period);
+  const activityReason =
+    plannedPartial || opportunisticPartial
+      ? [
+          plannedError,
+          ...truncationWarnings.planned,
+          ...truncationWarnings.opportunistic,
+        ]
+          .filter(Boolean)
+          .join(" ")
+          .replace(/^> /, "") || "GitHub activity data is partial."
+      : null;
+  const activitySource = sourceRecord(
+    "github-activity",
+    activityReason ? "unavailable" : "available",
+    activityReason,
+    GITHUB_GRAPHQL_URL,
+    period,
+  );
+  const stableRepositories = REPORT_PORTFOLIO.filter(
+    (entry) => entry.tier === "stable",
+  ).map((entry) => entry.repository);
+  const experimentalRepositories = REPORT_PORTFOLIO.filter(
+    (entry) => entry.tier === "experimental",
+  ).map((entry) => entry.repository);
+
+  const activity = {
+    calendar: chartDefinition({
+      id: "activity-calendar",
+      kind: "calendar",
+      title: "Daily merged pull requests",
+      currentValue: numericTotal(
+        activityMetrics.dailyMerges.map((entry) => entry.value),
+      ),
+      unit: "merged pull requests",
+      sourceLabel: "GitHub GraphQL",
+      sourceUrl: GITHUB_GRAPHQL_URL,
+      sourceWindow,
+      labels: activityMetrics.dailyMerges.map((entry) => entry.date),
+      series: [
+        {
+          id: "merged",
+          label: "Merged pull requests",
+          values: activityMetrics.dailyMerges.map((entry) => entry.value),
+        },
+      ],
+      minimumPoints: 1,
+    }),
+    repositories: chartDefinition({
+      id: "activity-repositories",
+      kind: "grouped-bar",
+      title: "Merged pull requests by repository",
+      currentValue: numericTotal(
+        activityMetrics.repositoryCounts.map((entry) => entry.value),
+      ),
+      unit: "merged pull requests",
+      sourceLabel: "GitHub GraphQL",
+      sourceUrl: GITHUB_GRAPHQL_URL,
+      sourceWindow,
+      labels: activityMetrics.repositoryCounts.map((entry) => entry.name),
+      series: [
+        {
+          id: "repositories",
+          label: "Merged pull requests",
+          values: activityMetrics.repositoryCounts.map((entry) => entry.value),
+        },
+      ],
+      minimumPoints: 1,
+    }),
+    categories: chartDefinition({
+      id: "activity-categories",
+      kind: "grouped-bar",
+      title: "Merged pull requests by label",
+      currentValue: numericTotal(
+        activityMetrics.categoryCounts.map((entry) => entry.value),
+      ),
+      unit: "label assignments",
+      sourceLabel: "GitHub GraphQL",
+      sourceUrl: GITHUB_GRAPHQL_URL,
+      sourceWindow,
+      labels: activityMetrics.categoryCounts.map((entry) => entry.name),
+      series: [
+        {
+          id: "categories",
+          label: "Label assignments",
+          values: activityMetrics.categoryCounts.map((entry) => entry.value),
+        },
+      ],
+      minimumPoints: 1,
+    }),
+    portfolio: {
+      stable: stableRepositories,
+      experimental: experimentalRepositories,
+    },
+    ...(activityReason ? { unavailableReason: activityReason } : {}),
+  };
+
+  const releaseSources = releaseResult?.sources ?? [
+    sourceRecord(
+      "github-releases",
+      "unavailable",
+      releaseError || "GitHub release data is unavailable.",
+      "https://api.github.com/repos",
+      period,
+    ),
+  ];
+  const releaseReasons = releaseSources
+    .filter((source) => source.status === "unavailable")
+    .map((source) => source.stateReason)
+    .filter(Boolean);
+  const releaseUnavailableReason =
+    releaseError ||
+    (releaseReasons.length > 0 ? releaseReasons.join("; ") : null);
+  const releaseEvents = releaseResult?.events ?? [];
+  const releaseSource = releaseSources[0] ?? {
+    url: "https://api.github.com/repos",
+  };
+  const hasAvailableReleaseSource = releaseSources.some(
+    (source) => source.status === "available",
+  );
+  const releaseChart =
+    releaseResult && !releaseError && hasAvailableReleaseSource
+      ? chartDefinition({
+          id: "delivery-releases",
+          kind: "line",
+          title: "Release events",
+          currentValue: releaseEvents.length,
+          unit: "release events",
+          sourceLabel: "GitHub Releases API",
+          sourceUrl: releaseSource.url,
+          sourceWindow,
+          labels:
+            releaseEvents.length > 0
+              ? releaseEvents.map((event) => event.publishedAt.slice(0, 10))
+              : [period.end],
+          series: [
+            {
+              id: "releases",
+              label: "Release events",
+              values:
+                releaseEvents.length > 0 ? releaseEvents.map(() => 1) : [0],
+            },
+          ],
+          minimumPoints: 1,
+        })
+      : null;
+  const laneLabels = factoryStats?.lanes?.map((lane) => lane.label) ?? [];
+  const laneValues =
+    factoryStats?.lanes?.map((lane) =>
+      typeof lane.total === "number" ? lane.total : null,
+    ) ?? [];
+  const laneReasons =
+    factoryStats?.lanes
+      ?.map((lane) => lane.unavailableReason)
+      .filter(Boolean) ?? [];
+  const hasAvailableLane = factoryStats?.lanes?.some(
+    (lane) => !lane.unavailableReason,
+  );
+  const laneUnavailableReason =
+    factoryError ||
+    (laneReasons.length > 0 ? laneReasons.join("; ") : null) ||
+    (!hasAvailableLane
+      ? "No publishing-lane measurements are available."
+      : null);
+  const delivery = {
+    lanes: factoryStats?.lanes ?? null,
+    cadence: hasAvailableLane
+      ? chartDefinition({
+          id: "delivery-cadence",
+          kind: "line",
+          title: "Publishing-lane cadence",
+          currentValue: numericTotal(laneValues),
+          unit: "publish runs",
+          sourceLabel: "GitHub Actions",
+          sourceUrl:
+            "https://api.github.com/repos/projectbluefin/bluefin/actions/runs",
+          sourceWindow,
+          labels: laneLabels,
+          series: [
+            {
+              id: "publish-runs",
+              label: "Publish runs",
+              values: laneValues,
+            },
+          ],
+          minimumPoints: 1,
+        })
+      : null,
+    releases: releaseChart,
+    ...(releaseUnavailableReason || laneUnavailableReason
+      ? {
+          unavailableReason: [laneUnavailableReason, releaseUnavailableReason]
+            .filter(Boolean)
+            .join("; "),
+        }
+      : {}),
+  };
+
+  const totalHumanPRs = plannedPRs.length + opportunisticPRs.length;
+  const totalBotPRs = numericTotal(
+    (botActivity ?? []).map((entry) => entry.count),
+  );
+  const automationValues = [totalHumanPRs, totalBotPRs];
+  const participation = {
+    automation: chartDefinition({
+      id: "participation-automation",
+      kind: "stacked-bar",
+      title: "Human and automation activity",
+      currentValue: totalHumanPRs + totalBotPRs,
+      unit: "pull requests",
+      sourceLabel: "GitHub GraphQL",
+      sourceUrl: GITHUB_GRAPHQL_URL,
+      sourceWindow,
+      labels: ["Report period"],
+      series: [
+        { id: "human", label: "Human", values: [automationValues[0]] },
+        {
+          id: "automation",
+          label: "Automation",
+          values: [automationValues[1]],
+        },
+      ],
+      minimumPoints: 1,
+    }),
+    leaderboard,
+  };
+
+  const countmeSource = sourceRecord(
+    "countme",
+    countmeStats ? "available" : "unavailable",
+    countmeError || "Countme data is unavailable.",
+    COUNTME_SOURCE_URL,
+    period,
+  );
+  const countmeChart = countmeStats
+    ? chartDefinition({
+        id: "ecosystem-countme",
+        kind: "line",
+        title: "Countme active systems",
+        currentValue: countmeStats.currentTotal,
+        unit: "estimated weekly active systems",
+        sourceLabel: "Countme",
+        sourceUrl: COUNTME_SOURCE_URL,
+        sourceWindow: `Through ${countmeStats.sourceDate}`,
+        labels: countmeStats.historyPoints.map(
+          (_, index) => `week-${index + 1}`,
+        ),
+        series: [
+          {
+            id: "active-systems",
+            label: "Active systems",
+            values: countmeStats.historyPoints,
+          },
+        ],
+        minimumPoints: 1,
+      })
+    : null;
+  const tapSource = sourceRecord(
+    "homebrew",
+    tapError ? "unavailable" : "available",
+    tapError,
+    "https://github.com/ublue-os/homebrew-tap",
+    period,
+  );
+  const tapValues = [
+    tapAdditions.production?.length ?? 0,
+    tapAdditions.experimental?.length ?? 0,
+  ];
+  const homebrewChart = tapError
+    ? null
+    : chartDefinition({
+        id: "ecosystem-homebrew",
+        kind: "grouped-bar",
+        title: "Homebrew tap additions",
+        currentValue: numericTotal(tapValues),
+        unit: "package additions",
+        sourceLabel: "Homebrew taps",
+        sourceUrl: "https://github.com/ublue-os/homebrew-tap",
+        sourceWindow,
+        labels: ["Production tap", "Experimental tap"],
+        series: [{ id: "additions", label: "Additions", values: tapValues }],
+        minimumPoints: 1,
+      });
+  const flathubReason = "No configured public Flathub report source.";
+  const flathubSource = sourceRecord(
+    "flathub",
+    "unavailable",
+    flathubReason,
+    FLATHUB_SOURCE_URL,
+    period,
+  );
+  const ecosystem = {
+    countme: countmeChart,
+    homebrew: homebrewChart,
+    flathub: null,
+    unavailableReason: [countmeSource, tapSource, flathubSource]
+      .filter((source) => source.status === "unavailable")
+      .map((source) => source.stateReason)
+      .join("; "),
+  };
+
+  return buildReportSnapshot({
+    period,
+    sources: [
+      activitySource,
+      sourceRecord(
+        "github-lanes",
+        hasAvailableLane ? "available" : "unavailable",
+        laneUnavailableReason,
+        "https://api.github.com/repos/projectbluefin/bluefin/actions/runs",
+        period,
+      ),
+      ...releaseSources,
+      countmeSource,
+      tapSource,
+      flathubSource,
+    ],
+    activity,
+    delivery,
+    participation,
+    ecosystem,
+    history: withoutNestedHistory(history.snapshots),
+  });
+}
+
 /**
  * Main report generation function
  */
-async function generateReport() {
+export async function generateReport() {
   log.info("=== Monthly Report Generator ===");
 
   // Check for GITHUB_TOKEN
@@ -360,6 +788,7 @@ async function generateReport() {
     // Fetch tap additions
     log.info("Fetching homebrew tap additions...");
     const tapAdditions = { production: [], experimental: [] };
+    let tapError = null;
     try {
       tapAdditions.production = await fetchTapPromotions(startDate, endDate);
       tapAdditions.experimental = await fetchExperimentalAdditions(
@@ -381,12 +810,14 @@ async function generateReport() {
     } catch (error) {
       log.warn("Tap additions fetch failed, continuing without it");
       log.warn(`Error: ${error.message}`);
+      tapError = error.message;
       // Continue report generation even if tap additions fail
     }
 
     // Fetch factory monthly stats
     log.info("Fetching factory publishing lane metrics...");
     let factoryStats = null;
+    let factoryError = null;
     try {
       factoryStats = await fetchFactoryMonthlyStats(startDate, endDate);
       log.info(
@@ -394,12 +825,29 @@ async function generateReport() {
       );
     } catch (error) {
       log.warn(`Factory stats fetch failed: ${error.message}`);
+      factoryError = error.message;
       factoryStats = null;
+    }
+
+    // Fetch release metadata from the configured public GitHub sources
+    log.info("Fetching release events...");
+    let releaseResult = null;
+    let releaseError = null;
+    try {
+      releaseResult = await fetchReleaseEvents(
+        REPORT_PORTFOLIO,
+        reportPeriod(startDate, endDate),
+      );
+      log.info(`✅ Release events fetched: ${releaseResult.events.length}`);
+    } catch (error) {
+      releaseError = error instanceof Error ? error.message : String(error);
+      log.warn(`Release event fetch failed: ${releaseError}`);
     }
 
     // Extract countme telemetry metrics
     log.info("Extracting countme telemetry metrics...");
     let countmeStats = null;
+    let countmeError = null;
     try {
       countmeStats = extractCountmeMetrics(startDate, endDate);
       if (countmeStats) {
@@ -409,7 +857,11 @@ async function generateReport() {
       }
     } catch (error) {
       log.warn(`Countme telemetry extraction failed: ${error.message}`);
+      countmeError = error.message;
       countmeStats = null;
+    }
+    if (!countmeStats && !countmeError) {
+      countmeError = "Countme data is unavailable.";
     }
 
     // Extract Hive leaderboard heroes and new lights
@@ -425,22 +877,47 @@ async function generateReport() {
       leaderboard = null;
     }
 
-    // Generate markdown
-    log.info("Generating markdown...");
-    let markdown = generateReportMarkdown(
-      plannedHumanItems,
-      opportunisticHumanItems,
-      contributors,
-      newContributors,
-      botActivity,
+    let reportHistory;
+    try {
+      reportHistory = readReportHistory();
+    } catch (error) {
+      log.warn(
+        `Report history unavailable, starting from the seed: ${error.message}`,
+      );
+      reportHistory = { schemaVersion: 2, snapshots: [] };
+    }
+
+    const snapshot = buildReportSnapshotPayload({
       startDate,
       endDate,
-      buildMetrics,
-      tapAdditions,
+      plannedPRs,
+      opportunisticPRs,
+      plannedPartial,
+      plannedError,
+      opportunisticPartial: truncationWarnings.opportunistic.length > 0,
+      truncationWarnings,
       factoryStats,
+      factoryError,
+      releaseResult,
+      releaseError,
       countmeStats,
+      countmeError,
+      tapAdditions,
+      tapError,
+      botActivity,
       leaderboard,
-    );
+      history: reportHistory,
+    });
+
+    // Generate markdown
+    log.info("Generating markdown...");
+    let markdown = generateReportMarkdown({
+      snapshot,
+      plannedItems: plannedHumanItems,
+      opportunisticItems: opportunisticHumanItems,
+      contributors,
+      newContributors,
+    });
 
     if (
       truncationWarnings.planned.length > 0 ||
@@ -465,7 +942,15 @@ async function generateReport() {
     const filename = `blog/${format(endDate, "yyyy-MM-dd")}-${slug}.mdx`;
     await writeFile(filename, markdown, "utf8");
 
-    // Save known contributors cache AFTER successful write — prevents cache poisoning on failure
+    // Persist history only after the immutable post has been written successfully.
+    const nextHistory = mergeReportHistory(reportHistory, snapshot);
+    await writeFile(
+      REPORT_HISTORY_PATH,
+      `${JSON.stringify(nextHistory, null, 2)}\n`,
+      "utf8",
+    );
+
+    // Save known contributors cache after the post and history writes.
     try {
       const updatedSet = new Set([...knownSet, ...contributors]);
       await saveKnownContributors(updatedSet, KNOWN_CONTRIBUTORS_CACHE);
@@ -535,10 +1020,11 @@ async function generateReport() {
   }
 }
 
-// Run the script
-generateReport().catch((error) => {
-  log.error("Unhandled error in report generation");
-  log.error(error.message);
-  github.error(`Unhandled error: ${error.message}`);
-  process.exit(1);
-});
+if (import.meta.url === pathToFileURL(process.argv[1] ?? "").href) {
+  generateReport().catch((error) => {
+    log.error("Unhandled error in report generation");
+    log.error(error.message);
+    github.error(`Unhandled error: ${error.message}`);
+    process.exit(1);
+  });
+}

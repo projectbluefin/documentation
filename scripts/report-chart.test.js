@@ -364,11 +364,13 @@ test("ReportActivity renders its three charts and explicit portfolio tiers", () 
   const markup = renderComponent(
     "ReportActivity",
     {
-      calendar: sectionChart("calendar", "Daily merges"),
-      repositories: sectionChart("repositories", "Repository activity"),
-      categories: sectionChart("categories", "Category distribution"),
-      stableRepositories: ["projectbluefin/bluefin"],
-      experimentalRepositories: ["projectbluefin/utah"],
+      snapshot: {
+        calendar: sectionChart("calendar", "Daily merges"),
+        repositories: sectionChart("repositories", "Repository activity"),
+        categories: sectionChart("categories", "Category distribution"),
+        stableRepositories: ["projectbluefin/bluefin"],
+        experimentalRepositories: ["projectbluefin/utah"],
+      },
     },
     { "./ReportChart": chartStub },
   );
@@ -384,9 +386,11 @@ test("ReportDelivery renders lane outcomes, trends, releases, and changelogs", (
   const markup = renderComponent(
     "ReportDelivery",
     {
-      lanes: [{ id: "bluefin", label: "Bluefin", pending: 1 }],
-      cadence: sectionChart("cadence", "Cadence and duration"),
-      releases: sectionChart("releases", "Release events"),
+      snapshot: {
+        lanes: [{ id: "bluefin", label: "Bluefin", pending: 1 }],
+        cadence: sectionChart("cadence", "Cadence and duration"),
+        releases: sectionChart("releases", "Release events"),
+      },
     },
     {
       "./ReportChart": chartStub,
@@ -423,16 +427,18 @@ test("ReportParticipation renders automation and the current leaderboard", () =>
   const markup = renderComponent(
     "ReportParticipation",
     {
-      automation: sectionChart("automation", "Human and automation activity"),
-      leaderboard: {
-        heroes: [
-          {
-            rank: 1,
-            login: "alice",
-            contributions: 3,
-          },
-        ],
-        newLights: [],
+      snapshot: {
+        automation: sectionChart("automation", "Human and automation activity"),
+        leaderboard: {
+          heroes: [
+            {
+              rank: 1,
+              login: "alice",
+              contributions: 3,
+            },
+          ],
+          newLights: [],
+        },
       },
     },
     {
@@ -449,9 +455,11 @@ test("ReportEcosystem renders Countme, Homebrew, and Flathub trends", () => {
   const markup = renderComponent(
     "ReportEcosystem",
     {
-      countme: sectionChart("countme", "Countme trend"),
-      homebrew: sectionChart("homebrew", "Homebrew trend"),
-      flathub: sectionChart("flathub", "Flathub trend"),
+      snapshot: {
+        countme: sectionChart("countme", "Countme trend"),
+        homebrew: sectionChart("homebrew", "Homebrew trend"),
+        flathub: sectionChart("flathub", "Flathub trend"),
+      },
     },
     { "./ReportChart": chartStub },
   );

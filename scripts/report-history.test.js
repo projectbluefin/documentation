@@ -103,6 +103,28 @@ test("mergeReportHistory preserves unavailable payloads and does not mutate inpu
   assert.equal(next.snapshots[1].ecosystem.countme, 4200);
 });
 
+test("mergeReportHistory archives every Reports 2.0 section", () => {
+  const snapshot = {
+    schemaVersion: 2,
+    period: { month: "2026-10" },
+    sources: [
+      { id: "flathub", status: "unavailable", stateReason: "No source" },
+    ],
+    activity: { calendar: { currentValue: "12" } },
+    delivery: { lanes: [{ id: "bluefin", total: 2 }] },
+    participation: { automation: { currentValue: "12" } },
+    ecosystem: { flathub: null },
+    history: [],
+  };
+
+  const next = mergeReportHistory(
+    { schemaVersion: 2, snapshots: [] },
+    snapshot,
+  );
+
+  assert.deepEqual(next.snapshots, [snapshot]);
+});
+
 test("mergeReportHistory rejects incompatible schemas", () => {
   assert.throws(
     () =>

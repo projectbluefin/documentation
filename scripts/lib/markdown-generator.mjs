@@ -82,6 +82,151 @@ export function generateReportChartTag(definition) {
   return `<ReportChart definition={${JSON.stringify(definition)}} />`;
 }
 
+function reportPeriodDates(snapshot) {
+  const period = snapshot?.period ?? {};
+  const startDate = new Date(`${period.start}T00:00:00.000Z`);
+  const endDate = new Date(`${period.end}T23:59:59.999Z`);
+  return {
+    startDate: Number.isNaN(startDate.getTime())
+      ? new Date("1970-01-01T00:00:00Z")
+      : startDate,
+    endDate: Number.isNaN(endDate.getTime())
+      ? new Date("1970-01-01T00:00:00Z")
+      : endDate,
+  };
+}
+
+function snapshotContributorCards(contributors, newContributors) {
+  return contributors
+    .map((username) => {
+      const sponsorUrl = getSponsorUrl(username);
+      const highlight = newContributors.includes(username)
+        ? " highlight={true}"
+        : "";
+      const sponsor = sponsorUrl ? ` sponsorUrl="${sponsorUrl}"` : "";
+      return `<GitHubProfileCard username="${username}"${highlight}${sponsor} />`;
+    })
+    .join("\n\n");
+}
+
+function snapshotSourcesSection(sources = []) {
+  if (sources.length === 0) return "";
+
+  const lines = sources.map((source) => {
+    const window = source.window
+      ? ` (${source.window.start} to ${source.window.end})`
+      : "";
+    const reason =
+      source.status === "unavailable" && source.stateReason
+        ? ` — ${source.stateReason}`
+        : "";
+    const url = source.url ? `: [source](${source.url})` : "";
+    return `- \`${source.id}\`: ${source.status}${reason}${window}${url}`;
+  });
+
+  return `## Sources\n\n${lines.join("\n")}`;
+}
+
+function generateSnapshotReportMarkdown({
+  snapshot,
+  plannedItems = [],
+  opportunisticItems = [],
+  contributors = [],
+  newContributors = [],
+} = {}) {
+  if (!snapshot || snapshot.schemaVersion !== 2) {
+    throw new TypeError("A schemaVersion 2 snapshot is required");
+  }
+
+  const { startDate, endDate } = reportPeriodDates(snapshot);
+  const month = startDate.getUTCMonth();
+  const year = startDate.getUTCFullYear();
+  const monthlyTitle = MONTHLY_TITLES[month] || "Report";
+  const dateStr = snapshot.period?.end || format(endDate, "yyyy-MM-dd");
+  const totalItems = plannedItems.length + opportunisticItems.length;
+  const kpis = [
+    {
+      label: "Completed work",
+      value: totalItems,
+      sublabel: `${plannedItems.length} planned • ${opportunisticItems.length} opportunistic`,
+    },
+    {
+      label: "Contributors",
+      value: contributors.length,
+      sublabel: `${newContributors.length} first-time contributors`,
+    },
+  ];
+  const allItems = [...plannedItems, ...opportunisticItems];
+  const workItems = formatItemList(allItems, new Set());
+  const contributorsSection =
+    contributors.length > 0
+      ? `## Contributors\n\n${snapshotContributorCards(contributors, newContributors)}`
+      : "";
+  const workSection =
+    workItems.length > 0
+      ? `## Completed work\n\n${workItems}`
+      : "## Completed work\n\nNo completed work recorded.";
+
+  return `---
+title: "${monthlyTitle} ${year}"
+date: ${dateStr}
+slug: ${getReportSlug(startDate)}
+authors: [bluefin]
+tags: [monthly-report, project-activity, announcements]
+---
+
+import {
+  ReportHeroKPIs,
+  ReportActivity,
+  ReportDelivery,
+  ReportParticipation,
+  ReportEcosystem,
+} from '@site/src/components/reports';
+import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
+
+const snapshot = ${JSON.stringify(snapshot, null, 2)};
+
+# Summary
+
+<ReportHeroKPIs
+  kpis={${JSON.stringify(kpis, null, 2)}}
+/>
+
+<ReportActivity snapshot={snapshot.activity} />
+
+<ReportDelivery snapshot={snapshot.delivery} />
+
+<ReportParticipation snapshot={snapshot.participation} />
+
+<ReportEcosystem snapshot={snapshot.ecosystem} />
+
+Release details remain on the canonical [/changelogs](/changelogs) surface.
+
+${workSection}
+
+${contributorsSection}
+
+${snapshotSourcesSection(snapshot.sources)}
+`;
+}
+
+/**
+ * Generate a Reports 2.0 snapshot post, or preserve the legacy positional
+ * contract for existing callers until their migration is complete.
+ */
+export function generateReportMarkdown(...args) {
+  if (
+    args.length === 1 &&
+    args[0] &&
+    typeof args[0] === "object" &&
+    !Array.isArray(args[0]) &&
+    Object.hasOwn(args[0], "snapshot")
+  ) {
+    return generateSnapshotReportMarkdown(args[0]);
+  }
+  return generateLegacyReportMarkdown(...args);
+}
+
 /**
  * Generate complete report markdown
  *
@@ -98,7 +243,7 @@ export function generateReportChartTag(definition) {
  * @param {Object|null} countmeStats - Active systems telemetry from extractCountmeMetrics()
  * @returns {string} Complete markdown content
  */
-export function generateReportMarkdown(
+function generateLegacyReportMarkdown(
   plannedItems,
   opportunisticItems,
   contributors,
@@ -298,9 +443,14 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
   }
 
   let doraJSX = "";
-  if (factoryStats && factoryStats.totals && factoryStats.totals.totalRuns > 0) {
+  if (
+    factoryStats &&
+    factoryStats.totals &&
+    factoryStats.totals.totalRuns > 0
+  ) {
     const totalReleases = factoryStats.totals.passed || 0;
-    const deploymentsPerWeek = totalReleases > 0 ? (totalReleases / 4.3).toFixed(1) : "0";
+    const deploymentsPerWeek =
+      totalReleases > 0 ? (totalReleases / 4.3).toFixed(1) : "0";
     const changeFailureRate =
       factoryStats.totals.successRate !== null
         ? `${(100 - factoryStats.totals.successRate).toFixed(1)}%`
@@ -504,17 +654,15 @@ ${kindSections}`;
     newContributors,
   );
 
-  // Generate footer with cross-links
+  // Generate footer with factual cross-links
   const footer = `---
 
-*Want to see the latest OS releases? Check out the [Changelogs](/changelogs). For announcements and deep dives, read our [Blog](/blog).*
-
-*This report was automatically generated from [todo.projectbluefin.io](https://todo.projectbluefin.io).*
+*Release details are available on the [Changelogs](/changelogs) surface.*
 
 ---
 
 *Generated on ${format(new Date(), "yyyy-MM-dd")}*  
-[View Project Board](https://todo.projectbluefin.io) | [Report an Issue](https://github.com/projectbluefin/common/issues/new)
+[Report an Issue](https://github.com/projectbluefin/common/issues/new)
 `;
 
   // Combine all sections
@@ -833,7 +981,7 @@ ${expTable}
 
 ${badges.join(" ")}
 
-**${totalCount} automated updates** this month via GitHub Actions. Homebrew tap version bumps ensure Bluefin users always have access to the latest stable releases.
+**${totalCount} automated updates** this month via GitHub Actions.
 
 ### Quick Summary
 
@@ -1070,7 +1218,7 @@ export function generateBuildHealthSection(buildMetrics, startDate, endDate) {
   const perfectClub =
     stats.perfectImages.length > 0
       ? stats.perfectImages.map((name) => `\`${name}\``).join(", ")
-      : "_None. Vegeta is displeased._";
+      : "_None_";
 
   const highlights = `### This Month's Highlights
 
@@ -1085,9 +1233,7 @@ export function generateBuildHealthSection(buildMetrics, startDate, endDate) {
 
 ## Build Health
 
-### Raptor Race
-
-Keep Bluefin healthy with green builds. Wranglers apply within!
+### Build metrics
 
 ${successRatesTable}
 
@@ -1107,11 +1253,7 @@ function generateContributorsSection(contributors, newContributors) {
   // Section 1: New Contributors (highlighted, shown first)
   // contributors and newContributors are pre-filtered by caller — no bots
   if (newContributors.length > 0) {
-    section += `### New Lights\n\n`;
-    section += `We welcome our newest Guardians to the project.\n\n`;
-    section += `> "I do not know what the future holds. But I know this: with you at our side, there is nothing we cannot face."\n`;
-    section += `> \n`;
-    section += `> —Commander Zavala\n\n`;
+    section += `### New contributors\n\n`;
     section += `<div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem', marginBottom: '2rem' }}>\n\n`;
 
     const newContributorCards = newContributors
@@ -1134,10 +1276,7 @@ function generateContributorsSection(contributors, newContributors) {
   );
 
   if (continuingContributors.length > 0) {
-    section += `### Wayfinders\n\n`;
-    section += `> "Define yourself by your actions."\n`;
-    section += `> \n`;
-    section += `> —Lord Saladin\n\n`;
+    section += `### Continuing contributors\n\n`;
     section += `<div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem', marginBottom: '2rem' }}>\n\n`;
 
     const continuingContributorCards = continuingContributors
