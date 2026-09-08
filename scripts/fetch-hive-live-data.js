@@ -107,6 +107,7 @@ const [
   openIssuesData,
   openPRsData,
   agentReadyData,
+  mergedWeekData,
 ] = await Promise.all([
   safeSearch(`org:${org} type:pr is:merged`, 30),
   safeSearch(`org:${org} type:issue is:open -label:queue/agent-ready -label:source:agent`, 25),
@@ -121,6 +122,7 @@ const [
   safeSearch(`org:${org} state:open type:issue`, 1),
   safeSearch(`org:${org} state:open type:pr`, 1),
   safeSearch(`org:${org} label:queue/agent-ready state:open`, 1),
+  safeSearch(`org:${org} type:pr is:merged merged:>${weekAgo}`, 1),
 ]);
 
 function mapItem(i) {
@@ -156,7 +158,7 @@ const output = {
     totalRepos: orgData.public_repos ?? 0,
     openIssues: openIssuesData.total_count ?? 0,
     openPRs: openPRsData.total_count ?? 0,
-    mergedThisWeek: closedData.total_count ?? 0,
+    mergedThisWeek: mergedWeekData.total_count ?? 0,
     agentReadyIssues: agentReadyData.total_count ?? 0,
     agentOpenPRs: hivePRData.total_count ?? 0,
     sourceAgentOpen: copilotPRData.total_count ?? 0,
