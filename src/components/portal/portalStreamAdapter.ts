@@ -5,6 +5,8 @@ export interface StreamVersionDetails {
   hweKernel?: string;
   mesa?: string;
   nvidia?: string;
+  flatpak?: string;
+  podman?: string;
 }
 
 export interface StreamDefinition {
@@ -72,6 +74,7 @@ const DAKOTA_KEYS = [
 ];
 
 interface RawImageStream {
+  label?: string;
   tag?: string;
   versions?: Record<string, string | null>;
 }
@@ -89,6 +92,27 @@ interface RawDriverLatest {
 interface RawDriverStream {
   id?: string;
   latest?: RawDriverLatest;
+}
+
+function findImageStream(
+  product?: RawProduct,
+  preferredTag = "stable",
+): RawImageStream | undefined {
+  if (
+    !product ||
+    !Array.isArray(product.streams) ||
+    product.streams.length === 0
+  ) {
+    return undefined;
+  }
+  const match = product.streams.find(
+    (s) =>
+      typeof s === "object" &&
+      s !== null &&
+      (s.tag?.toLowerCase() === preferredTag.toLowerCase() ||
+        s.label?.toLowerCase() === preferredTag.toLowerCase()),
+  );
+  return match ?? product.streams[0];
 }
 
 function findProduct(raw: unknown, id: string): RawProduct | undefined {
@@ -117,8 +141,10 @@ function findDriverStream(
 function extractVersionDetails(
   product?: RawProduct,
   driverStream?: RawDriverStream,
+  streamTag = "stable",
 ): StreamVersionDetails | undefined {
-  const imageVersions = product?.streams?.[0]?.versions;
+  const imageStream = findImageStream(product, streamTag);
+  const imageVersions = imageStream?.versions;
   const driverVersions = driverStream?.latest?.versions;
 
   if (!imageVersions && !driverVersions) {
@@ -147,14 +173,22 @@ function extractVersionDetails(
     details.base = `Fedora ${fedora.replace(/^F/, "")}`;
   }
 
+  const flatpak = driverVersions?.flatpak ?? imageVersions?.flatpak;
+  if (flatpak) details.flatpak = flatpak;
+
+  const podman = driverVersions?.podman ?? imageVersions?.podman;
+  if (podman) details.podman = podman;
+
   return Object.keys(details).length > 0 ? details : undefined;
 }
 
 function extractDakotaRows(
   product?: RawProduct,
   driverStream?: RawDriverStream,
+  streamTag = "stable",
 ): ProductVersionRow[] {
-  const imageVersions = product?.streams?.[0]?.versions ?? {};
+  const imageStream = findImageStream(product, streamTag);
+  const imageVersions = imageStream?.versions ?? {};
   const driverVersions = driverStream?.latest?.versions ?? {};
   const combined = { ...imageVersions, ...driverVersions };
 
@@ -170,17 +204,21 @@ export function adaptStreams(
 ): ChooserCatalog {
   const stableProduct = findProduct(imagesRaw, "projectbluefin-bluefin");
   const stableDriver = findDriverStream(driverVersionsRaw, "bluefin-stable");
-  const stableVersions = extractVersionDetails(stableProduct, stableDriver);
+  const stableVersions = extractVersionDetails(
+    stableProduct,
+    stableDriver,
+    "stable",
+  );
   const stableAvailable = !!stableVersions;
 
   const ltsProduct = findProduct(imagesRaw, "projectbluefin-bluefin-lts");
   const ltsDriver = findDriverStream(driverVersionsRaw, "bluefin-lts");
-  const ltsVersions = extractVersionDetails(ltsProduct, ltsDriver);
+  const ltsVersions = extractVersionDetails(ltsProduct, ltsDriver, "stable");
   const ltsAvailable = !!ltsVersions;
 
   const dakotaProduct = findProduct(imagesRaw, "projectbluefin-dakota");
   const dakotaDriver = findDriverStream(driverVersionsRaw, "dakota-latest");
-  const dakotaRows = extractDakotaRows(dakotaProduct, dakotaDriver);
+  const dakotaRows = extractDakotaRows(dakotaProduct, dakotaDriver, "stable");
 
   return {
     streams: {

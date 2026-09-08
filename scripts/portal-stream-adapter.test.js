@@ -60,6 +60,8 @@ test("stream adapter extracts verified stream versions from documentation build 
   assert.equal(catalog.streams.stable.versions.mesa, "26.0.8");
   assert.equal(catalog.streams.stable.versions.nvidia, "595.71.05");
   assert.equal(catalog.streams.stable.versions.base, "Fedora 44");
+  assert.equal(catalog.streams.stable.versions.flatpak, "1.17.7");
+  assert.equal(catalog.streams.stable.versions.podman, "5.8.2");
 
   assert.equal(catalog.streams.lts.id, "lts");
   assert.equal(catalog.streams.lts.available, true);
@@ -72,6 +74,8 @@ test("stream adapter extracts verified stream versions from documentation build 
   assert.equal(catalog.streams.lts.versions.gnome, "49.5");
   assert.equal(catalog.streams.lts.versions.kernel, "6.12.0-233.el10");
   assert.equal(catalog.streams.lts.versions.hweKernel, "7.0.8-100.fc43");
+  assert.equal(catalog.streams.lts.versions.flatpak, "1.16.0");
+  assert.equal(catalog.streams.lts.versions.podman, "5.8.2");
 });
 
 test("stream adapter sets available false and shows reason when stream is absent", () => {
@@ -174,8 +178,111 @@ test("stream adapter determines availability independently and omits missing fie
   assert.equal("nvidia" in catalog.streams.stable.versions, false);
   assert.equal("mesa" in catalog.streams.stable.versions, false);
   assert.equal("hweKernel" in catalog.streams.stable.versions, false);
+  assert.equal("flatpak" in catalog.streams.stable.versions, false);
+  assert.equal("podman" in catalog.streams.stable.versions, false);
 
   assert.equal(catalog.streams.lts.available, false);
   assert.equal(catalog.streams.lts.unavailableReason, "Will return");
   assert.equal(catalog.streams.lts.versions, undefined);
+});
+
+test("stream adapter selects intended stream by tag/id regardless of stream array ordering", () => {
+  const { adaptStreams } = loadTsModule(adapterPath);
+  const reorderedImages = {
+    products: [
+      {
+        id: "projectbluefin-bluefin",
+        streams: [
+          {
+            tag: "testing",
+            label: "TESTING",
+            versions: {
+              gnome: "999.0",
+              kernel: "999.0.0-testing",
+              flatpak: "999.0",
+              podman: "999.0",
+            },
+          },
+          {
+            tag: "stable",
+            label: "STABLE",
+            versions: {
+              gnome: "50.1",
+              kernel: "7.0.8-200.fc44",
+              nvidia: "595.71.05",
+              fedora: "F44",
+              flatpak: "1.17.7",
+              mesa: "26.0.8",
+              podman: "5.8.2",
+            },
+          },
+        ],
+      },
+      {
+        id: "projectbluefin-bluefin-lts",
+        streams: [
+          {
+            tag: "testing",
+            label: "TESTING",
+            versions: {
+              gnome: "888.0",
+              kernel: "888.0.0-testing",
+              flatpak: "888.0",
+              podman: "888.0",
+            },
+          },
+          {
+            tag: "stable",
+            label: "STABLE",
+            versions: {
+              gnome: "49.5",
+              kernel: "6.12.0-233.el10",
+              flatpak: "1.16.0",
+              mesa: "25.2.7",
+              podman: "5.8.2",
+            },
+          },
+        ],
+      },
+      {
+        id: "projectbluefin-dakota",
+        streams: [
+          {
+            tag: "testing",
+            label: "TESTING",
+            versions: {
+              kernel: "999.0.0-dakota-testing",
+              mesa: "999.0",
+            },
+          },
+          {
+            tag: "stable",
+            label: "STABLE",
+            versions: {
+              kernel: "7.0.7",
+              gnome: "50.2",
+              mesa: "26.0.6",
+              nvidia: "595.71.05",
+            },
+          },
+        ],
+      },
+    ],
+  };
+
+  const catalog = adaptStreams(reorderedImages, { streams: [] });
+
+  assert.equal(catalog.streams.stable.versions.gnome, "50.1");
+  assert.equal(catalog.streams.stable.versions.kernel, "7.0.8-200.fc44");
+  assert.equal(catalog.streams.stable.versions.flatpak, "1.17.7");
+  assert.equal(catalog.streams.stable.versions.podman, "5.8.2");
+
+  assert.equal(catalog.streams.lts.versions.gnome, "49.5");
+  assert.equal(catalog.streams.lts.versions.kernel, "6.12.0-233.el10");
+  assert.equal(catalog.streams.lts.versions.flatpak, "1.16.0");
+  assert.equal(catalog.streams.lts.versions.podman, "5.8.2");
+
+  const dakotaRows = catalog.ecosystem[0].versionRows;
+  const kernelRow = dakotaRows.find((r) => r.label === "Kernel");
+  assert.equal(kernelRow?.value, "7.0.7");
 });
