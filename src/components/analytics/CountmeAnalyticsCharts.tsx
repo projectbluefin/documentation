@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from "react";
 import Heading from "@theme/Heading";
 import EChart from "../factory/EChart";
+import Unavailable from "../factory/Unavailable";
 import Sparkline from "../Sparkline";
 import { gapSafe, seriesColor, seriesDash } from "../factory/chartTheme";
 import styles from "./CountmeAnalyticsCharts.module.css";
@@ -23,6 +24,8 @@ export interface CountmeDataset {
   unit: string;
   variants: string[];
   weeks: CountmeWeek[];
+  unavailable?: boolean;
+  stateReason?: string | null;
 }
 
 type LegacyRange = "12w" | "24w" | "all";
@@ -66,7 +69,7 @@ const IMAGE_CONFIGS = [
 
 export default function CountmeAnalyticsCharts(): React.JSX.Element {
   const data = countmeHistoryData as unknown as CountmeDataset;
-  const weeks = data.weeks || [];
+  const weeks = data?.weeks || [];
 
   const [legacyRange, setLegacyRange] = useState<LegacyRange>("all");
   const [range, setRange] = useState<RangeOption>("12w");
@@ -104,6 +107,21 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
       0,
     );
   }, [latestWeek]);
+
+  // Real finite point counts for EChart to prevent bypassing accumulating data
+  const realLegacyPoints = useMemo(() => {
+    return legacyFilteredWeeks.filter(
+      (w) => typeof w.bluefin === "number" && !Number.isNaN(w.bluefin),
+    ).length;
+  }, [legacyFilteredWeeks]);
+
+  const realComparativePoints = useMemo(() => {
+    return filteredWeeks.filter((w) =>
+      peerImages.some(
+        (key) => typeof w[key] === "number" && !Number.isNaN(w[key]),
+      ),
+    ).length;
+  }, [filteredWeeks, peerImages]);
 
   // Shared domain for workstation small multiples
   const workstationDomain = useMemo<[number, number]>(() => {
@@ -228,6 +246,19 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
     };
   }, [filteredWeeks, viewMode]);
 
+  if (data?.unavailable || !weeks.length) {
+    return (
+      <div className={styles.container}>
+        <Unavailable
+          what="Countme Analytics"
+          reason={
+            data?.stateReason ?? "Countme dataset is currently unavailable."
+          }
+        />
+      </div>
+    );
+  }
+
   return (
     <div className={styles.container}>
       {/* ── 1. Hero: Legacy Bluefins ────────────────────────────────────────── */}
@@ -280,7 +311,7 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
           option={legacyChartOption}
           title="Legacy Bluefins"
           summary={`Legacy Bluefins historical weekly active systems: currently ${currentBluefin.toLocaleString()} systems as of week ${latestWeek.week}, up ${bluefinDeltaPct}% across ${weeks.length} tracked weeks.`}
-          points={legacyFilteredWeeks.length}
+          points={realLegacyPoints}
           minPoints={2}
           height={320}
           tableCaption="Legacy Bluefins weekly active systems history"
@@ -307,10 +338,8 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
         {/* Distribution Bar */}
         <div
           className={styles.distributionBar}
-          role="progressbar"
-          aria-valuenow={100}
-          aria-valuemin={0}
-          aria-valuemax={100}
+          role="region"
+          aria-label={`Desktop ecosystem distribution across ${peerTotal.toLocaleString()} systems`}
         >
           {IMAGE_CONFIGS.map((cfg) => {
             const count = Number(latestWeek[cfg.id]) || 0;
@@ -450,7 +479,7 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
           option={comparativeChartOption}
           title="Comparative Image Trajectories"
           summary={`Comparative adoption trajectories across cloud-native images over ${filteredWeeks.length} weeks. Latest week (${latestWeek.week}): Bazzite ${Number(latestWeek.bazzite || 0).toLocaleString()} (Gaming), Bluefin ${Number(latestWeek.bluefin || 0).toLocaleString()} (Workstation), Aurora ${Number(latestWeek.aurora || 0).toLocaleString()} (KDE), Bluefin LTS ${Number(latestWeek["bluefin-lts"] || 0).toLocaleString()} (CentOS EPEL floor).`}
-          points={filteredWeeks.length}
+          points={realComparativePoints}
           minPoints={2}
           height={320}
           tableCaption="Weekly estimated active systems by image variant"
