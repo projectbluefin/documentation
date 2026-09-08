@@ -67,6 +67,7 @@ test("browser globals are deferred to the effect", () => {
     "window.innerHeight",
     "window.matchMedia",
     "document.getElementById",
+    "ResizeObserver",
   ]) {
     assert.ok(
       source.indexOf(browserGlobal) > effect,

@@ -114,9 +114,6 @@ export function layerTransform(scrollY: number, rate: number): string {
   return `translate3d(0, ${scrollY * rate}px, 0)`;
 }
 
-export function isParallaxVisible(
-  scrollY: number,
-  sceneHeight: number,
-): boolean {
-  return scrollY <= sceneHeight;
+export function isParallaxVisible(scrollY: number, sceneEnd: number): boolean {
+  return scrollY <= sceneEnd;
 }

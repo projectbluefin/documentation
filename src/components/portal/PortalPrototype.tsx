@@ -19,23 +19,48 @@ const developerBenefits = [
 ];
 
 export default function PortalPrototype(): React.JSX.Element {
+  const handleDiscoverClick = (
+    event: React.MouseEvent<HTMLAnchorElement>,
+  ): void => {
+    event.preventDefault();
+    const target = document.getElementById("scene-users");
+    if (!target) return;
+
+    const prefersReduced =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    target.scrollIntoView({
+      behavior: prefersReduced ? "auto" : "smooth",
+      block: "start",
+    });
+    target.focus({ preventScroll: true });
+    window.history.pushState(null, "", "#scene-users");
+  };
+
   return (
     <main className={styles.portal}>
       <div id="portal-scenes" className={styles.sceneStack}>
         <section id="scene-landing" className={styles.landingScene}>
           <div className={styles.landingGrid}>
             <div className={styles.landingCopy}>
-              <img
-                className={styles.wordmark}
-                src="/img/bluefin-wordmark-light.svg"
-                alt="Bluefin"
-                fetchPriority="high"
-              />
+              <h1 className={styles.wordmarkTitle}>
+                <img
+                  className={styles.wordmark}
+                  src="/img/bluefin-wordmark-light.svg"
+                  alt="Bluefin"
+                  fetchPriority="high"
+                />
+              </h1>
               <p>
                 The next generation Linux workstation, designed for reliability,
                 performance, and sustainability.
               </p>
-              <a className={styles.primaryAction} href="#scene-users">
+              <a
+                className={styles.primaryAction}
+                href="#scene-users"
+                onClick={handleDiscoverClick}
+              >
                 Discover
               </a>
             </div>
@@ -48,7 +73,7 @@ export default function PortalPrototype(): React.JSX.Element {
           </div>
         </section>
 
-        <section id="scene-users" className={styles.contentScene}>
+        <section id="scene-users" className={styles.contentScene} tabIndex={-1}>
           <div className={styles.twoColumn}>
             <img
               className={styles.userCharacter}

@@ -67,6 +67,11 @@ test("prototype renders source-authored scenes in order", () => {
   }, -1);
 
   assert.ok(html.includes('id="portal-scenes"'));
+  assert.match(html, /<h1[^>]*>\s*<img[^>]*alt="Bluefin"[^>]*\/>\s*<\/h1>/);
+  assert.match(
+    html,
+    /<h1[^>]*>\s*<img[^>]*src="\/img\/bluefin-wordmark-light\.svg"[^>]*\/>\s*<\/h1>/,
+  );
   assert.ok(
     html.includes(
       "The next generation Linux workstation, designed for reliability, performance, and sustainability.",
@@ -77,6 +82,7 @@ test("prototype renders source-authored scenes in order", () => {
   assert.ok(html.includes(">Developers<"));
   assert.ok(html.includes(">Mission<"));
   assert.ok(html.includes('href="#scene-users"'));
+  assert.match(html, /id="scene-users"[^>]*tabindex="-1"/);
   assert.ok(html.includes('src="/img/portal/layer-transition.webp"'));
 });
 
@@ -96,8 +102,15 @@ test("scoped CSS clips artwork and defines mobile and reduced-motion paths", () 
 
   assert.match(css, /\.parallaxViewport\s*\{[^}]*overflow:\s*clip/s);
   assert.match(css, /\.parallaxLayer\s*\{[^}]*position:\s*absolute/s);
+  assert.match(
+    css,
+    /\.contentScene\s*\{[^}]*scroll-margin-top:\s*var\(--ifm-navbar-height/s,
+  );
   assert.match(css, /@media \(max-width:\s*956px\)/);
   assert.match(css, /@media \(prefers-reduced-motion:\s*reduce\)/);
+  const sharedGridMatches = css.match(/\.landingGrid,\s*\.twoColumn/g);
+  assert.equal(sharedGridMatches?.length, 2);
+  assert.ok(!css.includes("scroll-behavior"));
   assert.ok(!css.includes("html {"));
   assert.ok(!css.includes(":root {"));
 });

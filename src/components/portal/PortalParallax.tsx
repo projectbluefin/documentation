@@ -41,6 +41,14 @@ export default function PortalParallax(): React.JSX.Element {
     const scenes = document.getElementById("portal-scenes");
     if (!root || !scenes) return;
 
+    const rateLayers = Array.from(
+      root.querySelectorAll<HTMLElement>("[data-rate]"),
+      (layer) => ({
+        element: layer,
+        rate: Number(layer.dataset.rate ?? 0),
+      }),
+    );
+
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     let frame = 0;
 
@@ -48,22 +56,30 @@ export default function PortalParallax(): React.JSX.Element {
       frame = 0;
       const scrollY = window.scrollY;
       const reduced = reducedMotion.matches;
-      root.hidden = !isParallaxVisible(scrollY, scenes.offsetHeight);
+      const sceneEnd = scenes.getBoundingClientRect().bottom + scrollY;
+      root.hidden = !isParallaxVisible(scrollY, sceneEnd);
       root.style.setProperty(
         "--portal-night-opacity",
         reduced ? "0" : String(overlayOpacity(scrollY, window.innerHeight)),
       );
-      root.querySelectorAll<HTMLElement>("[data-rate]").forEach((layer) => {
-        const rate = Number(layer.dataset.rate);
-        layer.style.transform = reduced
+      for (const { element, rate } of rateLayers) {
+        element.style.transform = reduced
           ? "none"
           : layerTransform(scrollY, rate);
-      });
+      }
     };
 
     const schedule = (): void => {
       if (!frame) frame = window.requestAnimationFrame(render);
     };
+
+    let resizeObserver: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== "undefined") {
+      resizeObserver = new ResizeObserver(() => {
+        schedule();
+      });
+      resizeObserver.observe(scenes);
+    }
 
     render();
     window.addEventListener("scroll", schedule, { passive: true });
@@ -74,6 +90,7 @@ export default function PortalParallax(): React.JSX.Element {
       window.removeEventListener("scroll", schedule);
       window.removeEventListener("resize", schedule);
       reducedMotion.removeEventListener("change", schedule);
+      if (resizeObserver) resizeObserver.disconnect();
       if (frame) window.cancelAnimationFrame(frame);
     };
   }, []);
