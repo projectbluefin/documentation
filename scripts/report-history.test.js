@@ -190,10 +190,17 @@ test("mergeReportHistory rejects missing or invalid period.month", () => {
   );
 });
 
-test("tracked seed and history baseline are version-2 compatible", () => {
-  const seed = readReportHistory();
-  assert.equal(seed.schemaVersion, 2);
-  assert.deepEqual(seed.snapshots, []);
+test("tracked report history is version-2 compatible", () => {
+  const history = readReportHistory();
+  assert.equal(history.schemaVersion, 2);
+  assert.ok(Array.isArray(history.snapshots));
+  assert.ok(
+    history.snapshots.every(
+      (snapshot) =>
+        snapshot.schemaVersion === 2 &&
+        /^\d{4}-\d{2}$/.test(snapshot.period.month),
+    ),
+  );
 });
 
 test("readReportHistory returns valid history when present", () => {
