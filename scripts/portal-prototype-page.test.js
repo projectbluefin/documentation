@@ -59,6 +59,7 @@ test("prototype renders source-authored scenes in order", () => {
     'id="scene-users"',
     'id="scene-developers"',
     'id="scene-mission"',
+    'id="scene-video"',
   ];
   ids.reduce((previous, id) => {
     const current = html.indexOf(id);
@@ -84,6 +85,7 @@ test("prototype renders source-authored scenes in order", () => {
   assert.ok(html.includes('href="#scene-users"'));
   assert.match(html, /id="scene-users"[^>]*tabindex="-1"/);
   assert.ok(html.includes('src="/img/portal/layer-transition.webp"'));
+  assert.ok(html.includes('title="Bluefin Introduction"'));
 });
 
 test("route stays temporary and does not replace the documentation root", () => {

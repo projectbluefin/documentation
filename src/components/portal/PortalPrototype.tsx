@@ -1,5 +1,6 @@
 import React from "react";
 import PortalParallax from "./PortalParallax";
+import PortalVideo from "./PortalVideo";
 import styles from "./PortalPrototype.module.css";
 import { TRANSITION_SRC } from "./portalModel";
 
@@ -153,6 +154,8 @@ export default function PortalPrototype(): React.JSX.Element {
           </div>
         </div>
       </section>
+
+      <PortalVideo />
     </main>
   );
 }
