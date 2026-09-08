@@ -1,5 +1,5 @@
 ---
-title: "Bluefin Server"
+title: "Bluefin Server Alpha 2"
 slug: bluefin-server
 authors: bluefin
 tags: [announcements, server]
@@ -9,7 +9,13 @@ image: /img/blog/2026-09-07-bluefin-server/children-of-the-dark-army.jpg
 
 # Bluefin Server
 
-**An FSDK-based, image-based Linux server OS.**
+Alright, here it is, [Bluefin Server](https://projectbluefin.io/server/), this one actually boots. This is the base of the Bluefin Factory, the thing you'll build your homelab on. And in turn, your desktops or whatever you want. Kubernetes for the home.
+
+AGENT MAKE THIS A THUMBNAIL: https://projectbluefin.io/server/
+
+An FSDK-based, image-based Linux server OS.**
+
+To celebrate this milestone, enjoy the latest video, with some fresh lore!
 
 <iframe
   width="560"
@@ -20,11 +26,15 @@ image: /img/blog/2026-09-07-bluefin-server/children-of-the-dark-army.jpg
   allowFullScreen
 />
 
-Bluefin Server targets the same use-case space as Flatcar Container Linux,
+Bluefin Server targets the same use-case space as Flatcar Container Linux, Kairos,
 Fedora CoreOS, and Talos, but is built from scratch with
 [BuildStream 2](https://buildstream.build/) from
 [freedesktop-sdk](https://freedesktop-sdk.io/) (FSDK 26.08)
-components and uutils coreutils.
+components and uutils coreutils. 
+
+It is designed to be installed and then managed entirely through the Kubestellar GUI. I'll be releasing point releases quickly over the next few days. After the install it will give you a web address, then you go to it on your computer. Then that's it, your perfect home server.
+
+Except the dashboards are empty. The more people we have making these the better, including a ZFS one! This variant will have ZFS support so now's the time to jump onboard!
 
 It is [DDI first](https://0pointer.net/blog/fitting-everything-together.html):
 the OS payload is a compressed XFS DDI filesystem image that is deployed by an
@@ -37,33 +47,28 @@ Bluefin Server is currently in **Alpha**:
 - **Milestone status**: Phase A (reproducible build path, uutils, k0s sysext,
   graph validation) is complete. Phase B (automated boot verification on lab
   cluster) is in progress.
-- **Trust model**: Releases include cryptographic provenance with GPG-signed
-  `SHA256SUMS` manifests and in-tree `systemd-sysupdate` verification
+- `systemd-sysupdate` should work, we're about to find out!
   configurations.
-- **Suitability**: Alpha builds are intended for evaluation, testing, and
-  factory validation. Not yet recommended for production workloads.
 - **Readiness roadmap**: Track completed criteria and remaining gates toward
   1.0 in
   [`docs/MVP_1_0_READINESS.md`](https://github.com/projectbluefin/server/blob/main/docs/MVP_1_0_READINESS.md).
 
-## What it is
+## How this works
 
 - **A/B root rollback** — an MVP 1.0 gate: `50-root.transfer` names `root-a`
   and `root-b`; the installer currently creates only `root-a`.
 - **DDI-first delivery** — the installer embeds the OS payload as a data
-  partition; no network is required at install time.
-- **Minimal, distroless OS image** — no shell in the running rootfs by default.
-- **systemd-native installer** — `systemd-sysinstall` provides the interactive
-  terminal UI and `systemd-repart` handles partitioning and block-copy DDI
-  placement.
-- **Optional k0s as a `systemd-sysext`** so the base image stays distroless.
+  partition; no network is required at install time. This is basically Linux systemd style.
+- **Minimal, distroless OS image** — no shell in the running rootfs by default IS what we are shooting for. We'll probably fail at this lol.
+- **systemd-native installer** — `systemd-sysinstall` provides the interactive terminal UI and `systemd-repart` handles partitioning and block-copy DDI placement. Finally distro installers can all go die!
+- **Optional k0s as a `systemd-sysext`** so the base image stays distroless. We started with k3s but I want to see how this one goes, stripped down for the home.
 
-> **Temporary bring-up exception:** SSH is enabled for cluster boot tests and
-> remote debugging. It is scheduled for removal once diagnostics move to serial
-> logs or a guest agent. See
+> **SSH ON:** SSH is enabled for cluster boot tests and remote debugging. It is scheduled for removal once diagnostics move to serial logs or a guest agent. See
 > [`docs/skills/factory-integration.md`](https://github.com/projectbluefin/server/blob/main/docs/skills/factory-integration.md).
 
 ## Quick start
+
+Bare metal sorely needed! However this runs on any Linux, feel free to fire up a VM and start designing that dashboard! Once we get home assistant and all the goodies it'll be amazing! Thanks for checking it out!
 
 You need only `podman` and [just](https://github.com/casey/just). BuildStream
 runs inside the FSDK `bst2` container, so BuildStream is not installed locally.
@@ -83,20 +88,3 @@ See
 for the contributor checklist, Conventional Commit rules, and
 [`docs/skills/index.md`](https://github.com/projectbluefin/server/blob/main/docs/skills/index.md)
 for task-specific guidance.
-
-## Security and release trust
-
-- **Signed manifests**: GitHub Actions builds all release artifacts, generates
-  a combined `SHA256SUMS` manifest, and signs it with GPG before publishing to
-  GitHub Releases.
-- **Sysupdate verification**: Target nodes verify updates using signed manifest
-  transfers; see
-  [`docs/skills/systemd-sysupdate-verification.md`](https://github.com/projectbluefin/server/blob/main/docs/skills/systemd-sysupdate-verification.md)
-  for details.
-- **Vulnerability disclosure**: See
-  [`SECURITY.md`](https://github.com/projectbluefin/server/blob/main/SECURITY.md)
-  for policy details and how to report security issues.
-
-## License
-
-Apache-2.0.
