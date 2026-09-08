@@ -52,16 +52,6 @@ sudo install -d -m 0755 /etc/projectbluefin/countme && sudo touch /etc/projectbl
 
 (The legacy marker `/etc/dakota-countme/disabled` is also honored.)
 
-- **Cohort measurement:** Uses Fedora-style installation age buckets (1: first week, 2: 2–4 weeks, 3: 5–24 weeks, 4: >24 weeks) calculated locally from an installation epoch timestamp.
-- **Privacy guarantees:** Transmits only image name, tag, flavor, architecture, and age bucket. No machine ID, IP address, username, or persistent identifier is sent or logged.
-- **How to opt out:** Create the disable marker file:
-
-```bash
-sudo install -d -m 0755 /etc/projectbluefin/countme && sudo touch /etc/projectbluefin/countme/disabled
-```
-
-(The legacy marker `/etc/dakota-countme/disabled` is also honored.)
-
 ## Homebrew
 
 Homebrew analytics are on by default. To turn them off:

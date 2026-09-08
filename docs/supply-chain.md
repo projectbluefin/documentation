@@ -30,7 +30,7 @@ cosign verify ghcr.io/projectbluefin/bluefin:stable \
 
 ```bash
 curl -O https://raw.githubusercontent.com/projectbluefin/bluefin-lts/main/cosign.pub
-cosign verify ghcr.io/projectbluefin/bluefin:lts --key cosign.pub
+cosign verify ghcr.io/projectbluefin/bluefin-lts:stable --key cosign.pub
 ```
 
 ### Verify Dakota

@@ -467,7 +467,7 @@ async function main() {
     "bluefin-lts",
     "Bluefin LTS",
     "Long-term support stream from projectbluefin/bluefin-lts.",
-    "sudo bootc switch ghcr.io/projectbluefin/bluefin:lts --enforce-container-sigpolicy",
+    "sudo bootc switch ghcr.io/projectbluefin/bluefin-lts:stable --enforce-container-sigpolicy",
     sbomCache,
     ltsNvidiaByTag,
     LTS_HISTORY_DAYS,

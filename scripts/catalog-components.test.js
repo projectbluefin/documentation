@@ -82,7 +82,7 @@ const ltsCatalog = {
       name: "Bluefin LTS",
       subtitle: "Long-term support stream from projectbluefin/bluefin-lts.",
       command:
-        "sudo bootc switch ghcr.io/projectbluefin/bluefin:lts --enforce-container-sigpolicy",
+        "sudo bootc switch ghcr.io/projectbluefin/bluefin-lts:stable --enforce-container-sigpolicy",
       source: "sbom",
       rowCount: 1,
       latest: {

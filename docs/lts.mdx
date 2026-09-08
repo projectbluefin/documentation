@@ -10,7 +10,7 @@ _Achillobator giganticus_
 
 ![achillosmall](/img/user-attachments/b6945e80-34e4-44bb-8518-91ad31fed56d.png)
 
-Larger, more lethal [Bluefin](https://projectbluefin.io). `bluefin:lts` is built on CentOS Stream 10.
+Larger, more lethal [Bluefin](https://projectbluefin.io). `bluefin-lts` is built on CentOS Stream 10.
 
 ## Purpose
 
@@ -64,9 +64,9 @@ Do NOT rebase to this image from an existing Bluefin, Aurora, Bazzite, or Fedora
 
 The following images and tags are available:
 
-- `bluefin:lts` - base LTS experience, kernel 6.12.0 with long term maintenance from CentOS with backported GNOME releases.
-- `bluefin-gdx:lts` - includes Nvidia drivers and associated CUDA tooling. This is the only image with Nvidia drivers. See [Bluefin GDX](/gdx)
-- `bluefin:lts-hwe` - Fresher but gated Linux kernels matching other Bluefins, including btrfs support.
+- `bluefin-lts:stable` - base LTS experience on CentOS Stream 10, kernel 6.12.0 with long term maintenance from CentOS with backported GNOME releases.
+- `bluefin-lts-nvidia:stable` - includes Nvidia drivers and associated CUDA tooling.
+- `bluefin-lts:lts-hwe` - Fresher but gated Linux kernels matching other Bluefins, including btrfs support.
 
 ### Using the HWE branch
 
@@ -106,7 +106,7 @@ To build locally and then spit out a VM:
 git clone https://github.com/projectbluefin/bluefin-lts
 cd bluefin-lts
 just build
-just build-qcow2 ghcr.io/projectbluefin/bluefin:lts # if you want to build an ISO just change qcow2 to iso instead
+just build-qcow2 ghcr.io/projectbluefin/bluefin-lts:stable # if you want to build an ISO just change qcow2 to iso instead
 ```
 
 The [qcow2](https://qemu-project.gitlab.io/qemu/system/images.html) file will be written to the `output/` directory. Default username and password are `centos`/`centos`
