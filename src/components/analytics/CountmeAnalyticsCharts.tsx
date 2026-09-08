@@ -134,21 +134,24 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
     return weeks;
   }, [weeks, heroRange]);
 
-  // Delta calculation for Bluefin fleet
-  const firstWeek = weeks[0] || ({} as CountmeWeek);
+  // Delta calculation for Bluefin fleet, baselined to the first week of the
+  // currently selected hero range (not the entire history).
+  const firstHeroWeek = heroFilteredWeeks[0] || ({} as CountmeWeek);
   const initialTotalBluefin =
-    (Number(firstWeek.bluefin) || 0) +
-      (Number(firstWeek["bluefin-lts"]) || 0) +
-      (Number(firstWeek.dakota) || 0) +
-      (Number(firstWeek.utah) || 0) || currentTotalBluefin;
+    (Number(firstHeroWeek.bluefin) || 0) +
+      (Number(firstHeroWeek["bluefin-lts"]) || 0) +
+      (Number(firstHeroWeek.dakota) || 0) +
+      (Number(firstHeroWeek.utah) || 0) || currentTotalBluefin;
 
-  const bluefinDeltaPct =
+  const bluefinDeltaPctValue =
     initialTotalBluefin > 0
-      ? (
-          ((currentTotalBluefin - initialTotalBluefin) / initialTotalBluefin) *
-          100
-        ).toFixed(1)
-      : "0.0";
+      ? ((currentTotalBluefin - initialTotalBluefin) / initialTotalBluefin) *
+        100
+      : 0;
+
+  const bluefinDeltaPct = bluefinDeltaPctValue.toFixed(1);
+  const bluefinDeltaPctSigned =
+    bluefinDeltaPctValue >= 0 ? `+${bluefinDeltaPct}` : bluefinDeltaPct;
 
   // Filtered weeks for comparative time-series charts
   const filteredWeeks = useMemo(() => {
@@ -440,7 +443,7 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
             </div>
             <div className={styles.heroMeta}>
               <span style={{ fontWeight: 700, color: "#39d2c0" }}>
-                +{bluefinDeltaPct}% overall
+                {bluefinDeltaPctSigned}% overall
               </span>
               <span>latest week ({latestWeek.week})</span>
             </div>
@@ -486,7 +489,7 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
         <EChart
           option={heroChartOption}
           title="Bluefin Systems"
-          summary={`Project Bluefin weekly active systems: currently ${currentTotalBluefin.toLocaleString()} systems as of week ${latestWeek.week}, up ${bluefinDeltaPct}% across ${weeks.length} tracked weeks.`}
+          summary={`Project Bluefin weekly active systems: currently ${currentTotalBluefin.toLocaleString()} systems as of week ${latestWeek.week}, ${bluefinDeltaPctValue >= 0 ? "up" : "down"} ${Math.abs(bluefinDeltaPctValue).toFixed(1)}% across ${heroFilteredWeeks.length} tracked weeks.`}
           points={realHeroPoints}
           minPoints={2}
           height={320}
