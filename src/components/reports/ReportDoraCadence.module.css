@@ -53,3 +53,14 @@
   color: var(--ifm-color-emphasis-600);
   margin-top: 0.2rem;
 }
+
+.state {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.state strong {
+  color: var(--ifm-heading-color);
+}

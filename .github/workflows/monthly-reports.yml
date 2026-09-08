@@ -55,7 +55,10 @@ jobs:
         id: generate
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npm run generate-report
+        run: |
+          npm run fetch-countme -- --force
+          npm run fetch-flathub-stats -- --force
+          npm run generate-report
 
       - name: Create feature branch
         run: |
@@ -67,7 +70,19 @@ jobs:
 
       - name: Commit changes to branch
         run: |
-          git add reports/ scripts/data/known-contributors.json
+          mapfile -t REPORT_FILES < <(
+            git status --short --untracked-files=all |
+              awk '$2 ~ /^blog\/.*\.mdx$/ {print $2}'
+          )
+          if [ "${#REPORT_FILES[@]}" -ne 1 ]; then
+            echo "Expected exactly one generated blog report, found ${#REPORT_FILES[@]}"
+            printf '%s\n' "${REPORT_FILES[@]}"
+            exit 1
+          fi
+          git add "${REPORT_FILES[0]}" \
+            scripts/data/report-history.json \
+            scripts/data/known-contributors.json \
+            static/data/countme-history.json
           git diff --staged --quiet || git commit -m "docs(reports): add monthly report for $(date +%B\ %Y)"
 
       - name: Save known contributors cache

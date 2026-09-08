@@ -419,8 +419,8 @@ if (import.meta.url === pathToFileURL(process.argv[1] ?? "").href) {
       priorWeeks.length > 0
         ? buildPayload(priorWeeks, {
             generatedAt: now,
-            unavailable: false,
-            stateReason: null,
+            unavailable: true,
+            stateReason: reason,
           })
         : buildPayload([], {
             generatedAt: now,

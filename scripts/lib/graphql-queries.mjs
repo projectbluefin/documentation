@@ -162,6 +162,7 @@ export async function fetchClosedItemsFromRepo(
           title: pr.title,
           url: pr.url,
           closedAt: pr.mergedAt,
+          mergedAt: pr.mergedAt,
           labels: pr.labels.nodes,
           author: pr.author?.login || "unknown",
           repository: `${owner}/${name}`,

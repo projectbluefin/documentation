@@ -57,18 +57,20 @@
 }
 
 .rateHigh {
-  background: rgba(40, 167, 69, 0.12);
-  color: #28a745;
+  background: var(--ifm-color-primary-contrast-background);
+  color: var(--ifm-color-primary-dark);
 }
 
 .rateMed {
-  background: rgba(255, 193, 7, 0.15);
-  color: #d39e00;
+  background: var(--ifm-color-primary-contrast-background);
+  color: var(--ifm-color-primary);
+  opacity: 0.82;
 }
 
 .rateLow {
-  background: rgba(220, 53, 69, 0.12);
-  color: #dc3545;
+  background: var(--ifm-color-primary-contrast-background);
+  color: var(--ifm-color-primary-darker);
+  opacity: 0.64;
 }
 
 .statsRow {
@@ -107,4 +109,27 @@
 .sparklineLabel {
   font-size: 0.75rem;
   color: var(--ifm-color-emphasis-600);
+}
+
+.state,
+.pendingState,
+.unavailableState {
+  color: var(--ifm-color-emphasis-700);
+}
+
+.state {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.state strong {
+  color: var(--ifm-heading-color);
+}
+
+.pendingState,
+.unavailableState {
+  margin: 0.5rem 0 0;
+  font-size: 0.8rem;
 }

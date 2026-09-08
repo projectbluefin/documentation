@@ -305,6 +305,18 @@ test("buildPayload produces the documented shape", () => {
   assert.equal(payload.weeks.length, 1);
 });
 
+test("buildPayload can retain history while marking a failed refresh unavailable", () => {
+  const payload = buildPayload([{ week: "2026-07-27", bluefin: 42 }], {
+    generatedAt: "2026-08-07T20:00:00Z",
+    unavailable: true,
+    stateReason: "Countme request failed",
+  });
+
+  assert.equal(payload.unavailable, true);
+  assert.equal(payload.stateReason, "Countme request failed");
+  assert.deepEqual(payload.weeks, [{ week: "2026-07-27", bluefin: 42 }]);
+});
+
 // ── committed seed ───────────────────────────────────────────────────────
 
 test("the committed seed was produced by the current method", () => {

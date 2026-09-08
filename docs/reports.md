@@ -5,16 +5,17 @@ slug: /about-reports
 
 # Monthly Reports
 
-Monthly reports provide transparent, data-driven summaries of completed work, active contributors, and project momentum from the [Bluefin Project Board](https://todo.projectbluefin.io).
+Monthly reports provide transparent, data-driven snapshots of completed work,
+active contributors, and project momentum from configured public sources.
 
 ## What Are Monthly Reports?
 
 Monthly reports are automatically generated each month, summarizing:
 
-- **Completed Work:** Items moved to "Done" on the project board, categorized by area and type
+- **Completed Work:** Publicly measurable merged work, categorized by repository and work type
 - **Contributors:** Everyone who contributed during the period, with special recognition for first-time contributors
 - **Bot Activity:** Automated dependency updates and maintenance tasks
-- **Project Status:** ChillOps philosophy indicators for each project area
+- **Project Status:** Publishing-lane and ecosystem measurements when public sources are available
 
 Reports are published monthly covering the previous month's activity.
 
@@ -94,11 +95,11 @@ Recognition for everyone who contributed:
 
 Understanding the content types:
 
-| Content Type   | Purpose                                | Frequency   | Source                   |
-| -------------- | -------------------------------------- | ----------- | ------------------------ |
-| **Changelogs** | OS release notes with package versions | Per release | GitHub Releases          |
-| **Blog Posts** | Deep dives, announcements, tutorials   | Ad-hoc      | Manual authoring         |
-| **Reports**    | Project activity summaries             | Monthly     | Project board automation |
+| Content Type   | Purpose                                | Frequency   | Source                         |
+| -------------- | -------------------------------------- | ----------- | ------------------------------ |
+| **Changelogs** | OS release notes with package versions | Per release | GitHub Releases                |
+| **Blog Posts** | Deep dives, announcements, tutorials   | Ad-hoc      | Manual authoring               |
+| **Reports**    | Immutable project activity snapshots   | Monthly     | Public-source report generator |
 
 **Use changelogs** to see what changed in a specific OS release.  
 They now also include supply-chain-related highlights when present in release commits.  
@@ -113,15 +114,17 @@ They now also include supply-chain-related highlights when present in release co
 
 ## Automated Generation
 
-Reports are 100% automatically generated from the project board:
+Reports are automatically generated from configured public sources:
 
-1. Monthly on the last day of the month at 10:00 UTC
-2. GitHub Actions workflow fetches project board data
-3. Script categorizes completed items by labels
-4. Markdown report generated and committed
+1. On the first Monday of each month at 10:00 UTC
+2. GitHub Actions workflow fetches report inputs and project activity
+3. The script assembles a version-two snapshot and categorizes completed items
+4. The blog post, report history, contributor cache, and Countme history are committed
 5. Site rebuilds and deploys automatically
 
-No manual curation or editing. What you see reflects actual project board state.
+Report sections retain unavailable source states instead of converting missing
+measurements to zero. Release-specific package notes remain on the Changelogs
+surface.
 
 ## Learn More
 

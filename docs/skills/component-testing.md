@@ -91,6 +91,12 @@ memory and rendered to a string inside that same runner.
      renderToStaticMarkup(React.createElement(Component, props));
    ```
 
+   When a component composes sibling components, stub those sibling imports in
+   the same require shim and assert the composition contract (for example,
+   chart identifiers and visible section labels) without mounting a second
+   test harness. Keep separate tests for the composed component's unavailable
+   state; it must render a status and source reason rather than return `null`.
+
 4. Assert the rules that matter, not the pixels. Markup assertions are brittle
    if they pin exact coordinates; count elements, check for the presence of a
    marker, and assert that forbidden output is absent.

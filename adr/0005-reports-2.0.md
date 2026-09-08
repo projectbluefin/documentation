@@ -1,6 +1,6 @@
 # 0005. Reports 2.0 public monthly snapshot model
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-09-07
 - **Decider:** @castrojo
 

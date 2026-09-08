@@ -7,7 +7,24 @@ import {
 import {
   extractCountmeMetrics,
   extractLeaderboardHeroes,
+  FACTORY_LANES,
+  fetchFactoryMonthlyStats,
+  extractCountmeMetricsFromPayload,
 } from "./lib/factory-monthly-metrics.mjs";
+import { REPORT_PORTFOLIO } from "./lib/report-portfolio.mjs";
+
+function apiRun(overrides = {}) {
+  return {
+    path: ".github/workflows/build-image-testing.yml",
+    event: "push",
+    status: "completed",
+    conclusion: "success",
+    run_started_at: "2026-10-10T10:00:00Z",
+    created_at: "2026-10-10T10:00:00Z",
+    updated_at: "2026-10-10T10:10:00Z",
+    ...overrides,
+  };
+}
 
 test("getReportSlug generates dinosaur slug correctly", () => {
   const augDate = new Date("2026-08-01T00:00:00Z");
@@ -159,4 +176,141 @@ test("extractCountmeMetrics returns null or data without throwing", () => {
     assert.ok(typeof metrics.currentTotal === "number");
     assert.ok(Array.isArray(metrics.historyPoints));
   }
+});
+
+test("extractCountmeMetricsFromPayload preserves Countme gaps as null", () => {
+  const metrics = extractCountmeMetricsFromPayload(
+    {
+      unavailable: false,
+      weeks: [
+        { week: "2026-10-05", bluefin: 10, "bluefin-lts": 5 },
+        { week: "2026-10-12", bluefin: null, "bluefin-lts": 6 },
+        { week: "2026-10-19", bluefin: 12, "bluefin-lts": 7 },
+      ],
+    },
+    new Date("2026-10-01T00:00:00Z"),
+    new Date("2026-10-31T23:59:59Z"),
+  );
+
+  assert.equal(metrics.currentTotal, 19);
+  assert.equal(metrics.previousTotal, 15);
+  assert.deepEqual(metrics.historyPoints, [15, null, 19]);
+  assert.deepEqual(
+    metrics.variants.map((variant) => variant.count),
+    [12, 7, null],
+  );
+});
+
+test("extractCountmeMetricsFromPayload returns null for an unavailable payload", () => {
+  assert.equal(
+    extractCountmeMetricsFromPayload(
+      {
+        unavailable: true,
+        stateReason: "Countme request failed",
+        weeks: [{ week: "2026-10-05", bluefin: 10, "bluefin-lts": 5 }],
+      },
+      new Date("2026-10-01T00:00:00Z"),
+      new Date("2026-10-31T23:59:59Z"),
+    ),
+    null,
+  );
+});
+
+test("FACTORY_LANES contains only portfolio entries configured for lanes", () => {
+  assert.deepEqual(
+    FACTORY_LANES.map((lane) => lane.repo),
+    REPORT_PORTFOLIO.filter((entry) => entry.signals.includes("lanes")).map(
+      (entry) => entry.repository,
+    ),
+  );
+});
+
+test("a failed configured lane remains visible with null measurements", async () => {
+  const failedRepository = FACTORY_LANES[1].repo;
+  const result = await fetchFactoryMonthlyStats(
+    new Date("2026-10-01T00:00:00Z"),
+    new Date("2026-10-31T23:59:59Z"),
+    async (url) => {
+      if (url.includes(failedRepository)) {
+        return { ok: false, status: 503 };
+      }
+      return {
+        ok: true,
+        async json() {
+          return { workflow_runs: [] };
+        },
+      };
+    },
+  );
+
+  assert.deepEqual(
+    result.lanes.map((lane) => lane.repo),
+    FACTORY_LANES.map((lane) => lane.repo),
+  );
+  const failedLane = result.lanes.find(
+    (lane) => lane.repo === failedRepository,
+  );
+  assert.equal(failedLane.total, null);
+  assert.equal(failedLane.passed, null);
+  assert.equal(failedLane.failed, null);
+  assert.equal(failedLane.pending, null);
+  assert.equal(failedLane.successRate, null);
+  assert.equal(failedLane.medianDurationMin, null);
+  assert.match(failedLane.unavailableReason, /503/);
+});
+
+test("in-flight publishing runs are pending and never failed", async () => {
+  const runs = [
+    apiRun(),
+    apiRun({
+      conclusion: "failure",
+      updated_at: "2026-10-10T10:20:00Z",
+    }),
+    apiRun({
+      status: "in_progress",
+      conclusion: null,
+      updated_at: undefined,
+    }),
+  ];
+  const result = await fetchFactoryMonthlyStats(
+    new Date("2026-10-01T00:00:00Z"),
+    new Date("2026-10-31T23:59:59Z"),
+    async () => ({
+      ok: true,
+      async json() {
+        return { workflow_runs: runs };
+      },
+    }),
+  );
+
+  const lane = result.lanes[0];
+  assert.equal(lane.total, 3);
+  assert.equal(lane.passed, 1);
+  assert.equal(lane.failed, 1);
+  assert.equal(lane.pending, 1);
+  assert.equal(lane.successRate, 50);
+  assert.equal(lane.medianDurationMin, 15);
+});
+
+test("publishing lanes expose a date-based delivery trend", async () => {
+  const result = await fetchFactoryMonthlyStats(
+    new Date("2026-10-01T00:00:00Z"),
+    new Date("2026-10-03T23:59:59Z"),
+    async () => ({
+      ok: true,
+      async json() {
+        return {
+          workflow_runs: [
+            apiRun({ run_started_at: "2026-10-01T10:00:00Z" }),
+            apiRun({ run_started_at: "2026-10-03T10:00:00Z" }),
+          ],
+        };
+      },
+    }),
+  );
+
+  assert.deepEqual(result.lanes[0].trend, {
+    labels: ["2026-10-01", "2026-10-02", "2026-10-03"],
+    values: [1, 0, 1],
+  });
 });

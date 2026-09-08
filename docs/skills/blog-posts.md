@@ -1,6 +1,6 @@
 ---
 name: blog-posts
-version: "1.2"
+version: "1.3"
 last_updated: "2026-09-08"
 id: blog-posts
 one_line_purpose: Format, embed, and validate Bluefin blog posts under blog/.
@@ -68,11 +68,13 @@ A design skill saying "come up with copy" refers to mockups, not authorship.
    For a requested website screenshot, capture a fully rendered viewport, not
    its Open Graph image or loading state. For a YouTube-only stub, fetch the
    canonical title from the oEmbed endpoint.
-   If `maxresdefault.jpg` returns HTTP 200, save it under the post's
-   `static/img/blog/<YYYY-MM-DD-slug>/` directory and use that local path as the
-   front-matter `image`; otherwise save the oEmbed `thumbnail_url`. When the
-   maintainer supplied no prose, the body may contain only the standard
-   accessible YouTube iframe.
+   To find the most recent video without consuming YouTube Data API quota,
+   retrieve `https://www.youtube.com/@<channel>/videos`, use its first video
+   ID, then verify that ID with oEmbed. If `maxresdefault.jpg` returns HTTP 200,
+   save it under the post's `static/img/blog/<YYYY-MM-DD-slug>/` directory and
+   use that local path as the front-matter `image`; otherwise save the oEmbed
+   `thumbnail_url`. When the maintainer supplied no prose, the body may contain
+   only the standard accessible YouTube iframe.
 
 3. **Write the front matter.**
 
@@ -89,8 +91,10 @@ A design skill saying "come up with copy" refers to mockups, not authorship.
 
    `image` is the social card. Point it at a local path under `static/`.
 
-4. **Add the body only from supplied copy.** Use `{/* truncate */}` to mark the
-   end of the list summary in `.mdx`; `<!-- truncate -->` in `.md`.
+4. **Add the body only from supplied copy.** This site deliberately configures
+   `truncateMarker` to match nothing, so do not add inert marker comments to
+   new posts. The Docusaurus untruncated-post warning is expected for every
+   post, including posts that use the documented marker syntax.
 
 5. **Format only what you touched**, then build.
 
@@ -195,7 +199,8 @@ For images and video, use `src/components/blog/BlogFigure.tsx` — it renders
 - [ ] Front matter has `title`, `slug`, `authors`, `tags`, `date`, and `image`.
 - [ ] No single-element JSX line exceeds 80 characters.
 - [ ] `npx prettier --check` passes on the files you touched.
-- [ ] `npm run build:ci` emits no warnings naming your page path.
+- [ ] `npm run build:ci` completes; the untruncated-post warning is expected
+      from this site's deliberately disabled `truncateMarker`.
 
 ## Sources
 

@@ -49,15 +49,27 @@
 }
 
 .positive {
-  color: #28a745;
+  color: var(--ifm-color-primary);
 }
 
 .negative {
-  color: #dc3545;
+  color: var(--ifm-color-primary-dark);
+  opacity: 0.72;
 }
 
 .neutral {
   color: var(--ifm-color-emphasis-600);
+}
+
+.unavailable {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.unavailable strong {
+  color: var(--ifm-heading-color);
 }
 
 .chartCol {
