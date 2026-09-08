@@ -188,3 +188,138 @@ test("the report generator assembles source states into a version-two snapshot",
   assert.equal(snapshot.ecosystem.countme.currentValue, "12");
   assert.ok(snapshot.sources.some((source) => source.id === "flathub"));
 });
+
+test("report periods use UTC calendar dates regardless of local timezone", async () => {
+  const { buildReportSnapshotPayload } = await reportGenerator;
+  const previousTimezone = process.env.TZ;
+  process.env.TZ = "Pacific/Kiritimati";
+
+  try {
+    const snapshot = buildReportSnapshotPayload({
+      startDate: new Date("2026-10-01T00:00:00.000Z"),
+      endDate: new Date("2026-10-31T23:59:59.999Z"),
+      history: { schemaVersion: 2, snapshots: [] },
+    });
+
+    assert.deepEqual(snapshot.period, {
+      month: "2026-10",
+      start: "2026-10-01",
+      end: "2026-10-31",
+    });
+    assert.equal(snapshot.sources[0].window.end, "2026-10-31");
+  } finally {
+    if (previousTimezone === undefined) {
+      delete process.env.TZ;
+    } else {
+      process.env.TZ = previousTimezone;
+    }
+  }
+});
+
+test("unavailable activity does not serialize measured zeros", async () => {
+  const { buildReportSnapshotPayload } = await reportGenerator;
+  const snapshot = buildReportSnapshotPayload({
+    startDate: new Date("2026-10-01T00:00:00.000Z"),
+    endDate: new Date("2026-10-03T23:59:59.999Z"),
+    plannedPRs: [
+      {
+        repository: "projectbluefin/common",
+        mergedAt: "2026-10-02T12:00:00Z",
+        labels: [],
+      },
+    ],
+    plannedPartial: true,
+    plannedError: "GitHub activity request failed",
+    truncationWarnings: { planned: [], opportunistic: [] },
+    history: { schemaVersion: 2, snapshots: [] },
+  });
+
+  assert.equal(
+    snapshot.sources.find((source) => source.id === "github-activity").status,
+    "unavailable",
+  );
+  assert.equal(snapshot.activity.calendar, null);
+  assert.equal(snapshot.activity.repositories, null);
+  assert.equal(snapshot.activity.categories, null);
+  assert.match(snapshot.activity.unavailableReason, /request failed/);
+});
+
+test("participation totals separate human and bot pull requests", async () => {
+  const { buildReportSnapshotPayload } = await reportGenerator;
+  const snapshot = buildReportSnapshotPayload({
+    startDate: new Date("2026-10-01T00:00:00.000Z"),
+    endDate: new Date("2026-10-31T23:59:59.999Z"),
+    plannedPRs: [
+      {
+        repository: "projectbluefin/common",
+        mergedAt: "2026-10-02T12:00:00Z",
+        labels: [],
+      },
+      {
+        repository: "projectbluefin/common",
+        mergedAt: "2026-10-03T12:00:00Z",
+        labels: [],
+      },
+    ],
+    botActivity: [{ repo: "projectbluefin/common", bot: "renovate", count: 1 }],
+    history: { schemaVersion: 2, snapshots: [] },
+  });
+
+  assert.deepEqual(
+    snapshot.participation.automation.series.map((series) => ({
+      id: series.id,
+      values: series.values,
+    })),
+    [
+      { id: "human", values: [1] },
+      { id: "automation", values: [1] },
+    ],
+  );
+  assert.equal(snapshot.participation.automation.currentValue, "2");
+});
+
+test("release provenance keeps aggregate and repository-specific sources", async () => {
+  const { buildReportSnapshotPayload } = await reportGenerator;
+  const period = { start: "2026-10-01", end: "2026-10-31" };
+  const aggregateSource = {
+    id: "github-releases",
+    status: "unavailable",
+    stateReason: "projectbluefin/dakota: HTTP 503",
+    url: "https://api.github.com/repos",
+    window: period,
+  };
+  const repositorySources = [
+    {
+      id: "github-releases",
+      repository: "projectbluefin/bluefin",
+      status: "available",
+      stateReason: null,
+      url: "https://api.github.com/repos/projectbluefin/bluefin/releases",
+      window: period,
+    },
+    {
+      id: "github-releases",
+      repository: "projectbluefin/dakota",
+      status: "unavailable",
+      stateReason: "HTTP 503",
+      url: "https://api.github.com/repos/projectbluefin/dakota/releases",
+      window: period,
+    },
+  ];
+
+  const snapshot = buildReportSnapshotPayload({
+    startDate: new Date("2026-10-01T00:00:00.000Z"),
+    endDate: new Date("2026-10-31T23:59:59.999Z"),
+    releaseResult: {
+      events: [],
+      source: aggregateSource,
+      sources: repositorySources,
+    },
+    history: { schemaVersion: 2, snapshots: [] },
+  });
+
+  const releaseSources = snapshot.sources.filter(
+    (source) => source.id === "github-releases",
+  );
+  assert.deepEqual(releaseSources, [aggregateSource, ...repositorySources]);
+});

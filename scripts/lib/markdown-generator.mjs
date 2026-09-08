@@ -6,7 +6,6 @@
  * Pattern from RESEARCH.md (lines 603-652)
  */
 
-import { format } from "date-fns";
 import {
   LABEL_CATEGORIES,
   LABEL_COLORS,
@@ -82,6 +81,10 @@ export function generateReportChartTag(definition) {
   return `<ReportChart definition={${JSON.stringify(definition)}} />`;
 }
 
+function utcDateString(date) {
+  return date.toISOString().slice(0, 10);
+}
+
 function reportPeriodDates(snapshot) {
   const period = snapshot?.period ?? {};
   const startDate = new Date(`${period.start}T00:00:00.000Z`);
@@ -142,7 +145,7 @@ function generateSnapshotReportMarkdown({
   const month = startDate.getUTCMonth();
   const year = startDate.getUTCFullYear();
   const monthlyTitle = MONTHLY_TITLES[month] || "Report";
-  const dateStr = snapshot.period?.end || format(endDate, "yyyy-MM-dd");
+  const dateStr = snapshot.period?.end || utcDateString(endDate);
   const totalItems = plannedItems.length + opportunisticItems.length;
   const kpis = [
     {
@@ -275,7 +278,7 @@ function generateLegacyReportMarkdown(
     "December",
   ];
   const monthYear = `${monthNames[month]} ${year}`;
-  const dateStr = format(endDate, "yyyy-MM-dd");
+  const dateStr = utcDateString(endDate);
 
   const monthlyTitle = MONTHLY_TITLES[month];
   const reportSlug = getReportSlug(startDate);
@@ -661,7 +664,7 @@ ${kindSections}`;
 
 ---
 
-*Generated on ${format(new Date(), "yyyy-MM-dd")}*  
+*Generated on ${utcDateString(new Date())}*
 [Report an Issue](https://github.com/projectbluefin/common/issues/new)
 `;
 

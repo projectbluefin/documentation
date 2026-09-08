@@ -40,7 +40,6 @@ import {
   extractLeaderboardHeroes,
 } from "./lib/factory-monthly-metrics.mjs";
 
-import { format } from "date-fns";
 import { writeFile } from "fs/promises";
 import { pathToFileURL } from "url";
 
@@ -51,6 +50,20 @@ const GITHUB_GRAPHQL_URL = "https://api.github.com/graphql";
 const COUNTME_SOURCE_URL =
   "https://data-analysis.fedoraproject.org/csv-reports/countme/totals.csv";
 const FLATHUB_SOURCE_URL = "https://flathub.org/api/v2/stats";
+const MONTH_NAMES = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
 
 /**
  * Split an array into two arrays based on a predicate.
@@ -157,10 +170,12 @@ function aggregateBotActivity(botItems) {
 }
 
 function reportPeriod(startDate, endDate) {
+  const start = startDate.toISOString().slice(0, 10);
+  const end = endDate.toISOString().slice(0, 10);
   return {
-    month: format(startDate, "yyyy-MM"),
-    start: format(startDate, "yyyy-MM-dd"),
-    end: format(endDate, "yyyy-MM-dd"),
+    month: start.slice(0, 7),
+    start,
+    end,
   };
 }
 
@@ -211,7 +226,7 @@ function numericTotal(values) {
 }
 
 function periodSourceWindow(startDate, endDate) {
-  return `${format(startDate, "MMMM yyyy")} UTC (${format(startDate, "yyyy-MM-dd")} to ${format(endDate, "yyyy-MM-dd")})`;
+  return `${MONTH_NAMES[startDate.getUTCMonth()]} ${startDate.getUTCFullYear()} UTC (${startDate.toISOString().slice(0, 10)} to ${endDate.toISOString().slice(0, 10)})`;
 }
 
 function withoutNestedHistory(snapshots) {
@@ -273,69 +288,79 @@ export function buildReportSnapshotPayload({
   ).map((entry) => entry.repository);
 
   const activity = {
-    calendar: chartDefinition({
-      id: "activity-calendar",
-      kind: "calendar",
-      title: "Daily merged pull requests",
-      currentValue: numericTotal(
-        activityMetrics.dailyMerges.map((entry) => entry.value),
-      ),
-      unit: "merged pull requests",
-      sourceLabel: "GitHub GraphQL",
-      sourceUrl: GITHUB_GRAPHQL_URL,
-      sourceWindow,
-      labels: activityMetrics.dailyMerges.map((entry) => entry.date),
-      series: [
-        {
-          id: "merged",
-          label: "Merged pull requests",
-          values: activityMetrics.dailyMerges.map((entry) => entry.value),
-        },
-      ],
-      minimumPoints: 1,
-    }),
-    repositories: chartDefinition({
-      id: "activity-repositories",
-      kind: "grouped-bar",
-      title: "Merged pull requests by repository",
-      currentValue: numericTotal(
-        activityMetrics.repositoryCounts.map((entry) => entry.value),
-      ),
-      unit: "merged pull requests",
-      sourceLabel: "GitHub GraphQL",
-      sourceUrl: GITHUB_GRAPHQL_URL,
-      sourceWindow,
-      labels: activityMetrics.repositoryCounts.map((entry) => entry.name),
-      series: [
-        {
-          id: "repositories",
-          label: "Merged pull requests",
-          values: activityMetrics.repositoryCounts.map((entry) => entry.value),
-        },
-      ],
-      minimumPoints: 1,
-    }),
-    categories: chartDefinition({
-      id: "activity-categories",
-      kind: "grouped-bar",
-      title: "Merged pull requests by label",
-      currentValue: numericTotal(
-        activityMetrics.categoryCounts.map((entry) => entry.value),
-      ),
-      unit: "label assignments",
-      sourceLabel: "GitHub GraphQL",
-      sourceUrl: GITHUB_GRAPHQL_URL,
-      sourceWindow,
-      labels: activityMetrics.categoryCounts.map((entry) => entry.name),
-      series: [
-        {
-          id: "categories",
-          label: "Label assignments",
-          values: activityMetrics.categoryCounts.map((entry) => entry.value),
-        },
-      ],
-      minimumPoints: 1,
-    }),
+    calendar: activityReason
+      ? null
+      : chartDefinition({
+          id: "activity-calendar",
+          kind: "calendar",
+          title: "Daily merged pull requests",
+          currentValue: numericTotal(
+            activityMetrics.dailyMerges.map((entry) => entry.value),
+          ),
+          unit: "merged pull requests",
+          sourceLabel: "GitHub GraphQL",
+          sourceUrl: GITHUB_GRAPHQL_URL,
+          sourceWindow,
+          labels: activityMetrics.dailyMerges.map((entry) => entry.date),
+          series: [
+            {
+              id: "merged",
+              label: "Merged pull requests",
+              values: activityMetrics.dailyMerges.map((entry) => entry.value),
+            },
+          ],
+          minimumPoints: 1,
+        }),
+    repositories: activityReason
+      ? null
+      : chartDefinition({
+          id: "activity-repositories",
+          kind: "grouped-bar",
+          title: "Merged pull requests by repository",
+          currentValue: numericTotal(
+            activityMetrics.repositoryCounts.map((entry) => entry.value),
+          ),
+          unit: "merged pull requests",
+          sourceLabel: "GitHub GraphQL",
+          sourceUrl: GITHUB_GRAPHQL_URL,
+          sourceWindow,
+          labels: activityMetrics.repositoryCounts.map((entry) => entry.name),
+          series: [
+            {
+              id: "repositories",
+              label: "Merged pull requests",
+              values: activityMetrics.repositoryCounts.map(
+                (entry) => entry.value,
+              ),
+            },
+          ],
+          minimumPoints: 1,
+        }),
+    categories: activityReason
+      ? null
+      : chartDefinition({
+          id: "activity-categories",
+          kind: "grouped-bar",
+          title: "Merged pull requests by label",
+          currentValue: numericTotal(
+            activityMetrics.categoryCounts.map((entry) => entry.value),
+          ),
+          unit: "label assignments",
+          sourceLabel: "GitHub GraphQL",
+          sourceUrl: GITHUB_GRAPHQL_URL,
+          sourceWindow,
+          labels: activityMetrics.categoryCounts.map((entry) => entry.name),
+          series: [
+            {
+              id: "categories",
+              label: "Label assignments",
+              values: activityMetrics.categoryCounts.map(
+                (entry) => entry.value,
+              ),
+            },
+          ],
+          minimumPoints: 1,
+        }),
     portfolio: {
       stable: stableRepositories,
       experimental: experimentalRepositories,
@@ -343,29 +368,33 @@ export function buildReportSnapshotPayload({
     ...(activityReason ? { unavailableReason: activityReason } : {}),
   };
 
-  const releaseSources = releaseResult?.sources ?? [
-    sourceRecord(
-      "github-releases",
-      "unavailable",
-      releaseError || "GitHub release data is unavailable.",
-      "https://api.github.com/repos",
-      period,
-    ),
-  ];
-  const releaseReasons = releaseSources
+  const fallbackReleaseSource = sourceRecord(
+    "github-releases",
+    "unavailable",
+    releaseError || "GitHub release data is unavailable.",
+    "https://api.github.com/repos",
+    period,
+  );
+  const releaseSources = releaseResult?.sources ?? [fallbackReleaseSource];
+  const releaseAggregateSource =
+    releaseResult?.source ??
+    (releaseSources.length === 1 ? releaseSources[0] : fallbackReleaseSource);
+  const releaseProvenance = releaseResult?.source
+    ? [releaseAggregateSource, ...releaseSources]
+    : releaseSources;
+  const releaseReasons = [releaseAggregateSource, ...releaseSources]
     .filter((source) => source.status === "unavailable")
     .map((source) => source.stateReason)
     .filter(Boolean);
   const releaseUnavailableReason =
     releaseError ||
-    (releaseReasons.length > 0 ? releaseReasons.join("; ") : null);
+    (releaseReasons.length > 0
+      ? [...new Set(releaseReasons)].join("; ")
+      : null);
   const releaseEvents = releaseResult?.events ?? [];
-  const releaseSource = releaseSources[0] ?? {
-    url: "https://api.github.com/repos",
-  };
-  const hasAvailableReleaseSource = releaseSources.some(
-    (source) => source.status === "available",
-  );
+  const releaseSource = releaseAggregateSource;
+  const hasAvailableReleaseSource =
+    releaseAggregateSource.status === "available";
   const releaseChart =
     releaseResult && !releaseError && hasAvailableReleaseSource
       ? chartDefinition({
@@ -444,10 +473,12 @@ export function buildReportSnapshotPayload({
       : {}),
   };
 
-  const totalHumanPRs = plannedPRs.length + opportunisticPRs.length;
-  const totalBotPRs = numericTotal(
-    (botActivity ?? []).map((entry) => entry.count),
+  const totalPRs = allPRs.length;
+  const totalBotPRs = Math.min(
+    totalPRs,
+    numericTotal((botActivity ?? []).map((entry) => entry.count)),
   );
+  const totalHumanPRs = totalPRs - totalBotPRs;
   const automationValues = [totalHumanPRs, totalBotPRs];
   const participation = {
     automation: chartDefinition({
@@ -558,7 +589,7 @@ export function buildReportSnapshotPayload({
         "https://api.github.com/repos/projectbluefin/bluefin/actions/runs",
         period,
       ),
-      ...releaseSources,
+      ...releaseProvenance,
       countmeSource,
       tapSource,
       flathubSource,
@@ -599,7 +630,7 @@ export async function generateReport() {
   // Calculate report window (previous month or override)
   const { startDate, endDate } = calculateReportWindow(monthOverride);
   log.info(
-    `Report period: ${format(startDate, "MMMM yyyy")} (${format(startDate, "yyyy-MM-dd")} to ${format(endDate, "yyyy-MM-dd")})`,
+    `Report period: ${MONTH_NAMES[startDate.getUTCMonth()]} ${startDate.getUTCFullYear()} (${startDate.toISOString().slice(0, 10)} to ${endDate.toISOString().slice(0, 10)})`,
   );
 
   try {
@@ -939,7 +970,7 @@ export async function generateReport() {
 
     // Write to blog directory
     const slug = getReportSlug(startDate);
-    const filename = `blog/${format(endDate, "yyyy-MM-dd")}-${slug}.mdx`;
+    const filename = `blog/${endDate.toISOString().slice(0, 10)}-${slug}.mdx`;
     await writeFile(filename, markdown, "utf8");
 
     // Persist history only after the immutable post has been written successfully.
