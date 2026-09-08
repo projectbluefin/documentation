@@ -74,3 +74,33 @@ test("PortalVideo statically renders video iframe and semantic copy", () => {
   assert.ok(!source.includes("document."));
   assert.ok(!source.includes("useEffect"));
 });
+
+test("PortalBazaar statically renders app store copy, screenshot, and Flathub action", () => {
+  const componentPath = path.join(portalDir, "PortalBazaar.tsx");
+  assert.ok(fs.existsSync(componentPath), "PortalBazaar.tsx must exist");
+
+  const PortalBazaar = loadModule(componentPath).default;
+  const html = renderToStaticMarkup(React.createElement(PortalBazaar));
+
+  assert.ok(html.includes('id="bazaar"'));
+  assert.ok(html.includes(">Run your favorite<"));
+  assert.ok(html.includes(">Applications<"));
+  assert.ok(html.includes('href="https://usebazaar.org"'));
+  assert.ok(html.includes('href="https://flathub.org"'));
+  assert.ok(html.includes('href="https://docs.brew.sh/Homebrew-on-Linux"'));
+  assert.ok(html.includes('src="/img/bazaar.png"'));
+  assert.ok(
+    html.includes('alt="Screenshot of Bluefin&#x27;s Flatpak Store, Bazaar"'),
+  );
+  assert.ok(html.includes('src="/img/bazaar.svg"'));
+  assert.ok(html.includes('alt="Bazaar&#x27;s Icon"'));
+  assert.ok(html.includes("Bluefin is developed on Bluefin."));
+  assert.ok(html.includes('href="https://flathub.org/"'));
+  assert.ok(html.includes("View apps on Flathub"));
+
+  // Check no browser globals
+  const source = fs.readFileSync(componentPath, "utf8");
+  assert.ok(!source.includes("window."));
+  assert.ok(!source.includes("document."));
+  assert.ok(!source.includes("useEffect"));
+});

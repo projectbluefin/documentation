@@ -60,12 +60,17 @@ test("prototype renders source-authored scenes in order", () => {
     'id="scene-developers"',
     'id="scene-mission"',
     'id="scene-video"',
+    'id="bazaar"',
   ];
   ids.reduce((previous, id) => {
     const current = html.indexOf(id);
-    assert.ok(current > previous, `${id} must follow the previous scene`);
+    assert.ok(
+      current > previous,
+      `${id} must follow the previous scene in order`,
+    );
     return current;
   }, -1);
+  assert.ok(html.includes(">Applications<"));
 
   assert.ok(html.includes('id="portal-scenes"'));
   assert.match(html, /<h1[^>]*>\s*<img[^>]*alt="Bluefin"[^>]*\/>\s*<\/h1>/);
