@@ -289,3 +289,21 @@ test("DriverVersionsCatalog showRebootStep prop controls reboot banner", () => {
   });
   assert.ok(!withoutReboot.includes("Final Step: Reboot"));
 });
+
+test("DriverVersionsCatalog generates rebase commands using the correct package for bluefin-lts", () => {
+  const html = render(DriverVersionsCatalog, {
+    streamId: "bluefin-lts",
+    catalogOverride: ltsCatalog,
+  });
+
+  assert.ok(
+    html.includes(
+      "sudo bootc switch --enforce-container-sigpolicy ghcr.io/projectbluefin/bluefin-lts:lts-20260906",
+    ),
+  );
+  assert.ok(
+    !html.includes(
+      "sudo bootc switch --enforce-container-sigpolicy ghcr.io/projectbluefin/bluefin:lts-20260906",
+    ),
+  );
+});
