@@ -8,6 +8,8 @@ const {
   extractMetrics,
   finalizeContributorStats,
   MAX_WEEKS,
+  registryHeaders,
+  trackedProjectRepos,
 } = require("./fetch-hive-history.js");
 
 const WEEK = 7 * 86400;
@@ -267,6 +269,27 @@ test("computeStatsWindows returns ordered unix-second cut-offs", () => {
   assert.equal(monthAgo, NOW_SEC - 28 * 86400);
   assert.equal(threeMonthsAgo, NOW_SEC - 91 * 86400);
   assert.ok(threeMonthsAgo < monthAgo && monthAgo < weekAgo);
+});
+
+test("tracked Project Bluefin repositories come from the Hive registry", () => {
+  assert.deepEqual(
+    trackedProjectRepos({
+      hives: [
+        { org: "other", repos: ["ignored"] },
+        {
+          org: "projectbluefin",
+          repos: ["common", "server", "fsdk-containers"],
+        },
+      ],
+    }),
+    ["common", "server", "fsdk-containers"],
+  );
+});
+
+test("Hive registry requests never include GitHub authorization", () => {
+  assert.deepEqual(registryHeaders(), {
+    "User-Agent": "bluefin-hive-history/1.0",
+  });
 });
 
 // extractMetrics is the sole reader of the live hive payload. Every field it

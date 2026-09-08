@@ -2111,6 +2111,137 @@
   text-transform: none;
 }
 
+.leaderboards .contributionLink,
+.leaderboards .lbNewcomer,
+.leaderboards .hiveTaskCard {
+  background: var(--ifm-card-background-color);
+  border-color: var(--ifm-color-emphasis-200);
+  border-radius: var(--ifm-global-radius);
+  color: var(--ifm-font-color-base);
+  padding: 0.9rem 1rem;
+  transition:
+    background-color 0.1s ease,
+    border-color 0.1s ease;
+}
+
+.leaderboards .contributionLink:hover,
+.leaderboards .lbNewcomer:hover,
+.leaderboards .hiveTaskCard:hover {
+  background-color: var(--ifm-color-emphasis-100);
+  border-color: var(--ifm-color-primary);
+  color: var(--ifm-font-color-base);
+}
+
+.leaderboards .contributionLinkTitle,
+.leaderboards .hiveTaskPlayer {
+  color: var(--ifm-heading-color);
+}
+
+.leaderboards .contributionLinkPath,
+.leaderboards .hiveTaskCount,
+.leaderboards .lbNewcomerStat {
+  color: var(--ifm-color-emphasis-700);
+}
+
+.leaderboards .lbNewcomers {
+  background: var(
+    --ifm-color-primary-contrast-background,
+    rgba(74, 105, 189, 0.1)
+  );
+  border-color: var(--ifm-color-primary);
+  border-radius: var(--ifm-global-radius);
+  padding: 1rem;
+}
+
+.leaderboards .lbTabs {
+  border-color: var(--ifm-color-emphasis-200);
+  gap: 0.75rem;
+}
+
+.leaderboards .lbTab {
+  border-color: var(--ifm-color-emphasis-300);
+  border-radius: var(--ifm-global-radius);
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.8rem;
+  letter-spacing: normal;
+  padding: 0.45rem 0.85rem;
+  text-transform: none;
+  transition:
+    background-color 0.1s ease,
+    border-color 0.1s ease,
+    color 0.1s ease;
+}
+
+.leaderboards .lbTab:hover {
+  background-color: var(--ifm-color-emphasis-100);
+  border-color: var(--ifm-color-primary);
+  color: var(--ifm-color-primary);
+}
+
+.leaderboards .lbTabActive {
+  background: var(
+    --ifm-color-primary-contrast-background,
+    rgba(74, 105, 189, 0.1)
+  );
+  border-color: var(--ifm-color-primary);
+  color: var(--ifm-color-primary);
+}
+
+.leaderboards .lbTable {
+  background: var(--ifm-color-emphasis-100);
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: var(--ifm-global-radius);
+  overflow: hidden;
+}
+
+.leaderboards .lbHeader {
+  background: var(--ifm-card-background-color);
+  border-color: var(--ifm-color-emphasis-200);
+  color: var(--ifm-color-emphasis-600);
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  margin: 0;
+  padding: 0.6rem 1rem;
+}
+
+.leaderboards .lbRow {
+  border-bottom: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 0;
+  color: var(--ifm-font-color-base);
+  padding: 0.55rem 1rem;
+  transition: background-color 0.1s ease;
+}
+
+.leaderboards .lbRow:last-child {
+  border-bottom: 0;
+}
+
+.leaderboards .lbRow:hover {
+  background-color: var(--ifm-color-emphasis-200);
+  color: var(--ifm-font-color-base);
+}
+
+.leaderboards .lbLogin,
+.leaderboards .lbCommitCount {
+  color: var(--ifm-color-primary);
+}
+
+.leaderboards .lbColRank,
+.leaderboards .lbColHive,
+.leaderboards .lbRepoChip,
+.leaderboards .lbRepoMore,
+.leaderboards .lbSparkValue {
+  color: var(--ifm-color-emphasis-600);
+}
+
+.leaderboards .lbAvatar {
+  border-color: var(--ifm-color-emphasis-300);
+}
+
+.leaderboards .lbRepoChip {
+  background: var(--ifm-color-emphasis-200);
+}
+
 .contributionLinks {
   margin-bottom: 1.25rem;
 }
@@ -2307,7 +2438,10 @@
   padding: 0.3rem 0.9rem;
   border-radius: 6px;
   cursor: pointer;
-  transition: all 0.15s;
+  transition:
+    background-color 0.15s,
+    border-color 0.15s,
+    color 0.15s;
   letter-spacing: 0.03em;
   text-transform: uppercase;
 }

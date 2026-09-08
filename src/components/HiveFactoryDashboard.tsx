@@ -532,9 +532,11 @@ interface QueueData {
 // All fetches fall back gracefully when the user is not logged in.
 const HOSTED_INSTANCE_URL =
   "https://hosted-projectbluefin-knuckle-gjvq.hive.hivecommons.dev";
+const HOSTED_DOSSIER_URL =
+  "https://hosted-projectbluefin-common-nmq5.hive.hivecommons.dev";
 
-function playerLeaderboardUrl(login: string): string {
-  return `${HOSTED_INSTANCE_URL}/api/leaderboard/contributor/${encodeURIComponent(login)}`;
+function contributorDossierUrl(login: string): string {
+  return `${HOSTED_DOSSIER_URL}/contribute/dossier/${encodeURIComponent(login)}`;
 }
 
 // Public registry — no auth required, updated every ~15 min by the hub
@@ -1422,7 +1424,7 @@ function ContributorWall({
               return (
                 <Link
                   key={login}
-                  href={playerLeaderboardUrl(login)}
+                  href={contributorDossierUrl(login)}
                   target="_blank"
                   rel="noreferrer"
                   className={styles.spotlightCard}
@@ -1478,7 +1480,7 @@ function ContributorWall({
             {visibleRest.map(({ login, repos }) => (
               <Link
                 key={login}
-                href={playerLeaderboardUrl(login)}
+                href={contributorDossierUrl(login)}
                 target="_blank"
                 rel="noreferrer"
                 className={styles.contributorCard}
@@ -1854,7 +1856,7 @@ export function ContributorLeaderboard({
             {newcomers.map(({ login, projects, recentActivity }) => (
               <Link
                 key={login}
-                href={playerLeaderboardUrl(login)}
+                href={contributorDossierUrl(login)}
                 target="_blank"
                 rel="noreferrer"
                 className={styles.lbNewcomer}
@@ -1936,7 +1938,7 @@ export function ContributorLeaderboard({
             return (
               <Link
                 key={login}
-                href={playerLeaderboardUrl(login)}
+                href={contributorDossierUrl(login)}
                 target="_blank"
                 rel="noreferrer"
                 className={styles.lbRow}
@@ -2087,7 +2089,7 @@ function HiveTaskLeaderboard({
           .map((entry) => (
             <Link
               key={entry.github_username}
-              href={playerLeaderboardUrl(entry.github_username)}
+              href={contributorDossierUrl(entry.github_username)}
               target="_blank"
               rel="noreferrer"
               className={styles.hiveTaskCard}

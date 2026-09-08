@@ -75,23 +75,26 @@ const MAX_WEEKS = 52;
 // leaderboard view (only ~33 contributors are active in a given year).
 const MAX_WEEKLY_SERIES = 100;
 
-// All active factory repos
-const FACTORY_REPOS = [
-  "bluefin",
+// Last verified registry set. The public registry normally supplies this list.
+const FALLBACK_FACTORY_REPOS = [
   "common",
-  "documentation",
-  "actions",
+  "bluefin",
   "bluefin-lts",
-  "dakota",
-  "bonedigger",
-  "bootc-installer",
-  "knuckle",
+  "actions",
   "testsuite",
+  "server",
+  "fsdk-containers",
+  "finpilot",
+  "dakota-iso",
+  "utah",
+  "utah-packages",
+  "lab",
+  "documentation",
   "website",
-  "brew",
-  "iso",
-  "wolfictl",
-  "fisherman",
+  "review",
+  "bootc-installer",
+  "bluefin-bling",
+  "knuckle",
 ];
 
 // GitHub bot accounts to exclude from human contributor lists
@@ -107,6 +110,8 @@ const BOT_LOGINS = new Set([
 
 const GH_TOKEN = process.env.GITHUB_TOKEN || process.env.GH_TOKEN || "";
 const GH_API = "https://api.github.com";
+const REGISTRY_URL = "https://hive.hivecommons.dev/api/registry";
+const TARGET_ORG = "projectbluefin";
 
 function ghHeaders() {
   const h = { "User-Agent": "bluefin-hive-history/1.0" };
@@ -114,8 +119,34 @@ function ghHeaders() {
   return h;
 }
 
+function registryHeaders() {
+  return { "User-Agent": "bluefin-hive-history/1.0" };
+}
+
 function safeNum(v) {
   return typeof v === "number" && isFinite(v) ? v : undefined;
+}
+
+function trackedProjectRepos(data) {
+  const hive = data?.hives?.find((entry) => entry?.org === TARGET_ORG);
+  return Array.isArray(hive?.repos)
+    ? [...new Set(hive.repos.filter((repo) => typeof repo === "string"))]
+    : [];
+}
+
+async function fetchTrackedProjectRepos() {
+  try {
+    const res = await fetch(REGISTRY_URL, { headers: registryHeaders() });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const repos = trackedProjectRepos(await res.json());
+    if (repos.length === 0) throw new Error(`no ${TARGET_ORG} repos`);
+    return repos;
+  } catch (err) {
+    console.warn(
+      `[hive-history] Hive registry unavailable (${err.message}) — using the last known repository set`,
+    );
+    return FALLBACK_FACTORY_REPOS;
+  }
 }
 
 function extractMetrics(data) {
@@ -157,12 +188,12 @@ function extractMetrics(data) {
  * handle pagination, aggregate into { login: totalCommits }.
  * Skips 404s and 403s gracefully.
  */
-async function fetchContributors() {
+async function fetchContributors(repos = FALLBACK_FACTORY_REPOS) {
   const totals = {};
   const byRepo = {};
 
   await Promise.allSettled(
-    FACTORY_REPOS.map(async (repo) => {
+    repos.map(async (repo) => {
       const repoMap = {};
       let url = `${GH_API}/repos/projectbluefin/${repo}/contributors?per_page=100&anon=false`;
       let pages = 0;
@@ -342,12 +373,12 @@ function finalizeContributorStats(
  * Returns: { stats: { [login]: { total, lastWeek, lastMonth, last3Months, byRepo, weeks } },
  *            weekStarts: number[] }
  */
-async function fetchContributorWeeklyStats() {
+async function fetchContributorWeeklyStats(repos = FALLBACK_FACTORY_REPOS) {
   const windows = computeStatsWindows();
   const acc = createStatsAccumulator();
 
   await Promise.allSettled(
-    FACTORY_REPOS.map(async (repo) => {
+    repos.map(async (repo) => {
       const url = `${GH_API}/repos/projectbluefin/${repo}/stats/contributors`;
       let attempts = 0;
       let data = null;
@@ -410,6 +441,7 @@ async function main() {
   if (!history.contributorStats) history.contributorStats = {};
   if (!Array.isArray(history.contributorWeekStarts))
     history.contributorWeekStarts = [];
+  const trackedRepos = await fetchTrackedProjectRepos();
 
   // ── Fetch hive snapshot ──────────────────────────────────────────────────
   let metrics = null;
@@ -468,7 +500,7 @@ async function main() {
       "[hive-history] Fetching all-time contributor counts from factory repos...",
     );
     try {
-      const { totals, byRepo } = await fetchContributors();
+      const { totals, byRepo } = await fetchContributors(trackedRepos);
       history.contributors = totals;
       history.contributorsByRepo = byRepo;
       history.lastContributorFetch = new Date().toISOString();
@@ -497,7 +529,7 @@ async function main() {
       "[hive-history] Fetching weekly contributor stats (stats/contributors)...",
     );
     try {
-      const stats = await fetchContributorWeeklyStats();
+      const stats = await fetchContributorWeeklyStats(trackedRepos);
       history.contributorStats = stats.stats;
       history.contributorWeekStarts = stats.weekStarts;
       history.lastWeeklyStatsFetch = new Date().toISOString();
@@ -541,4 +573,6 @@ module.exports = {
   finalizeContributorStats,
   MAX_WEEKLY_SERIES,
   MAX_WEEKS,
+  registryHeaders,
+  trackedProjectRepos,
 };
