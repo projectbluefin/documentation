@@ -24,8 +24,9 @@ function assertBefore(haystack, before, after, message) {
   assert.ok(beforeIndex < afterIndex, message);
 }
 
-test("community view foregrounds hosted Hive contribution paths and newcomers", () => {
-  const community = source.slice(
+test("leaderboards view foregrounds hosted Hive contribution paths and newcomers", () => {
+  const leaderboards = source.slice(
+    source.indexOf("export function LeaderboardsSection"),
     source.indexOf("export function CommunitySection"),
   );
   const leaderboard = source.slice(
@@ -37,16 +38,16 @@ test("community view foregrounds hosted Hive contribution paths and newcomers", 
   );
 
   assertBefore(
-    community,
+    leaderboards,
     "<ContributionLinks",
-    "<ContributorWall",
-    "hosted Hive contribution paths must lead the community view",
+    "<HiveTaskLeaderboard",
+    "hosted Hive contribution paths must lead the standalone view",
   );
   assertBefore(
-    community,
+    leaderboards,
     "<ContributorLeaderboard",
     "<ContributorWall",
-    "the active leaderboard must precede the historical community wall",
+    "the active leaderboard must precede player cards",
   );
   assertBefore(
     leaderboard,
@@ -122,7 +123,7 @@ test("community view foregrounds hosted Hive contribution paths and newcomers", 
   );
   assert.match(
     config,
-    /to: "\/factory\/community",\s+label: "Leaderboards"/,
+    /to: "\/leaderboards",\s+label: "Leaderboards"/,
     "navbar must expose the Leaderboards landing page",
   );
 });

@@ -2145,6 +2145,59 @@
   font-size: 0.7rem;
 }
 
+.hiveTaskGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.75rem;
+}
+
+.hiveTaskCard {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.7rem;
+  background: var(--fx-surface);
+  border: 1px solid var(--fx-border);
+  border-radius: 8px;
+  color: var(--fx-text);
+  text-decoration: none;
+}
+
+.hiveTaskCard:hover {
+  border-color: var(--fx-accent);
+  color: var(--fx-text);
+  text-decoration: none;
+}
+
+.hiveTaskCard:focus-visible {
+  outline: 2px solid var(--fx-accent);
+  outline-offset: 2px;
+}
+
+.hiveTaskAvatar {
+  grid-row: span 2;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+
+.hiveTaskPlayer {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--fx-accent);
+  font-size: 0.8rem;
+  font-weight: var(--fx-weight-bold);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hiveTaskCount {
+  color: var(--fx-text-muted);
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.7rem;
+}
+
 .lbNewcomers {
   margin: 1rem 0;
   padding: 0.9rem;
@@ -2264,7 +2317,7 @@
 
 .lbHeader {
   display: grid;
-  grid-template-columns: 2rem 1fr 5rem 7rem 9rem 1fr;
+  grid-template-columns: 2rem 1fr 5rem 7rem 6rem 9rem 1fr;
   gap: 0.5rem;
   align-items: center;
   padding: 0.3rem 0.5rem;
@@ -2278,7 +2331,7 @@
 
 .lbRow {
   display: grid;
-  grid-template-columns: 2rem 1fr 5rem 7rem 9rem 1fr;
+  grid-template-columns: 2rem 1fr 5rem 7rem 6rem 9rem 1fr;
   gap: 0.5rem;
   align-items: center;
   padding: 0.4rem 0.5rem;
@@ -2292,6 +2345,11 @@
   background: var(--fx-surface);
   text-decoration: none;
   color: var(--fx-text);
+}
+
+.lbRow:focus-visible {
+  outline: 2px solid var(--fx-accent);
+  outline-offset: 2px;
 }
 
 .lbColRank {
@@ -2333,6 +2391,13 @@
   display: flex;
   align-items: center;
   gap: 0.4rem;
+}
+
+.lbColHive {
+  color: var(--fx-text-muted);
+  font-family: "JetBrains Mono", "Fira Code", monospace;
+  font-size: 0.68rem;
+  font-variant-numeric: tabular-nums;
 }
 
 .lbCommitCount {
@@ -2402,7 +2467,8 @@
   }
 
   .lbColRepos,
-  .lbColBadges {
+  .lbColBadges,
+  .lbColHive {
     display: none;
   }
 }

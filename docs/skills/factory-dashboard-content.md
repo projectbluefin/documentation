@@ -70,6 +70,14 @@ Contribution setup and hosted leaderboard links use
 hosted Hive for interactive contribution flows; do not recreate its setup UI in
 the docs dashboard.
 
+Individual player records are available at
+`/api/leaderboard/contributor/{username}`. Use that verified route for player
+cards: the hosted Hive has no public HTML profile route for arbitrary users.
+
+`/leaderboards` is a standalone docs page, not a Factory tab. It owns the
+shared Hive data provider directly; do not add top-level pages to
+`FACTORY_ROUTES`.
+
 ### countme: match ublue-os/countme, and never trust the seed on its own
 
 The adoption numbers come from Fedora's public countme totals CSV

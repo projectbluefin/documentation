@@ -6,6 +6,7 @@ import Sparkline from "./Sparkline";
 import { FX_SEVERITY, type SeverityLevel } from "./factory/chartTheme";
 import type { SparklinePoint } from "./Sparkline";
 import ActivityCalendar from "./ActivityCalendar";
+import { useDataset } from "./factory/FactoryDataContext";
 import styles from "./HiveFactoryDashboard.module.css";
 
 // ── Types ──────────────────────────────────────────────────────────────────
@@ -531,6 +532,10 @@ interface QueueData {
 // All fetches fall back gracefully when the user is not logged in.
 const HOSTED_INSTANCE_URL =
   "https://hosted-projectbluefin-knuckle-gjvq.hive.hivecommons.dev";
+
+function playerLeaderboardUrl(login: string): string {
+  return `${HOSTED_INSTANCE_URL}/api/leaderboard/contributor/${encodeURIComponent(login)}`;
+}
 
 // Public registry — no auth required, updated every ~15 min by the hub
 // Registry data is fetched at build time via scripts/fetch-registry-data.js
@@ -1417,7 +1422,7 @@ function ContributorWall({
               return (
                 <Link
                   key={login}
-                  href={`https://github.com/${login}`}
+                  href={playerLeaderboardUrl(login)}
                   target="_blank"
                   rel="noreferrer"
                   className={styles.spotlightCard}
@@ -1473,7 +1478,7 @@ function ContributorWall({
             {visibleRest.map(({ login, repos }) => (
               <Link
                 key={login}
-                href={`https://github.com/${login}`}
+                href={playerLeaderboardUrl(login)}
                 target="_blank"
                 rel="noreferrer"
                 className={styles.contributorCard}
@@ -1657,6 +1662,7 @@ interface LeaderboardEntry {
   hasStats: boolean;
   activity: number;
   recentActivity: number;
+  hiveTasks: number | null;
   isNew: boolean;
   /** Commits per week, oldest-first. Empty when the series was not collected. */
   weeks: number[];
@@ -1669,7 +1675,15 @@ function weekStartLabel(seconds?: number): string {
   return new Date(seconds * 1000).toISOString().slice(0, 10);
 }
 
-function ContributorLeaderboard({ history }: { history: HiveHistory | null }) {
+export function ContributorLeaderboard({
+  history,
+  registryEntries = [],
+  registryAvailable = true,
+}: {
+  history: HiveHistory | null;
+  registryEntries?: RegistryLeaderboardEntry[];
+  registryAvailable?: boolean;
+}) {
   const [tab, setTab] = React.useState<LeaderboardTab>("monthly");
 
   const hasWeeklyStats =
@@ -1677,7 +1691,7 @@ function ContributorLeaderboard({ history }: { history: HiveHistory | null }) {
     Object.keys(history.contributorStats).length > 0;
   const activeTab = hasWeeklyStats ? tab : "alltime";
 
-  const { ranked, newcomers } = React.useMemo((): {
+  const { ranked, newcomers } = ((): {
     ranked: LeaderboardEntry[];
     newcomers: LeaderboardEntry[];
   } => {
@@ -1686,12 +1700,20 @@ function ContributorLeaderboard({ history }: { history: HiveHistory | null }) {
     const stats = history.contributorStats ?? {};
     const allTimeMap = history.contributors ?? {};
     const byRepo = history.contributorsByRepo ?? {};
+    const hiveTasks = new Map(
+      registryEntries.map((entry) => [
+        entry.github_username,
+        entry.tasks_completed,
+      ]),
+    );
 
     // Build a unified map of all known contributors (no bots)
     const allLogins = new Set(
-      [...Object.keys(stats), ...Object.keys(allTimeMap)].filter(
-        (l) => !isBotLogin(l),
-      ),
+      [
+        ...Object.keys(stats),
+        ...Object.keys(allTimeMap),
+        ...registryEntries.map((entry) => entry.github_username),
+      ].filter((l) => !isBotLogin(l)),
     );
     const rows: LeaderboardEntry[] = [];
 
@@ -1699,6 +1721,11 @@ function ContributorLeaderboard({ history }: { history: HiveHistory | null }) {
       const s = stats[login];
       const lastWeek = s?.lastWeek ?? 0;
       const lastMonth = s?.lastMonth ?? 0;
+      const completedTasks = registryAvailable
+        ? hiveTasks.has(login)
+          ? (hiveTasks.get(login) ?? 0)
+          : null
+        : null;
 
       const allTimeRepoMap = Object.fromEntries(
         Object.entries(byRepo)
@@ -1723,7 +1750,7 @@ function ContributorLeaderboard({ history }: { history: HiveHistory | null }) {
         return mb - ma;
       });
 
-      if (repos.length === 0) continue;
+      if (repos.length === 0 && (completedTasks ?? 0) === 0) continue;
 
       rows.push({
         rank: 0,
@@ -1739,6 +1766,7 @@ function ContributorLeaderboard({ history }: { history: HiveHistory | null }) {
               ? lastMonth
               : (allTimeMap[login] ?? 0),
         recentActivity: s?.last3Months ?? 0,
+        hiveTasks: completedTasks,
         isNew:
           s != null &&
           (allTimeMap[login] ?? 0) > 0 &&
@@ -1755,18 +1783,23 @@ function ContributorLeaderboard({ history }: { history: HiveHistory | null }) {
       )
       .slice(0, 12);
     const ranked = rows.filter(
-      (row) => activeTab === "alltime" || row.activity > 0,
+      (row) =>
+        activeTab === "alltime" || row.activity > 0 || (row.hiveTasks ?? 0) > 0,
     );
     ranked.sort((a, b) =>
       activeTab === "alltime"
-        ? b.projects - a.projects || b.activity - a.activity
-        : b.activity - a.activity || b.projects - a.projects,
+        ? b.projects - a.projects ||
+          b.activity - a.activity ||
+          a.login.localeCompare(b.login)
+        : b.activity - a.activity ||
+          b.projects - a.projects ||
+          a.login.localeCompare(b.login),
     );
     ranked.forEach((r, i) => {
       r.rank = i + 1;
     });
     return { ranked: ranked.slice(0, 25), newcomers };
-  }, [activeTab, history]);
+  })();
 
   if (!history || (ranked.length === 0 && newcomers.length === 0)) return null;
 
@@ -1821,7 +1854,7 @@ function ContributorLeaderboard({ history }: { history: HiveHistory | null }) {
             {newcomers.map(({ login, projects, recentActivity }) => (
               <Link
                 key={login}
-                href={`https://github.com/${login}`}
+                href={playerLeaderboardUrl(login)}
                 target="_blank"
                 rel="noreferrer"
                 className={styles.lbNewcomer}
@@ -1881,11 +1914,21 @@ function ContributorLeaderboard({ history }: { history: HiveHistory | null }) {
           <span className={styles.lbColUser}>Contributor</span>
           <span className={styles.lbColCommits}>Projects</span>
           <span className={styles.lbColActivity}>{activityLabel}</span>
+          <span className={styles.lbColHive}>Hive tasks</span>
           <span className={styles.lbColRepos}>Repos</span>
           <span className={styles.lbColBadges}>Milestones</span>
         </div>
         {ranked.map(
-          ({ rank, login, projects, repos, badges, weeks, activity }) => {
+          ({
+            rank,
+            login,
+            projects,
+            repos,
+            badges,
+            weeks,
+            activity,
+            hiveTasks,
+          }) => {
             const current = weeks.length ? weeks[weeks.length - 1] : null;
             const totalCommits = weeks.reduce((a, b) => a + b, 0);
             const from = weekStartLabel(weekStarts[0]);
@@ -1893,7 +1936,7 @@ function ContributorLeaderboard({ history }: { history: HiveHistory | null }) {
             return (
               <Link
                 key={login}
-                href={`https://github.com/${login}`}
+                href={playerLeaderboardUrl(login)}
                 target="_blank"
                 rel="noreferrer"
                 className={styles.lbRow}
@@ -1937,6 +1980,12 @@ function ContributorLeaderboard({ history }: { history: HiveHistory | null }) {
                     />
                   )}
                   <span className={styles.lbSparkValue}>{activity}</span>
+                </span>
+                <span className={styles.lbColHive}>
+                  {" "}
+                  {hiveTasks == null
+                    ? "unavailable"
+                    : `${hiveTasks} Hive tasks`}
                 </span>
                 <span className={styles.lbColRepos}>
                   {repos.slice(0, 3).map((r) => (
@@ -2010,6 +2059,56 @@ function ContributionLinks(): React.JSX.Element {
             /contribute/leaderboard
           </span>
         </Link>
+      </div>
+    </section>
+  );
+}
+
+function HiveTaskLeaderboard({
+  entries,
+}: {
+  entries: RegistryLeaderboardEntry[];
+}): React.JSX.Element | null {
+  if (entries.length === 0) return null;
+
+  return (
+    <section className={styles.panel}>
+      <Heading as="h2" className={styles.panelTitle}>
+        Hive Task Leaderboard
+      </Heading>
+      <div className={styles.hiveTaskGrid}>
+        {[...entries]
+          .sort(
+            (a, b) =>
+              b.tasks_completed - a.tasks_completed ||
+              a.github_username.localeCompare(b.github_username),
+          )
+          .slice(0, 12)
+          .map((entry) => (
+            <Link
+              key={entry.github_username}
+              href={playerLeaderboardUrl(entry.github_username)}
+              target="_blank"
+              rel="noreferrer"
+              className={styles.hiveTaskCard}
+            >
+              <img
+                src={
+                  entry.avatar_url ||
+                  `https://github.com/${entry.github_username}.png?size=40`
+                }
+                alt={entry.github_username}
+                className={styles.hiveTaskAvatar}
+                loading="lazy"
+              />
+              <span className={styles.hiveTaskPlayer}>
+                {entry.github_username}
+              </span>
+              <span className={styles.hiveTaskCount}>
+                {entry.tasks_completed} Hive tasks
+              </span>
+            </Link>
+          ))}
       </div>
     </section>
   );
@@ -4192,14 +4291,59 @@ export function LiveSection({ s }: { s: FactoryLive }): React.JSX.Element {
   );
 }
 
+export function LeaderboardsSection(): React.JSX.Element {
+  const history = useDataset<HiveHistory>("hiveHistory");
+  const registry = useDataset<RegistryEntry>("registry");
+  const hiveHistory = history.data;
+  const registryData = registry.data;
+  const registryEntries =
+    Array.isArray(registryData?.leaderboard) &&
+    registryData.leaderboard.length > 0
+      ? registryData.leaderboard
+      : null;
+
+  return (
+    <>
+      <ContributionLinks />
+      {hiveHistory ? (
+        <div className={styles.twoCol}>
+          <ContributorLeaderboard
+            history={hiveHistory}
+            registryEntries={registryEntries ?? []}
+            registryAvailable={registryEntries != null}
+          />
+          <ContributorWall prs={[]} history={hiveHistory} />
+        </div>
+      ) : (
+        <section className={styles.panel}>
+          <p className={styles.unavailableNote}>
+            GitHub contribution data{" "}
+            {history.loading ? "loading." : "unavailable"}
+            {!history.loading && history.reason ? `: ${history.reason}` : ""}
+          </p>
+        </section>
+      )}
+      {registryEntries ? (
+        <HiveTaskLeaderboard entries={registryEntries} />
+      ) : (
+        <section className={styles.panel}>
+          <p className={styles.unavailableNote}>
+            Hive task data {registry.loading ? "loading." : "unavailable"}
+            {!registry.loading && registry.reason ? `: ${registry.reason}` : ""}
+          </p>
+        </section>
+      )}
+    </>
+  );
+}
+
 /**
- * Contributors, leaderboards, discussions and merged work.
+ * Contributors, discussions and merged work.
  */
 export function CommunitySection({ s }: { s: FactoryLive }): React.JSX.Element {
   const {
     queue,
     orgStats,
-    registryData,
     mergedPRs,
     velocity,
     hiveHistory,
@@ -4209,14 +4353,6 @@ export function CommunitySection({ s }: { s: FactoryLive }): React.JSX.Element {
   } = s;
   return (
     <>
-      <ContributionLinks />
-
-      {/* ── Current contributors ── */}
-      <div className={styles.twoCol}>
-        <ContributorLeaderboard history={hiveHistory} />
-        <ContributorWall prs={mergedPRs} history={hiveHistory} />
-      </div>
-
       {/* ── Destiny columns: Guardians | Ghosts ── */}
       <div className={styles.destinyColumns}>
         <GuardiansColumn discussions={communityDiscussions} />
@@ -4225,97 +4361,6 @@ export function CommunitySection({ s }: { s: FactoryLive }): React.JSX.Element {
 
       {/* ── Recently Merged (full width) ── */}
       <MergedPRFeed prs={mergedPRs} />
-
-      {/* ── Registry Task Leaderboard ── */}
-      {registryData?.leaderboard && registryData.leaderboard.length > 0 && (
-        <section className={styles.panel}>
-          <Heading as="h2" className={styles.panelTitle}>
-            Hive Task Leaderboard
-          </Heading>
-          <p className={styles.panelMeta}>
-            Tasks completed via the hive registry &mdash; a different measure
-            from Community Builders below, which counts commits. Updated live
-          </p>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
-              gap: "0.5rem",
-              marginTop: "0.75rem",
-            }}
-          >
-            {registryData.leaderboard
-              .sort((a, b) => b.tasks_completed - a.tasks_completed)
-              .slice(0, 12)
-              .map((entry, idx) => (
-                <div
-                  key={entry.github_username}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.5rem",
-                    background: "var(--fx-surface)",
-                    borderRadius: "6px",
-                    padding: "0.4rem 0.6rem",
-                    border:
-                      idx === 0
-                        ? "1px solid var(--fx-sev-watch)"
-                        : "1px solid var(--fx-surface-3)",
-                  }}
-                >
-                  <span
-                    style={{
-                      fontSize: "0.7rem",
-                      color: "var(--fx-text-faint)",
-                      fontFamily: "monospace",
-                      width: "1.2rem",
-                      flexShrink: 0,
-                    }}
-                  >
-                    #{idx + 1}
-                  </span>
-                  <img
-                    src={
-                      entry.avatar_url ||
-                      `https://github.com/${entry.github_username}.png?size=32`
-                    }
-                    alt={entry.github_username}
-                    width={24}
-                    height={24}
-                    style={{ borderRadius: "50%", flexShrink: 0 }}
-                  />
-                  <span
-                    style={{
-                      fontSize: "0.8rem",
-                      color: "var(--fx-text)",
-                      flex: 1,
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    {entry.github_username}
-                  </span>
-                  <span
-                    style={{
-                      fontSize: "0.75rem",
-                      fontWeight: 700,
-                      fontFamily: "monospace",
-                      color:
-                        idx === 0
-                          ? "var(--fx-sev-watch)"
-                          : idx < 3
-                            ? "var(--fx-sev-ok)"
-                            : "var(--fx-accent)",
-                    }}
-                  >
-                    {entry.tasks_completed}
-                  </span>
-                </div>
-              ))}
-          </div>
-        </section>
-      )}
 
       {/* ── History Zone ── */}
       <div className={styles.twoCol}>
