@@ -1,35 +1,35 @@
 ---
 name: factory-dashboard-content
-version: "1.1"
-last_updated: "2026-09-06"
+version: "1.2"
+last_updated: "2026-09-08"
 id: factory-dashboard-content
-one_line_purpose: Write and verify copy, data, and charts on /factory.
+one_line_purpose: Write and verify copy, data, and charts on /factory and /analytics.
 entry_point: docs/skills/factory-dashboard-content.md
 category: meta
 status: active
-tags: [factory, dashboard, echarts, theming]
+tags: [factory, dashboard, echarts, theming, analytics]
 description: >-
-  Write and verify copy, data, and charts on the /factory dashboard. Use when
-  editing a factory panel title or summary, adding a lane or image to the
-  dashboard, touching countme adoption numbers, or styling an ECharts chart in
-  src/components/factory/.
+  Write and verify copy, data, and charts on the /factory dashboard and /analytics page.
+  Use when editing panel titles or summaries, adding an image lane, touching countme
+  adoption numbers, or styling ECharts components and KPI strips.
 metadata:
   type: procedure
 ---
 
-# Factory dashboard content
+# Factory and Analytics Dashboard Content
 
-The `/factory` dashboard (`src/components/HiveFactoryDashboard.tsx` and the panels
-under `src/components/factory/panels/`) reports on Bluefin with live data. Chart
-titles, summaries and captions are public-facing copy, so they follow the same
-rules as any other page — plus a few that are specific to this data.
+The `/factory` dashboard and `/analytics` page report on Bluefin with live data.
+Chart titles, summaries, captions, and KPI metrics are public-facing copy, so
+they follow the same rules as any other page — plus a few that are specific to
+this data.
 
 ## When to Use
 
 - Editing a panel title, summary, caption, or `Unavailable` reason.
+- Updating `/analytics` charts, KPI strips, or workstation family cards.
 - Adding or removing an image lane on the dashboard.
 - Changing countme adoption numbers or their labels.
-- Styling an ECharts chart under `src/components/factory/`.
+- Styling an ECharts chart under `src/components/factory/` or `src/components/analytics/`.
 
 ## When NOT to Use
 
@@ -140,6 +140,16 @@ Rules:
 
 **Check both themes before claiming a visual fix.** A dashboard that is only
 ever opened in dark mode hides half its contrast bugs.
+
+### Analytics page (`/analytics`) design conventions
+
+The `/analytics` page uses modern, Astro-inspired visual density:
+
+- **Top KPI strip:** 4 primary metrics (Fleet Total, 12-week Delta, Ecosystem Share, Coverage) using tabular numerals, uppercase tracked eyebrows (`0.08em`), and compact trend pills (`↑`/`↓`).
+- **Dominant chart panels:** Feature clean uppercase eyebrows (`WEEKLY ACTIVE SYSTEMS`), prominent headlines, and compact segmented pill buttons (`Unified Fleet` / `By Edition`, `12w` / `24w` / `All`).
+- **Family cards:** Minimalist cards focused strictly on KPI, edition eyebrow, status pill, shared-domain sparkline, and a direct link. Avoid paragraph narratives or Base Stack / Repo / Image / Streams key-value lists directly in card surfaces.
+- **Unified comparison:** Fold ecosystem share distributions directly into comparative chart headers/legends rather than rendering duplicate standalone distribution bars.
+- **Clean disclosure:** Move technical counting methodology (ADR 0004), first-party service details, and opt-out commands into a collapsed `<details>` disclosure to keep the primary view scannable.
 
 ### Tests pin the copy
 
