@@ -6,7 +6,7 @@ leaderboard with Bluefin's colours.
 ## Use it
 
 ```text
-https://hosted-projectbluefin-knuckle-gjvq.hive.kubestellar.io/contribute/leaderboard?style=projectbluefin/documentation/static/hive/leaderboard.css@main
+https://hosted-projectbluefin-knuckle-gjvq.hive.hivecommons.dev/contribute/leaderboard?style=projectbluefin/documentation/static/hive/leaderboard.css@main
 ```
 
 `?style=` takes `owner/repo/path/theme.css@ref`. Omit `@ref` to track the

@@ -2094,6 +2094,86 @@
   margin-bottom: 0.5rem;
 }
 
+/* ── Contribution and newcomer landing ─────────────────────────────────── */
+
+.contributionLinks {
+  margin-bottom: 1.25rem;
+}
+
+.contributionLinksGrid,
+.lbNewcomersGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.75rem;
+}
+
+.contributionLink,
+.lbNewcomer {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.7rem 0.8rem;
+  color: var(--fx-text);
+  background: var(--fx-surface);
+  border: 1px solid var(--fx-border);
+  border-radius: 8px;
+  text-decoration: none;
+}
+
+.contributionLink {
+  flex-direction: column;
+  align-items: flex-start;
+  min-height: 5rem;
+}
+
+.contributionLink:hover,
+.lbNewcomer:hover {
+  border-color: var(--fx-accent);
+  color: var(--fx-text);
+  text-decoration: none;
+}
+
+.contributionLinkTitle {
+  font-size: 1rem;
+  font-weight: var(--fx-weight-bold);
+}
+
+.contributionLinkPath {
+  margin-top: auto;
+  color: var(--fx-text-muted);
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.7rem;
+}
+
+.lbNewcomers {
+  margin: 1rem 0;
+  padding: 0.9rem;
+  background: color-mix(in srgb, var(--fx-accent) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--fx-accent) 30%, transparent);
+  border-radius: 8px;
+}
+
+.lbNewcomersTitle {
+  margin-bottom: 0.75rem !important;
+  font-size: 0.9rem !important;
+}
+
+.lbNewcomer {
+  flex-wrap: wrap;
+}
+
+.lbNewcomerAvatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+
+.lbNewcomerStat {
+  width: 100%;
+  font-size: 0.7rem;
+  color: var(--fx-text-muted);
+}
+
 /* ── History Trends ──────────────────────────────────────────────────────── */
 
 .historyTrendsGrid {

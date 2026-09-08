@@ -63,6 +63,13 @@ do **not** and were removed. If removing a lane empties a whole UI section,
 remove the section too — a permanently-empty panel that says "no data found"
 misleads readers into thinking there is a gap.
 
+### Hosted Hive flows stay hosted
+
+Contribution setup and hosted leaderboard links use
+`https://hosted-projectbluefin-knuckle-gjvq.hive.hivecommons.dev`. Link to the
+hosted Hive for interactive contribution flows; do not recreate its setup UI in
+the docs dashboard.
+
 ### countme: match ublue-os/countme, and never trust the seed on its own
 
 The adoption numbers come from Fedora's public countme totals CSV
