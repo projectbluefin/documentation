@@ -7,7 +7,23 @@ import {
 import {
   extractCountmeMetrics,
   extractLeaderboardHeroes,
+  FACTORY_LANES,
+  fetchFactoryMonthlyStats,
 } from "./lib/factory-monthly-metrics.mjs";
+import { REPORT_PORTFOLIO } from "./lib/report-portfolio.mjs";
+
+function apiRun(overrides = {}) {
+  return {
+    path: ".github/workflows/build-image-testing.yml",
+    event: "push",
+    status: "completed",
+    conclusion: "success",
+    run_started_at: "2026-10-10T10:00:00Z",
+    created_at: "2026-10-10T10:00:00Z",
+    updated_at: "2026-10-10T10:10:00Z",
+    ...overrides,
+  };
+}
 
 test("getReportSlug generates dinosaur slug correctly", () => {
   const augDate = new Date("2026-08-01T00:00:00Z");
@@ -159,4 +175,80 @@ test("extractCountmeMetrics returns null or data without throwing", () => {
     assert.ok(typeof metrics.currentTotal === "number");
     assert.ok(Array.isArray(metrics.historyPoints));
   }
+});
+
+test("FACTORY_LANES contains only portfolio entries configured for lanes", () => {
+  assert.deepEqual(
+    FACTORY_LANES.map((lane) => lane.repo),
+    REPORT_PORTFOLIO.filter((entry) => entry.signals.includes("lanes")).map(
+      (entry) => entry.repository,
+    ),
+  );
+});
+
+test("a failed configured lane remains visible with null measurements", async () => {
+  const failedRepository = FACTORY_LANES[1].repo;
+  const result = await fetchFactoryMonthlyStats(
+    new Date("2026-10-01T00:00:00Z"),
+    new Date("2026-10-31T23:59:59Z"),
+    async (url) => {
+      if (url.includes(failedRepository)) {
+        return { ok: false, status: 503 };
+      }
+      return {
+        ok: true,
+        async json() {
+          return { workflow_runs: [] };
+        },
+      };
+    },
+  );
+
+  assert.deepEqual(
+    result.lanes.map((lane) => lane.repo),
+    FACTORY_LANES.map((lane) => lane.repo),
+  );
+  const failedLane = result.lanes.find(
+    (lane) => lane.repo === failedRepository,
+  );
+  assert.equal(failedLane.total, null);
+  assert.equal(failedLane.passed, null);
+  assert.equal(failedLane.failed, null);
+  assert.equal(failedLane.pending, null);
+  assert.equal(failedLane.successRate, null);
+  assert.equal(failedLane.medianDurationMin, null);
+  assert.match(failedLane.unavailableReason, /503/);
+});
+
+test("in-flight publishing runs are pending and never failed", async () => {
+  const runs = [
+    apiRun(),
+    apiRun({
+      conclusion: "failure",
+      updated_at: "2026-10-10T10:20:00Z",
+    }),
+    apiRun({
+      status: "in_progress",
+      conclusion: null,
+      updated_at: undefined,
+    }),
+  ];
+  const result = await fetchFactoryMonthlyStats(
+    new Date("2026-10-01T00:00:00Z"),
+    new Date("2026-10-31T23:59:59Z"),
+    async () => ({
+      ok: true,
+      async json() {
+        return { workflow_runs: runs };
+      },
+    }),
+  );
+
+  const lane = result.lanes[0];
+  assert.equal(lane.total, 3);
+  assert.equal(lane.passed, 1);
+  assert.equal(lane.failed, 1);
+  assert.equal(lane.pending, 1);
+  assert.equal(lane.successRate, 50);
+  assert.equal(lane.medianDurationMin, 15);
 });

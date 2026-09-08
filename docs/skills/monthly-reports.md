@@ -73,7 +73,6 @@ zero-dependency SSR React infogram.
    - `<ReportAutomationStats>`: Factory autonomous vs human PR breakdown.
    - `<ReportDoraCadence>`: Deployment cadence and velocity indicators.
 
-
 5. **Verify build and tests:**
    ```bash
    npm test
@@ -81,6 +80,21 @@ zero-dependency SSR React infogram.
    npm run lint
    npm run build:ci
    ```
+
+## Public-source adapter invariants
+
+- Report adapters use original public GitHub endpoints only. A source record
+  includes its public API URL and the exact report measurement window, whether
+  the request is available or unavailable.
+- Release events contain release metadata only; never copy release bodies into
+  an immutable report snapshot.
+- Every configured publishing lane remains in the result. A failed lane keeps
+  its identity and reason while its measurements are `null`, not zero.
+- Workflow runs without a terminal verdict are `pending`, not failed, and are
+  excluded from the success-rate denominator.
+- Activity aggregation skips missing repository and category values instead of
+  creating `"undefined"` buckets. Add adapter tests before implementation and
+  observe the expected red test run before writing production code.
 
 ## Common Rationalizations
 

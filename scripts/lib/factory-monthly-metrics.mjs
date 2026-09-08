@@ -15,6 +15,7 @@ import {
   median,
   successRate,
 } from "../fetch-factory-stats.js";
+import { REPORT_PORTFOLIO } from "./report-portfolio.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const COUNTME_PATH = resolve(
@@ -24,23 +25,119 @@ const COUNTME_PATH = resolve(
 
 const GH_API = "https://api.github.com";
 
-const FACTORY_LANES = [
-  {
-    id: "bluefin-testing",
-    label: "Bluefin Testing",
-    repo: "projectbluefin/bluefin",
-  },
-  {
-    id: "bluefin-lts",
-    label: "Bluefin LTS",
-    repo: "projectbluefin/bluefin-lts",
-  },
-  {
-    id: "dakota",
-    label: "Dakota",
-    repo: "projectbluefin/dakota",
-  },
-];
+const LANE_LABELS = {
+  "projectbluefin/bluefin": "Bluefin Testing",
+  "projectbluefin/bluefin-lts": "Bluefin LTS",
+  "projectbluefin/dakota": "Dakota",
+};
+
+function laneId(repository) {
+  const name = repository.split("/").pop();
+  return name === "bluefin" ? "bluefin-testing" : name;
+}
+
+export const FACTORY_LANES = REPORT_PORTFOLIO.filter((entry) =>
+  entry.signals?.includes("lanes"),
+).map((entry) => ({
+  id: laneId(entry.repository),
+  label:
+    LANE_LABELS[entry.repository] ??
+    entry.repository
+      .split("/")
+      .pop()
+      .replace(
+        /(^|-)([a-z])/g,
+        (_, separator, letter) =>
+          `${separator === "-" ? " " : ""}${letter.toUpperCase()}`,
+      ),
+  repo: entry.repository,
+}));
+
+async function fetchLaneRuns(lane, startISO, endISO, fetchImpl, headers) {
+  const runs = [];
+  for (let page = 1; page <= 5; page += 1) {
+    const url = `${GH_API}/repos/${lane.repo}/actions/runs?per_page=100&page=${page}&created=${encodeURIComponent(`${startISO}..${endISO}`)}`;
+    const response = await fetchImpl(url, {
+      headers,
+      signal: AbortSignal.timeout(15000),
+    });
+    if (!response?.ok) {
+      throw new Error(`HTTP ${response?.status ?? "unknown"} for ${lane.repo}`);
+    }
+    const data = await response.json();
+    const batch = data.workflow_runs ?? [];
+    runs.push(...batch);
+    if (batch.length < 100) break;
+  }
+  return runs;
+}
+
+function buildLaneMetrics(lane, runs, startMs, endMs) {
+  const publishRuns = (runs ?? []).filter((run) => {
+    const created = Date.parse(run.run_started_at ?? run.created_at ?? "");
+    return (
+      Number.isFinite(created) &&
+      created >= startMs &&
+      created <= endMs &&
+      isPublishRun(run)
+    );
+  });
+
+  const classified = publishRuns.map((run) => ({
+    run,
+    status: classifyRun(run),
+  }));
+  const passed = classified.filter(({ status }) => status === "passed").length;
+  const failed = classified.filter(({ status }) => status === "failed").length;
+  const pending = classified.filter(
+    ({ status }) => status === "running",
+  ).length;
+  const durations = classified
+    .filter(({ status }) => status !== "running")
+    .map(({ run }) => runDurationMin(run))
+    .filter(
+      (duration) => typeof duration === "number" && Number.isFinite(duration),
+    );
+
+  const dailyCounts = {};
+  for (const run of publishRuns) {
+    const day = (run.run_started_at ?? run.created_at ?? "").slice(0, 10);
+    if (day) dailyCounts[day] = (dailyCounts[day] ?? 0) + 1;
+  }
+  const sparklineData = Object.keys(dailyCounts)
+    .sort()
+    .map((day) => dailyCounts[day]);
+
+  return {
+    id: lane.id,
+    label: lane.label,
+    repo: lane.repo,
+    total: publishRuns.length,
+    passed,
+    failed,
+    pending,
+    successRate: successRate(passed, failed),
+    medianDurationMin: median(durations),
+    sparklineData: sparklineData.length > 1 ? sparklineData : [passed, failed],
+    unavailableReason: null,
+  };
+}
+
+function unavailableLane(lane, reason) {
+  return {
+    id: lane.id,
+    label: lane.label,
+    repo: lane.repo,
+    total: null,
+    passed: null,
+    failed: null,
+    pending: null,
+    successRate: null,
+    medianDurationMin: null,
+    sparklineData: null,
+    unavailableReason: reason,
+  };
+}
 
 /**
  * Fetch factory publishing lane statistics for a date window
@@ -49,7 +146,11 @@ const FACTORY_LANES = [
  * @param {Date} endDate
  * @returns {Promise<{lanes: Array, totals: Object}>}
  */
-export async function fetchFactoryMonthlyStats(startDate, endDate) {
+export async function fetchFactoryMonthlyStats(
+  startDate,
+  endDate,
+  fetchImpl = globalThis.fetch,
+) {
   const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN || "";
   const headers = {
     Accept: "application/vnd.github.v3+json",
@@ -62,85 +163,35 @@ export async function fetchFactoryMonthlyStats(startDate, endDate) {
   const startMs = startDate.getTime();
   const endMs = endDate.getTime();
 
-  const laneResults = [];
-
-  for (const lane of FACTORY_LANES) {
-    let runs = [];
-    try {
-      for (let page = 1; page <= 5; page++) {
-        const url = `${GH_API}/repos/${lane.repo}/actions/runs?per_page=100&page=${page}&created=${encodeURIComponent(`${startISO}..${endISO}`)}`;
-        const res = await fetch(url, {
+  const laneResults = await Promise.all(
+    FACTORY_LANES.map(async (lane) => {
+      try {
+        const runs = await fetchLaneRuns(
+          lane,
+          startISO,
+          endISO,
+          fetchImpl,
           headers,
-          signal: AbortSignal.timeout(15000),
-        });
-        if (!res.ok) {
-          console.warn(`[factory-metrics] HTTP ${res.status} for ${lane.repo}`);
-          break;
-        }
-        const data = await res.json();
-        const batch = data.workflow_runs ?? [];
-        runs.push(...batch);
-        if (batch.length < 100) break;
+        );
+        return buildLaneMetrics(lane, runs, startMs, endMs);
+      } catch (error) {
+        const reason = error instanceof Error ? error.message : String(error);
+        console.warn(`[factory-metrics] ${lane.repo} unavailable — ${reason}`);
+        return unavailableLane(lane, reason);
       }
-    } catch (err) {
-      console.warn(
-        `[factory-metrics] Failed fetching runs for ${lane.repo}: ${err.message}`,
-      );
-    }
+    }),
+  );
 
-    const publishRuns = runs.filter((r) => {
-      const created = Date.parse(r.run_started_at ?? r.created_at ?? "");
-      return created >= startMs && created <= endMs && isPublishRun(r);
-    });
-
-    const passed = publishRuns.filter(
-      (r) => classifyRun(r) === "passed",
-    ).length;
-    const failed = publishRuns.filter(
-      (r) => classifyRun(r) === "failed",
-    ).length;
-    const running = publishRuns.filter(
-      (r) => classifyRun(r) === "running",
-    ).length;
-    const total = publishRuns.length;
-    const rate = successRate(passed, failed);
-
-    const durations = publishRuns
-      .map(runDurationMin)
-      .filter((d) => typeof d === "number" && Number.isFinite(d));
-    const medianDur = median(durations);
-
-    // Group runs by day to create a sparkline data array
-    const dailyCounts = {};
-    publishRuns.forEach((r) => {
-      const day = (r.run_started_at ?? r.created_at ?? "").slice(0, 10);
-      if (day) {
-        dailyCounts[day] = (dailyCounts[day] || 0) + 1;
-      }
-    });
-
-    const sparklineData = Object.keys(dailyCounts)
-      .sort()
-      .map((d) => dailyCounts[d]);
-
-    laneResults.push({
-      id: lane.id,
-      label: lane.label,
-      repo: lane.repo,
-      total,
-      passed,
-      failed,
-      running,
-      successRate: rate,
-      medianDurationMin: medianDur,
-      sparklineData:
-        sparklineData.length > 1 ? sparklineData : [passed, failed],
-    });
-  }
-
-  const allPassed = laneResults.reduce((sum, l) => sum + l.passed, 0);
-  const allFailed = laneResults.reduce((sum, l) => sum + l.failed, 0);
-  const allTotal = laneResults.reduce((sum, l) => sum + l.total, 0);
+  const availableLanes = laneResults.filter(
+    (lane) => lane.unavailableReason === null,
+  );
+  const allPassed = availableLanes.reduce((sum, lane) => sum + lane.passed, 0);
+  const allFailed = availableLanes.reduce((sum, lane) => sum + lane.failed, 0);
+  const allPending = availableLanes.reduce(
+    (sum, lane) => sum + lane.pending,
+    0,
+  );
+  const allTotal = availableLanes.reduce((sum, lane) => sum + lane.total, 0);
   const overallRate = successRate(allPassed, allFailed);
 
   return {
@@ -149,6 +200,7 @@ export async function fetchFactoryMonthlyStats(startDate, endDate) {
       totalRuns: allTotal,
       passed: allPassed,
       failed: allFailed,
+      pending: allPending,
       successRate: overallRate,
     },
   };
