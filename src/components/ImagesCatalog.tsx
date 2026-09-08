@@ -58,6 +58,7 @@ interface Product {
   summary: string;
   artwork: "bluefin" | "achillobator" | "dakotaraptor";
   supportedArches?: string[] | null;
+  imageRef?: string;
   downloads?: {
     display: string;
     source: "live" | "cache" | "unavailable";
@@ -94,6 +95,7 @@ interface Product {
     sbomCommand?: string | null;
   } | null;
   lastPublishedAt?: string | null;
+  imagePublished?: boolean;
 }
 
 interface ImagesCatalog {
@@ -341,6 +343,7 @@ export default function ImagesCatalogComponent({
         const releaseUrl = assetsLink(product.versions?.release?.url);
         const lastValidated = formatDate(catalog.generatedAt || null);
         const lastPublished = formatDate(product.lastPublishedAt || null);
+        const isAwaitingInitialRelease = product.imagePublished === false;
         const hasNvidiaVariant =
           product.streams.some((entry) => Boolean(entry.nvidiaCommand)) ||
           product.testingStreams.some((entry) => Boolean(entry.nvidiaCommand));
@@ -484,7 +487,13 @@ export default function ImagesCatalogComponent({
                 )}
               </div>
 
-              {product.streams.length > 0 ? (
+              {isAwaitingInitialRelease ? (
+                <p className={styles.emptyText}>
+                  Awaiting initial release: no image has been published to{" "}
+                  <code>{product.imageRef}</code> yet. Switch commands will
+                  appear here once the first build ships.
+                </p>
+              ) : product.streams.length > 0 ? (
                 <Tabs
                   groupId={`streams-${product.id}`}
                   values={product.streams.map((entry) => ({
@@ -532,15 +541,17 @@ export default function ImagesCatalogComponent({
                 <p className={styles.emptyText}>No active tags.</p>
               )}
 
-              <details className={styles.testingDetails}>
-                <summary>
-                  Testing Branches ({product.testingStreams.length})
-                </summary>
-                <StreamList
-                  streams={product.testingStreams}
-                  preferNvidia={nvidiaEnabled}
-                />
-              </details>
+              {!isAwaitingInitialRelease && (
+                <details className={styles.testingDetails}>
+                  <summary>
+                    Testing Branches ({product.testingStreams.length})
+                  </summary>
+                  <StreamList
+                    streams={product.testingStreams}
+                    preferNvidia={nvidiaEnabled}
+                  />
+                </details>
+              )}
             </section>
 
             <section
@@ -549,91 +560,106 @@ export default function ImagesCatalogComponent({
               <Heading as="h3" className={styles.sectionTitle}>
                 Signing and SBOM
               </Heading>
-              {product.security?.cosignKeyUrl ? (
+              {isAwaitingInitialRelease ? (
                 <p className={styles.securityText}>
-                  Key: <code>{product.security.cosignKeyUrl}</code>
+                  Signing, provenance, and SBOM commands will appear here once{" "}
+                  <code>{product.imageRef}</code> has a published image to
+                  verify.
                 </p>
               ) : (
-                <p className={styles.securityText}>
-                  No published cosign key URL in this catalog.
-                </p>
-              )}
+                <>
+                  {product.security?.cosignKeyUrl ? (
+                    <p className={styles.securityText}>
+                      Key: <code>{product.security.cosignKeyUrl}</code>
+                    </p>
+                  ) : (
+                    <p className={styles.securityText}>
+                      No published cosign key URL in this catalog.
+                    </p>
+                  )}
 
-              <Tabs
-                groupId={`security-${product.id}`}
-                values={[
-                  { label: "Verify Signature", value: "verify-signature" },
-                  { label: "Verify Provenance", value: "verify-provenance" },
-                  { label: "Inspect SBOM", value: "generate-sbom" },
-                ]}
-              >
-                <TabItem value="verify-signature">
-                  <p className={styles.tabCopy}>
-                    Signature verification confirms this image was signed by the
-                    expected maintainers and helps detect tampering before
-                    deployment.{" "}
-                    <Link
-                      to="https://docs.sigstore.dev/cosign/verifying/verify/"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Learn more
-                    </Link>
-                    .
-                  </p>
-                  {product.security?.verifyCommand && (
-                    <CodeBlock language="bash">
-                      {product.security.verifyCommand}
-                    </CodeBlock>
-                  )}
-                </TabItem>
-                <TabItem value="verify-provenance">
-                  <p className={styles.tabCopy}>
-                    Provenance attestation lets you validate how the image was
-                    built in CI so you can make trust decisions from evidence.{" "}
-                    <Link
-                      to="https://slsa.dev/"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Learn more
-                    </Link>
-                    .
-                  </p>
-                  {product.security?.attestCommand && (
-                    <CodeBlock language="bash">
-                      {product.security.attestCommand}
-                    </CodeBlock>
-                  )}
-                  {product.security?.attestCommand &&
-                    product.security.hasAttestation === false && (
+                  <Tabs
+                    groupId={`security-${product.id}`}
+                    values={[
+                      { label: "Verify Signature", value: "verify-signature" },
+                      {
+                        label: "Verify Provenance",
+                        value: "verify-provenance",
+                      },
+                      { label: "Inspect SBOM", value: "generate-sbom" },
+                    ]}
+                  >
+                    <TabItem value="verify-signature">
                       <p className={styles.tabCopy}>
-                        Note: attestations are not yet published for this image.
-                        The command is provided for when they are.
+                        Signature verification confirms this image was signed by
+                        the expected maintainers and helps detect tampering
+                        before deployment.{" "}
+                        <Link
+                          to="https://docs.sigstore.dev/cosign/verifying/verify/"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Learn more
+                        </Link>
+                        .
                       </p>
-                    )}
-                </TabItem>
-                <TabItem value="generate-sbom">
-                  <p className={styles.tabCopy}>
-                    SBOMs are published alongside each image as OCI referrers.
-                    Use oras to inspect attached artifacts and pull the SBOM for
-                    audits, policy checks, and vulnerability triage.{" "}
-                    <Link
-                      to="https://oras.land/docs/"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Learn more
-                    </Link>
-                    .
-                  </p>
-                  {product.security?.sbomCommand && (
-                    <CodeBlock language="bash">
-                      {product.security.sbomCommand}
-                    </CodeBlock>
-                  )}
-                </TabItem>
-              </Tabs>
+                      {product.security?.verifyCommand && (
+                        <CodeBlock language="bash">
+                          {product.security.verifyCommand}
+                        </CodeBlock>
+                      )}
+                    </TabItem>
+                    <TabItem value="verify-provenance">
+                      <p className={styles.tabCopy}>
+                        Provenance attestation lets you validate how the image
+                        was built in CI so you can make trust decisions from
+                        evidence.{" "}
+                        <Link
+                          to="https://slsa.dev/"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Learn more
+                        </Link>
+                        .
+                      </p>
+                      {product.security?.attestCommand && (
+                        <CodeBlock language="bash">
+                          {product.security.attestCommand}
+                        </CodeBlock>
+                      )}
+                      {product.security?.attestCommand &&
+                        product.security.hasAttestation === false && (
+                          <p className={styles.tabCopy}>
+                            Note: attestations are not yet published for this
+                            image. The command is provided for when they are.
+                          </p>
+                        )}
+                    </TabItem>
+                    <TabItem value="generate-sbom">
+                      <p className={styles.tabCopy}>
+                        SBOMs are published alongside each image as OCI
+                        referrers. Use oras to inspect attached artifacts and
+                        pull the SBOM for audits, policy checks, and
+                        vulnerability triage.{" "}
+                        <Link
+                          to="https://oras.land/docs/"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Learn more
+                        </Link>
+                        .
+                      </p>
+                      {product.security?.sbomCommand && (
+                        <CodeBlock language="bash">
+                          {product.security.sbomCommand}
+                        </CodeBlock>
+                      )}
+                    </TabItem>
+                  </Tabs>
+                </>
+              )}
             </section>
           </article>
         );
