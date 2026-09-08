@@ -5,6 +5,7 @@ const path = require("path");
 const {
   buildExtensionRecord,
   isStale,
+  unavailablePayload,
 } = require("./fetch-gnome-extensions.js");
 
 test("buildExtensionRecord normalizes remote GNOME extension fields", () => {
@@ -40,4 +41,11 @@ test("isStale returns true when the cache file does not exist", () => {
     isStale(path.join(__dirname, "..", "static", "data", "missing-gnome-extensions.json")),
     true,
   );
+});
+
+test("unavailablePayload emits the documented unavailable-object shape", () => {
+  assert.deepEqual(unavailablePayload("All GNOME extension fetches failed"), {
+    unavailable: true,
+    stateReason: "All GNOME extension fetches failed",
+  });
 });
