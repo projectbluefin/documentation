@@ -187,7 +187,7 @@ import {
 } from '@site/src/components/reports';
 import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
 
-const snapshot = ${JSON.stringify(snapshot, null, 2)};
+export const snapshot = ${JSON.stringify(snapshot, null, 2)};
 
 # Summary
 

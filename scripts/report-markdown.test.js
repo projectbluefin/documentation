@@ -89,6 +89,7 @@ test("the report MDX embeds one immutable version-two snapshot", async () => {
   });
 
   assert.match(markdown, /tags: \[monthly-report/);
+  assert.match(markdown, /export const snapshot = \{/);
   assert.match(markdown, /schemaVersion/);
   assert.match(markdown, /ReportDelivery/);
   assert.match(markdown, /\/changelogs/);
