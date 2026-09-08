@@ -10,6 +10,12 @@ const RELEASE_ENTRY = {
 };
 const RELEASES_URL =
   "https://api.github.com/repos/projectbluefin/bluefin/releases";
+const SECOND_RELEASE_ENTRY = {
+  repository: "projectbluefin/dakota",
+  signals: ["activity", "releases"],
+};
+const SECOND_RELEASES_URL =
+  "https://api.github.com/repos/projectbluefin/dakota/releases";
 
 test("fetchReleaseEvents returns public release metadata with available provenance", async () => {
   const result = await fetchReleaseEvents(
@@ -56,11 +62,16 @@ test("fetchReleaseEvents returns public release metadata with available provenan
     },
   ]);
   assert.equal(result.events[0].body, undefined);
-  assert.equal(result.source.id, "github-releases");
-  assert.equal(result.source.status, "available");
-  assert.equal(result.source.stateReason, null);
-  assert.equal(result.source.url, RELEASES_URL);
-  assert.deepEqual(result.source.window, PERIOD);
+  assert.deepEqual(result.sources, [
+    {
+      id: "github-releases",
+      repository: RELEASE_ENTRY.repository,
+      status: "available",
+      stateReason: null,
+      url: RELEASES_URL,
+      window: PERIOD,
+    },
+  ]);
 });
 
 test("fetchReleaseEvents retains unavailable source provenance", async () => {
@@ -74,9 +85,52 @@ test("fetchReleaseEvents retains unavailable source provenance", async () => {
   );
 
   assert.deepEqual(result.events, []);
-  assert.equal(result.source.id, "github-releases");
-  assert.equal(result.source.status, "unavailable");
-  assert.match(result.source.stateReason, /503/);
-  assert.equal(result.source.url, RELEASES_URL);
-  assert.deepEqual(result.source.window, PERIOD);
+  assert.deepEqual(result.sources, [
+    {
+      id: "github-releases",
+      repository: RELEASE_ENTRY.repository,
+      status: "unavailable",
+      stateReason: "HTTP 503",
+      url: RELEASES_URL,
+      window: PERIOD,
+    },
+  ]);
+});
+
+test("fetchReleaseEvents preserves provenance for each release-enabled repository", async () => {
+  const result = await fetchReleaseEvents(
+    [RELEASE_ENTRY, SECOND_RELEASE_ENTRY],
+    PERIOD,
+    async (url) => {
+      if (url === RELEASES_URL) {
+        return {
+          ok: true,
+          async json() {
+            return [];
+          },
+        };
+      }
+      assert.equal(url, SECOND_RELEASES_URL);
+      return { ok: false, status: 503 };
+    },
+  );
+
+  assert.deepEqual(result.sources, [
+    {
+      id: "github-releases",
+      repository: "projectbluefin/bluefin",
+      status: "available",
+      stateReason: null,
+      url: RELEASES_URL,
+      window: PERIOD,
+    },
+    {
+      id: "github-releases",
+      repository: "projectbluefin/dakota",
+      status: "unavailable",
+      stateReason: "HTTP 503",
+      url: SECOND_RELEASES_URL,
+      window: PERIOD,
+    },
+  ]);
 });

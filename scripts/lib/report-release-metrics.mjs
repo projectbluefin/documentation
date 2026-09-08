@@ -32,9 +32,10 @@ function inReportWindow(publishedAt, period) {
   );
 }
 
-function unavailableSource(period, url, stateReason) {
+function unavailableSource(repository, period, url, stateReason) {
   return {
     id: "github-releases",
+    ...(repository ? { repository } : {}),
     status: "unavailable",
     stateReason,
     url,
@@ -42,9 +43,10 @@ function unavailableSource(period, url, stateReason) {
   };
 }
 
-function availableSource(period, url) {
+function availableSource(repository, period, url) {
   return {
     id: "github-releases",
+    ...(repository ? { repository } : {}),
     status: "available",
     stateReason: null,
     url,
@@ -73,16 +75,10 @@ function normalizeRelease(repository, release, period) {
  *
  * @param {Array<{repository: string, url: string, releases?: Array, unavailableReason?: string}>} responses
  * @param {{start: string, end: string}} period
- * @returns {{events: Array, source: object}}
+ * @returns {{events: Array, sources: Array}}
  */
 export function normalizeReleaseEvents(responses, period) {
   const entries = responses ?? [];
-  const sourceUrls = entries.map((entry) => entry.url).filter(Boolean);
-  const sourceUrl =
-    sourceUrls.length === 1 ? sourceUrls[0] : `${GITHUB_API}/repos`;
-  const failures = entries
-    .map((entry) => entry.unavailableReason)
-    .filter((reason) => typeof reason === "string" && reason.length > 0);
   const successful = entries.filter(
     (entry) => !entry.unavailableReason && Array.isArray(entry.releases),
   );
@@ -93,20 +89,30 @@ export function normalizeReleaseEvents(responses, period) {
       .filter(Boolean),
   );
 
-  let source;
+  let sources;
   if (entries.length === 0) {
-    source = unavailableSource(
-      period,
-      sourceUrl,
-      "No configured public GitHub release source",
-    );
-  } else if (failures.length > 0) {
-    source = unavailableSource(period, sourceUrl, failures.join("; "));
+    sources = [
+      unavailableSource(
+        null,
+        period,
+        `${GITHUB_API}/repos`,
+        "No configured public GitHub release source",
+      ),
+    ];
   } else {
-    source = availableSource(period, sourceUrl);
+    sources = entries.map((entry) =>
+      entry.unavailableReason
+        ? unavailableSource(
+            entry.repository,
+            period,
+            entry.url,
+            entry.unavailableReason,
+          )
+        : availableSource(entry.repository, period, entry.url),
+    );
   }
 
-  return { events, source };
+  return { events, sources };
 }
 
 export async function fetchReleaseEvents(
