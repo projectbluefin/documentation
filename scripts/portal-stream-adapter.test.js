@@ -286,3 +286,78 @@ test("stream adapter selects intended stream by tag/id regardless of stream arra
   const kernelRow = dakotaRows.find((r) => r.label === "Kernel");
   assert.equal(kernelRow?.value, "7.0.7");
 });
+
+test("findImageStream requires exact canonical tag without label or first-stream fallback", () => {
+  const { findImageStream } = loadTsModule(adapterPath);
+
+  // Absence: only label matching, tag missing
+  const onlyLabel = {
+    streams: [{ label: "stable", versions: { gnome: "50.0" } }],
+  };
+  assert.equal(
+    findImageStream(onlyLabel, "stable"),
+    undefined,
+    "matching label without canonical tag must return undefined",
+  );
+
+  // Absence: different tag, no fallback to first stream
+  const onlyTesting = {
+    streams: [{ tag: "testing", versions: { gnome: "999.0" } }],
+  };
+  assert.equal(
+    findImageStream(onlyTesting, "stable"),
+    undefined,
+    "missing canonical tag must not fall back to first stream",
+  );
+
+  // Out-of-order: exact canonical tag selected even if later in array
+  const outOfOrder = {
+    streams: [
+      { tag: "beta", versions: { gnome: "51.0" } },
+      { tag: "stable", versions: { gnome: "50.1" } },
+      { tag: "alpha", versions: { gnome: "52.0" } },
+    ],
+  };
+  const matched = findImageStream(outOfOrder, "stable");
+  assert.ok(matched);
+  assert.equal(matched.tag, "stable");
+  assert.equal(matched.versions?.gnome, "50.1");
+});
+
+test("missing canonical stable tag makes stream unavailable even if driver versions exist", () => {
+  const { adaptStreams } = loadTsModule(adapterPath);
+
+  // Product has only 'testing' stream; driver stream has 'bluefin-stable' versions
+  const missingStableImages = {
+    products: [
+      {
+        id: "projectbluefin-bluefin",
+        streams: [
+          {
+            tag: "testing",
+            label: "Stable", // label deceptively says Stable, but tag is testing
+            versions: { gnome: "999.0", kernel: "999.0" },
+          },
+        ],
+      },
+    ],
+  };
+  const driverData = {
+    streams: [
+      {
+        id: "bluefin-stable",
+        latest: { versions: { kernel: "7.0.8", gnome: "50.1" } },
+      },
+    ],
+  };
+
+  const catalog = adaptStreams(missingStableImages, driverData);
+
+  assert.equal(
+    catalog.streams.stable.available,
+    false,
+    "missing exact canonical stable tag must make stream unavailable",
+  );
+  assert.equal(catalog.streams.stable.unavailableReason, "Will return");
+  assert.equal(catalog.streams.stable.versions, undefined);
+});

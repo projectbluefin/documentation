@@ -111,7 +111,7 @@ test("product card renders link, title, image, and version rows", () => {
   assert.ok(html.includes("50.2"));
 });
 
-test("product card renders external wolves link safely", () => {
+test("product card renders external wolves link safely with explicit noopener noreferrer", () => {
   const PortalProductCard = loadModule(componentPath).default;
   const html = renderToStaticMarkup(
     React.createElement(PortalProductCard, {
@@ -122,6 +122,8 @@ test("product card renders external wolves link safely", () => {
   );
 
   assert.match(html, /<a[^>]*href="https:\/\/projectbluefin\.io\/wolves\/"/);
+  assert.match(html, /target="_blank"/);
+  assert.match(html, /rel="noopener noreferrer"/);
   assert.ok(html.includes("Seven Days to the Wolves"));
 });
 
@@ -210,5 +212,40 @@ test("product card omits versionInfo block when versionRows is empty or undefine
   assert.ok(
     !htmlUndefined.includes("versionInfo"),
     "undefined versionRows must not render versionInfo",
+  );
+});
+
+test("product card scoped CSS implements resilient min-height/auto and reduced-motion suppression", () => {
+  const cssPath = path.join(
+    root,
+    "src",
+    "components",
+    "portal",
+    "PortalSectionPicker.module.css",
+  );
+  const css = fs.readFileSync(cssPath, "utf8");
+
+  // Resilient height under text zoom
+  assert.match(
+    css,
+    /\.cardBox\s*\{[^}]*min-height:\s*400px;[^}]*height:\s*auto;/s,
+    "cardBox must use min-height and height:auto for resilience under text zoom",
+  );
+  assert.match(
+    css,
+    /\.cardOverlay\s*\{[^}]*position:\s*relative;[^}]*min-height:\s*400px;/s,
+    "cardOverlay must be relative with min-height so content expands without clipping",
+  );
+
+  // Reduced-motion suppression
+  assert.match(
+    css,
+    /@media \(prefers-reduced-motion:\s*reduce\)\s*\{[^}]*\.cardBox[^}]*transition:\s*none\s*!important/s,
+    "reduced-motion must suppress card transitions",
+  );
+  assert.match(
+    css,
+    /@media \(prefers-reduced-motion:\s*reduce\)\s*\{[^}]*\.cardBox:hover[^}]*transform:\s*none\s*!important/s,
+    "reduced-motion must suppress card hover transform",
   );
 });

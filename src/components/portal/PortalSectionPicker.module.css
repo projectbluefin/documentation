@@ -1,8 +1,9 @@
 .cardBox {
   position: relative;
-  display: block;
+  display: flex;
+  flex-direction: column;
   min-height: 400px;
-  height: 100%;
+  height: auto;
   border-radius: 12px;
   overflow: hidden;
   border: 2px solid rgba(59, 130, 246, 0.25);
@@ -23,22 +24,26 @@
 .cardCenter {
   border-color: rgba(59, 130, 246, 0.6);
   box-shadow: 0 0 24px rgba(59, 130, 246, 0.35);
-  filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.45));
 }
 
 .cardImage {
   width: 100%;
-  height: 100%;
+  flex: 1 1 auto;
   min-height: 400px;
+  height: auto;
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 .cardOverlay {
-  position: absolute;
-  inset: 0;
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 400px;
+  height: auto;
   background: linear-gradient(
     to bottom,
     rgba(0, 0, 0, 0.15) 0%,
@@ -51,7 +56,6 @@
   padding: 15px;
   color: #f3f4f6;
   border-radius: 12px;
-  overflow-y: auto;
 }
 
 .cardTitle {
@@ -162,7 +166,7 @@
 .releaseBox {
   position: relative;
   min-height: 400px;
-  height: 100%;
+  height: auto;
   border-radius: 12px;
   overflow: hidden;
   cursor: pointer;
@@ -196,7 +200,7 @@
 
 .releaseImage {
   width: 100%;
-  height: 100%;
+  height: auto;
   min-height: 400px;
   background-size: contain;
   background-position: center;
@@ -206,11 +210,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
 }
 
 .releaseOverlay {
-  position: absolute;
-  inset: 0;
+  position: relative;
+  width: 100%;
+  min-height: 400px;
+  height: auto;
   background: linear-gradient(
     to bottom,
     rgba(0, 0, 0, 0.2) 0%,
@@ -594,9 +601,28 @@
   background-color: #2563eb;
 }
 
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.stepHeader h3:focus,
+.releaseTitle:focus {
+  outline: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .cardBox,
+  .cardBox:hover,
   .releaseBox,
+  .releaseBox:hover,
   .backButton,
   .optionButton,
   .downloadButton,
@@ -733,6 +759,7 @@
   background: #3b82f6;
   box-shadow: 0 0 16px rgba(59, 130, 246, 0.45);
   pointer-events: none;
+  transform: translateY(-50%);
 }
 
 .wolvesCampaignGrid {
@@ -751,5 +778,6 @@
     inset: 0 auto 0 50%;
     width: 2px;
     height: auto;
+    transform: translateX(-50%);
   }
 }

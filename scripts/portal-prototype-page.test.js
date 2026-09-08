@@ -159,3 +159,13 @@ test("scoped CSS clips artwork and defines mobile and reduced-motion paths", () 
   assert.ok(!css.includes("html {"));
   assert.ok(!css.includes(":root {"));
 });
+
+test("portal prototype preserves downstream live-section insertion seam comment", () => {
+  const componentSource = fs.readFileSync(componentPath, "utf8");
+  assert.ok(
+    componentSource.includes(
+      "Downstream insertion seam: Subproject 3 (PortalFlock, PortalContributors, PortalNews) mounts here between Community and Footer",
+    ),
+    "insertion seam comment between Community and Footer must be preserved",
+  );
+});

@@ -7,6 +7,8 @@ export interface PortalProductCardProps {
   description?: string;
   image: string;
   href?: string;
+  target?: string;
+  rel?: string;
   badgeTitle?: string;
   badgeSub?: string;
   versionRows?: ProductVersionRow[];
@@ -18,6 +20,8 @@ export default function PortalProductCard({
   description,
   image,
   href,
+  target,
+  rel,
   badgeTitle,
   badgeSub,
   versionRows,
@@ -63,8 +67,15 @@ export default function PortalProductCard({
   );
 
   if (href) {
+    const isExternal = /^https?:\/\//.test(href);
     return (
-      <a className={cardClassName} href={href}>
+      <a
+        className={cardClassName}
+        href={href}
+        {...(isExternal
+          ? { target: target ?? "_blank", rel: rel ?? "noopener noreferrer" }
+          : { target, rel })}
+      >
         {content}
       </a>
     );

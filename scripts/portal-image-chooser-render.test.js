@@ -281,9 +281,245 @@ test("image chooser renders download step with exact ISO and checksum URLs and d
   assert.ok(html.includes("Choose a different release"));
 });
 
-test("scoped CSS provides reduced-motion and resilient container rules", () => {
+test("scoped CSS provides reduced-motion, resilient container rules, and accessible srOnly utility", () => {
   const css = fs.readFileSync(cssPath, "utf8");
 
   assert.match(css, /@media\s*\(\s*prefers-reduced-motion:\s*reduce\s*\)/);
   assert.match(css, /\.releaseBox\s*\{[^}]*min-height/s);
+  assert.match(css, /\.srOnly\s*\{[^}]*position:\s*absolute/s);
+});
+
+test("image chooser exposes polite live-region step announcement and tabindex=-1 on headings across all steps", () => {
+  const { adaptStreams } = loadModule(adapterPath);
+  const chooserModule = loadModule(chooserPath);
+  const PortalImageChooser = chooserModule.default;
+  const catalog = adaptStreams(imagesData, driverVersionsData);
+
+  // Release step
+  const htmlRelease = renderToStaticMarkup(
+    React.createElement(PortalImageChooser, { catalog }),
+  );
+  assert.match(
+    htmlRelease,
+    /<div[^>]*aria-live="polite"[^>]*aria-atomic="true"[^>]*role="status"[^>]*>/,
+    "live-region must be present with aria-live=polite and aria-atomic=true",
+  );
+  assert.ok(
+    htmlRelease.includes("Step 1: Choose a Bluefin release."),
+    "live-region must announce release step",
+  );
+  assert.match(
+    htmlRelease,
+    /<h3[^>]*tabindex="-1"[^>]*class="[^"]*releaseTitle[^"]*"[^>]*>Bluefin<\/h3>/,
+    "release title heading must have tabindex=-1 for accessible programmatic focus",
+  );
+
+  // Architecture step
+  const htmlArch = renderToStaticMarkup(
+    React.createElement(PortalImageChooser, {
+      catalog,
+      initialState: { step: "architecture", selection: { stream: "stable" } },
+    }),
+  );
+  assert.ok(
+    htmlArch.includes("Step 2: Choose architecture for Bluefin."),
+    "live-region must announce architecture step",
+  );
+  assert.match(
+    htmlArch,
+    /<h3[^>]*tabindex="-1"[^>]*>Which architecture/,
+    "architecture step heading must have tabindex=-1",
+  );
+
+  // GPU step
+  const htmlGpu = renderToStaticMarkup(
+    React.createElement(PortalImageChooser, {
+      catalog,
+      initialState: {
+        step: "gpu",
+        selection: { stream: "stable", arch: "x86" },
+      },
+    }),
+  );
+  assert.ok(
+    htmlGpu.includes("Step 3: Choose graphics card vendor."),
+    "live-region must announce GPU step",
+  );
+  assert.match(
+    htmlGpu,
+    /<h3[^>]*tabindex="-1"[^>]*>Who is the vendor/,
+    "GPU step heading must have tabindex=-1",
+  );
+
+  // Kernel step
+  const htmlKernel = renderToStaticMarkup(
+    React.createElement(PortalImageChooser, {
+      catalog,
+      initialState: {
+        step: "kernel",
+        selection: { stream: "lts", arch: "x86", gpu: "amd" },
+      },
+    }),
+  );
+  assert.ok(
+    htmlKernel.includes("Step 4: Choose kernel preference for Bluefin LTS."),
+    "live-region must announce kernel step",
+  );
+  assert.match(
+    htmlKernel,
+    /<h3[^>]*tabindex="-1"[^>]*>What is your priority/,
+    "kernel step heading must have tabindex=-1",
+  );
+
+  // Download step
+  const htmlDownload = renderToStaticMarkup(
+    React.createElement(PortalImageChooser, {
+      catalog,
+      initialState: {
+        step: "download",
+        selection: {
+          stream: "stable",
+          arch: "x86",
+          gpu: "amd",
+          kernel: "regular",
+        },
+      },
+    }),
+  );
+  assert.ok(
+    htmlDownload.includes("Ready to download Bluefin."),
+    "live-region must announce download ready",
+  );
+  assert.match(
+    htmlDownload,
+    /<h3[^>]*tabindex="-1"[^>]*>Ready to Download!<\/h3>/,
+    "download step heading must have tabindex=-1",
+  );
+  assert.match(
+    htmlDownload,
+    /<a[^>]*href="https:\/\/github\.com\/orgs\/ublue-os\/packages\?repo_name=bluefin"[^>]*rel="noopener noreferrer"/,
+    "registry link must use explicit noopener noreferrer",
+  );
+});
+
+test("getStepAnnouncement pure helper covers forward, ARM direct-download, and Nvidia bypass states", () => {
+  const { adaptStreams } = loadModule(adapterPath);
+  const { getStepAnnouncement } = loadModule(chooserPath);
+  const catalog = adaptStreams(imagesData, driverVersionsData);
+
+  // Step 1: Release
+  assert.equal(
+    getStepAnnouncement({ step: "release", selection: {} }, catalog),
+    "Step 1: Choose a Bluefin release.",
+  );
+
+  // Step 2: Architecture
+  assert.equal(
+    getStepAnnouncement(
+      { step: "architecture", selection: { stream: "stable" } },
+      catalog,
+    ),
+    "Step 2: Choose architecture for Bluefin.",
+  );
+
+  // Step 3: GPU
+  assert.equal(
+    getStepAnnouncement(
+      { step: "gpu", selection: { stream: "stable", arch: "x86" } },
+      catalog,
+    ),
+    "Step 3: Choose graphics card vendor.",
+  );
+
+  // Step 4: Kernel
+  assert.equal(
+    getStepAnnouncement(
+      {
+        step: "kernel",
+        selection: { stream: "lts", arch: "x86", gpu: "amd" },
+      },
+      catalog,
+    ),
+    "Step 4: Choose kernel preference for Bluefin LTS.",
+  );
+
+  // Download: regular forward
+  assert.equal(
+    getStepAnnouncement(
+      {
+        step: "download",
+        selection: {
+          stream: "stable",
+          arch: "x86",
+          gpu: "amd",
+          kernel: "regular",
+        },
+      },
+      catalog,
+    ),
+    "Ready to download Bluefin.",
+  );
+
+  // Download: ARM direct-download
+  assert.equal(
+    getStepAnnouncement(
+      {
+        step: "download",
+        selection: { stream: "lts", arch: "arm", kernel: "regular" },
+      },
+      catalog,
+    ),
+    "Ready to download Bluefin LTS.",
+  );
+
+  // Download: Nvidia bypass
+  assert.equal(
+    getStepAnnouncement(
+      {
+        step: "download",
+        selection: {
+          stream: "lts",
+          arch: "x86",
+          gpu: "nvidia",
+          kernel: "regular",
+        },
+      },
+      catalog,
+    ),
+    "Ready to download Bluefin GDX.",
+  );
+});
+
+test("client-only ref and transition focus effect skips initial mount and avoids browser globals during SSR", () => {
+  const source = fs.readFileSync(chooserPath, "utf8");
+
+  // SSR safety: effect and ref imports
+  assert.match(source, /useRef,\s*useEffect/);
+  assert.match(source, /const\s+isInitialMount\s*=\s*useRef\(true\);/);
+  assert.match(source, /const\s+containerRef\s*=\s*useRef/);
+
+  // Mount skipping
+  assert.match(
+    source,
+    /if\s*\(\s*isInitialMount\.current\s*\)\s*\{\s*isInitialMount\.current\s*=\s*false;\s*return;\s*\}/,
+    "effect must skip initial mount to avoid stealing page focus on load",
+  );
+
+  // Focus management in transition effect
+  assert.match(
+    source,
+    /containerRef\.current\.querySelector<HTMLElement>\(\s*"h3,\s*\[role='heading'\]"/,
+    "effect must query step heading in container",
+  );
+  assert.match(
+    source,
+    /heading\.focus\(\)/,
+    "effect must focus heading on step transition",
+  );
+  assert.match(
+    source,
+    /firstControl\?\.focus\(\)/,
+    "effect must fall back to first control if no heading exists",
+  );
+  assert.match(source, /\},\s*\[step\]\);/, "effect must trigger on [step]");
 });

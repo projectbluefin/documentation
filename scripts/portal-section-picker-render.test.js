@@ -105,6 +105,18 @@ test("section picker renders id=scene-picker with header, intro, chooser, ecosys
   assert.ok(html.includes("For the Wolves"));
   assert.ok(html.includes("No compromises."));
 
+  // Verify external campaign and tool links use explicit noopener noreferrer
+  assert.match(
+    html,
+    /<a[^>]*href="https:\/\/flathub\.org\/apps\/org\.fedoraproject\.MediaWriter"[^>]*rel="noopener noreferrer"/,
+    "Fedora Media Writer link must use noopener noreferrer",
+  );
+  assert.match(
+    html,
+    /<a[^>]*href="https:\/\/hive\.kubestellar\.io"[^>]*rel="noopener noreferrer"/,
+    "Hive link must use noopener noreferrer",
+  );
+
   const dakotaIdx = html.indexOf('href="/dakota"');
   const serverIdx = html.indexOf('href="/server"');
   const utahIdx = html.indexOf('href="/utah"');
@@ -211,13 +223,35 @@ test("section picker supports injectable imagesData and driverVersionsData props
   assert.ok(html.includes("25.0.0"));
 });
 
-test("section picker CSS enforces pointer-events none on connector and responsive grid", () => {
+test("section picker CSS enforces pointer-events none on connector, single glow, and centered connectors", () => {
   const css = fs.readFileSync(cssPath, "utf8");
 
   assert.match(
     css,
     /\.productEcosystemConnector\s*\{[^}]*pointer-events:\s*none/s,
   );
+  // Retaining one clear central emphasis on container, no duplicate glow on cardCenter
   assert.match(css, /\.productEcosystemCardServer\s*\{[^}]*drop-shadow/s);
+  assert.ok(
+    !/\.cardCenter\s*\{[^}]*drop-shadow/s.test(css),
+    "duplicate drop-shadow glow must be removed from cardCenter",
+  );
+
+  // Desktop and mobile centered connectors
+  assert.match(
+    css,
+    /\.productEcosystemConnector\s*\{[^}]*transform:\s*translateY\(-50%\)/s,
+    "desktop connector must be vertically centered",
+  );
+
+  const mobileMediaMatch = css.match(
+    /@media \(max-width:\s*956px\)\s*\{([\s\S]*?)\n\}/,
+  );
+  assert.ok(mobileMediaMatch, "mobile media query must exist");
+  assert.match(
+    mobileMediaMatch[1],
+    /\.productEcosystemConnector\s*\{[^}]*transform:\s*translateX\(-50%\)/s,
+    "mobile connector must be horizontally centered with transform",
+  );
   assert.match(css, /@media \(max-width:\s*956px\)/);
 });

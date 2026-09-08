@@ -5,7 +5,10 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 const root = path.join(__dirname, "..");
-const webPublic = "/home/jorge/src/website/public";
+const webPublic =
+  process.env.BLUEFIN_WEBSITE_PUBLIC ||
+  process.env.WEBSITE_PUBLIC_DIR ||
+  "/home/jorge/src/website/public";
 
 const ASSET_SPECS = [
   {
@@ -116,6 +119,25 @@ test("picker and card assets exist, have correct size, and match expected sha256
         0,
         `copied asset must be byte-identical to source: ${targetPath}`,
       );
+    }
+  }
+});
+
+test("asset source path can be overridden via environment variables", () => {
+  const customDir = "/custom/override/path";
+  const originalEnv = process.env.WEBSITE_PUBLIC_DIR;
+  try {
+    process.env.WEBSITE_PUBLIC_DIR = customDir;
+    const resolved =
+      process.env.BLUEFIN_WEBSITE_PUBLIC ||
+      process.env.WEBSITE_PUBLIC_DIR ||
+      "/home/jorge/src/website/public";
+    assert.equal(resolved, customDir);
+  } finally {
+    if (originalEnv !== undefined) {
+      process.env.WEBSITE_PUBLIC_DIR = originalEnv;
+    } else {
+      delete process.env.WEBSITE_PUBLIC_DIR;
     }
   }
 });

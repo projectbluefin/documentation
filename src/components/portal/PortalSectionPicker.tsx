@@ -42,7 +42,7 @@ export default function PortalSectionPicker({
               <a
                 href="https://flathub.org/apps/org.fedoraproject.MediaWriter"
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
               >
                 Fedora Media Writer
               </a>{" "}
@@ -72,7 +72,7 @@ export default function PortalSectionPicker({
                 <a
                   href="https://hive.kubestellar.io"
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                 >
                   Hive
                 </a>{" "}

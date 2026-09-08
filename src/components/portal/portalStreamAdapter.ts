@@ -94,9 +94,9 @@ interface RawDriverStream {
   latest?: RawDriverLatest;
 }
 
-function findImageStream(
+export function findImageStream(
   product?: RawProduct,
-  preferredTag = "stable",
+  canonicalTag = "stable",
 ): RawImageStream | undefined {
   if (
     !product ||
@@ -105,14 +105,12 @@ function findImageStream(
   ) {
     return undefined;
   }
-  const match = product.streams.find(
+  return product.streams.find(
     (s) =>
       typeof s === "object" &&
       s !== null &&
-      (s.tag?.toLowerCase() === preferredTag.toLowerCase() ||
-        s.label?.toLowerCase() === preferredTag.toLowerCase()),
+      s.tag?.toLowerCase() === canonicalTag.toLowerCase(),
   );
-  return match ?? product.streams[0];
 }
 
 function findProduct(raw: unknown, id: string): RawProduct | undefined {
@@ -144,12 +142,12 @@ function extractVersionDetails(
   streamTag = "stable",
 ): StreamVersionDetails | undefined {
   const imageStream = findImageStream(product, streamTag);
-  const imageVersions = imageStream?.versions;
-  const driverVersions = driverStream?.latest?.versions;
-
-  if (!imageVersions && !driverVersions) {
+  if (!imageStream || !imageStream.versions) {
     return undefined;
   }
+
+  const imageVersions = imageStream.versions;
+  const driverVersions = driverStream?.latest?.versions;
 
   const details: StreamVersionDetails = {};
 

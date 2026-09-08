@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { FaDownload, FaCheckCircle, FaGithub } from "react-icons/fa";
 import styles from "./PortalSectionPicker.module.css";
 import {
@@ -22,12 +22,69 @@ export interface PortalImageChooserProps {
   initialState?: ChooserState;
 }
 
+export function getStepAnnouncement(
+  state: ChooserState,
+  catalog?: ChooserCatalog,
+): string {
+  const { step, selection } = state;
+  const currentStream = selection.stream
+    ? catalog?.streams[selection.stream]
+    : undefined;
+  const streamTitle = currentStream?.title ?? "Bluefin";
+
+  switch (step) {
+    case "release":
+      return "Step 1: Choose a Bluefin release.";
+    case "architecture":
+      return `Step 2: Choose architecture for ${streamTitle}.`;
+    case "gpu":
+      return "Step 3: Choose graphics card vendor.";
+    case "kernel":
+      return `Step 4: Choose kernel preference for ${streamTitle}.`;
+    case "download": {
+      const displayTitle =
+        selection.gpu === "nvidia" && selection.stream === "lts"
+          ? "Bluefin GDX"
+          : streamTitle;
+      return `Ready to download ${displayTitle}.`;
+    }
+    default:
+      return "";
+  }
+}
+
 export default function PortalImageChooser({
   catalog,
   initialState = INITIAL_CHOOSER_STATE,
 }: PortalImageChooserProps): React.JSX.Element {
   const [state, setState] = useState<ChooserState>(initialState);
   const { step, selection } = state;
+  const isInitialMount = useRef(true);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+
+    if (containerRef.current) {
+      const heading = containerRef.current.querySelector<HTMLElement>(
+        "h3, [role='heading']",
+      );
+      if (heading) {
+        if (!heading.hasAttribute("tabindex")) {
+          heading.setAttribute("tabindex", "-1");
+        }
+        heading.focus();
+      } else {
+        const firstControl = containerRef.current.querySelector<HTMLElement>(
+          "button:not([disabled]), [role='button']:not([aria-disabled='true']), a[href]",
+        );
+        firstControl?.focus();
+      }
+    }
+  }, [step]);
 
   const currentStream = selection.stream
     ? catalog.streams[selection.stream]
@@ -78,7 +135,9 @@ export default function PortalImageChooser({
                 <div className={styles.releaseOverlay}>
                   <div className={styles.releaseContent}>
                     <div className={styles.releaseHeader}>
-                      <h3 className={styles.releaseTitle}>{stream.title}</h3>
+                      <h3 tabIndex={-1} className={styles.releaseTitle}>
+                        {stream.title}
+                      </h3>
                       <span className={styles.releaseSubtitle}>
                         {stream.subtitle}
                       </span>
@@ -194,7 +253,7 @@ export default function PortalImageChooser({
           >
             Back to releases
           </button>
-          <h3>
+          <h3 tabIndex={-1}>
             Which architecture will you install Bluefin on? Older BIOS-based
             systems are unsupported
           </h3>
@@ -231,7 +290,7 @@ export default function PortalImageChooser({
         >
           Back
         </button>
-        <h3>
+        <h3 tabIndex={-1}>
           Who is the vendor of your primary graphics card (GPU)? Older Nvidia
           cards are unsupported
         </h3>
@@ -265,7 +324,7 @@ export default function PortalImageChooser({
         >
           Back
         </button>
-        <h3>
+        <h3 tabIndex={-1}>
           What is your priority? This choice balances system stability with
           support for the newest hardware. You can change this later:
         </h3>
@@ -311,7 +370,7 @@ export default function PortalImageChooser({
           >
             Back
           </button>
-          <h3>Ready to Download!</h3>
+          <h3 tabIndex={-1}>Ready to Download!</h3>
         </div>
 
         <div className={styles.downloadSummary}>
@@ -396,7 +455,7 @@ export default function PortalImageChooser({
                 title="View Registry"
                 href={REGISTRY_URL}
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
               >
                 <FaGithub />
                 View Registry
@@ -439,8 +498,19 @@ export default function PortalImageChooser({
     );
   };
 
+  const stepAnnouncement = getStepAnnouncement(state, catalog);
+
   return (
-    <div className={styles.imageChooser}>
+    <div ref={containerRef} className={styles.imageChooser}>
+      <div
+        className={styles.srOnly}
+        aria-live="polite"
+        aria-atomic="true"
+        role="status"
+        data-testid="chooser-live-region"
+      >
+        {stepAnnouncement}
+      </div>
       {step === "release" && renderReleaseStep()}
       {step === "architecture" && renderArchitectureStep()}
       {step === "gpu" && renderGpuStep()}

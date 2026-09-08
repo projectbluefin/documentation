@@ -167,6 +167,7 @@ export default function PortalPrototype(): React.JSX.Element {
 
       <PortalCommunity />
 
+      {/* Downstream insertion seam: Subproject 3 (PortalFlock, PortalContributors, PortalNews) mounts here between Community and Footer */}
       <PortalFooter />
     </main>
   );

@@ -87,7 +87,7 @@ export function selectGpu(state: ChooserState, gpu: GpuId): ChooserState {
       step: "kernel",
       selection: {
         ...state.selection,
-        gpu: "amd",
+        gpu,
         kernel: undefined,
       },
     };
