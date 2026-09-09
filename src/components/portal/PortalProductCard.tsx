@@ -67,7 +67,7 @@ export default function PortalProductCard({
   );
 
   if (href) {
-    const isExternal = /^https?:\/\//.test(href);
+    const isExternal = /^https?:\/\//i.test(href);
     return (
       <a
         className={cardClassName}
