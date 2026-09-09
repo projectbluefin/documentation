@@ -9,8 +9,56 @@ import PortalContributors from "./PortalContributors";
 import PortalNews from "./PortalNews";
 import PortalFooter from "./PortalFooter";
 import PortalNavigation from "./PortalNavigation";
+import PortalPageLoading from "./PortalPageLoading";
 import styles from "./PortalPrototype.module.css";
-import { TRANSITION_SRC, useHeroRaptor } from "./portalModel";
+import {
+  CHARACTER_IMAGES,
+  PORTAL_CHARACTER_IMAGES,
+  TRANSITION_SRC,
+  useHeroRaptor,
+} from "./portalModel";
+
+export { CHARACTER_IMAGES, PORTAL_CHARACTER_IMAGES };
+
+export function useImagePreloader(images: readonly string[]): boolean {
+  const [isLoading, setIsLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    let mounted = true;
+
+    if (typeof Image === "undefined" || images.length === 0) {
+      setIsLoading(false);
+      return;
+    }
+
+    Promise.all(
+      images.map((src) => {
+        return new Promise<void>((resolve) => {
+          const img = new Image();
+          img.src = src;
+          if (img.complete) {
+            resolve();
+          } else {
+            img.onload = () => resolve();
+            img.onerror = () => resolve();
+          }
+        });
+      }),
+    ).finally(() => {
+      setTimeout(() => {
+        if (mounted) {
+          setIsLoading(false);
+        }
+      }, 100);
+    });
+
+    return () => {
+      mounted = false;
+    };
+  }, [images]);
+
+  return isLoading;
+}
 
 const userBenefits = [
   "Applications by Flathub",
@@ -29,6 +77,7 @@ const developerBenefits = [
 
 export default function PortalPrototype(): React.JSX.Element {
   const heroRaptorSrc = useHeroRaptor();
+  const isLoading = useImagePreloader(CHARACTER_IMAGES);
 
   const handleDiscoverClick = (
     event: React.MouseEvent<HTMLAnchorElement>,
@@ -69,7 +118,8 @@ export default function PortalPrototype(): React.JSX.Element {
   };
 
   return (
-    <div className={styles.portal}>
+    <div className={styles.portal} aria-busy={isLoading}>
+      {isLoading && <PortalPageLoading />}
       <div id="portal-scenes" className={styles.sceneStack}>
         <section id="scene-landing" className={styles.landingScene}>
           <div className={styles.landingGrid}>

@@ -1,0 +1,43 @@
+.pageLoading {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  background: var(--portal-bg, #0c1016);
+  color: var(--portal-text-light, #ffffff);
+}
+
+.loader {
+  width: 56px;
+  height: 56px;
+  border: 2px solid var(--portal-blue, var(--color-blue, #4285f4));
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.dots {
+  font-size: 1.8rem;
+  text-align: left;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loader {
+    animation-duration: 2s;
+  }
+}
