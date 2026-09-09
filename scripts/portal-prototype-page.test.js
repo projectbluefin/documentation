@@ -182,3 +182,12 @@ test("portal prototype preserves downstream live-section insertion seam comment"
     "insertion seam comment between Community and Footer must be preserved",
   );
 });
+
+test("parallax viewport accounts for announcement bar height dynamically", () => {
+  const css = fs.readFileSync(cssPath, "utf8");
+  assert.match(
+    css,
+    /\.parallaxViewport\s*\{[^}]*inset:\s*calc\(\s*var\(--ifm-navbar-height\)\s*\+\s*var\(--docusaurus-announcement-bar-height,\s*0px\)\s*\)\s*0\s*0/s,
+    "parallaxViewport must account for active announcement bar height",
+  );
+});
