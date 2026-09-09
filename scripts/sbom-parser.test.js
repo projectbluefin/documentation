@@ -69,6 +69,8 @@ test("extractDateFromTag reads the trailing YYYYMMDD after . or -", () => {
   assert.equal(extractDateFromTag("stable-20260331"), "20260331");
   assert.equal(extractDateFromTag("lts.20260331"), "20260331");
   assert.equal(extractDateFromTag("lts-hwe-testing-20260331"), "20260331");
+  assert.equal(extractDateFromTag("stable-44.20260606"), "20260606");
+  assert.equal(extractDateFromTag("testing-44.20260720"), "20260720");
 });
 
 test("extractDateFromTag returns null when there is no trailing date", () => {
@@ -178,6 +180,57 @@ test("findRecentTagsForStream deduplicates, sorts newest first, and caps the cou
     found.map((f) => f.tag),
     [`stable-${d1}`, `stable-${d2}`],
   );
+});
+
+test("findRecentTagsForStream recognizes version-qualified dated tags", () => {
+  const recent = daysAgoTag(3);
+  const found = findRecentTagsForStream(
+    [`stable-44.${recent}`, `stable-44-${recent}`],
+    SPEC,
+  );
+  assert.equal(found.length, 1);
+  assert.equal(found[0].dateStr, recent);
+  assert.equal(found[0].cacheKey, `stable-${recent}`);
+});
+
+test("findRecentTagsForStream retains latest-release fallback when lookback finds no releases", (t) => {
+  t.after(() => {
+    delete process.env.SBOM_LOOKBACK_DAYS;
+  });
+  process.env.SBOM_LOOKBACK_DAYS = "30";
+  const old1 = daysAgoTag(120);
+  const old2 = daysAgoTag(100);
+  const found = findRecentTagsForStream(
+    [`stable-${old1}`, `stable-${old2}`],
+    SPEC,
+  );
+  assert.equal(found.length, 1);
+  assert.equal(found[0].tag, `stable-${old2}`);
+  assert.equal(found[0].dateStr, old2);
+  assert.equal(found[0].cacheKey, `stable-${old2}`);
+});
+
+test("findRecentTagsForStream matches live probe with version-qualified tags and fallback", () => {
+  const probeTags = [
+    "stable-20260606",
+    "stable-44.20260606",
+    "testing-44.20260720",
+  ];
+  const stableFound = findRecentTagsForStream(probeTags, SPEC);
+  assert.equal(stableFound.length, 1);
+  assert.equal(stableFound[0].dateStr, "20260606");
+  assert.equal(stableFound[0].cacheKey, "stable-20260606");
+
+  const testingSpec = {
+    streamPrefix: "testing",
+    org: "projectbluefin",
+    package: "utah",
+  };
+  const testingFound = findRecentTagsForStream(probeTags, testingSpec);
+  assert.equal(testingFound.length, 1);
+  assert.equal(testingFound[0].dateStr, "20260720");
+  assert.equal(testingFound[0].cacheKey, "testing-20260720");
+  assert.equal(testingFound[0].tag, "testing-44.20260720");
 });
 
 // ---------------------------------------------------------------------------
