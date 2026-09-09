@@ -1,0 +1,95 @@
+.flockSection {
+  display: block;
+  position: relative;
+  padding: 128px 0;
+  background-color: var(--portal-bg, #0c1016);
+  border-bottom: 1px solid var(--portal-border, #272727);
+  scroll-margin-top: var(--ifm-navbar-height, 60px);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.title {
+  margin: 0 0 24px;
+  color: var(--portal-text-light, #ffffff);
+  font-size: clamp(40px, 6vw, 70px);
+  font-weight: 700;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.description {
+  margin: 0 auto;
+  max-width: 720px;
+  color: var(--portal-text-light, #ffffff);
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.card {
+  padding: 24px;
+  background: rgb(255 255 255 / 2%);
+  border: 1px solid var(--portal-border, #272727);
+  border-radius: 8px;
+}
+
+.growthChart {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.attribution {
+  margin: 24px 0 0;
+  text-align: center;
+  font-size: 16px;
+  color: var(--portal-text-light, #ffffff);
+}
+
+.attribution a {
+  color: var(--portal-blue-light, #8a97f7);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.attribution a:hover,
+.attribution a:focus {
+  text-decoration: underline;
+}
+
+.attribution a:focus-visible {
+  outline: 3px solid var(--portal-text-light, #ffffff);
+  outline-offset: 3px;
+}
+
+@media (max-width: 768px) {
+  .flockSection {
+    padding: 64px 0;
+  }
+
+  .header {
+    margin-bottom: 24px;
+  }
+
+  .title {
+    font-size: 40px;
+  }
+
+  .description,
+  .attribution {
+    font-size: 14px;
+  }
+
+  .card {
+    padding: 16px;
+  }
+}

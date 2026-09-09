@@ -64,6 +64,8 @@ const EXPECTED_ASSET_SHA256 = {
     "9a3dc62404129d731a24ead52df09042a01cb8d3ad2745790329e73347421186",
   "brands/universal-blue.svg":
     "da97ad81b874d9f977a074ab883752132323c618b14da6987a76f847d71de6b9",
+  "img/portal/growth_bluefins.svg":
+    "da231307c334bd11d66995825d8bedd4ed749ea0c931d04808d8d6c386fa3fb9",
 };
 
 test("static assets exist and match checked-in SHA-256 hashes", () => {
@@ -189,4 +191,28 @@ test("portal static data exposes exact metadata contracts", () => {
     data.getCopyrightText(2026),
     "Copyright 2026 © Project Bluefin and Universal Blue",
   );
+
+  // Flock
+  assert.equal(data.FLOCK_METADATA.title, "Our Flock");
+  assert.equal(
+    data.FLOCK_METADATA.description,
+    "Bluefin is built by a dedicated group of maintainers and contributors.",
+  );
+  assert.equal(
+    data.FLOCK_METADATA.chartSrc,
+    "/img/portal/growth_bluefins.svg",
+  );
+  assert.equal(
+    data.FLOCK_METADATA.chartAlt,
+    "Bluefin active users weekly growth chart",
+  );
+  assert.equal(
+    data.FLOCK_METADATA.attributionPrefix,
+    "Statistics provided by",
+  );
+  assert.equal(
+    data.FLOCK_METADATA.countMeUrl,
+    "https://github.com/ublue-os/countme",
+  );
+  assert.equal(data.FLOCK_METADATA.countMeLabel, "DNF Count Me");
 });

@@ -95,6 +95,7 @@ test("prototype renders source-authored scenes in order through footer including
     'id="bazaar"',
     'id="scene-picker"',
     'id="scene-community"',
+    'id="flock"',
     'id="alumni"',
     'id="sponsors"',
   ];

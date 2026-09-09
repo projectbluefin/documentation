@@ -269,4 +269,58 @@ test("Bazaar, Community CTAs, and Footer links maintain accessible contrast and 
     footerCss,
     /\.socialLinks li a:hover\s*\{[^}]*var\(--portal-blue-light,\s*#8a97f7\)/,
   );
+
+  // Flock attribution link uses scoped token variable with fallback
+  const flockCss = fs.readFileSync(
+    path.join(portalDir, "PortalFlock.module.css"),
+    "utf8",
+  );
+  assert.match(
+    flockCss,
+    /\.attribution a\s*\{[^}]*var\(--portal-blue-light,\s*#8a97f7\)/,
+  );
+  assert.match(
+    flockCss,
+    /\.attribution a:focus-visible\s*\{[^}]*outline:\s*3px solid/,
+  );
 });
+
+test("PortalFlock statically renders header, growth chart card, attribution, and supports children", () => {
+  const componentPath = path.join(portalDir, "PortalFlock.tsx");
+  assert.ok(fs.existsSync(componentPath), "PortalFlock.tsx must exist");
+
+  const PortalFlock = loadModule(componentPath).default;
+  const html = renderToStaticMarkup(
+    React.createElement(
+      PortalFlock,
+      null,
+      React.createElement("div", { id: "contributors-slot" }, "Contributors"),
+    ),
+  );
+
+  assert.ok(html.includes('id="flock"'));
+  assert.ok(html.includes(">Our Flock<"));
+  assert.ok(
+    html.includes(
+      "Bluefin is built by a dedicated group of maintainers and contributors.",
+    ),
+  );
+  assert.ok(html.includes('src="/img/portal/growth_bluefins.svg"'));
+  assert.ok(
+    html.includes('alt="Bluefin active users weekly growth chart"'),
+  );
+  assert.ok(html.includes('loading="lazy"'));
+  assert.ok(html.includes("Statistics provided by"));
+  assert.ok(html.includes('href="https://github.com/ublue-os/countme"'));
+  assert.ok(html.includes("DNF Count Me"));
+  assert.ok(html.includes('target="_blank"'));
+  assert.ok(html.includes('rel="noopener noreferrer"'));
+  assert.ok(html.includes('id="contributors-slot"'));
+
+  // Check no browser globals
+  const source = fs.readFileSync(componentPath, "utf8");
+  assert.ok(!source.includes("window."));
+  assert.ok(!source.includes("document."));
+  assert.ok(!source.includes("useEffect"));
+});
+

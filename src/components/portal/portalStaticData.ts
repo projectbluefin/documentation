@@ -37,6 +37,17 @@ export const COMMUNITY_METADATA = {
   },
 } as const;
 
+export const FLOCK_METADATA = {
+  title: "Our Flock",
+  description:
+    "Bluefin is built by a dedicated group of maintainers and contributors.",
+  chartSrc: "/img/portal/growth_bluefins.svg",
+  chartAlt: "Bluefin active users weekly growth chart",
+  attributionPrefix: "Statistics provided by",
+  countMeUrl: "https://github.com/ublue-os/countme",
+  countMeLabel: "DNF Count Me",
+} as const;
+
 export const ALUMNI_COMPANIES: readonly BrandLink[] = [
   {
     imageUrl: "/brands/alumni/anchore.svg",
