@@ -91,6 +91,12 @@ memory and rendered to a string inside that same runner.
      renderToStaticMarkup(React.createElement(Component, props));
    ```
 
+   When a component composes sibling components, stub those sibling imports in
+   the same require shim and assert the composition contract (for example,
+   chart identifiers and visible section labels) without mounting a second
+   test harness. Keep separate tests for the composed component's unavailable
+   state; it must render a status and source reason rather than return `null`.
+
 4. Assert the rules that matter, not the pixels. Markup assertions are brittle
    if they pin exact coordinates; count elements, check for the presence of a
    marker, and assert that forbidden output is absent.
@@ -124,6 +130,25 @@ assert.ok(
 // Output must be deterministic, or SSG diffs churn between builds.
 assert.equal(render(props), render(props));
 ```
+
+## Effectful visual components
+
+`renderToStaticMarkup` does not run effects. For a component whose visible
+behavior depends on scrolling, resizing, media queries, or browser observers:
+
+1. Extract coordinate math and state transitions into a pure TypeScript module
+   and test that module with `node:test`.
+2. Static-render the component shell to prove deterministic, accessible SSR
+   markup and verify browser globals are deferred to `useEffect`.
+3. Run `npm run build:ci` to exercise Docusaurus server rendering and route
+   generation.
+4. Start `just dev --port 3000` and use local Chromium for the behavior only a
+   browser can prove: transforms, overflow, responsive visibility, focus, media
+   preferences, console errors, and hydration.
+
+Do not add a DOM test framework merely to simulate browser layout. Pure logic,
+static SSR output, the production build, and one local-browser check are the
+smallest complete test stack for this class of component.
 
 ## Common Rationalizations
 

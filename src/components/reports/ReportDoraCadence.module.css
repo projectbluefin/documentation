@@ -1,0 +1,66 @@
+.container {
+  margin: 1.5rem 0 2rem 0;
+  padding: 1.25rem;
+  background: var(
+    --ifm-card-background-color,
+    var(--ifm-background-surface-color)
+  );
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+  color: var(--ifm-heading-color);
+}
+
+.subtitle {
+  font-size: 0.8rem;
+  color: var(--ifm-color-emphasis-600);
+  margin-bottom: 1.25rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1.25rem;
+}
+
+.metricItem {
+  display: flex;
+  flex-direction: column;
+}
+
+.metricValue {
+  font-size: 1.75rem;
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--ifm-heading-color);
+  margin-bottom: 0.25rem;
+}
+
+.metricLabel {
+  font-size: 0.825rem;
+  font-weight: 600;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.metricHint {
+  font-size: 0.75rem;
+  color: var(--ifm-color-emphasis-600);
+  margin-top: 0.2rem;
+}
+
+.state {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.state strong {
+  color: var(--ifm-heading-color);
+}

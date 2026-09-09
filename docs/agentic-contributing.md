@@ -505,7 +505,7 @@ gh search issues --owner projectbluefin --state open
 Also see:
 
 - [todo.projectbluefin.io](https://todo.projectbluefin.io/) — work that is new or in progress
-- [Reports](/reports) — recently completed work
+- [Monthly Reports](/blog/tags/monthly-report) — recently completed work
 - `get_work_queue()` on `https://mcp.projectbluefin.io/mcp` — live ready-to-implement queue directly from Hive
 
 ### Agent context via MCP (`mcp.projectbluefin.io`)

@@ -5,28 +5,10 @@
  * to identify opportunistic work (contributions not tracked on project board)
  */
 
-/**
- * List of repositories to monitor for monthly reports
- * Format: "owner/repo"
- */
-export const MONITORED_REPOS = [
-  // Core Bluefin repositories
-  "projectbluefin/bluefin",
-  "projectbluefin/bluefin-lts",
-  // Aurora excluded - KDE variant tracked separately (not Bluefin-focused)
+import { REPORT_PORTFOLIO } from "./report-portfolio.mjs";
 
-  // Artwork and visual assets
-  "ublue-os/artwork",
-
-  // Homebrew taps
-  "ublue-os/homebrew-tap",
-  "ublue-os/homebrew-experimental-tap",
-
-  // Project Bluefin organization
-  "projectbluefin/common",
-  "projectbluefin/documentation",
-  "projectbluefin/branding",
-  "projectbluefin/iso",
-  "projectbluefin/dakota", // GNOME OS Prototype
-  "projectbluefin/finpilot",
-];
+export const MONITORED_REPOS = REPORT_PORTFOLIO.filter(
+  (entry) =>
+    entry.signals.includes("activity") &&
+    entry.repository.startsWith("projectbluefin/"),
+).map((entry) => entry.repository);

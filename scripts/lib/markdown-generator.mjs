@@ -6,7 +6,6 @@
  * Pattern from RESEARCH.md (lines 603-652)
  */
 
-import { format } from "date-fns";
 import {
   LABEL_CATEGORIES,
   LABEL_COLORS,
@@ -14,6 +13,7 @@ import {
   getCategoryForItem,
 } from "./label-mapping.mjs";
 import { getSponsorUrl } from "./github-sponsors.mjs";
+import { extractLeaderboardHeroes } from "./factory-monthly-metrics.mjs";
 
 /**
  * Category descriptions for monthly reports
@@ -37,6 +37,200 @@ const CATEGORY_DESCRIPTIONS = {
 };
 
 /**
+ * Dinosaur-themed monthly titles (catchy and alliterative)
+ */
+export const MONTHLY_TITLES = [
+  "Jurassic January",
+  "Fossil February",
+  "Mesozoic March",
+  "Allosaurus April",
+  "Megalosaurus May",
+  "Juravenator June",
+  "Jovial July",
+  "Archaeopteryx August",
+  "Stegosaurus September",
+  "Ornithopod October",
+  "Nodosaurus November",
+  "Deinonychus December",
+];
+
+/**
+ * Compute canonical blog slug for a report date
+ *
+ * @param {Date} date
+ * @returns {string} e.g. "archaeopteryx-august-2026"
+ */
+export function getReportSlug(date) {
+  const month = date.getUTCMonth();
+  const year = date.getUTCFullYear();
+  const title = MONTHLY_TITLES[month] || "Report";
+  return `${title.toLowerCase().replace(/\s+/g, "-")}-${year}`;
+}
+
+/**
+ * Serialize one report chart definition as an MDX component tag.
+ *
+ * The report generator consumes this helper when Reports 2.0 snapshot
+ * integration is added; keeping serialization here makes the contract
+ * testable without changing the current positional generator API.
+ *
+ * @param {Object} definition - JSON-serializable ReportChartDefinition
+ * @returns {string} MDX ReportChart tag
+ */
+export function generateReportChartTag(definition) {
+  return `<ReportChart definition={${JSON.stringify(definition)}} />`;
+}
+
+function utcDateString(date) {
+  return date.toISOString().slice(0, 10);
+}
+
+function reportPeriodDates(snapshot) {
+  const period = snapshot?.period ?? {};
+  const startDate = new Date(`${period.start}T00:00:00.000Z`);
+  const endDate = new Date(`${period.end}T23:59:59.999Z`);
+  return {
+    startDate: Number.isNaN(startDate.getTime())
+      ? new Date("1970-01-01T00:00:00Z")
+      : startDate,
+    endDate: Number.isNaN(endDate.getTime())
+      ? new Date("1970-01-01T00:00:00Z")
+      : endDate,
+  };
+}
+
+function snapshotContributorCards(contributors, newContributors) {
+  return contributors
+    .map((username) => {
+      const sponsorUrl = getSponsorUrl(username);
+      const highlight = newContributors.includes(username)
+        ? " highlight={true}"
+        : "";
+      const sponsor = sponsorUrl ? ` sponsorUrl="${sponsorUrl}"` : "";
+      return `<GitHubProfileCard username="${username}"${highlight}${sponsor} />`;
+    })
+    .join("\n\n");
+}
+
+function snapshotSourcesSection(sources = []) {
+  if (sources.length === 0) return "";
+
+  const lines = sources.map((source) => {
+    const window = source.window
+      ? ` (${source.window.start} to ${source.window.end})`
+      : "";
+    const reason =
+      source.status === "unavailable" && source.stateReason
+        ? ` — ${source.stateReason}`
+        : "";
+    const url = source.url ? `: [source](${source.url})` : "";
+    return `- \`${source.id}\`: ${source.status}${reason}${window}${url}`;
+  });
+
+  return `## Sources\n\n${lines.join("\n")}`;
+}
+
+function generateSnapshotReportMarkdown({
+  snapshot,
+  plannedItems = [],
+  opportunisticItems = [],
+  contributors = [],
+  newContributors = [],
+} = {}) {
+  if (!snapshot || snapshot.schemaVersion !== 2) {
+    throw new TypeError("A schemaVersion 2 snapshot is required");
+  }
+
+  const { startDate, endDate } = reportPeriodDates(snapshot);
+  const month = startDate.getUTCMonth();
+  const year = startDate.getUTCFullYear();
+  const monthlyTitle = MONTHLY_TITLES[month] || "Report";
+  const dateStr = snapshot.period?.end || utcDateString(endDate);
+  const totalItems = plannedItems.length + opportunisticItems.length;
+  const kpis = [
+    {
+      label: "Completed work",
+      value: totalItems,
+      sublabel: `${plannedItems.length} planned • ${opportunisticItems.length} opportunistic`,
+    },
+    {
+      label: "Contributors",
+      value: contributors.length,
+      sublabel: `${newContributors.length} first-time contributors`,
+    },
+  ];
+  const allItems = [...plannedItems, ...opportunisticItems];
+  const workItems = formatItemList(allItems, new Set());
+  const contributorsSection =
+    contributors.length > 0
+      ? `## Contributors\n\n${snapshotContributorCards(contributors, newContributors)}`
+      : "";
+  const workSection =
+    workItems.length > 0
+      ? `## Completed work\n\n${workItems}`
+      : "## Completed work\n\nNo completed work recorded.";
+
+  return `---
+title: "${monthlyTitle} ${year}"
+date: ${dateStr}
+slug: ${getReportSlug(startDate)}
+authors: [bluefin]
+tags: [monthly-report, project-activity, announcements]
+---
+
+import {
+  ReportHeroKPIs,
+  ReportActivity,
+  ReportDelivery,
+  ReportParticipation,
+  ReportEcosystem,
+} from '@site/src/components/reports';
+import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
+
+export const snapshot = ${JSON.stringify(snapshot, null, 2)};
+
+# Summary
+
+<ReportHeroKPIs
+  kpis={${JSON.stringify(kpis, null, 2)}}
+/>
+
+<ReportActivity snapshot={snapshot.activity} />
+
+<ReportDelivery snapshot={snapshot.delivery} />
+
+<ReportParticipation snapshot={snapshot.participation} />
+
+<ReportEcosystem snapshot={snapshot.ecosystem} />
+
+Release details remain on the canonical [/changelogs](/changelogs) surface.
+
+${workSection}
+
+${contributorsSection}
+
+${snapshotSourcesSection(snapshot.sources)}
+`;
+}
+
+/**
+ * Generate a Reports 2.0 snapshot post, or preserve the legacy positional
+ * contract for existing callers until their migration is complete.
+ */
+export function generateReportMarkdown(...args) {
+  if (
+    args.length === 1 &&
+    args[0] &&
+    typeof args[0] === "object" &&
+    !Array.isArray(args[0]) &&
+    Object.hasOwn(args[0], "snapshot")
+  ) {
+    return generateSnapshotReportMarkdown(args[0]);
+  }
+  return generateLegacyReportMarkdown(...args);
+}
+
+/**
  * Generate complete report markdown
  *
  * @param {Array} plannedItems - Items from project board completed during period
@@ -48,9 +242,11 @@ const CATEGORY_DESCRIPTIONS = {
  * @param {Date} endDate - Report period end date
  * @param {Object|null} buildMetrics - Build health metrics from fetchBuildMetrics()
  * @param {Object} tapAdditions - Tap additions from fetchTapAdditions() {production: [], experimental: []}
+ * @param {Object|null} factoryStats - Factory lane statistics from fetchFactoryMonthlyStats()
+ * @param {Object|null} countmeStats - Active systems telemetry from extractCountmeMetrics()
  * @returns {string} Complete markdown content
  */
-export function generateReportMarkdown(
+function generateLegacyReportMarkdown(
   plannedItems,
   opportunisticItems,
   contributors,
@@ -60,6 +256,9 @@ export function generateReportMarkdown(
   endDate,
   buildMetrics = null,
   tapAdditions = { production: [], experimental: [] },
+  factoryStats = null,
+  countmeStats = null,
+  leaderboard = null,
 ) {
   // Extract year and month from startDate in UTC
   const year = startDate.getUTCFullYear();
@@ -79,37 +278,27 @@ export function generateReportMarkdown(
     "December",
   ];
   const monthYear = `${monthNames[month]} ${year}`;
-  const dateStr = format(endDate, "yyyy-MM-dd");
+  const dateStr = utcDateString(endDate);
 
-  // Dinosaur-themed monthly titles (catchy and alliterative)
-  const monthlyTitles = [
-    "Jurassic January",
-    "Fossil February",
-    "Mesozoic March",
-    "Allosaurus April",
-    "Megalosaurus May",
-    "Juravenator June",
-    "Jovial July",
-    "Archaeopteryx August",
-    "Stegosaurus September",
-    "Ornithopod October",
-    "Nodosaurus November",
-    "Deinonychus December",
-  ];
-  const monthlyTitle = monthlyTitles[month];
-
-  // Generate frontmatter with MDX import for GitHubProfileCard component
-  // Slug format: /YYYY/MM (e.g., /2026/01)
-  const monthPadded = String(month + 1).padStart(2, "0");
-  const slug = `/${year}/${monthPadded}`;
+  const monthlyTitle = MONTHLY_TITLES[month];
+  const reportSlug = getReportSlug(startDate);
 
   const frontmatter = `---
 title: "${monthlyTitle} ${year}"
 date: ${dateStr}
-slug: ${slug}
-tags: [monthly-report, project-activity]
+slug: ${reportSlug}
+authors: [bluefin]
+tags: [monthly-report, project-activity, announcements]
 ---
 
+import {
+  ReportHeroKPIs,
+  ReportLeaderboard,
+  ReportLaneHealth,
+  ReportDoraCadence,
+  ReportCountmeTrend,
+  ReportAutomationStats,
+} from '@site/src/components/reports';
 import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
 `;
 
@@ -123,12 +312,184 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
   );
   const totalHumanPRs = plannedItems.length + opportunisticItems.length;
   const totalPRs = totalHumanPRs + totalBotPRs;
-  const automationPercentage = totalPRs > 0
-    ? ((totalBotPRs / totalPRs) * 100).toFixed(1)
-    : "0.0";
+  const automationPercentage =
+    totalPRs > 0 ? ((totalBotPRs / totalPRs) * 100).toFixed(1) : "0.0";
 
-  // Generate summary section as compact table
+  // Build hero KPIs
+  const kpis = [
+    {
+      label: "Merged PRs",
+      value: totalHumanPRs,
+      sublabel: `${plannedItems.length} planned • ${opportunisticItems.length} opportunistic`,
+    },
+    {
+      label: "Factory Automation",
+      value: `${automationPercentage}%`,
+      sublabel: `${totalBotPRs} automated PRs out of ${totalPRs} total`,
+    },
+    {
+      label: "Contributors",
+      value: contributors.length,
+      sublabel: `${newContributors.length} first-time contributors`,
+      trend:
+        newContributors.length > 0
+          ? `+${newContributors.length} new`
+          : undefined,
+      trendDirection: newContributors.length > 0 ? "up" : "neutral",
+    },
+  ];
+
+  if (
+    factoryStats &&
+    factoryStats.totals &&
+    factoryStats.totals.successRate !== null
+  ) {
+    kpis.push({
+      label: "Factory Reliability",
+      value: `${factoryStats.totals.successRate}%`,
+      sublabel: `${factoryStats.totals.totalRuns} lane publish runs`,
+      trendDirection: factoryStats.totals.successRate >= 90 ? "up" : "neutral",
+    });
+  }
+
+  const totalTapAdditions =
+    (tapAdditions.production?.length || 0) +
+    (tapAdditions.experimental?.length || 0);
+  if (totalTapAdditions > 0) {
+    kpis.push({
+      label: "Tap Additions",
+      value: totalTapAdditions,
+      sublabel: `${tapAdditions.production?.length || 0} production • ${tapAdditions.experimental?.length || 0} experimental`,
+    });
+  }
+
+  if (countmeStats && countmeStats.currentTotal) {
+    kpis.push({
+      label: "Active Systems",
+      value: countmeStats.currentTotal.toLocaleString(),
+      sublabel: "Weekly active systems (Countme)",
+    });
+  }
+
+  const heroKPIsJSX = `<ReportHeroKPIs
+  kpis={${JSON.stringify(kpis, null, 2)}}
+/>`;
+
+  let laneHealthJSX = "";
+  if (factoryStats && factoryStats.lanes && factoryStats.lanes.length > 0) {
+    laneHealthJSX = `<ReportLaneHealth
+  lanes={${JSON.stringify(factoryStats.lanes, null, 2)}}
+/>`;
+  }
+
+  let countmeJSX = "";
+  if (countmeStats) {
+    countmeJSX = `<ReportCountmeTrend
+  currentTotal={${countmeStats.currentTotal}}
+  previousTotal={${countmeStats.previousTotal}}
+  historyPoints={${JSON.stringify(countmeStats.historyPoints)}}
+  variants={${JSON.stringify(countmeStats.variants)}}
+  sourceDate="${countmeStats.sourceDate || ""}"
+/>`;
+  }
+
+  // Aggregate bot PRs by repo for visual breakdown
+  const repoAggregates = {};
+  botActivity.forEach((activity) => {
+    const repo = activity.repo
+      .replace("ublue-os/", "")
+      .replace("projectbluefin/", "");
+    if (!repoAggregates[repo]) repoAggregates[repo] = 0;
+    repoAggregates[repo] += activity.count;
+  });
+
+  const repoBreakdown = Object.entries(repoAggregates)
+    .sort((a, b) => b[1] - a[1])
+    .map(([repo, count]) => ({
+      repo,
+      count,
+      percentage:
+        totalPRs > 0 ? `${((count / totalPRs) * 100).toFixed(1)}%` : "0%",
+    }));
+
+  const automationStatsJSX = `<ReportAutomationStats
+  totalPRs={${totalPRs}}
+  botPRs={${totalBotPRs}}
+  humanPRs={${totalHumanPRs}}
+  automationPercentage="${automationPercentage}"
+  repoBreakdown={${JSON.stringify(repoBreakdown, null, 2)}}
+/>`;
+
+  // Leaderboard data
+  let leaderboardData = leaderboard;
+  if (
+    !leaderboardData &&
+    (plannedItems.length > 0 || opportunisticItems.length > 0)
+  ) {
+    leaderboardData = extractLeaderboardHeroes(
+      [...plannedItems, ...opportunisticItems],
+      newContributors,
+    );
+  }
+
+  let leaderboardJSX = "";
+  if (
+    leaderboardData &&
+    leaderboardData.heroes &&
+    leaderboardData.heroes.length > 0
+  ) {
+    leaderboardJSX = `<ReportLeaderboard
+  period="${monthYear}"
+  heroes={${JSON.stringify(leaderboardData.heroes, null, 2)}}
+  newLights={${JSON.stringify(leaderboardData.newLights || [], null, 2)}}
+/>`;
+  }
+
+  let doraJSX = "";
+  if (
+    factoryStats &&
+    factoryStats.totals &&
+    factoryStats.totals.totalRuns > 0
+  ) {
+    const totalReleases = factoryStats.totals.passed || 0;
+    const deploymentsPerWeek =
+      totalReleases > 0 ? (totalReleases / 4.3).toFixed(1) : "0";
+    const changeFailureRate =
+      factoryStats.totals.successRate !== null
+        ? `${(100 - factoryStats.totals.successRate).toFixed(1)}%`
+        : "0%";
+    const durations = (factoryStats.lanes || [])
+      .map((l) => l.medianDurationMin)
+      .filter((d) => typeof d === "number" && d > 0);
+    const medianLeadTimeHours =
+      durations.length > 0
+        ? `${(durations.reduce((a, b) => a + b, 0) / durations.length / 60).toFixed(1)}h`
+        : "N/A";
+
+    doraJSX = `<ReportDoraCadence
+  totalReleases={${totalReleases}}
+  deploymentsPerWeek="${deploymentsPerWeek}"
+  changeFailureRate="${changeFailureRate}"
+  medianLeadTimeHours="${medianLeadTimeHours}"
+/>`;
+  }
+
+  // Generate summary section with rich infogram components
   const summary = `# Summary
+
+${heroKPIsJSX}
+
+${leaderboardJSX}
+
+${laneHealthJSX}
+
+${doraJSX}
+
+${countmeJSX}
+
+${automationStatsJSX}
+
+{/* truncate */}
 
 | | |
 |--------|-------|
@@ -190,8 +551,10 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
         categoryName.includes("Development")
       ) {
         // Create unified Homebrew section with promotions and updates
-        const hasPromotions = tapAdditions.production && tapAdditions.production.length > 0;
-        const hasExperimental = tapAdditions.experimental && tapAdditions.experimental.length > 0;
+        const hasPromotions =
+          tapAdditions.production && tapAdditions.production.length > 0;
+        const hasExperimental =
+          tapAdditions.experimental && tapAdditions.experimental.length > 0;
         const hasUpdates = homebrewActivity.length > 0;
 
         if (hasPromotions || hasExperimental || hasUpdates) {
@@ -199,8 +562,7 @@ import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
 
           // Add New Applications subsection (if any)
           if (hasPromotions || hasExperimental) {
-            const newAppsContent =
-              generateNewApplicationsContent(tapAdditions);
+            const newAppsContent = generateNewApplicationsContent(tapAdditions);
             fullSection += `#### New Applications\n\n${newAppsContent}\n\n`;
           }
 
@@ -267,7 +629,7 @@ ${kindSections}`;
     seenUrls.add(url);
     return true;
   });
-  
+
   const uncategorizedSection = generateUncategorizedSection(
     uniqueItems,
     displayedUrls,
@@ -295,17 +657,15 @@ ${kindSections}`;
     newContributors,
   );
 
-  // Generate footer with cross-links
+  // Generate footer with factual cross-links
   const footer = `---
 
-*Want to see the latest OS releases? Check out the [Changelogs](/changelogs). For announcements and deep dives, read our [Blog](/blog).*
-
-*This report was automatically generated from [todo.projectbluefin.io](https://todo.projectbluefin.io).*
+*Release details are available on the [Changelogs](/changelogs) surface.*
 
 ---
 
-*Generated on ${format(new Date(), "yyyy-MM-dd")}*  
-[View Project Board](https://todo.projectbluefin.io) | [Report an Issue](https://github.com/projectbluefin/common/issues/new)
+*Generated on ${utcDateString(new Date())}*
+[Report an Issue](https://github.com/projectbluefin/common/issues/new)
 `;
 
   // Combine all sections
@@ -424,10 +784,12 @@ function filterItemsByLabels(items, categoryLabels, targetCategory = null) {
 function formatItemList(items, displayedUrls) {
   // Separate Dakota items from other items
   const dakotaItems = items.filter(
-    (item) => item.content?.repository?.nameWithOwner === "projectbluefin/dakota"
+    (item) =>
+      item.content?.repository?.nameWithOwner === "projectbluefin/dakota",
   );
   const otherItems = items.filter(
-    (item) => item.content?.repository?.nameWithOwner !== "projectbluefin/dakota"
+    (item) =>
+      item.content?.repository?.nameWithOwner !== "projectbluefin/dakota",
   );
 
   const sections = [];
@@ -437,16 +799,18 @@ function formatItemList(items, displayedUrls) {
     const lines = [];
     otherItems.forEach((item) => {
       const url = item.content?.url;
-      
+
       // Skip if already displayed
       if (displayedUrls.has(url)) {
         return;
       }
-      
+
       const type = item.content.__typename === "PullRequest" ? "PR" : "Issue";
       const number = item.content.number;
       // Escape curly braces in titles to prevent MDX interpretation as JSX
-      const title = item.content.title.replace(/{/g, "\\{").replace(/}/g, "\\}");
+      const title = item.content.title
+        .replace(/{/g, "\\{")
+        .replace(/}/g, "\\}");
       const author = item.content.author?.login || "unknown";
 
       // Mark this URL as displayed
@@ -454,7 +818,9 @@ function formatItemList(items, displayedUrls) {
 
       // Hyperlight-style format: title by @author in #PR
       // Use zero-width space to prevent GitHub notifications
-      lines.push(`- ${title} by [@\u200B${author}](https://github.com/${author}) in [#${number}](${url})`);
+      lines.push(
+        `- ${title} by [@\u200B${author}](https://github.com/${author}) in [#${number}](${url})`,
+      );
     });
     sections.push(lines.join("\n"));
   }
@@ -464,16 +830,18 @@ function formatItemList(items, displayedUrls) {
     const lines = [];
     dakotaItems.forEach((item) => {
       const url = item.content?.url;
-      
+
       // Skip if already displayed
       if (displayedUrls.has(url)) {
         return;
       }
-      
+
       const type = item.content.__typename === "PullRequest" ? "PR" : "Issue";
       const number = item.content.number;
       // Escape curly braces in titles to prevent MDX interpretation as JSX
-      const title = item.content.title.replace(/{/g, "\\{").replace(/}/g, "\\}");
+      const title = item.content.title
+        .replace(/{/g, "\\{")
+        .replace(/}/g, "\\}");
       const author = item.content.author?.login || "unknown";
 
       // Mark this URL as displayed
@@ -481,9 +849,11 @@ function formatItemList(items, displayedUrls) {
 
       // Hyperlight-style format: title by @author in #PR
       // Use zero-width space to prevent GitHub notifications
-      lines.push(`- ${title} by [@\u200B${author}](https://github.com/${author}) in [#${number}](${url})`);
+      lines.push(
+        `- ${title} by [@\u200B${author}](https://github.com/${author}) in [#${number}](${url})`,
+      );
     });
-    
+
     const dakotaSection = `##### Dakota (GNOME OS Prototype)\n\n${lines.join("\n")}`;
     sections.push(dakotaSection);
   }
@@ -614,7 +984,7 @@ ${expTable}
 
 ${badges.join(" ")}
 
-**${totalCount} automated updates** this month via GitHub Actions. Homebrew tap version bumps ensure Bluefin users always have access to the latest stable releases.
+**${totalCount} automated updates** this month via GitHub Actions.
 
 ### Quick Summary
 
@@ -851,7 +1221,7 @@ export function generateBuildHealthSection(buildMetrics, startDate, endDate) {
   const perfectClub =
     stats.perfectImages.length > 0
       ? stats.perfectImages.map((name) => `\`${name}\``).join(", ")
-      : "_None. Vegeta is displeased._";
+      : "_None_";
 
   const highlights = `### This Month's Highlights
 
@@ -866,9 +1236,7 @@ export function generateBuildHealthSection(buildMetrics, startDate, endDate) {
 
 ## Build Health
 
-### Raptor Race
-
-Keep Bluefin healthy with green builds. Wranglers apply within!
+### Build metrics
 
 ${successRatesTable}
 
@@ -888,11 +1256,7 @@ function generateContributorsSection(contributors, newContributors) {
   // Section 1: New Contributors (highlighted, shown first)
   // contributors and newContributors are pre-filtered by caller — no bots
   if (newContributors.length > 0) {
-    section += `### New Lights\n\n`;
-    section += `We welcome our newest Guardians to the project.\n\n`;
-    section += `> "I do not know what the future holds. But I know this: with you at our side, there is nothing we cannot face."\n`;
-    section += `> \n`;
-    section += `> —Commander Zavala\n\n`;
+    section += `### New contributors\n\n`;
     section += `<div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem', marginBottom: '2rem' }}>\n\n`;
 
     const newContributorCards = newContributors
@@ -915,10 +1279,7 @@ function generateContributorsSection(contributors, newContributors) {
   );
 
   if (continuingContributors.length > 0) {
-    section += `### Wayfinders\n\n`;
-    section += `> "Define yourself by your actions."\n`;
-    section += `> \n`;
-    section += `> —Lord Saladin\n\n`;
+    section += `### Continuing contributors\n\n`;
     section += `<div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem', marginBottom: '2rem' }}>\n\n`;
 
     const continuingContributorCards = continuingContributors
@@ -947,38 +1308,41 @@ function generateContributorsSection(contributors, newContributors) {
  */
 function generateNewApplicationsContent(tapAdditions) {
   const { production, experimental } = tapAdditions;
-  
+
   // Combine lists
   const allApps = [];
-  
+
   if (production) {
-    production.forEach(app => {
-       allApps.push({ ...app, status: 'Stable' });
+    production.forEach((app) => {
+      allApps.push({ ...app, status: "Stable" });
     });
   }
-  
+
   if (experimental) {
-    experimental.forEach(app => {
-       allApps.push({ ...app, status: 'Experimental' });
+    experimental.forEach((app) => {
+      allApps.push({ ...app, status: "Experimental" });
     });
   }
-  
+
   if (allApps.length === 0) return "";
-  
+
   // Sort by name
   allApps.sort((a, b) => a.name.localeCompare(b.name));
-  
+
   const header = `| Application | Description | Status |
 |-------------|-------------|--------|`;
-  
-  const rows = allApps.map(app => {
-     const statusBadge = app.status === 'Stable' 
-        ? `![Stable](https://img.shields.io/badge/stable-blue?style=flat-square)` 
-        : `![Experimental](https://img.shields.io/badge/experimental-orange?style=flat-square)`;
-     
-     return `| [**${app.name}**](${app.prUrl}) | ${app.description} | ${statusBadge} |`;
-  }).join("\n");
-  
+
+  const rows = allApps
+    .map((app) => {
+      const statusBadge =
+        app.status === "Stable"
+          ? `![Stable](https://img.shields.io/badge/stable-blue?style=flat-square)`
+          : `![Experimental](https://img.shields.io/badge/experimental-orange?style=flat-square)`;
+
+      return `| [**${app.name}**](${app.prUrl}) | ${app.description} | ${statusBadge} |`;
+    })
+    .join("\n");
+
   return `The following applications were added to our Homebrew taps this month:
 
 ${header}
@@ -986,5 +1350,3 @@ ${rows}
 
 Use \`ujust bbrew\` to browse and install these packages. Follow [the tap instructions](https://github.com/ublue-os/homebrew-tap) if you want to do it by hand.`;
 }
-
-

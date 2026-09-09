@@ -63,6 +63,29 @@ do **not** and were removed. If removing a lane empties a whole UI section,
 remove the section too — a permanently-empty panel that says "no data found"
 misleads readers into thinking there is a gap.
 
+### Hosted Hive flows stay hosted
+
+Contribution setup and hosted leaderboard links use
+`https://hosted-projectbluefin-knuckle-gjvq.hive.hivecommons.dev`. Link to the
+hosted Hive for interactive contribution flows; do not recreate its setup UI in
+the docs dashboard.
+
+Individual contributor cards and rows link to
+`https://hosted-projectbluefin-common-nmq5.hive.hivecommons.dev/contribute/dossier/{username}`.
+The dossier owns contributor-specific Hive statistics and milestones.
+
+`/leaderboards` is a standalone docs page, not a Factory tab. It owns the
+shared Hive data provider directly; do not add top-level pages to
+`FACTORY_ROUTES`.
+
+`scripts/fetch-hive-history.js` derives its contributor scope from the
+`projectbluefin` Hive registry entry's `repos` array. Its fallback is only a
+last verified registry snapshot for source outages; do not use it as the normal
+repository scope.
+
+The public Hive registry accepts anonymous requests. Do not forward GitHub
+authorization to it.
+
 ### countme: match ublue-os/countme, and never trust the seed on its own
 
 The adoption numbers come from Fedora's public countme totals CSV

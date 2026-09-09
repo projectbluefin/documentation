@@ -1,7 +1,7 @@
 ---
 name: blog-posts
-version: "1.1"
-last_updated: "2026-09-06"
+version: "1.3"
+last_updated: "2026-09-08"
 id: blog-posts
 one_line_purpose: Format, embed, and validate Bluefin blog posts under blog/.
 entry_point: docs/skills/blog-posts.md
@@ -30,7 +30,7 @@ component. Authors resolve from `blog/authors.yaml`.
 
 ## When NOT to Use
 
-- Monthly reports — live in `reports/` with their own generator.
+- Monthly reports — live in `blog/` as dinosaur-slug infograms generated via `scripts/generate-report.mjs`; see [`monthly-reports.md`](monthly-reports.md).
 - Comment threads on a published post — see [`giscus-discussions.md`](giscus-discussions.md).
 - Getting a merged post live — see [`shipping-and-verifying.md`](shipping-and-verifying.md).
 
@@ -65,12 +65,16 @@ A design skill saying "come up with copy" refers to mockups, not authorship.
    `static/img/blog/<YYYY-MM-DD-slug>/`. Never hotlink a CDN — the post has to
    survive the source account, the CDN, and the link rotting.
 
-   For a YouTube-only stub, fetch the canonical title from the oEmbed endpoint.
-   If `maxresdefault.jpg` returns HTTP 200, save it under the post's
-   `static/img/blog/<YYYY-MM-DD-slug>/` directory and use that local path as the
-   front-matter `image`; otherwise save the oEmbed `thumbnail_url`. When the
-   maintainer supplied no prose, the body may contain only the standard
-   accessible YouTube iframe.
+   For a requested website screenshot, capture a fully rendered viewport, not
+   its Open Graph image or loading state. For a YouTube-only stub, fetch the
+   canonical title from the oEmbed endpoint.
+   To find the most recent video without consuming YouTube Data API quota,
+   retrieve `https://www.youtube.com/@<channel>/videos`, use its first video
+   ID, then verify that ID with oEmbed. If `maxresdefault.jpg` returns HTTP 200,
+   save it under the post's `static/img/blog/<YYYY-MM-DD-slug>/` directory and
+   use that local path as the front-matter `image`; otherwise save the oEmbed
+   `thumbnail_url`. When the maintainer supplied no prose, the body may contain
+   only the standard accessible YouTube iframe.
 
 3. **Write the front matter.**
 
@@ -87,10 +91,16 @@ A design skill saying "come up with copy" refers to mockups, not authorship.
 
    `image` is the social card. Point it at a local path under `static/`.
 
-4. **Add the body only from supplied copy.** Use `{/* truncate */}` to mark the
-   end of the list summary in `.mdx`; `<!-- truncate -->` in `.md`.
+4. **Use supported author socials.** Do not add `gitlab` to an author record:
+   Docusaurus turns its value into a relative link and fails broken-link
+   validation. Reuse only social keys already present in `blog/authors.yaml`.
 
-5. **Format only what you touched**, then build.
+5. **Add the body only from supplied copy.** This site deliberately configures
+   `truncateMarker` to match nothing, so do not add inert marker comments to
+   new posts. The Docusaurus untruncated-post warning is expected for every
+   post, including posts that use the documented marker syntax.
+
+6. **Format only what you touched**, then build.
 
    ```bash
    npx prettier --write blog/<file>.mdx
@@ -113,7 +123,9 @@ compiles to:
 
 ```html
 <div>Some <strong>Markdown</strong> content</div>
-<div><p>Some <strong>Markdown</strong> content</p></div>
+<div>
+  <p>Some <strong>Markdown</strong> content</p>
+</div>
 ```
 
 So this, which is what Prettier produces once the line passes 80 characters:
@@ -191,7 +203,8 @@ For images and video, use `src/components/blog/BlogFigure.tsx` — it renders
 - [ ] Front matter has `title`, `slug`, `authors`, `tags`, `date`, and `image`.
 - [ ] No single-element JSX line exceeds 80 characters.
 - [ ] `npx prettier --check` passes on the files you touched.
-- [ ] `npm run build:ci` emits no warnings naming your page path.
+- [ ] `npm run build:ci` completes; the untruncated-post warning is expected
+      from this site's deliberately disabled `truncateMarker`.
 
 ## Sources
 

@@ -1,6 +1,6 @@
 ---
 name: giscus-discussions
-version: "1.1"
+version: "1.2"
 last_updated: "2026-09-06"
 id: giscus-discussions
 one_line_purpose: Verify, recover, and archive blog Giscus discussion threads.
@@ -103,7 +103,11 @@ Discussion are both verified.
    link, SHA-1 marker, and comment count. A count of zero is valid for a new
    post. The marker is required because the site maps Giscus with
    `mapping="og:title"` and `strict="1"`.
-7. Only after the Giscus Discussion is verified, replace the source draft
+7. Query the source Discussion with
+   `repository.discussion(number: <number>)` and use the returned GraphQL `id`
+   for `updateDiscussion` and `closeDiscussion`. Its REST numeric `id` is not
+   accepted by those mutations.
+8. Only after the Giscus Discussion is verified, replace the source draft
    Discussion body with links to the live post and comment Discussion, then
    close it. Use GitHub GraphQL `updateDiscussion` and `closeDiscussion`
    mutations when the REST update endpoint is unavailable to the authenticated

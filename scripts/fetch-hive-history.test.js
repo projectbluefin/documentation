@@ -5,8 +5,11 @@ const {
   accumulateRepoStats,
   computeStatsWindows,
   createStatsAccumulator,
+  extractMetrics,
   finalizeContributorStats,
   MAX_WEEKS,
+  registryHeaders,
+  trackedProjectRepos,
 } = require("./fetch-hive-history.js");
 
 const WEEK = 7 * 86400;
@@ -266,4 +269,168 @@ test("computeStatsWindows returns ordered unix-second cut-offs", () => {
   assert.equal(monthAgo, NOW_SEC - 28 * 86400);
   assert.equal(threeMonthsAgo, NOW_SEC - 91 * 86400);
   assert.ok(threeMonthsAgo < monthAgo && monthAgo < weekAgo);
+});
+
+test("tracked Project Bluefin repositories come from the Hive registry", () => {
+  assert.deepEqual(
+    trackedProjectRepos({
+      hives: [
+        { org: "other", repos: ["ignored"] },
+        {
+          org: "projectbluefin",
+          repos: ["common", "server", "fsdk-containers"],
+        },
+      ],
+    }),
+    ["common", "server", "fsdk-containers"],
+  );
+});
+
+test("Hive registry requests never include GitHub authorization", () => {
+  assert.deepEqual(registryHeaders(), {
+    "User-Agent": "bluefin-hive-history/1.0",
+  });
+});
+
+// extractMetrics is the sole reader of the live hive payload. Every field it
+// emits is a history data point, and a wrong-but-plausible value here is not a
+// crash — it is a wrong chart. These tests pin the fallbacks and the coercion.
+
+test("extractMetrics returns null for a missing payload", () => {
+  assert.equal(extractMetrics(null), null);
+  assert.equal(extractMetrics(undefined), null);
+});
+
+test("extractMetrics reads a fully populated payload", () => {
+  const metrics = extractMetrics({
+    acmmLevel: 3,
+    governor: {
+      mode: "conservative",
+      budgetPct: 42,
+      queue: 7,
+      budget: { totalTokens: 1000, used: 420 },
+    },
+    agents: [{ paused: false }, { paused: true }, {}],
+    advisoryItems: [{}, {}],
+    mergeActivity: { today: 4, week: 19 },
+    issueToMerge: { median_minutes: 88, avg_minutes: 120 },
+  });
+
+  assert.deepEqual(metrics, {
+    acmmLevel: 3,
+    govMode: "conservative",
+    budgetPct: 42,
+    budgetTotal: 1000,
+    budgetUsed: 420,
+    queue: 7,
+    agents: 3,
+    // An agent with no `paused` key counts as running, not as unknown.
+    runningAgents: 2,
+    advisories: 2,
+    mergedToday: 4,
+    mergedWeek: 19,
+    // median wins over avg when both are present.
+    medianMergeMins: 88,
+  });
+});
+
+test("extractMetrics yields undefined fields, never zeros, for an empty payload", () => {
+  const metrics = extractMetrics({});
+
+  // Counts are real lengths of absent collections, so 0 is correct for them.
+  assert.equal(metrics.agents, 0);
+  assert.equal(metrics.runningAgents, 0);
+  assert.equal(metrics.advisories, 0);
+
+  // Everything else must stay undefined so the chart plots a gap rather than
+  // a fabricated zero reading.
+  for (const key of [
+    "acmmLevel",
+    "govMode",
+    "budgetPct",
+    "budgetTotal",
+    "budgetUsed",
+    "queue",
+    "mergedToday",
+    "mergedWeek",
+    "medianMergeMins",
+  ]) {
+    assert.equal(metrics[key], undefined, `${key} should be undefined`);
+  }
+});
+
+test("extractMetrics falls back to the legacy top-level tokenBudget", () => {
+  const metrics = extractMetrics({
+    tokenBudget: { total: 900, used: 300 },
+    budgetPct: 33,
+  });
+
+  // governor.budget is absent, so the older tokenBudget shape supplies these,
+  // and `total` is accepted where `totalTokens` is missing.
+  assert.equal(metrics.budgetTotal, 900);
+  assert.equal(metrics.budgetUsed, 300);
+  assert.equal(metrics.budgetPct, 33);
+});
+
+test("extractMetrics prefers governor.budgetPct over the top-level one", () => {
+  const metrics = extractMetrics({
+    governor: { budgetPct: 10 },
+    budgetPct: 99,
+  });
+  assert.equal(metrics.budgetPct, 10);
+});
+
+test("extractMetrics treats governor.issues as the queue when queue is absent", () => {
+  assert.equal(extractMetrics({ governor: { issues: 12 } }).queue, 12);
+  // An explicit queue wins over issues.
+  assert.equal(extractMetrics({ governor: { queue: 3, issues: 12 } }).queue, 3);
+});
+
+test("extractMetrics falls back to avg_minutes when there is no median", () => {
+  assert.equal(
+    extractMetrics({ issueToMerge: { avg_minutes: 150 } }).medianMergeMins,
+    150,
+  );
+});
+
+test("extractMetrics rejects non-finite and non-numeric readings", () => {
+  const metrics = extractMetrics({
+    acmmLevel: Infinity,
+    governor: {
+      mode: 7,
+      budgetPct: NaN,
+      queue: "12",
+      budget: { totalTokens: -Infinity, used: null },
+    },
+    mergeActivity: { today: "4", week: undefined },
+  });
+
+  // A numeric string is not a number: coercing "12" would let a string leak
+  // into a chart series that is summed elsewhere.
+  assert.equal(metrics.queue, undefined);
+  assert.equal(metrics.mergedToday, undefined);
+  assert.equal(metrics.acmmLevel, undefined);
+  assert.equal(metrics.budgetPct, undefined);
+  assert.equal(metrics.budgetTotal, undefined);
+  assert.equal(metrics.budgetUsed, undefined);
+  assert.equal(metrics.mergedWeek, undefined);
+  // mode must be a string or nothing.
+  assert.equal(metrics.govMode, undefined);
+});
+
+test("extractMetrics survives wrong-typed containers without throwing", () => {
+  const metrics = extractMetrics({
+    governor: "down",
+    agents: "many",
+    advisoryItems: null,
+    mergeActivity: 42,
+    issueToMerge: "unknown",
+  });
+
+  assert.equal(metrics.agents, 0);
+  assert.equal(metrics.runningAgents, 0);
+  assert.equal(metrics.advisories, 0);
+  assert.equal(metrics.queue, undefined);
+  assert.equal(metrics.mergedToday, undefined);
+  assert.equal(metrics.medianMergeMins, undefined);
 });

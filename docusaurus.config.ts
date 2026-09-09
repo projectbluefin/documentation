@@ -104,31 +104,51 @@ const config: Config = {
             to: "/contributors",
             from: "/donations/contributors",
           },
+          {
+            to: "/blog/tags/monthly-report",
+            from: ["/reports", "/reports/about-monthly-reports"],
+          },
+          {
+            to: "/blog/nodosaurus-november-2025",
+            from: "/reports/2025/11",
+          },
+          {
+            to: "/blog/deinonychus-december-2025",
+            from: "/reports/2025/12",
+          },
+          {
+            to: "/blog/jurassic-january-2026",
+            from: "/reports/2026/01",
+          },
+          {
+            to: "/blog/fossil-february-2026",
+            from: "/reports/2026/02",
+          },
+          {
+            to: "/blog/mesozoic-march-2026",
+            from: "/reports/2026/03",
+          },
+          {
+            to: "/blog/allosaurus-april-2026",
+            from: "/reports/2026/04",
+          },
+          {
+            to: "/blog/megalosaurus-may-2026",
+            from: "/reports/2026/05",
+          },
+          {
+            to: "/blog/juravenator-june-2026",
+            from: "/reports/2026/06",
+          },
+          {
+            to: "/blog/jovial-july-2026",
+            from: "/reports/2026/07",
+          },
+          {
+            to: "/blog/archaeopteryx-august-2026",
+            from: "/reports/2026/08",
+          },
         ],
-      },
-    ],
-    [
-      "@docusaurus/plugin-content-blog",
-      {
-        id: "reports",
-        routeBasePath: "reports",
-        path: "./reports",
-        blogTitle: "Monthly Reports",
-        blogDescription:
-          "Automated project activity reports from GitHub Project Board",
-        blogSidebarTitle: "Recent Reports",
-        blogSidebarCount: 10,
-        postsPerPage: 20,
-        showReadingTime: false, // System-generated content
-        authorsMapPath: "authors.yaml",
-        feedOptions: {
-          type: "all",
-          title: "Project Bluefin - Monthly Reports",
-          description: "Automated monthly activity reports from project board",
-          copyright: `Copyright © ${new Date().getFullYear()} Project Bluefin`,
-        },
-        // Enable table of contents in right sidebar
-        showLastUpdateTime: true,
       },
     ],
   ],
@@ -144,7 +164,7 @@ const config: Config = {
           "style-src 'self' 'unsafe-inline'",
           "img-src 'self' data: https:",
           "font-src 'self' data:",
-          "connect-src 'self' https://api.github.com https://raw.githubusercontent.com https://giscus.app https://formulae.brew.sh https://queue.projectbluefin.io https://hosted-projectbluefin-knuckle-gjvq.hive.kubestellar.io https://hive.kubestellar.io",
+          "connect-src 'self' https://api.github.com https://raw.githubusercontent.com https://giscus.app https://formulae.brew.sh https://queue.projectbluefin.io https://hosted-projectbluefin-knuckle-gjvq.hive.hivecommons.dev https://hive.kubestellar.io",
           "frame-src https://giscus.app https://www.youtube.com https://youtube.com https://insights.linuxfoundation.org",
         ].join("; "),
       },
@@ -197,13 +217,13 @@ const config: Config = {
           position: "right",
         },
         {
-          to: "reports",
-          label: "Reports",
+          to: "/leaderboards",
+          label: "Leaderboards",
           position: "right",
         },
         {
-          to: "/factory",
-          label: "Factory",
+          href: "https://hosted-projectbluefin-knuckle-gjvq.hive.hivecommons.dev",
+          label: "Hive",
           position: "right",
         },
         {

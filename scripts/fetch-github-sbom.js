@@ -68,6 +68,7 @@ const {
 const { extractBstPackageVersions, isSemverLike } = require("./lib/sbom/bst");
 const { buildSlimFrontendStreams } = require("./lib/sbom/slim");
 const { atomicWriteJson } = require("./lib/sbom/writer");
+const { requireTrustForRepo } = require("./lib/signing-trust");
 
 // ---------------------------------------------------------------------------
 // Configuration
@@ -119,17 +120,17 @@ const PARTIAL_RELEASES_REASON =
  * package is the GHCR container package name under the org.
  * releasesRepo is the GitHub repo used for tag enumeration via Releases API.
  *
- * keyless:true  → OIDC keyless signing (stable/latest/beta mainline streams)
- * keyless:false → key-based signing; cosignKeyUrl required (lts/gdx streams).
- *                 These streams have no SBOMs yet — present:false is expected.
- *                 When lts SBOMs are published, no code changes are needed.
+ * Signing policy is NOT declared here. `keyless` and `cosignKeyUrl` are derived
+ * from keyRepo via scripts/lib/signing-trust.js, the single source of truth
+ * shared with fetch-github-images.js:
+ *   keyless:true  → OIDC keyless signing (stable/latest/beta mainline streams)
+ *   keyless:false → key-based signing; cosignKeyUrl required (lts/gdx streams).
+ *                   These streams have no SBOMs yet — present:false is expected.
+ *                   When lts SBOMs are published, no code changes are needed.
  *
  * GTS is retired and absent from this list.
  */
-const COSIGN_KEY_LTS =
-  "https://raw.githubusercontent.com/projectbluefin/bluefin-lts/main/cosign.pub";
-
-const STREAM_SPECS = [
+const RAW_STREAM_SPECS = [
   {
     id: "bluefin-stable",
     label: "Bluefin Stable",
@@ -138,7 +139,6 @@ const STREAM_SPECS = [
     releasesRepo: "projectbluefin/bluefin",
     streamPrefix: "stable",
     keyRepo: "projectbluefin/bluefin",
-    keyless: true,
   },
   {
     id: "bluefin-stable-daily",
@@ -147,7 +147,6 @@ const STREAM_SPECS = [
     package: "bluefin",
     streamPrefix: "stable-daily",
     keyRepo: "projectbluefin/bluefin",
-    keyless: true,
   },
   {
     id: "bluefin-latest",
@@ -157,7 +156,6 @@ const STREAM_SPECS = [
     releasesRepo: "projectbluefin/bluefin",
     streamPrefix: "latest",
     keyRepo: "projectbluefin/bluefin",
-    keyless: true,
   },
   {
     id: "bluefin-lts",
@@ -167,8 +165,6 @@ const STREAM_SPECS = [
     releasesRepo: "projectbluefin/bluefin-lts",
     streamPrefix: "lts",
     keyRepo: "projectbluefin/bluefin-lts",
-    keyless: false,
-    cosignKeyUrl: COSIGN_KEY_LTS,
   },
   {
     id: "bluefin-lts-hwe",
@@ -178,8 +174,6 @@ const STREAM_SPECS = [
     releasesRepo: "projectbluefin/bluefin-lts",
     streamPrefix: "lts-hwe",
     keyRepo: "projectbluefin/bluefin-lts",
-    keyless: false,
-    cosignKeyUrl: COSIGN_KEY_LTS,
   },
   {
     id: "bluefin-lts-hwe-testing",
@@ -189,8 +183,6 @@ const STREAM_SPECS = [
     releasesRepo: "projectbluefin/bluefin-lts",
     streamPrefix: "lts-hwe-testing",
     keyRepo: "projectbluefin/bluefin-lts",
-    keyless: false,
-    cosignKeyUrl: COSIGN_KEY_LTS,
   },
   {
     id: "bluefin-lts-hwe-testing-50",
@@ -200,8 +192,6 @@ const STREAM_SPECS = [
     releasesRepo: "projectbluefin/bluefin-lts",
     streamPrefix: "lts-hwe-testing-50",
     keyRepo: "projectbluefin/bluefin-lts",
-    keyless: false,
-    cosignKeyUrl: COSIGN_KEY_LTS,
   },
   {
     id: "bluefin-lts-testing-50",
@@ -211,8 +201,6 @@ const STREAM_SPECS = [
     releasesRepo: "projectbluefin/bluefin-lts",
     streamPrefix: "lts-testing-50",
     keyRepo: "projectbluefin/bluefin-lts",
-    keyless: false,
-    cosignKeyUrl: COSIGN_KEY_LTS,
   },
   {
     id: "bluefin-dx-stable",
@@ -222,7 +210,6 @@ const STREAM_SPECS = [
     releasesRepo: "projectbluefin/bluefin",
     streamPrefix: "stable",
     keyRepo: "projectbluefin/bluefin",
-    keyless: true,
   },
   {
     id: "bluefin-dx-latest",
@@ -232,7 +219,6 @@ const STREAM_SPECS = [
     releasesRepo: "projectbluefin/bluefin",
     streamPrefix: "latest",
     keyRepo: "projectbluefin/bluefin",
-    keyless: true,
   },
   {
     id: "bluefin-dx-lts",
@@ -242,8 +228,6 @@ const STREAM_SPECS = [
     releasesRepo: "projectbluefin/bluefin-lts",
     streamPrefix: "lts",
     keyRepo: "projectbluefin/bluefin-lts",
-    keyless: false,
-    cosignKeyUrl: COSIGN_KEY_LTS,
   },
   {
     id: "bluefin-dx-lts-hwe-testing",
@@ -253,8 +237,6 @@ const STREAM_SPECS = [
     releasesRepo: "projectbluefin/bluefin-lts",
     streamPrefix: "lts-hwe-testing",
     keyRepo: "projectbluefin/bluefin-lts",
-    keyless: false,
-    cosignKeyUrl: COSIGN_KEY_LTS,
   },
   {
     id: "bluefin-dx-lts-hwe-testing-50",
@@ -264,8 +246,6 @@ const STREAM_SPECS = [
     releasesRepo: "projectbluefin/bluefin-lts",
     streamPrefix: "lts-hwe-testing-50",
     keyRepo: "projectbluefin/bluefin-lts",
-    keyless: false,
-    cosignKeyUrl: COSIGN_KEY_LTS,
   },
   {
     id: "bluefin-dx-lts-testing-50",
@@ -275,8 +255,6 @@ const STREAM_SPECS = [
     releasesRepo: "projectbluefin/bluefin-lts",
     streamPrefix: "lts-testing-50",
     keyRepo: "projectbluefin/bluefin-lts",
-    keyless: false,
-    cosignKeyUrl: COSIGN_KEY_LTS,
   },
   {
     id: "bluefin-gdx-lts",
@@ -286,8 +264,6 @@ const STREAM_SPECS = [
     releasesRepo: "projectbluefin/bluefin-lts",
     streamPrefix: "lts",
     keyRepo: "projectbluefin/bluefin-lts",
-    keyless: false,
-    cosignKeyUrl: COSIGN_KEY_LTS,
   },
   {
     id: "bluefin-gdx-latest",
@@ -297,7 +273,6 @@ const STREAM_SPECS = [
     releasesRepo: "projectbluefin/bluefin",
     streamPrefix: "latest",
     keyRepo: "projectbluefin/bluefin",
-    keyless: true,
   },
   {
     id: "bluefin-nvidia-open-stable",
@@ -307,7 +282,6 @@ const STREAM_SPECS = [
     releasesRepo: "projectbluefin/bluefin",
     streamPrefix: "stable",
     keyRepo: "projectbluefin/bluefin",
-    keyless: true,
   },
   {
     id: "utah-testing",
@@ -317,7 +291,6 @@ const STREAM_SPECS = [
     releasesRepo: "projectbluefin/utah",
     streamPrefix: "testing",
     keyRepo: "projectbluefin/utah",
-    keyless: true,
   },
   {
     id: "utah-nvidia-testing",
@@ -327,7 +300,6 @@ const STREAM_SPECS = [
     releasesRepo: "projectbluefin/utah",
     streamPrefix: "testing",
     keyRepo: "projectbluefin/utah",
-    keyless: true,
   },
   {
     id: "dakota-latest",
@@ -337,7 +309,6 @@ const STREAM_SPECS = [
     // Uses usesLatestTag:true — routes through processLatestTagStream() which
     // fetches :latest plus the 10 most recent commit-SHA image tags for history.
     keyRepo: "projectbluefin/dakota",
-    keyless: true,
     usesLatestTag: true,
   },
   {
@@ -346,10 +317,24 @@ const STREAM_SPECS = [
     org: "projectbluefin",
     package: "dakota-nvidia",
     keyRepo: "projectbluefin/dakota",
-    keyless: true,
     usesLatestTag: true,
   },
 ];
+
+// Trust policy is not restated per stream: it is derived from keyRepo via the
+// shared table, so a signing-model change lands in exactly one place. An
+// undeclared signing repo is fatal at load time rather than silently keyless.
+const STREAM_SPECS = RAW_STREAM_SPECS.map((spec) => {
+  const trust = requireTrustForRepo(
+    spec.keyRepo,
+    `STREAM_SPECS entry "${spec.id}"`,
+  );
+  return {
+    ...spec,
+    keyless: trust.keyless,
+    cosignKeyUrl: trust.cosignKeyUrl,
+  };
+});
 
 // ---------------------------------------------------------------------------
 // Latest-tag stream processing (Dakota)

@@ -1,0 +1,4068 @@
+---
+title: "Archaeopteryx August 2026"
+date: 2026-08-31
+slug: archaeopteryx-august-2026
+authors: [bluefin]
+tags: [monthly-report, project-activity, announcements]
+---
+
+import {
+  ReportHeroKPIs,
+  ReportActivity,
+  ReportDelivery,
+  ReportParticipation,
+  ReportEcosystem,
+} from '@site/src/components/reports';
+import GitHubProfileCard from '@site/src/components/GitHubProfileCard';
+
+export const snapshot = {
+  "schemaVersion": 2,
+  "period": {
+    "month": "2026-08",
+    "start": "2026-08-01",
+    "end": "2026-08-31"
+  },
+  "sources": [
+    {
+      "id": "github-activity",
+      "status": "available",
+      "stateReason": null,
+      "url": "https://api.github.com/graphql",
+      "window": {
+        "start": "2026-08-01",
+        "end": "2026-08-31"
+      }
+    },
+    {
+      "id": "github-lanes",
+      "status": "available",
+      "stateReason": null,
+      "url": "https://api.github.com/repos/projectbluefin/bluefin/actions/runs",
+      "window": {
+        "start": "2026-08-01",
+        "end": "2026-08-31"
+      }
+    },
+    {
+      "id": "github-releases",
+      "status": "available",
+      "stateReason": null,
+      "url": "https://api.github.com/repos",
+      "window": {
+        "start": "2026-08-01",
+        "end": "2026-08-31"
+      }
+    },
+    {
+      "id": "github-releases",
+      "repository": "projectbluefin/bluefin",
+      "status": "available",
+      "stateReason": null,
+      "url": "https://api.github.com/repos/projectbluefin/bluefin/releases",
+      "window": {
+        "start": "2026-08-01",
+        "end": "2026-08-31"
+      }
+    },
+    {
+      "id": "github-releases",
+      "repository": "projectbluefin/bluefin-lts",
+      "status": "available",
+      "stateReason": null,
+      "url": "https://api.github.com/repos/projectbluefin/bluefin-lts/releases",
+      "window": {
+        "start": "2026-08-01",
+        "end": "2026-08-31"
+      }
+    },
+    {
+      "id": "github-releases",
+      "repository": "projectbluefin/dakota",
+      "status": "available",
+      "stateReason": null,
+      "url": "https://api.github.com/repos/projectbluefin/dakota/releases",
+      "window": {
+        "start": "2026-08-01",
+        "end": "2026-08-31"
+      }
+    },
+    {
+      "id": "github-releases",
+      "repository": "projectbluefin/server",
+      "status": "available",
+      "stateReason": null,
+      "url": "https://api.github.com/repos/projectbluefin/server/releases",
+      "window": {
+        "start": "2026-08-01",
+        "end": "2026-08-31"
+      }
+    },
+    {
+      "id": "countme",
+      "status": "available",
+      "stateReason": null,
+      "url": "https://data-analysis.fedoraproject.org/csv-reports/countme/totals.csv",
+      "window": {
+        "start": "2026-08-01",
+        "end": "2026-08-31"
+      }
+    },
+    {
+      "id": "homebrew",
+      "status": "available",
+      "stateReason": null,
+      "url": "https://github.com/ublue-os/homebrew-tap",
+      "window": {
+        "start": "2026-08-01",
+        "end": "2026-08-31"
+      }
+    },
+    {
+      "id": "flathub",
+      "status": "unavailable",
+      "stateReason": "Flathub statistics could not be read.",
+      "url": "https://flathub.org/api/v2/stats",
+      "window": {
+        "start": "2026-08-01",
+        "end": "2026-08-31"
+      }
+    }
+  ],
+  "activity": {
+    "calendar": {
+      "id": "activity-calendar",
+      "kind": "calendar",
+      "title": "Daily merged pull requests",
+      "currentValue": "541",
+      "unit": "merged pull requests",
+      "sourceLabel": "GitHub GraphQL",
+      "sourceUrl": "https://api.github.com/graphql",
+      "sourceWindow": "August 2026 UTC (2026-08-01 to 2026-08-31)",
+      "labels": [
+        "2026-08-01",
+        "2026-08-02",
+        "2026-08-03",
+        "2026-08-04",
+        "2026-08-05",
+        "2026-08-06",
+        "2026-08-07",
+        "2026-08-08",
+        "2026-08-09",
+        "2026-08-10",
+        "2026-08-11",
+        "2026-08-12",
+        "2026-08-13",
+        "2026-08-14",
+        "2026-08-15",
+        "2026-08-16",
+        "2026-08-17",
+        "2026-08-18",
+        "2026-08-19",
+        "2026-08-20",
+        "2026-08-21",
+        "2026-08-22",
+        "2026-08-23",
+        "2026-08-24",
+        "2026-08-25",
+        "2026-08-26",
+        "2026-08-27",
+        "2026-08-28",
+        "2026-08-29",
+        "2026-08-30",
+        "2026-08-31"
+      ],
+      "series": [
+        {
+          "id": "merged",
+          "label": "Merged pull requests",
+          "values": [
+            38,
+            20,
+            30,
+            14,
+            12,
+            10,
+            117,
+            20,
+            54,
+            8,
+            3,
+            5,
+            10,
+            5,
+            15,
+            11,
+            7,
+            8,
+            5,
+            14,
+            21,
+            17,
+            8,
+            19,
+            7,
+            14,
+            4,
+            11,
+            10,
+            22,
+            2
+          ]
+        }
+      ],
+      "minimumPoints": 1
+    },
+    "repositories": {
+      "id": "activity-repositories",
+      "kind": "grouped-bar",
+      "title": "Merged pull requests by repository",
+      "currentValue": "541",
+      "unit": "merged pull requests",
+      "sourceLabel": "GitHub GraphQL",
+      "sourceUrl": "https://api.github.com/graphql",
+      "sourceWindow": "August 2026 UTC (2026-08-01 to 2026-08-31)",
+      "labels": [
+        "projectbluefin/actions",
+        "projectbluefin/bluefin",
+        "projectbluefin/bluefin-lts",
+        "projectbluefin/bonedigger",
+        "projectbluefin/common",
+        "projectbluefin/dakota",
+        "projectbluefin/documentation",
+        "projectbluefin/finpilot",
+        "projectbluefin/iso",
+        "projectbluefin/server",
+        "projectbluefin/testsuite",
+        "projectbluefin/utah",
+        "projectbluefin/utah-packages"
+      ],
+      "series": [
+        {
+          "id": "repositories",
+          "label": "Merged pull requests",
+          "values": [
+            44,
+            155,
+            38,
+            3,
+            50,
+            92,
+            18,
+            49,
+            1,
+            4,
+            67,
+            6,
+            14
+          ]
+        }
+      ],
+      "minimumPoints": 1
+    },
+    "categories": {
+      "id": "activity-categories",
+      "kind": "grouped-bar",
+      "title": "Merged pull requests by label",
+      "currentValue": "435",
+      "unit": "label assignments",
+      "sourceLabel": "GitHub GraphQL",
+      "sourceUrl": "https://api.github.com/graphql",
+      "sourceWindow": "August 2026 UTC (2026-08-01 to 2026-08-31)",
+      "labels": [
+        "1-triage",
+        "3-clanker-queue",
+        "4-review",
+        "agent/contributor",
+        "automerge",
+        "chore/deps",
+        "cli/copilot",
+        "contributor/castrojo",
+        "dependencies",
+        "hold",
+        "javascript",
+        "kde",
+        "lgtm",
+        "needs-human",
+        "pr/needs-review",
+        "quality",
+        "release/ready",
+        "renovate/high-risk",
+        "renovate/low-risk",
+        "runner",
+        "security",
+        "size:M",
+        "size:S",
+        "size:XL",
+        "size:XS",
+        "testing"
+      ],
+      "series": [
+        {
+          "id": "categories",
+          "label": "Label assignments",
+          "values": [
+            3,
+            41,
+            38,
+            2,
+            52,
+            52,
+            2,
+            2,
+            2,
+            13,
+            2,
+            9,
+            23,
+            1,
+            67,
+            3,
+            63,
+            16,
+            3,
+            9,
+            6,
+            1,
+            2,
+            1,
+            19,
+            3
+          ]
+        }
+      ],
+      "minimumPoints": 1
+    },
+    "portfolio": {
+      "stable": [
+        "projectbluefin/bluefin",
+        "projectbluefin/bluefin-lts",
+        "projectbluefin/dakota",
+        "projectbluefin/testsuite",
+        "projectbluefin/server",
+        "projectbluefin/actions",
+        "projectbluefin/bonedigger",
+        "projectbluefin/aurorafin-shared",
+        "projectbluefin/common",
+        "projectbluefin/documentation",
+        "projectbluefin/branding",
+        "projectbluefin/iso",
+        "projectbluefin/finpilot"
+      ],
+      "experimental": [
+        "projectbluefin/utah",
+        "projectbluefin/utah-packages"
+      ]
+    }
+  },
+  "delivery": {
+    "lanes": [
+      {
+        "id": "bluefin-testing",
+        "label": "Bluefin Testing",
+        "repo": "projectbluefin/bluefin",
+        "total": 8,
+        "passed": 0,
+        "failed": 3,
+        "pending": 5,
+        "successRate": 0,
+        "medianDurationMin": 65,
+        "sparklineData": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          6,
+          0,
+          1,
+          0,
+          0,
+          0,
+          1,
+          0
+        ],
+        "trend": {
+          "labels": [
+            "2026-08-01",
+            "2026-08-02",
+            "2026-08-03",
+            "2026-08-04",
+            "2026-08-05",
+            "2026-08-06",
+            "2026-08-07",
+            "2026-08-08",
+            "2026-08-09",
+            "2026-08-10",
+            "2026-08-11",
+            "2026-08-12",
+            "2026-08-13",
+            "2026-08-14",
+            "2026-08-15",
+            "2026-08-16",
+            "2026-08-17",
+            "2026-08-18",
+            "2026-08-19",
+            "2026-08-20",
+            "2026-08-21",
+            "2026-08-22",
+            "2026-08-23",
+            "2026-08-24",
+            "2026-08-25",
+            "2026-08-26",
+            "2026-08-27",
+            "2026-08-28",
+            "2026-08-29",
+            "2026-08-30",
+            "2026-08-31"
+          ],
+          "values": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            6,
+            0,
+            1,
+            0,
+            0,
+            0,
+            1,
+            0
+          ]
+        },
+        "unavailableReason": null
+      },
+      {
+        "id": "bluefin-lts",
+        "label": "Bluefin LTS",
+        "repo": "projectbluefin/bluefin-lts",
+        "total": 30,
+        "passed": 0,
+        "failed": 0,
+        "pending": 30,
+        "successRate": null,
+        "medianDurationMin": null,
+        "sparklineData": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          1,
+          1,
+          0,
+          0,
+          0,
+          0,
+          7,
+          0,
+          11,
+          9
+        ],
+        "trend": {
+          "labels": [
+            "2026-08-01",
+            "2026-08-02",
+            "2026-08-03",
+            "2026-08-04",
+            "2026-08-05",
+            "2026-08-06",
+            "2026-08-07",
+            "2026-08-08",
+            "2026-08-09",
+            "2026-08-10",
+            "2026-08-11",
+            "2026-08-12",
+            "2026-08-13",
+            "2026-08-14",
+            "2026-08-15",
+            "2026-08-16",
+            "2026-08-17",
+            "2026-08-18",
+            "2026-08-19",
+            "2026-08-20",
+            "2026-08-21",
+            "2026-08-22",
+            "2026-08-23",
+            "2026-08-24",
+            "2026-08-25",
+            "2026-08-26",
+            "2026-08-27",
+            "2026-08-28",
+            "2026-08-29",
+            "2026-08-30",
+            "2026-08-31"
+          ],
+          "values": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            7,
+            0,
+            11,
+            9
+          ]
+        },
+        "unavailableReason": null
+      },
+      {
+        "id": "dakota",
+        "label": "Dakota",
+        "repo": "projectbluefin/dakota",
+        "total": 85,
+        "passed": 71,
+        "failed": 2,
+        "pending": 12,
+        "successRate": 97,
+        "medianDurationMin": 39,
+        "sparklineData": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          4,
+          7,
+          9,
+          35,
+          16,
+          7,
+          4
+        ],
+        "trend": {
+          "labels": [
+            "2026-08-01",
+            "2026-08-02",
+            "2026-08-03",
+            "2026-08-04",
+            "2026-08-05",
+            "2026-08-06",
+            "2026-08-07",
+            "2026-08-08",
+            "2026-08-09",
+            "2026-08-10",
+            "2026-08-11",
+            "2026-08-12",
+            "2026-08-13",
+            "2026-08-14",
+            "2026-08-15",
+            "2026-08-16",
+            "2026-08-17",
+            "2026-08-18",
+            "2026-08-19",
+            "2026-08-20",
+            "2026-08-21",
+            "2026-08-22",
+            "2026-08-23",
+            "2026-08-24",
+            "2026-08-25",
+            "2026-08-26",
+            "2026-08-27",
+            "2026-08-28",
+            "2026-08-29",
+            "2026-08-30",
+            "2026-08-31"
+          ],
+          "values": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            4,
+            7,
+            9,
+            35,
+            16,
+            7,
+            4
+          ]
+        },
+        "unavailableReason": null
+      }
+    ],
+    "cadence": {
+      "id": "delivery-cadence",
+      "kind": "line",
+      "title": "Publishing-lane cadence",
+      "currentValue": "123",
+      "unit": "publish runs",
+      "sourceLabel": "GitHub Actions",
+      "sourceUrl": "https://api.github.com/repos/projectbluefin/bluefin/actions/runs",
+      "sourceWindow": "August 2026 UTC (2026-08-01 to 2026-08-31)",
+      "labels": [
+        "2026-08-01",
+        "2026-08-02",
+        "2026-08-03",
+        "2026-08-04",
+        "2026-08-05",
+        "2026-08-06",
+        "2026-08-07",
+        "2026-08-08",
+        "2026-08-09",
+        "2026-08-10",
+        "2026-08-11",
+        "2026-08-12",
+        "2026-08-13",
+        "2026-08-14",
+        "2026-08-15",
+        "2026-08-16",
+        "2026-08-17",
+        "2026-08-18",
+        "2026-08-19",
+        "2026-08-20",
+        "2026-08-21",
+        "2026-08-22",
+        "2026-08-23",
+        "2026-08-24",
+        "2026-08-25",
+        "2026-08-26",
+        "2026-08-27",
+        "2026-08-28",
+        "2026-08-29",
+        "2026-08-30",
+        "2026-08-31"
+      ],
+      "series": [
+        {
+          "id": "bluefin-testing",
+          "label": "Bluefin Testing",
+          "values": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            6,
+            0,
+            1,
+            0,
+            0,
+            0,
+            1,
+            0
+          ]
+        },
+        {
+          "id": "bluefin-lts",
+          "label": "Bluefin LTS",
+          "values": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            7,
+            0,
+            11,
+            9
+          ]
+        },
+        {
+          "id": "dakota",
+          "label": "Dakota",
+          "values": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            4,
+            7,
+            9,
+            35,
+            16,
+            7,
+            4
+          ]
+        }
+      ],
+      "minimumPoints": 1
+    },
+    "releases": {
+      "id": "delivery-releases",
+      "kind": "line",
+      "title": "Release events",
+      "currentValue": "13",
+      "unit": "release events",
+      "sourceLabel": "GitHub Releases API",
+      "sourceUrl": "https://api.github.com/repos",
+      "sourceWindow": "August 2026 UTC (2026-08-01 to 2026-08-31)",
+      "labels": [
+        "2026-08-07",
+        "2026-08-06",
+        "2026-08-05",
+        "2026-08-04",
+        "2026-08-03",
+        "2026-08-02",
+        "2026-08-01",
+        "2026-08-31",
+        "2026-08-28",
+        "2026-08-24",
+        "2026-08-21",
+        "2026-08-19",
+        "2026-08-15"
+      ],
+      "series": [
+        {
+          "id": "releases",
+          "label": "Release events",
+          "values": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        }
+      ],
+      "minimumPoints": 1
+    }
+  },
+  "participation": {
+    "automation": {
+      "id": "participation-automation",
+      "kind": "stacked-bar",
+      "title": "Human and automation activity",
+      "currentValue": "541",
+      "unit": "pull requests",
+      "sourceLabel": "GitHub GraphQL",
+      "sourceUrl": "https://api.github.com/graphql",
+      "sourceWindow": "August 2026 UTC (2026-08-01 to 2026-08-31)",
+      "labels": [
+        "Report period"
+      ],
+      "series": [
+        {
+          "id": "human",
+          "label": "Human",
+          "values": [
+            258
+          ]
+        },
+        {
+          "id": "automation",
+          "label": "Automation",
+          "values": [
+            283
+          ]
+        }
+      ],
+      "minimumPoints": 1
+    },
+    "leaderboard": {
+      "heroes": [
+        {
+          "rank": 1,
+          "login": "castrojo",
+          "avatarUrl": "https://github.com/castrojo.png?size=64",
+          "contributions": 109,
+          "projects": 9,
+          "repos": [
+            "common",
+            "bluefin",
+            "bluefin-lts",
+            "dakota",
+            "testsuite",
+            "server",
+            "actions",
+            "documentation",
+            "finpilot"
+          ],
+          "badge": {
+            "label": "Top Hero",
+            "color": "#F9C74F",
+            "title": "Month MVP"
+          },
+          "isNew": false
+        },
+        {
+          "rank": 2,
+          "login": "ahmedadan",
+          "avatarUrl": "https://github.com/ahmedadan.png?size=64",
+          "contributions": 35,
+          "projects": 3,
+          "repos": [
+            "common",
+            "bluefin",
+            "dakota"
+          ],
+          "badge": {
+            "label": "High Velocity",
+            "color": "#2AA198",
+            "title": "5+ Merged PRs"
+          },
+          "isNew": false
+        },
+        {
+          "rank": 3,
+          "login": "kubestellar-hive",
+          "avatarUrl": "https://github.com/kubestellar-hive.png?size=64",
+          "contributions": 27,
+          "projects": 7,
+          "repos": [
+            "common",
+            "bluefin",
+            "dakota",
+            "testsuite",
+            "server",
+            "actions",
+            "finpilot"
+          ],
+          "badge": {
+            "label": "High Velocity",
+            "color": "#2AA198",
+            "title": "5+ Merged PRs"
+          },
+          "isNew": false
+        },
+        {
+          "rank": 4,
+          "login": "hanthor",
+          "avatarUrl": "https://github.com/hanthor.png?size=64",
+          "contributions": 24,
+          "projects": 9,
+          "repos": [
+            "common",
+            "bluefin",
+            "bluefin-lts",
+            "dakota",
+            "testsuite",
+            "actions",
+            "finpilot",
+            "utah",
+            "utah-packages"
+          ],
+          "badge": {
+            "label": "High Velocity",
+            "color": "#2AA198",
+            "title": "5+ Merged PRs"
+          },
+          "isNew": false
+        },
+        {
+          "rank": 5,
+          "login": "Danathar",
+          "avatarUrl": "https://github.com/Danathar.png?size=64",
+          "contributions": 20,
+          "projects": 3,
+          "repos": [
+            "bluefin",
+            "dakota",
+            "testsuite"
+          ],
+          "badge": {
+            "label": "High Velocity",
+            "color": "#2AA198",
+            "title": "5+ Merged PRs"
+          },
+          "isNew": false
+        },
+        {
+          "rank": 6,
+          "login": "mrbobbytables",
+          "avatarUrl": "https://github.com/mrbobbytables.png?size=64",
+          "contributions": 13,
+          "projects": 3,
+          "repos": [
+            "bluefin",
+            "dakota",
+            "testsuite"
+          ],
+          "badge": {
+            "label": "High Velocity",
+            "color": "#2AA198",
+            "title": "5+ Merged PRs"
+          },
+          "isNew": false
+        },
+        {
+          "rank": 7,
+          "login": "bketelsen",
+          "avatarUrl": "https://github.com/bketelsen.png?size=64",
+          "contributions": 11,
+          "projects": 4,
+          "repos": [
+            "bluefin",
+            "bluefin-lts",
+            "testsuite",
+            "finpilot"
+          ],
+          "badge": {
+            "label": "High Velocity",
+            "color": "#2AA198",
+            "title": "5+ Merged PRs"
+          },
+          "isNew": false
+        },
+        {
+          "rank": 8,
+          "login": "Siddhj2206",
+          "avatarUrl": "https://github.com/Siddhj2206.png?size=64",
+          "contributions": 5,
+          "projects": 2,
+          "repos": [
+            "actions",
+            "finpilot"
+          ],
+          "badge": {
+            "label": "High Velocity",
+            "color": "#2AA198",
+            "title": "5+ Merged PRs"
+          },
+          "isNew": false
+        },
+        {
+          "rank": 9,
+          "login": "joshyorko",
+          "avatarUrl": "https://github.com/joshyorko.png?size=64",
+          "contributions": 4,
+          "projects": 4,
+          "repos": [
+            "common",
+            "bluefin",
+            "testsuite",
+            "bonedigger"
+          ],
+          "badge": {
+            "label": "Cross-Fleet",
+            "color": "#8A63D2",
+            "title": "Multi-Repo Impact"
+          },
+          "isNew": false
+        },
+        {
+          "rank": 10,
+          "login": "HuntedRaven7",
+          "avatarUrl": "https://github.com/HuntedRaven7.png?size=64",
+          "contributions": 3,
+          "projects": 3,
+          "repos": [
+            "common",
+            "bluefin-lts",
+            "utah"
+          ],
+          "badge": {
+            "label": "Cross-Fleet",
+            "color": "#8A63D2",
+            "title": "Multi-Repo Impact"
+          },
+          "isNew": false
+        },
+        {
+          "rank": 11,
+          "login": "rapenne-s",
+          "avatarUrl": "https://github.com/rapenne-s.png?size=64",
+          "contributions": 2,
+          "projects": 1,
+          "repos": [
+            "dakota"
+          ],
+          "isNew": false
+        },
+        {
+          "rank": 12,
+          "login": "Giklab",
+          "avatarUrl": "https://github.com/Giklab.png?size=64",
+          "contributions": 1,
+          "projects": 1,
+          "repos": [
+            "common"
+          ],
+          "isNew": false
+        },
+        {
+          "rank": 13,
+          "login": "kylerankin",
+          "avatarUrl": "https://github.com/kylerankin.png?size=64",
+          "contributions": 1,
+          "projects": 1,
+          "repos": [
+            "testsuite"
+          ],
+          "isNew": false
+        },
+        {
+          "rank": 14,
+          "login": "onlydole",
+          "avatarUrl": "https://github.com/onlydole.png?size=64",
+          "contributions": 1,
+          "projects": 1,
+          "repos": [
+            "testsuite"
+          ],
+          "isNew": false
+        },
+        {
+          "rank": 15,
+          "login": "theMimolet",
+          "avatarUrl": "https://github.com/theMimolet.png?size=64",
+          "contributions": 1,
+          "projects": 1,
+          "repos": [
+            "common"
+          ],
+          "isNew": false
+        },
+        {
+          "rank": 16,
+          "login": "tunix",
+          "avatarUrl": "https://github.com/tunix.png?size=64",
+          "contributions": 1,
+          "projects": 1,
+          "repos": [
+            "finpilot"
+          ],
+          "isNew": false
+        }
+      ],
+      "newLights": []
+    }
+  },
+  "ecosystem": {
+    "countme": {
+      "id": "ecosystem-countme",
+      "kind": "line",
+      "title": "Countme active systems",
+      "currentValue": "3920",
+      "unit": "estimated weekly active systems",
+      "sourceLabel": "Countme",
+      "sourceUrl": "https://data-analysis.fedoraproject.org/csv-reports/countme/totals.csv",
+      "sourceWindow": "Through 2026-07-27",
+      "labels": [
+        "week-1",
+        "week-2",
+        "week-3",
+        "week-4",
+        "week-5",
+        "week-6",
+        "week-7",
+        "week-8",
+        "week-9",
+        "week-10"
+      ],
+      "series": [
+        {
+          "id": "active-systems",
+          "label": "Active systems",
+          "values": [
+            3561,
+            3672,
+            3606,
+            3712,
+            3780,
+            3667,
+            3584,
+            3678,
+            4195,
+            3920
+          ]
+        }
+      ],
+      "minimumPoints": 1
+    },
+    "homebrew": {
+      "id": "ecosystem-homebrew",
+      "kind": "grouped-bar",
+      "title": "Homebrew tap additions",
+      "currentValue": "14",
+      "unit": "package additions",
+      "sourceLabel": "Homebrew taps",
+      "sourceUrl": "https://github.com/ublue-os/homebrew-tap",
+      "sourceWindow": "August 2026 UTC (2026-08-01 to 2026-08-31)",
+      "labels": [
+        "Production tap",
+        "Experimental tap"
+      ],
+      "series": [
+        {
+          "id": "additions",
+          "label": "Additions",
+          "values": [
+            2,
+            12
+          ]
+        }
+      ],
+      "minimumPoints": 1
+    },
+    "flathub": null,
+    "unavailableReason": "Flathub statistics could not be read."
+  },
+  "history": [
+    {
+      "schemaVersion": 2,
+      "period": {
+        "month": "2026-07",
+        "start": "2026-07-01",
+        "end": "2026-07-31"
+      },
+      "sources": [
+        {
+          "id": "github-activity",
+          "status": "available",
+          "stateReason": null,
+          "url": "https://api.github.com/graphql",
+          "window": {
+            "start": "2026-07-01",
+            "end": "2026-07-31"
+          }
+        },
+        {
+          "id": "github-lanes",
+          "status": "available",
+          "stateReason": null,
+          "url": "https://api.github.com/repos/projectbluefin/bluefin/actions/runs",
+          "window": {
+            "start": "2026-07-01",
+            "end": "2026-07-31"
+          }
+        },
+        {
+          "id": "github-releases",
+          "status": "available",
+          "stateReason": null,
+          "url": "https://api.github.com/repos",
+          "window": {
+            "start": "2026-07-01",
+            "end": "2026-07-31"
+          }
+        },
+        {
+          "id": "github-releases",
+          "repository": "projectbluefin/bluefin",
+          "status": "available",
+          "stateReason": null,
+          "url": "https://api.github.com/repos/projectbluefin/bluefin/releases",
+          "window": {
+            "start": "2026-07-01",
+            "end": "2026-07-31"
+          }
+        },
+        {
+          "id": "github-releases",
+          "repository": "projectbluefin/bluefin-lts",
+          "status": "available",
+          "stateReason": null,
+          "url": "https://api.github.com/repos/projectbluefin/bluefin-lts/releases",
+          "window": {
+            "start": "2026-07-01",
+            "end": "2026-07-31"
+          }
+        },
+        {
+          "id": "github-releases",
+          "repository": "projectbluefin/dakota",
+          "status": "available",
+          "stateReason": null,
+          "url": "https://api.github.com/repos/projectbluefin/dakota/releases",
+          "window": {
+            "start": "2026-07-01",
+            "end": "2026-07-31"
+          }
+        },
+        {
+          "id": "github-releases",
+          "repository": "projectbluefin/server",
+          "status": "available",
+          "stateReason": null,
+          "url": "https://api.github.com/repos/projectbluefin/server/releases",
+          "window": {
+            "start": "2026-07-01",
+            "end": "2026-07-31"
+          }
+        },
+        {
+          "id": "countme",
+          "status": "available",
+          "stateReason": null,
+          "url": "https://data-analysis.fedoraproject.org/csv-reports/countme/totals.csv",
+          "window": {
+            "start": "2026-07-01",
+            "end": "2026-07-31"
+          }
+        },
+        {
+          "id": "homebrew",
+          "status": "available",
+          "stateReason": null,
+          "url": "https://github.com/ublue-os/homebrew-tap",
+          "window": {
+            "start": "2026-07-01",
+            "end": "2026-07-31"
+          }
+        },
+        {
+          "id": "flathub",
+          "status": "unavailable",
+          "stateReason": "Flathub statistics could not be read.",
+          "url": "https://flathub.org/api/v2/stats",
+          "window": {
+            "start": "2026-07-01",
+            "end": "2026-07-31"
+          }
+        }
+      ],
+      "activity": {
+        "calendar": {
+          "id": "activity-calendar",
+          "kind": "calendar",
+          "title": "Daily merged pull requests",
+          "currentValue": "553",
+          "unit": "merged pull requests",
+          "sourceLabel": "GitHub GraphQL",
+          "sourceUrl": "https://api.github.com/graphql",
+          "sourceWindow": "July 2026 UTC (2026-07-01 to 2026-07-31)",
+          "labels": [
+            "2026-07-01",
+            "2026-07-02",
+            "2026-07-03",
+            "2026-07-04",
+            "2026-07-05",
+            "2026-07-06",
+            "2026-07-07",
+            "2026-07-08",
+            "2026-07-09",
+            "2026-07-10",
+            "2026-07-11",
+            "2026-07-12",
+            "2026-07-13",
+            "2026-07-14",
+            "2026-07-15",
+            "2026-07-16",
+            "2026-07-17",
+            "2026-07-18",
+            "2026-07-19",
+            "2026-07-20",
+            "2026-07-21",
+            "2026-07-22",
+            "2026-07-23",
+            "2026-07-24",
+            "2026-07-25",
+            "2026-07-26",
+            "2026-07-27",
+            "2026-07-28",
+            "2026-07-29",
+            "2026-07-30",
+            "2026-07-31"
+          ],
+          "series": [
+            {
+              "id": "merged",
+              "label": "Merged pull requests",
+              "values": [
+                26,
+                13,
+                12,
+                9,
+                8,
+                14,
+                7,
+                13,
+                8,
+                6,
+                14,
+                9,
+                7,
+                10,
+                4,
+                7,
+                6,
+                7,
+                31,
+                87,
+                34,
+                14,
+                17,
+                12,
+                24,
+                15,
+                17,
+                40,
+                48,
+                20,
+                14
+              ]
+            }
+          ],
+          "minimumPoints": 1
+        },
+        "repositories": {
+          "id": "activity-repositories",
+          "kind": "grouped-bar",
+          "title": "Merged pull requests by repository",
+          "currentValue": "553",
+          "unit": "merged pull requests",
+          "sourceLabel": "GitHub GraphQL",
+          "sourceUrl": "https://api.github.com/graphql",
+          "sourceWindow": "July 2026 UTC (2026-07-01 to 2026-07-31)",
+          "labels": [
+            "projectbluefin/actions",
+            "projectbluefin/bluefin",
+            "projectbluefin/bluefin-lts",
+            "projectbluefin/common",
+            "projectbluefin/dakota",
+            "projectbluefin/documentation",
+            "projectbluefin/finpilot",
+            "projectbluefin/iso",
+            "projectbluefin/server",
+            "projectbluefin/testsuite"
+          ],
+          "series": [
+            {
+              "id": "repositories",
+              "label": "Merged pull requests",
+              "values": [
+                38,
+                166,
+                52,
+                39,
+                71,
+                18,
+                72,
+                2,
+                3,
+                92
+              ]
+            }
+          ],
+          "minimumPoints": 1
+        },
+        "categories": {
+          "id": "activity-categories",
+          "kind": "grouped-bar",
+          "title": "Merged pull requests by label",
+          "currentValue": "525",
+          "unit": "label assignments",
+          "sourceLabel": "GitHub GraphQL",
+          "sourceUrl": "https://api.github.com/graphql",
+          "sourceWindow": "July 2026 UTC (2026-07-01 to 2026-07-31)",
+          "labels": [
+            "4-review",
+            "agent/contributor",
+            "automerge",
+            "chore/deps",
+            "cli/copilot",
+            "contributor/castrojo",
+            "kde",
+            "pr/needs-review",
+            "release/ready",
+            "runner",
+            "size:XS"
+          ],
+          "series": [
+            {
+              "id": "categories",
+              "label": "Label assignments",
+              "values": [
+                471,
+                1,
+                6,
+                6,
+                1,
+                1,
+                3,
+                11,
+                10,
+                3,
+                12
+              ]
+            }
+          ],
+          "minimumPoints": 1
+        },
+        "portfolio": {
+          "stable": [
+            "projectbluefin/bluefin",
+            "projectbluefin/bluefin-lts",
+            "projectbluefin/dakota",
+            "projectbluefin/testsuite",
+            "projectbluefin/server",
+            "projectbluefin/actions",
+            "projectbluefin/bonedigger",
+            "projectbluefin/aurorafin-shared",
+            "projectbluefin/common",
+            "projectbluefin/documentation",
+            "projectbluefin/branding",
+            "projectbluefin/iso",
+            "projectbluefin/finpilot"
+          ],
+          "experimental": [
+            "projectbluefin/utah",
+            "projectbluefin/utah-packages"
+          ]
+        }
+      },
+      "delivery": {
+        "lanes": [
+          {
+            "id": "bluefin-testing",
+            "label": "Bluefin Testing",
+            "repo": "projectbluefin/bluefin",
+            "total": 19,
+            "passed": 13,
+            "failed": 2,
+            "pending": 4,
+            "successRate": 87,
+            "medianDurationMin": 44,
+            "sparklineData": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              1,
+              13,
+              3,
+              2
+            ],
+            "trend": {
+              "labels": [
+                "2026-07-01",
+                "2026-07-02",
+                "2026-07-03",
+                "2026-07-04",
+                "2026-07-05",
+                "2026-07-06",
+                "2026-07-07",
+                "2026-07-08",
+                "2026-07-09",
+                "2026-07-10",
+                "2026-07-11",
+                "2026-07-12",
+                "2026-07-13",
+                "2026-07-14",
+                "2026-07-15",
+                "2026-07-16",
+                "2026-07-17",
+                "2026-07-18",
+                "2026-07-19",
+                "2026-07-20",
+                "2026-07-21",
+                "2026-07-22",
+                "2026-07-23",
+                "2026-07-24",
+                "2026-07-25",
+                "2026-07-26",
+                "2026-07-27",
+                "2026-07-28",
+                "2026-07-29",
+                "2026-07-30",
+                "2026-07-31"
+              ],
+              "values": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1,
+                13,
+                3,
+                2
+              ]
+            },
+            "unavailableReason": null
+          },
+          {
+            "id": "bluefin-lts",
+            "label": "Bluefin LTS",
+            "repo": "projectbluefin/bluefin-lts",
+            "total": 36,
+            "passed": 19,
+            "failed": 11,
+            "pending": 6,
+            "successRate": 63,
+            "medianDurationMin": 23,
+            "sparklineData": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              18,
+              3,
+              0,
+              6,
+              6,
+              3
+            ],
+            "trend": {
+              "labels": [
+                "2026-07-01",
+                "2026-07-02",
+                "2026-07-03",
+                "2026-07-04",
+                "2026-07-05",
+                "2026-07-06",
+                "2026-07-07",
+                "2026-07-08",
+                "2026-07-09",
+                "2026-07-10",
+                "2026-07-11",
+                "2026-07-12",
+                "2026-07-13",
+                "2026-07-14",
+                "2026-07-15",
+                "2026-07-16",
+                "2026-07-17",
+                "2026-07-18",
+                "2026-07-19",
+                "2026-07-20",
+                "2026-07-21",
+                "2026-07-22",
+                "2026-07-23",
+                "2026-07-24",
+                "2026-07-25",
+                "2026-07-26",
+                "2026-07-27",
+                "2026-07-28",
+                "2026-07-29",
+                "2026-07-30",
+                "2026-07-31"
+              ],
+              "values": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                18,
+                3,
+                0,
+                6,
+                6,
+                3
+              ]
+            },
+            "unavailableReason": null
+          },
+          {
+            "id": "dakota",
+            "label": "Dakota",
+            "repo": "projectbluefin/dakota",
+            "total": 37,
+            "passed": 14,
+            "failed": 8,
+            "pending": 15,
+            "successRate": 64,
+            "medianDurationMin": 61,
+            "sparklineData": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              16,
+              12,
+              9
+            ],
+            "trend": {
+              "labels": [
+                "2026-07-01",
+                "2026-07-02",
+                "2026-07-03",
+                "2026-07-04",
+                "2026-07-05",
+                "2026-07-06",
+                "2026-07-07",
+                "2026-07-08",
+                "2026-07-09",
+                "2026-07-10",
+                "2026-07-11",
+                "2026-07-12",
+                "2026-07-13",
+                "2026-07-14",
+                "2026-07-15",
+                "2026-07-16",
+                "2026-07-17",
+                "2026-07-18",
+                "2026-07-19",
+                "2026-07-20",
+                "2026-07-21",
+                "2026-07-22",
+                "2026-07-23",
+                "2026-07-24",
+                "2026-07-25",
+                "2026-07-26",
+                "2026-07-27",
+                "2026-07-28",
+                "2026-07-29",
+                "2026-07-30",
+                "2026-07-31"
+              ],
+              "values": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                16,
+                12,
+                9
+              ]
+            },
+            "unavailableReason": null
+          }
+        ],
+        "cadence": {
+          "id": "delivery-cadence",
+          "kind": "line",
+          "title": "Publishing-lane cadence",
+          "currentValue": "92",
+          "unit": "publish runs",
+          "sourceLabel": "GitHub Actions",
+          "sourceUrl": "https://api.github.com/repos/projectbluefin/bluefin/actions/runs",
+          "sourceWindow": "July 2026 UTC (2026-07-01 to 2026-07-31)",
+          "labels": [
+            "2026-07-01",
+            "2026-07-02",
+            "2026-07-03",
+            "2026-07-04",
+            "2026-07-05",
+            "2026-07-06",
+            "2026-07-07",
+            "2026-07-08",
+            "2026-07-09",
+            "2026-07-10",
+            "2026-07-11",
+            "2026-07-12",
+            "2026-07-13",
+            "2026-07-14",
+            "2026-07-15",
+            "2026-07-16",
+            "2026-07-17",
+            "2026-07-18",
+            "2026-07-19",
+            "2026-07-20",
+            "2026-07-21",
+            "2026-07-22",
+            "2026-07-23",
+            "2026-07-24",
+            "2026-07-25",
+            "2026-07-26",
+            "2026-07-27",
+            "2026-07-28",
+            "2026-07-29",
+            "2026-07-30",
+            "2026-07-31"
+          ],
+          "series": [
+            {
+              "id": "bluefin-testing",
+              "label": "Bluefin Testing",
+              "values": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1,
+                13,
+                3,
+                2
+              ]
+            },
+            {
+              "id": "bluefin-lts",
+              "label": "Bluefin LTS",
+              "values": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                18,
+                3,
+                0,
+                6,
+                6,
+                3
+              ]
+            },
+            {
+              "id": "dakota",
+              "label": "Dakota",
+              "values": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                16,
+                12,
+                9
+              ]
+            }
+          ],
+          "minimumPoints": 1
+        },
+        "releases": {
+          "id": "delivery-releases",
+          "kind": "line",
+          "title": "Release events",
+          "currentValue": "50",
+          "unit": "release events",
+          "sourceLabel": "GitHub Releases API",
+          "sourceUrl": "https://api.github.com/repos",
+          "sourceWindow": "July 2026 UTC (2026-07-01 to 2026-07-31)",
+          "labels": [
+            "2026-07-20",
+            "2026-07-19",
+            "2026-07-18",
+            "2026-07-17",
+            "2026-07-16",
+            "2026-07-15",
+            "2026-07-14",
+            "2026-07-13",
+            "2026-07-12",
+            "2026-07-11",
+            "2026-07-10",
+            "2026-07-09",
+            "2026-07-08",
+            "2026-07-07",
+            "2026-07-06",
+            "2026-07-05",
+            "2026-07-04",
+            "2026-07-03",
+            "2026-07-02",
+            "2026-07-01",
+            "2026-07-31",
+            "2026-07-30",
+            "2026-07-29",
+            "2026-07-28",
+            "2026-07-27",
+            "2026-07-26",
+            "2026-07-25",
+            "2026-07-24",
+            "2026-07-23",
+            "2026-07-22",
+            "2026-07-21",
+            "2026-07-20",
+            "2026-07-19",
+            "2026-07-18",
+            "2026-07-17",
+            "2026-07-16",
+            "2026-07-15",
+            "2026-07-14",
+            "2026-07-13",
+            "2026-07-12",
+            "2026-07-11",
+            "2026-07-10",
+            "2026-07-09",
+            "2026-07-08",
+            "2026-07-07",
+            "2026-07-06",
+            "2026-07-31",
+            "2026-07-11",
+            "2026-07-20",
+            "2026-07-11"
+          ],
+          "series": [
+            {
+              "id": "releases",
+              "label": "Release events",
+              "values": [
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1
+              ]
+            }
+          ],
+          "minimumPoints": 1
+        }
+      },
+      "participation": {
+        "automation": {
+          "id": "participation-automation",
+          "kind": "stacked-bar",
+          "title": "Human and automation activity",
+          "currentValue": "553",
+          "unit": "pull requests",
+          "sourceLabel": "GitHub GraphQL",
+          "sourceUrl": "https://api.github.com/graphql",
+          "sourceWindow": "July 2026 UTC (2026-07-01 to 2026-07-31)",
+          "labels": [
+            "Report period"
+          ],
+          "series": [
+            {
+              "id": "human",
+              "label": "Human",
+              "values": [
+                126
+              ]
+            },
+            {
+              "id": "automation",
+              "label": "Automation",
+              "values": [
+                427
+              ]
+            }
+          ],
+          "minimumPoints": 1
+        },
+        "leaderboard": {
+          "heroes": [
+            {
+              "rank": 1,
+              "login": "castrojo",
+              "avatarUrl": "https://github.com/castrojo.png?size=64",
+              "contributions": 104,
+              "projects": 9,
+              "repos": [
+                "common",
+                "bluefin",
+                "bluefin-lts",
+                "dakota",
+                "testsuite",
+                "server",
+                "actions",
+                "documentation",
+                "iso"
+              ],
+              "badge": {
+                "label": "Top Hero",
+                "color": "#F9C74F",
+                "title": "Month MVP"
+              },
+              "isNew": false
+            },
+            {
+              "rank": 2,
+              "login": "ahmedadan",
+              "avatarUrl": "https://github.com/ahmedadan.png?size=64",
+              "contributions": 12,
+              "projects": 2,
+              "repos": [
+                "dakota",
+                "actions"
+              ],
+              "badge": {
+                "label": "High Velocity",
+                "color": "#2AA198",
+                "title": "5+ Merged PRs"
+              },
+              "isNew": false
+            },
+            {
+              "rank": 3,
+              "login": "Siddhj2206",
+              "avatarUrl": "https://github.com/Siddhj2206.png?size=64",
+              "contributions": 2,
+              "projects": 1,
+              "repos": [
+                "finpilot"
+              ],
+              "isNew": false
+            },
+            {
+              "rank": 4,
+              "login": "clubanderson",
+              "avatarUrl": "https://github.com/clubanderson.png?size=64",
+              "contributions": 1,
+              "projects": 1,
+              "repos": [
+                "bluefin-lts"
+              ],
+              "isNew": false
+            },
+            {
+              "rank": 5,
+              "login": "daegalus",
+              "avatarUrl": "https://github.com/daegalus.png?size=64",
+              "contributions": 1,
+              "projects": 1,
+              "repos": [
+                "dakota"
+              ],
+              "isNew": false
+            },
+            {
+              "rank": 6,
+              "login": "elephantum",
+              "avatarUrl": "https://github.com/elephantum.png?size=64",
+              "contributions": 1,
+              "projects": 1,
+              "repos": [
+                "common"
+              ],
+              "isNew": false
+            },
+            {
+              "rank": 7,
+              "login": "hanthor",
+              "avatarUrl": "https://github.com/hanthor.png?size=64",
+              "contributions": 1,
+              "projects": 1,
+              "repos": [
+                "dakota"
+              ],
+              "isNew": false
+            },
+            {
+              "rank": 8,
+              "login": "KiKaraage",
+              "avatarUrl": "https://github.com/KiKaraage.png?size=64",
+              "contributions": 1,
+              "projects": 1,
+              "repos": [
+                "common"
+              ],
+              "isNew": false
+            },
+            {
+              "rank": 9,
+              "login": "theMimolet",
+              "avatarUrl": "https://github.com/theMimolet.png?size=64",
+              "contributions": 1,
+              "projects": 1,
+              "repos": [
+                "common"
+              ],
+              "isNew": false
+            },
+            {
+              "rank": 10,
+              "login": "Xarianne",
+              "avatarUrl": "https://github.com/Xarianne.png?size=64",
+              "contributions": 1,
+              "projects": 1,
+              "repos": [
+                "dakota"
+              ],
+              "isNew": false
+            },
+            {
+              "rank": 11,
+              "login": "znmeb",
+              "avatarUrl": "https://github.com/znmeb.png?size=64",
+              "contributions": 1,
+              "projects": 1,
+              "repos": [
+                "documentation"
+              ],
+              "isNew": false
+            }
+          ],
+          "newLights": []
+        }
+      },
+      "ecosystem": {
+        "countme": {
+          "id": "ecosystem-countme",
+          "kind": "line",
+          "title": "Countme active systems",
+          "currentValue": "3920",
+          "unit": "estimated weekly active systems",
+          "sourceLabel": "Countme",
+          "sourceUrl": "https://data-analysis.fedoraproject.org/csv-reports/countme/totals.csv",
+          "sourceWindow": "Through 2026-07-27",
+          "labels": [
+            "week-1",
+            "week-2",
+            "week-3",
+            "week-4",
+            "week-5",
+            "week-6",
+            "week-7",
+            "week-8",
+            "week-9",
+            "week-10"
+          ],
+          "series": [
+            {
+              "id": "active-systems",
+              "label": "Active systems",
+              "values": [
+                3561,
+                3672,
+                3606,
+                3712,
+                3780,
+                3667,
+                3584,
+                3678,
+                4195,
+                3920
+              ]
+            }
+          ],
+          "minimumPoints": 1
+        },
+        "homebrew": {
+          "id": "ecosystem-homebrew",
+          "kind": "grouped-bar",
+          "title": "Homebrew tap additions",
+          "currentValue": "3",
+          "unit": "package additions",
+          "sourceLabel": "Homebrew taps",
+          "sourceUrl": "https://github.com/ublue-os/homebrew-tap",
+          "sourceWindow": "July 2026 UTC (2026-07-01 to 2026-07-31)",
+          "labels": [
+            "Production tap",
+            "Experimental tap"
+          ],
+          "series": [
+            {
+              "id": "additions",
+              "label": "Additions",
+              "values": [
+                1,
+                2
+              ]
+            }
+          ],
+          "minimumPoints": 1
+        },
+        "flathub": null,
+        "unavailableReason": "Flathub statistics could not be read."
+      }
+    },
+    {
+      "schemaVersion": 2,
+      "period": {
+        "month": "2026-08",
+        "start": "2026-08-01",
+        "end": "2026-08-31"
+      },
+      "sources": [
+        {
+          "id": "github-activity",
+          "status": "available",
+          "stateReason": null,
+          "url": "https://api.github.com/graphql",
+          "window": {
+            "start": "2026-08-01",
+            "end": "2026-08-31"
+          }
+        },
+        {
+          "id": "github-lanes",
+          "status": "available",
+          "stateReason": null,
+          "url": "https://api.github.com/repos/projectbluefin/bluefin/actions/runs",
+          "window": {
+            "start": "2026-08-01",
+            "end": "2026-08-31"
+          }
+        },
+        {
+          "id": "github-releases",
+          "status": "available",
+          "stateReason": null,
+          "url": "https://api.github.com/repos",
+          "window": {
+            "start": "2026-08-01",
+            "end": "2026-08-31"
+          }
+        },
+        {
+          "id": "github-releases",
+          "repository": "projectbluefin/bluefin",
+          "status": "available",
+          "stateReason": null,
+          "url": "https://api.github.com/repos/projectbluefin/bluefin/releases",
+          "window": {
+            "start": "2026-08-01",
+            "end": "2026-08-31"
+          }
+        },
+        {
+          "id": "github-releases",
+          "repository": "projectbluefin/bluefin-lts",
+          "status": "available",
+          "stateReason": null,
+          "url": "https://api.github.com/repos/projectbluefin/bluefin-lts/releases",
+          "window": {
+            "start": "2026-08-01",
+            "end": "2026-08-31"
+          }
+        },
+        {
+          "id": "github-releases",
+          "repository": "projectbluefin/dakota",
+          "status": "available",
+          "stateReason": null,
+          "url": "https://api.github.com/repos/projectbluefin/dakota/releases",
+          "window": {
+            "start": "2026-08-01",
+            "end": "2026-08-31"
+          }
+        },
+        {
+          "id": "github-releases",
+          "repository": "projectbluefin/server",
+          "status": "available",
+          "stateReason": null,
+          "url": "https://api.github.com/repos/projectbluefin/server/releases",
+          "window": {
+            "start": "2026-08-01",
+            "end": "2026-08-31"
+          }
+        },
+        {
+          "id": "countme",
+          "status": "available",
+          "stateReason": null,
+          "url": "https://data-analysis.fedoraproject.org/csv-reports/countme/totals.csv",
+          "window": {
+            "start": "2026-08-01",
+            "end": "2026-08-31"
+          }
+        },
+        {
+          "id": "homebrew",
+          "status": "available",
+          "stateReason": null,
+          "url": "https://github.com/ublue-os/homebrew-tap",
+          "window": {
+            "start": "2026-08-01",
+            "end": "2026-08-31"
+          }
+        },
+        {
+          "id": "flathub",
+          "status": "unavailable",
+          "stateReason": "Flathub statistics could not be read.",
+          "url": "https://flathub.org/api/v2/stats",
+          "window": {
+            "start": "2026-08-01",
+            "end": "2026-08-31"
+          }
+        }
+      ],
+      "activity": {
+        "calendar": {
+          "id": "activity-calendar",
+          "kind": "calendar",
+          "title": "Daily merged pull requests",
+          "currentValue": "541",
+          "unit": "merged pull requests",
+          "sourceLabel": "GitHub GraphQL",
+          "sourceUrl": "https://api.github.com/graphql",
+          "sourceWindow": "August 2026 UTC (2026-08-01 to 2026-08-31)",
+          "labels": [
+            "2026-08-01",
+            "2026-08-02",
+            "2026-08-03",
+            "2026-08-04",
+            "2026-08-05",
+            "2026-08-06",
+            "2026-08-07",
+            "2026-08-08",
+            "2026-08-09",
+            "2026-08-10",
+            "2026-08-11",
+            "2026-08-12",
+            "2026-08-13",
+            "2026-08-14",
+            "2026-08-15",
+            "2026-08-16",
+            "2026-08-17",
+            "2026-08-18",
+            "2026-08-19",
+            "2026-08-20",
+            "2026-08-21",
+            "2026-08-22",
+            "2026-08-23",
+            "2026-08-24",
+            "2026-08-25",
+            "2026-08-26",
+            "2026-08-27",
+            "2026-08-28",
+            "2026-08-29",
+            "2026-08-30",
+            "2026-08-31"
+          ],
+          "series": [
+            {
+              "id": "merged",
+              "label": "Merged pull requests",
+              "values": [
+                38,
+                20,
+                30,
+                14,
+                12,
+                10,
+                117,
+                20,
+                54,
+                8,
+                3,
+                5,
+                10,
+                5,
+                15,
+                11,
+                7,
+                8,
+                5,
+                14,
+                21,
+                17,
+                8,
+                19,
+                7,
+                14,
+                4,
+                11,
+                10,
+                22,
+                2
+              ]
+            }
+          ],
+          "minimumPoints": 1
+        },
+        "repositories": {
+          "id": "activity-repositories",
+          "kind": "grouped-bar",
+          "title": "Merged pull requests by repository",
+          "currentValue": "541",
+          "unit": "merged pull requests",
+          "sourceLabel": "GitHub GraphQL",
+          "sourceUrl": "https://api.github.com/graphql",
+          "sourceWindow": "August 2026 UTC (2026-08-01 to 2026-08-31)",
+          "labels": [
+            "projectbluefin/actions",
+            "projectbluefin/bluefin",
+            "projectbluefin/bluefin-lts",
+            "projectbluefin/bonedigger",
+            "projectbluefin/common",
+            "projectbluefin/dakota",
+            "projectbluefin/documentation",
+            "projectbluefin/finpilot",
+            "projectbluefin/iso",
+            "projectbluefin/server",
+            "projectbluefin/testsuite",
+            "projectbluefin/utah",
+            "projectbluefin/utah-packages"
+          ],
+          "series": [
+            {
+              "id": "repositories",
+              "label": "Merged pull requests",
+              "values": [
+                44,
+                155,
+                38,
+                3,
+                50,
+                92,
+                18,
+                49,
+                1,
+                4,
+                67,
+                6,
+                14
+              ]
+            }
+          ],
+          "minimumPoints": 1
+        },
+        "categories": {
+          "id": "activity-categories",
+          "kind": "grouped-bar",
+          "title": "Merged pull requests by label",
+          "currentValue": "435",
+          "unit": "label assignments",
+          "sourceLabel": "GitHub GraphQL",
+          "sourceUrl": "https://api.github.com/graphql",
+          "sourceWindow": "August 2026 UTC (2026-08-01 to 2026-08-31)",
+          "labels": [
+            "1-triage",
+            "3-clanker-queue",
+            "4-review",
+            "agent/contributor",
+            "automerge",
+            "chore/deps",
+            "cli/copilot",
+            "contributor/castrojo",
+            "dependencies",
+            "hold",
+            "javascript",
+            "kde",
+            "lgtm",
+            "needs-human",
+            "pr/needs-review",
+            "quality",
+            "release/ready",
+            "renovate/high-risk",
+            "renovate/low-risk",
+            "runner",
+            "security",
+            "size:M",
+            "size:S",
+            "size:XL",
+            "size:XS",
+            "testing"
+          ],
+          "series": [
+            {
+              "id": "categories",
+              "label": "Label assignments",
+              "values": [
+                3,
+                41,
+                38,
+                2,
+                52,
+                52,
+                2,
+                2,
+                2,
+                13,
+                2,
+                9,
+                23,
+                1,
+                67,
+                3,
+                63,
+                16,
+                3,
+                9,
+                6,
+                1,
+                2,
+                1,
+                19,
+                3
+              ]
+            }
+          ],
+          "minimumPoints": 1
+        },
+        "portfolio": {
+          "stable": [
+            "projectbluefin/bluefin",
+            "projectbluefin/bluefin-lts",
+            "projectbluefin/dakota",
+            "projectbluefin/testsuite",
+            "projectbluefin/server",
+            "projectbluefin/actions",
+            "projectbluefin/bonedigger",
+            "projectbluefin/aurorafin-shared",
+            "projectbluefin/common",
+            "projectbluefin/documentation",
+            "projectbluefin/branding",
+            "projectbluefin/iso",
+            "projectbluefin/finpilot"
+          ],
+          "experimental": [
+            "projectbluefin/utah",
+            "projectbluefin/utah-packages"
+          ]
+        }
+      },
+      "delivery": {
+        "lanes": [
+          {
+            "id": "bluefin-testing",
+            "label": "Bluefin Testing",
+            "repo": "projectbluefin/bluefin",
+            "total": 8,
+            "passed": 0,
+            "failed": 3,
+            "pending": 5,
+            "successRate": 0,
+            "medianDurationMin": 65,
+            "sparklineData": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              6,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1,
+              0
+            ],
+            "trend": {
+              "labels": [
+                "2026-08-01",
+                "2026-08-02",
+                "2026-08-03",
+                "2026-08-04",
+                "2026-08-05",
+                "2026-08-06",
+                "2026-08-07",
+                "2026-08-08",
+                "2026-08-09",
+                "2026-08-10",
+                "2026-08-11",
+                "2026-08-12",
+                "2026-08-13",
+                "2026-08-14",
+                "2026-08-15",
+                "2026-08-16",
+                "2026-08-17",
+                "2026-08-18",
+                "2026-08-19",
+                "2026-08-20",
+                "2026-08-21",
+                "2026-08-22",
+                "2026-08-23",
+                "2026-08-24",
+                "2026-08-25",
+                "2026-08-26",
+                "2026-08-27",
+                "2026-08-28",
+                "2026-08-29",
+                "2026-08-30",
+                "2026-08-31"
+              ],
+              "values": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                6,
+                0,
+                1,
+                0,
+                0,
+                0,
+                1,
+                0
+              ]
+            },
+            "unavailableReason": null
+          },
+          {
+            "id": "bluefin-lts",
+            "label": "Bluefin LTS",
+            "repo": "projectbluefin/bluefin-lts",
+            "total": 30,
+            "passed": 0,
+            "failed": 0,
+            "pending": 30,
+            "successRate": null,
+            "medianDurationMin": null,
+            "sparklineData": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              1,
+              1,
+              1,
+              0,
+              0,
+              0,
+              0,
+              7,
+              0,
+              11,
+              9
+            ],
+            "trend": {
+              "labels": [
+                "2026-08-01",
+                "2026-08-02",
+                "2026-08-03",
+                "2026-08-04",
+                "2026-08-05",
+                "2026-08-06",
+                "2026-08-07",
+                "2026-08-08",
+                "2026-08-09",
+                "2026-08-10",
+                "2026-08-11",
+                "2026-08-12",
+                "2026-08-13",
+                "2026-08-14",
+                "2026-08-15",
+                "2026-08-16",
+                "2026-08-17",
+                "2026-08-18",
+                "2026-08-19",
+                "2026-08-20",
+                "2026-08-21",
+                "2026-08-22",
+                "2026-08-23",
+                "2026-08-24",
+                "2026-08-25",
+                "2026-08-26",
+                "2026-08-27",
+                "2026-08-28",
+                "2026-08-29",
+                "2026-08-30",
+                "2026-08-31"
+              ],
+              "values": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1,
+                1,
+                1,
+                0,
+                0,
+                0,
+                0,
+                7,
+                0,
+                11,
+                9
+              ]
+            },
+            "unavailableReason": null
+          },
+          {
+            "id": "dakota",
+            "label": "Dakota",
+            "repo": "projectbluefin/dakota",
+            "total": 85,
+            "passed": 71,
+            "failed": 2,
+            "pending": 12,
+            "successRate": 97,
+            "medianDurationMin": 39,
+            "sparklineData": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              3,
+              4,
+              7,
+              9,
+              35,
+              16,
+              7,
+              4
+            ],
+            "trend": {
+              "labels": [
+                "2026-08-01",
+                "2026-08-02",
+                "2026-08-03",
+                "2026-08-04",
+                "2026-08-05",
+                "2026-08-06",
+                "2026-08-07",
+                "2026-08-08",
+                "2026-08-09",
+                "2026-08-10",
+                "2026-08-11",
+                "2026-08-12",
+                "2026-08-13",
+                "2026-08-14",
+                "2026-08-15",
+                "2026-08-16",
+                "2026-08-17",
+                "2026-08-18",
+                "2026-08-19",
+                "2026-08-20",
+                "2026-08-21",
+                "2026-08-22",
+                "2026-08-23",
+                "2026-08-24",
+                "2026-08-25",
+                "2026-08-26",
+                "2026-08-27",
+                "2026-08-28",
+                "2026-08-29",
+                "2026-08-30",
+                "2026-08-31"
+              ],
+              "values": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                3,
+                4,
+                7,
+                9,
+                35,
+                16,
+                7,
+                4
+              ]
+            },
+            "unavailableReason": null
+          }
+        ],
+        "cadence": {
+          "id": "delivery-cadence",
+          "kind": "line",
+          "title": "Publishing-lane cadence",
+          "currentValue": "123",
+          "unit": "publish runs",
+          "sourceLabel": "GitHub Actions",
+          "sourceUrl": "https://api.github.com/repos/projectbluefin/bluefin/actions/runs",
+          "sourceWindow": "August 2026 UTC (2026-08-01 to 2026-08-31)",
+          "labels": [
+            "2026-08-01",
+            "2026-08-02",
+            "2026-08-03",
+            "2026-08-04",
+            "2026-08-05",
+            "2026-08-06",
+            "2026-08-07",
+            "2026-08-08",
+            "2026-08-09",
+            "2026-08-10",
+            "2026-08-11",
+            "2026-08-12",
+            "2026-08-13",
+            "2026-08-14",
+            "2026-08-15",
+            "2026-08-16",
+            "2026-08-17",
+            "2026-08-18",
+            "2026-08-19",
+            "2026-08-20",
+            "2026-08-21",
+            "2026-08-22",
+            "2026-08-23",
+            "2026-08-24",
+            "2026-08-25",
+            "2026-08-26",
+            "2026-08-27",
+            "2026-08-28",
+            "2026-08-29",
+            "2026-08-30",
+            "2026-08-31"
+          ],
+          "series": [
+            {
+              "id": "bluefin-testing",
+              "label": "Bluefin Testing",
+              "values": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                6,
+                0,
+                1,
+                0,
+                0,
+                0,
+                1,
+                0
+              ]
+            },
+            {
+              "id": "bluefin-lts",
+              "label": "Bluefin LTS",
+              "values": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1,
+                1,
+                1,
+                0,
+                0,
+                0,
+                0,
+                7,
+                0,
+                11,
+                9
+              ]
+            },
+            {
+              "id": "dakota",
+              "label": "Dakota",
+              "values": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                3,
+                4,
+                7,
+                9,
+                35,
+                16,
+                7,
+                4
+              ]
+            }
+          ],
+          "minimumPoints": 1
+        },
+        "releases": {
+          "id": "delivery-releases",
+          "kind": "line",
+          "title": "Release events",
+          "currentValue": "13",
+          "unit": "release events",
+          "sourceLabel": "GitHub Releases API",
+          "sourceUrl": "https://api.github.com/repos",
+          "sourceWindow": "August 2026 UTC (2026-08-01 to 2026-08-31)",
+          "labels": [
+            "2026-08-07",
+            "2026-08-06",
+            "2026-08-05",
+            "2026-08-04",
+            "2026-08-03",
+            "2026-08-02",
+            "2026-08-01",
+            "2026-08-31",
+            "2026-08-28",
+            "2026-08-24",
+            "2026-08-21",
+            "2026-08-19",
+            "2026-08-15"
+          ],
+          "series": [
+            {
+              "id": "releases",
+              "label": "Release events",
+              "values": [
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1
+              ]
+            }
+          ],
+          "minimumPoints": 1
+        }
+      },
+      "participation": {
+        "automation": {
+          "id": "participation-automation",
+          "kind": "stacked-bar",
+          "title": "Human and automation activity",
+          "currentValue": "541",
+          "unit": "pull requests",
+          "sourceLabel": "GitHub GraphQL",
+          "sourceUrl": "https://api.github.com/graphql",
+          "sourceWindow": "August 2026 UTC (2026-08-01 to 2026-08-31)",
+          "labels": [
+            "Report period"
+          ],
+          "series": [
+            {
+              "id": "human",
+              "label": "Human",
+              "values": [
+                258
+              ]
+            },
+            {
+              "id": "automation",
+              "label": "Automation",
+              "values": [
+                283
+              ]
+            }
+          ],
+          "minimumPoints": 1
+        },
+        "leaderboard": {
+          "heroes": [
+            {
+              "rank": 1,
+              "login": "castrojo",
+              "avatarUrl": "https://github.com/castrojo.png?size=64",
+              "contributions": 109,
+              "projects": 9,
+              "repos": [
+                "common",
+                "bluefin",
+                "bluefin-lts",
+                "dakota",
+                "testsuite",
+                "server",
+                "actions",
+                "documentation",
+                "finpilot"
+              ],
+              "badge": {
+                "label": "Top Hero",
+                "color": "#F9C74F",
+                "title": "Month MVP"
+              },
+              "isNew": false
+            },
+            {
+              "rank": 2,
+              "login": "ahmedadan",
+              "avatarUrl": "https://github.com/ahmedadan.png?size=64",
+              "contributions": 35,
+              "projects": 3,
+              "repos": [
+                "common",
+                "bluefin",
+                "dakota"
+              ],
+              "badge": {
+                "label": "High Velocity",
+                "color": "#2AA198",
+                "title": "5+ Merged PRs"
+              },
+              "isNew": false
+            },
+            {
+              "rank": 3,
+              "login": "kubestellar-hive",
+              "avatarUrl": "https://github.com/kubestellar-hive.png?size=64",
+              "contributions": 27,
+              "projects": 7,
+              "repos": [
+                "common",
+                "bluefin",
+                "dakota",
+                "testsuite",
+                "server",
+                "actions",
+                "finpilot"
+              ],
+              "badge": {
+                "label": "High Velocity",
+                "color": "#2AA198",
+                "title": "5+ Merged PRs"
+              },
+              "isNew": false
+            },
+            {
+              "rank": 4,
+              "login": "hanthor",
+              "avatarUrl": "https://github.com/hanthor.png?size=64",
+              "contributions": 24,
+              "projects": 9,
+              "repos": [
+                "common",
+                "bluefin",
+                "bluefin-lts",
+                "dakota",
+                "testsuite",
+                "actions",
+                "finpilot",
+                "utah",
+                "utah-packages"
+              ],
+              "badge": {
+                "label": "High Velocity",
+                "color": "#2AA198",
+                "title": "5+ Merged PRs"
+              },
+              "isNew": false
+            },
+            {
+              "rank": 5,
+              "login": "Danathar",
+              "avatarUrl": "https://github.com/Danathar.png?size=64",
+              "contributions": 20,
+              "projects": 3,
+              "repos": [
+                "bluefin",
+                "dakota",
+                "testsuite"
+              ],
+              "badge": {
+                "label": "High Velocity",
+                "color": "#2AA198",
+                "title": "5+ Merged PRs"
+              },
+              "isNew": false
+            },
+            {
+              "rank": 6,
+              "login": "mrbobbytables",
+              "avatarUrl": "https://github.com/mrbobbytables.png?size=64",
+              "contributions": 13,
+              "projects": 3,
+              "repos": [
+                "bluefin",
+                "dakota",
+                "testsuite"
+              ],
+              "badge": {
+                "label": "High Velocity",
+                "color": "#2AA198",
+                "title": "5+ Merged PRs"
+              },
+              "isNew": false
+            },
+            {
+              "rank": 7,
+              "login": "bketelsen",
+              "avatarUrl": "https://github.com/bketelsen.png?size=64",
+              "contributions": 11,
+              "projects": 4,
+              "repos": [
+                "bluefin",
+                "bluefin-lts",
+                "testsuite",
+                "finpilot"
+              ],
+              "badge": {
+                "label": "High Velocity",
+                "color": "#2AA198",
+                "title": "5+ Merged PRs"
+              },
+              "isNew": false
+            },
+            {
+              "rank": 8,
+              "login": "Siddhj2206",
+              "avatarUrl": "https://github.com/Siddhj2206.png?size=64",
+              "contributions": 5,
+              "projects": 2,
+              "repos": [
+                "actions",
+                "finpilot"
+              ],
+              "badge": {
+                "label": "High Velocity",
+                "color": "#2AA198",
+                "title": "5+ Merged PRs"
+              },
+              "isNew": false
+            },
+            {
+              "rank": 9,
+              "login": "joshyorko",
+              "avatarUrl": "https://github.com/joshyorko.png?size=64",
+              "contributions": 4,
+              "projects": 4,
+              "repos": [
+                "common",
+                "bluefin",
+                "testsuite",
+                "bonedigger"
+              ],
+              "badge": {
+                "label": "Cross-Fleet",
+                "color": "#8A63D2",
+                "title": "Multi-Repo Impact"
+              },
+              "isNew": false
+            },
+            {
+              "rank": 10,
+              "login": "HuntedRaven7",
+              "avatarUrl": "https://github.com/HuntedRaven7.png?size=64",
+              "contributions": 3,
+              "projects": 3,
+              "repos": [
+                "common",
+                "bluefin-lts",
+                "utah"
+              ],
+              "badge": {
+                "label": "Cross-Fleet",
+                "color": "#8A63D2",
+                "title": "Multi-Repo Impact"
+              },
+              "isNew": false
+            },
+            {
+              "rank": 11,
+              "login": "rapenne-s",
+              "avatarUrl": "https://github.com/rapenne-s.png?size=64",
+              "contributions": 2,
+              "projects": 1,
+              "repos": [
+                "dakota"
+              ],
+              "isNew": false
+            },
+            {
+              "rank": 12,
+              "login": "Giklab",
+              "avatarUrl": "https://github.com/Giklab.png?size=64",
+              "contributions": 1,
+              "projects": 1,
+              "repos": [
+                "common"
+              ],
+              "isNew": false
+            },
+            {
+              "rank": 13,
+              "login": "kylerankin",
+              "avatarUrl": "https://github.com/kylerankin.png?size=64",
+              "contributions": 1,
+              "projects": 1,
+              "repos": [
+                "testsuite"
+              ],
+              "badge": {
+                "label": "New Light",
+                "color": "#1D76DB",
+                "title": "First-time Contributor"
+              },
+              "isNew": true
+            },
+            {
+              "rank": 14,
+              "login": "onlydole",
+              "avatarUrl": "https://github.com/onlydole.png?size=64",
+              "contributions": 1,
+              "projects": 1,
+              "repos": [
+                "testsuite"
+              ],
+              "badge": {
+                "label": "New Light",
+                "color": "#1D76DB",
+                "title": "First-time Contributor"
+              },
+              "isNew": true
+            },
+            {
+              "rank": 15,
+              "login": "theMimolet",
+              "avatarUrl": "https://github.com/theMimolet.png?size=64",
+              "contributions": 1,
+              "projects": 1,
+              "repos": [
+                "common"
+              ],
+              "isNew": false
+            },
+            {
+              "rank": 16,
+              "login": "tunix",
+              "avatarUrl": "https://github.com/tunix.png?size=64",
+              "contributions": 1,
+              "projects": 1,
+              "repos": [
+                "finpilot"
+              ],
+              "isNew": false
+            }
+          ],
+          "newLights": [
+            {
+              "login": "onlydole",
+              "avatarUrl": "https://github.com/onlydole.png?size=32",
+              "repos": [
+                "testsuite"
+              ]
+            },
+            {
+              "login": "kylerankin",
+              "avatarUrl": "https://github.com/kylerankin.png?size=32",
+              "repos": [
+                "testsuite"
+              ]
+            }
+          ]
+        }
+      },
+      "ecosystem": {
+        "countme": {
+          "id": "ecosystem-countme",
+          "kind": "line",
+          "title": "Countme active systems",
+          "currentValue": "3920",
+          "unit": "estimated weekly active systems",
+          "sourceLabel": "Countme",
+          "sourceUrl": "https://data-analysis.fedoraproject.org/csv-reports/countme/totals.csv",
+          "sourceWindow": "Through 2026-07-27",
+          "labels": [
+            "week-1",
+            "week-2",
+            "week-3",
+            "week-4",
+            "week-5",
+            "week-6",
+            "week-7",
+            "week-8",
+            "week-9",
+            "week-10"
+          ],
+          "series": [
+            {
+              "id": "active-systems",
+              "label": "Active systems",
+              "values": [
+                3561,
+                3672,
+                3606,
+                3712,
+                3780,
+                3667,
+                3584,
+                3678,
+                4195,
+                3920
+              ]
+            }
+          ],
+          "minimumPoints": 1
+        },
+        "homebrew": {
+          "id": "ecosystem-homebrew",
+          "kind": "grouped-bar",
+          "title": "Homebrew tap additions",
+          "currentValue": "14",
+          "unit": "package additions",
+          "sourceLabel": "Homebrew taps",
+          "sourceUrl": "https://github.com/ublue-os/homebrew-tap",
+          "sourceWindow": "August 2026 UTC (2026-08-01 to 2026-08-31)",
+          "labels": [
+            "Production tap",
+            "Experimental tap"
+          ],
+          "series": [
+            {
+              "id": "additions",
+              "label": "Additions",
+              "values": [
+                2,
+                12
+              ]
+            }
+          ],
+          "minimumPoints": 1
+        },
+        "flathub": null,
+        "unavailableReason": "Flathub statistics could not be read."
+      }
+    }
+  ]
+};
+
+# Summary
+
+<ReportHeroKPIs
+  kpis={[
+  {
+    "label": "Completed work",
+    "value": 258,
+    "sublabel": "24 planned • 234 opportunistic"
+  },
+  {
+    "label": "Contributors",
+    "value": 16,
+    "sublabel": "0 first-time contributors"
+  }
+]}
+/>
+
+<ReportActivity snapshot={snapshot.activity} />
+
+<ReportDelivery snapshot={snapshot.delivery} />
+
+<ReportParticipation snapshot={snapshot.participation} />
+
+<ReportEcosystem snapshot={snapshot.ecosystem} />
+
+Release details remain on the canonical [/changelogs](/changelogs) surface.
+
+## Completed work
+
+- feat(motd): add uwelcome + update umotd by [@​theMimolet](https://github.com/theMimolet) in [#815](https://github.com/projectbluefin/common/pull/815)
+- fix(brew): trust vendored taps so preinstalled casks actually install by [@​ahmedadan](https://github.com/ahmedadan) in [#1047](https://github.com/projectbluefin/common/pull/1047)
+- fix(report): read the boot-time booted-image snapshot when bootc status fails by [@​ahmedadan](https://github.com/ahmedadan) in [#1030](https://github.com/projectbluefin/common/pull/1030)
+- fix(report): read booted tag from bootc, not baked image-info by [@​ahmedadan](https://github.com/ahmedadan) in [#1020](https://github.com/projectbluefin/common/pull/1020)
+- fix(brew): keep preinstall off login critical path by [@​ahmedadan](https://github.com/ahmedadan) in [#1006](https://github.com/projectbluefin/common/pull/1006)
+- fix(brew-preinstall): journal-safe output capture, no /dev/stderr by [@​ahmedadan](https://github.com/ahmedadan) in [#998](https://github.com/projectbluefin/common/pull/998)
+- fix(brew): correct linuxbrew prefix spelling and preinstall tap ordering by [@​ahmedadan](https://github.com/ahmedadan) in [#997](https://github.com/projectbluefin/common/pull/997)
+- feat(brew): ship managed ChairLift integration by [@​castrojo](https://github.com/castrojo) in [#985](https://github.com/projectbluefin/common/pull/985)
+- fix(brew): handle cask lifecycle in brew-preinstall by [@​HuntedRaven7](https://github.com/HuntedRaven7) in [#981](https://github.com/projectbluefin/common/pull/981)
+- feat(ujust): honor ACTION in toggle-updates for non-interactive use by [@​hanthor](https://github.com/hanthor) in [#966](https://github.com/projectbluefin/common/pull/966)
+- test: add BATS regression coverage for theming hook by [@​kubestellar-hive](https://github.com/kubestellar-hive) in [#926](https://github.com/projectbluefin/common/pull/926)
+- fix(fastfetch): exit cleanly when binary is unavailable by [@​castrojo](https://github.com/castrojo) in [#931](https://github.com/projectbluefin/common/pull/931)
+- test(docs): add check-skill-index regression tests by [@​kubestellar-hive](https://github.com/kubestellar-hive) in [#924](https://github.com/projectbluefin/common/pull/924)
+- fix(ujust): preserve report copy when optional files are absent by [@​castrojo](https://github.com/castrojo) in [#917](https://github.com/projectbluefin/common/pull/917)
+- fix(report): preserve external queue preferences by [@​joshyorko](https://github.com/joshyorko) in [#936](https://github.com/projectbluefin/common/pull/936)
+- fix(ujust): bootstrap fzf for --choose by [@​castrojo](https://github.com/castrojo) in [#902](https://github.com/projectbluefin/common/pull/902)
+- fix(ci): stop validate failing on stale generated_at date by [@​castrojo](https://github.com/castrojo) in [#937](https://github.com/projectbluefin/common/pull/937)
+- test(docs): add skill validator coverage by [@​kubestellar-hive](https://github.com/kubestellar-hive) in [#911](https://github.com/projectbluefin/common/pull/911)
+- feat(brew): preinstall ChairLift with Bluefin maintainer config by [@​castrojo](https://github.com/castrojo) in [#853](https://github.com/projectbluefin/common/pull/853)
+- ci: make the advisory E2E signal mean something by [@​castrojo](https://github.com/castrojo) in [#914](https://github.com/projectbluefin/common/pull/914)
+- ci: stop running E2E on docs-only pushes by [@​castrojo](https://github.com/castrojo) in [#913](https://github.com/projectbluefin/common/pull/913)
+- fix(gnome): enable smoke-tested extensions by [@​castrojo](https://github.com/castrojo) in [#912](https://github.com/projectbluefin/common/pull/912)
+- docs: collapse issue forms to one and delete phantom label taxonomy by [@​castrojo](https://github.com/castrojo) in [#909](https://github.com/projectbluefin/common/pull/909)
+- fix(flatpak): correct Thunderbird Flatpak ID by [@​Giklab](https://github.com/Giklab) in [#906](https://github.com/projectbluefin/common/pull/906)
+- fix(build): checkpoint the rpmdb out of WAL mode at every stage commit by [@​Danathar](https://github.com/Danathar) in [#1153](https://github.com/projectbluefin/bluefin/pull/1153)
+- docs(ci): record Firefox failure after testsuite fix by [@​Danathar](https://github.com/Danathar) in [#1143](https://github.com/projectbluefin/bluefin/pull/1143)
+- docs(ci): record Testing Images build failing since 2026-08-12 (#995) by [@​Danathar](https://github.com/Danathar) in [#1136](https://github.com/projectbluefin/bluefin/pull/1136)
+- test(brew): assert the brew-preinstall payload, not just its trampoline by [@​Danathar](https://github.com/Danathar) in [#1135](https://github.com/projectbluefin/bluefin/pull/1135)
+- fix(framework): drop user-setup hook that installs a nonexistent brew formula by [@​Danathar](https://github.com/Danathar) in [#1132](https://github.com/projectbluefin/bluefin/pull/1132)
+- fix(lab-check): find the existing check run on busy commits by [@​Danathar](https://github.com/Danathar) in [#1100](https://github.com/projectbluefin/bluefin/pull/1100)
+- docs(ci): document :testing promotion blocker set for #989 by [@​mrbobbytables](https://github.com/mrbobbytables) in [#1091](https://github.com/projectbluefin/bluefin/pull/1091)
+- docs(ci): document merge-queue GH006 race and stuck-promotion diagnosis by [@​mrbobbytables](https://github.com/mrbobbytables) in [#1106](https://github.com/projectbluefin/bluefin/pull/1106)
+- docs(ci): document the :testing stream-tag leak triage path for #989 by [@​mrbobbytables](https://github.com/mrbobbytables) in [#1096](https://github.com/projectbluefin/bluefin/pull/1096)
+- docs(ci): document that :testing can freeze for weeks, masking triage (#929) by [@​mrbobbytables](https://github.com/mrbobbytables) in [#1095](https://github.com/projectbluefin/bluefin/pull/1095)
+- fix(framework): remove stale hid_sensor_hub karg from AMD Framework laptops by [@​mrbobbytables](https://github.com/mrbobbytables) in [#1103](https://github.com/projectbluefin/bluefin/pull/1103)
+- ci: raise BATS coverage threshold from 30% to 45% by [@​mrbobbytables](https://github.com/mrbobbytables) in [#1104](https://github.com/projectbluefin/bluefin/pull/1104)
+- docs(ci): explain the nested testsuite workflow refs by [@​castrojo](https://github.com/castrojo) in [#1077](https://github.com/projectbluefin/bluefin/pull/1077)
+- ci(lab-check): point the Checks-permission fix at the right screen by [@​Danathar](https://github.com/Danathar) in [#1079](https://github.com/projectbluefin/bluefin/pull/1079)
+- test(build): regression-guard missing IMPORTANT_PACKAGES entries (#965) by [@​mrbobbytables](https://github.com/mrbobbytables) in [#1090](https://github.com/projectbluefin/bluefin/pull/1090)
+- docs(workflow): note Closes #NNN only fires on the default branch by [@​mrbobbytables](https://github.com/mrbobbytables) in [#1092](https://github.com/projectbluefin/bluefin/pull/1092)
+- docs(ci): document stable-promotion blocker set for #929 by [@​mrbobbytables](https://github.com/mrbobbytables) in [#1089](https://github.com/projectbluefin/bluefin/pull/1089)
+- ci(bonedigger): drop the remaining no-op triggers and dead permission by [@​Danathar](https://github.com/Danathar) in [#1085](https://github.com/projectbluefin/bluefin/pull/1085)
+- ci: gate stable promotion to Tuesday window by [@​Danathar](https://github.com/Danathar) in [#1076](https://github.com/projectbluefin/bluefin/pull/1076)
+- fix(ci): preserve builds after Renovate merges by [@​joshyorko](https://github.com/joshyorko) in [#1111](https://github.com/projectbluefin/bluefin/pull/1111)
+- test(brew): assert the brew-preinstall delivery path ships in the image by [@​Danathar](https://github.com/Danathar) in [#1081](https://github.com/projectbluefin/bluefin/pull/1081)
+- docs(security): correct CVE-2026-33186 root cause — podman is a second carrier by [@​Danathar](https://github.com/Danathar) in [#1082](https://github.com/projectbluefin/bluefin/pull/1082)
+- test(framework): assert fw-charge-control.conf ships in the built image by [@​Danathar](https://github.com/Danathar) in [#1080](https://github.com/projectbluefin/bluefin/pull/1080)
+- ci: guard the testsuite workflow contract by [@​Danathar](https://github.com/Danathar) in [#1044](https://github.com/projectbluefin/bluefin/pull/1044)
+- docs(security): document the cosign signature-format requirement by [@​hanthor](https://github.com/hanthor) in [#1071](https://github.com/projectbluefin/bluefin/pull/1071)
+- ci: actually remove the mirrored validate status shim by [@​castrojo](https://github.com/castrojo) in [#1074](https://github.com/projectbluefin/bluefin/pull/1074)
+- ci: replace mirrored validate status with real check on merge queue by [@​castrojo](https://github.com/castrojo) in [#1072](https://github.com/projectbluefin/bluefin/pull/1072)
+- fix(packages): add fzf to base package manifest (#965) by [@​hanthor](https://github.com/hanthor) in [#1057](https://github.com/projectbluefin/bluefin/pull/1057)
+- docs(release): clarify e2e gates for stable promotion by [@​Danathar](https://github.com/Danathar) in [#1049](https://github.com/projectbluefin/bluefin/pull/1049)
+- ci(bonedigger): drop the no-op schedule trigger by [@​hanthor](https://github.com/hanthor) in [#1061](https://github.com/projectbluefin/bluefin/pull/1061)
+- test(framework): lock fw-charge-control.conf battery health fix by [@​hanthor](https://github.com/hanthor) in [#1060](https://github.com/projectbluefin/bluefin/pull/1060)
+- test(ci): lock ctx-build stage 1 context to its required inputs by [@​hanthor](https://github.com/hanthor) in [#1059](https://github.com/projectbluefin/bluefin/pull/1059)
+- ci(lab-check): surface actionable error when MergeRaptor token mint is denied by [@​hanthor](https://github.com/hanthor) in [#1058](https://github.com/projectbluefin/bluefin/pull/1058)
+- [quality] ci(unit-tests): enforce 30% BATS line coverage threshold by [@​kubestellar-hive](https://github.com/kubestellar-hive) in [#1037](https://github.com/projectbluefin/bluefin/pull/1037)
+- fix(ci): run base-branch guard on main-targeted PRs by [@​castrojo](https://github.com/castrojo) in [#1041](https://github.com/projectbluefin/bluefin/pull/1041)
+- [sec-check] fix: pr-validation.yml add permissions block (contents: read) by [@​kubestellar-hive](https://github.com/kubestellar-hive) in [#1038](https://github.com/projectbluefin/bluefin/pull/1038)
+- docs(security): document CVE-2026-33186 in buildah (no F44 fix available) by [@​ahmedadan](https://github.com/ahmedadan) in [#1018](https://github.com/projectbluefin/bluefin/pull/1018)
+- docs(ci): record MergeRaptor Checks write requirement for lab check by [@​castrojo](https://github.com/castrojo) in [#1010](https://github.com/projectbluefin/bluefin/pull/1010)
+- fix(ci): run gitlink check against github.sha by [@​castrojo](https://github.com/castrojo) in [#1034](https://github.com/projectbluefin/bluefin/pull/1034)
+- ci: restore managed testsuite v1 ref and stop Renovate re-pinning it by [@​castrojo](https://github.com/castrojo) in [#1012](https://github.com/projectbluefin/bluefin/pull/1012)
+- ci(bonedigger): drop the no-op pull_request trigger by [@​castrojo](https://github.com/castrojo) in [#1011](https://github.com/projectbluefin/bluefin/pull/1011)
+- docs(skills): record e2e gate triage and tag verification by [@​castrojo](https://github.com/castrojo) in [#1013](https://github.com/projectbluefin/bluefin/pull/1013)
+- fix(ci): propagate BATS failures by [@​bketelsen](https://github.com/bketelsen) in [#1015](https://github.com/projectbluefin/bluefin/pull/1015)
+- fix(factory): extract merge-group status mirror by [@​bketelsen](https://github.com/bketelsen) in [#1021](https://github.com/projectbluefin/bluefin/pull/1021)
+- fix(build): fully isolate Stage 2 and ISO contexts by [@​bketelsen](https://github.com/bketelsen) in [#1020](https://github.com/projectbluefin/bluefin/pull/1020)
+- fix(renovate): consolidate repository config by [@​bketelsen](https://github.com/bketelsen) in [#1017](https://github.com/projectbluefin/bluefin/pull/1017)
+- fix(framework): enable native battery charge control by [@​bketelsen](https://github.com/bketelsen) in [#1019](https://github.com/projectbluefin/bluefin/pull/1019)
+- ci: document the :testing tag gate on the reusable-build caller by [@​castrojo](https://github.com/castrojo) in [#992](https://github.com/projectbluefin/bluefin/pull/992)
+- docs(skills): note release input trust and worktree merge cleanup by [@​castrojo](https://github.com/castrojo) in [#998](https://github.com/projectbluefin/bluefin/pull/998)
+- feat(ci): add BATS coverage reporting artifacts by [@​castrojo](https://github.com/castrojo) in [#911](https://github.com/projectbluefin/bluefin/pull/911)
+- docs(skills): record CI gating and worktree failure modes by [@​castrojo](https://github.com/castrojo) in [#994](https://github.com/projectbluefin/bluefin/pull/994)
+- docs(skills): adopt the factory skill front-matter contract by [@​castrojo](https://github.com/castrojo) in [#991](https://github.com/projectbluefin/bluefin/pull/991)
+- chore: enforce isolated worktrees for feature work by [@​castrojo](https://github.com/castrojo) in [#980](https://github.com/projectbluefin/bluefin/pull/980)
+- chore(release): remove legacy manifest changelog by [@​bketelsen](https://github.com/bketelsen) in [#973](https://github.com/projectbluefin/bluefin/pull/973)
+- fix(build): invalidate package layer for build file changes by [@​castrojo](https://github.com/castrojo) in [#964](https://github.com/projectbluefin/bluefin/pull/964)
+- docs: add agent fast path and every-loop repair contract by [@​castrojo](https://github.com/castrojo) in [#984](https://github.com/projectbluefin/bluefin/pull/984)
+- docs(workflow): replace placeholder bonedigger TODO with real tracking issue by [@​castrojo](https://github.com/castrojo) in [#982](https://github.com/projectbluefin/bluefin/pull/982)
+- docs: sync agentic procedures with projectbluefin/common by [@​castrojo](https://github.com/castrojo) in [#979](https://github.com/projectbluefin/bluefin/pull/979)
+- fix(image): include bootupd for bootc installs by [@​castrojo](https://github.com/castrojo) in [#962](https://github.com/projectbluefin/bluefin/pull/962)
+- ci: verify common extension defaults by [@​castrojo](https://github.com/castrojo) in [#955](https://github.com/projectbluefin/bluefin/pull/955)
+- ci: verify E2E health fixes by [@​castrojo](https://github.com/castrojo) in [#952](https://github.com/projectbluefin/bluefin/pull/952)
+- ci: verify testsuite v1 E2E fixes by [@​castrojo](https://github.com/castrojo) in [#950](https://github.com/projectbluefin/bluefin/pull/950)
+- ci: rerun E2E with testsuite v1 fixes by [@​castrojo](https://github.com/castrojo) in [#949](https://github.com/projectbluefin/bluefin/pull/949)
+- chore: sync issue templates from common by [@​castrojo](https://github.com/castrojo) in [#946](https://github.com/projectbluefin/bluefin/pull/946)
+- ci: retire skill-drift.yml (no-op stub) by [@​castrojo](https://github.com/castrojo) in [#944](https://github.com/projectbluefin/bluefin/pull/944)
+- fix(ci): use managed testsuite v1 by [@​castrojo](https://github.com/castrojo) in [#941](https://github.com/projectbluefin/bluefin/pull/941)
+- fix(ci): force GET method for gh api in nvidia manifest assembly by [@​HuntedRaven7](https://github.com/HuntedRaven7) in [#530](https://github.com/projectbluefin/bluefin-lts/pull/530)
+- fix: install dnf5 so bluefin-lts-countme.service can run by [@​hanthor](https://github.com/hanthor) in [#502](https://github.com/projectbluefin/bluefin-lts/pull/502)
+- chore(release): remove legacy manifest changelog by [@​bketelsen](https://github.com/bketelsen) in [#497](https://github.com/projectbluefin/bluefin-lts/pull/497)
+- fix(ci): unblock PR lint and the promotion release gate by [@​hanthor](https://github.com/hanthor) in [#501](https://github.com/projectbluefin/bluefin-lts/pull/501)
+- fix(ci): assemble signed multi-arch manifest for bluefin-lts-nvidia:testing by [@​castrojo](https://github.com/castrojo) in [#472](https://github.com/projectbluefin/bluefin-lts/pull/472)
+- ci(lab): publish PR results through MergeRaptor by [@​castrojo](https://github.com/castrojo) in [#456](https://github.com/projectbluefin/bluefin-lts/pull/456)
+- chore: sync issue templates from common by [@​castrojo](https://github.com/castrojo) in [#487](https://github.com/projectbluefin/bluefin-lts/pull/487)
+- ci: retire skill-drift.yml (no-op stub) by [@​castrojo](https://github.com/castrojo) in [#486](https://github.com/projectbluefin/bluefin-lts/pull/486)
+- test(dx): add unit tests for dx_distrobox_can_be_created (#501) by [@​mrbobbytables](https://github.com/mrbobbytables) in [#755](https://github.com/projectbluefin/testsuite/pull/755)
+- fix(installer): gate the LUKS assertion on the target, not a dead env var by [@​Danathar](https://github.com/Danathar) in [#754](https://github.com/projectbluefin/testsuite/pull/754)
+- feat(dx): gate distrobox create/install/export on a cached image at runtime by [@​Danathar](https://github.com/Danathar) in [#753](https://github.com/projectbluefin/testsuite/pull/753)
+- [sec-check] fix: declare top-level permissions: \{\} in build-kde-runner.yml build-runner.yml  by [@​kubestellar-hive](https://github.com/kubestellar-hive) in [#750](https://github.com/projectbluefin/testsuite/pull/750)
+- fix(smoke): preserve Firefox AT-SPI env for Flatpak exports by [@​Danathar](https://github.com/Danathar) in [#741](https://github.com/projectbluefin/testsuite/pull/741)
+- feat(e2e): compose test software as a container layer instead of runtime install by [@​hanthor](https://github.com/hanthor) in [#744](https://github.com/projectbluefin/testsuite/pull/744)
+- [sec-check] fix: pr-validate.yml add permissions block (contents: read) by [@​kubestellar-hive](https://github.com/kubestellar-hive) in [#738](https://github.com/projectbluefin/testsuite/pull/738)
+- [sec-check] fix: unit-tests.yml add permissions block (contents: read) by [@​kubestellar-hive](https://github.com/kubestellar-hive) in [#739](https://github.com/projectbluefin/testsuite/pull/739)
+- docs(skills): document design gate and verification requirements for #487 by [@​hanthor](https://github.com/hanthor) in [#747](https://github.com/projectbluefin/testsuite/pull/747)
+- test(smoke): scope composefs capability check to Fedora-shipped caps by [@​hanthor](https://github.com/hanthor) in [#749](https://github.com/projectbluefin/testsuite/pull/749)
+- docs(skills): link projectbluefin/lab#621 to distrobox image-cache gap #501 by [@​hanthor](https://github.com/hanthor) in [#748](https://github.com/projectbluefin/testsuite/pull/748)
+- test(common): cover ujust toggle-updates via its non-interactive ACTION contract by [@​hanthor](https://github.com/hanthor) in [#746](https://github.com/projectbluefin/testsuite/pull/746)
+- fix(shared): refuse dbus autolaunch and snapshot session state on readiness failure by [@​castrojo](https://github.com/castrojo) in [#737](https://github.com/projectbluefin/testsuite/pull/737)
+- [quality] add new coverage for untested areas (epic #705) by [@​kubestellar-hive](https://github.com/kubestellar-hive) in [#733](https://github.com/projectbluefin/testsuite/pull/733)
+- test(common): make Dakota ujust chooser and report coverage non-vacuous by [@​castrojo](https://github.com/castrojo) in [#735](https://github.com/projectbluefin/testsuite/pull/735)
+- feat(common): add non-interactive devmode coverage via bctl by [@​onlydole](https://github.com/onlydole) in [#724](https://github.com/projectbluefin/testsuite/pull/724)
+- fix(shared): survive GDM restart in GNOME shell readiness gate by [@​castrojo](https://github.com/castrojo) in [#727](https://github.com/projectbluefin/testsuite/pull/727)
+- fix(e2e): enforce the @hardware_blocked tag in CI and at runtime by [@​castrojo](https://github.com/castrojo) in [#726](https://github.com/projectbluefin/testsuite/pull/726)
+- docs: reconcile factory-model governance contradictions and correct the ghost-lab merge gate by [@​castrojo](https://github.com/castrojo) in [#732](https://github.com/projectbluefin/testsuite/pull/732)
+- test(scripts): assert KDE installer behaviour instead of its source text by [@​castrojo](https://github.com/castrojo) in [#730](https://github.com/projectbluefin/testsuite/pull/730)
+- fix(ci): generate suite-map coverage snapshot instead of hand-editing by [@​castrojo](https://github.com/castrojo) in [#728](https://github.com/projectbluefin/testsuite/pull/728)
+- fix(smoke): restore Bluefin release gate reliability by [@​castrojo](https://github.com/castrojo) in [#731](https://github.com/projectbluefin/testsuite/pull/731)
+- feat(installer): add post-boot assertions for UEFI, Flatpak exclusion, and LUKS cmdline by [@​kylerankin](https://github.com/kylerankin) in [#697](https://github.com/projectbluefin/testsuite/pull/697)
+- docs(behave): trim SKILL.md under the 500-line cap by [@​castrojo](https://github.com/castrojo) in [#729](https://github.com/projectbluefin/testsuite/pull/729)
+- fix(smoke): restore Bluefin release gate reliability by [@​joshyorko](https://github.com/joshyorko) in [#691](https://github.com/projectbluefin/testsuite/pull/691)
+- test(scripts): add unit tests for validate_docs.py by [@​kubestellar-hive](https://github.com/kubestellar-hive) in [#675](https://github.com/projectbluefin/testsuite/pull/675)
+- test(software): add CLI-driven Flatpak per-app permission coverage by [@​castrojo](https://github.com/castrojo) in [#710](https://github.com/projectbluefin/testsuite/pull/710)
+- test(common): add Dakota ujust report and chooser regression coverage by [@​castrojo](https://github.com/castrojo) in [#699](https://github.com/projectbluefin/testsuite/pull/699)
+- test: cover orca, input-methods and xwayland smoke step logic by [@​castrojo](https://github.com/castrojo) in [#709](https://github.com/projectbluefin/testsuite/pull/709)
+- docs: onboard testsuite to the common factory model and remove the PR cap by [@​castrojo](https://github.com/castrojo) in [#694](https://github.com/projectbluefin/testsuite/pull/694)
+- test: cover GNOME shell readiness helper by [@​kubestellar-hive](https://github.com/kubestellar-hive) in [#672](https://github.com/projectbluefin/testsuite/pull/672)
+- feat(developer): add pending bctl.feature scenarios ahead of CI unmask by [@​mrbobbytables](https://github.com/mrbobbytables) in [#722](https://github.com/projectbluefin/testsuite/pull/722)
+- docs: record OOBE first-boot investigation by [@​bketelsen](https://github.com/bketelsen) in [#715](https://github.com/projectbluefin/testsuite/pull/715)
+- fix(software): initialize shared SSH context with coverage by [@​bketelsen](https://github.com/bketelsen) in [#721](https://github.com/projectbluefin/testsuite/pull/721)
+- docs(skills): capture SSH context contract and unit-test stub pitfalls by [@​castrojo](https://github.com/castrojo) in [#723](https://github.com/projectbluefin/testsuite/pull/723)
+- build(dashboard): migrate to @tailwindcss/vite, drop @astrojs/tailwind by [@​castrojo](https://github.com/castrojo) in [#716](https://github.com/projectbluefin/testsuite/pull/716)
+- test(scripts): add installer contract coverage for KDE webdriver by [@​kubestellar-hive](https://github.com/kubestellar-hive) in [#676](https://github.com/projectbluefin/testsuite/pull/676)
+- test(flatcar): implement Ignition and update-disable lifecycle scenarios by [@​castrojo](https://github.com/castrojo) in [#711](https://github.com/projectbluefin/testsuite/pull/711)
+- docs: add update-cadence research informed by testsuite validation by [@​hanthor](https://github.com/hanthor) in [#713](https://github.com/projectbluefin/testsuite/pull/713)
+- fix(smoke): enable Firefox AT-SPI accessibility and stop the filler false pass by [@​castrojo](https://github.com/castrojo) in [#692](https://github.com/projectbluefin/testsuite/pull/692)
+- test(dx): add distrobox create/install/export scenarios behind @pending by [@​castrojo](https://github.com/castrojo) in [#720](https://github.com/projectbluefin/testsuite/pull/720)
+- fix(software): set SSH context for shared ssh_steps in the suite by [@​castrojo](https://github.com/castrojo) in [#718](https://github.com/projectbluefin/testsuite/pull/718)
+- fix(e2e): enforce non-runnable tag filters by [@​bketelsen](https://github.com/bketelsen) in [#717](https://github.com/projectbluefin/testsuite/pull/717)
+- docs(behave): record ujust toggle-updates non-interactive blocker (#499) by [@​castrojo](https://github.com/castrojo) in [#714](https://github.com/projectbluefin/testsuite/pull/714)
+- docs: add issue templates for the agent intake path by [@​castrojo](https://github.com/castrojo) in [#700](https://github.com/projectbluefin/testsuite/pull/700)
+- docs: codify .worktrees/ isolation policy and agent worktree hygiene by [@​castrojo](https://github.com/castrojo) in [#695](https://github.com/projectbluefin/testsuite/pull/695)
+- fix(ci): count job-summary scenarios explicitly instead of by subtraction by [@​castrojo](https://github.com/castrojo) in [#698](https://github.com/projectbluefin/testsuite/pull/698)
+- chore: ignore extracted image roots and local e2e diagnostics by [@​castrojo](https://github.com/castrojo) in [#708](https://github.com/projectbluefin/testsuite/pull/708)
+- fix(ci): count @pending scenarios as stubs in coverage badges by [@​castrojo](https://github.com/castrojo) in [#701](https://github.com/projectbluefin/testsuite/pull/701)
+- test: resolve overdue quarantine debt and reclassify infra-blocked scenarios by [@​castrojo](https://github.com/castrojo) in [#693](https://github.com/projectbluefin/testsuite/pull/693)
+- fix(e2e): preserve smoke health capacity by [@​castrojo](https://github.com/castrojo) in [#684](https://github.com/projectbluefin/testsuite/pull/684)
+- fix(e2e): preserve image extension defaults by [@​castrojo](https://github.com/castrojo) in [#683](https://github.com/projectbluefin/testsuite/pull/683)
+- fix(smoke): preserve monitor layout when scaling by [@​castrojo](https://github.com/castrojo) in [#682](https://github.com/projectbluefin/testsuite/pull/682)
+- ci: retire skill-drift.yml (no-op stub) by [@​castrojo](https://github.com/castrojo) in [#681](https://github.com/projectbluefin/testsuite/pull/681)
+- fix(ci): render e2e heredoc delimiter correctly by [@​castrojo](https://github.com/castrojo) in [#680](https://github.com/projectbluefin/testsuite/pull/680)
+- fix(ci): restore e2e workflow heredoc indentation by [@​castrojo](https://github.com/castrojo) in [#678](https://github.com/projectbluefin/testsuite/pull/678)
+- [scanner] fix: publish PXE boot artifacts by [@​kubestellar-hive](https://github.com/kubestellar-hive) in [#23](https://github.com/projectbluefin/server/pull/23)
+- docs: add SECURITY.md vulnerability disclosure policy by [@​castrojo](https://github.com/castrojo) in [#17](https://github.com/projectbluefin/server/pull/17)
+- fix(promote): derive squash branch name from inputs everywhere by [@​Siddhj2206](https://github.com/Siddhj2206) in [#423](https://github.com/projectbluefin/actions/pull/423)
+- fix(sign-and-publish): pin cosign to legacy .sig format for podman/bootc by [@​hanthor](https://github.com/hanthor) in [#420](https://github.com/projectbluefin/actions/pull/420)
+- [sec-check] fix: pin renovate version, declare top-level permissions in reusable-sync-branches by [@​kubestellar-hive](https://github.com/kubestellar-hive) in [#417](https://github.com/projectbluefin/actions/pull/417)
+- [sec-check] fix: actionlint.yml declare least-privilege permissions by [@​kubestellar-hive](https://github.com/kubestellar-hive) in [#415](https://github.com/projectbluefin/actions/pull/415)
+- [quality] add regression coverage for _section_footer in render_pr_body by [@​kubestellar-hive](https://github.com/kubestellar-hive) in [#412](https://github.com/projectbluefin/actions/pull/412)
+- fix(check-token-health): support GitHub App installation tokens by [@​kubestellar-hive](https://github.com/kubestellar-hive) in [#418](https://github.com/projectbluefin/actions/pull/418)
+- fix(ci): use the self-repository prefix in renovate-automerge by [@​castrojo](https://github.com/castrojo) in [#406](https://github.com/projectbluefin/actions/pull/406)
+- fix(build): stop leaking the stream tag when publish_stream_tag=false by [@​castrojo](https://github.com/castrojo) in [#405](https://github.com/projectbluefin/actions/pull/405)
+- fix(renovate): stop managing first-party projectbluefin/actions refs by [@​castrojo](https://github.com/castrojo) in [#401](https://github.com/projectbluefin/actions/pull/401)
+- ci(actions): make mergeraptor auto-merge actually fire on main by [@​castrojo](https://github.com/castrojo) in [#400](https://github.com/projectbluefin/actions/pull/400)
+- ci(actions): migrate internal composition to self-repository syntax by [@​castrojo](https://github.com/castrojo) in [#392](https://github.com/projectbluefin/actions/pull/392)
+- fix(ci): use secrets.MERGERAPTOR_APP_ID and client-id in factory workflows by [@​castrojo](https://github.com/castrojo) in [#354](https://github.com/projectbluefin/actions/pull/354)
+- [quality] add CLI regression tests for consumer-contract script by [@​kubestellar-hive](https://github.com/kubestellar-hive) in [#378](https://github.com/projectbluefin/actions/pull/378)
+- fix(actions): resolve bundled cosign installer from self repository by [@​castrojo](https://github.com/castrojo) in [#376](https://github.com/projectbluefin/actions/pull/376)
+- [quality] add BATS coverage for sign-and-publish SBOM path generation by [@​kubestellar-hive](https://github.com/kubestellar-hive) in [#371](https://github.com/projectbluefin/actions/pull/371)
+- test(scripts): cover promotion body scripts by [@​kubestellar-hive](https://github.com/kubestellar-hive) in [#369](https://github.com/projectbluefin/actions/pull/369)
+- [quality] add entrypoint regression coverage by [@​kubestellar-hive](https://github.com/kubestellar-hive) in [#366](https://github.com/projectbluefin/actions/pull/366)
+- [quality] add regression tests for render_card placeholder fallback by [@​kubestellar-hive](https://github.com/kubestellar-hive) in [#367](https://github.com/projectbluefin/actions/pull/367)
+- fix(tests): prioritize scripts/ over .github/actions copies in sys.path by [@​kubestellar-hive](https://github.com/kubestellar-hive) in [#370](https://github.com/projectbluefin/actions/pull/370)
+- [quality] expand sign-and-publish BATS coverage for cache and attach failure paths by [@​kubestellar-hive](https://github.com/kubestellar-hive) in [#372](https://github.com/projectbluefin/actions/pull/372)
+- fix(report): apply external queue preferences by [@​joshyorko](https://github.com/joshyorko) in [#34](https://github.com/projectbluefin/bonedigger/pull/34)
+- docs: add Future of Bluefin video post by [@​castrojo](https://github.com/castrojo) in [#1037](https://github.com/projectbluefin/documentation/pull/1037)
+- ci: add just check pre-commit gate by [@​castrojo](https://github.com/castrojo) in [#1035](https://github.com/projectbluefin/documentation/pull/1035)
+- docs: add /dakota variant page by [@​castrojo](https://github.com/castrojo) in [#1036](https://github.com/projectbluefin/documentation/pull/1036)
+- chore: remove stale content and dead dashboard code by [@​castrojo](https://github.com/castrojo) in [#1034](https://github.com/projectbluefin/documentation/pull/1034)
+- refactor: remove dead code and replace hand-rolled helpers with stdlib by [@​castrojo](https://github.com/castrojo) in [#1033](https://github.com/projectbluefin/documentation/pull/1033)
+- docs(blog): add post on Bazzite killing the gamer kernel by [@​castrojo](https://github.com/castrojo) in [#1032](https://github.com/projectbluefin/documentation/pull/1032)
+- docs: add "The Wolves Are Coming" blog post with Bluesky embed by [@​castrojo](https://github.com/castrojo) in [#1030](https://github.com/projectbluefin/documentation/pull/1030)
+- fix(cards): source the Dakota release card from the SBOM cache by [@​castrojo](https://github.com/castrojo) in [#1029](https://github.com/projectbluefin/documentation/pull/1029)
+- fix(factory): attribute Hive to KubeStellar, not an individual by [@​castrojo](https://github.com/castrojo) in [#1028](https://github.com/projectbluefin/documentation/pull/1028)
+- fix(countme): count devices the way ublue-os/countme counts them by [@​castrojo](https://github.com/castrojo) in [#1027](https://github.com/projectbluefin/documentation/pull/1027)
+- fix(factory): correct branding terminology, relabel countme, drop non-owned toolbox images by [@​castrojo](https://github.com/castrojo) in [#1026](https://github.com/projectbluefin/documentation/pull/1026)
+- feat(factory): two-level navigation and first-party chart parity by [@​castrojo](https://github.com/castrojo) in [#1025](https://github.com/projectbluefin/documentation/pull/1025)
+- docs(blog): publish Dakota Alpha 5 by [@​castrojo](https://github.com/castrojo) in [#1020](https://github.com/projectbluefin/documentation/pull/1020)
+- docs(downloads): promote Dakota alpha5 by [@​castrojo](https://github.com/castrojo) in [#1019](https://github.com/projectbluefin/documentation/pull/1019)
+- feat(release-cards): add deterministic release-context renderer and action by [@​castrojo](https://github.com/castrojo) in [#1018](https://github.com/projectbluefin/documentation/pull/1018)
+- fix(containerfile): break dnf.conf hardlink before config-manager setopt by [@​tunix](https://github.com/tunix) in [#258](https://github.com/projectbluefin/finpilot/pull/258)
+- [scanner] docs: document Renovate alert permission by [@​kubestellar-hive](https://github.com/kubestellar-hive) in [#276](https://github.com/projectbluefin/finpilot/pull/276)
+- docs: align signing, branch-model, and promotion docs with current behavior by [@​Siddhj2206](https://github.com/Siddhj2206) in [#273](https://github.com/projectbluefin/finpilot/pull/273)
+- feat(ci): enable keyless image signing by default by [@​Siddhj2206](https://github.com/Siddhj2206) in [#271](https://github.com/projectbluefin/finpilot/pull/271)
+- fix(ci): enable native overlay for faster layer commits by [@​Siddhj2206](https://github.com/Siddhj2206) in [#266](https://github.com/projectbluefin/finpilot/pull/266)
+- fix(ci): grant packages:read to promotion reusable caller by [@​Siddhj2206](https://github.com/Siddhj2206) in [#259](https://github.com/projectbluefin/finpilot/pull/259)
+- ci: add two-branch main/stable workflow with factory promotion reusable by [@​castrojo](https://github.com/castrojo) in [#240](https://github.com/projectbluefin/finpilot/pull/240)
+- fix: prevent clean-stage.sh glob failure on empty /var/cache by [@​castrojo](https://github.com/castrojo) in [#243](https://github.com/projectbluefin/finpilot/pull/243)
+- fix(ci): harden workflow security — pin renovate, add clean.yml permissions by [@​castrojo](https://github.com/castrojo) in [#239](https://github.com/projectbluefin/finpilot/pull/239)
+- feat(factory): onboard Hive issue workflow by [@​castrojo](https://github.com/castrojo) in [#218](https://github.com/projectbluefin/finpilot/pull/218)
+- fix(ci): simplify rechunking enablement by [@​bketelsen](https://github.com/bketelsen) in [#220](https://github.com/projectbluefin/finpilot/pull/220)
+- fix(build): stop copying default just recipes from common OCI by [@​hanthor](https://github.com/hanthor) in [#227](https://github.com/projectbluefin/finpilot/pull/227)
+- Move to agentic workflows and skills by [@​hanthor](https://github.com/hanthor) in [#226](https://github.com/projectbluefin/finpilot/pull/226)
+- fix(packages): install gum for default ujust recipes by [@​castrojo](https://github.com/castrojo) in [#221](https://github.com/projectbluefin/finpilot/pull/221)
+- fix: changed up how the common repo is used by [@​HuntedRaven7](https://github.com/HuntedRaven7) in [#6](https://github.com/projectbluefin/utah/pull/6)
+- Add Utah GNOME desktop and live ISO bring-up by [@​hanthor](https://github.com/hanthor) in [#5](https://github.com/projectbluefin/utah/pull/5)
+- Build Utah on Hummingbird with the GNOME 51 stack, all four flavors by [@​hanthor](https://github.com/hanthor) in [#1](https://github.com/projectbluefin/utah/pull/1)
+- Add GNOME 51 GDM to the package factory by [@​hanthor](https://github.com/hanthor) in [#12](https://github.com/projectbluefin/utah-packages/pull/12)
+- Let cosign see the registry login the publish step already made by [@​hanthor](https://github.com/hanthor) in [#3](https://github.com/projectbluefin/utah-packages/pull/3)
+- Import the package factory: GNOME 51 for Hummingbird, published as an OCI image by [@​hanthor](https://github.com/hanthor) in [#1](https://github.com/projectbluefin/utah-packages/pull/1)
+
+##### Dakota (GNOME OS Prototype)
+
+- fix(ujust): preserve newlines in confirm/report/verify by [@​rapenne-s](https://github.com/rapenne-s) in [#1331](https://github.com/projectbluefin/dakota/pull/1331)
+- fix(image): create plugdev and nintendo_switch groups for udev rules by [@​ahmedadan](https://github.com/ahmedadan) in [#1424](https://github.com/projectbluefin/dakota/pull/1424)
+- fix(ci): sync-next merges small next tweaks instead of restoring files by [@​ahmedadan](https://github.com/ahmedadan) in [#1419](https://github.com/projectbluefin/dakota/pull/1419)
+- fix(packages): ship fastfetch binary expected by common wrapper by [@​ahmedadan](https://github.com/ahmedadan) in [#1417](https://github.com/projectbluefin/dakota/pull/1417)
+- [scanner] fix: include dmidecode for bios-info by [@​kubestellar-hive](https://github.com/kubestellar-hive) in [#1391](https://github.com/projectbluefin/dakota/pull/1391)
+- fix(fastfetch): show real stream tag via boot-time booted-image sync by [@​ahmedadan](https://github.com/ahmedadan) in [#1393](https://github.com/projectbluefin/dakota/pull/1393)
+- fix(image): unbreak fresh-ISO post-install (uwelcome, brew, devmode) by [@​ahmedadan](https://github.com/ahmedadan) in [#1388](https://github.com/projectbluefin/dakota/pull/1388)
+- ci(build): queue runs FIFO with stale-run gate, detach source tracker by [@​ahmedadan](https://github.com/ahmedadan) in [#1384](https://github.com/projectbluefin/dakota/pull/1384)
+- chore(kernel): align testing on Linux 7.1.8 by [@​ahmedadan](https://github.com/ahmedadan) in [#1379](https://github.com/projectbluefin/dakota/pull/1379)
+- chore(kernel): move next kernels to stable 7.2 by [@​ahmedadan](https://github.com/ahmedadan) in [#1378](https://github.com/projectbluefin/dakota/pull/1378)
+- perf(image): compose the host toolchain once by [@​ahmedadan](https://github.com/ahmedadan) in [#1377](https://github.com/projectbluefin/dakota/pull/1377)
+- fix(chunkah): preserve export mtimes by [@​ahmedadan](https://github.com/ahmedadan) in [#1376](https://github.com/projectbluefin/dakota/pull/1376)
+- refactor(agent): reduce eager context by [@​ahmedadan](https://github.com/ahmedadan) in [#1362](https://github.com/projectbluefin/dakota/pull/1362)
+- ci(aarch64): stop queueing x86 builds behind ARM in the CAS group by [@​ahmedadan](https://github.com/ahmedadan) in [#1359](https://github.com/projectbluefin/dakota/pull/1359)
+- fix(ci): tolerate owned paths absent from next during sync by [@​ahmedadan](https://github.com/ahmedadan) in [#1357](https://github.com/projectbluefin/dakota/pull/1357)
+- fix(elements): complete the fdsdk 26.08 port across all variants by [@​ahmedadan](https://github.com/ahmedadan) in [#1356](https://github.com/projectbluefin/dakota/pull/1356)
+- ci(next): build next images on every content push by [@​ahmedadan](https://github.com/ahmedadan) in [#1354](https://github.com/projectbluefin/dakota/pull/1354)
+- fix(elements): stage sandbox shell explicitly for fdsdk 26.08 by [@​ahmedadan](https://github.com/ahmedadan) in [#1353](https://github.com/projectbluefin/dakota/pull/1353)
+- ci(next): derive fdsdk pin and patches from tracked gnome-build-meta by [@​ahmedadan](https://github.com/ahmedadan) in [#1352](https://github.com/projectbluefin/dakota/pull/1352)
+- ci(next): add patches/linux-ogc to the sync overlay by [@​ahmedadan](https://github.com/ahmedadan) in [#1346](https://github.com/projectbluefin/dakota/pull/1346)
+- ci(next): replace merge sync from main with overlay sync-next workflow by [@​ahmedadan](https://github.com/ahmedadan) in [#1345](https://github.com/projectbluefin/dakota/pull/1345)
+- fix(gaming): repin LuaJIT after upstream deleted the ROLLING tag by [@​ahmedadan](https://github.com/ahmedadan) in [#1344](https://github.com/projectbluefin/dakota/pull/1344)
+- ci(release): disable broken GNOME 50 smoke gate on stable promotion by [@​ahmedadan](https://github.com/ahmedadan) in [#1342](https://github.com/projectbluefin/dakota/pull/1342)
+- fix(brew): bump common for prefix fix, ship make, guard spelling by [@​ahmedadan](https://github.com/ahmedadan) in [#1341](https://github.com/projectbluefin/dakota/pull/1341)
+- feat(bluefin): add brlaser CUPS driver by [@​rapenne-s](https://github.com/rapenne-s) in [#1329](https://github.com/projectbluefin/dakota/pull/1329)
+- ci(e2e): correct installer-suite gating docs and add a dispatch recipe by [@​Danathar](https://github.com/Danathar) in [#1323](https://github.com/projectbluefin/dakota/pull/1323)
+- docs(e2e-ci): spec fisherman installer post-boot assertions, correct status by [@​mrbobbytables](https://github.com/mrbobbytables) in [#1330](https://github.com/projectbluefin/dakota/pull/1330)
+- ci(release): schedule Dakota stable promotions Mon/Wed/Fri by [@​Danathar](https://github.com/Danathar) in [#1322](https://github.com/projectbluefin/dakota/pull/1322)
+- test: add avatar-audit to catch #353-class dinosaur-avatar regressions by [@​Danathar](https://github.com/Danathar) in [#1308](https://github.com/projectbluefin/dakota/pull/1308)
+- fix: restore Bluefin dinosaur avatars in GNOME user-account picker by [@​mrbobbytables](https://github.com/mrbobbytables) in [#1302](https://github.com/projectbluefin/dakota/pull/1302)
+- ci: run validate on PRs targeting main by [@​castrojo](https://github.com/castrojo) in [#1318](https://github.com/projectbluefin/dakota/pull/1318)
+- [quality] add Python regression tests for workflow and filemap scripts by [@​kubestellar-hive](https://github.com/kubestellar-hive) in [#1276](https://github.com/projectbluefin/dakota/pull/1276)
+- ci(e2e): expose installer suite on workflow_dispatch (fisherman post-boot assertions) by [@​hanthor](https://github.com/hanthor) in [#1316](https://github.com/projectbluefin/dakota/pull/1316)
+- docs(skills): record /dev/stdin regression and why CI cannot catch it by [@​castrojo](https://github.com/castrojo) in [#1303](https://github.com/projectbluefin/dakota/pull/1303)
+- fix(elements): stop using /dev/stdin for inline file writes by [@​castrojo](https://github.com/castrojo) in [#1298](https://github.com/projectbluefin/dakota/pull/1298)
+- fix(audio): unfold pcsp install command; YAML folding emptied artifact by [@​ahmedadan](https://github.com/ahmedadan) in [#1297](https://github.com/projectbluefin/dakota/pull/1297)
+- fix(audio): disable PC-speaker WirePlumber sink by [@​castrojo](https://github.com/castrojo) in [#1257](https://github.com/projectbluefin/dakota/pull/1257)
+- fix(gaming): pin Steam .deb to versioned pool URL; CDN swaps content by [@​ahmedadan](https://github.com/ahmedadan) in [#1279](https://github.com/projectbluefin/dakota/pull/1279)
+- fix(gaming): ship 32-bit GL/Vulkan drivers and re-enable Steam UI GPU by [@​ahmedadan](https://github.com/ahmedadan) in [#1278](https://github.com/projectbluefin/dakota/pull/1278)
+- feat(nvidia): update to 610.57.04 and ship its missing data files by [@​ahmedadan](https://github.com/ahmedadan) in [#1277](https://github.com/projectbluefin/dakota/pull/1277)
+- fix(bluefin): support ydotool on CMake 4 by [@​ahmedadan](https://github.com/ahmedadan) in [#1267](https://github.com/projectbluefin/dakota/pull/1267)
+- feat(bluefin): add ydotool input automation by [@​castrojo](https://github.com/castrojo) in [#1258](https://github.com/projectbluefin/dakota/pull/1258)
+- chore: sync issue templates from common by [@​castrojo](https://github.com/castrojo) in [#1264](https://github.com/projectbluefin/dakota/pull/1264)
+- ci: retire skill-drift.yml (no-op stub) by [@​castrojo](https://github.com/castrojo) in [#1263](https://github.com/projectbluefin/dakota/pull/1263)
+- fix(ci): delete .github/workflows/lab-check.yml by [@​castrojo](https://github.com/castrojo) in [#1260](https://github.com/projectbluefin/dakota/pull/1260)
+- fix(zswap): disable zram via integration command, overlap lost by [@​ahmedadan](https://github.com/ahmedadan) in [#1262](https://github.com/projectbluefin/dakota/pull/1262)
+
+## Contributors
+
+<GitHubProfileCard username="theMimolet" />
+
+<GitHubProfileCard username="ahmedadan" sponsorUrl="https://github.com/sponsors/ahmedadan" />
+
+<GitHubProfileCard username="castrojo" sponsorUrl="https://github.com/sponsors/castrojo" />
+
+<GitHubProfileCard username="HuntedRaven7" />
+
+<GitHubProfileCard username="hanthor" sponsorUrl="https://github.com/sponsors/hanthor" />
+
+<GitHubProfileCard username="kubestellar-hive" />
+
+<GitHubProfileCard username="joshyorko" />
+
+<GitHubProfileCard username="Giklab" />
+
+<GitHubProfileCard username="Danathar" />
+
+<GitHubProfileCard username="mrbobbytables" />
+
+<GitHubProfileCard username="bketelsen" />
+
+<GitHubProfileCard username="rapenne-s" />
+
+<GitHubProfileCard username="onlydole" />
+
+<GitHubProfileCard username="kylerankin" />
+
+<GitHubProfileCard username="Siddhj2206" />
+
+<GitHubProfileCard username="tunix" />
+
+## Sources
+
+- `github-activity`: available (2026-08-01 to 2026-08-31): [source](https://api.github.com/graphql)
+- `github-lanes`: available (2026-08-01 to 2026-08-31): [source](https://api.github.com/repos/projectbluefin/bluefin/actions/runs)
+- `github-releases`: available (2026-08-01 to 2026-08-31): [source](https://api.github.com/repos)
+- `github-releases`: available (2026-08-01 to 2026-08-31): [source](https://api.github.com/repos/projectbluefin/bluefin/releases)
+- `github-releases`: available (2026-08-01 to 2026-08-31): [source](https://api.github.com/repos/projectbluefin/bluefin-lts/releases)
+- `github-releases`: available (2026-08-01 to 2026-08-31): [source](https://api.github.com/repos/projectbluefin/dakota/releases)
+- `github-releases`: available (2026-08-01 to 2026-08-31): [source](https://api.github.com/repos/projectbluefin/server/releases)
+- `countme`: available (2026-08-01 to 2026-08-31): [source](https://data-analysis.fedoraproject.org/csv-reports/countme/totals.csv)
+- `homebrew`: available (2026-08-01 to 2026-08-31): [source](https://github.com/ublue-os/homebrew-tap)
+- `flathub`: unavailable — Flathub statistics could not be read. (2026-08-01 to 2026-08-31): [source](https://flathub.org/api/v2/stats)

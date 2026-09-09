@@ -1,0 +1,244 @@
+.chartFrame {
+  --report-chart-text: var(--ifm-font-color-base);
+  --report-chart-muted: var(--ifm-color-emphasis-700);
+  --report-chart-surface: var(
+    --ifm-card-background-color,
+    var(--ifm-background-surface-color)
+  );
+  --report-chart-border: var(--ifm-color-emphasis-300);
+  --report-chart-grid: var(--ifm-color-emphasis-200);
+  --report-chart-accent: var(--ifm-color-primary);
+  --report-chart-series-1: var(--ifm-color-primary);
+  --report-chart-series-2: var(--ifm-color-primary-dark);
+  --report-chart-series-3: var(--ifm-color-primary-light);
+  --report-chart-series-4: var(
+    --ifm-color-secondary,
+    var(--ifm-color-primary-darker)
+  );
+
+  box-sizing: border-box;
+  width: 100%;
+  margin: 1.5rem 0;
+  padding: 1rem;
+  color: var(--report-chart-text);
+  background: var(--report-chart-surface);
+  border: 1px solid var(--report-chart-border);
+  border-radius: var(--ifm-global-radius);
+}
+
+.chartCaption {
+  display: grid;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.chartHeading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.chartTitle {
+  margin: 0;
+  color: var(--report-chart-text);
+  font-size: 1.125rem;
+}
+
+.currentMetric {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  color: var(--report-chart-text);
+}
+
+.currentValue {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.currentUnit {
+  color: var(--report-chart-muted);
+  font-size: 0.875rem;
+}
+
+.provenance {
+  color: var(--report-chart-muted);
+  font-size: 0.875rem;
+}
+
+.provenance a {
+  color: var(--report-chart-accent);
+}
+
+.chartCanvas,
+.chartPlaceholder {
+  width: 100%;
+  min-height: 18rem;
+}
+
+.chartPlaceholder {
+  border: 1px dashed var(--report-chart-border);
+  border-radius: calc(var(--ifm-global-radius) * 0.75);
+}
+
+.accumulating {
+  margin: 0.5rem 0 0;
+  color: var(--report-chart-muted);
+  font-style: italic;
+}
+
+.dataDetails {
+  margin-top: 0.75rem;
+  color: var(--report-chart-text);
+}
+
+.dataDetails summary {
+  color: var(--report-chart-accent);
+  cursor: pointer;
+}
+
+.tableScroll {
+  overflow-x: auto;
+  margin-top: 0.75rem;
+}
+
+.dataTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.dataTable caption {
+  margin-bottom: 0.5rem;
+  color: var(--report-chart-muted);
+  text-align: left;
+}
+
+.dataTable th,
+.dataTable td {
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--report-chart-border);
+  text-align: left;
+}
+
+.dataTable th {
+  color: var(--report-chart-text);
+  font-weight: 600;
+}
+
+.dataTable td {
+  color: var(--report-chart-muted);
+}
+
+.reportSection {
+  margin: 2rem 0;
+}
+
+.sectionHeader {
+  margin-bottom: 1rem;
+}
+
+.sectionHeader h2 {
+  margin-bottom: 0.25rem;
+}
+
+.sectionHeader p {
+  margin: 0;
+  color: var(--report-chart-muted);
+}
+
+.sectionGrid {
+  display: grid;
+  gap: 1rem;
+}
+
+.sectionPanel {
+  min-width: 0;
+}
+
+.sectionPanel > h3 {
+  margin: 0 0 0.5rem;
+  color: var(--report-chart-text);
+  font-size: 1rem;
+}
+
+.state {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0.9rem 1rem;
+  color: var(--report-chart-muted);
+  border: 1px dashed var(--report-chart-border);
+  border-radius: calc(var(--ifm-global-radius) * 0.75);
+}
+
+.state strong {
+  color: var(--report-chart-text);
+}
+
+.stateGlyph {
+  color: var(--report-chart-accent);
+  font-weight: 700;
+}
+
+.portfolioGrid {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.portfolioGroup {
+  padding: 1rem;
+  border: 1px solid var(--report-chart-border);
+  border-radius: calc(var(--ifm-global-radius) * 0.75);
+  background: var(--report-chart-surface);
+}
+
+.portfolioGroup h3 {
+  margin: 0 0 0.5rem;
+  color: var(--report-chart-text);
+  font-size: 1rem;
+}
+
+.portfolioList {
+  margin: 0;
+  padding-left: 1.25rem;
+  color: var(--report-chart-muted);
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.875rem;
+}
+
+.mutedState {
+  margin: 0;
+  color: var(--report-chart-muted);
+  font-style: italic;
+}
+
+.canonicalLink {
+  margin: 1rem 0 0;
+  color: var(--report-chart-muted);
+}
+
+.canonicalLink a {
+  color: var(--report-chart-accent);
+}
+
+@media (min-width: 800px) {
+  .sectionGrid,
+  .portfolioGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chartFrame,
+  .chartFrame * {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
