@@ -6,8 +6,8 @@
   height: auto;
   border-radius: 12px;
   overflow: hidden;
-  border: 2px solid rgba(59, 130, 246, 0.25);
-  background: #1f2937;
+  border: 2px solid rgba(var(--portal-blue-rgb, 66, 133, 244), 0.25);
+  background: var(--portal-bg-light, #10151f);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   text-decoration: none;
   color: inherit;
@@ -22,8 +22,8 @@
 }
 
 .cardCenter {
-  border-color: rgba(59, 130, 246, 0.6);
-  box-shadow: 0 0 24px rgba(59, 130, 246, 0.35);
+  border-color: rgba(var(--portal-blue-rgb, 66, 133, 244), 0.6);
+  box-shadow: 0 0 24px rgba(var(--portal-blue-rgb, 66, 133, 244), 0.35);
 }
 
 .cardImage {
@@ -103,8 +103,8 @@
 }
 
 .versionValue {
-  font-family: monospace;
-  color: #93c5fd;
+  font-family: var(--portal-font-mono, "JetBrains Mono", monospace);
+  color: var(--portal-blue-light, #8a97f7);
   font-weight: 500;
   background: rgba(0, 0, 0, 0.3);
   padding: 1px 4px;
@@ -174,7 +174,7 @@
     transform 0.3s ease,
     box-shadow 0.3s ease;
   border: 3px solid transparent;
-  background: #1f2937;
+  background: var(--portal-bg-light, #10151f);
 }
 
 .releaseBox:hover {
@@ -194,8 +194,8 @@
 }
 
 .releaseBox.recommended {
-  border-color: #4f9cf9;
-  box-shadow: 0 0 20px rgba(79, 156, 249, 0.3);
+  border-color: var(--portal-blue, #4285f4);
+  box-shadow: 0 0 20px rgba(var(--portal-blue-rgb, 66, 133, 244), 0.3);
 }
 
 .releaseImage {
@@ -261,7 +261,7 @@
   position: absolute;
   top: 10px;
   right: 10px;
-  background: rgba(59, 130, 246, 0.9);
+  background: rgba(var(--portal-blue-rgb, 66, 133, 244), 0.9);
   color: white;
   padding: 5px 10px;
   border-radius: 6px;
@@ -324,8 +324,8 @@
 }
 
 .versionItemValue {
-  font-family: monospace;
-  color: #93c5fd;
+  font-family: var(--portal-font-mono, "JetBrains Mono", monospace);
+  color: var(--portal-blue-light, #8a97f7);
   font-weight: 500;
   background: rgba(0, 0, 0, 0.3);
   padding: 1px 4px;
@@ -354,8 +354,8 @@
   font-weight: 700;
   height: 36px;
   line-height: 36px;
-  border: 2px solid #3b82f6;
-  background-color: #3b82f6;
+  border: 2px solid var(--portal-blue, #4285f4);
+  background-color: var(--portal-blue, #4285f4);
   color: #f3f4f6;
   border-radius: 18px;
   display: inline-flex;
@@ -372,7 +372,8 @@
 }
 
 .backButton:hover {
-  background-color: #2563eb;
+  background-color: var(--portal-blue-hover, #3367d6);
+  border-color: var(--portal-blue-hover, #3367d6);
 }
 
 .optionsGrid {
@@ -383,9 +384,9 @@
 .optionButton {
   position: relative;
   padding: 15px;
-  border: 2px solid #374151;
+  border: 2px solid var(--portal-border, #272727);
   border-radius: 8px;
-  background: #1f2937;
+  background: var(--portal-bg-light, #10151f);
   color: white;
   font-size: 16px;
   font-weight: 700;
@@ -396,8 +397,8 @@
 }
 
 .optionButton:hover:not(:disabled) {
-  border-color: #4f9cf9;
-  background: rgba(79, 156, 249, 0.1);
+  border-color: var(--portal-blue, #4285f4);
+  background: rgba(var(--portal-blue-rgb, 66, 133, 244), 0.1);
 }
 
 .optionButton:disabled {
@@ -435,16 +436,16 @@
 
 .decisionItem {
   padding: 10px;
-  border: 2px solid #374151;
+  border: 2px solid var(--portal-border, #272727);
   border-radius: 8px;
-  background: #1f2937;
+  background: var(--portal-bg-light, #10151f);
 }
 
 .decisionLabel {
   display: block;
   font-size: 17px;
   font-weight: 600;
-  color: #93c5fd;
+  color: var(--portal-blue-light, #8a97f7);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: 7.5px;
@@ -461,14 +462,14 @@
 .decisionSubtitle {
   display: block;
   font-size: 16px;
-  color: #9ca3af;
+  color: var(--portal-text, #bdbdbd);
   font-style: italic;
 }
 
 .generatedFilename {
   padding: 10px;
-  background: rgba(79, 156, 249, 0.1);
-  border: 1px solid rgba(79, 156, 249, 0.2);
+  background: rgba(var(--portal-blue-rgb, 66, 133, 244), 0.1);
+  border: 1px solid rgba(var(--portal-blue-rgb, 66, 133, 244), 0.2);
   border-radius: 8px;
   text-align: center;
 }
@@ -477,13 +478,13 @@
   display: block;
   font-size: 17.5px;
   font-weight: 600;
-  color: #93c5fd;
+  color: var(--portal-blue-light, #8a97f7);
   margin-bottom: 5px;
 }
 
 .filenameValue {
   display: block;
-  font-family: monospace;
+  font-family: var(--portal-font-mono, "JetBrains Mono", monospace);
   font-size: 16.5px;
   font-weight: 600;
   color: white;
@@ -496,8 +497,8 @@
 .terminalCommandBox {
   margin-top: 15px;
   padding: 10px;
-  background: rgba(79, 156, 249, 0.1);
-  border: 1px solid rgba(79, 156, 249, 0.2);
+  background: rgba(var(--portal-blue-rgb, 66, 133, 244), 0.1);
+  border: 1px solid rgba(var(--portal-blue-rgb, 66, 133, 244), 0.2);
   border-radius: 8px;
   text-align: center;
 }
@@ -506,7 +507,7 @@
   display: block;
   font-size: 17.5px;
   font-weight: 600;
-  color: #93c5fd;
+  color: var(--portal-blue-light, #8a97f7);
   margin-bottom: 5px;
 }
 
@@ -521,7 +522,7 @@
 }
 
 .commandValue {
-  font-family: monospace;
+  font-family: var(--portal-font-mono, "JetBrains Mono", monospace);
   font-size: 15px;
   font-weight: 600;
   color: white;
@@ -534,12 +535,12 @@
 }
 
 .copyButton {
-  background: rgba(74, 144, 226, 0.2);
-  border: 1px solid rgba(74, 144, 226, 0.4);
+  background: rgba(var(--portal-blue-rgb, 66, 133, 244), 0.2);
+  border: 1px solid rgba(var(--portal-blue-rgb, 66, 133, 244), 0.4);
   border-radius: 6px;
   padding: 6px 10px;
   cursor: pointer;
-  color: #93c5fd;
+  color: var(--portal-blue-light, #8a97f7);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -551,7 +552,7 @@
 }
 
 .copyButton:hover {
-  background: rgba(74, 144, 226, 0.35);
+  background: rgba(var(--portal-blue-rgb, 66, 133, 244), 0.35);
   color: white;
 }
 
@@ -572,8 +573,8 @@
   gap: 9px;
   height: 44px;
   line-height: 44px;
-  border: 2px solid #3b82f6;
-  background-color: #3b82f6;
+  border: 2px solid var(--portal-blue, #4285f4);
+  background-color: var(--portal-blue, #4285f4);
   color: #f3f4f6;
   border-radius: 22px;
   padding: 0 25px;
@@ -588,7 +589,8 @@
 }
 
 .downloadButton:hover {
-  background-color: #2563eb;
+  background-color: var(--portal-blue-hover, #3367d6);
+  border-color: var(--portal-blue-hover, #3367d6);
   color: #f3f4f6;
   text-decoration: none;
 }
@@ -631,8 +633,8 @@
 }
 
 .documentationNote {
-  background: rgba(79, 156, 249, 0.1);
-  border: 1px solid rgba(79, 156, 249, 0.2);
+  background: rgba(var(--portal-blue-rgb, 66, 133, 244), 0.1);
+  border: 1px solid rgba(var(--portal-blue-rgb, 66, 133, 244), 0.2);
   border-radius: 8px;
   padding: 15px;
   margin-bottom: 30px;
@@ -641,15 +643,15 @@
 }
 
 .documentationNote a {
-  color: #93c5fd;
+  color: var(--portal-blue-light, #8a97f7);
 }
 
 .startOverButton {
   font-weight: 700;
   height: 36px;
   line-height: 36px;
-  border: 2px solid #3b82f6;
-  background-color: #3b82f6;
+  border: 2px solid var(--portal-blue, #4285f4);
+  background-color: var(--portal-blue, #4285f4);
   color: #f3f4f6;
   border-radius: 18px;
   display: inline-flex;
@@ -666,7 +668,8 @@
 }
 
 .startOverButton:hover {
-  background-color: #2563eb;
+  background-color: var(--portal-blue-hover, #3367d6);
+  border-color: var(--portal-blue-hover, #3367d6);
 }
 
 .srOnly {
@@ -726,7 +729,7 @@
   font-size: 20px;
   font-weight: 400;
   text-transform: uppercase;
-  color: #9ca3af;
+  color: var(--portal-text, #bdbdbd);
 }
 
 .pickerTitle {
@@ -747,7 +750,7 @@
 .cardContent p {
   font-size: 16px;
   line-height: 1.6;
-  color: #d1d5db;
+  color: var(--portal-text-light, #ffffff);
   margin: 0 0 16px 0;
 }
 
@@ -757,7 +760,7 @@
 
 .cardContent a {
   font-weight: 700;
-  color: #60a5fa;
+  color: var(--portal-blue-light, #8a97f7);
   text-decoration: none;
 }
 
@@ -778,7 +781,7 @@
   font-size: 20px;
   font-weight: 400;
   text-transform: uppercase;
-  color: #9ca3af;
+  color: var(--portal-text, #bdbdbd);
   margin: 0 0 10px 0;
 }
 
@@ -787,12 +790,12 @@
   max-width: 70ch;
   font-size: 16px;
   line-height: 1.6;
-  color: #d1d5db;
+  color: var(--portal-text-light, #ffffff);
 }
 
 .wolvesDownloadDescription a {
   font-weight: 700;
-  color: #60a5fa;
+  color: var(--portal-blue-light, #8a97f7);
   text-decoration: none;
 }
 
@@ -817,7 +820,9 @@
   position: relative;
   z-index: 2;
   min-width: 0;
-  filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.45));
+  filter: drop-shadow(
+    0 0 20px rgba(var(--portal-blue-rgb, 66, 133, 244), 0.45)
+  );
 }
 
 .productEcosystemConnector {
@@ -825,8 +830,8 @@
   z-index: 0;
   inset: 50% 0 auto;
   height: 2px;
-  background: #3b82f6;
-  box-shadow: 0 0 16px rgba(59, 130, 246, 0.45);
+  background: var(--portal-blue, #4285f4);
+  box-shadow: 0 0 16px rgba(var(--portal-blue-rgb, 66, 133, 244), 0.45);
   pointer-events: none;
   transform: translateY(-50%);
 }
@@ -848,5 +853,24 @@
     width: 2px;
     height: auto;
     transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 512px) {
+  .container {
+    padding: 0 16px;
+  }
+
+  .pickerCard {
+    padding: 16px;
+  }
+
+  .downloadSummary {
+    padding: 16px;
+  }
+
+  .cardOverlay,
+  .releaseOverlay {
+    padding: 16px;
   }
 }
