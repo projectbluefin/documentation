@@ -183,6 +183,9 @@ function rowFromSbomRelease(
       mesa: pkg.mesa || null,
       nvidia: nvidiaVersion || null,
       gnome: pkg.gnome || null,
+      systemd: pkg.systemd || null,
+      bootc: pkg.bootc || null,
+      pipewire: pkg.pipewire || null,
     },
   };
 }

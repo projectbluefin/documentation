@@ -58,6 +58,33 @@ test("rowFromSbomRelease builds kernel/mesa/gnome from SBOM only", () => {
   assert.equal(row.versions.nvidia, "595.58.03-1");
 });
 
+test("rowFromSbomRelease includes systemd, bootc, and pipewire when present", () => {
+  const row = rowFromSbomRelease(
+    "dakota-latest",
+    "latest-20260608",
+    {
+      tag: "latest-20260608",
+      packageVersions: {
+        kernel: "7.0.7",
+        systemd: "260.2",
+        bootc: "1.15.2",
+        mesa: "26.0.6",
+        gnome: "50.2",
+        pipewire: "1.6.1",
+      },
+    },
+    "595.71.05",
+  );
+
+  assert.equal(row.versions.kernel, "7.0.7");
+  assert.equal(row.versions.systemd, "260.2");
+  assert.equal(row.versions.bootc, "1.15.2");
+  assert.equal(row.versions.mesa, "26.0.6");
+  assert.equal(row.versions.nvidia, "595.71.05");
+  assert.equal(row.versions.gnome, "50.2");
+  assert.equal(row.versions.pipewire, "1.6.1");
+});
+
 test("buildStreamFromSbom sorts newest-first and marks source sbom", () => {
   const cache = {
     streams: {

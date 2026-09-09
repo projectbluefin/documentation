@@ -200,7 +200,13 @@ function normalizeSbomStreamTag(streamTag) {
 function buildSbomStreamId(spec, streamTag) {
   const normalizedTag = normalizeSbomStreamTag(streamTag);
   if (!spec?.sbomStreamId || !normalizedTag) return null;
-  if (spec.id === "projectbluefin-bluefin-lts" && normalizedTag === "stable") {
+  if (
+    spec.id === "projectbluefin-bluefin-lts" &&
+    (normalizedTag === "stable" || normalizedTag === "testing")
+  ) {
+    return spec.sbomStreamId;
+  }
+  if (spec.id === "projectbluefin-dakota") {
     return spec.sbomStreamId;
   }
   return spec.sbomStreamId.replace(
@@ -310,8 +316,8 @@ function latestFeedItem(feeds, source) {
       // Current format: "stable-20260807: LTS"
       return (
         title.includes(" lts:") ||
-        /^lts\.\d{8}:/.test(title) ||
-        /^stable-\d{8}:\s*lts\b/.test(title)
+        /^lts\.\d{8}/.test(title) ||
+        /^stable-\d{8}/.test(title)
       );
     }
     return title.startsWith(`${stream}-`);
@@ -366,10 +372,22 @@ function buildTopStreams(spec, tagSet) {
   return top;
 }
 
-function attachNvidiaCommands(streams, spec, nvidiaTagSet) {
+function attachNvidiaCommands(
+  streams,
+  spec,
+  nvidiaTagSet,
+  existingStreams = [],
+) {
   if (!spec.nvidiaPackage) return streams;
 
   return streams.map((entry) => {
+    if (!nvidiaTagSet && Array.isArray(existingStreams)) {
+      const existingEntry = existingStreams.find((s) => s.tag === entry.tag);
+      if (existingEntry && "nvidiaCommand" in existingEntry) {
+        return { ...entry, nvidiaCommand: existingEntry.nvidiaCommand };
+      }
+    }
+
     let nvidiaTag = null;
 
     if (nvidiaTagSet && nvidiaTagSet.has(entry.tag)) {
@@ -480,14 +498,31 @@ async function buildStreamVersionInfo(
     flatpak: sbomVersions?.flatpak || null,
     mesa: sbomVersions?.mesa || null,
     podman: sbomVersions?.podman || null,
+    systemd: sbomVersions?.systemd || null,
+    bootc: sbomVersions?.bootc || null,
+    pipewire: sbomVersions?.pipewire || null,
   };
 }
 
-function attachNvidiaTestingCommands(streams, spec, nvidiaTagSet) {
-  if (!spec.nvidiaPackage || !nvidiaTagSet) return streams;
+function attachNvidiaTestingCommands(
+  streams,
+  spec,
+  nvidiaTagSet,
+  existingTestingStreams = [],
+) {
+  if (!spec.nvidiaPackage) return streams;
 
   return streams.map((entry) => {
-    if (!nvidiaTagSet.has(entry.tag)) {
+    if (!nvidiaTagSet && Array.isArray(existingTestingStreams)) {
+      const existingEntry = existingTestingStreams.find(
+        (s) => s.tag === entry.tag,
+      );
+      if (existingEntry && "nvidiaCommand" in existingEntry) {
+        return { ...entry, nvidiaCommand: existingEntry.nvidiaCommand };
+      }
+    }
+
+    if (!nvidiaTagSet?.has(entry.tag)) {
       return { ...entry, nvidiaCommand: null };
     }
 
@@ -594,7 +629,12 @@ async function buildProduct(spec, feeds, cachedById, ageHours, sbomCache) {
   try {
     tags = await listTags(imageRef);
   } catch {
-    tags = existing?.allTags || [];
+    tags =
+      existing?.allTags ||
+      [
+        ...(existing?.streams || []).map((s) => s.tag),
+        ...(existing?.testingStreams || []).map((s) => s.tag),
+      ].filter(Boolean);
   }
   const tagSet = new Set(tags);
 
@@ -606,7 +646,7 @@ async function buildProduct(spec, feeds, cachedById, ageHours, sbomCache) {
       );
       nvidiaTagSet = new Set(nvidiaTags);
     } catch {
-      nvidiaTagSet = null;
+      nvidiaTagSet = existing?.nvidiaTags ? new Set(existing.nvidiaTags) : null;
     }
   }
 
@@ -614,11 +654,13 @@ async function buildProduct(spec, feeds, cachedById, ageHours, sbomCache) {
     buildTopStreams(spec, tagSet),
     spec,
     nvidiaTagSet,
+    existing?.streams,
   );
   const testingStreams = attachNvidiaTestingCommands(
     buildTestingStreams(spec, tags),
     spec,
     nvidiaTagSet,
+    existing?.testingStreams,
   );
 
   for (const stream of streams) {
