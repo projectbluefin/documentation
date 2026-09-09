@@ -152,9 +152,34 @@ export default function PortalPrototype(): React.JSX.Element {
               ecosystem.
             </p>
             <p>
+              By introducing cloud-native patterns to the desktop we hope to
+              ignite interest in desktop computing while catering to the next
+              generation of open-source contributors. Bluefin is designed to be
+              the tool you depend on to do what you do best. The answer for us
+              is simple, use what the experts in infrastructure use. The current
+              Linux desktop didn&apos;t get us there, but we believe that what
+              was made, can be unmade. Let&apos;s make it better.
+            </p>
+            <p>
               Bluefin is about sustainability, encompassing the software, the
               hardware, and the people.
             </p>
+            <blockquote className={styles.missionQuote}>
+              <p>
+                There are two ways of spreading light: to be the candle or the
+                mirror that reflects it.
+                <cite>
+                  <a
+                    href="https://en.wikipedia.org/wiki/Edith_Wharton"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Edith Wharton
+                  </a>
+                </cite>
+              </p>
+            </blockquote>
+            <p>Or she may disembowel us on the way. Clever Girl.</p>
           </div>
         </div>
       </section>
