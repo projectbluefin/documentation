@@ -352,12 +352,12 @@
 
 .backButton {
   font-weight: 700;
-  height: 36px;
-  line-height: 36px;
-  border: 2px solid var(--portal-blue, #4285f4);
-  background-color: var(--portal-blue, #4285f4);
-  color: #f3f4f6;
-  border-radius: 18px;
+  min-height: 44px;
+  line-height: 44px;
+  border: 2px solid #2563eb;
+  background-color: #2563eb;
+  color: #ffffff;
+  border-radius: 22px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -372,8 +372,8 @@
 }
 
 .backButton:hover {
-  background-color: var(--portal-blue-hover, #3367d6);
-  border-color: var(--portal-blue-hover, #3367d6);
+  background-color: #1d4ed8;
+  border-color: #1d4ed8;
 }
 
 .optionsGrid {
@@ -383,6 +383,7 @@
 
 .optionButton {
   position: relative;
+  min-height: 44px;
   padding: 15px;
   border: 2px solid var(--portal-border, #272727);
   border-radius: 8px;
@@ -571,11 +572,12 @@
   display: inline-flex;
   align-items: center;
   gap: 9px;
+  min-height: 44px;
   height: 44px;
   line-height: 44px;
-  border: 2px solid var(--portal-blue, #4285f4);
-  background-color: var(--portal-blue, #4285f4);
-  color: #f3f4f6;
+  border: 2px solid #2563eb;
+  background-color: #2563eb;
+  color: #ffffff;
   border-radius: 22px;
   padding: 0 25px;
   font-size: 17.5px;
@@ -589,9 +591,9 @@
 }
 
 .downloadButton:hover {
-  background-color: var(--portal-blue-hover, #3367d6);
-  border-color: var(--portal-blue-hover, #3367d6);
-  color: #f3f4f6;
+  background-color: #1d4ed8;
+  border-color: #1d4ed8;
+  color: #ffffff;
   text-decoration: none;
 }
 
@@ -611,12 +613,12 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  height: 36px;
-  line-height: 36px;
+  min-height: 44px;
+  line-height: 44px;
   border: 1px solid rgba(255, 255, 255, 0.2);
   background: rgba(255, 255, 255, 0.05);
   color: #f3f4f6;
-  border-radius: 18px;
+  border-radius: 22px;
   padding: 0 16px;
   font-size: 14px;
   font-weight: 600;
@@ -648,12 +650,12 @@
 
 .startOverButton {
   font-weight: 700;
-  height: 36px;
-  line-height: 36px;
-  border: 2px solid var(--portal-blue, #4285f4);
-  background-color: var(--portal-blue, #4285f4);
-  color: #f3f4f6;
-  border-radius: 18px;
+  min-height: 44px;
+  line-height: 44px;
+  border: 2px solid #2563eb;
+  background-color: #2563eb;
+  color: #ffffff;
+  border-radius: 22px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -668,8 +670,8 @@
 }
 
 .startOverButton:hover {
-  background-color: var(--portal-blue-hover, #3367d6);
-  border-color: var(--portal-blue-hover, #3367d6);
+  background-color: #1d4ed8;
+  border-color: #1d4ed8;
 }
 
 .srOnly {
@@ -684,9 +686,18 @@
   border: 0;
 }
 
-.stepHeader h3:focus,
-.releaseTitle:focus {
-  outline: none;
+.cardBox:focus-visible,
+.releaseBox:focus-visible,
+.backButton:focus-visible,
+.optionButton:focus-visible,
+.downloadButton:focus-visible,
+.btnSecondary:focus-visible,
+.startOverButton:focus-visible,
+.copyButton:focus-visible,
+.stepHeader h3:focus-visible,
+.releaseTitle:focus-visible {
+  outline: 2px solid var(--portal-blue-light);
+  outline-offset: 2px;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -706,6 +717,7 @@
 }
 
 .sectionWrap {
+  --portal-blue-light: #8a97f7;
   padding: 60px 0;
   width: 100%;
 }

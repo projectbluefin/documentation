@@ -260,3 +260,61 @@ test("section picker CSS enforces pointer-events none on connector, single glow,
   );
   assert.match(css, /@media \(max-width:\s*956px\)/);
 });
+
+test("section picker CSS resolves focus suppression, touch targets, and accessible contrast", () => {
+  const css = fs.readFileSync(cssPath, "utf8");
+
+  // Focus suppression removed and explicit focus-visible rings added
+  assert.ok(
+    !css.includes("outline: none"),
+    "outline: none must be removed from PortalSectionPicker.module.css",
+  );
+  assert.match(
+    css,
+    /:focus-visible\s*\{[^}]*outline:\s*2px solid var\(--portal-blue-light\)/,
+    "interactive and focusable elements must have explicit focus-visible rings",
+  );
+
+  // Touch target minimum height 44px
+  assert.ok(
+    !css.includes("height: 36px"),
+    "height: 36px must be removed to meet WCAG 44px touch target recommendation",
+  );
+  assert.match(
+    css,
+    /\.backButton\s*\{[^}]*min-height:\s*44px/s,
+    "backButton must have min-height: 44px",
+  );
+  assert.match(
+    css,
+    /\.startOverButton\s*\{[^}]*min-height:\s*44px/s,
+    "startOverButton must have min-height: 44px",
+  );
+  assert.match(
+    css,
+    /\.btnSecondary\s*\{[^}]*min-height:\s*44px/s,
+    "btnSecondary must have min-height: 44px",
+  );
+  assert.match(
+    css,
+    /\.downloadButton\s*\{[^}]*min-height:\s*44px/s,
+    "downloadButton must have min-height: 44px",
+  );
+
+  // Button background high-contrast compliant shade (#3b82f6 replaced with #2563eb)
+  assert.match(
+    css,
+    /\.downloadButton\s*\{[^}]*background-color:\s*#2563eb/s,
+    "downloadButton must use WCAG AA compliant shade #2563eb",
+  );
+  assert.match(
+    css,
+    /\.backButton\s*\{[^}]*background-color:\s*#2563eb/s,
+    "backButton must use WCAG AA compliant shade #2563eb",
+  );
+  assert.match(
+    css,
+    /\.startOverButton\s*\{[^}]*background-color:\s*#2563eb/s,
+    "startOverButton must use WCAG AA compliant shade #2563eb",
+  );
+});
