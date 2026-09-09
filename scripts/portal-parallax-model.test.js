@@ -109,3 +109,68 @@ test("portal motion math clamps overlay, preserves rates, and culls", () => {
   assert.equal(isParallaxVisible(3000, 3000), true);
   assert.equal(isParallaxVisible(3001, 3000), false);
 });
+
+test("hero raptor selector resolves seasonal overrides and random variants", () => {
+  const {
+    resolveHeroRaptor,
+    HERO_RAPTOR_VARIANTS,
+    HOLIDAY_RAPTOR_SRC,
+    PRIDE_RAPTOR_SRC,
+    DEFAULT_HERO_RAPTOR_SRC,
+  } = loadTsModule(modelPath);
+
+  assert.equal(
+    HOLIDAY_RAPTOR_SRC,
+    "/img/portal/characters/header/Holidaysaurus.webp",
+  );
+  assert.equal(PRIDE_RAPTOR_SRC, "/img/portal/characters/header/pride.webp");
+  assert.equal(
+    DEFAULT_HERO_RAPTOR_SRC,
+    "/img/portal/characters/header/bluefin-small.webp",
+  );
+  assert.equal(HERO_RAPTOR_VARIANTS.length, 12);
+  assert.ok(
+    HERO_RAPTOR_VARIANTS.includes(
+      "/img/portal/characters/header/bluefin-small.webp",
+    ),
+  );
+  assert.ok(
+    !HERO_RAPTOR_VARIANTS.includes(HOLIDAY_RAPTOR_SRC),
+    "Holiday raptor is seasonal easter egg, not in default rotation array",
+  );
+  assert.ok(
+    !HERO_RAPTOR_VARIANTS.includes(PRIDE_RAPTOR_SRC),
+    "Pride raptor is seasonal easter egg, not in default rotation array",
+  );
+
+  // Holiday season: December (month index 11)
+  const decDate = new Date(2026, 11, 25);
+  assert.equal(resolveHeroRaptor(decDate), HOLIDAY_RAPTOR_SRC);
+
+  // Pride month: June (month index 5)
+  const juneDate = new Date(2026, 5, 15);
+  assert.equal(resolveHeroRaptor(juneDate), PRIDE_RAPTOR_SRC);
+
+  // Other months: standard rotation using random()
+  const sepDate = new Date(2026, 8, 9);
+  const firstVariant = resolveHeroRaptor(sepDate, () => 0.0);
+  assert.equal(firstVariant, HERO_RAPTOR_VARIANTS[0]);
+
+  const lastVariant = resolveHeroRaptor(sepDate, () => 0.999);
+  assert.equal(
+    lastVariant,
+    HERO_RAPTOR_VARIANTS[HERO_RAPTOR_VARIANTS.length - 1],
+  );
+
+  // Verify all files exist on disk
+  for (const src of [
+    ...HERO_RAPTOR_VARIANTS,
+    HOLIDAY_RAPTOR_SRC,
+    PRIDE_RAPTOR_SRC,
+  ]) {
+    assert.ok(
+      fs.existsSync(path.join(__dirname, "..", "static", src)),
+      `missing hero raptor asset ${src}`,
+    );
+  }
+});

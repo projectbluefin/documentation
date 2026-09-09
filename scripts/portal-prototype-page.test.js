@@ -162,6 +162,8 @@ test("prototype renders source-authored scenes in order through footer including
   assert.ok(html.includes('id="scene-picker"'));
   assert.ok(html.includes(">Try<"));
   assert.ok(html.includes(">Bluefin<"));
+  assert.ok(html.includes('href="#scene-picker"'));
+  assert.ok(html.includes(">Try Out<"));
   assert.ok(html.includes(">Community<"));
   assert.ok(html.includes(">Our Contributors<"));
   assert.ok(html.includes("Featuring alumni from companies like"));
@@ -196,6 +198,11 @@ test("scoped CSS clips artwork and defines mobile and reduced-motion paths", () 
     /\.missionCharacter\s*\{[^}]*background:\s*radial-gradient/s,
   );
   assert.match(css, /\.missionQuote\s*\{[^}]*border-top:/s);
+  assert.match(css, /\.landingActions\s*\{[^}]*display:\s*flex/s);
+  assert.match(
+    css,
+    /\.secondaryAction\s*\{[^}]*background:\s*var\(--portal-bg\)/s,
+  );
   const sharedGridMatches = css.match(/\.landingGrid,\s*\.twoColumn/g);
   assert.equal(sharedGridMatches?.length, 2);
   assert.ok(!css.includes("scroll-behavior"));
@@ -219,5 +226,21 @@ test("parallax viewport accounts for announcement bar height dynamically", () =>
     css,
     /\.parallaxViewport\s*\{[^}]*inset:\s*calc\(\s*var\(--ifm-navbar-height\)\s*\+\s*var\(--docusaurus-announcement-bar-height,\s*0px\)\s*\)\s*0\s*0/s,
     "parallaxViewport must account for active announcement bar height",
+  );
+});
+
+test("portal prototype hero raptor artwork integrates seasonal selection and random variants", () => {
+  const componentSource = fs.readFileSync(componentPath, "utf8");
+  assert.ok(
+    componentSource.includes("useHeroRaptor"),
+    "PortalPrototype must use useHeroRaptor hook",
+  );
+  assert.ok(
+    componentSource.includes("handleTryOutClick"),
+    "PortalPrototype must define handleTryOutClick",
+  );
+  assert.ok(
+    componentSource.includes('href="#scene-picker"'),
+    "PortalPrototype must contain Try Out link pointing to #scene-picker",
   );
 });
