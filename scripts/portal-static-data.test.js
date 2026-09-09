@@ -184,6 +184,21 @@ test("portal static data exposes exact metadata contracts", () => {
     "/brands/universal-blue.svg",
   );
 
+  // News
+  assert.equal(data.NEWS_METADATA.tag, "Latest");
+  assert.equal(data.NEWS_METADATA.title, "News");
+  assert.equal(data.NEWS_METADATA.feedUrl, "/blog/atom.xml");
+  assert.equal(data.NEWS_METADATA.viewAllUrl, "/blog");
+  assert.equal(
+    data.NEWS_METADATA.viewAllLabel,
+    "View all posts on the official blog",
+  );
+  assert.equal(data.FALLBACK_NEWS_POSTS.length, 3);
+  assert.equal(
+    data.FALLBACK_NEWS_POSTS[0].title,
+    "Introducing Project Bluefin",
+  );
+
   // Copyright
   assert.equal(
     data.getCopyrightText(2026),

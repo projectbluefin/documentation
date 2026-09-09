@@ -4,6 +4,51 @@ export interface BrandLink {
   readonly altText: string;
 }
 
+export interface BlogPost {
+  title: string;
+  link: string;
+  description: string;
+  pubDate: string;
+  formattedDate: string;
+}
+
+export const FALLBACK_NEWS_POSTS: readonly BlogPost[] = [
+  {
+    title: "Introducing Project Bluefin",
+    link: "https://docs.projectbluefin.io/blog/introducing-project-bluefin",
+    description:
+      "Welcome to Project Bluefin, the next generation Linux workstation designed for reliability, performance, and sustainability.",
+    pubDate: "2024-01-15T10:00:00Z",
+    formattedDate: "January 15, 2024",
+  },
+  {
+    title: "Developer Mode: Cloud-Native Workflows",
+    link: "https://docs.projectbluefin.io/blog/developer-mode",
+    description:
+      "Learn about Bluefin's developer mode and how it transforms your device into a powerful workstation with container-focused workflows.",
+    pubDate: "2024-01-20T14:30:00Z",
+    formattedDate: "January 20, 2024",
+  },
+  {
+    title: "Understanding Image-Based Updates",
+    link: "https://docs.projectbluefin.io/blog/image-based-updates",
+    description:
+      "Discover how Bluefin's automatic image-based updates provide near-zero maintenance while ensuring system stability.",
+    pubDate: "2024-01-25T09:15:00Z",
+    formattedDate: "January 25, 2024",
+  },
+] as const;
+
+export const NEWS_METADATA = {
+  tag: "Latest",
+  title: "News",
+  feedUrl: "/blog/atom.xml",
+  viewAllUrl: "/blog",
+  viewAllLabel: "View all posts on the official blog",
+  loadingText: "Loading blog posts...",
+  noPostsText: "No blog posts found.",
+} as const;
+
 export const VIDEO_METADATA = {
   title: "Bluefin Introduction",
   embedUrl: "https://www.youtube.com/embed/Nz-yyDwTfRM?autoplay=1",
