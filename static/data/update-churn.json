@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-08T04:46:37.344Z",
+  "generatedAt": "2026-09-09T05:16:14.267Z",
   "source": "GHCR OCI Manifests & Attestations",
   "method": "oci-layer-diff-v1",
   "unit": "MB",
@@ -74,7 +74,7 @@
         },
         {
           "tag": "stable",
-          "date": "2026-09-08",
+          "date": "2026-09-09",
           "previousTag": "stable-daily-20260606",
           "downloadChurnMB": 4600,
           "sharedMB": 0,
@@ -114,11 +114,11 @@
         },
         {
           "tag": "stable",
-          "date": "2026-09-08",
+          "date": "2026-09-09",
           "previousTag": "10-20260606",
-          "downloadChurnMB": 3075.5,
+          "downloadChurnMB": 3072.1,
           "sharedMB": 0,
-          "totalMB": 3075.5,
+          "totalMB": 3072.1,
           "reuseEfficiencyPct": 0,
           "totalLayers": 68,
           "sharedLayers": 0,
@@ -169,7 +169,7 @@
         },
         {
           "tag": "stable",
-          "date": "2026-09-08",
+          "date": "2026-09-09",
           "previousTag": "latest.20260115",
           "downloadChurnMB": 2970.9,
           "sharedMB": 0,
