@@ -6,6 +6,7 @@ import PortalSectionPicker from "./PortalSectionPicker";
 import PortalCommunity from "./PortalCommunity";
 import PortalFlock from "./PortalFlock";
 import PortalContributors from "./PortalContributors";
+import PortalNews from "./PortalNews";
 import PortalFooter from "./PortalFooter";
 import PortalNavigation from "./PortalNavigation";
 import styles from "./PortalPrototype.module.css";
@@ -228,6 +229,7 @@ export default function PortalPrototype(): React.JSX.Element {
       {/* Downstream insertion seam: Subproject 3 (PortalFlock, PortalContributors, PortalNews) mounts here between Community and Footer */}
       <PortalFlock />
       <PortalContributors />
+      <PortalNews />
 
       <PortalFooter />
 
