@@ -80,6 +80,14 @@
   border: 0;
 }
 
+.landingActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+  align-items: center;
+}
+
 .primaryAction {
   display: inline-flex;
   min-height: 44px;
@@ -96,6 +104,27 @@
 }
 
 .primaryAction:focus-visible {
+  outline: 3px solid var(--portal-text-light);
+  outline-offset: 3px;
+}
+
+.secondaryAction {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 24px;
+  border: 1px solid var(--portal-bg);
+  border-radius: 999px;
+  background: var(--portal-bg);
+  color: var(--portal-text-light);
+  font-size: 18px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.secondaryAction:focus-visible {
   outline: 3px solid var(--portal-text-light);
   outline-offset: 3px;
 }

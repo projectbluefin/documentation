@@ -6,7 +6,7 @@ import PortalSectionPicker from "./PortalSectionPicker";
 import PortalCommunity from "./PortalCommunity";
 import PortalFooter from "./PortalFooter";
 import styles from "./PortalPrototype.module.css";
-import { TRANSITION_SRC } from "./portalModel";
+import { TRANSITION_SRC, useHeroRaptor } from "./portalModel";
 
 const userBenefits = [
   "Applications by Flathub",
@@ -24,6 +24,8 @@ const developerBenefits = [
 ];
 
 export default function PortalPrototype(): React.JSX.Element {
+  const heroRaptorSrc = useHeroRaptor();
+
   const handleDiscoverClick = (
     event: React.MouseEvent<HTMLAnchorElement>,
   ): void => {
@@ -41,6 +43,25 @@ export default function PortalPrototype(): React.JSX.Element {
     });
     target.focus({ preventScroll: true });
     window.history.pushState(null, "", "#scene-users");
+  };
+
+  const handleTryOutClick = (
+    event: React.MouseEvent<HTMLAnchorElement>,
+  ): void => {
+    event.preventDefault();
+    const target = document.getElementById("scene-picker");
+    if (!target) return;
+
+    const prefersReduced =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    target.scrollIntoView({
+      behavior: prefersReduced ? "auto" : "smooth",
+      block: "start",
+    });
+    target.focus({ preventScroll: true });
+    window.history.pushState(null, "", "#scene-picker");
   };
 
   return (
@@ -61,17 +82,26 @@ export default function PortalPrototype(): React.JSX.Element {
                 The next generation Linux workstation, designed for reliability,
                 performance, and sustainability.
               </p>
-              <a
-                className={styles.primaryAction}
-                href="#scene-users"
-                onClick={handleDiscoverClick}
-              >
-                Discover
-              </a>
+              <div className={styles.landingActions}>
+                <a
+                  className={styles.primaryAction}
+                  href="#scene-users"
+                  onClick={handleDiscoverClick}
+                >
+                  Discover
+                </a>
+                <a
+                  className={styles.secondaryAction}
+                  href="#scene-picker"
+                  onClick={handleTryOutClick}
+                >
+                  Try Out
+                </a>
+              </div>
             </div>
             <img
               className={styles.heroCharacter}
-              src="/img/characters/bluefin-small.webp"
+              src={heroRaptorSrc}
               alt="Bluefin"
               fetchPriority="high"
             />

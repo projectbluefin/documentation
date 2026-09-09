@@ -125,6 +125,8 @@ test("prototype renders source-authored scenes in order through footer including
   assert.ok(html.includes('id="scene-picker"'));
   assert.ok(html.includes(">Try<"));
   assert.ok(html.includes(">Bluefin<"));
+  assert.ok(html.includes('href="#scene-picker"'));
+  assert.ok(html.includes(">Try Out<"));
   assert.ok(html.includes(">Community<"));
   assert.ok(html.includes("Featuring alumni from companies like"));
   assert.ok(html.includes("Our sponsors"));
@@ -153,6 +155,11 @@ test("scoped CSS clips artwork and defines mobile and reduced-motion paths", () 
   );
   assert.match(css, /@media \(max-width:\s*956px\)/);
   assert.match(css, /@media \(prefers-reduced-motion:\s*reduce\)/);
+  assert.match(css, /\.landingActions\s*\{[^}]*display:\s*flex/s);
+  assert.match(
+    css,
+    /\.secondaryAction\s*\{[^}]*background:\s*var\(--portal-bg\)/s,
+  );
   const sharedGridMatches = css.match(/\.landingGrid,\s*\.twoColumn/g);
   assert.equal(sharedGridMatches?.length, 2);
   assert.ok(!css.includes("scroll-behavior"));
@@ -167,5 +174,21 @@ test("portal prototype preserves downstream live-section insertion seam comment"
       "Downstream insertion seam: Subproject 3 (PortalFlock, PortalContributors, PortalNews) mounts here between Community and Footer",
     ),
     "insertion seam comment between Community and Footer must be preserved",
+  );
+});
+
+test("portal prototype hero raptor artwork integrates seasonal selection and random variants", () => {
+  const componentSource = fs.readFileSync(componentPath, "utf8");
+  assert.ok(
+    componentSource.includes("useHeroRaptor"),
+    "PortalPrototype must use useHeroRaptor hook",
+  );
+  assert.ok(
+    componentSource.includes("handleTryOutClick"),
+    "PortalPrototype must define handleTryOutClick",
+  );
+  assert.ok(
+    componentSource.includes('href="#scene-picker"'),
+    "PortalPrototype must contain Try Out link pointing to #scene-picker",
   );
 });

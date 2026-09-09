@@ -1,3 +1,5 @@
+import React from "react";
+
 export const PORTAL_BREAKPOINT_PX = 956;
 export const MOBILE_LAYER_SRC = "/img/portal/mobile-parallax.webp";
 export const TRANSITION_SRC = "/img/portal/layer-transition.webp";
@@ -116,4 +118,53 @@ export function layerTransform(scrollY: number, rate: number): string {
 
 export function isParallaxVisible(scrollY: number, sceneEnd: number): boolean {
   return scrollY <= sceneEnd;
+}
+
+export const HERO_RAPTOR_VARIANTS: readonly string[] = [
+  "/img/portal/characters/header/achillobator.webp",
+  "/img/portal/characters/header/angry.webp",
+  "/img/portal/characters/header/bluefin-small.webp",
+  "/img/portal/characters/header/dakota.webp",
+  "/img/portal/characters/header/dolly.webp",
+  "/img/portal/characters/header/intrigued.webp",
+  "/img/portal/characters/header/karl.webp",
+  "/img/portal/characters/header/katharina.webp",
+  "/img/portal/characters/header/leaping.webp",
+  "/img/portal/characters/header/marcoventator-tai.webp",
+  "/img/portal/characters/header/roaring.webp",
+  "/img/portal/characters/header/utah.webp",
+];
+
+export const HOLIDAY_RAPTOR_SRC =
+  "/img/portal/characters/header/Holidaysaurus.webp";
+export const PRIDE_RAPTOR_SRC = "/img/portal/characters/header/pride.webp";
+export const DEFAULT_HERO_RAPTOR_SRC =
+  "/img/portal/characters/header/bluefin-small.webp";
+
+export function resolveHeroRaptor(
+  date: Date = new Date(),
+  random: () => number = Math.random,
+): string {
+  const month = date.getMonth();
+  if (month === 11) {
+    return HOLIDAY_RAPTOR_SRC;
+  }
+  if (month === 5) {
+    return PRIDE_RAPTOR_SRC;
+  }
+  const index = Math.floor(random() * HERO_RAPTOR_VARIANTS.length);
+  return HERO_RAPTOR_VARIANTS[index] ?? DEFAULT_HERO_RAPTOR_SRC;
+}
+
+export function useHeroRaptor(
+  initialSrc: string = DEFAULT_HERO_RAPTOR_SRC,
+  resolve: () => string = () => resolveHeroRaptor(),
+): string {
+  const [heroSrc, setHeroSrc] = React.useState<string>(initialSrc);
+
+  React.useEffect(() => {
+    setHeroSrc(resolve());
+  }, [resolve]);
+
+  return heroSrc;
 }
