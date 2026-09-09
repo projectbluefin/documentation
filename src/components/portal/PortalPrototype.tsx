@@ -6,6 +6,7 @@ import PortalSectionPicker from "./PortalSectionPicker";
 import PortalCommunity from "./PortalCommunity";
 import PortalContributors from "./PortalContributors";
 import PortalFooter from "./PortalFooter";
+import PortalNavigation from "./PortalNavigation";
 import styles from "./PortalPrototype.module.css";
 import { TRANSITION_SRC } from "./portalModel";
 
@@ -172,6 +173,8 @@ export default function PortalPrototype(): React.JSX.Element {
       <PortalContributors />
 
       <PortalFooter />
+
+      <PortalNavigation />
     </main>
   );
 }
