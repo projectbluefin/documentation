@@ -131,7 +131,7 @@
   outline-offset: 3px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 956px) {
   .bazaarSection {
     padding: 64px 0;
   }
@@ -149,5 +149,15 @@
   .flathubButton {
     width: 100%;
     max-width: 300px;
+  }
+}
+
+@media (max-width: 512px) {
+  .container {
+    padding: 0 16px;
+  }
+
+  .bazaarSection {
+    padding: 48px 0;
   }
 }

@@ -1,16 +1,28 @@
 .portal {
   --portal-bg: #0c1016;
+  --portal-bg-light: #10151f;
   --portal-bg-rgb: 12, 16, 22;
   --portal-border: #272727;
   --portal-border-light: #616161;
   --portal-text: #bdbdbd;
   --portal-text-light: #ffffff;
+  --portal-text-muted: #9ca3af;
+  --portal-blue: #4285f4;
   --portal-blue-light: #8a97f7;
+  --portal-blue-hover: #3367d6;
+  --portal-blue-rgb: 66, 133, 244;
+  --portal-font-family:
+    "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, sans-serif;
+  --portal-font-mono:
+    "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", monospace;
   position: relative;
   isolation: isolate;
   overflow-x: clip;
   background: var(--portal-bg);
   color: var(--portal-text-light);
+  font-family: var(--portal-font-family);
 }
 
 .sceneStack {
@@ -372,6 +384,27 @@
   .parallaxCanvas {
     inset: 0;
     height: 110dvh;
+  }
+}
+
+@media (max-width: 512px) {
+  .heroCharacter,
+  .userCharacter,
+  .developerCharacter,
+  .missionCharacter {
+    width: min(216px, 100%);
+  }
+
+  .twoColumn,
+  .landingGrid,
+  .developerLayout,
+  .missionGrid {
+    padding: 16px;
+  }
+
+  .benefitGrid p,
+  .developerGrid p {
+    padding: 16px;
   }
 }
 

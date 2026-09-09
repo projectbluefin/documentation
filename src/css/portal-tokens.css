@@ -1,0 +1,41 @@
+/*
+ * Design tokens for Bluefin Portal.
+ *
+ * Harmonized with projectbluefin/website design system tokens and typography:
+ * - Brand blues: --portal-blue (#4285f4), --portal-blue-light (#8a97f7)
+ * - Dark surfaces: --portal-bg (#0c1016), --portal-bg-light (#10151f)
+ * - Typography: Inter font stack for body/headings, JetBrains Mono for monospace
+ * - Breakpoints: Desktop-to-tablet collapse at 956px, mobile phone at 512px
+ */
+
+:root {
+  /* Surfaces */
+  --portal-bg: #0c1016;
+  --portal-bg-light: #10151f;
+  --portal-bg-rgb: 12, 16, 22;
+
+  /* Borders */
+  --portal-border: #272727;
+  --portal-border-light: #616161;
+
+  /* Typography */
+  --portal-text: #bdbdbd;
+  --portal-text-light: #ffffff;
+  --portal-text-muted: #9ca3af;
+  --portal-font-family:
+    "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, sans-serif;
+  --portal-font-mono:
+    "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", monospace;
+
+  /* Brand blues */
+  --portal-blue: #4285f4;
+  --portal-blue-light: #8a97f7;
+  --portal-blue-hover: #3367d6;
+  --portal-blue-rgb: 66, 133, 244;
+
+  /* Interactive / CTA tokens */
+  --portal-cta-bg: var(--portal-blue);
+  --portal-cta-hover-bg: var(--portal-blue-hover);
+}
