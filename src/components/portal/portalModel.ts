@@ -2,6 +2,15 @@ export const PORTAL_BREAKPOINT_PX = 956;
 export const MOBILE_LAYER_SRC = "/img/portal/mobile-parallax.webp";
 export const TRANSITION_SRC = "/img/portal/layer-transition.webp";
 
+export const PORTAL_CHARACTER_IMAGES = [
+  "/img/characters/bluefin-small.webp",
+  "/img/portal/characters/bluefin.webp",
+  "/img/portal/characters/karl.webp",
+  "/img/portal/characters/nest.webp",
+] as const;
+
+export const CHARACTER_IMAGES = PORTAL_CHARACTER_IMAGES;
+
 export type PortalDrift = "left" | "right";
 
 export type PortalLayer = {
