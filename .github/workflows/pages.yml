@@ -149,8 +149,16 @@ jobs:
       - name: Generate embeddable card images
         run: npm run generate-card-images
 
-      - name: Run unit tests
-        run: npm test
+      - name: Run unit tests with coverage
+        run: npm run test:coverage
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: coverage-report
+          path: coverage/lcov.info
+          retention-days: 30
 
       - name: Run validation (typecheck + lint + prettier)
         run: |
