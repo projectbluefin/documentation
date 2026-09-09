@@ -95,6 +95,7 @@ test("prototype renders source-authored scenes in order through footer including
     'id="bazaar"',
     'id="scene-picker"',
     'id="scene-community"',
+    'id="contributors"',
     'id="alumni"',
     'id="sponsors"',
   ];
@@ -126,6 +127,7 @@ test("prototype renders source-authored scenes in order through footer including
   assert.ok(html.includes(">Try<"));
   assert.ok(html.includes(">Bluefin<"));
   assert.ok(html.includes(">Community<"));
+  assert.ok(html.includes(">Our Contributors<"));
   assert.ok(html.includes("Featuring alumni from companies like"));
   assert.ok(html.includes("Our sponsors"));
   assert.ok(html.includes("Project Bluefin is Built With"));

@@ -37,6 +37,18 @@ export const COMMUNITY_METADATA = {
   },
 } as const;
 
+export const CONTRIBUTORS_METADATA = {
+  tag: "Our Contributors",
+  title: "Contribute",
+  description:
+    "Assist in Bluefin's development by contributing code, reporting bugs, or making feature requests. You can also sponsor individual contributors if you'd like to contribute monetarily.",
+  bluefinRepoUrl: "https://github.com/ublue-os/bluefin",
+  bluefinPulseUrl: "https://github.com/ublue-os/bluefin/pulse",
+  donationsUrl: "/donations",
+  buttonLabel: "Visit our GitHub",
+  donateButtonLabel: "Donate",
+} as const;
+
 export const ALUMNI_COMPANIES: readonly BrandLink[] = [
   {
     imageUrl: "/brands/alumni/anchore.svg",
