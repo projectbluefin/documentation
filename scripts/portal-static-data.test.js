@@ -141,11 +141,11 @@ test("portal static data exposes exact metadata contracts", () => {
   );
   assert.equal(
     data.COMMUNITY_METADATA.docsCard.discordUrl,
-    "https://discord.gg/WYCpGEM4sM",
+    "https://discord.gg/XUC8cANVHy",
   );
   assert.equal(
     data.COMMUNITY_METADATA.docsCard.discussionsUrl,
-    "https://github.com/ublue-os/bluefin/discussions",
+    "https://github.com/projectbluefin/bluefin/discussions",
   );
 
   // Alumni

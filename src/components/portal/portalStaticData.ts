@@ -32,8 +32,8 @@ export const COMMUNITY_METADATA = {
     iconSrc: "/icons/docs.svg",
     iconAlt: "Bluefin Documentation",
     docsUrl: "https://docs.projectbluefin.io",
-    discordUrl: "https://discord.gg/WYCpGEM4sM",
-    discussionsUrl: "https://github.com/ublue-os/bluefin/discussions",
+    discordUrl: "https://discord.gg/XUC8cANVHy",
+    discussionsUrl: "https://github.com/projectbluefin/bluefin/discussions",
   },
 } as const;
 

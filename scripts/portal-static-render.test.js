@@ -128,10 +128,12 @@ test("PortalCommunity statically renders documentation card, icons, and action l
   );
   assert.ok(html.includes('href="https://docs.projectbluefin.io"'));
   assert.ok(html.includes("View Documentation"));
-  assert.ok(html.includes('href="https://discord.gg/WYCpGEM4sM"'));
+  assert.ok(html.includes('href="https://discord.gg/XUC8cANVHy"'));
   assert.ok(html.includes("Join our Discord"));
   assert.ok(
-    html.includes('href="https://github.com/ublue-os/bluefin/discussions"'),
+    html.includes(
+      'href="https://github.com/projectbluefin/bluefin/discussions"',
+    ),
   );
   assert.ok(html.includes("Discussions"));
   // Verify SVG icons rendered
@@ -191,7 +193,7 @@ test("PortalFooter statically renders alumni, sponsors, powered-by, credits, and
   assert.ok(html.includes("Welcome to indie Cloud Native."));
 
   // Social
-  assert.ok(html.includes('href="https://github.com/ublue-os/bluefin"'));
+  assert.ok(html.includes('href="https://github.com/projectbluefin/bluefin"'));
   assert.ok(html.includes("GitHub"));
 
   // Credits
