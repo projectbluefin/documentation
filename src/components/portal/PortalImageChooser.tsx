@@ -1,5 +1,11 @@
-import React, { useState, useRef, useEffect } from "react";
-import { FaDownload, FaCheckCircle, FaGithub } from "react-icons/fa";
+import React, { useState, useRef, useEffect, useCallback } from "react";
+import {
+  FaDownload,
+  FaCheckCircle,
+  FaGithub,
+  FaCopy,
+  FaCheck,
+} from "react-icons/fa";
 import styles from "./PortalSectionPicker.module.css";
 import {
   INITIAL_CHOOSER_STATE,
@@ -13,6 +19,7 @@ import {
   formatIsoFilename,
   formatIsoUrl,
   formatChecksumUrl,
+  formatBootcCommand,
   type ChooserState,
 } from "./portalChooserModel";
 import type { ChooserCatalog } from "./portalStreamAdapter";
@@ -20,6 +27,38 @@ import type { ChooserCatalog } from "./portalStreamAdapter";
 export interface PortalImageChooserProps {
   catalog: ChooserCatalog;
   initialState?: ChooserState;
+}
+
+export function CopyButton({
+  command,
+}: {
+  command: string;
+}): React.JSX.Element {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = useCallback(async () => {
+    try {
+      if (typeof navigator !== "undefined" && navigator.clipboard) {
+        await navigator.clipboard.writeText(command);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      }
+    } catch {
+      // clipboard unavailable — silently ignore
+    }
+  }, [command]);
+
+  return (
+    <button
+      type="button"
+      className={`${styles.copyButton} ${copied ? styles.copied : ""}`}
+      onClick={handleCopy}
+      aria-label={copied ? "Copied!" : "Copy terminal command"}
+      title={copied ? "Copied!" : "Copy to clipboard"}
+    >
+      {copied ? <FaCheck size={14} /> : <FaCopy size={14} />}
+    </button>
+  );
 }
 
 export function getStepAnnouncement(
@@ -354,6 +393,7 @@ export default function PortalImageChooser({
     const filename = formatIsoFilename(selection);
     const isoUrl = formatIsoUrl(selection);
     const checksumUrl = formatChecksumUrl(selection);
+    const bootcCommand = formatBootcCommand(selection);
 
     const displayReleaseTitle =
       selection.gpu === "nvidia" && selection.stream === "lts"
@@ -432,6 +472,16 @@ export default function PortalImageChooser({
             <div className={styles.generatedFilename}>
               <span className={styles.filenameLabel}>Installation ISO:</span>
               <span className={styles.filenameValue}>{filename}</span>
+            </div>
+
+            <div className={styles.terminalCommandBox}>
+              <span className={styles.commandLabel}>
+                Terminal Rebase Command:
+              </span>
+              <div className={styles.commandRow}>
+                <code className={styles.commandValue}>{bootcCommand}</code>
+                <CopyButton command={bootcCommand} />
+              </div>
             </div>
           </div>
 
