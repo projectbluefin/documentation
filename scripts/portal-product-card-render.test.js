@@ -127,6 +127,22 @@ test("product card renders external wolves link safely with explicit noopener no
   assert.ok(html.includes("Seven Days to the Wolves"));
 });
 
+test("product card renders external destination link safely with explicit noopener noreferrer", () => {
+  const PortalProductCard = loadModule(componentPath).default;
+  const html = renderToStaticMarkup(
+    React.createElement(PortalProductCard, {
+      title: "Utah",
+      image: "/img/portal/characters/utah.webp",
+      href: "https://devconf.us",
+    }),
+  );
+
+  assert.match(html, /<a[^>]*href="https:\/\/devconf\.us"/);
+  assert.match(html, /target="_blank"/);
+  assert.match(html, /rel="noopener noreferrer"/);
+  assert.ok(html.includes("Utah"));
+});
+
 test("product card renders badge title and subtitle when provided", () => {
   const PortalProductCard = loadModule(componentPath).default;
   const html = renderToStaticMarkup(

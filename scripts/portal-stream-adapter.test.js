@@ -173,7 +173,7 @@ test("stream adapter sets available false and shows reason when stream is absent
   assert.equal(catalog.streams.lts.versions, undefined);
 });
 
-test("ecosystem cards link local routes and wolves links absolute url", () => {
+test("ecosystem cards link expected destinations and wolves links absolute url", () => {
   const { adaptStreams } = loadTsModule(adapterPath);
   const catalog = adaptStreams(deterministicImages, deterministicDrivers);
 
@@ -199,7 +199,7 @@ test("ecosystem cards link local routes and wolves links absolute url", () => {
   assert.deepEqual(server.versionRows, []);
 
   assert.equal(utah.title, "Utah");
-  assert.equal(utah.href, "/utah");
+  assert.equal(utah.href, "https://devconf.us");
   assert.equal(utah.image, "/img/portal/characters/utah.webp");
   assert.deepEqual(utah.versionRows, []);
 

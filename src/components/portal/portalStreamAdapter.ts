@@ -269,7 +269,7 @@ export function adaptStreams(
         id: "utah",
         title: "Utah",
         description: "",
-        href: "/utah",
+        href: "https://devconf.us",
         image: "/img/portal/characters/utah.webp",
         versionRows: [],
       },
