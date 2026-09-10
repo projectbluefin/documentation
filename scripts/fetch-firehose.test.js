@@ -42,6 +42,61 @@ test("buildOsInfo keeps core OS versions and major packages", () => {
   });
 });
 
+test("buildOsInfo includes NVIDIA when packageVersions has it directly", () => {
+  const info = buildOsInfo("bluefin-stable", {
+    kernel: "6.14.0",
+    podman: "5.4",
+    nvidia: "580.65.06",
+  });
+
+  assert.equal(info.majorPackages.NVIDIA, "580.65.06");
+});
+
+test("buildOsInfo includes NVIDIA from the companion-stream lookup fallback", () => {
+  const info = buildOsInfo(
+    "bluefin-stable",
+    { kernel: "6.14.0", podman: "5.4" },
+    "580.65.06",
+  );
+
+  assert.equal(info.majorPackages.NVIDIA, "580.65.06");
+});
+
+test("buildOsApp resolves NVIDIA for bluefin-stable from the bluefin-nvidia-open-stable companion stream", () => {
+  const spec = {
+    streamId: "bluefin-stable",
+    appId: "bluefin-os-stable",
+    name: "Bluefin OS (Stable)",
+    summary: "Stable track",
+    ghReleasesUrl: "https://github.com/projectbluefin/bluefin/releases",
+  };
+  const sbomCache = {
+    streams: {
+      "bluefin-stable": {
+        releases: {
+          "stable-20260402": {
+            tag: "stable-20260402",
+            packageVersions: { kernel: "6.14.1", podman: "5.8.2", systemd: "259.5", bootc: "1.15.2" },
+          },
+        },
+      },
+      "bluefin-nvidia-open-stable": {
+        releases: {
+          "nvidia-open-stable-20260402": {
+            tag: "nvidia-open-stable-20260402",
+            packageVersions: { nvidia: "580.65.06" },
+          },
+        },
+      },
+    },
+  };
+
+  const app = buildOsApp(spec, sbomCache);
+
+  assert.equal(app.osInfo.majorPackages.NVIDIA, "580.65.06");
+  assert.equal(app.osInfo.majorPackages.Podman, "5.8.2");
+});
+
 test("buildOsApp picks the newest populated release and computes package diffs", () => {
   const spec = {
     streamId: "bluefin-stable",
