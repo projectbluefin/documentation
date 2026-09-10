@@ -172,8 +172,17 @@ test("PortalContributors statically renders contributor cards, CTA buttons, and 
   assert.ok(fs.existsSync(componentPath), "PortalContributors.tsx must exist");
 
   const PortalContributors = loadModule(componentPath).default;
-  const html = renderToStaticMarkup(React.createElement(PortalContributors));
-
+  const mockData = {
+    contributors: [
+      { login: "contributor1", html_url: "https://github.com/contributor1" },
+    ],
+    activityWindowLabel: "the past year",
+    bluefinPulseUrl: "https://github.com/ublue-os/bluefin/pulse",
+    unavailable: false,
+  };
+  const html = renderToStaticMarkup(
+    React.createElement(PortalContributors, { data: mockData }),
+  );
   assert.ok(html.includes('id="contributors"'));
   assert.ok(html.includes(">Our Contributors<"));
   assert.ok(html.includes(">Contribute<"));
@@ -392,9 +401,7 @@ test("PortalFlock statically renders header, growth chart card, attribution, and
     ),
   );
   assert.ok(html.includes('src="/img/portal/growth_bluefins.svg"'));
-  assert.ok(
-    html.includes('alt="Bluefin active users weekly growth chart"'),
-  );
+  assert.ok(html.includes('alt="Bluefin active users weekly growth chart"'));
   assert.ok(html.includes('loading="lazy"'));
   assert.ok(html.includes("Statistics provided by"));
   assert.ok(html.includes('href="https://github.com/ublue-os/countme"'));
@@ -409,4 +416,3 @@ test("PortalFlock statically renders header, growth chart card, attribution, and
   assert.ok(!source.includes("document."));
   assert.ok(!source.includes("useEffect"));
 });
-
