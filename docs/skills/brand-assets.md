@@ -38,9 +38,19 @@ primary branding.
 
 1. **Asset Source**: Source wordmark SVGs from `projectbluefin/website` (`public/brands/`).
 2. **Transparent Background**: Strip any `<rect ... />` elements so SVGs overlay cleanly.
-3. **Variants**: Maintain both `bluefin-wordmark-dark.svg` (white lettering) and `bluefin-wordmark-light.svg` (black lettering).
+3. **Variants**: Maintain both `bluefin-wordmark-dark.svg` (white lettering) and `bluefin-wordmark-light.svg` (black lettering), as well as documentation-specific wordmarks (`bluefin-documentation-wordmark*.svg`).
 4. **Accent Color**: The "fin" ligature fill is `#4285f4`. Do not use `--wc-gold` or arbitrary blues.
 5. **Navbar Setup**: Set `navbar.title: ""` and use `src` / `srcDark` so the wordmark renders without duplicate text.
+
+## Social Preview Cards
+
+The documentation's Open Graph and social preview card (`static/img/meta.png`) is generated from the official Bluefin desktop wallpaper pool:
+
+- **Style Parity**: Mirrors the projectbluefin/website social card signature layout with pristine artwork vibrancy, multi-layered letter drop shadows, and no muddy background scrim.
+- **Calendar Alignment**: The website uses the Day calendar and the documentation uses the matching Night calendar (e.g. September docs uses `bluefin-09-night.webp`).
+- **Wordmark & Typography**: Uses the "bluefin documentation" wordmark with `BLUE` in Audiowide and `fin documentation` set in Science Gothic.
+- **Pre-rendered Library**: Static cards are pre-rendered in `static/cards/` (36 allowed wallpapers: 24 monthly pairs, 12 wolves story illustrations).
+- **Generator**: Run `npm run generate:social-cards` to update `static/img/meta.png`.
 
 ## Common Rationalizations
 
