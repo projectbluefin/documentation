@@ -38,7 +38,7 @@ function ArchBadges({ arches }: { arches: string[] }) {
 interface StreamInfo {
   label: string;
   tag: string;
-  command: string;
+  command?: string | null;
   nvidiaCommand?: string | null;
   versions?: {
     gnome?: string | null;
@@ -494,42 +494,52 @@ export default function ImagesCatalogComponent({
                 >
                   {product.streams.map((entry) => (
                     <TabItem key={entry.tag} value={tabValue(entry.tag)}>
-                      <p className={styles.tabCopy}>
-                        Use this command to switch to the{" "}
-                        <strong>{entry.label.toLowerCase()}</strong> channel for
-                        this image. It is the quickest way to stay on that
-                        release stream.
-                      </p>
-                      {nvidiaEnabled ? (
-                        entry.nvidiaCommand ? (
-                          <>
-                            <StreamVersionPills
-                              versions={entry.versions}
-                              showNvidia
-                            />
-                            <CodeBlock language="bash">
-                              {entry.nvidiaCommand}
-                            </CodeBlock>
-                          </>
-                        ) : (
-                          <p className={styles.emptyText}>
-                            No Nvidia variant published for this stream tag.
-                          </p>
-                        )
-                      ) : (
+                      {entry.command ? (
                         <>
-                          <StreamVersionPills
-                            versions={entry.versions}
-                            showNvidia={false}
-                          />
-                          <CodeBlock language="bash">{entry.command}</CodeBlock>
+                          <p className={styles.tabCopy}>
+                            Use this command to switch to the{" "}
+                            <strong>{entry.label.toLowerCase()}</strong> channel for
+                            this image. It is the quickest way to stay on that
+                            release stream.
+                          </p>
+                          {nvidiaEnabled ? (
+                            entry.nvidiaCommand ? (
+                              <>
+                                <StreamVersionPills
+                                  versions={entry.versions}
+                                  showNvidia
+                                />
+                                <CodeBlock language="bash">
+                                  {entry.nvidiaCommand}
+                                </CodeBlock>
+                              </>
+                            ) : (
+                              <p className={styles.emptyText}>
+                                No Nvidia variant published for this stream tag.
+                              </p>
+                            )
+                          ) : (
+                            <>
+                              <StreamVersionPills
+                                versions={entry.versions}
+                                showNvidia={false}
+                              />
+                              <CodeBlock language="bash">{entry.command}</CodeBlock>
+                            </>
+                          )}
                         </>
+                      ) : (
+                        <p className={styles.emptyText}>
+                          Awaiting initial release: <code>{entry.tag}</code> image is not yet published. Switch commands will appear once available.
+                        </p>
                       )}
                     </TabItem>
                   ))}
                 </Tabs>
               ) : (
-                <p className={styles.emptyText}>No active tags.</p>
+                <p className={styles.emptyText}>
+                  Awaiting initial release: no active image tags published yet.
+                </p>
               )}
 
               <details className={styles.testingDetails}>
@@ -581,10 +591,14 @@ export default function ImagesCatalogComponent({
                     </Link>
                     .
                   </p>
-                  {product.security?.verifyCommand && (
+                  {product.security?.verifyCommand ? (
                     <CodeBlock language="bash">
                       {product.security.verifyCommand}
                     </CodeBlock>
+                  ) : (
+                    <p className={styles.emptyText}>
+                      Awaiting initial release: verification commands will be available once the image is published.
+                    </p>
                   )}
                 </TabItem>
                 <TabItem value="verify-provenance">
@@ -600,10 +614,14 @@ export default function ImagesCatalogComponent({
                     </Link>
                     .
                   </p>
-                  {product.security?.attestCommand && (
+                  {product.security?.attestCommand ? (
                     <CodeBlock language="bash">
                       {product.security.attestCommand}
                     </CodeBlock>
+                  ) : (
+                    <p className={styles.emptyText}>
+                      Awaiting initial release: attestation verification will be available once the image is published.
+                    </p>
                   )}
                   {product.security?.attestCommand &&
                     product.security.hasAttestation === false && (
@@ -627,10 +645,14 @@ export default function ImagesCatalogComponent({
                     </Link>
                     .
                   </p>
-                  {product.security?.sbomCommand && (
+                  {product.security?.sbomCommand ? (
                     <CodeBlock language="bash">
                       {product.security.sbomCommand}
                     </CodeBlock>
+                  ) : (
+                    <p className={styles.emptyText}>
+                      Awaiting initial release: SBOM inspection will be available once the image is published.
+                    </p>
                   )}
                 </TabItem>
               </Tabs>
