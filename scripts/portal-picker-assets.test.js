@@ -83,6 +83,45 @@ const ASSET_SPECS = [
     sha256: "25eb40ff39db684309649ede1dbd2b00d99f59d9b8ab7661aca5b2ecbcd0feb5",
     size: 61620,
   },
+  {
+    targetRel: path.join(
+      "static",
+      "img",
+      "portal",
+      "characters",
+      "header",
+      "Holidaysaurus.webp",
+    ),
+    sourceRel: path.join("..", "src", "assets", "img", "Holidaysaurus.webp"),
+    sha256: "23b0011d20cbe1b45e6b65425bfef5e391614d6326f474af9d24413c13b47370",
+    size: 174772,
+  },
+  {
+    targetRel: path.join(
+      "static",
+      "img",
+      "portal",
+      "characters",
+      "header",
+      "pride.webp",
+    ),
+    sourceRel: path.join("characters", "header", "pride.webp"),
+    sha256: "64d90f2aa06661e99fbe5afc7c72289dd64d1fef2372fb3bebe92b21bb6636ec",
+    size: 91414,
+  },
+  {
+    targetRel: path.join(
+      "static",
+      "img",
+      "portal",
+      "characters",
+      "header",
+      "bluefin-small.webp",
+    ),
+    sourceRel: path.join("characters", "header", "bluefin-small.webp"),
+    sha256: "9193f80e4e13d583d5fae10337aaaa64bd941fb76e716f3c20876deb47860570",
+    size: 98040,
+  },
 ];
 
 test("picker and card assets exist, have correct size, and match expected sha256 checksums", () => {
