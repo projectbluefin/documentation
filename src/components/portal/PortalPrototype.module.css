@@ -6,6 +6,7 @@
   --portal-text: #bdbdbd;
   --portal-text-light: #ffffff;
   --portal-blue-light: #8a97f7;
+  --portal-blue-rgb: 108, 122, 233;
   position: relative;
   isolation: isolate;
   overflow-x: clip;
@@ -130,6 +131,69 @@
   color: var(--portal-text-light);
   font-size: 20px;
   line-height: 1.6;
+}
+
+.sceneContent blockquote,
+.missionQuote {
+  margin: 60px 0 20px;
+  padding: 20px 0;
+  border-top: 1px solid var(--portal-border);
+  border-bottom: 1px solid var(--portal-border);
+}
+
+.sceneContent blockquote:last-child,
+.missionQuote:last-child {
+  border-bottom: 0;
+}
+
+.sceneContent blockquote p,
+.missionQuote p {
+  color: var(--portal-text-light);
+  font-size: 20px;
+  font-style: italic;
+  line-height: 1.6;
+}
+
+.sceneContent blockquote cite,
+.missionQuote cite {
+  position: relative;
+  display: block;
+  margin-right: 10px;
+  padding-top: 15px;
+  font-style: normal;
+  text-align: right;
+}
+
+.sceneContent blockquote cite::before,
+.missionQuote cite::before {
+  content: "”";
+  position: absolute;
+  top: 15px;
+  right: 150px;
+  width: 20px;
+  height: 2px;
+  color: var(--portal-text);
+  font-size: 15rem;
+  opacity: 0.2;
+  pointer-events: none;
+}
+
+.sceneContent blockquote a,
+.missionQuote a {
+  color: var(--portal-blue-light);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.sceneContent blockquote a:hover,
+.missionQuote a:hover {
+  text-decoration: underline;
+}
+
+.sceneContent blockquote a:focus-visible,
+.missionQuote a:focus-visible {
+  outline: 3px solid var(--portal-text-light);
+  outline-offset: 3px;
 }
 
 .userCharacter,
@@ -281,6 +345,11 @@
 
 .missionCharacter {
   width: min(768px, 110%);
+  background: radial-gradient(
+    circle,
+    rgba(108, 122, 233, 0.1) 0%,
+    rgba(108, 122, 233, 0) 70%
+  );
 }
 
 @media (max-width: 956px) {

@@ -128,7 +128,32 @@ test("prototype renders source-authored scenes in order through footer including
   assert.ok(html.includes(">For<"));
   assert.ok(html.includes(">You<"));
   assert.ok(html.includes(">Developers<"));
+  assert.ok(html.includes(">Our<"));
   assert.ok(html.includes(">Mission<"));
+  assert.ok(
+    html.includes("Bluefin is not just software, she is a new breed of animal"),
+  );
+  assert.ok(html.includes("Technology begins with the local computer"));
+  assert.ok(
+    html.includes(
+      "By introducing cloud-native patterns to the desktop we hope to ignite interest",
+    ),
+  );
+  assert.ok(
+    html.includes(
+      "Bluefin is about sustainability, encompassing the software, the hardware, and the people.",
+    ),
+  );
+  assert.ok(
+    html.includes(
+      "There are two ways of spreading light: to be the candle or the mirror that reflects it.",
+    ),
+  );
+  assert.ok(html.includes("Edith Wharton"));
+  assert.ok(
+    html.includes('href="https://en.wikipedia.org/wiki/Edith_Wharton"'),
+  );
+  assert.ok(html.includes("Or she may disembowel us on the way. Clever Girl."));
   assert.ok(html.includes('href="#scene-users"'));
   assert.match(html, /id="scene-users"[^>]*tabindex="-1"/);
   assert.ok(html.includes('src="/img/portal/layer-transition.webp"'));
@@ -166,6 +191,11 @@ test("scoped CSS clips artwork and defines mobile and reduced-motion paths", () 
   );
   assert.match(css, /@media \(max-width:\s*956px\)/);
   assert.match(css, /@media \(prefers-reduced-motion:\s*reduce\)/);
+  assert.match(
+    css,
+    /\.missionCharacter\s*\{[^}]*background:\s*radial-gradient/s,
+  );
+  assert.match(css, /\.missionQuote\s*\{[^}]*border-top:/s);
   const sharedGridMatches = css.match(/\.landingGrid,\s*\.twoColumn/g);
   assert.equal(sharedGridMatches?.length, 2);
   assert.ok(!css.includes("scroll-behavior"));
