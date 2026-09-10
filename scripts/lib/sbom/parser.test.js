@@ -10,6 +10,7 @@ const {
   stripRpmRelease,
   extractDateFromTag,
   normaliseLtsTag,
+  matchesStreamTag,
   buildCacheKey,
   findRecentTagsForStream,
   extractPackageVersions,
@@ -226,16 +227,113 @@ test("findRecentTagsForStream honours SBOM_MAX_RELEASES", () => {
   }
 });
 
-test("findRecentTagsForStream honours SBOM_LOOKBACK_DAYS", () => {
-  const tags = [`stable-${daysAgoTag(30)}`];
+test("findRecentTagsForStream honours SBOM_LOOKBACK_DAYS when recent releases exist", () => {
+  const tags = [`stable-${daysAgoTag(3)}`, `stable-${daysAgoTag(30)}`];
   const previous = process.env.SBOM_LOOKBACK_DAYS;
   process.env.SBOM_LOOKBACK_DAYS = "7";
   try {
-    assert.equal(findRecentTagsForStream(tags, STABLE_SPEC).length, 0);
+    const found = findRecentTagsForStream(tags, STABLE_SPEC);
+    assert.equal(found.length, 1);
+    assert.equal(found[0].dateStr, daysAgoTag(3));
   } finally {
     if (previous === undefined) delete process.env.SBOM_LOOKBACK_DAYS;
     else process.env.SBOM_LOOKBACK_DAYS = previous;
   }
+});
+
+test("findRecentTagsForStream retains latest-release fallback when lookback finds no releases", () => {
+  const tags = [`stable-${daysAgoTag(30)}`, `stable-${daysAgoTag(60)}`];
+  const previous = process.env.SBOM_LOOKBACK_DAYS;
+  process.env.SBOM_LOOKBACK_DAYS = "7";
+  try {
+    const found = findRecentTagsForStream(tags, STABLE_SPEC);
+    assert.equal(found.length, 1);
+    assert.equal(found[0].dateStr, daysAgoTag(30));
+  } finally {
+    if (previous === undefined) delete process.env.SBOM_LOOKBACK_DAYS;
+    else process.env.SBOM_LOOKBACK_DAYS = previous;
+  }
+});
+
+test("findRecentTagsForStream supports version-qualified live tags", () => {
+  const recent = daysAgoTag(3);
+  const tags = [
+    `stable-44.${recent}`,
+    `testing-44.${recent}`,
+    "stable-44.notadate",
+  ];
+  const found = findRecentTagsForStream(tags, STABLE_SPEC);
+  assert.equal(found.length, 1);
+  assert.equal(found[0].tag, `stable-44.${recent}`);
+  assert.equal(found[0].cacheKey, `stable-${recent}`);
+  assert.equal(found[0].dateStr, recent);
+  assert.equal(
+    found[0].imageRef,
+    `ghcr.io/ublue-os/bluefin:stable-44.${recent}`,
+  );
+});
+
+test("findRecentTagsForStream handles issue #1082 probe tags and fallback", () => {
+  const probeTags = [
+    "stable-20260606",
+    "stable-44.20260606",
+    "testing-44.20260720",
+  ];
+
+  // For stable: both tags are older than 90-day lookback from now, so fallback retains 20260606
+  const stableFound = findRecentTagsForStream(probeTags, STABLE_SPEC);
+  assert.equal(stableFound.length, 1);
+  assert.equal(stableFound[0].dateStr, "20260606");
+  assert.equal(stableFound[0].cacheKey, "stable-20260606");
+  // Exact canonical tag is preferred over version-qualified when both exist
+  assert.equal(stableFound[0].tag, "stable-20260606");
+
+  // For testing: testing-44.20260720 is recognized
+  const testingSpec = {
+    streamPrefix: "testing",
+    org: "projectbluefin",
+    package: "utah",
+  };
+  const testingFound = findRecentTagsForStream(probeTags, testingSpec);
+  assert.equal(testingFound.length, 1);
+  assert.equal(testingFound[0].dateStr, "20260720");
+  assert.equal(testingFound[0].cacheKey, "testing-20260720");
+  assert.equal(testingFound[0].tag, "testing-44.20260720");
+});
+
+test("matchesStreamTag matches canonical and version-qualified tags", () => {
+  assert.equal(matchesStreamTag("stable-20260606", "stable", "20260606"), true);
+  assert.equal(matchesStreamTag("stable.20260606", "stable", "20260606"), true);
+  assert.equal(
+    matchesStreamTag("stable-44.20260606", "stable", "20260606"),
+    true,
+  );
+  assert.equal(
+    matchesStreamTag("stable-44-20260606", "stable", "20260606"),
+    true,
+  );
+  assert.equal(
+    matchesStreamTag("testing-44.20260720", "testing", "20260720"),
+    true,
+  );
+  assert.equal(
+    matchesStreamTag("stable-daily-44.20260530", "stable-daily", "20260530"),
+    true,
+  );
+  // Rejections
+  assert.equal(
+    matchesStreamTag("stable-daily-20260606", "stable", "20260606"),
+    false,
+  );
+  assert.equal(
+    matchesStreamTag("stable-daily-44.20260606", "stable", "20260606"),
+    false,
+  );
+  assert.equal(
+    matchesStreamTag("stable-20260606-hwe", "stable", "20260606"),
+    false,
+  );
+  assert.equal(matchesStreamTag("gts-20260606", "stable", "20260606"), false);
 });
 
 test("findRecentTagsForStream returns an empty list for no tags", () => {

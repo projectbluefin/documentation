@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from "react";
+import Heading from "@theme/Heading";
 import EChart from "../factory/EChart";
 import Unavailable from "../factory/Unavailable";
 import { gapSafe, FX_COLORS } from "../factory/chartTheme";
@@ -81,6 +82,46 @@ export default function ImageChurnCharts(): React.JSX.Element {
     };
   }, [images]);
 
+  // Aggregate stats across active images for the top KPI summary strip
+  const topStats = useMemo(() => {
+    let totalDownloadMB = 0;
+    let totalSharedMB = 0;
+    let totalChunks = 0;
+    let totalZstdChunks = 0;
+    let activeImagesCount = 0;
+    let totalImagesCount = images.length;
+
+    for (const img of images) {
+      if (img.unavailable || !img.releases || img.releases.length === 0)
+        continue;
+      activeImagesCount += 1;
+      const latest = img.releases[img.releases.length - 1];
+      totalDownloadMB += latest.downloadChurnMB;
+      totalSharedMB += latest.sharedMB;
+      totalChunks += latest.totalLayers;
+      totalZstdChunks += latest.zstdLayers;
+    }
+
+    const overallTotalMB = totalDownloadMB + totalSharedMB;
+    const avgReusePct =
+      overallTotalMB > 0
+        ? ((totalSharedMB / overallTotalMB) * 100).toFixed(1)
+        : "0.0";
+    const zstdPct =
+      totalChunks > 0
+        ? ((totalZstdChunks / totalChunks) * 100).toFixed(0)
+        : "0";
+
+    return {
+      totalDownloadMB,
+      avgReusePct,
+      totalChunks,
+      zstdPct,
+      activeImagesCount,
+      totalImagesCount,
+    };
+  }, [images]);
+
   if (typedChurnData?.unavailable) {
     return (
       <Unavailable
@@ -92,58 +133,126 @@ export default function ImageChurnCharts(): React.JSX.Element {
 
   return (
     <div className={styles.container}>
-      <div className={styles.heroCard}>
-        <div className={styles.heroHeader}>
-          <div className={styles.heroTitleGroup}>
-            <h3 className={styles.heroTitle}>
+      {/* ── 1. Top KPI Summary Strip ────────────────────────────────────── */}
+      <section className={styles.kpiGrid} aria-label="Key update churn metrics">
+        <article className={styles.kpiCard}>
+          <span className={styles.kpiEyebrow}>Latest Fleet Churn</span>
+          <div className={styles.kpiValue}>
+            {topStats.totalDownloadMB > 0
+              ? `${(topStats.totalDownloadMB / 1024).toFixed(2)}`
+              : "0"}
+            <span className={styles.kpiUnit}>GB</span>
+          </div>
+          <span className={styles.kpiMeta}>
+            Across all active stable workstation releases
+          </span>
+        </article>
+
+        <article className={styles.kpiCard}>
+          <span className={styles.kpiEyebrow}>OCI Layer Reuse</span>
+          <div className={styles.kpiValue}>
+            {topStats.avgReusePct}
+            <span className={styles.kpiUnit}>%</span>
+          </div>
+          <span className={styles.kpiMeta}>
+            Shared layers cached on client bootc systems
+          </span>
+        </article>
+
+        <article className={styles.kpiCard}>
+          <span className={styles.kpiEyebrow}>Zstd:Chunked Adoption</span>
+          <div className={styles.kpiValue}>
+            {topStats.zstdPct}
+            <span className={styles.kpiUnit}>%</span>
+          </div>
+          <span className={styles.kpiMeta}>
+            {topStats.totalChunks} total package interval chunks
+          </span>
+        </article>
+
+        <article className={styles.kpiCard}>
+          <span className={styles.kpiEyebrow}>Tracked Images</span>
+          <div className={styles.kpiValue}>
+            {topStats.activeImagesCount} of {topStats.totalImagesCount} Active
+          </div>
+          <span className={styles.kpiMeta}>
+            Bluefin, LTS, Dakota tracked · Utah onboarding
+          </span>
+        </article>
+      </section>
+
+      {/* ── 2. Dominant Churn & Reuse Panel ───────────────────────────────── */}
+      <section
+        className={styles.panelCard}
+        aria-label="Update churn rate and layer reuse efficiency"
+      >
+        <div className={styles.panelHeader}>
+          <div className={styles.titleGroup}>
+            <span className={styles.eyebrow}>
+              OCI Layer Caching & Compression
+            </span>
+            <Heading as="h3" className={styles.panelTitle}>
               Update Churn Rate & Layer Reuse Efficiency
-            </h3>
-            <p className={styles.heroSubtitle}>
+            </Heading>
+            <p className={styles.panelSubtitle}>
               Release-over-release download size deltas, zstd-chunked
               compression, and OCI layer cache reuse across Project Bluefin
-              stable images.
+              images.
             </p>
           </div>
-        </div>
 
-        {/* Metric Selector Tabs */}
-        <div className={styles.metricTabs} role="tablist">
-          <button
-            type="button"
-            role="tab"
-            aria-selected={metric === "churn"}
-            className={`${styles.metricTab} ${metric === "churn" ? styles.metricTabActive : ""}`}
-            onClick={() => setMetric("churn")}
-          >
-            Update Download Churn (MB)
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={metric === "efficiency"}
-            className={`${styles.metricTab} ${metric === "efficiency" ? styles.metricTabActive : ""}`}
-            onClick={() => setMetric("efficiency")}
-          >
-            Layer Reuse Efficiency (%)
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={metric === "layers"}
-            className={`${styles.metricTab} ${metric === "layers" ? styles.metricTabActive : ""}`}
-            onClick={() => setMetric("layers")}
-          >
-            Chunk & Layer Counts
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={metric === "zstd"}
-            className={`${styles.metricTab} ${metric === "zstd" ? styles.metricTabActive : ""}`}
-            onClick={() => setMetric("zstd")}
-          >
-            Zstd-Chunked Stats
-          </button>
+          <div className={styles.controlsRow}>
+            <div
+              className={styles.segmentedGroup}
+              role="tablist"
+              aria-label="Update churn metrics"
+            >
+              <button
+                type="button"
+                role="tab"
+                aria-selected={metric === "churn"}
+                className={`${styles.toggleBtn} ${
+                  metric === "churn" ? styles.toggleBtnActive : ""
+                }`}
+                onClick={() => setMetric("churn")}
+              >
+                Download Churn (MB)
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={metric === "efficiency"}
+                className={`${styles.toggleBtn} ${
+                  metric === "efficiency" ? styles.toggleBtnActive : ""
+                }`}
+                onClick={() => setMetric("efficiency")}
+              >
+                Reuse Efficiency (%)
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={metric === "layers"}
+                className={`${styles.toggleBtn} ${
+                  metric === "layers" ? styles.toggleBtnActive : ""
+                }`}
+                onClick={() => setMetric("layers")}
+              >
+                Chunk & Layer Counts
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={metric === "zstd"}
+                className={`${styles.toggleBtn} ${
+                  metric === "zstd" ? styles.toggleBtnActive : ""
+                }`}
+                onClick={() => setMetric("zstd")}
+              >
+                Zstd-Chunked Stats
+              </button>
+            </div>
+          </div>
         </div>
 
         {/* Small Multiples Grid (one card per image) */}
@@ -158,14 +267,14 @@ export default function ImageChurnCharts(): React.JSX.Element {
           ))}
         </div>
 
-        <div className={styles.metaNotes}>
-          <span className={styles.metaNoteDot}>●</span>
+        <div className={styles.panelFooter}>
+          <span className={styles.footerDot}>●</span>
           <span>
             Chunkah rechunks system updates into package-interval OCI layers.
             Shared layers require 0 download bytes during bootc updates.
           </span>
         </div>
-      </div>
+      </section>
     </div>
   );
 }
@@ -185,11 +294,13 @@ function ImageChurnPanel({
 
   if (unavailable || releases.length === 0) {
     return (
-      <div className={styles.imageCard}>
+      <article className={styles.imageCard}>
         <div className={styles.imageHeader}>
           <div className={styles.imageTitleArea}>
-            <span className={styles.imageEdition}>{edition}</span>
-            <h4 className={styles.imageName}>{name}</h4>
+            <span className={styles.cardEyebrow}>{edition}</span>
+            <Heading as="h4" className={styles.imageName}>
+              {name}
+            </Heading>
           </div>
           <span className={`${styles.badge} ${styles.badgeUnavailable}`}>
             ○ Inactive
@@ -197,9 +308,12 @@ function ImageChurnPanel({
         </div>
         <Unavailable
           what={`${name} Churn Data`}
-          reason={stateReason || "No stable release data recorded"}
+          reason={
+            stateReason ||
+            "No stable release data recorded — image is under active development"
+          }
         />
-      </div>
+      </article>
     );
   }
 
@@ -334,11 +448,13 @@ function ImageChurnPanel({
   }
 
   return (
-    <div className={styles.imageCard}>
+    <article className={styles.imageCard}>
       <div className={styles.imageHeader}>
         <div className={styles.imageTitleArea}>
-          <span className={styles.imageEdition}>{edition}</span>
-          <h4 className={styles.imageName}>{name}</h4>
+          <span className={styles.cardEyebrow}>{edition}</span>
+          <Heading as="h4" className={styles.imageName}>
+            {name}
+          </Heading>
         </div>
         <span className={`${styles.badge} ${styles.badgeActive}`}>
           ● {latest.compressionFormat}
@@ -346,34 +462,34 @@ function ImageChurnPanel({
       </div>
 
       {/* Raw Values KPI Row alongside graphical representation */}
-      <div className={styles.kpiRow}>
-        <div className={styles.kpiItem}>
-          <span className={styles.kpiLabel}>Update Churn</span>
-          <span className={styles.kpiValue}>
+      <div className={styles.cardKpiGrid}>
+        <div className={styles.cardKpiItem}>
+          <span className={styles.cardKpiLabel}>Churn</span>
+          <div className={styles.cardKpiValue}>
             {latest.downloadChurnMB}
-            <span className={styles.kpiUnit}>MB</span>
-          </span>
+            <span className={styles.cardKpiUnit}>MB</span>
+          </div>
         </div>
-        <div className={styles.kpiItem}>
-          <span className={styles.kpiLabel}>Reuse Rate</span>
-          <span className={styles.kpiValue}>
+        <div className={styles.cardKpiItem}>
+          <span className={styles.cardKpiLabel}>Reuse</span>
+          <div className={styles.cardKpiValue}>
             {latest.reuseEfficiencyPct}
-            <span className={styles.kpiUnit}>%</span>
-          </span>
+            <span className={styles.cardKpiUnit}>%</span>
+          </div>
         </div>
-        <div className={styles.kpiItem}>
-          <span className={styles.kpiLabel}>Layers</span>
-          <span className={styles.kpiValue}>
+        <div className={styles.cardKpiItem}>
+          <span className={styles.cardKpiLabel}>Layers</span>
+          <div className={styles.cardKpiValue}>
             {latest.totalLayers}
-            <span className={styles.kpiUnit}>chunks</span>
-          </span>
+            <span className={styles.cardKpiUnit}>chunks</span>
+          </div>
         </div>
-        <div className={styles.kpiItem}>
-          <span className={styles.kpiLabel}>Image Size</span>
-          <span className={styles.kpiValue}>
+        <div className={styles.cardKpiItem}>
+          <span className={styles.cardKpiLabel}>Total</span>
+          <div className={styles.cardKpiValue}>
             {latest.totalMB}
-            <span className={styles.kpiUnit}>MB</span>
-          </span>
+            <span className={styles.cardKpiUnit}>MB</span>
+          </div>
         </div>
       </div>
 
@@ -389,6 +505,6 @@ function ImageChurnPanel({
           tableCaption={`Update Churn Statistics for ${name}`}
         />
       </div>
-    </div>
+    </article>
   );
 }

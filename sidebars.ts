@@ -55,7 +55,6 @@ const sidebars: SidebarsConfig = {
         "values",
         "code-of-conduct",
         "supply-chain",
-        "analytics",
         "reports",
       ],
     },

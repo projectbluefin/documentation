@@ -11,6 +11,8 @@ import {
   tailRange,
   buildPayload,
   METHOD,
+  VARIANTS,
+  NON_FEDORA_VARIANTS,
 } from "./fetch-countme.js";
 
 /**
@@ -104,6 +106,8 @@ test("normalizeVariant folds known OS names", () => {
   assert.equal(normalizeVariant("Aurora"), "aurora");
   assert.equal(normalizeVariant("Bazzite"), "bazzite");
   assert.equal(normalizeVariant("Fedora Linux"), "fedora");
+  assert.equal(normalizeVariant("Dakota"), "dakota");
+  assert.equal(normalizeVariant("Utah"), "utah");
 });
 
 test("normalizeVariant folds downstream spins", () => {
@@ -121,6 +125,29 @@ test("normalizeVariant returns bluefin-lts for Bluefin LTS, not bluefin", () => 
   // Branch order: LTS must be checked before generic bluefin
   assert.equal(normalizeVariant("Bluefin LTS"), "bluefin-lts");
   assert.notEqual(normalizeVariant("Bluefin LTS"), "bluefin");
+});
+
+test("normalizeVariant recognizes Dakota and Utah before generic bluefin fallback", () => {
+  // Branch order: specific variants must be checked before generic bluefin
+  const names = ["Dakota", "bluefin-dakota", "Utah", "bluefin-utah"];
+  assert.deepEqual(names.map(normalizeVariant), [
+    "dakota",
+    "dakota",
+    "utah",
+    "utah",
+  ]);
+
+  assert.equal(normalizeVariant("Dakota"), "dakota");
+  assert.equal(normalizeVariant("bluefin-dakota"), "dakota");
+  assert.equal(normalizeVariant("Bluefin Dakota"), "dakota");
+  assert.equal(normalizeVariant("Project Bluefin Dakota"), "dakota");
+  assert.notEqual(normalizeVariant("bluefin-dakota"), "bluefin");
+
+  assert.equal(normalizeVariant("Utah"), "utah");
+  assert.equal(normalizeVariant("bluefin-utah"), "utah");
+  assert.equal(normalizeVariant("Bluefin Utah"), "utah");
+  assert.equal(normalizeVariant("Project Bluefin Utah"), "utah");
+  assert.notEqual(normalizeVariant("bluefin-utah"), "bluefin");
 });
 
 // ── aggregateWeeks ───────────────────────────────────────────────────────
@@ -178,6 +205,30 @@ test("aggregateWeeks counts Bluefin LTS across its own repos, having no fedora-N
   const weeks = aggregateWeeks(rows);
   assert.equal(weeks[0]["bluefin-lts"], 159);
   assert.equal(weeks[0].bluefin, undefined);
+});
+
+test("aggregateWeeks counts Dakota across non-Fedora repos, having no fedora-N repo", () => {
+  // Dakota is GNOME OS based and has no fedora-N repo; it must not be dropped
+  // by the base repo restriction or misclassified as flagship bluefin.
+  const rows = parseAll([
+    row({ os_name: "bluefin-dakota", repo_tag: "gnome-os", hits: 12 }),
+    row({ os_name: "Dakota", repo_tag: "gnome-os-master", hits: 8 }),
+  ]);
+  const weeks = aggregateWeeks(rows);
+  assert.equal(weeks.length, 1);
+  assert.equal(weeks[0].dakota, 20);
+  assert.equal(weeks[0].bluefin, undefined);
+});
+
+test("aggregateWeeks counts Utah systems with base fedora repo, separated from Bluefin", () => {
+  const rows = parseAll([
+    row({ os_name: "bluefin-utah", repo_tag: "fedora-44", hits: 15 }),
+    row({ os_name: "bluefin", repo_tag: "fedora-44", hits: 30 }),
+  ]);
+  const weeks = aggregateWeeks(rows);
+  assert.equal(weeks.length, 1);
+  assert.equal(weeks[0].utah, 15);
+  assert.equal(weeks[0].bluefin, 30);
 });
 
 test("aggregateWeeks skips the two weeks upstream got wrong", () => {
@@ -303,6 +354,9 @@ test("buildPayload produces the documented shape", () => {
   assert.equal(payload.unavailable, false);
   assert.equal(payload.stateReason, null);
   assert.equal(payload.weeks.length, 1);
+  assert.deepEqual(payload.variants, VARIANTS);
+  assert.ok(payload.variants.includes("dakota"));
+  assert.ok(payload.variants.includes("utah"));
 });
 
 test("buildPayload can retain history while marking a failed refresh unavailable", () => {

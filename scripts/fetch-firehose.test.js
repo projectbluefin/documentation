@@ -27,6 +27,7 @@ test("buildOsInfo keeps core OS versions and major packages", () => {
     mesa: "25.0",
     podman: "5.4",
     systemd: "257",
+    nvidia: "595.71.05",
   });
 
   assert.deepEqual(info, {
@@ -38,8 +39,77 @@ test("buildOsInfo keeps core OS versions and major packages", () => {
     majorPackages: {
       Podman: "5.4",
       systemd: "257",
+      NVIDIA: "595.71.05",
     },
   });
+});
+
+test("buildOsApp resolves companion NVIDIA versions for stable and LTS streams", () => {
+  const sbomCache = {
+    streams: {
+      "bluefin-stable": {
+        releases: {
+          "stable-20260402": {
+            packageVersions: {
+              kernel: "6.14.1",
+              gnome: "48.1",
+              nvidia: null,
+            },
+          },
+        },
+      },
+      "bluefin-nvidia-open-stable": {
+        releases: {
+          "nvidia-open-stable-20260402": {
+            packageVersions: {
+              nvidia: "595.71.05",
+            },
+          },
+        },
+      },
+      "bluefin-lts": {
+        releases: {
+          "lts-20260402": {
+            packageVersions: {
+              kernel: "6.12.0",
+              gnome: "47.2",
+            },
+          },
+        },
+      },
+      "bluefin-lts-nvidia": {
+        releases: {
+          "lts-nvidia-20260402": {
+            packageVersions: {
+              nvidia: "580.40.01",
+            },
+          },
+        },
+      },
+    },
+  };
+
+  const stableSpec = {
+    streamId: "bluefin-stable",
+    appId: "bluefin-os-stable",
+    name: "Bluefin OS (Stable)",
+    summary: "Stable track",
+    ghReleasesUrl: "https://github.com/projectbluefin/bluefin/releases",
+  };
+  const stableApp = buildOsApp(stableSpec, sbomCache);
+  assert.equal(stableApp.osInfo.majorPackages.NVIDIA, "595.71.05");
+  assert.equal(stableApp.releases[0].packageVersions.nvidia, "595.71.05");
+
+  const ltsSpec = {
+    streamId: "bluefin-lts",
+    appId: "bluefin-os-lts",
+    name: "Bluefin OS (LTS)",
+    summary: "LTS track",
+    ghReleasesUrl: "https://github.com/projectbluefin/bluefin-lts/releases",
+  };
+  const ltsApp = buildOsApp(ltsSpec, sbomCache);
+  assert.equal(ltsApp.osInfo.majorPackages.NVIDIA, "580.40.01");
+  assert.equal(ltsApp.releases[0].packageVersions.nvidia, "580.40.01");
 });
 
 test("buildOsApp picks the newest populated release and computes package diffs", () => {

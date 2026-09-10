@@ -101,6 +101,23 @@ function buildCacheKey(streamPrefix, dateStr) {
   return `${streamPrefix}-${dateStr}`;
 }
 
+function escapeRegExp(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+/**
+ * Match a tag against a stream prefix and date string.
+ * Supports:
+ *   - Canonical unversioned: `<streamPrefix>-YYYYMMDD` or `<streamPrefix>.YYYYMMDD`
+ *   - Version-qualified live tags: `<streamPrefix>-<version>.YYYYMMDD` or `<streamPrefix>-<version>-YYYYMMDD`
+ */
+function matchesStreamTag(tag, streamPrefix, dateStr) {
+  const pattern = new RegExp(
+    `^${escapeRegExp(streamPrefix)}(?:-(\\d+))?[.-]${dateStr}$`,
+  );
+  return pattern.test(tag);
+}
+
 /**
  * Filter a list of GHCR tag strings to find recent dated tags for a given stream.
  *
@@ -116,13 +133,11 @@ function findRecentTagsForStream(ghcrTags, spec) {
 
   for (const tagName of ghcrTags) {
     const normalised = normaliseLtsTag(tagName.toLowerCase());
-    if (!normalised.startsWith(`${spec.streamPrefix}-`)) continue;
+    if (!normalised.startsWith(spec.streamPrefix)) continue;
     const dateStr = extractDateFromTag(normalised);
     if (!dateStr) continue;
 
-    // Enforce canonical tag: only exact `<streamPrefix>-YYYYMMDD` is accepted.
-    const expectedCanonical = `${spec.streamPrefix}-${dateStr}`;
-    if (normalised !== expectedCanonical) continue;
+    if (!matchesStreamTag(normalised, spec.streamPrefix, dateStr)) continue;
 
     // Tags from GHCR have no publishedAt — derive from the date string.
     const year = dateStr.slice(0, 4);
@@ -130,7 +145,7 @@ function findRecentTagsForStream(ghcrTags, spec) {
     const day = dateStr.slice(6, 8);
     const publishedAt = `${year}-${month}-${day}T00:00:00Z`;
     const publishedMs = Date.parse(publishedAt);
-    if (isNaN(publishedMs) || publishedMs < cutoff) continue;
+    if (isNaN(publishedMs)) continue;
 
     found.push({
       tag: normalised,
@@ -138,23 +153,46 @@ function findRecentTagsForStream(ghcrTags, spec) {
       dateStr,
       imageRef: `ghcr.io/${spec.org}/${spec.package}:${tagName}`,
       publishedAt,
+      publishedMs,
     });
   }
 
-  // Deduplicate by cacheKey (keep first/most-recent encounter)
-  const seen = new Set();
-  const unique = [];
+  // Deduplicate by cacheKey, preferring the exact canonical tag (<prefix>-YYYYMMDD)
+  // over version-qualified alternatives if both are present for the same date.
+  const byCacheKey = new Map();
   for (const entry of found) {
-    if (!seen.has(entry.cacheKey)) {
-      seen.add(entry.cacheKey);
-      unique.push(entry);
+    const existing = byCacheKey.get(entry.cacheKey);
+    if (!existing) {
+      byCacheKey.set(entry.cacheKey, entry);
+    } else {
+      const canonicalTag = `${spec.streamPrefix}-${entry.dateStr}`;
+      if (entry.tag === canonicalTag && existing.tag !== canonicalTag) {
+        byCacheKey.set(entry.cacheKey, entry);
+      }
     }
   }
+
+  const unique = Array.from(byCacheKey.values());
 
   // Sort descending by dateStr (YYYYMMDD sorts lexicographically)
   unique.sort((a, b) => b.dateStr.localeCompare(a.dateStr));
 
-  return unique.slice(0, maxReleases);
+  // Lookback filter with latest-release fallback:
+  // Return releases within the lookback window up to maxReleases.
+  // When the fixed lookback finds no releases, retain the single latest release.
+  const withinLookback = unique.filter((entry) => entry.publishedMs >= cutoff);
+  const results =
+    withinLookback.length > 0
+      ? withinLookback.slice(0, maxReleases)
+      : unique.slice(0, 1);
+
+  return results.map(({ tag, cacheKey, dateStr, imageRef, publishedAt }) => ({
+    tag,
+    cacheKey,
+    dateStr,
+    imageRef,
+    publishedAt,
+  }));
 }
 
 // ---------------------------------------------------------------------------
@@ -206,7 +244,8 @@ function extractPackageVersions(sbomPath) {
   //   Packages represent BST elements, not RPM packages. Extraction uses
   //   (name, BST element path suffix) pairs to disambiguate between components
   //   that share a name (e.g. the `linux` kernel element vs. Rust `linux` crates).
-  const isSpdx = Array.isArray(sbom?.packages) && typeof sbom?.spdxVersion === "string";
+  const isSpdx =
+    Array.isArray(sbom?.packages) && typeof sbom?.spdxVersion === "string";
   const isBstSpdx =
     isSpdx &&
     (sbom.packages || []).some((pkg) =>
@@ -348,6 +387,7 @@ module.exports = {
   stripRpmRelease,
   extractDateFromTag,
   normaliseLtsTag,
+  matchesStreamTag,
   buildCacheKey,
   findRecentTagsForStream,
   extractPackageVersions,

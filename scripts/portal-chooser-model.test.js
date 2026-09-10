@@ -57,6 +57,7 @@ test("flow: Stable -> x86 -> AMD yields regular kernel and correct URLs", () => 
     formatIsoFilename,
     formatIsoUrl,
     formatChecksumUrl,
+    formatBootcCommand,
   } = loadTsModule(modelPath);
 
   let state = selectRelease(INITIAL_CHOOSER_STATE, "stable", true);
@@ -82,6 +83,10 @@ test("flow: Stable -> x86 -> AMD yields regular kernel and correct URLs", () => 
     formatChecksumUrl(state.selection),
     "https://download.projectbluefin.io/bluefin-stable-x86_64.iso-CHECKSUM",
   );
+  assert.equal(
+    formatBootcCommand(state.selection),
+    "sudo bootc switch ghcr.io/projectbluefin/bluefin:stable --enforce-container-sigpolicy",
+  );
 });
 
 test("flow: Stable -> x86 -> Nvidia yields nvidia-open suffix", () => {
@@ -93,6 +98,7 @@ test("flow: Stable -> x86 -> Nvidia yields nvidia-open suffix", () => {
     formatIsoFilename,
     formatIsoUrl,
     formatChecksumUrl,
+    formatBootcCommand,
   } = loadTsModule(modelPath);
 
   let state = selectRelease(INITIAL_CHOOSER_STATE, "stable", true);
@@ -111,6 +117,10 @@ test("flow: Stable -> x86 -> Nvidia yields nvidia-open suffix", () => {
     formatChecksumUrl(state.selection),
     "https://download.projectbluefin.io/bluefin-nvidia-open-stable-x86_64.iso-CHECKSUM",
   );
+  assert.equal(
+    formatBootcCommand(state.selection),
+    "sudo bootc switch ghcr.io/projectbluefin/bluefin-nvidia:stable --enforce-container-sigpolicy",
+  );
 });
 
 test("flow: LTS -> x86 -> AMD requires kernel selection", () => {
@@ -123,6 +133,7 @@ test("flow: LTS -> x86 -> AMD requires kernel selection", () => {
     formatIsoFilename,
     formatIsoUrl,
     formatChecksumUrl,
+    formatBootcCommand,
   } = loadTsModule(modelPath);
 
   let state = selectRelease(INITIAL_CHOOSER_STATE, "lts", true);
@@ -145,6 +156,10 @@ test("flow: LTS -> x86 -> AMD requires kernel selection", () => {
     formatChecksumUrl(regularState.selection),
     "https://download.projectbluefin.io/bluefin-lts-x86_64.iso-CHECKSUM",
   );
+  assert.equal(
+    formatBootcCommand(regularState.selection),
+    "sudo bootc switch ghcr.io/projectbluefin/bluefin-lts:stable --enforce-container-sigpolicy",
+  );
 
   const hweState = selectKernel(state, "hwe");
   assert.equal(hweState.step, "download");
@@ -160,6 +175,10 @@ test("flow: LTS -> x86 -> AMD requires kernel selection", () => {
     formatChecksumUrl(hweState.selection),
     "https://download.projectbluefin.io/bluefin-lts-hwe-x86_64.iso-CHECKSUM",
   );
+  assert.equal(
+    formatBootcCommand(hweState.selection),
+    "sudo bootc switch ghcr.io/projectbluefin/bluefin-lts:lts-hwe --enforce-container-sigpolicy",
+  );
 });
 
 test("flow: LTS -> x86 -> Nvidia creates GDX and skips kernel step", () => {
@@ -171,6 +190,7 @@ test("flow: LTS -> x86 -> Nvidia creates GDX and skips kernel step", () => {
     formatIsoFilename,
     formatIsoUrl,
     formatChecksumUrl,
+    formatBootcCommand,
   } = loadTsModule(modelPath);
 
   let state = selectRelease(INITIAL_CHOOSER_STATE, "lts", true);
@@ -190,6 +210,10 @@ test("flow: LTS -> x86 -> Nvidia creates GDX and skips kernel step", () => {
     formatChecksumUrl(state.selection),
     "https://download.projectbluefin.io/bluefin-gdx-lts-x86_64.iso-CHECKSUM",
   );
+  assert.equal(
+    formatBootcCommand(state.selection),
+    "sudo bootc switch ghcr.io/projectbluefin/bluefin-lts-nvidia:stable --enforce-container-sigpolicy",
+  );
 });
 
 test("flow: ARM architecture switches to LTS and jumps directly to download", () => {
@@ -200,6 +224,7 @@ test("flow: ARM architecture switches to LTS and jumps directly to download", ()
     formatIsoFilename,
     formatIsoUrl,
     formatChecksumUrl,
+    formatBootcCommand,
   } = loadTsModule(modelPath);
 
   let state = selectRelease(INITIAL_CHOOSER_STATE, "stable", true);
@@ -218,6 +243,10 @@ test("flow: ARM architecture switches to LTS and jumps directly to download", ()
     formatChecksumUrl(state.selection),
     "https://download.projectbluefin.io/bluefin-lts-aarch64.iso-CHECKSUM",
   );
+  assert.equal(
+    formatBootcCommand(state.selection),
+    "sudo bootc switch ghcr.io/projectbluefin/bluefin-lts:stable --enforce-container-sigpolicy",
+  );
 
   let ltsArmState = selectArchitecture(
     selectRelease(INITIAL_CHOOSER_STATE, "lts", true),
@@ -228,6 +257,10 @@ test("flow: ARM architecture switches to LTS and jumps directly to download", ()
   assert.equal(
     formatIsoFilename(ltsArmState.selection),
     "bluefin-lts-aarch64.iso",
+  );
+  assert.equal(
+    formatBootcCommand(ltsArmState.selection),
+    "sudo bootc switch ghcr.io/projectbluefin/bluefin-lts:stable --enforce-container-sigpolicy",
   );
 });
 
@@ -292,4 +325,75 @@ test("back navigation retreats step-by-step and clears downstream choices", () =
   assert.equal(ltsNvidiaState.selection.gpu, undefined);
 
   assert.deepEqual(resetChooser(), INITIAL_CHOOSER_STATE);
+});
+
+test("formatBootcCommand generates expected commands across all hardware and stream selections", () => {
+  const { formatBootcCommand } = loadTsModule(modelPath);
+
+  // Defaults and fallbacks
+  assert.equal(
+    formatBootcCommand({}),
+    "sudo bootc switch ghcr.io/projectbluefin/bluefin:stable --enforce-container-sigpolicy",
+  );
+  assert.equal(
+    formatBootcCommand({ stream: "stable" }),
+    "sudo bootc switch ghcr.io/projectbluefin/bluefin:stable --enforce-container-sigpolicy",
+  );
+
+  // Stable permutations
+  assert.equal(
+    formatBootcCommand({
+      stream: "stable",
+      arch: "x86",
+      gpu: "amd",
+      kernel: "regular",
+    }),
+    "sudo bootc switch ghcr.io/projectbluefin/bluefin:stable --enforce-container-sigpolicy",
+  );
+  assert.equal(
+    formatBootcCommand({
+      stream: "stable",
+      arch: "x86",
+      gpu: "nvidia",
+      kernel: "regular",
+    }),
+    "sudo bootc switch ghcr.io/projectbluefin/bluefin-nvidia:stable --enforce-container-sigpolicy",
+  );
+
+  // LTS permutations
+  assert.equal(
+    formatBootcCommand({
+      stream: "lts",
+      arch: "x86",
+      gpu: "amd",
+      kernel: "regular",
+    }),
+    "sudo bootc switch ghcr.io/projectbluefin/bluefin-lts:stable --enforce-container-sigpolicy",
+  );
+  assert.equal(
+    formatBootcCommand({
+      stream: "lts",
+      arch: "x86",
+      gpu: "amd",
+      kernel: "hwe",
+    }),
+    "sudo bootc switch ghcr.io/projectbluefin/bluefin-lts:lts-hwe --enforce-container-sigpolicy",
+  );
+  assert.equal(
+    formatBootcCommand({
+      stream: "lts",
+      arch: "x86",
+      gpu: "nvidia",
+      kernel: "regular",
+    }),
+    "sudo bootc switch ghcr.io/projectbluefin/bluefin-lts-nvidia:stable --enforce-container-sigpolicy",
+  );
+  assert.equal(
+    formatBootcCommand({
+      stream: "lts",
+      arch: "arm",
+      kernel: "regular",
+    }),
+    "sudo bootc switch ghcr.io/projectbluefin/bluefin-lts:stable --enforce-container-sigpolicy",
+  );
 });

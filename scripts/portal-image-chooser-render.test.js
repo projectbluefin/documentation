@@ -317,6 +317,15 @@ test("image chooser renders download step with exact ISO and checksum URLs and d
   );
   assert.ok(
     html.includes(
+      "sudo bootc switch ghcr.io/projectbluefin/bluefin:stable --enforce-container-sigpolicy",
+    ),
+  );
+  assert.match(
+    html,
+    /<button[^>]*class="[^"]*copyButton[^"]*"[^>]*aria-label="Copy terminal command"/,
+  );
+  assert.ok(
+    html.includes(
       "https://github.com/orgs/ublue-os/packages?repo_name=bluefin",
     ),
   );
@@ -637,4 +646,63 @@ test("regression: chooser render tests remain stable when rendered with differen
   assert.ok(primaryHtml.includes("Fedora 44"));
   assert.ok(primaryHtml.includes("1.17.7"));
   assert.ok(primaryHtml.includes("5.8.2"));
+});
+
+test("image chooser renders terminal command box with CopyButton across stream variants", () => {
+  const { default: PortalImageChooser, CopyButton } = loadModule(chooserPath);
+  const catalog = deterministicCatalog;
+
+  // Standalone CopyButton rendering
+  const copyBtnHtml = renderToStaticMarkup(
+    React.createElement(CopyButton, {
+      command: "sudo bootc switch test",
+    }),
+  );
+  assert.match(
+    copyBtnHtml,
+    /<button[^>]*class="[^"]*copyButton[^"]*"[^>]*aria-label="Copy terminal command"[^>]*title="Copy to clipboard"/,
+  );
+
+  // LTS Nvidia (GDX)
+  const ltsNvidiaHtml = renderToStaticMarkup(
+    React.createElement(PortalImageChooser, {
+      catalog,
+      initialState: {
+        step: "download",
+        selection: {
+          stream: "lts",
+          arch: "x86",
+          gpu: "nvidia",
+          kernel: "regular",
+        },
+      },
+    }),
+  );
+  assert.ok(
+    ltsNvidiaHtml.includes(
+      "sudo bootc switch ghcr.io/projectbluefin/bluefin-lts-nvidia:stable --enforce-container-sigpolicy",
+    ),
+  );
+  assert.ok(ltsNvidiaHtml.includes("Terminal Rebase Command:"));
+
+  // LTS HWE
+  const ltsHweHtml = renderToStaticMarkup(
+    React.createElement(PortalImageChooser, {
+      catalog,
+      initialState: {
+        step: "download",
+        selection: {
+          stream: "lts",
+          arch: "x86",
+          gpu: "amd",
+          kernel: "hwe",
+        },
+      },
+    }),
+  );
+  assert.ok(
+    ltsHweHtml.includes(
+      "sudo bootc switch ghcr.io/projectbluefin/bluefin-lts:lts-hwe --enforce-container-sigpolicy",
+    ),
+  );
 });

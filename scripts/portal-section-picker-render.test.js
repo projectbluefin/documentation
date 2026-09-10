@@ -119,7 +119,7 @@ test("section picker renders id=scene-picker with header, intro, chooser, ecosys
 
   const dakotaIdx = html.indexOf('href="/dakota"');
   const serverIdx = html.indexOf('href="/server"');
-  const utahIdx = html.indexOf('href="/utah"');
+  const utahIdx = html.indexOf('href="https://devconf.us"');
   const wolvesIdx = html.indexOf('href="https://projectbluefin.io/wolves/"');
 
   assert.ok(dakotaIdx > 0, "Dakota card must link /dakota");
@@ -128,6 +128,11 @@ test("section picker renders id=scene-picker with header, intro, chooser, ecosys
   assert.ok(
     wolvesIdx > utahIdx,
     "Wolves card must follow Utah in campaign grid",
+  );
+  assert.match(
+    html,
+    /<a[^>]*href="https:\/\/devconf\.us"[^>]*target="_blank"[^>]*rel="noopener noreferrer"/,
+    "Utah card link must use target=_blank and rel=noopener noreferrer",
   );
 
   assert.match(html, /<div[^>]*aria-hidden="true"[^>]*>/);

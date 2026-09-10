@@ -2,7 +2,7 @@
 /**
  * Fetches weekly countme data from the Fedora countme totals CSV and writes
  * static/data/countme-history.json, consumed by the site to show active-device
- * trends for Bluefin, Bluefin LTS, Aurora, Bazzite, and Fedora.
+ * trends for Bluefin, Bluefin LTS, Aurora, Bazzite, Fedora, Dakota, and Utah.
  *
  * COUNTING RULE — keep in step with ublue-os/countme.
  *
@@ -23,8 +23,10 @@
  *      to the base ^fedora-[0-9]+$ repo picks the one repo every Fedora-based
  *      system has exactly one of; summing across those tags therefore sums
  *      across releases (F41 + F42 + …), not across repos of one machine.
- *   3. Bluefin LTS is exempt from rule 2. It is CentOS Stream based and has no
- *      fedora-N repo at all, so it is counted across its own (EPEL) repos.
+ *   3. Bluefin LTS and Dakota are exempt from rule 2. Bluefin LTS is CentOS
+ *      Stream based and has no fedora-N repo at all, so it is counted across
+ *      its own (EPEL) repos. Dakota is GNOME OS based and also has no
+ *      fedora-N base repo.
  *   4. Two upstream weeks are known bad and are skipped outright.
  *
  * The source CSV is ~600 MB. This script uses HTTP Range requests to fetch only
@@ -52,7 +54,15 @@ const OUT = resolve(__dirname, "../static/data/countme-history.json");
 const CSV_URL =
   "https://data-analysis.fedoraproject.org/csv-reports/countme/totals.csv";
 
-const VARIANTS = ["bluefin", "bluefin-lts", "aurora", "bazzite", "fedora"];
+export const VARIANTS = [
+  "bluefin",
+  "bluefin-lts",
+  "aurora",
+  "bazzite",
+  "fedora",
+  "dakota",
+  "utah",
+];
 
 /**
  * How a weekly number is derived from the CSV. Stamped into the payload so a
@@ -71,9 +81,9 @@ const BASE_REPO = /^fedora-\d+$/;
 /**
  * Variants with no fedora-N repo, counted across their own repos instead.
  * Bluefin LTS is CentOS Stream based and reaches Fedora's counter only through
- * EPEL. ublue-os/countme has this same carve-out.
+ * EPEL. Dakota is GNOME OS based and has no Fedora base repo.
  */
-const NON_FEDORA_VARIANTS = new Set(["bluefin-lts"]);
+export const NON_FEDORA_VARIANTS = new Set(["bluefin-lts", "dakota"]);
 
 /**
  * Weeks upstream got wrong, skipped exactly as ublue-os/countme skips them.
@@ -169,7 +179,7 @@ export function parseCsvLine(line) {
  * Returns null for unrecognised names — bucketing an unknown OS into a variant
  * would inflate the headline number.
  *
- * ORDER MATTERS: LTS checks before generic bluefin.
+ * ORDER MATTERS: LTS, Dakota, and Utah check before generic bluefin.
  */
 export function normalizeVariant(osName) {
   if (osName == null) return null;
@@ -183,6 +193,23 @@ export function normalizeVariant(osName) {
     s.startsWith("bluefin-lts")
   )
     return "bluefin-lts";
+
+  // Specific Bluefin variants before generic flagship fallback
+  if (
+    s.startsWith("bluefin-dakota") ||
+    s.includes("bluefin dakota") ||
+    s.startsWith("dakota") ||
+    s.includes("dakota")
+  )
+    return "dakota";
+
+  if (
+    s.startsWith("bluefin-utah") ||
+    s.includes("bluefin utah") ||
+    s.startsWith("utah") ||
+    s.includes("utah")
+  )
+    return "utah";
 
   if (s.startsWith("bluefin")) return "bluefin";
   if (s.startsWith("aurora")) return "aurora";

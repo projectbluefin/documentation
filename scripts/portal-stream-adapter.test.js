@@ -72,8 +72,12 @@ const deterministicImages = {
           tag: "stable",
           versions: {
             kernel: "7.0.7",
-            gnome: "50.2",
+            systemd: "260.2",
+            bootc: "1.15.2",
             mesa: "26.0.6",
+            nvidia: "595.71.05",
+            gnome: "50.2",
+            pipewire: "1.6.1",
           },
         },
       ],
@@ -113,8 +117,12 @@ const deterministicDrivers = {
       latest: {
         versions: {
           kernel: "7.0.7",
-          gnome: "50.2",
+          systemd: "260.2",
+          bootc: "1.15.2",
           mesa: "26.0.6",
+          nvidia: "595.71.05",
+          gnome: "50.2",
+          pipewire: "1.6.1",
         },
       },
     },
@@ -173,7 +181,7 @@ test("stream adapter sets available false and shows reason when stream is absent
   assert.equal(catalog.streams.lts.versions, undefined);
 });
 
-test("ecosystem cards link local routes and wolves links absolute url", () => {
+test("ecosystem cards link expected destinations and wolves links absolute url", () => {
   const { adaptStreams } = loadTsModule(adapterPath);
   const catalog = adaptStreams(deterministicImages, deterministicDrivers);
 
@@ -183,12 +191,27 @@ test("ecosystem cards link local routes and wolves links absolute url", () => {
   assert.equal(dakota.title, "Dakota");
   assert.equal(dakota.href, "/dakota");
   assert.equal(dakota.image, "/img/portal/characters/dakota.webp");
-  assert.ok(dakota.versionRows.length > 0);
+  assert.equal(dakota.versionRows.length, 7);
 
   const dakotaLabels = dakota.versionRows.map((r) => r.label);
-  assert.ok(dakotaLabels.includes("Kernel"));
-  assert.ok(dakotaLabels.includes("GNOME"));
-  assert.ok(dakotaLabels.includes("Mesa"));
+  assert.deepEqual(dakotaLabels, [
+    "Kernel",
+    "systemd",
+    "bootc",
+    "Mesa",
+    "NVidia Driver",
+    "GNOME",
+    "PipeWire",
+  ]);
+  assert.deepEqual(dakota.versionRows, [
+    { label: "Kernel", value: "7.0.7" },
+    { label: "systemd", value: "260.2" },
+    { label: "bootc", value: "1.15.2" },
+    { label: "Mesa", value: "26.0.6" },
+    { label: "NVidia Driver", value: "595.71.05" },
+    { label: "GNOME", value: "50.2" },
+    { label: "PipeWire", value: "1.6.1" },
+  ]);
   assert.ok(!dakotaLabels.includes("Freedesktop SDK"));
   assert.ok(!dakotaLabels.includes("Homebrew"));
 
@@ -199,7 +222,7 @@ test("ecosystem cards link local routes and wolves links absolute url", () => {
   assert.deepEqual(server.versionRows, []);
 
   assert.equal(utah.title, "Utah");
-  assert.equal(utah.href, "/utah");
+  assert.equal(utah.href, "https://devconf.us");
   assert.equal(utah.image, "/img/portal/characters/utah.webp");
   assert.deepEqual(utah.versionRows, []);
 
@@ -468,6 +491,21 @@ test("smoke test: stream adapter processes live static data files with structura
   assert.equal(typeof catalog.streams.stable.recommended, "boolean");
   assert.equal(typeof catalog.streams.lts.recommended, "boolean");
   assert.ok(Array.isArray(catalog.ecosystem));
+  const liveDakota = catalog.ecosystem.find((e) => e.id === "dakota");
+  assert.ok(liveDakota);
+  assert.equal(liveDakota.versionRows.length, 7);
+  assert.deepEqual(
+    liveDakota.versionRows.map((r) => r.label),
+    [
+      "Kernel",
+      "systemd",
+      "bootc",
+      "Mesa",
+      "NVidia Driver",
+      "GNOME",
+      "PipeWire",
+    ],
+  );
   assert.ok(catalog.wolvesCampaign);
   assert.equal(typeof catalog.wolvesCampaign.title, "string");
   assert.equal(typeof catalog.wolvesCampaign.href, "string");
