@@ -251,3 +251,42 @@ test("portal prototype hero raptor artwork integrates seasonal selection and ran
     "PortalPrototype must contain Try Out link pointing to #scene-picker",
   );
 });
+
+test("portal prototype avoids nested landmark and suppresses no outlines", () => {
+  const componentSource = fs.readFileSync(componentPath, "utf8");
+  assert.match(
+    componentSource,
+    /<div className=\{styles\.portal\}>/,
+    "PortalPrototype must use div with styles.portal as root",
+  );
+  assert.ok(
+    !componentSource.includes("<main"),
+    "PortalPrototype must not contain <main> tag",
+  );
+  assert.ok(
+    !componentSource.includes("</main>"),
+    "PortalPrototype must not contain </main> tag",
+  );
+
+  const PortalPrototype = loadModule(componentPath).default;
+  const html = renderToStaticMarkup(React.createElement(PortalPrototype));
+  assert.ok(
+    !html.includes("<main"),
+    "Rendered HTML must not include <main> landmark",
+  );
+  assert.ok(
+    !html.includes("</main>"),
+    "Rendered HTML must not include </main> closing tag",
+  );
+
+  const css = fs.readFileSync(cssPath, "utf8");
+  assert.ok(
+    !css.includes("outline: none"),
+    "PortalPrototype.module.css must not use outline: none",
+  );
+  assert.match(
+    css,
+    /\.contentScene:focus-visible\s*\{[^}]*outline:\s*2px solid var\(--portal-blue-light\)/,
+    "contentScene must have explicit 2px solid var(--portal-blue-light) focus-visible ring",
+  );
+});

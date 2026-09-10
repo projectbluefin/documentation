@@ -147,8 +147,8 @@
   scroll-margin-top: var(--ifm-navbar-height, 60px);
 }
 
-.contentScene:focus {
-  outline: none;
+.contentScene:focus-visible {
+  outline: 2px solid var(--portal-blue-light);
 }
 
 .sceneContent strong {
