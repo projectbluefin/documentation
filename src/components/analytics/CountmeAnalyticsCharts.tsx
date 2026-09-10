@@ -186,6 +186,10 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
       const ltsSeries = gapSafe(
         heroFilteredWeeks.map((w) => w["bluefin-lts"] ?? null),
       );
+      const dakotaSeries = gapSafe(
+        heroFilteredWeeks.map((w) => w.dakota ?? null),
+      );
+      const utahSeries = gapSafe(heroFilteredWeeks.map((w) => w.utah ?? null));
 
       return {
         xAxis: {
@@ -217,6 +221,28 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
             symbolSize: 6,
             itemStyle: { color: "#bc8cff" },
             lineStyle: { width: 3, color: "#bc8cff", type: [6, 3] },
+            connectNulls: false,
+          },
+          {
+            name: "Dakota",
+            type: "line",
+            data: dakotaSeries,
+            smooth: true,
+            showSymbol: true,
+            symbolSize: 6,
+            itemStyle: { color: "#39d2c0" },
+            lineStyle: { width: 3, color: "#39d2c0", type: [2, 2] },
+            connectNulls: false,
+          },
+          {
+            name: "Utah",
+            type: "line",
+            data: utahSeries,
+            smooth: true,
+            showSymbol: true,
+            symbolSize: 6,
+            itemStyle: { color: "#f0883e" },
+            lineStyle: { width: 3, color: "#f0883e", type: [1, 2] },
             connectNulls: false,
           },
         ],
@@ -318,6 +344,22 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
           itemStyle: { color: seriesColor(1) },
           lineStyle: { type: seriesDash(1) },
         },
+        {
+          name: "Dakota",
+          type: "line",
+          data: gapSafe(filteredWeeks.map((w) => w.dakota ?? null)),
+          connectNulls: false,
+          itemStyle: { color: "#39d2c0" },
+          lineStyle: { type: seriesDash(3) },
+        },
+        {
+          name: "Utah",
+          type: "line",
+          data: gapSafe(filteredWeeks.map((w) => w.utah ?? null)),
+          connectNulls: false,
+          itemStyle: { color: "#f0883e" },
+          lineStyle: { type: seriesDash(4) },
+        },
       );
     } else {
       // Total Bluefin family
@@ -387,7 +429,8 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
               Weekly Active Systems
             </Heading>
             <p className={styles.heroSubtitle}>
-              Weekly DNF countme check-ins across Project Bluefin workstation variants (Fedora countme)
+              Weekly DNF countme check-ins across Project Bluefin workstation
+              variants (Fedora countme)
             </p>
             <div className={styles.heroSubBadges}>
               <span
