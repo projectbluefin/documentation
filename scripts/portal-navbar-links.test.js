@@ -20,7 +20,7 @@ test("docusaurus.config.ts contains complete reconciled navbar navigation links"
     "navbar must include Ask Bluefin on the left",
   );
 
-  // Right links: Blog, Changelogs, Reports, Leaderboards, Hive, Discussions, Feedback, Store
+  // Right links: Blog, Changelogs, Reports, Leaderboards, Hive, Discussions, Analytics, Store
   assert.match(
     configContent,
     /to:\s*"blog"[\s\S]*label:\s*"Blog"[\s\S]*position:\s*"right"/,
@@ -43,8 +43,8 @@ test("docusaurus.config.ts contains complete reconciled navbar navigation links"
   );
   assert.match(
     configContent,
-    /href:\s*"https:\/\/feedback\.projectbluefin\.io\/"[\s\S]*label:\s*"Feedback"[\s\S]*position:\s*"right"/,
-    "navbar must include Feedback on the right",
+    /to:\s*"\/analytics"[\s\S]*label:\s*"Analytics"[\s\S]*position:\s*"right"/,
+    "navbar must include Analytics on the right",
   );
   assert.match(
     configContent,
