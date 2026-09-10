@@ -5,8 +5,10 @@ import type DOMPurifyType from "dompurify";
  * Allowlist preserves GitHub-rendered Markdown output: code blocks, links, lists,
  * headings, images, and formatting — while stripping scripts, iframes, event handlers.
  *
- * SSR-safe: during server-side rendering (build), returns the raw HTML since the
- * output is static and the fetch scripts already validate external data. DOMPurify
+ * SSR-safe: during server-side rendering (build), returns the HTML as-is — it
+ * was already sanitized at fetch time by the fetch scripts (e.g.
+ * scripts/fetch-firehose.js via sanitize-html with the same allowlist), and the
+ * output is static. DOMPurify
  * requires a real DOM and cannot run in Docusaurus SSG (jsdom bundles break webpack).
  */
 const ALLOWED_TAGS = [
