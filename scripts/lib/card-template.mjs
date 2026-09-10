@@ -169,7 +169,7 @@ export function renderCard(
     const pkg = (release.majorPackages ?? []).find(
       (p) => p.name.toLowerCase() === name.toLowerCase()
     );
-    if (pkg) return [{ name: pkg.name, version: pkg.version }];
+    if (pkg) return [{ name: pkg.name, version: pkg.version, prevVersion: pkg.prevVersion }];
     return [];
   });
 
