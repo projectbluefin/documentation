@@ -5,7 +5,9 @@ const path = require("node:path");
 const { execFileSync } = require("node:child_process");
 
 const ROOT = path.resolve(__dirname, "..");
-const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, "package.json"), "utf8"));
+const pkg = JSON.parse(
+  fs.readFileSync(path.join(ROOT, "package.json"), "utf8"),
+);
 
 // ── Phase definitions in package.json ────────────────────────────────────────
 
@@ -52,6 +54,7 @@ const FETCH_SCRIPTS = [
   "fetch-github-driver-versions.js",
   "fetch-github-images.js",
   "fetch-contributors.js",
+  "fetch-portal-contributors.js",
   "fetch-firehose.js",
   "fetch-pin-state.js",
 ];
@@ -59,10 +62,7 @@ const FETCH_SCRIPTS = [
 test("all fetch script files exist", () => {
   for (const script of FETCH_SCRIPTS) {
     const scriptPath = path.join(ROOT, "scripts", script);
-    assert.ok(
-      fs.existsSync(scriptPath),
-      `scripts/${script} must exist`,
-    );
+    assert.ok(fs.existsSync(scriptPath), `scripts/${script} must exist`);
   }
 });
 
@@ -84,6 +84,7 @@ const GITHUB_SCRIPTS = [
   "fetch-github-profiles.js",
   "fetch-github-repos.js",
   "fetch-contributors.js",
+  "fetch-portal-contributors.js",
 ];
 
 for (const script of GITHUB_SCRIPTS) {

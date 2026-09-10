@@ -297,6 +297,32 @@ test("STREAM_SPECS contains utah-testing and utah-nvidia-testing", () => {
   assert.equal(utahNvidiaSpec.streamPrefix, "testing");
 });
 
+test("STREAM_SPECS maps all Bluefin LTS streams to bluefin-lts package and stable prefixes", () => {
+  const ltsStreams = STREAM_SPECS.filter((s) => s.id.includes("lts"));
+  assert.ok(ltsStreams.length > 0, "LTS streams must exist");
+
+  for (const stream of ltsStreams) {
+    assert.equal(
+      stream.package,
+      "bluefin-lts",
+      `${stream.id} must use package bluefin-lts`,
+    );
+    assert.ok(
+      stream.streamPrefix.startsWith("stable"),
+      `${stream.id} streamPrefix must start with stable, got ${stream.streamPrefix}`,
+    );
+    assert.ok(
+      !stream.streamPrefix.startsWith("lts"),
+      `${stream.id} streamPrefix must not start with lts`,
+    );
+  }
+
+  const primaryLts = STREAM_SPECS.find((s) => s.id === "bluefin-lts");
+  assert.ok(primaryLts, "bluefin-lts spec must exist");
+  assert.equal(primaryLts.package, "bluefin-lts");
+  assert.equal(primaryLts.streamPrefix, "stable");
+});
+
 // Dynamic reference date based on current time to avoid lookback window flakiness.
 const now = new Date();
 const FIXED_RECENT_DATE = now.toISOString().split("T")[0].replace(/-/g, "");
@@ -339,11 +365,46 @@ test("findRecentTagsForStream: picks stable-YYYYMMDD tags from GHCR list", () =>
   assert.equal(result[0].cacheKey, `stable-${FIXED_RECENT_DATE}`);
 });
 
-test("findRecentTagsForStream: excludes tags older than LOOKBACK_DAYS", () => {
+test("findRecentTagsForStream: excludes tags older than LOOKBACK_DAYS when recent releases exist", () => {
   const oldDate = "20200101"; // way in the past
-  const ghcrTags = [`stable-${oldDate}`];
+  const ghcrTags = [`stable-${FIXED_RECENT_DATE}`, `stable-${oldDate}`];
   const result = findRecentTagsForStream(ghcrTags, MOCK_STABLE_SPEC);
-  assert.equal(result.length, 0, "old tags must be excluded");
+  assert.equal(
+    result.length,
+    1,
+    "old tags must be excluded when recent releases exist",
+  );
+  assert.equal(result[0].tag, `stable-${FIXED_RECENT_DATE}`);
+});
+
+test("findRecentTagsForStream: retains latest-release fallback when lookback finds no releases", () => {
+  const oldDate = "20200101";
+  const olderDate = "20190101";
+  const ghcrTags = [`stable-${olderDate}`, `stable-${oldDate}`];
+  const result = findRecentTagsForStream(ghcrTags, MOCK_STABLE_SPEC);
+  assert.equal(
+    result.length,
+    1,
+    "must retain single latest release as fallback",
+  );
+  assert.equal(result[0].dateStr, oldDate);
+});
+
+test("findRecentTagsForStream: recognizes version-qualified live tags", () => {
+  const ghcrTags = [
+    `stable-44.${FIXED_RECENT_DATE}`,
+    `testing-44.${FIXED_RECENT_DATE}`,
+    `stable-daily-44.${FIXED_RECENT_DATE}`,
+  ];
+  const stableResult = findRecentTagsForStream(ghcrTags, MOCK_STABLE_SPEC);
+  assert.equal(stableResult.length, 1);
+  assert.equal(stableResult[0].tag, `stable-44.${FIXED_RECENT_DATE}`);
+  assert.equal(stableResult[0].cacheKey, `stable-${FIXED_RECENT_DATE}`);
+
+  const dailyResult = findRecentTagsForStream(ghcrTags, MOCK_STABLE_DAILY_SPEC);
+  assert.equal(dailyResult.length, 1);
+  assert.equal(dailyResult[0].tag, `stable-daily-44.${FIXED_RECENT_DATE}`);
+  assert.equal(dailyResult[0].cacheKey, `stable-daily-${FIXED_RECENT_DATE}`);
 });
 
 test("findRecentTagsForStream: deduplicates same date", () => {

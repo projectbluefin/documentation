@@ -150,7 +150,7 @@ export default function PortalFooter(): React.JSX.Element {
           <ul className={styles.socialLinks}>
             <li>
               <a
-                href="https://github.com/ublue-os/bluefin"
+                href="https://github.com/projectbluefin/bluefin"
                 target="_blank"
                 rel="noopener noreferrer"
               >

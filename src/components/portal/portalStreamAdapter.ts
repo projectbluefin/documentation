@@ -83,6 +83,7 @@ interface RawProduct {
   id?: string;
   package?: string;
   streams?: RawImageStream[];
+  versions?: Record<string, string | null>;
 }
 
 interface RawDriverLatest {
@@ -185,15 +186,25 @@ function extractDakotaRows(
   driverStream?: RawDriverStream,
   streamTag = "stable",
 ): ProductVersionRow[] {
-  const imageStream = findImageStream(product, streamTag);
+  const imageStream =
+    findImageStream(product, streamTag) || findImageStream(product, "latest");
   const imageVersions = imageStream?.versions ?? {};
   const driverVersions = driverStream?.latest?.versions ?? {};
-  const combined = { ...imageVersions, ...driverVersions };
+  const productVersions =
+    typeof product?.versions === "object" && product.versions !== null
+      ? (product.versions as Record<string, string | null>)
+      : {};
 
-  return DAKOTA_KEYS.filter((key) => combined[key]).map((key) => ({
-    label: PACKAGE_LABELS[key] ?? key,
-    value: String(combined[key]),
-  }));
+  const getVersion = (key: string): string | null => {
+    const val =
+      driverVersions[key] ?? imageVersions[key] ?? productVersions[key];
+    return val ? String(val) : null;
+  };
+
+  return DAKOTA_KEYS.map((key) => {
+    const value = getVersion(key);
+    return value ? { label: PACKAGE_LABELS[key] ?? key, value } : null;
+  }).filter((row): row is ProductVersionRow => row !== null);
 }
 
 export function adaptStreams(
@@ -269,7 +280,7 @@ export function adaptStreams(
         id: "utah",
         title: "Utah",
         description: "",
-        href: "/utah",
+        href: "https://devconf.us",
         image: "/img/portal/characters/utah.webp",
         versionRows: [],
       },

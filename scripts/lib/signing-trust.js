@@ -40,11 +40,11 @@ const SIGNING_TRUST = {
     cosignKeyUrl: COSIGN_KEY_LTS,
     attestationLive: false,
   },
-  // Utah: keyless + OCI attestation live.
+  // Utah: keyless, awaiting initial testing image release and OCI attestation.
   "projectbluefin/utah": {
     keyless: true,
     cosignKeyUrl: null,
-    attestationLive: true,
+    attestationLive: false,
   },
   // Dakota: keyless, but SLSA attestations reach the OCI registry only once
   // projectbluefin/dakota#391 lands (push-to-registry: true).

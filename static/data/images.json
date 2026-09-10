@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-06T23:03:42.206Z",
+  "generatedAt": "2026-09-09T19:15:35.696Z",
   "cacheHours": 168,
   "refreshHours": 336,
   "staleDays": 30,
@@ -31,7 +31,10 @@
             "fedora": "F44",
             "flatpak": "1.17.7",
             "mesa": "26.0.8",
-            "podman": "5.8.2"
+            "podman": "5.8.2",
+            "systemd": "259.5",
+            "bootc": "1.15.2",
+            "pipewire": "1.6.6"
           },
           "nvidiaCommand": "sudo bootc switch ghcr.io/projectbluefin/bluefin-nvidia:stable --enforce-container-sigpolicy"
         },
@@ -46,7 +49,10 @@
             "fedora": "F44",
             "flatpak": "1.17.7",
             "mesa": "26.0.8",
-            "podman": "5.8.2"
+            "podman": "5.8.2",
+            "systemd": "259.5",
+            "bootc": "1.15.2",
+            "pipewire": "1.6.6"
           },
           "nvidiaCommand": "sudo bootc switch ghcr.io/projectbluefin/bluefin-nvidia:testing --enforce-container-sigpolicy"
         }
@@ -65,16 +71,16 @@
           "ostreeCommit": "f16f67b41b89dbda51bfc64baa385c645b17804ff6cf2415bb45e8313d7552ff"
         }
       },
-      "metadataSource": "live",
+      "metadataSource": "cache",
       "versions": {
         "source": "sbom",
         "gnome": "50.1",
         "kernel": "7.0.8-200.fc44",
         "nvidia": "595.71.05",
         "release": {
-          "title": "stable-20260720: Stable",
-          "url": "https://github.com/projectbluefin/bluefin/releases/tag/stable-20260720",
-          "assetsUrl": "https://github.com/projectbluefin/bluefin/releases/tag/stable-20260720#assets"
+          "title": "stable-20260909",
+          "url": "https://github.com/projectbluefin/bluefin/releases/tag/stable-20260909",
+          "assetsUrl": "https://github.com/projectbluefin/bluefin/releases/tag/stable-20260909#assets"
         }
       },
       "security": {
@@ -116,7 +122,10 @@
             "fedora": null,
             "flatpak": "1.16.0",
             "mesa": "25.2.7",
-            "podman": "5.8.2"
+            "podman": "5.8.2",
+            "systemd": "257",
+            "bootc": "1.15.2",
+            "pipewire": "1.4.11"
           },
           "nvidiaCommand": "sudo bootc switch ghcr.io/projectbluefin/bluefin-lts-nvidia:stable --enforce-container-sigpolicy"
         },
@@ -131,7 +140,10 @@
             "fedora": null,
             "flatpak": "1.16.0",
             "mesa": "25.2.7",
-            "podman": "5.8.2"
+            "podman": "5.8.2",
+            "systemd": "257",
+            "bootc": "1.15.2",
+            "pipewire": "1.4.11"
           },
           "nvidiaCommand": "sudo bootc switch ghcr.io/projectbluefin/bluefin-lts-nvidia:testing --enforce-container-sigpolicy"
         }
@@ -150,16 +162,16 @@
           "ostreeCommit": null
         }
       },
-      "metadataSource": "live",
+      "metadataSource": "cache",
       "versions": {
         "source": "sbom",
         "gnome": "49.5",
         "kernel": "6.12.0-233.el10",
         "nvidia": null,
         "release": {
-          "title": "stable-20260807: LTS",
-          "url": "https://github.com/projectbluefin/bluefin-lts/releases/tag/stable-20260807",
-          "assetsUrl": "https://github.com/projectbluefin/bluefin-lts/releases/tag/stable-20260807#assets"
+          "title": "stable-20260909",
+          "url": "https://github.com/projectbluefin/bluefin-lts/releases/tag/stable-20260909",
+          "assetsUrl": "https://github.com/projectbluefin/bluefin-lts/releases/tag/stable-20260909#assets"
         }
       },
       "security": {
@@ -201,7 +213,10 @@
             "fedora": null,
             "flatpak": "1.16.6",
             "mesa": "26.0.6",
-            "podman": "5.8.2"
+            "podman": "5.8.2",
+            "systemd": "260.2",
+            "bootc": "1.15.2",
+            "pipewire": "1.6.1"
           },
           "nvidiaCommand": "sudo bootc switch ghcr.io/projectbluefin/dakota-nvidia:stable --enforce-container-sigpolicy"
         },
@@ -216,7 +231,10 @@
             "fedora": null,
             "flatpak": "1.16.6",
             "mesa": "26.0.6",
-            "podman": "5.8.2"
+            "podman": "5.8.2",
+            "systemd": "260.2",
+            "bootc": "1.15.2",
+            "pipewire": "1.6.1"
           },
           "nvidiaCommand": "sudo bootc switch ghcr.io/projectbluefin/dakota-nvidia:testing --enforce-container-sigpolicy"
         }
@@ -235,7 +253,7 @@
           "ostreeCommit": null
         }
       },
-      "metadataSource": "live",
+      "metadataSource": "cache",
       "versions": {
         "source": "sbom",
         "gnome": "50.2",
@@ -278,7 +296,7 @@
         {
           "label": "TESTING",
           "tag": "testing",
-          "command": "sudo bootc switch ghcr.io/projectbluefin/utah:testing --enforce-container-sigpolicy",
+          "command": null,
           "versions": {
             "gnome": null,
             "kernel": null,
@@ -286,7 +304,10 @@
             "fedora": null,
             "flatpak": null,
             "mesa": null,
-            "podman": null
+            "podman": null,
+            "systemd": null,
+            "bootc": null,
+            "pipewire": null
           },
           "nvidiaCommand": null
         }
@@ -307,10 +328,10 @@
       },
       "security": {
         "cosignKeyUrl": null,
-        "verifyCommand": "cosign verify --certificate-oidc-issuer https://token.actions.githubusercontent.com --certificate-identity-regexp '^https://github.com/projectbluefin/utah/.github/workflows/' ghcr.io/projectbluefin/utah:testing",
-        "attestCommand": "cosign verify-attestation --type https://slsa.dev/provenance/v1 --certificate-oidc-issuer https://token.actions.githubusercontent.com --certificate-identity-regexp '^https://github.com/projectbluefin/utah/.github/workflows/' ghcr.io/projectbluefin/utah:testing",
-        "hasAttestation": true,
-        "sbomCommand": "oras discover ghcr.io/projectbluefin/utah:testing"
+        "verifyCommand": null,
+        "attestCommand": null,
+        "hasAttestation": false,
+        "sbomCommand": null
       },
       "inspectTag": "testing",
       "lastPublishedAt": null,

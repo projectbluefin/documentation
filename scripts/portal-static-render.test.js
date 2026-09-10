@@ -6,6 +6,8 @@ const ts = require("typescript");
 const React = require("react");
 const { renderToStaticMarkup } = require("react-dom/server");
 
+const root = path.join(__dirname, "..");
+
 function loadModule(file) {
   const { outputText } = ts.transpileModule(fs.readFileSync(file, "utf8"), {
     compilerOptions: {
@@ -19,6 +21,25 @@ function loadModule(file) {
   new Function("require", "module", "exports", outputText)(
     (id) => {
       if (id.endsWith(".css")) return {};
+      if (id.startsWith("@site/")) {
+        const rel = id.slice("@site/".length);
+        const target = path.resolve(root, rel);
+        if (target.endsWith(".json"))
+          return JSON.parse(fs.readFileSync(target, "utf8"));
+        for (const suffix of [
+          ".ts",
+          ".tsx",
+          "/index.ts",
+          "/index.tsx",
+          ".json",
+        ]) {
+          if (fs.existsSync(target + suffix)) {
+            if (suffix === ".json")
+              return JSON.parse(fs.readFileSync(target + suffix, "utf8"));
+            return loadModule(target + suffix);
+          }
+        }
+      }
       if (id.startsWith(".")) {
         const base = path.resolve(path.dirname(file), id);
         for (const suffix of [".ts", ".tsx", "/index.ts", "/index.tsx"]) {
@@ -128,10 +149,12 @@ test("PortalCommunity statically renders documentation card, icons, and action l
   );
   assert.ok(html.includes('href="https://docs.projectbluefin.io"'));
   assert.ok(html.includes("View Documentation"));
-  assert.ok(html.includes('href="https://discord.gg/WYCpGEM4sM"'));
+  assert.ok(html.includes('href="https://discord.gg/XUC8cANVHy"'));
   assert.ok(html.includes("Join our Discord"));
   assert.ok(
-    html.includes('href="https://github.com/ublue-os/bluefin/discussions"'),
+    html.includes(
+      'href="https://github.com/projectbluefin/bluefin/discussions"',
+    ),
   );
   assert.ok(html.includes("Discussions"));
   // Verify SVG icons rendered
@@ -142,6 +165,58 @@ test("PortalCommunity statically renders documentation card, icons, and action l
   assert.ok(!source.includes("window."));
   assert.ok(!source.includes("document."));
   assert.ok(!source.includes("useEffect"));
+});
+
+test("PortalContributors statically renders contributor cards, CTA buttons, and activity links", () => {
+  const componentPath = path.join(portalDir, "PortalContributors.tsx");
+  assert.ok(fs.existsSync(componentPath), "PortalContributors.tsx must exist");
+
+  const PortalContributors = loadModule(componentPath).default;
+  const html = renderToStaticMarkup(React.createElement(PortalContributors));
+
+  assert.ok(html.includes('id="contributors"'));
+  assert.ok(html.includes(">Our Contributors<"));
+  assert.ok(html.includes(">Contribute<"));
+  assert.ok(html.includes('href="https://github.com/ublue-os/bluefin"'));
+  assert.ok(html.includes("Visit our GitHub"));
+  assert.ok(html.includes('href="/donations"'));
+  assert.ok(html.includes(">Donate<"));
+  assert.ok(html.includes("Contributors active since"));
+  assert.ok(html.includes('href="https://github.com/ublue-os/bluefin/pulse"'));
+  assert.ok(html.includes("View full repository activity on GitHub →"));
+
+  // Check no browser globals
+  const source = fs.readFileSync(componentPath, "utf8");
+  assert.ok(!source.includes("window."));
+  assert.ok(!source.includes("document."));
+  assert.ok(!source.includes("useEffect"));
+});
+
+test("PortalContributors renders graceful unavailable fallback when data is unavailable or empty", () => {
+  const componentPath = path.join(portalDir, "PortalContributors.tsx");
+  const PortalContributors = loadModule(componentPath).default;
+
+  const htmlUnavailable = renderToStaticMarkup(
+    React.createElement(PortalContributors, {
+      data: { unavailable: true, contributors: [] },
+    }),
+  );
+  assert.ok(
+    htmlUnavailable.includes("GitHub activity is unavailable right now."),
+  );
+  assert.ok(htmlUnavailable.includes("View activity on GitHub"));
+  assert.ok(
+    htmlUnavailable.includes(
+      'href="https://github.com/ublue-os/bluefin/pulse"',
+    ),
+  );
+
+  const htmlEmpty = renderToStaticMarkup(
+    React.createElement(PortalContributors, {
+      data: { unavailable: false, contributors: [] },
+    }),
+  );
+  assert.ok(htmlEmpty.includes("GitHub activity is unavailable right now."));
 });
 
 test("PortalFooter statically renders alumni, sponsors, powered-by, credits, and copyright", () => {
@@ -191,7 +266,7 @@ test("PortalFooter statically renders alumni, sponsors, powered-by, credits, and
   assert.ok(html.includes("Welcome to indie Cloud Native."));
 
   // Social
-  assert.ok(html.includes('href="https://github.com/ublue-os/bluefin"'));
+  assert.ok(html.includes('href="https://github.com/projectbluefin/bluefin"'));
   assert.ok(html.includes("GitHub"));
 
   // Credits
@@ -236,15 +311,21 @@ test("Bazaar, Community CTAs, and Footer links maintain accessible contrast and 
     path.join(portalDir, "PortalFooter.module.css"),
     "utf8",
   );
+  const contributorsCss = fs.readFileSync(
+    path.join(portalDir, "PortalContributors.module.css"),
+    "utf8",
+  );
 
   // Inaccessible #4285f4 must not be used as button background or footer links
   assert.ok(!bazaarCss.includes("#4285f4"));
   assert.ok(!communityCss.includes("#4285f4"));
   assert.ok(!footerCss.includes("#4285f4"));
+  assert.ok(!contributorsCss.includes("#4285f4"));
 
   // Accessible normal background fallback (#0056b3 has > 7:1 contrast on white)
   assert.match(bazaarCss, /\.flathubButton\s*\{[^}]*#0056b3/);
   assert.match(communityCss, /\.communityButton\s*\{[^}]*#0056b3/);
+  assert.match(contributorsCss, /\.contributorsButton\s*\{[^}]*#0056b3/);
 
   // Explicit visible focus rings
   assert.match(
@@ -255,10 +336,15 @@ test("Bazaar, Community CTAs, and Footer links maintain accessible contrast and 
     communityCss,
     /\.communityButton:focus-visible\s*\{[^}]*outline:\s*3px solid/,
   );
+  assert.match(
+    contributorsCss,
+    /\.contributorsButton:focus-visible\s*\{[^}]*outline:\s*3px solid/,
+  );
 
   // Accessible hover and focus state background
   assert.match(bazaarCss, /\.flathubButton:hover[^}]*#004494/);
   assert.match(communityCss, /\.communityButton:hover[^}]*#004494/);
+  assert.match(contributorsCss, /\.contributorsButton:hover[^}]*#004494/);
 
   // Footer links use scoped token variable with fallback
   assert.match(

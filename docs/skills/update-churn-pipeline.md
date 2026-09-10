@@ -35,10 +35,13 @@ Measuring release-over-release download deltas, chunkah layer reuse efficiency, 
 4. **Data Degradation & Fallback**:
    - If an image has no stable releases (e.g. Utah in bootstrapping phase), flag it explicitly with `{ unavailable: true, stateReason: "..." }`.
    - Never throw or exit non-zero from the pipeline script.
-5. **Chart Representation**:
-   - Use shared domains across small-multiple image cards so scales are visually comparable.
-   - Always display raw numerical values alongside visual charts.
-   - Encode status with intensity and glyphs, never red/green pairs.
+5. **Modern Visualization Conventions**:
+   - **KPI Summary Strip**: Lead with key fleet-wide metrics (Latest Fleet Churn in GB, OCI Layer Reuse %, Zstd:Chunked Adoption %, and Active Image Coverage) with tabular numerals and tracked uppercase eyebrows.
+   - **Glassmorphic Panel Styling**: Dark translucent surface cards (`rgba(15, 23, 42, 0.45)`), rounded corners (`18px`), and compact segmented pill controls (`Download Churn (MB)`, `Reuse Efficiency (%)`, `Chunk & Layer Counts`, `Zstd-Chunked Stats`).
+   - **Image Card KPIs**: 4-column compact summary grid (Churn, Reuse, Layers, Total) displayed with tabular numerals directly above each small-multiple EChart.
+   - **Semantic Heading Hierarchy**: Use Docusaurus `<Heading as="h3">` and `<Heading as="h4">` components rather than raw HTML `<h3>` and `<h4>` tags.
+   - **Shared Domains**: Maintain uniform scales across all small-multiple image cards so release churn is visually comparable.
+   - **Visible Unavailability**: Retain explicit `<Unavailable>` fallback cards with descriptive state reasons for inactive or onboarding images (e.g., Utah).
 
 ## Common Rationalizations
 

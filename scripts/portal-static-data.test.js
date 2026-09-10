@@ -141,12 +141,27 @@ test("portal static data exposes exact metadata contracts", () => {
   );
   assert.equal(
     data.COMMUNITY_METADATA.docsCard.discordUrl,
-    "https://discord.gg/WYCpGEM4sM",
+    "https://discord.gg/XUC8cANVHy",
   );
   assert.equal(
     data.COMMUNITY_METADATA.docsCard.discussionsUrl,
-    "https://github.com/ublue-os/bluefin/discussions",
+    "https://github.com/projectbluefin/bluefin/discussions",
   );
+
+  // Contributors
+  assert.equal(data.CONTRIBUTORS_METADATA.tag, "Our Contributors");
+  assert.equal(data.CONTRIBUTORS_METADATA.title, "Contribute");
+  assert.equal(
+    data.CONTRIBUTORS_METADATA.bluefinRepoUrl,
+    "https://github.com/ublue-os/bluefin",
+  );
+  assert.equal(
+    data.CONTRIBUTORS_METADATA.bluefinPulseUrl,
+    "https://github.com/ublue-os/bluefin/pulse",
+  );
+  assert.equal(data.CONTRIBUTORS_METADATA.donationsUrl, "/donations");
+  assert.equal(data.CONTRIBUTORS_METADATA.buttonLabel, "Visit our GitHub");
+  assert.equal(data.CONTRIBUTORS_METADATA.donateButtonLabel, "Donate");
 
   // Alumni
   assert.equal(data.ALUMNI_COMPANIES.length, 9);

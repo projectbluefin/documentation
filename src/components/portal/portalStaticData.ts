@@ -32,9 +32,21 @@ export const COMMUNITY_METADATA = {
     iconSrc: "/icons/docs.svg",
     iconAlt: "Bluefin Documentation",
     docsUrl: "https://docs.projectbluefin.io",
-    discordUrl: "https://discord.gg/WYCpGEM4sM",
-    discussionsUrl: "https://github.com/ublue-os/bluefin/discussions",
+    discordUrl: "https://discord.gg/XUC8cANVHy",
+    discussionsUrl: "https://github.com/projectbluefin/bluefin/discussions",
   },
+} as const;
+
+export const CONTRIBUTORS_METADATA = {
+  tag: "Our Contributors",
+  title: "Contribute",
+  description:
+    "Assist in Bluefin's development by contributing code, reporting bugs, or making feature requests. You can also sponsor individual contributors if you'd like to contribute monetarily.",
+  bluefinRepoUrl: "https://github.com/ublue-os/bluefin",
+  bluefinPulseUrl: "https://github.com/ublue-os/bluefin/pulse",
+  donationsUrl: "/donations",
+  buttonLabel: "Visit our GitHub",
+  donateButtonLabel: "Donate",
 } as const;
 
 export const ALUMNI_COMPANIES: readonly BrandLink[] = [

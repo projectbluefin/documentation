@@ -15,6 +15,7 @@ export interface FirehosePackageVersions {
   systemd?: string | null;
   bootc?: string | null;
   fedora?: string | null;
+  nvidia?: string | null;
   /** Full RPM name→version map — used for diff computation */
   allPackages?: Record<string, string> | null;
 }

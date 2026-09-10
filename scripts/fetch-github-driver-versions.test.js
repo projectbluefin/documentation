@@ -58,6 +58,33 @@ test("rowFromSbomRelease builds kernel/mesa/gnome from SBOM only", () => {
   assert.equal(row.versions.nvidia, "595.58.03-1");
 });
 
+test("rowFromSbomRelease includes systemd, bootc, and pipewire when present", () => {
+  const row = rowFromSbomRelease(
+    "dakota-latest",
+    "latest-20260608",
+    {
+      tag: "latest-20260608",
+      packageVersions: {
+        kernel: "7.0.7",
+        systemd: "260.2",
+        bootc: "1.15.2",
+        mesa: "26.0.6",
+        gnome: "50.2",
+        pipewire: "1.6.1",
+      },
+    },
+    "595.71.05",
+  );
+
+  assert.equal(row.versions.kernel, "7.0.7");
+  assert.equal(row.versions.systemd, "260.2");
+  assert.equal(row.versions.bootc, "1.15.2");
+  assert.equal(row.versions.mesa, "26.0.6");
+  assert.equal(row.versions.nvidia, "595.71.05");
+  assert.equal(row.versions.gnome, "50.2");
+  assert.equal(row.versions.pipewire, "1.6.1");
+});
+
 test("buildStreamFromSbom sorts newest-first and marks source sbom", () => {
   const cache = {
     streams: {
@@ -100,6 +127,49 @@ test("buildStreamFromSbom sorts newest-first and marks source sbom", () => {
   assert.equal(stream.source, "sbom");
   assert.equal(stream.latest?.tag, "stable-20260331");
   assert.equal(stream.latest?.versions.kernel, "6.18.13-200");
+});
+
+test("buildStreamFromSbom resolves Bluefin LTS HWE companion kernel with stable-hwe prefix", () => {
+  const cache = {
+    streams: {
+      "bluefin-lts": {
+        releases: {
+          "stable-20260908": {
+            tag: "stable-20260908",
+            packageVersions: {
+              kernel: "6.12.0-224.el10",
+              mesa: "25.3.6-6",
+              gnome: "49.5-1",
+            },
+          },
+        },
+      },
+      "bluefin-lts-hwe": {
+        releases: {
+          "stable-hwe-20260908": {
+            tag: "stable-hwe-20260908",
+            packageVersions: {
+              kernel: "6.18.13-200.fc43",
+            },
+          },
+        },
+      },
+    },
+  };
+
+  const stream = buildStreamFromSbom(
+    "bluefin-lts",
+    "Bluefin LTS",
+    "Long-term support stream.",
+    "sudo bootc switch ghcr.io/projectbluefin/bluefin-lts:stable --enforce-container-sigpolicy",
+    cache,
+    {},
+    9999,
+    "bluefin-lts-hwe",
+  );
+
+  assert.equal(stream.latest?.versions.kernel, "6.12.0-224.el10");
+  assert.equal(stream.latest?.versions.hweKernel, "6.18.13-200.fc43");
 });
 
 test("buildStreamFromSbom builds Utah testing stream", () => {

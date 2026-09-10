@@ -233,3 +233,23 @@ export function formatIsoUrl(selection: ChooserSelection): string {
 export function formatChecksumUrl(selection: ChooserSelection): string {
   return `${BASE_DOWNLOAD_URL}/${formatIsoFilename(selection)}-CHECKSUM`;
 }
+
+export function formatBootcCommand(selection: ChooserSelection): string {
+  let image = "bluefin";
+  if (selection.stream === "lts") {
+    image = selection.gpu === "nvidia" ? "bluefin-lts-nvidia" : "bluefin-lts";
+  } else if (selection.gpu === "nvidia") {
+    image = "bluefin-nvidia";
+  }
+
+  let tag = "stable";
+  if (
+    selection.stream === "lts" &&
+    selection.kernel === "hwe" &&
+    selection.gpu !== "nvidia"
+  ) {
+    tag = "lts-hwe";
+  }
+
+  return `sudo bootc switch ghcr.io/projectbluefin/${image}:${tag} --enforce-container-sigpolicy`;
+}

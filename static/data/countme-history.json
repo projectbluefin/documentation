@@ -3,7 +3,15 @@
   "source": "https://data-analysis.fedoraproject.org/csv-reports/countme/totals.csv",
   "method": "ublue-countme-v1",
   "unit": "estimated weekly active systems",
-  "variants": ["bluefin", "bluefin-lts", "aurora", "bazzite", "fedora"],
+  "variants": [
+    "bluefin",
+    "bluefin-lts",
+    "aurora",
+    "bazzite",
+    "fedora",
+    "dakota",
+    "utah"
+  ],
   "weeks": [
     {
       "week": "2025-12-01",

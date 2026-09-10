@@ -56,12 +56,12 @@ interface DoraMonthly {
   passed: number;
   failed: number;
   running?: number;
-  failureRate: number;
+  failureRate: number | null;
   medianDurationMin: number;
 }
 interface DoraCurrent {
   deploymentsPerWeek: number;
-  changeFailureRate: number;
+  changeFailureRate: number | null;
   medianLeadTimeHours: number | null;
   leadTimeReason?: string;
 }
@@ -113,7 +113,8 @@ function fmt(n: number | null | undefined): string {
   return n.toLocaleString("en-US");
 }
 
-function pct(n: number): string {
+function pct(n: number | null | undefined): string {
+  if (n == null || !Number.isFinite(n)) return "—";
   return `${(n * 100).toFixed(1)}%`;
 }
 
