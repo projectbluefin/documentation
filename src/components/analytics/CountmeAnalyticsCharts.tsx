@@ -135,20 +135,26 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
   }, [weeks, heroRange]);
 
   // Delta calculation for Bluefin fleet
-  const firstWeek = weeks[0] || ({} as CountmeWeek);
+  const firstWeek = heroFilteredWeeks[0] || ({} as CountmeWeek);
   const initialTotalBluefin =
     (Number(firstWeek.bluefin) || 0) +
       (Number(firstWeek["bluefin-lts"]) || 0) +
       (Number(firstWeek.dakota) || 0) +
       (Number(firstWeek.utah) || 0) || currentTotalBluefin;
 
-  const bluefinDeltaPct =
+  const rawDeltaPct =
     initialTotalBluefin > 0
-      ? (
-          ((currentTotalBluefin - initialTotalBluefin) / initialTotalBluefin) *
-          100
-        ).toFixed(1)
-      : "0.0";
+      ? ((currentTotalBluefin - initialTotalBluefin) / initialTotalBluefin) *
+        100
+      : 0;
+
+  const bluefinDeltaPct =
+    Math.abs(rawDeltaPct) < 0.05 ? "0.0" : rawDeltaPct.toFixed(1);
+
+  const heroDeltaFormatted =
+    Number(bluefinDeltaPct) > 0
+      ? `+${bluefinDeltaPct}%`
+      : `${bluefinDeltaPct}%`;
 
   // Filtered weeks for comparative time-series charts
   const filteredWeeks = useMemo(() => {
@@ -440,7 +446,7 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
             </div>
             <div className={styles.heroMeta}>
               <span style={{ fontWeight: 700, color: "#39d2c0" }}>
-                +{bluefinDeltaPct}% overall
+                {heroDeltaFormatted} overall
               </span>
               <span>latest week ({latestWeek.week})</span>
             </div>
