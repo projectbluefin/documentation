@@ -105,6 +105,7 @@ export function selectMonthlyWallpaper(
 
 /**
  * Convert a WebP file to PNG buffer for Satori decoding.
+ * Returns null if no external image conversion utility is installed.
  */
 export function webpToPngBuffer(webpPath) {
   try {
@@ -113,21 +114,25 @@ export function webpToPngBuffer(webpPath) {
       stdio: ["pipe", "pipe", "ignore"],
     });
   } catch {
-    return execFileSync(
-      "ffmpeg",
-      [
-        "-v",
-        "error",
-        "-i",
-        webpPath,
-        "-f",
-        "image2pipe",
-        "-vcodec",
-        "png",
-        "-",
-      ],
-      { maxBuffer: 50 * 1024 * 1024, stdio: ["pipe", "pipe", "ignore"] },
-    );
+    try {
+      return execFileSync(
+        "ffmpeg",
+        [
+          "-v",
+          "error",
+          "-i",
+          webpPath,
+          "-f",
+          "image2pipe",
+          "-vcodec",
+          "png",
+          "-",
+        ],
+        { maxBuffer: 50 * 1024 * 1024, stdio: ["pipe", "pipe", "ignore"] },
+      );
+    } catch {
+      return null;
+    }
   }
 }
 
@@ -214,8 +219,13 @@ export async function generateSocialCard({
   }
 
   const pngBuf = webpToPngBuffer(wallpaperPath);
+  if (!pngBuf) {
+    console.warn(
+      "Neither dwebp nor ffmpeg is installed — preserving existing social preview card.",
+    );
+    return { png: outputPathPng, webp: outputPathWebp, skipped: true };
+  }
   const dataUrl = `data:image/png;base64,${pngBuf.toString("base64")}`;
-
   const rawWordmark = readFileSync(WORDMARK_PATH, "utf8");
   const fontBoldBuffer = readFileSync(
     join(FONTSOURCE_DIR, "inter-latin-700-normal.woff"),
