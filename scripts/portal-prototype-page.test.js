@@ -256,7 +256,7 @@ test("portal prototype avoids nested landmark and suppresses no outlines", () =>
   const componentSource = fs.readFileSync(componentPath, "utf8");
   assert.match(
     componentSource,
-    /<div className=\{styles\.portal\}>/,
+    /<div className=\{styles\.portal\}(?:\s+aria-busy=\{[^}]+\})?>/,
     "PortalPrototype must use div with styles.portal as root",
   );
   assert.ok(
