@@ -181,9 +181,17 @@ function UserspaceMarker({
   );
 }
 
+const STREAM_PACKAGES: Record<string, string> = {
+  "bluefin-stable": "bluefin",
+  "bluefin-lts": "bluefin-lts",
+  "dakota-latest": "dakota",
+  "utah-testing": "utah",
+};
+
 function buildRebaseCommand(stream: DriverStream, tag: string): string {
   const safeTag = tag.replace(/[^a-zA-Z0-9_.-]/g, "");
-  return `sudo bootc switch --enforce-container-sigpolicy ghcr.io/projectbluefin/${stream.id.replace(/-.*/, "")}:${safeTag}`;
+  const pkg = STREAM_PACKAGES[stream.id] ?? stream.id.replace(/-.*/, "");
+  return `sudo bootc switch --enforce-container-sigpolicy ghcr.io/projectbluefin/${pkg}:${safeTag}`;
 }
 
 function ReleaseNode({
