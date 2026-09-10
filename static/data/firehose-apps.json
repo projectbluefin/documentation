@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "generatedAt": "2026-07-21T01:48:56.994Z",
+  "generatedAt": "2026-09-10T02:41:58.502Z",
   "generatedBy": "bluefin-releases v1.0.0",
   "buildDuration": "9.357971736s",
   "stats": {
@@ -37,7 +37,8 @@
         "majorPackages": {
           "Podman": "5.8.2",
           "systemd": "259.5",
-          "bootc": "1.15.2"
+          "bootc": "1.15.2",
+          "NVIDIA": "595.71.05"
         }
       },
       "releases": [
@@ -65,12 +66,13 @@
             "podman": "5.8.2",
             "systemd": "259.5",
             "bootc": "1.15.2",
-            "fedora": "F44"
+            "fedora": "F44",
+            "nvidia": "595.71.05"
           },
           "packageDiff": null
         }
       ],
-      "fetchedAt": "2026-07-21T01:48:56.990Z",
+      "fetchedAt": "2026-09-10T02:41:58.499Z",
       "isVerified": false,
       "appSet": "core",
       "packageType": "os"
@@ -92,7 +94,8 @@
         "majorPackages": {
           "Podman": "5.8.2",
           "systemd": "257",
-          "bootc": "1.15.2"
+          "bootc": "1.15.2",
+          "NVIDIA": "595.71.05"
         }
       },
       "releases": [
@@ -110,7 +113,8 @@
             "podman": "5.8.2",
             "systemd": "257",
             "bootc": "1.15.2",
-            "fedora": null
+            "fedora": null,
+            "nvidia": "595.71.05"
           },
           "packageDiff": {
             "added": [],
@@ -153,7 +157,8 @@
             "podman": "5.8.2",
             "systemd": "257",
             "bootc": "1.15.2",
-            "fedora": null
+            "fedora": null,
+            "nvidia": "595.71.05"
           },
           "packageDiff": {
             "added": [],
@@ -175,12 +180,13 @@
             "podman": "5.8.2",
             "systemd": "257",
             "bootc": "1.15.2",
-            "fedora": null
+            "fedora": null,
+            "nvidia": "595.71.05"
           },
           "packageDiff": null
         }
       ],
-      "fetchedAt": "2026-07-21T01:48:56.994Z",
+      "fetchedAt": "2026-09-10T02:41:58.502Z",
       "isVerified": false,
       "appSet": "core",
       "packageType": "os"

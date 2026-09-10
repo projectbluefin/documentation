@@ -5,15 +5,40 @@
 import React, { useEffect, useState } from "react";
 import styles from "./PageContributors.module.css";
 import contributorsData from "@site/static/data/file-contributors.json";
+import type {
+  FileContributor,
+  FileContributorsData,
+} from "@site/src/types/data";
 
-interface Contributor {
-  login: string;
-  html_url: string;
-  avatar_url: string;
+export type Contributor = FileContributor;
+
+export interface PageContributorsProps {
+  filePath: string;
+  data?: FileContributorsData;
 }
 
-interface PageContributorsProps {
-  filePath: string;
+export function isDatasetUnavailable(
+  data: FileContributorsData | undefined,
+): boolean {
+  if (!data) return true;
+  if ("unavailable" in data && data.unavailable !== undefined) {
+    return Boolean(data.unavailable);
+  }
+  if ("files" in data && data.files !== undefined) {
+    return Object.keys(data.files).length === 0;
+  }
+  return Object.keys(data).length === 0;
+}
+
+export function getFileContributors(
+  data: FileContributorsData | undefined,
+  filePath: string,
+): Contributor[] | undefined {
+  if (!data) return undefined;
+  if ("files" in data && data.files && typeof data.files === "object") {
+    return (data.files as Record<string, Contributor[]>)[filePath];
+  }
+  return (data as Record<string, Contributor[]>)[filePath];
 }
 
 const CACHE_KEY_PREFIX = "file_contributors_";
@@ -129,15 +154,37 @@ const fetchFileContributors = async (
   });
 };
 
-const PageContributors: React.FC<PageContributorsProps> = ({ filePath }) => {
-  const [contributors, setContributors] = useState<Contributor[]>([]);
-  const [loading, setLoading] = useState(true);
+const PageContributors: React.FC<PageContributorsProps> = ({
+  filePath,
+  data = contributorsData as unknown as FileContributorsData,
+}) => {
+  const [contributors, setContributors] = useState<Contributor[]>(() => {
+    if (isDatasetUnavailable(data)) {
+      return [];
+    }
+    const buildData = getFileContributors(data, filePath);
+    return buildData ?? [];
+  });
+  const [loading, setLoading] = useState<boolean>(() => {
+    if (isDatasetUnavailable(data)) {
+      return false;
+    }
+    const buildData = getFileContributors(data, filePath);
+    return !buildData;
+  });
 
   useEffect(() => {
-    // First, try pre-fetched build-time data
-    const buildData = (contributorsData as Record<string, typeof contributorsData[keyof typeof contributorsData]>)[filePath];
+    // If the contributor dataset as a whole is unavailable, suppress visitor-side API fallback
+    if (isDatasetUnavailable(data)) {
+      setContributors([]);
+      setLoading(false);
+      return;
+    }
 
-    if (buildData) {
+    // First, try pre-fetched build-time data
+    const buildData = getFileContributors(data, filePath);
+
+    if (buildData && buildData.length > 0) {
       setContributors(buildData);
       setLoading(false);
       return;
@@ -150,11 +197,12 @@ const PageContributors: React.FC<PageContributorsProps> = ({ filePath }) => {
 
       if (cachedData) {
         try {
-          const { data, timestamp } = JSON.parse(cachedData);
+          const { data: cachedContributors, timestamp } =
+            JSON.parse(cachedData);
           const age = Date.now() - timestamp;
 
           if (age < CACHE_DURATION) {
-            setContributors(data);
+            setContributors(cachedContributors);
             setLoading(false);
             return;
           } else {
@@ -166,10 +214,10 @@ const PageContributors: React.FC<PageContributorsProps> = ({ filePath }) => {
       }
     }
 
-    // Finally, fetch from GitHub API as fallback
+    // Finally, fetch from GitHub API as fallback for cache misses on an available dataset
     fetchFileContributors(filePath)
-      .then((data) => {
-        setContributors(data);
+      .then((fetchedData) => {
+        setContributors(fetchedData);
         setLoading(false);
 
         // Cache in localStorage with 30-day expiry
@@ -179,7 +227,7 @@ const PageContributors: React.FC<PageContributorsProps> = ({ filePath }) => {
             localStorage.setItem(
               cacheKey,
               JSON.stringify({
-                data,
+                data: fetchedData,
                 timestamp: Date.now(),
               }),
             );
@@ -195,7 +243,7 @@ const PageContributors: React.FC<PageContributorsProps> = ({ filePath }) => {
         );
         setLoading(false);
       });
-  }, [filePath]);
+  }, [filePath, data]);
 
   if (loading) {
     return null;

@@ -4,7 +4,7 @@ import styles from "./HiveSnapshot.module.css";
 
 /** The hive instance whose read-only snapshot this links to. */
 const SNAPSHOT_URL =
-  "https://hosted-projectbluefin-common-nmq5.hive.kubestellar.io/snapshot";
+  "https://hosted-projectbluefin-common-nmq5.hive.hivecommons.dev/snapshot";
 
 /**
  * A link to the hive's own read-only dashboard snapshot.

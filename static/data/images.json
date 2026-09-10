@@ -296,7 +296,7 @@
         {
           "label": "TESTING",
           "tag": "testing",
-          "command": "sudo bootc switch ghcr.io/projectbluefin/utah:testing --enforce-container-sigpolicy",
+          "command": null,
           "versions": {
             "gnome": null,
             "kernel": null,
@@ -328,10 +328,10 @@
       },
       "security": {
         "cosignKeyUrl": null,
-        "verifyCommand": "cosign verify --certificate-oidc-issuer https://token.actions.githubusercontent.com --certificate-identity-regexp '^https://github.com/projectbluefin/utah/.github/workflows/' ghcr.io/projectbluefin/utah:testing",
-        "attestCommand": "cosign verify-attestation --type https://slsa.dev/provenance/v1 --certificate-oidc-issuer https://token.actions.githubusercontent.com --certificate-identity-regexp '^https://github.com/projectbluefin/utah/.github/workflows/' ghcr.io/projectbluefin/utah:testing",
-        "hasAttestation": true,
-        "sbomCommand": "oras discover ghcr.io/projectbluefin/utah:testing"
+        "verifyCommand": null,
+        "attestCommand": null,
+        "hasAttestation": false,
+        "sbomCommand": null
       },
       "inspectTag": "testing",
       "lastPublishedAt": null,
