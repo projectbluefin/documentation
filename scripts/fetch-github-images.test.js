@@ -9,6 +9,7 @@ const {
   buildSecurityInfo,
   buildStreamVersionInfo,
   buildTestingStreams,
+  buildTopStreams,
   buildUnavailableOutput,
   cacheAgeHours,
   handleUnavailableCache,
@@ -411,7 +412,7 @@ test("buildSecurityInfo returns keyless verification commands for keyless repos"
   assert.match(info.attestCommand, /https:\/\/slsa\.dev\/provenance\/v1/);
 });
 
-test("buildSecurityInfo returns keyless verification commands for Utah", () => {
+test("buildSecurityInfo returns keyless verification commands for Utah with attestationLive false", () => {
   const info = buildSecurityInfo(
     {
       keyRepo: "projectbluefin/utah",
@@ -422,9 +423,41 @@ test("buildSecurityInfo returns keyless verification commands for Utah", () => {
   );
 
   assert.equal(info.cosignKeyUrl, null);
-  assert.equal(info.hasAttestation, true);
+  assert.equal(info.hasAttestation, false);
   assert.match(info.verifyCommand, /certificate-oidc-issuer/);
   assert.match(info.attestCommand, /certificate-identity-regexp/);
+});
+
+test("buildSecurityInfo hides verification commands when tag is not available", () => {
+  const info = buildSecurityInfo(
+    {
+      keyRepo: "projectbluefin/utah",
+      org: "projectbluefin",
+      package: "utah",
+    },
+    "testing",
+    false,
+  );
+
+  assert.equal(info.cosignKeyUrl, null);
+  assert.equal(info.hasAttestation, false);
+  assert.equal(info.verifyCommand, null);
+  assert.equal(info.attestCommand, null);
+  assert.equal(info.sbomCommand, null);
+});
+
+test("buildTopStreams leaves command null when tag is not in tagSet", () => {
+  const spec = {
+    org: "projectbluefin",
+    package: "utah",
+    streamOrder: ["testing"],
+  };
+  const emptyTagSet = new Set();
+  const streams = buildTopStreams(spec, emptyTagSet);
+
+  assert.equal(streams.length, 1);
+  assert.equal(streams[0].tag, "testing");
+  assert.equal(streams[0].command, null);
 });
 
 test("handleUnavailableCache preserves a valid SBOM-derived image catalog", () => {

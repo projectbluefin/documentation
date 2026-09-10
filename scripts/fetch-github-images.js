@@ -365,7 +365,9 @@ function buildTopStreams(spec, tagSet) {
     top.push({
       label: fallbackTag.toUpperCase(),
       tag: fallbackTag,
-      command: `sudo bootc switch ghcr.io/${spec.org}/${spec.package}:${fallbackTag} --enforce-container-sigpolicy`,
+      command: tagSet.has(fallbackTag)
+        ? `sudo bootc switch ghcr.io/${spec.org}/${spec.package}:${fallbackTag} --enforce-container-sigpolicy`
+        : null,
       versions: null,
     });
   }
@@ -381,6 +383,9 @@ function attachNvidiaCommands(
   if (!spec.nvidiaPackage) return streams;
 
   return streams.map((entry) => {
+    if (!entry.command) {
+      return { ...entry, nvidiaCommand: null };
+    }
     if (!nvidiaTagSet && Array.isArray(existingStreams)) {
       const existingEntry = existingStreams.find((s) => s.tag === entry.tag);
       if (existingEntry && "nvidiaCommand" in existingEntry) {
@@ -533,7 +538,7 @@ function attachNvidiaTestingCommands(
   });
 }
 
-function buildSecurityInfo(spec, inspectTag) {
+function buildSecurityInfo(spec, inspectTag, isAvailable = true) {
   const imageRef = `ghcr.io/${spec.org}/${spec.package}:${inspectTag}`;
 
   // Signing policy per repo lives in scripts/lib/signing-trust.js — the single
@@ -556,13 +561,13 @@ function buildSecurityInfo(spec, inspectTag) {
   const OIDC_IDENTITY_PREFIX = `^https://github.com/${spec.keyRepo}/.github/workflows/`;
   const SLSA_TYPE = "https://slsa.dev/provenance/v1";
 
-  if (hasNoPipeline) {
+  if (hasNoPipeline || !isAvailable) {
     return {
       cosignKeyUrl: null,
       verifyCommand: null,
       attestCommand: null,
       hasAttestation: false,
-      sbomCommand: `oras discover ${imageRef}`,
+      sbomCommand: null,
     };
   }
 
@@ -632,8 +637,8 @@ async function buildProduct(spec, feeds, cachedById, ageHours, sbomCache) {
     tags =
       existing?.allTags ||
       [
-        ...(existing?.streams || []).map((s) => s.tag),
-        ...(existing?.testingStreams || []).map((s) => s.tag),
+        ...(existing?.streams || []).filter((s) => s.command).map((s) => s.tag),
+        ...(existing?.testingStreams || []).filter((s) => s.command).map((s) => s.tag),
       ].filter(Boolean);
   }
   const tagSet = new Set(tags);
@@ -759,7 +764,7 @@ async function buildProduct(spec, feeds, cachedById, ageHours, sbomCache) {
     metadata,
     metadataSource,
     versions,
-    security: buildSecurityInfo(spec, inspectTag),
+    security: buildSecurityInfo(spec, inspectTag, tagSet.has(inspectTag)),
     inspectTag,
     lastPublishedAt: lastPublishedAt,
     stale,
@@ -903,6 +908,7 @@ module.exports = {
   buildSecurityInfo,
   buildStreamVersionInfo,
   buildTestingStreams,
+  buildTopStreams,
   buildUnavailableOutput,
   cacheAgeHours,
   handleUnavailableCache,

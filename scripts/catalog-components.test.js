@@ -117,6 +117,56 @@ test("ImagesCatalog renders the unavailable reason", () => {
   assert.ok(html.includes("SBOM cache contains no release data"));
 });
 
+test("ImagesCatalog renders awaiting initial release for unpublished streams and hides commands", () => {
+  const html = render(imagesModule.default, {
+    initialCatalog: {
+      products: [
+        {
+          id: "projectbluefin-utah",
+          name: "Project Bluefin Utah",
+          org: "projectbluefin",
+          package: "utah",
+          artwork: "bluefin",
+          streams: [
+            {
+              label: "TESTING",
+              tag: "testing",
+              command: null,
+            },
+          ],
+          testingStreams: [],
+          security: {
+            cosignKeyUrl: null,
+            verifyCommand: null,
+            attestCommand: null,
+            hasAttestation: false,
+            sbomCommand: null,
+          },
+        },
+      ],
+      unavailable: false,
+    },
+  });
+
+  assert.ok(
+    html.includes(
+      "Awaiting initial release: <code>testing</code> image is not yet published.",
+    ),
+  );
+  assert.ok(
+    html.includes(
+      "Awaiting initial release: verification commands will be available once the image is published.",
+    ),
+  );
+  assert.ok(
+    html.includes(
+      "Awaiting initial release: attestation verification will be available once the image is published.",
+    ),
+  );
+  assert.ok(!html.includes("sudo bootc switch ghcr.io/projectbluefin/utah"));
+  assert.ok(!html.includes("cosign verify"));
+});
+
 test("DriverVersionsCatalog renders the unavailable reason", () => {
   const html = render(DriverVersionsCatalog, {
     streamId: "bluefin-lts",
