@@ -42,6 +42,18 @@ test("buildOsInfo keeps core OS versions and major packages", () => {
   });
 });
 
+test("buildOsInfo includes NVIDIA in majorPackages when present in packageVersions", () => {
+  const info = buildOsInfo("bluefin-stable", {
+    podman: "5.4",
+    nvidia: "595.71.05",
+  });
+
+  assert.deepEqual(info.majorPackages, {
+    Podman: "5.4",
+    NVIDIA: "595.71.05",
+  });
+});
+
 test("buildOsApp picks the newest populated release and computes package diffs", () => {
   const spec = {
     streamId: "bluefin-stable",
@@ -84,6 +96,42 @@ test("buildOsApp picks the newest populated release and computes package diffs",
     { name: "gamma", newVersion: null, oldVersion: "3" },
   ]);
 });
+test("buildOsApp falls back to driverCache for NVIDIA when absent in SBOM packageVersions", () => {
+  const spec = {
+    streamId: "bluefin-stable",
+    appId: "bluefin-os-stable",
+    name: "Bluefin OS (Stable)",
+  };
+  const sbomCache = {
+    streams: {
+      "bluefin-stable": {
+        releases: {
+          "stable-20260401": {
+            packageVersions: {
+              podman: "5.8.2",
+            },
+          },
+        },
+      },
+    },
+  };
+  const driverCache = {
+    streams: [
+      {
+        id: "bluefin-stable",
+        latest: {
+          versions: {
+            nvidia: "595.71.05",
+          },
+        },
+      },
+    ],
+  };
+
+  const app = buildOsApp(spec, sbomCache, driverCache);
+  assert.equal(app.osInfo.majorPackages.NVIDIA, "595.71.05");
+});
+
 
 test("sanitizeRemoteApp trims strings coerces booleans and limits release entries", () => {
   const app = sanitizeRemoteApp({

@@ -4,6 +4,7 @@ const path = require("path");
 const OUTPUT_DIR = path.join(__dirname, "..", "static", "data");
 const OUTPUT_FILE = path.join(OUTPUT_DIR, "firehose-apps.json");
 const SBOM_FILE = path.join(OUTPUT_DIR, "sbom-attestations.json");
+const DRIVER_FILE = path.join(OUTPUT_DIR, "driver-versions.json");
 const SOURCE_URL = "https://castrojo.github.io/bluefin-releases/apps.json";
 
 // Cache configuration — match the 6h pipeline schedule of bluefin-releases.
@@ -53,6 +54,21 @@ function readSbomCache() {
     return null;
   }
 }
+/**
+ * Read driver-versions.json from disk.
+ * Returns null if the file is absent or unparseable.
+ */
+function readDriverCache() {
+  if (!fs.existsSync(DRIVER_FILE)) return null;
+  try {
+    const data = JSON.parse(fs.readFileSync(DRIVER_FILE, "utf-8"));
+    if (!data.streams || !Array.isArray(data.streams)) return null;
+    return data;
+  } catch {
+    return null;
+  }
+}
+
 
 /**
  * Get all releases for a stream, sorted descending (newest first).
@@ -83,6 +99,7 @@ function buildOsInfo(streamId, packageVersions) {
   if (packageVersions.podman) majorPackages["Podman"] = packageVersions.podman;
   if (packageVersions.systemd) majorPackages["systemd"] = packageVersions.systemd;
   if (packageVersions.bootc) majorPackages["bootc"] = packageVersions.bootc;
+  if (packageVersions.nvidia) majorPackages["NVIDIA"] = packageVersions.nvidia;
 
   if (Object.keys(majorPackages).length > 0) {
     info.majorPackages = majorPackages;
@@ -136,7 +153,7 @@ function computePackageDiff(current, previous) {
  * The "latest release" is the most recent SBOM cache entry with packageVersions.
  * Older entries (up to 9 more) are collected as releases[] for the older-releases toggle.
  */
-function buildOsApp(spec, sbomCache) {
+function buildOsApp(spec, sbomCache, driverCache = null) {
   const stream = sbomCache?.streams?.[spec.streamId];
   const releases = sortedReleases(stream);
 
@@ -157,7 +174,15 @@ function buildOsApp(spec, sbomCache) {
       currentReleaseDate = `${currentReleaseVersion}T00:00:00Z`;
       updatedAt = currentReleaseDate;
     }
-    osInfo = buildOsInfo(spec.streamId, latestWithVersions.packageVersions);
+    const packageVersions = { ...latestWithVersions.packageVersions };
+    if (!packageVersions.nvidia && driverCache?.streams) {
+      const driverStream = driverCache.streams.find((s) => s.id === spec.streamId);
+      const nvidiaVer = driverStream?.latest?.versions?.nvidia;
+      if (nvidiaVer) {
+        packageVersions.nvidia = nvidiaVer;
+      }
+    }
+    osInfo = buildOsInfo(spec.streamId, packageVersions);
   } else if (releases.length > 0) {
     // Have releases but none with packageVersions yet (SBOM not populated for this entry)
     const first = releases[0];
@@ -381,8 +406,9 @@ async function fetchFirehoseData() {
     );
   }
 
+  const driverCache = readDriverCache();
   const osApps = OS_STREAM_SPECS.map((spec) => {
-    const app = buildOsApp(spec, sbomCache);
+    const app = buildOsApp(spec, sbomCache, driverCache);
     console.log(
       `  OS entry: ${spec.appId} — version: ${app.currentReleaseVersion || "(none)"}, ` +
         `kernel: ${app.osInfo?.kernelVersion || "(none)"}`,
