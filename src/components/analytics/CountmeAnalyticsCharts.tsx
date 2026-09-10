@@ -10,14 +10,14 @@ import countmeHistoryData from "@site/static/data/countme-history.json";
 
 export interface CountmeWeek {
   week: string;
-  bluefin?: number;
-  "bluefin-lts"?: number;
-  aurora?: number;
-  bazzite?: number;
-  fedora?: number;
-  dakota?: number;
-  utah?: number;
-  [key: string]: string | number | undefined;
+  bluefin?: number | null;
+  "bluefin-lts"?: number | null;
+  aurora?: number | null;
+  bazzite?: number | null;
+  fedora?: number | null;
+  dakota?: number | null;
+  utah?: number | null;
+  [key: string]: string | number | null | undefined;
 }
 
 export interface CountmeDataset {
@@ -31,12 +31,41 @@ export interface CountmeDataset {
   stateReason?: string | null;
 }
 
+/**
+ * Parse a raw count value, preserving 0 as a valid measurement.
+ * Returns null for undefined, null, empty string, or non-finite values.
+ */
+export function parseCount(val: unknown): number | null {
+  if (val === null || val === undefined || val === "") return null;
+  const n = typeof val === "number" ? val : Number(val);
+  return Number.isFinite(n) ? n : null;
+}
+
+/**
+ * Sum an array of counts, preserving 0 if at least one value is present,
+ * and returning null if all values are missing (gaps).
+ */
+export function sumPresent(
+  values: Array<number | null | undefined>,
+): number | null {
+  let hasValue = false;
+  let total = 0;
+  for (const raw of values) {
+    const val = parseCount(raw);
+    if (val !== null) {
+      hasValue = true;
+      total += val;
+    }
+  }
+  return hasValue ? total : null;
+}
+
 type HeroRange = "12w" | "24w" | "all";
 type HeroMode = "unified" | "split";
 type RangeOption = "4w" | "12w" | "all";
 type ViewMode = "workstations" | "all-ecosystem" | "with-fedora";
 
-interface ProjectBluefinImageSpec {
+export interface ProjectBluefinImageSpec {
   id: "bluefin" | "bluefin-lts" | "dakota" | "utah";
   name: string;
   edition: string;
@@ -46,7 +75,7 @@ interface ProjectBluefinImageSpec {
   statusText: string;
 }
 
-const BLUEFIN_FAMILY_IMAGES: ProjectBluefinImageSpec[] = [
+export const BLUEFIN_FAMILY_IMAGES: ProjectBluefinImageSpec[] = [
   {
     id: "bluefin",
     name: "Bluefin",
@@ -85,8 +114,31 @@ const BLUEFIN_FAMILY_IMAGES: ProjectBluefinImageSpec[] = [
   },
 ];
 
-export default function CountmeAnalyticsCharts(): React.JSX.Element {
-  const data = countmeHistoryData as unknown as CountmeDataset;
+export function getFamilyImageMetrics(
+  img: ProjectBluefinImageSpec,
+  weeks: CountmeWeek[],
+  latestWeek: CountmeWeek,
+) {
+  const count = parseCount(latestWeek[img.id]);
+  const history = weeks.slice(-12).map((w) => parseCount(w[img.id]));
+  const hasHistory = history.some((v) => v !== null);
+  const isTracked = count !== null;
+  return {
+    count,
+    isTracked,
+    hasHistory,
+    history: isTracked || hasHistory ? history : [],
+  };
+}
+
+export interface CountmeAnalyticsChartsProps {
+  dataset?: CountmeDataset;
+}
+
+export default function CountmeAnalyticsCharts({
+  dataset,
+}: CountmeAnalyticsChartsProps = {}): React.JSX.Element {
+  const data = dataset ?? (countmeHistoryData as unknown as CountmeDataset);
   const weeks = data?.weeks || [];
 
   const [heroRange, setHeroRange] = useState<HeroRange>("all");
@@ -95,12 +147,13 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
   const [viewMode, setViewMode] = useState<ViewMode>("all-ecosystem");
 
   const latestWeek = weeks[weeks.length - 1] || ({} as CountmeWeek);
-  const latestBluefin = Number(latestWeek.bluefin) || 0;
-  const latestBluefinLts = Number(latestWeek["bluefin-lts"]) || 0;
-  const latestDakota = Number(latestWeek.dakota) || 0;
-  const latestUtah = Number(latestWeek.utah) || 0;
+  const latestBluefin = parseCount(latestWeek.bluefin);
+  const latestBluefinLts = parseCount(latestWeek["bluefin-lts"]);
+  const latestDakota = parseCount(latestWeek.dakota);
+  const latestUtah = parseCount(latestWeek.utah);
   const currentTotalBluefin =
-    latestBluefin + latestBluefinLts + latestDakota + latestUtah;
+    sumPresent([latestBluefin, latestBluefinLts, latestDakota, latestUtah]) ??
+    0;
 
   // Filtered weeks for Hero Bluefin chart
   const heroFilteredWeeks = useMemo(() => {
@@ -112,10 +165,12 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
   // Delta calculation for Bluefin fleet
   const firstWeek = weeks[0] || ({} as CountmeWeek);
   const initialTotalBluefin =
-    (Number(firstWeek.bluefin) || 0) +
-      (Number(firstWeek["bluefin-lts"]) || 0) +
-      (Number(firstWeek.dakota) || 0) +
-      (Number(firstWeek.utah) || 0) || currentTotalBluefin;
+    sumPresent([
+      firstWeek.bluefin,
+      firstWeek["bluefin-lts"],
+      firstWeek.dakota,
+      firstWeek.utah,
+    ]) ?? currentTotalBluefin;
 
   const bluefinDeltaPct =
     initialTotalBluefin > 0
@@ -134,8 +189,8 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
 
   // Ecosystem totals (Bazzite + Total Bluefin fleet + Aurora)
   const peerTotal = useMemo(() => {
-    const bazzite = Number(latestWeek.bazzite) || 0;
-    const aurora = Number(latestWeek.aurora) || 0;
+    const bazzite = parseCount(latestWeek.bazzite) ?? 0;
+    const aurora = parseCount(latestWeek.aurora) ?? 0;
     return bazzite + currentTotalBluefin + aurora;
   }, [latestWeek, currentTotalBluefin]);
 
@@ -143,18 +198,22 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
   const realHeroPoints = useMemo(() => {
     return heroFilteredWeeks.filter(
       (w) =>
-        (typeof w.bluefin === "number" && !Number.isNaN(w.bluefin)) ||
-        (typeof w["bluefin-lts"] === "number" &&
-          !Number.isNaN(w["bluefin-lts"])),
+        parseCount(w.bluefin) !== null ||
+        parseCount(w["bluefin-lts"]) !== null ||
+        parseCount(w.dakota) !== null ||
+        parseCount(w.utah) !== null,
     ).length;
   }, [heroFilteredWeeks]);
 
   const realComparativePoints = useMemo(() => {
     return filteredWeeks.filter(
       (w) =>
-        (typeof w.bazzite === "number" && !Number.isNaN(w.bazzite)) ||
-        (typeof w.bluefin === "number" && !Number.isNaN(w.bluefin)) ||
-        (typeof w.aurora === "number" && !Number.isNaN(w.aurora)),
+        parseCount(w.bazzite) !== null ||
+        parseCount(w.bluefin) !== null ||
+        parseCount(w["bluefin-lts"]) !== null ||
+        parseCount(w.dakota) !== null ||
+        parseCount(w.utah) !== null ||
+        parseCount(w.aurora) !== null,
     ).length;
   }, [filteredWeeks]);
 
@@ -162,17 +221,25 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
   const workstationDomain = useMemo<[number, number]>(() => {
     let min = Infinity;
     let max = -Infinity;
-    const workstationKeys = ["bluefin", "aurora", "bluefin-lts"] as const;
+    const workstationKeys = [
+      "bluefin",
+      "aurora",
+      "bluefin-lts",
+      "dakota",
+      "utah",
+    ] as const;
     for (const w of weeks) {
       for (const k of workstationKeys) {
-        const val = w[k];
-        if (typeof val === "number") {
+        const val = parseCount(w[k]);
+        if (val !== null) {
           if (val < min) min = val;
           if (val > max) max = val;
         }
       }
     }
-    return [Math.max(0, min), Math.max(100, max)];
+    const safeMin = Number.isFinite(min) ? Math.max(0, min) : 0;
+    const safeMax = Number.isFinite(max) ? Math.max(100, max) : 100;
+    return [safeMin, safeMax];
   }, [weeks]);
 
   // 1. "Bluefin Systems (Total Fleet)" EChart option
@@ -181,10 +248,10 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
 
     if (heroMode === "split") {
       const flagshipSeries = gapSafe(
-        heroFilteredWeeks.map((w) => w.bluefin ?? null),
+        heroFilteredWeeks.map((w) => parseCount(w.bluefin)),
       );
       const ltsSeries = gapSafe(
-        heroFilteredWeeks.map((w) => w["bluefin-lts"] ?? null),
+        heroFilteredWeeks.map((w) => parseCount(w["bluefin-lts"])),
       );
 
       return {
@@ -225,14 +292,9 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
 
     // Unified fleet total series
     const totalSeries = gapSafe(
-      heroFilteredWeeks.map((w) => {
-        const bf = typeof w.bluefin === "number" ? w.bluefin : 0;
-        const lts = typeof w["bluefin-lts"] === "number" ? w["bluefin-lts"] : 0;
-        const dakota = typeof w.dakota === "number" ? w.dakota : 0;
-        const utah = typeof w.utah === "number" ? w.utah : 0;
-        const sum = bf + lts + dakota + utah;
-        return sum > 0 ? sum : null;
-      }),
+      heroFilteredWeeks.map((w) =>
+        sumPresent([w.bluefin, w["bluefin-lts"], w.dakota, w.utah]),
+      ),
     );
 
     return {
@@ -282,7 +344,7 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
       seriesList.push({
         name: "Fedora (Base)",
         type: "line",
-        data: gapSafe(filteredWeeks.map((w) => w.fedora ?? null)),
+        data: gapSafe(filteredWeeks.map((w) => parseCount(w.fedora))),
         connectNulls: false,
         itemStyle: { color: "#79b8ff" },
         lineStyle: { type: [4, 4] },
@@ -293,7 +355,7 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
       seriesList.push({
         name: "Bazzite (Gaming)",
         type: "line",
-        data: gapSafe(filteredWeeks.map((w) => w.bazzite ?? null)),
+        data: gapSafe(filteredWeeks.map((w) => parseCount(w.bazzite))),
         connectNulls: false,
         itemStyle: { color: "#f0883e" },
         lineStyle: { type: seriesDash(3) },
@@ -305,7 +367,7 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
         {
           name: "Bluefin Flagship",
           type: "line",
-          data: gapSafe(filteredWeeks.map((w) => w.bluefin ?? null)),
+          data: gapSafe(filteredWeeks.map((w) => parseCount(w.bluefin))),
           connectNulls: false,
           itemStyle: { color: seriesColor(0) },
           lineStyle: { type: seriesDash(0) },
@@ -313,7 +375,7 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
         {
           name: "Bluefin LTS",
           type: "line",
-          data: gapSafe(filteredWeeks.map((w) => w["bluefin-lts"] ?? null)),
+          data: gapSafe(filteredWeeks.map((w) => parseCount(w["bluefin-lts"]))),
           connectNulls: false,
           itemStyle: { color: seriesColor(1) },
           lineStyle: { type: seriesDash(1) },
@@ -325,14 +387,9 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
         name: "Bluefin Family",
         type: "line",
         data: gapSafe(
-          filteredWeeks.map((w) => {
-            const sum =
-              (Number(w.bluefin) || 0) +
-              (Number(w["bluefin-lts"]) || 0) +
-              (Number(w.dakota) || 0) +
-              (Number(w.utah) || 0);
-            return sum > 0 ? sum : null;
-          }),
+          filteredWeeks.map((w) =>
+            sumPresent([w.bluefin, w["bluefin-lts"], w.dakota, w.utah]),
+          ),
         ),
         connectNulls: false,
         itemStyle: { color: seriesColor(0) },
@@ -343,7 +400,7 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
     seriesList.push({
       name: "Aurora (KDE)",
       type: "line",
-      data: gapSafe(filteredWeeks.map((w) => w.aurora ?? null)),
+      data: gapSafe(filteredWeeks.map((w) => parseCount(w.aurora))),
       connectNulls: false,
       itemStyle: { color: seriesColor(2) },
       lineStyle: { type: seriesDash(2) },
@@ -370,8 +427,8 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
   }
 
   // Distribution calculations
-  const bazziteCount = Number(latestWeek.bazzite) || 0;
-  const auroraCount = Number(latestWeek.aurora) || 0;
+  const bazziteCount = parseCount(latestWeek.bazzite) ?? 0;
+  const auroraCount = parseCount(latestWeek.aurora) ?? 0;
   const bazzitePct = peerTotal > 0 ? (bazziteCount / peerTotal) * 100 : 0;
   const bluefinPct =
     peerTotal > 0 ? (currentTotalBluefin / peerTotal) * 100 : 0;
@@ -387,23 +444,34 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
               Weekly Active Systems
             </Heading>
             <p className={styles.heroSubtitle}>
-              Weekly DNF countme check-ins across Project Bluefin workstation variants (Fedora countme)
+              Weekly DNF countme check-ins across Project Bluefin workstation
+              variants (Fedora countme)
             </p>
             <div className={styles.heroSubBadges}>
               <span
                 className={`${styles.heroSubBadge} ${styles.heroSubBadgeHighlight}`}
               >
                 Flagship (projectbluefin/bluefin):{" "}
-                {latestBluefin.toLocaleString()} (
-                {((latestBluefin / currentTotalBluefin) * 100).toFixed(1)}%)
+                {latestBluefin !== null
+                  ? `${latestBluefin.toLocaleString()} (${currentTotalBluefin > 0 ? ((latestBluefin / currentTotalBluefin) * 100).toFixed(1) : "0.0"}%)`
+                  : "Pending"}
               </span>
               <span className={styles.heroSubBadge}>
                 LTS (projectbluefin/bluefin-lts):{" "}
-                {latestBluefinLts.toLocaleString()} (
-                {((latestBluefinLts / currentTotalBluefin) * 100).toFixed(1)}%)
+                {latestBluefinLts !== null
+                  ? `${latestBluefinLts.toLocaleString()} (${currentTotalBluefin > 0 ? ((latestBluefinLts / currentTotalBluefin) * 100).toFixed(1) : "0.0"}%)`
+                  : "Pending"}
               </span>
-              <span className={styles.heroSubBadge}>Dakota: Bootstrapping</span>
-              <span className={styles.heroSubBadge}>Utah: Provisioning</span>
+              <span className={styles.heroSubBadge}>
+                {latestDakota !== null
+                  ? `Dakota: ${latestDakota.toLocaleString()}${currentTotalBluefin > 0 ? ` (${((latestDakota / currentTotalBluefin) * 100).toFixed(1)}%)` : ""}`
+                  : "Dakota: Bootstrapping"}
+              </span>
+              <span className={styles.heroSubBadge}>
+                {latestUtah !== null
+                  ? `Utah: ${latestUtah.toLocaleString()}${currentTotalBluefin > 0 ? ` (${((latestUtah / currentTotalBluefin) * 100).toFixed(1)}%)` : ""}`
+                  : "Utah: Provisioning"}
+              </span>
             </div>
           </div>
 
@@ -485,19 +553,8 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
 
         <div className={styles.familyGrid}>
           {BLUEFIN_FAMILY_IMAGES.map((img) => {
-            const count =
-              img.id === "bluefin"
-                ? latestBluefin
-                : img.id === "bluefin-lts"
-                  ? latestBluefinLts
-                  : img.id === "dakota"
-                    ? latestDakota
-                    : latestUtah;
-
-            const isTracked = count > 0;
-            const history = isTracked
-              ? weeks.slice(-12).map((w) => (w[img.id] as number) ?? null)
-              : [];
+            const { count, isTracked, hasHistory, history } =
+              getFamilyImageMetrics(img, weeks, latestWeek);
 
             return (
               <div key={img.id} className={styles.familyCard}>
@@ -521,13 +578,13 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
 
                 <div className={styles.countRow}>
                   <span className={styles.countValue}>
-                    {isTracked
+                    {isTracked && count !== null
                       ? count.toLocaleString()
                       : img.status === "bootstrapping"
                         ? "Initial"
                         : "Pending"}
                   </span>
-                  {isTracked && currentTotalBluefin > 0 && (
+                  {isTracked && count !== null && currentTotalBluefin > 0 && (
                     <span className={styles.sharePct}>
                       {((count / currentTotalBluefin) * 100).toFixed(1)}% fleet
                     </span>
@@ -536,7 +593,9 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
 
                 <div className={styles.cardSparkline}>
                   <span className={styles.sparklineLabel}>
-                    {isTracked ? "12-week trend" : "Countme status"}
+                    {isTracked || hasHistory
+                      ? "12-week trend"
+                      : "Countme status"}
                   </span>
                   <Sparkline
                     data={history}
@@ -554,7 +613,11 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
                         ? "accumulating countme data"
                         : "provisioning countme"
                     }
-                    label={`${img.name} 12-week adoption trend: currently ${count.toLocaleString()}`}
+                    label={
+                      count !== null
+                        ? `${img.name} 12-week adoption trend: currently ${count.toLocaleString()}`
+                        : `${img.name} countme status: ${img.statusText}`
+                    }
                   />
                 </div>
 
@@ -685,7 +748,7 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
         <EChart
           option={comparativeChartOption}
           title="Comparative Image Trajectories"
-          summary={`Comparative adoption trajectories across cloud-native images over ${filteredWeeks.length} weeks. Latest week (${latestWeek.week}): Bazzite ${Number(latestWeek.bazzite || 0).toLocaleString()} (Gaming), Bluefin Family ${currentTotalBluefin.toLocaleString()} (Workstations), Aurora ${Number(latestWeek.aurora || 0).toLocaleString()} (KDE).`}
+          summary={`Comparative adoption trajectories across cloud-native images over ${filteredWeeks.length} weeks. Latest week (${latestWeek.week}): Bazzite ${(parseCount(latestWeek.bazzite) ?? 0).toLocaleString()} (Gaming), Bluefin Family ${currentTotalBluefin.toLocaleString()} (Workstations), Aurora ${(parseCount(latestWeek.aurora) ?? 0).toLocaleString()} (KDE).`}
           points={realComparativePoints}
           minPoints={2}
           height={320}
