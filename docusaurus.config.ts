@@ -207,6 +207,11 @@ const config: Config = {
           label: "Documentation",
         },
         {
+          href: "https://ask.projectbluefin.io",
+          label: "Ask Bluefin",
+          position: "left",
+        },
+        {
           to: "blog",
           label: "Blog",
           position: "right",
@@ -214,6 +219,11 @@ const config: Config = {
         {
           to: "changelogs",
           label: "Changelogs",
+          position: "right",
+        },
+        {
+          href: "https://docs.projectbluefin.io/reports",
+          label: "Reports",
           position: "right",
         },
         {
@@ -238,7 +248,7 @@ const config: Config = {
         },
         {
           href: "https://store.projectbluefin.io",
-          label: "Store (US Only)",
+          label: "Store",
           position: "right",
         },
       ],

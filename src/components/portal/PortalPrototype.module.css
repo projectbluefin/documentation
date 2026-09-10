@@ -252,7 +252,10 @@
 
 .parallaxViewport {
   position: fixed;
-  inset: var(--ifm-navbar-height) 0 0;
+  inset: calc(
+      var(--ifm-navbar-height) + var(--docusaurus-announcement-bar-height, 0px)
+    )
+    0 0;
   z-index: 5;
   overflow: clip;
   pointer-events: none;
