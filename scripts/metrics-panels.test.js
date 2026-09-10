@@ -436,6 +436,21 @@ function render(fixtures) {
 
 // ── Tests ──────────────────────────────────────────────────────────────────
 
+test("null change failure rate renders unavailable marker, never 0.0%", () => {
+  const doraNullRate = {
+    ...DORA,
+    current: { ...DORA.current, changeFailureRate: null },
+  };
+  const html = render({
+    countme: COUNTME_FULL,
+    brew: BREW,
+    dora: doraNullRate,
+    scorecard: SCORECARD,
+  });
+  assert.ok(!html.includes("0.0%"));
+  assert.ok(html.includes("—"));
+});
+
 test("lead time renders as not-measured, never as 0", () => {
   const html = render({
     countme: COUNTME_FULL,
