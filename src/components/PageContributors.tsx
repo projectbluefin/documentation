@@ -19,6 +19,15 @@ interface PageContributorsProps {
 const CACHE_KEY_PREFIX = "file_contributors_";
 const CACHE_DURATION = 30 * 24 * 60 * 60 * 1000; // 30 days
 
+// Must match UNAVAILABLE_KEY in scripts/fetch-contributors.js. When the
+// build-time fetch produced zero successful results, the dataset carries
+// this sentinel instead of per-file entries, signalling that every visitor
+// browser should skip its GitHub API fallback rather than hammering the
+// unauthenticated API on every page load.
+const UNAVAILABLE_KEY = "__contributors_unavailable__";
+const isDatasetGloballyUnavailable =
+  (contributorsData as Record<string, unknown>)[UNAVAILABLE_KEY] === true;
+
 // Global request queue to prevent rate limiting
 class RequestQueue {
   private queue: Array<() => Promise<void>> = [];
@@ -164,6 +173,14 @@ const PageContributors: React.FC<PageContributorsProps> = ({ filePath }) => {
           localStorage.removeItem(cacheKey);
         }
       }
+    }
+
+    // If the build-time dataset is globally unavailable (e.g. the fetch
+    // script had no token or was rate-limited during the build), don't fall
+    // back to per-page client-side API requests - just show nothing.
+    if (isDatasetGloballyUnavailable) {
+      setLoading(false);
+      return;
     }
 
     // Finally, fetch from GitHub API as fallback

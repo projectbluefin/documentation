@@ -10,6 +10,12 @@ const OUTPUT_FILE = path.join(OUTPUT_DIR, "file-contributors.json");
 const DOCS_DIR = path.join(__dirname, "..", "docs");
 const BLOG_DIR = path.join(__dirname, "..", "blog");
 
+// Sentinel key written when a complete fetch run yields zero successful
+// results. Consumers (e.g. PageContributors.tsx) use this to detect a
+// globally unavailable dataset and suppress per-page client-side API
+// fallback requests, instead of treating every missing key as a cache miss.
+const UNAVAILABLE_KEY = "__contributors_unavailable__";
+
 // Cache configuration
 const CACHE_MAX_AGE_HOURS = 24;
 
@@ -143,19 +149,25 @@ async function fetchAllContributors() {
     },
   );
 
-  const contributorsData = Object.fromEntries(resultsMap);
   const successCount = resultsMap.size;
 
   console.log(
     `\nSuccessfully fetched contributors for ${successCount}/${allFiles.length} files`,
   );
 
-  // Don't fail build if no contributors fetched - component will gracefully handle empty data
-  if (successCount === 0) {
+  // Don't fail build if no contributors fetched - component will gracefully handle empty data.
+  // When nothing succeeded (e.g. no token / rate limited / offline), emit a sentinel
+  // payload instead of an empty object so the client knows the whole dataset is
+  // unavailable and can skip its per-page GitHub API fallback requests.
+  let contributorsData;
+  if (allFiles.length > 0 && successCount === 0) {
     console.warn(
       "\n⚠️  No contributors fetched! Contributors will not be displayed.",
     );
     console.warn("   Please set a GitHub token and try again.");
+    contributorsData = { [UNAVAILABLE_KEY]: true };
+  } else {
+    contributorsData = Object.fromEntries(resultsMap);
   }
 
   // Ensure output directory exists
@@ -183,4 +195,5 @@ if (require.main === module) {
 module.exports = {
   getAllMarkdownFiles,
   isBotAccount,
+  UNAVAILABLE_KEY,
 };
