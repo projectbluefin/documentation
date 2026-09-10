@@ -19,12 +19,12 @@
  *  - Pagination: GitHub Releases API is paginated; we fetch all pages.
  *  - Failure modes: present:false = no attestation published;
  *                   verified:false = attestation exists but verification failed.
- *  - lts/gdx streams: keyless:false (key-based signing, not OIDC keyless).
+ *  - lts streams: keyless:false (key-based signing, not OIDC keyless).
  *    verifyAttestation() uses OIDC keyless → attestation.present:false is expected.
  *    LTS SBOMs ARE published (spdx-json format via oras attach from reusable-build-image.yml).
  *    downloadSbom() uses ORAS directly and works regardless of signing method.
  *    extractPackageVersions() handles both Syft JSON and SPDX JSON formats.
- *    Cache hit for lts/gdx uses packageVersions presence (not attestation.verified).
+ *    Cache hit for lts uses packageVersions presence (not attestation.verified).
  *  - SBOM download: uses `oras discover` on the image tag to find the
  *    vnd.spdx+json referrer digest, then `oras pull` to download sbom.json
  *    into a temp directory.
@@ -32,7 +32,7 @@
  *    parsed for RPM artifacts to extract packageVersions.
  *  - SBOM cache: keyed by image digest — if the digest hasn't changed AND
  *    packageVersions is non-null, the existing cache entry is reused.
- *  - NVIDIA: present in GDX (bluefin-gdx-lts) SBOM as nvidia-driver RPM.
+ *  - NVIDIA: present in LTS NVIDIA (bluefin-lts-nvidia) SBOM as nvidia-driver RPM.
  *    Absent from base bluefin-stable/lts SBOMs (akmod, built separately).
  *    fetch-github-driver-versions.js uses null for nvidia on stable/lts streams.
  *  - Atomic write: output is written to a temp file then renamed to avoid
@@ -124,7 +124,7 @@ const PARTIAL_RELEASES_REASON =
  * from keyRepo via scripts/lib/signing-trust.js, the single source of truth
  * shared with fetch-github-images.js:
  *   keyless:true  → OIDC keyless signing (stable/latest/beta mainline streams)
- *   keyless:false → key-based signing; cosignKeyUrl required (lts/gdx streams).
+ *   keyless:false → key-based signing; cosignKeyUrl required (lts streams).
  *                   These streams have no SBOMs yet — present:false is expected.
  *                   When lts SBOMs are published, no code changes are needed.
  *
@@ -203,76 +203,13 @@ const RAW_STREAM_SPECS = [
     keyRepo: "projectbluefin/bluefin-lts",
   },
   {
-    id: "bluefin-dx-stable",
-    label: "Bluefin DX Stable",
-    org: "projectbluefin",
-    package: "bluefin-dx",
-    releasesRepo: "projectbluefin/bluefin",
-    streamPrefix: "stable",
-    keyRepo: "projectbluefin/bluefin",
-  },
-  {
-    id: "bluefin-dx-latest",
-    label: "Bluefin DX Latest",
-    org: "projectbluefin",
-    package: "bluefin-dx",
-    releasesRepo: "projectbluefin/bluefin",
-    streamPrefix: "latest",
-    keyRepo: "projectbluefin/bluefin",
-  },
-  {
-    id: "bluefin-dx-lts",
-    label: "Bluefin DX LTS",
+    id: "bluefin-lts-nvidia",
+    label: "Bluefin LTS NVIDIA",
     org: "projectbluefin",
     package: "bluefin-lts",
     releasesRepo: "projectbluefin/bluefin-lts",
     streamPrefix: "stable",
     keyRepo: "projectbluefin/bluefin-lts",
-  },
-  {
-    id: "bluefin-dx-lts-hwe-testing",
-    label: "Bluefin DX LTS HWE Testing",
-    org: "projectbluefin",
-    package: "bluefin-lts",
-    releasesRepo: "projectbluefin/bluefin-lts",
-    streamPrefix: "stable-hwe-testing",
-    keyRepo: "projectbluefin/bluefin-lts",
-  },
-  {
-    id: "bluefin-dx-lts-hwe-testing-50",
-    label: "Bluefin DX LTS HWE Testing 50",
-    org: "projectbluefin",
-    package: "bluefin-lts",
-    releasesRepo: "projectbluefin/bluefin-lts",
-    streamPrefix: "stable-hwe-testing-50",
-    keyRepo: "projectbluefin/bluefin-lts",
-  },
-  {
-    id: "bluefin-dx-lts-testing-50",
-    label: "Bluefin DX LTS Testing 50",
-    org: "projectbluefin",
-    package: "bluefin-lts",
-    releasesRepo: "projectbluefin/bluefin-lts",
-    streamPrefix: "stable-testing-50",
-    keyRepo: "projectbluefin/bluefin-lts",
-  },
-  {
-    id: "bluefin-gdx-lts",
-    label: "Bluefin GDX LTS",
-    org: "projectbluefin",
-    package: "bluefin-lts",
-    releasesRepo: "projectbluefin/bluefin-lts",
-    streamPrefix: "stable",
-    keyRepo: "projectbluefin/bluefin-lts",
-  },
-  {
-    id: "bluefin-gdx-latest",
-    label: "Bluefin GDX Latest",
-    org: "projectbluefin",
-    package: "bluefin-gdx",
-    releasesRepo: "projectbluefin/bluefin",
-    streamPrefix: "latest",
-    keyRepo: "projectbluefin/bluefin",
   },
   {
     id: "bluefin-nvidia-open-stable",
