@@ -57,7 +57,6 @@ const HARDCODED_USERNAMES = [
   "tulilirockz",
 
   // Artists
-  "chandeleer1698",
   "delphicmelody",
 
   // Bluefin Maintainers (Emeritus)
