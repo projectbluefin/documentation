@@ -13,6 +13,7 @@ const {
   cacheAgeHours,
   handleUnavailableCache,
   isCurrentImageCatalog,
+  isImagePublished,
   main,
   normalizeTestingTag,
   reportMainError,
@@ -356,6 +357,14 @@ test("buildSecurityInfo returns keyless verification commands for keyless repos"
   assert.equal(info.hasAttestation, true);
   assert.match(info.verifyCommand, /certificate-identity-regexp/);
   assert.match(info.attestCommand, /https:\/\/slsa\.dev\/provenance\/v1/);
+});
+
+test("isImagePublished is false when the registry has no matching stream tag", () => {
+  const spec = { streamOrder: ["testing"] };
+
+  assert.equal(isImagePublished(spec, new Set()), false);
+  assert.equal(isImagePublished(spec, new Set(["unstable", "latest"])), false);
+  assert.equal(isImagePublished(spec, new Set(["testing"])), true);
 });
 
 test("buildSecurityInfo returns keyless verification commands for Utah", () => {

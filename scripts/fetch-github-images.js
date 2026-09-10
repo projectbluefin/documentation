@@ -341,6 +341,14 @@ async function inspectImage(imageRef, tag) {
   return JSON.parse(stdout);
 }
 
+// A product's primary stream tag (e.g. Utah's `testing`) is only considered
+// published once it actually shows up in the registry's tag list. This keeps
+// buildTopStreams' "no exact match" fallback from fabricating a switch
+// command for a tag that has never been pushed at all.
+function isImagePublished(spec, tagSet) {
+  return spec.streamOrder.some((tag) => tagSet.has(tag));
+}
+
 function buildTopStreams(spec, tagSet) {
   const top = [];
   for (const tag of spec.streamOrder) {
@@ -597,6 +605,7 @@ async function buildProduct(spec, feeds, cachedById, ageHours, sbomCache) {
     tags = existing?.allTags || [];
   }
   const tagSet = new Set(tags);
+  const imagePublished = isImagePublished(spec, tagSet);
 
   let nvidiaTagSet = null;
   if (spec.nvidiaPackage) {
@@ -610,16 +619,16 @@ async function buildProduct(spec, feeds, cachedById, ageHours, sbomCache) {
     }
   }
 
-  const streams = attachNvidiaCommands(
-    buildTopStreams(spec, tagSet),
-    spec,
-    nvidiaTagSet,
-  );
-  const testingStreams = attachNvidiaTestingCommands(
-    buildTestingStreams(spec, tags),
-    spec,
-    nvidiaTagSet,
-  );
+  const streams = imagePublished
+    ? attachNvidiaCommands(buildTopStreams(spec, tagSet), spec, nvidiaTagSet)
+    : [];
+  const testingStreams = imagePublished
+    ? attachNvidiaTestingCommands(
+        buildTestingStreams(spec, tags),
+        spec,
+        nvidiaTagSet,
+      )
+    : [];
 
   for (const stream of streams) {
     stream.versions = await buildStreamVersionInfo(
@@ -717,8 +726,17 @@ async function buildProduct(spec, feeds, cachedById, ageHours, sbomCache) {
     metadata,
     metadataSource,
     versions,
-    security: buildSecurityInfo(spec, inspectTag),
+    security: imagePublished
+      ? buildSecurityInfo(spec, inspectTag)
+      : {
+          cosignKeyUrl: null,
+          verifyCommand: null,
+          attestCommand: null,
+          hasAttestation: false,
+          sbomCommand: null,
+        },
     inspectTag,
+    imagePublished,
     lastPublishedAt: lastPublishedAt,
     stale,
     keepEvenIfStale: Boolean(spec.keepEvenIfStale),
@@ -866,6 +884,7 @@ module.exports = {
   handleUnavailableCache,
   hasUsableSbomData,
   isCurrentImageCatalog,
+  isImagePublished,
   main,
   normalizeTestingTag,
   reportMainError,
