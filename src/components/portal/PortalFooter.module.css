@@ -219,3 +219,14 @@
     gap: 20px;
   }
 }
+
+@media (max-width: 512px) {
+  .centeredContainer,
+  .gridContainer {
+    padding: 0 16px;
+  }
+
+  .portalFooter {
+    padding-bottom: 64px;
+  }
+}

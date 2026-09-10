@@ -4,6 +4,15 @@
  * work well for content-centric websites.
  */
 
+@import "@fontsource/inter/300.css";
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/700.css";
+@import "@fontsource/jetbrains-mono/400.css";
+@import "@fontsource/jetbrains-mono/500.css";
+@import "@fontsource/jetbrains-mono/600.css";
+@import "@fontsource/jetbrains-mono/700.css";
+@import "./portal-tokens.css";
+
 /* FIXME: make these blue! (more like "slate") */
 /* You can override the default Infima variables here. */
 :root {
