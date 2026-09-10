@@ -85,6 +85,59 @@ test("buildStreamVersionInfo extracts nvidia and packages strictly from SBOM", a
   assert.equal(versions.mesa, "25.3.6");
 });
 
+test("buildStreamVersionInfo extracts systemd, bootc, and pipewire for Dakota from SBOM", async () => {
+  const spec = {
+    id: "projectbluefin-dakota",
+    org: "projectbluefin",
+    package: "dakota",
+    sbomStreamId: "dakota-latest",
+    nvidiaSbomStreamId: "dakota-nvidia-latest",
+    streamOrder: ["stable", "testing"],
+  };
+  const sbomCache = {
+    streams: {
+      "dakota-latest": {
+        releases: {
+          "latest-20260608": {
+            packageVersions: {
+              kernel: "7.0.7",
+              gnome: "50.2",
+              mesa: "26.0.6",
+              systemd: "260.2",
+              bootc: "1.15.2",
+              pipewire: "1.6.1",
+            },
+          },
+        },
+      },
+      "dakota-nvidia-latest": {
+        releases: {
+          "latest-20260608": {
+            packageVersions: {
+              nvidia: "595.71.05",
+            },
+          },
+        },
+      },
+    },
+  };
+
+  const versions = await buildStreamVersionInfo(
+    spec,
+    "ghcr.io/projectbluefin/dakota",
+    "stable",
+    null,
+    sbomCache,
+  );
+  assert.equal(versions.kernel, "7.0.7");
+  assert.equal(versions.systemd, "260.2");
+  assert.equal(versions.bootc, "1.15.2");
+  assert.equal(versions.mesa, "26.0.6");
+  assert.equal(versions.nvidia, "595.71.05");
+  assert.equal(versions.gnome, "50.2");
+  assert.equal(versions.pipewire, "1.6.1");
+});
+
 test("buildStreamVersionInfo falls back to companion nvidia SBOM stream when base stream has no nvidia", async () => {
   const spec = {
     id: "projectbluefin-bluefin",
