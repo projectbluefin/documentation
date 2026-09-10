@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-06T23:03:51.211Z",
+  "generatedAt": "2026-09-09T19:15:21.689Z",
   "cacheHours": 168,
   "historyDays": 90,
   "streams": [
@@ -21,7 +21,10 @@
           "hweKernel": null,
           "mesa": "26.0.8",
           "nvidia": "595.71.05",
-          "gnome": "50.1"
+          "gnome": "50.1",
+          "systemd": "259.5",
+          "bootc": "1.15.2",
+          "pipewire": "1.6.6"
         }
       },
       "history": [
@@ -36,7 +39,10 @@
             "hweKernel": null,
             "mesa": "26.0.8",
             "nvidia": "595.71.05",
-            "gnome": "50.1"
+            "gnome": "50.1",
+            "systemd": "259.5",
+            "bootc": "1.15.2",
+            "pipewire": "1.6.6"
           }
         }
       ]
@@ -59,7 +65,10 @@
           "hweKernel": "7.0.8-100.fc43",
           "mesa": "25.2.7",
           "nvidia": "595.71.05",
-          "gnome": "49.5"
+          "gnome": "49.5",
+          "systemd": "257",
+          "bootc": "1.15.2",
+          "pipewire": "1.4.11"
         }
       },
       "history": [
@@ -74,7 +83,10 @@
             "hweKernel": "7.0.8-100.fc43",
             "mesa": "25.2.7",
             "nvidia": "595.71.05",
-            "gnome": "49.5"
+            "gnome": "49.5",
+            "systemd": "257",
+            "bootc": "1.15.2",
+            "pipewire": "1.4.11"
           }
         },
         {
@@ -88,7 +100,10 @@
             "hweKernel": "7.0.8-100.fc43",
             "mesa": "25.2.7",
             "nvidia": "595.71.05",
-            "gnome": "49.5"
+            "gnome": "49.5",
+            "systemd": "257",
+            "bootc": "1.15.2",
+            "pipewire": "1.4.11"
           }
         },
         {
@@ -102,7 +117,10 @@
             "hweKernel": "7.0.8-100.fc43",
             "mesa": "25.2.7",
             "nvidia": "595.71.05",
-            "gnome": "49.5"
+            "gnome": "49.5",
+            "systemd": "257",
+            "bootc": "1.15.2",
+            "pipewire": "1.4.11"
           }
         }
       ]
@@ -125,7 +143,10 @@
           "hweKernel": null,
           "mesa": "26.0.6",
           "nvidia": "595.71.05",
-          "gnome": "50.2"
+          "gnome": "50.2",
+          "systemd": "260.2",
+          "bootc": "1.15.2",
+          "pipewire": "1.6.1"
         }
       },
       "history": [
@@ -140,7 +161,10 @@
             "hweKernel": null,
             "mesa": "26.0.6",
             "nvidia": "595.71.05",
-            "gnome": "50.2"
+            "gnome": "50.2",
+            "systemd": "260.2",
+            "bootc": "1.15.2",
+            "pipewire": "1.6.1"
           }
         },
         {
@@ -154,7 +178,10 @@
             "hweKernel": null,
             "mesa": "26.0.5",
             "nvidia": "595.71.05",
-            "gnome": "50.0"
+            "gnome": "50.0",
+            "systemd": "260.1",
+            "bootc": null,
+            "pipewire": "1.6.1"
           }
         }
       ]

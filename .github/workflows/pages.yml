@@ -149,6 +149,9 @@ jobs:
       - name: Generate embeddable card images
         run: npm run generate-card-images
 
+      - name: Generate social preview card
+        run: npm run generate-social-cards
+
       - name: Run unit tests with coverage
         run: npm run test:coverage
 
