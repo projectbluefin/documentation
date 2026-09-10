@@ -289,3 +289,92 @@ test("DriverVersionsCatalog showRebootStep prop controls reboot banner", () => {
   });
   assert.ok(!withoutReboot.includes("Final Step: Reboot"));
 });
+
+test("DriverVersionsCatalog generates rebase commands using the correct package for bluefin-lts and other streams", () => {
+  const catalog = {
+    generatedAt: "2026-09-06T00:00:00.000Z",
+    streams: [
+      {
+        id: "bluefin-lts",
+        latest: {
+          stream: "bluefin-lts",
+          tag: "lts-20260906",
+          versions: { kernel: "6.18.13-200.fc43" },
+        },
+        history: [],
+      },
+      {
+        id: "bluefin-stable",
+        latest: {
+          stream: "bluefin-stable",
+          tag: "stable-20260906",
+          versions: { kernel: "6.18.13-200.fc43" },
+        },
+        history: [],
+      },
+      {
+        id: "dakota-latest",
+        latest: {
+          stream: "dakota-latest",
+          tag: "latest-20260906",
+          versions: { kernel: "6.18.13-200.fc43" },
+        },
+        history: [],
+      },
+      {
+        id: "utah-testing",
+        latest: {
+          stream: "utah-testing",
+          tag: "testing-20260906",
+          versions: { kernel: "6.18.13-200.fc43" },
+        },
+        history: [],
+      },
+    ],
+  };
+
+  const ltsHtml = render(DriverVersionsCatalog, {
+    streamId: "bluefin-lts",
+    catalogOverride: catalog,
+  });
+  assert.ok(
+    ltsHtml.includes(
+      "sudo bootc switch --enforce-container-sigpolicy ghcr.io/projectbluefin/bluefin-lts:lts-20260906",
+    ),
+  );
+  assert.ok(
+    !ltsHtml.includes(
+      "sudo bootc switch --enforce-container-sigpolicy ghcr.io/projectbluefin/bluefin:lts-20260906",
+    ),
+  );
+
+  const stableHtml = render(DriverVersionsCatalog, {
+    streamId: "bluefin-stable",
+    catalogOverride: catalog,
+  });
+  assert.ok(
+    stableHtml.includes(
+      "sudo bootc switch --enforce-container-sigpolicy ghcr.io/projectbluefin/bluefin:stable-20260906",
+    ),
+  );
+
+  const dakotaHtml = render(DriverVersionsCatalog, {
+    streamId: "dakota-latest",
+    catalogOverride: catalog,
+  });
+  assert.ok(
+    dakotaHtml.includes(
+      "sudo bootc switch --enforce-container-sigpolicy ghcr.io/projectbluefin/dakota:latest-20260906",
+    ),
+  );
+
+  const utahHtml = render(DriverVersionsCatalog, {
+    streamId: "utah-testing",
+    catalogOverride: catalog,
+  });
+  assert.ok(
+    utahHtml.includes(
+      "sudo bootc switch --enforce-container-sigpolicy ghcr.io/projectbluefin/utah:testing-20260906",
+    ),
+  );
+});
