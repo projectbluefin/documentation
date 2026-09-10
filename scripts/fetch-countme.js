@@ -52,7 +52,15 @@ const OUT = resolve(__dirname, "../static/data/countme-history.json");
 const CSV_URL =
   "https://data-analysis.fedoraproject.org/csv-reports/countme/totals.csv";
 
-const VARIANTS = ["bluefin", "bluefin-lts", "aurora", "bazzite", "fedora"];
+const VARIANTS = [
+  "bluefin",
+  "bluefin-lts",
+  "dakota",
+  "utah",
+  "aurora",
+  "bazzite",
+  "fedora",
+];
 
 /**
  * How a weekly number is derived from the CSV. Stamped into the payload so a
@@ -71,9 +79,11 @@ const BASE_REPO = /^fedora-\d+$/;
 /**
  * Variants with no fedora-N repo, counted across their own repos instead.
  * Bluefin LTS is CentOS Stream based and reaches Fedora's counter only through
- * EPEL. ublue-os/countme has this same carve-out.
+ * EPEL. ublue-os/countme has this same carve-out. Dakota is GNOME OS based,
+ * assembled from source with Apache BuildStream — there are no RPMs, so it has
+ * no fedora-N repo either.
  */
-const NON_FEDORA_VARIANTS = new Set(["bluefin-lts"]);
+const NON_FEDORA_VARIANTS = new Set(["bluefin-lts", "dakota"]);
 
 /**
  * Weeks upstream got wrong, skipped exactly as ublue-os/countme skips them.
@@ -169,7 +179,10 @@ export function parseCsvLine(line) {
  * Returns null for unrecognised names — bucketing an unknown OS into a variant
  * would inflate the headline number.
  *
- * ORDER MATTERS: LTS checks before generic bluefin.
+ * ORDER MATTERS: LTS, Dakota, and Utah check before generic bluefin. Dakota and
+ * Utah are Bluefin variants whose os_name carries a "bluefin-" prefix (e.g.
+ * "bluefin-dakota", "bluefin-utah"), so the broad startsWith("bluefin") branch
+ * would otherwise fold them into flagship Bluefin.
  */
 export function normalizeVariant(osName) {
   if (osName == null) return null;
@@ -183,6 +196,22 @@ export function normalizeVariant(osName) {
     s.startsWith("bluefin-lts")
   )
     return "bluefin-lts";
+
+  // Dakota — GNOME OS / Apache BuildStream distroless prototype.
+  if (
+    s.includes("dakotaraptor") ||
+    s.startsWith("bluefin-dakota") ||
+    s.startsWith("dakota")
+  )
+    return "dakota";
+
+  // Utah — Fedora Hummingbird base with the GNOME 51 desktop stack.
+  if (
+    s.includes("utahraptor") ||
+    s.startsWith("bluefin-utah") ||
+    s.startsWith("utah")
+  )
+    return "utah";
 
   if (s.startsWith("bluefin")) return "bluefin";
   if (s.startsWith("aurora")) return "aurora";
