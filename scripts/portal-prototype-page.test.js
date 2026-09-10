@@ -95,8 +95,10 @@ test("prototype renders source-authored scenes in order through footer including
     'id="bazaar"',
     'id="scene-picker"',
     'id="scene-community"',
+    'id="contributors"',
     'id="alumni"',
     'id="sponsors"',
+    'id="navigation"',
   ];
   ids.reduce((previous, id) => {
     const current = html.indexOf(id);
@@ -108,6 +110,16 @@ test("prototype renders source-authored scenes in order through footer including
   }, -1);
 
   assert.ok(html.includes('id="portal-scenes"'));
+  assert.ok(html.includes('id="navigation"'));
+  assert.ok(html.includes('role="navigation"'));
+  assert.ok(html.includes('href="#scene-users"'));
+  assert.ok(html.includes('href="#scene-developers"'));
+  assert.ok(html.includes('href="#scene-mission"'));
+  assert.ok(html.includes('href="#scene-picker"'));
+  assert.ok(html.includes('href="#scene-community"'));
+  assert.ok(html.includes(">For Devs<"));
+  assert.ok(html.includes(">Our Mission<"));
+  assert.ok(html.includes(">Try Out<"));
   assert.match(html, /<h1[^>]*>\s*<img[^>]*alt="Bluefin"[^>]*\/>\s*<\/h1>/);
   assert.match(
     html,
@@ -126,6 +138,7 @@ test("prototype renders source-authored scenes in order through footer including
   assert.ok(html.includes(">Try<"));
   assert.ok(html.includes(">Bluefin<"));
   assert.ok(html.includes(">Community<"));
+  assert.ok(html.includes(">Our Contributors<"));
   assert.ok(html.includes("Featuring alumni from companies like"));
   assert.ok(html.includes("Our sponsors"));
   assert.ok(html.includes("Project Bluefin is Built With"));

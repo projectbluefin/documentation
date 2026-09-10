@@ -117,6 +117,56 @@ test("ImagesCatalog renders the unavailable reason", () => {
   assert.ok(html.includes("SBOM cache contains no release data"));
 });
 
+test("ImagesCatalog renders awaiting initial release for unpublished streams and hides commands", () => {
+  const html = render(imagesModule.default, {
+    initialCatalog: {
+      products: [
+        {
+          id: "projectbluefin-utah",
+          name: "Project Bluefin Utah",
+          org: "projectbluefin",
+          package: "utah",
+          artwork: "bluefin",
+          streams: [
+            {
+              label: "TESTING",
+              tag: "testing",
+              command: null,
+            },
+          ],
+          testingStreams: [],
+          security: {
+            cosignKeyUrl: null,
+            verifyCommand: null,
+            attestCommand: null,
+            hasAttestation: false,
+            sbomCommand: null,
+          },
+        },
+      ],
+      unavailable: false,
+    },
+  });
+
+  assert.ok(
+    html.includes(
+      "Awaiting initial release: <code>testing</code> image is not yet published.",
+    ),
+  );
+  assert.ok(
+    html.includes(
+      "Awaiting initial release: verification commands will be available once the image is published.",
+    ),
+  );
+  assert.ok(
+    html.includes(
+      "Awaiting initial release: attestation verification will be available once the image is published.",
+    ),
+  );
+  assert.ok(!html.includes("sudo bootc switch ghcr.io/projectbluefin/utah"));
+  assert.ok(!html.includes("cosign verify"));
+});
+
 test("DriverVersionsCatalog renders the unavailable reason", () => {
   const html = render(DriverVersionsCatalog, {
     streamId: "bluefin-lts",
@@ -288,4 +338,93 @@ test("DriverVersionsCatalog showRebootStep prop controls reboot banner", () => {
     showRebootStep: false,
   });
   assert.ok(!withoutReboot.includes("Final Step: Reboot"));
+});
+
+test("DriverVersionsCatalog generates rebase commands using the correct package for bluefin-lts and other streams", () => {
+  const catalog = {
+    generatedAt: "2026-09-06T00:00:00.000Z",
+    streams: [
+      {
+        id: "bluefin-lts",
+        latest: {
+          stream: "bluefin-lts",
+          tag: "lts-20260906",
+          versions: { kernel: "6.18.13-200.fc43" },
+        },
+        history: [],
+      },
+      {
+        id: "bluefin-stable",
+        latest: {
+          stream: "bluefin-stable",
+          tag: "stable-20260906",
+          versions: { kernel: "6.18.13-200.fc43" },
+        },
+        history: [],
+      },
+      {
+        id: "dakota-latest",
+        latest: {
+          stream: "dakota-latest",
+          tag: "latest-20260906",
+          versions: { kernel: "6.18.13-200.fc43" },
+        },
+        history: [],
+      },
+      {
+        id: "utah-testing",
+        latest: {
+          stream: "utah-testing",
+          tag: "testing-20260906",
+          versions: { kernel: "6.18.13-200.fc43" },
+        },
+        history: [],
+      },
+    ],
+  };
+
+  const ltsHtml = render(DriverVersionsCatalog, {
+    streamId: "bluefin-lts",
+    catalogOverride: catalog,
+  });
+  assert.ok(
+    ltsHtml.includes(
+      "sudo bootc switch --enforce-container-sigpolicy ghcr.io/projectbluefin/bluefin-lts:lts-20260906",
+    ),
+  );
+  assert.ok(
+    !ltsHtml.includes(
+      "sudo bootc switch --enforce-container-sigpolicy ghcr.io/projectbluefin/bluefin:lts-20260906",
+    ),
+  );
+
+  const stableHtml = render(DriverVersionsCatalog, {
+    streamId: "bluefin-stable",
+    catalogOverride: catalog,
+  });
+  assert.ok(
+    stableHtml.includes(
+      "sudo bootc switch --enforce-container-sigpolicy ghcr.io/projectbluefin/bluefin:stable-20260906",
+    ),
+  );
+
+  const dakotaHtml = render(DriverVersionsCatalog, {
+    streamId: "dakota-latest",
+    catalogOverride: catalog,
+  });
+  assert.ok(
+    dakotaHtml.includes(
+      "sudo bootc switch --enforce-container-sigpolicy ghcr.io/projectbluefin/dakota:latest-20260906",
+    ),
+  );
+
+  const utahHtml = render(DriverVersionsCatalog, {
+    streamId: "utah-testing",
+    catalogOverride: catalog,
+  });
+  assert.ok(
+    utahHtml.includes(
+      "sudo bootc switch --enforce-container-sigpolicy ghcr.io/projectbluefin/utah:testing-20260906",
+    ),
+  );
 });

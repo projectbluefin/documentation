@@ -68,7 +68,6 @@ export interface GnomeExtension {
 /**
  * File contributors from scripts/fetch-contributors.js
  * Used by: src/components/PageContributors.tsx
- * Structure: Record of file paths to contributor arrays
  */
 export interface FileContributor {
   login: string;
@@ -76,5 +75,18 @@ export interface FileContributor {
   avatar_url: string;
 }
 
-export type FileContributorsData = Record<string, FileContributor[]>;
+export interface FileContributorsPayload {
+  generatedAt?: string;
+  files?: Record<string, FileContributor[]>;
+  unavailable?: boolean;
+  stateReason?: string | null;
+}
 
+export type FileContributorsData =
+  FileContributorsPayload | Record<string, FileContributor[]>;
+
+declare module "@site/static/data/file-contributors.json" {
+  import type { FileContributorsData } from "@site/src/types/data";
+  const data: FileContributorsData;
+  export default data;
+}

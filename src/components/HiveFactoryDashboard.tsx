@@ -548,9 +548,12 @@ function contributorDossierUrl(login: string): string {
 // The old raw.githubusercontent.com HTML snapshot is no longer published.
 const SNAPSHOT_API_URL = `${HOSTED_INSTANCE_URL}/api/status`;
 
-// Queue data: try the hosted instance first (credentials:include), fall back to public mirror
+// Queue data: try the hosted instance first (credentials:include), fall back to public mirror.
+// The public mirror is the queue-feed skill's canonical endpoint (see
+// projectbluefin/common docs/skills/queue-feed.md) — queue.projectbluefin.io/data.json
+// 404s, so anonymous visitors need this URL instead.
 const QUEUE_URL_HOSTED = `${HOSTED_INSTANCE_URL}/data.json`;
-const QUEUE_URL_FALLBACK = "https://queue.projectbluefin.io/data.json";
+const QUEUE_URL_FALLBACK = "https://projectbluefin.github.io/review/queue.json";
 const GH_API = "https://api.github.com";
 const DAKOTA = "projectbluefin/dakota";
 const BUILD_WORKFLOW = "246164114";
@@ -924,6 +927,44 @@ async function fetchTimeout(
   }
 }
 
+// Shape of the public queue-feed mirror (projectbluefin/common docs/skills/queue-feed.md):
+// a flat list of PR review-queue items. It carries no P0/P1 issue triage or victory-log
+// data, so those QueueData sections stay empty when only this fallback is available.
+export interface PublicQueueItem {
+  repository: string;
+  url: string;
+  title: string;
+  updated_at: string;
+  labels?: string[];
+}
+
+export interface PublicQueueFeed {
+  generated_at: string;
+  items: PublicQueueItem[];
+}
+
+export function normalizePublicQueueFeed(feed: PublicQueueFeed): QueueData {
+  const prs: QueuePR[] = (feed.items ?? []).map((item) => ({
+    title: item.title,
+    html_url: item.url,
+    repository_url: `https://api.github.com/repos/${item.repository}`,
+    updated_at: item.updated_at,
+    labels: (item.labels ?? []).map((name) => ({ name, color: "" })),
+  }));
+  return {
+    generated: feed.generated_at,
+    repos: Array.from(new Set((feed.items ?? []).map((i) => i.repository))),
+    issues: { p0: [], p1: [] },
+    prs: { approved: [], required: prs, none: [] },
+    victories: {
+      startDate: feed.generated_at,
+      dreams: { count: 0, recent: [] },
+      relief: { count: 0, recent: [] },
+      toil: { count: 0, recent: [] },
+    },
+  };
+}
+
 // Fetch queue data from the hosted instance first (works when the user has an active
 // hive.kubestellar.io session), falling back to the public mirror.
 async function fetchQueueData(): Promise<QueueData | null> {
@@ -937,7 +978,8 @@ async function fetchQueueData(): Promise<QueueData | null> {
   }
   try {
     const r = await fetchTimeout(QUEUE_URL_FALLBACK, 10000);
-    if (r.ok) return (await r.json()) as QueueData;
+    if (r.ok)
+      return normalizePublicQueueFeed((await r.json()) as PublicQueueFeed);
   } catch {
     // both sources unavailable
   }
@@ -1806,14 +1848,6 @@ export function ContributorLeaderboard({
   if (!history || (ranked.length === 0 && newcomers.length === 0)) return null;
 
   const weekStarts = history.contributorWeekStarts ?? [];
-  const seriesRows = ranked.filter((r) => r.weeks.length > 0);
-  // One scale for the whole column. These rows are small multiples: per-row
-  // autoscaling would draw a two-commit week and a two-hundred-commit week as
-  // the same mountain range.
-  const weekDomain: [number, number] = [
-    0,
-    Math.max(1, ...seriesRows.flatMap((r) => r.weeks)),
-  ];
   const lastUpdated = history.lastWeeklyStatsFetch
     ? new Date(history.lastWeeklyStatsFetch).toLocaleDateString("en-US", {
         month: "short",
@@ -1834,10 +1868,7 @@ export function ContributorLeaderboard({
         Community Builders
       </Heading>
       <p className={styles.panelMeta}>
-        Ranked by breadth of engagement — projects contributed to across the
-        factory. Each row carries {weekStarts.length || "no"} weeks of commits
-        on one shared 0&ndash;{weekDomain[1]} scale, so the rows compare
-        directly
+        Ranked by breadth of engagement across the factory
         {lastUpdated ? ` · stats as of ${lastUpdated}` : ""}
         {!hasWeeklyStats && (
           <span className={styles.lbAccumulating}>
@@ -1971,14 +2002,14 @@ export function ContributorLeaderboard({
                     <Sparkline
                       data={weeks}
                       variant="line"
-                      domain={weekDomain}
+                      scale="zero"
                       width={64}
                       height={16}
                       color="var(--fx-accent)"
                       showEnd
                       emptyLabel="no series"
                       className={styles.lbSparkline}
-                      label={`${login}: commits per week from ${from} to ${to}, ${totalCommits} in total, ${current ?? 0} in the latest week, on a shared 0 to ${weekDomain[1]} scale.`}
+                      label={`${login}: commits per week from ${from} to ${to}, ${totalCommits} in total, ${current ?? 0} in the latest week.`}
                     />
                   )}
                   <span className={styles.lbSparkValue}>{activity}</span>

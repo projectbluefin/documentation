@@ -180,6 +180,51 @@ test("findRecentTagsForStream deduplicates, sorts newest first, and caps the cou
   );
 });
 
+test("findRecentTagsForStream recognizes version-qualified dated tags", () => {
+  const recent = daysAgoTag(2);
+  const found = findRecentTagsForStream([`stable-44.${recent}`], SPEC);
+  assert.equal(found.length, 1);
+  assert.equal(found[0].tag, `stable-44.${recent}`);
+  assert.equal(found[0].cacheKey, `stable-${recent}`);
+  assert.equal(found[0].dateStr, recent);
+});
+
+test("findRecentTagsForStream retains latest-release fallback when lookback finds no releases", (t) => {
+  t.after(() => {
+    delete process.env.SBOM_LOOKBACK_DAYS;
+  });
+  process.env.SBOM_LOOKBACK_DAYS = "7";
+  const old1 = daysAgoTag(30);
+  const old2 = daysAgoTag(60);
+  const found = findRecentTagsForStream(
+    [`stable-${old2}`, `stable-${old1}`],
+    SPEC,
+  );
+  assert.equal(found.length, 1);
+  assert.equal(found[0].dateStr, old1);
+});
+
+test("findRecentTagsForStream resolves issue #1082 probe tags", () => {
+  const probeTags = [
+    "stable-20260606",
+    "stable-44.20260606",
+    "testing-44.20260720",
+  ];
+  const stableFound = findRecentTagsForStream(probeTags, SPEC);
+  assert.equal(stableFound.length, 1);
+  assert.equal(stableFound[0].dateStr, "20260606");
+  assert.equal(stableFound[0].cacheKey, "stable-20260606");
+
+  const testingFound = findRecentTagsForStream(probeTags, {
+    streamPrefix: "testing",
+    org: "projectbluefin",
+    package: "utah",
+  });
+  assert.equal(testingFound.length, 1);
+  assert.equal(testingFound[0].dateStr, "20260720");
+  assert.equal(testingFound[0].cacheKey, "testing-20260720");
+});
+
 // ---------------------------------------------------------------------------
 // extractPackageVersions
 // ---------------------------------------------------------------------------

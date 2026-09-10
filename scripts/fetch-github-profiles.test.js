@@ -11,6 +11,7 @@ test("discoverUsernames returns unique GitHub usernames from repo sources", () =
 
   assert.ok(usernames.includes("castrojo"));
   assert.ok(usernames.includes("ahmedadan"));
+  assert.ok(!usernames.includes("chandeleer1698"));
   assert.equal(new Set(usernames).size, usernames.length);
 });
 

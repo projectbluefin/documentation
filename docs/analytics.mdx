@@ -1,130 +1,74 @@
 ---
 title: Analytics
 slug: /analytics
+displayed_sidebar: null
 ---
 
 import CountmeAnalyticsCharts from "@site/src/components/analytics/CountmeAnalyticsCharts";
 import ImageChurnCharts from "@site/src/components/analytics/ImageChurnCharts";
 
-[![LFX Health Score](https://insights.linuxfoundation.org/api/badge/health-score?project=ublue-os-bluefin)](https://insights.linuxfoundation.org/project/ublue-os-bluefin)
-
-Bluefin is a high-performance predator. The team believes in instrumentation and countme as a means to improve software — but that information must be privacy-respecting via an open process so we can verify what is being shared.
-
-> Data, for me, is the foundation of F1. There's no human judgment involved. You've got to get your foundation right in data.
->
-> — [James Vowles](https://www.youtube.com/watch?v=nYzwvTSffiY&t=1025s)
-
-## Countme Statistics
+Adoption metrics and active system telemetry across the Project Bluefin workstation family.
 
 <CountmeAnalyticsCharts />
 
-The Fedora countme service is on by default in Fedora, and Bluefin inherits that behavior:
+## Update Churn & Compression Analytics
 
-- [countme](https://github.com/wgwoods/fedora-countme-data)
-- [How to turn it off](https://coreos.github.io/rpm-ostree/countme/)
+Project Bluefin measures download byte delta, layer reuse efficiency, and compression statistics between consecutive stable releases.
+Cloud-native bootc updates take advantage of OCI layer caching: layers whose SHA-256 digests
+remain unchanged between releases require zero download bandwidth.
 
-### Single Source of Truth
+Using [Chunkah](https://github.com/coreos/chunkah) and the `zstd-chunked` container layer format,
+operating system updates are segmented into fine-grained package intervals so clients download only specific chunks containing changed packages.
+
+<ImageChurnCharts />
+
+<details>
+<summary><strong>Methodology, Privacy & Opt-Out</strong></summary>
+
+### Counting Methodology
 
 The charts above serve as the single source of truth for the entire Project Bluefin
-workstation family, preserving direct historical continuity with the canonical
-baseline from `ublue-os/bluefin`.
+workstation family, preserving direct continuity with the canonical baseline from
+[`ublue-os/countme`](https://github.com/ublue-os/countme).
 
-Active systems across all Project Bluefin images are combined into the unified
-Bluefin fleet view:
+- **Method:** Evaluated according to ADR 0004 (`ublue-countme-v1` baseline) using base repository queries.
+- **Enterprise LTS:** Bluefin LTS runs on CentOS Stream 10 and reaches Fedora counters through EPEL mirrors, which undercounts relative to standard Fedora repos.
+- **Next-Gen Variants:** Dakota (BuildStream) and Utah (Hummingbird) are activating first-party reporting via `projectbluefin/common`.
 
-- **Bluefin (Flagship Workstation):** Standard Fedora bootc cloud-native developer workstation.
-- **Bluefin LTS (Enterprise Workstation):** CentOS Stream 10 bootc long-term support release with 10-year platform stability.
-- **Project Bluefin Dakota (Next-Gen Workstation):** Assembled from source with Apache BuildStream on GNOME OS bootc.
-- **Project Bluefin Utah (Next-Gen Workstation):** Modular workstation on minimal Fedora Hummingbird bootc with GNOME 51 desktop layer.
+### First-party Countme Service & Privacy Guarantees
 
-### First-party Countme Service
-
-Project Bluefin images (`bluefin`, `bluefin-lts`, `dakota`, and `utah`) participate
-in direct weekly countme reporting via `projectbluefin/common` systemd services targeting
+Project Bluefin images participate in direct weekly countme reporting via systemd services targeting
 `https://countme.projectbluefin.io/metalink`.
 
 - **Cohort measurement:** Uses installation age buckets (1: first week, 2: 2–4 weeks, 3: 5–24 weeks, 4: >24 weeks) calculated locally from an installation epoch timestamp.
 - **Privacy guarantees:** Transmits only image name, tag, flavor, architecture, and age bucket. No machine ID, IP address, username, or persistent identifier is sent or logged.
-- **How to opt out:** Create the disable marker file:
+
+### Opt-Out Instructions
+
+To disable Project Bluefin countme reporting, create the disable marker file:
 
 ```bash
 sudo install -d -m 0755 /etc/projectbluefin/countme && sudo touch /etc/projectbluefin/countme/disabled
 ```
 
-(The legacy marker `/etc/dakota-countme/disabled` is also honored.)
+_(The legacy marker `/etc/dakota-countme/disabled` is also honored.)_
 
-## Update Churn & Compression Analytics
+To disable upstream Fedora countme:
 
-Project Bluefin measures the download byte delta, layer reuse efficiency, and compression statistics between consecutive stable releases.
-Cloud-native bootc updates take advantage of OCI layer caching: layers whose SHA-256 digests
-remain unchanged between releases are already present on the client system and require zero download bandwidth.
+- [Fedora countme documentation](https://coreos.github.io/rpm-ostree/countme/)
 
-Using [Chunkah](https://github.com/coreos/chunkah) and the `zstd-chunked` container layer format,
-operating system updates are segmented into fine-grained package intervals. Rather than downloading a multi-gigabyte
-monolithic system image on every update, clients download only the specific chunks containing changed packages.
+To disable Homebrew analytics:
 
-<ImageChurnCharts />
-
-## Homebrew
-
-Homebrew analytics are on by default. To turn them off:
-
-```
+```bash
 brew analytics off
 ```
 
-See the [Homebrew documentation](https://docs.brew.sh/Analytics) for more information. You can also check the [operating system rankings](https://formulae.brew.sh/analytics/os-version/30d/).
+See the [Homebrew analytics documentation](https://docs.brew.sh/Analytics) for additional details.
 
-## Contributor Metrics
+</details>
 
-The charts below are sourced from [Linux Foundation Insights](https://insights.linuxfoundation.org/project/ublue-os-bluefin) and track the `projectbluefin/bluefin` repository. For org-wide metrics across all 15 factory repos, see the [Factory metrics view](/factory/metrics).
+### Contributor Metrics
 
-<div
-  className="lfx-chart"
-  style={{ overflow: "hidden", borderRadius: "8px", height: "488px" }}
->
-  <iframe
-    src="https://insights.linuxfoundation.org/embed/project/ublue-os-bluefin?widget=active-contributors"
-    style={{
-      transform: "scale(0.75)",
-      transformOrigin: "top left",
-      width: "133%",
-      height: "800px",
-      border: "none",
-    }}
-  />
-</div>
+For real-time development and organizational velocity metrics across all 15 factory repositories, see the [Factory metrics view](/factory/metrics).
 
-<div
-  className="lfx-chart"
-  style={{ overflow: "hidden", borderRadius: "8px", height: "503px" }}
->
-  <iframe
-    src="https://insights.linuxfoundation.org/embed/project/ublue-os-bluefin?widget=commit-activities"
-    style={{
-      transform: "scale(0.75)",
-      transformOrigin: "top left",
-      width: "133%",
-      height: "820px",
-      border: "none",
-    }}
-  />
-</div>
-
-<div
-  className="lfx-chart"
-  style={{ overflow: "hidden", borderRadius: "8px", height: "645px" }}
->
-  <iframe
-    src="https://insights.linuxfoundation.org/embed/project/ublue-os-bluefin?widget=pull-requests"
-    style={{
-      transform: "scale(0.75)",
-      transformOrigin: "top left",
-      width: "133%",
-      height: "1010px",
-      border: "none",
-    }}
-  />
-</div>
-
-For the full picture across all factory repositories, visit the [Factory metrics view](/factory/metrics).
+Upstream repository metrics for `projectbluefin/bluefin` are also tracked on [Linux Foundation Insights](https://insights.linuxfoundation.org/project/ublue-os-bluefin).
