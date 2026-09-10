@@ -92,6 +92,17 @@ Used on light backgrounds with dark lettering and `#4285f4` ligature:
 
 - <a href="/img/bluefin-wordmark-light.svg" download="bluefin-wordmark-light.svg">Download bluefin-wordmark-light.svg</a>
 
+### Documentation Wordmark
+
+The official Bluefin Documentation wordmark pairs the primary wordmark with "documentation" set in **Science Gothic**:
+
+<p align="center" style={{background: '#1a1b26', padding: '24px', borderRadius: '8px'}}>
+  <img src="/img/bluefin-documentation-wordmark.svg" alt="Bluefin Documentation Wordmark" width="420" />
+</p>
+
+- <a href="/img/bluefin-documentation-wordmark.svg" download="bluefin-documentation-wordmark.svg">Download bluefin-documentation-wordmark.svg</a>
+- <a href="/img/bluefin-documentation-wordmark-light.svg" download="bluefin-documentation-wordmark-light.svg">Download bluefin-documentation-wordmark-light.svg</a>
+
 ### Legacy Logo Deprecation
 
 The legacy square glassmorphic Universal Blue `u` logo is deprecated and dropped from all primary Bluefin branding. Bluefin uses the raptor emblem and the official Bluefin wordmark.

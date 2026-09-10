@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Bluefin Documentation Social Preview Card</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html,
+      body {
+        width: 1200px;
+        height: 630px;
+        overflow: hidden;
+        background: #080c14;
+        position: relative;
+      }
+      .background {
+        position: absolute;
+        inset: 0;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+      }
+      .bottom-content {
+        position: absolute;
+        bottom: 56px;
+        left: 64px;
+        z-index: 2;
+      }
+      .wordmark-wrap {
+        width: 820px;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.95))
+          drop-shadow(0 4px 16px rgba(0, 0, 0, 0.85))
+          drop-shadow(0 8px 32px rgba(0, 0, 0, 0.75));
+      }
+      .wordmark-wrap svg {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="background" id="bg"></div>
+
+    <div class="bottom-content">
+      <div class="wordmark-wrap" id="wordmark"></div>
+    </div>
+
+    <script>
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("bg")) {
+        document.getElementById("bg").style.backgroundImage =
+          `url('${params.get("bg")}')`;
+      }
+    </script>
+  </body>
+</html>
