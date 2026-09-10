@@ -35,6 +35,31 @@ const RELEASE_REPO_BY_STREAM = {
 };
 
 /**
+ * GHCR image tags for the LTS stream use an internal "lts-YYYYMMDD" cache key
+ * (see SBOM_STREAM_PREFIX below), but the projectbluefin/bluefin-lts repo
+ * publishes its GitHub Releases tagged "stable-YYYYMMDD". Map cache-key
+ * prefixes to the upstream release tag prefix actually used per-stream so
+ * releaseUrl links resolve instead of 404ing.
+ */
+const UPSTREAM_RELEASE_TAG_PREFIX_BY_STREAM = {
+  "bluefin-lts": "stable",
+};
+
+/**
+ * Translate a cache-key-derived tag (e.g. "lts-20260602") to the tag actually
+ * used by the stream's upstream GitHub Releases (e.g. "stable-20260602").
+ * Streams without an entry in UPSTREAM_RELEASE_TAG_PREFIX_BY_STREAM, or tags
+ * that don't match the stream's known cache-key prefix, are returned as-is.
+ */
+function translateToUpstreamReleaseTag(streamId, tag) {
+  const upstreamPrefix = UPSTREAM_RELEASE_TAG_PREFIX_BY_STREAM[streamId];
+  const cachePrefix = SBOM_STREAM_PREFIX[streamId];
+  if (!upstreamPrefix || !cachePrefix || !tag) return tag;
+  if (!tag.startsWith(`${cachePrefix}-`)) return tag;
+  return `${upstreamPrefix}${tag.slice(cachePrefix.length)}`;
+}
+
+/**
  * Look up packageVersions from the SBOM cache for a specific stream + cacheKey.
  * cacheKey format matches fetch-github-sbom.js: e.g. "stable-20260331", "lts-20260331".
  * Returns null if not found.
@@ -171,9 +196,10 @@ function rowFromSbomRelease(
     title: releaseEntry?.tag || cacheKey,
     releaseUrl: (() => {
       const tag = releaseEntry?.tag || cacheKey;
+      const upstreamTag = translateToUpstreamReleaseTag(streamId, tag);
       const repo = RELEASE_REPO_BY_STREAM[streamId];
-      return repo && tag
-        ? `https://github.com/${repo}/releases/tag/${tag}`
+      return repo && upstreamTag
+        ? `https://github.com/${repo}/releases/tag/${upstreamTag}`
         : RELEASE_URL_BY_STREAM[streamId] || null;
     })(),
     publishedAt,
@@ -540,6 +566,7 @@ if (require.main === module) {
 module.exports = {
   buildUnavailableOutput,
   lookupSbomVersionsForTag,
+  translateToUpstreamReleaseTag,
   rowFromSbomRelease,
   buildStreamFromSbom,
   buildNvidiaMapFromSbomStream,
