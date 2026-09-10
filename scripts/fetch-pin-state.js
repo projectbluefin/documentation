@@ -1,8 +1,9 @@
 /**
  * fetch-pin-state.js
  *
- * Reads bluefin-lts HWE workflow YAML files from the GitHub Contents API
- * and extracts any `kernel-pin` (or future `*-pin`) workflow inputs.
+ * Reads the active bluefin-lts build workflow YAML from the GitHub Contents
+ * API and extracts any `kernel_pin` (or future `*_pin`) input passed to the
+ * shared projectbluefin/actions reusable-build.yml workflow.
  * Writes static/data/stream-pins.json consumed by the docs UI to render
  * 📌 "Pinned" badges next to intentionally-held component versions.
  *
@@ -17,12 +18,10 @@ const OUTPUT_FILE = path.join(__dirname, "..", "static", "data", "stream-pins.js
 const WORKFLOWS_TO_CHECK = [
   {
     repo: "projectbluefin/bluefin-lts",
-    path: ".github/workflows/build-regular-hwe.yml",
-    stream: "bluefin-lts",
-  },
-  {
-    repo: "projectbluefin/bluefin-lts",
-    path: ".github/workflows/build-dx-hwe.yml",
+    // bluefin-lts is HWE-only (no separate build-regular-hwe.yml/build-dx-hwe.yml
+    // since #437); build-regular.yml is the active workflow and passes an optional
+    // `kernel_pin` input to the shared reusable-build.yml when a kernel is pinned.
+    path: ".github/workflows/build-regular.yml",
     stream: "bluefin-lts",
   },
 ];
@@ -47,11 +46,11 @@ async function fetchWorkflowContent(repo, filePath) {
 }
 
 /**
- * Extract `kernel-pin` value from a workflow YAML string.
- * Matches the pattern:   kernel-pin: <version>
+ * Extract `kernel_pin` value from a workflow YAML string.
+ * Matches the pattern:   kernel_pin: <version>
  */
 function extractKernelPin(yamlContent) {
-  const match = yamlContent.match(/kernel-pin:\s*([^\s\n#]+)/);
+  const match = yamlContent.match(/kernel_pin:\s*([^\s\n#]+)/);
   return match ? match[1].trim() : null;
 }
 
@@ -89,7 +88,7 @@ async function main() {
       if (kernelPin) {
         console.log(`  ${stream} hweKernel pin: ${kernelPin}`);
       } else {
-        console.log(`  ${stream}: no kernel-pin found (floating)`);
+        console.log(`  ${stream}: no kernel_pin found (floating)`);
       }
     } catch (err) {
       console.warn(`  Warning: could not fetch ${repo}/${filePath}: ${err.message}`);
