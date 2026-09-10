@@ -221,13 +221,7 @@ export default function CountmeAnalyticsCharts({
   const workstationDomain = useMemo<[number, number]>(() => {
     let min = Infinity;
     let max = -Infinity;
-    const workstationKeys = [
-      "bluefin",
-      "aurora",
-      "bluefin-lts",
-      "dakota",
-      "utah",
-    ] as const;
+    const workstationKeys = BLUEFIN_FAMILY_IMAGES.map((img) => img.id);
     for (const w of weeks) {
       for (const k of workstationKeys) {
         const val = parseCount(w[k]);
