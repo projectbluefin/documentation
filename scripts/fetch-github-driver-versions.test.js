@@ -56,6 +56,31 @@ test("rowFromSbomRelease builds kernel/mesa/gnome from SBOM only", () => {
   assert.equal(row.versions.mesa, "25.3.6-6");
   assert.equal(row.versions.gnome, "49.5-1");
   assert.equal(row.versions.nvidia, "595.58.03-1");
+  assert.equal(
+    row.releaseUrl,
+    "https://github.com/projectbluefin/bluefin/releases/tag/stable-20260331",
+  );
+});
+
+test("rowFromSbomRelease translates LTS lts-YYYYMMDD cache key to upstream stable-YYYYMMDD releaseUrl", () => {
+  const row = rowFromSbomRelease(
+    "bluefin-lts",
+    "lts-20260602",
+    {
+      tag: "lts-20260602",
+      packageVersions: {
+        kernel: "6.12.0-233.el10",
+      },
+    },
+    "595.71.05",
+  );
+
+  assert.equal(row.tag, "lts-20260602");
+  assert.equal(row.title, "lts-20260602");
+  assert.equal(
+    row.releaseUrl,
+    "https://github.com/projectbluefin/bluefin-lts/releases/tag/stable-20260602",
+  );
 });
 
 test("buildStreamFromSbom sorts newest-first and marks source sbom", () => {

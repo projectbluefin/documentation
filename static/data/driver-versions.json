@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-06T23:03:51.211Z",
+  "generatedAt": "2026-09-10T01:42:07.293Z",
   "cacheHours": 168,
   "historyDays": 90,
   "streams": [
@@ -52,7 +52,7 @@
         "stream": "bluefin-lts",
         "tag": "lts-20260602",
         "title": "lts-20260602",
-        "releaseUrl": "https://github.com/projectbluefin/bluefin-lts/releases/tag/lts-20260602",
+        "releaseUrl": "https://github.com/projectbluefin/bluefin-lts/releases/tag/stable-20260602",
         "publishedAt": "2026-06-02T00:00:00.000Z",
         "versions": {
           "kernel": "6.12.0-233.el10",
@@ -67,7 +67,7 @@
           "stream": "bluefin-lts",
           "tag": "lts-20260602",
           "title": "lts-20260602",
-          "releaseUrl": "https://github.com/projectbluefin/bluefin-lts/releases/tag/lts-20260602",
+          "releaseUrl": "https://github.com/projectbluefin/bluefin-lts/releases/tag/stable-20260602",
           "publishedAt": "2026-06-02T00:00:00.000Z",
           "versions": {
             "kernel": "6.12.0-233.el10",
@@ -81,7 +81,7 @@
           "stream": "bluefin-lts",
           "tag": "lts-20260531",
           "title": "lts-20260531",
-          "releaseUrl": "https://github.com/projectbluefin/bluefin-lts/releases/tag/lts-20260531",
+          "releaseUrl": "https://github.com/projectbluefin/bluefin-lts/releases/tag/stable-20260531",
           "publishedAt": "2026-05-31T00:00:00.000Z",
           "versions": {
             "kernel": "6.12.0-231.el10",
@@ -95,7 +95,7 @@
           "stream": "bluefin-lts",
           "tag": "lts-20260530",
           "title": "lts-20260530",
-          "releaseUrl": "https://github.com/projectbluefin/bluefin-lts/releases/tag/lts-20260530",
+          "releaseUrl": "https://github.com/projectbluefin/bluefin-lts/releases/tag/stable-20260530",
           "publishedAt": "2026-05-30T00:00:00.000Z",
           "versions": {
             "kernel": "6.12.0-231.el10",

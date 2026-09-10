@@ -170,7 +170,10 @@ function rowFromSbomRelease(
     tag: releaseEntry?.tag || cacheKey,
     title: releaseEntry?.tag || cacheKey,
     releaseUrl: (() => {
-      const tag = releaseEntry?.tag || cacheKey;
+      let tag = releaseEntry?.tag || cacheKey;
+      if (streamId === "bluefin-lts" && typeof tag === "string") {
+        tag = tag.replace(/^lts-(\d{8})$/, "stable-$1");
+      }
       const repo = RELEASE_REPO_BY_STREAM[streamId];
       return repo && tag
         ? `https://github.com/${repo}/releases/tag/${tag}`
