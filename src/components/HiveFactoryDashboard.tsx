@@ -1806,14 +1806,6 @@ export function ContributorLeaderboard({
   if (!history || (ranked.length === 0 && newcomers.length === 0)) return null;
 
   const weekStarts = history.contributorWeekStarts ?? [];
-  const seriesRows = ranked.filter((r) => r.weeks.length > 0);
-  // One scale for the whole column. These rows are small multiples: per-row
-  // autoscaling would draw a two-commit week and a two-hundred-commit week as
-  // the same mountain range.
-  const weekDomain: [number, number] = [
-    0,
-    Math.max(1, ...seriesRows.flatMap((r) => r.weeks)),
-  ];
   const lastUpdated = history.lastWeeklyStatsFetch
     ? new Date(history.lastWeeklyStatsFetch).toLocaleDateString("en-US", {
         month: "short",
@@ -1834,10 +1826,7 @@ export function ContributorLeaderboard({
         Community Builders
       </Heading>
       <p className={styles.panelMeta}>
-        Ranked by breadth of engagement — projects contributed to across the
-        factory. Each row carries {weekStarts.length || "no"} weeks of commits
-        on one shared 0&ndash;{weekDomain[1]} scale, so the rows compare
-        directly
+        Ranked by breadth of engagement across the factory
         {lastUpdated ? ` · stats as of ${lastUpdated}` : ""}
         {!hasWeeklyStats && (
           <span className={styles.lbAccumulating}>
@@ -1971,14 +1960,14 @@ export function ContributorLeaderboard({
                     <Sparkline
                       data={weeks}
                       variant="line"
-                      domain={weekDomain}
+                      scale="zero"
                       width={64}
                       height={16}
                       color="var(--fx-accent)"
                       showEnd
                       emptyLabel="no series"
                       className={styles.lbSparkline}
-                      label={`${login}: commits per week from ${from} to ${to}, ${totalCommits} in total, ${current ?? 0} in the latest week, on a shared 0 to ${weekDomain[1]} scale.`}
+                      label={`${login}: commits per week from ${from} to ${to}, ${totalCommits} in total, ${current ?? 0} in the latest week.`}
                     />
                   )}
                   <span className={styles.lbSparkValue}>{activity}</span>
