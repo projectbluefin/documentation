@@ -232,8 +232,8 @@ const config: Config = {
           position: "right",
         },
         {
-          href: "https://feedback.projectbluefin.io/",
-          label: "Feedback",
+          to: "/analytics",
+          label: "Analytics",
           position: "right",
         },
         {

@@ -39,12 +39,7 @@ type ViewMode = "workstations" | "all-ecosystem" | "with-fedora";
 interface ProjectBluefinImageSpec {
   id: "bluefin" | "bluefin-lts" | "dakota" | "utah";
   name: string;
-  badge: string;
   edition: string;
-  stream: string;
-  repo: string;
-  imageRef: string;
-  desc: string;
   color: string;
   link: string;
   status: "active" | "bootstrapping" | "provisioning";
@@ -55,12 +50,7 @@ const BLUEFIN_FAMILY_IMAGES: ProjectBluefinImageSpec[] = [
   {
     id: "bluefin",
     name: "Bluefin",
-    badge: "Fedora bootc",
     edition: "Flagship Workstation",
-    stream: ":stable (GNOME 50.1 / Linux 7.0)",
-    repo: "projectbluefin/bluefin",
-    imageRef: "ghcr.io/projectbluefin/bluefin:stable",
-    desc: "Flagship cloud-native developer workstation with devcontainers, eBPF tooling, and dedicated developer ergonomics.",
     color: "#58a6ff",
     link: "/downloads",
     status: "active",
@@ -69,44 +59,29 @@ const BLUEFIN_FAMILY_IMAGES: ProjectBluefinImageSpec[] = [
   {
     id: "bluefin-lts",
     name: "Bluefin LTS",
-    badge: "CentOS Stream 10 bootc",
     edition: "Enterprise Workstation",
-    stream: ":stable (CentOS Stream 10 / Linux 6.12 LTS)",
-    repo: "projectbluefin/bluefin-lts",
-    imageRef: "ghcr.io/projectbluefin/bluefin-lts:stable",
-    desc: "Long-term support release providing 10-year platform stability, certified enterprise kernel base, and rock-solid reliability.",
     color: "#bc8cff",
     link: "/lts",
     status: "active",
-    statusText: "Active Tracking",
+    statusText: "Active · EPEL",
   },
   {
     id: "dakota",
     name: "Project Bluefin Dakota",
-    badge: "GNOME OS bootc",
     edition: "Next-Gen BuildStream",
-    stream: ":stable & :testing (GNOME 50)",
-    repo: "projectbluefin/dakota",
-    imageRef: "ghcr.io/projectbluefin/dakota:stable",
-    desc: "Built from source with Apache BuildStream. Eschews traditional packaging for pure upstream GNOME delivering a direct feedback loop.",
     color: "#39d2c0",
     link: "/dakota",
     status: "bootstrapping",
-    statusText: "Alpha · Countme Activating",
+    statusText: "Alpha · Collecting",
   },
   {
     id: "utah",
     name: "Project Bluefin Utah",
-    badge: "Hummingbird bootc",
     edition: "Modular Hummingbird",
-    stream: ":testing (GNOME 51)",
-    repo: "projectbluefin/utah",
-    imageRef: "ghcr.io/projectbluefin/utah:testing",
-    desc: "Hardened minimal Fedora Hummingbird bootable base with Bluefin package contract and modular GNOME 51 desktop layer.",
     color: "#f0883e",
     link: "/utah",
     status: "provisioning",
-    statusText: "Pre-alpha · Countme Provisioning",
+    statusText: "Pre-alpha · Provisioning",
   },
 ];
 
@@ -409,12 +384,10 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
         <div className={styles.heroHeader}>
           <div className={styles.heroTitleGroup}>
             <Heading as="h3" className={styles.heroTitle}>
-              Bluefin Systems
-              <span className={styles.heroBadge}>Source of Truth</span>
+              Weekly Active Systems
             </Heading>
             <p className={styles.heroSubtitle}>
-              Canonical weekly active systems across all Project Bluefin
-              workstation variants
+              Weekly DNF countme check-ins across Project Bluefin workstation variants (Fedora countme)
             </p>
             <div className={styles.heroSubBadges}>
               <span
@@ -559,31 +532,6 @@ export default function CountmeAnalyticsCharts(): React.JSX.Element {
                       {((count / currentTotalBluefin) * 100).toFixed(1)}% fleet
                     </span>
                   )}
-                </div>
-
-                <p className={styles.cardDesc}>{img.desc}</p>
-
-                <div className={styles.familyMetaRow}>
-                  <div className={styles.familyMetaItem}>
-                    <span className={styles.familyMetaLabel}>Base Stack</span>
-                    <span className={styles.familyMetaValue}>{img.badge}</span>
-                  </div>
-                  <div className={styles.familyMetaItem}>
-                    <span className={styles.familyMetaLabel}>Repository</span>
-                    <span className={styles.familyMetaValue}>
-                      <code>{img.repo}</code>
-                    </span>
-                  </div>
-                  <div className={styles.familyMetaItem}>
-                    <span className={styles.familyMetaLabel}>Image</span>
-                    <span className={styles.familyMetaValue}>
-                      <code>{img.imageRef}</code>
-                    </span>
-                  </div>
-                  <div className={styles.familyMetaItem}>
-                    <span className={styles.familyMetaLabel}>Streams</span>
-                    <span className={styles.familyMetaValue}>{img.stream}</span>
-                  </div>
                 </div>
 
                 <div className={styles.cardSparkline}>
