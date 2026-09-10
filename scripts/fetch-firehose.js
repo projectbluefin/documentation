@@ -1,10 +1,39 @@
 const fs = require("fs");
 const path = require("path");
 
+const {
+  buildNvidiaMapFromSbomStream,
+  buildLtsNvidiaByTagFromSbom,
+  resolveCompanionNvidia,
+} = require("./fetch-github-driver-versions.js");
+
 const OUTPUT_DIR = path.join(__dirname, "..", "static", "data");
 const OUTPUT_FILE = path.join(OUTPUT_DIR, "firehose-apps.json");
 const SBOM_FILE = path.join(OUTPUT_DIR, "sbom-attestations.json");
 const SOURCE_URL = "https://castrojo.github.io/bluefin-releases/apps.json";
+
+/**
+ * Per-OS-stream builders for the companion NVIDIA release map.
+ * NVIDIA ships as an akmod built outside the OS image (not in Syft scans),
+ * so its version has to be looked up from a companion SBOM stream — same
+ * approach fetch-github-driver-versions.js uses for the Driver Versions page.
+ */
+const NVIDIA_MAP_BUILDER_BY_STREAM = {
+  "bluefin-stable": (sbomCache) =>
+    buildNvidiaMapFromSbomStream(sbomCache, "bluefin-nvidia-open-stable"),
+  "bluefin-lts": (sbomCache) => buildLtsNvidiaByTagFromSbom(sbomCache),
+};
+
+/**
+ * Resolve the NVIDIA driver version for a release entry of a given OS stream.
+ * Returns null when the stream has no companion NVIDIA map or no match is found.
+ */
+function resolveNvidiaVersion(streamId, sbomCache, releaseEntry, cacheKey) {
+  const buildMap = NVIDIA_MAP_BUILDER_BY_STREAM[streamId];
+  if (!buildMap) return null;
+  const nvidiaByTag = buildMap(sbomCache);
+  return resolveCompanionNvidia(nvidiaByTag, releaseEntry, cacheKey);
+}
 
 // Cache configuration — match the 6h pipeline schedule of bluefin-releases.
 // Set FIREHOSE_CACHE_HOURS=0 to always fetch (used in CI via pages.yml).
@@ -69,7 +98,7 @@ function sortedReleases(stream) {
  * Build a FirehoseOsInfo object from a SBOM packageVersions record.
  * Returns null if packageVersions is absent.
  */
-function buildOsInfo(streamId, packageVersions) {
+function buildOsInfo(streamId, packageVersions, nvidiaVersion = null) {
   if (!packageVersions) return null;
 
   const info = { stream: streamId };
@@ -83,6 +112,8 @@ function buildOsInfo(streamId, packageVersions) {
   if (packageVersions.podman) majorPackages["Podman"] = packageVersions.podman;
   if (packageVersions.systemd) majorPackages["systemd"] = packageVersions.systemd;
   if (packageVersions.bootc) majorPackages["bootc"] = packageVersions.bootc;
+  const nvidia = packageVersions.nvidia || nvidiaVersion;
+  if (nvidia) majorPackages["NVIDIA"] = nvidia;
 
   if (Object.keys(majorPackages).length > 0) {
     info.majorPackages = majorPackages;
@@ -157,7 +188,13 @@ function buildOsApp(spec, sbomCache) {
       currentReleaseDate = `${currentReleaseVersion}T00:00:00Z`;
       updatedAt = currentReleaseDate;
     }
-    osInfo = buildOsInfo(spec.streamId, latestWithVersions.packageVersions);
+    const nvidiaVersion = resolveNvidiaVersion(
+      spec.streamId,
+      sbomCache,
+      latestWithVersions,
+      latestWithVersions.cacheKey,
+    );
+    osInfo = buildOsInfo(spec.streamId, latestWithVersions.packageVersions, nvidiaVersion);
   } else if (releases.length > 0) {
     // Have releases but none with packageVersions yet (SBOM not populated for this entry)
     const first = releases[0];
