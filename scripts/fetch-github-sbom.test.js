@@ -297,6 +297,32 @@ test("STREAM_SPECS contains utah-testing and utah-nvidia-testing", () => {
   assert.equal(utahNvidiaSpec.streamPrefix, "testing");
 });
 
+test("STREAM_SPECS maps all Bluefin LTS streams to bluefin-lts package and stable prefixes", () => {
+  const ltsStreams = STREAM_SPECS.filter((s) => s.id.includes("lts"));
+  assert.ok(ltsStreams.length > 0, "LTS streams must exist");
+
+  for (const stream of ltsStreams) {
+    assert.equal(
+      stream.package,
+      "bluefin-lts",
+      `${stream.id} must use package bluefin-lts`,
+    );
+    assert.ok(
+      stream.streamPrefix.startsWith("stable"),
+      `${stream.id} streamPrefix must start with stable, got ${stream.streamPrefix}`,
+    );
+    assert.ok(
+      !stream.streamPrefix.startsWith("lts"),
+      `${stream.id} streamPrefix must not start with lts`,
+    );
+  }
+
+  const primaryLts = STREAM_SPECS.find((s) => s.id === "bluefin-lts");
+  assert.ok(primaryLts, "bluefin-lts spec must exist");
+  assert.equal(primaryLts.package, "bluefin-lts");
+  assert.equal(primaryLts.streamPrefix, "stable");
+});
+
 // Dynamic reference date based on current time to avoid lookback window flakiness.
 const now = new Date();
 const FIXED_RECENT_DATE = now.toISOString().split("T")[0].replace(/-/g, "");
