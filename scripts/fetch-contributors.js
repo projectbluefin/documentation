@@ -92,24 +92,52 @@ function getAllMarkdownFiles(dir) {
     });
 }
 
+function buildPayload(
+  files = {},
+  { generatedAt, unavailable, stateReason } = {},
+) {
+  const fileEntries =
+    files instanceof Map ? Object.fromEntries(files) : files || {};
+  const fileCount = Object.keys(fileEntries).length;
+  const isUnavailable =
+    unavailable !== undefined ? Boolean(unavailable) : fileCount === 0;
+
+  return {
+    generatedAt: generatedAt ?? new Date().toISOString(),
+    files: fileEntries,
+    unavailable: isUnavailable,
+    stateReason: isUnavailable
+      ? (stateReason ?? "No contributor requests succeeded")
+      : null,
+  };
+}
+
 async function fetchAllContributors() {
+  const force = process.argv.includes("--force");
+
   // Check if existing cache is fresh enough
   if (fs.existsSync(OUTPUT_FILE)) {
-    const stats = fs.statSync(OUTPUT_FILE);
-    const ageHours = (Date.now() - stats.mtimeMs) / (1000 * 60 * 60);
+    try {
+      const stats = fs.statSync(OUTPUT_FILE);
+      const ageHours = (Date.now() - stats.mtimeMs) / (1000 * 60 * 60);
 
-    if (ageHours < CACHE_MAX_AGE_HOURS && !process.argv.includes("--force")) {
-      console.log(
-        `✓ Cache is ${ageHours.toFixed(1)}h old (max ${CACHE_MAX_AGE_HOURS}h). Skipping fetch.`,
-      );
-      console.log(`  Use --force flag to bypass cache and force fresh fetch.`);
-      return;
-    } else if (ageHours >= CACHE_MAX_AGE_HOURS) {
-      console.log(
-        `⏱️  Cache is ${ageHours.toFixed(1)}h old (max ${CACHE_MAX_AGE_HOURS}h). Fetching fresh data...`,
-      );
-    } else {
-      console.log("🔄 --force flag detected. Fetching fresh data...");
+      if (ageHours < CACHE_MAX_AGE_HOURS && !force) {
+        console.log(
+          `✓ Cache is ${ageHours.toFixed(1)}h old (max ${CACHE_MAX_AGE_HOURS}h). Skipping fetch.`,
+        );
+        console.log(
+          `  Use --force flag to bypass cache and force fresh fetch.`,
+        );
+        return;
+      } else if (ageHours >= CACHE_MAX_AGE_HOURS) {
+        console.log(
+          `⏱️  Cache is ${ageHours.toFixed(1)}h old (max ${CACHE_MAX_AGE_HOURS}h). Fetching fresh data...`,
+        );
+      } else {
+        console.log("🔄 --force flag detected. Fetching fresh data...");
+      }
+    } catch {
+      // Ignore cache read errors and proceed to fetch
     }
   }
 
@@ -134,29 +162,43 @@ async function fetchAllContributors() {
     `Found ${allFiles.length} files to process (${docFiles.length} docs, ${blogFiles.length} blog)`,
   );
 
-  const resultsMap = await sequentialFetchWithDelay(
-    allFiles,
-    async (filePath) => {
+  let resultsMap = new Map();
+  let fetchError = null;
+
+  try {
+    resultsMap = await sequentialFetchWithDelay(allFiles, async (filePath) => {
       console.log(`Fetching contributors for ${filePath}...`);
       const contributors = await fetchCommits(filePath);
       return contributors.length > 0 ? contributors : null;
-    },
-  );
+    });
+  } catch (error) {
+    console.error("Error fetching contributors:", error.message);
+    fetchError = error;
+  }
 
-  const contributorsData = Object.fromEntries(resultsMap);
   const successCount = resultsMap.size;
+  const isUnavailable = successCount === 0;
 
-  console.log(
-    `\nSuccessfully fetched contributors for ${successCount}/${allFiles.length} files`,
-  );
-
-  // Don't fail build if no contributors fetched - component will gracefully handle empty data
-  if (successCount === 0) {
+  let stateReason = null;
+  if (isUnavailable) {
     console.warn(
       "\n⚠️  No contributors fetched! Contributors will not be displayed.",
     );
-    console.warn("   Please set a GitHub token and try again.");
+    if (fetchError) {
+      stateReason = `Contributor fetch failed: ${fetchError.message}`;
+    } else if (!GITHUB_TOKEN) {
+      console.warn("   Please set a GitHub token and try again.");
+      stateReason =
+        "No GitHub token configured and contributor requests failed";
+    } else {
+      stateReason = "No contributor requests succeeded";
+    }
   }
+
+  const payload = buildPayload(resultsMap, {
+    unavailable: isUnavailable,
+    stateReason,
+  });
 
   // Ensure output directory exists
   if (!fs.existsSync(OUTPUT_DIR)) {
@@ -166,21 +208,52 @@ async function fetchAllContributors() {
   // Write to file
   fs.writeFileSync(
     OUTPUT_FILE,
-    JSON.stringify(contributorsData, null, 2),
+    JSON.stringify(payload, null, 2) + "\n",
     "utf-8",
   );
 
-  console.log(`✓ Contributors data saved to ${OUTPUT_FILE}`);
+  if (isUnavailable) {
+    console.log(`✓ Unavailable contributor payload saved to ${OUTPUT_FILE}`);
+  } else {
+    console.log(
+      `\nSuccessfully fetched contributors for ${successCount}/${allFiles.length} files`,
+    );
+    console.log(`✓ Contributors data saved to ${OUTPUT_FILE}`);
+  }
+
+  return payload;
 }
 
 if (require.main === module) {
   fetchAllContributors().catch((error) => {
-    console.error("Fatal error:", error);
-    process.exit(1);
+    console.error("Fatal error:", error.message);
+    try {
+      const fallback = buildPayload(
+        {},
+        {
+          unavailable: true,
+          stateReason: `Fatal contributor fetch error: ${error.message}`,
+        },
+      );
+      if (!fs.existsSync(OUTPUT_DIR)) {
+        fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+      }
+      fs.writeFileSync(
+        OUTPUT_FILE,
+        JSON.stringify(fallback, null, 2) + "\n",
+        "utf-8",
+      );
+    } catch {
+      // ignore
+    }
+    process.exit(0);
   });
 }
 
 module.exports = {
+  OUTPUT_FILE,
   getAllMarkdownFiles,
   isBotAccount,
+  buildPayload,
+  fetchAllContributors,
 };
