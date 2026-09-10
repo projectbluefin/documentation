@@ -174,6 +174,7 @@
 }
 
 .sceneContent blockquote,
+.sceneQuote,
 .missionQuote {
   margin: 60px 0 20px;
   padding: 20px 0;
@@ -182,11 +183,13 @@
 }
 
 .sceneContent blockquote:last-child,
+.sceneQuote:last-child,
 .missionQuote:last-child {
   border-bottom: 0;
 }
 
 .sceneContent blockquote p,
+.sceneQuote p,
 .missionQuote p {
   color: var(--portal-text-light);
   font-size: 20px;
@@ -195,6 +198,7 @@
 }
 
 .sceneContent blockquote cite,
+.sceneQuote cite,
 .missionQuote cite {
   position: relative;
   display: block;
@@ -205,6 +209,7 @@
 }
 
 .sceneContent blockquote cite::before,
+.sceneQuote cite::before,
 .missionQuote cite::before {
   content: "”";
   position: absolute;
@@ -219,6 +224,7 @@
 }
 
 .sceneContent blockquote a,
+.sceneQuote a,
 .missionQuote a {
   color: var(--portal-blue-light);
   font-weight: 700;
@@ -226,11 +232,13 @@
 }
 
 .sceneContent blockquote a:hover,
+.sceneQuote a:hover,
 .missionQuote a:hover {
   text-decoration: underline;
 }
 
 .sceneContent blockquote a:focus-visible,
+.sceneQuote a:focus-visible,
 .missionQuote a:focus-visible {
   outline: 3px solid var(--portal-text-light);
   outline-offset: 3px;
@@ -252,9 +260,44 @@
   grid-template-columns: 3fr 2fr;
 }
 
+.developerArtworkWrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 .developerCharacter {
   width: min(756px, 120%);
   transform: translateX(-10%);
+}
+
+.sceneArrow {
+  position: absolute;
+  top: 11%;
+  right: 15%;
+  z-index: 2;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  text-align: left;
+}
+
+.sceneArrow img {
+  width: 24px;
+  height: auto;
+  transform: scaleY(1) translateY(10px);
+}
+
+.sceneArrow p {
+  margin: 0;
+  color: var(--portal-text-light);
+  font-size: 16px;
+}
+
+.sceneArrow b {
+  font-weight: 700;
 }
 
 .benefitGrid,
@@ -273,8 +316,71 @@
   grid-template-columns: repeat(2, 1fr);
 }
 
-.benefitGrid p,
-.developerGrid p {
+.developerBrandItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 140px;
+  padding: 24px;
+  border-right: 1px solid var(--portal-border-light);
+  border-bottom: 1px solid var(--portal-border-light);
+  text-align: center;
+}
+
+.developerBrandItem:nth-child(even) {
+  border-right: 0;
+}
+
+.developerBrandItem:nth-last-child(1),
+.developerBrandItem:nth-last-child(2) {
+  border-bottom: 0;
+}
+
+.iconWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  margin-bottom: 12px;
+}
+
+.iconMain {
+  position: relative;
+  z-index: 1;
+  display: block;
+  height: 32px;
+  width: auto;
+  max-width: 36px;
+  object-fit: contain;
+}
+
+.iconBlur {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 0;
+  display: block;
+  height: 32px;
+  width: auto;
+  max-width: 36px;
+  object-fit: contain;
+  opacity: 0.35;
+  transform: translate(-50%, -50%) scale(1.8);
+  filter: blur(12px);
+  pointer-events: none;
+}
+
+.developerBrandItem p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.4;
+  text-shadow: 1px 1px 2px rgb(var(--portal-bg-rgb) / 50%);
+}
+
+.benefitGrid p {
   display: grid;
   place-items: center;
   min-height: 110px;
@@ -285,9 +391,18 @@
   text-shadow: 1px 1px 2px rgb(var(--portal-bg-rgb) / 50%);
 }
 
-.benefitGrid p:last-child,
-.developerGrid p:nth-child(even) {
+.benefitGrid p:last-child {
   border-right: 0;
+}
+
+.sceneContent a {
+  color: var(--portal-blue-light);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.sceneContent a:hover {
+  text-decoration: underline;
 }
 
 .parallaxViewport {
@@ -454,16 +569,20 @@
   }
 
   .benefitGrid p,
-  .developerGrid p,
-  .developerGrid p:nth-child(even) {
+  .developerBrandItem,
+  .developerBrandItem:nth-child(even) {
     min-height: 0;
     border-right: 0;
     border-bottom: 1px solid var(--portal-border-light);
   }
 
   .benefitGrid p:last-child,
-  .developerGrid p:last-child {
+  .developerBrandItem:last-child {
     border-bottom: 0;
+  }
+
+  .sceneArrow {
+    display: none;
   }
 
   .desktopLayer {
@@ -503,6 +622,7 @@
   }
 
   .benefitGrid p,
+  .developerBrandItem,
   .developerGrid p {
     padding: 16px;
   }

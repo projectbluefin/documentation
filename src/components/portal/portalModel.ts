@@ -24,6 +24,45 @@ export type PortalLayer = {
   priority?: boolean;
 };
 
+export interface DeveloperBenefit {
+  text: string;
+  icon: string;
+  alt: string;
+}
+
+export const DEVELOPER_BENEFITS: readonly DeveloperBenefit[] = [
+  {
+    text: "Visual Studio Code with devcontainers",
+    icon: "/brands/vscode.svg",
+    alt: "Visual Studio Code logo",
+  },
+  {
+    text: "Work with your favorite Linux distributions with a container-focused terminal",
+    icon: "/brands/ptyxis.svg",
+    alt: "Ptyxis logo",
+  },
+  {
+    text: "Designed for cloud native development with the CNCF's best tools, including Kubernetes",
+    icon: "/brands/kubernetes.svg",
+    alt: "Kubernetes logo",
+  },
+  {
+    text: "Homebrew on-tap by default, same tools as your Mac",
+    icon: "/brands/homebrew.svg",
+    alt: "Homebrew logo",
+  },
+  {
+    text: "Podman Desktop for graphical container management",
+    icon: "/brands/podman-desktop.svg",
+    alt: "Podman Desktop logo",
+  },
+  {
+    text: "JetBrains IDEs one command away",
+    icon: "/brands/jetbrains-icon.png",
+    alt: "JetBrains logo",
+  },
+];
+
 const evening = (file: string): string => `/img/portal/evening/${file}`;
 const clouds = evening("BlueFinSite_2_Clouds-min.webp");
 
