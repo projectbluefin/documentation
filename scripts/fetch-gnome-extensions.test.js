@@ -4,6 +4,7 @@ const path = require("path");
 
 const {
   buildExtensionRecord,
+  buildUnavailableOutput,
   isStale,
 } = require("./fetch-gnome-extensions.js");
 
@@ -40,4 +41,11 @@ test("isStale returns true when the cache file does not exist", () => {
     isStale(path.join(__dirname, "..", "static", "data", "missing-gnome-extensions.json")),
     true,
   );
+});
+test("buildUnavailableOutput creates unavailable payload with reason", () => {
+  const payload = buildUnavailableOutput("Service unreachable");
+  assert.equal(payload.unavailable, true);
+  assert.equal(payload.stateReason, "Service unreachable");
+  assert.deepEqual(payload.extensions, []);
+  assert.ok(payload.generatedAt);
 });
