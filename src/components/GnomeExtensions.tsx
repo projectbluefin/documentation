@@ -15,43 +15,86 @@ interface ExtensionData {
   donateUrl: string | null;
 }
 
+/**
+ * scripts/fetch-gnome-extensions.js never fails the build: on error it writes
+ * `{ unavailable: true, stateReason }` instead of the extension array (see
+ * AGENTS.md → Data pipelines). This must be checked before treating the
+ * payload as an array, or a plain `.find()` throws.
+ */
+interface UnavailablePayload {
+  unavailable: true;
+  stateReason: string;
+}
+
+type ExtensionsResponse = ExtensionData[] | UnavailablePayload;
+
+function isUnavailablePayload(
+  data: ExtensionsResponse,
+): data is UnavailablePayload {
+  return !Array.isArray(data) && data?.unavailable === true;
+}
+
 interface GnomeExtensionsProps {
   extensionId: number;
 }
 
+type LoadState =
+  | { status: "loading" }
+  | { status: "found"; extension: ExtensionData }
+  | { status: "not-found" }
+  | { status: "unavailable"; reason: string };
+
 const GnomeExtensions: React.FC<GnomeExtensionsProps> = ({ extensionId }) => {
-  const [extension, setExtension] = useState<ExtensionData | null>(null);
+  const [state, setState] = useState<LoadState>({ status: "loading" });
   const [imageError, setImageError] = useState(false);
-  const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
     fetch("/data/gnome-extensions.json")
       .then((response) => response.json())
-      .then((data: ExtensionData[]) => {
-        const ext = data.find((item) => item.id === extensionId);
-        if (ext) {
-          setExtension(ext);
+      .then((data: ExtensionsResponse) => {
+        if (isUnavailablePayload(data)) {
+          setState({ status: "unavailable", reason: data.stateReason });
+          return;
         }
+        const ext = data.find((item) => item.id === extensionId);
+        setState(ext ? { status: "found", extension: ext } : { status: "not-found" });
       })
       .catch((error) => {
         console.error("Error loading extension metadata:", error);
-        setLoadError(true);
+        setState({
+          status: "unavailable",
+          reason: "Extension data could not be loaded.",
+        });
       });
   }, [extensionId]);
 
-  if (loadError) {
+  if (state.status === "unavailable") {
     return (
       <div className={styles.extensionBox}>
         <div className={styles.extensionInfo}>
-          <p className={styles.extensionDescription}>Extension data unavailable.</p>
+          <p className={styles.extensionDescription}>{state.reason}</p>
         </div>
       </div>
     );
   }
 
-  if (!extension) {
+  if (state.status === "not-found") {
+    return (
+      <div className={styles.extensionBox}>
+        <div className={styles.extensionInfo}>
+          <p className={styles.extensionDescription}>
+            Extension data unavailable.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (state.status === "loading") {
     return <div className={styles.extensionBox}>Loading...</div>;
   }
+
+  const extension = state.extension;
 
   const thumbnailUrl = extension.screenshot || extension.remoteScreenshot;
   // Truncate to first line, then cap at 150 chars if still too long

@@ -125,6 +125,23 @@ async function fetchExtensionData(pk) {
   return buildExtensionRecord(pk, data, localScreenshot);
 }
 
+/**
+ * Per the repo's data-pipeline rules (AGENTS.md), a fetch script must never
+ * fail the build: no throw, no non-zero exit, no silently empty file. On
+ * error it writes this explicit unavailable payload instead, so consumers
+ * (e.g. GnomeExtensions.tsx) can render a visible reason rather than hang at
+ * "Loading...".
+ */
+function unavailablePayload(reason) {
+  return { unavailable: true, stateReason: reason };
+}
+
+function writeUnavailable(reason) {
+  console.warn(`fetch-gnome-extensions: ${reason} — writing unavailable payload`);
+  fs.mkdirSync(path.dirname(OUTPUT_JSON), { recursive: true });
+  fs.writeFileSync(OUTPUT_JSON, JSON.stringify(unavailablePayload(reason), null, 2));
+}
+
 async function main() {
   if (!isStale(OUTPUT_JSON)) return;
 
@@ -140,8 +157,8 @@ async function main() {
   }
 
   if (extensions.length === 0) {
-    console.error("All extension fetches failed — aborting.");
-    process.exit(1);
+    writeUnavailable("All GNOME extension fetches failed");
+    return;
   }
   if (extensions.length < EXTENSION_IDS.length) {
     console.warn(`Warning: only ${extensions.length}/${EXTENSION_IDS.length} extensions fetched.`);
@@ -152,10 +169,14 @@ async function main() {
 }
 
 if (require.main === module) {
-  main().catch((e) => { console.error(e); process.exit(1); });
+  main().catch((e) => {
+    console.error(e);
+    writeUnavailable(`GNOME extension data could not be generated: ${e.message}`);
+  });
 }
 
 module.exports = {
   buildExtensionRecord,
   isStale,
+  unavailablePayload,
 };
