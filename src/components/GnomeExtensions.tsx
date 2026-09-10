@@ -23,14 +23,32 @@ const GnomeExtensions: React.FC<GnomeExtensionsProps> = ({ extensionId }) => {
   const [extension, setExtension] = useState<ExtensionData | null>(null);
   const [imageError, setImageError] = useState(false);
   const [loadError, setLoadError] = useState(false);
+  const [notFound, setNotFound] = useState(false);
+  const [unavailableReason, setUnavailableReason] = useState<string | null>(null);
 
   useEffect(() => {
     fetch("/data/gnome-extensions.json")
       .then((response) => response.json())
-      .then((data: ExtensionData[]) => {
-        const ext = data.find((item) => item.id === extensionId);
-        if (ext) {
-          setExtension(ext);
+      .then((data: unknown) => {
+        if (!data) {
+          setLoadError(true);
+          return;
+        }
+        if (Array.isArray(data)) {
+          const ext = data.find((item: ExtensionData) => item?.id === extensionId);
+          if (ext) {
+            setExtension(ext);
+          } else {
+            setNotFound(true);
+          }
+        } else if (typeof data === "object" && "unavailable" in data && Boolean(data.unavailable)) {
+          const reason = "stateReason" in data && typeof data.stateReason === "string"
+            ? data.stateReason
+            : "Extension data unavailable.";
+          setUnavailableReason(reason);
+          setLoadError(true);
+        } else {
+          setLoadError(true);
         }
       })
       .catch((error) => {
@@ -43,7 +61,19 @@ const GnomeExtensions: React.FC<GnomeExtensionsProps> = ({ extensionId }) => {
     return (
       <div className={styles.extensionBox}>
         <div className={styles.extensionInfo}>
-          <p className={styles.extensionDescription}>Extension data unavailable.</p>
+          <p className={styles.extensionDescription}>
+            {unavailableReason ?? "Extension data unavailable."}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (notFound) {
+    return (
+      <div className={styles.extensionBox}>
+        <div className={styles.extensionInfo}>
+          <p className={styles.extensionDescription}>Extension #{extensionId} not found.</p>
         </div>
       </div>
     );

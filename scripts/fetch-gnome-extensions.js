@@ -96,6 +96,15 @@ function buildExtensionRecord(pk, data, localScreenshot = null) {
     donateUrl: data.donate_url || null,
   };
 }
+function buildUnavailableOutput(reason = "GNOME extensions API unavailable") {
+  return {
+    generatedAt: new Date().toISOString(),
+    unavailable: true,
+    stateReason: reason,
+    extensions: [],
+  };
+}
+
 
 async function fetchExtensionData(pk) {
   const url = `https://extensions.gnome.org/extension-info/?pk=${pk}`;
@@ -140,8 +149,11 @@ async function main() {
   }
 
   if (extensions.length === 0) {
-    console.error("All extension fetches failed — aborting.");
-    process.exit(1);
+    const unavailableReason = "GNOME extensions API unavailable";
+    console.warn(`All extension fetches failed — writing unavailable payload (${unavailableReason}).`);
+    const unavailablePayload = buildUnavailableOutput(unavailableReason);
+    fs.writeFileSync(OUTPUT_JSON, JSON.stringify(unavailablePayload, null, 2) + "\n");
+    return;
   }
   if (extensions.length < EXTENSION_IDS.length) {
     console.warn(`Warning: only ${extensions.length}/${EXTENSION_IDS.length} extensions fetched.`);
@@ -157,5 +169,6 @@ if (require.main === module) {
 
 module.exports = {
   buildExtensionRecord,
+  buildUnavailableOutput,
   isStale,
 };
