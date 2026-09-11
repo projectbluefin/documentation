@@ -183,7 +183,7 @@ describe("fetchBuildMetrics with injected requestClient seam", () => {
     const start = new Date("2026-03-01T00:00:00Z");
     const end = new Date("2026-03-31T23:59:59Z");
 
-    const mockRequest = async (route, params) => {
+    const mockRequest = async (route, _params) => {
       assert.equal(route, "GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs");
       // Return a run based on the workflow id
       return {
