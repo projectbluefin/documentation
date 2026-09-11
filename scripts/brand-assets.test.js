@@ -123,3 +123,22 @@ test("navbar i18n translation and css suppress duplicate title", () => {
     );
   }
 });
+
+test("custom.css hides inactive theme logo to prevent stacking flash", () => {
+  const cssPath = path.join(repoRoot, "src/css/custom.css");
+  const css = fs.readFileSync(cssPath, "utf8");
+
+  assert.ok(
+    css.includes(".navbar__logo img"),
+    "custom.css must style .navbar__logo img",
+  );
+  // Verify inactive logos are hidden to prevent stacking flash
+  assert.ok(
+    css.includes("themedComponent--dark") && css.includes("display: none"),
+    "custom.css must hide dark logo in light mode to prevent flash",
+  );
+  assert.ok(
+    css.includes("themedComponent--light") && css.includes("display: none"),
+    "custom.css must hide light logo in dark mode to prevent flash",
+  );
+});
