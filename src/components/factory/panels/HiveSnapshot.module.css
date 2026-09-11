@@ -31,7 +31,7 @@
   padding: 0 var(--fx-space-4);
   border-radius: var(--fx-radius-md);
   background: var(--fx-accent);
-  color: var(--fx-bg);
+  color: var(--fx-text-on-accent);
   font-size: var(--fx-text-sm);
   font-weight: var(--fx-weight-bold);
   transition: var(--fx-transition);
@@ -40,7 +40,7 @@
 .cta:hover,
 .cta:focus-visible {
   background: var(--fx-accent-dim);
-  color: var(--fx-bg);
+  color: var(--fx-text-on-accent);
   text-decoration: none;
 }
 
