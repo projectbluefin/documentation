@@ -163,7 +163,7 @@ export default function CountmeAnalyticsCharts({
   }, [weeks, heroRange]);
 
   // Delta calculation for Bluefin fleet
-  const firstWeek = weeks[0] || ({} as CountmeWeek);
+  const firstWeek = heroFilteredWeeks[0] || ({} as CountmeWeek);
   const initialTotalBluefin =
     sumPresent([
       firstWeek.bluefin,
@@ -179,6 +179,7 @@ export default function CountmeAnalyticsCharts({
           100
         ).toFixed(1)
       : "0.0";
+  const bluefinDeltaIsPositive = parseFloat(bluefinDeltaPct) >= 0;
 
   // Filtered weeks for comparative time-series charts
   const filteredWeeks = useMemo(() => {
@@ -517,7 +518,8 @@ export default function CountmeAnalyticsCharts({
             </div>
             <div className={styles.heroMeta}>
               <span style={{ fontWeight: 700, color: "#39d2c0" }}>
-                +{bluefinDeltaPct}% overall
+                {bluefinDeltaIsPositive ? "+" : ""}
+                {bluefinDeltaPct}% overall
               </span>
               <span>latest week ({latestWeek.week})</span>
             </div>
@@ -563,7 +565,7 @@ export default function CountmeAnalyticsCharts({
         <EChart
           option={heroChartOption}
           title="Bluefin Systems"
-          summary={`Project Bluefin weekly active systems: currently ${currentTotalBluefin.toLocaleString()} systems as of week ${latestWeek.week}, up ${bluefinDeltaPct}% across ${weeks.length} tracked weeks.`}
+          summary={`Project Bluefin weekly active systems: currently ${currentTotalBluefin.toLocaleString()} systems as of week ${latestWeek.week}, ${bluefinDeltaIsPositive ? "up" : "down"} ${Math.abs(parseFloat(bluefinDeltaPct))}% across ${heroFilteredWeeks.length} tracked weeks.`}
           points={realHeroPoints}
           minPoints={2}
           height={320}
