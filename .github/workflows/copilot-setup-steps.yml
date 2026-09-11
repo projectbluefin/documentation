@@ -32,7 +32,7 @@ jobs:
         run: npm ci --legacy-peer-deps
 
       - name: Install Wrangler (Cloudflare CLI)
-        run: npm install -g wrangler@latest
+        run: npm install -g wrangler@4.129.1
 
       - name: Verify Wrangler auth
         if: env.CLOUDFLARE_API_TOKEN != ''
