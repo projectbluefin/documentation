@@ -4201,27 +4201,11 @@ export function LiveSection({ s }: { s: FactoryLive }): React.JSX.Element {
         </section>
       )}
 
-      <GovernorPanel governor={snapshot?.governor} registry={registryData} />
-      <VictoryLog victories={queueData?.victories ?? null} />
-      {advisoryItems.length > 0 && (
-        <section className={styles.panel}>
-          <Heading as="h2" className={styles.panelTitle}>
-            What Frames Are Working On
-          </Heading>
-          <p className={styles.panelMeta}>
-            Advisory digest — findings, bugs, CI failures logged by each Frame
-          </p>
-          <AgentWorkLog
-            agents={agents}
-            items={advisoryItems}
-            advisoryIssue={snapshot?.advisoryIssue}
-            config={config}
-          />
-        </section>
-      )}
-      {/* Registry Health Checks */}
-      {registryData?.health?.checks &&
-        registryData.health.checks.length > 0 && (
+      {/* Governor and System Health */}
+      {(() => {
+        const hasHealthChecks =
+          registryData?.health?.checks && registryData.health.checks.length > 0;
+        const healthPanel = hasHealthChecks ? (
           <section className={styles.panel}>
             <Heading as="h2" className={styles.panelTitle}>
               System Health
@@ -4319,7 +4303,41 @@ export function LiveSection({ s }: { s: FactoryLive }): React.JSX.Element {
               </p>
             )}
           </section>
-        )}
+        ) : null;
+
+        return hasHealthChecks ? (
+          <div className={styles.twoCol}>
+            <GovernorPanel
+              governor={snapshot?.governor}
+              registry={registryData}
+            />
+            {healthPanel}
+          </div>
+        ) : (
+          <GovernorPanel
+            governor={snapshot?.governor}
+            registry={registryData}
+          />
+        );
+      })()}
+
+      <VictoryLog victories={queueData?.victories ?? null} />
+      {advisoryItems.length > 0 && (
+        <section className={styles.panel}>
+          <Heading as="h2" className={styles.panelTitle}>
+            What Frames Are Working On
+          </Heading>
+          <p className={styles.panelMeta}>
+            Advisory digest — findings, bugs, CI failures logged by each Frame
+          </p>
+          <AgentWorkLog
+            agents={agents}
+            items={advisoryItems}
+            advisoryIssue={snapshot?.advisoryIssue}
+            config={config}
+          />
+        </section>
+      )}
     </>
   );
 }
@@ -4396,9 +4414,7 @@ export function CommunitySection({ s }: { s: FactoryLive }): React.JSX.Element {
       <MergedPRFeed prs={mergedPRs} />
 
       {/* ── History Zone ── */}
-      <div className={styles.twoCol}>
-        <HistoryTrends history={hiveHistory} />
-      </div>
+      <HistoryTrends history={hiveHistory} />
 
       {/* Velocity + Org stats */}
       <div className={styles.twoCol}>

@@ -53,3 +53,11 @@
 .link:hover {
   text-decoration: underline;
 }
+
+.twoCol {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: var(--fx-space-4);
+  align-items: start;
+  margin-bottom: var(--fx-space-5);
+}

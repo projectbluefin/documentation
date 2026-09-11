@@ -181,34 +181,50 @@ export default function BuildsPanels({
           flight (not shown below)
         </div>
       )}
-      <table className={styles.table}>
-        <thead>
-          <tr>
-            <th>Lane</th>
-            <th>Started</th>
-            <th>Duration</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {recentTerminal.map((r, i) => {
-            const lane = runToLane.get(r);
-            const sev = r.status === "passed" ? "ok" : "alert";
-            return (
-              <tr key={i}>
-                <td>{lane?.label ?? "—"}</td>
-                <td>{fmtTime(r.t)}</td>
-                <td>{r.durationMin} min</td>
-                <td>
-                  <span aria-label={FX_SEVERITY[sev].word}>
-                    {FX_SEVERITY[sev].glyph}
-                  </span>
-                </td>
+      {(() => {
+        const mid = Math.ceil(recentTerminal.length / 2);
+        const col1 = recentTerminal.slice(0, mid);
+        const col2 = recentTerminal.slice(mid);
+        const renderTable = (runs: typeof recentTerminal, keyPrefix: string) => (
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th>Lane</th>
+                <th>Started</th>
+                <th>Duration</th>
+                <th>Status</th>
               </tr>
-            );
-          })}
-        </tbody>
-      </table>
+            </thead>
+            <tbody>
+              {runs.map((r, i) => {
+                const lane = runToLane.get(r);
+                const sev = r.status === "passed" ? "ok" : "alert";
+                return (
+                  <tr key={`${keyPrefix}-${i}`}>
+                    <td>{lane?.label ?? "—"}</td>
+                    <td>{fmtTime(r.t)}</td>
+                    <td>{r.durationMin} min</td>
+                    <td>
+                      <span aria-label={FX_SEVERITY[sev].word}>
+                        {FX_SEVERITY[sev].glyph}
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        );
+
+        return col2.length > 0 ? (
+          <div className={styles.twoCol}>
+            <div>{renderTable(col1, "col1")}</div>
+            <div>{renderTable(col2, "col2")}</div>
+          </div>
+        ) : (
+          renderTable(col1, "col1")
+        );
+      })()}
     </div>
   );
 }
