@@ -455,6 +455,7 @@ if (require.main === module) {
 }
 
 module.exports = {
+  OS_STREAM_SPECS,
   buildOsApp,
   buildOsInfo,
   computePackageDiff,
