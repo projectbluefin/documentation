@@ -92,6 +92,8 @@ const REPO_MERGED_PRS_QUERY = `
  * @param {string} name - Repository name (e.g., "bluefin")
  * @param {Date} startDate - Start of date range
  * @param {Date} endDate - End of date range
+ * @param {object} [options] - Optional dependencies/overrides
+ * @param {Function} [options.client=graphqlWithAuth] - GraphQL client
  * @returns {Promise<{items: Array, partial: boolean, error?: string}>} Fetch result
  */
 export async function fetchClosedItemsFromRepo(
@@ -99,7 +101,9 @@ export async function fetchClosedItemsFromRepo(
   name,
   startDate,
   endDate,
+  options = {},
 ) {
+  const { client = graphqlWithAuth } = options;
   // Declared outside try so partial results are preserved on mid-pagination error.
   const allItems = [];
   try {
@@ -108,7 +112,7 @@ export async function fetchClosedItemsFromRepo(
     let issuesHasNextPage = true;
     while (issuesHasNextPage) {
       const result = await retryWithBackoff(async () => {
-        return await graphqlWithAuth(REPO_CLOSED_ISSUES_QUERY, {
+        return await client(REPO_CLOSED_ISSUES_QUERY, {
           owner,
           name,
           since: startDate.toISOString(),
@@ -143,7 +147,7 @@ export async function fetchClosedItemsFromRepo(
     let prsHasNextPage = true;
     while (prsHasNextPage) {
       const result = await retryWithBackoff(async () => {
-        return await graphqlWithAuth(REPO_MERGED_PRS_QUERY, {
+        return await client(REPO_MERGED_PRS_QUERY, {
           owner,
           name,
           cursor: prsCursor,

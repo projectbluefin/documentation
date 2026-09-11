@@ -414,6 +414,34 @@ describe("fetchClosedItemsFromRepo", () => {
 
     assert.deepEqual(result, { items: [], partial: false });
   });
+
+  it("accepts an injected client option to bypass the default graphqlWithAuth", async () => {
+    const { fetchClosedItemsFromRepo, REPO_CLOSED_ISSUES_QUERY, REPO_MERGED_PRS_QUERY } = await load();
+    const mockCalls = [];
+    const customClient = async (query, vars) => {
+      mockCalls.push({ query, vars });
+      if (query === REPO_CLOSED_ISSUES_QUERY) {
+        return repoPages({ issues: page([issueNode({ number: 99 })]) });
+      }
+      if (query === REPO_MERGED_PRS_QUERY) {
+        return repoPages({ pullRequests: page([prNode({ number: 100 })]) });
+      }
+      return repoPages();
+    };
+
+    const result = await fetchClosedItemsFromRepo("custom-owner", "custom-repo", START, END, {
+      client: customClient,
+    });
+
+    assert.equal(result.partial, false);
+    assert.deepEqual(
+      result.items.map((i) => i.number),
+      [99, 100],
+    );
+    assert.equal(mockCalls.length, 2);
+    assert.equal(mockCalls[0].vars.owner, "custom-owner");
+    assert.equal(mockCalls[0].vars.name, "custom-repo");
+  });
 });
 
 describe("graphql-queries module surface", () => {
