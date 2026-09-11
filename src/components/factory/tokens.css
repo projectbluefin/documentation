@@ -28,6 +28,7 @@
   --fx-text-strong: var(--ifm-heading-color);
   --fx-text-muted: var(--ifm-color-emphasis-700);
   --fx-text-faint: var(--ifm-color-emphasis-600);
+  --fx-text-on-accent: var(--ifm-font-color-base-inverse, #fff);
 
   --fx-accent: var(--ifm-color-primary);
   --fx-accent-dim: var(--ifm-color-primary-dark);

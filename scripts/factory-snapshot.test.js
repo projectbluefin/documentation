@@ -66,3 +66,25 @@ test("HiveSnapshot renders snapshot link in markup", () => {
   );
   assert.match(html, /Open the live snapshot/);
 });
+
+test("HiveSnapshot CTA button uses readable high-contrast text color token", () => {
+  const css = fs.readFileSync(
+    path.join(
+      __dirname,
+      "..",
+      "src",
+      "components",
+      "factory",
+      "panels",
+      "HiveSnapshot.module.css",
+    ),
+    "utf8",
+  );
+  // Must not use var(--fx-bg) for text color (transparent in light mode)
+  assert.ok(!css.includes("color: var(--fx-bg)"), "CTA must not use --fx-bg for text color");
+  assert.match(
+    css,
+    /\.cta\s*\{[^}]*color:\s*var\(--fx-text-on-accent\)/s,
+    "CTA button must use --fx-text-on-accent for high-contrast text in light mode",
+  );
+});
