@@ -68,9 +68,19 @@ const requestWithAuth = request.defaults({
  * @param {number} workflowId - Workflow ID
  * @param {Date} startDate - Start of date range
  * @param {Date} endDate - End of date range
+ * @param {object} [options] - Options
+ * @param {Function} [options.requestClient=requestWithAuth] - Octokit request client
  * @returns {Promise<Array>} Array of workflow run objects
  */
-async function fetchWorkflowRuns(owner, repo, workflowId, startDate, endDate) {
+async function fetchWorkflowRuns(
+  owner,
+  repo,
+  workflowId,
+  startDate,
+  endDate,
+  options = {},
+) {
+  const { requestClient = requestWithAuth } = options;
   const runs = [];
   let page = 1;
   const perPage = 100;
@@ -83,7 +93,7 @@ async function fetchWorkflowRuns(owner, repo, workflowId, startDate, endDate) {
     while (true) {
       const response = await retryWithBackoff(
         async () => {
-          return await requestWithAuth(
+          return await requestClient(
             "GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs",
             {
               owner,
@@ -127,7 +137,7 @@ async function fetchWorkflowRuns(owner, repo, workflowId, startDate, endDate) {
  * @param {Array} runs - Workflow runs
  * @returns {Object} Workflow metrics
  */
-function calculateWorkflowMetrics(name, repo, workflowId, runs) {
+export function calculateWorkflowMetrics(name, repo, workflowId, runs) {
   const totalBuilds = runs.length;
 
   if (totalBuilds === 0) {
@@ -178,7 +188,7 @@ function calculateWorkflowMetrics(name, repo, workflowId, runs) {
  * @param {Array} images - Array of workflow metrics
  * @returns {Object} Aggregate statistics
  */
-function calculateStatistics(images) {
+export function calculateStatistics(images) {
   const totalBuilds = images.reduce((sum, img) => sum + img.totalBuilds, 0);
 
   if (totalBuilds === 0) {
@@ -230,7 +240,7 @@ function calculateStatistics(images) {
  * @param {number} previous - Previous month value
  * @returns {number} Percentage change (e.g., +2.3, -1.5)
  */
-function calculateMoMChange(current, previous) {
+export function calculateMoMChange(current, previous) {
   if (previous === 0) {
     return 0; // No previous data
   }
@@ -244,9 +254,12 @@ function calculateMoMChange(current, previous) {
  *
  * @param {Date} startDate - Start of current month
  * @param {Date} endDate - End of current month
+ * @param {object} [options] - Options
+ * @param {Function} [options.requestClient=requestWithAuth] - Octokit request client
  * @returns {Promise<Object|null>} Build metrics or null if unavailable
  */
-export async function fetchBuildMetrics(startDate, endDate) {
+export async function fetchBuildMetrics(startDate, endDate, options = {}) {
+  const { requestClient = requestWithAuth } = options;
   console.log("[build-metrics] Fetching build health metrics...");
 
   try {
@@ -281,6 +294,7 @@ export async function fetchBuildMetrics(startDate, endDate) {
           workflow.workflowId,
           startDate,
           endDate,
+          { requestClient },
         );
         const metrics = calculateWorkflowMetrics(
           workflow.name,
@@ -312,6 +326,7 @@ export async function fetchBuildMetrics(startDate, endDate) {
           workflow.workflowId,
           prevMonthStart,
           prevMonthEnd,
+          { requestClient },
         );
         const metrics = calculateWorkflowMetrics(
           workflow.name,
@@ -370,3 +385,5 @@ export async function fetchBuildMetrics(startDate, endDate) {
     return null; // Graceful degradation
   }
 }
+
+export { TRACKED_WORKFLOWS, requestWithAuth };
