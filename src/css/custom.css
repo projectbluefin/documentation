@@ -255,7 +255,18 @@ aside.col--3 nav.thin-scrollbar {
   height: 100%;
   width: auto;
   max-width: none;
+}
+
+html[data-theme="light"] .navbar__logo img[class*="themedComponent--light"],
+html:not([data-theme]) .navbar__logo img[class*="themedComponent--light"],
+html[data-theme="dark"] .navbar__logo img[class*="themedComponent--dark"] {
   display: block;
+}
+
+html[data-theme="light"] .navbar__logo img[class*="themedComponent--dark"],
+html:not([data-theme]) .navbar__logo img[class*="themedComponent--dark"],
+html[data-theme="dark"] .navbar__logo img[class*="themedComponent--light"] {
+  display: none !important;
 }
 
 .navbar__title {
