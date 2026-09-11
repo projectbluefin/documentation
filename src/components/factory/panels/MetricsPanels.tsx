@@ -395,15 +395,22 @@ function HomebrewPanel({
     series: [
       {
         type: "bar",
-        data: barItems.map((r, i) => ({
-          value: r.count,
-          itemStyle: {
-            color:
-              r.id === "bluefin" || r.id === "bluefin-lts"
-                ? seriesColor(0)
-                : seriesColor(3),
-          },
-        })),
+        data: barItems.map((r, i) => {
+          const isBluefin = r.id === "bluefin" || r.id === "bluefin-lts";
+          const isMac =
+            r.label.toLowerCase().includes("macos") ||
+            r.id.toLowerCase().includes("macos") ||
+            r.id.toLowerCase().includes("darwin");
+          const color = isBluefin
+            ? seriesColor(0)
+            : isMac
+              ? seriesColor(1)
+              : seriesColor(2);
+          return {
+            value: r.count,
+            itemStyle: { color },
+          };
+        }),
         name: "Installs",
       },
     ],

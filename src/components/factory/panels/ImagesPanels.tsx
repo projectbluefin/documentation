@@ -236,21 +236,21 @@ export default function ImagesPanels(): React.JSX.Element {
         height={Math.max(280, timelineLanes.length * 24)}
       />
 
-      {/* Freshness brackets */}
-      <EChart
-        option={bracketOption}
-        title="Freshness brackets"
-        summary={`${stateCounts.fresh} fresh, ${stateCounts.stale} stale, ${stateCounts.awaiting} awaiting across ${allStreams.length} lanes`}
-        points={allStreams.length}
-      />
-
-      {/* Availability by family */}
-      <EChart
-        option={familyOption}
-        title="Availability by family"
-        summary={`${families.length} families; ${awaitingStreams.length} lanes still awaiting first publish`}
-        points={families.length}
-      />
+      {/* Freshness brackets and Availability by family */}
+      <div className={styles.twoCol}>
+        <EChart
+          option={bracketOption}
+          title="Freshness brackets"
+          summary={`${stateCounts.fresh} fresh, ${stateCounts.stale} stale, ${stateCounts.awaiting} awaiting across ${allStreams.length} lanes`}
+          points={allStreams.length}
+        />
+        <EChart
+          option={familyOption}
+          title="Availability by family"
+          summary={`${families.length} families; ${awaitingStreams.length} lanes still awaiting first publish`}
+          points={families.length}
+        />
+      </div>
 
       {/* Provenance */}
       <div className={styles.provenanceBlock}>
