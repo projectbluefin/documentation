@@ -56,7 +56,7 @@ export async function fetchExperimentalAdditions(startDate, endDate, options = {
  * @returns {Promise<Array>} Array of {name, description, mergedAt, prNumber, prUrl}
  */
 async function fetchRepoAdditions(repo, startDate, endDate, options = {}) {
-  const { client = graphqlWithAuth, fetchImpl = globalThis.fetch } = options;
+  const { client = graphqlWithAuth, fetchImpl } = options;
   // Fetch merged PRs from tap
   const prs = await fetchMergedPRs(repo, startDate, endDate, { client });
   console.log(`   Found ${prs.length} merged PRs in ${repo}`);
@@ -181,18 +181,19 @@ async function fetchMergedPRs(repo, startDate, endDate, options = {}) {
  * @returns {Promise<Array>} Array of {filename, status}
  */
 async function fetchPRFiles(repo, prNumber, options = {}) {
-  const { fetchImpl = globalThis.fetch } = options;
+  const { fetchImpl } = options;
   const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
-  if (!token) {
+  if (!fetchImpl && !token) {
     throw new Error(
       "GitHub token required. Set GITHUB_TOKEN or GH_TOKEN environment variable.",
     );
   }
+  const call = fetchImpl ?? globalThis.fetch;
 
   const url = `https://api.github.com/repos/${repo}/pulls/${prNumber}/files?per_page=100`;
-  const response = await fetchImpl(url, {
+  const response = await call(url, {
     headers: {
-      Authorization: `Bearer ${token}`,
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       Accept: "application/vnd.github.v3+json",
     },
   });
@@ -216,17 +217,18 @@ async function fetchPRFiles(repo, prNumber, options = {}) {
  * @returns {Promise<string|null>} Package description or null
  */
 async function fetchPackageDescription(repo, filepath, options = {}) {
-  const { fetchImpl = globalThis.fetch } = options;
+  const { fetchImpl } = options;
   const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
-  if (!token) {
+  if (!fetchImpl && !token) {
     return null;
   }
+  const call = fetchImpl ?? globalThis.fetch;
 
   try {
     const url = `https://api.github.com/repos/${repo}/contents/${filepath}`;
-    const response = await fetchImpl(url, {
+    const response = await call(url, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
         Accept: "application/vnd.github.v3.raw",
       },
     });
