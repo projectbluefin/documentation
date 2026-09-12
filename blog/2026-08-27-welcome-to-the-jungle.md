@@ -7,6 +7,8 @@ date: 2026-08-27T18:45:00-04:00
 image: /img/blog/2026-08-27-welcome-to-the-jungle/youtube-thumbnail.jpg
 ---
 
+## [wolves.projectbluefin.io](https://wolves.projectbluefin.io)
+
 A follow up to [The Future of Bluefin - Time to be Honest](/blog/the-future-of-bluefin-time-to-be-honest).
 
 <iframe
