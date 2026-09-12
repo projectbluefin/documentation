@@ -26,7 +26,9 @@ function loadModule(file) {
         const rel = id.slice("@site/".length);
         const target = path.resolve(root, rel);
         if (target.endsWith(".json"))
-          return JSON.parse(fs.readFileSync(target, "utf8"));
+          return fs.existsSync(target)
+            ? JSON.parse(fs.readFileSync(target, "utf8"))
+            : { unavailable: true };
         for (const suffix of [
           ".ts",
           ".tsx",

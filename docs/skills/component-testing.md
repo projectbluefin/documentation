@@ -97,6 +97,13 @@ memory and rendered to a string inside that same runner.
    test harness. Keep separate tests for the composed component's unavailable
    state; it must render a status and source reason rather than return `null`.
 
+   When a component imports generated data from `@site/static/data/*.json` at
+   module scope, the require shim must resolve a missing file to
+   `{ unavailable: true }` rather than throw. Those files are gitignored
+   generated output, so a clean CI checkout does not have them, and an
+   unguarded `readFileSync` fails the suite before any assertion runs.
+   `scripts/portal-static-render.test.js` is the reference pattern.
+
 4. Assert the rules that matter, not the pixels. Markup assertions are brittle
    if they pin exact coordinates; count elements, check for the presence of a
    marker, and assert that forbidden output is absent.
