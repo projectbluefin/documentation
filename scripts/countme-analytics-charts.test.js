@@ -72,6 +72,7 @@ function loadComponent() {
 const mod = loadComponent();
 const {
   parseCount,
+  compactWeek,
   BLUEFIN_FAMILY_IMAGES,
   default: CountmeAnalyticsCharts,
 } = mod;
@@ -386,16 +387,16 @@ test("the chart carries gaps through to the series, never zeros", () => {
       .replace(/&amp;/g, "&"),
   );
 
-  const lts = option.series.find((s) => s.name === "Bluefin LTS");
+  const lts = option.series.find((s) => s.name === "LTS");
   assert.deepEqual(lts.data, [0, null, null]);
   assert.equal(lts.connectNulls, false, "a gap must break the line");
   assert.equal(lts.smooth, false, "a spline invents values between weeks");
 
-  const dakota = option.series.find((s) => s.name === "Project Bluefin Dakota");
+  const dakota = option.series.find((s) => s.name === "Dakota");
   assert.deepEqual(dakota.data, [null, 9, 14]);
 
   assert.ok(
-    !option.series.some((s) => s.name === "Project Bluefin Utah"),
+    !option.series.some((s) => s.name === "Utah"),
     "a repo with no readings must not be plotted",
   );
   assert.equal(
@@ -502,16 +503,16 @@ test("the game-mode series is drawn under its image, not as a new one", () => {
   );
 
   const names = option.series.map((s) => s.name);
-  assert.ok(names.includes("Project Bluefin Dakota"));
-  assert.ok(names.includes("Project Bluefin Dakota (game mode)"));
+  assert.ok(names.includes("Dakota"));
+  assert.ok(names.includes("Dakota \u00b7 game mode"));
   assert.ok(
     !names.some((n) => n.includes("dakota-gaming")),
     "the gaming id must never surface as an image of its own",
   );
 
-  const total = option.series.find((s) => s.name === "Project Bluefin Dakota");
+  const total = option.series.find((s) => s.name === "Dakota");
   const gaming = option.series.find(
-    (s) => s.name === "Project Bluefin Dakota (game mode)",
+    (s) => s.name === "Dakota \u00b7 game mode",
   );
   assert.deepEqual(total.data, [4, 6]);
   assert.deepEqual(gaming.data, [1, 2]);
@@ -521,4 +522,30 @@ test("the game-mode series is drawn under its image, not as a new one", () => {
     "a share carries its image's colour so it is not read as a separate image",
   );
   assert.equal(gaming.connectNulls, false);
+});
+
+test("the axis shortens its ticks but keeps the full date in the data", () => {
+  // Nine ISO dates on one axis repeat the year nine times and crowd each other
+  // out. The tooltip and the numbers table read xAxis.data, so the full date
+  // has to survive there even though the tick text does not show it.
+  const html = renderCounts(COUNTS_FIXTURE);
+  const option = JSON.parse(
+    html
+      .match(
+        /data-title="Weekly active systems"[\s\S]*?data-option="([^"]*)"/,
+      )[1]
+      .replace(/&quot;/g, '"')
+      .replace(/&amp;/g, "&"),
+  );
+
+  assert.deepEqual(option.xAxis.data, [
+    "2026-08-17",
+    "2026-08-24",
+    "2026-08-31",
+  ]);
+  assert.equal(compactWeek("2026-08-17"), "Aug 17");
+  assert.equal(compactWeek("2026-01-05"), "Jan 5");
+  // A value that is not a date is passed through rather than rendered as
+  // "Invalid Date" on the axis.
+  assert.equal(compactWeek("not-a-date"), "not-a-date");
 });
