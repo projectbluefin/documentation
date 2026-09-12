@@ -1,6 +1,36 @@
 import React, { useEffect, useRef, useState } from "react";
-import { toTableRows, FX_CHART_THEME } from "./chartTheme";
+import {
+  toTableRows,
+  FX_CHART_THEME,
+  FX_COLORS,
+  FX_COLOR_TOKENS,
+  fxEchartsTheme,
+  type FxPalette,
+} from "./chartTheme";
 import styles from "./FactoryShell.module.css";
+
+const FX_THEME_NAME = "fx";
+
+/**
+ * Read the `--fx-*` tokens off the mounted element.
+ *
+ * Canvas cannot resolve CSS custom properties, so a chart that hard-codes its
+ * text colour is illegible in whichever theme it was not written for. Outside
+ * `.fxRoot` the tokens are absent and the dark literals stand in.
+ */
+function resolvePalette(el: HTMLElement): FxPalette {
+  const cs = getComputedStyle(el);
+  const read = (slot: keyof FxPalette): string =>
+    cs.getPropertyValue(FX_COLOR_TOKENS[slot]).trim() || FX_COLORS[slot];
+  return {
+    text: read("text"),
+    muted: read("muted"),
+    faint: read("faint"),
+    grid: read("grid"),
+    surface: read("surface"),
+    border: read("border"),
+  };
+}
 
 interface EChartsInstance {
   setOption: (o: unknown, notMerge?: boolean) => void;
@@ -55,8 +85,31 @@ export default function EChart({
   const ref = useRef<HTMLDivElement>(null);
   const chartRef = useRef<EChartsInstance | null>(null);
   const [mounted, setMounted] = useState(false);
-  const [ready, setReady] = useState(false);
+  // A counter, not a boolean: a dispose/re-init pair that lands in one React
+  // batch would coalesce `false`→`true` into no state change at all, and the
+  // fresh instance would never be handed its option. A counter always moves.
+  const [instance, setInstance] = useState(0);
   const enough = points >= minPoints;
+
+  // Docusaurus flips data-theme on <html>. The canvas palette is resolved at
+  // init, so the chart has to be rebuilt when that attribute changes. Seeded
+  // from the DOM so the first paint is not immediately thrown away.
+  const [colorMode, setColorMode] = useState(() =>
+    typeof document === "undefined"
+      ? ""
+      : (document.documentElement.getAttribute("data-theme") ?? ""),
+  );
+  useEffect(() => {
+    const root = document.documentElement;
+    const observer = new MutationObserver(() =>
+      setColorMode(root.getAttribute("data-theme") ?? ""),
+    );
+    observer.observe(root, {
+      attributes: true,
+      attributeFilter: ["data-theme"],
+    });
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => setMounted(true), []);
 
@@ -80,6 +133,7 @@ export default function EChart({
         charts.PieChart,
         charts.ScatterChart,
         charts.HeatmapChart,
+        components.TitleComponent,
         components.GridComponent,
         components.TooltipComponent,
         components.LegendComponent,
@@ -89,20 +143,26 @@ export default function EChart({
         components.MarkLineComponent,
         renderers.CanvasRenderer,
       ]);
-      chartRef.current = core.init(ref.current) as unknown as EChartsInstance;
+      core.registerTheme(
+        FX_THEME_NAME,
+        fxEchartsTheme(resolvePalette(ref.current)),
+      );
+      chartRef.current = core.init(
+        ref.current,
+        FX_THEME_NAME,
+      ) as unknown as EChartsInstance;
       observer = new ResizeObserver(() => chartRef.current?.resize());
       observer.observe(ref.current);
-      setReady(true);
+      setInstance((n) => n + 1);
     })();
 
     return () => {
       disposed = true;
-      setReady(false);
       observer?.disconnect();
       chartRef.current?.dispose();
       chartRef.current = null;
     };
-  }, [mounted, enough]);
+  }, [mounted, enough, colorMode]);
 
   // The option is applied separately, so a new object literal costs one
   // setOption call rather than a full dispose/reimport/reinit cycle.
@@ -114,12 +174,12 @@ export default function EChart({
   const optionRef = useRef(option);
   optionRef.current = option;
   useEffect(() => {
-    if (!ready || !chartRef.current) return;
+    if (!chartRef.current) return;
     chartRef.current.setOption(
       { ...FX_CHART_THEME, ...optionRef.current },
       true,
     );
-  }, [ready, optionKey]);
+  }, [instance, optionKey]);
 
   const rows = toTableRows(option as never);
 

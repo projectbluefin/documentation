@@ -1,351 +1,391 @@
+/*
+ * /analytics presentation layer.
+ *
+ * Every colour and measure comes from the --fx-* tokens in
+ * src/components/factory/tokens.css, which derive from Infima. The component
+ * wraps itself in .fxRoot so those tokens resolve here the same way they do on
+ * /factory — that is what makes this page follow the site's light/dark toggle
+ * instead of painting a fixed dark slab into a light document.
+ */
+
 .container {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
-  margin: 1.5rem 0 3rem;
-  font-family: inherit;
+  gap: var(--fx-space-6);
+  margin: var(--fx-space-5) 0 var(--fx-space-7);
+  background: transparent;
 }
 
-/* ── Top KPI Summary Strip ──────────────────────────────────────────────── */
-.kpiGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-  gap: 1rem;
+/* ── Panels ─────────────────────────────────────────────────────────────── */
+
+.heroCard,
+.panelCard,
+.familySection {
+  padding: var(--fx-space-5);
+  background: var(--fx-surface);
+  border: 1px solid var(--fx-border);
+  border-radius: var(--fx-radius-lg);
 }
 
-.kpiCard {
-  background: var(--ifm-card-background-color, rgba(15, 23, 42, 0.5));
-  border: 1px solid var(--ifm-color-emphasis-200, rgba(255, 255, 255, 0.08));
-  border-radius: 16px;
-  padding: 1.25rem 1.4rem;
+.heroHeader {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--fx-space-5);
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: var(--fx-space-4);
+}
+
+.heroTitleGroup {
+  flex: 1 1 22rem;
+  min-width: 0;
+}
+
+.heroTitle {
+  margin: 0 0 var(--fx-space-2);
+  font-size: var(--fx-text-xl);
+  line-height: 1.15;
+  color: var(--fx-text-strong);
+}
+
+.heroSubtitle {
+  margin: 0;
+  max-width: 56ch;
+  font-size: var(--fx-text-sm);
+  line-height: 1.55;
+  color: var(--fx-text-muted);
+}
+
+.heroKPI {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  min-height: 120px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
-  transition:
-    border-color 0.2s ease,
-    transform 0.2s ease;
+  gap: var(--fx-space-2);
+  align-items: flex-end;
+  text-align: right;
 }
 
-.kpiCard:hover {
-  border-color: var(--ifm-color-primary, #38bdf8);
-  transform: translateY(-2px);
-}
-
-.kpiEyebrow {
-  font-size: 0.72rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--ifm-color-emphasis-600, #94a3b8);
-}
-
-.kpiValueRow {
-  display: flex;
-  align-items: baseline;
-  gap: 0.6rem;
-}
-
-.kpiValue {
-  font-size: 2rem;
-  font-weight: 800;
+.heroNumber {
+  font-family: var(--fx-font-mono);
+  font-size: clamp(2.25rem, 6vw, 3.25rem);
+  font-weight: var(--fx-weight-black);
+  line-height: 1;
   letter-spacing: -0.03em;
-  color: var(--ifm-heading-color, #f8fafc);
+  color: var(--fx-text-strong);
   font-variant-numeric: tabular-nums;
-  line-height: 1.1;
-  margin: 0.35rem 0;
+}
+
+.heroMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--fx-space-2);
+  align-items: center;
+  justify-content: flex-end;
+  font-size: var(--fx-text-xs);
+  color: var(--fx-text-muted);
 }
 
 .trendBadge {
-  font-size: 0.72rem;
-  font-weight: 700;
-  padding: 0.15rem 0.5rem;
-  border-radius: 999px;
-  display: inline-flex;
-  align-items: center;
+  padding: 0.125rem 0.5rem;
+  border-radius: var(--fx-radius-pill);
+  font-family: var(--fx-font-mono);
+  font-weight: var(--fx-weight-bold);
   font-variant-numeric: tabular-nums;
+  border: 1px solid currentColor;
 }
 
+/* Direction is carried by the sign in the label; the tone only reinforces it. */
 .trendUp {
-  background: rgba(57, 210, 192, 0.15);
-  color: #39d2c0;
+  color: var(--fx-accent);
 }
 
 .trendDown {
-  background: rgba(248, 113, 113, 0.15);
-  color: #f87171;
+  color: var(--fx-sev-watch);
 }
 
-.kpiMeta {
-  font-size: 0.75rem;
-  color: var(--ifm-color-emphasis-500, #64748b);
-  line-height: 1.3;
-}
+/* ── Controls ───────────────────────────────────────────────────────────── */
 
-/* ── Panel Cards (Charts) ────────────────────────────────────────────────── */
-.panelCard {
-  background: var(--ifm-card-background-color, rgba(15, 23, 42, 0.45));
-  border: 1px solid var(--ifm-color-emphasis-200, rgba(255, 255, 255, 0.07));
-  border-radius: 18px;
-  padding: 1.5rem;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18);
-  display: flex;
-  flex-direction: column;
-}
-
-.panelHeader {
+.chartControls {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 1.25rem;
-}
-
-.titleGroup {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-}
-
-.eyebrow {
-  font-size: 0.72rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--ifm-color-emphasis-600, #94a3b8);
-}
-
-.panelTitle {
-  font-size: 1.25rem;
-  font-weight: 800;
-  color: var(--ifm-heading-color, #f8fafc);
-  margin: 0;
-  letter-spacing: -0.02em;
-}
-
-.controlsRow {
-  display: flex;
-  flex-wrap: wrap;
+  gap: var(--fx-space-3);
   align-items: center;
-  gap: 0.6rem;
+  justify-content: space-between;
+  margin-bottom: var(--fx-space-4);
 }
 
-.segmentedGroup {
+.toggleGroup {
   display: inline-flex;
-  background: var(--ifm-color-emphasis-100, rgba(15, 23, 42, 0.55));
-  border: 1px solid var(--ifm-color-emphasis-200, rgba(255, 255, 255, 0.08));
-  border-radius: 8px;
-  padding: 0.2rem;
-  gap: 0.15rem;
+  padding: 0.1875rem;
+  gap: 0.1875rem;
+  background: var(--fx-surface-2);
+  border: 1px solid var(--fx-border);
+  border-radius: var(--fx-radius-pill);
 }
 
 .toggleBtn {
+  padding: 0.3125rem 0.875rem;
+  border: 0;
+  border-radius: var(--fx-radius-pill);
   background: transparent;
-  border: none;
-  border-radius: 6px;
-  padding: 0.3rem 0.65rem;
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--ifm-color-emphasis-700, #94a3b8);
+  color: var(--fx-text-muted);
+  font-family: inherit;
+  font-size: var(--fx-text-xs);
+  font-weight: var(--fx-weight-medium);
   cursor: pointer;
-  transition: all 0.15s ease;
-  white-space: nowrap;
+  transition: var(--fx-transition);
 }
 
-.toggleBtn:hover:not(.toggleBtnActive) {
-  color: var(--ifm-heading-color, #f8fafc);
-  background: rgba(255, 255, 255, 0.04);
+.toggleBtn:hover {
+  color: var(--fx-text);
+  background: var(--fx-surface-3);
 }
 
-.toggleBtnActive {
-  background: var(--ifm-color-primary, #38bdf8);
-  color: #fff !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+.toggleBtn:focus-visible {
+  outline: 2px solid var(--fx-accent);
+  outline-offset: 2px;
 }
 
-.panelFooter {
-  font-size: 0.75rem;
-  color: var(--ifm-color-emphasis-500, #64748b);
-  margin-top: 0.85rem;
-  line-height: 1.4;
-  border-top: 1px solid var(--ifm-color-emphasis-200, rgba(255, 255, 255, 0.05));
-  padding-top: 0.6rem;
+.toggleBtnActive,
+.toggleBtnActive:hover {
+  background: var(--fx-accent);
+  color: var(--ifm-button-color);
 }
 
-/* ── Ecosystem Chips ─────────────────────────────────────────────────────── */
-.ecosystemChips {
+.statStrip {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.45rem;
-  margin-top: 0.4rem;
+  gap: var(--fx-space-4);
+  font-size: var(--fx-text-xs);
+  color: var(--fx-text-muted);
 }
 
-.chipBazzite,
-.chipBluefin,
-.chipAurora {
-  font-size: 0.72rem;
-  font-weight: 600;
-  padding: 0.15rem 0.5rem;
-  border-radius: 999px;
+.statStrip strong {
+  font-family: var(--fx-font-mono);
+  color: var(--fx-text-strong);
   font-variant-numeric: tabular-nums;
-  border: 1px solid transparent;
 }
 
-.chipBazzite {
-  background: rgba(240, 136, 62, 0.12);
-  color: #f0883e;
-  border-color: rgba(240, 136, 62, 0.25);
-}
-
-.chipBluefin {
-  background: rgba(88, 166, 255, 0.12);
-  color: #58a6ff;
-  border-color: rgba(88, 166, 255, 0.25);
-}
-
-.chipAurora {
-  background: rgba(57, 210, 192, 0.12);
-  color: #39d2c0;
-  border-color: rgba(57, 210, 192, 0.25);
-}
-
-/* ── Family Section ──────────────────────────────────────────────────────── */
-.familySection {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
+/* ── Section headers ────────────────────────────────────────────────────── */
 
 .sectionHeader {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
+  margin-bottom: var(--fx-space-4);
 }
 
 .sectionTitle {
-  font-size: 1.25rem;
-  font-weight: 800;
-  color: var(--ifm-heading-color, #f8fafc);
-  margin: 0;
-  letter-spacing: -0.02em;
+  margin: 0 0 var(--fx-space-2);
+  font-size: var(--fx-text-lg);
+  color: var(--fx-text-strong);
 }
+
+.sectionSubtext {
+  margin: 0;
+  max-width: 68ch;
+  font-size: var(--fx-text-sm);
+  line-height: 1.55;
+  color: var(--fx-text-muted);
+}
+
+.legendRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--fx-space-3);
+  margin: var(--fx-space-3) 0 0;
+}
+
+.legendChip {
+  display: inline-flex;
+  gap: 0.375rem;
+  align-items: center;
+  font-size: var(--fx-text-xs);
+  color: var(--fx-text-muted);
+}
+
+.legendGlyph {
+  font-size: 0.9em;
+  line-height: 1;
+}
+
+.chartNote {
+  margin: var(--fx-space-3) 0 0;
+  padding-top: var(--fx-space-3);
+  border-top: 1px solid var(--fx-border);
+  font-size: var(--fx-text-xs);
+  line-height: 1.6;
+  color: var(--fx-text-muted);
+}
+
+.chartNote code {
+  font-size: 0.9em;
+}
+
+/* ── Family cards ───────────────────────────────────────────────────────── */
 
 .familyGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr));
+  gap: var(--fx-space-4);
 }
 
 .familyCard {
-  background: var(--ifm-card-background-color, rgba(15, 23, 42, 0.45));
-  border: 1px solid var(--ifm-color-emphasis-200, rgba(255, 255, 255, 0.07));
-  border-radius: 16px;
-  padding: 1.25rem;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.12);
-  transition:
-    border-color 0.2s ease,
-    transform 0.2s ease;
+  gap: var(--fx-space-3);
+  padding: var(--fx-space-4);
+  background: var(--fx-surface-2);
+  border: 1px solid var(--fx-border);
+  border-radius: var(--fx-radius-md);
 }
 
-.familyCard:hover {
-  border-color: var(--ifm-color-primary, #38bdf8);
-  transform: translateY(-2px);
-}
-
-.familyTopRow {
+.familyCardHeader {
   display: flex;
-  align-items: center;
+  gap: var(--fx-space-3);
+  align-items: flex-start;
   justify-content: space-between;
-  gap: 0.5rem;
-  margin-bottom: 0.35rem;
 }
 
-.cardEyebrow {
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--ifm-color-emphasis-600, #94a3b8);
+.familyCardTitleGroup {
+  min-width: 0;
+}
+
+.familyName {
+  margin: 0;
+  font-size: var(--fx-text-md);
+  line-height: 1.25;
+  color: var(--fx-text-strong);
+}
+
+.familyEdition {
+  display: block;
+  margin-top: 0.125rem;
+  font-size: var(--fx-text-xs);
+  color: var(--fx-text-faint);
 }
 
 .statusPill {
-  font-size: 0.68rem;
-  font-weight: 700;
-  padding: 0.12rem 0.45rem;
-  border-radius: 999px;
+  flex: none;
+  padding: 0.125rem 0.5rem;
+  border-radius: var(--fx-radius-pill);
+  border: 1px solid currentColor;
+  font-size: 0.7rem;
+  font-weight: var(--fx-weight-bold);
   white-space: nowrap;
 }
 
 .statusActive {
-  background: rgba(57, 210, 192, 0.14);
-  color: #39d2c0;
+  color: var(--fx-accent);
 }
 
 .statusPending {
-  background: rgba(188, 140, 255, 0.14);
-  color: #bc8cff;
-}
-
-.familyName {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--ifm-heading-color, #f8fafc);
-  margin: 0 0 0.5rem 0;
+  color: var(--fx-text-faint);
 }
 
 .countRow {
   display: flex;
+  gap: var(--fx-space-2);
   align-items: baseline;
-  gap: 0.5rem;
-  margin-bottom: 0.75rem;
 }
 
 .countValue {
-  font-size: 1.65rem;
-  font-weight: 800;
+  font-family: var(--fx-font-mono);
+  font-size: var(--fx-text-xl);
+  font-weight: var(--fx-weight-black);
+  line-height: 1;
   letter-spacing: -0.02em;
-  color: var(--ifm-heading-color, #f8fafc);
+  color: var(--fx-text-strong);
   font-variant-numeric: tabular-nums;
-  line-height: 1.1;
 }
 
 .sharePct {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--ifm-color-emphasis-600, #94a3b8);
-  font-variant-numeric: tabular-nums;
+  font-size: var(--fx-text-xs);
+  color: var(--fx-text-muted);
 }
 
-.sparklineContainer {
-  margin-top: auto;
-  padding-top: 0.6rem;
-  border-top: 1px dashed
-    var(--ifm-color-emphasis-200, rgba(255, 255, 255, 0.06));
-}
-
-.familyCardFooter {
+.cardSparkline {
   display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  margin-top: 0.6rem;
-}
-
-.cardLink {
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--ifm-color-primary, #38bdf8);
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
+  flex-direction: column;
   gap: 0.25rem;
-  transition: gap 0.15s ease;
 }
 
-.cardLink:hover {
-  text-decoration: underline;
-  gap: 0.4rem;
+.sparklineLabel {
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fx-text-faint);
+}
+
+.variantList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  margin: 0;
+  padding: var(--fx-space-3) 0 0;
+  border-top: 1px solid var(--fx-border);
+  list-style: none;
+}
+
+.variantRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--fx-space-2);
+  align-items: center;
+  justify-content: space-between;
+}
+
+.variantName {
+  font-family: var(--fx-font-mono);
+  font-size: 0.75rem;
+  color: var(--fx-text);
+  background: var(--fx-surface-3);
+  border: 0;
+  padding: 0.0625rem 0.375rem;
+  border-radius: var(--fx-radius-sm);
+}
+
+.variantStreams {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--fx-space-2);
+}
+
+.streamChip {
+  display: inline-flex;
+  gap: 0.3rem;
+  align-items: center;
+  font-family: var(--fx-font-mono);
+  font-size: 0.7rem;
+  color: var(--fx-text-muted);
+  font-variant-numeric: tabular-nums;
+  cursor: help;
+}
+
+.variantEmpty {
+  font-size: var(--fx-text-xs);
+  line-height: 1.5;
+  color: var(--fx-text-faint);
+}
+
+.familyFooter {
+  margin-top: auto;
+  padding-top: var(--fx-space-2);
+}
+
+.familyLink {
+  font-size: var(--fx-text-xs);
+  font-weight: var(--fx-weight-bold);
+  color: var(--fx-accent);
+}
+
+@media (max-width: 600px) {
+  .heroHeader {
+    flex-direction: column;
+  }
+
+  .heroKPI {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .heroMeta {
+    justify-content: flex-start;
+  }
 }
