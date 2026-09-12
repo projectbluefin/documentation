@@ -1,4 +1,5 @@
 import React from "react";
+import { FIRST_PARTY_PENDING_REASON } from "@site/scripts/lib/countme-sources.mjs";
 import Sparkline from "../Sparkline";
 import styles from "./ReportCountmeTrend.module.css";
 
@@ -27,14 +28,17 @@ export default function ReportCountmeTrend({
   unavailableReason,
   stateReason,
 }: ReportCountmeTrendProps): React.JSX.Element {
-  const reason = unavailableReason ?? stateReason;
-  if (reason || currentTotal === null || currentTotal === undefined) {
+  const explicitReason = unavailableReason ?? stateReason;
+  if (explicitReason || currentTotal === null || currentTotal === undefined) {
+    // A Project Bluefin count comes from countme.projectbluefin.io or from
+    // nowhere. With no read endpoint published yet the generator has no total
+    // to pass, so the panel says why rather than charting an upstream number.
     return (
       <div className={styles.container} role="status">
         <div className={styles.unavailable}>
           <span aria-hidden="true">⚠</span>
           <strong>Data unavailable</strong>
-          <span>{reason ?? "No Countme measurement is available."}</span>
+          <span>{explicitReason ?? FIRST_PARTY_PENDING_REASON}</span>
         </div>
       </div>
     );
@@ -51,7 +55,7 @@ export default function ReportCountmeTrend({
     <div className={styles.container}>
       <div className={styles.heading}>Active Systems Adoption</div>
       <div className={styles.subtitle}>
-        Estimated weekly active systems via Fedora Countme telemetry
+        Estimated weekly active systems from countme
         {sourceDate ? ` • ${sourceDate}` : ""}
       </div>
 

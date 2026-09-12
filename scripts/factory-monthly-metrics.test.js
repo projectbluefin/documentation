@@ -12,6 +12,7 @@ import {
   extractCountmeMetricsFromPayload,
 } from "./lib/factory-monthly-metrics.mjs";
 import { REPORT_PORTFOLIO } from "./lib/report-portfolio.mjs";
+import { FIRST_PARTY_PENDING_REASON } from "./lib/countme-sources.mjs";
 
 function apiRun(overrides = {}) {
   return {
@@ -137,12 +138,16 @@ test("generateReportMarkdown includes ReportHeroKPIs, ReportLeaderboard, and fro
     },
   };
 
+  // What the extractor now returns for every period: no Project Bluefin count
+  // exists outside countme.projectbluefin.io, which publishes no read endpoint.
   const countmeStats = {
-    currentTotal: 3228,
-    previousTotal: 3100,
-    historyPoints: [3100, 3150, 3228],
-    variants: [{ name: "Bluefin", count: 3165 }],
-    sourceDate: "2026-08-08",
+    unavailable: true,
+    unavailableReason: FIRST_PARTY_PENDING_REASON,
+    currentTotal: null,
+    previousTotal: null,
+    historyPoints: [],
+    variants: [],
+    sourceDate: null,
   };
 
   const md = generateReportMarkdown(
@@ -166,25 +171,21 @@ test("generateReportMarkdown includes ReportHeroKPIs, ReportLeaderboard, and fro
   assert.match(md, /<ReportLaneHealth/);
   assert.match(md, /<ReportCountmeTrend/);
   assert.match(md, /<ReportAutomationStats/);
+  // The panel stays in the post, stating why; the hero KPI does not invent a
+  // population out of an unavailable measurement.
+  assert.doesNotMatch(md, /Active Systems/);
 });
 
-test("extractCountmeMetrics returns null or data without throwing", () => {
-  const startDate = new Date("2026-08-01T00:00:00Z");
-  const endDate = new Date("2026-08-31T23:59:59Z");
-  const metrics = extractCountmeMetrics(startDate, endDate);
-  if (metrics !== null) {
-    assert.ok(typeof metrics.currentTotal === "number");
-    assert.ok(Array.isArray(metrics.historyPoints));
-  }
-});
-
-test("extractCountmeMetricsFromPayload preserves Countme gaps as null", () => {
+test("no Project Bluefin count is derived from the upstream countme dataset", () => {
+  // countme-history.json is built from Fedora's totals.csv. Summing `bluefin`
+  // and `bluefin-lts` out of it published mirror hits as our installed base;
+  // the payload is now ignored no matter how inviting it looks.
   const metrics = extractCountmeMetricsFromPayload(
     {
       unavailable: false,
       weeks: [
         { week: "2026-10-05", bluefin: 10, "bluefin-lts": 5 },
-        { week: "2026-10-12", bluefin: null, "bluefin-lts": 6 },
+        { week: "2026-10-12", bluefin: 11, "bluefin-lts": 6 },
         { week: "2026-10-19", bluefin: 12, "bluefin-lts": 7 },
       ],
     },
@@ -192,27 +193,22 @@ test("extractCountmeMetricsFromPayload preserves Countme gaps as null", () => {
     new Date("2026-10-31T23:59:59Z"),
   );
 
-  assert.equal(metrics.currentTotal, 19);
-  assert.equal(metrics.previousTotal, 15);
-  assert.deepEqual(metrics.historyPoints, [15, null, 19]);
-  assert.deepEqual(
-    metrics.variants.map((variant) => variant.count),
-    [12, 7, null],
-  );
-});
+  assert.equal(metrics.currentTotal, null);
+  assert.equal(metrics.previousTotal, null);
+  assert.deepEqual(metrics.historyPoints, []);
+  assert.deepEqual(metrics.variants, []);
+  assert.equal(metrics.unavailableReason, FIRST_PARTY_PENDING_REASON);
 
-test("extractCountmeMetricsFromPayload returns null for an unavailable payload", () => {
-  assert.equal(
-    extractCountmeMetricsFromPayload(
-      {
-        unavailable: true,
-        stateReason: "Countme request failed",
-        weeks: [{ week: "2026-10-05", bluefin: 10, "bluefin-lts": 5 }],
-      },
+  // The panel keeps its identity instead of vanishing from the report.
+  assert.equal(metrics.unavailable, true);
+
+  // Reading the shipped dataset off disk reaches the same answer.
+  assert.deepEqual(
+    extractCountmeMetrics(
       new Date("2026-10-01T00:00:00Z"),
       new Date("2026-10-31T23:59:59Z"),
     ),
-    null,
+    metrics,
   );
 });
 
