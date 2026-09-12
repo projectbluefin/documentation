@@ -262,90 +262,92 @@ export default function ApplicationsPanels(): React.JSX.Element {
         <Unavailable what="Release cadence" reason="Loading release history…" />
       )}
 
-      {/* 4. Flathub downloads attributed to Bluefin */}
-      {flReady && bluefinOs ? (
-        <div className={panelStyles.section}>
-          <h2 className={panelStyles.heading}>
-            Flathub downloads attributed to Bluefin
-          </h2>
-          <div className={styles.bigNumber}>
-            {formatNumber(bluefinOs.downloads)}
+      {/* 4. Flathub downloads and 5. Peer comparison */}
+      <div className={styles.twoCol}>
+        {flReady && bluefinOs ? (
+          <div className={panelStyles.section}>
+            <h2 className={panelStyles.heading}>
+              Flathub downloads attributed to Bluefin
+            </h2>
+            <div className={styles.bigNumber}>
+              {formatNumber(bluefinOs.downloads)}
+            </div>
+            <div className={styles.bigLabel}>
+              {(bluefinOs.share * 100).toFixed(3)}% of all Flathub downloads
+            </div>
+            <EChart
+              title="Bluefin Flathub downloads by base version"
+              summary={`${formatNumber(bluefinOs.downloads)} total downloads across ${Object.keys(bluefinOs.versions).length} Bluefin base versions.`}
+              points={Object.keys(bluefinOs.versions).length}
+              minPoints={1}
+              height={220}
+              option={{
+                xAxis: {
+                  type: "category",
+                  data: Object.keys(bluefinOs.versions).sort(),
+                },
+                yAxis: { type: "value", name: "Downloads" },
+                series: [
+                  {
+                    type: "bar",
+                    name: "Downloads",
+                    data: gapSafe(
+                      Object.keys(bluefinOs.versions)
+                        .sort()
+                        .map((k) => bluefinOs.versions[k]),
+                    ),
+                    itemStyle: { color: seriesColor(0) },
+                  },
+                ],
+              }}
+            />
           </div>
-          <div className={styles.bigLabel}>
-            {(bluefinOs.share * 100).toFixed(3)}% of all Flathub downloads
-          </div>
+        ) : flathub?.unavailable ? (
+          <Unavailable
+            what="Flathub attribution"
+            reason={flathub.stateReason ?? "Flathub data is unavailable."}
+          />
+        ) : flReason ? (
+          <Unavailable what="Flathub attribution" reason={flReason} />
+        ) : (
+          <Unavailable
+            what="Flathub attribution"
+            reason="Loading Flathub data…"
+          />
+        )}
+
+        {/* 5. Peer comparison (log scale) */}
+        {flReady && peerEntries.length > 0 ? (
           <EChart
-            title="Bluefin Flathub downloads by base version"
-            summary={`${formatNumber(bluefinOs.downloads)} total downloads across ${Object.keys(bluefinOs.versions).length} Bluefin base versions.`}
-            points={Object.keys(bluefinOs.versions).length}
-            minPoints={1}
-            height={220}
+            title="Bluefin vs peer cloud-native desktops on Flathub (log scale)"
+            summary={`Bluefin: ${formatNumber(bluefinOs?.downloads ?? 0)}. Bazzite and Fedora are 1–2 orders of magnitude larger; a logarithmic scale is used so all bars remain visible.`}
+            points={peerEntries.length}
+            minPoints={2}
+            height={280}
             option={{
               xAxis: {
                 type: "category",
-                data: Object.keys(bluefinOs.versions).sort(),
+                data: peerEntries.map((e) => e.label),
               },
-              yAxis: { type: "value", name: "Downloads" },
+              yAxis: {
+                type: "log",
+                name: "Downloads (log scale)",
+                min: 1,
+              },
               series: [
                 {
                   type: "bar",
-                  name: "Downloads",
-                  data: gapSafe(
-                    Object.keys(bluefinOs.versions)
-                      .sort()
-                      .map((k) => bluefinOs.versions[k]),
-                  ),
-                  itemStyle: { color: seriesColor(0) },
+                  name: "Flathub downloads",
+                  data: gapSafe(peerEntries.map((e) => e.downloads)),
+                  itemStyle: { color: seriesColor(2) },
                 },
               ],
             }}
           />
-        </div>
-      ) : flathub?.unavailable ? (
-        <Unavailable
-          what="Flathub attribution"
-          reason={flathub.stateReason ?? "Flathub data is unavailable."}
-        />
-      ) : flReason ? (
-        <Unavailable what="Flathub attribution" reason={flReason} />
-      ) : (
-        <Unavailable
-          what="Flathub attribution"
-          reason="Loading Flathub data…"
-        />
-      )}
-
-      {/* 5. Peer comparison (log scale) */}
-      {flReady && peerEntries.length > 0 ? (
-        <EChart
-          title="Bluefin vs peer cloud-native desktops on Flathub (log scale)"
-          summary={`Bluefin: ${formatNumber(bluefinOs?.downloads ?? 0)}. Bazzite and Fedora are 1–2 orders of magnitude larger; a logarithmic scale is used so all bars remain visible.`}
-          points={peerEntries.length}
-          minPoints={2}
-          height={280}
-          option={{
-            xAxis: {
-              type: "category",
-              data: peerEntries.map((e) => e.label),
-            },
-            yAxis: {
-              type: "log",
-              name: "Downloads (log scale)",
-              min: 1,
-            },
-            series: [
-              {
-                type: "bar",
-                name: "Flathub downloads",
-                data: gapSafe(peerEntries.map((e) => e.downloads)),
-                itemStyle: { color: seriesColor(2) },
-              },
-            ],
-          }}
-        />
-      ) : (
-        <Unavailable what="Peer comparison" reason="Loading Flathub data…" />
-      )}
+        ) : (
+          <Unavailable what="Peer comparison" reason="Loading Flathub data…" />
+        )}
+      </div>
 
       {/* 6. Flathub platform context — downloads per day */}
       {flReady && flathub.downloadsPerDay.length > 0 ? (
