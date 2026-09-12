@@ -5,6 +5,7 @@ import {
 } from "./routes.mjs";
 import {
   renderAccumulatingSvg,
+  restyleUpstreamChart,
   renderRepoBadge,
   renderRepoChartSvg,
 } from "./render.mjs";
@@ -160,6 +161,32 @@ async function createLegacyProxyResponse(upstream) {
   });
 }
 
+/**
+ * Upstream's chart in the Bluefin palette.
+ *
+ * The bytes are fetched from the same artifact the untouched legacy route
+ * serves, so the data and its provenance are identical; only the four colours
+ * matplotlib emits are rewritten. A failure falls back to nothing rather than
+ * to a substitute series: there is no other permitted source for this image.
+ */
+async function createThemedLegacyResponse(upstream) {
+  const upstreamRes = await fetch(upstream, {
+    headers: { "user-agent": USER_AGENT },
+  });
+
+  if (!upstreamRes.ok) {
+    return new Response(`upstream error: ${upstreamRes.status}`, {
+      status: 502,
+      headers: baseHeaders({ "content-type": "text/plain;charset=UTF-8" }),
+    });
+  }
+
+  return svgResponse(
+    restyleUpstreamChart(await upstreamRes.text()),
+    COUNTS_CACHE_TTL_SECONDS,
+  );
+}
+
 async function proxyRequest(request, env, ctx) {
   const url = new URL(request.url);
   const pathname = normalizePathname(url.pathname);
@@ -187,6 +214,8 @@ async function proxyRequest(request, env, ctx) {
   if (route.kind === "counts") return createCountsResponse(env);
   if (route.kind === "chart") return createChartResponse(env, route.repo);
   if (route.kind === "badge") return createBadgeResponse(env, route.repo);
+  if (route.kind === "legacy-themed")
+    return createThemedLegacyResponse(route.url);
 
   return createLegacyProxyResponse(route.url);
 }

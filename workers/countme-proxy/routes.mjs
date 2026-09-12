@@ -20,6 +20,21 @@ export const LEGACY_ROUTES = {
   "/badge-endpoints/bluefin.json": UPSTREAM_ALLOWED.source,
 };
 
+/**
+ * The upstream chart, restyled to the Bluefin palette.
+ *
+ * Presentation only. The series, its axes and its values are upstream's,
+ * fetched from the same artifact as `/growth_bluefins.svg` and never
+ * re-derived: `isPermittedSource` allows exactly one source for
+ * `ublue-os/bluefin:stable`, so recomputing this series from Fedora's CSV —
+ * which is how upstream builds it — would be a forbidden source wearing our
+ * palette. Recolouring the artifact claims nothing new about the data.
+ *
+ * `/growth_bluefins.svg` keeps returning upstream's bytes unchanged, for
+ * anything that expects the original.
+ */
+export const LEGACY_THEMED_ROUTE = "/legacy/bluefin.svg";
+
 /** Weekly aggregate of our own countme records, as JSON. */
 export const COUNTS_ROUTE = "/counts.json";
 
@@ -65,6 +80,9 @@ export function resolveRoute(pathname) {
   const normalized = normalizePathname(pathname);
 
   const legacyUrl = LEGACY_ROUTES[normalized];
+
+  if (normalized === LEGACY_THEMED_ROUTE)
+    return { kind: "legacy-themed", url: LEGACY_BLUEFIN_CHART_URL };
   if (legacyUrl) return { kind: "legacy", url: legacyUrl };
 
   if (normalized === COUNTS_ROUTE) return { kind: "counts" };

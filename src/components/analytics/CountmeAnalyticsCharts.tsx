@@ -58,7 +58,7 @@ const REGISTRY_URL = "/data/ghcr-packages.json";
  * time-series file, so this panel shows the image it publishes rather than
  * replotting a series that does not exist.
  */
-const LEGACY_CHART_URL = `${FIRST_PARTY_ORIGIN}/growth_bluefins.svg`;
+const LEGACY_CHART_URL = `${FIRST_PARTY_ORIGIN}/legacy/bluefin.svg`;
 const LEGACY_BADGE_URL = `${FIRST_PARTY_ORIGIN}/badge-endpoints/bluefin.json`;
 
 /** Display names for the first-party `repo` identifiers. */
@@ -685,15 +685,11 @@ export default function CountmeAnalyticsCharts({
             Upstream Image (Legacy)
           </Heading>
           <p className={styles.sectionSubtext}>
-            <code>ublue-os/bluefin:stable</code> is counted by{" "}
+            <code>ublue-os/bluefin:stable</code>, counted by{" "}
             <Link to="https://github.com/ublue-os/countme">
               ublue-os/countme
             </Link>
-            , not by Project Bluefin. It is shown alongside the first-party
-            counts so the migration between them is visible. The two are
-            measured by different services and are not the same quantity: the
-            legacy series counts DNF metalink hits, the first-party series
-            counts image check-ins.
+            . Metalink hits, not image check-ins.
           </p>
         </header>
 
@@ -733,9 +729,8 @@ export default function CountmeAnalyticsCharts({
               height={700}
             />
             <figcaption className={styles.chartNote}>
-              Chart published by <code>ublue-os/countme</code> and proxied
-              unmodified. Its axis and scale are upstream&rsquo;s, so it is not
-              plotted on the same domain as the first-party panel above.
+              Published by <code>ublue-os/countme</code>, recoloured only.
+              Upstream&rsquo;s scale.
             </figcaption>
           </figure>
         )}

@@ -223,11 +223,11 @@
   height: auto;
   border: 1px solid var(--fx-border);
   border-radius: var(--fx-radius-md);
-  /* Upstream renders on white. It is framed and padded so it reads as an
-     embedded external artifact rather than a panel of ours, and it is not
-     recoloured: altering another project's published chart misrepresents it. */
-  background: #fff;
-  padding: var(--fx-space-2);
+  /* The worker recolours upstream's chart to the Bluefin palette and leaves
+     its canvas transparent, so the panel surface shows through and the chart
+     follows the light and dark themes without a second copy. */
+  background: var(--fx-surface-2);
+  padding: var(--fx-space-3);
 }
 
 /* Game mode is a share of the image it belongs to, so it is stated inline with
