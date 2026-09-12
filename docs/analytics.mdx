@@ -7,16 +7,11 @@ displayed_sidebar: null
 import CountmeAnalyticsCharts from "@site/src/components/analytics/CountmeAnalyticsCharts";
 import ImageChurnCharts from "@site/src/components/analytics/ImageChurnCharts";
 
-Image publication state across every Project Bluefin image, and weekly active
-systems from countme.
-
 <CountmeAnalyticsCharts />
 
 ## Update Churn & Compression Analytics
 
 Project Bluefin measures download byte delta, layer reuse efficiency, and compression statistics between consecutive stable releases.
-Cloud-native bootc updates take advantage of OCI layer caching: layers whose SHA-256 digests
-remain unchanged between releases require zero download bandwidth.
 
 Using [Chunkah](https://github.com/coreos/chunkah) and the `zstd-chunked` container layer format,
 operating system updates are segmented into fine-grained package intervals so clients download only specific chunks containing changed packages.
@@ -28,15 +23,7 @@ operating system updates are segmented into fine-grained package intervals so cl
 
 ### Counting Methodology
 
-Every Project Bluefin count comes from `countme.projectbluefin.io` and nothing
-else. Fedora's countme CSV covers the upstream images it can see — Fedora
-itself, Aurora and Bazzite — and is never a substitute for one of ours. The one
-upstream figure that remains upstream's to publish is `ublue-os/bluefin:stable`,
-counted by [`ublue-os/countme`](https://github.com/ublue-os/countme).
-
-- **Method:** `upstream-peers-v2` — one base repository (`fedora-N`) per system, per ADR 0004, applied to every variant with no exemption.
-- **Enterprise LTS:** Bluefin LTS runs on CentOS Stream 10 and reaches Fedora counters only through whichever EPEL mirrors it happens to hit. That is an artefact, not a population, so it is not published from that source.
-- **Next-Gen Variants:** Dakota (BuildStream), Utah (Hummingbird), and Bluefin Server (freedesktop-sdk) are activating first-party reporting via `projectbluefin/common`. Bluefin Server delivers a DDI through `systemd-sysupdate` rather than a container tag, so it carries no OCI promotion stream.
+Every Project Bluefin count comes from `countme.projectbluefin.io`
 
 ### First-party Countme Service & Privacy Guarantees
 
