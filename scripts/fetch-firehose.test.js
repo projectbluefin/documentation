@@ -155,6 +155,32 @@ test("buildOsApp picks the newest populated release and computes package diffs",
   ]);
 });
 
+test("sanitizeRemoteApp strips scripts, event handlers, and unsafe URLs from HTML", () => {
+  const app = sanitizeRemoteApp({
+    id: "xss",
+    name: "XSS",
+    summary: "s",
+    description:
+      '<p onclick="alert(1)">ok</p><script>alert(1)</script><a href="javascript:alert(1)">bad</a><img src="https://example.com/i.png" onerror="alert(1)">',
+    releases: [
+      {
+        version: "v1",
+        title: "t",
+        date: "2026-01-01",
+        description: '<b>bold</b><iframe src="https://evil.example"></iframe>',
+        url: "https://example.com",
+        type: "remote",
+      },
+    ],
+  });
+
+  assert.equal(
+    app.description,
+    '<p>ok</p><a>bad</a><img src="https://example.com/i.png" />',
+  );
+  assert.equal(app.releases[0].description, "<b>bold</b>");
+});
+
 test("sanitizeRemoteApp trims strings coerces booleans and limits release entries", () => {
   const app = sanitizeRemoteApp({
     id: "demo",

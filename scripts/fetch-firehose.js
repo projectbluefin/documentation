@@ -1,10 +1,42 @@
 const fs = require("fs");
 const path = require("path");
+const sanitizeHtml = require("sanitize-html");
 const {
   buildNvidiaMapFromSbomStream,
   buildLtsNvidiaByTagFromSbom,
   resolveCompanionNvidia,
 } = require("./fetch-github-driver-versions.js");
+
+// HTML allowlist — keep in sync with src/utils/sanitizeHtml.ts (ALLOWED_TAGS /
+// ALLOWED_ATTR). External release-note HTML must be stripped of scripts,
+// iframes, event handlers, and unsafe URL protocols before it is baked into
+// the static site: the SSR branch of sanitizeHtml() returns input raw, so
+// fetch-time sanitization is the only thing standing between an upstream feed
+// and stored XSS on the docs domain.
+const SANITIZE_OPTIONS = {
+  allowedTags: [
+    "a", "abbr", "b", "blockquote", "br", "code", "dd", "del", "details",
+    "div", "dl", "dt", "em", "h1", "h2", "h3", "h4", "h5", "h6", "hr",
+    "i", "img", "ins", "kbd", "li", "ol", "p", "pre", "q", "s", "samp",
+    "span", "strong", "sub", "summary", "sup", "table", "tbody", "td",
+    "tfoot", "th", "thead", "tr", "tt", "ul", "var",
+  ],
+  allowedAttributes: {
+    "*": [
+      "href", "target", "rel", "src", "alt", "title", "class", "id",
+      "width", "height", "align", "colspan", "rowspan", "scope",
+    ],
+  },
+  // sanitize-html defaults already restrict href/src to safe protocols
+  // (http/https/mailto etc.) — javascript: URLs are dropped.
+};
+
+function cleanHtml(v, maxLen = 5000) {
+  if (typeof v !== "string") {
+    return null;
+  }
+  return sanitizeHtml(v.slice(0, maxLen), SANITIZE_OPTIONS);
+}
 
 const OUTPUT_DIR = path.join(__dirname, "..", "static", "data");
 const OUTPUT_FILE = path.join(OUTPUT_DIR, "firehose-apps.json");
@@ -281,7 +313,7 @@ function sanitizeRemoteApp(app) {
     id: str(app.id, 200),
     name: str(app.name, 200),
     summary: str(app.summary, 500),
-    description: str(app.description),
+    description: cleanHtml(app.description),
     icon: str(app.icon, 2000),
     updatedAt: str(app.updatedAt, 30),
     currentReleaseVersion: str(app.currentReleaseVersion, 100),
@@ -299,7 +331,7 @@ function sanitizeRemoteApp(app) {
       version: str(r.version, 200),
       title: str(r.title, 500),
       date: str(r.date, 30),
-      description: str(r.description),
+      description: cleanHtml(r.description),
       url: str(r.url, 2000),
       type: str(r.type, 50),
     }));
