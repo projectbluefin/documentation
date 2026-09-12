@@ -61,6 +61,39 @@ const REGISTRY_URL = "/data/ghcr-packages.json";
 const LEGACY_CHART_URL = `${FIRST_PARTY_ORIGIN}/legacy/bluefin.svg`;
 const LEGACY_BADGE_URL = `${FIRST_PARTY_ORIGIN}/badge-endpoints/bluefin.json`;
 
+/**
+ * Chart series names.
+ *
+ * Short on purpose: the chip row above the chart already carries the full name
+ * and the current value, so a legend repeating "Project Bluefin Dakota" five
+ * times only crowds the axis it sits under.
+ */
+export const SHORT_REPO_LABELS: Record<string, string> = {
+  bluefin: "Bluefin",
+  "bluefin-lts": "LTS",
+  dakota: "Dakota",
+  utah: "Utah",
+  server: "Server",
+};
+
+/**
+ * `2026-07-13` as `Jul 13`.
+ *
+ * Nine ISO dates across one axis repeat the year nine times and leave no room
+ * to read any of them. The full date stays on the axis data, so the tooltip and
+ * the numbers table below still carry it.
+ */
+export function compactWeek(week: string): string {
+  const d = new Date(`${week}T00:00:00Z`);
+  return Number.isNaN(d.getTime())
+    ? week
+    : d.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        timeZone: "UTC",
+      });
+}
+
 /** Display names for the first-party `repo` identifiers. */
 export const REPO_LABELS: Record<string, string> = {
   bluefin: "Bluefin",
@@ -456,13 +489,26 @@ export default function CountmeAnalyticsCharts({
       tooltip: { trigger: "axis" },
       xAxis: {
         type: "category",
+        // Full ISO dates stay in the data, so the tooltip and the numbers table
+        // keep them; only the tick text is shortened.
         data: weekLabels(countmeWeeks),
+        axisLabel: {
+          fontSize: 13,
+          hideOverlap: true,
+          formatter: (value: string) => compactWeek(value),
+        },
       },
       // Anchored at zero: a floating floor turns a flat series into a cliff.
-      yAxis: { type: "value", min: 0 },
+      yAxis: {
+        type: "value",
+        min: 0,
+        minInterval: 1,
+        axisLabel: { fontSize: 13 },
+      },
+      legend: { textStyle: { fontSize: 13 }, itemGap: 18 },
       series: [
         ...activeRepos.map((repo, i) => ({
-          name: REPO_LABELS[repo] ?? repo,
+          name: SHORT_REPO_LABELS[repo] ?? repo,
           type: "line",
           // Rule 4: discrete weekly readings. No spline between them, and a
           // missing week breaks the line rather than being bridged or zeroed.
@@ -490,7 +536,7 @@ export default function CountmeAnalyticsCharts({
         ...gamingActiveRepos.map((repo) => {
           const i = activeRepos.indexOf(repo);
           return {
-            name: `${REPO_LABELS[repo] ?? repo} (game mode)`,
+            name: `${SHORT_REPO_LABELS[repo] ?? repo} · game mode`,
             type: "line",
             smooth: false,
             connectNulls: false,
