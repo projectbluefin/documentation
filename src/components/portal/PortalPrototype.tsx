@@ -13,11 +13,11 @@ import PortalPageLoading from "./PortalPageLoading";
 import styles from "./PortalPrototype.module.css";
 import {
   CHARACTER_IMAGES,
+  DEVELOPER_BENEFITS,
   PORTAL_CHARACTER_IMAGES,
   TRANSITION_SRC,
   useHeroRaptor,
 } from "./portalModel";
-
 export { CHARACTER_IMAGES, PORTAL_CHARACTER_IMAGES };
 
 export function useImagePreloader(images: readonly string[]): boolean {
@@ -66,14 +66,7 @@ const userBenefits = [
   "Included GPU drivers",
 ];
 
-const developerBenefits = [
-  "Visual Studio Code with devcontainers",
-  "Work with your favorite Linux distributions with a container-focused terminal",
-  "Designed for cloud native development with the CNCF's best tools, including Kubernetes",
-  "Homebrew on-tap by default, same tools as your Mac",
-  "Podman Desktop for graphical container management",
-  "JetBrains IDEs one command away",
-];
+const developerBenefits = DEVELOPER_BENEFITS;
 
 export default function PortalPrototype(): React.JSX.Element {
   const heroRaptorSrc = useHeroRaptor();
@@ -182,6 +175,20 @@ export default function PortalPrototype(): React.JSX.Element {
                   <p key={benefit}>{benefit}</p>
                 ))}
               </div>
+              <blockquote className={styles.sceneQuote}>
+                <p>
+                  Evolution is a process of constant branching and expansion.
+                  <cite>
+                    <a
+                      href="https://en.wikipedia.org/wiki/Stephen_Jay_Gould"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Stephen Jay Gould
+                    </a>
+                  </cite>
+                </p>
+              </blockquote>
             </div>
           </div>
         </section>
@@ -195,19 +202,74 @@ export default function PortalPrototype(): React.JSX.Element {
                 Bluefin comes with an optional &quot;developer mode&quot; that
                 transforms your device into a powerful workstation. It features
                 container-focused workflows to get you started depending on
-                where you&apos;re coming from, or bring your own.
+                where you&apos;re coming from, or bring your own. There are{" "}
+                <a
+                  href="https://www.cncf.io/announcements/2025/11/11/cncf-and-slashdata-survey-finds-cloud-native-ecosystem-surges-to-15-6m-developers/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  15.6 million cloud native developers
+                </a>{" "}
+                in the world, wield these{" "}
+                <a
+                  href="https://landscape.cncf.io/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  industry-leading tools
+                </a>{" "}
+                with ease...
               </p>
               <div className={styles.developerGrid}>
                 {developerBenefits.map((benefit) => (
-                  <p key={benefit}>{benefit}</p>
+                  <div key={benefit.text} className={styles.developerBrandItem}>
+                    <div className={styles.iconWrap}>
+                      <img
+                        src={benefit.icon}
+                        alt=""
+                        aria-hidden="true"
+                        className={styles.iconBlur}
+                        loading="lazy"
+                      />
+                      <img
+                        src={benefit.icon}
+                        alt={benefit.alt}
+                        className={styles.iconMain}
+                        loading="lazy"
+                      />
+                    </div>
+                    <p>{benefit.text}</p>
+                  </div>
                 ))}
               </div>
+              <blockquote className={styles.sceneQuote}>
+                <p>
+                  Be the one who moves, not the one who is moved.
+                  <cite>
+                    <a
+                      href="https://en.wikipedia.org/wiki/Lance_Reddick"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Commander Zavala (Destiny)
+                    </a>
+                  </cite>
+                </p>
+              </blockquote>
             </div>
-            <img
-              className={styles.developerCharacter}
-              src="/img/portal/characters/karl.webp"
-              alt="Karl towering over the Backlog"
-            />
+            <div className={styles.developerArtworkWrapper}>
+              <div className={styles.sceneArrow}>
+                <img src="/icons/arrow.svg" alt="" aria-hidden="true" />
+                <p>
+                  <b>Tower</b> over your Backlog!
+                </p>
+              </div>
+              <img
+                className={styles.developerCharacter}
+                src="/img/portal/characters/karl.webp"
+                alt="Karl towering over the Backlog"
+              />
+            </div>
           </div>
         </section>
       </div>
