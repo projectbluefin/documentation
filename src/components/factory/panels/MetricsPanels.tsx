@@ -8,11 +8,16 @@ import Sparkline from "../../Sparkline";
 import styles from "./MetricsPanels.module.css";
 
 // ── Data shapes ────────────────────────────────────────────────────────────
+import { FIRST_PARTY_PENDING_REASON } from "@site/scripts/lib/countme-sources.mjs";
 
+/**
+ * A week of the upstream countme series, as `scripts/fetch-countme.js` writes
+ * it. It carries Fedora and the Universal Blue images that are not ours; a
+ * Project Bluefin count comes from `countme.projectbluefin.io` and is never
+ * read out of here, so no field of this shape names one of our images.
+ */
 interface CountmeWeek {
   week: string;
-  bluefin?: number;
-  "bluefin-lts"?: number;
   aurora?: number;
   bazzite?: number;
   fedora?: number;
@@ -128,7 +133,7 @@ export default function MetricsPanels(): React.JSX.Element {
 
   return (
     <>
-      <ActiveDevices countme={countme} />
+      <ActiveDevices />
       <EcosystemShare countme={countme} />
       <HomebrewPanel brew={brew} />
       <DeliveryFrequency dora={dora} />
@@ -140,112 +145,22 @@ export default function MetricsPanels(): React.JSX.Element {
 
 // ── Panel 1: Weekly active devices ─────────────────────────────────────────
 
-function ActiveDevices({
-  countme,
-}: {
-  countme: {
-    data: CountmeData | null;
-    loading: boolean;
-    reason: string | null;
-  };
-}) {
-  const [range, setRange] = useState<Range>("all");
-
-  if (countme.reason || (!countme.loading && !countme.data)) {
-    return (
-      <Unavailable
-        what="Weekly active devices"
-        reason={
-          countme.reason ?? "countme data is not available in this environment."
-        }
-      />
-    );
-  }
-  if (countme.loading || !countme.data) {
-    return (
-      <Unavailable
-        what="Weekly active devices"
-        reason="Loading adoption data…"
-      />
-    );
-  }
-  if (countme.data.unavailable) {
-    return (
-      <Unavailable
-        what="Weekly active devices"
-        reason={countme.data.stateReason ?? "Data unavailable."}
-      />
-    );
-  }
-
-  const weeks = sliceWeeks(countme.data.weeks, range);
-  const latest = countme.data.weeks[countme.data.weeks.length - 1];
-  const currentBluefin = latest?.bluefin;
-  const currentLts = latest?.["bluefin-lts"];
-
-  const bluefinSeries = gapSafe(weeks.map((w) => w.bluefin ?? null));
-  const ltsSeries = gapSafe(weeks.map((w) => w["bluefin-lts"] ?? null));
-  const labels = weeks.map((w) => w.week);
-
-  const realPoints = bluefinSeries.filter((v) => v !== null).length;
-
-  const option = {
-    xAxis: { type: "category", data: labels },
-    yAxis: { type: "value" },
-    series: [
-      {
-        name: "Bluefin",
-        type: "line",
-        data: bluefinSeries,
-        connectNulls: false,
-        itemStyle: { color: seriesColor(0) },
-        lineStyle: { type: seriesDash(0) },
-      },
-      {
-        name: "Bluefin LTS",
-        type: "line",
-        data: ltsSeries,
-        connectNulls: false,
-        itemStyle: { color: seriesColor(1) },
-        lineStyle: { type: seriesDash(1) },
-      },
-    ],
-  };
-
+/**
+ * Bluefin and Bluefin LTS are counted by `countme.projectbluefin.io`, never by
+ * Fedora's CSV.
+ *
+ * This panel used to chart `countme-history.json`'s `bluefin` and
+ * `bluefin-lts` series, which were Fedora and EPEL mirror hits wearing our
+ * names. Those keys no longer exist and may not come back. Until the
+ * first-party service publishes a read endpoint, the panel states that instead
+ * of substituting an upstream number.
+ */
+function ActiveDevices() {
   return (
-    <section className={styles.section}>
-      <h2 className={styles.heading}>Weekly active devices</h2>
-      <div className={styles.currentValue}>
-        {fmt(currentBluefin)} Bluefin · {fmt(currentLts)} LTS
-      </div>
-      <p className={styles.note}>
-        Counted the same way as the{" "}
-        <Link href="https://github.com/ublue-os/countme">ublue-os/countme</Link>{" "}
-        charts and README badges. Bluefin LTS is CentOS Stream based and reaches
-        Fedora&rsquo;s counter only through EPEL, so its line undercounts and is
-        not comparable like-for-like.
-      </p>
-      <div className={styles.rangeToggle}>
-        {(["30d", "90d", "365d", "all"] as Range[]).map((r) => (
-          <button
-            key={r}
-            className={`${styles.rangeBtn} ${range === r ? styles.rangeBtnActive : ""}`}
-            onClick={() => setRange(r)}
-            aria-pressed={range === r}
-          >
-            {r === "all" ? "All" : r}
-          </button>
-        ))}
-      </div>
-      <EChart
-        option={option}
-        title="Weekly active devices"
-        summary={`Bluefin: ${fmt(currentBluefin)} active devices this week. LTS: ${fmt(currentLts)}. countme is a Fedora-side weekly estimate that only sees systems which ran dnf that week, and it can be turned off, so this is an estimate rather than a census. Bluefin LTS is visible only via EPEL and undercounts.`}
-        points={realPoints}
-        minPoints={2}
-        tableCaption="Weekly active devices for Bluefin and Bluefin LTS"
-      />
-    </section>
+    <Unavailable
+      what="Weekly active devices"
+      reason={FIRST_PARTY_PENDING_REASON}
+    />
   );
 }
 
@@ -295,7 +210,7 @@ function EcosystemShare({
   }
 
   const slices: Array<{ name: string; value: number }> = [];
-  const peers = ["bluefin", "bluefin-lts", "aurora", "bazzite"] as const;
+  const peers = ["aurora", "bazzite"] as const;
   for (const p of peers) {
     const v = latest[p];
     if (v != null) slices.push({ name: p, value: v });
@@ -324,14 +239,15 @@ function EcosystemShare({
     <section className={styles.section}>
       <h2 className={styles.heading}>Ecosystem share</h2>
       <p className={styles.note}>
-        Bluefin LTS is included for completeness, but it is CentOS Stream based
-        and countme sees it only through EPEL, so its slice is an undercount
-        rather than a like-for-like share.
+        The upstream peers Fedora&rsquo;s countme CSV can see. Project Bluefin
+        images are not in it: they are counted by{" "}
+        <code>countme.projectbluefin.io</code>, and an EPEL mirror hit is not a
+        population.
       </p>
       <EChart
         option={option}
         title="Cloud-native desktop ecosystem share"
-        summary={`Latest week across ${slices.length} peer cloud-native desktops (excluding Fedora, which dwarfs the rest and is the shared base rather than a peer image). Bluefin LTS is visible only via EPEL and is undercounted.`}
+        summary={`Latest week across ${slices.length} peer cloud-native desktops from Fedora's countme CSV, excluding Fedora itself, which is the shared base rather than a peer image. Project Bluefin images are counted by countme.projectbluefin.io and are not in this dataset.`}
         points={realPoints}
         minPoints={2}
         height={320}
