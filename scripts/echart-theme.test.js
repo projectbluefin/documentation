@@ -104,3 +104,28 @@ test("toTableRows tolerates an axis array and a chart with no series", () => {
   ]);
   assert.deepEqual(theme.toTableRows({}), [[""]]);
 });
+
+test("toTableRows pivots a heatmap back into the grid a sighted reader sees", () => {
+  const rows = theme.toTableRows({
+    xAxis: { data: [":testing", ":stable"] },
+    yAxis: { data: ["bluefin", "dakota"] },
+    series: [
+      {
+        name: "Stream freshness",
+        type: "heatmap",
+        data: [
+          { value: [0, 0, 1], text: "● 1d" },
+          { value: [1, 0, 1], text: "● 1d" },
+          { value: [0, 1, 3], text: "■ 72d" },
+        ],
+      },
+    ],
+  });
+
+  assert.deepEqual(rows, [
+    ["", ":testing", ":stable"],
+    ["bluefin", "● 1d", "● 1d"],
+    // The cell nobody published is a gap, not a zero.
+    ["dakota", "■ 72d", "no data"],
+  ]);
+});
