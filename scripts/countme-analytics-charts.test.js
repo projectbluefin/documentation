@@ -25,120 +25,127 @@ function loadComponent() {
     },
   });
   const mod = { exports: {} };
-  new Function("require", "module", "exports", outputText)(
-    (id) => {
-      if (id.endsWith(".css")) return {};
-      if (id === "@docusaurus/useBaseUrl") {
-        return { __esModule: true, default: (p) => p };
-      }
-      if (id === "@docusaurus/Link") {
-        return {
-          __esModule: true,
-          default: ({ to, children, ...rest }) =>
-            React.createElement("a", { href: to, ...rest }, children),
-        };
-      }
-      if (id === "@theme/Heading") {
-        return {
-          __esModule: true,
-          default: ({ as: Tag = "h3", children, ...rest }) =>
-            React.createElement(Tag, rest, children),
-        };
-      }
-      if (id.includes("EChart")) {
-        return {
-          __esModule: true,
-          default: (props) =>
-            React.createElement("div", {
-              "data-testid": "echart",
-              "data-title": props.title,
-              "data-summary": props.summary,
-              "data-points": String(props.points),
-              "data-option": JSON.stringify(props.option),
-            }),
-        };
-      }
-      if (id.includes("Unavailable")) {
-        return {
-          __esModule: true,
-          default: (props) =>
-            React.createElement("div", {
-              "data-testid": "unavailable",
-              "data-what": props.what,
-              "data-reason": props.reason,
-            }),
-        };
-      }
-      if (id.includes("Sparkline")) {
-        return {
-          __esModule: true,
-          default: (props) =>
-            React.createElement("span", {
-              "data-testid": "sparkline",
-              "data-data": JSON.stringify(props.data),
-              "data-show-end": String(props.showEnd),
-              "data-empty-label": props.emptyLabel,
-              "data-label": props.label,
-            }),
-        };
-      }
-      if (id.includes("countme-history.json")) {
-        return {
-          generatedAt: "2026-08-08T23:59:55.087Z",
-          source:
-            "https://data-analysis.fedoraproject.org/csv-reports/countme/totals.csv",
-          method: "ublue-countme-v1",
-          unit: "estimated weekly active systems",
-          variants: ["bluefin", "bluefin-lts", "aurora", "bazzite", "fedora"],
-          weeks: [
+
+  // Local modules are transpiled and handed the shim again, not node's require:
+  // a relative .ts import inside a relative .ts import is still a .ts import,
+  // and node cannot resolve it.
+  const shim = (from) => (id) => {
+    if (id.endsWith(".css")) return {};
+    if (id === "react") return React;
+    if (id === "@docusaurus/useBaseUrl") {
+      return { __esModule: true, default: (p) => p };
+    }
+    if (id === "@docusaurus/Link") {
+      return {
+        __esModule: true,
+        default: ({ to, children, ...rest }) =>
+          React.createElement("a", { href: to, ...rest }, children),
+      };
+    }
+    if (id === "@theme/Heading") {
+      return {
+        __esModule: true,
+        default: ({ as: Tag = "h3", children, ...rest }) =>
+          React.createElement(Tag, rest, children),
+      };
+    }
+    if (id.includes("EChart")) {
+      return {
+        __esModule: true,
+        default: (props) =>
+          React.createElement("div", {
+            "data-testid": "echart",
+            "data-title": props.title,
+            "data-summary": props.summary,
+            "data-points": String(props.points),
+            "data-option": JSON.stringify(props.option),
+          }),
+      };
+    }
+    if (id.includes("Unavailable")) {
+      return {
+        __esModule: true,
+        default: (props) =>
+          React.createElement("div", {
+            "data-testid": "unavailable",
+            "data-what": props.what,
+            "data-reason": props.reason,
+          }),
+      };
+    }
+    if (id.includes("Sparkline")) {
+      return {
+        __esModule: true,
+        default: (props) =>
+          React.createElement("span", {
+            "data-testid": "sparkline",
+            "data-data": JSON.stringify(props.data),
+            "data-color": props.color,
+            "data-show-end": String(props.showEnd),
+            "data-empty-label": props.emptyLabel,
+            "data-label": props.label,
+          }),
+      };
+    }
+    if (id.includes("countme-history.json")) {
+      return {
+        generatedAt: "2026-08-08T23:59:55.087Z",
+        source:
+          "https://data-analysis.fedoraproject.org/csv-reports/countme/totals.csv",
+        method: "ublue-countme-v1",
+        unit: "estimated weekly active systems",
+        variants: ["bluefin", "bluefin-lts", "aurora", "bazzite", "fedora"],
+        weeks: [
+          {
+            week: "2026-07-20",
+            fedora: 1073642,
+            bazzite: 88548,
+            aurora: 2669,
+            bluefin: 4095,
+            "bluefin-lts": 100,
+          },
+          {
+            week: "2026-07-27",
+            fedora: 1102473,
+            bluefin: 3761,
+            bazzite: 89550,
+            aurora: 2826,
+            "bluefin-lts": 159,
+          },
+        ],
+        unavailable: false,
+        stateReason: null,
+      };
+    }
+    if (id.startsWith(".")) {
+      const base = path.resolve(path.dirname(from), id);
+      for (const ext of ["", ".ts", ".tsx", "/index.ts", "/index.tsx"]) {
+        if (ext && fs.existsSync(base + ext)) {
+          const { outputText: innerOutput } = ts.transpileModule(
+            fs.readFileSync(base + ext, "utf8"),
             {
-              week: "2026-07-20",
-              fedora: 1073642,
-              bazzite: 88548,
-              aurora: 2669,
-              bluefin: 4095,
-              "bluefin-lts": 100,
-            },
-            {
-              week: "2026-07-27",
-              fedora: 1102473,
-              bluefin: 3761,
-              bazzite: 89550,
-              aurora: 2826,
-              "bluefin-lts": 159,
-            },
-          ],
-          unavailable: false,
-          stateReason: null,
-        };
-      }
-      if (id.startsWith(".")) {
-        const base = path.resolve(path.dirname(TSX_PATH), id);
-        for (const ext of [".ts", ".tsx", "/index.ts", "/index.tsx"]) {
-          if (fs.existsSync(base + ext)) {
-            const innerSource = fs.readFileSync(base + ext, "utf8");
-            const { outputText: innerOutput } = ts.transpileModule(
-              innerSource,
-              {
-                compilerOptions: {
-                  jsx: ts.JsxEmit.React,
-                  target: ts.ScriptTarget.ES2020,
-                  module: ts.ModuleKind.CommonJS,
-                },
+              compilerOptions: {
+                jsx: ts.JsxEmit.React,
+                target: ts.ScriptTarget.ES2020,
+                module: ts.ModuleKind.CommonJS,
               },
-            );
-            const innerMod = { exports: {} };
-            new Function("require", "module", "exports", innerOutput)(
-              require,
-              innerMod,
-              innerMod.exports,
-            );
-            return innerMod.exports;
-          }
+            },
+          );
+          const innerMod = { exports: {} };
+          new Function("require", "module", "exports", innerOutput)(
+            shim(base + ext),
+            innerMod,
+            innerMod.exports,
+          );
+          return innerMod.exports;
         }
       }
-      return require(id);
-    },
+    }
+    return require(id);
+  };
+
+  new Function("require", "module", "exports", outputText)(
+    shim(TSX_PATH),
     mod,
     mod.exports,
   );
@@ -352,24 +359,40 @@ test("unified fleet EChart preserves missing weeks as gaps and 0 as 0", () => {
   );
 });
 
-test("every catalogued OCI image gets a matrix row, registry or not", () => {
+const PROMOTED = [
+  "bluefin",
+  "bluefin-nvidia",
+  "bluefin-lts",
+  "bluefin-lts-nvidia",
+  "dakota",
+  "dakota-nvidia",
+  "dakota-gaming",
+  "dakota-nvidia-gaming",
+];
+
+test("the matrix rows are the images the release workflows promote", () => {
   const { matrixRows, BLUEFIN_FAMILY_IMAGES: families } = mod;
   const images = matrixRows().map((r) => r.image);
 
-  assert.deepEqual(images, [
-    "bluefin",
-    "bluefin-nvidia",
-    "bluefin-lts",
-    "bluefin-lts-hwe",
-    "bluefin-lts-hwe-nvidia",
-    "dakota",
-    "dakota-nvidia",
-  ]);
+  // Each repo's execute-release.yml promotion matrix, verbatim. The -hwe images
+  // are still in the registry but in nobody's matrix, so they are named on the
+  // family card as retired rather than charted as permanently stale lanes.
+  assert.deepEqual(images, PROMOTED);
+
+  const lts = families.find((f) => f.id === "bluefin-lts");
+  assert.deepEqual(lts.retired, ["bluefin-lts-hwe", "bluefin-lts-hwe-nvidia"]);
+  for (const name of lts.retired) assert.ok(!images.includes(name));
 
   // Bluefin Server delivers a DDI, not a container tag, so it has no lane here
   // even though it is a counted family.
   assert.ok(families.some((f) => f.id === "server"));
   assert.ok(!images.includes("server"));
+});
+
+test("the promotion axis is testing then stable, and nothing else", () => {
+  // :lts, :gts and :latest linger on some images from retired schemes. A column
+  // that is a dash down most of the grid is not a measurement.
+  assert.deepEqual(mod.STREAM_COLUMNS, ["testing", "stable"]);
 });
 
 test("an image the registry does not carry stays in the grid as a gap", () => {
@@ -384,23 +407,28 @@ test("an image the registry does not carry stays in the grid as a gap", () => {
   }
 });
 
-test("a stream a family does not promote through is named, not blamed", () => {
+test("a retired tag on an image is not mistaken for a promotion lane", () => {
   const { matrixRows, buildStreamMatrix } = mod;
-  const rows = matrixRows();
-  const cells = buildStreamMatrix(rows, [
+  const cells = buildStreamMatrix(matrixRows(), [
     {
       name: "bluefin",
       family: "os",
-      streams: [{ tag: "lts", ageDays: 99, state: "stale", publishedAt: null }],
+      streams: [
+        { tag: "lts", ageDays: 99, state: "stale", publishedAt: null },
+        { tag: "testing", ageDays: 1, state: "fresh", publishedAt: null },
+      ],
     },
   ]);
 
-  const retired = cells.find(
-    (c) => c.image === "bluefin" && c.stream === "lts",
+  assert.ok(
+    !cells.some((c) => c.stream === "lts"),
+    ":lts is not a column, so a stale :lts tag cannot colour the grid",
   );
-  assert.equal(retired.level, "unknown");
-  assert.equal(retired.ageDays, null);
-  assert.match(retired.reason, /does not promote through :lts/);
+  const testing = cells.find(
+    (c) => c.image === "bluefin" && c.stream === "testing",
+  );
+  assert.equal(testing.ageDays, 1);
+  assert.equal(testing.level, "ok");
 });
 
 test("freshness splits stale by drift and treats a missing tag as unknown", () => {
@@ -478,25 +506,13 @@ test("the matrix plots every catalogued image against every stream", () => {
   assert.ok(chart, "matrix echart must be present");
 
   const option = JSON.parse(chart[1].replace(/&quot;/g, '"'));
-  assert.deepEqual(option.yAxis.data, [
-    "bluefin",
-    "bluefin-nvidia",
-    "bluefin-lts",
-    "bluefin-lts-hwe",
-    "bluefin-lts-hwe-nvidia",
-    "dakota",
-    "dakota-nvidia",
-  ]);
-  assert.deepEqual(option.xAxis.data, [":testing", ":stable", ":lts"]);
-  assert.equal(option.series[0].data.length, 21);
+  assert.deepEqual(option.yAxis.data, PROMOTED);
+  assert.deepEqual(option.xAxis.data, [":testing", ":stable"]);
+  assert.equal(option.series[0].data.length, PROMOTED.length * 2);
 
   // Every cell carries its own number, never a bare colour swatch.
   const published = option.series[0].data.filter((c) => c.text !== "—");
-  assert.deepEqual(published.map((c) => c.text).sort(), [
-    "■ 72d",
-    "● 1d",
-    "● 1d",
-  ]);
+  assert.deepEqual(published.map((c) => c.text).sort(), ["● 1d", "● 1d"]);
 });
 
 test("the matrix says why it is empty rather than rendering nothing", () => {
