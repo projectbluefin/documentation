@@ -20,8 +20,8 @@ metadata:
 
 Automated monthly reports are published directly as blog posts under `blog/`
 using dinosaur-themed monthly slugs (e.g. `archaeopteryx-august-2026`). They
-combine public GitHub activity, publishing-lane outcomes, Countme weekly
-adoption telemetry, Homebrew tap updates, release events, and contributor
+combine public GitHub activity, publishing-lane outcomes, countme source
+state, Homebrew tap updates, release events, and contributor
 activity into an immutable SSR-safe report snapshot. ECharts is already a site
 dependency for substantive interactive charts; no report-specific dependency is
 added.
@@ -80,7 +80,9 @@ added.
    - `<ReportParticipation>`: Human and automation activity plus contributors.
    - `<ReportEcosystem>`: Countme, Homebrew, and Flathub source states.
    - `<ReportLaneHealth>`: Publishing lane metrics (Testing, LTS, Dakota).
-   - `<ReportCountmeTrend>`: Weekly active systems telemetry and variant distribution.
+   - `<ReportCountmeTrend>`: Weekly active systems from countme. Unavailable
+     until `countme.projectbluefin.io` publishes a read endpoint; it states
+     that reason rather than charting an upstream number.
    - `<ReportAutomationStats>`: Factory autonomous vs human PR breakdown.
    - `<ReportDoraCadence>`: Deployment cadence and velocity indicators.
 
@@ -157,6 +159,16 @@ snapshot and its provenance remain available to server-rendered output.
 - Partial GitHub pagination makes participation unavailable rather than
   presenting a human/automation split or leaderboard derived from an
   incomplete result.
+- **A Project Bluefin count comes from our own deployment only.** Every count
+  for `bluefin`, `bluefin-lts`, `dakota`, `utah`, or `server` comes from
+  `countme.projectbluefin.io`. Fedora's `totals.csv` — the source behind
+  `static/data/countme-history.json` — counts mirror hits for a Fedora repo
+  and is never a substitute for one of our images. Until the first-party
+  service publishes a read endpoint, `extractCountmeMetrics()` returns an
+  unavailable measurement carrying `FIRST_PARTY_PENDING_REASON` from
+  `scripts/lib/countme-sources.mjs`: the report keeps the countme panel and
+  states the reason, and the Active Systems hero KPI does not appear.
+  `scripts/countme-first-party.test.js` enforces this.
 - Countme and Flathub gaps remain `null` or unavailable. A missing variant,
   failed refresh, or incomplete daily window is never coerced to zero.
 - Activity aggregation skips missing repository and category values instead of

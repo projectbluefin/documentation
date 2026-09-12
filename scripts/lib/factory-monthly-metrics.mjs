@@ -5,9 +5,6 @@
  * for the monthly reporting window.
  */
 
-import { existsSync, readFileSync } from "fs";
-import { resolve, dirname } from "path";
-import { fileURLToPath } from "url";
 import {
   isPublishRun,
   classifyRun,
@@ -15,13 +12,8 @@ import {
   median,
   successRate,
 } from "../fetch-factory-stats.js";
+import { FIRST_PARTY_PENDING_REASON } from "./countme-sources.mjs";
 import { REPORT_PORTFOLIO } from "./report-portfolio.mjs";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const COUNTME_PATH = resolve(
-  __dirname,
-  "../../static/data/countme-history.json",
-);
 
 const GH_API = "https://api.github.com";
 
@@ -223,83 +215,49 @@ export async function fetchFactoryMonthlyStats(
 }
 
 /**
- * Extract active systems Countme data for the report period
+ * Active systems for the report period.
  *
- * @param {Date} startDate
- * @param {Date} endDate
- * @returns {Object|null}
+ * There is no Project Bluefin adoption number to return, and there was never a
+ * legitimate one here. This used to sum `bluefin` and `bluefin-lts` out of
+ * `static/data/countme-history.json`, a dataset built from Fedora's
+ * `totals.csv` — mirror hits for a Fedora repo, published in the monthly
+ * report as our installed base. Those keys are gone and do not come back.
+ *
+ * Every Project Bluefin count comes from `countme.projectbluefin.io` and
+ * nothing else; see `./countme-sources.mjs`. That service is collecting but
+ * publishes no read endpoint yet, so the honest report states why instead of
+ * substituting an upstream figure.
+ *
+ * The result stays a metrics object with `null` measurements rather than
+ * `null` itself: the report only emits `<ReportCountmeTrend>` when it has an
+ * object, and a report that quietly drops the panel is indistinguishable from
+ * one that had a number to show.
+ *
+ * @returns {{unavailable: true, unavailableReason: string, currentTotal: null,
+ *   previousTotal: null, historyPoints: [], variants: [], sourceDate: null}}
  */
-function numericOrNull(value) {
-  return typeof value === "number" && Number.isFinite(value) ? value : null;
-}
-
-function sumKnown(values) {
-  const numbers = values.map(numericOrNull);
-  return numbers.every((value) => value !== null)
-    ? numbers.reduce((sum, value) => sum + value, 0)
-    : null;
-}
-
-export function extractCountmeMetricsFromPayload(payload, startDate, endDate) {
-  if (payload?.unavailable === true) return null;
-
-  const weeks = Array.isArray(payload?.weeks) ? payload.weeks : [];
-  if (weeks.length === 0) return null;
-
-  const endISO = endDate.toISOString().split("T")[0];
-  const eligible = weeks
-    .filter((week) => typeof week?.week === "string" && week.week <= endISO)
-    .sort((left, right) => left.week.localeCompare(right.week));
-  if (eligible.length === 0) return null;
-
-  const latest = eligible[eligible.length - 1];
-  const previous =
-    eligible.length >= 5 ? eligible[eligible.length - 5] : eligible[0];
-  const recentWeeks = eligible.slice(-10);
-
+function countmeUnavailable() {
   return {
-    currentTotal: sumKnown([latest.bluefin, latest["bluefin-lts"]]),
-    previousTotal: sumKnown([previous.bluefin, previous["bluefin-lts"]]),
-    historyPoints: recentWeeks.map((week) =>
-      sumKnown([week.bluefin, week["bluefin-lts"]]),
-    ),
-    variants: [
-      {
-        name: "Bluefin",
-        count: numericOrNull(latest.bluefin),
-        color: "#1D76DB",
-      },
-      {
-        name: "Bluefin LTS",
-        count: numericOrNull(latest["bluefin-lts"]),
-        color: "#2AA198",
-      },
-      {
-        name: "Aurora",
-        count: numericOrNull(latest.aurora),
-        color: "#8A63D2",
-      },
-    ],
-    sourceDate: latest.week,
+    unavailable: true,
+    unavailableReason: FIRST_PARTY_PENDING_REASON,
+    currentTotal: null,
+    previousTotal: null,
+    historyPoints: [],
+    variants: [],
+    sourceDate: null,
   };
 }
 
-export function extractCountmeMetrics(startDate, endDate) {
-  if (!existsSync(COUNTME_PATH)) return null;
+/**
+ * The upstream countme payload carries no count we may publish, whatever it
+ * holds, so it is not read.
+ */
+export function extractCountmeMetricsFromPayload() {
+  return countmeUnavailable();
+}
 
-  try {
-    const raw = readFileSync(COUNTME_PATH, "utf8");
-    return extractCountmeMetricsFromPayload(
-      JSON.parse(raw),
-      startDate,
-      endDate,
-    );
-  } catch (err) {
-    console.warn(
-      `[factory-metrics] Failed reading countme history: ${err.message}`,
-    );
-    return null;
-  }
+export function extractCountmeMetrics() {
+  return countmeUnavailable();
 }
 
 /**
