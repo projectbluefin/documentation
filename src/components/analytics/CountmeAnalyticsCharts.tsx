@@ -9,10 +9,7 @@ import {
   withAlpha,
   type SeverityLevel,
 } from "../factory/chartTheme";
-import {
-  FIRST_PARTY_PENDING_REASON,
-  UPSTREAM_ALLOWED,
-} from "@site/scripts/lib/countme-sources.mjs";
+import { FIRST_PARTY_PENDING_REASON } from "@site/scripts/lib/countme-sources.mjs";
 import { useFactoryTheme } from "../factory/useFactoryTheme";
 import "../factory/tokens.css";
 import styles from "./CountmeAnalyticsCharts.module.css";
@@ -391,40 +388,18 @@ export default function CountmeAnalyticsCharts({
 
   return (
     <div ref={themeRef} className={`fxRoot ${styles.container}`}>
-      {/* ── 1. Where a Project Bluefin count comes from ──────────────────── */}
+      {/* ── 1. Weekly active systems ─────────────────────────────────────── */}
       <section className={styles.panelCard}>
         <header className={styles.sectionHeader}>
           <Heading as="h3" className={styles.sectionTitle}>
             Weekly Active Systems
           </Heading>
-          <p className={styles.sectionSubtext}>
-            Project Bluefin counts its own images. Every number for{" "}
-            <code>bluefin</code>, <code>bluefin-lts</code>, <code>dakota</code>,{" "}
-            <code>utah</code> and <code>server</code> comes from{" "}
-            <code>countme.projectbluefin.io</code> and nothing else.
-          </p>
         </header>
 
         <Unavailable
           what="Weekly active systems"
           reason={FIRST_PARTY_PENDING_REASON}
         />
-
-        <p className={styles.chartNote}>
-          <strong>Why not Fedora&rsquo;s numbers:</strong> Fedora and{" "}
-          <code>ublue-os/countme</code> only see a machine when it reaches a
-          Fedora or EPEL mirror. They undercount bootc, and they cannot see
-          stream, flavor or game mode at all. Bluefin LTS is the sharpest case:
-          it is CentOS Stream based, so upstream sees it only through whichever
-          EPEL mirrors it happens to hit, which is not a population and must not
-          be published as one. The one upstream figure that is still upstream
-          &rsquo;s to publish is{" "}
-          <Link href={UPSTREAM_ALLOWED.source}>
-            <code>{UPSTREAM_ALLOWED.id}</code>
-          </Link>{" "}
-          &mdash; the pre-migration image, counted by{" "}
-          <code>ublue-os/countme</code>.
-        </p>
       </section>
 
       {/* ── 2. Image × stream publication matrix ────────────────────────── */}
