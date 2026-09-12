@@ -57,6 +57,7 @@ const SBOM_STREAM_PREFIX = {
   "bluefin-latest": "latest",
   "bluefin-lts": "stable",
   "bluefin-lts-hwe": "stable-hwe",
+  "bluefin-lts-nvidia": "stable",
   "bluefin-dx-stable": "stable",
   "bluefin-dx-latest": "latest",
   "bluefin-dx-lts": "stable",
