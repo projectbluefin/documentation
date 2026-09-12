@@ -16,6 +16,7 @@ import {
   successRate,
 } from "../fetch-factory-stats.js";
 import { REPORT_PORTFOLIO } from "./report-portfolio.mjs";
+import { githubHeaders, githubFetch, githubToken } from "./gh.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const COUNTME_PATH = resolve(
@@ -57,14 +58,12 @@ async function fetchLaneRuns(lane, startISO, endISO, fetchImpl, headers) {
   const runs = [];
   for (let page = 1; page <= 5; page += 1) {
     const url = `${GH_API}/repos/${lane.repo}/actions/runs?per_page=100&page=${page}&created=${encodeURIComponent(`${startISO}..${endISO}`)}`;
-    const response = await fetchImpl(url, {
+    const res = await githubFetch(url, {
       headers,
       signal: AbortSignal.timeout(15000),
+      fetchImpl,
     });
-    if (!response?.ok) {
-      throw new Error(`HTTP ${response?.status ?? "unknown"} for ${lane.repo}`);
-    }
-    const data = await response.json();
+    const data = await res.json();
     const batch = data.workflow_runs ?? [];
     runs.push(...batch);
     if (batch.length < 100) break;
@@ -167,12 +166,10 @@ export async function fetchFactoryMonthlyStats(
   endDate,
   fetchImpl = globalThis.fetch,
 ) {
-  const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN || "";
-  const headers = {
-    Accept: "application/vnd.github.v3+json",
-    "User-Agent": "bluefin-docs/generate-report",
-    ...(token ? { Authorization: `token ${token}` } : {}),
-  };
+  const headers = githubHeaders(githubToken(), {
+    accept: "application/vnd.github.v3+json",
+    userAgent: "bluefin-docs/generate-report",
+  });
 
   const startISO = startDate.toISOString().split("T")[0];
   const endISO = endDate.toISOString().split("T")[0];
