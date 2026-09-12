@@ -6,10 +6,20 @@ import EChart from "../factory/EChart";
 import Unavailable from "../factory/Unavailable";
 import {
   readableInk,
+  seriesDash,
   withAlpha,
   type SeverityLevel,
 } from "../factory/chartTheme";
 import { FIRST_PARTY_PENDING_REASON } from "@site/scripts/lib/countme-sources.mjs";
+import {
+  COUNTS_URL,
+  latestReading,
+  measuredWeekCount,
+  reportingRepos,
+  repoSeries,
+  weekLabels,
+  type CountmeDataset,
+} from "./firstPartyCountme";
 import { useFactoryTheme } from "../factory/useFactoryTheme";
 import "../factory/tokens.css";
 import styles from "./CountmeAnalyticsCharts.module.css";
@@ -20,6 +30,42 @@ import styles from "./CountmeAnalyticsCharts.module.css";
  * exist fails the build instead of rendering a panel that says why.
  */
 const REGISTRY_URL = "/data/ghcr-packages.json";
+
+/**
+ * Weekly active systems come from the first-party service and nothing else.
+ *
+ * The reader lives in `./firstPartyCountme`, and is imported rather than
+ * re-exported from here. This file holds the image catalogue, and
+ * `scripts/countme-first-party.test.js` forbids one file from holding both a
+ * catalogue of our image ids and a computed index into a countme week. That
+ * pairing twice published a Fedora-derived number under a Project Bluefin name,
+ * so the two stay in separate files and the gate stays a real gate.
+ */
+
+/** Display names for the first-party `repo` identifiers. */
+export const REPO_LABELS: Record<string, string> = {
+  bluefin: "Bluefin",
+  "bluefin-lts": "Bluefin LTS",
+  dakota: "Project Bluefin Dakota",
+  utah: "Project Bluefin Utah",
+  server: "Bluefin Server",
+};
+
+/**
+ * Marker shapes, paired with the palette index like `seriesDash`.
+ *
+ * The Bluefin categorical ramp is six shades of a single blue, so hue alone
+ * cannot tell two series apart. Shape and dash carry the distinction instead,
+ * which is also what makes the chart readable in greyscale.
+ */
+export const SERIES_SYMBOLS = [
+  "circle",
+  "triangle",
+  "diamond",
+  "rect",
+  "pin",
+  "arrow",
+] as const;
 
 /** One published tag of one GHCR package, as `scripts/fetch-ghcr-packages.js` writes it. */
 export interface GhcrStream {
@@ -264,10 +310,13 @@ export function buildStreamMatrix(
 
 export interface CountmeAnalyticsChartsProps {
   registry?: GhcrDataset;
+  /** Injected by tests; production fetches the first-party aggregate. */
+  counts?: CountmeDataset;
 }
 
 export default function CountmeAnalyticsCharts({
   registry,
+  counts,
 }: CountmeAnalyticsChartsProps = {}): React.JSX.Element {
   const [themeRef, fxTheme] = useFactoryTheme();
   const cat = fxTheme.categorical;
@@ -294,6 +343,103 @@ export default function CountmeAnalyticsCharts({
       }
     })();
   }, [base, registry]);
+
+  // ── Weekly active systems, first-party only ────────────────────────────
+  const [fetchedCounts, setFetchedCounts] = useState<CountmeDataset | null>(
+    null,
+  );
+  const [countsReason, setCountsReason] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (counts) return;
+    void (async () => {
+      try {
+        const res = await fetch(COUNTS_URL);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        setFetchedCounts((await res.json()) as CountmeDataset);
+      } catch {
+        // The reason is deliberately generic. A panel reason is published copy,
+        // and commit 5a5269bc removed internal service posture from this page.
+        setCountsReason(FIRST_PARTY_PENDING_REASON);
+      }
+    })();
+  }, [counts]);
+
+  const countsData = counts ?? fetchedCounts;
+  const countmeWeeks = countsData?.weeks ?? [];
+  const activeRepos = useMemo(
+    () => reportingRepos(countmeWeeks),
+    [countmeWeeks],
+  );
+
+  /** Readings that exist, so the panel can print a number per series. */
+  const countmeReadings = useMemo(
+    () =>
+      activeRepos.map((repo) => ({
+        repo,
+        label: REPO_LABELS[repo] ?? repo,
+        reading: latestReading(countmeWeeks, repo),
+      })),
+    [activeRepos, countmeWeeks],
+  );
+
+  /** Rule 5: the point count is real readings, not axis length. */
+  const countmePoints = useMemo(
+    () => measuredWeekCount(countmeWeeks, activeRepos),
+    [countmeWeeks, activeRepos],
+  );
+
+  const countmeOption = useMemo(
+    () => ({
+      grid: { left: 56, right: 24, top: 16, bottom: 48, containLabel: true },
+      tooltip: { trigger: "axis" },
+      xAxis: {
+        type: "category",
+        data: weekLabels(countmeWeeks),
+      },
+      // Anchored at zero: a floating floor turns a flat series into a cliff.
+      yAxis: { type: "value", min: 0 },
+      series: activeRepos.map((repo, i) => ({
+        name: REPO_LABELS[repo] ?? repo,
+        type: "line",
+        // Rule 4: discrete weekly readings. No spline between them, and a
+        // missing week breaks the line rather than being bridged or zeroed.
+        smooth: false,
+        connectNulls: false,
+        showSymbol: true,
+        symbolSize: 7,
+        // The Bluefin palette is six shades of one hue, so colour alone cannot
+        // separate series. chartTheme pairs each index with a dash pattern and a
+        // symbol for exactly this; both survive greyscale and colour blindness.
+        symbol: SERIES_SYMBOLS[i % SERIES_SYMBOLS.length],
+        data: repoSeries(countmeWeeks, repo),
+        itemStyle: { color: cat[i % cat.length] },
+        lineStyle: {
+          width: 2,
+          color: cat[i % cat.length],
+          type: seriesDash(i),
+        },
+      })),
+    }),
+    [countmeWeeks, activeRepos, cat],
+  );
+
+  /**
+   * Rule 1, in prose: the summary carries the current number for every series,
+   * so the chart is never the sole holder of the claim. A series whose latest
+   * weeks are a gap reports the last week it was actually measured.
+   */
+  const countmeSummary = useMemo(() => {
+    if (!countmeReadings.length) return FIRST_PARTY_PENDING_REASON;
+    const parts = countmeReadings.map(({ label, reading }) =>
+      reading
+        ? `${label} ${reading.value.toLocaleString()} (week ${reading.week})`
+        : `${label} accumulating data`,
+    );
+    return `Weekly active systems across ${countmePoints} measured week${
+      countmePoints === 1 ? "" : "s"
+    } — ${parts.join(", ")}.`;
+  }, [countmeReadings, countmePoints]);
 
   const ghcr = registry ?? fetchedRegistry;
 
@@ -396,10 +542,46 @@ export default function CountmeAnalyticsCharts({
           </Heading>
         </header>
 
-        <Unavailable
-          what="Weekly active systems"
-          reason={FIRST_PARTY_PENDING_REASON}
-        />
+        {countmePoints > 0 ? (
+          <>
+            {/* Rule 1: every series states its current number, in text, next
+                to the graphic rather than only inside it. */}
+            <p className={styles.legendRow}>
+              {countmeReadings.map(({ repo, label, reading }, i) => (
+                <span key={repo} className={styles.legendChip}>
+                  <span
+                    className={styles.legendGlyph}
+                    aria-hidden="true"
+                    style={{ color: cat[i % cat.length] }}
+                  >
+                    ●
+                  </span>
+                  {label}:{" "}
+                  {reading ? reading.value.toLocaleString() : "accumulating"}
+                </span>
+              ))}
+            </p>
+            <EChart
+              option={countmeOption}
+              title="Weekly active systems"
+              summary={countmeSummary}
+              points={countmePoints}
+              minPoints={2}
+              height={300}
+              tableCaption="Weekly active systems by image, from the first-party countme service"
+            />
+          </>
+        ) : (
+          // Rule 6: unavailability is visible and carries its reason.
+          <Unavailable
+            what="Weekly active systems"
+            reason={
+              countsData?.stateReason ??
+              countsReason ??
+              FIRST_PARTY_PENDING_REASON
+            }
+          />
+        )}
       </section>
 
       {/* ── 2. Image × stream publication matrix ────────────────────────── */}
