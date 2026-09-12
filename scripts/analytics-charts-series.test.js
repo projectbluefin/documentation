@@ -40,6 +40,9 @@ function loadComponent(datasetFixture) {
 
   const requireShim = (id) => {
     if (id.endsWith(".css")) return {};
+    if (id === "@docusaurus/useBaseUrl") {
+      return { __esModule: true, default: (p) => p };
+    }
     if (id === "@docusaurus/Link") {
       return {
         __esModule: true,
@@ -147,78 +150,79 @@ const SAMPLE_DATASET = {
   stateReason: null,
 };
 
-test("CountmeAnalyticsCharts renders without crashing", () => {
+function renderSample() {
   const { mod, capturedECharts } = loadComponent(SAMPLE_DATASET);
-  const CountmeAnalyticsCharts = mod.default;
-  const html = renderToStaticMarkup(
-    React.createElement(CountmeAnalyticsCharts),
-  );
+  const html = renderToStaticMarkup(React.createElement(mod.default));
+  return { html, capturedECharts, mod };
+}
+
+test("CountmeAnalyticsCharts renders every panel without crashing", () => {
+  const { html, capturedECharts } = renderSample();
+
   assert.ok(html.includes("Weekly Active Systems"));
-  assert.ok(
-    capturedECharts.length >= 2,
-    "Expected hero and comparative ECharts",
+  assert.deepEqual(capturedECharts.map((p) => p.title).sort(), [
+    "Adoption by image family",
+    "Cloud-native desktop ecosystem",
+    "Project Bluefin fleet",
+  ]);
+
+  // The registry snapshot is fetched after hydration, so the static render says
+  // the matrix is pending rather than dropping the panel.
+  assert.match(html, /data-unavailable="true"/);
+  assert.match(html, /Reading the registry snapshot/);
+});
+
+test("each image family gets its own ridgeline lane", () => {
+  const { capturedECharts, mod } = renderSample();
+  const ridgeline = capturedECharts.find(
+    (p) => p.title === "Adoption by image family",
+  ).option;
+
+  assert.deepEqual(
+    ridgeline.series.map((s) => s.name),
+    mod.BLUEFIN_FAMILY_IMAGES.map((f) => f.name),
+  );
+  // Each lane owns a grid, so one lane's shape cannot be read off another's.
+  assert.deepEqual(
+    ridgeline.series.map((s) => [s.xAxisIndex, s.yAxisIndex]),
+    ridgeline.series.map((_, i) => [i, i]),
   );
 });
 
-test("hero chart in split mode defines series for Bluefin Flagship, Bluefin LTS, Dakota, and Utah", () => {
-  const source = fs.readFileSync(tsxPath, "utf8");
-  assert.ok(
-    source.includes('name: "Dakota"'),
-    "CountmeAnalyticsCharts must include Dakota series",
+test("ridgeline lanes share one domain rather than autoscaling", () => {
+  const { capturedECharts } = renderSample();
+  const ridgeline = capturedECharts.find(
+    (p) => p.title === "Adoption by image family",
+  ).option;
+
+  const maxima = new Set(ridgeline.yAxis.map((a) => a.max));
+  assert.equal(
+    maxima.size,
+    1,
+    "per-lane autoscaling makes every lane identical",
   );
-  assert.ok(
-    source.includes('name: "Utah"'),
-    "CountmeAnalyticsCharts must include Utah series",
-  );
-  assert.ok(
-    source.includes("data: dakotaSeries"),
-    "CountmeAnalyticsCharts must map dakotaSeries to Dakota series in hero split mode",
-  );
-  assert.ok(
-    source.includes("data: utahSeries"),
-    "CountmeAnalyticsCharts must map utahSeries to Utah series in hero split mode",
-  );
+  // The largest family in the fixture, so Utah's 20 reads as the sliver it is.
+  assert.deepEqual([...maxima], [3600]);
+  for (const axis of ridgeline.yAxis) assert.equal(axis.min, 0);
 });
 
-test("comparative chart in workstations mode includes Dakota and Utah series", () => {
-  const source = fs.readFileSync(tsxPath, "utf8");
-  const workstationsBlock = source.match(
-    /if\s*\(\s*viewMode\s*===\s*"workstations"\s*\)\s*\{([\s\S]*?)\}\s*else/,
-  );
-  assert.ok(workstationsBlock, "workstations viewMode branch must exist");
-  const blockContent = workstationsBlock[1];
+test("a family with no telemetry keeps its lane and states why", () => {
+  const { mod, capturedECharts } = loadComponent({
+    unavailable: false,
+    weeks: [{ week: "2026-08-01", bluefin: 3000 }],
+  });
+  renderToStaticMarkup(React.createElement(mod.default));
 
-  assert.ok(
-    blockContent.includes("Bluefin Flagship"),
-    "workstations mode must include Bluefin Flagship",
-  );
-  assert.ok(
-    blockContent.includes("Bluefin LTS"),
-    "workstations mode must include Bluefin LTS",
-  );
-  assert.ok(
-    blockContent.includes("Dakota"),
-    "workstations mode must include Dakota",
-  );
-  assert.ok(
-    blockContent.includes("Utah"),
-    "workstations mode must include Utah",
-  );
-  assert.ok(
-    blockContent.includes("w.dakota"),
-    "workstations mode must map w.dakota",
-  );
-  assert.ok(
-    blockContent.includes("w.utah"),
-    "workstations mode must map w.utah",
-  );
-});
+  const ridgeline = capturedECharts.find(
+    (p) => p.title === "Adoption by image family",
+  ).option;
 
-test("hero split series reconcile with unified fleet sum", () => {
-  const week = SAMPLE_DATASET.weeks[0];
-  const expectedTotal =
-    week.bluefin + week["bluefin-lts"] + week.dakota + week.utah;
-
-  assert.equal(expectedTotal, 3500 + 120 + 45 + 15);
-  assert.equal(expectedTotal, 3680);
+  assert.equal(ridgeline.series.length, mod.BLUEFIN_FAMILY_IMAGES.length);
+  const dakota = ridgeline.title.find(
+    (t) => t.text === "Project Bluefin Dakota",
+  );
+  assert.match(dakota.subtext, /^no telemetry —/);
+  // The reporting lane still prints its current value as a number.
+  const bluefin = ridgeline.title.find((t) => t.text === "Bluefin");
+  assert.equal(bluefin.subtext, "3,000 systems");
 });

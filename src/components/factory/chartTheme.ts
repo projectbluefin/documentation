@@ -9,10 +9,23 @@
  *     sample can never arrive as 0.
  *   - animation is off, so prefers-reduced-motion needs no runtime branch.
  *
- * Colours are literals rather than var(--fx-*) because ECharts renders to
- * canvas, where CSS custom properties do not resolve. They are kept in sync
- * with tokens.css by hand; the test asserts the banned pairs stay out.
+ * ECharts renders to canvas, where CSS custom properties do not resolve, so the
+ * literals below are the dark-mode fallback. EChart.tsx reads the live
+ * `--fx-*` tokens off the mounted element and registers them as an ECharts
+ * theme, which is what makes a chart legible in light mode; these values only
+ * apply where the tokens are absent. The test asserts the banned pairs stay
+ * out.
  */
+
+/** The token each palette slot is resolved from at runtime. */
+export const FX_COLOR_TOKENS = {
+  text: "--fx-text",
+  muted: "--fx-text-muted",
+  faint: "--fx-text-faint",
+  grid: "--fx-border",
+  surface: "--fx-surface",
+  border: "--fx-border",
+} as const;
 
 export const FX_COLORS = {
   text: "#e6edf3",
@@ -73,25 +86,115 @@ export function gapSafe(
   );
 }
 
+/**
+ * Spread over every panel's option. Colours are deliberately absent: they come
+ * from the runtime theme EChart.tsx registers, so a panel that says nothing
+ * about colour follows the site's light/dark toggle.
+ */
 export const FX_CHART_THEME = {
   animation: false,
   backgroundColor: "transparent",
-  textStyle: { color: FX_COLORS.text, fontSize: 12 },
+  textStyle: { fontSize: 12 },
   grid: { left: 48, right: 16, top: 28, bottom: 32, containLabel: true },
-  tooltip: {
-    trigger: "axis",
-    backgroundColor: FX_COLORS.surface,
-    borderColor: FX_COLORS.border,
-    textStyle: { color: FX_COLORS.text },
-  },
-  legend: { textStyle: { color: FX_COLORS.muted }, icon: "roundRect" },
+  tooltip: { trigger: "axis" },
+  legend: { icon: "roundRect" },
 } as const;
 
+export interface FxPalette {
+  text: string;
+  muted: string;
+  faint: string;
+  grid: string;
+  surface: string;
+  border: string;
+}
+
+/**
+ * An ECharts theme object built from resolved token values.
+ *
+ * Registered rather than merged into each option so a panel's own colour
+ * choices still win — this only supplies what the panel left unsaid.
+ */
+export function fxEchartsTheme(palette: FxPalette): Record<string, unknown> {
+  const axis = {
+    axisLine: { lineStyle: { color: palette.border } },
+    axisTick: { lineStyle: { color: palette.border } },
+    axisLabel: { color: palette.muted },
+    splitLine: { lineStyle: { color: palette.grid } },
+    splitArea: { show: false },
+  };
+  return {
+    backgroundColor: "transparent",
+    textStyle: { color: palette.text },
+    title: {
+      textStyle: { color: palette.text },
+      subtextStyle: { color: palette.muted },
+    },
+    categoryAxis: axis,
+    valueAxis: axis,
+    timeAxis: axis,
+    logAxis: axis,
+    legend: { textStyle: { color: palette.muted } },
+    tooltip: {
+      backgroundColor: palette.surface,
+      borderColor: palette.border,
+      textStyle: { color: palette.text },
+    },
+  };
+}
+
+interface MinimalAxis {
+  data?: Array<string | number>;
+}
+
+/** A heatmap datum: `[columnIndex, rowIndex, value]`, optionally with a label. */
+export interface HeatCell {
+  value: [number, number, number | null];
+  text?: string;
+}
+
+interface MinimalSeries {
+  name?: string;
+  type?: string;
+  data?: Array<number | null | undefined> | HeatCell[];
+}
+
 interface MinimalOption {
-  xAxis?:
-    | { data?: Array<string | number> }
-    | Array<{ data?: Array<string | number> }>;
-  series?: Array<{ name?: string; data?: Array<number | null | undefined> }>;
+  xAxis?: MinimalAxis | MinimalAxis[];
+  yAxis?: MinimalAxis | MinimalAxis[];
+  series?: MinimalSeries[];
+}
+
+/**
+ * A heatmap's rows are its y categories and its columns are its x categories,
+ * so the generic category-by-series flattening below would emit `[x, y, v]`
+ * triples instead of a readable table. Pivot it back into the grid a sighted
+ * reader sees. An absent cell reads "no data" — never 0.
+ */
+function heatmapRows(
+  opt: MinimalOption,
+  series: MinimalSeries,
+): Array<string[]> {
+  const xAxis = Array.isArray(opt.xAxis) ? opt.xAxis[0] : opt.xAxis;
+  const yAxis = Array.isArray(opt.yAxis) ? opt.yAxis[0] : opt.yAxis;
+  const cols = (xAxis?.data ?? []).map(String);
+  const rowLabels = (yAxis?.data ?? []).map(String);
+  const cells = new Map<string, string>();
+  for (const cell of (series.data ?? []) as HeatCell[]) {
+    if (!cell || !Array.isArray(cell.value)) continue;
+    const [x, y, v] = cell.value;
+    cells.set(
+      `${x}:${y}`,
+      cell.text ?? (v === null || v === undefined ? "no data" : String(v)),
+    );
+  }
+  return [
+    ["", ...cols],
+    ...rowLabels.map((label, y) => [
+      label,
+      ...cols.map((_, x) => cells.get(`${x}:${y}`) ?? "no data"),
+    ]),
+  ];
 }
 
 /**
@@ -99,14 +202,17 @@ interface MinimalOption {
  * never the sole carrier of a claim. A gap reads as "no data", not as 0.
  */
 export function toTableRows(opt: MinimalOption): Array<string[]> {
+  const series = opt.series ?? [];
+  const heat = series.find((s) => s.type === "heatmap");
+  if (heat) return heatmapRows(opt, heat);
+
   const axis = Array.isArray(opt.xAxis) ? opt.xAxis[0] : opt.xAxis;
   const categories = (axis?.data ?? []).map(String);
-  const series = opt.series ?? [];
   const header = ["", ...series.map((s, i) => s.name ?? `Series ${i + 1}`)];
   const rows = categories.map((c, r) => [
     c,
     ...series.map((s) => {
-      const v = s.data?.[r];
+      const v = (s.data as Array<number | null | undefined> | undefined)?.[r];
       return v === null || v === undefined || Number.isNaN(v as number)
         ? "no data"
         : String(v);

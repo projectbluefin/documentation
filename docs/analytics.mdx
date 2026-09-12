@@ -7,7 +7,8 @@ displayed_sidebar: null
 import CountmeAnalyticsCharts from "@site/src/components/analytics/CountmeAnalyticsCharts";
 import ImageChurnCharts from "@site/src/components/analytics/ImageChurnCharts";
 
-Adoption metrics and active system telemetry across the Project Bluefin workstation family.
+Adoption metrics, image publication state, and active system telemetry across every
+Project Bluefin image family.
 
 <CountmeAnalyticsCharts />
 
@@ -33,7 +34,7 @@ workstation family, preserving direct continuity with the canonical baseline fro
 
 - **Method:** Evaluated according to ADR 0004 (`ublue-countme-v1` baseline) using base repository queries.
 - **Enterprise LTS:** Bluefin LTS runs on CentOS Stream 10 and reaches Fedora counters through EPEL mirrors, which undercounts relative to standard Fedora repos.
-- **Next-Gen Variants:** Dakota (BuildStream) and Utah (Hummingbird) are activating first-party reporting via `projectbluefin/common`.
+- **Next-Gen Variants:** Dakota (BuildStream), Utah (Hummingbird), and Bluefin Server (freedesktop-sdk) are activating first-party reporting via `projectbluefin/common`. Bluefin Server delivers a DDI through `systemd-sysupdate` rather than a container tag, so it carries no OCI promotion stream.
 
 ### First-party Countme Service & Privacy Guarantees
 
