@@ -129,3 +129,35 @@ test("toTableRows pivots a heatmap back into the grid a sighted reader sees", ()
     ["dakota", "■ 72d", "no data"],
   ]);
 });
+
+test("readableInk flips with the swatch, whatever notation it arrives in", () => {
+  // getComputedStyle serialises a custom property to hex or rgb() even when
+  // tokens.css wrote hsl(), so an hsl-only reader silently returned one ink for
+  // everything — which shipped white labels on a near-white heatmap cell.
+  const onLight = ["#c7d7ff", "rgb(199, 215, 255)", "hsl(217, 100%, 89%)"];
+  const onDark = ["#22306b", "rgb(34, 48, 107)", "hsl(224, 52%, 28%)"];
+
+  const inks = new Set(onLight.map(theme.readableInk));
+  assert.equal(inks.size, 1, "one swatch, one ink, however it is written");
+
+  for (const pale of onLight) {
+    for (const deep of onDark) {
+      assert.notEqual(
+        theme.readableInk(pale),
+        theme.readableInk(deep),
+        `${pale} and ${deep} cannot share an ink`,
+      );
+    }
+  }
+});
+
+test("withAlpha survives whatever notation the token resolved to", () => {
+  assert.equal(theme.withAlpha("#4285f4", 0.4), "rgba(66, 133, 244, 0.4)");
+  assert.equal(
+    theme.withAlpha("rgb(66, 133, 244)", 0.4),
+    "rgba(66, 133, 244, 0.4)",
+  );
+  // An unparseable value is returned untouched rather than mangled into a
+  // string zrender will silently drop.
+  assert.equal(theme.withAlpha("currentColor", 0.4), "currentColor");
+});

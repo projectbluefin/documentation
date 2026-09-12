@@ -2,35 +2,12 @@ import React, { useEffect, useRef, useState } from "react";
 import {
   toTableRows,
   FX_CHART_THEME,
-  FX_COLORS,
-  FX_COLOR_TOKENS,
   fxEchartsTheme,
-  type FxPalette,
+  resolveFxTheme,
 } from "./chartTheme";
 import styles from "./FactoryShell.module.css";
 
 const FX_THEME_NAME = "fx";
-
-/**
- * Read the `--fx-*` tokens off the mounted element.
- *
- * Canvas cannot resolve CSS custom properties, so a chart that hard-codes its
- * text colour is illegible in whichever theme it was not written for. Outside
- * `.fxRoot` the tokens are absent and the dark literals stand in.
- */
-function resolvePalette(el: HTMLElement): FxPalette {
-  const cs = getComputedStyle(el);
-  const read = (slot: keyof FxPalette): string =>
-    cs.getPropertyValue(FX_COLOR_TOKENS[slot]).trim() || FX_COLORS[slot];
-  return {
-    text: read("text"),
-    muted: read("muted"),
-    faint: read("faint"),
-    grid: read("grid"),
-    surface: read("surface"),
-    border: read("border"),
-  };
-}
 
 interface EChartsInstance {
   setOption: (o: unknown, notMerge?: boolean) => void;
@@ -145,7 +122,7 @@ export default function EChart({
       ]);
       core.registerTheme(
         FX_THEME_NAME,
-        fxEchartsTheme(resolvePalette(ref.current)),
+        fxEchartsTheme(resolveFxTheme(ref.current)),
       );
       chartRef.current = core.init(
         ref.current,

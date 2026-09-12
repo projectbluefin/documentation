@@ -192,24 +192,58 @@ No match means fetch it at runtime from `/data/thing.json` and render
 `Unavailable` with the reason on failure, the way `FactoryDataProvider` and
 `CountmeAnalyticsCharts` do.
 
-### The catalogue drives the grid, not the snapshot
+### The catalogue drives the grid, and source drives the catalogue
 
 `/analytics` plots every image family `projectbluefin/common` ships into against
 every promotion stream. The row set comes from `BLUEFIN_FAMILY_IMAGES` in
-`src/components/analytics/CountmeAnalyticsCharts.tsx`, derived from
-`projectbluefin/common` → `docs/skills/image-registry.md`; the GHCR snapshot only
+`src/components/analytics/CountmeAnalyticsCharts.tsx`; the GHCR snapshot only
 fills the cells in.
 
 That order matters. If the snapshot drove the rows, an image that stopped
 publishing would quietly vanish from the grid and the page would look healthy.
 Driven by the catalogue, it keeps its row and the cell reads `—`.
 
-Three distinctions the matrix has to keep straight:
+**The catalogue is derived from each repository's `execute-release.yml`
+promotion matrix — not from `common` → `docs/skills/image-registry.md`.** That
+file is a convenient summary and it was wrong on three counts when this chart
+was built against it:
 
-- A stream a family **does not promote through** (`bluefin:lts`) is not the same
-  as one it should publish and has not.
-- **Retired tags stay out.** `:latest` and `:gts` still sit in GHCR on old
-  digests. They are not columns; the panel note says so.
+- It claims `bluefin-lts` promotes `:testing` → `:lts` with `:stable` as a
+  floating alias. Every repo's release workflow targets `stable`. There is no
+  `:lts` promotion, so an `:lts` column is a column of dashes.
+- It lists `bluefin-lts-hwe` and `bluefin-lts-hwe-nvidia` as live. They answer
+  in the registry but appear in no promotion matrix — they are retired, and
+  charting them as lanes shows two permanently-stale rows that nobody owns.
+- It omits `bluefin-lts-nvidia`, `dakota-gaming` and `dakota-nvidia-gaming`
+  entirely. All three are promoted; none could appear on the dashboard, because
+  `FALLBACK_LANES` in `scripts/fetch-ghcr-packages.js` had been written from the
+  same summary.
+
+Re-derive before editing either list:
+
+```bash
+for r in bluefin bluefin-lts dakota; do
+  gh api "repos/projectbluefin/$r/contents/.github/workflows/execute-release.yml" \
+    --jq .content | base64 -d | grep -E '"image"'
+done
+
+# Cross-check against the registry, which answers anonymously:
+tok=$(curl -s "https://ghcr.io/token?scope=repository:projectbluefin/dakota-gaming:pull" | jq -r .token)
+curl -s -H "Authorization: Bearer $tok" https://ghcr.io/v2/projectbluefin/dakota-gaming/tags/list | jq '.tags'
+```
+
+**`FALLBACK_LANES` is not a nicety — in CI it is the only list.**
+`github.token` is repository-scoped and cannot list an org's packages, so the
+Packages API returns nothing and the fetcher falls back to those lanes every
+time. An image missing from it is an image the dashboard can never show,
+however correct the component is. `scripts/fetch-ghcr-packages.test.js` pins
+`PROMOTED_IMAGES ⊆ FALLBACK_LANES`.
+
+Two more distinctions the matrix keeps straight:
+
+- **Retired tags stay out of the columns.** `:latest`, `:gts` and `:lts` still
+  sit on some images from older schemes. They are named in the panel note and
+  the retired images are named on their family card.
 - **Bluefin Server ships a DDI**, not a container tag, so it is a counted family
   with no row in the OCI matrix at all — `delivery: "ddi"` marks it.
 
