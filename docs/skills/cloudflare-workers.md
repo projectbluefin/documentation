@@ -93,15 +93,30 @@ than reaching for `--legacy-peer-deps`.
 
 ## CountMe Worker (countme.projectbluefin.io)
 
-`workers/countme-proxy` handles two primary workloads:
+`workers/countme-proxy` handles three workloads:
 
-1. **Upstream Artifact Proxy:** Serves weekly growth charts (`/`, `/growth.svg`,
-   `/sources/projectbluefin/bluefin/growth.svg`) and shields.io badge endpoints
-   (`/badge-endpoints/{bluefin,bluefin-lts}.json`), falling back to a branded
-   pending SVG if projectbluefin artifacts have not yet populated.
-2. **Client Ingestion (`/metalink`):** Receives weekly anonymous countme pings
-   from Project Bluefin clients (`bluefin`, `bluefin-lts`, `dakota`).
-   - Query parameters: `repo` (e.g. `bluefin`, `bluefin-lts`, `dakota`), `tag`
+1. **First-party counts:** Every Project Bluefin series is aggregated from its
+   own D1 rows, never fetched from another service. One weekly query, grouped
+   by Monday-anchored week and `repo`, feeds `/counts.json`, the per-repo
+   charts (`/`, `/growth.svg`, `/<repo>/growth.svg`) and the shields.io badges
+   (`/badge-endpoints/<repo>.json`). `scripts/lib/countme-sources.mjs` is
+   imported directly rather than restated, so the Worker and the site enforce
+   one definition of where a count may come from.
+   - A repo with no rows in a week is `null`, never `0`: the service cannot
+     tell "nobody reported" from "nobody was running it". SVG charts break the
+     line at a gap instead of interpolating across it.
+   - Unbound binding, failing query, or zero rows all return HTTP 200 with
+     `unavailable: true` and `FIRST_PARTY_PENDING_REASON`. A counts endpoint
+     that 500s is a chart that renders nothing.
+2. **Upstream artifact proxy:** Only `ublue-os/bluefin:stable`, the upstream
+   pre-migration image — `/growth_bluefins.svg`,
+   `/sources/ublue-os/bluefin/growth.svg`, `/badge-endpoints/bluefin.json`.
+   That is the whole exception; every other `ublue-os/countme` series,
+   Bluefin LTS included, is EPEL-summed and may not be republished as ours.
+3. **Client ingestion (`/metalink`):** Receives weekly anonymous countme pings
+   from Project Bluefin clients and writes the rows the counts query reads.
+   - Query parameters: `repo` (one of `bluefin`, `bluefin-lts`, `dakota`,
+     `utah`, `server`), `tag`
      (e.g. `stable`), `flavor` (e.g. `main`), `arch` (`x86_64`, `aarch64`),
      `countme` (integer bucket 1–4).
    - Responses are HTTP 200 with `cache-control: no-store`.
