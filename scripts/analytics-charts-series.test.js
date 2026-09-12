@@ -1,10 +1,9 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const fs = require("node:fs");
 const path = require("node:path");
-const ts = require("typescript");
 const React = require("react");
 const { renderToStaticMarkup } = require("react-dom/server");
+const { loadTsxModule } = require("./lib/load-tsx");
 
 const tsxPath = path.join(
   __dirname,
@@ -14,31 +13,10 @@ const tsxPath = path.join(
   "analytics",
   "CountmeAnalyticsCharts.tsx",
 );
-const chartThemePath = path.join(
-  __dirname,
-  "..",
-  "src",
-  "components",
-  "factory",
-  "chartTheme.ts",
-);
-
 function loadComponent(datasetFixture) {
-  const source = fs.readFileSync(tsxPath, "utf8");
-  const { outputText } = ts.transpileModule(source, {
-    compilerOptions: {
-      jsx: ts.JsxEmit.React,
-      target: ts.ScriptTarget.ES2020,
-      module: ts.ModuleKind.CommonJS,
-    },
-  });
-
-  const chartTheme = require(chartThemePath);
-  const mod = { exports: {} };
-
   const capturedECharts = [];
 
-  const requireShim = (id) => {
+  const mocks = (id) => {
     if (id.endsWith(".css")) return {};
     if (id === "@docusaurus/useBaseUrl") {
       return { __esModule: true, default: (p) => p };
@@ -90,7 +68,6 @@ function loadComponent(datasetFixture) {
           }),
       };
     }
-    if (id.endsWith("chartTheme")) return chartTheme;
     if (id === "@site/static/data/countme-history.json") {
       return (
         datasetFixture ||
@@ -99,15 +76,10 @@ function loadComponent(datasetFixture) {
         )
       );
     }
-    return require(id);
+    return undefined;
   };
 
-  new Function("require", "module", "exports", outputText)(
-    requireShim,
-    mod,
-    mod.exports,
-  );
-  return { mod: mod.exports, capturedECharts };
+  return { mod: loadTsxModule(tsxPath, mocks), capturedECharts };
 }
 
 const SAMPLE_DATASET = {

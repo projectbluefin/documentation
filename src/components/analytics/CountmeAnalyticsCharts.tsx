@@ -7,10 +7,11 @@ import Unavailable from "../factory/Unavailable";
 import Sparkline from "../Sparkline";
 import {
   gapSafe,
-  seriesColor,
-  FX_SEVERITY,
+  readableInk,
+  withAlpha,
   type SeverityLevel,
 } from "../factory/chartTheme";
+import { useFactoryTheme } from "../factory/useFactoryTheme";
 import "../factory/tokens.css";
 import styles from "./CountmeAnalyticsCharts.module.css";
 import countmeHistoryData from "@site/static/data/countme-history.json";
@@ -103,15 +104,21 @@ type HeroRange = "12w" | "24w" | "all";
 type EcosystemMode = "absolute" | "share";
 
 /**
- * The promotion streams the factory actually publishes, in promotion order.
+ * The promotion axis, in promotion order.
  *
- * Source: `projectbluefin/common` → `docs/skills/image-registry.md`. `bluefin`
- * and `dakota` promote `:testing` → `:stable`; `bluefin-lts` promotes
- * `:testing` → `:lts` with `:stable` as a floating alias. Retired tags
- * (`:latest`, `:gts`) still sit in the registry and are deliberately not
- * columns here — nothing promotes through them.
+ * Read from source, not from `projectbluefin/common` →
+ * `docs/skills/image-registry.md`, which still claims `bluefin-lts` promotes to
+ * `:lts`. Every repo's `execute-release.yml` targets `stable`:
+ *
+ *   bluefin      {"source_tag":"testing","target_tag":"stable"}
+ *   bluefin-lts  {"source_tag":"testing","target_tag":"stable"}
+ *   dakota       {"source_tag":"<build sha>","target_tag":"stable"}
+ *
+ * `:lts`, `:gts` and `:latest` still sit on some images as leftovers from
+ * retired schemes. Nothing promotes through them, so they are not columns — a
+ * column that is a dash down most of the grid teaches nobody anything.
  */
-export const STREAM_COLUMNS = ["testing", "stable", "lts"] as const;
+export const STREAM_COLUMNS = ["testing", "stable"] as const;
 export type StreamTag = (typeof STREAM_COLUMNS)[number];
 
 export interface ProjectBluefinImageSpec {
@@ -120,26 +127,37 @@ export interface ProjectBluefinImageSpec {
   edition: string;
   /** Upstream the image is composed from. */
   base: string;
-  color: string;
+  /** Index into the resolved `--fx-cat-*` ramp. Never a literal colour. */
+  cat: number;
   link: string;
   status: "active" | "bootstrapping" | "provisioning";
   statusText: string;
-  /** Published GHCR package names in this family, in registry order. */
+  /** GHCR packages this family promotes, in release-workflow order. */
   images: string[];
-  /** Streams this family promotes through. */
-  streams: StreamTag[];
+  /** Packages still in the registry that no release workflow promotes. */
+  retired?: string[];
   /** `oci` families appear in the stream matrix; `ddi` families ship no container tags. */
   delivery: "oci" | "ddi";
 }
 
 /**
  * Every image family `projectbluefin/common` ships into, with the GHCR packages
- * each one publishes.
+ * each one promotes.
  *
- * Source of truth: `projectbluefin/common` → `docs/skills/image-registry.md`.
- * `id` is the first-party countme `repo` identifier; `images` are the published
- * flavors under the Justfile `image_name` rule (`flavor=main` → `{image}`,
- * otherwise `{image}-{flavor}`).
+ * **Derived from each repo's `execute-release.yml` promotion matrix, not from
+ * `common` → `docs/skills/image-registry.md`.** That file was the source here
+ * and it is wrong on three counts: it claims `bluefin-lts` promotes to `:lts`,
+ * it lists the retired `-hwe` images as live, and it omits `bluefin-lts-nvidia`
+ * and both dakota gaming images entirely. Re-derive before editing this list:
+ *
+ * ```bash
+ * for r in bluefin bluefin-lts dakota; do
+ *   gh api "repos/projectbluefin/$r/contents/.github/workflows/execute-release.yml" \
+ *     --jq .content | base64 -d | grep -E '"image"'
+ * done
+ * ```
+ *
+ * `id` is the first-party countme `repo` identifier.
  */
 export const BLUEFIN_FAMILY_IMAGES: ProjectBluefinImageSpec[] = [
   {
@@ -147,12 +165,11 @@ export const BLUEFIN_FAMILY_IMAGES: ProjectBluefinImageSpec[] = [
     name: "Bluefin",
     edition: "Flagship Workstation",
     base: "Fedora",
-    color: "#58a6ff",
+    cat: 0,
     link: "/downloads",
     status: "active",
     statusText: "Active Tracking",
     images: ["bluefin", "bluefin-nvidia"],
-    streams: ["testing", "stable"],
     delivery: "oci",
   },
   {
@@ -160,12 +177,12 @@ export const BLUEFIN_FAMILY_IMAGES: ProjectBluefinImageSpec[] = [
     name: "Bluefin LTS",
     edition: "Enterprise Workstation",
     base: "CentOS Stream 10",
-    color: "#bc8cff",
+    cat: 1,
     link: "/lts",
     status: "active",
     statusText: "Active · EPEL",
-    images: ["bluefin-lts", "bluefin-lts-hwe", "bluefin-lts-hwe-nvidia"],
-    streams: ["testing", "stable", "lts"],
+    images: ["bluefin-lts", "bluefin-lts-nvidia"],
+    retired: ["bluefin-lts-hwe", "bluefin-lts-hwe-nvidia"],
     delivery: "oci",
   },
   {
@@ -173,12 +190,16 @@ export const BLUEFIN_FAMILY_IMAGES: ProjectBluefinImageSpec[] = [
     name: "Project Bluefin Dakota",
     edition: "Next-Gen BuildStream",
     base: "GNOME OS / BuildStream 2",
-    color: "#39d2c0",
+    cat: 2,
     link: "/dakota",
     status: "bootstrapping",
     statusText: "Alpha · Collecting",
-    images: ["dakota", "dakota-nvidia"],
-    streams: ["testing", "stable"],
+    images: [
+      "dakota",
+      "dakota-nvidia",
+      "dakota-gaming",
+      "dakota-nvidia-gaming",
+    ],
     delivery: "oci",
   },
   {
@@ -186,12 +207,11 @@ export const BLUEFIN_FAMILY_IMAGES: ProjectBluefinImageSpec[] = [
     name: "Project Bluefin Utah",
     edition: "Modular Hummingbird",
     base: "Fedora Hummingbird",
-    color: "#f0883e",
+    cat: 3,
     link: "/utah",
     status: "provisioning",
     statusText: "Pre-alpha · Provisioning",
     images: [],
-    streams: [],
     delivery: "oci",
   },
   {
@@ -199,12 +219,11 @@ export const BLUEFIN_FAMILY_IMAGES: ProjectBluefinImageSpec[] = [
     name: "Bluefin Server",
     edition: "Image-Based Server",
     base: "freedesktop-sdk 26.08",
-    color: "#79b8ff",
+    cat: 4,
     link: "https://github.com/projectbluefin/server",
     status: "provisioning",
     statusText: "Alpha · DDI delivery",
     images: [],
-    streams: [],
     delivery: "ddi",
   },
 ];
@@ -246,18 +265,6 @@ const LEVEL_ORDINAL: Record<SeverityLevel, number> = {
   watch: 2,
   alert: 3,
 };
-
-/**
- * Ink that stays readable on a severity swatch.
- *
- * The four severity colours span roughly 45–68% lightness, which crosses the
- * point where white stops being the higher-contrast choice. Read the lightness
- * out of the `hsl()` literal rather than picking one ink and hoping.
- */
-export function contrastInk(hslColor: string): string {
-  const lightness = Number(/,\s*([\d.]+)%\s*\)/.exec(hslColor)?.[1]);
-  return Number.isFinite(lightness) && lightness >= 55 ? "#10130f" : "#f8fafc";
-}
 
 export interface MatrixRow {
   image: string;
@@ -303,19 +310,17 @@ export function buildStreamMatrix(
       const published = byName
         .get(row.image)
         ?.streams?.find((s) => s.tag === stream);
-      const applicable = row.family.streams.includes(stream);
       cells.push({
         x,
         y,
         image: row.image,
         stream,
-        level: applicable ? freshnessLevel(published) : "unknown",
-        ageDays: applicable ? parseCount(published?.ageDays) : null,
+        level: freshnessLevel(published),
+        ageDays: parseCount(published?.ageDays),
         publishedAt: published?.publishedAt ?? null,
-        reason: applicable
-          ? (published?.stateReason ??
-            (published ? null : "no version published under this tag"))
-          : `${row.family.name} does not promote through :${stream}`,
+        reason:
+          published?.stateReason ??
+          (published ? null : "no version published under this tag"),
       });
     });
   });
@@ -364,6 +369,9 @@ export default function CountmeAnalyticsCharts({
   const data = dataset ?? (countmeHistoryData as unknown as CountmeDataset);
   const weeks = data?.weeks || [];
 
+  const [themeRef, fxTheme] = useFactoryTheme();
+  const cat = fxTheme.categorical;
+  const sev = fxTheme.severity;
   const [heroRange, setHeroRange] = useState<HeroRange>("all");
   const [ecoMode, setEcoMode] = useState<EcosystemMode>("absolute");
   const [fetchedRegistry, setFetchedRegistry] = useState<GhcrDataset | null>(
@@ -451,8 +459,8 @@ export default function CountmeAnalyticsCharts({
                 data: p50,
                 showSymbol: false,
                 smooth: true,
-                lineStyle: { width: 2, type: [6, 3], color: seriesColor(4) },
-                itemStyle: { color: seriesColor(4) },
+                lineStyle: { width: 2, type: [6, 3], color: cat[5] },
+                itemStyle: { color: cat[5] },
                 connectNulls: false,
               },
               {
@@ -463,8 +471,8 @@ export default function CountmeAnalyticsCharts({
                 showSymbol: false,
                 smooth: true,
                 lineStyle: { opacity: 0 },
-                itemStyle: { color: "rgba(88, 166, 255, 0.35)" },
-                areaStyle: { color: "rgba(88, 166, 255, 0.2)" },
+                itemStyle: { color: withAlpha(cat[0], 0.35) },
+                areaStyle: { color: cat[0], opacity: 0.18 },
                 connectNulls: false,
               },
             ]
@@ -477,8 +485,8 @@ export default function CountmeAnalyticsCharts({
           showSymbol: true,
           symbolSize: 6,
           z: 5,
-          itemStyle: { color: seriesColor(0) },
-          lineStyle: { width: 3, color: seriesColor(0) },
+          itemStyle: { color: cat[0] },
+          lineStyle: { width: 3, color: cat[0] },
           connectNulls: false,
         },
       ],
@@ -524,7 +532,7 @@ export default function CountmeAnalyticsCharts({
         pieces: (Object.keys(LEVEL_ORDINAL) as SeverityLevel[]).map(
           (level) => ({
             value: LEVEL_ORDINAL[level],
-            color: FX_SEVERITY[level].color,
+            color: sev[level].color,
           }),
         ),
       },
@@ -533,16 +541,16 @@ export default function CountmeAnalyticsCharts({
           name: "Stream freshness",
           type: "heatmap",
           data: cells.map((c) => {
-            const sev = FX_SEVERITY[c.level];
+            const level = sev[c.level];
             return {
               value: [c.x, c.y, LEVEL_ORDINAL[c.level]],
-              text: c.ageDays === null ? "—" : `${sev.glyph} ${c.ageDays}d`,
-              label: { color: contrastInk(sev.color) },
+              text: c.ageDays === null ? "—" : `${level.glyph} ${c.ageDays}d`,
+              label: { color: readableInk(level.color) },
               tip: [
                 `${c.image}:${c.stream}`,
                 c.ageDays === null
                   ? "No published version"
-                  : `Published ${c.ageDays} day${c.ageDays === 1 ? "" : "s"} ago — ${sev.word}`,
+                  : `Published ${c.ageDays} day${c.ageDays === 1 ? "" : "s"} ago — ${level.word}`,
                 c.publishedAt
                   ? `Last push ${c.publishedAt.slice(0, 10)}`
                   : null,
@@ -559,17 +567,17 @@ export default function CountmeAnalyticsCharts({
             formatter: (p: { data: { text: string } }) => p.data.text,
           },
           itemStyle: {
-            borderColor: "rgba(127, 127, 127, 0.28)",
+            borderColor: withAlpha(fxTheme.palette.border, 0.9),
             borderWidth: 2,
             borderRadius: 6,
           },
           emphasis: {
-            itemStyle: { borderColor: seriesColor(0), borderWidth: 3 },
+            itemStyle: { borderColor: cat[0], borderWidth: 3 },
           },
         },
       ],
     }),
-    [rows, cells],
+    [rows, cells, sev, cat, fxTheme.palette.border],
   );
 
   // ── Family ridgeline ───────────────────────────────────────────────────
@@ -620,7 +628,7 @@ export default function CountmeAnalyticsCharts({
               : `${current.toLocaleString()} systems`,
           left: 0,
           top: LANE_TOP + i * (LANE_HEIGHT + LANE_GAP) + 10,
-          textStyle: { color: family.color, fontSize: 13, fontWeight: 600 },
+          textStyle: { color: cat[family.cat], fontSize: 13, fontWeight: 600 },
           subtextStyle: { fontSize: 12 },
         };
       }),
@@ -643,33 +651,36 @@ export default function CountmeAnalyticsCharts({
         max: ridgelineMax,
         show: false,
       })),
-      series: BLUEFIN_FAMILY_IMAGES.map((family, i) => ({
-        name: family.name,
-        type: "line",
-        xAxisIndex: i,
-        yAxisIndex: i,
-        data: laneSeriesData[i],
-        smooth: true,
-        symbol: "none",
-        connectNulls: false,
-        lineStyle: { width: 2, color: family.color },
-        itemStyle: { color: family.color },
-        areaStyle: {
-          color: {
-            type: "linear",
-            x: 0,
-            y: 0,
-            x2: 0,
-            y2: 1,
-            colorStops: [
-              { offset: 0, color: `${family.color}66` },
-              { offset: 1, color: `${family.color}0d` },
-            ],
+      series: BLUEFIN_FAMILY_IMAGES.map((family, i) => {
+        const laneColor = cat[family.cat];
+        return {
+          name: family.name,
+          type: "line",
+          xAxisIndex: i,
+          yAxisIndex: i,
+          data: laneSeriesData[i],
+          smooth: true,
+          symbol: "none",
+          connectNulls: false,
+          lineStyle: { width: 2, color: laneColor },
+          itemStyle: { color: laneColor },
+          areaStyle: {
+            color: {
+              type: "linear",
+              x: 0,
+              y: 0,
+              x2: 0,
+              y2: 1,
+              colorStops: [
+                { offset: 0, color: withAlpha(laneColor, 0.4) },
+                { offset: 1, color: withAlpha(laneColor, 0.05) },
+              ],
+            },
           },
-        },
-      })),
+        };
+      }),
     }),
-    [weeks, laneSeriesData, ridgelineMax, latestWeek],
+    [weeks, laneSeriesData, ridgelineMax, latestWeek, cat],
   );
 
   // ── Ecosystem streamgraph ──────────────────────────────────────────────
@@ -677,21 +688,21 @@ export default function CountmeAnalyticsCharts({
     () => [
       {
         name: "Bazzite (Gaming)",
-        color: "#f0883e",
+        color: cat[2],
         values: weeks.map((w) => parseCount(w.bazzite)),
       },
       {
         name: "Bluefin family (Workstation)",
-        color: seriesColor(0),
+        color: cat[0],
         values: weeks.map(fleetOf),
       },
       {
         name: "Aurora (KDE)",
-        color: "#39d2c0",
+        color: cat[4],
         values: weeks.map((w) => parseCount(w.aurora)),
       },
     ],
-    [weeks],
+    [weeks, cat],
   );
 
   const ecoTotals = useMemo(
@@ -744,7 +755,7 @@ export default function CountmeAnalyticsCharts({
 
   if (data?.unavailable || !weeks.length) {
     return (
-      <div className={`fxRoot ${styles.container}`}>
+      <div ref={themeRef} className={`fxRoot ${styles.container}`}>
         <Unavailable
           what="Countme Analytics"
           reason={
@@ -766,7 +777,7 @@ export default function CountmeAnalyticsCharts({
   const packageIndex = new Map(ghcrPackages.map((p) => [p.name, p]));
 
   return (
-    <div className={`fxRoot ${styles.container}`}>
+    <div ref={themeRef} className={`fxRoot ${styles.container}`}>
       {/* ── 1. Fleet trend with rolling median band ─────────────────────── */}
       <section className={styles.heroCard}>
         <header className={styles.heroHeader}>
@@ -870,11 +881,11 @@ export default function CountmeAnalyticsCharts({
                   <span
                     aria-hidden="true"
                     className={styles.legendGlyph}
-                    style={{ color: FX_SEVERITY[level].color }}
+                    style={{ color: sev[level].color }}
                   >
-                    {FX_SEVERITY[level].glyph}
+                    {sev[level].glyph}
                   </span>
-                  {FX_SEVERITY[level].word}
+                  {sev[level].word}
                 </span>
               ),
             )}
@@ -903,12 +914,12 @@ export default function CountmeAnalyticsCharts({
         )}
 
         <p className={styles.chartNote}>
-          <strong>Streams:</strong> <code>bluefin</code> and <code>dakota</code>{" "}
-          promote <code>:testing</code> &rarr; <code>:stable</code>.{" "}
-          <code>bluefin-lts</code> promotes <code>:testing</code> &rarr;{" "}
-          <code>:lts</code>, with <code>:stable</code> as a floating alias.
-          Retired <code>:latest</code> and <code>:gts</code> tags still sit in
-          the registry and are deliberately excluded.
+          <strong>Streams:</strong> every image promotes <code>:testing</code>{" "}
+          &rarr; <code>:stable</code>, which is the whole axis. Read from each
+          repository&rsquo;s <code>execute-release.yml</code> promotion matrix.
+          The <code>:lts</code>, <code>:gts</code> and <code>:latest</code> tags
+          still sit on some images as leftovers from retired schemes; nothing
+          promotes through them, so they are not columns here.
         </p>
       </section>
 
@@ -1007,7 +1018,7 @@ export default function CountmeAnalyticsCharts({
                     domain={[0, ridgelineMax]}
                     width={220}
                     height={32}
-                    color={img.color}
+                    color={cat[img.cat]}
                     areaColor="currentColor"
                     areaOpacity={0.12}
                     showEnd={isTracked}
@@ -1037,7 +1048,7 @@ export default function CountmeAnalyticsCharts({
                       <li key={name} className={styles.variantRow}>
                         <code className={styles.variantName}>{name}</code>
                         <span className={styles.variantStreams}>
-                          {img.streams.map((stream) => {
+                          {STREAM_COLUMNS.map((stream) => {
                             const published = packageIndex
                               .get(name)
                               ?.streams?.find((s) => s.tag === stream);
@@ -1047,16 +1058,16 @@ export default function CountmeAnalyticsCharts({
                               <span
                                 key={stream}
                                 className={styles.streamChip}
-                                title={`${name}:${stream} — ${FX_SEVERITY[level].word}${
+                                title={`${name}:${stream} — ${sev[level].word}${
                                   age === null ? "" : `, ${age} days old`
                                 }`}
                               >
                                 <span
                                   aria-hidden="true"
                                   className={styles.legendGlyph}
-                                  style={{ color: FX_SEVERITY[level].color }}
+                                  style={{ color: sev[level].color }}
                                 >
-                                  {FX_SEVERITY[level].glyph}
+                                  {sev[level].glyph}
                                 </span>
                                 {stream} {age === null ? "—" : `${age}d`}
                               </span>
@@ -1066,6 +1077,17 @@ export default function CountmeAnalyticsCharts({
                       </li>
                     ))
                   )}
+                  {img.retired?.length ? (
+                    <li className={styles.variantEmpty}>
+                      Retired, still in the registry:{" "}
+                      {img.retired.map((name, i) => (
+                        <React.Fragment key={name}>
+                          {i > 0 && ", "}
+                          <code>{name}</code>
+                        </React.Fragment>
+                      ))}
+                    </li>
+                  ) : null}
                 </ul>
 
                 <div className={styles.familyFooter}>

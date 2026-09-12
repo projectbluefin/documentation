@@ -200,13 +200,24 @@ export function buildPayload(
  * it works, still discovers everything.
  */
 export const FALLBACK_LANES = [
+  // OS images, in the order each repo's execute-release.yml promotes them.
+  // Derived from source, not from common/docs/skills/image-registry.md — that
+  // file still lists :lts as a promotion target and omits bluefin-lts-nvidia
+  // and the two dakota gaming images. Re-derive with:
+  //   gh api repos/projectbluefin/<repo>/contents/.github/workflows/execute-release.yml \
+  //     --jq .content | base64 -d | grep source_tag
   "bluefin",
-  "bluefin-lts",
-  "bluefin-lts-hwe",
   "bluefin-nvidia",
-  "bluefin-lts-hwe-nvidia",
+  "bluefin-lts",
+  "bluefin-lts-nvidia",
   "dakota",
   "dakota-nvidia",
+  "dakota-gaming",
+  "dakota-nvidia-gaming",
+  // Still in the registry, no longer in any promotion matrix. Kept so the
+  // Images view can say a lane is retired rather than silently dropping it.
+  "bluefin-lts-hwe",
+  "bluefin-lts-hwe-nvidia",
   "base",
   "static",
   "skopeo",
@@ -216,6 +227,25 @@ export const FALLBACK_LANES = [
   "brew",
   "common",
   "testsuite",
+];
+
+/**
+ * The OS images every repo's `execute-release.yml` promotes `:testing` →
+ * `:stable`, and nothing else.
+ *
+ * `FALLBACK_LANES` is deliberately wider: it also carries retired lanes so a
+ * panel can name them. Anything charted as a live promotion lane comes from
+ * here.
+ */
+export const PROMOTED_IMAGES = [
+  "bluefin",
+  "bluefin-nvidia",
+  "bluefin-lts",
+  "bluefin-lts-nvidia",
+  "dakota",
+  "dakota-nvidia",
+  "dakota-gaming",
+  "dakota-nvidia-gaming",
 ];
 
 /** Tags worth an inspect call. Everything else is noise or a cosign artefact. */
