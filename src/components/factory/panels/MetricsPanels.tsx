@@ -152,7 +152,7 @@ export default function MetricsPanels(): React.JSX.Element {
  * This panel used to chart `countme-history.json`'s `bluefin` and
  * `bluefin-lts` series, which were Fedora and EPEL mirror hits wearing our
  * names. Those keys no longer exist and may not come back. Until the
- * first-party service publishes a read endpoint, the panel states that instead
+ * first-party counts are published, the panel states that instead
  * of substituting an upstream number.
  */
 function ActiveDevices() {

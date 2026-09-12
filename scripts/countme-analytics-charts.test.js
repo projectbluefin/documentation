@@ -135,10 +135,10 @@ test("the catalogue names every family common ships into", () => {
   assert.deepEqual(ids, ["bluefin", "bluefin-lts", "dakota", "utah", "server"]);
 });
 
-test("the count panel names its source instead of substituting a number", () => {
-  // Every Project Bluefin count comes from countme.projectbluefin.io, which
-  // publishes no read endpoint yet. The honest render is an unavailable panel
-  // carrying the reason — never an upstream figure standing in for ours.
+test("the count panel says it lacks data without naming infrastructure", () => {
+  // Presentation rule 6 requires the panel to say it is unavailable and why.
+  // AGENTS.md requires that it never emit a host address or an internal URL.
+  // Both hold: it speaks about the data, not the plumbing.
   const html = renderToStaticMarkup(
     React.createElement(CountmeAnalyticsCharts, {
       registry: REGISTRY_FIXTURE,
@@ -152,7 +152,9 @@ test("the count panel names its source instead of substituting a number", () => 
     panel,
     "the weekly active systems panel must say it is unavailable",
   );
-  assert.match(panel[1], /countme\.projectbluefin\.io/);
+  assert.match(panel[1], /not published yet/);
+  assert.doesNotMatch(panel[1], /projectbluefin\.io/);
+  assert.doesNotMatch(panel[1], /endpoint/i);
 });
 
 const PROMOTED = [
