@@ -77,17 +77,18 @@ const {
 } = mod;
 
 // The first-party reader is its own module; see the note in the component.
-const { latestReading, reportingRepos } = loadTsxModule(
-  path.join(
-    __dirname,
-    "..",
-    "src",
-    "components",
-    "analytics",
-    "firstPartyCountme.ts",
-  ),
-  (id) => (id.endsWith(".css") ? {} : undefined),
-);
+const { latestReading, reportingRepos, latestGaming, gamingRepos } =
+  loadTsxModule(
+    path.join(
+      __dirname,
+      "..",
+      "src",
+      "components",
+      "analytics",
+      "firstPartyCountme.ts",
+    ),
+    (id) => (id.endsWith(".css") ? {} : undefined),
+  );
 
 const REGISTRY_FIXTURE = {
   generatedAt: "2026-09-10T04:08:30.490Z",
@@ -427,4 +428,97 @@ test("the panel stays unavailable when the service reports no weeks", () => {
   );
   assert.ok(panel, "an empty aggregate must still render a reasoned panel");
   assert.doesNotMatch(panel[1], /projectbluefin\.io/);
+});
+
+/**
+ * Game mode is an attribute of a ping, not an image.
+ *
+ * The service folds a `-gaming` repo id into its base image, so `weeks[i][repo]`
+ * is the whole population and `weeks[i].gaming[repo]` is the part of it in game
+ * mode. Adding the two would double-count; drawing gaming as its own image
+ * would invent a population that does not exist.
+ */
+const GAMING_FIXTURE = {
+  generatedAt: "2026-09-12T00:00:00.000Z",
+  source: "https://countme.projectbluefin.io",
+  method: "first-party-d1-v2",
+  unit: "estimated weekly active systems",
+  variants: ["bluefin", "dakota"],
+  weeks: [
+    {
+      week: "2026-08-31",
+      bluefin: 10,
+      dakota: 4,
+      utah: null,
+      gaming: { bluefin: 0, dakota: 1, utah: null },
+    },
+    {
+      week: "2026-09-07",
+      bluefin: 12,
+      dakota: 6,
+      utah: null,
+      gaming: { bluefin: 0, dakota: 2, utah: null },
+    },
+  ],
+};
+
+test("game mode is a share of its image, never added to it", () => {
+  assert.equal(latestGaming(GAMING_FIXTURE.weeks, "dakota"), 2);
+  // Reported, but nobody in game mode: a real 0, not a gap.
+  assert.equal(latestGaming(GAMING_FIXTURE.weeks, "bluefin"), 0);
+  // Never reported at all.
+  assert.equal(latestGaming(GAMING_FIXTURE.weeks, "utah"), null);
+
+  const total = latestReading(GAMING_FIXTURE.weeks, "dakota").value;
+  assert.ok(
+    latestGaming(GAMING_FIXTURE.weeks, "dakota") <= total,
+    "a share cannot exceed the population it came from",
+  );
+});
+
+test("only images that reported game mode get a game-mode series", () => {
+  // bluefin is a measured zero, so plotting it would draw a flat line on the
+  // floor and read as a population rather than an absence.
+  assert.deepEqual(
+    gamingRepos(GAMING_FIXTURE.weeks, ["bluefin", "dakota", "utah"]),
+    ["dakota"],
+  );
+});
+
+test("the game-mode series is drawn under its image, not as a new one", () => {
+  const html = renderToStaticMarkup(
+    React.createElement(CountmeAnalyticsCharts, {
+      registry: REGISTRY_FIXTURE,
+      counts: GAMING_FIXTURE,
+    }),
+  );
+  const option = JSON.parse(
+    html
+      .match(
+        /data-title="Weekly active systems"[\s\S]*?data-option="([^"]*)"/,
+      )[1]
+      .replace(/&quot;/g, '"')
+      .replace(/&amp;/g, "&"),
+  );
+
+  const names = option.series.map((s) => s.name);
+  assert.ok(names.includes("Project Bluefin Dakota"));
+  assert.ok(names.includes("Project Bluefin Dakota (game mode)"));
+  assert.ok(
+    !names.some((n) => n.includes("dakota-gaming")),
+    "the gaming id must never surface as an image of its own",
+  );
+
+  const total = option.series.find((s) => s.name === "Project Bluefin Dakota");
+  const gaming = option.series.find(
+    (s) => s.name === "Project Bluefin Dakota (game mode)",
+  );
+  assert.deepEqual(total.data, [4, 6]);
+  assert.deepEqual(gaming.data, [1, 2]);
+  assert.equal(
+    gaming.itemStyle.color,
+    total.itemStyle.color,
+    "a share carries its image's colour so it is not read as a separate image",
+  );
+  assert.equal(gaming.connectNulls, false);
 });

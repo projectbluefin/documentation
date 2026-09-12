@@ -9,16 +9,13 @@ import {
   renderRepoChartSvg,
 } from "./render.mjs";
 import {
-  FIRST_PARTY,
-  FIRST_PARTY_PENDING_REASON,
-  PROJECTBLUEFIN_REPOS,
-} from "../../scripts/lib/countme-sources.mjs";
+  COUNTED_REPO_IDS,
+  WEEKLY_COUNTS_SQL,
+  buildCountsDocument,
+  pendingCountsDocument,
+} from "./counts.mjs";
 
 const USER_AGENT = "projectbluefin-countme-worker/1.0";
-const COUNT_METHOD = "first-party-d1-v1";
-const COUNT_UNIT = "estimated weekly active systems";
-const WEEK_WINDOW_DAYS = 180;
-const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
 function baseHeaders(extra = {}) {
   return {
@@ -107,102 +104,19 @@ function jsonResponse(payload, maxAgeSeconds) {
   });
 }
 
-/**
- * Weekly counts per first-party repo, Monday-anchored.
- *
- * `weekday 0` advances to that week's Sunday, so `-6 days` lands on its Monday
- * — the same week key the published series has always used.
- */
-const WEEKLY_COUNTS_SQL = `SELECT date(received_at, 'weekday 0', '-6 days') AS week,
-          repo,
-          COUNT(*) AS hits
-   FROM telemetry_events
-   WHERE received_at >= date('now', '-${WEEK_WINDOW_DAYS} days')
-     AND repo IN (${PROJECTBLUEFIN_REPOS.map(() => "?").join(", ")})
-   GROUP BY week, repo
-   ORDER BY week ASC`;
-
-function countsMeta() {
-  return {
-    generatedAt: new Date().toISOString(),
-    source: FIRST_PARTY.origin,
-    method: COUNT_METHOD,
-    unit: COUNT_UNIT,
-  };
-}
-
-function pendingCounts() {
-  return {
-    ...countsMeta(),
-    variants: [],
-    weeks: [],
-    unavailable: true,
-    stateReason: FIRST_PARTY_PENDING_REASON,
-  };
-}
-
-/** Every Monday from `first` through `last`, so a silent week stays visible. */
-function weekAxis(first, last) {
-  const axis = [];
-  for (
-    let stamp = Date.parse(`${first}T00:00:00Z`);
-    stamp <= Date.parse(`${last}T00:00:00Z`);
-    stamp += WEEK_MS
-  ) {
-    axis.push(new Date(stamp).toISOString().slice(0, 10));
-  }
-  return axis;
-}
-
-/**
- * The counts document. A repo with no rows in a week is null, never 0: we
- * cannot distinguish "nobody reported" from "nobody was running it".
- */
+/** Runs the weekly query and hands the rows to the counting rules. */
 async function aggregateWeeklyCounts(env) {
-  if (!env || !env.DB) return pendingCounts();
+  if (!env || !env.DB) return pendingCountsDocument();
 
-  let rows;
   try {
     const query = await env.DB.prepare(WEEKLY_COUNTS_SQL)
-      .bind(...PROJECTBLUEFIN_REPOS)
+      .bind(...COUNTED_REPO_IDS)
       .all();
-    rows = (query && query.results) || [];
+    return buildCountsDocument((query && query.results) || []);
   } catch (err) {
     console.error("Failed to aggregate countme records:", err);
-    return pendingCounts();
+    return pendingCountsDocument();
   }
-
-  const counted = rows.filter(
-    (row) => row && typeof row.week === "string" && Number.isFinite(row.hits),
-  );
-  if (counted.length === 0) return pendingCounts();
-
-  const byWeek = new Map();
-  for (const row of counted) {
-    const week = byWeek.get(row.week) || new Map();
-    week.set(row.repo, (week.get(row.repo) || 0) + row.hits);
-    byWeek.set(row.week, week);
-  }
-
-  const observed = [...byWeek.keys()].sort();
-  const weeks = weekAxis(observed[0], observed[observed.length - 1]).map(
-    (week) => {
-      const counts = byWeek.get(week);
-      const entry = { week };
-      for (const repo of PROJECTBLUEFIN_REPOS) {
-        entry[repo] = counts && counts.has(repo) ? counts.get(repo) : null;
-      }
-      return entry;
-    },
-  );
-
-  return {
-    ...countsMeta(),
-    variants: PROJECTBLUEFIN_REPOS.filter((repo) =>
-      weeks.some((week) => week[repo] !== null),
-    ),
-    weeks,
-  };
 }
 
 async function createCountsResponse(env) {

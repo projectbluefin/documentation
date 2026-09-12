@@ -13,6 +13,10 @@ import {
 import { FIRST_PARTY_PENDING_REASON } from "@site/scripts/lib/countme-sources.mjs";
 import {
   COUNTS_URL,
+  FIRST_PARTY_ORIGIN,
+  gamingRepos,
+  gamingSeries,
+  latestGaming,
   latestReading,
   measuredWeekCount,
   reportingRepos,
@@ -41,6 +45,21 @@ const REGISTRY_URL = "/data/ghcr-packages.json";
  * pairing twice published a Fedora-derived number under a Project Bluefin name,
  * so the two stay in separate files and the gate stays a real gate.
  */
+
+/**
+ * The one upstream series anyone may publish, per `UPSTREAM_ALLOWED`:
+ * `ublue-os/bluefin:stable`, counted by `ublue-os/countme`.
+ *
+ * Both are read through our own worker rather than from GitHub directly, so the
+ * page talks to a single origin and `raw.githubusercontent.com` does not need
+ * to appear in `connect-src` for this.
+ *
+ * Upstream publishes a rendered chart and a rounded badge value, and no
+ * time-series file, so this panel shows the image it publishes rather than
+ * replotting a series that does not exist.
+ */
+const LEGACY_CHART_URL = `${FIRST_PARTY_ORIGIN}/growth_bluefins.svg`;
+const LEGACY_BADGE_URL = `${FIRST_PARTY_ORIGIN}/badge-endpoints/bluefin.json`;
 
 /** Display names for the first-party `repo` identifiers. */
 export const REPO_LABELS: Record<string, string> = {
@@ -372,6 +391,27 @@ export default function CountmeAnalyticsCharts({
     [countmeWeeks],
   );
 
+  // ── Upstream image, the one permitted legacy series ────────────────────
+  //
+  // UPSTREAM_ALLOWED is the single exception to the first-party rule:
+  // ublue-os/bluefin:stable, counted by ublue-os/countme. Both the badge and
+  // the chart are proxied by our worker, so this stays on one origin and needs
+  // no second CSP entry.
+  const [legacyActive, setLegacyActive] = useState<string | null>(null);
+
+  useEffect(() => {
+    void (async () => {
+      try {
+        const res = await fetch(LEGACY_BADGE_URL);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const badge = (await res.json()) as { message?: string };
+        setLegacyActive(badge?.message ?? null);
+      } catch {
+        setLegacyActive(null);
+      }
+    })();
+  }, []);
+
   /** Readings that exist, so the panel can print a number per series. */
   const countmeReadings = useMemo(
     () =>
@@ -379,8 +419,29 @@ export default function CountmeAnalyticsCharts({
         repo,
         label: REPO_LABELS[repo] ?? repo,
         reading: latestReading(countmeWeeks, repo),
+        gaming: latestGaming(countmeWeeks, repo),
       })),
     [activeRepos, countmeWeeks],
+  );
+
+  /**
+   * Latest reading summed across every reporting image.
+   *
+   * Each image's own latest week is used, because they do not all report in the
+   * same week. Null when nothing has reported at all, so the panel says
+   * "accumulating data" rather than claiming a fleet of zero.
+   */
+  const firstPartyTotal = useMemo(() => {
+    const readings = countmeReadings
+      .map((r) => r.reading?.value)
+      .filter((v): v is number => typeof v === "number");
+    return readings.length ? readings.reduce((sum, v) => sum + v, 0) : null;
+  }, [countmeReadings]);
+
+  /** Images that actually reported game mode, so a flat zero is never drawn. */
+  const gamingActiveRepos = useMemo(
+    () => gamingRepos(countmeWeeks, activeRepos),
+    [countmeWeeks, activeRepos],
   );
 
   /** Rule 5: the point count is real readings, not axis length. */
@@ -399,29 +460,56 @@ export default function CountmeAnalyticsCharts({
       },
       // Anchored at zero: a floating floor turns a flat series into a cliff.
       yAxis: { type: "value", min: 0 },
-      series: activeRepos.map((repo, i) => ({
-        name: REPO_LABELS[repo] ?? repo,
-        type: "line",
-        // Rule 4: discrete weekly readings. No spline between them, and a
-        // missing week breaks the line rather than being bridged or zeroed.
-        smooth: false,
-        connectNulls: false,
-        showSymbol: true,
-        symbolSize: 7,
-        // The Bluefin palette is six shades of one hue, so colour alone cannot
-        // separate series. chartTheme pairs each index with a dash pattern and a
-        // symbol for exactly this; both survive greyscale and colour blindness.
-        symbol: SERIES_SYMBOLS[i % SERIES_SYMBOLS.length],
-        data: repoSeries(countmeWeeks, repo),
-        itemStyle: { color: cat[i % cat.length] },
-        lineStyle: {
-          width: 2,
-          color: cat[i % cat.length],
-          type: seriesDash(i),
-        },
-      })),
+      series: [
+        ...activeRepos.map((repo, i) => ({
+          name: REPO_LABELS[repo] ?? repo,
+          type: "line",
+          // Rule 4: discrete weekly readings. No spline between them, and a
+          // missing week breaks the line rather than being bridged or zeroed.
+          smooth: false,
+          connectNulls: false,
+          showSymbol: true,
+          symbolSize: 7,
+          // The Bluefin palette is six shades of one hue, so colour alone
+          // cannot separate series. chartTheme pairs each index with a dash
+          // pattern and a symbol for exactly this; both survive greyscale and
+          // colour blindness.
+          symbol: SERIES_SYMBOLS[i % SERIES_SYMBOLS.length],
+          data: repoSeries(countmeWeeks, repo),
+          itemStyle: { color: cat[i % cat.length] },
+          lineStyle: {
+            width: 2,
+            color: cat[i % cat.length],
+            type: seriesDash(i),
+          },
+        })),
+        // Game mode is a share of the image above it, never a separate image,
+        // so it carries that image's colour and sits under its line. It is
+        // drawn only for images that actually reported it, so a flat zero does
+        // not imply a population nobody measured.
+        ...gamingActiveRepos.map((repo) => {
+          const i = activeRepos.indexOf(repo);
+          return {
+            name: `${REPO_LABELS[repo] ?? repo} (game mode)`,
+            type: "line",
+            smooth: false,
+            connectNulls: false,
+            showSymbol: true,
+            symbolSize: 6,
+            symbol: "emptyCircle",
+            data: gamingSeries(countmeWeeks, repo),
+            itemStyle: { color: cat[i % cat.length] },
+            lineStyle: {
+              width: 1,
+              color: cat[i % cat.length],
+              type: "dotted",
+              opacity: 0.85,
+            },
+          };
+        }),
+      ],
     }),
-    [countmeWeeks, activeRepos, cat],
+    [countmeWeeks, activeRepos, gamingActiveRepos, cat],
   );
 
   /**
@@ -547,7 +635,7 @@ export default function CountmeAnalyticsCharts({
             {/* Rule 1: every series states its current number, in text, next
                 to the graphic rather than only inside it. */}
             <p className={styles.legendRow}>
-              {countmeReadings.map(({ repo, label, reading }, i) => (
+              {countmeReadings.map(({ repo, label, reading, gaming }, i) => (
                 <span key={repo} className={styles.legendChip}>
                   <span
                     className={styles.legendGlyph}
@@ -558,6 +646,12 @@ export default function CountmeAnalyticsCharts({
                   </span>
                   {label}:{" "}
                   {reading ? reading.value.toLocaleString() : "accumulating"}
+                  {reading && gaming !== null && gaming > 0 ? (
+                    <span className={styles.gamingSplit}>
+                      {" "}
+                      ({gaming.toLocaleString()} in game mode)
+                    </span>
+                  ) : null}
                 </span>
               ))}
             </p>
@@ -581,6 +675,69 @@ export default function CountmeAnalyticsCharts({
               FIRST_PARTY_PENDING_REASON
             }
           />
+        )}
+      </section>
+
+      {/* ── 2. Upstream image, for watching the migration ────────────────── */}
+      <section className={styles.panelCard}>
+        <header className={styles.sectionHeader}>
+          <Heading as="h3" className={styles.sectionTitle}>
+            Upstream Image (Legacy)
+          </Heading>
+          <p className={styles.sectionSubtext}>
+            <code>ublue-os/bluefin:stable</code> is counted by{" "}
+            <Link to="https://github.com/ublue-os/countme">
+              ublue-os/countme
+            </Link>
+            , not by Project Bluefin. It is shown alongside the first-party
+            counts so the migration between them is visible. The two are
+            measured by different services and are not the same quantity: the
+            legacy series counts DNF metalink hits, the first-party series
+            counts image check-ins.
+          </p>
+        </header>
+
+        {/* Rule 1: both sides of the comparison carry their current value. */}
+        <p className={styles.legendRow}>
+          <span className={styles.legendChip}>
+            <span className={styles.legendGlyph} aria-hidden="true">
+              ◇
+            </span>
+            Upstream <code>bluefin:stable</code>:{" "}
+            {legacyActive ?? "unavailable"}
+          </span>
+          <span className={styles.legendChip}>
+            <span className={styles.legendGlyph} aria-hidden="true">
+              ●
+            </span>
+            Project Bluefin images:{" "}
+            {firstPartyTotal === null
+              ? "accumulating data"
+              : firstPartyTotal.toLocaleString()}
+          </span>
+        </p>
+
+        {legacyActive === null ? (
+          <Unavailable
+            what="Upstream count"
+            reason="The upstream badge could not be read."
+          />
+        ) : (
+          <figure className={styles.legacyFigure}>
+            <img
+              className={styles.legacyChart}
+              src={LEGACY_CHART_URL}
+              alt={`Upstream ublue-os/bluefin growth chart. Current upstream active users: ${legacyActive}.`}
+              loading="lazy"
+              width={1200}
+              height={700}
+            />
+            <figcaption className={styles.chartNote}>
+              Chart published by <code>ublue-os/countme</code> and proxied
+              unmodified. Its axis and scale are upstream&rsquo;s, so it is not
+              plotted on the same domain as the first-party panel above.
+            </figcaption>
+          </figure>
         )}
       </section>
 

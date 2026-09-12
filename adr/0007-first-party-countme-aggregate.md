@@ -128,3 +128,48 @@ number would age with the deployment rather than with the data.
 **Log y-axis to fit Fedora's magnitude alongside Bluefin's.** Rejected here: the
 panel no longer plots Fedora, so the range that motivated it is gone, and a log
 axis is easy to misread on a page that does not otherwise use one.
+
+## Addendum, 2026-09-12: game mode and the upstream panel
+
+Two follow-on decisions, taken after the first deployment.
+
+### Game mode is an attribute, not an image
+
+Clients report game mode two ways: a `-gaming` repo id, and a `gamemode=1`
+parameter. Live D1 carried both — `dakota-gaming` with `gamemode=1`, and a
+`bluefin` row also flagged `gamemode=1` — so this is not a Dakota-specific
+image. Treating `dakota-gaming` as its own repo would have split Dakota's
+population in two and left a phantom image in the catalogue.
+
+The service normalizes the repo id and folds both spellings into the base
+image. `weeks[i][repo]` is the whole population, including game mode.
+`weeks[i].gaming[repo]` is the part of it that was in game mode. The two are a
+population and its share, never addends: `gaming[repo] <= weeks[i][repo]` holds
+for every repo and week, and a test asserts it.
+
+A repo that reported with nobody in game mode is `0`, not `null` — a real
+measurement, distinct from a week it did not report at all. The page draws a
+game-mode series only for images with a non-zero reading, so a flat zero never
+implies a population nobody measured. Each game-mode series carries its parent
+image's colour with a dotted stroke, so it reads as a share of the line above
+it rather than as a separate image, and the current split is stated in words
+next to the image's number.
+
+Payload method bumped to `first-party-d1-v2`.
+
+### The upstream image is shown alongside
+
+`ublue-os/bluefin:stable` is published on the page next to the first-party
+counts, so the migration between the two is visible rather than inferred. This
+is `UPSTREAM_ALLOWED`, the single permitted upstream series, and it is read
+through our own worker's existing legacy routes.
+
+Upstream publishes rendered matplotlib SVGs and a rounded badge value, and no
+time-series file. The panel therefore embeds the chart upstream publishes
+instead of replotting a series that does not exist, and states the badge's
+value as its current number. The image is framed rather than recoloured:
+altering another project's published chart would misrepresent it.
+
+The two series are not the same quantity — the legacy one counts DNF metalink
+hits, the first-party one counts image check-ins — and the panel says so rather
+than inviting a subtraction.

@@ -21,7 +21,10 @@ import {
  * The aggregate is fetched at runtime rather than built into the site because
  * it accumulates continuously, while the site rebuilds only on merge.
  */
-export const COUNTS_URL = `${FIRST_PARTY.origin}/counts.json`;
+/** The first-party origin. Every route below is served by our own worker. */
+export const FIRST_PARTY_ORIGIN: string = FIRST_PARTY.origin;
+
+export const COUNTS_URL = `${FIRST_PARTY_ORIGIN}/counts.json`;
 
 /** One week of first-party counts. A missing repo is `null` — a gap, never 0. */
 export interface CountmeWeek {
@@ -108,4 +111,54 @@ export function measuredWeekCount(
   return weeks.filter((w) =>
     repos.some((repo) => parseReading(w[repo]) !== null),
   ).length;
+}
+
+/**
+ * Game-mode counts for a week, when the service reports them.
+ *
+ * Game mode is an attribute of a ping, not an image: a client reports it as a
+ * `-gaming` repo id or a `gamemode=1` flag, and the service folds both into the
+ * base image. `weeks[i][repo]` is therefore the whole population and
+ * `weeks[i].gaming[repo]` is the part of it that was in game mode, so the two
+ * are never added together.
+ */
+export function gamingOf(
+  week: CountmeWeek | undefined,
+): Record<string, unknown> {
+  const gaming = week?.gaming;
+  return gaming && typeof gaming === "object"
+    ? (gaming as Record<string, unknown>)
+    : {};
+}
+
+/** A repo's game-mode series across the week axis, gaps preserved as null. */
+export function gamingSeries(
+  weeks: CountmeWeek[],
+  repo: string,
+): Array<number | null> {
+  return weeks.map((w) => parseReading(gamingOf(w)[repo]));
+}
+
+/**
+ * Latest game-mode reading for a repo, read backwards like `latestReading`.
+ *
+ * A repo that reported but had nobody in game mode is `0`, which is a real
+ * measurement and distinct from the `null` of a week it did not report at all.
+ */
+export function latestGaming(
+  weeks: CountmeWeek[],
+  repo: string,
+): number | null {
+  for (let i = weeks.length - 1; i >= 0; i -= 1) {
+    const value = parseReading(gamingOf(weeks[i])[repo]);
+    if (value !== null) return value;
+  }
+  return null;
+}
+
+/** Repos carrying at least one non-zero game-mode reading. */
+export function gamingRepos(weeks: CountmeWeek[], repos: string[]): string[] {
+  return repos.filter((repo) =>
+    weeks.some((w) => (parseReading(gamingOf(w)[repo]) ?? 0) > 0),
+  );
 }
