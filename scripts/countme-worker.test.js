@@ -5,6 +5,7 @@ const path = require("node:path");
 
 let routes;
 let render;
+let counts;
 let policy;
 let fetchHandler;
 
@@ -13,6 +14,7 @@ const repoRoot = path.join(__dirname, "..");
 test.before(async () => {
   routes = await import("../workers/countme-proxy/routes.mjs");
   render = await import("../workers/countme-proxy/render.mjs");
+  counts = await import("../workers/countme-proxy/counts.mjs");
   policy = await import("./lib/countme-sources.mjs");
   const mod = await import("../workers/countme-proxy/index.mjs");
   fetchHandler = mod.default.fetch;
@@ -23,6 +25,7 @@ const WORKER_SOURCES = [
   "workers/countme-proxy/index.mjs",
   "workers/countme-proxy/routes.mjs",
   "workers/countme-proxy/render.mjs",
+  "workers/countme-proxy/counts.mjs",
 ];
 
 /**
@@ -175,9 +178,10 @@ test("every first-party repo has a chart and a badge route", () => {
 
 test("counts.json aggregates weekly records per first-party repo", async () => {
   const db = stubDb([
-    { week: "2026-08-31", repo: "bluefin", hits: 3552 },
-    { week: "2026-08-31", repo: "bluefin-lts", hits: 194 },
-    { week: "2026-09-07", repo: "bluefin", hits: 3601 },
+    { week: "2026-08-31", repo: "bluefin", gamemode: 0, hits: 3552 },
+    { week: "2026-08-31", repo: "bluefin-lts", gamemode: 0, hits: 194 },
+    { week: "2026-09-07", repo: "bluefin", gamemode: 0, hits: 3601 },
+    { week: "2026-09-07", repo: "bluefin", gamemode: 1, hits: 1 },
   ]);
 
   const response = await get("/counts.json", db.env);
@@ -185,7 +189,7 @@ test("counts.json aggregates weekly records per first-party repo", async () => {
 
   assert.equal(response.status, 200);
   assert.equal(body.source, policy.FIRST_PARTY.origin);
-  assert.equal(body.method, "first-party-d1-v1");
+  assert.equal(body.method, "first-party-d1-v2");
   assert.equal(body.unit, "estimated weekly active systems");
   assert.ok(!body.unavailable);
   assert.deepEqual(body.variants, ["bluefin", "bluefin-lts"]);
@@ -197,19 +201,33 @@ test("counts.json aggregates weekly records per first-party repo", async () => {
       dakota: null,
       utah: null,
       server: null,
+      gaming: {
+        bluefin: 0,
+        "bluefin-lts": 0,
+        dakota: null,
+        utah: null,
+        server: null,
+      },
     },
     {
       week: "2026-09-07",
-      bluefin: 3601,
+      bluefin: 3602,
       "bluefin-lts": null,
       dakota: null,
       utah: null,
       server: null,
+      gaming: {
+        bluefin: 1,
+        "bluefin-lts": null,
+        dakota: null,
+        utah: null,
+        server: null,
+      },
     },
   ]);
 
   assert.ok(db.statements[0].sql.includes("telemetry_events"));
-  assert.deepEqual(db.statements[0].args, [...policy.PROJECTBLUEFIN_REPOS]);
+  assert.deepEqual(db.statements[0].args, [...counts.COUNTED_REPO_IDS]);
 });
 
 test("a repo missing from a week is null, never zero", async () => {
@@ -220,6 +238,7 @@ test("a repo missing from a week is null, never zero", async () => {
   const week = JSON.parse(text).weeks[0];
 
   assert.equal(week.dakota, null);
+  assert.equal(week.gaming.dakota, null);
   assert.ok("dakota" in week, "the key is present so the gap is explicit");
   assert.match(text, /"dakota":null/u);
   assert.ok(
@@ -241,6 +260,113 @@ test("a week nobody reported stays on the axis as a gap", async () => {
     ["2026-08-31", "2026-09-07", "2026-09-14"],
   );
   assert.equal(body.weeks[1].bluefin, null);
+});
+
+test("a -gaming id counts as its base image in game mode", () => {
+  assert.deepEqual(counts.normalizeCountmeRepo("dakota-gaming", 1), {
+    repo: "dakota",
+    gaming: true,
+  });
+
+  // The suffix alone is enough: a client that forgets the flag still lands in
+  // the same bucket, and so does one that sends the flag without the suffix.
+  assert.deepEqual(counts.normalizeCountmeRepo("dakota-gaming", 0), {
+    repo: "dakota",
+    gaming: true,
+  });
+  assert.deepEqual(counts.normalizeCountmeRepo("dakota", 1), {
+    repo: "dakota",
+    gaming: true,
+  });
+  assert.deepEqual(counts.normalizeCountmeRepo("dakota", 0), {
+    repo: "dakota",
+    gaming: false,
+  });
+
+  // Game mode is an attribute of a ping, not an image of Dakota's.
+  assert.deepEqual(counts.normalizeCountmeRepo("bluefin-lts-gaming", 0), {
+    repo: "bluefin-lts",
+    gaming: true,
+  });
+
+  // Anything outside the first-party set still drops, suffixed or not.
+  assert.equal(counts.normalizeCountmeRepo("eos", 0), null);
+  assert.equal(counts.normalizeCountmeRepo("eos-gaming", 1), null);
+  assert.equal(counts.normalizeCountmeRepo("-gaming", 1), null);
+  assert.equal(counts.normalizeCountmeRepo(undefined, 0), null);
+});
+
+test("normalization is idempotent", () => {
+  for (const [repo, gamemode] of [
+    ["dakota-gaming", 1],
+    ["dakota-gaming", 0],
+    ["dakota", 1],
+    ["bluefin", 0],
+  ]) {
+    const once = counts.normalizeCountmeRepo(repo, gamemode);
+    const twice = counts.normalizeCountmeRepo(once.repo, once.gaming ? 1 : 0);
+    assert.deepEqual(twice, once, `${repo}/${gamemode} must settle`);
+  }
+});
+
+test("dakota-gaming folds into the dakota total and its gaming share", async () => {
+  const db = stubDb([
+    { week: "2026-09-07", repo: "dakota", gamemode: 0, hits: 18 },
+    { week: "2026-09-07", repo: "dakota-gaming", gamemode: 1, hits: 1 },
+    { week: "2026-09-07", repo: "eos", gamemode: 0, hits: 8 },
+  ]);
+
+  const body = await (await get("/counts.json", db.env)).json();
+  const week = body.weeks[0];
+
+  assert.equal(week.dakota, 19, "the gaming image is part of Dakota");
+  assert.equal(week.gaming.dakota, 1);
+  assert.ok(!("dakota-gaming" in week), "gaming is not a repo of its own");
+  assert.ok(!("eos" in week), "a repo outside the policy set never appears");
+  assert.deepEqual(body.variants, ["dakota"]);
+});
+
+test("a repo that reported no game mode that week is 0, not null", async () => {
+  const db = stubDb([
+    { week: "2026-09-07", repo: "bluefin", gamemode: 0, hits: 12 },
+    { week: "2026-09-07", repo: "dakota", gamemode: 1, hits: 3 },
+  ]);
+
+  const week = (await (await get("/counts.json", db.env)).json()).weeks[0];
+
+  assert.equal(week.gaming.bluefin, 0, "it reported, nobody was in game mode");
+  assert.equal(week.gaming.utah, null, "it did not report at all");
+  assert.equal(week.utah, null);
+  assert.equal(week.gaming.dakota, 3, "every Dakota ping was in game mode");
+  assert.equal(week.dakota, 3);
+});
+
+test("the gaming share never exceeds the total it came from", async () => {
+  const db = stubDb([
+    { week: "2026-08-31", repo: "dakota", gamemode: 0, hits: 18 },
+    { week: "2026-08-31", repo: "dakota-gaming", gamemode: 1, hits: 4 },
+    { week: "2026-08-31", repo: "bluefin", gamemode: 1, hits: 1 },
+    { week: "2026-09-14", repo: "bluefin-lts", gamemode: 0, hits: 2 },
+    { week: "2026-09-14", repo: "dakota", gamemode: 1, hits: 7 },
+  ]);
+
+  const body = await (await get("/counts.json", db.env)).json();
+
+  for (const week of body.weeks) {
+    for (const repo of policy.PROJECTBLUEFIN_REPOS) {
+      const total = week[repo];
+      const gaming = week.gaming[repo];
+
+      if (total === null) {
+        assert.equal(gaming, null, `${repo} ${week.week}: no data either way`);
+        continue;
+      }
+      assert.ok(
+        gaming <= total,
+        `${repo} ${week.week}: gaming ${gaming} exceeds total ${total}`,
+      );
+    }
+  }
 });
 
 test("counts.json declares a source every first-party repo may use", async () => {
@@ -302,10 +428,11 @@ test("an empty database yields a pending document at HTTP 200", async () => {
   assert.equal(body.stateReason, policy.FIRST_PARTY_PENDING_REASON);
 });
 
-test("charts and badges render from the database without leaving the edge", async () => {
+test("charts and badges show the total, game mode included", async () => {
   const db = stubDb([
-    { week: "2026-08-31", repo: "bluefin-lts", hits: 100 },
-    { week: "2026-09-07", repo: "bluefin-lts", hits: 194 },
+    { week: "2026-08-31", repo: "bluefin-lts", gamemode: 0, hits: 100 },
+    { week: "2026-09-07", repo: "bluefin-lts", gamemode: 0, hits: 194 },
+    { week: "2026-09-07", repo: "bluefin-lts-gaming", gamemode: 1, hits: 6 },
   ]);
   const stub = stubFetch(async () => new Response("", { status: 500 }));
 
@@ -319,13 +446,13 @@ test("charts and badges render from the database without leaving the edge", asyn
     );
     assert.equal(chart.headers.get("cache-control"), "public, max-age=900");
     assert.match(svg, /Bluefin LTS/u);
-    assert.match(svg, />194</u);
+    assert.match(svg, />200</u, "the plotted value is the population");
 
     const badge = await get("/badge-endpoints/bluefin-lts.json", db.env);
     assert.deepEqual(await badge.json(), {
       schemaVersion: 1,
       label: "Bluefin LTS",
-      message: "194",
+      message: "200",
       color: "bc8cff",
     });
 

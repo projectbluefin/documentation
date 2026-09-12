@@ -209,3 +209,29 @@
     gap: var(--fx-space-2);
   }
 }
+
+/* Upstream chart, published by ublue-os/countme and proxied unmodified. It is
+   an image rather than a plotted series because upstream ships no time-series
+   file; its axis is upstream's, so it is framed rather than blended in. */
+.legacyFigure {
+  margin: 0;
+}
+
+.legacyChart {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--fx-border);
+  border-radius: var(--fx-radius-md);
+  /* Upstream renders on white. It is framed and padded so it reads as an
+     embedded external artifact rather than a panel of ours, and it is not
+     recoloured: altering another project's published chart misrepresents it. */
+  background: #fff;
+  padding: var(--fx-space-2);
+}
+
+/* Game mode is a share of the image it belongs to, so it is stated inline with
+   that image's number rather than given a chip of its own. */
+.gamingSplit {
+  color: var(--fx-text-muted);
+}
