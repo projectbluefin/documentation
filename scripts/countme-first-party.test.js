@@ -238,3 +238,30 @@ test("countme is never called telemetry in published copy", () => {
     `say "countme", not "telemetry":\n${offenders.join("\n")}`,
   );
 });
+
+test("a reason string never discloses infrastructure", async () => {
+  const { FIRST_PARTY_PENDING_REASON } = await policy;
+
+  // AGENTS.md, Data pipelines: "Never emit a host address, an internal URL, or
+  // a token." This string renders on /analytics, /factory/metrics and the
+  // monthly report. It shipped naming the host AND stating that the service was
+  // collecting but published no read endpoint — a description of internal
+  // posture, on a public page, in an error message.
+  for (const banned of [
+    /projectbluefin\.io/i,
+    /\bendpoint\b/i,
+    /\bD1\b/,
+    /cloudflare/i,
+    /\bworker\b/i,
+    /https?:\/\//,
+  ]) {
+    assert.doesNotMatch(
+      FIRST_PARTY_PENDING_REASON,
+      banned,
+      `the published reason must not describe infrastructure (${banned})`,
+    );
+  }
+
+  // Presentation rule 6 still has to hold: it must say something.
+  assert.ok(FIRST_PARTY_PENDING_REASON.trim().length > 0);
+});

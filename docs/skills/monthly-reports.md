@@ -81,7 +81,7 @@ added.
    - `<ReportEcosystem>`: Countme, Homebrew, and Flathub source states.
    - `<ReportLaneHealth>`: Publishing lane metrics (Testing, LTS, Dakota).
    - `<ReportCountmeTrend>`: Weekly active systems from countme. Unavailable
-     until `countme.projectbluefin.io` publishes a read endpoint; it states
+     until first-party counts are published; it states
      that reason rather than charting an upstream number.
    - `<ReportAutomationStats>`: Factory autonomous vs human PR breakdown.
    - `<ReportDoraCadence>`: Deployment cadence and velocity indicators.
@@ -164,7 +164,7 @@ snapshot and its provenance remain available to server-rendered output.
   `countme.projectbluefin.io`. Fedora's `totals.csv` — the source behind
   `static/data/countme-history.json` — counts mirror hits for a Fedora repo
   and is never a substitute for one of our images. Until the first-party
-  service publishes a read endpoint, `extractCountmeMetrics()` returns an
+  counts are published, `extractCountmeMetrics()` returns an
   unavailable measurement carrying `FIRST_PARTY_PENDING_REASON` from
   `scripts/lib/countme-sources.mjs`: the report keeps the countme panel and
   states the reason, and the Active Systems hero KPI does not appear.

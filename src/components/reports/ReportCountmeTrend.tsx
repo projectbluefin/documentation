@@ -31,7 +31,7 @@ export default function ReportCountmeTrend({
   const explicitReason = unavailableReason ?? stateReason;
   if (explicitReason || currentTotal === null || currentTotal === undefined) {
     // A Project Bluefin count comes from countme.projectbluefin.io or from
-    // nowhere. With no read endpoint published yet the generator has no total
+    // nowhere. With no first-party count published yet the generator has no total
     // to pass, so the panel says why rather than charting an upstream number.
     return (
       <div className={styles.container} role="status">
