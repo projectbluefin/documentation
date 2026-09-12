@@ -229,6 +229,106 @@ test("ghFetch error message names the requested path, not the expanded URL", asy
 });
 
 // ---------------------------------------------------------------------------
+// githubHeaders
+// ---------------------------------------------------------------------------
+
+test("githubHeaders emits the canonical contract by default", () => {
+  const h = gh.githubHeaders("t");
+  assert.equal(h.accept, "application/vnd.github+json");
+  assert.equal(h["x-github-api-version"], "2022-11-28");
+  assert.equal(h["user-agent"], "projectbluefin-documentation-factory");
+  assert.equal(h.authorization, "Bearer t");
+});
+
+test("githubHeaders omits authorization when there is no token", () => {
+  assert.ok(!("authorization" in gh.githubHeaders(null)));
+});
+
+test("githubHeaders lets a caller override the accept representation", () => {
+  // The Contents API's .raw representation returns the file bytes directly, so
+  // tap-promotions overrides the default accept to keep that behaviour intact.
+  const h = gh.githubHeaders("t", {
+    accept: "application/vnd.github.v3.raw",
+    userAgent: "custom",
+  });
+  assert.equal(h.accept, "application/vnd.github.v3.raw");
+  assert.equal(h["user-agent"], "custom");
+  // The api-version pin survives the override — it is not an accept choice.
+  assert.equal(h["x-github-api-version"], "2022-11-28");
+});
+
+// ---------------------------------------------------------------------------
+// githubFetch
+// ---------------------------------------------------------------------------
+
+test("githubFetch builds the URL and forwards the caller's headers", async () => {
+  const stub = stubFetch(() => jsonResponse({}));
+  try {
+    const res = await gh.githubFetch("/x", {
+      headers: gh.githubHeaders("t"),
+    });
+    assert.equal(stub.calls[0].url, `${gh.GH_API}/x`);
+    assert.equal(stub.calls[0].init.headers.authorization, "Bearer t");
+    assert.ok(res.ok);
+  } finally {
+    stub.restore();
+  }
+});
+
+test("githubFetch honours a fetchImpl override for tests", async () => {
+  let seen;
+  const impl = async (url, init) => {
+    seen = { url, init };
+    return jsonResponse({});
+  };
+  await gh.githubFetch("/x", {
+    headers: gh.githubHeaders("t"),
+    fetchImpl: impl,
+  });
+  assert.equal(seen.url, `${gh.GH_API}/x`);
+  assert.equal(seen.init.headers.authorization, "Bearer t");
+});
+
+test("githubFetch throws on a non-2xx by default", async () => {
+  const stub = stubFetch(() => jsonResponse({}, { ok: false, status: 500 }));
+  try {
+    await assert.rejects(
+      () => gh.githubFetch("/boom", { headers: gh.githubHeaders("t") }),
+      /-> 500/,
+    );
+  } finally {
+    stub.restore();
+  }
+});
+
+test("githubFetch returns null instead of throwing when throwOnError is false", async () => {
+  const stub = stubFetch(() => jsonResponse({}, { ok: false, status: 503 }));
+  try {
+    const res = await gh.githubFetch("/boom", {
+      headers: gh.githubHeaders("t"),
+      throwOnError: false,
+    });
+    assert.equal(res, null);
+  } finally {
+    stub.restore();
+  }
+});
+
+test("githubFetch forwards a timeout signal to the request", async () => {
+  const stub = stubFetch(() => jsonResponse({}));
+  try {
+    const signal = AbortSignal.timeout(15000);
+    await gh.githubFetch("/x", {
+      headers: gh.githubHeaders("t"),
+      signal,
+    });
+    assert.equal(stub.calls[0].init.signal, signal);
+  } finally {
+    stub.restore();
+  }
+});
+
+// ---------------------------------------------------------------------------
 // ghPaginate
 // ---------------------------------------------------------------------------
 

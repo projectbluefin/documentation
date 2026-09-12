@@ -6,6 +6,7 @@
  */
 
 import { graphqlWithAuth, retryWithBackoff } from "./graphql-queries.mjs";
+import { githubHeaders, githubFetch, githubToken } from "./gh.js";
 
 const TAP_REPOS = {
   production: "ublue-os/homebrew-tap",
@@ -39,11 +40,20 @@ export async function fetchTapPromotions(startDate, endDate, options = {}) {
  * @param {Function} [options.fetchImpl=fetch] - fetch implementation
  * @returns {Promise<Array>} Array of {name, description, mergedAt, prNumber, prUrl}
  */
-export async function fetchExperimentalAdditions(startDate, endDate, options = {}) {
+export async function fetchExperimentalAdditions(
+  startDate,
+  endDate,
+  options = {},
+) {
   console.log(
     `\n🧪 Fetching experimental tap additions from ${startDate.toISOString().split("T")[0]} to ${endDate.toISOString().split("T")[0]}...\n`,
   );
-  return fetchRepoAdditions(TAP_REPOS.experimental, startDate, endDate, options);
+  return fetchRepoAdditions(
+    TAP_REPOS.experimental,
+    startDate,
+    endDate,
+    options,
+  );
 }
 
 /**
@@ -147,7 +157,7 @@ async function fetchMergedPRs(repo, startDate, endDate, options = {}) {
 
   while (hasNextPage) {
     const data = await retryWithBackoff(() =>
-      client(query, { owner, name, cursor })
+      client(query, { owner, name, cursor }),
     );
     const prs = data.repository.pullRequests.nodes;
 
@@ -182,27 +192,18 @@ async function fetchMergedPRs(repo, startDate, endDate, options = {}) {
  */
 async function fetchPRFiles(repo, prNumber, options = {}) {
   const { fetchImpl } = options;
-  const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
+  const token = githubToken();
   if (!fetchImpl && !token) {
     throw new Error(
       "GitHub token required. Set GITHUB_TOKEN or GH_TOKEN environment variable.",
     );
   }
-  const call = fetchImpl ?? globalThis.fetch;
 
   const url = `https://api.github.com/repos/${repo}/pulls/${prNumber}/files?per_page=100`;
-  const response = await call(url, {
-    headers: {
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      Accept: "application/vnd.github.v3+json",
-    },
+  const response = await githubFetch(url, {
+    headers: githubHeaders(token, { accept: "application/vnd.github.v3+json" }),
+    fetchImpl,
   });
-
-  if (!response.ok) {
-    throw new Error(
-      `Failed to fetch PR files: ${response.status} ${response.statusText}`,
-    );
-  }
 
   const files = await response.json();
   return files.map((f) => ({ filename: f.filename, status: f.status }));
@@ -218,24 +219,21 @@ async function fetchPRFiles(repo, prNumber, options = {}) {
  */
 async function fetchPackageDescription(repo, filepath, options = {}) {
   const { fetchImpl } = options;
-  const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
+  const token = githubToken();
   if (!fetchImpl && !token) {
     return null;
   }
-  const call = fetchImpl ?? globalThis.fetch;
 
+  const url = `https://api.github.com/repos/${repo}/contents/${filepath}`;
   try {
-    const url = `https://api.github.com/repos/${repo}/contents/${filepath}`;
-    const response = await call(url, {
-      headers: {
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        Accept: "application/vnd.github.v3.raw",
-      },
+    const response = await githubFetch(url, {
+      headers: githubHeaders(token, {
+        accept: "application/vnd.github.v3.raw",
+      }),
+      fetchImpl,
+      throwOnError: false,
     });
-
-    if (!response.ok) {
-      return null;
-    }
+    if (!response) return null;
 
     const content = await response.text();
     return parseFormulaDescription(content);
