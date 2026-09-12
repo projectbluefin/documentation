@@ -522,16 +522,19 @@ test("ReportCountmeTrend preserves zero and explains unavailable sources", () =>
   assert.match(unavailable, /Data unavailable/);
   assert.match(unavailable, /HTTP 503/);
 
-  // The monthly report passes no reason: it has no total to pass, because a
-  // Project Bluefin count comes from countme.projectbluefin.io and that
-  // service publishes no read endpoint yet. The panel supplies that reason
-  // itself rather than showing an unexplained blank.
+  // The monthly report passes no reason, so the panel supplies one itself
+  // rather than showing an unexplained blank. That fallback is published copy,
+  // so it says the number is not published and stops: AGENTS.md forbids
+  // emitting a host address or an internal URL, and an error message that
+  // inventories which internal routes do not exist yet is a disclosure.
   const noReason = renderComponent(
     "ReportCountmeTrend",
     { currentTotal: null, historyPoints: [], variants: [] },
     { "../Sparkline": sparklineStub },
   );
-  assert.match(noReason, /countme\.projectbluefin\.io/);
+  assert.match(noReason, /not published yet/);
+  assert.doesNotMatch(noReason, /projectbluefin\.io/);
+  assert.doesNotMatch(noReason, /endpoint/i);
 });
 
 test("ReportLaneHealth exposes pending and unavailable lane states", () => {

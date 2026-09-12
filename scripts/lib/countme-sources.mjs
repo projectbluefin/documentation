@@ -85,12 +85,15 @@ export function isPermittedSource(repo, source) {
 /**
  * The reason a panel shows when a first-party count is not available yet.
  *
- * `countme.projectbluefin.io/metalink` is live and writing to D1, but the
- * service publishes no read endpoint, so nothing can query it. Until it does,
- * the honest render is an unavailable panel that says why — never a substituted
- * upstream number.
+ * AGENTS.md: "Never emit a host address, an internal URL, or a token." This
+ * string is rendered on /analytics, /factory/metrics and the monthly report, so
+ * it says that the number is not published and stops. It must never describe
+ * service topology, endpoint inventory, or what is or is not reachable —
+ * a panel explaining which internal routes do not exist yet is an
+ * infrastructure disclosure wearing an error message.
+ *
+ * Presentation rule 6 still applies: the panel says it lacks data, and why, in
+ * terms of the data rather than the plumbing.
  */
 export const FIRST_PARTY_PENDING_REASON =
-  "Counted by countme.projectbluefin.io, which is collecting but does not yet " +
-  "publish a read endpoint. Fedora and ublue-os numbers are not a permitted " +
-  "substitute for a Project Bluefin image.";
+  "Weekly active systems are not published yet.";
