@@ -10,7 +10,6 @@ import {
   renderRepoChartSvg,
 } from "./render.mjs";
 import {
-  COUNTED_REPO_IDS,
   WEEKLY_COUNTS_SQL,
   buildCountsDocument,
   pendingCountsDocument,
@@ -110,9 +109,7 @@ async function aggregateWeeklyCounts(env) {
   if (!env || !env.DB) return pendingCountsDocument();
 
   try {
-    const query = await env.DB.prepare(WEEKLY_COUNTS_SQL)
-      .bind(...COUNTED_REPO_IDS)
-      .all();
+    const query = await env.DB.prepare(WEEKLY_COUNTS_SQL).all();
     return buildCountsDocument((query && query.results) || []);
   } catch (err) {
     console.error("Failed to aggregate countme records:", err);
