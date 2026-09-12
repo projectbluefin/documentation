@@ -35,13 +35,44 @@ Measuring release-over-release download deltas, chunkah layer reuse efficiency, 
 4. **Data Degradation & Fallback**:
    - If an image has no stable releases (e.g. Utah in bootstrapping phase), flag it explicitly with `{ unavailable: true, stateReason: "..." }`.
    - Never throw or exit non-zero from the pipeline script.
-5. **Modern Visualization Conventions**:
-   - **KPI Summary Strip**: Lead with key fleet-wide metrics (Latest Fleet Churn in GB, OCI Layer Reuse %, Zstd:Chunked Adoption %, and Active Image Coverage) with tabular numerals and tracked uppercase eyebrows.
-   - **Glassmorphic Panel Styling**: Dark translucent surface cards (`rgba(15, 23, 42, 0.45)`), rounded corners (`18px`), and compact segmented pill controls (`Download Churn (MB)`, `Reuse Efficiency (%)`, `Chunk & Layer Counts`, `Zstd-Chunked Stats`).
-   - **Image Card KPIs**: 4-column compact summary grid (Churn, Reuse, Layers, Total) displayed with tabular numerals directly above each small-multiple EChart.
-   - **Semantic Heading Hierarchy**: Use Docusaurus `<Heading as="h3">` and `<Heading as="h4">` components rather than raw HTML `<h3>` and `<h4>` tags.
-   - **Shared Domains**: Maintain uniform scales across all small-multiple image cards so release churn is visually comparable.
-   - **Visible Unavailability**: Retain explicit `<Unavailable>` fallback cards with descriptive state reasons for inactive or onboarding images (e.g., Utah).
+5. **Baseline Releases Are Not Deltas**:
+   - The first tag the pipeline tracked for an image has `previousTag: null` and
+     `isBaseline: true`. The fetcher writes its `downloadChurnMB` as the whole
+     image and its `sharedMB` and `reuseEfficiencyPct` as `0`.
+   - That `0` means "not measured", not "measured as zero". Every delta-derived
+     series withholds baseline points and marks them separately — a diamond on
+     the churn ridgeline, an `○ base` cell on the reuse heatmap. Charting a
+     baseline as churn draws the whole image as a regression against a release
+     it was never compared to.
+   - Properties that are not deltas — the layer compression format, the layer
+     count — still read from baseline releases, because they are observed on the
+     release itself rather than diffed against a predecessor.
+6. **Chart Vocabulary**: `/analytics` follows the `projectbluefin/lab` house
+   style, and bar charts are not part of it. The five panels are:
+   - **KPI summary strip**: fleet churn in GB, layer reuse %, zstd adoption %,
+     tracked-image coverage, in tabular numerals.
+   - **Churn ridgeline**: multi-grid line small multiples, one lane per image,
+     every lane on the same value domain and the same union-of-release-dates
+     category axis. A rolling p50 and a p50–p95 band appear per lane once that
+     lane has 5 consecutive deltas: two stacked series, the median line visible
+     and the spread carrying `areaStyle` behind `lineStyle: { opacity: 0 }`.
+     Below that count the band is withheld and the panel says so.
+   - **Reuse heatmap**: rows are images, columns are release dates, cells carry
+     a glyph plus the percentage, coloured by `visualMap.pieces` over the
+     severity ramp. Give each cell `{ value: [x, y, v], text, tip }` so
+     `toTableRows` pivots it into the accessible table.
+   - **Byte composition**: stacked area, cached below downloaded. Colour by
+     category, never by lane — the same band must mean the same thing in every
+     lane.
+   - **Compression state lane**: the same heatmap frame, one hue plus a glyph,
+     carrying `zstdLayers/totalLayers` in the cell.
+7. **Colour Comes From Tokens**: no hex literal in the component or its CSS
+   module. `useFactoryTheme()` resolves the `--fx-*` ramp; use
+   `fxTheme.categorical[i]`, `fxTheme.severity[level]`, `withAlpha()` and
+   `readableInk()`, and attach the returned ref to a root carrying
+   `className="fxRoot"`. `scripts/factory-theming.test.js` enforces this.
+   Charts render only through `src/components/factory/EChart.tsx`, which needs
+   `points` and `minPoints` on every panel.
 
 ## Common Rationalizations
 
@@ -49,17 +80,31 @@ Measuring release-over-release download deltas, chunkah layer reuse efficiency, 
   Wrong. ADR 0002 mandates visible unavailability: omitting a variant makes an incomplete dashboard indistinguishable from a healthy one. Render an explicit unavailable card.
 - _"We can estimate churn by diffing RPM package sizes instead of container layers."_
   Wrong. OCI layer descriptors represent the actual compressed bytes transferred over the wire by container engines and bootc. Layer digest matching is the ground truth.
+- _"A bar chart is the obvious way to show per-release download size."_
+  Wrong, and it has been rejected repeatedly. Use the lane/heatmap/area
+  vocabulary above. `scripts/image-churn-charts.test.js` reads the option
+  objects and fails on any `bar` series.
+- _"The baseline release shows 0% reuse, so the cache is not working."_
+  Wrong. A baseline has no predecessor, so reuse is undefined. Withhold it and
+  mark the cell `unknown`.
 
 ## Red Flags
 
 - Script fails the build on network timeouts or registry 404s.
 - Returning `null` from a chart panel causing it to disappear instead of rendering `<Unavailable>`.
-- Using red/green color encoding for churn rate severity.
+- Using red/green color encoding for churn rate severity, or hue without a glyph.
 - Interpolating missing release data points instead of rendering visible gaps with `gapSafe()`.
+- Autoscaling a small multiple to its own lane instead of the shared domain.
+- A hex literal anywhere in the component or its CSS module.
 
 ## Verification
 
 - `node --test scripts/fetch-update-churn.test.js` passes 100%.
+- `node --test scripts/image-churn-charts.test.js` passes: no bar series, one
+  shared domain per small-multiple panel, baselines withheld from deltas, and
+  every panel able to state unavailability.
+- `node --test scripts/factory-theming.test.js` passes, which covers
+  `src/components/analytics/ImageChurnCharts.module.css`.
 - `npm run typecheck` passes with 0 errors.
 - `npm run lint` passes with 0 errors.
 - `static/data/update-churn.json` carries a valid `generatedAt` timestamp and contains entries for all four images (`bluefin`, `bluefin-lts`, `dakota`, `utah`).
@@ -69,4 +114,8 @@ Measuring release-over-release download deltas, chunkah layer reuse efficiency, 
 - `scripts/fetch-update-churn.js`
 - `scripts/fetch-update-churn.test.js`
 - `src/components/analytics/ImageChurnCharts.tsx`
+- `src/components/analytics/ImageChurnCharts.module.css`
+- `scripts/image-churn-charts.test.js`
+- `projectbluefin/lab` → `src/scripts/{tests-charts.js,builds-charts.js}`, the
+  house chart style these panels follow
 - `.github/workflows/update-churn-cache.yml`

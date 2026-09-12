@@ -12,18 +12,22 @@ import {
   buildPayload,
   METHOD,
   VARIANTS,
-  NON_FEDORA_VARIANTS,
+  PROJECTBLUEFIN_IMAGES,
 } from "./fetch-countme.js";
 
 /**
  * A CSV record in the documented column order. Defaults describe an ordinary
  * countme row, so each test states only the field it is actually about.
+ *
+ * The default os_name is Aurora: this pipeline publishes upstream images only,
+ * so a fixture naming a Project Bluefin image would be dropped before it
+ * reached the rule under test.
  */
 function row({
   week_start = "2026-07-27",
   week_end = "2026-08-02",
   hits = 1,
-  os_name = "Bluefin",
+  os_name = "Aurora",
   os_version = "44",
   os_variant = "workstation",
   os_arch = "x86_64",
@@ -54,12 +58,12 @@ function parseAll(lines) {
 
 test("parseCsvLine maps the documented header order", () => {
   const line =
-    "2026-07-27,2026-08-03,42,Bluefin,42,Workstation,x86_64,1,updates,x86_64";
+    "2026-07-27,2026-08-03,42,Aurora,42,Workstation,x86_64,1,updates,x86_64";
   const parsed = parseCsvLine(line);
   assert.equal(parsed.week_start, "2026-07-27");
   assert.equal(parsed.week_end, "2026-08-03");
   assert.equal(parsed.hits, 42);
-  assert.equal(parsed.os_name, "Bluefin");
+  assert.equal(parsed.os_name, "Aurora");
   assert.equal(parsed.os_arch, "x86_64");
   assert.equal(parsed.sys_age, 1);
   assert.equal(parsed.repo_tag, "updates");
@@ -83,9 +87,9 @@ test("splitCsvRow unescapes a doubled quote inside a quoted field", () => {
 
 test("parseCsvLine reads a quoted os_name without shifting later columns", () => {
   const parsed = parseCsvLine(
-    '2026-07-27,2026-08-02,5,"Bluefin, Special Edition",44,workstation,x86_64,2,fedora-44,x86_64',
+    '2026-07-27,2026-08-02,5,"Aurora, Special Edition",44,workstation,x86_64,2,fedora-44,x86_64',
   );
-  assert.equal(parsed.os_name, "Bluefin, Special Edition");
+  assert.equal(parsed.os_name, "Aurora, Special Edition");
   assert.equal(parsed.hits, 5);
   assert.equal(parsed.repo_tag, "fedora-44");
   assert.equal(parsed.sys_age, 2);
@@ -99,20 +103,16 @@ test("parseCsvLine returns null for a row with the wrong column count", () => {
 
 // ── normalizeVariant ─────────────────────────────────────────────────────
 
-test("normalizeVariant folds known OS names", () => {
-  assert.equal(normalizeVariant("Bluefin"), "bluefin");
-  assert.equal(normalizeVariant("Bluefin LTS"), "bluefin-lts");
-  assert.equal(normalizeVariant("Achillobator"), "bluefin-lts");
+test("normalizeVariant folds the upstream OS names this pipeline publishes", () => {
   assert.equal(normalizeVariant("Aurora"), "aurora");
   assert.equal(normalizeVariant("Bazzite"), "bazzite");
   assert.equal(normalizeVariant("Fedora Linux"), "fedora");
-  assert.equal(normalizeVariant("Dakota"), "dakota");
-  assert.equal(normalizeVariant("Utah"), "utah");
+  assert.equal(normalizeVariant("Fedora"), "fedora");
 });
 
-test("normalizeVariant folds downstream spins", () => {
-  assert.equal(normalizeVariant("bluefin-dx-t1"), "bluefin");
+test("normalizeVariant folds downstream spins of a published variant", () => {
   assert.equal(normalizeVariant("AuroraWorkstation"), "aurora");
+  assert.equal(normalizeVariant("bazzite-deck"), "bazzite");
 });
 
 test("normalizeVariant returns null for unrecognised names", () => {
@@ -121,33 +121,34 @@ test("normalizeVariant returns null for unrecognised names", () => {
   assert.equal(normalizeVariant(null), null);
 });
 
-test("normalizeVariant returns bluefin-lts for Bluefin LTS, not bluefin", () => {
-  // Branch order: LTS must be checked before generic bluefin
-  assert.equal(normalizeVariant("Bluefin LTS"), "bluefin-lts");
-  assert.notEqual(normalizeVariant("Bluefin LTS"), "bluefin");
-});
-
-test("normalizeVariant recognizes Dakota and Utah before generic bluefin fallback", () => {
-  // Branch order: specific variants must be checked before generic bluefin
-  const names = ["Dakota", "bluefin-dakota", "Utah", "bluefin-utah"];
-  assert.deepEqual(names.map(normalizeVariant), [
-    "dakota",
-    "dakota",
-    "utah",
-    "utah",
+test("normalizeVariant resolves no projectbluefin image, under any spelling", () => {
+  // The rule: every Project Bluefin count comes from countme.projectbluefin.io.
+  // A row here that looks like one of ours is an upstream artefact — Fedora
+  // seeing an EPEL mirror hit, say — and bucketing it publishes that artefact
+  // as a population. Dropping it is the whole point of this function.
+  const spellings = PROJECTBLUEFIN_IMAGES.flatMap((image) => [
+    image,
+    image.toUpperCase(),
+    image.replace(/-/g, " "),
+    `${image}-dx`,
+    `Project Bluefin ${image}`,
   ]);
 
-  assert.equal(normalizeVariant("Dakota"), "dakota");
-  assert.equal(normalizeVariant("bluefin-dakota"), "dakota");
-  assert.equal(normalizeVariant("Bluefin Dakota"), "dakota");
-  assert.equal(normalizeVariant("Project Bluefin Dakota"), "dakota");
-  assert.notEqual(normalizeVariant("bluefin-dakota"), "bluefin");
+  const bucketed = spellings.filter((name) => normalizeVariant(name) !== null);
+  assert.deepEqual(
+    bucketed,
+    [],
+    `these projectbluefin spellings were bucketed into a published variant: ${bucketed.join(", ")}`,
+  );
+});
 
-  assert.equal(normalizeVariant("Utah"), "utah");
-  assert.equal(normalizeVariant("bluefin-utah"), "utah");
-  assert.equal(normalizeVariant("Bluefin Utah"), "utah");
-  assert.equal(normalizeVariant("Project Bluefin Utah"), "utah");
-  assert.notEqual(normalizeVariant("bluefin-utah"), "bluefin");
+test("VARIANTS names no projectbluefin image", () => {
+  for (const image of PROJECTBLUEFIN_IMAGES) {
+    assert.ok(
+      !VARIANTS.includes(image),
+      `${image} is counted by countme.projectbluefin.io, not by the Fedora CSV`,
+    );
+  }
 });
 
 // ── aggregateWeeks ───────────────────────────────────────────────────────
@@ -167,7 +168,7 @@ test("aggregateWeeks counts a system once, not once per enabled repo", () => {
   ]);
   const weeks = aggregateWeeks(rows);
   assert.equal(weeks.length, 1);
-  assert.equal(weeks[0].bluefin, 1);
+  assert.equal(weeks[0].aurora, 1);
 });
 
 test("aggregateWeeks excludes the legacy unique-IP rows carried as sys_age -1", () => {
@@ -180,7 +181,7 @@ test("aggregateWeeks excludes the legacy unique-IP rows carried as sys_age -1", 
     row({ sys_age: "-1", hits: 900 }),
   ]);
   const weeks = aggregateWeeks(rows);
-  assert.equal(weeks[0].bluefin, 15);
+  assert.equal(weeks[0].aurora, 15);
 });
 
 test("aggregateWeeks sums releases and architectures, which are different machines", () => {
@@ -192,43 +193,46 @@ test("aggregateWeeks sums releases and architectures, which are different machin
     row({ repo_tag: "fedora-44", os_arch: "aarch64", hits: 7 }),
   ]);
   const weeks = aggregateWeeks(rows);
-  assert.equal(weeks[0].bluefin, 127);
+  assert.equal(weeks[0].aurora, 127);
 });
 
-test("aggregateWeeks counts Bluefin LTS across its own repos, having no fedora-N repo", () => {
-  // LTS is CentOS Stream based and reaches Fedora's counter only through EPEL,
-  // so the base-repo restriction would zero it out.
-  const rows = parseAll([
-    row({ os_name: "Bluefin LTS", repo_tag: "epel-10", hits: 150 }),
-    row({ os_name: "Bluefin LTS", repo_tag: "epel-testing-10", hits: 9 }),
-  ]);
-  const weeks = aggregateWeeks(rows);
-  assert.equal(weeks[0]["bluefin-lts"], 159);
-  assert.equal(weeks[0].bluefin, undefined);
+test("aggregateWeeks drops an EPEL row entirely instead of exempting it", () => {
+  // The deleted NON_FEDORA_VARIANTS exemption let a CentOS Stream image skip
+  // the ^fedora-N$ restriction and be summed across whatever EPEL mirrors it
+  // reached. That sum is not a population, and the week it lands in is the one
+  // the page publishes — so an EPEL row must produce no key and no week at all,
+  // not a small number under some other name.
+  const epelOnly = aggregateWeeks(
+    parseAll([
+      row({ os_name: "Bluefin LTS", repo_tag: "epel-10", hits: 150 }),
+      row({ os_name: "Bluefin LTS", repo_tag: "epel-testing-10", hits: 9 }),
+    ]),
+  );
+  assert.deepEqual(epelOnly, []);
+
+  // And it contributes nothing to a week that does have real rows.
+  const mixed = aggregateWeeks(
+    parseAll([
+      row({ os_name: "Aurora", repo_tag: "fedora-44", hits: 12 }),
+      row({ os_name: "Bluefin LTS", repo_tag: "epel-10", hits: 150 }),
+    ]),
+  );
+  assert.equal(mixed.length, 1);
+  assert.deepEqual(Object.keys(mixed[0]).sort(), ["aurora", "week"]);
+  assert.equal(mixed[0].aurora, 12);
 });
 
-test("aggregateWeeks counts Dakota across non-Fedora repos, having no fedora-N repo", () => {
-  // Dakota is GNOME OS based and has no fedora-N repo; it must not be dropped
-  // by the base repo restriction or misclassified as flagship bluefin.
+test("aggregateWeeks applies the base-repo restriction to every variant", () => {
+  // No variant is exempt any more: a non-fedora-N repo never contributes,
+  // whoever the row belongs to.
   const rows = parseAll([
-    row({ os_name: "bluefin-dakota", repo_tag: "gnome-os", hits: 12 }),
-    row({ os_name: "Dakota", repo_tag: "gnome-os-master", hits: 8 }),
+    row({ os_name: "Bazzite", repo_tag: "fedora-44", hits: 30 }),
+    row({ os_name: "Bazzite", repo_tag: "rpmfusion-free", hits: 400 }),
+    row({ os_name: "Fedora Linux", repo_tag: "updates-released-f44", hits: 9 }),
   ]);
   const weeks = aggregateWeeks(rows);
-  assert.equal(weeks.length, 1);
-  assert.equal(weeks[0].dakota, 20);
-  assert.equal(weeks[0].bluefin, undefined);
-});
-
-test("aggregateWeeks counts Utah systems with base fedora repo, separated from Bluefin", () => {
-  const rows = parseAll([
-    row({ os_name: "bluefin-utah", repo_tag: "fedora-44", hits: 15 }),
-    row({ os_name: "bluefin", repo_tag: "fedora-44", hits: 30 }),
-  ]);
-  const weeks = aggregateWeeks(rows);
-  assert.equal(weeks.length, 1);
-  assert.equal(weeks[0].utah, 15);
-  assert.equal(weeks[0].bluefin, 30);
+  assert.equal(weeks[0].bazzite, 30);
+  assert.equal(weeks[0].fedora, undefined);
 });
 
 test("aggregateWeeks skips the two weeks upstream got wrong", () => {
@@ -248,13 +252,13 @@ test("aggregateWeeks skips the two weeks upstream got wrong", () => {
 
 test("aggregateWeeks drops unrecognised OSes", () => {
   const rows = parseAll([
-    row({ os_name: "Bluefin", hits: 10 }),
-    row({ os_name: "Aurora", hits: 5 }),
+    row({ os_name: "Aurora", hits: 10 }),
+    row({ os_name: "Bazzite", hits: 5 }),
     row({ os_name: "Rocky Linux", hits: 99 }),
   ]);
   const weeks = aggregateWeeks(rows);
-  assert.equal(weeks[0].bluefin, 10);
-  assert.equal(weeks[0].aurora, 5);
+  assert.equal(weeks[0].aurora, 10);
+  assert.equal(weeks[0].bazzite, 5);
   assert.equal(weeks[0]["rocky linux"], undefined);
 });
 
@@ -294,18 +298,18 @@ test("aggregateWeeks dropFirst trims the partial week even when it survives no f
 
 test("mergeHistory keeps existing weeks, replaces overlaps, sorts ascending, never duplicates", () => {
   const prior = [
-    { week: "2026-07-13", bluefin: 100 },
-    { week: "2026-07-20", bluefin: 200 },
+    { week: "2026-07-13", aurora: 100 },
+    { week: "2026-07-20", aurora: 200 },
   ];
   const fresh = [
-    { week: "2026-07-20", bluefin: 250 },
-    { week: "2026-07-27", bluefin: 300 },
+    { week: "2026-07-20", aurora: 250 },
+    { week: "2026-07-27", aurora: 300 },
   ];
   const merged = mergeHistory(prior, fresh);
   assert.equal(merged.length, 3);
   assert.equal(merged[0].week, "2026-07-13");
   assert.equal(merged[1].week, "2026-07-20");
-  assert.equal(merged[1].bluefin, 250); // fresh wins
+  assert.equal(merged[1].aurora, 250); // fresh wins
   assert.equal(merged[2].week, "2026-07-27");
 });
 
@@ -313,15 +317,32 @@ test("mergeHistory discards prior weeks counted by a different method", () => {
   // A routine run only sees a ~6 week window. Keeping older weeks that were
   // counted differently would leave one series with a step in the middle and
   // nothing on the page to say so.
-  const prior = [{ week: "2026-07-13", bluefin: 23737 }];
-  const fresh = [{ week: "2026-07-27", bluefin: 3761 }];
+  const prior = [{ week: "2026-07-13", aurora: 23737 }];
+  const fresh = [{ week: "2026-07-27", aurora: 3761 }];
   const merged = mergeHistory(prior, fresh, "countme-hits-v0");
   assert.deepEqual(merged, fresh);
 });
 
+test("mergeHistory does not carry a banned key forward out of an older method", () => {
+  // This is what the METHOD bump is for. A seed written before the
+  // projectbluefin images left this pipeline still carries bluefin and
+  // bluefin-lts keys; merging it forward would keep publishing Fedora-derived
+  // numbers under our image names forever.
+  const prior = [
+    { week: "2026-07-13", aurora: 2800, bluefin: 3555, "bluefin-lts": 165 },
+  ];
+  const fresh = [{ week: "2026-07-27", aurora: 3063 }];
+  const merged = mergeHistory(prior, fresh, "upstream-peers-v1");
+
+  const keys = new Set(merged.flatMap((w) => Object.keys(w)));
+  assert.ok(!keys.has("bluefin"), "bluefin survived a method change");
+  assert.ok(!keys.has("bluefin-lts"), "bluefin-lts survived a method change");
+  assert.deepEqual(merged, fresh);
+});
+
 test("mergeHistory keeps prior weeks when the method matches", () => {
-  const prior = [{ week: "2026-07-13", bluefin: 3555 }];
-  const fresh = [{ week: "2026-07-27", bluefin: 3761 }];
+  const prior = [{ week: "2026-07-13", aurora: 3555 }];
+  const fresh = [{ week: "2026-07-27", aurora: 3761 }];
   const merged = mergeHistory(prior, fresh, METHOD);
   assert.equal(merged.length, 2);
 });
@@ -336,7 +357,7 @@ test("tailRange computes correct byte ranges", () => {
 // ── buildPayload ─────────────────────────────────────────────────────────
 
 test("buildPayload produces the documented shape", () => {
-  const weeks = [{ week: "2026-07-27", bluefin: 42 }];
+  const weeks = [{ week: "2026-07-27", aurora: 42 }];
   const payload = buildPayload(weeks, {
     generatedAt: "2026-08-07T20:00:00Z",
   });
@@ -355,12 +376,15 @@ test("buildPayload produces the documented shape", () => {
   assert.equal(payload.stateReason, null);
   assert.equal(payload.weeks.length, 1);
   assert.deepEqual(payload.variants, VARIANTS);
-  assert.ok(payload.variants.includes("dakota"));
-  assert.ok(payload.variants.includes("utah"));
+  // The payload declares its own key set; a reader trusts it, so it may not
+  // advertise an image this pipeline is not allowed to count.
+  for (const image of PROJECTBLUEFIN_IMAGES) {
+    assert.ok(!payload.variants.includes(image));
+  }
 });
 
 test("buildPayload can retain history while marking a failed refresh unavailable", () => {
-  const payload = buildPayload([{ week: "2026-07-27", bluefin: 42 }], {
+  const payload = buildPayload([{ week: "2026-07-27", aurora: 42 }], {
     generatedAt: "2026-08-07T20:00:00Z",
     unavailable: true,
     stateReason: "Countme request failed",
@@ -368,44 +392,58 @@ test("buildPayload can retain history while marking a failed refresh unavailable
 
   assert.equal(payload.unavailable, true);
   assert.equal(payload.stateReason, "Countme request failed");
-  assert.deepEqual(payload.weeks, [{ week: "2026-07-27", bluefin: 42 }]);
+  assert.deepEqual(payload.weeks, [{ week: "2026-07-27", aurora: 42 }]);
 });
 
 // ── committed seed ───────────────────────────────────────────────────────
+
+const seed = JSON.parse(
+  readFileSync(
+    new URL("../static/data/countme-history.json", import.meta.url),
+    "utf-8",
+  ),
+);
 
 test("the committed seed was produced by the current method", () => {
   // A seed left behind by an older counting rule would be served to readers as
   // if it were current. mergeHistory drops such weeks on the next run, but the
   // committed file is what ships until then.
-  const seed = JSON.parse(
-    readFileSync(
-      new URL("../static/data/countme-history.json", import.meta.url),
-      "utf-8",
-    ),
-  );
   assert.equal(seed.method, METHOD);
+});
+
+test("the committed seed carries only the variants this pipeline may publish", () => {
+  const keys = new Set(seed.weeks.flatMap((w) => Object.keys(w)));
+  keys.delete("week");
+  for (const key of keys) {
+    assert.ok(
+      VARIANTS.includes(key),
+      `week key "${key}" is not one of the published variants ${VARIANTS.join(", ")}`,
+    );
+  }
 });
 
 test("committed seed magnitudes agree with ublue-os/countme", () => {
   // The dashboard and the project's README badges are two views of one number.
   // This pins the order of magnitude offline: before ADR 0004 the site said
-  // 23,737 weekly Bluefin devices while the badge said 3.8k.
-  const seed = JSON.parse(
-    readFileSync(
-      new URL("../static/data/countme-history.json", import.meta.url),
-      "utf-8",
-    ),
-  );
+  // 23,737 weekly Bluefin devices while the badge said 3.8k. The same failure
+  // mode applies to every variant here — dropping the one-repo-per-system rule
+  // multiplies each of these by the number of countme-enabled repos.
   const latest = seed.weeks.at(-1);
   assert.ok(latest, "seed has at least one week");
   assert.ok(
-    latest.bluefin > 1000 && latest.bluefin < 15000,
-    `Bluefin weekly devices out of expected range: ${latest.bluefin}. ` +
-      `Compare against ublue-os/countme badge-endpoints/bluefin.json before changing this bound.`,
+    latest.fedora > 100_000 && latest.fedora < 5_000_000,
+    `Fedora weekly devices out of expected range: ${latest.fedora}. ` +
+      `Compare against Fedora's published countme totals before changing this bound.`,
   );
-  // Bluefin LTS reaches Fedora's counter only through EPEL, so it is small.
   assert.ok(
-    latest["bluefin-lts"] < latest.bluefin,
-    "LTS should not exceed Bluefin",
+    latest.aurora > 100 && latest.aurora < 50_000,
+    `Aurora weekly devices out of expected range: ${latest.aurora}. ` +
+      `Compare against ublue-os/countme badge-endpoints before changing this bound.`,
+  );
+  // Fedora is the base every one of these images derives from, so it is the
+  // largest number in the file by orders of magnitude.
+  assert.ok(
+    latest.fedora > latest.bazzite && latest.bazzite > latest.aurora,
+    "expected fedora > bazzite > aurora",
   );
 });

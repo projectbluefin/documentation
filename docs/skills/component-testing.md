@@ -53,36 +53,30 @@ memory and rendered to a string inside that same runner.
 
 1. Put the test in `scripts/<name>.test.js` so the existing glob picks it up.
    It is CommonJS, like every other file there.
-2. Transpile and evaluate the component, stubbing CSS module imports:
+2. Load the component through `scripts/lib/load-tsx.js`, stubbing only the
+   imports a test cannot run:
 
    ```js
-   const fs = require("node:fs");
-   const ts = require("typescript");
    const React = require("react");
    const { renderToStaticMarkup } = require("react-dom/server");
+   const { loadTsxModule } = require("./lib/load-tsx");
 
-   function loadComponent(tsxPath) {
-     const { outputText } = ts.transpileModule(
-       fs.readFileSync(tsxPath, "utf8"),
-       {
-         compilerOptions: {
-           jsx: ts.JsxEmit.React,
-           target: ts.ScriptTarget.ES2020,
-           module: ts.ModuleKind.CommonJS,
-         },
-       },
-     );
-     const mod = { exports: {} };
-     new Function("require", "module", "exports", outputText)(
-       // `*.module.css` resolves to an object of class names at build time;
-       // in the test runner it must be stubbed or the require throws.
-       (id) => (id.endsWith(".css") ? {} : require(id)),
-       mod,
-       mod.exports,
-     );
-     return mod.exports.default;
-   }
+   const mod = loadTsxModule(tsxPath, (id) => {
+     // `*.module.css` resolves to an object of class names at build time;
+     // in the test runner it must be stubbed or the require throws.
+     if (id.endsWith(".css")) return {};
+     if (id.includes("EChart")) return echartStub;
+     return undefined; // fall through to real resolution
+   });
    ```
+
+   The loader hands itself down to relative imports and resolves Docusaurus's
+   `@site/…` alias against the repository root, including `.mjs` and `.json`.
+   Both matter: a nested local import resolved by node's `require` throws
+   `MODULE_NOT_FOUND`, and a stubbed `@site/scripts/lib/*.mjs` would mean the
+   test asserts against its own copy of a rule the page is supposed to obey.
+   Write a fresh inline transpiler only when the component needs a shim the
+   shared loader cannot express.
 
 3. Render with props and assert on the markup string:
 

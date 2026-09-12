@@ -375,6 +375,14 @@ function loadComponent(tsxPath) {
             }),
         };
       }
+      // `@site/…` is Docusaurus's alias for the repository root. The countme
+      // source policy is real repository source, not a stub: a test that made
+      // up its own copy of the rule would pass while the page broke it.
+      if (id.startsWith("@site/")) {
+        return loadModule(
+          path.resolve(__dirname, "..", id.slice("@site/".length)),
+        );
+      }
       // Relative imports for chartTheme
       if (id.startsWith(".")) {
         const base = path.resolve(path.dirname(tsxPath), id);

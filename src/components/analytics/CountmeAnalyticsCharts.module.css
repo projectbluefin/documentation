@@ -18,151 +18,12 @@
 
 /* ── Panels ─────────────────────────────────────────────────────────────── */
 
-.heroCard,
 .panelCard,
 .familySection {
   padding: var(--fx-space-5);
   background: var(--fx-surface);
   border: 1px solid var(--fx-border);
   border-radius: var(--fx-radius-lg);
-}
-
-.heroHeader {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--fx-space-5);
-  align-items: flex-start;
-  justify-content: space-between;
-  margin-bottom: var(--fx-space-4);
-}
-
-.heroTitleGroup {
-  flex: 1 1 22rem;
-  min-width: 0;
-}
-
-.heroTitle {
-  margin: 0 0 var(--fx-space-2);
-  font-size: var(--fx-text-xl);
-  line-height: 1.15;
-  color: var(--fx-text-strong);
-}
-
-.heroSubtitle {
-  margin: 0;
-  max-width: 56ch;
-  font-size: var(--fx-text-sm);
-  line-height: 1.55;
-  color: var(--fx-text-muted);
-}
-
-.heroKPI {
-  display: flex;
-  flex-direction: column;
-  gap: var(--fx-space-2);
-  align-items: flex-end;
-  text-align: right;
-}
-
-.heroNumber {
-  font-family: var(--fx-font-mono);
-  font-size: clamp(2.25rem, 6vw, 3.25rem);
-  font-weight: var(--fx-weight-black);
-  line-height: 1;
-  letter-spacing: -0.03em;
-  color: var(--fx-text-strong);
-  font-variant-numeric: tabular-nums;
-}
-
-.heroMeta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--fx-space-2);
-  align-items: center;
-  justify-content: flex-end;
-  font-size: var(--fx-text-xs);
-  color: var(--fx-text-muted);
-}
-
-.trendBadge {
-  padding: 0.125rem 0.5rem;
-  border-radius: var(--fx-radius-pill);
-  font-family: var(--fx-font-mono);
-  font-weight: var(--fx-weight-bold);
-  font-variant-numeric: tabular-nums;
-  border: 1px solid currentColor;
-}
-
-/* Direction is carried by the sign in the label; the tone only reinforces it. */
-.trendUp {
-  color: var(--fx-accent);
-}
-
-.trendDown {
-  color: var(--fx-sev-watch);
-}
-
-/* ── Controls ───────────────────────────────────────────────────────────── */
-
-.chartControls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--fx-space-3);
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: var(--fx-space-4);
-}
-
-.toggleGroup {
-  display: inline-flex;
-  padding: 0.1875rem;
-  gap: 0.1875rem;
-  background: var(--fx-surface-2);
-  border: 1px solid var(--fx-border);
-  border-radius: var(--fx-radius-pill);
-}
-
-.toggleBtn {
-  padding: 0.3125rem 0.875rem;
-  border: 0;
-  border-radius: var(--fx-radius-pill);
-  background: transparent;
-  color: var(--fx-text-muted);
-  font-family: inherit;
-  font-size: var(--fx-text-xs);
-  font-weight: var(--fx-weight-medium);
-  cursor: pointer;
-  transition: var(--fx-transition);
-}
-
-.toggleBtn:hover {
-  color: var(--fx-text);
-  background: var(--fx-surface-3);
-}
-
-.toggleBtn:focus-visible {
-  outline: 2px solid var(--fx-accent);
-  outline-offset: 2px;
-}
-
-.toggleBtnActive,
-.toggleBtnActive:hover {
-  background: var(--fx-accent);
-  color: var(--ifm-button-color);
-}
-
-.statStrip {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--fx-space-4);
-  font-size: var(--fx-text-xs);
-  color: var(--fx-text-muted);
-}
-
-.statStrip strong {
-  font-family: var(--fx-font-mono);
-  color: var(--fx-text-strong);
-  font-variant-numeric: tabular-nums;
 }
 
 /* ── Section headers ────────────────────────────────────────────────────── */
@@ -279,40 +140,6 @@
   color: var(--fx-text-faint);
 }
 
-.countRow {
-  display: flex;
-  gap: var(--fx-space-2);
-  align-items: baseline;
-}
-
-.countValue {
-  font-family: var(--fx-font-mono);
-  font-size: var(--fx-text-xl);
-  font-weight: var(--fx-weight-black);
-  line-height: 1;
-  letter-spacing: -0.02em;
-  color: var(--fx-text-strong);
-  font-variant-numeric: tabular-nums;
-}
-
-.sharePct {
-  font-size: var(--fx-text-xs);
-  color: var(--fx-text-muted);
-}
-
-.cardSparkline {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.sparklineLabel {
-  font-size: 0.7rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--fx-text-faint);
-}
-
 .variantList {
   display: flex;
   flex-direction: column;
@@ -376,16 +203,9 @@
 }
 
 @media (max-width: 600px) {
-  .heroHeader {
+  .familyCardHeader {
     flex-direction: column;
-  }
-
-  .heroKPI {
     align-items: flex-start;
-    text-align: left;
-  }
-
-  .heroMeta {
-    justify-content: flex-start;
+    gap: var(--fx-space-2);
   }
 }
