@@ -27,20 +27,29 @@ const themed = [
 /** Severity is deliberately hue-fixed, so hsl() is allowed; raw hex is not. */
 const HEX = /#[0-9a-fA-F]{6}\b/g;
 
+/**
+ * Blank out comment bodies, keeping newlines so line numbers still line up.
+ *
+ * The previous per-line check only recognised a comment when the line itself
+ * started with `*`, `//` or `/*`, so a wrapped block comment looked like code.
+ * That is the same trap the declaration test below already documents: parse the
+ * construct, do not pattern-match the line.
+ */
+function stripComments(src) {
+  return src
+    .replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, " "))
+    .replace(/\/\/[^\n]*/g, (m) => " ".repeat(m.length));
+}
+
 test("no themed file hardcodes a hex colour", () => {
   const offenders = [];
   for (const rel of themed) {
-    const src = fs.readFileSync(path.join(repo, rel), "utf8");
+    const src = stripComments(fs.readFileSync(path.join(repo, rel), "utf8"));
     src.split("\n").forEach((line, i) => {
-      // A comment may name a retired colour to explain why it is retired.
-      const isComment =
-        line.trimStart().startsWith("*") ||
-        line.trimStart().startsWith("//") ||
-        line.trimStart().startsWith("/*");
-      if (isComment) return;
       // The categorical series palette is a palette by definition: chart
-      // series need distinguishable hues that no Infima variable supplies.
-      // It is declared once, in tokens.css, and consumed as --fx-cat-*.
+      // series need distinguishable steps that no single Infima variable
+      // supplies. It is declared once, in tokens.css, and consumed as
+      // --fx-cat-*.
       if (/^\s*--fx-cat-\d:/.test(line)) return;
       const found = line.match(HEX);
       if (found) offenders.push(`${rel}:${i + 1} ${found.join(" ")}`);
@@ -51,6 +60,80 @@ test("no themed file hardcodes a hex colour", () => {
     [],
     `use a --fx-* token so the dashboard follows the site theme:\n${offenders.join("\n")}`,
   );
+});
+
+test("the chart palette is anchored on the Bluefin brand accent", () => {
+  const tokens = fs.readFileSync(
+    path.join(repo, "src/components/factory/tokens.css"),
+    "utf8",
+  );
+
+  // The wordmark ligature colour in docs/press-kit.md, and --color-blue in
+  // projectbluefin/website. It is the one value the ramp is built around.
+  const anchors = [...tokens.matchAll(/--fx-cat-1:\s*(#[0-9a-f]{6})/gi)].map(
+    (m) => m[1].toLowerCase(),
+  );
+  assert.ok(anchors.length >= 2, "both themes must declare --fx-cat-1");
+  assert.deepEqual([...new Set(anchors)], ["#4285f4"]);
+
+  // Severity is one hue at four intensities. Amber is what this replaced: a
+  // traffic-light ramp reads as a different product inside a blue dashboard.
+  const sevHues = [
+    ...tokens.matchAll(/--fx-sev-(?:ok|watch|alert):\s*hsl\((\d+)/g),
+  ].map((m) => m[1]);
+  assert.ok(sevHues.length >= 6, "both themes must declare the severity ramp");
+  assert.deepEqual(
+    [...new Set(sevHues)],
+    ["217"],
+    "severity must stay on the brand hue in both themes",
+  );
+});
+
+test("the canvas fallback ramp matches the dark tokens it stands in for", () => {
+  const tokens = fs.readFileSync(
+    path.join(repo, "src/components/factory/tokens.css"),
+    "utf8",
+  );
+  const theme = fs.readFileSync(
+    path.join(repo, "src/components/factory/chartTheme.ts"),
+    "utf8",
+  );
+
+  // Canvas cannot read a CSS variable, so chartTheme.ts carries a copy for
+  // charts mounted outside .fxRoot. A copy that drifts is how the dashboard
+  // ended up with two palettes; this is the gate that notices.
+  const darkBlock = /\[data-theme="dark"\]\s*\.fxRoot\s*\{([\s\S]*?)\n\}/.exec(
+    tokens,
+  );
+  assert.ok(darkBlock, "tokens.css must carry a dark override block");
+
+  const darkCats = [
+    ...darkBlock[1].matchAll(/--fx-cat-\d:\s*(#[0-9a-f]{6})/gi),
+  ].map((m) => m[1].toLowerCase());
+  assert.equal(darkCats.length, 6, "the dark block restates all six cat steps");
+
+  const fallbackCats = [
+    ...(/const CATEGORICAL = \[([\s\S]*?)\]/.exec(theme)?.[1] ?? "").matchAll(
+      /"(#[0-9a-f]{6})"/gi,
+    ),
+  ].map((m) => m[1].toLowerCase());
+  assert.deepEqual(
+    fallbackCats,
+    darkCats,
+    "CATEGORICAL must equal the dark --fx-cat-* ramp, step for step",
+  );
+
+  for (const [, level, color] of darkBlock[1].matchAll(
+    /--fx-sev-(ok|watch|alert):\s*(hsl\([^)]+\))/g,
+  )) {
+    assert.match(
+      theme,
+      new RegExp(
+        `${level}:\\s*\\{\\s*color:\\s*"${color.replace(/[()%,]/g, "\\$&")}"`,
+      ),
+      `FX_SEVERITY.${level} must equal the dark --fx-sev-${level}`,
+    );
+  }
 });
 
 test("tokens derive from Infima rather than redefining a palette", () => {
