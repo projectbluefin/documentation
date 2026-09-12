@@ -257,3 +257,40 @@ export function renderRepoBadge(dataset, repo) {
     color: (current ? repoAccent(repo) : PALETTE.muted).replace("#", ""),
   };
 }
+
+/**
+ * The upstream chart, recoloured to the Bluefin palette.
+ *
+ * Presentation only. Every coordinate, tick and label stays exactly as upstream
+ * drew it; this rewrites the four colours matplotlib emits and nothing else.
+ * The data is not re-derived, because it may not be: `isPermittedSource` allows
+ * one source for `ublue-os/bluefin:stable`, and recomputing the series from
+ * Fedora's CSV would be a forbidden source wearing our palette.
+ *
+ * The background becomes transparent rather than dark. An SVG inside an `<img>`
+ * cannot read the page's CSS, so a baked dark canvas would be wrong in light
+ * mode; letting the panel behind it show through is correct in both. The ink
+ * tones are chosen to clear AA on either surface for the same reason.
+ */
+const UPSTREAM_PALETTE = Object.freeze({
+  "#ffffff": "none", // canvas — let the panel behind show through
+  "#cccccc": "#7d848d", // gridlines
+  "#616161": "#8b949e", // axis labels and ticks
+  "#77aadd": "#58a6ff", // the series itself, in Bluefin blue
+});
+
+export function restyleUpstreamChart(svg) {
+  let out = String(svg);
+
+  for (const [from, to] of Object.entries(UPSTREAM_PALETTE)) {
+    out = out.replaceAll(from, to);
+    out = out.replaceAll(from.toUpperCase(), to);
+  }
+
+  // matplotlib paints the canvas as an opaque rect before anything else.
+  // `fill="none"` above handles the declared colour; this catches the pair of
+  // full-bleed rects it emits with an explicit style instead.
+  out = out.replaceAll('style="fill: none"', 'style="fill:none"');
+
+  return out;
+}

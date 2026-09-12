@@ -762,3 +762,85 @@ test("accepts metalink pings from Utah countme clients", async () => {
     /countme accepted for repo=utah tag=testing flavor=default gamemode=0 arch=x86_64 countme=1/i,
   );
 });
+
+test("the themed legacy chart recolours upstream without re-deriving it", async () => {
+  // isPermittedSource allows exactly one source for ublue-os/bluefin:stable, so
+  // this route must fetch the same artifact the untouched route serves and only
+  // change its colours. Recomputing the series from Fedora's CSV — how upstream
+  // builds it — would be a forbidden source wearing our palette.
+  const upstreamSvg =
+    '<svg xmlns="http://www.w3.org/2000/svg">' +
+    '<rect fill="#ffffff" width="10" height="10"/>' +
+    '<path stroke="#cccccc" d="M0 0"/>' +
+    '<text fill="#616161">2026-01</text>' +
+    '<path stroke="#77aadd" d="M1 1 L2 2"/>' +
+    "</svg>";
+
+  const calls = [];
+  const restore = globalThis.fetch;
+  globalThis.fetch = async (url) => {
+    calls.push(String(url));
+    return new Response(upstreamSvg, {
+      status: 200,
+      headers: { "content-type": "image/svg+xml" },
+    });
+  };
+
+  try {
+    const res = await fetchHandler(
+      new Request("https://countme.projectbluefin.io/legacy/bluefin.svg"),
+      {},
+      { waitUntil() {} },
+    );
+    const body = await res.text();
+
+    assert.equal(res.status, 200);
+    assert.match(res.headers.get("content-type"), /svg/);
+    assert.equal(
+      calls.length,
+      1,
+      "the themed chart must come from one upstream fetch",
+    );
+    assert.match(calls[0], /ublue-os\/countme/);
+    assert.doesNotMatch(
+      calls[0],
+      /data-analysis\.fedoraproject\.org/,
+      "the series must never be recomputed from the forbidden source",
+    );
+
+    // Upstream's white canvas must not survive onto a dark panel.
+    assert.doesNotMatch(body, /#ffffff/i);
+    assert.doesNotMatch(body, /#77aadd/i);
+    assert.match(body, /#58a6ff/, "the series takes the Bluefin accent");
+
+    // The geometry is upstream's and must be untouched.
+    assert.match(body, /d="M1 1 L2 2"/);
+    assert.match(body, /2026-01/);
+  } finally {
+    globalThis.fetch = restore;
+  }
+});
+
+test("the untouched legacy route still returns upstream's own bytes", async () => {
+  const upstreamSvg =
+    '<svg><rect fill="#ffffff"/><path stroke="#77aadd"/></svg>';
+  const restore = globalThis.fetch;
+  globalThis.fetch = async () =>
+    new Response(upstreamSvg, {
+      status: 200,
+      headers: { "content-type": "image/svg+xml" },
+    });
+
+  try {
+    const res = await fetchHandler(
+      new Request("https://countme.projectbluefin.io/growth_bluefins.svg"),
+      {},
+      { waitUntil() {} },
+    );
+    const body = await res.text();
+    assert.match(body, /#ffffff/, "upstream's artifact stays byte-for-byte");
+    assert.match(body, /#77aadd/);
+  } finally {
+    globalThis.fetch = restore;
+  }
+});
