@@ -844,3 +844,42 @@ test("the untouched legacy route still returns upstream's own bytes", async () =
     globalThis.fetch = restore;
   }
 });
+
+test("the chart title is inked, not left to default black", async () => {
+  // matplotlib omits `style` on the title's group, so a remap that only
+  // rewrites declared colours leaves it black on a dark panel. Every other text
+  // group carries its own fill.
+  const upstreamSvg =
+    '<svg xmlns="http://www.w3.org/2000/svg">' +
+    '<g id="text_17"><g style="fill: #616161" transform="translate(1 2)"/></g>' +
+    '<g id="text_18">\n <!-- Weekly Active Devices -->\n ' +
+    '<g transform="translate(3 4)"/></g>' +
+    '<g id="line2d_1"><g transform="translate(5 6)"/></g>' +
+    "</svg>";
+
+  const restore = globalThis.fetch;
+  globalThis.fetch = async () =>
+    new Response(upstreamSvg, {
+      status: 200,
+      headers: { "content-type": "image/svg+xml" },
+    });
+
+  try {
+    const res = await fetchHandler(
+      new Request("https://countme.projectbluefin.io/legacy/bluefin.svg"),
+      {},
+      { waitUntil() {} },
+    );
+    const body = await res.text();
+
+    assert.match(
+      body,
+      /<g id="text_18">\s*<!-- Weekly Active Devices -->\s*<g style="fill: #8b949e" transform="translate\(3 4\)"/u,
+      "the title must be given the same ink as the axis labels",
+    );
+    // A plotted group is not text and must keep its own styling untouched.
+    assert.match(body, /<g id="line2d_1"><g transform="translate\(5 6\)"/u);
+  } finally {
+    globalThis.fetch = restore;
+  }
+});

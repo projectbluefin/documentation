@@ -279,6 +279,20 @@ const UPSTREAM_PALETTE = Object.freeze({
   "#77aadd": "#58a6ff", // the series itself, in Bluefin blue
 });
 
+/** The ink every text group gets, including the ones upstream leaves unset. */
+const UPSTREAM_INK = "#8b949e";
+
+/**
+ * Text groups matplotlib emits with no fill of their own.
+ *
+ * Axis labels and ticks carry `style="fill: ..."`; the chart title does not, so
+ * it falls back to the SVG default of black and stays black through a colour
+ * remap that only rewrites declared values. Matching the group opener is what
+ * makes this catch the title without touching the plotted paths.
+ */
+const UNSTYLED_TEXT_GROUP =
+  /(<g id="text_\d+">\s*(?:<!--[\s\S]*?-->\s*)?<g )(transform=)/gu;
+
 export function restyleUpstreamChart(svg) {
   let out = String(svg);
 
@@ -286,6 +300,8 @@ export function restyleUpstreamChart(svg) {
     out = out.replaceAll(from, to);
     out = out.replaceAll(from.toUpperCase(), to);
   }
+
+  out = out.replace(UNSTYLED_TEXT_GROUP, `$1style="fill: ${UPSTREAM_INK}" $2`);
 
   // matplotlib paints the canvas as an opaque rect before anything else.
   // `fill="none"` above handles the declared colour; this catches the pair of
