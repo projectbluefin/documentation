@@ -28,6 +28,9 @@ function loadComponent() {
   new Function("require", "module", "exports", outputText)(
     (id) => {
       if (id.endsWith(".css")) return {};
+      if (id === "@docusaurus/useBaseUrl") {
+        return { __esModule: true, default: (p) => p };
+      }
       if (id === "@docusaurus/Link") {
         return {
           __esModule: true,
@@ -150,6 +153,48 @@ const {
   BLUEFIN_FAMILY_IMAGES,
   default: CountmeAnalyticsCharts,
 } = mod;
+
+const REGISTRY_FIXTURE = {
+  generatedAt: "2026-09-10T04:08:30.490Z",
+  source: "public-registry",
+  packages: [
+    {
+      name: "bluefin",
+      family: "os",
+      streams: [
+        {
+          tag: "testing",
+          publishedAt: "2026-09-08T18:31:26Z",
+          ageDays: 1,
+          state: "fresh",
+          stateReason: null,
+        },
+        {
+          tag: "stable",
+          publishedAt: "2026-09-08T18:31:26Z",
+          ageDays: 1,
+          state: "fresh",
+          stateReason: null,
+        },
+      ],
+    },
+    {
+      name: "bluefin-lts-hwe",
+      family: "os",
+      streams: [
+        {
+          tag: "testing",
+          publishedAt: "2026-06-30T01:09:51Z",
+          ageDays: 72,
+          state: "stale",
+          stateReason: "testing lanes are expected to publish within 7 days",
+        },
+      ],
+    },
+  ],
+  unavailable: false,
+  stateReason: null,
+};
 
 test("parseCount distinguishes 0 from null/undefined", () => {
   assert.equal(parseCount(0), 0);
@@ -291,18 +336,177 @@ test("unified fleet EChart preserves missing weeks as gaps and 0 as 0", () => {
     React.createElement(CountmeAnalyticsCharts, { dataset }),
   );
 
-  // Find echart with title "Bluefin Systems"
   const heroChartMatch = html.match(
-    /data-title="Bluefin Systems"[^>]*data-option="([^"]*)"/,
+    /data-title="Project Bluefin fleet"[^>]*data-option="([^"]*)"/,
   );
   assert.ok(heroChartMatch, "hero echart must be present");
 
   const option = JSON.parse(heroChartMatch[1].replace(/&quot;/g, '"'));
-  const totalSeriesData = option.series[0].data;
+  const fleet = option.series.find((s) => s.name === "Weekly active systems");
+  assert.ok(fleet, "fleet series must be present");
 
   assert.deepEqual(
-    totalSeriesData,
+    fleet.data,
     [100, null, 0],
     "unified fleet series must preserve null gap for missing week and 0 for zero week",
   );
+});
+
+test("every catalogued OCI image gets a matrix row, registry or not", () => {
+  const { matrixRows, BLUEFIN_FAMILY_IMAGES: families } = mod;
+  const images = matrixRows().map((r) => r.image);
+
+  assert.deepEqual(images, [
+    "bluefin",
+    "bluefin-nvidia",
+    "bluefin-lts",
+    "bluefin-lts-hwe",
+    "bluefin-lts-hwe-nvidia",
+    "dakota",
+    "dakota-nvidia",
+  ]);
+
+  // Bluefin Server delivers a DDI, not a container tag, so it has no lane here
+  // even though it is a counted family.
+  assert.ok(families.some((f) => f.id === "server"));
+  assert.ok(!images.includes("server"));
+});
+
+test("an image the registry does not carry stays in the grid as a gap", () => {
+  const { matrixRows, buildStreamMatrix, STREAM_COLUMNS } = mod;
+  const rows = matrixRows();
+  const cells = buildStreamMatrix(rows, []);
+
+  assert.equal(cells.length, rows.length * STREAM_COLUMNS.length);
+  for (const cell of cells) {
+    assert.equal(cell.level, "unknown");
+    assert.equal(cell.ageDays, null, "an absent stream is a gap, never 0");
+  }
+});
+
+test("a stream a family does not promote through is named, not blamed", () => {
+  const { matrixRows, buildStreamMatrix } = mod;
+  const rows = matrixRows();
+  const cells = buildStreamMatrix(rows, [
+    {
+      name: "bluefin",
+      family: "os",
+      streams: [{ tag: "lts", ageDays: 99, state: "stale", publishedAt: null }],
+    },
+  ]);
+
+  const retired = cells.find(
+    (c) => c.image === "bluefin" && c.stream === "lts",
+  );
+  assert.equal(retired.level, "unknown");
+  assert.equal(retired.ageDays, null);
+  assert.match(retired.reason, /does not promote through :lts/);
+});
+
+test("freshness splits stale by drift and treats a missing tag as unknown", () => {
+  const { freshnessLevel } = mod;
+  assert.equal(freshnessLevel(undefined), "unknown");
+  assert.equal(freshnessLevel({ tag: "stable", ageDays: null }), "unknown");
+  assert.equal(
+    freshnessLevel({ tag: "stable", ageDays: 0, state: "fresh" }),
+    "ok",
+  );
+  assert.equal(
+    freshnessLevel({ tag: "stable", ageDays: 12, state: "stale" }),
+    "watch",
+  );
+  assert.equal(
+    freshnessLevel({ tag: "stable", ageDays: 72, state: "stale" }),
+    "alert",
+  );
+});
+
+test("the rolling band stays empty until its window is full", () => {
+  const { rollingPercentile } = mod;
+  const median = rollingPercentile([1, 2, 3, 4, 5, 6], 5, 0.5);
+
+  assert.deepEqual(
+    median.slice(0, 4),
+    [null, null, null, null],
+    "a four-point window must not be extrapolated into a band",
+  );
+  assert.equal(median[4], 3);
+  assert.equal(median[5], 4);
+});
+
+test("a gap withholds the band instead of being read as zero", () => {
+  const { rollingPercentile } = mod;
+  const median = rollingPercentile([10, null, 10, 10, 10, 10, 10], 5, 0.5);
+
+  assert.equal(
+    median[5],
+    null,
+    "a window holding four measurements and one gap is not a full window",
+  );
+  assert.equal(
+    median[6],
+    10,
+    "the band resumes once five real measurements are in the window, undragged by the gap",
+  );
+});
+
+const MATRIX_DATASET = {
+  generatedAt: "2026-09-10T00:00:00Z",
+  source: "test",
+  method: "ublue-countme-v1",
+  unit: "estimated weekly active systems",
+  variants: ["bluefin", "bluefin-lts"],
+  weeks: [
+    { week: "2026-09-01", bluefin: 3000, "bluefin-lts": 100 },
+    { week: "2026-09-08", bluefin: 3100, "bluefin-lts": 110 },
+  ],
+  unavailable: false,
+  stateReason: null,
+};
+
+test("the matrix plots every catalogued image against every stream", () => {
+  const html = renderToStaticMarkup(
+    React.createElement(CountmeAnalyticsCharts, {
+      dataset: MATRIX_DATASET,
+      registry: REGISTRY_FIXTURE,
+    }),
+  );
+
+  const chart = html.match(
+    /data-title="Image stream freshness"[^>]*data-option="([^"]*)"/,
+  );
+  assert.ok(chart, "matrix echart must be present");
+
+  const option = JSON.parse(chart[1].replace(/&quot;/g, '"'));
+  assert.deepEqual(option.yAxis.data, [
+    "bluefin",
+    "bluefin-nvidia",
+    "bluefin-lts",
+    "bluefin-lts-hwe",
+    "bluefin-lts-hwe-nvidia",
+    "dakota",
+    "dakota-nvidia",
+  ]);
+  assert.deepEqual(option.xAxis.data, [":testing", ":stable", ":lts"]);
+  assert.equal(option.series[0].data.length, 21);
+
+  // Every cell carries its own number, never a bare colour swatch.
+  const published = option.series[0].data.filter((c) => c.text !== "—");
+  assert.deepEqual(published.map((c) => c.text).sort(), [
+    "■ 72d",
+    "● 1d",
+    "● 1d",
+  ]);
+});
+
+test("the matrix says why it is empty rather than rendering nothing", () => {
+  const html = renderToStaticMarkup(
+    React.createElement(CountmeAnalyticsCharts, {
+      dataset: MATRIX_DATASET,
+      registry: { packages: [], unavailable: true, stateReason: "no token" },
+    }),
+  );
+
+  assert.match(html, /data-what="Image stream matrix"/);
+  assert.match(html, /data-reason="no token"/);
 });
