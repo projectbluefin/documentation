@@ -412,10 +412,10 @@ async function fetchContributorWeeklyStats(repos = FALLBACK_FACTORY_REPOS) {
   return finalizeContributorStats(acc);
 }
 
-function loadHistory() {
+function loadHistory(file = OUTPUT_FILE) {
   try {
-    if (fs.existsSync(OUTPUT_FILE)) {
-      return JSON.parse(fs.readFileSync(OUTPUT_FILE, "utf8"));
+    if (fs.existsSync(file)) {
+      return JSON.parse(fs.readFileSync(file, "utf8"));
     }
   } catch {
     // ignore corrupt file — start fresh
@@ -571,8 +571,10 @@ module.exports = {
   createStatsAccumulator,
   extractMetrics,
   finalizeContributorStats,
+  loadHistory,
   MAX_WEEKLY_SERIES,
   MAX_WEEKS,
   registryHeaders,
+  safeNum,
   trackedProjectRepos,
 };
