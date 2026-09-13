@@ -28,6 +28,7 @@
 import { writeFileSync, existsSync, statSync } from "fs";
 import { resolve, dirname } from "path";
 import { fileURLToPath, pathToFileURL } from "url";
+import { GH_API, ghFetch, githubToken } from "./lib/gh.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const OUT = resolve(__dirname, "../static/data/hive-live-data.json");
@@ -118,8 +119,8 @@ export async function main() {
   const CACHE_TTL_MS = CACHE_TTL_HOURS * 60 * 60 * 1000;
   const force = process.argv.includes("--force");
 
-  const TOKEN = process.env.GITHUB_TOKEN || process.env.GH_TOKEN || "";
-  if (!TOKEN) {
+  const token = githubToken();
+  if (!token) {
     console.warn(
       "fetch-hive-live-data: no GITHUB_TOKEN — API calls will be rate-limited",
     );
@@ -135,15 +136,9 @@ export async function main() {
     }
   }
 
-  const GH_API = "https://api.github.com";
-  const headers = {
-    Accept: "application/vnd.github.v3+json",
-    ...(TOKEN ? { Authorization: `Bearer ${TOKEN}` } : {}),
-  };
-
   async function ghSearch(q, perPage = 30) {
     const url = `${GH_API}/search/issues?q=${encodeURIComponent(q)}&sort=updated&order=desc&per_page=${perPage}`;
-    const res = await fetch(url, { headers });
+    const res = await ghFetch(url, { token });
     if (!res.ok) {
       const err = await res.text().catch(() => res.statusText);
       throw new Error(`${res.status} for ${url}: ${err.slice(0, 200)}`);
@@ -153,7 +148,7 @@ export async function main() {
 
   async function ghGet(path) {
     const url = path.startsWith("http") ? path : `${GH_API}${path}`;
-    const res = await fetch(url, { headers });
+    const res = await ghFetch(url, { token });
     if (!res.ok) throw new Error(`${res.status} for ${url}`);
     return res.json();
   }

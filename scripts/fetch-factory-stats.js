@@ -54,11 +54,11 @@
 import { writeFileSync, existsSync, statSync, mkdirSync } from "fs";
 import { resolve, dirname } from "path";
 import { fileURLToPath, pathToFileURL } from "url";
+import { GH_API, ghPaginate, githubToken } from "./lib/gh.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const OUT = resolve(__dirname, "../static/data/factory-stats.json");
 
-const GH_API = "https://api.github.com";
 const WINDOW_DAYS = 7;
 const MAX_PAGES = 10; // 1000 runs per lane is far more than a 7-day window holds
 
@@ -284,30 +284,20 @@ export function buildPayload(lanes, { from, to, generatedAt }) {
   };
 }
 
-const TOKEN = process.env.GITHUB_TOKEN || process.env.GH_TOKEN || "";
-
-const headers = {
-  Accept: "application/vnd.github.v3+json",
-  "User-Agent": "bluefin-docs/fetch-factory-stats",
-  ...(TOKEN ? { Authorization: `Bearer ${TOKEN}` } : {}),
-};
-
-async function fetchLaneRuns(repo, fromISO) {
-  const runs = [];
-  for (let page = 1; page <= MAX_PAGES; page++) {
-    const url =
-      `${GH_API}/repos/${repo}/actions/runs` +
-      `?per_page=100&page=${page}&created=${encodeURIComponent(`>=${fromISO.slice(0, 10)}`)}`;
-    const res = await fetch(url, {
-      headers,
+async function fetchLaneRuns(repo, fromISO, token) {
+  const runs = await ghPaginate(
+    `${GH_API}/repos/${repo}/actions/runs?created=>=${encodeURIComponent(
+      `>=${fromISO.slice(0, 10)}`,
+    )}`,
+    {
+      token,
+      maxPages: MAX_PAGES,
+      select: (body) => body.workflow_runs ?? [],
+      // Preserve the site's own per-request timeout so a wedged endpoint can't
+      // hang the build (projectbluefin/documentation#1232).
       signal: AbortSignal.timeout(20000),
-    });
-    if (!res.ok) throw new Error(`HTTP ${res.status} for ${repo} actions/runs`);
-    const data = await res.json();
-    const batch = data.workflow_runs ?? [];
-    runs.push(...batch);
-    if (batch.length < 100) break;
-  }
+    },
+  );
   const fromMs = Date.parse(fromISO);
   return runs.filter(
     (r) => Date.parse(r.run_started_at ?? r.created_at ?? "") >= fromMs,
@@ -330,7 +320,8 @@ async function main() {
     }
   }
 
-  if (!TOKEN) {
+  const token = githubToken();
+  if (!token) {
     console.warn(
       "fetch-factory-stats: no GITHUB_TOKEN/GH_TOKEN — API calls will be rate-limited",
     );
@@ -343,7 +334,7 @@ async function main() {
   const lanes = await Promise.all(
     LANES.map(async (lane) => {
       try {
-        const runs = await fetchLaneRuns(lane.repo, fromISO);
+        const runs = await fetchLaneRuns(lane.repo, fromISO, token);
         return buildLane(lane, runs);
       } catch (err) {
         console.warn(
