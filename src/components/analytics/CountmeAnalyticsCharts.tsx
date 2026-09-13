@@ -728,7 +728,7 @@ export default function CountmeAnalyticsCharts({
       <section className={styles.panelCard}>
         <header className={styles.sectionHeader}>
           <Heading as="h3" className={styles.sectionTitle}>
-            Upstream Image (Legacy)
+            ublue-os/bluefin (legacy)
           </Heading>
           <p className={styles.sectionSubtext}>
             <code>ublue-os/bluefin:stable</code>, counted by{" "}
