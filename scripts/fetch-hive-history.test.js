@@ -1,5 +1,8 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const path = require("node:path");
+const { tmpdir } = require("node:os");
 
 const {
   accumulateRepoStats,
@@ -7,8 +10,10 @@ const {
   createStatsAccumulator,
   extractMetrics,
   finalizeContributorStats,
+  loadHistory,
   MAX_WEEKS,
   registryHeaders,
+  safeNum,
   trackedProjectRepos,
 } = require("./fetch-hive-history.js");
 
@@ -433,4 +438,77 @@ test("extractMetrics survives wrong-typed containers without throwing", () => {
   assert.equal(metrics.queue, undefined);
   assert.equal(metrics.mergedToday, undefined);
   assert.equal(metrics.medianMergeMins, undefined);
+});
+
+// safeNum is the coercion gate behind every numeric field: it turns anything
+// that is not a finite number into undefined so a chart plots a gap, not a
+// garbage value. loadHistory is the read path for the tracked seed file — a
+// regression here either silently drops history or crashes the run.
+
+test("safeNum keeps only finite numbers", () => {
+  assert.equal(safeNum(42), 42);
+  assert.equal(safeNum(0), 0);
+  assert.equal(safeNum(3.14), 3.14);
+});
+
+test("safeNum rejects non-numbers, NaN and +/- Infinity", () => {
+  for (const v of [
+    NaN,
+    Infinity,
+    -Infinity,
+    "12",
+    null,
+    undefined,
+    {},
+    [],
+    true,
+    { a: 1 },
+  ]) {
+    assert.equal(safeNum(v), undefined, `expected undefined for ${String(v)}`);
+  }
+});
+
+test("loadHistory returns the seeded default when no file exists", () => {
+  const missing = path.join(tmpdir(), `hive-missing-${process.pid}.json`);
+  assert.equal(fs.existsSync(missing), false);
+
+  const history = loadHistory(missing);
+
+  assert.deepEqual(history, {
+    entries: [],
+    contributors: {},
+    contributorsByRepo: {},
+    contributorStats: {},
+    contributorWeekStarts: [],
+    lastContributorFetch: null,
+    lastWeeklyStatsFetch: null,
+  });
+});
+
+test("loadHistory parses a valid history file", () => {
+  const file = path.join(tmpdir(), `hive-valid-${process.pid}.json`);
+  const seed = {
+    entries: [{ t: 1, acmmLevel: 3 }],
+    contributors: { a: 5 },
+    contributorWeekStarts: [1735689600],
+  };
+  fs.writeFileSync(file, JSON.stringify(seed), "utf8");
+  try {
+    assert.deepEqual(loadHistory(file), seed);
+  } finally {
+    fs.rmSync(file);
+  }
+});
+
+test("loadHistory starts fresh on a corrupt file instead of throwing", () => {
+  const file = path.join(tmpdir(), `hive-corrupt-${process.pid}.json`);
+  fs.writeFileSync(file, "{ not: valid json,,, ", "utf8");
+  try {
+    const history = loadHistory(file);
+    assert.deepEqual(history.entries, []);
+    assert.deepEqual(history.contributors, {});
+    assert.deepEqual(history.contributorWeekStarts, []);
+  } finally {
+    fs.rmSync(file);
+  }
 });
