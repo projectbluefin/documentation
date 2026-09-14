@@ -25,10 +25,16 @@
  *   ffmpeg   Converts any decoded image → WebP thumbnail and fullres
  */
 
-import { readFileSync, writeFileSync, mkdirSync, existsSync, unlinkSync } from "fs";
+import {
+  readFileSync,
+  writeFileSync,
+  mkdirSync,
+  existsSync,
+  unlinkSync,
+} from "fs";
 import { execSync } from "child_process";
 import { join, dirname, extname, basename } from "path";
-import { fileURLToPath } from "url";
+import { fileURLToPath, pathToFileURL } from "url";
 import os from "os";
 import {
   findBazziteCandidates,
@@ -75,8 +81,8 @@ const apiHeaders = {
  * Fetch a URL and return parsed JSON.
  * Throws on non-2xx responses with a descriptive message.
  */
-async function fetchJSON(url) {
-  const res = await fetch(url, { headers: apiHeaders });
+export async function fetchJSON(url, { fetchImpl = fetch } = {}) {
+  const res = await fetchImpl(url, { headers: apiHeaders });
   if (!res.ok) {
     const body = await res.text().catch(() => "(unreadable)");
     throw new Error(`HTTP ${res.status} from ${url}\n${body}`);
@@ -92,14 +98,15 @@ async function fetchJSON(url) {
  * having to walk subtrees one-by-one.  For large repos this may be truncated
  * by GitHub; the `truncated` field is checked and we bail if true.
  */
-async function fetchRepoTree() {
+export async function fetchRepoTree({ fetchImpl = fetch } = {}) {
   const data = await fetchJSON(
-    `${GITHUB_API}/repos/${UPSTREAM}/git/trees/main?recursive=1`
+    `${GITHUB_API}/repos/${UPSTREAM}/git/trees/main?recursive=1`,
+    { fetchImpl },
   );
   if (data.truncated) {
     throw new Error(
       "GitHub tree response was truncated — repo is too large for recursive=1. " +
-        "Consider switching to paginated subtree fetches."
+        "Consider switching to paginated subtree fetches.",
     );
   }
   return data.tree; // array of { path, type, sha, url }
@@ -113,14 +120,21 @@ async function fetchRepoTree() {
  * Download a raw file from ublue-os/artwork at its main-branch path.
  * Returns the local temp file path.
  */
-async function downloadRaw(remotePath, suffix) {
+export async function downloadRaw(
+  remotePath,
+  suffix,
+  { fetchImpl = fetch } = {},
+) {
   const url = `${RAW_BASE}/${remotePath}`;
-  const res = await fetch(url, { headers: apiHeaders });
+  const res = await fetchImpl(url, { headers: apiHeaders });
   if (!res.ok) {
     throw new Error(`Failed to download ${url}: HTTP ${res.status}`);
   }
   const buf = Buffer.from(await res.arrayBuffer());
-  const tmp = join(os.tmpdir(), `artwork-${Date.now()}-${Math.random().toString(36).slice(2)}${suffix}`);
+  const tmp = join(
+    os.tmpdir(),
+    `artwork-${Date.now()}-${Math.random().toString(36).slice(2)}${suffix}`,
+  );
   writeFileSync(tmp, buf);
   return tmp;
 }
@@ -135,37 +149,50 @@ async function downloadRaw(remotePath, suffix) {
  *
  * Returns { thumbnailPath, fullresPath }.
  */
-function convertToWebP(srcFile, outputName, ext) {
+export function convertToWebP(
+  srcFile,
+  outputName,
+  ext,
+  {
+    run = execSync,
+    thumbnailsDir = THUMBNAILS_DIR,
+    fullresDir = FULLRES_DIR,
+  } = {},
+) {
   let pngFile = srcFile;
   let createdPng = false;
 
   // Decode JXL → PNG so ffmpeg can ingest it
   if (ext === ".jxl") {
     pngFile = srcFile.replace(/\.jxl$/, ".png");
-    execSync(`djxl "${srcFile}" "${pngFile}"`, { stdio: "pipe" });
+    run(`djxl "${srcFile}" "${pngFile}"`, { stdio: "pipe" });
     createdPng = true;
   }
 
-  mkdirSync(THUMBNAILS_DIR, { recursive: true });
-  mkdirSync(FULLRES_DIR, { recursive: true });
+  mkdirSync(thumbnailsDir, { recursive: true });
+  mkdirSync(fullresDir, { recursive: true });
 
-  const thumbnailPath = join(THUMBNAILS_DIR, `${outputName}.webp`);
-  const fullresPath = join(FULLRES_DIR, `${outputName}.webp`);
+  const thumbnailPath = join(thumbnailsDir, `${outputName}.webp`);
+  const fullresPath = join(fullresDir, `${outputName}.webp`);
 
   // Thumbnail: scale to 480px wide, preserve aspect ratio, quality 85
-  execSync(
+  run(
     `ffmpeg -y -i "${pngFile}" -vf "scale=480:-1" -quality 85 "${thumbnailPath}"`,
-    { stdio: "pipe" }
+    { stdio: "pipe" },
   );
 
   // Full-resolution: scale to max 1920px wide (don't upscale smaller images)
-  execSync(
+  run(
     `ffmpeg -y -i "${pngFile}" -vf "scale='min(1920,iw)':-1" -quality 90 "${fullresPath}"`,
-    { stdio: "pipe" }
+    { stdio: "pipe" },
   );
 
   if (createdPng) {
-    try { unlinkSync(pngFile); } catch { /* best-effort cleanup */ }
+    try {
+      unlinkSync(pngFile);
+    } catch {
+      /* best-effort cleanup */
+    }
   }
 
   return { thumbnailPath, fullresPath };
@@ -179,12 +206,20 @@ function convertToWebP(srcFile, outputName, ext) {
  * @param {string} outputName  Slug used for the output filenames
  * @returns {{ thumbnailWebpUrl: string, fullresWebpUrl: string }}
  */
-async function downloadAndConvert(remotePath, outputName) {
+export async function downloadAndConvert(
+  remotePath,
+  outputName,
+  { downloadRawImpl = downloadRaw, convertToWebPImpl = convertToWebP } = {},
+) {
   const ext = extname(remotePath).toLowerCase();
   let tmpFile;
   try {
-    tmpFile = await downloadRaw(remotePath, ext);
-    const { thumbnailPath, fullresPath } = convertToWebP(tmpFile, outputName, ext);
+    tmpFile = await downloadRawImpl(remotePath, ext);
+    const { thumbnailPath, fullresPath } = convertToWebPImpl(
+      tmpFile,
+      outputName,
+      ext,
+    );
 
     // Return site-root-relative paths (as used throughout artwork.json)
     return {
@@ -193,7 +228,11 @@ async function downloadAndConvert(remotePath, outputName) {
     };
   } finally {
     if (tmpFile && existsSync(tmpFile)) {
-      try { unlinkSync(tmpFile); } catch { /* best-effort */ }
+      try {
+        unlinkSync(tmpFile);
+      } catch {
+        /* best-effort */
+      }
     }
   }
 }
@@ -205,8 +244,8 @@ async function downloadAndConvert(remotePath, outputName) {
 /**
  * Read and parse the artwork.json manifest.
  */
-function readManifest() {
-  const raw = readFileSync(MANIFEST_PATH, "utf8");
+export function readManifest(manifestPath = MANIFEST_PATH) {
+  const raw = readFileSync(manifestPath, "utf8");
   return JSON.parse(raw);
 }
 
@@ -214,8 +253,8 @@ function readManifest() {
  * Write the updated manifest to disk (direct overwrite — acceptable in CI
  * where this is the only writer process).
  */
-function writeManifest(manifest) {
-  writeFileSync(MANIFEST_PATH, JSON.stringify(manifest, null, 2) + "\n", "utf8");
+export function writeManifest(manifest, manifestPath = MANIFEST_PATH) {
+  writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + "\n", "utf8");
 }
 
 // ---------------------------------------------------------------------------
@@ -230,17 +269,25 @@ function writeManifest(manifest) {
  * Manifest IDs:    bluefin-NN  (zero-padded two digits)
  * Detection:       any NN not yet present in the collection
  */
-async function syncBluefinMonthly(manifest, tree, changes) {
+export async function syncBluefinMonthly(
+  manifest,
+  tree,
+  changes,
+  { dryRun = DRY_RUN, downloadAndConvertImpl = downloadAndConvert } = {},
+) {
   const collection = manifest.projects.bluefin.collections.find(
-    (c) => c.id === "bluefin-monthly"
+    (c) => c.id === "bluefin-monthly",
   );
-  if (!collection) throw new Error("bluefin-monthly collection not found in manifest");
+  if (!collection)
+    throw new Error("bluefin-monthly collection not found in manifest");
 
   const existingNums = new Set(
-    collection.wallpapers.map((w) => {
-      const m = w.id.match(/^bluefin-(\d+)$/);
-      return m ? parseInt(m[1], 10) : null;
-    }).filter(Boolean)
+    collection.wallpapers
+      .map((w) => {
+        const m = w.id.match(/^bluefin-(\d+)$/);
+        return m ? parseInt(m[1], 10) : null;
+      })
+      .filter(Boolean),
   );
 
   const paths = getTreePaths(tree);
@@ -263,14 +310,20 @@ async function syncBluefinMonthly(manifest, tree, changes) {
     let previewUrl = null;
     let previewNightUrl = null;
 
-    if (!DRY_RUN) {
+    if (!dryRun) {
       // Download and convert the day image for the thumbnail
-      const { thumbnailWebpUrl } = await downloadAndConvert(dayRemote, `${outputBase}-day`);
+      const { thumbnailWebpUrl } = await downloadAndConvertImpl(
+        dayRemote,
+        `${outputBase}-day`,
+      );
       previewUrl = thumbnailWebpUrl;
 
       // Night thumbnail if the night image exists upstream
       if (paths.has(nightRemote)) {
-        const { thumbnailWebpUrl: nightThumb } = await downloadAndConvert(nightRemote, `${outputBase}-night`);
+        const { thumbnailWebpUrl: nightThumb } = await downloadAndConvertImpl(
+          nightRemote,
+          `${outputBase}-night`,
+        );
         previewNightUrl = nightThumb;
       }
     } else {
@@ -293,7 +346,9 @@ async function syncBluefinMonthly(manifest, tree, changes) {
       hasLightbox: true,
       previewNightUrl,
     });
-    changes.push(`- **Bluefin Monthly #${nnPadded}** — new monthly wallpaper (author TBD)`);
+    changes.push(
+      `- **Bluefin Monthly #${nnPadded}** — new monthly wallpaper (author TBD)`,
+    );
   }
 
   if (newWallpapers.length > 0) {
@@ -322,11 +377,19 @@ async function syncBluefinMonthly(manifest, tree, changes) {
  * Note: "framework" is a known special case with SVGs; we handle it by
  * treating the directory as a named extra.
  */
-async function syncBluefinExtras(manifest, tree, changes) {
+export async function syncBluefinExtras(
+  manifest,
+  tree,
+  changes,
+  { dryRun = DRY_RUN, downloadAndConvertImpl = downloadAndConvert } = {},
+) {
   const collection = manifest.projects.bluefin.collections.find(
-    (c) => c.id === "bluefin-wallpapers-extra"
+    (c) => c.id === "bluefin-wallpapers-extra",
   );
-  if (!collection) throw new Error("bluefin-wallpapers-extra collection not found in manifest");
+  if (!collection)
+    throw new Error(
+      "bluefin-wallpapers-extra collection not found in manifest",
+    );
 
   const existingIds = new Set(collection.wallpapers.map((w) => w.id));
 
@@ -348,18 +411,16 @@ async function syncBluefinExtras(manifest, tree, changes) {
       jxlUrl = `https://raw.githubusercontent.com/${UPSTREAM}/main/${srcPath}`;
     }
 
-    if (!DRY_RUN && ext !== ".svg") {
+    if (!dryRun && ext !== ".svg") {
       // SVGs are served directly (no conversion needed for extras with SVGs).
-      const converted = await downloadAndConvert(srcPath, outputName);
+      const converted = await downloadAndConvertImpl(srcPath, outputName);
       previewUrl = converted.thumbnailWebpUrl;
       fullresWebpUrl = converted.fullresWebpUrl;
     } else {
-      previewUrl = ext !== ".svg"
-        ? `/img/artwork/thumbnails/${outputName}.webp`
-        : null;
-      fullresWebpUrl = ext !== ".svg"
-        ? `/img/artwork/fullres/${outputName}.webp`
-        : null;
+      previewUrl =
+        ext !== ".svg" ? `/img/artwork/thumbnails/${outputName}.webp` : null;
+      fullresWebpUrl =
+        ext !== ".svg" ? `/img/artwork/fullres/${outputName}.webp` : null;
     }
 
     const rawBase = `https://raw.githubusercontent.com/${UPSTREAM}/main`;
@@ -381,21 +442,22 @@ async function syncBluefinExtras(manifest, tree, changes) {
       hasLightbox: true,
     });
 
-    changes.push(`- **Bluefin Extra "${dirName}"** — new wallpaper directory (author TBD)`);
+    changes.push(
+      `- **Bluefin Extra "${dirName}"** — new wallpaper directory (author TBD)`,
+    );
   }
 
-  for (const {
-    id: slug,
-    jxlPath,
-    outputName,
-  } of findBluefinExtraJxlCandidates(tree, existingIds)) {
+  for (const { id: slug, jxlPath, outputName } of findBluefinExtraJxlCandidates(
+    tree,
+    existingIds,
+  )) {
     console.log(`  [bluefin-extras] New JXL: ${jxlPath}`);
 
     let previewUrl = null;
     let fullresWebpUrl = null;
 
-    if (!DRY_RUN) {
-      const converted = await downloadAndConvert(jxlPath, outputName);
+    if (!dryRun) {
+      const converted = await downloadAndConvertImpl(jxlPath, outputName);
       previewUrl = converted.thumbnailWebpUrl;
       fullresWebpUrl = converted.fullresWebpUrl;
     } else {
@@ -417,7 +479,9 @@ async function syncBluefinExtras(manifest, tree, changes) {
       hasLightbox: true,
     });
 
-    changes.push(`- **Bluefin Extra (JXL) "${slug}"** — new artwork (author TBD)`);
+    changes.push(
+      `- **Bluefin Extra (JXL) "${slug}"** — new artwork (author TBD)`,
+    );
   }
 
   collection.wallpapers.push(...newWallpapers);
@@ -431,11 +495,17 @@ async function syncBluefinExtras(manifest, tree, changes) {
  * Manifest IDs:    {id}  (the directory name, e.g. "aurora-wallpaper-10")
  * Detection:       any {id} directory not already in the collection
  */
-async function syncAurora(manifest, tree, changes) {
+export async function syncAurora(
+  manifest,
+  tree,
+  changes,
+  { dryRun = DRY_RUN, downloadAndConvertImpl = downloadAndConvert } = {},
+) {
   const collection = manifest.projects.aurora.collections.find(
-    (c) => c.id === "aurora-wallpapers"
+    (c) => c.id === "aurora-wallpapers",
   );
-  if (!collection) throw new Error("aurora-wallpapers collection not found in manifest");
+  if (!collection)
+    throw new Error("aurora-wallpapers collection not found in manifest");
 
   const existingIds = new Set(collection.wallpapers.map((w) => w.id));
   const upstreamIds = getSubdirNames(tree, "wallpapers/aurora");
@@ -447,8 +517,10 @@ async function syncAurora(manifest, tree, changes) {
     console.log(`  [aurora] New wallpaper: ${id}`);
 
     // Find the JXL in the images subdirectory (pick the highest resolution)
-    const jxlFiles = [...getTreePaths(tree)].filter((p) =>
-      p.startsWith(`wallpapers/aurora/${id}/contents/images/`) && p.endsWith(".jxl")
+    const jxlFiles = [...getTreePaths(tree)].filter(
+      (p) =>
+        p.startsWith(`wallpapers/aurora/${id}/contents/images/`) &&
+        p.endsWith(".jxl"),
     );
 
     // Sort by resolution if multiple JXLs exist (e.g. 3840x2160 > 1920x1080)
@@ -464,8 +536,8 @@ async function syncAurora(manifest, tree, changes) {
     let previewUrl = null;
     let fullresWebpUrl = null;
 
-    if (!DRY_RUN && jxlPath) {
-      const converted = await downloadAndConvert(jxlPath, outputName);
+    if (!dryRun && jxlPath) {
+      const converted = await downloadAndConvertImpl(jxlPath, outputName);
       previewUrl = converted.thumbnailWebpUrl;
       fullresWebpUrl = converted.fullresWebpUrl;
     } else {
@@ -475,9 +547,7 @@ async function syncAurora(manifest, tree, changes) {
 
     newWallpapers.push({
       id,
-      title: id
-        .replace(/-/g, " ")
-        .replace(/\b\w/g, (c) => c.toUpperCase()),
+      title: id.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
       author: null,
       authorLicense: null,
       previewUrl,
@@ -506,11 +576,17 @@ async function syncAurora(manifest, tree, changes) {
  *                  lowercased + underscores → hyphens
  * Detection:       any file whose slug-based ID is not already in the collection
  */
-async function syncBazzite(manifest, tree, changes) {
+export async function syncBazzite(
+  manifest,
+  tree,
+  changes,
+  { dryRun = DRY_RUN, downloadAndConvertImpl = downloadAndConvert } = {},
+) {
   const collection = manifest.projects.bazzite.collections.find(
-    (c) => c.id === "bazzite-wallpapers"
+    (c) => c.id === "bazzite-wallpapers",
   );
-  if (!collection) throw new Error("bazzite-wallpapers collection not found in manifest");
+  if (!collection)
+    throw new Error("bazzite-wallpapers collection not found in manifest");
 
   const existingIds = new Set(collection.wallpapers.map((w) => w.id));
 
@@ -518,7 +594,7 @@ async function syncBazzite(manifest, tree, changes) {
     collection.wallpapers.flatMap((w) => {
       const urls = [w.dayUrl, w.nightUrl, w.jxlUrl].filter(Boolean);
       return urls.map((u) => basename(u).toLowerCase());
-    })
+    }),
   );
   const newWallpapers = [];
 
@@ -534,8 +610,8 @@ async function syncBazzite(manifest, tree, changes) {
 
     let previewUrl = null;
 
-    if (!DRY_RUN) {
-      const converted = await downloadAndConvert(primaryPath, outputName);
+    if (!dryRun) {
+      const converted = await downloadAndConvertImpl(primaryPath, outputName);
       previewUrl = converted.thumbnailWebpUrl;
       // Note: we only store the thumbnail for bazzite (no fullres WebP — we
       // link directly to the upstream PNG/JPG via dayUrl instead).
@@ -572,37 +648,47 @@ async function syncBazzite(manifest, tree, changes) {
 // Main
 // ---------------------------------------------------------------------------
 
-async function main() {
-  console.log(`update-artwork.mjs — ${DRY_RUN ? "DRY RUN" : "live mode"}`);
+export async function main({
+  dryRun = DRY_RUN,
+  run = execSync,
+  fetchRepoTreeImpl = fetchRepoTree,
+  readManifestImpl = readManifest,
+  writeManifestImpl = writeManifest,
+  writeChangesImpl = (body) => writeFileSync(CHANGES_PATH, body, "utf8"),
+  now = () => new Date(),
+} = {}) {
+  console.log(`update-artwork.mjs — ${dryRun ? "DRY RUN" : "live mode"}`);
   console.log(`Upstream: https://github.com/${UPSTREAM}`);
 
   // Validate required tools are available (skip in dry-run since we won't call them)
-  if (!DRY_RUN) {
+  if (!dryRun) {
     for (const tool of ["djxl", "ffmpeg"]) {
       try {
-        execSync(`command -v ${tool}`, { stdio: "pipe" });
+        run(`command -v ${tool}`, { stdio: "pipe" });
       } catch {
         throw new Error(
           `Required tool '${tool}' not found in PATH. ` +
-            "Install libjxl-tools (for djxl) and ffmpeg before running this script."
+            "Install libjxl-tools (for djxl) and ffmpeg before running this script.",
         );
       }
     }
   }
 
   console.log("Fetching upstream repo tree…");
-  const tree = await fetchRepoTree();
+  const tree = await fetchRepoTreeImpl();
   console.log(`  Got ${tree.length} tree entries`);
 
-  const manifest = readManifest();
+  const manifest = readManifestImpl();
   const changes = [];
 
   // Run all four sync routines
   const counts = {
-    bluefinMonthly: await syncBluefinMonthly(manifest, tree, changes),
-    bluefinExtras: await syncBluefinExtras(manifest, tree, changes),
-    aurora: await syncAurora(manifest, tree, changes),
-    bazzite: await syncBazzite(manifest, tree, changes),
+    bluefinMonthly: await syncBluefinMonthly(manifest, tree, changes, {
+      dryRun,
+    }),
+    bluefinExtras: await syncBluefinExtras(manifest, tree, changes, { dryRun }),
+    aurora: await syncAurora(manifest, tree, changes, { dryRun }),
+    bazzite: await syncBazzite(manifest, tree, changes, { dryRun }),
   };
 
   const totalNew = Object.values(counts).reduce((a, b) => a + b, 0);
@@ -617,10 +703,12 @@ async function main() {
   for (const line of changes) console.log(` ${line}`);
 
   // Update the generatedAt timestamp
-  manifest.generatedAt = new Date().toISOString().replace(/\.\d{3}Z$/, "Z");
+  manifest.generatedAt = now()
+    .toISOString()
+    .replace(/\.\d{3}Z$/, "Z");
 
-  if (!DRY_RUN) {
-    writeFileSync(MANIFEST_PATH, JSON.stringify(manifest, null, 2) + "\n", "utf8");
+  if (!dryRun) {
+    writeManifestImpl(manifest);
     console.log(`\nWrote updated manifest → ${MANIFEST_PATH}`);
 
     // Write PR body
@@ -638,14 +726,16 @@ async function main() {
       `_Generated by \`scripts/update-artwork.mjs\` at ${manifest.generatedAt}_`,
     ].join("\n");
 
-    writeFileSync(CHANGES_PATH, body, "utf8");
+    writeChangesImpl(body);
     console.log(`Wrote PR body → ${CHANGES_PATH}`);
   } else {
     console.log("\n[dry-run] No files written.");
   }
 }
 
-main().catch((err) => {
-  console.error("\nFATAL:", err.message ?? err);
-  process.exit(1);
-});
+if (import.meta.url === pathToFileURL(process.argv[1] ?? "").href) {
+  main().catch((err) => {
+    console.error("\nFATAL:", err.message ?? err);
+    process.exit(1);
+  });
+}
