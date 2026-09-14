@@ -39,17 +39,22 @@ function stubDb(rows, { throws = false } = {}) {
     env: {
       DB: {
         prepare(sql) {
+          statements.push({ sql, args: [] });
+          const result = {
+            async all() {
+              if (throws) throw new Error("no such table");
+              return { results: rows };
+            },
+            async run() {
+              if (throws) throw new Error("no such table");
+            },
+          };
           return {
+            ...result,
             bind(...args) {
-              statements.push({ sql, args });
+              statements[statements.length - 1] = { sql, args };
               return {
-                async all() {
-                  if (throws) throw new Error("no such table");
-                  return { results: rows };
-                },
-                async run() {
-                  if (throws) throw new Error("no such table");
-                },
+                ...result,
               };
             },
           };
@@ -227,7 +232,10 @@ test("counts.json aggregates weekly records per first-party repo", async () => {
   ]);
 
   assert.ok(db.statements[0].sql.includes("telemetry_events"));
-  assert.deepEqual(db.statements[0].args, [...counts.COUNTED_REPO_IDS]);
+  // No repo filter in SQL: filtering to bare family ids there discarded every
+  // hardware variant before the counting rules saw it.
+  assert.deepEqual(db.statements[0].args, []);
+  assert.ok(!db.statements[0].sql.includes("repo IN"));
 });
 
 test("a repo missing from a week is null, never zero", async () => {
@@ -882,4 +890,55 @@ test("the chart title is inked, not left to default black", async () => {
   } finally {
     globalThis.fetch = restore;
   }
+});
+
+test("every published image variant counts under its family", async () => {
+  // Clients send the published image name, so the id on the wire is
+  // `bluefin-lts-hwe-nvidia`, not `bluefin-lts`. Matching bare family ids threw
+  // every hardware variant away, which is why LTS counted 2 while its images
+  // were reporting.
+  const n = (repo, gm = 0) => counts.normalizeCountmeRepo(repo, gm);
+
+  assert.deepEqual(n("bluefin-lts-hwe"), { repo: "bluefin-lts", gaming: false });
+  assert.deepEqual(n("bluefin-lts-hwe-nvidia"), {
+    repo: "bluefin-lts",
+    gaming: false,
+  });
+  assert.deepEqual(n("bluefin-lts-nvidia"), {
+    repo: "bluefin-lts",
+    gaming: false,
+  });
+  assert.deepEqual(n("bluefin-nvidia"), { repo: "bluefin", gaming: false });
+  assert.deepEqual(n("dakota-nvidia"), { repo: "dakota", gaming: false });
+  assert.deepEqual(n("dakota-nvidia-gaming"), { repo: "dakota", gaming: true });
+
+  // An LTS image must never be counted as flagship: longest family wins.
+  assert.equal(n("bluefin-lts").repo, "bluefin-lts");
+  assert.equal(n("bluefin-lts-hwe").repo, "bluefin-lts");
+
+  // Still ours only.
+  assert.equal(n("eos"), null);
+  assert.equal(n("fedora"), null);
+  assert.equal(n(""), null);
+
+  // Idempotent.
+  assert.deepEqual(n(n("bluefin-lts-hwe").repo), {
+    repo: "bluefin-lts",
+    gaming: false,
+  });
+});
+
+test("an LTS hardware variant lands in the LTS total, not flagship", async () => {
+  const db = stubDb([
+    { week: "2026-09-07", repo: "bluefin-lts", gamemode: 0, hits: 2 },
+    { week: "2026-09-07", repo: "bluefin-lts-hwe", gamemode: 0, hits: 40 },
+    { week: "2026-09-07", repo: "bluefin-lts-hwe-nvidia", gamemode: 0, hits: 11 },
+    { week: "2026-09-07", repo: "bluefin-nvidia", gamemode: 0, hits: 7 },
+  ]);
+
+  const body = await (await get("/counts.json", db.env)).json();
+  const week = body.weeks[body.weeks.length - 1];
+
+  assert.equal(week["bluefin-lts"], 53, "2 + 40 + 11 all count as LTS");
+  assert.equal(week.bluefin, 7, "an nvidia flagship build is still flagship");
 });
