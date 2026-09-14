@@ -5,6 +5,7 @@ const path = require("node:path");
 const React = require("react");
 const ts = require("typescript");
 const { renderToStaticMarkup } = require("react-dom/server");
+const { loadTsxModule } = require("./lib/load-tsx");
 
 const REPO = path.join(__dirname, "..");
 const CHART = path.join(
@@ -92,27 +93,20 @@ function loadClient() {
   return mod.exports;
 }
 
+/**
+ * Load a report component with its CSS module and any stubbed siblings.
+ *
+ * The shared loader resolves relative and `@site/…` imports as real source.
+ * `ReportCountmeTrend` imports the count-source policy from
+ * `@site/scripts/lib/countme-sources.mjs`; a test that stubbed it would assert
+ * against its own copy of the wording instead of the shipped one.
+ */
 function loadComponent(tsxPath, stubs = {}) {
-  const source = fs.readFileSync(tsxPath, "utf8");
-  const { outputText } = ts.transpileModule(source, {
-    compilerOptions: {
-      jsx: ts.JsxEmit.React,
-      target: ts.ScriptTarget.ES2020,
-      module: ts.ModuleKind.CommonJS,
-    },
-  });
-  const mod = { exports: {} };
-  const requireShim = (id) => {
+  return loadTsxModule(tsxPath, (id) => {
     if (id.endsWith(".css")) return cssStub();
     if (Object.hasOwn(stubs, id)) return stubs[id];
-    return require(id);
-  };
-  new Function("require", "module", "exports", outputText)(
-    requireShim,
-    mod,
-    mod.exports,
-  );
-  return mod.exports;
+    return undefined;
+  });
 }
 
 const exported = loadChart();
@@ -527,6 +521,20 @@ test("ReportCountmeTrend preserves zero and explains unavailable sources", () =>
   );
   assert.match(unavailable, /Data unavailable/);
   assert.match(unavailable, /HTTP 503/);
+
+  // The monthly report passes no reason, so the panel supplies one itself
+  // rather than showing an unexplained blank. That fallback is published copy,
+  // so it says the number is not published and stops: AGENTS.md forbids
+  // emitting a host address or an internal URL, and an error message that
+  // inventories which internal routes do not exist yet is a disclosure.
+  const noReason = renderComponent(
+    "ReportCountmeTrend",
+    { currentTotal: null, historyPoints: [], variants: [] },
+    { "../Sparkline": sparklineStub },
+  );
+  assert.match(noReason, /not published yet/);
+  assert.doesNotMatch(noReason, /projectbluefin\.io/);
+  assert.doesNotMatch(noReason, /endpoint/i);
 });
 
 test("ReportLaneHealth exposes pending and unavailable lane states", () => {

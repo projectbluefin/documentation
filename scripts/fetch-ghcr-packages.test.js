@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 
 import {
   FALLBACK_LANES,
+  PROMOTED_IMAGES,
   buildPackage,
   buildPayload,
   classifyFamily,
@@ -213,4 +214,41 @@ test("fallbackTagsOf keeps reported streams and drops cosign artefacts", () => {
 
 test("fallbackTagsOf returns an empty list rather than throwing on no tags", () => {
   assert.deepEqual(fallbackTagsOf([]), []);
+});
+
+test("every promoted image is a lane the fetcher actually reads", () => {
+  // FALLBACK_LANES is the only list consulted when the Packages API returns
+  // nothing, which is the normal case in CI — github.token is repository-scoped
+  // and cannot list an org's packages. An image missing from it is an image the
+  // dashboard can never show, however correct the component is.
+  for (const image of PROMOTED_IMAGES) {
+    assert.ok(
+      FALLBACK_LANES.includes(image),
+      `${image} is promoted but is not a fallback lane`,
+    );
+  }
+});
+
+test("the promoted set matches each repo's execute-release.yml", () => {
+  // Verbatim from the promotion matrices. Re-derive before editing:
+  //   gh api repos/projectbluefin/<repo>/contents/.github/workflows/execute-release.yml \
+  //     --jq .content | base64 -d | grep -E '"image"'
+  assert.deepEqual(PROMOTED_IMAGES, [
+    "bluefin",
+    "bluefin-nvidia",
+    "bluefin-lts",
+    "bluefin-lts-nvidia",
+    "dakota",
+    "dakota-nvidia",
+    "dakota-gaming",
+    "dakota-nvidia-gaming",
+  ]);
+
+  // The -hwe images still answer in the registry but are in no promotion
+  // matrix. They stay as lanes so a panel can call them retired; they are not
+  // promoted images.
+  for (const retired of ["bluefin-lts-hwe", "bluefin-lts-hwe-nvidia"]) {
+    assert.ok(FALLBACK_LANES.includes(retired));
+    assert.ok(!PROMOTED_IMAGES.includes(retired));
+  }
 });

@@ -23,7 +23,9 @@ export function githubToken() {
 }
 
 /**
- * Build GitHub API request headers with the repo's single contract.
+ * The single GitHub API header contract (projectbluefin/documentation#1232).
+ * Every fetcher in the factory layer builds headers through here so Accept /
+ * api-version / user-agent cannot drift per file.
  *
  * Canonical defaults: `accept: application/vnd.github+json`, the pinned
  * `x-github-api-version`, the project user agent, and a `Bearer` authorization
@@ -31,8 +33,8 @@ export function githubToken() {
  * needs a different representation — e.g. the Contents API's `.raw` representation
  * returns the file bytes directly, so callers pass
  * `application/vnd.github.v3.raw`. Everything else (token source, api-version
- * pin, user agent, auth scheme) now flows through this one builder instead of
- * being restated at every fetch site.
+ * pin, user agent, auth scheme) flows through this builder instead of being
+ * restated at every fetch site.
  */
 export function githubHeaders(token, { accept, apiVersion, userAgent } = {}) {
   const h = {
@@ -80,10 +82,17 @@ function headers(token) {
 /**
  * One request. Throws on a non-2xx so the caller's try/catch can write an
  * explicit unavailable payload; it never returns a partial success.
+ *
+ * `signal` is forwarded to fetch so a caller can pin its own timeout; the
+ * shared client has no retry of its so a wedged endpoint fails fast instead of
+ * hanging the build.
  */
-export async function ghFetch(path, { token = githubToken() } = {}) {
+export async function ghFetch(path, { token = githubToken(), signal } = {}) {
   const url = path.startsWith("http") ? path : `${GH_API}${path}`;
-  const res = await fetch(url, { headers: headers(token) });
+  const res = await fetch(url, {
+    headers: githubHeaders(token),
+    ...(signal ? { signal } : {}),
+  });
   if (!res.ok) {
     const hint =
       res.status === 401 || res.status === 403
@@ -102,7 +111,7 @@ export async function ghFetch(path, { token = githubToken() } = {}) {
  */
 export async function ghPaginate(
   path,
-  { token = githubToken(), maxPages = 5, select } = {},
+  { token = githubToken(), maxPages = 5, select, signal } = {},
 ) {
   const perPage = 100;
   const out = [];
@@ -112,6 +121,7 @@ export async function ghPaginate(
       `${path}${sep}per_page=${perPage}&page=${page}`,
       {
         token,
+        signal,
       },
     );
     const items = select ? select(body) : body;

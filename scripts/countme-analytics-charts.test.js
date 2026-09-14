@@ -1,10 +1,9 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const fs = require("node:fs");
 const path = require("node:path");
-const ts = require("typescript");
 const React = require("react");
 const { renderToStaticMarkup } = require("react-dom/server");
+const { loadTsxModule } = require("./lib/load-tsx");
 
 const TSX_PATH = path.join(
   __dirname,
@@ -15,141 +14,124 @@ const TSX_PATH = path.join(
   "CountmeAnalyticsCharts.tsx",
 );
 
+/**
+ * The component's own imports, stubbed only where a test cannot run them:
+ * Docusaurus internals, CSS modules, and the two chart primitives whose props
+ * are what these tests actually read. Everything else — the countme source
+ * policy included — is loaded from real repository source.
+ */
 function loadComponent() {
-  const source = fs.readFileSync(TSX_PATH, "utf8");
-  const { outputText } = ts.transpileModule(source, {
-    compilerOptions: {
-      jsx: ts.JsxEmit.React,
-      target: ts.ScriptTarget.ES2020,
-      module: ts.ModuleKind.CommonJS,
-    },
+  return loadTsxModule(TSX_PATH, (id) => {
+    if (id.endsWith(".css")) return {};
+    if (id === "react") return React;
+    if (id === "@docusaurus/useBaseUrl") {
+      return { __esModule: true, default: (p) => p };
+    }
+    if (id === "@docusaurus/Link") {
+      return {
+        __esModule: true,
+        default: ({ to, children, ...rest }) =>
+          React.createElement("a", { href: to, ...rest }, children),
+      };
+    }
+    if (id === "@theme/Heading") {
+      return {
+        __esModule: true,
+        default: ({ as: Tag = "h3", children, ...rest }) =>
+          React.createElement(Tag, rest, children),
+      };
+    }
+    if (id.includes("EChart")) {
+      return {
+        __esModule: true,
+        default: (props) =>
+          React.createElement("div", {
+            "data-testid": "echart",
+            "data-title": props.title,
+            "data-summary": props.summary,
+            "data-points": String(props.points),
+            "data-option": JSON.stringify(props.option),
+          }),
+      };
+    }
+    if (id.includes("Unavailable")) {
+      return {
+        __esModule: true,
+        default: (props) =>
+          React.createElement("div", {
+            "data-testid": "unavailable",
+            "data-what": props.what,
+            "data-reason": props.reason,
+          }),
+      };
+    }
+    return undefined;
   });
-  const mod = { exports: {} };
-  new Function("require", "module", "exports", outputText)(
-    (id) => {
-      if (id.endsWith(".css")) return {};
-      if (id === "@docusaurus/Link") {
-        return {
-          __esModule: true,
-          default: ({ to, children, ...rest }) =>
-            React.createElement("a", { href: to, ...rest }, children),
-        };
-      }
-      if (id === "@theme/Heading") {
-        return {
-          __esModule: true,
-          default: ({ as: Tag = "h3", children, ...rest }) =>
-            React.createElement(Tag, rest, children),
-        };
-      }
-      if (id.includes("EChart")) {
-        return {
-          __esModule: true,
-          default: (props) =>
-            React.createElement("div", {
-              "data-testid": "echart",
-              "data-title": props.title,
-              "data-summary": props.summary,
-              "data-points": String(props.points),
-              "data-option": JSON.stringify(props.option),
-            }),
-        };
-      }
-      if (id.includes("Unavailable")) {
-        return {
-          __esModule: true,
-          default: (props) =>
-            React.createElement("div", {
-              "data-testid": "unavailable",
-              "data-what": props.what,
-              "data-reason": props.reason,
-            }),
-        };
-      }
-      if (id.includes("Sparkline")) {
-        return {
-          __esModule: true,
-          default: (props) =>
-            React.createElement("span", {
-              "data-testid": "sparkline",
-              "data-data": JSON.stringify(props.data),
-              "data-show-end": String(props.showEnd),
-              "data-empty-label": props.emptyLabel,
-              "data-label": props.label,
-            }),
-        };
-      }
-      if (id.includes("countme-history.json")) {
-        return {
-          generatedAt: "2026-08-08T23:59:55.087Z",
-          source:
-            "https://data-analysis.fedoraproject.org/csv-reports/countme/totals.csv",
-          method: "ublue-countme-v1",
-          unit: "estimated weekly active systems",
-          variants: ["bluefin", "bluefin-lts", "aurora", "bazzite", "fedora"],
-          weeks: [
-            {
-              week: "2026-07-20",
-              fedora: 1073642,
-              bazzite: 88548,
-              aurora: 2669,
-              bluefin: 4095,
-              "bluefin-lts": 100,
-            },
-            {
-              week: "2026-07-27",
-              fedora: 1102473,
-              bluefin: 3761,
-              bazzite: 89550,
-              aurora: 2826,
-              "bluefin-lts": 159,
-            },
-          ],
-          unavailable: false,
-          stateReason: null,
-        };
-      }
-      if (id.startsWith(".")) {
-        const base = path.resolve(path.dirname(TSX_PATH), id);
-        for (const ext of [".ts", ".tsx", "/index.ts", "/index.tsx"]) {
-          if (fs.existsSync(base + ext)) {
-            const innerSource = fs.readFileSync(base + ext, "utf8");
-            const { outputText: innerOutput } = ts.transpileModule(
-              innerSource,
-              {
-                compilerOptions: {
-                  jsx: ts.JsxEmit.React,
-                  target: ts.ScriptTarget.ES2020,
-                  module: ts.ModuleKind.CommonJS,
-                },
-              },
-            );
-            const innerMod = { exports: {} };
-            new Function("require", "module", "exports", innerOutput)(
-              require,
-              innerMod,
-              innerMod.exports,
-            );
-            return innerMod.exports;
-          }
-        }
-      }
-      return require(id);
-    },
-    mod,
-    mod.exports,
-  );
-  return mod.exports;
 }
 
 const mod = loadComponent();
 const {
   parseCount,
-  sumPresent,
-  getFamilyImageMetrics,
+  compactWeek,
   BLUEFIN_FAMILY_IMAGES,
   default: CountmeAnalyticsCharts,
 } = mod;
+
+// The first-party reader is its own module; see the note in the component.
+const { latestReading, reportingRepos, latestGaming, gamingRepos } =
+  loadTsxModule(
+    path.join(
+      __dirname,
+      "..",
+      "src",
+      "components",
+      "analytics",
+      "firstPartyCountme.ts",
+    ),
+    (id) => (id.endsWith(".css") ? {} : undefined),
+  );
+
+const REGISTRY_FIXTURE = {
+  generatedAt: "2026-09-10T04:08:30.490Z",
+  source: "public-registry",
+  packages: [
+    {
+      name: "bluefin",
+      family: "os",
+      streams: [
+        {
+          tag: "testing",
+          publishedAt: "2026-09-08T18:31:26Z",
+          ageDays: 1,
+          state: "fresh",
+          stateReason: null,
+        },
+        {
+          tag: "stable",
+          publishedAt: "2026-09-08T18:31:26Z",
+          ageDays: 1,
+          state: "fresh",
+          stateReason: null,
+        },
+      ],
+    },
+    {
+      name: "bluefin-lts-hwe",
+      family: "os",
+      streams: [
+        {
+          tag: "testing",
+          publishedAt: "2026-06-30T01:09:51Z",
+          ageDays: 72,
+          state: "stale",
+          stateReason: "testing lanes are expected to publish within 7 days",
+        },
+      ],
+    },
+  ],
+  unavailable: false,
+  stateReason: null,
+};
 
 test("parseCount distinguishes 0 from null/undefined", () => {
   assert.equal(parseCount(0), 0);
@@ -163,146 +145,407 @@ test("parseCount distinguishes 0 from null/undefined", () => {
   assert.equal(parseCount(NaN), null);
 });
 
-test("sumPresent retains numeric 0 and preserves all-missing as null", () => {
-  // All zeros: sum is 0, not null and not discarded
-  assert.equal(sumPresent([0, 0, 0, 0]), 0);
-
-  // Mixed zeros and missing: sum is 0
-  assert.equal(sumPresent([0, null, undefined]), 0);
-
-  // Values with missing: sums present numbers
-  assert.equal(sumPresent([15, null, 0]), 15);
-  assert.equal(sumPresent([3761, 159, null, null]), 3920);
-
-  // All missing: returns null, representing a gap instead of coercing to 0
-  assert.equal(sumPresent([null, undefined]), null);
-  assert.equal(sumPresent([]), null);
+test("the catalogue names every family common ships into", () => {
+  const ids = BLUEFIN_FAMILY_IMAGES.map((img) => img.id);
+  assert.deepEqual(ids, ["bluefin", "bluefin-lts", "dakota", "utah", "server"]);
 });
 
-test("issue #1086: weekly Dakota values [15, 0] yield isTracked: true and history: [15, 0]", () => {
-  const dakotaSpec = BLUEFIN_FAMILY_IMAGES.find((img) => img.id === "dakota");
-  assert.ok(dakotaSpec, "dakota spec must exist");
+test("the count panel says it lacks data without naming infrastructure", () => {
+  // Presentation rule 6 requires the panel to say it is unavailable and why.
+  // AGENTS.md requires that it never emit a host address or an internal URL.
+  // Both hold: it speaks about the data, not the plumbing.
+  const html = renderToStaticMarkup(
+    React.createElement(CountmeAnalyticsCharts, {
+      registry: REGISTRY_FIXTURE,
+    }),
+  );
 
-  const weeks = [
-    { week: "2026-07-20", dakota: 15 },
-    { week: "2026-07-27", dakota: 0 },
-  ];
-  const latestWeek = weeks[1];
+  const panel = html.match(
+    /data-what="Weekly active systems"[^>]*data-reason="([^"]*)"/,
+  );
+  assert.ok(
+    panel,
+    "the weekly active systems panel must say it is unavailable",
+  );
+  assert.match(panel[1], /not published yet/);
+  assert.doesNotMatch(panel[1], /projectbluefin\.io/);
+  assert.doesNotMatch(panel[1], /endpoint/i);
+});
 
-  const metrics = getFamilyImageMetrics(dakotaSpec, weeks, latestWeek);
-  assert.equal(metrics.count, 0, "latest count for dakota must be numeric 0");
+const PROMOTED = [
+  "bluefin",
+  "bluefin-nvidia",
+  "bluefin-lts",
+  "bluefin-lts-nvidia",
+  "dakota",
+  "dakota-nvidia",
+  "dakota-gaming",
+  "dakota-nvidia-gaming",
+];
+
+test("the matrix rows are the images the release workflows promote", () => {
+  const { matrixRows, BLUEFIN_FAMILY_IMAGES: families } = mod;
+  const images = matrixRows().map((r) => r.image);
+
+  // Each repo's execute-release.yml promotion matrix, verbatim. The -hwe images
+  // are still in the registry but in nobody's matrix, so they are named on the
+  // family card as retired rather than charted as permanently stale lanes.
+  assert.deepEqual(images, PROMOTED);
+
+  const lts = families.find((f) => f.id === "bluefin-lts");
+  assert.deepEqual(lts.retired, ["bluefin-lts-hwe", "bluefin-lts-hwe-nvidia"]);
+  for (const name of lts.retired) assert.ok(!images.includes(name));
+
+  // Bluefin Server delivers a DDI, not a container tag, so it has no lane here
+  // even though it is a counted family.
+  assert.ok(families.some((f) => f.id === "server"));
+  assert.ok(!images.includes("server"));
+});
+
+test("the promotion axis is testing then stable, and nothing else", () => {
+  // :lts, :gts and :latest linger on some images from retired schemes. A column
+  // that is a dash down most of the grid is not a measurement.
+  assert.deepEqual(mod.STREAM_COLUMNS, ["testing", "stable"]);
+});
+
+test("an image the registry does not carry stays in the grid as a gap", () => {
+  const { matrixRows, buildStreamMatrix, STREAM_COLUMNS } = mod;
+  const rows = matrixRows();
+  const cells = buildStreamMatrix(rows, []);
+
+  assert.equal(cells.length, rows.length * STREAM_COLUMNS.length);
+  for (const cell of cells) {
+    assert.equal(cell.level, "unknown");
+    assert.equal(cell.ageDays, null, "an absent stream is a gap, never 0");
+  }
+});
+
+test("a retired tag on an image is not mistaken for a promotion lane", () => {
+  const { matrixRows, buildStreamMatrix } = mod;
+  const cells = buildStreamMatrix(matrixRows(), [
+    {
+      name: "bluefin",
+      family: "os",
+      streams: [
+        { tag: "lts", ageDays: 99, state: "stale", publishedAt: null },
+        { tag: "testing", ageDays: 1, state: "fresh", publishedAt: null },
+      ],
+    },
+  ]);
+
+  assert.ok(
+    !cells.some((c) => c.stream === "lts"),
+    ":lts is not a column, so a stale :lts tag cannot colour the grid",
+  );
+  const testing = cells.find(
+    (c) => c.image === "bluefin" && c.stream === "testing",
+  );
+  assert.equal(testing.ageDays, 1);
+  assert.equal(testing.level, "ok");
+});
+
+test("freshness splits stale by drift and treats a missing tag as unknown", () => {
+  const { freshnessLevel } = mod;
+  assert.equal(freshnessLevel(undefined), "unknown");
+  assert.equal(freshnessLevel({ tag: "stable", ageDays: null }), "unknown");
   assert.equal(
-    metrics.isTracked,
-    true,
-    "dakota must be tracked when latest count is 0",
+    freshnessLevel({ tag: "stable", ageDays: 0, state: "fresh" }),
+    "ok",
   );
-  assert.deepEqual(
-    metrics.history,
-    [15, 0],
-    "history must retain [15, 0] rather than being cleared to []",
+  assert.equal(
+    freshnessLevel({ tag: "stable", ageDays: 12, state: "stale" }),
+    "watch",
   );
-});
-
-test("missing values are preserved as gaps (null) in history series, not coerced to 0", () => {
-  const dakotaSpec = BLUEFIN_FAMILY_IMAGES.find((img) => img.id === "dakota");
-  const weeks = [
-    { week: "2026-07-13", dakota: 15 },
-    { week: "2026-07-20" }, // missing week
-    { week: "2026-07-27", dakota: 0 },
-  ];
-  const latestWeek = weeks[2];
-
-  const metrics = getFamilyImageMetrics(dakotaSpec, weeks, latestWeek);
-  assert.equal(metrics.count, 0);
-  assert.equal(metrics.isTracked, true);
-  assert.deepEqual(
-    metrics.history,
-    [15, null, 0],
-    "missing week must be null gap, not coerced to 0",
+  assert.equal(
+    freshnessLevel({ tag: "stable", ageDays: 72, state: "stale" }),
+    "alert",
   );
 });
 
-test("untracked image with no data yields isTracked: false, count: null, and history: []", () => {
-  const utahSpec = BLUEFIN_FAMILY_IMAGES.find((img) => img.id === "utah");
-  const weeks = [{ week: "2026-07-20" }, { week: "2026-07-27" }];
-  const latestWeek = weeks[1];
-
-  const metrics = getFamilyImageMetrics(utahSpec, weeks, latestWeek);
-  assert.equal(metrics.count, null);
-  assert.equal(metrics.isTracked, false);
-  assert.deepEqual(metrics.history, []);
-});
-
-test("rendering Dakota with [15, 0] renders '0' count and sparkline with [15, 0]", () => {
-  const dataset = {
-    generatedAt: "2026-07-27T00:00:00Z",
-    source: "test",
-    method: "ublue-countme-v1",
-    unit: "estimated weekly active systems",
-    variants: ["bluefin", "bluefin-lts", "dakota"],
-    weeks: [
-      { week: "2026-07-20", bluefin: 3000, "bluefin-lts": 100, dakota: 15 },
-      { week: "2026-07-27", bluefin: 3100, "bluefin-lts": 110, dakota: 0 },
-    ],
-    unavailable: false,
-    stateReason: null,
-  };
-
+test("the matrix plots every catalogued image against every stream", () => {
   const html = renderToStaticMarkup(
-    React.createElement(CountmeAnalyticsCharts, { dataset }),
+    React.createElement(CountmeAnalyticsCharts, {
+      registry: REGISTRY_FIXTURE,
+    }),
   );
 
-  // Dakota should show "0" as count value
-  assert.ok(
-    html.includes(">0</span>"),
-    "rendered markup must include numeric count 0",
+  const chart = html.match(
+    /data-title="Image stream freshness"[^>]*data-option="([^"]*)"/,
+  );
+  assert.ok(chart, "matrix echart must be present");
+
+  const option = JSON.parse(chart[1].replace(/&quot;/g, '"'));
+  assert.deepEqual(option.yAxis.data, PROMOTED);
+  assert.deepEqual(option.xAxis.data, [":testing", ":stable"]);
+  assert.equal(option.series[0].data.length, PROMOTED.length * 2);
+
+  // Every cell carries its own number, never a bare colour swatch.
+  const published = option.series[0].data.filter((c) => c.text !== "—");
+  assert.deepEqual(published.map((c) => c.text).sort(), ["● 1d", "● 1d"]);
+});
+
+test("the matrix says why it is empty rather than rendering nothing", () => {
+  const html = renderToStaticMarkup(
+    React.createElement(CountmeAnalyticsCharts, {
+      registry: { packages: [], unavailable: true, stateReason: "no token" },
+    }),
   );
 
-  // Sparkline data for Dakota should contain [15, 0]
-  assert.ok(
-    html.includes('data-data="[15,0]"'),
-    "sparkline must render with data [15, 0]",
+  assert.match(html, /data-what="Image stream matrix"/);
+  assert.match(html, /data-reason="no token"/);
+});
+
+/**
+ * Weekly active systems, served by the first-party service.
+ *
+ * A week the service did not measure is `null` — a gap. A week it measured as
+ * zero is `0`. Collapsing those two into each other is the specific bug these
+ * tests exist to catch: it is the difference between "nobody reported" and
+ * "nobody was running it", and the chart draws them differently.
+ */
+const COUNTS_FIXTURE = {
+  generatedAt: "2026-09-12T00:00:00.000Z",
+  source: "https://countme.projectbluefin.io",
+  method: "first-party-d1-v1",
+  unit: "estimated weekly active systems",
+  variants: ["bluefin", "bluefin-lts", "dakota", "utah"],
+  weeks: [
+    {
+      week: "2026-08-17",
+      bluefin: 3510,
+      "bluefin-lts": 0,
+      dakota: null,
+      utah: null,
+    },
+    {
+      week: "2026-08-24",
+      bluefin: 3688,
+      "bluefin-lts": null,
+      dakota: 9,
+      utah: null,
+    },
+    {
+      week: "2026-08-31",
+      bluefin: 3901,
+      "bluefin-lts": null,
+      dakota: 14,
+      utah: null,
+    },
+  ],
+};
+
+function renderCounts(counts) {
+  return renderToStaticMarkup(
+    React.createElement(CountmeAnalyticsCharts, {
+      registry: REGISTRY_FIXTURE,
+      counts,
+    }),
+  );
+}
+
+test("a trailing gap reports the last week actually measured", () => {
+  // bluefin-lts last reported in 2026-08-17 and has been a gap since. Reading
+  // forwards would call it null and hide a real number; coercing the gap to 0
+  // would claim the fleet emptied. Neither is true.
+  assert.deepEqual(latestReading(COUNTS_FIXTURE.weeks, "bluefin-lts"), {
+    value: 0,
+    week: "2026-08-17",
+  });
+  assert.deepEqual(latestReading(COUNTS_FIXTURE.weeks, "bluefin"), {
+    value: 3901,
+    week: "2026-08-31",
+  });
+});
+
+test("a repo that never reported is not a series", () => {
+  // utah is null in every week. Included, it would draw as a flat line on the
+  // floor and read as "zero systems" rather than "not counted yet".
+  const repos = reportingRepos(COUNTS_FIXTURE.weeks);
+  assert.ok(repos.includes("bluefin"));
+  assert.ok(repos.includes("dakota"));
+  assert.ok(!repos.includes("utah"));
+  assert.deepEqual(reportingRepos([]), []);
+});
+
+test("a measured zero is a reading, not a gap", () => {
+  const weeks = [{ week: "2026-08-17", bluefin: 0 }];
+  assert.deepEqual(reportingRepos(weeks), ["bluefin"]);
+  assert.deepEqual(latestReading(weeks, "bluefin"), {
+    value: 0,
+    week: "2026-08-17",
+  });
+});
+
+test("the chart carries gaps through to the series, never zeros", () => {
+  const html = renderCounts(COUNTS_FIXTURE);
+  const option = JSON.parse(
+    html
+      .match(
+        /data-title="Weekly active systems"[\s\S]*?data-option="([^"]*)"/,
+      )[1]
+      .replace(/&quot;/g, '"')
+      .replace(/&amp;/g, "&"),
   );
 
-  // Dakota should have 12-week trend label, not countme status
+  const lts = option.series.find((s) => s.name === "LTS");
+  assert.deepEqual(lts.data, [0, null, null]);
+  assert.equal(lts.connectNulls, false, "a gap must break the line");
+  assert.equal(lts.smooth, false, "a spline invents values between weeks");
+
+  const dakota = option.series.find((s) => s.name === "Dakota");
+  assert.deepEqual(dakota.data, [null, 9, 14]);
+
   assert.ok(
-    html.includes("12-week adoption trend: currently 0"),
-    "sparkline label should state current value 0",
+    !option.series.some((s) => s.name === "Utah"),
+    "a repo with no readings must not be plotted",
+  );
+  assert.equal(
+    option.yAxis.min,
+    0,
+    "a floating floor exaggerates a flat series",
   );
 });
 
-test("unified fleet EChart preserves missing weeks as gaps and 0 as 0", () => {
-  const dataset = {
-    generatedAt: "2026-07-27T00:00:00Z",
-    source: "test",
-    method: "ublue-countme-v1",
-    unit: "estimated weekly active systems",
-    variants: ["bluefin", "bluefin-lts", "dakota", "utah"],
-    weeks: [
-      { week: "2026-07-13", bluefin: 100 },
-      { week: "2026-07-20" }, // all fleet variants missing -> null gap
-      { week: "2026-07-27", bluefin: 0, "bluefin-lts": 0, dakota: 0, utah: 0 }, // fleet total = 0
-    ],
-    unavailable: false,
-    stateReason: null,
-  };
+test("every plotted series states its current number", () => {
+  // Presentation rule 1: the graphic never carries a claim on its own.
+  const html = renderCounts(COUNTS_FIXTURE);
+  const summary = html.match(
+    /data-title="Weekly active systems"[\s\S]*?data-summary="([^"]*)"/,
+  )[1];
 
-  const html = renderToStaticMarkup(
-    React.createElement(CountmeAnalyticsCharts, { dataset }),
+  assert.match(summary, /Bluefin 3,901 \(week 2026-08-31\)/);
+  assert.match(summary, /Bluefin LTS 0 \(week 2026-08-17\)/);
+  assert.match(summary, /Project Bluefin Dakota 14 \(week 2026-08-31\)/);
+});
+
+test("the panel stays unavailable when the service reports no weeks", () => {
+  const html = renderCounts({
+    unavailable: true,
+    stateReason: "Weekly active systems are not published yet.",
+    weeks: [],
+  });
+  const panel = html.match(
+    /data-what="Weekly active systems"[^>]*data-reason="([^"]*)"/,
   );
+  assert.ok(panel, "an empty aggregate must still render a reasoned panel");
+  assert.doesNotMatch(panel[1], /projectbluefin\.io/);
+});
 
-  // Find echart with title "Bluefin Systems"
-  const heroChartMatch = html.match(
-    /data-title="Bluefin Systems"[^>]*data-option="([^"]*)"/,
+/**
+ * Game mode is an attribute of a ping, not an image.
+ *
+ * The service folds a `-gaming` repo id into its base image, so `weeks[i][repo]`
+ * is the whole population and `weeks[i].gaming[repo]` is the part of it in game
+ * mode. Adding the two would double-count; drawing gaming as its own image
+ * would invent a population that does not exist.
+ */
+const GAMING_FIXTURE = {
+  generatedAt: "2026-09-12T00:00:00.000Z",
+  source: "https://countme.projectbluefin.io",
+  method: "first-party-d1-v2",
+  unit: "estimated weekly active systems",
+  variants: ["bluefin", "dakota"],
+  weeks: [
+    {
+      week: "2026-08-31",
+      bluefin: 10,
+      dakota: 4,
+      utah: null,
+      gaming: { bluefin: 0, dakota: 1, utah: null },
+    },
+    {
+      week: "2026-09-07",
+      bluefin: 12,
+      dakota: 6,
+      utah: null,
+      gaming: { bluefin: 0, dakota: 2, utah: null },
+    },
+  ],
+};
+
+test("game mode is a share of its image, never added to it", () => {
+  assert.equal(latestGaming(GAMING_FIXTURE.weeks, "dakota"), 2);
+  // Reported, but nobody in game mode: a real 0, not a gap.
+  assert.equal(latestGaming(GAMING_FIXTURE.weeks, "bluefin"), 0);
+  // Never reported at all.
+  assert.equal(latestGaming(GAMING_FIXTURE.weeks, "utah"), null);
+
+  const total = latestReading(GAMING_FIXTURE.weeks, "dakota").value;
+  assert.ok(
+    latestGaming(GAMING_FIXTURE.weeks, "dakota") <= total,
+    "a share cannot exceed the population it came from",
   );
-  assert.ok(heroChartMatch, "hero echart must be present");
+});
 
-  const option = JSON.parse(heroChartMatch[1].replace(/&quot;/g, '"'));
-  const totalSeriesData = option.series[0].data;
-
+test("only images that reported game mode get a game-mode series", () => {
+  // bluefin is a measured zero, so plotting it would draw a flat line on the
+  // floor and read as a population rather than an absence.
   assert.deepEqual(
-    totalSeriesData,
-    [100, null, 0],
-    "unified fleet series must preserve null gap for missing week and 0 for zero week",
+    gamingRepos(GAMING_FIXTURE.weeks, ["bluefin", "dakota", "utah"]),
+    ["dakota"],
   );
+});
+
+test("the game-mode series is drawn under its image, not as a new one", () => {
+  const html = renderToStaticMarkup(
+    React.createElement(CountmeAnalyticsCharts, {
+      registry: REGISTRY_FIXTURE,
+      counts: GAMING_FIXTURE,
+    }),
+  );
+  const option = JSON.parse(
+    html
+      .match(
+        /data-title="Weekly active systems"[\s\S]*?data-option="([^"]*)"/,
+      )[1]
+      .replace(/&quot;/g, '"')
+      .replace(/&amp;/g, "&"),
+  );
+
+  const names = option.series.map((s) => s.name);
+  assert.ok(names.includes("Dakota"));
+  assert.ok(names.includes("Dakota \u00b7 game mode"));
+  assert.ok(
+    !names.some((n) => n.includes("dakota-gaming")),
+    "the gaming id must never surface as an image of its own",
+  );
+
+  const total = option.series.find((s) => s.name === "Dakota");
+  const gaming = option.series.find(
+    (s) => s.name === "Dakota \u00b7 game mode",
+  );
+  assert.deepEqual(total.data, [4, 6]);
+  assert.deepEqual(gaming.data, [1, 2]);
+  assert.equal(
+    gaming.itemStyle.color,
+    total.itemStyle.color,
+    "a share carries its image's colour so it is not read as a separate image",
+  );
+  assert.equal(gaming.connectNulls, false);
+});
+
+test("the axis shortens its ticks but keeps the full date in the data", () => {
+  // Nine ISO dates on one axis repeat the year nine times and crowd each other
+  // out. The tooltip and the numbers table read xAxis.data, so the full date
+  // has to survive there even though the tick text does not show it.
+  const html = renderCounts(COUNTS_FIXTURE);
+  const option = JSON.parse(
+    html
+      .match(
+        /data-title="Weekly active systems"[\s\S]*?data-option="([^"]*)"/,
+      )[1]
+      .replace(/&quot;/g, '"')
+      .replace(/&amp;/g, "&"),
+  );
+
+  assert.deepEqual(option.xAxis.data, [
+    "2026-08-17",
+    "2026-08-24",
+    "2026-08-31",
+  ]);
+  assert.equal(compactWeek("2026-08-17"), "Aug 17");
+  assert.equal(compactWeek("2026-01-05"), "Jan 5");
+  // A value that is not a date is passed through rather than rendered as
+  // "Invalid Date" on the axis.
+  assert.equal(compactWeek("not-a-date"), "not-a-date");
 });

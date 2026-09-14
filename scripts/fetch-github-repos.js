@@ -35,12 +35,14 @@ const GITHUB_REPOS = [
   "flattool/ignition",
   "tchx84/Flatseal",
   "mjakeman/extension-manager",
-  "deja-dup/deja-dup",
-  "Flavius42/mission-center",
+  // deja-dup/deja-dup and Flavius42/mission-center have no canonical GitHub
+  // repo: both projects moved development to GNOME GitLab and no longer
+  // publish an equivalent GitHub repository, so they are intentionally
+  // omitted here (see docs/donations/projects.mdx).
   "adhami3310/impression",
   "PintaProject/Pinta",
   "GNOME/Showtime",
-  "tesk-g/refine",
+  "TheEvilSkeleton/Refine", // formerly tesk-g/refine; account renamed
   "mijorus/smile",
 
   // Homebrew CLI Tools (bluefin-cli)
@@ -148,11 +150,47 @@ async function fetchAllRepos() {
     },
   );
 
-  const repos = Object.fromEntries(resultsMap);
+  // Load whatever cache already exists on disk so a failed fetch for one
+  // repo (rate limiting, transient network error, etc.) doesn't erase stats
+  // that were previously fetched successfully for that same repo.
+  let existingCache = {};
+  if (fs.existsSync(OUTPUT_FILE)) {
+    try {
+      existingCache = JSON.parse(fs.readFileSync(OUTPUT_FILE, "utf-8"));
+    } catch (error) {
+      console.warn(`⚠️  Could not parse existing cache: ${error.message}`);
+    }
+  }
 
+  // ponytail: cache is parsed with JSON.parse and trusted as-is; entries are
+  // assumed to be {full_name, stargazers_count, forks_count}. Add a shape
+  // guard if untrusted/external caches can ever land in github-repos.json.
+
+  const freshRepos = Object.fromEntries(resultsMap);
+
+  // Merge: start from cached entries for repos still tracked (dropping any
+  // that were removed from GITHUB_REPOS), then overlay this run's successes.
+  // A repo that failed this run keeps its last-known-good stats instead of
+  // disappearing entirely.
+  const repos = {};
+  for (const repoPath of GITHUB_REPOS) {
+    if (existingCache[repoPath]) {
+      repos[repoPath] = existingCache[repoPath];
+    }
+  }
+  Object.assign(repos, freshRepos);
+
+  const failedCount = GITHUB_REPOS.length - Object.keys(freshRepos).length;
   console.log(
-    `\nSuccessfully fetched ${Object.keys(repos).length}/${GITHUB_REPOS.length} repos`,
+    `\nSuccessfully fetched ${Object.keys(freshRepos).length}/${GITHUB_REPOS.length} repos`,
   );
+  if (failedCount > 0) {
+    const recoveredFromCache =
+      Object.keys(repos).length - Object.keys(freshRepos).length;
+    console.log(
+      `  ${recoveredFromCache} of the ${failedCount} failures were preserved from the existing cache.`,
+    );
+  }
 
   // Don't fail build if no repos fetched - the component will just not show stats
   if (Object.keys(repos).length === 0) {

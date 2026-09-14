@@ -34,22 +34,37 @@
   --fx-accent-dim: var(--ifm-color-primary-dark);
   --fx-accent-soft: var(--ifm-color-primary-lightest);
 
-  /* Severity stays one hue at four intensities plus a glyph — it is semantic,
-     not decorative, so it does not follow the brand palette. Never encode
-     severity by hue alone and never with a red/green pair. */
-  --fx-sev-unknown: var(--ifm-color-emphasis-500);
-  --fx-sev-ok: hsl(38, 30%, 42%);
-  --fx-sev-watch: hsl(38, 74%, 38%);
-  --fx-sev-alert: hsl(38, 96%, 32%);
+  /* Severity is one hue at four intensities plus a glyph — and the hue is the
+     brand's, 217, the hue of the #4285f4 wordmark accent. It used to be a
+     traffic-light amber, which read as a different product sitting inside the
+     dashboard. The Wolves cinematic (projectbluefin/website,
+     style/wolves-cinematic.scss) names its accent --wc-gold and then sets it to
+     blue; that is the whole design language in one line.
 
-  /* Categorical series, anchored on the brand blue. chartTheme.ts pairs each
-     with a dash pattern so the reading survives greyscale. */
-  --fx-cat-1: var(--ifm-color-primary);
-  --fx-cat-2: #8a63d2;
-  --fx-cat-3: #2aa198;
-  --fx-cat-4: #cb6d20;
-  --fx-cat-5: #5c7bd1;
-  --fx-cat-6: #a2b5fa;
+     Intensity runs toward contrast with the surface, so the lane that needs
+     attention is the loud one. Never encode severity by hue alone and never
+     with a red/green pair. */
+  --fx-sev-unknown: hsl(217, 8%, 52%);
+  --fx-sev-ok: hsl(217, 50%, 52%);
+  --fx-sev-watch: hsl(217, 62%, 38%);
+  --fx-sev-alert: hsl(217, 78%, 26%);
+
+  /* Categorical series: one ramp through the documented Bluefin blues, anchored
+     on the brand accent the wordmark ligature uses (docs/press-kit.md, and
+     --color-blue in projectbluefin/website). The rest are the site's own Infima
+     primary scale from src/css/custom.css. Steps alternate light and dark so
+     neighbours separate, and chartTheme.ts pairs each index with a dash pattern
+     so the reading survives greyscale.
+
+     Written as hex, not hsl: getComputedStyle serialises a custom property to
+     hex anyway, and the brand accent should be its exact value rather than a
+     round-trip that lands one digit away. */
+  --fx-cat-1: #4285f4;
+  --fx-cat-2: #22306b;
+  --fx-cat-3: #5c7bd1;
+  --fx-cat-4: #3f5aa4;
+  --fx-cat-5: #89a3f0;
+  --fx-cat-6: #2c4075;
 
   --fx-space-1: 0.25rem;
   --fx-space-2: 0.5rem;
@@ -89,6 +104,32 @@
   font-family: var(--fx-font);
   color: var(--fx-text);
   background: var(--fx-bg);
+}
+
+/*
+ * Surfaces and text follow Infima's emphasis scale, which inverts on its own.
+ * The two fixed ramps above cannot: they are tuned to be loud against white, so
+ * on a dark surface the loudest step is the darkest one and severity reads
+ * backwards. Same hue, same four intensities, mirrored.
+ *
+ * The categorical steps that were dark-on-white move light-on-black by the same
+ * rule, and --fx-cat-1 stays exactly the brand accent in both.
+ */
+[data-theme="dark"] .fxRoot {
+  --fx-sev-ok: hsl(217, 89%, 61%); /* the brand accent itself */
+  --fx-sev-watch: hsl(217, 94%, 74%);
+  --fx-sev-alert: hsl(217, 100%, 86%);
+
+  /* All six are restated, not just the ones that move: chartTheme.ts keeps a
+     copy of this block for charts mounted outside .fxRoot, and
+     factory-theming.test.js compares the two ramps step for step. A partial
+     override would make that comparison a guess. */
+  --fx-cat-1: #4285f4; /* the brand accent, unchanged in both themes */
+  --fx-cat-2: #c7d7ff;
+  --fx-cat-3: #60a5fa; /* the Wolves signal blue */
+  --fx-cat-4: #8a97f7; /* --color-blue-light */
+  --fx-cat-5: #5c7bd1;
+  --fx-cat-6: #a2b5fa;
 }
 
 /* Headings inside the dashboard use the site's heading treatment. */
