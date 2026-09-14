@@ -7,7 +7,10 @@ export function stripMd(text) {
 }
 
 export function splitMdRow(line) {
-  return line.replace(/^\||\|$/g, "").split("|").map((s) => s.trim());
+  return line
+    .replace(/^\||\|$/g, "")
+    .split("|")
+    .map((s) => s.trim());
 }
 
 export function isMdSeparatorRow(cells) {
@@ -37,6 +40,52 @@ export function extractSectionsMd(content) {
   return sections;
 }
 
+export function stripHtml(html) {
+  return html
+    .replace(/<[^>]+>/g, "")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&#(\d+);/g, (_, dec) => String.fromCharCode(Number(dec)))
+    .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) =>
+      String.fromCharCode(parseInt(hex, 16)),
+    )
+    .trim();
+}
+
+export function parseHtmlTableRows(tableHtml) {
+  const rows = [];
+  const rowRe = /<tr[^>]*>([\s\S]*?)<\/tr>/gi;
+  let rowMatch;
+  while ((rowMatch = rowRe.exec(tableHtml)) !== null) {
+    const rowInner = rowMatch[1];
+    const cellRe = /<td[^>]*>([\s\S]*?)<\/td>/gi;
+    const cells = [];
+    let cellMatch;
+    while ((cellMatch = cellRe.exec(rowInner)) !== null) {
+      cells.push(stripHtml(cellMatch[1]));
+    }
+    if (cells.length > 0) {
+      rows.push(cells);
+    }
+  }
+  return rows;
+}
+
+export function extractSectionsHtml(content) {
+  const sections = new Map();
+  const sectionRe = /<h3[^>]*>([\s\S]*?)<\/h3>\s*(<table[\s\S]*?<\/table>)/gi;
+  let m;
+  while ((m = sectionRe.exec(content)) !== null) {
+    const heading = stripHtml(m[1]);
+    sections.set(heading, parseHtmlTableRows(m[2]));
+  }
+  return sections;
+}
+
 export function parseTwoColTableMd(rows) {
   const results = [];
   for (const cells of rows) {
@@ -46,13 +95,19 @@ export function parseTwoColTableMd(rows) {
     const raw = stripMd(cells[1]);
     const parts = raw.split(/\s*➡️?\s*/u).map((s) => s.trim());
     if (parts.length >= 2 && parts[0] && parts[parts.length - 1]) {
-      results.push({ name, version: parts[parts.length - 1], prevVersion: parts[0] });
+      results.push({
+        name,
+        version: parts[parts.length - 1],
+        prevVersion: parts[0],
+      });
     } else {
       results.push({ name, version: raw, prevVersion: null });
     }
   }
   return results;
 }
+
+export const parseTwoColTable = parseTwoColTableMd;
 
 export function parseDiffRows(rows) {
   let added = 0;
@@ -69,18 +124,30 @@ export function parseDiffRows(rows) {
 }
 
 export function parseCommitRows(rows) {
-  return rows.filter((cells) => cells.length >= 2 && cells[0] && cells[0] !== "Hash").length;
+  return rows.filter(
+    (cells) => cells.length >= 2 && cells[0] && cells[0] !== "Hash",
+  ).length;
 }
 
 export function parseFeedItem(item, streamHint) {
   const content = item.content ?? "";
   const isMarkdown = /^\|[\s|:-]*---[\s|:-]*\|/m.test(content);
-  if (!isMarkdown) return null;
+  const isHtml = /<table/i.test(content);
+  if (!isMarkdown && !isHtml) return null;
 
-  const sections = extractSectionsMd(content);
-  const majorPackages = parseTwoColTableMd(sections.get("Major packages") ?? []);
-  const dxPackages = parseTwoColTableMd(sections.get("Major DX packages") ?? []);
-  const gdxPackages = parseTwoColTableMd(sections.get("Major GDX packages") ?? []);
+  const sections = isMarkdown
+    ? extractSectionsMd(content)
+    : extractSectionsHtml(content);
+
+  const majorPackages = parseTwoColTableMd(
+    sections.get("Major packages") ?? [],
+  );
+  const dxPackages = parseTwoColTableMd(
+    sections.get("Major DX packages") ?? [],
+  );
+  const gdxPackages = parseTwoColTableMd(
+    sections.get("Major GDX packages") ?? [],
+  );
   if (majorPackages.length === 0) return null;
 
   const diffStats = parseDiffRows(sections.get("All Images") ?? []);
@@ -88,12 +155,17 @@ export function parseFeedItem(item, streamHint) {
 
   const fedoraMatch = item.title.match(/\(F(\d+)\./);
   const fedoraVersion = fedoraMatch ? fedoraMatch[1] : null;
-  const centosMatch = item.title.match(/\(([a-z0-9]+s),\s*#/i);
+  const centosMatch = item.title.match(/\(([a-z0-9]+s)(?:,\s*#|\))/i);
   const centosVersion = centosMatch ? centosMatch[1] : null;
 
-  const prefixMatch = item.title.match(/^([a-z]+-[\d.]+)/i);
+  const prefixMatch = item.title.match(/^([a-z]+[-.][\d.]+)/i);
   let tag = prefixMatch ? prefixMatch[1].toLowerCase() : streamHint;
+  tag = tag.replace(/^latest-(\d{8})$/, "stable-daily-$1");
   tag = tag.replace(/^lts\.(\d{8})$/, "lts-$1");
+  if (tag === streamHint) {
+    const ltsAltMatch = item.title.match(/LTS:\s*(\d{8})/i);
+    if (ltsAltMatch) tag = `lts-${ltsAltMatch[1]}`;
+  }
 
   const dateMs = new Date(item.pubDate).getTime();
 
@@ -127,9 +199,15 @@ export function sbomKeyForRelease(tag, stream) {
   const dateMatch = tag.match(/(\d{8})/);
   if (!dateMatch) return null;
   const date = dateMatch[1];
-  if (stream === "lts") return { streamId: "bluefin-lts", cacheKey: `lts-${date}` };
-  if (stream === "stable-daily") return { streamId: "bluefin-stable-daily", cacheKey: `stable-daily-${date}` };
-  if (stream === "stable") return { streamId: "bluefin-stable", cacheKey: `stable-${date}` };
+  if (stream === "lts")
+    return { streamId: "bluefin-lts", cacheKey: `lts-${date}` };
+  if (stream === "stable-daily")
+    return {
+      streamId: "bluefin-stable-daily",
+      cacheKey: `stable-daily-${date}`,
+    };
+  if (stream === "stable")
+    return { streamId: "bluefin-stable", cacheKey: `stable-${date}` };
   return null;
 }
 
@@ -219,7 +297,9 @@ export function enrichFromSbom(release, stream, sbomCache) {
   const key = sbomKeyForRelease(release.tag, stream);
   if (!key) return release;
 
-  const packages = sbomCache?.streams?.[key.streamId]?.releases?.[key.cacheKey]?.packageVersions;
+  const packages =
+    sbomCache?.streams?.[key.streamId]?.releases?.[key.cacheKey]
+      ?.packageVersions;
   if (!packages) return release;
 
   const sbomChipNames = new Set(CHIP_TO_SBOM.map(({ chipName }) => chipName));
@@ -230,7 +310,9 @@ export function enrichFromSbom(release, stream, sbomCache) {
 
   for (const { chipName, displayName, field } of CHIP_TO_SBOM) {
     const sbomVersion = packages[field];
-    const fromNotes = release.majorPackages.find((p) => p.name.toLowerCase() === chipName);
+    const fromNotes = release.majorPackages.find(
+      (p) => p.name.toLowerCase() === chipName,
+    );
     const version = sbomVersion ?? fromNotes?.version ?? null;
     if (!version) continue;
     sbomPackages.push({
