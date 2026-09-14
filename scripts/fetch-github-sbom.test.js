@@ -321,6 +321,25 @@ test("STREAM_SPECS maps all Bluefin LTS streams to bluefin-lts package and stabl
   assert.ok(primaryLts, "bluefin-lts spec must exist");
   assert.equal(primaryLts.package, "bluefin-lts");
   assert.equal(primaryLts.streamPrefix, "stable");
+
+  const ltsNvidia = STREAM_SPECS.find((s) => s.id === "bluefin-lts-nvidia");
+  assert.ok(ltsNvidia, "bluefin-lts-nvidia spec must exist");
+  assert.equal(ltsNvidia.package, "bluefin-lts");
+  assert.equal(ltsNvidia.streamPrefix, "stable");
+  assert.equal(ltsNvidia.org, "projectbluefin");
+  assert.equal(ltsNvidia.releasesRepo, "projectbluefin/bluefin-lts");
+  assert.equal(ltsNvidia.keyRepo, "projectbluefin/bluefin-lts");
+});
+
+test("STREAM_SPECS does not contain retired dx or gdx streams", () => {
+  const retiredStreams = STREAM_SPECS.filter(
+    (s) => s.id.includes("-dx-") || s.id.includes("-gdx-"),
+  );
+  assert.deepEqual(
+    retiredStreams.map((s) => s.id),
+    [],
+    "dx and gdx streams should be retired",
+  );
 });
 
 // Dynamic reference date based on current time to avoid lookback window flakiness.

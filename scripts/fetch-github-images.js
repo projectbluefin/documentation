@@ -68,7 +68,6 @@ const PRODUCT_SPECS = [
     releaseSource: { feed: "lts", stream: "lts" },
     sbomStreamId: "bluefin-lts",
     nvidiaSbomStreamId: "bluefin-lts-nvidia",
-    nvidiaSbomFallbackStreamId: "bluefin-gdx-lts",
     keyRepo: "projectbluefin/bluefin-lts",
     nvidiaPackage: "bluefin-lts-nvidia",
     allowTestingStreams: true,
