@@ -7,3 +7,8 @@ workers_dev = false
 routes = [
   { pattern = "countme.projectbluefin.io/*", zone_name = "projectbluefin.io" }
 ]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "projectbluefin-countme"
+database_id = "3704849e-b4f6-4e90-9d20-cae873b6244b"

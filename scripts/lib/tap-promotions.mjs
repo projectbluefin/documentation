@@ -17,13 +17,16 @@ const TAP_REPOS = {
  *
  * @param {Date} startDate - Start of reporting period
  * @param {Date} endDate - End of reporting period
+ * @param {object} [options] - Optional dependencies/overrides
+ * @param {Function} [options.client=graphqlWithAuth] - GraphQL client
+ * @param {Function} [options.fetchImpl=fetch] - fetch implementation
  * @returns {Promise<Array>} Array of {name, description, mergedAt, prNumber, prUrl}
  */
-export async function fetchTapPromotions(startDate, endDate) {
+export async function fetchTapPromotions(startDate, endDate, options = {}) {
   console.log(
     `\n🍺 Fetching tap promotions from ${startDate.toISOString().split("T")[0]} to ${endDate.toISOString().split("T")[0]}...\n`,
   );
-  return fetchRepoAdditions(TAP_REPOS.production, startDate, endDate);
+  return fetchRepoAdditions(TAP_REPOS.production, startDate, endDate, options);
 }
 
 /**
@@ -31,13 +34,16 @@ export async function fetchTapPromotions(startDate, endDate) {
  *
  * @param {Date} startDate - Start of reporting period
  * @param {Date} endDate - End of reporting period
+ * @param {object} [options] - Optional dependencies/overrides
+ * @param {Function} [options.client=graphqlWithAuth] - GraphQL client
+ * @param {Function} [options.fetchImpl=fetch] - fetch implementation
  * @returns {Promise<Array>} Array of {name, description, mergedAt, prNumber, prUrl}
  */
-export async function fetchExperimentalAdditions(startDate, endDate) {
+export async function fetchExperimentalAdditions(startDate, endDate, options = {}) {
   console.log(
     `\n🧪 Fetching experimental tap additions from ${startDate.toISOString().split("T")[0]} to ${endDate.toISOString().split("T")[0]}...\n`,
   );
-  return fetchRepoAdditions(TAP_REPOS.experimental, startDate, endDate);
+  return fetchRepoAdditions(TAP_REPOS.experimental, startDate, endDate, options);
 }
 
 /**
@@ -46,18 +52,19 @@ export async function fetchExperimentalAdditions(startDate, endDate) {
  * @param {string} repo - Repository in format "owner/repo"
  * @param {Date} startDate - Start of reporting period
  * @param {Date} endDate - End of reporting period
+ * @param {object} [options] - Optional dependencies/overrides
  * @returns {Promise<Array>} Array of {name, description, mergedAt, prNumber, prUrl}
  */
-async function fetchRepoAdditions(repo, startDate, endDate) {
+async function fetchRepoAdditions(repo, startDate, endDate, options = {}) {
+  const { client = graphqlWithAuth, fetchImpl } = options;
   // Fetch merged PRs from tap
-  const prs = await fetchMergedPRs(repo, startDate, endDate);
-
+  const prs = await fetchMergedPRs(repo, startDate, endDate, { client });
   console.log(`   Found ${prs.length} merged PRs in ${repo}`);
 
   // Find PRs that added new formula/cask files
   const additions = [];
   for (const pr of prs) {
-    const files = await fetchPRFiles(repo, pr.number);
+    const files = await fetchPRFiles(repo, pr.number, { fetchImpl });
 
     // Look for added formula or cask files
     const addedPackages = files.filter(
@@ -74,7 +81,9 @@ async function fetchRepoAdditions(repo, startDate, endDate) {
         .replace(/\.rb$/, "");
 
       // Fetch package description from the added file
-      const description = await fetchPackageDescription(repo, file.filename);
+      const description = await fetchPackageDescription(repo, file.filename, {
+        fetchImpl,
+      });
 
       additions.push({
         name: packageName,
@@ -100,9 +109,11 @@ async function fetchRepoAdditions(repo, startDate, endDate) {
  * @param {string} repo - Repository in format "owner/repo"
  * @param {Date} startDate - Start date
  * @param {Date} endDate - End date
+ * @param {object} [options] - Optional dependencies/overrides
  * @returns {Promise<Array>} Array of {number, title, url, mergedAt}
  */
-async function fetchMergedPRs(repo, startDate, endDate) {
+async function fetchMergedPRs(repo, startDate, endDate, options = {}) {
+  const { client = graphqlWithAuth } = options;
   const [owner, name] = repo.split("/");
 
   const query = `
@@ -136,7 +147,7 @@ async function fetchMergedPRs(repo, startDate, endDate) {
 
   while (hasNextPage) {
     const data = await retryWithBackoff(() =>
-      graphqlWithAuth(query, { owner, name, cursor })
+      client(query, { owner, name, cursor })
     );
     const prs = data.repository.pullRequests.nodes;
 
@@ -166,20 +177,23 @@ async function fetchMergedPRs(repo, startDate, endDate) {
  *
  * @param {string} repo - Repository in format "owner/repo"
  * @param {number} prNumber - PR number
+ * @param {object} [options] - Optional dependencies/overrides
  * @returns {Promise<Array>} Array of {filename, status}
  */
-async function fetchPRFiles(repo, prNumber) {
+async function fetchPRFiles(repo, prNumber, options = {}) {
+  const { fetchImpl } = options;
   const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
-  if (!token) {
+  if (!fetchImpl && !token) {
     throw new Error(
       "GitHub token required. Set GITHUB_TOKEN or GH_TOKEN environment variable.",
     );
   }
+  const call = fetchImpl ?? globalThis.fetch;
 
   const url = `https://api.github.com/repos/${repo}/pulls/${prNumber}/files?per_page=100`;
-  const response = await fetch(url, {
+  const response = await call(url, {
     headers: {
-      Authorization: `Bearer ${token}`,
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       Accept: "application/vnd.github.v3+json",
     },
   });
@@ -199,19 +213,22 @@ async function fetchPRFiles(repo, prNumber) {
  *
  * @param {string} repo - Repository in format "owner/repo"
  * @param {string} filepath - Path to formula/cask file
+ * @param {object} [options] - Optional dependencies/overrides
  * @returns {Promise<string|null>} Package description or null
  */
-async function fetchPackageDescription(repo, filepath) {
+async function fetchPackageDescription(repo, filepath, options = {}) {
+  const { fetchImpl } = options;
   const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
-  if (!token) {
+  if (!fetchImpl && !token) {
     return null;
   }
+  const call = fetchImpl ?? globalThis.fetch;
 
   try {
     const url = `https://api.github.com/repos/${repo}/contents/${filepath}`;
-    const response = await fetch(url, {
+    const response = await call(url, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
         Accept: "application/vnd.github.v3.raw",
       },
     });
@@ -236,7 +253,7 @@ async function fetchPackageDescription(repo, filepath) {
  * @param {string} content - Ruby file content
  * @returns {string|null} Description or null
  */
-function parseFormulaDescription(content) {
+export function parseFormulaDescription(content) {
   // Match: desc "Some description here"
   const descMatch = content.match(/desc\s+"([^"]+)"/);
   if (descMatch) {

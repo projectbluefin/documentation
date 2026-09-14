@@ -1,32 +1,144 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Link from "@docusaurus/Link";
+import useBaseUrl from "@docusaurus/useBaseUrl";
 import Heading from "@theme/Heading";
 import EChart from "../factory/EChart";
 import Unavailable from "../factory/Unavailable";
-import Sparkline from "../Sparkline";
-import { gapSafe, seriesColor, seriesDash } from "../factory/chartTheme";
+import {
+  readableInk,
+  seriesDash,
+  withAlpha,
+  type SeverityLevel,
+} from "../factory/chartTheme";
+import { FIRST_PARTY_PENDING_REASON } from "@site/scripts/lib/countme-sources.mjs";
+import {
+  COUNTS_URL,
+  FIRST_PARTY_ORIGIN,
+  gamingRepos,
+  gamingSeries,
+  latestGaming,
+  latestReading,
+  measuredWeekCount,
+  reportingRepos,
+  repoSeries,
+  weekLabels,
+  type CountmeDataset,
+} from "./firstPartyCountme";
+import { useFactoryTheme } from "../factory/useFactoryTheme";
+import "../factory/tokens.css";
 import styles from "./CountmeAnalyticsCharts.module.css";
-import countmeHistoryData from "@site/static/data/countme-history.json";
 
-export interface CountmeWeek {
-  week: string;
-  bluefin?: number | null;
-  "bluefin-lts"?: number | null;
-  aurora?: number | null;
-  bazzite?: number | null;
-  fedora?: number | null;
-  dakota?: number | null;
-  utah?: number | null;
-  [key: string]: string | number | null | undefined;
+/**
+ * The registry snapshot is generated at build time and is not a tracked seed,
+ * so it is fetched rather than imported: a static import of a file that may not
+ * exist fails the build instead of rendering a panel that says why.
+ */
+const REGISTRY_URL = "/data/ghcr-packages.json";
+
+/**
+ * Weekly active systems come from the first-party service and nothing else.
+ *
+ * The reader lives in `./firstPartyCountme`, and is imported rather than
+ * re-exported from here. This file holds the image catalogue, and
+ * `scripts/countme-first-party.test.js` forbids one file from holding both a
+ * catalogue of our image ids and a computed index into a countme week. That
+ * pairing twice published a Fedora-derived number under a Project Bluefin name,
+ * so the two stay in separate files and the gate stays a real gate.
+ */
+
+/**
+ * The one upstream series anyone may publish, per `UPSTREAM_ALLOWED`:
+ * `ublue-os/bluefin:stable`, counted by `ublue-os/countme`.
+ *
+ * Both are read through our own worker rather than from GitHub directly, so the
+ * page talks to a single origin and `raw.githubusercontent.com` does not need
+ * to appear in `connect-src` for this.
+ *
+ * Upstream publishes a rendered chart and a rounded badge value, and no
+ * time-series file, so this panel shows the image it publishes rather than
+ * replotting a series that does not exist.
+ */
+const LEGACY_CHART_URL = `${FIRST_PARTY_ORIGIN}/legacy/bluefin.svg`;
+const LEGACY_BADGE_URL = `${FIRST_PARTY_ORIGIN}/badge-endpoints/bluefin.json`;
+
+/**
+ * Chart series names.
+ *
+ * Short on purpose: the chip row above the chart already carries the full name
+ * and the current value, so a legend repeating "Project Bluefin Dakota" five
+ * times only crowds the axis it sits under.
+ */
+export const SHORT_REPO_LABELS: Record<string, string> = {
+  bluefin: "Bluefin",
+  "bluefin-lts": "LTS",
+  dakota: "Dakota",
+  utah: "Utah",
+  server: "Server",
+};
+
+/**
+ * `2026-07-13` as `Jul 13`.
+ *
+ * Nine ISO dates across one axis repeat the year nine times and leave no room
+ * to read any of them. The full date stays on the axis data, so the tooltip and
+ * the numbers table below still carry it.
+ */
+export function compactWeek(week: string): string {
+  const d = new Date(`${week}T00:00:00Z`);
+  return Number.isNaN(d.getTime())
+    ? week
+    : d.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        timeZone: "UTC",
+      });
 }
 
-export interface CountmeDataset {
-  generatedAt: string;
-  source: string;
-  method: string;
-  unit: string;
-  variants: string[];
-  weeks: CountmeWeek[];
+/** Display names for the first-party `repo` identifiers. */
+export const REPO_LABELS: Record<string, string> = {
+  bluefin: "Bluefin",
+  "bluefin-lts": "Bluefin LTS",
+  dakota: "Project Bluefin Dakota",
+  utah: "Project Bluefin Utah",
+  server: "Bluefin Server",
+};
+
+/**
+ * Marker shapes, paired with the palette index like `seriesDash`.
+ *
+ * The Bluefin categorical ramp is six shades of a single blue, so hue alone
+ * cannot tell two series apart. Shape and dash carry the distinction instead,
+ * which is also what makes the chart readable in greyscale.
+ */
+export const SERIES_SYMBOLS = [
+  "circle",
+  "triangle",
+  "diamond",
+  "rect",
+  "pin",
+  "arrow",
+] as const;
+
+/** One published tag of one GHCR package, as `scripts/fetch-ghcr-packages.js` writes it. */
+export interface GhcrStream {
+  tag: string;
+  publishedAt?: string | null;
+  ageDays?: number | null;
+  state?: string | null;
+  stateReason?: string | null;
+}
+
+export interface GhcrPackage {
+  name: string;
+  family: string;
+  streams?: GhcrStream[];
+  versionCount?: number;
+}
+
+export interface GhcrDataset {
+  generatedAt?: string;
+  source?: string;
+  packages?: GhcrPackage[];
   unavailable?: boolean;
   stateReason?: string | null;
 }
@@ -42,762 +154,791 @@ export function parseCount(val: unknown): number | null {
 }
 
 /**
- * Sum an array of counts, preserving 0 if at least one value is present,
- * and returning null if all values are missing (gaps).
+ * The promotion axis, in promotion order.
+ *
+ * Read from source, not from `projectbluefin/common` →
+ * `docs/skills/image-registry.md`, which still claims `bluefin-lts` promotes to
+ * `:lts`. Every repo's `execute-release.yml` targets `stable`:
+ *
+ *   bluefin      {"source_tag":"testing","target_tag":"stable"}
+ *   bluefin-lts  {"source_tag":"testing","target_tag":"stable"}
+ *   dakota       {"source_tag":"<build sha>","target_tag":"stable"}
+ *
+ * `:lts`, `:gts` and `:latest` still sit on some images as leftovers from
+ * retired schemes. Nothing promotes through them, so they are not columns — a
+ * column that is a dash down most of the grid teaches nobody anything.
  */
-export function sumPresent(
-  values: Array<number | null | undefined>,
-): number | null {
-  let hasValue = false;
-  let total = 0;
-  for (const raw of values) {
-    const val = parseCount(raw);
-    if (val !== null) {
-      hasValue = true;
-      total += val;
-    }
-  }
-  return hasValue ? total : null;
-}
-
-type HeroRange = "12w" | "24w" | "all";
-type HeroMode = "unified" | "split";
-type RangeOption = "4w" | "12w" | "all";
-type ViewMode = "workstations" | "all-ecosystem" | "with-fedora";
+export const STREAM_COLUMNS = ["testing", "stable"] as const;
+export type StreamTag = (typeof STREAM_COLUMNS)[number];
 
 export interface ProjectBluefinImageSpec {
-  id: "bluefin" | "bluefin-lts" | "dakota" | "utah";
+  id: "bluefin" | "bluefin-lts" | "dakota" | "utah" | "server";
   name: string;
   edition: string;
-  color: string;
+  /** Upstream the image is composed from. */
+  base: string;
+  /** Index into the resolved `--fx-cat-*` ramp. Never a literal colour. */
+  cat: number;
   link: string;
   status: "active" | "bootstrapping" | "provisioning";
   statusText: string;
+  /** GHCR packages this family promotes, in release-workflow order. */
+  images: string[];
+  /** Packages still in the registry that no release workflow promotes. */
+  retired?: string[];
+  /** `oci` families appear in the stream matrix; `ddi` families ship no container tags. */
+  delivery: "oci" | "ddi";
 }
 
+/**
+ * Every image family `projectbluefin/common` ships into, with the GHCR packages
+ * each one promotes.
+ *
+ * **Derived from each repo's `execute-release.yml` promotion matrix, not from
+ * `common` → `docs/skills/image-registry.md`.** That file was the source here
+ * and it is wrong on three counts: it claims `bluefin-lts` promotes to `:lts`,
+ * it lists the retired `-hwe` images as live, and it omits `bluefin-lts-nvidia`
+ * and both dakota gaming images entirely. Re-derive before editing this list:
+ *
+ * ```bash
+ * for r in bluefin bluefin-lts dakota; do
+ *   gh api "repos/projectbluefin/$r/contents/.github/workflows/execute-release.yml" \
+ *     --jq .content | base64 -d | grep -E '"image"'
+ * done
+ * ```
+ *
+ * `id` is the first-party countme `repo` identifier.
+ */
 export const BLUEFIN_FAMILY_IMAGES: ProjectBluefinImageSpec[] = [
   {
     id: "bluefin",
     name: "Bluefin",
     edition: "Flagship Workstation",
-    color: "#58a6ff",
+    base: "Fedora",
+    cat: 0,
     link: "/downloads",
     status: "active",
     statusText: "Active Tracking",
+    images: ["bluefin", "bluefin-nvidia"],
+    delivery: "oci",
   },
   {
     id: "bluefin-lts",
     name: "Bluefin LTS",
     edition: "Enterprise Workstation",
-    color: "#bc8cff",
+    base: "CentOS Stream 10",
+    cat: 1,
     link: "/lts",
     status: "active",
     statusText: "Active · EPEL",
+    images: ["bluefin-lts", "bluefin-lts-nvidia"],
+    retired: ["bluefin-lts-hwe", "bluefin-lts-hwe-nvidia"],
+    delivery: "oci",
   },
   {
     id: "dakota",
     name: "Project Bluefin Dakota",
     edition: "Next-Gen BuildStream",
-    color: "#39d2c0",
+    base: "GNOME OS / BuildStream 2",
+    cat: 2,
     link: "/dakota",
     status: "bootstrapping",
     statusText: "Alpha · Collecting",
+    images: [
+      "dakota",
+      "dakota-nvidia",
+      "dakota-gaming",
+      "dakota-nvidia-gaming",
+    ],
+    delivery: "oci",
   },
   {
     id: "utah",
     name: "Project Bluefin Utah",
     edition: "Modular Hummingbird",
-    color: "#f0883e",
+    base: "Fedora Hummingbird",
+    cat: 3,
     link: "/utah",
     status: "provisioning",
     statusText: "Pre-alpha · Provisioning",
+    images: [],
+    delivery: "oci",
+  },
+  {
+    id: "server",
+    name: "Bluefin Server",
+    edition: "Image-Based Server",
+    base: "freedesktop-sdk 26.08",
+    cat: 4,
+    link: "https://github.com/projectbluefin/server",
+    status: "provisioning",
+    statusText: "Alpha · DDI delivery",
+    images: [],
+    delivery: "ddi",
   },
 ];
 
-export function getFamilyImageMetrics(
-  img: ProjectBluefinImageSpec,
-  weeks: CountmeWeek[],
-  latestWeek: CountmeWeek,
-) {
-  const count = parseCount(latestWeek[img.id]);
-  const history = weeks.slice(-12).map((w) => parseCount(w[img.id]));
-  const hasHistory = history.some((v) => v !== null);
-  const isTracked = count !== null;
-  return {
-    count,
-    isTracked,
-    hasHistory,
-    history: isTracked || hasHistory ? history : [],
-  };
+/**
+ * Publication recency as one hue at four intensities plus a glyph.
+ *
+ * `fetch-ghcr-packages.js` already decides `fresh` vs `stale` per tag against
+ * that lane's own cadence budget, so this only splits `stale` by how far past
+ * the budget it has drifted. An absent stream is `unknown` — a gap, not a zero.
+ */
+export function freshnessLevel(stream?: GhcrStream | null): SeverityLevel {
+  const age = parseCount(stream?.ageDays);
+  if (!stream || age === null) return "unknown";
+  if (stream.state === "fresh") return "ok";
+  return age >= 30 ? "alert" : "watch";
+}
+
+const LEVEL_ORDINAL: Record<SeverityLevel, number> = {
+  unknown: 0,
+  ok: 1,
+  watch: 2,
+  alert: 3,
+};
+
+export interface MatrixRow {
+  image: string;
+  family: ProjectBluefinImageSpec;
+}
+
+export interface MatrixCell {
+  x: number;
+  y: number;
+  image: string;
+  stream: StreamTag;
+  level: SeverityLevel;
+  ageDays: number | null;
+  publishedAt: string | null;
+  reason: string | null;
+}
+
+/** Every OCI image the families publish, flattened into heatmap rows. */
+export function matrixRows(
+  families: ProjectBluefinImageSpec[] = BLUEFIN_FAMILY_IMAGES,
+): MatrixRow[] {
+  return families
+    .filter((f) => f.delivery === "oci")
+    .flatMap((family) => family.images.map((image) => ({ image, family })));
+}
+
+/**
+ * Join the image catalogue against the registry snapshot.
+ *
+ * The catalogue drives the grid, not the snapshot: an image the factory is
+ * supposed to publish but the registry does not carry still gets a cell, marked
+ * unknown. A silently missing row and a published-but-stale row are different
+ * claims.
+ */
+export function buildStreamMatrix(
+  rows: MatrixRow[],
+  packages: GhcrPackage[],
+): MatrixCell[] {
+  const byName = new Map(packages.map((p) => [p.name, p]));
+  const cells: MatrixCell[] = [];
+  rows.forEach((row, y) => {
+    STREAM_COLUMNS.forEach((stream, x) => {
+      const published = byName
+        .get(row.image)
+        ?.streams?.find((s) => s.tag === stream);
+      cells.push({
+        x,
+        y,
+        image: row.image,
+        stream,
+        level: freshnessLevel(published),
+        ageDays: parseCount(published?.ageDays),
+        publishedAt: published?.publishedAt ?? null,
+        reason:
+          published?.stateReason ??
+          (published ? null : "no version published under this tag"),
+      });
+    });
+  });
+  return cells;
 }
 
 export interface CountmeAnalyticsChartsProps {
-  dataset?: CountmeDataset;
+  registry?: GhcrDataset;
+  /** Injected by tests; production fetches the first-party aggregate. */
+  counts?: CountmeDataset;
 }
 
 export default function CountmeAnalyticsCharts({
-  dataset,
+  registry,
+  counts,
 }: CountmeAnalyticsChartsProps = {}): React.JSX.Element {
-  const data = dataset ?? (countmeHistoryData as unknown as CountmeDataset);
-  const weeks = data?.weeks || [];
+  const [themeRef, fxTheme] = useFactoryTheme();
+  const cat = fxTheme.categorical;
+  const sev = fxTheme.severity;
+  const [fetchedRegistry, setFetchedRegistry] = useState<GhcrDataset | null>(
+    null,
+  );
+  const [registryReason, setRegistryReason] = useState<string | null>(null);
+  const base = useBaseUrl("/");
 
-  const [heroRange, setHeroRange] = useState<HeroRange>("all");
-  const [heroMode, setHeroMode] = useState<HeroMode>("unified");
-  const [range, setRange] = useState<RangeOption>("12w");
-  const [viewMode, setViewMode] = useState<ViewMode>("all-ecosystem");
-
-  const latestWeek = weeks[weeks.length - 1] || ({} as CountmeWeek);
-  const latestBluefin = parseCount(latestWeek.bluefin);
-  const latestBluefinLts = parseCount(latestWeek["bluefin-lts"]);
-  const latestDakota = parseCount(latestWeek.dakota);
-  const latestUtah = parseCount(latestWeek.utah);
-  const currentTotalBluefin =
-    sumPresent([latestBluefin, latestBluefinLts, latestDakota, latestUtah]) ??
-    0;
-
-  // Filtered weeks for Hero Bluefin chart
-  const heroFilteredWeeks = useMemo(() => {
-    if (heroRange === "12w") return weeks.slice(-12);
-    if (heroRange === "24w") return weeks.slice(-24);
-    return weeks;
-  }, [weeks, heroRange]);
-
-  // Delta calculation for Bluefin fleet
-  const firstWeek = weeks[0] || ({} as CountmeWeek);
-  const initialTotalBluefin =
-    sumPresent([
-      firstWeek.bluefin,
-      firstWeek["bluefin-lts"],
-      firstWeek.dakota,
-      firstWeek.utah,
-    ]) ?? currentTotalBluefin;
-
-  const bluefinDeltaPct =
-    initialTotalBluefin > 0
-      ? (
-          ((currentTotalBluefin - initialTotalBluefin) / initialTotalBluefin) *
-          100
-        ).toFixed(1)
-      : "0.0";
-
-  // Filtered weeks for comparative time-series charts
-  const filteredWeeks = useMemo(() => {
-    if (range === "4w") return weeks.slice(-4);
-    if (range === "12w") return weeks.slice(-12);
-    return weeks;
-  }, [weeks, range]);
-
-  // Ecosystem totals (Bazzite + Total Bluefin fleet + Aurora)
-  const peerTotal = useMemo(() => {
-    const bazzite = parseCount(latestWeek.bazzite) ?? 0;
-    const aurora = parseCount(latestWeek.aurora) ?? 0;
-    return bazzite + currentTotalBluefin + aurora;
-  }, [latestWeek, currentTotalBluefin]);
-
-  // Real finite point counts for EChart to prevent bypassing accumulating data
-  const realHeroPoints = useMemo(() => {
-    return heroFilteredWeeks.filter(
-      (w) =>
-        parseCount(w.bluefin) !== null ||
-        parseCount(w["bluefin-lts"]) !== null ||
-        parseCount(w.dakota) !== null ||
-        parseCount(w.utah) !== null,
-    ).length;
-  }, [heroFilteredWeeks]);
-
-  const realComparativePoints = useMemo(() => {
-    return filteredWeeks.filter(
-      (w) =>
-        parseCount(w.bazzite) !== null ||
-        parseCount(w.bluefin) !== null ||
-        parseCount(w["bluefin-lts"]) !== null ||
-        parseCount(w.dakota) !== null ||
-        parseCount(w.utah) !== null ||
-        parseCount(w.aurora) !== null,
-    ).length;
-  }, [filteredWeeks]);
-
-  // Shared domain for workstation small multiples
-  const workstationDomain = useMemo<[number, number]>(() => {
-    let min = Infinity;
-    let max = -Infinity;
-    const workstationKeys = BLUEFIN_FAMILY_IMAGES.map((img) => img.id);
-    for (const w of weeks) {
-      for (const k of workstationKeys) {
-        const val = parseCount(w[k]);
-        if (val !== null) {
-          if (val < min) min = val;
-          if (val > max) max = val;
-        }
+  useEffect(() => {
+    if (registry) return;
+    const url = base.replace(/\/$/, "") + REGISTRY_URL;
+    void (async () => {
+      try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        setFetchedRegistry((await res.json()) as GhcrDataset);
+      } catch (err) {
+        setRegistryReason(
+          `${REGISTRY_URL} could not be read (${(err as Error).message}). ` +
+            `It is generated at build time and may not exist in this environment.`,
+        );
       }
-    }
-    const safeMin = Number.isFinite(min) ? Math.max(0, min) : 0;
-    const safeMax = Number.isFinite(max) ? Math.max(100, max) : 100;
-    return [safeMin, safeMax];
-  }, [weeks]);
+    })();
+  }, [base, registry]);
 
-  // 1. "Bluefin Systems (Total Fleet)" EChart option
-  const heroChartOption = useMemo(() => {
-    const labels = heroFilteredWeeks.map((w) => w.week);
+  // ── Weekly active systems, first-party only ────────────────────────────
+  const [fetchedCounts, setFetchedCounts] = useState<CountmeDataset | null>(
+    null,
+  );
+  const [countsReason, setCountsReason] = useState<string | null>(null);
 
-    if (heroMode === "split") {
-      const flagshipSeries = gapSafe(
-        heroFilteredWeeks.map((w) => parseCount(w.bluefin)),
-      );
-      const ltsSeries = gapSafe(
-        heroFilteredWeeks.map((w) => parseCount(w["bluefin-lts"])),
-      );
-      const dakotaSeries = gapSafe(
-        heroFilteredWeeks.map((w) => w.dakota ?? null),
-      );
-      const utahSeries = gapSafe(heroFilteredWeeks.map((w) => w.utah ?? null));
+  useEffect(() => {
+    if (counts) return;
+    void (async () => {
+      try {
+        const res = await fetch(COUNTS_URL);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        setFetchedCounts((await res.json()) as CountmeDataset);
+      } catch {
+        // The reason is deliberately generic. A panel reason is published copy,
+        // and commit 5a5269bc removed internal service posture from this page.
+        setCountsReason(FIRST_PARTY_PENDING_REASON);
+      }
+    })();
+  }, [counts]);
 
-      return {
-        xAxis: {
-          type: "category",
-          data: labels,
-        },
-        yAxis: {
-          type: "value",
-          min: "dataMin",
-        },
-        series: [
-          {
-            name: "Bluefin Flagship",
-            type: "line",
-            data: flagshipSeries,
-            smooth: true,
-            showSymbol: true,
-            symbolSize: 6,
-            itemStyle: { color: "#58a6ff" },
-            lineStyle: { width: 3, color: "#58a6ff" },
-            connectNulls: false,
-          },
-          {
-            name: "Bluefin LTS",
-            type: "line",
-            data: ltsSeries,
-            smooth: true,
-            showSymbol: true,
-            symbolSize: 6,
-            itemStyle: { color: "#bc8cff" },
-            lineStyle: { width: 3, color: "#bc8cff", type: [6, 3] },
-            connectNulls: false,
-          },
-          {
-            name: "Dakota",
-            type: "line",
-            data: dakotaSeries,
-            smooth: true,
-            showSymbol: true,
-            symbolSize: 6,
-            itemStyle: { color: "#39d2c0" },
-            lineStyle: { width: 3, color: "#39d2c0", type: [2, 2] },
-            connectNulls: false,
-          },
-          {
-            name: "Utah",
-            type: "line",
-            data: utahSeries,
-            smooth: true,
-            showSymbol: true,
-            symbolSize: 6,
-            itemStyle: { color: "#f0883e" },
-            lineStyle: { width: 3, color: "#f0883e", type: [1, 2] },
-            connectNulls: false,
-          },
-        ],
-      };
-    }
+  const countsData = counts ?? fetchedCounts;
+  const countmeWeeks = countsData?.weeks ?? [];
+  const activeRepos = useMemo(
+    () => reportingRepos(countmeWeeks),
+    [countmeWeeks],
+  );
 
-    // Unified fleet total series
-    const totalSeries = gapSafe(
-      heroFilteredWeeks.map((w) =>
-        sumPresent([w.bluefin, w["bluefin-lts"], w.dakota, w.utah]),
-      ),
-    );
+  // ── Upstream image, the one permitted legacy series ────────────────────
+  //
+  // UPSTREAM_ALLOWED is the single exception to the first-party rule:
+  // ublue-os/bluefin:stable, counted by ublue-os/countme. Both the badge and
+  // the chart are proxied by our worker, so this stays on one origin and needs
+  // no second CSP entry.
+  const [legacyActive, setLegacyActive] = useState<string | null>(null);
 
-    return {
+  useEffect(() => {
+    void (async () => {
+      try {
+        const res = await fetch(LEGACY_BADGE_URL);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const badge = (await res.json()) as { message?: string };
+        setLegacyActive(badge?.message ?? null);
+      } catch {
+        setLegacyActive(null);
+      }
+    })();
+  }, []);
+
+  /** Readings that exist, so the panel can print a number per series. */
+  const countmeReadings = useMemo(
+    () =>
+      activeRepos.map((repo) => ({
+        repo,
+        label: REPO_LABELS[repo] ?? repo,
+        reading: latestReading(countmeWeeks, repo),
+        gaming: latestGaming(countmeWeeks, repo),
+      })),
+    [activeRepos, countmeWeeks],
+  );
+
+  /**
+   * Latest reading summed across every reporting image.
+   *
+   * Each image's own latest week is used, because they do not all report in the
+   * same week. Null when nothing has reported at all, so the panel says
+   * "accumulating data" rather than claiming a fleet of zero.
+   */
+  const firstPartyTotal = useMemo(() => {
+    const readings = countmeReadings
+      .map((r) => r.reading?.value)
+      .filter((v): v is number => typeof v === "number");
+    return readings.length ? readings.reduce((sum, v) => sum + v, 0) : null;
+  }, [countmeReadings]);
+
+  /** Images that actually reported game mode, so a flat zero is never drawn. */
+  const gamingActiveRepos = useMemo(
+    () => gamingRepos(countmeWeeks, activeRepos),
+    [countmeWeeks, activeRepos],
+  );
+
+  /** Rule 5: the point count is real readings, not axis length. */
+  const countmePoints = useMemo(
+    () => measuredWeekCount(countmeWeeks, activeRepos),
+    [countmeWeeks, activeRepos],
+  );
+
+  const countmeOption = useMemo(
+    () => ({
+      grid: { left: 56, right: 24, top: 16, bottom: 48, containLabel: true },
+      tooltip: { trigger: "axis" },
       xAxis: {
         type: "category",
-        data: labels,
+        // Full ISO dates stay in the data, so the tooltip and the numbers table
+        // keep them; only the tick text is shortened.
+        data: weekLabels(countmeWeeks),
+        axisLabel: {
+          fontSize: 13,
+          hideOverlap: true,
+          formatter: (value: string) => compactWeek(value),
+        },
       },
+      // Anchored at zero: a floating floor turns a flat series into a cliff.
       yAxis: {
         type: "value",
-        min: "dataMin",
+        min: 0,
+        minInterval: 1,
+        axisLabel: { fontSize: 13 },
+      },
+      legend: { textStyle: { fontSize: 13 }, itemGap: 18 },
+      series: [
+        ...activeRepos.map((repo, i) => ({
+          name: SHORT_REPO_LABELS[repo] ?? repo,
+          type: "line",
+          // Rule 4: discrete weekly readings. No spline between them, and a
+          // missing week breaks the line rather than being bridged or zeroed.
+          smooth: false,
+          connectNulls: false,
+          showSymbol: true,
+          symbolSize: 7,
+          // The Bluefin palette is six shades of one hue, so colour alone
+          // cannot separate series. chartTheme pairs each index with a dash
+          // pattern and a symbol for exactly this; both survive greyscale and
+          // colour blindness.
+          symbol: SERIES_SYMBOLS[i % SERIES_SYMBOLS.length],
+          data: repoSeries(countmeWeeks, repo),
+          itemStyle: { color: cat[i % cat.length] },
+          lineStyle: {
+            width: 2,
+            color: cat[i % cat.length],
+            type: seriesDash(i),
+          },
+        })),
+        // Game mode is a share of the image above it, never a separate image,
+        // so it carries that image's colour and sits under its line. It is
+        // drawn only for images that actually reported it, so a flat zero does
+        // not imply a population nobody measured.
+        ...gamingActiveRepos.map((repo) => {
+          const i = activeRepos.indexOf(repo);
+          return {
+            name: `${SHORT_REPO_LABELS[repo] ?? repo} · game mode`,
+            type: "line",
+            smooth: false,
+            connectNulls: false,
+            showSymbol: true,
+            symbolSize: 6,
+            symbol: "emptyCircle",
+            data: gamingSeries(countmeWeeks, repo),
+            itemStyle: { color: cat[i % cat.length] },
+            lineStyle: {
+              width: 1,
+              color: cat[i % cat.length],
+              type: "dotted",
+              opacity: 0.85,
+            },
+          };
+        }),
+      ],
+    }),
+    [countmeWeeks, activeRepos, gamingActiveRepos, cat],
+  );
+
+  /**
+   * Rule 1, in prose: the summary carries the current number for every series,
+   * so the chart is never the sole holder of the claim. A series whose latest
+   * weeks are a gap reports the last week it was actually measured.
+   */
+  const countmeSummary = useMemo(() => {
+    if (!countmeReadings.length) return FIRST_PARTY_PENDING_REASON;
+    const parts = countmeReadings.map(({ label, reading }) =>
+      reading
+        ? `${label} ${reading.value.toLocaleString()} (week ${reading.week})`
+        : `${label} accumulating data`,
+    );
+    return `Weekly active systems across ${countmePoints} measured week${
+      countmePoints === 1 ? "" : "s"
+    } — ${parts.join(", ")}.`;
+  }, [countmeReadings, countmePoints]);
+
+  const ghcr = registry ?? fetchedRegistry;
+
+  // ── Image × stream publication matrix ──────────────────────────────────
+  const ghcrPackages = ghcr?.packages ?? [];
+  const rows = useMemo(() => matrixRows(), []);
+  const cells = useMemo(
+    () => buildStreamMatrix(rows, ghcrPackages),
+    [rows, ghcrPackages],
+  );
+  const publishedCells = cells.filter((c) => c.ageDays !== null).length;
+
+  const matrixOption = useMemo(
+    () => ({
+      // The shared option supplies a legend; a single-series heatmap has no use
+      // for one, and it lands on top of the stream labels.
+      legend: { show: false },
+      grid: { left: 200, right: 32, top: 12, bottom: 44, containLabel: false },
+      tooltip: {
+        trigger: "item",
+        formatter: (p: { data: { tip: string } }) => p.data.tip,
+      },
+      xAxis: {
+        type: "category",
+        position: "bottom",
+        data: STREAM_COLUMNS.map((s) => `:${s}`),
+        axisLabel: { fontSize: 13, fontWeight: 600 },
+        splitArea: { show: false },
+      },
+      yAxis: {
+        type: "category",
+        inverse: true,
+        data: rows.map((r) => r.image),
+        axisLabel: { fontSize: 12 },
+        splitArea: { show: false },
+      },
+      visualMap: {
+        show: false,
+        type: "piecewise",
+        pieces: (Object.keys(LEVEL_ORDINAL) as SeverityLevel[]).map(
+          (level) => ({
+            value: LEVEL_ORDINAL[level],
+            color: sev[level].color,
+          }),
+        ),
       },
       series: [
         {
-          name: "Bluefin Family (All Systems)",
-          type: "line",
-          data: totalSeries,
-          smooth: true,
-          showSymbol: true,
-          symbolSize: 6,
-          itemStyle: { color: "#58a6ff" },
-          lineStyle: { width: 3, color: "#58a6ff" },
-          areaStyle: {
-            color: {
-              type: "linear",
-              x: 0,
-              y: 0,
-              x2: 0,
-              y2: 1,
-              colorStops: [
-                { offset: 0, color: "rgba(88, 166, 255, 0.45)" },
-                { offset: 1, color: "rgba(57, 210, 192, 0.05)" },
-              ],
-            },
+          name: "Stream freshness",
+          type: "heatmap",
+          data: cells.map((c) => {
+            const level = sev[c.level];
+            return {
+              value: [c.x, c.y, LEVEL_ORDINAL[c.level]],
+              text: c.ageDays === null ? "—" : `${level.glyph} ${c.ageDays}d`,
+              label: { color: readableInk(level.color) },
+              tip: [
+                `${c.image}:${c.stream}`,
+                c.ageDays === null
+                  ? "No published version"
+                  : `Published ${c.ageDays} day${c.ageDays === 1 ? "" : "s"} ago — ${level.word}`,
+                c.publishedAt
+                  ? `Last push ${c.publishedAt.slice(0, 10)}`
+                  : null,
+                c.reason,
+              ]
+                .filter(Boolean)
+                .join("\n"),
+            };
+          }),
+          label: {
+            show: true,
+            fontSize: 12,
+            fontWeight: 600,
+            formatter: (p: { data: { text: string } }) => p.data.text,
           },
-          connectNulls: false,
+          itemStyle: {
+            borderColor: withAlpha(fxTheme.palette.border, 0.9),
+            borderWidth: 2,
+            borderRadius: 6,
+          },
+          emphasis: {
+            itemStyle: { borderColor: cat[0], borderWidth: 3 },
+          },
         },
       ],
-    };
-  }, [heroFilteredWeeks, heroMode]);
+    }),
+    [rows, cells, sev, cat, fxTheme.palette.border],
+  );
 
-  // 2. Comparative EChart configuration
-  const comparativeChartOption = useMemo(() => {
-    const labels = filteredWeeks.map((w) => w.week);
-    const seriesList = [];
-
-    if (viewMode === "with-fedora") {
-      seriesList.push({
-        name: "Fedora (Base)",
-        type: "line",
-        data: gapSafe(filteredWeeks.map((w) => parseCount(w.fedora))),
-        connectNulls: false,
-        itemStyle: { color: "#79b8ff" },
-        lineStyle: { type: [4, 4] },
-      });
-    }
-
-    if (viewMode === "all-ecosystem" || viewMode === "with-fedora") {
-      seriesList.push({
-        name: "Bazzite (Gaming)",
-        type: "line",
-        data: gapSafe(filteredWeeks.map((w) => parseCount(w.bazzite))),
-        connectNulls: false,
-        itemStyle: { color: "#f0883e" },
-        lineStyle: { type: seriesDash(3) },
-      });
-    }
-
-    if (viewMode === "workstations") {
-      seriesList.push(
-        {
-          name: "Bluefin Flagship",
-          type: "line",
-          data: gapSafe(filteredWeeks.map((w) => parseCount(w.bluefin))),
-          connectNulls: false,
-          itemStyle: { color: seriesColor(0) },
-          lineStyle: { type: seriesDash(0) },
-        },
-        {
-          name: "Bluefin LTS",
-          type: "line",
-          data: gapSafe(filteredWeeks.map((w) => parseCount(w["bluefin-lts"]))),
-          connectNulls: false,
-          itemStyle: { color: seriesColor(1) },
-          lineStyle: { type: seriesDash(1) },
-        },
-        {
-          name: "Dakota",
-          type: "line",
-          data: gapSafe(filteredWeeks.map((w) => w.dakota ?? null)),
-          connectNulls: false,
-          itemStyle: { color: "#39d2c0" },
-          lineStyle: { type: seriesDash(3) },
-        },
-        {
-          name: "Utah",
-          type: "line",
-          data: gapSafe(filteredWeeks.map((w) => w.utah ?? null)),
-          connectNulls: false,
-          itemStyle: { color: "#f0883e" },
-          lineStyle: { type: seriesDash(4) },
-        },
-      );
-    } else {
-      // Total Bluefin family
-      seriesList.push({
-        name: "Bluefin Family",
-        type: "line",
-        data: gapSafe(
-          filteredWeeks.map((w) =>
-            sumPresent([w.bluefin, w["bluefin-lts"], w.dakota, w.utah]),
-          ),
-        ),
-        connectNulls: false,
-        itemStyle: { color: seriesColor(0) },
-        lineStyle: { type: seriesDash(0) },
-      });
-    }
-
-    seriesList.push({
-      name: "Aurora (KDE)",
-      type: "line",
-      data: gapSafe(filteredWeeks.map((w) => parseCount(w.aurora))),
-      connectNulls: false,
-      itemStyle: { color: seriesColor(2) },
-      lineStyle: { type: seriesDash(2) },
-    });
-
-    return {
-      xAxis: { type: "category", data: labels },
-      yAxis: { type: "value" },
-      series: seriesList,
-    };
-  }, [filteredWeeks, viewMode]);
-
-  if (data?.unavailable || !weeks.length) {
-    return (
-      <div className={styles.container}>
-        <Unavailable
-          what="Countme Analytics"
-          reason={
-            data?.stateReason ?? "Countme dataset is currently unavailable."
-          }
-        />
-      </div>
-    );
-  }
-
-  // Distribution calculations
-  const bazziteCount = parseCount(latestWeek.bazzite) ?? 0;
-  const auroraCount = parseCount(latestWeek.aurora) ?? 0;
-  const bazzitePct = peerTotal > 0 ? (bazziteCount / peerTotal) * 100 : 0;
-  const bluefinPct =
-    peerTotal > 0 ? (currentTotalBluefin / peerTotal) * 100 : 0;
-  const auroraPct = peerTotal > 0 ? (auroraCount / peerTotal) * 100 : 0;
+  const packageIndex = new Map(ghcrPackages.map((p) => [p.name, p]));
 
   return (
-    <div className={styles.container}>
-      {/* ── 1. Hero: Bluefin Systems (Total Fleet) ─────────────────────────── */}
-      <div className={styles.heroCard}>
-        <div className={styles.heroHeader}>
-          <div className={styles.heroTitleGroup}>
-            <Heading as="h3" className={styles.heroTitle}>
-              Weekly Active Systems
-            </Heading>
-            <p className={styles.heroSubtitle}>
-              Weekly DNF countme check-ins across Project Bluefin workstation
-              variants (Fedora countme)
+    <div ref={themeRef} className={`fxRoot ${styles.container}`}>
+      {/* ── 1. Weekly active systems ─────────────────────────────────────── */}
+      <section className={styles.panelCard}>
+        <header className={styles.sectionHeader}>
+          <Heading as="h3" className={styles.sectionTitle}>
+            Weekly Active Systems
+          </Heading>
+        </header>
+
+        {countmePoints > 0 ? (
+          <>
+            {/* Rule 1: every series states its current number, in text, next
+                to the graphic rather than only inside it. */}
+            <p className={styles.legendRow}>
+              {countmeReadings.map(({ repo, label, reading, gaming }, i) => (
+                <span key={repo} className={styles.legendChip}>
+                  <span
+                    className={styles.legendGlyph}
+                    aria-hidden="true"
+                    style={{ color: cat[i % cat.length] }}
+                  >
+                    ●
+                  </span>
+                  {label}:{" "}
+                  {reading ? reading.value.toLocaleString() : "accumulating"}
+                  {reading && gaming !== null && gaming > 0 ? (
+                    <span className={styles.gamingSplit}>
+                      {" "}
+                      ({gaming.toLocaleString()} in game mode)
+                    </span>
+                  ) : null}
+                </span>
+              ))}
             </p>
-            <div className={styles.heroSubBadges}>
-              <span
-                className={`${styles.heroSubBadge} ${styles.heroSubBadgeHighlight}`}
-              >
-                Flagship (projectbluefin/bluefin):{" "}
-                {latestBluefin !== null
-                  ? `${latestBluefin.toLocaleString()} (${currentTotalBluefin > 0 ? ((latestBluefin / currentTotalBluefin) * 100).toFixed(1) : "0.0"}%)`
-                  : "Pending"}
-              </span>
-              <span className={styles.heroSubBadge}>
-                LTS (projectbluefin/bluefin-lts):{" "}
-                {latestBluefinLts !== null
-                  ? `${latestBluefinLts.toLocaleString()} (${currentTotalBluefin > 0 ? ((latestBluefinLts / currentTotalBluefin) * 100).toFixed(1) : "0.0"}%)`
-                  : "Pending"}
-              </span>
-              <span className={styles.heroSubBadge}>
-                {latestDakota !== null
-                  ? `Dakota: ${latestDakota.toLocaleString()}${currentTotalBluefin > 0 ? ` (${((latestDakota / currentTotalBluefin) * 100).toFixed(1)}%)` : ""}`
-                  : "Dakota: Bootstrapping"}
-              </span>
-              <span className={styles.heroSubBadge}>
-                {latestUtah !== null
-                  ? `Utah: ${latestUtah.toLocaleString()}${currentTotalBluefin > 0 ? ` (${((latestUtah / currentTotalBluefin) * 100).toFixed(1)}%)` : ""}`
-                  : "Utah: Provisioning"}
-              </span>
-            </div>
-          </div>
+            <EChart
+              option={countmeOption}
+              title="Weekly active systems"
+              summary={countmeSummary}
+              points={countmePoints}
+              minPoints={2}
+              height={300}
+              tableCaption="Weekly active systems by image, from the first-party countme service"
+            />
+          </>
+        ) : (
+          // Rule 6: unavailability is visible and carries its reason.
+          <Unavailable
+            what="Weekly active systems"
+            reason={
+              countsData?.stateReason ??
+              countsReason ??
+              FIRST_PARTY_PENDING_REASON
+            }
+          />
+        )}
+      </section>
 
-          <div className={styles.heroKPI}>
-            <div className={styles.heroNumber}>
-              {currentTotalBluefin.toLocaleString()}
-            </div>
-            <div className={styles.heroMeta}>
-              <span style={{ fontWeight: 700, color: "#39d2c0" }}>
-                +{bluefinDeltaPct}% overall
-              </span>
-              <span>latest week ({latestWeek.week})</span>
-            </div>
-          </div>
-        </div>
+      {/* ── 2. Upstream image, for watching the migration ────────────────── */}
+      <section className={styles.panelCard}>
+        <header className={styles.sectionHeader}>
+          <Heading as="h3" className={styles.sectionTitle}>
+            ublue-os/bluefin (legacy)
+          </Heading>
+          <p className={styles.sectionSubtext}>
+            <code>ublue-os/bluefin:stable</code>, counted by{" "}
+            <Link to="https://github.com/ublue-os/countme">
+              ublue-os/countme
+            </Link>
+            . Metalink hits, not image check-ins.
+          </p>
+        </header>
 
-        <div className={styles.chartControls}>
-          <div className={styles.toggleGroup}>
-            <button
-              type="button"
-              className={`${styles.toggleBtn} ${heroMode === "unified" ? styles.toggleBtnActive : ""}`}
-              onClick={() => setHeroMode("unified")}
-            >
-              Unified Fleet
-            </button>
-            <button
-              type="button"
-              className={`${styles.toggleBtn} ${heroMode === "split" ? styles.toggleBtnActive : ""}`}
-              onClick={() => setHeroMode("split")}
-            >
-              By Edition
-            </button>
-          </div>
+        {/* Rule 1: both sides of the comparison carry their current value. */}
+        <p className={styles.legendRow}>
+          <span className={styles.legendChip}>
+            <span className={styles.legendGlyph} aria-hidden="true">
+              ◇
+            </span>
+            Upstream <code>bluefin:stable</code>:{" "}
+            {legacyActive ?? "unavailable"}
+          </span>
+          <span className={styles.legendChip}>
+            <span className={styles.legendGlyph} aria-hidden="true">
+              ●
+            </span>
+            Project Bluefin images:{" "}
+            {firstPartyTotal === null
+              ? "accumulating data"
+              : firstPartyTotal.toLocaleString()}
+          </span>
+        </p>
 
-          <div className={styles.toggleGroup}>
-            {(["12w", "24w", "all"] as HeroRange[]).map((r) => (
-              <button
-                key={r}
-                type="button"
-                className={`${styles.toggleBtn} ${heroRange === r ? styles.toggleBtnActive : ""}`}
-                onClick={() => setHeroRange(r)}
-              >
-                {r === "12w"
-                  ? "12 Weeks"
-                  : r === "24w"
-                    ? "6 Months"
-                    : `All History (${weeks.length}w)`}
-              </button>
-            ))}
-          </div>
-        </div>
+        {legacyActive === null ? (
+          <Unavailable
+            what="Upstream count"
+            reason="The upstream badge could not be read."
+          />
+        ) : (
+          <figure className={styles.legacyFigure}>
+            <img
+              className={styles.legacyChart}
+              src={LEGACY_CHART_URL}
+              alt={`Upstream ublue-os/bluefin growth chart. Current upstream active users: ${legacyActive}.`}
+              loading="lazy"
+              width={1200}
+              height={700}
+            />
+            <figcaption className={styles.chartNote}>
+              Published by <code>ublue-os/countme</code>, recoloured only.
+              Upstream&rsquo;s scale.
+            </figcaption>
+          </figure>
+        )}
+      </section>
 
-        <EChart
-          option={heroChartOption}
-          title="Bluefin Systems"
-          summary={`Project Bluefin weekly active systems: currently ${currentTotalBluefin.toLocaleString()} systems as of week ${latestWeek.week}, up ${bluefinDeltaPct}% across ${weeks.length} tracked weeks.`}
-          points={realHeroPoints}
-          minPoints={2}
-          height={320}
-          tableCaption="Project Bluefin weekly active systems history"
-        />
+      {/* ── 2. Image × stream publication matrix ────────────────────────── */}
+      <section className={styles.panelCard}>
+        <header className={styles.sectionHeader}>
+          <Heading as="h3" className={styles.sectionTitle}>
+            Image &times; Stream Publication Matrix
+          </Heading>
+          <p className={styles.sectionSubtext}>
+            Days since each published image last pushed to each promotion
+            stream. One hue at four intensities, plus a glyph:
+          </p>
+          <p className={styles.legendRow}>
+            {(["ok", "watch", "alert", "unknown"] as SeverityLevel[]).map(
+              (level) => (
+                <span key={level} className={styles.legendChip}>
+                  <span
+                    aria-hidden="true"
+                    className={styles.legendGlyph}
+                    style={{ color: sev[level].color }}
+                  >
+                    {sev[level].glyph}
+                  </span>
+                  {sev[level].word}
+                </span>
+              ),
+            )}
+          </p>
+        </header>
 
-        <div className={styles.chartNote}>
-          <strong>Lineage:</strong> Single source of truth for Project Bluefin,
-          unifying flagship (<code>projectbluefin/bluefin</code>) and enterprise
-          LTS (<code>projectbluefin/bluefin-lts</code>) into one fleet view.
-        </div>
-      </div>
+        {ghcr?.unavailable || !ghcrPackages.length ? (
+          <Unavailable
+            what="Image stream matrix"
+            reason={
+              ghcr?.stateReason ??
+              registryReason ??
+              "Reading the registry snapshot…"
+            }
+          />
+        ) : (
+          <EChart
+            option={matrixOption}
+            title="Image stream freshness"
+            summary={`${publishedCells} of ${cells.length} image-stream lanes carry a published version, across ${rows.map((r) => r.image).join(", ")} and the :${STREAM_COLUMNS.join(", :")} streams.`}
+            points={publishedCells}
+            minPoints={1}
+            height={rows.length * 46 + 64}
+            tableCaption="Days since last publish per image and promotion stream"
+          />
+        )}
 
-      {/* ── 2. Project Bluefin Image Family ─────────────────────────────────── */}
-      <div className={styles.familySection}>
-        <div className={styles.sectionHeading}>
-          Project Bluefin Image Family
-        </div>
-        <div className={styles.sectionSubtext}>
-          Workstation operating system images built, maintained, and
-          instrumented by Project Bluefin
-        </div>
+        <p className={styles.chartNote}>
+          <strong>Streams:</strong> every image promotes <code>:testing</code>{" "}
+          &rarr; <code>:stable</code>, which is the whole axis. Read from each
+          repository&rsquo;s <code>execute-release.yml</code> promotion matrix.
+          The <code>:lts</code>, <code>:gts</code> and <code>:latest</code> tags
+          still sit on some images as leftovers from retired schemes; nothing
+          promotes through them, so they are not columns here.
+        </p>
+      </section>
+
+      {/* ── 4. Family cards ─────────────────────────────────────────────── */}
+      <section className={styles.familySection}>
+        <header className={styles.sectionHeader}>
+          <Heading as="h3" className={styles.sectionTitle}>
+            Project Bluefin Image Family
+          </Heading>
+          <p className={styles.sectionSubtext}>
+            Every image <code>projectbluefin/common</code> ships into, with the
+            GHCR flavors each family publishes.
+          </p>
+        </header>
 
         <div className={styles.familyGrid}>
-          {BLUEFIN_FAMILY_IMAGES.map((img) => {
-            const { count, isTracked, hasHistory, history } =
-              getFamilyImageMetrics(img, weeks, latestWeek);
-
-            return (
-              <div key={img.id} className={styles.familyCard}>
-                <div className={styles.familyCardHeader}>
-                  <div className={styles.familyCardTitleGroup}>
-                    <Heading as="h4" className={styles.familyName}>
-                      {img.name}
-                    </Heading>
-                    <span className={styles.familyEdition}>{img.edition}</span>
-                  </div>
-                  <span
-                    className={`${styles.statusPill} ${
-                      img.status === "active"
-                        ? styles.statusActive
-                        : styles.statusPending
-                    }`}
-                  >
-                    {img.statusText}
+          {BLUEFIN_FAMILY_IMAGES.map((img) => (
+            <article key={img.id} className={styles.familyCard}>
+              <div className={styles.familyCardHeader}>
+                <div className={styles.familyCardTitleGroup}>
+                  <Heading as="h4" className={styles.familyName}>
+                    {img.name}
+                  </Heading>
+                  <span className={styles.familyEdition}>
+                    {img.edition} · {img.base}
                   </span>
                 </div>
-
-                <div className={styles.countRow}>
-                  <span className={styles.countValue}>
-                    {isTracked && count !== null
-                      ? count.toLocaleString()
-                      : img.status === "bootstrapping"
-                        ? "Initial"
-                        : "Pending"}
-                  </span>
-                  {isTracked && count !== null && currentTotalBluefin > 0 && (
-                    <span className={styles.sharePct}>
-                      {((count / currentTotalBluefin) * 100).toFixed(1)}% fleet
-                    </span>
-                  )}
-                </div>
-
-                <div className={styles.cardSparkline}>
-                  <span className={styles.sparklineLabel}>
-                    {isTracked || hasHistory
-                      ? "12-week trend"
-                      : "Countme status"}
-                  </span>
-                  <Sparkline
-                    data={history}
-                    variant="line"
-                    domain={workstationDomain}
-                    width={220}
-                    height={32}
-                    color={img.color}
-                    areaColor="currentColor"
-                    areaOpacity={0.12}
-                    showEnd={isTracked}
-                    minPoints={2}
-                    emptyLabel={
-                      img.status === "bootstrapping"
-                        ? "accumulating countme data"
-                        : "provisioning countme"
-                    }
-                    label={
-                      count !== null
-                        ? `${img.name} 12-week adoption trend: currently ${count.toLocaleString()}`
-                        : `${img.name} countme status: ${img.statusText}`
-                    }
-                  />
-                </div>
-
-                <div className={styles.familyFooter}>
-                  <Link to={img.link} className={styles.familyLink}>
-                    View {img.name} Details &rarr;
-                  </Link>
-                </div>
+                <span
+                  className={`${styles.statusPill} ${
+                    img.status === "active"
+                      ? styles.statusActive
+                      : styles.statusPending
+                  }`}
+                >
+                  {img.statusText}
+                </span>
               </div>
-            );
-          })}
-        </div>
-      </div>
 
-      {/* ── 3. Cloud-Native Ecosystem Overview ─────────────────────────────── */}
-      <div className={styles.shareSection}>
-        <div className={styles.sectionHeading}>
-          Cloud-Native Desktop Ecosystem
-        </div>
-        <div className={styles.sectionSubtext}>
-          Share of {peerTotal.toLocaleString()} total estimated active
-          cloud-native desktop devices (latest week: {latestWeek.week})
-        </div>
+              <ul className={styles.variantList}>
+                {img.images.length === 0 ? (
+                  <li className={styles.variantEmpty}>
+                    {img.delivery === "ddi"
+                      ? "DDI + systemd-sysupdate delivery — no container stream"
+                      : "No image published to GHCR yet"}
+                  </li>
+                ) : (
+                  img.images.map((name) => (
+                    <li key={name} className={styles.variantRow}>
+                      <code className={styles.variantName}>{name}</code>
+                      <span className={styles.variantStreams}>
+                        {STREAM_COLUMNS.map((stream) => {
+                          const published = packageIndex
+                            .get(name)
+                            ?.streams?.find((s) => s.tag === stream);
+                          const level = freshnessLevel(published);
+                          const age = parseCount(published?.ageDays);
+                          return (
+                            <span
+                              key={stream}
+                              className={styles.streamChip}
+                              title={`${name}:${stream} — ${sev[level].word}${
+                                age === null ? "" : `, ${age} days old`
+                              }`}
+                            >
+                              <span
+                                aria-hidden="true"
+                                className={styles.legendGlyph}
+                                style={{ color: sev[level].color }}
+                              >
+                                {sev[level].glyph}
+                              </span>
+                              {stream} {age === null ? "—" : `${age}d`}
+                            </span>
+                          );
+                        })}
+                      </span>
+                    </li>
+                  ))
+                )}
+                {img.retired?.length ? (
+                  <li className={styles.variantEmpty}>
+                    Retired, still in the registry:{" "}
+                    {img.retired.map((name, i) => (
+                      <React.Fragment key={name}>
+                        {i > 0 && ", "}
+                        <code>{name}</code>
+                      </React.Fragment>
+                    ))}
+                  </li>
+                ) : null}
+              </ul>
 
-        {/* Distribution Bar */}
-        <div
-          className={styles.distributionBar}
-          role="region"
-          aria-label={`Desktop ecosystem distribution across ${peerTotal.toLocaleString()} systems`}
-        >
-          <div
-            className={styles.segment}
-            style={{ width: `${bazzitePct}%`, backgroundColor: "#f0883e" }}
-            title={`Bazzite (Gaming): ${bazziteCount.toLocaleString()} (${bazzitePct.toFixed(1)}%)`}
-          />
-          <div
-            className={styles.segment}
-            style={{ width: `${bluefinPct}%`, backgroundColor: "#58a6ff" }}
-            title={`Bluefin Family: ${currentTotalBluefin.toLocaleString()} (${bluefinPct.toFixed(1)}%)`}
-          />
-          <div
-            className={styles.segment}
-            style={{ width: `${auroraPct}%`, backgroundColor: "#39d2c0" }}
-            title={`Aurora (KDE): ${auroraCount.toLocaleString()} (${auroraPct.toFixed(1)}%)`}
-          />
+              <div className={styles.familyFooter}>
+                <Link to={img.link} className={styles.familyLink}>
+                  {img.name} details &rarr;
+                </Link>
+              </div>
+            </article>
+          ))}
         </div>
-
-        {/* Legend */}
-        <div className={styles.shareLegend}>
-          <div className={styles.legendItem}>
-            <span
-              className={styles.legendDot}
-              style={{ backgroundColor: "#f0883e" }}
-            />
-            <span className={styles.legendLabel}>Bazzite (Gaming):</span>
-            <span className={styles.legendValue}>
-              {bazziteCount.toLocaleString()} ({bazzitePct.toFixed(1)}%)
-            </span>
-          </div>
-          <div className={styles.legendItem}>
-            <span
-              className={styles.legendDot}
-              style={{ backgroundColor: "#58a6ff" }}
-            />
-            <span className={styles.legendLabel}>Bluefin Family:</span>
-            <span className={styles.legendValue}>
-              {currentTotalBluefin.toLocaleString()} ({bluefinPct.toFixed(1)}%)
-            </span>
-          </div>
-          <div className={styles.legendItem}>
-            <span
-              className={styles.legendDot}
-              style={{ backgroundColor: "#39d2c0" }}
-            />
-            <span className={styles.legendLabel}>Aurora (KDE):</span>
-            <span className={styles.legendValue}>
-              {auroraCount.toLocaleString()} ({auroraPct.toFixed(1)}%)
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* ── 4. Interactive Comparative Trajectory ───────────────────────────── */}
-      <div className={styles.chartCard}>
-        <div className={styles.chartControls}>
-          <div className={styles.toggleGroup}>
-            <button
-              type="button"
-              className={`${styles.toggleBtn} ${viewMode === "all-ecosystem" ? styles.toggleBtnActive : ""}`}
-              onClick={() => setViewMode("all-ecosystem")}
-            >
-              All Desktop Images
-            </button>
-            <button
-              type="button"
-              className={`${styles.toggleBtn} ${viewMode === "workstations" ? styles.toggleBtnActive : ""}`}
-              onClick={() => setViewMode("workstations")}
-            >
-              Workstations (Flagship, LTS & Aurora)
-            </button>
-            <button
-              type="button"
-              className={`${styles.toggleBtn} ${viewMode === "with-fedora" ? styles.toggleBtnActive : ""}`}
-              onClick={() => setViewMode("with-fedora")}
-            >
-              Include Fedora Base
-            </button>
-          </div>
-
-          <div className={styles.toggleGroup}>
-            {(["4w", "12w", "all"] as RangeOption[]).map((r) => (
-              <button
-                key={r}
-                type="button"
-                className={`${styles.toggleBtn} ${range === r ? styles.toggleBtnActive : ""}`}
-                onClick={() => setRange(r)}
-              >
-                {r === "4w"
-                  ? "4 Weeks"
-                  : r === "12w"
-                    ? "12 Weeks"
-                    : "All Weeks"}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <EChart
-          option={comparativeChartOption}
-          title="Comparative Image Trajectories"
-          summary={`Comparative adoption trajectories across cloud-native images over ${filteredWeeks.length} weeks. Latest week (${latestWeek.week}): Bazzite ${(parseCount(latestWeek.bazzite) ?? 0).toLocaleString()} (Gaming), Bluefin Family ${currentTotalBluefin.toLocaleString()} (Workstations), Aurora ${(parseCount(latestWeek.aurora) ?? 0).toLocaleString()} (KDE).`}
-          points={realComparativePoints}
-          minPoints={2}
-          height={320}
-          tableCaption="Weekly estimated active systems by image variant"
-        />
-
-        <div className={styles.chartNote}>
-          <strong>Methodology:</strong> Derived from weekly Countme telemetry
-          tracking with <code>ublue-countme-v1</code> baseline aggregation,
-          supplemented by first-party <code>countme.projectbluefin.io</code>{" "}
-          pings.
-        </div>
-      </div>
+      </section>
     </div>
   );
 }

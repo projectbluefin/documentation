@@ -7,15 +7,11 @@ displayed_sidebar: null
 import CountmeAnalyticsCharts from "@site/src/components/analytics/CountmeAnalyticsCharts";
 import ImageChurnCharts from "@site/src/components/analytics/ImageChurnCharts";
 
-Adoption metrics and active system telemetry across the Project Bluefin workstation family.
-
 <CountmeAnalyticsCharts />
 
 ## Update Churn & Compression Analytics
 
 Project Bluefin measures download byte delta, layer reuse efficiency, and compression statistics between consecutive stable releases.
-Cloud-native bootc updates take advantage of OCI layer caching: layers whose SHA-256 digests
-remain unchanged between releases require zero download bandwidth.
 
 Using [Chunkah](https://github.com/coreos/chunkah) and the `zstd-chunked` container layer format,
 operating system updates are segmented into fine-grained package intervals so clients download only specific chunks containing changed packages.
@@ -27,13 +23,7 @@ operating system updates are segmented into fine-grained package intervals so cl
 
 ### Counting Methodology
 
-The charts above serve as the single source of truth for the entire Project Bluefin
-workstation family, preserving direct continuity with the canonical baseline from
-[`ublue-os/countme`](https://github.com/ublue-os/countme).
-
-- **Method:** Evaluated according to ADR 0004 (`ublue-countme-v1` baseline) using base repository queries.
-- **Enterprise LTS:** Bluefin LTS runs on CentOS Stream 10 and reaches Fedora counters through EPEL mirrors, which undercounts relative to standard Fedora repos.
-- **Next-Gen Variants:** Dakota (BuildStream) and Utah (Hummingbird) are activating first-party reporting via `projectbluefin/common`.
+Every Project Bluefin count comes from `countme.projectbluefin.io`
 
 ### First-party Countme Service & Privacy Guarantees
 
