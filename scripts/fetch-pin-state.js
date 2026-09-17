@@ -11,6 +11,7 @@
 
 const fs = require("fs");
 const path = require("path");
+const { githubHeaders, githubFetch } = require("./lib/request-queue");
 
 const OUTPUT_FILE = path.join(
   __dirname,
@@ -40,22 +41,15 @@ const WORKFLOWS_TO_CHECK = [
 
 async function fetchWorkflowContent(repo, filePath) {
   const url = `https://api.github.com/repos/${repo}/contents/${filePath}`;
-  const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
-  const headers = {
-    "User-Agent": "bluefin-docs/fetch-pin-state",
-    Accept: "application/vnd.github.v3+json",
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
+  const headers = githubHeaders(null, {
+    accept: "application/vnd.github.v3+json",
+    userAgent: "bluefin-docs/fetch-pin-state",
+  });
 
-  const response = await fetch(url, {
+  const response = await githubFetch(url, {
     headers,
     signal: AbortSignal.timeout(15000),
   });
-  if (!response.ok) {
-    throw new Error(
-      `GitHub API error for ${repo}/${filePath}: ${response.status} ${response.statusText}`,
-    );
-  }
 
   const data = await response.json();
   return Buffer.from(data.content, "base64").toString("utf8");

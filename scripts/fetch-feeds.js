@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const { githubToken, githubHeaders, githubFetch } = require("./lib/request-queue");
 
 /**
  * Parse the `Link` response header and return the URL for rel="next", or null.
@@ -65,28 +66,24 @@ function parseAtomEntry(entry) {
 }
 
 async function fetchReleasesFromApi(owner, repo) {
-  const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
+  const token = githubToken();
   if (!token) {
     console.warn(`No GITHUB_TOKEN — falling back to Atom feed for ${owner}/${repo}`);
     return null;
   }
 
   const MAX_RELEASES = 500;
-  const headers = {
-    Authorization: `Bearer ${token}`,
-    Accept: "application/vnd.github+json",
-    "X-GitHub-Api-Version": "2022-11-28",
-  };
+  const headers = githubHeaders(token);
 
   let allReleases = [];
   let nextUrl = `https://api.github.com/repos/${owner}/${repo}/releases?per_page=100`;
 
   while (nextUrl && allReleases.length < MAX_RELEASES) {
     console.log(`Fetching releases API: ${nextUrl}`);
-    const response = await fetch(nextUrl, { headers });
+    const response = await githubFetch(nextUrl, { headers, throwOnError: false });
 
-    if (!response.ok) {
-      console.warn(`GitHub API returned ${response.status} for ${owner}/${repo} — falling back to Atom`);
+    if (!response) {
+      console.warn(`GitHub API unavailable for ${owner}/${repo} — falling back to Atom`);
       return null;
     }
 

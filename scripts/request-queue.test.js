@@ -2,14 +2,17 @@
  * Tests for scripts/lib/request-queue.js
  */
 
-const { describe, it, beforeEach } = require("node:test");
+const { describe, it, beforeEach, afterEach } = require("node:test");
 const assert = require("node:assert/strict");
 
 const {
+  GH_API,
   isNetworkError,
   retryWithBackoff,
   sequentialFetchWithDelay,
+  githubToken,
   githubHeaders,
+  githubFetch,
 } = require("./lib/request-queue");
 
 // ── isNetworkError ──────────────────────────────────────────────────────────
@@ -87,7 +90,13 @@ describe("retryWithBackoff", () => {
     const err = new Error("Unauthorized");
     err.status = 401;
     await assert.rejects(
-      () => retryWithBackoff(() => { throw err; }, { maxRetries: 3 }),
+      () =>
+        retryWithBackoff(
+          () => {
+            throw err;
+          },
+          { maxRetries: 3 },
+        ),
       (thrown) => thrown.status === 401,
     );
   });
@@ -96,7 +105,13 @@ describe("retryWithBackoff", () => {
     const err = new Error("Forbidden");
     err.status = 403;
     await assert.rejects(
-      () => retryWithBackoff(() => { throw err; }, { maxRetries: 3 }),
+      () =>
+        retryWithBackoff(
+          () => {
+            throw err;
+          },
+          { maxRetries: 3 },
+        ),
       (thrown) => thrown.status === 403,
     );
   });
@@ -171,10 +186,7 @@ describe("sequentialFetchWithDelay", () => {
 
   it("applies default 100ms delay", async () => {
     const start = Date.now();
-    await sequentialFetchWithDelay(
-      ["a", "b"],
-      async (item) => item,
-    );
+    await sequentialFetchWithDelay(["a", "b"], async (item) => item);
     const elapsed = Date.now() - start;
     // Two items → one inter-request delay of ~100ms + one trailing delay
     assert.ok(elapsed >= 150, `Expected ≥150ms, got ${elapsed}ms`);
@@ -226,5 +238,167 @@ describe("githubHeaders", () => {
   it("cleanup env", () => {
     if (originalToken) process.env.GITHUB_TOKEN = originalToken;
     if (originalGhToken) process.env.GH_TOKEN = originalGhToken;
+  });
+});
+
+// ── GH_API / githubToken ────────────────────────────────────────────────────
+
+describe("githubToken", () => {
+  const originalToken = process.env.GITHUB_TOKEN;
+  const originalGhToken = process.env.GH_TOKEN;
+
+  beforeEach(() => {
+    delete process.env.GITHUB_TOKEN;
+    delete process.env.GH_TOKEN;
+  });
+
+  it("exports the canonical GitHub API origin", () => {
+    assert.equal(GH_API, "https://api.github.com");
+  });
+
+  it("returns null when no token is set", () => {
+    assert.equal(githubToken(), null);
+  });
+
+  it("prefers GITHUB_TOKEN over GH_TOKEN", () => {
+    process.env.GITHUB_TOKEN = "primary";
+    process.env.GH_TOKEN = "secondary";
+    assert.equal(githubToken(), "primary");
+  });
+
+  it("falls back to GH_TOKEN", () => {
+    process.env.GH_TOKEN = "fallback";
+    assert.equal(githubToken(), "fallback");
+  });
+
+  it("cleanup env", () => {
+    if (originalToken) process.env.GITHUB_TOKEN = originalToken;
+    if (originalGhToken) process.env.GH_TOKEN = originalGhToken;
+  });
+});
+
+// ── githubHeaders contract (CJS twin of lib/gh.js) ─────────────────────────
+
+describe("githubHeaders (contract)", () => {
+  beforeEach(() => {
+    delete process.env.GITHUB_TOKEN;
+    delete process.env.GH_TOKEN;
+  });
+
+  it("pins the api-version and advertise the json accept by default", () => {
+    const headers = githubHeaders("tok");
+    assert.equal(headers["Accept"], "application/vnd.github+json");
+    assert.equal(headers["X-GitHub-Api-Version"], "2022-11-28");
+    assert.equal(headers["User-Agent"], "Bluefin-Docs-Build");
+    assert.equal(headers["Authorization"], "Bearer tok");
+  });
+
+  it("allows accept override for endpoint-specific representations", () => {
+    const headers = githubHeaders("tok", {
+      accept: "application/vnd.github.v3.raw",
+    });
+    assert.equal(headers["Accept"], "application/vnd.github.v3.raw");
+    assert.equal(headers["X-GitHub-Api-Version"], "2022-11-28");
+  });
+
+  it("allows api-version and user-agent overrides", () => {
+    const headers = githubHeaders(null, {
+      apiVersion: "2021-01-01",
+      userAgent: "bluefin-docs/fetch-pin-state",
+    });
+    assert.equal(headers["X-GitHub-Api-Version"], "2021-01-01");
+    assert.equal(headers["User-Agent"], "bluefin-docs/fetch-pin-state");
+  });
+
+  it("omits api-version when disabled", () => {
+    const headers = githubHeaders("tok", { apiVersion: false });
+    assert.equal(headers["X-GitHub-Api-Version"], undefined);
+  });
+
+  it("omits Authorization when no token is present", () => {
+    const headers = githubHeaders();
+    assert.equal(headers["Authorization"], undefined);
+  });
+});
+
+// ── githubFetch ─────────────────────────────────────────────────────────────
+
+describe("githubFetch", () => {
+  const originalToken = process.env.GITHUB_TOKEN;
+  const originalGhToken = process.env.GH_TOKEN;
+  let originalFetch;
+
+  beforeEach(() => {
+    delete process.env.GITHUB_TOKEN;
+    delete process.env.GH_TOKEN;
+  });
+
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
+    if (originalToken) process.env.GITHUB_TOKEN = originalToken;
+    if (originalGhToken) process.env.GH_TOKEN = originalGhToken;
+  });
+
+  function stubFetch(handler) {
+    const calls = [];
+    originalFetch = globalThis.fetch;
+    globalThis.fetch = async (url, init = {}) => {
+      calls.push({ url, init });
+      return handler(url, init);
+    };
+    return calls;
+  }
+
+  function response(body, { ok = true, status = 200 } = {}) {
+    return { ok, status, json: async () => body };
+  }
+
+  it("resolves relative paths against the shared API origin", async () => {
+    const calls = stubFetch(() => response({ ok: true }));
+    await githubFetch("/repos/o/r", { throwOnError: false });
+    assert.equal(calls[0].url, "https://api.github.com/repos/o/r");
+  });
+
+  it("passes URLs through unchanged", async () => {
+    const calls = stubFetch(() => response({ ok: true }));
+    await githubFetch("https://example.com/x", { throwOnError: false });
+    assert.equal(calls[0].url, "https://example.com/x");
+  });
+
+  it("uses provided headers and forwards a signal", async () => {
+    const calls = stubFetch(() => response({ ok: true }));
+    const signal = { aborted: false };
+    await githubFetch("/path", {
+      headers: githubHeaders("tok"),
+      signal,
+      throwOnError: false,
+    });
+    assert.equal(calls[0].init.headers["Authorization"], "Bearer tok");
+    assert.equal(calls[0].init.signal, signal);
+  });
+
+  it("builds headers from env token when none passed", async () => {
+    process.env.GH_TOKEN = "env-tok";
+    const calls = stubFetch(() => response({ ok: true }));
+    await githubFetch("/path", { throwOnError: false });
+    assert.equal(calls[0].init.headers["Authorization"], "Bearer env-tok");
+  });
+
+  it("throws on non-2xx by default", async () => {
+    stubFetch(() => response({ error: "nope" }, { ok: false, status: 500 }));
+    await assert.rejects(() => githubFetch("/path"), /GET \/path -> 500/);
+  });
+
+  it("returns null on non-2xx when throwOnError is false", async () => {
+    stubFetch(() => response({ error: "missing" }, { ok: false, status: 404 }));
+    const res = await githubFetch("/path", { throwOnError: false });
+    assert.equal(res, null);
+  });
+
+  it("returns the ok response when throwOnError is false", async () => {
+    stubFetch(() => response({ hits: [1] }, { ok: true, status: 200 }));
+    const res = await githubFetch("/path", { throwOnError: false });
+    assert.equal(res.status, 200);
+    assert.deepEqual(await res.json(), { hits: [1] });
   });
 });

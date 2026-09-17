@@ -1,7 +1,7 @@
 /**
  * Shared request-queue utilities for GitHub API fetch scripts.
  *
- * Consolidates two patterns that were duplicated across multiple scripts:
+ * Consolidates patterns that were duplicated across multiple scripts:
  *
  * 1. `retryWithBackoff(fn, opts)` — exponential-backoff retry for transient
  *    network errors (ECONNRESET, ETIMEDOUT, etc.).  Skips retry on auth/rate-
@@ -12,9 +12,19 @@
  *    calling an async function for each item with a fixed inter-request delay.
  *    Previously duplicated in fetch-github-repos.js, fetch-contributors.js,
  *    and fetch-github-profiles.js.
+ *
+ * 3. The single GitHub API header + token contract (`githubToken`,
+ *    `githubHeaders`, `githubFetch`) — the CJS twin of `lib/gh.js`. It exists
+ *    so the CJS fetchers (fetch-feeds.js, fetch-pin-state.js, ...) route their
+ *    token acquisition, Accept / api-version pinning, and user-agent through
+ *    one place instead of restating them per script (projectbluefin/
+ *    documentation#1232).
  */
 
 "use strict";
+
+/** GitHub REST API origin for CJS fetchers. */
+const GH_API = "https://api.github.com";
 
 // ── Retry with exponential backoff ──────────────────────────────────────────
 
@@ -120,27 +130,83 @@ async function sequentialFetchWithDelay(items, fetchFn, opts = {}) {
   return results;
 }
 
-// ── GitHub auth headers helper ──────────────────────────────────────────────
+// ── GitHub API client (CJS twin of lib/gh.js) ──────────────────────────────
 
 /**
- * Build standard GitHub API request headers.
+ * The single GitHub token source. Reads `GITHUB_TOKEN`, then `GH_TOKEN`.
  *
- * @param {string} [token]  GitHub personal access token. Falls back to
- *                          GITHUB_TOKEN / GH_TOKEN env vars when omitted.
+ * @returns {string|null} The token, or null when neither env var is set.
+ */
+function githubToken() {
+  return process.env.GITHUB_TOKEN || process.env.GH_TOKEN || null;
+}
+
+/**
+ * Build the single GitHub API header contract used by the CJS fetchers.
+ *
+ * Canonical defaults: the project user-agent, `application/vnd.github+json`,
+ * and the pinned `x-github-api-version`. `Authorization: Bearer` is added
+ * whenever a token is present. Callers override `accept` only where an
+ * endpoint needs a different representation (e.g. the Contents API `.raw`).
+ *
+ * @param {string}  [token]              GitHub token. Falls back to the env.
+ * @param {object}  [opts]               Options.
+ * @param {string}  [opts.accept]        Accept header override.
+ * @param {string}  [opts.apiVersion]    api-version override; `false` omits it.
+ * @param {string}  [opts.userAgent]     User-Agent override.
  * @returns {object} Headers object suitable for `fetch()`.
  */
-function githubHeaders(token) {
-  const t = token || process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
-  const headers = { "User-Agent": "Bluefin-Docs-Build" };
-  if (t) {
-    headers["Authorization"] = `Bearer ${t}`;
+function githubHeaders(token, { accept, apiVersion, userAgent } = {}) {
+  const t = token || githubToken();
+  const headers = {
+    "User-Agent": userAgent || "Bluefin-Docs-Build",
+    Accept: accept || "application/vnd.github+json",
+  };
+  if (apiVersion !== false) {
+    headers["X-GitHub-Api-Version"] = apiVersion || "2022-11-28";
   }
+  if (t) headers["Authorization"] = `Bearer ${t}`;
   return headers;
 }
 
+/**
+ * One request through the shared CJS client. Mirrors `githubFetch` in
+ * lib/gh.js so the two module systems share one header/error contract.
+ *
+ * Throws on a non-2xx unless `throwOnError` is false — the fail-soft callers
+ * that prefer a null fallback over an exception pass `throwOnError: false`.
+ *
+ * @param {string}  path            API path (e.g. "/repos/o/r/releases") or full URL.
+ * @param {object}  [opts]          Options.
+ * @param {object}  [opts.headers]  Pre-built headers (usually from `githubHeaders`).
+ * @param {AbortSignal} [opts.signal] Optional timeout / cancellation signal.
+ * @param {boolean} [opts.throwOnError=true] Throw on non-2xx instead of returning null.
+ * @returns {Promise<Response|null>} The fetch Response, or null when
+ *                                   `throwOnError` is false and the status is not ok.
+ */
+async function githubFetch(
+  path,
+  { headers, signal, throwOnError = true } = {},
+) {
+  const url = path.startsWith("http") ? path : `${GH_API}${path}`;
+  const res = await fetch(url, { headers: headers ?? githubHeaders(), signal });
+  if (!res.ok) {
+    if (!throwOnError) return null;
+    const hint =
+      res.status === 401 || res.status === 403
+        ? " (a token with the required scope is missing or exhausted)"
+        : "";
+    throw new Error(`GET ${path} -> ${res.status}${hint}`);
+  }
+  return res;
+}
+
 module.exports = {
+  GH_API,
   isNetworkError,
   retryWithBackoff,
   sequentialFetchWithDelay,
+  githubToken,
   githubHeaders,
+  githubFetch,
 };
