@@ -48,7 +48,3 @@ clear:
 dev-safe *ARGS:
     npx docusaurus clear
     npx docusaurus start --host 0.0.0.0 {{ARGS}}
-
-# Run Playwright e2e tests against the local dev server (reuses existing if running)
-test:
-    npm run test:e2e
