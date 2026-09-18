@@ -9,13 +9,19 @@ export const DakotaSection: React.FC = () => (
   <DownloadCard
     variant="dakotaraptor"
     title="Bluefin Dakotaraptor"
+    recommended
     description="Dakota is in Alpha — take appropriate precautions."
     entries={[
       {
-        label: "AMD / Intel + Nvidia (Unified)",
+        label: "AMD64 (x86_64)",
         isoUrl: `${BASE}/dakota-live-latest.iso`,
         isoFilename: "dakota-live-latest.iso",
         checksumUrl: `${BASE}/dakota-live-latest.iso-CHECKSUM`,
+      },
+      {
+        label: "AArch64 (ARM64)",
+        isoFilename: "dakota-live-aarch64-latest.iso",
+        unavailableReason: "Not yet published",
       },
     ]}
     sections={[
@@ -39,7 +45,6 @@ const DownloadSectionTesting: React.FC = () => (
     <DownloadCard
       variant="bluefin"
       title="Bluefin"
-      recommended
       description={
         <>
           The most current testing build, based on the latest Fedora.{" "}

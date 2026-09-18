@@ -1,13 +1,13 @@
 import React from "react";
 import styles from "./DownloadCard.module.css";
 
-export interface DownloadEntry {
+export type DownloadEntry = {
   label: string;
-  isoUrl: string;
   isoFilename: string;
-  torrentUrl?: string;
-  checksumUrl: string;
-}
+} & (
+  | { isoUrl: string; torrentUrl?: string; checksumUrl: string; unavailableReason?: never }
+  | { isoUrl?: never; torrentUrl?: never; checksumUrl?: never; unavailableReason: string }
+);
 
 export interface EntryGroup {
   label: string;
@@ -70,25 +70,41 @@ function EntryRow({ entry }: { entry: DownloadEntry }) {
         <GpuLabel label={entry.label} />
       </div>
       <div className={styles.entryButtons}>
-        <a
-          href={entry.isoUrl}
-          download={entry.isoFilename}
-          className={styles.downloadButton}
-        >
-          📥 Download ISO
-        </a>
-        {entry.torrentUrl ? (
-          <a href={entry.torrentUrl} className={styles.secondaryLink}>
-            🧲 Torrent
-          </a>
+        {entry.unavailableReason ? (
+          <>
+            <span className={`${styles.downloadButton} ${styles.downloadButtonDisabled}`}>
+              {entry.unavailableReason}
+            </span>
+            <span className={styles.secondaryLinkDisabled}>
+              🧲 Torrent
+            </span>
+            <span className={styles.secondaryLinkDisabled}>
+              🔐 Verify
+            </span>
+          </>
         ) : (
-          <span className={styles.secondaryLinkDisabled}>
-            🧲 Torrent
-          </span>
+          <>
+            <a
+              href={entry.isoUrl}
+              download={entry.isoFilename}
+              className={styles.downloadButton}
+            >
+              📥 Download ISO
+            </a>
+            {entry.torrentUrl ? (
+              <a href={entry.torrentUrl} className={styles.secondaryLink}>
+                🧲 Torrent
+              </a>
+            ) : (
+              <span className={styles.secondaryLinkDisabled}>
+                🧲 Torrent
+              </span>
+            )}
+            <a href={entry.checksumUrl} className={styles.secondaryLink}>
+              🔐 Verify
+            </a>
+          </>
         )}
-        <a href={entry.checksumUrl} className={styles.secondaryLink}>
-          🔐 Verify
-        </a>
       </div>
     </div>
   );

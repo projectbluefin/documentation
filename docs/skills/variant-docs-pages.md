@@ -43,9 +43,16 @@ Model on `docs/server.mdx` (static) or `docs/dakota.mdx` (embeds components):
 2. **One-paragraph identity**: State what it is, what it's built on, and status
    callout (`:::info` for alpha/pre-alpha).
 3. **Download/install**: Embed `<DakotaSection />` from
-   `src/components/DownloadSectionTesting.tsx` when ISOs exist instead of
-   hand-writing ISO links — the component is the single source for URLs and
-   checksums.
+   `src/components/DownloadSectionTesting.tsx` on both `/dakota` and `/downloads`.
+   That component is the single source for Dakota URLs, checksums, architecture
+   rows, and availability. A published ISO and its checksum must both return
+   HTTP 200 before the row becomes clickable; represent an expected but absent
+   architecture with `unavailableReason`, never a dead link.
+   On `/downloads`, render Dakota before the unsupported-image warning, then
+   render `DownloadSection`, `LtsDownloadCard`, and `GdxDownloadCard` as separate
+   siblings after the warning. Do not fold LTS or GDX back into
+   `DownloadSection`; the split keeps the warning scoped to Fedora-based Bluefin
+   images without implying that it applies to Dakota.
 4. **Image streams table**: Provide exact `bootc switch` commands.
 5. **Known gaps**: Link to relevant upstream/downstream issue trackers.
 6. **Live versions**: Use `<DriverVersionsCatalog streamId="…" />` when the
