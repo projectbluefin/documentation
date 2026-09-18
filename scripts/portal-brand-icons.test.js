@@ -8,6 +8,20 @@ const { renderToStaticMarkup } = require("react-dom/server");
 
 const root = path.join(__dirname, "..");
 const portalDir = path.join(root, "src", "components", "portal");
+const generatedDataDir = path.join(root, "static", "data");
+
+// Most static/data/*.json files are produced by `npm run fetch-data` and are
+// gitignored, so they are absent when the unit suite runs on a clean checkout.
+// Treat an absent generated payload as empty rather than failing the render.
+function readJsonModule(target) {
+  if (
+    !fs.existsSync(target) &&
+    path.dirname(target) === generatedDataDir
+  ) {
+    return {};
+  }
+  return JSON.parse(fs.readFileSync(target, "utf8"));
+}
 
 function loadModule(file) {
   const { outputText } = ts.transpileModule(fs.readFileSync(file, "utf8"), {
@@ -26,7 +40,7 @@ function loadModule(file) {
         const rel = id.slice("@site/".length);
         const target = path.resolve(root, rel);
         if (target.endsWith(".json"))
-          return JSON.parse(fs.readFileSync(target, "utf8"));
+          return readJsonModule(target);
         for (const suffix of [
           ".ts",
           ".tsx",
@@ -36,7 +50,7 @@ function loadModule(file) {
         ]) {
           if (fs.existsSync(target + suffix)) {
             if (suffix === ".json")
-              return JSON.parse(fs.readFileSync(target + suffix, "utf8"));
+              return readJsonModule(target + suffix);
             return loadModule(target + suffix);
           }
         }
@@ -44,7 +58,7 @@ function loadModule(file) {
       if (id.startsWith(".")) {
         const base = path.resolve(path.dirname(file), id);
         if (base.endsWith(".json"))
-          return JSON.parse(fs.readFileSync(base, "utf8"));
+          return readJsonModule(base);
         for (const suffix of [
           ".ts",
           ".tsx",
@@ -54,7 +68,7 @@ function loadModule(file) {
         ]) {
           if (fs.existsSync(base + suffix)) {
             if (suffix === ".json")
-              return JSON.parse(fs.readFileSync(base + suffix, "utf8"));
+              return readJsonModule(base + suffix);
             return loadModule(base + suffix);
           }
         }

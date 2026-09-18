@@ -1,5 +1,47 @@
 const fs = require("fs");
 const path = require("path");
+const sanitizeHtml = require("sanitize-html");
+
+// HTML allowlist — keep in sync with src/utils/sanitizeHtml.ts (ALLOWED_TAGS /
+// ALLOWED_ATTR) and scripts/fetch-firehose.js. Release-note HTML (Atom feed
+// content, or Markdown inline HTML in API bodies) must be stripped of scripts,
+// iframes, event handlers, and unsafe URL protocols before it is baked into
+// the static site: the SSR branch of sanitizeHtml() returns input raw, so
+// fetch-time sanitization is the only thing standing between an upstream feed
+// and stored XSS on the docs domain.
+const SANITIZE_OPTIONS = {
+  allowedTags: [
+    "a", "abbr", "b", "blockquote", "br", "code", "dd", "del", "details",
+    "div", "dl", "dt", "em", "h1", "h2", "h3", "h4", "h5", "h6", "hr",
+    "i", "img", "ins", "kbd", "li", "ol", "p", "pre", "q", "s", "samp",
+    "span", "strong", "sub", "summary", "sup", "table", "tbody", "td",
+    "tfoot", "th", "thead", "tr", "tt", "ul", "var",
+  ],
+  allowedAttributes: {
+    "*": [
+      "href", "target", "rel", "src", "alt", "title", "class", "id",
+      "width", "height", "align", "colspan", "rowspan", "scope",
+    ],
+  },
+  // sanitize-html defaults already restrict href/src to safe protocols
+  // (http/https/mailto etc.) — javascript: URLs are dropped.
+};
+
+function cleanHtml(v, maxLen = 5000) {
+  if (typeof v !== "string") {
+    return "";
+  }
+  return sanitizeHtml(v.slice(0, maxLen), SANITIZE_OPTIONS);
+}
+
+// Only http(s) links may reach <a href> in the rendered feed — anything else
+// (javascript:, data:, ...) is replaced with a no-op.
+function safeLink(href) {
+  if (typeof href === "string" && /^https?:\/\//i.test(href.trim())) {
+    return href;
+  }
+  return "#";
+}
 
 /**
  * Parse the `Link` response header and return the URL for rel="next", or null.
@@ -20,10 +62,10 @@ function parseLinkNext(linkHeader) {
 function mapApiRelease(release) {
   return {
     title: release.tag_name ?? "Unknown Release",
-    link: release.html_url ?? "#",
+    link: safeLink(release.html_url),
     pubDate: release.published_at ?? "",
     contentSnippet: (release.body ?? "").substring(0, 200) + "...",
-    content: release.body ?? "",
+    content: cleanHtml(release.body ?? ""),
   };
 }
 
@@ -57,10 +99,10 @@ function parseAtomEntry(entry) {
 
   return {
     title: entry.title ? entry.title[0] : "Unknown Release",
-    link,
+    link: safeLink(link),
     pubDate: entry.updated ? entry.updated[0] : "",
     contentSnippet,
-    content,
+    content: cleanHtml(content),
   };
 }
 
