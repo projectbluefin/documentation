@@ -108,15 +108,15 @@ const BOT_LOGINS = new Set([
   "copilot",
 ]);
 
-const GH_TOKEN = process.env.GITHUB_TOKEN || process.env.GH_TOKEN || "";
 const GH_API = "https://api.github.com";
 const REGISTRY_URL = "https://hive.hivecommons.dev/api/registry";
 const TARGET_ORG = "projectbluefin";
 
-function ghHeaders() {
-  const h = { "User-Agent": "bluefin-hive-history/1.0" };
-  if (GH_TOKEN) h["Authorization"] = `Bearer ${GH_TOKEN}`;
-  return h;
+async function ghHeaders() {
+  const { githubToken, githubHeaders } = await import("./lib/gh.js");
+  return githubHeaders(githubToken(), {
+    userAgent: "bluefin-hive-history/1.0",
+  });
 }
 
 function registryHeaders() {
@@ -201,7 +201,7 @@ async function fetchContributors(repos = FALLBACK_FACTORY_REPOS) {
         pages++;
         let res;
         try {
-          res = await fetch(url, { headers: ghHeaders() });
+          res = await fetch(url, { headers: await ghHeaders() });
         } catch {
           break;
         }
@@ -386,7 +386,7 @@ async function fetchContributorWeeklyStats(repos = FALLBACK_FACTORY_REPOS) {
         attempts++;
         let res;
         try {
-          res = await fetch(url, { headers: ghHeaders() });
+          res = await fetch(url, { headers: await ghHeaders() });
         } catch {
           break;
         }
@@ -454,7 +454,7 @@ async function main() {
       console.log("[hive-history] Fetching /api/status...");
       const res = await fetch(SNAPSHOT_API_URL, {
         headers: {
-          ...ghHeaders(),
+          ...(await ghHeaders()),
           Authorization: `Bearer ${HIVE_API_TOKEN}`,
           Accept: "application/json",
         },
