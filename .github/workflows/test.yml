@@ -1,22 +1,18 @@
 name: Unit Tests
 
 on:
+  # No paths filter. The scripts/ suite reads and executes files under src/
+  # (portal-brand-icons.test.js loads PortalPrototype.tsx; seven other suites
+  # assert on src/components/** and src/css/**), so a src/-only change could
+  # break it without the gate ever running. Filtering also meant a red main
+  # was never re-verified. A no-op run on an unrelated change costs a minute;
+  # a broken gate that never fires cost us #1276 (#1288).
   push:
     branches:
       - main
-    paths:
-      - "scripts/**"
-      - "package.json"
-      - "package-lock.json"
-      - ".github/workflows/test.yml"
   pull_request:
     branches:
       - main
-    paths:
-      - "scripts/**"
-      - "package.json"
-      - "package-lock.json"
-      - ".github/workflows/test.yml"
   merge_group:
   workflow_dispatch:
 
@@ -45,4 +41,30 @@ jobs:
         run: npm ci --legacy-peer-deps
 
       - name: Run unit tests
+        run: npm test
+
+  # workers/knowledge-mcp ships its own suite that the root `npm test` glob
+  # (`scripts/**/*.test.js`, rooted at the repository root, .js only) can never
+  # reach, and no workflow ran it (#1289). It imports only node: builtins and
+  # its own src/, so it needs no install.
+  knowledge-mcp:
+    name: Run workers/knowledge-mcp tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: workers/knowledge-mcp
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+
+      - name: Run knowledge-mcp unit tests
         run: npm test
