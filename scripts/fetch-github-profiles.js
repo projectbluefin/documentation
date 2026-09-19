@@ -4,6 +4,7 @@ const yaml = require("js-yaml");
 const {
   sequentialFetchWithDelay,
   githubHeaders,
+  githubToken,
 } = require("./lib/request-queue");
 
 const REPO_ROOT = path.join(__dirname, "..");
@@ -164,7 +165,7 @@ const GITHUB_USERNAMES = discoverUsernames();
 const CACHE_MAX_AGE_HOURS = 24;
 
 // Check for GitHub token from environment
-const GITHUB_TOKEN = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
+const GITHUB_TOKEN = githubToken();
 
 async function fetchProfile(username) {
   const url = `https://api.github.com/users/${username}`;

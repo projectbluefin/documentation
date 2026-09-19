@@ -3,6 +3,7 @@ const path = require("path");
 const {
   sequentialFetchWithDelay,
   githubHeaders,
+  githubToken,
 } = require("./lib/request-queue");
 
 const OUTPUT_DIR = path.join(__dirname, "..", "static", "data");
@@ -14,7 +15,7 @@ const BLOG_DIR = path.join(__dirname, "..", "blog");
 const CACHE_MAX_AGE_HOURS = 24;
 
 // Check for GitHub token from environment
-const GITHUB_TOKEN = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
+const GITHUB_TOKEN = githubToken();
 
 // GitHub repo details
 const REPO_OWNER = "projectbluefin";

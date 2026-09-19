@@ -1,13 +1,13 @@
 const fs = require("fs");
 const path = require("path");
-const { githubHeaders } = require("./lib/request-queue");
+const { githubHeaders, githubToken } = require("./lib/request-queue");
 
 const OUTPUT_DIR = path.join(__dirname, "..", "static", "data");
 const OUTPUT_FILE = path.join(OUTPUT_DIR, "portal-contributors.json");
 
 const CACHE_MAX_AGE_HOURS = 24;
 
-const GITHUB_TOKEN = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
+const GITHUB_TOKEN = githubToken();
 
 const IGNORED_IDENTITIES = new Set([
   "Copilot",

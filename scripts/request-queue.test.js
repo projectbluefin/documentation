@@ -10,6 +10,7 @@ const {
   retryWithBackoff,
   sequentialFetchWithDelay,
   githubHeaders,
+  githubToken,
 } = require("./lib/request-queue");
 
 // ── isNetworkError ──────────────────────────────────────────────────────────
@@ -224,6 +225,38 @@ describe("githubHeaders", () => {
 
   // Restore env vars at the end
   it("cleanup env", () => {
+    if (originalToken) process.env.GITHUB_TOKEN = originalToken;
+    if (originalGhToken) process.env.GH_TOKEN = originalGhToken;
+  });
+});
+
+// ── githubToken ─────────────────────────────────────────────────────────────
+
+describe("githubToken", () => {
+  const originalToken = process.env.GITHUB_TOKEN;
+  const originalGhToken = process.env.GH_TOKEN;
+
+  beforeEach(() => {
+    delete process.env.GITHUB_TOKEN;
+    delete process.env.GH_TOKEN;
+  });
+
+  it("returns null when neither env var is set", () => {
+    assert.equal(githubToken(), null);
+  });
+
+  it("prefers GITHUB_TOKEN over GH_TOKEN", () => {
+    process.env.GITHUB_TOKEN = "gh-token";
+    process.env.GH_TOKEN = "ghenv-token";
+    assert.equal(githubToken(), "gh-token");
+  });
+
+  it("falls back to GH_TOKEN when GITHUB_TOKEN is absent", () => {
+    process.env.GH_TOKEN = "ghenv-token";
+    assert.equal(githubToken(), "ghenv-token");
+  });
+
+  it("restores the caller's env vars", () => {
     if (originalToken) process.env.GITHUB_TOKEN = originalToken;
     if (originalGhToken) process.env.GH_TOKEN = originalGhToken;
   });

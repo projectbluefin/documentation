@@ -3,6 +3,7 @@ const path = require("path");
 const {
   sequentialFetchWithDelay,
   githubHeaders,
+  githubToken,
 } = require("./lib/request-queue");
 
 const GITHUB_REPOS = [
@@ -80,7 +81,7 @@ const OUTPUT_FILE = path.join(OUTPUT_DIR, "github-repos.json");
 const CACHE_MAX_AGE_HOURS = 24;
 
 // Check for GitHub token from environment
-const GITHUB_TOKEN = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
+const GITHUB_TOKEN = githubToken();
 
 async function fetchRepo(repoPath) {
   const url = `https://api.github.com/repos/${repoPath}`;

@@ -120,6 +120,19 @@ async function sequentialFetchWithDelay(items, fetchFn, opts = {}) {
   return results;
 }
 
+// ── GitHub token helper ─────────────────────────────────────────────────────
+
+/**
+ * The single GitHub API token source for the CJS fetch scripts.
+ *
+ * Consolidates the `GITHUB_TOKEN || GH_TOKEN` restatement that used to appear
+ * at every fetch site (projectbluefin/documentation#1232). Returns null when
+ * neither env var is set so callers can decide how to degrade.
+ */
+function githubToken() {
+  return process.env.GITHUB_TOKEN || process.env.GH_TOKEN || null;
+}
+
 // ── GitHub auth headers helper ──────────────────────────────────────────────
 
 /**
@@ -142,5 +155,6 @@ module.exports = {
   isNetworkError,
   retryWithBackoff,
   sequentialFetchWithDelay,
+  githubToken,
   githubHeaders,
 };
