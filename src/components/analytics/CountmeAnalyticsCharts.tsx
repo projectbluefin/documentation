@@ -728,7 +728,7 @@ export default function CountmeAnalyticsCharts({
       <section className={styles.panelCard}>
         <header className={styles.sectionHeader}>
           <Heading as="h3" className={styles.sectionTitle}>
-            ublue-os/bluefin (legacy)
+            Bluefin Classic (ublue-os/bluefin)
           </Heading>
           <p className={styles.sectionSubtext}>
             <code>ublue-os/bluefin:stable</code>, counted by{" "}
@@ -738,15 +738,13 @@ export default function CountmeAnalyticsCharts({
             . Metalink hits, not image check-ins.
           </p>
         </header>
-
         {/* Rule 1: both sides of the comparison carry their current value. */}
         <p className={styles.legendRow}>
           <span className={styles.legendChip}>
             <span className={styles.legendGlyph} aria-hidden="true">
               ◇
             </span>
-            Upstream <code>bluefin:stable</code>:{" "}
-            {legacyActive ?? "unavailable"}
+            Bluefin Classic: {legacyActive ?? "unavailable"}
           </span>
           <span className={styles.legendChip}>
             <span className={styles.legendGlyph} aria-hidden="true">
@@ -769,7 +767,7 @@ export default function CountmeAnalyticsCharts({
             <img
               className={styles.legacyChart}
               src={LEGACY_CHART_URL}
-              alt={`Upstream ublue-os/bluefin growth chart. Current upstream active users: ${legacyActive}.`}
+              alt={`Bluefin Classic (ublue-os/bluefin) growth chart. Current upstream active users: ${legacyActive}.`}
               loading="lazy"
               width={1200}
               height={700}

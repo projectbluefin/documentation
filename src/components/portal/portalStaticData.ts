@@ -99,7 +99,7 @@ export const FLOCK_METADATA = {
   description:
     "Bluefin is built by a dedicated group of maintainers and contributors.",
   chartSrc: "/img/portal/growth_bluefins.svg",
-  chartAlt: "Bluefin active users weekly growth chart",
+  chartAlt: "Bluefin Classic active users weekly growth chart",
   attributionPrefix: "Statistics provided by",
   countMeUrl: "https://github.com/ublue-os/countme",
   countMeLabel: "DNF Count Me",
