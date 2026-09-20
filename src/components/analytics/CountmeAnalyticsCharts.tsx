@@ -69,11 +69,7 @@ const LEGACY_BADGE_URL = `${FIRST_PARTY_ORIGIN}/badge-endpoints/bluefin.json`;
  * times only crowds the axis it sits under.
  */
 export const SHORT_REPO_LABELS: Record<string, string> = {
-  bluefin: "Bluefin",
-  "bluefin-lts": "LTS",
-  dakota: "Dakota",
-  utah: "Utah",
-  server: "Server",
+  dakota: "Bluefin",
 };
 
 /**
@@ -96,11 +92,7 @@ export function compactWeek(week: string): string {
 
 /** Display names for the first-party `repo` identifiers. */
 export const REPO_LABELS: Record<string, string> = {
-  bluefin: "Bluefin",
-  "bluefin-lts": "Bluefin LTS",
-  dakota: "Project Bluefin Dakota",
-  utah: "Project Bluefin Utah",
-  server: "Bluefin Server",
+  dakota: "Bluefin",
 };
 
 /**
@@ -419,8 +411,9 @@ export default function CountmeAnalyticsCharts({
 
   const countsData = counts ?? fetchedCounts;
   const countmeWeeks = countsData?.weeks ?? [];
+  // Only track and measure Dakota on this chart (labeled as "Bluefin")
   const activeRepos = useMemo(
-    () => reportingRepos(countmeWeeks),
+    () => reportingRepos(countmeWeeks).filter((repo) => repo === "dakota"),
     [countmeWeeks],
   );
 
