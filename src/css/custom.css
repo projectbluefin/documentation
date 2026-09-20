@@ -152,12 +152,12 @@ nav.menu.thin-scrollbar {
   overflow-y: visible !important;
 }
 
-/* Blog left sidebar — sticky, full-height list, pinned to top */
+/* Blog left sidebar — sticky, viewport-constrained, scrollable list */
 aside.col--3 nav.thin-scrollbar {
   position: sticky !important;
   top: calc(var(--ifm-navbar-height) + 2rem) !important;
-  max-height: none !important;
-  overflow-y: visible !important;
+  max-height: calc(100vh - var(--ifm-navbar-height) - 3rem) !important;
+  overflow-y: auto !important;
 }
 
 /* Blog right sidebar (TOC) — viewport-constrained, scrollable within box  */
