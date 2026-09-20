@@ -51,7 +51,7 @@ const BLUEFIN_CHART_ALIASES = [
 /** `/<repo>/growth.svg` for every first-party repo, plus the Bluefin aliases. */
 export const CHART_ROUTES = {
   ...Object.fromEntries(
-    BLUEFIN_CHART_ALIASES.map((alias) => [alias, "bluefin"]),
+    BLUEFIN_CHART_ALIASES.map((alias) => [alias, "dakota"]),
   ),
   ...Object.fromEntries(
     PROJECTBLUEFIN_REPOS.map((repo) => [`/${repo}/growth.svg`, repo]),
