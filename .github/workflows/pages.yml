@@ -165,10 +165,14 @@ jobs:
 
       - name: Run validation (typecheck + lint + prettier)
         run: |
-          npm run typecheck &
-          npm run lint &
-          (npm run prettier-lint || true) &
-          wait
+          npm run typecheck & typecheck_pid=$!
+          npm run lint & lint_pid=$!
+          (npm run prettier-lint || true) & prettier_pid=$!
+          status=0
+          wait "$typecheck_pid" || status=1
+          wait "$lint_pid" || status=1
+          wait "$prettier_pid" || status=1
+          exit "$status"
 
       - name: Build website
         run: npm run build:ci
