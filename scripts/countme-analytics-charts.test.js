@@ -387,13 +387,15 @@ test("the chart carries gaps through to the series, never zeros", () => {
       .replace(/&amp;/g, "&"),
   );
 
-  const lts = option.series.find((s) => s.name === "LTS");
-  assert.deepEqual(lts.data, [0, null, null]);
-  assert.equal(lts.connectNulls, false, "a gap must break the line");
-  assert.equal(lts.smooth, false, "a spline invents values between weeks");
+  assert.ok(
+    !option.series.some((s) => s.name === "LTS"),
+    "LTS must not be plotted on the first-party chart",
+  );
 
-  const dakota = option.series.find((s) => s.name === "Dakota");
+  const dakota = option.series.find((s) => s.name === "Bluefin");
   assert.deepEqual(dakota.data, [null, 9, 14]);
+  assert.equal(dakota.connectNulls, false, "a gap must break the line");
+  assert.equal(dakota.smooth, false, "a spline invents values between weeks");
 
   assert.ok(
     !option.series.some((s) => s.name === "Utah"),
@@ -413,9 +415,8 @@ test("every plotted series states its current number", () => {
     /data-title="Weekly active systems"[\s\S]*?data-summary="([^"]*)"/,
   )[1];
 
-  assert.match(summary, /Bluefin 3,901 \(week 2026-08-31\)/);
-  assert.match(summary, /Bluefin LTS 0 \(week 2026-08-17\)/);
-  assert.match(summary, /Project Bluefin Dakota 14 \(week 2026-08-31\)/);
+  assert.match(summary, /Bluefin 14 \(week 2026-08-31\)/);
+  assert.doesNotMatch(summary, /Bluefin LTS/);
 });
 
 test("the panel stays unavailable when the service reports no weeks", () => {
@@ -503,16 +504,16 @@ test("the game-mode series is drawn under its image, not as a new one", () => {
   );
 
   const names = option.series.map((s) => s.name);
-  assert.ok(names.includes("Dakota"));
-  assert.ok(names.includes("Dakota \u00b7 game mode"));
+  assert.ok(names.includes("Bluefin"));
+  assert.ok(names.includes("Bluefin \u00b7 game mode"));
   assert.ok(
     !names.some((n) => n.includes("dakota-gaming")),
     "the gaming id must never surface as an image of its own",
   );
 
-  const total = option.series.find((s) => s.name === "Dakota");
+  const total = option.series.find((s) => s.name === "Bluefin");
   const gaming = option.series.find(
-    (s) => s.name === "Dakota \u00b7 game mode",
+    (s) => s.name === "Bluefin \u00b7 game mode",
   );
   assert.deepEqual(total.data, [4, 6]);
   assert.deepEqual(gaming.data, [1, 2]);
