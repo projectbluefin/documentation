@@ -9,6 +9,7 @@ const {
   isNetworkError,
   retryWithBackoff,
   sequentialFetchWithDelay,
+  githubToken,
   githubHeaders,
 } = require("./lib/request-queue");
 
@@ -226,5 +227,66 @@ describe("githubHeaders", () => {
   it("cleanup env", () => {
     if (originalToken) process.env.GITHUB_TOKEN = originalToken;
     if (originalGhToken) process.env.GH_TOKEN = originalGhToken;
+  });
+
+  it("keeps the legacy no-opts shape (no accept/api-version)", () => {
+    const headers = githubHeaders("t", {});
+    assert.equal(headers["accept"], undefined);
+    assert.equal(headers["x-github-api-version"], undefined);
+    assert.equal(headers["Authorization"], "Bearer t");
+  });
+
+  it("overrides accept, apiVersion and userAgent when given", () => {
+    const headers = githubHeaders("t", {
+      accept: "application/vnd.github.v3+json",
+      apiVersion: "2022-11-28",
+      userAgent: "bluefin-docs/fetch-pin-state",
+    });
+    assert.equal(headers["accept"], "application/vnd.github.v3+json");
+    assert.equal(headers["x-github-api-version"], "2022-11-28");
+    assert.equal(headers["User-Agent"], "bluefin-docs/fetch-pin-state");
+    assert.equal(headers["Authorization"], "Bearer t");
+  });
+
+  it("omits x-github-api-version when apiVersion is undefined but keeps accept", () => {
+    const headers = githubHeaders("t", {
+      accept: "application/vnd.github+json",
+    });
+    assert.equal(headers["accept"], "application/vnd.github+json");
+    assert.equal(headers["x-github-api-version"], undefined);
+  });
+});
+
+// ── githubToken ─────────────────────────────────────────────────────────────
+
+describe("githubToken", () => {
+  const originalToken = process.env.GITHUB_TOKEN;
+  const originalGhToken = process.env.GH_TOKEN;
+
+  beforeEach(() => {
+    delete process.env.GITHUB_TOKEN;
+    delete process.env.GH_TOKEN;
+  });
+
+  it("returns null when neither env var is set", () => {
+    assert.equal(githubToken(), null);
+  });
+
+  it("prefers GITHUB_TOKEN over GH_TOKEN", () => {
+    process.env.GITHUB_TOKEN = "ghb";
+    process.env.GH_TOKEN = "ght";
+    assert.equal(githubToken(), "ghb");
+  });
+
+  it("falls back to GH_TOKEN when GITHUB_TOKEN is absent", () => {
+    process.env.GH_TOKEN = "ght";
+    assert.equal(githubToken(), "ght");
+  });
+
+  it("restores env vars", () => {
+    if (originalToken) process.env.GITHUB_TOKEN = originalToken;
+    else delete process.env.GITHUB_TOKEN;
+    if (originalGhToken) process.env.GH_TOKEN = originalGhToken;
+    else delete process.env.GH_TOKEN;
   });
 });
