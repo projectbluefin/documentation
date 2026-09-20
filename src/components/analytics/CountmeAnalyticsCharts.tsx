@@ -419,9 +419,9 @@ export default function CountmeAnalyticsCharts({
 
   const countsData = counts ?? fetchedCounts;
   const countmeWeeks = countsData?.weeks ?? [];
-  // Only track and measure Dakota on this chart (labeled as "Bluefin")
-  const activeRepos: string[] = useMemo(
-    () => reportingRepos(countmeWeeks).filter((repo): repo is string => repo === "dakota"),
+  // Active repos tracked by the first-party service (strictly Dakota, labeled as Bluefin)
+  const activeRepos = useMemo(
+    () => reportingRepos(countmeWeeks),
     [countmeWeeks],
   );
 

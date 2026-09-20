@@ -33,7 +33,7 @@ const CONSUMERS = [
 ];
 
 test("the Fedora CSV pipeline publishes no projectbluefin image", async () => {
-  const { PROJECTBLUEFIN_REPOS } = await policy;
+  const { BANNED_PROJECTBLUEFIN_REPOS: bannedRepos } = await policy;
   const src = read("scripts/fetch-countme.js");
 
   // VARIANTS is the published key set. A projectbluefin repo appearing in it is
@@ -42,7 +42,7 @@ test("the Fedora CSV pipeline publishes no projectbluefin image", async () => {
   assert.ok(variants, "fetch-countme.js must export VARIANTS");
   const published = [...variants[1].matchAll(/"([^"]+)"/g)].map((m) => m[1]);
 
-  for (const banned of PROJECTBLUEFIN_REPOS) {
+  for (const banned of bannedRepos) {
     assert.ok(
       !published.includes(banned),
       `${banned} is a projectbluefin image; its count comes from ` +
@@ -68,14 +68,15 @@ test("no EPEL exemption can reappear in the counting rule", async () => {
 });
 
 test("the shipped dataset carries no projectbluefin count", async () => {
-  const { PROJECTBLUEFIN_REPOS, FORBIDDEN_SOURCES } = await policy;
+  const { BANNED_PROJECTBLUEFIN_REPOS: bannedRepos, FORBIDDEN_SOURCES } =
+    await policy;
   const data = JSON.parse(read("static/data/countme-history.json"));
 
   for (const forbidden of FORBIDDEN_SOURCES) {
     if (!String(data.source ?? "").includes(forbidden)) continue;
     // This dataset is upstream-derived, so it may not name one of our images.
     for (const week of data.weeks ?? []) {
-      for (const banned of PROJECTBLUEFIN_REPOS) {
+      for (const banned of bannedRepos) {
         assert.ok(
           !(banned in week),
           `week ${week.week} carries "${banned}" from ${data.source} — ` +
@@ -88,7 +89,7 @@ test("the shipped dataset carries no projectbluefin count", async () => {
 });
 
 test("no component reads a projectbluefin count out of the upstream dataset", async () => {
-  const { PROJECTBLUEFIN_REPOS } = await policy;
+  const { BANNED_PROJECTBLUEFIN_REPOS: bannedRepos } = await policy;
 
   // Reading w.bluefin or w["bluefin-lts"] out of a consumer is reading a
   // Fedora number. This catches the literal spelling; the computed spelling
@@ -99,7 +100,7 @@ test("no component reads a projectbluefin count out of the upstream dataset", as
     const full = path.join(repo, rel);
     if (!fs.existsSync(full)) continue;
     const src = fs.readFileSync(full, "utf8");
-    for (const banned of PROJECTBLUEFIN_REPOS) {
+    for (const banned of bannedRepos) {
       const patterns = [
         new RegExp(`\\bw\\.${banned}\\b`),
         new RegExp(`\\["${banned}"\\]`),
@@ -120,7 +121,7 @@ test("no component reads a projectbluefin count out of the upstream dataset", as
 });
 
 test("no consumer reaches a countme week by a key list of its own", async () => {
-  const { PROJECTBLUEFIN_REPOS } = await policy;
+  const { BANNED_PROJECTBLUEFIN_REPOS: bannedRepos } = await policy;
   const { VARIANTS } = await import("./fetch-countme.js");
 
   // The literal check above missed this twice, because the offending code never
@@ -161,7 +162,7 @@ test("no consumer reaches a countme week by a key list of its own", async () => 
     //    the only dataset at hand here is the upstream one.
     for (const [literal] of src.matchAll(/\[[^[\]]*\]/g)) {
       const strings = [...literal.matchAll(/"([^"]+)"/g)].map((m) => m[1]);
-      const ours = strings.filter((s) => PROJECTBLUEFIN_REPOS.includes(s));
+      const ours = strings.filter((s) => bannedRepos.includes(s));
       const upstream = strings.filter((s) => VARIANTS.includes(s));
       if (ours.length && upstream.length)
         offenders.push(`${rel}: ${literal.trim()}`);
@@ -173,7 +174,7 @@ test("no consumer reaches a countme week by a key list of its own", async () => 
     for (const [, body] of src.matchAll(
       /(?:interface|type)\s+\w*(?:Countme|Week)\w*[^{]*\{([^}]*)\}/g,
     )) {
-      for (const banned of PROJECTBLUEFIN_REPOS) {
+      for (const banned of bannedRepos) {
         if (new RegExp(`(?:^|[\\s{,;])"?${banned}"?\\s*\\??\\s*:`).test(body))
           offenders.push(`${rel}: week type declares "${banned}"`);
       }

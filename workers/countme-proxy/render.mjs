@@ -17,19 +17,11 @@ const PALETTE = {
 };
 
 export const REPO_ACCENTS = {
-  bluefin: "#58a6ff",
-  "bluefin-lts": "#bc8cff",
-  dakota: "#39d2c0",
-  utah: "#f0883e",
-  server: "#7ee787",
+  dakota: "#58a6ff",
 };
 
 export const REPO_LABELS = {
-  bluefin: "Bluefin",
-  "bluefin-lts": "Bluefin LTS",
   dakota: "Bluefin",
-  utah: "Utah",
-  server: "Server",
 };
 
 const FONT = "Inter, Segoe UI, Arial, sans-serif";

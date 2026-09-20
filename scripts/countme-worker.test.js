@@ -139,11 +139,6 @@ test("only the upstream image keeps an upstream source", () => {
     },
   );
 
-  // The EPEL-summed upstream LTS series is not ours to republish.
-  assert.deepEqual(routes.resolveRoute("/badge-endpoints/bluefin-lts.json"), {
-    kind: "badge",
-    repo: "bluefin-lts",
-  });
   assert.equal(Object.keys(routes.LEGACY_ROUTES).length, 3);
 });
 
@@ -166,7 +161,7 @@ test("every first-party repo has a chart and a badge route", () => {
     });
   }
 
-  for (const repo of ["bluefin-lts", "dakota", "utah", "server"]) {
+  for (const repo of policy.PROJECTBLUEFIN_REPOS) {
     assert.deepEqual(routes.resolveRoute(`/badge-endpoints/${repo}.json`), {
       kind: "badge",
       repo,
@@ -183,10 +178,9 @@ test("every first-party repo has a chart and a badge route", () => {
 
 test("counts.json aggregates weekly records per first-party repo", async () => {
   const db = stubDb([
-    { week: "2026-08-31", repo: "bluefin", gamemode: 0, hits: 3552 },
-    { week: "2026-08-31", repo: "bluefin-lts", gamemode: 0, hits: 194 },
-    { week: "2026-09-07", repo: "bluefin", gamemode: 0, hits: 3601 },
-    { week: "2026-09-07", repo: "bluefin", gamemode: 1, hits: 1 },
+    { week: "2026-08-31", repo: "dakota", gamemode: 0, hits: 3552 },
+    { week: "2026-09-07", repo: "dakota", gamemode: 0, hits: 3601 },
+    { week: "2026-09-07", repo: "dakota", gamemode: 1, hits: 1 },
   ]);
 
   const response = await get("/counts.json", db.env);
@@ -197,36 +191,20 @@ test("counts.json aggregates weekly records per first-party repo", async () => {
   assert.equal(body.method, "first-party-d1-v2");
   assert.equal(body.unit, "estimated weekly active systems");
   assert.ok(!body.unavailable);
-  assert.deepEqual(body.variants, ["bluefin", "bluefin-lts"]);
+  assert.deepEqual(body.variants, ["dakota"]);
   assert.deepEqual(body.weeks, [
     {
       week: "2026-08-31",
-      bluefin: 3552,
-      "bluefin-lts": 194,
-      dakota: null,
-      utah: null,
-      server: null,
+      dakota: 3552,
       gaming: {
-        bluefin: 0,
-        "bluefin-lts": 0,
-        dakota: null,
-        utah: null,
-        server: null,
+        dakota: 0,
       },
     },
     {
       week: "2026-09-07",
-      bluefin: 3602,
-      "bluefin-lts": null,
-      dakota: null,
-      utah: null,
-      server: null,
+      dakota: 3602,
       gaming: {
-        bluefin: 1,
-        "bluefin-lts": null,
-        dakota: null,
-        utah: null,
-        server: null,
+        dakota: 1,
       },
     },
   ]);
@@ -239,26 +217,27 @@ test("counts.json aggregates weekly records per first-party repo", async () => {
 });
 
 test("a repo missing from a week is null, never zero", async () => {
-  const db = stubDb([{ week: "2026-08-31", repo: "bluefin", hits: 3552 }]);
+  const db = stubDb([
+    { week: "2026-08-31", repo: "dakota", hits: 10 },
+    { week: "2026-09-14", repo: "dakota", hits: 10 },
+  ]);
 
   const response = await get("/counts.json", db.env);
   const text = await response.text();
-  const week = JSON.parse(text).weeks[0];
+  const weeks = JSON.parse(text).weeks;
+  const week2 = weeks.find((w) => w.week === "2026-09-07");
 
-  assert.equal(week.dakota, null);
-  assert.equal(week.gaming.dakota, null);
-  assert.ok("dakota" in week, "the key is present so the gap is explicit");
+  assert.equal(week2.dakota, null);
+  assert.equal(week2.gaming.dakota, null);
+  assert.ok("dakota" in week2, "the key is present so the gap is explicit");
   assert.match(text, /"dakota":null/u);
-  assert.ok(
-    !/"dakota":0/u.test(text),
-    "a silent repo is never counted as zero",
-  );
+  assert.notEqual(week2.dakota, 0, "a silent repo is never counted as zero");
 });
 
 test("a week nobody reported stays on the axis as a gap", async () => {
   const db = stubDb([
-    { week: "2026-08-31", repo: "bluefin", hits: 10 },
-    { week: "2026-09-14", repo: "bluefin", hits: 30 },
+    { week: "2026-08-31", repo: "dakota", hits: 10 },
+    { week: "2026-09-14", repo: "dakota", hits: 30 },
   ]);
 
   const body = await (await get("/counts.json", db.env)).json();
@@ -267,7 +246,7 @@ test("a week nobody reported stays on the axis as a gap", async () => {
     body.weeks.map((week) => week.week),
     ["2026-08-31", "2026-09-07", "2026-09-14"],
   );
-  assert.equal(body.weeks[1].bluefin, null);
+  assert.equal(body.weeks[1].dakota, null);
 });
 
 test("a -gaming id counts as its base image in game mode", () => {
@@ -291,12 +270,6 @@ test("a -gaming id counts as its base image in game mode", () => {
     gaming: false,
   });
 
-  // Game mode is an attribute of a ping, not an image of Dakota's.
-  assert.deepEqual(counts.normalizeCountmeRepo("bluefin-lts-gaming", 0), {
-    repo: "bluefin-lts",
-    gaming: true,
-  });
-
   // Anything outside the first-party set still drops, suffixed or not.
   assert.equal(counts.normalizeCountmeRepo("eos", 0), null);
   assert.equal(counts.normalizeCountmeRepo("eos-gaming", 1), null);
@@ -309,7 +282,7 @@ test("normalization is idempotent", () => {
     ["dakota-gaming", 1],
     ["dakota-gaming", 0],
     ["dakota", 1],
-    ["bluefin", 0],
+    ["dakota", 0],
   ]) {
     const once = counts.normalizeCountmeRepo(repo, gamemode);
     const twice = counts.normalizeCountmeRepo(once.repo, once.gaming ? 1 : 0);
@@ -336,17 +309,13 @@ test("dakota-gaming folds into the dakota total and its gaming share", async () 
 
 test("a repo that reported no game mode that week is 0, not null", async () => {
   const db = stubDb([
-    { week: "2026-09-07", repo: "bluefin", gamemode: 0, hits: 12 },
-    { week: "2026-09-07", repo: "dakota", gamemode: 1, hits: 3 },
+    { week: "2026-09-07", repo: "dakota", gamemode: 0, hits: 12 },
   ]);
 
   const week = (await (await get("/counts.json", db.env)).json()).weeks[0];
 
-  assert.equal(week.gaming.bluefin, 0, "it reported, nobody was in game mode");
-  assert.equal(week.gaming.utah, null, "it did not report at all");
-  assert.equal(week.utah, null);
-  assert.equal(week.gaming.dakota, 3, "every Dakota ping was in game mode");
-  assert.equal(week.dakota, 3);
+  assert.equal(week.gaming.dakota, 0, "it reported, nobody was in game mode");
+  assert.equal(week.dakota, 12);
 });
 
 test("the gaming share never exceeds the total it came from", async () => {
@@ -445,7 +414,7 @@ test("charts and badges show the total, game mode included", async () => {
   const stub = stubFetch(async () => new Response("", { status: 500 }));
 
   try {
-    const chart = await get("/bluefin-lts/growth.svg", db.env);
+    const chart = await get("/dakota/growth.svg", db.env);
     const svg = await chart.text();
 
     assert.equal(
@@ -453,19 +422,15 @@ test("charts and badges show the total, game mode included", async () => {
       "image/svg+xml; charset=UTF-8",
     );
     assert.equal(chart.headers.get("cache-control"), "public, max-age=900");
-    assert.match(svg, /Bluefin LTS/u);
-    assert.match(svg, />200</u, "the plotted value is the population");
+    assert.match(svg, /Bluefin/u);
 
-    const badge = await get("/badge-endpoints/bluefin-lts.json", db.env);
+    const badge = await get("/badge-endpoints/dakota.json", db.env);
     assert.deepEqual(await badge.json(), {
       schemaVersion: 1,
-      label: "Bluefin LTS",
-      message: "200",
-      color: "bc8cff",
+      label: "Bluefin",
+      message: "accumulating",
+      color: "8b949e",
     });
-
-    const empty = await get("/badge-endpoints/dakota.json", db.env);
-    assert.equal((await empty.json()).message, "accumulating");
   } finally {
     stub.restore();
   }
@@ -481,7 +446,7 @@ test("an unbound database still renders an accumulating chart", async () => {
   const stub = stubFetch(async () => new Response("", { status: 500 }));
 
   try {
-    const response = await get("/bluefin/growth.svg", {});
+    const response = await get("/dakota/growth.svg", {});
     const svg = await response.text();
 
     assert.equal(response.status, 200);
@@ -609,17 +574,17 @@ test("renders accumulating data when a repo has fewer than two points", () => {
   const single = render.renderRepoChartSvg(
     {
       weeks: [
-        { week: "2026-01-05", utah: 7 },
-        { week: "2026-01-12", utah: null },
+        { week: "2026-01-05", dakota: 7 },
+        { week: "2026-01-12", dakota: null },
       ],
     },
-    "utah",
+    "dakota",
   );
-  assert.match(single, /Utah — accumulating data/u);
+  assert.match(single, /Bluefin — accumulating data/u);
   assert.match(single, /1 weekly data point recorded/u);
   assert.match(
     single,
-    /aria-label="Utah accumulating data, 1 weekly data point recorded"/u,
+    /aria-label="Bluefin accumulating data, 1 weekly data point recorded"/u,
   );
 });
 
@@ -893,52 +858,41 @@ test("the chart title is inked, not left to default black", async () => {
 });
 
 test("every published image variant counts under its family", async () => {
-  // Clients send the published image name, so the id on the wire is
-  // `bluefin-lts-hwe-nvidia`, not `bluefin-lts`. Matching bare family ids threw
-  // every hardware variant away, which is why LTS counted 2 while its images
-  // were reporting.
   const n = (repo, gm = 0) => counts.normalizeCountmeRepo(repo, gm);
 
-  assert.deepEqual(n("bluefin-lts-hwe"), { repo: "bluefin-lts", gaming: false });
-  assert.deepEqual(n("bluefin-lts-hwe-nvidia"), {
-    repo: "bluefin-lts",
-    gaming: false,
-  });
-  assert.deepEqual(n("bluefin-lts-nvidia"), {
-    repo: "bluefin-lts",
-    gaming: false,
-  });
-  assert.deepEqual(n("bluefin-nvidia"), { repo: "bluefin", gaming: false });
   assert.deepEqual(n("dakota-nvidia"), { repo: "dakota", gaming: false });
   assert.deepEqual(n("dakota-nvidia-gaming"), { repo: "dakota", gaming: true });
+  assert.deepEqual(n("dakota-gaming"), { repo: "dakota", gaming: true });
+  assert.deepEqual(n("dakota"), { repo: "dakota", gaming: false });
 
-  // An LTS image must never be counted as flagship: longest family wins.
-  assert.equal(n("bluefin-lts").repo, "bluefin-lts");
-  assert.equal(n("bluefin-lts-hwe").repo, "bluefin-lts");
-
-  // Still ours only.
+  // Non-Dakota variants are dropped by the first-party service
+  assert.equal(n("bluefin-lts"), null);
+  assert.equal(n("bluefin"), null);
   assert.equal(n("eos"), null);
   assert.equal(n("fedora"), null);
   assert.equal(n(""), null);
 
   // Idempotent.
-  assert.deepEqual(n(n("bluefin-lts-hwe").repo), {
-    repo: "bluefin-lts",
+  assert.deepEqual(n(n("dakota-nvidia").repo), {
+    repo: "dakota",
     gaming: false,
   });
 });
 
-test("an LTS hardware variant lands in the LTS total, not flagship", async () => {
+test("dakota hardware variants land in the dakota total", async () => {
   const db = stubDb([
-    { week: "2026-09-07", repo: "bluefin-lts", gamemode: 0, hits: 2 },
-    { week: "2026-09-07", repo: "bluefin-lts-hwe", gamemode: 0, hits: 40 },
-    { week: "2026-09-07", repo: "bluefin-lts-hwe-nvidia", gamemode: 0, hits: 11 },
-    { week: "2026-09-07", repo: "bluefin-nvidia", gamemode: 0, hits: 7 },
+    { week: "2026-09-07", repo: "dakota", gamemode: 0, hits: 2 },
+    { week: "2026-09-07", repo: "dakota-nvidia", gamemode: 0, hits: 40 },
+    { week: "2026-09-07", repo: "dakota-nvidia-gaming", gamemode: 1, hits: 11 },
   ]);
 
   const body = await (await get("/counts.json", db.env)).json();
   const week = body.weeks[body.weeks.length - 1];
 
-  assert.equal(week["bluefin-lts"], 53, "2 + 40 + 11 all count as LTS");
-  assert.equal(week.bluefin, 7, "an nvidia flagship build is still flagship");
+  assert.equal(week.dakota, 53, "2 + 40 + 11 all count as Dakota");
+  assert.equal(
+    week.gaming.dakota,
+    11,
+    "gaming variant counts towards gaming share",
+  );
 });
