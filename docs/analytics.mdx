@@ -35,13 +35,11 @@ Project Bluefin images participate in direct weekly countme reporting via system
 
 ### Opt-Out Instructions
 
-To disable Project Bluefin countme reporting, create the disable marker file:
+To disable Project Bluefin countme reporting, disable the systemd timer:
 
 ```bash
-sudo install -d -m 0755 /etc/projectbluefin/countme && sudo touch /etc/projectbluefin/countme/disabled
+sudo systemctl disable --now bluefin-countme.timer
 ```
-
-_(The legacy marker `/etc/dakota-countme/disabled` is also honored.)_
 
 To disable upstream Fedora countme:
 
