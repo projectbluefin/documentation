@@ -60,16 +60,21 @@ export const FORBIDDEN_SOURCES = Object.freeze([
 
 /**
  * Repo identifiers owned by `projectbluefin`, as the first-party service records
- * them in its `repo` parameter.
+ * them in its `repo` parameter. Project Bluefin exclusively tracks Dakota.
  */
-export const PROJECTBLUEFIN_REPOS = Object.freeze([
+export const PROJECTBLUEFIN_REPOS = Object.freeze(["dakota"]);
+
+/**
+ * Historical/family image identifiers that must never be counted from
+ * upstream Fedora or EPEL sources.
+ */
+export const BANNED_PROJECTBLUEFIN_REPOS = Object.freeze([
   "bluefin",
   "bluefin-lts",
   "dakota",
   "utah",
   "server",
 ]);
-
 /**
  * True when a count for `repo` may come from `source`.
  *

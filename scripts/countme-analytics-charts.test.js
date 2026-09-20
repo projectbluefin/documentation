@@ -361,16 +361,16 @@ test("a repo that never reported is not a series", () => {
   // utah is null in every week. Included, it would draw as a flat line on the
   // floor and read as "zero systems" rather than "not counted yet".
   const repos = reportingRepos(COUNTS_FIXTURE.weeks);
-  assert.ok(repos.includes("bluefin"));
   assert.ok(repos.includes("dakota"));
   assert.ok(!repos.includes("utah"));
+  assert.ok(!repos.includes("bluefin-lts"));
   assert.deepEqual(reportingRepos([]), []);
 });
 
 test("a measured zero is a reading, not a gap", () => {
-  const weeks = [{ week: "2026-08-17", bluefin: 0 }];
-  assert.deepEqual(reportingRepos(weeks), ["bluefin"]);
-  assert.deepEqual(latestReading(weeks, "bluefin"), {
+  const weeks = [{ week: "2026-08-17", dakota: 0 }];
+  assert.deepEqual(reportingRepos(weeks), ["dakota"]);
+  assert.deepEqual(latestReading(weeks, "dakota"), {
     value: 0,
     week: "2026-08-17",
   });
