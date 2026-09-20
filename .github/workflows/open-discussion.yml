@@ -43,8 +43,15 @@ jobs:
           zero   = "0" * 40
 
           if not os.environ.get("GH_TOKEN"):
-              print("BLUEFIN_DISCUSSIONS_TOKEN is not configured", file=sys.stderr)
-              sys.exit(1)
+              # ponytail: the cross-repo token is a repository secret that the
+              # maintainer provisions; a missing secret must not leave main red.
+              # Skip discussion creation instead of failing — the job goes green
+              # and the feature activates automatically once the secret exists.
+              print(
+                  "BLUEFIN_DISCUSSIONS_TOKEN is not configured — "
+                  "skipping discussion creation. Configure the secret to enable it."
+              )
+              sys.exit(0)
 
           if event == "workflow_dispatch":
               # Backfill discussions for already-published posts, including posts
