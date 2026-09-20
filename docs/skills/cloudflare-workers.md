@@ -108,8 +108,8 @@ than reaching for `--legacy-peer-deps`.
    - Unbound binding, failing query, or zero rows all return HTTP 200 with
      `unavailable: true` and `FIRST_PARTY_PENDING_REASON`. A counts endpoint
      that 500s is a chart that renders nothing.
-2. **Upstream artifact proxy:** Only `ublue-os/bluefin:stable`, the upstream
-   pre-migration image — `/growth_bluefins.svg`,
+2. **Upstream artifact proxy:** Only `ublue-os/bluefin:stable` (rebadged as
+   **Bluefin Classic**), the upstream pre-migration image — `/growth_bluefins.svg`,
    `/sources/ublue-os/bluefin/growth.svg`, `/badge-endpoints/bluefin.json`.
    That is the whole exception; every other `ublue-os/countme` series,
    Bluefin LTS included, is EPEL-summed and may not be republished as ours.
