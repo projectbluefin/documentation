@@ -602,7 +602,7 @@ test("renders accumulating data when a repo has fewer than two points", () => {
     { weeks: [{ week: "2026-01-05", bluefin: 10 }] },
     "dakota",
   );
-  assert.match(empty, /Dakota — accumulating data/u);
+  assert.match(empty, /Bluefin — accumulating data/u);
   assert.match(empty, /0 weekly data points recorded/u);
   assert.equal(pathData(empty).length, 0);
 

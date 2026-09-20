@@ -27,7 +27,7 @@ export const REPO_ACCENTS = {
 export const REPO_LABELS = {
   bluefin: "Bluefin",
   "bluefin-lts": "Bluefin LTS",
-  dakota: "Dakota",
+  dakota: "Bluefin",
   utah: "Utah",
   server: "Server",
 };
