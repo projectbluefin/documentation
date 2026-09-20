@@ -191,7 +191,10 @@ async function githubFetch(
   const url = path.startsWith("http") ? path : `${GH_API}${path}`;
   const res = await fetch(url, { headers: headers ?? githubHeaders(), signal });
   if (!res.ok) {
-    if (!throwOnError) return null;
+    if (!throwOnError) {
+      console.warn(`GET ${path} -> ${res.status} (fail-soft; returning null)`);
+      return null;
+    }
     const hint =
       res.status === 401 || res.status === 403
         ? " (a token with the required scope is missing or exhausted)"
