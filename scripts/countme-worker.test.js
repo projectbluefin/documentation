@@ -162,7 +162,7 @@ test("every first-party repo has a chart and a badge route", () => {
   ]) {
     assert.deepEqual(routes.resolveRoute(alias), {
       kind: "chart",
-      repo: "bluefin",
+      repo: "dakota",
     });
   }
 
