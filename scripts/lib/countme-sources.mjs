@@ -33,7 +33,7 @@
 /** The one upstream series anyone may publish, and its canonical endpoint. */
 export const UPSTREAM_ALLOWED = Object.freeze({
   id: "ublue-os/bluefin:stable",
-  label: "ublue-os/bluefin:stable",
+  label: "Bluefin Classic",
   source:
     "https://raw.githubusercontent.com/ublue-os/countme/main/badge-endpoints/bluefin.json",
   note: "Upstream pre-migration image. Counted by ublue-os/countme, not by us.",

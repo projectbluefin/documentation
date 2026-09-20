@@ -234,7 +234,7 @@ test("portal static data exposes exact metadata contracts", () => {
   );
   assert.equal(
     data.FLOCK_METADATA.chartAlt,
-    "Bluefin active users weekly growth chart",
+    "Bluefin Classic active users weekly growth chart",
   );
   assert.equal(
     data.FLOCK_METADATA.attributionPrefix,

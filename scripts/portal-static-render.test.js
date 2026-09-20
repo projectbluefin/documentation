@@ -403,7 +403,7 @@ test("PortalFlock statically renders header, growth chart card, attribution, and
     ),
   );
   assert.ok(html.includes('src="/img/portal/growth_bluefins.svg"'));
-  assert.ok(html.includes('alt="Bluefin active users weekly growth chart"'));
+  assert.ok(html.includes('alt="Bluefin Classic active users weekly growth chart"'));
   assert.ok(html.includes('loading="lazy"'));
   assert.ok(html.includes("Statistics provided by"));
   assert.ok(html.includes('href="https://github.com/ublue-os/countme"'));
