@@ -1,1 +1,46 @@
-name: CI\non:\n  push:\n    branches: [main]\n  pull_request:\n    branches: [main]\n\njobs:\n  build:\n    runs-on: ubuntu-latest\n\n    steps:\n    - uses: actions/checkout@v3\n    - name: Set up Node.js\n      uses: actions/setup-node@v3\n      with:\n        node-version: 18\n    - run: npm install\n    - run: npm test\n    - name: Check for BLUEFIN_DISCUSSIONS_TOKEN\n      run: |\n        if [ -z "${{ secrets.BLUEFIN_DISCUSSIONS_TOKEN }}" ]; then\n          echo "BLUEFIN_DISCUSSIONS_TOKEN is not configured" >&2\n          exit 1\n        fi
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Run tests
+        run: npm test
+
+      - name: Check for BLUEFIN_DISCUSSIONS_TOKEN
+        if: github.event_name != 'pull_request'
+        env:
+          BLUEFIN_DISCUSSIONS_TOKEN: ${{ secrets.BLUEFIN_DISCUSSIONS_TOKEN }}
+        run: |
+          if [ -z "$BLUEFIN_DISCUSSIONS_TOKEN" ]; then
+            echo "BLUEFIN_DISCUSSIONS_TOKEN is not configured" >&2
+            exit 1
+          fi
