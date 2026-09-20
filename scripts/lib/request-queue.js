@@ -12,6 +12,13 @@
  *    calling an async function for each item with a fixed inter-request delay.
  *    Previously duplicated in fetch-github-repos.js, fetch-contributors.js,
  *    and fetch-github-profiles.js.
+ *
+ * 3. `githubToken()` / `githubHeaders(token, opts)` — the single token and
+ *    header contract for the CJS fetch layer, the counterpart of
+ *    `lib/gh.js`'s exports. Migrated onto these from the hand-rolled
+ *    fetch-feeds.js, fetch-pin-state.js and fetch-hive-history.js so token
+ *    acquisition and the Accept / api-version / user-agent shape can no longer
+ *    drift per file (projectbluefin/documentation#1232).
  */
 
 "use strict";
@@ -123,15 +130,39 @@ async function sequentialFetchWithDelay(items, fetchFn, opts = {}) {
 // ── GitHub auth headers helper ──────────────────────────────────────────────
 
 /**
+ * Resolve the GitHub token from the environment. Single source of truth for
+ * the CJS fetch layer (the CJS counterpart of `githubToken()` in lib/gh.js),
+ * so the token is not restated at every fetch site (projectbluefin#1232).
+ *
+ * @returns {string|null} The token, or null when neither env var is set.
+ */
+function githubToken() {
+  return process.env.GITHUB_TOKEN || process.env.GH_TOKEN || null;
+}
+
+/**
  * Build standard GitHub API request headers.
  *
+ * The single header contract for the CJS fetch layer — the CJS counterpart to
+ * `githubHeaders()` in lib/gh.js. Callers override only the field an endpoint
+ * needs a different value for (e.g. the Contents API needs the legacy
+ * `v3+json` accept). Backward compatible: `githubHeaders(token)` with no opts
+ * returns the same User-Agent + Authorization shape it always returned, so the
+ * existing request-queue consumers (fetch-contributors, fetch-github-profiles,
+ * fetch-github-repos, fetch-portal-contributors) are unchanged.
+ *
  * @param {string} [token]  GitHub personal access token. Falls back to
- *                          GITHUB_TOKEN / GH_TOKEN env vars when omitted.
+ *                          githubToken() (GITHUB_TOKEN / GH_TOKEN) when omitted.
+ * @param {object} [opts]   Overrides: `{ accept, apiVersion, userAgent }`.
  * @returns {object} Headers object suitable for `fetch()`.
  */
-function githubHeaders(token) {
-  const t = token || process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
-  const headers = { "User-Agent": "Bluefin-Docs-Build" };
+function githubHeaders(token, opts = {}) {
+  const t = token || githubToken();
+  const headers = { "User-Agent": opts.userAgent ?? "Bluefin-Docs-Build" };
+  if (opts.accept) headers["accept"] = opts.accept;
+  if (opts.apiVersion !== undefined) {
+    headers["x-github-api-version"] = opts.apiVersion;
+  }
   if (t) {
     headers["Authorization"] = `Bearer ${t}`;
   }
@@ -142,5 +173,6 @@ module.exports = {
   isNetworkError,
   retryWithBackoff,
   sequentialFetchWithDelay,
+  githubToken,
   githubHeaders,
 };

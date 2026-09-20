@@ -46,6 +46,7 @@
 
 const fs = require("fs");
 const path = require("path");
+const { githubToken, githubHeaders } = require("./lib/request-queue");
 
 // Snapshot data comes from the hosted Knuckle /api/status endpoint.
 // The old raw.githubusercontent.com HTML snapshot (bluefin/index.html) is no longer published.
@@ -108,15 +109,14 @@ const BOT_LOGINS = new Set([
   "copilot",
 ]);
 
-const GH_TOKEN = process.env.GITHUB_TOKEN || process.env.GH_TOKEN || "";
 const GH_API = "https://api.github.com";
 const REGISTRY_URL = "https://hive.hivecommons.dev/api/registry";
 const TARGET_ORG = "projectbluefin";
 
 function ghHeaders() {
-  const h = { "User-Agent": "bluefin-hive-history/1.0" };
-  if (GH_TOKEN) h["Authorization"] = `Bearer ${GH_TOKEN}`;
-  return h;
+  return githubHeaders(githubToken(), {
+    userAgent: "bluefin-hive-history/1.0",
+  });
 }
 
 function registryHeaders() {
