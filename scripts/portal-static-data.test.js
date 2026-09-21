@@ -210,11 +210,13 @@ test("portal static data exposes exact metadata contracts", () => {
     data.NEWS_METADATA.viewAllLabel,
     "View all posts on the official blog",
   );
-  assert.equal(data.FALLBACK_NEWS_POSTS.length, 3);
   assert.equal(
-    data.FALLBACK_NEWS_POSTS[0].title,
-    "Introducing Project Bluefin",
+    data.NEWS_METADATA.unavailableText,
+    "Latest posts are unavailable",
   );
+  // Posts come from the build-time blog index, never from hand-written
+  // stand-ins that link to articles nobody wrote.
+  assert.equal(data.FALLBACK_NEWS_POSTS, undefined);
 
   // Copyright
   assert.equal(
@@ -228,18 +230,12 @@ test("portal static data exposes exact metadata contracts", () => {
     data.FLOCK_METADATA.description,
     "Bluefin is built by a dedicated group of maintainers and contributors.",
   );
-  assert.equal(
-    data.FLOCK_METADATA.chartSrc,
-    "/img/portal/growth_bluefins.svg",
-  );
+  assert.equal(data.FLOCK_METADATA.chartSrc, "/img/portal/growth_bluefins.svg");
   assert.equal(
     data.FLOCK_METADATA.chartAlt,
     "Bluefin Classic active users weekly growth chart",
   );
-  assert.equal(
-    data.FLOCK_METADATA.attributionPrefix,
-    "Statistics provided by",
-  );
+  assert.equal(data.FLOCK_METADATA.attributionPrefix, "Statistics provided by");
   assert.equal(
     data.FLOCK_METADATA.countMeUrl,
     "https://github.com/ublue-os/countme",

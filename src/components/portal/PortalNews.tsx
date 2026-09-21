@@ -1,12 +1,41 @@
 import React, { useState, useEffect } from "react";
+import blogIndexData from "@site/static/data/blog-posts.json";
 import styles from "./PortalNews.module.css";
-import {
-  NEWS_METADATA,
-  FALLBACK_NEWS_POSTS,
-  type BlogPost,
-} from "./portalStaticData";
+import { NEWS_METADATA, type BlogPost } from "./portalStaticData";
 
 export type { BlogPost };
+
+interface BlogIndex {
+  readonly posts?: readonly Partial<BlogPost>[];
+  readonly unavailable?: boolean;
+  readonly stateReason?: string;
+}
+
+/**
+ * The posts `scripts/build-blog-index.js` read out of `blog/` at build time.
+ *
+ * They are the server-rendered content of this section and the standing answer
+ * when the live feed does not come back: every entry is a post that exists, so
+ * a reader without JavaScript — or with a failed fetch — still gets the real
+ * blog rather than a placeholder.
+ */
+export function normalizeBlogIndex(index: BlogIndex): BlogPost[] {
+  if (!index || index.unavailable || !Array.isArray(index.posts)) return [];
+
+  return index.posts
+    .filter((post) => Boolean(post?.title && post?.link))
+    .map((post) => ({
+      title: post.title ?? "",
+      link: post.link ?? "",
+      description: post.description ?? "",
+      pubDate: post.pubDate ?? "",
+      formattedDate: post.formattedDate ?? "",
+    }));
+}
+
+export const LOCAL_NEWS_POSTS: readonly BlogPost[] = normalizeBlogIndex(
+  blogIndexData as BlogIndex,
+);
 
 export interface PortalNewsProps {
   feedUrl?: string;
@@ -170,20 +199,22 @@ export default function PortalNews({
   feedUrl = NEWS_METADATA.feedUrl,
   perPage = 5,
   initialPosts,
-  fallbackPosts = FALLBACK_NEWS_POSTS,
+  fallbackPosts = LOCAL_NEWS_POSTS,
   initialLoading,
   viewAllUrl = NEWS_METADATA.viewAllUrl,
   viewAllLabel = NEWS_METADATA.viewAllLabel,
 }: PortalNewsProps): React.JSX.Element {
-  const isServer = typeof window === "undefined";
-  const [posts, setPosts] = useState<BlogPost[]>(() => {
-    if (initialPosts !== undefined) return initialPosts;
-    return isServer ? fallbackPosts.slice(0, perPage) : [];
-  });
+  // The build-time index is the same on the server and in the browser, so the
+  // first client render matches the server markup instead of blanking the
+  // section while the feed request is in flight.
+  const seedPosts = fallbackPosts.slice(0, perPage);
+  const [posts, setPosts] = useState<BlogPost[]>(
+    () => initialPosts ?? seedPosts,
+  );
   const [loading, setLoading] = useState<boolean>(() => {
     if (initialLoading !== undefined) return initialLoading;
     if (initialPosts !== undefined) return false;
-    return !isServer;
+    return seedPosts.length === 0 && typeof window !== "undefined";
   });
   const [error, setError] = useState<string | null>(null);
 
@@ -193,7 +224,6 @@ export default function PortalNews({
     let isMounted = true;
 
     async function fetchFeed() {
-      setLoading(true);
       setError(null);
 
       try {
@@ -207,7 +237,9 @@ export default function PortalNews({
         if (response.ok) {
           const xmlText = await response.text();
           const parsedPosts = parseAtomFeed(xmlText);
-          if (isMounted) {
+          // An empty parse is not fresher than the build-time index; keeping
+          // the index beats replacing real posts with nothing.
+          if (isMounted && parsedPosts.length > 0) {
             setPosts(parsedPosts.slice(0, perPage));
           }
           return;
@@ -216,8 +248,18 @@ export default function PortalNews({
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       } catch (err) {
         console.warn("Failed to fetch live feed, using fallback:", err);
-        if (isMounted) {
-          setPosts(fallbackPosts.slice(0, perPage));
+        if (!isMounted) return;
+
+        const localPosts = fallbackPosts.slice(0, perPage);
+        setPosts(localPosts);
+        // Unavailability is visible, with its reason: a section that quietly
+        // renders nothing is indistinguishable from a blog with no posts.
+        if (localPosts.length === 0) {
+          setError(
+            `${NEWS_METADATA.unavailableText} (${
+              err instanceof Error ? err.message : String(err)
+            }).`,
+          );
         }
       } finally {
         if (isMounted) {
@@ -306,20 +348,18 @@ export default function PortalNews({
                     </div>
                   </article>
                 ))}
-
-                <div className={`${styles.feedSource} feed-source`}>
-                  <p className={`${styles.sourceText} source-text`}>
-                    <a
-                      href={viewAllHref}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {viewAllLabel}
-                    </a>
-                  </p>
-                </div>
               </div>
             )}
+
+            {/* The way to the blog stays on the page in every state — a failed
+                feed is the moment a reader most needs the link. */}
+            <div className={`${styles.feedSource} feed-source`}>
+              <p className={`${styles.sourceText} source-text`}>
+                <a href={viewAllHref} target="_blank" rel="noopener noreferrer">
+                  {viewAllLabel}
+                </a>
+              </p>
+            </div>
           </div>
         </div>
       </div>
