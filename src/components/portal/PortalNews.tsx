@@ -211,10 +211,14 @@ export default function PortalNews({
   const [posts, setPosts] = useState<BlogPost[]>(
     () => initialPosts ?? seedPosts,
   );
+  // Start with loading=false whichever side renders: the server has no
+  // window and the client must produce the same first markup, so an empty
+  // index renders "no posts" on both until the effect below flips the state.
+  // A window check here would say "loading" on the client and "no posts" on
+  // the server for the same props, which is a hydration mismatch.
   const [loading, setLoading] = useState<boolean>(() => {
     if (initialLoading !== undefined) return initialLoading;
-    if (initialPosts !== undefined) return false;
-    return seedPosts.length === 0 && typeof window !== "undefined";
+    return false;
   });
   const [error, setError] = useState<string | null>(null);
 
@@ -225,6 +229,9 @@ export default function PortalNews({
 
     async function fetchFeed() {
       setError(null);
+      if (seedPosts.length === 0) {
+        setLoading(true);
+      }
 
       try {
         const response = await fetch(feedUrl, {
@@ -273,7 +280,7 @@ export default function PortalNews({
     return () => {
       isMounted = false;
     };
-  }, [feedUrl, perPage, initialPosts, fallbackPosts]);
+  }, [feedUrl, perPage, initialPosts, fallbackPosts, seedPosts.length]);
 
   const viewAllHref =
     viewAllUrl ??
