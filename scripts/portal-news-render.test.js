@@ -190,6 +190,27 @@ test("PortalNews renders loading and no-posts states when requested", () => {
   assert.ok(noPostsHtml.includes("No blog posts found."));
 });
 
+test("PortalNews first render is the same with and without a window when the index is empty", () => {
+  // The unavailable-index case must not hydrate differently: the server has
+  // no window, the client does, and both must produce "no posts" on the
+  // first render. The effect flips to loading afterwards, never the
+  // initializer.
+  const PortalNews = loadPortalNews({ unavailable: true, posts: [] }).default;
+
+  const serverHtml = renderToStaticMarkup(React.createElement(PortalNews, {}));
+  const hadWindow = Object.prototype.hasOwnProperty.call(globalThis, "window");
+  globalThis.window = globalThis.window ?? {};
+  let clientHtml;
+  try {
+    clientHtml = renderToStaticMarkup(React.createElement(PortalNews, {}));
+  } finally {
+    if (!hadWindow) delete globalThis.window;
+  }
+  assert.equal(clientHtml, serverHtml);
+  assert.ok(serverHtml.includes("No blog posts found."));
+  assert.ok(!serverHtml.includes("Loading blog posts..."));
+});
+
 test("PortalNews keeps the blog link in every state", () => {
   const PortalNews = loadPortalNews({ unavailable: true, posts: [] }).default;
 
