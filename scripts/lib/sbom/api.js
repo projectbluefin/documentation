@@ -9,6 +9,7 @@ const os = require("os");
 const path = require("path");
 const { execFile } = require("child_process");
 const { promisify } = require("util");
+const { githubToken } = require("../request-queue.js");
 
 const execFileAsync = promisify(execFile);
 
@@ -29,7 +30,7 @@ const OIDC_ISSUER = "https://token.actions.githubusercontent.com";
  */
 async function getGhcrToken(org, pkg) {
   const headers = { "User-Agent": "BluefinDocsSBOM/1.0" };
-  const ghToken = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
+  const ghToken = githubToken();
   if (ghToken) {
     const b64 = Buffer.from(`x-access-token:${ghToken}`).toString("base64");
     headers.Authorization = `Basic ${b64}`;
@@ -88,7 +89,7 @@ async function fetchGhcrTags(org, pkg) {
  * Uses GITHUB_TOKEN/GH_TOKEN if available; otherwise no-op (anonymous mode).
  */
 async function orasLogin() {
-  const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
+  const token = githubToken();
   if (!token) return;
 
   // x-access-token works for GITHUB_TOKEN in Actions.
