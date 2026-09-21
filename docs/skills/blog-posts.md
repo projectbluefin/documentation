@@ -1,7 +1,7 @@
 ---
 name: blog-posts
-version: "1.3"
-last_updated: "2026-09-08"
+version: "1.4"
+last_updated: "2026-09-21"
 id: blog-posts
 one_line_purpose: Format, embed, and validate Bluefin blog posts under blog/.
 entry_point: docs/skills/blog-posts.md
@@ -175,6 +175,31 @@ For images and video, use `src/components/blog/BlogFigure.tsx` — it renders
 `.mp4` and `.webm` as a looping muted autoplay video and everything else as an
 `<img>`.
 
+## A post's front matter is also portal copy
+
+`scripts/build-blog-index.js` reads `blog/` at build time and writes
+`static/data/blog-posts.json`; `src/components/portal/PortalNews.tsx` renders
+that file as the `#scene-news` cards before its `/blog/atom.xml` fetch resolves,
+and keeps it when the fetch fails. Three consequences when you touch a post:
+
+- **`title` and `slug` are the card.** The link is `/blog/<slug>/`, so a slug
+  change moves the portal card with it. A post with no `title` is skipped.
+- **The card text is the post's own lead paragraph.** The extractor drops
+  imports, `export const snapshot = {…}` metrics blocks, headings, and
+  multi-line JSX embeds, then quotes the first paragraph of at least 40
+  characters, cut at 280 on a word boundary. A `description` in front matter
+  overrides it. Nothing is paraphrased — if the card reads badly, fix the
+  paragraph or add a `description`; never write a summary into the index.
+- **An embed-only post gets no card text**, which is correct. The card renders
+  with title and date alone rather than with invented copy.
+
+Regenerate and read the result rather than guessing:
+
+```bash
+npm run build-blog-index && node -e \
+  "console.log(require('./static/data/blog-posts.json').posts[0])"
+```
+
 ## Common Rationalizations
 
 | Rationalization                                     | Reality                                                                       |
@@ -203,6 +228,7 @@ For images and video, use `src/components/blog/BlogFigure.tsx` — it renders
 - [ ] Front matter has `title`, `slug`, `authors`, `tags`, `date`, and `image`.
 - [ ] No single-element JSX line exceeds 80 characters.
 - [ ] `npx prettier --check` passes on the files you touched.
+- [ ] `npm run build-blog-index` still yields a readable card for the post.
 - [ ] `npm run build:ci` completes; the untruncated-post warning is expected
       from this site's deliberately disabled `truncateMarker`.
 

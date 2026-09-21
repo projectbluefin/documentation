@@ -2,48 +2,81 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
-const ts = require("typescript");
 const React = require("react");
 const { renderToStaticMarkup } = require("react-dom/server");
-
-function loadModule(file) {
-  const { outputText } = ts.transpileModule(fs.readFileSync(file, "utf8"), {
-    compilerOptions: {
-      jsx: ts.JsxEmit.React,
-      target: ts.ScriptTarget.ES2020,
-      module: ts.ModuleKind.CommonJS,
-      esModuleInterop: true,
-    },
-  });
-  const mod = { exports: {} };
-  new Function("require", "module", "exports", outputText)(
-    (id) => {
-      if (id.endsWith(".css")) return {};
-      if (id.startsWith(".")) {
-        const base = path.resolve(path.dirname(file), id);
-        for (const suffix of [".ts", ".tsx", "/index.ts", "/index.tsx"]) {
-          if (fs.existsSync(base + suffix)) return loadModule(base + suffix);
-        }
-      }
-      return require(id);
-    },
-    mod,
-    mod.exports,
-  );
-  return mod.exports;
-}
+const { loadTsxModule } = require("./lib/load-tsx");
 
 const portalDir = path.join(__dirname, "..", "src", "components", "portal");
 const componentPath = path.join(portalDir, "PortalNews.tsx");
 const cssPath = path.join(portalDir, "PortalNews.module.css");
+const indexModuleId = "@site/static/data/blog-posts.json";
+
+// Stands in for scripts/build-blog-index.js output. The real file is generated
+// during `npm run fetch-data`, so a test that read it would pass or fail on
+// whether someone had run a build.
+const SAMPLE_INDEX = {
+  generatedAt: "2026-09-10T00:00:00.000Z",
+  posts: [
+    {
+      title: "Bluefin Server Alpha 2",
+      link: "/blog/bluefin-server/",
+      description: "Alright, here it is, Bluefin Server, this one boots.",
+      pubDate: "2026-09-08T02:11:44.000Z",
+      formattedDate: "September 8, 2026",
+    },
+    {
+      title: "Announcing mcp.projectbluefin.io",
+      link: "/blog/mcp-projectbluefin-io/",
+      description: "Model Context Protocol is an open protocol.",
+      pubDate: "2026-09-07T19:00:00.000Z",
+      formattedDate: "September 7, 2026",
+    },
+    {
+      title: "Bluefin: Welcome to the Jungle",
+      link: "/blog/welcome-to-the-jungle/",
+      description: "A follow up to The Future of Bluefin.",
+      pubDate: "2026-08-27T22:45:00.000Z",
+      formattedDate: "August 27, 2026",
+    },
+    {
+      title: "Reaffirming our Commitment to Upstream Kernel Development",
+      link: "/blog/killing-the-gamer-kernel/",
+      description: "Earlier this month the Dakota team worked upstream.",
+      pubDate: "2026-08-21T02:21:50.000Z",
+      formattedDate: "August 21, 2026",
+    },
+    {
+      title: "The Wolves Are Coming",
+      link: "/blog/the-wolves-are-coming/",
+      description: "",
+      pubDate: "2026-08-17T03:23:14.000Z",
+      formattedDate: "August 17, 2026",
+    },
+    {
+      title: "Sixth Post Beyond perPage",
+      link: "/blog/sixth-post-beyond-per-page/",
+      description: "Should not reach the section at the default perPage.",
+      pubDate: "2026-08-02T00:00:00.000Z",
+      formattedDate: "August 2, 2026",
+    },
+  ],
+};
+
+function loadPortalNews(index = SAMPLE_INDEX) {
+  return loadTsxModule(componentPath, (id) => {
+    if (id.endsWith(".css")) return {};
+    if (id === indexModuleId) return index;
+    return undefined;
+  });
+}
 
 test("PortalNews.tsx and PortalNews.module.css exist", () => {
   assert.ok(fs.existsSync(componentPath), "PortalNews.tsx must exist");
   assert.ok(fs.existsSync(cssPath), "PortalNews.module.css must exist");
 });
 
-test("PortalNews statically renders section header, cards, and view-all link", () => {
-  const PortalNews = loadModule(componentPath).default;
+test("PortalNews statically renders the build-time blog index", () => {
+  const PortalNews = loadPortalNews().default;
   const html = renderToStaticMarkup(React.createElement(PortalNews));
 
   // Section id and accessibility label
@@ -57,22 +90,14 @@ test("PortalNews statically renders section header, cards, and view-all link", (
   assert.ok(html.includes(">Latest<"), "must include Latest tag");
   assert.ok(html.includes(">News<"), "must include News title");
 
-  // Fallback / default cards rendered
-  assert.ok(html.includes("Introducing Project Bluefin"));
+  // Cards come from the local blog index, so every link is a post that exists.
+  assert.ok(html.includes("Bluefin Server Alpha 2"));
+  assert.ok(html.includes('href="/blog/bluefin-server/"'));
+  assert.ok(html.includes("September 8, 2026"));
   assert.ok(
-    html.includes(
-      "https://docs.projectbluefin.io/blog/introducing-project-bluefin",
-    ),
+    html.includes("Alright, here it is, Bluefin Server, this one boots."),
   );
-  assert.ok(html.includes("January 15, 2024"));
-  assert.ok(
-    html.includes(
-      "Welcome to Project Bluefin, the next generation Linux workstation designed for reliability, performance, and sustainability.",
-    ),
-  );
-
-  assert.ok(html.includes("Developer Mode: Cloud-Native Workflows"));
-  assert.ok(html.includes("Understanding Image-Based Updates"));
+  assert.ok(html.includes("Announcing mcp.projectbluefin.io"));
 
   // View all posts link
   assert.ok(html.includes('href="/blog"'), 'must link to "/blog"');
@@ -80,12 +105,44 @@ test("PortalNews statically renders section header, cards, and view-all link", (
     html.includes("View all posts"),
     'must include "View all posts" text',
   );
-  assert.ok(html.includes('target="_blank"'));
   assert.ok(html.includes('rel="noopener noreferrer"'));
 });
 
+test("PortalNews renders at most perPage cards", () => {
+  const PortalNews = loadPortalNews().default;
+
+  const html = renderToStaticMarkup(React.createElement(PortalNews));
+  assert.ok(
+    !html.includes("Sixth Post Beyond perPage"),
+    "the sixth post must not render at the default perPage of 5",
+  );
+
+  const twoUp = renderToStaticMarkup(
+    React.createElement(PortalNews, { perPage: 2 }),
+  );
+  assert.ok(twoUp.includes("Bluefin Server Alpha 2"));
+  assert.ok(!twoUp.includes("Bluefin: Welcome to the Jungle"));
+});
+
+test("PortalNews never ships placeholder posts", () => {
+  const source = fs.readFileSync(componentPath, "utf8");
+  const staticData = fs.readFileSync(
+    path.join(portalDir, "portalStaticData.ts"),
+    "utf8",
+  );
+
+  // Hand-written stand-in posts linked to /blog URLs that were never written.
+  for (const text of [source, staticData]) {
+    assert.ok(
+      !text.includes("Introducing Project Bluefin"),
+      "no invented post titles may be committed as fallback data",
+    );
+    assert.ok(!text.includes("FALLBACK_NEWS_POSTS"));
+  }
+});
+
 test("PortalNews renders custom initialPosts and perPage correctly", () => {
-  const PortalNews = loadModule(componentPath).default;
+  const PortalNews = loadPortalNews().default;
   const customPosts = [
     {
       title: "Test Announcement Alpha",
@@ -112,11 +169,11 @@ test("PortalNews renders custom initialPosts and perPage correctly", () => {
   assert.ok(html.includes("September 1, 2026"));
   assert.ok(html.includes("Description of alpha announcement."));
   assert.ok(html.includes("Test Announcement Beta"));
-  assert.ok(!html.includes("Introducing Project Bluefin"));
+  assert.ok(!html.includes("Bluefin Server Alpha 2"));
 });
 
 test("PortalNews renders loading and no-posts states when requested", () => {
-  const PortalNews = loadModule(componentPath).default;
+  const PortalNews = loadPortalNews().default;
 
   // Loading state
   const loadingHtml = renderToStaticMarkup(
@@ -133,8 +190,46 @@ test("PortalNews renders loading and no-posts states when requested", () => {
   assert.ok(noPostsHtml.includes("No blog posts found."));
 });
 
+test("PortalNews keeps the blog link in every state", () => {
+  const PortalNews = loadPortalNews({ unavailable: true, posts: [] }).default;
+
+  // An unavailable index must still leave the reader a way to the blog.
+  for (const props of [{}, { initialLoading: true }, { initialPosts: [] }]) {
+    const html = renderToStaticMarkup(React.createElement(PortalNews, props));
+    assert.ok(
+      html.includes("View all posts") && html.includes('href="/blog"'),
+      `view-all link missing for props ${JSON.stringify(props)}`,
+    );
+  }
+});
+
+test("normalizeBlogIndex tolerates an unavailable or partial index", () => {
+  const { normalizeBlogIndex } = loadPortalNews();
+
+  assert.deepEqual(normalizeBlogIndex({ unavailable: true, posts: [] }), []);
+  assert.deepEqual(normalizeBlogIndex({}), []);
+  assert.deepEqual(
+    normalizeBlogIndex({
+      posts: [
+        { title: "Kept", link: "/blog/kept/" },
+        { title: "No link" },
+        { link: "/blog/no-title/" },
+      ],
+    }),
+    [
+      {
+        title: "Kept",
+        link: "/blog/kept/",
+        description: "",
+        pubDate: "",
+        formattedDate: "",
+      },
+    ],
+  );
+});
+
 test("formatFeedDate formats ISO dates to readable en-US dates", () => {
-  const { formatFeedDate } = loadModule(componentPath);
+  const { formatFeedDate } = loadPortalNews();
 
   assert.equal(formatFeedDate("2024-01-15T10:00:00Z"), "January 15, 2024");
   assert.equal(formatFeedDate("2026-09-08T02:11:44.000Z"), "September 8, 2026");
@@ -143,7 +238,7 @@ test("formatFeedDate formats ISO dates to readable en-US dates", () => {
 });
 
 test("cleanDescription strips HTML, CDATA, and entities", () => {
-  const { cleanDescription } = loadModule(componentPath);
+  const { cleanDescription } = loadPortalNews();
 
   assert.equal(
     cleanDescription(
@@ -156,7 +251,7 @@ test("cleanDescription strips HTML, CDATA, and entities", () => {
 });
 
 test("parseAtomFeedRegex correctly parses Atom XML feed", () => {
-  const { parseAtomFeedRegex } = loadModule(componentPath);
+  const { parseAtomFeedRegex } = loadPortalNews();
 
   const sampleXml = `<?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
