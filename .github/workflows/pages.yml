@@ -149,8 +149,15 @@ jobs:
       - name: Generate embeddable card images
         run: npm run generate-card-images
 
+      # The social preview card is rebuilt on every deploy so the monthly night
+      # wallpaper rotates on its own (the daily schedule below picks up the new
+      # month). Satori cannot decode WebP, so dwebp/cwebp must be present or the
+      # generator would silently ship the previous month's card.
+      - name: Install WebP tools
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends webp
+
       - name: Generate social preview card
-        run: npm run generate-social-cards
+        run: npm run generate-social-cards -- --strict
 
       - name: Run unit tests with coverage
         run: npm run test:coverage
