@@ -1,7 +1,7 @@
 ---
 name: shipping-and-verifying
-version: "1.1"
-last_updated: "2026-09-06"
+version: "1.2"
+last_updated: "2026-09-21"
 id: shipping-and-verifying
 one_line_purpose: Land changes on main and verify live deployment on docs site.
 entry_point: docs/skills/shipping-and-verifying.md
@@ -34,6 +34,25 @@ check that silently proves nothing.
 - Doc-only changes to `docs/**`, `blog/**`, `reports/**`, `adr/**`, or
   `AGENTS.md` — those push straight to `main`, no pull request or queue.
 - Deciding _what_ to change. This skill covers landing and proving it.
+
+### Setting up a linked worktree for local validation
+
+A freshly created git worktree lacks gitignored data and feeds. Running
+`just check` or `npm run build:ci` directly in an unpopulated worktree fails
+with missing JSON module imports (e.g. `playlist-metadata.json`, `file-contributors.json`,
+or feeds under `@site/static/feeds/`).
+
+Before running `just check` or `npm run build:ci` in a new worktree:
+
+```bash
+# 1. Install dependencies
+npm install --legacy-peer-deps
+
+# 2. Seed gitignored data and feed caches from the primary checkout
+mkdir -p static/data static/feeds
+cp -n ../../static/data/*.json static/data/ 2>/dev/null || true
+cp -r ../../static/feeds/* static/feeds/ 2>/dev/null || true
+```
 
 ## Core Process
 
