@@ -9,32 +9,15 @@ image: /img/blog/dakota.png
 
 import BlogFigure from "@site/src/components/blog/BlogFigure";
 
-Dakota Alpha 6 is out. Built against GNOME 51 and freedesktop-sdk 26.08.1, running Linux 7.2.6, NVIDIA 615.71.09, and OGC 7.2.6-ogc1. 174 commits since Alpha 5.
+Dakota Alpha 6 is out. This one is brought to you by [Ahmed Ahdan](https://github.com/ahmedadan)/ Built against GNOME 51 and freedesktop-sdk 26.08.1, running Linux 7.2.6, NVIDIA 615.71.09. Kernel OGC 7.2.6-ogc1 for your gaming needs.
+
+This one certainly feels good! Please remember that we still do NOT support secure boot, so temper your expectations! Here's the changelog, I'll make a video on this one since we have a lot to discuss!
 
 <BlogFigure
   src="/img/blog/dakota.png"
   alt="Bluefin Dakota desktop running GNOME"
   caption="Dakota, built from source with BuildStream"
 />
-
-## Build identity
-
-| Field                     | Value                                                                                                                              |
-| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| Source revision           | [`787bf4d`](https://github.com/projectbluefin/dakota/commit/787bf4d60fee70bebe6c868b7a2079a0eeea76aa)                              |
-| Built                     | 2026-09-21T13:21:06Z                                                                                                               |
-| Previous release          | Alpha 5, [`0713d23`](https://github.com/projectbluefin/dakota/commit/0713d23e105f3da504715daf729b35e34ec804fa) (`stable-20260731`) |
-| Commits since Alpha 5     | 174 non-merge                                                                                                                      |
-| Upstream commits absorbed | 574 in `gnome-build-meta` (`50.3-5-g4b25046` → `51.0-3-ge34f1eb`)                                                                  |
-
-### Published container digests
-
-| Image                                         | Stream   | Digest                                                                    |
-| --------------------------------------------- | -------- | ------------------------------------------------------------------------- |
-| `ghcr.io/projectbluefin/dakota`               | `stable` | `sha256:ddab2e2d816976a8f181603987e76d1c992109f435b2abdf1eae76f40f7139f8` |
-| `ghcr.io/projectbluefin/dakota-nvidia`        | `stable` | `sha256:0a943c03c8f4b2e17d0fa642d7254658d1e989ad6428099fed919093491ff479` |
-| `ghcr.io/projectbluefin/dakota-gaming`        | `stable` | `sha256:e0670ab927e6762e175a73a1ed47b54215163170a5efe407472640c1ac9951ea` |
-| `ghcr.io/projectbluefin/dakota-nvidia-gaming` | `stable` | `sha256:48a19c3e368fdf9534b5f8de5e16cdddd54a74889b78ecb4aecc4323863065e9` |
 
 ## Version matrix
 
@@ -53,9 +36,6 @@ Alpha 5 baseline values are from tag `stable-20260731` (as reflected in the Alph
 | systemd            | `260.2`           | `261.2`           | `gnome-build-meta`                           |
 | Mesa               | `26.1.4`          | `26.2.2`          | `freedesktop-sdk`                            |
 | GTK                | `4.22.4`          | `4.24.0`          | `gnome-build-meta`                           |
-| GLib               | `2.88.2`          | `2.90.0`          | `gnome-build-meta`                           |
-| WebKitGTK          | `2.52.5`          | `2.54.0`          | `gnome-build-meta`                           |
-| Flatpak            | `1.18.0`          | `1.18.2`          | `gnome-build-meta`                           |
 | PipeWire           | `1.6.1`           | `1.6.8`           | `gnome-build-meta`                           |
 | WirePlumber        | `0.5.15`          | `0.5.17`          | `freedesktop-sdk`                            |
 | NetworkManager     | `1.56.1`          | `1.58.1`          | `gnome-build-meta`                           |
@@ -65,7 +45,11 @@ _Note on kernel and bootc_: Dakota pins its kernel at `7.2.6` via `elements/core
 
 GNOME 51 "A Coruña" was officially released on September 16, 2026 — see the [official release notes](https://release.gnome.org/51/).
 
-## Platform migration
+## Migrating Major GNOME Versions
+
+This is the first time we utilized `dakota:next` tracking a dev release, and Ahmed smoothly transitioned the testing branches through these: 
+
+
 
 | Change                                                     | Commit                                                               |
 | ---------------------------------------------------------- | -------------------------------------------------------------------- |
@@ -78,9 +62,9 @@ GNOME 51 "A Coruña" was officially released on September 16, 2026 — see the [
 | Core junctions to GBM 51.0-3                               | [`12334d2`](https://github.com/projectbluefin/dakota/commit/12334d2) |
 | Track gnome-build-meta master in `:next`                   | [`3af437b`](https://github.com/projectbluefin/dakota/commit/3af437b) |
 
-Notable upstream `gnome-build-meta` structural changes absorbed: freedesktop-sdk 26.08 stack with GCC 16, glibc 2.44, and systemd 261 ([`282270e`](https://gitlab.gnome.org/GNOME/gnome-build-meta/-/commit/282270e53a25ef14ff7d526701bbab3a2f3f982d)); mutable systemd-confext for `/etc` ([`c72367f`](https://gitlab.gnome.org/GNOME/gnome-build-meta/-/commit/c72367fef60e40f3b034f064c8c214979825eba8)); NetworkManager 464XLAT/clat enablement ([`ff58682`](https://gitlab.gnome.org/GNOME/gnome-build-meta/-/commit/ff586821d3f56ce23555ae3b259d6480e34c2ab1)); libical pinned to 3.x for GNOME Calendar ([`6a65529`](https://gitlab.gnome.org/GNOME/gnome-build-meta/-/commit/6a655291cb09c693a1cf59ad33cfba817101bb05)); Flatpak built from git main ([`e28a728`](https://gitlab.gnome.org/GNOME/gnome-build-meta/-/commit/e28a728fcd71d6f837ae682c4ff80bdc8de77b5b)).
-
 ## Kernel and hardware
+
+Here's a bunch of enablement crap: 
 
 | Change                                          | Commit                                                               |
 | ----------------------------------------------- | -------------------------------------------------------------------- |
@@ -100,9 +84,10 @@ Notable upstream `gnome-build-meta` structural changes absorbed: freedesktop-sdk
 
 ## Desktop
 
+And some of the upcoming desktop improvements that we've been going over in the Discussions:
+
 | Change                                                   | Commit                                                               |
 | -------------------------------------------------------- | -------------------------------------------------------------------- |
-| Vicinae launcher packaged, bound to `Super+Space`        | [`ab764d3`](https://github.com/projectbluefin/dakota/commit/ab764d3) |
 | Curated GNOME Shell extensions suite                     | [`01b757b`](https://github.com/projectbluefin/dakota/commit/01b757b) |
 | `quick-settings-audio-panel` enabled by default          | [`8897f7c`](https://github.com/projectbluefin/dakota/commit/8897f7c) |
 | BudsLink-Companion replaces Bluetooth-Battery-Meter      | [`b07c05d`](https://github.com/projectbluefin/dakota/commit/b07c05d) |
@@ -126,6 +111,9 @@ Notable upstream `gnome-build-meta` structural changes absorbed: freedesktop-sdk
   caption="dakota-nvidia-gaming on the OGC kernel"
 />
 
+Bluefin's "Game Mode" is fleshed out now, offering access to a "Bazzite Light" gaming setup, perfect for slaying out. Destiny on Linux please Sony! 
+
+
 | Change                                              | Commit                                                               |
 | --------------------------------------------------- | -------------------------------------------------------------------- |
 | OGC gaming kernel 7.2.6-ogc1                        | [`1371bce`](https://github.com/projectbluefin/dakota/commit/1371bce) |
@@ -135,6 +123,8 @@ Notable upstream `gnome-build-meta` structural changes absorbed: freedesktop-sdk
 | Re-pin LuaJIT after upstream deleted ROLLING tag    | [`f277abd`](https://github.com/projectbluefin/dakota/commit/f277abd) |
 
 ## Image and boot plumbing
+
+The chunka work is great, you'll notice way smaller updates than the old images. Top of the line hunter!
 
 | Change                                                             | Commit                                                               |
 | ------------------------------------------------------------------ | -------------------------------------------------------------------- |
@@ -146,60 +136,13 @@ Notable upstream `gnome-build-meta` structural changes absorbed: freedesktop-sdk
 | Compose host toolchain once during image builds                    | [`e4a2dfd`](https://github.com/projectbluefin/dakota/commit/e4a2dfd) |
 | Stop using `/dev/stdin` for inline writes under BuildBarn/BuildBox | [`5e30bde`](https://github.com/projectbluefin/dakota/commit/5e30bde) |
 
-## Telemetry
-
-`countme` moved out of Dakota into the shared `projectbluefin/common` reporter.
-
-| Change                                                              | Commit                                                               |
-| ------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| Remove local countme client, units, and `COUNTME_*` os-release keys | [`b254e3e`](https://github.com/projectbluefin/dakota/commit/b254e3e) |
-| Enable `bluefin-countme.timer` via `timers.target.wants` symlink    | [`8d25de1`](https://github.com/projectbluefin/dakota/commit/8d25de1) |
-
-Removed: `files/countme/dakota-countme`, `files/countme/bluefin-countme.service`, `files/countme/bluefin-countme.timer`, `elements/bluefin/countme.bst`.
-
-## Release engineering
-
-| Change                                                     | Commit                                                               |
-| ---------------------------------------------------------- | -------------------------------------------------------------------- |
-| Stable promotions scheduled M/W/F                          | [`c5161f6`](https://github.com/projectbluefin/dakota/commit/c5161f6) |
-| Label-gated PR builds, SBOM job repair                     | [`3d549f4`](https://github.com/projectbluefin/dakota/commit/3d549f4) |
-| Gate merges on the PR build when labeled `build`           | [`1713308`](https://github.com/projectbluefin/dakota/commit/1713308) |
-| Smoke-test the image Publish built, not the branch tip     | [`fa13c5b`](https://github.com/projectbluefin/dakota/commit/fa13c5b) |
-| Pin cosign to a digest-pinned installer                    | [`2e595b8`](https://github.com/projectbluefin/dakota/commit/2e595b8) |
-| Route x86 variants through BuildBox remote execution       | [`0cd4c9f`](https://github.com/projectbluefin/dakota/commit/0cd4c9f) |
-| Queue build runs FIFO with a stale-run gate                | [`0aa3804`](https://github.com/projectbluefin/dakota/commit/0aa3804) |
-| Stop queueing x86 builds behind ARM in the CAS group       | [`260a4d2`](https://github.com/projectbluefin/dakota/commit/260a4d2) |
-| Overlay `sync-next` workflow replaces merge sync from main | [`2e887f2`](https://github.com/projectbluefin/dakota/commit/2e887f2) |
-| Compiled fakecap speeds up BST chunkification              | [`82774e6`](https://github.com/projectbluefin/dakota/commit/82774e6) |
-| aarch64 automation paused until boot validation works      | [`1cf9ef6`](https://github.com/projectbluefin/dakota/commit/1cf9ef6) |
-
-## Component version deltas
-
-First-to-last versions across the 174-commit window:
-
-| Package                            | Alpha 5       | Alpha 6               |
-| ---------------------------------- | ------------- | --------------------- |
-| `bootc`                            | `v1.16.6-0`   | `v1.16.13-0`          |
-| `common` (`projectbluefin/common`) | `v2026.07-57` | `v2026.08-112`        |
-| `nautilus-python`                  | `4.1.0-0`     | `4.1.0-12`            |
-| `sudo-rs`                          | `v0.2.14-0`   | `v0.2.15-0`           |
-| `uutils-coreutils`                 | `0.9.0-0`     | `0.12.0-0`            |
-| `xdg-terminal-exec`                | `v0.14.2-0`   | `v0.14.3-0`           |
-| `tailscale`                        | `1.98.10`     | `1.102.4`             |
-| `gum`                              | `v0.17.0`     | `v2.0.1`              |
-| `jetbrains-mono-nerd-font`         | `v3.5.0`      | `v3.5.1`              |
-| `uwelcome`                         | —             | `v0.3.5`              |
-| wallpapers                         | —             | `bluefin-v2026-08-21` |
-
 ## Behavior changes
 
-- `Super+Space` now opens Vicinae.
 - Ghostty ships `resize-overlay = never`; theme tracks the GNOME Dark/Light preference.
 - `snd_pcsp` sink disabled in WirePlumber — audio no longer falls back to the PC speaker after resume.
-- `ujust` flatpak recipes dropped `-y`, restoring graphical polkit prompts ([`83f5202`](https://github.com/projectbluefin/dakota/commit/83f5202)).
 - zram is disabled; swap is zswap backed by `/var/swap/swapfile`.
 - Bluetooth-Battery-Meter is replaced by BudsLink-Companion plus the `io.github.maniacx.BudsLink` Flatpak.
-- `aarch64` images are not published this cycle.
+- `aarch64` images are not published this cycle. (We'll turn these on soon)
 
 ## Images
 
