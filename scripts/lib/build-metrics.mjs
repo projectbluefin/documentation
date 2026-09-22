@@ -11,6 +11,8 @@
 import { request } from "@octokit/request";
 import { createRequire } from "module";
 
+import { githubHeaders, githubToken } from "./gh.js";
+
 const require = createRequire(import.meta.url);
 const { retryWithBackoff } = require("./request-queue.js");
 
@@ -52,13 +54,21 @@ const TRACKED_WORKFLOWS = [
 ];
 
 /**
- * Authenticated request client
+ * Auth headers for the Octokit request client, from the shared ESM factory
+ * client (projectbluefin/documentation#1232).
+ *
+ * Resolved per call rather than baked into a `request.defaults()` singleton at
+ * import time: a token exported into the environment after this module loads is
+ * still picked up, and a missing token now omits `authorization` entirely. The
+ * previous inline read always sent a header, producing the literal
+ * `token undefined` — a guaranteed 401 on requests that would otherwise have
+ * succeeded anonymously.
+ *
+ * @returns {object} Headers for one Octokit request.
  */
-const requestWithAuth = request.defaults({
-  headers: {
-    authorization: `token ${process.env.GITHUB_TOKEN || process.env.GH_TOKEN}`,
-  },
-});
+function authHeaders() {
+  return githubHeaders(githubToken());
+}
 
 /**
  * Fetch workflow runs for a specific workflow within a date range
@@ -69,7 +79,7 @@ const requestWithAuth = request.defaults({
  * @param {Date} startDate - Start of date range
  * @param {Date} endDate - End of date range
  * @param {object} [options] - Options
- * @param {Function} [options.requestClient=requestWithAuth] - Octokit request client
+ * @param {Function} [options.requestClient=request] - Octokit request client
  * @returns {Promise<Array>} Array of workflow run objects
  */
 async function fetchWorkflowRuns(
@@ -80,7 +90,7 @@ async function fetchWorkflowRuns(
   endDate,
   options = {},
 ) {
-  const { requestClient = requestWithAuth } = options;
+  const { requestClient = request } = options;
   const runs = [];
   let page = 1;
   const perPage = 100;
@@ -102,6 +112,7 @@ async function fetchWorkflowRuns(
               created: `${startDateStr}..${endDateStr}`,
               per_page: perPage,
               page,
+              headers: authHeaders(),
             },
           );
         },
@@ -255,11 +266,11 @@ export function calculateMoMChange(current, previous) {
  * @param {Date} startDate - Start of current month
  * @param {Date} endDate - End of current month
  * @param {object} [options] - Options
- * @param {Function} [options.requestClient=requestWithAuth] - Octokit request client
+ * @param {Function} [options.requestClient=request] - Octokit request client
  * @returns {Promise<Object|null>} Build metrics or null if unavailable
  */
 export async function fetchBuildMetrics(startDate, endDate, options = {}) {
-  const { requestClient = requestWithAuth } = options;
+  const { requestClient = request } = options;
   console.log("[build-metrics] Fetching build health metrics...");
 
   try {

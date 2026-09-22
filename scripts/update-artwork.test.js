@@ -109,6 +109,36 @@ test("fetchRepoTree uses the injected fetch and rejects truncated trees", async 
   assert.match(urls[0], /\/git\/trees\/main\?recursive=1$/);
 });
 
+test("fetchRepoTree sends the shared GitHub header contract", async () => {
+  // The sync used to hand-roll this object with the legacy `v3+json` accept and
+  // read GITHUB_TOKEN alone. It now comes from the shared client, which reads
+  // either name and omits `authorization` when neither is set.
+  delete process.env.GITHUB_TOKEN;
+  delete process.env.GH_TOKEN;
+  const { fetchRepoTree } = await import("./update-artwork.mjs");
+  const sent = [];
+  const fetchImpl = async (_url, init) => {
+    sent.push(init.headers);
+    return { ok: true, json: async () => ({ truncated: false, tree: [] }) };
+  };
+
+  await fetchRepoTree({ fetchImpl });
+
+  assert.equal(sent[0].accept, "application/vnd.github+json");
+  assert.equal(sent[0]["x-github-api-version"], "2022-11-28");
+  assert.equal(sent[0]["user-agent"], "projectbluefin-documentation-factory");
+  assert.ok(!("authorization" in sent[0]));
+
+  process.env.GH_TOKEN = "artwork-token";
+  try {
+    await fetchRepoTree({ fetchImpl });
+  } finally {
+    delete process.env.GH_TOKEN;
+  }
+
+  assert.equal(sent[1].authorization, "Bearer artwork-token");
+});
+
 test("manifest helpers round-trip through an injected path", async (t) => {
   const { readManifest, writeManifest } = await import("./update-artwork.mjs");
   const directory = mkdtempSync(join(tmpdir(), "update-artwork-test-"));

@@ -254,8 +254,7 @@ async function fetchSponsorableStatus(usernames) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "User-Agent": "Bluefin-Docs-Build",
-          Authorization: `Bearer ${GITHUB_TOKEN}`,
+          ...githubHeaders(GITHUB_TOKEN),
         },
         body: JSON.stringify({ query }),
       });
