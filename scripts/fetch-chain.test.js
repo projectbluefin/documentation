@@ -44,6 +44,62 @@ test("fetch-pin-state phase runs between independent and dependent", () => {
   assert.ok(pinIdx < depIdx, "pin-state must come before dependent phase");
 });
 
+// ── Failure propagation across the parallel phases ───────────────────────────
+
+// Both phases fan out over many scripts. A bare `wait` terminating a chain of
+// backgrounded `&` jobs always returns 0, which silently discards the exit code
+// of every fetch script — including the ones that deliberately exit non-zero.
+// The phases must delegate to scripts/run-parallel.mjs, which propagates status.
+
+const PARALLEL_PHASES = ["fetch-data:independent", "fetch-data:dependent"];
+
+for (const phase of PARALLEL_PHASES) {
+  test(`${phase} does not swallow exit codes with a bare wait`, () => {
+    const cmd = pkg.scripts[phase];
+    assert.doesNotMatch(
+      cmd,
+      /(^|[;&\s])wait\s*$/,
+      `${phase} must not end in a bare \`wait\` — it always returns 0`,
+    );
+    assert.doesNotMatch(
+      cmd,
+      /&(?!&)/,
+      `${phase} must not background jobs with \`&\`; their status is lost`,
+    );
+  });
+
+  test(`${phase} delegates to the status-propagating runner`, () => {
+    assert.match(
+      pkg.scripts[phase],
+      /node scripts\/run-parallel\.mjs /,
+      `${phase} must fan out via scripts/run-parallel.mjs`,
+    );
+  });
+}
+
+test("run-parallel runner exists and is executable by node", () => {
+  const runner = path.join(ROOT, "scripts", "run-parallel.mjs");
+  assert.ok(fs.existsSync(runner), "scripts/run-parallel.mjs must exist");
+  const res = execFileSync("node", ["--check", runner], { stdio: "pipe" });
+  assert.ok(res !== undefined);
+});
+
+test("every script named by the phases is defined in package.json", () => {
+  for (const phase of PARALLEL_PHASES) {
+    const names = pkg.scripts[phase]
+      .replace(/^node scripts\/run-parallel\.mjs /, "")
+      .trim()
+      .split(/\s+/);
+    assert.ok(names.length > 0, `${phase} must name at least one script`);
+    for (const name of names) {
+      assert.ok(
+        pkg.scripts[name],
+        `${phase} references undefined script "${name}"`,
+      );
+    }
+  }
+});
+
 // ── Script files exist and are readable ──────────────────────────────────────
 
 const FETCH_SCRIPTS = [

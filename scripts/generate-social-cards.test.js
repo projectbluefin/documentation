@@ -56,3 +56,45 @@ test("buildUnifiedLockupSvg creates a unified lockup with feDropShadow filter an
   assert.ok(lockup.width > 0);
   assert.equal(lockup.height, 155);
 });
+
+test("generateSocialCard skips without a decoder by default and throws under --strict", async () => {
+  const { generateSocialCard, MISSING_DECODER_MESSAGE } =
+    await import("./generate-social-cards.mjs");
+  const wallpaper = { file: "bluefin-01-night.webp", monthIndex: 1 };
+  const noDecoder = () => null;
+
+  const lenient = await generateSocialCard({
+    wallpaper,
+    decodeWebp: noDecoder,
+  });
+  assert.equal(lenient.skipped, true);
+
+  await assert.rejects(
+    () =>
+      generateSocialCard({ wallpaper, strict: true, decodeWebp: noDecoder }),
+    (err) => err.message === MISSING_DECODER_MESSAGE,
+  );
+});
+
+test("pages workflow installs the WebP tools and runs the generator in strict mode", () => {
+  const workflow = fs.readFileSync(
+    path.join(__dirname, "../.github/workflows/pages.yml"),
+    "utf8",
+  );
+  const installIdx = workflow.indexOf(
+    "apt-get install -y --no-install-recommends webp",
+  );
+  const generateIdx = workflow.indexOf(
+    "npm run generate-social-cards -- --strict",
+  );
+
+  assert.ok(installIdx !== -1, "pages.yml must install the webp CLI tools");
+  assert.ok(
+    generateIdx !== -1,
+    "pages.yml must generate the card in strict mode",
+  );
+  assert.ok(
+    installIdx < generateIdx,
+    "the webp tools must be installed before the card is generated",
+  );
+});

@@ -4,7 +4,7 @@
   "type": "module",
   "description": "Public MCP endpoint serving the Project Bluefin org knowledge base at mcp.projectbluefin.io",
   "scripts": {
-    "test": "node --test scripts/build-index.test.mjs",
+    "test": "node --test \"scripts/*.test.mjs\"",
     "build-index": "node scripts/build-index.mjs"
   },
   "dependencies": {
