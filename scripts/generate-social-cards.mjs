@@ -104,6 +104,19 @@ export function selectMonthlyWallpaper(
 }
 
 /**
+ * Shown whenever the monthly wallpaper cannot be decoded. Exported so the CI
+ * step and the tests assert on the same wording.
+ */
+export const MISSING_DECODER_MESSAGE =
+  "Neither dwebp nor ffmpeg is installed, so the monthly wallpaper cannot be decoded";
+
+/**
+ * Shown when the rendered card cannot be re-encoded to WebP.
+ */
+export const MISSING_ENCODER_MESSAGE =
+  "cwebp is not installed, so the WebP copy of the social preview card cannot be written";
+
+/**
  * Convert a WebP file to PNG buffer for Satori decoding.
  * Returns null if no external image conversion utility is installed.
  */
@@ -133,6 +146,27 @@ export function webpToPngBuffer(webpPath) {
     } catch {
       return null;
     }
+  }
+}
+
+/**
+ * Encode a rendered PNG buffer as WebP.
+ * Returns null when cwebp is unavailable so the caller can decide whether a
+ * missing WebP copy is fatal — never write PNG bytes to a `.webp` path.
+ */
+export function pngToWebpBuffer(pngBuffer, quality = 90) {
+  try {
+    return execFileSync(
+      "cwebp",
+      ["-q", String(quality), "-o", "-", "--", "-"],
+      {
+        input: pngBuffer,
+        maxBuffer: 50 * 1024 * 1024,
+        stdio: ["pipe", "pipe", "ignore"],
+      },
+    );
+  } catch {
+    return null;
   }
 }
 
@@ -212,16 +246,22 @@ export async function generateSocialCard({
   wallpaper,
   outputPathPng = join(STATIC_DIR, "img/meta.png"),
   outputPathWebp = join(STATIC_DIR, "img/meta.webp"),
+  strict = false,
+  decodeWebp = webpToPngBuffer,
+  encodeWebp = pngToWebpBuffer,
 } = {}) {
   const wallpaperPath = join(WALLPAPERS_DIR, wallpaper.file);
   if (!existsSync(wallpaperPath)) {
     throw new Error(`Wallpaper file not found: ${wallpaperPath}`);
   }
 
-  const pngBuf = webpToPngBuffer(wallpaperPath);
+  const pngBuf = decodeWebp(wallpaperPath);
   if (!pngBuf) {
+    if (strict) {
+      throw new Error(MISSING_DECODER_MESSAGE);
+    }
     console.warn(
-      "Neither dwebp nor ffmpeg is installed — preserving existing social preview card.",
+      `${MISSING_DECODER_MESSAGE} — preserving existing social preview card.`,
     );
     return { png: outputPathPng, webp: outputPathWebp, skipped: true };
   }
@@ -292,20 +332,17 @@ export async function generateSocialCard({
   writeFileSync(outputPathPng, renderedPng);
 
   if (outputPathWebp) {
-    mkdirSync(dirname(outputPathWebp), { recursive: true });
-    try {
-      const webpBuf = execFileSync(
-        "cwebp",
-        ["-q", "90", "-o", "-", "--", "-"],
-        {
-          input: renderedPng,
-          maxBuffer: 50 * 1024 * 1024,
-          stdio: ["pipe", "pipe", "ignore"],
-        },
-      );
+    const webpBuf = encodeWebp(renderedPng);
+    if (webpBuf) {
+      mkdirSync(dirname(outputPathWebp), { recursive: true });
       writeFileSync(outputPathWebp, webpBuf);
-    } catch {
-      writeFileSync(outputPathWebp, renderedPng);
+    } else if (strict) {
+      throw new Error(MISSING_ENCODER_MESSAGE);
+    } else {
+      console.warn(
+        `${MISSING_ENCODER_MESSAGE} — leaving the existing ${outputPathWebp} untouched.`,
+      );
+      return { png: outputPathPng, webp: null };
     }
   }
 
@@ -316,6 +353,9 @@ export async function generateSocialCard({
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   const args = process.argv.slice(2);
   const monthArgIdx = args.indexOf("--month");
+  // CI passes --strict so a missing converter fails the run loudly instead of
+  // silently shipping last month's card.
+  const strict = args.includes("--strict");
   let selected = null;
 
   if (monthArgIdx !== -1 && args[monthArgIdx + 1]) {
@@ -334,7 +374,22 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   console.log(
     `Generating social preview card using ${selected.file} (${selected.monthName} Night)...`,
   );
-  const result = await generateSocialCard({ wallpaper: selected });
+
+  let result;
+  try {
+    result = await generateSocialCard({ wallpaper: selected, strict });
+  } catch (err) {
+    console.error(`✗ ${err.message}`);
+    console.error(
+      "Install the WebP tools (`sudo apt-get install -y webp`) and re-run.",
+    );
+    process.exit(1);
+  }
+
+  if (result.skipped) {
+    process.exit(0);
+  }
+
   console.log(`✓ Generated ${result.png}`);
   if (result.webp) {
     console.log(`✓ Generated ${result.webp}`);

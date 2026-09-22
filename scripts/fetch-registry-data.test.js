@@ -242,8 +242,10 @@ test("package.json wires the script to the fetch-registry-data npm script", () =
   );
   // The build-time data pass must actually include it, or the dashboard ships
   // whatever registry-data.json happened to be committed.
+  // The phase fans out via scripts/run-parallel.mjs, which takes bare script
+  // names rather than inline `npm run <name>` invocations.
   assert.match(
     pkg.scripts["fetch-data:independent"],
-    /npm run fetch-registry-data\b/,
+    /(^|\s)fetch-registry-data(\s|$)/,
   );
 });

@@ -1,7 +1,7 @@
 ---
 name: giscus-discussions
-version: "1.2"
-last_updated: "2026-09-06"
+version: "1.3"
+last_updated: "2026-09-20"
 id: giscus-discussions
 one_line_purpose: Verify, recover, and archive blog Giscus discussion threads.
 entry_point: docs/skills/giscus-discussions.md
@@ -11,7 +11,8 @@ tags: [giscus, github-discussions, blog, comments]
 description: >-
   Verify, recover, and archive Bluefin blog Giscus Discussions. Use when a
   published blog post has no comments, the Open Discussion on New Blog Post
-  workflow fails, or a source Discussion must be replaced by its blog post.
+  workflow fails or skips, or a source Discussion must be replaced by its blog
+  post.
 metadata:
   type: procedure
   context7-sources:
@@ -24,8 +25,8 @@ metadata:
 
 Use this procedure after publishing a Bluefin blog post when:
 
-- the `Open Discussion on New Blog Post` workflow fails or does not create a
-  Discussion;
+- the `Open Discussion on New Blog Post` workflow fails, or succeeds without
+  creating a Discussion;
 - the post’s Giscus comment area cannot find its Discussion;
 - an existing draft Discussion must point readers to the published post.
 
@@ -41,11 +42,16 @@ Discussion are both verified.
 1. Confirm the post is live at
    `https://docs.projectbluefin.io/blog/<slug>/` and that its HTML includes
    `giscus`.
-2. Inspect the matching `Open Discussion on New Blog Post` workflow run. The
-   normal fix is to restore the existing `BLUEFIN_DISCUSSIONS_TOKEN` repository
-   secret with Discussion write access in `ublue-os/bluefin`, then rerun the
-   workflow. Do not create a replacement token, GitHub App, or credential
-   scheme.
+2. Inspect the matching `Open Discussion on New Blog Post` workflow run, and
+   read its log rather than its conclusion. A missing
+   `BLUEFIN_DISCUSSIONS_TOKEN` does not turn the run red: the job logs
+   `BLUEFIN_DISCUSSIONS_TOKEN is not configured` and exits green, so that an
+   unprovisioned secret never blocks `main`. A green run carrying that line
+   created no Discussion. The normal fix is to restore the existing
+   `BLUEFIN_DISCUSSIONS_TOKEN` repository secret with Discussion write access
+   in `ublue-os/bluefin`, then rerun the workflow, which activates the feature
+   with no code change. Do not create a replacement token, GitHub App, or
+   credential scheme.
 3. Search `ublue-os/bluefin` for the exact title
    `<post title> | Bluefin`. If it already exists, verify its body contains the
    expected SHA-1 marker and do not create a duplicate.
@@ -120,11 +126,15 @@ Discussion are both verified.
 | “The workflow failed, but the post is live, so comments can wait.” | A strict Giscus mapping has no discussion to attach to. Create or recover the exact matching Discussion before closing the source thread. |
 | “A similar title is close enough.”                                 | Giscus strict mode matches the exact `og:title` hash. Use the blog title and its `Bluefin` suffix exactly.                                |
 | “I can make a new token to unblock this.”                          | The supported automation uses `BLUEFIN_DISCUSSIONS_TOKEN`. Restore that secret; do not add another credential scheme.                     |
+| “The workflow run is green, so the secret must be configured.”     | The job exits green by design when the secret is absent. Read the log for the skip notice before concluding the automation ran.           |
 | “The original discussion can be closed first.”                     | Readers lose the migration path until the post and its comments are both live. Archive it last.                                           |
 
 ## Red Flags
 
-- The workflow claims success without a new `ublue-os/bluefin` Discussion.
+- The workflow reports a created Discussion that does not exist in
+  `ublue-os/bluefin`. A green run whose log carries the
+  `BLUEFIN_DISCUSSIONS_TOKEN is not configured` skip notice is the documented
+  unprovisioned-secret path, not a silent success.
 - The Giscus title differs from the blog title plus ` | Bluefin`.
 - The Discussion body lacks its SHA-1 marker.
 - More than one Discussion exists with the exact blog-comment title.

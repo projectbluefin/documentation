@@ -46,22 +46,28 @@ primary branding.
 
 - **Tooling**: `scripts/generate-social-cards.mjs` generates Open Graph / Twitter cards (`static/img/meta.png` and `static/img/meta.webp`).
 - **Rotation & Pairings**: Bluefin website uses the Day versions of the official monthly wallpapers; the documentation uses the Night versions of the same wallpaper for the month (`static/img/wallpapers/bluefin-NN-night.webp`).
+- **The rotation happens in CI, not in git.** `.github/workflows/pages.yml` regenerates the card before `npm run build:ci`, and the daily `schedule` trigger is what rolls the card over on the 1st. The committed `static/img/meta.*` is only a seed; do not expect it to track the current month.
+- **Satori cannot decode WebP.** The generator shells out to `dwebp` (or `ffmpeg`) to read the wallpaper and to `cwebp` to write the WebP copy. `ubuntu-latest` ships none of them, so pages.yml installs the `webp` package first. Without it the generator prints `MISSING_DECODER_MESSAGE` and exits 0 — the build stays green while silently shipping the previous month's card, which is how the rotation quietly stopped before. CI therefore runs it as `npm run generate-social-cards -- --strict`, which turns that skip into a failure.
+- **Never write PNG bytes to a `.webp` path.** When `cwebp` is missing, leave the existing `static/img/meta.webp` alone rather than producing a mislabelled file.
 - **Documentation Signature**: Displays the official Bluefin wordmark accompanied by `"Documentation"` text aligned to the letter baseline with multi-layered drop shadows (`drop-shadow(0 2px 4px rgba(0, 0, 0, 0.95)) drop-shadow(0 4px 16px rgba(0, 0, 0, 0.85)) drop-shadow(0 8px 32px rgba(0, 0, 0, 0.75))`).
 
 ## Common Rationalizations
 
 - _"We can keep the ublue 'u' icon next to the wordmark."_ Wrong: Bluefin uses the raptor emblem and wordmark; the `u` is dropped.
 - _"One SVG is fine for both themes."_ Wrong: Dark lettering is invisible on dark themes; always provide dark and light variants.
+- _"The social card step is green, so the card is rotating."_ Wrong: the generator exits 0 when `dwebp`/`ffmpeg` are absent. Read the step log for `preserving existing social preview card`, or rely on `--strict`.
 
 ## Red Flags
 
 - Navbar showing "BLUEfin Bluefin" due to duplicate `navbar.title`.
 - Opaque rectangular background behind wordmark on colored headers.
 - Re-introducing the glassmorphic ublue `u` icon.
+- A social preview card whose wallpaper does not match the current UTC month.
 
 ## Verification
 
-- `node --test scripts/brand-assets.test.js` passes.
+- `node --test scripts/brand-assets.test.js scripts/generate-social-cards.test.js` passes.
+- `npm run generate-social-cards -- --strict` renders a 2400x1260 card locally (needs the `webp` package installed).
 - `npm test` passes.
 - Light and dark theme toggle displays correct contrast wordmark.
 
