@@ -63,8 +63,9 @@ those are the states that say a lane is already on something. Each group keeps
 the hub's org-wide `count` alongside `matched`, the number that survived the
 `repo` filter, so the two differ on purpose.
 
-Hive's `/api/contribute/triage` projection carries no lane account and no pull
-request link, so neither is returned; adding them is a hub change.
+Hive's `/api/contribute/triage` projection carries no lane account; pull request
+links (`pr: {number, url, state}`) are included on `reviewing` items when the
+hub provides them.
 
 ## How it works
 

@@ -167,6 +167,15 @@ test("mentionedRepos picks up org-qualified and bare citations", () => {
   assert.ok(repos.includes("dakota-iso"));
   assert.ok(repos.includes("actions"));
 });
+test("mentionedRepos picks up title-only repo prefix with colon", () => {
+  const repos = mentionedRepos(
+    "actions: Consumer Validation failing on PR branches\nsome body text without mention",
+    null,
+    "actions: Consumer Validation failing on PR branches",
+  );
+  assert.ok(repos.includes("actions"));
+});
+
 
 test("normalizeRepo accepts both spellings and rejects junk", () => {
   assert.equal(normalizeRepo("projectbluefin/actions"), "actions");

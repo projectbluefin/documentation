@@ -206,8 +206,8 @@ function createServer(env) {
             };
           }),
           note:
-            "Hive's triage projection carries no lane account or pull-request link, so " +
-            "neither is returned here.",
+            "Hive's triage projection carries no lane account; pull request details (number, " +
+            "url, state) are included on reviewing items when supplied by the hub.",
         });
       } catch (err) {
         return fail(err);

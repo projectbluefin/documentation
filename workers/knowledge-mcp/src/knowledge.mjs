@@ -37,6 +37,9 @@ const LEADING_CITATION = new RegExp(`^(?:${ORG}/)?(${REPO_SLUG})#(\\d+)\\b`, "i"
 // that repo.
 const REPO_MENTION = new RegExp(`${ORG}/(${REPO_SLUG})|\\b(${REPO_SLUG})#\\d+`, "gi");
 
+// Titles frequently open with `<repo>: ...` or `projectbluefin/<repo>: ...`.
+const LEADING_REPO_COLON = new RegExp(`^(?:${ORG}/)?(${REPO_SLUG}):\\s`, "i");
+
 /** `projectbluefin/actions`, `Actions` and `actions` all mean the same repo. */
 export function normalizeRepo(repo) {
   if (!repo) return null;
@@ -63,9 +66,16 @@ export function parseCitation(title) {
 }
 
 /** Every repo the entry mentions, citation first. Used by the `repo` filter. */
-export function mentionedRepos(text, citation) {
+export function mentionedRepos(text, citation, title) {
   const found = new Set();
   if (citation) found.add(citation.repo);
+  if (title) {
+    const mTitle = LEADING_REPO_COLON.exec(title);
+    if (mTitle) {
+      const slug = mTitle[1].toLowerCase();
+      if (slug.length >= 3) found.add(slug);
+    }
+  }
   for (const m of String(text ?? "").matchAll(REPO_MENTION)) {
     const slug = (m[1] ?? m[2] ?? "").toLowerCase();
     // Two characters is a false-positive magnet (`a#1`), and no org repo is
@@ -141,7 +151,7 @@ export function parseKnowledge(markdown) {
       entry.number = citation.number;
       entry.url = citation.url;
     }
-    entry.repos = mentionedRepos(searchable, citation);
+    entry.repos = mentionedRepos(searchable, citation, entry.title);
 
     if (tags.includes(BLOCKED_TAG)) {
       dropped++;
