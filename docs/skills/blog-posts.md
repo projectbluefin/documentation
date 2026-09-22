@@ -1,7 +1,7 @@
 ---
 name: blog-posts
-version: "1.3"
-last_updated: "2026-09-08"
+version: "1.4"
+last_updated: "2026-09-21"
 id: blog-posts
 one_line_purpose: Format, embed, and validate Bluefin blog posts under blog/.
 entry_point: docs/skills/blog-posts.md
@@ -175,6 +175,27 @@ For images and video, use `src/components/blog/BlogFigure.tsx` — it renders
 `.mp4` and `.webm` as a looping muted autoplay video and everything else as an
 `<img>`.
 
+For multi-image galleries, schematics, and concept art collections, use
+`src/components/blog/ImageCarousel.tsx`. It provides an accessible interactive
+carousel with thumbnail strip, swipe and arrow navigation, and a native modal
+lightbox (`<dialog>` with `.showModal()`) that traps focus and preserves page
+scroll:
+
+```jsx
+import ImageCarousel from "@site/src/components/blog/ImageCarousel";
+
+<ImageCarousel
+  images={[
+    {
+      src: "/img/blog/<post-folder>/image-1.webp",
+      alt: "Descriptive alt text",
+      title: "Slide Title",
+      subtitle: "Optional Subtitle",
+    },
+  ]}
+/>;
+```
+
 ## Common Rationalizations
 
 | Rationalization                                     | Reality                                                                       |
@@ -209,5 +230,5 @@ For images and video, use `src/components/blog/BlogFigure.tsx` — it renders
 ## Sources
 
 - Context7: `/websites/docusaurus_io_3_9_2` (MDX truncation, JSX interleaving, blog front matter).
-- `src/components/blog/BlueskyPost.tsx`, `src/components/blog/BlogFigure.tsx`
+- `src/components/blog/BlueskyPost.tsx`, `src/components/blog/BlogFigure.tsx`, `src/components/blog/ImageCarousel.tsx`
 - [`AGENTS.md`](https://github.com/projectbluefin/documentation/blob/main/AGENTS.md) → _Never write in a maintainer's voice_
