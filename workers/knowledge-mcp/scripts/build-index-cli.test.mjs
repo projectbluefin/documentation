@@ -70,7 +70,14 @@ after(() => new Promise((resolve) => server.close(resolve)));
 async function run({ args = [], env = {}, serve = null } = {}) {
   queued = serve;
   const dir = await mkdtemp(join(tmpdir(), "build-index-"));
-  const child = { HIVE_TOKEN: "test-token", HIVE_HUB: hub, ...env };
+  // GITHUB_STEP_SUMMARY is always set under Actions; default it off so only
+  // cases that opt in write a summary, instead of polluting the real CI one.
+  const child = {
+    HIVE_TOKEN: "test-token",
+    HIVE_HUB: hub,
+    GITHUB_STEP_SUMMARY: undefined,
+    ...env,
+  };
   // Explicit deletes let a case unset a variable the ambient env may carry.
   const childEnv = { ...process.env, ...child };
   for (const [k, v] of Object.entries(child)) if (v === undefined) delete childEnv[k];
