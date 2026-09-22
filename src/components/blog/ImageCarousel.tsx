@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import Heading from "@theme/Heading";
-import Link from "@docusaurus/Link";
 import styles from "./ImageCarousel.module.css";
 
 export interface CarouselImage {
@@ -319,14 +318,14 @@ export default function ImageCarousel({
             <span>
               {currentIndex + 1} of {total}
             </span>
-            <Link
+            <a
               href={current.src}
               target="_blank"
               rel="noopener noreferrer"
               className={styles.fullResLink}
             >
               Open full resolution ↗
-            </Link>
+            </a>
           </div>
         </div>
       </dialog>
