@@ -20,6 +20,17 @@ export const DakotaSection: React.FC = () => (
     ]}
     sections={[
       {
+        label: "Alpha 6",
+        entries: [
+          {
+            label: "AMD / Intel + Nvidia (Unified)",
+            isoUrl: `${BASE}/dakota-live-alpha6.iso`,
+            isoFilename: "dakota-live-alpha6.iso",
+            checksumUrl: `${BASE}/dakota-live-alpha6.iso-CHECKSUM`,
+          },
+        ],
+      },
+      {
         label: "Alpha 5",
         entries: [
           {
