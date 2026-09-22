@@ -33,7 +33,7 @@ const { retryWithBackoff } = require("./request-queue.js");
 function graphqlWithAuth(query, options = {}) {
   return graphql(query, {
     ...options,
-    headers: { ...options.headers, ...githubHeaders(githubToken()) },
+    headers: { ...githubHeaders(githubToken()), ...options.headers },
   });
 }
 
