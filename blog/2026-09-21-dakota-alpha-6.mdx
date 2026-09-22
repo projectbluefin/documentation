@@ -1,0 +1,217 @@
+---
+title: "Dakota Alpha 6"
+slug: dakota-alpha-6
+authors: castrojo
+tags: [announcements, development, dakota]
+date: 2026-09-21T20:00:00-04:00
+image: /img/blog/dakota.png
+---
+
+import BlogFigure from "@site/src/components/blog/BlogFigure";
+import ImageCarousel from "@site/src/components/blog/ImageCarousel";
+
+Dakota Alpha 6 is out. This one is brought to you by [Ahmed Ahdan](https://github.com/ahmedadan)/ Built against GNOME 51 and freedesktop-sdk 26.08.1, running Linux 7.2.6, NVIDIA 615.71.09. Kernel OGC 7.2.6-ogc1 for your gaming needs.
+
+This one certainly feels good! Please remember that we still do NOT support secure boot, so temper your expectations! Here's the changelog, I'll make a video on this one since we have a lot to discuss!
+
+<BlogFigure
+  src="/img/blog/dakota.png"
+  alt="Bluefin Dakota desktop running GNOME"
+  caption="Dakota, built from source with BuildStream"
+/>
+
+## Version matrix
+
+Alpha 5 baseline values are from tag `stable-20260731` (as reflected in the Alpha 5 release announcement):
+
+| Component          | Alpha 5           | Alpha 6           | Source / Pin                                 |
+| ------------------ | ----------------- | ----------------- | -------------------------------------------- |
+| GNOME Shell        | `50.3`            | `51.0`            | `gnome-build-meta`                           |
+| Mutter             | `50.3`            | `51.0`            | `gnome-build-meta`                           |
+| freedesktop-sdk    | `25.08.14`        | `26.08.1`         | `elements/freedesktop-sdk.bst`               |
+| gnome-build-meta   | `50.3-5-g4b25046` | `51.0-3-ge34f1eb` | `elements/gnome-build-meta.bst`              |
+| Kernel             | `7.0.11`          | `7.2.6`           | `elements/core/linux-fdsdk.bst`              |
+| Game Mode kernel   | `7.1.4-ogc1`      | `7.2.6-ogc1`      | `elements/core/linux-ogc.bst`                |
+| NVIDIA             | `610.43.02`       | `615.71.09`       | `elements/bluefin-nvidia/nvidia-drivers.bst` |
+| bootc              | `1.16.6`          | `1.16.13`         | `elements/gnomeos-deps/bootc.bst`            |
+| systemd            | `260.2`           | `261.2`           | `gnome-build-meta`                           |
+| Mesa               | `26.1.4`          | `26.2.2`          | `freedesktop-sdk`                            |
+| GTK                | `4.22.4`          | `4.24.0`          | `gnome-build-meta`                           |
+| PipeWire           | `1.6.1`           | `1.6.8`           | `gnome-build-meta`                           |
+| WirePlumber        | `0.5.15`          | `0.5.17`          | `freedesktop-sdk`                            |
+| NetworkManager     | `1.56.1`          | `1.58.1`          | `gnome-build-meta`                           |
+| xdg-desktop-portal | `1.22.1`          | `1.22.1`          | `gnome-build-meta`                           |
+
+_Note on kernel and bootc_: Dakota pins its kernel at `7.2.6` via `elements/core/linux-fdsdk.bst` (ahead of freedesktop-sdk 26.08.1's default of `7.2.2`) and pins bootc at `1.16.13` via `elements/gnomeos-deps/bootc.bst` (ahead of gnome-build-meta's default of `1.16.6`).
+
+GNOME 51 "A Coruña" was officially released on September 16, 2026 — see the [official release notes](https://release.gnome.org/51/).
+
+<iframe
+  width="560"
+  height="315"
+  src="https://www.youtube.com/embed/sWZCsPYsIUM"
+  title="Bluefin Classic and Dakota Alpha 6"
+  frameborder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  referrerpolicy="strict-origin-when-cross-origin"
+  allowfullscreen
+  style={{ maxWidth: "100%", aspectRatio: "16 / 9", height: "auto" }}
+></iframe>
+
+## Migrating Major GNOME Versions
+
+This is the first time we utilized `dakota:next` tracking a dev release, and Ahmed smoothly transitioned the testing branches through these:
+
+| Change                                                     | Commit                                                               |
+| ---------------------------------------------------------- | -------------------------------------------------------------------- |
+| GNOME 51 and freedesktop-sdk 26.08 on testing              | [`5005f85`](https://github.com/projectbluefin/dakota/commit/5005f85) |
+| freedesktop-sdk 26.08.1 and NVIDIA 615.71.09               | [`e835b88`](https://github.com/projectbluefin/dakota/commit/e835b88) |
+| Complete fdsdk 26.08 port across all variants              | [`a29d9f6`](https://github.com/projectbluefin/dakota/commit/a29d9f6) |
+| Derive fdsdk pin and patches from tracked gnome-build-meta | [`57a70d3`](https://github.com/projectbluefin/dakota/commit/57a70d3) |
+| Stage sandbox shell explicitly for fdsdk 26.08             | [`526affd`](https://github.com/projectbluefin/dakota/commit/526affd) |
+| Core junctions to GBM 50.4 and fdsdk 25.08.16              | [`5e630bc`](https://github.com/projectbluefin/dakota/commit/5e630bc) |
+| Core junctions to GBM 51.0-3                               | [`12334d2`](https://github.com/projectbluefin/dakota/commit/12334d2) |
+| Track gnome-build-meta master in `:next`                   | [`3af437b`](https://github.com/projectbluefin/dakota/commit/3af437b) |
+
+## Kernel and hardware
+
+Here's a bunch of enablement crap:
+
+| Change                                          | Commit                                                               |
+| ----------------------------------------------- | -------------------------------------------------------------------- |
+| Kernel 7.2 with hardware enablement             | [`5fbeae7`](https://github.com/projectbluefin/dakota/commit/5fbeae7) |
+| Align testing on 7.1.8                          | [`6e388f8`](https://github.com/projectbluefin/dakota/commit/6e388f8) |
+| OGC gaming kernel 7.2.6-ogc1                    | [`1371bce`](https://github.com/projectbluefin/dakota/commit/1371bce) |
+| Carry `hid-asus` build fix for OGC 7.2.6-ogc1   | [`d2c8cf7`](https://github.com/projectbluefin/dakota/commit/d2c8cf7) |
+| NVIDIA 610.57.04 plus missing data files        | [`ed2bea8`](https://github.com/projectbluefin/dakota/commit/ed2bea8) |
+| ATH12K Wi-Fi across variants                    | [`b307333`](https://github.com/projectbluefin/dakota/commit/b307333) |
+| Restore desktop capabilities across streams     | [`a984a81`](https://github.com/projectbluefin/dakota/commit/a984a81) |
+| Preserve hybrid graphics configuration          | [`997f6ec`](https://github.com/projectbluefin/dakota/commit/997f6ec) |
+| `brlaser` CUPS driver                           | [`846cd92`](https://github.com/projectbluefin/dakota/commit/846cd92) |
+| `dmidecode` for BIOS info                       | [`0c5c9ea`](https://github.com/projectbluefin/dakota/commit/0c5c9ea) |
+| Disable zram in favor of zswap                  | [`53952c7`](https://github.com/projectbluefin/dakota/commit/53952c7) |
+| `ydotool` input automation and uinput rules     | [`a182aba`](https://github.com/projectbluefin/dakota/commit/a182aba) |
+| `plugdev` and `nintendo_switch` groups for udev | [`02bb985`](https://github.com/projectbluefin/dakota/commit/02bb985) |
+
+## Desktop
+
+And some of the upcoming desktop improvements that we've been going over in the Discussions:
+
+| Change                                                   | Commit                                                               |
+| -------------------------------------------------------- | -------------------------------------------------------------------- |
+| Curated GNOME Shell extensions suite                     | [`01b757b`](https://github.com/projectbluefin/dakota/commit/01b757b) |
+| `quick-settings-audio-panel` enabled by default          | [`8897f7c`](https://github.com/projectbluefin/dakota/commit/8897f7c) |
+| BudsLink-Companion replaces Bluetooth-Battery-Meter      | [`b07c05d`](https://github.com/projectbluefin/dakota/commit/b07c05d) |
+| `syncthing-toggle` → `bluefin-bling` v2                  | [`bd7bbe6`](https://github.com/projectbluefin/dakota/commit/bd7bbe6) |
+| Ghostty resize overlay off by default (Wayland loop)     | [`556bc0c`](https://github.com/projectbluefin/dakota/commit/556bc0c) |
+| Ghostty dual-theme tracks GNOME Dark/Light               | [`ffe6271`](https://github.com/projectbluefin/dakota/commit/ffe6271) |
+| Stop GDM fingerprint retry loop on unenrolled readers    | [`ddc37d7`](https://github.com/projectbluefin/dakota/commit/ddc37d7) |
+| Disable PC-speaker WirePlumber sink                      | [`a5e9152`](https://github.com/projectbluefin/dakota/commit/a5e9152) |
+| Portable unzip flags for extension installs              | [`787bf4d`](https://github.com/projectbluefin/dakota/commit/787bf4d) |
+| Preserve release ZIP root files in extension packaging   | [`20113c3`](https://github.com/projectbluefin/dakota/commit/20113c3) |
+| Avoid broken and intrusive desktop defaults              | [`691a377`](https://github.com/projectbluefin/dakota/commit/691a377) |
+| Developer mode adapted to Dakota                         | [`9efe6e9`](https://github.com/projectbluefin/dakota/commit/9efe6e9) |
+| Bluefin dinosaur avatars in GNOME user-account picker    | [`e106345`](https://github.com/projectbluefin/dakota/commit/e106345) |
+| Unbreak fresh-ISO post-install (uwelcome, brew, devmode) | [`85a1123`](https://github.com/projectbluefin/dakota/commit/85a1123) |
+
+## Game Mode
+
+<BlogFigure
+  src="/img/blog/2026-07-27-bluefins-sausage-factory/ogc-gaming-kernel-stack.png"
+  alt="Fastfetch output showing the Dakota NVIDIA gaming image and the OGC gaming kernel"
+  caption="dakota-nvidia-gaming on the OGC kernel"
+/>
+
+Bluefin's "Game Mode" is fleshed out now, offering access to a "Bazzite Light" gaming setup, perfect for slaying out. Destiny on Linux please Sony!
+
+| Change                                              | Commit                                                               |
+| --------------------------------------------------- | -------------------------------------------------------------------- |
+| OGC gaming kernel 7.2.6-ogc1                        | [`1371bce`](https://github.com/projectbluefin/dakota/commit/1371bce) |
+| 32-bit GL/Vulkan drivers, Steam UI GPU acceleration | [`096b351`](https://github.com/projectbluefin/dakota/commit/096b351) |
+| Steam `.deb` pinned to versioned pool URL           | [`e051009`](https://github.com/projectbluefin/dakota/commit/e051009) |
+| `patches/linux-ogc` added to sync overlay           | [`efc23c7`](https://github.com/projectbluefin/dakota/commit/efc23c7) |
+| Re-pin LuaJIT after upstream deleted ROLLING tag    | [`f277abd`](https://github.com/projectbluefin/dakota/commit/f277abd) |
+
+## Image and boot plumbing
+
+The chunka work is great, you'll notice way smaller updates than the old images. Top of the line hunter!
+
+| Change                                                             | Commit                                                               |
+| ------------------------------------------------------------------ | -------------------------------------------------------------------- |
+| Single source of truth for the image-variant set                   | [`a987f87`](https://github.com/projectbluefin/dakota/commit/a987f87) |
+| Real stream tag in fastfetch via boot-time booted-image sync       | [`d4048c6`](https://github.com/projectbluefin/dakota/commit/d4048c6) |
+| Generate ownership during image builds with chunkah                | [`4360e70`](https://github.com/projectbluefin/dakota/commit/4360e70) |
+| Fetch remote companion data before reading in chunkah              | [`73ff57e`](https://github.com/projectbluefin/dakota/commit/73ff57e) |
+| Preserve export mtimes in chunkah                                  | [`1c081c0`](https://github.com/projectbluefin/dakota/commit/1c081c0) |
+| Compose host toolchain once during image builds                    | [`e4a2dfd`](https://github.com/projectbluefin/dakota/commit/e4a2dfd) |
+| Stop using `/dev/stdin` for inline writes under BuildBarn/BuildBox | [`5e30bde`](https://github.com/projectbluefin/dakota/commit/5e30bde) |
+
+## Behavior changes
+
+- Ghostty ships `resize-overlay = never`; theme tracks the GNOME Dark/Light preference.
+- `snd_pcsp` sink disabled in WirePlumber — audio no longer falls back to the PC speaker after resume.
+- zram is disabled; swap is zswap backed by `/var/swap/swapfile`.
+- Bluetooth-Battery-Meter is replaced by BudsLink-Companion plus the `io.github.maniacx.BudsLink` Flatpak.
+- `aarch64` images are not published this cycle. (We'll turn these on soon)
+
+## Images
+
+| Image         | Stream  | Command                                                                 |
+| ------------- | ------- | ----------------------------------------------------------------------- |
+| Dakota        | Stable  | `sudo bootc switch ghcr.io/projectbluefin/dakota:stable`                |
+| Dakota        | Testing | `sudo bootc switch ghcr.io/projectbluefin/dakota:testing`               |
+| NVIDIA        | Stable  | `sudo bootc switch ghcr.io/projectbluefin/dakota-nvidia:stable`         |
+| NVIDIA        | Testing | `sudo bootc switch ghcr.io/projectbluefin/dakota-nvidia:testing`        |
+| Gaming        | Stable  | `sudo bootc switch ghcr.io/projectbluefin/dakota-gaming:stable`         |
+| Gaming        | Testing | `sudo bootc switch ghcr.io/projectbluefin/dakota-gaming:testing`        |
+| NVIDIA Gaming | Stable  | `sudo bootc switch ghcr.io/projectbluefin/dakota-nvidia-gaming:stable`  |
+| NVIDIA Gaming | Testing | `sudo bootc switch ghcr.io/projectbluefin/dakota-nvidia-gaming:testing` |
+
+You **can't** rebase to Dakota from another image. If you're not on Dakota already, reinstall from the ISO.
+
+## ISO downloads
+
+- [Dakota Alpha 6 ISO](https://projectbluefin.dev/dakota-live-alpha6.iso)
+- [Dakota Alpha 6 Checksum](https://projectbluefin.dev/dakota-live-alpha6.iso-CHECKSUM)
+- [Latest Dakota daily snapshot](https://projectbluefin.dev/dakota-live-latest.iso)
+
+Testing instructions and bug reporting: [ISO Testing](/downloads-testing). File ISO bugs in [projectbluefin/dakota-iso](https://github.com/projectbluefin/dakota-iso/issues).
+
+## Lore
+
+Remember that the wolves are coming, level up your skills at [training.projectbluefin.io](https://training.projectbluefin.io). It's a tough world out there, here's a sneak peek at the artwork from the artists at [makemeacomic.com](https://makemeacomic.com)! These are just a sample of entries from a mysterious journal uncovered on Europa by a [REDACTED] merchant. Inside are the secrets to unlocking the potential of Contributor-Guardians and their mounts. But the forces of the Toilmaster are already ahead of them. Instructions from a doomed CNCF Expedition are sparse:
+
+:::tip[CNCF VANGUARD // ALERT ONE]
+
+There's a stone here. "All these worlds are yours, except Europa, attempt no landing there." But sir didn't the Hummingbird team leave three days ago?
+
+:::
+
+<ImageCarousel
+  images={[
+    {
+      src: "/img/blog/2026-09-21-dakota-alpha-6/bluefin-raptor.webp",
+      alt: "Bluefin — Long-Range Raptor Mount concept illustration",
+      title: "Bluefin",
+      subtitle: "Long-Range Raptor Mount",
+    },
+    {
+      src: "/img/blog/2026-09-21-dakota-alpha-6/quetzalcoatlus.webp",
+      alt: "Quetzalcoatlus — 2-Passenger Air Fighter Unit concept illustration",
+      title: "Quetzalcoatlus",
+      subtitle: "2-Passenger Air Fighter Unit",
+    },
+    {
+      src: "/img/blog/2026-09-21-dakota-alpha-6/tricero.webp",
+      alt: "Tricero — Long-Range Heavy-Load Combat Unit concept illustration",
+      title: "Tricero",
+      subtitle: "Long-Range Heavy-Load Combat Unit",
+    },
+    {
+      src: "/img/blog/2026-09-21-dakota-alpha-6/brachio-trax.webp",
+      alt: "Brachio-Trax — Long-Distance Cargo and Passenger Transport Vehicle concept illustration",
+      title: "Brachio-Trax",
+      subtitle: "Long-Distance Cargo & Passenger Transport",
+    },
+  ]}
+/>
