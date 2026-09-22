@@ -8,6 +8,7 @@ image: /img/blog/dakota.png
 ---
 
 import BlogFigure from "@site/src/components/blog/BlogFigure";
+import ImageCarousel from "@site/src/components/blog/ImageCarousel";
 
 Dakota Alpha 6 is out. This one is brought to you by [Ahmed Ahdan](https://github.com/ahmedadan)/ Built against GNOME 51 and freedesktop-sdk 26.08.1, running Linux 7.2.6, NVIDIA 615.71.09. Kernel OGC 7.2.6-ogc1 for your gaming needs.
 
@@ -47,9 +48,7 @@ GNOME 51 "A Coruña" was officially released on September 16, 2026 — see the [
 
 ## Migrating Major GNOME Versions
 
-This is the first time we utilized `dakota:next` tracking a dev release, and Ahmed smoothly transitioned the testing branches through these: 
-
-
+This is the first time we utilized `dakota:next` tracking a dev release, and Ahmed smoothly transitioned the testing branches through these:
 
 | Change                                                     | Commit                                                               |
 | ---------------------------------------------------------- | -------------------------------------------------------------------- |
@@ -64,7 +63,7 @@ This is the first time we utilized `dakota:next` tracking a dev release, and Ahm
 
 ## Kernel and hardware
 
-Here's a bunch of enablement crap: 
+Here's a bunch of enablement crap:
 
 | Change                                          | Commit                                                               |
 | ----------------------------------------------- | -------------------------------------------------------------------- |
@@ -111,8 +110,7 @@ And some of the upcoming desktop improvements that we've been going over in the 
   caption="dakota-nvidia-gaming on the OGC kernel"
 />
 
-Bluefin's "Game Mode" is fleshed out now, offering access to a "Bazzite Light" gaming setup, perfect for slaying out. Destiny on Linux please Sony! 
-
+Bluefin's "Game Mode" is fleshed out now, offering access to a "Bazzite Light" gaming setup, perfect for slaying out. Destiny on Linux please Sony!
 
 | Change                                              | Commit                                                               |
 | --------------------------------------------------- | -------------------------------------------------------------------- |
@@ -166,3 +164,32 @@ You **can't** rebase to Dakota from another image. If you're not on Dakota alrea
 - [Latest Dakota daily snapshot](https://projectbluefin.dev/dakota-live-latest.iso)
 
 Testing instructions and bug reporting: [ISO Testing](/downloads-testing). File ISO bugs in [projectbluefin/iso](https://github.com/projectbluefin/iso/issues).
+
+<ImageCarousel
+  images={[
+    {
+      src: "/img/blog/2026-09-21-dakota-alpha-6/bluefin-raptor.webp",
+      alt: "Bluefin — Long-Range Raptor Mount concept illustration",
+      title: "Bluefin",
+      subtitle: "Long-Range Raptor Mount",
+    },
+    {
+      src: "/img/blog/2026-09-21-dakota-alpha-6/quetzalcoatlus.webp",
+      alt: "Quetzalcoatlus — 2-Passenger Air Fighter Unit concept illustration",
+      title: "Quetzalcoatlus",
+      subtitle: "2-Passenger Air Fighter Unit",
+    },
+    {
+      src: "/img/blog/2026-09-21-dakota-alpha-6/tricero.webp",
+      alt: "Tricero — Long-Range Heavy-Load Combat Unit concept illustration",
+      title: "Tricero",
+      subtitle: "Long-Range Heavy-Load Combat Unit",
+    },
+    {
+      src: "/img/blog/2026-09-21-dakota-alpha-6/brachio-trax.webp",
+      alt: "Brachio-Trax — Long-Distance Cargo and Passenger Transport Vehicle concept illustration",
+      title: "Brachio-Trax",
+      subtitle: "Long-Distance Cargo & Passenger Transport",
+    },
+  ]}
+/>
