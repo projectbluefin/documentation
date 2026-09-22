@@ -224,15 +224,14 @@ export default function ImageCarousel({
       {total > 1 && (
         <div
           className={styles.thumbnailStrip}
-          role="tablist"
+          role="group"
           aria-label="Image thumbnails"
         >
           {images.map((img, idx) => (
             <button
               key={img.src}
               type="button"
-              role="tab"
-              aria-selected={idx === currentIndex}
+              aria-current={idx === currentIndex ? "true" : undefined}
               aria-label={`Slide ${idx + 1}: ${img.title || img.alt}`}
               className={`${styles.thumbnailBtn} ${idx === currentIndex ? styles.activeThumbnail : ""}`}
               onClick={() => goTo(idx)}
