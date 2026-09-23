@@ -12,6 +12,7 @@ import {
 import {
   WEEKLY_COUNTS_SQL,
   buildCountsDocument,
+  normalizeCountmeRepo,
   pendingCountsDocument,
 } from "./counts.mjs";
 
@@ -33,21 +34,23 @@ async function recordTelemetryEvent(
   env,
   { repo, tag, flavor, arch, bucket, gamemode },
 ) {
-  if (!env || !env.DB) return;
+  if (!env || !env.DB) return false;
   try {
     const receivedAt = new Date().toISOString();
-    await env.DB.prepare(
+    const result = await env.DB.prepare(
       `INSERT INTO telemetry_events (repo, tag, flavor, arch, bucket, gamemode, received_at)
        VALUES (?, ?, ?, ?, ?, ?, ?)`,
     )
       .bind(repo, tag, flavor, arch, bucket, gamemode, receivedAt)
       .run();
+    return result?.success === true;
   } catch (err) {
     console.error("Failed to persist telemetry event:", err);
+    return false;
   }
 }
 
-async function createMetalinkResponse(request, env, ctx) {
+async function createMetalinkResponse(request, env) {
   const url = new URL(request.url);
   const repo = url.searchParams.get("repo") || "unknown";
   const tag = url.searchParams.get("tag") || "unknown";
@@ -56,8 +59,14 @@ async function createMetalinkResponse(request, env, ctx) {
   const countme = url.searchParams.get("countme") || "unknown";
   const gamemode = url.searchParams.get("gamemode") === "1" ? 1 : 0;
   const bucket = parseInt(countme, 10) || 1;
+  if (normalizeCountmeRepo(repo, gamemode)?.repo !== "dakota") {
+    return new Response("unsupported repository", {
+      status: 400,
+      headers: baseHeaders({ "cache-control": "no-store" }),
+    });
+  }
 
-  const persistPromise = recordTelemetryEvent(env, {
+  const persisted = await recordTelemetryEvent(env, {
     repo,
     tag,
     flavor,
@@ -66,10 +75,11 @@ async function createMetalinkResponse(request, env, ctx) {
     gamemode,
   });
 
-  if (ctx && typeof ctx.waitUntil === "function") {
-    ctx.waitUntil(persistPromise);
-  } else {
-    await persistPromise;
+  if (!persisted) {
+    return new Response("countme unavailable", {
+      status: 503,
+      headers: baseHeaders({ "cache-control": "no-store" }),
+    });
   }
 
   return new Response(
@@ -184,7 +194,7 @@ async function createThemedLegacyResponse(upstream) {
   );
 }
 
-async function proxyRequest(request, env, ctx) {
+async function proxyRequest(request, env) {
   const url = new URL(request.url);
   const pathname = normalizePathname(url.pathname);
 
@@ -196,7 +206,13 @@ async function proxyRequest(request, env, ctx) {
   }
 
   if (isMetalinkRequest(pathname)) {
-    return createMetalinkResponse(request, env, ctx);
+    if (request.method === "HEAD") {
+      return new Response(null, {
+        status: 405,
+        headers: baseHeaders({ allow: "GET", "cache-control": "no-store" }),
+      });
+    }
+    return createMetalinkResponse(request, env);
   }
 
   const route = resolveRoute(pathname);
@@ -218,7 +234,7 @@ async function proxyRequest(request, env, ctx) {
 }
 
 export default {
-  async fetch(request, env, ctx) {
-    return proxyRequest(request, env, ctx);
+  async fetch(request, env) {
+    return proxyRequest(request, env);
   },
 };

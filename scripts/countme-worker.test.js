@@ -47,6 +47,7 @@ function stubDb(rows, { throws = false } = {}) {
             },
             async run() {
               if (throws) throw new Error("no such table");
+              return { success: true };
             },
           };
           return {
@@ -405,11 +406,11 @@ test("an empty database yields a pending document at HTTP 200", async () => {
   assert.equal(body.stateReason, policy.FIRST_PARTY_PENDING_REASON);
 });
 
-test("charts and badges show the total, game mode included", async () => {
+test("charts and badges show Dakota's total, game mode included", async () => {
   const db = stubDb([
-    { week: "2026-08-31", repo: "bluefin-lts", gamemode: 0, hits: 100 },
-    { week: "2026-09-07", repo: "bluefin-lts", gamemode: 0, hits: 194 },
-    { week: "2026-09-07", repo: "bluefin-lts-gaming", gamemode: 1, hits: 6 },
+    { week: "2026-08-31", repo: "dakota", gamemode: 0, hits: 100 },
+    { week: "2026-09-07", repo: "dakota", gamemode: 0, hits: 194 },
+    { week: "2026-09-07", repo: "dakota-nvidia-gaming", gamemode: 1, hits: 6 },
   ]);
   const stub = stubFetch(async () => new Response("", { status: 500 }));
 
@@ -422,14 +423,15 @@ test("charts and badges show the total, game mode included", async () => {
       "image/svg+xml; charset=UTF-8",
     );
     assert.equal(chart.headers.get("cache-control"), "public, max-age=900");
-    assert.match(svg, /Bluefin/u);
+    assert.match(svg, /Bluefin — estimated weekly active systems/u);
+    assert.match(svg, />200</u);
 
     const badge = await get("/badge-endpoints/dakota.json", db.env);
     assert.deepEqual(await badge.json(), {
       schemaVersion: 1,
       label: "Bluefin",
-      message: "accumulating",
-      color: "8b949e",
+      message: "200",
+      color: "58a6ff",
     });
   } finally {
     stub.restore();
@@ -452,6 +454,14 @@ test("an unbound database still renders an accumulating chart", async () => {
     assert.equal(response.status, 200);
     assert.match(svg, /Bluefin — accumulating data/u);
     assert.match(svg, /0 weekly data points recorded/u);
+
+    const badge = await get("/badge-endpoints/dakota.json", {});
+    assert.deepEqual(await badge.json(), {
+      schemaVersion: 1,
+      label: "Bluefin",
+      message: "accumulating",
+      color: "8b949e",
+    });
   } finally {
     stub.restore();
   }
@@ -624,26 +634,23 @@ test("published svg copy describes the data, never the infrastructure", () => {
   );
 });
 
-test("accepts metalink pings from Dakota countme clients", async () => {
-  const request = new Request(
-    "https://countme.projectbluefin.io/metalink?repo=dakota&tag=latest&flavor=default&arch=x86_64&countme=3",
+test("an unbound database cannot acknowledge a Dakota metalink ping", async () => {
+  const response = await get(
+    "/metalink?repo=dakota&tag=latest&flavor=default&arch=x86_64&countme=3",
+    {},
   );
 
-  const response = await fetchHandler(request);
-
-  assert.equal(response.status, 200);
+  assert.equal(response.status, 503);
   assert.equal(response.headers.get("cache-control"), "no-store");
-  assert.equal(
-    response.headers.get("content-type"),
-    "text/plain;charset=UTF-8",
-  );
-  assert.match(
-    await response.text(),
-    /countme accepted for repo=dakota tag=latest flavor=default gamemode=0 arch=x86_64 countme=3/i,
-  );
+  assert.doesNotMatch(await response.text(), /accepted/u);
 });
 
-test("accepts metalink pings with gamemode enabled and persists to D1", async () => {
+test("a Dakota metalink ping is acknowledged only after one D1 insert succeeds", async () => {
+  let finishInsert;
+  let settled = false;
+  const insertResult = new Promise((resolve) => {
+    finishInsert = resolve;
+  });
   const inserted = [];
   const mockEnv = {
     DB: {
@@ -653,6 +660,7 @@ test("accepts metalink pings with gamemode enabled and persists to D1", async ()
             return {
               async run() {
                 inserted.push({ sql, args });
+                return insertResult;
               },
             };
           },
@@ -664,76 +672,101 @@ test("accepts metalink pings with gamemode enabled and persists to D1", async ()
   const request = new Request(
     "https://countme.projectbluefin.io/metalink?repo=dakota&tag=testing&flavor=gaming&gamemode=1&arch=x86_64&countme=1",
   );
+  const responsePromise = fetchHandler(request, mockEnv, {
+    waitUntil() {},
+  }).then((response) => {
+    settled = true;
+    return response;
+  });
 
-  const response = await fetchHandler(request, mockEnv);
+  await new Promise((resolve) => setImmediate(resolve));
+  assert.equal(settled, false, "a pending insert must not be acknowledged");
+  assert.equal(inserted.length, 1);
+  finishInsert({ success: true });
+  const response = await responsePromise;
 
   assert.equal(response.status, 200);
+  assert.equal(response.headers.get("cache-control"), "no-store");
+  assert.equal(
+    response.headers.get("content-type"),
+    "text/plain;charset=UTF-8",
+  );
   assert.match(
     await response.text(),
     /countme accepted for repo=dakota tag=testing flavor=gaming gamemode=1 arch=x86_64 countme=1/i,
   );
   assert.equal(inserted.length, 1);
-  assert.equal(inserted[0].args[0], "dakota");
-  assert.equal(inserted[0].args[1], "testing");
-  assert.equal(inserted[0].args[2], "gaming");
-  assert.equal(inserted[0].args[5], 1); // gamemode
+  assert.match(inserted[0].sql, /INSERT INTO telemetry_events/u);
+  assert.deepEqual(inserted[0].args.slice(0, 6), [
+    "dakota",
+    "testing",
+    "gaming",
+    "x86_64",
+    1,
+    1,
+  ]);
 });
 
-test("accepts metalink pings from Bluefin countme clients", async () => {
-  const request = new Request(
-    "https://countme.projectbluefin.io/metalink?repo=bluefin&tag=stable&flavor=main&arch=x86_64&countme=2",
-  );
-
-  const response = await fetchHandler(request);
-
-  assert.equal(response.status, 200);
-  assert.equal(response.headers.get("cache-control"), "no-store");
-  assert.equal(
-    response.headers.get("content-type"),
-    "text/plain;charset=UTF-8",
-  );
-  assert.match(
-    await response.text(),
-    /countme accepted for repo=bluefin tag=stable flavor=main gamemode=0 arch=x86_64 countme=2/i,
-  );
-});
-
-test("accepts metalink pings from Bluefin LTS countme clients", async () => {
-  const request = new Request(
-    "https://countme.projectbluefin.io/metalink?repo=bluefin-lts&tag=stable&flavor=main&arch=x86_64&countme=4",
-  );
-
-  const response = await fetchHandler(request);
-
-  assert.equal(response.status, 200);
-  assert.equal(response.headers.get("cache-control"), "no-store");
-  assert.equal(
-    response.headers.get("content-type"),
-    "text/plain;charset=UTF-8",
-  );
-  assert.match(
-    await response.text(),
-    /countme accepted for repo=bluefin-lts tag=stable flavor=main gamemode=0 arch=x86_64 countme=4/i,
+test("Dakota variants are countable metalink repositories", async () => {
+  const db = stubDb([]);
+  for (const repo of [
+    "dakota-nvidia",
+    "dakota-gaming",
+    "dakota-nvidia-gaming",
+  ]) {
+    const response = await get(`/metalink?repo=${repo}&countme=2`, db.env);
+    assert.equal(response.status, 200, repo);
+  }
+  assert.deepEqual(
+    db.statements.map((statement) => statement.args[0]),
+    ["dakota-nvidia", "dakota-gaming", "dakota-nvidia-gaming"],
   );
 });
 
-test("accepts metalink pings from Utah countme clients", async () => {
-  const request = new Request(
-    "https://countme.projectbluefin.io/metalink?repo=utah&tag=testing&flavor=default&arch=x86_64&countme=1",
-  );
+test("unsupported or absent repositories are rejected without an insert", async () => {
+  const db = stubDb([]);
+  for (const repo of ["bluefin", "bluefin-lts", "utah", "dakota-other", ""]) {
+    const response = await get(`/metalink?repo=${repo}&countme=2`, db.env);
+    assert.equal(response.status, 400, repo);
+    assert.doesNotMatch(await response.text(), /accepted/u);
+  }
+  assert.deepEqual(db.statements, []);
+});
 
-  const response = await fetchHandler(request);
+test("a failed D1 insert cannot acknowledge a metalink ping", async () => {
+  const db = stubDb([], { throws: true });
+  const response = await get("/metalink?repo=dakota&countme=2", db.env);
 
-  assert.equal(response.status, 200);
+  assert.equal(response.status, 503);
   assert.equal(response.headers.get("cache-control"), "no-store");
-  assert.equal(
-    response.headers.get("content-type"),
-    "text/plain;charset=UTF-8",
+  assert.doesNotMatch(await response.text(), /accepted/u);
+  assert.equal(db.statements.length, 1);
+});
+
+test("a D1 result without success cannot acknowledge a metalink ping", async () => {
+  const db = stubDb([]);
+  db.env.DB.prepare = () => ({
+    bind: () => ({ run: async () => ({ success: false }) }),
+  });
+  const response = await get("/metalink?repo=dakota&countme=2", db.env);
+
+  assert.equal(response.status, 503);
+  assert.doesNotMatch(await response.text(), /accepted/u);
+});
+
+test("HEAD /metalink never records a countme event", async () => {
+  const db = stubDb([]);
+  const response = await fetchHandler(
+    new Request(
+      "https://countme.projectbluefin.io/metalink?repo=dakota&countme=2",
+      { method: "HEAD" },
+    ),
+    db.env,
   );
-  assert.match(
-    await response.text(),
-    /countme accepted for repo=utah tag=testing flavor=default gamemode=0 arch=x86_64 countme=1/i,
-  );
+
+  assert.equal(response.status, 405);
+  assert.equal(response.headers.get("allow"), "GET");
+  assert.deepEqual(db.statements, []);
 });
 
 test("the themed legacy chart recolours upstream without re-deriving it", async () => {
