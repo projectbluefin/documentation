@@ -599,9 +599,20 @@ export default function ImagesCatalogComponent({
                     .
                   </p>
                   {product.security?.verifyCommand ? (
-                    <CodeBlock language="bash">
-                      {product.security.verifyCommand}
-                    </CodeBlock>
+                    <>
+                      <CodeBlock language="bash">
+                        {product.security.verifyCommand}
+                      </CodeBlock>
+                      {product.security.cosignKeyUrl && (
+                        <p className={styles.tabCopy}>
+                          Note: key-based signature verification of legacy{" "}
+                          <code>.sig</code> tags requires cosign v2.x (cosign
+                          v3+ defaults to OCI 1.1 referrers). Use the{" "}
+                          <strong>Verify Provenance</strong> tab for keyless
+                          OIDC verification on cosign v3+.
+                        </p>
+                      )}
+                    </>
                   ) : (
                     <p className={styles.emptyText}>
                       {hasPublishedImage
