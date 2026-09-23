@@ -81,6 +81,12 @@ test("extractSeasonProjectUnlocks emits level-ups when reaching breadth tiers (2
         commit: { committer: { date: "2026-09-18T12:00:00Z" } },
         parents: [{}],
       },
+      // Merge commit by frank in common: parents.length > 1 skipped, so frank stays at 1 repo (dakota only)
+      {
+        author: { login: "frank" },
+        commit: { committer: { date: "2026-09-17T08:00:00Z" } },
+        parents: [{}, {}],
+      },
     ],
     dakota: [
       {
@@ -92,12 +98,6 @@ test("extractSeasonProjectUnlocks emits level-ups when reaching breadth tiers (2
         author: { login: "frank" },
         commit: { committer: { date: "2026-09-16T08:00:00Z" } },
         parents: [{}],
-      },
-      // Merge commit by frank in common: parents.length > 1 skipped, so frank stays at 1 repo
-      {
-        author: { login: "frank" },
-        commit: { committer: { date: "2026-09-17T08:00:00Z" } },
-        parents: [{}, {}],
       },
     ],
   };
