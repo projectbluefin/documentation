@@ -332,6 +332,23 @@ interface GNOMESeason {
   weekStarts: number[];
   weeklyCommits: number[];
   totalCommits: number;
+  breadthUnlocks?: HiveMilestoneEvent[];
+}
+
+export interface HiveMilestoneEvent {
+  id: string;
+  login: string;
+  type: "tier_up" | "task_landmark" | "project_unlock";
+  title: string;
+  detail: string;
+  detectedAt: string;
+  tier?: string;
+  value?: number;
+  repo?: string;
+  badge?: {
+    label: string;
+    color: string;
+  };
 }
 
 interface HiveHistory {
@@ -348,6 +365,8 @@ interface HiveHistory {
   weeklyStatsError?: string | null;
   season?: GNOMESeason | null;
   seasonError?: string | null;
+  milestones?: HiveMilestoneEvent[];
+  milestonesError?: string | null;
 }
 
 // ── Factory build statistics (static/data/factory-stats.json) ──────────────
@@ -2361,6 +2380,88 @@ function HiveTaskLeaderboard({
                 </span>
               </Link>
             ))}
+        </div>
+      )}
+    </section>
+  );
+}
+
+export function RecentMilestonesLeaderboard({
+  milestones,
+  breadthUnlocks,
+  error,
+}: {
+  milestones?: HiveMilestoneEvent[];
+  breadthUnlocks?: HiveMilestoneEvent[];
+  error?: string | null;
+}): React.JSX.Element {
+  const allEvents = [
+    ...(Array.isArray(milestones) ? milestones : []),
+    ...(Array.isArray(breadthUnlocks) ? breadthUnlocks : []),
+  ];
+  allEvents.sort(
+    (a, b) => Date.parse(b.detectedAt || "") - Date.parse(a.detectedAt || ""),
+  );
+  const items = allEvents.slice(0, 50);
+
+  return (
+    <section className={styles.panel}>
+      <Heading as="h2" className={styles.panelTitle}>
+        Recent Milestones
+      </Heading>
+      <p className={styles.panelMeta}>
+        Ledger of teamwork &mdash; contributors levelling up trust tiers,
+        unlocking project achievements, and crossing task landmarks.
+        {error && <span className={styles.lbAccumulating}> · {error}</span>}
+      </p>
+      {items.length === 0 ? (
+        <p className={styles.panelMeta}>
+          <span className={styles.lbAccumulating}>
+            {error
+              ? `Milestones unavailable: ${error}`
+              : "Milestone ledger accumulating — tracking promotions, landmarks, and project unlocks across factory runs"}
+          </span>
+        </p>
+      ) : (
+        <div className={styles.milestonesGrid}>
+          {items.map((m) => (
+            <Link
+              key={m.id}
+              href={contributorDossierUrl(m.login)}
+              target="_blank"
+              rel="noreferrer"
+              className={styles.milestoneCard}
+            >
+              <img
+                src={`https://github.com/${m.login}.png?size=40`}
+                alt={m.login}
+                className={styles.milestoneAvatar}
+                loading="lazy"
+              />
+              <div className={styles.milestoneContent}>
+                <div className={styles.milestoneTop}>
+                  <span className={styles.milestoneUser}>{m.login}</span>
+                  {m.badge && (
+                    <span
+                      className={styles.milestoneBadge}
+                      style={{
+                        borderColor: m.badge.color,
+                        color: m.badge.color,
+                      }}
+                    >
+                      {m.badge.label}
+                    </span>
+                  )}
+                </div>
+                <span className={styles.milestoneTitle}>{m.title}</span>
+                <span className={styles.milestoneDetail}>{m.detail}</span>
+                <span className={styles.milestoneDate}>
+                  detected{" "}
+                  {m.detectedAt ? m.detectedAt.slice(0, 10) : "recently"}
+                </span>
+              </div>
+            </Link>
+          ))}
         </div>
       )}
     </section>
@@ -4575,6 +4676,20 @@ export function LeaderboardsSection(): React.JSX.Element {
 
   return (
     <div className={styles.leaderboards}>
+      {hiveHistory ? (
+        <RecentMilestonesLeaderboard
+          milestones={hiveHistory.milestones}
+          breadthUnlocks={hiveHistory.season?.breadthUnlocks}
+          error={hiveHistory.milestonesError}
+        />
+      ) : (
+        <section className={styles.panel}>
+          <p className={styles.unavailableNote}>
+            Milestone data {history.loading ? "loading." : "unavailable"}
+            {!history.loading && history.reason ? `: ${history.reason}` : ""}
+          </p>
+        </section>
+      )}
       {hiveHistory ? (
         <>
           <ContributorLeaderboard

@@ -364,3 +364,111 @@ test("all-agent task registry displays visible notice instead of disappearing", 
   assert.match(html, /No human task completions recorded in the registry yet/);
   assert.match(html, /1 autonomous agent worker entries hidden/);
 });
+
+test("the standalone page renders the Recent Milestones leaderboard as a ledger of teamwork", () => {
+  const { LeaderboardsSection } = loadDashboard({
+    hiveHistory: {
+      entries: [],
+      contributors: { champion: 100 },
+      contributorsByRepo: { common: { champion: 100 } },
+      milestones: [
+        {
+          id: "tier-champion-trusted-2026-09-23",
+          login: "champion",
+          type: "tier_up",
+          title: "Reached Trusted Tier",
+          detail: "Maintainer-verified contributor in Hive",
+          detectedAt: "2026-09-23T12:00:00Z",
+          badge: {
+            label: "TRUSTED",
+            color: "var(--fx-sev-watch)",
+          },
+        },
+      ],
+      season: {
+        version: 51,
+        name: "A Coruña",
+        start: "2026-09-16T00:00:00.000Z",
+        source: "https://release.gnome.org/51/",
+        updatedAt: "2026-09-22T00:00:00Z",
+        repos: ["common", "dakota", "bluefin"],
+        byLogin: {},
+        weekStarts: [],
+        weeklyCommits: [],
+        totalCommits: 5,
+        breadthUnlocks: [
+          {
+            id: "season-51-champion-breadth-3",
+            login: "champion",
+            type: "project_unlock",
+            value: 3,
+            repo: "bluefin",
+            title: "Reached Builder Tier",
+            detail:
+              "Active across 3 projects in Season of A Coruña (unlocked by bluefin)",
+            detectedAt: "2026-09-22T08:00:00Z",
+            badge: {
+              label: "BUILDER",
+              color: "var(--fx-cat-2)",
+            },
+          },
+        ],
+      },
+    },
+    registry: {},
+  });
+  const html = renderToStaticMarkup(React.createElement(LeaderboardsSection));
+  assert.match(html, /Recent Milestones/);
+  assert.match(html, /Ledger of teamwork/);
+  assert.match(html, /Reached Trusted Tier/);
+  assert.match(html, /Reached Builder Tier/);
+  assert.match(html, /champion/);
+  assert.ok(
+    html.indexOf("Reached Trusted Tier") < html.indexOf("Reached Builder Tier"),
+    "newer tier-up event (09-23) must render before older season breadth event (09-22)",
+  );
+  assert.match(
+    html,
+    /href="https:\/\/hosted-projectbluefin-common-nmq5\.hive\.hivecommons\.dev\/contribute\/dossier\/champion"/,
+  );
+});
+
+test("Recent Milestones shows accumulating status when ledger has no events yet", () => {
+  const { LeaderboardsSection } = loadDashboard({
+    hiveHistory: {
+      entries: [],
+      contributors: {},
+      contributorsByRepo: {},
+      milestones: [],
+    },
+    registry: {},
+  });
+  const html = renderToStaticMarkup(React.createElement(LeaderboardsSection));
+  assert.match(html, /Recent Milestones/);
+  assert.match(html, /Milestone ledger accumulating/);
+});
+
+test("missing milestone data is visible instead of disappearing", () => {
+  const { LeaderboardsSection } = loadDashboard({
+    hiveHistory: null,
+    registry: {},
+  });
+  const html = renderToStaticMarkup(React.createElement(LeaderboardsSection));
+  assert.match(html, /Milestone data unavailable/);
+});
+
+test("Recent Milestones renders an explicit error reason when refresh fails", () => {
+  const { LeaderboardsSection } = loadDashboard({
+    hiveHistory: {
+      entries: [],
+      contributors: {},
+      contributorsByRepo: {},
+      milestones: [],
+      milestonesError: "Hive leaderboard HTTP 503",
+    },
+    registry: {},
+  });
+  const html = renderToStaticMarkup(React.createElement(LeaderboardsSection));
+  assert.match(html, /Recent Milestones/);
+  assert.match(html, /Milestones unavailable: Hive leaderboard HTTP 503/);
+});

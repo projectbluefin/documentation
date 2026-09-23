@@ -486,6 +486,9 @@ test("loadHistory returns the seeded default when no file exists", () => {
     lastWeeklyStatsFetch: null,
     contributorError: null,
     weeklyStatsError: null,
+    milestonesError: null,
+    hiveContributorTiers: {},
+    milestones: [],
   });
 });
 

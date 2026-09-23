@@ -107,6 +107,20 @@ the verified fallback list during discovery failures.
   human entries remain.
 - **Publishing cadence matches cache TTL:** `pages.yml` publishes on a 6-hour
   schedule (`0 */6 * * *`) aligned with the data refresh horizon.
+- **Recent Milestones ledger of teamwork:** The Recent Milestones leaderboard on
+  `/leaderboards` tracks contributors levelling up trust tiers (Contributor,
+  Trusted, Merger, Advisor), crossing task landmarks (1, 10, 25, 50, 100, 250, 500
+  shipped), and reaching project breadth thresholds (2, 3, 5, 7, 10 repos) in the
+  current GNOME release season.
+  - Hive tier promotions and task landmark thresholds mirror `hivecommons/hive`
+    `src/pkg/dashboard/me_profile.go` (`taskShippedMilestones`, `tierRankValue`).
+  - Human tiers and tasks are snapshotted from hosted `/api/leaderboard`
+    (`leaderboard[]`); the `projectbluefin` central registry is agents-only.
+  - Hive milestone events are diffed between runs and stored in `hive-history.json`
+    via `update-hive-cache.yml` (labeled "detected <date>"), while season breadth
+    unlocks are recomputed fresh per release into `history.season.breadthUnlocks`
+    (dated by the commit landed time) to avoid polluting the persistent cache.
+  - The first run records a baseline, and the panel shows "accumulating data" honestly.
 
 ### GNOME release seasons on /leaderboards
 
