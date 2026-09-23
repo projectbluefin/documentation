@@ -65,10 +65,9 @@ misleads readers into thinking there is a gap.
 
 ### Hosted Hive flows stay hosted
 
-Contribution setup and hosted leaderboard links use
-`https://hosted-projectbluefin-knuckle-gjvq.hive.hivecommons.dev`. Link to the
-hosted Hive for interactive contribution flows; do not recreate its setup UI in
-the docs dashboard.
+The standalone `/leaderboards` page presents contribution statistics; do not
+duplicate hosted Hive setup controls there. Link individual contributor rows to
+their hosted dossiers rather than building another profile surface.
 
 Individual contributor cards and rows link to
 `https://hosted-projectbluefin-common-nmq5.hive.hivecommons.dev/contribute/dossier/{username}`.
@@ -78,10 +77,10 @@ The dossier owns contributor-specific Hive statistics and milestones.
 shared Hive data provider directly; do not add top-level pages to
 `FACTORY_ROUTES`.
 
-`scripts/fetch-hive-history.js` discovers the repository scope by querying
-active, non-fork repositories across the `projectbluefin` organization via the
-GitHub API, falling back to the Hive registry and a verified factory list during
-API outages.
+`scripts/fetch-hive-history.js` discovers active project repositories through
+the GitHub API. It excludes `projectbluefin/lab` and archived repos, includes
+the two explicitly tracked factory forks (`dakota-iso`, `chairlift`), and uses
+the verified fallback list during discovery failures.
 
 ### Contributor leaderboard and freshness rules
 
@@ -90,12 +89,16 @@ API outages.
   all repositories fail, prior data is preserved, timestamps are not bumped, and
   an explicit error notice (`contributorError`, `weeklyStatsError`) is recorded.
 - **Agents are not humans:** Autonomous agent accounts carry `trust_tier: "agent"`
-  in the Hive registry and must be excluded from human leaderboards and newcomer
-  cards. In addition, system accounts like `web-flow` must be filtered out.
-- **Single-endpoint newcomer comparison:** New contributor detection compares
-  windowed activity against total activity within the same statistical payload
-  (`s.total > 0 && s.total === s.last3Months`) rather than crossing separate
-  cache lifecycles.
+  in the Hive registry and must be excluded from attributed contributor cards.
+  System accounts like `web-flow` also require exclusion. A GitHub login or
+  profile bio does not establish who produced a commit.
+- **New means new within tracked repos:** A contributor qualifies when
+  `s.total === s.last3Months` in one GitHub stats payload: all their recorded
+  commits to currently tracked repos fall within the last 13 weeks. This does
+  not prove their first contribution to every historical Bluefin repo. When
+  `weeklyStatsError` is set, show only accounts also corroborated by the
+  all-time contributors map (`allTimeMap[login] === s.last3Months`); a busy repo
+  must not turn a veteran into a false newcomer.
 - **Graceful partial handling for computing endpoints:** When a busy repository
   returns 202 while GitHub computes stats, available repositories are still folded
   in, and an explicit notice indicates in-flight status without freezing all data.
@@ -104,6 +107,38 @@ API outages.
   human entries remain.
 - **Publishing cadence matches cache TTL:** `pages.yml` publishes on a 6-hour
   schedule (`0 */6 * * *`) aligned with the data refresh horizon.
+
+### GNOME release seasons on /leaderboards
+
+- Read the latest **published** GNOME release from
+  [`release.gnome.org/atom.xml`](https://release.gnome.org/atom.xml), then read
+  its official release notes heading for the nickname. GNOME 51 is **A Coruña**,
+  published September 16, 2026 at 00:00 UTC; do not infer a release from an OS
+  image version or reuse a nickname for the next GNOME release.
+- A season starts at the release timestamp. Count only default-branch
+  **non-merge** commits (`parents.length <= 1`) whose committer timestamp lands
+  within the season and whose GitHub author resolves to a login. GitHub's
+  `/stats/contributors` excludes merge commits; including them here inflates the
+  season relative to Month and Week. Keep `parents` when projecting the
+  `/commits` response. Fetch every page with `since` and `until`; a partial
+  repository response cannot become a complete season. The all-time
+  `/contributors` count is a separate contract and never resets.
+- Keep the last complete season if discovery or collection fails, with a
+  visible `seasonError`. If no season has been collected, show unavailability,
+  not zero. The tracked `static/data/hive-history.json` is only a seed; inspect
+  `lastContributorFetch` and `season.updatedAt` in the published JSON when
+  auditing freshness.
+- Standings and comparison bars must use the selected period's commits, and
+  bars must share one domain with numeric values. The weekly season chart uses
+  the exact season-week series with Sunday UTC boundaries. Feed every ECharts
+  series through `gapSafe()` so missing samples stay gaps; use the existing
+  themed `EChart` (category x-axis, value y-axis, zero baseline) with a
+  screen-reader table. Never put CSS `var()` values inside canvas options.
+  Hive tasks are all-time registry completions, never season commits.
+- Use the actual light/dark Bluefin wordmark assets for the page heading: only
+  the **f** has the brand-blue accent. On narrow layouts, keep “Leaderboards”
+  horizontally aligned with the mark. Broken hosted contribution tiles do not
+  belong above the standings.
 
 The public Hive registry accepts anonymous requests. Do not forward GitHub
 authorization to it.
@@ -311,6 +346,11 @@ change.
 - [ ] Every unavailable panel states a reason —
       `scripts/panel-unavailability.test.js` passes.
 - [ ] No new empty sections.
+- [ ] `node --test scripts/gnome-season.test.js scripts/leaderboards-standalone.test.js`
+      passes; GNOME release rollover resets seasonal counts but leaves all-time
+      totals intact.
+- [ ] `/leaderboards` is readable at desktop and 390px in both themes; the
+      wordmark and heading remain on one line with no horizontal overflow.
 
 ## Sources
 
@@ -322,5 +362,10 @@ change.
   pipelines; counting rules documented in their file headers.
 - `src/components/factory/chartTheme.ts`,
   `src/components/factory/useFactoryTheme.ts` — theme-token plumbing.
+- [GNOME release Atom feed](https://release.gnome.org/atom.xml) and
+  [GNOME 51 release notes](https://release.gnome.org/51/) — canonical release
+  version, published UTC boundary, and nickname.
+- Apache ECharts official handbook `/apache/echarts-handbook` — category/value
+  line-axis configuration used through the local `EChart` wrapper.
 - [`adr/0004-countme-counting-method.md`](https://github.com/projectbluefin/documentation/blob/main/adr/0004-countme-counting-method.md)
   — why a hit is not a device and `sys_age = -1` is excluded.

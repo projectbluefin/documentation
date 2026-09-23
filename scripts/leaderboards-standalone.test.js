@@ -66,7 +66,19 @@ function loadDashboard(datasets = {}) {
       if (id.includes("Sparkline") || id.includes("ActivityCalendar")) {
         return { __esModule: true, default: () => React.createElement("svg") };
       }
-      if (id.includes("chartTheme")) return { FX_SEVERITY: {} };
+      if (id.includes("factory/EChart")) {
+        return {
+          __esModule: true,
+          default: ({ summary }) =>
+            React.createElement("figure", null, summary),
+        };
+      }
+      if (id.includes("chartTheme"))
+        return {
+          FX_SEVERITY: {},
+          gapSafe: (data) =>
+            data.map((value) => (Number.isNaN(value) ? null : (value ?? null))),
+        };
       return require(id);
     },
     mod,
@@ -139,6 +151,45 @@ test("contributor rows link to their hosted dossiers", () => {
       ),
     );
   }
+});
+
+test("current GNOME season ranks exact season commits while retaining all-time access", () => {
+  const { ContributorLeaderboard } = loadDashboard();
+  const html = renderToStaticMarkup(
+    React.createElement(ContributorLeaderboard, {
+      history: {
+        entries: [],
+        contributors: { veteran: 100, newcomer: 3 },
+        contributorsByRepo: { common: { veteran: 100, newcomer: 3 } },
+        contributorStats: {},
+        season: {
+          version: 51,
+          name: "A Coruña",
+          start: "2026-09-16T00:00:00.000Z",
+          source: "https://release.gnome.org/51/",
+          updatedAt: "2026-09-22T00:00:00Z",
+          repos: ["common"],
+          byLogin: {
+            newcomer: { commits: 3, repos: { common: 3 } },
+            veteran: { commits: 1, repos: { common: 1 } },
+          },
+          weekStarts: [1789257600, 1789862400],
+          weeklyCommits: [1, 3],
+          totalCommits: 4,
+        },
+      },
+    }),
+  );
+  assert.match(html, /Season of A Coruña/);
+  assert.match(html, /GNOME 51/);
+  assert.match(html, /1 tracked repo/);
+  assert.match(html, /All Time/);
+  assert.ok(
+    html.indexOf("<figure") < html.indexOf("dossier/newcomer"),
+    "season chart precedes standings",
+  );
+  assert.ok(html.indexOf("dossier/newcomer") < html.indexOf("dossier/veteran"));
+  assert.match(html.replace(/<[^>]*>/g, " "), /4\s+season commits/);
 });
 
 test("leaderboards stay outside the Factory tab registry", () => {
@@ -235,46 +286,61 @@ test("missing Hive task data is visible instead of zero", () => {
   assert.doesNotMatch(html, /0 Hive tasks/);
 });
 
-test("newcomer detection uses single-endpoint total and surfaces error notices", () => {
+test("first-commit cards use complete stats; incomplete stats show an explicit reason", () => {
   const { ContributorLeaderboard } = loadDashboard();
-  const html = renderToStaticMarkup(
-    React.createElement(ContributorLeaderboard, {
-      history: {
-        entries: [],
-        contributors: { veteran: 50 },
-        contributorsByRepo: { common: { veteran: 50, newcomer: 4 } },
-        contributorStats: {
-          veteran: {
-            total: 50,
-            lastWeek: 2,
-            lastMonth: 10,
-            last3Months: 20,
-            byRepo: { common: 50 },
-            weeks: [2],
-          },
-          newcomer: {
-            total: 4,
-            lastWeek: 2,
-            lastMonth: 4,
-            last3Months: 4,
-            byRepo: { common: 4 },
-            weeks: [2],
-          },
-        },
-        contributorWeekStarts: [1_700_000_000],
-        lastWeeklyStatsFetch: "2026-09-20T00:00:00.000Z",
-        weeklyStatsError: "GitHub weekly stats refresh failed (rate limit)",
+  const history = {
+    entries: [],
+    contributors: { veteran: 50 },
+    contributorsByRepo: { common: { veteran: 50, newcomer: 4 } },
+    contributorStats: {
+      veteran: {
+        total: 50,
+        lastWeek: 2,
+        lastMonth: 10,
+        last3Months: 20,
+        byRepo: { common: 50 },
+        weeks: [2],
       },
-      registryEntries: [],
-    }),
+      newcomer: {
+        total: 4,
+        lastWeek: 2,
+        lastMonth: 4,
+        last3Months: 4,
+        byRepo: { common: 4 },
+        weeks: [2],
+      },
+    },
+    contributorWeekStarts: [1_700_000_000],
+    lastWeeklyStatsFetch: "2026-09-20T00:00:00.000Z",
+  };
+  const render = (data) =>
+    renderToStaticMarkup(
+      React.createElement(ContributorLeaderboard, {
+        history: data,
+        registryEntries: [],
+      }),
+    );
+  const complete = render(history);
+  assert.match(complete, /New to tracked repos · last 13 weeks/);
+  assert.match(complete, /4 commits · 1 project/);
+  assert.doesNotMatch(
+    complete,
+    />veteran<\/span><span class="[^"]*">20 commits/,
   );
 
-  assert.match(html, /New contributors/);
-  assert.match(html, />newcomer</);
-  assert.doesNotMatch(html, />veteran<\/span><span class="[^"]*">20 commits/);
-  assert.match(html, /GitHub weekly stats refresh failed/);
-  assert.match(html, /stats as of Sep 20/);
-  assert.match(html, /4 commits · 1 project/);
+  const partial = {
+    ...history,
+    weeklyStatsError: "GitHub weekly stats refresh failed (rate limit)",
+  };
+  const corroborated = render({
+    ...partial,
+    contributors: { veteran: 50, newcomer: 4 },
+  });
+  assert.match(corroborated, /New to tracked repos · last 13 weeks/);
+  assert.match(corroborated, /4 commits · 1 project/);
+  const uncorroborated = render(partial);
+  assert.doesNotMatch(uncorroborated, /New to tracked repos · last 13 weeks/);
+  assert.match(uncorroborated, /GitHub weekly stats refresh failed/);
 });
 
 test("all-agent task registry displays visible notice instead of disappearing", () => {

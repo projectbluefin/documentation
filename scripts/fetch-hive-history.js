@@ -48,6 +48,12 @@
 const fs = require("fs");
 const path = require("path");
 const { githubToken, githubHeaders } = require("./lib/request-queue");
+const {
+  releaseFromFeed,
+  parseSeason,
+  collectSeason,
+  fetchSeasonCommits,
+} = require("./lib/gnome-season");
 
 // Snapshot data comes from the hosted Knuckle /api/status endpoint.
 // The old raw.githubusercontent.com HTML snapshot (bluefin/index.html) is no longer published.
@@ -65,6 +71,7 @@ const MAX_ENTRIES = 168;
 // The site publishes every six hours; refresh both datasets on every publish.
 const CONTRIBUTOR_TTL_MS = 6 * 60 * 60 * 1000;
 const WEEKLY_STATS_TTL_MS = 6 * 60 * 60 * 1000;
+const SEASON_TTL_MS = 6 * 60 * 60 * 1000;
 
 // GitHub's stats/contributors endpoint returns 52 weekly buckets per contributor.
 const MAX_WEEKS = 52;
@@ -123,6 +130,7 @@ const BOT_LOGINS = new Set([
   "codex",
   "claude",
   "unknown",
+  "hive-agent",
 ]);
 const GH_API = "https://api.github.com";
 const REGISTRY_URL = "https://hive.hivecommons.dev/api/registry";
@@ -145,7 +153,13 @@ function safeNum(v) {
 function trackedProjectRepos(data) {
   const hive = data?.hives?.find((entry) => entry?.org === TARGET_ORG);
   return Array.isArray(hive?.repos)
-    ? [...new Set(hive.repos.filter((repo) => typeof repo === "string"))]
+    ? [
+        ...new Set(
+          hive.repos.filter(
+            (repo) => typeof repo === "string" && !EXCLUDED_REPOS.has(repo),
+          ),
+        ),
+      ]
     : [];
 }
 
@@ -607,6 +621,60 @@ async function main() {
     console.log(
       "[hive-history] Weekly contributor stats still fresh, skipping",
     );
+  }
+
+  // A GNOME release defines the season boundary, independent of the OS image version.
+  try {
+    const feedResponse = await fetch("https://release.gnome.org/atom.xml", {
+      signal: AbortSignal.timeout(15000),
+    });
+    if (!feedResponse.ok)
+      throw new Error(`GNOME release feed: HTTP ${feedResponse.status}`);
+    const feed = await feedResponse.text();
+    const release = releaseFromFeed(feed);
+    const notesResponse = await fetch(release.source, {
+      signal: AbortSignal.timeout(15000),
+    });
+    if (!notesResponse.ok)
+      throw new Error(`GNOME release notes: HTTP ${notesResponse.status}`);
+    const season = parseSeason(feed, await notesResponse.text());
+    const fetchedAt = Date.parse(history.season?.updatedAt ?? "");
+    if (
+      forceRefresh ||
+      history.season?.version !== season.version ||
+      !Number.isFinite(fetchedAt) ||
+      Date.now() - fetchedAt > SEASON_TTL_MS
+    ) {
+      const now = Date.now();
+      const commits = await fetchSeasonCommits(
+        trackedRepos,
+        season.start,
+        new Date(now).toISOString(),
+        (url) =>
+          fetch(url, {
+            headers: ghHeaders(),
+            signal: AbortSignal.timeout(30000),
+          }),
+      );
+      history.season = {
+        ...season,
+        ...collectSeason(
+          season,
+          commits,
+          now,
+          (login) => login.endsWith("[bot]") || BOT_LOGINS.has(login),
+        ),
+        repos: [...trackedRepos].sort(),
+        updatedAt: new Date().toISOString(),
+      };
+      console.log(
+        `[hive-history] GNOME ${season.version} ${season.name}: ${history.season.totalCommits} commits across ${trackedRepos.length} repos`,
+      );
+    }
+    history.seasonError = null;
+  } catch (err) {
+    history.seasonError = `Season data unavailable: ${err.message}${history.season ? "; showing the last complete season snapshot" : ""}`;
+    console.warn(`[hive-history] ${history.seasonError}`);
   }
 
   // ── Write output ─────────────────────────────────────────────────────────

@@ -3,9 +3,10 @@ import Layout from "@theme/Layout";
 import Link from "@docusaurus/Link";
 import Heading from "@theme/Heading";
 import Sparkline from "./Sparkline";
-import { FX_SEVERITY, type SeverityLevel } from "./factory/chartTheme";
+import { FX_SEVERITY, gapSafe, type SeverityLevel } from "./factory/chartTheme";
 import type { SparklinePoint } from "./Sparkline";
 import ActivityCalendar from "./ActivityCalendar";
+import EChart from "./factory/EChart";
 import { useDataset } from "./factory/FactoryDataContext";
 import styles from "./HiveFactoryDashboard.module.css";
 
@@ -320,6 +321,19 @@ interface ContributorStat {
   weeks?: number[];
 }
 
+interface GNOMESeason {
+  version: number;
+  name: string;
+  start: string;
+  source: string;
+  updatedAt: string;
+  repos: string[];
+  byLogin: Record<string, { commits: number; repos: Record<string, number> }>;
+  weekStarts: number[];
+  weeklyCommits: number[];
+  totalCommits: number;
+}
+
 interface HiveHistory {
   entries: HiveHistoryEntry[];
   contributors: Record<string, number>;
@@ -332,6 +346,8 @@ interface HiveHistory {
   lastWeeklyStatsFetch?: string;
   contributorError?: string | null;
   weeklyStatsError?: string | null;
+  season?: GNOMESeason | null;
+  seasonError?: string | null;
 }
 
 // ── Factory build statistics (static/data/factory-stats.json) ──────────────
@@ -658,6 +674,7 @@ function isBotLogin(login: string): boolean {
     l === "quality" ||
     l === "codex" ||
     l === "unknown" ||
+    l === "hive-agent" ||
     l.includes("[bot]") ||
     l.endsWith("-bot") ||
     /^(renovate|dependabot|github-actions|copilot|semantic-release-bot|mergeraptor|allcontributors|imgbot|stale|snyk|scanner|sec-check|ci-maintainer|reviewer|architect)/.test(
@@ -1702,7 +1719,7 @@ function HistoryTrends({ history }: { history: HiveHistory | null }) {
 
 // ── Contributor Leaderboard ───────────────────────────────────────────────
 
-type LeaderboardTab = "alltime" | "monthly" | "weekly";
+type LeaderboardTab = "season" | "alltime" | "monthly" | "weekly";
 
 interface LeaderboardEntry {
   rank: number;
@@ -1735,18 +1752,32 @@ export function ContributorLeaderboard({
   registryEntries?: RegistryLeaderboardEntry[];
   registryAvailable?: boolean;
 }) {
-  const [tab, setTab] = React.useState<LeaderboardTab>("monthly");
+  const [tab, setTab] = React.useState<LeaderboardTab>("season");
 
   const hasWeeklyStats =
     history?.contributorStats != null &&
     Object.keys(history.contributorStats).length > 0;
-  const activeTab = hasWeeklyStats ? tab : "alltime";
+  const activeTab =
+    (tab === "season" && !history?.season) ||
+    ((tab === "monthly" || tab === "weekly") && !hasWeeklyStats)
+      ? "alltime"
+      : tab;
 
-  const { ranked, newcomers } = ((): {
+  const { ranked, newcomers, totalRanked, totalActivity, chartRows } = ((): {
     ranked: LeaderboardEntry[];
     newcomers: LeaderboardEntry[];
+    totalRanked: number;
+    totalActivity: number;
+    chartRows: LeaderboardEntry[];
   } => {
-    if (!history) return { ranked: [], newcomers: [] };
+    if (!history)
+      return {
+        ranked: [],
+        newcomers: [],
+        totalRanked: 0,
+        totalActivity: 0,
+        chartRows: [],
+      };
 
     const stats = history.contributorStats ?? {};
     const allTimeMap = history.contributors ?? {};
@@ -1763,12 +1794,18 @@ export function ContributorLeaderboard({
       (entry) =>
         entry.trust_tier !== "agent" && !isBotLogin(entry.github_username),
     );
+    const agentLogins = new Set(
+      registryEntries
+        .filter((entry) => entry.trust_tier === "agent")
+        .map((entry) => entry.github_username.toLowerCase()),
+    );
     const allLogins = new Set(
       [
         ...Object.keys(stats),
         ...Object.keys(allTimeMap),
+        ...Object.keys(history.season?.byLogin ?? {}),
         ...registryHumanEntries.map((entry) => entry.github_username),
-      ].filter((l) => !isBotLogin(l)),
+      ].filter((l) => !isBotLogin(l) && !agentLogins.has(l.toLowerCase())),
     );
     const rows: LeaderboardEntry[] = [];
 
@@ -1788,17 +1825,15 @@ export function ContributorLeaderboard({
           .map(([repo, contributors]) => [repo, contributors[login]]),
       );
       const repoMap =
-        activeTab === "alltime"
-          ? allTimeRepoMap
-          : (s?.byRepo ?? allTimeRepoMap);
+        activeTab === "season"
+          ? (history.season?.byLogin[login]?.repos ?? {})
+          : activeTab === "alltime"
+            ? allTimeRepoMap
+            : (s?.byRepo ?? allTimeRepoMap);
       const repos = Object.keys(
-        Object.keys(repoMap).length > 0
+        activeTab === "season" || Object.keys(repoMap).length > 0
           ? repoMap
-          : Object.fromEntries(
-              Object.entries(byRepo)
-                .filter(([, rc]) => rc[login] != null)
-                .map(([r, rc]) => [r, rc[login]]),
-            ),
+          : allTimeRepoMap,
       ).sort((a, b) => {
         const ma = repoMap[a] ?? byRepo[a]?.[login] ?? 0;
         const mb = repoMap[b] ?? byRepo[b]?.[login] ?? 0;
@@ -1812,27 +1847,36 @@ export function ContributorLeaderboard({
         login,
         projects: repos.length,
         repos,
-        badges: computeMilestones(repos.length, lastWeek, lastMonth),
+        badges: computeMilestones(
+          repos.length,
+          activeTab === "season" ? 0 : lastWeek,
+          activeTab === "season" ? 0 : lastMonth,
+        ),
         hasStats: s != null,
         activity:
-          activeTab === "weekly"
-            ? lastWeek
-            : activeTab === "monthly"
-              ? lastMonth
-              : (allTimeMap[login] ?? 0),
+          activeTab === "season"
+            ? (history.season?.byLogin[login]?.commits ?? 0)
+            : activeTab === "weekly"
+              ? lastWeek
+              : activeTab === "monthly"
+                ? lastMonth
+                : (allTimeMap[login] ?? 0),
         recentActivity: s?.last3Months ?? 0,
         hiveTasks: completedTasks,
         isNew:
           s != null &&
           (s.total ?? 0) > 0 &&
           (s.last3Months ?? 0) > 0 &&
-          s.total === s.last3Months,
+          s.total === s.last3Months &&
+          (!history.weeklyStatsError || allTimeMap[login] === s.last3Months),
         weeks: Array.isArray(s?.weeks) ? s.weeks : [],
       });
     }
 
     const newcomers = rows
-      .filter((row) => row.isNew)
+      .filter(
+        (row) => row.isNew && (activeTab !== "season" || row.activity > 0),
+      )
       .sort(
         (a, b) =>
           b.recentActivity - a.recentActivity ||
@@ -1843,7 +1887,9 @@ export function ContributorLeaderboard({
       .slice(0, 12);
     const ranked = rows.filter(
       (row) =>
-        activeTab === "alltime" || row.activity > 0 || (row.hiveTasks ?? 0) > 0,
+        activeTab === "alltime" ||
+        row.activity > 0 ||
+        (activeTab !== "season" && (row.hiveTasks ?? 0) > 0),
     );
     ranked.sort((a, b) =>
       activeTab === "alltime"
@@ -1857,7 +1903,17 @@ export function ContributorLeaderboard({
     ranked.forEach((r, i) => {
       r.rank = i + 1;
     });
-    return { ranked: ranked.slice(0, 25), newcomers };
+    const chartRows = [...ranked]
+      .filter((row) => row.activity > 0)
+      .sort((a, b) => b.activity - a.activity || a.login.localeCompare(b.login))
+      .slice(0, 6);
+    return {
+      ranked: ranked.slice(0, 25),
+      newcomers,
+      totalRanked: ranked.length,
+      totalActivity: ranked.reduce((sum, row) => sum + row.activity, 0),
+      chartRows,
+    };
   })();
 
   if (!history) return null;
@@ -1871,101 +1927,207 @@ export function ContributorLeaderboard({
     : null;
 
   const activityLabel =
-    activeTab === "weekly"
-      ? "Weekly commits"
-      : activeTab === "monthly"
-        ? "Monthly commits"
-        : "All-time commits";
+    activeTab === "season"
+      ? "Season commits"
+      : activeTab === "weekly"
+        ? "Weekly commits"
+        : activeTab === "monthly"
+          ? "Monthly commits"
+          : "All-time commits";
+  const season = history.season;
+  const barRows = chartRows;
+  const barMax = barRows[0]?.activity ?? 1;
 
   return (
     <section className={styles.panel}>
       <Heading as="h2" className={styles.panelTitle}>
-        Community Builders
+        {activeTab === "season" && season
+          ? `Season of ${season.name}`
+          : activeTab === "alltime"
+            ? "All-time standings"
+            : "Community Builders"}
       </Heading>
       <p className={styles.panelMeta}>
-        {activeTab === "alltime"
-          ? "Ranked by breadth of engagement across the factory"
-          : `Ranked by commit activity during the selected ${activeTab === "weekly" ? "week" : "month"}`}
-        {lastUpdated ? ` · stats as of ${lastUpdated}` : ""}
-        {!hasWeeklyStats && (
+        {activeTab === "season" && season ? (
+          <>
+            GNOME {season.version} · Since{" "}
+            {new Date(season.start).toLocaleDateString("en-US", {
+              timeZone: "UTC",
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+            })}{" "}
+            · <Link href={season.source}>GNOME release notes</Link> · Ranked by
+            season commits
+            {season.repos?.length
+              ? ` · ${season.repos.length} tracked ${season.repos.length === 1 ? "repo" : "repos"}`
+              : ""}
+            {` · Updated ${new Date(season.updatedAt).toLocaleString("en-US", { timeZone: "UTC", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", hour12: false })} UTC`}
+          </>
+        ) : (
+          <>
+            {activeTab === "alltime"
+              ? "Ranked by project breadth · All-time commits"
+              : `Ranked by ${activeTab} commits`}
+            {history.lastContributorFetch && activeTab === "alltime"
+              ? ` · stats as of ${new Date(history.lastContributorFetch).toLocaleDateString("en-US", { timeZone: "UTC", month: "short", day: "numeric" })}`
+              : lastUpdated
+                ? ` · weekly stats as of ${lastUpdated}`
+                : ""}
+            {!season && " · Season data unavailable"}
+          </>
+        )}
+        {!hasWeeklyStats && (tab === "monthly" || tab === "weekly") && (
           <span className={styles.lbAccumulating}>
             {" "}
             · Activity windows accumulating — check back soon
           </span>
         )}
-        {history.contributorError && (
+        {activeTab === "alltime" && history.contributorError && (
           <span className={styles.lbAccumulating}>
             {" "}
             · {history.contributorError}
           </span>
         )}
-        {history.weeklyStatsError && (
+        {activeTab !== "season" && history.weeklyStatsError && (
           <span className={styles.lbAccumulating}>
             {" "}
             · {history.weeklyStatsError}
           </span>
         )}
+        {history.seasonError && (
+          <span className={styles.lbAccumulating}>
+            {" "}
+            · {history.seasonError}
+          </span>
+        )}
       </p>
-
-      {newcomers.length > 0 && (
-        <div className={styles.lbNewcomers}>
-          <Heading as="h3" className={styles.lbNewcomersTitle}>
-            New contributors
-          </Heading>
-          <div className={styles.lbNewcomersGrid}>
-            {newcomers.map(({ login, projects, recentActivity }) => (
-              <Link
-                key={login}
-                href={contributorDossierUrl(login)}
-                target="_blank"
-                rel="noreferrer"
-                className={styles.lbNewcomer}
-              >
-                <img
-                  src={`https://github.com/${login}.png?size=40`}
-                  alt={login}
-                  className={styles.lbNewcomerAvatar}
-                  loading="lazy"
-                />
-                <span className={styles.lbLogin}>{login}</span>
-                <span className={styles.lbNewcomerStat}>
-                  {recentActivity} {recentActivity === 1 ? "commit" : "commits"}{" "}
-                  · {projects} {projects === 1 ? "project" : "projects"}
-                </span>
-              </Link>
-            ))}
-          </div>
+      <div className={styles.lbMetrics}>
+        <div>
+          <strong>{totalRanked}</strong>
+          <span>
+            {activeTab === "season" ? "season contributors" : "contributors"}
+          </span>
         </div>
-      )}
-
+        <div>
+          <strong>
+            {totalRanked
+              ? totalActivity
+              : activeTab === "season" && !season
+                ? "—"
+                : 0}
+          </strong>
+          <span>{activityLabel.toLowerCase()}</span>
+        </div>
+        <div>
+          <strong>
+            {activeTab === "season"
+              ? new Set(
+                  Object.values(season?.byLogin ?? {}).flatMap((entry) =>
+                    Object.keys(entry.repos),
+                  ),
+                ).size
+              : Object.keys(history.contributorsByRepo ?? {}).length}
+          </strong>
+          <span>
+            {activeTab === "season"
+              ? "season projects"
+              : "tracked projects (all time)"}
+          </span>
+        </div>
+      </div>
       <div
         className={styles.lbTabs}
-        role="tablist"
-        aria-label="Contributor leaderboard timeframes"
+        role="group"
+        aria-label="Leaderboard period"
       >
-        {(["alltime", "monthly", "weekly"] as LeaderboardTab[]).map((t) => {
-          const disabled = !hasWeeklyStats && t !== "alltime";
-          return (
-            <button
-              key={t}
-              role="tab"
-              aria-selected={activeTab === t}
-              disabled={disabled}
-              className={`${styles.lbTab} ${activeTab === t ? styles.lbTabActive : ""} ${disabled ? styles.lbTabDisabled : ""}`}
-              onClick={() => {
-                if (!disabled) setTab(t);
-              }}
-              title={disabled ? "Activity data accumulating" : undefined}
-            >
-              {t === "alltime"
-                ? "All Time"
-                : t === "monthly"
-                  ? "Active Month"
-                  : "Active Week"}
-              {disabled && <span className={styles.lbTabPending}> ○</span>}
-            </button>
-          );
-        })}
+        {(["season", "alltime", "monthly", "weekly"] as LeaderboardTab[]).map(
+          (t) => {
+            const disabled =
+              (t === "season" && !season) ||
+              ((t === "monthly" || t === "weekly") && !hasWeeklyStats);
+            return (
+              <button
+                key={t}
+                type="button"
+                aria-pressed={activeTab === t}
+                disabled={disabled}
+                className={`${styles.lbTab} ${activeTab === t ? styles.lbTabActive : ""} ${disabled ? styles.lbTabDisabled : ""}`}
+                onClick={() => {
+                  if (!disabled) setTab(t);
+                }}
+                title={
+                  disabled
+                    ? t === "season"
+                      ? "Season data unavailable"
+                      : "Activity data accumulating"
+                    : undefined
+                }
+              >
+                {t === "season"
+                  ? season
+                    ? `Season of ${season.name}`
+                    : "Season unavailable"
+                  : t === "alltime"
+                    ? "All Time"
+                    : t === "monthly"
+                      ? "Active Month"
+                      : "Active Week"}
+                {disabled && <span className={styles.lbTabPending}> ○</span>}
+              </button>
+            );
+          },
+        )}
+      </div>
+      <div
+        className={`${styles.lbCharts} ${activeTab === "season" && season ? "" : styles.lbChartsSingle}`}
+      >
+        <div className={styles.lbCompare}>
+          <Heading as="h3">
+            Top contributors · {activityLabel.toLowerCase()}
+          </Heading>
+          {barRows.length === 0 ? (
+            <p>Accumulating data</p>
+          ) : (
+            barRows.map((row) => (
+              <div className={styles.lbBarRow} key={row.login}>
+                <span>{row.login}</span>
+                <span className={styles.lbBarTrack}>
+                  <span
+                    style={{ width: `${(row.activity / barMax) * 100}%` }}
+                  />
+                </span>
+                <strong>{row.activity}</strong>
+              </div>
+            ))
+          )}
+        </div>
+        {activeTab === "season" && season && (
+          <EChart
+            title="Weekly season activity"
+            summary={`${season.weeklyCommits.at(-1) ?? 0} commits in the latest week; ${season.totalCommits} season commits since GNOME ${season.version}.`}
+            points={season.weekStarts.length}
+            height={220}
+            option={{
+              grid: { left: 48, right: 24, top: 22, bottom: 36 },
+              xAxis: {
+                type: "category",
+                data: season.weekStarts.map(weekStartLabel),
+                boundaryGap: false,
+              },
+              yAxis: { type: "value", min: 0 },
+              series: [
+                {
+                  type: "line",
+                  name: "Season commits",
+                  data: gapSafe(season.weeklyCommits),
+                  symbolSize: 7,
+                  lineStyle: { width: 3 },
+                },
+              ],
+            }}
+          />
+        )}
       </div>
 
       {!hasWeeklyStats &&
@@ -1978,18 +2140,22 @@ export function ContributorLeaderboard({
         )}
       {ranked.length === 0 ? (
         <p className={styles.lbFallbackNote}>
-          No recorded commit activity during this{" "}
-          {activeTab === "weekly" ? "week" : "month"}. Select All Time above to
-          view all contributors.
+          {activeTab === "season"
+            ? `No attributed commits since GNOME ${season?.version} released.`
+            : activeTab === "alltime"
+              ? history.contributorError || "Contributor data unavailable."
+              : `No recorded commit activity in this ${activeTab} window. Select All Time to view all contributors.`}
         </p>
       ) : (
         <div className={styles.lbTable}>
           <div className={styles.lbHeader}>
             <span className={styles.lbColRank}>#</span>
             <span className={styles.lbColUser}>Contributor</span>
-            <span className={styles.lbColCommits}>Projects</span>
+            <span className={styles.lbColCommits}>
+              {activeTab === "season" ? "Projects" : "Projects · all time"}
+            </span>
             <span className={styles.lbColActivity}>{activityLabel}</span>
-            <span className={styles.lbColHive}>Hive tasks</span>
+            <span className={styles.lbColHive}>Hive tasks · all time</span>
             <span className={styles.lbColRepos}>Repos</span>
             <span className={styles.lbColBadges}>Milestones</span>
           </div>
@@ -2093,49 +2259,44 @@ export function ContributorLeaderboard({
         </div>
       )}
 
-      {ranked.length >= 25 && (
+      {totalRanked > 25 && (
         <p className={styles.panelMeta} style={{ marginTop: "0.5rem" }}>
-          Showing top 25 of {Object.keys(history.contributors ?? {}).length}{" "}
-          contributors
+          Showing top 25 of {totalRanked} contributors
         </p>
       )}
-    </section>
-  );
-}
-
-function ContributionLinks(): React.JSX.Element {
-  return (
-    <section className={styles.contributionLinks}>
-      <Heading as="h2" className={styles.panelTitle}>
-        Manual contributions
-      </Heading>
-      <div className={styles.contributionLinksGrid}>
-        <Link
-          href={`${HOSTED_INSTANCE_URL}/contribute`}
-          className={styles.contributionLink}
-        >
-          <span className={styles.contributionLinkTitle}>Contribute</span>
-          <span className={styles.contributionLinkPath}>/contribute</span>
-        </Link>
-        <Link
-          href={`${HOSTED_INSTANCE_URL}/contribute/operations`}
-          className={styles.contributionLink}
-        >
-          <span className={styles.contributionLinkTitle}>Operations</span>
-          <span className={styles.contributionLinkPath}>
-            /contribute/operations
-          </span>
-        </Link>
-        <Link
-          href={`${HOSTED_INSTANCE_URL}/contribute/leaderboard`}
-          className={styles.contributionLink}
-        >
-          <span className={styles.contributionLinkTitle}>Leaderboard</span>
-          <span className={styles.contributionLinkPath}>
-            /contribute/leaderboard
-          </span>
-        </Link>
-      </div>
+      {newcomers.length > 0 && (
+        <div className={styles.lbNewcomers}>
+          <Heading as="h3" className={styles.lbNewcomersTitle}>
+            New to tracked repos · last 13 weeks
+          </Heading>
+          <div className={styles.lbNewcomersGrid}>
+            {newcomers.map(({ login, projects, recentActivity, activity }) => (
+              <Link
+                key={login}
+                href={contributorDossierUrl(login)}
+                target="_blank"
+                rel="noreferrer"
+                className={styles.lbNewcomer}
+              >
+                <img
+                  src={`https://github.com/${login}.png?size=40`}
+                  alt={login}
+                  className={styles.lbNewcomerAvatar}
+                  loading="lazy"
+                />
+                <span className={styles.lbLogin}>{login}</span>
+                <span className={styles.lbNewcomerStat}>
+                  {activeTab === "season" ? activity : recentActivity}{" "}
+                  {(activeTab === "season" ? activity : recentActivity) === 1
+                    ? "commit"
+                    : "commits"}{" "}
+                  · {projects} {projects === 1 ? "project" : "projects"}
+                </span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
     </section>
   );
 }
@@ -2155,6 +2316,10 @@ function HiveTaskLeaderboard({
       <Heading as="h2" className={styles.panelTitle}>
         Hive Task Leaderboard
       </Heading>
+      <p className={styles.panelMeta}>
+        All-time tasks completed through the Hive registry; separate from GitHub
+        commits.
+      </p>
       {humanEntries.length === 0 ? (
         <p className={styles.panelMeta}>
           No human task completions recorded in the registry yet
@@ -4410,16 +4575,15 @@ export function LeaderboardsSection(): React.JSX.Element {
 
   return (
     <div className={styles.leaderboards}>
-      <ContributionLinks />
       {hiveHistory ? (
-        <div className={styles.twoCol}>
+        <>
           <ContributorLeaderboard
             history={hiveHistory}
             registryEntries={registryEntries ?? []}
             registryAvailable={registryEntries != null}
           />
           <ContributorWall prs={[]} history={hiveHistory} />
-        </div>
+        </>
       ) : (
         <section className={styles.panel}>
           <p className={styles.unavailableNote}>

@@ -50,7 +50,18 @@ function loadDashboardModule() {
       if (id.includes("Sparkline") || id.includes("ActivityCalendar")) {
         return { __esModule: true, default: () => React.createElement("svg") };
       }
-      if (id.includes("chartTheme")) return { FX_SEVERITY: {} };
+      if (id.includes("factory/EChart")) {
+        return {
+          __esModule: true,
+          default: () => React.createElement("figure"),
+        };
+      }
+      if (id.includes("chartTheme"))
+        return {
+          FX_SEVERITY: {},
+          gapSafe: (data) =>
+            data.map((value) => (Number.isNaN(value) ? null : (value ?? null))),
+        };
       if (id.startsWith("@docusaurus/")) {
         return { __esModule: true, default: () => null };
       }
