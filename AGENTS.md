@@ -208,8 +208,11 @@ reads `projectbluefin/lab` or any lab-cluster service.
 Rules for every `scripts/fetch-*.js`:
 
 - Export the pure functions so `scripts/*.test.js` can exercise them offline.
-- **Never fail the build.** No throw, no non-zero exit, no silently empty file.
-  On error, write `{ unavailable: true, stateReason }` and exit 0.
+- **Never fail the build on transient upstream fetch errors.** On recoverable
+  or soft errors, write `{ unavailable: true, stateReason }` and exit 0. Hard
+  failures (such as unrecoverable configuration or pipeline corruption) exit
+  non-zero, and `scripts/run-parallel.mjs` propagates those fatal exits to fail
+  the build before deploying corrupt or missing data.
 - **An in-flight CI run is never a failure.** Anything without a terminal
   conclusion is pending. Reuse `classifyRun` from `scripts/lib/gh.js`.
 - A missing value is `null` — a gap. A real `0` stays `0`. "Steady at zero" and
