@@ -198,7 +198,7 @@ function rowFromSbomRelease(
 }
 
 /** A companion version is valid only for the same stream release key. */
-function resolveCompanionNvidia(nvidiaByTag, entry, cacheKey) {
+function resolveCompanionNvidia(nvidiaByTag, cacheKey) {
   return nvidiaByTag?.[cacheKey] || null;
 }
 
@@ -235,7 +235,7 @@ function buildStreamFromSbom(
         pkg.kernel || hweKernel || pkg.mesa || pkg.gnome || pkg.nvidia,
       );
       const companionNvidia = hasPackageVersions
-        ? resolveCompanionNvidia(nvidiaByTag, entry, cacheKey)
+        ? resolveCompanionNvidia(nvidiaByTag, cacheKey)
         : null;
       const nvidiaVersion = pkg.nvidia || companionNvidia;
       return rowFromSbomRelease(

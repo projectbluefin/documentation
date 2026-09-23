@@ -318,8 +318,11 @@ Bluefin and Aurora include Cockpit for machine management. We're hoping to inclu
 
 ## Verification
 
-These images are signed with sigstore's [cosign](https://docs.sigstore.dev/cosign/). You can verify the signature by downloading the `cosign.pub` key from [this repo](https://github.com/projectbluefin/bluefin) and running the following command:
+These images are signed with sigstore's [cosign](https://docs.sigstore.dev/cosign/). Bluefin Classic uses key-based signing, so verify it with the `cosign.pub` key from [ublue-os/bluefin](https://github.com/ublue-os/bluefin):
 
 ```sh
-cosign verify --key cosign.pub ghcr.io/projectbluefin/bluefin
+cosign verify --key https://raw.githubusercontent.com/ublue-os/bluefin/main/cosign.pub \
+  ghcr.io/ublue-os/bluefin:stable
 ```
+
+Bluefin LTS, Dakota, and Utah are signed keylessly instead — see [Supply Chain Security](/supply-chain) for their verification commands.

@@ -292,6 +292,27 @@ function currentCachedStream(existing, spec) {
   );
 }
 
+// Floating tags are re-verified unconditionally because a tag can move twice in
+// one day, but the *result* of a refresh must not demote a good same-day entry:
+// a transient SBOM download or attestation failure would otherwise replace
+// verified package data with nulls and render the stream Unavailable until the
+// next successful run.
+//
+// @returns {null|string} null to accept the refreshed entry, otherwise a short
+//          reason describing what the refresh lost.
+function refreshRegression(previousEntry, attestation, packageVersions) {
+  if (!previousEntry) return null;
+  const reasons = [];
+  if (packageVersions == null && previousEntry.packageVersions != null)
+    reasons.push("no SBOM");
+  if (
+    attestation?.verified !== true &&
+    previousEntry.attestation?.verified === true
+  )
+    reasons.push("unverified");
+  return reasons.length > 0 ? reasons.join(", ") : null;
+}
+
 // Floating tags are sampled by channel; historical entries are keyed by their
 // creation date because the registry tag itself moves between builds.
 async function processFloatingTagStream(spec, existing) {
@@ -334,14 +355,27 @@ async function processFloatingTagStream(spec, existing) {
         }
       }
     }
-    releases[cacheKey] = {
-      tag: spec.floatingTag,
-      imageRef,
-      digest: null,
+    // Re-verification is unconditional, but a degraded result keeps the
+    // previous good entry — see refreshRegression().
+    const regression = refreshRegression(
+      previous[cacheKey],
       attestation,
       packageVersions,
-      checkedAt: new Date().toISOString(),
-    };
+    );
+    if (regression) {
+      console.warn(
+        `    ${cacheKey}: refresh degraded (${regression}) — keeping previous entry`,
+      );
+    } else {
+      releases[cacheKey] = {
+        tag: spec.floatingTag,
+        imageRef,
+        digest: null,
+        attestation,
+        packageVersions,
+        checkedAt: new Date().toISOString(),
+      };
+    }
   }
   return {
     id: spec.id,
@@ -370,11 +404,24 @@ async function processFloatingTagStream(spec, existing) {
 async function processStream(spec, ghcrTagsByImage, existing) {
   if (spec.floatingTag) {
     const imageKey = `${spec.org}/${spec.package}`;
-    if (ghcrTagsByImage.get(imageKey)?.includes(spec.floatingTag)) {
+    const listedTags = ghcrTagsByImage.get(imageKey);
+    if (listedTags?.includes(spec.floatingTag)) {
       return processFloatingTagStream(spec, existing);
     }
-    if (!ghcrTagsByImage.has(imageKey) && currentCachedStream(existing, spec))
+    // Two different absences deserve two different answers:
+    //  - the listing failed, or the package still publishes other tags while
+    //    the floating tag is momentarily missing (mid-push, brief retag). The
+    //    accumulated per-day history is still real, so keep it.
+    //  - the package publishes no tags at all: the stream is unreleased or
+    //    retired, so never keep serving history for an image the registry does
+    //    not have.
+    const registryIsLive = listedTags === undefined || listedTags.length > 0;
+    if (registryIsLive && currentCachedStream(existing, spec)) {
+      console.log(
+        `  ${spec.id}: floating tag "${spec.floatingTag}" not listed — keeping existing cache`,
+      );
       return existing.streams[spec.id];
+    }
     return {
       id: spec.id,
       label: spec.label,
@@ -432,7 +479,7 @@ async function processStream(spec, ghcrTagsByImage, existing) {
       existingEntry?.imageRef === imageRef &&
       hasVersions &&
       hasAllPackages &&
-      ((spec.keyless || spec.attestationLive) ? isVerified : true);
+      (spec.keyless || spec.attestationLive ? isVerified : true);
     if (isCacheHit) {
       console.log(
         `    ${cacheKey}: cache hit (${spec.keyless ? "verified, " : ""}versions populated)`,
@@ -620,7 +667,7 @@ function isValidSbomCache(cache) {
 }
 
 function hasPrimaryReleaseData(streams) {
-  // LTS releases remain catalogued even while their key-signed images have
+  // LTS releases remain catalogued even while their keyless-signed images have
   // no published SBOM. Classic must have parsed packages for version display.
   return (
     PRIMARY_RELEASE_STREAM_IDS.every((id) => hasReleaseData(streams?.[id])) &&
@@ -780,5 +827,6 @@ module.exports = {
   isSemverLike,
   selectAmd64DigestFromManifest,
   findRecentTagsForStream,
+  refreshRegression,
   fetchGhcrTags, // exported for integration testing
 };

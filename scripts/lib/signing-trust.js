@@ -23,9 +23,6 @@
  *                           yet, so the command is advisory.
  */
 
-const COSIGN_KEY_LTS =
-  "https://raw.githubusercontent.com/projectbluefin/bluefin-lts/main/cosign.pub";
-
 const SIGNING_TRUST = {
   // Bluefin Classic: key-based image signature + OCI-published keyless SLSA provenance.
   "ublue-os/bluefin": {
@@ -93,7 +90,6 @@ function knownSigningRepos() {
 }
 
 module.exports = {
-  COSIGN_KEY_LTS,
   SIGNING_TRUST,
   trustForRepo,
   requireTrustForRepo,

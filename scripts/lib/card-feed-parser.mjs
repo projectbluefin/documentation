@@ -217,9 +217,9 @@ export const DAKOTA_LINK = "https://github.com/projectbluefin/dakota";
  * Build the Dakota release card data from the SBOM attestation cache.
  *
  * Mirrors getDakotaOsEvent() in src/components/FirehoseFeed.tsx: the newest
- * `dakota-latest` entry that carries package versions, with the Nvidia version
- * overlaid from `dakota-nvidia-latest`. Returns null when the cache has no
- * usable Dakota data.
+ * `dakota-stable` entry that carries package versions, with the Nvidia version
+ * overlaid from `dakota-nvidia-stable` for the same release date. Returns null
+ * when the cache has no usable Dakota data.
  */
 export function buildDakotaRelease(sbomCache) {
   const releases = sbomCache?.streams?.["dakota-stable"]?.releases;

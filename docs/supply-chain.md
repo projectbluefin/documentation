@@ -11,48 +11,54 @@ Every Bluefin image is signed and attested at build time. You can verify any ima
 
 ## Signing paradigms
 
-Bluefin uses two signing methods depending on the stream:
+Bluefin uses two signing methods depending on the image. The authoritative table lives in `scripts/lib/signing-trust.js`, which also generates the verify commands shown on the [Images](/images) page.
 
-| Paradigm                    | Streams                                     | Verification                                |
-| --------------------------- | ------------------------------------------- | ------------------------------------------- |
-| **Keyless (OIDC/Sigstore)** | `stable`, `latest`, `dx`, `gdx`, all Dakota | `cosign verify` with Rekor transparency log |
-| **Key-based**               | `lts`, `lts-hwe` and all LTS variants       | `cosign verify` with repo public key        |
+| Paradigm                    | Images                                                              | Verification                                |
+| --------------------------- | ------------------------------------------------------------------- | ------------------------------------------- |
+| **Key-based**               | Bluefin Classic (`ghcr.io/ublue-os/bluefin`, `bluefin-nvidia-open`) | `cosign verify` with repo public key        |
+| **Keyless (OIDC/Sigstore)** | Bluefin LTS, all Dakota, all Utah                                   | `cosign verify` with Rekor transparency log |
 
-### Verify a keyless image (stable / latest)
+### Verify Bluefin Classic (key-based)
 
 ```bash
-cosign verify ghcr.io/projectbluefin/bluefin:stable \
-  --certificate-identity-regexp="https://github.com/projectbluefin/bluefin/.github/workflows/build.yml" \
+cosign verify --key https://raw.githubusercontent.com/ublue-os/bluefin/main/cosign.pub \
+  ghcr.io/ublue-os/bluefin:stable
+```
+
+:::note
+
+Classic still publishes legacy `.sig` tags, which only cosign v2.x can read. On cosign v3 and newer, verify the keyless SLSA provenance described below instead.
+
+:::
+
+### Verify an LTS image (keyless)
+
+```bash
+cosign verify ghcr.io/projectbluefin/bluefin-lts:stable \
+  --certificate-identity-regexp="^https://github.com/projectbluefin/bluefin-lts/.github/workflows/" \
   --certificate-oidc-issuer=https://token.actions.githubusercontent.com
 ```
 
-### Verify an LTS image (key-based)
-
-```bash
-curl -O https://raw.githubusercontent.com/projectbluefin/bluefin-lts/main/cosign.pub
-cosign verify ghcr.io/projectbluefin/bluefin-lts:stable --key cosign.pub
-```
-
-### Verify Dakota
+### Verify Dakota (keyless)
 
 ```bash
 cosign verify ghcr.io/projectbluefin/dakota:stable \
-  --certificate-identity-regexp="https://github.com/projectbluefin/dakota/.github/workflows/build.yml" \
+  --certificate-identity-regexp="https://github.com/projectbluefin/dakota/.github/workflows/publish.yml" \
   --certificate-oidc-issuer=https://token.actions.githubusercontent.com
 ```
 
-Substitute your specific tag (e.g. `stable-20260501`) for `stable` / `lts` to pin to a known-good release.
+Substitute your specific tag (e.g. `stable-20260501`) for `stable` to pin to a known-good release.
 
 ## SLSA provenance
 
-Keyless streams include [SLSA v1](https://slsa.dev/provenance/v1) provenance attestations stored alongside the image in GHCR. The [Driver Versions](/driver-versions) page shows per-stream attestation status verified nightly.
+Bluefin Classic and Dakota publish [SLSA v1](https://slsa.dev/provenance/v1) provenance attestations alongside the image in GHCR. Provenance is always verified keylessly through the signing repo's GitHub Actions OIDC identity, even for a key-signed image like Classic. LTS and Utah do not publish provenance yet. The [Driver Versions](/driver-versions) page shows per-stream attestation status verified nightly.
 
 Fetch and inspect provenance:
 
 ```bash
-cosign verify-attestation ghcr.io/projectbluefin/bluefin:stable \
+cosign verify-attestation ghcr.io/ublue-os/bluefin:stable \
   --type slsaprovenance1 \
-  --certificate-identity-regexp="https://github.com/projectbluefin/bluefin/.github/workflows/build.yml" \
+  --certificate-identity-regexp="^https://github.com/ublue-os/bluefin/.github/workflows/" \
   --certificate-oidc-issuer=https://token.actions.githubusercontent.com | jq -r '.payload' | base64 -d | jq
 ```
 
@@ -64,7 +70,7 @@ Fetch the SBOM for any image:
 
 ```bash
 # Install oras: https://oras.land
-oras discover --artifact-type application/vnd.syft+json ghcr.io/projectbluefin/bluefin:stable
+oras discover --artifact-type application/vnd.syft+json ghcr.io/ublue-os/bluefin:stable
 ```
 
 ## OpenSSF Scorecard

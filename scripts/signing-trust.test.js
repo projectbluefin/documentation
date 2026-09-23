@@ -2,7 +2,6 @@ const test = require("node:test");
 const assert = require("node:assert");
 
 const {
-  COSIGN_KEY_LTS,
   SIGNING_TRUST,
   trustForRepo,
   requireTrustForRepo,

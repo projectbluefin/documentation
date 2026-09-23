@@ -21,6 +21,7 @@ const {
   stripEpoch,
   compareRpmVersions,
   findRecentTagsForStream,
+  refreshRegression,
   extractBstPackageVersions,
   isSemverLike,
 } = require("./fetch-github-sbom.js");
@@ -340,6 +341,60 @@ test("floating Utah testing never borrows an unsupported registry tag", async ()
   assert.deepEqual(result.releases, {});
   const outage = await processStream(spec, new Map(), cached);
   assert.deepEqual(outage.releases, cached.streams[spec.id].releases);
+});
+
+test("floating stream keeps history when the tag is momentarily absent mid-push", async () => {
+  const spec = STREAM_SPECS.find((stream) => stream.id === "utah-testing");
+  const cached = completeSbomCache();
+  cached.streams[spec.id].releases["testing-20260906"] = {
+    tag: "testing",
+    imageRef: "ghcr.io/projectbluefin/utah:testing",
+    packageVersions: { kernel: "6.18.1" },
+  };
+  // The package still publishes other tags, so the missing floating tag is a
+  // transient retag rather than an unreleased stream.
+  const result = await processStream(
+    spec,
+    new Map([["projectbluefin/utah", ["testing-20260906", "next"]]]),
+    cached,
+  );
+  assert.deepEqual(result.releases, cached.streams[spec.id].releases);
+});
+
+test("refreshRegression keeps a good entry when a floating refresh degrades", () => {
+  const good = {
+    attestation: { verified: true },
+    packageVersions: { kernel: "6.18.1" },
+  };
+
+  // Transient SBOM failure must not null out populated package versions.
+  assert.equal(refreshRegression(good, { verified: true }, null), "no SBOM");
+  // Transient verification failure must not demote a verified entry.
+  assert.equal(
+    refreshRegression(good, { verified: false }, { kernel: "6.18.1" }),
+    "unverified",
+  );
+  assert.equal(
+    refreshRegression(good, { verified: false }, null),
+    "no SBOM, unverified",
+  );
+
+  // A healthy refresh is accepted, including a genuine version change.
+  assert.equal(
+    refreshRegression(good, { verified: true }, { kernel: "6.18.2" }),
+    null,
+  );
+  // Nothing cached for the day yet: always accept, even a degraded result.
+  assert.equal(refreshRegression(undefined, { verified: false }, null), null);
+  // A previously degraded entry does not block a still-degraded refresh.
+  assert.equal(
+    refreshRegression(
+      { attestation: { verified: false }, packageVersions: null },
+      { verified: false },
+      null,
+    ),
+    null,
+  );
 });
 test("STREAM_SPECS maps all Bluefin LTS streams to bluefin-lts package and stable prefixes", () => {
   const ltsStreams = STREAM_SPECS.filter(
