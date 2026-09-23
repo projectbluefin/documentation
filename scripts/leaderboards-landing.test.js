@@ -82,8 +82,9 @@ test("leaderboards view foregrounds hosted Hive contribution paths and newcomers
     "newcomers must expose three-month activity",
   );
   assert.ok(
-    leaderboard.includes("s?.last3Months === allTimeMap[login]"),
-    "newcomers must be compared against canonical all-time contributions",
+    leaderboard.includes("s.total === s.last3Months") ||
+      leaderboard.includes("s?.total === s?.last3Months"),
+    "newcomers must be compared against canonical activity windows",
   );
   assert.ok(
     /const repoMap =\s*\n\s*activeTab === "alltime"/.test(leaderboard),

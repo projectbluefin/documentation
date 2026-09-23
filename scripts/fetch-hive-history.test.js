@@ -9,6 +9,8 @@ const {
   computeStatsWindows,
   createStatsAccumulator,
   extractMetrics,
+  fetchContributors,
+  fetchContributorWeeklyStats,
   finalizeContributorStats,
   loadHistory,
   MAX_WEEKS,
@@ -482,6 +484,8 @@ test("loadHistory returns the seeded default when no file exists", () => {
     contributorWeekStarts: [],
     lastContributorFetch: null,
     lastWeeklyStatsFetch: null,
+    contributorError: null,
+    weeklyStatsError: null,
   });
 });
 
@@ -510,5 +514,52 @@ test("loadHistory starts fresh on a corrupt file instead of throwing", () => {
     assert.deepEqual(history.contributorWeekStarts, []);
   } finally {
     fs.rmSync(file);
+  }
+});
+
+test("fetchContributors rejects when any tracked repository request fails", async () => {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async (url) => {
+    if (String(url).includes("server")) {
+      return { status: 403, ok: false };
+    }
+    return {
+      status: 200,
+      ok: true,
+      json: async () => [{ login: "jorge", contributions: 10 }],
+      headers: { get: () => null },
+    };
+  };
+  try {
+    await assert.rejects(
+      () => fetchContributors(["common", "server"]),
+      /server: HTTP 403/,
+    );
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("fetchContributorWeeklyStats rejects when stats stay in computing state", async () => {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async () => ({ status: 202, ok: false });
+  try {
+    await assert.rejects(
+      () => fetchContributorWeeklyStats(["common"]),
+      /common \(computing\)/,
+    );
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("loadHistory includes null error slots on fresh instantiation", () => {
+  const file = path.join(tmpdir(), `hive-empty-${process.pid}.json`);
+  try {
+    const history = loadHistory(file);
+    assert.equal(history.contributorError, null);
+    assert.equal(history.weeklyStatsError, null);
+  } finally {
+    if (fs.existsSync(file)) fs.rmSync(file);
   }
 });

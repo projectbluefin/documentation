@@ -178,6 +178,14 @@ test("the standalone page includes linked Hive task cards", () => {
           tasks_failed: 0,
           active: true,
         },
+        {
+          github_username: "custom-agent-helper",
+          avatar_url: "",
+          trust_tier: "agent",
+          tasks_completed: 99,
+          tasks_failed: 0,
+          active: false,
+        },
       ],
     },
   });
@@ -190,6 +198,7 @@ test("the standalone page includes linked Hive task cards", () => {
 
   assert.match(html, /Hive Task Leaderboard/);
   assert.match(html, /zulu-player/);
+  assert.doesNotMatch(html, />custom-agent-helper</);
   assert.match(
     html,
     /href="https:\/\/hosted-projectbluefin-common-nmq5\.hive\.hivecommons\.dev\/contribute\/dossier\/zulu-player"/,
@@ -224,4 +233,68 @@ test("missing Hive task data is visible instead of zero", () => {
 
   assert.match(html, /Hive task data unavailable/);
   assert.doesNotMatch(html, /0 Hive tasks/);
+});
+
+test("newcomer detection uses single-endpoint total and surfaces error notices", () => {
+  const { ContributorLeaderboard } = loadDashboard();
+  const html = renderToStaticMarkup(
+    React.createElement(ContributorLeaderboard, {
+      history: {
+        entries: [],
+        contributors: { veteran: 50 },
+        contributorsByRepo: { common: { veteran: 50, newcomer: 4 } },
+        contributorStats: {
+          veteran: {
+            total: 50,
+            lastWeek: 2,
+            lastMonth: 10,
+            last3Months: 20,
+            byRepo: { common: 50 },
+            weeks: [2],
+          },
+          newcomer: {
+            total: 4,
+            lastWeek: 2,
+            lastMonth: 4,
+            last3Months: 4,
+            byRepo: { common: 4 },
+            weeks: [2],
+          },
+        },
+        contributorWeekStarts: [1_700_000_000],
+        lastWeeklyStatsFetch: "2026-09-20T00:00:00.000Z",
+        weeklyStatsError: "GitHub weekly stats refresh failed (rate limit)",
+      },
+      registryEntries: [],
+    }),
+  );
+
+  assert.match(html, /New contributors/);
+  assert.match(html, />newcomer</);
+  assert.doesNotMatch(html, />veteran<\/span><span class="[^"]*">20 commits/);
+  assert.match(html, /GitHub weekly stats refresh failed/);
+  assert.match(html, /stats as of Sep 20/);
+  assert.match(html, /4 commits · 1 project/);
+});
+
+test("all-agent task registry displays visible notice instead of disappearing", () => {
+  const { LeaderboardsSection } = loadDashboard({
+    hiveHistory: { entries: [], contributors: {}, contributorsByRepo: {} },
+    registry: {
+      leaderboard: [
+        {
+          github_username: "bot-agent",
+          avatar_url: "",
+          trust_tier: "agent",
+          tasks_completed: 10,
+          tasks_failed: 0,
+          active: false,
+        },
+      ],
+    },
+  });
+  const html = renderToStaticMarkup(React.createElement(LeaderboardsSection));
+  assert.match(html, /Hive Task Leaderboard/);
+  assert.match(html, /No human task completions recorded in the registry yet/);
+  assert.match(html, /1 autonomous agent worker entries hidden/);
 });
