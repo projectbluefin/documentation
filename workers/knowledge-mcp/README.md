@@ -20,13 +20,52 @@ Point any MCP client at it — no account, no token:
 
 | Tool | Returns |
 |---|---|
-| `search_knowledge(query, limit=10)` | Matching knowledge entries — patterns, coverage gaps, CI conventions across `projectbluefin/*` |
+| `search_knowledge(query, limit=10, repo?)` | Matching knowledge entries — patterns, coverage gaps, CI conventions across `projectbluefin/*`. Optionally narrowed to one repository |
+| `get_repo_conventions(repo, limit=10)` | Curated ground rules for one repository, from `conventions`-tagged knowledge entries |
 | `get_factory_status()` | Live hub health, active contributors, actionable items, per-tier limits |
-| `get_work_queue(limit=10)` | Live ready-to-implement queue and triage counts |
+| `get_work_queue(limit=10, repo?)` | Live ready-to-implement queue, plus the `implementing` and `reviewing` items already in flight |
 
 Results are capped at 25 entries. The endpoint never returns the whole corpus:
 loading a ~470 KB export into an agent's context is the exact failure this
 replaces (see `review/docs/skills/goose-context.md`).
+
+### Citations
+
+A `search_knowledge` hit carries `repo`, `number` and `url` when the source
+entry's title opens with a `<repo>#<number>` citation — `utah-packages#46: …`,
+`bluefin-lts#511: …`. That prefix is the only citation the Hive export
+contains; there are no structured issue fields to read, so entries whose titles
+carry no such prefix come back without those three fields rather than with
+guessed ones. `url` uses `/issues/<n>`, which GitHub redirects to the pull
+request when the number is a PR.
+
+The `repo` filter is deliberately looser than the citation: it matches any
+`projectbluefin/<repo>` or `<repo>#<n>` mention in the title or body, so a
+finding filed in one repository still surfaces for the repository it is about.
+
+The export carries no `kind` (issue vs PR), no open/closed `state`, and no
+date, so `search_knowledge` has no `since` argument and reports neither. Those
+would need the hub to add the fields to `/api/v1/knowledge` first.
+
+### Conventions records
+
+`get_repo_conventions` reads the same index; it holds no repository facts of
+its own and makes no GitHub call. A record is any knowledge entry that mentions
+the repository and is tagged `conventions`. A missing or wrong record is
+therefore fixed upstream in Hive, not here, and the tool says so explicitly
+when a repository has none.
+
+### Work queue
+
+`get_work_queue` returns the ready queue plus, for the `implementing` and
+`reviewing` triage levels, the items themselves rather than only a count —
+those are the states that say a lane is already on something. Each group keeps
+the hub's org-wide `count` alongside `matched`, the number that survived the
+`repo` filter, so the two differ on purpose.
+
+Hive's `/api/contribute/triage` projection carries no lane account; pull request
+links (`pr: {number, url, state}`) are included on `reviewing` items when the
+hub provides them.
 
 ## How it works
 

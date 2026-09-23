@@ -9,13 +9,22 @@
 import { createMcpHandler } from "agents/mcp/server";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { parseKnowledge, searchEntries } from "./knowledge.mjs";
+import {
+  parseKnowledge,
+  searchEntries,
+  conventionsFor,
+  normalizeRepo,
+  ORG,
+} from "./knowledge.mjs";
 
 // NOTE: workerd treats every named export as a potential entrypoint, so
 // nothing but the default handler may be exported from this module.
 const INDEX_KEY = "knowledge-index";
 const HUB = "https://hosted-projectbluefin-knuckle-gjvq.hive.hivecommons.dev";
 const MAX_LIMIT = 25;
+// Triage levels whose items a caller needs by name, not just by count: these
+// are the states that say "someone is already on this".
+const IN_FLIGHT = new Set(["implementing", "reviewing"]);
 // A false positive must not freeze the index, so a tripwire hit withholds one
 // entry. A spike means upstream tagging changed and is worth refusing to publish.
 const VIOLATION_CEILING = 25;
@@ -59,22 +68,70 @@ function createServer(env) {
       description:
         "Search the Project Bluefin organization knowledge base: engineering patterns, " +
         "test-coverage gaps, CI conventions, and per-repository findings across " +
-        "projectbluefin/*. Returns only matching entries, never the whole corpus.",
+        "projectbluefin/*. Returns only matching entries, never the whole corpus. " +
+        "Hits carry a repo/number/url citation when the source entry names one, so a " +
+        "duplicate check needs no follow-up GitHub call.",
       inputSchema: {
         query: z.string().min(2).describe("Keywords, e.g. 'bats coverage bluefin-lts'"),
         limit: z.number().int().min(1).max(MAX_LIMIT).optional().describe("Max entries (default 10)"),
+        repo: z
+          .string()
+          .optional()
+          .describe("Narrow to one repository, e.g. 'projectbluefin/actions' or 'actions'"),
       },
     },
-    async ({ query, limit }) => {
+    async ({ query, limit, repo }) => {
       try {
+        const slug = normalizeRepo(repo);
+        if (repo && !slug) throw new Error(`'${repo}' is not a projectbluefin repository name`);
         const index = await loadIndex(env);
-        const hits = searchEntries(index.entries, query, Math.min(limit ?? 10, MAX_LIMIT));
+        const hits = searchEntries(index.entries, query, Math.min(limit ?? 10, MAX_LIMIT), {
+          repo: slug,
+        });
         return json({
           query,
+          repo: slug ? `${ORG}/${slug}` : null,
           matched: hits.length,
           indexed: index.count,
           generated: index.generated,
           results: hits,
+        });
+      } catch (err) {
+        return fail(err);
+      }
+    },
+  );
+
+  server.registerTool(
+    "get_repo_conventions",
+    {
+      description:
+        "Curated ground rules for one projectbluefin repository — who merges, review and " +
+        "merge-queue requirements, repo-specific CI gates, and whether the repo is " +
+        "hands-off for agents. Read from the knowledge base, so a missing or wrong record " +
+        "is fixed upstream in Hive rather than here.",
+      inputSchema: {
+        repo: z.string().describe("Repository, e.g. 'projectbluefin/testsuite' or 'testsuite'"),
+        limit: z.number().int().min(1).max(MAX_LIMIT).optional().describe("Max records (default 10)"),
+      },
+    },
+    async ({ repo, limit }) => {
+      try {
+        const slug = normalizeRepo(repo);
+        if (!slug) throw new Error(`'${repo}' is not a projectbluefin repository name`);
+        const index = await loadIndex(env);
+        const records = conventionsFor(index.entries, slug, Math.min(limit ?? 10, MAX_LIMIT));
+        return json({
+          repo: `${ORG}/${slug}`,
+          found: records.length,
+          generated: index.generated,
+          conventions: records,
+          // Say so rather than implying the repo has no rules.
+          note: records.length
+            ? undefined
+            : "No `conventions`-tagged knowledge entry mentions this repository yet. " +
+              "Add one in Hive — this endpoint publishes the knowledge base and holds no " +
+              "repository facts of its own.",
         });
       } catch (err) {
         return fail(err);
@@ -108,27 +165,49 @@ function createServer(env) {
     {
       description:
         "Live Project Bluefin work queue and triage state from Hive: issues ready to " +
-        "implement, and how work is grouped by triage level. Read-only — Hive alone " +
-        "assigns work.",
+        "implement, plus what is already in flight (implementing, reviewing) so a " +
+        "maintainer does not race a Hive lane. Read-only — Hive alone assigns work.",
       inputSchema: {
         limit: z.number().int().min(1).max(MAX_LIMIT).optional().describe("Max queue items (default 10)"),
+        repo: z
+          .string()
+          .optional()
+          .describe("Narrow to one repository, e.g. 'projectbluefin/server' or 'server'"),
       },
     },
-    async ({ limit }) => {
+    async ({ limit, repo }) => {
       try {
         const cap = Math.min(limit ?? 10, MAX_LIMIT);
+        const slug = normalizeRepo(repo);
+        if (repo && !slug) throw new Error(`'${repo}' is not a projectbluefin repository name`);
+        const wanted = slug ? `${ORG}/${slug}` : null;
+        const forRepo = (items) =>
+          wanted ? (items ?? []).filter((i) => i.repo === wanted) : (items ?? []);
+
         const [queue, triage] = await Promise.all([
           hub("/api/contribute/queue"),
           hub("/api/contribute/triage"),
         ]);
+        const ready = forRepo(queue.queue);
         return json({
-          queue: (queue.queue ?? []).slice(0, cap),
-          queue_total: (queue.queue ?? []).length,
-          triage: (triage.groups ?? []).map((g) => ({
-            level: g.level,
-            label: g.label,
-            count: g.count,
-          })),
+          repo: wanted,
+          queue: ready.slice(0, cap),
+          queue_total: ready.length,
+          triage: (triage.groups ?? []).map((g) => {
+            const items = forRepo(g.issues);
+            return {
+              level: g.level,
+              label: g.label,
+              // `count` is the hub's org-wide total for the level; `items` is
+              // what survived the repo filter and the cap, so the two differ
+              // on purpose.
+              count: g.count,
+              ...(IN_FLIGHT.has(g.level) ? { items: items.slice(0, cap), matched: items.length } : {}),
+            };
+          }),
+          note:
+            "Hive's triage projection carries no lane account; pull request details (number, " +
+            "url, state) are included on reviewing items when supplied by the hub.",
         });
       } catch (err) {
         return fail(err);
