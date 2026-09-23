@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-23T11:47:54.474Z",
+  "generatedAt": "2026-09-23T12:03:48.979Z",
   "cacheHours": 168,
   "historyDays": 90,
   "streams": [
@@ -246,7 +246,7 @@
           "gnome": "51.0",
           "systemd": "261.3",
           "bootc": "1.16.13",
-          "pipewire": null
+          "pipewire": "1.6.8"
         }
       },
       "history": [
@@ -265,7 +265,7 @@
             "gnome": "51.0",
             "systemd": "261.3",
             "bootc": "1.16.13",
-            "pipewire": null
+            "pipewire": "1.6.8"
           }
         }
       ]

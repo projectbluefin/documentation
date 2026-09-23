@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-23T11:48:07.590Z",
+  "generatedAt": "2026-09-23T12:04:00.714Z",
   "cacheHours": 168,
   "refreshHours": 336,
   "staleDays": 30,
@@ -230,7 +230,7 @@
         "sbomCommand": "oras discover ghcr.io/projectbluefin/bluefin-lts:stable"
       },
       "inspectTag": "stable",
-      "lastPublishedAt": "2026-09-23T11:46:18.775Z",
+      "lastPublishedAt": "2026-09-23T12:03:03.420Z",
       "stale": false,
       "keepEvenIfStale": true
     },
@@ -266,7 +266,7 @@
             "podman": "6.1.0",
             "systemd": "261.3",
             "bootc": "1.16.13",
-            "pipewire": null
+            "pipewire": "1.6.8"
           },
           "nvidiaCommand": "sudo bootc switch ghcr.io/projectbluefin/dakota-nvidia:stable --enforce-container-sigpolicy",
           "imageRef": "ghcr.io/projectbluefin/dakota:stable",
@@ -281,7 +281,7 @@
             "podman": "6.1.0",
             "systemd": "261.3",
             "bootc": "1.16.13",
-            "pipewire": null
+            "pipewire": "1.6.8"
           }
         },
         {
@@ -298,7 +298,7 @@
             "podman": "6.1.0",
             "systemd": "261.3",
             "bootc": "1.16.13",
-            "pipewire": null
+            "pipewire": "1.6.8"
           },
           "nvidiaCommand": "sudo bootc switch ghcr.io/projectbluefin/dakota-nvidia:testing --enforce-container-sigpolicy",
           "imageRef": "ghcr.io/projectbluefin/dakota:testing",
@@ -313,7 +313,7 @@
             "podman": "6.1.0",
             "systemd": "261.3",
             "bootc": "1.16.13",
-            "pipewire": null
+            "pipewire": "1.6.8"
           }
         }
       ],
@@ -351,7 +351,7 @@
         "sbomCommand": "oras discover ghcr.io/projectbluefin/dakota:stable"
       },
       "inspectTag": "stable",
-      "lastPublishedAt": "2026-09-23T11:47:09.065Z",
+      "lastPublishedAt": "2026-09-23T12:03:15.132Z",
       "stale": false,
       "keepEvenIfStale": true
     },
@@ -429,7 +429,7 @@
         "sbomCommand": "oras discover ghcr.io/projectbluefin/utah:testing"
       },
       "inspectTag": "testing",
-      "lastPublishedAt": "2026-09-23T11:47:02.657Z",
+      "lastPublishedAt": "2026-09-23T12:03:09.032Z",
       "stale": false,
       "keepEvenIfStale": true
     }

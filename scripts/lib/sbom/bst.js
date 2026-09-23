@@ -47,7 +47,10 @@ const BST_PACKAGE_MAP = [
   { name: "mesa", bstSuffixes: ["extensions/mesa/mesa.bst"], field: "mesa" },
   {
     name: "pipewire",
-    bstSuffixes: ["components/pipewire-base.bst"],
+    bstSuffixes: [
+      "components/_private/pipewire-base.bst",
+      "components/pipewire-base.bst",
+    ],
     field: "pipewire",
   },
   { name: "podman", bstSuffixes: ["components/podman.bst"], field: "podman" },

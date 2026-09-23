@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-23T11:47:19.125Z",
+  "generatedAt": "2026-09-23T12:03:25.501Z",
   "lookbackDays": 90,
   "maxReleasesPerStream": 10,
   "streams": {
@@ -59502,7 +59502,7 @@
             "error": "no attestation"
           },
           "packageVersions": null,
-          "checkedAt": "2026-09-23T11:46:18.775Z"
+          "checkedAt": "2026-09-23T12:03:03.420Z"
         }
       }
     },
@@ -59567,7 +59567,7 @@
             "error": "no attestation"
           },
           "packageVersions": null,
-          "checkedAt": "2026-09-23T11:46:22.319Z"
+          "checkedAt": "2026-09-23T12:03:06.271Z"
         }
       }
     },
@@ -79764,7 +79764,7 @@
             "error": "no attestation"
           },
           "packageVersions": null,
-          "checkedAt": "2026-09-23T11:47:02.657Z"
+          "checkedAt": "2026-09-23T12:03:09.032Z"
         }
       }
     },
@@ -79789,7 +79789,7 @@
             "error": "no attestation"
           },
           "packageVersions": null,
-          "checkedAt": "2026-09-23T11:47:05.582Z"
+          "checkedAt": "2026-09-23T12:03:11.855Z"
         }
       }
     },
@@ -79821,7 +79821,7 @@
             "systemd": "261.3",
             "bootc": "1.16.13",
             "fedora": null,
-            "pipewire": null,
+            "pipewire": "1.6.8",
             "flatpak": null,
             "nvidia": null,
             "allPackages": {
@@ -82286,7 +82286,7 @@
               "dialoguer": "0.12.0"
             }
           },
-          "checkedAt": "2026-09-23T11:47:09.065Z"
+          "checkedAt": "2026-09-23T12:03:15.132Z"
         }
       }
     },
@@ -82318,7 +82318,7 @@
             "systemd": "261.3",
             "bootc": "1.16.13",
             "fedora": null,
-            "pipewire": null,
+            "pipewire": "1.6.8",
             "flatpak": null,
             "nvidia": null,
             "allPackages": {
@@ -84783,7 +84783,7 @@
               "dialoguer": "0.12.0"
             }
           },
-          "checkedAt": "2026-09-23T11:47:12.501Z"
+          "checkedAt": "2026-09-23T12:03:18.470Z"
         }
       }
     },
@@ -84815,7 +84815,7 @@
             "systemd": "261.3",
             "bootc": "1.16.13",
             "fedora": null,
-            "pipewire": null,
+            "pipewire": "1.6.8",
             "flatpak": null,
             "nvidia": "615.71.09",
             "allPackages": {
@@ -87283,7 +87283,7 @@
               "dialoguer": "0.12.0"
             }
           },
-          "checkedAt": "2026-09-23T11:47:15.796Z"
+          "checkedAt": "2026-09-23T12:03:21.896Z"
         }
       }
     },
@@ -87315,7 +87315,7 @@
             "systemd": "261.3",
             "bootc": "1.16.13",
             "fedora": null,
-            "pipewire": null,
+            "pipewire": "1.6.8",
             "flatpak": null,
             "nvidia": "615.71.09",
             "allPackages": {
@@ -89783,7 +89783,7 @@
               "dialoguer": "0.12.0"
             }
           },
-          "checkedAt": "2026-09-23T11:47:19.125Z"
+          "checkedAt": "2026-09-23T12:03:25.501Z"
         }
       }
     }

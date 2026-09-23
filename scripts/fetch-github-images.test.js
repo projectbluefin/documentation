@@ -49,7 +49,11 @@ test("Classic catalog points at the published image and key-based signer", () =>
     security.verifyCommand,
     /cosign verify --key .*ublue-os\/bluefin.* ghcr\.io\/ublue-os\/bluefin:stable/,
   );
-  assert.equal(security.attestCommand, null);
+  assert.match(
+    security.attestCommand,
+    /cosign verify-attestation --type https:\/\/slsa\.dev\/provenance\/v1 .* ghcr\.io\/ublue-os\/bluefin:stable/,
+  );
+  assert.equal(security.hasAttestation, true);
 });
 
 test("Classic exposes only published stable, daily and latest channel tags", () => {
