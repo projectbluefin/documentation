@@ -84,6 +84,15 @@ the verified fallback list during discovery failures.
 
 ### Contributor leaderboard and freshness rules
 
+- **Ranked by Hive tasks, not commits:** On `/leaderboards`, all panels
+  (`ContributorLeaderboard`, `ContributorWall`, `HiveTaskLeaderboard`) rank
+  contributors by all-time Hive tasks completed via `hiveHistory.hiveContributorTiers[login].tasks`.
+  Commits are not used for ranking. Period tabs (season/month/week) and commit
+  sparklines are omitted because Hive tasks represent all-time completed work.
+- **Hosted Hive API source:** Human trust tiers and task completions are snapshotted
+  at build/cache time from the hosted Hive instance's `/api/leaderboard` endpoint
+  (`leaderboard[]`). Autonomous agents (`trust_tier: "agent"`) and bots are excluded.
+  The central registry leaderboard is agents-only and is not used for human rankings.
 - **Resilient refresh prevents corrupted partial state:** Network fetches for
   all-time contributors and weekly stats validate every repository response. If
   all repositories fail, prior data is preserved, timestamps are not bumped, and
@@ -92,21 +101,30 @@ the verified fallback list during discovery failures.
   in the Hive registry and must be excluded from attributed contributor cards.
   System accounts like `web-flow` also require exclusion. A GitHub login or
   profile bio does not establish who produced a commit.
-- **New means new within tracked repos:** A contributor qualifies when
-  `s.total === s.last3Months` in one GitHub stats payload: all their recorded
-  commits to currently tracked repos fall within the last 13 weeks. This does
-  not prove their first contribution to every historical Bluefin repo. When
-  `weeklyStatsError` is set, show only accounts also corroborated by the
-  all-time contributors map (`allTimeMap[login] === s.last3Months`); a busy repo
-  must not turn a veteran into a false newcomer.
 - **Graceful partial handling for computing endpoints:** When a busy repository
   returns 202 while GitHub computes stats, available repositories are still folded
   in, and an explicit notice indicates in-flight status without freezing all data.
 - **Unavailability is visible:** Neither the contributor table nor the task grid
   collapses silently when filtered or quiet. Render an explicit notice when zero
-  human entries remain.
+  human entries remain. When `hiveContributorTiers` is empty (such as on a fresh
+  checkout or prior to `update-hive-cache.yml`'s initial post-merge run),
+  panels render an explicit "Hive task data unavailable" notice (incorporating
+  `milestonesError` if present) rather than displaying misleading zeros or empty tables.
 - **Publishing cadence matches cache TTL:** `pages.yml` publishes on a 6-hour
   schedule (`0 */6 * * *`) aligned with the data refresh horizon.
+- **Recent Milestones ledger of teamwork:** The Recent Milestones leaderboard celebrates
+  collaborative milestones alongside individual standings:
+  - Tracks contributors levelling up trust tiers (Contributor, Trusted, Merger, Advisor),
+    crossing task landmarks (1, 10, 25, 50, 100, 250, 500 tasks shipped), and reaching
+    project breadth thresholds (2, 3, 5, 7, 10 distinct repos) in the GNOME release cycle.
+  - Hive tier promotions and landmark thresholds mirror `hivecommons/hive`
+    `src/pkg/dashboard/me_profile.go` (`taskShippedMilestones`, `tierRankValue`).
+  - Hive milestone events are diffed between runs and stored in `hive-history.json`
+    via `update-hive-cache.yml` (labeled "detected <date>").
+  - Season breadth unlocks are recomputed fresh per release into
+    `history.season.breadthUnlocks` (dated by the commit landed time) to avoid
+    cache pollution.
+  - A baseline run without prior diff state displays "Milestone ledger accumulating".
 
 ### GNOME release seasons on /leaderboards
 
@@ -128,13 +146,6 @@ the verified fallback list during discovery failures.
   not zero. The tracked `static/data/hive-history.json` is only a seed; inspect
   `lastContributorFetch` and `season.updatedAt` in the published JSON when
   auditing freshness.
-- Standings and comparison bars must use the selected period's commits, and
-  bars must share one domain with numeric values. The weekly season chart uses
-  the exact season-week series with Sunday UTC boundaries. Feed every ECharts
-  series through `gapSafe()` so missing samples stay gaps; use the existing
-  themed `EChart` (category x-axis, value y-axis, zero baseline) with a
-  screen-reader table. Never put CSS `var()` values inside canvas options.
-  Hive tasks are all-time registry completions, never season commits.
 - Use the actual light/dark Bluefin wordmark assets for the page heading: only
   the **f** has the brand-blue accent. On narrow layouts, keep “Leaderboards”
   horizontally aligned with the mark. Broken hosted contribution tiles do not

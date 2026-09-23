@@ -2112,7 +2112,8 @@
 }
 
 .leaderboards .lbNewcomer,
-.leaderboards .hiveTaskCard {
+.leaderboards .hiveTaskCard,
+.leaderboards .milestoneCard {
   background: var(--ifm-card-background-color);
   border-color: var(--ifm-color-emphasis-200);
   border-radius: var(--ifm-global-radius);
@@ -2124,7 +2125,8 @@
 }
 
 .leaderboards .lbNewcomer:hover,
-.leaderboards .hiveTaskCard:hover {
+.leaderboards .hiveTaskCard:hover,
+.leaderboards .milestoneCard:hover {
   background-color: var(--ifm-color-emphasis-100);
   border-color: var(--ifm-color-primary);
   color: var(--ifm-font-color-base);
@@ -2397,7 +2399,7 @@
 .leaderboards .lbHeader,
 .leaderboards .lbRow {
   grid-template-columns:
-    2.5rem minmax(10rem, 2fr) 6rem 8rem 7rem minmax(8rem, 1fr)
+    2.5rem minmax(10rem, 2fr) 6rem 8rem minmax(8rem, 1fr)
     minmax(7rem, 1fr);
   gap: 0.7rem;
 }
@@ -2441,7 +2443,7 @@
   }
   .leaderboards .lbHeader,
   .leaderboards .lbRow {
-    grid-template-columns: 2.5rem minmax(9rem, 2fr) 5rem 7rem 6rem;
+    grid-template-columns: 2.5rem minmax(9rem, 2fr) 5rem 7rem;
   }
   .leaderboards .lbColRepos,
   .leaderboards .lbColBadges {
@@ -2558,6 +2560,99 @@
   color: var(--fx-text-muted);
   font-family: var(--ifm-font-family-monospace);
   font-size: 0.7rem;
+}
+
+.milestonesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 0.85rem;
+  margin-top: 1rem;
+}
+
+.milestoneCard {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  padding: 0.9rem 1rem;
+  background: var(--fx-surface);
+  border: 1px solid var(--fx-border);
+  border-radius: 8px;
+  color: var(--fx-text);
+  text-decoration: none;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease;
+}
+
+.milestoneCard:hover {
+  border-color: var(--fx-accent);
+  background: var(--fx-surface-2);
+  text-decoration: none;
+  color: var(--fx-text);
+}
+
+.milestoneAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: 1px solid var(--fx-surface-3);
+}
+
+.milestoneContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.milestoneTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.milestoneUser {
+  font-weight: 700;
+  color: var(--fx-accent);
+  font-size: 0.95rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.milestoneBadge {
+  font-size: 0.65rem;
+  padding: 0.1rem 0.45rem;
+  border: 1px solid;
+  border-radius: 20px;
+  font-family: var(--ifm-font-family-monospace);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.milestoneTitle {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--fx-text);
+  line-height: 1.3;
+}
+
+.milestoneDetail {
+  font-size: 0.78rem;
+  color: var(--fx-text-muted);
+  line-height: 1.35;
+}
+
+.milestoneDate {
+  font-size: 0.72rem;
+  color: var(--fx-text-faint);
+  font-family: var(--ifm-font-family-monospace);
+  margin-top: 0.2rem;
 }
 
 .lbNewcomers {
@@ -2682,7 +2777,7 @@
 
 .lbHeader {
   display: grid;
-  grid-template-columns: 2rem 1fr 5rem 7rem 6rem 9rem 1fr;
+  grid-template-columns: 2rem 1fr 5rem 7rem 9rem 1fr;
   gap: 0.5rem;
   align-items: center;
   padding: 0.3rem 0.5rem;
@@ -2696,7 +2791,7 @@
 
 .lbRow {
   display: grid;
-  grid-template-columns: 2rem 1fr 5rem 7rem 6rem 9rem 1fr;
+  grid-template-columns: 2rem 1fr 5rem 7rem 9rem 1fr;
   gap: 0.5rem;
   align-items: center;
   padding: 0.4rem 0.5rem;

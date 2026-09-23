@@ -54,6 +54,11 @@ const {
   collectSeason,
   fetchSeasonCommits,
 } = require("./lib/gnome-season");
+const {
+  diffMilestones,
+  extractSeasonProjectUnlocks,
+  mergeMilestonesLedger,
+} = require("./lib/recent-milestones");
 
 // Snapshot data comes from the hosted Knuckle /api/status endpoint.
 // The old raw.githubusercontent.com HTML snapshot (bluefin/index.html) is no longer published.
@@ -485,6 +490,9 @@ function loadHistory(file = OUTPUT_FILE) {
     lastWeeklyStatsFetch: null,
     contributorError: null,
     weeklyStatsError: null,
+    milestonesError: null,
+    hiveContributorTiers: {},
+    milestones: [],
   };
 }
 
@@ -498,6 +506,8 @@ async function main() {
   if (!history.contributorStats) history.contributorStats = {};
   if (!Array.isArray(history.contributorWeekStarts))
     history.contributorWeekStarts = [];
+  if (!history.hiveContributorTiers) history.hiveContributorTiers = {};
+  if (!Array.isArray(history.milestones)) history.milestones = [];
   const trackedRepos = await fetchTrackedProjectRepos();
 
   // ── Fetch hive snapshot ──────────────────────────────────────────────────
@@ -531,6 +541,55 @@ async function main() {
     } catch (err) {
       console.warn(`[hive-history] Snapshot fetch failed: ${err.message}`);
     }
+  }
+
+  // ── Fetch hosted Hive leaderboard for trust tier and task milestones ──────
+  try {
+    const lbUrl = `${HOSTED_INSTANCE_URL}/api/leaderboard`;
+    console.log(`[hive-history] Fetching ${lbUrl}...`);
+    const res = await fetch(lbUrl, { signal: AbortSignal.timeout(15000) });
+    if (res.ok) {
+      const data = await res.json();
+      const rows = Array.isArray(data.leaderboard) ? data.leaderboard : [];
+      if (rows.length > 0) {
+        const nextTiers = {};
+        for (const row of rows) {
+          if (row && row.github_username && row.trust_tier !== "agent") {
+            nextTiers[row.github_username] = {
+              tier: row.trust_tier || "newcomer",
+              tasks: Number(row.tasks_completed) || 0,
+            };
+          }
+        }
+        const detectedAt = new Date().toISOString();
+        const diffEvents = diffMilestones(
+          history.hiveContributorTiers,
+          nextTiers,
+          detectedAt,
+        );
+        if (diffEvents.length > 0) {
+          console.log(
+            `[hive-history] Detected ${diffEvents.length} new Hive milestone(s)`,
+          );
+          history.milestones = mergeMilestonesLedger(
+            history.milestones,
+            diffEvents,
+          );
+        }
+        history.hiveContributorTiers = nextTiers;
+      }
+      history.milestonesError = null;
+    } else {
+      history.milestonesError = `Hive leaderboard HTTP ${res.status}`;
+      console.warn(
+        `[hive-history] /api/leaderboard returned HTTP ${res.status}`,
+      );
+    }
+  } catch (err) {
+    history.milestonesError = `Hive leaderboard unavailable: ${err.message}`;
+    console.warn(
+      `[hive-history] Hive leaderboard fetch failed: ${err.message}`,
+    );
   }
 
   // ── Append history entry ─────────────────────────────────────────────────
@@ -670,6 +729,22 @@ async function main() {
       console.log(
         `[hive-history] GNOME ${season.version} ${season.name}: ${history.season.totalCommits} commits across ${trackedRepos.length} repos`,
       );
+      // Extract season project breadth level-ups (stored per-season, not in persistent ledger)
+      try {
+        const unlocks = extractSeasonProjectUnlocks(
+          season,
+          commits,
+          (login) => login.endsWith("[bot]") || BOT_LOGINS.has(login),
+        );
+        history.season.breadthUnlocks = unlocks;
+        console.log(
+          `[hive-history] Extracted ${unlocks.length} season breadth milestone(s)`,
+        );
+      } catch (err) {
+        console.warn(
+          `[hive-history] Failed to extract season project unlocks: ${err.message}`,
+        );
+      }
     }
     history.seasonError = null;
   } catch (err) {
