@@ -39,7 +39,7 @@ primary branding.
 1. **Asset Source**: Source wordmark SVGs from `projectbluefin/website` (`public/brands/`).
 2. **Transparent Background**: Strip any `<rect ... />` elements so SVGs overlay cleanly.
 3. **Variants**: Maintain both `bluefin-wordmark-dark.svg` (white lettering) and `bluefin-wordmark-light.svg` (black lettering).
-4. **Accent Color**: The "fin" ligature fill is `#4285f4`. Do not use `--wc-gold` or arbitrary blues.
+4. **Accent Color**: Only the wordmark's “f” is `#4285f4`; the other letters use the theme-appropriate light/dark variant. Do not use `--wc-gold` or arbitrary blues.
 5. **Navbar Setup**: Set `navbar.title: ""` and use `src` / `srcDark` so the wordmark renders without duplicate text.
 
 ### Social Preview Cards

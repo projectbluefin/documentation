@@ -2111,7 +2111,6 @@
   text-transform: none;
 }
 
-.leaderboards .contributionLink,
 .leaderboards .lbNewcomer,
 .leaderboards .hiveTaskCard {
   background: var(--ifm-card-background-color);
@@ -2124,7 +2123,6 @@
     border-color 0.1s ease;
 }
 
-.leaderboards .contributionLink:hover,
 .leaderboards .lbNewcomer:hover,
 .leaderboards .hiveTaskCard:hover {
   background-color: var(--ifm-color-emphasis-100);
@@ -2132,12 +2130,10 @@
   color: var(--ifm-font-color-base);
 }
 
-.leaderboards .contributionLinkTitle,
 .leaderboards .hiveTaskPlayer {
   color: var(--ifm-heading-color);
 }
 
-.leaderboards .contributionLinkPath,
 .leaderboards .hiveTaskCount,
 .leaderboards .lbNewcomerStat {
   color: var(--ifm-color-emphasis-700);
@@ -2242,18 +2238,257 @@
   background: var(--ifm-color-emphasis-200);
 }
 
-.contributionLinks {
-  margin-bottom: 1.25rem;
+/* Standalone leaderboard: editorial hierarchy, aligned numbers, one Bluefin accent. */
+.lbPage {
+  max-width: 1340px;
+  margin: 0 auto;
+  padding: clamp(1.5rem, 4vw, 3.5rem) clamp(1rem, 3vw, 2rem) 5rem;
 }
 
-.contributionLinksGrid,
+.lbHero {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: clamp(0.6rem, 2.5vw, 1.5rem);
+  padding-bottom: 1.4rem;
+  margin-bottom: 1.8rem;
+  border-bottom: 1px solid var(--fx-border);
+}
+
+.lbHeroWordmark img {
+  width: clamp(118px, 19vw, 190px);
+  height: auto;
+  display: block;
+}
+
+.lbHeroWordmark .lbWordmarkDark,
+:global(html[data-theme="dark"]) .lbWordmarkLight {
+  display: none;
+}
+
+:global(html[data-theme="dark"]) .lbWordmarkDark {
+  display: block;
+}
+
+.lbHero h1 {
+  margin: 0;
+  font-size: clamp(1.7rem, 4vw, 3.4rem);
+  font-weight: 750;
+  line-height: 1.12;
+  letter-spacing: -0.045em;
+  transform: translateY(-0.095em);
+}
+
+.leaderboards > .panel {
+  margin-bottom: 1.4rem;
+}
+
+.leaderboards .panel {
+  padding: clamp(1rem, 2.5vw, 2rem);
+}
+
+.leaderboards .panelTitle {
+  font-size: clamp(1.5rem, 2.4vw, 2.1rem);
+  font-weight: 720;
+  letter-spacing: -0.035em;
+  line-height: 1.2;
+}
+
+.leaderboards .panelMeta,
+.leaderboards .lbFallbackNote {
+  font-size: 0.96rem;
+  line-height: 1.55;
+}
+
+.lbMetrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+  padding: 1.25rem 0;
+  border-block: 1px solid var(--fx-border);
+}
+
+.lbMetrics > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.lbMetrics strong {
+  font-size: clamp(1.9rem, 3.2vw, 2.6rem);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.05em;
+  line-height: 1;
+}
+
+.lbMetrics span {
+  font-size: 0.9rem;
+  color: var(--fx-text-muted);
+}
+
+.lbCharts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 1.4rem 0 2rem;
+}
+
+.lbChartsSingle {
+  grid-template-columns: 1fr;
+}
+
+.lbCompare,
+.lbCharts > figure {
+  min-width: 0;
+  margin: 0;
+  padding: 1.1rem;
+  border: 1px solid var(--fx-border);
+  border-radius: var(--fx-radius-md);
+  background: var(--fx-surface-2);
+}
+
+.lbCompare h3 {
+  font-size: 1.15rem;
+  margin: 0 0 1rem;
+}
+
+.lbBarRow {
+  display: grid;
+  grid-template-columns: minmax(6rem, 1fr) minmax(4rem, 2fr) 3.5rem;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.45rem 0;
+  font-size: 0.98rem;
+}
+
+.lbBarRow > span:first-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lbBarRow strong {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.lbBarTrack {
+  height: 0.65rem;
+  overflow: hidden;
+  border-radius: 0.25rem;
+  background: var(--fx-surface-3);
+}
+
+.lbBarTrack > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--fx-accent);
+}
+
+.leaderboards .lbTab,
+.leaderboards .lbRow,
+.leaderboards .lbNewcomer,
+.leaderboards .hiveTaskCard {
+  font-size: 0.98rem;
+}
+
+.leaderboards .lbHeader,
+.leaderboards .lbRow {
+  grid-template-columns:
+    2.5rem minmax(10rem, 2fr) 6rem 8rem 7rem minmax(8rem, 1fr)
+    minmax(7rem, 1fr);
+  gap: 0.7rem;
+}
+
+.leaderboards .lbHeader {
+  font-size: 0.82rem;
+}
+
+.leaderboards .lbRow {
+  min-height: 3.7rem;
+}
+
+.leaderboards .lbLogin,
+.leaderboards .lbCommitCount,
+.leaderboards .lbSparkValue,
+.leaderboards .hiveTaskPlayer,
+.leaderboards .spotlightName {
+  font-size: 1rem;
+}
+
+.leaderboards .lbColHive,
+.leaderboards .lbRepoChip,
+.leaderboards .lbNewcomerStat,
+.leaderboards .hiveTaskCount,
+.leaderboards .communityStatLabel {
+  font-size: 0.87rem;
+}
+
+.leaderboards .communitySpotlight {
+  grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
+}
+
+.leaderboards .communityStats {
+  background: var(--fx-surface-2);
+  border-color: var(--fx-border);
+}
+
+@media (max-width: 1020px) {
+  .lbCharts {
+    grid-template-columns: 1fr;
+  }
+  .leaderboards .lbHeader,
+  .leaderboards .lbRow {
+    grid-template-columns: 2.5rem minmax(9rem, 2fr) 5rem 7rem 6rem;
+  }
+  .leaderboards .lbColRepos,
+  .leaderboards .lbColBadges {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .lbHero h1 {
+    transform: translateY(-0.03em);
+  }
+  .lbMetrics {
+    gap: 0.5rem;
+  }
+  .lbBarRow {
+    grid-template-columns: minmax(5rem, 1fr) minmax(3rem, 1.5fr) 3rem;
+    gap: 0.5rem;
+  }
+  .leaderboards .lbTabs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    white-space: normal;
+  }
+  .leaderboards .lbTab {
+    min-height: 2.9rem;
+    padding-inline: 0.4rem;
+  }
+  .leaderboards .lbHeader,
+  .leaderboards .lbRow {
+    grid-template-columns: 2rem minmax(6rem, 1fr) 5rem;
+    padding-inline: 0.5rem;
+  }
+  .leaderboards .lbColCommits,
+  .leaderboards .lbColHive {
+    display: none;
+  }
+  .leaderboards .lbNewcomersGrid {
+    grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+  }
+}
+
 .lbNewcomersGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 0.75rem;
 }
 
-.contributionLink,
 .lbNewcomer {
   display: flex;
   align-items: center;
@@ -2266,29 +2501,10 @@
   text-decoration: none;
 }
 
-.contributionLink {
-  flex-direction: column;
-  align-items: flex-start;
-  min-height: 5rem;
-}
-
-.contributionLink:hover,
 .lbNewcomer:hover {
   border-color: var(--fx-accent);
   color: var(--fx-text);
   text-decoration: none;
-}
-
-.contributionLinkTitle {
-  font-size: 1rem;
-  font-weight: var(--fx-weight-bold);
-}
-
-.contributionLinkPath {
-  margin-top: auto;
-  color: var(--fx-text-muted);
-  font-family: var(--ifm-font-family-monospace);
-  font-size: 0.7rem;
 }
 
 .hiveTaskGrid {

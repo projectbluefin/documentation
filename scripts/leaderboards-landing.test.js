@@ -24,7 +24,7 @@ function assertBefore(haystack, before, after, message) {
   assert.ok(beforeIndex < afterIndex, message);
 }
 
-test("leaderboards view foregrounds hosted Hive contribution paths and newcomers", () => {
+test("leaderboards place standings before the contributor wall", () => {
   const leaderboards = source.slice(
     source.indexOf("export function LeaderboardsSection"),
     source.indexOf("export function CommunitySection"),
@@ -32,28 +32,11 @@ test("leaderboards view foregrounds hosted Hive contribution paths and newcomers
   const leaderboard = source.slice(
     source.indexOf("function ContributorLeaderboard"),
   );
-  const contributionLinks = source.slice(
-    source.indexOf("function ContributionLinks"),
-    source.indexOf("function VelocityPanel"),
-  );
-
-  assertBefore(
-    leaderboards,
-    "<ContributionLinks",
-    "<HiveTaskLeaderboard",
-    "hosted Hive contribution paths must lead the standalone view",
-  );
   assertBefore(
     leaderboards,
     "<ContributorLeaderboard",
     "<ContributorWall",
     "the active leaderboard must precede player cards",
-  );
-  assertBefore(
-    leaderboard,
-    "New contributors",
-    "All Time",
-    "new contributors must appear before the all-time leaderboard control",
   );
   assertBefore(
     leaderboard,
@@ -74,8 +57,8 @@ test("leaderboards view foregrounds hosted Hive contribution paths and newcomers
     "ranks must be assigned after the active leaderboard is sorted",
   );
   assert.ok(
-    leaderboard.includes('React.useState<LeaderboardTab>("monthly")'),
-    "monthly activity must be the default leaderboard view",
+    leaderboard.includes('React.useState<LeaderboardTab>("season")'),
+    "current GNOME season must be the default leaderboard view",
   );
   assert.ok(
     leaderboard.includes("recentActivity: s?.last3Months ?? 0"),
@@ -87,29 +70,11 @@ test("leaderboards view foregrounds hosted Hive contribution paths and newcomers
     "newcomers must be compared against canonical activity windows",
   );
   assert.ok(
-    /const repoMap =\s*\n\s*activeTab === "alltime"/.test(leaderboard),
-    "all-time rankings must use the canonical per-repository contribution map",
+    /activeTab === "season"[\s\S]*?activeTab === "alltime"[\s\S]*?allTimeRepoMap/.test(
+      leaderboard,
+    ),
+    "seasonal and all-time rankings must keep distinct per-repository scopes",
   );
-
-  for (const route of [
-    "/contribute",
-    "/contribute/leaderboard",
-    "/contribute/operations",
-  ]) {
-    assert.ok(
-      source.includes(`\${HOSTED_INSTANCE_URL}${route}`),
-      `missing hosted Hive deep link for ${route}`,
-    );
-  }
-  for (const title of ["Contribute", "Operations", "Leaderboard"]) {
-    assert.match(
-      contributionLinks,
-      new RegExp(
-        `<span className=\\{styles\\.contributionLinkTitle\\}>\\s*${title}\\s*<`,
-      ),
-      `missing ${title} hosted Hive tile`,
-    );
-  }
 
   const hostedHive =
     "https://hosted-projectbluefin-knuckle-gjvq.hive.hivecommons.dev";
