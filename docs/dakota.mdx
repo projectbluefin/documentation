@@ -24,7 +24,7 @@ Each image is signed with [cosign](https://docs.sigstore.dev/cosign/system_confi
 
 ```bash
 cosign verify ghcr.io/projectbluefin/dakota:stable \
-  --certificate-identity-regexp="https://github.com/projectbluefin/dakota/.github/workflows/build.yml" \
+  --certificate-identity-regexp="https://github.com/projectbluefin/dakota/.github/workflows/publish.yml" \
   --certificate-oidc-issuer=https://token.actions.githubusercontent.com
 ```
 
@@ -34,8 +34,8 @@ Dakota uses the [freedesktop-sdk](https://gitlab.com/freedesktop-sdk/freedesktop
 
 | Tag        | Stream  | What it is                                                                |
 | ---------- | ------- | ------------------------------------------------------------------------- |
-| `:stable`  | Stable  | GNOME 50 — production. Mon/Wed/Fri automated promotion from `:testing`.   |
-| `:testing` | Dev     | GNOME 50 — daily builds from the `testing` branch. Boot-check gated.      |
+| `:stable`  | Stable  | GNOME 51 — production. Mon/Wed/Fri automated promotion from `:testing`.   |
+| `:testing` | Testing | GNOME 51 — daily builds from the `testing` branch. Boot-check gated.      |
 | `:next`    | Rolling | GNOME master — the bleeding edge. Tracks gnome-build-meta `master` daily. |
 | `:btw`     | Rolling | Alias for `:next`.                                                        |
 
@@ -75,7 +75,7 @@ No telemetry, no phone-home. Every report is reviewed by you before it leaves yo
 
 ## Current versions
 
-<DriverVersionsCatalog streamId="dakota-latest" />
+<DriverVersionsCatalog streamId="dakota-stable" />
 
 ## Known gaps
 

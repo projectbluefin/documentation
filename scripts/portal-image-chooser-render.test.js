@@ -317,7 +317,7 @@ test("image chooser renders download step with exact ISO and checksum URLs and d
   );
   assert.ok(
     html.includes(
-      "sudo bootc switch ghcr.io/projectbluefin/bluefin:stable --enforce-container-sigpolicy",
+      "sudo bootc switch ghcr.io/ublue-os/bluefin:stable --enforce-container-sigpolicy",
     ),
   );
   assert.match(

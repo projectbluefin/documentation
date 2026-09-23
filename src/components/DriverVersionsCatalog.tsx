@@ -36,6 +36,7 @@ interface DriverRow {
   title: string | null;
   releaseUrl: string | null;
   publishedAt: string | null;
+  imageRef?: string | null;
   versions: VersionSet;
 }
 
@@ -43,8 +44,9 @@ interface DriverStream {
   id: string;
   name: string;
   subtitle: string;
+  imageRef?: string | null;
   command: string;
-  source: "cache" | "live" | "unavailable";
+  source: "sbom" | "cache" | "live" | "unavailable";
   rowCount: number;
   latest: DriverRow | null;
   history: DriverRow[];
@@ -179,19 +181,6 @@ function UserspaceMarker({
       </span>
     </div>
   );
-}
-
-const STREAM_PACKAGES: Record<string, string> = {
-  "bluefin-stable": "bluefin",
-  "bluefin-lts": "bluefin-lts",
-  "dakota-latest": "dakota",
-  "utah-testing": "utah",
-};
-
-function buildRebaseCommand(stream: DriverStream, tag: string): string {
-  const safeTag = tag.replace(/[^a-zA-Z0-9_.-]/g, "");
-  const pkg = STREAM_PACKAGES[stream.id] ?? stream.id.replace(/-.*/, "");
-  return `sudo bootc switch --enforce-container-sigpolicy ghcr.io/projectbluefin/${pkg}:${safeTag}`;
 }
 
 function ReleaseNode({
@@ -402,16 +391,25 @@ function ReleaseNode({
           </div>
         </div>
 
-        <div className={styles.rebaseInline}>
-          <span className={styles.rebaseInlineLabel}>
-            Rebase to this release
-          </span>
-          <div className={styles.commandBlock}>
-            <CodeBlock language="bash">
-              {buildRebaseCommand(stream, row.tag)}
-            </CodeBlock>
+        {row.imageRef ||
+        (emphasize && row === stream.latest && stream.imageRef) ? (
+          <div className={styles.rebaseInline}>
+            <span className={styles.rebaseInlineLabel}>
+              {row.imageRef
+                ? "Rebase to this release"
+                : "Switch to current stream"}
+            </span>
+            <div className={styles.commandBlock}>
+              <CodeBlock language="bash">
+                {`sudo bootc switch --enforce-container-sigpolicy ${row.imageRef || stream.imageRef}`}
+              </CodeBlock>
+            </div>
           </div>
-        </div>
+        ) : (
+          <p className={styles.rebaseInline}>
+            No published image for this historical SBOM snapshot.
+          </p>
+        )}
       </div>
     </article>
   );
@@ -428,7 +426,7 @@ function hasValidVersions(row: DriverRow | null | undefined): boolean {
 }
 
 interface DriverVersionsCatalogProps {
-  streamId: "bluefin-stable" | "bluefin-lts" | "dakota-latest" | "utah-testing";
+  streamId: "bluefin-stable" | "bluefin-lts" | "dakota-stable" | "utah-testing";
   catalogOverride?: DriverCatalog;
   showRebootStep?: boolean;
 }
@@ -463,11 +461,11 @@ export default function DriverVersionsCatalog({
   const fallbackLabel =
     streamId === "bluefin-lts"
       ? "Bluefin LTS"
-      : streamId === "dakota-latest"
-        ? "Dakotaraptor"
+      : streamId === "dakota-stable"
+        ? "Dakota Stable"
         : streamId === "utah-testing"
-          ? "Utah"
-          : "Stable";
+          ? "Utah Testing"
+          : "Bluefin Classic";
 
   if (!stream) {
     return (
@@ -536,8 +534,9 @@ export default function DriverVersionsCatalog({
       <section key={stream.id} className={styles.streamSection}>
         <header className={styles.streamHeader}>
           <span className={styles.streamMeta}>
-            {stream.source} · {stream.rowCount} releases in {fallbackLabel} ·
-            updated {formatDate(activeCatalog.generatedAt)}
+            SBOM{stream.source !== "sbom" ? ` (${stream.source})` : ""} ·{" "}
+            {stream.rowCount} snapshots in {fallbackLabel} · updated{" "}
+            {formatDate(activeCatalog.generatedAt)}
           </span>
           {currentUserspace && (
             <span className={styles.fedoraPill}>{currentUserspace.label}</span>
@@ -660,8 +659,8 @@ export default function DriverVersionsCatalog({
             </Heading>
             <ol className={styles.rebaseList}>
               <li>
-                After running one of the per-release rebase commands above,
-                reboot to activate the deployment:
+                After running an available image switch command above, reboot to
+                activate the deployment:
                 <div className={styles.commandBlock}>
                   <CodeBlock language="bash">sudo systemctl reboot</CodeBlock>
                 </div>

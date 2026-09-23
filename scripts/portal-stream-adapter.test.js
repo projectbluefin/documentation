@@ -34,7 +34,7 @@ const root = path.join(__dirname, "..");
 const deterministicImages = {
   products: [
     {
-      id: "projectbluefin-bluefin",
+      id: "ublue-bluefin",
       streams: [
         {
           tag: "stable",
@@ -113,7 +113,7 @@ const deterministicDrivers = {
       },
     },
     {
-      id: "dakota-latest",
+      id: "dakota-stable",
       latest: {
         versions: {
           kernel: "7.0.7",
@@ -255,7 +255,7 @@ test("stream adapter determines availability independently and omits missing fie
   const partialImages = {
     products: [
       {
-        id: "projectbluefin-bluefin",
+        id: "ublue-bluefin",
         streams: [
           {
             tag: "stable",
@@ -295,7 +295,7 @@ test("stream adapter selects intended stream by tag/id regardless of stream arra
   const reorderedImages = {
     products: [
       {
-        id: "projectbluefin-bluefin",
+        id: "ublue-bluefin",
         streams: [
           {
             tag: "testing",
@@ -435,7 +435,7 @@ test("missing canonical stable tag makes stream unavailable even if driver versi
   const missingStableImages = {
     products: [
       {
-        id: "projectbluefin-bluefin",
+        id: "ublue-bluefin",
         streams: [
           {
             tag: "testing",
@@ -517,7 +517,7 @@ test("regression: exact tests remain stable when actual generated files contain 
   const driftedImages = {
     products: [
       {
-        id: "projectbluefin-bluefin",
+        id: "ublue-bluefin",
         streams: [
           {
             tag: "stable",

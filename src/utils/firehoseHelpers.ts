@@ -71,7 +71,7 @@ export function sbomKeyForRelease(
 ): { streamId: string; cacheKey: string } | null {
   const date = parseDateFromTag(tag);
   if (!date) return null;
-  if (stream === "lts") return { streamId: "bluefin-lts", cacheKey: `lts-${date}` };
+  if (stream === "lts") return { streamId: "bluefin-lts", cacheKey: `stable-${date}` };
   if (stream === "stable-daily")
     return { streamId: "bluefin-stable-daily", cacheKey: `stable-daily-${date}` };
   if (stream === "stable") return { streamId: "bluefin-stable", cacheKey: `stable-${date}` };

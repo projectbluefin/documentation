@@ -42,7 +42,7 @@ const IMAGE_CONFIGS = [
     id: "bluefin",
     name: "Bluefin",
     edition: "Flagship Workstation",
-    repo: "projectbluefin/bluefin",
+    repo: "ublue-os/bluefin",
     package: "bluefin",
     stream: "stable",
     sbomStreamId: "bluefin-stable-daily",
@@ -77,16 +77,8 @@ const IMAGE_CONFIGS = [
     repo: "projectbluefin/dakota",
     package: "dakota",
     stream: "stable",
-    sbomStreamId: "dakota-latest",
-    defaultTags: [
-      "latest.20260114",
-      "latest.20260115",
-      "latest-20260503",
-      "latest-20260608",
-      "latest-20260620",
-      "latest-20260621",
-      "stable",
-    ],
+    sbomStreamId: "dakota-stable",
+    defaultTags: ["stable"],
   },
   {
     id: "utah",
@@ -368,15 +360,24 @@ async function main() {
     const { id, name, edition, repo, stream, sbomStreamId, defaultTags } =
       config;
 
-    // Collect tags from config + SBOM cache
+    // Collect tags from config + SBOM cache.
+    // For streams that publish dated tags (e.g. Bluefin Classic, LTS), SBOM releases
+    // are actual registry tags (stable-YYYYMMDD, lts.YYYYMMDD). For streams whose releases
+    // use floating tags (Dakota, Utah), use the entry's actual image tag or floating stream.
     const tagsToInspect = [...defaultTags];
     if (sbomCache?.streams?.[sbomStreamId]?.releases) {
-      const sbomReleases = Object.keys(
-        sbomCache.streams[sbomStreamId].releases,
-      );
-      for (const t of sbomReleases) {
-        if (!tagsToInspect.includes(t)) {
-          tagsToInspect.push(t);
+      const releases = sbomCache.streams[sbomStreamId].releases;
+      for (const [key, entry] of Object.entries(releases)) {
+        const candidateTag = entry?.tag || key;
+        // Skip synthetic floating cache keys like "stable-20260922" or "testing-20260922"
+        // that are not actual published tags on the container registry
+        if (entry?.imageRef && entry.imageRef.includes(":")) {
+          const refTag = entry.imageRef.split(":").pop();
+          if (refTag && !tagsToInspect.includes(refTag)) {
+            tagsToInspect.push(refTag);
+          }
+        } else if (!tagsToInspect.includes(candidateTag)) {
+          tagsToInspect.push(candidateTag);
         }
       }
     }

@@ -10,7 +10,7 @@ import DriverVersionsCatalog from "@site/src/components/DriverVersionsCatalog";
 **Utah** (_Utahraptor ostrommaysi_) is Bluefin built on [Fedora Hummingbird](https://fedoramagazine.org/fedora-hummingbird-linux-taking-the-hummingbird-model-to-the-full-os/), which provides a hardened, fast-moving bootable base without a desktop. Utah adds the desktop layer: Bluefin's package contract and the GNOME 51 desktop stack built from verified upstream sources via `projectbluefin/utah-packages`.
 
 :::info[Pre-alpha]
-Utah is an experimental pre-alpha build in active development. No public ISOs are published yet; it is designed for developers and contributors testing Hummingbird and GNOME 51 integration. Track progress and file issues at [projectbluefin/utah](https://github.com/projectbluefin/utah/issues).
+Utah is an experimental pre-alpha build in active development. Its `:testing` container image is published on GHCR, but no public ISO is available. Track progress and file issues at [projectbluefin/utah](https://github.com/projectbluefin/utah/issues).
 :::
 
 ## Architecture
@@ -26,14 +26,11 @@ Utah is composed across two coordinated repositories:
 
 Utah defines four flavors matching Bluefin's standard targets: `utah`, `utah-nvidia`, `utah-gaming`, and `utah-nvidia-gaming`.
 
-|        Tag | Stream | Description                                              |
-| ---------: | -----: | -------------------------------------------------------- |
-| `:testing` |    Dev | Daily development build from the `testing` branch.       |
-|  `:stable` | Stable | Promoted from `:testing` following automated validation. |
+| Tag        | Stream  | Availability                                |
+| ---------- | ------- | ------------------------------------------- |
+| `:testing` | Testing | Published at `ghcr.io/projectbluefin/utah`. |
 
-:::note[Awaiting initial release]
-Public container images and `bootc switch` commands are not yet available. Utah is currently awaiting its initial testing image release on GHCR. Track progress at [projectbluefin/utah](https://github.com/projectbluefin/utah).
-:::
+There is no published `:stable` stream or dated Utah release tag. Driver versions below appear only when a matching testing-image SBOM is available.
 
 ## Features and Stack
 

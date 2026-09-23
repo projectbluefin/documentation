@@ -197,7 +197,7 @@ test("section picker supports injectable imagesData and driverVersionsData props
   const customImages = {
     products: [
       {
-        id: "projectbluefin-bluefin",
+        id: "ublue-bluefin",
         streams: [
           {
             tag: "stable",

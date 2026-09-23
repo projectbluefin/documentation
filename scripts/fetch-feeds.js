@@ -11,16 +11,69 @@ const sanitizeHtml = require("sanitize-html");
 // and stored XSS on the docs domain.
 const SANITIZE_OPTIONS = {
   allowedTags: [
-    "a", "abbr", "b", "blockquote", "br", "code", "dd", "del", "details",
-    "div", "dl", "dt", "em", "h1", "h2", "h3", "h4", "h5", "h6", "hr",
-    "i", "img", "ins", "kbd", "li", "ol", "p", "pre", "q", "s", "samp",
-    "span", "strong", "sub", "summary", "sup", "table", "tbody", "td",
-    "tfoot", "th", "thead", "tr", "tt", "ul", "var",
+    "a",
+    "abbr",
+    "b",
+    "blockquote",
+    "br",
+    "code",
+    "dd",
+    "del",
+    "details",
+    "div",
+    "dl",
+    "dt",
+    "em",
+    "h1",
+    "h2",
+    "h3",
+    "h4",
+    "h5",
+    "h6",
+    "hr",
+    "i",
+    "img",
+    "ins",
+    "kbd",
+    "li",
+    "ol",
+    "p",
+    "pre",
+    "q",
+    "s",
+    "samp",
+    "span",
+    "strong",
+    "sub",
+    "summary",
+    "sup",
+    "table",
+    "tbody",
+    "td",
+    "tfoot",
+    "th",
+    "thead",
+    "tr",
+    "tt",
+    "ul",
+    "var",
   ],
   allowedAttributes: {
     "*": [
-      "href", "target", "rel", "src", "alt", "title", "class", "id",
-      "width", "height", "align", "colspan", "rowspan", "scope",
+      "href",
+      "target",
+      "rel",
+      "src",
+      "alt",
+      "title",
+      "class",
+      "id",
+      "width",
+      "height",
+      "align",
+      "colspan",
+      "rowspan",
+      "scope",
     ],
   },
   // sanitize-html defaults already restrict href/src to safe protocols
@@ -73,26 +126,17 @@ function mapApiRelease(release) {
 function parseAtomEntry(entry) {
   let link = "#";
   if (entry.link && Array.isArray(entry.link)) {
-    const htmlLink = entry.link.find(
-      (l) => l.$ && l.$.type === "text/html",
-    );
+    const htmlLink = entry.link.find((l) => l.$ && l.$.type === "text/html");
     link = htmlLink ? htmlLink.$.href : entry.link[0].$.href;
   }
 
   let content = "";
   let contentSnippet = "";
-  if (
-    entry.content &&
-    Array.isArray(entry.content) &&
-    entry.content[0]
-  ) {
+  if (entry.content && Array.isArray(entry.content) && entry.content[0]) {
     if (typeof entry.content[0] === "string") {
       content = entry.content[0];
       contentSnippet = content.substring(0, 200) + "...";
-    } else if (
-      entry.content[0]._ &&
-      typeof entry.content[0]._ === "string"
-    ) {
+    } else if (entry.content[0]._ && typeof entry.content[0]._ === "string") {
       content = entry.content[0]._;
       contentSnippet = content.substring(0, 200) + "...";
     }
@@ -110,7 +154,9 @@ function parseAtomEntry(entry) {
 async function fetchReleasesFromApi(owner, repo) {
   const token = githubToken();
   if (!token) {
-    console.warn(`No GITHUB_TOKEN — falling back to Atom feed for ${owner}/${repo}`);
+    console.warn(
+      `No GITHUB_TOKEN — falling back to Atom feed for ${owner}/${repo}`,
+    );
     return null;
   }
 
@@ -128,7 +174,9 @@ async function fetchReleasesFromApi(owner, repo) {
     const response = await fetch(nextUrl, { headers });
 
     if (!response.ok) {
-      console.warn(`GitHub API returned ${response.status} for ${owner}/${repo} — falling back to Atom`);
+      console.warn(
+        `GitHub API returned ${response.status} for ${owner}/${repo} — falling back to Atom`,
+      );
       return null;
     }
 
@@ -138,13 +186,13 @@ async function fetchReleasesFromApi(owner, repo) {
   }
 
   if (allReleases.length >= MAX_RELEASES) {
-    console.warn(`${owner}/${repo}: reached ${MAX_RELEASES}-release cap — some older releases may be omitted`);
+    console.warn(
+      `${owner}/${repo}: reached ${MAX_RELEASES}-release cap — some older releases may be omitted`,
+    );
   }
 
   // Map GitHub API response to the same OsFeedItem shape used by the parsers
-  return allReleases
-    .filter((r) => !r.draft)
-    .map((r) => mapApiRelease(r));
+  return allReleases.filter((r) => !r.draft).map((r) => mapApiRelease(r));
 }
 
 /**
@@ -185,7 +233,9 @@ async function fetchAndSaveFeed(owner, repo, filename) {
     const stat = fs.statSync(jsonPath);
     const ageMs = Date.now() - stat.mtimeMs;
     if (ageMs < 24 * 60 * 60 * 1000 && !process.argv.includes("--force")) {
-      console.log(`Cache hit: ${filename} (${Math.round(ageMs / 3600000)}h old) — skipping fetch`);
+      console.log(
+        `Cache hit: ${filename} (${Math.round(ageMs / 3600000)}h old) — skipping fetch`,
+      );
       return;
     }
   }
@@ -221,8 +271,12 @@ async function fetchAndSaveFeed(owner, repo, filename) {
 }
 
 async function main() {
-  await fetchAndSaveFeed("projectbluefin", "bluefin", "bluefin-releases.json");
-  await fetchAndSaveFeed("projectbluefin", "bluefin-lts", "bluefin-lts-releases.json");
+  await fetchAndSaveFeed("ublue-os", "bluefin", "bluefin-releases.json");
+  await fetchAndSaveFeed(
+    "projectbluefin",
+    "bluefin-lts",
+    "bluefin-lts-releases.json",
+  );
 }
 
 if (require.main === module) {

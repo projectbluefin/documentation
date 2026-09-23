@@ -49,6 +49,7 @@ interface StreamInfo {
     mesa?: string | null;
     podman?: string | null;
   } | null;
+  nvidiaVersions?: StreamInfo["versions"];
 }
 
 interface Product {
@@ -126,19 +127,19 @@ export function StreamVersionPills({
   return (
     <div className={styles.streamVersionPills}>
       <span className={styles.versionPill}>
-        <strong>GNOME</strong> {versions?.gnome || "Unknown"}
+        <strong>GNOME</strong> {versions?.gnome || "Unavailable"}
       </span>
       <span className={styles.versionPill}>
-        <strong>Linux</strong> {versions?.kernel || "Unknown"}
+        <strong>Linux</strong> {versions?.kernel || "Unavailable"}
       </span>
-      {(showNvidia || versions?.nvidia) && (
+      {showNvidia && (
         <span className={styles.versionPill}>
           <img
             src="/img/gpu/nvidia.svg"
             alt="NVIDIA"
             className={styles.pillLogo}
           />
-          <strong>NVIDIA</strong> {versions?.nvidia || "Unknown"}
+          <strong>NVIDIA</strong> {versions?.nvidia || "Unavailable"}
         </span>
       )}
       {versions?.flatpak && (
@@ -177,7 +178,7 @@ function StreamList({
         <li key={`${entry.tag}-${entry.command}`}>
           <span className={styles.streamTag}>{entry.label}</span>
           <StreamVersionPills
-            versions={entry.versions}
+            versions={preferNvidia ? entry.nvidiaVersions : entry.versions}
             showNvidia={preferNvidia}
           />
           {preferNvidia ? (
@@ -295,8 +296,7 @@ export default function ImagesCatalogComponent({
   }
 
   const bluefinProducts = products.filter(
-    (product) =>
-      product.id === "projectbluefin-bluefin" || product.name === "Bluefin",
+    (product) => product.id === "ublue-bluefin" || product.name === "Bluefin",
   );
   const ltsProducts = products.filter(
     (product) =>
@@ -344,6 +344,9 @@ export default function ImagesCatalogComponent({
         const hasNvidiaVariant =
           product.streams.some((entry) => Boolean(entry.nvidiaCommand)) ||
           product.testingStreams.some((entry) => Boolean(entry.nvidiaCommand));
+        const hasPublishedImage =
+          product.streams.some((entry) => Boolean(entry.command)) ||
+          product.testingStreams.some((entry) => Boolean(entry.command));
         const nvidiaEnabled = Boolean(nvidiaModeByProduct[product.id]);
 
         return (
@@ -498,15 +501,15 @@ export default function ImagesCatalogComponent({
                         <>
                           <p className={styles.tabCopy}>
                             Use this command to switch to the{" "}
-                            <strong>{entry.label.toLowerCase()}</strong> channel for
-                            this image. It is the quickest way to stay on that
-                            release stream.
+                            <strong>{entry.label.toLowerCase()}</strong> channel
+                            for this image. It is the quickest way to stay on
+                            that release stream.
                           </p>
                           {nvidiaEnabled ? (
                             entry.nvidiaCommand ? (
                               <>
                                 <StreamVersionPills
-                                  versions={entry.versions}
+                                  versions={entry.nvidiaVersions}
                                   showNvidia
                                 />
                                 <CodeBlock language="bash">
@@ -524,13 +527,17 @@ export default function ImagesCatalogComponent({
                                 versions={entry.versions}
                                 showNvidia={false}
                               />
-                              <CodeBlock language="bash">{entry.command}</CodeBlock>
+                              <CodeBlock language="bash">
+                                {entry.command}
+                              </CodeBlock>
                             </>
                           )}
                         </>
                       ) : (
                         <p className={styles.emptyText}>
-                          Awaiting initial release: <code>{entry.tag}</code> image is not yet published. Switch commands will appear once available.
+                          Awaiting initial release: <code>{entry.tag}</code>{" "}
+                          image is not yet published. Switch commands will
+                          appear once available.
                         </p>
                       )}
                     </TabItem>
@@ -592,12 +599,25 @@ export default function ImagesCatalogComponent({
                     .
                   </p>
                   {product.security?.verifyCommand ? (
-                    <CodeBlock language="bash">
-                      {product.security.verifyCommand}
-                    </CodeBlock>
+                    <>
+                      <CodeBlock language="bash">
+                        {product.security.verifyCommand}
+                      </CodeBlock>
+                      {product.security.cosignKeyUrl && (
+                        <p className={styles.tabCopy}>
+                          Note: key-based signature verification of legacy{" "}
+                          <code>.sig</code> tags requires cosign v2.x (cosign
+                          v3+ defaults to OCI 1.1 referrers). Use the{" "}
+                          <strong>Verify Provenance</strong> tab for keyless
+                          OIDC verification on cosign v3+.
+                        </p>
+                      )}
+                    </>
                   ) : (
                     <p className={styles.emptyText}>
-                      Awaiting initial release: verification commands will be available once the image is published.
+                      {hasPublishedImage
+                        ? "Verification command unavailable."
+                        : "Awaiting initial release: verification commands will be available once the image is published."}
                     </p>
                   )}
                 </TabItem>
@@ -620,7 +640,9 @@ export default function ImagesCatalogComponent({
                     </CodeBlock>
                   ) : (
                     <p className={styles.emptyText}>
-                      Awaiting initial release: attestation verification will be available once the image is published.
+                      {hasPublishedImage
+                        ? "Attestation verification command unavailable."
+                        : "Awaiting initial release: attestation verification will be available once the image is published."}
                     </p>
                   )}
                   {product.security?.attestCommand &&
@@ -633,9 +655,10 @@ export default function ImagesCatalogComponent({
                 </TabItem>
                 <TabItem value="generate-sbom">
                   <p className={styles.tabCopy}>
-                    SBOMs are published alongside each image as OCI referrers.
-                    Use oras to inspect attached artifacts and pull the SBOM for
-                    audits, policy checks, and vulnerability triage.{" "}
+                    When present, SBOMs are published alongside images as OCI
+                    referrers. Use oras to inspect attached artifacts and pull
+                    the SBOM for audits, policy checks, and vulnerability
+                    triage.{" "}
                     <Link
                       to="https://oras.land/docs/"
                       target="_blank"
@@ -651,7 +674,9 @@ export default function ImagesCatalogComponent({
                     </CodeBlock>
                   ) : (
                     <p className={styles.emptyText}>
-                      Awaiting initial release: SBOM inspection will be available once the image is published.
+                      {hasPublishedImage
+                        ? "SBOM inspection command unavailable."
+                        : "Awaiting initial release: SBOM inspection will be available once the image is published."}
                     </p>
                   )}
                 </TabItem>
@@ -665,11 +690,10 @@ export default function ImagesCatalogComponent({
     <div className={styles.imagesPage}>
       <section id="bluefin-stable" className={styles.sectionGroup}>
         <Heading as="h2" className={styles.groupTitle}>
-          Bluefin
+          Bluefin Classic
         </Heading>
         <p className={styles.groupHint}>
-          Recommended for most users who want current Bluefin releases and fast
-          feature delivery.
+          Current Bluefin releases from ublue-os/bluefin.
         </p>
         <div className="alert alert--info" role="note">
           Rebasing between Bluefin and Bluefin LTS image families is not
@@ -699,8 +723,7 @@ export default function ImagesCatalogComponent({
           Dakota
         </Heading>
         <p className={styles.groupHint}>
-          Recommended for users evaluating the next-generation Dakota track and
-          related experiments.
+          Dakota stable and testing image streams.
         </p>
         <div className="alert alert--info" role="note">
           Dakota is a separate image track. Rebasing between Bluefin and Bluefin

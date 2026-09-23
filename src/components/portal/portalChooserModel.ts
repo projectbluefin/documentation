@@ -235,11 +235,13 @@ export function formatChecksumUrl(selection: ChooserSelection): string {
 }
 
 export function formatBootcCommand(selection: ChooserSelection): string {
+  let org = "ublue-os";
   let image = "bluefin";
   if (selection.stream === "lts") {
+    org = "projectbluefin";
     image = selection.gpu === "nvidia" ? "bluefin-lts-nvidia" : "bluefin-lts";
   } else if (selection.gpu === "nvidia") {
-    image = "bluefin-nvidia";
+    image = "bluefin-nvidia-open";
   }
 
   let tag = "stable";
@@ -251,5 +253,5 @@ export function formatBootcCommand(selection: ChooserSelection): string {
     tag = "lts-hwe";
   }
 
-  return `sudo bootc switch ghcr.io/projectbluefin/${image}:${tag} --enforce-container-sigpolicy`;
+  return `sudo bootc switch ghcr.io/${org}/${image}:${tag} --enforce-container-sigpolicy`;
 }

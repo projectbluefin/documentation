@@ -116,46 +116,36 @@ const PARTIAL_RELEASES_REASON =
   "GitHub SBOM data unavailable: primary streams produced no releases.";
 
 /**
- * Streams to scan.  keyRepo drives the OIDC identity regexp used by cosign.
- * package is the GHCR container package name under the org.
- * releasesRepo is the GitHub repo used for tag enumeration via Releases API.
- *
- * Signing policy is NOT declared here. `keyless` and `cosignKeyUrl` are derived
- * from keyRepo via scripts/lib/signing-trust.js, the single source of truth
- * shared with fetch-github-images.js:
- *   keyless:true  → OIDC keyless signing (stable/latest/beta mainline streams)
- *   keyless:false → key-based signing; cosignKeyUrl required (lts streams).
- *                   These streams have no SBOMs yet — present:false is expected.
- *                   When lts SBOMs are published, no code changes are needed.
- *
- * GTS is retired and absent from this list.
+ * package is the GHCR container package name under the org. keyRepo selects
+ * the repository's signing trust policy. Dated tags are enumerated from GHCR;
+ * floating channels use their image creation date as a per-stream cache key.
  */
 const RAW_STREAM_SPECS = [
   {
     id: "bluefin-stable",
     label: "Bluefin Stable",
-    org: "projectbluefin",
+    org: "ublue-os",
     package: "bluefin",
-    releasesRepo: "projectbluefin/bluefin",
+    releasesRepo: "ublue-os/bluefin",
     streamPrefix: "stable",
-    keyRepo: "projectbluefin/bluefin",
+    keyRepo: "ublue-os/bluefin",
   },
   {
     id: "bluefin-stable-daily",
     label: "Bluefin Stable Daily",
-    org: "projectbluefin",
+    org: "ublue-os",
     package: "bluefin",
     streamPrefix: "stable-daily",
-    keyRepo: "projectbluefin/bluefin",
+    keyRepo: "ublue-os/bluefin",
   },
   {
     id: "bluefin-latest",
     label: "Bluefin Latest",
-    org: "projectbluefin",
+    org: "ublue-os",
     package: "bluefin",
-    releasesRepo: "projectbluefin/bluefin",
+    releasesRepo: "ublue-os/bluefin",
     streamPrefix: "latest",
-    keyRepo: "projectbluefin/bluefin",
+    keyRepo: "ublue-os/bluefin",
   },
   {
     id: "bluefin-lts",
@@ -164,6 +154,7 @@ const RAW_STREAM_SPECS = [
     package: "bluefin-lts",
     releasesRepo: "projectbluefin/bluefin-lts",
     streamPrefix: "stable",
+    floatingTag: "stable",
     keyRepo: "projectbluefin/bluefin-lts",
   },
   {
@@ -206,19 +197,20 @@ const RAW_STREAM_SPECS = [
     id: "bluefin-lts-nvidia",
     label: "Bluefin LTS NVIDIA",
     org: "projectbluefin",
-    package: "bluefin-lts",
+    package: "bluefin-lts-nvidia",
     releasesRepo: "projectbluefin/bluefin-lts",
     streamPrefix: "stable",
+    floatingTag: "stable",
     keyRepo: "projectbluefin/bluefin-lts",
   },
   {
     id: "bluefin-nvidia-open-stable",
     label: "Bluefin Nvidia Open Stable",
-    org: "projectbluefin",
-    package: "bluefin-nvidia",
-    releasesRepo: "projectbluefin/bluefin",
+    org: "ublue-os",
+    package: "bluefin-nvidia-open",
+    releasesRepo: "ublue-os/bluefin",
     streamPrefix: "stable",
-    keyRepo: "projectbluefin/bluefin",
+    keyRepo: "ublue-os/bluefin",
   },
   {
     id: "utah-testing",
@@ -227,6 +219,7 @@ const RAW_STREAM_SPECS = [
     package: "utah",
     releasesRepo: "projectbluefin/utah",
     streamPrefix: "testing",
+    floatingTag: "testing",
     keyRepo: "projectbluefin/utah",
   },
   {
@@ -236,25 +229,40 @@ const RAW_STREAM_SPECS = [
     package: "utah-nvidia",
     releasesRepo: "projectbluefin/utah",
     streamPrefix: "testing",
+    floatingTag: "testing",
     keyRepo: "projectbluefin/utah",
   },
   {
-    id: "dakota-latest",
-    label: "Dakota Latest",
+    id: "dakota-stable",
+    label: "Dakota Stable",
     org: "projectbluefin",
     package: "dakota",
-    // Uses usesLatestTag:true — routes through processLatestTagStream() which
-    // fetches :latest plus the 10 most recent commit-SHA image tags for history.
     keyRepo: "projectbluefin/dakota",
-    usesLatestTag: true,
+    floatingTag: "stable",
   },
   {
-    id: "dakota-nvidia-latest",
-    label: "Dakota Nvidia Latest",
+    id: "dakota-testing",
+    label: "Dakota Testing",
+    org: "projectbluefin",
+    package: "dakota",
+    keyRepo: "projectbluefin/dakota",
+    floatingTag: "testing",
+  },
+  {
+    id: "dakota-nvidia-stable",
+    label: "Dakota Nvidia Stable",
     org: "projectbluefin",
     package: "dakota-nvidia",
     keyRepo: "projectbluefin/dakota",
-    usesLatestTag: true,
+    floatingTag: "stable",
+  },
+  {
+    id: "dakota-nvidia-testing",
+    label: "Dakota Nvidia Testing",
+    org: "projectbluefin",
+    package: "dakota-nvidia",
+    keyRepo: "projectbluefin/dakota",
+    floatingTag: "testing",
   },
 ];
 
@@ -270,107 +278,97 @@ const STREAM_SPECS = RAW_STREAM_SPECS.map((spec) => {
     ...spec,
     keyless: trust.keyless,
     cosignKeyUrl: trust.cosignKeyUrl,
+    attestationLive: trust.attestationLive,
   };
 });
 
-// ---------------------------------------------------------------------------
-// Latest-tag stream processing (Dakota)
-// ---------------------------------------------------------------------------
+function currentCachedStream(existing, spec) {
+  const stream = existing?.streams?.[spec.id];
+  return (
+    stream?.org === spec.org &&
+    stream?.package === spec.package &&
+    stream?.keyRepo === spec.keyRepo &&
+    stream?.streamPrefix === (spec.floatingTag || spec.streamPrefix)
+  );
+}
 
-/**
- * Process a stream that uses a :latest floating tag instead of date-based tags.
- * Used for Dakota, which pushes :latest on every scheduled/dispatch build but
- * does not create YYYYMMDD-suffixed release tags.
- *
- * Cache key is derived from the image creation date annotation:
- *   "latest-YYYYMMDD"  (e.g. "latest-20260502")
- * Falls back to "latest-unknown" if the annotation is absent.
- *
- * @param {object}      spec      Stream spec with usesLatestTag: true
- * @param {object|null} existing  Existing SBOM cache for incremental updates
- */
-async function processLatestTagStream(spec, existing) {
-  // Seed from existing cache — accumulates history across nightly runs.
-  const existingReleases = existing?.streams?.[spec.id]?.releases || {};
-  const releases = { ...existingReleases };
+// Floating tags are re-verified unconditionally because a tag can move twice in
+// one day, but the *result* of a refresh must not demote a good same-day entry:
+// a transient SBOM download or attestation failure would otherwise replace
+// verified package data with nulls and render the stream Unavailable until the
+// next successful run.
+//
+// @returns {null|string} null to accept the refreshed entry, otherwise a short
+//          reason describing what the refresh lost.
+function refreshRegression(previousEntry, attestation, packageVersions) {
+  if (!previousEntry) return null;
+  const reasons = [];
+  if (packageVersions == null && previousEntry.packageVersions != null)
+    reasons.push("no SBOM");
+  if (
+    attestation?.verified !== true &&
+    previousEntry.attestation?.verified === true
+  )
+    reasons.push("unverified");
+  return reasons.length > 0 ? reasons.join(", ") : null;
+}
 
-  // Build the list of image refs to process: :latest plus the 10 most recent
-  // commit-SHA tags (each is a distinct tagged build pushed to GHCR).
-  const allTags = await fetchGhcrTags(spec.org, spec.package);
-  const commitTags = allTags.filter((t) => /^[0-9a-f]{40}$/.test(t)).slice(-10); // last 10 = most recently pushed
-  const imageRefs = [
-    `ghcr.io/${spec.org}/${spec.package}:latest`,
-    ...commitTags.map((t) => `ghcr.io/${spec.org}/${spec.package}:${t}`),
-  ];
-
-  for (const imageRef of imageRefs) {
-    const dateStr = await getImageCreatedDate(imageRef);
-    const cacheKey = dateStr ? `latest-${dateStr}` : null;
-    if (!cacheKey) continue;
-
-    const existingEntry = releases[cacheKey];
-    const hasVersions = existingEntry?.packageVersions != null;
-    const hasAllPackages =
-      existingEntry?.packageVersions?.allPackages != null &&
-      Object.keys(existingEntry.packageVersions.allPackages).length > 0;
-    const isVerified = existingEntry?.attestation?.verified === true;
-    const isCacheHit =
-      !FORCE_REFRESH && hasVersions && hasAllPackages && isVerified;
-
-    console.log(`  ${spec.id}: ${cacheKey}${isCacheHit ? " (cache hit)" : ""}`);
-
-    if (isCacheHit) {
-      // Patch tag to cacheKey on cache hits — migrates old tag:imageRef entries
-      // so the nvidiaByTag lookup in buildStreamFromSbom works correctly.
-      releases[cacheKey] = { ...existingEntry, tag: cacheKey };
-    } else {
-      console.log(`  ${spec.id}: verifying attestation for ${imageRef}`);
-      const rawAttestation = await verifyAttestation(imageRef, spec);
-      const attestation = {
-        present: rawAttestation.present,
-        verified: rawAttestation.verified,
-        predicateType: rawAttestation.predicateType,
-        slsaType: SLSA_TYPE,
-        ...(rawAttestation.errorKind !== undefined && {
-          errorKind: rawAttestation.errorKind,
-        }),
-        error: rawAttestation.error,
-      };
-
-      let packageVersions = null;
-      let sbomPath = null;
-      let tmpDir = null;
-      try {
-        sbomPath = await downloadSbom(imageRef);
-        if (sbomPath) {
-          tmpDir = path.dirname(sbomPath);
-          packageVersions = extractPackageVersions(sbomPath);
-          if (packageVersions) {
-            console.log(
-              `    ${cacheKey}: extracted packageVersions ` +
-                `(gnome: ${packageVersions.gnome}, kernel: ${packageVersions.kernel})`,
-            );
-          }
-        }
-      } catch (err) {
-        console.warn(
-          `    ${cacheKey}: SBOM download/parse error — ${err.message}`,
-        );
-      } finally {
-        if (tmpDir) {
-          try {
-            fs.rmSync(tmpDir, { recursive: true, force: true });
-          } catch {
-            // ignore cleanup errors
-          }
+// Floating tags are sampled by channel; historical entries are keyed by their
+// creation date because the registry tag itself moves between builds.
+async function processFloatingTagStream(spec, existing) {
+  const previous = currentCachedStream(existing, spec)
+    ? existing.streams[spec.id].releases || {}
+    : {};
+  const releases = { ...previous };
+  const imageRef = `ghcr.io/${spec.org}/${spec.package}:${spec.floatingTag}`;
+  const dateStr = await getImageCreatedDate(imageRef);
+  if (dateStr) {
+    const cacheKey = `${spec.floatingTag}-${dateStr}`;
+    // A floating tag can move twice in one day. A date-key cache hit does not
+    // prove it still identifies the same image, so verify and download again.
+    const rawAttestation = await verifyAttestation(imageRef, spec);
+    const attestation = {
+      present: rawAttestation.present,
+      verified: rawAttestation.verified,
+      predicateType: rawAttestation.predicateType,
+      slsaType: rawAttestation.predicateType === SLSA_TYPE ? SLSA_TYPE : null,
+      ...(rawAttestation.errorKind !== undefined && {
+        errorKind: rawAttestation.errorKind,
+      }),
+      error: rawAttestation.error,
+    };
+    let packageVersions = null;
+    let sbomPath = null;
+    try {
+      sbomPath = await downloadSbom(imageRef);
+      if (sbomPath) packageVersions = extractPackageVersions(sbomPath);
+    } catch (err) {
+      console.warn(
+        `    ${cacheKey}: SBOM download/parse error — ${err.message}`,
+      );
+    } finally {
+      if (sbomPath) {
+        try {
+          fs.rmSync(path.dirname(sbomPath), { recursive: true, force: true });
+        } catch {
+          /* temporary-file cleanup is best-effort */
         }
       }
-
+    }
+    // Re-verification is unconditional, but a degraded result keeps the
+    // previous good entry — see refreshRegression().
+    const regression = refreshRegression(
+      previous[cacheKey],
+      attestation,
+      packageVersions,
+    );
+    if (regression) {
+      console.warn(
+        `    ${cacheKey}: refresh degraded (${regression}) — keeping previous entry`,
+      );
+    } else {
       releases[cacheKey] = {
-        // Store cacheKey as tag (e.g. "latest-20260514") so buildNvidiaMapFromSbomStream
-        // and the nvidiaByTag lookup in buildStreamFromSbom can match by cacheKey.
-        // Storing the full imageRef causes the lookup to fail (wrong image name).
-        tag: cacheKey,
+        tag: spec.floatingTag,
         imageRef,
         digest: null,
         attestation,
@@ -378,14 +376,13 @@ async function processLatestTagStream(spec, existing) {
         checkedAt: new Date().toISOString(),
       };
     }
-  } // end for imageRefs
-
+  }
   return {
     id: spec.id,
     label: spec.label,
     org: spec.org,
     package: spec.package,
-    streamPrefix: "latest",
+    streamPrefix: spec.floatingTag,
     keyRepo: spec.keyRepo,
     keyless: spec.keyless,
     releases,
@@ -405,15 +402,42 @@ async function processLatestTagStream(spec, existing) {
  * @param {object|null} existing  Existing cache for incremental updates.
  */
 async function processStream(spec, ghcrTagsByImage, existing) {
-  // Dakota uses a :latest floating tag instead of date-based release tags.
-  if (spec.usesLatestTag) {
-    return processLatestTagStream(spec, existing);
+  if (spec.floatingTag) {
+    const imageKey = `${spec.org}/${spec.package}`;
+    const listedTags = ghcrTagsByImage.get(imageKey);
+    if (listedTags?.includes(spec.floatingTag)) {
+      return processFloatingTagStream(spec, existing);
+    }
+    // Two different absences deserve two different answers:
+    //  - the listing failed, or the package still publishes other tags while
+    //    the floating tag is momentarily missing (mid-push, brief retag). The
+    //    accumulated per-day history is still real, so keep it.
+    //  - the package publishes no tags at all: the stream is unreleased or
+    //    retired, so never keep serving history for an image the registry does
+    //    not have.
+    const registryIsLive = listedTags === undefined || listedTags.length > 0;
+    if (registryIsLive && currentCachedStream(existing, spec)) {
+      console.log(
+        `  ${spec.id}: floating tag "${spec.floatingTag}" not listed — keeping existing cache`,
+      );
+      return existing.streams[spec.id];
+    }
+    return {
+      id: spec.id,
+      label: spec.label,
+      org: spec.org,
+      package: spec.package,
+      streamPrefix: spec.floatingTag,
+      keyRepo: spec.keyRepo,
+      keyless: spec.keyless,
+      releases: {},
+    };
   }
 
   const imageKey = `${spec.org}/${spec.package}`;
   // If the GHCR tag fetch failed — preserve existing cache.
   if (!ghcrTagsByImage.has(imageKey)) {
-    if (existing?.streams?.[spec.id]) {
+    if (currentCachedStream(existing, spec)) {
       console.log(
         `  ${spec.id}: GHCR tags unavailable — keeping existing cache`,
       );
@@ -441,7 +465,9 @@ async function processStream(spec, ghcrTagsByImage, existing) {
   const releases = {};
   for (const { tag, cacheKey, imageRef } of recentTags) {
     // Cache hit: reuse if digest matches AND packageVersions is already populated.
-    const existingEntry = existing?.streams?.[spec.id]?.releases?.[cacheKey];
+    const existingEntry = currentCachedStream(existing, spec)
+      ? existing.streams[spec.id].releases?.[cacheKey]
+      : null;
     const hasVersions = existingEntry?.packageVersions != null;
     const hasAllPackages =
       existingEntry?.packageVersions?.allPackages != null &&
@@ -450,10 +476,10 @@ async function processStream(spec, ghcrTagsByImage, existing) {
 
     const isCacheHit =
       !FORCE_REFRESH &&
+      existingEntry?.imageRef === imageRef &&
       hasVersions &&
       hasAllPackages &&
-      (spec.keyless ? isVerified : true);
-
+      (spec.keyless || spec.attestationLive ? isVerified : true);
     if (isCacheHit) {
       console.log(
         `    ${cacheKey}: cache hit (${spec.keyless ? "verified, " : ""}versions populated)`,
@@ -480,7 +506,7 @@ async function processStream(spec, ghcrTagsByImage, existing) {
         present: attestation.present,
         verified: attestation.verified,
         predicateType: attestation.predicateType,
-        slsaType: SLSA_TYPE,
+        slsaType: attestation.predicateType === SLSA_TYPE ? SLSA_TYPE : null,
         ...(attestation.errorKind !== undefined && {
           errorKind: attestation.errorKind,
         }),
@@ -634,12 +660,22 @@ function isValidSbomCache(cache) {
     return false;
   }
 
-  return Object.values(streams).some(hasReleaseData);
+  return (
+    STREAM_SPECS.every((spec) => currentCachedStream(cache, spec)) &&
+    hasPrimaryReleaseData(streams)
+  );
 }
 
 function hasPrimaryReleaseData(streams) {
-  return PRIMARY_RELEASE_STREAM_IDS.every((streamId) =>
-    hasReleaseData(streams?.[streamId]),
+  // LTS releases remain catalogued even while their keyless-signed images have
+  // no published SBOM. Classic must have parsed packages for version display.
+  return (
+    PRIMARY_RELEASE_STREAM_IDS.every((id) => hasReleaseData(streams?.[id])) &&
+    Object.values(streams["bluefin-stable"].releases).some(
+      (entry) =>
+        entry?.packageVersions?.allPackages &&
+        Object.keys(entry.packageVersions.allPackages).length > 0,
+    )
   );
 }
 
@@ -707,7 +743,7 @@ async function main() {
     } catch (err) {
       console.error(`  Error processing ${spec.id}: ${err.message}`);
       // Preserve existing data for this stream on error
-      if (existing?.streams?.[spec.id]) {
+      if (currentCachedStream(existing, spec)) {
         streams[spec.id] = existing.streams[spec.id];
         console.log(`  Kept existing cache for ${spec.id}`);
       }
@@ -778,6 +814,7 @@ if (require.main === module) {
 
 module.exports = {
   STREAM_SPECS,
+  processStream,
   buildUnavailableOutput,
   handleEmptyCache,
   hasPrimaryReleaseData,
@@ -790,5 +827,6 @@ module.exports = {
   isSemverLike,
   selectAmd64DigestFromManifest,
   findRecentTagsForStream,
+  refreshRegression,
   fetchGhcrTags, // exported for integration testing
 };

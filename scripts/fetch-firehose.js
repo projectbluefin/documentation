@@ -15,16 +15,69 @@ const {
 // and stored XSS on the docs domain.
 const SANITIZE_OPTIONS = {
   allowedTags: [
-    "a", "abbr", "b", "blockquote", "br", "code", "dd", "del", "details",
-    "div", "dl", "dt", "em", "h1", "h2", "h3", "h4", "h5", "h6", "hr",
-    "i", "img", "ins", "kbd", "li", "ol", "p", "pre", "q", "s", "samp",
-    "span", "strong", "sub", "summary", "sup", "table", "tbody", "td",
-    "tfoot", "th", "thead", "tr", "tt", "ul", "var",
+    "a",
+    "abbr",
+    "b",
+    "blockquote",
+    "br",
+    "code",
+    "dd",
+    "del",
+    "details",
+    "div",
+    "dl",
+    "dt",
+    "em",
+    "h1",
+    "h2",
+    "h3",
+    "h4",
+    "h5",
+    "h6",
+    "hr",
+    "i",
+    "img",
+    "ins",
+    "kbd",
+    "li",
+    "ol",
+    "p",
+    "pre",
+    "q",
+    "s",
+    "samp",
+    "span",
+    "strong",
+    "sub",
+    "summary",
+    "sup",
+    "table",
+    "tbody",
+    "td",
+    "tfoot",
+    "th",
+    "thead",
+    "tr",
+    "tt",
+    "ul",
+    "var",
   ],
   allowedAttributes: {
     "*": [
-      "href", "target", "rel", "src", "alt", "title", "class", "id",
-      "width", "height", "align", "colspan", "rowspan", "scope",
+      "href",
+      "target",
+      "rel",
+      "src",
+      "alt",
+      "title",
+      "class",
+      "id",
+      "width",
+      "height",
+      "align",
+      "colspan",
+      "rowspan",
+      "scope",
     ],
   },
   // sanitize-html defaults already restrict href/src to safe protocols
@@ -58,15 +111,15 @@ const OS_STREAM_SPECS = [
     appId: "bluefin-os-stable",
     name: "Bluefin OS (Stable)",
     summary: "The stable Bluefin release track.",
-    imageRef: "ghcr.io/projectbluefin/bluefin",
-    ghReleasesUrl: "https://github.com/projectbluefin/bluefin/releases",
+    imageRef: "ghcr.io/ublue-os/bluefin",
+    ghReleasesUrl: "https://github.com/ublue-os/bluefin/releases",
   },
   {
     streamId: "bluefin-lts",
     appId: "bluefin-os-lts",
     name: "Bluefin OS (LTS)",
     summary: "Long-term support Bluefin track.",
-    imageRef: "ghcr.io/projectbluefin/bluefin",
+    imageRef: "ghcr.io/projectbluefin/bluefin-lts",
     ghReleasesUrl: "https://github.com/projectbluefin/bluefin-lts/releases",
     // LTS does not publish SBOM attestations — OS chip data will be absent.
     noSbom: true,
@@ -82,7 +135,11 @@ function readSbomCache() {
   try {
     const data = JSON.parse(fs.readFileSync(SBOM_FILE, "utf-8"));
     // Empty seed: { generatedAt: null, streams: {} }
-    if (!data.generatedAt || !data.streams || Object.keys(data.streams).length === 0) {
+    if (
+      !data.generatedAt ||
+      !data.streams ||
+      Object.keys(data.streams).length === 0
+    ) {
       return null;
     }
     return data;
@@ -118,7 +175,8 @@ function buildOsInfo(streamId, packageVersions) {
 
   const majorPackages = {};
   if (packageVersions.podman) majorPackages["Podman"] = packageVersions.podman;
-  if (packageVersions.systemd) majorPackages["systemd"] = packageVersions.systemd;
+  if (packageVersions.systemd)
+    majorPackages["systemd"] = packageVersions.systemd;
   if (packageVersions.bootc) majorPackages["bootc"] = packageVersions.bootc;
   if (packageVersions.nvidia) majorPackages["NVIDIA"] = packageVersions.nvidia;
 
@@ -187,7 +245,6 @@ function buildOsApp(spec, sbomCache) {
   } else if (spec.streamId === "bluefin-lts") {
     nvidiaByTag = buildLtsNvidiaByTagFromSbom(sbomCache);
   }
-
   // Find the most recent entry that has packageVersions populated
   const latestWithVersions = releases.find((r) => r.packageVersions != null);
 
@@ -201,18 +258,21 @@ function buildOsApp(spec, sbomCache) {
     // cacheKey is "<stream>-YYYYMMDD"
     const datePart = latestWithVersions.cacheKey.replace(/^.*?-(\d{8})$/, "$1");
     if (/^\d{8}$/.test(datePart)) {
-      currentReleaseVersion = datePart.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3");
+      currentReleaseVersion = datePart.replace(
+        /(\d{4})(\d{2})(\d{2})/,
+        "$1-$2-$3",
+      );
       currentReleaseDate = `${currentReleaseVersion}T00:00:00Z`;
       updatedAt = currentReleaseDate;
     }
     const companionNvidia = resolveCompanionNvidia(
       nvidiaByTag,
-      latestWithVersions,
       latestWithVersions.cacheKey,
     );
     const resolvedPackageVersions = {
       ...latestWithVersions.packageVersions,
-      nvidia: latestWithVersions.packageVersions.nvidia || companionNvidia || null,
+      nvidia:
+        latestWithVersions.packageVersions.nvidia || companionNvidia || null,
     };
     osInfo = buildOsInfo(spec.streamId, resolvedPackageVersions);
   } else if (releases.length > 0) {
@@ -220,7 +280,10 @@ function buildOsApp(spec, sbomCache) {
     const first = releases[0];
     const datePart = first.cacheKey.replace(/^.*?-(\d{8})$/, "$1");
     if (/^\d{8}$/.test(datePart)) {
-      currentReleaseVersion = datePart.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3");
+      currentReleaseVersion = datePart.replace(
+        /(\d{4})(\d{2})(\d{2})/,
+        "$1-$2-$3",
+      );
       currentReleaseDate = `${currentReleaseVersion}T00:00:00Z`;
       updatedAt = currentReleaseDate;
     }
@@ -250,7 +313,7 @@ function buildOsApp(spec, sbomCache) {
     }
 
     const companionNvidia = r.packageVersions
-      ? resolveCompanionNvidia(nvidiaByTag, r, r.cacheKey)
+      ? resolveCompanionNvidia(nvidiaByTag, r.cacheKey)
       : null;
     const nvidiaVersion = r.packageVersions
       ? r.packageVersions.nvidia || companionNvidia || null
@@ -356,7 +419,8 @@ async function fetchFirehoseData() {
       isEmpty = true;
     }
 
-    const isForced = process.argv.includes("--force") || CACHE_MAX_AGE_HOURS === 0;
+    const isForced =
+      process.argv.includes("--force") || CACHE_MAX_AGE_HOURS === 0;
 
     if (!isEmpty && !isForced && ageHours < CACHE_MAX_AGE_HOURS) {
       console.log(
@@ -436,10 +500,10 @@ async function fetchFirehoseData() {
   const sbomCache = readSbomCache();
 
   if (sbomCache) {
+    console.log(`✓ SBOM cache loaded (generatedAt: ${sbomCache.generatedAt})`);
     console.log(
-      `✓ SBOM cache loaded (generatedAt: ${sbomCache.generatedAt})`,
+      `  Streams available: ${Object.keys(sbomCache.streams).join(", ")}`,
     );
-    console.log(`  Streams available: ${Object.keys(sbomCache.streams).join(", ")}`);
   } else {
     console.log(
       "  SBOM cache is empty seed or unavailable — OS entries will have no version data.",

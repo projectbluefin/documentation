@@ -12,24 +12,26 @@ import DriverVersionsCatalog from "@site/src/components/DriverVersionsCatalog";
 
 Sometimes the raptor just gets you. This page tracks major driver versions across Bluefin releases to help users identify and switch to specific driver versions. Good for ruling out major components. Remember to rebase back to the release stream later if you want to see if your issue gets fixed, use `ujust rebase-helper` for that. Good luck, you got this.
 
+Versions shown below come from image SBOMs for the selected stream. A missing SBOM is shown as unavailable; an archival SBOM snapshot without a published image tag cannot be rebased to.
+
 <Tabs groupId="driver-stream" queryString>
-  <TabItem value="bluefin" label="Bluefin" default>
+  <TabItem value="bluefin" label="Bluefin Classic" default>
     <DriverVersionsCatalog streamId="bluefin-stable" showRebootStep={false} />
   </TabItem>
   <TabItem value="bluefin-lts" label="Bluefin LTS">
     <DriverVersionsCatalog streamId="bluefin-lts" showRebootStep={false} />
   </TabItem>
-  <TabItem value="dakota" label="Dakota">
-    <DriverVersionsCatalog streamId="dakota-latest" showRebootStep={false} />
+  <TabItem value="dakota" label="Dakota Stable">
+    <DriverVersionsCatalog streamId="dakota-stable" showRebootStep={false} />
   </TabItem>
-  <TabItem value="utah" label="Utah">
+  <TabItem value="utah" label="Utah Testing">
     <DriverVersionsCatalog streamId="utah-testing" showRebootStep={false} />
   </TabItem>
 </Tabs>
 
 ## Final Step: Reboot
 
-After running one of the per-release rebase commands above, reboot to activate the deployment:
+After running an available image switch command above, reboot to activate the deployment:
 
 ```bash
 sudo systemctl reboot

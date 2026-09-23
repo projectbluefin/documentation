@@ -1,19 +1,21 @@
 {
-  "generatedAt": "2026-09-09T19:15:35.696Z",
+  "generatedAt": "2026-09-23T12:04:00.714Z",
   "cacheHours": 168,
   "refreshHours": 336,
   "staleDays": 30,
   "products": [
     {
-      "id": "projectbluefin-bluefin",
+      "id": "ublue-bluefin",
       "name": "Bluefin",
-      "org": "projectbluefin",
+      "org": "ublue-os",
       "package": "bluefin",
       "versionSource": "sbom",
       "summary": "Primary Bluefin desktop image for most systems.",
       "artwork": "bluefin",
-      "imageRef": "ghcr.io/projectbluefin/bluefin",
-      "packagePageUrl": "https://github.com/orgs/projectbluefin/packages/container/package/bluefin",
+      "sbomStreamId": "bluefin-stable",
+      "nvidiaSbomStreamId": "bluefin-nvidia-open-stable",
+      "imageRef": "ghcr.io/ublue-os/bluefin",
+      "packagePageUrl": "https://github.com/orgs/ublue-os/packages/container/package/bluefin",
       "isoSectionLink": "/downloads",
       "supportedArches": [
         "amd",
@@ -23,76 +25,114 @@
         {
           "label": "STABLE",
           "tag": "stable",
-          "command": "sudo bootc switch ghcr.io/projectbluefin/bluefin:stable --enforce-container-sigpolicy",
+          "command": "sudo bootc switch ghcr.io/ublue-os/bluefin:stable --enforce-container-sigpolicy",
           "versions": {
-            "gnome": "50.1",
-            "kernel": "7.0.8-200.fc44",
-            "nvidia": "595.71.05",
+            "gnome": "50.3",
+            "kernel": "7.1.6-201.fc44",
+            "nvidia": null,
             "fedora": "F44",
-            "flatpak": "1.17.7",
-            "mesa": "26.0.8",
-            "podman": "5.8.2",
-            "systemd": "259.5",
-            "bootc": "1.15.2",
-            "pipewire": "1.6.6"
+            "flatpak": "1.18.0",
+            "mesa": "26.1.4",
+            "podman": "5.8.4",
+            "systemd": "259.8",
+            "bootc": "1.16.7",
+            "pipewire": "1.6.8"
           },
-          "nvidiaCommand": "sudo bootc switch ghcr.io/projectbluefin/bluefin-nvidia:stable --enforce-container-sigpolicy"
+          "nvidiaCommand": "sudo bootc switch ghcr.io/ublue-os/bluefin-nvidia-open:stable --enforce-container-sigpolicy",
+          "imageRef": "ghcr.io/ublue-os/bluefin:stable",
+          "nvidiaImageRef": "ghcr.io/ublue-os/bluefin-nvidia-open:stable",
+          "nvidiaVersions": {
+            "gnome": "50.3",
+            "kernel": "7.1.6-201.fc44",
+            "nvidia": "615.71.09",
+            "fedora": "F44",
+            "flatpak": "1.18.0",
+            "mesa": "26.1.4",
+            "podman": "5.8.4",
+            "systemd": "259.8",
+            "bootc": "1.16.7",
+            "pipewire": "1.6.8"
+          }
         },
         {
-          "label": "TESTING",
-          "tag": "testing",
-          "command": "sudo bootc switch ghcr.io/projectbluefin/bluefin:testing --enforce-container-sigpolicy",
+          "label": "STABLE-DAILY",
+          "tag": "stable-daily",
+          "command": "sudo bootc switch ghcr.io/ublue-os/bluefin:stable-daily --enforce-container-sigpolicy",
           "versions": {
-            "gnome": "50.1",
-            "kernel": "7.0.8-200.fc44",
-            "nvidia": "595.71.05",
+            "gnome": "50.3",
+            "kernel": "7.1.6-201.fc44",
+            "nvidia": null,
             "fedora": "F44",
-            "flatpak": "1.17.7",
-            "mesa": "26.0.8",
-            "podman": "5.8.2",
-            "systemd": "259.5",
-            "bootc": "1.15.2",
-            "pipewire": "1.6.6"
+            "flatpak": "1.18.0",
+            "mesa": "26.1.4",
+            "podman": "5.8.4",
+            "systemd": "259.8",
+            "bootc": "1.16.7",
+            "pipewire": "1.6.8"
           },
-          "nvidiaCommand": "sudo bootc switch ghcr.io/projectbluefin/bluefin-nvidia:testing --enforce-container-sigpolicy"
+          "nvidiaCommand": "sudo bootc switch ghcr.io/ublue-os/bluefin-nvidia-open:stable-daily --enforce-container-sigpolicy",
+          "imageRef": "ghcr.io/ublue-os/bluefin:stable-daily",
+          "nvidiaImageRef": "ghcr.io/ublue-os/bluefin-nvidia-open:stable-daily",
+          "nvidiaVersions": null
+        },
+        {
+          "label": "LATEST",
+          "tag": "latest",
+          "command": "sudo bootc switch ghcr.io/ublue-os/bluefin:latest --enforce-container-sigpolicy",
+          "versions": {
+            "gnome": "50.3",
+            "kernel": "7.1.6-201.fc44",
+            "nvidia": null,
+            "fedora": "F44",
+            "flatpak": "1.18.0",
+            "mesa": "26.1.4",
+            "podman": "5.8.4",
+            "systemd": "259.8",
+            "bootc": "1.16.7",
+            "pipewire": "1.6.8"
+          },
+          "nvidiaCommand": "sudo bootc switch ghcr.io/ublue-os/bluefin-nvidia-open:latest --enforce-container-sigpolicy",
+          "imageRef": "ghcr.io/ublue-os/bluefin:latest",
+          "nvidiaImageRef": "ghcr.io/ublue-os/bluefin-nvidia-open:latest",
+          "nvidiaVersions": null
         }
       ],
       "testingStreams": [],
       "metadata": {
-        "digest": "sha256:383f523982a84cd23b40a8d252b50d6c4a65b013b03bfb70e74e0708fd8e082f",
-        "digestShort": "383f523982a8",
-        "digestLink": "https://github.com/projectbluefin/bluefin/releases/tag/stable-20260720#assets",
+        "digest": "sha256:76aa5d6f4f2f3e18b244587bfbd45ae1777a7d0934f869534228eab6af1f0101",
+        "digestShort": "76aa5d6f4f2f",
+        "digestLink": null,
         "architecture": "amd64",
         "os": "linux",
         "labels": {
-          "version": "testing-44.20260720",
-          "revision": null,
-          "source": "https://raw.githubusercontent.com/projectbluefin/bluefin/refs/heads/main/Containerfile",
-          "ostreeCommit": "f16f67b41b89dbda51bfc64baa385c645b17804ff6cf2415bb45e8313d7552ff"
+          "version": "44.20260922",
+          "revision": "7aafce49db08d8d965a827582ce5dc806ac9017e",
+          "source": "https://raw.githubusercontent.com/ublue-os/bluefin/refs/heads/main/Containerfile",
+          "ostreeCommit": "ecec47bc555b2da07eb48b3528fed839ca04f812dbc4d8193c1f0afed9efe2f3"
         }
       },
-      "metadataSource": "cache",
+      "metadataSource": "live",
       "versions": {
         "source": "sbom",
-        "gnome": "50.1",
-        "kernel": "7.0.8-200.fc44",
-        "nvidia": "595.71.05",
+        "gnome": "50.3",
+        "kernel": "7.1.6-201.fc44",
+        "nvidia": null,
         "release": {
-          "title": "stable-20260909",
-          "url": "https://github.com/projectbluefin/bluefin/releases/tag/stable-20260909",
-          "assetsUrl": "https://github.com/projectbluefin/bluefin/releases/tag/stable-20260909#assets"
+          "title": null,
+          "url": "https://github.com/ublue-os/bluefin/releases",
+          "assetsUrl": null
         }
       },
       "security": {
-        "cosignKeyUrl": null,
-        "verifyCommand": "cosign verify --certificate-oidc-issuer https://token.actions.githubusercontent.com --certificate-identity-regexp '^https://github.com/projectbluefin/bluefin/.github/workflows/' ghcr.io/projectbluefin/bluefin:stable",
-        "attestCommand": "cosign verify-attestation --type https://slsa.dev/provenance/v1 --certificate-oidc-issuer https://token.actions.githubusercontent.com --certificate-identity-regexp '^https://github.com/projectbluefin/bluefin/.github/workflows/' ghcr.io/projectbluefin/bluefin:stable",
+        "cosignKeyUrl": "https://raw.githubusercontent.com/ublue-os/bluefin/main/cosign.pub",
+        "verifyCommand": "cosign verify --key https://raw.githubusercontent.com/ublue-os/bluefin/main/cosign.pub ghcr.io/ublue-os/bluefin:stable",
+        "attestCommand": "cosign verify-attestation --type https://slsa.dev/provenance/v1 --certificate-oidc-issuer https://token.actions.githubusercontent.com --certificate-identity-regexp '^https://github.com/ublue-os/bluefin/.github/workflows/' ghcr.io/ublue-os/bluefin:stable",
         "hasAttestation": true,
-        "sbomCommand": "oras discover ghcr.io/projectbluefin/bluefin:stable"
+        "sbomCommand": "oras discover ghcr.io/ublue-os/bluefin:stable"
       },
       "inspectTag": "stable",
-      "lastPublishedAt": "2026-06-24T08:24:35.666Z",
-      "stale": true,
+      "lastPublishedAt": "2026-09-23T11:45:01.406Z",
+      "stale": false,
       "keepEvenIfStale": true
     },
     {
@@ -103,6 +143,8 @@
       "versionSource": "sbom",
       "summary": "Long-term support Bluefin stream.",
       "artwork": "achillobator",
+      "sbomStreamId": "bluefin-lts",
+      "nvidiaSbomStreamId": "bluefin-lts-nvidia",
       "imageRef": "ghcr.io/projectbluefin/bluefin-lts",
       "packagePageUrl": "https://github.com/orgs/projectbluefin/packages/container/package/bluefin-lts",
       "isoSectionLink": "/downloads",
@@ -116,74 +158,80 @@
           "tag": "stable",
           "command": "sudo bootc switch ghcr.io/projectbluefin/bluefin-lts:stable --enforce-container-sigpolicy",
           "versions": {
-            "gnome": "49.5",
-            "kernel": "6.12.0-233.el10",
+            "gnome": null,
+            "kernel": null,
             "nvidia": null,
             "fedora": null,
-            "flatpak": "1.16.0",
-            "mesa": "25.2.7",
-            "podman": "5.8.2",
-            "systemd": "257",
-            "bootc": "1.15.2",
-            "pipewire": "1.4.11"
+            "flatpak": null,
+            "mesa": null,
+            "podman": null,
+            "systemd": null,
+            "bootc": null,
+            "pipewire": null
           },
-          "nvidiaCommand": "sudo bootc switch ghcr.io/projectbluefin/bluefin-lts-nvidia:stable --enforce-container-sigpolicy"
+          "nvidiaCommand": "sudo bootc switch ghcr.io/projectbluefin/bluefin-lts-nvidia:stable --enforce-container-sigpolicy",
+          "imageRef": "ghcr.io/projectbluefin/bluefin-lts:stable",
+          "nvidiaImageRef": "ghcr.io/projectbluefin/bluefin-lts-nvidia:stable",
+          "nvidiaVersions": null
         },
         {
           "label": "TESTING",
           "tag": "testing",
           "command": "sudo bootc switch ghcr.io/projectbluefin/bluefin-lts:testing --enforce-container-sigpolicy",
           "versions": {
-            "gnome": "49.5",
-            "kernel": "6.12.0-233.el10",
+            "gnome": null,
+            "kernel": null,
             "nvidia": null,
             "fedora": null,
-            "flatpak": "1.16.0",
-            "mesa": "25.2.7",
-            "podman": "5.8.2",
-            "systemd": "257",
-            "bootc": "1.15.2",
-            "pipewire": "1.4.11"
+            "flatpak": null,
+            "mesa": null,
+            "podman": null,
+            "systemd": null,
+            "bootc": null,
+            "pipewire": null
           },
-          "nvidiaCommand": "sudo bootc switch ghcr.io/projectbluefin/bluefin-lts-nvidia:testing --enforce-container-sigpolicy"
+          "nvidiaCommand": "sudo bootc switch ghcr.io/projectbluefin/bluefin-lts-nvidia:testing --enforce-container-sigpolicy",
+          "imageRef": "ghcr.io/projectbluefin/bluefin-lts:testing",
+          "nvidiaImageRef": "ghcr.io/projectbluefin/bluefin-lts-nvidia:testing",
+          "nvidiaVersions": null
         }
       ],
       "testingStreams": [],
       "metadata": {
-        "digest": "sha256:41a15d1bc6926775874396ed21c920807be7b632d685529f3d3954a4326b9722",
-        "digestShort": "41a15d1bc692",
+        "digest": "sha256:935c3283da7c02b76846919d554fedda62885f783018ad314f41b2a0c9dd3931",
+        "digestShort": "935c3283da7c",
         "digestLink": "https://github.com/projectbluefin/bluefin-lts/releases/tag/stable-20260807#assets",
         "architecture": "amd64",
         "os": "linux",
         "labels": {
           "version": "10",
-          "revision": "5f38951e7b9174eddf67239e7d72fea1e3b61dc8",
+          "revision": "dbeeb854a10be48b9ed2fecdbca0e65098b6b3ff",
           "source": null,
-          "ostreeCommit": null
+          "ostreeCommit": "a772d16f8b994ed4a2064bbf1b02c921b1c37e1ce5f4bba66875bdfa1d915046"
         }
       },
-      "metadataSource": "cache",
+      "metadataSource": "live",
       "versions": {
         "source": "sbom",
-        "gnome": "49.5",
-        "kernel": "6.12.0-233.el10",
+        "gnome": null,
+        "kernel": null,
         "nvidia": null,
         "release": {
-          "title": "stable-20260909",
-          "url": "https://github.com/projectbluefin/bluefin-lts/releases/tag/stable-20260909",
-          "assetsUrl": "https://github.com/projectbluefin/bluefin-lts/releases/tag/stable-20260909#assets"
+          "title": "stable-20260807: LTS",
+          "url": "https://github.com/projectbluefin/bluefin-lts/releases/tag/stable-20260807",
+          "assetsUrl": "https://github.com/projectbluefin/bluefin-lts/releases/tag/stable-20260807#assets"
         }
       },
       "security": {
-        "cosignKeyUrl": "https://raw.githubusercontent.com/projectbluefin/bluefin-lts/main/cosign.pub",
-        "verifyCommand": "cosign verify --key https://raw.githubusercontent.com/projectbluefin/bluefin-lts/main/cosign.pub ghcr.io/projectbluefin/bluefin-lts:stable",
-        "attestCommand": "cosign verify-attestation --type https://slsa.dev/provenance/v1 --key https://raw.githubusercontent.com/projectbluefin/bluefin-lts/main/cosign.pub ghcr.io/projectbluefin/bluefin-lts:stable",
+        "cosignKeyUrl": null,
+        "verifyCommand": "cosign verify --certificate-oidc-issuer https://token.actions.githubusercontent.com --certificate-identity-regexp '^https://github.com/projectbluefin/bluefin-lts/.github/workflows/' ghcr.io/projectbluefin/bluefin-lts:stable",
+        "attestCommand": null,
         "hasAttestation": false,
         "sbomCommand": "oras discover ghcr.io/projectbluefin/bluefin-lts:stable"
       },
       "inspectTag": "stable",
-      "lastPublishedAt": "2026-06-24T08:25:24.169Z",
-      "stale": true,
+      "lastPublishedAt": "2026-09-23T12:03:03.420Z",
+      "stale": false,
       "keepEvenIfStale": true
     },
     {
@@ -194,6 +242,8 @@
       "versionSource": "sbom",
       "summary": "Project Bluefin Dakota image stream built with BuildStream.",
       "artwork": "dakotaraptor",
+      "sbomStreamId": "dakota-stable",
+      "nvidiaSbomStreamId": "dakota-nvidia-stable",
       "imageRef": "ghcr.io/projectbluefin/dakota",
       "packagePageUrl": "https://github.com/orgs/projectbluefin/packages/container/package/dakota",
       "isoSectionLink": "/downloads-testing#dakotaraptor",
@@ -207,74 +257,102 @@
           "tag": "stable",
           "command": "sudo bootc switch ghcr.io/projectbluefin/dakota:stable --enforce-container-sigpolicy",
           "versions": {
-            "gnome": "50.2",
-            "kernel": "7.0.7",
-            "nvidia": "595.71.05",
+            "gnome": "51.0",
+            "kernel": "7.2.6",
+            "nvidia": null,
             "fedora": null,
-            "flatpak": "1.16.6",
-            "mesa": "26.0.6",
-            "podman": "5.8.2",
-            "systemd": "260.2",
-            "bootc": "1.15.2",
-            "pipewire": "1.6.1"
+            "flatpak": null,
+            "mesa": "26.2.2",
+            "podman": "6.1.0",
+            "systemd": "261.3",
+            "bootc": "1.16.13",
+            "pipewire": "1.6.8"
           },
-          "nvidiaCommand": "sudo bootc switch ghcr.io/projectbluefin/dakota-nvidia:stable --enforce-container-sigpolicy"
+          "nvidiaCommand": "sudo bootc switch ghcr.io/projectbluefin/dakota-nvidia:stable --enforce-container-sigpolicy",
+          "imageRef": "ghcr.io/projectbluefin/dakota:stable",
+          "nvidiaImageRef": "ghcr.io/projectbluefin/dakota-nvidia:stable",
+          "nvidiaVersions": {
+            "gnome": "51.0",
+            "kernel": "7.2.6",
+            "nvidia": "615.71.09",
+            "fedora": null,
+            "flatpak": null,
+            "mesa": "26.2.2",
+            "podman": "6.1.0",
+            "systemd": "261.3",
+            "bootc": "1.16.13",
+            "pipewire": "1.6.8"
+          }
         },
         {
           "label": "TESTING",
           "tag": "testing",
           "command": "sudo bootc switch ghcr.io/projectbluefin/dakota:testing --enforce-container-sigpolicy",
           "versions": {
-            "gnome": "50.2",
-            "kernel": "7.0.7",
-            "nvidia": "595.71.05",
+            "gnome": "51.0",
+            "kernel": "7.2.6",
+            "nvidia": null,
             "fedora": null,
-            "flatpak": "1.16.6",
-            "mesa": "26.0.6",
-            "podman": "5.8.2",
-            "systemd": "260.2",
-            "bootc": "1.15.2",
-            "pipewire": "1.6.1"
+            "flatpak": null,
+            "mesa": "26.2.2",
+            "podman": "6.1.0",
+            "systemd": "261.3",
+            "bootc": "1.16.13",
+            "pipewire": "1.6.8"
           },
-          "nvidiaCommand": "sudo bootc switch ghcr.io/projectbluefin/dakota-nvidia:testing --enforce-container-sigpolicy"
+          "nvidiaCommand": "sudo bootc switch ghcr.io/projectbluefin/dakota-nvidia:testing --enforce-container-sigpolicy",
+          "imageRef": "ghcr.io/projectbluefin/dakota:testing",
+          "nvidiaImageRef": "ghcr.io/projectbluefin/dakota-nvidia:testing",
+          "nvidiaVersions": {
+            "gnome": "51.0",
+            "kernel": "7.2.6",
+            "nvidia": "615.71.09",
+            "fedora": null,
+            "flatpak": null,
+            "mesa": "26.2.2",
+            "podman": "6.1.0",
+            "systemd": "261.3",
+            "bootc": "1.16.13",
+            "pipewire": "1.6.8"
+          }
         }
       ],
       "testingStreams": [],
       "metadata": {
-        "digest": "sha256:a6916e9e298e1b86d2002232ac83cb377ab603aa39de1252789c01e8c34a5ac6",
-        "digestShort": "a6916e9e298e",
-        "digestLink": "https://github.com/projectbluefin/dakota/releases#assets",
+        "digest": "sha256:ddab2e2d816976a8f181603987e76d1c992109f435b2abdf1eae76f40f7139f8",
+        "digestShort": "ddab2e2d8169",
+        "digestLink": null,
         "architecture": "amd64",
         "os": "linux",
         "labels": {
           "version": "latest",
-          "revision": "cb7d1c577379a9354c6725d2c72ef2373070b8e4",
+          "revision": "787bf4d60fee70bebe6c868b7a2079a0eeea76aa",
           "source": "https://github.com/projectbluefin/dakota",
           "ostreeCommit": null
         }
       },
-      "metadataSource": "cache",
+      "metadataSource": "live",
       "versions": {
         "source": "sbom",
-        "gnome": "50.2",
-        "kernel": "7.0.7",
-        "nvidia": "595.71.05",
+        "gnome": "51.0",
+        "kernel": "7.2.6",
+        "nvidia": null,
         "release": {
           "title": null,
           "url": "https://github.com/projectbluefin/dakota/releases",
-          "assetsUrl": "https://github.com/projectbluefin/dakota/releases#assets"
+          "assetsUrl": null
         }
       },
       "security": {
         "cosignKeyUrl": null,
         "verifyCommand": "cosign verify --certificate-oidc-issuer https://token.actions.githubusercontent.com --certificate-identity-regexp '^https://github.com/projectbluefin/dakota/.github/workflows/' ghcr.io/projectbluefin/dakota:stable",
         "attestCommand": "cosign verify-attestation --type https://slsa.dev/provenance/v1 --certificate-oidc-issuer https://token.actions.githubusercontent.com --certificate-identity-regexp '^https://github.com/projectbluefin/dakota/.github/workflows/' ghcr.io/projectbluefin/dakota:stable",
-        "hasAttestation": false,
+        "hasAttestation": true,
         "sbomCommand": "oras discover ghcr.io/projectbluefin/dakota:stable"
       },
       "inspectTag": "stable",
-      "lastPublishedAt": "2026-06-24T08:26:49.590Z",
-      "stale": true,
+      "lastPublishedAt": "2026-09-23T12:03:15.132Z",
+      "stale": false,
       "keepEvenIfStale": true
     },
     {
@@ -285,6 +363,8 @@
       "versionSource": "sbom",
       "summary": "Project Bluefin Utah image stream built with Fedora Hummingbird technology.",
       "artwork": "bluefin",
+      "sbomStreamId": "utah-testing",
+      "nvidiaSbomStreamId": "utah-nvidia-testing",
       "imageRef": "ghcr.io/projectbluefin/utah",
       "packagePageUrl": "https://github.com/orgs/projectbluefin/packages/container/package/utah",
       "isoSectionLink": null,
@@ -296,7 +376,7 @@
         {
           "label": "TESTING",
           "tag": "testing",
-          "command": null,
+          "command": "sudo bootc switch ghcr.io/projectbluefin/utah:testing --enforce-container-sigpolicy",
           "versions": {
             "gnome": null,
             "kernel": null,
@@ -309,12 +389,27 @@
             "bootc": null,
             "pipewire": null
           },
-          "nvidiaCommand": null
+          "nvidiaCommand": "sudo bootc switch ghcr.io/projectbluefin/utah-nvidia:testing --enforce-container-sigpolicy",
+          "imageRef": "ghcr.io/projectbluefin/utah:testing",
+          "nvidiaImageRef": "ghcr.io/projectbluefin/utah-nvidia:testing",
+          "nvidiaVersions": null
         }
       ],
       "testingStreams": [],
-      "metadata": null,
-      "metadataSource": "unavailable",
+      "metadata": {
+        "digest": "sha256:d1869a16e7793cbefd1eb6857689b5b1b202b9ffee3a64ea8c7c303a0eb4375c",
+        "digestShort": "d1869a16e779",
+        "digestLink": null,
+        "architecture": "amd64",
+        "os": "linux",
+        "labels": {
+          "version": "testing-20260919-dbd1425",
+          "revision": "2fdb47bf6203a5fd2623fa34a81a92fd8896f00c",
+          "source": "https://github.com/projectbluefin/utah",
+          "ostreeCommit": null
+        }
+      },
+      "metadataSource": "live",
       "versions": {
         "source": "sbom",
         "gnome": null,
@@ -323,18 +418,18 @@
         "release": {
           "title": null,
           "url": "https://github.com/projectbluefin/utah/releases",
-          "assetsUrl": "https://github.com/projectbluefin/utah/releases#assets"
+          "assetsUrl": null
         }
       },
       "security": {
         "cosignKeyUrl": null,
-        "verifyCommand": null,
+        "verifyCommand": "cosign verify --certificate-oidc-issuer https://token.actions.githubusercontent.com --certificate-identity-regexp '^https://github.com/projectbluefin/utah/.github/workflows/' ghcr.io/projectbluefin/utah:testing",
         "attestCommand": null,
         "hasAttestation": false,
-        "sbomCommand": null
+        "sbomCommand": "oras discover ghcr.io/projectbluefin/utah:testing"
       },
       "inspectTag": "testing",
-      "lastPublishedAt": null,
+      "lastPublishedAt": "2026-09-23T12:03:09.032Z",
       "stale": false,
       "keepEvenIfStale": true
     }

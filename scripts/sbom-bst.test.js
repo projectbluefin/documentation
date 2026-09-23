@@ -49,7 +49,10 @@ test("BST_PACKAGE_MAP entries are well formed and map to distinct fields", () =>
   const fields = new Set();
   for (const entry of BST_PACKAGE_MAP) {
     assert.equal(typeof entry.name, "string");
-    assert.ok(entry.bstSuffix.endsWith(".bst"), entry.bstSuffix);
+    assert.ok(Array.isArray(entry.bstSuffixes) && entry.bstSuffixes.length > 0);
+    for (const suffix of entry.bstSuffixes) {
+      assert.ok(suffix.endsWith(".bst"), suffix);
+    }
     assert.equal(
       fields.has(entry.field),
       false,
@@ -78,7 +81,7 @@ function bstPkg(name, versionInfo, locators) {
 test("extractBstPackageVersions maps every element in BST_PACKAGE_MAP", () => {
   const packages = BST_PACKAGE_MAP.map((entry, i) =>
     bstPkg(entry.name, `${i + 1}.0`, [
-      `freedesktop-sdk.bst:${entry.bstSuffix}`,
+      `freedesktop-sdk.bst:${entry.bstSuffixes[0]}`,
     ]),
   );
   const got = extractBstPackageVersions({ spdxVersion: "SPDX-2.3", packages });

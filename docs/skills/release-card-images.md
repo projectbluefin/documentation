@@ -55,10 +55,11 @@ correct forever and be wrong within a month.
 | `dakota`      | `static/data/sbom-attestations-frontend.json` (SBOM only)  |
 
 Dakota has no release-notes feed to parse, so `buildDakotaRelease()` in
-`scripts/lib/card-feed-parser.mjs` reads the `dakota-latest` SBOM stream
-directly and overlays the Nvidia version from `dakota-nvidia-latest`. This
-mirrors `getDakotaOsEvent()` in `src/components/FirehoseFeed.tsx` — the PNG and
-the pinned card on `/changelogs` must agree, so change both together.
+`scripts/lib/card-feed-parser.mjs` reads the `dakota-stable` SBOM stream
+directly and overlays the Nvidia version from `dakota-nvidia-stable` for the
+matching release date. This mirrors `getDakotaOsEvent()` in
+`src/components/FirehoseFeed.tsx` — the PNG and the pinned card on
+`/changelogs` must agree, so change both together.
 
 Two traps in the SBOM cache:
 

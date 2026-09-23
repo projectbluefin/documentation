@@ -405,6 +405,31 @@ describe("scripts/lib/sbom/api.js", () => {
   describe("verifyAttestation", () => {
     const spec = { keyRepo: "ublue-os/bluefin" };
 
+    it("key-signed stream without live attestation verifies with its own public key", async () => {
+      execFileHandler = (cmd, args) => {
+        assert.equal(cmd, "cosign");
+        assert.deepEqual(args, [
+          "verify",
+          "--key",
+          "https://raw.githubusercontent.com/projectbluefin/bluefin-lts/main/cosign.pub",
+          "ghcr.io/projectbluefin/bluefin-lts:stable",
+        ]);
+        return { stdout: "{}", stderr: "" };
+      };
+      const result = await api.verifyAttestation(
+        "ghcr.io/projectbluefin/bluefin-lts:stable",
+        {
+          keyRepo: "projectbluefin/bluefin-lts",
+          keyless: false,
+          attestationLive: false,
+          cosignKeyUrl:
+            "https://raw.githubusercontent.com/projectbluefin/bluefin-lts/main/cosign.pub",
+        },
+      );
+      assert.equal(result.verified, true);
+      assert.equal(result.predicateType, "cosign-sign");
+    });
+
     it("cosign-sign stream: returns verified when cosign verify succeeds", async () => {
       const cosignSpec = { ...spec, signingType: "cosign-sign" };
       let invokedArgs = null;
@@ -1005,6 +1030,53 @@ describe("scripts/lib/sbom/api.js", () => {
         "ghcr.io/ublue-os/bluefin:latest",
       );
       assert.equal(dateStr, "20260908");
+    });
+    it("resolves multi-arch index to amd64 child manifest to read created annotation", async () => {
+      execFileHandler = (cmd, args) => {
+        if (
+          args[1] === "fetch" &&
+          args[2] === "ghcr.io/projectbluefin/bluefin-lts:stable"
+        ) {
+          return {
+            stdout: JSON.stringify({
+              schemaVersion: 2,
+              mediaType: "application/vnd.oci.image.index.v1+json",
+              manifests: [
+                {
+                  mediaType: "application/vnd.oci.image.manifest.v1+json",
+                  digest: "sha256:arm64manifest",
+                  platform: { architecture: "arm64", os: "linux" },
+                },
+                {
+                  mediaType: "application/vnd.oci.image.manifest.v1+json",
+                  digest: "sha256:amd64manifest",
+                  platform: { architecture: "amd64", os: "linux" },
+                },
+              ],
+            }),
+            stderr: "",
+          };
+        }
+        if (
+          args[1] === "fetch" &&
+          args[2] === "ghcr.io/projectbluefin/bluefin-lts@sha256:amd64manifest"
+        ) {
+          return {
+            stdout: JSON.stringify({
+              annotations: {
+                "org.opencontainers.image.created": "2026-09-21T21:21:28Z",
+              },
+            }),
+            stderr: "",
+          };
+        }
+        throw new Error(`Unexpected command: ${cmd} ${args.join(" ")}`);
+      };
+
+      const dateStr = await api.getImageCreatedDate(
+        "ghcr.io/projectbluefin/bluefin-lts:stable",
+      );
+      assert.equal(dateStr, "20260921");
     });
 
     it("strategy 2: extracts date from image config blob when annotation is missing", async () => {
