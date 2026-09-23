@@ -8,18 +8,34 @@
 import { graphql } from "@octokit/graphql";
 import { createRequire } from "module";
 
+import { githubHeaders, githubToken } from "./gh.js";
+
 const require = createRequire(import.meta.url);
 const { retryWithBackoff } = require("./request-queue.js");
 
 /**
- * Authenticated GraphQL client singleton
- * Configured with GITHUB_TOKEN from environment
+ * Authenticated GraphQL client.
+ *
+ * Token source and header shape come from the shared ESM factory client
+ * (projectbluefin/documentation#1232) instead of being restated here, so the
+ * layer has one auth contract. Headers are resolved per call rather than baked
+ * into a `graphql.defaults()` singleton at import time: a token exported into
+ * the environment after this module loads is still picked up, and a missing
+ * token now omits `authorization` entirely. The previous inline read always
+ * sent a header, producing the literal `token undefined` — a guaranteed 401 on
+ * requests that would otherwise have succeeded anonymously.
+ *
+ * @param {string} query - GraphQL document
+ * @param {object} [options] - Variables, forwarded to Octokit. `headers`,
+ *   `url`, `method` and `baseUrl` remain reserved words there.
+ * @returns {Promise<object>} The `data` payload.
  */
-const graphqlWithAuth = graphql.defaults({
-  headers: {
-    authorization: `token ${process.env.GITHUB_TOKEN || process.env.GH_TOKEN}`,
-  },
-});
+function graphqlWithAuth(query, options = {}) {
+  return graphql(query, {
+    ...options,
+    headers: { ...options.headers, ...githubHeaders(githubToken()) },
+  });
+}
 
 /**
  * GraphQL query to fetch closed issues from a repository (paginated)

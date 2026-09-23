@@ -20,6 +20,7 @@ const END = new Date("2026-03-31T23:59:59.000Z");
 
 const realFetch = globalThis.fetch;
 let requests;
+let sentHeaders;
 
 /** Empty page for whichever resource a test is not exercising. */
 function emptyPage() {
@@ -73,6 +74,7 @@ function stubFetch(responders) {
   globalThis.fetch = async (_url, opts) => {
     const body = JSON.parse(opts.body);
     requests.push(body);
+    sentHeaders.push(opts.headers);
     const responder = queue.shift();
     assert.ok(responder, `unexpected extra GraphQL request: ${body.query}`);
     const result = responder(body);
@@ -96,10 +98,13 @@ async function load() {
 describe("fetchClosedItemsFromRepo", () => {
   beforeEach(() => {
     requests = [];
+    sentHeaders = [];
   });
 
   afterEach(() => {
     globalThis.fetch = realFetch;
+    delete process.env.GITHUB_TOKEN;
+    delete process.env.GH_TOKEN;
   });
 
   it("normalises closed issues into report items", async () => {
@@ -441,6 +446,72 @@ describe("fetchClosedItemsFromRepo", () => {
     assert.equal(mockCalls.length, 2);
     assert.equal(mockCalls[0].vars.owner, "custom-owner");
     assert.equal(mockCalls[0].vars.name, "custom-repo");
+  });
+});
+
+describe("shared GitHub auth headers", () => {
+  // These cases assert on the ambient environment, so clear both names before
+  // each one; `load()` alone would otherwise inherit whatever the shell has.
+  beforeEach(() => {
+    requests = [];
+    sentHeaders = [];
+    delete process.env.GITHUB_TOKEN;
+    delete process.env.GH_TOKEN;
+  });
+
+  afterEach(() => {
+    delete process.env.GITHUB_TOKEN;
+    delete process.env.GH_TOKEN;
+  });
+
+  it("sends the shared header contract when a token is set", async () => {
+    process.env.GITHUB_TOKEN = "env-token";
+    const { fetchClosedItemsFromRepo } = await load();
+    stubFetch([() => repoPages(), () => repoPages()]);
+
+    await fetchClosedItemsFromRepo("o", "r", START, END);
+
+    assert.equal(sentHeaders[0].authorization, "Bearer env-token");
+    assert.equal(sentHeaders[0].accept, "application/vnd.github+json");
+    assert.equal(sentHeaders[0]["x-github-api-version"], "2022-11-28");
+  });
+
+  it("prefers GITHUB_TOKEN over GH_TOKEN, matching the shared token source", async () => {
+    process.env.GITHUB_TOKEN = "primary";
+    process.env.GH_TOKEN = "secondary";
+    const { fetchClosedItemsFromRepo } = await load();
+    stubFetch([() => repoPages(), () => repoPages()]);
+
+    await fetchClosedItemsFromRepo("o", "r", START, END);
+
+    assert.equal(sentHeaders[0].authorization, "Bearer primary");
+  });
+
+  it("omits authorization entirely when no token is set", async () => {
+    // The previous inline read always sent a header, producing the literal
+    // `token undefined` — a 401 on a request that would have worked anonymously.
+    delete process.env.GITHUB_TOKEN;
+    delete process.env.GH_TOKEN;
+    const { fetchClosedItemsFromRepo } = await load();
+    stubFetch([() => repoPages(), () => repoPages()]);
+
+    await fetchClosedItemsFromRepo("o", "r", START, END);
+
+    assert.ok(!("authorization" in sentHeaders[0]));
+  });
+
+  it("resolves the token per call rather than once at import time", async () => {
+    delete process.env.GITHUB_TOKEN;
+    delete process.env.GH_TOKEN;
+    const { fetchClosedItemsFromRepo } = await load();
+    stubFetch([() => repoPages(), () => repoPages()]);
+    await fetchClosedItemsFromRepo("o", "r", START, END);
+    assert.ok(!("authorization" in sentHeaders[0]));
+
+    process.env.GH_TOKEN = "late-token";
+    stubFetch([() => repoPages(), () => repoPages()]);
+    await fetchClosedItemsFromRepo("o", "r", START, END);
+    assert.equal(sentHeaders[2].authorization, "Bearer late-token");
   });
 });
 

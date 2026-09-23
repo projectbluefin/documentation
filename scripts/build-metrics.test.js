@@ -21,7 +21,7 @@
  *   - error handling and graceful degradation to null
  */
 
-const { describe, it } = require("node:test");
+const { describe, it, beforeEach, afterEach } = require("node:test");
 const assert = require("node:assert/strict");
 
 async function load() {
@@ -216,5 +216,77 @@ describe("fetchBuildMetrics with injected requestClient seam", () => {
     // Passing invalid Date that throws in getFullYear or similar
     const result = await fetchBuildMetrics(null, null);
     assert.equal(result, null);
+  });
+});
+
+describe("fetchBuildMetrics auth headers", () => {
+  const start = new Date("2026-03-01T00:00:00Z");
+  const end = new Date("2026-03-31T23:59:59Z");
+
+  // These cases assert on the ambient environment, so clear both names before
+  // each one; the module caches on import, so a leaked var would persist.
+  beforeEach(() => {
+    delete process.env.GITHUB_TOKEN;
+    delete process.env.GH_TOKEN;
+  });
+
+  afterEach(() => {
+    delete process.env.GITHUB_TOKEN;
+    delete process.env.GH_TOKEN;
+  });
+
+  /** An injected requestClient that records the params it was handed. */
+  function recordingClient() {
+    const calls = [];
+    const client = async (route, params) => {
+      calls.push({ route, params });
+      return { data: { workflow_runs: [] } };
+    };
+    return { calls, client };
+  }
+
+  it("passes the shared header contract to every request", async () => {
+    process.env.GITHUB_TOKEN = "env-token";
+    const { fetchBuildMetrics } = await load();
+    const { calls, client } = recordingClient();
+
+    await fetchBuildMetrics(start, end, { requestClient: client });
+
+    assert.ok(calls.length > 0);
+    for (const { params } of calls) {
+      assert.equal(params.headers.authorization, "Bearer env-token");
+      assert.equal(params.headers.accept, "application/vnd.github+json");
+      assert.equal(params.headers["x-github-api-version"], "2022-11-28");
+    }
+  });
+
+  it("omits authorization entirely when no token is set", async () => {
+    // The previous inline read always sent a header, producing the literal
+    // `token undefined` — a 401 on a request that would have worked anonymously.
+    const { fetchBuildMetrics } = await load();
+    const { calls, client } = recordingClient();
+
+    await fetchBuildMetrics(start, end, { requestClient: client });
+
+    assert.ok(calls.length > 0);
+    for (const { params } of calls) {
+      assert.ok(!("authorization" in params.headers));
+    }
+  });
+
+  it("resolves the token per call rather than once at import time", async () => {
+    const { fetchBuildMetrics } = await load();
+
+    const before = recordingClient();
+    await fetchBuildMetrics(start, end, { requestClient: before.client });
+    assert.ok(!("authorization" in before.calls[0].params.headers));
+
+    process.env.GH_TOKEN = "late-token";
+    const after = recordingClient();
+    await fetchBuildMetrics(start, end, { requestClient: after.client });
+    assert.equal(
+      after.calls[0].params.headers.authorization,
+      "Bearer late-token",
+    );
   });
 });

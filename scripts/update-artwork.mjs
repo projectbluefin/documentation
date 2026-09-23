@@ -14,7 +14,8 @@
  *
  * Environment:
  *   GITHUB_TOKEN   Optional. Used to authenticate GitHub API requests to
- *                  avoid rate-limiting in CI.
+ *   GH_TOKEN       avoid rate-limiting in CI. Either name works; both are read
+ *                  through the shared `githubToken()` helper.
  *
  * Exit codes:
  *   0  Success (including "nothing new to add" — fully idempotent)
@@ -43,6 +44,7 @@ import {
   getSubdirNames,
   getTreePaths,
 } from "./lib/update-artwork-detection.mjs";
+import { githubHeaders, githubToken } from "./lib/gh.js";
 
 // ---------------------------------------------------------------------------
 // Paths
@@ -69,20 +71,27 @@ const UPSTREAM = "ublue-os/artwork";
 const GITHUB_API = "https://api.github.com";
 const RAW_BASE = `https://raw.githubusercontent.com/${UPSTREAM}/main`;
 
-const apiHeaders = {
-  Accept: "application/vnd.github.v3+json",
-  "User-Agent": "bluefin-docs-artwork-sync/1.0",
-  ...(process.env.GITHUB_TOKEN
-    ? { Authorization: `token ${process.env.GITHUB_TOKEN}` }
-    : {}),
-};
+/**
+ * GitHub API headers for the artwork sync.
+ *
+ * Built by the shared ESM factory client (projectbluefin/documentation#1232)
+ * rather than restated here: one Accept/api-version contract, one user agent,
+ * one token source (`GITHUB_TOKEN` / `GH_TOKEN` — this file previously read
+ * `GITHUB_TOKEN` alone) and an `authorization` header that is omitted instead
+ * of sent empty when no token is configured.
+ *
+ * @returns {object} Headers for one request.
+ */
+function apiHeaders() {
+  return githubHeaders(githubToken());
+}
 
 /**
  * Fetch a URL and return parsed JSON.
  * Throws on non-2xx responses with a descriptive message.
  */
 export async function fetchJSON(url, { fetchImpl = fetch } = {}) {
-  const res = await fetchImpl(url, { headers: apiHeaders });
+  const res = await fetchImpl(url, { headers: apiHeaders() });
   if (!res.ok) {
     const body = await res.text().catch(() => "(unreadable)");
     throw new Error(`HTTP ${res.status} from ${url}\n${body}`);
@@ -126,7 +135,7 @@ export async function downloadRaw(
   { fetchImpl = fetch } = {},
 ) {
   const url = `${RAW_BASE}/${remotePath}`;
-  const res = await fetchImpl(url, { headers: apiHeaders });
+  const res = await fetchImpl(url, { headers: apiHeaders() });
   if (!res.ok) {
     throw new Error(`Failed to download ${url}: HTTP ${res.status}`);
   }
