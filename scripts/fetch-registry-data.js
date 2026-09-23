@@ -17,9 +17,12 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const OUT = resolve(__dirname, "../static/data/registry-data.json");
 const REGISTRY_URL = "https://hive.hivecommons.dev/api/registry";
 const TARGET_ORG = "projectbluefin";
-const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
-const force = process.argv.includes("--force");
-
+const envHours = process.env.REGISTRY_CACHE_HOURS;
+const CACHE_TTL_MS =
+  envHours !== undefined
+    ? Number(envHours) * 60 * 60 * 1000
+    : 24 * 60 * 60 * 1000;
+const force = process.argv.includes("--force") || CACHE_TTL_MS === 0;
 if (!force && existsSync(OUT)) {
   const age = Date.now() - statSync(OUT).mtimeMs;
   if (age < CACHE_TTL_MS) {

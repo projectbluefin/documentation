@@ -134,6 +134,9 @@ jobs:
           # Always re-fetch hive live data (Guardians, Ghosts, PRs, stats) on
           # every build so the factory dashboard shows current GitHub state.
           HIVE_LIVE_CACHE_HOURS: "0"
+          # Always re-fetch public hive registry data (tasks, heartbeat, health)
+          # on every build so the leaderboard shows current task completions.
+          REGISTRY_CACHE_HOURS: "0"
         run: npm run fetch-data
 
       - name: Restore card image cache

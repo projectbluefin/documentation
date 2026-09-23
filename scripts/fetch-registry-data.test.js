@@ -232,6 +232,34 @@ test("--force refetches even when the cache is fresh", () => {
   assert.deepEqual(JSON.parse(readFileSync(tree.out, "utf8")), ENTRY);
 });
 
+test("REGISTRY_CACHE_HOURS=0 refetches even when the cache is fresh", () => {
+  const tree = makeTree();
+  writeFileSync(tree.out, JSON.stringify({ org: "stale" }, null, 2) + "\n");
+  age(tree.out, 60 * 1000);
+
+  const env = { REGISTRY_CACHE_HOURS: "0" };
+  const result = run(tree, { body: { hives: [ENTRY] } });
+  // run with custom env
+  const proc = spawnSync(
+    process.execPath,
+    ["--import", tree.preload, tree.script],
+    {
+      env: {
+        ...process.env,
+        ...env,
+        STUB_URL_LOG: tree.urlLog,
+        STUB_MODE: "ok",
+        STUB_BODY: JSON.stringify({ hives: [ENTRY] }),
+      },
+      encoding: "utf8",
+    },
+  );
+
+  assert.equal(proc.status, 0, proc.stderr);
+  assert.equal(existsSync(tree.urlLog), true, "fetch should have run");
+  assert.deepEqual(JSON.parse(readFileSync(tree.out, "utf8")), ENTRY);
+});
+
 test("package.json wires the script to the fetch-registry-data npm script", () => {
   const pkg = JSON.parse(
     readFileSync(resolve(__dirname, "..", "package.json"), "utf8"),
