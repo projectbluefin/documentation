@@ -167,6 +167,40 @@ test("ImagesCatalog renders awaiting initial release for unpublished streams and
   assert.ok(!html.includes("cosign verify"));
 });
 
+test("ImagesCatalog does not call published images unreleased when security data is missing", () => {
+  const html = render(imagesModule.default, {
+    initialCatalog: {
+      products: [
+        {
+          id: "ublue-bluefin",
+          name: "Bluefin",
+          org: "ublue-os",
+          summary: "Bluefin Classic",
+          artwork: "bluefin",
+          packagePageUrl:
+            "https://github.com/orgs/ublue-os/packages/container/package/bluefin",
+          streams: [
+            {
+              label: "Stable",
+              tag: "stable",
+              command: "sudo bootc switch ghcr.io/ublue-os/bluefin:stable",
+              versions: null,
+            },
+          ],
+          testingStreams: [],
+          metadata: null,
+          metadataSource: "unavailable",
+          security: null,
+        },
+      ],
+    },
+  });
+  assert.ok(html.includes("Verification command unavailable"));
+  assert.ok(html.includes("GNOME</strong> Unavailable"));
+  assert.ok(html.includes("Linux</strong> Unavailable"));
+  assert.ok(!html.includes("Awaiting initial release"));
+});
+
 test("DriverVersionsCatalog renders the unavailable reason", () => {
   const html = render(DriverVersionsCatalog, {
     streamId: "bluefin-lts",
@@ -215,6 +249,68 @@ test("StreamVersionPills centralizes optional NVIDIA and package pills", () => {
   assert.ok(!withoutNvidia.includes("NVIDIA"));
 });
 
+test("ImagesCatalog NVIDIA mode shows companion SBOM versions, not base-image versions", () => {
+  const product = {
+    id: "ublue-bluefin",
+    name: "Bluefin",
+    org: "ublue-os",
+    summary: "Bluefin Classic",
+    artwork: "bluefin",
+    packagePageUrl:
+      "https://github.com/orgs/ublue-os/packages/container/package/bluefin",
+    streams: [
+      {
+        label: "Stable",
+        tag: "stable",
+        command: "sudo bootc switch ghcr.io/ublue-os/bluefin:stable",
+        nvidiaCommand:
+          "sudo bootc switch ghcr.io/ublue-os/bluefin-nvidia-open:stable",
+        versions: { kernel: "6.18.1", nvidia: "BASE-DRIVER" },
+        nvidiaVersions: { kernel: "6.18.2", nvidia: "COMPANION-DRIVER" },
+      },
+    ],
+    testingStreams: [],
+    metadata: null,
+    metadataSource: "unavailable",
+  };
+  let stateCall = 0;
+  const nvidiaImages = loadComponent(
+    path.join(COMPONENTS_DIR, "ImagesCatalog.tsx"),
+    {
+      react: {
+        ...React,
+        useState(initial) {
+          stateCall += 1;
+          return [
+            stateCall === 2 ? { "ublue-bluefin": true } : initial,
+            () => {},
+          ];
+        },
+      },
+    },
+  ).default;
+  const html = render(nvidiaImages, {
+    initialCatalog: { products: [product] },
+  });
+  assert.ok(html.includes("COMPANION-DRIVER"));
+  assert.ok(!html.includes("BASE-DRIVER"));
+  assert.ok(html.includes("ghcr.io/ublue-os/bluefin-nvidia-open:stable"));
+
+  stateCall = 0;
+  const withoutCompanion = render(nvidiaImages, {
+    initialCatalog: {
+      products: [
+        {
+          ...product,
+          streams: [{ ...product.streams[0], nvidiaVersions: null }],
+        },
+      ],
+    },
+  });
+  assert.ok(withoutCompanion.includes("NVIDIA</strong> Unavailable"));
+  assert.ok(!withoutCompanion.includes("BASE-DRIVER"));
+});
+
 test("DriverVersionsCatalog guards against empty releases and selects newest valid row", () => {
   const nullLatestCatalog = {
     generatedAt: "2026-09-06T00:00:00.000Z",
@@ -223,7 +319,7 @@ test("DriverVersionsCatalog guards against empty releases and selects newest val
         id: "bluefin-stable",
         name: "Bluefin",
         subtitle: "Current stable stream",
-        command: "sudo bootc switch ghcr.io/projectbluefin/bluefin:stable",
+        command: "sudo bootc switch ghcr.io/ublue-os/bluefin:stable",
         source: "sbom",
         rowCount: 2,
         latest: {
@@ -289,10 +385,10 @@ test("DriverVersionsCatalog renders empty card without archiveRail for empty str
     generatedAt: "2026-09-06T00:00:00.000Z",
     streams: [
       {
-        id: "dakota-latest",
+        id: "dakota-stable",
         name: "Dakota",
         subtitle: "GNOME OS stream",
-        command: "sudo bootc switch ghcr.io/projectbluefin/dakota:latest",
+        command: "sudo bootc switch ghcr.io/projectbluefin/dakota:stable",
         source: "sbom",
         rowCount: 0,
         latest: null,
@@ -302,7 +398,7 @@ test("DriverVersionsCatalog renders empty card without archiveRail for empty str
   };
 
   const html = render(DriverVersionsCatalog, {
-    streamId: "dakota-latest",
+    streamId: "dakota-stable",
     catalogOverride: emptyCatalog,
   });
 
@@ -340,91 +436,105 @@ test("DriverVersionsCatalog showRebootStep prop controls reboot banner", () => {
   assert.ok(!withoutReboot.includes("Final Step: Reboot"));
 });
 
-test("DriverVersionsCatalog generates rebase commands using the correct package for bluefin-lts and other streams", () => {
+test("DriverVersionsCatalog uses published image refs and never invents archival tags", () => {
   const catalog = {
-    generatedAt: "2026-09-06T00:00:00.000Z",
     streams: [
       {
-        id: "bluefin-lts",
-        latest: {
-          stream: "bluefin-lts",
-          tag: "lts-20260906",
-          versions: { kernel: "6.18.13-200.fc43" },
-        },
-        history: [],
-      },
-      {
         id: "bluefin-stable",
+        name: "Bluefin Classic",
+        source: "sbom",
+        rowCount: 1,
+        imageRef: "ghcr.io/ublue-os/bluefin:stable",
         latest: {
           stream: "bluefin-stable",
           tag: "stable-20260906",
+          imageRef: "ghcr.io/ublue-os/bluefin:stable-20260906",
           versions: { kernel: "6.18.13-200.fc43" },
         },
         history: [],
       },
       {
-        id: "dakota-latest",
+        id: "bluefin-lts",
+        name: "Bluefin LTS",
+        source: "sbom",
+        rowCount: 1,
+        imageRef: "ghcr.io/projectbluefin/bluefin-lts:stable",
         latest: {
-          stream: "dakota-latest",
-          tag: "latest-20260906",
+          stream: "bluefin-lts",
+          tag: "lts-20260906",
+          imageRef: "ghcr.io/projectbluefin/bluefin-lts:lts-20260906",
           versions: { kernel: "6.18.13-200.fc43" },
         },
         history: [],
       },
       {
-        id: "utah-testing",
+        id: "dakota-stable",
+        name: "Dakota Stable",
+        source: "sbom",
+        rowCount: 2,
+        imageRef: "ghcr.io/projectbluefin/dakota:stable",
         latest: {
-          stream: "utah-testing",
-          tag: "testing-20260906",
-          versions: { kernel: "6.18.13-200.fc43" },
+          stream: "dakota-stable",
+          tag: "dakota-stable-20260906",
+          imageRef: null,
+          versions: { kernel: "6.18.13" },
         },
-        history: [],
+        history: [
+          {
+            stream: "dakota-stable",
+            tag: "dakota-stable-20260906",
+            imageRef: null,
+            versions: { kernel: "6.18.13" },
+          },
+          {
+            stream: "dakota-stable",
+            tag: "dakota-stable-20260905",
+            imageRef: null,
+            versions: { kernel: "6.18.12" },
+          },
+        ],
       },
     ],
   };
-
-  const ltsHtml = render(DriverVersionsCatalog, {
-    streamId: "bluefin-lts",
-    catalogOverride: catalog,
-  });
-  assert.ok(
-    ltsHtml.includes(
-      "sudo bootc switch --enforce-container-sigpolicy ghcr.io/projectbluefin/bluefin-lts:lts-20260906",
-    ),
-  );
-  assert.ok(
-    !ltsHtml.includes(
-      "sudo bootc switch --enforce-container-sigpolicy ghcr.io/projectbluefin/bluefin:lts-20260906",
-    ),
-  );
-
-  const stableHtml = render(DriverVersionsCatalog, {
+  const classic = render(DriverVersionsCatalog, {
     streamId: "bluefin-stable",
     catalogOverride: catalog,
   });
+  assert.ok(classic.includes("ghcr.io/ublue-os/bluefin:stable-20260906"));
   assert.ok(
-    stableHtml.includes(
-      "sudo bootc switch --enforce-container-sigpolicy ghcr.io/projectbluefin/bluefin:stable-20260906",
-    ),
+    !classic.includes("ghcr.io/projectbluefin/bluefin:stable-20260906"),
   );
 
-  const dakotaHtml = render(DriverVersionsCatalog, {
-    streamId: "dakota-latest",
+  const lts = render(DriverVersionsCatalog, {
+    streamId: "bluefin-lts",
     catalogOverride: catalog,
   });
+  assert.ok(lts.includes("ghcr.io/projectbluefin/bluefin-lts:lts-20260906"));
+
+  const dakota = render(DriverVersionsCatalog, {
+    streamId: "dakota-stable",
+    catalogOverride: catalog,
+  });
+  assert.ok(dakota.includes("ghcr.io/projectbluefin/dakota:stable"));
   assert.ok(
-    dakotaHtml.includes(
-      "sudo bootc switch --enforce-container-sigpolicy ghcr.io/projectbluefin/dakota:latest-20260906",
-    ),
+    !dakota.includes("ghcr.io/projectbluefin/dakota:dakota-stable-20260905"),
+  );
+  assert.ok(
+    !dakota.includes("ghcr.io/projectbluefin/dakota:dakota-stable-20260906"),
+  );
+  assert.ok(
+    dakota.includes("No published image for this historical SBOM snapshot"),
   );
 
-  const utahHtml = render(DriverVersionsCatalog, {
-    streamId: "utah-testing",
+  catalog.streams[2].latest = {
+    stream: "dakota-stable",
+    tag: "dakota-stable-20260907",
+    imageRef: null,
+    versions: { kernel: null },
+  };
+  const stale = render(DriverVersionsCatalog, {
+    streamId: "dakota-stable",
     catalogOverride: catalog,
   });
-  assert.ok(
-    utahHtml.includes(
-      "sudo bootc switch --enforce-container-sigpolicy ghcr.io/projectbluefin/utah:testing-20260906",
-    ),
-  );
+  assert.ok(!stale.includes("ghcr.io/projectbluefin/dakota:stable"));
 });

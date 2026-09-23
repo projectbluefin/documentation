@@ -21,16 +21,16 @@ const SBOM_UNAVAILABLE_REASON =
   "SBOM attestation cache not found or empty — run fetch-github-sbom.js first";
 
 const RELEASE_URL_BY_STREAM = {
-  "bluefin-stable": "https://github.com/projectbluefin/bluefin/releases",
+  "bluefin-stable": "https://github.com/ublue-os/bluefin/releases",
   "bluefin-lts": "https://github.com/projectbluefin/bluefin-lts/releases",
-  "dakota-latest": "https://github.com/projectbluefin/dakota/releases",
+  "dakota-stable": "https://github.com/projectbluefin/dakota/releases",
   "utah-testing": "https://github.com/projectbluefin/utah/releases",
 };
 
 const RELEASE_REPO_BY_STREAM = {
-  "bluefin-stable": "projectbluefin/bluefin",
+  "bluefin-stable": "ublue-os/bluefin",
   "bluefin-lts": "projectbluefin/bluefin-lts",
-  "dakota-latest": "projectbluefin/dakota",
+  "dakota-stable": "projectbluefin/dakota",
   "utah-testing": "projectbluefin/utah",
 };
 
@@ -43,27 +43,15 @@ function lookupSbomVersionsForTag(sbomCache, sbomStreamId, cacheKey) {
   return lookupVersionsForRelease(sbomCache, sbomStreamId, cacheKey);
 }
 
-/**
- * Derive the SBOM cache key prefix from a stream ID.
- * The SBOM cache key format is "<streamPrefix>-YYYYMMDD" (e.g. "stable-20260331").
- * sbomStreamId format is "<product>-<streamPrefix>" (e.g. "bluefin-stable",
- * "bluefin-dx-latest", "bluefin-gdx-lts").
- * Strip everything up to and including the last product segment.
- *
- * Explicit map is used instead of string manipulation to be unambiguous:
- */
+/** Exact cache-key prefixes used to match LTS HWE kernels by release date. */
 const SBOM_STREAM_PREFIX = {
-  "bluefin-stable": "stable",
-  "bluefin-latest": "latest",
   "bluefin-lts": "stable",
   "bluefin-lts-hwe": "stable-hwe",
   "bluefin-lts-nvidia": "stable",
-  "bluefin-dx-stable": "stable",
-  "bluefin-dx-latest": "latest",
-  "bluefin-dx-lts": "stable",
-  "bluefin-gdx-lts": "stable",
-  "bluefin-gdx-latest": "latest",
-  "dakota-latest": "latest",
+  "dakota-stable": "stable",
+  "dakota-nvidia-stable": "stable",
+  "utah-testing": "testing",
+  "utah-nvidia-testing": "testing",
 };
 
 function readJsonIfExists(filePath, fallback = null) {
@@ -110,8 +98,8 @@ function isSbomOutput(output) {
 }
 
 function requiredStreamIds(sbomCache) {
-  const required = ["bluefin-stable", "bluefin-lts"];
-  for (const streamId of ["dakota-latest", "utah-testing"]) {
+  const required = ["bluefin-stable", "bluefin-lts", "utah-testing"];
+  for (const streamId of ["dakota-stable"]) {
     if (
       Object.keys(sbomCache?.streams?.[streamId]?.releases || {}).length > 0
     ) {
@@ -125,8 +113,23 @@ function isValidCachedOutput(output, sbomCache) {
   if (!isSbomOutput(output)) return false;
 
   const cachedStreamIds = new Set(output.streams.map((stream) => stream?.id));
-  return requiredStreamIds(sbomCache).every((streamId) =>
-    cachedStreamIds.has(streamId),
+  return (
+    output.streams.every((stream) => {
+      const expectedRef = `ghcr.io/${RELEASE_REPO_BY_STREAM[stream.id]}:${stream.id === "utah-testing" ? "testing" : "stable"}`;
+      const unavailableUtah =
+        stream.id === "utah-testing" &&
+        stream.imageRef === null &&
+        (!sbomCache ||
+          !Object.keys(sbomCache.streams?.["utah-testing"]?.releases || {})
+            .length);
+      return (
+        RELEASE_URL_BY_STREAM[stream.id] &&
+        (stream.imageRef === expectedRef || unavailableUtah)
+      );
+    }) &&
+    requiredStreamIds(sbomCache).every((streamId) =>
+      cachedStreamIds.has(streamId),
+    )
   );
 }
 
@@ -135,7 +138,7 @@ function handleUnavailableCache(
   outputFile = OUTPUT_FILE,
 ) {
   const existing = readJsonIfExists(outputFile);
-  if (isSbomOutput(existing)) {
+  if (isValidCachedOutput(existing, null)) {
     console.warn(
       "SBOM attestation cache unavailable. Preserving existing SBOM-derived driver versions.",
     );
@@ -171,15 +174,15 @@ function rowFromSbomRelease(
     tag: releaseEntry?.tag || cacheKey,
     title: releaseEntry?.tag || cacheKey,
     releaseUrl: (() => {
-      let tag = releaseEntry?.tag || cacheKey;
-      if (streamId === "bluefin-lts" && typeof tag === "string") {
-        tag = tag.replace(/^lts-(\d{8})$/, "stable-$1");
-      }
+      const tag = releaseEntry?.tag;
       const repo = RELEASE_REPO_BY_STREAM[streamId];
-      return repo && tag
+      return repo && typeof tag === "string" && /[.-]\d{8}$/.test(tag)
         ? `https://github.com/${repo}/releases/tag/${tag}`
         : RELEASE_URL_BY_STREAM[streamId] || null;
     })(),
+    imageRef: /[.-]\d{8}$/.test(releaseEntry?.tag || "")
+      ? releaseEntry?.imageRef || null
+      : null,
     publishedAt,
     versions: {
       kernel: pkg.kernel || null,
@@ -194,100 +197,9 @@ function rowFromSbomRelease(
   };
 }
 
-/**
- * Resolves the NVIDIA driver version for a release from a companion stream lookup map.
- * Lookup order:
- * 1. Exact match by release tag or cacheKey
- * 2. Exact match by release date (YYYYMMDD)
- * 3. Most recent companion release whose date is <= this release's date
- * 4. Latest companion release if within reasonable proximity (e.g. 30 days)
- *
- * @param {Record<string, string>} nvidiaByTag - Map of companion release tags/keys to NVIDIA versions
- * @param {object} [entry] - Release entry object
- * @param {string} [cacheKey] - Cache key of the release
- * @param {number} [proximityDays=30] - Proximity threshold in days for fallback
- * @returns {string|null} - Resolved NVIDIA version or null
- */
-function resolveCompanionNvidia(
-  nvidiaByTag,
-  entry,
-  cacheKey,
-  proximityDays = 30,
-) {
-  if (!nvidiaByTag || typeof nvidiaByTag !== "object") return null;
-
-  const tag = entry?.tag || cacheKey;
-
-  // 1. Exact string match by tag or cacheKey
-  if (tag && nvidiaByTag[tag]) {
-    return nvidiaByTag[tag];
-  }
-  if (cacheKey && nvidiaByTag[cacheKey]) {
-    return nvidiaByTag[cacheKey];
-  }
-
-  // Extract 8-digit date from tag or cacheKey
-  const releaseDateMatch = String(tag || cacheKey || "").match(
-    /(\d{4})(\d{2})(\d{2})/,
-  );
-  if (!releaseDateMatch) {
-    return null;
-  }
-
-  const [, rYear, rMonth, rDay] = releaseDateMatch;
-  const releaseDateStr = `${rYear}${rMonth}${rDay}`;
-  const releaseTimestamp = Date.UTC(
-    Number(rYear),
-    Number(rMonth) - 1,
-    Number(rDay),
-  );
-
-  // 2. Exact match by date
-  if (nvidiaByTag[releaseDateStr]) {
-    return nvidiaByTag[releaseDateStr];
-  }
-
-  // Gather companion entries with valid dates
-  const companionEntries = [];
-  for (const [key, version] of Object.entries(nvidiaByTag)) {
-    if (!version) continue;
-    if (key.includes(releaseDateStr)) {
-      return version;
-    }
-    const match = key.match(/(\d{4})(\d{2})(\d{2})/);
-    if (!match) continue;
-    const [, cYear, cMonth, cDay] = match;
-    const timestamp = Date.UTC(Number(cYear), Number(cMonth) - 1, Number(cDay));
-    companionEntries.push({
-      key,
-      version,
-      timestamp,
-    });
-  }
-
-  if (companionEntries.length === 0) {
-    return null;
-  }
-
-  // Sort newest companion first
-  companionEntries.sort((a, b) => b.timestamp - a.timestamp);
-
-  // 3. Most recent companion release whose date is <= this release's date
-  const priorOrSame = companionEntries.filter(
-    (c) => c.timestamp <= releaseTimestamp,
-  );
-  if (priorOrSame.length > 0) {
-    return priorOrSame[0].version;
-  }
-
-  // 4. Latest companion release if within reasonable proximity
-  const latestCompanion = companionEntries[0];
-  const proximityMs = proximityDays * 24 * 60 * 60 * 1000;
-  if (Math.abs(latestCompanion.timestamp - releaseTimestamp) <= proximityMs) {
-    return latestCompanion.version;
-  }
-
-  return null;
+/** A companion version is valid only for the same stream release key. */
+function resolveCompanionNvidia(nvidiaByTag, entry, cacheKey) {
+  return nvidiaByTag?.[cacheKey] || null;
 }
 
 function buildStreamFromSbom(
@@ -359,6 +271,15 @@ function buildStreamFromSbom(
     name,
     subtitle,
     command,
+    imageRef: command
+      ? streamId === "bluefin-stable"
+        ? "ghcr.io/ublue-os/bluefin:stable"
+        : streamId === "bluefin-lts"
+          ? "ghcr.io/projectbluefin/bluefin-lts:stable"
+          : streamId === "dakota-stable"
+            ? "ghcr.io/projectbluefin/dakota:stable"
+            : "ghcr.io/projectbluefin/utah:testing"
+      : null,
     source: "sbom",
     rowCount: history.length,
     latest: history[0] || null,
@@ -366,50 +287,31 @@ function buildStreamFromSbom(
   };
 }
 
-/**
- * Build an nvidia version lookup map keyed by date tag from a named SBOM stream.
- * @param {object} sbomCache
- * @param {string} streamId  e.g. "bluefin-gdx-lts" or "bluefin-nvidia-open-stable"
- * @returns {Record<string, string>}
- */
+/** NVIDIA companion releases are indexed only by their own cache key. */
 function buildNvidiaMapFromSbomStream(sbomCache, streamId) {
-  const releases = sbomCache?.streams?.[streamId]?.releases || {};
+  const stream = sbomCache?.streams?.[streamId];
+  const expectedPackage = {
+    "bluefin-nvidia-open-stable": "ublue-os/bluefin-nvidia-open",
+    "bluefin-lts-nvidia": "projectbluefin/bluefin-lts-nvidia",
+    "dakota-nvidia-stable": "projectbluefin/dakota-nvidia",
+    "utah-nvidia-testing": "projectbluefin/utah-nvidia",
+  }[streamId];
+  if (
+    !expectedPackage ||
+    `${stream?.org}/${stream?.package}` !== expectedPackage
+  )
+    return {};
+  const releases = stream.releases || {};
   const map = {};
   for (const [cacheKey, entry] of Object.entries(releases)) {
-    const version = entry?.packageVersions?.nvidia;
-    if (!version) continue;
-    map[cacheKey] = version;
-    const tag = entry?.tag;
-    if (tag && tag !== cacheKey) map[tag] = version;
-    const dateMatch = String(tag || cacheKey).match(/(\d{8})/);
-    if (dateMatch && !map[dateMatch[1]]) {
-      map[dateMatch[1]] = version;
-    }
+    if (entry?.packageVersions?.nvidia)
+      map[cacheKey] = entry.packageVersions.nvidia;
   }
   return map;
 }
 
-/**
- * Build the NVIDIA lookup map used by the LTS stream.
- * Prefer the dedicated LTS NVIDIA stream and fall back to the legacy stream
- * while older SBOM caches are still in circulation.
- * If neither has entries, fall back to bluefin-nvidia-open-stable.
- * @param {object} sbomCache
- * @returns {Record<string, string>}
- */
 function buildLtsNvidiaByTagFromSbom(sbomCache) {
-  const ltsNvidia = buildNvidiaMapFromSbomStream(
-    sbomCache,
-    "bluefin-lts-nvidia",
-  );
-  if (Object.keys(ltsNvidia).length > 0) {
-    return ltsNvidia;
-  }
-  const gdxLts = buildNvidiaMapFromSbomStream(sbomCache, "bluefin-gdx-lts");
-  if (Object.keys(gdxLts).length > 0) {
-    return gdxLts;
-  }
-  return buildNvidiaMapFromSbomStream(sbomCache, "bluefin-nvidia-open-stable");
+  return buildNvidiaMapFromSbomStream(sbomCache, "bluefin-lts-nvidia");
 }
 
 async function main() {
@@ -418,7 +320,13 @@ async function main() {
     sbomCache?.streams &&
     typeof sbomCache.streams === "object" &&
     !Array.isArray(sbomCache.streams);
-  const sbomLoaded = Boolean(sbomCache?.generatedAt) && Boolean(hasSbomStreams);
+  const sbomLoaded =
+    Boolean(sbomCache?.generatedAt) &&
+    Boolean(hasSbomStreams) &&
+    sbomCache.streams?.["bluefin-stable"]?.org === "ublue-os" &&
+    sbomCache.streams["bluefin-stable"].package === "bluefin" &&
+    sbomCache.streams?.["bluefin-lts"]?.org === "projectbluefin" &&
+    sbomCache.streams["bluefin-lts"].package === "bluefin-lts";
   if (!sbomLoaded) {
     handleUnavailableCache();
     return;
@@ -464,8 +372,8 @@ async function main() {
   const stableStream = buildStreamFromSbom(
     "bluefin-stable",
     "Bluefin",
-    "Current stable stream from projectbluefin/bluefin.",
-    "sudo bootc switch ghcr.io/projectbluefin/bluefin:stable --enforce-container-sigpolicy",
+    "Current stable stream from ublue-os/bluefin.",
+    "sudo bootc switch ghcr.io/ublue-os/bluefin:stable --enforce-container-sigpolicy",
     sbomCache,
     nvidiaOpenStableByTag,
   );
@@ -482,18 +390,18 @@ async function main() {
   );
 
   const hasSbomDakota =
-    Object.keys(sbomCache.streams?.["dakota-latest"]?.releases || {}).length >
+    Object.keys(sbomCache.streams?.["dakota-stable"]?.releases || {}).length >
     0;
   const dakotaNvidiaByTag = buildNvidiaMapFromSbomStream(
     sbomCache,
-    "dakota-nvidia-latest",
+    "dakota-nvidia-stable",
   );
   console.log(
     `Dakota nvidia map: ${Object.keys(dakotaNvidiaByTag).length} entries`,
   );
   const dakotaStream = hasSbomDakota
     ? buildStreamFromSbom(
-        "dakota-latest",
+        "dakota-stable",
         "Dakota",
         "GNOME OS-based image from projectbluefin/dakota.",
         "sudo bootc switch --enforce-container-sigpolicy ghcr.io/projectbluefin/dakota:stable",
@@ -502,7 +410,8 @@ async function main() {
       )
     : null;
 
-  const hasSbomUtah = Boolean(sbomCache.streams?.["utah-testing"]);
+  const hasSbomUtah =
+    Object.keys(sbomCache.streams?.["utah-testing"]?.releases || {}).length > 0;
   const utahNvidiaByTag = buildNvidiaMapFromSbomStream(
     sbomCache,
     "utah-nvidia-testing",
@@ -510,16 +419,16 @@ async function main() {
   console.log(
     `Utah nvidia map: ${Object.keys(utahNvidiaByTag).length} entries`,
   );
-  const utahStream = hasSbomUtah
-    ? buildStreamFromSbom(
-        "utah-testing",
-        "Utah",
-        "Project Hummingbird-based image from projectbluefin/utah.",
-        "sudo bootc switch --enforce-container-sigpolicy ghcr.io/projectbluefin/utah:testing",
-        sbomCache,
-        utahNvidiaByTag,
-      )
-    : null;
+  const utahStream = buildStreamFromSbom(
+    "utah-testing",
+    "Utah",
+    "Project Hummingbird-based image from projectbluefin/utah.",
+    hasSbomUtah
+      ? "sudo bootc switch --enforce-container-sigpolicy ghcr.io/projectbluefin/utah:testing"
+      : null,
+    sbomCache,
+    utahNvidiaByTag,
+  );
 
   const output = {
     generatedAt: new Date().toISOString(),
@@ -529,7 +438,7 @@ async function main() {
       stableStream,
       ltsStream,
       ...(dakotaStream ? [dakotaStream] : []),
-      ...(utahStream ? [utahStream] : []),
+      utahStream,
     ],
   };
 

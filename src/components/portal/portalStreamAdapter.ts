@@ -211,7 +211,7 @@ export function adaptStreams(
   imagesRaw: unknown,
   driverVersionsRaw: unknown,
 ): ChooserCatalog {
-  const stableProduct = findProduct(imagesRaw, "projectbluefin-bluefin");
+  const stableProduct = findProduct(imagesRaw, "ublue-bluefin");
   const stableDriver = findDriverStream(driverVersionsRaw, "bluefin-stable");
   const stableVersions = extractVersionDetails(
     stableProduct,
@@ -226,7 +226,7 @@ export function adaptStreams(
   const ltsAvailable = !!ltsVersions;
 
   const dakotaProduct = findProduct(imagesRaw, "projectbluefin-dakota");
-  const dakotaDriver = findDriverStream(driverVersionsRaw, "dakota-latest");
+  const dakotaDriver = findDriverStream(driverVersionsRaw, "dakota-stable");
   const dakotaRows = extractDakotaRows(dakotaProduct, dakotaDriver, "stable");
 
   return {

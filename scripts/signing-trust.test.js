@@ -13,9 +13,9 @@ const { STREAM_SPECS } = require("./fetch-github-sbom");
 const { PRODUCT_SPECS, buildSecurityInfo } = require("./fetch-github-images");
 
 test("trustForRepo returns a copy, not the shared table entry", () => {
-  const a = trustForRepo("projectbluefin/bluefin");
-  a.keyless = false;
-  assert.strictEqual(trustForRepo("projectbluefin/bluefin").keyless, true);
+  const a = trustForRepo("ublue-os/bluefin");
+  a.keyless = true;
+  assert.strictEqual(trustForRepo("ublue-os/bluefin").keyless, false);
 });
 
 test("trustForRepo returns null for an undeclared signing repo", () => {
@@ -47,14 +47,11 @@ test("key-based repos declare a cosignKeyUrl and keyless repos do not", () => {
   }
 });
 
-test("LTS trust points at the cosign.pub in the LTS repo", () => {
+test("LTS trust is keyless via OIDC", () => {
+  assert.strictEqual(SIGNING_TRUST["projectbluefin/bluefin-lts"].keyless, true);
   assert.strictEqual(
     SIGNING_TRUST["projectbluefin/bluefin-lts"].cosignKeyUrl,
-    COSIGN_KEY_LTS,
-  );
-  assert.match(
-    COSIGN_KEY_LTS,
-    /projectbluefin\/bluefin-lts\/main\/cosign\.pub$/,
+    null,
   );
 });
 
@@ -126,7 +123,7 @@ test("buildSecurityInfo renders the command shape the shared table declares", ()
         info.verifyCommand.includes(`--key ${trust.cosignKeyUrl}`),
         `${repo} is key-based so the verify command must pass --key`,
       );
-      assert.strictEqual(info.hasAttestation, false);
+      assert.strictEqual(info.hasAttestation, trust.attestationLive);
     }
   }
 });

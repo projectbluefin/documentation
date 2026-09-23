@@ -110,26 +110,26 @@ test("buildDakotaRelease picks the newest SBOM entry and overlays Nvidia", async
 
   const sbomCache = {
     streams: {
-      "dakota-latest": {
+      "dakota-stable": {
         releases: {
-          "latest-20260601": { packageVersions: { kernel: "6.0.0" } },
-          "latest-20260613": {
+          "stable-20260601": { packageVersions: { kernel: "6.0.0" } },
+          "stable-20260613": {
             packageVersions: { kernel: "7.0.7", gnome: "50.2", fedora: "F44" },
           },
           // Newer, but no package versions — must not win.
-          "latest-20260808": { packageVersions: {} },
+          "stable-20260808": { packageVersions: {} },
         },
       },
-      "dakota-nvidia-latest": {
+      "dakota-nvidia-stable": {
         releases: {
-          "latest-20260613": { packageVersions: { nvidia: "610.43.02" } },
+          "stable-20260613": { packageVersions: { nvidia: "610.43.02" } },
         },
       },
     },
   };
 
   const release = buildDakotaRelease(sbomCache);
-  assert.equal(release.tag, "latest-20260613");
+  assert.equal(release.tag, "stable-20260613");
   assert.equal(release.fedoraVersion, "44");
   assert.equal(release.dateMs, Date.parse("2026-06-13T00:00:00Z"));
   assert.deepEqual(release.majorPackages, [

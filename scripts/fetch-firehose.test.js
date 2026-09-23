@@ -14,9 +14,16 @@ test("computePackageDiff sorts added changed and removed packages", () => {
     { bravo: "1", gamma: "9" },
   );
 
-  assert.deepEqual(diff.added, [{ name: "alpha", newVersion: "1", oldVersion: null }, { name: "zed", newVersion: "2", oldVersion: null }]);
-  assert.deepEqual(diff.changed, [{ name: "bravo", newVersion: "2", oldVersion: "1" }]);
-  assert.deepEqual(diff.removed, [{ name: "gamma", newVersion: null, oldVersion: "9" }]);
+  assert.deepEqual(diff.added, [
+    { name: "alpha", newVersion: "1", oldVersion: null },
+    { name: "zed", newVersion: "2", oldVersion: null },
+  ]);
+  assert.deepEqual(diff.changed, [
+    { name: "bravo", newVersion: "2", oldVersion: "1" },
+  ]);
+  assert.deepEqual(diff.removed, [
+    { name: "gamma", newVersion: null, oldVersion: "9" },
+  ]);
 });
 
 test("buildOsInfo keeps core OS versions and major packages", () => {
@@ -48,6 +55,8 @@ test("buildOsApp resolves companion NVIDIA versions for stable and LTS streams",
   const sbomCache = {
     streams: {
       "bluefin-stable": {
+        org: "ublue-os",
+        package: "bluefin",
         releases: {
           "stable-20260402": {
             packageVersions: {
@@ -59,8 +68,10 @@ test("buildOsApp resolves companion NVIDIA versions for stable and LTS streams",
         },
       },
       "bluefin-nvidia-open-stable": {
+        org: "ublue-os",
+        package: "bluefin-nvidia-open",
         releases: {
-          "nvidia-open-stable-20260402": {
+          "stable-20260402": {
             packageVersions: {
               nvidia: "595.71.05",
             },
@@ -68,8 +79,10 @@ test("buildOsApp resolves companion NVIDIA versions for stable and LTS streams",
         },
       },
       "bluefin-lts": {
+        org: "projectbluefin",
+        package: "bluefin-lts",
         releases: {
-          "lts-20260402": {
+          "stable-20260402": {
             packageVersions: {
               kernel: "6.12.0",
               gnome: "47.2",
@@ -78,8 +91,10 @@ test("buildOsApp resolves companion NVIDIA versions for stable and LTS streams",
         },
       },
       "bluefin-lts-nvidia": {
+        org: "projectbluefin",
+        package: "bluefin-lts-nvidia",
         releases: {
-          "lts-nvidia-20260402": {
+          "stable-20260402": {
             packageVersions: {
               nvidia: "580.40.01",
             },

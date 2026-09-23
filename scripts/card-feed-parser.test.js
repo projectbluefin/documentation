@@ -162,7 +162,7 @@ test("sbomKeyForRelease maps a tag to its stream cache key", () => {
   });
   assert.deepEqual(sbomKeyForRelease("41.20250808.0", "lts"), {
     streamId: "bluefin-lts",
-    cacheKey: "lts-20250808",
+    cacheKey: "stable-20250808",
   });
   assert.equal(sbomKeyForRelease("not-a-tag", "stable"), null);
 });
@@ -172,10 +172,10 @@ test("buildDakotaRelease returns null when the cache has no dakota stream", () =
   assert.equal(buildDakotaRelease({ streams: {} }), null);
 });
 
-test("buildDakotaRelease picks the newest dakota-latest release and overlays Nvidia", () => {
+test("buildDakotaRelease picks the newest dakota-stable release and overlays Nvidia", () => {
   const sbomCache = {
     streams: {
-      "dakota-latest": {
+      "dakota-stable": {
         releases: {
           20250801: {
             packageVersions: { kernel: "6.9", gnome: "47", fedora: "40" },
@@ -185,9 +185,9 @@ test("buildDakotaRelease picks the newest dakota-latest release and overlays Nvi
           },
         },
       },
-      "dakota-nvidia-latest": {
+      "dakota-nvidia-stable": {
         releases: {
-          "latest-20250808": { packageVersions: { nvidia: "570.132.00" } },
+          "stable-20250808": { packageVersions: { nvidia: "570.132.00" } },
         },
       },
     },
@@ -200,6 +200,40 @@ test("buildDakotaRelease picks the newest dakota-latest release and overlays Nvi
   assert.equal(nvidia.version, "570.132.00");
   const kernel = release.majorPackages.find((p) => p.name === "Kernel");
   assert.equal(kernel.version, "6.10");
+});
+
+test("buildDakotaRelease reports Nvidia only for matching release date", () => {
+  const cache = {
+    streams: {
+      "dakota-stable": {
+        releases: {
+          "stable-20260922": {
+            packageVersions: { kernel: "7.2.6", gnome: "50.0" },
+          },
+        },
+      },
+      "dakota-nvidia-stable": {
+        releases: {
+          "stable-20260921": {
+            packageVersions: { nvidia: "610.57.04" },
+          },
+        },
+      },
+    },
+  };
+  const mismatched = buildDakotaRelease(cache);
+  assert.equal(
+    mismatched.majorPackages.find((pkg) => pkg.name === "Nvidia"),
+    undefined,
+  );
+  cache.streams["dakota-nvidia-stable"].releases["stable-20260922"] = {
+    packageVersions: { nvidia: "610.57.04" },
+  };
+  const matched = buildDakotaRelease(cache);
+  assert.equal(
+    matched.majorPackages.find((pkg) => pkg.name === "Nvidia")?.version,
+    "610.57.04",
+  );
 });
 
 test("enrichFromSbom backfills chip versions from the SBOM cache", () => {

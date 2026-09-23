@@ -85,7 +85,7 @@ test("flow: Stable -> x86 -> AMD yields regular kernel and correct URLs", () => 
   );
   assert.equal(
     formatBootcCommand(state.selection),
-    "sudo bootc switch ghcr.io/projectbluefin/bluefin:stable --enforce-container-sigpolicy",
+    "sudo bootc switch ghcr.io/ublue-os/bluefin:stable --enforce-container-sigpolicy",
   );
 });
 
@@ -119,7 +119,7 @@ test("flow: Stable -> x86 -> Nvidia yields nvidia-open suffix", () => {
   );
   assert.equal(
     formatBootcCommand(state.selection),
-    "sudo bootc switch ghcr.io/projectbluefin/bluefin-nvidia:stable --enforce-container-sigpolicy",
+    "sudo bootc switch ghcr.io/ublue-os/bluefin-nvidia-open:stable --enforce-container-sigpolicy",
   );
 });
 
@@ -333,11 +333,11 @@ test("formatBootcCommand generates expected commands across all hardware and str
   // Defaults and fallbacks
   assert.equal(
     formatBootcCommand({}),
-    "sudo bootc switch ghcr.io/projectbluefin/bluefin:stable --enforce-container-sigpolicy",
+    "sudo bootc switch ghcr.io/ublue-os/bluefin:stable --enforce-container-sigpolicy",
   );
   assert.equal(
     formatBootcCommand({ stream: "stable" }),
-    "sudo bootc switch ghcr.io/projectbluefin/bluefin:stable --enforce-container-sigpolicy",
+    "sudo bootc switch ghcr.io/ublue-os/bluefin:stable --enforce-container-sigpolicy",
   );
 
   // Stable permutations
@@ -348,7 +348,7 @@ test("formatBootcCommand generates expected commands across all hardware and str
       gpu: "amd",
       kernel: "regular",
     }),
-    "sudo bootc switch ghcr.io/projectbluefin/bluefin:stable --enforce-container-sigpolicy",
+    "sudo bootc switch ghcr.io/ublue-os/bluefin:stable --enforce-container-sigpolicy",
   );
   assert.equal(
     formatBootcCommand({
@@ -357,7 +357,7 @@ test("formatBootcCommand generates expected commands across all hardware and str
       gpu: "nvidia",
       kernel: "regular",
     }),
-    "sudo bootc switch ghcr.io/projectbluefin/bluefin-nvidia:stable --enforce-container-sigpolicy",
+    "sudo bootc switch ghcr.io/ublue-os/bluefin-nvidia-open:stable --enforce-container-sigpolicy",
   );
 
   // LTS permutations

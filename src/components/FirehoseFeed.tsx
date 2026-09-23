@@ -229,50 +229,33 @@ function enrichLtsFromHistory(events: OsReleaseEvent[]): OsReleaseEvent[] {
  * (new release format), so dxPackages/gdxPackages are empty after parse.
  * This function fills them from authoritative SBOM data.
  */
-function enrichLtsDxGdxFromSbom(events: OsReleaseEvent[]): OsReleaseEvent[] {
+function enrichLtsGdxFromSbom(events: OsReleaseEvent[]): OsReleaseEvent[] {
   return events.map((event) => {
     if (event.stream !== "lts") return event;
 
     const dateMatch = event.release.tag.match(/(\d{8})/);
     if (!dateMatch) return event;
-    const cacheKey = `lts-${dateMatch[1]}`;
 
-    const dxAllPkgs =
-      getSbomCache()?.streams?.["bluefin-dx-lts"]?.releases?.[cacheKey]
-        ?.packageVersions?.allPackages;
-    const gdxAllPkgs =
-      getSbomCache()?.streams?.["bluefin-gdx-lts"]?.releases?.[cacheKey]
-        ?.packageVersions?.allPackages;
-
-    const dxPackages = [...event.release.dxPackages];
-    if (dxAllPkgs) {
-      const existing = new Set(dxPackages.map((p) => p.name.toLowerCase()));
-      for (const [rpm, label] of Object.entries(DX_CHIP_MAP)) {
-        const version = dxAllPkgs[rpm];
-        if (version && !existing.has(label.toLowerCase())) {
-          dxPackages.push({ name: label, version, prevVersion: null });
-        }
-      }
-    }
+    const nvidiaStream =
+      getSbomCache()?.streams?.["bluefin-lts-nvidia"]?.releases;
+    const nvidiaAllPkgs =
+      nvidiaStream?.[`stable-${dateMatch[1]}`]?.packageVersions?.allPackages;
 
     const gdxPackages = [...event.release.gdxPackages];
-    if (gdxAllPkgs) {
+    if (nvidiaAllPkgs) {
       const existing = new Set(gdxPackages.map((p) => p.name.toLowerCase()));
       for (const [rpm, label] of Object.entries(GDX_CHIP_MAP)) {
-        const version = gdxAllPkgs[rpm];
+        const version = nvidiaAllPkgs[rpm];
         if (version && !existing.has(label.toLowerCase())) {
           gdxPackages.push({ name: label, version, prevVersion: null });
         }
       }
     }
 
-    if (
-      dxPackages.length === event.release.dxPackages.length &&
-      gdxPackages.length === event.release.gdxPackages.length
-    ) {
+    if (gdxPackages.length === event.release.gdxPackages.length) {
       return event;
     }
-    return { ...event, release: { ...event.release, dxPackages, gdxPackages } };
+    return { ...event, release: { ...event.release, gdxPackages } };
   });
 }
 
@@ -293,12 +276,12 @@ function enrichLtsHweKernelFromSbom(
 
     const dateMatch = event.release.tag.match(/(\d{8})/);
     if (!dateMatch) return event;
+
     const hweKernel =
       getSbomCache()?.streams?.["bluefin-lts-hwe"]?.releases?.[
-        `lts-hwe-${dateMatch[1]}`
+        `stable-hwe-${dateMatch[1]}`
       ]?.packageVersions?.kernel;
     if (!hweKernel) return event;
-
     const updatedPackages = event.release.majorPackages.map((pkg) =>
       pkg.name.toLowerCase() === "hwe kernel"
         ? { ...pkg, version: hweKernel }
@@ -329,7 +312,7 @@ function getStableDailyOsEvents(): OsReleaseEvent[] {
       getSbomCache(),
       "bluefin-stable-daily",
       "stable-daily",
-      "https://github.com/orgs/projectbluefin/packages/container/package/bluefin",
+      "https://github.com/orgs/ublue-os/packages/container/package/bluefin",
     );
   }
   return _stableDailyOsEvents;
@@ -339,7 +322,7 @@ let _ltsOsEvents: OsReleaseEvent[] | null = null;
 function getLtsOsEvents(): OsReleaseEvent[] {
   if (!_ltsOsEvents) {
     _ltsOsEvents = enrichLtsHweKernelFromSbom(
-      enrichLtsDxGdxFromSbom(
+      enrichLtsGdxFromSbom(
         enrichLtsFromHistory(
           enrichFromSbom(loadOsEvents(getBluefinLtsReleasesData(), "lts")),
         ),
@@ -361,7 +344,7 @@ function getDakotaStreamEvents(): OsReleaseEvent[] {
     const cutoff = Date.now() - ROLLING_WINDOW_MS;
     _dakotaStreamEvents = sbomStreamToEvents(
       getSbomCache(),
-      "dakota-latest",
+      "dakota-stable",
       "dakota",
       DAKOTA_GITHUB_URL,
     ).filter((e) => e.dateMs > cutoff);
@@ -389,7 +372,7 @@ function getDakotaOsEvent(): OsReleaseEvent | undefined {
 
   const events = sbomStreamToEvents(
     getSbomCache(),
-    "dakota-latest",
+    "dakota-stable",
     "dakota",
     DAKOTA_GITHUB_URL,
   );
@@ -402,22 +385,16 @@ function getDakotaOsEvent(): OsReleaseEvent | undefined {
   // Most recent SBOM release for the pinned card.
   const latest = events.sort((a, b) => b.dateMs - a.dateMs)[0];
 
-  // Overlay nvidia version from the dakota-nvidia-latest stream.
-  // Prefer the release whose date matches; fall back to the newest available.
+  // Overlay nvidia version strictly from the dakota-nvidia-stable stream for matching release date
   let nvidiaVersion: string | null = null;
   const nvidiaReleases =
-    getSbomCache()?.streams?.["dakota-nvidia-latest"]?.releases;
+    getSbomCache()?.streams?.["dakota-nvidia-stable"]?.releases;
   if (nvidiaReleases) {
     const dateMatch = latest.release.tag.match(/(\d{8})/);
-    const exactKey = dateMatch ? `latest-${dateMatch[1]}` : null;
+    const stableKey = dateMatch ? `stable-${dateMatch[1]}` : null;
     nvidiaVersion =
-      (exactKey && nvidiaReleases[exactKey]?.packageVersions?.nvidia) ??
-      Object.values(nvidiaReleases)
-        .map((r) => r?.packageVersions?.nvidia ?? null)
-        .find((v): v is string => v !== null) ??
-      null;
+      (stableKey && nvidiaReleases[stableKey]?.packageVersions?.nvidia) || null;
   }
-
   const nvidiaPackage: ParsedMajorPackage | null = nvidiaVersion
     ? { name: "Nvidia", version: nvidiaVersion, prevVersion: null }
     : null;
@@ -685,7 +662,7 @@ function RssLinks() {
         </li>
         <li>
           <a
-            href="https://github.com/projectbluefin/bluefin/releases.atom"
+            href="https://github.com/ublue-os/bluefin/releases.atom"
             target="_blank"
             rel="noopener noreferrer"
           >

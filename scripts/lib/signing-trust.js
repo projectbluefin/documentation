@@ -27,17 +27,17 @@ const COSIGN_KEY_LTS =
   "https://raw.githubusercontent.com/projectbluefin/bluefin-lts/main/cosign.pub";
 
 const SIGNING_TRUST = {
-  // Mainline Bluefin streams: keyless + OCI-published SLSA attestations.
-  "projectbluefin/bluefin": {
-    keyless: true,
-    cosignKeyUrl: null,
+  // Bluefin Classic: key-based image signature + OCI-published keyless SLSA provenance.
+  "ublue-os/bluefin": {
+    keyless: false,
+    cosignKeyUrl:
+      "https://raw.githubusercontent.com/ublue-os/bluefin/main/cosign.pub",
     attestationLive: true,
   },
-  // LTS streams: traditional key-based signing with cosign.pub from the LTS
-  // repo. Attestations are not published yet.
+  // Bluefin LTS: keyless cosign signing via GitHub Actions OIDC; no provenance or SBOM yet.
   "projectbluefin/bluefin-lts": {
-    keyless: false,
-    cosignKeyUrl: COSIGN_KEY_LTS,
+    keyless: true,
+    cosignKeyUrl: null,
     attestationLive: false,
   },
   // Utah: keyless, awaiting initial testing image release and OCI attestation.
@@ -46,12 +46,11 @@ const SIGNING_TRUST = {
     cosignKeyUrl: null,
     attestationLive: false,
   },
-  // Dakota: keyless, but SLSA attestations reach the OCI registry only once
-  // projectbluefin/dakota#391 lands (push-to-registry: true).
+  // Dakota: keyless signing + live OCI-published SLSA provenance.
   "projectbluefin/dakota": {
     keyless: true,
     cosignKeyUrl: null,
-    attestationLive: false,
+    attestationLive: true,
   },
 };
 

@@ -88,7 +88,7 @@ function extractDateFromTag(tag) {
 function normaliseLtsTag(tag) {
   // lts.20260501       → lts-20260501
   // lts-hwe.20260501   → lts-hwe-20260501
-  // latest.20260501    → latest-20260501  (Dakota date-stamped tags)
+  // latest.20260501    → latest-20260501
   return tag.replace(/^((?:lts|latest)[a-z-]*)\.(\d{8})/, "$1-$2");
 }
 
@@ -321,28 +321,36 @@ function extractPackageVersions(sbomPath) {
         kernelVersions.push(stripEpoch(String(version)));
         break;
       case "gnome-shell":
-        if (!result.gnome) result.gnome = stripRpmRelease(stripEpoch(String(version)));
+        if (!result.gnome)
+          result.gnome = stripRpmRelease(stripEpoch(String(version)));
         break;
       case "mesa-filesystem":
-        if (!result.mesa) result.mesa = stripRpmRelease(stripEpoch(String(version)));
+        if (!result.mesa)
+          result.mesa = stripRpmRelease(stripEpoch(String(version)));
         break;
       case "podman":
-        if (!result.podman) result.podman = stripRpmRelease(stripEpoch(String(version)));
+        if (!result.podman)
+          result.podman = stripRpmRelease(stripEpoch(String(version)));
         break;
       case "systemd":
-        if (!result.systemd) result.systemd = stripRpmRelease(stripEpoch(String(version)));
+        if (!result.systemd)
+          result.systemd = stripRpmRelease(stripEpoch(String(version)));
         break;
       case "bootc":
-        if (!result.bootc) result.bootc = stripRpmRelease(stripEpoch(String(version)));
+        if (!result.bootc)
+          result.bootc = stripRpmRelease(stripEpoch(String(version)));
         break;
       case "pipewire":
-        if (!result.pipewire) result.pipewire = stripRpmRelease(stripEpoch(String(version)));
+        if (!result.pipewire)
+          result.pipewire = stripRpmRelease(stripEpoch(String(version)));
         break;
       case "flatpak":
-        if (!result.flatpak) result.flatpak = stripRpmRelease(stripEpoch(String(version)));
+        if (!result.flatpak)
+          result.flatpak = stripRpmRelease(stripEpoch(String(version)));
         break;
       case "nvidia-driver":
-        if (!result.nvidia) result.nvidia = stripRpmRelease(stripEpoch(String(version)));
+        if (!result.nvidia)
+          result.nvidia = stripRpmRelease(stripEpoch(String(version)));
         break;
       case "fedora-release-common": {
         if (!result.fedora) {

@@ -200,7 +200,7 @@ export function sbomKeyForRelease(tag, stream) {
   if (!dateMatch) return null;
   const date = dateMatch[1];
   if (stream === "lts")
-    return { streamId: "bluefin-lts", cacheKey: `lts-${date}` };
+    return { streamId: "bluefin-lts", cacheKey: `stable-${date}` };
   if (stream === "stable-daily")
     return {
       streamId: "bluefin-stable-daily",
@@ -222,7 +222,7 @@ export const DAKOTA_LINK = "https://github.com/projectbluefin/dakota";
  * usable Dakota data.
  */
 export function buildDakotaRelease(sbomCache) {
-  const releases = sbomCache?.streams?.["dakota-latest"]?.releases;
+  const releases = sbomCache?.streams?.["dakota-stable"]?.releases;
   if (!releases) return null;
 
   let latest = null;
@@ -252,21 +252,11 @@ export function buildDakotaRelease(sbomCache) {
 
   if (!latest) return null;
 
-  // Overlay Nvidia from the dakota-nvidia-latest stream: prefer the matching
-  // date, then fall back to the newest entry that reports a version.
+  // Overlay Nvidia strictly from the companion stream for the same release date
   const nvidiaReleases =
-    sbomCache?.streams?.["dakota-nvidia-latest"]?.releases ?? {};
-  let nvidiaVersion =
-    nvidiaReleases[`latest-${latest.date}`]?.packageVersions?.nvidia ?? null;
-  if (!nvidiaVersion) {
-    for (const key of Object.keys(nvidiaReleases).sort().reverse()) {
-      const version = nvidiaReleases[key]?.packageVersions?.nvidia;
-      if (version) {
-        nvidiaVersion = version;
-        break;
-      }
-    }
-  }
+    sbomCache?.streams?.["dakota-nvidia-stable"]?.releases ?? {};
+  const nvidiaVersion =
+    nvidiaReleases[`stable-${latest.date}`]?.packageVersions?.nvidia ?? null;
 
   const majorPackages = nvidiaVersion
     ? [

@@ -12,6 +12,7 @@ const {
   buildTopStreams,
   buildUnavailableOutput,
   cacheAgeHours,
+  companionVersionsForStream,
   handleUnavailableCache,
   isCurrentImageCatalog,
   main,
@@ -24,41 +25,129 @@ const {
 function completeCachedProducts() {
   return PRODUCT_SPECS.map((spec) => ({
     id: spec.id,
-    org: "projectbluefin",
+    org: spec.org,
+    package: spec.package,
+    imageRef: `ghcr.io/${spec.org}/${spec.package}`,
+    sbomStreamId: spec.sbomStreamId,
+    nvidiaSbomStreamId: spec.nvidiaSbomStreamId,
     versionSource: "sbom",
     versions: { source: "sbom" },
   }));
 }
 
-test("PRODUCT_SPECS defines only the 4 projectbluefin image products", () => {
-  const productIds = PRODUCT_SPECS.map((spec) => spec.id);
+test("Classic catalog points at the published image and key-based signer", () => {
+  const classic = PRODUCT_SPECS[0];
+  assert.equal(classic.id, "ublue-bluefin");
+  assert.equal(classic.org, "ublue-os");
+  assert.equal(classic.nvidiaPackage, "bluefin-nvidia-open");
+  const security = buildSecurityInfo(classic, "stable");
+  assert.equal(
+    security.cosignKeyUrl,
+    "https://raw.githubusercontent.com/ublue-os/bluefin/main/cosign.pub",
+  );
+  assert.match(
+    security.verifyCommand,
+    /cosign verify --key .*ublue-os\/bluefin.* ghcr\.io\/ublue-os\/bluefin:stable/,
+  );
+  assert.equal(security.attestCommand, null);
+});
 
-  assert.deepEqual(productIds, [
-    "projectbluefin-bluefin",
-    "projectbluefin-bluefin-lts",
-    "projectbluefin-dakota",
-    "projectbluefin-utah",
-  ]);
+test("Classic exposes only published stable, daily and latest channel tags", () => {
+  const streams = buildTopStreams(
+    PRODUCT_SPECS[0],
+    new Set(["stable", "stable-daily", "latest", "testing"]),
+  );
+  assert.deepEqual(
+    streams.map((stream) => stream.tag),
+    ["stable", "stable-daily", "latest"],
+  );
+  assert.equal(
+    streams[1].command,
+    "sudo bootc switch ghcr.io/ublue-os/bluefin:stable-daily --enforce-container-sigpolicy",
+  );
+});
 
-  for (const spec of PRODUCT_SPECS) {
-    assert.equal(spec.org, "projectbluefin");
-    assert.ok(
-      !spec.id.startsWith("ublue-"),
-      `Product ID ${spec.id} must not start with ublue-`,
-    );
-  }
+test("image catalog rejects old organization and package even if SBOM-labelled", () => {
+  const products = completeCachedProducts();
+  assert.equal(isCurrentImageCatalog({ products }), true);
+  const oldOrg = products.map((product, i) =>
+    i
+      ? product
+      : {
+          ...product,
+          org: "projectbluefin",
+          imageRef: "ghcr.io/projectbluefin/bluefin",
+        },
+  );
+  assert.equal(isCurrentImageCatalog({ products: oldOrg }), false);
+  const oldStream = products.map((product, i) =>
+    i === 2 ? { ...product, sbomStreamId: "dakota-latest" } : product,
+  );
+  assert.equal(isCurrentImageCatalog({ products: oldStream }), false);
+  assert.equal(
+    isCurrentImageCatalog({
+      products: products.map((product, i) =>
+        i ? product : { ...product, package: "bluefin-dx" },
+      ),
+    }),
+    false,
+  );
+});
+
+test("versions never borrow an unrelated channel or companion release", async () => {
+  const spec = PRODUCT_SPECS[2];
+  const cache = {
+    streams: {
+      "dakota-stable": {
+        org: "projectbluefin",
+        package: "dakota",
+        releases: { "stable-20260922": { packageVersions: { kernel: "7.1" } } },
+      },
+      "dakota-testing": {
+        org: "projectbluefin",
+        package: "dakota",
+        releases: {
+          "testing-20260922": { packageVersions: { kernel: "7.2" } },
+        },
+      },
+      "dakota-nvidia-stable": {
+        org: "projectbluefin",
+        package: "dakota-nvidia",
+        releases: { "stable-20260921": { packageVersions: { nvidia: "595" } } },
+      },
+    },
+  };
+  assert.equal(
+    (await buildStreamVersionInfo(spec, "", "testing", null, cache)).kernel,
+    "7.2",
+  );
+  assert.equal(
+    (await buildStreamVersionInfo(spec, "", "stable", null, cache)).nvidia,
+    null,
+  );
+  assert.equal(companionVersionsForStream(cache, spec, "stable"), null);
+  cache.streams["dakota-nvidia-stable"].releases["stable-20260922"] = {
+    packageVersions: { kernel: "7.1-nvidia", nvidia: "600" },
+  };
+  assert.deepEqual(companionVersionsForStream(cache, spec, "stable"), {
+    kernel: "7.1-nvidia",
+    nvidia: "600",
+  });
+  assert.equal(sbomVersionsForStream(cache, spec, "next"), null);
 });
 
 test("buildStreamVersionInfo extracts nvidia and packages strictly from SBOM", async () => {
   const spec = {
-    id: "projectbluefin-bluefin",
-    org: "projectbluefin",
+    id: "ublue-bluefin",
+    org: "ublue-os",
     package: "bluefin",
     sbomStreamId: "bluefin-stable",
   };
   const sbomCache = {
     streams: {
       "bluefin-stable": {
+        org: "ublue-os",
+        package: "bluefin",
         releases: {
           "stable-20260906": {
             packageVersions: {
@@ -75,7 +164,7 @@ test("buildStreamVersionInfo extracts nvidia and packages strictly from SBOM", a
 
   const versions = await buildStreamVersionInfo(
     spec,
-    "ghcr.io/projectbluefin/bluefin",
+    "ghcr.io/ublue-os/bluefin",
     "stable",
     null,
     sbomCache,
@@ -91,15 +180,17 @@ test("buildStreamVersionInfo extracts systemd, bootc, and pipewire for Dakota fr
     id: "projectbluefin-dakota",
     org: "projectbluefin",
     package: "dakota",
-    sbomStreamId: "dakota-latest",
-    nvidiaSbomStreamId: "dakota-nvidia-latest",
+    sbomStreamId: "dakota-stable",
+    nvidiaSbomStreamId: "dakota-nvidia-stable",
     streamOrder: ["stable", "testing"],
   };
   const sbomCache = {
     streams: {
-      "dakota-latest": {
+      "dakota-stable": {
+        org: "projectbluefin",
+        package: "dakota",
         releases: {
-          "latest-20260608": {
+          "stable-20260608": {
             packageVersions: {
               kernel: "7.0.7",
               gnome: "50.2",
@@ -111,9 +202,11 @@ test("buildStreamVersionInfo extracts systemd, bootc, and pipewire for Dakota fr
           },
         },
       },
-      "dakota-nvidia-latest": {
+      "dakota-nvidia-stable": {
+        org: "projectbluefin",
+        package: "dakota-nvidia",
         releases: {
-          "latest-20260608": {
+          "stable-20260608": {
             packageVersions: {
               nvidia: "595.71.05",
             },
@@ -134,53 +227,9 @@ test("buildStreamVersionInfo extracts systemd, bootc, and pipewire for Dakota fr
   assert.equal(versions.systemd, "260.2");
   assert.equal(versions.bootc, "1.15.2");
   assert.equal(versions.mesa, "26.0.6");
-  assert.equal(versions.nvidia, "595.71.05");
+  assert.equal(versions.nvidia, null);
   assert.equal(versions.gnome, "50.2");
   assert.equal(versions.pipewire, "1.6.1");
-});
-
-test("buildStreamVersionInfo falls back to companion nvidia SBOM stream when base stream has no nvidia", async () => {
-  const spec = {
-    id: "projectbluefin-bluefin",
-    org: "projectbluefin",
-    package: "bluefin",
-    sbomStreamId: "bluefin-stable",
-    nvidiaSbomStreamId: "bluefin-nvidia-open-stable",
-  };
-  const sbomCache = {
-    streams: {
-      "bluefin-stable": {
-        releases: {
-          "stable-20260906": {
-            packageVersions: {
-              gnome: "49.5",
-              kernel: "6.18.13-200.fc43",
-              nvidia: null,
-              mesa: "25.3.6",
-            },
-          },
-        },
-      },
-      "bluefin-nvidia-open-stable": {
-        releases: {
-          "stable-20260906": {
-            packageVersions: {
-              nvidia: "595.71.05",
-            },
-          },
-        },
-      },
-    },
-  };
-
-  const versions = await buildStreamVersionInfo(
-    spec,
-    "ghcr.io/projectbluefin/bluefin",
-    "stable",
-    null,
-    sbomCache,
-  );
-  assert.equal(versions.nvidia, "595.71.05");
 });
 
 test("cacheAgeHours uses generatedAt instead of the file mtime", () => {
@@ -209,7 +258,10 @@ test("image cache validity rejects retired products", () => {
 
   assert.equal(
     isCurrentImageCatalog({
-      products: [{ ...products[0], id: "ublue-bluefin" }, ...products.slice(1)],
+      products: [
+        { ...products[0], id: "projectbluefin-bluefin" },
+        ...products.slice(1),
+      ],
     }),
     false,
   );
@@ -323,6 +375,37 @@ test("release metadata preserves the release asset URL", () => {
   );
 });
 
+test("Classic release metadata ignores a similarly named release from another repository", () => {
+  const spec = PRODUCT_SPECS[0];
+  const feeds = {
+    bluefin: {
+      items: [
+        {
+          title: "stable-44.20260922: other",
+          link: "https://github.com/projectbluefin/bluefin/releases/tag/stable-44.20260922",
+        },
+        {
+          title: "stable-44.20260922: Classic",
+          link: "https://github.com/ublue-os/bluefin/releases/tag/stable-44.20260922",
+        },
+      ],
+    },
+  };
+  assert.equal(
+    releaseInfoFromSource(feeds, spec.releaseSource).url,
+    "https://github.com/ublue-os/bluefin/releases/tag/stable-44.20260922",
+  );
+});
+
+test("release listing fallback does not invent an assets anchor", () => {
+  const release = releaseInfoFromSource(
+    { bluefin: { items: [] } },
+    PRODUCT_SPECS[0].releaseSource,
+  );
+  assert.equal(release.url, "https://github.com/ublue-os/bluefin/releases");
+  assert.equal(release.assetsUrl, null);
+});
+
 test("buildUnavailableOutput exposes an explicit fallback state", () => {
   const output = buildUnavailableOutput("upstream unavailable");
 
@@ -369,49 +452,6 @@ test("buildTestingStreams keeps supported testing families and deduplicates norm
   );
 });
 
-test("sbomVersionsForStream falls back from testing stream to base stream", () => {
-  const spec = {
-    org: "projectbluefin",
-    package: "bluefin",
-    sbomStreamId: "bluefin-lts",
-  };
-  const sbomCache = {
-    streams: {
-      "bluefin-lts": {
-        id: "bluefin-lts",
-        org: "projectbluefin",
-        package: "bluefin",
-        releases: {
-          "lts-20260401": {
-            packageVersions: { kernel: "6.14.0", gnome: "48.1" },
-          },
-        },
-      },
-    },
-  };
-
-  assert.deepEqual(sbomVersionsForStream(sbomCache, spec, "lts-testing"), {
-    kernel: "6.14.0",
-    gnome: "48.1",
-  });
-});
-
-test("buildSecurityInfo returns keyless verification commands for keyless repos", () => {
-  const info = buildSecurityInfo(
-    {
-      keyRepo: "projectbluefin/bluefin",
-      org: "projectbluefin",
-      package: "bluefin",
-    },
-    "stable",
-  );
-
-  assert.equal(info.cosignKeyUrl, null);
-  assert.equal(info.hasAttestation, true);
-  assert.match(info.verifyCommand, /certificate-identity-regexp/);
-  assert.match(info.attestCommand, /https:\/\/slsa\.dev\/provenance\/v1/);
-});
-
 test("buildSecurityInfo returns keyless verification commands for Utah with attestationLive false", () => {
   const info = buildSecurityInfo(
     {
@@ -425,7 +465,7 @@ test("buildSecurityInfo returns keyless verification commands for Utah with atte
   assert.equal(info.cosignKeyUrl, null);
   assert.equal(info.hasAttestation, false);
   assert.match(info.verifyCommand, /certificate-oidc-issuer/);
-  assert.match(info.attestCommand, /certificate-identity-regexp/);
+  assert.equal(info.attestCommand, null);
 });
 
 test("buildSecurityInfo hides verification commands when tag is not available", () => {

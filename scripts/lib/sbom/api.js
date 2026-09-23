@@ -72,8 +72,9 @@ async function fetchGhcrTags(org, pkg) {
 
     // Follow pagination Link header per RFC 5988 / OCI distribution spec.
     const linkHeader = res.headers.get("link") || "";
-    const nextMatch = linkHeader.match(/<([^>]+)>;\s*rel="next"/i)
-      ?? linkHeader.match(/<([^>]+)>;\s*rel=next(?:[^a-z]|$)/i);
+    const nextMatch =
+      linkHeader.match(/<([^>]+)>;\s*rel="next"/i) ??
+      linkHeader.match(/<([^>]+)>;\s*rel=next(?:[^a-z]|$)/i);
     url = nextMatch ? new URL(nextMatch[1], res.url).href : null;
   }
 
@@ -109,7 +110,9 @@ async function orasLogin() {
     console.log("oras: logged in to ghcr.io");
   } catch (err) {
     // Login failure is non-fatal — oras may still work for public images
-    console.warn(`oras: login failed (continuing anonymously) — ${err.message}`);
+    console.warn(
+      `oras: login failed (continuing anonymously) — ${err.message}`,
+    );
   }
 }
 
@@ -132,28 +135,44 @@ async function orasLogin() {
 async function verifyAttestation(imageRef, spec) {
   const oidcIdentityRegexp = `^https://github.com/${spec.keyRepo}/.github/workflows/`;
 
-  // Dakota (and any stream with signingType: "cosign-sign") uses `cosign sign`
-  // which produces a keyless OIDC signature, not an SLSA attestation. Verify
-  // with `cosign verify` rather than `cosign verify-attestation`.
-  if (spec.signingType === "cosign-sign") {
-    const verifyArgs = [
-      "verify",
-      "--certificate-oidc-issuer",
-      OIDC_ISSUER,
-      "--certificate-identity-regexp",
-      oidcIdentityRegexp,
-      imageRef,
-    ];
+  // If the stream has live SLSA provenance (including key-signed images that publish keyless provenance like Classic),
+  // verify via keyless SLSA provenance. Otherwise, for keyless signature-only streams (like Dakota), use cosign verify.
+  // For key-signed images without provenance, verify with the public key.
+  if (
+    !spec.attestationLive &&
+    (spec.keyless === false || spec.signingType === "cosign-sign")
+  ) {
+    const verifyArgs =
+      spec.keyless === false
+        ? ["verify", "--key", spec.cosignKeyUrl, imageRef]
+        : [
+            "verify",
+            "--certificate-oidc-issuer",
+            OIDC_ISSUER,
+            "--certificate-identity-regexp",
+            oidcIdentityRegexp,
+            imageRef,
+          ];
     try {
       await execFileAsync("cosign", verifyArgs, {
         env: { ...process.env },
         maxBuffer: 1 * 1024 * 1024,
       });
-      return { present: true, verified: true, predicateType: "cosign-sign", error: null };
+      return {
+        present: true,
+        verified: true,
+        predicateType: "cosign-sign",
+        error: null,
+      };
     } catch (err) {
       const msg = (err.stderr || err.message || "").toLowerCase();
       if (msg.includes("no matching signatures") || msg.includes("not found")) {
-        return { present: false, verified: false, predicateType: null, error: "no signature" };
+        return {
+          present: false,
+          verified: false,
+          predicateType: null,
+          error: "no signature",
+        };
       }
       return {
         present: null,
@@ -189,7 +208,8 @@ async function verifyAttestation(imageRef, spec) {
     if (
       msg.includes("no matching attestations") ||
       msg.includes("no attestations") ||
-      msg.includes("not found")
+      msg.includes("not found") ||
+      msg.includes("none of the attestations matched the predicate type")
     ) {
       return {
         present: false,
@@ -291,10 +311,14 @@ async function downloadSbom(imageRef) {
       execFileAsync(
         "oras",
         [
-          "manifest", "fetch",
-          "--format", "go-template",
-          "--template", "{{ .digest }}",
-          "--platform", "linux/amd64",
+          "manifest",
+          "fetch",
+          "--format",
+          "go-template",
+          "--template",
+          "{{ .digest }}",
+          "--platform",
+          "linux/amd64",
           imageRef,
         ],
         { env: { ...process.env }, maxBuffer: 64 * 1024, timeout: 30000 },
@@ -345,7 +369,9 @@ async function downloadSbom(imageRef) {
     );
 
     if (!sbomReferrer) {
-      console.warn(`    downloadSbom: no SPDX referrer found for ${resolvedRef}`);
+      console.warn(
+        `    downloadSbom: no SPDX referrer found for ${resolvedRef}`,
+      );
       return null;
     }
 
@@ -411,10 +437,30 @@ async function getImageCreatedDate(imageRef) {
       ["manifest", "fetch", imageRef],
       { env: { ...process.env }, maxBuffer: 256 * 1024, timeout: 30000 },
     );
-    const manifest = JSON.parse(manifestResult.stdout);
+    let manifest = JSON.parse(manifestResult.stdout);
+    const imageRepo = imageRef.split(":")[0];
+
+    // If manifest is an index (multi-arch), resolve to amd64 manifest
+    if (Array.isArray(manifest.manifests)) {
+      const amd64Entry =
+        manifest.manifests.find(
+          (m) =>
+            m?.platform?.architecture === "amd64" &&
+            m?.platform?.os === "linux",
+        ) || manifest.manifests[0];
+      if (amd64Entry?.digest) {
+        const amd64Result = await execFileAsync(
+          "oras",
+          ["manifest", "fetch", `${imageRepo}@${amd64Entry.digest}`],
+          { env: { ...process.env }, maxBuffer: 256 * 1024, timeout: 30000 },
+        );
+        manifest = JSON.parse(amd64Result.stdout);
+      }
+    }
 
     // Strategy 1: manifest-level annotation (common in Syft-attested images).
-    const annotationDate = manifest?.annotations?.["org.opencontainers.image.created"];
+    const annotationDate =
+      manifest?.annotations?.["org.opencontainers.image.created"];
     if (annotationDate) {
       return annotationDate.slice(0, 10).replace(/-/g, "");
     }
@@ -422,7 +468,6 @@ async function getImageCreatedDate(imageRef) {
     // Strategy 2: image config blob `.created` (bootc/BuildStream images).
     const configDigest = manifest?.config?.digest;
     if (!configDigest) return null;
-    const imageRepo = imageRef.split(":")[0];
     const configResult = await execFileAsync(
       "oras",
       ["blob", "fetch", "--output", "-", `${imageRepo}@${configDigest}`],

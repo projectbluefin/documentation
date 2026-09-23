@@ -119,6 +119,8 @@ checkout` stamps every tracked file with the current time and the TTL never
   replacing a good cache. An aggregate release count can hide a partial run
   where only an optional stream succeeded, so preserve the last complete cache
   until the primary data is present.
+- Bluefin Classic images are published from `ublue-os/bluefin` to `ghcr.io/ublue-os/bluefin` and `ghcr.io/ublue-os/bluefin-nvidia-open`. Verification commands and catalog packages must point to `ublue-os`, not `projectbluefin`.
+- OCI container images with detached cosign signatures use `.sig` tag extensions (`sha256-<digest>.sig`) rather than referrers. When validating image signing in CI or scraper pipelines, inspect the actual manifest mediaType: a Sigstore bundle referrer carrying an in-toto SLSA predicate proves build provenance, not container key-signing.
 - Troubleshooting and system diagnostics use `ublue-os/tap/linux-mcp-server`
   and Goose, automated on Bluefin via `ujust probe`. Keep diagnostics zero-auth
   and local-first; external SaaS accounts and internal cluster/lab endpoints

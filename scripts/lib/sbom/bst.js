@@ -37,23 +37,31 @@ function isSemverLike(version) {
  * Order matters: the first matching entry wins.
  */
 const BST_PACKAGE_MAP = [
-  { name: "gnome-shell", bstSuffix: "core/gnome-shell.bst", field: "gnome" },
-  // components/linux.bst is the actual running kernel; linux-headers.bst is build-only.
-  { name: "linux", bstSuffix: "components/linux.bst", field: "kernel" },
-  { name: "mesa", bstSuffix: "extensions/mesa/mesa.bst", field: "mesa" },
-  { name: "pipewire", bstSuffix: "components/pipewire-base.bst", field: "pipewire" },
-  { name: "podman", bstSuffix: "components/podman.bst", field: "podman" },
-  { name: "flatpak", bstSuffix: "components/flatpak.bst", field: "flatpak" },
-  { name: "bootc", bstSuffix: "gnomeos-deps/bootc.bst", field: "bootc" },
+  { name: "gnome-shell", bstSuffixes: ["core/gnome-shell.bst"], field: "gnome" },
+  // core/linux-fdsdk.bst and core/linux-ogc.bst are Dakota's running kernels; components/linux.bst is upstream.
+  {
+    name: "linux",
+    bstSuffixes: ["core/linux-fdsdk.bst", "core/linux-ogc.bst", "components/linux.bst"],
+    field: "kernel",
+  },
+  { name: "mesa", bstSuffixes: ["extensions/mesa/mesa.bst"], field: "mesa" },
+  {
+    name: "pipewire",
+    bstSuffixes: ["components/pipewire-base.bst"],
+    field: "pipewire",
+  },
+  { name: "podman", bstSuffixes: ["components/podman.bst"], field: "podman" },
+  { name: "flatpak", bstSuffixes: ["components/flatpak.bst"], field: "flatpak" },
+  { name: "bootc", bstSuffixes: ["gnomeos-deps/bootc.bst"], field: "bootc" },
   {
     name: "systemd",
-    bstSuffix: "core-deps/systemd-base.bst",
+    bstSuffixes: ["core-deps/systemd-base.bst"],
     field: "systemd",
   },
   // Dakota nvidia variant: upstream tarball is named NVIDIA-Linux-x86
   {
     name: "NVIDIA-Linux-x86",
-    bstSuffix: "bluefin-nvidia/nvidia-drivers.bst",
+    bstSuffixes: ["bluefin-nvidia/nvidia-drivers.bst"],
     field: "nvidia",
   },
 ];
@@ -111,11 +119,11 @@ function extractBstPackageVersions(sbom) {
     }
 
     // Map to named version fields using BST element path suffix.
-    for (const { name: mapName, bstSuffix, field } of BST_PACKAGE_MAP) {
+    for (const { name: mapName, bstSuffixes, field } of BST_PACKAGE_MAP) {
       if (name !== mapName) continue;
       if (result[field]) continue; // already populated
       const matchingRef = bstRefs.find((r) =>
-        r?.referenceLocator?.endsWith(bstSuffix),
+        bstSuffixes.some((suffix) => r?.referenceLocator?.endsWith(suffix)),
       );
       if (matchingRef) {
         result[field] = ver;

@@ -12,6 +12,7 @@ const path = require("node:path");
 
 const {
   STREAM_SPECS,
+  processStream,
   handleEmptyCache,
   hasPrimaryReleaseData,
   isValidSbomCache,
@@ -34,17 +35,34 @@ function makeOutputPaths() {
   };
 }
 
+function completeSbomCache() {
+  const streams = Object.fromEntries(
+    STREAM_SPECS.map((spec) => [
+      spec.id,
+      {
+        id: spec.id,
+        org: spec.org,
+        package: spec.package,
+        keyRepo: spec.keyRepo,
+        streamPrefix: spec.floatingTag || spec.streamPrefix,
+        releases: {},
+      },
+    ]),
+  );
+  for (const id of ["bluefin-stable", "bluefin-lts"]) {
+    streams[id].releases["stable-20260906"] = {
+      tag: "stable-20260906",
+      imageRef: `ghcr.io/${streams[id].org}/${streams[id].package}:stable-20260906`,
+      packageVersions: { kernel: "6.18.1", allPackages: { kernel: "6.18.1" } },
+    };
+  }
+  return { generatedAt: "2026-09-06T00:00:00.000Z", streams };
+}
+
 test("handleEmptyCache preserves an existing cache", () => {
   const paths = makeOutputPaths();
   try {
-    const existing = {
-      generatedAt: "2026-09-06T00:00:00.000Z",
-      streams: {
-        "bluefin-stable": {
-          releases: { "stable-20260906": { tag: "stable-20260906" } },
-        },
-      },
-    };
+    const existing = completeSbomCache();
     writeFileSync(paths.outputFile, JSON.stringify(existing), "utf-8");
 
     assert.deepEqual(handleEmptyCache(existing, paths), existing);
@@ -106,7 +124,7 @@ test("handleEmptyCache rejects empty and malformed existing caches", () => {
   }
 });
 
-test("isValidSbomCache requires a release-bearing stream", () => {
+test("isValidSbomCache requires complete current stream identities and SBOM packages", () => {
   assert.equal(isValidSbomCache({}), false);
   assert.equal(isValidSbomCache({ streams: {} }), false);
   assert.equal(
@@ -115,40 +133,56 @@ test("isValidSbomCache requires a release-bearing stream", () => {
     }),
     false,
   );
+  const complete = completeSbomCache();
+  assert.equal(isValidSbomCache(complete), true);
   assert.equal(
     isValidSbomCache({
+      ...complete,
       streams: {
+        ...complete.streams,
         "bluefin-stable": {
-          releases: { "stable-20260906": { tag: "stable-20260906" } },
+          ...complete.streams["bluefin-stable"],
+          org: "projectbluefin",
         },
       },
     }),
-    true,
+    false,
   );
 });
 
-test("hasPrimaryReleaseData rejects partial stream results", () => {
+test("hasPrimaryReleaseData requires LTS releases and parsed Classic packages", () => {
+  const complete = completeSbomCache().streams;
+  assert.equal(hasPrimaryReleaseData(complete), true);
   assert.equal(
     hasPrimaryReleaseData({
-      "bluefin-stable": {
-        releases: { "stable-20260906": {} },
-      },
-      "bluefin-lts": {
-        releases: {},
-      },
+      ...complete,
+      "bluefin-lts": { ...complete["bluefin-lts"], releases: {} },
     }),
     false,
   );
   assert.equal(
     hasPrimaryReleaseData({
-      "bluefin-stable": {
-        releases: { "stable-20260906": {} },
-      },
+      ...complete,
       "bluefin-lts": {
-        releases: { "lts-20260906": {} },
+        ...complete["bluefin-lts"],
+        releases: {
+          "stable-20260906": { tag: "stable-20260906", packageVersions: null },
+        },
       },
     }),
     true,
+  );
+  assert.equal(
+    hasPrimaryReleaseData({
+      ...complete,
+      "bluefin-stable": {
+        ...complete["bluefin-stable"],
+        releases: {
+          "stable-20260906": { packageVersions: null },
+        },
+      },
+    }),
+    false,
   );
 });
 
@@ -188,14 +222,7 @@ test("reportMainError writes unavailable fallbacks when the cache is missing", (
 
 test("reportMainError preserves an existing cache", () => {
   const paths = makeOutputPaths();
-  const existing = {
-    generatedAt: "2026-09-06T00:00:00.000Z",
-    streams: {
-      "bluefin-stable": {
-        releases: { "stable-20260906": { tag: "stable-20260906" } },
-      },
-    },
-  };
+  const existing = completeSbomCache();
   const messages = [];
   const originalError = console.error;
   const originalWarn = console.warn;
@@ -297,8 +324,27 @@ test("STREAM_SPECS contains utah-testing and utah-nvidia-testing", () => {
   assert.equal(utahNvidiaSpec.streamPrefix, "testing");
 });
 
+test("floating Utah testing never borrows an unsupported registry tag", async () => {
+  const spec = STREAM_SPECS.find((stream) => stream.id === "utah-testing");
+  const cached = completeSbomCache();
+  cached.streams[spec.id].releases["testing-20260906"] = {
+    tag: "testing",
+    imageRef: "ghcr.io/projectbluefin/utah:testing",
+    packageVersions: { kernel: "6.18.1" },
+  };
+  const result = await processStream(
+    spec,
+    new Map([["projectbluefin/utah", []]]),
+    cached,
+  );
+  assert.deepEqual(result.releases, {});
+  const outage = await processStream(spec, new Map(), cached);
+  assert.deepEqual(outage.releases, cached.streams[spec.id].releases);
+});
 test("STREAM_SPECS maps all Bluefin LTS streams to bluefin-lts package and stable prefixes", () => {
-  const ltsStreams = STREAM_SPECS.filter((s) => s.id.includes("lts"));
+  const ltsStreams = STREAM_SPECS.filter(
+    (s) => s.id.includes("lts") && s.id !== "bluefin-lts-nvidia",
+  );
   assert.ok(ltsStreams.length > 0, "LTS streams must exist");
 
   for (const stream of ltsStreams) {
@@ -324,7 +370,7 @@ test("STREAM_SPECS maps all Bluefin LTS streams to bluefin-lts package and stabl
 
   const ltsNvidia = STREAM_SPECS.find((s) => s.id === "bluefin-lts-nvidia");
   assert.ok(ltsNvidia, "bluefin-lts-nvidia spec must exist");
-  assert.equal(ltsNvidia.package, "bluefin-lts");
+  assert.equal(ltsNvidia.package, "bluefin-lts-nvidia");
   assert.equal(ltsNvidia.streamPrefix, "stable");
   assert.equal(ltsNvidia.org, "projectbluefin");
   assert.equal(ltsNvidia.releasesRepo, "projectbluefin/bluefin-lts");

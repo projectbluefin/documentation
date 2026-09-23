@@ -170,13 +170,18 @@ const _normalizeReleaseDate = (value?: string | null): string | null => {
  * Get NVIDIA driver version from firehose data (not present in SBOM).
  * NVIDIA ships as an akmod built outside the image and is not in Syft scans.
  */
-const getNvidiaVersionFromFirehose = (feedId: string, _title: string): string | null => {
+const getNvidiaVersionFromFirehose = (
+  feedId: string,
+  _title: string,
+): string | null => {
   const appId = FIREHOSE_APP_ID_BY_FEED_ID[feedId];
   if (!appId) return null;
   const app = FIREHOSE_OS_APP_LOOKUP[appId];
   if (!app?.osInfo?.majorPackages) return null;
   const majorPackages = app.osInfo.majorPackages;
-  return majorPackages.NVIDIA || majorPackages.Nvidia || majorPackages.nvidia || null;
+  return (
+    majorPackages.NVIDIA || majorPackages.Nvidia || majorPackages.nvidia || null
+  );
 };
 
 // ─── Feed parsing helpers ────────────────────────────────────────────────────
@@ -227,7 +232,7 @@ const resolveItemLink = (item: FeedItem, feedId: string): string => {
     if (idMatch) {
       const [, , tag] = idMatch;
       if (feedId === "bluefinReleases") {
-        itemLink = `https://github.com/projectbluefin/bluefin/releases/tag/${tag}`;
+        itemLink = `https://github.com/ublue-os/bluefin/releases/tag/${tag}`;
       } else if (feedId === "bluefinLtsReleases") {
         itemLink = `https://github.com/projectbluefin/bluefin-lts/releases/tag/${tag}`;
       }
@@ -299,7 +304,12 @@ const computeDerivedReleaseData = (
   const majorVersionBumps = extractMajorVersionBumps(diff);
   const releaseSummary = buildReleaseSummary(diff, majorVersionBumps);
 
-  return { versionSummary, supplyChainLinks, majorVersionBumps, releaseSummary };
+  return {
+    versionSummary,
+    supplyChainLinks,
+    majorVersionBumps,
+    releaseSummary,
+  };
 };
 
 // ─── FeedItems Component ─────────────────────────────────────────────────────
@@ -387,7 +397,9 @@ const FeedItems: React.FC<FeedItemsProps> = ({
                       {showDescription && itemDescription && (
                         <div
                           className={styles.feedItemDescription}
-                          dangerouslySetInnerHTML={{ __html: sanitizeHtml(itemDescription) }}
+                          dangerouslySetInnerHTML={{
+                            __html: sanitizeHtml(itemDescription),
+                          }}
                         />
                       )}
                     </div>
@@ -415,7 +427,9 @@ const FeedItems: React.FC<FeedItemsProps> = ({
                     {showDescription && itemDescription && (
                       <div
                         className={styles.feedItemDescription}
-                        dangerouslySetInnerHTML={{ __html: sanitizeHtml(itemDescription) }}
+                        dangerouslySetInnerHTML={{
+                          __html: sanitizeHtml(itemDescription),
+                        }}
                       />
                     )}
                   </div>
@@ -499,7 +513,9 @@ const CombinedFeedItems: React.FC<CombinedFeedItemsProps> = ({
             itemDescription,
             isRelease,
             displayTitle,
-            supplyChainLinks: derived?.supplyChainLinks ?? getSupplyChainLinks(sbomCache, displayTitle, item._feedId),
+            supplyChainLinks:
+              derived?.supplyChainLinks ??
+              getSupplyChainLinks(sbomCache, displayTitle, item._feedId),
             majorVersionBumps: derived?.majorVersionBumps ?? [],
             releaseSummary: derived?.releaseSummary ?? null,
           };
@@ -630,7 +646,9 @@ const CombinedFeedItems: React.FC<CombinedFeedItemsProps> = ({
                 {showDescription && itemDescription && (
                   <div
                     className={styles.feedItemDescription}
-                    dangerouslySetInnerHTML={{ __html: sanitizeHtml(itemDescription) }}
+                    dangerouslySetInnerHTML={{
+                      __html: sanitizeHtml(itemDescription),
+                    }}
                   />
                 )}
               </div>

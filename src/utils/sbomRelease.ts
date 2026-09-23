@@ -31,14 +31,13 @@ export const extractReleaseTag = (title: string): string | null => {
     /(stable-\d{8}|beta-\d{8}|latest-\d{8}|lts[-.]\d{8})/i,
   );
   if (tagMatch) {
-    // Normalise lts.YYYYMMDD → lts-YYYYMMDD to match cache key format
-    return tagMatch[1].toLowerCase().replace(/^lts\.(\d{8})$/, "lts-$1");
+    // Normalise lts.YYYYMMDD or lts-YYYYMMDD → stable-YYYYMMDD to match bluefin-lts cache key format
+    return tagMatch[1].toLowerCase().replace(/^lts[.-](\d{8})$/, "stable-$1");
   }
 
-  // LTS feed titles use "bluefin-lts LTS: YYYYMMDD (...)" format — extract date
+  // LTS feed titles use "bluefin-lts LTS: YYYYMMDD (...)" format — extract date as stable-YYYYMMDD
   const ltsDateMatch = title.match(/\bLTS:\s*(\d{8})\b/i);
-  if (ltsDateMatch) return `lts-${ltsDateMatch[1]}`;
-
+  if (ltsDateMatch) return `stable-${ltsDateMatch[1]}`;
   return null;
 };
 
@@ -117,28 +116,24 @@ export const getSupplyChainLinks = (
   let attestationVerified: boolean | null = null;
   let attestationPresent: boolean | null = null;
 
-  if (cache?.streams) {
-    const streamEntries = Object.entries(cache.streams);
-
-    // First pass: only streams that match the feed's LTS/non-LTS family.
-    const preferred = streamEntries.filter(([key]) =>
-      isLtsFeed ? key.includes("lts") : !key.includes("lts"),
-    );
-
-    const searchOrder = preferred.length > 0 ? preferred : streamEntries;
-
-    for (const [, stream] of searchOrder) {
-      const entry = stream.releases?.[releaseTag];
-      if (entry) {
-        attestationVerified = entry.attestation.verified ?? null;
-        attestationPresent = entry.attestation.present ?? null;
-        break;
-      }
+  const streamId =
+    feedId && feedId in SBOM_STREAM_BY_FEED_ID
+      ? SBOM_STREAM_BY_FEED_ID[feedId]
+      : undefined;
+  if (streamId && cache?.streams && streamId in cache.streams) {
+    const stream = cache.streams[streamId];
+    const entry = stream.releases?.[releaseTag];
+    if (entry) {
+      attestationVerified = entry.attestation?.verified ?? null;
+      attestationPresent = entry.attestation?.present ?? null;
     }
   }
 
+  const org = isLtsFeed ? "projectbluefin" : "ublue-os";
+  const pkg = isLtsFeed ? "bluefin-lts" : "bluefin";
+
   return {
-    packageTagUrl: `https://github.com/orgs/projectbluefin/packages/container/bluefin?tag=${encodeURIComponent(releaseTag)}`,
+    packageTagUrl: `https://github.com/orgs/${org}/packages/container/${pkg}?tag=${encodeURIComponent(releaseTag)}`,
     attestationVerified,
     attestationPresent,
   };
@@ -167,11 +162,14 @@ export const extractVersionSummary = (
   if (!packages) return [];
 
   const changes: VersionChange[] = [];
-  if (packages.kernel) changes.push({ name: "Kernel", change: packages.kernel });
+  if (packages.kernel)
+    changes.push({ name: "Kernel", change: packages.kernel });
   if (packages.gnome) changes.push({ name: "GNOME", change: packages.gnome });
   if (packages.mesa) changes.push({ name: "Mesa", change: packages.mesa });
-  if (packages.podman) changes.push({ name: "Podman", change: packages.podman });
-  if (packages.systemd) changes.push({ name: "systemd", change: packages.systemd });
+  if (packages.podman)
+    changes.push({ name: "Podman", change: packages.podman });
+  if (packages.systemd)
+    changes.push({ name: "systemd", change: packages.systemd });
   if (packages.bootc) changes.push({ name: "bootc", change: packages.bootc });
   if (nvidiaVersion) changes.push({ name: "NVIDIA", change: nvidiaVersion });
 
