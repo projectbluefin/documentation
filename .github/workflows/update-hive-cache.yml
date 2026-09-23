@@ -4,7 +4,11 @@ on:
   schedule:
     - cron: "0 */2 * * *" # every 2 hours
   workflow_dispatch:
-
+    inputs:
+      force:
+        description: "Force refresh regardless of TTL"
+        type: boolean
+        default: true
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
@@ -59,8 +63,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
           HIVE_API_TOKEN: ${{ secrets.HIVE_API_TOKEN }}
+          FORCE_REFRESH: ${{ github.event_name == 'workflow_dispatch' && (inputs.force && '1' || '0') || '0' }}
         run: node scripts/fetch-hive-history.js
-
       - name: Validate Hive history output
         run: |
           node -e "
