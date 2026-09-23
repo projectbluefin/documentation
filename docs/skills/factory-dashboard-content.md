@@ -78,10 +78,32 @@ The dossier owns contributor-specific Hive statistics and milestones.
 shared Hive data provider directly; do not add top-level pages to
 `FACTORY_ROUTES`.
 
-`scripts/fetch-hive-history.js` derives its contributor scope from the
-`projectbluefin` Hive registry entry's `repos` array. Its fallback is only a
-last verified registry snapshot for source outages; do not use it as the normal
-repository scope.
+`scripts/fetch-hive-history.js` discovers the repository scope by querying
+active, non-fork repositories across the `projectbluefin` organization via the
+GitHub API, falling back to the Hive registry and a verified factory list during
+API outages.
+
+### Contributor leaderboard and freshness rules
+
+- **Resilient refresh prevents corrupted partial state:** Network fetches for
+  all-time contributors and weekly stats validate every repository response. If
+  all repositories fail, prior data is preserved, timestamps are not bumped, and
+  an explicit error notice (`contributorError`, `weeklyStatsError`) is recorded.
+- **Agents are not humans:** Autonomous agent accounts carry `trust_tier: "agent"`
+  in the Hive registry and must be excluded from human leaderboards and newcomer
+  cards. In addition, system accounts like `web-flow` must be filtered out.
+- **Single-endpoint newcomer comparison:** New contributor detection compares
+  windowed activity against total activity within the same statistical payload
+  (`s.total > 0 && s.total === s.last3Months`) rather than crossing separate
+  cache lifecycles.
+- **Graceful partial handling for computing endpoints:** When a busy repository
+  returns 202 while GitHub computes stats, available repositories are still folded
+  in, and an explicit notice indicates in-flight status without freezing all data.
+- **Unavailability is visible:** Neither the contributor table nor the task grid
+  collapses silently when filtered or quiet. Render an explicit notice when zero
+  human entries remain.
+- **Publishing cadence matches cache TTL:** `pages.yml` publishes on a 6-hour
+  schedule (`0 */6 * * *`) aligned with the data refresh horizon.
 
 The public Hive registry accepts anonymous requests. Do not forward GitHub
 authorization to it.

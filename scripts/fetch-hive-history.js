@@ -4,8 +4,7 @@
  *
  * Runs every 2 hours via update-hive-cache.yml.
  * Appends a snapshot of key Hive metrics to static/data/hive-history.json.
- * Refreshes all-time contributor counts once per day (contributors endpoint).
- * Refreshes weekly contributor stats once per day (stats/contributors endpoint).
+ * Refreshes contributor counts and weekly stats every six hours when published.
  *
  * History file format:
  * {
@@ -16,6 +15,7 @@
  *   "contributors": { "login": totalCommits, ... },
  *   "contributorsByRepo": { "repo": { "login": commits } },
  *   "lastContributorFetch": "ISO timestamp",
+ *   "contributorError": null | "refresh failed",
  *
  *   // Weekly breakdown from /stats/contributors endpoint
  *   // Enables monthly/weekly leaderboard windows
@@ -40,7 +40,8 @@
  *   // array refers to contributorWeekStarts[i].
  *   "contributorWeekStarts": [1735689600, ...],
  *
- *   "lastWeeklyStatsFetch": "ISO timestamp"
+ *   "lastWeeklyStatsFetch": "ISO timestamp",
+ *   "weeklyStatsError": null | "refresh failed"
  * }
  */
 
@@ -61,11 +62,9 @@ const OUTPUT_FILE = path.join(__dirname, "../static/data/hive-history.json");
 // 14 days at one entry per 2h = 168 entries
 const MAX_ENTRIES = 168;
 
-// Refresh all-time contributor counts once per day
-const CONTRIBUTOR_TTL_MS = 24 * 60 * 60 * 1000;
-
-// Refresh weekly stats once per day (stats/contributors is expensive: 1 req/repo)
-const WEEKLY_STATS_TTL_MS = 24 * 60 * 60 * 1000;
+// The site publishes every six hours; refresh both datasets on every publish.
+const CONTRIBUTOR_TTL_MS = 6 * 60 * 60 * 1000;
+const WEEKLY_STATS_TTL_MS = 6 * 60 * 60 * 1000;
 
 // GitHub's stats/contributors endpoint returns 52 weekly buckets per contributor.
 const MAX_WEEKS = 52;
@@ -76,30 +75,37 @@ const MAX_WEEKS = 52;
 // leaderboard view (only ~33 contributors are active in a given year).
 const MAX_WEEKLY_SERIES = 100;
 
-// Last verified registry set. The public registry normally supplies this list.
+// Verified active community repositories across projectbluefin.
+// Excludes projectbluefin/lab per AGENTS.md data-pipeline rules.
 const FALLBACK_FACTORY_REPOS = [
   "common",
   "bluefin",
   "bluefin-lts",
   "actions",
-  "testsuite",
+  "dakota",
+  "dakota-iso",
+  "bonedigger",
+  "bootc-installer",
+  "knuckle",
   "server",
   "fsdk-containers",
   "finpilot",
-  "dakota-iso",
+  "testsuite",
   "utah",
   "utah-packages",
-  "lab",
   "documentation",
   "website",
-  "review",
-  "bootc-installer",
+  "contribute",
   "bluefin-bling",
-  "knuckle",
+  "chairlift",
+  "iso",
 ];
 
-// GitHub bot accounts to exclude from human contributor lists
-// Any login ending in [bot] is also excluded
+// Repositories that are forks or upstreams but core to projectbluefin development
+const ALLOWED_CORE_FORKS = new Set(["dakota-iso", "chairlift"]);
+const EXCLUDED_REPOS = new Set(["lab"]);
+
+// GitHub bot and automation accounts to exclude from human contributor lists
 const BOT_LOGINS = new Set([
   "mergeraptor",
   "renovate-bot",
@@ -107,8 +113,17 @@ const BOT_LOGINS = new Set([
   "semantic-release-bot",
   "Copilot",
   "copilot",
+  "web-flow",
+  "scanner",
+  "sec-check",
+  "ci-maintainer",
+  "reviewer",
+  "architect",
+  "quality",
+  "codex",
+  "claude",
+  "unknown",
 ]);
-
 const GH_API = "https://api.github.com";
 const REGISTRY_URL = "https://hive.hivecommons.dev/api/registry";
 const TARGET_ORG = "projectbluefin";
@@ -135,6 +150,30 @@ function trackedProjectRepos(data) {
 }
 
 async function fetchTrackedProjectRepos() {
+  // Prefer live listing of non-fork, active repos from the projectbluefin org
+  try {
+    const url = `${GH_API}/orgs/${TARGET_ORG}/repos?per_page=100&type=public`;
+    const res = await fetch(url, { headers: ghHeaders() });
+    if (res.ok) {
+      const repos = await res.json();
+      if (Array.isArray(repos) && repos.length > 0) {
+        const active = repos
+          .filter(
+            (r) =>
+              !r.archived &&
+              (!r.fork || ALLOWED_CORE_FORKS.has(r.name)) &&
+              !EXCLUDED_REPOS.has(r.name) &&
+              typeof r.name === "string",
+          )
+          .map((r) => r.name);
+        if (active.length > 0)
+          return [...new Set([...active, ...ALLOWED_CORE_FORKS])];
+      }
+    }
+  } catch {
+    // Fall back to registry or hardcoded list below
+  }
+
   try {
     const res = await fetch(REGISTRY_URL, { headers: registryHeaders() });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -143,12 +182,11 @@ async function fetchTrackedProjectRepos() {
     return repos;
   } catch (err) {
     console.warn(
-      `[hive-history] Hive registry unavailable (${err.message}) — using the last known repository set`,
+      `[hive-history] Repository discovery fallback (${err.message}) — using default set`,
     );
     return FALLBACK_FACTORY_REPOS;
   }
 }
-
 function extractMetrics(data) {
   if (!data) return null;
   const gov = (typeof data.governor === "object" && data.governor) || {};
@@ -183,57 +221,41 @@ function extractMetrics(data) {
   };
 }
 
-/**
- * Fetch /repos/projectbluefin/{repo}/contributors for each factory repo,
- * handle pagination, aggregate into { login: totalCommits }.
- * Skips 404s and 403s gracefully.
- */
+/** Fetch complete, paginated contributor counts for every tracked repo. */
 async function fetchContributors(repos = FALLBACK_FACTORY_REPOS) {
-  const totals = {};
   const byRepo = {};
+  const totals = {};
 
-  await Promise.allSettled(
+  await Promise.all(
     repos.map(async (repo) => {
       const repoMap = {};
       let url = `${GH_API}/repos/projectbluefin/${repo}/contributors?per_page=100&anon=false`;
-      let pages = 0;
-      while (url && pages < 10) {
-        pages++;
-        let res;
-        try {
-          res = await fetch(url, { headers: ghHeaders() });
-        } catch {
-          break;
-        }
-        if (res.status === 404 || res.status === 403 || res.status === 204)
-          break;
-        if (!res.ok) break;
-        let contributors;
-        try {
-          contributors = await res.json();
-        } catch {
-          break;
-        }
-        if (!Array.isArray(contributors)) break;
+      while (url) {
+        const res = await fetch(url, { headers: ghHeaders() });
+        if (res.status === 204) break;
+        if (!res.ok) throw new Error(`${repo}: HTTP ${res.status}`);
+        const contributors = await res.json();
+        if (!Array.isArray(contributors))
+          throw new Error(`${repo}: invalid contributor response`);
         for (const c of contributors) {
-          if (!c.login) continue;
-          // Skip any bot account (suffix [bot] or known bot logins)
-          if (c.login.endsWith("[bot]") || BOT_LOGINS.has(c.login)) continue;
-          const count = c.contributions || 0;
-          repoMap[c.login] = (repoMap[c.login] || 0) + count;
-          totals[c.login] = (totals[c.login] || 0) + count;
+          if (!c.login || c.login.endsWith("[bot]") || BOT_LOGINS.has(c.login))
+            continue;
+          repoMap[c.login] = (repoMap[c.login] || 0) + (c.contributions || 0);
         }
-        // follow pagination
         const link = res.headers.get("Link") || "";
-        const nextMatch = link.match(/<([^>]+)>;\s*rel="next"/);
-        url = nextMatch ? nextMatch[1] : null;
+        url = link.match(/<([^>]+)>;\s*rel="next"/)?.[1] ?? null;
       }
-      if (Object.keys(repoMap).length > 0) {
-        byRepo[repo] = repoMap;
-      }
+      byRepo[repo] = repoMap;
     }),
   );
 
+  for (const repoMap of Object.values(byRepo)) {
+    for (const [login, count] of Object.entries(repoMap)) {
+      totals[login] = (totals[login] || 0) + count;
+    }
+  }
+  if (Object.keys(totals).length === 0)
+    throw new Error("no contributor data returned");
   return { totals, byRepo };
 }
 
@@ -373,43 +395,62 @@ function finalizeContributorStats(
  * Returns: { stats: { [login]: { total, lastWeek, lastMonth, last3Months, byRepo, weeks } },
  *            weekStarts: number[] }
  */
-async function fetchContributorWeeklyStats(repos = FALLBACK_FACTORY_REPOS) {
+async function fetchContributorWeeklyStats(
+  repos = FALLBACK_FACTORY_REPOS,
+  { existingStats = {}, existingWeekStarts = [] } = {},
+) {
   const windows = computeStatsWindows();
   const acc = createStatsAccumulator();
 
-  await Promise.allSettled(
+  // Seed accumulator with known timestamps if available
+  for (const ts of existingWeekStarts) {
+    if (typeof ts === "number" && ts > 0) acc.weekStarts[ts] = true;
+  }
+
+  const failedRepos = [];
+
+  await Promise.all(
     repos.map(async (repo) => {
       const url = `${GH_API}/repos/projectbluefin/${repo}/stats/contributors`;
-      let attempts = 0;
-      let data = null;
-      while (attempts < 4) {
-        attempts++;
-        let res;
-        try {
-          res = await fetch(url, { headers: ghHeaders() });
-        } catch {
-          break;
-        }
-        if (res.status === 404 || res.status === 403 || res.status === 204)
-          break;
+      for (let attempts = 1; attempts <= 4; attempts++) {
+        const res = await fetch(url, { headers: ghHeaders() });
+        if (res.status === 204 || res.status === 404) return;
         if (res.status === 202) {
-          // GitHub is computing stats — wait and retry
-          await new Promise((r) => setTimeout(r, 2000 * attempts));
+          if (attempts === 4) {
+            failedRepos.push(`${repo} (computing)`);
+            return;
+          }
+          await new Promise((r) => setTimeout(r, 1500 * attempts));
           continue;
         }
-        if (!res.ok) break;
-        try {
-          data = await res.json();
-        } catch {
-          break;
+        if (!res.ok) {
+          failedRepos.push(`${repo} (HTTP ${res.status})`);
+          return;
         }
-        break;
+        const data = await res.json();
+        if (!Array.isArray(data)) {
+          failedRepos.push(`${repo} (invalid format)`);
+          return;
+        }
+        accumulateRepoStats(acc, repo, data, windows);
+        return;
       }
-      accumulateRepoStats(acc, repo, data, windows);
     }),
   );
 
-  return finalizeContributorStats(acc);
+  if (Object.keys(acc.stats).length === 0) {
+    throw new Error(
+      failedRepos.length > 0
+        ? `weekly stats unavailable: ${failedRepos.join(", ")}`
+        : "no weekly stats returned",
+    );
+  }
+
+  const finalized = finalizeContributorStats(acc);
+  return {
+    ...finalized,
+    failedRepos,
+  };
 }
 
 function loadHistory(file = OUTPUT_FILE) {
@@ -428,6 +469,8 @@ function loadHistory(file = OUTPUT_FILE) {
     contributorWeekStarts: [],
     lastContributorFetch: null,
     lastWeeklyStatsFetch: null,
+    contributorError: null,
+    weeklyStatsError: null,
   };
 }
 
@@ -504,13 +547,15 @@ async function main() {
       history.contributors = totals;
       history.contributorsByRepo = byRepo;
       history.lastContributorFetch = new Date().toISOString();
+      history.contributorError = null;
       const humanCount = Object.keys(totals).length;
       const totalCommits = Object.values(totals).reduce((s, n) => s + n, 0);
       console.log(
         `[hive-history] Contributors: ${humanCount} humans, ${totalCommits} total commits`,
       );
     } catch (err) {
-      console.warn(`[hive-history] Contributor fetch failed: ${err.message}`);
+      history.contributorError = `GitHub contributor refresh failed (${err.message}); showing last complete snapshot`;
+      console.warn(`[hive-history] ${history.contributorError}`);
     }
   } else {
     console.log(
@@ -529,10 +574,19 @@ async function main() {
       "[hive-history] Fetching weekly contributor stats (stats/contributors)...",
     );
     try {
-      const stats = await fetchContributorWeeklyStats(trackedRepos);
+      const stats = await fetchContributorWeeklyStats(trackedRepos, {
+        existingStats: history.contributorStats,
+        existingWeekStarts: history.contributorWeekStarts,
+      });
       history.contributorStats = stats.stats;
       history.contributorWeekStarts = stats.weekStarts;
-      history.lastWeeklyStatsFetch = new Date().toISOString();
+      if (stats.failedRepos && stats.failedRepos.length > 0) {
+        // Keep timestamp stale so the next scheduled run retries the computing repos
+        history.weeklyStatsError = `Partial update: stats computing for ${stats.failedRepos.join(", ")}`;
+      } else {
+        history.lastWeeklyStatsFetch = new Date().toISOString();
+        history.weeklyStatsError = null;
+      }
       const count = Object.keys(stats.stats).length;
       const activeThisWeek = Object.values(stats.stats).filter(
         (s) => s.lastWeek > 0,
@@ -544,7 +598,8 @@ async function main() {
         `[hive-history] Weekly stats: ${count} contributors, ${activeThisWeek} active this week, ${withSeries} with a ${stats.weekStarts.length}-week series`,
       );
     } catch (err) {
-      console.warn(`[hive-history] Weekly stats fetch failed: ${err.message}`);
+      history.weeklyStatsError = `GitHub weekly stats refresh failed (${err.message}); showing last complete snapshot`;
+      console.warn(`[hive-history] ${history.weeklyStatsError}`);
     }
   } else {
     console.log(
@@ -570,6 +625,8 @@ module.exports = {
   computeStatsWindows,
   createStatsAccumulator,
   extractMetrics,
+  fetchContributors,
+  fetchContributorWeeklyStats,
   finalizeContributorStats,
   loadHistory,
   MAX_WEEKLY_SERIES,
