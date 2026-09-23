@@ -2009,7 +2009,12 @@ export function RecentMilestonesLeaderboard({
           </span>
         </p>
       ) : (
-        <div className={styles.milestonesGrid}>
+        <div
+          className={styles.milestonesGrid}
+          role="region"
+          aria-label="Recent milestones"
+          tabIndex={0}
+        >
           {items.map((m) => (
             <Link
               key={m.id}
@@ -4263,6 +4268,21 @@ export function LeaderboardsSection(): React.JSX.Element {
   return (
     <div className={styles.leaderboards}>
       {hiveHistory ? (
+        <ContributorLeaderboard
+          history={hiveHistory}
+          registryEntries={registryEntries ?? []}
+          registryAvailable={registryEntries != null}
+        />
+      ) : (
+        <section className={styles.panel}>
+          <p className={styles.unavailableNote}>
+            GitHub contribution data{" "}
+            {history.loading ? "loading." : "unavailable"}
+            {!history.loading && history.reason ? `: ${history.reason}` : ""}
+          </p>
+        </section>
+      )}
+      {hiveHistory ? (
         <RecentMilestonesLeaderboard
           milestones={hiveHistory.milestones}
           breadthUnlocks={hiveHistory.season?.breadthUnlocks}
@@ -4277,14 +4297,7 @@ export function LeaderboardsSection(): React.JSX.Element {
         </section>
       )}
       {hiveHistory ? (
-        <>
-          <ContributorLeaderboard
-            history={hiveHistory}
-            registryEntries={registryEntries ?? []}
-            registryAvailable={registryEntries != null}
-          />
-          <ContributorWall history={hiveHistory} />
-        </>
+        <ContributorWall history={hiveHistory} />
       ) : (
         <section className={styles.panel}>
           <p className={styles.unavailableNote}>
