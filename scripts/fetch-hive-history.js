@@ -533,11 +533,13 @@ async function main() {
   }
 
   // ── Refresh all-time contributor counts (daily) ───────────────────────────
+  const forceRefresh =
+    process.argv.includes("--force") || process.env.FORCE_REFRESH === "1";
   const lastFetch = history.lastContributorFetch
     ? new Date(history.lastContributorFetch).getTime()
     : 0;
-  const needsContributorRefresh = Date.now() - lastFetch > CONTRIBUTOR_TTL_MS;
-
+  const needsContributorRefresh =
+    forceRefresh || Date.now() - lastFetch > CONTRIBUTOR_TTL_MS;
   if (needsContributorRefresh) {
     console.log(
       "[hive-history] Fetching all-time contributor counts from factory repos...",
@@ -567,8 +569,8 @@ async function main() {
   const lastWeeklyFetch = history.lastWeeklyStatsFetch
     ? new Date(history.lastWeeklyStatsFetch).getTime()
     : 0;
-  const needsWeeklyRefresh = Date.now() - lastWeeklyFetch > WEEKLY_STATS_TTL_MS;
-
+  const needsWeeklyRefresh =
+    forceRefresh || Date.now() - lastWeeklyFetch > WEEKLY_STATS_TTL_MS;
   if (needsWeeklyRefresh) {
     console.log(
       "[hive-history] Fetching weekly contributor stats (stats/contributors)...",
