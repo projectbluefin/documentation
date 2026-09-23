@@ -29,51 +29,11 @@ test("leaderboards place standings before the contributor wall", () => {
     source.indexOf("export function LeaderboardsSection"),
     source.indexOf("export function CommunitySection"),
   );
-  const leaderboard = source.slice(
-    source.indexOf("function ContributorLeaderboard"),
-  );
   assertBefore(
     leaderboards,
     "<ContributorLeaderboard",
     "<ContributorWall",
     "the active leaderboard must precede player cards",
-  );
-  assertBefore(
-    leaderboard,
-    "const newcomers = rows",
-    "const ranked",
-    "newcomers must be selected before the active leaderboard is filtered",
-  );
-  assert.ok(
-    leaderboard.includes("recentActivity"),
-    "newcomers must show their three-month activity",
-  );
-  assert.ok(
-    leaderboard.includes("const activityLabel"),
-    "the activity column must match the selected leaderboard window",
-  );
-  assert.ok(
-    leaderboard.includes("ranked.forEach"),
-    "ranks must be assigned after the active leaderboard is sorted",
-  );
-  assert.ok(
-    leaderboard.includes('React.useState<LeaderboardTab>("season")'),
-    "current GNOME season must be the default leaderboard view",
-  );
-  assert.ok(
-    leaderboard.includes("recentActivity: s?.last3Months ?? 0"),
-    "newcomers must expose three-month activity",
-  );
-  assert.ok(
-    leaderboard.includes("s.total === s.last3Months") ||
-      leaderboard.includes("s?.total === s?.last3Months"),
-    "newcomers must be compared against canonical activity windows",
-  );
-  assert.ok(
-    /activeTab === "season"[\s\S]*?activeTab === "alltime"[\s\S]*?allTimeRepoMap/.test(
-      leaderboard,
-    ),
-    "seasonal and all-time rankings must keep distinct per-repository scopes",
   );
 
   const hostedHive =

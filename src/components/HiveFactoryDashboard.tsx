@@ -303,7 +303,7 @@ interface HiveHistoryEntry {
 
 interface OrgContributor {
   login: string;
-  commits: number;
+  tasks: number;
   repos: string[];
 }
 
@@ -365,6 +365,7 @@ interface HiveHistory {
   weeklyStatsError?: string | null;
   season?: GNOMESeason | null;
   seasonError?: string | null;
+  hiveContributorTiers?: Record<string, { tier: string; tasks: number }>;
   milestones?: HiveMilestoneEvent[];
   milestonesError?: string | null;
 }
@@ -1398,59 +1399,52 @@ const MODE_COLORS: Record<string, string> = {
 
 // ── Nous / Strategy Lab panel ──────────────────────────────────────────────
 
-function ContributorWall({
-  prs,
-  history,
-}: {
-  prs: MergedPR[];
-  history: HiveHistory | null;
-}) {
+function ContributorWall({ history }: { history: HiveHistory | null }) {
   const [showAll, setShowAll] = React.useState(false);
 
-  // Build sorted contributor list: breadth-first (repos active in), not commit count
+  const tiers = history?.hiveContributorTiers;
+  const byRepo = history?.contributorsByRepo ?? {};
+
   const orgContributors: OrgContributor[] = React.useMemo(() => {
-    if (history?.contributors && Object.keys(history.contributors).length > 0) {
-      const byRepo = history.contributorsByRepo ?? {};
-      return Object.entries(history.contributors)
-        .filter(([login]) => !isBotLogin(login))
-        .map(([login, commits]) => {
-          const repos = Object.entries(byRepo)
-            .filter(([, rc]) => rc[login] != null)
-            .sort((a, b) => (b[1][login] ?? 0) - (a[1][login] ?? 0))
-            .map(([repo]) => repo);
-          return { login, commits, repos };
-        })
-        .sort(
-          (a, b) => b.repos.length - a.repos.length || b.commits - a.commits,
-        );
-    }
-    // fallback: derive from recent PRs
-    const seen = new Set<string>();
-    const out: OrgContributor[] = [];
-    for (const pr of prs) {
-      if (pr.isBot || isBotLogin(pr.author) || seen.has(pr.author)) continue;
-      seen.add(pr.author);
-      out.push({ login: pr.author, commits: 0, repos: [pr.repo] });
-      if (out.length >= 20) break;
-    }
-    return out;
-  }, [history, prs]);
+    if (!tiers || Object.keys(tiers).length === 0) return [];
 
-  const isOrgWide =
-    history?.contributors && Object.keys(history.contributors).length > 0;
-  const activeThisMonth = isOrgWide
-    ? Object.values(history?.contributorStats ?? {}).filter(
-        (s) => (s.lastMonth ?? 0) > 0,
-      ).length
-    : 0;
+    return Object.entries(tiers)
+      .filter(([login, data]) => !isBotLogin(login) && data?.tier !== "agent")
+      .map(([login, data]) => {
+        const repos = Object.entries(byRepo)
+          .filter(([, rc]) => rc[login] != null)
+          .sort((a, b) => (b[1][login] ?? 0) - (a[1][login] ?? 0))
+          .map(([repo]) => repo);
+        return { login, tasks: Number(data.tasks) || 0, repos };
+      })
+      .sort(
+        (a, b) =>
+          b.tasks - a.tasks ||
+          b.repos.length - a.repos.length ||
+          a.login.localeCompare(b.login),
+      );
+  }, [byRepo, tiers]);
 
+  if (!tiers || Object.keys(tiers).length === 0) {
+    return (
+      <section className={styles.panel}>
+        <Heading as="h2" className={styles.panelTitle}>
+          Factory Community
+        </Heading>
+        <p className={styles.unavailableNote}>
+          Hive task data {history ? "unavailable" : "loading."}
+          {history?.milestonesError ? `: ${history.milestonesError}` : ""}
+        </p>
+      </section>
+    );
+  }
+
+  const totalHiveTasks = orgContributors.reduce((sum, c) => sum + c.tasks, 0);
   const SPOTLIGHT_COUNT = 12;
   const GRID_INITIAL = 60;
   const spotlight = orgContributors.slice(0, SPOTLIGHT_COUNT);
   const rest = orgContributors.slice(SPOTLIGHT_COUNT);
   const visibleRest = showAll ? rest : rest.slice(0, GRID_INITIAL);
-
-  const stats = history?.contributorStats ?? {};
 
   return (
     <section className={styles.panel}>
@@ -1458,53 +1452,34 @@ function ContributorWall({
         Factory Community
       </Heading>
 
-      {isOrgWide && (
-        <div className={styles.communityStats}>
-          <div className={styles.communityStatItem}>
-            <span className={styles.communityStatValue}>
-              {orgContributors.length}
-            </span>
-            <span className={styles.communityStatLabel}>contributors</span>
-          </div>
-          <div className={styles.communityStatDivider} />
-          <div className={styles.communityStatItem}>
-            <span className={styles.communityStatValue}>
-              {Object.keys(history?.contributorsByRepo ?? {}).length}
-            </span>
-            <span className={styles.communityStatLabel}>repos</span>
-          </div>
-          <div className={styles.communityStatDivider} />
-          <div className={styles.communityStatItem}>
-            <span className={styles.communityStatValue}>
-              {activeThisMonth > 0 ? activeThisMonth : orgContributors.length}
-            </span>
-            <span className={styles.communityStatLabel}>
-              {activeThisMonth > 0 ? "active this month" : "total"}
-            </span>
-          </div>
+      <div className={styles.communityStats}>
+        <div className={styles.communityStatItem}>
+          <span className={styles.communityStatValue}>
+            {orgContributors.length}
+          </span>
+          <span className={styles.communityStatLabel}>contributors</span>
         </div>
-      )}
-
-      {!isOrgWide && (
-        <p className={styles.panelMeta}>
-          Humans landing code in the latest merged queue
-        </p>
-      )}
+        <div className={styles.communityStatDivider} />
+        <div className={styles.communityStatItem}>
+          <span className={styles.communityStatValue}>
+            {Object.keys(history?.contributorsByRepo ?? {}).length}
+          </span>
+          <span className={styles.communityStatLabel}>repos</span>
+        </div>
+        <div className={styles.communityStatDivider} />
+        <div className={styles.communityStatItem}>
+          <span className={styles.communityStatValue}>{totalHiveTasks}</span>
+          <span className={styles.communityStatLabel}>hive tasks</span>
+        </div>
+      </div>
 
       {/* ── Spotlight: top contributors ───────────────────────────────── */}
       {spotlight.length > 0 && (
         <>
           <p className={styles.communitySpotlightLabel}>✦ Top Contributors</p>
           <div className={styles.communitySpotlight}>
-            {spotlight.map(({ login, repos }) => {
-              const s = stats[login];
-              const lastWeek = s?.lastWeek ?? 0;
-              const lastMonth = s?.lastMonth ?? 0;
-              const badges = computeMilestones(
-                repos.length,
-                lastWeek,
-                lastMonth,
-              );
+            {spotlight.map(({ login, tasks, repos }) => {
+              const badges = computeMilestones(repos.length, 0, 0);
               const topBadge = badges[0];
               return (
                 <Link
@@ -1523,7 +1498,7 @@ function ContributorWall({
                   />
                   <span className={styles.spotlightName}>{login}</span>
                   <span className={styles.spotlightCommits}>
-                    {repos.length} {repos.length === 1 ? "project" : "projects"}
+                    {tasks} {tasks === 1 ? "Hive task" : "Hive tasks"}
                   </span>
                   {repos.length > 0 && (
                     <div className={styles.spotlightRepos}>
@@ -1562,7 +1537,7 @@ function ContributorWall({
             Community
           </p>
           <div className={styles.contributorGrid}>
-            {visibleRest.map(({ login, repos }) => (
+            {visibleRest.map(({ login, tasks, repos }) => (
               <Link
                 key={login}
                 href={contributorDossierUrl(login)}
@@ -1582,11 +1557,7 @@ function ContributorWall({
                   loading="lazy"
                 />
                 <span className={styles.contributorName}>{login}</span>
-                {repos.length > 0 && (
-                  <span className={styles.contributorCommits}>
-                    {repos.length}p
-                  </span>
-                )}
+                <span className={styles.contributorCommits}>{tasks}t</span>
               </Link>
             ))}
           </div>
@@ -1600,20 +1571,6 @@ function ContributorWall({
           )}
         </>
       )}
-
-      {orgContributors.length === 0 && (
-        <div className={styles.empty}>Frames are running the show</div>
-      )}
-
-      <p className={styles.panelMeta} style={{ marginTop: "1rem" }}>
-        <Link
-          href="https://github.com/orgs/projectbluefin/people"
-          target="_blank"
-          rel="noreferrer"
-        >
-          View all on GitHub →
-        </Link>
-      </p>
     </section>
   );
 }
@@ -1738,543 +1695,213 @@ function HistoryTrends({ history }: { history: HiveHistory | null }) {
 
 // ── Contributor Leaderboard ───────────────────────────────────────────────
 
-type LeaderboardTab = "season" | "alltime" | "monthly" | "weekly";
-
 interface LeaderboardEntry {
   rank: number;
   login: string;
-  projects: number; // repos.length — breadth of engagement
+  projects: number;
   repos: string[];
   badges: MilestoneBadge[];
-  hasStats: boolean;
-  activity: number;
-  recentActivity: number;
-  hiveTasks: number | null;
-  isNew: boolean;
-  /** Commits per week, oldest-first. Empty when the series was not collected. */
-  weeks: number[];
-}
-
-/** UTC day for a unix-second week start. Deterministic across build machines. */
-function weekStartLabel(seconds?: number): string {
-  if (typeof seconds !== "number" || !Number.isFinite(seconds))
-    return "unknown";
-  return new Date(seconds * 1000).toISOString().slice(0, 10);
+  tasks: number;
+  tier?: string;
 }
 
 export function ContributorLeaderboard({
   history,
-  registryEntries = [],
-  registryAvailable = true,
 }: {
   history: HiveHistory | null;
   registryEntries?: RegistryLeaderboardEntry[];
   registryAvailable?: boolean;
 }) {
-  const [tab, setTab] = React.useState<LeaderboardTab>("season");
+  const tiers = history?.hiveContributorTiers;
+  const byRepo = history?.contributorsByRepo ?? {};
 
-  const hasWeeklyStats =
-    history?.contributorStats != null &&
-    Object.keys(history.contributorStats).length > 0;
-  const activeTab =
-    (tab === "season" && !history?.season) ||
-    ((tab === "monthly" || tab === "weekly") && !hasWeeklyStats)
-      ? "alltime"
-      : tab;
-
-  const { ranked, newcomers, totalRanked, totalActivity, chartRows } = ((): {
+  const { ranked, totalRanked, totalTasks, chartRows } = ((): {
     ranked: LeaderboardEntry[];
-    newcomers: LeaderboardEntry[];
     totalRanked: number;
-    totalActivity: number;
+    totalTasks: number;
     chartRows: LeaderboardEntry[];
   } => {
-    if (!history)
-      return {
-        ranked: [],
-        newcomers: [],
-        totalRanked: 0,
-        totalActivity: 0,
-        chartRows: [],
-      };
+    if (!tiers || Object.keys(tiers).length === 0) {
+      return { ranked: [], totalRanked: 0, totalTasks: 0, chartRows: [] };
+    }
 
-    const stats = history.contributorStats ?? {};
-    const allTimeMap = history.contributors ?? {};
-    const byRepo = history.contributorsByRepo ?? {};
-    const hiveTasks = new Map(
-      registryEntries.map((entry) => [
-        entry.github_username,
-        entry.tasks_completed,
-      ]),
-    );
-
-    // Build a unified map of all known contributors (no bots)
-    const registryHumanEntries = registryEntries.filter(
-      (entry) =>
-        entry.trust_tier !== "agent" && !isBotLogin(entry.github_username),
-    );
-    const agentLogins = new Set(
-      registryEntries
-        .filter((entry) => entry.trust_tier === "agent")
-        .map((entry) => entry.github_username.toLowerCase()),
-    );
-    const allLogins = new Set(
-      [
-        ...Object.keys(stats),
-        ...Object.keys(allTimeMap),
-        ...Object.keys(history.season?.byLogin ?? {}),
-        ...registryHumanEntries.map((entry) => entry.github_username),
-      ].filter((l) => !isBotLogin(l) && !agentLogins.has(l.toLowerCase())),
-    );
     const rows: LeaderboardEntry[] = [];
-
-    for (const login of allLogins) {
-      const s = stats[login];
-      const lastWeek = s?.lastWeek ?? 0;
-      const lastMonth = s?.lastMonth ?? 0;
-      const completedTasks = registryAvailable
-        ? hiveTasks.has(login)
-          ? (hiveTasks.get(login) ?? 0)
-          : null
-        : null;
+    for (const [login, data] of Object.entries(tiers)) {
+      if (isBotLogin(login) || data?.tier === "agent") continue;
+      const tasks = Number(data?.tasks) || 0;
 
       const allTimeRepoMap = Object.fromEntries(
         Object.entries(byRepo)
           .filter(([, contributors]) => contributors[login] != null)
           .map(([repo, contributors]) => [repo, contributors[login]]),
       );
-      const repoMap =
-        activeTab === "season"
-          ? (history.season?.byLogin[login]?.repos ?? {})
-          : activeTab === "alltime"
-            ? allTimeRepoMap
-            : (s?.byRepo ?? allTimeRepoMap);
-      const repos = Object.keys(
-        activeTab === "season" || Object.keys(repoMap).length > 0
-          ? repoMap
-          : allTimeRepoMap,
-      ).sort((a, b) => {
-        const ma = repoMap[a] ?? byRepo[a]?.[login] ?? 0;
-        const mb = repoMap[b] ?? byRepo[b]?.[login] ?? 0;
+      const repos = Object.keys(allTimeRepoMap).sort((a, b) => {
+        const ma = allTimeRepoMap[a] ?? 0;
+        const mb = allTimeRepoMap[b] ?? 0;
         return mb - ma;
       });
-
-      if (repos.length === 0 && (completedTasks ?? 0) === 0) continue;
 
       rows.push({
         rank: 0,
         login,
         projects: repos.length,
         repos,
-        badges: computeMilestones(
-          repos.length,
-          activeTab === "season" ? 0 : lastWeek,
-          activeTab === "season" ? 0 : lastMonth,
-        ),
-        hasStats: s != null,
-        activity:
-          activeTab === "season"
-            ? (history.season?.byLogin[login]?.commits ?? 0)
-            : activeTab === "weekly"
-              ? lastWeek
-              : activeTab === "monthly"
-                ? lastMonth
-                : (allTimeMap[login] ?? 0),
-        recentActivity: s?.last3Months ?? 0,
-        hiveTasks: completedTasks,
-        isNew:
-          s != null &&
-          (s.total ?? 0) > 0 &&
-          (s.last3Months ?? 0) > 0 &&
-          s.total === s.last3Months &&
-          (!history.weeklyStatsError || allTimeMap[login] === s.last3Months),
-        weeks: Array.isArray(s?.weeks) ? s.weeks : [],
+        badges: computeMilestones(repos.length, 0, 0),
+        tasks,
+        tier: data?.tier,
       });
     }
 
-    const newcomers = rows
-      .filter(
-        (row) => row.isNew && (activeTab !== "season" || row.activity > 0),
-      )
-      .sort(
-        (a, b) =>
-          b.recentActivity - a.recentActivity ||
-          b.activity - a.activity ||
-          b.projects - a.projects ||
-          a.login.localeCompare(b.login),
-      )
-      .slice(0, 12);
-    const ranked = rows.filter(
-      (row) =>
-        activeTab === "alltime" ||
-        row.activity > 0 ||
-        (activeTab !== "season" && (row.hiveTasks ?? 0) > 0),
+    rows.sort(
+      (a, b) =>
+        b.tasks - a.tasks ||
+        b.projects - a.projects ||
+        a.login.localeCompare(b.login),
     );
-    ranked.sort((a, b) =>
-      activeTab === "alltime"
-        ? b.projects - a.projects ||
-          b.activity - a.activity ||
-          a.login.localeCompare(b.login)
-        : b.activity - a.activity ||
-          b.projects - a.projects ||
-          a.login.localeCompare(b.login),
-    );
-    ranked.forEach((r, i) => {
+    rows.forEach((r, i) => {
       r.rank = i + 1;
     });
-    const chartRows = [...ranked]
-      .filter((row) => row.activity > 0)
-      .sort((a, b) => b.activity - a.activity || a.login.localeCompare(b.login))
-      .slice(0, 6);
+
     return {
-      ranked: ranked.slice(0, 25),
-      newcomers,
-      totalRanked: ranked.length,
-      totalActivity: ranked.reduce((sum, row) => sum + row.activity, 0),
-      chartRows,
+      ranked: rows.slice(0, 25),
+      totalRanked: rows.length,
+      totalTasks: rows.reduce((sum, r) => sum + r.tasks, 0),
+      chartRows: rows.slice(0, 6),
     };
   })();
 
-  if (!history) return null;
-  const weekStarts = history.contributorWeekStarts ?? [];
-  const lastUpdated = history.lastWeeklyStatsFetch
-    ? new Date(history.lastWeeklyStatsFetch).toLocaleDateString("en-US", {
-        timeZone: "UTC",
-        month: "short",
-        day: "numeric",
-      })
-    : null;
+  if (!tiers || Object.keys(tiers).length === 0) {
+    return (
+      <section className={styles.panel}>
+        <Heading as="h2" className={styles.panelTitle}>
+          Community Builders
+        </Heading>
+        <p className={styles.unavailableNote}>
+          Hive task data {history ? "unavailable" : "loading."}
+          {history?.milestonesError ? `: ${history.milestonesError}` : ""}
+        </p>
+      </section>
+    );
+  }
 
-  const activityLabel =
-    activeTab === "season"
-      ? "Season commits"
-      : activeTab === "weekly"
-        ? "Weekly commits"
-        : activeTab === "monthly"
-          ? "Monthly commits"
-          : "All-time commits";
-  const season = history.season;
-  const barRows = chartRows;
-  const barMax = barRows[0]?.activity ?? 1;
+  const barMax = Math.max(1, chartRows[0]?.tasks ?? 1);
 
   return (
     <section className={styles.panel}>
       <Heading as="h2" className={styles.panelTitle}>
-        {activeTab === "season" && season
-          ? `Season of ${season.name}`
-          : activeTab === "alltime"
-            ? "All-time standings"
-            : "Community Builders"}
+        Community Builders
       </Heading>
       <p className={styles.panelMeta}>
-        {activeTab === "season" && season ? (
-          <>
-            GNOME {season.version} · Since{" "}
-            {new Date(season.start).toLocaleDateString("en-US", {
-              timeZone: "UTC",
-              month: "short",
-              day: "numeric",
-              year: "numeric",
-            })}{" "}
-            · <Link href={season.source}>GNOME release notes</Link> · Ranked by
-            season commits
-            {season.repos?.length
-              ? ` · ${season.repos.length} tracked ${season.repos.length === 1 ? "repo" : "repos"}`
-              : ""}
-            {` · Updated ${new Date(season.updatedAt).toLocaleString("en-US", { timeZone: "UTC", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", hour12: false })} UTC`}
-          </>
-        ) : (
-          <>
-            {activeTab === "alltime"
-              ? "Ranked by project breadth · All-time commits"
-              : `Ranked by ${activeTab} commits`}
-            {history.lastContributorFetch && activeTab === "alltime"
-              ? ` · stats as of ${new Date(history.lastContributorFetch).toLocaleDateString("en-US", { timeZone: "UTC", month: "short", day: "numeric" })}`
-              : lastUpdated
-                ? ` · weekly stats as of ${lastUpdated}`
-                : ""}
-            {!season && " · Season data unavailable"}
-          </>
-        )}
-        {!hasWeeklyStats && (tab === "monthly" || tab === "weekly") && (
-          <span className={styles.lbAccumulating}>
-            {" "}
-            · Activity windows accumulating — check back soon
-          </span>
-        )}
-        {activeTab === "alltime" && history.contributorError && (
-          <span className={styles.lbAccumulating}>
-            {" "}
-            · {history.contributorError}
-          </span>
-        )}
-        {activeTab !== "season" && history.weeklyStatsError && (
-          <span className={styles.lbAccumulating}>
-            {" "}
-            · {history.weeklyStatsError}
-          </span>
-        )}
-        {history.seasonError && (
-          <span className={styles.lbAccumulating}>
-            {" "}
-            · {history.seasonError}
-          </span>
-        )}
+        Ranked by Hive tasks completed across the factory
       </p>
       <div className={styles.lbMetrics}>
         <div>
           <strong>{totalRanked}</strong>
-          <span>
-            {activeTab === "season" ? "season contributors" : "contributors"}
-          </span>
+          <span>contributors</span>
+        </div>
+        <div>
+          <strong>{totalTasks}</strong>
+          <span>hive tasks</span>
         </div>
         <div>
           <strong>
-            {totalRanked
-              ? totalActivity
-              : activeTab === "season" && !season
-                ? "—"
-                : 0}
+            {Object.keys(history?.contributorsByRepo ?? {}).length}
           </strong>
-          <span>{activityLabel.toLowerCase()}</span>
-        </div>
-        <div>
-          <strong>
-            {activeTab === "season"
-              ? new Set(
-                  Object.values(season?.byLogin ?? {}).flatMap((entry) =>
-                    Object.keys(entry.repos),
-                  ),
-                ).size
-              : Object.keys(history.contributorsByRepo ?? {}).length}
-          </strong>
-          <span>
-            {activeTab === "season"
-              ? "season projects"
-              : "tracked projects (all time)"}
-          </span>
+          <span>tracked projects</span>
         </div>
       </div>
-      <div
-        className={styles.lbTabs}
-        role="group"
-        aria-label="Leaderboard period"
-      >
-        {(["season", "alltime", "monthly", "weekly"] as LeaderboardTab[]).map(
-          (t) => {
-            const disabled =
-              (t === "season" && !season) ||
-              ((t === "monthly" || t === "weekly") && !hasWeeklyStats);
-            return (
-              <button
-                key={t}
-                type="button"
-                aria-pressed={activeTab === t}
-                disabled={disabled}
-                className={`${styles.lbTab} ${activeTab === t ? styles.lbTabActive : ""} ${disabled ? styles.lbTabDisabled : ""}`}
-                onClick={() => {
-                  if (!disabled) setTab(t);
-                }}
-                title={
-                  disabled
-                    ? t === "season"
-                      ? "Season data unavailable"
-                      : "Activity data accumulating"
-                    : undefined
-                }
-              >
-                {t === "season"
-                  ? season
-                    ? `Season of ${season.name}`
-                    : "Season unavailable"
-                  : t === "alltime"
-                    ? "All Time"
-                    : t === "monthly"
-                      ? "Active Month"
-                      : "Active Week"}
-                {disabled && <span className={styles.lbTabPending}> ○</span>}
-              </button>
-            );
-          },
-        )}
-      </div>
-      <div
-        className={`${styles.lbCharts} ${activeTab === "season" && season ? "" : styles.lbChartsSingle}`}
-      >
+
+      <div className={`${styles.lbCharts} ${styles.lbChartsSingle}`}>
         <div className={styles.lbCompare}>
-          <Heading as="h3">
-            Top contributors · {activityLabel.toLowerCase()}
-          </Heading>
-          {barRows.length === 0 ? (
+          <Heading as="h3">Top contributors · hive tasks</Heading>
+          {chartRows.length === 0 ? (
             <p>Accumulating data</p>
           ) : (
-            barRows.map((row) => (
+            chartRows.map((row) => (
               <div className={styles.lbBarRow} key={row.login}>
                 <span>{row.login}</span>
                 <span className={styles.lbBarTrack}>
-                  <span
-                    style={{ width: `${(row.activity / barMax) * 100}%` }}
-                  />
+                  <span style={{ width: `${(row.tasks / barMax) * 100}%` }} />
                 </span>
-                <strong>{row.activity}</strong>
+                <strong>{row.tasks}</strong>
               </div>
             ))
           )}
         </div>
-        {activeTab === "season" && season && (
-          <EChart
-            title="Weekly season activity"
-            summary={`${season.weeklyCommits.at(-1) ?? 0} commits in the latest week; ${season.totalCommits} season commits since GNOME ${season.version}.`}
-            points={season.weekStarts.length}
-            height={220}
-            option={{
-              grid: { left: 48, right: 24, top: 22, bottom: 36 },
-              xAxis: {
-                type: "category",
-                data: season.weekStarts.map(weekStartLabel),
-                boundaryGap: false,
-              },
-              yAxis: { type: "value", min: 0 },
-              series: [
-                {
-                  type: "line",
-                  name: "Season commits",
-                  data: gapSafe(season.weeklyCommits),
-                  symbolSize: 7,
-                  lineStyle: { width: 3 },
-                },
-              ],
-            }}
-          />
-        )}
       </div>
 
-      {!hasWeeklyStats &&
-        activeTab === "alltime" &&
-        (tab === "monthly" || tab === "weekly") && (
-          <p className={styles.lbFallbackNote}>
-            Showing all-time contributors — activity windows are still
-            accumulating.
-          </p>
-        )}
       {ranked.length === 0 ? (
         <p className={styles.lbFallbackNote}>
-          {activeTab === "season"
-            ? `No attributed commits since GNOME ${season?.version} released.`
-            : activeTab === "alltime"
-              ? history.contributorError || "Contributor data unavailable."
-              : `No recorded commit activity in this ${activeTab} window. Select All Time to view all contributors.`}
+          No recorded Hive task activity yet.
         </p>
       ) : (
         <div className={styles.lbTable}>
           <div className={styles.lbHeader}>
             <span className={styles.lbColRank}>#</span>
             <span className={styles.lbColUser}>Contributor</span>
-            <span className={styles.lbColCommits}>
-              {activeTab === "season" ? "Projects" : "Projects · all time"}
-            </span>
-            <span className={styles.lbColActivity}>{activityLabel}</span>
-            <span className={styles.lbColHive}>Hive tasks · all time</span>
+            <span className={styles.lbColCommits}>Projects</span>
+            <span className={styles.lbColActivity}>Hive tasks</span>
             <span className={styles.lbColRepos}>Repos</span>
             <span className={styles.lbColBadges}>Milestones</span>
           </div>
-          {ranked.map(
-            ({
-              rank,
-              login,
-              projects,
-              repos,
-              badges,
-              weeks,
-              activity,
-              hiveTasks,
-            }) => {
-              const current = weeks.length ? weeks[weeks.length - 1] : null;
-              const totalCommits = weeks.reduce((a, b) => a + b, 0);
-              const from = weekStartLabel(weekStarts[0]);
-              const to = weekStartLabel(weekStarts[weeks.length - 1]);
-              return (
-                <Link
-                  key={login}
-                  href={contributorDossierUrl(login)}
-                  target="_blank"
-                  rel="noreferrer"
-                  className={styles.lbRow}
-                >
+          {ranked.map(({ rank, login, projects, repos, badges, tasks }) => (
+            <Link
+              key={login}
+              href={contributorDossierUrl(login)}
+              target="_blank"
+              rel="noreferrer"
+              className={styles.lbRow}
+            >
+              <span
+                className={`${styles.lbColRank} ${rank <= 3 ? styles.lbTopRank : ""}`}
+              >
+                {rank === 1
+                  ? "01"
+                  : rank === 2
+                    ? "02"
+                    : rank === 3
+                      ? "03"
+                      : String(rank).padStart(2, "0")}
+              </span>
+              <span className={styles.lbColUser}>
+                <img
+                  src={`https://github.com/${login}.png?size=24`}
+                  alt={login}
+                  className={styles.lbAvatar}
+                  loading="lazy"
+                />
+                <span className={styles.lbLogin}>{login}</span>
+              </span>
+              <span className={styles.lbColCommits}>
+                <span className={styles.lbCommitCount}>{projects}</span>
+              </span>
+              <span className={styles.lbColActivity}>
+                <span className={styles.lbSparkValue}>{tasks}</span>
+              </span>
+              <span className={styles.lbColRepos}>
+                {repos.slice(0, 3).map((r) => (
+                  <span key={r} className={styles.lbRepoChip}>
+                    {r}
+                  </span>
+                ))}
+                {repos.length > 3 && (
+                  <span className={styles.lbRepoMore}>+{repos.length - 3}</span>
+                )}
+              </span>
+              <span className={styles.lbColBadges}>
+                {badges.map((b) => (
                   <span
-                    className={`${styles.lbColRank} ${rank <= 3 ? styles.lbTopRank : ""}`}
+                    key={b.tier}
+                    className={styles.lbBadge}
+                    style={{ borderColor: b.color, color: b.color }}
+                    title={b.title}
                   >
-                    {rank === 1
-                      ? "01"
-                      : rank === 2
-                        ? "02"
-                        : rank === 3
-                          ? "03"
-                          : String(rank).padStart(2, "0")}
+                    {b.label}
                   </span>
-                  <span className={styles.lbColUser}>
-                    <img
-                      src={`https://github.com/${login}.png?size=24`}
-                      alt={login}
-                      className={styles.lbAvatar}
-                      loading="lazy"
-                    />
-                    <span className={styles.lbLogin}>{login}</span>
-                  </span>
-                  <span className={styles.lbColCommits}>
-                    <span className={styles.lbCommitCount}>{projects}</span>
-                  </span>
-                  <span className={styles.lbColActivity}>
-                    {activeTab === "weekly" && (
-                      <Sparkline
-                        data={weeks}
-                        variant="line"
-                        scale="zero"
-                        width={64}
-                        height={16}
-                        color="var(--fx-accent)"
-                        showEnd
-                        emptyLabel="no series"
-                        className={styles.lbSparkline}
-                        label={`${login}: commits per week from ${from} to ${to}, ${totalCommits} in total, ${current ?? 0} in the latest week.`}
-                      />
-                    )}
-                    <span className={styles.lbSparkValue}>{activity}</span>
-                  </span>
-                  <span className={styles.lbColHive}>
-                    {" "}
-                    {hiveTasks == null
-                      ? "unavailable"
-                      : `${hiveTasks} Hive tasks`}
-                  </span>
-                  <span className={styles.lbColRepos}>
-                    {repos.slice(0, 3).map((r) => (
-                      <span key={r} className={styles.lbRepoChip}>
-                        {r}
-                      </span>
-                    ))}
-                    {repos.length > 3 && (
-                      <span className={styles.lbRepoMore}>
-                        +{repos.length - 3}
-                      </span>
-                    )}
-                  </span>
-                  <span className={styles.lbColBadges}>
-                    {badges.map((b) => (
-                      <span
-                        key={b.tier}
-                        className={styles.lbBadge}
-                        style={{ borderColor: b.color, color: b.color }}
-                        title={b.title}
-                      >
-                        {b.label}
-                      </span>
-                    ))}
-                  </span>
-                </Link>
-              );
-            },
-          )}
+                ))}
+              </span>
+            </Link>
+          ))}
         </div>
       )}
 
@@ -2283,103 +1910,62 @@ export function ContributorLeaderboard({
           Showing top 25 of {totalRanked} contributors
         </p>
       )}
-      {newcomers.length > 0 && (
-        <div className={styles.lbNewcomers}>
-          <Heading as="h3" className={styles.lbNewcomersTitle}>
-            New to tracked repos · last 13 weeks
-          </Heading>
-          <div className={styles.lbNewcomersGrid}>
-            {newcomers.map(({ login, projects, recentActivity, activity }) => (
-              <Link
-                key={login}
-                href={contributorDossierUrl(login)}
-                target="_blank"
-                rel="noreferrer"
-                className={styles.lbNewcomer}
-              >
-                <img
-                  src={`https://github.com/${login}.png?size=40`}
-                  alt={login}
-                  className={styles.lbNewcomerAvatar}
-                  loading="lazy"
-                />
-                <span className={styles.lbLogin}>{login}</span>
-                <span className={styles.lbNewcomerStat}>
-                  {activeTab === "season" ? activity : recentActivity}{" "}
-                  {(activeTab === "season" ? activity : recentActivity) === 1
-                    ? "commit"
-                    : "commits"}{" "}
-                  · {projects} {projects === 1 ? "project" : "projects"}
-                </span>
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
     </section>
   );
 }
 
 function HiveTaskLeaderboard({
-  entries,
+  tiers,
 }: {
-  entries: RegistryLeaderboardEntry[];
+  tiers?: Record<string, { tier: string; tasks: number }>;
 }): React.JSX.Element | null {
-  const humanEntries = entries.filter(
-    (entry) =>
-      entry.trust_tier !== "agent" && !isBotLogin(entry.github_username),
-  );
-  const agentCount = entries.length - humanEntries.length;
+  const humanEntries = Object.entries(tiers ?? {})
+    .filter(
+      ([login, data]) => !isBotLogin(login) && data && data.tier !== "agent",
+    )
+    .map(([login, data]) => ({
+      login,
+      tier: data.tier,
+      tasks: Number(data.tasks) || 0,
+    }))
+    .sort((a, b) => b.tasks - a.tasks || a.login.localeCompare(b.login));
+
   return (
     <section className={styles.panel}>
       <Heading as="h2" className={styles.panelTitle}>
         Hive Task Leaderboard
       </Heading>
       <p className={styles.panelMeta}>
-        All-time tasks completed through the Hive registry; separate from GitHub
-        commits.
+        All-time tasks completed through the Hive.
       </p>
       {humanEntries.length === 0 ? (
         <p className={styles.panelMeta}>
-          No human task completions recorded in the registry yet
-          {agentCount > 0
-            ? ` (${agentCount} autonomous agent worker entries hidden)`
-            : ""}
+          <span className={styles.lbAccumulating}>
+            No human task completions recorded in the Hive yet
+          </span>
         </p>
       ) : (
         <div className={styles.hiveTaskGrid}>
-          {[...humanEntries]
-            .sort(
-              (a, b) =>
-                b.tasks_completed - a.tasks_completed ||
-                a.github_username.localeCompare(b.github_username),
-            )
-            .slice(0, 12)
-            .map((entry) => (
-              <Link
-                key={entry.github_username}
-                href={contributorDossierUrl(entry.github_username)}
-                target="_blank"
-                rel="noreferrer"
-                className={styles.hiveTaskCard}
-              >
-                <img
-                  src={
-                    entry.avatar_url ||
-                    `https://github.com/${entry.github_username}.png?size=40`
-                  }
-                  alt={entry.github_username}
-                  className={styles.hiveTaskAvatar}
-                  loading="lazy"
-                />
-                <span className={styles.hiveTaskPlayer}>
-                  {entry.github_username}
-                </span>
-                <span className={styles.hiveTaskCount}>
-                  {entry.tasks_completed} Hive tasks
-                </span>
-              </Link>
-            ))}
+          {humanEntries.slice(0, 12).map((entry) => (
+            <Link
+              key={entry.login}
+              href={contributorDossierUrl(entry.login)}
+              target="_blank"
+              rel="noreferrer"
+              className={styles.hiveTaskCard}
+            >
+              <img
+                src={`https://github.com/${entry.login}.png?size=40`}
+                alt={entry.login}
+                className={styles.hiveTaskAvatar}
+                loading="lazy"
+              />
+              <span className={styles.hiveTaskPlayer}>{entry.login}</span>
+              <span className={styles.hiveTaskCount}>
+                {entry.tasks} Hive tasks
+              </span>
+            </Link>
+          ))}
         </div>
       )}
     </section>
@@ -4697,7 +4283,7 @@ export function LeaderboardsSection(): React.JSX.Element {
             registryEntries={registryEntries ?? []}
             registryAvailable={registryEntries != null}
           />
-          <ContributorWall prs={[]} history={hiveHistory} />
+          <ContributorWall history={hiveHistory} />
         </>
       ) : (
         <section className={styles.panel}>
@@ -4708,13 +4294,17 @@ export function LeaderboardsSection(): React.JSX.Element {
           </p>
         </section>
       )}
-      {registryEntries ? (
-        <HiveTaskLeaderboard entries={registryEntries} />
+      {hiveHistory?.hiveContributorTiers &&
+      Object.keys(hiveHistory.hiveContributorTiers).length > 0 ? (
+        <HiveTaskLeaderboard tiers={hiveHistory.hiveContributorTiers} />
       ) : (
         <section className={styles.panel}>
           <p className={styles.unavailableNote}>
-            Hive task data {registry.loading ? "loading." : "unavailable"}
-            {!registry.loading && registry.reason ? `: ${registry.reason}` : ""}
+            Hive task data {history.loading ? "loading." : "unavailable"}
+            {!history.loading &&
+            (history.reason || hiveHistory?.milestonesError)
+              ? `: ${history.reason || hiveHistory?.milestonesError}`
+              : ""}
           </p>
         </section>
       )}

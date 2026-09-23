@@ -2399,7 +2399,7 @@
 .leaderboards .lbHeader,
 .leaderboards .lbRow {
   grid-template-columns:
-    2.5rem minmax(10rem, 2fr) 6rem 8rem 7rem minmax(8rem, 1fr)
+    2.5rem minmax(10rem, 2fr) 6rem 8rem minmax(8rem, 1fr)
     minmax(7rem, 1fr);
   gap: 0.7rem;
 }
@@ -2443,7 +2443,7 @@
   }
   .leaderboards .lbHeader,
   .leaderboards .lbRow {
-    grid-template-columns: 2.5rem minmax(9rem, 2fr) 5rem 7rem 6rem;
+    grid-template-columns: 2.5rem minmax(9rem, 2fr) 5rem 7rem;
   }
   .leaderboards .lbColRepos,
   .leaderboards .lbColBadges {
@@ -2777,7 +2777,7 @@
 
 .lbHeader {
   display: grid;
-  grid-template-columns: 2rem 1fr 5rem 7rem 6rem 9rem 1fr;
+  grid-template-columns: 2rem 1fr 5rem 7rem 9rem 1fr;
   gap: 0.5rem;
   align-items: center;
   padding: 0.3rem 0.5rem;
@@ -2791,7 +2791,7 @@
 
 .lbRow {
   display: grid;
-  grid-template-columns: 2rem 1fr 5rem 7rem 6rem 9rem 1fr;
+  grid-template-columns: 2rem 1fr 5rem 7rem 9rem 1fr;
   gap: 0.5rem;
   align-items: center;
   padding: 0.4rem 0.5rem;
