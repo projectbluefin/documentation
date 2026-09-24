@@ -93,7 +93,13 @@ than reaching for `--legacy-peer-deps`.
 
 ## CountMe Worker (countme.projectbluefin.io)
 
-`workers/countme-proxy` handles three workloads:
+`workers/countme-proxy` is the **one** countme service: Worker
+`projectbluefin-countme`, D1 `projectbluefin-countme`, route
+`countme.projectbluefin.io/*`. It deploys only through
+`.github/workflows/deploy-countme-worker.yml`, which applies
+`migrations/countme/` before `wrangler deploy`. Never stand up a second
+countme Worker or D1, and never `wrangler deploy` it by hand. It handles four
+workloads:
 
 1. **First-party counts:** Every Project Bluefin series is aggregated from its
    own D1 rows, never fetched from another service. One weekly query, grouped
@@ -121,6 +127,21 @@ than reaching for `--legacy-peer-deps`.
      `countme` (integer bucket 1–4).
    - Responses are HTTP 200 with `cache-control: no-store`.
    - The endpoint strictly disallows persistent machine identifiers or tokens.
+4. **eos-phone-home receiver (`PUT /v1/activate`, `PUT /v1/ping`):** The same
+   HTTP contract as
+   [`endlessm/eos-activation-server`](https://github.com/endlessm/eos-activation-server),
+   so the unmodified [`eos-phone-home`](https://github.com/endlessm/eos-phone-home)
+   client works with only `host = https://countme.projectbluefin.io` in
+   `/etc/eos-phone-home.conf`. JSON only (406 otherwise), upstream schema
+   (400 on failure), reply `{"success": true}`. Instead of queueing records for
+   Azafea, it bumps per-day counters in `eos_activations` / `eos_pings`;
+   vendor, product, and upstream `serial`/`mac_hash` are validated but never
+   stored. Only a confirmed D1 write (`success === true`) is acknowledged;
+   anything else is a retryable 503.
+   - The client pings at most once per 24h, so a day's `n` is systems active
+     that day. `/v1/daily.json` publishes daily actives and a seven-day
+     **mean** of them: summing days counts a daily machine seven times.
+   - `count == 0` marks a system's first ping (`new` in `/v1/daily.json`).
 
 ## Verifying before deploy
 

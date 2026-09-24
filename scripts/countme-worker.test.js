@@ -26,6 +26,7 @@ const WORKER_SOURCES = [
   "workers/countme-proxy/routes.mjs",
   "workers/countme-proxy/render.mjs",
   "workers/countme-proxy/counts.mjs",
+  "workers/countme-proxy/eos.mjs",
 ];
 
 /**
@@ -1049,4 +1050,111 @@ test("dakota hardware variants land in the dakota total", async () => {
     11,
     "gaming variant counts towards gaming share",
   );
+});
+
+// eos-phone-home receiver (workers/countme-proxy/eos.mjs). The unmodified
+// upstream client must work unchanged, so these pin the upstream contract.
+
+const EOS_PING = {
+  dualboot: false,
+  image: "unknown",
+  release: "44",
+  vendor: "System76",
+  product: "Thelio Mira",
+  count: 0,
+  metrics_enabled: false,
+  metrics_environment: "unknown",
+};
+
+function put(pathname, body, env, contentType = "application/json") {
+  return fetchHandler(
+    new Request(`https://countme.projectbluefin.io${pathname}`, {
+      method: "PUT",
+      headers: { "content-type": contentType },
+      body: typeof body === "string" ? body : JSON.stringify(body),
+    }),
+    env,
+  );
+}
+
+test("an eos-phone-home ping is counted and acknowledged like eos-activation-server", async () => {
+  const db = stubDb([]);
+  const response = await put("/v1/ping", EOS_PING, db.env);
+
+  assert.equal(response.status, 200);
+  assert.deepEqual(await response.json(), { success: true });
+  const [insert] = db.statements;
+  assert.match(insert.sql, /INSERT INTO eos_pings/u);
+  assert.deepEqual(insert.args.slice(1), ["unknown", "44", 1]);
+});
+
+test("only a system's first eos ping (count 0) is counted as new", async () => {
+  const db = stubDb([]);
+  await put("/v1/ping", { ...EOS_PING, count: 5 }, db.env);
+  assert.equal(db.statements[0].args[3], 0);
+});
+
+test("eos records failing the upstream schema are rejected without a write", async () => {
+  const db = stubDb([]);
+  const { vendor: _vendor, ...missingVendor } = EOS_PING;
+  const cases = [
+    missingVendor,
+    { ...EOS_PING, count: -1 },
+    { ...EOS_PING, dualboot: "no" },
+    { ...EOS_PING, image: "x".repeat(129) },
+  ];
+  for (const body of cases) {
+    const response = await put("/v1/ping", body, db.env);
+    assert.equal(response.status, 400);
+  }
+  assert.equal((await put("/v1/ping", "not json", db.env)).status, 400);
+  assert.equal(
+    (await put("/v1/ping", EOS_PING, db.env, "text/plain")).status,
+    406,
+  );
+  assert.equal(db.statements.length, 0);
+});
+
+test("a failed D1 write cannot acknowledge an eos record", async () => {
+  const db = stubDb([], { throws: true });
+  const response = await put("/v1/activate", EOS_PING, db.env);
+  assert.equal(response.status, 503);
+  assert.equal((await response.json()).success, false);
+});
+
+test("a D1 result without success cannot acknowledge an eos ping", async () => {
+  const db = stubDb([]);
+  db.env.DB.prepare = () => ({
+    bind: () => ({ run: async () => ({ success: false }) }),
+  });
+  const response = await put("/v1/ping", EOS_PING, db.env);
+  assert.equal(response.status, 503);
+  assert.equal((await response.json()).success, false);
+});
+
+test("eos endpoints accept only PUT", async () => {
+  const response = await get("/v1/ping", stubDb([]).env);
+  assert.equal(response.status, 405);
+  assert.equal(response.headers.get("allow"), "PUT");
+});
+
+test("the weekly eos figure is a mean of the seven complete days before today", async () => {
+  const eos = await import("../workers/countme-proxy/eos.mjs");
+  const now = new Date("2026-09-24T12:00:00Z");
+  const week = [17, 18, 19, 20, 21, 22, 23].map((d) => ({
+    day: `2026-09-${d}`,
+    active: d === 23 ? 17 : 10,
+    new: 0,
+  }));
+  const today = { day: "2026-09-24", active: 999, new: 0 };
+
+  // A mean, not a sum, and today's partial day never enters it.
+  assert.equal(
+    eos.buildEosDailyDocument([...week, today], now).sevenDayMeanActive,
+    11,
+  );
+
+  // A missing day is a gap, not a zero: no mean rather than a diluted one.
+  const gap = week.filter((d) => d.day !== "2026-09-20");
+  assert.equal(eos.buildEosDailyDocument(gap, now).sevenDayMeanActive, null);
 });
