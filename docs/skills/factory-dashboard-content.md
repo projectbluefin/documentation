@@ -156,35 +156,28 @@ authorization to it.
 
 ### CountMe: first-party stream counts only
 
-`/analytics` reads `https://countme.projectbluefin.io/counts.json` at runtime.
-The Worker aggregates D1 events; `scripts/lib/countme-sources.mjs` allows only
-`dakota` as a first-party published repo today. This image is labeled
-**Bluefin**. The older upstream artifact is **Bluefin Classic** and remains
-separate. Fedora's `totals.csv` and the tracked `countme-history.json` are not
-sources for a Project Bluefin image count.
+`/analytics` reads `https://countme.projectbluefin.io/v1/daily.json` at
+runtime: one row per UTC day and image, `{day, image, n}`, where `image` is
+`<image-name>/<image-flavor>:<stream>`. The rows come from
+`projectbluefin-countme`, shipped by `projectbluefin/common`, which pings at
+most once per day with the booted `stable` or `testing` tag (else `unknown`).
+No machine ID is transmitted, so `n` estimates systems active that day rather
+than counting distinct devices. The older upstream artifact is **Bluefin
+Classic** and remains separate. Fedora's `totals.csv` and the tracked
+`countme-history.json` are not sources for a Project Bluefin image count.
 
-- The Dakota client reports one successful check-in per UTC Monday-anchored
-  week, with a booted `stable` or `testing` tag. Its daily calendar retry does
-  not send another ping after a successful report that week. No machine ID is
-  transmitted, so the totals estimate active systems rather than count
-  distinct devices.
-- `/counts.json` keeps the all-tag Dakota total for existing consumers, but
-  additionally publishes nullable `dakotaStable`, `dakotaTesting` and
-  `dakotaUnclassified` readings. Only exact tags belong to named streams;
-  `latest`, missing or ambiguous tags stay unclassified. Game mode is a subset
-  of check-ins, not a separate image or a third stream.
-- The first chart plots stable and testing only, on one zero-anchored domain.
-  Its text dates each last measured reading and labels the in-progress UTC
-  week using `generatedAt`. Missing is `null`, never zero; unclassified pings
-  are disclosed separately rather than attributed to either line.
-- The cards read **Bluefin**, **Bluefin Utah**, **Bluefin Classic**, in that
-  order. Bluefin Utah is fed by `https://countme.projectbluefin.io/v1/daily.json`
-  (daily `projectbluefin-countme` pings, one row per day and image), read with
-  `familyDaily(rows, "utah")` in `firstPartyCountme.ts`. It plots systems
-  active **per day** by stream; never add days together into weekly users.
+- The cards read **Bluefin** (`dakota…` images), **Bluefin Utah** (`utah…`),
+  **Bluefin Classic**, in that order. Both first-party cards are one
+  `DailyPanel`, fed by `familyDaily(rows, family)` in `firstPartyCountme.ts`.
+- They plot systems active **per day** by stream on one zero-anchored domain.
+  The day axis is continuous, so an unreported day is a `null` gap, never a
+  zero and never bridged. Never add days together into weekly users.
+- An empty card says "No raptors reporting in, life finds a way"; a failed
+  fetch shows the generic pending reason instead.
+- The Bluefin Classic comparison chip shows the latest Bluefin daily total.
 
-Verify suspicious numbers against the read-only D1 rows grouped by `repo`,
-`tag` and UTC week, then compare `/counts.json`. Re-running a fetcher only
+Verify suspicious numbers against the read-only D1 `daily_pings` rows grouped
+by `day` and `image`, then compare `/v1/daily.json`. Re-running a fetcher only
 proves determinism. Never send a synthetic production ping to test a chart.
 
 ### Charts follow the site theme
@@ -342,8 +335,8 @@ change.
 - [ ] `node --test scripts/factory-theming.test.js scripts/tests-panels.test.js`
       passes.
 - [ ] Panel copy matches [`/press-kit`](/press-kit) vocabulary.
-- [ ] Named stream counts agree with exact `stable`/`testing` D1 tags; other
-      Dakota tags remain unclassified.
+- [ ] Per-stream daily counts agree with the D1 `daily_pings` rows for that
+      image family.
 - [ ] The dashboard was opened in **both** light and dark mode.
 - [ ] Every unavailable panel states a reason —
       `scripts/panel-unavailability.test.js` passes.
@@ -357,7 +350,7 @@ change.
 ## Sources
 
 - [`/press-kit`](/press-kit) — brand vocabulary for panel copy.
-- `workers/countme-proxy/counts.mjs`,
+- `workers/countme-proxy/ping.mjs`,
   `src/components/analytics/firstPartyCountme.ts`, and
   `scripts/lib/countme-sources.mjs` — first-party counting contract.
 - [`ublue-os/countme`](https://github.com/ublue-os/countme) — upstream source

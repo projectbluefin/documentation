@@ -1,7 +1,7 @@
 import { FIRST_PARTY } from "@site/scripts/lib/countme-sources.mjs";
 
 /**
- * Reading weekly active systems from the first-party countme service.
+ * Reading daily active systems from the first-party countme service.
  *
  * This module is deliberately separate from the component that renders it.
  * `scripts/countme-first-party.test.js` forbids a file that holds the image
@@ -20,83 +20,6 @@ import { FIRST_PARTY } from "@site/scripts/lib/countme-sources.mjs";
  */
 /** The first-party origin. Every route below is served by our own worker. */
 export const FIRST_PARTY_ORIGIN: string = FIRST_PARTY.origin;
-
-export const COUNTS_URL = `${FIRST_PARTY_ORIGIN}/counts.json`;
-
-/** One week of first-party counts. A null stream is a gap, never zero. */
-export interface CountmeWeek {
-  week: string;
-  [repo: string]: string | number | null | undefined;
-}
-
-export interface CountmeDataset {
-  generatedAt?: string;
-  source?: string;
-  method?: string;
-  unit?: string;
-  variants?: string[];
-  weeks?: CountmeWeek[];
-  unavailable?: boolean;
-  stateReason?: string | null;
-}
-
-/**
- * Parse a raw count, preserving 0 as a real measurement.
- *
- * `0` and `null` are different claims: "nobody was running it" against "nobody
- * reported". Returns null for undefined, null, empty string, and non-finite.
- */
-export function parseReading(val: unknown): number | null {
-  if (val === null || val === undefined || val === "") return null;
-  const n = typeof val === "number" ? val : Number(val);
-  return Number.isFinite(n) ? n : null;
-}
-
-/**
- * Latest real reading for a repo, with the week it belongs to.
- *
- * Reads backwards so a trailing gap does not read as "no data": the number is
- * the most recent one actually measured, and the caller states its week rather
- * than implying it is current.
- */
-export function latestReading(
-  weeks: CountmeWeek[],
-  repo: string,
-): { value: number; week: string } | null {
-  for (let i = weeks.length - 1; i >= 0; i -= 1) {
-    const value = parseReading(weeks[i]?.[repo]);
-    if (value !== null) return { value, week: String(weeks[i].week) };
-  }
-  return null;
-}
-
-/** A repo's series across the week axis, gaps preserved as null. */
-export function repoSeries(
-  weeks: CountmeWeek[],
-  repo: string,
-): Array<number | null> {
-  return weeks.map((w) => parseReading(w[repo]));
-}
-
-/** The week axis, as category labels. */
-export function weekLabels(weeks: CountmeWeek[]): string[] {
-  return weeks.map((w) => String(w.week));
-}
-
-/**
- * Weeks carrying at least one real reading.
- *
- * This is the count presentation rule 5 tests against, so an axis padded with
- * empty weeks cannot pass for accumulated data.
- */
-export function measuredWeekCount(
-  weeks: CountmeWeek[],
-  repos: string[],
-): number {
-  return weeks.filter((w) =>
-    repos.some((repo) => parseReading(w[repo]) !== null),
-  ).length;
-}
 
 /** Systems active per UTC day and image, from `projectbluefin-countme` pings. */
 export const DAILY_URL = `${FIRST_PARTY_ORIGIN}/v1/daily.json`;
@@ -151,4 +74,29 @@ export function familyDaily(
     });
   }
   return { days, streams };
+}
+
+export type FamilyDaily = ReturnType<typeof familyDaily>;
+
+/** Days on which at least one stream reported, as `measuredWeekCount` does. */
+export function measuredDays(daily: FamilyDaily): number {
+  return daily.days.filter((_, i) =>
+    DAILY_STREAMS.some((stream) => daily.streams[stream][i] !== null),
+  ).length;
+}
+
+/** The last day any stream reported, with that day's total across streams. */
+export function latestDaily(
+  daily: FamilyDaily,
+): { value: number; day: string } | null {
+  for (let i = daily.days.length - 1; i >= 0; i -= 1) {
+    const values = DAILY_STREAMS.map((stream) => daily.streams[stream][i]);
+    if (values.some((v) => v !== null)) {
+      return {
+        value: values.reduce<number>((sum, v) => sum + (v ?? 0), 0),
+        day: daily.days[i],
+      };
+    }
+  }
+  return null;
 }

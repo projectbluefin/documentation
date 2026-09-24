@@ -12,17 +12,14 @@ import {
 } from "../factory/chartTheme";
 import { FIRST_PARTY_PENDING_REASON } from "@site/scripts/lib/countme-sources.mjs";
 import {
-  COUNTS_URL,
   DAILY_STREAMS,
   DAILY_URL,
   FIRST_PARTY_ORIGIN,
   familyDaily,
-  latestReading,
-  measuredWeekCount,
-  repoSeries,
-  weekLabels,
-  type CountmeDataset,
+  latestDaily,
+  measuredDays,
   type DailyDataset,
+  type FamilyDaily,
 } from "./firstPartyCountme";
 import { useFactoryTheme } from "../factory/useFactoryTheme";
 import "../factory/tokens.css";
@@ -36,7 +33,7 @@ import styles from "./CountmeAnalyticsCharts.module.css";
 const REGISTRY_URL = "/data/ghcr-packages.json";
 
 /**
- * Weekly active systems come from the first-party service and nothing else.
+ * Active-system counts come from the first-party service and nothing else.
  *
  * The reader lives in `./firstPartyCountme`, and is imported rather than
  * re-exported from here. This file holds the image catalogue, and
@@ -60,22 +57,6 @@ const REGISTRY_URL = "/data/ghcr-packages.json";
  */
 const LEGACY_CHART_URL = `${FIRST_PARTY_ORIGIN}/legacy/bluefin.svg`;
 const LEGACY_BADGE_URL = `${FIRST_PARTY_ORIGIN}/badge-endpoints/bluefin.json`;
-
-/** Only exact Dakota tags are named chart series; all other tags stay unclassified. */
-const DAKOTA_STREAMS = [
-  { key: "dakotaStable", label: "Bluefin :stable" },
-  { key: "dakotaTesting", label: "Bluefin :testing" },
-] as const;
-const DAKOTA_STREAM_KEYS = DAKOTA_STREAMS.map(({ key }) => key);
-
-function readingText(
-  reading: ReturnType<typeof latestReading>,
-  currentWeek: string | null,
-): string {
-  return reading
-    ? `${reading.value.toLocaleString()} (week ${reading.week}${reading.week === currentWeek ? ", partial" : ""})`
-    : "accumulating data";
-}
 
 /**
  * `2026-07-13` as `Jul 13`.
@@ -345,17 +326,122 @@ export function buildStreamMatrix(
   return cells;
 }
 
+/** What an empty daily card says until its image family reports. */
+export const NO_RAPTORS = "No raptors reporting in, life finds a way";
+
+/**
+ * One image family's systems active per day, by stream: the latest value of
+ * each stream as text, then the chart, or the reason there is no chart.
+ */
+function DailyPanel({
+  daily,
+  label,
+  reason,
+  cat,
+}: {
+  daily: FamilyDaily;
+  label: string;
+  reason: string;
+  cat: string[];
+}): React.JSX.Element {
+  const measured = measuredDays(daily);
+  const readings = DAILY_STREAMS.map((stream) => {
+    const values = daily.streams[stream];
+    for (let i = values.length - 1; i >= 0; i -= 1) {
+      if (values[i] !== null) {
+        return {
+          stream,
+          text: `${values[i]!.toLocaleString()} (${daily.days[i]})`,
+        };
+      }
+    }
+    return { stream, text: "accumulating data" };
+  });
+  const option = useMemo(
+    () => ({
+      grid: { left: 56, right: 24, top: 16, bottom: 48, containLabel: true },
+      tooltip: { trigger: "axis" },
+      xAxis: {
+        type: "category",
+        data: daily.days,
+        axisLabel: {
+          fontSize: 13,
+          hideOverlap: true,
+          formatter: (value: string) => compactWeek(value),
+        },
+      },
+      // Anchored at zero: a floating floor turns a flat series into a cliff.
+      yAxis: {
+        type: "value",
+        min: 0,
+        minInterval: 1,
+        axisLabel: { fontSize: 13 },
+      },
+      legend: { textStyle: { fontSize: 13 }, itemGap: 18 },
+      series: DAILY_STREAMS.map((stream, i) => ({
+        name: `${label} :${stream}`,
+        type: "line",
+        // Gaps break the line rather than being bridged or turned into zero.
+        smooth: false,
+        connectNulls: false,
+        showSymbol: true,
+        symbolSize: 7,
+        symbol: SERIES_SYMBOLS[i],
+        data: daily.streams[stream],
+        itemStyle: { color: cat[i % cat.length] },
+        lineStyle: {
+          width: 2,
+          color: cat[i % cat.length],
+          type: seriesDash(i),
+        },
+      })),
+    }),
+    [daily, label, cat],
+  );
+  return (
+    <>
+      <p className={styles.legendRow}>
+        {readings.map(({ stream, text }, i) => (
+          <span key={stream} className={styles.legendChip}>
+            <span
+              className={styles.legendGlyph}
+              aria-hidden="true"
+              style={{ color: cat[i % cat.length] }}
+            >
+              ●
+            </span>
+            {label} :{stream}: {text}
+          </span>
+        ))}
+      </p>
+      {measured > 0 ? (
+        <EChart
+          option={option}
+          title={`${label} daily active systems`}
+          summary={`Systems active per day across ${measured} measured day${
+            measured === 1 ? "" : "s"
+          } — ${readings.map((r) => `${label} :${r.stream} ${r.text}`).join(", ")}.`}
+          points={measured}
+          minPoints={2}
+          height={300}
+          tableCaption={`${label} systems active per day by stream`}
+        />
+      ) : (
+        // Rule 6: unavailability is visible and carries its reason.
+        <Unavailable what={`${label} daily active systems`} reason={reason} />
+      )}
+    </>
+  );
+}
+
 export interface CountmeAnalyticsChartsProps {
   registry?: GhcrDataset;
-  /** Injected by tests; production fetches the first-party aggregate. */
-  counts?: CountmeDataset;
   /** Injected by tests; production fetches the daily ping counts. */
   daily?: DailyDataset;
 }
 
 export default function CountmeAnalyticsCharts({
   registry,
-  counts,
   daily,
 }: CountmeAnalyticsChartsProps = {}): React.JSX.Element {
   const [themeRef, fxTheme] = useFactoryTheme();
@@ -384,45 +470,6 @@ export default function CountmeAnalyticsCharts({
     })();
   }, [base, registry]);
 
-  // ── Weekly active systems, first-party only ────────────────────────────
-  const [fetchedCounts, setFetchedCounts] = useState<CountmeDataset | null>(
-    null,
-  );
-  const [countsReason, setCountsReason] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (counts) return;
-    void (async () => {
-      try {
-        const res = await fetch(COUNTS_URL);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        setFetchedCounts((await res.json()) as CountmeDataset);
-      } catch {
-        // The reason is deliberately generic. A panel reason is published copy,
-        // and commit 5a5269bc removed internal service posture from this page.
-        setCountsReason(FIRST_PARTY_PENDING_REASON);
-      }
-    })();
-  }, [counts]);
-
-  const countsData = counts ?? fetchedCounts;
-  const countmeWeeks = countsData?.weeks ?? [];
-  const generatedAt = countsData?.generatedAt
-    ? new Date(countsData.generatedAt)
-    : null;
-  const currentWeek =
-    generatedAt && Number.isFinite(generatedAt.valueOf())
-      ? new Date(
-          Date.UTC(
-            generatedAt.getUTCFullYear(),
-            generatedAt.getUTCMonth(),
-            generatedAt.getUTCDate() - ((generatedAt.getUTCDay() + 6) % 7),
-          ),
-        )
-          .toISOString()
-          .slice(0, 10)
-      : null;
-
   // ── Upstream image, the one permitted legacy series ────────────────────
   //
   // UPSTREAM_ALLOWED is the single exception to the first-party rule:
@@ -444,7 +491,7 @@ export default function CountmeAnalyticsCharts({
     })();
   }, []);
 
-  // ── Bluefin Utah: daily pings from projectbluefin-countme ──────────────
+  // ── Bluefin and Bluefin Utah: daily pings from projectbluefin-countme ─
   const [fetchedDaily, setFetchedDaily] = useState<DailyDataset | null>(null);
   const [dailyReason, setDailyReason] = useState<string | null>(null);
 
@@ -456,134 +503,23 @@ export default function CountmeAnalyticsCharts({
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         setFetchedDaily((await res.json()) as DailyDataset);
       } catch {
+        // A panel reason is published copy: generic, no service posture.
         setDailyReason(FIRST_PARTY_PENDING_REASON);
       }
     })();
   }, [daily]);
 
+  const dailyData = daily ?? fetchedDaily;
+  const emptyReason = dailyData?.stateReason ?? dailyReason ?? NO_RAPTORS;
+  const bluefin = useMemo(
+    () => familyDaily(dailyData?.days ?? [], "dakota"),
+    [dailyData],
+  );
   const utah = useMemo(
-    () => familyDaily((daily ?? fetchedDaily)?.days ?? [], "utah"),
-    [daily, fetchedDaily],
+    () => familyDaily(dailyData?.days ?? [], "utah"),
+    [dailyData],
   );
-  const utahMeasured = utah.days.filter((_, i) =>
-    DAILY_STREAMS.some((stream) => utah.streams[stream][i] !== null),
-  ).length;
-  const utahReadings = DAILY_STREAMS.map((stream) => {
-    const values = utah.streams[stream];
-    for (let i = values.length - 1; i >= 0; i -= 1) {
-      if (values[i] !== null)
-        return { stream, value: values[i], day: utah.days[i] };
-    }
-    return { stream, value: null, day: null };
-  });
-  const utahText = ({ value, day }: (typeof utahReadings)[number]) =>
-    value === null ? "accumulating data" : `${value.toLocaleString()} (${day})`;
-  const utahOption = useMemo(
-    () => ({
-      grid: { left: 56, right: 24, top: 16, bottom: 48, containLabel: true },
-      tooltip: { trigger: "axis" },
-      xAxis: {
-        type: "category",
-        data: utah.days,
-        axisLabel: {
-          fontSize: 13,
-          hideOverlap: true,
-          formatter: (value: string) => compactWeek(value),
-        },
-      },
-      yAxis: {
-        type: "value",
-        min: 0,
-        minInterval: 1,
-        axisLabel: { fontSize: 13 },
-      },
-      legend: { textStyle: { fontSize: 13 }, itemGap: 18 },
-      series: DAILY_STREAMS.map((stream, i) => ({
-        name: `Bluefin Utah :${stream}`,
-        type: "line",
-        smooth: false,
-        connectNulls: false,
-        showSymbol: true,
-        symbolSize: 7,
-        symbol: SERIES_SYMBOLS[i],
-        data: utah.streams[stream],
-        itemStyle: { color: cat[i % cat.length] },
-        lineStyle: {
-          width: 2,
-          color: cat[i % cat.length],
-          type: seriesDash(i),
-        },
-      })),
-    }),
-    [utah, cat],
-  );
-
-  const countmeReadings = useMemo(
-    () =>
-      DAKOTA_STREAMS.map((stream) => ({
-        ...stream,
-        reading: latestReading(countmeWeeks, stream.key),
-      })),
-    [countmeWeeks],
-  );
-  const unclassifiedReading = latestReading(countmeWeeks, "dakotaUnclassified");
-  // The legacy comparison uses the existing all-tag aggregate, never a stream.
-  const allTagReading = latestReading(countmeWeeks, "dakota");
-  const countmePoints = measuredWeekCount(countmeWeeks, DAKOTA_STREAM_KEYS);
-
-  const countmeOption = useMemo(
-    () => ({
-      grid: { left: 56, right: 24, top: 16, bottom: 48, containLabel: true },
-      tooltip: { trigger: "axis" },
-      xAxis: {
-        type: "category",
-        // Full ISO dates stay in the data, so the tooltip and the numbers table
-        // keep them; only the tick text is shortened.
-        data: weekLabels(countmeWeeks),
-        axisLabel: {
-          fontSize: 13,
-          hideOverlap: true,
-          formatter: (value: string) => compactWeek(value),
-        },
-      },
-      // Anchored at zero: a floating floor turns a flat series into a cliff.
-      yAxis: {
-        type: "value",
-        min: 0,
-        minInterval: 1,
-        axisLabel: { fontSize: 13 },
-      },
-      legend: { textStyle: { fontSize: 13 }, itemGap: 18 },
-      series: DAKOTA_STREAMS.map(({ key, label }, i) => ({
-        name: label,
-        type: "line",
-        // Discrete weekly readings: gaps break the line rather than being
-        // bridged or converted to zero.
-        smooth: false,
-        connectNulls: false,
-        showSymbol: true,
-        symbolSize: 7,
-        symbol: SERIES_SYMBOLS[i],
-        data: repoSeries(countmeWeeks, key),
-        itemStyle: { color: cat[i % cat.length] },
-        lineStyle: {
-          width: 2,
-          color: cat[i % cat.length],
-          type: seriesDash(i),
-        },
-      })),
-    }),
-    [countmeWeeks, cat],
-  );
-
-  /** The chart's accessible summary dates every measured stream reading. */
-  const countmeSummary = `Estimated weekly active systems from check-ins across ${countmePoints} measured week${
-    countmePoints === 1 ? "" : "s"
-  } — ${countmeReadings
-    .map(
-      ({ label, reading }) => `${label} ${readingText(reading, currentWeek)}`,
-    )
-    .join(", ")}.`;
+  const bluefinLatest = latestDaily(bluefin);
 
   const ghcr = registry ?? fetchedRegistry;
 
@@ -678,55 +614,20 @@ export default function CountmeAnalyticsCharts({
 
   return (
     <div ref={themeRef} className={`fxRoot ${styles.container}`}>
-      {/* ── 1. Bluefin: weekly active systems ────────────────────────────── */}
+      {/* ── 1. Bluefin: daily active systems ─────────────────────────────── */}
       <section className={styles.panelCard}>
         <header className={styles.sectionHeader}>
           <Heading as="h3" className={styles.sectionTitle}>
             Bluefin
           </Heading>
-          <p className={styles.sectionSubtext}>Weekly active systems.</p>
+          <p className={styles.sectionSubtext}>Systems active per day.</p>
         </header>
-
-        <p className={styles.legendRow}>
-          {countmeReadings.map(({ key, label, reading }, i) => (
-            <span key={key} className={styles.legendChip}>
-              <span
-                className={styles.legendGlyph}
-                aria-hidden="true"
-                style={{ color: cat[i % cat.length] }}
-              >
-                ●
-              </span>
-              {label}: {readingText(reading, currentWeek)}
-            </span>
-          ))}
-        </p>
-        {countmePoints > 0 ? (
-          <EChart
-            option={countmeOption}
-            title="Weekly active systems"
-            summary={countmeSummary}
-            points={countmePoints}
-            minPoints={2}
-            height={300}
-            tableCaption="Estimated weekly active systems by Bluefin stream from first-party check-ins"
-          />
-        ) : (
-          // Rule 6: unavailability is visible and carries its reason.
-          <Unavailable
-            what="Weekly active systems"
-            reason={
-              countsData?.stateReason ??
-              countsReason ??
-              FIRST_PARTY_PENDING_REASON
-            }
-          />
-        )}
-        <p className={styles.chartNote}>
-          Unclassified: {readingText(unclassifiedReading, currentWeek)}. These
-          are estimates from weekly check-ins; other or unknown tags are not
-          assigned to <code>:stable</code> or <code>:testing</code>.
-        </p>
+        <DailyPanel
+          daily={bluefin}
+          label="Bluefin"
+          reason={emptyReason}
+          cat={cat}
+        />
       </section>
 
       {/* ── 2. Bluefin Utah: daily active systems ────────────────────────── */}
@@ -737,44 +638,12 @@ export default function CountmeAnalyticsCharts({
           </Heading>
           <p className={styles.sectionSubtext}>Systems active per day.</p>
         </header>
-        <p className={styles.legendRow}>
-          {utahReadings.map((reading, i) => (
-            <span key={reading.stream} className={styles.legendChip}>
-              <span
-                className={styles.legendGlyph}
-                aria-hidden="true"
-                style={{ color: cat[i % cat.length] }}
-              >
-                ●
-              </span>
-              Bluefin Utah :{reading.stream}: {utahText(reading)}
-            </span>
-          ))}
-        </p>
-        {utahMeasured > 0 ? (
-          <EChart
-            option={utahOption}
-            title="Bluefin Utah daily active systems"
-            summary={`Systems active per day across ${utahMeasured} measured day${
-              utahMeasured === 1 ? "" : "s"
-            } — ${utahReadings
-              .map((r) => `Bluefin Utah :${r.stream} ${utahText(r)}`)
-              .join(", ")}.`}
-            points={utahMeasured}
-            minPoints={2}
-            height={300}
-            tableCaption="Bluefin Utah systems active per day by stream"
-          />
-        ) : (
-          <Unavailable
-            what="Bluefin Utah daily active systems"
-            reason={
-              (daily ?? fetchedDaily)?.stateReason ??
-              dailyReason ??
-              "No Bluefin Utah system has reported yet."
-            }
-          />
-        )}
+        <DailyPanel
+          daily={utah}
+          label="Bluefin Utah"
+          reason={emptyReason}
+          cat={cat}
+        />
       </section>
 
       {/* ── 3. Upstream image, for watching the migration ────────────────── */}
@@ -803,7 +672,10 @@ export default function CountmeAnalyticsCharts({
             <span className={styles.legendGlyph} aria-hidden="true">
               ●
             </span>
-            Bluefin (all tags): {readingText(allTagReading, currentWeek)}
+            Bluefin:{" "}
+            {bluefinLatest
+              ? `${bluefinLatest.value.toLocaleString()} (${bluefinLatest.day})`
+              : "accumulating data"}
           </span>
         </p>
 
