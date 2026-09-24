@@ -78,18 +78,17 @@ const {
 } = mod;
 
 // The first-party reader is its own module; see the note in the component.
-const { latestReading, reportingRepos, latestGaming, gamingRepos } =
-  loadTsxModule(
-    path.join(
-      __dirname,
-      "..",
-      "src",
-      "components",
-      "analytics",
-      "firstPartyCountme.ts",
-    ),
-    (id) => (id.endsWith(".css") ? {} : undefined),
-  );
+const { latestReading } = loadTsxModule(
+  path.join(
+    __dirname,
+    "..",
+    "src",
+    "components",
+    "analytics",
+    "firstPartyCountme.ts",
+  ),
+  (id) => (id.endsWith(".css") ? {} : undefined),
+);
 
 const REGISTRY_FIXTURE = {
   generatedAt: "2026-09-10T04:08:30.490Z",
@@ -297,39 +296,37 @@ test("the matrix says why it is empty rather than rendering nothing", () => {
 
 /**
  * Weekly active systems, served by the first-party service.
- *
- * A week the service did not measure is `null` — a gap. A week it measured as
- * zero is `0`. Collapsing those two into each other is the specific bug these
- * tests exist to catch: it is the difference between "nobody reported" and
- * "nobody was running it", and the chart draws them differently.
+ * Only Dakota's exact stable/testing tags are charted. An unclassified tag is
+ * disclosed in text instead of being silently assigned to either stream.
+ * Null means no reading; zero is a real measured value.
  */
 const COUNTS_FIXTURE = {
-  generatedAt: "2026-09-12T00:00:00.000Z",
+  generatedAt: "2026-09-23T12:00:00.000Z",
   source: "https://countme.projectbluefin.io",
-  method: "first-party-d1-v1",
+  method: "first-party-d1-v2",
   unit: "estimated weekly active systems",
-  variants: ["bluefin", "bluefin-lts", "dakota", "utah"],
+  variants: ["dakota"],
   weeks: [
     {
-      week: "2026-08-17",
-      bluefin: 3510,
-      "bluefin-lts": 0,
-      dakota: null,
-      utah: null,
+      week: "2026-09-07",
+      dakota: 4,
+      dakotaStable: null,
+      dakotaTesting: 1,
+      dakotaUnclassified: 3,
     },
     {
-      week: "2026-08-24",
-      bluefin: 3688,
-      "bluefin-lts": null,
-      dakota: 9,
-      utah: null,
+      week: "2026-09-14",
+      dakota: 3,
+      dakotaStable: 2,
+      dakotaTesting: null,
+      dakotaUnclassified: 1,
     },
     {
-      week: "2026-08-31",
-      bluefin: 3901,
-      "bluefin-lts": null,
-      dakota: 14,
-      utah: null,
+      week: "2026-09-21",
+      dakota: 1,
+      dakotaStable: null,
+      dakotaTesting: null,
+      dakotaUnclassified: 1,
     },
   ],
 };
@@ -343,80 +340,95 @@ function renderCounts(counts) {
   );
 }
 
-test("a trailing gap reports the last week actually measured", () => {
-  // bluefin-lts last reported in 2026-08-17 and has been a gap since. Reading
-  // forwards would call it null and hide a real number; coercing the gap to 0
-  // would claim the fleet emptied. Neither is true.
-  assert.deepEqual(latestReading(COUNTS_FIXTURE.weeks, "bluefin-lts"), {
-    value: 0,
-    week: "2026-08-17",
-  });
-  assert.deepEqual(latestReading(COUNTS_FIXTURE.weeks, "bluefin"), {
-    value: 3901,
-    week: "2026-08-31",
-  });
-});
+function chartOption(html) {
+  const option = html.match(
+    /data-title="Weekly active systems"[\s\S]*?data-option="([^"]*)"/,
+  );
+  assert.ok(option, "weekly active systems must render a chart");
+  return JSON.parse(option[1].replace(/&quot;/g, '"').replace(/&amp;/g, "&"));
+}
 
-test("a repo that never reported is not a series", () => {
-  // utah is null in every week. Included, it would draw as a flat line on the
-  // floor and read as "zero systems" rather than "not counted yet".
-  const repos = reportingRepos(COUNTS_FIXTURE.weeks);
-  assert.ok(repos.includes("dakota"));
-  assert.ok(!repos.includes("utah"));
-  assert.ok(!repos.includes("bluefin-lts"));
-  assert.deepEqual(reportingRepos([]), []);
-});
-
-test("a measured zero is a reading, not a gap", () => {
-  const weeks = [{ week: "2026-08-17", dakota: 0 }];
-  assert.deepEqual(reportingRepos(weeks), ["dakota"]);
-  assert.deepEqual(latestReading(weeks, "dakota"), {
-    value: 0,
-    week: "2026-08-17",
+test("a trailing gap reports the last week each stream actually measured", () => {
+  assert.deepEqual(latestReading(COUNTS_FIXTURE.weeks, "dakotaStable"), {
+    value: 2,
+    week: "2026-09-14",
+  });
+  assert.deepEqual(latestReading(COUNTS_FIXTURE.weeks, "dakotaTesting"), {
+    value: 1,
+    week: "2026-09-07",
   });
 });
 
-test("the chart carries gaps through to the series, never zeros", () => {
+test("only the exact Dakota streams appear, not all-tag or LTS totals", () => {
   const html = renderCounts(COUNTS_FIXTURE);
-  const option = JSON.parse(
-    html
-      .match(
-        /data-title="Weekly active systems"[\s\S]*?data-option="([^"]*)"/,
-      )[1]
-      .replace(/&quot;/g, '"')
-      .replace(/&amp;/g, "&"),
+  const option = chartOption(html);
+  assert.equal((html.match(/Weekly Active Systems/g) ?? []).length, 1);
+  assert.deepEqual(
+    option.series.map((series) => series.name),
+    ["Bluefin :stable", "Bluefin :testing"],
   );
-
-  assert.ok(
-    !option.series.some((s) => s.name === "LTS"),
-    "LTS must not be plotted on the first-party chart",
+  assert.deepEqual(
+    option.series.map((series) => series.data),
+    [
+      [null, 2, null],
+      [1, null, null],
+    ],
   );
-
-  const dakota = option.series.find((s) => s.name === "Bluefin");
-  assert.deepEqual(dakota.data, [null, 9, 14]);
-  assert.equal(dakota.connectNulls, false, "a gap must break the line");
-  assert.equal(dakota.smooth, false, "a spline invents values between weeks");
-
-  assert.ok(
-    !option.series.some((s) => s.name === "Utah"),
-    "a repo with no readings must not be plotted",
-  );
-  assert.equal(
-    option.yAxis.min,
-    0,
-    "a floating floor exaggerates a flat series",
-  );
+  assert.match(html, /Bluefin :stable: 2 \(week 2026-09-14\)/);
+  assert.match(html, /Bluefin :testing: 1 \(week 2026-09-07\)/);
+  assert.match(html, /Unclassified: 1 \(week 2026-09-21, partial\)/);
+  assert.match(html, /Bluefin \(all tags\): 1 \(week 2026-09-21, partial\)/);
+  assert.match(html, /Bluefin Classic \(ublue-os\/bluefin\)/);
+  assert.match(html, /estimates from weekly check-ins/i);
 });
 
-test("every plotted series states its current number", () => {
-  // Presentation rule 1: the graphic never carries a claim on its own.
+test("a measured zero is shown as zero rather than an accumulating gap", () => {
+  const counts = {
+    ...COUNTS_FIXTURE,
+    weeks: [
+      {
+        week: "2026-09-21",
+        dakota: 0,
+        dakotaStable: 0,
+        dakotaTesting: null,
+        dakotaUnclassified: 0,
+      },
+    ],
+  };
+  const html = renderCounts(counts);
+  assert.deepEqual(
+    chartOption(html).series.map((s) => s.data),
+    [[0], [null]],
+  );
+  assert.match(html, /Bluefin :stable: 0 \(week 2026-09-21, partial\)/);
+  assert.match(html, /Bluefin :testing: accumulating/);
+  assert.match(html, /Unclassified: 0 \(week 2026-09-21, partial\)/);
+});
+
+test("the chart breaks at missing weeks rather than inventing zeros or bridges", () => {
+  const option = chartOption(renderCounts(COUNTS_FIXTURE));
+  assert.deepEqual(
+    option.series.map((series) => series.data),
+    [
+      [null, 2, null],
+      [1, null, null],
+    ],
+  );
+  for (const series of option.series) {
+    assert.equal(series.connectNulls, false, "a gap must break the line");
+    assert.equal(series.smooth, false, "a spline invents values");
+  }
+  assert.equal(option.yAxis.min, 0, "the floor must not exaggerate readings");
+});
+
+test("the chart summary dates the readings instead of calling totals a stream", () => {
   const html = renderCounts(COUNTS_FIXTURE);
   const summary = html.match(
     /data-title="Weekly active systems"[\s\S]*?data-summary="([^"]*)"/,
   )[1];
-
-  assert.match(summary, /Bluefin 14 \(week 2026-08-31\)/);
-  assert.doesNotMatch(summary, /Bluefin LTS/);
+  assert.match(summary, /Bluefin :stable 2 \(week 2026-09-14\)/);
+  assert.match(summary, /Bluefin :testing 1 \(week 2026-09-07\)/);
+  assert.doesNotMatch(summary, /Bluefin LTS|Bluefin \d|game mode/);
 });
 
 test("the panel stays unavailable when the service reports no weeks", () => {
@@ -429,120 +441,43 @@ test("the panel stays unavailable when the service reports no weeks", () => {
     /data-what="Weekly active systems"[^>]*data-reason="([^"]*)"/,
   );
   assert.ok(panel, "an empty aggregate must still render a reasoned panel");
+  assert.match(panel[1], /not published yet/);
   assert.doesNotMatch(panel[1], /projectbluefin\.io/);
 });
-
-/**
- * Game mode is an attribute of a ping, not an image.
- *
- * The service folds a `-gaming` repo id into its base image, so `weeks[i][repo]`
- * is the whole population and `weeks[i].gaming[repo]` is the part of it in game
- * mode. Adding the two would double-count; drawing gaming as its own image
- * would invent a population that does not exist.
- */
-const GAMING_FIXTURE = {
-  generatedAt: "2026-09-12T00:00:00.000Z",
-  source: "https://countme.projectbluefin.io",
-  method: "first-party-d1-v2",
-  unit: "estimated weekly active systems",
-  variants: ["bluefin", "dakota"],
-  weeks: [
-    {
-      week: "2026-08-31",
-      bluefin: 10,
-      dakota: 4,
-      utah: null,
-      gaming: { bluefin: 0, dakota: 1, utah: null },
-    },
-    {
-      week: "2026-09-07",
-      bluefin: 12,
-      dakota: 6,
-      utah: null,
-      gaming: { bluefin: 0, dakota: 2, utah: null },
-    },
-  ],
-};
-
-test("game mode is a share of its image, never added to it", () => {
-  assert.equal(latestGaming(GAMING_FIXTURE.weeks, "dakota"), 2);
-  // Reported, but nobody in game mode: a real 0, not a gap.
-  assert.equal(latestGaming(GAMING_FIXTURE.weeks, "bluefin"), 0);
-  // Never reported at all.
-  assert.equal(latestGaming(GAMING_FIXTURE.weeks, "utah"), null);
-
-  const total = latestReading(GAMING_FIXTURE.weeks, "dakota").value;
-  assert.ok(
-    latestGaming(GAMING_FIXTURE.weeks, "dakota") <= total,
-    "a share cannot exceed the population it came from",
+test("unclassified-only weeks disclose their count and absence of named streams", () => {
+  const html = renderCounts({
+    generatedAt: "2026-09-23T12:00:00.000Z",
+    stateReason: "Named stream check-ins have not reported yet.",
+    weeks: [
+      {
+        week: "2026-09-21",
+        dakota: 1,
+        dakotaStable: null,
+        dakotaTesting: null,
+        dakotaUnclassified: 1,
+      },
+    ],
+  });
+  assert.match(html, /Unclassified: 1 \(week 2026-09-21, partial\)/);
+  assert.match(html, /Bluefin :stable: accumulating data/);
+  assert.match(html, /Bluefin :testing: accumulating data/);
+  assert.match(
+    html,
+    /data-reason="Named stream check-ins have not reported yet\."/,
   );
-});
-
-test("only images that reported game mode get a game-mode series", () => {
-  // bluefin is a measured zero, so plotting it would draw a flat line on the
-  // floor and read as a population rather than an absence.
-  assert.deepEqual(
-    gamingRepos(GAMING_FIXTURE.weeks, ["bluefin", "dakota", "utah"]),
-    ["dakota"],
-  );
-});
-
-test("the game-mode series is drawn under its image, not as a new one", () => {
-  const html = renderToStaticMarkup(
-    React.createElement(CountmeAnalyticsCharts, {
-      registry: REGISTRY_FIXTURE,
-      counts: GAMING_FIXTURE,
-    }),
-  );
-  const option = JSON.parse(
-    html
-      .match(
-        /data-title="Weekly active systems"[\s\S]*?data-option="([^"]*)"/,
-      )[1]
-      .replace(/&quot;/g, '"')
-      .replace(/&amp;/g, "&"),
-  );
-
-  const names = option.series.map((s) => s.name);
-  assert.ok(names.includes("Bluefin"));
-  assert.ok(names.includes("Bluefin \u00b7 game mode"));
-  assert.ok(
-    !names.some((n) => n.includes("dakota-gaming")),
-    "the gaming id must never surface as an image of its own",
-  );
-
-  const total = option.series.find((s) => s.name === "Bluefin");
-  const gaming = option.series.find(
-    (s) => s.name === "Bluefin \u00b7 game mode",
-  );
-  assert.deepEqual(total.data, [4, 6]);
-  assert.deepEqual(gaming.data, [1, 2]);
-  assert.equal(
-    gaming.itemStyle.color,
-    total.itemStyle.color,
-    "a share carries its image's colour so it is not read as a separate image",
-  );
-  assert.equal(gaming.connectNulls, false);
+  assert.doesNotMatch(html, /data-title="Weekly active systems"/);
 });
 
 test("the axis shortens its ticks but keeps the full date in the data", () => {
   // Nine ISO dates on one axis repeat the year nine times and crowd each other
   // out. The tooltip and the numbers table read xAxis.data, so the full date
   // has to survive there even though the tick text does not show it.
-  const html = renderCounts(COUNTS_FIXTURE);
-  const option = JSON.parse(
-    html
-      .match(
-        /data-title="Weekly active systems"[\s\S]*?data-option="([^"]*)"/,
-      )[1]
-      .replace(/&quot;/g, '"')
-      .replace(/&amp;/g, "&"),
-  );
+  const option = chartOption(renderCounts(COUNTS_FIXTURE));
 
   assert.deepEqual(option.xAxis.data, [
-    "2026-08-17",
-    "2026-08-24",
-    "2026-08-31",
+    "2026-09-07",
+    "2026-09-14",
+    "2026-09-21",
   ]);
   assert.equal(compactWeek("2026-08-17"), "Aug 17");
   assert.equal(compactWeek("2026-01-05"), "Jan 5");

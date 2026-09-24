@@ -179,9 +179,27 @@ test("every first-party repo has a chart and a badge route", () => {
 
 test("counts.json aggregates weekly records per first-party repo", async () => {
   const db = stubDb([
-    { week: "2026-08-31", repo: "dakota", gamemode: 0, hits: 3552 },
-    { week: "2026-09-07", repo: "dakota", gamemode: 0, hits: 3601 },
-    { week: "2026-09-07", repo: "dakota", gamemode: 1, hits: 1 },
+    {
+      week: "2026-08-31",
+      repo: "dakota",
+      tag: "stable",
+      gamemode: 0,
+      hits: 3552,
+    },
+    {
+      week: "2026-09-07",
+      repo: "dakota",
+      tag: "stable",
+      gamemode: 0,
+      hits: 3601,
+    },
+    {
+      week: "2026-09-07",
+      repo: "dakota",
+      tag: "testing",
+      gamemode: 1,
+      hits: 1,
+    },
   ]);
 
   const response = await get("/counts.json", db.env);
@@ -197,6 +215,9 @@ test("counts.json aggregates weekly records per first-party repo", async () => {
     {
       week: "2026-08-31",
       dakota: 3552,
+      dakotaStable: 3552,
+      dakotaTesting: null,
+      dakotaUnclassified: null,
       gaming: {
         dakota: 0,
       },
@@ -204,6 +225,9 @@ test("counts.json aggregates weekly records per first-party repo", async () => {
     {
       week: "2026-09-07",
       dakota: 3602,
+      dakotaStable: 3601,
+      dakotaTesting: 1,
+      dakotaUnclassified: null,
       gaming: {
         dakota: 1,
       },
@@ -215,6 +239,92 @@ test("counts.json aggregates weekly records per first-party repo", async () => {
   // hardware variant before the counting rules saw it.
   assert.deepEqual(db.statements[0].args, []);
   assert.ok(!db.statements[0].sql.includes("repo IN"));
+});
+
+test("counts.json separates exact Dakota tags without counting another repo", async () => {
+  const db = stubDb([
+    { week: "2026-09-07", repo: "dakota", tag: "stable", gamemode: 0, hits: 2 },
+    {
+      week: "2026-09-07",
+      repo: "dakota-nvidia-gaming",
+      tag: "testing",
+      gamemode: 0,
+      hits: 1,
+    },
+    { week: "2026-09-07", repo: "dakota", tag: "latest", gamemode: 0, hits: 4 },
+    { week: "2026-09-07", repo: "eos", tag: "stable", gamemode: 0, hits: 50 },
+    {
+      week: "2026-09-14",
+      repo: "dakota",
+      tag: "unknown",
+      gamemode: 0,
+      hits: 1,
+    },
+  ]);
+
+  const body = await (await get("/counts.json", db.env)).json();
+  assert.deepEqual(body.variants, ["dakota"]);
+  assert.deepEqual(body.weeks, [
+    {
+      week: "2026-09-07",
+      dakota: 7,
+      dakotaStable: 2,
+      dakotaTesting: 1,
+      dakotaUnclassified: 4,
+      gaming: { dakota: 1 },
+    },
+    {
+      week: "2026-09-14",
+      dakota: 1,
+      dakotaStable: null,
+      dakotaTesting: null,
+      dakotaUnclassified: 1,
+      gaming: { dakota: 0 },
+    },
+  ]);
+  assert.ok(body.weeks.every((week) => !("bluefin-lts" in week)));
+  assert.ok(body.weeks.every((week) => !("eos" in week)));
+});
+
+test("a recorded zero stays measured while absent Dakota tags stay null", async () => {
+  const db = stubDb([
+    { week: "2026-09-07", repo: "dakota", tag: "stable", gamemode: 0, hits: 0 },
+    {
+      week: "2026-09-21",
+      repo: "dakota",
+      tag: "stable/testing",
+      gamemode: 0,
+      hits: 1,
+    },
+  ]);
+
+  const body = await (await get("/counts.json", db.env)).json();
+  assert.deepEqual(body.weeks, [
+    {
+      week: "2026-09-07",
+      dakota: 0,
+      dakotaStable: 0,
+      dakotaTesting: null,
+      dakotaUnclassified: null,
+      gaming: { dakota: 0 },
+    },
+    {
+      week: "2026-09-14",
+      dakota: null,
+      dakotaStable: null,
+      dakotaTesting: null,
+      dakotaUnclassified: null,
+      gaming: { dakota: null },
+    },
+    {
+      week: "2026-09-21",
+      dakota: 1,
+      dakotaStable: null,
+      dakotaTesting: null,
+      dakotaUnclassified: 1,
+      gaming: { dakota: 0 },
+    },
+  ]);
 });
 
 test("a repo missing from a week is null, never zero", async () => {

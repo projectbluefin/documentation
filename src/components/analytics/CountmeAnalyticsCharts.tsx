@@ -14,12 +14,8 @@ import { FIRST_PARTY_PENDING_REASON } from "@site/scripts/lib/countme-sources.mj
 import {
   COUNTS_URL,
   FIRST_PARTY_ORIGIN,
-  gamingRepos,
-  gamingSeries,
-  latestGaming,
   latestReading,
   measuredWeekCount,
-  reportingRepos,
   repoSeries,
   weekLabels,
   type CountmeDataset,
@@ -61,20 +57,21 @@ const REGISTRY_URL = "/data/ghcr-packages.json";
 const LEGACY_CHART_URL = `${FIRST_PARTY_ORIGIN}/legacy/bluefin.svg`;
 const LEGACY_BADGE_URL = `${FIRST_PARTY_ORIGIN}/badge-endpoints/bluefin.json`;
 
-/**
- * Chart series names.
- *
- * Short on purpose: the chip row above the chart already carries the full name
- * and the current value, so a legend repeating "Project Bluefin Dakota" five
- * times only crowds the axis it sits under.
- */
-export const SHORT_REPO_LABELS: Record<string, string> = {
-  bluefin: "Bluefin",
-  "bluefin-lts": "LTS",
-  dakota: "Bluefin",
-  utah: "Utah",
-  server: "Server",
-};
+/** Only exact Dakota tags are named chart series; all other tags stay unclassified. */
+const DAKOTA_STREAMS = [
+  { key: "dakotaStable", label: "Bluefin :stable" },
+  { key: "dakotaTesting", label: "Bluefin :testing" },
+] as const;
+const DAKOTA_STREAM_KEYS = DAKOTA_STREAMS.map(({ key }) => key);
+
+function readingText(
+  reading: ReturnType<typeof latestReading>,
+  currentWeek: string | null,
+): string {
+  return reading
+    ? `${reading.value.toLocaleString()} (week ${reading.week}${reading.week === currentWeek ? ", partial" : ""})`
+    : "accumulating data";
+}
 
 /**
  * `2026-07-13` as `Jul 13`.
@@ -94,15 +91,6 @@ export function compactWeek(week: string): string {
       });
 }
 
-/** Display names for the first-party `repo` identifiers. */
-export const REPO_LABELS: Record<string, string> = {
-  bluefin: "Bluefin",
-  "bluefin-lts": "Bluefin LTS",
-  dakota: "Bluefin",
-  utah: "Project Bluefin Utah",
-  server: "Bluefin Server",
-};
-
 /**
  * Marker shapes, paired with the palette index like `seriesDash`.
  *
@@ -110,14 +98,7 @@ export const REPO_LABELS: Record<string, string> = {
  * cannot tell two series apart. Shape and dash carry the distinction instead,
  * which is also what makes the chart readable in greyscale.
  */
-export const SERIES_SYMBOLS = [
-  "circle",
-  "triangle",
-  "diamond",
-  "rect",
-  "pin",
-  "arrow",
-] as const;
+export const SERIES_SYMBOLS = ["circle", "triangle"] as const;
 
 /** One published tag of one GHCR package, as `scripts/fetch-ghcr-packages.js` writes it. */
 export interface GhcrStream {
@@ -419,11 +400,21 @@ export default function CountmeAnalyticsCharts({
 
   const countsData = counts ?? fetchedCounts;
   const countmeWeeks = countsData?.weeks ?? [];
-  // Active repos tracked by the first-party service (strictly Dakota, labeled as Bluefin)
-  const activeRepos = useMemo(
-    () => reportingRepos(countmeWeeks),
-    [countmeWeeks],
-  );
+  const generatedAt = countsData?.generatedAt
+    ? new Date(countsData.generatedAt)
+    : null;
+  const currentWeek =
+    generatedAt && Number.isFinite(generatedAt.valueOf())
+      ? new Date(
+          Date.UTC(
+            generatedAt.getUTCFullYear(),
+            generatedAt.getUTCMonth(),
+            generatedAt.getUTCDate() - ((generatedAt.getUTCDay() + 6) % 7),
+          ),
+        )
+          .toISOString()
+          .slice(0, 10)
+      : null;
 
   // ── Upstream image, the one permitted legacy series ────────────────────
   //
@@ -446,43 +437,18 @@ export default function CountmeAnalyticsCharts({
     })();
   }, []);
 
-  /** Readings that exist, so the panel can print a number per series. */
   const countmeReadings = useMemo(
     () =>
-      activeRepos.map((repo) => ({
-        repo,
-        label: REPO_LABELS[repo] ?? repo,
-        reading: latestReading(countmeWeeks, repo),
-        gaming: latestGaming(countmeWeeks, repo),
+      DAKOTA_STREAMS.map((stream) => ({
+        ...stream,
+        reading: latestReading(countmeWeeks, stream.key),
       })),
-    [activeRepos, countmeWeeks],
+    [countmeWeeks],
   );
-
-  /**
-   * Latest reading summed across every reporting image.
-   *
-   * Each image's own latest week is used, because they do not all report in the
-   * same week. Null when nothing has reported at all, so the panel says
-   * "accumulating data" rather than claiming a fleet of zero.
-   */
-  const firstPartyTotal = useMemo(() => {
-    const readings = countmeReadings
-      .map((r) => r.reading?.value)
-      .filter((v): v is number => typeof v === "number");
-    return readings.length ? readings.reduce((sum, v) => sum + v, 0) : null;
-  }, [countmeReadings]);
-
-  /** Images that actually reported game mode, so a flat zero is never drawn. */
-  const gamingActiveRepos = useMemo(
-    () => gamingRepos(countmeWeeks, activeRepos),
-    [countmeWeeks, activeRepos],
-  );
-
-  /** Rule 5: the point count is real readings, not axis length. */
-  const countmePoints = useMemo(
-    () => measuredWeekCount(countmeWeeks, activeRepos),
-    [countmeWeeks, activeRepos],
-  );
+  const unclassifiedReading = latestReading(countmeWeeks, "dakotaUnclassified");
+  // The legacy comparison uses the existing all-tag aggregate, never a stream.
+  const allTagReading = latestReading(countmeWeeks, "dakota");
+  const countmePoints = measuredWeekCount(countmeWeeks, DAKOTA_STREAM_KEYS);
 
   const countmeOption = useMemo(
     () => ({
@@ -507,74 +473,36 @@ export default function CountmeAnalyticsCharts({
         axisLabel: { fontSize: 13 },
       },
       legend: { textStyle: { fontSize: 13 }, itemGap: 18 },
-      series: [
-        ...activeRepos.map((repo, i) => ({
-          name: SHORT_REPO_LABELS[repo] ?? repo,
-          type: "line",
-          // Rule 4: discrete weekly readings. No spline between them, and a
-          // missing week breaks the line rather than being bridged or zeroed.
-          smooth: false,
-          connectNulls: false,
-          showSymbol: true,
-          symbolSize: 7,
-          // The Bluefin palette is six shades of one hue, so colour alone
-          // cannot separate series. chartTheme pairs each index with a dash
-          // pattern and a symbol for exactly this; both survive greyscale and
-          // colour blindness.
-          symbol: SERIES_SYMBOLS[i % SERIES_SYMBOLS.length],
-          data: repoSeries(countmeWeeks, repo),
-          itemStyle: { color: cat[i % cat.length] },
-          lineStyle: {
-            width: 2,
-            color: cat[i % cat.length],
-            type: seriesDash(i),
-          },
-        })),
-        // Game mode is a share of the image above it, never a separate image,
-        // so it carries that image's colour and sits under its line. It is
-        // drawn only for images that actually reported it, so a flat zero does
-        // not imply a population nobody measured.
-        ...gamingActiveRepos.map((repo) => {
-          const i = activeRepos.indexOf(repo);
-          return {
-            name: `${SHORT_REPO_LABELS[repo] ?? repo} · game mode`,
-            type: "line",
-            smooth: false,
-            connectNulls: false,
-            showSymbol: true,
-            symbolSize: 6,
-            symbol: "emptyCircle",
-            data: gamingSeries(countmeWeeks, repo),
-            itemStyle: { color: cat[i % cat.length] },
-            lineStyle: {
-              width: 1,
-              color: cat[i % cat.length],
-              type: "dotted",
-              opacity: 0.85,
-            },
-          };
-        }),
-      ],
+      series: DAKOTA_STREAMS.map(({ key, label }, i) => ({
+        name: label,
+        type: "line",
+        // Discrete weekly readings: gaps break the line rather than being
+        // bridged or converted to zero.
+        smooth: false,
+        connectNulls: false,
+        showSymbol: true,
+        symbolSize: 7,
+        symbol: SERIES_SYMBOLS[i],
+        data: repoSeries(countmeWeeks, key),
+        itemStyle: { color: cat[i % cat.length] },
+        lineStyle: {
+          width: 2,
+          color: cat[i % cat.length],
+          type: seriesDash(i),
+        },
+      })),
     }),
-    [countmeWeeks, activeRepos, gamingActiveRepos, cat],
+    [countmeWeeks, cat],
   );
 
-  /**
-   * Rule 1, in prose: the summary carries the current number for every series,
-   * so the chart is never the sole holder of the claim. A series whose latest
-   * weeks are a gap reports the last week it was actually measured.
-   */
-  const countmeSummary = useMemo(() => {
-    if (!countmeReadings.length) return FIRST_PARTY_PENDING_REASON;
-    const parts = countmeReadings.map(({ label, reading }) =>
-      reading
-        ? `${label} ${reading.value.toLocaleString()} (week ${reading.week})`
-        : `${label} accumulating data`,
-    );
-    return `Weekly active systems across ${countmePoints} measured week${
-      countmePoints === 1 ? "" : "s"
-    } — ${parts.join(", ")}.`;
-  }, [countmeReadings, countmePoints]);
+  /** The chart's accessible summary dates every measured stream reading. */
+  const countmeSummary = `Estimated weekly active systems from check-ins across ${countmePoints} measured week${
+    countmePoints === 1 ? "" : "s"
+  } — ${countmeReadings
+    .map(
+      ({ label, reading }) => `${label} ${readingText(reading, currentWeek)}`,
+    )
+    .join(", ")}.`;
 
   const ghcr = registry ?? fetchedRegistry;
 
@@ -677,41 +605,30 @@ export default function CountmeAnalyticsCharts({
           </Heading>
         </header>
 
+        <p className={styles.legendRow}>
+          {countmeReadings.map(({ key, label, reading }, i) => (
+            <span key={key} className={styles.legendChip}>
+              <span
+                className={styles.legendGlyph}
+                aria-hidden="true"
+                style={{ color: cat[i % cat.length] }}
+              >
+                ●
+              </span>
+              {label}: {readingText(reading, currentWeek)}
+            </span>
+          ))}
+        </p>
         {countmePoints > 0 ? (
-          <>
-            {/* Rule 1: every series states its current number, in text, next
-                to the graphic rather than only inside it. */}
-            <p className={styles.legendRow}>
-              {countmeReadings.map(({ repo, label, reading, gaming }, i) => (
-                <span key={repo} className={styles.legendChip}>
-                  <span
-                    className={styles.legendGlyph}
-                    aria-hidden="true"
-                    style={{ color: cat[i % cat.length] }}
-                  >
-                    ●
-                  </span>
-                  {label}:{" "}
-                  {reading ? reading.value.toLocaleString() : "accumulating"}
-                  {reading && gaming !== null && gaming > 0 ? (
-                    <span className={styles.gamingSplit}>
-                      {" "}
-                      ({gaming.toLocaleString()} in game mode)
-                    </span>
-                  ) : null}
-                </span>
-              ))}
-            </p>
-            <EChart
-              option={countmeOption}
-              title="Weekly active systems"
-              summary={countmeSummary}
-              points={countmePoints}
-              minPoints={2}
-              height={300}
-              tableCaption="Weekly active systems by image, from the first-party countme service"
-            />
-          </>
+          <EChart
+            option={countmeOption}
+            title="Weekly active systems"
+            summary={countmeSummary}
+            points={countmePoints}
+            minPoints={2}
+            height={300}
+            tableCaption="Estimated weekly active systems by Bluefin stream from first-party check-ins"
+          />
         ) : (
           // Rule 6: unavailability is visible and carries its reason.
           <Unavailable
@@ -723,6 +640,11 @@ export default function CountmeAnalyticsCharts({
             }
           />
         )}
+        <p className={styles.chartNote}>
+          Unclassified: {readingText(unclassifiedReading, currentWeek)}. These
+          are estimates from weekly check-ins; other or unknown tags are not
+          assigned to <code>:stable</code> or <code>:testing</code>.
+        </p>
       </section>
 
       {/* ── 2. Upstream image, for watching the migration ────────────────── */}
@@ -751,10 +673,7 @@ export default function CountmeAnalyticsCharts({
             <span className={styles.legendGlyph} aria-hidden="true">
               ●
             </span>
-            Project Bluefin images:{" "}
-            {firstPartyTotal === null
-              ? "accumulating data"
-              : firstPartyTotal.toLocaleString()}
+            Bluefin (all tags): {readingText(allTagReading, currentWeek)}
           </span>
         </p>
 
