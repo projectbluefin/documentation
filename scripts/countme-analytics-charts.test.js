@@ -78,7 +78,7 @@ const {
 } = mod;
 
 // The first-party reader is its own module; see the note in the component.
-const { latestReading, familyDaily } = loadTsxModule(
+const { familyDaily } = loadTsxModule(
   path.join(
     __dirname,
     "..",
@@ -149,26 +149,25 @@ test("the catalogue names every family common ships into", () => {
   assert.deepEqual(ids, ["bluefin", "bluefin-lts", "dakota", "utah", "server"]);
 });
 
-test("the count panel says it lacks data without naming infrastructure", () => {
-  // Presentation rule 6 requires the panel to say it is unavailable and why.
+test("empty count cards say no raptors are reporting, naming no infrastructure", () => {
+  // Presentation rule 6 requires each panel to say it is unavailable and why.
   // AGENTS.md requires that it never emit a host address or an internal URL.
-  // Both hold: it speaks about the data, not the plumbing.
   const html = renderToStaticMarkup(
     React.createElement(CountmeAnalyticsCharts, {
       registry: REGISTRY_FIXTURE,
+      daily: { days: [] },
     }),
   );
-
-  const panel = html.match(
-    /data-what="Weekly active systems"[^>]*data-reason="([^"]*)"/,
-  );
-  assert.ok(
-    panel,
-    "the weekly active systems panel must say it is unavailable",
-  );
-  assert.match(panel[1], /not published yet/);
-  assert.doesNotMatch(panel[1], /projectbluefin\.io/);
-  assert.doesNotMatch(panel[1], /endpoint/i);
+  for (const what of ["Bluefin", "Bluefin Utah"]) {
+    const panel = html.match(
+      new RegExp(
+        `data-what="${what} daily active systems"[^>]*data-reason="([^"]*)"`,
+      ),
+    );
+    assert.ok(panel, `${what} must say it is unavailable`);
+    assert.equal(panel[1], "No raptors reporting in, life finds a way");
+  }
+  assert.doesNotMatch(html, /data-reason="[^"]*projectbluefin\.io/);
 });
 
 const PROMOTED = [
@@ -295,198 +294,7 @@ test("the matrix says why it is empty rather than rendering nothing", () => {
 });
 
 /**
- * Weekly active systems, served by the first-party service.
- * Only Dakota's exact stable/testing tags are charted. An unclassified tag is
- * disclosed in text instead of being silently assigned to either stream.
- * Null means no reading; zero is a real measured value.
- */
-const COUNTS_FIXTURE = {
-  generatedAt: "2026-09-23T12:00:00.000Z",
-  source: "https://countme.projectbluefin.io",
-  method: "first-party-d1-v2",
-  unit: "estimated weekly active systems",
-  variants: ["dakota"],
-  weeks: [
-    {
-      week: "2026-09-07",
-      dakota: 4,
-      dakotaStable: null,
-      dakotaTesting: 1,
-      dakotaUnclassified: 3,
-    },
-    {
-      week: "2026-09-14",
-      dakota: 3,
-      dakotaStable: 2,
-      dakotaTesting: null,
-      dakotaUnclassified: 1,
-    },
-    {
-      week: "2026-09-21",
-      dakota: 1,
-      dakotaStable: null,
-      dakotaTesting: null,
-      dakotaUnclassified: 1,
-    },
-  ],
-};
-
-function renderCounts(counts) {
-  return renderToStaticMarkup(
-    React.createElement(CountmeAnalyticsCharts, {
-      registry: REGISTRY_FIXTURE,
-      counts,
-    }),
-  );
-}
-
-function chartOption(html) {
-  const option = html.match(
-    /data-title="Weekly active systems"[\s\S]*?data-option="([^"]*)"/,
-  );
-  assert.ok(option, "weekly active systems must render a chart");
-  return JSON.parse(option[1].replace(/&quot;/g, '"').replace(/&amp;/g, "&"));
-}
-
-test("a trailing gap reports the last week each stream actually measured", () => {
-  assert.deepEqual(latestReading(COUNTS_FIXTURE.weeks, "dakotaStable"), {
-    value: 2,
-    week: "2026-09-14",
-  });
-  assert.deepEqual(latestReading(COUNTS_FIXTURE.weeks, "dakotaTesting"), {
-    value: 1,
-    week: "2026-09-07",
-  });
-});
-
-test("only the exact Dakota streams appear, not all-tag or LTS totals", () => {
-  const html = renderCounts(COUNTS_FIXTURE);
-  const option = chartOption(html);
-  assert.deepEqual(
-    option.series.map((series) => series.name),
-    ["Bluefin :stable", "Bluefin :testing"],
-  );
-  assert.deepEqual(
-    option.series.map((series) => series.data),
-    [
-      [null, 2, null],
-      [1, null, null],
-    ],
-  );
-  assert.match(html, /Bluefin :stable: 2 \(week 2026-09-14\)/);
-  assert.match(html, /Bluefin :testing: 1 \(week 2026-09-07\)/);
-  assert.match(html, /Unclassified: 1 \(week 2026-09-21, partial\)/);
-  assert.match(html, /Bluefin \(all tags\): 1 \(week 2026-09-21, partial\)/);
-  assert.match(html, /Bluefin Classic \(ublue-os\/bluefin\)/);
-  assert.match(html, /estimates from weekly check-ins/i);
-});
-
-test("a measured zero is shown as zero rather than an accumulating gap", () => {
-  const counts = {
-    ...COUNTS_FIXTURE,
-    weeks: [
-      {
-        week: "2026-09-21",
-        dakota: 0,
-        dakotaStable: 0,
-        dakotaTesting: null,
-        dakotaUnclassified: 0,
-      },
-    ],
-  };
-  const html = renderCounts(counts);
-  assert.deepEqual(
-    chartOption(html).series.map((s) => s.data),
-    [[0], [null]],
-  );
-  assert.match(html, /Bluefin :stable: 0 \(week 2026-09-21, partial\)/);
-  assert.match(html, /Bluefin :testing: accumulating/);
-  assert.match(html, /Unclassified: 0 \(week 2026-09-21, partial\)/);
-});
-
-test("the chart breaks at missing weeks rather than inventing zeros or bridges", () => {
-  const option = chartOption(renderCounts(COUNTS_FIXTURE));
-  assert.deepEqual(
-    option.series.map((series) => series.data),
-    [
-      [null, 2, null],
-      [1, null, null],
-    ],
-  );
-  for (const series of option.series) {
-    assert.equal(series.connectNulls, false, "a gap must break the line");
-    assert.equal(series.smooth, false, "a spline invents values");
-  }
-  assert.equal(option.yAxis.min, 0, "the floor must not exaggerate readings");
-});
-
-test("the chart summary dates the readings instead of calling totals a stream", () => {
-  const html = renderCounts(COUNTS_FIXTURE);
-  const summary = html.match(
-    /data-title="Weekly active systems"[\s\S]*?data-summary="([^"]*)"/,
-  )[1];
-  assert.match(summary, /Bluefin :stable 2 \(week 2026-09-14\)/);
-  assert.match(summary, /Bluefin :testing 1 \(week 2026-09-07\)/);
-  assert.doesNotMatch(summary, /Bluefin LTS|Bluefin \d|game mode/);
-});
-
-test("the panel stays unavailable when the service reports no weeks", () => {
-  const html = renderCounts({
-    unavailable: true,
-    stateReason: "Weekly active systems are not published yet.",
-    weeks: [],
-  });
-  const panel = html.match(
-    /data-what="Weekly active systems"[^>]*data-reason="([^"]*)"/,
-  );
-  assert.ok(panel, "an empty aggregate must still render a reasoned panel");
-  assert.match(panel[1], /not published yet/);
-  assert.doesNotMatch(panel[1], /projectbluefin\.io/);
-});
-test("unclassified-only weeks disclose their count and absence of named streams", () => {
-  const html = renderCounts({
-    generatedAt: "2026-09-23T12:00:00.000Z",
-    stateReason: "Named stream check-ins have not reported yet.",
-    weeks: [
-      {
-        week: "2026-09-21",
-        dakota: 1,
-        dakotaStable: null,
-        dakotaTesting: null,
-        dakotaUnclassified: 1,
-      },
-    ],
-  });
-  assert.match(html, /Unclassified: 1 \(week 2026-09-21, partial\)/);
-  assert.match(html, /Bluefin :stable: accumulating data/);
-  assert.match(html, /Bluefin :testing: accumulating data/);
-  assert.match(
-    html,
-    /data-reason="Named stream check-ins have not reported yet\."/,
-  );
-  assert.doesNotMatch(html, /data-title="Weekly active systems"/);
-});
-
-test("the axis shortens its ticks but keeps the full date in the data", () => {
-  // Nine ISO dates on one axis repeat the year nine times and crowd each other
-  // out. The tooltip and the numbers table read xAxis.data, so the full date
-  // has to survive there even though the tick text does not show it.
-  const option = chartOption(renderCounts(COUNTS_FIXTURE));
-
-  assert.deepEqual(option.xAxis.data, [
-    "2026-09-07",
-    "2026-09-14",
-    "2026-09-21",
-  ]);
-  assert.equal(compactWeek("2026-08-17"), "Aug 17");
-  assert.equal(compactWeek("2026-01-05"), "Jan 5");
-  // A value that is not a date is passed through rather than rendered as
-  // "Invalid Date" on the axis.
-  assert.equal(compactWeek("not-a-date"), "not-a-date");
-});
-
-/**
- * Bluefin Utah: daily pings from projectbluefin-countme, read from
+ * Bluefin and Bluefin Utah: daily pings from projectbluefin-countme, read from
  * /v1/daily.json rows of `<image-name>/<image-flavor>:<stream>`.
  */
 const DAILY_FIXTURE = {
@@ -503,7 +311,6 @@ test("the three count cards read Bluefin, Bluefin Utah, Bluefin Classic in order
   const html = renderToStaticMarkup(
     React.createElement(CountmeAnalyticsCharts, {
       registry: REGISTRY_FIXTURE,
-      counts: COUNTS_FIXTURE,
       daily: DAILY_FIXTURE,
     }),
   );
@@ -529,7 +336,6 @@ test("the Utah card charts its streams and states each latest value", () => {
   const html = renderToStaticMarkup(
     React.createElement(CountmeAnalyticsCharts, {
       registry: REGISTRY_FIXTURE,
-      counts: COUNTS_FIXTURE,
       daily: DAILY_FIXTURE,
     }),
   );
@@ -551,11 +357,10 @@ test("the Utah card charts its streams and states each latest value", () => {
   assert.match(html, /Bluefin Utah :unknown: accumulating data/);
 });
 
-test("the Utah card says why it is empty before any Utah system reports", () => {
+test("the Utah card stays empty while only Dakota reports", () => {
   const html = renderToStaticMarkup(
     React.createElement(CountmeAnalyticsCharts, {
       registry: REGISTRY_FIXTURE,
-      counts: COUNTS_FIXTURE,
       daily: {
         days: [{ day: "2026-09-22", image: "dakota/main:stable", n: 9 }],
       },
@@ -563,7 +368,7 @@ test("the Utah card says why it is empty before any Utah system reports", () => 
   );
   assert.match(
     html,
-    /data-what="Bluefin Utah daily active systems"[^>]*data-reason="No Bluefin Utah system has reported yet\."/,
+    /data-what="Bluefin Utah daily active systems"[^>]*data-reason="No raptors reporting in, life finds a way"/,
   );
 });
 
@@ -577,4 +382,53 @@ test("a Utah day with no reports stays on the axis as a gap", () => {
   );
   assert.deepEqual(days, ["2026-09-20", "2026-09-21", "2026-09-22"]);
   assert.deepEqual(streams.stable, [4, null, 5]);
+});
+
+function renderDaily(daily) {
+  return renderToStaticMarkup(
+    React.createElement(CountmeAnalyticsCharts, {
+      registry: REGISTRY_FIXTURE,
+      daily,
+    }),
+  );
+}
+
+function dailyOption(html, label) {
+  const m = html.match(
+    new RegExp(
+      `data-title="${label} daily active systems"[^>]*data-option="([^"]*)"`,
+    ),
+  );
+  assert.ok(m, `${label} must render a chart`);
+  return JSON.parse(m[1].replace(/&quot;/g, '"').replace(/&amp;/g, "&"));
+}
+
+test("the Bluefin card charts Dakota pings per stream and never Utah", () => {
+  const option = dailyOption(renderDaily(DAILY_FIXTURE), "Bluefin");
+  assert.deepEqual(
+    option.series.map((s) => s.name),
+    ["Bluefin :stable", "Bluefin :testing", "Bluefin :unknown"],
+  );
+  assert.deepEqual(option.xAxis.data, ["2026-09-22"]);
+  assert.deepEqual(
+    option.series.map((s) => s.data),
+    [[9], [null], [null]],
+  );
+});
+
+test("the Bluefin Classic comparison uses the latest Bluefin daily total", () => {
+  assert.match(renderDaily(DAILY_FIXTURE), /Bluefin: 9 \(2026-09-22\)/);
+  assert.match(renderDaily({ days: [] }), /Bluefin: accumulating data/);
+});
+
+test("the day axis shortens its ticks but keeps the full date in the data", () => {
+  const option = dailyOption(renderDaily(DAILY_FIXTURE), "Bluefin Utah");
+  assert.deepEqual(option.xAxis.data, ["2026-09-22", "2026-09-23"]);
+  for (const series of option.series) {
+    assert.equal(series.connectNulls, false, "a gap must break the line");
+    assert.equal(series.smooth, false, "a spline invents values");
+  }
+  assert.equal(option.yAxis.min, 0, "the floor must not exaggerate readings");
+  assert.equal(compactWeek("2026-08-17"), "Aug 17");
+  assert.equal(compactWeek("not-a-date"), "not-a-date");
 });
