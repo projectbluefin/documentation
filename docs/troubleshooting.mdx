@@ -245,11 +245,11 @@ goose configure
 
 - **GitHub Copilot**: Select `GitHub Copilot` to authenticate directly with your GitHub account.
 - **Hosted APIs**: Select Anthropic, OpenAI, Gemini, etc., and enter your API key when prompted.
-- **Local Models**: [Ramalama](https://github.com/containers/ramalama) manages models as containers and serves an OpenAI-compatible endpoint:
+- **Local Models**: [llmman](https://github.com/llmmanorg/llmman) manages models as containers and serves an OpenAI-compatible endpoint:
 
 ```bash
-brew install ramalama
-ramalama serve qwen3:8b
+brew install llmmanorg/tap/llmman
+llmman serve
 ```
 
 Configure Goose to use your local model in `~/.config/goose/config.yaml`:
@@ -257,7 +257,7 @@ Configure Goose to use your local model in `~/.config/goose/config.yaml`:
 ```yaml
 GOOSE_PROVIDER: ollama
 GOOSE_MODEL: qwen3:8b
-OLLAMA_HOST: http://localhost:8080
+OLLAMA_HOST: http://localhost:17434
 ```
 
 [LM Studio](https://lmstudio.ai/) (`brew install lm-studio`) is a graphical alternative — load a model, start the local server, and select **LM Studio** in `goose configure`.
