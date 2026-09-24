@@ -21,7 +21,7 @@ const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 export const GAMING_SUFFIX = "-gaming";
 
 /**
- * Weekly counts per reported image and game-mode flag, Monday-anchored.
+ * Weekly counts per reported image, stream tag, and game-mode flag, Monday-anchored.
  *
  * `weekday 0` advances to that week's Sunday, so `-6 days` lands on its Monday.
  *
@@ -31,11 +31,12 @@ export const GAMING_SUFFIX = "-gaming";
  */
 export const WEEKLY_COUNTS_SQL = `SELECT date(received_at, 'weekday 0', '-6 days') AS week,
           repo,
+          tag,
           gamemode,
           COUNT(*) AS hits
    FROM telemetry_events
    WHERE received_at >= date('now', '-${WEEK_WINDOW_DAYS} days')
-   GROUP BY week, repo, gamemode
+   GROUP BY week, repo, tag, gamemode
    ORDER BY week ASC`;
 
 /**
@@ -127,8 +128,9 @@ function weekAxis(first, last) {
  * `week[repo]` is the total for that image, game mode included, because that
  * is the population. `week.gaming[repo]` is the part of it that was in game
  * mode: 0 is a real measurement — the image reported, nobody was in game mode
- * — while null means the image did not report at all that week. The same
- * distinction governs the totals, so neither can be inferred from the other.
+ * — while null means the image did not report at all that week. Dakota stream
+ * fields distinguish absent tags (null) from a recorded zero; unrecognized tags
+ * remain unclassified rather than being attributed to a named stream.
  */
 export function buildCountsDocument(rows) {
   const counted = (Array.isArray(rows) ? rows : []).filter(
@@ -144,6 +146,15 @@ export function buildCountsDocument(rows) {
     const cell = week.get(normalized.repo) || { total: 0, gaming: 0 };
     cell.total += row.hits;
     if (normalized.gaming) cell.gaming += row.hits;
+    if (normalized.repo === "dakota") {
+      const stream =
+        row.tag === "stable"
+          ? "stable"
+          : row.tag === "testing"
+            ? "testing"
+            : "unclassified";
+      cell[stream] = (cell[stream] ?? 0) + row.hits;
+    }
     week.set(normalized.repo, cell);
     byWeek.set(row.week, week);
   }
@@ -162,6 +173,10 @@ export function buildCountsDocument(rows) {
         entry[repo] = cell ? cell.total : null;
         gaming[repo] = cell ? cell.gaming : null;
       }
+      const dakota = counts?.get("dakota");
+      entry.dakotaStable = dakota?.stable ?? null;
+      entry.dakotaTesting = dakota?.testing ?? null;
+      entry.dakotaUnclassified = dakota?.unclassified ?? null;
 
       entry.gaming = gaming;
       return entry;

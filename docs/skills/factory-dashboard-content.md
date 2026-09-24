@@ -154,48 +154,33 @@ the verified fallback list during discovery failures.
 The public Hive registry accepts anonymous requests. Do not forward GitHub
 authorization to it.
 
-### countme: match ublue-os/countme, and never trust the seed on its own
+### CountMe: first-party stream counts only
 
-The adoption numbers come from Fedora's public countme totals CSV
-(`scripts/fetch-countme.js` → `static/data/countme-history.json`, a tracked
-seed).
+`/analytics` reads `https://countme.projectbluefin.io/counts.json` at runtime.
+The Worker aggregates D1 events; `scripts/lib/countme-sources.mjs` allows only
+`dakota` as a first-party published repo today. This image is labeled
+**Bluefin**. The older upstream artifact is **Bluefin Classic** and remains
+separate. Fedora's `totals.csv` and the tracked `countme-history.json` are not
+sources for a Project Bluefin image count.
 
-**The canonical implementation is [`ublue-os/countme`](https://github.com/ublue-os/countme),
-not this repository.** It produces the `growth_*.svg` charts embedded on
-`/analytics` and the "Active Users" badges in project READMEs. Our script exists
-only because those outputs are a rendered chart and a single latest number, while
-the dashboard needs the weekly series as data. The counting rules in
-`scripts/fetch-countme.js` are ported from that project's `data_processing.py`
-and are documented in our file header. **If a number here disagrees with the
-badge there, this repository is wrong.** Check it:
+- The Dakota client reports one successful check-in per UTC Monday-anchored
+  week, with a booted `stable` or `testing` tag. Its daily calendar retry does
+  not send another ping after a successful report that week. No machine ID is
+  transmitted, so the totals estimate active systems rather than count
+  distinct devices.
+- `/counts.json` keeps the all-tag Dakota total for existing consumers, but
+  additionally publishes nullable `dakotaStable`, `dakotaTesting` and
+  `dakotaUnclassified` readings. Only exact tags belong to named streams;
+  `latest`, missing or ambiguous tags stay unclassified. Game mode is a subset
+  of check-ins, not a separate image or a third stream.
+- The first chart plots stable and testing only, on one zero-anchored domain.
+  Its text dates each last measured reading and labels the in-progress UTC
+  week using `generatedAt`. Missing is `null`, never zero; unclassified pings
+  are disclosed separately rather than attributed to either line.
 
-```bash
-curl -s https://raw.githubusercontent.com/ublue-os/countme/main/badge-endpoints/bluefin.json
-```
-
-The two rules that are easy to get wrong, and were wrong until ADR 0004:
-
-- **A hit is not a device.** DNF sends countme once a week for _each_
-  countme-enabled repo, so one machine appears under ~19 repo tags. Restrict to
-  the base `^fedora-[0-9]+$` repo. Bluefin LTS is exempt — it is CentOS Stream
-  based, has no `fedora-N` repo, and is counted across its EPEL repos.
-- **`sys_age = -1` is a different metric, not a subtotal.** `mirrors-countme`
-  runs a second pass (`BucketSelectUniqueIP`) that writes a legacy unique-IP
-  estimate into the same table under that sentinel. Summing it with the real
-  `sys_age` 1–4 rows stacks two metrics together.
-
-"Weekly active devices" is now the correct label, matching the upstream chart
-title. Bluefin LTS must carry its EPEL caveat wherever it is charted.
-
-#### An empty re-derive diff does not mean the data is right
-
-This file previously advised that re-running the fetcher and seeing no diff
-proved the committed data correct, and that a suspicious number should be
-relabelled rather than investigated. That advice was wrong and it is why a 6×
-overcount survived: re-running a script only confirms the script is
-deterministic, never that its arithmetic is right. When a number looks
-implausible, check it against an **independent** source — here, the project's own
-published badge — before concluding the data is fine.
+Verify suspicious numbers against the read-only D1 rows grouped by `repo`,
+`tag` and UTC week, then compare `/counts.json`. Re-running a fetcher only
+proves determinism. Never send a synthetic production ping to test a chart.
 
 ### Charts follow the site theme
 
@@ -342,7 +327,8 @@ change.
 - `categoryAxis` or `valueAxis` set inside an option object rather than applied
   by `applyAxisTheme()`.
 - A lane in `FALLBACK_LANES` for an image the `projectbluefin` org does not own.
-- A countme series summed across all repo tags, or including `sys_age = -1`.
+- An unclassified count attributed to `:stable` or `:testing`, or a
+  Fedora-derived number labeled as a Project Bluefin image.
 - A panel that renders nothing rather than saying it is unavailable and why.
 - A changed chart title with no matching update in `scripts/*-panels.test.js`.
 
@@ -351,8 +337,8 @@ change.
 - [ ] `node --test scripts/factory-theming.test.js scripts/tests-panels.test.js`
       passes.
 - [ ] Panel copy matches [`/press-kit`](/press-kit) vocabulary.
-- [ ] Adoption numbers agree with the upstream badge from
-      [`ublue-os/countme`](https://github.com/ublue-os/countme).
+- [ ] Named stream counts agree with exact `stable`/`testing` D1 tags; other
+      Dakota tags remain unclassified.
 - [ ] The dashboard was opened in **both** light and dark mode.
 - [ ] Every unavailable panel states a reason —
       `scripts/panel-unavailability.test.js` passes.
@@ -366,11 +352,12 @@ change.
 ## Sources
 
 - [`/press-kit`](/press-kit) — brand vocabulary for panel copy.
-- [`ublue-os/countme`](https://github.com/ublue-os/countme) — canonical
-  counting implementation; `data_processing.py` is the reference for
-  `scripts/fetch-countme.js`.
-- `scripts/fetch-countme.js`, `scripts/fetch-ghcr-packages.js` — data
-  pipelines; counting rules documented in their file headers.
+- `workers/countme-proxy/counts.mjs`,
+  `src/components/analytics/firstPartyCountme.ts`, and
+  `scripts/lib/countme-sources.mjs` — first-party counting contract.
+- [`ublue-os/countme`](https://github.com/ublue-os/countme) — upstream source
+  only for separately labeled Bluefin Classic.
+- `scripts/fetch-ghcr-packages.js` — image publication, not countme adoption.
 - `src/components/factory/chartTheme.ts`,
   `src/components/factory/useFactoryTheme.ts` — theme-token plumbing.
 - [GNOME release Atom feed](https://release.gnome.org/atom.xml) and

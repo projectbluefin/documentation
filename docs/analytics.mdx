@@ -35,10 +35,10 @@ Project Bluefin images participate in direct weekly countme reporting via system
 
 ### Opt-Out Instructions
 
-To disable Project Bluefin countme reporting, disable the systemd timer:
+To stop Project Bluefin countme reporting now and across reboots, mask its systemd timer and service:
 
 ```bash
-sudo systemctl disable --now bluefin-countme.timer
+sudo systemctl mask --now bluefin-countme.timer bluefin-countme.service
 ```
 
 To disable upstream Fedora countme:
