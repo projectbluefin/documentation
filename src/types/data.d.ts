@@ -90,3 +90,24 @@ declare module "@site/static/data/file-contributors.json" {
   const data: FileContributorsData;
   export default data;
 }
+
+export interface BlogIndexPost {
+  title?: string;
+  link?: string;
+  description?: string;
+  pubDate?: string;
+  formattedDate?: string;
+}
+
+export interface BlogIndexPayload {
+  generatedAt?: string;
+  posts?: BlogIndexPost[];
+  unavailable?: boolean;
+  stateReason?: string;
+}
+
+declare module "@site/static/data/blog-posts.json" {
+  import type { BlogIndexPayload } from "@site/src/types/data";
+  const data: BlogIndexPayload;
+  export default data;
+}
