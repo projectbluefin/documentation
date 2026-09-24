@@ -177,6 +177,11 @@ sources for a Project Bluefin image count.
   Its text dates each last measured reading and labels the in-progress UTC
   week using `generatedAt`. Missing is `null`, never zero; unclassified pings
   are disclosed separately rather than attributed to either line.
+- The cards read **Bluefin**, **Bluefin Utah**, **Bluefin Classic**, in that
+  order. Bluefin Utah is fed by `https://countme.projectbluefin.io/v1/daily.json`
+  (daily `projectbluefin-countme` pings, one row per day and image), read with
+  `familyDaily(rows, "utah")` in `firstPartyCountme.ts`. It plots systems
+  active **per day** by stream; never add days together into weekly users.
 
 Verify suspicious numbers against the read-only D1 rows grouped by `repo`,
 `tag` and UTC week, then compare `/counts.json`. Re-running a fetcher only

@@ -78,7 +78,7 @@ const {
 } = mod;
 
 // The first-party reader is its own module; see the note in the component.
-const { latestReading } = loadTsxModule(
+const { latestReading, familyDaily } = loadTsxModule(
   path.join(
     __dirname,
     "..",
@@ -362,7 +362,6 @@ test("a trailing gap reports the last week each stream actually measured", () =>
 test("only the exact Dakota streams appear, not all-tag or LTS totals", () => {
   const html = renderCounts(COUNTS_FIXTURE);
   const option = chartOption(html);
-  assert.equal((html.match(/Weekly Active Systems/g) ?? []).length, 1);
   assert.deepEqual(
     option.series.map((series) => series.name),
     ["Bluefin :stable", "Bluefin :testing"],
@@ -484,4 +483,98 @@ test("the axis shortens its ticks but keeps the full date in the data", () => {
   // A value that is not a date is passed through rather than rendered as
   // "Invalid Date" on the axis.
   assert.equal(compactWeek("not-a-date"), "not-a-date");
+});
+
+/**
+ * Bluefin Utah: daily pings from projectbluefin-countme, read from
+ * /v1/daily.json rows of `<image-name>/<image-flavor>:<stream>`.
+ */
+const DAILY_FIXTURE = {
+  unit: "systems active per UTC day",
+  days: [
+    { day: "2026-09-22", image: "utah/main:stable", n: 2 },
+    { day: "2026-09-22", image: "utah-nvidia/nvidia:stable", n: 1 },
+    { day: "2026-09-22", image: "dakota/main:stable", n: 9 },
+    { day: "2026-09-23", image: "utah/main:testing", n: 1 },
+  ],
+};
+
+test("the three count cards read Bluefin, Bluefin Utah, Bluefin Classic in order", () => {
+  const html = renderToStaticMarkup(
+    React.createElement(CountmeAnalyticsCharts, {
+      registry: REGISTRY_FIXTURE,
+      counts: COUNTS_FIXTURE,
+      daily: DAILY_FIXTURE,
+    }),
+  );
+  const headings = [...html.matchAll(/<h3[^>]*>([^<]*)<\/h3>/g)].map(
+    (m) => m[1],
+  );
+  assert.deepEqual(headings.slice(0, 3), [
+    "Bluefin",
+    "Bluefin Utah",
+    "Bluefin Classic (ublue-os/bluefin)",
+  ]);
+});
+
+test("Utah daily counts sum its flavors per stream and never include Dakota", () => {
+  const { days, streams } = familyDaily(DAILY_FIXTURE.days, "utah");
+  assert.deepEqual(days, ["2026-09-22", "2026-09-23"]);
+  assert.deepEqual(streams.stable, [3, null], "a day with no report is a gap");
+  assert.deepEqual(streams.testing, [null, 1]);
+  assert.deepEqual(streams.unknown, [null, null]);
+});
+
+test("the Utah card charts its streams and states each latest value", () => {
+  const html = renderToStaticMarkup(
+    React.createElement(CountmeAnalyticsCharts, {
+      registry: REGISTRY_FIXTURE,
+      counts: COUNTS_FIXTURE,
+      daily: DAILY_FIXTURE,
+    }),
+  );
+  const option = html.match(
+    /data-title="Bluefin Utah daily active systems"[^>]*data-option="([^"]*)"/,
+  );
+  assert.ok(option, "the Utah card must render a chart");
+  const parsed = JSON.parse(option[1].replace(/&quot;/g, '"'));
+  assert.deepEqual(
+    parsed.series.map((s) => s.data),
+    [
+      [3, null],
+      [null, 1],
+      [null, null],
+    ],
+  );
+  assert.match(html, /Bluefin Utah :stable: 3 \(2026-09-22\)/);
+  assert.match(html, /Bluefin Utah :testing: 1 \(2026-09-23\)/);
+  assert.match(html, /Bluefin Utah :unknown: accumulating data/);
+});
+
+test("the Utah card says why it is empty before any Utah system reports", () => {
+  const html = renderToStaticMarkup(
+    React.createElement(CountmeAnalyticsCharts, {
+      registry: REGISTRY_FIXTURE,
+      counts: COUNTS_FIXTURE,
+      daily: {
+        days: [{ day: "2026-09-22", image: "dakota/main:stable", n: 9 }],
+      },
+    }),
+  );
+  assert.match(
+    html,
+    /data-what="Bluefin Utah daily active systems"[^>]*data-reason="No Bluefin Utah system has reported yet\."/,
+  );
+});
+
+test("a Utah day with no reports stays on the axis as a gap", () => {
+  const { days, streams } = familyDaily(
+    [
+      { day: "2026-09-20", image: "utah/main:stable", n: 4 },
+      { day: "2026-09-22", image: "utah/main:stable", n: 5 },
+    ],
+    "utah",
+  );
+  assert.deepEqual(days, ["2026-09-20", "2026-09-21", "2026-09-22"]);
+  assert.deepEqual(streams.stable, [4, null, 5]);
 });

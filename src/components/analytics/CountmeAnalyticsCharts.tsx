@@ -13,12 +13,16 @@ import {
 import { FIRST_PARTY_PENDING_REASON } from "@site/scripts/lib/countme-sources.mjs";
 import {
   COUNTS_URL,
+  DAILY_STREAMS,
+  DAILY_URL,
   FIRST_PARTY_ORIGIN,
+  familyDaily,
   latestReading,
   measuredWeekCount,
   repoSeries,
   weekLabels,
   type CountmeDataset,
+  type DailyDataset,
 } from "./firstPartyCountme";
 import { useFactoryTheme } from "../factory/useFactoryTheme";
 import "../factory/tokens.css";
@@ -98,7 +102,7 @@ export function compactWeek(week: string): string {
  * cannot tell two series apart. Shape and dash carry the distinction instead,
  * which is also what makes the chart readable in greyscale.
  */
-export const SERIES_SYMBOLS = ["circle", "triangle"] as const;
+export const SERIES_SYMBOLS = ["circle", "triangle", "diamond"] as const;
 
 /** One published tag of one GHCR package, as `scripts/fetch-ghcr-packages.js` writes it. */
 export interface GhcrStream {
@@ -345,11 +349,14 @@ export interface CountmeAnalyticsChartsProps {
   registry?: GhcrDataset;
   /** Injected by tests; production fetches the first-party aggregate. */
   counts?: CountmeDataset;
+  /** Injected by tests; production fetches the daily ping counts. */
+  daily?: DailyDataset;
 }
 
 export default function CountmeAnalyticsCharts({
   registry,
   counts,
+  daily,
 }: CountmeAnalyticsChartsProps = {}): React.JSX.Element {
   const [themeRef, fxTheme] = useFactoryTheme();
   const cat = fxTheme.categorical;
@@ -436,6 +443,80 @@ export default function CountmeAnalyticsCharts({
       }
     })();
   }, []);
+
+  // ── Bluefin Utah: daily pings from projectbluefin-countme ──────────────
+  const [fetchedDaily, setFetchedDaily] = useState<DailyDataset | null>(null);
+  const [dailyReason, setDailyReason] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (daily) return;
+    void (async () => {
+      try {
+        const res = await fetch(DAILY_URL);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        setFetchedDaily((await res.json()) as DailyDataset);
+      } catch {
+        setDailyReason(FIRST_PARTY_PENDING_REASON);
+      }
+    })();
+  }, [daily]);
+
+  const utah = useMemo(
+    () => familyDaily((daily ?? fetchedDaily)?.days ?? [], "utah"),
+    [daily, fetchedDaily],
+  );
+  const utahMeasured = utah.days.filter((_, i) =>
+    DAILY_STREAMS.some((stream) => utah.streams[stream][i] !== null),
+  ).length;
+  const utahReadings = DAILY_STREAMS.map((stream) => {
+    const values = utah.streams[stream];
+    for (let i = values.length - 1; i >= 0; i -= 1) {
+      if (values[i] !== null)
+        return { stream, value: values[i], day: utah.days[i] };
+    }
+    return { stream, value: null, day: null };
+  });
+  const utahText = ({ value, day }: (typeof utahReadings)[number]) =>
+    value === null ? "accumulating data" : `${value.toLocaleString()} (${day})`;
+  const utahOption = useMemo(
+    () => ({
+      grid: { left: 56, right: 24, top: 16, bottom: 48, containLabel: true },
+      tooltip: { trigger: "axis" },
+      xAxis: {
+        type: "category",
+        data: utah.days,
+        axisLabel: {
+          fontSize: 13,
+          hideOverlap: true,
+          formatter: (value: string) => compactWeek(value),
+        },
+      },
+      yAxis: {
+        type: "value",
+        min: 0,
+        minInterval: 1,
+        axisLabel: { fontSize: 13 },
+      },
+      legend: { textStyle: { fontSize: 13 }, itemGap: 18 },
+      series: DAILY_STREAMS.map((stream, i) => ({
+        name: `Bluefin Utah :${stream}`,
+        type: "line",
+        smooth: false,
+        connectNulls: false,
+        showSymbol: true,
+        symbolSize: 7,
+        symbol: SERIES_SYMBOLS[i],
+        data: utah.streams[stream],
+        itemStyle: { color: cat[i % cat.length] },
+        lineStyle: {
+          width: 2,
+          color: cat[i % cat.length],
+          type: seriesDash(i),
+        },
+      })),
+    }),
+    [utah, cat],
+  );
 
   const countmeReadings = useMemo(
     () =>
@@ -597,12 +678,13 @@ export default function CountmeAnalyticsCharts({
 
   return (
     <div ref={themeRef} className={`fxRoot ${styles.container}`}>
-      {/* ── 1. Weekly active systems ─────────────────────────────────────── */}
+      {/* ── 1. Bluefin: weekly active systems ────────────────────────────── */}
       <section className={styles.panelCard}>
         <header className={styles.sectionHeader}>
           <Heading as="h3" className={styles.sectionTitle}>
-            Weekly Active Systems
+            Bluefin
           </Heading>
+          <p className={styles.sectionSubtext}>Weekly active systems.</p>
         </header>
 
         <p className={styles.legendRow}>
@@ -647,7 +729,55 @@ export default function CountmeAnalyticsCharts({
         </p>
       </section>
 
-      {/* ── 2. Upstream image, for watching the migration ────────────────── */}
+      {/* ── 2. Bluefin Utah: daily active systems ────────────────────────── */}
+      <section className={styles.panelCard}>
+        <header className={styles.sectionHeader}>
+          <Heading as="h3" className={styles.sectionTitle}>
+            Bluefin Utah
+          </Heading>
+          <p className={styles.sectionSubtext}>Systems active per day.</p>
+        </header>
+        <p className={styles.legendRow}>
+          {utahReadings.map((reading, i) => (
+            <span key={reading.stream} className={styles.legendChip}>
+              <span
+                className={styles.legendGlyph}
+                aria-hidden="true"
+                style={{ color: cat[i % cat.length] }}
+              >
+                ●
+              </span>
+              Bluefin Utah :{reading.stream}: {utahText(reading)}
+            </span>
+          ))}
+        </p>
+        {utahMeasured > 0 ? (
+          <EChart
+            option={utahOption}
+            title="Bluefin Utah daily active systems"
+            summary={`Systems active per day across ${utahMeasured} measured day${
+              utahMeasured === 1 ? "" : "s"
+            } — ${utahReadings
+              .map((r) => `Bluefin Utah :${r.stream} ${utahText(r)}`)
+              .join(", ")}.`}
+            points={utahMeasured}
+            minPoints={2}
+            height={300}
+            tableCaption="Bluefin Utah systems active per day by stream"
+          />
+        ) : (
+          <Unavailable
+            what="Bluefin Utah daily active systems"
+            reason={
+              (daily ?? fetchedDaily)?.stateReason ??
+              dailyReason ??
+              "No Bluefin Utah system has reported yet."
+            }
+          />
+        )}
+      </section>
+
+      {/* ── 3. Upstream image, for watching the migration ────────────────── */}
       <section className={styles.panelCard}>
         <header className={styles.sectionHeader}>
           <Heading as="h3" className={styles.sectionTitle}>
@@ -700,7 +830,7 @@ export default function CountmeAnalyticsCharts({
         )}
       </section>
 
-      {/* ── 2. Image × stream publication matrix ────────────────────────── */}
+      {/* ── 4. Image × stream publication matrix ────────────────────────── */}
       <section className={styles.panelCard}>
         <header className={styles.sectionHeader}>
           <Heading as="h3" className={styles.sectionTitle}>
@@ -759,7 +889,7 @@ export default function CountmeAnalyticsCharts({
         </p>
       </section>
 
-      {/* ── 4. Family cards ─────────────────────────────────────────────── */}
+      {/* ── 5. Family cards ─────────────────────────────────────────────── */}
       <section className={styles.familySection}>
         <header className={styles.sectionHeader}>
           <Heading as="h3" className={styles.sectionTitle}>
