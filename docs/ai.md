@@ -21,7 +21,7 @@ Bluefin provides open, user-controlled API endpoints to the operating system for
   - [Goose](https://block.github.io/goose/) as the primary interface to hosted and local models
 - Accelerate open standards in AI by shipping tools from the [Agentic AI Foundation](https://aaif.io/), [CNCF](https://cncf.io), and other foundations
 - Local LLM service management
-  - Model management via `ramalama` and Docker Model Runner, your choice
+  - Model management via `llmman` and Docker Model Runner, your choice
 - GPU Acceleration for both Nvidia and AMD are included out of the box and usually do not require any extra setup
 - Highlight great AI/ML applications on Flathub in our curated section in the App Store
 - A great reason to [sell more swag](https://store.projectbluefin.io)
@@ -55,50 +55,36 @@ The following AI-focused command-line tools are available via Homebrew (`brew in
 | [mistral-vibe](https://formulae.brew.sh/formula/mistral-vibe)       | CLI for Mistral AI models                                        |
 | [opencode](https://formulae.brew.sh/formula/opencode)               | AI coding agent for the terminal                                 |
 | [qwen-code](https://formulae.brew.sh/formula/qwen-code)             | CLI for Qwen3-Coder models                                       |
-| [ramalama](https://formulae.brew.sh/formula/ramalama)               | Manage and run AI models locally with containers                 |
+| [llmman](https://github.com/llmmanorg/llmman)                       | Manage and run AI models locally with containers                 |
 | [whisper-cpp](https://formulae.brew.sh/formula/whisper-cpp)         | High-performance inference of OpenAI's Whisper model             |
 
-## Ramalama
+## llmman
 
-Install [Ramalama](https://github.com/containers/ramalama) via `brew install ramalama`: manage local models and is the preferred default experience. It's for people who work with local models frequently and need advanced features. It offers the ability to pull models from huggingface, ollama, and any container registry. By default it pulls from ollama.com, check the [Ramalama documentation](https://github.com/containers/ramalama/tree/main/docs) for more information.
+Install [llmman](https://github.com/llmmanorg/llmman) via `brew install llmmanorg/tap/llmman`: manage local models and is the preferred default experience. It's for people who work with local models frequently and need advanced features. It offers the ability to pull models from huggingface, ollama, and any container registry. Check the [llmman documentation](https://github.com/llmmanorg/llmman#readme) for more information.
 
-Use the full `ramalama` command in Bluefin, matching the upstream RamaLama documentation.
+Use the full `llmman` command in Bluefin, matching the upstream llmman documentation.
 
-Ramalama's command line experience is similar to Podman. Examples include:
+llmman's command line experience includes:
 
 ```
-ramalama pull llama3.2:latest
-ramalama run llama3.2
-ramalama run deepseek-r1
+llmman pull llama3.2:latest
+llmman run llama3.2
+llmman run deepseek-r1
 ```
 
 You can also serve the models locally:
 
 ```
-ramalama serve deepseek-r1
+llmman serve
 ```
 
-Then go to `http://127.0.0.0:8080` in your browser.
-
-Ramalama will automatically pull in anything your host needs to do the workload. The images are also stored in the same container storage as your other containers. This allows for centralized management of the models and other podman images:
-
-```
-❯ podman images
-REPOSITORY                                 TAG         IMAGE ID      CREATED        SIZE
-quay.io/ramalama/rocm                      latest      8875feffdb87  5 days ago     6.92 GB
-```
+Then go to `http://127.0.0.1:17434` in your browser.
 
 ### Integrating with Existing Tools
 
-`ramalama serve` will serve an OpenAI compatible endpoint at `http://0.0.0.0:8080`, you can use this to configure tools that do not support ramalama directly:
+`llmman serve` will serve an OpenAI compatible endpoint at `http://127.0.0.1:17434`, you can use this to configure tools that do not support llmman directly:
 
 ![Newelle](/img/user-attachments/ff079ed5-43af-48fb-8e7b-e5b9446b3bfe.png)
-
-### Other Ramalama tips
-
-- Force Vulkan instead of ROCm: `ramalama serve --image quay.io/ramalama/ramalama gpt-oss:latest`
-- Strix Halo users: `ramalama serve --image docker.io/kyuz0/amd-strix-halo-toolboxes:vulkan-radv gpt-oss:latest`
-  - Check out [AMD Strix Halo Llama.cpp Toolboxes](https://github.com/kyuz0/amd-strix-halo-toolboxes) and [Donato Capitella's channel](https://www.youtube.com/@donatocapitella) for more information
 
 ### Running AI Agents in VS Code
 
@@ -108,7 +94,7 @@ Here is an example of using devcontainers to run agents inside containers for is
 
 ## Docker Model Runner
 
-[Docker Model Runner](https://docs.docker.com/model-runner/) is Docker's built-in local LLM service, included in Bluefin alongside Ramalama. It runs models from [Docker Hub's AI catalog](https://hub.docker.com/u/ai) and exposes an OpenAI-compatible API — no separate server setup required.
+[Docker Model Runner](https://docs.docker.com/model-runner/) is Docker's built-in local LLM service, included in Bluefin alongside llmman. It runs models from [Docker Hub's AI catalog](https://hub.docker.com/u/ai) and exposes an OpenAI-compatible API — no separate server setup required.
 
 ### Basic Usage
 
@@ -130,15 +116,15 @@ docker model rm ai/llama3.2
 
 Docker Model Runner serves an OpenAI-compatible endpoint at `http://localhost:12434` that you can use with any tool that supports the OpenAI API format — Goose, aichat, VSCode extensions, and more.
 
-### Ramalama vs Docker Model Runner
+### llmman vs Docker Model Runner
 
 Both provide a local OpenAI-compatible API. Choose based on your workflow:
 
-|               | Ramalama                            | Docker Model Runner   |
+|               | llmman                              | Docker Model Runner   |
 | ------------- | ----------------------------------- | --------------------- |
 | Model sources | OCI registries, Ollama, HuggingFace | Docker Hub AI catalog |
 | Engine        | Podman                              | Docker Engine         |
-| Quick command | `ramalama`                          | `docker model`        |
+| Quick command | `llmman`                            | `docker model`        |
 
 See the [Docker Model Runner documentation](https://docs.docker.com/model-runner/) for the full model catalog and configuration options.
 
