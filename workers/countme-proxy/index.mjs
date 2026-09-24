@@ -14,11 +14,7 @@ import {
   buildCountsDocument,
   pendingCountsDocument,
 } from "./counts.mjs";
-import {
-  EOS_PATHS,
-  createEosDailyResponse,
-  createEosRecordResponse,
-} from "./eos.mjs";
+import { createDailyResponse, createPingResponse } from "./ping.mjs";
 
 const USER_AGENT = "projectbluefin-countme-worker/1.0";
 
@@ -196,18 +192,17 @@ async function proxyRequest(request, env) {
   const url = new URL(request.url);
   const pathname = normalizePathname(url.pathname);
 
-  const eosKind = EOS_PATHS[pathname];
-  if (eosKind) {
+  if (pathname === "/v1/ping") {
     if (request.method !== "PUT") {
       return new Response("method not allowed", {
         status: 405,
         headers: baseHeaders({ allow: "PUT", "cache-control": "no-store" }),
       });
     }
-    return createEosRecordResponse(eosKind, request, env);
+    return createPingResponse(request, env);
   }
   if (pathname === "/v1/daily.json" && request.method === "GET") {
-    return createEosDailyResponse(env);
+    return createDailyResponse(env);
   }
 
   if (request.method !== "GET" && request.method !== "HEAD") {

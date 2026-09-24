@@ -26,7 +26,7 @@ const WORKER_SOURCES = [
   "workers/countme-proxy/routes.mjs",
   "workers/countme-proxy/render.mjs",
   "workers/countme-proxy/counts.mjs",
-  "workers/countme-proxy/eos.mjs",
+  "workers/countme-proxy/ping.mjs",
 ];
 
 /**
@@ -39,6 +39,9 @@ function stubDb(rows, { throws = false } = {}) {
     statements,
     env: {
       DB: {
+        async batch(prepared) {
+          return Promise.all(prepared.map((statement) => statement.run()));
+        },
         prepare(sql) {
           statements.push({ sql, args: [] });
           const result = {
@@ -1052,149 +1055,63 @@ test("dakota hardware variants land in the dakota total", async () => {
   );
 });
 
-// eos-phone-home receiver (workers/countme-proxy/eos.mjs). The unmodified
-// upstream client must work unchanged, so these pin the upstream contract.
+// Active-system pings (workers/countme-proxy/ping.mjs).
 
-const EOS_PING = {
-  dualboot: false,
-  image: "dakota/main:stable",
-  release: "44",
-  vendor: "System76",
-  product: "Thelio Mira",
-  count: 0,
-  metrics_enabled: false,
-  metrics_environment: "unknown",
-};
-
-function put(pathname, body, env, contentType = "application/json") {
+function put(body, env) {
   return fetchHandler(
-    new Request(`https://countme.projectbluefin.io${pathname}`, {
+    new Request("https://countme.projectbluefin.io/v1/ping", {
       method: "PUT",
-      headers: { "content-type": contentType },
+      headers: { "content-type": "application/json" },
       body: typeof body === "string" ? body : JSON.stringify(body),
     }),
     env,
   );
 }
 
-test("an eos-phone-home ping is counted and acknowledged like eos-activation-server", async () => {
+test("a Bluefin image ping is counted per day and acknowledged", async () => {
   const db = stubDb([]);
-  const response = await put("/v1/ping", EOS_PING, db.env);
-
-  assert.equal(response.status, 200);
-  assert.deepEqual(await response.json(), { success: true });
-  const insert = db.statements.find((st) => st.sql.includes("INSERT"));
-  assert.match(insert.sql, /INSERT INTO eos_pings/u);
-  assert.deepEqual(insert.args.slice(1), ["dakota/main:stable", "44", 1]);
-});
-
-test("only a system's first eos ping (count 0) is counted as new", async () => {
-  const db = stubDb([]);
-  await put("/v1/ping", { ...EOS_PING, count: 5 }, db.env);
-  const insert = db.statements.find((st) => st.sql.includes("INSERT"));
-  assert.equal(insert.args[3], 0);
-});
-
-test("eos records failing the upstream schema are rejected without a write", async () => {
-  const db = stubDb([]);
-  const { vendor: _vendor, ...missingVendor } = EOS_PING;
-  const cases = [
-    missingVendor,
-    { ...EOS_PING, count: -1 },
-    { ...EOS_PING, dualboot: "no" },
-    { ...EOS_PING, image: "x".repeat(129) },
-    { ...EOS_PING, image: "unknown" },
-    { ...EOS_PING, image: "fedora/main:stable" },
-    { ...EOS_PING, image: "dakota/main:latest" },
-    { ...EOS_PING, image: "dakota:stable" },
-  ];
-  for (const body of cases) {
-    const response = await put("/v1/ping", body, db.env);
-    assert.equal(response.status, 400);
+  for (const image of ["dakota-nvidia/nvidia:testing", "utah/main:unknown"]) {
+    const response = await put({ image }, db.env);
+    assert.equal(response.status, 200, image);
+    assert.deepEqual(await response.json(), { success: true });
   }
-  assert.equal((await put("/v1/ping", "not json", db.env)).status, 400);
-  assert.equal(
-    (await put("/v1/ping", EOS_PING, db.env, "text/plain")).status,
-    406,
+  const upserts = db.statements.filter((s) => s.sql.includes("INSERT"));
+  assert.deepEqual(
+    upserts.map((s) => s.args[1]),
+    ["dakota-nvidia/nvidia:testing", "utah/main:unknown"],
   );
+});
+
+test("pings that are not a known Bluefin image are rejected without a write", async () => {
+  const db = stubDb([]);
+  for (const body of [
+    { image: "fedora/main:stable" },
+    { image: "dakota/main:latest" },
+    { image: "dakota:stable" },
+    {},
+    "not json",
+  ]) {
+    assert.equal((await put(body, db.env)).status, 400, JSON.stringify(body));
+  }
   assert.equal(db.statements.length, 0);
 });
 
-test("a failed D1 write cannot acknowledge an eos record", async () => {
-  const db = stubDb([], { throws: true });
-  const response = await put("/v1/activate", EOS_PING, db.env);
-  assert.equal(response.status, 503);
-  assert.equal((await response.json()).success, false);
-});
+test("a ping is never acknowledged unless D1 confirms the write", async () => {
+  const thrown = await put(
+    { image: "dakota/main:stable" },
+    stubDb([], { throws: true }).env,
+  );
+  assert.equal(thrown.status, 503);
 
-test("a D1 result without success cannot acknowledge an eos ping", async () => {
   const db = stubDb([]);
-  // Table setup succeeds; only the INSERT reports success: false.
-  db.env.DB.prepare = () => ({
-    run: async () => ({ success: true }),
-    bind: () => ({ run: async () => ({ success: false }) }),
-  });
-  const response = await put("/v1/ping", EOS_PING, db.env);
-  assert.equal(response.status, 503);
-  assert.equal((await response.json()).success, false);
+  db.env.DB.batch = async () => [{ success: true }, { success: false }];
+  const unconfirmed = await put({ image: "dakota/main:stable" }, db.env);
+  assert.equal(unconfirmed.status, 503);
+  assert.equal((await unconfirmed.json()).success, false);
 });
 
-test("eos endpoints accept only PUT", async () => {
+test("/v1/ping accepts only PUT", async () => {
   const response = await get("/v1/ping", stubDb([]).env);
   assert.equal(response.status, 405);
   assert.equal(response.headers.get("allow"), "PUT");
-});
-
-test("the weekly eos figure is a mean of the seven complete days before today", async () => {
-  const eos = await import("../workers/countme-proxy/eos.mjs");
-  const now = new Date("2026-09-24T12:00:00Z");
-  const week = [17, 18, 19, 20, 21, 22, 23].map((d) => ({
-    day: `2026-09-${d}`,
-    image: "dakota/main:stable",
-    active: d === 23 ? 17 : 10,
-    new: 0,
-  }));
-  const today = {
-    day: "2026-09-24",
-    image: "dakota/main:stable",
-    active: 999,
-    new: 0,
-  };
-
-  // A mean, not a sum, and today's partial day never enters it.
-  assert.equal(
-    eos.buildEosDailyDocument([...week, today], now).sevenDayMeanActive,
-    11,
-  );
-
-  // A missing day is a gap, not a zero: no mean rather than a diluted one.
-  const gap = week.filter((d) => d.day !== "2026-09-20");
-  assert.equal(eos.buildEosDailyDocument(gap, now).sevenDayMeanActive, null);
-});
-
-test("Dakota and Utah images are accepted and reported per image", async () => {
-  const db = stubDb([]);
-  for (const image of ["dakota-nvidia/nvidia:testing", "utah/gaming:unknown"]) {
-    assert.equal(
-      (await put("/v1/ping", { ...EOS_PING, image }, db.env)).status,
-      200,
-      image,
-    );
-  }
-  const eos = await import("../workers/countme-proxy/eos.mjs");
-  const doc = eos.buildEosDailyDocument(
-    [
-      { day: "2026-09-23", image: "dakota/main:stable", active: 3, new: 1 },
-      { day: "2026-09-23", image: "utah/main:testing", active: 2, new: 0 },
-    ],
-    new Date("2026-09-24T00:00:00Z"),
-  );
-  assert.deepEqual(doc.days, [
-    {
-      day: "2026-09-23",
-      active: 5,
-      new: 1,
-      images: { "dakota/main:stable": 3, "utah/main:testing": 2 },
-    },
-  ]);
 });
