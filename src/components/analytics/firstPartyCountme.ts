@@ -97,3 +97,58 @@ export function measuredWeekCount(
     repos.some((repo) => parseReading(w[repo]) !== null),
   ).length;
 }
+
+/** Systems active per UTC day and image, from `projectbluefin-countme` pings. */
+export const DAILY_URL = `${FIRST_PARTY_ORIGIN}/v1/daily.json`;
+
+/** `image` is `<image-name>/<image-flavor>:<stream>`. */
+export interface DailyRow {
+  day: string;
+  image: string;
+  n: number;
+}
+
+export interface DailyDataset {
+  unit?: string;
+  days?: DailyRow[];
+  unavailable?: boolean;
+  stateReason?: string | null;
+}
+
+export const DAILY_STREAMS = ["stable", "testing", "unknown"] as const;
+
+/**
+ * One image family's daily actives per stream (`utah` matches `utah/…` and
+ * `utah-nvidia/…`). The axis is every UTC day from the first report to the
+ * last, so a day nobody reported stays on the axis as a null gap.
+ */
+export function familyDaily(
+  rows: DailyRow[],
+  family: string,
+): { days: string[]; streams: Record<string, Array<number | null>> } {
+  const mine = rows.filter(
+    (r) => r.image.startsWith(`${family}/`) || r.image.startsWith(`${family}-`),
+  );
+  const reported = mine.map((r) => r.day).sort();
+  const days: string[] = [];
+  if (reported.length) {
+    const last = Date.parse(`${reported[reported.length - 1]}T00:00:00Z`);
+    for (
+      let t = Date.parse(`${reported[0]}T00:00:00Z`);
+      t <= last;
+      t += 86_400_000
+    ) {
+      days.push(new Date(t).toISOString().slice(0, 10));
+    }
+  }
+  const streams: Record<string, Array<number | null>> = {};
+  for (const stream of DAILY_STREAMS) {
+    streams[stream] = days.map((day) => {
+      const hits = mine.filter(
+        (r) => r.day === day && r.image.endsWith(`:${stream}`),
+      );
+      return hits.length ? hits.reduce((sum, r) => sum + r.n, 0) : null;
+    });
+  }
+  return { days, streams };
+}
