@@ -128,20 +128,27 @@ workloads:
      `countme` (integer bucket 1–4).
    - Responses are HTTP 200 with `cache-control: no-store`.
    - The endpoint strictly disallows persistent machine identifiers or tokens.
-4. **eos-phone-home receiver (`PUT /v1/activate`, `PUT /v1/ping`):** The same
-   HTTP contract as
-   [`endlessm/eos-activation-server`](https://github.com/endlessm/eos-activation-server),
-   so the unmodified [`eos-phone-home`](https://github.com/endlessm/eos-phone-home)
-   client works with only `host = https://countme.projectbluefin.io` in
-   `/etc/eos-phone-home.conf`. JSON only (406 otherwise), upstream schema
-   (400 on failure), reply `{"success": true}`. Instead of queueing records for
-   Azafea, it bumps per-day counters in `eos_activations` / `eos_pings`;
+4. **Active-system counter (`PUT /v1/activate`, `PUT /v1/ping`):** The
+   [`eos-phone-home`](https://github.com/endlessm/eos-phone-home) protocol,
+   with the HTTP contract of
+   [`endlessm/eos-activation-server`](https://github.com/endlessm/eos-activation-server):
+   JSON only (406 otherwise), schema-validated (400 on failure), reply
+   `{"success": true}`. The client is a small shell script
+   (`projectbluefin-countme`), not upstream's Python, because upstream reads
+   an Endless-only xattr for `image`. Instead of queueing records for Azafea,
+   the Worker bumps per-day counters in `eos_activations` / `eos_pings`;
    vendor, product, and upstream `serial`/`mac_hash` are validated but never
    stored. Only a confirmed D1 write (`success === true`) is acknowledged;
    anything else is a retryable 503.
+   - `image` must be `<image-name>/<image-flavor>:<stream>` for a family in
+     `EOS_IMAGE_FAMILIES` (`dakota`, `utah`) and a stream in `stable`,
+     `testing`, `unknown`. image-name and image-flavor come from
+     `/usr/share/ublue-os/image-info.json`; the stream comes from the booted
+     ref (`bootc status`), never from `image-tag`, which is fixed at build
+     time. This rejects non-Bluefin shapes; it cannot authenticate callers.
    - The client pings at most once per 24h, so a day's `n` is systems active
-     that day. `/v1/daily.json` publishes daily actives and a seven-day
-     **mean** of them: summing days counts a daily machine seven times.
+     that day. `/v1/daily.json` publishes daily actives, per image, and a
+     seven-day **mean**: summing days counts a daily machine seven times.
    - `count == 0` marks a system's first ping (`new` in `/v1/daily.json`).
 
 ## Verifying before deploy
