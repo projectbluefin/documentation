@@ -96,8 +96,9 @@ than reaching for `--legacy-peer-deps`.
 `workers/countme-proxy` is the **one** countme service: Worker
 `projectbluefin-countme`, D1 `projectbluefin-countme`, route
 `countme.projectbluefin.io/*`. It deploys only through
-`.github/workflows/deploy-countme-worker.yml`, which applies
-`migrations/countme/` before `wrangler deploy`. Never stand up a second
+`.github/workflows/deploy-countme-worker.yml`. There is no migration step:
+the CI token has no D1 permission, so the Worker creates any table it needs
+with `CREATE TABLE IF NOT EXISTS` through its binding. Never stand up a second
 countme Worker or D1, and never `wrangler deploy` it by hand. It handles four
 workloads:
 
