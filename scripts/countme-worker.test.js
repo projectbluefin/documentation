@@ -723,14 +723,25 @@ test("Dakota variants are countable metalink repositories", async () => {
   );
 });
 
-test("unsupported or absent repositories are rejected without an insert", async () => {
-  const db = stubDb([]);
-  for (const repo of ["bluefin", "bluefin-lts", "utah", "dakota-other", ""]) {
+test("non-Dakota pings persist without entering the Dakota count", async () => {
+  const db = stubDb([
+    { week: "2026-09-21", repo: "bluefin-lts", gamemode: 0, hits: 12 },
+    { week: "2026-09-21", repo: "unknown", gamemode: 0, hits: 4 },
+    { week: "2026-09-21", repo: "dakota", gamemode: 0, hits: 2 },
+  ]);
+  for (const repo of ["bluefin-lts", "unknown"]) {
     const response = await get(`/metalink?repo=${repo}&countme=2`, db.env);
-    assert.equal(response.status, 400, repo);
-    assert.doesNotMatch(await response.text(), /accepted/u);
+    assert.equal(response.status, 200, repo);
   }
-  assert.deepEqual(db.statements, []);
+
+  assert.deepEqual(
+    db.statements.filter((s) => s.sql.includes("INSERT")).map((s) => s.args[0]),
+    ["bluefin-lts", "unknown"],
+  );
+  const published = await (await get("/counts.json", db.env)).json();
+  assert.deepEqual(published.variants, ["dakota"]);
+  assert.equal(published.weeks[0].dakota, 2);
+  assert.ok(!("bluefin-lts" in published.weeks[0]));
 });
 
 test("a failed D1 insert cannot acknowledge a metalink ping", async () => {

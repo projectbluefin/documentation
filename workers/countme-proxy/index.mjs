@@ -12,7 +12,6 @@ import {
 import {
   WEEKLY_COUNTS_SQL,
   buildCountsDocument,
-  normalizeCountmeRepo,
   pendingCountsDocument,
 } from "./counts.mjs";
 
@@ -59,12 +58,6 @@ async function createMetalinkResponse(request, env) {
   const countme = url.searchParams.get("countme") || "unknown";
   const gamemode = url.searchParams.get("gamemode") === "1" ? 1 : 0;
   const bucket = parseInt(countme, 10) || 1;
-  if (normalizeCountmeRepo(repo, gamemode)?.repo !== "dakota") {
-    return new Response("unsupported repository", {
-      status: 400,
-      headers: baseHeaders({ "cache-control": "no-store" }),
-    });
-  }
 
   const persisted = await recordTelemetryEvent(env, {
     repo,
