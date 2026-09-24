@@ -1057,7 +1057,7 @@ test("dakota hardware variants land in the dakota total", async () => {
 
 const EOS_PING = {
   dualboot: false,
-  image: "unknown",
+  image: "dakota/main:stable",
   release: "44",
   vendor: "System76",
   product: "Thelio Mira",
@@ -1085,7 +1085,7 @@ test("an eos-phone-home ping is counted and acknowledged like eos-activation-ser
   assert.deepEqual(await response.json(), { success: true });
   const insert = db.statements.find((st) => st.sql.includes("INSERT"));
   assert.match(insert.sql, /INSERT INTO eos_pings/u);
-  assert.deepEqual(insert.args.slice(1), ["unknown", "44", 1]);
+  assert.deepEqual(insert.args.slice(1), ["dakota/main:stable", "44", 1]);
 });
 
 test("only a system's first eos ping (count 0) is counted as new", async () => {
@@ -1103,6 +1103,10 @@ test("eos records failing the upstream schema are rejected without a write", asy
     { ...EOS_PING, count: -1 },
     { ...EOS_PING, dualboot: "no" },
     { ...EOS_PING, image: "x".repeat(129) },
+    { ...EOS_PING, image: "unknown" },
+    { ...EOS_PING, image: "fedora/main:stable" },
+    { ...EOS_PING, image: "dakota/main:latest" },
+    { ...EOS_PING, image: "dakota:stable" },
   ];
   for (const body of cases) {
     const response = await put("/v1/ping", body, db.env);
@@ -1125,7 +1129,9 @@ test("a failed D1 write cannot acknowledge an eos record", async () => {
 
 test("a D1 result without success cannot acknowledge an eos ping", async () => {
   const db = stubDb([]);
+  // Table setup succeeds; only the INSERT reports success: false.
   db.env.DB.prepare = () => ({
+    run: async () => ({ success: true }),
     bind: () => ({ run: async () => ({ success: false }) }),
   });
   const response = await put("/v1/ping", EOS_PING, db.env);
@@ -1144,10 +1150,16 @@ test("the weekly eos figure is a mean of the seven complete days before today", 
   const now = new Date("2026-09-24T12:00:00Z");
   const week = [17, 18, 19, 20, 21, 22, 23].map((d) => ({
     day: `2026-09-${d}`,
+    image: "dakota/main:stable",
     active: d === 23 ? 17 : 10,
     new: 0,
   }));
-  const today = { day: "2026-09-24", active: 999, new: 0 };
+  const today = {
+    day: "2026-09-24",
+    image: "dakota/main:stable",
+    active: 999,
+    new: 0,
+  };
 
   // A mean, not a sum, and today's partial day never enters it.
   assert.equal(
@@ -1158,4 +1170,31 @@ test("the weekly eos figure is a mean of the seven complete days before today", 
   // A missing day is a gap, not a zero: no mean rather than a diluted one.
   const gap = week.filter((d) => d.day !== "2026-09-20");
   assert.equal(eos.buildEosDailyDocument(gap, now).sevenDayMeanActive, null);
+});
+
+test("Dakota and Utah images are accepted and reported per image", async () => {
+  const db = stubDb([]);
+  for (const image of ["dakota-nvidia/nvidia:testing", "utah/gaming:unknown"]) {
+    assert.equal(
+      (await put("/v1/ping", { ...EOS_PING, image }, db.env)).status,
+      200,
+      image,
+    );
+  }
+  const eos = await import("../workers/countme-proxy/eos.mjs");
+  const doc = eos.buildEosDailyDocument(
+    [
+      { day: "2026-09-23", image: "dakota/main:stable", active: 3, new: 1 },
+      { day: "2026-09-23", image: "utah/main:testing", active: 2, new: 0 },
+    ],
+    new Date("2026-09-24T00:00:00Z"),
+  );
+  assert.deepEqual(doc.days, [
+    {
+      day: "2026-09-23",
+      active: 5,
+      new: 1,
+      images: { "dakota/main:stable": 3, "utah/main:testing": 2 },
+    },
+  ]);
 });

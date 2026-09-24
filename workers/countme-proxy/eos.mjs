@@ -1,17 +1,29 @@
-// eos-phone-home receiver: counts active systems, nothing else.
+// Active-system counter speaking the eos-phone-home protocol.
 //
 // The HTTP contract matches endlessm/eos-activation-server (api/activation.js,
-// api/ping.js), so the unmodified upstream client works with only
-// `host = https://countme.projectbluefin.io` in /etc/eos-phone-home.conf:
-// PUT JSON, schema-validated, reply {"success": true}. Where upstream queues
-// each record for Azafea, this bumps per-day counters in D1. Vendor and
-// product are validated (the client always sends them) but never stored.
-// `serial` and `mac_hash` stay in the activate schema only so upstream-shaped
-// bodies validate; eos-phone-home does not send them and they are never stored.
+// api/ping.js): PUT JSON, schema-validated, reply {"success": true}. Where
+// upstream queues each record for Azafea, this bumps per-day counters in D1.
+// Vendor and product are validated but never stored. `serial` and `mac_hash`
+// stay in the activate schema only so upstream-shaped bodies validate; no
+// Project Bluefin client sends them and they are never stored.
+//
+// Only Project Bluefin images are counted: `image` must be
+// `<image-name>/<image-flavor>:<stream>`, where image-name and image-flavor
+// come from /usr/share/ublue-os/image-info.json and stream is the booted
+// ref's tag. An anonymous endpoint cannot prove who calls it; this rejects
+// everything that is not a known image shape, it does not authenticate.
+
+export const EOS_IMAGE_FAMILIES = ["dakota", "utah"];
+export const EOS_STREAMS = ["stable", "testing", "unknown"];
+const IMAGE_RE = new RegExp(
+  `^(?:${EOS_IMAGE_FAMILIES.join("|")})(?:-[a-z0-9]+){0,3}/[a-z0-9-]{1,32}:(?:${EOS_STREAMS.join("|")})$`,
+  "u",
+);
 
 const MAX_LABEL = 128;
 const STRING = (v) => typeof v === "string";
 const LABEL = (v) => STRING(v) && v.length <= MAX_LABEL;
+const IMAGE = (v) => STRING(v) && IMAGE_RE.test(v);
 const BOOL = (v) => typeof v === "boolean";
 const UINT = (v) => Number.isInteger(v) && v >= 0;
 
@@ -19,7 +31,7 @@ const SCHEMAS = {
   activate: {
     required: ["image", "vendor", "product", "release"],
     types: {
-      image: LABEL,
+      image: IMAGE,
       vendor: STRING,
       product: STRING,
       serial: STRING,
@@ -32,7 +44,7 @@ const SCHEMAS = {
   ping: {
     required: ["image", "vendor", "product", "release"],
     types: {
-      image: LABEL,
+      image: IMAGE,
       vendor: STRING,
       product: STRING,
       release: LABEL,
@@ -46,7 +58,7 @@ const SCHEMAS = {
 
 export const EOS_PATHS = { "/v1/activate": "activate", "/v1/ping": "ping" };
 
-/** Same required fields and types as eos-activation-server, plus label caps. */
+/** eos-activation-server's required fields and types, plus the image allowlist. */
 export function validEosRecord(kind, body) {
   const { required, types } = SCHEMAS[kind];
   if (body === null || typeof body !== "object" || Array.isArray(body))
@@ -69,15 +81,20 @@ const SCHEMA = [
     n INTEGER NOT NULL, first INTEGER NOT NULL, PRIMARY KEY (day, image, release))`,
 ];
 
-let tablesReady = null;
+// Keyed by binding so a transient failure retries and tests stay isolated.
+const tablesReady = new WeakMap();
 function ensureTables(db) {
-  tablesReady ??= Promise.all(SCHEMA.map((sql) => db.prepare(sql).run())).catch(
-    (err) => {
-      tablesReady = null; // retry on the next request
-      throw err;
-    },
-  );
-  return tablesReady;
+  let ready = tablesReady.get(db);
+  if (!ready) {
+    ready = Promise.all(SCHEMA.map((sql) => db.prepare(sql).run())).catch(
+      (err) => {
+        tablesReady.delete(db); // retry on the next request
+        throw err;
+      },
+    );
+    tablesReady.set(db, ready);
+  }
+  return ready;
 }
 
 const ACTIVATE_SQL = `INSERT INTO eos_activations (day, image, release, n) VALUES (?, ?, ?, 1)
@@ -88,8 +105,8 @@ const ACTIVATE_SQL = `INSERT INTO eos_activations (day, image, release, n) VALUE
 const PING_SQL = `INSERT INTO eos_pings (day, image, release, n, first) VALUES (?, ?, ?, 1, ?)
   ON CONFLICT (day, image, release) DO UPDATE SET n = n + 1, first = first + excluded.first`;
 
-export const EOS_DAILY_SQL = `SELECT day, SUM(n) AS active, SUM(first) AS new
-  FROM eos_pings WHERE day >= ? GROUP BY day ORDER BY day`;
+export const EOS_DAILY_SQL = `SELECT day, image, SUM(n) AS active, SUM(first) AS new
+  FROM eos_pings WHERE day >= ? GROUP BY day, image ORDER BY day, image`;
 
 export const EOS_WINDOW_DAYS = 90;
 
@@ -150,18 +167,24 @@ export async function createEosRecordResponse(kind, request, env) {
 }
 
 /**
- * Rows: { day, active, new }. The client pings at most once per 24h, so
- * `active` for a day is systems active that day. Summing days would count a
- * daily machine seven times a week, so the weekly figure is the mean of the
- * seven complete UTC days before `now` (today is partial). A day with no row
- * is a gap, not a zero, so any missing day makes the mean null.
+ * Rows: { day, image, active, new }, one per day and image. The client pings
+ * at most once per 24h, so `active` for a day is systems active that day.
+ * Summing days would count a daily machine seven times a week, so the weekly
+ * figure is the mean of the seven complete UTC days before `now` (today is
+ * partial). A day with no row is a gap, not a zero, so any missing day makes
+ * the mean null.
  */
 export function buildEosDailyDocument(rows, now) {
-  const days = rows.map(({ day, active, new: fresh }) => ({
-    day,
-    active,
-    new: fresh,
-  }));
+  const byDate = new Map();
+  for (const { day, image, active, new: fresh } of rows) {
+    let entry = byDate.get(day);
+    if (!entry)
+      byDate.set(day, (entry = { day, active: 0, new: 0, images: {} }));
+    entry.active += active;
+    entry.new += fresh;
+    entry.images[image] = active;
+  }
+  const days = [...byDate.values()];
   const byDay = new Map(days.map((d) => [d.day, d.active]));
   const today = Date.UTC(
     now.getUTCFullYear(),
