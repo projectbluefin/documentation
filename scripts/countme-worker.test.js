@@ -1083,7 +1083,7 @@ test("an eos-phone-home ping is counted and acknowledged like eos-activation-ser
 
   assert.equal(response.status, 200);
   assert.deepEqual(await response.json(), { success: true });
-  const [insert] = db.statements;
+  const insert = db.statements.find((st) => st.sql.includes("INSERT"));
   assert.match(insert.sql, /INSERT INTO eos_pings/u);
   assert.deepEqual(insert.args.slice(1), ["unknown", "44", 1]);
 });
@@ -1091,7 +1091,8 @@ test("an eos-phone-home ping is counted and acknowledged like eos-activation-ser
 test("only a system's first eos ping (count 0) is counted as new", async () => {
   const db = stubDb([]);
   await put("/v1/ping", { ...EOS_PING, count: 5 }, db.env);
-  assert.equal(db.statements[0].args[3], 0);
+  const insert = db.statements.find((st) => st.sql.includes("INSERT"));
+  assert.equal(insert.args[3], 0);
 });
 
 test("eos records failing the upstream schema are rejected without a write", async () => {

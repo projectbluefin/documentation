@@ -57,6 +57,29 @@ export function validEosRecord(kind, body) {
   );
 }
 
+// Per-day counters only: no per-system rows, no IPs, no hardware fields.
+// The Worker creates these itself through its D1 binding, once per isolate,
+// so deploying needs no migration step or D1 permission on the CI token.
+const SCHEMA = [
+  `CREATE TABLE IF NOT EXISTS eos_activations (
+    day TEXT NOT NULL, image TEXT NOT NULL, release TEXT NOT NULL,
+    n INTEGER NOT NULL, PRIMARY KEY (day, image, release))`,
+  `CREATE TABLE IF NOT EXISTS eos_pings (
+    day TEXT NOT NULL, image TEXT NOT NULL, release TEXT NOT NULL,
+    n INTEGER NOT NULL, first INTEGER NOT NULL, PRIMARY KEY (day, image, release))`,
+];
+
+let tablesReady = null;
+function ensureTables(db) {
+  tablesReady ??= Promise.all(SCHEMA.map((sql) => db.prepare(sql).run())).catch(
+    (err) => {
+      tablesReady = null; // retry on the next request
+      throw err;
+    },
+  );
+  return tablesReady;
+}
+
 const ACTIVATE_SQL = `INSERT INTO eos_activations (day, image, release, n) VALUES (?, ?, ?, 1)
   ON CONFLICT (day, image, release) DO UPDATE SET n = n + 1`;
 
@@ -103,19 +126,20 @@ export async function createEosRecordResponse(kind, request, env) {
     return json({ error: "countme unavailable", success: false }, 503);
 
   const day = new Date().toISOString().slice(0, 10);
-  const statement =
-    kind === "activate"
-      ? env.DB.prepare(ACTIVATE_SQL).bind(day, body.image, body.release)
-      : env.DB.prepare(PING_SQL).bind(
-          day,
-          body.image,
-          body.release,
-          body.count === 0 ? 1 : 0,
-        );
   // Acknowledge only a confirmed write, as /metalink does: a client told
   // "success" never retries, so anything else must be a retryable 503.
   let persisted = false;
   try {
+    await ensureTables(env.DB);
+    const statement =
+      kind === "activate"
+        ? env.DB.prepare(ACTIVATE_SQL).bind(day, body.image, body.release)
+        : env.DB.prepare(PING_SQL).bind(
+            day,
+            body.image,
+            body.release,
+            body.count === 0 ? 1 : 0,
+          );
     persisted = (await statement.run())?.success === true;
   } catch (err) {
     console.error("Failed to count eos-phone-home record:", err);
@@ -168,6 +192,7 @@ export async function createEosDailyResponse(env) {
     .toISOString()
     .slice(0, 10);
   try {
+    await ensureTables(env.DB);
     const { results } = await env.DB.prepare(EOS_DAILY_SQL).bind(since).all();
     return json(buildEosDailyDocument(results || [], now), 200);
   } catch (err) {
