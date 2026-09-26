@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-25T05:16:48.278Z",
+  "generatedAt": "2026-09-26T05:15:21.012Z",
   "source": "GHCR OCI Manifests & Attestations",
   "method": "oci-layer-diff-v1",
   "unit": "MB",
@@ -14,7 +14,7 @@
       "releases": [
         {
           "tag": "stable",
-          "date": "2026-09-25",
+          "date": "2026-09-26",
           "previousTag": null,
           "downloadChurnMB": 3175,
           "sharedMB": 0,
@@ -204,7 +204,7 @@
         },
         {
           "tag": "stable",
-          "date": "2026-09-25",
+          "date": "2026-09-26",
           "previousTag": "10-20260606",
           "downloadChurnMB": 3893.7,
           "sharedMB": 0,
@@ -229,7 +229,7 @@
       "releases": [
         {
           "tag": "stable",
-          "date": "2026-09-25",
+          "date": "2026-09-26",
           "previousTag": null,
           "downloadChurnMB": 3478.8,
           "sharedMB": 0,
@@ -254,16 +254,16 @@
       "releases": [
         {
           "tag": "testing",
-          "date": "2026-09-25",
+          "date": "2026-09-26",
           "previousTag": null,
-          "downloadChurnMB": 2102.2,
+          "downloadChurnMB": 2185.1,
           "sharedMB": 0,
-          "totalMB": 2102.2,
+          "totalMB": 2185.1,
           "reuseEfficiencyPct": 0,
-          "totalLayers": 44,
+          "totalLayers": 128,
           "sharedLayers": 0,
-          "newLayers": 44,
-          "zstdLayers": 44,
+          "newLayers": 128,
+          "zstdLayers": 128,
           "compressionFormat": "zstd-chunked",
           "isBaseline": true
         }
