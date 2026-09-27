@@ -258,15 +258,13 @@ export default function ImagesCatalogComponent({
   }
 
   const bluefinProducts = products.filter(
-    (product) => product.id === "ublue-bluefin" || product.name === "Bluefin",
+    (product) => product.id === "ublue-bluefin",
   );
   const dakotaProducts = products.filter(
-    (product) =>
-      product.id === "projectbluefin-dakota" || product.name.includes("Dakota"),
+    (product) => product.id === "projectbluefin-dakota",
   );
   const utahProducts = products.filter(
-    (product) =>
-      product.id === "projectbluefin-utah" || product.name.includes("Utah"),
+    (product) => product.id === "projectbluefin-utah",
   );
 
   const renderCards = (items: Product[]) =>
