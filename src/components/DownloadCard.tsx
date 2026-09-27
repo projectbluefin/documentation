@@ -15,27 +15,27 @@ export interface EntryGroup {
 }
 
 export interface DownloadCardProps {
-  variant: "bluefin" | "bluefin-lts" | "bluefin-gdx" | "dakotaraptor";
+  variant: "bluefin" | "dakotaraptor";
   title: string;
   description: React.ReactNode;
   entries: DownloadEntry[];
   sections?: EntryGroup[];
   recommended?: boolean;
+  /** Render vendor logos beside hardware labels. Defaults to true. */
+  gpuLogos?: boolean;
 }
 
 const VARIANT_CLASS: Record<DownloadCardProps["variant"], string> = {
-  "bluefin":      styles.cardBluefin,
-  "bluefin-lts":  styles.cardLts,
-  "bluefin-gdx":  styles.cardGdx,
-  "dakotaraptor": styles.cardDakota,
+  bluefin: styles.cardBluefin,
+  dakotaraptor: styles.cardDakota,
 };
 
 const LOGO_MAP: Record<string, { src: string; alt: string }> = {
-  amd:     { src: "/img/gpu/amd.svg",    alt: "AMD" },
-  intel:   { src: "/img/gpu/intel.svg",  alt: "Intel" },
-  nvidia:  { src: "/img/gpu/nvidia.svg", alt: "NVIDIA" },
-  arm:     { src: "/img/gpu/arm.svg",    alt: "ARM" },
-  aarch64: { src: "/img/gpu/arm.svg",    alt: "ARM" },
+  amd: { src: "/img/gpu/amd.svg", alt: "AMD" },
+  intel: { src: "/img/gpu/intel.svg", alt: "Intel" },
+  nvidia: { src: "/img/gpu/nvidia.svg", alt: "NVIDIA" },
+  arm: { src: "/img/gpu/arm.svg", alt: "ARM" },
+  aarch64: { src: "/img/gpu/arm.svg", alt: "ARM" },
 };
 
 function logoForPart(part: string) {
@@ -43,15 +43,17 @@ function logoForPart(part: string) {
   return key ? LOGO_MAP[key] : null;
 }
 
-function GpuLabel({ label }: { label: string }) {
+function GpuLabel({ label, logos }: { label: string; logos: boolean }) {
   const parts = label.split(" / ");
   return (
     <div className={styles.gpuLabel}>
       {parts.map((part) => {
-        const logo = logoForPart(part);
+        const logo = logos ? logoForPart(part) : null;
         return (
           <span key={part} className={styles.gpuLine}>
-            {logo && <img src={logo.src} alt={logo.alt} className={styles.gpuLogo} />}
+            {logo && (
+              <img src={logo.src} alt={logo.alt} className={styles.gpuLogo} />
+            )}
             <span>{part}</span>
           </span>
         );
@@ -60,14 +62,20 @@ function GpuLabel({ label }: { label: string }) {
   );
 }
 
-function EntryRow({ entry }: { entry: DownloadEntry }) {
+function EntryRow({
+  entry,
+  gpuLogos,
+}: {
+  entry: DownloadEntry;
+  gpuLogos: boolean;
+}) {
   return (
     <div className={styles.entry}>
       <div className={styles.entryFilename}>
         <span className={styles.isoName}>{entry.isoFilename}</span>
       </div>
       <div className={styles.entryGpu}>
-        <GpuLabel label={entry.label} />
+        <GpuLabel label={entry.label} logos={gpuLogos} />
       </div>
       <div className={styles.entryButtons}>
         <a
@@ -82,9 +90,7 @@ function EntryRow({ entry }: { entry: DownloadEntry }) {
             🧲 Torrent
           </a>
         ) : (
-          <span className={styles.secondaryLinkDisabled}>
-            🧲 Torrent
-          </span>
+          <span className={styles.secondaryLinkDisabled}>🧲 Torrent</span>
         )}
         <a href={entry.checksumUrl} className={styles.secondaryLink}>
           🔐 Verify
@@ -94,25 +100,35 @@ function EntryRow({ entry }: { entry: DownloadEntry }) {
   );
 }
 
-const DownloadCard: React.FC<DownloadCardProps> = ({ variant, title, description, entries, sections, recommended }) => (
+const DownloadCard: React.FC<DownloadCardProps> = ({
+  variant,
+  title,
+  description,
+  entries,
+  sections,
+  recommended,
+  gpuLogos = true,
+}) => (
   <article className={`${styles.card} ${VARIANT_CLASS[variant]}`}>
     <div className={styles.cardHeader}>
       <div className={styles.titleRow}>
         <h2 className={styles.cardTitle}>{title}</h2>
-        {recommended && <span className={styles.recommendedBadge}>Recommended</span>}
+        {recommended && (
+          <span className={styles.recommendedBadge}>Recommended</span>
+        )}
       </div>
       <p className={styles.cardDescription}>{description}</p>
     </div>
 
     <div className={styles.entries}>
       {entries.map((entry) => (
-        <EntryRow key={entry.label} entry={entry} />
+        <EntryRow key={entry.label} entry={entry} gpuLogos={gpuLogos} />
       ))}
       {sections?.map((section) => (
         <div key={section.label} className={styles.section}>
           <div className={styles.sectionLabel}>{section.label}</div>
           {section.entries.map((entry) => (
-            <EntryRow key={entry.label} entry={entry} />
+            <EntryRow key={entry.label} entry={entry} gpuLogos={gpuLogos} />
           ))}
         </div>
       ))}

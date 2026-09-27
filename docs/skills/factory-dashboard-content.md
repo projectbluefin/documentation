@@ -48,9 +48,9 @@ Panel titles and summaries must follow [`/press-kit`](/press-kit). In practice:
   "immutable desktop" — the press kit bans it, and there is no such thing as an
   "immutable desktop". Bluefin is a bootc image / a cloud-native operating
   system.
-- The peers shown in the ecosystem and Flathub comparisons — Bluefin, Bluefin
-  LTS, Aurora, Bazzite — are Universal Blue **cloud-native desktops** (or just
-  "images"). Fedora is the shared base they build on, not a peer image.
+- The peers shown in the ecosystem and Flathub comparisons — Bluefin, Aurora,
+  Bazzite — are Universal Blue **cloud-native desktops** (or just "images").
+  Fedora is the shared base they build on, not a peer image.
 - Do not invent grouping terms. "peer immutable distributions" was made up;
   "peer cloud-native desktops" is accurate.
 
@@ -256,24 +256,15 @@ Driven by the catalogue, it keeps its row and the cell reads `—`.
 
 **The catalogue is derived from each repository's `execute-release.yml`
 promotion matrix — not from `common` → `docs/skills/image-registry.md`.** That
-file is a convenient summary and it was wrong on three counts when this chart
-was built against it:
-
-- It claims `bluefin-lts` promotes `:testing` → `:lts` with `:stable` as a
-  floating alias. Every repo's release workflow targets `stable`. There is no
-  `:lts` promotion, so an `:lts` column is a column of dashes.
-- It lists `bluefin-lts-hwe` and `bluefin-lts-hwe-nvidia` as live. They answer
-  in the registry but appear in no promotion matrix — they are retired, and
-  charting them as lanes shows two permanently-stale rows that nobody owns.
-- It omits `bluefin-lts-nvidia`, `dakota-gaming` and `dakota-nvidia-gaming`
-  entirely. All three are promoted; none could appear on the dashboard, because
-  `FALLBACK_LANES` in `scripts/fetch-ghcr-packages.js` had been written from the
-  same summary.
+file is a convenient summary and it was wrong when this chart was built against
+it: it omitted `dakota-gaming` and `dakota-nvidia-gaming` entirely. Both are
+promoted; neither could appear on the dashboard, because `FALLBACK_LANES` in
+`scripts/fetch-ghcr-packages.js` had been written from the same summary.
 
 Re-derive before editing either list:
 
 ```bash
-for r in bluefin bluefin-lts dakota; do
+for r in bluefin dakota; do
   gh api "repos/projectbluefin/$r/contents/.github/workflows/execute-release.yml" \
     --jq .content | base64 -d | grep -E '"image"'
 done
@@ -292,8 +283,8 @@ however correct the component is. `scripts/fetch-ghcr-packages.test.js` pins
 
 Two more distinctions the matrix keeps straight:
 
-- **Retired tags stay out of the columns.** `:latest`, `:gts` and `:lts` still
-  sit on some images from older schemes. They are named in the panel note and
+- **Retired tags stay out of the columns.** `:latest` and `:gts` still sit on
+  some images from older schemes. They are named in the panel note and
   the retired images are named on their family card.
 - **Bluefin Server ships a DDI**, not a container tag, so it is a counted family
   with no row in the OCI matrix at all — `delivery: "ddi"` marks it.

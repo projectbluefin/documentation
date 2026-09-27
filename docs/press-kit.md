@@ -19,7 +19,6 @@ The name of the project is `Project Bluefin` but usually shortened to just `Blue
 
 - `Bluefin` - used to refer to the project and/or the operating system
 - `Bluefin DX` - Bluefin with developer mode turned on, relevant when discussing developer-specific features
-- `Bluefin GDX` - Bluefin with developer mode turned on, and Nvidia specific tooling like CUDA. Relevant when discussing AI-specific features
 
 ## Incorrect Usage
 

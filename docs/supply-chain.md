@@ -16,7 +16,7 @@ Bluefin uses two signing methods depending on the image. The authoritative table
 | Paradigm                    | Images                                                              | Verification                                |
 | --------------------------- | ------------------------------------------------------------------- | ------------------------------------------- |
 | **Key-based**               | Bluefin Classic (`ghcr.io/ublue-os/bluefin`, `bluefin-nvidia-open`) | `cosign verify` with repo public key        |
-| **Keyless (OIDC/Sigstore)** | Bluefin LTS, all Dakota, all Utah                                   | `cosign verify` with Rekor transparency log |
+| **Keyless (OIDC/Sigstore)** | All Dakota, all Utah                                                | `cosign verify` with Rekor transparency log |
 
 ### Verify Bluefin Classic (key-based)
 
@@ -31,14 +31,6 @@ Classic still publishes legacy `.sig` tags, which only cosign v2.x can read. On 
 
 :::
 
-### Verify an LTS image (keyless)
-
-```bash
-cosign verify ghcr.io/projectbluefin/bluefin-lts:stable \
-  --certificate-identity-regexp="^https://github.com/projectbluefin/bluefin-lts/.github/workflows/" \
-  --certificate-oidc-issuer=https://token.actions.githubusercontent.com
-```
-
 ### Verify Dakota (keyless)
 
 ```bash
@@ -51,7 +43,7 @@ Substitute your specific tag (e.g. `stable-20260501`) for `stable` to pin to a k
 
 ## SLSA provenance
 
-Bluefin Classic and Dakota publish [SLSA v1](https://slsa.dev/provenance/v1) provenance attestations alongside the image in GHCR. Provenance is always verified keylessly through the signing repo's GitHub Actions OIDC identity, even for a key-signed image like Classic. LTS and Utah do not publish provenance yet. The [Driver Versions](/driver-versions) page shows per-stream attestation status verified nightly.
+Bluefin Classic and Dakota publish [SLSA v1](https://slsa.dev/provenance/v1) provenance attestations alongside the image in GHCR. Provenance is always verified keylessly through the signing repo's GitHub Actions OIDC identity, even for a key-signed image like Classic. Utah does not publish provenance yet. The [Driver Versions](/driver-versions) page shows per-stream attestation status verified nightly.
 
 Fetch and inspect provenance:
 

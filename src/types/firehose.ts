@@ -55,7 +55,6 @@ export type FirehoseAppSet = "core" | "dx" | string;
 export interface FirehoseOsInfo {
   stream?: string;
   fedoraVersion?: string;
-  centosVersion?: string;
   buildNumber?: string;
   commitHash?: string;
   imageName?: string;

@@ -86,13 +86,6 @@
   opacity: 0.16;
 }
 
-.cardArtworkLts {
-  background-image:
-    linear-gradient(135deg, rgba(92, 61, 30, 0.04), rgba(92, 61, 30, 0.12)),
-    url("/img/characters/achillobator.webp");
-  opacity: 0.2;
-}
-
 .feedItemHeader {
   display: flex;
   align-items: baseline;
@@ -175,11 +168,6 @@
 
 .feedLabelBluefin {
   background: #0057b8;
-  color: #ffffff;
-}
-
-.feedLabelLts {
-  background: #5c3d1e;
   color: #ffffff;
 }
 
@@ -375,7 +363,8 @@
 .headsUpBlock {
   background: color-mix(in srgb, var(--ifm-color-warning) 22%, transparent);
   border-left: 4px solid var(--ifm-color-warning-dark);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ifm-color-warning) 30%, transparent);
+  box-shadow: inset 0 0 0 1px
+    color-mix(in srgb, var(--ifm-color-warning) 30%, transparent);
   border-radius: 0 4px 4px 0;
   padding: 0.45rem 0.65rem;
   position: relative;
@@ -478,7 +467,9 @@
 }
 
 .contributorAvatar {
-  transition: border-color 0.15s ease, transform 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    transform 0.15s ease;
 }
 
 /* Responsive design */

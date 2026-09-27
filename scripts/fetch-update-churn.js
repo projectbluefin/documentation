@@ -4,7 +4,7 @@
  *
  * Automated data pipeline tracking release-over-release update churn,
  * layer reuse efficiency, chunk counts, and zstd compression statistics
- * for Project Bluefin stable release images (Bluefin, Bluefin LTS, Dakota, Utah).
+ * for Project Bluefin stable release images (Bluefin, Dakota, Utah).
  *
  * Produces static/data/update-churn.json consumed by /analytics.
  *
@@ -51,22 +51,6 @@ const IMAGE_CONFIGS = [
       "stable-daily-20260531",
       "stable-daily-20260604",
       "stable-daily-20260606",
-      "stable",
-    ],
-  },
-  {
-    id: "bluefin-lts",
-    name: "Bluefin LTS",
-    edition: "Enterprise Workstation",
-    repo: "projectbluefin/bluefin-lts",
-    package: "bluefin-lts",
-    stream: "stable",
-    sbomStreamId: "bluefin-lts",
-    defaultTags: [
-      "lts.20260530",
-      "lts.20260531",
-      "lts.20260602",
-      "10-20260606",
       "stable",
     ],
   },
@@ -361,8 +345,8 @@ async function main() {
       config;
 
     // Collect tags from config + SBOM cache.
-    // For streams that publish dated tags (e.g. Bluefin Classic, LTS), SBOM releases
-    // are actual registry tags (stable-YYYYMMDD, lts.YYYYMMDD). For streams whose releases
+    // For streams that publish dated tags (e.g. Bluefin Classic), SBOM releases
+    // are actual registry tags (stable-YYYYMMDD). For streams whose releases
     // use floating tags (Dakota, Utah), use the entry's actual image tag or floating stream.
     const tagsToInspect = [...defaultTags];
     if (sbomCache?.streams?.[sbomStreamId]?.releases) {
@@ -483,11 +467,6 @@ if (require.main === module) {
       stateReason: err.message,
       images: {
         bluefin: { unavailable: true, stateReason: err.message, releases: [] },
-        "bluefin-lts": {
-          unavailable: true,
-          stateReason: err.message,
-          releases: [],
-        },
         dakota: { unavailable: true, stateReason: err.message, releases: [] },
         utah: { unavailable: true, stateReason: err.message, releases: [] },
       },

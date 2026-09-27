@@ -107,7 +107,7 @@ Measuring release-over-release download deltas, chunkah layer reuse efficiency, 
   `src/components/analytics/ImageChurnCharts.module.css`.
 - `npm run typecheck` passes with 0 errors.
 - `npm run lint` passes with 0 errors.
-- `static/data/update-churn.json` carries a valid `generatedAt` timestamp and contains entries for all four images (`bluefin`, `bluefin-lts`, `dakota`, `utah`).
+- `static/data/update-churn.json` carries a valid `generatedAt` timestamp and contains entries for all three images (`bluefin`, `dakota`, `utah`).
 
 ## Sources
 

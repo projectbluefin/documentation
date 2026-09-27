@@ -9,7 +9,6 @@ const {
   rowFromSbomRelease,
   buildStreamFromSbom,
   buildNvidiaMapFromSbomStream,
-  buildLtsNvidiaByTagFromSbom,
   resolveCompanionNvidia,
   handleUnavailableCache,
   cacheAgeHours,
@@ -133,49 +132,6 @@ test("buildStreamFromSbom sorts newest-first and marks source sbom", () => {
   assert.equal(stream.latest?.versions.kernel, "6.18.13-200");
 });
 
-test("buildStreamFromSbom resolves Bluefin LTS HWE companion kernel with stable-hwe prefix", () => {
-  const cache = {
-    streams: {
-      "bluefin-lts": {
-        releases: {
-          "stable-20260908": {
-            tag: "stable-20260908",
-            packageVersions: {
-              kernel: "6.12.0-224.el10",
-              mesa: "25.3.6-6",
-              gnome: "49.5-1",
-            },
-          },
-        },
-      },
-      "bluefin-lts-hwe": {
-        releases: {
-          "stable-hwe-20260908": {
-            tag: "stable-hwe-20260908",
-            packageVersions: {
-              kernel: "6.18.13-200.fc43",
-            },
-          },
-        },
-      },
-    },
-  };
-
-  const stream = buildStreamFromSbom(
-    "bluefin-lts",
-    "Bluefin LTS",
-    "Long-term support stream.",
-    "sudo bootc switch ghcr.io/projectbluefin/bluefin-lts:stable --enforce-container-sigpolicy",
-    cache,
-    {},
-    9999,
-    "bluefin-lts-hwe",
-  );
-
-  assert.equal(stream.latest?.versions.kernel, "6.12.0-224.el10");
-  assert.equal(stream.latest?.versions.hweKernel, "6.18.13-200.fc43");
-});
-
 test("buildStreamFromSbom builds Utah testing stream", () => {
   const cache = {
     streams: {
@@ -230,35 +186,6 @@ test("handleUnavailableCache writes an explicit fallback", () => {
   }
 });
 
-test("buildLtsNvidiaByTagFromSbom prefers the dedicated LTS NVIDIA stream", () => {
-  const cache = {
-    streams: {
-      "bluefin-lts-nvidia": {
-        org: "projectbluefin",
-        package: "bluefin-lts-nvidia",
-        releases: {
-          "lts-20260502": {
-            tag: "lts-20260502",
-            packageVersions: { nvidia: "595.71.05" },
-          },
-        },
-      },
-      "bluefin-gdx-lts": {
-        releases: {
-          "lts-20260502": {
-            tag: "lts-20260502",
-            packageVersions: { nvidia: "570.144.03" },
-          },
-        },
-      },
-    },
-  };
-
-  const map = buildLtsNvidiaByTagFromSbom(cache);
-
-  assert.equal(map["lts-20260502"], "595.71.05");
-});
-
 test("buildNvidiaMapFromSbomStream builds nvidia map from bluefin-nvidia-open-stable", () => {
   const cache = {
     streams: {
@@ -303,16 +230,12 @@ test("isValidCachedOutput rejects a cache missing an SBOM-backed stream", () => 
   const sbomCache = {
     streams: {
       "bluefin-stable": { releases: { "stable-20260906": {} } },
-      "bluefin-lts": { releases: { "lts-20260906": {} } },
       "utah-testing": { releases: { "testing-20260906": {} } },
     },
   };
   const cachedOutput = {
     generatedAt: new Date().toISOString(),
-    streams: [
-      { id: "bluefin-stable", source: "sbom" },
-      { id: "bluefin-lts", source: "sbom" },
-    ],
+    streams: [{ id: "bluefin-stable", source: "sbom" }],
   };
 
   assert.equal(isValidCachedOutput(cachedOutput, sbomCache), false);
@@ -322,14 +245,13 @@ test("isValidCachedOutput rejects a cache containing a non-SBOM stream", () => {
   const sbomCache = {
     streams: {
       "bluefin-stable": { releases: { "stable-20260906": {} } },
-      "bluefin-lts": { releases: { "lts-20260906": {} } },
     },
   };
   const cachedOutput = {
     generatedAt: new Date().toISOString(),
     streams: [
       { id: "bluefin-stable", source: "sbom" },
-      { id: "bluefin-lts", source: "github" },
+      { id: "utah-testing", source: "github" },
     ],
   };
 
@@ -422,11 +344,6 @@ test("driver rows never borrow NVIDIA from another release date or family", () =
           "stable-20260921": { packageVersions: { nvidia: "595.1" } },
         },
       },
-      "bluefin-lts": {
-        releases: {
-          "stable-20260922": { packageVersions: { kernel: "6.12.1" } },
-        },
-      },
     },
   };
   const companion = buildNvidiaMapFromSbomStream(
@@ -438,7 +355,6 @@ test("driver rows never borrow NVIDIA from another release date or family", () =
       .latest.versions.nvidia,
     null,
   );
-  assert.deepEqual(buildLtsNvidiaByTagFromSbom(cache), {});
   assert.equal(
     rowFromSbomRelease(
       "bluefin-stable",
@@ -472,7 +388,6 @@ test("driver cache rejects retired Dakota mapping", () => {
       {
         streams: [
           { id: "bluefin-stable", source: "sbom" },
-          { id: "bluefin-lts", source: "sbom" },
           { id: "dakota-latest", source: "sbom" },
         ],
       },
@@ -504,11 +419,6 @@ test("driver cache preserves only mapped SBOM-derived streams", () => {
         id: "bluefin-stable",
         source: "sbom",
         imageRef: "ghcr.io/ublue-os/bluefin:stable",
-      },
-      {
-        id: "bluefin-lts",
-        source: "sbom",
-        imageRef: "ghcr.io/projectbluefin/bluefin-lts:stable",
       },
       {
         id: "dakota-stable",

@@ -122,23 +122,20 @@ export function parseCount(val: unknown): number | null {
 /**
  * The promotion axis, in promotion order.
  *
- * Read from source, not from `projectbluefin/common` →
- * `docs/skills/image-registry.md`, which still claims `bluefin-lts` promotes to
- * `:lts`. Every repo's `execute-release.yml` targets `stable`:
+ * Read from source: every repo's `execute-release.yml` targets `stable`:
  *
  *   bluefin      {"source_tag":"testing","target_tag":"stable"}
- *   bluefin-lts  {"source_tag":"testing","target_tag":"stable"}
  *   dakota       {"source_tag":"<build sha>","target_tag":"stable"}
  *
- * `:lts`, `:gts` and `:latest` still sit on some images as leftovers from
- * retired schemes. Nothing promotes through them, so they are not columns — a
+ * `:gts` and `:latest` still sit on some images as leftovers from retired
+ * schemes. Nothing promotes through them, so they are not columns — a
  * column that is a dash down most of the grid teaches nobody anything.
  */
 export const STREAM_COLUMNS = ["testing", "stable"] as const;
 export type StreamTag = (typeof STREAM_COLUMNS)[number];
 
 export interface ProjectBluefinImageSpec {
-  id: "bluefin" | "bluefin-lts" | "dakota" | "utah" | "server";
+  id: "bluefin" | "dakota" | "utah" | "server";
   name: string;
   edition: string;
   /** Upstream the image is composed from. */
@@ -150,8 +147,6 @@ export interface ProjectBluefinImageSpec {
   statusText: string;
   /** GHCR packages this family promotes, in release-workflow order. */
   images: string[];
-  /** Packages still in the registry that no release workflow promotes. */
-  retired?: string[];
   /** `oci` families appear in the stream matrix; `ddi` families ship no container tags. */
   delivery: "oci" | "ddi";
 }
@@ -161,13 +156,11 @@ export interface ProjectBluefinImageSpec {
  * each one promotes.
  *
  * **Derived from each repo's `execute-release.yml` promotion matrix, not from
- * `common` → `docs/skills/image-registry.md`.** That file was the source here
- * and it is wrong on three counts: it claims `bluefin-lts` promotes to `:lts`,
- * it lists the retired `-hwe` images as live, and it omits `bluefin-lts-nvidia`
- * and both dakota gaming images entirely. Re-derive before editing this list:
+ * `common` → `docs/skills/image-registry.md`**, which omits both dakota gaming
+ * images. Re-derive before editing this list:
  *
  * ```bash
- * for r in bluefin bluefin-lts dakota; do
+ * for r in bluefin dakota; do
  *   gh api "repos/projectbluefin/$r/contents/.github/workflows/execute-release.yml" \
  *     --jq .content | base64 -d | grep -E '"image"'
  * done
@@ -186,19 +179,6 @@ export const BLUEFIN_FAMILY_IMAGES: ProjectBluefinImageSpec[] = [
     status: "active",
     statusText: "Active Tracking",
     images: ["bluefin", "bluefin-nvidia"],
-    delivery: "oci",
-  },
-  {
-    id: "bluefin-lts",
-    name: "Bluefin LTS",
-    edition: "Enterprise Workstation",
-    base: "CentOS Stream 10",
-    cat: 1,
-    link: "/lts",
-    status: "active",
-    statusText: "Active · EPEL",
-    images: ["bluefin-lts", "bluefin-lts-nvidia"],
-    retired: ["bluefin-lts-hwe", "bluefin-lts-hwe-nvidia"],
     delivery: "oci",
   },
   {
@@ -755,9 +735,9 @@ export default function CountmeAnalyticsCharts({
           <strong>Streams:</strong> every image promotes <code>:testing</code>{" "}
           &rarr; <code>:stable</code>, which is the whole axis. Read from each
           repository&rsquo;s <code>execute-release.yml</code> promotion matrix.
-          The <code>:lts</code>, <code>:gts</code> and <code>:latest</code> tags
-          still sit on some images as leftovers from retired schemes; nothing
-          promotes through them, so they are not columns here.
+          The <code>:gts</code> and <code>:latest</code> tags still sit on some
+          images as leftovers from retired schemes; nothing promotes through
+          them, so they are not columns here.
         </p>
       </section>
 
@@ -837,17 +817,6 @@ export default function CountmeAnalyticsCharts({
                     </li>
                   ))
                 )}
-                {img.retired?.length ? (
-                  <li className={styles.variantEmpty}>
-                    Retired, still in the registry:{" "}
-                    {img.retired.map((name, i) => (
-                      <React.Fragment key={name}>
-                        {i > 0 && ", "}
-                        <code>{name}</code>
-                      </React.Fragment>
-                    ))}
-                  </li>
-                ) : null}
               </ul>
 
               <div className={styles.familyFooter}>

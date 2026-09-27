@@ -83,7 +83,6 @@ Bluefin is a combination of a set of configuration OCI containers which are then
 ### Images
 
 - Bluefin: [@projectbluefin/bluefin](https://github.com/projectbluefin/bluefin) - Fedora-based workstation OCI image
-- Bluefin LTS: [@projectbluefin/bluefin-lts](https://github.com/projectbluefin/bluefin-lts) - CentOS Stream 10-based workstation OCI image
 - Dakota: [@projectbluefin/dakota](https://github.com/projectbluefin/dakota) - GNOME OS / Apache BuildStream distroless workstation
 - Utah: [@projectbluefin/utah](https://github.com/projectbluefin/utah) - Fedora Hummingbird with GNOME 51 desktop stack
 - Bluefin Server: [@projectbluefin/server](https://github.com/projectbluefin/server) - FSDK-based DDI-first server OS
@@ -106,35 +105,29 @@ flowchart TB
 
     subgraph base["Base Environments"]
         fedora["<strong>Fedora bootc</strong><br/>Workstation Base"]
-        centos["<strong>CentOS Stream 10</strong><br/>Enterprise Base"]
         gnome_base["<strong>GNOME OS</strong><br/>BuildStream Elements"]
         hummingbird["<strong>Fedora Hummingbird</strong><br/>Minimal Base"]
     end
 
     subgraph images["Target Images"]
         bluefin["Bluefin<br/>:stable / :testing"]
-        lts["Bluefin LTS<br/>:lts / :lts-hwe / bluefin-gdx"]
         dakota["Dakota<br/>:stable / :testing / :next"]
         utah["Utah<br/>:testing (GNOME 51)"]
     end
 
     common --> fedora
-    common --> centos
     common --> gnome_base
     common --> hummingbird
 
     branding --> fedora
-    branding --> centos
     branding --> gnome_base
     branding --> hummingbird
 
     artwork --> fedora
-    artwork --> centos
     artwork --> gnome_base
     artwork --> hummingbird
 
     fedora --> bluefin
-    centos --> lts
     gnome_base --> dakota
     hummingbird --> utah
 

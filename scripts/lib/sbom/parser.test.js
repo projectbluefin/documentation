@@ -9,7 +9,7 @@ const {
   stripEpoch,
   stripRpmRelease,
   extractDateFromTag,
-  normaliseLtsTag,
+  normaliseDottedTag,
   matchesStreamTag,
   buildCacheKey,
   findRecentTagsForStream,
@@ -120,13 +120,13 @@ test("stripRpmRelease is a no-op when there is no release suffix", () => {
 });
 
 // ---------------------------------------------------------------------------
-// extractDateFromTag / normaliseLtsTag / buildCacheKey
+// extractDateFromTag / normaliseDottedTag / buildCacheKey
 // ---------------------------------------------------------------------------
 
 test("extractDateFromTag pulls the trailing YYYYMMDD after a dash or dot", () => {
   assert.equal(extractDateFromTag("stable-20260331"), "20260331");
-  assert.equal(extractDateFromTag("lts.20260331"), "20260331");
-  assert.equal(extractDateFromTag("lts-hwe-testing-20260331"), "20260331");
+  assert.equal(extractDateFromTag("latest.20260331"), "20260331");
+  assert.equal(extractDateFromTag("stable-testing-50-20260331"), "20260331");
 });
 
 test("extractDateFromTag returns null when there is no trailing date", () => {
@@ -135,21 +135,21 @@ test("extractDateFromTag returns null when there is no trailing date", () => {
   assert.equal(extractDateFromTag("stable-20260331-hwe"), null);
 });
 
-test("normaliseLtsTag converts the dot separator to a dash for lts and latest", () => {
-  assert.equal(normaliseLtsTag("lts.20260331"), "lts-20260331");
-  assert.equal(normaliseLtsTag("lts.20260331-hwe"), "lts-20260331-hwe");
-  assert.equal(normaliseLtsTag("lts-hwe.20260501"), "lts-hwe-20260501");
-  assert.equal(normaliseLtsTag("latest.20260501"), "latest-20260501");
+test("normaliseDottedTag converts the dot separator to a dash for latest", () => {
+  assert.equal(normaliseDottedTag("latest.20260501"), "latest-20260501");
 });
 
-test("normaliseLtsTag leaves unrelated tags untouched", () => {
-  assert.equal(normaliseLtsTag("stable.20260331"), "stable.20260331");
-  assert.equal(normaliseLtsTag("lts-20260331"), "lts-20260331");
+test("normaliseDottedTag leaves unrelated tags untouched", () => {
+  assert.equal(normaliseDottedTag("stable.20260331"), "stable.20260331");
+  assert.equal(normaliseDottedTag("latest-20260331"), "latest-20260331");
 });
 
 test("buildCacheKey joins the stream prefix and date with a dash", () => {
   assert.equal(buildCacheKey("stable", "20260331"), "stable-20260331");
-  assert.equal(buildCacheKey("lts-hwe", "20260501"), "lts-hwe-20260501");
+  assert.equal(
+    buildCacheKey("stable-daily", "20260501"),
+    "stable-daily-20260501",
+  );
 });
 
 // ---------------------------------------------------------------------------
@@ -201,18 +201,18 @@ test("findRecentTagsForStream sorts newest first and deduplicates by cache key",
   );
 });
 
-test("findRecentTagsForStream normalises lts dot tags before matching", () => {
+test("findRecentTagsForStream normalises latest dot tags before matching", () => {
   const recent = daysAgoTag(3);
-  const found = findRecentTagsForStream([`lts.${recent}`], {
-    streamPrefix: "lts",
+  const found = findRecentTagsForStream([`latest.${recent}`], {
+    streamPrefix: "latest",
     org: "ublue-os",
-    package: "bluefin-lts",
+    package: "bluefin",
   });
 
   assert.equal(found.length, 1);
-  assert.equal(found[0].tag, `lts-${recent}`);
+  assert.equal(found[0].tag, `latest-${recent}`);
   // imageRef must keep the original (un-normalised) tag so the pull works.
-  assert.equal(found[0].imageRef, `ghcr.io/ublue-os/bluefin-lts:lts.${recent}`);
+  assert.equal(found[0].imageRef, `ghcr.io/ublue-os/bluefin:latest.${recent}`);
 });
 
 test("findRecentTagsForStream honours SBOM_MAX_RELEASES", () => {

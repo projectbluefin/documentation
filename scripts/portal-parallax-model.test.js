@@ -128,7 +128,7 @@ test("hero raptor selector resolves seasonal overrides and random variants", () 
     DEFAULT_HERO_RAPTOR_SRC,
     "/img/portal/characters/header/bluefin-small.webp",
   );
-  assert.equal(HERO_RAPTOR_VARIANTS.length, 12);
+  assert.equal(HERO_RAPTOR_VARIANTS.length, 11);
   assert.ok(
     HERO_RAPTOR_VARIANTS.includes(
       "/img/portal/characters/header/bluefin-small.webp",

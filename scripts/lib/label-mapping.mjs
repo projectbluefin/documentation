@@ -153,7 +153,14 @@ const TITLE_PATTERNS = {
     /qemu/i,
     /\bvm\b/i,
   ],
-  Ecosystem: [/flatpak/i, /bazaar/i, /flathub/i, /homebrew/i, /\bbrew\b/i, /\bdistrobox\b/i],
+  Ecosystem: [
+    /flatpak/i,
+    /bazaar/i,
+    /flathub/i,
+    /homebrew/i,
+    /\bbrew\b/i,
+    /\bdistrobox\b/i,
+  ],
   "System Services & Policies": [
     /systemd/i,
     /service/i,
@@ -180,7 +187,6 @@ const REPO_CATEGORY_MAP = {
   "projectbluefin/common": "Infrastructure",
   "projectbluefin/finpilot": "Development",
   "projectbluefin/bluefin": "Infrastructure",
-  "projectbluefin/bluefin-lts": "Infrastructure",
   "ublue-os/homebrew-tap": "Ecosystem",
   "ublue-os/homebrew-experimental-tap": "Ecosystem",
   "ublue-os/artwork": "Desktop",

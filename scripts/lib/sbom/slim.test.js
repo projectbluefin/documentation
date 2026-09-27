@@ -30,9 +30,9 @@ const streams = {
       },
     },
   },
-  "bluefin-lts": {
+  dakota: {
     releases: {
-      "lts-x86_64": {
+      "stable-x86_64": {
         packageVersions: { kernel: "6.12.8-300" },
       },
     },
@@ -63,7 +63,7 @@ test("it keeps the named versions the frontend actually needs", () => {
 
 test("it preserves the stream shape and sibling release fields", () => {
   const out = buildSlimFrontendStreams(streams);
-  assert.deepEqual(Object.keys(out), ["bluefin", "bluefin-lts"]);
+  assert.deepEqual(Object.keys(out), ["bluefin", "dakota"]);
   assert.equal(out.bluefin.releases["latest-x86_64"].extra, "keep-me");
   assert.deepEqual(Object.keys(out.bluefin.releases), [
     "latest-x86_64",

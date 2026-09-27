@@ -46,14 +46,6 @@ test("key-based repos declare a cosignKeyUrl and keyless repos do not", () => {
   }
 });
 
-test("LTS trust is keyless via OIDC", () => {
-  assert.strictEqual(SIGNING_TRUST["projectbluefin/bluefin-lts"].keyless, true);
-  assert.strictEqual(
-    SIGNING_TRUST["projectbluefin/bluefin-lts"].cosignKeyUrl,
-    null,
-  );
-});
-
 // --- drift gates: both consumers must resolve through the shared table ------
 
 test("every STREAM_SPECS keyRepo has a declared trust policy", () => {

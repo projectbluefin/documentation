@@ -3,7 +3,6 @@ const path = require("path");
 const sanitizeHtml = require("sanitize-html");
 const {
   buildNvidiaMapFromSbomStream,
-  buildLtsNvidiaByTagFromSbom,
   resolveCompanionNvidia,
 } = require("./fetch-github-driver-versions.js");
 
@@ -102,7 +101,7 @@ const CACHE_MAX_AGE_HOURS = Number(process.env.FIREHOSE_CACHE_HOURS ?? 6);
 
 /**
  * SBOM stream ID → OS entry metadata mapping.
- * Only stable and lts are surfaced as OS release cards.
+ * Only stable is surfaced as an OS release card.
  * "latest" is a rolling edge stream — not shown as a discrete release.
  */
 const OS_STREAM_SPECS = [
@@ -113,16 +112,6 @@ const OS_STREAM_SPECS = [
     summary: "The stable Bluefin release track.",
     imageRef: "ghcr.io/ublue-os/bluefin",
     ghReleasesUrl: "https://github.com/ublue-os/bluefin/releases",
-  },
-  {
-    streamId: "bluefin-lts",
-    appId: "bluefin-os-lts",
-    name: "Bluefin OS (LTS)",
-    summary: "Long-term support Bluefin track.",
-    imageRef: "ghcr.io/projectbluefin/bluefin-lts",
-    ghReleasesUrl: "https://github.com/projectbluefin/bluefin-lts/releases",
-    // LTS does not publish SBOM attestations — OS chip data will be absent.
-    noSbom: true,
   },
 ];
 
@@ -242,8 +231,6 @@ function buildOsApp(spec, sbomCache) {
       sbomCache,
       "bluefin-nvidia-open-stable",
     );
-  } else if (spec.streamId === "bluefin-lts") {
-    nvidiaByTag = buildLtsNvidiaByTagFromSbom(sbomCache);
   }
   // Find the most recent entry that has packageVersions populated
   const latestWithVersions = releases.find((r) => r.packageVersions != null);

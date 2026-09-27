@@ -24,9 +24,9 @@
  * ## Why this is a module and not a paragraph
  *
  * The prose version of this rule has been in `common` for months. In that time
- * `scripts/fetch-countme.js` grew a `NON_FEDORA_VARIANTS` exemption whose only
- * purpose was to sum Bluefin LTS across EPEL repos, and `/analytics` published
- * the result as "Bluefin LTS: 165 systems". A paragraph cannot fail a build.
+ * `scripts/fetch-countme.js` grew a `NON_FEDORA_VARIANTS` exemption that summed
+ * EPEL mirror hits, and `/analytics` published the result as a first-party
+ * population. A paragraph cannot fail a build.
  * `scripts/countme-first-party.test.js` can.
  */
 
@@ -70,7 +70,6 @@ export const PROJECTBLUEFIN_REPOS = Object.freeze(["dakota"]);
  */
 export const BANNED_PROJECTBLUEFIN_REPOS = Object.freeze([
   "bluefin",
-  "bluefin-lts",
   "dakota",
   "utah",
   "server",

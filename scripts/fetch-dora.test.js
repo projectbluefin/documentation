@@ -111,7 +111,6 @@ test("buildPayload assembles the full contract shape", () => {
   assert.equal(payload.windowDays, 365);
   assert.deepEqual(payload.repos, [
     "projectbluefin/bluefin",
-    "projectbluefin/bluefin-lts",
     "projectbluefin/dakota",
   ]);
   assert.equal(payload.unavailable, false);

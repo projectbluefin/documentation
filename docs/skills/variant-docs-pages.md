@@ -8,11 +8,11 @@ one_line_purpose: Author and maintain top-level docs pages for image variants.
 entry_point: docs/skills/variant-docs-pages.md
 category: meta
 status: active
-tags: [variants, pages, dakota, lts, server, utah]
+tags: [variants, pages, dakota, server, utah]
 description: >-
   Author and maintain top-level docs pages for Bluefin image families under
   docs/. Use when adding or updating landing pages for variants like dakota,
-  lts, server, or utah, including sidebar placement and component embedding.
+  server, or utah, including sidebar placement and component embedding.
 metadata:
   type: procedure
 ---
@@ -20,7 +20,7 @@ metadata:
 # Variant docs pages
 
 A "variant page" is the single landing page for one OS image family:
-`/lts`, `/server`, `/dakota`. The reader arrived from the repo README or a
+`/server`, `/dakota`. The reader arrived from the repo README or a
 blog announcement and wants: what is this, how do I get it, what can break.
 
 ## When to Use
@@ -102,6 +102,6 @@ is the filename without extension.
 
 ## Sources
 
-- `docs/dakota.mdx`, `docs/lts.mdx`, `docs/server.mdx`, `docs/utah.mdx`
+- `docs/dakota.mdx`, `docs/server.mdx`, `docs/utah.mdx`
 - `sidebars.ts`
 - [`AGENTS.md`](https://github.com/projectbluefin/documentation/blob/main/AGENTS.md)

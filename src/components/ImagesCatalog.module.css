@@ -47,11 +47,6 @@
   background-image: url("/img/characters/bluefin-small.webp");
 }
 
-.cardLts::after {
-  background-image: url("/img/characters/achillobator.webp");
-  opacity: 1;
-}
-
 .cardDakota::after {
   background-image: url("/img/characters/dakotaraptor.webp");
   opacity: 1;

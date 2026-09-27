@@ -411,19 +411,19 @@ describe("scripts/lib/sbom/api.js", () => {
         assert.deepEqual(args, [
           "verify",
           "--key",
-          "https://raw.githubusercontent.com/projectbluefin/bluefin-lts/main/cosign.pub",
-          "ghcr.io/projectbluefin/bluefin-lts:stable",
+          "https://raw.githubusercontent.com/ublue-os/bluefin/main/cosign.pub",
+          "ghcr.io/ublue-os/bluefin:stable",
         ]);
         return { stdout: "{}", stderr: "" };
       };
       const result = await api.verifyAttestation(
-        "ghcr.io/projectbluefin/bluefin-lts:stable",
+        "ghcr.io/ublue-os/bluefin:stable",
         {
-          keyRepo: "projectbluefin/bluefin-lts",
+          keyRepo: "ublue-os/bluefin",
           keyless: false,
           attestationLive: false,
           cosignKeyUrl:
-            "https://raw.githubusercontent.com/projectbluefin/bluefin-lts/main/cosign.pub",
+            "https://raw.githubusercontent.com/ublue-os/bluefin/main/cosign.pub",
         },
       );
       assert.equal(result.verified, true);
@@ -1035,7 +1035,7 @@ describe("scripts/lib/sbom/api.js", () => {
       execFileHandler = (cmd, args) => {
         if (
           args[1] === "fetch" &&
-          args[2] === "ghcr.io/projectbluefin/bluefin-lts:stable"
+          args[2] === "ghcr.io/ublue-os/bluefin:stable"
         ) {
           return {
             stdout: JSON.stringify({
@@ -1059,7 +1059,7 @@ describe("scripts/lib/sbom/api.js", () => {
         }
         if (
           args[1] === "fetch" &&
-          args[2] === "ghcr.io/projectbluefin/bluefin-lts@sha256:amd64manifest"
+          args[2] === "ghcr.io/ublue-os/bluefin@sha256:amd64manifest"
         ) {
           return {
             stdout: JSON.stringify({
@@ -1074,7 +1074,7 @@ describe("scripts/lib/sbom/api.js", () => {
       };
 
       const dateStr = await api.getImageCreatedDate(
-        "ghcr.io/projectbluefin/bluefin-lts:stable",
+        "ghcr.io/ublue-os/bluefin:stable",
       );
       assert.equal(dateStr, "20260921");
     });

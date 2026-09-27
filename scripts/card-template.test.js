@@ -35,10 +35,8 @@ function baseRelease(overrides = {}) {
   return {
     tag: "stable-20260401",
     fedoraVersion: null,
-    centosVersion: null,
     majorPackages: [],
     dxPackages: [],
-    gdxPackages: [],
     diffStats: null,
     commitCount: 0,
     ...overrides,
@@ -81,7 +79,6 @@ test("W and H are the fixed card dimensions used by the root element", async () 
 test("stream selects the accent colour on the title and left border", async () => {
   const cases = [
     ["stable", "#2f74b5"],
-    ["lts", "#d97706"],
     ["dakota", "#7c3aed"],
     ["unknown-stream", "#2f74b5"],
   ];
@@ -98,7 +95,6 @@ test("stream selects the accent colour on the title and left border", async () =
 
 test("default title is derived from the stream", async () => {
   assert.ok(texts(await render({ stream: "stable" })).includes("Bluefin"));
-  assert.ok(texts(await render({ stream: "lts" })).includes("Bluefin LTS"));
   assert.ok(
     texts(await render({ stream: "dakota" })).includes("Bluefin Dakota"),
   );
@@ -106,10 +102,10 @@ test("default title is derived from the stream", async () => {
 
 test("titleOverride wins over the stream-derived title", async () => {
   const strings = texts(
-    await render({ stream: "lts", titleOverride: "Bluefin LTS 10.1" }),
+    await render({ stream: "dakota", titleOverride: "Dakota 1.0" }),
   );
-  assert.ok(strings.includes("Bluefin LTS 10.1"));
-  assert.ok(!strings.includes("Bluefin LTS"));
+  assert.ok(strings.includes("Dakota 1.0"));
+  assert.ok(!strings.includes("Bluefin Dakota"));
 });
 
 test("dark theme swaps the palette on the card background", async () => {
@@ -135,34 +131,19 @@ test("a positive dateMs renders a UTC long-form date, and 0 renders none", async
 
 test("the release tag is always rendered", async () => {
   const tree = await render({
-    release: baseRelease({ tag: "lts-20260401.1" }),
+    release: baseRelease({ tag: "stable-20260401.1" }),
   });
-  assert.ok(texts(tree).includes("lts-20260401.1"));
+  assert.ok(texts(tree).includes("stable-20260401.1"));
 });
 
-test("base-OS chips appear only for the version fields that are set", async () => {
+test("the Fedora chip appears only when fedoraVersion is set", async () => {
   const none = texts(await render());
   assert.ok(!none.some((s) => s.startsWith("Fedora ")));
-  assert.ok(!none.some((s) => s.startsWith("CentOS ")));
 
   const fedora = texts(
     await render({ release: baseRelease({ fedoraVersion: "43" }) }),
   );
   assert.ok(fedora.includes("Fedora 43"));
-  assert.ok(!fedora.some((s) => s.startsWith("CentOS ")));
-
-  const centos = texts(
-    await render({ release: baseRelease({ centosVersion: "10" }) }),
-  );
-  assert.ok(centos.includes("CentOS 10"));
-
-  const both = texts(
-    await render({
-      release: baseRelease({ fedoraVersion: "43", centosVersion: "10" }),
-    }),
-  );
-  assert.ok(both.includes("Fedora 43"));
-  assert.ok(both.includes("CentOS 10"));
 });
 
 test("header chips are the default HEADER_NAMES intersection, case-insensitively matched", async () => {
@@ -239,7 +220,6 @@ test("missing package arrays are tolerated", async () => {
   const strings = texts(tree);
   assert.ok(strings.includes("stable-20260401"));
   assert.ok(!strings.includes("DX"));
-  assert.ok(!strings.includes("GDX"));
 });
 
 test("DX chips are capped at 6 and labelled", async () => {
@@ -253,21 +233,6 @@ test("DX chips are capped at 6 and labelled", async () => {
   assert.ok(strings.includes("dx-0"));
   assert.ok(strings.includes("dx-5"));
   assert.ok(!strings.includes("dx-6"));
-});
-
-test("GDX chips are capped at 4 and labelled", async () => {
-  const gdxPackages = Array.from({ length: 7 }, (_, i) => ({
-    name: `gdx-${i}`,
-    version: `${i}.0`,
-  }));
-  const strings = texts(
-    await render({ release: baseRelease({ gdxPackages }) }),
-  );
-
-  assert.ok(strings.includes("GDX"));
-  assert.ok(strings.includes("gdx-0"));
-  assert.ok(strings.includes("gdx-3"));
-  assert.ok(!strings.includes("gdx-4"));
 });
 
 test("a chip with prevVersion is highlighted as changed and carries an up arrow", async () => {

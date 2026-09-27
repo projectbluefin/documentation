@@ -183,14 +183,12 @@ function templateRelease(context) {
   return {
     tag: context.tag,
     fedoraVersion: null,
-    centosVersion: null,
     majorPackages: context.components.map((component) => ({
       name: component.label,
       version: component.version,
       prevVersion: component.previous_version,
     })),
     dxPackages: [],
-    gdxPackages: [],
     diffStats: {
       changed: context.change_counts.updated,
       added: context.change_counts.added,

@@ -114,19 +114,6 @@ const REGISTRY_FIXTURE = {
         },
       ],
     },
-    {
-      name: "bluefin-lts-hwe",
-      family: "os",
-      streams: [
-        {
-          tag: "testing",
-          publishedAt: "2026-06-30T01:09:51Z",
-          ageDays: 72,
-          state: "stale",
-          stateReason: "testing lanes are expected to publish within 7 days",
-        },
-      ],
-    },
   ],
   unavailable: false,
   stateReason: null,
@@ -146,7 +133,7 @@ test("parseCount distinguishes 0 from null/undefined", () => {
 
 test("the catalogue names every family common ships into", () => {
   const ids = BLUEFIN_FAMILY_IMAGES.map((img) => img.id);
-  assert.deepEqual(ids, ["bluefin", "bluefin-lts", "dakota", "utah", "server"]);
+  assert.deepEqual(ids, ["bluefin", "dakota", "utah", "server"]);
 });
 
 test("empty count cards say no raptors are reporting, naming no infrastructure", () => {
@@ -173,8 +160,6 @@ test("empty count cards say no raptors are reporting, naming no infrastructure",
 const PROMOTED = [
   "bluefin",
   "bluefin-nvidia",
-  "bluefin-lts",
-  "bluefin-lts-nvidia",
   "dakota",
   "dakota-nvidia",
   "dakota-gaming",
@@ -185,14 +170,8 @@ test("the matrix rows are the images the release workflows promote", () => {
   const { matrixRows, BLUEFIN_FAMILY_IMAGES: families } = mod;
   const images = matrixRows().map((r) => r.image);
 
-  // Each repo's execute-release.yml promotion matrix, verbatim. The -hwe images
-  // are still in the registry but in nobody's matrix, so they are named on the
-  // family card as retired rather than charted as permanently stale lanes.
+  // Each repo's execute-release.yml promotion matrix, verbatim.
   assert.deepEqual(images, PROMOTED);
-
-  const lts = families.find((f) => f.id === "bluefin-lts");
-  assert.deepEqual(lts.retired, ["bluefin-lts-hwe", "bluefin-lts-hwe-nvidia"]);
-  for (const name of lts.retired) assert.ok(!images.includes(name));
 
   // Bluefin Server delivers a DDI, not a container tag, so it has no lane here
   // even though it is a counted family.
@@ -201,7 +180,7 @@ test("the matrix rows are the images the release workflows promote", () => {
 });
 
 test("the promotion axis is testing then stable, and nothing else", () => {
-  // :lts, :gts and :latest linger on some images from retired schemes. A column
+  // :gts and :latest linger on some images from retired schemes. A column
   // that is a dash down most of the grid is not a measurement.
   assert.deepEqual(mod.STREAM_COLUMNS, ["testing", "stable"]);
 });
@@ -225,15 +204,15 @@ test("a retired tag on an image is not mistaken for a promotion lane", () => {
       name: "bluefin",
       family: "os",
       streams: [
-        { tag: "lts", ageDays: 99, state: "stale", publishedAt: null },
+        { tag: "gts", ageDays: 99, state: "stale", publishedAt: null },
         { tag: "testing", ageDays: 1, state: "fresh", publishedAt: null },
       ],
     },
   ]);
 
   assert.ok(
-    !cells.some((c) => c.stream === "lts"),
-    ":lts is not a column, so a stale :lts tag cannot colour the grid",
+    !cells.some((c) => c.stream === "gts"),
+    ":gts is not a column, so a stale :gts tag cannot colour the grid",
   );
   const testing = cells.find(
     (c) => c.image === "bluefin" && c.stream === "testing",

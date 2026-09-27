@@ -88,7 +88,13 @@ describe("retryWithBackoff", () => {
     const err = new Error("Unauthorized");
     err.status = 401;
     await assert.rejects(
-      () => retryWithBackoff(() => { throw err; }, { maxRetries: 3 }),
+      () =>
+        retryWithBackoff(
+          () => {
+            throw err;
+          },
+          { maxRetries: 3 },
+        ),
       (thrown) => thrown.status === 401,
     );
   });
@@ -97,7 +103,13 @@ describe("retryWithBackoff", () => {
     const err = new Error("Forbidden");
     err.status = 403;
     await assert.rejects(
-      () => retryWithBackoff(() => { throw err; }, { maxRetries: 3 }),
+      () =>
+        retryWithBackoff(
+          () => {
+            throw err;
+          },
+          { maxRetries: 3 },
+        ),
       (thrown) => thrown.status === 403,
     );
   });
@@ -172,10 +184,7 @@ describe("sequentialFetchWithDelay", () => {
 
   it("applies default 100ms delay", async () => {
     const start = Date.now();
-    await sequentialFetchWithDelay(
-      ["a", "b"],
-      async (item) => item,
-    );
+    await sequentialFetchWithDelay(["a", "b"], async (item) => item);
     const elapsed = Date.now() - start;
     // Two items → one inter-request delay of ~100ms + one trailing delay
     assert.ok(elapsed >= 150, `Expected ≥150ms, got ${elapsed}ms`);
@@ -240,11 +249,11 @@ describe("githubHeaders", () => {
     const headers = githubHeaders("t", {
       accept: "application/vnd.github.v3+json",
       apiVersion: "2022-11-28",
-      userAgent: "bluefin-docs/fetch-pin-state",
+      userAgent: "bluefin-docs/fetch-feeds",
     });
     assert.equal(headers["accept"], "application/vnd.github.v3+json");
     assert.equal(headers["x-github-api-version"], "2022-11-28");
-    assert.equal(headers["User-Agent"], "bluefin-docs/fetch-pin-state");
+    assert.equal(headers["User-Agent"], "bluefin-docs/fetch-feeds");
     assert.equal(headers["Authorization"], "Bearer t");
   });
 

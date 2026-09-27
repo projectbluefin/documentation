@@ -10,7 +10,6 @@ Bluefin endeavors to ship:
 
 - The world's most powerful [cloud native developer environment](https://landscape.cncf.io/)
 - Full virtualization support centered around QEMU/KVM, as well as support for Docker and Incus
-- [Bluefin GDX](/gdx) variant specifically designed for AI and Machine Learning
 
 :::info[Stronger Together]
 
@@ -62,10 +61,6 @@ Turning on developer mode is a two-step process:
 ![image](/img/user-attachments/76df5201-da02-42d0-bec9-fad259df9b0d.png)
 
 ## Step 2: Add yourself to the right groups
-
-**Bluefin LTS users**: You can skip this step and just reboot.
-
-For other Bluefins:
 
 `ujust dx-group` - to add your user account to the right groups. Then reboot. This step only needs to be done once.
 
@@ -166,14 +161,7 @@ The JetBrains blog also has more information on JetBrains Dev Containers support
 ## Virtualization and Container Runtimes
 
 - [virt-manager](https://virt-manager.org/) and associated tooling (KVM, qemu)
-
-Note: Bluefin LTS users must install the QEMU addon from Bazaar:
-
-![qemu](/img/user-attachments/5b0462d2-2c08-4086-a4ce-c34afa9685c2.png)
-
-or via command line: `flatpak install flathub org.virt_manager.virt_manager org.virt_manager.virt_manager.Extension.Qemu `
-
-- [Incus](https://linuxcontainers.org/incus/) provides system containers (Not available in Bluefin LTS)
+- [Incus](https://linuxcontainers.org/incus/) provides system containers
 
 ## Local Application Development
 

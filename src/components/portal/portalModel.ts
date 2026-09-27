@@ -169,7 +169,6 @@ export function isParallaxVisible(scrollY: number, sceneEnd: number): boolean {
 }
 
 export const HERO_RAPTOR_VARIANTS: readonly string[] = [
-  "/img/portal/characters/header/achillobator.webp",
   "/img/portal/characters/header/angry.webp",
   "/img/portal/characters/header/bluefin-small.webp",
   "/img/portal/characters/header/dakota.webp",

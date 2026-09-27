@@ -10,6 +10,7 @@ export const DakotaSection: React.FC = () => (
     variant="dakotaraptor"
     title="Bluefin Dakotaraptor"
     description="Dakota is in Alpha — take appropriate precautions."
+    gpuLogos={false}
     entries={[
       {
         label: "AMD / Intel + Nvidia (Unified)",
@@ -72,85 +73,6 @@ const DownloadSectionTesting: React.FC = () => (
           isoFilename: "bluefin-nvidia-open-stable-x86_64.iso",
           torrentUrl: `${BASE}/bluefin-nvidia-open-stable-x86_64.iso.torrent`,
           checksumUrl: `${BASE}/bluefin-nvidia-open-stable-x86_64.iso-CHECKSUM`,
-        },
-      ]}
-    />
-
-    <DownloadCard
-      variant="bluefin-lts"
-      title="Bluefin LTS"
-      description={
-        <>
-          The long-term support experience.{" "}
-          <a href="/lts">📖 Read the documentation</a> to learn about features
-          and differences. HWE images include updated kernels — recommended for
-          newer devices.
-        </>
-      }
-      entries={[
-        {
-          label: "AMD / Intel",
-          isoUrl: `${BASE}/bluefin-lts-x86_64.iso`,
-          isoFilename: "bluefin-lts-x86_64.iso",
-          checksumUrl: `${BASE}/bluefin-lts-x86_64.iso-CHECKSUM`,
-        },
-        {
-          label: "ARM (aarch64)",
-          isoUrl: `${BASE}/bluefin-lts-aarch64.iso`,
-          isoFilename: "bluefin-lts-aarch64.iso",
-          checksumUrl: `${BASE}/bluefin-lts-aarch64.iso-CHECKSUM`,
-        },
-        {
-          label: "AMD / Intel (HWE)",
-          isoUrl: `${BASE}/bluefin-lts-hwe-x86_64.iso`,
-          isoFilename: "bluefin-lts-hwe-x86_64.iso",
-          torrentUrl: `${BASE}/bluefin-lts-hwe-x86_64.iso.torrent`,
-          checksumUrl: `${BASE}/bluefin-lts-hwe-x86_64.iso-CHECKSUM`,
-        },
-        {
-          label: "ARM (HWE)",
-          isoUrl: `${BASE}/bluefin-lts-hwe-aarch64.iso`,
-          isoFilename: "bluefin-lts-hwe-aarch64.iso",
-          torrentUrl: `${BASE}/bluefin-lts-hwe-aarch64.iso.torrent`,
-          checksumUrl: `${BASE}/bluefin-lts-hwe-aarch64.iso-CHECKSUM`,
-        },
-      ]}
-      sections={[
-        {
-          label: "HWE Testing (Weekly)",
-          entries: [
-            {
-              label: "AMD / Intel",
-              isoUrl: `${BASE}/bluefin-lts-hwe-testing-x86_64.iso`,
-              isoFilename: "bluefin-lts-hwe-testing-x86_64.iso",
-              torrentUrl: `${BASE}/bluefin-lts-hwe-testing-x86_64.iso.torrent`,
-              checksumUrl: `${BASE}/bluefin-lts-hwe-testing-x86_64.iso-CHECKSUM`,
-            },
-            {
-              label: "ARM (aarch64)",
-              isoUrl: `${BASE}/bluefin-lts-hwe-testing-aarch64.iso`,
-              isoFilename: "bluefin-lts-hwe-testing-aarch64.iso",
-              torrentUrl: `${BASE}/bluefin-lts-hwe-testing-aarch64.iso.torrent`,
-              checksumUrl: `${BASE}/bluefin-lts-hwe-testing-aarch64.iso-CHECKSUM`,
-            },
-          ],
-        },
-        {
-          label: "Bluefin GDX",
-          entries: [
-            {
-              label: "Nvidia",
-              isoUrl: `${BASE}/bluefin-gdx-lts-x86_64.iso`,
-              isoFilename: "bluefin-gdx-lts-x86_64.iso",
-              checksumUrl: `${BASE}/bluefin-gdx-lts-x86_64.iso-CHECKSUM`,
-            },
-            {
-              label: "ARM (aarch64)",
-              isoUrl: `${BASE}/bluefin-gdx-lts-aarch64.iso`,
-              isoFilename: "bluefin-gdx-lts-aarch64.iso",
-              checksumUrl: `${BASE}/bluefin-gdx-lts-aarch64.iso-CHECKSUM`,
-            },
-          ],
         },
       ]}
     />

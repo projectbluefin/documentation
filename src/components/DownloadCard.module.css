@@ -17,8 +17,6 @@
 /* ── Mascot art ── */
 
 .cardBluefin::after,
-.cardLts::after,
-.cardGdx::after,
 .cardDakota::after {
   content: "";
   position: absolute;
@@ -33,17 +31,21 @@
   opacity: 0.9;
 }
 
-.cardBluefin::after  { background-image: url("/img/characters/bluefin-small.webp"); }
-.cardLts::after,
-.cardGdx::after      { background-image: url("/img/characters/achillobator.webp"); height: 110px; background-position: right top; }
-.cardDakota::after   { background-image: url("/img/characters/dakotaraptor.webp"); }
+.cardBluefin::after {
+  background-image: url("/img/characters/bluefin-small.webp");
+}
+.cardDakota::after {
+  background-image: url("/img/characters/dakotaraptor.webp");
+}
 
 /* ── Stream accent borders ── */
 
-.cardBluefin { border-left: 3px solid var(--ifm-color-primary); }
-.cardLts     { border-left: 3px solid #d97706; }
-.cardGdx     { border-left: 3px solid #7c3aed; }
-.cardDakota  { border-left: 3px solid #7c3aed; }
+.cardBluefin {
+  border-left: 3px solid var(--ifm-color-primary);
+}
+.cardDakota {
+  border-left: 3px solid #7c3aed;
+}
 
 /* ── Header ── */
 
@@ -52,11 +54,6 @@
   z-index: 1;
   padding: 1.25rem 1.5rem 1rem;
   padding-right: 140px;
-}
-
-.cardLts .cardHeader,
-.cardGdx .cardHeader {
-  min-height: 155px;
 }
 
 .titleRow {
@@ -206,7 +203,9 @@
   padding: 0.4rem 1rem;
   border-radius: 6px;
   text-decoration: none !important;
-  transition: background 0.15s, transform 0.1s;
+  transition:
+    background 0.15s,
+    transform 0.1s;
   white-space: nowrap;
   min-width: 130px;
   justify-content: center;
@@ -233,7 +232,9 @@
   border: 1px solid var(--ifm-color-emphasis-300);
   border-radius: 5px;
   white-space: nowrap;
-  transition: background 0.15s, border-color 0.15s;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
   min-width: 82px;
   justify-content: center;
 }
@@ -273,8 +274,6 @@
   }
 
   .cardBluefin::after,
-  .cardLts::after,
-  .cardGdx::after,
   .cardDakota::after {
     width: 70px;
     height: 70px;

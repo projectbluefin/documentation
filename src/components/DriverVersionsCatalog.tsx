@@ -3,28 +3,11 @@ import Link from "@docusaurus/Link";
 import Heading from "@theme/Heading";
 import CodeBlock from "@theme/CodeBlock";
 import driverVersionsData from "@site/static/data/driver-versions.json";
-import streamPinsData from "@site/static/data/stream-pins.json";
 import Sparkline from "@site/src/components/Sparkline";
 import styles from "./DriverVersionsCatalog.module.css";
 
-interface StreamPins {
-  hweKernel?: string | null;
-  kernel?: string | null;
-  mesa?: string | null;
-  nvidia?: string | null;
-  gnome?: string | null;
-}
-
-interface PinsData {
-  generatedAt?: string;
-  streams?: Record<string, StreamPins>;
-}
-
-const pinsCatalog = streamPinsData as unknown as PinsData;
-
 interface VersionSet {
   kernel: string | null;
-  hweKernel: string | null;
   mesa: string | null;
   nvidia: string | null;
   gnome: string | null;
@@ -136,26 +119,16 @@ function versionSparkData(
 }
 
 interface UserspaceInfo {
-  label: string; // e.g. "Fedora 43 Userspace" or "CentOS Stream 10 Userspace"
-  key: string; // e.g. "fc43" or "el10" — used for transition detection
+  label: string; // e.g. "Fedora 43 Userspace"
+  key: string; // e.g. "fc43" — used for transition detection
 }
 
 /** Reads the BASE kernel to determine the userspace OS and version. */
 function extractUserspace(row: DriverRow): UserspaceInfo | null {
   const base = row.versions.kernel ?? "";
-  const el = base.match(/\.el(\d+)/);
-  if (el)
-    return { label: `CentOS Stream ${el[1]} Userspace`, key: `el${el[1]}` };
   const fc = base.match(/\.fc(\d+)/);
   if (fc) return { label: `Fedora ${fc[1]} Userspace`, key: `fc${fc[1]}` };
   return null;
-}
-
-/** Extracts the numeric Fedora release from HWE kernel (used for HWE pin context only). */
-function _extractFedoraRelease(row: DriverRow): number | null {
-  const kernelStr = row.versions.hweKernel ?? row.versions.kernel ?? "";
-  const m = kernelStr.match(/\.fc(\d+)/);
-  return m ? parseInt(m[1], 10) : null;
 }
 
 /** Banner shown at the transition point where the userspace version changed. */
@@ -188,28 +161,16 @@ function ReleaseNode({
   row,
   previousRow,
   emphasize,
-  pins,
-  pinnedHweKernels,
 }: {
   stream: DriverStream;
   row: DriverRow;
   previousRow?: DriverRow;
   emphasize: boolean;
-  pins?: StreamPins | null;
-  pinnedHweKernels?: Set<string>;
 }) {
   const kernel = valueOrFallback(row.versions.kernel);
   const nvidia = valueOrFallback(row.versions.nvidia);
   const mesa = valueOrFallback(row.versions.mesa);
-  const hwe = row.versions.hweKernel;
   const gnome = valueOrFallback(row.versions.gnome);
-
-  // Badge fires if: workflow pin matches (current pin) OR SBOM history shows
-  // this kernel version repeated across 2+ releases (historically pinned).
-  const hweIsPinned = Boolean(
-    (pins?.hweKernel && hwe && hwe === pins.hweKernel) ||
-    (hwe && pinnedHweKernels?.has(hwe)),
-  );
 
   const kernelMajor = majorNumber(row.versions.kernel);
   const previousKernelMajor = majorNumber(previousRow?.versions.kernel);
@@ -321,20 +282,6 @@ function ReleaseNode({
               <span className={styles.minorTag}>Minor bump</span>
             )}
           </div>
-          {hwe !== null && (
-            <div className={styles.majorVersionCard}>
-              <span className={styles.majorVersionLabel}>HWE Kernel</span>
-              <VersionValue value={hwe} />
-              {hweIsPinned && (
-                <span
-                  className={styles.pinnedTag}
-                  title={`Pinned to ${cleanVersion(pins?.hweKernel ?? hwe)} by maintainer — not following upstream`}
-                >
-                  📌 Pinned
-                </span>
-              )}
-            </div>
-          )}
           <div
             className={
               nvidiaMajorBump
@@ -426,7 +373,7 @@ function hasValidVersions(row: DriverRow | null | undefined): boolean {
 }
 
 interface DriverVersionsCatalogProps {
-  streamId: "bluefin-stable" | "bluefin-lts" | "dakota-stable" | "utah-testing";
+  streamId: "bluefin-stable" | "dakota-stable" | "utah-testing";
   catalogOverride?: DriverCatalog;
   showRebootStep?: boolean;
 }
@@ -459,13 +406,11 @@ export default function DriverVersionsCatalog({
     : [];
   const stream = allStreams.find((entry) => entry.id === streamId);
   const fallbackLabel =
-    streamId === "bluefin-lts"
-      ? "Bluefin LTS"
-      : streamId === "dakota-stable"
-        ? "Dakota Stable"
-        : streamId === "utah-testing"
-          ? "Utah Testing"
-          : "Bluefin Classic";
+    streamId === "dakota-stable"
+      ? "Dakota Stable"
+      : streamId === "utah-testing"
+        ? "Utah Testing"
+        : "Bluefin Classic";
 
   if (!stream) {
     return (
@@ -499,30 +444,12 @@ export default function DriverVersionsCatalog({
     (row) => row !== latest && (!latest.tag || row.tag !== latest.tag),
   );
 
-  const streamPins = pinsCatalog.streams?.[streamId] ?? null;
-
-  // Detect historically-pinned HWE kernels from SBOM data:
-  // a kernel version that appears in 2+ consecutive rows was held intentionally.
-  const allRows = (stream.history || []).filter((r) => r?.versions?.hweKernel);
-  const hweCounts = new Map<string, number>();
-  for (const r of allRows) {
-    const v = r.versions.hweKernel!;
-    hweCounts.set(v, (hweCounts.get(v) ?? 0) + 1);
-  }
-  const pinnedHweKernels = new Set(
-    [...hweCounts.entries()].filter(([, count]) => count >= 2).map(([v]) => v),
-  );
-
   const currentUserspace = extractUserspace(latest);
   const kernelSpark = versionSparkData(stream.history, "kernel");
-  const hweSpark = versionSparkData(stream.history, "hweKernel");
   const mesaSpark = versionSparkData(stream.history, "mesa");
   const gnomeSpark = versionSparkData(stream.history, "gnome");
   const showTrends =
-    kernelSpark.length >= 2 ||
-    hweSpark.length >= 2 ||
-    mesaSpark.length >= 2 ||
-    gnomeSpark.length >= 2;
+    kernelSpark.length >= 2 || mesaSpark.length >= 2 || gnomeSpark.length >= 2;
 
   return (
     <div className={styles.timelinePage}>
@@ -555,21 +482,6 @@ export default function DriverVersionsCatalog({
                     height={20}
                     color="#3fb950"
                     areaColor="rgba(63,185,80,0.10)"
-                  />
-                </span>
-              )}
-              {hweSpark.length >= 2 && (
-                <span
-                  className={styles.trendChip}
-                  title="HWE kernel version trend"
-                >
-                  <span className={styles.trendLabel}>HWE</span>
-                  <Sparkline
-                    data={hweSpark}
-                    width={72}
-                    height={20}
-                    color="#a371f7"
-                    areaColor="rgba(163,113,247,0.10)"
                   />
                 </span>
               )}
@@ -613,8 +525,6 @@ export default function DriverVersionsCatalog({
             row={latest}
             previousRow={older[0]}
             emphasize
-            pins={streamPins}
-            pinnedHweKernels={pinnedHweKernels}
           />
         </div>
 
@@ -643,8 +553,6 @@ export default function DriverVersionsCatalog({
                     row={row}
                     previousRow={older[index + 1]}
                     emphasize={false}
-                    pins={streamPins}
-                    pinnedHweKernels={pinnedHweKernels}
                   />
                 </React.Fragment>
               );

@@ -46,7 +46,7 @@ In **Settings** → **Network** → A network setting, set **Metered Connection:
 
 ## Streams and Throttle Settings
 
-Bluefin offers images based on the current version of Fedora, as well as a CentOS based image. This is to provide users with flexibility as to how aggressive they want their updates. These are referred to as "streams".
+Bluefin offers images based on the current version of Fedora. This is to provide users with flexibility as to how aggressive they want their updates. These are referred to as "streams".
 
 ### Bluefin
 
@@ -67,8 +67,6 @@ You can choose from three rolling tags, or lock to a specific version of Fedora.
 | Application Updates: | Twice a Day                          | Twice a Day |
 | Kernel:              | Gated                                | Ungated     |
 
-**Note:** [Bluefin LTS](/lts) and [GDX](/gdx) not shown here, refer to their respective documentation for more details.
-
 The major difference between `latest` and `stable` is the kernel cadence and when they do a major upgrade. `latest` will upgrade to the next major Fedora release as soon as it is available and builds daily. `stable` will upgrade when CoreOS does its userspace upgrade, which is usually a few weeks afterwards, and builds weekly or daily. Users can choose the `stable-daily` image for daily stable updates, or stick to `stable` for weekly builds.
 
 #### Gated Kernel
@@ -80,8 +78,6 @@ Adding and editing kernel boot arguments is handled by `bootc kargs`. Check the 
 :::info[It's all just Bluefin]
 
 Bluefin's components are shared across all images, don't think of it as a separate "Edition" or "Spin". Bluefin strives to be the same across all the images, we feel that the aggressiveness of updates can be "be a setting". Ideally you use "Bluefin" and don't need to care about your update stream.
-
-`lts` for a work machine and `stable` for your hot rod.
 
 :::
 
@@ -325,4 +321,4 @@ cosign verify --key https://raw.githubusercontent.com/ublue-os/bluefin/main/cosi
   ghcr.io/ublue-os/bluefin:stable
 ```
 
-Bluefin LTS, Dakota, and Utah are signed keylessly instead — see [Supply Chain Security](/supply-chain) for their verification commands.
+Dakota and Utah are signed keylessly instead — see [Supply Chain Security](/supply-chain) for their verification commands.

@@ -177,16 +177,16 @@ test("generateReportMarkdown includes ReportHeroKPIs, ReportLeaderboard, and fro
 });
 
 test("no Project Bluefin count is derived from the upstream countme dataset", () => {
-  // countme-history.json is built from Fedora's totals.csv. Summing `bluefin`
-  // and `bluefin-lts` out of it published mirror hits as our installed base;
+  // countme-history.json is built from Fedora's totals.csv. Summing per-image
+  // keys out of it published mirror hits as our installed base;
   // the payload is now ignored no matter how inviting it looks.
   const metrics = extractCountmeMetricsFromPayload(
     {
       unavailable: false,
       weeks: [
-        { week: "2026-10-05", bluefin: 10, "bluefin-lts": 5 },
-        { week: "2026-10-12", bluefin: 11, "bluefin-lts": 6 },
-        { week: "2026-10-19", bluefin: 12, "bluefin-lts": 7 },
+        { week: "2026-10-05", bluefin: 10 },
+        { week: "2026-10-12", bluefin: 11 },
+        { week: "2026-10-19", bluefin: 12 },
       ],
     },
     new Date("2026-10-01T00:00:00Z"),

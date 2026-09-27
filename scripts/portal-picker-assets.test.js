@@ -17,18 +17,6 @@ const ASSET_SPECS = [
       "img",
       "portal",
       "characters",
-      "achillobator.webp",
-    ),
-    sourceRel: path.join("characters", "achillobator.webp"),
-    sha256: "ad6097e6c005ad1c2b2d0171a73c61304efe5a692be3a2c3649fa30623ef04fa",
-    size: 123950,
-  },
-  {
-    targetRel: path.join(
-      "static",
-      "img",
-      "portal",
-      "characters",
       "leaping.webp",
     ),
     sourceRel: path.join("characters", "leaping.webp"),

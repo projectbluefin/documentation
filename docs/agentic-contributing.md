@@ -34,7 +34,7 @@ The agentic factory is operational and shipping daily.
 - `post-testing-e2e.yml` — runs `smoke,common` suites against every push to `testing`
 - `nightly.yml` — nightly `smoke,common,vanilla-gnome` baseline run against `:latest`
 - `promote-testing-to-main.yml` — daily automated promotion PR into merge queue; `execute-release.yml` publishes `:stable` on push to `main`
-- `projectbluefin/actions` shared CI library consumed by `bluefin`, `bluefin-lts`, and `dakota`
+- `projectbluefin/actions` shared CI library consumed by `bluefin` and `dakota`
 - `bonedigger` issue lifecycle bot
 - AI Moderator (`moderator.yml`) — spam detection and moderation on issues and PR comments
 
@@ -83,7 +83,6 @@ flowchart TB
     subgraph image_repos["Image Repositories"]
         direction LR
         bluefin["projectbluefin/bluefin\n(Fedora-based)"]
-        lts["projectbluefin/bluefin-lts\n(CentOS-based)"]
         common["projectbluefin/common\n(shared OCI layer)"]
         dakota["projectbluefin/dakota\n(BuildStream / distroless)"]
     end
@@ -99,7 +98,7 @@ flowchart TB
 
 ### Components
 
-**[KubeStellar Hive](https://hive.projectbluefin.io/)** is the orchestration layer. It manages 8 repositories in the `projectbluefin` org (`bluefin`, `bluefin-lts`, `common`, `dakota`, `actions`, `renovate-config`, `bonedigger`, `knuckle`). You can watch it work in real time at [hive.projectbluefin.io](https://hive.projectbluefin.io).
+**[KubeStellar Hive](https://hive.projectbluefin.io/)** is the orchestration layer. It manages 7 repositories in the `projectbluefin` org (`bluefin`, `common`, `dakota`, `actions`, `renovate-config`, `bonedigger`, `knuckle`). You can watch it work in real time at [hive.projectbluefin.io](https://hive.projectbluefin.io).
 
 **[bonedigger](https://github.com/projectbluefin/bonedigger)** is the client + lifecycle bot. On Bluefin systems, users run `ujust report` — the agent collects system diagnostics that are hard for humans to gather manually, scrubs PII on-device, and files an issue to the relevant image repository. The GitHub Actions lifecycle bot then manages the pipeline: `filed → approved → queued → claimed → done`.
 
@@ -277,7 +276,6 @@ A PR that touches CI, build, or packaging without a skill file update is a yello
 | Repo                                                                                  | Role                                                           | What humans contribute                              |
 | ------------------------------------------------------------------------------------- | -------------------------------------------------------------- | --------------------------------------------------- |
 | [projectbluefin/bluefin](https://github.com/projectbluefin/bluefin)                   | Main OS image (Fedora-based)                                   | Design decisions, PR review, `testing`-branch fixes |
-| [projectbluefin/bluefin-lts](https://github.com/projectbluefin/bluefin-lts)           | LTS variant (CentOS Stream 10 / bootc)                         | Same; LTS-specific hardware or lifecycle concerns   |
 | [projectbluefin/common](https://github.com/projectbluefin/common)                     | Shared OCI layer — desktop config, ujust, GNOME opinions       | Shared behavior that applies to all variants        |
 | [projectbluefin/aurorafin-shared](https://github.com/projectbluefin/aurorafin-shared) | Shared system files for Aurora and Bluefin                     | Cross-project shared configuration                  |
 | [projectbluefin/dakota](https://github.com/projectbluefin/dakota)                     | Distroless prototype (Dakotaraptor, BuildStream)               | Experimental; actions library wired in              |
@@ -290,21 +288,18 @@ flowchart TB
     shared["projectbluefin/aurorafin-shared\n(Aurora+Bluefin shared config)"]
 
     common --> bluefin
-    common --> lts
     common --> dakota
     shared --> bluefin
 
     subgraph images["Image Repos"]
         bluefin["projectbluefin/bluefin\n(Fedora-based)"]
-        lts["projectbluefin/bluefin-lts\n(CentOS Stream 10)"]
         dakota["projectbluefin/dakota\n(BuildStream / distroless)"]
     end
 
     testsuite["projectbluefin/testsuite\n(E2E gate)"]
 
     bluefin -->|smoke gate| testsuite
-    lts -->|smoke gate| testsuite
-    testsuite -->|gate blocks promotion| stable[":stable / :lts"]
+    testsuite -->|gate blocks promotion| stable[":stable"]
 
     iso["projectbluefin/iso\n(installation media)"]
     stable --> iso

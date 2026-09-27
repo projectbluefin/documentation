@@ -197,15 +197,15 @@ test("aggregateWeeks sums releases and architectures, which are different machin
 });
 
 test("aggregateWeeks drops an EPEL row entirely instead of exempting it", () => {
-  // The deleted NON_FEDORA_VARIANTS exemption let a CentOS Stream image skip
-  // the ^fedora-N$ restriction and be summed across whatever EPEL mirrors it
+  // The deleted NON_FEDORA_VARIANTS exemption let an image skip the
+  // ^fedora-N$ restriction and be summed across whatever EPEL mirrors it
   // reached. That sum is not a population, and the week it lands in is the one
   // the page publishes — so an EPEL row must produce no key and no week at all,
   // not a small number under some other name.
   const epelOnly = aggregateWeeks(
     parseAll([
-      row({ os_name: "Bluefin LTS", repo_tag: "epel-10", hits: 150 }),
-      row({ os_name: "Bluefin LTS", repo_tag: "epel-testing-10", hits: 9 }),
+      row({ os_name: "Aurora", repo_tag: "epel-10", hits: 150 }),
+      row({ os_name: "Aurora", repo_tag: "epel-testing-10", hits: 9 }),
     ]),
   );
   assert.deepEqual(epelOnly, []);
@@ -214,7 +214,7 @@ test("aggregateWeeks drops an EPEL row entirely instead of exempting it", () => 
   const mixed = aggregateWeeks(
     parseAll([
       row({ os_name: "Aurora", repo_tag: "fedora-44", hits: 12 }),
-      row({ os_name: "Bluefin LTS", repo_tag: "epel-10", hits: 150 }),
+      row({ os_name: "Aurora", repo_tag: "epel-10", hits: 150 }),
     ]),
   );
   assert.equal(mixed.length, 1);
@@ -325,18 +325,15 @@ test("mergeHistory discards prior weeks counted by a different method", () => {
 
 test("mergeHistory does not carry a banned key forward out of an older method", () => {
   // This is what the METHOD bump is for. A seed written before the
-  // projectbluefin images left this pipeline still carries bluefin and
-  // bluefin-lts keys; merging it forward would keep publishing Fedora-derived
-  // numbers under our image names forever.
-  const prior = [
-    { week: "2026-07-13", aurora: 2800, bluefin: 3555, "bluefin-lts": 165 },
-  ];
+  // projectbluefin images left this pipeline still carries a bluefin key;
+  // merging it forward would keep publishing Fedora-derived numbers under our
+  // image names forever.
+  const prior = [{ week: "2026-07-13", aurora: 2800, bluefin: 3555 }];
   const fresh = [{ week: "2026-07-27", aurora: 3063 }];
   const merged = mergeHistory(prior, fresh, "upstream-peers-v1");
 
   const keys = new Set(merged.flatMap((w) => Object.keys(w)));
   assert.ok(!keys.has("bluefin"), "bluefin survived a method change");
-  assert.ok(!keys.has("bluefin-lts"), "bluefin-lts survived a method change");
   assert.deepEqual(merged, fresh);
 });
 

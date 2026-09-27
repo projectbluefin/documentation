@@ -26,7 +26,7 @@ const OUT = resolve(__dirname, "../static/data/brew-analytics.json");
 const BASE_URL = "https://formulae.brew.sh/api/analytics/os-version";
 const WINDOWS = ["30d", "90d", "365d"];
 
-const BLUEFIN_EXACT = new Set(["Bluefin", "Bluefin LTS"]);
+const BLUEFIN_EXACT = new Set(["Bluefin"]);
 const PEER_PREFIXES = ["Fedora Linux", "Ubuntu", "macOS"];
 
 /** Slug: lowercase, non-alphanumerics → hyphen. */

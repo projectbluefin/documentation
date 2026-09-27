@@ -145,9 +145,6 @@ export function parseFeedItem(item, streamHint) {
   const dxPackages = parseTwoColTableMd(
     sections.get("Major DX packages") ?? [],
   );
-  const gdxPackages = parseTwoColTableMd(
-    sections.get("Major GDX packages") ?? [],
-  );
   if (majorPackages.length === 0) return null;
 
   const diffStats = parseDiffRows(sections.get("All Images") ?? []);
@@ -155,17 +152,10 @@ export function parseFeedItem(item, streamHint) {
 
   const fedoraMatch = item.title.match(/\(F(\d+)\./);
   const fedoraVersion = fedoraMatch ? fedoraMatch[1] : null;
-  const centosMatch = item.title.match(/\(([a-z0-9]+s)(?:,\s*#|\))/i);
-  const centosVersion = centosMatch ? centosMatch[1] : null;
 
   const prefixMatch = item.title.match(/^([a-z]+[-.][\d.]+)/i);
   let tag = prefixMatch ? prefixMatch[1].toLowerCase() : streamHint;
   tag = tag.replace(/^latest-(\d{8})$/, "stable-daily-$1");
-  tag = tag.replace(/^lts\.(\d{8})$/, "lts-$1");
-  if (tag === streamHint) {
-    const ltsAltMatch = item.title.match(/LTS:\s*(\d{8})/i);
-    if (ltsAltMatch) tag = `lts-${ltsAltMatch[1]}`;
-  }
 
   const dateMs = new Date(item.pubDate).getTime();
 
@@ -173,10 +163,8 @@ export function parseFeedItem(item, streamHint) {
     stream: streamHint,
     tag,
     fedoraVersion,
-    centosVersion,
     majorPackages,
     dxPackages,
-    gdxPackages,
     diffStats,
     commitCount,
     dateMs: Number.isNaN(dateMs) ? 0 : dateMs,
@@ -199,8 +187,6 @@ export function sbomKeyForRelease(tag, stream) {
   const dateMatch = tag.match(/(\d{8})/);
   if (!dateMatch) return null;
   const date = dateMatch[1];
-  if (stream === "lts")
-    return { streamId: "bluefin-lts", cacheKey: `stable-${date}` };
   if (stream === "stable-daily")
     return {
       streamId: "bluefin-stable-daily",
@@ -271,10 +257,8 @@ export function buildDakotaRelease(sbomCache) {
     fedoraVersion: latest.packages.fedora
       ? String(latest.packages.fedora).replace(/^F/, "")
       : null,
-    centosVersion: null,
     majorPackages,
     dxPackages: [],
-    gdxPackages: [],
     diffStats: { added: 0, changed: 0, removed: 0 },
     commitCount: 0,
     dateMs: latest.dateMs,

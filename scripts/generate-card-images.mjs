@@ -29,7 +29,9 @@ const ROOT = join(__dirname, "..");
 
 // ── Font loading ────────────────────────────────────────────────────────────
 const FONTSOURCE = join(ROOT, "node_modules/@fontsource/inter/files");
-const fontRegular = readFileSync(join(FONTSOURCE, "inter-latin-400-normal.woff"));
+const fontRegular = readFileSync(
+  join(FONTSOURCE, "inter-latin-400-normal.woff"),
+);
 const fontBold = readFileSync(join(FONTSOURCE, "inter-latin-700-normal.woff"));
 
 const fonts = [
@@ -45,7 +47,6 @@ function loadMascotDataUri(name) {
 
 const MASCOTS = {
   stable: loadMascotDataUri("bluefin-small"),
-  lts: loadMascotDataUri("achillobator"),
   dakota: loadMascotDataUri("dakotaraptor"),
 };
 
@@ -53,7 +54,12 @@ const MASCOTS = {
 
 let SBOM_CACHE = null;
 try {
-  SBOM_CACHE = JSON.parse(readFileSync(join(ROOT, "static/data/sbom-attestations-frontend.json"), "utf8"));
+  SBOM_CACHE = JSON.parse(
+    readFileSync(
+      join(ROOT, "static/data/sbom-attestations-frontend.json"),
+      "utf8",
+    ),
+  );
 } catch {
   // SBOM file absent or empty — enrichment silently skipped
 }
@@ -65,7 +71,9 @@ function loadLatestRelease(feedPath, streamHint) {
   try {
     feed = JSON.parse(readFileSync(feedPath, "utf8"));
   } catch {
-    console.error(`ERROR: ${feedPath} not found. Run \`npm run fetch-feeds\` first.`);
+    console.error(
+      `ERROR: ${feedPath} not found. Run \`npm run fetch-feeds\` first.`,
+    );
     process.exit(1);
   }
   for (const item of feed.items ?? []) {
@@ -122,7 +130,7 @@ function saveHashManifest(manifest) {
  */
 function cardFilesExist(outDir, slug) {
   return ["light", "dark"].every((theme) =>
-    existsSync(join(outDir, `${slug}-${theme}.png`))
+    existsSync(join(outDir, `${slug}-${theme}.png`)),
   );
 }
 
@@ -131,24 +139,22 @@ function cardFilesExist(outDir, slug) {
 async function main() {
   const stableRaw = loadLatestRelease(
     join(ROOT, "static/feeds/bluefin-releases.json"),
-    "stable"
-  );
-  const ltsRaw = loadLatestRelease(
-    join(ROOT, "static/feeds/bluefin-lts-releases.json"),
-    "lts"
+    "stable",
   );
 
-  const stableRelease = stableRaw ? enrichFromSbom(stableRaw, "stable", SBOM_CACHE) : null;
-  const ltsRelease = ltsRaw ? enrichFromSbom(ltsRaw, "lts", SBOM_CACHE) : null;
+  const stableRelease = stableRaw
+    ? enrichFromSbom(stableRaw, "stable", SBOM_CACHE)
+    : null;
 
   const dakotaRelease = buildDakotaRelease(SBOM_CACHE);
   if (!dakotaRelease) {
-    console.warn("WARN: no Dakota data in the SBOM cache — dakota card not regenerated");
+    console.warn(
+      "WARN: no Dakota data in the SBOM cache — dakota card not regenerated",
+    );
   }
 
   const cards = [
     { release: stableRelease, stream: "stable", slug: "bluefin" },
-    { release: ltsRelease,    stream: "lts",    slug: "bluefin-lts" },
     { release: dakotaRelease, stream: "dakota", slug: "dakota" },
   ];
 
@@ -180,7 +186,13 @@ async function main() {
     const mascotDataUri = MASCOTS[stream] ?? MASCOTS.stable;
 
     for (const theme of ["light", "dark"]) {
-      const element = renderCard(release, stream, release.dateMs, theme, mascotDataUri);
+      const element = renderCard(
+        release,
+        stream,
+        release.dateMs,
+        theme,
+        mascotDataUri,
+      );
 
       const svg = await satori(element, { width: W, height: H, fonts });
 
@@ -190,7 +202,9 @@ async function main() {
 
       const outPath = join(outDir, `${slug}-${theme}.png`);
       writeFileSync(outPath, pngBuffer);
-      console.log(`  ✓ ${slug}-${theme}.png (${Math.round(pngBuffer.length / 1024)}KB)`);
+      console.log(
+        `  ✓ ${slug}-${theme}.png (${Math.round(pngBuffer.length / 1024)}KB)`,
+      );
       generated++;
     }
   }

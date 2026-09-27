@@ -79,7 +79,7 @@ added.
    - `<ReportDelivery>`: Publishing-lane outcomes, cadence, and release events.
    - `<ReportParticipation>`: Human and automation activity plus contributors.
    - `<ReportEcosystem>`: Countme, Homebrew, and Flathub source states.
-   - `<ReportLaneHealth>`: Publishing lane metrics (Testing, LTS, Dakota).
+   - `<ReportLaneHealth>`: Publishing lane metrics (Testing, Dakota).
    - `<ReportCountmeTrend>`: Weekly active systems from countme. Unavailable
      until first-party counts are published; it states
      that reason rather than charting an upstream number.
@@ -160,7 +160,7 @@ snapshot and its provenance remain available to server-rendered output.
   presenting a human/automation split or leaderboard derived from an
   incomplete result.
 - **A Project Bluefin count comes from our own deployment only.** Every count
-  for `bluefin`, `bluefin-lts`, `dakota`, `utah`, or `server` comes from
+  for `bluefin`, `dakota`, `utah`, or `server` comes from
   `countme.projectbluefin.io`. Fedora's `totals.csv` — the source behind
   `static/data/countme-history.json` — counts mirror hits for a Fedora repo
   and is never a substitute for one of our images. Until the first-party

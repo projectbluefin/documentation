@@ -8,7 +8,6 @@ const {
   PRODUCT_SPECS,
   buildSecurityInfo,
   buildStreamVersionInfo,
-  buildTestingStreams,
   buildTopStreams,
   buildUnavailableOutput,
   cacheAgeHours,
@@ -16,7 +15,6 @@ const {
   handleUnavailableCache,
   isCurrentImageCatalog,
   main,
-  normalizeTestingTag,
   reportMainError,
   releaseInfoFromSource,
   sbomVersionsForStream,
@@ -85,7 +83,7 @@ test("image catalog rejects old organization and package even if SBOM-labelled",
   );
   assert.equal(isCurrentImageCatalog({ products: oldOrg }), false);
   const oldStream = products.map((product, i) =>
-    i === 2 ? { ...product, sbomStreamId: "dakota-latest" } : product,
+    i === 1 ? { ...product, sbomStreamId: "dakota-latest" } : product,
   );
   assert.equal(isCurrentImageCatalog({ products: oldStream }), false);
   assert.equal(
@@ -99,7 +97,7 @@ test("image catalog rejects old organization and package even if SBOM-labelled",
 });
 
 test("versions never borrow an unrelated channel or companion release", async () => {
-  const spec = PRODUCT_SPECS[2];
+  const spec = PRODUCT_SPECS[1];
   const cache = {
     streams: {
       "dakota-stable": {
@@ -317,7 +315,6 @@ test("main writes an unavailable catalog when SBOM streams have no releases", as
         generatedAt: new Date().toISOString(),
         streams: {
           "bluefin-stable": { releases: {} },
-          "bluefin-lts": { releases: {} },
           "dakota-latest": { releases: {} },
           "utah-testing": { releases: {} },
         },
@@ -358,25 +355,6 @@ test("release metadata preserves the release asset URL", () => {
     release.assetsUrl,
     "https://github.com/projectbluefin/bluefin/releases/tag/stable-20260906#assets",
   );
-
-  const ltsRelease = releaseInfoFromSource(
-    {
-      lts: {
-        items: [
-          {
-            title: "stable-20260906: LTS",
-            link: "https://github.com/projectbluefin/bluefin-lts/releases/tag/stable-20260906",
-          },
-        ],
-      },
-    },
-    { feed: "lts", stream: "lts" },
-  );
-
-  assert.equal(
-    ltsRelease.url,
-    "https://github.com/projectbluefin/bluefin-lts/releases/tag/stable-20260906",
-  );
 });
 
 test("Classic release metadata ignores a similarly named release from another repository", () => {
@@ -416,44 +394,6 @@ test("buildUnavailableOutput exposes an explicit fallback state", () => {
   assert.equal(output.unavailable, true);
   assert.equal(output.stateReason, "upstream unavailable");
   assert.deepEqual(output.products, []);
-});
-
-test("normalizeTestingTag strips architecture and date suffixes", () => {
-  assert.equal(
-    normalizeTestingTag("lts-testing-20260401-amd64"),
-    "lts-testing",
-  );
-  assert.equal(
-    normalizeTestingTag("lts.hwe.testing-2-arm64"),
-    "lts.hwe.testing-2",
-  );
-});
-
-test("buildTestingStreams keeps supported testing families and deduplicates normalized tags", () => {
-  const spec = {
-    allowTestingStreams: true,
-    org: "projectbluefin",
-    package: "bluefin",
-  };
-
-  const streams = buildTestingStreams(spec, [
-    "lts-testing-20260401-amd64",
-    "lts-testing-20260402-arm64",
-    "lts-hwe-testing-1",
-    "latest",
-    "gts-testing",
-    "stream10",
-    "unstable",
-  ]);
-
-  assert.deepEqual(
-    streams.map((stream) => stream.tag),
-    ["lts-hwe-testing-1"],
-  );
-  assert.match(
-    streams[0].command,
-    /ghcr\.io\/projectbluefin\/bluefin:lts-hwe-testing-1/,
-  );
 });
 
 test("buildSecurityInfo returns keyless verification commands for Utah with attestationLive false", () => {

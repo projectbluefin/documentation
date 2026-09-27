@@ -9,7 +9,7 @@
  *
  * Key design decisions:
  *  - Tag pattern: GHCR uses <stream>-<YYYYMMDD> (e.g. stable-20260331).
- *    We match with /[.-](\d{8})$/ and normalise lts.YYYYMMDD → lts-YYYYMMDD.
+ *    We match with /[.-](\d{8})$/.
  *  - Auth: no PAT required. Tag enumeration uses the GitHub Releases API with
  *    the standard github.token (no cross-org scope needed). For GHCR access,
  *    we attempt `oras login ghcr.io` with GITHUB_TOKEN/GH_TOKEN when available.
@@ -19,12 +19,8 @@
  *  - Pagination: GitHub Releases API is paginated; we fetch all pages.
  *  - Failure modes: present:false = no attestation published;
  *                   verified:false = attestation exists but verification failed.
- *  - lts streams: keyless:false (key-based signing, not OIDC keyless).
- *    verifyAttestation() uses OIDC keyless → attestation.present:false is expected.
- *    LTS SBOMs ARE published (spdx-json format via oras attach from reusable-build-image.yml).
- *    downloadSbom() uses ORAS directly and works regardless of signing method.
- *    extractPackageVersions() handles both Syft JSON and SPDX JSON formats.
- *    Cache hit for lts uses packageVersions presence (not attestation.verified).
+ *  - SBOM download works regardless of signing method; extractPackageVersions()
+ *    handles both Syft JSON and SPDX JSON formats.
  *  - SBOM download: uses `oras discover` on the image tag to find the
  *    vnd.spdx+json referrer digest, then `oras pull` to download sbom.json
  *    into a temp directory.
@@ -32,9 +28,8 @@
  *    parsed for RPM artifacts to extract packageVersions.
  *  - SBOM cache: keyed by image digest — if the digest hasn't changed AND
  *    packageVersions is non-null, the existing cache entry is reused.
- *  - NVIDIA: present in LTS NVIDIA (bluefin-lts-nvidia) SBOM as nvidia-driver RPM.
- *    Absent from base bluefin-stable/lts SBOMs (akmod, built separately).
- *    fetch-github-driver-versions.js uses null for nvidia on stable/lts streams.
+ *  - NVIDIA: absent from base bluefin-stable SBOMs (akmod, built separately).
+ *    fetch-github-driver-versions.js uses null for nvidia on stable streams.
  *  - Atomic write: output is written to a temp file then renamed to avoid
  *    leaving a truncated JSON file if the process is interrupted.
  */
@@ -111,7 +106,7 @@ const FORCE_REFRESH = process.argv.includes("--force");
 
 const EMPTY_RELEASES_REASON =
   "GitHub SBOM data unavailable: all configured streams produced zero releases.";
-const PRIMARY_RELEASE_STREAM_IDS = ["bluefin-stable", "bluefin-lts"];
+const PRIMARY_RELEASE_STREAM_IDS = ["bluefin-stable"];
 const PARTIAL_RELEASES_REASON =
   "GitHub SBOM data unavailable: primary streams produced no releases.";
 
@@ -146,62 +141,6 @@ const RAW_STREAM_SPECS = [
     releasesRepo: "ublue-os/bluefin",
     streamPrefix: "latest",
     keyRepo: "ublue-os/bluefin",
-  },
-  {
-    id: "bluefin-lts",
-    label: "Bluefin LTS",
-    org: "projectbluefin",
-    package: "bluefin-lts",
-    releasesRepo: "projectbluefin/bluefin-lts",
-    streamPrefix: "stable",
-    floatingTag: "stable",
-    keyRepo: "projectbluefin/bluefin-lts",
-  },
-  {
-    id: "bluefin-lts-hwe",
-    label: "Bluefin LTS HWE",
-    org: "projectbluefin",
-    package: "bluefin-lts",
-    releasesRepo: "projectbluefin/bluefin-lts",
-    streamPrefix: "stable-hwe",
-    keyRepo: "projectbluefin/bluefin-lts",
-  },
-  {
-    id: "bluefin-lts-hwe-testing",
-    label: "Bluefin LTS HWE Testing",
-    org: "projectbluefin",
-    package: "bluefin-lts",
-    releasesRepo: "projectbluefin/bluefin-lts",
-    streamPrefix: "stable-hwe-testing",
-    keyRepo: "projectbluefin/bluefin-lts",
-  },
-  {
-    id: "bluefin-lts-hwe-testing-50",
-    label: "Bluefin LTS HWE Testing 50",
-    org: "projectbluefin",
-    package: "bluefin-lts",
-    releasesRepo: "projectbluefin/bluefin-lts",
-    streamPrefix: "stable-hwe-testing-50",
-    keyRepo: "projectbluefin/bluefin-lts",
-  },
-  {
-    id: "bluefin-lts-testing-50",
-    label: "Bluefin LTS Testing 50",
-    org: "projectbluefin",
-    package: "bluefin-lts",
-    releasesRepo: "projectbluefin/bluefin-lts",
-    streamPrefix: "stable-testing-50",
-    keyRepo: "projectbluefin/bluefin-lts",
-  },
-  {
-    id: "bluefin-lts-nvidia",
-    label: "Bluefin LTS NVIDIA",
-    org: "projectbluefin",
-    package: "bluefin-lts-nvidia",
-    releasesRepo: "projectbluefin/bluefin-lts",
-    streamPrefix: "stable",
-    floatingTag: "stable",
-    keyRepo: "projectbluefin/bluefin-lts",
   },
   {
     id: "bluefin-nvidia-open-stable",
@@ -667,8 +606,7 @@ function isValidSbomCache(cache) {
 }
 
 function hasPrimaryReleaseData(streams) {
-  // LTS releases remain catalogued even while their keyless-signed images have
-  // no published SBOM. Classic must have parsed packages for version display.
+  // Classic must have parsed packages for version display.
   return (
     PRIMARY_RELEASE_STREAM_IDS.every((id) => hasReleaseData(streams?.[id])) &&
     Object.values(streams["bluefin-stable"].releases).some(

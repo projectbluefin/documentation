@@ -60,7 +60,7 @@ export interface PackageVersions {
   pipewire: string | null;
   /** e.g. "1.17.3-1.fc43" from the `flatpak` RPM */
   flatpak: string | null;
-  /** e.g. "595.71.05" from the NVIDIA driver (GDX / dakota-nvidia streams only) */
+  /** e.g. "595.71.05" from the NVIDIA driver (dakota-nvidia streams only) */
   nvidia: string | null;
   /**
    * Flat name→version map of every RPM artifact in the image.
@@ -98,7 +98,7 @@ export interface SbomStream {
   /**
    * Map of cache key → release attestation result.
    * Cache keys match the format produced by extractReleaseTag() in utils/sbomRelease.ts:
-   *   stable-YYYYMMDD, gts-YYYYMMDD, lts-YYYYMMDD, etc.
+   *   stable-YYYYMMDD, gts-YYYYMMDD, etc.
    */
   releases: Record<string, SbomRelease>;
 }

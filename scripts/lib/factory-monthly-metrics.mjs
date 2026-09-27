@@ -20,7 +20,6 @@ const GH_API = "https://api.github.com";
 
 const LANE_LABELS = {
   "projectbluefin/bluefin": "Bluefin Testing",
-  "projectbluefin/bluefin-lts": "Bluefin LTS",
   "projectbluefin/dakota": "Dakota",
 };
 
@@ -215,7 +214,7 @@ export async function fetchFactoryMonthlyStats(
  * Active systems for the report period.
  *
  * There is no Project Bluefin adoption number to return, and there was never a
- * legitimate one here. This used to sum `bluefin` and `bluefin-lts` out of
+ * legitimate one here. This used to sum per-image keys out of
  * `static/data/countme-history.json`, a dataset built from Fedora's
  * `totals.csv` — mirror hits for a Fedora repo, published in the monthly
  * report as our installed base. Those keys are gone and do not come back.

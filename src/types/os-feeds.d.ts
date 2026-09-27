@@ -12,9 +12,3 @@ declare module "@site/static/feeds/bluefin-releases.json" {
   const data: OsFeedData;
   export default data;
 }
-
-declare module "@site/static/feeds/bluefin-lts-releases.json" {
-  import type { OsFeedData } from "@site/src/types/os-feed";
-  const data: OsFeedData;
-  export default data;
-}

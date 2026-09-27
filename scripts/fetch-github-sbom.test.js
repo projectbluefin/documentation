@@ -50,7 +50,7 @@ function completeSbomCache() {
       },
     ]),
   );
-  for (const id of ["bluefin-stable", "bluefin-lts"]) {
+  for (const id of ["bluefin-stable"]) {
     streams[id].releases["stable-20260906"] = {
       tag: "stable-20260906",
       imageRef: `ghcr.io/${streams[id].org}/${streams[id].package}:stable-20260906`,
@@ -151,28 +151,9 @@ test("isValidSbomCache requires complete current stream identities and SBOM pack
   );
 });
 
-test("hasPrimaryReleaseData requires LTS releases and parsed Classic packages", () => {
+test("hasPrimaryReleaseData requires parsed Classic packages", () => {
   const complete = completeSbomCache().streams;
   assert.equal(hasPrimaryReleaseData(complete), true);
-  assert.equal(
-    hasPrimaryReleaseData({
-      ...complete,
-      "bluefin-lts": { ...complete["bluefin-lts"], releases: {} },
-    }),
-    false,
-  );
-  assert.equal(
-    hasPrimaryReleaseData({
-      ...complete,
-      "bluefin-lts": {
-        ...complete["bluefin-lts"],
-        releases: {
-          "stable-20260906": { tag: "stable-20260906", packageVersions: null },
-        },
-      },
-    }),
-    true,
-  );
   assert.equal(
     hasPrimaryReleaseData({
       ...complete,
@@ -394,52 +375,6 @@ test("refreshRegression keeps a good entry when a floating refresh degrades", ()
       null,
     ),
     null,
-  );
-});
-test("STREAM_SPECS maps all Bluefin LTS streams to bluefin-lts package and stable prefixes", () => {
-  const ltsStreams = STREAM_SPECS.filter(
-    (s) => s.id.includes("lts") && s.id !== "bluefin-lts-nvidia",
-  );
-  assert.ok(ltsStreams.length > 0, "LTS streams must exist");
-
-  for (const stream of ltsStreams) {
-    assert.equal(
-      stream.package,
-      "bluefin-lts",
-      `${stream.id} must use package bluefin-lts`,
-    );
-    assert.ok(
-      stream.streamPrefix.startsWith("stable"),
-      `${stream.id} streamPrefix must start with stable, got ${stream.streamPrefix}`,
-    );
-    assert.ok(
-      !stream.streamPrefix.startsWith("lts"),
-      `${stream.id} streamPrefix must not start with lts`,
-    );
-  }
-
-  const primaryLts = STREAM_SPECS.find((s) => s.id === "bluefin-lts");
-  assert.ok(primaryLts, "bluefin-lts spec must exist");
-  assert.equal(primaryLts.package, "bluefin-lts");
-  assert.equal(primaryLts.streamPrefix, "stable");
-
-  const ltsNvidia = STREAM_SPECS.find((s) => s.id === "bluefin-lts-nvidia");
-  assert.ok(ltsNvidia, "bluefin-lts-nvidia spec must exist");
-  assert.equal(ltsNvidia.package, "bluefin-lts-nvidia");
-  assert.equal(ltsNvidia.streamPrefix, "stable");
-  assert.equal(ltsNvidia.org, "projectbluefin");
-  assert.equal(ltsNvidia.releasesRepo, "projectbluefin/bluefin-lts");
-  assert.equal(ltsNvidia.keyRepo, "projectbluefin/bluefin-lts");
-});
-
-test("STREAM_SPECS does not contain retired dx or gdx streams", () => {
-  const retiredStreams = STREAM_SPECS.filter(
-    (s) => s.id.includes("-dx-") || s.id.includes("-gdx-"),
-  );
-  assert.deepEqual(
-    retiredStreams.map((s) => s.id),
-    [],
-    "dx and gdx streams should be retired",
   );
 });
 

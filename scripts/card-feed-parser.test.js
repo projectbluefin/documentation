@@ -134,7 +134,6 @@ test("parseFeedItem parses a markdown card into a normalized item", () => {
   assert.equal(parsed.stream, "bluefin");
   assert.equal(parsed.tag, "bluefin-41.20250808.0");
   assert.equal(parsed.fedoraVersion, "41");
-  assert.equal(parsed.centosVersion, null);
   assert.equal(parsed.majorPackages[0].name, "Kernel");
   assert.equal(parsed.majorPackages[0].version, "6.9.5");
   assert.equal(parsed.diffStats.added, 1);
@@ -158,10 +157,6 @@ test("parseFeedItem returns null for non-card content", () => {
 test("sbomKeyForRelease maps a tag to its stream cache key", () => {
   assert.deepEqual(sbomKeyForRelease("41.20250808.0", "stable"), {
     streamId: "bluefin-stable",
-    cacheKey: "stable-20250808",
-  });
-  assert.deepEqual(sbomKeyForRelease("41.20250808.0", "lts"), {
-    streamId: "bluefin-lts",
     cacheKey: "stable-20250808",
   });
   assert.equal(sbomKeyForRelease("not-a-tag", "stable"), null);

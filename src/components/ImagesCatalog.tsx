@@ -57,7 +57,7 @@ interface Product {
   name: string;
   org: string;
   summary: string;
-  artwork: "bluefin" | "achillobator" | "dakotaraptor";
+  artwork: "bluefin" | "dakotaraptor";
   supportedArches?: string[] | null;
   downloads?: {
     display: string;
@@ -66,7 +66,6 @@ interface Product {
   packagePageUrl: string;
   isoSectionLink?: string | null;
   streams: StreamInfo[];
-  testingStreams: StreamInfo[];
   metadata: {
     digest?: string | null;
     digestShort?: string | null;
@@ -158,43 +157,6 @@ export function StreamVersionPills({
         </span>
       )}
     </div>
-  );
-}
-
-function StreamList({
-  streams,
-  preferNvidia,
-}: {
-  streams: StreamInfo[];
-  preferNvidia: boolean;
-}) {
-  if (!streams.length) {
-    return <p className={styles.emptyText}>No active tags.</p>;
-  }
-
-  return (
-    <ul className={styles.streamList}>
-      {streams.map((entry) => (
-        <li key={`${entry.tag}-${entry.command}`}>
-          <span className={styles.streamTag}>{entry.label}</span>
-          <StreamVersionPills
-            versions={preferNvidia ? entry.nvidiaVersions : entry.versions}
-            showNvidia={preferNvidia}
-          />
-          {preferNvidia ? (
-            entry.nvidiaCommand ? (
-              <CodeBlock language="bash">{entry.nvidiaCommand}</CodeBlock>
-            ) : (
-              <span className={styles.emptyText}>
-                No Nvidia variant for this tag.
-              </span>
-            )
-          ) : (
-            <CodeBlock language="bash">{entry.command}</CodeBlock>
-          )}
-        </li>
-      ))}
-    </ul>
   );
 }
 
@@ -298,11 +260,6 @@ export default function ImagesCatalogComponent({
   const bluefinProducts = products.filter(
     (product) => product.id === "ublue-bluefin" || product.name === "Bluefin",
   );
-  const ltsProducts = products.filter(
-    (product) =>
-      product.id === "projectbluefin-bluefin-lts" ||
-      product.name.includes("LTS"),
-  );
   const dakotaProducts = products.filter(
     (product) =>
       product.id === "projectbluefin-dakota" || product.name.includes("Dakota"),
@@ -317,20 +274,16 @@ export default function ImagesCatalogComponent({
       .sort((a, b) => {
         if (a.name === "Bluefin") return -1;
         if (b.name === "Bluefin") return 1;
-        if (a.name === "Bluefin LTS") return -1;
-        if (b.name === "Bluefin LTS") return 1;
         return a.name.localeCompare(b.name);
       })
       .map((product) => {
         const tone =
           product.artwork === "dakotaraptor"
             ? styles.cardDakota
-            : product.artwork === "achillobator"
-              ? styles.cardLts
-              : product.id === "projectbluefin-utah" ||
-                  product.name.includes("Utah")
-                ? styles.cardUtah
-                : styles.cardBluefin;
+            : product.id === "projectbluefin-utah" ||
+                product.name.includes("Utah")
+              ? styles.cardUtah
+              : styles.cardBluefin;
         const digestShort = product.metadata?.digestShort || "Unavailable";
         const digestFull = product.metadata?.digest || null;
         const digestLink = product.metadata?.digestLink;
@@ -341,12 +294,12 @@ export default function ImagesCatalogComponent({
         const releaseUrl = assetsLink(product.versions?.release?.url);
         const lastValidated = formatDate(catalog.generatedAt || null);
         const lastPublished = formatDate(product.lastPublishedAt || null);
-        const hasNvidiaVariant =
-          product.streams.some((entry) => Boolean(entry.nvidiaCommand)) ||
-          product.testingStreams.some((entry) => Boolean(entry.nvidiaCommand));
-        const hasPublishedImage =
-          product.streams.some((entry) => Boolean(entry.command)) ||
-          product.testingStreams.some((entry) => Boolean(entry.command));
+        const hasNvidiaVariant = product.streams.some((entry) =>
+          Boolean(entry.nvidiaCommand),
+        );
+        const hasPublishedImage = product.streams.some((entry) =>
+          Boolean(entry.command),
+        );
         const nvidiaEnabled = Boolean(nvidiaModeByProduct[product.id]);
 
         return (
@@ -548,16 +501,6 @@ export default function ImagesCatalogComponent({
                   Awaiting initial release: no active image tags published yet.
                 </p>
               )}
-
-              <details className={styles.testingDetails}>
-                <summary>
-                  Testing Branches ({product.testingStreams.length})
-                </summary>
-                <StreamList
-                  streams={product.testingStreams}
-                  preferNvidia={nvidiaEnabled}
-                />
-              </details>
             </section>
 
             <section
@@ -695,27 +638,7 @@ export default function ImagesCatalogComponent({
         <p className={styles.groupHint}>
           Current Bluefin releases from ublue-os/bluefin.
         </p>
-        <div className="alert alert--info" role="note">
-          Rebasing between Bluefin and Bluefin LTS image families is not
-          supported. Choose the family you intend to stay on.
-        </div>
         <div className={styles.cards}>{renderCards(bluefinProducts)}</div>
-      </section>
-
-      <section id="bluefin-lts" className={styles.sectionGroup}>
-        <Heading as="h2" className={styles.groupTitle}>
-          Bluefin LTS
-        </Heading>
-        <p className={styles.groupHint}>
-          Recommended for longer support windows, conservative upgrades, and
-          production-focused workstations.
-        </p>
-        <div className="alert alert--info" role="note">
-          Rebasing between Bluefin and Bluefin LTS image families is not
-          supported. Plan migrations as fresh installs or supported upgrade
-          paths.
-        </div>
-        <div className={styles.cards}>{renderCards(ltsProducts)}</div>
       </section>
 
       <section className={styles.sectionGroup}>
@@ -726,8 +649,8 @@ export default function ImagesCatalogComponent({
           Dakota stable and testing image streams.
         </p>
         <div className="alert alert--info" role="note">
-          Dakota is a separate image track. Rebasing between Bluefin and Bluefin
-          LTS families and Dakota is not supported.
+          Dakota is a separate image track. Rebasing between Bluefin and Dakota
+          is not supported.
         </div>
         <div className={styles.cards}>{renderCards(dakotaProducts)}</div>
       </section>

@@ -146,11 +146,11 @@ export default function MetricsPanels(): React.JSX.Element {
 // ── Panel 1: Weekly active devices ─────────────────────────────────────────
 
 /**
- * Bluefin and Bluefin LTS are counted by `countme.projectbluefin.io`, never by
+ * Bluefin is counted by `countme.projectbluefin.io`, never by
  * Fedora's CSV.
  *
- * This panel used to chart `countme-history.json`'s `bluefin` and
- * `bluefin-lts` series, which were Fedora and EPEL mirror hits wearing our
+ * This panel used to chart `countme-history.json`'s `bluefin` series,
+ * which was Fedora mirror hits wearing our
  * names. Those keys no longer exist and may not come back. Until the
  * first-party counts are published, the panel states that instead
  * of substituting an upstream number.
@@ -241,7 +241,7 @@ function EcosystemShare({
       <p className={styles.note}>
         The upstream peers Fedora&rsquo;s countme CSV can see. Project Bluefin
         images are not in it: they are counted by{" "}
-        <code>countme.projectbluefin.io</code>, and an EPEL mirror hit is not a
+        <code>countme.projectbluefin.io</code>, and a mirror hit is not a
         population.
       </p>
       <EChart
@@ -294,7 +294,6 @@ function HomebrewPanel({
   }
 
   const bluefin365 = w365.rows.find((r) => r.id === "bluefin");
-  const lts365 = w365.rows.find((r) => r.id === "bluefin-lts");
 
   // Bar chart: Bluefin + peers sorted by count
   const barItems = [...w365.rows, ...w365.peers].sort(
@@ -312,7 +311,7 @@ function HomebrewPanel({
       {
         type: "bar",
         data: barItems.map((r, i) => {
-          const isBluefin = r.id === "bluefin" || r.id === "bluefin-lts";
+          const isBluefin = r.id === "bluefin";
           const isMac =
             r.label.toLowerCase().includes("macos") ||
             r.id.toLowerCase().includes("macos") ||
@@ -367,7 +366,6 @@ function HomebrewPanel({
           <tr>
             <th>Window</th>
             <th>Bluefin</th>
-            <th>Bluefin LTS</th>
           </tr>
         </thead>
         <tbody>
@@ -377,17 +375,15 @@ function HomebrewPanel({
               return (
                 <tr key={wk}>
                   <th scope="row">{wk}</th>
-                  <td colSpan={3}>not reported</td>
+                  <td>not reported</td>
                 </tr>
               );
             }
             const bf = win.rows.find((r) => r.id === "bluefin");
-            const lt = win.rows.find((r) => r.id === "bluefin-lts");
             return (
               <tr key={wk}>
                 <td>{wk}</td>
                 <td>{bf ? `#${bf.rank} — ${fmt(bf.count)}` : "—"}</td>
-                <td>{lt ? `#${lt.rank} — ${fmt(lt.count)}` : "—"}</td>
               </tr>
             );
           })}

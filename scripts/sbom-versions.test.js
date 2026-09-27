@@ -26,9 +26,9 @@ const CACHE = {
         "stable-20260215": { packageVersions: { kernel: "6.16.9" } },
       },
     },
-    lts: {
+    dakota: {
       releases: {
-        "lts-20260331": { packageVersions: { kernel: "6.12.20" } },
+        "latest-20260331": { packageVersions: { kernel: "6.12.20" } },
       },
     },
     empty: { releases: {} },
@@ -79,7 +79,7 @@ test("lookupVersionsForStream skips newer releases that carry no packageVersions
 });
 
 test("lookupVersionsForStream returns null for an unknown stream", () => {
-  assert.equal(lookupVersionsForStream(CACHE, "dakota"), null);
+  assert.equal(lookupVersionsForStream(CACHE, "unknown"), null);
 });
 
 test("lookupVersionsForStream returns null for a stream with no releases key", () => {
@@ -104,12 +104,18 @@ test("lookupVersionsForStream tolerates a null or shapeless cache", () => {
 });
 
 test("lookupVersionsForRelease returns the versions for the exact cache key", () => {
-  assert.deepEqual(lookupVersionsForRelease(CACHE, "stable", "stable-20260215"), {
-    kernel: "6.16.9",
-  });
-  assert.deepEqual(lookupVersionsForRelease(CACHE, "lts", "lts-20260331"), {
-    kernel: "6.12.20",
-  });
+  assert.deepEqual(
+    lookupVersionsForRelease(CACHE, "stable", "stable-20260215"),
+    {
+      kernel: "6.16.9",
+    },
+  );
+  assert.deepEqual(
+    lookupVersionsForRelease(CACHE, "dakota", "latest-20260331"),
+    {
+      kernel: "6.12.20",
+    },
+  );
 });
 
 test("lookupVersionsForRelease does not fall back to another release", () => {
@@ -122,21 +128,33 @@ test("lookupVersionsForRelease does not fall back to another release", () => {
 });
 
 test("lookupVersionsForRelease does not cross stream boundaries", () => {
-  assert.equal(lookupVersionsForRelease(CACHE, "lts", "stable-20260331"), null);
+  assert.equal(
+    lookupVersionsForRelease(CACHE, "dakota", "stable-20260331"),
+    null,
+  );
 });
 
 test("lookupVersionsForRelease returns null for an unknown stream or empty cache", () => {
-  assert.equal(lookupVersionsForRelease(CACHE, "dakota", "dakota-20260331"), null);
-  assert.equal(lookupVersionsForRelease(null, "stable", "stable-20260331"), null);
+  assert.equal(
+    lookupVersionsForRelease(CACHE, "unknown", "unknown-20260331"),
+    null,
+  );
+  assert.equal(
+    lookupVersionsForRelease(null, "stable", "stable-20260331"),
+    null,
+  );
   assert.equal(lookupVersionsForRelease({}, "stable", "stable-20260331"), null);
 });
 
 test("a cache read from disk feeds both lookups", () => {
   const cache = readSbomCache(writeCache(JSON.stringify(CACHE)));
-  assert.deepEqual(lookupVersionsForStream(cache, "lts"), {
+  assert.deepEqual(lookupVersionsForStream(cache, "dakota"), {
     kernel: "6.12.20",
   });
-  assert.deepEqual(lookupVersionsForRelease(cache, "lts", "lts-20260331"), {
-    kernel: "6.12.20",
-  });
+  assert.deepEqual(
+    lookupVersionsForRelease(cache, "dakota", "latest-20260331"),
+    {
+      kernel: "6.12.20",
+    },
+  );
 });

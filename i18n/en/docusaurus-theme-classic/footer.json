@@ -63,10 +63,6 @@
     "message": "Releases Feed",
     "description": "The label of footer link with label=Releases Feed linking to https://github.com/projectbluefin/bluefin/releases.atom"
   },
-  "link.item.label.LTS Releases Feed": {
-    "message": "LTS Releases Feed",
-    "description": "The label of footer link with label=LTS Releases Feed linking to https://github.com/projectbluefin/bluefin-lts/releases.atom"
-  },
   "link.item.label.Discussions Feed": {
     "message": "Discussions Feed",
     "description": "The label of footer link with label=Discussions Feed linking to https://github.com/ublue-os/bluefin/discussions.atom"
@@ -90,10 +86,6 @@
   "link.item.label.Bluefin": {
     "message": "Bluefin",
     "description": "The label of footer link with label=Bluefin linking to https://github.com/projectbluefin/bluefin"
-  },
-  "link.item.label.Bluefin LTS": {
-    "message": "Bluefin LTS",
-    "description": "The label of footer link with label=Bluefin LTS linking to https://github.com/projectbluefin/bluefin-lts"
   },
   "link.item.label.Documentation": {
     "message": "Documentation",

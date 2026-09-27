@@ -16,7 +16,7 @@
  * 3. `githubToken()` / `githubHeaders(token, opts)` — the single token and
  *    header contract for the CJS fetch layer, the counterpart of
  *    `lib/gh.js`'s exports. Migrated onto these from the hand-rolled
- *    fetch-feeds.js, fetch-pin-state.js and fetch-hive-history.js so token
+ *    fetch-feeds.js and fetch-hive-history.js so token
  *    acquisition and the Accept / api-version / user-agent shape can no longer
  *    drift per file (projectbluefin/documentation#1232).
  */

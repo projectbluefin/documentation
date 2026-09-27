@@ -34,11 +34,13 @@ function lookupVersionsForStream(cache, streamId) {
 
 /**
  * Return packageVersions for a specific release tag within a stream.
- * cacheKey format: "stable-20260331", "lts-20260331", etc.
+ * cacheKey format: "stable-20260331", "latest-20260331", etc.
  * Used by the Driver Versions page for per-release historical data.
  */
 function lookupVersionsForRelease(cache, streamId, cacheKey) {
-  return cache?.streams?.[streamId]?.releases?.[cacheKey]?.packageVersions ?? null;
+  return (
+    cache?.streams?.[streamId]?.releases?.[cacheKey]?.packageVersions ?? null
+  );
 }
 
 module.exports = {

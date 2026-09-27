@@ -51,7 +51,7 @@ test("buildOsInfo keeps core OS versions and major packages", () => {
   });
 });
 
-test("buildOsApp resolves companion NVIDIA versions for stable and LTS streams", () => {
+test("buildOsApp resolves companion NVIDIA versions for the stable stream", () => {
   const sbomCache = {
     streams: {
       "bluefin-stable": {
@@ -78,29 +78,6 @@ test("buildOsApp resolves companion NVIDIA versions for stable and LTS streams",
           },
         },
       },
-      "bluefin-lts": {
-        org: "projectbluefin",
-        package: "bluefin-lts",
-        releases: {
-          "stable-20260402": {
-            packageVersions: {
-              kernel: "6.12.0",
-              gnome: "47.2",
-            },
-          },
-        },
-      },
-      "bluefin-lts-nvidia": {
-        org: "projectbluefin",
-        package: "bluefin-lts-nvidia",
-        releases: {
-          "stable-20260402": {
-            packageVersions: {
-              nvidia: "580.40.01",
-            },
-          },
-        },
-      },
     },
   };
 
@@ -114,17 +91,6 @@ test("buildOsApp resolves companion NVIDIA versions for stable and LTS streams",
   const stableApp = buildOsApp(stableSpec, sbomCache);
   assert.equal(stableApp.osInfo.majorPackages.NVIDIA, "595.71.05");
   assert.equal(stableApp.releases[0].packageVersions.nvidia, "595.71.05");
-
-  const ltsSpec = {
-    streamId: "bluefin-lts",
-    appId: "bluefin-os-lts",
-    name: "Bluefin OS (LTS)",
-    summary: "LTS track",
-    ghReleasesUrl: "https://github.com/projectbluefin/bluefin-lts/releases",
-  };
-  const ltsApp = buildOsApp(ltsSpec, sbomCache);
-  assert.equal(ltsApp.osInfo.majorPackages.NVIDIA, "580.40.01");
-  assert.equal(ltsApp.releases[0].packageVersions.nvidia, "580.40.01");
 });
 
 test("buildOsApp picks the newest populated release and computes package diffs", () => {

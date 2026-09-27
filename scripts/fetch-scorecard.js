@@ -28,11 +28,7 @@ const OUT = resolve(__dirname, "../static/data/scorecard-history.json");
 
 const API_BASE = "https://api.securityscorecards.dev/projects/github.com";
 
-const REPOS = [
-  "projectbluefin/bluefin",
-  "projectbluefin/bluefin-lts",
-  "projectbluefin/dakota",
-];
+const REPOS = ["projectbluefin/bluefin", "projectbluefin/dakota"];
 
 const HISTORY_CAP = 365;
 

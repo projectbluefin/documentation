@@ -150,16 +150,6 @@ test("section picker supports decoupled custom catalog prop", () => {
         image: "/img/portal/characters/leaping.webp",
         supportedArch: ["x86"],
         recommended: true,
-        available: true,
-      },
-      lts: {
-        id: "lts",
-        title: "Bluefin LTS Custom",
-        subtitle: "LTS Sub",
-        description: "LTS Desc",
-        image: "/img/portal/characters/achillobator.webp",
-        supportedArch: ["x86"],
-        recommended: false,
         available: false,
         unavailableReason: "Custom unavailable",
       },
@@ -186,7 +176,6 @@ test("section picker supports decoupled custom catalog prop", () => {
   );
 
   assert.ok(html.includes("Bluefin Custom"));
-  assert.ok(html.includes("Custom unavailable"));
   assert.ok(html.includes("Dakota Custom"));
   assert.ok(html.includes("CustomPkg"));
   assert.ok(html.includes("1.0.0"));

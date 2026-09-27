@@ -55,7 +55,7 @@ _Avoid_: Telemetry server, collector daemon
 
 **CountMe Client**:
 The scheduled systemd service and timer running on Project Bluefin systems
-(`bluefin`, `bluefin-lts`, `dakota`) via `projectbluefin/common` that computes
+(`bluefin`, `dakota`) via `projectbluefin/common` that computes
 installation age and transmits anonymous weekly pings.
 _Avoid_: Telemetry agent, tracking daemon
 
