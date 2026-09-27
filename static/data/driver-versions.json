@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-23T12:03:48.979Z",
+  "generatedAt": "2026-09-27T19:16:08.103Z",
   "cacheHours": 168,
   "historyDays": 90,
   "streams": [
@@ -20,7 +20,6 @@
         "publishedAt": "2026-09-22T00:00:00.000Z",
         "versions": {
           "kernel": "7.1.6-201.fc44",
-          "hweKernel": null,
           "mesa": "26.1.4",
           "nvidia": "615.71.09",
           "gnome": "50.3",
@@ -39,7 +38,6 @@
           "publishedAt": "2026-09-22T00:00:00.000Z",
           "versions": {
             "kernel": "7.1.6-201.fc44",
-            "hweKernel": null,
             "mesa": "26.1.4",
             "nvidia": "615.71.09",
             "gnome": "50.3",
@@ -57,7 +55,6 @@
           "publishedAt": "2026-09-15T00:00:00.000Z",
           "versions": {
             "kernel": "7.1.6-201.fc44",
-            "hweKernel": null,
             "mesa": "26.1.4",
             "nvidia": "615.71.09",
             "gnome": "50.3",
@@ -75,7 +72,6 @@
           "publishedAt": "2026-09-08T00:00:00.000Z",
           "versions": {
             "kernel": "7.1.6-201.fc44",
-            "hweKernel": null,
             "mesa": "26.1.4",
             "nvidia": "610.57.04",
             "gnome": "50.3",
@@ -93,7 +89,6 @@
           "publishedAt": "2026-09-01T00:00:00.000Z",
           "versions": {
             "kernel": "7.1.6-201.fc44",
-            "hweKernel": null,
             "mesa": "26.1.4",
             "nvidia": "610.57.04",
             "gnome": "50.3",
@@ -111,7 +106,6 @@
           "publishedAt": "2026-08-25T00:00:00.000Z",
           "versions": {
             "kernel": "7.1.6-201.fc44",
-            "hweKernel": null,
             "mesa": "26.1.4",
             "nvidia": "610.57.04",
             "gnome": "50.3",
@@ -129,7 +123,6 @@
           "publishedAt": "2026-08-18T00:00:00.000Z",
           "versions": {
             "kernel": "7.1.4-200.fc44",
-            "hweKernel": null,
             "mesa": "26.1.4",
             "nvidia": "610.57.04",
             "gnome": "50.3",
@@ -147,7 +140,6 @@
           "publishedAt": "2026-08-11T00:00:00.000Z",
           "versions": {
             "kernel": "7.0.12-201.fc44",
-            "hweKernel": null,
             "mesa": "26.1.4",
             "nvidia": "610.43.03",
             "gnome": "50.3",
@@ -165,7 +157,6 @@
           "publishedAt": "2026-08-04T00:00:00.000Z",
           "versions": {
             "kernel": "7.0.12-201.fc44",
-            "hweKernel": null,
             "mesa": "26.1.4",
             "nvidia": "610.43.03",
             "gnome": "50.3",
@@ -183,7 +174,6 @@
           "publishedAt": "2026-08-01T00:00:00.000Z",
           "versions": {
             "kernel": "7.0.12-201.fc44",
-            "hweKernel": null,
             "mesa": "26.1.4",
             "nvidia": "610.43.03",
             "gnome": "50.3",
@@ -201,7 +191,6 @@
           "publishedAt": "2026-07-21T00:00:00.000Z",
           "versions": {
             "kernel": "7.0.12-201.fc44",
-            "hweKernel": null,
             "mesa": "26.1.4",
             "nvidia": "610.43.03",
             "gnome": "50.3",
@@ -211,17 +200,6 @@
           }
         }
       ]
-    },
-    {
-      "id": "bluefin-lts",
-      "name": "Bluefin LTS",
-      "subtitle": "Long-term support stream from projectbluefin/bluefin-lts.",
-      "command": "sudo bootc switch ghcr.io/projectbluefin/bluefin-lts:stable --enforce-container-sigpolicy",
-      "imageRef": "ghcr.io/projectbluefin/bluefin-lts:stable",
-      "source": "sbom",
-      "rowCount": 0,
-      "latest": null,
-      "history": []
     },
     {
       "id": "dakota-stable",
@@ -240,7 +218,6 @@
         "publishedAt": "2026-09-21T00:00:00.000Z",
         "versions": {
           "kernel": "7.2.6",
-          "hweKernel": null,
           "mesa": "26.2.2",
           "nvidia": "615.71.09",
           "gnome": "51.0",
@@ -259,7 +236,6 @@
           "publishedAt": "2026-09-21T00:00:00.000Z",
           "versions": {
             "kernel": "7.2.6",
-            "hweKernel": null,
             "mesa": "26.2.2",
             "nvidia": "615.71.09",
             "gnome": "51.0",

@@ -71,29 +71,27 @@ const DriverVersionsCatalog = loadComponent(
   path.join(COMPONENTS_DIR, "DriverVersionsCatalog.tsx"),
   {
     "@site/static/data/driver-versions.json": driverVersions,
-    "@site/static/data/stream-pins.json": { streams: {} },
   },
 ).default;
-const ltsCatalog = {
+const stableCatalog = {
   generatedAt: "2026-09-06T00:00:00.000Z",
   streams: [
     {
-      id: "bluefin-lts",
-      name: "Bluefin LTS",
-      subtitle: "Long-term support stream from projectbluefin/bluefin-lts.",
+      id: "bluefin-stable",
+      name: "Bluefin",
+      subtitle: "Current stable stream from ublue-os/bluefin.",
       command:
-        "sudo bootc switch ghcr.io/projectbluefin/bluefin-lts:stable --enforce-container-sigpolicy",
+        "sudo bootc switch ghcr.io/ublue-os/bluefin:stable --enforce-container-sigpolicy",
       source: "sbom",
       rowCount: 1,
       latest: {
-        stream: "bluefin-lts",
-        tag: "lts-20260906",
-        title: "lts-20260906",
+        stream: "bluefin-stable",
+        tag: "stable-20260906",
+        title: "stable-20260906",
         releaseUrl: null,
         publishedAt: "2026-09-06T00:00:00.000Z",
         versions: {
           kernel: "6.18.13-200.fc43",
-          hweKernel: null,
           mesa: "25.3.6",
           nvidia: "595.71.05",
           gnome: "50.0",
@@ -134,7 +132,6 @@ test("ImagesCatalog renders awaiting initial release for unpublished streams and
               command: null,
             },
           ],
-          testingStreams: [],
           security: {
             cosignKeyUrl: null,
             verifyCommand: null,
@@ -187,7 +184,6 @@ test("ImagesCatalog does not call published images unreleased when security data
               versions: null,
             },
           ],
-          testingStreams: [],
           metadata: null,
           metadataSource: "unavailable",
           security: null,
@@ -203,23 +199,12 @@ test("ImagesCatalog does not call published images unreleased when security data
 
 test("DriverVersionsCatalog renders the unavailable reason", () => {
   const html = render(DriverVersionsCatalog, {
-    streamId: "bluefin-lts",
+    streamId: "bluefin-stable",
     catalogOverride: driverVersions,
   });
 
   assert.ok(html.includes("Driver versions unavailable"));
   assert.ok(html.includes("SBOM cache unavailable"));
-});
-
-test("DriverVersionsCatalog uses the Bluefin LTS NVIDIA label", () => {
-  const html = render(DriverVersionsCatalog, {
-    streamId: "bluefin-lts",
-    catalogOverride: ltsCatalog,
-  });
-
-  assert.ok(html.includes("Bluefin LTS"));
-  assert.ok(html.includes("NVIDIA"));
-  assert.ok(!html.includes("NVIDIA (GDX)"));
 });
 
 test("StreamVersionPills centralizes optional NVIDIA and package pills", () => {
@@ -269,7 +254,6 @@ test("ImagesCatalog NVIDIA mode shows companion SBOM versions, not base-image ve
         nvidiaVersions: { kernel: "6.18.2", nvidia: "COMPANION-DRIVER" },
       },
     ],
-    testingStreams: [],
     metadata: null,
     metadataSource: "unavailable",
   };
@@ -330,7 +314,6 @@ test("DriverVersionsCatalog guards against empty releases and selects newest val
           publishedAt: "2026-06-06T00:00:00.000Z",
           versions: {
             kernel: null,
-            hweKernel: null,
             mesa: null,
             nvidia: null,
             gnome: null,
@@ -345,7 +328,6 @@ test("DriverVersionsCatalog guards against empty releases and selects newest val
             publishedAt: "2026-06-06T00:00:00.000Z",
             versions: {
               kernel: null,
-              hweKernel: null,
               mesa: null,
               nvidia: null,
               gnome: null,
@@ -359,7 +341,6 @@ test("DriverVersionsCatalog guards against empty releases and selects newest val
             publishedAt: "2026-05-31T00:00:00.000Z",
             versions: {
               kernel: "7.0.8-200.fc44",
-              hweKernel: null,
               mesa: "26.0.8",
               nvidia: null,
               gnome: "50.1",
@@ -422,15 +403,15 @@ test("DriverVersionsCatalog renders empty card without archiveRail for empty str
 
 test("DriverVersionsCatalog showRebootStep prop controls reboot banner", () => {
   const withReboot = render(DriverVersionsCatalog, {
-    streamId: "bluefin-lts",
-    catalogOverride: ltsCatalog,
+    streamId: "bluefin-stable",
+    catalogOverride: stableCatalog,
     showRebootStep: true,
   });
   assert.ok(withReboot.includes("Final Step: Reboot"));
 
   const withoutReboot = render(DriverVersionsCatalog, {
-    streamId: "bluefin-lts",
-    catalogOverride: ltsCatalog,
+    streamId: "bluefin-stable",
+    catalogOverride: stableCatalog,
     showRebootStep: false,
   });
   assert.ok(!withoutReboot.includes("Final Step: Reboot"));
@@ -449,20 +430,6 @@ test("DriverVersionsCatalog uses published image refs and never invents archival
           stream: "bluefin-stable",
           tag: "stable-20260906",
           imageRef: "ghcr.io/ublue-os/bluefin:stable-20260906",
-          versions: { kernel: "6.18.13-200.fc43" },
-        },
-        history: [],
-      },
-      {
-        id: "bluefin-lts",
-        name: "Bluefin LTS",
-        source: "sbom",
-        rowCount: 1,
-        imageRef: "ghcr.io/projectbluefin/bluefin-lts:stable",
-        latest: {
-          stream: "bluefin-lts",
-          tag: "lts-20260906",
-          imageRef: "ghcr.io/projectbluefin/bluefin-lts:lts-20260906",
           versions: { kernel: "6.18.13-200.fc43" },
         },
         history: [],
@@ -505,12 +472,6 @@ test("DriverVersionsCatalog uses published image refs and never invents archival
     !classic.includes("ghcr.io/projectbluefin/bluefin:stable-20260906"),
   );
 
-  const lts = render(DriverVersionsCatalog, {
-    streamId: "bluefin-lts",
-    catalogOverride: catalog,
-  });
-  assert.ok(lts.includes("ghcr.io/projectbluefin/bluefin-lts:lts-20260906"));
-
   const dakota = render(DriverVersionsCatalog, {
     streamId: "dakota-stable",
     catalogOverride: catalog,
@@ -526,7 +487,7 @@ test("DriverVersionsCatalog uses published image refs and never invents archival
     dakota.includes("No published image for this historical SBOM snapshot"),
   );
 
-  catalog.streams[2].latest = {
+  catalog.streams[1].latest = {
     stream: "dakota-stable",
     tag: "dakota-stable-20260907",
     imageRef: null,

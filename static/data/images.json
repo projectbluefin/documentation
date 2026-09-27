@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-23T12:04:00.714Z",
+  "generatedAt": "2026-09-27T19:16:17.576Z",
   "cacheHours": 168,
   "refreshHours": 336,
   "staleDays": 30,
@@ -97,11 +97,10 @@
           "nvidiaVersions": null
         }
       ],
-      "testingStreams": [],
       "metadata": {
         "digest": "sha256:76aa5d6f4f2f3e18b244587bfbd45ae1777a7d0934f869534228eab6af1f0101",
         "digestShort": "76aa5d6f4f2f",
-        "digestLink": null,
+        "digestLink": "https://github.com/ublue-os/bluefin/releases/tag/stable-20260922#assets",
         "architecture": "amd64",
         "os": "linux",
         "labels": {
@@ -118,9 +117,9 @@
         "kernel": "7.1.6-201.fc44",
         "nvidia": null,
         "release": {
-          "title": null,
-          "url": "https://github.com/ublue-os/bluefin/releases",
-          "assetsUrl": null
+          "title": "stable-20260922: Stable (F44.20260922, #7aafce4)",
+          "url": "https://github.com/ublue-os/bluefin/releases/tag/stable-20260922",
+          "assetsUrl": "https://github.com/ublue-os/bluefin/releases/tag/stable-20260922#assets"
         }
       },
       "security": {
@@ -132,105 +131,6 @@
       },
       "inspectTag": "stable",
       "lastPublishedAt": "2026-09-23T11:45:01.406Z",
-      "stale": false,
-      "keepEvenIfStale": true
-    },
-    {
-      "id": "projectbluefin-bluefin-lts",
-      "name": "Bluefin LTS",
-      "org": "projectbluefin",
-      "package": "bluefin-lts",
-      "versionSource": "sbom",
-      "summary": "Long-term support Bluefin stream.",
-      "artwork": "achillobator",
-      "sbomStreamId": "bluefin-lts",
-      "nvidiaSbomStreamId": "bluefin-lts-nvidia",
-      "imageRef": "ghcr.io/projectbluefin/bluefin-lts",
-      "packagePageUrl": "https://github.com/orgs/projectbluefin/packages/container/package/bluefin-lts",
-      "isoSectionLink": "/downloads",
-      "supportedArches": [
-        "amd",
-        "intel"
-      ],
-      "streams": [
-        {
-          "label": "STABLE",
-          "tag": "stable",
-          "command": "sudo bootc switch ghcr.io/projectbluefin/bluefin-lts:stable --enforce-container-sigpolicy",
-          "versions": {
-            "gnome": null,
-            "kernel": null,
-            "nvidia": null,
-            "fedora": null,
-            "flatpak": null,
-            "mesa": null,
-            "podman": null,
-            "systemd": null,
-            "bootc": null,
-            "pipewire": null
-          },
-          "nvidiaCommand": "sudo bootc switch ghcr.io/projectbluefin/bluefin-lts-nvidia:stable --enforce-container-sigpolicy",
-          "imageRef": "ghcr.io/projectbluefin/bluefin-lts:stable",
-          "nvidiaImageRef": "ghcr.io/projectbluefin/bluefin-lts-nvidia:stable",
-          "nvidiaVersions": null
-        },
-        {
-          "label": "TESTING",
-          "tag": "testing",
-          "command": "sudo bootc switch ghcr.io/projectbluefin/bluefin-lts:testing --enforce-container-sigpolicy",
-          "versions": {
-            "gnome": null,
-            "kernel": null,
-            "nvidia": null,
-            "fedora": null,
-            "flatpak": null,
-            "mesa": null,
-            "podman": null,
-            "systemd": null,
-            "bootc": null,
-            "pipewire": null
-          },
-          "nvidiaCommand": "sudo bootc switch ghcr.io/projectbluefin/bluefin-lts-nvidia:testing --enforce-container-sigpolicy",
-          "imageRef": "ghcr.io/projectbluefin/bluefin-lts:testing",
-          "nvidiaImageRef": "ghcr.io/projectbluefin/bluefin-lts-nvidia:testing",
-          "nvidiaVersions": null
-        }
-      ],
-      "testingStreams": [],
-      "metadata": {
-        "digest": "sha256:935c3283da7c02b76846919d554fedda62885f783018ad314f41b2a0c9dd3931",
-        "digestShort": "935c3283da7c",
-        "digestLink": "https://github.com/projectbluefin/bluefin-lts/releases/tag/stable-20260807#assets",
-        "architecture": "amd64",
-        "os": "linux",
-        "labels": {
-          "version": "10",
-          "revision": "dbeeb854a10be48b9ed2fecdbca0e65098b6b3ff",
-          "source": null,
-          "ostreeCommit": "a772d16f8b994ed4a2064bbf1b02c921b1c37e1ce5f4bba66875bdfa1d915046"
-        }
-      },
-      "metadataSource": "live",
-      "versions": {
-        "source": "sbom",
-        "gnome": null,
-        "kernel": null,
-        "nvidia": null,
-        "release": {
-          "title": "stable-20260807: LTS",
-          "url": "https://github.com/projectbluefin/bluefin-lts/releases/tag/stable-20260807",
-          "assetsUrl": "https://github.com/projectbluefin/bluefin-lts/releases/tag/stable-20260807#assets"
-        }
-      },
-      "security": {
-        "cosignKeyUrl": null,
-        "verifyCommand": "cosign verify --certificate-oidc-issuer https://token.actions.githubusercontent.com --certificate-identity-regexp '^https://github.com/projectbluefin/bluefin-lts/.github/workflows/' ghcr.io/projectbluefin/bluefin-lts:stable",
-        "attestCommand": null,
-        "hasAttestation": false,
-        "sbomCommand": "oras discover ghcr.io/projectbluefin/bluefin-lts:stable"
-      },
-      "inspectTag": "stable",
-      "lastPublishedAt": "2026-09-23T12:03:03.420Z",
       "stale": false,
       "keepEvenIfStale": true
     },
@@ -317,7 +217,6 @@
           }
         }
       ],
-      "testingStreams": [],
       "metadata": {
         "digest": "sha256:ddab2e2d816976a8f181603987e76d1c992109f435b2abdf1eae76f40f7139f8",
         "digestShort": "ddab2e2d8169",
@@ -395,16 +294,15 @@
           "nvidiaVersions": null
         }
       ],
-      "testingStreams": [],
       "metadata": {
-        "digest": "sha256:d1869a16e7793cbefd1eb6857689b5b1b202b9ffee3a64ea8c7c303a0eb4375c",
-        "digestShort": "d1869a16e779",
+        "digest": "sha256:eb0ef567aed628fbc373634201667fc032aa6bbe77313a9bbe5689577eefb514",
+        "digestShort": "eb0ef567aed6",
         "digestLink": null,
         "architecture": "amd64",
         "os": "linux",
         "labels": {
-          "version": "testing-20260919-dbd1425",
-          "revision": "2fdb47bf6203a5fd2623fa34a81a92fd8896f00c",
+          "version": "testing-20260927-77a2a94",
+          "revision": "f56b8595881a1f240c4cb88547b3be90cf6a7dd2",
           "source": "https://github.com/projectbluefin/utah",
           "ostreeCommit": null
         }

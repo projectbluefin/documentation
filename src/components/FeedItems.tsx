@@ -147,7 +147,6 @@ const ActionLinkButton: React.FC<{ label: string; url: string }> = ({
 
 const FIREHOSE_APP_ID_BY_FEED_ID: Record<string, string> = {
   bluefinReleases: "bluefin-os-stable",
-  bluefinLtsReleases: "bluefin-os-lts",
 };
 
 const FIREHOSE_OS_APP_LOOKUP: Record<string, FirehoseApp> = (() => {
@@ -188,7 +187,7 @@ const getNvidiaVersionFromFirehose = (
 
 // Helper function to determine if a feed should show executive summaries
 const isReleaseFeed = (feedId: string): boolean => {
-  return feedId === "bluefinReleases" || feedId === "bluefinLtsReleases";
+  return feedId === "bluefinReleases";
 };
 
 // Helper to extract items from a raw parsed feed
@@ -233,8 +232,6 @@ const resolveItemLink = (item: FeedItem, feedId: string): string => {
       const [, , tag] = idMatch;
       if (feedId === "bluefinReleases") {
         itemLink = `https://github.com/ublue-os/bluefin/releases/tag/${tag}`;
-      } else if (feedId === "bluefinLtsReleases") {
-        itemLink = `https://github.com/projectbluefin/bluefin-lts/releases/tag/${tag}`;
       }
     } else {
       const discussionMatch = item.id.match(
@@ -253,10 +250,7 @@ const resolveItemLink = (item: FeedItem, feedId: string): string => {
 
 // Helper function to format release titles for better readability
 const formatReleaseTitle = (title: string, feedId: string): string => {
-  if (feedId === "bluefinLtsReleases") {
-    // For LTS releases: Replace "bluefin-lts LTS: " or "Bluefin LTS: " prefix with "lts-"
-    return title.replace(/^(bluefin-lts|Bluefin) LTS: /, "lts-");
-  } else if (feedId === "bluefinReleases") {
+  if (feedId === "bluefinReleases") {
     // For stable releases: Keep "stable-" prefix, strip ": Stable" text, simplify Fedora version
     if (title.startsWith("stable-")) {
       return title.replace(
@@ -463,13 +457,13 @@ const CombinedFeedItems: React.FC<CombinedFeedItemsProps> = ({
 }) => {
   try {
     // Call useStoredFeed for each feed (hooks must be called unconditionally at top level)
-    const feedDataLts: ParsedFeed | null = useStoredFeed(
-      feeds[0]?.feedId ?? "bluefinLtsReleases",
+    const feedDataFirst: ParsedFeed | null = useStoredFeed(
+      feeds[0]?.feedId ?? "bluefinReleases",
     );
-    const feedDataStable: ParsedFeed | null = useStoredFeed(
+    const feedDataSecond: ParsedFeed | null = useStoredFeed(
       feeds[1]?.feedId ?? "bluefinReleases",
     );
-    const rawFeeds = [feedDataLts, feedDataStable];
+    const rawFeeds = [feedDataFirst, feedDataSecond];
 
     // Tag each item with its source feedId + label, then merge
     type TaggedItem = FeedItem & { _feedId: string; _label: string };
@@ -552,12 +546,12 @@ const CombinedFeedItems: React.FC<CombinedFeedItemsProps> = ({
             const inner = (
               <div className={styles.feedItemContent}>
                 <div
-                  className={`${styles.cardArtwork} ${item._feedId === "bluefinLtsReleases" ? styles.cardArtworkLts : styles.cardArtworkMain}`}
+                  className={`${styles.cardArtwork} ${styles.cardArtworkMain}`}
                   aria-hidden="true"
                 />
                 <div className={styles.feedItemHeader}>
                   <span
-                    className={`${styles.feedLabel} ${item._feedId === "bluefinLtsReleases" ? styles.feedLabelLts : styles.feedLabelBluefin}`}
+                    className={`${styles.feedLabel} ${styles.feedLabelBluefin}`}
                   >
                     {item._label}
                   </span>

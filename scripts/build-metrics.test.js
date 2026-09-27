@@ -64,7 +64,12 @@ describe("calculateWorkflowMetrics", () => {
       },
     ];
 
-    const result = calculateWorkflowMetrics("bluefin:stable", "projectbluefin/bluefin", 125772764, runs);
+    const result = calculateWorkflowMetrics(
+      "bluefin:stable",
+      "projectbluefin/bluefin",
+      125772764,
+      runs,
+    );
 
     assert.equal(result.totalBuilds, 3);
     assert.equal(result.failures, 1);
@@ -89,7 +94,12 @@ describe("calculateWorkflowMetrics", () => {
       },
     ];
 
-    const result = calculateWorkflowMetrics("bluefin:stable", "projectbluefin/bluefin", 125772764, runs);
+    const result = calculateWorkflowMetrics(
+      "bluefin:stable",
+      "projectbluefin/bluefin",
+      125772764,
+      runs,
+    );
 
     assert.equal(result.totalBuilds, 2);
     assert.equal(result.successRate, 100);
@@ -127,7 +137,7 @@ describe("calculateStatistics", () => {
         avgDuration: 200,
       },
       {
-        name: "bluefin:lts",
+        name: "dakota:stable",
         totalBuilds: 20,
         successRate: 100,
         avgDuration: 150,
@@ -138,7 +148,7 @@ describe("calculateStatistics", () => {
 
     assert.equal(stats.totalBuilds, 170);
     assert.equal(stats.mostActive, "bluefin:latest");
-    assert.deepEqual(stats.perfectImages, ["bluefin:stable", "bluefin:lts"]);
+    assert.deepEqual(stats.perfectImages, ["bluefin:stable", "dakota:stable"]);
     assert.equal(stats.perfectStreak, 30);
     // (50*100 + 100*200 + 20*150) / 170 = (5000 + 20000 + 3000) / 170 = 28000 / 170 = 164.705... -> 165
     assert.equal(stats.avgDuration, 165);
@@ -184,7 +194,10 @@ describe("fetchBuildMetrics with injected requestClient seam", () => {
     const end = new Date("2026-03-31T23:59:59Z");
 
     const mockRequest = async (route, _params) => {
-      assert.equal(route, "GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs");
+      assert.equal(
+        route,
+        "GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs",
+      );
       // Return a run based on the workflow id
       return {
         data: {
@@ -205,10 +218,10 @@ describe("fetchBuildMetrics with injected requestClient seam", () => {
 
     assert.ok(metrics);
     assert.ok(Array.isArray(metrics.images));
-    assert.equal(metrics.images.length, 7); // 7 TRACKED_WORKFLOWS
-    assert.equal(metrics.stats.totalBuilds, 7);
-    assert.equal(metrics.stats.perfectImages.length, 7);
-    assert.equal(metrics.previousMonth.images.length, 7);
+    assert.equal(metrics.images.length, 2); // 2 TRACKED_WORKFLOWS
+    assert.equal(metrics.stats.totalBuilds, 2);
+    assert.equal(metrics.stats.perfectImages.length, 2);
+    assert.equal(metrics.previousMonth.images.length, 2);
   });
 
   it("returns null gracefully if an unhandled top-level error occurs", async () => {

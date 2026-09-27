@@ -14,12 +14,11 @@ const { renderToStaticMarkup } = require("react-dom/server");
 const COUNTME_FULL = {
   unit: "estimated weekly active systems",
   method: "ublue-countme-v1",
-  variants: ["bluefin", "bluefin-lts", "aurora", "bazzite", "fedora"],
+  variants: ["bluefin", "aurora", "bazzite", "fedora"],
   weeks: [
     {
       week: "2026-06-29",
       bluefin: 3563,
-      "bluefin-lts": 104,
       aurora: 2716,
       bazzite: 85959,
       fedora: 1068523,
@@ -27,7 +26,6 @@ const COUNTME_FULL = {
     {
       week: "2026-07-06",
       bluefin: 3508,
-      "bluefin-lts": 76,
       aurora: 2667,
       bazzite: 86025,
       fedora: 1101818,
@@ -35,7 +33,6 @@ const COUNTME_FULL = {
     {
       week: "2026-07-13",
       bluefin: 3555,
-      "bluefin-lts": 123,
       aurora: 2688,
       bazzite: 86626,
       fedora: 1070454,
@@ -43,7 +40,6 @@ const COUNTME_FULL = {
     {
       week: "2026-07-20",
       bluefin: 4095,
-      "bluefin-lts": 100,
       aurora: 2669,
       bazzite: 88548,
       fedora: 1073642,
@@ -51,7 +47,6 @@ const COUNTME_FULL = {
     {
       week: "2026-07-27",
       bluefin: 3761,
-      "bluefin-lts": 159,
       aurora: 2826,
       bazzite: 89550,
       fedora: 1102473,
@@ -63,19 +58,17 @@ const COUNTME_FULL = {
 
 const COUNTME_WITH_GAP = {
   unit: "weekly countme hits",
-  variants: ["bluefin", "bluefin-lts", "aurora", "bazzite", "fedora"],
+  variants: ["bluefin", "aurora", "bazzite", "fedora"],
   weeks: [
     {
       week: "2026-07-06",
       bluefin: 21000,
-      aurora: 15500,
       bazzite: 410000,
       fedora: 13100000,
     },
     {
       week: "2026-07-13",
       bluefin: 22000,
-      "bluefin-lts": 580,
       aurora: 16000,
       bazzite: 420000,
       fedora: 13200000,
@@ -83,7 +76,6 @@ const COUNTME_WITH_GAP = {
     {
       week: "2026-07-20",
       bluefin: 23000,
-      "bluefin-lts": 600,
       aurora: 16500,
       bazzite: 450000,
       fedora: 13200000,
@@ -91,7 +83,6 @@ const COUNTME_WITH_GAP = {
     {
       week: "2026-07-27",
       bluefin: 23737,
-      "bluefin-lts": 622,
       aurora: 17451,
       bazzite: 483371,
       fedora: 13230935,
@@ -115,13 +106,6 @@ const BREW = {
           rank: 11,
           count: 1348347,
           percent: 0.48,
-        },
-        {
-          id: "bluefin-lts",
-          label: "Bluefin LTS",
-          rank: 39,
-          count: 79450,
-          percent: 0.03,
         },
       ],
       peers: [
@@ -148,13 +132,6 @@ const BREW = {
           count: 350000,
           percent: 0.45,
         },
-        {
-          id: "bluefin-lts",
-          label: "Bluefin LTS",
-          rank: 41,
-          count: 20000,
-          percent: 0.02,
-        },
       ],
       peers: [],
       unavailable: false,
@@ -173,13 +150,6 @@ const BREW = {
           count: 120000,
           percent: 0.5,
         },
-        {
-          id: "bluefin-lts",
-          label: "Bluefin LTS",
-          rank: 40,
-          count: 7000,
-          percent: 0.03,
-        },
       ],
       peers: [],
       unavailable: false,
@@ -192,11 +162,7 @@ const BREW = {
 
 const DORA = {
   windowDays: 365,
-  repos: [
-    "projectbluefin/bluefin",
-    "projectbluefin/bluefin-lts",
-    "projectbluefin/dakota",
-  ],
+  repos: ["projectbluefin/bluefin", "projectbluefin/dakota"],
   monthly: [
     {
       month: "2026-06",
@@ -256,7 +222,7 @@ const SCORECARD = {
       stateReason: null,
     },
     {
-      repo: "projectbluefin/bluefin-lts",
+      repo: "projectbluefin/dakota",
       unavailable: true,
       stateReason: "Repository not found in OpenSSF Scorecard database.",
       current: { date: "", score: 0, checks: [] },
@@ -570,7 +536,7 @@ test("missing variant key becomes null in series, never 0", () => {
     dora: DORA,
     scorecard: SCORECARD,
   });
-  // Look at the lane table sparkline data for bluefin-lts
+  // Look at the lane table sparkline data for aurora
   const sparklines = [...html.matchAll(/data-data="([^"]*)"/g)];
   // Find a sparkline containing null (gap)
   const hasGap = sparklines.some((m) => {

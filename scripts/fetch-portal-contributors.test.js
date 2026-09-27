@@ -164,7 +164,7 @@ test("harvestPortalContributors honours a custom window in days", async () => {
   );
 });
 
-test("harvestPortalContributors queries org repos plus the two ublue-os fallbacks and skips forks", async () => {
+test("harvestPortalContributors queries org repos plus the ublue-os/bluefin fallback and skips forks", async () => {
   const { calls } = await harvest([
     [
       "/orgs/projectbluefin/repos",
@@ -183,11 +183,7 @@ test("harvestPortalContributors queries org repos plus the two ublue-os fallback
     .filter((url) => url.includes("/commits"))
     .map((url) => url.match(/repos\/([^/]+\/[^/]+)\/commits/)[1]);
 
-  assert.deepEqual(commitRepos, [
-    "projectbluefin/common",
-    "ublue-os/bluefin",
-    "ublue-os/bluefin-lts",
-  ]);
+  assert.deepEqual(commitRepos, ["projectbluefin/common", "ublue-os/bluefin"]);
 });
 
 test("harvestPortalContributors de-duplicates a repo the org listing already returned", async () => {
@@ -196,7 +192,7 @@ test("harvestPortalContributors de-duplicates a repo the org listing already ret
       "/orgs/projectbluefin/repos",
       paged([
         { full_name: "ublue-os/bluefin", fork: false },
-        { full_name: "ublue-os/bluefin-lts", fork: false },
+        { full_name: "projectbluefin/common", fork: false },
       ]),
     ],
     ["/commits", paged([])],
@@ -207,14 +203,14 @@ test("harvestPortalContributors de-duplicates a repo the org listing already ret
   assert.equal(commitRepos.length, 2);
 });
 
-test("harvestPortalContributors still reports the fallback repos when the org listing fails", async () => {
+test("harvestPortalContributors still reports the fallback repo when the org listing fails", async () => {
   const { payload, calls } = await harvest([
     ["/orgs/projectbluefin/repos", errorResponse(403)],
     ["/commits", paged([commit("castrojo")])],
     ["/discussions", paged([])],
   ]);
 
-  assert.equal(calls.filter((url) => url.includes("/commits")).length, 2);
+  assert.equal(calls.filter((url) => url.includes("/commits")).length, 1);
   assert.deepEqual(
     payload.contributors.map((person) => person.login),
     ["castrojo"],
@@ -229,7 +225,7 @@ test("harvestPortalContributors treats a non-array org listing page as the end o
   ]);
 
   assert.equal(calls.filter((url) => url.includes("/orgs/")).length, 1);
-  assert.equal(calls.filter((url) => url.includes("/commits")).length, 2);
+  assert.equal(calls.filter((url) => url.includes("/commits")).length, 1);
   assert.deepEqual(
     payload.contributors.map((person) => person.login),
     ["hanthor"],
@@ -330,9 +326,12 @@ test("harvestPortalContributors synthesises a profile URL when the API omits htm
 
 test("harvestPortalContributors keeps results from repos that succeeded when one repo fails", async () => {
   const { payload } = await harvest([
-    ["/orgs/projectbluefin/repos", paged([])],
+    [
+      "/orgs/projectbluefin/repos",
+      paged([{ full_name: "projectbluefin/common", fork: false }]),
+    ],
     ["ublue-os/bluefin/commits", errorResponse(500)],
-    ["ublue-os/bluefin-lts/commits", paged([commit("hanthor")])],
+    ["projectbluefin/common/commits", paged([commit("hanthor")])],
     ["/discussions", paged([])],
   ]);
 

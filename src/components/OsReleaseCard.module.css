@@ -18,7 +18,6 @@
 /* ── Mascot art (::after pseudo, matching ImagesCatalog pattern) ── */
 
 .cardStable::after,
-.cardLts::after,
 .cardDakota::after {
   content: "";
   position: absolute;
@@ -37,10 +36,6 @@
   background-image: url("/img/characters/bluefin-small.webp");
 }
 
-.cardLts::after {
-  background-image: url("/img/characters/achillobator.webp");
-}
-
 .cardDakota::after {
   background-image: url("/img/characters/dakotaraptor.webp");
 }
@@ -49,10 +44,6 @@
 
 .cardStable {
   border-left: 3px solid var(--ifm-color-primary);
-}
-
-.cardLts {
-  border-left: 3px solid #d97706;
 }
 
 .cardDakota {
@@ -119,12 +110,6 @@
   background: rgba(34, 197, 94, 0.15);
   color: #15803d;
   border: 1px solid rgba(34, 197, 94, 0.35);
-}
-
-.badgeLts {
-  background: rgba(217, 119, 6, 0.15);
-  color: #b45309;
-  border: 1px solid rgba(217, 119, 6, 0.35);
 }
 
 .badgeDaily {
@@ -200,22 +185,6 @@
   border-color: rgba(234, 179, 8, 0.4);
 }
 
-.chipPinned {
-  background: rgba(251, 191, 36, 0.08);
-  border-color: rgba(180, 83, 9, 0.35);
-}
-
-[data-theme="dark"] .chipPinned {
-  background: rgba(120, 53, 15, 0.25);
-  border-color: rgba(194, 65, 12, 0.5);
-}
-
-.chipPinnedIcon {
-  font-size: 0.72rem;
-  line-height: 1;
-  margin-left: 2px;
-}
-
 .chipLabel {
   font-weight: 600;
   color: var(--ifm-color-emphasis-700);
@@ -254,7 +223,10 @@
   font-size: 0.82rem;
   color: var(--ifm-color-emphasis-700);
   cursor: pointer;
-  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    border-color 0.15s,
+    color 0.15s;
 }
 
 .collapsibleToggle:hover {
@@ -441,12 +413,12 @@
   text-decoration: none;
   font-weight: 500;
   padding: 0.2rem 0.6rem;
-  border: 1px solid var(--ifm-color-primary-lightest, rgba(0,0,0,0.15));
+  border: 1px solid var(--ifm-color-primary-lightest, rgba(0, 0, 0, 0.15));
   border-radius: 4px;
 }
 
 .viewLink:hover {
-  background: var(--ifm-color-primary-lightest, rgba(0,0,0,0.05));
+  background: var(--ifm-color-primary-lightest, rgba(0, 0, 0, 0.05));
   text-decoration: none;
 }
 
@@ -457,14 +429,14 @@
   background: none;
   cursor: pointer;
   padding: 0.2rem 0.6rem;
-  border: 1px solid var(--ifm-color-primary-lightest, rgba(0,0,0,0.15));
+  border: 1px solid var(--ifm-color-primary-lightest, rgba(0, 0, 0, 0.15));
   border-radius: 4px;
   transition: background 0.15s;
   font-family: inherit;
 }
 
 .embedButton:hover {
-  background: var(--ifm-color-primary-lightest, rgba(0,0,0,0.05));
+  background: var(--ifm-color-primary-lightest, rgba(0, 0, 0, 0.05));
 }
 
 .embedButton:active {
@@ -492,7 +464,6 @@
   }
 
   .cardStable::after,
-  .cardLts::after,
   .cardDakota::after {
     width: 70px;
     height: 70px;

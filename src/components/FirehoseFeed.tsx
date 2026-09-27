@@ -21,7 +21,6 @@ import {
   ROLLING_WINDOW_MS,
   CHIP_TO_SBOM,
   DX_CHIP_MAP,
-  GDX_CHIP_MAP,
   sbomKeyForRelease,
   buildVersionChips as _buildVersionChips,
   sbomStreamToEvents,
@@ -43,15 +42,6 @@ function getBluefinReleasesData() {
   return _bluefinReleasesData!;
 }
 
-let _bluefinLtsReleasesData: { items?: OsFeedItem[] } | null = null;
-function getBluefinLtsReleasesData() {
-  if (!_bluefinLtsReleasesData) {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    _bluefinLtsReleasesData = require("@site/static/feeds/bluefin-lts-releases.json");
-  }
-  return _bluefinLtsReleasesData!;
-}
-
 /** A single release event flattened out of its parent app. */
 export interface FlatRelease {
   app: FirehoseApp;
@@ -61,13 +51,10 @@ export interface FlatRelease {
 
 // ── OS release events ─────────────────────────────────────────────────────────
 
-function loadOsEvents(
-  feedData: { items?: OsFeedItem[] },
-  streamHint?: "lts",
-): OsReleaseEvent[] {
+function loadOsEvents(feedData: { items?: OsFeedItem[] }): OsReleaseEvent[] {
   const events: OsReleaseEvent[] = [];
   for (const item of feedData.items ?? []) {
-    const release = parseOsRelease(item, streamHint);
+    const release = parseOsRelease(item);
     if (!release) continue;
     const dateMs = new Date(item.pubDate).getTime();
     if (isNaN(dateMs)) continue;
@@ -103,9 +90,9 @@ function getSbomCache(): SbomAttestationsData {
  * version is authoritative and overrides any version parsed from release notes.
  * prevVersion (the gold change-indicator arrow) is preserved from release notes
  * so the UI can still show what changed. Packages outside CHIP_TO_SBOM (Nvidia,
- * HWE Kernel, DX, GDX) are kept from release notes unchanged.
+ * DX) are kept from release notes unchanged.
  *
- * Only applies to stable/LTS events. Dakota events are sourced separately via getDakotaOsEvent().
+ * Only applies to stable events. Dakota events are sourced separately via getDakotaOsEvent().
  */
 function enrichFromSbom(events: OsReleaseEvent[]): OsReleaseEvent[] {
   return events.map((event) => {
@@ -128,7 +115,7 @@ function enrichFromSbom(events: OsReleaseEvent[]): OsReleaseEvent[] {
 
     const sbomChipNames = new Set(CHIP_TO_SBOM.map(({ chipName }) => chipName));
 
-    // Keep non-SBOM packages (Nvidia, HWE Kernel, DX, GDX, etc.) from release notes.
+    // Keep non-SBOM packages (Nvidia, DX, etc.) from release notes.
     const nonSbomPackages = event.release.majorPackages.filter(
       (p) => !sbomChipNames.has(p.name.toLowerCase()),
     );
@@ -167,133 +154,6 @@ function enrichFromSbom(events: OsReleaseEvent[]): OsReleaseEvent[] {
   });
 }
 
-/**
- * Carry forward package versions last seen in fullDiff across the LTS release
- * history so each card shows its most-recently-observed version for packages
- * not tracked by the primary SBOM path (e.g. releases older than LOOKBACK_DAYS,
- * or packages SBOM tracks but release notes also list).
- *
- * Primary SBOM pipeline (enrichFromSbom) handles Kernel, GNOME, Mesa, Podman,
- * bootc, systemd, pipewire, flatpak for releases within LOOKBACK_DAYS.
- * This function is a fallback for older releases and carries forward the same
- * TRACKED set from the release notes / fullDiff parser.
- *
- * Processes events oldest→newest, maintaining a running "last known" state,
- * then restores the original newest-first order.
- */
-function enrichLtsFromHistory(events: OsReleaseEvent[]): OsReleaseEvent[] {
-  const TRACKED = ["systemd", "bootc", "pipewire", "flatpak", "hwe kernel"];
-  const sorted = [...events].sort((a, b) => a.dateMs - b.dateMs);
-  const running: Record<string, string> = {};
-
-  const enriched = sorted.map((event) => {
-    // Update running state from majorPackages listed in release notes
-    for (const pkg of event.release.majorPackages) {
-      const lower = pkg.name.toLowerCase();
-      if (TRACKED.includes(lower)) running[lower] = pkg.version;
-    }
-    // Update from fullDiff (packages that changed in this release)
-    for (const entry of event.release.fullDiff) {
-      const lower = entry.name.toLowerCase();
-      if (TRACKED.includes(lower) && entry.newVersion)
-        running[lower] = entry.newVersion;
-    }
-
-    const existingNames = new Set(
-      event.release.majorPackages.map((p) => p.name.toLowerCase()),
-    );
-    const toAdd: ParsedMajorPackage[] = [];
-    for (const name of TRACKED) {
-      if (!existingNames.has(name) && running[name]) {
-        toAdd.push({ name, version: running[name], prevVersion: null });
-      }
-    }
-    if (toAdd.length === 0) return event;
-    return {
-      ...event,
-      release: {
-        ...event.release,
-        majorPackages: [...event.release.majorPackages, ...toAdd],
-      },
-    };
-  });
-
-  return enriched.sort((a, b) => b.dateMs - a.dateMs);
-}
-
-/**
- * Enrich LTS events' dxPackages and gdxPackages from the bluefin-dx-lts /
- * bluefin-gdx-lts SBOM allPackages maps.
- *
- * The "Major DX / GDX packages" tables are absent from lts.YYYYMMDD releases
- * (new release format), so dxPackages/gdxPackages are empty after parse.
- * This function fills them from authoritative SBOM data.
- */
-function enrichLtsGdxFromSbom(events: OsReleaseEvent[]): OsReleaseEvent[] {
-  return events.map((event) => {
-    if (event.stream !== "lts") return event;
-
-    const dateMatch = event.release.tag.match(/(\d{8})/);
-    if (!dateMatch) return event;
-
-    const nvidiaStream =
-      getSbomCache()?.streams?.["bluefin-lts-nvidia"]?.releases;
-    const nvidiaAllPkgs =
-      nvidiaStream?.[`stable-${dateMatch[1]}`]?.packageVersions?.allPackages;
-
-    const gdxPackages = [...event.release.gdxPackages];
-    if (nvidiaAllPkgs) {
-      const existing = new Set(gdxPackages.map((p) => p.name.toLowerCase()));
-      for (const [rpm, label] of Object.entries(GDX_CHIP_MAP)) {
-        const version = nvidiaAllPkgs[rpm];
-        if (version && !existing.has(label.toLowerCase())) {
-          gdxPackages.push({ name: label, version, prevVersion: null });
-        }
-      }
-    }
-
-    if (gdxPackages.length === event.release.gdxPackages.length) {
-      return event;
-    }
-    return { ...event, release: { ...event.release, gdxPackages } };
-  });
-}
-
-/**
- * Override the "HWE Kernel" carry-forward value in LTS events with the
- * authoritative version from the bluefin-lts-hwe SBOM stream.
- *
- * enrichLtsFromHistory carries "hwe kernel" forward from release notes, but
- * LTS release notes have not included HWE Kernel since lts.20251223, causing
- * the changelogs page to display a stale value. The SBOM stream always has the
- * correct installed version.
- */
-function enrichLtsHweKernelFromSbom(
-  events: OsReleaseEvent[],
-): OsReleaseEvent[] {
-  return events.map((event) => {
-    if (event.stream !== "lts") return event;
-
-    const dateMatch = event.release.tag.match(/(\d{8})/);
-    if (!dateMatch) return event;
-
-    const hweKernel =
-      getSbomCache()?.streams?.["bluefin-lts-hwe"]?.releases?.[
-        `stable-hwe-${dateMatch[1]}`
-      ]?.packageVersions?.kernel;
-    if (!hweKernel) return event;
-    const updatedPackages = event.release.majorPackages.map((pkg) =>
-      pkg.name.toLowerCase() === "hwe kernel"
-        ? { ...pkg, version: hweKernel }
-        : pkg,
-    );
-    return {
-      ...event,
-      release: { ...event.release, majorPackages: updatedPackages },
-    };
-  });
-}
-
 // ── Lazy-initialized derived data ─────────────────────────────────────────────
 // All enrichment pipelines run on first access rather than at module load time.
 
@@ -316,20 +176,6 @@ function getStableDailyOsEvents(): OsReleaseEvent[] {
     );
   }
   return _stableDailyOsEvents;
-}
-
-let _ltsOsEvents: OsReleaseEvent[] | null = null;
-function getLtsOsEvents(): OsReleaseEvent[] {
-  if (!_ltsOsEvents) {
-    _ltsOsEvents = enrichLtsHweKernelFromSbom(
-      enrichLtsGdxFromSbom(
-        enrichLtsFromHistory(
-          enrichFromSbom(loadOsEvents(getBluefinLtsReleasesData(), "lts")),
-        ),
-      ),
-    );
-  }
-  return _ltsOsEvents;
 }
 
 // Rolling 12-month window for the stream — pinned cards (PINNED_OS_EVENTS) are unaffected.
@@ -358,7 +204,6 @@ function getAllOsStreamEvents(): OsReleaseEvent[] {
     _allOsStreamEvents = [
       ...getBluefinOsEvents(),
       ...getStableDailyOsEvents(),
-      ...getLtsOsEvents(),
       ...getDakotaStreamEvents(),
     ]
       .filter((e) => e.dateMs > cutoff)
@@ -411,22 +256,18 @@ function getDakotaOsEvent(): OsReleaseEvent | undefined {
   return _dakotaOsEvent;
 }
 
-// Pinned "Current Versions" cards: latest stable + latest LTS + Dakota placeholder.
+// Pinned "Current Versions" cards: latest stable + Dakota.
 // All bluefin releases are stable-daily; synthesise a "stable"-streamed clone for
 // the pinned card so it shows the "Stable" badge while the stream shows "Daily".
 let _pinnedOsEvents: OsReleaseEvent[] | null = null;
 function computePinnedOsEvents(): OsReleaseEvent[] {
   if (!_pinnedOsEvents) {
     const bluefin = getBluefinOsEvents();
-    const lts = getLtsOsEvents();
     // Pinned Bluefin card: most recent weekly stable release (stream === "stable").
     // stable-daily builds (latest-YYYYMMDD, if published) appear in the timeline only.
     const pinnedStable: OsReleaseEvent | undefined =
       bluefin.find((e) => e.stream === "stable") ?? bluefin[0];
-    // Pinned LTS card: latest from LTS feed
-    const pinnedLts: OsReleaseEvent | undefined =
-      lts.length > 0 ? lts[0] : undefined;
-    _pinnedOsEvents = [pinnedStable, pinnedLts, getDakotaOsEvent()].filter(
+    _pinnedOsEvents = [pinnedStable, getDakotaOsEvent()].filter(
       (e): e is OsReleaseEvent => e !== undefined,
     );
   }
@@ -667,15 +508,6 @@ function RssLinks() {
             rel="noopener noreferrer"
           >
             Releases Atom
-          </a>
-        </li>
-        <li>
-          <a
-            href="https://github.com/projectbluefin/bluefin-lts/releases.atom"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            LTS Releases Atom
           </a>
         </li>
         <li>

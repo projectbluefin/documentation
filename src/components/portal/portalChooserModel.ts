@@ -1,16 +1,13 @@
-export type ReleaseId = "stable" | "lts";
-export type ArchId = "x86" | "arm";
+export type ReleaseId = "stable";
+export type ArchId = "x86";
 export type GpuId = "amd" | "nvidia";
-export type KernelId = "regular" | "hwe";
 
-export type ChooserStep =
-  "release" | "architecture" | "gpu" | "kernel" | "download";
+export type ChooserStep = "release" | "architecture" | "gpu" | "download";
 
 export interface ChooserSelection {
   stream?: ReleaseId;
   arch?: ArchId;
   gpu?: GpuId;
-  kernel?: KernelId;
 }
 
 export interface ChooserState {
@@ -47,71 +44,22 @@ export function selectArchitecture(
   state: ChooserState,
   arch: ArchId,
 ): ChooserState {
-  if (arch === "arm") {
-    return {
-      step: "download",
-      selection: {
-        ...state.selection,
-        stream: "lts",
-        arch: "arm",
-        gpu: undefined,
-        kernel: "regular",
-      },
-    };
-  }
-
   return {
     step: "gpu",
     selection: {
       ...state.selection,
-      arch: "x86",
+      arch,
       gpu: undefined,
-      kernel: undefined,
     },
   };
 }
 
 export function selectGpu(state: ChooserState, gpu: GpuId): ChooserState {
-  if (state.selection.stream === "lts") {
-    if (gpu === "nvidia") {
-      return {
-        step: "download",
-        selection: {
-          ...state.selection,
-          gpu: "nvidia",
-          kernel: "regular",
-        },
-      };
-    }
-    return {
-      step: "kernel",
-      selection: {
-        ...state.selection,
-        gpu,
-        kernel: undefined,
-      },
-    };
-  }
-
   return {
     step: "download",
     selection: {
       ...state.selection,
       gpu,
-      kernel: "regular",
-    },
-  };
-}
-
-export function selectKernel(
-  state: ChooserState,
-  kernel: KernelId,
-): ChooserState {
-  return {
-    step: "download",
-    selection: {
-      ...state.selection,
-      kernel,
     },
   };
 }
@@ -120,43 +68,11 @@ export function navigateBack(state: ChooserState): ChooserState {
   const { step, selection } = state;
 
   if (step === "download") {
-    if (selection.arch === "arm") {
-      return {
-        step: "architecture",
-        selection: {
-          ...selection,
-          arch: undefined,
-          gpu: undefined,
-          kernel: undefined,
-        },
-      };
-    }
-    if (selection.stream === "lts" && selection.gpu === "amd") {
-      return {
-        step: "kernel",
-        selection: {
-          ...selection,
-          kernel: undefined,
-        },
-      };
-    }
     return {
       step: "gpu",
       selection: {
         ...selection,
         gpu: undefined,
-        kernel: undefined,
-      },
-    };
-  }
-
-  if (step === "kernel") {
-    return {
-      step: "gpu",
-      selection: {
-        ...selection,
-        gpu: undefined,
-        kernel: undefined,
       },
     };
   }
@@ -193,30 +109,13 @@ export function formatImageName(selection: ChooserSelection): string {
   let name = "bluefin";
 
   if (selection.gpu === "nvidia") {
-    if (selection.stream === "lts") {
-      name += "-gdx";
-    } else {
-      name += "-nvidia-open";
-    }
+    name += "-nvidia-open";
   }
 
   name += `-${selection.stream ?? "stable"}`;
 
-  if (
-    selection.stream === "lts" &&
-    selection.kernel === "hwe" &&
-    selection.gpu !== "nvidia"
-  ) {
-    name += "-hwe";
-  }
-
-  switch (selection.arch) {
-    case "x86":
-      name += "-x86_64";
-      break;
-    case "arm":
-      name += "-aarch64";
-      break;
+  if (selection.arch === "x86") {
+    name += "-x86_64";
   }
 
   return name;
@@ -235,23 +134,6 @@ export function formatChecksumUrl(selection: ChooserSelection): string {
 }
 
 export function formatBootcCommand(selection: ChooserSelection): string {
-  let org = "ublue-os";
-  let image = "bluefin";
-  if (selection.stream === "lts") {
-    org = "projectbluefin";
-    image = selection.gpu === "nvidia" ? "bluefin-lts-nvidia" : "bluefin-lts";
-  } else if (selection.gpu === "nvidia") {
-    image = "bluefin-nvidia-open";
-  }
-
-  let tag = "stable";
-  if (
-    selection.stream === "lts" &&
-    selection.kernel === "hwe" &&
-    selection.gpu !== "nvidia"
-  ) {
-    tag = "lts-hwe";
-  }
-
-  return `sudo bootc switch ghcr.io/${org}/${image}:${tag} --enforce-container-sigpolicy`;
+  const image = selection.gpu === "nvidia" ? "bluefin-nvidia-open" : "bluefin";
+  return `sudo bootc switch ghcr.io/ublue-os/${image}:stable --enforce-container-sigpolicy`;
 }

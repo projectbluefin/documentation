@@ -51,21 +51,6 @@ const deterministicImages = {
       ],
     },
     {
-      id: "projectbluefin-bluefin-lts",
-      streams: [
-        {
-          tag: "stable",
-          versions: {
-            fedora: "el10",
-            gnome: "49.5",
-            kernel: "6.12.0-233.el10",
-            flatpak: "1.16.0",
-            podman: "5.8.2",
-          },
-        },
-      ],
-    },
-    {
       id: "projectbluefin-dakota",
       streams: [
         {
@@ -101,18 +86,6 @@ const deterministicDrivers = {
       },
     },
     {
-      id: "bluefin-lts",
-      latest: {
-        versions: {
-          gnome: "49.5",
-          kernel: "6.12.0-233.el10",
-          hweKernel: "7.0.8-100.fc43",
-          flatpak: "1.16.0",
-          podman: "5.8.2",
-        },
-      },
-    },
-    {
       id: "dakota-stable",
       latest: {
         versions: {
@@ -133,9 +106,7 @@ test("stream adapter extracts verified stream versions from deterministic fixtur
   const { adaptStreams } = loadTsModule(adapterPath);
   const catalog = adaptStreams(deterministicImages, deterministicDrivers);
 
-  assert.ok(catalog.streams.stable);
-  assert.ok(catalog.streams.lts);
-
+  assert.deepEqual(Object.keys(catalog.streams), ["stable"]);
   assert.equal(catalog.streams.stable.id, "stable");
   assert.equal(catalog.streams.stable.available, true);
   assert.equal(catalog.streams.stable.recommended, true);
@@ -151,20 +122,6 @@ test("stream adapter extracts verified stream versions from deterministic fixtur
   assert.equal(catalog.streams.stable.versions.base, "Fedora 44");
   assert.equal(catalog.streams.stable.versions.flatpak, "1.17.7");
   assert.equal(catalog.streams.stable.versions.podman, "5.8.2");
-
-  assert.equal(catalog.streams.lts.id, "lts");
-  assert.equal(catalog.streams.lts.available, true);
-  assert.equal(catalog.streams.lts.recommended, false);
-  assert.equal(
-    catalog.streams.lts.image,
-    "/img/portal/characters/achillobator.webp",
-  );
-  assert.deepEqual(catalog.streams.lts.supportedArch, ["x86", "arm"]);
-  assert.equal(catalog.streams.lts.versions.gnome, "49.5");
-  assert.equal(catalog.streams.lts.versions.kernel, "6.12.0-233.el10");
-  assert.equal(catalog.streams.lts.versions.hweKernel, "7.0.8-100.fc43");
-  assert.equal(catalog.streams.lts.versions.flatpak, "1.16.0");
-  assert.equal(catalog.streams.lts.versions.podman, "5.8.2");
 });
 
 test("stream adapter sets available false and shows reason when stream is absent", () => {
@@ -175,10 +132,7 @@ test("stream adapter sets available false and shows reason when stream is absent
 
   assert.equal(catalog.streams.stable.available, false);
   assert.equal(catalog.streams.stable.unavailableReason, "Will return");
-  assert.equal(catalog.streams.lts.available, false);
-  assert.equal(catalog.streams.lts.unavailableReason, "Will return");
   assert.equal(catalog.streams.stable.versions, undefined);
-  assert.equal(catalog.streams.lts.versions, undefined);
 });
 
 test("ecosystem cards link expected destinations and wolves links absolute url", () => {
@@ -244,9 +198,6 @@ test("stream adapter handles null or undefined inputs safely with explicit unava
   assert.equal(catalog.streams.stable.available, false);
   assert.equal(catalog.streams.stable.unavailableReason, "Will return");
   assert.equal(catalog.streams.stable.versions, undefined);
-  assert.equal(catalog.streams.lts.available, false);
-  assert.equal(catalog.streams.lts.unavailableReason, "Will return");
-  assert.equal(catalog.streams.lts.versions, undefined);
   assert.deepEqual(catalog.ecosystem[0].versionRows, []);
 });
 
@@ -281,13 +232,8 @@ test("stream adapter determines availability independently and omits missing fie
   assert.equal(catalog.streams.stable.versions.base, "Fedora 44");
   assert.equal("nvidia" in catalog.streams.stable.versions, false);
   assert.equal("mesa" in catalog.streams.stable.versions, false);
-  assert.equal("hweKernel" in catalog.streams.stable.versions, false);
   assert.equal("flatpak" in catalog.streams.stable.versions, false);
   assert.equal("podman" in catalog.streams.stable.versions, false);
-
-  assert.equal(catalog.streams.lts.available, false);
-  assert.equal(catalog.streams.lts.unavailableReason, "Will return");
-  assert.equal(catalog.streams.lts.versions, undefined);
 });
 
 test("stream adapter selects intended stream by tag/id regardless of stream array ordering", () => {
@@ -317,32 +263,6 @@ test("stream adapter selects intended stream by tag/id regardless of stream arra
               fedora: "F44",
               flatpak: "1.17.7",
               mesa: "26.0.8",
-              podman: "5.8.2",
-            },
-          },
-        ],
-      },
-      {
-        id: "projectbluefin-bluefin-lts",
-        streams: [
-          {
-            tag: "testing",
-            label: "TESTING",
-            versions: {
-              gnome: "888.0",
-              kernel: "888.0.0-testing",
-              flatpak: "888.0",
-              podman: "888.0",
-            },
-          },
-          {
-            tag: "stable",
-            label: "STABLE",
-            versions: {
-              gnome: "49.5",
-              kernel: "6.12.0-233.el10",
-              flatpak: "1.16.0",
-              mesa: "25.2.7",
               podman: "5.8.2",
             },
           },
@@ -380,11 +300,6 @@ test("stream adapter selects intended stream by tag/id regardless of stream arra
   assert.equal(catalog.streams.stable.versions.kernel, "7.0.8-200.fc44");
   assert.equal(catalog.streams.stable.versions.flatpak, "1.17.7");
   assert.equal(catalog.streams.stable.versions.podman, "5.8.2");
-
-  assert.equal(catalog.streams.lts.versions.gnome, "49.5");
-  assert.equal(catalog.streams.lts.versions.kernel, "6.12.0-233.el10");
-  assert.equal(catalog.streams.lts.versions.flatpak, "1.16.0");
-  assert.equal(catalog.streams.lts.versions.podman, "5.8.2");
 
   const dakotaRows = catalog.ecosystem[0].versionRows;
   const kernelRow = dakotaRows.find((r) => r.label === "Kernel");
@@ -481,15 +396,10 @@ test("smoke test: stream adapter processes live static data files with structura
 
   assert.ok(catalog.streams);
   assert.ok(catalog.streams.stable);
-  assert.ok(catalog.streams.lts);
   assert.equal(catalog.streams.stable.id, "stable");
-  assert.equal(catalog.streams.lts.id, "lts");
   assert.equal(typeof catalog.streams.stable.available, "boolean");
-  assert.equal(typeof catalog.streams.lts.available, "boolean");
   assert.ok(Array.isArray(catalog.streams.stable.supportedArch));
-  assert.ok(Array.isArray(catalog.streams.lts.supportedArch));
   assert.equal(typeof catalog.streams.stable.recommended, "boolean");
-  assert.equal(typeof catalog.streams.lts.recommended, "boolean");
   assert.ok(Array.isArray(catalog.ecosystem));
   const liveDakota = catalog.ecosystem.find((e) => e.id === "dakota");
   assert.ok(liveDakota);
@@ -534,21 +444,6 @@ test("regression: exact tests remain stable when actual generated files contain 
         ],
       },
       {
-        id: "projectbluefin-bluefin-lts",
-        streams: [
-          {
-            tag: "stable",
-            versions: {
-              fedora: "el11",
-              gnome: "50.0",
-              kernel: "7.0.0-100.el11",
-              flatpak: "1.17.0",
-              podman: "6.0.0",
-            },
-          },
-        ],
-      },
-      {
         id: "projectbluefin-dakota",
         streams: [
           {
@@ -578,18 +473,6 @@ test("regression: exact tests remain stable when actual generated files contain 
           },
         },
       },
-      {
-        id: "bluefin-lts",
-        latest: {
-          versions: {
-            gnome: "50.0",
-            kernel: "7.0.0-100.el11",
-            hweKernel: "8.1.0-50.fc45",
-            flatpak: "1.17.0",
-            podman: "6.0.0",
-          },
-        },
-      },
     ],
   };
 
@@ -597,8 +480,6 @@ test("regression: exact tests remain stable when actual generated files contain 
   assert.equal(dynamicCatalog.streams.stable.versions.gnome, "52.0");
   assert.equal(dynamicCatalog.streams.stable.versions.base, "Fedora 45");
   assert.equal(dynamicCatalog.streams.stable.versions.kernel, "8.1.0-100.fc45");
-  assert.equal(dynamicCatalog.streams.lts.versions.gnome, "50.0");
-  assert.equal(dynamicCatalog.streams.lts.versions.kernel, "7.0.0-100.el11");
 
   // Prove deterministic fixture assertions remain completely unaffected
   const deterministicCatalogResult = adaptStreams(

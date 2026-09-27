@@ -13,7 +13,6 @@ import {
   selectRelease,
   selectArchitecture,
   selectGpu,
-  selectKernel,
   navigateBack,
   resetChooser,
   formatIsoFilename,
@@ -78,15 +77,8 @@ export function getStepAnnouncement(
       return `Step 2: Choose architecture for ${streamTitle}.`;
     case "gpu":
       return "Step 3: Choose graphics card vendor.";
-    case "kernel":
-      return `Step 4: Choose kernel preference for ${streamTitle}.`;
-    case "download": {
-      const displayTitle =
-        selection.gpu === "nvidia" && selection.stream === "lts"
-          ? "Bluefin GDX"
-          : streamTitle;
-      return `Ready to download ${displayTitle}.`;
-    }
+    case "download":
+      return `Ready to download ${streamTitle}.`;
     default:
       return "";
   }
@@ -132,7 +124,7 @@ export default function PortalImageChooser({
   const renderReleaseStep = () => (
     <div className={styles.releaseSelection}>
       <div className={styles.releaseGrid}>
-        {(["stable", "lts"] as const).map((id) => {
+        {(["stable"] as const).map((id) => {
           const stream = catalog.streams[id];
           if (!stream) return null;
           const isRecommended = stream.recommended;
@@ -217,16 +209,6 @@ export default function PortalImageChooser({
                             </span>
                           </div>
                         )}
-                        {id === "lts" && stream.versions.hweKernel && (
-                          <div className={styles.versionItem}>
-                            <span className={styles.versionItemLabel}>
-                              HWE Kernel:
-                            </span>
-                            <span className={styles.versionItemValue}>
-                              {stream.versions.hweKernel}
-                            </span>
-                          </div>
-                        )}
                         {stream.versions.mesa && (
                           <div className={styles.versionItem}>
                             <span className={styles.versionItemLabel}>
@@ -306,14 +288,6 @@ export default function PortalImageChooser({
           >
             x86_64 (Standard for most computers)
           </button>
-          <button
-            type="button"
-            className={styles.optionButton}
-            disabled={!supported.includes("arm")}
-            onClick={() => setState(selectArchitecture(state, "arm"))}
-          >
-            ARM64
-          </button>
         </div>
       </div>
     );
@@ -353,52 +327,11 @@ export default function PortalImageChooser({
     </div>
   );
 
-  const renderKernelStep = () => (
-    <div className={styles.stepSelection}>
-      <div className={styles.stepHeader}>
-        <button
-          type="button"
-          className={styles.backButton}
-          onClick={() => setState(navigateBack(state))}
-        >
-          Back
-        </button>
-        <h3 tabIndex={-1}>
-          What is your priority? This choice balances system stability with
-          support for the newest hardware. You can change this later:
-        </h3>
-      </div>
-      <div className={styles.optionsGrid}>
-        <button
-          type="button"
-          className={styles.optionButton}
-          onClick={() => setState(selectKernel(state, "regular"))}
-        >
-          LTS Linux kernel: The most reliable option, perfect for most
-          computers.
-        </button>
-        <button
-          type="button"
-          className={styles.optionButton}
-          onClick={() => setState(selectKernel(state, "hwe"))}
-        >
-          Latest Linux kernel: Best for brand-new devices and getting the newest
-          features.
-        </button>
-      </div>
-    </div>
-  );
-
   const renderDownloadStep = () => {
     const filename = formatIsoFilename(selection);
     const isoUrl = formatIsoUrl(selection);
     const checksumUrl = formatChecksumUrl(selection);
     const bootcCommand = formatBootcCommand(selection);
-
-    const displayReleaseTitle =
-      selection.gpu === "nvidia" && selection.stream === "lts"
-        ? "Bluefin GDX"
-        : currentStream?.title;
 
     return (
       <div className={styles.downloadSection}>
@@ -420,7 +353,7 @@ export default function PortalImageChooser({
               <div className={styles.decisionItem}>
                 <span className={styles.decisionLabel}>Release:</span>
                 <span className={styles.decisionValue}>
-                  {displayReleaseTitle}
+                  {currentStream?.title}
                 </span>
                 <span className={styles.decisionSubtitle}>
                   {currentStream?.subtitle}
@@ -428,30 +361,11 @@ export default function PortalImageChooser({
               </div>
               <div className={styles.decisionItem}>
                 <span className={styles.decisionLabel}>Architecture:</span>
-                <span className={styles.decisionValue}>
-                  {selection.arch === "x86" ? "x86_64" : "ARM64"}
-                </span>
+                <span className={styles.decisionValue}>x86_64</span>
                 <span className={styles.decisionSubtitle}>
-                  {selection.arch === "x86"
-                    ? "Standard for most computers (AMD and Intel)"
-                    : "For ARM-based systems (Apple Silicon, Raspberry Pi, etc)"}
+                  Standard for most computers (AMD and Intel)
                 </span>
               </div>
-              {selection.stream === "lts" && (
-                <div className={styles.decisionItem}>
-                  <span className={styles.decisionLabel}>Kernel:</span>
-                  <span className={styles.decisionValue}>
-                    {selection.kernel === "hwe"
-                      ? "Hardware Enablement (HWE)"
-                      : "Regular LTS"}
-                  </span>
-                  <span className={styles.decisionSubtitle}>
-                    {selection.kernel === "hwe"
-                      ? "Regularly updated kernels for better hardware support"
-                      : "Stable kernel updates, locked to 6.12.0 with backports"}
-                  </span>
-                </div>
-              )}
               {selection.gpu && (
                 <div className={styles.decisionItem}>
                   <span className={styles.decisionLabel}>
@@ -564,7 +478,6 @@ export default function PortalImageChooser({
       {step === "release" && renderReleaseStep()}
       {step === "architecture" && renderArchitectureStep()}
       {step === "gpu" && renderGpuStep()}
-      {step === "kernel" && renderKernelStep()}
       {step === "download" && renderDownloadStep()}
     </div>
   );

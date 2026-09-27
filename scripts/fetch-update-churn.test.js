@@ -187,5 +187,5 @@ test("calculateReleaseChurn: processes ordered releases and computes sequential 
 test("extractDateFromTag: parses YYYYMMDD date strings accurately", () => {
   assert.equal(extractDateFromTag("stable-daily-20260606"), "2026-06-06");
   assert.equal(extractDateFromTag("latest.20260114"), "2026-01-14");
-  assert.equal(extractDateFromTag("lts-20260531"), "2026-05-31");
+  assert.equal(extractDateFromTag("stable-20260531"), "2026-05-31");
 });

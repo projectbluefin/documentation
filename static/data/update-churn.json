@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-26T05:15:21.012Z",
+  "generatedAt": "2026-09-27T19:15:03.522Z",
   "source": "GHCR OCI Manifests & Attestations",
   "method": "oci-layer-diff-v1",
   "unit": "MB",
@@ -14,7 +14,7 @@
       "releases": [
         {
           "tag": "stable",
-          "date": "2026-09-26",
+          "date": "2026-09-27",
           "previousTag": null,
           "downloadChurnMB": 3175,
           "sharedMB": 0,
@@ -179,46 +179,6 @@
         }
       ]
     },
-    "bluefin-lts": {
-      "id": "bluefin-lts",
-      "name": "Bluefin LTS",
-      "edition": "Enterprise Workstation",
-      "package": "projectbluefin/bluefin-lts",
-      "stream": "stable",
-      "unavailable": false,
-      "releases": [
-        {
-          "tag": "10-20260606",
-          "date": "2026-06-06",
-          "previousTag": null,
-          "downloadChurnMB": 2843.1,
-          "sharedMB": 0,
-          "totalMB": 2843.1,
-          "reuseEfficiencyPct": 0,
-          "totalLayers": 128,
-          "sharedLayers": 0,
-          "newLayers": 128,
-          "zstdLayers": 128,
-          "compressionFormat": "zstd-chunked",
-          "isBaseline": true
-        },
-        {
-          "tag": "stable",
-          "date": "2026-09-26",
-          "previousTag": "10-20260606",
-          "downloadChurnMB": 3893.7,
-          "sharedMB": 0,
-          "totalMB": 3893.7,
-          "reuseEfficiencyPct": 0,
-          "totalLayers": 68,
-          "sharedLayers": 0,
-          "newLayers": 68,
-          "zstdLayers": 68,
-          "compressionFormat": "zstd-chunked",
-          "isBaseline": false
-        }
-      ]
-    },
     "dakota": {
       "id": "dakota",
       "name": "Project Bluefin Dakota",
@@ -229,7 +189,7 @@
       "releases": [
         {
           "tag": "stable",
-          "date": "2026-09-26",
+          "date": "2026-09-27",
           "previousTag": null,
           "downloadChurnMB": 3478.8,
           "sharedMB": 0,
@@ -254,11 +214,11 @@
       "releases": [
         {
           "tag": "testing",
-          "date": "2026-09-26",
+          "date": "2026-09-27",
           "previousTag": null,
-          "downloadChurnMB": 2185.1,
+          "downloadChurnMB": 2210.8,
           "sharedMB": 0,
-          "totalMB": 2185.1,
+          "totalMB": 2210.8,
           "reuseEfficiencyPct": 0,
           "totalLayers": 128,
           "sharedLayers": 0,

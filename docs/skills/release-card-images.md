@@ -23,7 +23,7 @@ metadata:
 repositories hotlink from their READMEs:
 
 ```
-https://docs.projectbluefin.io/img/cards/{bluefin,bluefin-lts,dakota}-{light,dark}.png
+https://docs.projectbluefin.io/img/cards/{bluefin,dakota}-{light,dark}.png
 ```
 
 The PNGs are gitignored and regenerated during the CI build, so **a card is only
@@ -48,11 +48,10 @@ correct forever and be wrong within a month.
 
 ### Every card reads a live source
 
-| Card          | Source                                                     |
-| ------------- | ---------------------------------------------------------- |
-| `bluefin`     | `static/feeds/bluefin-releases.json` + SBOM enrichment     |
-| `bluefin-lts` | `static/feeds/bluefin-lts-releases.json` + SBOM enrichment |
-| `dakota`      | `static/data/sbom-attestations-frontend.json` (SBOM only)  |
+| Card      | Source                                                    |
+| --------- | --------------------------------------------------------- |
+| `bluefin` | `static/feeds/bluefin-releases.json` + SBOM enrichment    |
+| `dakota`  | `static/data/sbom-attestations-frontend.json` (SBOM only) |
 
 Dakota has no release-notes feed to parse, so `buildDakotaRelease()` in
 `scripts/lib/card-feed-parser.mjs` reads the `dakota-stable` SBOM stream

@@ -118,14 +118,13 @@ workloads:
 2. **Upstream artifact proxy:** Only `ublue-os/bluefin:stable` (rebadged as
    **Bluefin Classic**), the upstream pre-migration image — `/growth_bluefins.svg`,
    `/sources/ublue-os/bluefin/growth.svg`, `/badge-endpoints/bluefin.json`.
-   That is the whole exception; every other `ublue-os/countme` series,
-   Bluefin LTS included, is EPEL-summed and may not be republished as ours.
+   That is the whole exception; no other `ublue-os/countme` series may be
+   republished as ours.
 3. **Client ingestion (`/metalink`):** Receives weekly anonymous countme pings
    from Project Bluefin clients and writes the rows the counts query reads.
-   - Query parameters: `repo` (one of `bluefin`, `bluefin-lts`, `dakota`,
-     `utah`, `server`), `tag`
-     (e.g. `stable`), `flavor` (e.g. `main`), `arch` (`x86_64`, `aarch64`),
-     `countme` (integer bucket 1–4).
+   - Query parameters: `repo` (one of `bluefin`, `dakota`, `utah`, `server`),
+     `tag` (e.g. `stable`), `flavor` (e.g. `main`), `arch` (`x86_64`,
+     `aarch64`), `countme` (integer bucket 1–4).
    - Responses are HTTP 200 with `cache-control: no-store`.
    - The endpoint strictly disallows persistent machine identifiers or tokens.
 4. **Active-system count (`PUT /v1/ping`, `GET /v1/daily.json`):** Each

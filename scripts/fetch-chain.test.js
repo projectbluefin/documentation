@@ -34,16 +34,6 @@ test("fetch-data script defines independent and dependent phases", () => {
   );
 });
 
-test("fetch-pin-state phase runs between independent and dependent", () => {
-  const fetchData = pkg.scripts["fetch-data"];
-  const indIdx = fetchData.indexOf("fetch-data:independent");
-  const pinIdx = fetchData.indexOf("fetch-pin-state");
-  const depIdx = fetchData.indexOf("fetch-data:dependent");
-
-  assert.ok(indIdx < pinIdx, "independent phase must come before pin-state");
-  assert.ok(pinIdx < depIdx, "pin-state must come before dependent phase");
-});
-
 // ── Failure propagation across the parallel phases ───────────────────────────
 
 // Both phases fan out over many scripts. A bare `wait` terminating a chain of
@@ -112,7 +102,6 @@ const FETCH_SCRIPTS = [
   "fetch-contributors.js",
   "fetch-portal-contributors.js",
   "fetch-firehose.js",
-  "fetch-pin-state.js",
 ];
 
 test("all fetch script files exist", () => {

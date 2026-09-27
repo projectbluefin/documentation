@@ -54,7 +54,7 @@ export interface UpdateChurnDataset {
 
 const typedChurnData = churnDataRaw as unknown as UpdateChurnDataset;
 
-const IMAGE_ORDER = ["bluefin", "bluefin-lts", "dakota", "utah"];
+const IMAGE_ORDER = ["bluefin", "dakota", "utah"];
 
 /**
  * A rolling percentile band needs this many consecutive deltas before it

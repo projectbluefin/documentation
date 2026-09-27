@@ -20,7 +20,7 @@ guidance in a general-purpose design or content skill you have loaded.
 | Generating or maintaining automated monthly reports   | [`skills/monthly-reports.md`](skills/monthly-reports.md)                                    |
 | Adding or changing a React component                  | [`skills/component-testing.md`](skills/component-testing.md)                                |
 | Editing `/factory` dashboard panels or copy           | [`skills/factory-dashboard-content.md`](skills/factory-dashboard-content.md)                |
-| Adding a top-level page for a variant (dakota, lts…)  | [`skills/variant-docs-pages.md`](skills/variant-docs-pages.md)                              |
+| Adding a top-level page for a variant (dakota, utah…) | [`skills/variant-docs-pages.md`](skills/variant-docs-pages.md)                              |
 | Changing the generated release card PNGs              | [`skills/release-card-images.md`](skills/release-card-images.md)                            |
 | Updating logos, wordmarks, or brand assets            | [`skills/brand-assets.md`](skills/brand-assets.md)                                          |
 | Verifying, recovering, or archiving a blog discussion | [`skills/giscus-discussions.md`](skills/giscus-discussions.md)                              |

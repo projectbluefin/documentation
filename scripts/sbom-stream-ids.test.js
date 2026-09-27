@@ -12,9 +12,7 @@
  *
  * Nothing else keeps those strings resolvable: a typo or a renamed stream
  * yields silently missing data on the published site instead of a build
- * failure. (Happened in practice: bluefin-lts named nvidiaSbomStreamId
- * "bluefin-lts-nvidia" months before that stream existed — it only rendered
- * because resolveNvidiaVersion fell back to bluefin-gdx-lts.)
+ * failure.
  *
  * Rules enforced here:
  *   1. Every sbomStreamId / streamId must be a declared STREAM_SPECS id.

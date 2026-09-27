@@ -42,7 +42,6 @@ const REPORTED_TAGS = new Set([
   "testing",
   "latest",
   "gts",
-  "lts",
   "nightly",
   "beta",
 ]);
@@ -53,7 +52,7 @@ const ROLLING_TAGS = new Set(["testing", "latest", "nightly", "beta"]);
  * Real-world tags: stable-20260720, testing-20260808, testing-44.20260808.2
  * Captures the base stream name (group 1).
  */
-const DATED_STREAM_TAG = /^(stable|testing|latest|nightly|beta|gts|lts)-\d{8}/;
+const DATED_STREAM_TAG = /^(stable|testing|latest|nightly|beta|gts)-\d{8}/;
 
 // ── Pure exports ────────────────────────────────────────────────────────
 
@@ -202,22 +201,15 @@ export function buildPayload(
 export const FALLBACK_LANES = [
   // OS images, in the order each repo's execute-release.yml promotes them.
   // Derived from source, not from common/docs/skills/image-registry.md — that
-  // file still lists :lts as a promotion target and omits bluefin-lts-nvidia
-  // and the two dakota gaming images. Re-derive with:
+  // file omits the two dakota gaming images. Re-derive with:
   //   gh api repos/projectbluefin/<repo>/contents/.github/workflows/execute-release.yml \
   //     --jq .content | base64 -d | grep source_tag
   "bluefin",
   "bluefin-nvidia",
-  "bluefin-lts",
-  "bluefin-lts-nvidia",
   "dakota",
   "dakota-nvidia",
   "dakota-gaming",
   "dakota-nvidia-gaming",
-  // Still in the registry, no longer in any promotion matrix. Kept so the
-  // Images view can say a lane is retired rather than silently dropping it.
-  "bluefin-lts-hwe",
-  "bluefin-lts-hwe-nvidia",
   "base",
   "static",
   "skopeo",
@@ -233,15 +225,12 @@ export const FALLBACK_LANES = [
  * The OS images every repo's `execute-release.yml` promotes `:testing` →
  * `:stable`, and nothing else.
  *
- * `FALLBACK_LANES` is deliberately wider: it also carries retired lanes so a
- * panel can name them. Anything charted as a live promotion lane comes from
- * here.
+ * `FALLBACK_LANES` is deliberately wider: it also carries the userspace and
+ * tooling images. Anything charted as a live promotion lane comes from here.
  */
 export const PROMOTED_IMAGES = [
   "bluefin",
   "bluefin-nvidia",
-  "bluefin-lts",
-  "bluefin-lts-nvidia",
   "dakota",
   "dakota-nvidia",
   "dakota-gaming",

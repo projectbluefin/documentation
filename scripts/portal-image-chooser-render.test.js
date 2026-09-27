@@ -122,24 +122,6 @@ const deterministicCatalog = {
         podman: "5.8.2",
       },
     },
-    lts: {
-      id: "lts",
-      title: "Bluefin LTS",
-      subtitle: "For professionals and AI/ML engineers",
-      description:
-        "A long term support experience on an enterprise-grade foundation.",
-      image: "/img/portal/characters/achillobator.webp",
-      supportedArch: ["x86", "arm"],
-      recommended: false,
-      available: true,
-      versions: {
-        gnome: "49.5",
-        kernel: "6.12.0-233.el10",
-        hweKernel: "7.0.8-100.fc43",
-        flatpak: "1.16.0",
-        podman: "5.8.2",
-      },
-    },
   },
   ecosystem: [
     {
@@ -171,10 +153,8 @@ test("image chooser renders initial release step with recommended badge, Flatpak
 
   assert.ok(html.includes("RECOMMENDED"));
   assert.ok(html.includes("Bluefin"));
-  assert.ok(html.includes("Bluefin LTS"));
   assert.ok(html.includes("Fedora 44"));
   assert.ok(html.includes("7.0.8-200.fc44"));
-  assert.ok(html.includes("6.12.0-233.el10"));
 
   // Flatpak and Podman chips verification
   assert.ok(html.includes("Flatpak:"));
@@ -199,17 +179,6 @@ test("image chooser omits Flatpak and Podman chips when missing from version det
         versions: {
           gnome: "50.1",
         },
-      },
-      lts: {
-        id: "lts",
-        title: "Bluefin LTS",
-        subtitle: "LTS",
-        description: "Enterprise foundation.",
-        image: "/img/portal/characters/achillobator.webp",
-        supportedArch: ["x86"],
-        recommended: false,
-        available: true,
-        versions: {},
       },
     },
     ecosystem: [],
@@ -238,17 +207,6 @@ test("image chooser renders disabled release with unavailable badge and aria-dis
         recommended: true,
         available: false,
         unavailableReason: "Maintenance mode",
-        versions: {},
-      },
-      lts: {
-        id: "lts",
-        title: "Bluefin LTS",
-        subtitle: "LTS",
-        description: "Enterprise foundation.",
-        image: "/img/portal/characters/achillobator.webp",
-        supportedArch: ["x86"],
-        recommended: false,
-        available: true,
         versions: {},
       },
     },
@@ -281,7 +239,7 @@ test("image chooser renders architecture step with back button and options", () 
   assert.ok(html.includes("Back to releases"));
   assert.ok(html.includes("Which architecture will you install Bluefin on?"));
   assert.ok(html.includes("x86_64 (Standard for most computers)"));
-  assert.ok(html.includes("ARM64"));
+  assert.ok(!html.includes("ARM64"));
 });
 
 test("image chooser renders download step with exact ISO and checksum URLs and doc links", () => {
@@ -297,7 +255,6 @@ test("image chooser renders download step with exact ISO and checksum URLs and d
           stream: "stable",
           arch: "x86",
           gpu: "amd",
-          kernel: "regular",
         },
       },
     }),
@@ -407,26 +364,6 @@ test("image chooser exposes polite live-region step announcement and tabindex=-1
     "GPU step heading must have tabindex=-1",
   );
 
-  // Kernel step
-  const htmlKernel = renderToStaticMarkup(
-    React.createElement(PortalImageChooser, {
-      catalog,
-      initialState: {
-        step: "kernel",
-        selection: { stream: "lts", arch: "x86", gpu: "amd" },
-      },
-    }),
-  );
-  assert.ok(
-    htmlKernel.includes("Step 4: Choose kernel preference for Bluefin LTS."),
-    "live-region must announce kernel step",
-  );
-  assert.match(
-    htmlKernel,
-    /<h3[^>]*tabindex="-1"[^>]*>What is your priority/,
-    "kernel step heading must have tabindex=-1",
-  );
-
   // Download step
   const htmlDownload = renderToStaticMarkup(
     React.createElement(PortalImageChooser, {
@@ -437,7 +374,6 @@ test("image chooser exposes polite live-region step announcement and tabindex=-1
           stream: "stable",
           arch: "x86",
           gpu: "amd",
-          kernel: "regular",
         },
       },
     }),
@@ -458,7 +394,7 @@ test("image chooser exposes polite live-region step announcement and tabindex=-1
   );
 });
 
-test("getStepAnnouncement pure helper covers forward, ARM direct-download, and Nvidia bypass states", () => {
+test("getStepAnnouncement pure helper covers each step", () => {
   const { getStepAnnouncement } = loadModule(chooserPath);
   const catalog = deterministicCatalog;
 
@@ -486,18 +422,6 @@ test("getStepAnnouncement pure helper covers forward, ARM direct-download, and N
     "Step 3: Choose graphics card vendor.",
   );
 
-  // Step 4: Kernel
-  assert.equal(
-    getStepAnnouncement(
-      {
-        step: "kernel",
-        selection: { stream: "lts", arch: "x86", gpu: "amd" },
-      },
-      catalog,
-    ),
-    "Step 4: Choose kernel preference for Bluefin LTS.",
-  );
-
   // Download: regular forward
   assert.equal(
     getStepAnnouncement(
@@ -507,41 +431,11 @@ test("getStepAnnouncement pure helper covers forward, ARM direct-download, and N
           stream: "stable",
           arch: "x86",
           gpu: "amd",
-          kernel: "regular",
         },
       },
       catalog,
     ),
     "Ready to download Bluefin.",
-  );
-
-  // Download: ARM direct-download
-  assert.equal(
-    getStepAnnouncement(
-      {
-        step: "download",
-        selection: { stream: "lts", arch: "arm", kernel: "regular" },
-      },
-      catalog,
-    ),
-    "Ready to download Bluefin LTS.",
-  );
-
-  // Download: Nvidia bypass
-  assert.equal(
-    getStepAnnouncement(
-      {
-        step: "download",
-        selection: {
-          stream: "lts",
-          arch: "x86",
-          gpu: "nvidia",
-          kernel: "regular",
-        },
-      },
-      catalog,
-    ),
-    "Ready to download Bluefin GDX.",
   );
 });
 
@@ -602,23 +496,6 @@ test("regression: chooser render tests remain stable when rendered with differen
           podman: "9.9.9",
         },
       },
-      lts: {
-        id: "lts",
-        title: "Bluefin LTS",
-        subtitle: "LTS",
-        description: "Enterprise foundation.",
-        image: "/img/portal/characters/achillobator.webp",
-        supportedArch: ["x86", "arm"],
-        recommended: false,
-        available: true,
-        versions: {
-          gnome: "88.0",
-          kernel: "88.0.0",
-          hweKernel: "99.0.0",
-          flatpak: "8.8.8",
-          podman: "8.8.8",
-        },
-      },
     },
     ecosystem: [],
     wolvesCampaign: {
@@ -663,46 +540,24 @@ test("image chooser renders terminal command box with CopyButton across stream v
     /<button[^>]*class="[^"]*copyButton[^"]*"[^>]*aria-label="Copy terminal command"[^>]*title="Copy to clipboard"/,
   );
 
-  // LTS Nvidia (GDX)
-  const ltsNvidiaHtml = renderToStaticMarkup(
+  // Stable Nvidia
+  const nvidiaHtml = renderToStaticMarkup(
     React.createElement(PortalImageChooser, {
       catalog,
       initialState: {
         step: "download",
         selection: {
-          stream: "lts",
+          stream: "stable",
           arch: "x86",
           gpu: "nvidia",
-          kernel: "regular",
         },
       },
     }),
   );
   assert.ok(
-    ltsNvidiaHtml.includes(
-      "sudo bootc switch ghcr.io/projectbluefin/bluefin-lts-nvidia:stable --enforce-container-sigpolicy",
+    nvidiaHtml.includes(
+      "sudo bootc switch ghcr.io/ublue-os/bluefin-nvidia-open:stable --enforce-container-sigpolicy",
     ),
   );
-  assert.ok(ltsNvidiaHtml.includes("Terminal Rebase Command:"));
-
-  // LTS HWE
-  const ltsHweHtml = renderToStaticMarkup(
-    React.createElement(PortalImageChooser, {
-      catalog,
-      initialState: {
-        step: "download",
-        selection: {
-          stream: "lts",
-          arch: "x86",
-          gpu: "amd",
-          kernel: "hwe",
-        },
-      },
-    }),
-  );
-  assert.ok(
-    ltsHweHtml.includes(
-      "sudo bootc switch ghcr.io/projectbluefin/bluefin-lts:lts-hwe --enforce-container-sigpolicy",
-    ),
-  );
+  assert.ok(nvidiaHtml.includes("Terminal Rebase Command:"));
 });

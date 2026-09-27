@@ -31,12 +31,6 @@ const SIGNING_TRUST = {
       "https://raw.githubusercontent.com/ublue-os/bluefin/main/cosign.pub",
     attestationLive: true,
   },
-  // Bluefin LTS: keyless cosign signing via GitHub Actions OIDC; no provenance or SBOM yet.
-  "projectbluefin/bluefin-lts": {
-    keyless: true,
-    cosignKeyUrl: null,
-    attestationLive: false,
-  },
   // Utah: keyless, awaiting initial testing image release and OCI attestation.
   "projectbluefin/utah": {
     keyless: true,

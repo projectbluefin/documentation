@@ -70,9 +70,7 @@ function stripRpmRelease(version) {
  * Extract the YYYYMMDD date from a GHCR tag.
  * Handles patterns:
  *   stable-20260331    → 20260331
- *   lts-20260331       → 20260331
- *   lts.20260331       → 20260331
- *   lts-hwe-testing-20260331 → 20260331
+ *   stable-testing-50-20260331 → 20260331
  */
 function extractDateFromTag(tag) {
   const match = tag.match(/[.-](\d{8})$/);
@@ -80,22 +78,17 @@ function extractDateFromTag(tag) {
 }
 
 /**
- * Normalise an lts*.YYYYMMDD tag to lts*-YYYYMMDD format.
- * Handles: lts.20260331       → lts-20260331
- *          lts.20260331-hwe   → lts-20260331-hwe
- *          lts-hwe.20260501   → lts-hwe-20260501
+ * Normalise a latest*.YYYYMMDD tag to latest*-YYYYMMDD format.
+ * Handles: latest.20260501 → latest-20260501
  */
-function normaliseLtsTag(tag) {
-  // lts.20260501       → lts-20260501
-  // lts-hwe.20260501   → lts-hwe-20260501
-  // latest.20260501    → latest-20260501
-  return tag.replace(/^((?:lts|latest)[a-z-]*)\.(\d{8})/, "$1-$2");
+function normaliseDottedTag(tag) {
+  return tag.replace(/^(latest[a-z-]*)\.(\d{8})/, "$1-$2");
 }
 
 /**
  * Build the stream-prefixed cache key used in FeedItems.tsx.
  * extractReleaseTag() in FeedItems produces: stable-YYYYMMDD, gts-YYYYMMDD,
- * lts-YYYYMMDD, etc.
+ * etc.
  */
 function buildCacheKey(streamPrefix, dateStr) {
   return `${streamPrefix}-${dateStr}`;
@@ -132,7 +125,7 @@ function findRecentTagsForStream(ghcrTags, spec) {
   const found = [];
 
   for (const tagName of ghcrTags) {
-    const normalised = normaliseLtsTag(tagName.toLowerCase());
+    const normalised = normaliseDottedTag(tagName.toLowerCase());
     if (!normalised.startsWith(spec.streamPrefix)) continue;
     const dateStr = extractDateFromTag(normalised);
     if (!dateStr) continue;
@@ -235,7 +228,7 @@ function extractPackageVersions(sbomPath) {
   // Syft JSON (stable/daily streams): top-level `artifacts` array; each entry
   //   has a `type` field ("rpm", "deb", etc.).
   //
-  // SPDX JSON (LTS/GDX streams): top-level `packages` array with `spdxVersion`
+  // SPDX JSON: top-level `packages` array with `spdxVersion`
   //   present; RPM packages are identified by a pkg:rpm/ PURL in externalRefs.
   //   Normalise to the same {name, version, type} shape before processing.
   //
@@ -394,7 +387,7 @@ module.exports = {
   stripEpoch,
   stripRpmRelease,
   extractDateFromTag,
-  normaliseLtsTag,
+  normaliseDottedTag,
   matchesStreamTag,
   buildCacheKey,
   findRecentTagsForStream,

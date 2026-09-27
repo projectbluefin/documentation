@@ -26,7 +26,7 @@ function version(tags, createdAt = "2026-08-01T10:00:00Z") {
 
 test("classifyFamily: os images", () => {
   assert.equal(classifyFamily("bluefin"), "os");
-  assert.equal(classifyFamily("bluefin-lts-hwe-nvidia"), "os");
+  assert.equal(classifyFamily("bluefin-nvidia"), "os");
   assert.equal(classifyFamily("dakota"), "os");
   assert.equal(classifyFamily("dakota-nvidia"), "os");
 });
@@ -236,19 +236,9 @@ test("the promoted set matches each repo's execute-release.yml", () => {
   assert.deepEqual(PROMOTED_IMAGES, [
     "bluefin",
     "bluefin-nvidia",
-    "bluefin-lts",
-    "bluefin-lts-nvidia",
     "dakota",
     "dakota-nvidia",
     "dakota-gaming",
     "dakota-nvidia-gaming",
   ]);
-
-  // The -hwe images still answer in the registry but are in no promotion
-  // matrix. They stay as lanes so a panel can call them retired; they are not
-  // promoted images.
-  for (const retired of ["bluefin-lts-hwe", "bluefin-lts-hwe-nvidia"]) {
-    assert.ok(FALLBACK_LANES.includes(retired));
-    assert.ok(!PROMOTED_IMAGES.includes(retired));
-  }
 });

@@ -69,11 +69,6 @@ const LANES = [
     label: "bluefin testing",
     repo: "projectbluefin/bluefin",
   },
-  {
-    id: "bluefin-lts",
-    label: "bluefin lts",
-    repo: "projectbluefin/bluefin-lts",
-  },
   { id: "dakota", label: "dakota", repo: "projectbluefin/dakota" },
 ];
 

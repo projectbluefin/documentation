@@ -17,44 +17,18 @@ import type {
 /** Maps FeedItems feedId to the corresponding SBOM stream key. */
 export const SBOM_STREAM_BY_FEED_ID: Record<string, string> = {
   bluefinReleases: "bluefin-stable",
-  bluefinLtsReleases: "bluefin-lts",
 };
 
 // ─── Tag Extraction ──────────────────────────────────────────────────────────
 
 /**
- * Extract the SBOM cache key (e.g. "stable-20260501") from a feed item title.
- * LTS tags are normalised to the `stable-*` form used by the bluefin-lts cache
- * stream. Use {@link extractRegistryTag} for anything that addresses GHCR.
+ * Extract the release tag (e.g. "stable-20260501") from a feed item title.
+ * The tag is both the SBOM cache key and the GHCR registry tag.
  * Returns null if no recognizable tag pattern is found.
  */
 export const extractReleaseTag = (title: string): string | null => {
-  const registryTag = extractRegistryTag(title);
-  if (!registryTag) return null;
-
-  // Normalise lts-YYYYMMDD → stable-YYYYMMDD to match bluefin-lts cache key format
-  return registryTag.replace(/^lts-(\d{8})$/, "stable-$1");
-};
-
-/**
- * Extract the container registry tag (e.g. "lts-20260501") from a feed item
- * title. Unlike {@link extractReleaseTag}, LTS tags are *not* rewritten to
- * `stable-*`: GHCR publishes dated `lts-YYYYMMDD` tags for bluefin-lts, so this
- * is the value that must be used when linking to a package tag.
- * Returns null if no recognizable tag pattern is found.
- */
-export const extractRegistryTag = (title: string): string | null => {
-  const tagMatch = title.match(
-    /(stable-\d{8}|beta-\d{8}|latest-\d{8}|lts[-.]\d{8})/i,
-  );
-  if (tagMatch) {
-    return tagMatch[1].toLowerCase().replace(/^lts\.(\d{8})$/, "lts-$1");
-  }
-
-  // LTS feed titles use "bluefin-lts LTS: YYYYMMDD (...)" format
-  const ltsDateMatch = title.match(/\bLTS:\s*(\d{8})\b/i);
-  if (ltsDateMatch) return `lts-${ltsDateMatch[1]}`;
-  return null;
+  const tagMatch = title.match(/(stable-\d{8}|beta-\d{8}|latest-\d{8})/i);
+  return tagMatch ? tagMatch[1].toLowerCase() : null;
 };
 
 /**
@@ -109,8 +83,7 @@ export interface SupplyChainLinks {
 
 /**
  * Build supply-chain link information for a given release title.
- * Looks up attestation state from the SBOM cache, preferring the stream
- * family that matches the feed (LTS vs non-LTS).
+ * Looks up attestation state from the SBOM cache stream matching the feed.
  */
 export const getSupplyChainLinks = (
   cache: SbomAttestationsData,
@@ -118,17 +91,14 @@ export const getSupplyChainLinks = (
   feedId?: string,
 ): SupplyChainLinks => {
   const releaseTag = extractReleaseTag(title);
-  const registryTag = extractRegistryTag(title);
 
-  if (!releaseTag || !registryTag) {
+  if (!releaseTag) {
     return {
       packageTagUrl: null,
       attestationVerified: null,
       attestationPresent: null,
     };
   }
-
-  const isLtsFeed = feedId === "bluefinLtsReleases";
 
   let attestationVerified: boolean | null = null;
   let attestationPresent: boolean | null = null;
@@ -146,11 +116,8 @@ export const getSupplyChainLinks = (
     }
   }
 
-  const org = isLtsFeed ? "projectbluefin" : "ublue-os";
-  const pkg = isLtsFeed ? "bluefin-lts" : "bluefin";
-
   return {
-    packageTagUrl: `https://github.com/orgs/${org}/packages/container/${pkg}?tag=${encodeURIComponent(registryTag)}`,
+    packageTagUrl: `https://github.com/orgs/ublue-os/packages/container/bluefin?tag=${encodeURIComponent(releaseTag)}`,
     attestationVerified,
     attestationPresent,
   };

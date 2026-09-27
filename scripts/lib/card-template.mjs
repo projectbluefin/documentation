@@ -14,7 +14,6 @@ const THEMES = {
     textMuted: "#6b7280",
     textStrong: "#111827",
     primaryStable: "#2f74b5",
-    primaryLts: "#d97706",
     primaryDakota: "#7c3aed",
     chipBg: "#f3f4f6",
     chipBorder: "#e5e7eb",
@@ -35,7 +34,6 @@ const THEMES = {
     textMuted: "#9ca3af",
     textStrong: "#f1f5f9",
     primaryStable: "#5b9bd5",
-    primaryLts: "#f59e0b",
     primaryDakota: "#a78bfa",
     chipBg: "#2d3348",
     chipBorder: "#4b5563",
@@ -52,7 +50,6 @@ const THEMES = {
 };
 
 function primary(stream, colors) {
-  if (stream === "lts") return colors.primaryLts;
   if (stream === "dakota") return colors.primaryDakota;
   return colors.primaryStable;
 }
@@ -88,7 +85,7 @@ function versionChip(name, version, colors, prevVersion) {
     h(
       "span",
       { style: { fontWeight: 700, color: colors.chipLabel, fontSize: "12px" } },
-      name
+      name,
     ),
     h(
       "span",
@@ -99,7 +96,7 @@ function versionChip(name, version, colors, prevVersion) {
           fontSize: "12px",
         },
       },
-      version
+      version,
     ),
     changed
       ? h(
@@ -112,15 +109,15 @@ function versionChip(name, version, colors, prevVersion) {
               lineHeight: "1",
             },
           },
-          "↑"
+          "↑",
         )
-      : null
+      : null,
   );
 }
 
 /**
  * @param {object} release  – ParsedOsRelease-shaped object
- * @param {string} stream   – "stable" | "lts" | "dakota"
+ * @param {string} stream   – "stable" | "dakota"
  * @param {number} dateMs   – epoch ms (0 = no date)
  * @param {"light"|"dark"} theme
  * @param {string} mascotDataUri – PNG as data URI
@@ -135,18 +132,13 @@ export function renderCard(
   theme,
   mascotDataUri,
   titleOverride,
-  headerPackageNames
+  headerPackageNames,
 ) {
   const colors = THEMES[theme];
   const accentColor = primary(stream, colors);
 
   const title =
-    titleOverride ||
-    (stream === "lts"
-      ? "Bluefin LTS"
-      : stream === "dakota"
-      ? "Bluefin Dakota"
-      : "Bluefin");
+    titleOverride || (stream === "dakota" ? "Bluefin Dakota" : "Bluefin");
 
   const dateStr =
     dateMs > 0
@@ -160,21 +152,31 @@ export function renderCard(
 
   // Which packages to show as header chips (matching HEADER_CHIP_NAMES in OsReleaseCard)
   const HEADER_NAMES = [
-    "Kernel", "HWE Kernel", "Gnome", "Mesa", "Podman",
-    "Nvidia", "bootc", "systemd", "pipewire", "flatpak",
-    "sudo-rs", "uutils-coreutils",
+    "Kernel",
+    "Gnome",
+    "Mesa",
+    "Podman",
+    "Nvidia",
+    "bootc",
+    "systemd",
+    "pipewire",
+    "flatpak",
+    "sudo-rs",
+    "uutils-coreutils",
   ];
 
   const headerChips = (headerPackageNames ?? HEADER_NAMES).flatMap((name) => {
     const pkg = (release.majorPackages ?? []).find(
-      (p) => p.name.toLowerCase() === name.toLowerCase()
+      (p) => p.name.toLowerCase() === name.toLowerCase(),
     );
-    if (pkg) return [{ name: pkg.name, version: pkg.version, prevVersion: pkg.prevVersion }];
+    if (pkg)
+      return [
+        { name: pkg.name, version: pkg.version, prevVersion: pkg.prevVersion },
+      ];
     return [];
   });
 
   const dxChips = (release.dxPackages ?? []).slice(0, 6);
-  const gdxChips = (release.gdxPackages ?? []).slice(0, 4);
 
   return h(
     "div",
@@ -227,16 +229,20 @@ export function renderCard(
       },
 
       // ── Title
-      h("div", {
-        style: {
-          fontSize: "24px",
-          fontWeight: 700,
-          color: accentColor,
-          lineHeight: "1.2",
-          marginBottom: "5px",
-          paddingRight: "135px",
+      h(
+        "div",
+        {
+          style: {
+            fontSize: "24px",
+            fontWeight: 700,
+            color: accentColor,
+            lineHeight: "1.2",
+            marginBottom: "5px",
+            paddingRight: "135px",
+          },
         },
-      }, title),
+        title,
+      ),
 
       // ── Meta row: tag + date + Fedora chip
       h(
@@ -251,42 +257,42 @@ export function renderCard(
             paddingRight: "135px",
           },
         },
-        h("span", {
-          style: {
-            fontFamily: "Inter",
-            fontSize: "13px",
-            color: colors.tagColor,
+        h(
+          "span",
+          {
+            style: {
+              fontFamily: "Inter",
+              fontSize: "13px",
+              color: colors.tagColor,
+            },
           },
-        }, release.tag),
+          release.tag,
+        ),
         dateStr
-          ? h("span", {
-              style: { fontSize: "12px", color: colors.textMuted },
-            }, dateStr)
+          ? h(
+              "span",
+              {
+                style: { fontSize: "12px", color: colors.textMuted },
+              },
+              dateStr,
+            )
           : null,
         release.fedoraVersion
-          ? h("span", {
-              style: {
-                fontSize: "11px",
-                color: colors.baseText,
-                background: colors.baseBg,
-                border: `1px solid ${colors.baseBorder}`,
-                borderRadius: "4px",
-                padding: "1px 7px",
+          ? h(
+              "span",
+              {
+                style: {
+                  fontSize: "11px",
+                  color: colors.baseText,
+                  background: colors.baseBg,
+                  border: `1px solid ${colors.baseBorder}`,
+                  borderRadius: "4px",
+                  padding: "1px 7px",
+                },
               },
-            }, `Fedora ${release.fedoraVersion}`)
+              `Fedora ${release.fedoraVersion}`,
+            )
           : null,
-        release.centosVersion
-          ? h("span", {
-              style: {
-                fontSize: "11px",
-                color: colors.baseText,
-                background: colors.baseBg,
-                border: `1px solid ${colors.baseBorder}`,
-                borderRadius: "4px",
-                padding: "1px 7px",
-              },
-            }, `CentOS ${release.centosVersion}`)
-          : null
       ),
 
       // ── Header chips
@@ -299,11 +305,13 @@ export function renderCard(
                 flexDirection: "row",
                 flexWrap: "wrap",
                 gap: "6px",
-                marginBottom: dxChips.length > 0 || gdxChips.length > 0 ? "8px" : "0",
+                marginBottom: dxChips.length > 0 ? "8px" : "0",
                 paddingRight: "135px",
               },
             },
-            ...headerChips.map((p) => versionChip(p.name, p.version, colors, p.prevVersion))
+            ...headerChips.map((p) =>
+              versionChip(p.name, p.version, colors, p.prevVersion),
+            ),
           )
         : null,
 
@@ -318,63 +326,46 @@ export function renderCard(
                 flexWrap: "wrap",
                 alignItems: "center",
                 gap: "6px",
-                marginBottom: gdxChips.length > 0 ? "6px" : "0",
                 paddingRight: "135px",
               },
             },
-            h("span", {
-              style: {
-                fontSize: "10px",
-                fontWeight: 700,
-                textTransform: "uppercase",
-                letterSpacing: "0.05em",
-                color: colors.dxLabelColor,
-                flexShrink: 0,
+            h(
+              "span",
+              {
+                style: {
+                  fontSize: "10px",
+                  fontWeight: 700,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.05em",
+                  color: colors.dxLabelColor,
+                  flexShrink: 0,
+                },
               },
-            }, "DX"),
-            ...dxChips.map((p) => versionChip(p.name, p.version, colors, p.prevVersion))
-          )
-        : null,
-
-      // ── GDX row
-      gdxChips.length > 0
-        ? h(
-            "div",
-            {
-              style: {
-                display: "flex",
-                flexDirection: "row",
-                flexWrap: "wrap",
-                alignItems: "center",
-                gap: "6px",
-                paddingRight: "135px",
-              },
-            },
-            h("span", {
-              style: {
-                fontSize: "10px",
-                fontWeight: 700,
-                textTransform: "uppercase",
-                letterSpacing: "0.05em",
-                color: colors.dxLabelColor,
-                flexShrink: 0,
-              },
-            }, "GDX"),
-            ...gdxChips.map((p) => versionChip(p.name, p.version, colors, p.prevVersion))
+              "DX",
+            ),
+            ...dxChips.map((p) =>
+              versionChip(p.name, p.version, colors, p.prevVersion),
+            ),
           )
         : null,
 
       // ── Package changes + commits summary
       (() => {
         const { diffStats, commitCount } = release;
-        const hasDiff = diffStats && (diffStats.changed > 0 || diffStats.added > 0 || diffStats.removed > 0);
+        const hasDiff =
+          diffStats &&
+          (diffStats.changed > 0 ||
+            diffStats.added > 0 ||
+            diffStats.removed > 0);
         const hasCommits = commitCount > 0;
         if (!hasDiff && !hasCommits) return null;
 
         const diffParts = [];
-        if (diffStats?.changed > 0) diffParts.push(`${diffStats.changed} updated`);
+        if (diffStats?.changed > 0)
+          diffParts.push(`${diffStats.changed} updated`);
         if (diffStats?.added > 0) diffParts.push(`${diffStats.added} added`);
-        if (diffStats?.removed > 0) diffParts.push(`${diffStats.removed} removed`);
+        if (diffStats?.removed > 0)
+          diffParts.push(`${diffStats.removed} removed`);
 
         return h(
           "div",
@@ -387,15 +378,23 @@ export function renderCard(
             },
           },
           hasDiff
-            ? h("span", {
-                style: { fontSize: "11px", color: colors.textMuted },
-              }, `Package changes — ${diffParts.join(" · ")}`)
+            ? h(
+                "span",
+                {
+                  style: { fontSize: "11px", color: colors.textMuted },
+                },
+                `Package changes — ${diffParts.join(" · ")}`,
+              )
             : null,
           hasCommits
-            ? h("span", {
-                style: { fontSize: "11px", color: colors.textMuted },
-              }, `Commits (${commitCount})`)
-            : null
+            ? h(
+                "span",
+                {
+                  style: { fontSize: "11px", color: colors.textMuted },
+                },
+                `Commits (${commitCount})`,
+              )
+            : null,
         );
       })(),
 
@@ -412,10 +411,14 @@ export function renderCard(
             borderTop: `1px solid ${colors.footerBorder}`,
           },
         },
-        h("span", {
-          style: { fontSize: "12px", color: colors.footerText },
-        }, "docs.projectbluefin.io/changelogs")
-      )
-    )
+        h(
+          "span",
+          {
+            style: { fontSize: "12px", color: colors.footerText },
+          },
+          "docs.projectbluefin.io/changelogs",
+        ),
+      ),
+    ),
   );
 }

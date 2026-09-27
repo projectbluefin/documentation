@@ -9,7 +9,7 @@ const {
   stripEpoch,
   stripRpmRelease,
   extractDateFromTag,
-  normaliseLtsTag,
+  normaliseDottedTag,
   buildCacheKey,
   findRecentTagsForStream,
   extractPackageVersions,
@@ -67,28 +67,24 @@ test("stripRpmRelease keeps only the upstream version", () => {
 
 test("extractDateFromTag reads the trailing YYYYMMDD after . or -", () => {
   assert.equal(extractDateFromTag("stable-20260331"), "20260331");
-  assert.equal(extractDateFromTag("lts.20260331"), "20260331");
-  assert.equal(extractDateFromTag("lts-hwe-testing-20260331"), "20260331");
+  assert.equal(extractDateFromTag("latest.20260331"), "20260331");
+  assert.equal(extractDateFromTag("stable-testing-50-20260331"), "20260331");
 });
 
 test("extractDateFromTag returns null when there is no trailing date", () => {
   assert.equal(extractDateFromTag("latest"), null);
-  assert.equal(extractDateFromTag("lts-20260331-hwe"), null);
+  assert.equal(extractDateFromTag("stable-20260331-hwe"), null);
   // Not eight digits.
   assert.equal(extractDateFromTag("stable-2026033"), null);
 });
 
-test("normaliseLtsTag converts the dotted date separator to a dash", () => {
-  assert.equal(normaliseLtsTag("lts.20260331"), "lts-20260331");
-  assert.equal(normaliseLtsTag("lts.20260331-hwe"), "lts-20260331-hwe");
-  assert.equal(normaliseLtsTag("lts-hwe.20260501"), "lts-hwe-20260501");
-  // Dakota date-stamped tags.
-  assert.equal(normaliseLtsTag("latest.20260501"), "latest-20260501");
+test("normaliseDottedTag converts the dotted date separator to a dash", () => {
+  assert.equal(normaliseDottedTag("latest.20260501"), "latest-20260501");
 });
 
-test("normaliseLtsTag leaves unrelated streams alone", () => {
-  assert.equal(normaliseLtsTag("stable.20260331"), "stable.20260331");
-  assert.equal(normaliseLtsTag("gts-20260331"), "gts-20260331");
+test("normaliseDottedTag leaves unrelated streams alone", () => {
+  assert.equal(normaliseDottedTag("stable.20260331"), "stable.20260331");
+  assert.equal(normaliseDottedTag("gts-20260331"), "gts-20260331");
 });
 
 test("buildCacheKey matches the key FeedItems.tsx derives", () => {

@@ -25,10 +25,9 @@ test("parseCount returns null for missing or unparseable", () => {
 
 // ── pickBluefinRows ──────────────────────────────────────────────────────
 
-test("pickBluefinRows finds both Bluefin lanes and keeps rank", () => {
+test("pickBluefinRows finds the Bluefin lane and keeps rank", () => {
   const items = [
     { number: 11, os_version: "Bluefin", count: "1,348,288", percent: "0.48" },
-    { number: 39, os_version: "Bluefin LTS", count: "79,446", percent: "0.03" },
     {
       number: 1,
       os_version: "macOS Tahoe (26)",
@@ -37,12 +36,10 @@ test("pickBluefinRows finds both Bluefin lanes and keeps rank", () => {
     },
   ];
   const rows = pickBluefinRows(items);
-  assert.equal(rows.length, 2);
+  assert.equal(rows.length, 1);
   assert.equal(rows[0].id, "bluefin");
   assert.equal(rows[0].rank, 11);
   assert.equal(rows[0].count, 1348288);
-  assert.equal(rows[1].id, "bluefin-lts");
-  assert.equal(rows[1].rank, 39);
 });
 
 test("pickBluefinRows does NOT match a lookalike", () => {

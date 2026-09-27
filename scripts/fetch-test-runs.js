@@ -37,7 +37,6 @@ const OUT = resolve(__dirname, "../static/data/test-runs.json");
 const WINDOW_DAYS = 30;
 const REPOS = [
   "projectbluefin/bluefin",
-  "projectbluefin/bluefin-lts",
   "projectbluefin/dakota",
   "projectbluefin/testsuite",
 ];

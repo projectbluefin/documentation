@@ -15,10 +15,6 @@
     "message": "Developer Experience",
     "description": "The label for category 'Developer Experience' in sidebar 'baseSidebar'"
   },
-  "sidebar.baseSidebar.category.Bluefin LTS": {
-    "message": "Bluefin LTS",
-    "description": "The label for category 'Bluefin LTS' in sidebar 'baseSidebar'"
-  },
   "sidebar.baseSidebar.category.Hardware": {
     "message": "Hardware",
     "description": "The label for category 'Hardware' in sidebar 'baseSidebar'"

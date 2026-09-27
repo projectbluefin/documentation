@@ -69,7 +69,6 @@ Changelog cards now include a **Supply Chain** block when a release contains com
 
 - The signal is derived from release commit entries (for example, references to SBOM generation, attest workflows, `cosign`, `oras`, or `syft` changes).
 - It is designed as a fast indicator for users tracking release integrity changes without reading every commit line.
-- LTS changelog cards include the same section now, and will begin showing entries as LTS SBOM/provenance commits land.
 - Cards now include a direct link to the matching GHCR package tag view in GitHub, which is the easiest path to inspect signatures and related supply-chain artifacts.
 - For full release context, open the linked release and commit details from each changelog card.
 

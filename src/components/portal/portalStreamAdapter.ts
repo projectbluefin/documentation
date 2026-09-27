@@ -2,7 +2,6 @@ export interface StreamVersionDetails {
   base?: string;
   gnome?: string;
   kernel?: string;
-  hweKernel?: string;
   mesa?: string;
   nvidia?: string;
   flatpak?: string;
@@ -10,12 +9,12 @@ export interface StreamVersionDetails {
 }
 
 export interface StreamDefinition {
-  id: "stable" | "lts";
+  id: "stable";
   title: string;
   subtitle: string;
   description: string;
   image: string;
-  supportedArch: ("x86" | "arm")[];
+  supportedArch: "x86"[];
   recommended: boolean;
   available: boolean;
   unavailableReason?: string;
@@ -47,7 +46,6 @@ export interface WolvesCampaignCardData {
 export interface ChooserCatalog {
   streams: {
     stable: StreamDefinition;
-    lts: StreamDefinition;
   };
   ecosystem: ProductEcosystemCardData[];
   wolvesCampaign: WolvesCampaignCardData;
@@ -158,9 +156,6 @@ function extractVersionDetails(
   const kernel = driverVersions?.kernel ?? imageVersions?.kernel;
   if (kernel) details.kernel = kernel;
 
-  const hweKernel = driverVersions?.hweKernel;
-  if (hweKernel) details.hweKernel = hweKernel;
-
   const mesa = driverVersions?.mesa ?? imageVersions?.mesa;
   if (mesa) details.mesa = mesa;
 
@@ -220,11 +215,6 @@ export function adaptStreams(
   );
   const stableAvailable = !!stableVersions;
 
-  const ltsProduct = findProduct(imagesRaw, "projectbluefin-bluefin-lts");
-  const ltsDriver = findDriverStream(driverVersionsRaw, "bluefin-lts");
-  const ltsVersions = extractVersionDetails(ltsProduct, ltsDriver, "stable");
-  const ltsAvailable = !!ltsVersions;
-
   const dakotaProduct = findProduct(imagesRaw, "projectbluefin-dakota");
   const dakotaDriver = findDriverStream(driverVersionsRaw, "dakota-stable");
   const dakotaRows = extractDakotaRows(dakotaProduct, dakotaDriver, "stable");
@@ -243,19 +233,6 @@ export function adaptStreams(
         available: stableAvailable,
         unavailableReason: stableAvailable ? undefined : "Will return",
         versions: stableVersions,
-      },
-      lts: {
-        id: "lts",
-        title: "Bluefin LTS",
-        subtitle: "For professionals and AI/ML engineers",
-        description:
-          "A long term support experience on an enterprise-grade foundation.",
-        image: "/img/portal/characters/achillobator.webp",
-        supportedArch: ["x86", "arm"],
-        recommended: false,
-        available: ltsAvailable,
-        unavailableReason: ltsAvailable ? undefined : "Will return",
-        versions: ltsVersions,
       },
     },
     ecosystem: [

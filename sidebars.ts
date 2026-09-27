@@ -30,7 +30,7 @@ const sidebars: SidebarsConfig = {
       type: "category",
       label: "Developer Guide",
       collapsed: false,
-      items: ["bluefin-dx", "ai",
+      items: ["bluefin-dx", "ai"],
     },
     {
       type: "category",
@@ -41,11 +41,11 @@ const sidebars: SidebarsConfig = {
         "agentic-contributing",
         "contributors",
         "downloads-testing",
-        "donations", 
+        "donations/index",
         "mission",
         "values",
         "code-of-conduct",
-        "supply-chain"
+        "supply-chain",
       ],
     },
   ],

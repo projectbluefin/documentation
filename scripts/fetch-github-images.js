@@ -19,13 +19,6 @@ const FEED_BLUEFIN = path.join(
   "feeds",
   "bluefin-releases.json",
 );
-const FEED_LTS = path.join(
-  __dirname,
-  "..",
-  "static",
-  "feeds",
-  "bluefin-lts-releases.json",
-);
 const SBOM_FILE = path.join(OUTPUT_DIR, "sbom-attestations.json");
 
 const CACHE_MAX_AGE_HOURS = Number(process.env.IMAGES_CACHE_HOURS || 168);
@@ -56,29 +49,9 @@ const PRODUCT_SPECS = [
     nvidiaSbomStreamId: "bluefin-nvidia-open-stable",
     keyRepo: "ublue-os/bluefin",
     nvidiaPackage: "bluefin-nvidia-open",
-    allowTestingStreams: false,
     isoSectionLink: "/downloads",
     supportedArches: ["amd", "intel"],
     keepEvenIfStale: true,
-  },
-  {
-    id: "projectbluefin-bluefin-lts",
-    name: "Bluefin LTS",
-    org: "projectbluefin",
-    package: "bluefin-lts",
-    artwork: "achillobator",
-    summary: "Long-term support Bluefin stream.",
-    streamOrder: ["stable", "testing"],
-    versionSource: SBOM_VERSION_SOURCE,
-    releaseSource: { feed: "lts", stream: "lts" },
-    sbomStreamId: "bluefin-lts",
-    nvidiaSbomStreamId: "bluefin-lts-nvidia",
-    keyRepo: "projectbluefin/bluefin-lts",
-    nvidiaPackage: "bluefin-lts-nvidia",
-    allowTestingStreams: true,
-    keepEvenIfStale: true,
-    isoSectionLink: "/downloads",
-    supportedArches: ["amd", "intel"],
   },
   {
     id: "projectbluefin-dakota",
@@ -96,7 +69,6 @@ const PRODUCT_SPECS = [
     nvidiaSbomStreamId: "dakota-nvidia-stable",
     keyRepo: "projectbluefin/dakota",
     nvidiaPackage: "dakota-nvidia",
-    allowTestingStreams: false,
     // No versionOverrides: versions come from the SBOM (BST SPDX format).
     // fedora will be null — Dakota is GNOME OS based, not Fedora.
     supportedArches: ["amd", "intel"],
@@ -120,7 +92,6 @@ const PRODUCT_SPECS = [
     nvidiaSbomStreamId: "utah-nvidia-testing",
     keyRepo: "projectbluefin/utah",
     nvidiaPackage: "utah-nvidia",
-    allowTestingStreams: false,
     supportedArches: ["amd", "intel"],
     isoSectionLink: null,
     keepEvenIfStale: true,
@@ -200,11 +171,8 @@ function normalizeSbomStreamTag(streamTag) {
 function buildSbomStreamId(spec, streamTag) {
   const normalizedTag = normalizeSbomStreamTag(streamTag);
   if (!spec?.sbomStreamId || !normalizedTag) return null;
-  if (spec.id === "projectbluefin-bluefin-lts" && normalizedTag === "stable") {
-    return spec.sbomStreamId;
-  }
   return spec.sbomStreamId.replace(
-    /-(stable|testing|latest|lts|beta)$/,
+    /-(stable|testing|latest|beta)$/,
     `-${normalizedTag}`,
   );
 }
@@ -251,18 +219,6 @@ function isCurrentImageCatalog(output) {
   });
 }
 
-function normalizeTestingTag(raw) {
-  return raw
-    .replace(/-(amd64|arm64)$/i, "")
-    .replace(/([.-])\d{8}(?=-|$)/g, "")
-    .replace(/-(\d{8})$/, "")
-    .replace(/\.+/g, ".")
-    .replace(/-+/g, "-")
-    .replace(/\.-/g, "-")
-    .replace(/-\./g, "-")
-    .replace(/(^[.-]+|[.-]+$)/g, "");
-}
-
 function sbomVersionsForStream(sbomCache, spec, streamTag) {
   const stream = sbomStreamForTag(sbomCache, spec, streamTag);
   if (!stream) return null;
@@ -296,8 +252,7 @@ function latestFeedItem(feeds, source) {
   // misrepresent daily-only images as stable releases. Return null so callers
   // render unknown values instead.
   if (source.stream === "stable-daily") return null;
-  const items =
-    source.feed === "lts" ? feeds?.lts?.items : feeds?.bluefin?.items;
+  const items = feeds?.bluefin?.items;
   if (!Array.isArray(items)) return null;
   const stream = source.stream;
 
@@ -308,16 +263,6 @@ function latestFeedItem(feeds, source) {
     )
       return false;
     const title = (item.title || "").toLowerCase();
-    if (stream === "lts") {
-      // Old format: "bluefin-lts lts: 20251223 ..."
-      // New format: "lts.20260501: lts.20260501 release"
-      // Current format: "stable-20260807: LTS"
-      return (
-        title.includes(" lts:") ||
-        /^lts\.\d{8}/.test(title) ||
-        /^stable-\d{8}/.test(title)
-      );
-    }
     return title.startsWith(`${stream}-`);
   });
 
@@ -413,45 +358,6 @@ function attachNvidiaCommands(
   });
 }
 
-function buildTestingStreams(spec, tags) {
-  if (!spec.allowTestingStreams) {
-    return [];
-  }
-
-  const normalized = new Set();
-  for (const raw of tags) {
-    const lower = raw.toLowerCase();
-
-    // Global exclusions: deprecated lines or non-supported branches.
-    if (lower.includes("gts")) continue;
-    if (lower.includes("unstable")) continue;
-    if (lower.includes("stream10")) continue;
-    if (/(^|-)10(-|$)/.test(lower)) continue;
-
-    // LTS-only testing families.
-    const isLtsTestingFamily =
-      /^lts-testing(?:-\d+)?$/.test(lower) ||
-      /^lts-hwe-testing(?:-\d+)?$/.test(lower) ||
-      /^lts-testing-hwe(?:-\d+)?$/.test(lower);
-
-    if (!isLtsTestingFamily) {
-      continue;
-    }
-
-    normalized.add(normalizeTestingTag(lower));
-  }
-
-  return [...normalized]
-    .filter(Boolean)
-    .sort((a, b) => a.localeCompare(b))
-    .map((tag) => ({
-      label: tag,
-      tag,
-      command: `sudo bootc switch ghcr.io/${spec.org}/${spec.package}:${tag} --enforce-container-sigpolicy`,
-      versions: null,
-    }));
-}
-
 function versionsFromPackages(sbomVersions) {
   return {
     gnome: sbomVersions?.gnome || null,
@@ -479,35 +385,6 @@ async function buildStreamVersionInfo(
   );
 }
 
-function attachNvidiaTestingCommands(
-  streams,
-  spec,
-  nvidiaTagSet,
-  existingTestingStreams = [],
-) {
-  if (!spec.nvidiaPackage) return streams;
-
-  return streams.map((entry) => {
-    if (!nvidiaTagSet && Array.isArray(existingTestingStreams)) {
-      const existingEntry = existingTestingStreams.find(
-        (s) => s.tag === entry.tag,
-      );
-      if (existingEntry && "nvidiaCommand" in existingEntry) {
-        return { ...entry, nvidiaCommand: existingEntry.nvidiaCommand };
-      }
-    }
-
-    if (!nvidiaTagSet?.has(entry.tag)) {
-      return { ...entry, nvidiaCommand: null };
-    }
-
-    return {
-      ...entry,
-      nvidiaCommand: `sudo bootc switch ghcr.io/${spec.org}/${spec.nvidiaPackage}:${entry.tag} --enforce-container-sigpolicy`,
-    };
-  });
-}
-
 function buildSecurityInfo(spec, inspectTag, isAvailable = true) {
   const imageRef = `ghcr.io/${spec.org}/${spec.package}:${inspectTag}`;
 
@@ -523,7 +400,7 @@ function buildSecurityInfo(spec, inspectTag, isAvailable = true) {
   const hasNoPipeline = !isKeyless && !cosignKeyUrl;
 
   // Keyless: GitHub OIDC / Sigstore — certificate-based, no public key file.
-  // The OIDC identity is derived from keyRepo so LTS variants resolve to their own
+  // The OIDC identity is derived from keyRepo so each variant resolves to its own
   // workflow repo automatically. We use --certificate-identity-regexp with a ^ anchor so
   // any workflow file under .github/workflows/ in the signing repo is accepted (the exact
   // workflow filename may differ across streams).
@@ -609,12 +486,10 @@ async function buildProduct(spec, feeds, cachedById, ageHours, sbomCache) {
   try {
     tags = await listTags(imageRef);
   } catch {
-    tags = [
-      ...(existing?.streams || []).filter((s) => s.command).map((s) => s.tag),
-      ...(existing?.testingStreams || [])
-        .filter((s) => s.command)
-        .map((s) => s.tag),
-    ].filter(Boolean);
+    tags = (existing?.streams || [])
+      .filter((s) => s.command)
+      .map((s) => s.tag)
+      .filter(Boolean);
   }
   const tagSet = new Set(tags);
 
@@ -636,14 +511,8 @@ async function buildProduct(spec, feeds, cachedById, ageHours, sbomCache) {
     nvidiaTagSet,
     existing?.streams,
   );
-  const testingStreams = attachNvidiaTestingCommands(
-    buildTestingStreams(spec, tags),
-    spec,
-    nvidiaTagSet,
-    existing?.testingStreams,
-  );
 
-  for (const stream of [...streams, ...testingStreams]) {
+  for (const stream of streams) {
     stream.imageRef = stream.command ? `${imageRef}:${stream.tag}` : null;
     stream.nvidiaImageRef = stream.nvidiaCommand
       ? `ghcr.io/${spec.org}/${spec.nvidiaPackage}:${stream.tag}`
@@ -736,7 +605,6 @@ async function buildProduct(spec, feeds, cachedById, ageHours, sbomCache) {
     isoSectionLink: spec.isoSectionLink || null,
     supportedArches: spec.supportedArches || null,
     streams,
-    testingStreams,
     metadata,
     metadataSource,
     versions,
@@ -788,7 +656,6 @@ async function main({ outputFile = OUTPUT_FILE, sbomFile = SBOM_FILE } = {}) {
   );
   const feeds = {
     bluefin: readJsonIfExists(FEED_BLUEFIN, { items: [] }),
-    lts: readJsonIfExists(FEED_LTS, { items: [] }),
   };
   console.log("SBOM attestation cache loaded.");
 
@@ -888,7 +755,6 @@ module.exports = {
   PRODUCT_SPECS,
   buildSecurityInfo,
   buildStreamVersionInfo,
-  buildTestingStreams,
   buildTopStreams,
   buildUnavailableOutput,
   cacheAgeHours,
@@ -897,7 +763,6 @@ module.exports = {
   hasUsableSbomData,
   isCurrentImageCatalog,
   main,
-  normalizeTestingTag,
   reportMainError,
   releaseInfoFromSource,
   sbomVersionsForStream,

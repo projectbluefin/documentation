@@ -38,11 +38,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const OUT = resolve(__dirname, "../static/data/dora.json");
 
 const WINDOW_DAYS = 365;
-const REPOS = [
-  "projectbluefin/bluefin",
-  "projectbluefin/bluefin-lts",
-  "projectbluefin/dakota",
-];
+const REPOS = ["projectbluefin/bluefin", "projectbluefin/dakota"];
 
 /** Extract YYYY-MM from an ISO timestamp. */
 export function monthKey(iso) {

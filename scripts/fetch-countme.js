@@ -2,7 +2,7 @@
 /**
  * Fetches weekly countme data from the Fedora countme totals CSV and writes
  * static/data/countme-history.json, consumed by the site to show active-device
- * trends for Bluefin, Bluefin LTS, Aurora, Bazzite, Fedora, Dakota, and Utah.
+ * trends for Bluefin, Aurora, Bazzite, Fedora, Dakota, and Utah.
  *
  * COUNTING RULE — keep in step with ublue-os/countme.
  *
@@ -24,8 +24,8 @@
  *      system has exactly one of; summing across those tags therefore sums
  *      across releases (F41 + F42 + …), not across repos of one machine.
  *   3. No variant is exempt from rule 2. The exemption that used to exist
- *      summed Bluefin LTS across EPEL mirror hits, which is precisely the
- *      upstream number policy forbids publishing for one of our images.
+ *      summed EPEL mirror hits, which is precisely the upstream number policy
+ *      forbids publishing for one of our images.
  *   4. Two upstream weeks are known bad and are skipped outright.
  *
  * The source CSV is ~600 MB. This script uses HTTP Range requests to fetch only
@@ -58,31 +58,18 @@ const CSV_URL =
  * — `countme.projectbluefin.io` and the D1 behind it — **and nothing else**.
  *
  * Fedora's CSV is not a permitted source for any of these, and this file must
- * never emit a key for one. Policy, verbatim, from `projectbluefin/common` →
- * `docs/skills/image-registry.md`:
- *
- *   "Never use Fedora / EPEL / ublue-os/countme numbers for Bluefin LTS or any
- *    other Project Bluefin image. Upstream pipelines undercount bootc, drop
- *    CS10/EPEL metalinks, and do not track modern streams or game mode status.
- *    The Cloudflare Worker and D1 database behind countme.projectbluefin.io are
- *    the single source of truth for all Project Bluefin counts, dashboards, and
- *    shields badges."
- *
- * Bluefin LTS is the sharpest case and the reason the rule exists: it is CentOS
- * Stream based, so Fedora only ever sees it through whichever EPEL mirrors it
- * happens to hit. That number is not a population and must not be published as
- * one.
+ * never emit a key for one. Policy, from `projectbluefin/common` →
+ * `docs/skills/image-registry.md`: never use Fedora / EPEL / ublue-os/countme
+ * numbers for any Project Bluefin image. Upstream pipelines undercount bootc,
+ * drop EPEL metalinks, and do not track modern streams or game mode status.
+ * The Cloudflare Worker and D1 database behind countme.projectbluefin.io are
+ * the single source of truth for all Project Bluefin counts, dashboards, and
+ * shields badges.
  *
  * `scripts/countme-first-party.test.js` fails the build if one of these appears
  * in the output.
  */
-export const PROJECTBLUEFIN_IMAGES = [
-  "bluefin",
-  "bluefin-lts",
-  "dakota",
-  "utah",
-  "server",
-];
+export const PROJECTBLUEFIN_IMAGES = ["bluefin", "dakota", "utah", "server"];
 
 /** Where a Project Bluefin count must come from. Stamped into the payload. */
 export const FIRST_PARTY_SOURCE = "https://countme.projectbluefin.io";
@@ -104,7 +91,7 @@ export const VARIANTS = ["aurora", "bazzite", "fedora"];
  * Bumped when the projectbluefin images were removed from this pipeline.
  *
  * The bump is load-bearing, not cosmetic: `mergeHistory` refuses to blend two
- * methods, so an old seed still carrying `bluefin` and `bluefin-lts` keys is
+ * methods, so an old seed still carrying a `bluefin` key is
  * discarded rather than merged forward. Without it the banned numbers survive
  * in history forever.
  */
@@ -117,13 +104,13 @@ const BASE_REPO = /^fedora-\d+$/;
 /**
  * There is no exemption from rule 2 any more.
  *
- * `NON_FEDORA_VARIANTS` used to let `bluefin-lts` and `dakota` skip the
- * `^fedora-N$` restriction and be summed across whatever repos they happened to
- * reach — EPEL mirrors, in LTS's case. That was the mechanism by which an
- * upstream number became a published "Bluefin LTS systems" figure, which policy
- * forbids. Both images are now out of this pipeline entirely, so every variant
- * that remains is Fedora-based and the base-repo restriction applies to all of
- * them without exception.
+ * `NON_FEDORA_VARIANTS` used to let non-Fedora images skip the `^fedora-N$`
+ * restriction and be summed across whatever repos they happened to reach —
+ * EPEL mirrors included. That was the mechanism by which an upstream number
+ * became a published population figure, which policy forbids. Those images are
+ * now out of this pipeline entirely, so every variant that remains is
+ * Fedora-based and the base-repo restriction applies to all of them without
+ * exception.
  */
 
 /**
@@ -283,7 +270,7 @@ export function aggregateWeeks(rows, { dropFirst = false } = {}) {
     if (!Number.isFinite(row.hits)) continue;
 
     // Rule 2 — one repo per system, now with no exemption. The exemption that
-    // used to sit here summed Bluefin LTS across EPEL mirror hits.
+    // used to sit here summed EPEL mirror hits.
     if (!BASE_REPO.test(row.repo_tag ?? "")) continue;
 
     if (!weekMap.has(week)) weekMap.set(week, { week });

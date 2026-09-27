@@ -92,7 +92,6 @@ const MAX_WEEKLY_SERIES = 100;
 const FALLBACK_FACTORY_REPOS = [
   "common",
   "bluefin",
-  "bluefin-lts",
   "actions",
   "dakota",
   "dakota-iso",

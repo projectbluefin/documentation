@@ -1,8 +1,7 @@
 /**
  * Parser for OS release feed HTML content.
  *
- * Each item in static/feeds/bluefin-releases.json and
- * static/feeds/bluefin-lts-releases.json contains a `content` field with
+ * Each item in static/feeds/bluefin-releases.json contains a `content` field with
  * machine-generated HTML. This module parses that HTML into structured data
  * using regex, avoiding a full DOM parser (no new dependencies).
  *
@@ -52,7 +51,6 @@ function isGtsItem(title: string): boolean {
  */
 function detectStream(title: string): OsStream | null {
   if (isGtsItem(title)) return null;
-  if (/^lts[.-]/i.test(title) || /\bLTS:/i.test(title)) return "lts";
   if (/^stable-daily-/i.test(title)) return "stable-daily";
   if (/^(stable|beta)-/i.test(title)) return "stable";
   if (/^latest-/i.test(title)) return "stable-daily";
@@ -68,31 +66,16 @@ function extractFedoraVersion(title: string): string | null {
 }
 
 /**
- * Extract CentOS base version from title, e.g. "(c10s, #...)" → "c10s".
- * Present in LTS releases (CentOS Stream base).
- */
-function extractCentosVersion(title: string): string | null {
-  const m = title.match(/\(([a-z0-9]+s),\s*#/i);
-  return m ? m[1] : null;
-}
-
-/**
  * Extract the release tag from the title.
  * Examples:
- *   "stable-20260331: Stable (...)"   → "stable-20260331"
- *   "bluefin-lts LTS: 20251223 (...)" → "lts-20251223"
- *   "lts.20251223: ..."               → "lts-20251223"
+ *   "stable-20260331: Stable (...)" → "stable-20260331"
  */
 function extractTag(title: string, stream: OsStream): string {
   // Compound prefix format: "stable-daily-YYYYMMDD" (two word segments before the date)
   const compoundMatch = title.match(/^([a-z]+-[a-z]+-\d{8})/i);
   if (compoundMatch) return compoundMatch[1].toLowerCase();
 
-  // Dot-separator format: "lts.YYYYMMDD" (new LTS release tag format as of 2026-04)
-  const dotSepMatch = title.match(/^([a-z]+)\.(\d{8})/i);
-  if (dotSepMatch) return `${dotSepMatch[1].toLowerCase()}-${dotSepMatch[2]}`;
-
-  // Standard prefix format: "stable-YYYYMMDD", "lts-YYYYMMDD", "latest-YYYYMMDD"
+  // Standard prefix format: "stable-YYYYMMDD", "latest-YYYYMMDD"
   const prefixMatch = title.match(/^([a-z]+-[\d.]+)/i);
   if (prefixMatch) {
     let tag = prefixMatch[1].toLowerCase();
@@ -100,9 +83,6 @@ function extractTag(title: string, stream: OsStream): string {
     tag = tag.replace(/^latest-(\d{8})$/, "stable-daily-$1");
     return tag;
   }
-  // LTS alternative format: "bluefin-lts LTS: YYYYMMDD (...)"
-  const ltsAltMatch = title.match(/LTS:\s*(\d{8})/i);
-  if (ltsAltMatch) return `lts-${ltsAltMatch[1]}`;
   return stream;
 }
 
@@ -133,14 +113,17 @@ function extractSections(html: string): Map<string, string> {
 function stripMd(text: string): string {
   return text
     .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1") // [text](url) → text
-    .replace(/\*\*([^*]*)\*\*/g, "$1")        // **bold** → text
-    .replace(/`([^`]+)`/g, "$1")              // `code` → text
+    .replace(/\*\*([^*]*)\*\*/g, "$1") // **bold** → text
+    .replace(/`([^`]+)`/g, "$1") // `code` → text
     .trim();
 }
 
 /** Split a Markdown table row into trimmed cell strings. */
 function splitMdRow(line: string): string[] {
-  return line.replace(/^\||\|$/g, "").split("|").map((s) => s.trim());
+  return line
+    .replace(/^\||\|$/g, "")
+    .split("|")
+    .map((s) => s.trim());
 }
 
 /** Returns true if a row is a separator line (| --- | --- |). */
@@ -191,7 +174,11 @@ function parseTwoColTableMd(rows: string[][]): ParsedMajorPackage[] {
     const versionRaw = stripMd(cells[1]);
     const parts = versionRaw.split(/\s*➡️?\s*/u).map((s) => s.trim());
     if (parts.length >= 2 && parts[0] && parts[parts.length - 1]) {
-      results.push({ name, version: parts[parts.length - 1], prevVersion: parts[0] });
+      results.push({
+        name,
+        version: parts[parts.length - 1],
+        prevVersion: parts[0],
+      });
     } else {
       results.push({ name, version: versionRaw, prevVersion: null });
     }
@@ -229,8 +216,10 @@ function parseFourColDiffTableMd(rows: string[][]): ParsedDiffEntry[] {
     const prevVersion = stripMd(cells[2]) || null;
     const newVersion = stripMd(cells[3]) || null;
     let indicator: ParsedDiffEntry["indicator"] = "changed";
-    if (emojiText.includes("✨") || (!prevVersion && newVersion)) indicator = "added";
-    else if (emojiText.includes("❌") || (prevVersion && !newVersion)) indicator = "removed";
+    if (emojiText.includes("✨") || (!prevVersion && newVersion))
+      indicator = "added";
+    else if (emojiText.includes("❌") || (prevVersion && !newVersion))
+      indicator = "removed";
     results.push({ indicator, name, prevVersion, newVersion });
   }
   return results;
@@ -245,7 +234,8 @@ function parseFourColDiffTableMd(rows: string[][]): ParsedDiffEntry[] {
  */
 function parseTwoColTable(tableHtml: string): ParsedMajorPackage[] {
   const results: ParsedMajorPackage[] = [];
-  const rowRe = /<tr>\s*<td[^>]*>([\s\S]*?)<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>\s*<\/tr>/gi;
+  const rowRe =
+    /<tr>\s*<td[^>]*>([\s\S]*?)<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>\s*<\/tr>/gi;
   let m: RegExpExecArray | null;
   while ((m = rowRe.exec(tableHtml)) !== null) {
     const name = stripHtml(m[1]);
@@ -268,8 +258,7 @@ function parseTwoColTable(tableHtml: string): ParsedMajorPackage[] {
 
 /**
  * Parse the Commits table.
- * Stable feed: 3 columns [Hash, Subject, Author].
- * LTS feed: 2 columns [Hash, Subject] — author is optional.
+ * Columns: [Hash, Subject, Author] — author is optional.
  *
  * Commit href URLs are allow-listed to https://github.com/ only.
  */
@@ -357,8 +346,7 @@ function parseFourColDiffTable(tableHtml: string): ParsedDiffEntry[] {
  *
  * @param item       Raw feed item.
  * @param streamHint Override stream detection — pass when the source file
- *                   already identifies the stream (e.g. "lts" for items from
- *                   bluefin-lts-releases.json).
+ *                   already identifies the stream.
  */
 export function parseOsRelease(
   item: OsFeedItem,
@@ -373,7 +361,6 @@ export function parseOsRelease(
 
   let majorPackages: ParsedMajorPackage[];
   let dxPackages: ParsedMajorPackage[];
-  let gdxPackages: ParsedMajorPackage[];
   let commits: ParsedCommit[];
   const fullDiff: ParsedDiffEntry[] = [];
 
@@ -381,9 +368,12 @@ export function parseOsRelease(
     const mdSections = extractSectionsMd(item.content);
     majorPackages = parseTwoColTableMd(mdSections.get("Major packages") ?? []);
     dxPackages = parseTwoColTableMd(mdSections.get("Major DX packages") ?? []);
-    gdxPackages = parseTwoColTableMd(mdSections.get("Major GDX packages") ?? []);
     commits = parseCommitsTableMd(mdSections.get("Commits") ?? []);
-    for (const heading of ["All Images", "Base Images", "Dev Experience Images"]) {
+    for (const heading of [
+      "All Images",
+      "Base Images",
+      "Dev Experience Images",
+    ]) {
       const rows = mdSections.get(heading);
       if (rows) fullDiff.push(...parseFourColDiffTableMd(rows));
     }
@@ -391,10 +381,13 @@ export function parseOsRelease(
     const sections = extractSections(item.content);
     majorPackages = parseTwoColTable(sections.get("Major packages") ?? "");
     dxPackages = parseTwoColTable(sections.get("Major DX packages") ?? "");
-    gdxPackages = parseTwoColTable(sections.get("Major GDX packages") ?? "");
     const commitsHtml = sections.get("Commits") ?? "";
     commits = commitsHtml ? parseCommitsTable(commitsHtml) : [];
-    for (const heading of ["All Images", "Base Images", "Dev Experience Images"]) {
+    for (const heading of [
+      "All Images",
+      "Base Images",
+      "Dev Experience Images",
+    ]) {
       const tableHtml = sections.get(heading);
       if (tableHtml) fullDiff.push(...parseFourColDiffTable(tableHtml));
     }
@@ -407,12 +400,13 @@ export function parseOsRelease(
   // are kept even if they have no release notes tables, because the SBOM pipeline will
   // enrich them with authoritative package versions (kernel, gnome, mesa, etc.).
   const hasDateTag = /\d{8}/.test(tag);
-  if (majorPackages.length === 0 && fullDiff.length === 0 && !hasDateTag) return null;
+  if (majorPackages.length === 0 && fullDiff.length === 0 && !hasDateTag)
+    return null;
 
   // Backfill: any majorPackage or dxPackage that changed but is absent from fullDiff
   // gets a synthetic "changed" entry so the collapsible list shows the full upgrade path.
   const fullDiffNames = new Set(fullDiff.map((e) => e.name.toLowerCase()));
-  for (const pkg of [...majorPackages, ...dxPackages, ...gdxPackages]) {
+  for (const pkg of [...majorPackages, ...dxPackages]) {
     if (pkg.prevVersion && !fullDiffNames.has(pkg.name.toLowerCase())) {
       fullDiff.unshift({
         indicator: "changed",
@@ -429,10 +423,8 @@ export function parseOsRelease(
     tag,
     githubUrl: item.link,
     fedoraVersion: extractFedoraVersion(item.title),
-    centosVersion: extractCentosVersion(item.title),
     majorPackages,
     dxPackages,
-    gdxPackages,
     commits,
     fullDiff,
   };

@@ -98,7 +98,6 @@ async function harvestPortalContributors({
       .filter((repo) => repo && !repo.fork && repo.full_name)
       .map((repo) => repo.full_name),
     "ublue-os/bluefin",
-    "ublue-os/bluefin-lts",
   ].filter((repo, index, all) => all.indexOf(repo) === index);
 
   const people = new Map();

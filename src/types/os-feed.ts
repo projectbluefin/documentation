@@ -2,8 +2,7 @@
  * Types for OS release feed data.
  *
  * Raw feed data lives in:
- *   static/feeds/bluefin-releases.json     (stable stream)
- *   static/feeds/bluefin-lts-releases.json (lts stream)
+ *   static/feeds/bluefin-releases.json (stable stream)
  *
  * GTS (Good Till September) was a retired stream. gts-prefixed entries may
  * appear in the stable feed as historical records — they are skipped by the
@@ -31,7 +30,7 @@ export interface OsFeedData {
 // ── Parsed structures ─────────────────────────────────────────────────────────
 
 /** The active Bluefin release streams. GTS is retired — skipped in parser. */
-export type OsStream = "stable" | "stable-daily" | "lts" | "dakota";
+export type OsStream = "stable" | "stable-daily" | "dakota";
 
 /**
  * A package entry from the "Major packages" or "Major DX packages" section.
@@ -46,14 +45,14 @@ export interface ParsedMajorPackage {
   prevVersion: string | null;
 }
 
-/** A commit entry from the "Commits" table. Author is absent in LTS 2-column tables. */
+/** A commit entry from the "Commits" table. Author is absent in 2-column tables. */
 export interface ParsedCommit {
   hash: string;
   /** Full GitHub commit URL (https://github.com/... only). Null if not found. */
   url: string | null;
   /** Plain-text commit subject (HTML stripped). */
   subject: string;
-  /** Commit author name. Null in LTS feed (2-column table format). */
+  /** Commit author name. Null for 2-column table format. */
   author: string | null;
 }
 
@@ -71,20 +70,16 @@ export interface ParsedDiffEntry {
 /** All structured data parsed from a single OsFeedItem. */
 export interface ParsedOsRelease {
   stream: OsStream;
-  /** Release tag, e.g. "stable-20260331" or "lts-20251223". */
+  /** Release tag, e.g. "stable-20260331". */
   tag: string;
   /** URL to the GitHub release page. */
   githubUrl: string;
-  /** Fedora base version, e.g. "43". Null for LTS (CentOS base). */
+  /** Fedora base version, e.g. "43". */
   fedoraVersion: string | null;
-  /** CentOS base version, e.g. "c10s". Null for stable (Fedora base). */
-  centosVersion: string | null;
   /** Entries from the "Major packages" table. */
   majorPackages: ParsedMajorPackage[];
   /** Entries from the "Major DX packages" table (dev tools: Docker, VSCode, etc.). */
   dxPackages: ParsedMajorPackage[];
-  /** Entries from the "Major GDX packages" table (GPU extras: Nvidia, CUDA). Present on LTS only. */
-  gdxPackages: ParsedMajorPackage[];
   /** Commit list. Empty array if no commits section is present. */
   commits: ParsedCommit[];
   /**

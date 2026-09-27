@@ -14,9 +14,9 @@ const policy = import("./lib/countme-sources.mjs");
  * upstream's to publish.
  *
  * This rule lived in prose in projectbluefin/common for months and was broken
- * anyway: fetch-countme.js carried a NON_FEDORA_VARIANTS exemption whose only
- * purpose was to sum Bluefin LTS across EPEL repo hits, and /analytics published
- * the result as a population. Prose cannot fail a build. This can.
+ * anyway: fetch-countme.js carried a NON_FEDORA_VARIANTS exemption that summed
+ * EPEL repo hits, and /analytics published the result as a population. Prose
+ * cannot fail a build. This can.
  */
 
 const read = (rel) => fs.readFileSync(path.join(repo, rel), "utf8");
@@ -54,16 +54,12 @@ test("the Fedora CSV pipeline publishes no projectbluefin image", async () => {
 test("no EPEL exemption can reappear in the counting rule", async () => {
   const src = read("scripts/fetch-countme.js");
 
-  // NON_FEDORA_VARIANTS existed solely to let Bluefin LTS skip the base-repo
+  // NON_FEDORA_VARIANTS existed solely to let an image skip the base-repo
   // restriction and be summed across EPEL mirrors. That is the exact mechanism
-  // that turned an upstream artefact into a published LTS population.
+  // that turned an upstream artefact into a published population.
   assert.ok(
     !/export const NON_FEDORA_VARIANTS/.test(src),
     "NON_FEDORA_VARIANTS is the EPEL exemption; it does not come back",
-  );
-  assert.ok(
-    !/normalizeVariant[\s\S]*?return "bluefin-lts"/.test(src),
-    "the Fedora CSV parser must not resolve any row to bluefin-lts",
   );
 });
 
@@ -91,7 +87,7 @@ test("the shipped dataset carries no projectbluefin count", async () => {
 test("no component reads a projectbluefin count out of the upstream dataset", async () => {
   const { BANNED_PROJECTBLUEFIN_REPOS: bannedRepos } = await policy;
 
-  // Reading w.bluefin or w["bluefin-lts"] out of a consumer is reading a
+  // Reading w.bluefin or w["dakota"] out of a consumer is reading a
   // Fedora number. This catches the literal spelling; the computed spelling
   // has its own test below, because it is the one that got through.
 
@@ -193,16 +189,16 @@ test("isPermittedSource allows exactly one upstream pairing", async () => {
   const { isPermittedSource, UPSTREAM_ALLOWED, FIRST_PARTY } = await policy;
 
   assert.ok(isPermittedSource(UPSTREAM_ALLOWED.id, UPSTREAM_ALLOWED.source));
-  assert.ok(isPermittedSource("bluefin-lts", `${FIRST_PARTY.origin}/summary`));
+  assert.ok(isPermittedSource("dakota", `${FIRST_PARTY.origin}/summary`));
 
   // The exception is one image from one endpoint, not a general licence.
   assert.ok(
     !isPermittedSource(
-      "bluefin-lts",
+      "dakota",
       "https://data-analysis.fedoraproject.org/csv-reports/countme/totals.csv",
     ),
   );
-  assert.ok(!isPermittedSource("bluefin-lts", UPSTREAM_ALLOWED.source));
+  assert.ok(!isPermittedSource("utah", UPSTREAM_ALLOWED.source));
   assert.ok(!isPermittedSource("dakota", UPSTREAM_ALLOWED.source));
   assert.ok(
     !isPermittedSource(

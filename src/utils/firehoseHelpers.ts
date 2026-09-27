@@ -4,7 +4,11 @@
  * and SBOM-to-event synthesis for all streams.
  */
 
-import type { OsReleaseEvent, ParsedMajorPackage, OsStream } from "../types/os-feed";
+import type {
+  OsReleaseEvent,
+  ParsedMajorPackage,
+  OsStream,
+} from "../types/os-feed";
 import type { SbomAttestationsData, PackageVersions } from "../types/sbom";
 
 // ── Constants ────────────────────────────────────────────────────────────────
@@ -41,12 +45,6 @@ export const DX_CHIP_MAP: Record<string, string> = {
   incus: "Incus",
 };
 
-/** RPM package name → display label for the GDX section chips */
-export const GDX_CHIP_MAP: Record<string, string> = {
-  "nvidia-driver": "Nvidia",
-  "nvidia-driver-cuda": "CUDA",
-};
-
 // ── Pure functions ───────────────────────────────────────────────────────────
 
 /** Extract a YYYYMMDD date string from a release tag. */
@@ -71,10 +69,13 @@ export function sbomKeyForRelease(
 ): { streamId: string; cacheKey: string } | null {
   const date = parseDateFromTag(tag);
   if (!date) return null;
-  if (stream === "lts") return { streamId: "bluefin-lts", cacheKey: `stable-${date}` };
   if (stream === "stable-daily")
-    return { streamId: "bluefin-stable-daily", cacheKey: `stable-daily-${date}` };
-  if (stream === "stable") return { streamId: "bluefin-stable", cacheKey: `stable-${date}` };
+    return {
+      streamId: "bluefin-stable-daily",
+      cacheKey: `stable-daily-${date}`,
+    };
+  if (stream === "stable")
+    return { streamId: "bluefin-stable", cacheKey: `stable-${date}` };
   return null;
 }
 
@@ -130,10 +131,8 @@ export function sbomStreamToEvents(
         fedoraVersion: releaseData.packageVersions.fedora
           ? releaseData.packageVersions.fedora.replace(/^F/, "")
           : null,
-        centosVersion: null,
         majorPackages,
         dxPackages: [],
-        gdxPackages: [],
         commits: [],
         fullDiff: [],
       },
