@@ -18,7 +18,7 @@ const sidebars: SidebarsConfig = {
         type: "doc",
         id: "images",
       },
-      items: ["server", "lts", "dakota", "utah"],
+      items: ["server", "dakota", "utah", "classic"],
     },
     {
       type: "category",
@@ -30,7 +30,7 @@ const sidebars: SidebarsConfig = {
       type: "category",
       label: "Developer Guide",
       collapsed: false,
-      items: ["bluefin-dx", "ai", "bluefin-gdx"],
+      items: ["bluefin-dx", "ai",
     },
     {
       type: "category",
@@ -41,21 +41,11 @@ const sidebars: SidebarsConfig = {
         "agentic-contributing",
         "contributors",
         "downloads-testing",
-        {
-          type: "category",
-          label: "Donations",
-          collapsed: true,
-          link: {
-            type: "doc",
-            id: "donations/index",
-          },
-          items: ["donations/projects"],
-        },
+        "donations", 
         "mission",
         "values",
         "code-of-conduct",
-        "supply-chain",
-        "reports",
+        "supply-chain"
       ],
     },
   ],
