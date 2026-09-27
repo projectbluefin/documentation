@@ -10,7 +10,7 @@ pagination_prev: null
 
 import ImagesCatalog from "@site/src/components/ImagesCatalog";
 
-The catalog covers three Bluefin image families: **Bluefin Classic** (published by
-`ublue-os`), **Dakota**, and **Utah**.
+The catalog covers three Bluefin image families: **Bluefin**, **Bluefin Classic**
+(published by `ublue-os`), and **Utah**.
 
 <ImagesCatalog />
