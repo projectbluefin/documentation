@@ -631,6 +631,20 @@ export default function ImagesCatalogComponent({
 
   return (
     <div className={styles.imagesPage}>
+      <section className={styles.sectionGroup}>
+        <Heading as="h2" className={styles.groupTitle}>
+          Bluefin
+        </Heading>
+        <p className={styles.groupHint}>
+          Bluefin stable and testing image streams.
+        </p>
+        <div className="alert alert--info" role="note">
+          Bluefin is a separate image track. Rebasing between Bluefin and
+          Bluefin Classic is not supported.
+        </div>
+        <div className={styles.cards}>{renderCards(dakotaProducts)}</div>
+      </section>
+
       <section id="bluefin-stable" className={styles.sectionGroup}>
         <Heading as="h2" className={styles.groupTitle}>
           Bluefin Classic
@@ -640,21 +654,6 @@ export default function ImagesCatalogComponent({
         </p>
         <div className={styles.cards}>{renderCards(bluefinProducts)}</div>
       </section>
-
-      <section className={styles.sectionGroup}>
-        <Heading as="h2" className={styles.groupTitle}>
-          Dakota
-        </Heading>
-        <p className={styles.groupHint}>
-          Dakota stable and testing image streams.
-        </p>
-        <div className="alert alert--info" role="note">
-          Dakota is a separate image track. Rebasing between Bluefin and Dakota
-          is not supported.
-        </div>
-        <div className={styles.cards}>{renderCards(dakotaProducts)}</div>
-      </section>
-
       <section className={styles.sectionGroup}>
         <Heading as="h2" className={styles.groupTitle}>
           Utah
