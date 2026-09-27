@@ -405,11 +405,11 @@ export default function DriverVersionsCatalog({
     ? activeCatalog.streams
     : [];
   const stream = allStreams.find((entry) => entry.id === streamId);
-  const fallbackLabel =
+  const streamLabel =
     streamId === "dakota-stable"
-      ? "Dakota Stable"
+      ? "Bluefin"
       : streamId === "utah-testing"
-        ? "Utah Testing"
+        ? "Utah"
         : "Bluefin Classic";
 
   if (!stream) {
@@ -462,7 +462,7 @@ export default function DriverVersionsCatalog({
         <header className={styles.streamHeader}>
           <span className={styles.streamMeta}>
             SBOM{stream.source !== "sbom" ? ` (${stream.source})` : ""} ·{" "}
-            {stream.rowCount} snapshots in {fallbackLabel} · updated{" "}
+            {stream.rowCount} snapshots in {streamLabel} · updated{" "}
             {formatDate(activeCatalog.generatedAt)}
           </span>
           {currentUserspace && (
