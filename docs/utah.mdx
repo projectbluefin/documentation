@@ -7,10 +7,10 @@ import DriverVersionsCatalog from "@site/src/components/DriverVersionsCatalog";
 
 # Utah
 
-**Utah** (_Utahraptor ostrommaysi_) is Bluefin built on [Fedora Hummingbird](https://fedoramagazine.org/fedora-hummingbird-linux-taking-the-hummingbird-model-to-the-full-os/), which provides a hardened, fast-moving bootable base without a desktop. Utah adds the desktop layer: Bluefin's package contract and the GNOME 51 desktop stack built from verified upstream sources via `projectbluefin/utah-packages`.
+**Utah** (_Utahraptor ostrommaysi_) is Bluefin built on [Fedora Hummingbird](https://fedoramagazine.org/fedora-hummingbird-linux-taking-the-hummingbird-model-to-the-full-os/), which provides a hardened, fast-moving bootable base without a desktop. Utah adds the desktop layer: Bluefin's GNOME desktop and user experience. Stack built from verified upstream sources via `projectbluefin/utah-packages`.
 
 :::info[Pre-alpha]
-Utah is an experimental pre-alpha build in active development. Its `:testing` container image is published on GHCR, but no public ISO is available. Track progress and file issues at [projectbluefin/utah](https://github.com/projectbluefin/utah/issues).
+Utah is an alpha build in active development. Its `:testing` container image is published on GHCR. Track progress and file issues at [projectbluefin/utah](https://github.com/projectbluefin/utah/issues).
 :::
 
 ## Architecture
@@ -28,26 +28,18 @@ Utah defines four flavors matching Bluefin's standard targets: `utah`, `utah-nvi
 
 | Tag        | Stream  | Availability                                |
 | ---------- | ------- | ------------------------------------------- |
-| `:testing` | Testing | Published at `ghcr.io/projectbluefin/utah`. |
-
-There is no published `:stable` stream or dated Utah release tag. Driver versions below appear only when a matching testing-image SBOM is available.
+| `:stable`  | Stable  | `ghcr.io/projectbluefin/utah:stable`        |
+| `:testing` | Testing | `ghcr.io/projectbluefin/utah:testing`       |
 
 ## Features and Stack
 
-- **Kernel**: Open Gaming Collective (OGC) Linux kernel with `sched_ext` scheduler extensibility.
+- **Kernel**: Same kernel options as Bluefin, Open Gaming Collective (OGC) Linux kernel available with Gaming mode
 - **Desktop**: GNOME 51 stack assembled from upstream source via `utah-packages`.
-- **Contract Parity**: Enforces package parity with Bluefin's base package specification (`packages/bluefin.toml`).
 - **NVIDIA and Gaming**: Specialized flavors include NVIDIA drivers and gaming stack components.
 
 ## Current Versions
 
 <DriverVersionsCatalog streamId="utah-testing" />
-
-## Known Gaps
-
-- **Installer Integration**: Single-architecture live ISOs build locally, but installer payload integration is ongoing.
-- **Hardware-accelerated Codecs**: Multimedia packages differ from standard Bluefin builds pending complete overlay integration.
-- **CUDA Packaging**: CUDA is not bundled in the base image (use the included NVIDIA Container Toolkit to run CUDA workloads in containers).
 
 ## Further Reading
 
