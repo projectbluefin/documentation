@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-26T05:15:21.012Z",
+  "generatedAt": "2026-09-27T05:15:41.569Z",
   "source": "GHCR OCI Manifests & Attestations",
   "method": "oci-layer-diff-v1",
   "unit": "MB",
@@ -14,7 +14,7 @@
       "releases": [
         {
           "tag": "stable",
-          "date": "2026-09-26",
+          "date": "2026-09-27",
           "previousTag": null,
           "downloadChurnMB": 3175,
           "sharedMB": 0,
@@ -204,11 +204,11 @@
         },
         {
           "tag": "stable",
-          "date": "2026-09-26",
+          "date": "2026-09-27",
           "previousTag": "10-20260606",
-          "downloadChurnMB": 3893.7,
+          "downloadChurnMB": 3892.1,
           "sharedMB": 0,
-          "totalMB": 3893.7,
+          "totalMB": 3892.1,
           "reuseEfficiencyPct": 0,
           "totalLayers": 68,
           "sharedLayers": 0,
@@ -229,7 +229,7 @@
       "releases": [
         {
           "tag": "stable",
-          "date": "2026-09-26",
+          "date": "2026-09-27",
           "previousTag": null,
           "downloadChurnMB": 3478.8,
           "sharedMB": 0,
@@ -254,11 +254,11 @@
       "releases": [
         {
           "tag": "testing",
-          "date": "2026-09-26",
+          "date": "2026-09-27",
           "previousTag": null,
-          "downloadChurnMB": 2185.1,
+          "downloadChurnMB": 2207.6,
           "sharedMB": 0,
-          "totalMB": 2185.1,
+          "totalMB": 2207.6,
           "reuseEfficiencyPct": 0,
           "totalLayers": 128,
           "sharedLayers": 0,
