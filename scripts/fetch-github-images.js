@@ -32,7 +32,7 @@ const SBOM_NO_RELEASE_DATA_REASON = "SBOM cache contains no release data";
 const PRODUCT_SPECS = [
   {
     id: "ublue-bluefin",
-    name: "Bluefin",
+    name: "Bluefin Classic",
     org: "ublue-os",
     package: "bluefin",
     artwork: "bluefin",
@@ -55,7 +55,7 @@ const PRODUCT_SPECS = [
   },
   {
     id: "projectbluefin-dakota",
-    name: "Project Bluefin Dakota",
+    name: "Bluefin",
     org: "projectbluefin",
     package: "dakota",
     artwork: "dakotaraptor",
