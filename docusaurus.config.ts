@@ -6,7 +6,7 @@ import type * as Preset from "@docusaurus/preset-classic";
 
 const config: Config = {
   title: "Bluefin",
-  tagline: "Bluefin Documentation",
+  tagline: "Documentation",
   favicon: "img/favicon.svg",
 
   url: "https://docs.projectbluefin.io",
@@ -207,18 +207,8 @@ const config: Config = {
           label: "Documentation",
         },
         {
-          href: "https://ask.projectbluefin.io",
-          label: "Ask Bluefin",
-          position: "left",
-        },
-        {
           to: "blog",
           label: "Blog",
-          position: "right",
-        },
-        {
-          to: "changelogs",
-          label: "Changelogs",
           position: "right",
         },
         {
@@ -311,11 +301,7 @@ const config: Config = {
             },
             {
               label: "Releases Feed",
-              href: "https://github.com/projectbluefin/bluefin/releases.atom",
-            },
-            {
-              label: "LTS Releases Feed",
-              href: "https://github.com/projectbluefin/bluefin-lts/releases.atom",
+              href: "https://github.com/projectbluefin/dakota/releases.atom",
             },
             {
               label: "Discussions Feed",
@@ -370,11 +356,7 @@ const config: Config = {
             },
             {
               label: "Bluefin",
-              href: "https://github.com/projectbluefin/bluefin",
-            },
-            {
-              label: "Bluefin LTS",
-              href: "https://github.com/projectbluefin/bluefin-lts",
+              href: "https://github.com/projectbluefin/dakota",
             },
             {
               label: "Documentation",
