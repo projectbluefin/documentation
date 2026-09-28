@@ -20,6 +20,8 @@ Some high points:
 
 I'll likely refresh this in a few weeks since we're really grooving now and getting in lots of fixes. We'll see how it plays out over the next month or so! I think this graphical representation is quite cool. It's a good graphical representation that shows how we went from manual mode to agentic mode. It's also nice that everything is MORE SPREAD OUT across MORE people instead of just a few. The next few months will be the real test to see how we do! Check [clankers.projectbluefin.io](https://clankers.projectbluefin.io) for contribution instructions if you want to check it out!
 
+For me the reviewer role has changed significantly. We have testing branches and test suites now so we can do better reviews instead of "this is mostly fine if it breaks users will tell us.". There's still a lot of that of course, we can never know who is using every knob in an operating system. Mostly now I review things in my [omp harness](https://omp.sh/) and watch things scroll by slowly. Sometimes I need to steer/adjust but these days it's more acking each other's reviews. This is particular handy with James being in India, we can leave each other homework to review since every change still needs a +2 from maintainers. 
+
 Here's two more, both on manual mode: 
 
 ### Bazzite
