@@ -1,0 +1,38 @@
+{
+  "logo.alt": {
+    "message": "Bluefin",
+    "description": "The alt text of navbar logo"
+  },
+  "item.label.Documentation": {
+    "message": "Documentation",
+    "description": "Navbar item with label Documentation"
+  },
+  "item.label.Blog": {
+    "message": "Blog",
+    "description": "Navbar item with label Blog"
+  },
+  "item.label.Reports": {
+    "message": "Reports",
+    "description": "Navbar item with label Reports"
+  },
+  "item.label.Leaderboards": {
+    "message": "Leaderboards",
+    "description": "Navbar item with label Leaderboards"
+  },
+  "item.label.Hive": {
+    "message": "Hive",
+    "description": "Navbar item with label Hive"
+  },
+  "item.label.Discussions": {
+    "message": "Discussions",
+    "description": "Navbar item with label Discussions"
+  },
+  "item.label.Analytics": {
+    "message": "Analytics",
+    "description": "Navbar item with label Analytics"
+  },
+  "item.label.Store": {
+    "message": "Store",
+    "description": "Navbar item with label Store"
+  }
+}

@@ -1,15 +1,35 @@
 import { themes as prismThemes } from "prism-react-renderer";
 import type { Config } from "@docusaurus/types";
 import type * as Preset from "@docusaurus/preset-classic";
+import {
+  dropStaticCopy,
+  englishOnlyRoutes,
+  remarkEnglishOnlyUrls,
+  translatedLocales,
+} from "./scripts/lib/translated-locales.mjs";
+
+// Translation locales go live once they hold a translated docs page, and carry
+// the core docs only; see docs/skills/translations.md. Docusaurus loads this
+// config once per locale and sets DOCUSAURUS_CURRENT_LOCALE before each load.
+const siteUrl = "https://docs.projectbluefin.io";
+const liveLocales = translatedLocales(`${__dirname}/i18n`);
+const isTranslation = (process.env.DOCUSAURUS_CURRENT_LOCALE ?? "en") !== "en";
+
+// English-only pages and static images come from the English site in a
+// translated build, which ships no copy of static/.
+const englishOnlyLink = (path: string) =>
+  isTranslation ? { href: `${siteUrl}${path}` } : { to: path };
+const staticAsset = (path: string) =>
+  isTranslation ? `${siteUrl}/${path}` : path;
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 const config: Config = {
   title: "Bluefin",
   tagline: "Documentation",
-  favicon: "img/favicon.svg",
+  favicon: staticAsset("img/favicon.svg"),
 
-  url: "https://docs.projectbluefin.io",
+  url: siteUrl,
   baseUrl: "/",
   trailingSlash: true,
 
@@ -30,7 +50,7 @@ const config: Config = {
 
   i18n: {
     defaultLocale: "en",
-    locales: ["en"],
+    locales: ["en", ...liveLocales],
   },
 
   markdown: {
@@ -49,22 +69,35 @@ const config: Config = {
           routeBasePath: "/",
           exclude: ["skills/**", "SKILL.md", "superpowers/**"],
           editUrl: "https://github.com/projectbluefin/documentation/tree/main",
+          // Before the defaults, which turn root images into bundled imports.
+          beforeDefaultRemarkPlugins: isTranslation
+            ? [
+                [
+                  remarkEnglishOnlyUrls,
+                  { siteUrl, routes: englishOnlyRoutes(__dirname) },
+                ],
+              ]
+            : [],
         },
-        blog: {
-          blogTitle: "Bluefin's Blog",
-          blogDescription: "Official Blog and Announcements",
-          blogSidebarCount: "ALL",
-          blogSidebarTitle: "Raptor News",
-          editUrl: "https://github.com/projectbluefin/documentation/edit/main/",
-          authorsMapPath: "authors.yaml",
-          truncateMarker: /(?!.*)/,
-          feedOptions: {
-            type: ["rss", "atom"],
-            xslt: true,
-            title: "Bluefin Blog",
-            description: "Official Blog and Announcements",
-          },
-        },
+        pages: isTranslation ? false : undefined,
+        blog: isTranslation
+          ? false
+          : {
+              blogTitle: "Bluefin's Blog",
+              blogDescription: "Official Blog and Announcements",
+              blogSidebarCount: "ALL",
+              blogSidebarTitle: "Raptor News",
+              editUrl:
+                "https://github.com/projectbluefin/documentation/edit/main/",
+              authorsMapPath: "authors.yaml",
+              truncateMarker: /(?!.*)/,
+              feedOptions: {
+                type: ["rss", "atom"],
+                xslt: true,
+                title: "Bluefin Blog",
+                description: "Official Blog and Announcements",
+              },
+            },
         theme: {
           customCss: "./src/css/custom.css",
         },
@@ -73,6 +106,7 @@ const config: Config = {
   ],
 
   plugins: [
+    ...(isTranslation ? [dropStaticCopy] : []),
     [
       "@easyops-cn/docusaurus-search-local",
       {
@@ -80,77 +114,82 @@ const config: Config = {
         docsRouteBasePath: "/",
       },
     ],
-    [
-      "@docusaurus/plugin-client-redirects",
-      {
-        redirects: [
-          {
-            to: "/",
-            from: "/introduction",
-          },
-          {
-            to: "/troubleshooting",
-            from: ["/FAQ", "/faq"],
-          },
-          {
-            to: "/server",
-            from: "/knuckle",
-          },
-          {
-            to: "/command-line",
-            from: "/tips",
-          },
-          {
-            to: "/contributors",
-            from: "/donations/contributors",
-          },
-          {
-            to: "/blog/tags/monthly-report",
-            from: ["/reports", "/reports/about-monthly-reports"],
-          },
-          {
-            to: "/blog/nodosaurus-november-2025",
-            from: "/reports/2025/11",
-          },
-          {
-            to: "/blog/deinonychus-december-2025",
-            from: "/reports/2025/12",
-          },
-          {
-            to: "/blog/jurassic-january-2026",
-            from: "/reports/2026/01",
-          },
-          {
-            to: "/blog/fossil-february-2026",
-            from: "/reports/2026/02",
-          },
-          {
-            to: "/blog/mesozoic-march-2026",
-            from: "/reports/2026/03",
-          },
-          {
-            to: "/blog/allosaurus-april-2026",
-            from: "/reports/2026/04",
-          },
-          {
-            to: "/blog/megalosaurus-may-2026",
-            from: "/reports/2026/05",
-          },
-          {
-            to: "/blog/juravenator-june-2026",
-            from: "/reports/2026/06",
-          },
-          {
-            to: "/blog/jovial-july-2026",
-            from: "/reports/2026/07",
-          },
-          {
-            to: "/blog/archaeopteryx-august-2026",
-            from: "/reports/2026/08",
-          },
-        ],
-      },
-    ],
+    // Legacy URL redirects are English-only; several target the blog.
+    ...(isTranslation
+      ? []
+      : [
+          [
+            "@docusaurus/plugin-client-redirects",
+            {
+              redirects: [
+                {
+                  to: "/",
+                  from: "/introduction",
+                },
+                {
+                  to: "/troubleshooting",
+                  from: ["/FAQ", "/faq"],
+                },
+                {
+                  to: "/server",
+                  from: "/knuckle",
+                },
+                {
+                  to: "/command-line",
+                  from: "/tips",
+                },
+                {
+                  to: "/contributors",
+                  from: "/donations/contributors",
+                },
+                {
+                  to: "/blog/tags/monthly-report",
+                  from: ["/reports", "/reports/about-monthly-reports"],
+                },
+                {
+                  to: "/blog/nodosaurus-november-2025",
+                  from: "/reports/2025/11",
+                },
+                {
+                  to: "/blog/deinonychus-december-2025",
+                  from: "/reports/2025/12",
+                },
+                {
+                  to: "/blog/jurassic-january-2026",
+                  from: "/reports/2026/01",
+                },
+                {
+                  to: "/blog/fossil-february-2026",
+                  from: "/reports/2026/02",
+                },
+                {
+                  to: "/blog/mesozoic-march-2026",
+                  from: "/reports/2026/03",
+                },
+                {
+                  to: "/blog/allosaurus-april-2026",
+                  from: "/reports/2026/04",
+                },
+                {
+                  to: "/blog/megalosaurus-may-2026",
+                  from: "/reports/2026/05",
+                },
+                {
+                  to: "/blog/juravenator-june-2026",
+                  from: "/reports/2026/06",
+                },
+                {
+                  to: "/blog/jovial-july-2026",
+                  from: "/reports/2026/07",
+                },
+                {
+                  to: "/blog/archaeopteryx-august-2026",
+                  from: "/reports/2026/08",
+                },
+              ],
+            },
+          ],
+        ]),
   ],
 
   headTags: [
@@ -190,13 +229,13 @@ const config: Config = {
     ],
 
     // Social card that shows up on discord when you share it
-    image: "img/meta.png",
+    image: staticAsset("img/meta.png"),
     navbar: {
       title: "",
       logo: {
         alt: "Bluefin",
-        src: "img/bluefin-wordmark-light.svg",
-        srcDark: "img/bluefin-wordmark-dark.svg",
+        src: staticAsset("img/bluefin-wordmark-light.svg"),
+        srcDark: staticAsset("img/bluefin-wordmark-dark.svg"),
         href: "https://projectbluefin.io",
       },
       items: [
@@ -207,7 +246,7 @@ const config: Config = {
           label: "Documentation",
         },
         {
-          to: "blog",
+          ...englishOnlyLink("/blog/"),
           label: "Blog",
           position: "right",
         },
@@ -217,7 +256,7 @@ const config: Config = {
           position: "right",
         },
         {
-          to: "/leaderboards",
+          ...englishOnlyLink("/leaderboards/"),
           label: "Leaderboards",
           position: "right",
         },
@@ -241,6 +280,9 @@ const config: Config = {
           label: "Store",
           position: "right",
         },
+        ...(liveLocales.length > 0
+          ? [{ type: "localeDropdown" as const, position: "right" as const }]
+          : []),
       ],
     },
     footer: {

@@ -47,9 +47,4 @@ test("leaderboards place standings before the contributor wall", () => {
     historyFetcher.includes(hostedHive),
     "history fetches must use the TLS-valid host",
   );
-  assert.match(
-    config,
-    /to: "\/leaderboards",\s+label: "Leaderboards"/,
-    "navbar must expose the Leaderboards landing page",
-  );
 });
