@@ -7,6 +7,8 @@ date: 2026-09-28
 image: /img/blog/2026-09-28-bluefin-development-visualized/Kx2UTqHPR9s.jpg
 ---
 
+#### Endless Forms most Beautiful
+
 I wanted to capture the recent swarm of activity in the project lately, so I turned to a trusted tool: [gource](https://github.com/acaudwell/gource). This is a visualization tool that makes git activity look cool. We needed something that showed how Bluefin _used_ to be, to how Bluefin is _now_. Here's the past few months:
 
 [![Bluefin Development Visualized](/img/blog/2026-09-28-bluefin-development-visualized/Kx2UTqHPR9s.jpg)](https://www.youtube.com/watch?v=Kx2UTqHPR9s)
