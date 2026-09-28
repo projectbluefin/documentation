@@ -88,11 +88,12 @@
     "prettier": "3.9.5",
     "satori": "0.28.0",
     "typescript": "6.0.3",
-    "wrangler": "4.129.1"
+    "wrangler": "4.142.0"
   },
   "overrides": {
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "serialize-javascript": "^7.0.5"
   },
   "browserslist": {
     "production": [
