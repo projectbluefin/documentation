@@ -1,26 +1,26 @@
 {
   "version.label": {
-    "message": "Next",
+    "message": "Далі",
     "description": "The label for version current"
   },
   "sidebar.baseSidebar.category.Get Bluefin": {
-    "message": "Get Bluefin",
+    "message": "Отримати Bluefin",
     "description": "The label for category 'Get Bluefin' in sidebar 'baseSidebar'"
   },
   "sidebar.baseSidebar.category.Images": {
-    "message": "Images",
+    "message": "Зображення",
     "description": "The label for category 'Images' in sidebar 'baseSidebar'"
   },
   "sidebar.baseSidebar.category.User Guide": {
-    "message": "User Guide",
+    "message": "Посібник користувача",
     "description": "The label for category 'User Guide' in sidebar 'baseSidebar'"
   },
   "sidebar.baseSidebar.category.Developer Guide": {
-    "message": "Developer Guide",
+    "message": "Посібник розробника",
     "description": "The label for category 'Developer Guide' in sidebar 'baseSidebar'"
   },
   "sidebar.baseSidebar.category.Community & Project": {
-    "message": "Community & Project",
+    "message": "Спільнота й проект",
     "description": "The label for category 'Community & Project' in sidebar 'baseSidebar'"
   }
 }

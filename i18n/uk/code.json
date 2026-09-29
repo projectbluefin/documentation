@@ -271,38 +271,38 @@
     "description": "The ARIA label and title attribute for expand button of doc sidebar"
   },
   "theme.SearchPage.existingResultsTitle": {
-    "message": "Search results for \"{query}\"",
+    "message": "Результати пошуку для \"{query}\"",
     "description": "The search page title for non-empty query"
   },
   "theme.SearchPage.emptyResultsTitle": {
-    "message": "Search the documentation",
+    "message": "Шукати в документації",
     "description": "The search page title for empty query"
   },
   "theme.SearchPage.searchContext.everywhere": {
-    "message": "Everywhere"
+    "message": "Всюди"
   },
   "theme.SearchPage.documentsFound.plurals": {
-    "message": "1 document found|{count} documents found",
+    "message": "1 знайдено документ|{count} знайдено документи|{count} знайдено документів",
     "description": "Pluralized label for \"{count} documents found\". Use as much plural forms (separated by \"|\") as your language support (see https://www.unicode.org/cldr/cldr-aux/charts/34/supplemental/language_plural_rules.html)"
   },
   "theme.SearchPage.noResultsText": {
-    "message": "No documents were found",
+    "message": "Документи не знайдено",
     "description": "The paragraph for empty search result"
   },
   "theme.SearchBar.noResultsText": {
-    "message": "No results"
+    "message": "Результатів не знайдено"
   },
   "theme.SearchBar.seeAllOutsideContext": {
-    "message": "See all results outside \"{context}\""
+    "message": "Переглянути всі результати поза \"{context}\""
   },
   "theme.SearchBar.searchInContext": {
-    "message": "See all results within \"{context}\""
+    "message": "Переглянути всі результати у \"{context}\""
   },
   "theme.SearchBar.seeAll": {
-    "message": "See all results"
+    "message": "Переглянути всі результати"
   },
   "theme.SearchBar.label": {
-    "message": "Search",
+    "message": "Пошук",
     "description": "The ARIA label and placeholder for search button"
   },
   "theme.blog.post.plurals": {

@@ -4,35 +4,35 @@
     "description": "The alt text of navbar logo"
   },
   "item.label.Documentation": {
-    "message": "Documentation",
+    "message": "Документація",
     "description": "Navbar item with label Documentation"
   },
   "item.label.Blog": {
-    "message": "Blog",
+    "message": "Блог",
     "description": "Navbar item with label Blog"
   },
   "item.label.Reports": {
-    "message": "Reports",
+    "message": "Звіти",
     "description": "Navbar item with label Reports"
   },
   "item.label.Leaderboards": {
-    "message": "Leaderboards",
+    "message": "Таблиці лідерів",
     "description": "Navbar item with label Leaderboards"
   },
   "item.label.Hive": {
-    "message": "Hive",
+    "message": "Всесвіт",
     "description": "Navbar item with label Hive"
   },
   "item.label.Discussions": {
-    "message": "Discussions",
+    "message": "Обговорення",
     "description": "Navbar item with label Discussions"
   },
   "item.label.Analytics": {
-    "message": "Analytics",
+    "message": "Аналітика",
     "description": "Navbar item with label Analytics"
   },
   "item.label.Store": {
-    "message": "Store",
+    "message": "Магазин",
     "description": "Navbar item with label Store"
   }
 }
