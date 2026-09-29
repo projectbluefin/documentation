@@ -50,6 +50,13 @@ const config: Config = {
   i18n: {
     defaultLocale: "en",
     locales: ["en", ...liveLocales],
+    // Pinned rather than inferred: `docusaurus build --locale <l>` (one locale
+    // per process, as scripts/build-site.mjs runs them in parallel) otherwise
+    // drops the /<l>/ segment and publishes every link against the English
+    // root. Same value Docusaurus infers for a multi-locale build.
+    localeConfigs: Object.fromEntries(
+      liveLocales.map((locale) => [locale, { baseUrl: `/${locale}/` }]),
+    ),
   },
 
   markdown: {

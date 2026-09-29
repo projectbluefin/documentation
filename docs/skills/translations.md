@@ -96,11 +96,13 @@ DOCUSAURUS_CURRENT_LOCALE=de npm run write-translations -- --locale de
 
 ```bash
 just dev --locale de          # hot reload, needs one translated page
-npm run build:ci -- --locale de
+npm run build:ci -- --locale de && npm run serve   # then open /de/
 ```
 
-Images and English-only links in a preview load from the production site, so
-an image added in the same PR shows only after the English build deploys it.
+A single-locale build lands in `build/de/` and serves under `/de/`, because
+`i18n.localeConfigs` pins each locale's `baseUrl` (see below). Images and
+English-only links in a preview load from the production site, so an image
+added in the same PR shows only after the English build deploys it.
 
 ### Opt in as a human reviewer
 
@@ -144,13 +146,29 @@ set. When it is not `en`, the config:
 
 Result: about 12 MB per live locale against 254 MB for English.
 
+Each locale builds in its own process (`scripts/build-site.mjs`), because a
+single `docusaurus build` builds locales one after another and every live
+translation added ~10s to CI. Locally the translated builds run in parallel
+beside English; CI spreads them over runners (see
+[`ci-workflows.md`](ci-workflows.md)). Two consequences:
+
+- A lone `--locale <l>` build drops the `/<l>/` baseUrl by design (multi-domain
+  support), so `i18n.localeConfigs` pins `baseUrl: "/<l>/"` for every live
+  locale — the same value a multi-locale build infers. Without the pin every
+  link in the locale points at the English root; `build-site.mjs` fails the
+  build if `build/<l>/index.html` has no `/<l>/` URL.
+- Output matches the single-process build: English byte-for-byte, translated
+  locales up to JS content hashes (module ids derive from the per-process
+  `.docusaurus-<l>/` path) and search-document ids (numbered per process).
+
 Search is one exception to per-locale config. `@easyops-cn/docusaurus-search-local`
-sets up lunr once per build process and reuses it for every locale, so its
-`language` list is shared: `"en"` plus the `SEARCH_LANGUAGES` code of every
-live locale. English only until a locale goes live. Once `zh` is in the list
-its jieba tokenizer replaces the tokenizer for every locale; Japanese then
-loses katakana terms (verified: `インストール` indexed without `zh`, dropped
-with it). A per-locale `language` crashes the build on `lunr.zh`.
+takes its `language` list from the config, which every locale shares: `"en"`
+plus the `SEARCH_LANGUAGES` code of every live locale, so each locale's process
+sets up the same lunr pipeline. English only until a locale goes live. Once
+`zh` is in the list its jieba tokenizer replaces the tokenizer for every
+locale; Japanese then loses katakana terms (verified: `インストール` indexed
+without `zh`, dropped with it). A per-locale `language` crashes the build on
+`lunr.zh`.
 
 The language menu is wrapped (`src/theme/NavbarItem/LocaleDropdownNavbarItem`)
 to render on docs routes only; elsewhere the other locales have no

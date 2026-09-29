@@ -28,8 +28,8 @@ npm install --legacy-peer-deps   # once
 npm run typecheck                # tsc
 npm run lint                     # eslint . — 0 errors required; warnings pre-exist
 npm test                         # node --test scripts/*.test.js
-npm run build                    # fetch-data, then docusaurus build
-npm run build:ci                 # build without refetching data
+npm run build                    # fetch-data, then every locale (scripts/build-site.mjs)
+npm run build:ci                 # build without refetching data; `-- --locale de` for one
 ```
 
 Run the smallest set that covers the change. `npm run build` fetches remote data

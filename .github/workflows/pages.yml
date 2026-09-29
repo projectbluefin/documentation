@@ -14,7 +14,7 @@ on:
 
 # Concurrency is per job, not per workflow: a workflow-level cancel would also
 # kill `verify`, and superseded main pushes (~29% of them) would get no test
-# result at all. Builds stay latest-wins; deploys queue so an in-flight Pages
+# result at all. Data and build jobs stay latest-wins; deploys queue so an in-flight Pages
 # deployment is never killed; `verify` always finishes.
 
 permissions:
@@ -26,23 +26,24 @@ permissions:
   packages: read
 
 jobs:
-  build:
-    name: Build Docusaurus
+  # Fetches every data file once, so all build parts render the same data.
+  data:
+    name: Fetch site data
     runs-on: ubuntu-latest
     concurrency:
-      group: ${{ github.workflow }}-build-${{ github.ref }}
+      group: ${{ github.workflow }}-data-${{ github.ref }}
       cancel-in-progress: true
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+      locales: ${{ steps.plan.outputs.locales }}
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
         with:
           egress-policy: audit
 
-      # Full history: `future.faster` enables gitEagerVcs, which dates any
-      # undated doc/blog file from git; a shallow clone would give it HEAD's.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
-          fetch-depth: 0
           persist-credentials: false
 
       # Same key as the cron workflows, so main already holds this entry.
@@ -176,7 +177,71 @@ jobs:
           REGISTRY_CACHE_HOURS: "0"
         run: npm run fetch-data
 
+      # One job per build part: English, plus translated locales in shards of
+      # up to 4 (scripts/build-site.mjs). Locales build one after another in a
+      # single Docusaurus process, so this keeps build time flat as
+      # translations go live instead of adding ~10s per locale.
+      - name: Plan build parts
+        id: plan
+        run: |
+          echo "matrix=$(node scripts/build-site.mjs --matrix)" >> "$GITHUB_OUTPUT"
+          echo "locales=$(node scripts/build-site.mjs --list-locales)" >> "$GITHUB_OUTPUT"
+
+      - name: Upload site data
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: site-data
+          path: |
+            static/data/*.json
+            static/feeds/*.json
+          retention-days: 1
+
+  build:
+    name: Build ${{ matrix.part }}
+    needs: data
+    runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.workflow }}-build-${{ matrix.part }}-${{ github.ref }}
+      cancel-in-progress: true
+    strategy:
+      matrix: ${{ fromJSON(needs.data.outputs.matrix) }}
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
+        with:
+          egress-policy: audit
+
+      # Full history: `future.faster` enables gitEagerVcs, which dates any
+      # undated doc/blog file from git; a shallow clone would give it HEAD's.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Restore node_modules
+        id: cache-node-modules
+        uses: actions/cache/restore@caa296126883cff596d87d8935842f9db880ef25 # v5
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 24
+
+      - name: Install dependencies
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        run: npm ci
+
+      - name: Download site data
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          name: site-data
+          path: static
+
+      # English carries every static asset; translated builds link to it.
       - name: Restore card image cache
+        if: matrix.part == 'en'
         uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
         with:
           path: |
@@ -187,6 +252,7 @@ jobs:
             card-images-
 
       - name: Generate embeddable card images
+        if: matrix.part == 'en'
         run: npm run generate-card-images
 
       # The social preview card is rebuilt on every deploy so the monthly night
@@ -194,21 +260,63 @@ jobs:
       # month). Satori cannot decode WebP, so dwebp/cwebp must be present or the
       # generator would silently ship the previous month's card.
       - name: Install WebP tools
+        if: matrix.part == 'en'
         run: sudo apt-get install -y --no-install-recommends webp || (sudo apt-get update && sudo apt-get install -y --no-install-recommends webp)
 
       - name: Generate social preview card
+        if: matrix.part == 'en'
         run: npm run generate-social-cards -- --strict
 
-      # Tests and lint run in the parallel `verify` job. Typecheck stays here:
-      # src/ imports gitignored static/data/*.json that only fetch-data writes.
+      # Tests and lint run in the parallel `verify` job. Typecheck needs the
+      # gitignored static/data/*.json that src/ imports, so it runs here.
       - name: Typecheck
+        if: matrix.part == 'en'
         run: npm run typecheck
 
-      - name: Build website
-        run: npm run build:ci
+      - name: Build website (${{ matrix.part }})
+        run: npm run build:ci -- --part ${{ matrix.part }}
 
-      # Only main deploys; nothing consumes the artifact on PRs.
-      - name: Upload Build Artifact
+      - name: Upload build part
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: site-${{ strategy.job-index }}
+          path: build
+          include-hidden-files: true # build/.nojekyll
+          retention-days: 1
+
+  # Merges the parts into one site. Runs on PRs too, so the merge is exercised
+  # before it ever reaches a deploy; only main uploads the Pages artifact.
+  assemble:
+    name: Assemble site
+    needs: [data, build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
+        with:
+          egress-policy: audit
+
+      - name: Download build parts
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          pattern: site-*
+          merge-multiple: true
+          path: build
+
+      # A shard whose upload went missing would otherwise deploy a site with a
+      # locale silently absent.
+      - name: Check every locale is present
+        env:
+          LOCALES: ${{ needs.data.outputs.locales }}
+        run: |
+          test -f build/index.html
+          test -f build/.nojekyll
+          for locale in $LOCALES; do
+            test -f "build/$locale/index.html" || { echo "::error::missing build/$locale"; exit 1; }
+          done
+          echo "assembled en + [${LOCALES}]"
+
+      - name: Upload Pages artifact
         if: github.ref == 'refs/heads/main'
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5
         with:
@@ -268,7 +376,7 @@ jobs:
   deploy:
     name: Deploy to GitHub Pages
     if: github.ref == 'refs/heads/main'
-    needs: [build, verify]
+    needs: [assemble, verify]
     concurrency:
       group: ${{ github.workflow }}-deploy-${{ github.ref }}
       cancel-in-progress: false
