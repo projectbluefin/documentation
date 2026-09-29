@@ -76,7 +76,7 @@ Bluefin cụ thể phân phối các công cụ upstream thay vì ứng dụng t
 
 :::info[Đây là Thế giới Đa nền]
 
-Quy trình trong Bluefin cố ý tập trung upstream -- chúng tôi tin vào trải nghiệm Linux nhất quán cho tất cả, dù là WSL trên Windows, Podman/Docker trên Mac, hoặc bất kỳ hệ thống Linux nào. [Hệ sinh thái cloud native](http://cncf.io) đã chứng minh mô hình này hoạt động. Điều này cho hàng triệu nhà phát triển hiện có trên tàu với quy trình đã quen, và giúp Linux cạnh tranh nơi quan trọng nhất.
+Quy trình trong Bluefin cố ý tập trung upstream -- chúng tôi tin vào trải nghiệm Linux nhất quán cho tất cả, dù là WSL trên Windows, Podman/Docker trên Mac, hoặc bất kỳ hệ thống Linux nào. [Hệ sinh thái cloud native](http://cncf.io) đã chứng minh mô hình này hoạt động. Điều này cho phép hàng triệu nhà phát triển hiện có bắt đầu với quy trình họ đã quen, và giúp Linux cạnh tranh nơi quan trọng nhất.
 
 :::
 

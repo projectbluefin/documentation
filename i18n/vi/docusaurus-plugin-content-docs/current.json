@@ -4,7 +4,7 @@
     "description": "The label for version current"
   },
   "sidebar.baseSidebar.category.Get Bluefin": {
-    "message": "Nhận Bluefin",
+    "message": "Tải Bluefin",
     "description": "The label for category 'Get Bluefin' in sidebar 'baseSidebar'"
   },
   "sidebar.baseSidebar.category.Images": {
