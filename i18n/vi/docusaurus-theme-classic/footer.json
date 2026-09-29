@@ -60,15 +60,15 @@
     "description": "The label of footer link with label=Changelogs linking to https://changelogs.projectbluefin.io"
   },
   "link.item.label.Blog and Announcements Feed": {
-    "message": "Bài viết và Thông báo",
+    "message": "Nguồn Bài viết và Thông báo",
     "description": "The label of footer link with label=Blog and Announcements Feed linking to https://docs.projectbluefin.io/blog/atom.xml"
   },
   "link.item.label.Releases Feed": {
-    "message": "Bản phát hành",
+    "message": "Nguồn Bản phát hành",
     "description": "The label of footer link with label=Releases Feed linking to https://github.com/projectbluefin/dakota/releases.atom"
   },
   "link.item.label.Discussions Feed": {
-    "message": "Thảo luận",
+    "message": "Nguồn Thảo luận",
     "description": "The label of footer link with label=Discussions Feed linking to https://github.com/ublue-os/bluefin/discussions.atom"
   },
   "link.item.label.Open Issues": {

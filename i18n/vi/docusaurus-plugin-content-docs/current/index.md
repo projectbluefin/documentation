@@ -1,10 +1,10 @@
 ---
-title: Mừng chào bạn đến với Bluefin
+title: Chào mừng bạn đến với Bluefin
 slug: /
 pagination_next: downloads
 ---
 
-# Mừng chào bạn đến với Bluefin
+# Chào mừng bạn đến với Bluefin
 
 Đối với người dùng, đây là một hệ thống đáng tin cậy như Chromebook với gần như không cần bảo trì, đồng thời mang tới cho nhà phát triển [chế độ phát triển cloud-native](/bluefin-dx) mạnh mẽ. Được xây dựng bằng công nghệ thế hệ mới, dành cho những ai cần máy của mình hoàn thành công việc.
 
@@ -12,7 +12,7 @@ pagination_next: downloads
 
 ## Bluefin có phù hợp với bạn?
 
-Bluefin là một desktop Linux thế hệ mới hướng tới cải tiến liên tục. Chúng tôi quyết tâm và nhanh chóng loại bỏ các công nghệ cũ càng càng sớm càng tốt để mang lại trải nghiệm tốt nhất.
+Bluefin là một desktop Linux thế hệ mới hướng tới cải tiến liên tục. Chúng tôi quyết tâm và nhanh chóng loại bỏ các công nghệ cũ càng sớm càng tốt để mang lại trải nghiệm tốt nhất.
 
 :::tip
 
@@ -24,11 +24,11 @@ Có thể nhiều người muốn nói rằng Bluefin phục vụ tốt nhất c
 
 Bluefin là:
 
-- **Ưu tiên Flatpak** - Hình ứng dụng trong Bluefin xoay quanh các ứng dụng biệt lập được quản lý trên Flathub. Các ứng dụng không hoạt động tốt với các thành phần hiện đại như Wayland, Pipewire, Flatpak Portals, v.v. có thể mang lại trải nghiệm kém và không được khuyến nghị.
+- **Ưu tiên Flatpak** - Mô hình ứng dụng trong Bluefin xoay quanh các ứng dụng biệt lập được quản lý trên Flathub. Các ứng dụng không hoạt động tốt với các thành phần hiện đại như Wayland, Pipewire, Flatpak Portals, v.v. có thể mang lại trải nghiệm kém và không được khuyến nghị.
 - **Cố ý vô hình** - Bluefin không phải là một distro. Mối quan hệ của bạn là với Flathub, brew, và những gì bạn đặt trong container của mình.
 - **Tối ưu cho 96%** - Không phải 4% - Bluefin theo cách tiếp cận "mạnh cùng nhau" về tính năng. Bạn luôn có thể làm những gì mình muốn, nhưng giá trị đến từ việc chia sẻ thực hành tốt. Chúng tôi không tốn nhiều thời gian cho các trường hợp ngoại lệ.
 - **Mô hình phát triển đã được chứng minh** - Trải nghiệm nhà phát triển xoay quanh container và giới thiệu người dùng Linux mới với [các công cụ trong cloud native](https://www.cncf.io/). Xem [Sứ mệnh](/mission) và [Giá trị](/values) để biết thêm.
-- **Cố ý tập trung vào phần cứng tốt** - Bluefin chạy tốt nhất trên phần cứng thân thiện Linux nhằm mang lại trải nghiệm không càng cũ cho người dùng. Bluefin cũng muốn hỗ trợ các OEM bán laptop và desktop Linux, nên nỗ lực chạy với tổ hợp phần mềm và phần cứng tốt nhất. Chúng tôi không cố gắng ghi lại hoặc xử lý các vấn đề làm tổn hại trải nghiệm người dùng, nên trong một số trường hợp một hệ điều hành khác là lựa chọn đúng.
+- **Cố ý tập trung vào phần cứng tốt** - Bluefin chạy tốt nhất trên phần cứng thân thiện Linux nhằm mang lại trải nghiệm không vướng công nghệ cũ cho người dùng. Bluefin cũng muốn hỗ trợ các OEM bán laptop và desktop Linux, nên nỗ lực chạy với tổ hợp phần mềm và phần cứng tốt nhất. Chúng tôi không cố gắng ghi lại hoặc xử lý các vấn đề làm tổn hại trải nghiệm người dùng, nên trong một số trường hợp một hệ điều hành khác là lựa chọn đúng.
 
 Nếu yêu cầu của bạn nằm ngoài phạm vi này, thì **Bluefin có thể không phải là lựa chọn tốt nhất cho bạn**. Bluefin có thể gây khó chịu [khi sử dụng sai cách](/troubleshooting/#am-i-holding-bluefin-wrong). Chúng tôi nhận ra rằng để tạo một desktop tốt hơn, nhiều phần của trải nghiệm desktop Linux truyền thống sẽ không đi cùng chúng tôi.
 
@@ -62,7 +62,7 @@ Bluefin là "Sự diễn giải của tinh thần Ubuntu được xây dựng tr
 - **Tính năng nâng cao chất lượng**:
   - [Starship](https://starship.rs) prompt terminal bật theo mặc định
   - [Solaar](https://github.com/pwr-Solaar/Solaar) cho chuột Logitech cùng `libratbagd`
-  - [rclone](https://rclone.org/overview/) và [restic](https://restic.net/) cho gắn trữ đám mây và sao lưu hiện đại
+  - [rclone](https://rclone.org/overview/) và [restic](https://restic.net/) cho gắn kết lưu trữ đám mây và sao lưu hiện đại
   - `zsh` và `fish` có sẵn là shell tùy chọn
   - [Hỗ trợ Switcheroo](https://man.archlinux.org/man/switcherooctl.1.en?ref=news.itsfoss.com) cho laptop hai GPU
 - **Nền tảng Universal Blue**:
