@@ -154,57 +154,78 @@ async function fetchSuites(token) {
 
     const testWorkflows = workflows.filter((w) => isTestWorkflow(w.path));
 
-    for (const wf of testWorkflows) {
-      const basename = String(wf.path).split("/").pop();
-      const shortRepo = repo.split("/").pop();
-      const id = `${shortRepo}/${basename}`;
-      const label = `${shortRepo} · ${basename.replace(/\.ya?ml$/, "")}`;
+    const workflowConcurrency = 4;
+    let next = 0;
+    const suiteResults = new Array(testWorkflows.length);
 
-      let rawRuns = [];
-      try {
-        rawRuns = await ghPaginate(
-          `/repos/${repo}/actions/workflows/${wf.id}/runs?created=${encodeURIComponent(`>=${fromISO.slice(0, 10)}`)}`,
-          { token, maxPages: 3, select: (b) => b.workflow_runs },
-        );
-      } catch (err) {
-        console.warn(
-          `fetch-test-runs: ${id} runs unavailable — ${err.message}`,
-        );
+    async function workflowWorker() {
+      while (next < testWorkflows.length) {
+        const index = next++;
+        const wf = testWorkflows[index];
+        const basename = String(wf.path).split("/").pop();
+        const shortRepo = repo.split("/").pop();
+        const id = `${shortRepo}/${basename}`;
+        const label = `${shortRepo} · ${basename.replace(/\.ya?ml$/, "")}`;
+
+        let rawRuns = [];
+        try {
+          rawRuns = await ghPaginate(
+            `/repos/${repo}/actions/workflows/${wf.id}/runs?created=${encodeURIComponent(`>=${fromISO.slice(0, 10)}`)}`,
+            { token, maxPages: 3, select: (b) => b.workflow_runs },
+          );
+        } catch (err) {
+          console.warn(
+            `fetch-test-runs: ${id} runs unavailable — ${err.message}`,
+          );
+        }
+
+        const runs = rawRuns
+          .map((r) => {
+            const startedAt = Date.parse(
+              r.run_started_at ?? r.created_at ?? "",
+            );
+            return {
+              t: Number.isFinite(startedAt)
+                ? Math.floor(startedAt / 1000)
+                : null,
+              status: classifyRun(r),
+              durationMin: runDurationMin(r),
+              url: r.html_url ?? null,
+              isoTime: r.run_started_at ?? r.created_at ?? null,
+            };
+          })
+          .filter((r) => r.t !== null)
+          .sort((a, b) => a.t - b.t);
+
+        const summary = summarizeSuite(runs);
+        const cleanRuns = runs.map(({ isoTime, ...rest }) => rest);
+
+        suiteResults[index] = {
+          id,
+          repo,
+          workflow: basename,
+          label,
+          runs: cleanRuns,
+          passRate: summary.passRate,
+          flips: summary.flips,
+          consecutiveFailures: summary.consecutiveFailures,
+          lastTerminalAt: summary.lastTerminalAt,
+          triageRank: triageRank(summary),
+          unavailable: false,
+          stateReason: null,
+        };
       }
+    }
 
-      const runs = rawRuns
-        .map((r) => {
-          const startedAt = Date.parse(r.run_started_at ?? r.created_at ?? "");
-          return {
-            t: Number.isFinite(startedAt) ? Math.floor(startedAt / 1000) : null,
-            status: classifyRun(r),
-            durationMin: runDurationMin(r),
-            url: r.html_url ?? null,
-            isoTime: r.run_started_at ?? r.created_at ?? null,
-          };
-        })
-        .filter((r) => r.t !== null)
-        .sort((a, b) => a.t - b.t);
+    await Promise.all(
+      Array.from(
+        { length: Math.min(workflowConcurrency, testWorkflows.length) },
+        workflowWorker,
+      ),
+    );
 
-      const summary = summarizeSuite(runs);
-
-      // Strip isoTime from final run output (internal only)
-      const cleanRuns = runs.map(({ isoTime, ...rest }) => rest);
-
-      suites.push({
-        id,
-        repo,
-        workflow: basename,
-        label,
-        runs: cleanRuns,
-        passRate: summary.passRate,
-        flips: summary.flips,
-        consecutiveFailures: summary.consecutiveFailures,
-        lastTerminalAt: summary.lastTerminalAt,
-        triageRank: triageRank(summary),
-        unavailable: false,
-        stateReason: null,
-      });
+    for (const suite of suiteResults) {
+      if (suite) suites.push(suite);
     }
   }
 

@@ -265,27 +265,41 @@ async function registryVersions(org, name) {
   } catch {
     return null;
   }
+  const wantedTags = fallbackTagsOf(tags);
+  const inspectConcurrency = 4;
+  const versionsByTag = new Array(wantedTags.length);
 
-  const versions = [];
-  for (const tag of fallbackTagsOf(tags)) {
-    try {
-      const { stdout } = await execFileAsync(
-        "skopeo",
-        ["inspect", "--no-tags", `${ref}:${tag}`],
-        { timeout: 60_000, maxBuffer: 32 * 1024 * 1024 },
-      );
-      const info = JSON.parse(stdout);
-      if (!info.Created) continue;
-      versions.push({
-        name: info.Digest,
-        created_at: info.Created,
-        metadata: { container: { tags: [tag] } },
-      });
-    } catch {
-      // A tag that cannot be inspected is a gap, not a failure of the lane.
+  let next = 0;
+  async function worker() {
+    while (next < wantedTags.length) {
+      const index = next++;
+      const tag = wantedTags[index];
+      try {
+        const { stdout } = await execFileAsync(
+          "skopeo",
+          ["inspect", "--no-tags", `${ref}:${tag}`],
+          { timeout: 60_000, maxBuffer: 32 * 1024 * 1024 },
+        );
+        const info = JSON.parse(stdout);
+        if (!info.Created) continue;
+        versionsByTag[index] = {
+          name: info.Digest,
+          created_at: info.Created,
+          metadata: { container: { tags: [tag] } },
+        };
+      } catch {
+        // A tag that cannot be inspected is a gap, not a failure of the lane.
+      }
     }
   }
-  return versions;
+
+  await Promise.all(
+    Array.from(
+      { length: Math.min(inspectConcurrency, wantedTags.length) },
+      worker,
+    ),
+  );
+  return versionsByTag.filter(Boolean);
 }
 
 async function main() {
@@ -357,11 +371,28 @@ async function main() {
       "fetch-ghcr-packages: Packages API returned nothing — falling back to " +
         "anonymous registry reads for the reported lanes",
     );
+    const laneConcurrency = 3;
     for (const org of ORGS) {
-      for (const name of FALLBACK_LANES) {
-        const versions = await registryVersions(org, name);
-        if (versions === null) continue;
-        allPackages.push(buildPackage({ name }, versions));
+      let next = 0;
+      const lanePackages = new Array(FALLBACK_LANES.length);
+      async function laneWorker() {
+        while (next < FALLBACK_LANES.length) {
+          const index = next++;
+          const name = FALLBACK_LANES[index];
+          const versions = await registryVersions(org, name);
+          if (versions !== null) {
+            lanePackages[index] = buildPackage({ name }, versions);
+          }
+        }
+      }
+      await Promise.all(
+        Array.from(
+          { length: Math.min(laneConcurrency, FALLBACK_LANES.length) },
+          laneWorker,
+        ),
+      );
+      for (const pkg of lanePackages) {
+        if (pkg) allPackages.push(pkg);
       }
     }
   }

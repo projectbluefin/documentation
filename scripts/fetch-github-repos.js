@@ -1,9 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-const {
-  sequentialFetchWithDelay,
-  githubHeaders,
-} = require("./lib/request-queue");
+const { mapWithConcurrency, githubHeaders } = require("./lib/request-queue");
 
 const GITHUB_REPOS = [
   // Built With Cloud Native (CNCF + OpenSSF — what makes Bluefin)
@@ -142,14 +139,19 @@ async function fetchAllRepos() {
 
   console.log(`Fetching ${GITHUB_REPOS.length} GitHub repos...`);
 
-  const resultsMap = await sequentialFetchWithDelay(
+  const rawEntries = await mapWithConcurrency(
     GITHUB_REPOS,
     async (repoPath) => {
       console.log(`Fetching ${repoPath}...`);
-      return fetchRepo(repoPath);
+      const data = await fetchRepo(repoPath);
+      return data != null ? [repoPath, data] : null;
     },
+    { concurrency: 6 },
   );
-
+  const resultsMap = new Map();
+  for (const entry of rawEntries) {
+    if (entry) resultsMap.set(entry[0], entry[1]);
+  }
   // Load whatever cache already exists on disk so a failed fetch for one
   // repo (rate limiting, transient network error, etc.) doesn't erase stats
   // that were previously fetched successfully for that same repo.

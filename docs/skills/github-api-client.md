@@ -84,10 +84,25 @@ instead of restating a token read or a header object.
    too (lowercase in ESM, `Authorization`/`User-Agent` in CJS). Write assertions
    against the client you actually called.
 
-9. **`.mjs` files are not linted.** `eslint.config.mjs` matches
-   `**/*.{js,jsx,ts,tsx}`, so `npm run lint` says nothing about
-   `scripts/lib/*.mjs`. A green lint on an ESM-client change is not evidence —
-   the `*.test.js` for that module is.
+9. **Use bounded concurrency and deterministic output for bulk fetches.**
+   Never serialize dozens of API calls with `sequentialFetchWithDelay` when
+   bounded concurrency (`mapWithConcurrency`, concurrency 4–6) completes them
+   in seconds. Keep results aligned with input order (via index assignment or
+   re-filtering) so generated JSON data files stay stable and deterministic
+   between builds.
+
+10. **Cache generated data files, but never committed seed files.**
+    Generated data files (`ghcr-packages.json`, `test-runs.json`, `dora.json`,
+    `factory-stats.json`, `flathub-stats.json`, `brew-analytics.json`) belong in
+    the GitHub Actions data cache so TTL skips fire. Committed seed files
+    tracked in git (`countme-history.json`, `scorecard-history.json`,
+    `update-churn.json`, `gnome-extensions.json`) must NEVER be included in the
+    Actions cache restore path, as restoring after checkout silently clobbers
+    freshly committed git history with stale cache entries.
+11. **`.mjs` files are not linted.** `eslint.config.mjs` matches
+    `**/*.{js,jsx,ts,tsx}`, so `npm run lint` says nothing about
+    `scripts/lib/*.mjs`. A green lint on an ESM-client change is not evidence —
+    the `*.test.js` for that module is.
 
 ## Common Rationalizations
 
@@ -140,8 +155,8 @@ instead of restating a token read or a header object.
 - `scripts/lib/gh.js` — ESM client: `githubToken`, `githubHeaders`,
   `githubFetch`, `ghFetch`, `ghPaginate`, `classifyRun`, `ageMs`, `ageDays`.
 - `scripts/lib/request-queue.js` — CJS client: `githubToken`, `githubHeaders`,
-  `retryWithBackoff`, `sequentialFetchWithDelay`, `isNetworkError`.
-- `scripts/gh-lib.test.js`, `scripts/request-queue.test.js` — the contract tests.
+  `retryWithBackoff`, `sequentialFetchWithDelay`, `mapWithConcurrency`,
+  `isNetworkError`.
 - `AGENTS.md` → _Data pipelines_ — the never-fail-the-build and null-vs-zero
   rules restated in steps 6 and 8.
 - `eslint.config.mjs` — the `files` glob that excludes `.mjs`.

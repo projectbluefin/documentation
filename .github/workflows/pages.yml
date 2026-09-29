@@ -56,16 +56,23 @@ jobs:
         with:
           path: |
             static/data/artwork-versions.json
+            static/data/brew-analytics.json
+            static/data/dora.json
             static/data/driver-versions.json
+            static/data/factory-stats.json
             static/data/file-contributors.json
             static/data/firehose-apps.json
+            static/data/flathub-stats.json
+            static/data/ghcr-packages.json
             static/data/github-repos.json
             static/data/images.json
             static/data/playlist-metadata.json
-            static/data/stream-pins.json
+            static/data/portal-contributors.json
             static/data/registry-data.json
+            static/data/stream-pins.json
+            static/data/test-runs.json
             static/data/hive-live-data.json
-          key: github-data-${{ hashFiles('scripts/fetch-*.js') }}
+          key: github-data-${{ hashFiles('scripts/fetch-*.js', 'scripts/fetch-*.mjs') }}
           restore-keys: |
             github-data-
 
