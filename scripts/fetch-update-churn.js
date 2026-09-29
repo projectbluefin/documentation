@@ -177,6 +177,11 @@ function datedTagKey(tag = "") {
  * Pure function: Sorts tags oldest-first by the date they carry, then by the
  * registry's build time, and only then by tag text.
  *
+ * A tag that carries no date at all is a floating name (`stable`, `testing`)
+ * that always points at the newest manifest, so it sorts *after* every dated
+ * tag. Sorting it first would make it the series baseline and turn the first
+ * delta into a backwards diff against an older dated build.
+ *
  * The tie-break matters: an image that ships several builds a day carries the
  * same YYYYMMDD on each of them, and `diffReleaseLayers` is directional (churn
  * is the layers in N absent from N-1, reuse % is relative to N), so a
@@ -190,7 +195,10 @@ function datedTagKey(tag = "") {
  * @param {Record<string, string>} [createdAt] tag -> ISO build timestamp
  */
 function compareTagsByDate(a, b, createdAt = {}) {
-  const dateDelta = datedTagKey(a).localeCompare(datedTagKey(b));
+  const keyA = datedTagKey(a);
+  const keyB = datedTagKey(b);
+  if (!keyA !== !keyB) return keyA ? -1 : 1;
+  const dateDelta = keyA.localeCompare(keyB);
   if (dateDelta !== 0) return dateDelta;
   const builtA = createdAt?.[a];
   const builtB = createdAt?.[b];
@@ -447,8 +455,9 @@ async function fetchGhcrTagCreatedAt(org, pkg, maxPages = 2) {
         const tags = version?.metadata?.container?.tags;
         if (!built || !Array.isArray(tags)) continue;
         for (const tag of tags) {
-          // A tag can have more than one version behind it; keep the oldest so
-          // the timestamp still describes the first build carrying the name.
+          // The API lists versions newest-first and a tag can survive more
+          // than one version, so the first hit is the newest build carrying
+          // the name — which is the manifest the tag resolves to today.
           if (typeof tag === "string" && !createdAt[tag])
             createdAt[tag] = built;
         }
@@ -482,9 +491,16 @@ async function discoverSeriesTags(repo, series) {
   if (!org || !pkg) return { tags: [], createdAt: {}, listed: false };
   try {
     const allTags = await fetchGhcrTags(org, pkg);
-    const tags = selectDatedTags(allTags, series);
-    if (tags.length === 0) return { tags: [], createdAt: {}, listed: false };
+    // The window has to be picked with the same ordering the chart uses, so
+    // the build times come first: trimming by tag text and then charting by
+    // build time can drop the wrong half of a same-day pair at the edge.
+    const matches = (Array.isArray(allTags) ? allTags : []).filter(
+      (t) => typeof t === "string" && series?.pattern?.test(t),
+    );
+    if (matches.length === 0) return { tags: [], createdAt: {}, listed: false };
     const createdAt = await fetchGhcrTagCreatedAt(org, pkg);
+    const tags = selectDatedTags(allTags, series, createdAt);
+    if (tags.length === 0) return { tags: [], createdAt: {}, listed: false };
     return { tags, createdAt, listed: true };
   } catch (err) {
     console.warn(

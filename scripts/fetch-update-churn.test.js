@@ -245,6 +245,28 @@ test("compareTagsByDate: orders by date, then build time, then tag text", () => 
   );
 });
 
+test("compareTagsByDate: an undated floating tag sorts last, not first", () => {
+  // `stable` is Bluefin's floating tag: it names whatever the newest manifest
+  // is, so it is the end of the series. Sorting it first would make it the
+  // baseline and turn the first delta into a backwards diff.
+  const tags = [
+    "stable",
+    "stable-daily-20260604",
+    "stable-daily-20260530",
+    "stable-daily-20260531",
+  ];
+  assert.deepEqual([...tags].sort(compareTagsByDate), [
+    "stable-daily-20260530",
+    "stable-daily-20260531",
+    "stable-daily-20260604",
+    "stable",
+  ]);
+
+  // Two undated tags still order deterministically by text.
+  assert.equal(compareTagsByDate("stable", "testing") < 0, true);
+  assert.equal(compareTagsByDate("stable", "stable"), 0);
+});
+
 test("selectDatedTags: keeps only matching dated tags, oldest-first, trimmed to limit", () => {
   const tags = [
     "testing",
