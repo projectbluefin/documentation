@@ -4,19 +4,19 @@
     "description": "The alt text of navbar logo"
   },
   "item.label.Documentation": {
-    "message": "Documentation",
+    "message": "दस्तावेज़ीकरण",
     "description": "Navbar item with label Documentation"
   },
   "item.label.Blog": {
-    "message": "Blog",
+    "message": "ब्लॉग",
     "description": "Navbar item with label Blog"
   },
   "item.label.Reports": {
-    "message": "Reports",
+    "message": "रिपोर्ट्स",
     "description": "Navbar item with label Reports"
   },
   "item.label.Leaderboards": {
-    "message": "Leaderboards",
+    "message": "लीडरबोर्ड्स",
     "description": "Navbar item with label Leaderboards"
   },
   "item.label.Hive": {
@@ -24,15 +24,15 @@
     "description": "Navbar item with label Hive"
   },
   "item.label.Discussions": {
-    "message": "Discussions",
+    "message": "चर्चाएँ",
     "description": "Navbar item with label Discussions"
   },
   "item.label.Analytics": {
-    "message": "Analytics",
+    "message": "विश्लेषण",
     "description": "Navbar item with label Analytics"
   },
   "item.label.Store": {
-    "message": "Store",
+    "message": "स्टोर",
     "description": "Navbar item with label Store"
   }
 }
