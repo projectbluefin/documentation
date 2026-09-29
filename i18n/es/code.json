@@ -271,38 +271,38 @@
     "description": "The ARIA label and title attribute for expand button of doc sidebar"
   },
   "theme.SearchPage.existingResultsTitle": {
-    "message": "Search results for \"{query}\"",
+    "message": "Resultados de búsqueda para \"{query}\"",
     "description": "The search page title for non-empty query"
   },
   "theme.SearchPage.emptyResultsTitle": {
-    "message": "Search the documentation",
+    "message": "Buscar en la documentación",
     "description": "The search page title for empty query"
   },
   "theme.SearchPage.searchContext.everywhere": {
-    "message": "Everywhere"
+    "message": "En todo"
   },
   "theme.SearchPage.documentsFound.plurals": {
-    "message": "1 document found|{count} documents found",
+    "message": "1 documento encontrado|{count} documentos encontrados",
     "description": "Pluralized label for \"{count} documents found\". Use as much plural forms (separated by \"|\") as your language support (see https://www.unicode.org/cldr/cldr-aux/charts/34/supplemental/language_plural_rules.html)"
   },
   "theme.SearchPage.noResultsText": {
-    "message": "No documents were found",
+    "message": "No se encontraron documentos",
     "description": "The paragraph for empty search result"
   },
   "theme.SearchBar.noResultsText": {
-    "message": "No results"
+    "message": "Sin resultados"
   },
   "theme.SearchBar.seeAllOutsideContext": {
-    "message": "See all results outside \"{context}\""
+    "message": "Ver todos los resultados fuera de \"{context}\""
   },
   "theme.SearchBar.searchInContext": {
-    "message": "See all results within \"{context}\""
+    "message": "Ver todos los resultados dentro de \"{context}\""
   },
   "theme.SearchBar.seeAll": {
-    "message": "See all results"
+    "message": "Ver todos los resultados"
   },
   "theme.SearchBar.label": {
-    "message": "Search",
+    "message": "Buscar",
     "description": "The ARIA label and placeholder for search button"
   },
   "theme.blog.post.plurals": {
