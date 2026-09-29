@@ -12,11 +12,11 @@
     "description": "Navbar item with label Blog"
   },
   "item.label.Reports": {
-    "message": "Reports",
+    "message": "Rapports",
     "description": "Navbar item with label Reports"
   },
   "item.label.Leaderboards": {
-    "message": "Leaderboards",
+    "message": "Tableaux de classement",
     "description": "Navbar item with label Leaderboards"
   },
   "item.label.Hive": {
@@ -28,11 +28,11 @@
     "description": "Navbar item with label Discussions"
   },
   "item.label.Analytics": {
-    "message": "Analytics",
+    "message": "Analytiques",
     "description": "Navbar item with label Analytics"
   },
   "item.label.Store": {
-    "message": "Store",
+    "message": "Boutique",
     "description": "Navbar item with label Store"
   }
 }
