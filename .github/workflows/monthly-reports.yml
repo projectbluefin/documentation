@@ -2,8 +2,10 @@ name: Generate Monthly Report
 
 on:
   schedule:
-    # First Monday of each month at 10:00 UTC
-    - cron: "0 10 1-7 * 1"
+    # Every Monday at 10:00 UTC; the gate job below lets only the first Monday
+    # of the month proceed. POSIX cron ORs day-of-month with day-of-week, so
+    # "0 10 1-7 * 1" would fire on days 1-7 *and* every Monday.
+    - cron: "0 10 * * 1"
   workflow_dispatch: # Allow manual triggering for testing
 
 permissions:
@@ -11,7 +13,27 @@ permissions:
   pull-requests: write # For creating PRs
 
 jobs:
+  gate:
+    runs-on: ubuntu-latest
+    permissions: {}
+    outputs:
+      proceed: ${{ steps.check.outputs.proceed }}
+    steps:
+      - name: Allow only the first Monday of the month on schedule
+        id: check
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          if [ "$EVENT_NAME" != "schedule" ] || [ "$(date -u +%-d)" -le 7 ]; then
+            echo "proceed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Not the first Monday of the month; skipping."
+            echo "proceed=false" >> "$GITHUB_OUTPUT"
+          fi
+
   generate-report:
+    needs: gate
+    if: needs.gate.outputs.proceed == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Harden Runner
@@ -36,8 +58,6 @@ jobs:
         with:
           path: node_modules
           key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            node-modules-${{ runner.os }}-
 
       - name: Install dependencies
         if: steps.cache-node-modules.outputs.cache-hit != 'true'

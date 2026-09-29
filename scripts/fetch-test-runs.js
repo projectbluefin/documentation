@@ -30,6 +30,7 @@ import {
   ageDays,
 } from "./lib/gh.js";
 import { runDurationMin } from "./fetch-factory-stats.js";
+import { mapWithConcurrency } from "./lib/request-queue.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const OUT = resolve(__dirname, "../static/data/test-runs.json");
@@ -136,25 +137,38 @@ export function buildPayload({ suites, generatedAt }) {
 }
 
 async function fetchSuites(token) {
-  const suites = [];
   const from = new Date(Date.now() - WINDOW_DAYS * 86400000);
   const fromISO = from.toISOString();
 
-  for (const repo of REPOS) {
-    let workflows;
-    try {
-      const data = await ghFetch(`/repos/${repo}/actions/workflows`, { token });
-      workflows = data.workflows ?? [];
-    } catch (err) {
-      console.warn(
-        `fetch-test-runs: ${repo} workflows unavailable — ${err.message}`,
-      );
-      continue;
-    }
+  // Workflow lists for every repo at once; a failed repo is skipped.
+  const workflowLists = await Promise.all(
+    REPOS.map(async (repo) => {
+      try {
+        const data = await ghFetch(`/repos/${repo}/actions/workflows`, {
+          token,
+        });
+        return data.workflows ?? [];
+      } catch (err) {
+        console.warn(
+          `fetch-test-runs: ${repo} workflows unavailable — ${err.message}`,
+        );
+        return null;
+      }
+    }),
+  );
 
-    const testWorkflows = workflows.filter((w) => isTestWorkflow(w.path));
+  // Flat (repo, workflow) list in REPOS order, then workflow order, so the
+  // suites keep the serial insertion order that buildPayload's stable sort
+  // relies on for ties.
+  const pairs = REPOS.flatMap((repo, i) =>
+    (workflowLists[i] ?? [])
+      .filter((w) => isTestWorkflow(w.path))
+      .map((wf) => ({ repo, wf })),
+  );
 
-    for (const wf of testWorkflows) {
+  return mapWithConcurrency(
+    pairs,
+    async ({ repo, wf }) => {
       const basename = String(wf.path).split("/").pop();
       const shortRepo = repo.split("/").pop();
       const id = `${shortRepo}/${basename}`;
@@ -187,11 +201,9 @@ async function fetchSuites(token) {
         .sort((a, b) => a.t - b.t);
 
       const summary = summarizeSuite(runs);
-
-      // Strip isoTime from final run output (internal only)
       const cleanRuns = runs.map(({ isoTime, ...rest }) => rest);
 
-      suites.push({
+      return {
         id,
         repo,
         workflow: basename,
@@ -204,11 +216,10 @@ async function fetchSuites(token) {
         triageRank: triageRank(summary),
         unavailable: false,
         stateReason: null,
-      });
-    }
-  }
-
-  return suites;
+      };
+    },
+    { concurrency: 8 },
+  );
 }
 
 async function main() {

@@ -27,7 +27,8 @@
 import { writeFileSync, existsSync, statSync, mkdirSync } from "fs";
 import { resolve, dirname } from "path";
 import { fileURLToPath, pathToFileURL } from "url";
-import { ghPaginate, githubToken, classifyRun } from "./lib/gh.js";
+import { ghFetch, ghPaginate, githubToken, classifyRun } from "./lib/gh.js";
+import { mapWithConcurrency } from "./lib/request-queue.js";
 import { isPublishRun, runDurationMin, median } from "./fetch-factory-stats.js";
 
 // Re-exported so existing importers of "./fetch-dora.js" keep working;
@@ -157,26 +158,55 @@ export function buildPayload({ releases, runs, windowDays, generatedAt }) {
 }
 
 async function fetchAllReleases(token) {
-  const all = [];
-  for (const repo of REPOS) {
-    const items = await ghPaginate(`/repos/${repo}/releases`, {
-      token,
-      maxPages: 4,
-    });
-    all.push(...items);
-  }
-  return all;
+  const perRepo = await Promise.all(
+    REPOS.map((repo) =>
+      ghPaginate(`/repos/${repo}/releases`, { token, maxPages: 4 }),
+    ),
+  );
+  return perRepo.flat();
 }
 
+const RUN_PAGES = 6;
+const PER_PAGE = 100;
+
+/**
+ * Publish runs for every repo, in REPOS order. All pages are requested up
+ * front (RUN_PAGES per repo, at most 10 in flight so the 2 concurrent release
+ * paginators keep the total at 12), then each repo is truncated at its first
+ * short or empty page — the same result ghPaginate's early stop produces. A
+ * failed page throws only when ghPaginate would have reached it.
+ */
 async function fetchAllPublishRuns(token, fromISO) {
+  const created = encodeURIComponent(`>=${fromISO.slice(0, 10)}`);
+  const jobs = REPOS.flatMap((repo) =>
+    Array.from({ length: RUN_PAGES }, (_, i) => ({ repo, page: i + 1 })),
+  );
+  const pages = await mapWithConcurrency(
+    jobs,
+    async ({ repo, page }) => {
+      try {
+        const body = await ghFetch(
+          `/repos/${repo}/actions/runs?created=${created}&per_page=${PER_PAGE}&page=${page}`,
+          { token },
+        );
+        return { items: body.workflow_runs };
+      } catch (error) {
+        return { error };
+      }
+    },
+    { concurrency: 10 },
+  );
+
   const all = [];
-  for (const repo of REPOS) {
-    const items = await ghPaginate(
-      `/repos/${repo}/actions/runs?created=${encodeURIComponent(`>=${fromISO.slice(0, 10)}`)}`,
-      { token, maxPages: 6, select: (b) => b.workflow_runs },
-    );
-    all.push(...items.filter(isPublishRun));
-  }
+  REPOS.forEach((_, r) => {
+    for (let p = 0; p < RUN_PAGES; p += 1) {
+      const { items, error } = pages[r * RUN_PAGES + p];
+      if (error) throw error;
+      if (!Array.isArray(items) || items.length === 0) break;
+      all.push(...items.filter(isPublishRun));
+      if (items.length < PER_PAGE) break;
+    }
+  });
   return all;
 }
 

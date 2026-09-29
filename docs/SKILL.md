@@ -29,6 +29,7 @@ guidance in a general-purpose design or content skill you have loaded.
 | Measuring update churn or layer efficiency            | [`skills/update-churn-pipeline.md`](skills/update-churn-pipeline.md)                        |
 | Adding or debugging a Cloudflare Worker or subdomain  | [`skills/cloudflare-workers.md`](skills/cloudflare-workers.md)                              |
 | Landing a pull request, or proving a change is live   | [`skills/shipping-and-verifying.md`](skills/shipping-and-verifying.md)                      |
+| Editing `.github/workflows/`, caches, or CI speed     | [`skills/ci-workflows.md`](skills/ci-workflows.md)                                          |
 | Writing back what you learned                         | [`skills/skill-improvement.md`](skills/skill-improvement.md)                                |
 | Authoring a new skill                                 | [`skills/write-a-skill.md`](skills/write-a-skill.md)                                        |
 | Anything else                                         | [`../AGENTS.md`](https://github.com/projectbluefin/documentation/blob/main/AGENTS.md) first |

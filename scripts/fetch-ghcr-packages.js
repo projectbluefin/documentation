@@ -26,6 +26,7 @@ import { fileURLToPath, pathToFileURL } from "url";
 import { execFile } from "child_process";
 import { promisify } from "util";
 import { githubToken, ghFetch, ghPaginate, ageDays } from "./lib/gh.js";
+import { mapWithConcurrency } from "./lib/request-queue.js";
 
 const execFileAsync = promisify(execFile);
 
@@ -265,27 +266,31 @@ async function registryVersions(org, name) {
   } catch {
     return null;
   }
-
-  const versions = [];
-  for (const tag of fallbackTagsOf(tags)) {
-    try {
-      const { stdout } = await execFileAsync(
-        "skopeo",
-        ["inspect", "--no-tags", `${ref}:${tag}`],
-        { timeout: 60_000, maxBuffer: 32 * 1024 * 1024 },
-      );
-      const info = JSON.parse(stdout);
-      if (!info.Created) continue;
-      versions.push({
-        name: info.Digest,
-        created_at: info.Created,
-        metadata: { container: { tags: [tag] } },
-      });
-    } catch {
-      // A tag that cannot be inspected is a gap, not a failure of the lane.
-    }
-  }
-  return versions;
+  const wantedTags = fallbackTagsOf(tags);
+  const versionsByTag = await mapWithConcurrency(
+    wantedTags,
+    async (tag) => {
+      try {
+        const { stdout } = await execFileAsync(
+          "skopeo",
+          ["inspect", "--no-tags", `${ref}:${tag}`],
+          { timeout: 60_000, maxBuffer: 32 * 1024 * 1024 },
+        );
+        const info = JSON.parse(stdout);
+        if (!info.Created) return null;
+        return {
+          name: info.Digest,
+          created_at: info.Created,
+          metadata: { container: { tags: [tag] } },
+        };
+      } catch {
+        // A tag that cannot be inspected is a gap, not a failure of the lane.
+        return null;
+      }
+    },
+    { concurrency: 4 },
+  );
+  return versionsByTag.filter(Boolean);
 }
 
 async function main() {
@@ -358,10 +363,18 @@ async function main() {
         "anonymous registry reads for the reported lanes",
     );
     for (const org of ORGS) {
-      for (const name of FALLBACK_LANES) {
-        const versions = await registryVersions(org, name);
-        if (versions === null) continue;
-        allPackages.push(buildPackage({ name }, versions));
+      const lanePackages = await mapWithConcurrency(
+        FALLBACK_LANES,
+        async (name) => {
+          const versions = await registryVersions(org, name);
+          return versions === null ? null : buildPackage({ name }, versions);
+        },
+        // Kept low: a throttled `list-tags` returns null and the lane is
+        // silently dropped, so width trades directly against completeness.
+        { concurrency: 4 },
+      );
+      for (const pkg of lanePackages) {
+        if (pkg) allPackages.push(pkg);
       }
     }
   }

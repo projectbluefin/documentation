@@ -12,9 +12,10 @@ on:
   schedule:
     - cron: "0 */6 * * *" # Every 6 hours (00:00, 06:00, 12:00, 18:00 UTC)
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+# Concurrency is per job, not per workflow: a workflow-level cancel would also
+# kill `verify`, and superseded main pushes (~29% of them) would get no test
+# result at all. Builds stay latest-wins; deploys queue so an in-flight Pages
+# deployment is never killed; `verify` always finishes.
 
 permissions:
   contents: read
@@ -28,44 +29,78 @@ jobs:
   build:
     name: Build Docusaurus
     runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.workflow }}-build-${{ github.ref }}
+      cancel-in-progress: true
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
         with:
           egress-policy: audit
 
+      # Full history: `future.faster` enables gitEagerVcs, which dates any
+      # undated doc/blog file from git; a shallow clone would give it HEAD's.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
           persist-credentials: false
 
+      # Same key as the cron workflows, so main already holds this entry.
+      # No restore-keys: a partial hit still runs `npm ci`, which deletes
+      # node_modules first, so restoring a stale tree is wasted download.
+      - name: Restore node_modules
+        id: cache-node-modules
+        uses: actions/cache/restore@caa296126883cff596d87d8935842f9db880ef25 # v5
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      # No `cache: npm`: ~/.npm only helps a node_modules miss, and restoring
+      # it costs ~3s on every hit.
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: 24
-          cache: npm
 
       - name: Install dependencies
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: npm ci
 
+      # Saved immediately after install, before the build writes the rspack
+      # persistent cache into node_modules/.cache — that state is known to
+      # corrupt (see `just clear`) and must never be archived. PR and merge
+      # queue saves are scoped to refs no other run can read, so skip them.
+      - name: Save node_modules
+        if: >-
+          steps.cache-node-modules.outputs.cache-hit != 'true' &&
+          github.event_name != 'pull_request' &&
+          github.event_name != 'merge_group'
+        uses: actions/cache/save@caa296126883cff596d87d8935842f9db880ef25 # v5
+        with:
+          path: node_modules
+          key: ${{ steps.cache-node-modules.outputs.cache-primary-key }}
+
       - name: Restore GitHub data cache
-        # Caches only files produced by fetch scripts. SBOM attestations,
-        # github-profiles, and artwork.json are managed by dedicated caches
-        # or the git checkout — they are intentionally excluded here so the
-        # broad restore never overwrites them.
+        # Caches only gitignored files produced by fetch scripts. Git-tracked
+        # seeds (SBOM attestations, images, driver-versions, firehose-apps,
+        # artwork*, countme/scorecard/update-churn history, gnome-extensions)
+        # are excluded so a stale cache entry never overwrites committed data.
+        # github-profiles and hive-history have their own dedicated caches.
         uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
         with:
           path: |
-            static/data/artwork-versions.json
-            static/data/driver-versions.json
+            static/data/brew-analytics.json
+            static/data/dora.json
+            static/data/factory-stats.json
             static/data/file-contributors.json
-            static/data/firehose-apps.json
+            static/data/flathub-stats.json
+            static/data/ghcr-packages.json
             static/data/github-repos.json
-            static/data/images.json
             static/data/playlist-metadata.json
-            static/data/stream-pins.json
+            static/data/portal-contributors.json
             static/data/registry-data.json
+            static/data/test-runs.json
             static/data/hive-live-data.json
-          key: github-data-${{ hashFiles('scripts/fetch-*.js') }}
+          key: github-data-${{ hashFiles('scripts/fetch-*.js', 'scripts/fetch-*.mjs') }}
           restore-keys: |
             github-data-
 
@@ -159,10 +194,56 @@ jobs:
       # month). Satori cannot decode WebP, so dwebp/cwebp must be present or the
       # generator would silently ship the previous month's card.
       - name: Install WebP tools
-        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends webp
+        run: sudo apt-get install -y --no-install-recommends webp || (sudo apt-get update && sudo apt-get install -y --no-install-recommends webp)
 
       - name: Generate social preview card
         run: npm run generate-social-cards -- --strict
+
+      # Tests and lint run in the parallel `verify` job. Typecheck stays here:
+      # src/ imports gitignored static/data/*.json that only fetch-data writes.
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build website
+        run: npm run build:ci
+
+      # Only main deploys; nothing consumes the artifact on PRs.
+      - name: Upload Build Artifact
+        if: github.ref == 'refs/heads/main'
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5
+        with:
+          path: build
+
+  # Runs beside `build` instead of ahead of it. `npm test` and eslint need no
+  # fetched data, so they come off the build's critical path; deploy still
+  # waits on both jobs. No concurrency group: every commit gets a result.
+  verify:
+    name: Unit tests and lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Restore node_modules
+        id: cache-node-modules
+        uses: actions/cache/restore@caa296126883cff596d87d8935842f9db880ef25 # v5
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 24
+
+      - name: Install dependencies
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        run: npm ci
 
       - name: Run unit tests with coverage
         run: npm run test:coverage
@@ -175,29 +256,22 @@ jobs:
           path: coverage/lcov.info
           retention-days: 30
 
-      - name: Run validation (typecheck + lint + prettier)
+      # prettier-lint is advisory (~100 files already fail; see AGENTS.md).
+      - name: Run lint (+ advisory prettier)
         run: |
-          npm run typecheck & typecheck_pid=$!
-          npm run lint & lint_pid=$!
           (npm run prettier-lint || true) & prettier_pid=$!
           status=0
-          wait "$typecheck_pid" || status=1
-          wait "$lint_pid" || status=1
-          wait "$prettier_pid" || status=1
+          npm run lint || status=1
+          wait "$prettier_pid"
           exit "$status"
-
-      - name: Build website
-        run: npm run build:ci
-
-      - name: Upload Build Artifact
-        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5
-        with:
-          path: build
 
   deploy:
     name: Deploy to GitHub Pages
     if: github.ref == 'refs/heads/main'
-    needs: [build]
+    needs: [build, verify]
+    concurrency:
+      group: ${{ github.workflow }}-deploy-${{ github.ref }}
+      cancel-in-progress: false
 
     # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
     permissions:

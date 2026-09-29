@@ -84,10 +84,31 @@ instead of restating a token read or a header object.
    too (lowercase in ESM, `Authorization`/`User-Agent` in CJS). Write assertions
    against the client you actually called.
 
-9. **`.mjs` files are not linted.** `eslint.config.mjs` matches
-   `**/*.{js,jsx,ts,tsx}`, so `npm run lint` says nothing about
-   `scripts/lib/*.mjs`. A green lint on an ESM-client change is not evidence —
-   the `*.test.js` for that module is.
+9. **Use bounded concurrency and deterministic output for bulk fetches.**
+   Never serialize dozens of calls or add fixed sleeps between them; fan out
+   with `mapWithConcurrency` from `lib/request-queue.js` (named import works
+   from ESM). Current widths are 4–10 per call site (dora caps total in flight
+   at 12; GHCR lanes stay at 4 because a throttled `list-tags` drops the lane).
+   Collect results by input index, never push in completion order, so
+   generated JSON stays byte-stable between builds. `lib/gh.js` has no retry,
+   and fetchers catch-and-continue, so an unbounded `Promise.all` that trips a
+   secondary rate limit silently drops data.
+
+10. **`fetch-data` is one parallel phase; declare real ordering explicitly.**
+    Every fetcher runs concurrently via `scripts/run-parallel.mjs`. The one
+    true dependency — `fetch-github-images` reads the gitignored
+    `static/feeds/bluefin-releases.json` that `fetch-feeds` writes — is a
+    `fetch-feeds-then-images` `&&` chain, pinned by `fetch-chain.test.js`. A
+    new fetcher that reads another fetcher's output needs its own chain, not a
+    second phase.
+
+11. **A new fetcher's output goes in the Actions data cache only if it is
+    gitignored.** See [`ci-workflows.md`](ci-workflows.md) step 2.
+
+12. **`.mjs` files are not linted.** `eslint.config.mjs` matches
+    `**/*.{js,jsx,ts,tsx}`, so `npm run lint` says nothing about
+    `scripts/lib/*.mjs`. A green lint on an ESM-client change is not evidence —
+    the `*.test.js` for that module is.
 
 ## Common Rationalizations
 
@@ -140,7 +161,8 @@ instead of restating a token read or a header object.
 - `scripts/lib/gh.js` — ESM client: `githubToken`, `githubHeaders`,
   `githubFetch`, `ghFetch`, `ghPaginate`, `classifyRun`, `ageMs`, `ageDays`.
 - `scripts/lib/request-queue.js` — CJS client: `githubToken`, `githubHeaders`,
-  `retryWithBackoff`, `sequentialFetchWithDelay`, `isNetworkError`.
+  `retryWithBackoff`, `sequentialFetchWithDelay`, `mapWithConcurrency`,
+  `isNetworkError`.
 - `scripts/gh-lib.test.js`, `scripts/request-queue.test.js` — the contract tests.
 - `AGENTS.md` → _Data pipelines_ — the never-fail-the-build and null-vs-zero
   rules restated in steps 6 and 8.

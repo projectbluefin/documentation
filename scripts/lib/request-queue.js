@@ -127,6 +127,37 @@ async function sequentialFetchWithDelay(items, fetchFn, opts = {}) {
   return results;
 }
 
+// ── Bounded-concurrency map ─────────────────────────────────────────────────
+
+/**
+ * Call `fn` for every item with at most `concurrency` calls in flight, and
+ * resolve with the results in input order. Keeps output deterministic while
+ * removing the wall-clock cost of strictly serial network fan-out.
+ *
+ * @param {Array}    items               Items to process.
+ * @param {Function} fn                  `async (item, index) => result`.
+ * @param {object}   [opts]              Options.
+ * @param {number}   [opts.concurrency=4] Maximum calls in flight.
+ * @returns {Promise<Array>} Results aligned with `items`.
+ */
+async function mapWithConcurrency(items, fn, opts = {}) {
+  const limit = Math.max(1, Math.floor(opts.concurrency ?? 4));
+  const results = new Array(items.length);
+  let next = 0;
+
+  async function worker() {
+    while (next < items.length) {
+      const index = next++;
+      results[index] = await fn(items[index], index);
+    }
+  }
+
+  await Promise.all(
+    Array.from({ length: Math.min(limit, items.length) }, worker),
+  );
+  return results;
+}
+
 // ── GitHub auth headers helper ──────────────────────────────────────────────
 
 /**
@@ -173,6 +204,7 @@ module.exports = {
   isNetworkError,
   retryWithBackoff,
   sequentialFetchWithDelay,
+  mapWithConcurrency,
   githubToken,
   githubHeaders,
 };

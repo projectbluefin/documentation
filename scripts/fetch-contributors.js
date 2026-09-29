@@ -1,9 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-const {
-  sequentialFetchWithDelay,
-  githubHeaders,
-} = require("./lib/request-queue");
+const { mapWithConcurrency, githubHeaders } = require("./lib/request-queue");
 
 const OUTPUT_DIR = path.join(__dirname, "..", "static", "data");
 const OUTPUT_FILE = path.join(OUTPUT_DIR, "file-contributors.json");
@@ -166,11 +163,18 @@ async function fetchAllContributors() {
   let fetchError = null;
 
   try {
-    resultsMap = await sequentialFetchWithDelay(allFiles, async (filePath) => {
-      console.log(`Fetching contributors for ${filePath}...`);
-      const contributors = await fetchCommits(filePath);
-      return contributors.length > 0 ? contributors : null;
-    });
+    const entries = await mapWithConcurrency(
+      allFiles,
+      async (filePath) => {
+        console.log(`Fetching contributors for ${filePath}...`);
+        const contributors = await fetchCommits(filePath);
+        return contributors.length > 0 ? [filePath, contributors] : null;
+      },
+      { concurrency: 6 },
+    );
+    for (const entry of entries) {
+      if (entry) resultsMap.set(entry[0], entry[1]);
+    }
   } catch (error) {
     console.error("Error fetching contributors:", error.message);
     fetchError = error;

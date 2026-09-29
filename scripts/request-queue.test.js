@@ -9,6 +9,7 @@ const {
   isNetworkError,
   retryWithBackoff,
   sequentialFetchWithDelay,
+  mapWithConcurrency,
   githubToken,
   githubHeaders,
 } = require("./lib/request-queue");
@@ -188,6 +189,45 @@ describe("sequentialFetchWithDelay", () => {
     const elapsed = Date.now() - start;
     // Two items → one inter-request delay of ~100ms + one trailing delay
     assert.ok(elapsed >= 150, `Expected ≥150ms, got ${elapsed}ms`);
+  });
+});
+
+// ── mapWithConcurrency ─────────────────────────────────────────────────────
+
+describe("mapWithConcurrency", () => {
+  it("resolves results in original input order", async () => {
+    const items = [50, 10, 30, 5];
+    const results = await mapWithConcurrency(
+      items,
+      async (ms, index) => {
+        await new Promise((resolve) => setTimeout(resolve, ms));
+        return `${index}:${ms}`;
+      },
+      { concurrency: 4 },
+    );
+    assert.deepEqual(results, ["0:50", "1:10", "2:30", "3:5"]);
+  });
+
+  it("caps concurrent executions to the specified limit", async () => {
+    let inFlight = 0;
+    let maxInFlight = 0;
+    const items = [1, 2, 3, 4, 5, 6];
+    await mapWithConcurrency(
+      items,
+      async () => {
+        inFlight++;
+        maxInFlight = Math.max(maxInFlight, inFlight);
+        await new Promise((resolve) => setTimeout(resolve, 15));
+        inFlight--;
+      },
+      { concurrency: 2 },
+    );
+    assert.equal(maxInFlight, 2);
+  });
+
+  it("handles empty arrays immediately", async () => {
+    const results = await mapWithConcurrency([], async () => 1);
+    assert.deepEqual(results, []);
   });
 });
 
