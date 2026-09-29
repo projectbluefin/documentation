@@ -1,7 +1,7 @@
 ---
 name: cloudflare-workers
 version: "1.0"
-last_updated: "2026-09-07"
+last_updated: "2026-09-27"
 id: cloudflare-workers
 one_line_purpose: Build and ship a Cloudflare Worker on a projectbluefin.io subdomain.
 entry_point: docs/skills/cloudflare-workers.md
@@ -129,8 +129,10 @@ workloads:
    - The endpoint strictly disallows persistent machine identifiers or tokens.
 4. **Active-system count (`PUT /v1/ping`, `GET /v1/daily.json`):** Each
    Project Bluefin system sends at most one `{"image": "<image-name>/<image-flavor>:<stream>"}`
-   per day from `projectbluefin-countme` (shipped by `projectbluefin/common`;
-   timer and service follow upstream `eos-phone-home`). The Worker keeps one
+   per day from `projectbluefin-countme`, the `projectbluefin/common` client
+   introduced in common#1205 (timer and service follow upstream
+   `eos-phone-home`). The Worker accepting pings does not mean any image sends
+   them: confirm the client exists at the image's pinned common ref first. The Worker keeps one
    counter per UTC day and image in `daily_pings`, created with
    `CREATE TABLE IF NOT EXISTS` in the same `batch` as the upsert. No
    per-system rows, no IPs.
@@ -143,6 +145,41 @@ workloads:
      else is a 503, and the client retries on its next timer run.
    - `/v1/daily.json` returns `[{day, image, n}]` for 90 days. A day's `n` is
      systems active that day; never sum days into weekly users.
+
+## Diagnosing an empty countme panel
+
+Trace the chain one hop at a time: client in the image, endpoint, D1 rows, page
+reader. Stop at the first hop that fails.
+
+1. **Render the page.** A text fetch of `/analytics/` returns the markup from
+   before hydration, which shows the stream matrix and upstream badge as
+   unavailable even when both are fine. Load it in a browser and record which
+   endpoints it requested.
+2. **Query D1 read-only.** `telemetry_events` holds weekly `/metalink` rows;
+   `daily_pings` holds `/v1/ping` counters:
+
+   ```bash
+   npx wrangler d1 execute projectbluefin-countme --remote --json \
+     --config wrangler.countme.toml --command \
+     "SELECT repo, tag, COUNT(*) n, MAX(received_at) last FROM telemetry_events GROUP BY 1,2 ORDER BY last DESC"
+   ```
+
+   Never send a well-formed ping to test; it becomes a count. A malformed
+   `image` must return 400 and write nothing.
+
+3. **Find the client that actually ships.** Code search sees default branches
+   only; images build from pins and other branches.
+   - Dakota copies common's whole `system_files/shared` tree through the
+     `ref:` in `elements/bluefin/common.bst`. Map the image's
+     `org.opencontainers.image.revision` label (`skopeo inspect`) to that pin,
+     then check the client file at the pin.
+   - Bluefin LTS merges features to `testing` before `main`; check both refs.
+   - Settle the question by running the shipped script inside the image, with
+     a stub `curl` on `PATH` and `BOOTED_IMAGE_FILE` set to a fake ref, so it
+     prints the request it would send instead of sending it.
+4. **Check both filters.** A row can be dropped twice: by the client's
+   `image-name` prefix check, then by the Worker's `PING_IMAGE_FAMILIES` or
+   `PROJECTBLUEFIN_REPOS`.
 
 ## Verifying before deploy
 

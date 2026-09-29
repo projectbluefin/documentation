@@ -159,8 +159,10 @@ authorization to it.
 `/analytics` reads `https://countme.projectbluefin.io/v1/daily.json` at
 runtime: one row per UTC day and image, `{day, image, n}`, where `image` is
 `<image-name>/<image-flavor>:<stream>`. The rows come from
-`projectbluefin-countme`, shipped by `projectbluefin/common`, which pings at
-most once per day with the booted `stable` or `testing` tag (else `unknown`).
+`projectbluefin-countme`, the `projectbluefin/common` client from common#1205,
+which pings at most once per day with the booted `stable` or `testing` tag
+(else `unknown`). An empty card can mean no image ships that client yet; see
+`cloudflare-workers.md` → _Diagnosing an empty countme panel_.
 No machine ID is transmitted, so `n` estimates systems active that day rather
 than counting distinct devices. The older upstream artifact is **Bluefin
 Classic** and remains separate. Fedora's `totals.csv` and the tracked
