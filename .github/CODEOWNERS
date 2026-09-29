@@ -4,3 +4,28 @@ scripts/ @castrojo
 docusaurus.config.ts @castrojo
 package.json @castrojo
 renovate.json @castrojo
+
+# Translations — one directory per locale.
+# Unowned until a human opts in: add your handle after your language's path
+# in a pull request and GitHub will request your review on its translation PRs.
+# See docs/skills/translations.md.
+/i18n/ar/
+/i18n/cs/
+/i18n/de/
+/i18n/es/
+/i18n/fr/
+/i18n/hi/
+/i18n/id/
+/i18n/it/
+/i18n/ja/
+/i18n/ko/
+/i18n/nl/
+/i18n/pl/
+/i18n/pt-BR/
+/i18n/ru/
+/i18n/sv/
+/i18n/tr/
+/i18n/uk/
+/i18n/vi/
+/i18n/zh-Hans/
+/i18n/zh-Hant/
