@@ -54,7 +54,7 @@ Bluefin 是「建立在 Fedora 技術上的 Ubuntu 精神的詮釋」——這�
 - **[Ptyxis 終端機](https://devsuite.app/ptyxis/)** 用於以容器為核心的工作流程
   - [Distroshelf](https://flathub.org/apps/com.ranfdev.DistroShelf) ([捐款](https://github.com/sponsors/ranfdev)) 用於容器管理
 - **[Tailscale](https://tailscale.com)** 內建，提供 VPN，並附 `wireguard-tools` 與系統匣圖示支援
-- **[GNOME 擴充功能管理器](https://flathub.org/apps/com.mattJakeman.ExtensionManager)** ([捐款](https://github.com/sponsors/mjakeman)) 內建
+- **[GNOME 擴充功能管理器](https://flathub.org/apps/com.mattjakeman.ExtensionManager)** ([捐款](https://github.com/sponsors/mjakeman)) 內建
 - **[Bazaar 應用程式商店](https://github.com/kolunmi/bazaar)**，整合 [Flathub](https://flathub.org)：
   - 熟悉的軟體中心介面，用於安裝圖形應用程式
   - 已棄用的應用程式和過時執行時環境會被隱藏

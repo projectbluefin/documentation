@@ -54,7 +54,7 @@ Bluefin es "una interpretación del espíritu de Ubuntu construida sobre la tecn
 - **[Terminal Ptyxis](https://devsuite.app/ptyxis/)** para flujos de trabajo centrados en contenedores
   - [Distroshelf](https://flathub.org/apps/com.ranfdev.DistroShelf) ([Donate](https://github.com/sponsors/ranfdev)) para gestión de contenedores
 - **[Tailscale](https://tailscale.com)** incluido para VPN, junto con `wireguard-tools` y soporte en la bandeja del sistema
-- **[GNOME Extensions Manager](https://flathub.org/apps/com.mattJakeman.ExtensionManager)** ([Donate](https://github.com/sponsors/mjakeman)) incluido
+- **[GNOME Extensions Manager](https://flathub.org/apps/com.mattjakeman.ExtensionManager)** ([Donate](https://github.com/sponsors/mjakeman)) incluido
 - **[Bazaar Application Store](https://github.com/kolunmi/bazaar)** con [Flathub](https://flathub.org):
   - UI de centro de software familiar para instalar aplicaciones gráficas
   - Aplicaciones abandonadas y tiempos de ejecución desactualizados no aparecen
