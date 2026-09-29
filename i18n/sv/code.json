@@ -167,7 +167,7 @@
     "description": "The ARIA label for recent posts in the blog sidebar"
   },
   "theme.DocSidebarItem.expandCategoryAriaLabel": {
-    "message": "Utväkla kategorin '{label}' i sidofältet",
+    "message": "Expandera kategorin '{label}' i sidofältet",
     "description": "The ARIA label to expand the sidebar category"
   },
   "theme.DocSidebarItem.collapseCategoryAriaLabel": {
@@ -255,7 +255,7 @@
     "description": "The ARIA label for hamburger menu button of mobile navigation"
   },
   "theme.navbar.mobileDropdown.collapseButton.expandAriaLabel": {
-    "message": "Utväkla rullmenyn",
+    "message": "Expandera rullmenyn",
     "description": "The ARIA label of the button to expand the mobile dropdown navbar item"
   },
   "theme.navbar.mobileDropdown.collapseButton.collapseAriaLabel": {
@@ -295,7 +295,7 @@
     "description": "The search page title for empty query"
   },
   "theme.SearchPage.searchContext.everywhere": {
-    "message": "Overallt"
+    "message": "Överallt"
   },
   "theme.SearchPage.documentsFound.plurals": {
     "message": "1 dokument hittad|{count} dokument hittade",
@@ -326,7 +326,7 @@
     "description": "The label of the link targeting the blog authors page"
   },
   "theme.blog.author.noPosts": {
-    "message": "Denna författare har inte skrivt några inlägg än.",
+    "message": "Denna författare har inte skrivit några inlägg än.",
     "description": "The text for authors with 0 blog post"
   },
   "theme.contentVisibility.unlistedBanner.title": {
@@ -342,7 +342,7 @@
     "description": "The draft content banner title"
   },
   "theme.contentVisibility.draftBanner.message": {
-    "message": "Denna sida är ett utkast. Den är bara synlig i utvecklingsläge och exkluderas från produktionsuppdateringn.",
+    "message": "Denna sida är ett utkast. Den är bara synlig i utvecklingsläge och exkluderas från produktionsbygget.",
     "description": "The draft content banner message"
   },
   "theme.docs.DocCard.categoryDescription.plurals": {
