@@ -64,13 +64,15 @@ function rewritten(nodes) {
   return tree.children.map((node) => node.url ?? node.children[0].url);
 }
 
+const link = (url) => ({ type: "link", url, children: [] });
+
 test("links into English-only routes go to the English site", () => {
-  const link = (url) => ({ type: "link", url, children: [] });
   assert.deepEqual(
     rewritten([
       link("/blog"),
       link("/blog/dakota-alpha-1"),
       link("/factory#health"),
+      link("pathname:///blog/rss.xml"),
       { type: "definition", url: "/blog/tags/monthly-report/" },
       { type: "paragraph", children: [link("/factory/")] },
     ]),
@@ -78,6 +80,7 @@ test("links into English-only routes go to the English site", () => {
       `${SITE}/blog`,
       `${SITE}/blog/dakota-alpha-1`,
       `${SITE}/factory#health`,
+      `${SITE}/blog/rss.xml`,
       `${SITE}/blog/tags/monthly-report/`,
       `${SITE}/factory/`,
     ],
@@ -85,19 +88,20 @@ test("links into English-only routes go to the English site", () => {
 });
 
 test("docs links stay in the locale, including prefix look-alikes", () => {
-  const link = (url) => ({ type: "link", url, children: [] });
   assert.deepEqual(
     rewritten([
       link("/installation"),
       link("/blogging-guide"),
       link("installation.md"),
       link("https://example.org/blog"),
+      link("pathname:///data/report.json"),
     ]),
     [
       "/installation",
       "/blogging-guide",
       "installation.md",
       "https://example.org/blog",
+      "pathname:///data/report.json",
     ],
   );
 });

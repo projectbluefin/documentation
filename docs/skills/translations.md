@@ -12,8 +12,8 @@ tags: [i18n, translations, locales, codeowners]
 description: >-
   Translate docs.projectbluefin.io into another language through pull requests.
   Use when translating a docs page or UI strings under i18n/<locale>/, picking
-  up a translation issue, opting in as a human reviewer for a language, or
-  adding a new locale.
+  up a translation issue, opting in as a human reviewer for a language, adding
+  a new locale, or changing how translated builds are assembled.
 metadata:
   type: procedure
 ---
@@ -22,7 +22,15 @@ metadata:
 
 Translations land as ordinary pull requests against `i18n/<locale>/`. There
 is no external translation platform and no secret; Docusaurus reads the files
-straight from the repository.
+straight from the repository. The human-facing contributor guide is
+[`TRANSLATING.md`](https://github.com/projectbluefin/documentation/blob/main/TRANSLATING.md);
+this page is the agent procedure and the build internals behind it.
+
+Supported locales are `TRANSLATION_LOCALES` in
+`scripts/lib/translated-locales.mjs`:
+`ar cs de es fr hi id it ja ko nl pl pt-BR ru sv tr uk vi zh-Hans zh-Hant`.
+Each has a stub at `i18n/<locale>/`, an unowned `.github/CODEOWNERS` entry, and
+a `Translate docs: <language>` issue.
 
 ## When to Use
 
@@ -30,59 +38,22 @@ straight from the repository.
 - Translating a docs page or UI strings for a supported locale.
 - Opting in as the human reviewer for a language.
 - Adding a locale that is not yet supported.
+- Changing what a translated build contains (`docusaurus.config.ts`,
+  `scripts/lib/translated-locales.mjs`), or a component used on docs pages
+  that loads static files.
 
 ## When NOT to Use
 
-- Blog posts, monthly reports, and the custom `src/pages` pages (`/factory`,
-  `/leaderboards`, `/changelogs`, …). They exist only in English; translated
-  builds do not contain them.
-- `docs/skills/**`, `docs/superpowers/**`, and `docs/SKILL.md`. These are
-  agent operating procedure, not reader docs; do not translate them.
+- Blog posts and monthly reports (published as blog posts) — see
+  [`blog-posts.md`](blog-posts.md). Both stay English.
+- Custom `src/pages` pages (`/factory`, `/leaderboards`, `/changelogs`, …) —
+  English-only; translated builds do not contain them.
+- `docs/skills/**`, `docs/superpowers/**`, and `docs/SKILL.md` — agent
+  operating procedure, not reader docs; never translated.
 
-## Supported locales
+## Core Process
 
-`TRANSLATION_LOCALES` in `scripts/lib/translated-locales.mjs` is the list:
-`ar cs de es fr hi id it ja ko nl pl pt-BR ru sv tr uk vi zh-Hans zh-Hant`.
-Each has a stub directory at `i18n/<locale>/` and an unowned entry in
-`.github/CODEOWNERS`.
-
-## A locale goes live on its first translated page
-
-`docusaurus.config.ts` builds only the locales whose
-`i18n/<locale>/docusaurus-plugin-content-docs/current/` holds at least one
-`.md` or `.mdx` file. Stubs (`.gitkeep`, the JSON string files) do not count,
-so no locale publishes an all-English duplicate. The language menu appears in
-the navbar once any locale is live.
-
-Consequence: a PR that translates only UI strings changes nothing visible.
-Translate at least one page — start with `index.md` — in the same PR.
-
-Untranslated pages in a live locale fall back to the English source, so a
-partial translation is safe to merge.
-
-## What a translated build contains
-
-Core docs as text, nothing else — about 12 MB per locale against 254 MB for
-English. Docusaurus loads the config once per locale with
-`DOCUSAURUS_CURRENT_LOCALE` set; when it is not `en` the config:
-
-- disables the blog and pages plugins and the legacy-URL redirects;
-- runs `remarkEnglishOnlyUrls` before the default remark plugins, rewriting
-  links into the blog and `src/pages` routes, and every root-relative image
-  (`/img/…`), to absolute `https://docs.projectbluefin.io/…` URLs;
-- points the favicon, navbar logo, and social card at the English site;
-- deletes the locale's copy of `static/` after the build (`dropStaticCopy`).
-
-Components that hard-code root paths (`src="/img/…"`, `fetch("/data/…")`)
-already resolve to the English copy. A component that builds a static path
-with `useBaseUrl` would resolve to `/<locale>/…`, which no longer exists —
-check the locale build for such references before adding one.
-
-The images rewrite must run in `beforeDefaultRemarkPlugins`: the default
-plugins turn root images into bundled imports, which would copy every docs
-image into the locale again.
-
-## Translating a page
+### Translate a page
 
 1. Copy the English page to the same relative path under the locale:
 
@@ -96,8 +67,10 @@ image into the locale again.
    `sidebar_label` values.
 3. Keep the page structurally identical to the English source so later
    English edits can be diffed across.
+4. A locale's first PR includes `index.md`: the locale is built only once it
+   holds a translated docs page (see _How a translated build works_).
 
-## Translating UI strings
+### Translate UI strings
 
 Edit only the `"message"` values; the `"description"` fields are context.
 
@@ -111,47 +84,130 @@ Edit only the `"message"` values; the `"description"` fields are context.
 `code.json` arrives partly translated: Docusaurus prefills its own theme
 strings. Review those rather than assuming they are correct for Bluefin.
 
-When English strings are added later, refresh the stub without losing
-existing translations:
+When English strings change, refresh the stub without losing translations.
+`write-translations` does not set `DOCUSAURUS_CURRENT_LOCALE` itself; without
+it the config loads as English and writes a blog stub that is never built:
 
 ```bash
-npm run write-translations -- --locale de
+DOCUSAURUS_CURRENT_LOCALE=de npm run write-translations -- --locale de
 ```
 
-## Preview and check
+### Preview and check
 
 ```bash
 just dev --locale de          # hot reload, needs one translated page
 npm run build:ci -- --locale de
 ```
 
-`onBrokenLinks` is `throw`, so a broken link in a translated page fails the
-build exactly as in English. Images and English-only links in a preview load
-from the production site, so an image added in the same PR shows only after
-the English build deploys it.
+Images and English-only links in a preview load from the production site, so
+an image added in the same PR shows only after the English build deploys it.
 
-## Human reviewers
+### Opt in as a human reviewer
 
-`.github/CODEOWNERS` lists every `/i18n/<locale>/` path with no owner. To
-review a language, open a PR adding your handle after its path:
+`.github/CODEOWNERS` lists every `/i18n/<locale>/` path with no owner. Add a
+handle after its path in a PR:
 
 ```
 /i18n/de/ @your-handle
 ```
 
-GitHub then requests your review on PRs touching that locale. The `main`
-ruleset does not require code-owner approval, so this routes reviews to you;
-it does not block merges.
+GitHub then requests that reviewer on PRs touching the locale. The `main`
+ruleset does not require code-owner approval, so this routes reviews; it does
+not block merges.
 
-## Adding a locale
+### Add a locale
 
-1. Add the code to `TRANSLATION_LOCALES` (keep it sorted).
-2. `npm run write-translations -- --locale <code>` and
-   `touch i18n/<code>/docusaurus-plugin-content-docs/current/.gitkeep`.
+1. Add the code to `TRANSLATION_LOCALES`, and its lunr-languages code to
+   `SEARCH_LANGUAGES` if `node_modules/lunr-languages/lunr.<code>.js` exists.
+2. `DOCUSAURUS_CURRENT_LOCALE=<code> npm run write-translations -- --locale <code>`
+   and `touch i18n/<code>/docusaurus-plugin-content-docs/current/.gitkeep`.
 3. Add an unowned `/i18n/<code>/` line to `.github/CODEOWNERS`.
 4. File a `Translate docs: <language>` issue labelled `queue/agent-ready`.
 
-## References
+### How a translated build works
 
-- [Docusaurus i18n](https://docusaurus.io/docs/i18n/introduction)
-- [`AGENTS.md`](https://github.com/projectbluefin/documentation/blob/main/AGENTS.md)
+`docusaurus.config.ts` puts a locale in `i18n.locales` only when
+`i18n/<locale>/docusaurus-plugin-content-docs/current/` holds a `.md` or
+`.mdx` file (`translatedLocales`). Stubs — `.gitkeep`, the JSON string files
+— do not count, so no locale publishes an all-English duplicate.
+
+Docusaurus loads the config once per locale with `DOCUSAURUS_CURRENT_LOCALE`
+set. When it is not `en`, the config:
+
+- disables the blog and pages plugins and the legacy-URL redirects;
+- runs `remarkEnglishOnlyUrls` in `beforeDefaultRemarkPlugins`, rewriting
+  links into the blog and `src/pages` routes (plain or `pathname://`) and
+  every root-relative image (`/img/…`) to absolute
+  `https://docs.projectbluefin.io/…` URLs;
+- points the favicon, navbar logo, and social card at the English site;
+- deletes the locale's copy of `static/` after the build (`dropStaticCopy`).
+
+Result: about 12 MB per live locale against 254 MB for English.
+
+Search is one exception to per-locale config. `@easyops-cn/docusaurus-search-local`
+sets up lunr once per build process and reuses it for every locale, so its
+`language` list is shared: `"en"` plus the `SEARCH_LANGUAGES` code of every
+live locale. English only until a locale goes live. Once `zh` is in the list
+its jieba tokenizer replaces the tokenizer for every locale; Japanese then
+loses katakana terms (verified: `インストール` indexed without `zh`, dropped
+with it). A per-locale `language` crashes the build on `lunr.zh`.
+
+The language menu is wrapped (`src/theme/NavbarItem/LocaleDropdownNavbarItem`)
+to render on docs routes only; elsewhere the other locales have no
+counterpart. The `hreflang` alternates in the page head come from the same
+theme utility and still list every locale on those routes; search engines
+ignore alternates that 404, and suppressing them would mean ejecting the
+theme's 142-line `SiteMetadata`.
+
+## Common Rationalizations
+
+- "A locale with only UI strings translated is progress, merge it." — It
+  builds nothing until a docs page exists; include `index.md`.
+- "Plain `npm run write-translations` is what Docusaurus documents." — Here
+  it loads the English config and writes a blog stub that is never built.
+- "`useBaseUrl` is the Docusaurus way to reference static files." — In a
+  translated build it resolves to `/<locale>/…`, which `dropStaticCopy`
+  deleted. Docs-page components use root paths (`/data/…`, `/img/…`).
+- "The rewrite works as a normal `remarkPlugins` entry." — The default
+  plugins have already turned images into bundled imports by then, copying
+  every image into the locale again.
+
+## Red Flags
+
+- A translation PR touching anything outside its `i18n/<locale>/`.
+- `i18n/<locale>/docusaurus-plugin-content-blog/` appearing in a diff.
+- A `README.md` or other `.md` placed in a stub's docs directory — it would
+  publish as a page and turn the locale on.
+- `build/<locale>/` larger than about 20 MB, or containing `img/`.
+- `/<locale>/(img|data|feeds)/` appearing in a locale build's HTML or JS.
+- A panel on a translated page reporting data unavailable that renders on
+  the English page.
+
+## Verification
+
+- `node --test scripts/translated-locales.test.js` passes.
+- `npm run build:ci` with the change and at least one translated page:
+  `du -sh build/<locale>` is about 12 MB, and
+  `grep -rhoE '/<locale>/(img|data|feeds)/' build/<locale> | wc -l` is 0.
+- `npx docusaurus serve`, then load a translated page that renders a
+  data-driven component (for example `/<locale>/analytics/`): no request
+  returns 4xx, and the panels match the English page.
+- On `/blog/`, the language menu is absent; on a docs page it lists the live
+  locales.
+
+## Sources
+
+- `scripts/lib/translated-locales.mjs`, `scripts/translated-locales.test.js`,
+  `docusaurus.config.ts`, `src/theme/NavbarItem/LocaleDropdownNavbarItem/`,
+  `TRANSLATING.md`, `.github/CODEOWNERS`.
+- Context7 `/facebook/docusaurus` — `i18n.locales`, `write-translations`,
+  per-locale `start`/`build --locale`.
+- Verified in installed source, not in Context7:
+  `@docusaurus/core/lib/commands/build/buildLocale.js` and
+  `commands/start/start.js` set `DOCUSAURUS_CURRENT_LOCALE` before loading
+  the config; `write-translations` does not. Remark plugin ordering was
+  verified by build output: as a `remarkPlugins` entry the German build
+  carried 28 MB of `assets/images`, as `beforeDefaultRemarkPlugins` 180 KB.
+- `@easyops-cn/docusaurus-search-local` `dist/server/server/utils/buildIndex.js`
+  — loads `lunr-languages/lunr.<code>` per `language` entry; `zh` uses its
+  bundled `@node-rs/jieba` tokenizer.

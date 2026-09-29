@@ -1,6 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
 import Link from "@docusaurus/Link";
-import useBaseUrl from "@docusaurus/useBaseUrl";
 import Heading from "@theme/Heading";
 import EChart from "../factory/EChart";
 import Unavailable from "../factory/Unavailable";
@@ -28,7 +27,9 @@ import styles from "./CountmeAnalyticsCharts.module.css";
 /**
  * The registry snapshot is generated at build time and is not a tracked seed,
  * so it is fetched rather than imported: a static import of a file that may not
- * exist fails the build instead of rendering a panel that says why.
+ * exist fails the build instead of rendering a panel that says why. The path is
+ * root-absolute on purpose: translated builds ship no copy of static/ and read
+ * the English one (see scripts/lib/translated-locales.mjs).
  */
 const REGISTRY_URL = "/data/ghcr-packages.json";
 
@@ -431,14 +432,12 @@ export default function CountmeAnalyticsCharts({
     null,
   );
   const [registryReason, setRegistryReason] = useState<string | null>(null);
-  const base = useBaseUrl("/");
 
   useEffect(() => {
     if (registry) return;
-    const url = base.replace(/\/$/, "") + REGISTRY_URL;
     void (async () => {
       try {
-        const res = await fetch(url);
+        const res = await fetch(REGISTRY_URL);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         setFetchedRegistry((await res.json()) as GhcrDataset);
       } catch (err) {
@@ -448,7 +447,7 @@ export default function CountmeAnalyticsCharts({
         );
       }
     })();
-  }, [base, registry]);
+  }, [registry]);
 
   // ── Upstream image, the one permitted legacy series ────────────────────
   //

@@ -24,9 +24,6 @@ function loadComponent() {
   return loadTsxModule(TSX_PATH, (id) => {
     if (id.endsWith(".css")) return {};
     if (id === "react") return React;
-    if (id === "@docusaurus/useBaseUrl") {
-      return { __esModule: true, default: (p) => p };
-    }
     if (id === "@docusaurus/Link") {
       return {
         __esModule: true,

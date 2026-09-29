@@ -78,25 +78,58 @@ export function englishOnlyRoutes(siteDir) {
  * Remark plugin for translated builds. Points two kinds of URL at the English
  * site instead of the locale:
  * - links into English-only routes (`/blog/…`, `/factory`, …), which do not
- *   exist under /<locale>/ and would otherwise fail the broken-link check;
+ *   exist under /<locale>/. Plain links would fail the broken-link check;
+ *   `pathname://` links skip it and would 404 silently, so they are matched
+ *   too;
  * - root-relative images (`/img/…`), so the locale loads the English copy
  *   instead of bundling its own.
  */
 export function remarkEnglishOnlyUrls({ siteUrl, routes }) {
-  const englishOnly = new RegExp(`^/(?:${routes.join("|")})(?:[/?#]|$)`);
+  const englishOnly = new RegExp(
+    `^(?:pathname://)?(/(?:${routes.join("|")})(?:[/?#].*)?)$`,
+  );
   const rewrite = (node) => {
-    const isLink = node.type === "link" || node.type === "definition";
-    const isRootImage =
+    const link =
+      (node.type === "link" || node.type === "definition") &&
+      englishOnly.exec(node.url);
+    if (link) {
+      node.url = siteUrl + link[1];
+    } else if (
       node.type === "image" &&
       node.url.startsWith("/") &&
-      !node.url.startsWith("//");
-    if ((isLink && englishOnly.test(node.url)) || isRootImage) {
+      !node.url.startsWith("//")
+    ) {
       node.url = siteUrl + node.url;
     }
     node.children?.forEach(rewrite);
   };
   return rewrite;
 }
+
+/**
+ * lunr-languages code for each locale that has one, for the search index.
+ * cs, id, and uk have none and index with English rules only.
+ * @type {Record<string, string | undefined>}
+ */
+export const SEARCH_LANGUAGES = {
+  ar: "ar",
+  de: "de",
+  es: "es",
+  fr: "fr",
+  hi: "hi",
+  it: "it",
+  ja: "ja",
+  ko: "ko",
+  nl: "nl",
+  pl: "pl",
+  "pt-BR": "pt",
+  ru: "ru",
+  sv: "sv",
+  tr: "tr",
+  vi: "vi",
+  "zh-Hans": "zh",
+  "zh-Hant": "zh",
+};
 
 /**
  * Docusaurus plugin for translated builds: deletes the locale's copy of
