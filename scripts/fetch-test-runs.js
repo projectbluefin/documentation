@@ -30,6 +30,7 @@ import {
   ageDays,
 } from "./lib/gh.js";
 import { runDurationMin } from "./fetch-factory-stats.js";
+import { mapWithConcurrency } from "./lib/request-queue.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const OUT = resolve(__dirname, "../static/data/test-runs.json");
@@ -136,100 +137,89 @@ export function buildPayload({ suites, generatedAt }) {
 }
 
 async function fetchSuites(token) {
-  const suites = [];
   const from = new Date(Date.now() - WINDOW_DAYS * 86400000);
   const fromISO = from.toISOString();
 
-  for (const repo of REPOS) {
-    let workflows;
-    try {
-      const data = await ghFetch(`/repos/${repo}/actions/workflows`, { token });
-      workflows = data.workflows ?? [];
-    } catch (err) {
-      console.warn(
-        `fetch-test-runs: ${repo} workflows unavailable — ${err.message}`,
-      );
-      continue;
-    }
-
-    const testWorkflows = workflows.filter((w) => isTestWorkflow(w.path));
-
-    const workflowConcurrency = 4;
-    let next = 0;
-    const suiteResults = new Array(testWorkflows.length);
-
-    async function workflowWorker() {
-      while (next < testWorkflows.length) {
-        const index = next++;
-        const wf = testWorkflows[index];
-        const basename = String(wf.path).split("/").pop();
-        const shortRepo = repo.split("/").pop();
-        const id = `${shortRepo}/${basename}`;
-        const label = `${shortRepo} · ${basename.replace(/\.ya?ml$/, "")}`;
-
-        let rawRuns = [];
-        try {
-          rawRuns = await ghPaginate(
-            `/repos/${repo}/actions/workflows/${wf.id}/runs?created=${encodeURIComponent(`>=${fromISO.slice(0, 10)}`)}`,
-            { token, maxPages: 3, select: (b) => b.workflow_runs },
-          );
-        } catch (err) {
-          console.warn(
-            `fetch-test-runs: ${id} runs unavailable — ${err.message}`,
-          );
-        }
-
-        const runs = rawRuns
-          .map((r) => {
-            const startedAt = Date.parse(
-              r.run_started_at ?? r.created_at ?? "",
-            );
-            return {
-              t: Number.isFinite(startedAt)
-                ? Math.floor(startedAt / 1000)
-                : null,
-              status: classifyRun(r),
-              durationMin: runDurationMin(r),
-              url: r.html_url ?? null,
-              isoTime: r.run_started_at ?? r.created_at ?? null,
-            };
-          })
-          .filter((r) => r.t !== null)
-          .sort((a, b) => a.t - b.t);
-
-        const summary = summarizeSuite(runs);
-        const cleanRuns = runs.map(({ isoTime, ...rest }) => rest);
-
-        suiteResults[index] = {
-          id,
-          repo,
-          workflow: basename,
-          label,
-          runs: cleanRuns,
-          passRate: summary.passRate,
-          flips: summary.flips,
-          consecutiveFailures: summary.consecutiveFailures,
-          lastTerminalAt: summary.lastTerminalAt,
-          triageRank: triageRank(summary),
-          unavailable: false,
-          stateReason: null,
-        };
+  // Workflow lists for every repo at once; a failed repo is skipped.
+  const workflowLists = await Promise.all(
+    REPOS.map(async (repo) => {
+      try {
+        const data = await ghFetch(`/repos/${repo}/actions/workflows`, {
+          token,
+        });
+        return data.workflows ?? [];
+      } catch (err) {
+        console.warn(
+          `fetch-test-runs: ${repo} workflows unavailable — ${err.message}`,
+        );
+        return null;
       }
-    }
+    }),
+  );
 
-    await Promise.all(
-      Array.from(
-        { length: Math.min(workflowConcurrency, testWorkflows.length) },
-        workflowWorker,
-      ),
-    );
+  // Flat (repo, workflow) list in REPOS order, then workflow order, so the
+  // suites keep the serial insertion order that buildPayload's stable sort
+  // relies on for ties.
+  const pairs = REPOS.flatMap((repo, i) =>
+    (workflowLists[i] ?? [])
+      .filter((w) => isTestWorkflow(w.path))
+      .map((wf) => ({ repo, wf })),
+  );
 
-    for (const suite of suiteResults) {
-      if (suite) suites.push(suite);
-    }
-  }
+  return mapWithConcurrency(
+    pairs,
+    async ({ repo, wf }) => {
+      const basename = String(wf.path).split("/").pop();
+      const shortRepo = repo.split("/").pop();
+      const id = `${shortRepo}/${basename}`;
+      const label = `${shortRepo} · ${basename.replace(/\.ya?ml$/, "")}`;
 
-  return suites;
+      let rawRuns = [];
+      try {
+        rawRuns = await ghPaginate(
+          `/repos/${repo}/actions/workflows/${wf.id}/runs?created=${encodeURIComponent(`>=${fromISO.slice(0, 10)}`)}`,
+          { token, maxPages: 3, select: (b) => b.workflow_runs },
+        );
+      } catch (err) {
+        console.warn(
+          `fetch-test-runs: ${id} runs unavailable — ${err.message}`,
+        );
+      }
+
+      const runs = rawRuns
+        .map((r) => {
+          const startedAt = Date.parse(r.run_started_at ?? r.created_at ?? "");
+          return {
+            t: Number.isFinite(startedAt) ? Math.floor(startedAt / 1000) : null,
+            status: classifyRun(r),
+            durationMin: runDurationMin(r),
+            url: r.html_url ?? null,
+            isoTime: r.run_started_at ?? r.created_at ?? null,
+          };
+        })
+        .filter((r) => r.t !== null)
+        .sort((a, b) => a.t - b.t);
+
+      const summary = summarizeSuite(runs);
+      const cleanRuns = runs.map(({ isoTime, ...rest }) => rest);
+
+      return {
+        id,
+        repo,
+        workflow: basename,
+        label,
+        runs: cleanRuns,
+        passRate: summary.passRate,
+        flips: summary.flips,
+        consecutiveFailures: summary.consecutiveFailures,
+        lastTerminalAt: summary.lastTerminalAt,
+        triageRank: triageRank(summary),
+        unavailable: false,
+        stateReason: null,
+      };
+    },
+    { concurrency: 8 },
+  );
 }
 
 async function main() {

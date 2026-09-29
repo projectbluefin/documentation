@@ -482,28 +482,25 @@ async function buildProduct(spec, feeds, cachedById, ageHours, sbomCache) {
 
   const imageRef = `ghcr.io/${spec.org}/${spec.package}`;
 
-  let tags = [];
-  try {
-    tags = await listTags(imageRef);
-  } catch {
-    tags = (existing?.streams || [])
-      .filter((s) => s.command)
-      .map((s) => s.tag)
-      .filter(Boolean);
-  }
+  const [tagsResult, nvidiaTagsResult] = await Promise.allSettled([
+    listTags(imageRef),
+    spec.nvidiaPackage
+      ? listTags(`ghcr.io/${spec.org}/${spec.nvidiaPackage}`)
+      : Promise.resolve(null),
+  ]);
+  const tags =
+    tagsResult.status === "fulfilled"
+      ? tagsResult.value
+      : (existing?.streams || [])
+          .filter((s) => s.command)
+          .map((s) => s.tag)
+          .filter(Boolean);
   const tagSet = new Set(tags);
 
-  let nvidiaTagSet = null;
-  if (spec.nvidiaPackage) {
-    try {
-      const nvidiaTags = await listTags(
-        `ghcr.io/${spec.org}/${spec.nvidiaPackage}`,
-      );
-      nvidiaTagSet = new Set(nvidiaTags);
-    } catch {
-      nvidiaTagSet = null;
-    }
-  }
+  const nvidiaTagSet =
+    spec.nvidiaPackage && nvidiaTagsResult.status === "fulfilled"
+      ? new Set(nvidiaTagsResult.value)
+      : null;
 
   const streams = attachNvidiaCommands(
     buildTopStreams(spec, tagSet),
@@ -659,24 +656,25 @@ async function main({ outputFile = OUTPUT_FILE, sbomFile = SBOM_FILE } = {}) {
   };
   console.log("SBOM attestation cache loaded.");
 
+  // PRODUCT_SPECS is a handful of entries, so building them all at once stays
+  // bounded; results come back in spec order for the stale-skip pass.
+  const built = await Promise.all(
+    PRODUCT_SPECS.map((spec) => {
+      console.log(`Fetching ${spec.org}/${spec.package}...`);
+      return buildProduct(spec, feeds, cachedById, ageHours, sbomCache);
+    }),
+  );
   const products = [];
-  for (const spec of PRODUCT_SPECS) {
-    console.log(`Fetching ${spec.org}/${spec.package}...`);
-    const product = await buildProduct(
-      spec,
-      feeds,
-      cachedById,
-      ageHours,
-      sbomCache,
-    );
+  PRODUCT_SPECS.forEach((spec, index) => {
+    const product = built[index];
     if (product.stale && !product.keepEvenIfStale) {
       console.log(
         `Skipping stale image ${spec.org}/${spec.package} (older than ${STALE_DAYS} days).`,
       );
-      continue;
+      return;
     }
     products.push(product);
-  }
+  });
 
   products.sort((a, b) => a.name.localeCompare(b.name));
 

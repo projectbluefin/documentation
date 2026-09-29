@@ -1,8 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-
-// Configuration constants
-const YOUTUBE_REQUEST_DELAY_MS = 1500; // Delay between requests to be respectful to YouTube
+const { mapWithConcurrency } = require("./lib/request-queue");
 
 // Playlist IDs from docs/music.md
 // Descriptions will be fetched from YouTube at build time
@@ -109,19 +107,18 @@ function extractMetadataFromHtml(html) {
       if (!thumbnailUrl) {
         const header = ytInitialData.header?.playlistHeaderRenderer;
         if (
-          header?.playlistHeaderBanner?.heroPlaylistThumbnailRenderer
-            ?.thumbnail?.thumbnails
+          header?.playlistHeaderBanner?.heroPlaylistThumbnailRenderer?.thumbnail
+            ?.thumbnails
         ) {
           const thumbnails =
-            header.playlistHeaderBanner.heroPlaylistThumbnailRenderer
-              .thumbnail.thumbnails;
+            header.playlistHeaderBanner.heroPlaylistThumbnailRenderer.thumbnail
+              .thumbnails;
           thumbnailUrl = thumbnails[thumbnails.length - 1]?.url;
         }
       }
 
       if (!thumbnailUrl) {
-        const microformat =
-          ytInitialData.microformat?.microformatDataRenderer;
+        const microformat = ytInitialData.microformat?.microformatDataRenderer;
         if (microformat?.thumbnail?.thumbnails) {
           const thumbnails = microformat.thumbnail.thumbnails;
           thumbnailUrl = thumbnails[thumbnails.length - 1]?.url;
@@ -266,17 +263,13 @@ async function fetchPlaylistMetadata(playlistId, title) {
 async function main() {
   console.log("Fetching playlist metadata from YouTube...\n");
 
-  const metadata = [];
-
-  for (const playlist of PLAYLISTS) {
-    const data = await fetchPlaylistMetadata(playlist.id, playlist.title);
-    metadata.push(data);
-
-    // Be nice to YouTube's servers - add delay between requests
-    await new Promise((resolve) =>
-      setTimeout(resolve, YOUTUBE_REQUEST_DELAY_MS),
-    );
-  }
+  // Bounded concurrency keeps the load on YouTube modest; results stay in
+  // PLAYLISTS order.
+  const metadata = await mapWithConcurrency(
+    PLAYLISTS,
+    (playlist) => fetchPlaylistMetadata(playlist.id, playlist.title),
+    { concurrency: 4 },
+  );
 
   // Save metadata to a JSON file
   const metadataPath = path.join(

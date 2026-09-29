@@ -31,7 +31,15 @@ jobs:
           node-version: "24"
           cache: npm
 
+      - name: Cache node_modules
+        id: cache-node-modules
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
       - name: Install dependencies
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: npm ci --legacy-peer-deps
 
       - name: Run CountMe worker tests

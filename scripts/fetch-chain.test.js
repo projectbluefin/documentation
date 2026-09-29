@@ -11,26 +11,30 @@ const pkg = JSON.parse(
 
 // ── Phase definitions in package.json ────────────────────────────────────────
 
-test("fetch-data script defines independent and dependent phases", () => {
-  assert.ok(pkg.scripts["fetch-data"], "fetch-data script must exist");
-  assert.ok(
-    pkg.scripts["fetch-data:independent"],
-    "fetch-data:independent script must exist",
+// fetch-github-images reads static/feeds/bluefin-releases.json, which only
+// fetch-feeds writes. Started concurrently with fetch-feeds, it silently loses
+// the Bluefin Classic release link and digest. Every other fetch script is
+// independent, so the single parallel phase must carry this one ordering.
+test("fetch-github-images runs only after fetch-feeds completes", () => {
+  assert.match(
+    pkg.scripts["fetch-data"],
+    /fetch-data:independent/,
+    "fetch-data must run the parallel phase",
   );
+  const phase = pkg.scripts["fetch-data:independent"].split(/\s+/);
   assert.ok(
-    pkg.scripts["fetch-data:dependent"],
-    "fetch-data:dependent script must exist",
+    !phase.includes("fetch-github-images") && !phase.includes("fetch-feeds"),
+    "fetch-feeds and fetch-github-images must not be fanned out independently",
   );
-
-  // fetch-data should orchestrate the phases in order
-  const fetchData = pkg.scripts["fetch-data"];
-  assert.ok(
-    fetchData.includes("fetch-data:independent"),
-    "fetch-data must reference the independent phase",
+  const chains = phase.filter((name) =>
+    /^npm run fetch-feeds && npm run fetch-github-images$/.test(
+      pkg.scripts[name] ?? "",
+    ),
   );
-  assert.ok(
-    fetchData.includes("fetch-data:dependent"),
-    "fetch-data must reference the dependent phase",
+  assert.equal(
+    chains.length,
+    1,
+    "the parallel phase must include one fetch-feeds && fetch-github-images chain",
   );
 });
 
@@ -41,7 +45,7 @@ test("fetch-data script defines independent and dependent phases", () => {
 // of every fetch script — including the ones that deliberately exit non-zero.
 // The phases must delegate to scripts/run-parallel.mjs, which propagates status.
 
-const PARALLEL_PHASES = ["fetch-data:independent", "fetch-data:dependent"];
+const PARALLEL_PHASES = ["fetch-data:independent"];
 
 for (const phase of PARALLEL_PHASES) {
   test(`${phase} does not swallow exit codes with a bare wait`, () => {

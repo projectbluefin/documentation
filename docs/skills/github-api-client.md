@@ -85,21 +85,28 @@ instead of restating a token read or a header object.
    against the client you actually called.
 
 9. **Use bounded concurrency and deterministic output for bulk fetches.**
-   Never serialize dozens of API calls with `sequentialFetchWithDelay` when
-   bounded concurrency (`mapWithConcurrency`, concurrency 4–6) completes them
-   in seconds. Keep results aligned with input order (via index assignment or
-   re-filtering) so generated JSON data files stay stable and deterministic
-   between builds.
+   Never serialize dozens of calls or add fixed sleeps between them; fan out
+   with `mapWithConcurrency` (concurrency 4–8) from `lib/request-queue.js`
+   (named import works from ESM). Collect results by input index, never push
+   in completion order, so generated JSON stays byte-stable between builds.
+   `lib/gh.js` has no retry, and fetchers catch-and-continue, so an unbounded
+   `Promise.all` that trips a secondary rate limit silently drops data.
 
-10. **Cache generated data files, but never committed seed files.**
-    Generated data files (`ghcr-packages.json`, `test-runs.json`, `dora.json`,
-    `factory-stats.json`, `flathub-stats.json`, `brew-analytics.json`) belong in
-    the GitHub Actions data cache so TTL skips fire. Committed seed files
-    tracked in git (`countme-history.json`, `scorecard-history.json`,
-    `update-churn.json`, `gnome-extensions.json`) must NEVER be included in the
-    Actions cache restore path, as restoring after checkout silently clobbers
-    freshly committed git history with stale cache entries.
-11. **`.mjs` files are not linted.** `eslint.config.mjs` matches
+10. **`fetch-data` is one parallel phase; declare real ordering explicitly.**
+    Every fetcher runs concurrently via `scripts/run-parallel.mjs`. The one
+    true dependency — `fetch-github-images` reads the gitignored
+    `static/feeds/bluefin-releases.json` that `fetch-feeds` writes — is a
+    `fetch-feeds-then-images` `&&` chain, pinned by `fetch-chain.test.js`. A
+    new fetcher that reads another fetcher's output needs its own chain, not a
+    second phase.
+
+11. **Cache generated data files, never git-tracked seeds.** pages.yml's
+    "Restore GitHub data cache" lists only gitignored fetcher outputs, so TTL
+    skips can fire. A tracked seed (`git ls-files static/data`) in that path is
+    restored after checkout and silently replaces freshly committed data with a
+    stale entry. Check `git ls-files` before adding a path.
+
+12. **`.mjs` files are not linted.** `eslint.config.mjs` matches
     `**/*.{js,jsx,ts,tsx}`, so `npm run lint` says nothing about
     `scripts/lib/*.mjs`. A green lint on an ESM-client change is not evidence —
     the `*.test.js` for that module is.
