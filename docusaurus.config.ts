@@ -2,6 +2,7 @@ import { themes as prismThemes } from "prism-react-renderer";
 import type { Config } from "@docusaurus/types";
 import type * as Preset from "@docusaurus/preset-classic";
 import {
+  SEARCH_LANGUAGES,
   dropStaticCopy,
   englishOnlyRoutes,
   remarkEnglishOnlyUrls,
@@ -15,10 +16,8 @@ const siteUrl = "https://docs.projectbluefin.io";
 const liveLocales = translatedLocales(`${__dirname}/i18n`);
 const isTranslation = (process.env.DOCUSAURUS_CURRENT_LOCALE ?? "en") !== "en";
 
-// English-only pages and static images come from the English site in a
-// translated build, which ships no copy of static/.
-const englishOnlyLink = (path: string) =>
-  isTranslation ? { href: `${siteUrl}${path}` } : { to: path };
+// Static images come from the English site in a translated build, which ships
+// no copy of static/. English-only navbar links go there too.
 const staticAsset = (path: string) =>
   isTranslation ? `${siteUrl}/${path}` : path;
 
@@ -112,6 +111,15 @@ const config: Config = {
       {
         hashed: true,
         docsRouteBasePath: "/",
+        // One list for every locale: the plugin sets up lunr once per build
+        // process and reuses it for each locale that follows. English stays
+        // first; untranslated pages fall back to it.
+        language: [
+          "en",
+          ...new Set(
+            liveLocales.flatMap((locale) => SEARCH_LANGUAGES[locale] ?? []),
+          ),
+        ],
       },
     ],
     // Legacy URL redirects are English-only; several target the blog.
@@ -246,7 +254,7 @@ const config: Config = {
           label: "Documentation",
         },
         {
-          ...englishOnlyLink("/blog/"),
+          ...(isTranslation ? { href: `${siteUrl}/blog/` } : { to: "/blog/" }),
           label: "Blog",
           position: "right",
         },
@@ -256,7 +264,9 @@ const config: Config = {
           position: "right",
         },
         {
-          ...englishOnlyLink("/leaderboards/"),
+          ...(isTranslation
+            ? { href: `${siteUrl}/leaderboards/` }
+            : { to: "/leaderboards/" }),
           label: "Leaderboards",
           position: "right",
         },
