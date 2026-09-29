@@ -56,7 +56,7 @@
     "description": "The name for the dark color mode"
   },
   "theme.colorToggle.ariaLabel": {
-    "message": "Växla mellan mörkt och ljust utseende (currently {mode})",
+    "message": "Växla mellan mörkt och ljust utseende (för närvarande {mode})",
     "description": "The ARIA label for the color mode toggle"
   },
   "theme.docs.breadcrumbs.navAriaLabel": {
@@ -298,7 +298,7 @@
     "message": "Överallt"
   },
   "theme.SearchPage.documentsFound.plurals": {
-    "message": "1 dokument hittad|{count} dokument hittade",
+    "message": "1 dokument hittat|{count} dokument hittade",
     "description": "Pluralized label for \"{count} documents found\". Use as much plural forms (separated by \"|\") as your language support (see https://www.unicode.org/cldr/cldr-aux/charts/34/supplemental/language_plural_rules.html)"
   },
   "theme.SearchPage.noResultsText": {

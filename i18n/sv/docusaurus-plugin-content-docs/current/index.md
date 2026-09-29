@@ -34,9 +34,9 @@ Om dina krav är utanför detta område, så är **Bluefin kanske inte rätt val
 
 ## Skrivbordsupplevelse och funktioner
 
-Bluefin har ett GNOME ([Donera](https://www.gnome.org/donate/)) skrivbord konfigurerat av vår gemenskap. Det är designat för att vara hands-off och hålla sig utan vägen så du kan fokusera på dina appar.
+Bluefin har ett GNOME ([Donera](https://www.gnome.org/donate/)) skrivbord konfigurerat av vår gemenskap. Det är designat för att vara hands-off och hålla sig ur vägen så du kan fokusera på dina appar.
 
-Systemuppdatering är bildbaserade och automatiska. Applikationer är logiskt åtskilda från systemet genom att använda Flatpak för grafiska appar och `brew` för radbaserade appar.
+Systemuppdatering är bildbaserade och automatiska. Applikationer är logiskt åtskilda från systemet genom att använda Flatpak för grafiska appar och `brew` för kommandoradsprogram.
 
 :::tip
 
@@ -46,7 +46,7 @@ Bluefin är "En tolkning av Ubuntu-andan byggd på Fedora-teknik"—en återkopp
 
 - **Ubuntu-liknande GNOME-layout** som integrerar kuraterade tillägg:
   - [Dash to Dock](https://micheleg.github.io/dash-to-dock/) - för en bekant dock
-  - [Appindicator](https://github.com/ubuntu/gnome-shell-extension-appindicator) - för flik-liknande ikoner i övre högra hörnet
+  - [Appindicator](https://github.com/ubuntu/gnome-shell-extension-appindicator) - för ikoner i systemfältet i övre högra hörnet
   - [GSConnect](https://github.com/GSConnect/gnome-shell-extension-gsconnect) - integrera din mobila enhet med din dator
   - [Blur my Shell](https://github.com/aunetx/blur-my-shell) ([Donera](https://github.com/sponsors/aunetx)) - för den där glitset
   - [Search Light](https://github.com/icedman/search-light) - erbjuder sökfunktion och ett macOS Spotlight-liknande arbetsflöde bundet till <kbd>Super</kbd>-<kbd>Space</kbd> som standard
@@ -70,9 +70,9 @@ Bluefin är "En tolkning av Ubuntu-andan byggd på Fedora-teknik"—en återkopp
   - Alla multimediacodec inkluderade
   - Stegvis automatiska uppdatering: använd din dator som vanligt och stäng av den när du är klar
 
-## Distrolös fokus
+## Distrolöst fokus
 
-Bluefin skippar specifikt upstream-verktygen istället för anpassade appar. Idén om en "distribution app store" har visat sig vara ohållbar för desktop-applikationsförfattare, så Bluefin shippar verktygen som [Bazaar](https://github.com/kolunmi/bazaar) och [Homebrew](https://brew.sh) istället. Arbetsflöden förblir inte bara distributionagnostiska, utan operativsystemagnostiska.
+Bluefin levererar medvetet upstream-verktyg i stället för egna applikationer. Idén om en "distribution app store" har visat sig vara ohållbar för desktop-applikationsförfattare, så Bluefin shippar verktygen som [Bazaar](https://github.com/kolunmi/bazaar) och [Homebrew](https://brew.sh) istället. Arbetsflöden förblir inte bara distributionagnostiska, utan operativsystemagnostiska.
 
 :::info[Det är en plattformsoberoende värld]
 

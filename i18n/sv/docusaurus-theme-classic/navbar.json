@@ -16,7 +16,7 @@
     "description": "Navbar item with label Reports"
   },
   "item.label.Leaderboards": {
-    "message": "Tabeller",
+    "message": "Topplistor",
     "description": "Navbar item with label Leaderboards"
   },
   "item.label.Hive": {
