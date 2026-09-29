@@ -369,7 +369,9 @@ async function main() {
           const versions = await registryVersions(org, name);
           return versions === null ? null : buildPackage({ name }, versions);
         },
-        { concurrency: 8 },
+        // Kept low: a throttled `list-tags` returns null and the lane is
+        // silently dropped, so width trades directly against completeness.
+        { concurrency: 4 },
       );
       for (const pkg of lanePackages) {
         if (pkg) allPackages.push(pkg);

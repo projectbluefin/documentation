@@ -12,9 +12,9 @@ on:
   schedule:
     - cron: "0 */6 * * *" # Every 6 hours (00:00, 06:00, 12:00, 18:00 UTC)
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+# Concurrency is per job, not per workflow: a workflow-level cancel would also
+# kill `verify`, and superseded main pushes (~29% of them) would get no test
+# result at all. Builds and deploys stay latest-wins; `verify` always finishes.
 
 permissions:
   contents: read
@@ -28,16 +28,20 @@ jobs:
   build:
     name: Build Docusaurus
     runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.workflow }}-build-${{ github.ref }}
+      cancel-in-progress: true
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
         with:
           egress-policy: audit
 
-      # Shallow: nothing in the build reads git history (no showLastUpdate*,
-      # every blog post is dated by filename or front matter).
+      # Full history: `future.faster` enables gitEagerVcs, which dates any
+      # undated doc/blog file from git; a shallow clone would give it HEAD's.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
+          fetch-depth: 0
           persist-credentials: false
 
       # Same key as the cron workflows, so main already holds this entry.
@@ -210,8 +214,8 @@ jobs:
           path: build
 
   # Runs beside `build` instead of ahead of it. `npm test` and eslint need no
-  # fetched data (the suite also ran from a bare checkout in test.yml), so they
-  # come off the build's critical path; deploy still waits on both jobs.
+  # fetched data, so they come off the build's critical path; deploy still
+  # waits on both jobs. No concurrency group: every commit gets a result.
   verify:
     name: Unit tests and lint
     runs-on: ubuntu-latest
@@ -264,6 +268,9 @@ jobs:
     name: Deploy to GitHub Pages
     if: github.ref == 'refs/heads/main'
     needs: [build, verify]
+    concurrency:
+      group: ${{ github.workflow }}-deploy-${{ github.ref }}
+      cancel-in-progress: true
 
     # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
     permissions:

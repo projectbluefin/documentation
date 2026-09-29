@@ -86,11 +86,13 @@ instead of restating a token read or a header object.
 
 9. **Use bounded concurrency and deterministic output for bulk fetches.**
    Never serialize dozens of calls or add fixed sleeps between them; fan out
-   with `mapWithConcurrency` (concurrency 4–8) from `lib/request-queue.js`
-   (named import works from ESM). Collect results by input index, never push
-   in completion order, so generated JSON stays byte-stable between builds.
-   `lib/gh.js` has no retry, and fetchers catch-and-continue, so an unbounded
-   `Promise.all` that trips a secondary rate limit silently drops data.
+   with `mapWithConcurrency` from `lib/request-queue.js` (named import works
+   from ESM). Current widths are 4–10 per call site (dora caps total in flight
+   at 12; GHCR lanes stay at 4 because a throttled `list-tags` drops the lane).
+   Collect results by input index, never push in completion order, so
+   generated JSON stays byte-stable between builds. `lib/gh.js` has no retry,
+   and fetchers catch-and-continue, so an unbounded `Promise.all` that trips a
+   secondary rate limit silently drops data.
 
 10. **`fetch-data` is one parallel phase; declare real ordering explicitly.**
     Every fetcher runs concurrently via `scripts/run-parallel.mjs`. The one
@@ -100,11 +102,8 @@ instead of restating a token read or a header object.
     new fetcher that reads another fetcher's output needs its own chain, not a
     second phase.
 
-11. **Cache generated data files, never git-tracked seeds.** pages.yml's
-    "Restore GitHub data cache" lists only gitignored fetcher outputs, so TTL
-    skips can fire. A tracked seed (`git ls-files static/data`) in that path is
-    restored after checkout and silently replaces freshly committed data with a
-    stale entry. Check `git ls-files` before adding a path.
+11. **A new fetcher's output goes in the Actions data cache only if it is
+    gitignored.** See [`ci-workflows.md`](ci-workflows.md) step 2.
 
 12. **`.mjs` files are not linted.** `eslint.config.mjs` matches
     `**/*.{js,jsx,ts,tsx}`, so `npm run lint` says nothing about
