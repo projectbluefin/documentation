@@ -200,19 +200,49 @@ test("datedTagKey: returns the YYYYMMDD stamp a tag carries", () => {
   assert.equal(datedTagKey(undefined), "");
 });
 
-test("compareTagsByDate: orders oldest-first and breaks same-day ties by tag", () => {
-  const sorted = [
+test("compareTagsByDate: orders by date, then build time, then tag text", () => {
+  const tags = [
     "testing-20260929-815ea44",
     "testing-20260927-f5f4053",
     "testing-20260929-362ea44",
     "testing-20260926-be64d10",
-  ].sort(compareTagsByDate);
-  assert.deepEqual(sorted, [
+  ];
+  // No timestamps available: the last resort is tag text, so the order is
+  // stable across runs even though it is an approximation.
+  assert.deepEqual([...tags].sort(compareTagsByDate), [
     "testing-20260926-be64d10",
     "testing-20260927-f5f4053",
     "testing-20260929-362ea44",
     "testing-20260929-815ea44",
   ]);
+
+  // With build times, the same-day pair orders by *when it was built*, not by
+  // how its short sha happens to sort. 362ea44 is the newer build even though
+  // "3" < "8" — and diffReleaseLayers is directional, so this is the order
+  // that decides which numbers the chart reports.
+  const createdAt = {
+    "testing-20260929-362ea44": "2026-09-29T18:04:11Z",
+    "testing-20260929-815ea44": "2026-09-29T09:41:52Z",
+  };
+  assert.deepEqual(
+    [...tags].sort((a, b) => compareTagsByDate(a, b, createdAt)),
+    [
+      "testing-20260926-be64d10",
+      "testing-20260927-f5f4053",
+      "testing-20260929-815ea44",
+      "testing-20260929-362ea44",
+    ],
+  );
+
+  // A tie on both date and build time falls back to text rather than
+  // depending on the input order.
+  assert.equal(
+    compareTagsByDate("testing-a", "testing-b", {
+      "testing-a": "2026-09-29T00:00:00Z",
+      "testing-b": "2026-09-29T00:00:00Z",
+    }) < 0,
+    true,
+  );
 });
 
 test("selectDatedTags: keeps only matching dated tags, oldest-first, trimmed to limit", () => {
@@ -290,4 +320,51 @@ test("selectDatedTags: a dated series produces a delta, not a lone baseline", ()
   assert.equal(delta.date, "2026-09-29");
   assert.equal(delta.downloadChurnMB, 5.0);
   assert.equal(delta.reuseEfficiencyPct, 66.7);
+});
+
+test("selectDatedTags: a floating tag never joins a dated series", () => {
+  // The regression: the SBOM cache contributes the floating `testing` tag, and
+  // it names the same manifest as the newest dated tag. Letting it in appended
+  // a duplicate release dated *today* by extractDateFromTag — 0 MB churn, or a
+  // backwards delta depending on where it landed.
+  const pattern = /^testing-\d{8}-[0-9a-f]{7,40}$/;
+  const selected = selectDatedTags(
+    [
+      "testing",
+      "testing-20260928-ce09ef7",
+      "testing-20260929-362ea44",
+      "latest",
+    ],
+    { pattern, limit: 14 },
+  );
+  assert.deepEqual(selected, [
+    "testing-20260928-ce09ef7",
+    "testing-20260929-362ea44",
+  ]);
+});
+
+test("selectDatedTags: limit applies to the merged list, seeds included", () => {
+  // Seeds are a fallback for a failed listing, not a way to exceed the limit:
+  // a seed older than the discovered window must not push the chart past it.
+  const pattern = /^testing-\d{8}-[0-9a-f]{7,40}$/;
+  const seeds = ["testing-20260926-34c0f13", "testing-20260926-be64d10"];
+  const merged = [
+    ...new Set([
+      ...seeds,
+      ...selectDatedTags(
+        [
+          "testing-20260927-08286da",
+          "testing-20260928-ce09ef7",
+          "testing-20260929-362ea44",
+        ],
+        { pattern, limit: 2 },
+      ),
+    ]),
+  ]
+    .sort(compareTagsByDate)
+    .slice(-2);
+  assert.deepEqual(merged, [
+    "testing-20260928-ce09ef7",
+    "testing-20260929-362ea44",
+  ]);
 });

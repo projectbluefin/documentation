@@ -20,6 +20,15 @@ const path = require("path");
 const { seedIsFresh } = require("./lib/seed-cache.js");
 const { fetchGhcrTags } = require("./lib/sbom/api.js");
 
+/**
+ * A GitHub token for the packages API, if this environment has one. The
+ * packages API is the only source of a per-tag build time, and it is
+ * authenticated; the OCI `tags/list` endpoint carries no timestamps at all.
+ */
+function githubToken() {
+  return process.env.GITHUB_TOKEN || process.env.GH_TOKEN || null;
+}
+
 const OUTPUT_FILE = path.join(
   __dirname,
   "..",
@@ -165,14 +174,30 @@ function datedTagKey(tag = "") {
 }
 
 /**
- * Pure function: Sorts tags oldest-first by the date they carry, falling back to
- * the tag text so same-day builds keep a stable order across runs. Churn is a
- * diff between consecutive entries, so the order is the measurement, not a
- * presentation detail.
+ * Pure function: Sorts tags oldest-first by the date they carry, then by the
+ * registry's build time, and only then by tag text.
+ *
+ * The tie-break matters: an image that ships several builds a day carries the
+ * same YYYYMMDD on each of them, and `diffReleaseLayers` is directional (churn
+ * is the layers in N absent from N-1, reuse % is relative to N), so a
+ * same-day pair compared in the wrong direction reports different numbers than
+ * the one a user actually performs. Tag text is not a build time — `362ea44`
+ * sorts before `815ea44` while being the newer build — so it is the last
+ * resort, used only for tags the packages API had no `created_at` for.
+ *
+ * @param {string} a
+ * @param {string} b
+ * @param {Record<string, string>} [createdAt] tag -> ISO build timestamp
  */
-function compareTagsByDate(a, b) {
+function compareTagsByDate(a, b, createdAt = {}) {
   const dateDelta = datedTagKey(a).localeCompare(datedTagKey(b));
-  return dateDelta !== 0 ? dateDelta : String(a).localeCompare(String(b));
+  if (dateDelta !== 0) return dateDelta;
+  const builtA = createdAt?.[a];
+  const builtB = createdAt?.[b];
+  if (builtA && builtB && builtA !== builtB) {
+    return String(builtA).localeCompare(String(builtB));
+  }
+  return String(a).localeCompare(String(b));
 }
 
 /**
@@ -183,8 +208,10 @@ function compareTagsByDate(a, b) {
  *
  * @param {string[]} tags  Every tag the registry lists for the package.
  * @param {{ pattern?: RegExp, limit?: number }} series
+ * @param {Record<string, string>} [createdAt] tag -> ISO build timestamp
+ * @returns {string[]}
  */
-function selectDatedTags(tags = [], series = {}) {
+function selectDatedTags(tags = [], series = {}, createdAt = {}) {
   const { pattern, limit } = series || {};
   if (
     !Array.isArray(tags) ||
@@ -198,7 +225,9 @@ function selectDatedTags(tags = [], series = {}) {
     ...new Set(tags.filter((t) => typeof t === "string" && pattern.test(t))),
   ];
   if (matched.length === 0) return [];
-  return matched.sort(compareTagsByDate).slice(-limit);
+  return matched
+    .sort((a, b) => compareTagsByDate(a, b, createdAt))
+    .slice(-limit);
 }
 
 /**
@@ -375,22 +404,93 @@ async function getPlatformLayers(repo, tag) {
 }
 
 /**
+ * Fetch a per-tag build time for a GHCR package from the GitHub packages API.
+ *
+ * The OCI `tags/list` endpoint returns names only, so the registry cannot
+ * break a same-day tie on its own. Each package version carries `created_at`
+ * and the tags pointing at it, which is exactly the ordering signal the churn
+ * series needs.
+ *
+ * Returns `{}` — never throws — when the API is unreachable, unauthenticated or
+ * rate-limited. `compareTagsByDate` then falls back to tag text, which is a
+ * documented approximation, not a crash.
+ *
+ * @returns {Promise<Record<string, string>>} tag -> ISO 8601 build timestamp
+ */
+async function fetchGhcrTagCreatedAt(org, pkg, maxPages = 2) {
+  const token = githubToken();
+  const createdAt = {};
+  if (!token || !org || !pkg) return createdAt;
+
+  const headers = {
+    Authorization: `Bearer ${token}`,
+    Accept: "application/vnd.github+json",
+    "User-Agent": "BluefinDocsChurn/1.0",
+    "X-GitHub-Api-Version": "2022-11-28",
+  };
+
+  try {
+    let url =
+      `https://api.github.com/orgs/${org}/packages/container/` +
+      `${encodeURIComponent(pkg)}/versions?per_page=100`;
+    for (let page = 0; url && page < maxPages; page += 1) {
+      const res = await fetch(url, { headers });
+      if (!res.ok) {
+        // 404 = package unknown to the API, 403 = scope or rate limit. Either
+        // way the caller keeps working with the text tie-break.
+        throw new Error(`HTTP ${res.status}`);
+      }
+      const versions = await res.json();
+      if (!Array.isArray(versions)) break;
+      for (const version of versions) {
+        const built = version?.created_at;
+        const tags = version?.metadata?.container?.tags;
+        if (!built || !Array.isArray(tags)) continue;
+        for (const tag of tags) {
+          // A tag can have more than one version behind it; keep the oldest so
+          // the timestamp still describes the first build carrying the name.
+          if (typeof tag === "string" && !createdAt[tag])
+            createdAt[tag] = built;
+        }
+      }
+      url =
+        res.headers.get("link")?.match(/<([^>]+)>;\s*rel="next"/i)?.[1] || null;
+      if (url) url = new URL(url, res.url).href;
+    }
+  } catch (err) {
+    console.warn(
+      `fetch-update-churn: build timestamps unavailable for ${org}/${pkg} — ` +
+        `${err.message}; falling back to tag-text ordering within a day`,
+    );
+    return {};
+  }
+
+  return createdAt;
+}
+
+/**
  * Resolve an image's published tag series from GHCR.
  *
  * Never throws and never exits non-zero: an unreachable or unauthorized tag
  * listing degrades to the config's seed tags, which is the same shape of gap
  * the rest of this pipeline already represents with `unavailable`.
+ *
+ * @returns {Promise<{ tags: string[], createdAt: Record<string, string>, listed: boolean }>}
  */
 async function discoverSeriesTags(repo, series) {
   const [org, pkg] = String(repo || "").split("/");
-  if (!org || !pkg) return [];
+  if (!org || !pkg) return { tags: [], createdAt: {}, listed: false };
   try {
-    return selectDatedTags(await fetchGhcrTags(org, pkg), series);
+    const allTags = await fetchGhcrTags(org, pkg);
+    const tags = selectDatedTags(allTags, series);
+    if (tags.length === 0) return { tags: [], createdAt: {}, listed: false };
+    const createdAt = await fetchGhcrTagCreatedAt(org, pkg);
+    return { tags, createdAt, listed: true };
   } catch (err) {
     console.warn(
       `fetch-update-churn: tag listing failed for ${repo} — ${err.message}`,
     );
-    return [];
+    return { tags: [], createdAt: {}, listed: false };
   }
 }
 
@@ -447,15 +547,22 @@ async function main() {
     // For streams that publish dated tags (e.g. Bluefin Classic), SBOM releases
     // are actual registry tags (stable-YYYYMMDD). For streams whose releases
     // use floating tags (Dakota), use the entry's actual image tag or floating stream.
-    const tagsToInspect = [...defaultTags];
+    const seedTags = [...defaultTags];
+    let seriesTags = [];
+    let seriesCreatedAt = {};
+    let seriesListed = false;
     if (tagSeries) {
-      for (const tag of await discoverSeriesTags(repo, tagSeries)) {
-        if (!tagsToInspect.includes(tag)) tagsToInspect.push(tag);
-      }
-      // Every tag in a discovered series carries its own date, so order the
-      // whole set by date rather than by which config introduced it.
-      tagsToInspect.sort(compareTagsByDate);
+      const discovered = await discoverSeriesTags(repo, tagSeries);
+      seriesTags = discovered.tags;
+      seriesCreatedAt = discovered.createdAt;
+      seriesListed = discovered.listed;
     }
+
+    // The series is the measurement, so nothing that is not part of it may
+    // join: a floating tag pulled in from the SBOM cache (`testing`) names a
+    // manifest some dated tag already covers, so adding it appends a duplicate
+    // point that is either 0 MB or a backwards measurement.
+    const candidateTags = [...new Set([...seedTags, ...seriesTags])];
     if (sbomCache?.streams?.[sbomStreamId]?.releases) {
       const releases = sbomCache.streams[sbomStreamId].releases;
       for (const [key, entry] of Object.entries(releases)) {
@@ -464,14 +571,28 @@ async function main() {
         // that are not actual published tags on the container registry
         if (entry?.imageRef && entry.imageRef.includes(":")) {
           const refTag = entry.imageRef.split(":").pop();
-          if (refTag && !tagsToInspect.includes(refTag)) {
-            tagsToInspect.push(refTag);
+          if (refTag && !candidateTags.includes(refTag)) {
+            candidateTags.push(refTag);
           }
-        } else if (!tagsToInspect.includes(candidateTag)) {
-          tagsToInspect.push(candidateTag);
+        } else if (!candidateTags.includes(candidateTag)) {
+          candidateTags.push(candidateTag);
         }
       }
     }
+
+    const inSeries = (tag) => !tagSeries || tagSeries.pattern.test(tag);
+    const tagsToInspect = candidateTags
+      .filter(inSeries)
+      // One sort, over everything, after every source has contributed. Churn
+      // is a diff between consecutive entries, so an order that depends on
+      // which source introduced a tag is a measurement that changes when an
+      // unrelated cache does.
+      .sort((a, b) => compareTagsByDate(a, b, seriesCreatedAt))
+      // `limit` describes the charted series, so it applies to the final list:
+      // a seed older than the discovered window would otherwise push the
+      // series past the limit. Seeds only survive a successful listing, which
+      // is exactly when they are not needed as a fallback.
+      .slice(tagSeries && seriesListed ? -tagSeries.limit : undefined);
 
     if (tagsToInspect.length === 0) {
       imagesOutput[id] = {
@@ -561,6 +682,7 @@ module.exports = {
   compareTagsByDate,
   selectDatedTags,
   discoverSeriesTags,
+  fetchGhcrTagCreatedAt,
   extractDateFromTag,
   fetchGhcrManifest,
   getPlatformLayers,

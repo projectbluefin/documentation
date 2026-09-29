@@ -33,11 +33,30 @@ Measuring release-over-release download deltas, chunkah layer reuse efficiency, 
      `selectDatedTags` keeps the most recent `limit`, oldest-first. Utah ships
      `testing-YYYYMMDD-<short-sha>` per build and is discovered this way. The
      `defaultTags` seed survives as a fallback for when tag listing fails.
-     Churn is a diff between consecutive entries, so the series is sorted by the
-     date each tag carries — `compareTagsByDate` — never by insertion order.
-     Tags without a date sort before dated ones, which is correct for a
-     `latest`-style floating tag appended from the SBOM cache: it is the
-     current build, so it belongs at the end of the series.
+   - Churn is a diff between consecutive entries, so the order *is* the
+     measurement, not a presentation detail. Every candidate — seed, registry
+     tag and SBOM-cache tag — is collected first and sorted exactly once, after
+     every source has contributed.
+   - **Order is by build time, not by tag text.** `compareTagsByDate` sorts on
+     the `YYYYMMDD` the tag carries, breaks same-day ties on the registry's
+     build timestamp (`fetchGhcrTagCreatedAt`, the packages API's `created_at`
+     per version), and falls back to tag text only for tags the packages API
+     had no timestamp for. This matters because an image that ships several
+     builds a day repeats the same date across them, and `diffReleaseLayers` is
+     directional — churn is the layers in N absent from N-1 and reuse % is
+     relative to N — so a same-day pair compared backwards reports different
+     numbers than the update a user performs. Tag text is not a build time:
+     `362ea44` sorts before `815ea44` while being the newer build.
+   - **A discovered series is a closed set.** When `tagSeries` is set, a tag
+     that does not match its `pattern` never joins the series — notably the
+     floating `testing` tag, which the SBOM cache contributes and which names a
+     manifest the newest dated tag already covers. Appending it produced a
+     duplicate point (0 MB churn, or a backwards delta) *and* a release dated
+     today by `extractDateFromTag`, which is how an undated tag ended up
+     appearing to "belong at the end" of the series. The tag list is sorted
+     before it is charted, so the floating tag is last only because it is
+     excluded. `limit` then trims the merged list, so a seed older than the
+     discovered window cannot push the chart past the limit.
 2. **Layer Digest Diffing**:
    - For release $N$ following release $N-1$:
      - Shared layers: layer digests present in both $N-1$ and $N$. These require 0 download bytes during `bootc update`.
