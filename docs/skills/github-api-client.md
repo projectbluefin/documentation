@@ -157,6 +157,7 @@ instead of restating a token read or a header object.
 - `scripts/lib/request-queue.js` — CJS client: `githubToken`, `githubHeaders`,
   `retryWithBackoff`, `sequentialFetchWithDelay`, `mapWithConcurrency`,
   `isNetworkError`.
+- `scripts/gh-lib.test.js`, `scripts/request-queue.test.js` — the contract tests.
 - `AGENTS.md` → _Data pipelines_ — the never-fail-the-build and null-vs-zero
   rules restated in steps 6 and 8.
 - `eslint.config.mjs` — the `files` glob that excludes `.mjs`.
