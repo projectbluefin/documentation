@@ -54,7 +54,7 @@ Bluefin är "En tolkning av Ubuntu-andan byggd på Fedora-teknik"—en återkopp
 - **[Ptyxis-terminal](https://devsuite.app/ptyxis/)** för behållarfokusarbetsflöden
   - [Distroshelf](https://flathub.org/apps/com.ranfdev.DistroShelf) ([Donera](https://github.com/sponsors/ranfdev)) för behållarhantering
 - **[Tailscale](https://tailscale.com)** inkluderat för VPN tillsammans med `wireguard-tools` och systray-stöd
-- **[GNOME Extensions Manager](https://flathub.org/apps/com.mattJakeman.ExtensionManager)** ([Donera](https://github.com/sponsors/mjakeman)) inkluderat
+- **[GNOME Extensions Manager](https://flathub.org/apps/com.mattjakeman.ExtensionManager)** ([Donera](https://github.com/sponsors/mjakeman)) inkluderat
 - **[Bazaar Appbutik](https://github.com/kolunmi/bazaar)** med [Flathub](https://flathub.org):
   - Bekant programcentergränssnitt för att installera grafiska appar
   - Övergivna appar och utdaterade runtime är olistade
