@@ -100,7 +100,7 @@
     "description": "The label of footer link with label=Press Kit linking to /press-kit"
   },
   "link.item.label.Main Bluefin Repository": {
-    "message": "Główny repozytorium Bluefin",
+    "message": "Główne repozytorium Bluefin",
     "description": "The label of footer link with label=Main Bluefin Repository linking to https://github.com/projectbluefin"
   },
   "link.item.label.Bluefin": {

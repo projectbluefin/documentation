@@ -12,11 +12,11 @@ Dla użytkowników końcowych Bluefin to system tak niezawodny jak Chromebook, n
 
 ## Czy Bluefin jest dla Ciebie?
 
-Bluefin to desktop nowej generacji, który dąży do stopniowej poprawy. Surowo i agresywnie odchodzimy od przestarzej technologii tak szybko, jak to możliwe, aby zapewnić najlepsze możliwe doświadczenie.
+Bluefin to desktop nowej generacji, który dąży do stopniowej poprawy. Surowo i agresywnie odchodzimy od przestarzałej technologii tak szybko, jak to możliwe, aby zapewnić najlepsze możliwe doświadczenie.
 
 :::tip
 
-Niektorzy mogliby powiedzieć, że Bluefin najlepiej sprawi się deweloperom lub doświadczonym użytkownikom Linuxa, ale ja twierdzę, że równie dobrze sprawdza się nowym użytkownikom — dzięki niezawodności i temu, jak dobrze skonfigurowany wychodzi z fabryki.
+Niektórzy mogliby powiedzieć, że Bluefin najlepiej sprawi się deweloperom lub doświadczonym użytkownikom Linuxa, ale ja twierdzę, że równie dobrze sprawdza się nowym użytkownikom — dzięki niezawodności i temu, jak dobrze skonfigurowany wychodzi z fabryki.
 
 -- [Jack Wallen](https://thenewstack.io/bluefin-a-next-gen-linux-workstation-for-containerized-apps/)
 
@@ -27,24 +27,24 @@ Bluefin to:
 - **Flatpak First** - Model aplikacji w Bluefin koncentruje się na kontenerowych aplikacjach utrzymanych w Flathub. Aplikacje, które źle współpracują z nowoczesnymi komponentami tak jak Wayland, Pipewire, Flatpak Portals itp., mogą dać słabe doświadczenie i nie są zalecane.
 - **Celowo niewidoczny** - Bluefin to nie dystrybucja. Twoja relacja jest z Flathub, Homebrew i wszystkim, co umieścisz w swoich kontenerach.
 - **Optymalizowany pod 96%** - Nie pod 4% - Bluefin przywiązuje wagę do podejścia "silniejsi razem". Zawsze możesz zrobić tak, jak chcesz, ale wartość płynie z dzielenia się najlepszymi praktykami. Nie tracimy czasu na przypadki brzegowe.
-- **Dowodzony model deweloperski** - Doświadczenie dewelopera skupione na kontenerach i otwierający nowym użytkownikom Linuxa [narzędzia używane w cloud native](https://www.cncf.io/). Zobacz strony [Oświadczenie misji](/mission) i [Wartości](/values), aby dowiedzieć się więcej.
-- **Celowo skupiony na świetnym sprzęcie** - Bluefin działa najlepiej na sprzęcie przyjaznym Linuxowi, aby zapewnić użytkownikom możliwie najlepsze doświadczenie bez starzełych technologii. Bluefin chce też wspierać OEM sprzedające laptopy i komputery z Linuxem, dąży więc do działania z najlepszą kombinacją oprogramowania i sprzętu. Nie robimy dodatkowych kroków, aby dokumentować albo obejść rzeczy, które kompromitują doświadczenie użytkownika, tak więc w niektórych przypadkach inny system operacyjny jest właściwym wyborem.
+- **Sprawdzony model deweloperski** - Doświadczenie dewelopera skupione na kontenerach i otwierające nowym użytkownikom Linuxa [narzędzia używane w cloud native](https://www.cncf.io/). Zobacz strony [Oświadczenie misji](/mission) i [Wartości](/values), aby dowiedzieć się więcej.
+- **Celowo skupiony na świetnym sprzęcie** - Bluefin działa najlepiej na sprzęcie przyjaznym Linuxowi, aby zapewnić użytkownikom możliwie najlepsze doświadczenie bez przestarzałych technologii. Bluefin chce też wspierać OEM sprzedające laptopy i komputery z Linuxem, dąży więc do działania z najlepszą kombinacją oprogramowania i sprzętu. Nie robimy dodatkowych kroków, aby dokumentować albo obejść rzeczy, które kompromitują doświadczenie użytkownika, tak więc w niektórych przypadkach inny system operacyjny jest właściwym wyborem.
 
 Jeśli Twoje wymagania wychodzą poza ten zakres, to **Bluefin może nie być najlepszym wyborem dla Ciebie**. Bluefin może powodować dyskomfort i [poważne uszkodzenia przy nieprawidłowym trzymaniu](/troubleshooting/#am-i-holding-bluefin-wrong).
 
-## Doświadczenie pulpowe i funkcje
+## Pulpit i funkcje
 
-Bluefin oferuje pul GNOME ([Donate](https://www.gnome.org/donate/)) skonfigurowany przez naszą społeczność. Został zaprojektowany tak, by być bezobsługowym i nie szkodzić, żebyś mógł skupić się na swoich aplikacjach.
+Bluefin oferuje pulpit GNOME ([Donate](https://www.gnome.org/donate/)) skonfigurowany przez naszą społeczność. Został zaprojektowany tak, by być bezobsługowym i nie szkodzić, żebyś mógł skupić się na swoich aplikacjach.
 
 Aktualizacje systemu są oparte na obrazach i automatyczne. Aplikacje są logicznie oddzielone od systemu za pomocą Flatpaków dla aplikacji graficznych i `brew` dla aplikacji wiersza poleceń.
 
 :::tip
 
-Bluefin to "interpretacja ducha Ubuntu zbudowana na technologii Fedora" — powrót do ery historii Ubuntu, w której wychowało się wielu entuzjastów open source, tak samo jak klasyczne X-Men. Chcemy dowieść ten sam vibe tutaj; traktuj nas jako reboot. Spokojny klimat.
+Bluefin to "interpretacja ducha Ubuntu zbudowana na technologii Fedora" — powrót do ery historii Ubuntu, w której wychowało się wielu entuzjastów open source, tak samo jak klasyczne X-Men. Chcemy oddać ten sam klimat; traktuj nas jako reboot. Spokojny klimat.
 
 :::
 
-- **Ubuntu-like układ GNOME** z kuratorowanymi rozszeniami:
+- **Ubuntu-like układ GNOME** z kuratorowanymi rozszerzeniami:
   - [Dash to Dock](https://micheleg.github.io/dash-to-dock/) - dla znajomego docka
   - [Appindicator](https://github.com/ubuntu/gnome-shell-extension-appindicator) - dla ikon typu tray w prawym górnym rogu
   - [GSConnect](https://github.com/GSConnect/gnome-shell-extension-gsconnect) - zintegruj swój telefon z komputerem
@@ -72,7 +72,7 @@ Bluefin to "interpretacja ducha Ubuntu zbudowana na technologii Fedora" — powr
 
 :::info[To cross-platformowy świat]
 
-Workflow w Bluefin celowo skupia się na upstream -- wierzymy w spójne doświadczenie Linuxa dla wszystkich, czy to WSL na Windows, Podman/Docker na Macu, czy dowolny system Linux. [Ekosystem cloud native](http://cncf.io) udowodnił, że ten model działa. Pozwala milionom istniecych deweloperów na wejście z workflow, które już znają, i pozwala Linuxowi rywalizować tam, gdzie ma to największe znaczenie.
+Workflow w Bluefin celowo skupia się na upstream -- wierzymy w spójne doświadczenie Linuxa dla wszystkich, czy to WSL na Windows, Podman/Docker na Macu, czy dowolny system Linux. [Ekosystem cloud native](http://cncf.io) udowodnił, że ten model działa. Pozwala milionom istniejących deweloperów na wejście z workflow, które już znają, i pozwala Linuxowi rywalizować tam, gdzie ma to największe znaczenie.
 
 :::
 
@@ -80,7 +80,7 @@ Workflow w Bluefin celowo skupia się na upstream -- wierzymy w spójne doświad
 
 - **[Downloads](/downloads)** — pobierz oficjalny ISO Bluefin albo torrent
 - **[Installation Runbook](/installation)** — planowanie sprzętu i kroki konfiguracji
-- **[User Guide](/administration)** — codzierna administracja, aktualizacje i aplikacje
+- **[User Guide](/administration)** — codzienna administracja, aktualizacje i aplikacje
 - **[Developer Guide](/bluefin-dx)** — kontenery, devcontainers i narzędzia AI
 
 [Post ogłoszeniowy](https://www.ypsidanger.com/announcing-project-bluefin/) zawiera też kilka dodatkowych informacji o tle.

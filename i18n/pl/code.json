@@ -271,7 +271,7 @@
     "description": "The ARIA label and title attribute for expand button of doc sidebar"
   },
   "theme.SearchBar.noResultsText": {
-    "message": "Brak wynók"
+    "message": "Brak wyników"
   },
   "theme.SearchBar.seeAllOutsideContext": {
     "message": "Zobacz wszystkie wyniki poza \"{context}\""
