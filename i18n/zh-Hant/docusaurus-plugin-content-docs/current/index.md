@@ -16,7 +16,7 @@ Bluefin 是一個朝持續改進方向發展的嶄新 Linux 桌面環境。我�
 
 :::tip
 
-有人或許傾向說 Bluefin 最適合開發者或有經驗的 Linux 使用者，但我認為，正因為它極其可靠、且開箱設定完善，它对初學者同樣是有強競爭力的選擇。
+有人或許傾向說 Bluefin 最適合開發者或有經驗的 Linux 使用者，但我認為，正因為它極其可靠、且開箱設定完善，它對初學者同樣是有強競爭力的選擇。
 
 -- [Jack Wallen](https://thenewstack.io/bluefin-a-next-gen-linux-workstation-for-containerized-apps/)
 
@@ -36,24 +36,24 @@ Bluefin 的特色：
 
 Bluefin 採用由社群設定的 GNOME（[捐款](https://www.gnome.org/donate/)）桌面。它設計為少手腳、不搶你風頭，讓你能專注於應用程式。
 
-系統更新基於影像且自動。應用程式透過 Flatpak 處理圖形應用、`brew` 處理命令列應用，與系統在邏輯上分開。
+系統更新基於映像檔且自動。應用程式透過 Flatpak 處理圖形應用、`brew` 處理命令列應用，與系統在邏輯上分開。
 
 :::tip
 
-Bluefin 是「建立在 Fedora 技術上的 Ubuntu 精神的詮釋」——這是对 Ubuntu 歷史某個時代的致敬，許多開源愛好者都在那個時代成長，就像經典 X 戰警一樣。我們希望在這裡帶來同樣的氛圍；把我們看作是一次重新出發。悠閒的氛圍。
+Bluefin 是「建立在 Fedora 技術上的 Ubuntu 精神的詮釋」——這是對 Ubuntu 歷史某個時代的致敬，許多開源愛好者都在那個時代成長，就像經典 X 戰警一樣。我們希望在這裡帶來同樣的氛圍；把我們看作是一次重新出發。悠閒的氛圍。
 
 :::
 
 - **類 Ubuntu 的 GNOME 版面**，整合經過篩選的擴充功能：
-  - [Dash to Dock](https://micheleg.github.io/dash-to-dock/) - 提供熟悉的選單列
-  - [Appindicator](https://github.com/ubuntu/gnome-shell-extension-appindicator) - 在右上角顯示類似工作區圖示
+  - [Dash to Dock](https://micheleg.github.io/dash-to-dock/) - 提供熟悉的 Dock
+  - [Appindicator](https://github.com/ubuntu/gnome-shell-extension-appindicator) - 在右上角顯示系統匣圖示
   - [GSConnect](https://github.com/GSConnect/gnome-shell-extension-gsconnect) - 將你的行動裝置整合進桌面
   - [Blur my Shell](https://github.com/aunetx/blur-my-shell) ([捐款](https://github.com/sponsors/aunetx)) - 打造華麗效果
-  - [Search Light](https://github.com/icedman/search-light) - 提供搜尋功能，並預設以 <kbd>Super</kbd>-<kbd>Space</kbd> 綁定类似 macOS Spotlight 的操作流程
+  - [Search Light](https://github.com/icedman/search-light) - 提供搜尋功能，並預設以 <kbd>Super</kbd>-<kbd>Space</kbd> 綁定類似 macOS Spotlight 的操作流程
 - **[開發者模式](/bluefin-dx)** - 專屬開發工具將 Bluefin 變成強大的雲端原生工作站
 - **[Ptyxis 終端機](https://devsuite.app/ptyxis/)** 用於以容器為核心的工作流程
   - [Distroshelf](https://flathub.org/apps/com.ranfdev.DistroShelf) ([捐款](https://github.com/sponsors/ranfdev)) 用於容器管理
-- **[Tailscale](https://tailscale.com)** 內建，提供 VPN，並附 `wireguard-tools` 與工作區圖示支援
+- **[Tailscale](https://tailscale.com)** 內建，提供 VPN，並附 `wireguard-tools` 與系統匣圖示支援
 - **[GNOME 擴充功能管理器](https://flathub.org/apps/com.mattJakeman.ExtensionManager)** ([捐款](https://github.com/sponsors/mjakeman)) 內建
 - **[Bazaar 應用程式商店](https://github.com/kolunmi/bazaar)**，整合 [Flathub](https://flathub.org)：
   - 熟悉的軟體中心介面，用於安裝圖形應用程式
