@@ -4,19 +4,19 @@
     "description": "The alt text of navbar logo"
   },
   "item.label.Documentation": {
-    "message": "Documentation",
+    "message": "Dokumentation",
     "description": "Navbar item with label Documentation"
   },
   "item.label.Blog": {
-    "message": "Blog",
+    "message": "Blogg",
     "description": "Navbar item with label Blog"
   },
   "item.label.Reports": {
-    "message": "Reports",
+    "message": "Rapporter",
     "description": "Navbar item with label Reports"
   },
   "item.label.Leaderboards": {
-    "message": "Leaderboards",
+    "message": "Tabeller",
     "description": "Navbar item with label Leaderboards"
   },
   "item.label.Hive": {
@@ -24,15 +24,15 @@
     "description": "Navbar item with label Hive"
   },
   "item.label.Discussions": {
-    "message": "Discussions",
+    "message": "Diskussioner",
     "description": "Navbar item with label Discussions"
   },
   "item.label.Analytics": {
-    "message": "Analytics",
+    "message": "Statistik",
     "description": "Navbar item with label Analytics"
   },
   "item.label.Store": {
-    "message": "Store",
+    "message": "Butik",
     "description": "Navbar item with label Store"
   }
 }
