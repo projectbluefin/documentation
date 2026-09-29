@@ -4,19 +4,19 @@
     "description": "The title of the footer links column with title=Universal Blue in the footer"
   },
   "link.title.Community": {
-    "message": "Community",
+    "message": "社群",
     "description": "The title of the footer links column with title=Community in the footer"
   },
   "link.title.RSS Feeds": {
-    "message": "RSS Feeds",
+    "message": "RSS 訂閱",
     "description": "The title of the footer links column with title=RSS Feeds in the footer"
   },
   "link.title.Contribute": {
-    "message": "Contribute",
+    "message": "參與貢獻",
     "description": "The title of the footer links column with title=Contribute in the footer"
   },
   "link.title.Media & Lore": {
-    "message": "Media & Lore",
+    "message": "媒體與傳說",
     "description": "The title of the footer links column with title=Media & Lore in the footer"
   },
   "link.title.GitHub": {
@@ -36,11 +36,11 @@
     "description": "The label of footer link with label=Universal Blue linking to https://universal-blue.org"
   },
   "link.item.label.Blog and Announcements": {
-    "message": "Blog and Announcements",
+    "message": "部落格與公告",
     "description": "The label of footer link with label=Blog and Announcements linking to https://blog.projectbluefin.io/"
   },
   "link.item.label.Discussions": {
-    "message": "Discussions",
+    "message": "討論",
     "description": "The label of footer link with label=Discussions linking to https://github.com/ublue-os/bluefin/discussions"
   },
   "link.item.label.Discord": {
@@ -48,59 +48,59 @@
     "description": "The label of footer link with label=Discord linking to https://discord.gg/XUC8cANVHy"
   },
   "link.item.label.Ask Bluefin": {
-    "message": "Ask Bluefin",
+    "message": "詢問 Bluefin",
     "description": "The label of footer link with label=Ask Bluefin linking to https://ask.projectbluefin.io"
   },
   "link.item.label.Feedback": {
-    "message": "Feedback",
+    "message": "回饋",
     "description": "The label of footer link with label=Feedback linking to https://feedback.projectbluefin.io/"
   },
   "link.item.label.Changelogs": {
-    "message": "Changelogs",
+    "message": "變更日誌",
     "description": "The label of footer link with label=Changelogs linking to https://changelogs.projectbluefin.io"
   },
   "link.item.label.Blog and Announcements Feed": {
-    "message": "Blog and Announcements Feed",
+    "message": "部落格與公告訂閱",
     "description": "The label of footer link with label=Blog and Announcements Feed linking to https://docs.projectbluefin.io/blog/atom.xml"
   },
   "link.item.label.Releases Feed": {
-    "message": "Releases Feed",
+    "message": "發行版本訂閱",
     "description": "The label of footer link with label=Releases Feed linking to https://github.com/projectbluefin/dakota/releases.atom"
   },
   "link.item.label.Discussions Feed": {
-    "message": "Discussions Feed",
+    "message": "討論訂閱",
     "description": "The label of footer link with label=Discussions Feed linking to https://github.com/ublue-os/bluefin/discussions.atom"
   },
   "link.item.label.Open Issues": {
-    "message": "Open Issues",
+    "message": "開放問題",
     "description": "The label of footer link with label=Open Issues linking to https://issues.projectbluefin.io"
   },
   "link.item.label.Open Pull Requests": {
-    "message": "Open Pull Requests",
+    "message": "開放合併請求",
     "description": "The label of footer link with label=Open Pull Requests linking to https://pullrequests.projectbluefin.io"
   },
   "link.item.label.Contributor's Guide": {
-    "message": "Contributor's Guide",
+    "message": "貢獻者指南",
     "description": "The label of footer link with label=Contributor's Guide linking to https://contribute.projectbluefin.io"
   },
   "link.item.label.Dinosaurs": {
-    "message": "Dinosaurs",
+    "message": "恐龍",
     "description": "The label of footer link with label=Dinosaurs linking to /dinosaurs"
   },
   "link.item.label.Artwork": {
-    "message": "Artwork",
+    "message": "美術作品",
     "description": "The label of footer link with label=Artwork linking to /artwork"
   },
   "link.item.label.Music": {
-    "message": "Music",
+    "message": "音樂",
     "description": "The label of footer link with label=Music linking to /music"
   },
   "link.item.label.Press Kit": {
-    "message": "Press Kit",
+    "message": "新聞資料包",
     "description": "The label of footer link with label=Press Kit linking to /press-kit"
   },
   "link.item.label.Main Bluefin Repository": {
-    "message": "Main Bluefin Repository",
+    "message": "Bluefin 主儲存庫",
     "description": "The label of footer link with label=Main Bluefin Repository linking to https://github.com/projectbluefin"
   },
   "link.item.label.Bluefin": {
@@ -108,15 +108,15 @@
     "description": "The label of footer link with label=Bluefin linking to https://github.com/projectbluefin/dakota"
   },
   "link.item.label.Documentation": {
-    "message": "Documentation",
+    "message": "文件",
     "description": "The label of footer link with label=Documentation linking to https://github.com/projectbluefin/documentation"
   },
   "link.item.label.Website": {
-    "message": "Website",
+    "message": "網站",
     "description": "The label of footer link with label=Website linking to https://github.com/projectbluefin/website"
   },
   "link.item.label.Report Issue": {
-    "message": "Report Issue",
+    "message": "回報問題",
     "description": "The label of footer link with label=Report Issue linking to https://github.com/projectbluefin/bluefin/issues/new/choose"
   },
   "copyright": {
