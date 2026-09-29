@@ -46,15 +46,15 @@ Bluefin là "Sự diễn giải của tinh thần Ubuntu được xây dựng tr
 
 - **Bố cục GNOME giống Ubuntu** tích hợp các extension được tuyển chọn:
   - [Dash to Dock](https://micheleg.github.io/dash-to-dock/) - để có một dock quen thuộc
-  - [Appindicator](https://github.com/ubuntu/gnome-shell-extension-appindicator/) - cho các biểu tượng kiểu khay ở góc trên bên phải
-  - [GSConnect](https://github.com/GSConnect/gnome-shell-extension-gsconnect/) - kết nối thiết bị di động với desktop
-  - [Blur my Shell](https://github.com/aunetx/blur-my-shell/) ([Quyên góp](https://github.com/sponsors/aunetx)) - cho chút lấp lánh
-  - [Search Light](https://github.com/icedman/search-light/) - cung cấp chức năng tìm kiếm và quy trình kiểu macOS Spotlight, gắn với <kbd>Super</kbd>-<kbd>Space</kbd> theo mặc định
+  - [Appindicator](https://github.com/ubuntu/gnome-shell-extension-appindicator) - cho các biểu tượng kiểu khay ở góc trên bên phải
+  - [GSConnect](https://github.com/GSConnect/gnome-shell-extension-gsconnect) - kết nối thiết bị di động với desktop
+  - [Blur my Shell](https://github.com/aunetx/blur-my-shell) ([Quyên góp](https://github.com/sponsors/aunetx)) - cho chút lấp lánh
+  - [Search Light](https://github.com/icedman/search-light) - cung cấp chức năng tìm kiếm và quy trình kiểu macOS Spotlight, gắn với <kbd>Super</kbd>-<kbd>Space</kbd> theo mặc định
 - **[Chế độ Nhà phát triển](/bluefin-dx)** - công cụ chuyên dụng cho nhà phát triển biến Bluefin thành workstation cloud-native mạnh mẽ
 - **[Terminal Ptyxis](https://devsuite.app/ptyxis/)** cho tác vụ tập trung container
   - [Distroshelf](https://flathub.org/apps/com.ranfdev.DistroShelf) ([Quyên góp](https://github.com/sponsors/ranfdev)) để quản lý container
 - **[Tailscale](https://tailscale.com)** tích hợp cho VPN cùng `wireguard-tools` và hỗ trợ systray
-- **[GNOME Extensions Manager](https://flathub.org/apps/com.mattJakeman.ExtensionManager)** ([Quyên góp](https://github.com/sponsors/mJakeman)) tích hợp
+- **[GNOME Extensions Manager](https://flathub.org/apps/com.mattjakeman.ExtensionManager)** ([Quyên góp](https://github.com/sponsors/mjakeman)) tích hợp
 - **[Cửa hàng Ứng dụng Bazaar](https://github.com/kolunmi/bazaar)** với [Flathub](https://flathub.org):
   - Trung tâm phần mềm quen thuộc để cài ứng dụng đồ họa
   - Ứng dụng bị bỏ rơi và runtime lỗi thời bị ẩn
