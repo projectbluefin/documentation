@@ -65,7 +65,7 @@ introduces a new domain or discovers a durable pattern must write or update one.
    - `## Verification`
    - `## Sources`
 6. **Update router**: Add the new skill to the table in `docs/SKILL.md` in the same commit.
-7. **Verification**: Run `npm test` and `bash scripts/check-skill-frontmatter.sh` to ensure all checks pass.
+7. **Verification**: Check the front matter and sections against the list below by hand — no automated skill-hygiene check exists — then run `npm test`.
 
 ## Common Rationalizations
 
@@ -88,7 +88,7 @@ introduces a new domain or discovers a durable pattern must write or update one.
 - [ ] Description is <= 256 characters.
 - [ ] Body contains all required sections (`When to Use`, `When NOT to Use`, `Core Process`, `Common Rationalizations`, `Red Flags`, `Verification`, `Sources`).
 - [ ] `docs/SKILL.md` includes a markdown link to the new skill.
-- [ ] `npm test` passes all tests, including skill hygiene checks.
+- [ ] `npm test` passes.
 
 ## Sources
 

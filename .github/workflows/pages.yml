@@ -14,7 +14,8 @@ on:
 
 # Concurrency is per job, not per workflow: a workflow-level cancel would also
 # kill `verify`, and superseded main pushes (~29% of them) would get no test
-# result at all. Builds and deploys stay latest-wins; `verify` always finishes.
+# result at all. Builds stay latest-wins; deploys queue so an in-flight Pages
+# deployment is never killed; `verify` always finishes.
 
 permissions:
   contents: read
@@ -270,7 +271,7 @@ jobs:
     needs: [build, verify]
     concurrency:
       group: ${{ github.workflow }}-deploy-${{ github.ref }}
-      cancel-in-progress: true
+      cancel-in-progress: false
 
     # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
     permissions:
