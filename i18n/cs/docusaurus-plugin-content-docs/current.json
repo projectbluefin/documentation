@@ -1,26 +1,26 @@
 {
   "version.label": {
-    "message": "Next",
+    "message": "Následující",
     "description": "The label for version current"
   },
   "sidebar.baseSidebar.category.Get Bluefin": {
-    "message": "Get Bluefin",
+    "message": "Získej Bluefin",
     "description": "The label for category 'Get Bluefin' in sidebar 'baseSidebar'"
   },
   "sidebar.baseSidebar.category.Images": {
-    "message": "Images",
+    "message": "Obrázky",
     "description": "The label for category 'Images' in sidebar 'baseSidebar'"
   },
   "sidebar.baseSidebar.category.User Guide": {
-    "message": "User Guide",
+    "message": "Uživatelský průvodce",
     "description": "The label for category 'User Guide' in sidebar 'baseSidebar'"
   },
   "sidebar.baseSidebar.category.Developer Guide": {
-    "message": "Developer Guide",
+    "message": "Vývojářský průvodce",
     "description": "The label for category 'Developer Guide' in sidebar 'baseSidebar'"
   },
   "sidebar.baseSidebar.category.Community & Project": {
-    "message": "Community & Project",
+    "message": "Komunita a projekt",
     "description": "The label for category 'Community & Project' in sidebar 'baseSidebar'"
   }
 }
