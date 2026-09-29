@@ -1,26 +1,26 @@
 {
   "version.label": {
-    "message": "Next",
+    "message": "التالي",
     "description": "The label for version current"
   },
   "sidebar.baseSidebar.category.Get Bluefin": {
-    "message": "Get Bluefin",
+    "message": "احصل على Bluefin",
     "description": "The label for category 'Get Bluefin' in sidebar 'baseSidebar'"
   },
   "sidebar.baseSidebar.category.Images": {
-    "message": "Images",
+    "message": "الصور",
     "description": "The label for category 'Images' in sidebar 'baseSidebar'"
   },
   "sidebar.baseSidebar.category.User Guide": {
-    "message": "User Guide",
+    "message": "دليل المستخدم",
     "description": "The label for category 'User Guide' in sidebar 'baseSidebar'"
   },
   "sidebar.baseSidebar.category.Developer Guide": {
-    "message": "Developer Guide",
+    "message": "دليل المطور",
     "description": "The label for category 'Developer Guide' in sidebar 'baseSidebar'"
   },
   "sidebar.baseSidebar.category.Community & Project": {
-    "message": "Community & Project",
+    "message": "المجتمع والمشروع",
     "description": "The label for category 'Community & Project' in sidebar 'baseSidebar'"
   }
 }

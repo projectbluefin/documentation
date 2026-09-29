@@ -4,19 +4,19 @@
     "description": "The alt text of navbar logo"
   },
   "item.label.Documentation": {
-    "message": "Documentation",
+    "message": "الوثائق",
     "description": "Navbar item with label Documentation"
   },
   "item.label.Blog": {
-    "message": "Blog",
+    "message": "المدونة",
     "description": "Navbar item with label Blog"
   },
   "item.label.Reports": {
-    "message": "Reports",
+    "message": "التقارير",
     "description": "Navbar item with label Reports"
   },
   "item.label.Leaderboards": {
-    "message": "Leaderboards",
+    "message": "لوحات المتصدرين",
     "description": "Navbar item with label Leaderboards"
   },
   "item.label.Hive": {
@@ -24,15 +24,15 @@
     "description": "Navbar item with label Hive"
   },
   "item.label.Discussions": {
-    "message": "Discussions",
+    "message": "المناقشات",
     "description": "Navbar item with label Discussions"
   },
   "item.label.Analytics": {
-    "message": "Analytics",
+    "message": "التحليلات",
     "description": "Navbar item with label Analytics"
   },
   "item.label.Store": {
-    "message": "Store",
+    "message": "المتجر",
     "description": "Navbar item with label Store"
   }
 }
