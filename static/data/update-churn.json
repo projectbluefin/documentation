@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-28T05:18:28.926Z",
+  "generatedAt": "2026-09-29T05:17:34.585Z",
   "source": "GHCR OCI Manifests & Attestations",
   "method": "oci-layer-diff-v1",
   "unit": "MB",
@@ -14,11 +14,11 @@
       "releases": [
         {
           "tag": "stable",
-          "date": "2026-09-28",
+          "date": "2026-09-29",
           "previousTag": null,
-          "downloadChurnMB": 3175,
+          "downloadChurnMB": 3174.9,
           "sharedMB": 0,
-          "totalMB": 3175,
+          "totalMB": 3174.9,
           "reuseEfficiencyPct": 0,
           "totalLayers": 74,
           "sharedLayers": 0,
@@ -31,13 +31,13 @@
           "tag": "stable-daily-20260922",
           "date": "2026-09-22",
           "previousTag": "stable",
-          "downloadChurnMB": 0,
-          "sharedMB": 3175,
+          "downloadChurnMB": 826.8,
+          "sharedMB": 2348.1,
           "totalMB": 3175,
-          "reuseEfficiencyPct": 100,
+          "reuseEfficiencyPct": 74,
           "totalLayers": 74,
-          "sharedLayers": 74,
-          "newLayers": 0,
+          "sharedLayers": 63,
+          "newLayers": 11,
           "zstdLayers": 0,
           "compressionFormat": "gzip",
           "isBaseline": false
@@ -189,7 +189,7 @@
       "releases": [
         {
           "tag": "stable",
-          "date": "2026-09-28",
+          "date": "2026-09-29",
           "previousTag": null,
           "downloadChurnMB": 3478.8,
           "sharedMB": 0,
@@ -214,11 +214,11 @@
       "releases": [
         {
           "tag": "testing",
-          "date": "2026-09-28",
+          "date": "2026-09-29",
           "previousTag": null,
-          "downloadChurnMB": 2210.8,
+          "downloadChurnMB": 2212.7,
           "sharedMB": 0,
-          "totalMB": 2210.8,
+          "totalMB": 2212.7,
           "reuseEfficiencyPct": 0,
           "totalLayers": 128,
           "sharedLayers": 0,
