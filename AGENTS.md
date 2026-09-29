@@ -213,11 +213,15 @@ Rules for every `scripts/fetch-*.js`:
   handler, and never write a silently empty file.
 - **A non-zero exit fails the whole build.** `scripts/run-parallel.mjs` fails
   the run if any script exits non-zero or dies on a signal, so reserve that for
-  output you must not deploy. Today's scripts are blunter than this rule: every
-  `fetch-*.js` ends in a top-level `.catch` that exits 1 — including on network
-  errors — and `scripts/fetch-github-profiles.js` also exits 1 when it resolves
-  zero profiles, so an upstream outage on a cold cache fails the build. Narrow
-  those paths when you touch them; don't add new ones.
+  output you must not deploy. Eight of the 23 `fetch-*.js` scripts are blunter
+  than this rule: `fetch-feeds`, `fetch-firehose`, `fetch-github-profiles`,
+  `fetch-github-repos`, `fetch-gnome-extensions`, `fetch-hive-history`,
+  `fetch-pin-state` and `fetch-portal-contributors` end in a top-level `.catch`
+  that exits non-zero — including on network errors — and
+  `scripts/fetch-github-profiles.js` also exits 1 when it resolves zero
+  profiles, so an upstream outage on a cold cache fails the build. The rest
+  already catch into the `unavailable`/exit-0 path. Narrow the eight when you
+  touch them; don't add new ones.
 - **An in-flight CI run is never a failure.** Anything without a terminal
   conclusion is pending. Reuse `classifyRun` from `scripts/lib/gh.js`.
 - A missing value is `null` — a gap. A real `0` stays `0`. "Steady at zero" and
