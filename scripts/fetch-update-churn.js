@@ -18,6 +18,7 @@
 const fs = require("fs");
 const path = require("path");
 const { seedIsFresh } = require("./lib/seed-cache.js");
+const { fetchGhcrTags } = require("./lib/sbom/api.js");
 
 const OUTPUT_FILE = path.join(
   __dirname,
@@ -36,6 +37,16 @@ const SBOM_FILE = path.join(
 
 const CACHE_MAX_AGE_HOURS = Number(process.env.UPDATE_CHURN_CACHE_HOURS || 24);
 const FORCE_REFRESH = process.argv.includes("--force");
+
+/**
+ * Utah publishes one dated tag per build: `testing-YYYYMMDD-<short-sha>`.
+ * Those tags are the only second point Utah has — the floating `testing` tag
+ * names a different manifest after every build, so it can never produce a delta.
+ */
+const UTAH_DATED_TAG = /^testing-\d{8}-[0-9a-f]{7,40}$/;
+
+/** How many dated Utah builds the churn series follows. */
+const UTAH_TAG_LIMIT = 14;
 
 const IMAGE_CONFIGS = [
   {
@@ -72,7 +83,22 @@ const IMAGE_CONFIGS = [
     package: "utah",
     stream: "testing",
     sbomStreamId: "utah-testing",
-    defaultTags: [],
+    // Seed series, so Utah still renders a delta if tag listing is unavailable
+    // on a given run. `tagSeries` keeps extending it from the registry below.
+    defaultTags: [
+      "testing-20260926-be64d10",
+      "testing-20260926-34c0f13",
+      "testing-20260926-e54be2e",
+      "testing-20260927-08286da",
+      "testing-20260927-56e4e2d",
+      "testing-20260927-f5f4053",
+      "testing-20260928-ce09ef7",
+      "testing-20260929-815ea44",
+    ],
+    // A hand-maintained tag list goes stale the day after it is written, and a
+    // stale list is indistinguishable from an image that stopped shipping. The
+    // registry is the source of truth, so read the series from it.
+    tagSeries: { pattern: UTAH_DATED_TAG, limit: UTAH_TAG_LIMIT },
   },
 ];
 
@@ -128,6 +154,51 @@ function analyzeManifestLayers(layers = []) {
     gzipBytes,
     compressionFormat,
   };
+}
+
+/**
+ * Pure function: The YYYYMMDD stamp a tag carries, or "" when it carries none.
+ */
+function datedTagKey(tag = "") {
+  const match = /(\d{4})(\d{2})(\d{2})/.exec(String(tag));
+  return match ? `${match[1]}${match[2]}${match[3]}` : "";
+}
+
+/**
+ * Pure function: Sorts tags oldest-first by the date they carry, falling back to
+ * the tag text so same-day builds keep a stable order across runs. Churn is a
+ * diff between consecutive entries, so the order is the measurement, not a
+ * presentation detail.
+ */
+function compareTagsByDate(a, b) {
+  const dateDelta = datedTagKey(a).localeCompare(datedTagKey(b));
+  return dateDelta !== 0 ? dateDelta : String(a).localeCompare(String(b));
+}
+
+/**
+ * Pure function: Picks the most recent `limit` tags matching `pattern`, in
+ * chronological order. A tag set that grows daily must be trimmed from the
+ * front, or the series is the registry's entire history rather than the churn
+ * the dashboard charts.
+ *
+ * @param {string[]} tags  Every tag the registry lists for the package.
+ * @param {{ pattern?: RegExp, limit?: number }} series
+ */
+function selectDatedTags(tags = [], series = {}) {
+  const { pattern, limit } = series || {};
+  if (
+    !Array.isArray(tags) ||
+    !pattern ||
+    !Number.isFinite(limit) ||
+    limit <= 0
+  ) {
+    return [];
+  }
+  const matched = [
+    ...new Set(tags.filter((t) => typeof t === "string" && pattern.test(t))),
+  ];
+  if (matched.length === 0) return [];
+  return matched.sort(compareTagsByDate).slice(-limit);
 }
 
 /**
@@ -304,6 +375,26 @@ async function getPlatformLayers(repo, tag) {
 }
 
 /**
+ * Resolve an image's published tag series from GHCR.
+ *
+ * Never throws and never exits non-zero: an unreachable or unauthorized tag
+ * listing degrades to the config's seed tags, which is the same shape of gap
+ * the rest of this pipeline already represents with `unavailable`.
+ */
+async function discoverSeriesTags(repo, series) {
+  const [org, pkg] = String(repo || "").split("/");
+  if (!org || !pkg) return [];
+  try {
+    return selectDatedTags(await fetchGhcrTags(org, pkg), series);
+  } catch (err) {
+    console.warn(
+      `fetch-update-churn: tag listing failed for ${repo} — ${err.message}`,
+    );
+    return [];
+  }
+}
+
+/**
  * Main execution function.
  */
 async function main() {
@@ -341,14 +432,30 @@ async function main() {
   const imagesOutput = {};
 
   for (const config of IMAGE_CONFIGS) {
-    const { id, name, edition, repo, stream, sbomStreamId, defaultTags } =
-      config;
+    const {
+      id,
+      name,
+      edition,
+      repo,
+      stream,
+      sbomStreamId,
+      defaultTags,
+      tagSeries,
+    } = config;
 
-    // Collect tags from config + SBOM cache.
+    // Collect tags from the registry + config + SBOM cache.
     // For streams that publish dated tags (e.g. Bluefin Classic), SBOM releases
     // are actual registry tags (stable-YYYYMMDD). For streams whose releases
-    // use floating tags (Dakota, Utah), use the entry's actual image tag or floating stream.
+    // use floating tags (Dakota), use the entry's actual image tag or floating stream.
     const tagsToInspect = [...defaultTags];
+    if (tagSeries) {
+      for (const tag of await discoverSeriesTags(repo, tagSeries)) {
+        if (!tagsToInspect.includes(tag)) tagsToInspect.push(tag);
+      }
+      // Every tag in a discovered series carries its own date, so order the
+      // whole set by date rather than by which config introduced it.
+      tagsToInspect.sort(compareTagsByDate);
+    }
     if (sbomCache?.streams?.[sbomStreamId]?.releases) {
       const releases = sbomCache.streams[sbomStreamId].releases;
       for (const [key, entry] of Object.entries(releases)) {
@@ -374,7 +481,9 @@ async function main() {
         package: repo,
         stream,
         unavailable: true,
-        stateReason: `No stable releases available yet — ${name} is under active development`,
+        stateReason: tagSeries
+          ? `Could not list a published tag series for ${name} from the registry`
+          : `No stable releases available yet — ${name} is under active development`,
         releases: [],
       };
       continue;
@@ -448,6 +557,10 @@ module.exports = {
   analyzeManifestLayers,
   diffReleaseLayers,
   calculateReleaseChurn,
+  datedTagKey,
+  compareTagsByDate,
+  selectDatedTags,
+  discoverSeriesTags,
   extractDateFromTag,
   fetchGhcrManifest,
   getPlatformLayers,

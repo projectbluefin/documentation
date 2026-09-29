@@ -24,6 +24,20 @@ Measuring release-over-release download deltas, chunkah layer reuse efficiency, 
 1. **Query Platform Manifests**:
    - Query OCI manifests via registry HTTPS endpoints or Skopeo for each image tag.
    - For multi-arch manifest lists (`application/vnd.oci.image.index.v1+json`), dereference the `linux/amd64` platform digest to obtain the array of layer descriptors.
+   - A tag set with only one member yields a baseline and no delta, so a card
+     whose only point is a baseline is a missing measurement, not a quiet
+     release. Where an image ships dated per-build tags, discover the series
+     from the registry instead of hand-listing it: `tagSeries` in
+     `IMAGE_CONFIGS` names a `pattern` and a `limit`, `fetchGhcrTags` (shared
+     with `fetch-github-sbom.js`) supplies the candidates, and
+     `selectDatedTags` keeps the most recent `limit`, oldest-first. Utah ships
+     `testing-YYYYMMDD-<short-sha>` per build and is discovered this way. The
+     `defaultTags` seed survives as a fallback for when tag listing fails.
+     Churn is a diff between consecutive entries, so the series is sorted by the
+     date each tag carries — `compareTagsByDate` — never by insertion order.
+     Tags without a date sort before dated ones, which is correct for a
+     `latest`-style floating tag appended from the SBOM cache: it is the
+     current build, so it belongs at the end of the series.
 2. **Layer Digest Diffing**:
    - For release $N$ following release $N-1$:
      - Shared layers: layer digests present in both $N-1$ and $N$. These require 0 download bytes during `bootc update`.
@@ -33,7 +47,10 @@ Measuring release-over-release download deltas, chunkah layer reuse efficiency, 
 3. **Zstd-Chunked Detection**:
    - A layer is recognized as zstd-chunked when its `mediaType` contains `zstd` or its annotations include `io.github.containers.zstd-chunked.manifest-checksum`.
 4. **Data Degradation & Fallback**:
-   - If an image has no stable releases (e.g. Utah in bootstrapping phase), flag it explicitly with `{ unavailable: true, stateReason: "..." }`.
+   - If an image has no publishable tags at all, or its tag series could not be
+     listed, flag it explicitly with `{ unavailable: true, stateReason: "..." }`.
+     Say which of the two happened — a registry that cannot be reached and an
+     image that has not shipped are different claims.
    - Never throw or exit non-zero from the pipeline script.
 5. **Baseline Releases Are Not Deltas**:
    - The first tag the pipeline tracked for an image has `previousTag: null` and
@@ -76,6 +93,10 @@ Measuring release-over-release download deltas, chunkah layer reuse efficiency, 
 
 ## Common Rationalizations
 
+- _"The tag list in `IMAGE_CONFIGS` is stale, so let us just update it by hand."_
+  Wrong. A hand-maintained list goes stale the day after it is written, and a
+  stale list is indistinguishable from an image that stopped shipping. Add a
+  `tagSeries` and let the registry supply the series.
 - _"Utah doesn't have releases yet, so we can omit it from the dataset."_
   Wrong. ADR 0002 mandates visible unavailability: omitting a variant makes an incomplete dashboard indistinguishable from a healthy one. Render an explicit unavailable card.
 - _"We can estimate churn by diffing RPM package sizes instead of container layers."_
