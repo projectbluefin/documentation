@@ -4,19 +4,19 @@
     "description": "The title of the footer links column with title=Universal Blue in the footer"
   },
   "link.title.Community": {
-    "message": "Community",
+    "message": "Społeczność",
     "description": "The title of the footer links column with title=Community in the footer"
   },
   "link.title.RSS Feeds": {
-    "message": "RSS Feeds",
+    "message": "Kanały RSS",
     "description": "The title of the footer links column with title=RSS Feeds in the footer"
   },
   "link.title.Contribute": {
-    "message": "Contribute",
+    "message": "Współtworzenie",
     "description": "The title of the footer links column with title=Contribute in the footer"
   },
   "link.title.Media & Lore": {
-    "message": "Media & Lore",
+    "message": "Media & Legendy",
     "description": "The title of the footer links column with title=Media & Lore in the footer"
   },
   "link.title.GitHub": {
@@ -36,11 +36,11 @@
     "description": "The label of footer link with label=Universal Blue linking to https://universal-blue.org"
   },
   "link.item.label.Blog and Announcements": {
-    "message": "Blog and Announcements",
+    "message": "Blog i ogłoszenia",
     "description": "The label of footer link with label=Blog and Announcements linking to https://blog.projectbluefin.io/"
   },
   "link.item.label.Discussions": {
-    "message": "Discussions",
+    "message": "Dyskusje",
     "description": "The label of footer link with label=Discussions linking to https://github.com/ublue-os/bluefin/discussions"
   },
   "link.item.label.Discord": {
@@ -48,59 +48,59 @@
     "description": "The label of footer link with label=Discord linking to https://discord.gg/XUC8cANVHy"
   },
   "link.item.label.Ask Bluefin": {
-    "message": "Ask Bluefin",
+    "message": "Zapytaj Bluefin",
     "description": "The label of footer link with label=Ask Bluefin linking to https://ask.projectbluefin.io"
   },
   "link.item.label.Feedback": {
-    "message": "Feedback",
+    "message": "Opinie",
     "description": "The label of footer link with label=Feedback linking to https://feedback.projectbluefin.io/"
   },
   "link.item.label.Changelogs": {
-    "message": "Changelogs",
+    "message": "Dzienniki zmian",
     "description": "The label of footer link with label=Changelogs linking to https://changelogs.projectbluefin.io"
   },
   "link.item.label.Blog and Announcements Feed": {
-    "message": "Blog and Announcements Feed",
+    "message": "Kanał: Blog i ogłoszenia",
     "description": "The label of footer link with label=Blog and Announcements Feed linking to https://docs.projectbluefin.io/blog/atom.xml"
   },
   "link.item.label.Releases Feed": {
-    "message": "Releases Feed",
+    "message": "Kanał: Wersje",
     "description": "The label of footer link with label=Releases Feed linking to https://github.com/projectbluefin/dakota/releases.atom"
   },
   "link.item.label.Discussions Feed": {
-    "message": "Discussions Feed",
+    "message": "Kanał: Dyskusje",
     "description": "The label of footer link with label=Discussions Feed linking to https://github.com/ublue-os/bluefin/discussions.atom"
   },
   "link.item.label.Open Issues": {
-    "message": "Open Issues",
+    "message": "Otwarte problemy",
     "description": "The label of footer link with label=Open Issues linking to https://issues.projectbluefin.io"
   },
   "link.item.label.Open Pull Requests": {
-    "message": "Open Pull Requests",
+    "message": "Otwarte pull requesty",
     "description": "The label of footer link with label=Open Pull Requests linking to https://pullrequests.projectbluefin.io"
   },
   "link.item.label.Contributor's Guide": {
-    "message": "Contributor's Guide",
+    "message": "Przewodnik współtworzenia",
     "description": "The label of footer link with label=Contributor's Guide linking to https://contribute.projectbluefin.io"
   },
   "link.item.label.Dinosaurs": {
-    "message": "Dinosaurs",
+    "message": "Dinozaury",
     "description": "The label of footer link with label=Dinosaurs linking to /dinosaurs"
   },
   "link.item.label.Artwork": {
-    "message": "Artwork",
+    "message": "Grafika",
     "description": "The label of footer link with label=Artwork linking to /artwork"
   },
   "link.item.label.Music": {
-    "message": "Music",
+    "message": "Muzyka",
     "description": "The label of footer link with label=Music linking to /music"
   },
   "link.item.label.Press Kit": {
-    "message": "Press Kit",
+    "message": "Materiały prasowe",
     "description": "The label of footer link with label=Press Kit linking to /press-kit"
   },
   "link.item.label.Main Bluefin Repository": {
-    "message": "Main Bluefin Repository",
+    "message": "Główny repozytorium Bluefin",
     "description": "The label of footer link with label=Main Bluefin Repository linking to https://github.com/projectbluefin"
   },
   "link.item.label.Bluefin": {
@@ -108,15 +108,15 @@
     "description": "The label of footer link with label=Bluefin linking to https://github.com/projectbluefin/dakota"
   },
   "link.item.label.Documentation": {
-    "message": "Documentation",
+    "message": "Dokumentacja",
     "description": "The label of footer link with label=Documentation linking to https://github.com/projectbluefin/documentation"
   },
   "link.item.label.Website": {
-    "message": "Website",
+    "message": "Strona",
     "description": "The label of footer link with label=Website linking to https://github.com/projectbluefin/website"
   },
   "link.item.label.Report Issue": {
-    "message": "Report Issue",
+    "message": "Zgłoś problem",
     "description": "The label of footer link with label=Report Issue linking to https://github.com/projectbluefin/bluefin/issues/new/choose"
   },
   "copyright": {
