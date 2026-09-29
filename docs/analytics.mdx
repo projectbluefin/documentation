@@ -27,19 +27,28 @@ Every Project Bluefin count comes from `countme.projectbluefin.io`
 
 ### First-party Countme Service & Privacy Guarantees
 
-Project Bluefin images participate in direct weekly countme reporting via systemd services targeting
-`https://countme.projectbluefin.io/metalink`.
+Project Bluefin Dakota and Utah images send a daily active-system ping from the
+`projectbluefin-countme` systemd timer to `https://countme.projectbluefin.io/v1/ping`.
+Other images do not send it.
 
-- **Cohort measurement:** Uses installation age buckets (1: first week, 2: 2–4 weeks, 3: 5–24 weeks, 4: >24 weeks) calculated locally from an installation epoch timestamp.
-- **Privacy guarantees:** Transmits only image name, tag, flavor, architecture, and age bucket. No machine ID, IP address, username, or persistent identifier is sent or logged.
+- **What is sent:** a single string, `<image-name>/<image-flavor>:<stream>`, where the stream
+  is the booted image's tag (`stable`, `testing`, or `unknown`). Nothing else: no install age,
+  architecture, machine ID, username, or persistent identifier.
+- **How often:** at most once per day per system, and never from a live ISO, installer, or
+  container.
+- **What is stored:** one counter per UTC day and image. No per-system rows and no IP addresses.
+  A day's count is the number of systems active that day, not distinct devices over time.
 
 ### Opt-Out Instructions
 
-To stop Project Bluefin countme reporting now and across reboots, mask its systemd timer and service:
+To stop Project Bluefin countme reporting now and across reboots, mask its systemd timer:
 
 ```bash
-sudo systemctl mask --now bluefin-countme.timer bluefin-countme.service
+sudo systemctl mask --now projectbluefin-countme.timer
 ```
+
+A mask of the previous `bluefin-countme.timer` or `bluefin-countme.service` units, and the
+`/etc/projectbluefin/countme/disabled` opt-out file, still stop reporting.
 
 To disable upstream Fedora countme:
 
