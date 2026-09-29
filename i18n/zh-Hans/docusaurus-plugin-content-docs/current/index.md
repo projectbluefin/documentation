@@ -16,7 +16,7 @@ Bluefin 是一款下一代 Linux 桌面，倾向于持续渐进式改进。我�
 
 :::tip
 
-或许有人乐于把 Bluefin 说成最能惠及开发者或有经验的 Linux 用户的工具，但我会争论说，它同样是新用户同样有力的选择，因为它足够可靠，而且开箱即用。
+或许有人乐于把 Bluefin 说成最能惠及开发者或有经验的 Linux 用户的工具，但我会争论说，它对新用户同样是有力的选择，因为它足够可靠，而且开箱即用。
 
 -- [Jack Wallen](https://thenewstack.io/bluefin-a-next-gen-linux-workstation-for-containerized-apps/)
 
@@ -24,7 +24,7 @@ Bluefin 是一款下一代 Linux 桌面，倾向于持续渐进式改进。我�
 
 Bluefin 是：
 
-- **Flatpak 优先** - Bluefin 的应用模型围绕隔离的应用展开，这些应用由 Flathub 维护。与现代组件（如 Wayland、Piwire、Flatpak Portal 等）配合不佳的应用体验可能较差，不推荐使用。
+- **Flatpak 优先** - Bluefin 的应用模型围绕隔离的应用展开，这些应用由 Flathub 维护。与现代组件（如 Wayland、Pipewire、Flatpak Portal 等）配合不佳的应用体验可能较差，不推荐使用。
 - **刻意保持隐形** - Bluefin 不是一个发行版。你打交道的是 Flathub、Homebrew 以及你放进容器里的任何东西。
 - **为 96% 优化** - 不是那 4% - Bluefin 对功能采取"更强共同体"的方式。你始终可以做你想做的事，但价值来自最佳实践的共享。我们不会在边界情况上花费太多时间。
 - **经过验证的开发模式** - 以容器为中心，并向新的 Linux 用户介绍[云原生所用的工具](https://www.cncf.io/)。更多信息请参阅[使命声明](/mission)和[价值观](/values)页面。
@@ -53,7 +53,7 @@ Bluefin 是"建立在 Fedora 技术之上的对 Ubuntu 精神的演绎"——这
 - **[Developer Mode](/bluefin-dx)** - 专用的开发工具，将 Bluefin 变成强大的云原生工作站
 - **[Ptyxis 终端](https://devsuite.app/ptyxis/)** 面向以容器为中心的工作流
   - [Distroshelf](https://flathub.org/apps/com.ranfdev.DistroShelf) ([Donate](https://github.com/sponsors/ranfdev)) 用于容器管理
-- **[Tailscale](https://tailscale.com)** 随 VPN 一起提供，并附带 `wireguard-tools` 和 systray 支持
+- **[Tailscale](https://tailscale.com)** 内置，用于 VPN，并附带 `wireguard-tools` 和系统托盘支持
 - **[GNOME Extensions Manager](https://flathub.org/apps/com.mattjakeman.ExtensionManager)** ([Donate](https://github.com/sponsors/mjakeman)) 随附
 - **[Bazaar 应用商店](https://github.com/kolunmi/bazaar)**，支持 [Flathub](https://flathub.org)：
   - 熟悉的应用中心 UI 用于安装图形应用
@@ -68,7 +68,7 @@ Bluefin 是"建立在 Fedora 技术之上的对 Ubuntu 精神的演绎"——这
 - **Universal Blue 基础**：
   - 随附用于游戏控制器和其他硬件的额外 udev 规则
   - 包含所有多媒体编解码器
-  - 分阶段自动更新：正常使用的电脑，完成后关闭它
+  - 分阶段自动更新：正常使用电脑，用完后关机即可
 
 ## 无发行版聚焦
 
@@ -84,7 +84,7 @@ Bluefin 中的工作流刻意聚焦上游——我们相信每个人都有一致
 
 - **[Downloads](/downloads)** — 获取官方 Bluefin ISO 或种子
 - **[Installation Runbook](/installation)** — 硬件规划和安装步骤
-- **[User Guide](/administration)** — 日常 administration、更新和应用
+- **[User Guide](/administration)** — 日常管理、更新和应用
 - **[Developer Guide](/bluefin-dx)** — 容器、devcontainers 和 AI 工具
 
 [公告博文](https://www.ypsidanger.com/announcing-project-bluefin/)还包含一些额外的背景信息。
