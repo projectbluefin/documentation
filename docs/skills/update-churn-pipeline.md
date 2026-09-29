@@ -24,6 +24,49 @@ Measuring release-over-release download deltas, chunkah layer reuse efficiency, 
 1. **Query Platform Manifests**:
    - Query OCI manifests via registry HTTPS endpoints or Skopeo for each image tag.
    - For multi-arch manifest lists (`application/vnd.oci.image.index.v1+json`), dereference the `linux/amd64` platform digest to obtain the array of layer descriptors.
+   - A tag set with only one member yields a baseline and no delta, so a card
+     whose only point is a baseline is a missing measurement, not a quiet
+     release. Where an image ships dated per-build tags, discover the series
+     from the registry instead of hand-listing it: `tagSeries` in
+     `IMAGE_CONFIGS` names a `pattern` and a `limit`, `fetchGhcrTags` (shared
+     with `fetch-github-sbom.js`) supplies the candidates, and
+     `selectDatedTags` keeps the most recent `limit`, oldest-first. Utah ships
+     `testing-YYYYMMDD-<short-sha>` per build and is discovered this way. The
+     `defaultTags` seed survives as a fallback for when tag listing fails.
+   - Churn is a diff between consecutive entries, so the order _is_ the
+     measurement, not a presentation detail. Every candidate — seed, registry
+     tag and SBOM-cache tag — is collected first and sorted exactly once, after
+     every source has contributed.
+   - **Order is by build time, not by tag text.** `compareTagsByDate` sorts on
+     the `YYYYMMDD` the tag carries, breaks same-day ties on the registry's
+     build timestamp (`fetchGhcrTagCreatedAt`, the packages API's `created_at`
+     per version), and falls back to tag text only for tags the packages API
+     had no timestamp for. This matters because an image that ships several
+     builds a day repeats the same date across them, and `diffReleaseLayers` is
+     directional — churn is the layers in N absent from N-1 and reuse % is
+     relative to N — so a same-day pair compared backwards reports different
+     numbers than the update a user performs. Tag text is not a build time:
+     `362ea44` sorts before `815ea44` while being the newer build. The
+     `created_at` lookup needs a token, so any workflow that produces the
+     dataset **must** pass `GITHUB_TOKEN` to the compute step — without one
+     `fetchGhcrTagCreatedAt` returns `{}` and the sort silently degrades to tag
+     text, which is the failure this tie-break exists to prevent.
+   - **An undated tag sorts last, never first.** A tag carrying no `YYYYMMDD`
+     is a floating name (`stable`, `testing`) pointing at the newest manifest,
+     so it belongs at the end of any series it is part of. Sorting it first
+     would make it the baseline and make the first delta a backwards diff.
+   - **A discovered series is a closed set.** When `tagSeries` is set, a tag
+     that does not match its `pattern` never joins the series — notably the
+     floating `testing` tag, which the SBOM cache contributes and which names a
+     manifest the newest dated tag already covers. Appending it produced a
+     duplicate point (0 MB churn, or a backwards delta) _and_ a release dated
+     today by `extractDateFromTag`, which is how an undated tag ended up
+     appearing to "belong at the end" of the series. The tag list is sorted
+     before it is charted, and the window itself is picked with the same
+     build-time order the chart uses, so a same-day pair at the edge of the
+     window is never trimmed against the order it is drawn in. `limit` then
+     trims the merged list, so a seed older than the
+     discovered window cannot push the chart past the limit.
 2. **Layer Digest Diffing**:
    - For release $N$ following release $N-1$:
      - Shared layers: layer digests present in both $N-1$ and $N$. These require 0 download bytes during `bootc update`.
@@ -33,7 +76,10 @@ Measuring release-over-release download deltas, chunkah layer reuse efficiency, 
 3. **Zstd-Chunked Detection**:
    - A layer is recognized as zstd-chunked when its `mediaType` contains `zstd` or its annotations include `io.github.containers.zstd-chunked.manifest-checksum`.
 4. **Data Degradation & Fallback**:
-   - If an image has no stable releases (e.g. Utah in bootstrapping phase), flag it explicitly with `{ unavailable: true, stateReason: "..." }`.
+   - If an image has no publishable tags at all, or its tag series could not be
+     listed, flag it explicitly with `{ unavailable: true, stateReason: "..." }`.
+     Say which of the two happened — a registry that cannot be reached and an
+     image that has not shipped are different claims.
    - Never throw or exit non-zero from the pipeline script.
 5. **Baseline Releases Are Not Deltas**:
    - The first tag the pipeline tracked for an image has `previousTag: null` and
@@ -76,6 +122,10 @@ Measuring release-over-release download deltas, chunkah layer reuse efficiency, 
 
 ## Common Rationalizations
 
+- _"The tag list in `IMAGE_CONFIGS` is stale, so let us just update it by hand."_
+  Wrong. A hand-maintained list goes stale the day after it is written, and a
+  stale list is indistinguishable from an image that stopped shipping. Add a
+  `tagSeries` and let the registry supply the series.
 - _"Utah doesn't have releases yet, so we can omit it from the dataset."_
   Wrong. ADR 0002 mandates visible unavailability: omitting a variant makes an incomplete dashboard indistinguishable from a healthy one. Render an explicit unavailable card.
 - _"We can estimate churn by diffing RPM package sizes instead of container layers."_
