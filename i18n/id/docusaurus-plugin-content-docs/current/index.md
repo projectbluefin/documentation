@@ -54,7 +54,7 @@ Bluefin adalah "Sebuah tafsir dari semangat Ubuntu yang dibangun atas teknologi 
 - **[Ptyxis terminal](https://devsuite.app/ptyxis/)** untuk alur kerja berfokus kontainer
   - [Distroshelf](https://flathub.org/apps/com.ranfdev.DistroShelf) ([Donasi](https://github.com/sponsors/ranfdev)) untuk manajemen kontainer
 - **[Tailscale](https://tailscale.com)** disertakan untuk VPN beserta `wireguard-tools` dan dukungan systray
-- **[GNOME Extensions Manager](https://flathub.org/apps/com.mattJakeman.ExtensionManager)** ([Donasi](https://github.com/sponsors/mjakeman)) disertakan
+- **[GNOME Extensions Manager](https://flathub.org/apps/com.mattjakeman.ExtensionManager)** ([Donasi](https://github.com/sponsors/mjakeman)) disertakan
 - **[Bazaar Application Store](https://github.com/kolunmi/bazaar)** yang menghadirkan [Flathub](https://flathub.org):
   - UI pusat software familiar untuk menginstal aplikasi grafis
   - Aplikasi yang ditinggalkan dan runtime kedaluwarsa dihilangkan
