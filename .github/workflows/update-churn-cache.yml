@@ -41,6 +41,8 @@ jobs:
           node-version: "24"
 
       - name: Compute release update churn
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: npm run fetch-update-churn -- --force
 
       - name: Check for churn dataset changes
