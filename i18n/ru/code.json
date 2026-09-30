@@ -282,7 +282,7 @@
     "message": "Везде"
   },
   "theme.SearchPage.documentsFound.plurals": {
-    "message": "Найден 1 документ|Найдено {count} документа|Найдено {count} документов",
+    "message": "Найден {count} документ|Найдено {count} документа|Найдено {count} документов",
     "description": "Pluralized label for \"{count} documents found\". Use as much plural forms (separated by \"|\") as your language support (see https://www.unicode.org/cldr/cldr-aux/charts/34/supplemental/language_plural_rules.html)"
   },
   "theme.SearchPage.noResultsText": {
