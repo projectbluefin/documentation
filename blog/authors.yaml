@@ -77,3 +77,12 @@ sherman:
   socials:
     github: "bsherman"
     linkedin: "benjamingsherman"
+
+delphicmelody:
+  name: Delphic Melody
+  page: true
+  title: Bluefin Artist
+  url: https://github.com/delphicmelody
+  image_url: https://github.com/delphicmelody.png
+  socials:
+    github: "delphicmelody"

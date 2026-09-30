@@ -91,16 +91,24 @@ A design skill saying "come up with copy" refers to mockups, not authorship.
 
    `image` is the social card. Point it at a local path under `static/`.
 
-4. **Use supported author socials.** Do not add `gitlab` to an author record:
-   Docusaurus turns its value into a relative link and fails broken-link
-   validation. Reuse only social keys already present in `blog/authors.yaml`.
+4. **Register new authors in `blog/authors.yaml`.** Every author key in the
+   post front matter must resolve in `blog/authors.yaml`. Use supported author
+   socials: do not add `gitlab` to an author record (Docusaurus turns its value
+   into a relative link and fails broken-link validation). Reuse only social
+   keys already present in `blog/authors.yaml` (such as `github`).
 
-5. **Add the body only from supplied copy.** This site deliberately configures
+5. **Quote HTML attribute values in MDX/Markdown.** MDX parsing treats raw HTML
+   tags as JSX. Bare unquoted attribute values like `<a href=https://...>` or
+   `<img src=/path...>` fail the MDX compilation parser with unexpected
+   character syntax errors. Always wrap attribute values in double quotes
+   (`href="..."`, `src="..."`, `alt="..."`).
+
+6. **Add the body only from supplied copy.** This site deliberately configures
    `truncateMarker` to match nothing, so do not add inert marker comments to
    new posts. The Docusaurus untruncated-post warning is expected for every
    post, including posts that use the documented marker syntax.
 
-6. **Format only what you touched**, then build.
+7. **Format only what you touched**, then build.
 
    ```bash
    npx prettier --write blog/<file>.mdx
