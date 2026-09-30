@@ -428,7 +428,18 @@ async function getPlatformLayers(repo, tag) {
 async function fetchGhcrTagCreatedAt(org, pkg, maxPages = 2) {
   const token = githubToken();
   const createdAt = {};
-  if (!token || !org || !pkg) return createdAt;
+  if (!token) {
+    // #1434 asks for a warning on the no-token path (not just the 403 catch),
+    // so a run without GITHUB_TOKEN surfaces the gap instead of silently
+    // degrading. The early return keeps the "never throws" contract.
+    console.warn(
+      "fetch-update-churn: no GITHUB_TOKEN configured for this repo — build " +
+        "timestamps unavailable; falling back to tag-text ordering within a day. " +
+        "Set GITHUB_TOKEN (with packages read access) to read per-tag build times.",
+    );
+    return createdAt;
+  }
+  if (!org || !pkg) return createdAt;
 
   const headers = {
     Authorization: `Bearer ${token}`,
