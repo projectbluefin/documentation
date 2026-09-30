@@ -24,7 +24,7 @@ Beberapa orang mungkin berkata bahwa Bluefin paling cocok untuk pengembang atau 
 
 Bluefin adalah:
 
-- **Flatpak Pertama** - Model aplikasi di Bluefin berpusat pada aplikasi terisolasi yang dipelihara di Flathub. Aplikasi yang tidak berjalan baik dengan komponen modern seperti Wayland, WirePlumber, Flatpak Portals, dll. mungkin memberikan pengalaman yang buruk dan tidak direkomendasikan.
+- **Flatpak Pertama** - Model aplikasi di Bluefin berpusat pada aplikasi terisolasi yang dipelihara di Flathub. Aplikasi yang tidak berjalan baik dengan komponen modern seperti Wayland, Pipewire, Flatpak Portals, dll. mungkin memberikan pengalaman yang buruk dan tidak direkomendasikan.
 - **Sengaja Tidak Menonjol** - Bluefin bukan sebuah distribusi. Hubungan Anda adalah dengan Flathub, brew, dan apa pun yang Anda masukkan ke dalam kontainer Anda.
 - **Teroptimasi untuk 96%** - Bukan 4% - Bluefin mengambil pendekatan "lebih kuat bersama" terhadap fitur. Anda selalu bisa melakukan apa yang Anda mau, tapi nilai datang dari berbagi praktik terbaik. Kami tidak menghabiskan banyak waktu pada kasus tepi.
 - **Model yang terbukti** - Pengalaman pengembang berpusat pada kontainer dan memperkenalkan pengguna Linux baru ke [tools used in cloud native](https://www.cncf.io/). Lihat halaman [Mission Statement](/mission) dan [Values](/values) untuk informasi lebih lanjut.
