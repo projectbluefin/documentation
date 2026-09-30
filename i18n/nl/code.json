@@ -44,7 +44,7 @@
     "description": "The label of the link targeting the tag list page"
   },
   "theme.colorToggle.ariaLabel.mode.system": {
-    "message": "system mode",
+    "message": "systeemmodus",
     "description": "The name for the system color mode"
   },
   "theme.colorToggle.ariaLabel.mode.light": {
@@ -175,11 +175,11 @@
     "description": "The ARIA label to collapse the sidebar category"
   },
   "theme.IconExternalLink.ariaLabel": {
-    "message": "(opens in new tab)",
+    "message": "(opent in nieuw tabblad)",
     "description": "The ARIA label for the external link icon"
   },
   "theme.NavBar.navAriaLabel": {
-    "message": "Main",
+    "message": "Hoofnnavigatie",
     "description": "The ARIA label for the main navigation"
   },
   "theme.NotFound.p1": {
@@ -255,11 +255,11 @@
     "description": "The ARIA label for hamburger menu button of mobile navigation"
   },
   "theme.navbar.mobileDropdown.collapseButton.expandAriaLabel": {
-    "message": "Expand the dropdown",
+    "message": "Dropdown uitklappen",
     "description": "The ARIA label of the button to expand the mobile dropdown navbar item"
   },
   "theme.navbar.mobileDropdown.collapseButton.collapseAriaLabel": {
-    "message": "Collapse the dropdown",
+    "message": "Dropdown inklappen",
     "description": "The ARIA label of the button to collapse the mobile dropdown navbar item"
   },
   "theme.docs.sidebar.expandButtonTitle": {
@@ -271,38 +271,38 @@
     "description": "The ARIA label and title attribute for expand button of doc sidebar"
   },
   "theme.SearchBar.noResultsText": {
-    "message": "No results"
+    "message": "Geen resultaten"
   },
   "theme.SearchBar.seeAllOutsideContext": {
-    "message": "See all results outside \"{context}\""
+    "message": "Alle resultaten buiten \"{context}\" bekijken"
   },
   "theme.SearchBar.searchInContext": {
-    "message": "See all results within \"{context}\""
+    "message": "Alle resultaten binnen \"{context}\" bekijken"
   },
   "theme.SearchBar.seeAll": {
-    "message": "See all results"
+    "message": "Alle resultaten bekijken"
   },
   "theme.SearchBar.label": {
-    "message": "Search",
+    "message": "Zoeken",
     "description": "The ARIA label and placeholder for search button"
   },
   "theme.SearchPage.existingResultsTitle": {
-    "message": "Search results for \"{query}\"",
+    "message": "Zoekresultaten voor \"{query}\"",
     "description": "The search page title for non-empty query"
   },
   "theme.SearchPage.emptyResultsTitle": {
-    "message": "Search the documentation",
+    "message": "Doorzoek de documentatie",
     "description": "The search page title for empty query"
   },
   "theme.SearchPage.searchContext.everywhere": {
-    "message": "Everywhere"
+    "message": "Overal"
   },
   "theme.SearchPage.documentsFound.plurals": {
-    "message": "1 document found|{count} documents found",
+    "message": "1 document gevonden|{count} documents gevonden",
     "description": "Pluralized label for \"{count} documents found\". Use as much plural forms (separated by \"|\") as your language support (see https://www.unicode.org/cldr/cldr-aux/charts/34/supplemental/language_plural_rules.html)"
   },
   "theme.SearchPage.noResultsText": {
-    "message": "No documents were found",
+    "message": "Geen documents gevonden",
     "description": "The paragraph for empty search result"
   },
   "theme.blog.post.plurals": {
@@ -330,7 +330,7 @@
     "description": "The text for authors with 0 blog post"
   },
   "theme.contentVisibility.unlistedBanner.title": {
-    "message": "Verborgen page",
+    "message": "Verborgen pagina",
     "description": "The unlisted content banner title"
   },
   "theme.contentVisibility.unlistedBanner.message": {
