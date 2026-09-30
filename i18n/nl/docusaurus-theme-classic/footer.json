@@ -116,7 +116,7 @@
     "description": "The label of footer link with label=Website linking to https://github.com/projectbluefin/website"
   },
   "link.item.label.Report Issue": {
-    "message": "Problem melden",
+    "message": "Probleem melden",
     "description": "The label of footer link with label=Report Issue linking to https://github.com/projectbluefin/bluefin/issues/new/choose"
   },
   "copyright": {
