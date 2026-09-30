@@ -4,19 +4,19 @@
     "description": "The alt text of navbar logo"
   },
   "item.label.Documentation": {
-    "message": "Documentation",
+    "message": "ドキュメント",
     "description": "Navbar item with label Documentation"
   },
   "item.label.Blog": {
-    "message": "Blog",
+    "message": "ブログ",
     "description": "Navbar item with label Blog"
   },
   "item.label.Reports": {
-    "message": "Reports",
+    "message": "レポート",
     "description": "Navbar item with label Reports"
   },
   "item.label.Leaderboards": {
-    "message": "Leaderboards",
+    "message": "リーダーボード",
     "description": "Navbar item with label Leaderboards"
   },
   "item.label.Hive": {
@@ -24,15 +24,15 @@
     "description": "Navbar item with label Hive"
   },
   "item.label.Discussions": {
-    "message": "Discussions",
+    "message": "ディスカッション",
     "description": "Navbar item with label Discussions"
   },
   "item.label.Analytics": {
-    "message": "Analytics",
+    "message": "分析",
     "description": "Navbar item with label Analytics"
   },
   "item.label.Store": {
-    "message": "Store",
+    "message": "ストア",
     "description": "Navbar item with label Store"
   }
 }

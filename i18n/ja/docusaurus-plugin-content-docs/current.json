@@ -4,23 +4,23 @@
     "description": "The label for version current"
   },
   "sidebar.baseSidebar.category.Get Bluefin": {
-    "message": "Get Bluefin",
+    "message": "Bluefinを入手",
     "description": "The label for category 'Get Bluefin' in sidebar 'baseSidebar'"
   },
   "sidebar.baseSidebar.category.Images": {
-    "message": "Images",
+    "message": "イメージ",
     "description": "The label for category 'Images' in sidebar 'baseSidebar'"
   },
   "sidebar.baseSidebar.category.User Guide": {
-    "message": "User Guide",
+    "message": "ユーザーガイド",
     "description": "The label for category 'User Guide' in sidebar 'baseSidebar'"
   },
   "sidebar.baseSidebar.category.Developer Guide": {
-    "message": "Developer Guide",
+    "message": "開発者ガイド",
     "description": "The label for category 'Developer Guide' in sidebar 'baseSidebar'"
   },
   "sidebar.baseSidebar.category.Community & Project": {
-    "message": "Community & Project",
+    "message": "コミュニティとプロジェクト",
     "description": "The label for category 'Community & Project' in sidebar 'baseSidebar'"
   }
 }
