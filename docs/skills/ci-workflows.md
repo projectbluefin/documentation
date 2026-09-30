@@ -17,10 +17,13 @@ metadata:
 
 # CI workflows
 
-`pages.yml` builds and deploys the site from `build`, `verify`, and `deploy`
-jobs. The cron `update-*-cache.yml` workflows feed it data through the Actions
-cache. Most CI mistakes here are silent: a cache that clobbers committed data,
-a gate that stops firing, or a cache entry that carries corrupt build state.
+`pages.yml` runs `data` (fetch once, upload `site-data`) → a `build` matrix
+(`en` plus translated shards of up to 4, from `build-site.mjs --matrix`) →
+`assemble` (merge parts, check every locale, upload the Pages artifact on
+main) → `deploy`, with `verify` (tests, lint) beside them. The cron
+`update-*-cache.yml` workflows feed it data through the Actions cache. Most CI
+mistakes here are silent: a cache that clobbers committed data, a gate that
+stops firing, or a cache entry that carries corrupt build state.
 
 ## When to Use
 
@@ -42,6 +45,17 @@ a gate that stops firing, or a cache entry that carries corrupt build state.
    script's "wrote"/"saved" line. Local fetch timings are only comparable when
    `static/data/github-profiles.json` is warm; CI restores it from its own
    cache, so a cold local run measures a 250-profile refetch CI never does.
+
+   Build time grows with live locales: one Docusaurus process builds them in
+   sequence, and one 4-vCPU runner is CPU-bound (parallel builds on it saved
+   only ~24% at 14 locales). Spread locales over runners instead; keep each
+   shard's artifact small (translated builds drop `static/`).
+
+   Anything a job uploads for another must be named by `needs`: `deploy` needs
+   `assemble`, not `build`, or it races the artifact. `upload-artifact` skips
+   dotfiles by default — `build/.nojekyll` needs `include-hidden-files`. Matrix
+   jobs sharing one job-level `concurrency` group cancel each other; include
+   `matrix.part` in the group.
 
 2. **Cache only gitignored fetcher output.** Run `git ls-files static/data`
    before adding a path to "Restore GitHub data cache". A tracked seed in that

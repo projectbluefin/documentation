@@ -9,6 +9,9 @@
 
 # Generated files
 .docusaurus
+# Per-locale scratch from scripts/build-site.mjs (removed after each build)
+.docusaurus-*
+/.locale-build
 .cache-loader
 
 # Auto-generated documentation

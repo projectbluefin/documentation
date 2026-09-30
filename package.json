@@ -5,8 +5,8 @@
   "scripts": {
     "docusaurus": "docusaurus",
     "start": "npm run fetch-data && docusaurus start --host 0.0.0.0",
-    "build": "npm run fetch-data && docusaurus build",
-    "build:ci": "docusaurus build",
+    "build": "npm run fetch-data && node scripts/build-site.mjs",
+    "build:ci": "node scripts/build-site.mjs",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
     "clear": "docusaurus clear",
