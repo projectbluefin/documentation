@@ -16,7 +16,7 @@ Bluefin é um desktop Linux de nova geração que avança em direção à melhor
 
 :::tip
 
-Alguns podem ser inclinados a dizer que o Bluefin serviria melhor aos desenvolvedores ou usuários avançados de Linux, mas eu argumentaria que ele é um contendente igualmente forte para usuários novos, por como ele é confiável e bem configurado de saída da caixa.
+Alguns podem ser inclinados a dizer que o Bluefin serviria melhor aos desenvolvedores ou usuários avançados de Linux, mas eu argumentaria que ele é um contendente igualmente forte para usuários novos, por como ele é confiável e bem configurado pronto para uso.
 
 -- [Jack Wallen](https://thenewstack.io/bluefin-a-next-gen-linux-workstation-for-containerized-apps/)
 
@@ -25,12 +25,12 @@ Alguns podem ser inclinados a dizer que o Bluefin serviria melhor aos desenvolve
 Bluefin é:
 
 - **Flatpak em Primeiro Lugar** - O modelo de aplicativos no Bluefin gira em torno de aplicativos isolados mantidos no Flathub. Aplicativos que não funcionam bem com componentes modernos como Wayland, Pipewire, Flatpak Portals, etc. podem oferecer uma experiência ruim e não são recomendados.
-- **Propositamente Invisible** - O Bluefin não é uma distribuição. Seu relacionamento é com o Flathub, o Homebrew e o que você colocar nos seus contêores.
+- **Propositamente Invisível** - O Bluefin não é uma distribuição. Seu relacionamento é com o Flathub, o Homebrew e o que você colocar nos seus contêineres.
 - **Otimizado para os 96%** - Não para os 4% - O Bluefin adota uma abordagem de "mais forte juntos" em relação às funcionalidades. Você sempre pode fazer o que quiser, mas o valor vem do compartilhamento de boas práticas. Não gastamos muito tempo com casos de borda.
-- **Modelo de desenvolvimento comprovado** - Experiência do desenvolvedor centrada nos contêores e na exposição dos [ferramentas usadas na cloud native](https://www.cncf.io/) para usuários novos de Linux. Veja as páginas da [Declaração de Missão](/mission) e dos [Valores](/values) para mais informações.
+- **Modelo de desenvolvimento comprovado** - Experiência do desenvolvedor centrada nos contêineres e na exposição das [ferramentas usadas na cloud native](https://www.cncf.io/) para usuários novos de Linux. Veja as páginas da [Declaração de Missão](/mission) e dos [Valores](/values) para mais informações.
 - **Focado Propositamente em um bom hardware** - O Bluefin roda melhor em hardware amigável a Linux, a fim de oferecer o máximo de experiência livre de legado aos usuários. O Bluefin também quer suportar OEMs que vendem laptops e desktops com Linux, por isso busca rodar com a melhor combinação de software e hardware. Não nos preocupamos em documentar ou contornar coisas que comprometem a experiência do usuário, então em alguns casos outro sistema operacional é a escolha correta.
 
-Se seus requisitos estão fora deste escopo, então **o Bluefin pode não ser o melhor para você**. O Bluefin pode causar desconforto e feridas [segurado incorretamente](/troubleshooting/#am-i-holding-bluefin-wrong). Reconhecemos que, para criar um desktop melhor, muitas partes da experiência tradicional do desktop Linux não virão conosco.
+Se seus requisitos estão fora deste escopo, então **o Bluefin pode não ser o melhor para você**. O Bluefin pode causar desconforto e feridas [quando segurado incorretamente](/troubleshooting/#am-i-holding-bluefin-wrong). Reconhecemos que, para criar um desktop melhor, muitas partes da experiência tradicional do desktop Linux não virão conosco.
 
 ## Experiência e funcionalidades de desktop
 
@@ -51,8 +51,8 @@ O Bluefin é "uma interpretação do espírito do Ubuntu construída sobre a tec
   - [Blur my Shell](https://github.com/aunetx/blur-my-shell) ([Doar](https://github.com/sponsors/aunetx)) - para aquele brilho
   - [Search Light](https://github.com/icedman/search-light) - fornece funcionalidade de busca e um workflow estilo macOS Spotlight vinculado a <kbd>Super</kbd>-<kbd>Space</kbd> por padrão
 - **[Modo de Desenvolvimento](/bluefin-dx)** - ferramentas dedicadas ao desenvolvedor que transformam o Bluefin em uma estação de trabalho cloud-native poderosa
-- **[Terminal Ptyxis](https://devsuite.app/ptyxis/)** para workflows centrados em contêores
-  - [Distroshelf](https://flathub.org/apps/com.ranfdev.DistroShelf) ([Doar](https://github.com/sponsors/ranfdev)) para gerenciamento de contêores
+- **[Terminal Ptyxis](https://devsuite.app/ptyxis/)** para workflows centrados em contêineres
+  - [Distroshelf](https://flathub.org/apps/com.ranfdev.DistroShelf) ([Doar](https://github.com/sponsors/ranfdev)) para gerenciamento de contêineres
 - **[Tailscale](https://tailscale.com)** incluído para VPN, junto com `wireguard-tools` e suporte a systray
 - **[Gerenciador de Extensões do GNOME](https://flathub.org/apps/com.mattjakeman.ExtensionManager)** ([Doar](https://github.com/sponsors/mjakeman)) incluído
 - **[Loja de Aplicativos Bazaar](https://github.com/kolunmi/bazaar)** com [Flathub](https://flathub.org):
@@ -61,13 +61,13 @@ O Bluefin é "uma interpretação do espírito do Ubuntu construída sobre a tec
   - [Warehouse](https://flathub.org/apps/io.github.flattool.Warehouse) ([Doar](https://ko-fi.com/heliguy)) incluído para gerenciamento de Flatpak
 - **Funcionalidades de Qualidade de Vida**:
   - [Starship](https://starship.rs) prompt de linha de comando ativado por padrão
-  - [Solaar](https://github.com/pwr-Solaar/Solaar) para mice Logitech, junto com `libratbagd`
+  - [Solaar](https://github.com/pwr-Solaar/Solaar) para mouses Logitech, junto com `libratbagd`
   - [rclone](https://rclone.org/overview/) e [restic](https://restic.net/) para montagem de armazenamento em nuvem e backups modernos de arquivos
   - `zsh` e `fish` incluídos como shells opcionais
   - [Suporte ao Switcheroo](https://man.archlinux.org/man/switcherooctl.1.en?ref=news.itsfoss.com) para laptops com GPUs duplas
 - **Base Universal Blue**:
-  - Regras udev extras para controles de jogo e outro hardware de saída da caixa
-  - Todos os codecs multimedia incluídos
+  - Regras udev extras para controles de jogo e outro hardware prontos para uso
+  - Todos os codecs multimídia incluídos
   - Atualizações automáticas em etapas: use seu computador normalmente e desligue-o quando terminar
 
 ## Foco no Distroless
@@ -85,11 +85,11 @@ Os workflows no Bluefin são propositalmente focados em upstream — acreditamos
 - **[Downloads](/downloads)** — baixe um ISO oficial do Bluefin ou um torrent
 - **[Guia de Instalação](/installation)** — planejamento de hardware e etapas de configuração
 - **[Guia do Usuário](/administration)** — administração diária, atualizações e aplicativos
-- **[Guia do Desenvolvedor](/bluefin-dx)** — contêores, devcontainers e ferramentas de IA
+- **[Guia do Desenvolvedor](/bluefin-dx)** — contêineres, devcontainers e ferramentas de IA
 
 O [post de anúncio no blog](https://www.ypsidanger.com/announcing-project-bluefin/) também tem algumas informações de contexto adicionais.
 
-## Vídeos e Podcasts Introduitórios
+## Vídeos e Podcasts Introdutórios
 
 Confira nossa [lista de vídeos e avaliações](https://universal-blue.discourse.group/tags/c/bluefin/6/videos-and-podcasts) para mais informações.
 
