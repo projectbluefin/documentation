@@ -5,8 +5,10 @@ authors: castrojo
 tags: [community, video]
 date: 2026-09-30T12:00:00-04:00
 image: /img/blog/2026-09-30-how-we-built-ubuntus-65m-community/youtube-thumbnail.jpg
-draft: true
+
 ---
+
+[Jono Bacon](https://www.jonobacon.com/) posted this video about how we did things in Ubuntu during the good old days. I thought it would be relevant to post here. Marco Ceppi and Adam Israel are the _Maintainers Emeritus_ who helped make the first prototypes of Bluefin. It's basically this formula but applied to `bootc` images:
 
 <iframe
   width="560"
