@@ -12,7 +12,7 @@ Voor eindgebruikers een systeem dat zo betrouwbaar is als een Chromebook met nau
 
 ## Is Bluefin iets voor jou?
 
-Bluefin is een Linux-desktop van de volgende generatie die richting progressieve verbetering evolueert. We keren zo mogelijk zo snel mogelijk rigoureus en effectief de rug naar verouderde technologieën toe, om de best mogelijke ervaring te bieden.
+Bluefin is een Linux-desktop van de volgende generatie die richting progressieve verbetering evolueert. We nemen zo snel mogelijk rigoureus en doortastend afstand van verouderde technologieën, om de best mogelijke ervaring te bieden.
 
 :::tip
 
@@ -28,7 +28,7 @@ Bluefin is:
 - **Doelbewust onzichtbaar** - Bluefin is geen distributie. Je relatie is met Flathub, Homebrew en wat je in je containers stopt.
 - **Geoptimaliseerd voor de 96%** - Niet de 4% - Bluefin volgt een "sterker samen"-benadering bij functies. Alles kan, maar de waarde komt van het delen van best practices. We brengen weinig tijd door met randgevallen.
 - **Bewezen ontwikkelmodel** - Developer experience gefocust op containers en nieuwe Linux-gebruikers blootstellen aan de [tools die in cloud native worden gebruikt](https://www.cncf.io/). Zie de [Mission Statement](/mission) en [Values](/values)-pagina's voor meer informatie.
-- **Doelbewust gefocust op grote hardware** - Bluefin loopt het beste op linux-vriendelijke hardware, om de gebruikers een zo mogelijk legacy-vrije ervaring te bieden. Bluefin wil ook OEMs ondersteunen die linux-laptops en -desktops verkopen, dus het doet zijn best om de beste combinatie van software en hardware te draaien. We doen niet onze best om dingen die de gebruikerservaring aantasten bewust te documenteren of te omzeilen, dus in sommige gevallen is een ander besturingssysteem de juiste keuze.
+- **Doelbewust gefocust op uitstekende hardware** - Bluefin loopt het beste op linux-vriendelijke hardware, om de gebruikers een zo mogelijk legacy-vrije ervaring te bieden. Bluefin wil ook OEMs ondersteunen die linux-laptops en -desktops verkopen, dus het doet zijn best om de beste combinatie van software en hardware te draaien. We doen niet ons best om dingen die de gebruikerservaring aantasten bewust te documenteren of te omzeilen, dus in sommige gevallen is een ander besturingssysteem de juiste keuze.
 
 Als je buiten deze scope valt, dan **is Bluefin misschien niet de juiste keuze voor jou**. Bluefin kan ongemak en lichamelijke schade veroorzaken [als het verkeerd wordt vastgehouden](/troubleshooting/#am-i-holding-bluefin-wrong). We erkennen dat veel delen van de traditionele linux-desktop-ervaring niet met ons meekomen om een betere desktop te bouwen.
 
@@ -44,13 +44,13 @@ Bluefin is "een interpretatie van de geest van Ubuntu, gebouwd op Fedora-technol
 
 :::
 
-- **Ubuntu-gelijke GNOME-lay-out** met gecureerde extensies:
+- **Ubuntu-achtige GNOME-lay-out** met gecureerde extensies:
   - [Dash to Dock](https://micheleg.github.io/dash-to-dock/) - voor een vertrouwde dock
-  - [Appindicator](https://github.com/ubuntu/gnome-shell-extension-appindicator) - voor tray-gelijke pictogrammen in de rechterbovenhoek
+  - [Appindicator](https://github.com/ubuntu/gnome-shell-extension-appindicator) - voor tray-achtige pictogrammen in de rechterbovenhoek
   - [GSConnect](https://github.com/GSConnect/gnome-shell-extension-gsconnect) - jouw mobiele apparaat integreren met je desktop
   - [Blur my Shell](https://github.com/aunetx/blur-my-shell) ([Donatie](https://github.com/sponsors/aunetx)) - voor een beetje glans
-  - [Search Light](https://github.com/icedman/search-light) - biedt functionaliteit voor zoeken en een macOS-Spotlight-gelijke workflow, standaard gebonden aan <kbd>Super</kbd>-<kbd>Space</kbd>
-- **[Developer Mode](/bluefin-dx)** - gedetailleerde developer-tooling die Bluefin verandert in een krachtige cloud-native workstation
+  - [Search Light](https://github.com/icedman/search-light) - biedt functionaliteit voor zoeken en een macOS-Spotlight-achtige workflow, standaard gebonden aan <kbd>Super</kbd>-<kbd>Space</kbd>
+- **[Developer Mode](/bluefin-dx)** - gedetailleerde developer-tooling die Bluefin verandert in een krachtig cloud-native workstation
 - **[Ptyxis-Terminal](https://devsuite.app/ptyxis/)** voor container-gefocuste workflows
   - [Distroshelf](https://flathub.org/apps/com.ranfdev.DistroShelf) ([Donatie](https://github.com/sponsors/ranfdev)) voor containerbeheer
 - **[Tailscale](https://tailscale.com)** meegeleverd voor VPN samen met `wireguard-tools` en systray-ondersteuning
@@ -76,7 +76,7 @@ Bluefin levert bewust upstream-tools in plaats van eigen applicaties. Het idee v
 
 :::info[Het is een platformoverstijgende wereld]
 
-De workflows in Bluefin zijn bewust upstream-gefocust -- we geloven in een consistente linux-ervaring voor iedereen, of het nu WSL op Windows is, Podman/Docker op een Mac, of een willekeurig linux-systeem. Het [cloud-native ecosysteem](http://cncf.io) heeft bewezen dat dit model werkt. Dit laat miljoenen bestaande ontwikkelaars toe om in te stappen met een workflow die ze al kennen, en laat linux toe om te concurreren waar het meest uitmaakt.
+De workflows in Bluefin zijn bewust upstream-gefocust -- we geloven in een consistente linux-ervaring voor iedereen, of het nu WSL op Windows is, Podman/Docker op een Mac, of een willekeurig linux-systeem. Het [cloud-native ecosysteem](http://cncf.io) heeft bewezen dat dit model werkt. Dit laat miljoenen bestaande ontwikkelaars toe om in te stappen met een workflow die ze al kennen, en laat linux toe om te concurreren waar het het meest uitmaakt.
 
 :::
 
