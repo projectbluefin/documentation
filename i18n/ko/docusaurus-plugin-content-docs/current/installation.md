@@ -255,7 +255,7 @@ sudo mokutil --import path/to/public_key.der
 ![image](/img/user-attachments/259a9bb2-2198-4744-924d-df457e26c7f4.png)
 
 :::note
-`ublue akmods\`가 나열되어 있다면 곧 제거될 예정인 이전 키입니다. `ublue kernel`이 현재 키입니다.
+`ublue akmods`가 나열되어 있다면 곧 제거될 예정인 이전 키입니다. `ublue kernel`이 현재 키입니다.
 :::
 
 Lenovo ThinkPad 사용자(P, T, X 시리즈): Secure Boot를 활성화하기 전에 BIOS(F1) → Security → Secure Boot로 이동하여 "Allow Microsoft 3rd party UEFI CA"를 활성화하세요. Fedora의 서명된 shim 부트로더가 펌웨어에 의해 인식되려면 이 설정이 필요합니다. 이 설정이 없으면 Secure Boot가 위반 오류와 함께 실패합니다.
