@@ -9,6 +9,7 @@ const {
   datedTagKey,
   compareTagsByDate,
   selectDatedTags,
+  fetchGhcrTagCreatedAt,
 } = require("./fetch-update-churn.js");
 
 test("analyzeManifestLayers: handles empty or invalid layers safely", () => {
@@ -389,4 +390,30 @@ test("selectDatedTags: limit applies to the merged list, seeds included", () => 
     "testing-20260928-ce09ef7",
     "testing-20260929-362ea44",
   ]);
+});
+
+test("fetchGhcrTagCreatedAt: warns and returns {} on the no-token path (#1434)", async () => {
+  const savedToken = process.env.GITHUB_TOKEN;
+  const savedGh = process.env.GH_TOKEN;
+  delete process.env.GITHUB_TOKEN;
+  delete process.env.GH_TOKEN;
+  try {
+    let warned = false;
+    const origWarn = console.warn;
+    console.warn = () => {
+      warned = true;
+    };
+    try {
+      const result = await fetchGhcrTagCreatedAt("ublue-os", "bluefin");
+      assert.deepEqual(result, {});
+      assert.equal(warned, true, "expected a warning on the no-token path");
+    } finally {
+      console.warn = origWarn;
+    }
+  } finally {
+    if (savedToken === undefined) delete process.env.GITHUB_TOKEN;
+    else process.env.GITHUB_TOKEN = savedToken;
+    if (savedGh === undefined) delete process.env.GH_TOKEN;
+    else process.env.GH_TOKEN = savedGh;
+  }
 });
