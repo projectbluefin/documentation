@@ -255,7 +255,7 @@ Pomocí `mokutil --list-enrolled` můžete ověřit, že je uveden klíč „ubl
 ![image](/img/user-attachments/259a9bb2-2198-4744-924d-df457e26c7f4.png)
 
 :::note
-Pokud vidíte uvedený `ublue akmods\`, jde o dřívější klíč, který bude brzy odstraněn. Aktuálním klíčem je `ublue kernel`.
+Pokud vidíte uvedený `ublue akmods`, jde o dřívější klíč, který bude brzy odstraněn. Aktuálním klíčem je `ublue kernel`.
 :::
 
 Uživatelé Lenovo ThinkPad (řady P, T, X): Před zapnutím Secure Boot přejděte do BIOSu (F1) → Security → Secure Boot a zapněte „Allow Microsoft 3rd party UEFI CA“. Toto nastavení je nutné, aby firmware rozpoznal podepsaný zavaděč shim Fedory. Bez něj Secure Boot selže s chybou narušení (violation).
