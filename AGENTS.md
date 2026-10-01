@@ -208,8 +208,24 @@ reads `projectbluefin/lab` or any lab-cluster service.
 Rules for every `scripts/fetch-*.js`:
 
 - Export the pure functions so `scripts/*.test.js` can exercise them offline.
-- **Never fail the build.** No throw, no non-zero exit, no silently empty file.
-  On error, write `{ unavailable: true, stateReason }` and exit 0.
+- **Handle an upstream fetch error, don't propagate it.** Catch it, write
+  `{ unavailable: true, stateReason }`, and exit 0. Never throw past your own
+  handler, and never write a silently empty file.
+- **A non-zero exit fails the whole build.** `scripts/run-parallel.mjs` fails
+  the run if any script exits non-zero or dies on a signal, so reserve that for
+  output you must not deploy. A top-level `.catch` that exits non-zero is fine
+  on its own — most `fetch-*.js` scripts have one, and because their inner
+  helpers already catch upstream failures into the `unavailable`/degraded,
+  exit-0 path, that outer `.catch` only fires on an unexpected error. That is
+  the shape this rule asks for; don't strip it. One script is genuinely
+  blunter: `scripts/fetch-github-profiles.js` exits 1 when it resolves zero
+  profiles, so an upstream outage on a cold cache fails the build. Two others
+  only get part of the way: `scripts/fetch-playlist-metadata.js` ends in
+  `main().catch(console.error)`, which exits 0 without writing an `unavailable`
+  payload, and `scripts/fetch-hive-live-data.js` has no top-level `catch` at
+  all — its inner helpers swallow network errors, so anything else throws as an
+  unhandled rejection and exits non-zero. Narrow those three when you touch
+  them; don't add new upstream-error hard failures.
 - **An in-flight CI run is never a failure.** Anything without a terminal
   conclusion is pending. Reuse `classifyRun` from `scripts/lib/gh.js`.
 - A missing value is `null` — a gap. A real `0` stays `0`. "Steady at zero" and
