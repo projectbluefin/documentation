@@ -1,0 +1,62 @@
+---
+title: Downloads
+slug: /downloads
+---
+
+import DownloadSection from "@site/src/components/DownloadSection";
+import { DakotaSection } from "@site/src/components/DownloadSectionTesting";
+
+Hier is een kort [runbook](/installation) voor het Bluefin-installatieproces. Lees de volledige inhoud van deze documentatie om overleving te garanderen. (In geval van een raptor-aanval.)
+
+## Dakotaraptor {#dakotaraptor}
+
+Bluefin zit midden in een overgang. Dit is een alfafversie maar nog dagelijks bruikbaar. We verwachten de definitieve versie tegen het eind van herfst 2026.
+
+<DakotaSection />
+
+## Classic
+
+:::warning
+
+Deze worden niet meer bijgewerkt en hier bewaard om historische redenen.
+
+:::
+
+<DownloadSection />
+
+## Downloads verifiëren met checksums
+
+**Checksums** laten je verifieren dat je download succesvol is afgerond en niet corrupt of gewijzigd is. Na het downloaden van een ISO kan je de checksum vergelijken met het officiële checksumbestand om de integriteit te garanderen. Hoewel optioneel wordt verificatie aanbevolen voor belangrijke installaties.
+
+#### Hoe checksums verifiëren met sha256sum
+
+1. **Download zowel de ISO als het overeenkomstige CHECKSUM-bestand**
+   - Bijvoorbeeld: `bluefin-stable-x86_64.iso` en `bluefin-stable-x86_64.iso-CHECKSUM`
+
+2. **Genereer de checksum van je gedownloade ISO:**
+
+   ```bash
+   sha256sum bluefin-stable-x86_64.iso
+   ```
+
+3. **Verifiëren met het officiële checksumbestand:**
+
+   ```bash
+   sha256sum -c bluefin-stable-x86_64.iso-CHECKSUM
+   ```
+
+4. **Bevestig succes:** Je zou `bluefin-stable-x86_64.iso: OK` moeten zien. Als de verificatie faalt, download de ISO opnieuw.
+
+**Voorbeeld:**
+
+```bash
+# Genereer checksum van gedownloade bestand
+$ sha256sum bluefin-stable-x86_64.iso
+a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef123456  bluefin-stable-x86_64.iso
+
+# Verifiëren tegen het officiële checksumbestand
+$ sha256sum -c bluefin-stable-x86_64.iso-CHECKSUM
+bluefin-stable-x86_64.iso: OK
+
+# 🦖 Rawr! Je download is verifiëerd
+```
