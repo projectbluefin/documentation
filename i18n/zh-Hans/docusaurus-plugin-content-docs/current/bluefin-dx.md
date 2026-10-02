@@ -106,7 +106,7 @@ Dev Containers 扩展默认使用 Docker。要切换到 Podman，在 VS Code 中
 
 ## 内置性能工具
 
-[Sysprof](https://www.sysprof.com/) 作为系统级性能分析器包含在内。以及 [Brendan Gregg 的](https://www.brendangregg/) 推荐的 CLI 工具：
+[Sysprof](https://www.sysprof.com/) 作为系统级性能分析器包含在内。以及 [Brendan Gregg 的](https://www.brendangregg.com/) 推荐的 CLI 工具：
 
 - `bcc`、`bpftrace`、`iproute2`、`nicstat`、`numactl`、`sysprof`、`sysstat`、`tiptop`、`trace-cmd` 和 `util-linux`
 

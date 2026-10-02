@@ -271,20 +271,20 @@ Bluefin 镜像使用以下工具构建：
 bluefin/
 ├── .github/
 │   └── workflows/          # GitHub Actions CI/CD
-│       ├── build-image-*.yml      # 镜像构建工作流
-│       ├── reusable-build.yml     # 共享构建逻辑
-│       └── clean.yml              # 清理工作流
+│       ├── build-image-*.yml      # Image build workflows
+│       ├── reusable-build.yml     # Shared build logic
+│       └── clean.yml              # Cleanup workflows
 ├── build_files/
-│   ├── base/               # 基础镜像构建脚本
-│   ├── shared/             # 共享工具和脚本
-│   └── dx/                 # 开发者版脚本
+│   ├── base/               # Base image build scripts
+│   ├── shared/             # Shared utilities and scripts
+│   └── dx/                 # Developer edition scripts
 ├── system_files/
-│   └── shared/             # 复制到镜像中的文件
-├── flatpaks/               # Flatpak 应用列表
-├── just/                   # Just recipes（ujust 命令）
-├── iso_files/              # ISO 特定配置
-├── packages.json           # 包清单
-└── Containerfile           # 主镜像定义
+│   └── shared/             # Files copied into the image
+├── flatpaks/               # Flatpak app lists
+├── just/                   # Just recipes (ujust commands)
+├── iso_files/              # ISO-specific configurations
+├── packages.json           # Package manifest
+└── Containerfile           # Main image definition
 ```
 
 #### 常见更改类型
@@ -320,7 +320,7 @@ vim just/60-custom.just
 添加你的 recipe：
 
 ```make
-# 安装自定义开发工具
+# Install custom development tool
 install-custom-tool:
     #!/usr/bin/env bash
     set -euxo pipefail
@@ -344,10 +344,10 @@ install-custom-tool:
 编辑适当的 flatpak 列表文件：
 
 ```bash
-# 用于所有 Bluefin 变体
+# For all Bluefin variants
 edit flatpaks/bluefin-list.txt
 
-# 仅用于 DX 变体
+# For DX variant only
 edit flatpaks/bluefin-dx-list.txt
 ```
 
@@ -386,19 +386,19 @@ Bluefin 使用 [Conventional Commits](https://www.conventionalcommits.org/)，�
 **来自实际 Bluefin 提交的示例：**
 
 ```bash
-# 简单修复
+# Simple fix
 git commit -m "fix: remove cockpit and brew setup functions"
 
-# 功能添加
+# Feature addition
 git commit -m "feat: add bazaar flatpak to default installation"
 
-# 带作用域的杂活
+# Chore with scope
 git commit -m "chore(deps): update ghcr.io/projectbluefin/common digest to 9168d7d"
 
-# 文档
+# Documentation
 git commit -m "docs: explain hat wobble"
 
-# 带解释的多行
+# Multi-line with explanation
 git commit -m "fix: Remove unused terminal and VFIO configurations
 
 These configurations were causing conflicts with default GNOME settings
@@ -430,29 +430,29 @@ Assisted-by: Claude 4.5 Opus via GitHub Copilot
 ### 进行提交
 
 ```bash
-# 暂存你的更改
+# Stage your changes
 git add path/to/modified/file.sh
 
-# 或暂存所有更改
+# Or stage all changes
 git add .
 
-# 检查你要提交的内容
+# Review what you're committing
 git diff --cached
 
-# 用消息提交
+# Commit with message
 git commit -m "feat(just): add custom development tool installer"
 
-# 或对多行提交使用编辑器
+# Or use an editor for multi-line commits
 git commit
 ```
 
 ### 推送更改
 
 ```bash
-# 推送到你的 fork
+# Push to your fork
 git push origin feat/add-bazaar-integration
 
-# 如果在 amend 后需要强推（谨慎使用）
+# If you need to force push after amending (use with caution)
 git push origin feat/add-bazaar-integration --force-with-lease
 ```
 
@@ -467,10 +467,10 @@ git push origin feat/add-bazaar-integration --force-with-lease
 **选项 1：容器构建**
 
 ```bash
-# 用 just 在本地构建
+# Build locally with just
 just build
 
-# 或直接用 podman 构建
+# Or build with podman directly
 podman build -t bluefin-test:latest .
 ```
 
@@ -493,15 +493,15 @@ Rebase 到 PR 镜像很有力，但伴随风险。始终有回滚到 stable 的�
 每个 PR 都会生成一个测试镜像。你可以 rebase 到它：
 
 ```bash
-# 找到 PR 编号（例如 #3322）
-# Rebase 到 PR 镜像
+# Find the PR number (e.g., #3322)
+# Rebase to the PR image
 sudo bootc switch ghcr.io/projectbluefin/bluefin:pr-3322
 
-# 重启以测试
+# Reboot to test
 sudo systemctl reboot
 
-# 如果它工作，在 PR 上留下反馈
-# 如果它不工作，回滚到 stable
+# If it works, leave feedback on the PR
+# If it doesn't work, revert to stable
 sudo bootc switch ghcr.io/projectbluefin/bluefin:stable
 sudo systemctl reboot
 ```
@@ -509,13 +509,13 @@ sudo systemctl reboot
 **测试 Just Recipes：**
 
 ```bash
-# 列出可用 recipe
+# List available recipes
 ujust
 
-# 测试你的新 recipe
+# Test your new recipe
 ujust install-custom-tool
 
-# 检查输出中的错误
+# Check for errors in the output
 ```
 
 ### Lint 与验证
@@ -523,24 +523,24 @@ ujust install-custom-tool
 **Shell 脚本 Lint：**
 
 ```bash
-# 如果不存在则安装 shellcheck
+# Install shellcheck if not present
 brew install shellcheck
 
-# Lint shell 脚本
+# Lint shell scripts
 shellcheck build_files/base/*.sh
 ```
 
 **容器 Lint：**
 
 ```bash
-# 用 hadolint 检查 Containerfile
+# Use hadolint for Containerfile
 podman run --rm -i hadolint/hadolint < Containerfile
 ```
 
 **JSON 验证：**
 
 ```bash
-# 验证 packages.json
+# Validate packages.json
 jq empty packages.json && echo "Valid JSON" || echo "Invalid JSON"
 ```
 
@@ -611,30 +611,30 @@ Fixes #123
 如果被要求更改：
 
 ```bash
-# 做被要求的更改
+# Make the requested changes
 vim path/to/file
 
-# 提交更改
+# Commit the changes
 git add path/to/file
 git commit -m "fix: address review feedback on error handling"
 
-# 推送以更新 PR
+# Push to update the PR
 git push origin your-branch-name
 ```
 
 **合并后：**
 
 ```bash
-# 切回 main
+# Switch back to main
 git checkout main
 
-# 拉取最新更改
+# Pull the latest changes
 git pull upstream main
 
-# 更新你的 fork
+# Update your fork
 git push origin main
 
-# 删除你的 feature 分支
+# Delete your feature branch
 git branch -d your-branch-name
 git push origin --delete your-branch-name
 ```
@@ -666,18 +666,18 @@ chore(deps): update softprops/action-gh-release digest to def456
 **当 Renovate 与你的 PR 冲突时：**
 
 ```bash
-# 在最新 main 上 rebase
+# Rebase on latest main
 git checkout your-branch
 git fetch upstream
 git rebase upstream/main
 
-# 如有冲突则解决
-git mergetool  # 或手动编辑文件
+# Resolve conflicts if any
+git mergetool  # or manually edit files
 
-# 继续 rebase
+# Continue rebase
 git rebase --continue
 
-# 强推（你的 PR，你的分支）
+# Force push (your PR, your branch)
 git push origin your-branch --force-with-lease
 ```
 
@@ -686,7 +686,7 @@ git push origin your-branch --force-with-lease
 对于较大的功能：
 
 ```bash
-# 工作时创建逻辑提交
+# Create logical commits as you work
 git add file1.sh
 git commit -m "feat: add base functionality"
 
@@ -696,54 +696,54 @@ git commit -m "feat: add error handling"
 git add file3.sh
 git commit -m "docs: document new feature"
 
-# 推送所有提交
+# Push all commits
 git push origin your-branch
 ```
 
 ### Amend 提交
 
 ```bash
-# 暂存额外的更改
+# Stage additional changes
 git add forgotten-file.sh
 
-# amend 上一个提交
+# Amend the last commit
 git commit --amend
 
-# 或在不更改消息的情况下 amend
+# Or amend without changing message
 git commit --amend --no-edit
 
-# 安全地强推
+# Force push with safety
 git push origin your-branch --force-with-lease
 ```
 
 ### Cherry-Pick 更改
 
 ```bash
-# 从另一个分支 cherry-pick 一个提交
+# Cherry-pick a commit from another branch
 git cherry-pick abc123def
 
-# cherry-pick 多个提交
+# Cherry-pick multiple commits
 git cherry-pick abc123..def456
 
-# 如有需要则解决冲突
+# Resolve conflicts if needed
 git cherry-pick --continue
 ```
 
 ### 与 Upstream 更改协作
 
 ```bash
-# 定期获取 upstream 更改
+# Fetch upstream changes regularly
 git fetch upstream
 
-# 更新 main 分支
+# Update main branch
 git checkout main
 git merge upstream/main
 
-# 对 feature 分支 rebase
+# Rebase feature branch
 git checkout your-feature
 git rebase main
 
-# 或把 main merge 进 feature
+# Or merge main into feature
 git merge main
 ```
 
@@ -847,10 +847,10 @@ Error: writing blob: adding layer with blob: permissions denied
 **解决方案：**
 
 ```bash
-# 用适当权限运行
+# Run with appropriate permissions
 sudo podman build -t test .
 
-# 或配置 rootless podman
+# Or configure rootless podman
 podman system migrate
 ```
 
@@ -863,10 +863,10 @@ Error: no space left on device
 **解决方案：**
 
 ```bash
-# 清理 podman 存储
+# Clean up podman storage
 podman system prune -a
 
-# 检查磁盘空间
+# Check disk space
 df -h
 ```
 
@@ -881,10 +881,10 @@ df -h
 **解决方案：**
 
 ```bash
-# amend 提交消息
+# Amend the commit message
 git commit --amend
 
-# 更新 PR
+# Update the PR
 git push origin your-branch --force-with-lease
 ```
 
@@ -897,20 +897,20 @@ CONFLICT (content): Merge conflict in packages.json
 **解决方案：**
 
 ```bash
-# 获取最新 upstream
+# Fetch latest upstream
 git fetch upstream
 
-# 在 main 上 rebase
+# Rebase on main
 git rebase upstream/main
 
-# 手动解决冲突
+# Resolve conflicts manually
 vim packages.json
 
-# 标记为已解决
+# Mark as resolved
 git add packages.json
 git rebase --continue
 
-# 强推
+# Force push
 git push origin your-branch --force-with-lease
 ```
 
@@ -1017,31 +1017,31 @@ GitHub Issue: "Package X fails on Fedora 42 due to Y dependency"
 **进行工作流更改：**
 
 ```bash
-# 编辑工作流文件
+# Edit workflow file
 vim .github/workflows/build-image-stable.yml
 
-# 在本地验证语法
-# 使用 GitHub 的工作流验证器或：
+# Validate syntax locally
+# Use GitHub's workflow validator or:
 yamllint .github/workflows/build-image-stable.yml
 
-# 提交
+# Commit
 git add .github/workflows/build-image-stable.yml
 git commit -m "chore(ci): improve stable build caching"
 
-# 先在你的 fork 中测试
+# Test in your fork first
 git push origin your-branch
-# 从 fork 打开 PR 看是否工作
+# Open PR from fork to see if it works
 ```
 
 **常见工作流模式：**
 
 ```yaml
-# 条件执行
+# Conditional execution
 - name: Build only on main
   if: github.ref == 'refs/heads/main'
   run: ./build.sh
 
-# 矩阵构建
+# Matrix builds
 strategy:
   matrix:
     variant: [bluefin, bluefin-dx]
@@ -1064,9 +1064,9 @@ set -eoux pipefail
 
 echo "::group:: Your Script Name"
 
-# 你的逻辑在这里
-# 用 $FEDORA_MAJOR_VERSION 做版本特定逻辑
-# 用 $IMAGE_NAME 做镜像特定逻辑
+# Your logic here
+# Use $FEDORA_MAJOR_VERSION for version-specific logic
+# Use $IMAGE_NAME for image-specific logic
 
 echo "::endgroup::"
 ```
@@ -1074,10 +1074,10 @@ echo "::endgroup::"
 **测试脚本：**
 
 ```bash
-# 直接执行（用于简单脚本）
+# Direct execution (for simple scripts)
 bash -x build_files/base/04-packages.sh
 
-# 容器执行（在基础镜像中测试）
+# Container execution (testing within the base image)
 podman run --rm -it \
   -v "$(pwd):/workspace:ro" \
   ghcr.io/projectbluefin/bluefin:testing \
@@ -1099,14 +1099,14 @@ Bluefin 使用持续交付：
 **stable：**
 
 ```bash
-# Rebase 到 stable
+# Rebase to stable
 sudo bootc switch ghcr.io/projectbluefin/bluefin:stable
 ```
 
 **testing：**
 
 ```bash
-# Rebase 到 testing
+# Rebase to testing
 sudo bootc switch ghcr.io/projectbluefin/bluefin:testing
 ```
 
@@ -1123,7 +1123,7 @@ sudo bootc switch ghcr.io/projectbluefin/bluefin:testing
 编辑适当的 Containerfile 部分：
 
 ```dockerfile
-# 回退到较旧版本的 ostree 以修复 Flatpak 安装
+# Revert to older version of ostree to fix Flatpak installations
 RUN rpm-ostree override replace \
     https://bodhi.fedoraproject.org/updates/FEDORA-2023-cab8a89753
 ```
@@ -1131,11 +1131,11 @@ RUN rpm-ostree override replace \
 **文档化固定：**
 
 ```bash
-# 添加解释注释：
-# - 固定了什么
-# - 为什么固定
-# - 上游 bug 链接
-# - 何时移除（在修复发布后）
+# Add comment explaining:
+# - What's pinned
+# - Why it's pinned
+# - Link to upstream bug
+# - When to remove (after fix is released)
 ```
 
 **移除固定：**
@@ -1143,9 +1143,9 @@ RUN rpm-ostree override replace \
 在 Fedora 发布修复后等待 24-48 小时（用于重建传播），然后：
 
 ```bash
-# 移除覆盖
+# Remove the override
 git diff Containerfile
-# 确认固定已移除
+# Confirm the pin is removed
 git commit -m "chore: remove ostree pin after upstream fix"
 ```
 
@@ -1185,7 +1185,7 @@ Bluefin 中的系统级 Flatpaks 通过列出要默认安装的 Flatpak 应用 I
 ```bash
 flatpak remote-add --if-not-exists --system flathub https://flathub.org/repo/flathub.flatpakrepo
 xargs flatpak --system -y install --or-update < /etc/ublue-os/system-flatpaks.list
-# 开发者模式 Flatpaks 在开发者模式启用时安装
+# Developer mode Flatpaks are installed if developer mode is enabled
 xargs flatpak --system -y install --or-update < /etc/ublue-os/system-flatpaks-dx.list
 ```
 
