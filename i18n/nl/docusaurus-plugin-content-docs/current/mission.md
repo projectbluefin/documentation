@@ -26,12 +26,12 @@ bijdragers aan open source.
   bijdragemogelijkheden via verschillende open source-organisaties. Begin bij
   de CNCF/Linux Foundation en hopen meer uit te breiden!
   - Opkomen voor Apache Buildstream, bootc, podman, kubernetes en andere
-    tools die distributie-ongekend ontworpen zijn.
+    tools die distro-agnostisch ontworpen zijn.
 
 ## Community en project
 
 - Streven naar een goed beheerd open source-project.
-- Gedecentraliseerd bestuur, zoals mensen verwachtzen:
+- Gedecentraliseerd bestuur, zoals mensen verwachten:
 - Het project moet de meeste open source-projectgezondheidschecks doorstaan
   die een typisch OSPO zou gebruiken bij zijn due diligence. Het team is daar
   nog niet, maar het is een haalbaar doel.

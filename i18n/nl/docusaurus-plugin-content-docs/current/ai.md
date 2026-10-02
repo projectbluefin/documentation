@@ -105,7 +105,7 @@ docker model pull ai/llama3.2
 # Draai een model interactief
 docker model run ai/llama3.2
 
-# Lijst afgerade modellen
+# Lijst gedownloade modellen
 docker model ls
 
 # Verwijder een model

@@ -254,7 +254,7 @@ Bluefin bevat samengestelde CLI-toolcollecties. Deze commando's installeeren sam
 | `ujust bios-info`              | Toont BIOS/UEFI-informatie (fabrikant, productnaam, versie, releasedatum)                                                                                                                                                                |
 | `ujust device-info`            | Stuurt de status, flatpak-lijst en systeeminfo naar het CentOS-pastebin en geeft de URL terug naar de terminal. Hiermee kan het eindgebruiker de URL handmatig aankoppelen met hun info zodat anderen hen kunnen helpen bij het debuggen |
 | `ujust rebase-helper`          | Interatieve assistent om tussen stromen te wisselen, te rebase naar andere images, of te rollback naar een vorige versie                                                                                                                 |
-| `ujust clean-system`           | Ru ongebruikte containers, volumes en flatpak-tijdranden op                                                                                                                                                                              |
+| `ujust clean-system`           | Ruim ongebruikte containers, volumes en flatpak-tijdranden op                                                                                                                                                                              |
 | `ujust check-idle-power-draw`  | Meet het idle-powerverbruik van je systeem met powerstat                                                                                                                                                                                 |
 | `ujust check-local-overrides`  | Toont bestanden die verschillen tussen `/usr/etc` en `/etc` om lokale aanpassingen te identificeren                                                                                                                                      |
 | `ujust logs-this-boot`         | Toont alle systeemlogboeken van de huidige boot                                                                                                                                                                                          |
@@ -286,9 +286,9 @@ Bluefin bevat samengestelde CLI-toolcollecties. Deze commando's installeeren sam
 
 Merk op dat Bluefin doorgaans probeert de systeem-Justfiles smal af te bakenen; de meeste hiervan zijn workarounds en geen volledig uitgeruste commando's. Ze kunnen worden verwijderd of gewijzigd afhankelijk van het probleem waarvoor ze oorspronkelijk waren bedoeld.
 
-## Extenties beheren
+## Extensies beheren
 
-Bluefin gebruikt de [Extension Manager](https://flathub.org/apps/com.mattJakeman.ExtensionManager) van Matthew Jakeman om de desktopextenties te beheren. De toepassing is standaard meegeleverd. Je kan er toegang toe via het [Logo Menu](https://github.com/Aryan20/Logomenu) (bedankt Aryan Kaushik!)
+Bluefin gebruikt de [Extension Manager](https://flathub.org/apps/com.mattjakeman.ExtensionManager) van Matthew Jakeman om de desktopextensies te beheren. De toepassing is standaard meegeleverd. Je kan er toegang toe via het [Logo Menu](https://github.com/Aryan20/Logomenu) (bedankt Aryan Kaushik!)
 
 ![GNOME Extension Menu Option (opens Extension Manager)](/img/user-attachments/c5ad1637-95c9-4692-8b25-e8ca6248e575.png)
 
@@ -298,7 +298,7 @@ Dit is nuttig als je besluit dat je sommige van de met Bluefin meegeleverde niet
 
 :::note
 
-In het onwaarschijnlijke geval dat je sessie crasht, worden al je extenties uitgeschakeld. In het zeldige geval dat dit gebeurt, moet je ze mogelijk allemaal weer inschakelen in de extensiebeheer.
+In het onwaarschijnlijke geval dat je sessie crasht, worden al je extensies uitgeschakeld. In het zeldige geval dat dit gebeurt, moet je ze mogelijk allemaal weer inschakelen in de extensiebeheer.
 
 :::
 

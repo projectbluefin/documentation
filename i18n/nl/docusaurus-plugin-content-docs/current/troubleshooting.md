@@ -27,19 +27,19 @@ Herstart om toe te passen. Om de huidige en vorige deployatiestanden te inspecte
 sudo bootc status
 ```
 
-### GNOME & extenties resetten
+### GNOME & extensies resetten
 
-Als desktopextenties of shellaanpassingen grafische problemen of bevriezingen veroorzaken:
+Als desktopextensies of shellaanpassingen grafische problemen of bevriezingen veroorzaken:
 
 ```bash
-# Reset GNOME Shell en extenties naar de systeemstandaarden
+# Reset GNOME Shell en extensies naar de systeemstandaarden
 dconf reset -f /org/gnome/
 ```
 
 ### Schijruimte & ongebruikte runtimes opruimen
 
 ```bash
-# Ru ongebruikte containers en ongebruikte Flatpak-runtimes
+# Ruim ongebruikte containers en ongebruikte Flatpak-runtimes
 ujust clean-system
 ```
 

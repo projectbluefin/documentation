@@ -65,9 +65,9 @@ Selecteer “Custom Command gebruiken” en voeg je shell toe:
 
 ![Ptyxis → Preferences → Profiles → A Profile Setting → Edit... → Shell → Custom Command](/img/user-attachments/8eb039db-7ec1-4847-b3d7-496d69fe9538.png)
 
-## Door onderhouders aanbevolen GNOME-extenties
+## Door onderhouders aanbevolen GNOME-extensies
 
-Hier zijn GNOME-extenties die onderhouders aanbevolen om je desktopervaring compleet te maken. Ondersteun extentieauteurs door te doneren aan die je leuk vindt!
+Hier zijn GNOME-extensies die onderhouders aanbevolen om je desktopervaring compleet te maken. Ondersteun extensieauteurs door te doneren aan die je leuk vindt!
 
 <div className={styles.extensionsGrid}>
 
