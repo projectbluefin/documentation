@@ -111,7 +111,7 @@ the source.
 
 ```bash
 npm ci
-npm test                       # parser, security filter, tripwire
+npm test                       # parser, security filter, tripwire, Worker entry points
 
 # Build a real index (needs a GitHub token the hub accepts)
 HIVE_TOKEN="$(gh auth token)" node scripts/build-index.mjs --out index.json --dry-run
