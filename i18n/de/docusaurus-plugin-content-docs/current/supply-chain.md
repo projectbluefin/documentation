@@ -2,18 +2,18 @@
 title: Sicherheit der Lieferkette
 sidebar_label: Lieferkette
 sidebar_position: 3
-description: Wie Bluefin-Abbilder mit Sigstore, SLSA und Syft signiert, überprüft und attestiert werden.
+description: Wie Bluefin-Images mit Sigstore, SLSA und Syft signiert, überprüft und attestiert werden.
 ---
 
 # Sicherheit der Lieferkette
 
-Jedes Bluefin-Abbild wird beim Build signiert und attestiert. Du kannst jedes Abbild vor der Installation überprüfen.
+Jedes Bluefin-Image wird beim Build signiert und attestiert. Du kannst jedes Image vor der Installation überprüfen.
 
 ## Signier-Paradigmen
 
-Bluefin verwendet je nach Abbild zwei Signier-Methoden. Die verbindliche Tabelle liegt in `scripts/lib/signing-trust.js`, die außerdem die Befehle zur Überprüfung erzeugt, die auf der [Images](/images)-Seite angezeigt werden.
+Bluefin verwendet je nach Image zwei Signier-Methoden. Die verbindliche Tabelle liegt in `scripts/lib/signing-trust.js`, die außerdem die Befehle zur Überprüfung erzeugt, die auf der [Images](/images)-Seite angezeigt werden.
 
-| Paradigma                   | Abbilder                                                            | Überprüfung                                   |
+| Paradigma                   | Images                                                              | Überprüfung                                   |
 | --------------------------- | ------------------------------------------------------------------- | --------------------------------------------- |
 | **Key-basiert**             | Bluefin Classic (`ghcr.io/ublue-os/bluefin`, `bluefin-nvidia-open`) | `cosign verify` mit dem öffentlichen Repo-Key |
 | **Keyless (OIDC/Sigstore)** | Alle Dakota, alle Utah                                              | `cosign verify` mit dem Rekor-Transparenz-Log |
@@ -43,7 +43,7 @@ Ersetze `stable` durch dein spezifisches Tag (z. B. `stable-20260501`), um an ei
 
 ## SLSA-Provenanz
 
-Bluefin Classic und Dakota veröffentlichen [SLSA v1](https://slsa.dev/provenance/v1) Provenanz-Attestierungen zusammen mit dem Abbild in GHCR. Provenanz wird immer keyless über die OIDC-Identität der GitHub Actions der Signier-Repo überprüft, sogar für ein key-signiertes Abbild wie Classic. Utah veröffentlicht noch keine Provenanz. Die Seite [Driver Versions](/driver-versions) zeigt den nächtlich überprüften Attestierungsstatus pro Stream an.
+Bluefin Classic und Dakota veröffentlichen [SLSA v1](https://slsa.dev/provenance/v1) Provenanz-Attestierungen zusammen mit dem Image in GHCR. Provenanz wird immer keyless über die OIDC-Identität der GitHub Actions des Signier-Repos überprüft, sogar für ein key-signiertes Image wie Classic. Utah veröffentlicht noch keine Provenanz. Die Seite [Driver Versions](/driver-versions) zeigt den nächtlich überprüften Attestierungsstatus pro Stream an.
 
 Provenanz abrufen und inspizieren:
 
@@ -56,9 +56,9 @@ cosign verify-attestation ghcr.io/ublue-os/bluefin:stable \
 
 ## SBOM
 
-Ein [Syft](https://github.com/anchore/syft) SPDX-JSON-SBOM wird an jedes Abbild als OCI-Attestierung angehängt. Die [Images](/images)-Seite hebt wichtige Package-Versionen hervor, die nächtlich aus diesen SBOMs extrahiert werden.
+Ein [Syft](https://github.com/anchore/syft) SPDX-JSON-SBOM wird an jedes Image als OCI-Attestierung angehängt. Die [Images](/images)-Seite hebt wichtige Package-Versionen hervor, die nächtlich aus diesen SBOMs extrahiert werden.
 
-SBOM für ein beliebiges Abbild abrufen:
+SBOM für ein beliebiges Image abrufen:
 
 ```bash
 # Install oras: https://oras.land
@@ -71,12 +71,12 @@ Source-Repositories werden wöchentlich von [OpenSSF Scorecard](https://security
 
 ## Toolchain
 
-| Tool                                         | Rolle                                           |
-| -------------------------------------------- | ----------------------------------------------- |
-| [cosign](https://github.com/sigstore/cosign) | Abbild-Signierung und Attestierungs-Überprüfung |
-| [ORAS](https://oras.land)                    | OCI Artifact push/pull (SBOMs, Provenanz)       |
-| [Syft](https://github.com/anchore/syft)      | SBOM-Generierung                                |
-| [SLSA](https://slsa.dev)                     | Provenanz-Spezifikation                         |
-| [Scorecard](https://securityscorecards.dev)  | Bewertung der Repository-Sicherheitslage        |
+| Tool                                         | Rolle                                          |
+| -------------------------------------------- | ---------------------------------------------- |
+| [cosign](https://github.com/sigstore/cosign) | Image-Signierung und Attestierungs-Überprüfung |
+| [ORAS](https://oras.land)                    | OCI Artifact push/pull (SBOMs, Provenanz)      |
+| [Syft](https://github.com/anchore/syft)      | SBOM-Generierung                               |
+| [SLSA](https://slsa.dev)                     | Provenanz-Spezifikation                        |
+| [Scorecard](https://securityscorecards.dev)  | Bewertung der Repository-Sicherheitslage       |
 
 Alle gehören zum [CNCF / OpenSSF](https://openssf.org)-Ökosystem und werden auf der [Projects](/donations/projects)-Seite angezeigt.

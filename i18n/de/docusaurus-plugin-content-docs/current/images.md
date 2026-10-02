@@ -1,6 +1,6 @@
 ---
 id: images
-title: Abbilder
+title: Images
 sidebar_position: 6
 hide_table_of_contents: true
 custom_edit_url: null
@@ -10,7 +10,7 @@ pagination_prev: null
 
 import ImagesCatalog from "@site/src/components/ImagesCatalog";
 
-Der Katalog umfasst drei Bluefin-Abbildfamilien: **Bluefin**, **Bluefin Classic**
+Der Katalog umfasst drei Bluefin-Image-Familien: **Bluefin**, **Bluefin Classic**
 (veröffentlicht von `ublue-os`) und **Utah**.
 
 <ImagesCatalog />
