@@ -13,10 +13,10 @@ Jedes Bluefin-Abbild wird beim Build signiert und attestiert. Du kannst jedes Ab
 
 Bluefin verwendet je nach Abbild zwei Signier-Methoden. Die verbindliche Tabelle liegt in `scripts/lib/signing-trust.js`, die außerdem die Befehle zur Überprüfung erzeugt, die auf der [Images](/images)-Seite angezeigt werden.
 
-| Paradigm                    | Abbilder                                                            | Überprüfung                                   |
+| Paradigma                   | Abbilder                                                            | Überprüfung                                   |
 | --------------------------- | ------------------------------------------------------------------- | --------------------------------------------- |
-| **Key-basiert**             | Bluefin Classic (`ghcr.io/ublue-os/bluefin`, `bluefin-nvidia-open`) | `cosign verify` mit der öffentlichen Repo-Key |
-| **Keyless (OIDC/Sigstore)** | Alle Dakota, alle Utah                                              | `cosign verify` mit der Rekor-Transparenz-Log |
+| **Key-basiert**             | Bluefin Classic (`ghcr.io/ublue-os/bluefin`, `bluefin-nvidia-open`) | `cosign verify` mit dem öffentlichen Repo-Key |
+| **Keyless (OIDC/Sigstore)** | Alle Dakota, alle Utah                                              | `cosign verify` mit dem Rekor-Transparenz-Log |
 
 ### Bluefin Classic überprüfen (key-basiert)
 
@@ -56,27 +56,27 @@ cosign verify-attestation ghcr.io/ublue-os/bluefin:stable \
 
 ## SBOM
 
-Ein [Syft](https://github.com/anchore/syft) SPDX-JSON-SBOM wird jedes Abbild als OCI-Attestierung angehängt. Die [Images](/images)-Seite hebt wichtige Package-Versionen hervor, die nächtlich aus diesen SBOMs extrahiert werden.
+Ein [Syft](https://github.com/anchore/syft) SPDX-JSON-SBOM wird an jedes Abbild als OCI-Attestierung angehängt. Die [Images](/images)-Seite hebt wichtige Package-Versionen hervor, die nächtlich aus diesen SBOMs extrahiert werden.
 
 SBOM für ein beliebiges Abbild abrufen:
 
 ```bash
-# Installier oras: https://oras.land
+# Install oras: https://oras.land
 oras discover --artifact-type application/vnd.syft+json ghcr.io/ublue-os/bluefin:stable
 ```
 
 ## OpenSSF Scorecard
 
-Source-Repositories werden wöchlich von [OpenSSF Scorecard](https://securityscorecards.dev) bewertet. Die Scores werden auf der [Projects](/donations/projects)-Seite angezeigt.
+Source-Repositories werden wöchentlich von [OpenSSF Scorecard](https://securityscorecards.dev) bewertet. Die Scores werden auf der [Projects](/donations/projects)-Seite angezeigt.
 
 ## Toolchain
 
-| Tool                                         | Rolle                                          |
-| -------------------------------------------- | ---------------------------------------------- |
-| [cosign](https://github.com/sigstore/cosign) | Image-Signierung und Attestierungs-Überprüfung |
-| [ORAS](https://oras.land)                    | OCI Artifact push/pull (SBOMs, Provenanz)      |
-| [Syft](https://github.com/anchore/syft)      | SBOM-Generierung                               |
-| [SLSA](https://slsa.dev)                     | Provenanz-Spezifikation                        |
-| [Scorecard](https://securityscorecards.dev)  | Bewertung der Repository-Sicherheitslage       |
+| Tool                                         | Rolle                                           |
+| -------------------------------------------- | ----------------------------------------------- |
+| [cosign](https://github.com/sigstore/cosign) | Abbild-Signierung und Attestierungs-Überprüfung |
+| [ORAS](https://oras.land)                    | OCI Artifact push/pull (SBOMs, Provenanz)       |
+| [Syft](https://github.com/anchore/syft)      | SBOM-Generierung                                |
+| [SLSA](https://slsa.dev)                     | Provenanz-Spezifikation                         |
+| [Scorecard](https://securityscorecards.dev)  | Bewertung der Repository-Sicherheitslage        |
 
 Alle gehören zum [CNCF / OpenSSF](https://openssf.org)-Ökosystem und werden auf der [Projects](/donations/projects)-Seite angezeigt.

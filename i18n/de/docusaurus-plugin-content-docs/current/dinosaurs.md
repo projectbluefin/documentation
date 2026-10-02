@@ -3,7 +3,7 @@ title: Dinosaurier
 slug: dinosaurs
 ---
 
-Bluefin hat Dinosaurier und andere prähistorische Tiere in seiner Kunstwerk.
+Bluefin hat Dinosaurier und andere prähistorische Tiere in seinem Kunstwerk.
 Bluefin hat Freunde, wir nennen das Bluefin's [Kessel](https://en.wikipedia.org/wiki/Kettle_%28birds%29).
 Alle hier gezeigten Wesen wurden von Jacob Schnurr gestaltet und gezeichnet.
 Du kannst Aufkleber dieser und vieler weiterer Designs in [seinem Etsy-Shop](https://www.etsy.com/shop/JSchnurrCommissions?dd_referrer=https%3A%2F%2Fwww.google.com%2F) kaufen. Sieh auch: [Warum Dinosaurier](https://www.youtube.com/watch?v=XpKFcLqbd-A&t=2451s)?
@@ -25,7 +25,7 @@ Illustration von Delphic Melody (M. Gopal)
 ## Bluefin LTS und GDX
 
 - Name: [ Redacted ]
-- Rolle: Eins der größten Raptors, repräsentiert die Trägheit des Unternehmens
+- Rolle: Einer der größten Raptoren, repräsentiert die Trägheit des Unternehmens
 - Art: [Achillobator giganticus](https://en.wikipedia.org/wiki/Achillobator)
 
 ![Achillobator](/img/user-attachments/eb94b207-c29b-4410-96b5-8c0ac8ef238f.png)
@@ -33,7 +33,7 @@ Illustration von Delphic Melody (M. Gopal)
 ## Kubernetes
 
 - Name: Karl
-- Rolle: Kubernetes ungezügelt, unsere Leitstern - repräsentiert unsere Developer Experience
+- Rolle: Kubernetes ungezügelt, unser Leitstern - repräsentiert unsere Developer Experience
 - Art: [Amargasaurus cazaui](https://en.wikipedia.org/wiki/Amargasaurus)
 
 ![Karl](/img/user-attachments/79ceae5e-f48b-4d87-aadd-c7f46294378e.png)

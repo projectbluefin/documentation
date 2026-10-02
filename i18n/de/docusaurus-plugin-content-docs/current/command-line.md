@@ -26,9 +26,9 @@ Bluefin verfolgt einen **Flatpak-first**-Ansatz für Desktop-Software. Anwendung
 
 Darauf achten, dass die Homebrew-Cask-Funktionalität macOS-spezifisch ist und in Bluefin nicht funktioniert; für GUI-Anwendungen wird Flatpak verwendet. Andere Werkzeuge wie [uv](https://github.com/astral-sh/uv), [pixi](https://github.com/prefix-dev/pixi), [asdf](https://asdf-vm.com/) und [mise](https://github.com/jdx/mise) laufen smooth, wenn sie über Homebrew installiert werden.
 
-:::info[Überschreit die Streams nicht]
+:::info[Überschreite die Streams nicht]
 
-Im Allgemeinen gilt: Brauchst du ein CLI-Tool oder eine Utility, verwendest Homebrew. Brauchst du eine Library und Dependencies für Entwicklungsarbeit, verwendest einen Container. Das hält alles sauber und reproduzierbar.
+Im Allgemeinen gilt: Brauchst du ein CLI-Tool oder eine Utility, verwende Homebrew. Brauchst du eine Library und Dependencies für Entwicklungsarbeit, verwende einen Container. Das hält alles sauber und reproduzierbar.
 
 :::
 
@@ -38,7 +38,7 @@ Das Projekt steht auf funktionales Bling, das slick ist und trotzdem einen Zweck
 
 ![image](/img/user-attachments/0e0326ef-6640-41a2-bd24-dae1b1647cfd.png)
 
-Die `bluefin-dx:beta`-Zeile ist der Name des OS-Abbilds und erinnert dich daran, ob du auf einem gepinten Abbild bist, mit Schnellzugriff auf gängige Befehle. Ein- und ausschalten mit `ujust toggle-user-motd`.
+Die `bluefin-dx:beta`-Zeile ist der Name des OS-Abbilds und erinnert dich daran, ob du auf einem gepinnten Abbild bist, mit Schnellzugriff auf gängige Befehle. Ein- und ausschalten mit `ujust toggle-user-motd`.
 
 Wir zeigen gerne unsere Maschinen. Lauf `fastfetch`:
 
@@ -54,7 +54,7 @@ Dieser Screen zeigt Hardware-Informationen, Benutzernamen, Maschinenname und Ker
 
 Bluefin verwendet standardmäßig [bash](https://www.gnu.org/software/bash/) und liefert zur Bequemlichkeit auch [fish](https://fishshell.com/) ([Donate](https://github.com/sponsors/fish-shell)) und [zsh](https://www.zsh.org/) auf dem Abbild aus.
 
-Bluefin liefert [Ptyxis](https://devsuite.app/ptyxis/) als Standard-Terminal (`Terminal` im App-Launcher). Es ist **stark empfohlen**, die Shell über das Terminal-Emulator statt systemweit zu ändern ([Warum nicht systemweit](https://tim.siosm.fr/blog/2023/12/22/dont-change-defaut-login-shell/)). Installiere zuerst die gewünschte Shell mit `brew install zsh` oder `brew install fish`. Klicke auf die Terminal-Einstellungen und bearbeite dein Profil:
+Bluefin liefert [Ptyxis](https://devsuite.app/ptyxis/) als Standard-Terminal (`Terminal` im App-Launcher). Es ist **stark empfohlen**, die Shell über den Terminal-Emulator statt systemweit zu ändern ([Warum nicht systemweit](https://tim.siosm.fr/blog/2023/12/22/dont-change-defaut-login-shell/)). Installiere zuerst die gewünschte Shell mit `brew install zsh` oder `brew install fish`. Klicke auf die Terminal-Einstellungen und bearbeite dein Profil:
 
 ![Ptyxis → Preferences → Profiles → A Profile Setting → Edit...](/img/user-attachments/2c122205-dbd8-41e6-8b7b-4f536c3b69e9.png)
 
