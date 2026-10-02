@@ -1,6 +1,6 @@
 ---
 id: images
-title: Bilder
+title: Abbilder
 sidebar_position: 6
 hide_table_of_contents: true
 custom_edit_url: null
