@@ -9,13 +9,13 @@ Bluefin is gemaakt door ingenieurs, maar tot leven gebracht door [Jacob Schnurr]
 
 :::tip[AI is een uitbreiding van cloud native]
 
-Bluefin's focus in AI is het bieden van een generieke API-endpoint aan het bestelsyssteem dat door de gebruiker wordt bestuurd. Net zoals Bluefin's bestelsyssteem is opgebouwd met [CNCF](https://cncf.io)-technologie zoals `bootc` en `podman`, wordt deze ervaring aangedreven door [Agentic AI Foundation](https://aaif.io/)-technologie zoals `goose`, met een sterke dosis open source-componenten die [RHEL Lightspeed](https://www.redhat.com/en/lightspeed) aandrijven.
+Bluefin's focus in AI is het bieden van een generieke API-endpoint aan het besturingssysteem dat door de gebruiker wordt bestuurd. Net zoals Bluefin's besturingssysteem is opgebouwd met [CNCF](https://cncf.io)-technologie zoals `bootc` en `podman`, wordt deze ervaring aangedreven door [Agentic AI Foundation](https://aaif.io/)-technologie zoals `goose`, met een sterke dosis open source-componenten die [RHEL Lightspeed](https://www.redhat.com/en/lightspeed) aandrijven.
 
 :::
 
 ## AI-architectuur en -tools
 
-Bluefin biedt open, door de gebruiker bestuurde API-endpoints aan het bestelsyssteem voor AI-workflows. We doen dit via een door de community beheerde set aan toolaanbevelingen en -configuratie:
+Bluefin biedt open, door de gebruiker bestuurde API-endpoints aan het besturingssysteem voor AI-workflows. We doen dit via een door de community beheerde set aan toolaanbevelingen en -configuratie:
 
 - “Bring your own LLM”-aanpak, het moet makkelijk zijn om tussen lokale en gehoste modellen te wisselen
   - [Goose](https://block.github.io/goose/) als primaire interface naar gehoste en lokale modellen
@@ -40,7 +40,7 @@ De [AI Lab-extentie](https://developers.redhat.com/products/podman-desktop/podma
 
 De volgende AI-gerichte commandoregeltools zijn beschikbaar via Homebrew (`brew install <name>`):
 
-| Name                                                                | Description                                                      |
+| Naam                                                                | Beschrijving                                                     |
 | ------------------------------------------------------------------- | ---------------------------------------------------------------- |
 | [aichat](https://formulae.brew.sh/formula/aichat)                   | All-in-one AI-gedreven CLI Chat & Copilot                        |
 | [block-goose-cli](https://formulae.brew.sh/formula/block-goose-cli) | Block Protocol AI agent CLI                                      |

@@ -5,7 +5,7 @@ slug: /administration
 
 #### Dagelijkse bediening
 
-Bluefin is ontworpen om het leven lang van de hardware te installeren zonder herinstallatie. In tegenstelling tot traditionele bestelsystemen is de image altijd schoon en “puur”, wat upgrades minder problematisch maken. Updates zijn standaard automatisch en onopvallend.
+Bluefin is ontworpen om het leven lang van de hardware te installeren zonder herinstallatie. In tegenstelling tot traditionele besturingssystemen is de image altijd schoon en “puur”, wat upgrades minder problematisch maken. Updates zijn standaard automatisch en onopvallend.
 
 Dit betekent doorgaans dat je je systeem één keer opzet en het daarna zo laat blijven. Waarschijnlijk kom je hier nooit meer terug. 🙂
 
@@ -32,7 +32,7 @@ Bluefin is ontworpen om “hands off” te zijn. Het systeem controleert elke ze
 
 - De meeste images worden wekelijks gepubliceerd, maar het kan op elk moment een nieuwe update duwen.
 
-Updates worden toegepassan wanneer het systeem herstart. Daarom wordt aanbevolen om je apparaat regelmatig uit te zetten als het niet wordt gebruikt, ervoor te zorgen dat kernelupdates worden toegepassan. Toepassingsupdates (zoals de browser) gebeuren onafhankelijk hiervan en vereisen geen herstart.
+Updates worden toegepast wanneer het systeem herstart. Daarom wordt aanbevolen om je apparaat regelmatig uit te zetten als het niet wordt gebruikt, ervoor te zorgen dat kernelupdates worden toegepast. Toepassingsupdates (zoals de browser) gebeuren onafhankelijk hiervan en vereisen geen herstart.
 
 Machinefirmware-updates worden geboden via de Firmware-toepassing.
 
@@ -206,11 +206,11 @@ rpm-ostree reset
 
 Herstart om toe te passen.
 
-| Aanbevolen alternatief | Niet layeren op host    |
-| ---------------------- | ----------------------- |
-| Flatpak-apps           | Grafische desktop-apps  |
-| Homebrew CLI-tools     | Host-utiliteiten        |
-| Distrobox / Containers | Ontwikkelingstijdranden |
+| Aanbevolen alternatief | Niet layeren op host   |
+| ---------------------- | ---------------------- |
+| Flatpak-apps           | Grafische desktop-apps |
+| Homebrew CLI-tools     | Host-utiliteiten       |
+| Distrobox / Containers | Ontwikkelingsruntimes  |
 
 ## Standaardwaarden overschrijven
 
@@ -239,13 +239,13 @@ Pro-tip, bewaar je eigen taken en aliasen in `~/.Justfile`, en ze zijn ook handi
 
 Bluefin bevat samengestelde CLI-toolcollecties. Deze commando's installeeren samengestelde collecties van tools via Homebrew:
 
-| Commando            | Description                                                                                                                 |
+| Commando            | Beschrijving                                                                                                                |
 | ------------------- | --------------------------------------------------------------------------------------------------------------------------- |
 | `ujust bluefin-cli` | Moderne CLI-tools: atuin, bat, chezmoi, direnv, eza, fd, gh, glab, ripgrep, starship, tealdeer, television, zoxide, en meer |
 
 ## Systeemcommando's
 
-| Commando                       | Description                                                                                                                                                                                                                              |
+| Commando                       | Beschrijving                                                                                                                                                                                                                             |
 | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `ujust update`                 | Manueel het systeem, flatpaks en brew-formules bijwerken                                                                                                                                                                                 |
 | `ujust toggle-updates`         | Automatische systeemupdates in- of uitschakelen                                                                                                                                                                                          |
@@ -254,7 +254,7 @@ Bluefin bevat samengestelde CLI-toolcollecties. Deze commando's installeeren sam
 | `ujust bios-info`              | Toont BIOS/UEFI-informatie (fabrikant, productnaam, versie, releasedatum)                                                                                                                                                                |
 | `ujust device-info`            | Stuurt de status, flatpak-lijst en systeeminfo naar het CentOS-pastebin en geeft de URL terug naar de terminal. Hiermee kan het eindgebruiker de URL handmatig aankoppelen met hun info zodat anderen hen kunnen helpen bij het debuggen |
 | `ujust rebase-helper`          | Interatieve assistent om tussen stromen te wisselen, te rebase naar andere images, of te rollback naar een vorige versie                                                                                                                 |
-| `ujust clean-system`           | Ruim ongebruikte containers, volumes en flatpak-tijdranden op                                                                                                                                                                            |
+| `ujust clean-system`           | Ruim ongebruikte containers, volumes en flatpak-runtimes op                                                                                                                                                                              |
 | `ujust check-idle-power-draw`  | Meet het idle-powerverbruik van je systeem met powerstat                                                                                                                                                                                 |
 | `ujust check-local-overrides`  | Toont bestanden die verschillen tussen `/usr/etc` en `/etc` om lokale aanpassingen te identificeren                                                                                                                                      |
 | `ujust logs-this-boot`         | Toont alle systeemlogboeken van de huidige boot                                                                                                                                                                                          |
@@ -268,7 +268,7 @@ Bluefin bevat samengestelde CLI-toolcollecties. Deze commando's installeeren sam
 
 ## Developer Experience-commando's
 
-| Commando               | Description                                                                                                                          |
+| Commando               | Beschrijving                                                                                                                         |
 | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
 | `ujust devmode`        | Wissel tussen Bluefin en de Developer Experience (bluefin-dx)                                                                        |
 | `ujust dx-group`       | Voeg je gebruiker toe aan docker, incus-admin, libvirt en dialout-groepen voor volledige developer-toegang                           |
@@ -277,7 +277,7 @@ Bluefin bevat samengestelde CLI-toolcollecties. Deze commando's installeeren sam
 
 ## Apps-installatiecommando's
 
-| Commando                              | Description                                                                                               |
+| Commando                              | Beschrijving                                                                                              |
 | ------------------------------------- | --------------------------------------------------------------------------------------------------------- |
 | `ujust jetbrains-toolbox`             | Installeer [JetBrains Toolbox](https://www.jetbrains.com/toolbox-app/) voor het beheer van JetBrains-IDEs |
 | `ujust install-opentabletdriver`      | Installeer of verwijder [OpenTabletDriver](https://opentabletdriver.net/), een open source-tabletdriver   |

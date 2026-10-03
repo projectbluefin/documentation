@@ -19,9 +19,9 @@ Deze pagina is een kort [runbook](https://www.pagerduty.com/resources/learn/what
 
 Bluefin is opzettelijk ontworpen om de staat van de kunst van Linux-ontwikkeling te volgen; het project optimaliseert een “golden path” om gebruikers de beste kans op succes te geven. Echter, soms heb je geluk (of pech). Deze sectie is geïnspireerd door Homebrew's [ondersteuningstappen](https://docs.brew.sh/Support-Tiers). Niet alle configuraties worden ondersteund. Hier is een snelle gids:
 
-### Trap 1 - De beste ervaring
+### Niveau 1 - De beste ervaring
 
-Een Trap 1-configuratie wordt als volledig ondersteund beschouwd. Deze configuraties ontvangen het hoogste niveau van dekking en worden geprioriteerd.
+Een Niveau 1-configuratie wordt als volledig ondersteund beschouwd. Deze configuraties ontvangen het hoogste niveau van dekking en worden geprioriteerd.
 
 #### Vereisten
 
@@ -37,16 +37,16 @@ Een Trap 1-configuratie wordt als volledig ondersteund beschouwd. Deze configura
 
 **Aanbeveling:** Bluefin
 
-### Trap 2 - Je zit waarschijnlijk wel goed
+### Niveau 2 - Je zit waarschijnlijk wel goed
 
-Een Trap 2-configuratie is niet volledig ondersteund en kan compromissen bevatten als gevolg van hardware- of softwarekeuzes.
+Een Niveau 2-configuratie is niet volledig ondersteund en kan compromissen bevatten als gevolg van hardware- of softwarekeuzes.
 Het kan meestal werken maar kan configuratie na installatie nodig hebben. Enkele hiervan werken prima maar zijn hier geplaatst omdat de software wordt geleverd door de fabrikant en niet iets wat het team kan controleren zoals Nvidia-drivers.
 
 #### Vereisten
 
 - Nvidia-GPU's op desktops
 - Enkele Linux-laptopfabrikanten kunnen onder deze trap vallen
-  - Misl om goede kernelondersteuning te hebben maar een externe module nodig voor een ventilatorcontroller of een ander component
+  - Heeft mogelijk goede kernelondersteuning maar een externe module nodig voor een ventilatorcontroller of een ander component
 - Lokaal gelayerde pakketten of andere softwareconfiguraties die niet in de documentatie worden behandeld
 - ARM/aarch64-hardware — het kernteam heeft geen toegang tot deze hardware maar genereert images voor de community
 
@@ -56,20 +56,20 @@ Het kan meestal werken maar kan configuratie na installatie nodig hebben. Enkele
   - Het team neemt deze configuraties gewoonlijk niet in rekening bij het testen.
 - Werkt doorgaans prima van dag tot dag
 
-**Aanbeveling:** Pro Bluefin en kijk hoe het loopt. Enkele mensen maken custom images, onderzoek kan nodig zijn.
+**Aanbeveling:** Probeer Bluefin en kijk hoe het loopt. Enkele mensen maken custom images, onderzoek kan nodig zijn.
 
-### Trap 3 - Wie weet?
+### Niveau 3 - Wie weet?
 
-Trap 3 is meestal niet ondersteund — het kan perfect werken of een ramp zijn.
+Niveau 3 is meestal niet ondersteund — het kan perfect werken of een ramp zijn.
 
 #### Vereisten
 
 - Bekend problematicale hardware (Asus- en Apple-laptops). Voor Intel-Macs van 2018–2020 met de T2-beveiligingschip, zie de community [T2 Mac-installatiegids](/t2-mac).
-- Dual-GPU-laptop con Nvidia-hardware
+- Dual-GPU-laptop met Nvidia-hardware
 - Oude “geluk met dit!”-verpakkingsformaten
   - .run-bestanden, tarballs en Appimages
   - Alles waar de software om DKMS vraagt
-- Exotic hardware in het algemeen — in bepaalde gevallen kan een Trap 3-installatie worden gebruikt als trofspraakrecht.
+- Exotic hardware in het algemeen — in bepaalde gevallen kan een Niveau 3-installatie worden gebruikt als opschepperij.
 
 #### Gebruikers kunnen verwachten
 
@@ -121,9 +121,9 @@ Je kan Bluefin op een externe schijf installeren om een draagbare Bluefin-instal
 
 ![bluefin-drive](/img/user-attachments/f3ea0252-b0ba-4c68-8566-68cfbdbfc6b2.png)
 
-**Vergeet niet om volledige schijfverslelling te selecteren tijdens de installatie!**
+**Vergeet niet om volledige schijfversleuteling te selecteren tijdens de installatie!**
 
-Gevalleiden:
+Gebruiksscenario's:
 
 - Een geweldige manier om Linux te uitproberen; als het je bevalt, zet de schijf in je hoofdmachine zonder te herinstalleren.
 - Of koop een nieuwe schijf voor je PC en zet je bestaande OS in een externe behuizing als backup.
@@ -207,7 +207,7 @@ Omdat de userspace helemaal in je home-map zit, zal elke tool die je gebruikt om
   - (Optioneel) Importeer je [wireguard-configuratie via `wg-quick`](https://blogs.gnome.org/thaller/2019/03/15/wireguard-in-networkmanager/) of gebruik de VPN-configuratie in de Netwerkbeheer-GUI
 - (Optioneel) Ontwikkelersconfiguratie
   - `ujust devmode` en volg de instructies
-  - Start VSCode en configureer je instellingen enenties
+  - Start VSCode en configureer je instellingen en extensies
 
 ## Dag 2: Operaties en Onderhoud
 
@@ -223,7 +223,7 @@ Bluefin streeft naar onderhoud zo eenvoudig mogelijk maken, echter veel van de g
   - Verwijder eenvoudig toepassingen in één keer
 - `ujust clean-system` om oude containers en ongebruikte Flatpak-runtimes op te ruimen
 
-En nog meer advies: hoe meer je investeert in dag 0, hoe vatter je dag 1 zal zijn, wat resulteert in een nog vottere dag 2. Na dat, is het alles trofspraakrecht. Het `fastfetch`-commando ([Donate](https://github.com/sponsors/LinusDierheimer)) zal er zijn om je mijlpaal te herinneren:
+En nog meer advies: hoe meer je investeert in dag 0, hoe soepeler je dag 1 zal zijn, wat resulteert in een nog soepelere dag 2. Na dat, is het alles opschepperij. Het `fastfetch`-commando ([Donate](https://github.com/sponsors/LinusDierheimer)) zal er zijn om je mijlpaal te herinneren:
 
 ![image](/img/user-attachments/e1b77128-6aaf-4a95-a9fc-cb1409a176fc.png)
 

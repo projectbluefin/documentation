@@ -12,8 +12,8 @@ Bluefin is ontworpen om door normale mensen te gebruiken, maar de commandoregel 
 
 Bluefin volgt een **Flatpak-first**-aanpak voor desktopsoftware. Toepassingen draaien geïsoleerd van het gaststelsel en worden gehaald uit [Flathub](https://flathub.org).
 
-- **[Bazaar](https://github.com/kolunmi/bazaar)** — de standaard toepassingswinkel. Het filtert verlaten toepassingen en die afhankelijk zijn van verouderde Flatpak-tijdranden.
-- **[Warehouse](https://flathub.org/apps/io.github.flattool.Warehouse)** — beheren van Flatpak-levenscycli, geïnstalleerde tijdranden inspecteren, restanten opruimen, en versies pinnen of downgraden.
+- **[Bazaar](https://github.com/kolunmi/bazaar)** — de standaard toepassingswinkel. Het filtert verlaten toepassingen en die afhankelijk zijn van verouderde Flatpak-runtimes.
+- **[Warehouse](https://flathub.org/apps/io.github.flattool.Warehouse)** — beheren van Flatpak-levenscycli, geïnstalleerde runtimes inspecteren, restanten opruimen, en versies pinnen of downgraden.
 - **[Flatseal](https://flathub.org/apps/com.github.tchx84.Flatseal)** — grafisch rechtenbeheer voor fijnmazige bestandsystem-, netwerk- en apparaattoegang tot Flatpak.
 
 ## Commandoregel-apps & Homebrew
