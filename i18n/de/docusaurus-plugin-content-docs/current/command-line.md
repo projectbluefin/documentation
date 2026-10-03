@@ -26,7 +26,7 @@ Bluefin verfolgt einen **Flatpak-first**-Ansatz für Desktop-Software. Anwendung
 
 Darauf achten, dass die Homebrew-Cask-Funktionalität macOS-spezifisch ist und in Bluefin nicht funktioniert; für GUI-Anwendungen wird Flatpak verwendet. Andere Werkzeuge wie [uv](https://github.com/astral-sh/uv), [pixi](https://github.com/prefix-dev/pixi), [asdf](https://asdf-vm.com/) und [mise](https://github.com/jdx/mise) laufen reibungslos, wenn sie über Homebrew installiert werden.
 
-:::info[Überschreite die Streams nicht]
+:::info[Kreuzt die Streams nicht]
 
 Im Allgemeinen gilt: Brauchst du ein CLI-Tool oder eine Utility, verwende Homebrew. Brauchst du eine Library und Dependencies für Entwicklungsarbeit, verwende einen Container. Das hält alles sauber und reproduzierbar.
 
