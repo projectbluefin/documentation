@@ -29,7 +29,7 @@ Een Trap 1-configuratie wordt als volledig ondersteund beschouwd. Deze configura
   - Linux-laptopfabrikanten kunnen al of niet onder deze trap vallen.
   - “Onze hardware wordt volledig ondersteund in de upstream Linux-kernel” ← goed
   - “We ondersteunen alleen Ubuntu 24.04” ← waarschijnlijk niet goed
-- Software verpakt voor moderne Linuxes (Flatpak voor desktoptoappen, containers voor ontwikkeling, enz.)
+- Software verpakt voor moderne Linuxes (Flatpak voor desktop-apps, containers voor ontwikkeling, enz.)
 
 #### Gebruikers kunnen verwachten
 
@@ -93,17 +93,17 @@ Bekijk de volgende overwegingen voordat je Bluefin installeert:
 
 ### Snelle referentie
 
-| Component   | Minimum                                 | Aanbevolen                                     |
-| ----------- | --------------------------------------- | ---------------------------------------------- |
-| **CPU**     | 64-bit x86_64                           | Zo veel als je kunt uitgeven                   |
-| **RAM**     | 16 GB                                   | 32 GB+ / Zo veel als je kunt uitgeven bij ZFS  |
-| **Opslag**  | 128 GB (alleen SSD, HDDs zijn te traag) | Zo veel als je kunt uitgeven                   |
-| **Grafiek** | Any modern Intel/AMD GPU                | Any modern GPU except Nvidia Maxwell and older |
-| **Boot**    | UEFI (BIOS unsupported)                 | UEFI with Secure Boot                          |
+| Component   | Minimum                                 | Aanbevolen                                       |
+| ----------- | --------------------------------------- | ------------------------------------------------ |
+| **CPU**     | 64-bit x86_64                           | Zo veel als je kunt uitgeven                     |
+| **RAM**     | 16 GB                                   | 32 GB+ / Zo veel als je kunt uitgeven bij ZFS    |
+| **Opslag**  | 128 GB (alleen SSD, HDDs zijn te traag) | Zo veel als je kunt uitgeven                     |
+| **Grafiek** | Elke moderne Intel/AMD-GPU              | Elke moderne GPU behalve Nvidia Maxwell en ouder |
+| **Boot**    | UEFI (BIOS niet ondersteund)            | UEFI met Secure Boot                             |
 
-### Schijruimte
+### Schijfruimte
 
-Dit is hoeveel schijruimte elke image van Bluefin standaard, dit inclusief de Flatpak-toappen (die kunnen worden verwijderd):
+Dit is hoeveel schijfruimte elke image van Bluefin standaard inneemt, inclusief de Flatpak-apps (die kunnen worden verwijderd):
 
 #### Bluefin
 
@@ -201,9 +201,9 @@ Omdat de userspace helemaal in je home-map zit, zal elke tool die je gebruikt om
 
 - Softwareinstallatie
   - Gebruik de Bazaar-winkel om toepassingen te installeren
-  - (Optioneel): Installeer commandoregeltoappen via `brew`
+  - (Optioneel): Installeer commandoregel-apps via `brew`
 - Na-installatieconfiguratie
-  - Selecteer/Wijzig standaardtoappen zoals je past
+  - Selecteer/Wijzig standaard-apps zoals je past
   - (Optioneel) Importeer je [wireguard-configuratie via `wg-quick`](https://blogs.gnome.org/thaller/2019/03/15/wireguard-in-networkmanager/) of gebruik de VPN-configuratie in de Netwerkbeheer-GUI
 - (Optioneel) Ontwikkelersconfiguratie
   - `ujust devmode` en volg de instructies

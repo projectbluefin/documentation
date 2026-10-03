@@ -19,7 +19,7 @@ Ik wil dat “defaults-lifestyle”.
 
 ![Bluefin Desktop Environment Illustration](/img/user-attachments/229f3763-c876-4402-8249-e631303e722b.png)
 
-## Toappen installeren
+## Apps installeren
 
 Gebruik [Bazaar](https://github.com/kolunmi/bazaar) om [toepassingen te installeren uit Flathub](https://flathub.org/). Systeemupdates en -upgrades worden niet door deze applicatie afgehandeld; het scala is beperkt tot het installeren van Flatpaks uit Flathub. Twee Flatpak-beheertools zijn meegeleverd:
 
@@ -206,11 +206,11 @@ rpm-ostree reset
 
 Herstart om toe te passen.
 
-| Aanbevolen alternatief | Niet layeren op host     |
-| ---------------------- | ------------------------ |
-| Flatpak-toappen        | Grafische desktoptoappen |
-| Homebrew CLI-tools     | Host-utiliteiten         |
-| Distrobox / Containers | Ontwikkelingstijdranden  |
+| Aanbevolen alternatief | Niet layeren op host    |
+| ---------------------- | ----------------------- |
+| Flatpak-apps           | Grafische desktop-apps  |
+| Homebrew CLI-tools     | Host-utiliteiten        |
+| Distrobox / Containers | Ontwikkelingstijdranden |
 
 ## Standaardwaarden overschrijven
 
@@ -254,7 +254,7 @@ Bluefin bevat samengestelde CLI-toolcollecties. Deze commando's installeeren sam
 | `ujust bios-info`              | Toont BIOS/UEFI-informatie (fabrikant, productnaam, versie, releasedatum)                                                                                                                                                                |
 | `ujust device-info`            | Stuurt de status, flatpak-lijst en systeeminfo naar het CentOS-pastebin en geeft de URL terug naar de terminal. Hiermee kan het eindgebruiker de URL handmatig aankoppelen met hun info zodat anderen hen kunnen helpen bij het debuggen |
 | `ujust rebase-helper`          | Interatieve assistent om tussen stromen te wisselen, te rebase naar andere images, of te rollback naar een vorige versie                                                                                                                 |
-| `ujust clean-system`           | Ruim ongebruikte containers, volumes en flatpak-tijdranden op                                                                                                                                                                              |
+| `ujust clean-system`           | Ruim ongebruikte containers, volumes en flatpak-tijdranden op                                                                                                                                                                            |
 | `ujust check-idle-power-draw`  | Meet het idle-powerverbruik van je systeem met powerstat                                                                                                                                                                                 |
 | `ujust check-local-overrides`  | Toont bestanden die verschillen tussen `/usr/etc` en `/etc` om lokale aanpassingen te identificeren                                                                                                                                      |
 | `ujust logs-this-boot`         | Toont alle systeemlogboeken van de huidige boot                                                                                                                                                                                          |
@@ -275,14 +275,14 @@ Bluefin bevat samengestelde CLI-toolcollecties. Deze commando's installeeren sam
 | `ujust bluefin-cli`    | Installeer Bluefin's samengestelde commandoregelervaring met moderne tools (atuin, bat, eza, fd, ripgrep, starship, zoxide, en meer) |
 | `ujust toggle-devmode` | Alias voor `ujust devmode`                                                                                                           |
 
-## Toappen installeren-commando's
+## Apps-installatiecommando's
 
 | Commando                              | Description                                                                                               |
 | ------------------------------------- | --------------------------------------------------------------------------------------------------------- |
 | `ujust jetbrains-toolbox`             | Installeer [JetBrains Toolbox](https://www.jetbrains.com/toolbox-app/) voor het beheer van JetBrains-IDEs |
 | `ujust install-opentabletdriver`      | Installeer of verwijder [OpenTabletDriver](https://opentabletdriver.net/), een open source-tabletdriver   |
 | `ujust install-system-flatpaks`       | Installeer de standaard systeemflatpaks (nuttig na een rebase)                                            |
-| `ujust install-system-flatpaks-extra` | Installeer extra aanbevolen Flatpak-toappen                                                               |
+| `ujust install-system-flatpaks-extra` | Installeer extra aanbevolen Flatpak-apps                                                                  |
 
 Merk op dat Bluefin doorgaans probeert de systeem-Justfiles smal af te bakenen; de meeste hiervan zijn workarounds en geen volledig uitgeruste commando's. Ze kunnen worden verwijderd of gewijzigd afhankelijk van het probleem waarvoor ze oorspronkelijk waren bedoeld.
 

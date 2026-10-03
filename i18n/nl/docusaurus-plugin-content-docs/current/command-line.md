@@ -16,7 +16,7 @@ Bluefin volgt een **Flatpak-first**-aanpak voor desktopsoftware. Toepassingen dr
 - **[Warehouse](https://flathub.org/apps/io.github.flattool.Warehouse)** — beheren van Flatpak-levenscycli, geïnstalleerde tijdranden inspecteren, restanten opruimen, en versies pinnen of downgraden.
 - **[Flatseal](https://flathub.org/apps/com.github.tchx84.Flatseal)** — grafisch rechtenbeheer voor fijnmazige bestandsystem-, netwerk- en apparaattoegang tot Flatpak.
 
-## Commandoregeltoappen & Homebrew
+## Commandoregel-apps & Homebrew
 
 [brew](https://brew.sh/) (Homebrew) is de primaire pakketbeheerder om commandoregeltoepassingen en ontwikkelaarsutils te installeren zonder het basis-OS-image te vervuilen.
 

@@ -15,7 +15,7 @@ Het project waardeert de tijd die wordt besteed aan het automatiseren van repeti
 
 ## Insluitend is beter dan uitsluitend
 
-Breed succesvol en nuttige technologieën verschillende perspectieven en vaardigheden nodig, die alleen gehoord kunnen worden in een gastvrije en respectvolle omgeving. Onze community eert de tijd en inspanning die in een bespreking wordt gestoken.
+Breed succesvolle en nuttige technologieën hebben verschillende perspectieven en vaardigheden nodig, die alleen gehoord kunnen worden in een gastvrije en respectvolle omgeving. Onze community eert de tijd en inspanning die in een bespreking wordt gestoken.
 
 ## Evolutie is beter dan stagnatie
 
