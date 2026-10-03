@@ -24,7 +24,7 @@ Bluefin verfolgt einen **Flatpak-first**-Ansatz für Desktop-Software. Anwendung
 - [Homebrew-Pakete](https://formulae.brew.sh/)
 - [Cheatsheet](https://devhints.io/homebrew)
 
-Darauf achten, dass die Homebrew-Cask-Funktionalität macOS-spezifisch ist und in Bluefin nicht funktioniert; für GUI-Anwendungen wird Flatpak verwendet. Andere Werkzeuge wie [uv](https://github.com/astral-sh/uv), [pixi](https://github.com/prefix-dev/pixi), [asdf](https://asdf-vm.com/) und [mise](https://github.com/jdx/mise) laufen reibungslos, wenn sie über Homebrew installiert werden.
+Beachte, dass die Homebrew-Cask-Funktionalität macOS-spezifisch ist und in Bluefin nicht funktioniert; für GUI-Anwendungen wird Flatpak verwendet. Andere Werkzeuge wie [uv](https://github.com/astral-sh/uv), [pixi](https://github.com/prefix-dev/pixi), [asdf](https://asdf-vm.com/) und [mise](https://github.com/jdx/mise) laufen reibungslos, wenn sie über Homebrew installiert werden.
 
 :::info[Kreuzt die Streams nicht]
 
@@ -81,7 +81,7 @@ Hier sind GNOME-Erweiterungen, die die Maintainer empfehlen, um deine Desktop-Er
 <GnomeExtensions extensionId={6000} />
 <GnomeExtensions extensionId={7065} />
 
-Für eine Tailscale-GUI empfehlen wir die [official systray application](https://tailscale.com/docs/features/client/linux-systray): `tailscale configure systray --enable-startup=systemd` und neu starten.
+Für eine Tailscale-GUI empfehlen wir die [offizielle Systray-Anwendung](https://tailscale.com/docs/features/client/linux-systray): `tailscale configure systray --enable-startup=systemd` und neu starten.
 
 </div>
 
