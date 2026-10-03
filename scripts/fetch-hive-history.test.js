@@ -8,6 +8,7 @@ const {
   accumulateRepoStats,
   computeStatsWindows,
   createStatsAccumulator,
+  extractHiveContributorTiers,
   extractMetrics,
   fetchContributors,
   fetchContributorWeeklyStats,
@@ -565,4 +566,40 @@ test("loadHistory includes null error slots on fresh instantiation", () => {
   } finally {
     if (fs.existsSync(file)) fs.rmSync(file);
   }
+});
+
+test("extractHiveContributorTiers filters out agents and preserves registration timestamps", () => {
+  const rows = [
+    {
+      github_username: "newbie",
+      trust_tier: "newcomer",
+      tasks_completed: 0,
+      registered_at: "2026-09-28T12:00:00Z",
+    },
+    {
+      github_username: "veteran",
+      trust_tier: "trusted",
+      tasks_completed: 42,
+      registered_at: "2026-08-01T00:00:00Z",
+    },
+    {
+      github_username: "scanner",
+      trust_tier: "agent",
+      tasks_completed: 999,
+    },
+    null,
+    {},
+  ];
+  const tiers = extractHiveContributorTiers(rows);
+  assert.equal(tiers.scanner, undefined, "agents must be excluded");
+  assert.deepEqual(tiers.newbie, {
+    tier: "newcomer",
+    tasks: 0,
+    registeredAt: "2026-09-28T12:00:00Z",
+  });
+  assert.deepEqual(tiers.veteran, {
+    tier: "trusted",
+    tasks: 42,
+    registeredAt: "2026-08-01T00:00:00Z",
+  });
 });

@@ -84,11 +84,17 @@ the verified fallback list during discovery failures.
 
 ### Contributor leaderboard and freshness rules
 
-- **Ranked by Hive tasks, not commits:** On `/leaderboards`, all panels
-  (`ContributorLeaderboard`, `ContributorWall`, `HiveTaskLeaderboard`) rank
-  contributors by all-time Hive tasks completed via `hiveHistory.hiveContributorTiers[login].tasks`.
-  Commits are not used for ranking. Period tabs (season/month/week) and commit
-  sparklines are omitted because Hive tasks represent all-time completed work.
+- **Ranked by Hive tasks, not commits:** On `/leaderboards`, standings
+  rank contributors by all-time Hive tasks completed via `hiveHistory.hiveContributorTiers[login].tasks`.
+  Commits are not used for overall standings.
+- **De-duplicated 4-quadrant layout:** The `/leaderboards` page avoids repetitive top-12
+  listings of the same contributors. It organizes community participation into distinct quadrants:
+  1. **Hive Standings** (`ContributorLeaderboard`): Top-25 ranked all-time task finishers with repo breadth and milestone badges.
+  2. **Recent Milestones** (`RecentMilestonesLeaderboard`): Live ledger of teamwork tracking tier promotions, task landmarks, and project breadth unlocks.
+  3. **New Hive Recruits & Operatives** (in `ContributorWall`): Showcases newly registered Hive members (`trust_tier: "newcomer"`) so new joiners get immediate recognition.
+  4. **Active Season Builders** (in `ContributorWall`): Highlights active code contributors in the current GNOME release season.
+- **Newcomer surfacing from hosted Hive:** The data pipeline captures `registered_at` timestamps from
+  the hosted Hive `/api/leaderboard` response, allowing newly registered operatives to be displayed in newest-first order.
 - **Hosted Hive API source:** Human trust tiers and task completions are snapshotted
   at build/cache time from the hosted Hive instance's `/api/leaderboard` endpoint
   (`leaderboard[]`). Autonomous agents (`trust_tier: "agent"`) and bots are excluded.

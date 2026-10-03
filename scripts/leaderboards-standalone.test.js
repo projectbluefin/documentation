@@ -150,15 +150,15 @@ test("leaderboards stay outside the Factory tab registry", () => {
   );
 });
 
-test("the standalone page includes linked Hive task cards", () => {
+test("the standalone page includes linked newcomer and community operative cards", () => {
   const { LeaderboardsSection } = loadDashboard({
     hiveHistory: {
       entries: [],
       contributors: {},
       contributorsByRepo: {},
       hiveContributorTiers: {
-        "zulu-player": { tier: "contributor", tasks: 7 },
-        "alpha-player": { tier: "contributor", tasks: 7 },
+        "zulu-player": { tier: "newcomer", tasks: 7 },
+        "alpha-player": { tier: "newcomer", tasks: 7 },
         "custom-agent-helper": { tier: "agent", tasks: 99 },
       },
     },
@@ -171,16 +171,20 @@ test("the standalone page includes linked Hive task cards", () => {
   );
   const html = renderToStaticMarkup(React.createElement(LeaderboardsSection));
 
-  assert.match(html, /Hive Task Leaderboard/);
+  assert.match(
+    html,
+    /New Hive Recruits &amp; Operatives|New Hive Recruits & Operatives/,
+  );
   assert.match(html, /zulu-player/);
   assert.doesNotMatch(html, />custom-agent-helper</);
   assert.match(
     html,
     /href="https:\/\/hosted-projectbluefin-common-nmq5\.hive\.hivecommons\.dev\/contribute\/dossier\/zulu-player"/,
   );
-  const taskCards = html.slice(html.indexOf("Hive Task Leaderboard"));
+  const newcomerCards = html.slice(html.indexOf("New Hive Recruits"));
   assert.ok(
-    taskCards.indexOf("alpha-player") < taskCards.indexOf("zulu-player"),
+    newcomerCards.indexOf("alpha-player") <
+      newcomerCards.indexOf("zulu-player"),
     "equal task counts must use login order rather than registry order",
   );
 });
