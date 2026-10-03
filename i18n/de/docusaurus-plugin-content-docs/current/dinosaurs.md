@@ -3,10 +3,7 @@ title: Dinosaurier
 slug: dinosaurs
 ---
 
-Bluefin hat Dinosaurier und andere prähistorische Tiere in seinem Kunstwerk.
-Bluefin hat Freunde, wir nennen das Bluefins [Kettle](https://en.wikipedia.org/wiki/Kettle_%28birds%29).
-Alle hier gezeigten Wesen wurden von Jacob Schnurr gestaltet und gezeichnet.
-Du kannst Aufkleber dieser und vieler weiterer Designs in [seinem Etsy-Shop](https://www.etsy.com/shop/JSchnurrCommissions?dd_referrer=https%3A%2F%2Fwww.google.com%2F) kaufen. Sieh auch: [Warum Dinosaurier](https://www.youtube.com/watch?v=XpKFcLqbd-A&t=2451s)?
+Bluefin hat Dinosaurier und andere prähistorische Tiere in seinem Kunstwerk.Bluefin hat Freunde, wir nennen das Bluefins [Kettle](https://en.wikipedia.org/wiki/Kettle_%28birds%29).Alle hier gezeigten Wesen wurden von Jacob Schnurr gestaltet und gezeichnet.Du kannst Aufkleber dieser und vieler weiterer Designs in [seinem Etsy-Shop](https://www.etsy.com/shop/JSchnurrCommissions?dd_referrer=https%3A%2F%2Fwww.google.com%2F) kaufen. Sieh auch: [Warum Dinosaurier](https://www.youtube.com/watch?v=XpKFcLqbd-A&t=2451s)?
 
 Hier ist die Besetzung der Figuren! Jede repräsentiert etwas Wichtiges für dieses Ökosystem.
 

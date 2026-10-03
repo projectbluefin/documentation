@@ -44,7 +44,7 @@ Wir zeigen gerne unsere Maschinen. Führe `fastfetch` aus:
 
 ![image](/img/user-attachments/f720f9d8-7c3c-4f3c-9112-c627686e0fb1.png)
 
-Dieser Screen zeigt Hardware-Informationen, Benutzernamen, Maschinenname und Kernel-Version. Jedes Bluefin-Image hat ein „Forged On"-Datum, das an die Erstinstallation der Maschine erinnert:
+Dieser Screen zeigt Hardware-Informationen, Benutzernamen, Maschinenname und Kernel-Version. Jedes Bluefin-Image hat ein „Forged On“-Datum, das an die Erstinstallation der Maschine erinnert:
 
 ![image](/img/user-attachments/99522c15-1209-4fa5-a076-1b6289bdbc76.png)
 
@@ -58,7 +58,7 @@ Bluefin liefert [Ptyxis](https://devsuite.app/ptyxis/) als Standard-Terminal (`T
 
 ![Ptyxis → Preferences → Profiles → A Profile Setting → Edit...](/img/user-attachments/2c122205-dbd8-41e6-8b7b-4f536c3b69e9.png)
 
-Wähle „Use Custom Command" und trage deine Shell hinzu:
+Wähle „Use Custom Command“ und trage deine Shell hinzu:
 
 - zsh: `/home/linuxbrew/.linuxbrew/bin/zsh`
 - fish: `/home/linuxbrew/.linuxbrew/bin/fish`
