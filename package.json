@@ -4,6 +4,9 @@
   "private": true,
   "scripts": {
     "docusaurus": "docusaurus",
+    "prestart": "node scripts/fetch-readmes.mjs",
+    "prebuild": "node scripts/fetch-readmes.mjs",
+    "prebuild:ci": "node scripts/fetch-readmes.mjs",
     "start": "npm run fetch-data && docusaurus start --host 0.0.0.0",
     "build": "npm run fetch-data && node scripts/build-site.mjs",
     "build:ci": "node scripts/build-site.mjs",

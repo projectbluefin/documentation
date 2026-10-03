@@ -36,7 +36,7 @@ blog announcement and wants: what is this, how do I get it, what can break.
 
 ## Core Process
 
-Model on `docs/server.mdx` (static) or `docs/dakota.mdx` (embeds components):
+Model on `docs/server.mdx` (imports its upstream README) or `docs/dakota.mdx` (embeds components):
 
 1. **Frontmatter**: Set `title` and explicit `slug: /<name>` so the page lives at
    the site root, not under a category path.
@@ -55,6 +55,22 @@ Model on `docs/server.mdx` (static) or `docs/dakota.mdx` (embeds components):
 
 Facts only, read from repo and blog sources. Do not invent narrative or
 motivation prose — see _Never write in a maintainer's voice_ in `AGENTS.md`.
+
+### README-backed pages
+
+`docs/server.mdx` renders `projectbluefin/server/README.md` through
+`src/content/server-readme.md`. The seed lives outside `docs/` so it creates
+no second route and needs no sidebar or global Markdown configuration changes.
+Its `mdx.format: md` frontmatter preserves ordinary Markdown and raw HTML;
+the wrapper retains native headings, TOC, search, and the upstream edit link.
+Keep `title` metadata for navigation; set `hide_title: true` when the README's
+wordmark already supplies the visible page title.
+
+`scripts/fetch-readmes.mjs` rewrites parsed links/images, not code examples.
+Add another source to its `readmes` list to reuse it for another image.
+The `prestart`, `prebuild`, and `prebuild:ci` npm hooks refresh each build
+checkout, including CI shards; the separate data job cannot transfer files
+outside its static JSON artifact. A failed fetch preserves the committed seed.
 
 ## Image Streams Policy
 
@@ -104,4 +120,6 @@ is the filename without extension.
 
 - `docs/dakota.mdx`, `docs/server.mdx`, `docs/utah.mdx`
 - `sidebars.ts`
+- `scripts/fetch-readmes.mjs`, `src/content/server-readme.md`, `package.json`
+- Docusaurus docs via Context7: `/websites/docusaurus_io`
 - [`AGENTS.md`](https://github.com/projectbluefin/documentation/blob/main/AGENTS.md)
