@@ -31,8 +31,6 @@ check that silently proves nothing.
 
 ## When NOT to Use
 
-- Doc-only changes to `docs/**`, `blog/**`, `reports/**`, `adr/**`, or
-  `AGENTS.md` — those push straight to `main`, no pull request or queue.
 - Deciding _what_ to change. This skill covers landing and proving it.
 
 ### Setting up a linked worktree for local validation
@@ -56,39 +54,43 @@ cp -r ../../static/feeds/* static/feeds/ 2>/dev/null || true
 
 ## Core Process
 
-### A green pull request that will not enqueue
+### Identifying branch rules and merge blockers
 
-`gh pr merge` reports only `The merge strategy for main is set by the merge
-queue`, the queue stays empty, and the pull request sits at `BLOCKED`. That
-message is about strategy, not about the blocker.
+`gh pr merge` reports `The merge strategy for main is set by the merge
+queue`. That message is about strategy, not about the blocker.
 
-Read the ruleset instead of guessing:
+Read the effective ruleset directly:
 
 ```bash
 gh api repos/projectbluefin/documentation/rules/branches/main \
   -q '.[] | {type, params: .parameters}'
 ```
 
-The `pull_request` rule carries:
+Currently, `main` enforces `deletion`, `non_fast_forward`, and `merge_queue`
+rules. There is no `pull_request` rule and no classic branch protection
+requiring reviews on `main`, so review thresholds (such as two-reviewer
+requirements) are governance policies maintained by reviewers and maintainers,
+not machine gates.
 
-```
-required_approving_review_count: 0
-require_last_push_approval:      true
-```
+### Held workflow runs (`action_required`) on bot and fork PRs
 
-Those two combine into a trap. Zero required reviews suggests none are needed,
-but `require_last_push_approval` demands an approval covering the most recent
-push, and GitHub forbids approving your own pull request. **A pull request you
-authored and pushed yourself can never enter the queue on its own**, no matter
-how green it is. It will sit open indefinitely, looking merely slow.
+Pull requests opened by automated bots (e.g. `github-actions[bot]`) or external
+forks often trigger workflow runs that pause at `action_required` pending approval:
 
-Three ways out: a second person approves, the ruleset bit is turned off, or a
-maintainer merges with `--admin`. `--admin` bypasses branch protection, so it is
-a maintainer's call — ask, do not assume.
-
-```bash
-gh pr merge <n> --repo projectbluefin/documentation --merge --admin
-```
+- `gh pr checks <n>` may report `no checks reported on the '<branch>' branch`
+  or display an empty rollup, and `mergeStateStatus` reads `UNSTABLE`.
+- Query all held runs across the repository:
+  ```bash
+  gh run list --repo projectbluefin/documentation --status action_required
+  ```
+- Maintainers approve a held run to release it (the API equivalent of the
+  **Approve and run workflows** button on the pull request). `gh run rerun`
+  targets runs that already executed and is not the approval path:
+  ```bash
+  gh api -X POST repos/projectbluefin/documentation/actions/runs/<run-id>/approve
+  ```
+  Once approved, the run transitions to `queued` / `in_progress` and status
+  checks populate as expected.
 
 ### Stacked pull requests: merge, do not squash
 
@@ -202,6 +204,6 @@ git branch -D <branch>
 - `.github/workflows/pages.yml` — deploys on every push to `main`; skips on
   pull requests.
 - `gh api repos/projectbluefin/documentation/rules/branches/main` — the
-  ruleset; `require_last_push_approval` is the self-authored-PR trap.
+  ruleset; merge queue requires PRs to land through the queue rather than direct pushes.
 - [`AGENTS.md`](https://github.com/projectbluefin/documentation/blob/main/AGENTS.md)
-  → _Git, branches, and shipping_ — merge queue and doc-only push exception.
+  → _Git, branches, and shipping_ — merge queue and branch protection rules.
