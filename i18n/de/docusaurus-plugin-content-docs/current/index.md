@@ -36,7 +36,7 @@ Wenn deine Anforderungen außerhalb dieses Umfangs liegen, dann **ist Bluefin m�
 
 Bluefin bietet einen GNOME ([Spende](https://www.gnome.org/donate/))-Desktop, der von unserer Community konfiguriert wird. Er ist so ausgelegt, dass er unkompliziert ist und dir aus dem Weg bleibt, damit du dich auf deine Anwendungen fokussieren kannst.
 
-System-Updates sind bilderbasiert und automatisch. Anwendungen werden logisch vom System getrennt, indem Flatpaks für grafische Anwendungen und `brew` für Befehlszeilen-Anwendungen verwendet werden.
+System-Updates sind image-basiert und automatisch. Anwendungen werden logisch vom System getrennt, indem Flatpaks für grafische Anwendungen und `brew` für Befehlszeilen-Anwendungen verwendet werden.
 
 :::tip
 
