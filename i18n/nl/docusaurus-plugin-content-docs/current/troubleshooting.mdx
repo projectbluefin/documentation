@@ -14,14 +14,14 @@ Bluefin is ontworpen om puur en betrouwbaar te zijn, maar als er iets misgaat, b
 
 ### Systeemrollback
 
-Als een kernel- of OS-update een probleem veroorzaakt, herstart dan naar de vorige deployatie of rol terug:
+Als een kernel- of OS-update een probleem veroorzaakt, herstart dan naar de vorige deployment of rol terug:
 
 ```bash
-# Rol terug naar de vorige deployatie
+# Rol terug naar de vorige deployment
 sudo bootc rollback
 ```
 
-Herstart om toe te passen. Om de huidige en vorige deployatiestanden te inspecteren:
+Herstart om toe te passen. Om de huidige en vorige deployments te inspecteren:
 
 ```bash
 sudo bootc status
@@ -84,7 +84,7 @@ Voor standaard toetsenbordindelingen, zie [GNOME Help > Toetsenbordindelingen](h
 
 ## Vaak gestelde vragen
 
-### Houd ik Bluefin verkeerd?
+### Houd ik Bluefin verkeerd vast? {#am-i-holding-bluefin-wrong}
 
 ![Houd Bluefin niet verkeerd](/img/user-attachments/6d03851b-5d42-4235-9e1c-3dde7c455946.png)
 
@@ -107,7 +107,7 @@ Ik heb Become Legend.
 
 ### Voor wie is dit?
 
-Bluefin gelooft er sterk in dat gebruikers worden voorgesteld aan Linux via een modern bureau. De markt wees eerdere generaties Linux-desktopconventies af, terwijl moderne modellen zoals ChromeOS en Android slaagden. **95% van de gebruikers komt goed weg met hun browser en Flatpaks.** Bluefin is ontworpen als een onderhoudsvrij algemeen bestelsysteem voor die 95%, terwijl het ontwikkelaars cloud-native tooling kant-en-klare biedt.
+Bluefin gelooft er sterk in dat gebruikers worden voorgesteld aan Linux via een modern bureau. De markt wees eerdere generaties Linux-desktopconventies af, terwijl moderne modellen zoals ChromeOS en Android slaagden. **95% van de gebruikers komt goed weg met hun browser en Flatpaks.** Bluefin is ontworpen als een onderhoudsvrij algemeen besturingssysteem voor die 95%, terwijl het ontwikkelaars cloud-native tooling kant-en-klare biedt.
 
 ### Wat met codecs?
 
@@ -147,7 +147,7 @@ Selecteer in het menu “Ask Bluefin” om de chatagent te gebruiken.
 
 ![ask](/img/troubleshooting/ask-bluefin-menu.png)
 
-> “Ask Bluefin” is een eigen bestelsysteemagent. Voor je nieuwe gebruikers een systeem dat je helpt Linux te leren, zonder de moeite van het door het internet graven of verteld te krijgen dat je de verkeerde Linux-distributie hebt geïnstaleerd. “Ask Bluefin” is getraind op het bestelsysteem en zijn documentatie, dus het leert altijd van de bron van de waarheid en wordt door de community afgesteld. Voor je Linux-veteranen een krachtige diagnostische tool voor je lokale PC, met ingebouwde integratie met je servers en cluster ...
+> “Ask Bluefin” is een eigen besturingssysteemagent. Voor je nieuwe gebruikers een systeem dat je helpt Linux te leren, zonder de moeite van het door het internet graven of verteld te krijgen dat je de verkeerde Linux-distributie hebt geïnstalleerd. “Ask Bluefin” is getraind op het besturingssysteem en zijn documentatie, dus het leert altijd van de bron van de waarheid en wordt door de community afgesteld. Voor je Linux-veteranen een krachtige diagnostische tool voor je lokale PC, met ingebouwde integratie met je servers en cluster ...
 
 `Ctrl`-`Alt`-`Shift`-`g` roept een quicklaunch op, zodat je de help-agent met één toetsdruk kan aanroepen:
 
@@ -163,7 +163,7 @@ ujust probe
 
 `ujust probe` voert automatisch uit:
 
-1. Verifieert dat Goose geïnstaleerd is (of vraagt om het via Homebrew te installeren).
+1. Verifieert dat Goose geïnstalleerd is (of vraagt om het via Homebrew te installeren).
 2. Installeert `ublue-os/tap/linux-mcp-server` als het nog niet aanwezig is.
 3. Schrijft automatisch de Goose-configuratie met `linux-tools` ingeschakeld via `goose-mcp-setup`.
 4. Zoekt naar een geconfigureerde LLM-provider en start de sessie.

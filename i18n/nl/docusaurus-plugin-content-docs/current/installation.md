@@ -86,8 +86,8 @@ Bekijk de volgende overwegingen voordat je Bluefin installeert:
 - Gebruik de [Fedora Media Writer](https://docs.fedoraproject.org/en-US/fedora/latest/preparing-boot-media/#_fedora_media_writer) om installatiemedia te maken. Andere manieren om media te maken werken mogelijk niet correct
   - Gebruik van Ventoy is **niet ondersteund**
 - Oudere BIOS-gebaseerde systemen zijn **niet ondersteund**; alleen UEFI-systemen worden ondersteund
-- Dual-booten van dezelfde schijf is **niet ondersteund**; gebruik een toegewijde schijf voor een ander bestelsysteem en gebruik je BIOS om een ander OS te booten
-  - Bluefin ondersteunt een [installatie op een externe schijf](#alternatief-bluefin-to-go-externe-schijf) als je het op bare metal wilt uitproberen voordat je je verbindt
+- Dual-booten van dezelfde schijf is **niet ondersteund**; gebruik een toegewijde schijf voor een ander besturingssysteem en gebruik je BIOS om een ander OS te booten
+  - Bluefin ondersteunt een [installatie op een externe schijf](#alternative-bluefin-to-go-external-drive) als je het op bare metal wilt uitproberen voordat je je verbindt
 - We **bevelen sterk aan** om geautomatiseerd partitioneren te gebruiken tijdens de installatie; handmatig partitioneren is onnodig tenzij je op een multischijfsysteem zit
 - Een Bluefin-standaardinstallatie is ~12,4 GB (~17,4 GB met de ontwikkelingsmodus ingeschakeld)
 
@@ -115,7 +115,7 @@ Bluefin wordt geleverd met een uitgebreide cloud-native ontwikkelstack. Deze wer
 
 _Deze vereisten zorgen voor een vlotte werking van Bluefin's geïntegreerde ontwikkelworkflow en container-eerste architectuur._
 
-## Alternatief: Bluefin to Go (Externe Schijf)
+## Alternatief: Bluefin to Go (Externe Schijf) {#alternative-bluefin-to-go-external-drive}
 
 Je kan Bluefin op een externe schijf installeren om een draagbare Bluefin-installatie te krijgen:
 
@@ -184,11 +184,11 @@ Download de juiste ISO van [de website](https://projectbluefin.io/#scene-picker)
 
 :::
 
-- Installeer het bestelsysteem
+- Installeer het besturingssysteem
   - Gebruik de volledige schijf met geautomatiseerd partitioneren
   - (Optioneel): [Zet Secure Boot op](#secure-boot)
   - (Optioneel): `ujust rebase-helper` om te bewegen naar `:stable` of `:testing`
-- Zet op, test en **verifiëren back-ups** — Hoewel de systeemimage reproduceerbaar is, moet je gebruikersdata in je home-map nog steeds worden gebackupt. Bluefin wordt geleverd met twee backuputiliteiten afhankelijk van je voorkeur. Ze worden geïnstaleerd als Flatpaks zodat je degene die je niet gebruikt kan verwijderen. `rclone` ([Donate](https://github.com/sponsors/rclone)) en `restic` ([Donate](https://github.com/sponsors/restic)) zijn ook vooraf geïnstaleerd als je commandoregeltools prefereert
+- Zet op, test en **verifiëren back-ups** — Hoewel de systeemimage reproduceerbaar is, moet je gebruikersdata in je home-map nog steeds worden gebackupt. Bluefin wordt geleverd met twee backuputiliteiten afhankelijk van je voorkeur. Ze worden geïnstalleerd als Flatpaks zodat je degene die je niet gebruikt kan verwijderen. `rclone` ([Donate](https://github.com/sponsors/rclone)) en `restic` ([Donate](https://github.com/sponsors/restic)) zijn ook vooraf geïnstalleerd als je commandoregeltools prefereert
   - [Deja Dup](https://apps.gnome.org/DejaDup/) ([Donate](https://liberapay.com/DejaDup))
   - [Pika Backup](https://apps.gnome.org/PikaBackup/) ([Donate](https://opencollective.com/pika-backup))
   - Zorg ervoor dat je back-ups functioneel zijn _voordat_ je doorgaat met configuratie
@@ -217,7 +217,7 @@ Bluefin streeft naar onderhoud zo eenvoudig mogelijk maken, echter veel van de g
   - `ujust changelogs` toont inkomende wijzigingen en updates van Fedora
   - `ujust bios` herstart de machine en betreedt de BIOS/UEFI-menu. Dit is nuttig om in een Windows-schijf te booten
 - Abonneer je op de [blog](/blog)
-- Verstaan [rebase- en rollback-procedures](/administration/#tussen-stromen-wisselen)
+- Verstaan [rebase- en rollback-procedures](/administration#switching-between-streams)
 - Gebruik de [Warehouse-toepassing](https://github.com/flattool/warehouse) om de Flatpak-lifecycle te beheren:
   - Pin aan een oude versie of rollback
   - Verwijder eenvoudig toepassingen in één keer

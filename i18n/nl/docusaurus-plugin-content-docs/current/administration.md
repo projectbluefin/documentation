@@ -81,7 +81,7 @@ De componenten van Bluefin worden gedeeld over alle images; denk er niet aan als
 
 :::
 
-### Tussen stromen wisselen
+### Tussen stromen wisselen {#switching-between-streams}
 
 Gebruik het commando `ujust rebase-helper` om rebase te selecteren en een specifieke stream te kiezen:
 
@@ -93,7 +93,7 @@ Of selecteer `date` en kies een oudere image.
 
 #### Tussen stromen wisselen (handmatig)
 
-Bluefin gebruikt [`bootc`](https://bootc.dev/bootc/) om de systeemimage te beheren. Om je huidige en geplande deployaties te inspecteren, draai:
+Bluefin gebruikt [`bootc`](https://bootc.dev/bootc/) om de systeemimage te beheren. Om je huidige en geplande deployments te inspecteren, draai:
 
 ```sh
 sudo bootc status
@@ -150,7 +150,7 @@ Pinnen op een specifieke datatag:
 sudo bootc switch ghcr.io/projectbluefin/bluefin:stable-20260825 --enforce-container-sigpolicy
 ```
 
-Rollback naar de vorige deployatie:
+Rollback naar de vorige deployment:
 
 ```sh
 sudo bootc rollback
@@ -188,9 +188,9 @@ Andere VPN-providers die hier niet expliciet worden genoemd, kunnen een minder v
 
 ## Lokaal layeren
 
-Het rechtstreeks toevoegen van pakketten op de host-image wordt niet aanbevolen in Bluefin. Het bestelsysteem is ontworpen om puur en reproduceerbaar te blijven als een OCI-image beheerd door `bootc`.
+Het rechtstreeks toevoegen van pakketten op de host-image wordt niet aanbevolen in Bluefin. Het besturingssysteem is ontworpen om puur en reproduceerbaar te blijven als een OCI-image beheerd door `bootc`.
 
-Werklasten moeten geïsoleerd zijn in containers (via Distrobox of Devcontainers), CLI-tools geïnstaleerd via Homebrew, en grafische toepassingen geïnstaleerd uit Flathub.
+Werklasten moeten geïsoleerd zijn in containers (via Distrobox of Devcontainers), CLI-tools geïnstalleerd via Homebrew, en grafische toepassingen geïnstalleerd uit Flathub.
 
 Als je tijdelijk een hostpakket moet layeren:
 
