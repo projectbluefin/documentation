@@ -1,0 +1,62 @@
+---
+title: 下载
+slug: /downloads
+---
+
+import DownloadSection from "@site/src/components/DownloadSection";
+import { DakotaSection } from "@site/src/components/DownloadSectionTesting";
+
+这里有一份简短的 Bluefin 安装[操作指南](/installation)。为了确保生存，请完整阅读本文档。（以防遭到迅猛龙袭击。）
+
+## Dakotaraptor {#dakotaraptor}
+
+Bluefin 正处于转型阶段。这是一个 Alpha 版本，但已可用于日常使用。我们预计最终版本将在 2026 年秋季结束前发布。
+
+<DakotaSection />
+
+## Classic
+
+:::warning
+
+这些版本已停止更新，仅作为历史资料保留在此。
+
+:::
+
+<DownloadSection />
+
+## 使用校验和验证下载
+
+**校验和**可用于验证下载是否成功完成，以及文件是否损坏或被篡改。下载 ISO 后，可以将其校验和与官方校验和文件进行比较，以确保文件完整。此步骤虽为可选，但对于重要的安装，建议进行验证。
+
+#### 如何使用 sha256sum 验证校验和
+
+1. **下载 ISO 文件及其对应的 CHECKSUM 文件**
+   - 例如：`bluefin-stable-x86_64.iso` 和 `bluefin-stable-x86_64.iso-CHECKSUM`
+
+2. **生成已下载 ISO 的校验和：**
+
+   ```bash
+   sha256sum bluefin-stable-x86_64.iso
+   ```
+
+3. **使用官方校验和文件进行验证：**
+
+   ```bash
+   sha256sum -c bluefin-stable-x86_64.iso-CHECKSUM
+   ```
+
+4. **确认验证成功：** 应显示 `bluefin-stable-x86_64.iso: OK`。如果验证失败，请重新下载 ISO。
+
+**示例：**
+
+```bash
+# Generate checksum of downloaded file
+$ sha256sum bluefin-stable-x86_64.iso
+a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef123456  bluefin-stable-x86_64.iso
+
+# Verify against official checksum file
+$ sha256sum -c bluefin-stable-x86_64.iso-CHECKSUM
+bluefin-stable-x86_64.iso: OK
+
+# 🦖 Rawr! Your download is verified
+```
