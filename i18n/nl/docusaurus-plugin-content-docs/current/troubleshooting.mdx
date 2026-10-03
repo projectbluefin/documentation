@@ -1,0 +1,346 @@
+---
+title: Probleemoplossing & FAQ
+slug: /troubleshooting
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+# Probleemoplossing & FAQ
+
+## Snelle diagnostiek & systeemherstel
+
+Bluefin is ontworpen om puur en betrouwbaar te zijn, maar als er iets misgaat, bieden image-gebaseerde systemen eenvoudige rollback- en reset-primitives.
+
+### Systeemrollback
+
+Als een kernel- of OS-update een probleem veroorzaakt, herstart dan naar de vorige deployment of rol terug:
+
+```bash
+# Roll back to previous deployment
+sudo bootc rollback
+```
+
+Herstart om toe te passen. Om de huidige en vorige deployments te inspecteren:
+
+```bash
+sudo bootc status
+```
+
+### GNOME & extensies resetten
+
+Als desktopextensies of shellaanpassingen grafische problemen of bevriezingen veroorzaken:
+
+```bash
+# Reset GNOME Shell and extensions to system defaults
+dconf reset -f /org/gnome/
+```
+
+### Schijfruimte & ongebruikte runtimes opruimen
+
+```bash
+# Clean up dangling containers and unused Flatpak runtimes
+ujust clean-system
+```
+
+### Fouten melden & fixes verifiëren
+
+Als er iets breekt of je een probleem op je machine tegenkomt, sturen drie commando's de diagnostiek rechtstreeks naar de onderhouders:
+
+| Commando                | Wat het doet                                                                                                |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `ujust report`          | vangt systeemdiagnostiek op, verwijdert gevoelige data lokaal, en opent een invulklare GitHub-issue.        |
+| `ujust confirm <issue>` | bevestigt dat je hardware een bestaande issue treft — voegt een hardwarevingerafdruk toe zonder duplicaten. |
+| `ujust verify <issue>`  | na een fix in een nieuwere image, bevestigt het dat het probleem is opgelost op je hardware.                |
+
+Elke rapport wordt ter controle weergegeven voordat hij wordt verzonden, wordt opgeslagen in een gist die jou toebehoort, en gebruikt nooit geautomatiseerde achtergrondtelemetrie.
+
+### Toetsenbordindeling & invoerproblemen
+
+#### Toetsenbordindeling wisselen conflicteert met zoeklicht
+
+GNOME's standaard wisselshortcut (<kbd>Super</kbd>+<kbd>Space</kbd>) conflicteert met Search Light. Om te aanpassen:
+
+1. Open **Instellingen** → **Toetsenbord** → **Toetsenbordshortcuts** → **Bekijk en pas kortkutsen aan**.
+2. Klik op **Typen**.
+3. Stel **Wissel naar volgende invoerbron** in op je voorkeurcombinatie (bijv. <kbd>Shift</kbd>+<kbd>Alt</kbd>).
+
+#### Uitgebreide toetsenbordindelingen (bijv. EurKEY)
+
+1. Open **Gnome Tweaks** → **Toetsenbord** → zet **Uitgebreide invoerbronnen tonen** op **Aan**.
+2. Log uit en weer in.
+3. Open **Instellingen** → **Toetsenbord** → voeg een nieuwe invoerbron toe met **+** → klik op **Meer...** en zoek naar je indeling.
+
+#### Invoermethode-editor (IME / Fcitx5)
+
+Voor standaard toetsenbordindelingen, zie [GNOME Help > Toetsenbordindelingen](https://help.gnome.org/gnome-help/keyboard-layouts.html). Voor Aziatische talen of andere complexe invoermethoden:
+
+1. Installeer Fcitx5: `flatpak install org.fcitx.Fcitx5`
+2. Installeer de [kimpanel](https://extensions.gnome.org/extension/261/kimpanel/) GNOME-extentie.
+3. Installeer je taaladdon (bijv. `flatpak install org.fcitx.Fcitx5.Addon.ChineseAddons`).
+4. Configureer invoermethoden in Fcitx5-instellingen. Gebruik <kbd>Ctrl</kbd>+<kbd>Space</kbd> om te schakelen. Zie de [Fcitx-wiki](https://fcitx-im.org/wiki/Using_Fcitx_5_on_Wayland#GNOME) voor details.
+
+---
+
+## Vaak gestelde vragen
+
+### Houd ik Bluefin verkeerd vast? {#am-i-holding-bluefin-wrong}
+
+![Houd Bluefin niet verkeerd](/img/user-attachments/6d03851b-5d42-4235-9e1c-3dde7c455946.png)
+
+Je kan altijd doen wat je wilt, maar Bluefin is ontworpen met een specifieke workflow in gedachten:
+
+- **Containeriseer je ontwikkelomgevingen** in plaats van ze te mengen met het OS. Definieer ze per project in `devcontainer.json`-bestanden beheerd door Git.
+- **Blijf bij Flatpaks en Homebrew.** De ideale aanpak is om de kern-OS-image ongewijzigd te laten.
+- **Volg XDG-standaarden** voor het overschrijven van bestanden. `/etc`, `/var`, `/usr/local` en `/opt` zijn beschrijfbaar. De meeste per-gebruiker-overschrijven zitten in `~/.config` en `~/.local`.
+- **Isoleer “jank” in containers.** Pakketten rechtstreeks op de host wringen is een anti-patroon.
+- **Denk niet te veel na over herstarten.** Zet je PC uit of herstart als je hem niet meer gebruikt, zodat geplande OS-updates automatisch worden toegepast.
+- **Hardware doet ertoe.** Bluefin werkt het beste op Linux-vriendelijke hardware.
+
+:::tip
+
+Ik heb Become Legend.
+
+-- [Dominus Ghaul](https://www.youtube.com/watch?v=Og-2axO4Bi0)
+
+:::
+
+### Voor wie is dit?
+
+Bluefin gelooft er sterk in dat gebruikers worden voorgesteld aan Linux via een modern bureau. De markt wees eerdere generaties Linux-desktopconventies af, terwijl moderne modellen zoals ChromeOS en Android slaagden. **95% van de gebruikers komt goed weg met hun browser en Flatpaks.** Bluefin is ontworpen als een onderhoudsvrij algemeen besturingssysteem voor die 95%, terwijl het ontwikkelaars cloud-native tooling kant-en-klare biedt.
+
+### Wat met codecs?
+
+Alles wat je nodig hebt is meegeleverd vanaf het begin via Universal Blue.
+
+### Wat is Homebrew?
+
+Zie [Homebrew is Great on Linux](https://www.ypsidanger.com/homebrew-is-great-on-linux/). Homebrew beheert CLI-utiliteiten zonder de base-image aan te raken of `sudo` te vereisen.
+
+### Waarom zijn er meerdere Bluefin-images?
+
+Bluefin streeft naar hetzelfde over alle images — het verschil is updatecadans en gespecialiseerde tooling:
+
+- **Bluefin**: Huidige Fedora-base met gated kernel voor algemeen desktopgebruik.
+- **Bluefin Server**: FSDK-gebaseerd, DDI-eerste minimale server-OS.
+- **Bluefin DX**: Ontwikkelingwerkplek met containers en devcontainers.
+
+### Wat is al die Ubuntu-invloed?
+
+Drie van de mede-oprichters van Bluefin hebben op Ubuntu bij Canonical gewerkt. Bluefin brengt de klassieke Ubuntu-desktopgeest terug ("Linux for Human Beings") gebouwd op moderne cloud-native container-infrastructuur.
+
+### Moet ik jou vertrouwen?
+
+Alles wordt openlijk gebouwd, getekend met Cosign / GPG, en gepubliceerd via GitHub Actions. Zie [Jorge Castro's bio](https://www.ypsidanger.com/about/) voor de achtergrond.
+
+---
+
+## Ask Bluefin & geautomatiseerde diagnostiek
+
+:::info
+Deze functie zit in Alfa. De menufunctie bestaat nog niet.
+:::
+
+- [Bluefin AI-pagina](/ai) — geeft deze pagina meer context over onze plannen voor Bluespeed
+
+Selecteer in het menu “Ask Bluefin” om de chatagent te gebruiken.
+
+![ask](/img/troubleshooting/ask-bluefin-menu.png)
+
+> “Ask Bluefin” is een eigen besturingssysteemagent. Voor je nieuwe gebruikers een systeem dat je helpt Linux te leren, zonder de moeite van het door het internet graven of verteld te krijgen dat je de verkeerde Linux-distributie hebt geïnstalleerd. “Ask Bluefin” is getraind op het besturingssysteem en zijn documentatie, dus het leert altijd van de bron van de waarheid en wordt door de community afgesteld. Voor je Linux-veteranen een krachtige diagnostische tool voor je lokale PC, met ingebouwde integratie met je servers en cluster ...
+
+`Ctrl`-`Alt`-`Shift`-`g` roept een quicklaunch op, zodat je de help-agent met één toetsdruk kan aanroepen:
+
+<img src="/img/goose-quick-launch.png" alt="Goose quick launch" />
+
+### Klaar-om-te-gebruiken opzet: `ujust probe`
+
+Bluefin bevat ingebouwde automatisering om een AI-probleemoplossingssessie op te zetten en te starten:
+
+```bash
+ujust probe
+```
+
+`ujust probe` voert automatisch uit:
+
+1. Verifieert dat Goose geïnstalleerd is (of vraagt om het via Homebrew te installeren).
+2. Installeert `ublue-os/tap/linux-mcp-server` als het nog niet aanwezig is.
+3. Schrijft automatisch de Goose-configuratie met `linux-tools` ingeschakeld via `goose-mcp-setup`.
+4. Zoekt naar een geconfigureerde LLM-provider en start de sessie.
+
+### Handmatige installatie & configuratie
+
+Als je het handmatig wilt installeren of dit op macOS opzet:
+
+<Tabs groupId="operating-systems">
+  <TabItem value="linux" label="Bluefin / Linux" default>
+
+```bash
+brew install ublue-os/tap/linux-mcp-server
+goose-mcp-setup
+```
+
+  </TabItem>
+  <TabItem value="macos" label="macOS">
+
+```bash
+brew install ublue-os/tap/linux-mcp-server
+goose-mcp-setup
+```
+
+:::note
+Op macOS inspecteert `linux-mcp-server` een externe Linux-host over SSH. Stel `LINUX_MCP_HOST: <host>` in in de envs van je `~/.config/goose/config.yaml`.
+:::
+
+  </TabItem>
+</Tabs>
+
+Het installeren van `ublue-os/tap/linux-mcp-server` installeert `linux-mcp-server`, de Goose-client (`block-goose-cli`) en `goose-mcp-setup`.
+
+#### linux-mcp-server
+
+Biedt systeemdiagnostiek en monitoringtools:
+
+- Systeeminfo (OS, kernel, hardware)
+- Procesbeheer
+- Service-monitoring (systemd)
+- Toegang tot logboeken (journalctl)
+- Netwerkdiagnostiek
+- Bestandsysteeminspectie
+
+**Repository**: [rhel-lightspeed/linux-mcp-server](https://github.com/rhel-lightspeed/linux-mcp-server)
+
+### Configuratiestappen
+
+#### Stap 1: Goose-extentie configureren
+
+`goose-mcp-setup` maakt `~/.config/goose/config.yaml` met de `linux-tools`-entie vooraf geconfigureerd:
+
+```yaml
+extensions:
+  linux-tools:
+    enabled: true
+    type: stdio
+    name: linux-tools
+    description: Linux system administration and diagnostics
+    cmd: /home/linuxbrew/.linuxbrew/bin/linux-mcp-server
+    envs:
+      LINUX_MCP_USER: <your-username>
+      LINUX_MCP_LOG_LEVEL: INFO
+      LINUX_MCP_SSH_KEY_PATH: ~/.ssh/id_ed25519
+    timeout: 30
+    bundled: null
+    available_tools: []
+    args: []
+```
+
+#### Stap 2: Je LLM-provider configureren
+
+Goose ondersteunt zowel gehoste providers als lokale modellen. Draai:
+
+```bash
+goose configure
+```
+
+- **GitHub Copilot**: selecteer `GitHub Copilot` om te verifiëren met je GitHub-account.
+- **Gehoste API's**: selecteer Anthropic, OpenAI, Gemini, enz., en voer je API-key in wanneer je darum gevraagd wordt.
+- **Lokale modellen**: [llmman](https://github.com/llmmanorg/llmman) beheert modellen als containers en biedt een OpenAI-compatiepe endpoint:
+
+```bash
+brew install llmmanorg/tap/llmman
+llmman serve
+```
+
+Configureer Goose om je lokale model te gebruiken in `~/.config/goose/config.yaml`:
+
+```yaml
+GOOSE_PROVIDER: ollama
+GOOSE_MODEL: qwen3:8b
+OLLAMA_HOST: http://localhost:17434
+```
+
+[LM Studio](https://lmstudio.ai/) (`brew install lm-studio`) is een grafisch alternatief — laad een model, start de lokale server, en selecteer **LM Studio** in `goose configure`.
+
+#### Stap 3: Probleemoplossing starten
+
+Start een interactieve sessie:
+
+```bash
+ujust probe
+# or directly:
+goose session
+```
+
+### Veiligheidsaspecten
+
+- MCP-servers draaien met je gebruikersrechten
+- Installeer alleen MCP-servers uit vertrouwde bronnen
+- Lees de serverdocumentatie voor vereiste rechten
+- Gebruik omgevingsvariabelen voor gevoelige referenties (klop ze niet vast in de configuratie)
+- Werk MCP-servers regelmatig bij om te beveiligen
+
+### Verder lezen
+
+- [MCP Officiële Documentatie](https://modelcontextprotocol.io/)
+- [MCP-Servers Bouwen](https://modelcontextprotocol.io/docs/2026-07-28/develop/build-server)
+- [MCP-Specificatie](https://modelcontextprotocol.io/specification/2026-07-28/architecture)
+
+## Geautomatiseerde Probleemoplossing
+
+Je kan het tool dingen over je systeem vragen met natuurlijke taal:
+
+![Hoogste CPU-gebruik](/img/troubleshooting/top-cpu-usage.png)
+
+### Systeemgezondheid
+
+Let op: deze zijn overgenomen van de linux-server-mcp-pagina maar je begrijp het idee:
+
+| Ik wil controleren... | Gebruik deze tool          | Voorbeeldprompt              |
+| --------------------- | -------------------------- | ---------------------------- |
+| **OS / Kernel**       | `get_system_information`   | "Welke OS-versie is dit?"    |
+| **CPU-belasting**     | `get_cpu_information`      | "Is de CPU overbelast?"      |
+| **Geheugen / RAM**    | `get_memory_information`   | "Hoeveel vrij RAM heb ik?"   |
+| **Schijfruimte**      | `get_disk_usage`           | "Zijn er schijven vol?"      |
+| **Hardware**          | `get_hardware_information` | "Lijst de PCI-apparaten op." |
+
+### Probleemoplossing
+
+| Ik wil controleren...    | Gebruik deze tool    | Voorbeeldprompt                                    |
+| ------------------------ | -------------------- | -------------------------------------------------- |
+| **Lopende apps**         | `list_processes`     | "Wie gebruikt de meeste CPU?"                      |
+| **Procesdetails**        | `get_process_info`   | "Inspecteer proces-ID 1234."                       |
+| **Services**             | `list_services`      | "Lopen alle services?"                             |
+| **Service-status**       | `get_service_status` | "Waarom is nginx mislukt?"                         |
+| **Systeemlogboeken**     | `get_journal_logs`   | "Toon fouten van het laatste uur."                 |
+| **Service-logboeken**    | `get_service_logs`   | "Toon recente logboeken voor sshd."                |
+| **Specifiek logbestand** | `read_log_file`      | "Lees de laatste 50 regels van /var/log/messages." |
+
+### Netwerk
+
+| Ik wil controleren... | Gebruik deze tool         | Voorbeeldprompt                  |
+| --------------------- | ------------------------- | -------------------------------- |
+| **IP-adressen**       | `get_network_interfaces`  | "Wat is mijn IP-adres?"          |
+| **Open poorten**      | `get_listening_ports`     | "Welke poorten zijn open?"       |
+| **Verbindingen**      | `get_network_connections` | "Wie is verbonden met poort 22?" |
+
+### Bestanden & opslag
+
+| Ik wil controleren...   | Gebruik deze tool    | Voorbeeldprompt                                  |
+| ----------------------- | -------------------- | ------------------------------------------------ |
+| **Schijverdelingen**    | `list_block_devices` | "Toon me de partitielayout."                     |
+| **Grote mappen**        | `list_directories`   | "Zoek de grootste mappen in /var."               |
+| **Recente wijzigingen** | `list_files`         | "Welke bestanden in /etc zijn recent gewijzigd?" |
+| **Bestand lezen**       | `read_file`          | "Lees /etc/fstab."                               |
+
+### Pro-tips
+
+- **Combineer tools:** Je hoeft niet één ding op een tijd te vragen.
+  > “Controleer CPU-gebruik en toon me de top 5 processen.”
+- **Filter logboeken:** Wees specifiek over tijd en prioriteit om contextvenster te sparen
+
+  > "Toon me `error`-prioriteit logboeken van de laatste `30 minuten`."
+
+- **Externe hosts:** Als je SSH hebt geconfigureerd, vraag gewoon om op een specifieke host te draaien.
+  > "Controleer schijfruimte op `webserver1`."
+
+![troubleshooting](/img/troubleshooting/troubleshooting-example.png)
