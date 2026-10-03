@@ -31,8 +31,6 @@ check that silently proves nothing.
 
 ## When NOT to Use
 
-- Doc-only changes to `docs/**`, `blog/**`, `reports/**`, `adr/**`, or
-  `AGENTS.md` — those push straight to `main`, no pull request or queue.
 - Deciding _what_ to change. This skill covers landing and proving it.
 
 ### Setting up a linked worktree for local validation
@@ -90,6 +88,7 @@ forks often trigger workflow runs that pause at `action_required` pending approv
   ```
   Once dispatched, the run transitions to `queued` / `in_progress` and status
   checks populate as expected.
+
 ### Stacked pull requests: merge, do not squash
 
 When the second branch is built on the first, its branch literally contains the
@@ -202,6 +201,6 @@ git branch -D <branch>
 - `.github/workflows/pages.yml` — deploys on every push to `main`; skips on
   pull requests.
 - `gh api repos/projectbluefin/documentation/rules/branches/main` — the
-  ruleset; `require_last_push_approval` is the self-authored-PR trap.
+  ruleset; merge queue requires PRs to land through the queue rather than direct pushes.
 - [`AGENTS.md`](https://github.com/projectbluefin/documentation/blob/main/AGENTS.md)
-  → _Git, branches, and shipping_ — merge queue and doc-only push exception.
+  → _Git, branches, and shipping_ — merge queue and branch protection rules.

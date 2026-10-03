@@ -77,16 +77,19 @@ curl -s -o /dev/null -w "%{http_code}\n" \
   "https://docs.projectbluefin.io/<path>?cb=$RANDOM"
 ```
 
-### Doc-only push exception
+### Pull requests and merge queue
 
-Changes touching only `docs/**`, `blog/**`, `reports/**`, `adr/**`, or
-`AGENTS.md` may be pushed straight to `main` without a PR. Verify first:
+All changes to `main` must land via a branch and a pull request through the
+merge queue (`main` enforces `merge_queue`, `deletion`, and `non_fast_forward`
+rulesets; direct pushes to `main` are declined by GitHub rule violations).
+
+Verify your branch changes first:
 
 ```bash
 git diff --cached --name-only
 ```
 
-**Everything else takes a branch and a PR targeting `main`.**
+**Every change takes a branch and a PR targeting `main`.**
 
 ## Factory hard rules
 
@@ -95,8 +98,7 @@ truth for cross-repo rules; it outranks anything here on factory-wide matters.
 The rules that bind this repository daily:
 
 - **Ask before opening PRs.** Present the plan and the diff, get explicit
-  maintainer approval, then open. The doc-only push exception above is the
-  pre-approved path; Renovate PRs are pre-approved by common policy.
+  maintainer approval, then open. Renovate PRs are pre-approved by common policy.
 - **Check for existing PRs before opening.**
   `gh pr list --repo projectbluefin/documentation --state open --search "<topic>"`
   Comment on a duplicate rather than opening another.
