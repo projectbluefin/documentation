@@ -205,6 +205,21 @@ async function fetchTrackedProjectRepos() {
     return FALLBACK_FACTORY_REPOS;
   }
 }
+function extractHiveContributorTiers(rows = []) {
+  const nextTiers = {};
+  if (!Array.isArray(rows)) return nextTiers;
+  for (const row of rows) {
+    if (row && row.github_username && row.trust_tier !== "agent") {
+      nextTiers[row.github_username] = {
+        tier: row.trust_tier || "newcomer",
+        tasks: Number(row.tasks_completed) || 0,
+        ...(row.registered_at ? { registeredAt: row.registered_at } : {}),
+      };
+    }
+  }
+  return nextTiers;
+}
+
 function extractMetrics(data) {
   if (!data) return null;
   const gov = (typeof data.governor === "object" && data.governor) || {};
@@ -550,16 +565,8 @@ async function main() {
     if (res.ok) {
       const data = await res.json();
       const rows = Array.isArray(data.leaderboard) ? data.leaderboard : [];
-      if (rows.length > 0) {
-        const nextTiers = {};
-        for (const row of rows) {
-          if (row && row.github_username && row.trust_tier !== "agent") {
-            nextTiers[row.github_username] = {
-              tier: row.trust_tier || "newcomer",
-              tasks: Number(row.tasks_completed) || 0,
-            };
-          }
-        }
+      const nextTiers = extractHiveContributorTiers(rows);
+      if (Object.keys(nextTiers).length > 0) {
         const detectedAt = new Date().toISOString();
         const diffEvents = diffMilestones(
           history.hiveContributorTiers,
@@ -768,6 +775,7 @@ module.exports = {
   accumulateRepoStats,
   computeStatsWindows,
   createStatsAccumulator,
+  extractHiveContributorTiers,
   extractMetrics,
   fetchContributors,
   fetchContributorWeeklyStats,

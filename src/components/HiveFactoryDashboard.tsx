@@ -365,7 +365,10 @@ interface HiveHistory {
   weeklyStatsError?: string | null;
   season?: GNOMESeason | null;
   seasonError?: string | null;
-  hiveContributorTiers?: Record<string, { tier: string; tasks: number }>;
+  hiveContributorTiers?: Record<
+    string,
+    { tier: string; tasks: number; registeredAt?: string }
+  >;
   milestones?: HiveMilestoneEvent[];
   milestonesError?: string | null;
 }
@@ -1404,26 +1407,116 @@ function ContributorWall({ history }: { history: HiveHistory | null }) {
 
   const tiers = history?.hiveContributorTiers;
   const byRepo = history?.contributorsByRepo ?? {};
+  const seasonLogins = history?.season?.byLogin ?? {};
 
-  const orgContributors: OrgContributor[] = React.useMemo(() => {
-    if (!tiers || Object.keys(tiers).length === 0) return [];
+  const { newcomers, seasonActive, totalHiveTasks, totalTracked } =
+    React.useMemo(() => {
+      if (!tiers || Object.keys(tiers).length === 0) {
+        return {
+          newcomers: [],
+          seasonActive: [],
+          totalHiveTasks: 0,
+          totalTracked: 0,
+        };
+      }
 
-    return Object.entries(tiers)
-      .filter(([login, data]) => !isBotLogin(login) && data?.tier !== "agent")
-      .map(([login, data]) => {
+      const pool: Record<
+        string,
+        {
+          login: string;
+          tier: string;
+          tasks: number;
+          repos: string[];
+          isNewcomer: boolean;
+          registeredAt?: string;
+          seasonCommits?: number;
+        }
+      > = {};
+
+      // 1. Ingest all Hive tiers
+      for (const [login, data] of Object.entries(tiers)) {
+        if (isBotLogin(login) || data?.tier === "agent") continue;
+        const tasks = Number(data?.tasks) || 0;
         const repos = Object.entries(byRepo)
           .filter(([, rc]) => rc[login] != null)
           .sort((a, b) => (b[1][login] ?? 0) - (a[1][login] ?? 0))
           .map(([repo]) => repo);
-        return { login, tasks: Number(data.tasks) || 0, repos };
-      })
-      .sort(
-        (a, b) =>
-          b.tasks - a.tasks ||
-          b.repos.length - a.repos.length ||
-          a.login.localeCompare(b.login),
-      );
-  }, [byRepo, tiers]);
+        const isNewcomer = data?.tier === "newcomer";
+        pool[login] = {
+          login,
+          tier: data?.tier || "newcomer",
+          tasks,
+          repos,
+          isNewcomer,
+          registeredAt: data?.registeredAt,
+        };
+      }
+
+      // 2. Fold in GNOME Season contributors
+      const allTimeContributors = history?.contributors ?? {};
+      for (const [login, sData] of Object.entries(seasonLogins)) {
+        if (isBotLogin(login)) continue;
+        const seasonCommits = sData?.commits || 0;
+        // Season newcomer: first-time code contributor whose all-time commits originated in this season
+        const isSeasonNewcomer =
+          seasonCommits > 0 &&
+          (allTimeContributors[login] == null ||
+            allTimeContributors[login] <= seasonCommits);
+
+        if (pool[login]) {
+          pool[login].seasonCommits = seasonCommits;
+          if (isSeasonNewcomer && pool[login].tier === "newcomer") {
+            pool[login].isNewcomer = true;
+          }
+        } else {
+          const repos = Object.keys(sData?.repos ?? {});
+          pool[login] = {
+            login,
+            tier: isSeasonNewcomer ? "newcomer" : "season",
+            tasks: 0,
+            repos,
+            isNewcomer: isSeasonNewcomer,
+            seasonCommits,
+          };
+        }
+      }
+      const allEntries = Object.values(pool);
+      const totalHiveTasks = allEntries.reduce((sum, c) => sum + c.tasks, 0);
+
+      // Newcomers: tier newcomer, or <= 10 tasks, or joined in current season
+      const newcomers = allEntries
+        .filter((c) => c.isNewcomer)
+        .sort((a, b) => {
+          if (a.registeredAt && b.registeredAt) {
+            return (
+              Date.parse(b.registeredAt || "") -
+              Date.parse(a.registeredAt || "")
+            );
+          }
+          return (
+            b.tasks - a.tasks ||
+            (b.seasonCommits ?? 0) - (a.seasonCommits ?? 0) ||
+            a.login.localeCompare(b.login)
+          );
+        });
+
+      // Active across current release season
+      const seasonActive = allEntries
+        .filter((c) => (c.seasonCommits ?? 0) > 0)
+        .sort(
+          (a, b) =>
+            (b.seasonCommits ?? 0) - (a.seasonCommits ?? 0) ||
+            b.tasks - a.tasks ||
+            a.login.localeCompare(b.login),
+        );
+
+      return {
+        newcomers,
+        seasonActive,
+        totalHiveTasks,
+        totalTracked: allEntries.length,
+      };
+    }, [byRepo, seasonLogins, tiers]);
 
   if (!tiers || Object.keys(tiers).length === 0) {
     return (
@@ -1439,32 +1532,27 @@ function ContributorWall({ history }: { history: HiveHistory | null }) {
     );
   }
 
-  const totalHiveTasks = orgContributors.reduce((sum, c) => sum + c.tasks, 0);
-  const SPOTLIGHT_COUNT = 12;
-  const GRID_INITIAL = 60;
-  const spotlight = orgContributors.slice(0, SPOTLIGHT_COUNT);
-  const rest = orgContributors.slice(SPOTLIGHT_COUNT);
-  const visibleRest = showAll ? rest : rest.slice(0, GRID_INITIAL);
+  const visibleNewcomers = showAll ? newcomers : newcomers.slice(0, 12);
 
   return (
     <section className={styles.panel}>
       <Heading as="h2" className={styles.panelTitle}>
         Factory Community
       </Heading>
+      <p className={styles.panelMeta}>
+        Welcoming new operatives and tracking active community engagement across
+        the factory.
+      </p>
 
       <div className={styles.communityStats}>
         <div className={styles.communityStatItem}>
-          <span className={styles.communityStatValue}>
-            {orgContributors.length}
-          </span>
-          <span className={styles.communityStatLabel}>contributors</span>
+          <span className={styles.communityStatValue}>{totalTracked}</span>
+          <span className={styles.communityStatLabel}>operatives</span>
         </div>
         <div className={styles.communityStatDivider} />
         <div className={styles.communityStatItem}>
-          <span className={styles.communityStatValue}>
-            {Object.keys(history?.contributorsByRepo ?? {}).length}
-          </span>
-          <span className={styles.communityStatLabel}>repos</span>
+          <span className={styles.communityStatValue}>{newcomers.length}</span>
+          <span className={styles.communityStatLabel}>newcomers</span>
         </div>
         <div className={styles.communityStatDivider} />
         <div className={styles.communityStatItem}>
@@ -1473,102 +1561,96 @@ function ContributorWall({ history }: { history: HiveHistory | null }) {
         </div>
       </div>
 
-      {/* ── Spotlight: top contributors ───────────────────────────────── */}
-      {spotlight.length > 0 && (
-        <>
-          <p className={styles.communitySpotlightLabel}>✦ Top Contributors</p>
-          <div className={styles.communitySpotlight}>
-            {spotlight.map(({ login, tasks, repos }) => {
-              const badges = computeMilestones(repos.length, 0, 0);
-              const topBadge = badges[0];
-              return (
-                <Link
-                  key={login}
-                  href={contributorDossierUrl(login)}
-                  target="_blank"
-                  rel="noreferrer"
-                  className={styles.spotlightCard}
-                  title={repos.slice(0, 3).join(", ")}
-                >
-                  <img
-                    src={`https://github.com/${login}.png?size=64`}
-                    alt={login}
-                    className={styles.spotlightAvatar}
-                    loading="lazy"
-                  />
-                  <span className={styles.spotlightName}>{login}</span>
-                  <span className={styles.spotlightCommits}>
-                    {tasks} {tasks === 1 ? "Hive task" : "Hive tasks"}
-                  </span>
-                  {repos.length > 0 && (
-                    <div className={styles.spotlightRepos}>
-                      {repos.slice(0, 2).map((r) => (
-                        <span key={r} className={styles.spotlightRepoChip}>
-                          {r}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                  {topBadge && (
-                    <span
-                      className={styles.spotlightBadge}
-                      style={{
-                        borderColor: topBadge.color,
-                        color: topBadge.color,
-                      }}
-                    >
-                      {topBadge.label}
-                    </span>
-                  )}
-                </Link>
-              );
-            })}
-          </div>
-        </>
+      {/* ── New Hive Operatives & Recruits ─────────────────────────────── */}
+      <p className={styles.communitySpotlightLabel}>
+        ✦ New Hive Recruits & Operatives
+      </p>
+      {newcomers.length === 0 ? (
+        <p className={styles.panelMeta}>
+          <span className={styles.lbAccumulating}>
+            No new contributors recorded yet
+          </span>
+        </p>
+      ) : (
+        <div className={styles.lbNewcomersGrid}>
+          {visibleNewcomers.map((c) => (
+            <Link
+              key={c.login}
+              href={contributorDossierUrl(c.login)}
+              target="_blank"
+              rel="noreferrer"
+              className={styles.lbNewcomer}
+              title={
+                c.repos.length > 0
+                  ? `${c.login} · ${c.repos.slice(0, 3).join(", ")}`
+                  : c.login
+              }
+            >
+              <img
+                src={`https://github.com/${c.login}.png?size=40`}
+                alt={c.login}
+                className={styles.lbNewcomerAvatar}
+                loading="lazy"
+              />
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <span className={styles.spotlightName}>{c.login}</span>
+                <span className={styles.lbNewcomerStat}>
+                  {c.tasks > 0
+                    ? `${c.tasks} Hive tasks`
+                    : (c.seasonCommits ?? 0) > 0
+                      ? `${c.seasonCommits} season commits`
+                      : "Joined Hive registry"}
+                </span>
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
+      {!showAll && newcomers.length > 12 && (
+        <button
+          className={styles.communityShowMore}
+          onClick={() => setShowAll(true)}
+          style={{ marginTop: "0.75rem" }}
+        >
+          Show all {newcomers.length} recruits
+        </button>
       )}
 
-      {/* ── Full community grid ───────────────────────────────────────── */}
-      {rest.length > 0 && (
+      {/* ── Season Activity Roster ─────────────────────────────────────── */}
+      {seasonActive.length > 0 && (
         <>
           <p
             className={styles.communitySpotlightLabel}
-            style={{ marginTop: "1.5rem" }}
+            style={{ marginTop: "1.75rem" }}
           >
-            Community
+            ✦{" "}
+            {history?.season?.name
+              ? `Season of ${history.season.name}`
+              : "Current Season"}{" "}
+            Active Builders
           </p>
-          <div className={styles.contributorGrid}>
-            {visibleRest.map(({ login, tasks, repos }) => (
+          <div className={styles.hiveTaskGrid}>
+            {seasonActive.slice(0, 12).map((entry) => (
               <Link
-                key={login}
-                href={contributorDossierUrl(login)}
+                key={entry.login}
+                href={contributorDossierUrl(entry.login)}
                 target="_blank"
                 rel="noreferrer"
-                className={styles.contributorCard}
-                title={
-                  repos.length > 0
-                    ? `${login} · ${repos.slice(0, 3).join(", ")}`
-                    : login
-                }
+                className={styles.hiveTaskCard}
               >
                 <img
-                  src={`https://github.com/${login}.png?size=40`}
-                  alt={login}
-                  className={styles.contributorAvatar}
+                  src={`https://github.com/${entry.login}.png?size=40`}
+                  alt={entry.login}
+                  className={styles.hiveTaskAvatar}
                   loading="lazy"
                 />
-                <span className={styles.contributorName}>{login}</span>
-                <span className={styles.contributorCommits}>{tasks}t</span>
+                <span className={styles.hiveTaskPlayer}>{entry.login}</span>
+                <span className={styles.hiveTaskCount}>
+                  {entry.seasonCommits} commits · {entry.tasks}t
+                </span>
               </Link>
             ))}
           </div>
-          {!showAll && rest.length > GRID_INITIAL && (
-            <button
-              className={styles.communityShowMore}
-              onClick={() => setShowAll(true)}
-            >
-              Show all {rest.length} contributors
-            </button>
-          )}
         </>
       )}
     </section>
@@ -1909,64 +1991,6 @@ export function ContributorLeaderboard({
         <p className={styles.panelMeta} style={{ marginTop: "0.5rem" }}>
           Showing top 25 of {totalRanked} contributors
         </p>
-      )}
-    </section>
-  );
-}
-
-function HiveTaskLeaderboard({
-  tiers,
-}: {
-  tiers?: Record<string, { tier: string; tasks: number }>;
-}): React.JSX.Element | null {
-  const humanEntries = Object.entries(tiers ?? {})
-    .filter(
-      ([login, data]) => !isBotLogin(login) && data && data.tier !== "agent",
-    )
-    .map(([login, data]) => ({
-      login,
-      tier: data.tier,
-      tasks: Number(data.tasks) || 0,
-    }))
-    .sort((a, b) => b.tasks - a.tasks || a.login.localeCompare(b.login));
-
-  return (
-    <section className={styles.panel}>
-      <Heading as="h2" className={styles.panelTitle}>
-        Hive Task Leaderboard
-      </Heading>
-      <p className={styles.panelMeta}>
-        All-time tasks completed through the Hive.
-      </p>
-      {humanEntries.length === 0 ? (
-        <p className={styles.panelMeta}>
-          <span className={styles.lbAccumulating}>
-            No human task completions recorded in the Hive yet
-          </span>
-        </p>
-      ) : (
-        <div className={styles.hiveTaskGrid}>
-          {humanEntries.slice(0, 12).map((entry) => (
-            <Link
-              key={entry.login}
-              href={contributorDossierUrl(entry.login)}
-              target="_blank"
-              rel="noreferrer"
-              className={styles.hiveTaskCard}
-            >
-              <img
-                src={`https://github.com/${entry.login}.png?size=40`}
-                alt={entry.login}
-                className={styles.hiveTaskAvatar}
-                loading="lazy"
-              />
-              <span className={styles.hiveTaskPlayer}>{entry.login}</span>
-              <span className={styles.hiveTaskCount}>
-                {entry.tasks} Hive tasks
-              </span>
-            </Link>
-          ))}
-        </div>
       )}
     </section>
   );
@@ -4304,20 +4328,6 @@ export function LeaderboardsSection(): React.JSX.Element {
             GitHub contribution data{" "}
             {history.loading ? "loading." : "unavailable"}
             {!history.loading && history.reason ? `: ${history.reason}` : ""}
-          </p>
-        </section>
-      )}
-      {hiveHistory?.hiveContributorTiers &&
-      Object.keys(hiveHistory.hiveContributorTiers).length > 0 ? (
-        <HiveTaskLeaderboard tiers={hiveHistory.hiveContributorTiers} />
-      ) : (
-        <section className={styles.panel}>
-          <p className={styles.unavailableNote}>
-            Hive task data {history.loading ? "loading." : "unavailable"}
-            {!history.loading &&
-            (history.reason || hiveHistory?.milestonesError)
-              ? `: ${history.reason || hiveHistory?.milestonesError}`
-              : ""}
           </p>
         </section>
       )}
