@@ -50,25 +50,25 @@ Mise is a tool that allows you to install specific versions of applications for 
 
 You can always use whatever you want. You do not need to use everything in here in order to be productive -- at the end of the day it's your computer and this is a set of defaults.
 
-# Enabling Developer Mode
+## Enabling Developer Mode
 
 Turning on developer mode is a two-step process:
 
-## Step 1: Turn it on
+### Step 1: Turn it on
 
 `ujust devmode` to enable or disable the dx mode, then reboot:
 
 ![image](/img/user-attachments/76df5201-da02-42d0-bec9-fad259df9b0d.png)
 
-## Step 2: Add yourself to the right groups
+### Step 2: Add yourself to the right groups
 
 `ujust dx-group` - to add your user account to the right groups. Then reboot. This step only needs to be done once.
 
 Like all Universal Blue images, switching is atomic, allowing for clean switching between modes depending on the use case.
 
-# Features
+## Features
 
-## Visual Studio Code with Docker
+### Visual Studio Code with Docker
 
 [Visual Studio Code](https://code.visualstudio.com/) is included in the image as the default IDE. It comes with the [devcontainers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) already installed. It's the recommended developer experience, so start here if you're new to containerized development!
 
@@ -78,7 +78,7 @@ Like all Universal Blue images, switching is atomic, allowing for clean switchin
 
 The most current [Docker Engine](https://docs.docker.com/engine/) is included by default and is set up to be the default container runtime for VSCode Using [docker compose](https://danielquinn.org/blog/developing-with-docker/) is also a great way to get started in container development and is an option if devcontainers don't fit your style. Note, Docker Desktop is not available, use Podman Desktop for graphical container management.
 
-### Using Podman with Dev Containers
+#### Using Podman with Dev Containers
 
 The Dev Containers extension defaults to Docker. To switch it to Podman, add these settings to VS Code:
 
@@ -98,13 +98,13 @@ Run `systemctl --user status podman.socket` to confirm the socket path for your 
 }
 ```
 
-## Podman and Podman Desktop
+### Podman and Podman Desktop
 
 ![Podman Desktop](/img/user-attachments/69f64ed1-7fcc-4040-9a3d-12b71308da1b.png)
 
 [Podman Desktop](https://podman-desktop.io/) is included to provide container management. Check out the Podman Desktop [documentation](https://podman-desktop.io/docs/intro) for more information. All the upstream `podman` tools are included. This is the default system container runtime and is the recommended developer configuration for new users.
 
-## Built-in Performance Tooling
+### Built-in Performance Tooling
 
 [Sysprof](https://www.sysprof.com/) is included as a systemwide performance profiler. As well as [Brendan Gregg's](https://www.brendangregg.com/) recommended CLI tools:
 
@@ -112,13 +112,13 @@ Run `systemctl --user status podman.socket` to confirm the socket path for your 
 
 Thanks to Ubuntu and Canonical for the [detailed specification](https://discourse.ubuntu.com/t/spec-include-performance-tooling-in-ubuntu/43134) and rationale. The project hopes that the inclusion of performance tools will [lead to better upstream software](https://blogs.gnome.org/chergert/2024/09/25/messaging-needs/).
 
-## Quality of Life Improvements
+### Quality of Life Improvements
 
 - A collection of well-curated monospace fonts
 - [Just](https://github.com/casey/just) task runner for automation tasks
 - `fish` and `zsh` available as optional shells
 
-### Pet Containers
+#### Pet Containers
 
 Pet containers are available as interactive terminals via [distrobox](https://distrobox.it/). Manage these via the included [DistroShelf](https://github.com/ranfdev/DistroShelf) application, available via the logomenu in the top left corner of your desktop under "Containers":
 
@@ -138,9 +138,9 @@ The included [Terminal](https://gitlab.gnome.org/GNOME/ptyxis) includes a host t
 - [Podman Desktop](https://flathub.org/apps/io.podman_desktop.PodmanDesktop) - Containers and Kubernetes for application developers
 - [Pods](https://flathub.org/apps/com.github.marhkb.Pods) is also a great way to manage your containers graphically
 
-# Other Tooling
+## Other Tooling
 
-## JetBrains
+### JetBrains
 
 `ujust jetbrains-toolbox` will fetch and install the [JetBrains Toolbox](https://www.jetbrains.com/toolbox-app) application, which will manage the installation of the JetBrains set of tools. This application will handle installation, removal, and upgrade of the JetBrains products, and is handled completely in your home directory, independent of the operating system image. We do not recommend using the JetBrains flatpaks.
 
@@ -152,22 +152,22 @@ The JetBrains blog also has more information on JetBrains Dev Containers support
 
 - [Using Dev Containers in JetBrains IDEs – Part 1](https://blog.jetbrains.com/idea/2024/07/using-dev-containers-in-jetbrains-ides-part-1/)
 
-## Neovim
+### Neovim
 
 `brew install neovim devcontainer` then follow these directions for a devcontainer setup:
 
 - [Running Neovim with Devcontainers](https://cadu.dev/running-neovim-on-devcontainers/)
 
-## Virtualization and Container Runtimes
+### Virtualization and Container Runtimes
 
 - [virt-manager](https://virt-manager.org/) and associated tooling (KVM, qemu)
 - [Incus](https://linuxcontainers.org/incus/) provides system containers
 
-## Local Application Development
+### Local Application Development
 
 [GNOME Builder](https://developer.gnome.org/documentation/introduction/builder.html) is the recommended application stack for making application.
 
-## Kubernetes
+### Kubernetes
 
 Install a common set of tools used by Kubernetes administrators via Homebrew (`brew install <name>`):
 
@@ -186,11 +186,11 @@ Install a common set of tools used by Kubernetes administrators via Homebrew (`b
 | [pack](https://buildpacks.io/)                           | A CLI tool to build apps using Cloud Native Buildpacks                                                          |
 | [syft](https://formulae.brew.sh/formula/syft)            | A CLI tool and library for generating a Software Bill of Materials (SBOM) from container images and filesystems |
 
-### CNCF Tools
+#### CNCF Tools
 
 For access to the full suite of [Cloud Native Computing Foundation](https://l.cncf.io) tools, use `ujust cncf` to browse and install from an extensive collection of 89 CNCF projects including graduated, incubating, and sandbox tools. This includes Argo, Cilium, Envoy, Flux, Istio, Linkerd, Prometheus, and many more.
 
-## Fonts
+### Fonts
 
 Install curated developer fonts via Homebrew (`brew install --cask <font-name>`), or use the included [Embellish](https://flathub.org/en/apps/io.github.getnf.embellish) tool:
 
@@ -207,7 +207,7 @@ Install curated developer fonts via Homebrew (`brew install --cask <font-name>`)
 | [FiraCode Nerd Font](https://formulae.brew.sh/cask/font-fira-code-nerd-font)                  |
 | [0xProto Nerd Font](https://formulae.brew.sh/cask/font-0xproto-nerd-font)                     |
 
-# Building Custom Images with Finpilot
+## Building Custom Images with Finpilot
 
 If you want to create your own customized, bootable `bootc` operating system image based on Bluefin:
 
