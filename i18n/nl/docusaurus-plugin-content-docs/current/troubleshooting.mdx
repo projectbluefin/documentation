@@ -17,7 +17,7 @@ Bluefin is ontworpen om puur en betrouwbaar te zijn, maar als er iets misgaat, b
 Als een kernel- of OS-update een probleem veroorzaakt, herstart dan naar de vorige deployment of rol terug:
 
 ```bash
-# Rol terug naar de vorige deployment
+# Roll back to previous deployment
 sudo bootc rollback
 ```
 
@@ -32,14 +32,14 @@ sudo bootc status
 Als desktopextensies of shellaanpassingen grafische problemen of bevriezingen veroorzaken:
 
 ```bash
-# Reset GNOME Shell en extensies naar de systeemstandaarden
+# Reset GNOME Shell and extensions to system defaults
 dconf reset -f /org/gnome/
 ```
 
 ### Schijfruimte & ongebruikte runtimes opruimen
 
 ```bash
-# Ruim ongebruikte containers en ongebruikte Flatpak-runtimes
+# Clean up dangling containers and unused Flatpak runtimes
 ujust clean-system
 ```
 
@@ -267,7 +267,7 @@ Start een interactieve sessie:
 
 ```bash
 ujust probe
-# of direct:
+# or directly:
 goose session
 ```
 

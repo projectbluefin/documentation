@@ -36,8 +36,8 @@ Versnelling van de ontwikkeling van besturingssystemen door integratie met het c
 - Het project streeft naar een minimalistische aanpak om het publiek te bedienen dat nog geen gebruik maakt van Linux. Het project richt zich op de 96%, niet op de 4%:
 - Focus op de duurzaamheid van de installatie op lange termijn.
 - Een fractie van het leven van een computer is dag 0-3; het project investeert bewust in het idee dat deze installatie mee gaat met de levensduur van de hardware.
-- Het project is streng wat buiten de scope valt. Er is geen extra werk zonder reden; als SRE/cloud-native mensen omarmen we luiheid en automatiseren we de wereld in plaats van aangepaste installers te schrijven om de schijven van mensen te verdelen — daar is geen tijd voor.
+- Het project is streng wat buiten de scope valt. Er is geen extra werk zonder reden; als SRE/cloud-native mensen omarmen we luiheid en automatiseren we de wereld in plaats van aangepaste installers te schrijven om de schijven van mensen te partitioneren — daar is geen tijd voor.
 - Als het team iets moet maken, is dat omdat er geen keuze is, en als het het moet maken, is het er niet blij mee.
 - Het project is hoofdzakelijk feature-complete en maakt geen grote veranderingen. Nog geen “maintenance mode”, maar ook geen significant bijkomende code. Het team laadt “Nee” vooruit om het project mager te houden.
-- Het doel is mensen te geven wat ze willen, met focus op duurzaamheid en onderhoud, meer “mijn expert-linuxvriend heeft dit voor mij opgezet” dan een fork of afleiding.
+- Het doel is mensen te geven wat ze willen, met focus op duurzaamheid en onderhoud, meer “mijn expert-linuxvriend heeft dit voor mij opgezet” dan een fork of afgeleide.
 - Teamleden hebben meerdere decennia ervaring met Linux-distributies; distributies zijn moeilijk, dus het team maakt geen “Linux-distributie”.

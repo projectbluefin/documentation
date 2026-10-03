@@ -99,16 +99,16 @@ Hier is een voorbeeld van het gebruik van devcontainers om agents binnen contain
 ### Basisgebruik
 
 ```bash
-# Trek een model van Docker Hub
+# Pull a model from Docker Hub
 docker model pull ai/llama3.2
 
-# Draai een model interactief
+# Run a model interactively
 docker model run ai/llama3.2
 
-# Lijst gedownloade modellen
+# List downloaded models
 docker model ls
 
-# Verwijder een model
+# Remove a model
 docker model rm ai/llama3.2
 ```
 

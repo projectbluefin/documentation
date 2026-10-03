@@ -87,7 +87,7 @@ Bekijk de volgende overwegingen voordat je Bluefin installeert:
   - Gebruik van Ventoy is **niet ondersteund**
 - Oudere BIOS-gebaseerde systemen zijn **niet ondersteund**; alleen UEFI-systemen worden ondersteund
 - Dual-booten van dezelfde schijf is **niet ondersteund**; gebruik een toegewijde schijf voor een ander besturingssysteem en gebruik je BIOS om een ander OS te booten
-  - Bluefin ondersteunt een [installatie op een externe schijf](#alternative-bluefin-to-go-external-drive) als je het op bare metal wilt uitproberen voordat je je verbindt
+  - Bluefin ondersteunt een [installatie op een externe schijf](#alternative-bluefin-to-go-external-drive) als je het op bare metal wilt uitproberen voordat je definitief kiest
 - We **bevelen sterk aan** om geautomatiseerd partitioneren te gebruiken tijdens de installatie; handmatig partitioneren is onnodig tenzij je op een multischijfsysteem zit
 - Een Bluefin-standaardinstallatie is ~12,4 GB (~17,4 GB met de ontwikkelingsmodus ingeschakeld)
 
