@@ -67,9 +67,10 @@ gh api repos/projectbluefin/documentation/rules/branches/main \
 ```
 
 Currently, `main` enforces `deletion`, `non_fast_forward`, and `merge_queue`
-rules. Classic branch protection does not enforce pull request reviews via the API,
-so review thresholds (such as two-reviewer requirements) are governance policies
-maintained by reviewers and maintainers, not machine gates.
+rules. There is no `pull_request` rule and no classic branch protection
+requiring reviews on `main`, so review thresholds (such as two-reviewer
+requirements) are governance policies maintained by reviewers and maintainers,
+not machine gates.
 
 ### Held workflow runs (`action_required`) on bot and fork PRs
 
@@ -82,11 +83,13 @@ forks often trigger workflow runs that pause at `action_required` pending approv
   ```bash
   gh run list --repo projectbluefin/documentation --status action_required
   ```
-- Maintainers can trigger execution or rerun them to clear the hold:
+- Maintainers approve a held run to release it (the API equivalent of the
+  **Approve and run workflows** button on the pull request). `gh run rerun`
+  targets runs that already executed and is not the approval path:
   ```bash
-  gh run rerun <run-id> --repo projectbluefin/documentation
+  gh api -X POST repos/projectbluefin/documentation/actions/runs/<run-id>/approve
   ```
-  Once dispatched, the run transitions to `queued` / `in_progress` and status
+  Once approved, the run transitions to `queued` / `in_progress` and status
   checks populate as expected.
 
 ### Stacked pull requests: merge, do not squash

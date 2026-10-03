@@ -87,20 +87,20 @@ is the filename without extension.
 
 - **`.md` vs `.mdx`**: any JSX component import requires `.mdx`; the sidebar
   id is identical either way.
-- **`sidebars.ts` voids the doc-only push exception.** The exception covers
-  `docs/**`, `blog/**`, `reports/**`, `adr/**` only — a page that adds itself
-  to the sidebar always ships via PR.
+- **Every change ships via PR.** `main` enforces the merge queue; there is no
+  direct-push path, including for pages under `docs/` or the `sidebars.ts`
+  entry that adds them.
 - **Prettier whole-file hazard**: `npx prettier --write sidebars.ts`
   reformats unrelated lines. Make the one-line sidebar edit by hand and leave
   the rest byte-identical; only `--write` the new page file.
 
 ## Common Rationalizations
 
-| Rationalization                                                   | Reality                                                              |
-| ----------------------------------------------------------------- | -------------------------------------------------------------------- |
-| "I will write an introductory story for why this variant exists." | Agents format facts; maintainers author narrative. Ask or omit.      |
-| "I can push directly to main because I touched docs/."            | Touching `sidebars.ts` voids the doc-only push exception; open a PR. |
-| "I'll hardcode the ISO links."                                    | Reusable download components keep hashes and links in sync.          |
+| Rationalization                                                   | Reality                                                         |
+| ----------------------------------------------------------------- | --------------------------------------------------------------- |
+| "I will write an introductory story for why this variant exists." | Agents format facts; maintainers author narrative. Ask or omit. |
+| "I can push directly to main because I touched docs/."            | `main` enforces the merge queue; every change ships via a PR.   |
+| "I'll hardcode the ISO links."                                    | Reusable download components keep hashes and links in sync.     |
 
 ## Red Flags
 
