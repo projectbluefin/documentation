@@ -8,7 +8,7 @@
     "build-index": "node scripts/build-index.mjs"
   },
   "dependencies": {
-    "agents": "^0.22.0",
+    "agents": "^0.24.0",
     "@modelcontextprotocol/sdk": "^1.30.0",
     "zod": "^4.0.0"
   }
