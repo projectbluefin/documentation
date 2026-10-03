@@ -1,0 +1,73 @@
+---
+title: ISO 测试
+slug: /downloads-testing
+---
+
+import DownloadSectionTesting from "@site/src/components/DownloadSectionTesting";
+import { DakotaSection } from "@site/src/components/DownloadSectionTesting";
+
+这里有一份简短的 Bluefin 安装[操作指南](/installation)。为了确保生存，请完整阅读本文档。（以防遭到迅猛龙袭击。）
+
+## 测试内容
+
+- 安装体验
+- 安全启动（Secure Boot）
+- 首次运行体验，检查几个应用程序和 Bazaar 应用商店
+- 尽可能在实体机器上测试，但不作强制要求
+- 如果有时间，请阅读文档，逐步体验新用户的使用流程。在此过程中发现的问题非常有价值，发现后请提交报告！
+- 在 [@projectbluefin/iso 仓库](https://github.com/projectbluefin/iso/issues)提交问题
+
+<DownloadSectionTesting />
+
+## Dakotaraptor {#dakotaraptor}
+
+<DakotaSection />
+
+## 使用校验和验证下载
+
+**校验和**可用于验证下载是否成功完成，以及文件是否损坏或被篡改。下载 ISO 后，可以将其校验和与官方校验和文件进行比较，以确保文件完整。此步骤虽为可选，但对于重要的安装，建议进行验证。
+
+#### 如何使用 sha256sum 验证校验和
+
+1. **下载 ISO 文件及其对应的 CHECKSUM 文件**
+   - 例如：`bluefin-stable-x86_64.iso` 和 `bluefin-stable-x86_64.iso-CHECKSUM`
+
+2. **生成已下载 ISO 的校验和：**
+
+   ```bash
+   sha256sum bluefin-stable-x86_64.iso
+   ```
+
+3. **对照官方校验和文件进行验证：**
+
+   ```bash
+   sha256sum -c bluefin-stable-x86_64.iso-CHECKSUM --ignore-missing
+   ```
+
+4. **确认结果：** 查看 ISO 文件对应的输出中是否有 `OK`。
+
+**示例：**
+
+```bash
+# Generate checksum of downloaded file
+$ sha256sum bluefin-stable-x86_64.iso
+a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef123456  bluefin-stable-x86_64.iso
+
+# Verify against official checksum file
+$ sha256sum -c bluefin-stable-x86_64.iso-CHECKSUM --ignore-missing
+bluefin-stable-x86_64.iso: OK
+
+# 🦖 Rawr! Your download is verified
+```
+
+## 配置并使用安装程序的问题报告功能
+
+1. 安装前，启用 `ujust report`：
+   - 将正在运行的 Live 系统连接到网络。
+   - 打开 Firefox 并登录 GitHub。
+   - 打开终端并执行 `brew install gh`。
+   - 在命令行中执行身份验证：`gh auth login`。选择通过浏览器验证。
+2. 安装失败后：
+   - 使用截图工具截取相关画面。
+   - 在终端中执行 `ujust report`。报告完成后，按 `ESC` 结束。
+   - 浏览器应会自动打开相应仓库的新建问题页面，填写即可。
