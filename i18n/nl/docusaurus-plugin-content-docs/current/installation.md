@@ -9,15 +9,15 @@ Om jezelf op te zetten voor succes is het nuttig om je Bluefin-installatie in fa
 
 :::info[💙 Stuur je dierbaren alsjeblieft niet naar deze pagina 💙]
 
-Deze runbook is voor ervaren gebruikers die Bluefin voor iemand anders installeren. Het is bedoeld op een geavanceerd technische vaardigheidsniveau. Vergeet niet om een [good playlist te kiezen](/music) voor maximale immersie.
+Deze runbook is voor ervaren gebruikers die Bluefin voor iemand anders installeren. Het is bedoeld op een geavanceerd technische vaardigheidsniveau. Vergeet niet om een [een goede playlist te kiezen](/music) voor maximale immersie.
 
 :::
 
 Deze pagina is een kort [runbook](https://www.pagerduty.com/resources/learn/what-is-a-runbook/) voor het Bluefin-installatieproces. Lees de volledige inhoud van deze documentatie om overleving te garanderen (in geval van een raptor-aanval).
 
-## Ondersteuningstappen
+## Ondersteuningsniveaus
 
-Bluefin is opzettelijk ontworpen om de staat van de kunst van Linux-ontwikkeling te volgen; het project optimaliseert een “golden path” om gebruikers de beste kans op succes te geven. Echter, soms heb je geluk (of pech). Deze sectie is geïnspireerd door Homebrew's [ondersteuningstappen](https://docs.brew.sh/Support-Tiers). Niet alle configuraties worden ondersteund. Hier is een snelle gids:
+Bluefin is opzettelijk ontworpen om de staat van de kunst van Linux-ontwikkeling te volgen; het project optimaliseert een “golden path” om gebruikers de beste kans op succes te geven. Echter, soms heb je geluk (of pech). Deze sectie is geïnspireerd door Homebrew's [ondersteuningsniveaus](https://docs.brew.sh/Support-Tiers). Niet alle configuraties worden ondersteund. Hier is een snelle gids:
 
 ### Niveau 1 - De beste ervaring
 
@@ -26,7 +26,7 @@ Een Niveau 1-configuratie wordt als volledig ondersteund beschouwd. Deze configu
 #### Vereisten
 
 - Linux-vriendelijke hardware (geen externe kernelmodules vereist)
-  - Linux-laptopfabrikanten kunnen al of niet onder deze trap vallen.
+  - Linux-laptopfabrikanten kunnen al of niet onder dit niveau vallen.
   - “Onze hardware wordt volledig ondersteund in de upstream Linux-kernel” ← goed
   - “We ondersteunen alleen Ubuntu 24.04” ← waarschijnlijk niet goed
 - Software verpakt voor moderne Linuxes (Flatpak voor desktop-apps, containers voor ontwikkeling, enz.)
@@ -45,7 +45,7 @@ Het kan meestal werken maar kan configuratie na installatie nodig hebben. Enkele
 #### Vereisten
 
 - Nvidia-GPU's op desktops
-- Enkele Linux-laptopfabrikanten kunnen onder deze trap vallen
+- Enkele Linux-laptopfabrikanten kunnen onder dit niveau vallen
   - Heeft mogelijk goede kernelondersteuning maar een externe module nodig voor een ventilatorcontroller of een ander component
 - Lokaal gelayerde pakketten of andere softwareconfiguraties die niet in de documentatie worden behandeld
 - ARM/aarch64-hardware — het kernteam heeft geen toegang tot deze hardware maar genereert images voor de community
@@ -64,7 +64,7 @@ Niveau 3 is meestal niet ondersteund — het kan perfect werken of een ramp zijn
 
 #### Vereisten
 
-- Bekend problematicale hardware (Asus- en Apple-laptops). Voor Intel-Macs van 2018–2020 met de T2-beveiligingschip, zie de community [T2 Mac-installatiegids](/t2-mac).
+- Bekende problematische hardware (Asus- en Apple-laptops). Voor Intel-Macs van 2018–2020 met de T2-beveiligingschip, zie de community [T2 Mac-installatiegids](/t2-mac).
 - Dual-GPU-laptop met Nvidia-hardware
 - Oude “geluk met dit!”-verpakkingsformaten
   - .run-bestanden, tarballs en Appimages
