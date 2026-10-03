@@ -40,9 +40,9 @@ Machinefirmware-updates worden geboden via de Firmware-toepassing.
 
 ### Updates beheren
 
-Selecteer in **Instellingen** → **Netwerk** → een netwerkinstelling **Gemeten verbinding: heeft datalimieten of kan kosten veroorzaken** om Bluefin-updates te pauzeren:
+Selecteer in **Instellingen** → **Netwerk** → een netwerkinstelling **Metered Connection: has data limits or can incur charges** om Bluefin-updates te pauzeren:
 
-![Instellingen → Netwerk → Een netwerkinstelling - `Gemeten verbinding: heeft datalimieten of kan kosten veroorzaken` Gemarkeerd](/img/user-attachments/00d04190-3a68-4fd1-8e03-7e97ef3193f2.png)
+![Instellingen → Netwerk → Een netwerkinstelling - `Metered Connection: has data limits or can incur charges` Gemarkeerd](/img/user-attachments/00d04190-3a68-4fd1-8e03-7e97ef3193f2.png)
 
 ## Stromen en throttle-instellingen
 
@@ -75,7 +75,7 @@ De `stable`-tag heeft een gated kernel. Deze kernel volgt dezelfde versie als de
 
 Het toevoegen en bewerken van kernel-bootargumenten wordt afgehandeld door `bootc kargs`. Zie de [upstream-documentatie](https://bootc.dev/bootc/building/kernel-arguments.html) voor meer informatie.
 
-:::info[Het is alles just Bluefin]
+:::info[Het is allemaal gewoon Bluefin]
 
 De componenten van Bluefin worden gedeeld over alle images; denk er niet aan als een aparte “Editie” of “Spin”. Bluefin streeft naar hetzelfde over alle images; we vinden dat de aggressiviteit van updates “een instelling” kan zijn. Ideaal gebruik je “Bluefin” en hoef je geen zorgen te maken over je updatestream.
 
@@ -214,7 +214,7 @@ Herstart om toe te passen.
 
 ## Standaardwaarden overschrijven
 
-Bluefin-systeemstandaarden worden op the base-image geleverd samen met Fedora-configuratie in `/usr/etc`. De meeste hiervan kunnen worden overschreven door een bestand in `/etc` te plaatsen.
+Bluefin-systeemstandaarden worden op de base-image geleverd samen met Fedora-configuratie in `/usr/etc`. De meeste hiervan kunnen worden overschreven door een bestand in `/etc` te plaatsen.
 
 Bijvoorbeeld: de Distrobox-configuratie zit in `/usr/etc/distrobox/distrobox.ini`. Je aanpassingsopties worden in `/etc/distrobox/distrobox.ini` geplaatst. Dit is nuttig in situaties waarin je een kopie van het originele bestand als referentie nodig hebt.
 

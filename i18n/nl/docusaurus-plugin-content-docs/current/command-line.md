@@ -34,7 +34,7 @@ Kort gezegd: heb je een CLI-tool of utility nodig? Gebruik Homebrew. Heb je een 
 
 ### Message of the Day en `fastfetch`
 
-Het project geeft de voorkeur aan functionele versiering die er strak uitziet maar ook een doel dient. Nieuwe terminals (<kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Enter</kbd>) tonen een message of the day met systeeminformation:
+Het project geeft de voorkeur aan functionele versiering die er strak uitziet maar ook een doel dient. Nieuwe terminals (<kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Enter</kbd>) tonen een message of the day met systeeminformatie:
 
 ![image](/img/user-attachments/0e0326ef-6640-41a2-bd24-dae1b1647cfd.png)
 
@@ -44,7 +44,7 @@ We laten onze machines graag zien. Draai `fastfetch`:
 
 ![image](/img/user-attachments/f720f9d8-7c3c-4f3c-9112-c627686e0fb1.png)
 
-Dit scherm toont systeeminformation, gebruikersnaam, machinenaam en kernelversie. Elke Bluefin-image heeft een datum “Gesmeid op” ter herdenking van de initiële installatie van de machine:
+Dit scherm toont systeeminformatie, gebruikersnaam, machinenaam en kernelversie. Elke Bluefin-image heeft een datum “Gesmeid op” ter herdenking van de initiële installatie van de machine:
 
 ![image](/img/user-attachments/99522c15-1209-4fa5-a076-1b6289bdbc76.png)
 

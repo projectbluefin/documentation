@@ -7,7 +7,7 @@ slug: /installation
 
 Om jezelf op te zetten voor succes is het nuttig om je Bluefin-installatie in fasen te plannen, zodat je veelvoorkomende valkuilen en slecht ondersteunde configuraties kan vermijden. Op Linux-vriendelijke hardware is het opstarten in het installatieproces en door de aanbevolen installatiewaarde heen klikken doorgaans genoeg. Maar te zeker is te zeker—hier is de details voor het geval je ze nodig hebt.
 
-:::info[💙 Stel je buren geen bezoek aan deze pagina 💙]
+:::info[💙 Stuur je dierbaren alsjeblieft niet naar deze pagina 💙]
 
 Deze runbook is voor ervaren gebruikers die Bluefin voor iemand anders installeren. Het is bedoeld op een geavanceerd technische vaardigheidsniveau. Vergeet niet om een [good playlist te kiezen](/music) voor maximale immersie.
 
