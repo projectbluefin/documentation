@@ -1,0 +1,44 @@
+---
+tags:
+  - drivers
+custom_edit_url: null
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import DriverVersionsCatalog from "@site/src/components/DriverVersionsCatalog";
+
+# 驱动版本
+
+有时 raptor 就是会缠上你。本页追踪 Bluefin 各版本 major 驱动版本，帮助用户识别并切换到特定的驱动版本。适合用来排查主要组件。如果你想知道问题是否已被修复，稍后请使用 `ujust rebase-helper` rebased 回发布流。祝你好运，你可以的。
+
+下方显示的版本来自所选流的镜像 SBOM。缺失的 SBOM 显示为不可用；没有已发布镜像标签的归档 SBOM 快照无法 rebased 到。
+
+<Tabs groupId="driver-stream" queryString>
+  <TabItem value="dakota" label="Bluefin" default>
+    <DriverVersionsCatalog streamId="dakota-stable" showRebootStep={false} />
+  </TabItem>
+  <TabItem value="server" label="Bluefin Server">
+
+:::info
+
+Bluefin Server 以 DDI 形式通过 `systemd-sysupdate` 更新，而不是容器镜像，因此没有镜像 SBOM 可用于追踪驱动版本。参见 [Bluefin Server](/server)。
+
+:::
+
+  </TabItem>
+  <TabItem value="bluefin" label="Bluefin Classic">
+    <DriverVersionsCatalog streamId="bluefin-stable" showRebootStep={false} />
+  </TabItem>
+  <TabItem value="utah" label="Utah">
+    <DriverVersionsCatalog streamId="utah-testing" showRebootStep={false} />
+  </TabItem>
+</Tabs>
+
+## 最后一步：重启
+
+在运行上方可用的镜像切换命令后，重启以激活部署：
+
+```bash
+sudo systemctl reboot
+```
