@@ -1,0 +1,48 @@
+---
+title: 다운로드
+slug: /downloads
+---
+
+import DownloadSection from "@site/src/components/DownloadSection";
+import { DakotaSection } from "@site/src/components/DownloadSectionTesting";
+
+## Classic
+
+<DownloadSection />
+
+## 체크섬으로 다운로드 검증하기
+
+**체크섬**으로 다운로드가 정상적으로 완료되었는지, 파일이 손상되거나 변조되지 않았는지 확인할 수 있습니다. ISO를 다운로드한 후 해당 파일의 체크섬을 공식 체크섬 파일과 비교하여 무결성을 확인할 수 있습니다. 필수는 아니지만, 중요한 설치를 진행할 때는 검증을 권장합니다.
+
+#### sha256sum으로 체크섬 검증하기
+
+1. **ISO 파일과 해당 CHECKSUM 파일을 모두 다운로드합니다**
+   - 예: `bluefin-stable-x86_64.iso` 및 `bluefin-stable-x86_64.iso-CHECKSUM`
+
+2. **다운로드한 ISO의 체크섬을 생성합니다:**
+
+   ```bash
+   sha256sum bluefin-stable-x86_64.iso
+   ```
+
+3. **공식 체크섬 파일을 사용하여 검증합니다:**
+
+   ```bash
+   sha256sum -c bluefin-stable-x86_64.iso-CHECKSUM
+   ```
+
+4. **성공 여부를 확인합니다:** `bluefin-stable-x86_64.iso: OK`가 표시되어야 합니다. 검증에 실패하면 ISO를 다시 다운로드하세요.
+
+**예:**
+
+```bash
+# Generate checksum of downloaded file
+$ sha256sum bluefin-stable-x86_64.iso
+a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef123456  bluefin-stable-x86_64.iso
+
+# Verify against official checksum file
+$ sha256sum -c bluefin-stable-x86_64.iso-CHECKSUM
+bluefin-stable-x86_64.iso: OK
+
+# 🦖 Rawr! Your download is verified
+```
