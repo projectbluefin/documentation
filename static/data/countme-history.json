@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-12T17:11:16.720Z",
+  "generatedAt": "2026-10-05T10:05:44.643Z",
   "source": "https://data-analysis.fedoraproject.org/csv-reports/countme/totals.csv",
   "method": "upstream-peers-v2",
   "unit": "estimated weekly active systems",
@@ -164,6 +164,24 @@
       "fedora": 1189275,
       "bazzite": 96901,
       "aurora": 3063
+    },
+    {
+      "week": "2026-09-07",
+      "fedora": 1215577,
+      "bazzite": 98107,
+      "aurora": 2928
+    },
+    {
+      "week": "2026-09-14",
+      "fedora": 1281041,
+      "bazzite": 97802,
+      "aurora": 2960
+    },
+    {
+      "week": "2026-09-21",
+      "fedora": 1260576,
+      "bazzite": 97909,
+      "aurora": 3125
     }
   ],
   "unavailable": false,
