@@ -120,10 +120,11 @@ rewriting the public archive or its corresponding history.
 of every contributor seen in any prior monthly report. The scheduled workflow
 no longer restores it from `actions/cache`: the file is already present after
 checkout, and a stale cache restore can silently revert hand additions made
-between reports (a prior cache restored
+between reports (restoring a cache saved before
 [`d1708ad8`](https://github.com/projectbluefin/documentation/commit/d1708ad8)
-would have dropped the contributors added in that commit). On a cold cache
-the generator's `loadKnownContributors()` falls back to
+would have overwritten the file and dropped the contributors added in that
+commit). If `known-contributors.json` is missing or unreadable, the generator's
+`loadKnownContributors()` falls back to
 `scripts/data/known-contributors-seed.json`.
 
 ## Portfolio and source rules
