@@ -23,7 +23,7 @@ L'apertura alle nuove idee e un'evoluzione tecnologica ponderata ci rendono un p
 
 ## Trasparenza
 
-Il progetto si impegna a utilizzare il meglio della tecnologia open source (come [sigstore](https://www.sigstore.dev/)) per garantire che gli utenti possano verificare i processi utilizzati per costruire queste immagini. Il progetto si sforza di educare gli utenti condividendo il maggior numero possibile di dati.
+Il progetto si impegna a utilizzare le più recenti tecnologie open source (come [sigstore](https://www.sigstore.dev/)) per garantire che gli utenti possano verificare i processi utilizzati per costruire queste immagini. Il progetto si sforza di educare gli utenti condividendo il maggior numero possibile di dati.
 
 ## Predisposizione all'azione
 
