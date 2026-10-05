@@ -1,0 +1,82 @@
+---
+title: Bluefin
+slug: /dakota
+---
+
+import { DakotaSection } from "@site/src/components/DownloadSectionTesting";
+import DriverVersionsCatalog from "@site/src/components/DriverVersionsCatalog";
+
+# Bluefin
+
+**Dakota** (_Dakotaraptor steini_)는 [GNOME OS](https://os.gnome.org/) 위에 구축된 Bluefin으로, [Apache BuildStream](https://buildstream.build/)를 통해 소스에서 완전히 조립되고 `bootc` 이미지로 게시됩니다. 전통적인 Linux 배포판 모델을 배제합니다 — RPM이 없으며 — 업스트림 소에서 소프트웨어를 직접 제공하도록 설계되었습니다.
+
+이것은 기본 Bluefin 경험이며, 현대적 Linux bootc 이미지 중 최정을 갖추도록 설계되었습니다.
+
+:::info[Alpha]
+Dakota는 late alpha 단계입니다. [이슈 제보](https://github.com/projectbluefin/dakota/issues)가 이 작업의 핵심입니다 — Dakota를 사용하는 모든 사용자는 업스트림 GNOME, freedesktop, 커널로 이어지는 구조화된 피드백 루프의 일부입니다. 변경을 싫어한다면 [Bluefin Classic](/classic)을 사용하세요.
+:::
+
+## 설치 및 다운로드
+
+<DakotaSection />
+
+다른 이미지에서 Dakota로 **rebase할 수 없습니다** — 이미 Dakota에 있지 않다면 ISO에서 다시 설치해야 합니다.
+
+이미지마다 [cosign](https://docs.sigstore.dev/cosign/system_config/installation/) 키리스 서명으로 서명되고 GitHub Actions OIDC를 사용합니다. 검증 방법:
+
+```bash
+cosign verify ghcr.io/projectbluefin/dakota:stable \
+  --certificate-identity-regexp="https://github.com/projectbluefin/dakota/.github/workflows/publish.yml" \
+  --certificate-oidc-issuer=https://token.actions.githubusercontent.com
+```
+
+## 이미지 스트림
+
+Dakota는 [freedesktop-sdk](https://gitlab.com/freedesktop-sdk/freedesktop-sdk) 버전을 기본 버전으로 사용합니다(예: 25.08.11은 2025년 8월 주요 업데이트의 11번째 릴리스입니다).
+
+| 태그       | 스트림  | 내용                                                           |
+| ---------- | ------- | -------------------------------------------------------------- |
+| `:stable`  | Stable  | GNOME 51 — 프로덕션. 월/수/금 `:testing`에서 자동화 촉진.      |
+| `:testing` | Testing | GNOME 51 — `testing` 브랜치에서의 매일 빌드. 부팅 검사로 제한. |
+| `:next`    | Rolling | GNOME master — 최전선. gnome-build-meta `master`를 매일 추적.  |
+| `:btw`     | Rolling | `:next`의 얼리스.                                              |
+
+```bash
+# Switch to the rolling stream
+sudo bootc switch ghcr.io/projectbluefin/dakota:next
+```
+
+### 게이밍 스트림
+
+game mode 이미지는 [Open Gaming Collective 커널](https://github.com/OpenGamingCollective/linux)(sched_ext, ntsync), 32-bit 호환 라이브리와 컨트롤러 udev 규칙이 포함된 Steam, gamescope와 Steam Big Picture gamescope 세션, GameMode / MangoHud / vkBasalt, InputPlumber, 그리고 첫 부팅 Flathub 설치의 Lutris, Heroic, Bottles, ProtonPlus, Protontricks, GOverlay를 추가합니다. gaming 커널 스트림에 `dakota:btw` 얼리스도 제공됩니다.
+
+| 이미지        | 스트림  | 명령                                                                    |
+| ------------- | ------- | ----------------------------------------------------------------------- |
+| Gaming        | Stable  | `sudo bootc switch ghcr.io/projectbluefin/dakota-gaming:stable`         |
+| Gaming        | Testing | `sudo bootc switch ghcr.io/projectbluefin/dakota-gaming:testing`        |
+| NVIDIA Gaming | Stable  | `sudo bootc switch ghcr.io/projectbluefin/dakota-nvidia-gaming:stable`  |
+| NVIDIA Gaming | Testing | `sudo bootc switch ghcr.io/projectbluefin/dakota-nvidia-gaming:testing` |
+
+## 피드백 루프
+
+하드웨어에서 무언가가 깨지면 세 명령이 증거를 업스트림으로 돌려보냅니다:
+
+| 명령                    | 설명                                                                                                 |
+| ----------------------- | ---------------------------------------------------------------------------------------------------- |
+| `ujust report`          | 시스템 상태를 캡처하고 미리 채워진 이슈를 엽니다.                                                    |
+| `ujust confirm <issue>` | 팀에 하드웨어가 동일한 버스에 접촉했다고 알립니다 — 하드웨어 지문을 추가하고 중복 제출을 방지합니다. |
+| `ujust verify <issue>`  | 야간 빌드에서 수정이 출하된 후, 당신의 기계에서 작동하는지 확인합니다.                               |
+
+텔레메트리는 없고, 전화 홈도 없습니다. 모든 보고는 당신이 검토하고, 당신이 소유한 gist에 저장되며, 언제든 삭제할 수 있습니다. 세 사용자가 독립적으로 `ujust verify`를 실행해 해당 이슈는 실제로 해결된 것으로 닫힙니다. 전체 [feedback loop 설계](https://github.com/projectbluefin/dakota/blob/testing/docs/feedback-loop.md)를 참고하세요.
+
+## 현재 버전
+
+<DriverVersionsCatalog streamId="dakota-stable" />
+
+## 더 읽을 것
+
+- [projectbluefin/dakota](https://github.com/projectbluefin/dakota) — README, 이미지 스트림, AGENTS.md의 기여자 워크플로우
+- 레포지토리 문서: [build](https://github.com/projectbluefin/dakota/blob/testing/docs/build.md), [CI](https://github.com/projectbluefin/dakota/blob/testing/docs/ci.md), [workflow](https://github.com/projectbluefin/dakota/blob/testing/docs/workflow.md), [피드백 루프](https://github.com/projectbluefin/dakota/blob/testing/docs/feedback-loop.md)
+- Blog: [Dakota Alpha 1](/blog/dakota-alpha-1) · [Gaming Mode and Dakota Alpha 5](/blog/dakota-alpha-5)
+- [GNOME OS](https://os.gnome.org/) · [BuildStream](https://buildstream.build/) · [freedesktop-sdk](https://gitlab.com/freedesktop-sdk/freedesktop-sdk)
+- [열린 이슈](https://github.com/projectbluefin/dakota/issues) — 여기에서 무엇이 이루어지고 있는지 확인하세요. ISO 특화 이슈는 [projectbluefin/dakota-iso](https://github.com/projectbluefin/dakota-iso/issues)로 갑니다

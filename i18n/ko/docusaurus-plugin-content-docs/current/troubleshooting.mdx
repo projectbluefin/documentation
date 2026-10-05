@@ -1,0 +1,346 @@
+---
+title: 문제 해결 및 FAQ
+slug: /troubleshooting
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+# 문제 해결 및 FAQ
+
+## 빠른 진단 및 시스템 복구
+
+Bluefin은 깨끗하고 신뢰할 수 있도록 설계되었지만, 문제가 발생하면 이미지 기반 시스템은 간단한 롤백과 초기화 프리미티브를 제공합니다.
+
+### 시스템 롤백
+
+커널이나 OS 업데이트가 문제를 일으키면, 이전 deployment로 재부팅하거나 롤백하세요:
+
+```bash
+# Roll back to previous deployment
+sudo bootc rollback
+```
+
+적용하기 위해 재부팅하세요. 현재와 이전 deployment 상태를 검사하려면:
+
+```bash
+sudo bootc status
+```
+
+### GNOME 및 확장 초기화
+
+desktop 확장이나 shell 튜크가 그래픽 문제나 방해를 일으키면:
+
+```bash
+# Reset GNOME Shell and extensions to system defaults
+dconf reset -f /org/gnome/
+```
+
+### 디스크 공간 및 사용하지 않는 런타임 정리
+
+```bash
+# Clean up dangling containers and unused Flatpak runtimes
+ujust clean-system
+```
+
+### 버그 보고 및 수정 검증
+
+뭔가 깨지거나 기기에서 문제를 겪을 때, 세 개의 명령은 진단을 관리자에게 직접 흘려보냅니다:
+
+| Command                 | What it does                                                                                             |
+| ----------------------- | -------------------------------------------------------------------------------------------------------- |
+| `ujust report`          | Captures system diagnostics, scrubs sensitive data locally, and opens a pre-filled GitHub issue.         |
+| `ujust confirm <issue>` | Confirms your hardware hits an existing issue — adds a hardware fingerprint without creating duplicates. |
+| `ujust verify <issue>`  | After a fix lands in a newer image, confirms the issue is resolved on your hardware.                     |
+
+Every report is displayed for your review before submission, stored in a gist you own, and never uses automated background telemetry.
+
+### Keyboard Layout & Input Issues
+
+#### Switching Keyboard Layouts Conflicts with Search Light
+
+GNOME's default switching shortcut (<kbd>Super</kbd>+<kbd>Space</kbd>) conflicts with Search Light. To customize:
+
+1. Open **Settings** → **Keyboard** → **Keyboard Shortcuts** → **View and Customize Shortcuts**.
+2. Click **Typing**.
+3. Set **Switch to next input source** to your preferred combination (e.g. <kbd>Shift</kbd>+<kbd>Alt</kbd>).
+
+#### Extended Keyboard Layouts (e.g. EurKEY)
+
+1. Open **Gnome Tweaks** → **Keyboard** → toggle **Show Extended Input Sources** to **On**.
+2. Log out and back in.
+3. Open **Settings** → **Keyboard** → add new input source with **+** → click **More...** and search for your layout.
+
+#### Input Method Editor (IME / Fcitx5)
+
+For standard keyboard layouts, see [GNOME Help > Keyboard Layouts](https://help.gnome.org/gnome-help/keyboard-layouts.html). For Asian languages or other complex input methods:
+
+1. Install Fcitx5: `flatpak install org.fcitx.Fcitx5`
+2. Install the [kimpanel](https://extensions.gnome.org/extension/261/kimpanel/) GNOME extension.
+3. Install your language addon (e.g. `flatpak install org.fcitx.Fcitx5.Addon.ChineseAddons`).
+4. Configure input methods in Fcitx5 settings. Use <kbd>Ctrl</kbd>+<kbd>Space</kbd> to toggle. See the [Fcitx wiki](https://fcitx-im.org/wiki/Using_Fcitx_5_on_Wayland#GNOME) for details.
+
+---
+
+## 자주 묻는 질문
+
+### Am I holding Bluefin wrong?
+
+![Don't hold Bluefin wrong](/img/user-attachments/6d03851b-5d42-4235-9e1c-3dde7c455946.png)
+
+You can always do what you want, but Bluefin is designed with a specific workflow in mind:
+
+- **Containerize your developer environments** rather than commingling them with the OS. Define them per project in `devcontainer.json` files managed by Git.
+- **Stick to Flatpaks and Homebrew.** The ideal is to leave the core OS image unchanged.
+- **Follow XDG standards** for overriding files. `/etc`, `/var`, `/usr/local`, and `/opt` are writable. Most per-user overrides live in `~/.config` and `~/.local`.
+- **Isolate old-school jank in containers.** Mangling packages directly on the host is an anti-pattern.
+- **Don't overthink rebooting.** Shut down or reboot your PC when you're done using it so staged OS updates apply automatically.
+- **Hardware matters.** Bluefin works best on Linux-friendly hardware.
+
+:::tip
+
+I have Become Legend.
+
+-- [Dominus Ghaul](https://www.youtube.com/watch?v=Og-2axO4Bi0)
+
+:::
+
+### So who is this for?
+
+Bluefin은 사용자가 현대적인 데스크톱을 통해 Linux에 소개되어야 한다고 강하게 생각합니다. 시장은 이전 세대의 Linux 데스크톱 관습을 거부했고, ChromeOS와 Android와 같은 현대적인 모델이 성공했습니다. **95%의 사용자는 브라우저와 Flatpaks를 사용하는 데 문제가 없습니다.** Bluefin은 그 95%를 위한 zero-maintenance 목적의 OS로 설계되었으며, 개발자에게 박스에서 네이티브 클라우드 도구를 제공합니다.
+
+### What about codecs?
+
+당신이 필요한 모든 것은 Universal Blue를 통해 박스에서 기본적으로 포함되어 있습니다.
+
+### What's the deal with Homebrew?
+
+[Homebrew is Great on Linux](https://www.ypsidanger.com/homebrew-is-great-on-linux/)를 확인하세요. Homebrew는 base 이미지를 건드리거나 `sudo`가 필요 없이 CLI 유틸리티를 관리합니다.
+
+### Why are there multiple Bluefin images?
+
+Bluefin은 모든 이미지에 걸쳐 동일하기를 노력합니다 — 차이는 업데이트 순환과 전문화된 도구입니다:
+
+- **Bluefin**: 일반 데스크톱 사용을 위한 gated 커널을 가진 현재 Fedora base.
+- **Bluefin Server**: FSDK 기반, DDI 우선 최소 서버 OS.
+- **Bluefin DX**: 컨테이너와 devcontainers를 가진 개발자 워크스페이스.
+
+### What's with all the Ubuntu influence?
+
+Bluefin의 공동 창립자 3명이 Canonical에서 Ubuntu를 위해 작업했습니다. Bluefin은 현대적인 클라우드 네이티브 컨테이너 인프라 위에 구축된 클래식 Ubuntu 데스크톱 정신("Linux for Human Beings")을 되가져옵니다.
+
+### Should I trust you?
+
+모든 것은 공개적으로 구축되고, Cosign / GPG로 서명되며, GitHub Actions를 통해 게시됩니다. 배경을 위해 [Jorge Castro's bio](https://www.ypsidanger.com/about/)를 확인하세요.
+
+---
+
+## Ask Bluefin 및 자동화된 진단
+
+:::info
+This feature is in Alpha. The menu feature doesn't exist yet.
+:::
+
+- [Bluefin AI page](/ai) - gives this page more context on our plans for Bluespeed
+
+In the menu select "Ask Bluefin" to use the chat agent.
+
+![ask](/img/troubleshooting/ask-bluefin-menu.png)
+
+> "Ask Bluefin"은 맞춤형 운영체제 에이전트입니다. 새 사용자를 위해, 당신은 Linux를 배우는 데 도움이 되도록 설계된 시스템이며, 인터넷을 뒤지거나 잘못된 Linux distribution을 설치했다고 말하는 고문의 괴롭힘 없이. "Ask Bluefin"은 운영체제와 그 문서로 훈련되므로, 항상 진실의 출처로부터 배우고 커뮤니티에 의해 다듬어집니다. Linux 베테란드를 위해, 당신의 로컬 PC를 위한 강력한 진단 도구이며, 당신의 서버와 클러스터에 대한 내장 통합이 있습니다 ...
+
+`Ctrl`-`Alt`-`Shift`- `g`는 quicklaunch를 호출하여 원키로 help 에이전트를 호출할 수 있습니다:
+
+<img src="/img/goose-quick-launch.png" alt="Goose quick launch" />
+
+### Out-of-the-Box Setup: `ujust probe`
+
+Bluefin은 AI 문제 해결 세션을 설정하고 실행하는 내장 자동화를 포함합니다:
+
+```bash
+ujust probe
+```
+
+`ujust probe`를 실행하면 자동으로:
+
+1. Goose가 설치되어 있는지 확인합니다 (아니면 Homebrew를 통해 설치하도록 프롬프트).
+2. 이미 존재하지 않으면 `ublue-os/tap/linux-mcp-server`를 설치합니다.
+3. `linux-tools`가 활성화된 Goose 구성을 `goose-mcp-setup`로 자동적으로 작성합니다.
+4. 구성된 LLM 제공자를 확인하고 세션을 시작합니다.
+
+### Manual Installation & Configuration
+
+수동으로 설치하거나 macOS에서 설정하려는 경우:
+
+<Tabs groupId="operating-systems">
+  <TabItem value="linux" label="Bluefin / Linux" default>
+
+```bash
+brew install ublue-os/tap/linux-mcp-server
+goose-mcp-setup
+```
+
+  </TabItem>
+  <TabItem value="macos" label="macOS">
+
+```bash
+brew install ublue-os/tap/linux-mcp-server
+goose-mcp-setup
+```
+
+:::note
+On macOS, `linux-mcp-server` inspects a remote Linux host over SSH. Set `LINUX_MCP_HOST: <host>` in your `~/.config/goose/config.yaml` envs.
+:::
+
+  </TabItem>
+</Tabs>
+
+`ublue-os/tap/linux-mcp-server`를 설치하면 `linux-mcp-server`, Goose 클라이언트 (`block-goose-cli`), 그리고 `goose-mcp-setup`가 설치됩니다.
+
+#### linux-mcp-server
+
+시스템 진단 및 모니터링 도구를 제공합니다:
+
+- 시스템 정보 (OS, kernel, hardware)
+- 프로세스 관리
+- 서비스 모니터링 (systemd)
+- 로그 접근 (journalctl)
+- 네트워크 진단
+- 파일 시스템 검사
+
+**Repository**: [rhel-lightspeed/linux-mcp-server](https://github.com/rhel-lightspeed/linux-mcp-server)
+
+### Configuration Steps
+
+#### Step 1: Configure Goose Extension
+
+`goose-mcp-setup`를 실행하면 `linux-tools` 확장이 사전 구성된 `~/.config/goose/config.yaml`을 만듭니다:
+
+```yaml
+extensions:
+  linux-tools:
+    enabled: true
+    type: stdio
+    name: linux-tools
+    description: Linux system administration and diagnostics
+    cmd: /home/linuxbrew/.linuxbrew/bin/linux-mcp-server
+    envs:
+      LINUX_MCP_USER: <your-username>
+      LINUX_MCP_LOG_LEVEL: INFO
+      LINUX_MCP_SSH_KEY_PATH: ~/.ssh/id_ed25519
+    timeout: 30
+    bundled: null
+    available_tools: []
+    args: []
+```
+
+#### Step 2: Configure your LLM Provider
+
+Goose는 호스팅 제공자와 로컬 모델 모두를 지원합니다. 실행하세요:
+
+```bash
+goose configure
+```
+
+- **GitHub Copilot**: `GitHub Copilot`을 선택하여 당신의 GitHub 계정으로 직접 인증합니다.
+- **Hosted APIs**: Anthropic, OpenAI, Gemini 등을 선택하고 프롬프트가 뜨면 API 키를 입력하세요.
+- **Local Models**: [llmman](https://github.com/llmmanorg/llmman)는 모델을 컨테이너로 관리하고 OpenAI 호환 엔드포인트를 제공합니다:
+
+```bash
+brew install llmmanorg/tap/llmman
+llmman serve
+```
+
+`~/.config/goose/config.yaml`에서 로컬 모델을 사용하도록 Goose를 설정하세요:
+
+```yaml
+GOOSE_PROVIDER: ollama
+GOOSE_MODEL: qwen3:8b
+OLLAMA_HOST: http://localhost:17434
+```
+
+[LM Studio](https://lmstudio.ai/) (`brew install lm-studio`)는 그래픽 대안입니다 — 모델을 로드하고 로컬 서버를 시작한 후 `goose configure`에서 **LM Studio**를 선택하세요.
+
+#### Step 3: Start Troubleshooting
+
+인터랙티브 세션을 시작하세요:
+
+```bash
+ujust probe
+# or directly:
+goose session
+```
+
+### Security Considerations
+
+- MCP 서버는 당신의 사용자 권한으로 실행됩니다
+- 신뢰할 수 있는 소스에서만 MCP 서버를 설치하세요
+- 필요한 권한을 위해 서버 문서를 검토하세요
+- 민감한 자격증명에 대한 환경 변수를 사용하세요 (구성에서 하드코딩하지 마세요)
+- 보안 패치를 받으 위해 MCP 서버를 정기적으로 업데이트하세요
+
+### Further Reading
+
+- [MCP Official Documentation](https://modelcontextprotocol.io/)
+- [Building MCP Servers](https://modelcontextprotocol.io/docs/2026-07-28/develop/build-server)
+- [MCP Specification](https://modelcontextprotocol.io/specification/2026-07-28/architecture)
+
+## 자동화된 문제 해결
+
+자연 언어를 사용하여 도구에 당신의 시스템에 대한 것들을 물을 수 있습니다:
+
+![Top CPU usage](/img/troubleshooting/top-cpu-usage.png)
+
+### System Health
+
+참고: 이것들은 linux-server-mcp 페이지에서 가져오지만 아이디어를 얻을 수 있습니다:
+
+| I want to check... | Use this tool              | Example Prompt                 |
+| ------------------ | -------------------------- | ------------------------------ |
+| **OS / Kernel**    | `get_system_information`   | "What OS version is this?"     |
+| **CPU Load**       | `get_cpu_information`      | "Is the CPU overloaded?"       |
+| **Memory / RAM**   | `get_memory_information`   | "How much free RAM do I have?" |
+| **Disk Space**     | `get_disk_usage`           | "Are any disks full?"          |
+| **Hardware**       | `get_hardware_information` | "List the PCI devices."        |
+
+### 문제 해결
+
+| I want to check...    | Use this tool        | Example Prompt                                 |
+| --------------------- | -------------------- | ---------------------------------------------- |
+| **Running Apps**      | `list_processes`     | "What's using the most CPU?"                   |
+| **Process Details**   | `get_process_info`   | "Inspect process ID 1234."                     |
+| **Services**          | `list_services`      | "Are all services running?"                    |
+| **Service Status**    | `get_service_status` | "Why did nginx fail?"                          |
+| **System Logs**       | `get_journal_logs`   | "Show errors from the last hour."              |
+| **Service Logs**      | `get_service_logs`   | "Show recent logs for sshd."                   |
+| **Specific Log File** | `read_log_file`      | "Read the last 50 lines of /var/log/messages." |
+
+### Network
+
+| I want to check... | Use this tool             | Example Prompt                 |
+| ------------------ | ------------------------- | ------------------------------ |
+| **IP Addresses**   | `get_network_interfaces`  | "What is my IP address?"       |
+| **Open Ports**     | `get_listening_ports`     | "What ports are open?"         |
+| **Connections**    | `get_network_connections` | "Who is connected to port 22?" |
+
+### Files & Storage
+
+| I want to check...  | Use this tool        | Example Prompt                         |
+| ------------------- | -------------------- | -------------------------------------- |
+| **Disk Partitions** | `list_block_devices` | "Show me the partition layout."        |
+| **Large Folders**   | `list_directories`   | "Find the largest folders in /var."    |
+| **Recent Changes**  | `list_files`         | "What files in /etc changed recently?" |
+| **Read File**       | `read_file`          | "Read /etc/fstab."                     |
+
+### Pro Tips
+
+- **Combine Tools:** 한 번에 하나의 것만 요청할 필요가 없습니다.
+  > "Check CPU usage and show me the top 5 processes."
+- **Filter Logs:** 시간과 우선순위를 구체적으로 하여 context 창을 절약하세요.
+
+  > "Show me `error` priority logs from the last `30 minutes`."
+
+- **Remote Hosts:** SSH를 설정했다면, 특정 호스트에서 실행하 요청하세요.
+  > "Check disk usage on `webserver1`."
+
+![troubleshooting](/img/troubleshooting/troubleshooting-example.png)

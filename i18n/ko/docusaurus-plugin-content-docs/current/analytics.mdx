@@ -1,0 +1,71 @@
+---
+title: 분석
+slug: /analytics
+displayed_sidebar: null
+---
+
+import CountmeAnalyticsCharts from "@site/src/components/analytics/CountmeAnalyticsCharts";
+import ImageChurnCharts from "@site/src/components/analytics/ImageChurnCharts";
+
+<CountmeAnalyticsCharts />
+
+## Update Churn & Compression Analytics
+
+Project Bluefin은 연속적인 안정 버전 릴리스 간 다운로드 바이트 델타, 레이어 재사용 효율성, 그리고 압축 통계를 측정합니다.
+
+[Chunkah](https://github.com/coreos/chunkah)와 `zstd-chunked` 컨테이너 레이어 형식을 사용하여,
+운영체제 업데이트는 미세한 패키지 간격으로 분할되어 클라이언트가 변경된 패키지를 포함하는 특정 청크만 다운로드합니다.
+
+<ImageChurnCharts />
+
+<details>
+<summary><strong>방법론, 개인정보 보호 및 옵트아웃</strong></summary>
+
+### 카운팅 방법론
+
+모든 Project Bluefin 카운트는 `countme.projectbluefin.io`에서 옵니다
+
+### 첫 번째 파티 Countme 서비스 및 개인정보 보호 보증
+
+Project Bluefin Dakota 및 Utah 이미지는 `projectbluefin-countme` systemd 타이머에서
+일일 활성 시스템 핑을 `https://countme.projectbluefin.io/v1/ping`으로 보냅니다.
+다른 이미지는 그것을 보내지 않습니다.
+
+- **보내는 것:** 단일 문자열, `<image-name>/<image-flavor>:<stream>`, 여기서 stream는
+  부팅된 이미지의 태그(`stable`, `testing`, 또는 `unknown`)입니다. 나머지는 없습니다: 설치 일수,
+  아키텍처, 머신 ID, 사용자 이름, 또는 식별 불가능한 식별자 없습니다.
+- **빈도:** 하루에 최대 한 번, 시스템당, 그리고 라이브 ISO, installer, 또는
+  컨테이너에서는 결코 보내지 않습니다.
+- **저장되는 것:** UTC 일 및 이미지당 하나의 카운터. 시스템당 행과 IP 주소가 없습니다.
+  하루의 카운트는 시간 경과에 따른 고유 디바이스가 아니라 그 날 활성인 시스템의 수입니다.
+
+### 옵트아웃 지침
+
+지금과 재부팅 전반에 걸쳐 Project Bluefin countme 보고를 중단하려면 그 systemd 타이머를 마스킹하세요:
+
+```bash
+sudo systemctl mask --now projectbluefin-countme.timer
+```
+
+이전 `bluefin-countme.timer` 또는 `bluefin-countme.service` 유닛의 마스킹과
+`/etc/projectbluefin/countme/disabled` 옵트아웃 파일은 여전히 보고를 중단시킵니다.
+
+업스트림 Fedora countme를 비활성화하려면:
+
+- [Fedora countme documentation](https://coreos.github.io/rpm-ostree/countme/)
+
+Homebrew 분석을 비활성화하려면:
+
+```bash
+brew analytics off
+```
+
+[Homebrew analytics documentation](https://docs.brew.sh/Analytics)에서 추가 세부 정보를 확인하세요.
+
+</details>
+
+### 기여자 지표
+
+모든 15개 팩토리 저장소에 걸친 실시간 개발 및 조직 속도를 위한 지표는 [Factory metrics view](/factory/metrics)를 확인하세요.
+
+`projectbluefin/bluefin`의 업스트림 저장소 지표는 [Linux Foundation Insights](https://insights.linuxfoundation.org/project/ublue-os-bluefin)에서도 추적됩니다.

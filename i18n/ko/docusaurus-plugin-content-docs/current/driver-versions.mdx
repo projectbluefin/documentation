@@ -1,0 +1,44 @@
+---
+tags:
+  - drivers
+custom_edit_url: null
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import DriverVersionsCatalog from "@site/src/components/DriverVersionsCatalog";
+
+# 드라이버 버전
+
+때로는 랩터가 당신을 번거롭게 하기도 합니다. 이 페이지는 Bluefin 릴리스 전반의 주요 드라이버 버전을 추적하여 사용자가 특정 드라이버 버전을 식별하고 전환할 수 있도록 돕습니다. 주요 구성 요소의 원인을 좁힐 때 유용합니다. 나중에 이슈가 해결되었는지 확인하고 싶다면 릴리스 스트림으로 재베이스해야 하는데, 그것은 `ujust rebase-helper`를 사용하세요. 화이팅, 해낼 수 있어요.
+
+아래에 표시된 버전은 선택한 스트림의 이미지 SBOM에서 가져옵니다.누락된 SBOM은 확인 불가능(unavailable)으로 표시되며, 이미 published 이미지 태그가 없는 보관용 SBOM 스냅샷은 재베이스할 수 없습니다.
+
+<Tabs groupId="driver-stream" queryString>
+  <TabItem value="dakota" label="Bluefin" default>
+    <DriverVersionsCatalog streamId="dakota-stable" showRebootStep={false} />
+  </TabItem>
+  <TabItem value="server" label="Bluefin Server">
+
+:::info
+
+Bluefin Server는 컨테이너 이미지가 아니라 `systemd-sysupdate`를 통해 업데이트되는 DDI로 출시되므로, 드라이버 버전을 추적할 이미지 SBOM이 없습니다. [Bluefin Server](/server)를 참고하세요.
+
+:::
+
+  </TabItem>
+  <TabItem value="bluefin" label="Bluefin Classic">
+    <DriverVersionsCatalog streamId="bluefin-stable" showRebootStep={false} />
+  </TabItem>
+  <TabItem value="utah" label="Utah">
+    <DriverVersionsCatalog streamId="utah-testing" showRebootStep={false} />
+  </TabItem>
+</Tabs>
+
+## 마지막 단계: 재부팅
+
+위에서 사용 가능한 이미지 전환 명령을 실행한 후, 배포를 활성화하기 위해 재부팅하세요:
+
+```bash
+sudo systemctl reboot
+```
