@@ -684,16 +684,6 @@ ${kindSections}`;
 }
 
 /**
- * Generate category section with subsections for Planned vs Opportunistic work
- *
- * @param {Array} plannedItems - Items from project board
- * @param {Array} opportunisticItems - Items from repos not on board
- * @param {string} categoryName - Category display name
- * @param {Array<string>} categoryLabels - Labels belonging to this category
- * @param {Set} displayedUrls - Set of URLs already displayed (modified in place)
- * @returns {string} Markdown section content
- */
-/**
  * Escape characters that MDX/JSX would otherwise interpret inside a PR/issue
  * title. Curly braces are already escaped inline; angle brackets (< and >)
  * break MDX compilation too (a title like "add <main>" or "<cstdint>") so they
@@ -707,6 +697,16 @@ function escapeTitle(title) {
     .replace(/>/g, "\\>");
 }
 
+/**
+ * Generate category section with subsections for Planned vs Opportunistic work
+ *
+ * @param {Array} plannedItems - Items from project board
+ * @param {Array} opportunisticItems - Items from repos not on board
+ * @param {string} categoryName - Category display name
+ * @param {Array<string>} categoryLabels - Labels belonging to this category
+ * @param {Set} displayedUrls - Set of URLs already displayed (modified in place)
+ * @returns {string} Markdown section content
+ */
 export function generateCategorySectionWithSubsections(
   plannedItems,
   opportunisticItems,
@@ -898,7 +898,7 @@ function generateUncategorizedSection(items, displayedUrls) {
   const lines = uncategorizedItems.map((item) => {
     const type = item.content.__typename === "PullRequest" ? "PR" : "Issue";
     const number = item.content.number;
-    // Escape curly braces in titles to prevent MDX interpretation as JSX
+    // Escape MDX-hostile characters in titles so they render literally
     const title = escapeTitle(item.content.title);
     const url = item.content.url;
     const author = item.content.author?.login || "unknown";
