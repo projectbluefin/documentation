@@ -693,6 +693,20 @@ ${kindSections}`;
  * @param {Set} displayedUrls - Set of URLs already displayed (modified in place)
  * @returns {string} Markdown section content
  */
+/**
+ * Escape characters that MDX/JSX would otherwise interpret inside a PR/issue
+ * title. Curly braces are already escaped inline; angle brackets (< and >)
+ * break MDX compilation too (a title like "add <main>" or "<cstdint>") so they
+ * are escaped alongside the braces using the same backslash form.
+ */
+function escapeTitle(title) {
+  return title
+    .replace(/{/g, "\\{")
+    .replace(/}/g, "\\}")
+    .replace(/</g, "\\<")
+    .replace(/>/g, "\\>");
+}
+
 export function generateCategorySectionWithSubsections(
   plannedItems,
   opportunisticItems,
@@ -807,10 +821,8 @@ function formatItemList(items, displayedUrls) {
 
       const type = item.content.__typename === "PullRequest" ? "PR" : "Issue";
       const number = item.content.number;
-      // Escape curly braces in titles to prevent MDX interpretation as JSX
-      const title = item.content.title
-        .replace(/{/g, "\\{")
-        .replace(/}/g, "\\}");
+      // Escape MDX-hostile characters in titles so they render literally
+      const title = escapeTitle(item.content.title);
       const author = item.content.author?.login || "unknown";
 
       // Mark this URL as displayed
@@ -838,10 +850,8 @@ function formatItemList(items, displayedUrls) {
 
       const type = item.content.__typename === "PullRequest" ? "PR" : "Issue";
       const number = item.content.number;
-      // Escape curly braces in titles to prevent MDX interpretation as JSX
-      const title = item.content.title
-        .replace(/{/g, "\\{")
-        .replace(/}/g, "\\}");
+      // Escape MDX-hostile characters in titles so they render literally
+      const title = escapeTitle(item.content.title);
       const author = item.content.author?.login || "unknown";
 
       // Mark this URL as displayed
@@ -889,7 +899,7 @@ function generateUncategorizedSection(items, displayedUrls) {
     const type = item.content.__typename === "PullRequest" ? "PR" : "Issue";
     const number = item.content.number;
     // Escape curly braces in titles to prevent MDX interpretation as JSX
-    const title = item.content.title.replace(/{/g, "\\{").replace(/}/g, "\\}");
+    const title = escapeTitle(item.content.title);
     const url = item.content.url;
     const author = item.content.author?.login || "unknown";
 
@@ -1147,10 +1157,8 @@ export function generateBotDetailsList(botActivity) {
     .flatMap((activity) => activity.items)
     .map((item) => {
       const number = item.content.number;
-      // Escape curly braces in titles to prevent MDX interpretation as JSX
-      const title = item.content.title
-        .replace(/{/g, "\\{")
-        .replace(/}/g, "\\}");
+      // Escape MDX-hostile characters in titles so they render literally
+      const title = escapeTitle(item.content.title);
       const url = item.content.url;
       const repo = item.content.repository.nameWithOwner;
       const author = item.content.author?.login || "unknown";

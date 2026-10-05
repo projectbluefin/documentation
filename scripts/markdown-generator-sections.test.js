@@ -286,6 +286,20 @@ describe("generateBotDetailsList", () => {
     assert.doesNotMatch(md, /bump \{pkg\}/);
   });
 
+  it("escapes angle brackets so MDX does not treat the title as a tag", async () => {
+    const { generateBotDetailsList } = await load();
+    const md = generateBotDetailsList([
+      {
+        repo: "projectbluefin/bluefin",
+        bot: "renovate",
+        items: [item({ title: "add <main> include" })],
+      },
+    ]);
+
+    assert.match(md, /add \\<main\\> include/);
+    assert.doesNotMatch(md, /<main>/);
+  });
+
   it("falls back to 'unknown' when the author is missing", async () => {
     const { generateBotDetailsList } = await load();
     const md = generateBotDetailsList([
@@ -457,6 +471,20 @@ describe("generateCategorySectionWithSubsections", () => {
     );
 
     assert.match(section, /handle \\\{x\\\}/);
+  });
+
+  it("escapes angle brackets in item titles so MDX compiles", async () => {
+    const { generateCategorySectionWithSubsections } = await load();
+    const section = generateCategorySectionWithSubsections(
+      [item({ number: 26, title: "use <cstdint>", labels: ["bug"] })],
+      [],
+      "\uD83D\uDC1B Bug Fixes",
+      ["bug"],
+      new Set(),
+    );
+
+    assert.match(section, /use \\<cstdint\\>/);
+    assert.doesNotMatch(section, /<cstdint>/);
   });
 
   it("falls back to 'unknown' for an item with no author", async () => {
