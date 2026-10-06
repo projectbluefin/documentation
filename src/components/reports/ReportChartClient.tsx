@@ -486,13 +486,27 @@ export default function ReportChartClient({
 
   if (!enoughData) return null;
 
+  const hiddenRows =
+    chartShape(definition) === "category"
+      ? definition.labels.length - MAX_CATEGORY_ROWS
+      : 0;
+
   return (
-    <div
-      ref={elementRef}
-      className={styles.chartCanvas}
-      style={{ height: `${chartHeight(definition)}px` }}
-      role="img"
-      aria-label={`${definition.title}. ${definition.currentValue} ${definition.unit}.`}
-    />
+    <>
+      <div
+        ref={elementRef}
+        className={styles.chartCanvas}
+        style={{ height: `${chartHeight(definition)}px` }}
+        role="img"
+        aria-label={`${definition.title}. ${definition.currentValue} ${definition.unit}.`}
+      />
+      {hiddenRows > 0 && (
+        <p className={styles.accumulating}>
+          Top {MAX_CATEGORY_ROWS} of {definition.labels.length} shown; the total
+          includes all {definition.labels.length}. Every value is in the table
+          below.
+        </p>
+      )}
+    </>
   );
 }
