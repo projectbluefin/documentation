@@ -46,7 +46,6 @@ function ChartSlot({
 }): React.JSX.Element {
   return (
     <div className={styles.sectionPanel}>
-      <h3>{label}</h3>
       {definition ? (
         <ReportChart definition={definition} />
       ) : (

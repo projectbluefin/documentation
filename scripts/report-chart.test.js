@@ -113,7 +113,16 @@ const exported = loadChart();
 const ReportChart = exported.default;
 const clientExported = loadClient();
 const ReportChartClient = clientExported.default;
-const { buildReportChartOption, selectEChartsModules } = clientExported;
+const { buildReportChartOption, timelineData } = clientExported;
+const theme = {
+  accent: "accent",
+  border: "border",
+  grid: "grid",
+  muted: "muted",
+  series: ["series-1", "series-2"],
+  surface: "surface",
+  text: "text",
+};
 
 const COMPONENTS = path.join(REPO, "src", "components", "reports");
 const chartStub = {
@@ -268,58 +277,58 @@ test("the client option disables animation and preserves null gaps and zeroes", 
   assert.equal(option.series[0].connectNulls, false);
 });
 
-test("the client module registration selects only the kind-specific modules", () => {
-  const modules = {
-    charts: {
-      BarChart: "bar",
-      HeatmapChart: "heatmap",
-      LineChart: "line",
-    },
-    components: {
-      CalendarComponent: "calendar",
-      GridComponent: "grid",
-      LegendComponent: "legend",
-      TooltipComponent: "tooltip",
-      VisualMapComponent: "visual-map",
-    },
-    renderers: { CanvasRenderer: "canvas" },
-  };
+test("an out-of-order date series is sorted without turning gaps into zeroes", () => {
+  const { labels, series, counted } = timelineData({
+    ...fixture,
+    labels: ["2026-10-03", "2026-10-01", "2026-10-02"],
+    series: [{ id: "merged", label: "Merged", values: [12, 0, null] }],
+  });
 
-  assert.deepEqual(selectEChartsModules("line", modules), [
-    "line",
-    "grid",
-    "legend",
-    "tooltip",
-    "canvas",
+  assert.equal(counted, false);
+  assert.deepEqual(labels, ["2026-10-01", "2026-10-02", "2026-10-03"]);
+  assert.deepEqual(series[0].values, [0, null, 12]);
+});
+
+test("an event list with repeated dates becomes daily counts across its span", () => {
+  const option = buildReportChartOption(
+    {
+      ...fixture,
+      labels: ["2026-09-04", "2026-09-02", "2026-09-04"],
+      series: [{ id: "releases", label: "Releases", values: [1, 1, 1] }],
+    },
+    theme,
+  );
+
+  assert.deepEqual(option.xAxis.data, [
+    "2026-09-02",
+    "2026-09-03",
+    "2026-09-04",
   ]);
-  assert.deepEqual(selectEChartsModules("grouped-bar", modules), [
-    "bar",
-    "grid",
-    "legend",
-    "tooltip",
-    "canvas",
-  ]);
-  assert.deepEqual(selectEChartsModules("stacked-bar", modules), [
-    "bar",
-    "grid",
-    "legend",
-    "tooltip",
-    "canvas",
-  ]);
-  assert.deepEqual(selectEChartsModules("lane-status", modules), [
-    "bar",
-    "grid",
-    "legend",
-    "tooltip",
-    "canvas",
-  ]);
-  assert.deepEqual(selectEChartsModules("calendar", modules), [
-    "heatmap",
-    "calendar",
-    "tooltip",
-    "visual-map",
-    "canvas",
-  ]);
+  assert.deepEqual(option.series[0].data, [1, 0, 2]);
+  assert.equal(option.series[0].type, "bar");
+});
+
+test("category comparisons are horizontal, largest first, with readable names", () => {
+  const labels = Array.from(
+    { length: 20 },
+    (_, i) => `projectbluefin/repo-${i}`,
+  );
+  const option = buildReportChartOption(
+    {
+      ...fixture,
+      kind: "grouped-bar",
+      labels,
+      series: [
+        { id: "merged", label: "Merged", values: labels.map((_, i) => i) },
+      ],
+    },
+    theme,
+  );
+
+  assert.equal(option.yAxis.type, "category");
+  assert.equal(option.yAxis.data.length, 15);
+  assert.equal(option.yAxis.data[0], "repo-19");
+  assert.deepEqual(option.series[0].data.slice(0, 2), [19, 18]);
 });
 
 test("the client renderer does not create an empty image below minimum history", () => {

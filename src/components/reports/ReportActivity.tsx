@@ -56,7 +56,6 @@ function ChartSlot({
 }): React.JSX.Element {
   return (
     <div className={styles.sectionPanel}>
-      <h3>{label}</h3>
       {definition ? (
         <ReportChart definition={definition} />
       ) : (
@@ -112,24 +111,12 @@ export default function ReportActivity(
         <p>Completed work across the configured factory portfolio.</p>
       </div>
 
-      {/* Daily activity gets full width so daily volume is legible across the month */}
-      <div className={styles.fullWidthPanel}>
+      <div className={styles.sectionGrid}>
         <ChartSlot
           label="Daily merged pull requests"
-          definition={
-            section.calendar
-              ? {
-                  ...section.calendar,
-                  kind: "line",
-                  labels: section.calendar.labels.map((d) => d.slice(5)),
-                }
-              : null
-          }
+          definition={section.calendar}
           reason={reason}
         />
-      </div>
-
-      <div className={styles.sectionGrid}>
         <ChartSlot
           label="Repository comparison"
           definition={section.repositories}
