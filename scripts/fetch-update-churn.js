@@ -449,19 +449,17 @@ async function getPlatformLayers(repo, tag) {
  * A busy package publishes many versions per build (per-arch manifests,
  * attestations, SBOMs), so a fixed small page budget covers only a day or two
  * of tags. When `need` is given, pagination continues until every listed tag
- * has a build time (or the API runs out of pages); `maxPages` is only a
- * runaway guard.
+ * has a build time, the API runs out of pages, or a page is entirely older
+ * than the oldest needed tag's date (a deleted or retagged version will never
+ * appear further back); `maxPages` is only a runaway guard. Without `need`
+ * the budget stays at two pages.
  *
  * @param {string} org
  * @param {string} pkg
  * @param {{ need?: string[], maxPages?: number }} [options]
  * @returns {Promise<Record<string, string>>} tag -> ISO 8601 build timestamp
  */
-async function fetchGhcrTagCreatedAt(
-  org,
-  pkg,
-  { need = [], maxPages = 100 } = {},
-) {
+async function fetchGhcrTagCreatedAt(org, pkg, { need = [], maxPages } = {}) {
   const token = githubToken();
   const createdAt = {};
   if (!token) {
@@ -485,11 +483,27 @@ async function fetchGhcrTagCreatedAt(
   };
 
   const pending = new Set(Array.isArray(need) ? need : []);
+  const pageBudget = Number.isFinite(maxPages)
+    ? maxPages
+    : pending.size > 0
+      ? 100
+      : 2;
+  // Versions are listed newest-first, so once a whole page was built more than
+  // a day before the oldest needed tag's date, no later page can carry it.
+  const neededKeys = [...pending].map(datedTagKey).filter(Boolean).sort();
+  let floorKey = "";
+  if (neededKeys.length > 0) {
+    const k = neededKeys[0];
+    const floor = new Date(
+      Date.UTC(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8) - 1),
+    );
+    floorKey = floor.toISOString().slice(0, 10).replace(/-/g, "");
+  }
   try {
     let url =
       `https://api.github.com/orgs/${org}/packages/container/` +
       `${encodeURIComponent(pkg)}/versions?per_page=100`;
-    for (let page = 0; url && page < maxPages; page += 1) {
+    for (let page = 0; url && page < pageBudget; page += 1) {
       const res = await fetch(url, { headers });
       if (!res.ok) {
         // 404 = package unknown to the API, 403 = scope or rate limit. Either
@@ -513,6 +527,18 @@ async function fetchGhcrTagCreatedAt(
       if (pending.size > 0) {
         for (const tag of [...pending]) if (createdAt[tag]) pending.delete(tag);
         if (pending.size === 0) break;
+        if (floorKey) {
+          const newestOnPage = versions
+            .map((v) =>
+              String(v?.created_at || "")
+                .slice(0, 10)
+                .replace(/-/g, ""),
+            )
+            .filter((key) => /^\d{8}$/.test(key))
+            .sort()
+            .pop();
+          if (newestOnPage && newestOnPage < floorKey) break;
+        }
       }
       url =
         res.headers.get("link")?.match(/<([^>]+)>;\s*rel="next"/i)?.[1] || null;
