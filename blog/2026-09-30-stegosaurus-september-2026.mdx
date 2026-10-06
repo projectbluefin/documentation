@@ -37,7 +37,7 @@ export const snapshot = {
       "id": "github-lanes",
       "status": "available",
       "stateReason": null,
-      "url": "https://api.github.com/repos/projectbluefin/bluefin/actions/runs",
+      "url": "https://api.github.com/repos/projectbluefin/dakota/actions/runs",
       "window": {
         "start": "2026-09-01",
         "end": "2026-09-30"
@@ -48,17 +48,6 @@ export const snapshot = {
       "status": "available",
       "stateReason": null,
       "url": "https://api.github.com/repos",
-      "window": {
-        "start": "2026-09-01",
-        "end": "2026-09-30"
-      }
-    },
-    {
-      "id": "github-releases",
-      "repository": "projectbluefin/bluefin",
-      "status": "available",
-      "stateReason": null,
-      "url": "https://api.github.com/repos/projectbluefin/bluefin/releases",
       "window": {
         "start": "2026-09-01",
         "end": "2026-09-30"
@@ -120,9 +109,9 @@ export const snapshot = {
   "activity": {
     "calendar": {
       "id": "activity-calendar",
-      "kind": "calendar",
+      "kind": "line",
       "title": "Daily merged pull requests",
-      "currentValue": "1289",
+      "currentValue": "1200",
       "unit": "merged pull requests",
       "sourceLabel": "GitHub GraphQL",
       "sourceUrl": "https://api.github.com/graphql",
@@ -164,32 +153,32 @@ export const snapshot = {
           "id": "merged",
           "label": "Merged pull requests",
           "values": [
+            9,
+            14,
+            2,
             10,
-            18,
-            3,
-            12,
-            45,
-            51,
-            48,
-            41,
-            21,
-            76,
-            7,
-            42,
+            39,
+            47,
+            38,
             35,
-            43,
-            7,
-            15,
-            37,
+            20,
+            76,
+            6,
+            34,
+            33,
+            39,
+            6,
+            14,
+            16,
             39,
             41,
             78,
             22,
             81,
-            117,
+            113,
             48,
-            86,
-            64,
+            75,
+            63,
             50,
             15,
             88,
@@ -203,14 +192,13 @@ export const snapshot = {
       "id": "activity-repositories",
       "kind": "grouped-bar",
       "title": "Merged pull requests by repository",
-      "currentValue": "1289",
+      "currentValue": "1200",
       "unit": "merged pull requests",
       "sourceLabel": "GitHub GraphQL",
       "sourceUrl": "https://api.github.com/graphql",
       "sourceWindow": "September 2026 UTC (2026-09-01 to 2026-09-30)",
       "labels": [
         "projectbluefin/actions",
-        "projectbluefin/bluefin",
         "projectbluefin/bonedigger",
         "projectbluefin/common",
         "projectbluefin/dakota",
@@ -228,7 +216,6 @@ export const snapshot = {
           "label": "Merged pull requests",
           "values": [
             96,
-            89,
             7,
             133,
             133,
@@ -248,7 +235,7 @@ export const snapshot = {
       "id": "activity-categories",
       "kind": "grouped-bar",
       "title": "Merged pull requests by label",
-      "currentValue": "946",
+      "currentValue": "865",
       "unit": "label assignments",
       "sourceLabel": "GitHub GraphQL",
       "sourceUrl": "https://api.github.com/graphql",
@@ -281,8 +268,6 @@ export const snapshot = {
         "quality",
         "release/blocked",
         "release/ready",
-        "renovate/high-risk",
-        "renovate/low-risk",
         "runner",
         "security",
         "size:XS",
@@ -300,34 +285,32 @@ export const snapshot = {
             41,
             19,
             4,
-            35,
-            53,
+            32,
+            41,
             4,
             17,
-            85,
+            83,
             4,
             10,
-            84,
+            82,
             7,
             6,
             2,
-            97,
-            117,
+            82,
+            112,
             7,
             11,
-            89,
-            15,
+            72,
+            14,
             63,
-            39,
+            36,
+            1,
             4,
-            6,
-            11,
-            2,
             11,
             6,
             1,
             1,
-            38
+            35
           ]
         }
       ],
@@ -335,7 +318,6 @@ export const snapshot = {
     },
     "portfolio": {
       "stable": [
-        "projectbluefin/bluefin",
         "projectbluefin/dakota",
         "projectbluefin/testsuite",
         "projectbluefin/server",
@@ -357,15 +339,15 @@ export const snapshot = {
   "delivery": {
     "lanes": [
       {
-        "id": "bluefin-testing",
-        "label": "Bluefin Testing",
-        "repo": "projectbluefin/bluefin",
-        "total": 17,
-        "passed": 0,
-        "failed": 2,
-        "pending": 15,
-        "successRate": 0,
-        "medianDurationMin": 66,
+        "id": "dakota",
+        "label": "Dakota",
+        "repo": "projectbluefin/dakota",
+        "total": 65,
+        "passed": 39,
+        "failed": 4,
+        "pending": 22,
+        "successRate": 91,
+        "medianDurationMin": 38,
         "sparklineData": [
           0,
           0,
@@ -373,6 +355,8 @@ export const snapshot = {
           0,
           0,
           0,
+          5,
+          10,
           0,
           0,
           0,
@@ -389,13 +373,11 @@ export const snapshot = {
           0,
           0,
           0,
-          4,
-          0,
-          12,
-          1,
-          0,
-          0,
-          0,
+          14,
+          10,
+          22,
+          2,
+          2,
           0
         ],
         "trend": {
@@ -438,118 +420,8 @@ export const snapshot = {
             0,
             0,
             0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            4,
-            0,
-            12,
-            1,
-            0,
-            0,
-            0,
-            0
-          ]
-        },
-        "unavailableReason": null
-      },
-      {
-        "id": "dakota",
-        "label": "Dakota",
-        "repo": "projectbluefin/dakota",
-        "total": 69,
-        "passed": 37,
-        "failed": 4,
-        "pending": 28,
-        "successRate": 90,
-        "medianDurationMin": 33,
-        "sparklineData": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          14,
-          10,
-          22,
-          2,
-          6,
-          15
-        ],
-        "trend": {
-          "labels": [
-            "2026-09-01",
-            "2026-09-02",
-            "2026-09-03",
-            "2026-09-04",
-            "2026-09-05",
-            "2026-09-06",
-            "2026-09-07",
-            "2026-09-08",
-            "2026-09-09",
-            "2026-09-10",
-            "2026-09-11",
-            "2026-09-12",
-            "2026-09-13",
-            "2026-09-14",
-            "2026-09-15",
-            "2026-09-16",
-            "2026-09-17",
-            "2026-09-18",
-            "2026-09-19",
-            "2026-09-20",
-            "2026-09-21",
-            "2026-09-22",
-            "2026-09-23",
-            "2026-09-24",
-            "2026-09-25",
-            "2026-09-26",
-            "2026-09-27",
-            "2026-09-28",
-            "2026-09-29",
-            "2026-09-30"
-          ],
-          "values": [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
+            5,
+            10,
             0,
             0,
             0,
@@ -570,8 +442,8 @@ export const snapshot = {
             10,
             22,
             2,
-            6,
-            15
+            2,
+            0
           ]
         },
         "unavailableReason": null
@@ -581,10 +453,10 @@ export const snapshot = {
       "id": "delivery-cadence",
       "kind": "line",
       "title": "Publishing-lane cadence",
-      "currentValue": "86",
+      "currentValue": "65",
       "unit": "publish runs",
       "sourceLabel": "GitHub Actions",
-      "sourceUrl": "https://api.github.com/repos/projectbluefin/bluefin/actions/runs",
+      "sourceUrl": "https://api.github.com/repos/projectbluefin/dakota/actions/runs",
       "sourceWindow": "September 2026 UTC (2026-09-01 to 2026-09-30)",
       "labels": [
         "2026-09-01",
@@ -620,42 +492,6 @@ export const snapshot = {
       ],
       "series": [
         {
-          "id": "bluefin-testing",
-          "label": "Bluefin Testing",
-          "values": [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            4,
-            0,
-            12,
-            1,
-            0,
-            0,
-            0,
-            0
-          ]
-        },
-        {
           "id": "dakota",
           "label": "Dakota",
           "values": [
@@ -665,8 +501,8 @@ export const snapshot = {
             0,
             0,
             0,
-            0,
-            0,
+            5,
+            10,
             0,
             0,
             0,
@@ -687,8 +523,8 @@ export const snapshot = {
             10,
             22,
             2,
-            6,
-            15
+            2,
+            0
           ]
         }
       ],
@@ -698,14 +534,12 @@ export const snapshot = {
       "id": "delivery-releases",
       "kind": "line",
       "title": "Release events",
-      "currentValue": "31",
+      "currentValue": "29",
       "unit": "release events",
       "sourceLabel": "GitHub Releases API",
       "sourceUrl": "https://api.github.com/repos",
       "sourceWindow": "September 2026 UTC (2026-09-01 to 2026-09-30)",
       "labels": [
-        "2026-09-17",
-        "2026-09-09",
         "2026-09-21",
         "2026-09-18",
         "2026-09-16",
@@ -769,8 +603,6 @@ export const snapshot = {
             1,
             1,
             1,
-            1,
-            1,
             1
           ]
         }
@@ -783,7 +615,7 @@ export const snapshot = {
       "id": "participation-automation",
       "kind": "stacked-bar",
       "title": "Human and automation activity",
-      "currentValue": "1289",
+      "currentValue": "1200",
       "unit": "pull requests",
       "sourceLabel": "GitHub GraphQL",
       "sourceUrl": "https://api.github.com/graphql",
@@ -796,14 +628,14 @@ export const snapshot = {
           "id": "human",
           "label": "Human",
           "values": [
-            1003
+            780
           ]
         },
         {
           "id": "automation",
           "label": "Automation",
           "values": [
-            286
+            420
           ]
         }
       ],
@@ -815,11 +647,10 @@ export const snapshot = {
           "rank": 1,
           "login": "castrojo",
           "avatarUrl": "https://github.com/castrojo.png?size=64",
-          "contributions": 293,
-          "projects": 11,
+          "contributions": 272,
+          "projects": 10,
           "repos": [
             "common",
-            "bluefin",
             "dakota",
             "testsuite",
             "server",
@@ -839,38 +670,12 @@ export const snapshot = {
         },
         {
           "rank": 2,
-          "login": "hivecommons-hive",
-          "avatarUrl": "https://github.com/hivecommons-hive.png?size=64",
-          "contributions": 172,
-          "projects": 10,
-          "repos": [
-            "common",
-            "bluefin",
-            "dakota",
-            "testsuite",
-            "server",
-            "actions",
-            "documentation",
-            "finpilot",
-            "utah",
-            "utah-packages"
-          ],
-          "badge": {
-            "label": "New Light",
-            "color": "#1D76DB",
-            "title": "First-time Contributor"
-          },
-          "isNew": true
-        },
-        {
-          "rank": 3,
           "login": "hanthor",
           "avatarUrl": "https://github.com/hanthor.png?size=64",
-          "contributions": 111,
-          "projects": 8,
+          "contributions": 110,
+          "projects": 7,
           "repos": [
             "common",
-            "bluefin",
             "testsuite",
             "server",
             "actions",
@@ -886,13 +691,36 @@ export const snapshot = {
           "isNew": false
         },
         {
+          "rank": 3,
+          "login": "kylerankin",
+          "avatarUrl": "https://github.com/kylerankin.png?size=64",
+          "contributions": 67,
+          "projects": 9,
+          "repos": [
+            "common",
+            "testsuite",
+            "server",
+            "actions",
+            "bonedigger",
+            "documentation",
+            "finpilot",
+            "utah",
+            "utah-packages"
+          ],
+          "badge": {
+            "label": "High Velocity",
+            "color": "#2AA198",
+            "title": "5+ Merged PRs"
+          },
+          "isNew": false
+        },
+        {
           "rank": 4,
           "login": "mrbobbytables",
           "avatarUrl": "https://github.com/mrbobbytables.png?size=64",
-          "contributions": 77,
-          "projects": 8,
+          "contributions": 65,
+          "projects": 7,
           "repos": [
-            "bluefin",
             "testsuite",
             "server",
             "actions",
@@ -912,11 +740,10 @@ export const snapshot = {
           "rank": 5,
           "login": "Danathar",
           "avatarUrl": "https://github.com/Danathar.png?size=64",
-          "contributions": 69,
-          "projects": 11,
+          "contributions": 59,
+          "projects": 10,
           "repos": [
             "common",
-            "bluefin",
             "dakota",
             "testsuite",
             "server",
@@ -936,31 +763,6 @@ export const snapshot = {
         },
         {
           "rank": 6,
-          "login": "kylerankin",
-          "avatarUrl": "https://github.com/kylerankin.png?size=64",
-          "contributions": 69,
-          "projects": 10,
-          "repos": [
-            "common",
-            "bluefin",
-            "testsuite",
-            "server",
-            "actions",
-            "bonedigger",
-            "documentation",
-            "finpilot",
-            "utah",
-            "utah-packages"
-          ],
-          "badge": {
-            "label": "New Light",
-            "color": "#1D76DB",
-            "title": "First-time Contributor"
-          },
-          "isNew": true
-        },
-        {
-          "rank": 7,
           "login": "ahmedadan",
           "avatarUrl": "https://github.com/ahmedadan.png?size=64",
           "contributions": 47,
@@ -978,14 +780,13 @@ export const snapshot = {
           "isNew": false
         },
         {
-          "rank": 8,
+          "rank": 7,
           "login": "mendezr",
           "avatarUrl": "https://github.com/mendezr.png?size=64",
-          "contributions": 35,
-          "projects": 9,
+          "contributions": 32,
+          "projects": 8,
           "repos": [
             "common",
-            "bluefin",
             "testsuite",
             "server",
             "actions",
@@ -1002,7 +803,7 @@ export const snapshot = {
           "isNew": true
         },
         {
-          "rank": 9,
+          "rank": 8,
           "login": "jeefy",
           "avatarUrl": "https://github.com/jeefy.png?size=64",
           "contributions": 29,
@@ -1018,7 +819,7 @@ export const snapshot = {
           "isNew": true
         },
         {
-          "rank": 10,
+          "rank": 9,
           "login": "Siddhj2206",
           "avatarUrl": "https://github.com/Siddhj2206.png?size=64",
           "contributions": 16,
@@ -1036,7 +837,7 @@ export const snapshot = {
           "isNew": false
         },
         {
-          "rank": 11,
+          "rank": 10,
           "login": "repires",
           "avatarUrl": "https://github.com/repires.png?size=64",
           "contributions": 15,
@@ -1057,7 +858,7 @@ export const snapshot = {
           "isNew": false
         },
         {
-          "rank": 12,
+          "rank": 11,
           "login": "buggtb",
           "avatarUrl": "https://github.com/buggtb.png?size=64",
           "contributions": 14,
@@ -1077,7 +878,7 @@ export const snapshot = {
           "isNew": true
         },
         {
-          "rank": 13,
+          "rank": 12,
           "login": "dtg01100",
           "avatarUrl": "https://github.com/dtg01100.png?size=64",
           "contributions": 13,
@@ -1096,7 +897,7 @@ export const snapshot = {
           "isNew": false
         },
         {
-          "rank": 14,
+          "rank": 13,
           "login": "sramkrishna",
           "avatarUrl": "https://github.com/sramkrishna.png?size=64",
           "contributions": 12,
@@ -1116,26 +917,7 @@ export const snapshot = {
           "isNew": true
         },
         {
-          "rank": 15,
-          "login": "KiKaraage",
-          "avatarUrl": "https://github.com/KiKaraage.png?size=64",
-          "contributions": 6,
-          "projects": 4,
-          "repos": [
-            "common",
-            "bluefin",
-            "actions",
-            "utah"
-          ],
-          "badge": {
-            "label": "High Velocity",
-            "color": "#2AA198",
-            "title": "5+ Merged PRs"
-          },
-          "isNew": false
-        },
-        {
-          "rank": 16,
+          "rank": 14,
           "login": "arteeh",
           "avatarUrl": "https://github.com/arteeh.png?size=64",
           "contributions": 5,
@@ -1153,25 +935,25 @@ export const snapshot = {
           "isNew": true
         },
         {
-          "rank": 17,
-          "login": "eltorrero",
-          "avatarUrl": "https://github.com/eltorrero.png?size=64",
-          "contributions": 4,
+          "rank": 15,
+          "login": "KiKaraage",
+          "avatarUrl": "https://github.com/KiKaraage.png?size=64",
+          "contributions": 5,
           "projects": 3,
           "repos": [
             "common",
-            "bluefin",
-            "actions"
+            "actions",
+            "utah"
           ],
           "badge": {
-            "label": "Cross-Fleet",
-            "color": "#8A63D2",
-            "title": "Multi-Repo Impact"
+            "label": "High Velocity",
+            "color": "#2AA198",
+            "title": "5+ Merged PRs"
           },
           "isNew": false
         },
         {
-          "rank": 18,
+          "rank": 16,
           "login": "HuntedRaven7",
           "avatarUrl": "https://github.com/HuntedRaven7.png?size=64",
           "contributions": 3,
@@ -1189,7 +971,7 @@ export const snapshot = {
           "isNew": false
         },
         {
-          "rank": 19,
+          "rank": 17,
           "login": "clubanderson",
           "avatarUrl": "https://github.com/clubanderson.png?size=64",
           "contributions": 3,
@@ -1201,7 +983,19 @@ export const snapshot = {
           "isNew": false
         },
         {
-          "rank": 20,
+          "rank": 18,
+          "login": "eltorrero",
+          "avatarUrl": "https://github.com/eltorrero.png?size=64",
+          "contributions": 3,
+          "projects": 2,
+          "repos": [
+            "common",
+            "actions"
+          ],
+          "isNew": false
+        },
+        {
+          "rank": 19,
           "login": "TB516",
           "avatarUrl": "https://github.com/TB516.png?size=64",
           "contributions": 2,
@@ -1218,7 +1012,7 @@ export const snapshot = {
           "isNew": true
         },
         {
-          "rank": 21,
+          "rank": 20,
           "login": "bronson",
           "avatarUrl": "https://github.com/bronson.png?size=64",
           "contributions": 1,
@@ -1234,7 +1028,7 @@ export const snapshot = {
           "isNew": true
         },
         {
-          "rank": 22,
+          "rank": 21,
           "login": "delphicmelody",
           "avatarUrl": "https://github.com/delphicmelody.png?size=64",
           "contributions": 1,
@@ -1245,7 +1039,7 @@ export const snapshot = {
           "isNew": false
         },
         {
-          "rank": 23,
+          "rank": 22,
           "login": "ericcurtin",
           "avatarUrl": "https://github.com/ericcurtin.png?size=64",
           "contributions": 1,
@@ -1261,7 +1055,7 @@ export const snapshot = {
           "isNew": true
         },
         {
-          "rank": 24,
+          "rank": 23,
           "login": "KOTONEX",
           "avatarUrl": "https://github.com/KOTONEX.png?size=64",
           "contributions": 1,
@@ -1277,7 +1071,7 @@ export const snapshot = {
           "isNew": true
         },
         {
-          "rank": 25,
+          "rank": 24,
           "login": "kronikpillow",
           "avatarUrl": "https://github.com/kronikpillow.png?size=64",
           "contributions": 1,
@@ -1293,7 +1087,7 @@ export const snapshot = {
           "isNew": true
         },
         {
-          "rank": 26,
+          "rank": 25,
           "login": "sebjag",
           "avatarUrl": "https://github.com/sebjag.png?size=64",
           "contributions": 1,
@@ -1304,7 +1098,7 @@ export const snapshot = {
           "isNew": false
         },
         {
-          "rank": 27,
+          "rank": 26,
           "login": "theMimolet",
           "avatarUrl": "https://github.com/theMimolet.png?size=64",
           "contributions": 1,
@@ -1315,7 +1109,7 @@ export const snapshot = {
           "isNew": false
         },
         {
-          "rank": 28,
+          "rank": 27,
           "login": "xHope-tech",
           "avatarUrl": "https://github.com/xHope-tech.png?size=64",
           "contributions": 1,
@@ -1333,27 +1127,10 @@ export const snapshot = {
       ],
       "newLights": [
         {
-          "login": "hivecommons-hive",
-          "avatarUrl": "https://github.com/hivecommons-hive.png?size=32",
-          "repos": [
-            "common",
-            "bluefin",
-            "dakota",
-            "testsuite",
-            "server",
-            "actions",
-            "documentation",
-            "finpilot",
-            "utah",
-            "utah-packages"
-          ]
-        },
-        {
           "login": "mendezr",
           "avatarUrl": "https://github.com/mendezr.png?size=32",
           "repos": [
             "common",
-            "bluefin",
             "testsuite",
             "server",
             "actions",
@@ -1372,22 +1149,6 @@ export const snapshot = {
             "actions",
             "documentation",
             "utah"
-          ]
-        },
-        {
-          "login": "kylerankin",
-          "avatarUrl": "https://github.com/kylerankin.png?size=32",
-          "repos": [
-            "common",
-            "bluefin",
-            "testsuite",
-            "server",
-            "actions",
-            "bonedigger",
-            "documentation",
-            "finpilot",
-            "utah",
-            "utah-packages"
           ]
         },
         {
@@ -4002,6 +3763,1326 @@ export const snapshot = {
         "flathub": null,
         "unavailableReason": "Flathub statistics could not be read."
       }
+    },
+    {
+      "schemaVersion": 2,
+      "period": {
+        "month": "2026-09",
+        "start": "2026-09-01",
+        "end": "2026-09-30"
+      },
+      "sources": [
+        {
+          "id": "github-activity",
+          "status": "available",
+          "stateReason": null,
+          "url": "https://api.github.com/graphql",
+          "window": {
+            "start": "2026-09-01",
+            "end": "2026-09-30"
+          }
+        },
+        {
+          "id": "github-lanes",
+          "status": "available",
+          "stateReason": null,
+          "url": "https://api.github.com/repos/projectbluefin/bluefin/actions/runs",
+          "window": {
+            "start": "2026-09-01",
+            "end": "2026-09-30"
+          }
+        },
+        {
+          "id": "github-releases",
+          "status": "available",
+          "stateReason": null,
+          "url": "https://api.github.com/repos",
+          "window": {
+            "start": "2026-09-01",
+            "end": "2026-09-30"
+          }
+        },
+        {
+          "id": "github-releases",
+          "repository": "projectbluefin/dakota",
+          "status": "available",
+          "stateReason": null,
+          "url": "https://api.github.com/repos/projectbluefin/dakota/releases",
+          "window": {
+            "start": "2026-09-01",
+            "end": "2026-09-30"
+          }
+        },
+        {
+          "id": "github-releases",
+          "repository": "projectbluefin/server",
+          "status": "available",
+          "stateReason": null,
+          "url": "https://api.github.com/repos/projectbluefin/server/releases",
+          "window": {
+            "start": "2026-09-01",
+            "end": "2026-09-30"
+          }
+        },
+        {
+          "id": "countme",
+          "status": "unavailable",
+          "stateReason": "Countme active-system measurement is incomplete.",
+          "url": "https://data-analysis.fedoraproject.org/csv-reports/countme/totals.csv",
+          "window": {
+            "start": "2026-09-01",
+            "end": "2026-09-30"
+          }
+        },
+        {
+          "id": "homebrew",
+          "status": "available",
+          "stateReason": null,
+          "url": "https://github.com/ublue-os/homebrew-tap",
+          "window": {
+            "start": "2026-09-01",
+            "end": "2026-09-30"
+          }
+        },
+        {
+          "id": "flathub",
+          "status": "available",
+          "stateReason": null,
+          "url": "https://flathub.org/api/v2/stats",
+          "window": {
+            "start": "2026-09-01",
+            "end": "2026-09-30"
+          }
+        }
+      ],
+      "activity": {
+        "calendar": {
+          "id": "activity-calendar",
+          "kind": "line",
+          "title": "Daily merged pull requests",
+          "currentValue": "1200",
+          "unit": "merged pull requests",
+          "sourceLabel": "GitHub GraphQL",
+          "sourceUrl": "https://api.github.com/graphql",
+          "sourceWindow": "September 2026 UTC (2026-09-01 to 2026-09-30)",
+          "labels": [
+            "2026-09-01",
+            "2026-09-02",
+            "2026-09-03",
+            "2026-09-04",
+            "2026-09-05",
+            "2026-09-06",
+            "2026-09-07",
+            "2026-09-08",
+            "2026-09-09",
+            "2026-09-10",
+            "2026-09-11",
+            "2026-09-12",
+            "2026-09-13",
+            "2026-09-14",
+            "2026-09-15",
+            "2026-09-16",
+            "2026-09-17",
+            "2026-09-18",
+            "2026-09-19",
+            "2026-09-20",
+            "2026-09-21",
+            "2026-09-22",
+            "2026-09-23",
+            "2026-09-24",
+            "2026-09-25",
+            "2026-09-26",
+            "2026-09-27",
+            "2026-09-28",
+            "2026-09-29",
+            "2026-09-30"
+          ],
+          "series": [
+            {
+              "id": "merged",
+              "label": "Merged pull requests",
+              "values": [
+                9,
+                14,
+                2,
+                10,
+                39,
+                47,
+                38,
+                35,
+                20,
+                76,
+                6,
+                34,
+                33,
+                39,
+                6,
+                14,
+                16,
+                39,
+                41,
+                78,
+                22,
+                81,
+                113,
+                48,
+                75,
+                63,
+                50,
+                15,
+                88,
+                49
+              ]
+            }
+          ],
+          "minimumPoints": 1
+        },
+        "repositories": {
+          "id": "activity-repositories",
+          "kind": "grouped-bar",
+          "title": "Merged pull requests by repository",
+          "currentValue": "1200",
+          "unit": "merged pull requests",
+          "sourceLabel": "GitHub GraphQL",
+          "sourceUrl": "https://api.github.com/graphql",
+          "sourceWindow": "September 2026 UTC (2026-09-01 to 2026-09-30)",
+          "labels": [
+            "projectbluefin/actions",
+            "projectbluefin/bonedigger",
+            "projectbluefin/common",
+            "projectbluefin/dakota",
+            "projectbluefin/documentation",
+            "projectbluefin/finpilot",
+            "projectbluefin/iso",
+            "projectbluefin/server",
+            "projectbluefin/testsuite",
+            "projectbluefin/utah",
+            "projectbluefin/utah-packages"
+          ],
+          "series": [
+            {
+              "id": "repositories",
+              "label": "Merged pull requests",
+              "values": [
+                96,
+                7,
+                133,
+                133,
+                255,
+                85,
+                2,
+                134,
+                77,
+                150,
+                128
+              ]
+            }
+          ],
+          "minimumPoints": 1
+        },
+        "categories": {
+          "id": "activity-categories",
+          "kind": "grouped-bar",
+          "title": "Merged pull requests by label",
+          "currentValue": "865",
+          "unit": "label assignments",
+          "sourceLabel": "GitHub GraphQL",
+          "sourceUrl": "https://api.github.com/graphql",
+          "sourceWindow": "September 2026 UTC (2026-09-01 to 2026-09-30)",
+          "labels": [
+            "2-discussing",
+            "3-clanker-queue",
+            "3-human-queue",
+            "4-review",
+            "agent/architect",
+            "agent/ci-maintainer",
+            "agent/quality",
+            "agent/scanner",
+            "agent/security",
+            "architecture",
+            "automerge",
+            "blocked",
+            "build",
+            "chore/deps",
+            "dependencies",
+            "flatcar-base",
+            "full-build",
+            "hive/hosted-projectbluefin-knuckle-gjvq",
+            "hold",
+            "javascript",
+            "kde",
+            "lgtm",
+            "needs-human",
+            "pr/needs-review",
+            "quality",
+            "release/blocked",
+            "release/ready",
+            "runner",
+            "security",
+            "size:XS",
+            "tech-debt",
+            "testing"
+          ],
+          "series": [
+            {
+              "id": "categories",
+              "label": "Label assignments",
+              "values": [
+                5,
+                26,
+                26,
+                41,
+                19,
+                4,
+                32,
+                41,
+                4,
+                17,
+                83,
+                4,
+                10,
+                82,
+                7,
+                6,
+                2,
+                82,
+                112,
+                7,
+                11,
+                72,
+                14,
+                63,
+                36,
+                1,
+                4,
+                11,
+                6,
+                1,
+                1,
+                35
+              ]
+            }
+          ],
+          "minimumPoints": 1
+        },
+        "portfolio": {
+          "stable": [
+            "projectbluefin/dakota",
+            "projectbluefin/testsuite",
+            "projectbluefin/server",
+            "projectbluefin/actions",
+            "projectbluefin/bonedigger",
+            "projectbluefin/aurorafin-shared",
+            "projectbluefin/common",
+            "projectbluefin/documentation",
+            "projectbluefin/branding",
+            "projectbluefin/iso",
+            "projectbluefin/finpilot"
+          ],
+          "experimental": [
+            "projectbluefin/utah",
+            "projectbluefin/utah-packages"
+          ]
+        }
+      },
+      "delivery": {
+        "lanes": [
+          {
+            "id": "dakota",
+            "label": "Dakota",
+            "repo": "projectbluefin/dakota",
+            "total": 69,
+            "passed": 37,
+            "failed": 4,
+            "pending": 28,
+            "successRate": 90,
+            "medianDurationMin": 33,
+            "sparklineData": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              14,
+              10,
+              22,
+              2,
+              6,
+              15
+            ],
+            "trend": {
+              "labels": [
+                "2026-09-01",
+                "2026-09-02",
+                "2026-09-03",
+                "2026-09-04",
+                "2026-09-05",
+                "2026-09-06",
+                "2026-09-07",
+                "2026-09-08",
+                "2026-09-09",
+                "2026-09-10",
+                "2026-09-11",
+                "2026-09-12",
+                "2026-09-13",
+                "2026-09-14",
+                "2026-09-15",
+                "2026-09-16",
+                "2026-09-17",
+                "2026-09-18",
+                "2026-09-19",
+                "2026-09-20",
+                "2026-09-21",
+                "2026-09-22",
+                "2026-09-23",
+                "2026-09-24",
+                "2026-09-25",
+                "2026-09-26",
+                "2026-09-27",
+                "2026-09-28",
+                "2026-09-29",
+                "2026-09-30"
+              ],
+              "values": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                14,
+                10,
+                22,
+                2,
+                6,
+                15
+              ]
+            },
+            "unavailableReason": null
+          }
+        ],
+        "cadence": {
+          "id": "delivery-cadence",
+          "kind": "line",
+          "title": "Publishing-lane cadence",
+          "currentValue": "69",
+          "unit": "publish runs",
+          "sourceLabel": "GitHub Actions",
+          "sourceUrl": "https://api.github.com/repos/projectbluefin/bluefin/actions/runs",
+          "sourceWindow": "September 2026 UTC (2026-09-01 to 2026-09-30)",
+          "labels": [
+            "2026-09-01",
+            "2026-09-02",
+            "2026-09-03",
+            "2026-09-04",
+            "2026-09-05",
+            "2026-09-06",
+            "2026-09-07",
+            "2026-09-08",
+            "2026-09-09",
+            "2026-09-10",
+            "2026-09-11",
+            "2026-09-12",
+            "2026-09-13",
+            "2026-09-14",
+            "2026-09-15",
+            "2026-09-16",
+            "2026-09-17",
+            "2026-09-18",
+            "2026-09-19",
+            "2026-09-20",
+            "2026-09-21",
+            "2026-09-22",
+            "2026-09-23",
+            "2026-09-24",
+            "2026-09-25",
+            "2026-09-26",
+            "2026-09-27",
+            "2026-09-28",
+            "2026-09-29",
+            "2026-09-30"
+          ],
+          "series": [
+            {
+              "id": "dakota",
+              "label": "Dakota",
+              "values": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                14,
+                10,
+                22,
+                2,
+                6,
+                15
+              ]
+            }
+          ],
+          "minimumPoints": 1
+        },
+        "releases": {
+          "id": "delivery-releases",
+          "kind": "line",
+          "title": "Release events",
+          "currentValue": "29",
+          "unit": "release events",
+          "sourceLabel": "GitHub Releases API",
+          "sourceUrl": "https://api.github.com/repos",
+          "sourceWindow": "September 2026 UTC (2026-09-01 to 2026-09-30)",
+          "labels": [
+            "2026-09-21",
+            "2026-09-18",
+            "2026-09-16",
+            "2026-09-14",
+            "2026-09-09",
+            "2026-09-04",
+            "2026-09-30",
+            "2026-09-30",
+            "2026-09-30",
+            "2026-09-30",
+            "2026-09-30",
+            "2026-09-30",
+            "2026-09-30",
+            "2026-09-30",
+            "2026-09-30",
+            "2026-09-30",
+            "2026-09-30",
+            "2026-09-30",
+            "2026-09-30",
+            "2026-09-30",
+            "2026-09-30",
+            "2026-09-29",
+            "2026-09-29",
+            "2026-09-29",
+            "2026-09-29",
+            "2026-09-29",
+            "2026-09-29",
+            "2026-09-28",
+            "2026-09-08"
+          ],
+          "series": [
+            {
+              "id": "releases",
+              "label": "Release events",
+              "values": [
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1
+              ]
+            }
+          ],
+          "minimumPoints": 1
+        }
+      },
+      "participation": {
+        "automation": {
+          "id": "participation-automation",
+          "kind": "stacked-bar",
+          "title": "Human and automation activity",
+          "currentValue": "1200",
+          "unit": "pull requests",
+          "sourceLabel": "GitHub GraphQL",
+          "sourceUrl": "https://api.github.com/graphql",
+          "sourceWindow": "September 2026 UTC (2026-09-01 to 2026-09-30)",
+          "labels": [
+            "Report period"
+          ],
+          "series": [
+            {
+              "id": "human",
+              "label": "Human",
+              "values": [
+                780
+              ]
+            },
+            {
+              "id": "automation",
+              "label": "Automation",
+              "values": [
+                420
+              ]
+            }
+          ],
+          "minimumPoints": 1
+        },
+        "leaderboard": {
+          "heroes": [
+            {
+              "rank": 1,
+              "login": "castrojo",
+              "avatarUrl": "https://github.com/castrojo.png?size=64",
+              "contributions": 272,
+              "projects": 10,
+              "repos": [
+                "common",
+                "dakota",
+                "testsuite",
+                "server",
+                "actions",
+                "bonedigger",
+                "documentation",
+                "finpilot",
+                "utah",
+                "utah-packages"
+              ],
+              "badge": {
+                "label": "Top Hero",
+                "color": "#F9C74F",
+                "title": "Month MVP"
+              },
+              "isNew": false
+            },
+            {
+              "rank": 2,
+              "login": "hanthor",
+              "avatarUrl": "https://github.com/hanthor.png?size=64",
+              "contributions": 110,
+              "projects": 7,
+              "repos": [
+                "common",
+                "testsuite",
+                "server",
+                "actions",
+                "iso",
+                "utah",
+                "utah-packages"
+              ],
+              "badge": {
+                "label": "High Velocity",
+                "color": "#2AA198",
+                "title": "5+ Merged PRs"
+              },
+              "isNew": false
+            },
+            {
+              "rank": 3,
+              "login": "kylerankin",
+              "avatarUrl": "https://github.com/kylerankin.png?size=64",
+              "contributions": 67,
+              "projects": 9,
+              "repos": [
+                "common",
+                "testsuite",
+                "server",
+                "actions",
+                "bonedigger",
+                "documentation",
+                "finpilot",
+                "utah",
+                "utah-packages"
+              ],
+              "badge": {
+                "label": "High Velocity",
+                "color": "#2AA198",
+                "title": "5+ Merged PRs"
+              },
+              "isNew": false
+            },
+            {
+              "rank": 4,
+              "login": "mrbobbytables",
+              "avatarUrl": "https://github.com/mrbobbytables.png?size=64",
+              "contributions": 65,
+              "projects": 7,
+              "repos": [
+                "testsuite",
+                "server",
+                "actions",
+                "documentation",
+                "finpilot",
+                "utah",
+                "utah-packages"
+              ],
+              "badge": {
+                "label": "High Velocity",
+                "color": "#2AA198",
+                "title": "5+ Merged PRs"
+              },
+              "isNew": false
+            },
+            {
+              "rank": 5,
+              "login": "Danathar",
+              "avatarUrl": "https://github.com/Danathar.png?size=64",
+              "contributions": 59,
+              "projects": 10,
+              "repos": [
+                "common",
+                "dakota",
+                "testsuite",
+                "server",
+                "actions",
+                "documentation",
+                "iso",
+                "finpilot",
+                "utah",
+                "utah-packages"
+              ],
+              "badge": {
+                "label": "High Velocity",
+                "color": "#2AA198",
+                "title": "5+ Merged PRs"
+              },
+              "isNew": false
+            },
+            {
+              "rank": 6,
+              "login": "ahmedadan",
+              "avatarUrl": "https://github.com/ahmedadan.png?size=64",
+              "contributions": 47,
+              "projects": 3,
+              "repos": [
+                "common",
+                "dakota",
+                "documentation"
+              ],
+              "badge": {
+                "label": "High Velocity",
+                "color": "#2AA198",
+                "title": "5+ Merged PRs"
+              },
+              "isNew": false
+            },
+            {
+              "rank": 7,
+              "login": "mendezr",
+              "avatarUrl": "https://github.com/mendezr.png?size=64",
+              "contributions": 32,
+              "projects": 8,
+              "repos": [
+                "common",
+                "testsuite",
+                "server",
+                "actions",
+                "documentation",
+                "finpilot",
+                "utah",
+                "utah-packages"
+              ],
+              "badge": {
+                "label": "New Light",
+                "color": "#1D76DB",
+                "title": "First-time Contributor"
+              },
+              "isNew": true
+            },
+            {
+              "rank": 8,
+              "login": "jeefy",
+              "avatarUrl": "https://github.com/jeefy.png?size=64",
+              "contributions": 29,
+              "projects": 1,
+              "repos": [
+                "server"
+              ],
+              "badge": {
+                "label": "New Light",
+                "color": "#1D76DB",
+                "title": "First-time Contributor"
+              },
+              "isNew": true
+            },
+            {
+              "rank": 9,
+              "login": "Siddhj2206",
+              "avatarUrl": "https://github.com/Siddhj2206.png?size=64",
+              "contributions": 16,
+              "projects": 3,
+              "repos": [
+                "common",
+                "actions",
+                "finpilot"
+              ],
+              "badge": {
+                "label": "High Velocity",
+                "color": "#2AA198",
+                "title": "5+ Merged PRs"
+              },
+              "isNew": false
+            },
+            {
+              "rank": 10,
+              "login": "repires",
+              "avatarUrl": "https://github.com/repires.png?size=64",
+              "contributions": 15,
+              "projects": 6,
+              "repos": [
+                "common",
+                "testsuite",
+                "actions",
+                "documentation",
+                "utah",
+                "utah-packages"
+              ],
+              "badge": {
+                "label": "High Velocity",
+                "color": "#2AA198",
+                "title": "5+ Merged PRs"
+              },
+              "isNew": false
+            },
+            {
+              "rank": 11,
+              "login": "buggtb",
+              "avatarUrl": "https://github.com/buggtb.png?size=64",
+              "contributions": 14,
+              "projects": 5,
+              "repos": [
+                "common",
+                "testsuite",
+                "actions",
+                "utah",
+                "utah-packages"
+              ],
+              "badge": {
+                "label": "New Light",
+                "color": "#1D76DB",
+                "title": "First-time Contributor"
+              },
+              "isNew": true
+            },
+            {
+              "rank": 12,
+              "login": "dtg01100",
+              "avatarUrl": "https://github.com/dtg01100.png?size=64",
+              "contributions": 13,
+              "projects": 4,
+              "repos": [
+                "server",
+                "actions",
+                "documentation",
+                "utah"
+              ],
+              "badge": {
+                "label": "High Velocity",
+                "color": "#2AA198",
+                "title": "5+ Merged PRs"
+              },
+              "isNew": false
+            },
+            {
+              "rank": 13,
+              "login": "sramkrishna",
+              "avatarUrl": "https://github.com/sramkrishna.png?size=64",
+              "contributions": 12,
+              "projects": 5,
+              "repos": [
+                "common",
+                "testsuite",
+                "actions",
+                "documentation",
+                "utah"
+              ],
+              "badge": {
+                "label": "New Light",
+                "color": "#1D76DB",
+                "title": "First-time Contributor"
+              },
+              "isNew": true
+            },
+            {
+              "rank": 14,
+              "login": "arteeh",
+              "avatarUrl": "https://github.com/arteeh.png?size=64",
+              "contributions": 5,
+              "projects": 3,
+              "repos": [
+                "common",
+                "server",
+                "utah-packages"
+              ],
+              "badge": {
+                "label": "New Light",
+                "color": "#1D76DB",
+                "title": "First-time Contributor"
+              },
+              "isNew": true
+            },
+            {
+              "rank": 15,
+              "login": "KiKaraage",
+              "avatarUrl": "https://github.com/KiKaraage.png?size=64",
+              "contributions": 5,
+              "projects": 3,
+              "repos": [
+                "common",
+                "actions",
+                "utah"
+              ],
+              "badge": {
+                "label": "High Velocity",
+                "color": "#2AA198",
+                "title": "5+ Merged PRs"
+              },
+              "isNew": false
+            },
+            {
+              "rank": 16,
+              "login": "HuntedRaven7",
+              "avatarUrl": "https://github.com/HuntedRaven7.png?size=64",
+              "contributions": 3,
+              "projects": 3,
+              "repos": [
+                "common",
+                "actions",
+                "utah"
+              ],
+              "badge": {
+                "label": "Cross-Fleet",
+                "color": "#8A63D2",
+                "title": "Multi-Repo Impact"
+              },
+              "isNew": false
+            },
+            {
+              "rank": 17,
+              "login": "clubanderson",
+              "avatarUrl": "https://github.com/clubanderson.png?size=64",
+              "contributions": 3,
+              "projects": 2,
+              "repos": [
+                "common",
+                "utah-packages"
+              ],
+              "isNew": false
+            },
+            {
+              "rank": 18,
+              "login": "eltorrero",
+              "avatarUrl": "https://github.com/eltorrero.png?size=64",
+              "contributions": 3,
+              "projects": 2,
+              "repos": [
+                "common",
+                "actions"
+              ],
+              "isNew": false
+            },
+            {
+              "rank": 19,
+              "login": "TB516",
+              "avatarUrl": "https://github.com/TB516.png?size=64",
+              "contributions": 2,
+              "projects": 2,
+              "repos": [
+                "server",
+                "documentation"
+              ],
+              "badge": {
+                "label": "New Light",
+                "color": "#1D76DB",
+                "title": "First-time Contributor"
+              },
+              "isNew": true
+            },
+            {
+              "rank": 20,
+              "login": "bronson",
+              "avatarUrl": "https://github.com/bronson.png?size=64",
+              "contributions": 1,
+              "projects": 1,
+              "repos": [
+                "server"
+              ],
+              "badge": {
+                "label": "New Light",
+                "color": "#1D76DB",
+                "title": "First-time Contributor"
+              },
+              "isNew": true
+            },
+            {
+              "rank": 21,
+              "login": "delphicmelody",
+              "avatarUrl": "https://github.com/delphicmelody.png?size=64",
+              "contributions": 1,
+              "projects": 1,
+              "repos": [
+                "documentation"
+              ],
+              "isNew": false
+            },
+            {
+              "rank": 22,
+              "login": "ericcurtin",
+              "avatarUrl": "https://github.com/ericcurtin.png?size=64",
+              "contributions": 1,
+              "projects": 1,
+              "repos": [
+                "common"
+              ],
+              "badge": {
+                "label": "New Light",
+                "color": "#1D76DB",
+                "title": "First-time Contributor"
+              },
+              "isNew": true
+            },
+            {
+              "rank": 23,
+              "login": "KOTONEX",
+              "avatarUrl": "https://github.com/KOTONEX.png?size=64",
+              "contributions": 1,
+              "projects": 1,
+              "repos": [
+                "dakota"
+              ],
+              "badge": {
+                "label": "New Light",
+                "color": "#1D76DB",
+                "title": "First-time Contributor"
+              },
+              "isNew": true
+            },
+            {
+              "rank": 24,
+              "login": "kronikpillow",
+              "avatarUrl": "https://github.com/kronikpillow.png?size=64",
+              "contributions": 1,
+              "projects": 1,
+              "repos": [
+                "common"
+              ],
+              "badge": {
+                "label": "New Light",
+                "color": "#1D76DB",
+                "title": "First-time Contributor"
+              },
+              "isNew": true
+            },
+            {
+              "rank": 25,
+              "login": "sebjag",
+              "avatarUrl": "https://github.com/sebjag.png?size=64",
+              "contributions": 1,
+              "projects": 1,
+              "repos": [
+                "documentation"
+              ],
+              "isNew": false
+            },
+            {
+              "rank": 26,
+              "login": "theMimolet",
+              "avatarUrl": "https://github.com/theMimolet.png?size=64",
+              "contributions": 1,
+              "projects": 1,
+              "repos": [
+                "common"
+              ],
+              "isNew": false
+            },
+            {
+              "rank": 27,
+              "login": "xHope-tech",
+              "avatarUrl": "https://github.com/xHope-tech.png?size=64",
+              "contributions": 1,
+              "projects": 1,
+              "repos": [
+                "common"
+              ],
+              "badge": {
+                "label": "New Light",
+                "color": "#1D76DB",
+                "title": "First-time Contributor"
+              },
+              "isNew": true
+            }
+          ],
+          "newLights": [
+            {
+              "login": "mendezr",
+              "avatarUrl": "https://github.com/mendezr.png?size=32",
+              "repos": [
+                "common",
+                "testsuite",
+                "server",
+                "actions",
+                "documentation",
+                "finpilot",
+                "utah",
+                "utah-packages"
+              ]
+            },
+            {
+              "login": "sramkrishna",
+              "avatarUrl": "https://github.com/sramkrishna.png?size=32",
+              "repos": [
+                "common",
+                "testsuite",
+                "actions",
+                "documentation",
+                "utah"
+              ]
+            },
+            {
+              "login": "kronikpillow",
+              "avatarUrl": "https://github.com/kronikpillow.png?size=32",
+              "repos": [
+                "common"
+              ]
+            },
+            {
+              "login": "buggtb",
+              "avatarUrl": "https://github.com/buggtb.png?size=32",
+              "repos": [
+                "common",
+                "testsuite",
+                "actions",
+                "utah",
+                "utah-packages"
+              ]
+            },
+            {
+              "login": "arteeh",
+              "avatarUrl": "https://github.com/arteeh.png?size=32",
+              "repos": [
+                "common",
+                "server",
+                "utah-packages"
+              ]
+            },
+            {
+              "login": "xHope-tech",
+              "avatarUrl": "https://github.com/xHope-tech.png?size=32",
+              "repos": [
+                "common"
+              ]
+            },
+            {
+              "login": "ericcurtin",
+              "avatarUrl": "https://github.com/ericcurtin.png?size=32",
+              "repos": [
+                "common"
+              ]
+            },
+            {
+              "login": "KOTONEX",
+              "avatarUrl": "https://github.com/KOTONEX.png?size=32",
+              "repos": [
+                "dakota"
+              ]
+            },
+            {
+              "login": "jeefy",
+              "avatarUrl": "https://github.com/jeefy.png?size=32",
+              "repos": [
+                "server"
+              ]
+            },
+            {
+              "login": "bronson",
+              "avatarUrl": "https://github.com/bronson.png?size=32",
+              "repos": [
+                "server"
+              ]
+            },
+            {
+              "login": "TB516",
+              "avatarUrl": "https://github.com/TB516.png?size=32",
+              "repos": [
+                "server",
+                "documentation"
+              ]
+            }
+          ]
+        }
+      },
+      "ecosystem": {
+        "countme": null,
+        "homebrew": {
+          "id": "ecosystem-homebrew",
+          "kind": "grouped-bar",
+          "title": "Homebrew tap additions",
+          "currentValue": "4",
+          "unit": "package additions",
+          "sourceLabel": "Homebrew taps",
+          "sourceUrl": "https://github.com/ublue-os/homebrew-tap",
+          "sourceWindow": "September 2026 UTC (2026-09-01 to 2026-09-30)",
+          "labels": [
+            "Production tap",
+            "Experimental tap"
+          ],
+          "series": [
+            {
+              "id": "additions",
+              "label": "Additions",
+              "values": [
+                1,
+                3
+              ]
+            }
+          ],
+          "minimumPoints": 1
+        },
+        "flathub": {
+          "id": "ecosystem-flathub",
+          "kind": "line",
+          "title": "Flathub downloads",
+          "currentValue": "138860924",
+          "unit": "calendar-month downloads",
+          "sourceLabel": "Flathub",
+          "sourceUrl": "https://flathub.org/api/v2/stats",
+          "sourceWindow": "2026-09-01 to 2026-09-30 UTC",
+          "labels": [
+            "2026-09-01",
+            "2026-09-02",
+            "2026-09-03",
+            "2026-09-04",
+            "2026-09-05",
+            "2026-09-06",
+            "2026-09-07",
+            "2026-09-08",
+            "2026-09-09",
+            "2026-09-10",
+            "2026-09-11",
+            "2026-09-12",
+            "2026-09-13",
+            "2026-09-14",
+            "2026-09-15",
+            "2026-09-16",
+            "2026-09-17",
+            "2026-09-18",
+            "2026-09-19",
+            "2026-09-20",
+            "2026-09-21",
+            "2026-09-22",
+            "2026-09-23",
+            "2026-09-24",
+            "2026-09-25",
+            "2026-09-26",
+            "2026-09-27",
+            "2026-09-28",
+            "2026-09-29",
+            "2026-09-30"
+          ],
+          "series": [
+            {
+              "id": "downloads",
+              "label": "Downloads",
+              "values": [
+                3847891,
+                3704773,
+                3346979,
+                3546709,
+                3606051,
+                3971490,
+                4269175,
+                3641711,
+                3430562,
+                3964229,
+                4223264,
+                3427171,
+                3209228,
+                3253176,
+                6879476,
+                9581954,
+                5635105,
+                5799594,
+                6441098,
+                5626597,
+                5122010,
+                5022777,
+                4330136,
+                4717927,
+                4303001,
+                4377214,
+                4183987,
+                5367481,
+                5826789,
+                4203369
+              ]
+            }
+          ],
+          "minimumPoints": 1
+        },
+        "unavailableReason": "Countme active-system measurement is incomplete."
+      }
     }
   ]
 };
@@ -4012,13 +5093,13 @@ export const snapshot = {
   kpis={[
   {
     "label": "Completed work",
-    "value": 1003,
-    "sublabel": "106 planned • 897 opportunistic"
+    "value": 780,
+    "sublabel": "79 planned • 701 opportunistic"
   },
   {
     "label": "Contributors",
-    "value": 28,
-    "sublabel": "13 first-time contributors"
+    "value": 27,
+    "sublabel": "11 first-time contributors"
   }
 ]}
 />
@@ -4035,8 +5116,6 @@ Release details remain on the canonical [/changelogs](/changelogs) surface.
 
 ## Completed work
 
-- test: repair broken-at-birth bats suites (test_ujust mock brew, powerwash bctl) by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1106](https://github.com/projectbluefin/common/pull/1106)
-- docs: record that system_files/nvidia/ is unconsumed and has no CDI preset — docs/skills/nvidia/\{SKILL.md,references/architecture.md\}, system_files/nvidia/README.md by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1125](https://github.com/projectbluefin/common/pull/1125)
 - fix(ci): report required checks on docs-only PRs by [@​Danathar](https://github.com/Danathar) in [#1181](https://github.com/projectbluefin/common/pull/1181)
 - docs(secrets-policy): record Cloudflare secrets as provisioned by [@​clubanderson](https://github.com/clubanderson) in [#1275](https://github.com/projectbluefin/common/pull/1275)
 - feat(wallpaper): ship original looping movie for Hidamari by [@​mendezr](https://github.com/mendezr) in [#1207](https://github.com/projectbluefin/common/pull/1207)
@@ -4046,7 +5125,6 @@ Release details remain on the canonical [/changelogs](/changelogs) surface.
 - feat(brew): update opencode to the v2 formula by [@​kronikpillow](https://github.com/kronikpillow) in [#1270](https://github.com/projectbluefin/common/pull/1270)
 - docs(ci-pitfalls): correct create-github-app-token owner/repositories scoping by [@​castrojo](https://github.com/castrojo) in [#1269](https://github.com/projectbluefin/common/pull/1269)
 - fix(chairlift): refresh vendored desktop entry and icons to v26.09.0-alpha.2 by [@​clubanderson](https://github.com/clubanderson) in [#1274](https://github.com/projectbluefin/common/pull/1274)
-- fix(ci): retry transient GHCR errors in check-oci-refs.py by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1122](https://github.com/projectbluefin/common/pull/1122)
 - docs(chairlift): fix broken brew-lifecycle doc reference in config.yml by [@​buggtb](https://github.com/buggtb) in [#1273](https://github.com/projectbluefin/common/pull/1273)
 - fix: align ChairLift config and ship GSettings schemas by [@​mendezr](https://github.com/mendezr) in [#1265](https://github.com/projectbluefin/common/pull/1265)
 - fix(nvidia): pin suspend notifiers so sleep is not vetoed by [@​mendezr](https://github.com/mendezr) in [#1176](https://github.com/projectbluefin/common/pull/1176)
@@ -4074,7 +5152,6 @@ Release details remain on the canonical [/changelogs](/changelogs) surface.
 - feat(brew): remove RamaLama from Bluefin AI tools bundle by [@​kylerankin](https://github.com/kylerankin) in [#1204](https://github.com/projectbluefin/common/pull/1204)
 - fix: honor NO_COLOR in local override output by [@​Danathar](https://github.com/Danathar) in [#1190](https://github.com/projectbluefin/common/pull/1190)
 - fix: require review for GitHub Actions minor/patch updates by [@​Danathar](https://github.com/Danathar) in [#1146](https://github.com/projectbluefin/common/pull/1146)
-- fix: polkit org.ublue.privileged.user.setup defaults no/no/auth_admin — system_files/shared/usr/share/polkit-1/actions/org.ublue.privileged.user.setup.policy by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1108](https://github.com/projectbluefin/common/pull/1108)
 - ci: run the suite-registration drift gate on every PR by [@​kylerankin](https://github.com/kylerankin) in [#1192](https://github.com/projectbluefin/common/pull/1192)
 - feat: WSL/container machine equivalent developer environment via Lima by [@​repires](https://github.com/repires) in [#1175](https://github.com/projectbluefin/common/pull/1175)
 - fix(systemd): remove local-fs ordering cycle in rechunker-group-fix by [@​kylerankin](https://github.com/kylerankin) in [#1208](https://github.com/projectbluefin/common/pull/1208)
@@ -4101,109 +5178,28 @@ Release details remain on the canonical [/changelogs](/changelogs) surface.
 - fix(brew): preserve user-owned preinstall packages by [@​Danathar](https://github.com/Danathar) in [#1109](https://github.com/projectbluefin/common/pull/1109)
 - fix(wireplumber): disable IR sensor on Kingcome hybrid webcam (2b7e:55c0) by [@​castrojo](https://github.com/castrojo) in [#1119](https://github.com/projectbluefin/common/pull/1119)
 - fix(cli): replace atuin and bash-preexec with starship and add tests by [@​castrojo](https://github.com/castrojo) in [#1113](https://github.com/projectbluefin/common/pull/1113)
-- fix(bonedigger-report): derive booted image name from live bootc status by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1127](https://github.com/projectbluefin/common/pull/1127)
-- docs(skills): add GPU vendor toolkit interface spec by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#971](https://github.com/projectbluefin/common/pull/971)
-- docs(contributing): add reviewer-ladder.md — concrete proposal for the reviewer-scaling rung by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1080](https://github.com/projectbluefin/common/pull/1080)
 - docs(skills): maintainer-driven tool actions and duplicate-cluster resolution by [@​castrojo](https://github.com/castrojo) in [#970](https://github.com/projectbluefin/common/pull/970)
 - docs: fix grammatical and readability problems README.md by [@​xHope-tech](https://github.com/xHope-tech) in [#1017](https://github.com/projectbluefin/common/pull/1017)
-- test: gate the Justfile test recipe against tests/ — tests/test_suite_registration.bats by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1166](https://github.com/projectbluefin/common/pull/1166)
-- test(dynamic-wallpaper): BATS coverage for the 20-dynamic-wallpaper.sh user-setup hook by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1138](https://github.com/projectbluefin/common/pull/1138)
-- test: BATS coverage for etc/profile.d/uwelcome.sh — tests/test_uwelcome_profile.bats by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1118](https://github.com/projectbluefin/common/pull/1118)
-- test(apps.just): BATS coverage for install-opentabletdriver and cncf by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1064](https://github.com/projectbluefin/common/pull/1064)
 - feat(bazaar): modernize curated layout and add Flathub IDE host integration hooks by [@​castrojo](https://github.com/castrojo) in [#1155](https://github.com/projectbluefin/common/pull/1155)
 - fix(bling): ship working ujust completions for bash/zsh/fish by [@​KiKaraage](https://github.com/KiKaraage) in [#1129](https://github.com/projectbluefin/common/pull/1129)
-- fix(skills): stop pipefail+SIGPIPE from failing check-skill-frontmatter by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1153](https://github.com/projectbluefin/common/pull/1153)
 - ci(actionlint): allow the ubuntu-26.04 runner labels by [@​Danathar](https://github.com/Danathar) in [#1151](https://github.com/projectbluefin/common/pull/1151)
-- fix: redirect Bazaar Zed installs by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1011](https://github.com/projectbluefin/common/pull/1011)
 - fix: add consistent bootc sudo policy by [@​castrojo](https://github.com/castrojo) in [#932](https://github.com/projectbluefin/common/pull/932)
 - fix(sec): ship Sigstore trust materials (Fulcio root + Rekor key) by [@​hanthor](https://github.com/hanthor) in [#933](https://github.com/projectbluefin/common/pull/933)
-- docs: expose Flatpak update schedule by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1000](https://github.com/projectbluefin/common/pull/1000)
 - feat: add llmman to ai-tools Brewfile by [@​ericcurtin](https://github.com/ericcurtin) in [#1097](https://github.com/projectbluefin/common/pull/1097)
-- test(system.just): BATS coverage for toggle-testing, toggle-vms, install-system-flatpaks by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1031](https://github.com/projectbluefin/common/pull/1031)
-- fix(ci): declare top-level permissions: \{\} in e2e.yml pr-e2e.yml promotion-candidate-e2e.yml by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#969](https://github.com/projectbluefin/common/pull/969)
-- test(default.just): BATS coverage for bios, bios-info, enroll-secure-boot-key, toggle-user-motd, check-local-overrides, check-idle-power-draw, benchmark by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1048](https://github.com/projectbluefin/common/pull/1048)
-- test(shared.just): BATS coverage for powerwash, toggle-tpm2 by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1034](https://github.com/projectbluefin/common/pull/1034)
-- fix(ci): unit-tests.yml add permissions block (contents: read) by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#961](https://github.com/projectbluefin/common/pull/961)
 - fix(brew): allow dedicated ChairLift migration by [@​ahmedadan](https://github.com/ahmedadan) in [#1100](https://github.com/projectbluefin/common/pull/1100)
-- fix: add Bluespeed setup recipe by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1023](https://github.com/projectbluefin/common/pull/1023)
-- fix: ignore fastfetch aliases by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1005](https://github.com/projectbluefin/common/pull/1005)
-- fix: configure opt-in bluespeed tools by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1007](https://github.com/projectbluefin/common/pull/1007)
 - fix(bling): rearm bash-preexec DEBUG trap on each prompt by [@​castrojo](https://github.com/castrojo) in [#943](https://github.com/projectbluefin/common/pull/943)
 - fix(brew): replace invalid `brew tap --trust` with `brew tap` + `brew trust` by [@​castrojo](https://github.com/castrojo) in [#941](https://github.com/projectbluefin/common/pull/941)
-- refactor: single source of truth for setup hook dispatch — ublue-\{system,user,privileged\}-setup → hookrunner.sh by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1063](https://github.com/projectbluefin/common/pull/1063)
-- refactor: single source of truth for image-name → upstream repo routing by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1045](https://github.com/projectbluefin/common/pull/1045)
 - test: isolate UWELCOME_SHOWN in test_motd_integration.bats by [@​castrojo](https://github.com/castrojo) in [#1088](https://github.com/projectbluefin/common/pull/1088)
 - refactor(just): move 00-entry.just to shared with optional imports by [@​Siddhj2206](https://github.com/Siddhj2206) in [#1042](https://github.com/projectbluefin/common/pull/1042)
 - fix(flatpak): correct metered check in appstream refresh service by [@​HuntedRaven7](https://github.com/HuntedRaven7) in [#1035](https://github.com/projectbluefin/common/pull/1035)
 - fix: restore native recipes without bluefinctl by [@​ahmedadan](https://github.com/ahmedadan) in [#1083](https://github.com/projectbluefin/common/pull/1083)
 - fix: resolve cask references and expose validation errors by [@​ahmedadan](https://github.com/ahmedadan) in [#1084](https://github.com/projectbluefin/common/pull/1084)
-- fix: remove sudo from device info status by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1003](https://github.com/projectbluefin/common/pull/1003)
-- fix: update after hibernation resume by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1001](https://github.com/projectbluefin/common/pull/1001)
-- feat: add richer Bluefin fastfetch colors by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#980](https://github.com/projectbluefin/common/pull/980)
 - fix(uwelcome): skip greeting for root and dedupe chained shells by [@​ahmedadan](https://github.com/ahmedadan) in [#1059](https://github.com/projectbluefin/common/pull/1059)
-- Add usage instructions for ublue-os/bluefin by [@​castrojo](https://github.com/castrojo) in [#1324](https://github.com/projectbluefin/bluefin/pull/1324)
-- fix(factory): trim promote-testing-to-main caller below loc-drift threshold by [@​mendezr](https://github.com/mendezr) in [#1298](https://github.com/projectbluefin/bluefin/pull/1298)
-- test: add beta-path coverage for validate-repos.sh by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1063](https://github.com/projectbluefin/bluefin/pull/1063)
-- refactor: remove unreachable 18-workarounds.sh + shared/build.sh, add build-stage reachability gate by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1148](https://github.com/projectbluefin/bluefin/pull/1148)
-- test: BATS coverage for build_files/shared/utils/ghcurl (_is_github_host token allowlist) by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1168](https://github.com/projectbluefin/bluefin/pull/1168)
-- fix(sec): pin akmods secureboot signing cert to commit SHA + SHA-256 by [@​kylerankin](https://github.com/kylerankin) in [#1267](https://github.com/projectbluefin/bluefin/pull/1267)
-- docs(ci): record firefox.feature AT-SPI blocker resolution (#989) by [@​mendezr](https://github.com/mendezr) in [#1301](https://github.com/projectbluefin/bluefin/pull/1301)
-- feat(packages): add gstreamer1-plugin-gtk4 to base image by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1275](https://github.com/projectbluefin/bluefin/pull/1275)
-- fix(ci): retry transient COPR health checks by [@​Danathar](https://github.com/Danathar) in [#1242](https://github.com/projectbluefin/bluefin/pull/1242)
-- ci(actionlint): allow the ubuntu-26.04 runner labels by [@​Danathar](https://github.com/Danathar) in [#1311](https://github.com/projectbluefin/bluefin/pull/1311)
-- docs(ci): note the reusable-build rechunk opt-in in build-image-testing by [@​mendezr](https://github.com/mendezr) in [#1314](https://github.com/projectbluefin/bluefin/pull/1314)
-- fix(release): ignore non-push build completions by [@​castrojo](https://github.com/castrojo) in [#1296](https://github.com/projectbluefin/bluefin/pull/1296)
-- fix(release): publish automatic E2E failures by [@​castrojo](https://github.com/castrojo) in [#1294](https://github.com/projectbluefin/bluefin/pull/1294)
-- fix(release): retry pending Tuesday releases hourly by [@​castrojo](https://github.com/castrojo) in [#1292](https://github.com/projectbluefin/bluefin/pull/1292)
-- fix(release): preserve pending Tuesday decision by [@​castrojo](https://github.com/castrojo) in [#1290](https://github.com/projectbluefin/bluefin/pull/1290)
-- fix(release): preserve release window recovery by [@​castrojo](https://github.com/castrojo) in [#1288](https://github.com/projectbluefin/bluefin/pull/1288)
-- fix(release): close automatic promotion gaps by [@​castrojo](https://github.com/castrojo) in [#1286](https://github.com/projectbluefin/bluefin/pull/1286)
-- fix(release): restore digest-bound E2E recovery by [@​castrojo](https://github.com/castrojo) in [#1284](https://github.com/projectbluefin/bluefin/pull/1284)
-- fix(release): remove broken lifecycle qualification by [@​castrojo](https://github.com/castrojo) in [#1282](https://github.com/projectbluefin/bluefin/pull/1282)
-- fix(release): qualify every promoted variant by [@​castrojo](https://github.com/castrojo) in [#1281](https://github.com/projectbluefin/bluefin/pull/1281)
-- fix(release): avoid duplicate E2E qualification by [@​castrojo](https://github.com/castrojo) in [#1280](https://github.com/projectbluefin/bluefin/pull/1280)
-- fix(release): recognize generated promotion commits by [@​castrojo](https://github.com/castrojo) in [#1278](https://github.com/projectbluefin/bluefin/pull/1278)
-- fix(release): gate Tuesday promotion on E2E by [@​castrojo](https://github.com/castrojo) in [#1274](https://github.com/projectbluefin/bluefin/pull/1274)
-- fix(ci): remove retired testing-lab integration by [@​castrojo](https://github.com/castrojo) in [#1256](https://github.com/projectbluefin/bluefin/pull/1256)
-- fix(factory): extract stable release window gate (#1232) by [@​mrbobbytables](https://github.com/mrbobbytables) in [#1239](https://github.com/projectbluefin/bluefin/pull/1239)
-- fix(ci): add missing top-level permissions: \{\} to workflows by [@​mrbobbytables](https://github.com/mrbobbytables) in [#1238](https://github.com/projectbluefin/bluefin/pull/1238)
-- fix(ujust): provide working shell autocomplete in bash and zsh by [@​mrbobbytables](https://github.com/mrbobbytables) in [#1236](https://github.com/projectbluefin/bluefin/pull/1236)
-- feat(packages): add ppp to base package manifest (#1073) by [@​mrbobbytables](https://github.com/mrbobbytables) in [#1234](https://github.com/projectbluefin/bluefin/pull/1234)
-- fix: workaround for fstrim to trim sysroot (#1138) by [@​mrbobbytables](https://github.com/mrbobbytables) in [#1235](https://github.com/projectbluefin/bluefin/pull/1235)
-- fix(sec): pin secureboot enrollment key fetch to akmods commit + SHA-256 by [@​hanthor](https://github.com/hanthor) in [#1241](https://github.com/projectbluefin/bluefin/pull/1241)
-- ci: restore upgrade-test (lifecycle) as a promotion gate (#400) by [@​kylerankin](https://github.com/kylerankin) in [#1101](https://github.com/projectbluefin/bluefin/pull/1101)
-- test(unit): add image-variant matrix drift gate against Justfile (#1164) by [@​castrojo](https://github.com/castrojo) in [#1195](https://github.com/projectbluefin/bluefin/pull/1195)
-- test(quality): add unit tests for check-testsuite-workflow-ref (#1169) by [@​castrojo](https://github.com/castrojo) in [#1196](https://github.com/projectbluefin/bluefin/pull/1196)
-- fix(worktree): guard against deleting branches with unpushed commits by [@​castrojo](https://github.com/castrojo) in [#1194](https://github.com/projectbluefin/bluefin/pull/1194)
-- fix(sec): pin coreos generator and firewalld zone fetch to sha256 by [@​castrojo](https://github.com/castrojo) in [#1193](https://github.com/projectbluefin/bluefin/pull/1193)
-- fix(security): consolidate Justfile supply-chain hardening (#1172, #1173) by [@​castrojo](https://github.com/castrojo) in [#1237](https://github.com/projectbluefin/bluefin/pull/1237)
-- fix(packages): restore Copyous runtime and use Firefox Flatpak by [@​castrojo](https://github.com/castrojo) in [#1228](https://github.com/projectbluefin/bluefin/pull/1228)
-- fix(build): validate supported brew preinstall contract by [@​castrojo](https://github.com/castrojo) in [#1221](https://github.com/projectbluefin/bluefin/pull/1221)
-- fix(ci): report lab checks with GITHUB_TOKEN instead of MergeRaptor token by [@​eltorrero](https://github.com/eltorrero) in [#1213](https://github.com/projectbluefin/bluefin/pull/1213)
-- ci: consumer validation for testsuite#792 (issue #989) by [@​mrbobbytables](https://github.com/mrbobbytables) in [#1215](https://github.com/projectbluefin/bluefin/pull/1215)
-- docs(ci): re-verify #989 firefox.feature blocker persists after rpmdb fix by [@​mrbobbytables](https://github.com/mrbobbytables) in [#1199](https://github.com/projectbluefin/bluefin/pull/1199)
-- ci: add top-level least-privilege permissions to moderator.yml by [@​mrbobbytables](https://github.com/mrbobbytables) in [#1200](https://github.com/projectbluefin/bluefin/pull/1200)
-- ci: upload BATS coverage to Codecov by [@​mrbobbytables](https://github.com/mrbobbytables) in [#1201](https://github.com/projectbluefin/bluefin/pull/1201)
-- fix(iso): keep /boot empty so derived images pass bootc container lint by [@​Danathar](https://github.com/Danathar) in [#1209](https://github.com/projectbluefin/bluefin/pull/1209)
-- docs(security): track CVE-2026-56854 across container-tools and tailscale by [@​Danathar](https://github.com/Danathar) in [#1211](https://github.com/projectbluefin/bluefin/pull/1211)
-- docs(ci): document GH006 merge-queue promotion conflict failure mode by [@​Danathar](https://github.com/Danathar) in [#1212](https://github.com/projectbluefin/bluefin/pull/1212)
-- fix(scanner): make framework AMD kargs cleanup retry-safe on failure by [@​mrbobbytables](https://github.com/mrbobbytables) in [#1202](https://github.com/projectbluefin/bluefin/pull/1202)
-- fix(ci): correct jq quoting in cache maintenance workflow by [@​mrbobbytables](https://github.com/mrbobbytables) in [#1203](https://github.com/projectbluefin/bluefin/pull/1203)
-- fix(sec): pin Anaconda install payload to a digest, not :stable by [@​mrbobbytables](https://github.com/mrbobbytables) in [#1204](https://github.com/projectbluefin/bluefin/pull/1204)
-- test(ci): pin the Tuesday stable release window by [@​Danathar](https://github.com/Danathar) in [#1134](https://github.com/projectbluefin/bluefin/pull/1134)
-- fix(lab-check): serialise lifecycle events that share a head SHA by [@​Danathar](https://github.com/Danathar) in [#1133](https://github.com/projectbluefin/bluefin/pull/1133)
-- ci: consumer validation for actions/native-overlay fix by [@​KiKaraage](https://github.com/KiKaraage) in [#1177](https://github.com/projectbluefin/bluefin/pull/1177)
-- [quality] test: BATS coverage for .github/scripts/install-hooks.sh and worktree.sh by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1162](https://github.com/projectbluefin/bluefin/pull/1162)
-- docs(ci): resolve the common-b toggle-updates blocker as a freeze artifact by [@​Danathar](https://github.com/Danathar) in [#1154](https://github.com/projectbluefin/bluefin/pull/1154)
-- [quality] test: unit coverage for .github/scripts/validate-docs.py (docs contract gate) by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1151](https://github.com/projectbluefin/bluefin/pull/1151)
-- test(build): guard just and gum, the rest of the ujust chain (#965) by [@​Danathar](https://github.com/Danathar) in [#1149](https://github.com/projectbluefin/bluefin/pull/1149)
-- test(framework): stop the hook tests from driving the host's real rpm-ostree by [@​Danathar](https://github.com/Danathar) in [#1144](https://github.com/projectbluefin/bluefin/pull/1144)
 - fix(pages): dashboard CNAME qa.projectbluefin.io shadowed by redirect by [@​kylerankin](https://github.com/kylerankin) in [#902](https://github.com/projectbluefin/testsuite/pull/902)
 - fix(gate): let non-Bluefin images skip Bluefin-only scenarios, tolerate GNOME 51 display key by [@​hanthor](https://github.com/hanthor) in [#900](https://github.com/projectbluefin/testsuite/pull/900)
 - fix(smoke): notify sandbox before app-availability early skips by [@​hanthor](https://github.com/hanthor) in [#899](https://github.com/projectbluefin/testsuite/pull/899)
 - fix(e2e): allow unsafe-mode test extension on GNOME 51 shells by [@​hanthor](https://github.com/hanthor) in [#898](https://github.com/projectbluefin/testsuite/pull/898)
 - fix(e2e): enable sshd via kernel arg so image presets cannot undo it by [@​hanthor](https://github.com/hanthor) in [#895](https://github.com/projectbluefin/testsuite/pull/895)
-- fix: sanitize run_id before using it as a dashboard output filename by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#892](https://github.com/projectbluefin/testsuite/pull/892)
 - fix(bazzite): mark extension 'is enabled' scenarios pending on state=6 regression by [@​buggtb](https://github.com/buggtb) in [#888](https://github.com/projectbluefin/testsuite/pull/888)
 - refactor: remove unconsumed DEFAULT_SLA and SLA_STRICT from timing helper by [@​repires](https://github.com/repires) in [#882](https://github.com/projectbluefin/testsuite/pull/882)
 - fix(renovate): restrict automerge to immutable-ref housekeeping by [@​kylerankin](https://github.com/kylerankin) in [#886](https://github.com/projectbluefin/testsuite/pull/886)
@@ -4221,10 +5217,8 @@ Release details remain on the canonical [/changelogs](/changelogs) surface.
 - test(lifecycle): add settled-deployment barrier and activate bootc pin scenario by [@​mrbobbytables](https://github.com/mrbobbytables) in [#837](https://github.com/projectbluefin/testsuite/pull/837)
 - [sec-check] fix: declare top-level permissions: \{\} in e2e.yml by [@​Danathar](https://github.com/Danathar) in [#813](https://github.com/projectbluefin/testsuite/pull/813)
 - refactor(ssh): Phase 2 — route dx/flatcar/kde-smoke/software/vanilla-gnome onto ssh_config.ssh_argv() by [@​mrbobbytables](https://github.com/mrbobbytables) in [#790](https://github.com/projectbluefin/testsuite/pull/790)
-- fix(smoke): align qecore pins — Containerfile.runner 4.16→4.19.3 + pin gnome-e2e in-VM install by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#821](https://github.com/projectbluefin/testsuite/pull/821)
 - fix(gnome-e2e): source the results summary from scripts/e2e_summary (#797) by [@​mendezr](https://github.com/mendezr) in [#819](https://github.com/projectbluefin/testsuite/pull/819)
 - docs(gnome): trim duplicate blank line to satisfy 500-line SKILL.md cap by [@​Danathar](https://github.com/Danathar) in [#869](https://github.com/projectbluefin/testsuite/pull/869)
-- test: unit coverage for the tests/shared/screenshot.py capture path by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#816](https://github.com/projectbluefin/testsuite/pull/816)
 - refactor: fold duplicated _first_value into shared ssh_config by [@​mrbobbytables](https://github.com/mrbobbytables) in [#787](https://github.com/projectbluefin/testsuite/pull/787)
 - docs(ci): make GNOME version string neutral across e2e summary and docs by [@​mendezr](https://github.com/mendezr) in [#854](https://github.com/projectbluefin/testsuite/pull/854)
 - test(vanilla-gnome): add GNOME 51 reduced-motion and focus-ring gsettings round-trips by [@​kylerankin](https://github.com/kylerankin) in [#851](https://github.com/projectbluefin/testsuite/pull/851)
@@ -4233,9 +5227,6 @@ Release details remain on the canonical [/changelogs](/changelogs) surface.
 - fix(ci): unify image-slug grammar across e2e workflow and artifact tags by [@​mrbobbytables](https://github.com/mrbobbytables) in [#865](https://github.com/projectbluefin/testsuite/pull/865)
 - ci: restore migration-target and extra-tags inputs to e2e.yml by [@​kylerankin](https://github.com/kylerankin) in [#867](https://github.com/projectbluefin/testsuite/pull/867)
 - test(software): re-anchor @future scenarios from closed #176 to #847 by [@​mrbobbytables](https://github.com/mrbobbytables) in [#849](https://github.com/projectbluefin/testsuite/pull/849)
-- fix: escape Pagefind metadata before innerHTML in dashboard GlobalSearch.astro by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#858](https://github.com/projectbluefin/testsuite/pull/858)
-- ci: measure scripts/ in the coverage gate — .coveragerc source (only file) by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#818](https://github.com/projectbluefin/testsuite/pull/818)
-- docs: add SECURITY.md (SECURITY.md only) by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#811](https://github.com/projectbluefin/testsuite/pull/811)
 - test(vanilla-gnome): GNOME 51 readiness — Shell version canary by [@​mrbobbytables](https://github.com/mrbobbytables) in [#864](https://github.com/projectbluefin/testsuite/pull/864)
 - docs: align AGENTS.md and contributing/SKILL.md on skill-update gate by [@​mrbobbytables](https://github.com/mrbobbytables) in [#862](https://github.com/projectbluefin/testsuite/pull/862)
 - test(smoke): suppress session idle-lock in smoke setup to unblock GOA provider-list by [@​mrbobbytables](https://github.com/mrbobbytables) in [#850](https://github.com/projectbluefin/testsuite/pull/850)
@@ -4245,23 +5236,12 @@ Release details remain on the canonical [/changelogs](/changelogs) surface.
 - fix(smoke): ignore Nvidia CDI failures in QEMU by [@​castrojo](https://github.com/castrojo) in [#855](https://github.com/projectbluefin/testsuite/pull/855)
 - fix(e2e): stabilize Firefox accessibility workflow by [@​castrojo](https://github.com/castrojo) in [#853](https://github.com/projectbluefin/testsuite/pull/853)
 - fix(e2e): robust toggle-updates probe, storage service lifecycle, and Firefox window lookup by [@​castrojo](https://github.com/castrojo) in [#792](https://github.com/projectbluefin/testsuite/pull/792)
-- [architect] refactor: single source of truth for the results-directory contract — new tests/shared/results_dir.py; timing.py/screenshot.py/kde_faillog.py import it by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#780](https://github.com/projectbluefin/testsuite/pull/780)
-- [sec-check] fix: bump nanoid 3.3.17 → 3.3.18 in dashboard/package-lock.json (GHSA-2v37-7h3g-55p8) by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#778](https://github.com/projectbluefin/testsuite/pull/778)
-- [quality] test: unit coverage for scripts/compose-e2e-image.sh (new tests/unit/test_compose_e2e_image.py) by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#774](https://github.com/projectbluefin/testsuite/pull/774)
-- [architect] refactor: single source of truth for SSH transport — smoke suite + shared/gnome_shell_steps onto ssh_config.ssh_argv() by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#773](https://github.com/projectbluefin/testsuite/pull/773)
-- [sec-check] fix: verify SHA-256 of ponytail files in Containerfile.runner by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#771](https://github.com/projectbluefin/testsuite/pull/771)
-- [scanner] fix: ignore input-remapper in QEMU by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#757](https://github.com/projectbluefin/testsuite/pull/757)
-- [quality] test: unit coverage for scripts/update_coverage_snapshot.py — new tests/unit/test_update_coverage_snapshot.py only by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#776](https://github.com/projectbluefin/testsuite/pull/776)
-- [quality] test: add unit tests for screenshot_steps.py behave wrappers by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#751](https://github.com/projectbluefin/testsuite/pull/751)
-- [quality] test: unit coverage for offline_boot_steps.py, sudo_rs_steps.py, bctl_steps.py, update_failure_steps.py by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#768](https://github.com/projectbluefin/testsuite/pull/768)
-- [architect] refactor: enforce behave suite environment quarantine-gate contract (new tests/unit/test_suite_environment_contract.py) by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#765](https://github.com/projectbluefin/testsuite/pull/765)
 - feat(nvidia): NVIDIA sysext skill and driver release tracking by [@​dtg01100](https://github.com/dtg01100) in [#326](https://github.com/projectbluefin/server/pull/326)
 - ci(build): run boot-test and release-dry-run when kernel-cache is skipped by [@​jeefy](https://github.com/jeefy) in [#328](https://github.com/projectbluefin/server/pull/328)
 - fix(initrd): verify the per-node Ignition config before applying it by [@​kylerankin](https://github.com/kylerankin) in [#285](https://github.com/projectbluefin/server/pull/285)
 - fix(installer): keep console install failures visible instead of halting by [@​dtg01100](https://github.com/dtg01100) in [#321](https://github.com/projectbluefin/server/pull/321)
 - feat(nvidia): deliver the driver and toolkit sysexts to nodes by [@​jeefy](https://github.com/jeefy) in [#319](https://github.com/projectbluefin/server/pull/319)
 - fix(os): ship /etc/protocols and /etc/services (IANA netdb) for NFSv3 by [@​jeefy](https://github.com/jeefy) in [#317](https://github.com/projectbluefin/server/pull/317)
-- docs(installer): correct root-prompt docs for USB-installed disks by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#296](https://github.com/projectbluefin/server/pull/296)
 - fix(sysupdate): ship the trust keyring in the vendor image by [@​arteeh](https://github.com/arteeh) in [#312](https://github.com/projectbluefin/server/pull/312)
 - feat(nvidia): container toolkit sysext (CDI) by [@​jeefy](https://github.com/jeefy) in [#304](https://github.com/projectbluefin/server/pull/304)
 - feat(nvidia): open-kernel-module driver sysext (nvidia-open-595) by [@​jeefy](https://github.com/jeefy) in [#305](https://github.com/projectbluefin/server/pull/305)
@@ -4272,7 +5252,6 @@ Release details remain on the canonical [/changelogs](/changelogs) surface.
 - fix(security): clear group/other write from image paths; repair /etc on existing installs by [@​castrojo](https://github.com/castrojo) in [#303](https://github.com/projectbluefin/server/pull/303)
 - docs: sync the Booty story with jeefy/booty main by [@​jeefy](https://github.com/jeefy) in [#298](https://github.com/projectbluefin/server/pull/298)
 - feat(os): NFS client (nfs-utils + rpcbind, client-only) in the base image by [@​jeefy](https://github.com/jeefy) in [#295](https://github.com/projectbluefin/server/pull/295)
-- docs(release): describe the SBOM's fixed creation time; scope the publish claim by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#287](https://github.com/projectbluefin/server/pull/287)
 - fix(installer): quiet vfat exec-bit repart warnings on diskless boot path by [@​kylerankin](https://github.com/kylerankin) in [#283](https://github.com/projectbluefin/server/pull/283)
 - fix(installer): accurate login banner and first-boot password docs by [@​castrojo](https://github.com/castrojo) in [#297](https://github.com/projectbluefin/server/pull/297)
 - fix(installer): ask for a root password on the installed disk's first boot by [@​castrojo](https://github.com/castrojo) in [#293](https://github.com/projectbluefin/server/pull/293)
@@ -4322,12 +5301,9 @@ Release details remain on the canonical [/changelogs](/changelogs) surface.
 - arch: make include/flatcar.yml the single source of truth for Flatcar pins by [@​kylerankin](https://github.com/kylerankin) in [#143](https://github.com/projectbluefin/server/pull/143)
 - feat(creds): extend systemd-creds provisioning to SSH keys, network, firstboot, and TPM2 by [@​mrbobbytables](https://github.com/mrbobbytables) in [#221](https://github.com/projectbluefin/server/pull/221)
 - revert: remove unapproved appliance identity design (#208) by [@​castrojo](https://github.com/castrojo) in [#235](https://github.com/projectbluefin/server/pull/235)
-- test(kiosk): executed coverage for kiosk-gate.js — tests/unit/test_kiosk_gate_behavior.py by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#232](https://github.com/projectbluefin/server/pull/232)
 - fix(installer): harden flash-installer with refusal guards, write verification, and GPT backup relocation by [@​castrojo](https://github.com/castrojo) in [#225](https://github.com/projectbluefin/server/pull/225)
 - chore(renovate): disable the homebrew manager for binary-asset formulae by [@​castrojo](https://github.com/castrojo) in [#211](https://github.com/projectbluefin/server/pull/211)
-- docs: appliance identity, mDNS, and Bash prompt design by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#208](https://github.com/projectbluefin/server/pull/208)
 - ci: include scripts/** in unit-tests workflow paths filter by [@​mendezr](https://github.com/mendezr) in [#234](https://github.com/projectbluefin/server/pull/234)
-- fix: generate SSH host keys on device, not in the published DDI by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#216](https://github.com/projectbluefin/server/pull/216)
 - fix(justfile): probe install-vm kiosk readiness from inside the guest (rebased) by [@​castrojo](https://github.com/castrojo) in [#227](https://github.com/projectbluefin/server/pull/227)
 - fix(installer): hard preflight abort when bluefin-installer-data is absent by [@​castrojo](https://github.com/castrojo) in [#224](https://github.com/projectbluefin/server/pull/224)
 - fix(boot): resolve QEMU installer boot deadlock and console readiness probe by [@​mrbobbytables](https://github.com/mrbobbytables) in [#220](https://github.com/projectbluefin/server/pull/220)
@@ -4338,12 +5314,7 @@ Release details remain on the canonical [/changelogs](/changelogs) surface.
 - fix(ci): move junction ref tracking out of the pull_request path by [@​castrojo](https://github.com/castrojo) in [#180](https://github.com/projectbluefin/server/pull/180)
 - feat(flatcar): record container runtime parity by [@​castrojo](https://github.com/castrojo) in [#192](https://github.com/projectbluefin/server/pull/192)
 - feat(arch): produce Flatcar-to-FSDK version parity matrix (#142) by [@​mrbobbytables](https://github.com/mrbobbytables) in [#184](https://github.com/projectbluefin/server/pull/184)
-- test: files/ payload reachability gate — tests/unit/test_files_payload_reachability.py by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#155](https://github.com/projectbluefin/server/pull/155)
 - test(build-depends): lock in os-countme curl+jq FSDK paths by [@​kylerankin](https://github.com/kylerankin) in [#122](https://github.com/projectbluefin/server/pull/122)
-- test: behavioral coverage for files/bin/bluefin-kubestellar — tests/unit/bluefin-kubestellar_test.bats by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#171](https://github.com/projectbluefin/server/pull/171)
-- test: executed coverage for docs-checks.py main() — new tests/unit/test_docs_checks_main.py by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#106](https://github.com/projectbluefin/server/pull/106)
-- fix: propagate lima-e2e browser-verification failures by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#160](https://github.com/projectbluefin/server/pull/160)
-- fix: sshd drop-in — prohibit root password login (files/os/ssh/sshd_config.d/bluefin-server.conf) by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#169](https://github.com/projectbluefin/server/pull/169)
 - fix(installer): bound root-a partition to guarantee room for var by [@​mrbobbytables](https://github.com/mrbobbytables) in [#207](https://github.com/projectbluefin/server/pull/207)
 - fix(test): preserve installer-created var partition by [@​castrojo](https://github.com/castrojo) in [#157](https://github.com/projectbluefin/server/pull/157)
 - ci: update installer evidence workflow pin by [@​castrojo](https://github.com/castrojo) in [#156](https://github.com/projectbluefin/server/pull/156)
@@ -4353,51 +5324,32 @@ Release details remain on the canonical [/changelogs](/changelogs) surface.
 - Add kmod component and update depmod path by [@​bronson](https://github.com/bronson) in [#146](https://github.com/projectbluefin/server/pull/146)
 - docs: mandate distributed BuildStream builds on ghost cluster by [@​castrojo](https://github.com/castrojo) in [#121](https://github.com/projectbluefin/server/pull/121)
 - fix(installer): fix kernel module extraction and probe USB storage drivers by [@​castrojo](https://github.com/castrojo) in [#120](https://github.com/projectbluefin/server/pull/120)
-- [architect] refactor: use %\{release-version\} in os-release-flatcar.bst — single source for FSDK version by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#89](https://github.com/projectbluefin/server/pull/89)
 - fix(e2e): support self-signed TLS certificates in readiness checks by [@​castrojo](https://github.com/castrojo) in [#118](https://github.com/projectbluefin/server/pull/118)
 - feat(lima): end-to-end Lima VM orchestration and automated browser login by [@​castrojo](https://github.com/castrojo) in [#117](https://github.com/projectbluefin/server/pull/117)
 - perf(kiosk): set KAGENTI_CONTROLLER_URL="none" in kc-agent gate command by [@​mrbobbytables](https://github.com/mrbobbytables) in [#114](https://github.com/projectbluefin/server/pull/114)
 - feat(kiosk): forward kubernetes API port 6443 in install-vm by [@​castrojo](https://github.com/castrojo) in [#107](https://github.com/projectbluefin/server/pull/107)
 - feat(countme): ship the shared bluefin-countme reporter by [@​castrojo](https://github.com/castrojo) in [#94](https://github.com/projectbluefin/server/pull/94)
-- [quality] test: BATS coverage for the flash-installer recipe in Justfile by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#86](https://github.com/projectbluefin/server/pull/86)
 - fix(kubestellar): correct container image tags and names in k0s manifests by [@​kylerankin](https://github.com/kylerankin) in [#103](https://github.com/projectbluefin/server/pull/103)
 - fix(k0s): generate kubeflex postgres password at first boot instead of hardcoding it by [@​kylerankin](https://github.com/kylerankin) in [#102](https://github.com/projectbluefin/server/pull/102)
 - fix(ci): restore dropped k0s sysext copy into dist/release/ by [@​castrojo](https://github.com/castrojo) in [#93](https://github.com/projectbluefin/server/pull/93)
 - feat(kernel): add Flatcar LTS kernel & ZFS sysext, export PXE release assets by [@​castrojo](https://github.com/castrojo) in [#92](https://github.com/projectbluefin/server/pull/92)
 - fix(installer): show interactive UI on the local display by [@​TB516](https://github.com/TB516) in [#79](https://github.com/projectbluefin/server/pull/79)
-- [quality] test: unit coverage for .github/scripts/check-k0s-version.py (read, scalar, expand, main fail-closed branches) by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#62](https://github.com/projectbluefin/server/pull/62)
-- [sec-check] fix: bind kubestellar-kiosk-proxy hostPort to 127.0.0.1 (files/k0s/manifests/kubestellar/41-kubestellar-kiosk-proxy.yaml) by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#75](https://github.com/projectbluefin/server/pull/75)
 - fix(k0s): complete first-boot activation and console readiness by [@​castrojo](https://github.com/castrojo) in [#63](https://github.com/projectbluefin/server/pull/63)
-- [quality] test: unit coverage for .github/scripts/check-release-version.py by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#60](https://github.com/projectbluefin/server/pull/60)
 - fix(build): prepare alpha release validation and sysext cleanup by [@​castrojo](https://github.com/castrojo) in [#59](https://github.com/projectbluefin/server/pull/59)
 - fix(fsdk): create uninstalled libappstream symlinks in appstream-minimal by [@​castrojo](https://github.com/castrojo) in [#58](https://github.com/projectbluefin/server/pull/58)
 - fix(build): add SONAME symlinks and LD_LIBRARY_PATH for gdk-pixbuf by [@​castrojo](https://github.com/castrojo) in [#56](https://github.com/projectbluefin/server/pull/56)
 - fix(fsdk): resolve libgirepository SONAME symlinks in gobject-introspection-base by [@​castrojo](https://github.com/castrojo) in [#54](https://github.com/projectbluefin/server/pull/54)
-- [quality] test: unit coverage for files/installer/repart.d target-disk layout (tests/unit/test_repart_layout.py) by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#41](https://github.com/projectbluefin/server/pull/41)
-- [architect] refactor: single source of truth for CPU-arch identity — new include/arch.yml, k3s-bin.bst, k3s-sysext.bst, os-release-flatcar.bst, extension-release.k3s by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#40](https://github.com/projectbluefin/server/pull/40)
-- [quality] test: BATS coverage for files/bin/system-container (start/stop/enter/reset dispatch) by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#38](https://github.com/projectbluefin/server/pull/38)
-- [sec-check] fix: seed k3s write-kubeconfig-mode 0600 (files/os/justfile just k8s recipe) by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#37](https://github.com/projectbluefin/server/pull/37)
-- [sec-check] fix: repair systemd-sysupdate OTA signature verification (keyring .pgp→.gpg + ship gpg) by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#36](https://github.com/projectbluefin/server/pull/36)
-- [architect] refactor(ci): enforce release-version invariant — project.conf release-version vs Justfile fsdk_version (adds .github/scripts/check-release-version.py, Justfile validate recipe) by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#34](https://github.com/projectbluefin/server/pull/34)
-- [quality] test: unit coverage for .github/scripts/docs-checks.py by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#30](https://github.com/projectbluefin/server/pull/30)
-- [sec-check] fix: harden sshd drop-in — key-only auth, no root password login by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#29](https://github.com/projectbluefin/server/pull/29)
 - fix(chunka): pin chunkah's build clock so an unchanged rebuild keeps its digest by [@​dtg01100](https://github.com/dtg01100) in [#592](https://github.com/projectbluefin/actions/pull/592)
 - chore: bump testsuite e2e pin for Utah gate fixes by [@​hanthor](https://github.com/hanthor) in [#588](https://github.com/projectbluefin/actions/pull/588)
 - chore: bump testsuite e2e pin for GNOME 51 + early-skip fixes by [@​hanthor](https://github.com/hanthor) in [#587](https://github.com/projectbluefin/actions/pull/587)
 - chore: bump testsuite e2e pin to include preset-proof sshd enablement by [@​hanthor](https://github.com/hanthor) in [#584](https://github.com/projectbluefin/actions/pull/584)
 - fix(factory-health): dedupe open alerts by author by [@​repires](https://github.com/repires) in [#577](https://github.com/projectbluefin/actions/pull/577)
-- test: unit-test trigger-scope drift gate — tests/test_unit_test_gate_scope.py vs unit-tests.yml paths: filter [architect] by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#523](https://github.com/projectbluefin/actions/pull/523)
 - fix(factory-health): close recovered alerts so dedupe stops muting pipelines by [@​Danathar](https://github.com/Danathar) in [#550](https://github.com/projectbluefin/actions/pull/550)
 - ci(unit-tests): add missing workflow paths for tested guarded workflows by [@​buggtb](https://github.com/buggtb) in [#578](https://github.com/projectbluefin/actions/pull/578)
 - fix(ci): annotate reusable-thin-caller-gate and drop hardcoded count in test by [@​castrojo](https://github.com/castrojo) in [#573](https://github.com/projectbluefin/actions/pull/573)
 - fix(factory-health): require a minimum sample before alerting by [@​Danathar](https://github.com/Danathar) in [#560](https://github.com/projectbluefin/actions/pull/560)
 - ci(promote-squash): let callers say the promotion PR is merged by a human by [@​Danathar](https://github.com/Danathar) in [#566](https://github.com/projectbluefin/actions/pull/566)
 - fix(factory-health): fail the run when factory alerts are misrouted by [@​Danathar](https://github.com/Danathar) in [#564](https://github.com/projectbluefin/actions/pull/564)
-- fix(check-token-health): exact OAuth scope matching + mktemp auth response by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#540](https://github.com/projectbluefin/actions/pull/540)
-- test(bootc-build): bats coverage for create-release inline shell steps — tests/bats/test_create_release.bats by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#518](https://github.com/projectbluefin/actions/pull/518)
-- test: executed coverage for scripts/check-self-repository-references.py main() and workflow_files() — tests/test_self_repository_references.py by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#509](https://github.com/projectbluefin/actions/pull/509)
-- test: composite-action inventory drift gate — README.md, docs/skills/composite-actions.md, action-reference.md vs the on-disk action.yml roster by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#500](https://github.com/projectbluefin/actions/pull/500)
-- test(pkg-cadence): executed coverage for the inline interval classifier in reusable-pkg-cadence.yml — tests/test_pkg_cadence_intervals.py by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#565](https://github.com/projectbluefin/actions/pull/565)
 - fix(workflows): stop PR-controlled CHUNKAH_VERSION reaching shell in vendor-chunka-files by [@​sramkrishna](https://github.com/sramkrishna) in [#570](https://github.com/projectbluefin/actions/pull/570)
 - fix(release): normalize caller-supplied image reference by [@​Siddhj2206](https://github.com/Siddhj2206) in [#524](https://github.com/projectbluefin/actions/pull/524)
 - feat(ci): annotate reusable workflows with required token type by [@​mrbobbytables](https://github.com/mrbobbytables) in [#547](https://github.com/projectbluefin/actions/pull/547)
@@ -4405,7 +5357,6 @@ Release details remain on the canonical [/changelogs](/changelogs) surface.
 - feat(reusable-build): allow testing-stream builds to opt into rechunking and SBOM by [@​mendezr](https://github.com/mendezr) in [#557](https://github.com/projectbluefin/actions/pull/557)
 - fix(factory-health): bound the run fetch by the window, not a run count by [@​Danathar](https://github.com/Danathar) in [#551](https://github.com/projectbluefin/actions/pull/551)
 - feat(ci): enforce thin-caller gate in consumer repos (issue #546) by [@​Danathar](https://github.com/Danathar) in [#554](https://github.com/projectbluefin/actions/pull/554)
-- fix(render-pr-body): stop hardcoding one repo's promotion flow by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#558](https://github.com/projectbluefin/actions/pull/558)
 - fix(ci): mint app token for renovate auto-merge wiring check by [@​Danathar](https://github.com/Danathar) in [#552](https://github.com/projectbluefin/actions/pull/552)
 - docs(skills): add merge-governance and document the empty-commit consumer PR by [@​castrojo](https://github.com/castrojo) in [#537](https://github.com/projectbluefin/actions/pull/537)
 - ci(unit-tests): cover ghcr-cleanup.yml in the paths filter by [@​castrojo](https://github.com/castrojo) in [#534](https://github.com/projectbluefin/actions/pull/534)
@@ -4435,17 +5386,13 @@ Release details remain on the canonical [/changelogs](/changelogs) surface.
 - fix(pkg-cadence): open a PR instead of pushing to main by [@​kylerankin](https://github.com/kylerankin) in [#476](https://github.com/projectbluefin/actions/pull/476)
 - fix(cadence): pass app credentials to reusable workflow (fixes #425) by [@​mrbobbytables](https://github.com/mrbobbytables) in [#492](https://github.com/projectbluefin/actions/pull/492)
 - chore(ci): narrow MergeRaptor app token permissions to what's needed (fixes #421) by [@​mendezr](https://github.com/mendezr) in [#478](https://github.com/projectbluefin/actions/pull/478)
-- [architect] test: declare every cosign-verify and digest-resolution site — tests/test_trust_policy_single_source.py by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#489](https://github.com/projectbluefin/actions/pull/489)
-- [quality] test: BATS coverage for .github/actions/validate-pr-title and discord-release-notify by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#469](https://github.com/projectbluefin/actions/pull/469)
 - docs(supply-chain): record cosign install trust policy (upstream-pinned single mechanism; refs #464) by [@​eltorrero](https://github.com/eltorrero) in [#491](https://github.com/projectbluefin/actions/pull/491)
 - docs(skills): add session-hygiene skill and mandatory gate by [@​castrojo](https://github.com/castrojo) in [#424](https://github.com/projectbluefin/actions/pull/424)
 - docs(skills): capture merge-queue, consumer-CI, and Renovate learnings by [@​castrojo](https://github.com/castrojo) in [#402](https://github.com/projectbluefin/actions/pull/402)
 - docs(skills): bring remaining skill files into canonical skill spec conformance by [@​mrbobbytables](https://github.com/mrbobbytables) in [#471](https://github.com/projectbluefin/actions/pull/471)
 - ci: test the Renovate auto-merge PR-lookup matcher end-to-end by [@​kylerankin](https://github.com/kylerankin) in [#488](https://github.com/projectbluefin/actions/pull/488)
 - fix(factory): exclude cancelled/action_required from success rate by [@​kylerankin](https://github.com/kylerankin) in [#495](https://github.com/projectbluefin/actions/pull/495)
-- [sec-check] fix: renovate automerge restricted to pin/pinDigest — human gate for new third-party code by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#475](https://github.com/projectbluefin/actions/pull/475)
 - [sec-check] fix: declare top-level permissions: \{\} in consumer-validation and prune-merged-branches by [@​mrbobbytables](https://github.com/mrbobbytables) in [#466](https://github.com/projectbluefin/actions/pull/466)
-- [architect] refactor: remove orphaned install-cosign composite action (.github/actions/install-cosign + docs example) by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#465](https://github.com/projectbluefin/actions/pull/465)
 - test(bats): add unit tests for 4 bootc-build composite actions by [@​castrojo](https://github.com/castrojo) in [#451](https://github.com/projectbluefin/actions/pull/451)
 - ci(unit-tests): expand bootc-build path filter to cover all actions by [@​castrojo](https://github.com/castrojo) in [#452](https://github.com/projectbluefin/actions/pull/452)
 - fix(validate-pr): handle spaces in system_files shellcheck paths by [@​castrojo](https://github.com/castrojo) in [#454](https://github.com/projectbluefin/actions/pull/454)
@@ -4457,15 +5404,7 @@ Release details remain on the canonical [/changelogs](/changelogs) surface.
 - fix(ci): pass RESOLVE_OK via env in release-gate verify step by [@​mrbobbytables](https://github.com/mrbobbytables) in [#458](https://github.com/projectbluefin/actions/pull/458)
 - fix(tests): isolate podman-missing bats test from preinstalled runner podman by [@​mrbobbytables](https://github.com/mrbobbytables) in [#459](https://github.com/projectbluefin/actions/pull/459)
 - fix(promote): make reviewer requests optional by [@​Siddhj2206](https://github.com/Siddhj2206) in [#455](https://github.com/projectbluefin/actions/pull/455)
-- [architect] refactor: single source of truth for release-gate digest/signature logic — scripts/resolve_digests.sh + scripts/verify_signatures.sh vs reusable-release-gate.yml jobs.gate steps resolve/verify by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#446](https://github.com/projectbluefin/actions/pull/446)
 - fix(bootc-build): use kernel overlayfs in reusable-build by [@​KiKaraage](https://github.com/KiKaraage) in [#443](https://github.com/projectbluefin/actions/pull/443)
-- [architect] refactor: remove orphaned keys/*.pub trust material + check-cosign-key-rotation.yml watchdog by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#442](https://github.com/projectbluefin/actions/pull/442)
-- [quality] test: BATS coverage for bootc-build/validate-pr/action.yml inline steps by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#439](https://github.com/projectbluefin/actions/pull/439)
-- [quality] test: add BATS unit tests for bootc-build/preflight/action.yml by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#436](https://github.com/projectbluefin/actions/pull/436)
-- docs(skills): add canonical procedure sections by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#435](https://github.com/projectbluefin/actions/pull/435)
-- [sec-check] fix: verify SHA-256 before installing cosign release asset in install-cosign action by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#434](https://github.com/projectbluefin/actions/pull/434)
-- [architect] refactor: single source of truth for scripts/render_pr_body.py and scripts/render_gate_section.py by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#431](https://github.com/projectbluefin/actions/pull/431)
-- [quality] test: add BATS unit tests for bootc-build/create-manifest/action.yml by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#428](https://github.com/projectbluefin/actions/pull/428)
 - fix(renovate-automerge): await nonterminal check states instead of blocking by [@​castrojo](https://github.com/castrojo) in [#448](https://github.com/projectbluefin/actions/pull/448)
 - docs(ujust): specify console QR codes for reports by [@​kylerankin](https://github.com/kylerankin) in [#44](https://github.com/projectbluefin/bonedigger/pull/44)
 - docs: update scope to ujust report framework and remove stale references by [@​castrojo](https://github.com/castrojo) in [#41](https://github.com/projectbluefin/bonedigger/pull/41)
@@ -4477,9 +5416,7 @@ Release details remain on the canonical [/changelogs](/changelogs) surface.
 - Publish blog post on Ubuntu's community building by [@​castrojo](https://github.com/castrojo) in [#1440](https://github.com/projectbluefin/documentation/pull/1440)
 - feat(blog): draft post for How We Built Ubuntu's 65M+ Community by [@​castrojo](https://github.com/castrojo) in [#1439](https://github.com/projectbluefin/documentation/pull/1439)
 - Add brazilian-bluefins blog post by [@​delphicmelody](https://github.com/delphicmelody) in [#1428](https://github.com/projectbluefin/documentation/pull/1428)
-- chore(deps): clear high npm audit advisories without a Docusaurus major by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1373](https://github.com/projectbluefin/documentation/pull/1373)
 - perf(ci): build locales in parallel shards so build time stays flat by [@​castrojo](https://github.com/castrojo) in [#1420](https://github.com/projectbluefin/documentation/pull/1420)
-- fix(i18n): correct Indonesian translation details by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1422](https://github.com/projectbluefin/documentation/pull/1422)
 - docs(i18n): translate installation, mission, values, command-line into Czech by [@​Danathar](https://github.com/Danathar) in [#1423](https://github.com/projectbluefin/documentation/pull/1423)
 - fix(i18n): correct ExtensionManager Flathub link casing across 5 locales by [@​castrojo](https://github.com/castrojo) in [#1424](https://github.com/projectbluefin/documentation/pull/1424)
 - i18n(de): translate index.md and UI strings for German by [@​castrojo](https://github.com/castrojo) in [#1421](https://github.com/projectbluefin/documentation/pull/1421)
@@ -4537,9 +5474,7 @@ Release details remain on the canonical [/changelogs](/changelogs) surface.
 - feat(leaderboards): render Recent Milestones as horizontal scroller below Community Builders by [@​castrojo](https://github.com/castrojo) in [#1337](https://github.com/projectbluefin/documentation/pull/1337)
 - feat(images): rework catalog for Bluefin Classic at ublue-os, Dakota, and Utah by [@​castrojo](https://github.com/castrojo) in [#1335](https://github.com/projectbluefin/documentation/pull/1335)
 - feat(leaderboards): add Recent Milestones leaderboard as a ledger of teamwork by [@​castrojo](https://github.com/castrojo) in [#1336](https://github.com/projectbluefin/documentation/pull/1336)
-- fix(deps): npm audit fix — resolve image-size, lodash-es, qs advisories (package-lock.json) by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1293](https://github.com/projectbluefin/documentation/pull/1293)
 - feat(leaderboards): add GNOME seasons and modern standings by [@​castrojo](https://github.com/castrojo) in [#1333](https://github.com/projectbluefin/documentation/pull/1333)
-- feat(knowledge-mcp): search citations and repo filter, get_repo_conventions, in-flight work queue by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1317](https://github.com/projectbluefin/documentation/pull/1317)
 - refactor: route remaining hand-rolled GitHub auth sites through shared clients by [@​sramkrishna](https://github.com/sramkrishna) in [#1327](https://github.com/projectbluefin/documentation/pull/1327)
 - fix(registry): support REGISTRY_CACHE_HOURS=0 to keep live task data fresh on deploy by [@​castrojo](https://github.com/castrojo) in [#1332](https://github.com/projectbluefin/documentation/pull/1332)
 - fix(ci): allow manual force refresh on update-hive-cache workflow by [@​castrojo](https://github.com/castrojo) in [#1331](https://github.com/projectbluefin/documentation/pull/1331)
@@ -4549,8 +5484,6 @@ Release details remain on the canonical [/changelogs](/changelogs) surface.
 - fix(branding): make the monthly social preview card actually rotate by [@​Danathar](https://github.com/Danathar) in [#1313](https://github.com/projectbluefin/documentation/pull/1313)
 - docs: record the green-skip signature for a missing BLUEFIN_DISCUSSIONS_TOKEN by [@​Danathar](https://github.com/Danathar) in [#1299](https://github.com/projectbluefin/documentation/pull/1299)
 - Fix link text for latest Dakota daily snapshot by [@​castrojo](https://github.com/castrojo) in [#1325](https://github.com/projectbluefin/documentation/pull/1325)
-- refactor(fetch-data): propagate fetch script exit codes via scripts/run-parallel.mjs by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1300](https://github.com/projectbluefin/documentation/pull/1300)
-- test(knowledge-mcp): executed coverage for scripts/build-index.mjs — workers/knowledge-mcp/scripts/build-index-cli.test.mjs by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1312](https://github.com/projectbluefin/documentation/pull/1312)
 - Embed YouTube video and update GNOME release note by [@​castrojo](https://github.com/castrojo) in [#1326](https://github.com/projectbluefin/documentation/pull/1326)
 - fix(blog): use plain anchor for full resolution link in ImageCarousel by [@​castrojo](https://github.com/castrojo) in [#1323](https://github.com/projectbluefin/documentation/pull/1323)
 - Revise bug reporting link and add lore content by [@​castrojo](https://github.com/castrojo) in [#1322](https://github.com/projectbluefin/documentation/pull/1322)
@@ -4570,17 +5503,8 @@ Release details remain on the canonical [/changelogs](/changelogs) surface.
 - refactor: converge CJS GitHub fetchers onto the shared request-queue client (#1232) by [@​castrojo](https://github.com/castrojo) in [#1295](https://github.com/projectbluefin/documentation/pull/1295)
 - fix(blog): restore scrollable viewport constraint to left sidebar by [@​castrojo](https://github.com/castrojo) in [#1284](https://github.com/projectbluefin/documentation/pull/1284)
 - ci: run the unit-test gate on every PR and run the knowledge-mcp suite by [@​Danathar](https://github.com/Danathar) in [#1290](https://github.com/projectbluefin/documentation/pull/1290)
-- test: unit coverage for scripts/lib/load-tsx.js loadTsxModule — new scripts/lib/load-tsx.test.js by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1271](https://github.com/projectbluefin/documentation/pull/1271)
-- refactor: remove dead Justfile recipe invoking a nonexistent npm script — Justfile only by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1269](https://github.com/projectbluefin/documentation/pull/1269)
-- test: black-box coverage for scripts/fetch-registry-data.js — new scripts/fetch-registry-data.test.js only by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1263](https://github.com/projectbluefin/documentation/pull/1263)
-- fix: sanitize release HTML at fetch time — scripts/fetch-feeds.js (mapApiRelease, parseAtomEntry) by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1266](https://github.com/projectbluefin/documentation/pull/1266)
-- test(portal): tolerate absent build-generated static/data JSON by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1277](https://github.com/projectbluefin/documentation/pull/1277)
-- fix(downloads): import DakotaSection and restore the warning admonition by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1283](https://github.com/projectbluefin/documentation/pull/1283)
 - Revise warning about Dakotaraptor and legacy ISOs by [@​castrojo](https://github.com/castrojo) in [#1280](https://github.com/projectbluefin/documentation/pull/1280)
 - Add warning for unsupported images in downloads by [@​castrojo](https://github.com/castrojo) in [#1278](https://github.com/projectbluefin/documentation/pull/1278)
-- [quality] test: cover harvestPortalContributors in scripts/fetch-portal-contributors.js by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1235](https://github.com/projectbluefin/documentation/pull/1235)
-- [architect] test: SBOM stream-id drift gate — PRODUCT_SPECS/OS_STREAM_SPECS/IMAGE_CONFIGS must resolve against fetch-github-sbom STREAM_SPECS by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1233](https://github.com/projectbluefin/documentation/pull/1233)
-- [sec-check] fix: sanitize external release HTML at fetch time (fetch-firehose.js sanitizeRemoteApp, sanitize-html allowlist) by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1215](https://github.com/projectbluefin/documentation/pull/1215)
 - ci: add unit test gate for scripts by [@​castrojo](https://github.com/castrojo) in [#1226](https://github.com/projectbluefin/documentation/pull/1226)
 - Factory: Optimize layout by combining data sections into 2-column rows on desktop by [@​mrbobbytables](https://github.com/mrbobbytables) in [#1228](https://github.com/projectbluefin/documentation/pull/1228)
 - fix(cards): parse HTML release-feed tables before generating Bluefin cards by [@​mrbobbytables](https://github.com/mrbobbytables) in [#1213](https://github.com/projectbluefin/documentation/pull/1213)
@@ -4605,7 +5529,6 @@ Release details remain on the canonical [/changelogs](/changelogs) surface.
 - fix(analytics): count our own images, and drop the last bar charts by [@​castrojo](https://github.com/castrojo) in [#1241](https://github.com/projectbluefin/documentation/pull/1241)
 - feat(analytics): put the charts on the Bluefin palette and the real image matrix by [@​castrojo](https://github.com/castrojo) in [#1240](https://github.com/projectbluefin/documentation/pull/1240)
 - feat(analytics): rebuild the charts around the full image matrix by [@​castrojo](https://github.com/castrojo) in [#1239](https://github.com/projectbluefin/documentation/pull/1239)
-- [quality] test: unit coverage for markdown-generator report-section builders (generateBuildHealthSection, generateBotDetailsList, generateCategorySectionWithSubsections) by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1229](https://github.com/projectbluefin/documentation/pull/1229)
 - feat(portal): add brand iconography, Karl backlog callout, and quotes to Users and Developers scenes by [@​castrojo](https://github.com/castrojo) in [#1211](https://github.com/projectbluefin/documentation/pull/1211)
 - [quality] test: unit coverage for scripts/lib/sbom/api.js (GHCR tags, oras download, cosign verification) by [@​Danathar](https://github.com/Danathar) in [#1210](https://github.com/projectbluefin/documentation/pull/1210)
 - test(scripts): silence unused-arg lint warning in build-metrics test by [@​castrojo](https://github.com/castrojo) in [#1225](https://github.com/projectbluefin/documentation/pull/1225)
@@ -4626,8 +5549,6 @@ Release details remain on the canonical [/changelogs](/changelogs) surface.
 - fix(analytics): retain Countme zeros and preserve missing values as gaps by [@​Danathar](https://github.com/Danathar) in [#1191](https://github.com/projectbluefin/documentation/pull/1191)
 - fix(portal): reconcile TopNavbar navigation links and Docusaurus layout header by [@​Danathar](https://github.com/Danathar) in [#1169](https://github.com/projectbluefin/documentation/pull/1169)
 - feat(portal): restore complete mission statements, Edith Wharton quote, and punchline by [@​mrbobbytables](https://github.com/mrbobbytables) in [#1155](https://github.com/projectbluefin/documentation/pull/1155)
-- [quality] test: unit coverage for scripts/lib/graphql-queries.mjs (fetchClosedItemsFromRepo pagination, date window, partial-result contract) by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1184](https://github.com/projectbluefin/documentation/pull/1184)
-- [quality] test: unit coverage for scripts/lib/card-template.mjs (renderCard, W/H) by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1170](https://github.com/projectbluefin/documentation/pull/1170)
 - fix(feed-items): supply NVIDIA versions at the data shape the release feed consumes by [@​mrbobbytables](https://github.com/mrbobbytables) in [#1178](https://github.com/projectbluefin/documentation/pull/1178)
 - fix(profiles): remove nonexistent chandeleer1698 GitHub username by [@​mrbobbytables](https://github.com/mrbobbytables) in [#1151](https://github.com/projectbluefin/documentation/pull/1151)
 - fix(pin-state): replace removed Bluefin LTS HWE workflow paths by [@​Danathar](https://github.com/Danathar) in [#1185](https://github.com/projectbluefin/documentation/pull/1185)
@@ -4668,10 +5589,7 @@ Release details remain on the canonical [/changelogs](/changelogs) surface.
 - fix(sbom): migrate Bluefin LTS stream specs to its package and stable tags by [@​castrojo](https://github.com/castrojo) in [#1106](https://github.com/projectbluefin/documentation/pull/1106)
 - fix(countme): recognize Dakota and Utah without misclassifying Bluefin variants by [@​castrojo](https://github.com/castrojo) in [#1105](https://github.com/projectbluefin/documentation/pull/1105)
 - fix(driver-versions): generate Bluefin LTS release links with stable tags by [@​castrojo](https://github.com/castrojo) in [#1104](https://github.com/projectbluefin/documentation/pull/1104)
-- [sec-check] fix: pin wrangler 4.129.1 via package-lock (deploy-countme-worker.yml / copilot-setup-steps.yml wrangler@latest) by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1075](https://github.com/projectbluefin/documentation/pull/1075)
 - fix(catalog): generate Bluefin LTS rebases against the bluefin-lts package by [@​castrojo](https://github.com/castrojo) in [#1102](https://github.com/projectbluefin/documentation/pull/1102)
-- [quality] test: unit coverage for scripts/lib/gh.js and scripts/lib/sbom/writer.js by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1167](https://github.com/projectbluefin/documentation/pull/1167)
-- [quality] test: unit coverage for scripts/lib/contributor-tracker.mjs, github-sponsors.mjs, sbom-versions.js by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1150](https://github.com/projectbluefin/documentation/pull/1150)
 - fix(profiles): remove nonexistent chandeleer1698 GitHub username by [@​castrojo](https://github.com/castrojo) in [#1101](https://github.com/projectbluefin/documentation/pull/1101)
 - feat(portal): implement PortalNavigation floating dock and section scroll spy by [@​mrbobbytables](https://github.com/mrbobbytables) in [#1153](https://github.com/projectbluefin/documentation/pull/1153)
 - feat(portal): implement PortalContributors component and contributor harvester workflow by [@​mrbobbytables](https://github.com/mrbobbytables) in [#1156](https://github.com/projectbluefin/documentation/pull/1156)
@@ -4679,7 +5597,6 @@ Release details remain on the canonical [/changelogs](/changelogs) surface.
 - fix(portal): align Utah ecosystem card link destination to devconf.us by [@​mrbobbytables](https://github.com/mrbobbytables) in [#1159](https://github.com/projectbluefin/documentation/pull/1159)
 - feat(portal): generate bootc switch terminal command and copy button in PortalImageChooser by [@​mrbobbytables](https://github.com/mrbobbytables) in [#1152](https://github.com/projectbluefin/documentation/pull/1152)
 - test: add coverage reporting for data-fetching script tests by [@​mrbobbytables](https://github.com/mrbobbytables) in [#1061](https://github.com/projectbluefin/documentation/pull/1061)
-- [quality] test: unit coverage for scripts/lib/label-mapping.mjs (category fallback chain, badge encoding) by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1147](https://github.com/projectbluefin/documentation/pull/1147)
 - fix(sbom): support version-qualified live tags in recent-release discovery by [@​mrbobbytables](https://github.com/mrbobbytables) in [#1128](https://github.com/projectbluefin/documentation/pull/1128)
 - feat(portal): add interactive image picker by [@​castrojo](https://github.com/castrojo) in [#1131](https://github.com/projectbluefin/documentation/pull/1131)
 - feat(portal): complete static landing sections by [@​castrojo](https://github.com/castrojo) in [#1130](https://github.com/projectbluefin/documentation/pull/1130)
@@ -4688,7 +5605,6 @@ Release details remain on the canonical [/changelogs](/changelogs) surface.
 - fix: link leaderboard contributor dossiers by [@​castrojo](https://github.com/castrojo) in [#1103](https://github.com/projectbluefin/documentation/pull/1103)
 - fix: restore Hive leaderboard data and styling by [@​castrojo](https://github.com/castrojo) in [#1076](https://github.com/projectbluefin/documentation/pull/1076)
 - feat: add standalone Hive leaderboards by [@​castrojo](https://github.com/castrojo) in [#1071](https://github.com/projectbluefin/documentation/pull/1071)
-- [quality] test: unit coverage for scripts/lib/sbom/parser.js by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1064](https://github.com/projectbluefin/documentation/pull/1064)
 - feat(analytics): add update churn rate pipeline, analytics charts, and trigger workflow by [@​castrojo](https://github.com/castrojo) in [#1070](https://github.com/projectbluefin/documentation/pull/1070)
 - feat: add Hive leaderboards landing by [@​castrojo](https://github.com/castrojo) in [#1069](https://github.com/projectbluefin/documentation/pull/1069)
 - feat(nav): rename Factory to Hive in navbar linking to hive.projectbluefin.io by [@​castrojo](https://github.com/castrojo) in [#1058](https://github.com/projectbluefin/documentation/pull/1058)
@@ -4696,11 +5612,6 @@ Release details remain on the canonical [/changelogs](/changelogs) surface.
 - fix(images): point bluefin-lts to projectbluefin/bluefin-lts package and update catalog by [@​castrojo](https://github.com/castrojo) in [#1067](https://github.com/projectbluefin/documentation/pull/1067)
 - feat(analytics): unify Bluefin family countme charts and multi-image catalog by [@​castrojo](https://github.com/castrojo) in [#1065](https://github.com/projectbluefin/documentation/pull/1065)
 - feat(analytics): add legacy bluefins and ecosystem countme analytics charts by [@​castrojo](https://github.com/castrojo) in [#1063](https://github.com/projectbluefin/documentation/pull/1063)
-- [sec-check] fix: pin Bun install in copilot-codespace.yml to v1.4.2 + SHA-256 (cluster: agent-env tool installs) by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1049](https://github.com/projectbluefin/documentation/pull/1049)
-- [architect] refactor: single source of truth for cosign trust policy — new scripts/lib/signing-trust.js, fetch-github-sbom.js STREAM_SPECS + fetch-github-images.js buildSecurityInfo derive from it by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1047](https://github.com/projectbluefin/documentation/pull/1047)
-- test: cover extractMetrics in scripts/fetch-hive-history.js — 9 cases appended to scripts/fetch-hive-history.test.js by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1045](https://github.com/projectbluefin/documentation/pull/1045)
-- test: make npm test collect scripts/lib tests — package.json "test" script + new scripts/test-discovery.test.js by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1044](https://github.com/projectbluefin/documentation/pull/1044)
-- test: unit coverage for scripts/lib/sbom/\{parser,bst,slim\}.js — new scripts/sbom-parser.test.js, scripts/sbom-bst.test.js by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1040](https://github.com/projectbluefin/documentation/pull/1040)
 - feat(reports): migrate monthly reports to blog with infograms and Hive Leaderboard by [@​castrojo](https://github.com/castrojo) in [#1059](https://github.com/projectbluefin/documentation/pull/1059)
 - fix: restrict countme worker entrypoint exports to default handler by [@​castrojo](https://github.com/castrojo) in [#1060](https://github.com/projectbluefin/documentation/pull/1060)
 - docs: announce mcp.projectbluefin.io and update hive links by [@​castrojo](https://github.com/castrojo) in [#1057](https://github.com/projectbluefin/documentation/pull/1057)
@@ -4710,29 +5621,18 @@ Release details remain on the canonical [/changelogs](/changelogs) surface.
 - Add link to upstream doc about IME setup by [@​sebjag](https://github.com/sebjag) in [#1038](https://github.com/projectbluefin/documentation/pull/1038)
 - fix(e2e): deliver the kickstart through an initramfs overlay by [@​Danathar](https://github.com/Danathar) in [#74](https://github.com/projectbluefin/iso/pull/74)
 - fix(ci): restore ISO rename output and soft-fail arm64 legs by [@​hanthor](https://github.com/hanthor) in [#70](https://github.com/projectbluefin/iso/pull/70)
-- test(justfile): executed coverage for _build-bib and the iso/*.toml BIB contract — tests/template/justfile-build-bib_test.bats by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#408](https://github.com/projectbluefin/finpilot/pull/408)
 - fix(just): resolve sudo via PATH in sudoif and pass arguments without word-splitting by [@​castrojo](https://github.com/castrojo) in [#394](https://github.com/projectbluefin/finpilot/pull/394)
 - fix(justfile): make the final artifact move idempotent in _build-bib by [@​mendezr](https://github.com/mendezr) in [#412](https://github.com/projectbluefin/finpilot/pull/412)
 - ci(workflow): correct sync-stable-to-main header comment by [@​kylerankin](https://github.com/kylerankin) in [#413](https://github.com/projectbluefin/finpilot/pull/413)
 - ci(workflow): retry just download in unit-tests by [@​kylerankin](https://github.com/kylerankin) in [#414](https://github.com/projectbluefin/finpilot/pull/414)
 - fix(build): write an unverified update ref instead of a signed one by [@​Danathar](https://github.com/Danathar) in [#406](https://github.com/projectbluefin/finpilot/pull/406)
-- test(build): executed coverage for build/*.sh.example — tests/template/build-examples_test.bats by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#398](https://github.com/projectbluefin/finpilot/pull/398)
 - fix(ci): skip Renovate when the token is not set by [@​Siddhj2206](https://github.com/Siddhj2206) in [#395](https://github.com/projectbluefin/finpilot/pull/395)
-- test(justfile): executed coverage for vm-artifact and the VM artifact-path contract — tests/template/justfile-vm-artifact_test.bats by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#400](https://github.com/projectbluefin/finpilot/pull/400)
 - ci(promote): stop citing the deleted scheduled approver by [@​Danathar](https://github.com/Danathar) in [#404](https://github.com/projectbluefin/finpilot/pull/404)
-- fix(renovate): require human review for third-party GitHub Actions bumps by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#416](https://github.com/projectbluefin/finpilot/pull/416)
 - fix(ci): restore merge_group trigger to pr-validation and unit-tests by [@​castrojo](https://github.com/castrojo) in [#418](https://github.com/projectbluefin/finpilot/pull/418)
 - refactor: full rewrite of the template by [@​castrojo](https://github.com/castrojo) in [#393](https://github.com/projectbluefin/finpilot/pull/393)
 - refactor: full rewrite of the template by [@​Siddhj2206](https://github.com/Siddhj2206) in [#383](https://github.com/projectbluefin/finpilot/pull/383)
-- [architect] test: image-identity drift gate — tests/unit/image-identity_test.bats + README rename checklist by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#368](https://github.com/projectbluefin/finpilot/pull/368)
-- [quality] test: executed coverage for Justfile clean, sudo-clean and sudoif recipes by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#365](https://github.com/projectbluefin/finpilot/pull/365)
-- [architect] refactor: single implementation for flatpak preinstall validation — build/validate-flatpaks.sh + just recipe + bats gate by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#359](https://github.com/projectbluefin/finpilot/pull/359)
 - docs: document E2E gap as intentional release risk (#281) by [@​mrbobbytables](https://github.com/mrbobbytables) in [#328](https://github.com/projectbluefin/finpilot/pull/328)
-- [quality] test: BATS coverage for .github/actions/check-token-health/check_token_health.sh by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#340](https://github.com/projectbluefin/finpilot/pull/340)
 - ci: auto-approve action_required checks on trusted promotion PRs by [@​mrbobbytables](https://github.com/mrbobbytables) in [#335](https://github.com/projectbluefin/finpilot/pull/335)
-- [architect] refactor: single source of truth for shell-lint scope — new .shellcheck-scope, Justfile:lint / shell-sources recipes by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#326](https://github.com/projectbluefin/finpilot/pull/326)
-- [architect] refactor: single source of truth for Brewfile validation — .pre-commit-config.yaml delegates to build/validate-brewfiles.sh by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#325](https://github.com/projectbluefin/finpilot/pull/325)
-- [sec-check] fix: iso/iso.toml kickstart bootc switch → ostree-image-signed transport by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#331](https://github.com/projectbluefin/finpilot/pull/331)
 - fix(ci): validate Brewfiles statically instead of evaluating them as Ruby by [@​Siddhj2206](https://github.com/Siddhj2206) in [#320](https://github.com/projectbluefin/finpilot/pull/320)
 - fix(just): use a per-invocation temp file for the registry tag list by [@​Siddhj2206](https://github.com/Siddhj2206) in [#314](https://github.com/projectbluefin/finpilot/pull/314)
 - ci: run BATS unit tests on PRs touching build, tests, or Justfile by [@​Siddhj2206](https://github.com/Siddhj2206) in [#317](https://github.com/projectbluefin/finpilot/pull/317)
@@ -4741,14 +5641,6 @@ Release details remain on the canonical [/changelogs](/changelogs) surface.
 - fix(ci): derive ghcr-cleanup target from the repository name by [@​Siddhj2206](https://github.com/Siddhj2206) in [#319](https://github.com/projectbluefin/finpilot/pull/319)
 - fix(ujust): stop install-jetbrains-toolbox when the checksum fails by [@​Siddhj2206](https://github.com/Siddhj2206) in [#315](https://github.com/projectbluefin/finpilot/pull/315)
 - fix(just): repair clean recipe so it finishes and removes all artifacts by [@​Siddhj2206](https://github.com/Siddhj2206) in [#312](https://github.com/projectbluefin/finpilot/pull/312)
-- [quality] test(Justfile): BATS unit tests for the tag-images recipe by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#299](https://github.com/projectbluefin/finpilot/pull/299)
-- [quality] test: BATS coverage for build/00-image-info.sh and build/10-build.sh by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#295](https://github.com/projectbluefin/finpilot/pull/295)
-- [architect] refactor: remove orphaned iso/rclone subsystem — iso/rclone/\{README.md,aws-s3,backblaze-b2,cloudflare-r2,sftp,scp\}.conf, .dockerignore, .github/commit-convention.md by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#302](https://github.com/projectbluefin/finpilot/pull/302)
-- [quality] test: BATS coverage for Justfile build and tag-images recipes by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#296](https://github.com/projectbluefin/finpilot/pull/296)
-- [quality] test: BATS coverage for custom/ujust/custom-apps.just and custom-system.just recipes by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#293](https://github.com/projectbluefin/finpilot/pull/293)
-- [architect] refactor: make image-identity rename sites self-consistent — Containerfile header, iso/iso.toml kickstart, custom/ujust/README.md by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#292](https://github.com/projectbluefin/finpilot/pull/292)
-- [sec-check] fix: renovate.json — human-review gate for GitHub Actions updates (.github/renovate.json packageRules) by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#306](https://github.com/projectbluefin/finpilot/pull/306)
-- [quality] test: add BATS unit tests for build/clean-stage.sh and build/copr-helpers.sh by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#285](https://github.com/projectbluefin/finpilot/pull/285)
 - fix(packages): stamp the provenance report from SOURCE_DATE_EPOCH, not the wall clock by [@​dtg01100](https://github.com/dtg01100) in [#343](https://github.com/projectbluefin/utah/pull/343)
 - ci: add a tested factory-pin rev tool for #336 by [@​dtg01100](https://github.com/dtg01100) in [#337](https://github.com/projectbluefin/utah/pull/337)
 - fix(packages): pin the baseurl of every allowlisted repository by [@​dtg01100](https://github.com/dtg01100) in [#334](https://github.com/projectbluefin/utah/pull/334)
@@ -4768,7 +5660,6 @@ Release details remain on the canonical [/changelogs](/changelogs) surface.
 - chore(ci): point release reusable at actions with preset-proof gate sshd by [@​hanthor](https://github.com/hanthor) in [#310](https://github.com/projectbluefin/utah/pull/310)
 - feat(kernel): build v4l2loopback for every flavor's kernel by [@​Danathar](https://github.com/Danathar) in [#298](https://github.com/projectbluefin/utah/pull/298)
 - fix(packages): add default-fonts-core-emoji to the parity contract by [@​buggtb](https://github.com/buggtb) in [#296](https://github.com/projectbluefin/utah/pull/296)
-- fix(iso): pin the tacklebox builder image by digest, not mutable latest by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#288](https://github.com/projectbluefin/utah/pull/288)
 - fix(image): strip extension build toolchain closure from shipping image by [@​hanthor](https://github.com/hanthor) in [#295](https://github.com/projectbluefin/utah/pull/295)
 - fix(iso): retry flaky Flathub pulls 5x so a timeout window can't fail E2E by [@​hanthor](https://github.com/hanthor) in [#285](https://github.com/projectbluefin/utah/pull/285)
 - feat(packages): printing and cameras, from the 2026-09-26 factory image by [@​hanthor](https://github.com/hanthor) in [#282](https://github.com/projectbluefin/utah/pull/282)
@@ -4799,22 +5690,17 @@ Release details remain on the canonical [/changelogs](/changelogs) surface.
 - fix(iso): tighten live ISO size budget by [@​Danathar](https://github.com/Danathar) in [#206](https://github.com/projectbluefin/utah/pull/206)
 - chore(deps): update actions/upload-pages-artifact action to v5 by [@​hanthor](https://github.com/hanthor) in [#234](https://github.com/projectbluefin/utah/pull/234)
 - ci: gate the live boot on the UTAH_LIVE_READY serial marker by [@​mendezr](https://github.com/mendezr) in [#229](https://github.com/projectbluefin/utah/pull/229)
-- fix: sandbox bluefin-stats-refresh and validate remote stat strings by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#232](https://github.com/projectbluefin/utah/pull/232)
 - fix(iso): force software GL rendering for the E2E test's terminal by [@​Danathar](https://github.com/Danathar) in [#224](https://github.com/projectbluefin/utah/pull/224)
 - test(installer): assert offline payload and default Flatpaks survive encrypted install by [@​Danathar](https://github.com/Danathar) in [#215](https://github.com/projectbluefin/utah/pull/215)
 - test: cover btrfs live-kernel contract by [@​Danathar](https://github.com/Danathar) in [#207](https://github.com/projectbluefin/utah/pull/207)
 - ci: document Utah testing-stream rechunk gate by [@​Danathar](https://github.com/Danathar) in [#205](https://github.com/projectbluefin/utah/pull/205)
 - docs: close README/skill package-count drift against the manifests by [@​Danathar](https://github.com/Danathar) in [#225](https://github.com/projectbluefin/utah/pull/225)
-- fix(ci): inspect downloads split across backslash continuations by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#188](https://github.com/projectbluefin/utah/pull/188)
 - fix(flavors): single-source flavor to image name mapping in flavors.py by [@​mrbobbytables](https://github.com/mrbobbytables) in [#144](https://github.com/projectbluefin/utah/pull/144)
 - fix(desktop): enable input-remapper.service for desktop input devices by [@​mrbobbytables](https://github.com/mrbobbytables) in [#148](https://github.com/projectbluefin/utah/pull/148)
 - ci(parity): pin check-parity upstream fetch to committed revision by [@​mrbobbytables](https://github.com/mrbobbytables) in [#152](https://github.com/projectbluefin/utah/pull/152)
 - ci: stop a testing build cancelling the one before it, which is losing the ISO evidence the release gate needs by [@​hanthor](https://github.com/hanthor) in [#185](https://github.com/projectbluefin/utah/pull/185)
 - ci(release): stop a missed stable release from looking exactly like a normal merge by [@​hanthor](https://github.com/hanthor) in [#195](https://github.com/projectbluefin/utah/pull/195)
-- test: executed coverage for check-repo-availability.py refusals and main() by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#200](https://github.com/projectbluefin/utah/pull/200)
 - fix: fall back to kernel module tree and refuse empty kernel releases in verify-rpm-contract by [@​mrbobbytables](https://github.com/mrbobbytables) in [#204](https://github.com/projectbluefin/utah/pull/204)
-- test: executed coverage for scripts/clean-stage.sh — tests/test_clean_stage.py by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#210](https://github.com/projectbluefin/utah/pull/210)
-- fix(ci): retry the check-repos contract gate on container-engine failure by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#221](https://github.com/projectbluefin/utah/pull/221)
 - fix: enable PipeWire user units so GNOME screencast can start by [@​KiKaraage](https://github.com/KiKaraage) in [#177](https://github.com/projectbluefin/utah/pull/177)
 - fix(installer): harden live-media boot paths and define Secure Boot strategy by [@​mrbobbytables](https://github.com/mrbobbytables) in [#143](https://github.com/projectbluefin/utah/pull/143)
 - Retry Flathub pulls, so one timed-out object cannot fail a flavor's ISO by [@​hanthor](https://github.com/hanthor) in [#162](https://github.com/projectbluefin/utah/pull/162)
@@ -4826,18 +5712,10 @@ Release details remain on the canonical [/changelogs](/changelogs) surface.
 - fix(image): stop shipping the 4 GB package repository in every image, and check Hummingbird signatures by [@​hanthor](https://github.com/hanthor) in [#133](https://github.com/projectbluefin/utah/pull/133)
 - fix: enable the btrfs kernel module in the OGC gaming-flavor kernel by [@​kylerankin](https://github.com/kylerankin) in [#158](https://github.com/projectbluefin/utah/pull/158)
 - ci: stop fork pull requests failing on a GHCR permission they cannot have by [@​hanthor](https://github.com/hanthor) in [#184](https://github.com/projectbluefin/utah/pull/184)
-- test: unit coverage for scripts/generate_skill_index.py — tests/test_generate_skill_index.py by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#190](https://github.com/projectbluefin/utah/pull/190)
-- test: executed coverage for verify-desktop-contract.py verify mode — tests/test_desktop_contract_verify.py by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#179](https://github.com/projectbluefin/utah/pull/179)
-- test: executed coverage for scripts/verify-rpm-contract.py — tests/test_verify_rpm_contract.py by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#174](https://github.com/projectbluefin/utah/pull/174)
-- test: gate the kernel cache key against Containerfile.kernel's build inputs by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#166](https://github.com/projectbluefin/utah/pull/166)
-- fix(kernel-cache): hash Containerfile.kernel whole so a recipe edit rotates the tag by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#171](https://github.com/projectbluefin/utah/pull/171)
 - fix(packages): single-source install repository identity in packages/*.repo by [@​mrbobbytables](https://github.com/mrbobbytables) in [#146](https://github.com/projectbluefin/utah/pull/146)
 - fix(desktop): mask bootc-fetch-apply-updates across cross-vendor etc merge by [@​mrbobbytables](https://github.com/mrbobbytables) in [#153](https://github.com/projectbluefin/utah/pull/153)
-- fix: verify NVIDIA installer against a committed digest on both paths by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#160](https://github.com/projectbluefin/utah/pull/160)
 - fix: stop shipping the 4 GB package repository in every image (#128) by [@​kylerankin](https://github.com/kylerankin) in [#156](https://github.com/projectbluefin/utah/pull/156)
-- test: run nested suites under tests/ — tests/run_suite.py, tests/test_suite_runner.py, Justfile test recipe by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#155](https://github.com/projectbluefin/utah/pull/155)
 - test(ci): add unit tests for check-download-integrity and check_workflow_outputs by [@​mrbobbytables](https://github.com/mrbobbytables) in [#147](https://github.com/projectbluefin/utah/pull/147)
-- fix(iso): make the fastfetch OCR gate match what tesseract actually reads by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#137](https://github.com/projectbluefin/utah/pull/137)
 - fix: enable bluetooth.service for desktop adapters by [@​kylerankin](https://github.com/kylerankin) in [#125](https://github.com/projectbluefin/utah/pull/125)
 - feat(packages): install what Bluefin inherits from Fedora's base and Hummingbird already has by [@​hanthor](https://github.com/hanthor) in [#129](https://github.com/projectbluefin/utah/pull/129)
 - fix(iso): get the LUKS end-to-end test green on all four flavors by [@​hanthor](https://github.com/hanthor) in [#94](https://github.com/projectbluefin/utah/pull/94)
@@ -4846,10 +5724,6 @@ Release details remain on the canonical [/changelogs](/changelogs) surface.
 - fix(e2e): capture the fastfetch shot at 1080p, with its logo by [@​hanthor](https://github.com/hanthor) in [#112](https://github.com/projectbluefin/utah/pull/112)
 - fix(packages): ship glibc-all-langpacks so a chosen locale exists by [@​hanthor](https://github.com/hanthor) in [#116](https://github.com/projectbluefin/utah/pull/116)
 - fix: keep GSConnect loading on GNOME 51 (clipboard final-type) by [@​mrbobbytables](https://github.com/mrbobbytables) in [#89](https://github.com/projectbluefin/utah/pull/89)
-- fix: verify SHA-256 on bootc-installer bundle in iso/live/src/install-flatpaks.sh, drop tuna-os fallback by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#48](https://github.com/projectbluefin/utah/pull/48)
-- test: unit coverage for the desktop contract gates — scripts/verify-desktop-contract.py + scripts/verify-gnome-extensions.py, new tests/test_desktop_contract.py [quality] by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#96](https://github.com/projectbluefin/utah/pull/96)
-- fix(packages): restore bluefin.toml parity and document the three unresolvable names by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#110](https://github.com/projectbluefin/utah/pull/110)
-- refactor: single owner for the just check syntax inventory — Justfile check recipe, new scripts/check-script-syntax.py by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#91](https://github.com/projectbluefin/utah/pull/91)
 - fix: resolve OGC kernels when assembling live ISOs by [@​hanthor](https://github.com/hanthor) in [#87](https://github.com/projectbluefin/utah/pull/87)
 - fix(iso): repair CI handoff, payload digests, and live kernel support by [@​hanthor](https://github.com/hanthor) in [#86](https://github.com/projectbluefin/utah/pull/86)
 - ci: automate LUKS ISO validation and screenshot evidence by [@​hanthor](https://github.com/hanthor) in [#84](https://github.com/projectbluefin/utah/pull/84)
@@ -4872,15 +5746,12 @@ Release details remain on the canonical [/changelogs](/changelogs) surface.
 - fix(ci): drop canary inject_failure from build matrix (#285) by [@​mrbobbytables](https://github.com/mrbobbytables) in [#286](https://github.com/projectbluefin/utah-packages/pull/286)
 - ci(validate): give check_workflow_quoting and runtime_contract a PR-wide trigger by [@​buggtb](https://github.com/buggtb) in [#282](https://github.com/projectbluefin/utah-packages/pull/282)
 - feat(libass): update to 0.17.5 by [@​hanthor](https://github.com/hanthor) in [#266](https://github.com/projectbluefin/utah-packages/pull/266)
-- fix(build): keep the Actions runtime token out of untrusted package builds by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#284](https://github.com/projectbluefin/utah-packages/pull/284)
 - fix: prevent lock screen password controls from overlapping by [@​arteeh](https://github.com/arteeh) in [#290](https://github.com/projectbluefin/utah-packages/pull/290)
-- test: executed coverage for tools/rebuild_matrix.py — tests/test_rebuild_matrix.py by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#192](https://github.com/projectbluefin/utah-packages/pull/192)
 - feat(ci): let a dispatch build and publish only named packages by [@​hanthor](https://github.com/hanthor) in [#279](https://github.com/projectbluefin/utah-packages/pull/279)
 - fix(printing): import pdfio for libcupsfilters, and rebuild libgphoto2 by [@​hanthor](https://github.com/hanthor) in [#278](https://github.com/projectbluefin/utah-packages/pull/278)
 - fix(enchant2): build without the Nuspell backend by [@​hanthor](https://github.com/hanthor) in [#276](https://github.com/projectbluefin/utah-packages/pull/276)
 - feat(publish): resolve the blocking transaction in Utah's pinned base by [@​hanthor](https://github.com/hanthor) in [#277](https://github.com/projectbluefin/utah-packages/pull/277)
 - fix(build): resolve the hermetic root with best=0, like the container lane by [@​hanthor](https://github.com/hanthor) in [#275](https://github.com/projectbluefin/utah-packages/pull/275)
-- test(packit): executed coverage for package_chunks and the packit_workflow CLI by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#200](https://github.com/projectbluefin/utah-packages/pull/200)
 - feat(publish): publish each wave's successes as that wave finishes by [@​hanthor](https://github.com/hanthor) in [#274](https://github.com/projectbluefin/utah-packages/pull/274)
 - fix(publish): a bootstrap build never replaces the real package by [@​hanthor](https://github.com/hanthor) in [#273](https://github.com/projectbluefin/utah-packages/pull/273)
 - fix(publish): resolve Utah's install set in Utah's own base image by [@​hanthor](https://github.com/hanthor) in [#272](https://github.com/projectbluefin/utah-packages/pull/272)
@@ -4911,7 +5782,6 @@ Release details remain on the canonical [/changelogs](/changelogs) surface.
 - fix(srt): build with the OpenSSL EVP backend instead of gnutls+nettle3.10 by [@​hanthor](https://github.com/hanthor) in [#241](https://github.com/projectbluefin/utah-packages/pull/241)
 - fix(ci): upgrade libxml2 to Hummingbird's split release before builddep by [@​hanthor](https://github.com/hanthor) in [#240](https://github.com/projectbluefin/utah-packages/pull/240)
 - fix(grub2): efi_vendor=fedora so GRUB sits beside Utah's shim (Utah install e2e red since 09-21) by [@​hanthor](https://github.com/hanthor) in [#238](https://github.com/projectbluefin/utah-packages/pull/238)
-- refactor(publish-gate): discover rebuild waves instead of restating them by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#236](https://github.com/projectbluefin/utah-packages/pull/236)
 - test: gate architecture inventory counts by [@​Danathar](https://github.com/Danathar) in [#194](https://github.com/projectbluefin/utah-packages/pull/194)
 - fix(factory): source rebuild matrix package set from source_locks by [@​repires](https://github.com/repires) in [#232](https://github.com/projectbluefin/utah-packages/pull/232)
 - fix(import): skip factory-sourced packages in Rawhide resolver by [@​mrbobbytables](https://github.com/mrbobbytables) in [#185](https://github.com/projectbluefin/utah-packages/pull/185)
@@ -4926,7 +5796,6 @@ Release details remain on the canonical [/changelogs](/changelogs) surface.
 - ci(audit): pin pyyaml and declare it for the unit tests job by [@​mendezr](https://github.com/mendezr) in [#221](https://github.com/projectbluefin/utah-packages/pull/221)
 - feat(packages): import google-noto-color-emoji-fonts and stix-fonts recipes by [@​mrbobbytables](https://github.com/mrbobbytables) in [#199](https://github.com/projectbluefin/utah-packages/pull/199)
 - docs: define ORAS source lookaside policy by [@​mrbobbytables](https://github.com/mrbobbytables) in [#189](https://github.com/projectbluefin/utah-packages/pull/189)
-- test: executed coverage for tools/runtime_contract.py main() — tests/test_runtime_contract_main.py by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#209](https://github.com/projectbluefin/utah-packages/pull/209)
 - fix(linux-atm): pin kernel-headers to 6.19.6 for atmsvc.h by [@​hanthor](https://github.com/hanthor) in [#218](https://github.com/projectbluefin/utah-packages/pull/218)
 - fix: exclude libicu-77 from every build root by default, with per-package opt-in by [@​hanthor](https://github.com/hanthor) in [#217](https://github.com/projectbluefin/utah-packages/pull/217)
 - feat: ppp/libpcap/linux-atm/libgda closure parity (utah-packages#149) by [@​kylerankin](https://github.com/kylerankin) in [#203](https://github.com/projectbluefin/utah-packages/pull/203)
@@ -4946,8 +5815,6 @@ Release details remain on the canonical [/changelogs](/changelogs) surface.
 - ci: pin zstandard version in rebuild-rpms prepare job (#105) by [@​mendezr](https://github.com/mendezr) in [#109](https://github.com/projectbluefin/utah-packages/pull/109)
 - ci: pin zstandard in the prepare job (carries #109) by [@​hanthor](https://github.com/hanthor) in [#137](https://github.com/projectbluefin/utah-packages/pull/137)
 - fix(quality): add missing provenance for gnome-desktop3 and malcontent-bootstrap by [@​mrbobbytables](https://github.com/mrbobbytables) in [#98](https://github.com/projectbluefin/utah-packages/pull/98)
-- test: source_pipeline.py fail-closed paths — fetch retry/empty-body, verify_signature, source_manifest, bundled_sources, main() entry validation [quality] by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#129](https://github.com/projectbluefin/utah-packages/pull/129)
-- test: executed coverage for tools/import_bluefin_rawhide.py — new tests/test_import_bluefin_rawhide.py (resolve_source, main) by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#107](https://github.com/projectbluefin/utah-packages/pull/107)
 - fix(ci): guard build toolchain containers against mutable tags by [@​kylerankin](https://github.com/kylerankin) in [#110](https://github.com/projectbluefin/utah-packages/pull/110)
 - fix(workflows): bind rawhide dispatch inputs via env, not run interpolation by [@​kylerankin](https://github.com/kylerankin) in [#114](https://github.com/projectbluefin/utah-packages/pull/114)
 - Build the whole Utah contract: 343 recipes, Firefox as a Flatpak, four stage failures fixed by [@​hanthor](https://github.com/hanthor) in [#70](https://github.com/projectbluefin/utah-packages/pull/70)
@@ -4955,10 +5822,6 @@ Release details remain on the canonical [/changelogs](/changelogs) surface.
 - fix(ci): pin build toolchain containers by digest by [@​kylerankin](https://github.com/kylerankin) in [#88](https://github.com/projectbluefin/utah-packages/pull/88)
 - ci: repin Packit SRPM image to live digest by [@​Danathar](https://github.com/Danathar) in [#85](https://github.com/projectbluefin/utah-packages/pull/85)
 - fix(buildroot): exclude legacy ruby default-gems from Hummingbird repo by [@​mrbobbytables](https://github.com/mrbobbytables) in [#83](https://github.com/projectbluefin/utah-packages/pull/83)
-- [quality] test: unit coverage for tools/validate.py and tools/check_workflow_quoting.py by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#61](https://github.com/projectbluefin/utah-packages/pull/61)
-- [quality] test(tools): unit coverage for dist_git.py and recalculate_hummingbird_gaps.py by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#63](https://github.com/projectbluefin/utah-packages/pull/63)
-- [quality] test: unit coverage for tools/bootstrap_upstream_sources.py — manifest_pins, merge_candidates, plan_targets, sha512, prove_generated by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#65](https://github.com/projectbluefin/utah-packages/pull/65)
-- [architect] refactor: single source-lock parse — route dist_bump/packit_source0/source_pipeline/render_packit_config through package_inventory.source_locks by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#78](https://github.com/projectbluefin/utah-packages/pull/78)
 - fix(tailscale): disable incompatible jsonv2 experiment by [@​Danathar](https://github.com/Danathar) in [#86](https://github.com/projectbluefin/utah-packages/pull/86)
 - ci: publish factory repositories atomically after closure validation by [@​kylerankin](https://github.com/kylerankin) in [#89](https://github.com/projectbluefin/utah-packages/pull/89)
 - fix(gcc): drop gcc from the rebuild set, let Hummingbird supply it by [@​kylerankin](https://github.com/kylerankin) in [#90](https://github.com/projectbluefin/utah-packages/pull/90)
@@ -4966,7 +5829,6 @@ Release details remain on the canonical [/changelogs](/changelogs) surface.
 - refactor(tools): wrap check_workflow_quoting and validate in testable functions by [@​castrojo](https://github.com/castrojo) in [#73](https://github.com/projectbluefin/utah-packages/pull/73)
 - ci: make the compiler cache outlive the build container by [@​hanthor](https://github.com/hanthor) in [#33](https://github.com/projectbluefin/utah-packages/pull/33)
 - fix: keep GSConnect loading on GNOME 48+ (clipboard final-type) by [@​hanthor](https://github.com/hanthor) in [#53](https://github.com/projectbluefin/utah-packages/pull/53)
-- [architect] refactor: single source for the Rawhide ingestion grammar — tools/rawhide_sources.py, scan_rawhide_state.py, import_bluefin_rawhide.py by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#49](https://github.com/projectbluefin/utah-packages/pull/49)
 - feat: compose a local Utah package repository by [@​hanthor](https://github.com/hanthor) in [#34](https://github.com/projectbluefin/utah-packages/pull/34)
 - feat(packit): wire packit srpm into a real pilot job by [@​castrojo](https://github.com/castrojo) in [#41](https://github.com/projectbluefin/utah-packages/pull/41)
 - fix(packit-sdk): use upstream quay.io/packit/packit instead of rebuilding by [@​castrojo](https://github.com/castrojo) in [#40](https://github.com/projectbluefin/utah-packages/pull/40)
@@ -5034,17 +5896,13 @@ Release details remain on the canonical [/changelogs](/changelogs) surface.
 - fix(scripts): gen-filemap refuses partial caches, tests pin kernel match by [@​ahmedadan](https://github.com/ahmedadan) in [#1484](https://github.com/projectbluefin/dakota/pull/1484)
 - feat(kernel): Linux 7.2 bump with Fedora-audited hardware enablement by [@​ahmedadan](https://github.com/ahmedadan) in [#1473](https://github.com/projectbluefin/dakota/pull/1473)
 - ci: revalidate retargeted PRs and document CI-run Justfile recipes by [@​ahmedadan](https://github.com/ahmedadan) in [#1485](https://github.com/projectbluefin/dakota/pull/1485)
-- [quality] test: unit coverage for .github/scripts/image_variants.py — new scripts/test_image_variants.py by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1476](https://github.com/projectbluefin/dakota/pull/1476)
 - fix(ci): open monthly filemap PRs against testing, not main by [@​ahmedadan](https://github.com/ahmedadan) in [#1467](https://github.com/projectbluefin/dakota/pull/1467)
-- [quality] test: add unit tests for scripts/gen-filemap.py by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1420](https://github.com/projectbluefin/dakota/pull/1420)
-- [quality] test: unit coverage for .github/scripts/render_card.py — scripts/test_render_card.py by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1453](https://github.com/projectbluefin/dakota/pull/1453)
-- [architect] refactor: single source of truth for dakota image-variant set — .github/image-variants.json + check-publish-workflow drift gate by [@​hivecommons-hive](https://github.com/hivecommons-hive) in [#1437](https://github.com/projectbluefin/dakota/pull/1437)
 - fix(ci): sync-next owns files/linux-ogc with the rest of the kernel set by [@​ahmedadan](https://github.com/ahmedadan) in [#1475](https://github.com/projectbluefin/dakota/pull/1475)
 - chore(packages): bump uwelcome to v0.3.5 for the portal timeout fix by [@​ahmedadan](https://github.com/ahmedadan) in [#1462](https://github.com/projectbluefin/dakota/pull/1462)
 
 ## Contributors
 
-<GitHubProfileCard username="hivecommons-hive" highlight={true} />
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 250px), 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
 
 <GitHubProfileCard username="Danathar" />
 
@@ -5054,7 +5912,7 @@ Release details remain on the canonical [/changelogs](/changelogs) surface.
 
 <GitHubProfileCard username="sramkrishna" highlight={true} />
 
-<GitHubProfileCard username="kylerankin" highlight={true} />
+<GitHubProfileCard username="kylerankin" />
 
 <GitHubProfileCard username="kronikpillow" highlight={true} />
 
@@ -5084,9 +5942,9 @@ Release details remain on the canonical [/changelogs](/changelogs) surface.
 
 <GitHubProfileCard username="HuntedRaven7" />
 
-<GitHubProfileCard username="mrbobbytables" />
-
 <GitHubProfileCard username="KOTONEX" highlight={true} />
+
+<GitHubProfileCard username="mrbobbytables" />
 
 <GitHubProfileCard username="dtg01100" />
 
@@ -5100,12 +5958,13 @@ Release details remain on the canonical [/changelogs](/changelogs) surface.
 
 <GitHubProfileCard username="sebjag" />
 
+</div>
+
 ## Sources
 
 - `github-activity`: available (2026-09-01 to 2026-09-30): [source](https://api.github.com/graphql)
-- `github-lanes`: available (2026-09-01 to 2026-09-30): [source](https://api.github.com/repos/projectbluefin/bluefin/actions/runs)
+- `github-lanes`: available (2026-09-01 to 2026-09-30): [source](https://api.github.com/repos/projectbluefin/dakota/actions/runs)
 - `github-releases`: available (2026-09-01 to 2026-09-30): [source](https://api.github.com/repos)
-- `github-releases`: available (2026-09-01 to 2026-09-30): [source](https://api.github.com/repos/projectbluefin/bluefin/releases)
 - `github-releases`: available (2026-09-01 to 2026-09-30): [source](https://api.github.com/repos/projectbluefin/dakota/releases)
 - `github-releases`: available (2026-09-01 to 2026-09-30): [source](https://api.github.com/repos/projectbluefin/server/releases)
 - `countme`: unavailable — Countme active-system measurement is incomplete. (2026-09-01 to 2026-09-30): [source](https://data-analysis.fedoraproject.org/csv-reports/countme/totals.csv)

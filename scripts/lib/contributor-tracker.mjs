@@ -30,7 +30,10 @@ const BOT_PATTERNS = [
   /^app\//i,
   /^mergeraptor(\[bot\])?$/i,
   /^Copilot$/i,
+  /^hivecommons.*$/i,
+  /^kubestellar.*$/i,
   /\[bot\]$/i,
+  /-bot$/i,
 ];
 
 /**
@@ -61,7 +64,9 @@ export async function loadKnownContributors(
       const raw = await readFile(path, "utf8");
       const parsed = JSON.parse(raw);
       if (Array.isArray(parsed)) {
-        console.log(`[INFO] Loaded ${parsed.length} known contributors from ${path}`);
+        console.log(
+          `[INFO] Loaded ${parsed.length} known contributors from ${path}`,
+        );
         return new Set(parsed);
       }
     } catch {
@@ -86,7 +91,9 @@ export async function saveKnownContributors(
   await mkdir(dirname(cachePath), { recursive: true });
   const sorted = [...knownSet].sort();
   await writeFile(cachePath, JSON.stringify(sorted, null, 2) + "\n", "utf8");
-  console.log(`[INFO] Saved ${knownSet.size} known contributors to ${cachePath}`);
+  console.log(
+    `[INFO] Saved ${knownSet.size} known contributors to ${cachePath}`,
+  );
 }
 
 /**

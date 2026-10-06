@@ -222,7 +222,7 @@ test("FACTORY_LANES contains only portfolio entries configured for lanes", () =>
 });
 
 test("a failed configured lane remains visible with null measurements", async () => {
-  const failedRepository = FACTORY_LANES[1].repo;
+  const failedRepository = FACTORY_LANES[0].repo;
   const result = await fetchFactoryMonthlyStats(
     new Date("2026-10-01T00:00:00Z"),
     new Date("2026-10-31T23:59:59Z"),

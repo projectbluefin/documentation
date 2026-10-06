@@ -7,7 +7,8 @@ import {
 import { MONITORED_REPOS } from "./lib/monitored-repos.mjs";
 
 test("the portfolio separates stable, experimental, and ecosystem sources", () => {
-  assert.equal(findPortfolioEntry("projectbluefin/bluefin").tier, "stable");
+  assert.equal(findPortfolioEntry("projectbluefin/dakota").tier, "stable");
+  assert.equal(findPortfolioEntry("projectbluefin/bluefin"), null);
   assert.equal(findPortfolioEntry("projectbluefin/utah").tier, "experimental");
   assert.equal(findPortfolioEntry("ublue-os/artwork").tier, "ecosystem");
   assert.equal(findPortfolioEntry("projectbluefin/not-configured"), null);

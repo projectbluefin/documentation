@@ -72,10 +72,13 @@
   color: var(--report-chart-accent);
 }
 
-.chartCanvas,
+.chartCanvas {
+  width: 100%;
+}
+
 .chartPlaceholder {
   width: 100%;
-  min-height: 18rem;
+  min-height: 15rem;
 }
 
 .chartPlaceholder {
@@ -151,7 +154,7 @@
 
 .sectionGrid {
   display: grid;
-  gap: 1rem;
+  gap: 0;
 }
 
 .sectionPanel {
@@ -228,9 +231,8 @@
 }
 
 @media (min-width: 800px) {
-  .sectionGrid,
   .portfolioGrid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 

@@ -39,6 +39,7 @@ import {
   fetchExperimentalAdditions,
 } from "./lib/tap-promotions.mjs";
 import {
+  FACTORY_LANES,
   fetchFactoryMonthlyStats,
   extractCountmeMetrics,
   extractLeaderboardHeroes,
@@ -51,6 +52,7 @@ const KNOWN_CONTRIBUTORS_CACHE = "scripts/data/known-contributors.json";
 const KNOWN_CONTRIBUTORS_SEED = "scripts/data/known-contributors-seed.json";
 const REPORT_HISTORY_PATH = "scripts/data/report-history.json";
 const GITHUB_GRAPHQL_URL = "https://api.github.com/graphql";
+const LANE_SOURCE_URL = `https://api.github.com/repos/${FACTORY_LANES[0].repo}/actions/runs`;
 const COUNTME_SOURCE_URL =
   "https://data-analysis.fedoraproject.org/csv-reports/countme/totals.csv";
 const FLATHUB_SOURCE_URL = "https://flathub.org/api/v2/stats";
@@ -314,7 +316,7 @@ export function buildReportSnapshotPayload({
       ? null
       : chartDefinition({
           id: "activity-calendar",
-          kind: "calendar",
+          kind: "line",
           title: "Daily merged pull requests",
           currentValue: numericTotal(
             activityMetrics.dailyMerges.map((entry) => entry.value),
@@ -485,8 +487,7 @@ export function buildReportSnapshotPayload({
           currentValue: numericTotal(laneValues),
           unit: "publish runs",
           sourceLabel: "GitHub Actions",
-          sourceUrl:
-            "https://api.github.com/repos/projectbluefin/bluefin/actions/runs",
+          sourceUrl: LANE_SOURCE_URL,
           sourceWindow,
           labels: hasCadenceTrend ? cadenceLabels : laneLabels,
           series: hasCadenceTrend
@@ -646,7 +647,7 @@ export function buildReportSnapshotPayload({
         "github-lanes",
         hasAvailableLane ? "available" : "unavailable",
         laneUnavailableReason,
-        "https://api.github.com/repos/projectbluefin/bluefin/actions/runs",
+        LANE_SOURCE_URL,
         period,
       ),
       ...releaseProvenance,

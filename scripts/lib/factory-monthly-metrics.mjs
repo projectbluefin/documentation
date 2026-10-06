@@ -18,22 +18,11 @@ import { githubHeaders, githubFetch, githubToken } from "./gh.js";
 
 const GH_API = "https://api.github.com";
 
-const LANE_LABELS = {
-  "projectbluefin/bluefin": "Bluefin Testing",
-  "projectbluefin/dakota": "Dakota",
-};
-
-function laneId(repository) {
-  const name = repository.split("/").pop();
-  return name === "bluefin" ? "bluefin-testing" : name;
-}
-
 export const FACTORY_LANES = REPORT_PORTFOLIO.filter((entry) =>
   entry.signals?.includes("lanes"),
 ).map((entry) => ({
-  id: laneId(entry.repository),
+  id: entry.repository.split("/").pop(),
   label:
-    LANE_LABELS[entry.repository] ??
     entry.repository
       .split("/")
       .pop()

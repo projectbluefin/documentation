@@ -31,6 +31,8 @@ test("isBot matches the bot identities that open PRs in this org", () => {
     "mergeraptor[bot]",
     "Copilot",
     "some-hive-app[bot]",
+    "hivecommons-hive",
+    "kubestellar-hive",
   ]) {
     assert.equal(isBot(bot), true, `${bot} should be classified as a bot`);
   }
@@ -157,10 +159,11 @@ test("identifyNewContributors returns only the unseen contributors", () => {
 });
 
 test("identifyNewContributors preserves input order and duplicates", () => {
-  assert.deepEqual(
-    identifyNewContributors(["b", "a", "b"], new Set()),
-    ["b", "a", "b"],
-  );
+  assert.deepEqual(identifyNewContributors(["b", "a", "b"], new Set()), [
+    "b",
+    "a",
+    "b",
+  ]);
 });
 
 test("identifyNewContributors returns an empty list when everyone is known", () => {

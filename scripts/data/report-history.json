@@ -7364,7 +7364,7 @@
           "id": "github-lanes",
           "status": "available",
           "stateReason": null,
-          "url": "https://api.github.com/repos/projectbluefin/bluefin/actions/runs",
+          "url": "https://api.github.com/repos/projectbluefin/dakota/actions/runs",
           "window": {
             "start": "2026-09-01",
             "end": "2026-09-30"
@@ -7375,17 +7375,6 @@
           "status": "available",
           "stateReason": null,
           "url": "https://api.github.com/repos",
-          "window": {
-            "start": "2026-09-01",
-            "end": "2026-09-30"
-          }
-        },
-        {
-          "id": "github-releases",
-          "repository": "projectbluefin/bluefin",
-          "status": "available",
-          "stateReason": null,
-          "url": "https://api.github.com/repos/projectbluefin/bluefin/releases",
           "window": {
             "start": "2026-09-01",
             "end": "2026-09-30"
@@ -7447,9 +7436,9 @@
       "activity": {
         "calendar": {
           "id": "activity-calendar",
-          "kind": "calendar",
+          "kind": "line",
           "title": "Daily merged pull requests",
-          "currentValue": "1289",
+          "currentValue": "1200",
           "unit": "merged pull requests",
           "sourceLabel": "GitHub GraphQL",
           "sourceUrl": "https://api.github.com/graphql",
@@ -7491,32 +7480,32 @@
               "id": "merged",
               "label": "Merged pull requests",
               "values": [
+                9,
+                14,
+                2,
                 10,
-                18,
-                3,
-                12,
-                45,
-                51,
-                48,
-                41,
-                21,
-                76,
-                7,
-                42,
+                39,
+                47,
+                38,
                 35,
-                43,
-                7,
-                15,
-                37,
+                20,
+                76,
+                6,
+                34,
+                33,
+                39,
+                6,
+                14,
+                16,
                 39,
                 41,
                 78,
                 22,
                 81,
-                117,
+                113,
                 48,
-                86,
-                64,
+                75,
+                63,
                 50,
                 15,
                 88,
@@ -7530,14 +7519,13 @@
           "id": "activity-repositories",
           "kind": "grouped-bar",
           "title": "Merged pull requests by repository",
-          "currentValue": "1289",
+          "currentValue": "1200",
           "unit": "merged pull requests",
           "sourceLabel": "GitHub GraphQL",
           "sourceUrl": "https://api.github.com/graphql",
           "sourceWindow": "September 2026 UTC (2026-09-01 to 2026-09-30)",
           "labels": [
             "projectbluefin/actions",
-            "projectbluefin/bluefin",
             "projectbluefin/bonedigger",
             "projectbluefin/common",
             "projectbluefin/dakota",
@@ -7555,7 +7543,6 @@
               "label": "Merged pull requests",
               "values": [
                 96,
-                89,
                 7,
                 133,
                 133,
@@ -7575,7 +7562,7 @@
           "id": "activity-categories",
           "kind": "grouped-bar",
           "title": "Merged pull requests by label",
-          "currentValue": "946",
+          "currentValue": "865",
           "unit": "label assignments",
           "sourceLabel": "GitHub GraphQL",
           "sourceUrl": "https://api.github.com/graphql",
@@ -7608,8 +7595,6 @@
             "quality",
             "release/blocked",
             "release/ready",
-            "renovate/high-risk",
-            "renovate/low-risk",
             "runner",
             "security",
             "size:XS",
@@ -7627,34 +7612,32 @@
                 41,
                 19,
                 4,
-                35,
-                53,
+                32,
+                41,
                 4,
                 17,
-                85,
+                83,
                 4,
                 10,
-                84,
+                82,
                 7,
                 6,
                 2,
-                97,
-                117,
+                82,
+                112,
                 7,
                 11,
-                89,
-                15,
+                72,
+                14,
                 63,
-                39,
+                36,
+                1,
                 4,
-                6,
-                11,
-                2,
                 11,
                 6,
                 1,
                 1,
-                38
+                35
               ]
             }
           ],
@@ -7662,7 +7645,6 @@
         },
         "portfolio": {
           "stable": [
-            "projectbluefin/bluefin",
             "projectbluefin/dakota",
             "projectbluefin/testsuite",
             "projectbluefin/server",
@@ -7684,15 +7666,15 @@
       "delivery": {
         "lanes": [
           {
-            "id": "bluefin-testing",
-            "label": "Bluefin Testing",
-            "repo": "projectbluefin/bluefin",
-            "total": 17,
-            "passed": 0,
-            "failed": 2,
-            "pending": 15,
-            "successRate": 0,
-            "medianDurationMin": 66,
+            "id": "dakota",
+            "label": "Dakota",
+            "repo": "projectbluefin/dakota",
+            "total": 65,
+            "passed": 39,
+            "failed": 4,
+            "pending": 22,
+            "successRate": 91,
+            "medianDurationMin": 38,
             "sparklineData": [
               0,
               0,
@@ -7700,6 +7682,8 @@
               0,
               0,
               0,
+              5,
+              10,
               0,
               0,
               0,
@@ -7716,13 +7700,11 @@
               0,
               0,
               0,
-              4,
-              0,
-              12,
-              1,
-              0,
-              0,
-              0,
+              14,
+              10,
+              22,
+              2,
+              2,
               0
             ],
             "trend": {
@@ -7765,118 +7747,8 @@
                 0,
                 0,
                 0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                4,
-                0,
-                12,
-                1,
-                0,
-                0,
-                0,
-                0
-              ]
-            },
-            "unavailableReason": null
-          },
-          {
-            "id": "dakota",
-            "label": "Dakota",
-            "repo": "projectbluefin/dakota",
-            "total": 69,
-            "passed": 37,
-            "failed": 4,
-            "pending": 28,
-            "successRate": 90,
-            "medianDurationMin": 33,
-            "sparklineData": [
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              14,
-              10,
-              22,
-              2,
-              6,
-              15
-            ],
-            "trend": {
-              "labels": [
-                "2026-09-01",
-                "2026-09-02",
-                "2026-09-03",
-                "2026-09-04",
-                "2026-09-05",
-                "2026-09-06",
-                "2026-09-07",
-                "2026-09-08",
-                "2026-09-09",
-                "2026-09-10",
-                "2026-09-11",
-                "2026-09-12",
-                "2026-09-13",
-                "2026-09-14",
-                "2026-09-15",
-                "2026-09-16",
-                "2026-09-17",
-                "2026-09-18",
-                "2026-09-19",
-                "2026-09-20",
-                "2026-09-21",
-                "2026-09-22",
-                "2026-09-23",
-                "2026-09-24",
-                "2026-09-25",
-                "2026-09-26",
-                "2026-09-27",
-                "2026-09-28",
-                "2026-09-29",
-                "2026-09-30"
-              ],
-              "values": [
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
+                5,
+                10,
                 0,
                 0,
                 0,
@@ -7897,8 +7769,8 @@
                 10,
                 22,
                 2,
-                6,
-                15
+                2,
+                0
               ]
             },
             "unavailableReason": null
@@ -7908,10 +7780,10 @@
           "id": "delivery-cadence",
           "kind": "line",
           "title": "Publishing-lane cadence",
-          "currentValue": "86",
+          "currentValue": "65",
           "unit": "publish runs",
           "sourceLabel": "GitHub Actions",
-          "sourceUrl": "https://api.github.com/repos/projectbluefin/bluefin/actions/runs",
+          "sourceUrl": "https://api.github.com/repos/projectbluefin/dakota/actions/runs",
           "sourceWindow": "September 2026 UTC (2026-09-01 to 2026-09-30)",
           "labels": [
             "2026-09-01",
@@ -7947,42 +7819,6 @@
           ],
           "series": [
             {
-              "id": "bluefin-testing",
-              "label": "Bluefin Testing",
-              "values": [
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                4,
-                0,
-                12,
-                1,
-                0,
-                0,
-                0,
-                0
-              ]
-            },
-            {
               "id": "dakota",
               "label": "Dakota",
               "values": [
@@ -7992,8 +7828,8 @@
                 0,
                 0,
                 0,
-                0,
-                0,
+                5,
+                10,
                 0,
                 0,
                 0,
@@ -8014,8 +7850,8 @@
                 10,
                 22,
                 2,
-                6,
-                15
+                2,
+                0
               ]
             }
           ],
@@ -8025,14 +7861,12 @@
           "id": "delivery-releases",
           "kind": "line",
           "title": "Release events",
-          "currentValue": "31",
+          "currentValue": "29",
           "unit": "release events",
           "sourceLabel": "GitHub Releases API",
           "sourceUrl": "https://api.github.com/repos",
           "sourceWindow": "September 2026 UTC (2026-09-01 to 2026-09-30)",
           "labels": [
-            "2026-09-17",
-            "2026-09-09",
             "2026-09-21",
             "2026-09-18",
             "2026-09-16",
@@ -8096,8 +7930,6 @@
                 1,
                 1,
                 1,
-                1,
-                1,
                 1
               ]
             }
@@ -8110,7 +7942,7 @@
           "id": "participation-automation",
           "kind": "stacked-bar",
           "title": "Human and automation activity",
-          "currentValue": "1289",
+          "currentValue": "1200",
           "unit": "pull requests",
           "sourceLabel": "GitHub GraphQL",
           "sourceUrl": "https://api.github.com/graphql",
@@ -8123,14 +7955,14 @@
               "id": "human",
               "label": "Human",
               "values": [
-                1003
+                780
               ]
             },
             {
               "id": "automation",
               "label": "Automation",
               "values": [
-                286
+                420
               ]
             }
           ],
@@ -8142,11 +7974,10 @@
               "rank": 1,
               "login": "castrojo",
               "avatarUrl": "https://github.com/castrojo.png?size=64",
-              "contributions": 293,
-              "projects": 11,
+              "contributions": 272,
+              "projects": 10,
               "repos": [
                 "common",
-                "bluefin",
                 "dakota",
                 "testsuite",
                 "server",
@@ -8166,38 +7997,12 @@
             },
             {
               "rank": 2,
-              "login": "hivecommons-hive",
-              "avatarUrl": "https://github.com/hivecommons-hive.png?size=64",
-              "contributions": 172,
-              "projects": 10,
-              "repos": [
-                "common",
-                "bluefin",
-                "dakota",
-                "testsuite",
-                "server",
-                "actions",
-                "documentation",
-                "finpilot",
-                "utah",
-                "utah-packages"
-              ],
-              "badge": {
-                "label": "New Light",
-                "color": "#1D76DB",
-                "title": "First-time Contributor"
-              },
-              "isNew": true
-            },
-            {
-              "rank": 3,
               "login": "hanthor",
               "avatarUrl": "https://github.com/hanthor.png?size=64",
-              "contributions": 111,
-              "projects": 8,
+              "contributions": 110,
+              "projects": 7,
               "repos": [
                 "common",
-                "bluefin",
                 "testsuite",
                 "server",
                 "actions",
@@ -8213,13 +8018,36 @@
               "isNew": false
             },
             {
+              "rank": 3,
+              "login": "kylerankin",
+              "avatarUrl": "https://github.com/kylerankin.png?size=64",
+              "contributions": 67,
+              "projects": 9,
+              "repos": [
+                "common",
+                "testsuite",
+                "server",
+                "actions",
+                "bonedigger",
+                "documentation",
+                "finpilot",
+                "utah",
+                "utah-packages"
+              ],
+              "badge": {
+                "label": "High Velocity",
+                "color": "#2AA198",
+                "title": "5+ Merged PRs"
+              },
+              "isNew": false
+            },
+            {
               "rank": 4,
               "login": "mrbobbytables",
               "avatarUrl": "https://github.com/mrbobbytables.png?size=64",
-              "contributions": 77,
-              "projects": 8,
+              "contributions": 65,
+              "projects": 7,
               "repos": [
-                "bluefin",
                 "testsuite",
                 "server",
                 "actions",
@@ -8239,11 +8067,10 @@
               "rank": 5,
               "login": "Danathar",
               "avatarUrl": "https://github.com/Danathar.png?size=64",
-              "contributions": 69,
-              "projects": 11,
+              "contributions": 59,
+              "projects": 10,
               "repos": [
                 "common",
-                "bluefin",
                 "dakota",
                 "testsuite",
                 "server",
@@ -8263,31 +8090,6 @@
             },
             {
               "rank": 6,
-              "login": "kylerankin",
-              "avatarUrl": "https://github.com/kylerankin.png?size=64",
-              "contributions": 69,
-              "projects": 10,
-              "repos": [
-                "common",
-                "bluefin",
-                "testsuite",
-                "server",
-                "actions",
-                "bonedigger",
-                "documentation",
-                "finpilot",
-                "utah",
-                "utah-packages"
-              ],
-              "badge": {
-                "label": "New Light",
-                "color": "#1D76DB",
-                "title": "First-time Contributor"
-              },
-              "isNew": true
-            },
-            {
-              "rank": 7,
               "login": "ahmedadan",
               "avatarUrl": "https://github.com/ahmedadan.png?size=64",
               "contributions": 47,
@@ -8305,14 +8107,13 @@
               "isNew": false
             },
             {
-              "rank": 8,
+              "rank": 7,
               "login": "mendezr",
               "avatarUrl": "https://github.com/mendezr.png?size=64",
-              "contributions": 35,
-              "projects": 9,
+              "contributions": 32,
+              "projects": 8,
               "repos": [
                 "common",
-                "bluefin",
                 "testsuite",
                 "server",
                 "actions",
@@ -8329,7 +8130,7 @@
               "isNew": true
             },
             {
-              "rank": 9,
+              "rank": 8,
               "login": "jeefy",
               "avatarUrl": "https://github.com/jeefy.png?size=64",
               "contributions": 29,
@@ -8345,7 +8146,7 @@
               "isNew": true
             },
             {
-              "rank": 10,
+              "rank": 9,
               "login": "Siddhj2206",
               "avatarUrl": "https://github.com/Siddhj2206.png?size=64",
               "contributions": 16,
@@ -8363,7 +8164,7 @@
               "isNew": false
             },
             {
-              "rank": 11,
+              "rank": 10,
               "login": "repires",
               "avatarUrl": "https://github.com/repires.png?size=64",
               "contributions": 15,
@@ -8384,7 +8185,7 @@
               "isNew": false
             },
             {
-              "rank": 12,
+              "rank": 11,
               "login": "buggtb",
               "avatarUrl": "https://github.com/buggtb.png?size=64",
               "contributions": 14,
@@ -8404,7 +8205,7 @@
               "isNew": true
             },
             {
-              "rank": 13,
+              "rank": 12,
               "login": "dtg01100",
               "avatarUrl": "https://github.com/dtg01100.png?size=64",
               "contributions": 13,
@@ -8423,7 +8224,7 @@
               "isNew": false
             },
             {
-              "rank": 14,
+              "rank": 13,
               "login": "sramkrishna",
               "avatarUrl": "https://github.com/sramkrishna.png?size=64",
               "contributions": 12,
@@ -8443,26 +8244,7 @@
               "isNew": true
             },
             {
-              "rank": 15,
-              "login": "KiKaraage",
-              "avatarUrl": "https://github.com/KiKaraage.png?size=64",
-              "contributions": 6,
-              "projects": 4,
-              "repos": [
-                "common",
-                "bluefin",
-                "actions",
-                "utah"
-              ],
-              "badge": {
-                "label": "High Velocity",
-                "color": "#2AA198",
-                "title": "5+ Merged PRs"
-              },
-              "isNew": false
-            },
-            {
-              "rank": 16,
+              "rank": 14,
               "login": "arteeh",
               "avatarUrl": "https://github.com/arteeh.png?size=64",
               "contributions": 5,
@@ -8480,25 +8262,25 @@
               "isNew": true
             },
             {
-              "rank": 17,
-              "login": "eltorrero",
-              "avatarUrl": "https://github.com/eltorrero.png?size=64",
-              "contributions": 4,
+              "rank": 15,
+              "login": "KiKaraage",
+              "avatarUrl": "https://github.com/KiKaraage.png?size=64",
+              "contributions": 5,
               "projects": 3,
               "repos": [
                 "common",
-                "bluefin",
-                "actions"
+                "actions",
+                "utah"
               ],
               "badge": {
-                "label": "Cross-Fleet",
-                "color": "#8A63D2",
-                "title": "Multi-Repo Impact"
+                "label": "High Velocity",
+                "color": "#2AA198",
+                "title": "5+ Merged PRs"
               },
               "isNew": false
             },
             {
-              "rank": 18,
+              "rank": 16,
               "login": "HuntedRaven7",
               "avatarUrl": "https://github.com/HuntedRaven7.png?size=64",
               "contributions": 3,
@@ -8516,7 +8298,7 @@
               "isNew": false
             },
             {
-              "rank": 19,
+              "rank": 17,
               "login": "clubanderson",
               "avatarUrl": "https://github.com/clubanderson.png?size=64",
               "contributions": 3,
@@ -8528,7 +8310,19 @@
               "isNew": false
             },
             {
-              "rank": 20,
+              "rank": 18,
+              "login": "eltorrero",
+              "avatarUrl": "https://github.com/eltorrero.png?size=64",
+              "contributions": 3,
+              "projects": 2,
+              "repos": [
+                "common",
+                "actions"
+              ],
+              "isNew": false
+            },
+            {
+              "rank": 19,
               "login": "TB516",
               "avatarUrl": "https://github.com/TB516.png?size=64",
               "contributions": 2,
@@ -8545,7 +8339,7 @@
               "isNew": true
             },
             {
-              "rank": 21,
+              "rank": 20,
               "login": "bronson",
               "avatarUrl": "https://github.com/bronson.png?size=64",
               "contributions": 1,
@@ -8561,7 +8355,7 @@
               "isNew": true
             },
             {
-              "rank": 22,
+              "rank": 21,
               "login": "delphicmelody",
               "avatarUrl": "https://github.com/delphicmelody.png?size=64",
               "contributions": 1,
@@ -8572,7 +8366,7 @@
               "isNew": false
             },
             {
-              "rank": 23,
+              "rank": 22,
               "login": "ericcurtin",
               "avatarUrl": "https://github.com/ericcurtin.png?size=64",
               "contributions": 1,
@@ -8588,7 +8382,7 @@
               "isNew": true
             },
             {
-              "rank": 24,
+              "rank": 23,
               "login": "KOTONEX",
               "avatarUrl": "https://github.com/KOTONEX.png?size=64",
               "contributions": 1,
@@ -8604,7 +8398,7 @@
               "isNew": true
             },
             {
-              "rank": 25,
+              "rank": 24,
               "login": "kronikpillow",
               "avatarUrl": "https://github.com/kronikpillow.png?size=64",
               "contributions": 1,
@@ -8620,7 +8414,7 @@
               "isNew": true
             },
             {
-              "rank": 26,
+              "rank": 25,
               "login": "sebjag",
               "avatarUrl": "https://github.com/sebjag.png?size=64",
               "contributions": 1,
@@ -8631,7 +8425,7 @@
               "isNew": false
             },
             {
-              "rank": 27,
+              "rank": 26,
               "login": "theMimolet",
               "avatarUrl": "https://github.com/theMimolet.png?size=64",
               "contributions": 1,
@@ -8642,7 +8436,7 @@
               "isNew": false
             },
             {
-              "rank": 28,
+              "rank": 27,
               "login": "xHope-tech",
               "avatarUrl": "https://github.com/xHope-tech.png?size=64",
               "contributions": 1,
@@ -8660,27 +8454,10 @@
           ],
           "newLights": [
             {
-              "login": "hivecommons-hive",
-              "avatarUrl": "https://github.com/hivecommons-hive.png?size=32",
-              "repos": [
-                "common",
-                "bluefin",
-                "dakota",
-                "testsuite",
-                "server",
-                "actions",
-                "documentation",
-                "finpilot",
-                "utah",
-                "utah-packages"
-              ]
-            },
-            {
               "login": "mendezr",
               "avatarUrl": "https://github.com/mendezr.png?size=32",
               "repos": [
                 "common",
-                "bluefin",
                 "testsuite",
                 "server",
                 "actions",
@@ -8699,22 +8476,6 @@
                 "actions",
                 "documentation",
                 "utah"
-              ]
-            },
-            {
-              "login": "kylerankin",
-              "avatarUrl": "https://github.com/kylerankin.png?size=32",
-              "repos": [
-                "common",
-                "bluefin",
-                "testsuite",
-                "server",
-                "actions",
-                "bonedigger",
-                "documentation",
-                "finpilot",
-                "utah",
-                "utah-packages"
               ]
             },
             {
@@ -11328,6 +11089,1326 @@
             },
             "flathub": null,
             "unavailableReason": "Flathub statistics could not be read."
+          }
+        },
+        {
+          "schemaVersion": 2,
+          "period": {
+            "month": "2026-09",
+            "start": "2026-09-01",
+            "end": "2026-09-30"
+          },
+          "sources": [
+            {
+              "id": "github-activity",
+              "status": "available",
+              "stateReason": null,
+              "url": "https://api.github.com/graphql",
+              "window": {
+                "start": "2026-09-01",
+                "end": "2026-09-30"
+              }
+            },
+            {
+              "id": "github-lanes",
+              "status": "available",
+              "stateReason": null,
+              "url": "https://api.github.com/repos/projectbluefin/bluefin/actions/runs",
+              "window": {
+                "start": "2026-09-01",
+                "end": "2026-09-30"
+              }
+            },
+            {
+              "id": "github-releases",
+              "status": "available",
+              "stateReason": null,
+              "url": "https://api.github.com/repos",
+              "window": {
+                "start": "2026-09-01",
+                "end": "2026-09-30"
+              }
+            },
+            {
+              "id": "github-releases",
+              "repository": "projectbluefin/dakota",
+              "status": "available",
+              "stateReason": null,
+              "url": "https://api.github.com/repos/projectbluefin/dakota/releases",
+              "window": {
+                "start": "2026-09-01",
+                "end": "2026-09-30"
+              }
+            },
+            {
+              "id": "github-releases",
+              "repository": "projectbluefin/server",
+              "status": "available",
+              "stateReason": null,
+              "url": "https://api.github.com/repos/projectbluefin/server/releases",
+              "window": {
+                "start": "2026-09-01",
+                "end": "2026-09-30"
+              }
+            },
+            {
+              "id": "countme",
+              "status": "unavailable",
+              "stateReason": "Countme active-system measurement is incomplete.",
+              "url": "https://data-analysis.fedoraproject.org/csv-reports/countme/totals.csv",
+              "window": {
+                "start": "2026-09-01",
+                "end": "2026-09-30"
+              }
+            },
+            {
+              "id": "homebrew",
+              "status": "available",
+              "stateReason": null,
+              "url": "https://github.com/ublue-os/homebrew-tap",
+              "window": {
+                "start": "2026-09-01",
+                "end": "2026-09-30"
+              }
+            },
+            {
+              "id": "flathub",
+              "status": "available",
+              "stateReason": null,
+              "url": "https://flathub.org/api/v2/stats",
+              "window": {
+                "start": "2026-09-01",
+                "end": "2026-09-30"
+              }
+            }
+          ],
+          "activity": {
+            "calendar": {
+              "id": "activity-calendar",
+              "kind": "line",
+              "title": "Daily merged pull requests",
+              "currentValue": "1200",
+              "unit": "merged pull requests",
+              "sourceLabel": "GitHub GraphQL",
+              "sourceUrl": "https://api.github.com/graphql",
+              "sourceWindow": "September 2026 UTC (2026-09-01 to 2026-09-30)",
+              "labels": [
+                "2026-09-01",
+                "2026-09-02",
+                "2026-09-03",
+                "2026-09-04",
+                "2026-09-05",
+                "2026-09-06",
+                "2026-09-07",
+                "2026-09-08",
+                "2026-09-09",
+                "2026-09-10",
+                "2026-09-11",
+                "2026-09-12",
+                "2026-09-13",
+                "2026-09-14",
+                "2026-09-15",
+                "2026-09-16",
+                "2026-09-17",
+                "2026-09-18",
+                "2026-09-19",
+                "2026-09-20",
+                "2026-09-21",
+                "2026-09-22",
+                "2026-09-23",
+                "2026-09-24",
+                "2026-09-25",
+                "2026-09-26",
+                "2026-09-27",
+                "2026-09-28",
+                "2026-09-29",
+                "2026-09-30"
+              ],
+              "series": [
+                {
+                  "id": "merged",
+                  "label": "Merged pull requests",
+                  "values": [
+                    9,
+                    14,
+                    2,
+                    10,
+                    39,
+                    47,
+                    38,
+                    35,
+                    20,
+                    76,
+                    6,
+                    34,
+                    33,
+                    39,
+                    6,
+                    14,
+                    16,
+                    39,
+                    41,
+                    78,
+                    22,
+                    81,
+                    113,
+                    48,
+                    75,
+                    63,
+                    50,
+                    15,
+                    88,
+                    49
+                  ]
+                }
+              ],
+              "minimumPoints": 1
+            },
+            "repositories": {
+              "id": "activity-repositories",
+              "kind": "grouped-bar",
+              "title": "Merged pull requests by repository",
+              "currentValue": "1200",
+              "unit": "merged pull requests",
+              "sourceLabel": "GitHub GraphQL",
+              "sourceUrl": "https://api.github.com/graphql",
+              "sourceWindow": "September 2026 UTC (2026-09-01 to 2026-09-30)",
+              "labels": [
+                "projectbluefin/actions",
+                "projectbluefin/bonedigger",
+                "projectbluefin/common",
+                "projectbluefin/dakota",
+                "projectbluefin/documentation",
+                "projectbluefin/finpilot",
+                "projectbluefin/iso",
+                "projectbluefin/server",
+                "projectbluefin/testsuite",
+                "projectbluefin/utah",
+                "projectbluefin/utah-packages"
+              ],
+              "series": [
+                {
+                  "id": "repositories",
+                  "label": "Merged pull requests",
+                  "values": [
+                    96,
+                    7,
+                    133,
+                    133,
+                    255,
+                    85,
+                    2,
+                    134,
+                    77,
+                    150,
+                    128
+                  ]
+                }
+              ],
+              "minimumPoints": 1
+            },
+            "categories": {
+              "id": "activity-categories",
+              "kind": "grouped-bar",
+              "title": "Merged pull requests by label",
+              "currentValue": "865",
+              "unit": "label assignments",
+              "sourceLabel": "GitHub GraphQL",
+              "sourceUrl": "https://api.github.com/graphql",
+              "sourceWindow": "September 2026 UTC (2026-09-01 to 2026-09-30)",
+              "labels": [
+                "2-discussing",
+                "3-clanker-queue",
+                "3-human-queue",
+                "4-review",
+                "agent/architect",
+                "agent/ci-maintainer",
+                "agent/quality",
+                "agent/scanner",
+                "agent/security",
+                "architecture",
+                "automerge",
+                "blocked",
+                "build",
+                "chore/deps",
+                "dependencies",
+                "flatcar-base",
+                "full-build",
+                "hive/hosted-projectbluefin-knuckle-gjvq",
+                "hold",
+                "javascript",
+                "kde",
+                "lgtm",
+                "needs-human",
+                "pr/needs-review",
+                "quality",
+                "release/blocked",
+                "release/ready",
+                "runner",
+                "security",
+                "size:XS",
+                "tech-debt",
+                "testing"
+              ],
+              "series": [
+                {
+                  "id": "categories",
+                  "label": "Label assignments",
+                  "values": [
+                    5,
+                    26,
+                    26,
+                    41,
+                    19,
+                    4,
+                    32,
+                    41,
+                    4,
+                    17,
+                    83,
+                    4,
+                    10,
+                    82,
+                    7,
+                    6,
+                    2,
+                    82,
+                    112,
+                    7,
+                    11,
+                    72,
+                    14,
+                    63,
+                    36,
+                    1,
+                    4,
+                    11,
+                    6,
+                    1,
+                    1,
+                    35
+                  ]
+                }
+              ],
+              "minimumPoints": 1
+            },
+            "portfolio": {
+              "stable": [
+                "projectbluefin/dakota",
+                "projectbluefin/testsuite",
+                "projectbluefin/server",
+                "projectbluefin/actions",
+                "projectbluefin/bonedigger",
+                "projectbluefin/aurorafin-shared",
+                "projectbluefin/common",
+                "projectbluefin/documentation",
+                "projectbluefin/branding",
+                "projectbluefin/iso",
+                "projectbluefin/finpilot"
+              ],
+              "experimental": [
+                "projectbluefin/utah",
+                "projectbluefin/utah-packages"
+              ]
+            }
+          },
+          "delivery": {
+            "lanes": [
+              {
+                "id": "dakota",
+                "label": "Dakota",
+                "repo": "projectbluefin/dakota",
+                "total": 69,
+                "passed": 37,
+                "failed": 4,
+                "pending": 28,
+                "successRate": 90,
+                "medianDurationMin": 33,
+                "sparklineData": [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  14,
+                  10,
+                  22,
+                  2,
+                  6,
+                  15
+                ],
+                "trend": {
+                  "labels": [
+                    "2026-09-01",
+                    "2026-09-02",
+                    "2026-09-03",
+                    "2026-09-04",
+                    "2026-09-05",
+                    "2026-09-06",
+                    "2026-09-07",
+                    "2026-09-08",
+                    "2026-09-09",
+                    "2026-09-10",
+                    "2026-09-11",
+                    "2026-09-12",
+                    "2026-09-13",
+                    "2026-09-14",
+                    "2026-09-15",
+                    "2026-09-16",
+                    "2026-09-17",
+                    "2026-09-18",
+                    "2026-09-19",
+                    "2026-09-20",
+                    "2026-09-21",
+                    "2026-09-22",
+                    "2026-09-23",
+                    "2026-09-24",
+                    "2026-09-25",
+                    "2026-09-26",
+                    "2026-09-27",
+                    "2026-09-28",
+                    "2026-09-29",
+                    "2026-09-30"
+                  ],
+                  "values": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    14,
+                    10,
+                    22,
+                    2,
+                    6,
+                    15
+                  ]
+                },
+                "unavailableReason": null
+              }
+            ],
+            "cadence": {
+              "id": "delivery-cadence",
+              "kind": "line",
+              "title": "Publishing-lane cadence",
+              "currentValue": "69",
+              "unit": "publish runs",
+              "sourceLabel": "GitHub Actions",
+              "sourceUrl": "https://api.github.com/repos/projectbluefin/bluefin/actions/runs",
+              "sourceWindow": "September 2026 UTC (2026-09-01 to 2026-09-30)",
+              "labels": [
+                "2026-09-01",
+                "2026-09-02",
+                "2026-09-03",
+                "2026-09-04",
+                "2026-09-05",
+                "2026-09-06",
+                "2026-09-07",
+                "2026-09-08",
+                "2026-09-09",
+                "2026-09-10",
+                "2026-09-11",
+                "2026-09-12",
+                "2026-09-13",
+                "2026-09-14",
+                "2026-09-15",
+                "2026-09-16",
+                "2026-09-17",
+                "2026-09-18",
+                "2026-09-19",
+                "2026-09-20",
+                "2026-09-21",
+                "2026-09-22",
+                "2026-09-23",
+                "2026-09-24",
+                "2026-09-25",
+                "2026-09-26",
+                "2026-09-27",
+                "2026-09-28",
+                "2026-09-29",
+                "2026-09-30"
+              ],
+              "series": [
+                {
+                  "id": "dakota",
+                  "label": "Dakota",
+                  "values": [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    14,
+                    10,
+                    22,
+                    2,
+                    6,
+                    15
+                  ]
+                }
+              ],
+              "minimumPoints": 1
+            },
+            "releases": {
+              "id": "delivery-releases",
+              "kind": "line",
+              "title": "Release events",
+              "currentValue": "29",
+              "unit": "release events",
+              "sourceLabel": "GitHub Releases API",
+              "sourceUrl": "https://api.github.com/repos",
+              "sourceWindow": "September 2026 UTC (2026-09-01 to 2026-09-30)",
+              "labels": [
+                "2026-09-21",
+                "2026-09-18",
+                "2026-09-16",
+                "2026-09-14",
+                "2026-09-09",
+                "2026-09-04",
+                "2026-09-30",
+                "2026-09-30",
+                "2026-09-30",
+                "2026-09-30",
+                "2026-09-30",
+                "2026-09-30",
+                "2026-09-30",
+                "2026-09-30",
+                "2026-09-30",
+                "2026-09-30",
+                "2026-09-30",
+                "2026-09-30",
+                "2026-09-30",
+                "2026-09-30",
+                "2026-09-30",
+                "2026-09-29",
+                "2026-09-29",
+                "2026-09-29",
+                "2026-09-29",
+                "2026-09-29",
+                "2026-09-29",
+                "2026-09-28",
+                "2026-09-08"
+              ],
+              "series": [
+                {
+                  "id": "releases",
+                  "label": "Release events",
+                  "values": [
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1
+                  ]
+                }
+              ],
+              "minimumPoints": 1
+            }
+          },
+          "participation": {
+            "automation": {
+              "id": "participation-automation",
+              "kind": "stacked-bar",
+              "title": "Human and automation activity",
+              "currentValue": "1200",
+              "unit": "pull requests",
+              "sourceLabel": "GitHub GraphQL",
+              "sourceUrl": "https://api.github.com/graphql",
+              "sourceWindow": "September 2026 UTC (2026-09-01 to 2026-09-30)",
+              "labels": [
+                "Report period"
+              ],
+              "series": [
+                {
+                  "id": "human",
+                  "label": "Human",
+                  "values": [
+                    780
+                  ]
+                },
+                {
+                  "id": "automation",
+                  "label": "Automation",
+                  "values": [
+                    420
+                  ]
+                }
+              ],
+              "minimumPoints": 1
+            },
+            "leaderboard": {
+              "heroes": [
+                {
+                  "rank": 1,
+                  "login": "castrojo",
+                  "avatarUrl": "https://github.com/castrojo.png?size=64",
+                  "contributions": 272,
+                  "projects": 10,
+                  "repos": [
+                    "common",
+                    "dakota",
+                    "testsuite",
+                    "server",
+                    "actions",
+                    "bonedigger",
+                    "documentation",
+                    "finpilot",
+                    "utah",
+                    "utah-packages"
+                  ],
+                  "badge": {
+                    "label": "Top Hero",
+                    "color": "#F9C74F",
+                    "title": "Month MVP"
+                  },
+                  "isNew": false
+                },
+                {
+                  "rank": 2,
+                  "login": "hanthor",
+                  "avatarUrl": "https://github.com/hanthor.png?size=64",
+                  "contributions": 110,
+                  "projects": 7,
+                  "repos": [
+                    "common",
+                    "testsuite",
+                    "server",
+                    "actions",
+                    "iso",
+                    "utah",
+                    "utah-packages"
+                  ],
+                  "badge": {
+                    "label": "High Velocity",
+                    "color": "#2AA198",
+                    "title": "5+ Merged PRs"
+                  },
+                  "isNew": false
+                },
+                {
+                  "rank": 3,
+                  "login": "kylerankin",
+                  "avatarUrl": "https://github.com/kylerankin.png?size=64",
+                  "contributions": 67,
+                  "projects": 9,
+                  "repos": [
+                    "common",
+                    "testsuite",
+                    "server",
+                    "actions",
+                    "bonedigger",
+                    "documentation",
+                    "finpilot",
+                    "utah",
+                    "utah-packages"
+                  ],
+                  "badge": {
+                    "label": "High Velocity",
+                    "color": "#2AA198",
+                    "title": "5+ Merged PRs"
+                  },
+                  "isNew": false
+                },
+                {
+                  "rank": 4,
+                  "login": "mrbobbytables",
+                  "avatarUrl": "https://github.com/mrbobbytables.png?size=64",
+                  "contributions": 65,
+                  "projects": 7,
+                  "repos": [
+                    "testsuite",
+                    "server",
+                    "actions",
+                    "documentation",
+                    "finpilot",
+                    "utah",
+                    "utah-packages"
+                  ],
+                  "badge": {
+                    "label": "High Velocity",
+                    "color": "#2AA198",
+                    "title": "5+ Merged PRs"
+                  },
+                  "isNew": false
+                },
+                {
+                  "rank": 5,
+                  "login": "Danathar",
+                  "avatarUrl": "https://github.com/Danathar.png?size=64",
+                  "contributions": 59,
+                  "projects": 10,
+                  "repos": [
+                    "common",
+                    "dakota",
+                    "testsuite",
+                    "server",
+                    "actions",
+                    "documentation",
+                    "iso",
+                    "finpilot",
+                    "utah",
+                    "utah-packages"
+                  ],
+                  "badge": {
+                    "label": "High Velocity",
+                    "color": "#2AA198",
+                    "title": "5+ Merged PRs"
+                  },
+                  "isNew": false
+                },
+                {
+                  "rank": 6,
+                  "login": "ahmedadan",
+                  "avatarUrl": "https://github.com/ahmedadan.png?size=64",
+                  "contributions": 47,
+                  "projects": 3,
+                  "repos": [
+                    "common",
+                    "dakota",
+                    "documentation"
+                  ],
+                  "badge": {
+                    "label": "High Velocity",
+                    "color": "#2AA198",
+                    "title": "5+ Merged PRs"
+                  },
+                  "isNew": false
+                },
+                {
+                  "rank": 7,
+                  "login": "mendezr",
+                  "avatarUrl": "https://github.com/mendezr.png?size=64",
+                  "contributions": 32,
+                  "projects": 8,
+                  "repos": [
+                    "common",
+                    "testsuite",
+                    "server",
+                    "actions",
+                    "documentation",
+                    "finpilot",
+                    "utah",
+                    "utah-packages"
+                  ],
+                  "badge": {
+                    "label": "New Light",
+                    "color": "#1D76DB",
+                    "title": "First-time Contributor"
+                  },
+                  "isNew": true
+                },
+                {
+                  "rank": 8,
+                  "login": "jeefy",
+                  "avatarUrl": "https://github.com/jeefy.png?size=64",
+                  "contributions": 29,
+                  "projects": 1,
+                  "repos": [
+                    "server"
+                  ],
+                  "badge": {
+                    "label": "New Light",
+                    "color": "#1D76DB",
+                    "title": "First-time Contributor"
+                  },
+                  "isNew": true
+                },
+                {
+                  "rank": 9,
+                  "login": "Siddhj2206",
+                  "avatarUrl": "https://github.com/Siddhj2206.png?size=64",
+                  "contributions": 16,
+                  "projects": 3,
+                  "repos": [
+                    "common",
+                    "actions",
+                    "finpilot"
+                  ],
+                  "badge": {
+                    "label": "High Velocity",
+                    "color": "#2AA198",
+                    "title": "5+ Merged PRs"
+                  },
+                  "isNew": false
+                },
+                {
+                  "rank": 10,
+                  "login": "repires",
+                  "avatarUrl": "https://github.com/repires.png?size=64",
+                  "contributions": 15,
+                  "projects": 6,
+                  "repos": [
+                    "common",
+                    "testsuite",
+                    "actions",
+                    "documentation",
+                    "utah",
+                    "utah-packages"
+                  ],
+                  "badge": {
+                    "label": "High Velocity",
+                    "color": "#2AA198",
+                    "title": "5+ Merged PRs"
+                  },
+                  "isNew": false
+                },
+                {
+                  "rank": 11,
+                  "login": "buggtb",
+                  "avatarUrl": "https://github.com/buggtb.png?size=64",
+                  "contributions": 14,
+                  "projects": 5,
+                  "repos": [
+                    "common",
+                    "testsuite",
+                    "actions",
+                    "utah",
+                    "utah-packages"
+                  ],
+                  "badge": {
+                    "label": "New Light",
+                    "color": "#1D76DB",
+                    "title": "First-time Contributor"
+                  },
+                  "isNew": true
+                },
+                {
+                  "rank": 12,
+                  "login": "dtg01100",
+                  "avatarUrl": "https://github.com/dtg01100.png?size=64",
+                  "contributions": 13,
+                  "projects": 4,
+                  "repos": [
+                    "server",
+                    "actions",
+                    "documentation",
+                    "utah"
+                  ],
+                  "badge": {
+                    "label": "High Velocity",
+                    "color": "#2AA198",
+                    "title": "5+ Merged PRs"
+                  },
+                  "isNew": false
+                },
+                {
+                  "rank": 13,
+                  "login": "sramkrishna",
+                  "avatarUrl": "https://github.com/sramkrishna.png?size=64",
+                  "contributions": 12,
+                  "projects": 5,
+                  "repos": [
+                    "common",
+                    "testsuite",
+                    "actions",
+                    "documentation",
+                    "utah"
+                  ],
+                  "badge": {
+                    "label": "New Light",
+                    "color": "#1D76DB",
+                    "title": "First-time Contributor"
+                  },
+                  "isNew": true
+                },
+                {
+                  "rank": 14,
+                  "login": "arteeh",
+                  "avatarUrl": "https://github.com/arteeh.png?size=64",
+                  "contributions": 5,
+                  "projects": 3,
+                  "repos": [
+                    "common",
+                    "server",
+                    "utah-packages"
+                  ],
+                  "badge": {
+                    "label": "New Light",
+                    "color": "#1D76DB",
+                    "title": "First-time Contributor"
+                  },
+                  "isNew": true
+                },
+                {
+                  "rank": 15,
+                  "login": "KiKaraage",
+                  "avatarUrl": "https://github.com/KiKaraage.png?size=64",
+                  "contributions": 5,
+                  "projects": 3,
+                  "repos": [
+                    "common",
+                    "actions",
+                    "utah"
+                  ],
+                  "badge": {
+                    "label": "High Velocity",
+                    "color": "#2AA198",
+                    "title": "5+ Merged PRs"
+                  },
+                  "isNew": false
+                },
+                {
+                  "rank": 16,
+                  "login": "HuntedRaven7",
+                  "avatarUrl": "https://github.com/HuntedRaven7.png?size=64",
+                  "contributions": 3,
+                  "projects": 3,
+                  "repos": [
+                    "common",
+                    "actions",
+                    "utah"
+                  ],
+                  "badge": {
+                    "label": "Cross-Fleet",
+                    "color": "#8A63D2",
+                    "title": "Multi-Repo Impact"
+                  },
+                  "isNew": false
+                },
+                {
+                  "rank": 17,
+                  "login": "clubanderson",
+                  "avatarUrl": "https://github.com/clubanderson.png?size=64",
+                  "contributions": 3,
+                  "projects": 2,
+                  "repos": [
+                    "common",
+                    "utah-packages"
+                  ],
+                  "isNew": false
+                },
+                {
+                  "rank": 18,
+                  "login": "eltorrero",
+                  "avatarUrl": "https://github.com/eltorrero.png?size=64",
+                  "contributions": 3,
+                  "projects": 2,
+                  "repos": [
+                    "common",
+                    "actions"
+                  ],
+                  "isNew": false
+                },
+                {
+                  "rank": 19,
+                  "login": "TB516",
+                  "avatarUrl": "https://github.com/TB516.png?size=64",
+                  "contributions": 2,
+                  "projects": 2,
+                  "repos": [
+                    "server",
+                    "documentation"
+                  ],
+                  "badge": {
+                    "label": "New Light",
+                    "color": "#1D76DB",
+                    "title": "First-time Contributor"
+                  },
+                  "isNew": true
+                },
+                {
+                  "rank": 20,
+                  "login": "bronson",
+                  "avatarUrl": "https://github.com/bronson.png?size=64",
+                  "contributions": 1,
+                  "projects": 1,
+                  "repos": [
+                    "server"
+                  ],
+                  "badge": {
+                    "label": "New Light",
+                    "color": "#1D76DB",
+                    "title": "First-time Contributor"
+                  },
+                  "isNew": true
+                },
+                {
+                  "rank": 21,
+                  "login": "delphicmelody",
+                  "avatarUrl": "https://github.com/delphicmelody.png?size=64",
+                  "contributions": 1,
+                  "projects": 1,
+                  "repos": [
+                    "documentation"
+                  ],
+                  "isNew": false
+                },
+                {
+                  "rank": 22,
+                  "login": "ericcurtin",
+                  "avatarUrl": "https://github.com/ericcurtin.png?size=64",
+                  "contributions": 1,
+                  "projects": 1,
+                  "repos": [
+                    "common"
+                  ],
+                  "badge": {
+                    "label": "New Light",
+                    "color": "#1D76DB",
+                    "title": "First-time Contributor"
+                  },
+                  "isNew": true
+                },
+                {
+                  "rank": 23,
+                  "login": "KOTONEX",
+                  "avatarUrl": "https://github.com/KOTONEX.png?size=64",
+                  "contributions": 1,
+                  "projects": 1,
+                  "repos": [
+                    "dakota"
+                  ],
+                  "badge": {
+                    "label": "New Light",
+                    "color": "#1D76DB",
+                    "title": "First-time Contributor"
+                  },
+                  "isNew": true
+                },
+                {
+                  "rank": 24,
+                  "login": "kronikpillow",
+                  "avatarUrl": "https://github.com/kronikpillow.png?size=64",
+                  "contributions": 1,
+                  "projects": 1,
+                  "repos": [
+                    "common"
+                  ],
+                  "badge": {
+                    "label": "New Light",
+                    "color": "#1D76DB",
+                    "title": "First-time Contributor"
+                  },
+                  "isNew": true
+                },
+                {
+                  "rank": 25,
+                  "login": "sebjag",
+                  "avatarUrl": "https://github.com/sebjag.png?size=64",
+                  "contributions": 1,
+                  "projects": 1,
+                  "repos": [
+                    "documentation"
+                  ],
+                  "isNew": false
+                },
+                {
+                  "rank": 26,
+                  "login": "theMimolet",
+                  "avatarUrl": "https://github.com/theMimolet.png?size=64",
+                  "contributions": 1,
+                  "projects": 1,
+                  "repos": [
+                    "common"
+                  ],
+                  "isNew": false
+                },
+                {
+                  "rank": 27,
+                  "login": "xHope-tech",
+                  "avatarUrl": "https://github.com/xHope-tech.png?size=64",
+                  "contributions": 1,
+                  "projects": 1,
+                  "repos": [
+                    "common"
+                  ],
+                  "badge": {
+                    "label": "New Light",
+                    "color": "#1D76DB",
+                    "title": "First-time Contributor"
+                  },
+                  "isNew": true
+                }
+              ],
+              "newLights": [
+                {
+                  "login": "mendezr",
+                  "avatarUrl": "https://github.com/mendezr.png?size=32",
+                  "repos": [
+                    "common",
+                    "testsuite",
+                    "server",
+                    "actions",
+                    "documentation",
+                    "finpilot",
+                    "utah",
+                    "utah-packages"
+                  ]
+                },
+                {
+                  "login": "sramkrishna",
+                  "avatarUrl": "https://github.com/sramkrishna.png?size=32",
+                  "repos": [
+                    "common",
+                    "testsuite",
+                    "actions",
+                    "documentation",
+                    "utah"
+                  ]
+                },
+                {
+                  "login": "kronikpillow",
+                  "avatarUrl": "https://github.com/kronikpillow.png?size=32",
+                  "repos": [
+                    "common"
+                  ]
+                },
+                {
+                  "login": "buggtb",
+                  "avatarUrl": "https://github.com/buggtb.png?size=32",
+                  "repos": [
+                    "common",
+                    "testsuite",
+                    "actions",
+                    "utah",
+                    "utah-packages"
+                  ]
+                },
+                {
+                  "login": "arteeh",
+                  "avatarUrl": "https://github.com/arteeh.png?size=32",
+                  "repos": [
+                    "common",
+                    "server",
+                    "utah-packages"
+                  ]
+                },
+                {
+                  "login": "xHope-tech",
+                  "avatarUrl": "https://github.com/xHope-tech.png?size=32",
+                  "repos": [
+                    "common"
+                  ]
+                },
+                {
+                  "login": "ericcurtin",
+                  "avatarUrl": "https://github.com/ericcurtin.png?size=32",
+                  "repos": [
+                    "common"
+                  ]
+                },
+                {
+                  "login": "KOTONEX",
+                  "avatarUrl": "https://github.com/KOTONEX.png?size=32",
+                  "repos": [
+                    "dakota"
+                  ]
+                },
+                {
+                  "login": "jeefy",
+                  "avatarUrl": "https://github.com/jeefy.png?size=32",
+                  "repos": [
+                    "server"
+                  ]
+                },
+                {
+                  "login": "bronson",
+                  "avatarUrl": "https://github.com/bronson.png?size=32",
+                  "repos": [
+                    "server"
+                  ]
+                },
+                {
+                  "login": "TB516",
+                  "avatarUrl": "https://github.com/TB516.png?size=32",
+                  "repos": [
+                    "server",
+                    "documentation"
+                  ]
+                }
+              ]
+            }
+          },
+          "ecosystem": {
+            "countme": null,
+            "homebrew": {
+              "id": "ecosystem-homebrew",
+              "kind": "grouped-bar",
+              "title": "Homebrew tap additions",
+              "currentValue": "4",
+              "unit": "package additions",
+              "sourceLabel": "Homebrew taps",
+              "sourceUrl": "https://github.com/ublue-os/homebrew-tap",
+              "sourceWindow": "September 2026 UTC (2026-09-01 to 2026-09-30)",
+              "labels": [
+                "Production tap",
+                "Experimental tap"
+              ],
+              "series": [
+                {
+                  "id": "additions",
+                  "label": "Additions",
+                  "values": [
+                    1,
+                    3
+                  ]
+                }
+              ],
+              "minimumPoints": 1
+            },
+            "flathub": {
+              "id": "ecosystem-flathub",
+              "kind": "line",
+              "title": "Flathub downloads",
+              "currentValue": "138860924",
+              "unit": "calendar-month downloads",
+              "sourceLabel": "Flathub",
+              "sourceUrl": "https://flathub.org/api/v2/stats",
+              "sourceWindow": "2026-09-01 to 2026-09-30 UTC",
+              "labels": [
+                "2026-09-01",
+                "2026-09-02",
+                "2026-09-03",
+                "2026-09-04",
+                "2026-09-05",
+                "2026-09-06",
+                "2026-09-07",
+                "2026-09-08",
+                "2026-09-09",
+                "2026-09-10",
+                "2026-09-11",
+                "2026-09-12",
+                "2026-09-13",
+                "2026-09-14",
+                "2026-09-15",
+                "2026-09-16",
+                "2026-09-17",
+                "2026-09-18",
+                "2026-09-19",
+                "2026-09-20",
+                "2026-09-21",
+                "2026-09-22",
+                "2026-09-23",
+                "2026-09-24",
+                "2026-09-25",
+                "2026-09-26",
+                "2026-09-27",
+                "2026-09-28",
+                "2026-09-29",
+                "2026-09-30"
+              ],
+              "series": [
+                {
+                  "id": "downloads",
+                  "label": "Downloads",
+                  "values": [
+                    3847891,
+                    3704773,
+                    3346979,
+                    3546709,
+                    3606051,
+                    3971490,
+                    4269175,
+                    3641711,
+                    3430562,
+                    3964229,
+                    4223264,
+                    3427171,
+                    3209228,
+                    3253176,
+                    6879476,
+                    9581954,
+                    5635105,
+                    5799594,
+                    6441098,
+                    5626597,
+                    5122010,
+                    5022777,
+                    4330136,
+                    4717927,
+                    4303001,
+                    4377214,
+                    4183987,
+                    5367481,
+                    5826789,
+                    4203369
+                  ]
+                }
+              ],
+              "minimumPoints": 1
+            },
+            "unavailableReason": "Countme active-system measurement is incomplete."
           }
         }
       ]

@@ -56,7 +56,6 @@ function ChartSlot({
 }): React.JSX.Element {
   return (
     <div className={styles.sectionPanel}>
-      <h3>{label}</h3>
       {definition ? (
         <ReportChart definition={definition} />
       ) : (
@@ -114,7 +113,7 @@ export default function ReportActivity(
 
       <div className={styles.sectionGrid}>
         <ChartSlot
-          label="Daily merge calendar"
+          label="Daily merged pull requests"
           definition={section.calendar}
           reason={reason}
         />

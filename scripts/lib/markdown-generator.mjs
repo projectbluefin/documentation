@@ -100,7 +100,7 @@ function reportPeriodDates(snapshot) {
 }
 
 function snapshotContributorCards(contributors, newContributors) {
-  return contributors
+  const cards = contributors
     .map((username) => {
       const sponsorUrl = getSponsorUrl(username);
       const highlight = newContributors.includes(username)
@@ -110,6 +110,8 @@ function snapshotContributorCards(contributors, newContributors) {
       return `<GitHubProfileCard username="${username}"${highlight}${sponsor} />`;
     })
     .join("\n\n");
+
+  return `<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 250px), 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>\n\n${cards}\n\n</div>`;
 }
 
 function snapshotSourcesSection(sources = []) {
@@ -1265,7 +1267,7 @@ function generateContributorsSection(contributors, newContributors) {
   // contributors and newContributors are pre-filtered by caller — no bots
   if (newContributors.length > 0) {
     section += `### New contributors\n\n`;
-    section += `<div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem', marginBottom: '2rem' }}>\n\n`;
+    section += `<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 250px), 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>\n\n`;
 
     const newContributorCards = newContributors
       .map((username) => {
@@ -1288,7 +1290,7 @@ function generateContributorsSection(contributors, newContributors) {
 
   if (continuingContributors.length > 0) {
     section += `### Continuing contributors\n\n`;
-    section += `<div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem', marginBottom: '2rem' }}>\n\n`;
+    section += `<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 250px), 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>\n\n`;
 
     const continuingContributorCards = continuingContributors
       .map((username) => {

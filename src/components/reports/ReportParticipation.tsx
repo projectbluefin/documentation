@@ -57,7 +57,6 @@ export default function ReportParticipation(
 
       <div className={styles.sectionGrid}>
         <div className={styles.sectionPanel}>
-          <h3>Human and automation activity</h3>
           {section.automation ? (
             <ReportChart definition={section.automation} />
           ) : (
@@ -67,7 +66,6 @@ export default function ReportParticipation(
       </div>
 
       <div className={styles.sectionPanel}>
-        <h3>Current contributor leaderboard</h3>
         {hasLeaderboard && leaderboard ? (
           <ReportLeaderboard
             title={leaderboard.title}

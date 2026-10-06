@@ -57,7 +57,9 @@ export default function ReportChart({
           <h3 className={styles.chartTitle}>{definition.title}</h3>
           <div className={styles.currentMetric}>
             <span className={styles.currentValue}>
-              {definition.currentValue}
+              {/^\d+$/.test(definition.currentValue)
+                ? Number(definition.currentValue).toLocaleString("en-US")
+                : definition.currentValue}
             </span>
             <span className={styles.currentUnit}>{definition.unit}</span>
           </div>
