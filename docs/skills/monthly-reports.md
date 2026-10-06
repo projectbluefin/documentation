@@ -143,6 +143,19 @@ is unavailable. A missing measurement is `null`, not zero. Publishing lanes
 retain their identity when unavailable, with measurements set to `null` and the
 reason shown.
 
+`projectbluefin/bluefin` is not in the portfolio; Dakota is the only publishing
+lane. Bot accounts (`isBot` in `scripts/lib/contributor-tracker.mjs`, including
+`hivecommons*`, `kubestellar*` and `*-bot`) never enter contributor counts or
+the leaderboard.
+
+To regenerate a published month after a portfolio change, delete the post (the
+generator refuses to overwrite), restore `scripts/data/known-contributors.json`
+from the commit before that month's original run, run
+`GITHUB_TOKEN=$(gh auth token) node scripts/generate-report.mjs --month=YYYY-MM`,
+then restore `known-contributors.json` to `HEAD`. Skipping the baseline restore
+erases that month's first-time contributors. `report-history.json` replaces the
+month in place.
+
 ## Chart accessibility contract
 
 Every chart must expose its current numeric value, unit, source label, and
@@ -151,6 +164,18 @@ minimum point count, and provide the snapshot values in an accessible
 `<details>` table. Severity uses a glyph as well as intensity; color is never
 the only distinction. ECharts runs only in the client boundary, while the
 snapshot and its provenance remain available to server-rendered output.
+
+Charts are drawn by data shape (`chartShape` in `ReportChartClient.tsx`), not
+by the snapshot's recorded `kind`, so already-published reports get the same
+rules:
+
+- Named comparisons: horizontal bars, largest first, full names, value at the
+  bar end, at most 15 rows. Never vertical bars with rotated or truncated labels.
+- Date series: about one tick per week, short dates, never rotated.
+  Out-of-order series are sorted with gaps kept as `null`.
+- Event lists (repeated dates, e.g. release events): counted per day.
+- One period split between series: a single labelled horizontal bar.
+- One chart per row at article width; the chart frame owns the title.
 
 ## Public-source adapter invariants
 
