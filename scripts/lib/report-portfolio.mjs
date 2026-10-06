@@ -1,10 +1,5 @@
 export const REPORT_PORTFOLIO = [
   {
-    repository: "projectbluefin/bluefin",
-    tier: "stable",
-    signals: ["activity", "lanes", "releases"],
-  },
-  {
     repository: "projectbluefin/dakota",
     tier: "stable",
     signals: ["activity", "lanes", "releases"],
