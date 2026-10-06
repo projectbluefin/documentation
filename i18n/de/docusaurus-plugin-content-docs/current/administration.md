@@ -93,7 +93,7 @@ Oder wähle `date` und ein älteres Image.
 
 #### Manuell zwischen Streams wechseln
 
-Bluefin verwendet [`bootc`](https://bootc.dev/bootc/), um das Betriebssystem-Image zu verwalten. Um deine aktuelle und gestagedeigtes Deployment zu inspizieren, führe aus:
+Bluefin verwendet [`bootc`](https://bootc.dev/bootc/), um das Betriebssystem-Image zu verwalten. Um deine aktuellen und gestagten Deployments zu inspizieren, führe aus:
 
 ```sh
 sudo bootc status

@@ -11,7 +11,7 @@ Bluefin ist bestrebt, Folgendes auszuliefern:
 - Die leistungsstärkste [cloud-native Entwicklungsumgebung](https://landscape.cncf.io/) der Welt
 - Volle Virtualisierungsunterstützung rund um QEMU/KVM sowie Unterstützung für Docker und Incus
 
-:::info[Stronger Together]
+:::info[Gemeinsam stärker]
 
 Es gibt [15,6 Millionen Cloud-Native-Entwickler](https://www.cncf.io/announcements/2025/11/11/cncf-and-slashdata-survey-finds-cloud-native-ecosystem-surges-to-15-6m-developers/) auf der Welt. Unser Workflow basiert auf den Entwicklungslehren aus diesen Techniken
 
@@ -30,7 +30,7 @@ Bluefin geht „all in" auf Cloud-Native-Entwicklung und wird anders verwendet a
 
 Dies unterscheidet sich von traditionellen Distributionen, indem es den Entwicklungsprozess betriebssystemagnostisch macht. Es gibt auf Bluefin kein Äquivalent zu `apt install php`; Entwicklung erfolgt mit `podman` oder `docker` direkt über eine IDE.
 
-Wir glauben auch an einfachen Zugang zu anderen florierenden Ökosystemen wie Python via `uv`. Wir werfen das Handtuch auf „ein Linux-System-Paketmanager, um sie alle zu beherrschen", weil diese Ökosysteme selbst Giganten sind. Kritiker werden sagen, dass wir zu viele Paketmanager ausliefern; wir sagen, dass wir keine Paketmanager ausliefern, sondern _Ökosysteme, die Nutzer wollen_. Und diese modernen Paketmanager sind für eine Welt im Container-Zeitgebaut, weil das tatsächlich stimmt. Und wir wollen sie out of the box auf unseren Desktops.
+Wir glauben auch an einfachen Zugang zu anderen florierenden Ökosystemen wie Python via `uv`. Wir werfen das Handtuch auf „ein Linux-System-Paketmanager, um sie alle zu beherrschen", weil diese Ökosysteme selbst Giganten sind. Kritiker werden sagen, dass wir zu viele Paketmanager ausliefern; wir sagen, dass wir keine Paketmanager ausliefern, sondern _Ökosysteme, die Nutzer wollen_. Und diese modernen Paketmanager sind für eine Welt gebaut, die auf Containern läuft, weil das tatsächlich stimmt. Und wir wollen sie out of the box auf unseren Desktops.
 
 :::tip[Warum Cloud Native?]
 
