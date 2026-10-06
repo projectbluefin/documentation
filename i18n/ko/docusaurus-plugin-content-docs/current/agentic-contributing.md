@@ -64,7 +64,7 @@ flowchart TB
 
     subgraph bonedigger["bonedigger (projectbluefin/bonedigger)"]
         direction TB
-        ujust["ujust report\n(사용자가 자신의 시스템에서 실행)")"]
+        ujust["ujust report\n(사용자가 자신의 시스템에서 실행)"]
         bot["GitHub Actions 라이프사이클 봇"]
         ujust --> bot
     end
@@ -212,7 +212,7 @@ flowchart LR
     task["에이전트가 작업합니다"]
     pattern["패턴, 우회책, 또는 관습을 발견합니다"]
     skill["그와 같은 PR에서 스킬 파일에 작성합니다"]
-    commit["커밋합니다\n(스킬 파일 포함)")"]
+    commit["커밋합니다\n(스킬 파일 포함)"]
     next["다음 에이전트가 더 똑똑하게 시작합니다"]
     loop["루프"]
 
@@ -349,7 +349,7 @@ flowchart TB
 
     build -->|다이제스트가 게시됩니다| e2e["post-testing-e2e.yml\nsmoke + common 스위트\nQEMU VM + AT-SPI\n촉진을 차단합니다"]
 
-    e2e -->|성공 시| promotion["promote-testing-to-main.yml\n1. 매일 04:00 UTC / 푸시에\n2. testing HEAD SHA를 잠급니다\n3. main에 대한 PR을 열거나 업데이트합니다\n4. 병합 큐가 자동 병합합니다\n   (0 승인 필요)")"]
+    e2e -->|성공 시| promotion["promote-testing-to-main.yml\n1. 매일 04:00 UTC / 푸시에\n2. testing HEAD SHA를 잠급니다\n3. main에 대한 PR을 열거나 업데이트합니다\n4. 병합 큐가 자동 병합합니다\n   (0 승인 필요)"]
 
     promotion --> release["execute-release.yml\nmain으로의 푸시에 트리거\nskopeo copy :testing@digest → :stable/:latest\n다이제스트 잠금"]
 
@@ -641,8 +641,8 @@ PR이 `Containerfile`, `Justfile`, `image-versions.yml`, `build_files/`, 또는 
 이것은 `e2e-dispatch.yml`을 트리거합니다. 이것은:
 
 1. PR 이미지를 빌드합니다
-   2.그것에 대한 smoke + developer + vanilla-gnome 스위트를 실행합니다
-2. 결과를 PR로 되돌려 게시합니다
+2. 그것에 대한 smoke + developer + vanilla-gnome 스위트를 실행합니다
+3. 결과를 PR로 되돌려 게시합니다
 
 `pr-smoke.yml`만으로는 부족하는 변경에 대한 확장 테스트에 사용하세요.
 
@@ -776,13 +776,13 @@ https://hive.projectbluefin.io/contribute/leaderboard?style=projectbluefin/docum
 
 `?style=` 파라미터는 `owner/repo/path/theme.css@ref`를 받습니다. 레포지토리의 기본 브랜치를 추적하려면 `@ref`를 생략하세요. hive는 서버 측에서 `raw.githubusercontent.com`에서 파일을 가져오고, 그 결과를 정제하며, 128 KiB로 제한합니다. 이것은 Content-Security-Policy를 그대로 유지하고 당신의 IP를 제3자로부터 멀리 둡니다.
 
-당신의 own을 작성하려면,
+직접 작성하시려면,
 [`static/hive/leaderboard.css`](https://github.com/projectbluefin/documentation/blob/main/static/hive/leaderboard.css)를
 복사하고 색을 변경하세요. 정제기는 처음 생각한 것보다 더 까다롭고, 그 각각은 정제된 결과를 가져와서 보낸 것과 diff하여 검증되었습니다. 어떤 선언이든 허용되지 않으면 전체 규칙을 거부합니다:
 
 - **`@import`와 `url()`이 없습니다.** 가져올 수 있는 스타일시트는 가져올 수 있는 스타일시트입니다.
 - **모든 at-규칙이 없습니다.** `@media`도 포함됩니다. `prefers-color-scheme` 또는 `prefers-reduced-motion`으로 분기할 수 없습니다.
-- **사용자 속성이 없습니다.** `--anything: value`를 포함하는 규칙은 그대로 dropped되므로, 테마는 자신의 변수를 정의할 수 없고 `--me-accent`도 설정할 수 없습니다 (그것은 hive의 내장 스타일이 작동하는 방법이지만). 리터럴 색을 사용하세요.
+- **사용자 속성이 없습니다.** `--anything: value`를 포함하는 규칙은 그대로 삭제되고, 테마는 자신의 변수를 정의할 수 없고 `--me-accent`도 설정할 수 없습니다 (그것은 hive의 내장 스타일이 작동하는 방법이지만). 리터럴 색을 사용하세요.
 - **그라디언트가 없습니다.** `linear-gradient()`는 살아남지 않습니다.
 - **조상 선택자가 없습니다.** 규칙은 `#tab-leaderboard`를 접두사로 붙여 범위가 정해지므로, `[data-theme="light"] .me-card`는 `#tab-leaderboard [data-theme="light"] .me-card`가 되고, hive는 `<html>`에 `data-theme`를 설정합니다 — 그 범위 위에 있어서, 결코 일치할 수 없습니다.
 

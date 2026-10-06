@@ -35,11 +35,11 @@ Bluefin은 [lazy consensus](https://www.apache.org/foundation/glossary.html#Lazy
 - 설계를하고 명세하기 위해 Draft 작업을 이슈로 변환하세요
   - 설계와 명세는 프로젝 위한 것이며 구현 약속을 수반하지 않습니다.
 
-### 아키텍트
+### 아키텍처
 
 Bluefin의 커스터마이징은 OCI 컨테이너에 보관되고, 이후 다른 컨테이너와base 이미지와 함께assemble되어 다른 Bluefin 이미지를 만듭니다.
 
-전체 구성 요소 다이어그램과 assemble 흐름은 아래 [**Bluefin 아키텍트 이해**](#bluefin-아키텍트-이해)를 확인하세요.
+전체 구성 요소 다이어그램과 assemble 흐름은 아래 [**Bluefin 아키텍처 이해**](#bluefin-아키텍처-이해)를 확인하세요.
 
 ### 시작하기 전에 알 것들
 
@@ -91,7 +91,7 @@ Bluefin은 다른 이미지에_ship되는 설정 OCI 컨테이너의 조합입�
 이것은 전통적인 Linux 배포 모델의 반대입니다, 가치는 다른 OCI 레이어에 있습니다,base 이미지에만 있는 것이 아닙니다. 이것이 우리가 "배포는 중요하지 않다"라고 말할 때의 의미입니다 — 어떤base 이미지를든 사용할 수 있기 때문에 이것은 우리가 수행해야 할 결정의 긴 목록에서 또 다른 선택일 뿐입니다. 여전히 _중요합니다_, 중요하지 않을 뿐입니다. 그리고 어디서나 소프트웨어를 소스할 수 있기 때문에 "누가 더 좋은 소프트웨어를 가져오는가"라는 아이디어는 단지 그걸 자동화할 수 있을 때 큰 의미가 없습니다.
 :::
 
-## Bluefin 아키텍트 이해
+## Bluefin 아키텍처 이해
 
 다른 구성 요소는 다음 순서로 assemble됩니다. 이것은 GitHub Actions와 자동화된 워크플로우를 통해 수행됩니다:
 
@@ -138,7 +138,7 @@ flowchart TB
 
 ### Image-Based Development
 
-Bluefin은 OCI 컨테이너 이미지를 배포 메커니즘으로 사용합니다. repo에 대한 모든 커밋은 부팅 가능한 OS 이미지를 생성하는 빌드를 트리거합니다. 이 아키텍트는 다음과 같은 의미를 가집니다:
+Bluefin은 OCI 컨테이너 이미지를 배포 메커니즘으로 사용합니다. repo에 대한 모든 커밋은 부팅 가능한 OS 이미지를 생성하는 빌드를 트리거합니다. 이 아키텍처는 다음과 같은 의미를 가집니다:
 
 ### 빌드 시스템
 
@@ -565,7 +565,7 @@ jq empty packages.json && echo "Valid JSON" || echo "Invalid JSON"
    ```
 
 2. **GitHub에서 PR을 열세요**:
-   - https://github.com/projectbluefin/bluefin으로 이동하세요
+   - <https://github.com/projectbluefin/bluefin>으로 이동하세요
    - "Pull requests" → "New pull request"을 클릭하세요
    - "compare across forks"을 클릭하세요
    - 당신의 크로와 브랜치를 선택하세요
@@ -797,7 +797,7 @@ git merge main
 **문서 표준:**
 
 - 명확하고 간결한 언어 사용
-- "simply" 또는 "easy" 같은 용어 회피 ([justsimly.dev](https://justsimly.dev/))
+- "simply" 또는 "easy" 같은 용어 회피 ([justsimply.dev](https://justsimply.dev/))
 - 실용적인 예제 포함
 - 관련 문서로 링크
 
