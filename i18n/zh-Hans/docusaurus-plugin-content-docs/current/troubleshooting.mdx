@@ -1,0 +1,343 @@
+---
+title: 故障排除与常见问题解答
+slug: /troubleshooting
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+# 故障排除与常见问题解答
+
+## 快速诊断与系统恢复
+
+Bluefin 设计为纯净且可靠，但当出现问题时，基于镜像的系统提供了简单的回滚和重置原语。
+
+### 系统回滚
+
+如果内核或系统更新导致问题，重启到上一个部署或回滚：
+
+```bash
+# 回滚到上一个部署
+sudo bootc rollback
+```
+
+重启以应用。要检查当前和上一个部署状态：
+
+```bash
+sudo bootc status
+```
+
+### 重置 GNOME 与扩展
+
+如果桌面扩展或 shell 调整导致图形问题或冻结：
+
+```bash
+# 将 GNOME Shell 和扩展重置为系统默认值
+dconf reset -f /org/gnome/
+```
+
+### 清理磁盘空间与未使用的运行时
+
+```bash
+# 清理悬空容器和未使用的 Flatpak 运行时
+ujust clean-system
+```
+
+### 报告问题并验证修复
+
+当某些东西损坏或你的机器上遇到问题时，三条命令会将诊断信息直接流式传输给维护者：
+
+| 命令                    | 作用                                                                                                   |
+| ----------------------- | ------------------------------------------------------------------------------------------------------ |
+| `ujust report`          | 捕获系统诊断，在本地 scrub 敏感数据，并打开一个预填的 GitHub 问题。                                    |
+| `ujust confirm <issue>` | 确认你的硬件遇到了现有问题——添加硬件指纹，不产生重复。                                                |
+| `ujust verify <issue>`  | 在修复 landing 到新版镜像后，确认问题在你的硬件上已解决。                                               |
+
+每条报告在提交前都会展示给你审阅，存储在你拥有的 gist 中，且从不使用自动后台遥测。
+
+### 键盘布局与输入问题
+
+#### 切换键盘布局与搜索快捷键冲突
+
+GNOME 的默认切换快捷键（<kbd>Super</kbd>+<kbd>Space</kbd>）与 Search Light 冲突。要自定义：
+
+1. 打开**设置** → **键盘** → **键盘快捷键** → **查看和自定义快捷键**。
+2. 点击**输入**。
+3. 将**切换到下一个输入源**设置为你偏好的组合（例如 <kbd>Shift</kbd>+<kbd>Alt</kbd>）。
+
+#### 扩展键盘布局（例如 EurKEY）
+
+1. 打开**Gnome Tweaks** → **键盘** → 切换**显示扩展输入源**为**开**。
+2. 注销并重新登录。
+3. 打开**设置** → **键盘** → 通过 **+** 添加新的输入源 → 点击**更多...**并搜索你的布局。
+
+#### 输入法编辑器（IME / Fcitx5）
+
+对于标准键盘布局，参见[GNOME 帮助 > 键盘布局](https://help.gnome.org/gnome-help/keyboard-layouts.html)。对于亚洲语言或其他复杂输入方法：
+
+1. 安装 Fcitx5：`flatpak install org.fcitx.Fcitx5`
+2. 安装[kimpanel](https://extensions.gnome.org/extension/261/kimpanel/) GNOME 扩展。
+3. 安装你的语言插件（例如 `flatpak install org.fcitx.Fcitx5.Addon.ChineseAddons`）。
+4. 在 Fcitx5 设置中配置输入方法。使用 <kbd>Ctrl</kbd>+<kbd>Space</kbd> 切换。详见[Fcitx wiki](https://fcitx-im.org/wiki/Using_Fcitx_5_on_Wayland#GNOME)。
+
+---
+
+## 常见问题解答
+
+### 我是不是把 Bluefin 拿错了？
+
+![不要拿错 Bluefin](/img/user-attachments/6d03851b-5d42-4235-9e1c-3dde7c455946.png)
+
+你总是可以做你想做的事，但 Bluefin 设计了一套特定的工作流程：
+
+- **把你的开发环境容器化**，而不是与操作系统混用。在由 Git 管理的 `devcontainer.json` 文件中按项目定义它们。
+- **使用 Flatpak 和 Homebrew。** 理想情况是保持核心 OS 镜像不变。
+- **遵循 XDG 标准**来覆盖文件。`/etc`、`/var`、`/usr/local` 和 `/opt` 可写。大多数每用户覆盖位于 `~/.config` 和 `~/.local`。
+- **把老式“糙”操作隔离到容器中。** 直接在主机上打包是一种反模式。
+- **不要过度思考重启。** 当你用完它时关机或重启，以便分阶段的 OS 更新自动应用。
+- **硬件很重要。** Bluefin 在对 Linux 友好的硬件上运行最佳。
+
+:::tip
+
+我已“化身为神”。
+
+—— [Dominus Ghaul](https://www.youtube.com/watch?v=Og-2axO4Bi0)
+
+:::
+
+### 那它适合谁？
+
+Bluefin 强烈认为用户应该通过现代桌面来接触 Linux。市场拒绝了上一代 Linux 桌面惯例，而 ChromeOS 和 Android 等现代模型取得了成功。**95% 的用户使用浏览器和 Flatpak 就足够了。** Bluefin 被设计为面向这 95% 用户的零维护通用操作系统，同时为开发者开箱即提供云原生工具。
+
+### 编解码器呢？
+
+你需要的一切通过 Universal Blue 开箱即提供。
+
+### Homebrew 是怎么回事？
+
+参见[Homebrew 在 Linux 上很棒](https://www.ypsidanger.com/homebrew-is-great-on-linux/)。Homebrew 管理 CLI 工具，不触及基础镜像，也不需要 `sudo`。
+
+### 为什么有多个 Bluefin 镜像？
+
+Bluefin 力求在各镜像间保持一致——区别在于更新节奏和专门化工具：
+
+- **Bluefin**：当前 Fedora 基础，带把关内核，用于通用桌面。
+- **Bluefin Server**：基于 FSDK，DDI 优先的极简服务器 OS。
+- **Bluefin DX**：带容器和 devcontainers 的开发工作站。
+
+### 为什么有这么多 Ubuntu 的影响？
+
+Bluefin 的三位联合创建者在 Canonical 工作于 Ubuntu。Bluefin 恢复了经典的 Ubuntu 桌面精神（“为人类/Linux”），构建在现代云原生容器基础设施之上。
+
+### 我应该信任你吗？
+
+一切都在公开构建，使用 Cosign / GPG 签名，并通过 GitHub Actions 发布。参见[Jorge Castro 的简介](https://www.ypsidanger.com/about/)以了解背景。
+
+---
+
+## 询问 Bluefin 与自动化诊断
+
+:::info
+此功能处于 Alpha 阶段。菜单功能尚不存在。
+:::
+
+- [Bluefin AI 页面](/ai) — 为我们的 Bluespeed 计划提供更多背景
+
+在菜单中选择“Ask Bluefin”以使用聊天代理。
+
+![ask](/img/troubleshooting/ask-bluefin-menu.png)
+
+> “Ask Bluefin”是一个自定义的操作系统代理。对于新用户，它是一个旨在帮助你学习 Linux 的系统，无需在互联网上挖来挖去，也无需被人告诉你装错了 Linux 发行版。“Ask Bluefin”在该操作系统及其文档上训练，因此它始终从真相之源学习并由社区调整。对于 Linux 老手，它是你本地 PC 的强大诊断工具，内置与你服务器和集群的集成 ...
+
+`Ctrl`-`Alt`-`Shift`-`g` 将调用 quicklaunch，让你用一个按键调用帮助代理：
+
+<img src="/img/goose-quick-launch.png" alt="Goose quick launch" />
+
+### 开箱即用的设置：`ujust probe`
+
+Bluefin 内置自动化来设置并启动一次 AI 故障排除会话：
+
+```bash
+ujust probe
+```
+
+运行 `ujust probe` 会自动：
+
+1. 验证 Goose 已安装（或通过 Homebrew 提示安装）。
+2. 若尚未安装，则安装 `ublue-os/tap/linux-mcp-server`。
+3. 通过 `goose-mcp-setup` 自动写入启用了 `linux-tools` 的 Goose 配置。
+4. 检查配置的 LLM 提供商并启动会话。
+
+### 手动安装与配置
+
+如果你倾向于手动安装，或在 macOS 上设置此功能：
+
+<Tabs groupId="operating-systems">
+  <TabItem value="linux" label="Bluefin / Linux" default>
+
+```bash
+brew install ublue-os/tap/linux-mcp-server
+goose-mcp-setup
+```
+  </TabItem>
+  <TabItem value="macos" label="macOS">
+
+```bash
+brew install ublue-os/tap/linux-mcp-server
+goose-mcp-setup
+```
+
+:::note
+在 macOS 上，`linux-mcp-server` 通过 SSH 检查远程 Linux 主机。在你的 `~/.config/goose/config.yaml` envs 中设置 `LINUX_MCP_HOST: <host>`。
+:::
+
+  </TabItem>
+</Tabs>
+
+安装 `ublue-os/tap/linux-mcp-server` 会安装 `linux-mcp-server`、Goose 客户端（`block-goose-cli`）和 `goose-mcp-setup`。
+
+#### linux-mcp-server
+
+提供系统诊断和监控工具：
+
+- 系统信息（OS、内核、硬件）
+- 进程管理
+- 服务监控（systemd）
+- 日志访问（journalctl）
+- 网络诊断
+- 文件系统检查
+
+**仓库**：[rhel-lightspeed/linux-mcp-server](https://github.com/rhel-lightspeed/linux-mcp-server)
+
+### 配置步骤
+
+#### 步骤 1：配置 Goose 扩展
+
+运行 `goose-mcp-setup` 会创建 `~/.config/goose/config.yaml`，其中预配置了 `linux-tools` 扩展：
+
+```yaml
+extensions:
+  linux-tools:
+    enabled: true
+    type: stdio
+    name: linux-tools
+    description: Linux 系统管理与诊断
+    cmd: /home/linuxbrew/.linuxbrew/bin/linux-mcp-server
+    envs:
+      LINUX_MCP_USER: <你的用户名>
+      LINUX_MCP_LOG_LEVEL: INFO
+      LINUX_MCP_SSH_KEY_PATH: ~/.ssh/id_ed25519
+    timeout: 30
+    bundled: null
+    available_tools: []
+    args: []
+```
+
+#### 步骤 2：配置你的 LLM 提供商
+
+Goose 同时支持托管提供商和本地模型。运行：
+
+```bash
+goose configure
+```
+
+- **GitHub Copilot**：选择 `GitHub Copilot` 直接对你的 GitHub 账号进行认证。
+- **托管 APIs**：选择 Anthropic、OpenAI、Gemini 等，并在提示时输入你的 API key。
+- **本地模型**：[llmman](https://github.com/llmmanorg/llmman) 将模型作为容器管理，并提供 OpenAI 兼容端点：
+
+```bash
+brew install llmmanorg/tap/llmman
+llmman serve
+```
+
+在 `~/.config/goose/config.yaml` 中配置 Goose 使用你的本地模型：
+
+```yaml
+GOOSE_PROVIDER: ollama
+GOOSE_MODEL: qwen3:8b
+OLLAMA_HOST: http://localhost:17434
+```
+
+[LM Studio](https://lmstudio.ai/)（`brew install lm-studio`）是一个图形化替代方案——加载模型，启动本地服务器，并在 `goose configure` 中选择 **LM Studio**。
+
+#### 步骤 3：开始故障排除
+
+启动一次交互式会话：
+
+```bash
+ujust probe
+# 或直接：
+goose session
+```
+
+### 安全考量
+
+- MCP 服务器以你的用户权限运行
+- 仅从可信来源安装 MCP 服务器
+- 查看服务器文档以了解所需权限
+- 对敏感凭据使用环境变量（不要在配置中硬编码）
+- 定期更新 MCP 服务器以获得安全补丁
+
+### 延伸阅读
+
+- [MCP 官方文档](https://modelcontextprotocol.io/)
+- [构建 MCP 服务器](https://modelcontextprotocol.io/docs/2026-07-28/develop/build-server)
+- [MCP 规范](https://modelcontextprotocol.io/specification/2026-07-28/architecture)
+
+## 自动化故障排除
+
+你可以用自然语言向该工具询问关于你系统的问题：
+
+![Top CPU 使用率](/img/troubleshooting/top-cpu-usage.png)
+
+### 系统健康
+
+注意：这些取自 linux-server-mcp 页面，但你应该懂这个意思：
+
+| 我想检查...    | 使用此工具             | 示例提示                     |
+| -------------- | ---------------------- | ---------------------------- |
+| **OS / 内核**  | `get_system_information`   | “这个 OS 版本是多少？”       |
+| **CPU 负载**   | `get_cpu_information`      | “CPU 是否过载？”             |
+| **内存 / RAM** | `get_memory_information`   | “我有多少可用 RAM？”         |
+| **磁盘空间**   | `get_disk_usage`         | “哪些磁盘满了？”             |
+| **硬件**       | `get_hardware_information` | “列出 PCI 设备。”            |
+
+### 故障排除
+
+| 我想检查...     | 使用此工具        | 示例提示                                    |
+| ---------------- | ------------------ | ------------------------------------------ |
+| **运行的应用**   | `list_processes`   | “什么占用了最多 CPU？”                      |
+| **进程详情**     | `get_process_info` | “检查进程 ID 1234。”                        |
+| **服务**         | `list_services`    | “所有服务都在运行吗？”                      |
+| **服务状态**     | `get_service_status` | “为什么 nginx 失败了？”                    |
+| **系统日志**     | `get_journal_logs` | “显示最近一小时的错误。”                    |
+| **服务日志**     | `get_service_logs` | “显示 sshd 的最新日志。”                    |
+| **特定日志文件** | `read_log_file`    | “读取 /var/log/messages 的最后 50 行。”     |
+
+### 网络
+
+| 我想检查... | 使用此工具              | 示例提示                     |
+| ---------- | ------------------------- | ---------------------------- |
+| **IP 地址**   | `get_network_interfaces`   | “我的 IP 地址是多少？”       |
+| **开放端口**  | `get_listening_ports`      | “哪些端口是开放的？”         |
+| **连接**      | `get_network_connections`  | “谁连接到了 22 端口？”       |
+
+### 文件与存储
+
+| 我想检查...  | 使用此工具        | 示例提示                          |
+| ------------ | ------------------ | --------------------------------- |
+| **磁盘分区** | `list_block_devices` | “显示我的分区布局。”              |
+| **大型文件夹** | `list_directories` | “找出 /var 中最大的文件夹。”      |
+| **最近的更改** | `list_files`       | “/etc 中哪些文件最近更改了？”     |
+| **读取文件**   | `read_file`        | “读取 /etc/fstab。”               |
+
+### 进阶技巧
+
+- **组合工具：** 你不需要一次只请求一件事。
+  > “检查 CPU 使用率并显示前 5 个进程。”
+- **过滤日志：** 在时间和优先级上具体化以节省上下文窗口。
+  > “显示最近 `30 分钟` 内 `error` 优先级的日志。”
+- **远程主机：** 如果你配置了 SSH，只需请求在特定主机上运行。
+  > “检查 `webserver1` 的磁盘使用率。”
+
+![troubleshooting](/img/troubleshooting/troubleshooting-example.png)

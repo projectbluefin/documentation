@@ -1,0 +1,83 @@
+---
+title: Bluefin
+slug: /dakota
+---
+
+import { DakotaSection } from "@site/src/components/DownloadSectionTesting";
+import DriverVersionsCatalog from "@site/src/components/DriverVersionsCatalog";
+
+# Bluefin
+
+**Dakota**（_Dakotaraptor steini_，达科塔斑龙）是基于 [GNOME OS](https://os.gnome.org/) 打造的 Bluefin，完全从源码使用 [Apache BuildStream](https://buildstream.build/) 组装，并发布为 `bootc` 镜像。它摒弃了传统的 Linux 发行版模式——没有 RPM——并设计为直接从上游来源提供软件。
+
+这是默认的 Bluefin 体验，旨在成为现代 Linux bootc 镜像的业界标杆。
+
+:::info[Alpha]
+Dakota 处于后期 alpha 阶段。[提交问题](https://github.com/projectbluefin/dakota/issues) 正是其核心目的——每一个运行 Dakota 的用户都是回馈到上游 GNOME、freedesktop 和内核的结构化反馈循环的一部分。如果你难以改变习惯，请使用 [Bluefin Classic](/classic)。
+:::
+
+## 下载与安装
+
+<DakotaSection />
+
+你**无法**从其他镜像 rebased 到 Dakota——如果你当前不在 Dakota 上，需要从 ISO 重新安装。
+
+每个镜像都通过 GitHub Actions OIDC 使用 [cosign](https://docs.sigstore.dev/cosign/system_config/installation/) 无密钥签名进行签名。可用以下命令验证：
+
+```bash
+cosign verify ghcr.io/projectbluefin/dakota:stable \
+  --certificate-identity-regexp="https://github.com/projectbluefin/dakota/.github/workflows/publish.yml" \
+  --certificate-oidc-issuer=https://token.actions.githubusercontent.com
+```
+
+## 镜像流
+
+Dakota 使用 [freedesktop-sdk](https://gitlab.com/freedesktop-sdk/freedesktop-sdk) 版本作为其基础版本（例如 25.08.11 表示 2025 年 8 月大版本更新的第 11 次发布）。
+
+| 标签        | 流      | 说明                                                                        |
+| ---------- | ------- | ------------------------------------------------------------------------- |
+| `:stable`  | Stable  | GNOME 51——生产环境。每周一、三、五从 `:testing` 自动提升。                       |
+| `:testing` | Testing | GNOME 51——来自 `testing` 分支的每日构建。经过启动检查把关。                        |
+| `:next`    | Rolling | GNOME master——最前沿。每日跟踪 gnome-build-meta `master`。                          |
+| `:btw`     | Rolling | `:next` 的别名。                                                              |
+
+
+```bash
+# 切换到滚动流
+sudo bootc switch ghcr.io/projectbluefin/dakota:next
+```
+
+### 游戏流
+
+游戏模式镜像加入了 [Open Gaming Collective 内核](https://github.com/OpenGamingCollective/linux)（sched_ext、ntsync）、带 32 位兼容库和控制器 udev 规则的 Steam、gamescope 与 Steam 大屏模式 gamescope 会话、GameMode / MangoHud / vkBasalt、InputPlumber，以及首次启动时从 Flathub 安装 Lutris、Heroic、Bottles、ProtonPlus、Protontricks 和 GOverlay。游戏内核流也提供 `dakota:btw` 别名。
+
+| 镜像           | 流      | 命令                                                                    |
+| ------------- | ------- | ----------------------------------------------------------------------- |
+| Gaming        | Stable  | `sudo bootc switch ghcr.io/projectbluefin/dakota-gaming:stable`         |
+| Gaming        | Testing | `sudo bootc switch ghcr.io/projectbluefin/dakota-gaming:testing`        |
+| NVIDIA Gaming | Stable  | `sudo bootc switch ghcr.io/projectbluefin/dakota-nvidia-gaming:stable`  |
+| NVIDIA Gaming | Testing | `sudo bootc switch ghcr.io/projectbluefin/dakota-nvidia-gaming:testing` |
+
+## 反馈循环
+
+当你的硬件上出现问题时，三条命令会将证据反馈到上游：
+
+| 命令                  | 作用                                                                                       |
+| --------------------- | -------------------------------------------------------------------------------------------------- |
+| `ujust report`        | 捕获你的系统状态并打开一个预填的问题。                                                               |
+| `ujust confirm <issue>` | 告诉团队你的硬件遇到了相同的问题——添加硬件指纹，不重复提交。                                           |
+| `ujust verify <issue>`  | 在夜间版本推出修复后，确认它在你的机器上有效。                                                       |
+
+无遥测、无回拨。每条报告在离开你的机器前都会经你审阅，存放在你拥有的 gist 中，且可随时删除。当三个用户独立对某个修复运行 `ujust verify` 时，该问题会以真正的置信度关闭。详见完整的[反馈循环设计](https://github.com/projectbluefin/dakota/blob/testing/docs/feedback-loop.md)。
+
+## 当前版本
+
+<DriverVersionsCatalog streamId="dakota-stable" />
+
+## 延伸阅读
+
+- [projectbluefin/dakota](https://github.com/projectbluefin/dakota)——README、镜像流、AGENTS.md 中的贡献者工作流
+- 仓库文档：[build](https://github.com/projectbluefin/dakota/blob/testing/docs/build.md)、[CI](https://github.com/projectbluefin/dakota/blob/testing/docs/ci.md)、[workflow](https://github.com/projectbluefin/dakota/blob/testing/docs/workflow.md)、[feedback loop](https://github.com/projectbluefin/dakota/blob/testing/docs/feedback-loop.md)
+- 博客：[Dakota Alpha 1](/blog/dakota-alpha-1) · [Gaming Mode 与 Dakota Alpha 5](/blog/dakota-alpha-5)
+- [GNOME OS](https://os.gnome.org/) · [BuildStream](https://buildstream.build/) · [freedesktop-sdk](https://gitlab.com/freedesktop-sdk/freedesktop-sdk)
+- [开放问题](https://github.com/projectbluefin/dakota/issues) 查看当前进展。与 ISO 相关的问题请提交到 [projectbluefin/dakota-iso](https://github.com/projectbluefin/dakota-iso/issues)

@@ -10,7 +10,7 @@ pagination_prev: null
 
 import ImagesCatalog from "@site/src/components/ImagesCatalog";
 
-이 카탈로그는 세 가지 Bluefin 이미지 계열을 다룹니다: **Bluefin**, **Bluefin Classic**
-(`ublue-os`가 게시), 그리고 **Utah**입니다.
+이 카탈로그에서는 **Bluefin**, **Bluefin Classic**
+(`ublue-os`에서 배포), **Utah**의 세 가지 Bluefin 이미지 계열을 확인할 수 있습니다.
 
 <ImagesCatalog />

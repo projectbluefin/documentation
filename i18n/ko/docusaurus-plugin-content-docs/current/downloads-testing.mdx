@@ -6,16 +6,16 @@ slug: /downloads-testing
 import DownloadSectionTesting from "@site/src/components/DownloadSectionTesting";
 import { DakotaSection } from "@site/src/components/DownloadSectionTesting";
 
-여기는 Bluefin 설치 과정에 대한 짧은 [runbook](/installation)입니다. 생존을 보장하기 위해 이 문서의 전반부를 읽으세요. (랍터 공격의 경우).
+Bluefin 설치 과정을 안내하는 간단한 [설치 가이드](/installation)입니다. 생존을 위해 이 문서 전체를 읽어 주세요. (랩터가 공격할 수도 있으니까요).
 
 ## 테스트할 항목
 
-- 설치 경험
-- Secure Boot
-- 첫 번째 경험, 몇 가지 애플리케이션과 Bazaar 애플리케이션 스토어 확인
-- 가능한 경우 메탈에서 하지만 필수는 아님
-- 시간이 있다면 문서를 따라 신사용자 경험을 한 단계씩 실행하세요. 이 버그는 매우 가치있어,, 찾으면 제보하세요!
-- [@projectbluefin/iso repository](https://github.com/projectbluefin/iso/issues)에서 이슈 제보
+- 설치 과정
+- 보안 부팅
+- 첫 실행 경험: 몇 가지 애플리케이션과 Bazaar 앱 스토어를 확인하세요
+- 가능하면 실제 하드웨어에서 테스트하되, 필수는 아닙니다
+- 시간이 있다면 문서를 따라 신규 사용자가 거치는 과정을 단계별로 진행해 보세요. 이 과정에서 발견한 버그는 특히 중요하므로, 발견하면 꼭 제보해 주세요!
+- [@projectbluefin/iso 저장소](https://github.com/projectbluefin/iso/issues)에 이슈를 등록해 주세요
 
 <DownloadSectionTesting />
 
@@ -23,51 +23,51 @@ import { DakotaSection } from "@site/src/components/DownloadSectionTesting";
 
 <DakotaSection />
 
-## 체크섬으로 다운로드 확인
+## 체크섬으로 다운로드 검증하기
 
-**체크섬(checksum)**은 다운로드가 성공적으로 완료되었고 손상되거나 변조되지 않았음을 확인하게 해줍니다. ISO를 다운로드한 후 공식 체크섬 파일과 비교하여 무결성을 확인할 수 있습니다. 선택적이지만, 중요한 설치에는 확인이 권장됩니다.
+**체크섬**으로 다운로드가 정상적으로 완료되었는지, 파일이 손상되거나 변조되지 않았는지 확인할 수 있습니다. ISO를 다운로드한 후 해당 파일의 체크섬을 공식 체크섬 파일과 비교하여 무결성을 확인할 수 있습니다. 필수는 아니지만, 중요한 설치를 진행할 때는 검증을 권장합니다.
 
-#### sha256sum으로 체크섬 확인 방법
+#### sha256sum으로 체크섬 검증하기
 
-1. **ISO 파일과 해당 CHECKSUM 파일과 다운로드하기**
+1. **ISO 파일과 해당 CHECKSUM 파일을 모두 다운로드합니다**
    - 예: `bluefin-stable-x86_64.iso` 및 `bluefin-stable-x86_64.iso-CHECKSUM`
 
-2. **다운로드한 ISO의 체크섬 생성하기:**
+2. **다운로드한 ISO의 체크섬을 생성합니다:**
 
    ```bash
    sha256sum bluefin-stable-x86_64.iso
    ```
 
-3. **공식 체크섬 파일과 비교하기:**
+3. **공식 체크섬 파일과 비교하여 검증합니다:**
 
    ```bash
    sha256sum -c bluefin-stable-x86_64.iso-CHECKSUM --ignore-missing
    ```
 
-4. **결과 확인하기:** ISO 파일에 대한 출력에서 `OK`을 찾으세요.
+4. **결과를 확인합니다:** ISO 파일에 대한 출력에 `OK`가 표시되는지 확인하세요.
 
-**예시:**
+**예:**
 
 ```bash
-# 다운로드한 파일의 체크섬 생성
+# Generate checksum of downloaded file
 $ sha256sum bluefin-stable-x86_64.iso
 a1b2c3d4e5f6789012345678901234567890abcdef1234567890abcdef123456  bluefin-stable-x86_64.iso
 
-# 공식 체크섬 파일과 비교
+# Verify against official checksum file
 $ sha256sum -c bluefin-stable-x86_64.iso-CHECKSUM --ignore-missing
 bluefin-stable-x86_64.iso: OK
 
-# 🦖 Rawr! 다운로드가 확인되었습니다
+# 🦖 Rawr! Your download is verified
 ```
 
-## Installer 버그 보고 설정 및 실행
+## 설치 프로그램 버그 보고 준비 및 실행
 
-1. 설치하기 전 - `ujust report` 활성화:
+1. 설치 전 - `ujust report` 사용 준비:
    - 실행 중인 라이브 시스템을 네트워크에 연결합니다.
-   - Firefox를 열고 로그인합니다.
+   - Firefox를 열고 GitHub에 로그인합니다.
    - 터미널을 열고 `brew install gh`를 실행합니다.
-   - 명령줄 인증을 수행합니다: `gh auth login`. 브라우저 방법을 사용하세요.
-2. 실패한 설치 이후:
-   - Screenshot 도구로 관련 스크린샷을 캡처합니다.
-   - 터미널에서 `ujust report`를 실행합니다. 보고서가 완료되면 `ESC`로 종료합니다.
-   - 브라우저가 자동으로 적절한 repo의 새 이슈를 열어야 합니다. 채우기만 하면 됩니다.
+   - `gh auth login`으로 명령줄 인증을 진행합니다. 브라우저를 이용하는 방식을 선택하세요.
+2. 설치 실패 후:
+   - 스크린샷 도구로 관련 화면을 캡처합니다.
+   - 터미널에서 `ujust report`를 실행합니다. 보고서 생성이 완료되면 `ESC`로 종료합니다.
+   - 브라우저에서 해당 저장소의 새 이슈 작성 화면이 자동으로 열립니다. 내용을 작성하면 됩니다.

@@ -1,8 +1,9 @@
 /**
  * Contributor tracking for monthly reports
  *
- * Identifies first-time contributors using a GHA cache append-only set.
- * New contributor = not seen in any previous run. Known = in cache from prior run.
+ * Identifies first-time contributors using the committed append-only set in
+ * scripts/data/known-contributors.json.
+ * New contributor = not seen in any previous run. Known = recorded by a prior run.
  */
 
 import { readFile, writeFile, mkdir } from "fs/promises";
@@ -43,11 +44,11 @@ export function isBot(username) {
 }
 
 /**
- * Load known contributors from cache file.
- * Falls back to seed file if cache is absent.
+ * Load known contributors from the committed known-contributors file.
+ * Falls back to seed file if that file is absent.
  * Returns empty Set on any parse error (never throws).
  *
- * @param {string} [cachePath] - Path to GHA-managed cache file
+ * @param {string} [cachePath] - Path to committed known-contributors file
  * @param {string} [seedPath] - Path to committed seed file (fallback)
  * @returns {Promise<Set<string>>}
  */

@@ -1,7 +1,7 @@
 ---
 name: monthly-reports
-version: "1.0"
-last_updated: "2026-09-07"
+version: "1.1"
+last_updated: "2026-10-05"
 id: monthly-reports
 one_line_purpose: Generate, validate, and publish automated monthly factory report blog posts.
 entry_point: docs/skills/monthly-reports.md
@@ -110,10 +110,22 @@ The generator writes the blog post first, then merges the snapshot into
 `scripts/data/report-history.json`, replacing only the same month and sorting
 snapshots by month. The tracked seed is
 `scripts/data/report-history-seed.json`. The scheduled archive workflow commits
-the generated post together with the history, contributor cache, and
+the generated post together with the history, the committed
+`scripts/data/known-contributors.json`, and
 `static/data/countme-history.json`. Blog posts are created with an exclusive
 file write; rerunning a month whose post already exists fails instead of
 rewriting the public archive or its corresponding history.
+
+`scripts/data/known-contributors.json` is the committed, authoritative record
+of every contributor seen in any prior monthly report. The scheduled workflow
+no longer restores it from `actions/cache`: the file is already present after
+checkout, and a stale cache restore can silently revert hand additions made
+between reports (restoring a cache saved before
+[`d1708ad8`](https://github.com/projectbluefin/documentation/commit/d1708ad8)
+would have overwritten the file and dropped the contributors added in that
+commit). If `known-contributors.json` is missing or unreadable, the generator's
+`loadKnownContributors()` falls back to
+`scripts/data/known-contributors-seed.json`.
 
 ## Portfolio and source rules
 
