@@ -239,6 +239,29 @@ function selectDatedTags(tags = [], series = {}, createdAt = {}) {
 }
 
 /**
+ * Pure function: The tags whose build time decides which tags enter the
+ * `limit` window and the order they are charted in — every matching tag dated
+ * on or after the oldest date that can still reach the window. Same-day tags at
+ * the window's edge are all included, since any of them may be kept.
+ *
+ * @param {string[]} tags
+ * @param {{ pattern?: RegExp, limit?: number }} series
+ * @returns {string[]}
+ */
+function tagsNeedingBuildTime(tags = [], series = {}) {
+  const { pattern, limit } = series || {};
+  if (!Array.isArray(tags) || !pattern || !Number.isFinite(limit) || limit <= 0)
+    return [];
+  const matched = [
+    ...new Set(tags.filter((t) => typeof t === "string" && pattern.test(t))),
+  ];
+  const keys = matched.map(datedTagKey).filter(Boolean).sort();
+  if (keys.length === 0) return [];
+  const cutoff = keys[Math.max(0, keys.length - limit)];
+  return matched.filter((t) => datedTagKey(t) >= cutoff);
+}
+
+/**
  * Pure function: Computes delta churn and layer reuse between consecutive releases.
  * @param {Array<{ digest: string, size: number }>} prevLayers
  * @param {Array<{ digest: string, size: number, mediaType?: string, annotations?: Record<string, string> }>} currLayers
@@ -423,9 +446,22 @@ async function getPlatformLayers(repo, tag) {
  * rate-limited. `compareTagsByDate` then falls back to tag text, which is a
  * documented approximation, not a crash.
  *
+ * A busy package publishes many versions per build (per-arch manifests,
+ * attestations, SBOMs), so a fixed small page budget covers only a day or two
+ * of tags. When `need` is given, pagination continues until every listed tag
+ * has a build time (or the API runs out of pages); `maxPages` is only a
+ * runaway guard.
+ *
+ * @param {string} org
+ * @param {string} pkg
+ * @param {{ need?: string[], maxPages?: number }} [options]
  * @returns {Promise<Record<string, string>>} tag -> ISO 8601 build timestamp
  */
-async function fetchGhcrTagCreatedAt(org, pkg, maxPages = 2) {
+async function fetchGhcrTagCreatedAt(
+  org,
+  pkg,
+  { need = [], maxPages = 100 } = {},
+) {
   const token = githubToken();
   const createdAt = {};
   if (!token) {
@@ -448,6 +484,7 @@ async function fetchGhcrTagCreatedAt(org, pkg, maxPages = 2) {
     "X-GitHub-Api-Version": "2022-11-28",
   };
 
+  const pending = new Set(Array.isArray(need) ? need : []);
   try {
     let url =
       `https://api.github.com/orgs/${org}/packages/container/` +
@@ -472,6 +509,10 @@ async function fetchGhcrTagCreatedAt(org, pkg, maxPages = 2) {
           if (typeof tag === "string" && !createdAt[tag])
             createdAt[tag] = built;
         }
+      }
+      if (pending.size > 0) {
+        for (const tag of [...pending]) if (createdAt[tag]) pending.delete(tag);
+        if (pending.size === 0) break;
       }
       url =
         res.headers.get("link")?.match(/<([^>]+)>;\s*rel="next"/i)?.[1] || null;
@@ -509,7 +550,9 @@ async function discoverSeriesTags(repo, series) {
       (t) => typeof t === "string" && series?.pattern?.test(t),
     );
     if (matches.length === 0) return { tags: [], createdAt: {}, listed: false };
-    const createdAt = await fetchGhcrTagCreatedAt(org, pkg);
+    const createdAt = await fetchGhcrTagCreatedAt(org, pkg, {
+      need: tagsNeedingBuildTime(matches, series),
+    });
     const tags = selectDatedTags(allTags, series, createdAt);
     if (tags.length === 0) return { tags: [], createdAt: {}, listed: false };
     return { tags, createdAt, listed: true };
@@ -708,6 +751,7 @@ module.exports = {
   datedTagKey,
   compareTagsByDate,
   selectDatedTags,
+  tagsNeedingBuildTime,
   discoverSeriesTags,
   fetchGhcrTagCreatedAt,
   extractDateFromTag,

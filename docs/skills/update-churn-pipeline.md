@@ -50,7 +50,11 @@ Measuring release-over-release download deltas, chunkah layer reuse efficiency, 
      `created_at` lookup needs a token, so any workflow that produces the
      dataset **must** pass `GITHUB_TOKEN` to the compute step — without one
      `fetchGhcrTagCreatedAt` returns `{}` and the sort silently degrades to tag
-     text, which is the failure this tie-break exists to prevent.
+     text, which is the failure this tie-break exists to prevent. Utah
+     publishes many package versions per build (arch manifests,
+     attestations, SBOMs), so a fixed page budget covers only a day or two:
+     `fetchGhcrTagCreatedAt` paginates until every tag that can reach the
+     window (`tagsNeedingBuildTime`) has a `created_at`.
    - **An undated tag sorts last, never first.** A tag carrying no `YYYYMMDD`
      is a floating name (`stable`, `testing`) pointing at the newest manifest,
      so it belongs at the end of any series it is part of. Sorting it first
