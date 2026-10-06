@@ -75,7 +75,7 @@
 .chartCanvas,
 .chartPlaceholder {
   width: 100%;
-  min-height: 18rem;
+  min-height: 15rem;
 }
 
 .chartPlaceholder {
@@ -151,9 +151,13 @@
 
 .sectionGrid {
   display: grid;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
+.fullWidthPanel {
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
 .sectionPanel {
   min-width: 0;
 }
@@ -228,9 +232,11 @@
 }
 
 @media (min-width: 800px) {
-  .sectionGrid,
   .portfolioGrid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .sectionGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 

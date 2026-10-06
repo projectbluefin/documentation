@@ -101,16 +101,29 @@ export function buildReportChartOption(
   definition: ReportChartDefinition,
   theme: ChartTheme,
 ): Record<string, unknown> {
-  const series = definition.series.map((item, index) => ({
-    id: item.id,
-    name: item.label,
-    type: definition.kind === "line" ? "line" : "bar",
-    data: item.values.map(finiteValue),
-    connectNulls: false,
-    itemStyle: { color: theme.series[index % theme.series.length] },
-    lineStyle: { color: theme.series[index % theme.series.length] },
-    ...(definition.kind === "stacked-bar" ? { stack: "total" } : {}),
-  }));
+  const isHorizontalBar = definition.kind === "grouped-bar";
+  const series = definition.series.map((item, index) => {
+    const color = theme.series[index % theme.series.length];
+    return {
+      id: item.id,
+      name: item.label,
+      type: definition.kind === "line" ? "line" : "bar",
+      data: item.values.map(finiteValue),
+      connectNulls: false,
+      barMaxWidth: isHorizontalBar ? 18 : 32,
+      itemStyle: {
+        color,
+        borderRadius:
+          definition.kind === "line"
+            ? 0
+            : isHorizontalBar
+              ? [0, 4, 4, 0]
+              : [4, 4, 0, 0],
+      },
+      lineStyle: { color, width: 2 },
+      ...(definition.kind === "stacked-bar" ? { stack: "total" } : {}),
+    };
+  });
 
   const common = {
     animation: false,
@@ -121,26 +134,42 @@ export function buildReportChartOption(
     textStyle: { color: theme.text },
     tooltip: {
       trigger: "axis",
-      backgroundColor: "transparent",
+      backgroundColor: "var(--ifm-color-emphasis-100, #f8f9fa)",
       borderColor: theme.border,
       textStyle: { color: theme.text },
     },
   };
 
   if (definition.kind === "calendar") {
-    const years = definition.labels
-      .map((label) => label.slice(0, 4))
-      .filter(Boolean);
-    const range = years.length > 0 ? years[0] : "2026";
+    const sortedLabels = [...definition.labels].sort();
+    const range =
+      sortedLabels.length >= 2
+        ? [sortedLabels[0], sortedLabels[sortedLabels.length - 1]]
+        : sortedLabels[0] || "2026";
     return {
       ...common,
+      tooltip: {
+        formatter: (params: { value?: [string, number] }) => {
+          const date = params.value?.[0];
+          const val = params.value?.[1];
+          return `<strong>${date}</strong><br/>${val ?? 0} ${definition.unit}`;
+        },
+        backgroundColor: "var(--ifm-color-emphasis-100, #f8f9fa)",
+        borderColor: theme.border,
+        textStyle: { color: theme.text },
+      },
       calendar: {
+        top: 25,
+        bottom: 45,
+        left: 36,
+        right: 36,
         range,
-        cellSize: ["auto", 18],
-        itemStyle: { borderColor: theme.grid },
-        yearLabel: { color: theme.text },
-        monthLabel: { color: theme.muted },
-        dayLabel: { color: theme.muted },
+        cellSize: ["auto", 22],
+        itemStyle: { borderColor: theme.border, borderWidth: 1 },
+        splitLine: { show: false },
+        yearLabel: { show: false },
+        monthLabel: { color: theme.muted, nameMap: "en" },
+        dayLabel: { color: theme.muted, firstDay: 1, nameMap: "en" },
       },
       visualMap: {
         min: 0,
@@ -156,7 +185,7 @@ export function buildReportChartOption(
         calculable: false,
         orient: "horizontal",
         left: "center",
-        bottom: 0,
+        bottom: 10,
         inRange: { color: [theme.grid, theme.accent] },
         textStyle: { color: theme.muted },
       },
@@ -175,17 +204,72 @@ export function buildReportChartOption(
     };
   }
 
+  const cleanLabels = definition.labels.map((l) =>
+    l
+      .replace(/^projectbluefin\//, "")
+      .replace(/^ublue-os\//, "")
+      .replace(/^hive\//, ""),
+  );
+
+  if (isHorizontalBar) {
+    return {
+      ...common,
+      legend: {
+        data: definition.series.map((item) => item.label),
+        textStyle: { color: theme.muted },
+      },
+      grid: {
+        left: 12,
+        right: 24,
+        top: 32,
+        bottom: 24,
+        containLabel: true,
+      },
+      xAxis: {
+        type: "value",
+        axisLabel: { color: theme.muted },
+        axisLine: { lineStyle: { color: theme.border } },
+        splitLine: { lineStyle: { color: theme.grid } },
+      },
+      yAxis: {
+        type: "category",
+        data: cleanLabels,
+        inverse: true,
+        axisLabel: {
+          color: theme.text,
+          fontSize: 12,
+        },
+        axisLine: { lineStyle: { color: theme.border } },
+        splitLine: { show: false },
+      },
+      series,
+    };
+  }
+
   return {
     ...common,
     legend: {
       data: definition.series.map((item) => item.label),
       textStyle: { color: theme.muted },
     },
-    grid: { left: 48, right: 16, top: 32, bottom: 40, containLabel: true },
+    grid: {
+      left: 16,
+      right: 16,
+      top: 32,
+      bottom: definition.labels.length > 5 ? 70 : 40,
+      containLabel: true,
+    },
     xAxis: {
       type: "category",
-      data: definition.labels,
-      axisLabel: { color: theme.muted },
+      data: cleanLabels,
+      axisLabel: {
+        color: theme.muted,
+        interval: 0,
+        rotate: definition.labels.length > 5 ? 35 : 0,
+        fontSize: 11,
+        formatter: (val: string) =>
+          val.length > 16 ? `${val.slice(0, 14)}…` : val,
+      },
       axisLine: { lineStyle: { color: theme.border } },
       splitLine: { lineStyle: { color: theme.grid } },
     },
@@ -284,10 +368,20 @@ export default function ReportChartClient({
 
   if (!enoughData) return null;
 
+  const isHorizontalBarChart = definition.kind === "grouped-bar";
+  const dynamicHeight = isHorizontalBarChart
+    ? `${Math.max(22, definition.labels.length * 28 + 60)}px`
+    : undefined;
+
   return (
     <div
       ref={elementRef}
       className={styles.chartCanvas}
+      style={
+        dynamicHeight
+          ? { height: dynamicHeight, minHeight: dynamicHeight }
+          : undefined
+      }
       role="img"
       aria-label={`${definition.title}. ${definition.currentValue} ${definition.unit}.`}
     />

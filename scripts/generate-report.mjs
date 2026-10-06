@@ -314,7 +314,7 @@ export function buildReportSnapshotPayload({
       ? null
       : chartDefinition({
           id: "activity-calendar",
-          kind: "calendar",
+          kind: "line",
           title: "Daily merged pull requests",
           currentValue: numericTotal(
             activityMetrics.dailyMerges.map((entry) => entry.value),

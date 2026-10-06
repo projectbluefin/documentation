@@ -112,12 +112,24 @@ export default function ReportActivity(
         <p>Completed work across the configured factory portfolio.</p>
       </div>
 
-      <div className={styles.sectionGrid}>
+      {/* Daily activity gets full width so daily volume is legible across the month */}
+      <div className={styles.fullWidthPanel}>
         <ChartSlot
-          label="Daily merge calendar"
-          definition={section.calendar}
+          label="Daily merged pull requests"
+          definition={
+            section.calendar
+              ? {
+                  ...section.calendar,
+                  kind: "line",
+                  labels: section.calendar.labels.map((d) => d.slice(5)),
+                }
+              : null
+          }
           reason={reason}
         />
+      </div>
+
+      <div className={styles.sectionGrid}>
         <ChartSlot
           label="Repository comparison"
           definition={section.repositories}
