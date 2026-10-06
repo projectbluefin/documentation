@@ -10,6 +10,7 @@ const {
   compareTagsByDate,
   selectDatedTags,
   fetchGhcrTagCreatedAt,
+  tagsNeedingBuildTime,
 } = require("./fetch-update-churn.js");
 
 test("analyzeManifestLayers: handles empty or invalid layers safely", () => {
@@ -415,5 +416,86 @@ test("fetchGhcrTagCreatedAt: warns and returns {} on the no-token path (#1434)",
     else process.env.GITHUB_TOKEN = savedToken;
     if (savedGh === undefined) delete process.env.GH_TOKEN;
     else process.env.GH_TOKEN = savedGh;
+  }
+});
+
+test("tagsNeedingBuildTime: covers the window plus every same-day tag at its edge", () => {
+  const pattern = /^testing-\d{8}-[0-9a-f]{7}$/;
+  const tags = [
+    "testing-20261001-aaaaaaa",
+    "testing-20261003-bbbbbbb",
+    "testing-20261003-ccccccc",
+    "testing-20261004-ddddddd",
+    "testing",
+  ];
+  assert.deepEqual(tagsNeedingBuildTime(tags, { pattern, limit: 2 }), [
+    "testing-20261003-bbbbbbb",
+    "testing-20261003-ccccccc",
+    "testing-20261004-ddddddd",
+  ]);
+  assert.deepEqual(
+    tagsNeedingBuildTime(tags, { pattern, limit: 14 }).length,
+    4,
+  );
+  assert.deepEqual(tagsNeedingBuildTime(tags, { pattern, limit: 0 }), []);
+});
+
+test("fetchGhcrTagCreatedAt: paginates past two pages until every needed tag has a build time", async () => {
+  const savedToken = process.env.GITHUB_TOKEN;
+  const savedFetch = global.fetch;
+  process.env.GITHUB_TOKEN = "t";
+  const pages = [
+    [
+      {
+        created_at: "2026-10-04T23:01:00Z",
+        metadata: { container: { tags: ["new"] } },
+      },
+    ],
+    [
+      {
+        created_at: "2026-10-04T22:00:00Z",
+        metadata: { container: { tags: [] } },
+      },
+    ],
+    [
+      {
+        created_at: "2026-10-04T11:18:00Z",
+        metadata: { container: { tags: ["old"] } },
+      },
+    ],
+    [
+      {
+        created_at: "2026-10-01T00:00:00Z",
+        metadata: { container: { tags: ["older"] } },
+      },
+    ],
+  ];
+  let calls = 0;
+  global.fetch = async (url) => {
+    const page = Number(new URL(url).searchParams.get("page") || 1);
+    calls += 1;
+    return {
+      ok: true,
+      url,
+      json: async () => pages[page - 1],
+      headers: {
+        get: () =>
+          page < pages.length
+            ? `<https://api.github.com/x?per_page=100&page=${page + 1}>; rel="next"`
+            : null,
+      },
+    };
+  };
+  try {
+    const result = await fetchGhcrTagCreatedAt("projectbluefin", "utah", {
+      need: ["new", "old"],
+    });
+    assert.equal(result.old, "2026-10-04T11:18:00Z");
+    assert.equal(result.new, "2026-10-04T23:01:00Z");
+    assert.equal(calls, 3, "stops once every needed tag is resolved");
+  } finally {
+    global.fetch = savedFetch;
+    if (savedToken === undefined) delete process.env.GITHUB_TOKEN;
+    else process.env.GITHUB_TOKEN = savedToken;
   }
 });
