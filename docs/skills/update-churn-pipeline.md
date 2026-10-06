@@ -54,7 +54,10 @@ Measuring release-over-release download deltas, chunkah layer reuse efficiency, 
      publishes many package versions per build (arch manifests,
      attestations, SBOMs), so a fixed page budget covers only a day or two:
      `fetchGhcrTagCreatedAt` paginates until every tag that can reach the
-     window (`tagsNeedingBuildTime`) has a `created_at`.
+     window (`tagsNeedingBuildTime`) has a `created_at`, stopping early once a
+     page is wholly older than a day before the oldest needed tag's date (so a
+     deleted or retagged version cannot drive it to the 100-page guard).
+     Without a `need` list the budget stays at two pages.
    - **An undated tag sorts last, never first.** A tag carrying no `YYYYMMDD`
      is a floating name (`stable`, `testing`) pointing at the newest manifest,
      so it belongs at the end of any series it is part of. Sorting it first

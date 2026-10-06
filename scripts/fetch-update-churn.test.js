@@ -499,3 +499,61 @@ test("fetchGhcrTagCreatedAt: paginates past two pages until every needed tag has
     else process.env.GITHUB_TOKEN = savedToken;
   }
 });
+
+function withPagedFetch(pages, fn) {
+  const savedToken = process.env.GITHUB_TOKEN;
+  const savedFetch = global.fetch;
+  process.env.GITHUB_TOKEN = "t";
+  const state = { calls: 0 };
+  global.fetch = async (url) => {
+    const page = Number(new URL(url).searchParams.get("page") || 1);
+    state.calls += 1;
+    return {
+      ok: true,
+      url,
+      json: async () => pages[page - 1],
+      headers: {
+        get: () =>
+          page < pages.length
+            ? `<https://api.github.com/x?per_page=100&page=${page + 1}>; rel="next"`
+            : null,
+      },
+    };
+  };
+  return fn(state).finally(() => {
+    global.fetch = savedFetch;
+    if (savedToken === undefined) delete process.env.GITHUB_TOKEN;
+    else process.env.GITHUB_TOKEN = savedToken;
+  });
+}
+
+const dayPages = (days) =>
+  days.map((day, i) => [
+    {
+      created_at: `2026-10-${day}T12:00:00Z`,
+      metadata: { container: { tags: [`t${i}`] } },
+    },
+  ]);
+
+test("fetchGhcrTagCreatedAt: keeps a two-page budget when no tags are needed", async () => {
+  await withPagedFetch(dayPages(["05", "04", "03", "02", "01"]), async (s) => {
+    const result = await fetchGhcrTagCreatedAt("projectbluefin", "utah");
+    assert.equal(s.calls, 2);
+    assert.deepEqual(Object.keys(result), ["t0", "t1"]);
+  });
+});
+
+test("fetchGhcrTagCreatedAt: stops once a page predates the oldest needed tag when one never appears", async () => {
+  await withPagedFetch(
+    dayPages(["09", "08", "07", "06", "05", "04", "03", "02", "01"]),
+    async (s) => {
+      const result = await fetchGhcrTagCreatedAt("projectbluefin", "utah", {
+        need: ["t0", "stable-20261007-gone"],
+      });
+      assert.equal(result.t0, "2026-10-09T12:00:00Z");
+      // Page 5 (Oct 5) is wholly older than a day before Oct 7: stop there
+      // instead of walking all nine pages.
+      assert.equal(s.calls, 5);
+    },
+  );
+});
