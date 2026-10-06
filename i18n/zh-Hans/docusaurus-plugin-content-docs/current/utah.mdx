@@ -1,0 +1,52 @@
+---
+title: Utah
+slug: /utah
+---
+
+import DriverVersionsCatalog from "@site/src/components/DriverVersionsCatalog";
+
+# Utah
+
+**Utah**（_Utahraptor ostrommaysi_，犹他斑龙）是基于 [Fedora Hummingbird](https://fedoramagazine.org/fedora-hummingbird-linux-taking-the-hummingbird-model-to-the-full-os/) 打造的 Bluefin。Fedora Hummingbird 提供一个经过加固、快速迭代的无桌面可启动基础；Utah 在此基础上加入桌面层：Bluefin 的 GNOME 桌面与用户体验。整个栈通过 `projectbluefin/utah-packages` 从经过验证的上游来源组装而成。
+
+:::info[Pre-alpha]
+Utah 是一个正在积极开发的 alpha 版本。其 `:testing` 容器镜像已发布在 GHCR。请在 [projectbluefin/utah](https://github.com/projectbluefin/utah/issues) 跟踪进度并提交问题。
+:::
+
+## 下载
+
+- [最新 ISO](https://projectbluefin.dev/utah-live-latest.iso)
+
+## 架构
+
+Utah 横跨两个协同仓库进行组装：
+
+| 仓库                                                                        | 角色                                                                                             |
+| ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| [`projectbluefin/utah`](https://github.com/projectbluefin/utah)           | 使用 Bluefin 的包契约与桌面服务组装 bootc 操作系统镜像。                                                |
+| [`projectbluefin/utah-packages`](https://github.com/projectbluefin/utah-packages) | 从经过验证的上游来源构建 GNOME 51 与桌面栈，并发布为 OCI 层。                                        |
+
+## 镜像流
+
+Utah 定义了四种镜像，对应 Bluefin 的标准目标：`utah`、`utah-nvidia`、`utah-gaming` 和 `utah-nvidia-gaming`。
+
+| 标签        | 流      | 可用性                                |
+| ---------- | ------- | ------------------------------------------- |
+| `:stable`  | Stable  | `ghcr.io/projectbluefin/utah:stable`        |
+| `:testing` | Testing | `ghcr.io/projectbluefin/utah:testing`       |
+
+## 功能与栈
+
+- **内核**：与 Bluefin 相同的内核选项，Gaming 模式提供 Open Gaming Collective（OGC）Linux 内核。
+- **桌面**：GNOME 51 栈通过 `utah-packages` 从上游来源组装。
+- **NVIDIA 与游戏**：专门化的镜像包含 NVIDIA 驱动与游戏栈组件。
+
+## 当前版本
+
+<DriverVersionsCatalog streamId="utah-testing" />
+
+## 延伸阅读
+
+- [projectbluefin/utah 仓库](https://github.com/projectbluefin/utah)
+- [projectbluefin/utah-packages 仓库](https://github.com/projectbluefin/utah-packages)
+- [Fedora Hummingbird 公告](https://fedoramagazine.org/fedora-hummingbird-linux-taking-the-hummingbird-model-to-the-full-os/)
