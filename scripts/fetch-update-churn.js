@@ -213,7 +213,19 @@ function datedTagKey(tag = "") {
  * same-day pair compared in the wrong direction reports different numbers than
  * the one a user actually performs. Tag text is not a build time — `362ea44`
  * sorts before `815ea44` while being the newer build — so it is the last
- * resort, used only for tags the packages API had no `created_at` for.
+ * resort.
+ *
+ * The comparator is a strict total order on `[date, buildTime, text]`. A tag
+ * the packages API had no `created_at` for sorts as if its build time were
+ * the empty string, which `localeCompare` puts before any real timestamp —
+ * the partial-coverage tie-break is now a missing-data sentinel rather than
+ * a conditional switch. That makes the comparator transitive: previously,
+ * when only some tags in a same-day group carried a timestamp, the function
+ * used build time for the timestamped pair and tag text for the others,
+ * which yielded a cyclic comparator (`cmp(a,b) = cmp(b,c) = cmp(c,a) = -1`
+ * was reachable) and the chart order flipped with input order whenever the
+ * `GHCR_TAG_CREATED_AT_MAX_PAGES` cap was hit. A total order on the same
+ * three keys removes the cycle at the source.
  *
  * @param {string} a
  * @param {string} b
@@ -225,11 +237,16 @@ function compareTagsByDate(a, b, createdAt = {}) {
   if (!keyA !== !keyB) return keyA ? -1 : 1;
   const dateDelta = keyA.localeCompare(keyB);
   if (dateDelta !== 0) return dateDelta;
+  // Missing `created_at` is the empty-string sentinel. Any real timestamp
+  // string sorts after "" under `localeCompare`, so a tag without coverage
+  // is treated as the oldest in its same-day group — consistent across
+  // every pair the comparator sees, which is what makes the function a
+  // total order rather than a mix of two tie-breaks.
   const builtA = createdAt?.[a];
   const builtB = createdAt?.[b];
-  if (builtA && builtB && builtA !== builtB) {
-    return String(builtA).localeCompare(String(builtB));
-  }
+  const timeA = builtA ? String(builtA) : "";
+  const timeB = builtB ? String(builtB) : "";
+  if (timeA !== timeB) return timeA.localeCompare(timeB);
   return String(a).localeCompare(String(b));
 }
 
@@ -483,8 +500,12 @@ async function getPlatformLayers(repo, tag) {
  * series needs.
  *
  * Returns `{}` — never throws — when the API is unreachable, unauthenticated or
- * rate-limited. `compareTagsByDate` then falls back to tag text, which is a
- * documented approximation, not a crash.
+ * rate-limited. `compareTagsByDate` then treats those tags as the empty-string
+ * sentinel and sorts them as the oldest in their same-day group; the chart
+ * still has a deterministic result across runs, just one that prefers the
+ * tags we *do* know about. A total order on `[date, buildTime, text]` keeps
+ * the comparator transitive where the old build-time-or-text switch could
+ * cycle.
  *
  * When `requiredTags` is provided, pagination continues past the default
  * two-page window until every requested tag has a timestamp, or until
@@ -518,8 +539,9 @@ async function fetchGhcrTagCreatedAt(
     // degrading. The early return keeps the "never throws" contract.
     console.warn(
       "fetch-update-churn: no GITHUB_TOKEN configured for this repo — build " +
-        "timestamps unavailable; falling back to tag-text ordering within a day. " +
-        "Set GITHUB_TOKEN (with packages read access) to read per-tag build times.",
+        "timestamps unavailable. The comparator treats missing timestamps as the " +
+        "oldest in a same-day group; set GITHUB_TOKEN (with packages read access) " +
+        "to read per-tag build times.",
     );
     return createdAt;
   }
@@ -594,7 +616,7 @@ async function fetchGhcrTagCreatedAt(
   } catch (err) {
     console.warn(
       `fetch-update-churn: build timestamps unavailable for ${org}/${pkg} — ` +
-        `${err.message}; falling back to tag-text ordering within a day`,
+        `${err.message}; missing timestamps will be treated as the oldest in a same-day group`,
     );
     return {};
   }

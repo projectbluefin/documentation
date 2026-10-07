@@ -271,6 +271,65 @@ test("compareTagsByDate: an undated floating tag sorts last, not first", () => {
   assert.equal(compareTagsByDate("stable", "stable"), 0);
 });
 
+test("compareTagsByDate: partial `created_at` coverage is a strict total order on [date, buildTime, text]", () => {
+  // #1500. When only some tags in a same-day group carry a `created_at`, the
+  // comparator must still give one answer for every pair, and that answer
+  // must agree with itself across the group. Previously the function used
+  // build time for the timestamped pair and tag text for the others, which
+  // produced a cyclic comparator and made the chart order flip with input
+  // order whenever the pagination cap clipped coverage.
+  const AAA = "testing-20260927-aaaa";
+  const BBB = "testing-20260927-bbbb";
+  const CCC = "testing-20260927-cccc";
+  // Text order: AAA < BBB < CCC. Build times put CCC before AAA on purpose,
+  // so the two orderings disagree and the old `builtA && builtB` switch
+  // would have produced a cycle.
+  const createdAt = {
+    [CCC]: "2026-09-27T05:00:00Z",
+    [AAA]: "2026-09-27T10:00:00Z",
+    // BBB intentionally missing.
+  };
+
+  // The total order is [date, buildTime, text] with missing timestamps sorted
+  // first (the empty-string sentinel). That puts BBB before the timestamped
+  // pair, then CCC (05:00Z), then AAA (10:00Z).
+  const expected = [BBB, CCC, AAA];
+  const permutations = [
+    [AAA, BBB, CCC],
+    [CCC, BBB, AAA],
+    [BBB, CCC, AAA],
+    [CCC, AAA, BBB],
+    [AAA, CCC, BBB],
+    [BBB, AAA, CCC],
+  ];
+  for (const input of permutations) {
+    assert.deepEqual(
+      [...input].sort((a, b) => compareTagsByDate(a, b, createdAt)),
+      expected,
+      `input order ${input.join(", ")} must sort to ${expected.join(", ")}`,
+    );
+  }
+
+  // Transitivity check: a strict total order never allows all three pairwise
+  // comparisons to agree in the same direction. The old comparator reached
+  // cmp(a,b) = cmp(b,c) = cmp(c,a) < 0 in this exact configuration, which is
+  // the cycle the issue calls out — the new comparator cannot reproduce it.
+  const ab = Math.sign(compareTagsByDate(AAA, BBB, createdAt));
+  const bc = Math.sign(compareTagsByDate(BBB, CCC, createdAt));
+  const ca = Math.sign(compareTagsByDate(CCC, AAA, createdAt));
+  assert.ok(
+    !(ab < 0 && bc < 0 && ca < 0),
+    "same-day partial coverage must not produce a cyclic comparator",
+  );
+
+  // A pair where only one side is missing a timestamp orders by the sentinel
+  // against the real timestamp, not by text. So the missing-timestamp tag is
+  // always the older of the two — predictable across builds, even if the
+  // chart would prefer a different tie-break.
+  assert.equal(compareTagsByDate(AAA, BBB, createdAt) > 0, true);
+  assert.equal(compareTagsByDate(CCC, BBB, createdAt) > 0, true);
+});
+
 test("selectDatedTags: keeps only matching dated tags, oldest-first, trimmed to limit", () => {
   const tags = [
     "testing",
