@@ -12,6 +12,7 @@ const {
   selectWindowCandidates,
   discoverSeriesTags,
   fetchGhcrTagCreatedAt,
+  GHCR_TAG_CREATED_AT_MAX_PAGES,
 } = require("./fetch-update-churn.js");
 
 test("analyzeManifestLayers: handles empty or invalid layers safely", () => {
@@ -543,7 +544,7 @@ test("fetchGhcrTagCreatedAt: stops paging once every requested tag is covered (#
   });
 });
 
-test("fetchGhcrTagCreatedAt: warns on partial coverage when the cap is hit (#1498)", async () => {
+test("fetchGhcrTagCreatedAt: warns when pagination ends before every requested tag is covered (#1498)", async () => {
   await withToken(async () => {
     // maxPages is 1, but requiredTags raises the ceiling to
     // GHCR_TAG_CREATED_AT_MAX_PAGES; the stub sends no `next` link, so paging
@@ -586,7 +587,45 @@ test("fetchGhcrTagCreatedAt: warns on partial coverage when the cap is hit (#149
   });
 });
 
-test("compareTagsByDate: same-day tags order by build time even when only some have it (#1498)", () => {
+test("fetchGhcrTagCreatedAt: stops at GHCR_TAG_CREATED_AT_MAX_PAGES and warns (#1498)", async () => {
+  await withToken(async () => {
+    // Every page advertises a `next` link and never carries the requested
+    // tag, so only the page ceiling ends the loop.
+    const page = Array.from({ length: 100 }, (_, i) => ({
+      created_at: "2026-10-05T00:00:00Z",
+      metadata: { container: { tags: [`unrelated-${i}`] } },
+    }));
+    const stub = stubFetchPages([
+      { body: page, link: '<https://api.github.com/next>; rel="next"' },
+    ]);
+    const warnings = [];
+    const origWarn = console.warn;
+    console.warn = (msg) => {
+      warnings.push(String(msg));
+    };
+    try {
+      const result = await fetchGhcrTagCreatedAt("projectbluefin", "utah", 2, [
+        "testing-20261004-missing",
+      ]);
+      assert.equal(stub.calls.length, GHCR_TAG_CREATED_AT_MAX_PAGES);
+      assert.equal(result["testing-20261004-missing"], undefined);
+      assert.equal(
+        warnings.some(
+          (w) =>
+            w.includes("testing-20261004-missing") &&
+            w.includes(`${GHCR_TAG_CREATED_AT_MAX_PAGES} page(s)`),
+        ),
+        true,
+        "expected a warning naming the ceiling and the uncovered tag",
+      );
+    } finally {
+      console.warn = origWarn;
+      stub.restore();
+    }
+  });
+});
+
+test("compareTagsByDate: same-day tags fall back to tag text when any timestamp is missing (#1498)", () => {
   // The fix in fetchGhcrTagCreatedAt guarantees every requested tag carries a
   // `created_at`, but the contract compareTagsByDate enforces is unchanged:
   // same-day ties break on the registry timestamp and fall back to tag text

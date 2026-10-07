@@ -52,16 +52,25 @@ const GHCR_TAG_CREATED_AT_PER_PAGE = 100;
 
 /** Hard upper limit on pages fetched for `created_at` lookup.
  *
- * The packages API returns 100 versions per page. An image that ships many
- * builds per day (Utah publishes 5-7) accumulates versions faster than the
- * default 2-page cap covers, so older same-day tags fall off the window and
- * `compareTagsByDate` reverts to tag-text ordering — which reverses the
+ * The packages API returns 100 versions per page. Each Utah build publishes
+ * ~31 package versions (manifest, per-arch manifests, chunk blobs, `.sig`),
+ * and Utah can ship many builds a day (20 on 20261003), so the 14-tag
+ * window typically resolves around page 5 and a heavy day inside the window
+ * (whole date groups are requested, see `selectWindowCandidates`) can push
+ * it to page 9 or beyond. Older same-day tags that fall off the window make
+ * `compareTagsByDate` revert to tag-text ordering — which reverses the
  * directional diff that drives the churn chart. When a caller hands us the
  * matched tag set, we paginate until every requested tag has a timestamp or
  * we hit this ceiling; either way the caller sees exactly how many timestamps
- * we could not recover.
+ * we could not recover. Override with `UPDATE_CHURN_GHCR_MAX_PAGES`.
  */
-const GHCR_TAG_CREATED_AT_MAX_PAGES = 10;
+const DEFAULT_GHCR_TAG_CREATED_AT_MAX_PAGES = 20;
+const GHCR_TAG_CREATED_AT_MAX_PAGES = (() => {
+  const raw = Number(process.env.UPDATE_CHURN_GHCR_MAX_PAGES);
+  return Number.isInteger(raw) && raw > 0
+    ? raw
+    : DEFAULT_GHCR_TAG_CREATED_AT_MAX_PAGES;
+})();
 
 /**
  * Utah publishes one dated tag per build: `testing-YYYYMMDD-<short-sha>`.
