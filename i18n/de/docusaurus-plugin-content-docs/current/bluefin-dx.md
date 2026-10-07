@@ -19,7 +19,7 @@ Es gibt [15,6 Millionen Cloud-Native-Entwickler](https://www.cncf.io/announcemen
 
 ## Der Cloud-Native-Entwicklungsansatz
 
-Bluefin geht „all in" auf Cloud-Native-Entwicklung und wird anders verwendet als eine traditionelle Distribution wie Ubuntu:
+Bluefin geht „all in“ auf Cloud-Native-Entwicklung und wird anders verwendet als eine traditionelle Distribution wie Ubuntu:
 
 - Entwicklung erfolgt in Containern; gängige Container-Muster sind:
   - [Devcontainer](https://containers.dev/) mit VSCode, JetBrains oder Neovim
@@ -30,7 +30,7 @@ Bluefin geht „all in" auf Cloud-Native-Entwicklung und wird anders verwendet a
 
 Dies unterscheidet sich von traditionellen Distributionen, indem es den Entwicklungsprozess betriebssystemagnostisch macht. Es gibt auf Bluefin kein Äquivalent zu `apt install php`; Entwicklung erfolgt mit `podman` oder `docker` direkt über eine IDE.
 
-Wir glauben auch an einfachen Zugang zu anderen florierenden Ökosystemen wie Python via `uv`. Wir werfen das Handtuch auf „ein Linux-System-Paketmanager, um sie alle zu beherrschen", weil diese Ökosysteme selbst Giganten sind. Kritiker werden sagen, dass wir zu viele Paketmanager ausliefern; wir sagen, dass wir keine Paketmanager ausliefern, sondern _Ökosysteme, die Nutzer wollen_. Und diese modernen Paketmanager sind für eine Welt gebaut, die auf Containern läuft, weil das tatsächlich stimmt. Und wir wollen sie out of the box auf unseren Desktops.
+Wir glauben auch an einfachen Zugang zu anderen florierenden Ökosystemen wie Python via `uv`. Wir werfen das Handtuch auf „ein Linux-System-Paketmanager, um sie alle zu beherrschen“, weil diese Ökosysteme selbst Giganten sind. Kritiker werden sagen, dass wir zu viele Paketmanager ausliefern; wir sagen, dass wir keine Paketmanager ausliefern, sondern _Ökosysteme, die Nutzer wollen_. Und diese modernen Paketmanager sind für eine Welt gebaut, die auf Containern läuft, weil das tatsächlich stimmt. Und wir wollen sie out of the box auf unseren Desktops.
 
 :::tip[Warum Cloud Native?]
 
@@ -40,9 +40,9 @@ Wir haben das Cloud-Native-Muster gewählt, weil lokale Entwicklung in Container
 
 ![image](/img/user-attachments/51415b6c-b7fe-45e9-af74-c01694b26fbe.png)
 
-Das Muster in `bluefin-dx` (und `aurora-dx`) dreht sich um [Devcontainer](https://containers.dev). Da Devcontainer im Git-Repository des Projekts leben, können sie auf jedem Betriebssystem bereitgestellt werden: Linux, macOS oder Windows (via WSL). Dies ermöglicht „von Natur aus verteilte" Entwicklung und vermeidet, dass Linux-Nutzer „die Außenseiter" sind, wenn sie mit Teamkollegen auf anderen Betriebssystemen arbeiten.
+Das Muster in `bluefin-dx` (und `aurora-dx`) dreht sich um [Devcontainer](https://containers.dev). Da Devcontainer im Git-Repository des Projekts leben, können sie auf jedem Betriebssystem bereitgestellt werden: Linux, macOS oder Windows (via WSL). Dies ermöglicht „von Natur aus verteilte“ Entwicklung und vermeidet, dass Linux-Nutzer „die Außenseiter“ sind, wenn sie mit Teamkollegen auf anderen Betriebssystemen arbeiten.
 
-Jedes Projekt enthält eine deklarative Umgebung, die den Nutzer mit einem „Best Practice"-Cloud-Native-Workflow out of the box starten lassen soll. Der [Ultimate Guide to Dev Containers](https://web.archive.org/web/20260313112015/https://www.daytona.io/dotfiles/ultimate-guide-to-dev-containers) hat einen guten Beitrag über die Vorteile der Verwendung von Devcontainern. Das bedeutet, dass die Entwicklungsumgebung in der Versionsverwaltung gehalten wird, statt an den Host gekoppelt zu sein.
+Jedes Projekt enthält eine deklarative Umgebung, die den Nutzer mit einem „Best Practice“-Cloud-Native-Workflow out of the box starten lassen soll. Der [Ultimate Guide to Dev Containers](https://web.archive.org/web/20260313112015/https://www.daytona.io/dotfiles/ultimate-guide-to-dev-containers) hat einen guten Beitrag über die Vorteile der Verwendung von Devcontainern. Das bedeutet, dass die Entwicklungsumgebung in der Versionsverwaltung gehalten wird, statt an den Host gekoppelt zu sein.
 
 Homebrew kann auch verwendet werden, um Entwicklungstools zu installieren. Es wird jedoch empfohlen, dies zu vermeiden und die Abhängigkeiten des Projekts in der Versionsverwaltung zu deklarieren. Es ist manchmal so bequem, [it's okay](https://www.youtube.com/shorts/lKwavoyaaFA).
 
@@ -120,7 +120,7 @@ Dank an Ubuntu und Canonical für die [detaillierte Spezifikation](https://disco
 
 #### Pet-Container
 
-Pet-Container sind als interaktive Terminals via [Distrobox](https://distrobox.it/) verfügbar. Verwalte diese über die enthaltene [DistroShelf](https://github.com/ranfdev/DistroShelf)-Anwendung, verfügbar über das Logomenü oben links auf deinem Desktop unter „Container":
+Pet-Container sind als interaktive Terminals via [Distrobox](https://distrobox.it/) verfügbar. Verwalte diese über die enthaltene [DistroShelf](https://github.com/ranfdev/DistroShelf)-Anwendung, verfügbar über das Logomenü oben links auf deinem Desktop unter „Container“:
 
 ![image](/img/user-attachments/bdab71b0-c04a-4562-a73d-396d4b907060.png)
 
@@ -134,7 +134,7 @@ Für CLI-Krieger kannst du deine Container mit der eingebauten Container-Unterst
 
 Das enthaltene [Terminal](https://gitlab.gnome.org/GNOME/ptyxis) enthält ein Host-Terminal, sodass du schnell zwischen Containern und dem Host wechseln kannst.
 
-- Das Standard-Terminal ist [Ptyxis](https://gitlab.gnome.org/GNOME/ptyxis), das eingebaute Integration von Distrobox-Containern enthält. Es ist im Menü als „Terminal" aliasiert. Es ist standardmäßig auf <kbd>Strg</kbd>-<kbd>Alt</kbd>-<kbd>Eingabe</kbd> zum Schnellstart gebunden
+- Das Standard-Terminal ist [Ptyxis](https://gitlab.gnome.org/GNOME/ptyxis), das eingebaute Integration von Distrobox-Containern enthält. Es ist im Menü als „Terminal“ aliasiert. Es ist standardmäßig auf <kbd>Strg</kbd>-<kbd>Alt</kbd>-<kbd>Eingabe</kbd> zum Schnellstart gebunden
 - [Podman Desktop](https://flathub.org/apps/io.podman_desktop.PodmanDesktop) — Container und Kubernetes für Anwendungsentwickler
 - [Pods](https://flathub.org/apps/com.github.marhkb.Pods) ist auch eine großartige Möglichkeit, deine Container grafisch zu verwalten
 
@@ -180,7 +180,7 @@ Installiere einen gemeinsamen Satz von Tools, die von Kubernetes-Administratoren
 | [k0sctl](https://k0sproject.io/)                         | Ein Befehlszeilen-Tool zum Bootstrappen und Verwalten von k0s-Kubernetes-Clustern                                            |
 | [k3sup](https://formulae.brew.sh/formula/k3sup)          | Ein leichtgewichtiges Utility, um k3s auf jeder lokalen oder Remote-VM zu installieren                                       |
 | [k9s](https://formulae.brew.sh/formula/k9s)              | Stellt eine Terminal-UI zur Interaktion mit deinen Kubernetes-Clustern bereit                                                |
-| [kind](https://formulae.brew.sh/formula/kind)            | Ein Tool zum Ausführen lokaler Kubernetes-Cluster mit Docker-Container-„Knoten"                                              |
+| [kind](https://formulae.brew.sh/formula/kind)            | Ein Tool zum Ausführen lokaler Kubernetes-Cluster mit Docker-Container-„Knoten“                                              |
 | [kubectl](https://kubernetes.io/docs/reference/kubectl/) | Das Kubernetes-Befehlszeilen-Tool, mit dem du Befehle gegen Kubernetes-Cluster ausführen kannst                              |
 | [kubectx](https://formulae.brew.sh/formula/kubectx)      | Ein Tool zum schnelleren Wechseln zwischen Kontexten (Clustern) in kubectl                                                   |
 | [pack](https://buildpacks.io/)                           | Ein CLI-Tool zum Erstellen von Apps mit Cloud-Native Buildpacks                                                              |

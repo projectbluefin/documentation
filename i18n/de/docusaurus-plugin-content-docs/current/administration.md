@@ -5,7 +5,7 @@ slug: /administration
 
 #### Täglicher Betrieb
 
-Bluefin ist dafür ausgelegt, für die Lebensdauer der Hardware ohne Neuinstallation installiert zu werden. Im Gegensatz zu herkömmlichen Betriebssystemen ist das Image immer unverändert und „sauber", wodurch Upgrades weniger problematisch sind. Updates sind standardmäßig automatisch und still.
+Bluefin ist dafür ausgelegt, für die Lebensdauer der Hardware ohne Neuinstallation installiert zu werden. Im Gegensatz zu herkömmlichen Betriebssystemen ist das Image immer unverändert und „sauber“, wodurch Upgrades weniger problematisch sind. Updates sind standardmäßig automatisch und still.
 
 Das bedeutet in der Regel, dass du dein System einmal einrichten kannst und es dann so bleibt. Dann musst du wahrscheinlich nie mehr hierher zurückkommen. 🙂
 
@@ -28,7 +28,7 @@ Verwende [Bazaar](https://github.com/kolunmi/bazaar), um [Anwendungen aus Flathu
 
 ## System-Updates
 
-Bluefin ist so konzipiert, dass es „ohne Zutun" funktioniert. Das System prüft alle sechs (6) Stunden auf Updates. Dies umfasst System-Updates, Flatpaks, Pet-Container und Homebrew.
+Bluefin ist so konzipiert, dass es „ohne Zutun“ funktioniert. Das System prüft alle sechs (6) Stunden auf Updates. Dies umfasst System-Updates, Flatpaks, Pet-Container und Homebrew.
 
 - Die meisten Images werden wöchentlich veröffentlicht, wir können aber jederzeit ein neues Update herausgeben.
 
@@ -46,11 +46,11 @@ Gehe in **Einstellungen** → **Netzwerk** → einer Netzwerkeinstellung und set
 
 ## Streams und Drosselungseinstellungen
 
-Bluefin bietet Images basierend auf der aktuellen Fedora-Version. Damit haben Nutzer die Wahl, wie aggressiv sie ihre Updates wünschen. Diese werden als „Streams" bezeichnet.
+Bluefin bietet Images basierend auf der aktuellen Fedora-Version. Damit haben Nutzer die Wahl, wie aggressiv sie ihre Updates wünschen. Diese werden als „Streams“ bezeichnet.
 
 ### Bluefin
 
-`stable`: Dies ist der Standard-Stream für Bluefin und richtet sich an die meisten Nutzer. Er ist immer ein Alias auf die aktuelle Fedora-Version, folgt aber dem Fedora-CoreOS-Veröffentlichungszeitplan. Das bedeutet, dass Kernel-Upgrades etwa 2 Wochen nach dem Erscheinen in Fedora kommen, was nützlich sein kann, um Kernel-Regressionen zu vermeiden, da das Bluefin-Team in diesen Fällen auf einen bestimmten Kernel pinnen kann. Wir nennen dies „Gating" des Kernels. `stable-daily` ist für diejenigen verfügbar, die tägliche Builds möchten.
+`stable`: Dies ist der Standard-Stream für Bluefin und richtet sich an die meisten Nutzer. Er ist immer ein Alias auf die aktuelle Fedora-Version, folgt aber dem Fedora-CoreOS-Veröffentlichungszeitplan. Das bedeutet, dass Kernel-Upgrades etwa 2 Wochen nach dem Erscheinen in Fedora kommen, was nützlich sein kann, um Kernel-Regressionen zu vermeiden, da das Bluefin-Team in diesen Fällen auf einen bestimmten Kernel pinnen kann. Wir nennen dies „Gating“ des Kernels. `stable-daily` ist für diejenigen verfügbar, die tägliche Builds möchten.
 
 :::note[Latest (Für Tester)]
 `latest`: Für Nutzer, die das Neueste wollen, was Fedora zu bieten hat — einen ungegateten Linux-Kernel, tägliche Updates, voller offener Gasfuß. 🔥 Dieser Stream bleibt absichtlich ungebrandet und ist nicht für den allgemeinen Gebrauch bestimmt.
@@ -77,7 +77,7 @@ Hinzufügen und Bearbeiten von Kernel-Boot-Argumenten wird von `bootc kargs` geh
 
 :::info[Es ist einfach Bluefin]
 
-Bluefins Komponenten werden über alle Images geteilt; betrachte es nicht als separate „Edition" oder „Spin". Bluefin ist bestrebt, über alle Images hinweg gleich zu sein; wir glauben, dass die Aggressivität von Updates eine „Einstellung" sein kann. Idealerweise nutzt du „Bluefin" und musst dich nicht um deinen Update-Stream kümmern.
+Bluefins Komponenten werden über alle Images geteilt; betrachte es nicht als separate „Edition“ oder „Spin“. Bluefin ist bestrebt, über alle Images hinweg gleich zu sein; wir glauben, dass die Aggressivität von Updates eine „Einstellung“ sein kann. Idealerweise nutzt du „Bluefin“ und musst dich nicht um deinen Update-Stream kümmern.
 
 :::
 
@@ -259,8 +259,8 @@ Bluefin enthält kuratierte CLI-Tool-Sammlungen. Diese Befehle installieren kura
 | `ujust check-local-overrides`  | Dateien anzeigen, die sich zwischen `/usr/etc` und `/etc` unterscheiden, um lokale Anpassungen zu identifizieren                                                                                                                                     |
 | `ujust logs-this-boot`         | Alle System-Logmeldungen vom aktuellen Boot anzeigen                                                                                                                                                                                                 |
 | `ujust logs-last-boot`         | Alle System-Logmeldungen vom vorherigen Boot anzeigen                                                                                                                                                                                                |
-| `ujust enroll-secure-boot-key` | Den Nvidia-Treiber- & KMOD-Signierschlüssel für Secure Boot enrollen (Passwort: „universalblue")                                                                                                                                                     |
-| `ujust toggle-user-motd`       | Anzeige der „Message of the Day" im Terminal umschalten                                                                                                                                                                                              |
+| `ujust enroll-secure-boot-key` | Den Nvidia-Treiber- & KMOD-Signierschlüssel für Secure Boot enrollen (Passwort: „universalblue“)                                                                                                                                                     |
+| `ujust toggle-user-motd`       | Anzeige der „Message of the Day“ im Terminal umschalten                                                                                                                                                                                              |
 | `ujust toggle-tpm2`            | Automatisches LUKS-Disk-Unlock via TPM umschalten (aktivieren/deaktivieren mit optionaler PIN)                                                                                                                                                       |
 | `ujust toggle-iwd`             | Zwischen iwd und wpa_supplicant für WLAN-Netzwerke wechseln (iwd kann Durchsatz verbessern und Latenz reduzieren)                                                                                                                                    |
 | `ujust benchmark`              | Einen einminütigen System-Benchmark mit stress-ng ausführen                                                                                                                                                                                          |

@@ -17,7 +17,7 @@ Bluefins Fokus in der KI liegt darauf, einen generischen API-Endpunkt zum Betrie
 
 Bluefin stellt offene, nutzergesteuerte API-Endpunkte zum Betriebssystem für KI-Workflows bereit. Wir tun dies über einen von der Community verwalteten Satz von Tool-Empfehlungen und Konfiguration:
 
-- „Bring your own LLM"-Ansatz, es sollte einfach sein, zwischen lokalen und gehosteten Modellen zu wechseln
+- „Bring your own LLM“-Ansatz, es sollte einfach sein, zwischen lokalen und gehosteten Modellen zu wechseln
   - [Goose](https://block.github.io/goose/) als primäre Schnittstelle zu gehosteten und lokalen Modellen
 - Beschleunigung offener Standards in der KI durch das Ausliefern von Tools von der [Agentic AI Foundation](https://aaif.io/), [CNCF](https://cncf.io) und anderen Stiftungen
 - Verwaltung lokaler LLM-Dienste
@@ -143,6 +143,8 @@ Bluefin bindet `Ctrl`-`Alt`-`Backspace` als Schnellstart für Alpaca, nachdem du
 ![Alpaca](/img/user-attachments/104c5263-5d34-497a-b986-93bb0a41c23e.png)
 
 ![image](/img/user-attachments/9fd38164-e2a9-4da1-9bcd-29e0e7add071.png)
+
+[^1]: Für vollständige AMD-Unterstützung muss zusätzlich die Flatpak-Erweiterung `com.jeffser.Alpaca.Plugins.AMD` installiert werden.
 
 ## Automatisierte Fehlerbehebung (WIP)
 
