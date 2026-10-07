@@ -140,7 +140,7 @@ Das enthaltene [Terminal](https://gitlab.gnome.org/GNOME/ptyxis) enthält ein Ho
 
 ## Andere Tools
 
-#### JetBrains
+### JetBrains
 
 `ujust jetbrains-toolbox` holt und installiert die [JetBrains Toolbox](https://www.jetbrains.com/toolbox-app)-Anwendung, die die Installation der JetBrains-Tool-Sammlung verwaltet. Diese Anwendung übernimmt Installation, Entfernung und Upgrade der JetBrains-Produkte und wird vollständig in deinem Home-Verzeichnis gehandhabt, unabhängig vom Betriebssystem-Image. Wir empfehlen nicht, die JetBrains-Flatpaks zu verwenden.
 
@@ -152,22 +152,22 @@ Der JetBrains-Blog hat auch weitere Informationen zur JetBrains-Dev-Containers-U
 
 - [Dev Containers in JetBrains-IDEs verwenden — Teil 1](https://blog.jetbrains.com/idea/2024/07/using-dev-containers-in-jetbrains-ides-part-1/)
 
-#### Neovim
+### Neovim
 
 `brew install neovim devcontainer` und folge dann diesen Anweisungen für ein Devcontainer-Setup:
 
 - [Neovim mit Devcontainern ausführen](https://cadu.dev/running-neovim-on-devcontainers/)
 
-#### Virtualisierung und Container-Runtimes
+### Virtualisierung und Container-Runtimes
 
 - [virt-manager](https://virt-manager.org/) und zugehörige Tools (KVM, qemu)
 - [Incus](https://linuxcontainers.org/incus/) stellt System-Container bereit
 
-#### Lokale Anwendungsentwicklung
+### Lokale Anwendungsentwicklung
 
 [GNOME Builder](https://developer.gnome.org/documentation/introduction/builder.html) ist der empfohlene Anwendungs-Stack zum Erstellen von Anwendungen.
 
-#### Kubernetes
+### Kubernetes {#kubernetes}
 
 Installiere einen gemeinsamen Satz von Tools, die von Kubernetes-Administratoren verwendet werden, via Homebrew (`brew install <name>`):
 
@@ -190,7 +190,7 @@ Installiere einen gemeinsamen Satz von Tools, die von Kubernetes-Administratoren
 
 Für Zugriff auf die vollständige Suite von [Cloud Native Computing Foundation](https://l.cncf.io)-Tools verwende `ujust cncf`, um aus einer umfangreichen Sammlung von 89 CNCF-Projekten zu browsen und zu installieren, einschließlich graduierter, inkubierender und Sandbox-Tools. Dies umfasst Argo, Cilium, Envoy, Flux, Istio, Linkerd, Prometheus und viele mehr.
 
-#### Fonts
+### Fonts {#fonts}
 
 Installiere kuratierte Entwickler-Fonts via Homebrew (`brew install --cask <font-name>`) oder verwende das enthaltene [Embellish](https://flathub.org/en/apps/io.github.getnf.embellish)-Tool:
 

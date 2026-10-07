@@ -81,7 +81,7 @@ Bluefins Komponenten werden über alle Images geteilt; betrachte es nicht als se
 
 :::
 
-### Zwischen Streams wechseln
+### Zwischen Streams wechseln {#switching-between-streams}
 
 Verwende den Befehl `ujust rebase-helper`, um ein Rebase auszuwählen und einen bestimmten Stream zu wählen:
 
