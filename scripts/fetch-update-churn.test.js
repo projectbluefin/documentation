@@ -9,6 +9,8 @@ const {
   datedTagKey,
   compareTagsByDate,
   selectDatedTags,
+  selectWindowCandidates,
+  discoverSeriesTags,
   fetchGhcrTagCreatedAt,
 } = require("./fetch-update-churn.js");
 
@@ -543,8 +545,10 @@ test("fetchGhcrTagCreatedAt: stops paging once every requested tag is covered (#
 
 test("fetchGhcrTagCreatedAt: warns on partial coverage when the cap is hit (#1498)", async () => {
   await withToken(async () => {
-    // The cap is 1, all returned versions are unrelated, so the requested tag
-    // is not covered and the function must warn and degrade gracefully. The
+    // maxPages is 1, but requiredTags raises the ceiling to
+    // GHCR_TAG_CREATED_AT_MAX_PAGES; the stub sends no `next` link, so paging
+    // ends after one page with the requested tag still uncovered and the
+    // function must warn and degrade gracefully. The
     // function still returns whatever `created_at` it collected; the warning
     // is the contract surface that tells the caller `compareTagsByDate` will
     // fall back to tag text for the missing tags.
@@ -604,4 +608,110 @@ test("compareTagsByDate: same-day tags order by build time even when only some h
       "testing-20261004-eb9ddac",
     ],
   );
+});
+
+test("selectWindowCandidates: takes newest whole date groups until the window is filled (#1498)", () => {
+  const matches = [
+    "testing-20261001-aaaaaaa",
+    "testing-20261002-bbbbbbb",
+    "testing-20261003-ccccccc",
+    "testing-20261003-ddddddd",
+    "testing-20261004-eeeeeee",
+    "testing-20261004-fffffff",
+    "testing-20261004-eeeeeee",
+  ];
+  // limit 3: 20261004 contributes 2, 20261003 must be taken whole (2 more),
+  // so the same-day pair at the window edge is ordered by build time.
+  assert.deepEqual(selectWindowCandidates(matches, 3).sort(), [
+    "testing-20261003-ccccccc",
+    "testing-20261003-ddddddd",
+    "testing-20261004-eeeeeee",
+    "testing-20261004-fffffff",
+  ]);
+  assert.deepEqual(selectWindowCandidates(matches, 0), []);
+  assert.deepEqual(selectWindowCandidates(null, 3), []);
+});
+
+test("discoverSeriesTags: requests build times only for the charted window (#1498)", async () => {
+  const savedToken = process.env.GITHUB_TOKEN;
+  process.env.GITHUB_TOKEN = "test-token";
+  const dated = Array.from(
+    { length: 40 },
+    (_, i) =>
+      `testing-202609${String((i % 28) + 1).padStart(2, "0")}-${String(i).padStart(7, "0")}`,
+  );
+  // Newest date (20260928) has a same-day pair; build time reverses text order.
+  const versions = [
+    {
+      created_at: "2026-09-28T20:00:00Z",
+      metadata: { container: { tags: ["testing-20260928-0000027"] } },
+    },
+    {
+      created_at: "2026-09-28T10:00:00Z",
+      metadata: { container: { tags: ["testing-20260928-1111111"] } },
+    },
+    ...dated
+      .filter((t) => t.startsWith("testing-2026092"))
+      .map((t) => ({
+        created_at: "2026-09-27T00:00:00Z",
+        metadata: { container: { tags: [t] } },
+      })),
+  ];
+  const calls = [];
+  const warnings = [];
+  const origFetch = global.fetch;
+  const origWarn = console.warn;
+  console.warn = (msg) => warnings.push(String(msg));
+  global.fetch = async (url) => {
+    const u = String(url);
+    calls.push(u);
+    let body;
+    let link = null;
+    if (u.startsWith("https://ghcr.io/token")) body = { token: "t" };
+    else if (u.includes("/tags/list"))
+      body = { tags: [...dated, "testing-20260928-1111111", "stable"] };
+    else {
+      body = versions;
+      link = '<https://api.github.com/next-page>; rel="next"';
+    }
+    return {
+      ok: true,
+      status: 200,
+      url: u,
+      headers: {
+        get: (n) => (String(n).toLowerCase() === "link" ? link : null),
+      },
+      json: async () => body,
+    };
+  };
+  try {
+    const result = await discoverSeriesTags("projectbluefin/utah", {
+      pattern: /^testing-\d{8}-[0-9a-f]{7,40}$/,
+      limit: 5,
+    });
+    assert.equal(result.listed, true);
+    assert.equal(result.tags.length, 5);
+    assert.deepEqual(result.tags.slice(-2), [
+      "testing-20260928-1111111",
+      "testing-20260928-0000027",
+    ]);
+    const apiCalls = calls.filter((u) =>
+      u.startsWith("https://api.github.com"),
+    );
+    assert.equal(
+      apiCalls.length,
+      1,
+      "window covered on page 1; no further paging",
+    );
+    assert.equal(
+      warnings.some((w) => w.includes("build timestamps incomplete")),
+      false,
+      "tags outside the window must not trigger the coverage warning",
+    );
+  } finally {
+    global.fetch = origFetch;
+    console.warn = origWarn;
+    if (savedToken === undefined) delete process.env.GITHUB_TOKEN;
+    else process.env.GITHUB_TOKEN = savedToken;
+  }
 });

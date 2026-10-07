@@ -255,6 +255,44 @@ function selectDatedTags(tags = [], series = {}, createdAt = {}) {
 }
 
 /**
+ * Pure function: Narrows matched tags to the ones that can land in the charted
+ * window, so the build-time lookup only has to cover those.
+ *
+ * The YYYYMMDD component orders tags reliably across days; only same-day ties
+ * need a registry timestamp. Taking whole date groups, newest first, until at
+ * least `limit` tags are collected yields a superset of whatever
+ * `selectDatedTags` keeps once build times break the ties. Undated tags sort
+ * after every dated one, so they are always candidates.
+ *
+ * @param {string[]} matches tags already filtered by the series pattern
+ * @param {number} limit size of the charted window
+ * @returns {string[]}
+ */
+function selectWindowCandidates(matches = [], limit) {
+  if (!Array.isArray(matches)) return [];
+  const unique = [...new Set(matches.filter((t) => typeof t === "string"))];
+  if (!Number.isFinite(limit) || limit <= 0) return [];
+  const byDate = new Map();
+  const undated = [];
+  for (const tag of unique) {
+    const key = datedTagKey(tag);
+    if (!key) {
+      undated.push(tag);
+      continue;
+    }
+    if (!byDate.has(key)) byDate.set(key, []);
+    byDate.get(key).push(tag);
+  }
+  const candidates = [...undated];
+  const dates = [...byDate.keys()].sort().reverse();
+  for (const date of dates) {
+    if (candidates.length >= limit) break;
+    candidates.push(...byDate.get(date));
+  }
+  return candidates;
+}
+
+/**
  * Pure function: Computes delta churn and layer reuse between consecutive releases.
  * @param {Array<{ digest: string, size: number }>} prevLayers
  * @param {Array<{ digest: string, size: number, mediaType?: string, annotations?: Record<string, string> }>} currLayers
@@ -450,10 +488,11 @@ async function getPlatformLayers(repo, tag) {
  *
  * @param {string} org
  * @param {string} pkg
- * @param {number} [maxPages=2] caller-chosen ceiling; bounded above by
- *   GHCR_TAG_CREATED_AT_MAX_PAGES.
+ * @param {number} [maxPages=2] page ceiling when `requiredTags` is empty.
+ *   With `requiredTags`, the ceiling is raised to at least
+ *   GHCR_TAG_CREATED_AT_MAX_PAGES so the lookup can reach every requested tag.
  * @param {string[]} [requiredTags] tags the caller will sort on; pagination
- *   continues until every entry has a timestamp or the bound is hit.
+ *   continues until every entry has a timestamp or the ceiling is hit.
  * @returns {Promise<Record<string, string>>} tag -> ISO 8601 build timestamp
  */
 async function fetchGhcrTagCreatedAt(
@@ -589,12 +628,14 @@ async function discoverSeriesTags(repo, series) {
       (t) => typeof t === "string" && series?.pattern?.test(t),
     );
     if (matches.length === 0) return { tags: [], createdAt: {}, listed: false };
-    // Pagination covers the matched set so every same-day tag has a
-    // `created_at` before we sort. The default two-page window only sees the
-    // newest ~200 versions, which is enough for daily builders and not for
-    // Utah's cadence. The function warns on partial coverage and the sort
-    // falls back to tag text for the gaps it could not resolve.
-    const createdAt = await fetchGhcrTagCreatedAt(org, pkg, 2, matches);
+    // Only tags that can land in the charted window need a `created_at`; the
+    // registry's full dated history reaches far past the pagination ceiling.
+    // The default two-page window only sees the newest ~200 versions, which
+    // is enough for daily builders and not for Utah's cadence, so pagination
+    // continues until the window candidates are covered. The function warns
+    // on partial coverage and the sort falls back to tag text for the gaps.
+    const required = selectWindowCandidates(matches, series?.limit);
+    const createdAt = await fetchGhcrTagCreatedAt(org, pkg, 2, required);
     const tags = selectDatedTags(allTags, series, createdAt);
     if (tags.length === 0) return { tags: [], createdAt: {}, listed: false };
     return { tags, createdAt, listed: true };
@@ -794,6 +835,7 @@ module.exports = {
   datedTagKey,
   compareTagsByDate,
   selectDatedTags,
+  selectWindowCandidates,
   discoverSeriesTags,
   fetchGhcrTagCreatedAt,
   extractDateFromTag,
