@@ -47,6 +47,22 @@ const SBOM_FILE = path.join(
 const CACHE_MAX_AGE_HOURS = Number(process.env.UPDATE_CHURN_CACHE_HOURS || 24);
 const FORCE_REFRESH = process.argv.includes("--force");
 
+/** Per-page request size to the GitHub packages versions API. */
+const GHCR_TAG_CREATED_AT_PER_PAGE = 100;
+
+/** Hard upper limit on pages fetched for `created_at` lookup.
+ *
+ * The packages API returns 100 versions per page. An image that ships many
+ * builds per day (Utah publishes 5-7) accumulates versions faster than the
+ * default 2-page cap covers, so older same-day tags fall off the window and
+ * `compareTagsByDate` reverts to tag-text ordering — which reverses the
+ * directional diff that drives the churn chart. When a caller hands us the
+ * matched tag set, we paginate until every requested tag has a timestamp or
+ * we hit this ceiling; either way the caller sees exactly how many timestamps
+ * we could not recover.
+ */
+const GHCR_TAG_CREATED_AT_MAX_PAGES = 10;
+
 /**
  * Utah publishes one dated tag per build: `testing-YYYYMMDD-<short-sha>`.
  * Those tags are the only second point Utah has — the floating `testing` tag
@@ -423,9 +439,29 @@ async function getPlatformLayers(repo, tag) {
  * rate-limited. `compareTagsByDate` then falls back to tag text, which is a
  * documented approximation, not a crash.
  *
+ * When `requiredTags` is provided, pagination continues past the default
+ * two-page window until every requested tag has a timestamp, or until
+ * `GHCR_TAG_CREATED_AT_MAX_PAGES` is hit. An image that ships many builds per
+ * day accumulates package versions faster than the default cap covers, so
+ * older same-day tags fall off the window and `compareTagsByDate` reverts to
+ * tag-text ordering — which reverses the directional diff that drives the
+ * churn chart. The default cap is a safety ceiling on tokens consumed per
+ * run, not the work the function intends to do.
+ *
+ * @param {string} org
+ * @param {string} pkg
+ * @param {number} [maxPages=2] caller-chosen ceiling; bounded above by
+ *   GHCR_TAG_CREATED_AT_MAX_PAGES.
+ * @param {string[]} [requiredTags] tags the caller will sort on; pagination
+ *   continues until every entry has a timestamp or the bound is hit.
  * @returns {Promise<Record<string, string>>} tag -> ISO 8601 build timestamp
  */
-async function fetchGhcrTagCreatedAt(org, pkg, maxPages = 2) {
+async function fetchGhcrTagCreatedAt(
+  org,
+  pkg,
+  maxPages = 2,
+  requiredTags = null,
+) {
   const token = githubToken();
   const createdAt = {};
   if (!token) {
@@ -448,11 +484,19 @@ async function fetchGhcrTagCreatedAt(org, pkg, maxPages = 2) {
     "X-GitHub-Api-Version": "2022-11-28",
   };
 
+  const requested = Array.isArray(requiredTags)
+    ? new Set(requiredTags.filter((t) => typeof t === "string"))
+    : null;
+  const pageBudget =
+    requested && requested.size > 0
+      ? Math.max(maxPages, GHCR_TAG_CREATED_AT_MAX_PAGES)
+      : maxPages;
+
   try {
     let url =
       `https://api.github.com/orgs/${org}/packages/container/` +
-      `${encodeURIComponent(pkg)}/versions?per_page=100`;
-    for (let page = 0; url && page < maxPages; page += 1) {
+      `${encodeURIComponent(pkg)}/versions?per_page=${GHCR_TAG_CREATED_AT_PER_PAGE}`;
+    for (let page = 0; url && page < pageBudget; page += 1) {
       const res = await fetch(url, { headers });
       if (!res.ok) {
         // 404 = package unknown to the API, 403 = scope or rate limit. Either
@@ -473,9 +517,31 @@ async function fetchGhcrTagCreatedAt(org, pkg, maxPages = 2) {
             createdAt[tag] = built;
         }
       }
+      // Once every tag the caller asked about has a timestamp, additional
+      // pages would only widen the data window without changing the order of
+      // the series the caller is going to chart.
+      if (
+        requested &&
+        requested.size > 0 &&
+        allRequestedCovered(requested, createdAt)
+      ) {
+        break;
+      }
       url =
         res.headers.get("link")?.match(/<([^>]+)>;\s*rel="next"/i)?.[1] || null;
       if (url) url = new URL(url, res.url).href;
+    }
+    if (requested && requested.size > 0) {
+      const missing = [...requested].filter((t) => !createdAt[t]);
+      if (missing.length > 0) {
+        console.warn(
+          `fetch-update-churn: ${org}/${pkg} build timestamps incomplete — ` +
+            `${missing.length} requested tag(s) had no created_at within ` +
+            `${pageBudget} page(s): ${missing.slice(0, 5).join(", ")}` +
+            (missing.length > 5 ? ", …" : "") +
+            "; falling back to tag-text ordering for those tags",
+        );
+      }
     }
   } catch (err) {
     console.warn(
@@ -486,6 +552,20 @@ async function fetchGhcrTagCreatedAt(org, pkg, maxPages = 2) {
   }
 
   return createdAt;
+}
+
+/**
+ * Pure helper: did we collect a `created_at` for every requested tag?
+ *
+ * @param {Set<string>} requested
+ * @param {Record<string, string>} createdAt
+ * @returns {boolean}
+ */
+function allRequestedCovered(requested, createdAt) {
+  for (const tag of requested) {
+    if (!createdAt[tag]) return false;
+  }
+  return true;
 }
 
 /**
@@ -509,7 +589,12 @@ async function discoverSeriesTags(repo, series) {
       (t) => typeof t === "string" && series?.pattern?.test(t),
     );
     if (matches.length === 0) return { tags: [], createdAt: {}, listed: false };
-    const createdAt = await fetchGhcrTagCreatedAt(org, pkg);
+    // Pagination covers the matched set so every same-day tag has a
+    // `created_at` before we sort. The default two-page window only sees the
+    // newest ~200 versions, which is enough for daily builders and not for
+    // Utah's cadence. The function warns on partial coverage and the sort
+    // falls back to tag text for the gaps it could not resolve.
+    const createdAt = await fetchGhcrTagCreatedAt(org, pkg, 2, matches);
     const tags = selectDatedTags(allTags, series, createdAt);
     if (tags.length === 0) return { tags: [], createdAt: {}, listed: false };
     return { tags, createdAt, listed: true };
@@ -701,6 +786,7 @@ module.exports = {
   OUTPUT_FILE,
   SBOM_FILE,
   CACHE_MAX_AGE_HOURS,
+  GHCR_TAG_CREATED_AT_MAX_PAGES,
   IMAGE_CONFIGS,
   analyzeManifestLayers,
   diffReleaseLayers,

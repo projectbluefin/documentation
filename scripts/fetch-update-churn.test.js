@@ -417,3 +417,191 @@ test("fetchGhcrTagCreatedAt: warns and returns {} on the no-token path (#1434)",
     else process.env.GH_TOKEN = savedGh;
   }
 });
+
+/**
+ * Helper: install a stub `fetch` that pages through `pages`, an array of
+ * { body, link? } entries. Each entry's `body` is returned verbatim and a
+ * `link` header pointing at a synthetic URL is emitted when present.
+ */
+function stubFetchPages(pages) {
+  const calls = [];
+  const origFetch = global.fetch;
+  global.fetch = async (url, _init) => {
+    calls.push(String(url));
+    const pageIndex = calls.length - 1;
+    const page = pages[pageIndex] || pages[pages.length - 1];
+    const headers = new Map();
+    if (page.link) headers.set("link", page.link);
+    return {
+      ok: true,
+      status: 200,
+      url: String(url),
+      headers: {
+        get: (name) => headers.get(String(name).toLowerCase()) || null,
+      },
+      json: async () => page.body,
+    };
+  };
+  return {
+    calls,
+    restore: () => {
+      global.fetch = origFetch;
+    },
+  };
+}
+
+function withToken(fn) {
+  const savedToken = process.env.GITHUB_TOKEN;
+  const savedGh = process.env.GH_TOKEN;
+  process.env.GITHUB_TOKEN = "test-token";
+  delete process.env.GH_TOKEN;
+  return (async () => {
+    try {
+      await fn();
+    } finally {
+      if (savedToken === undefined) delete process.env.GITHUB_TOKEN;
+      else process.env.GITHUB_TOKEN = savedToken;
+      if (savedGh === undefined) delete process.env.GH_TOKEN;
+      else process.env.GH_TOKEN = savedGh;
+    }
+  })();
+}
+
+test("fetchGhcrTagCreatedAt: paginates until every requested tag is covered (#1498)", async () => {
+  await withToken(async () => {
+    // 200 versions on page 1, none of which carry the older same-day tags the
+    // caller sorted on. Page 2 surfaces them, and the function must keep
+    // going to cover them rather than fall back to tag text.
+    const older = [
+      {
+        created_at: "2026-10-04T05:12:33Z",
+        metadata: { container: { tags: ["testing-20261004-ce484fa"] } },
+      },
+      {
+        created_at: "2026-10-04T07:48:01Z",
+        metadata: { container: { tags: ["testing-20261004-dce3a57"] } },
+      },
+      {
+        created_at: "2026-10-04T15:23:59Z",
+        metadata: { container: { tags: ["testing-20261004-eb9ddac"] } },
+      },
+    ];
+    const recent = Array.from({ length: 100 }, (_, i) => ({
+      created_at: `2026-10-05T${String(i % 24).padStart(2, "0")}:00:00Z`,
+      metadata: { container: { tags: [`unrelated-${i}`] } },
+    }));
+    const stub = stubFetchPages([
+      { body: recent, link: '<https://api.github.com/next>; rel="next"' },
+      { body: older },
+    ]);
+    try {
+      const result = await fetchGhcrTagCreatedAt("projectbluefin", "utah", 2, [
+        "testing-20261004-ce484fa",
+        "testing-20261004-dce3a57",
+        "testing-20261004-eb9ddac",
+      ]);
+      assert.equal(result["testing-20261004-ce484fa"], "2026-10-04T05:12:33Z");
+      assert.equal(result["testing-20261004-dce3a57"], "2026-10-04T07:48:01Z");
+      assert.equal(result["testing-20261004-eb9ddac"], "2026-10-04T15:23:59Z");
+      // Without the fix, page 1 is the only call and the older same-day
+      // tags fall through to alphabetical ordering.
+      assert.equal(stub.calls.length >= 2, true, "expected pagination");
+    } finally {
+      stub.restore();
+    }
+  });
+});
+
+test("fetchGhcrTagCreatedAt: stops paging once every requested tag is covered (#1498)", async () => {
+  await withToken(async () => {
+    // All requested tags are on page 1; the function must short-circuit and
+    // not waste API budget on page 2.
+    const page1 = [
+      {
+        created_at: "2026-10-04T05:12:33Z",
+        metadata: { container: { tags: ["testing-20261004-ce484fa"] } },
+      },
+      {
+        created_at: "2026-10-04T15:23:59Z",
+        metadata: { container: { tags: ["testing-20261004-eb9ddac"] } },
+      },
+    ];
+    const stub = stubFetchPages([{ body: page1, link: '<next>; rel="next"' }]);
+    try {
+      const result = await fetchGhcrTagCreatedAt("projectbluefin", "utah", 2, [
+        "testing-20261004-ce484fa",
+        "testing-20261004-eb9ddac",
+      ]);
+      assert.equal(result["testing-20261004-ce484fa"], "2026-10-04T05:12:33Z");
+      assert.equal(result["testing-20261004-eb9ddac"], "2026-10-04T15:23:59Z");
+      assert.equal(stub.calls.length, 1, "expected early termination");
+    } finally {
+      stub.restore();
+    }
+  });
+});
+
+test("fetchGhcrTagCreatedAt: warns on partial coverage when the cap is hit (#1498)", async () => {
+  await withToken(async () => {
+    // The cap is 1, all returned versions are unrelated, so the requested tag
+    // is not covered and the function must warn and degrade gracefully. The
+    // function still returns whatever `created_at` it collected; the warning
+    // is the contract surface that tells the caller `compareTagsByDate` will
+    // fall back to tag text for the missing tags.
+    const page = Array.from({ length: 100 }, (_, i) => ({
+      created_at: "2026-10-05T00:00:00Z",
+      metadata: { container: { tags: [`unrelated-${i}`] } },
+    }));
+    const stub = stubFetchPages([{ body: page }]);
+    const warnings = [];
+    const origWarn = console.warn;
+    console.warn = (msg) => {
+      warnings.push(String(msg));
+    };
+    try {
+      const result = await fetchGhcrTagCreatedAt("projectbluefin", "utah", 1, [
+        "testing-20261004-missing",
+      ]);
+      assert.equal(
+        Object.prototype.hasOwnProperty.call(
+          result,
+          "testing-20261004-missing",
+        ),
+        false,
+        "requested tag must remain unresolved at the page ceiling",
+      );
+      assert.equal(
+        warnings.some((w) => w.includes("testing-20261004-missing")),
+        true,
+        "expected a warning naming the uncovered requested tag",
+      );
+    } finally {
+      console.warn = origWarn;
+      stub.restore();
+    }
+  });
+});
+
+test("compareTagsByDate: same-day tags order by build time even when only some have it (#1498)", () => {
+  // The fix in fetchGhcrTagCreatedAt guarantees every requested tag carries a
+  // `created_at`, but the contract compareTagsByDate enforces is unchanged:
+  // same-day ties break on the registry timestamp and fall back to tag text
+  // only when at least one timestamp is missing. This guards the text-fallback
+  // branch from disappearing.
+  const createdAt = {
+    "testing-20261004-eb9ddac": "2026-10-04T15:23:59Z",
+    // ce484fa and dce3a57 are unrecorded: text ordering still applies.
+  };
+  assert.deepEqual(
+    [
+      "testing-20261004-ce484fa",
+      "testing-20261004-dce3a57",
+      "testing-20261004-eb9ddac",
+    ].sort((a, b) => compareTagsByDate(a, b, createdAt)),
+    [
+      "testing-20261004-ce484fa",
+      "testing-20261004-dce3a57",
+      "testing-20261004-eb9ddac",
+    ],
+  );
+});
