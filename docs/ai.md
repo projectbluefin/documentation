@@ -144,6 +144,8 @@ Bluefin binds `Ctrl`-`Alt`-`Backspace` as a quicklaunch for Alpaca automatically
 
 ![image](/img/user-attachments/9fd38164-e2a9-4da1-9bcd-29e0e7add071.png)
 
+[^1]: For proper AMD support, the Flatpak extension `com.jeffser.Alpaca.Plugins.AMD` must also be installed.
+
 ## Automated Troubleshooting (WIP)
 
 Bluefin ships with automated troubleshooting tools:
