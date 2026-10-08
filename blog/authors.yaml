@@ -86,3 +86,12 @@ delphicmelody:
   image_url: https://github.com/delphicmelody.png
   socials:
     github: "delphicmelody"
+
+juanresendiz813:
+  name: Juan Resendiz
+  page: true
+  title: Bluefin Classic Maintainer
+  url: https://github.com/juanresendiz813
+  image_url: https://github.com/juanresendiz813.png
+  socials:
+    github: "juanresendiz813"
