@@ -144,6 +144,8 @@ Docker Model Runner 在 `http://localhost:12434` 提供一个兼容 OpenAI 的�
 
 ![image](/img/user-attachments/9fd38164-e2a9-4da1-9bcd-29e0e7add071.png)
 
+[^1]: 要获得完整的 AMD 支持，还需要安装 Flatpak 扩展 `com.jeffser.Alpaca.Plugins.AMD`。
+
 ## 自动故障排查（WIP）
 
 Bluefin 附带自动故障排查工具：
