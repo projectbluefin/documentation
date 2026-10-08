@@ -40,17 +40,17 @@ Measuring release-over-release download deltas, chunkah layer reuse efficiency, 
    - **Order is by build time, not by tag text.** `compareTagsByDate` sorts on
      the `YYYYMMDD` the tag carries, breaks same-day ties on the registry's
      build timestamp (`fetchGhcrTagCreatedAt`, the packages API's `created_at`
-     per version), and falls back to tag text only for tags the packages API
-     had no timestamp for. This matters because an image that ships several
-     builds a day repeats the same date across them, and `diffReleaseLayers` is
-     directional — churn is the layers in N absent from N-1 and reuse % is
-     relative to N — so a same-day pair compared backwards reports different
-     numbers than the update a user performs. Tag text is not a build time:
-     `362ea44` sorts before `815ea44` while being the newer build. The
-     `created_at` lookup needs a token, so any workflow that produces the
-     dataset **must** pass `GITHUB_TOKEN` to the compute step — without one
-     `fetchGhcrTagCreatedAt` returns `{}` and the sort silently degrades to tag
-     text, which is the failure this tie-break exists to prevent.
+     per version), and falls back to tag text when both keys tie. This matters
+     because an image that ships several builds a day repeats the same date
+     across them, and `diffReleaseLayers` is directional — churn is the layers
+     in N absent from N-1 and reuse % is relative to N — so a same-day pair
+     compared backwards reports different numbers than the update a user
+     performs. Tag text is not a build time: `362ea44` sorts before `815ea44`
+     while being the newer build. The `created_at` lookup needs a token, so
+     any workflow that produces the dataset **must** pass `GITHUB_TOKEN` to the
+     compute step — without one `fetchGhcrTagCreatedAt` returns `{}` and the
+     sort degrades to the empty-string sentinel described below, which is
+     predictable rather than silent.
    - **The build-time lookup pages until every matched tag is resolved.** A
      package that ships multiple builds a day accumulates versions faster
      than the original two-page (200-version) window covered. When
@@ -71,6 +71,17 @@ Measuring release-over-release download deltas, chunkah layer reuse efficiency, 
      is a floating name (`stable`, `testing`) pointing at the newest manifest,
      so it belongs at the end of any series it is part of. Sorting it first
      would make it the baseline and make the first delta a backwards diff.
+   - **Partial `created_at` coverage sorts, but in a predictable way.** A tag
+     the packages API has no `created_at` for sorts as the empty-string
+     sentinel, which `compareTagsByDate`'s `localeCompare` puts before every
+     real timestamp — that tag is treated as the oldest in its same-day group.
+     The point is not to recover the missing build time (we cannot), it is to
+     keep the comparator a strict total order on `[date, buildTime, text]` so
+     the chart does not flip order between runs whenever the pagination cap
+     clips coverage. An earlier comparator used build time for the
+     timestamped pair and tag text for the others, which yielded a cyclic
+     comparator when a same-day group had partial coverage; the chart order
+     then depended on `tags/list` order, which is the flip #1498 describes.
    - **A discovered series is a closed set.** When `tagSeries` is set, a tag
      that does not match its `pattern` never joins the series — notably the
      floating `testing` tag, which the SBOM cache contributes and which names a
