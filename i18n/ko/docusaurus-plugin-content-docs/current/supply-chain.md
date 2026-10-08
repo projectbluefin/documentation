@@ -61,7 +61,7 @@ cosign verify-attestation ghcr.io/ublue-os/bluefin:stable \
 모든 이미지의 SBOM을 가져오세요:
 
 ```bash
-# oras 설치: https://oras.land
+# Install oras: https://oras.land
 oras discover --artifact-type application/vnd.syft+json ghcr.io/ublue-os/bluefin:stable
 ```
 

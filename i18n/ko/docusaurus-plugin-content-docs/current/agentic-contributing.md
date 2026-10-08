@@ -199,6 +199,7 @@ Hive에서의 크로스 에이전트 메모리 연속성은 **Beads**라는 시�
 의심이 든다면, 당신의 구현과 함께 초안 PR을 열고 명시적으로 물으세요. 이 시스템은 침묵하는 자율적 행동보다 가드에서 과도한 커뮤니케이션을 선호합니다.
 
 ---
+
 ## 자기개선 루프
 
 모든 에이전트 세션은 두 가지 산출물을 생산해야 합니다:
@@ -225,7 +226,7 @@ flowchart LR
 
 **작성하세요:**
 
--upstream 버그것에 대한 우회책 (구성 요소 + 이슈 링크 포함)
+- upstream 버그에 대한 우회책 (구성 요소 + 이슈 링크 포함)
 
 - 정확성을 위해 필요한 비명백한 패턴
 - 코드에서 명백하지 않은 관습
@@ -268,6 +269,7 @@ flowchart LR
 CI, 빌드, 또는 패키징을 건든 스킬 파일 업데이트가 없는 PR은 노란 깃발입니다. 아무것도 자동으로 경보하지 않습니다 — skill-drift 체크는 은퇴했습니다 — 그래서 이것은 검토자가 내려야 하는 판단입니다.
 
 ---
+
 ## 레포지토리 맵
 
 ### 핵심 이미지 레포지토리
@@ -333,6 +335,7 @@ flowchart TB
 Aurora와 Bazzite는 `projectbluefin/common`을 소비하지만 `ublue-os` org에서 유지보수합니다. org 전체의 강한 규칙을 잊지 마세요: 에이전트는 **절대** 어떤 `ublue-os/*` 레포지토리도 겨냥한 이슈, PR, 코멘트, 또는 작성하는 action을 만들면 안 됩니다 (읽기 전용 `gh api` 검사는 허용됨).
 
 ---
+
 ## 빌드와 촉진 파이프라인
 
 `git push`와 `:stable` 사이의 변경이 어떻게 되는지:
@@ -401,13 +404,13 @@ Bluefin 버그는 데이터 기증입니다. 이 시스템은 사용자 보고�
 ### 세 가지 ujust 명령
 
 ```bash
-# 버그나 질문이 있을 때 Bluefin 시스템에서 실행하세요
+# Run on your Bluefin system when you have a bug or question
 ujust report
 
-# 다른 사람이 보고한 버그를 재현할 수 있을 때
+# When you can reproduce a bug someone else reported
 ujust confirm <issue-number>
 
-# 출하된 수정이 당신에게 작동할 때 — 루프를 닫습니다
+# When a shipped fix works for you — closes the loop
 ujust verify <issue-number>
 ```
 
@@ -488,10 +491,10 @@ squash 병합만 유지하세요. PR 브랜치를 깔끔하게 유지하세요. 
 ### 작업 찾기
 
 ```bash
-# 기여를 위해 라벨이 붙은 이슈를 엽니다
+# Open issues labeled for contribution
 gh issue list --repo projectbluefin/bluefin --label "good-first-issue"
 
-# org 전반의 모든 열린 이슈
+# All open issues across the org
 gh search issues --owner projectbluefin --state open
 ```
 
@@ -531,9 +534,9 @@ gh search issues --owner projectbluefin --state open
 ### PR을 열기 전에
 
 ```bash
-# 레포지토리 루트에서
-just check                    # 모든 .just 파일 구문을 검증합니다
-pre-commit run --all-files    # 린트, 포맷, shellcheck, actionlint
+# From the repo root
+just check                    # Validates all .just file syntax
+pre-commit run --all-files    # Lint, format, shellcheck, actionlint
 ```
 
 둘 다 통과해야 합니다. CI는 어쨌든 실행할 것입니다 — 로컬에서 실행하면 왕복을 절약합니다.
@@ -575,10 +578,10 @@ Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>
 모든 `uses:` 외부 action 참조는 인라인 버전 주석과 함께 완전한 커밋 SHA로 잠겨 있어야 합니다. 플로팅 태그 (`@v3`, `@main`)은 허용되지 않고 actionlint에서 실패합니다:
 
 ```yaml
-# 올바릅니다
+# Correct
 - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
-# 틀립니다 — CI에서 실패합니다
+# Wrong — will fail CI
 - uses: actions/checkout@v4
 ```
 
@@ -589,6 +592,7 @@ Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>
 - 모든 PR은 메인테이너가 squash 병합합니다 — 당신의 브랜치 역사는 살아남지 않습니다
 
 ---
+
 ## 에이전트 PR 검토
 
 이것은 에이전트 프로젝트에 대한 인간의 가장 중요한 기여입니다. 에이전트는 빠르게 구현합니다; 당신의 검토는 기기 가드가 실행되기 전의 품질 가드입니다.
@@ -629,6 +633,7 @@ PR diff에서 `.github/skills/`를 확인하세요. 물으세요:
 - 의심이 든다면, 아무것도 게시하지 마세요
 
 ---
+
 ## 변경 테스트
 
 ### 빌드에 영향을 주는 PR의 자동화 스모크 테스트
@@ -656,12 +661,12 @@ PR이 `Containerfile`, `Justfile`, `image-versions.yml`, `build_files/`, 또는 
 이미지 경로를 건드는 모든 PR은 OCI 산출물을 생성합니다. 실행 중인 Bluefin 시스템에서 테스트하려면:
 
 ```bash
-# PR 번호를 찾으세요
+# Find the PR number
 sudo bootc switch ghcr.io/projectbluefin/bluefin:pr-<NUMBER>
 sudo systemctl reboot
 
-# 작동하면 — PR에 ujust verify 댓글을 남겨세요
-# 작동하지 않으면 — 되돌리세요
+# If it works — leave a ujust verify comment on the PR
+# If it doesn't work — revert
 sudo bootc switch ghcr.io/projectbluefin/bluefin:testing
 sudo systemctl reboot
 ```
@@ -669,10 +674,10 @@ sudo systemctl reboot
 ### 로컬 빌드
 
 ```bash
-# 로컬 빌드 (sudo 필요 없음)
+# Local build (no sudo required)
 just build bluefin latest main
 
-# CI-등가 빌드 (sudo 필요, buildah 사용)
+# CI-equivalent build (requires sudo, uses buildah)
 sudo just build-ghcr bluefin testing main
 ```
 
@@ -699,6 +704,7 @@ sudo just build-ghcr bluefin testing main
 `@quarantine`로 태그된 시나리오는 레포지토리에 있지만 촉진 가드에서 제외됩니다. 시나리오가 촉진 차단에 적합한 측정된 통과율을 갖기 전까지는 `@quarantine` 태그를 제거하지 마세요.
 
 ---
+
 ## Renovate와 작업하기
 
 Renovate는 [`projectbluefin/renovate-config`](https://github.com/projectbluefin/renovate-config)의 자체 호스트 설정으로 실행됩니다 — GitHub App 인증, PAT 없음.
@@ -718,15 +724,16 @@ git checkout your-branch
 git fetch origin
 git rebase origin/testing
 
-# 충돌이 있으면 해결하세요
+# Resolve conflicts if any
 git add resolved-file
 git rebase --continue
 
-# Force push (당신의 브랜치, 당신의 PR)
+# Force push (your branch, your PR)
 git push origin your-branch --force-with-lease
 ```
 
 ---
+
 ## 메인테이너 되기
 
 ### 자동화된 팩토리에서의 인간 결정 가드
@@ -753,6 +760,7 @@ git push origin your-branch --force-with-lease
 현재 팀을 위해 [github.com/orgs/projectbluefin/people](https://github.com/orgs/projectbluefin/people)를 확인하세요.
 
 ---
+
 ## 커뮤니티
 
 ### 참여할 곳

@@ -56,12 +56,12 @@ Bluefin은 느슨한 [Apache Lazy Consensus](https://community.apache.org/commit
 
 Bluefin은 포식자이며 가끔 당신에게 물 수 있고, 이유 있는 의견 소유자입니다:
 
-- userspace는 대부분 안정적입니다, 우리는 레이아웃에 대한_MAJOR_ 변경을 계획하지 않습니다 — 그냥 Ubuntu 데스크톱입니다.
+- userspace는 대부분 안정적입니다, 우리는 레이아웃에 대한 주요 변경을 계획하지 않습니다 — 그냥 Ubuntu 데스크톱입니다.
 - 우리의 **인프라 속도**는 인프라 작업에서 나옵니다
   - 이것이 프로젝트의 주요 초점입니다 — 최고의 인프라 없이는 제품을 전달할 수 없기 때문입니다. [bootc](https://github.com/bootc-dev/bootc)는 클라우드 네이티브 기술이며, 이유 때문에 우리가 그것 위에 구축하기를 선택합니다.
   - 당신이 "Kubernetes 플랫폼 팀의 Linux 사람"이라면 이것이 당신의 장소입니다
 - 우리의 **제품 속도**는 workload에서 나옵니다
-  - kickass GNOME 경험과 모든 최고의 upstream 기술을_ship하세요
+  - kickass GNOME 경험과 모든 최고의 upstream 기술을 ship하세요
   - premiere 클라우드 네이티브 개발자 경험을 전달하세요
   - 운영체제를 사용자로부터 추상화하세요
 - 지속가능성은 프로젝트에 중요합니다
@@ -71,7 +71,7 @@ Bluefin은 포식자이며 가끔 당신에게 물 수 있고, 이유 있는 의
 
 ## 개요
 
-Bluefin은 다른 이미지에_ship되는 설정 OCI 컨테이너의 조합입니다.
+Bluefin은 다른 이미지에 ship되는 설정 OCI 컨테이너의 조합입니다.
 
 ### Bluefin OCI 컨테이너
 
@@ -209,7 +209,7 @@ Bluefin 이미지는 다음을 사용하여 빌드됩니다:
 4. **설정 검증**:
    ```bash
    git remote -v
-   # 다음을 보여줘야 합니다:
+   # Should show:
    # origin    https://github.com/YOUR_USERNAME/bluefin.git (fetch)
    # origin    https://github.com/YOUR_USERNAME/bluefin.git (push)
    # upstream  https://github.com/projectbluefin/bluefin.git (fetch)
@@ -243,16 +243,16 @@ Bluefin 이미지는 다음을 사용하여 빌드됩니다:
 2. **설명적인 기능 브랜치 생성**:
 
    ```bash
-   # 버그 수정의 경우
+   # For a bug fix
    git checkout -b fix/cockpit-startup-crash
 
-   # 기능의 경우
+   # For a feature
    git checkout -b feat/add-bazaar-integration
 
-   # 문서의 경우
+   # For documentation
    git checkout -b docs/improve-local-build-guide
 
-   # chores/유지의 경우
+   # For chores/maintenance
    git checkout -b chore/update-copr-repos
    ```
 
@@ -271,20 +271,20 @@ Bluefin 이미지는 다음을 사용하여 빌드됩니다:
 bluefin/
 ├── .github/
 │   └── workflows/          # GitHub Actions CI/CD
-│       ├── build-image-*.yml      # 이미지 빌드 워크플로우
-│       ├── reusable-build.yml     # 공유 빌드 로직
-│       └── clean.yml              # 정리 워크플로우
+│       ├── build-image-*.yml      # Image build workflows
+│       ├── reusable-build.yml     # Shared build logic
+│       └── clean.yml              # Cleanup workflows
 ├── build_files/
-│   ├── base/               # base 이미지 빌드 스크립트
-│   ├── shared/             # 공유 유틸리티와 스크립트
-│   └── dx/                 # 개발자 에디션 스크립트
+│   ├── base/               # Base image build scripts
+│   ├── shared/             # Shared utilities and scripts
+│   └── dx/                 # Developer edition scripts
 ├── system_files/
-│   └── shared/             # 이미지에 복사되는 파일
-├── flatpaks/               # Flatpak 앱 목록
-├── just/                   # Just 레시피 (ujust 명령)
-├── iso_files/              # ISO 특별 설정
-├── packages.json           # 패키지 매니페스트
-└── Containerfile           # 메인 이미지 정의
+│   └── shared/             # Files copied into the image
+├── flatpaks/               # Flatpak app lists
+├── just/                   # Just recipes (ujust commands)
+├── iso_files/              # ISO-specific configurations
+├── packages.json           # Package manifest
+└── Containerfile           # Main image definition
 ```
 
 #### 공통 변경 유형
@@ -344,10 +344,10 @@ install-custom-tool:
 적절한 flatpak 목록 파일을 편집하세요:
 
 ```bash
-# 모든 Bluefin 변형의 경우
+# For all Bluefin variants
 edit flatpaks/bluefin-list.txt
 
-# DX 변형에만
+# For DX variant only
 edit flatpaks/bluefin-dx-list.txt
 ```
 
@@ -387,19 +387,19 @@ Bluefin은 [Conventional Commits](https://www.conventionalcommits.org/)를 사�
 **실제 Bluefin 커밋에서의 예제:**
 
 ```bash
-# 간단한 수정
+# Simple fix
 git commit -m "fix: remove cockpit and brew setup functions"
 
-# 기능 추가
+# Feature addition
 git commit -m "feat: add bazaar flatpak to default installation"
 
-# scope를 가진 chores
+# Chore with scope
 git commit -m "chore(deps): update ghcr.io/projectbluefin/common digest to 9168d7d"
 
-# 문서
+# Documentation
 git commit -m "docs: explain hat wobble"
 
-# 설명이 있는 여러 줄
+# Multi-line with explanation
 git commit -m "fix: Remove unused terminal and VFIO configurations
 
 These configurations were causing conflicts with default GNOME settings
@@ -431,29 +431,29 @@ Assisted-by: Claude 4.5 Opus via GitHub Copilot
 ### 커밋 만들기
 
 ```bash
-# 변경을 staging하세요
+# Stage your changes
 git add path/to/modified/file.sh
 
-# 또는 모든 변경을 staging하세요
+# Or stage all changes
 git add .
 
-# 커밋할 내용을 검토하세요
+# Review what you're committing
 git diff --cached
 
-# 메시지로 커밋하세요
+# Commit with message
 git commit -m "feat(just): add custom development tool installer"
 
-# 또는 여러 줄 커밋을 위해 편집기를 사용하세요
+# Or use an editor for multi-line commits
 git commit
 ```
 
 ### 변경 푸시
 
 ```bash
-# 당신의 크로 푸시하세요
+# Push to your fork
 git push origin feat/add-bazaar-integration
 
-# Amend 후에 force push가 필요한 경우 (주의하여 사용)
+# If you need to force push after amending (use with caution)
 git push origin feat/add-bazaar-integration --force-with-lease
 ```
 
@@ -468,10 +468,10 @@ git push origin feat/add-bazaar-integration --force-with-lease
 **옵션 1: 컨테이너 빌드**
 
 ```bash
-# just로 로컬에서 빌드
+# Build locally with just
 just build
 
-# 또는 직접 podman으로 빌드
+# Or build with podman directly
 podman build -t bluefin-test:latest .
 ```
 
@@ -494,15 +494,15 @@ Rebase는 강력하지만 위험을 수반합니다. 항상 stable로 되돌릴 
 모든 PR은 테스트 이미지를 생성합니다. 당신은 그에게 rebase할 수 있습니다:
 
 ```bash
-# PR 번호 찾기 (예: #3322)
-# PR 이미지에 rebase하세요
+# Find the PR number (e.g., #3322)
+# Rebase to the PR image
 sudo bootc switch ghcr.io/projectbluefin/bluefin:pr-3322
 
-# 테스트하기 위해 재부팅하세요
+# Reboot to test
 sudo systemctl reboot
 
-# 작동하면, PR에 피드백을 남겨세요
-# 작동하지 않으면, stable로 되돌리세요
+# If it works, leave feedback on the PR
+# If it doesn't work, revert to stable
 sudo bootc switch ghcr.io/projectbluefin/bluefin:stable
 sudo systemctl reboot
 ```
@@ -510,13 +510,13 @@ sudo systemctl reboot
 **Just 레시피 테스트:**
 
 ```bash
-# 사용 가능한 레시피 나열하세요
+# List available recipes
 ujust
 
-# 새로운 레시피 테스트하세요
+# Test your new recipe
 ujust install-custom-tool
 
-# 출력에서 에러를 확인하세요
+# Check for errors in the output
 ```
 
 ### 린팅 및 검증
@@ -524,24 +524,24 @@ ujust install-custom-tool
 **스크립트 린팅:**
 
 ```bash
-# 설치되어 있지 않으면 shellcheck를 설치하세요
+# Install shellcheck if not present
 brew install shellcheck
 
-# 스크립트 린팅하세요
+# Lint shell scripts
 shellcheck build_files/base/*.sh
 ```
 
 **컨테이너 린팅:**
 
 ```bash
-# Containerfile에 hadolint를 사용하세요
+# Use hadolint for Containerfile
 podman run --rm -i hadolint/hadolint < Containerfile
 ```
 
 **JSON 검증:**
 
 ```bash
-# packages.json을 검증하세요
+# Validate packages.json
 jq empty packages.json && echo "Valid JSON" || echo "Invalid JSON"
 ```
 
@@ -565,10 +565,10 @@ jq empty packages.json && echo "Valid JSON" || echo "Invalid JSON"
    ```
 
 2. **GitHub에서 PR을 열세요**:
-   - <https://github.com/projectbluefin/bluefin>으로 이동하세요
+   - [https://github.com/projectbluefin/bluefin](https://github.com/projectbluefin/bluefin)으로 이동하세요
    - "Pull requests" → "New pull request"을 클릭하세요
    - "compare across forks"을 클릭하세요
-   - 당신의 크로와 브랜치를 선택하세요
+   - 당신의 포크와 브랜치를 선택하세요
    - "Create pull request"을 클릭하세요
 
 3. **PR 설명을 작성하세요**:
@@ -612,30 +612,30 @@ Fixes #123
 변경이 요청되면:
 
 ```bash
-# 요청된 변경을 하세요
+# Make the requested changes
 vim path/to/file
 
-# 변경을 커밋하세요
+# Commit the changes
 git add path/to/file
 git commit -m "fix: address review feedback on error handling"
 
-# PR을 업데이트하기 위해 푸시하세요
+# Push to update the PR
 git push origin your-branch-name
 ```
 
 **병합 후:**
 
 ```bash
-# main으로 돌아가세요
+# Switch back to main
 git checkout main
 
-# 최신 변경을_pull하세요
+# Pull the latest changes
 git pull upstream main
 
-# 당신의 크로를 업데이트하세요
+# Update your fork
 git push origin main
 
-# 기능 브랜치를 삭제하세요
+# Delete your feature branch
 git branch -d your-branch-name
 git push origin --delete your-branch-name
 ```
@@ -667,18 +667,18 @@ chore(deps): update softprops/action-gh-release digest to def456
 **Renovate가 당신의 PR과 충돌할 때:**
 
 ```bash
-# 최신 main에서 rebase하세요
+# Rebase on latest main
 git checkout your-branch
 git fetch upstream
 git rebase upstream/main
 
-# 충돌을 해결하세요 (있는 경우)
-git mergetool  # 또는 수동으로 파일 편집
+# Resolve conflicts if any
+git mergetool  # or manually edit files
 
-# rebase를 계속하세요
+# Continue rebase
 git rebase --continue
 
-# force push (당신의 PR, 당신의 브랜치)
+# Force push (your PR, your branch)
 git push origin your-branch --force-with-lease
 ```
 
@@ -687,7 +687,7 @@ git push origin your-branch --force-with-lease
 더 큰 기능을 위해:
 
 ```bash
-# 작업하는 동안 논리적 커밋을 생성하세요
+# Create logical commits as you work
 git add file1.sh
 git commit -m "feat: add base functionality"
 
@@ -697,54 +697,54 @@ git commit -m "feat: add error handling"
 git add file3.sh
 git commit -m "docs: document new feature"
 
-# 모든 커밋을 시키세요
+# Push all commits
 git push origin your-branch
 ```
 
 ### 커밋 Amend
 
 ```bash
-# 추가 변경을 staging하세요
+# Stage additional changes
 git add forgotten-file.sh
 
-# 마지막 커밋을 amend하세요
+# Amend the last commit
 git commit --amend
 
-# 또는 메시지를 변경하지 amend하세요
+# Or amend without changing message
 git commit --amend --no-edit
 
-# 안전성으로 force push하세요
+# Force push with safety
 git push origin your-branch --force-with-lease
 ```
 
 ### Cherry-Picking 변경
 
 ```bash
-# 다른 브랜치에서 커밋을 cherry-pick하세요
+# Cherry-pick a commit from another branch
 git cherry-pick abc123def
 
-# 여러 커밋을 cherry-pick하세요
+# Cherry-pick multiple commits
 git cherry-pick abc123..def456
 
-# 필요한 경우 충돌을 해결하세요
+# Resolve conflicts if needed
 git cherry-pick --continue
 ```
 
 ### upstream 변경과 함께 작업하기
 
 ```bash
-# 정기적으로 upstream 변경을 가져오세요
+# Fetch upstream changes regularly
 git fetch upstream
 
-# main 브랜치를 업데이트하세요
+# Update main branch
 git checkout main
 git merge upstream/main
 
-# 기능 브랜치를 rebase하세요
+# Rebase feature branch
 git checkout your-feature
 git rebase main
 
-# 또는 main을 기능에 병합하세요
+# Or merge main into feature
 git merge main
 ```
 
@@ -803,7 +803,7 @@ git merge main
 
 ### 프론트엔드/UX 개발자를 위해
 
--위로 작업하세요!
+- upstream에서 작업하세요!
 
 ## 문제 해결 가이드
 
@@ -848,10 +848,10 @@ Error: writing blob: adding layer with blob: permissions denied
 **해결책:**
 
 ```bash
-# 적절한 권한으로 실행하세요
+# Run with appropriate permissions
 sudo podman build -t test .
 
-# 또는 rootless podman을 구성하세요
+# Or configure rootless podman
 podman system migrate
 ```
 
@@ -864,10 +864,10 @@ Error: no space left on device
 **해결책:**
 
 ```bash
-# podman 저장소를 정리하세요
+# Clean up podman storage
 podman system prune -a
 
-# 디스크 공간을 확인하세요
+# Check disk space
 df -h
 ```
 
@@ -882,10 +882,10 @@ df -h
 **해결책:**
 
 ```bash
-# 커밋 메시지를 amend하세요
+# Amend the commit message
 git commit --amend
 
-# PR을 업데이트하세요
+# Update the PR
 git push origin your-branch --force-with-lease
 ```
 
@@ -898,20 +898,20 @@ CONFLICT (content): Merge conflict in packages.json
 **해결책:**
 
 ```bash
-# 최신 upstream을 가져오세요
+# Fetch latest upstream
 git fetch upstream
 
-# main에서 rebase하세요
+# Rebase on main
 git rebase upstream/main
 
-# 충돌을 수동으로 해결하세요
+# Resolve conflicts manually
 vim packages.json
 
-# 해결된 것으로 표시하세요
+# Mark as resolved
 git add packages.json
 git rebase --continue
 
-# force push하세요
+# Force push
 git push origin your-branch --force-with-lease
 ```
 
@@ -1018,31 +1018,31 @@ GitHub Issue: "Package X fails on Fedora 42 due to Y dependency"
 **워크플로우 변경 만들기:**
 
 ```bash
-# 워크플로우 파일 편집하세요
+# Edit workflow file
 vim .github/workflows/build-image-stable.yml
 
-# 로컬에서 구문을 검증하세요
-# GitHub의 워크플로우 검증기 또는:
+# Validate syntax locally
+# Use GitHub's workflow validator or:
 yamllint .github/workflows/build-image-stable.yml
 
-# 커밋하세요
+# Commit
 git add .github/workflows/build-image-stable.yml
 git commit -m "chore(ci): improve stable build caching"
 
-# 먼저 당신의 크로에서 테스트하세요
+# Test in your fork first
 git push origin your-branch
-# PR을 열어서 작동하는지 확인하세요
+# Open PR from fork to see if it works
 ```
 
 **일반적인 워크플로우 패턴:**
 
 ```yaml
-# 조건부 실행
+# Conditional execution
 - name: Build only on main
   if: github.ref == 'refs/heads/main'
   run: ./build.sh
 
-# 매트릭스 빌드
+# Matrix builds
 strategy:
   matrix:
     variant: [bluefin, bluefin-dx]
@@ -1065,7 +1065,7 @@ set -eoux pipefail
 
 echo "::group:: Your Script Name"
 
-# 당신의 로직 여기를
+# Your logic here
 # Use $FEDORA_MAJOR_VERSION for version-specific logic
 # Use $IMAGE_NAME for image-specific logic
 
@@ -1075,10 +1075,10 @@ echo "::endgroup::"
 **스크립트 테스트:**
 
 ```bash
-# 직접 실행 (간단한 스크립트의 경우)
+# Direct execution (for simple scripts)
 bash -x build_files/base/04-packages.sh
 
-# 컨테이너 실행 (base 이미지 내에서 테스트)
+# Container execution (testing within the base image)
 podman run --rm -it \
   -v "$(pwd):/workspace:ro" \
   ghcr.io/projectbluefin/bluefin:testing \
@@ -1100,14 +1100,14 @@ Bluefin은 지속적인 전달을 사용합니다:
 **stable:**
 
 ```bash
-# stable로 rebase하세요
+# Rebase to stable
 sudo bootc switch ghcr.io/projectbluefin/bluefin:stable
 ```
 
 **testing:**
 
 ```bash
-# testing로 rebase하세요
+# Rebase to testing
 sudo bootc switch ghcr.io/projectbluefin/bluefin:testing
 ```
 
@@ -1132,11 +1132,11 @@ RUN rpm-ostree override replace \
 **고정 문서화:**
 
 ```bash
-# 설명하는 주석을 추가하세요:
-# - 무엇이 고정되어 있는지
-# - 왜 고정되어 있는지
-# - upstream 버그로의 링크
-# - 제거할 때 (수정이 출시된 후)
+# Add comment explaining:
+# - What's pinned
+# - Why it's pinned
+# - Link to upstream bug
+# - When to remove (after fix is released)
 ```
 
 **고정 제거:**
@@ -1144,9 +1144,9 @@ RUN rpm-ostree override replace \
 Fedora가 수정을 출시한 후 24-48시간을 기다리세요 (재빌드 전파를 위해), 그런 다음:
 
 ```bash
-# 재정제를 제거하세요
+# Remove the override
 git diff Containerfile
-# 고정이 제거되어 있는지 확인하세요
+# Confirm the pin is removed
 git commit -m "chore: remove ostree pin after upstream fix"
 ```
 
@@ -1186,7 +1186,7 @@ Bluefin의 시스템 전체 Flatpaks는 기본적으로 설치될 Flatpak 애플
 ```bash
 flatpak remote-add --if-not-exists --system flathub https://flathub.org/repo/flathub.flatpakrepo
 xargs flatpak --system -y install --or-update < /etc/ublue-os/system-flatpaks.list
-# 개발자 모드 Flatpaks는 개발자모드가 활성화되어 설치됩니다
+# Developer mode Flatpaks are installed if developer mode is enabled
 xargs flatpak --system -y install --or-update < /etc/ublue-os/system-flatpaks-dx.list
 ```
 
@@ -1207,7 +1207,7 @@ Bazaar의 소개 섹션은 YAML 설정 파일에 정의됩니다:
        appids:
          - org.mozilla.firefox
          - org.gnome.Calculator
-         - com.example.YourApp # <-- 여기에 앱을 추가하세요
+         - com.example.YourApp # <-- Add your app here
    ```
 3. 선택적으로, 애플리케이션이 새 카테고리에 맞으면 새 섹션을 생성하세요.
 4. 변경이 있는 PR을 제출하세요. Bazaar 메인테이너가 적절히 검토하고 병합합니다.
@@ -1245,20 +1245,20 @@ Bazaar의 소개 섹션은 YAML 설정 파일에 정의됩니다:
 - Bluefin 수정으로 인해 발생하지 않는
 - base Fedora 시스템에 영향을 받는
 
-###upstream으로 보고하는 방법
+### upstream으로 보고하는 방법
 
 1. **upstream Fedora에서 재현하세요** (가능하면):
 
    ```bash
-   # 이슈가 upstream Fedora Atomic / bootc에서 발생하는지 테스트하세요
+   # Test if the issue occurs on upstream Fedora Atomic / bootc
    ```
 
 2. **Fedora로 보고하세요**:
-   -upstream 추적자: [Fedora Atomic Desktops Issue Tracker](https://forge.fedoraproject.org/atomic-desktops/tracker/issues)
+   - upstream 추적자: [Fedora Atomic Desktops Issue Tracker](https://forge.fedoraproject.org/atomic-desktops/tracker/issues)
    - 포함하세요: Fedora 버전, 재현 단계, 로그
 
 3. **Bluefin 이슈에서 링크하세요**:
-   - upstream 이슈를_cross-참조하세요
+   - upstream 이슈를 cross-참조하세요
    - upstream 진행을 추적하세요
    - 수정을 테스트하세요
 

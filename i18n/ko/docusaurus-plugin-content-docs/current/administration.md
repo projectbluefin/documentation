@@ -214,7 +214,7 @@ rpm-ostree reset
 
 ## Overwriting System Defaults
 
-Bluefin 시스템 데폴트는 Fedora 구성과 함께 `/usr/etc`의 base 이미지에_shipped됩니다. 이것들의 대부분은 `/etc`에 파일을 배치하여 재정의할 수 있습니다.
+Bluefin 시스템 데폴트는 Fedora 구성과 함께 `/usr/etc`의 base 이미지에 shipped됩니다. 이것들의 대부분은 `/etc`에 파일을 배치하여 재정의할 수 있습니다.
 
 예를 들어, Distrobox 구성은 `/usr/etc/distrobox/distrobox.ini`에 있습니다. 당신의 커스터마이징 옵션은 `/etc/distrobox/distrobox.ini`에 배치될 것입니다. 이것은 원본 파일의 사본이 필요한 상황에 유용합니다.
 

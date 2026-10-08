@@ -162,7 +162,7 @@ sudo touch /etc/systemd/logind.conf.d/t2-lidswitch.conf
 
 ```
 [Login]
-# 우리는 일반적으로 무시하거나 poweroff하기를 원합니다, suspend는 T2에서 동작하지 않기 때문입니다
+# we generally want to ignore or poweroff, no suspend since it doesn't work on T2s
 HandlePowerKey=ignore
 HandlePowerKeyLongPress=poweroff
 HandleSuspendKey=ignore
