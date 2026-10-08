@@ -51,6 +51,22 @@ Measuring release-over-release download deltas, chunkah layer reuse efficiency, 
      dataset **must** pass `GITHUB_TOKEN` to the compute step — without one
      `fetchGhcrTagCreatedAt` returns `{}` and the sort silently degrades to tag
      text, which is the failure this tie-break exists to prevent.
+   - **The build-time lookup pages until every matched tag is resolved.** A
+     package that ships multiple builds a day accumulates versions faster
+     than the original two-page (200-version) window covered. When
+     `discoverSeriesTags` hands the matched set to `fetchGhcrTagCreatedAt`,
+     pagination continues past the default cap up to
+     `GHCR_TAG_CREATED_AT_MAX_PAGES` (default 20 pages, 2000 versions;
+     override with `UPDATE_CHURN_GHCR_MAX_PAGES`) and stops early once every
+     requested tag has a timestamp. A package whose matched window really is
+     longer than that warns about the gap and falls back to tag text for the
+     tags it could not resolve — the same approximation, in the contract
+     surface. Budget for it: each Utah build publishes ~31 package versions
+     (manifest, per-arch manifests, chunk blobs, `.sig`) and Utah can ship
+     20 builds in a day (20261003), so the 14-tag window typically resolves
+     around page 5, and because whole date groups are requested a heavy day
+     at the window edge can push it to page 9 or beyond. If the
+     "build timestamps incomplete" warning appears, raise the ceiling.
    - **An undated tag sorts last, never first.** A tag carrying no `YYYYMMDD`
      is a floating name (`stable`, `testing`) pointing at the newest manifest,
      so it belongs at the end of any series it is part of. Sorting it first
