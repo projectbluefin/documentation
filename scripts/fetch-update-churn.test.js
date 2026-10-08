@@ -454,6 +454,27 @@ test("selectDatedTags: limit applies to the merged list, seeds included", () => 
   ]);
 });
 
+test("selectDatedTags: Bluefin's stable-daily series keeps dated tags, drops the floating and versioned ones", () => {
+  // Bluefin ships `stable-daily-YYYYMMDD`. The floating `stable` tag names a
+  // different manifest after every build and would be dated *today* by
+  // extractDateFromTag, so it must never join the series; versioned builds such
+  // as `stable-daily-44.20260915` are a separate series and must not either.
+  const pattern = /^stable-daily-\d{8}$/;
+  const tags = [
+    "stable",
+    "stable-daily-20260908",
+    "stable-daily-20260915",
+    "stable-daily-44.20260915",
+    "stable-daily-20260901",
+  ];
+  const selected = selectDatedTags(tags, { pattern, limit: 14 });
+  assert.deepEqual(selected, [
+    "stable-daily-20260901",
+    "stable-daily-20260908",
+    "stable-daily-20260915",
+  ]);
+});
+
 test("fetchGhcrTagCreatedAt: warns and returns {} on the no-token path (#1434)", async () => {
   const savedToken = process.env.GITHUB_TOKEN;
   const savedGh = process.env.GH_TOKEN;

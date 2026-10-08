@@ -82,6 +82,16 @@ const UTAH_DATED_TAG = /^testing-\d{8}-[0-9a-f]{7,40}$/;
 /** How many dated Utah builds the churn series follows. */
 const UTAH_TAG_LIMIT = 14;
 
+/**
+ * Bluefin ships one dated tag per release: `stable-daily-YYYYMMDD`. Versioned
+ * builds such as `stable-daily-44.20260915` carry a component bump in the tag
+ * and are a different series, so they must not join this one.
+ */
+const BLUEFIN_DATED_TAG = /^stable-daily-\d{8}$/;
+
+/** How many dated Bluefin releases the churn series follows. */
+const BLUEFIN_TAG_LIMIT = 30;
+
 const IMAGE_CONFIGS = [
   {
     id: "bluefin",
@@ -98,6 +108,11 @@ const IMAGE_CONFIGS = [
       "stable-daily-20260606",
       "stable",
     ],
+    // A dated series, so discover it from the registry rather than trusting a
+    // hand-maintained list. The floating `stable` tag in defaultTags is a seed
+    // only: it does not match the pattern, so it never joins the series and
+    // `extractDateFromTag` cannot date it *today*.
+    tagSeries: { pattern: BLUEFIN_DATED_TAG, limit: BLUEFIN_TAG_LIMIT },
   },
   {
     id: "dakota",
