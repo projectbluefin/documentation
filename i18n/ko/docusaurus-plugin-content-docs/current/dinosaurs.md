@@ -19,7 +19,7 @@ Illustration by Delphic Melody (M. Gopal)
 
 ![Bluefin](/img/user-attachments/97324a75-e6c6-409e-b9ee-18f69d3715d0.png)
 
-## Bluefin LTS and GDX
+## Bluefin LTS 및 GDX {#bluefin-lts-and-gdx}
 
 - 이름: [ Redacted ]
 - 역할: 가장 큰 랍터 중 하나, 기업의 관성을 대표

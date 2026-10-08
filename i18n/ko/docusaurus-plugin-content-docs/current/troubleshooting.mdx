@@ -10,92 +10,92 @@ import TabItem from "@theme/TabItem";
 
 ## 빠른 진단 및 시스템 복구
 
-Bluefin은 깨끗하고 신뢰할 수 있도록 설계되었지만, 문제가 발생하면 이미지 기반 시스템은 간단한 롤백과 초기화 프리미티브를 제공합니다.
+Bluefin은 깨끗하고 안정적으로 동작하도록 설계되었지만, 문제가 생기더라도 이미지 기반 시스템은 간단한 롤백과 초기화 수단을 제공합니다.
 
 ### 시스템 롤백
 
-커널이나 OS 업데이트가 문제를 일으키면, 이전 deployment로 재부팅하거나 롤백하세요:
+커널이나 OS 업데이트로 문제가 생기면 이전 배포로 재부팅하거나 롤백하세요:
 
 ```bash
 # Roll back to previous deployment
 sudo bootc rollback
 ```
 
-적용하기 위해 재부팅하세요. 현재와 이전 deployment 상태를 검사하려면:
+적용하려면 재부팅하세요. 현재 배포와 이전 배포의 상태를 확인하려면:
 
 ```bash
 sudo bootc status
 ```
 
-### GNOME 및 확장 초기화
+### GNOME 및 확장 기능 초기화
 
-desktop 확장이나 shell 튜크가 그래픽 문제나 방해를 일으키면:
+데스크톱 확장 기능이나 셸 설정 변경으로 화면 문제나 오작동이 생기면:
 
 ```bash
 # Reset GNOME Shell and extensions to system defaults
 dconf reset -f /org/gnome/
 ```
 
-### 디스크 공간 및 사용하지 않는 런타임 정리
+### 디스크 공간 확보 및 사용하지 않는 런타임 정리
 
 ```bash
 # Clean up dangling containers and unused Flatpak runtimes
 ujust clean-system
 ```
 
-### 버그 보고 및 수정 검증
+### 버그 보고 및 수정 확인
 
-뭔가 깨지거나 기기에서 문제를 겪을 때, 세 개의 명령은 진단을 관리자에게 직접 흘려보냅니다:
+무언가 고장 났거나 기기에서 문제가 생기면, 다음 세 가지 명령으로 진단 정보를 메인테이너에게 바로 전달할 수 있습니다:
 
-| Command                 | What it does                                                                                             |
-| ----------------------- | -------------------------------------------------------------------------------------------------------- |
-| `ujust report`          | Captures system diagnostics, scrubs sensitive data locally, and opens a pre-filled GitHub issue.         |
-| `ujust confirm <issue>` | Confirms your hardware hits an existing issue — adds a hardware fingerprint without creating duplicates. |
-| `ujust verify <issue>`  | After a fix lands in a newer image, confirms the issue is resolved on your hardware.                     |
+| 명령                    | 하는 일                                                                                                |
+| ----------------------- | ------------------------------------------------------------------------------------------------------ |
+| `ujust report`          | 시스템 진단 정보를 수집하고, 민감한 데이터를 로컬에서 제거한 뒤, 내용이 채워진 GitHub 이슈를 엽니다.   |
+| `ujust confirm <issue>` | 내 하드웨어에서도 기존 이슈가 발생함을 확인합니다. 중복 이슈를 만들지 않고 하드웨어 정보만 추가합니다. |
+| `ujust verify <issue>`  | 새 이미지에 수정이 반영된 뒤, 내 하드웨어에서 이슈가 해결되었는지 확인합니다.                          |
 
-Every report is displayed for your review before submission, stored in a gist you own, and never uses automated background telemetry.
+모든 보고서는 제출 전에 검토할 수 있도록 표시되고, 본인 소유의 gist에 저장되며, 자동화된 백그라운드 원격 측정(telemetry)은 절대 사용하지 않습니다.
 
-### Keyboard Layout & Input Issues
+### 키보드 레이아웃 및 입력 문제
 
-#### Switching Keyboard Layouts Conflicts with Search Light
+#### 키보드 레이아웃 전환 단축키가 Search Light와 충돌하는 경우
 
-GNOME's default switching shortcut (<kbd>Super</kbd>+<kbd>Space</kbd>) conflicts with Search Light. To customize:
+GNOME의 기본 전환 단축키(<kbd>Super</kbd>+<kbd>Space</kbd>)는 Search Light와 충돌합니다. 단축키를 바꾸려면:
 
-1. Open **Settings** → **Keyboard** → **Keyboard Shortcuts** → **View and Customize Shortcuts**.
-2. Click **Typing**.
-3. Set **Switch to next input source** to your preferred combination (e.g. <kbd>Shift</kbd>+<kbd>Alt</kbd>).
+1. **Settings** → **Keyboard** → **Keyboard Shortcuts** → **View and Customize Shortcuts**를 엽니다.
+2. **Typing**을 클릭합니다.
+3. **Switch to next input source**를 원하는 조합(예: <kbd>Shift</kbd>+<kbd>Alt</kbd>)으로 설정합니다.
 
-#### Extended Keyboard Layouts (e.g. EurKEY)
+#### 확장 키보드 레이아웃(예: EurKEY)
 
-1. Open **Gnome Tweaks** → **Keyboard** → toggle **Show Extended Input Sources** to **On**.
-2. Log out and back in.
-3. Open **Settings** → **Keyboard** → add new input source with **+** → click **More...** and search for your layout.
+1. **Gnome Tweaks** → **Keyboard**를 열고 **Show Extended Input Sources**를 **On**으로 켭니다.
+2. 로그아웃한 뒤 다시 로그인합니다.
+3. **Settings** → **Keyboard**를 열고 **+**로 새 입력 소스를 추가한 다음 **More...**를 클릭해 원하는 레이아웃을 검색합니다.
 
-#### Input Method Editor (IME / Fcitx5)
+#### 입력기(IME / Fcitx5)
 
-For standard keyboard layouts, see [GNOME Help > Keyboard Layouts](https://help.gnome.org/gnome-help/keyboard-layouts.html). For Asian languages or other complex input methods:
+일반적인 키보드 레이아웃은 [GNOME Help > Keyboard Layouts](https://help.gnome.org/gnome-help/keyboard-layouts.html)를 참고하세요. 한국어 등 아시아 언어나 기타 복잡한 입력 방식이 필요하다면:
 
-1. Install Fcitx5: `flatpak install org.fcitx.Fcitx5`
-2. Install the [kimpanel](https://extensions.gnome.org/extension/261/kimpanel/) GNOME extension.
-3. Install your language addon (e.g. `flatpak install org.fcitx.Fcitx5.Addon.ChineseAddons`).
-4. Configure input methods in Fcitx5 settings. Use <kbd>Ctrl</kbd>+<kbd>Space</kbd> to toggle. See the [Fcitx wiki](https://fcitx-im.org/wiki/Using_Fcitx_5_on_Wayland#GNOME) for details.
+1. Fcitx5 설치: `flatpak install org.fcitx.Fcitx5`
+2. [kimpanel](https://extensions.gnome.org/extension/261/kimpanel/) GNOME 확장 기능을 설치합니다.
+3. 사용할 언어의 애드온을 설치합니다(예: `flatpak install org.fcitx.Fcitx5.Addon.ChineseAddons`).
+4. Fcitx5 설정에서 입력기를 구성합니다. <kbd>Ctrl</kbd>+<kbd>Space</kbd>로 전환할 수 있습니다. 자세한 내용은 [Fcitx 위키](https://fcitx-im.org/wiki/Using_Fcitx_5_on_Wayland#GNOME)를 확인하세요.
 
 ---
 
 ## 자주 묻는 질문
 
-### Am I holding Bluefin wrong?
+### Bluefin을 잘못 쓰고 있는 걸까요? {#am-i-holding-bluefin-wrong}
 
 ![Don't hold Bluefin wrong](/img/user-attachments/6d03851b-5d42-4235-9e1c-3dde7c455946.png)
 
-You can always do what you want, but Bluefin is designed with a specific workflow in mind:
+원하는 대로 써도 괜찮지만, Bluefin은 특정한 작업 방식을 염두에 두고 설계되었습니다:
 
-- **Containerize your developer environments** rather than commingling them with the OS. Define them per project in `devcontainer.json` files managed by Git.
-- **Stick to Flatpaks and Homebrew.** The ideal is to leave the core OS image unchanged.
-- **Follow XDG standards** for overriding files. `/etc`, `/var`, `/usr/local`, and `/opt` are writable. Most per-user overrides live in `~/.config` and `~/.local`.
-- **Isolate old-school jank in containers.** Mangling packages directly on the host is an anti-pattern.
-- **Don't overthink rebooting.** Shut down or reboot your PC when you're done using it so staged OS updates apply automatically.
-- **Hardware matters.** Bluefin works best on Linux-friendly hardware.
+- **개발 환경은 컨테이너로 분리하세요.** OS와 섞어 쓰지 말고, Git으로 관리하는 `devcontainer.json` 파일로 프로젝트마다 정의하세요.
+- **Flatpak과 Homebrew를 사용하세요.** 핵심 OS 이미지는 변경하지 않고 두는 것이 이상적입니다.
+- **파일을 재정의할 때는 XDG 표준을 따르세요.** `/etc`, `/var`, `/usr/local`, `/opt`는 쓰기가 가능합니다. 사용자별 재정의는 대부분 `~/.config`와 `~/.local`에 있습니다.
+- **오래된 방식의 지저분한 도구는 컨테이너에 격리하세요.** 호스트에서 패키지를 직접 뜯어고치는 것은 안티패턴입니다.
+- **재부팅을 너무 고민하지 마세요.** 사용이 끝나면 PC를 끄거나 재부팅하세요. 스테이징된 OS 업데이트가 자동으로 적용됩니다.
+- **하드웨어가 중요합니다.** Bluefin은 Linux 친화적인 하드웨어에서 가장 잘 동작합니다.
 
 :::tip
 
@@ -105,57 +105,58 @@ I have Become Legend.
 
 :::
 
-### So who is this for?
+### 그럼 누구를 위한 OS인가요? {#so-who-is-this-for}
 
-Bluefin은 사용자가 현대적인 데스크톱을 통해 Linux에 소개되어야 한다고 강하게 생각합니다. 시장은 이전 세대의 Linux 데스크톱 관습을 거부했고, ChromeOS와 Android와 같은 현대적인 모델이 성공했습니다. **95%의 사용자는 브라우저와 Flatpaks를 사용하는 데 문제가 없습니다.** Bluefin은 그 95%를 위한 zero-maintenance 목적의 OS로 설계되었으며, 개발자에게 박스에서 네이티브 클라우드 도구를 제공합니다.
+Bluefin은 사용자가 현대적인 데스크톱을 통해 Linux를 처음 접해야 한다고 굳게 믿습니다. 시장은 이전 세대의 Linux 데스크톱 관습을 받아들이지 않았고, ChromeOS나 Android 같은 현대적인 모델이 성공했습니다. **사용자의 95%는 브라우저와 Flatpak만으로 충분합니다.** Bluefin은 그 95%를 위해 관리가 필요 없는 OS로 설계되었으며, 개발자에게는 클라우드 네이티브 도구를 기본으로 제공합니다.
 
-### What about codecs?
+### 코덱은 어떻게 하나요? {#what-about-codecs}
 
-당신이 필요한 모든 것은 Universal Blue를 통해 박스에서 기본적으로 포함되어 있습니다.
+필요한 것은 모두 Universal Blue를 통해 기본으로 포함되어 있습니다.
 
-### What's the deal with Homebrew?
+### Homebrew는 왜 쓰나요? {#whats-the-deal-with-homebrew}
 
-[Homebrew is Great on Linux](https://www.ypsidanger.com/homebrew-is-great-on-linux/)를 확인하세요. Homebrew는 base 이미지를 건드리거나 `sudo`가 필요 없이 CLI 유틸리티를 관리합니다.
+[Homebrew is Great on Linux](https://www.ypsidanger.com/homebrew-is-great-on-linux/)를 확인하세요. Homebrew는 기본 이미지를 건드리거나 `sudo`를 쓰지 않고도 CLI 유틸리티를 관리합니다.
 
-### Why are there multiple Bluefin images?
+### Bluefin 이미지는 왜 여러 개인가요? {#why-are-there-multiple-bluefin-images}
 
-Bluefin은 모든 이미지에 걸쳐 동일하기를 노력합니다 — 차이는 업데이트 순환과 전문화된 도구입니다:
+Bluefin은 모든 이미지에서 동일하게 유지되도록 노력합니다. 차이는 업데이트 주기와 특화된 도구뿐입니다:
 
-- **Bluefin**: 일반 데스크톱 사용을 위한 gated 커널을 가진 현재 Fedora base.
-- **Bluefin Server**: FSDK 기반, DDI 우선 최소 서버 OS.
-- **Bluefin DX**: 컨테이너와 devcontainers를 가진 개발자 워크스페이스.
+- **Bluefin**: 일반 데스크톱 사용을 위한, 게이트 커널을 쓰는 현재 Fedora 기반 이미지.
+- **Bluefin Server**: FSDK 기반, DDI 우선의 최소 서버 OS.
+- **Bluefin DX**: 컨테이너와 devcontainer를 갖춘 개발자 작업 공간.
 
-### What's with all the Ubuntu influence?
+### Ubuntu의 영향이 많이 보이는 이유는? {#whats-with-all-the-ubuntu-influence}
 
-Bluefin의 공동 창립자 3명이 Canonical에서 Ubuntu를 위해 작업했습니다. Bluefin은 현대적인 클라우드 네이티브 컨테이너 인프라 위에 구축된 클래식 Ubuntu 데스크톱 정신("Linux for Human Beings")을 되가져옵니다.
+Bluefin의 공동 창립자 3명은 Canonical에서 Ubuntu 작업을 했습니다. Bluefin은 클래식 Ubuntu 데스크톱의 정신("Linux for Human Beings")을 현대적인 클라우드 네이티브 컨테이너 인프라 위에 되살립니다.
 
-### Should I trust you?
+### 믿어도 되나요? {#should-i-trust-you}
 
-모든 것은 공개적으로 구축되고, Cosign / GPG로 서명되며, GitHub Actions를 통해 게시됩니다. 배경을 위해 [Jorge Castro's bio](https://www.ypsidanger.com/about/)를 확인하세요.
+모든 것은 공개적으로 빌드되고, Cosign / GPG로 서명되며, GitHub Actions를 통해 게시됩니다. 배경은 [Jorge Castro의 소개](https://www.ypsidanger.com/about/)를 확인하세요.
 
 ---
 
 ## Ask Bluefin 및 자동화된 진단
 
 :::info
-This feature is in Alpha. The menu feature doesn't exist yet.
+이 기능은 알파 단계입니다. 메뉴 기능은 아직 없습니다.
 :::
 
-- [Bluefin AI page](/ai) - gives this page more context on our plans for Bluespeed
+- [Bluefin AI 페이지](/ai) - Bluespeed 계획에 대한 더 많은 배경 정보를 제공합니다
 
-In the menu select "Ask Bluefin" to use the chat agent.
+메뉴에서 "Ask Bluefin"을 선택하면 채팅 에이전트를 사용할 수 있습니다.
 
 ![ask](/img/troubleshooting/ask-bluefin-menu.png)
 
-> "Ask Bluefin"은 맞춤형 운영체제 에이전트입니다. 새 사용자를 위해, 당신은 Linux를 배우는 데 도움이 되도록 설계된 시스템이며, 인터넷을 뒤지거나 잘못된 Linux distribution을 설치했다고 말하는 고문의 괴롭힘 없이. "Ask Bluefin"은 운영체제와 그 문서로 훈련되므로, 항상 진실의 출처로부터 배우고 커뮤니티에 의해 다듬어집니다. Linux 베테란드를 위해, 당신의 로컬 PC를 위한 강력한 진단 도구이며, 당신의 서버와 클러스터에 대한 내장 통합이 있습니다 ...
+> "Ask Bluefin"은 맞춤형 운영체제 에이전트입니다. 새 사용자에게는 인터넷을 뒤지거나 "배포판을 잘못 골랐다"는 훈수에 시달리지 않고 Linux를 배울 수 있도록 돕는 시스템입니다. "Ask Bluefin"은 운영체제와 그 문서로 학습되므로 항상 신뢰할 수 있는 출처에서 배우며, 커뮤니티가 함께 다듬어 갑니다. Linux 숙련자에게는 로컬 PC를 위한 강력한 진단 도구이며, 서버와 클러스터와의 통합도 내장되어 있습니다 ...
 
-`Ctrl`-`Alt`-`Shift`- `g`는 quicklaunch를 호출하여 원키로 help 에이전트를 호출할 수 있습니다:
+<kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>G</kbd>로 빠른 실행을
+호출하면 키 하나로 도움말 에이전트를 부를 수 있습니다:
 
 <img src="/img/goose-quick-launch.png" alt="Goose quick launch" />
 
-### Out-of-the-Box Setup: `ujust probe`
+### 바로 쓰는 설정: `ujust probe` {#out-of-the-box-setup-ujust-probe}
 
-Bluefin은 AI 문제 해결 세션을 설정하고 실행하는 내장 자동화를 포함합니다:
+Bluefin에는 AI 문제 해결 세션을 설정하고 실행하는 자동화가 내장되어 있습니다:
 
 ```bash
 ujust probe
@@ -163,14 +164,14 @@ ujust probe
 
 `ujust probe`를 실행하면 자동으로:
 
-1. Goose가 설치되어 있는지 확인합니다 (아니면 Homebrew를 통해 설치하도록 프롬프트).
-2. 이미 존재하지 않으면 `ublue-os/tap/linux-mcp-server`를 설치합니다.
-3. `linux-tools`가 활성화된 Goose 구성을 `goose-mcp-setup`로 자동적으로 작성합니다.
+1. Goose가 설치되어 있는지 확인합니다(없으면 Homebrew로 설치할지 묻습니다).
+2. `ublue-os/tap/linux-mcp-server`가 없으면 설치합니다.
+3. `goose-mcp-setup`으로 `linux-tools`가 활성화된 Goose 구성을 자동으로 작성합니다.
 4. 구성된 LLM 제공자를 확인하고 세션을 시작합니다.
 
-### Manual Installation & Configuration
+### 수동 설치 및 구성 {#manual-installation--configuration}
 
-수동으로 설치하거나 macOS에서 설정하려는 경우:
+수동으로 설치하거나 macOS에서 설정하려면:
 
 <Tabs groupId="operating-systems">
   <TabItem value="linux" label="Bluefin / Linux" default>
@@ -189,32 +190,32 @@ goose-mcp-setup
 ```
 
 :::note
-On macOS, `linux-mcp-server` inspects a remote Linux host over SSH. Set `LINUX_MCP_HOST: <host>` in your `~/.config/goose/config.yaml` envs.
+macOS에서 `linux-mcp-server`는 SSH를 통해 원격 Linux 호스트를 점검합니다. `~/.config/goose/config.yaml`의 envs에 `LINUX_MCP_HOST: <host>`를 설정하세요.
 :::
 
   </TabItem>
 </Tabs>
 
-`ublue-os/tap/linux-mcp-server`를 설치하면 `linux-mcp-server`, Goose 클라이언트 (`block-goose-cli`), 그리고 `goose-mcp-setup`가 설치됩니다.
+`ublue-os/tap/linux-mcp-server`를 설치하면 `linux-mcp-server`, Goose 클라이언트(`block-goose-cli`), `goose-mcp-setup`이 함께 설치됩니다.
 
 #### linux-mcp-server
 
 시스템 진단 및 모니터링 도구를 제공합니다:
 
-- 시스템 정보 (OS, kernel, hardware)
+- 시스템 정보(OS, 커널, 하드웨어)
 - 프로세스 관리
-- 서비스 모니터링 (systemd)
-- 로그 접근 (journalctl)
+- 서비스 모니터링(systemd)
+- 로그 접근(journalctl)
 - 네트워크 진단
 - 파일 시스템 검사
 
-**Repository**: [rhel-lightspeed/linux-mcp-server](https://github.com/rhel-lightspeed/linux-mcp-server)
+**저장소**: [rhel-lightspeed/linux-mcp-server](https://github.com/rhel-lightspeed/linux-mcp-server)
 
-### Configuration Steps
+### 구성 단계 {#configuration-steps}
 
-#### Step 1: Configure Goose Extension
+#### 1단계: Goose 확장 구성 {#step-1-configure-goose-extension}
 
-`goose-mcp-setup`를 실행하면 `linux-tools` 확장이 사전 구성된 `~/.config/goose/config.yaml`을 만듭니다:
+`goose-mcp-setup`을 실행하면 `linux-tools` 확장이 미리 구성된 `~/.config/goose/config.yaml`이 만들어집니다:
 
 ```yaml
 extensions:
@@ -234,24 +235,24 @@ extensions:
     args: []
 ```
 
-#### Step 2: Configure your LLM Provider
+#### 2단계: LLM 제공자 구성 {#step-2-configure-your-llm-provider}
 
-Goose는 호스팅 제공자와 로컬 모델 모두를 지원합니다. 실행하세요:
+Goose는 호스팅 제공자와 로컬 모델을 모두 지원합니다. 다음을 실행하세요:
 
 ```bash
 goose configure
 ```
 
-- **GitHub Copilot**: `GitHub Copilot`을 선택하여 당신의 GitHub 계정으로 직접 인증합니다.
-- **Hosted APIs**: Anthropic, OpenAI, Gemini 등을 선택하고 프롬프트가 뜨면 API 키를 입력하세요.
-- **Local Models**: [llmman](https://github.com/llmmanorg/llmman)는 모델을 컨테이너로 관리하고 OpenAI 호환 엔드포인트를 제공합니다:
+- **GitHub Copilot**: `GitHub Copilot`을 선택하면 GitHub 계정으로 바로 인증합니다.
+- **호스팅 API**: Anthropic, OpenAI, Gemini 등을 선택하고 안내에 따라 API 키를 입력하세요.
+- **로컬 모델**: [llmman](https://github.com/llmmanorg/llmman)은 모델을 컨테이너로 관리하고 OpenAI 호환 엔드포인트를 제공합니다:
 
 ```bash
 brew install llmmanorg/tap/llmman
 llmman serve
 ```
 
-`~/.config/goose/config.yaml`에서 로컬 모델을 사용하도록 Goose를 설정하세요:
+`~/.config/goose/config.yaml`에서 Goose가 로컬 모델을 사용하도록 설정하세요:
 
 ```yaml
 GOOSE_PROVIDER: ollama
@@ -259,11 +260,11 @@ GOOSE_MODEL: qwen3:8b
 OLLAMA_HOST: http://localhost:17434
 ```
 
-[LM Studio](https://lmstudio.ai/) (`brew install lm-studio`)는 그래픽 대안입니다 — 모델을 로드하고 로컬 서버를 시작한 후 `goose configure`에서 **LM Studio**를 선택하세요.
+[LM Studio](https://lmstudio.ai/)(`brew install lm-studio`)는 그래픽 대안입니다. 모델을 불러오고 로컬 서버를 시작한 다음 `goose configure`에서 **LM Studio**를 선택하세요.
 
-#### Step 3: Start Troubleshooting
+#### 3단계: 문제 해결 시작 {#step-3-start-troubleshooting}
 
-인터랙티브 세션을 시작하세요:
+대화형 세션을 시작하세요:
 
 ```bash
 ujust probe
@@ -271,76 +272,76 @@ ujust probe
 goose session
 ```
 
-### Security Considerations
+### 보안 고려 사항 {#security-considerations}
 
-- MCP 서버는 당신의 사용자 권한으로 실행됩니다
-- 신뢰할 수 있는 소스에서만 MCP 서버를 설치하세요
-- 필요한 권한을 위해 서버 문서를 검토하세요
-- 민감한 자격증명에 대한 환경 변수를 사용하세요 (구성에서 하드코딩하지 마세요)
-- 보안 패치를 받으 위해 MCP 서버를 정기적으로 업데이트하세요
+- MCP 서버는 현재 사용자 권한으로 실행됩니다
+- 신뢰할 수 있는 출처의 MCP 서버만 설치하세요
+- 서버 문서에서 필요한 권한을 검토하세요
+- 민감한 자격 증명은 환경 변수로 전달하세요(구성 파일에 하드코딩하지 마세요)
+- 보안 패치를 받을 수 있도록 MCP 서버를 정기적으로 업데이트하세요
 
-### Further Reading
+### 더 읽을거리 {#further-reading}
 
-- [MCP Official Documentation](https://modelcontextprotocol.io/)
-- [Building MCP Servers](https://modelcontextprotocol.io/docs/2026-07-28/develop/build-server)
-- [MCP Specification](https://modelcontextprotocol.io/specification/2026-07-28/architecture)
+- [MCP 공식 문서](https://modelcontextprotocol.io/)
+- [MCP 서버 만들기](https://modelcontextprotocol.io/docs/2026-07-28/develop/build-server)
+- [MCP 명세](https://modelcontextprotocol.io/specification/2026-07-28/architecture)
 
 ## 자동화된 문제 해결
 
-자연 언어를 사용하여 도구에 당신의 시스템에 대한 것들을 물을 수 있습니다:
+자연어로 시스템에 대해 도구에 물어볼 수 있습니다:
 
 ![Top CPU usage](/img/troubleshooting/top-cpu-usage.png)
 
-### System Health
+### 시스템 상태 {#system-health}
 
-참고: 이것들은 linux-server-mcp 페이지에서 가져오지만 아이디어를 얻을 수 있습니다:
+참고: 아래 내용은 linux-mcp-server 페이지에서 가져온 것이지만, 어떤 걸 물어볼 수 있는지 감을 잡는 데 도움이 됩니다:
 
-| I want to check... | Use this tool              | Example Prompt                 |
-| ------------------ | -------------------------- | ------------------------------ |
-| **OS / Kernel**    | `get_system_information`   | "What OS version is this?"     |
-| **CPU Load**       | `get_cpu_information`      | "Is the CPU overloaded?"       |
-| **Memory / RAM**   | `get_memory_information`   | "How much free RAM do I have?" |
-| **Disk Space**     | `get_disk_usage`           | "Are any disks full?"          |
-| **Hardware**       | `get_hardware_information` | "List the PCI devices."        |
+| 확인하려는 항목  | 사용할 도구                | 예시 프롬프트             |
+| ---------------- | -------------------------- | ------------------------- |
+| **OS / 커널**    | `get_system_information`   | "이 OS 버전이 뭐야?"      |
+| **CPU 부하**     | `get_cpu_information`      | "CPU가 과부하 상태야?"    |
+| **메모리 / RAM** | `get_memory_information`   | "남은 RAM이 얼마나 돼?"   |
+| **디스크 공간**  | `get_disk_usage`           | "가득 찬 디스크가 있어?"  |
+| **하드웨어**     | `get_hardware_information` | "PCI 장치 목록을 보여줘." |
 
 ### 문제 해결
 
-| I want to check...    | Use this tool        | Example Prompt                                 |
-| --------------------- | -------------------- | ---------------------------------------------- |
-| **Running Apps**      | `list_processes`     | "What's using the most CPU?"                   |
-| **Process Details**   | `get_process_info`   | "Inspect process ID 1234."                     |
-| **Services**          | `list_services`      | "Are all services running?"                    |
-| **Service Status**    | `get_service_status` | "Why did nginx fail?"                          |
-| **System Logs**       | `get_journal_logs`   | "Show errors from the last hour."              |
-| **Service Logs**      | `get_service_logs`   | "Show recent logs for sshd."                   |
-| **Specific Log File** | `read_log_file`      | "Read the last 50 lines of /var/log/messages." |
+| 확인하려는 항목        | 사용할 도구          | 예시 프롬프트                               |
+| ---------------------- | -------------------- | ------------------------------------------- |
+| **실행 중인 앱**       | `list_processes`     | "CPU를 가장 많이 쓰는 게 뭐야?"             |
+| **프로세스 세부 정보** | `get_process_info`   | "프로세스 ID 1234를 살펴봐줘."              |
+| **서비스**             | `list_services`      | "모든 서비스가 실행 중이야?"                |
+| **서비스 상태**        | `get_service_status` | "nginx가 왜 실패했어?"                      |
+| **시스템 로그**        | `get_journal_logs`   | "지난 1시간 동안의 오류를 보여줘."          |
+| **서비스 로그**        | `get_service_logs`   | "sshd의 최근 로그를 보여줘."                |
+| **특정 로그 파일**     | `read_log_file`      | "/var/log/messages의 마지막 50줄을 읽어줘." |
 
-### Network
+### 네트워크 {#network}
 
-| I want to check... | Use this tool             | Example Prompt                 |
-| ------------------ | ------------------------- | ------------------------------ |
-| **IP Addresses**   | `get_network_interfaces`  | "What is my IP address?"       |
-| **Open Ports**     | `get_listening_ports`     | "What ports are open?"         |
-| **Connections**    | `get_network_connections` | "Who is connected to port 22?" |
+| 확인하려는 항목 | 사용할 도구               | 예시 프롬프트                   |
+| --------------- | ------------------------- | ------------------------------- |
+| **IP 주소**     | `get_network_interfaces`  | "내 IP 주소가 뭐야?"            |
+| **열린 포트**   | `get_listening_ports`     | "어떤 포트가 열려 있어?"        |
+| **연결**        | `get_network_connections` | "22번 포트에 누가 연결돼 있어?" |
 
-### Files & Storage
+### 파일 및 저장소 {#files--storage}
 
-| I want to check...  | Use this tool        | Example Prompt                         |
-| ------------------- | -------------------- | -------------------------------------- |
-| **Disk Partitions** | `list_block_devices` | "Show me the partition layout."        |
-| **Large Folders**   | `list_directories`   | "Find the largest folders in /var."    |
-| **Recent Changes**  | `list_files`         | "What files in /etc changed recently?" |
-| **Read File**       | `read_file`          | "Read /etc/fstab."                     |
+| 확인하려는 항목    | 사용할 도구          | 예시 프롬프트                       |
+| ------------------ | -------------------- | ----------------------------------- |
+| **디스크 파티션**  | `list_block_devices` | "파티션 구성을 보여줘."             |
+| **큰 폴더**        | `list_directories`   | "/var에서 가장 큰 폴더를 찾아줘."   |
+| **최근 변경 사항** | `list_files`         | "/etc에서 최근에 바뀐 파일이 뭐야?" |
+| **파일 읽기**      | `read_file`          | "/etc/fstab을 읽어줘."              |
 
-### Pro Tips
+### 유용한 팁 {#pro-tips}
 
-- **Combine Tools:** 한 번에 하나의 것만 요청할 필요가 없습니다.
-  > "Check CPU usage and show me the top 5 processes."
-- **Filter Logs:** 시간과 우선순위를 구체적으로 하여 context 창을 절약하세요.
+- **도구 조합하기:** 한 번에 하나씩만 요청할 필요는 없습니다.
+  > "CPU 사용량을 확인하고 상위 5개 프로세스를 보여줘."
+- **로그 필터링:** 시간과 우선순위를 구체적으로 지정하면 컨텍스트 창을 아낄 수 있습니다.
 
-  > "Show me `error` priority logs from the last `30 minutes`."
+  > "지난 `30분` 동안의 `error` 우선순위 로그를 보여줘."
 
-- **Remote Hosts:** SSH를 설정했다면, 특정 호스트에서 실행하 요청하세요.
-  > "Check disk usage on `webserver1`."
+- **원격 호스트:** SSH를 설정했다면 특정 호스트에서 실행하도록 요청하세요.
+  > "`webserver1`의 디스크 사용량을 확인해줘."
 
 ![troubleshooting](/img/troubleshooting/troubleshooting-example.png)

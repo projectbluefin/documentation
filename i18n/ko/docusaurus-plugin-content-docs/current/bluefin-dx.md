@@ -48,7 +48,7 @@ Homebrew를 개발 도구 설치에도 사용할 수 있습니다. 그러나 이
 
 Mise는 프로젝트별로 특정 버전의 애플리케이션을 설치할 수 있게 하는 도구입니다 (예: 한 프로젝트에서는 node 20, 다른 프로젝트에서는 node 21). 저장소의 `mise.toml` 파일을 사용해 필요한 특정 도구를 추적할 수 있습니다. [이것들을 전역으로 설치할 수도 있습니다](https://mise.jdx.dev/configuration.html#global-config-config-mise-config-toml). 이것은 devcontainers와 유사하게 사용할 수 있지만, 사용하기 위해 컨테이너로 전환할 필요는 없습니다.
 
-항상 원하는 것을 사용할 수 있습니다. 생산적이 되기 위해 여기에 있는 모든 것을 사용할 필요는 없습니다 — 결국 이것은 당신의 컴퓨터이고 이것은 기본값의 집합입니다.
+항상 원하는 것을 사용할 수 있습니다. 생산적이 되기 위해 여기에 있는 모든 것을 사용할 필요는 없습니다 — 결국 이것은 컴퓨터이고 이것은 기본값의 집합입니다.
 
 ## 개발자 모드 활성화
 
@@ -76,7 +76,7 @@ Mise는 프로젝트별로 특정 버전의 애플리케이션을 설치할 수 
 - [Dev Containers 규격](https://containers.dev/)
 - [초보자를 위한 시리즈: Dev Containers](https://www.youtube.com/watch?v=b1RavPr_878) — [VS Code YouTube 채널](https://www.youtube.com/@code/videos)의 훌륭한 입문용 튕토리얼
 
-가장 최근의 [Docker Engine](https://docs.docker.com/engine/)이 기본으로 포함되며 VSCode의 기본 컨테이너 런타임으로 설정되어 있습니다. [docker compose](https://danielquinn.org/blog/developing-with-docker/)를 사용하는 것도 컨테이너 개발에 시작하는 훌륭한 방법이며, devcontainers가 당신의 스타일에 맞지 않을 경우 선택지입니다. 참고로, Docker Desktop은 사용 불가능하며, 그래픽 컨테이너 관리를 위해 Podman Desktop을 사용하세요.
+가장 최근의 [Docker Engine](https://docs.docker.com/engine/)이 기본으로 포함되며 VSCode의 기본 컨테이너 런타임으로 설정되어 있습니다. [docker compose](https://danielquinn.org/blog/developing-with-docker/)를 사용하는 것도 컨테이너 개발에 시작하는 훌륭한 방법이며, devcontainers가 스타일에 맞지 않을 경우 선택지입니다. 참고로, Docker Desktop은 사용 불가능하며, 그래픽 컨테이너 관리를 위해 Podman Desktop을 사용하세요.
 
 #### Dev Containers로 Podman 사용
 
@@ -118,9 +118,9 @@ Ubuntu와 Canonical의 [세부 규격](https://discourse.ubuntu.com/t/spec-inclu
 - 자동화 작업을 위한 [Just](https://github.com/casey/just) 작업 실행기
 - 선택적 쉘로 `fish`와 `zsh` 사용 가능
 
-#### Pet Containers
+#### 펫 컨테이너(Pet Containers) {#pet-containers}
 
-Pet containers는 [distrobox](https://distrobox.it/)를 통해 인터티브 터미널로 제공됩니다. 이를 포함된 [DistroShelf](https://github.com/ranfdev/DistroShelf) 애플리케이션을 통해 관리하세요. 데스크톱 왼쪽 상단의 "Containers" 아래 logomenu에서 사용할 수 있습니다:
+펫 컨테이너는 [distrobox](https://distrobox.it/)를 통해 인터랙티브 터미널로 제공됩니다. 이를 포함된 [DistroShelf](https://github.com/ranfdev/DistroShelf) 애플리케이션을 통해 관리하세요. 데스크톱 왼쪽 상단의 "Containers" 아래 logomenu에서 사용할 수 있습니다:
 
 ![image](/img/user-attachments/bdab71b0-c04a-4562-a73d-396d4b907060.png)
 

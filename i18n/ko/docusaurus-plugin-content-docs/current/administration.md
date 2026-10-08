@@ -11,7 +11,7 @@ Bluefin은 재설치 없이 하드웨어의 수명까지 설치하도록 설계�
 
 :::tip
 
-나는 그 "디폴트 라이프스타일"이 좋다.
+나는 그 "기본값대로 사는 방식(default lifestyle)"이 좋다.
 
 -- [Matt Ray](https://www.softwaredefinedtalk.com/hosts/matt)
 
@@ -28,9 +28,9 @@ Bluefin은 재설치 없이 하드웨어의 수명까지 설치하도록 설계�
 
 ## 시스템 업데이트
 
-Bluefin은 "hands off"하도록 설계되었습니다. 시스템은 6시간마다 (6) 업데이트를 확인합니다. 여기에는 시스템 업데이트, flatpak, pet containers, 그리고 homebrew가 포함됩니다.
+Bluefin은 손댈 필요가 없도록("hands off") 설계되었습니다. 시스템은 6시간마다 업데이트를 확인합니다. 여기에는 시스템 업데이트, Flatpak, 펫 컨테이너(pet container), Homebrew가 포함됩니다.
 
-- 대부분의 이미지는 매주 게시되지만, 우리는 모든 시점에 새 업데이트를 밀 수 있습니다.
+- 대부분의 이미지는 매주 게시되지만, 필요하면 언제든지 새 업데이트를 배포할 수 있습니다.
 
 업데이트는 시스템이 재부팅될 때 적용됩니다. 따라서 커널 업데이트가 적용되는지 보장하기 위해 사용하지 않을 때 정기적으로 장치를 종료하는 것이 권장됩니다. 애플리케이션 업데이트 (브라우저 등)는 이것과 독립적으로 일어나며 재부팅이 필요 없습니다.
 
@@ -44,62 +44,62 @@ Bluefin은 "hands off"하도록 설계되었습니다. 시스템은 6시간마�
 
 ![Settings → Network → A network setting - `Metered Connection: has data limits or can incur charges` Highlight](/img/user-attachments/00d04190-3a68-4fd1-8e03-7e97ef3193f2.png)
 
-## Streams 및 Throttle 설정
+## Stream 및 업데이트 속도 설정 {#streams-and-throttle-settings}
 
-Bluefin은 Fedora의 현재 버전를 기반으로 이미지를 제공합니다. 이것은 업데이트를 얼마나 공격적으로 할지에 대한 유연성을 사용자에게 제공합니다. 이들은 "streams"라고 불립니다.
+Bluefin은 Fedora 현재 버전을 기반으로 한 이미지를 제공합니다. 사용자는 업데이트를 얼마나 공격적으로 받을지 유연하게 선택할 수 있으며, 이러한 선택지를 "stream"이라고 부릅니다.
 
 ### Bluefin
 
-`stable`: 이것은 Bluefin의 기본 stream이며 대부분의 사용자를 목표로 합니다. 이것은 항상 Fedora의 현재 버전으로 alias되지만 Fedora CoreOS 릴리스 일정을 따릅니다. 이것은 커널 업그레이드가 Fedora에 도입된 지 약 2주 후에 이루어지는데, 이는 Bluefin 팀이 그러한 상황에서 특정 커널로 핀할 수 있기 때문에 커널 regressions을 피하는 데 유용할 수 있습니다. 우리는 이것을 커널을 "gating"한다고 부릅니다. `stable-daily`는 매일 빌드를 원하는 사용자를 위해 사용할 수 있습니다.
+`stable`: Bluefin의 기본 stream이며 대부분의 사용자를 위한 것입니다. 항상 Fedora 현재 버전을 가리키지만 Fedora CoreOS 릴리스 일정을 따릅니다. 따라서 커널 업그레이드는 Fedora에 도입된 지 약 2주 뒤에 이루어집니다. 문제가 생기면 Bluefin 팀이 특정 커널 버전에 고정할 수 있으므로 커널 회귀(regression)를 피하는 데 도움이 됩니다. 이를 커널 "게이팅(gating)"이라고 부릅니다. 매일 빌드를 원하는 사용자는 `stable-daily`를 사용할 수 있습니다.
 
-:::note[Latest (For Testers)]
-`latest`: 사용자에게 최신 Fedora가 제공할 모든 것을 원하는 사람들을 위해, ungated Linux 커널, 매일 업데이트, 완전한 open throttle. 🔥 이 stream는 의도적으로 브랜드가 없고 일반 목적 사용용이 아닙니다.
+:::note[Latest (테스터용)]
+`latest`: 최신 Fedora가 제공하는 모든 것을 원하는 사용자를 위한 stream으로, 게이트되지 않은 Linux 커널, 매일 업데이트, 업데이트 속도 제한 없음이 특징입니다. 🔥 이 stream은 의도적으로 브랜딩이 없으며 일반 용도로 쓰기 위한 것이 아닙니다.
 :::
 
-세 개의 rolling tag에서 선택하거나 Fedora의 특정 버전으로 잠글 수 있습니다. 특정 버전 정보를 위해 [release notes](https://github.com/projectbluefin/bluefin/releases)를 확인하세요:
+세 가지 rolling 태그 중에서 고르거나 특정 Fedora 버전에 고정할 수 있습니다. 버전별 정보는 [릴리스 노트](https://github.com/projectbluefin/bluefin/releases)를 확인하세요:
 
-|                      | `stable` (default) 또는 `stable-daily` | `latest`    |
-| -------------------- | -------------------------------------- | ----------- |
-| Fedora Version:      | 43                                     | 43          |
-| GNOME Version:       | 49                                     | 49          |
-| Target User:         | All Users                              |             |
-| System Updates:      | Weekly or Daily                        | Daily       |
-| Application Updates: | Twice a Day                            | Twice a Day |
-| Kernel:              | Gated                                  | Ungated     |
+|                        | `stable`(기본값) 또는 `stable-daily` | `latest`          |
+| ---------------------- | ------------------------------------ | ----------------- |
+| Fedora 버전:           | 43                                   | 43                |
+| GNOME 버전:            | 49                                   | 49                |
+| 대상 사용자:           | 모든 사용자                          |                   |
+| 시스템 업데이트:       | 매주 또는 매일                       | 매일              |
+| 애플리케이션 업데이트: | 하루 두 번                           | 하루 두 번        |
+| 커널:                  | 게이트(Gated)                        | 비게이트(Ungated) |
 
-`latest`와 `stable` 사이의 주요 차이는 커널 cadence와 그들이 언제 major 업그레이드를 하는지입니다. `latest`는 사용 가능해지는 즉시 다음 major Fedora 릴리스로 업그레이드하고 매일 빌드합니다. `stable`는 CoreOS가 userspace 업그레이드를 할 때 업그레이드하는데, 이것은 보통 몇 주 후에 이루어지고 매주 또는 매일 빌드합니다. 사용자는 매일 stable 업데이트를 위해 `stable-daily` 이미지를 선택하거나, 매주 빌드를 위해 `stable`에 머물 수 있습니다.
+`latest`와 `stable`의 주요 차이는 커널 업데이트 주기와 메이저 업그레이드 시점입니다. `latest`는 다음 메이저 Fedora 릴리스가 나오는 즉시 업그레이드하며 매일 빌드됩니다. `stable`은 CoreOS가 사용자 공간(userspace)을 업그레이드할 때 함께 업그레이드하는데, 보통 몇 주 뒤이며 매주 또는 매일 빌드됩니다. 매일 stable 업데이트를 받으려면 `stable-daily` 이미지를, 매주 빌드를 원하면 `stable`을 사용하세요.
 
-#### Gated Kernel
+#### 게이트 커널(Gated Kernel)
 
-`stable` tag는 gated 커널을 특징으로 합니다. 이 커널은 기본 Fedora Silverblue보다 느린 cadence인 [Fedora CoreOS stable stream](https://fedoraproject.org/coreos/release-notes?arch=x86_64&stream=stable)의 동일한 버전를 따릅니다. Universal Blue 팀은 regressions이 사용자에게 영향을 줄 수 있는 순서를 피하기 위해 임시적으로 특정 커널로 핀할 수 있습니다.
+`stable` 태그는 게이트 커널을 사용합니다. 이 커널은 [Fedora CoreOS stable stream](https://fedoraproject.org/coreos/release-notes?arch=x86_64&stream=stable)과 같은 버전을 따르며, 기본 Fedora Silverblue보다 업데이트 주기가 느립니다. Universal Blue 팀은 회귀(regression)가 사용자에게 영향을 주지 않도록 일시적으로 특정 커널 버전에 고정할 수 있습니다.
 
-커널 boot 인수를 추가하고 편집하는 것은 `bootc kargs`로 처리됩니다. 더 많은 정보를 위해 [upstream documentation](https://bootc.dev/bootc/building/kernel-arguments.html)를 확인하세요.
+커널 부트 인수의 추가 및 편집은 `bootc kargs`로 처리합니다. 자세한 내용은 [upstream 문서](https://bootc.dev/bootc/building/kernel-arguments.html)를 확인하세요.
 
-:::info[It's all just Bluefin]
+:::info[모두 같은 Bluefin입니다]
 
-Bluefin의 컴포넌트는 모든 이미지에 공유되므로, 그것을 별도의 "Edition" 또는 "Spin"으로 생각하지 마세요. Bluefin은 모든 이미지에 걸쳐 동일하기를 노력합니다, 우리는 업데이트의 공격성이 "be a setting"일 수 있다고 생각합니다. 이상적으로는 "Bluefin"을 사용하고 업데이트 stream에 대해 신경 쓸 필요가 없습니다.
+Bluefin의 구성 요소는 모든 이미지에서 공유되므로, 별도의 "에디션"이나 "스핀"으로 생각하지 마세요. Bluefin은 모든 이미지에서 동일하게 유지되도록 노력하며, 업데이트를 얼마나 공격적으로 받을지는 "하나의 설정"이어야 한다고 생각합니다. 이상적으로는 그냥 "Bluefin"을 사용하고 업데이트 stream은 신경 쓰지 않아도 됩니다.
 
 :::
 
-### Switching between Streams
+### Stream 간 전환 {#switching-between-streams}
 
-`ujust rebase-helper` 명령을 사용하여 rebase를 선택하고 특정 stream을 선택하세요:
+`ujust rebase-helper` 명령에서 rebase를 선택한 다음 원하는 stream을 고르세요:
 
 ![`ujust rebase-helper` - channel](/img/user-attachments/5ac60808-1e15-4c80-9592-e41fd2b52917.png)
 
-또는 `date`를 선택하고 오래된 이미지를 선택하세요.
+또는 `date`를 선택해 이전 이미지를 고를 수도 있습니다.
 
 ![`ujust rebase-helper` - date](/img/user-attachments/567061da-036d-4779-873e-154a5a833e67.png)
 
-#### streams 수동으로 전환
+#### 수동으로 stream 전환하기
 
-Bluefin은 운영체제 이미지를 관리하기 위해 [`bootc`](https://bootc.dev/bootc/)를 사용합니다. 현재의와 staging된 deployment를 검사하려면, 실행하세요:
+Bluefin은 운영체제 이미지 관리에 [`bootc`](https://bootc.dev/bootc/)를 사용합니다. 현재 배포와 스테이징된 배포를 확인하려면 다음을 실행하세요:
 
 ```sh
 sudo bootc status
 ```
 
-이것은 부팅된 이미지, staging된 업데이트 (있는 경우), 그리고 rollback 타깃을 표시합니다:
+부팅된 이미지, 스테이징된 업데이트(있는 경우), 롤백 대상이 표시됩니다:
 
 ```
 Current staged image: ghcr.io/projectbluefin/bluefin:stable
@@ -110,53 +110,53 @@ Current booted image: ghcr.io/projectbluefin/bluefin:stable
     Image digest: sha256:...
 ```
 
-`ghcr.io/projectbluefin/bluefin:stable` 참조는 이미지와 stream tag를 나타냅니다. `:stable`, `:latest`, 또는 pinned date tags를 찾으세요.
+`ghcr.io/projectbluefin/bluefin:stable` 참조는 이미지와 stream 태그를 나타냅니다. `:stable`, `:latest` 또는 날짜로 고정된 태그를 찾아보세요.
 
-로컬로 layer된 패키지가 있다면, streams를 전환하기 전에 그것들을 초기화하세요:
+로컬에 레이어링한 패키지가 있다면 stream을 전환하기 전에 모두 제거해 기본 이미지 상태로 되돌리세요:
 
 ```sh
 rpm-ostree reset
 ```
 
-**Pro Tip**: Bluefin의 [release notes](https://github.com/projectbluefin/bluefin/releases)에는 각 릴리스에 대한 stream 전환 지침이 포함되어 있습니다.
+**팁**: Bluefin의 [릴리스 노트](https://github.com/projectbluefin/bluefin/releases)에는 릴리스마다 stream 전환 방법이 포함되어 있습니다.
 
-streams를 이동하려면 `bootc switch` 명령을 사용하세요:
+stream을 옮기려면 `bootc switch` 명령을 사용하세요:
 
-#### Manual Switch Examples
+#### 수동 전환 예시
 
 <details>
 
-<summary>Switching to `:stable`. The `--enforce-container-sigpolicy` flag ensures signature validation for the target image:</summary>
+<summary>`:stable`로 전환하기. `--enforce-container-sigpolicy` 플래그는 대상 이미지의 서명 검증을 보장합니다:</summary>
 
 ```sh
 sudo bootc switch ghcr.io/projectbluefin/bluefin:stable --enforce-container-sigpolicy
 ```
 
-Switching to `:testing`:
+`:testing`으로 전환하기:
 
 ```sh
 sudo bootc switch ghcr.io/projectbluefin/bluefin:testing --enforce-container-sigpolicy
 ```
 
-Switching to NVIDIA hardware images:
+NVIDIA 하드웨어용 이미지로 전환하기:
 
 ```sh
 sudo bootc switch ghcr.io/projectbluefin/bluefin-nvidia:stable --enforce-container-sigpolicy
 ```
 
-Pinning to a specific date tag:
+특정 날짜 태그에 고정하기:
 
 ```sh
 sudo bootc switch ghcr.io/projectbluefin/bluefin:stable-20260825 --enforce-container-sigpolicy
 ```
 
-Roll back to the previous deployment:
+이전 배포로 롤백하기:
 
 ```sh
 sudo bootc rollback
 ```
 
-Use `skopeo inspect` to query image metadata and available tags:
+`skopeo inspect`로 이미지 메타데이터와 사용 가능한 태그를 조회하세요:
 
 ```sh
 skopeo inspect docker://ghcr.io/projectbluefin/bluefin:stable
@@ -164,161 +164,161 @@ skopeo inspect docker://ghcr.io/projectbluefin/bluefin:stable
 
 </details>
 
-This will show all the available tags and useful metadata like image and kernel versions.
+사용 가능한 모든 태그와 함께 이미지 및 커널 버전 같은 유용한 메타데이터가 표시됩니다.
 
-Check the [bootc documentation](https://bootc.dev/bootc/) for more information.
+자세한 내용은 [bootc 문서](https://bootc.dev/bootc/)를 확인하세요.
 
-## Virtual Private Networks (VPN)
+## 가상 사설망(VPN) {#virtual-private-networks-vpn}
 
-[Tailscale](https://tailscale.com)는 desktop와 development 사용 사례 모두를 위해 VPN 서비스를 제공하기 위해 기본적으로 포함되어 있습니다. [Tailscale is pretty useful](https://blog.6nok.org/tailscale-is-pretty-useful/).
+[Tailscale](https://tailscale.com)은 데스크톱과 개발 용도 모두에 VPN 서비스를 제공하기 위해 기본으로 포함되어 있습니다. [Tailscale is pretty useful](https://blog.6nok.org/tailscale-is-pretty-useful/)도 참고하세요.
 
-- [Using Tailscale with Mullvad](https://tailscale.com/docs/features/exit-nodes/mullvad-exit-nodes) - 박스에서 가장 좋은 경험을 제공합니다
-- [Using Tailscale with Docker](https://tailscale.com/docs/features/containers/docker) - development을 위해
-- [Using the system tray with tailscale](https://tailscale.com/docs/features/client/linux-systray) - system tray에 tailscale 아이콘을 설정하기 위해 이것을 따르세요. `wl-clipboard`는 이미 시스템에 포함되어 있으므로 그것을 설치할 필요가 없음을 참고하세요.
-- Tailscale의 [YouTube channel](https://www.youtube.com/@Tailscale)는 많은 훌륭한 팁과 트릭을 가지고 있습니다
-- 좋은 VPN 제공자는 직접 Network Manager로 가져올 수 있는 Wireguard 구성을 제공할 수 있으므로, 더 많은 정보를 위해 그들의 문서를 확인하세요:
+- [Tailscale과 Mullvad 함께 사용하기](https://tailscale.com/docs/features/exit-nodes/mullvad-exit-nodes) - 설치 직후 바로 가장 좋은 경험을 제공합니다
+- [Tailscale과 Docker 함께 사용하기](https://tailscale.com/docs/features/containers/docker) - 개발용
+- [Tailscale에서 시스템 트레이 사용하기](https://tailscale.com/docs/features/client/linux-systray) - 시스템 트레이에 Tailscale 아이콘을 표시하려면 이 문서를 따르세요. `wl-clipboard`는 이미 시스템에 포함되어 있으므로 따로 설치할 필요가 없습니다.
+- Tailscale의 [YouTube 채널](https://www.youtube.com/@Tailscale)에는 유용한 팁과 요령이 많이 있습니다
+- 좋은 VPN 제공업체는 Network Manager로 바로 가져올 수 있는 WireGuard 구성을 제공하기도 하니, 자세한 내용은 각 제공업체의 문서를 확인하세요:
   - [NordVPN](https://support.nordvpn.com/hc/en-us/articles/20347784574097-Connecting-to-NordVPN-Linux-Network-Manager)
 
-Flathub에도 좋은 경험을 제공할 VPN 제공자가 있습니다:
+Flathub에도 좋은 경험을 제공하는 VPN 제공업체가 있습니다:
 
-- [Mozilla VPN](https://flathub.org/apps/org.mozilla.vpn) ([Donate](https://foundation.mozilla.org/en/?form=donate&gad_source=1))
-- [ProtonVPN client](https://flathub.org/apps/com.protonvpn.www) - Flathub에서 사용 가능
+- [Mozilla VPN](https://flathub.org/apps/org.mozilla.vpn) ([후원하기](https://foundation.mozilla.org/en/?form=donate&gad_source=1))
+- [ProtonVPN 클라이언트](https://flathub.org/apps/com.protonvpn.www) - Flathub에서 사용 가능
 
-여기에서 명시적으로 언급되지 않은 다른 VPN 제공자는 부족한 패키징 경험을 제공할 수 있고 권장되지 않습니다. 당신의 VPN 제공자가 이 카테고리에 속한다면, wireguard 구성을 내보내고 수동으로 가져오는 것이 가장 좋은 접근일 수 있습니다.
+여기에서 언급하지 않은 다른 VPN 제공업체는 패키징 품질이 떨어질 수 있어 권장하지 않습니다. 사용 중인 VPN 제공업체가 여기에 해당한다면 WireGuard 구성을 내보낸 뒤 수동으로 가져오는 것이 가장 좋은 방법일 수 있습니다.
 
-## Local Layering
+## 로컬 레이어링 {#local-layering}
 
-직접적으로 host 이미지에 패키지를 추가하는 것은 Bluefin에서 권장되지 않습니다. 운영체제는 `bootc`로 관리되는 OCI 이미지로서 깨끗하고 재현 가능하게 유지되도록 설계되었습니다.
+Bluefin에서는 호스트 이미지에 패키지를 직접 추가하는 것을 권장하지 않습니다. 운영체제는 `bootc`로 관리되는 OCI 이미지로서 깨끗하고 재현 가능하게 유지되도록 설계되었습니다.
 
-Workload는 컨테이너 (Distrobox 또는 Devcontainers를 통해), Homebrew를 통해 설치된 CLI 도구, 그리고 Flathub에서 설치된 그래픽 애플리케이션으로 고립되어야 합니다.
+작업 환경은 컨테이너(Distrobox 또는 Devcontainers), Homebrew로 설치한 CLI 도구, Flathub에서 설치한 그래픽 애플리케이션으로 분리해야 합니다.
 
-임시로 host 패키지를 layer해야 한다면:
+호스트에 패키지를 임시로 레이어링해야 한다면:
 
 ```sh
 rpm-ostree install <package>
 ```
 
-모든 layer된 패키지를 제거하고 순수 이미지 baseline로 돌아가기 위해:
+레이어링한 패키지를 모두 제거하고 순수한 기본 이미지로 돌아가려면:
 
 ```sh
 rpm-ostree reset
 ```
 
-적용하기 위해 재부팅하세요.
+적용하려면 재부팅하세요.
 
-| Recommended Alternative | Avoid Layering on Host |
-| ----------------------- | ---------------------- |
-| Flatpak apps            | Graphical desktop apps |
-| Homebrew CLI tools      | Host utilities         |
-| Distrobox / Containers  | Developer runtimes     |
+| 권장 대안            | 호스트 레이어링을 피할 항목 |
+| -------------------- | --------------------------- |
+| Flatpak 앱           | 그래픽 데스크톱 앱          |
+| Homebrew CLI 도구    | 호스트 유틸리티             |
+| Distrobox / 컨테이너 | 개발자 런타임               |
 
-## Overwriting System Defaults
+## 시스템 기본값 재정의 {#overwriting-system-defaults}
 
-Bluefin 시스템 데폴트는 Fedora 구성과 함께 `/usr/etc`의 base 이미지에 shipped됩니다. 이것들의 대부분은 `/etc`에 파일을 배치하여 재정의할 수 있습니다.
+Bluefin의 시스템 기본값은 Fedora 구성과 함께 기본 이미지의 `/usr/etc`에 포함되어 배포됩니다. 대부분은 `/etc`에 파일을 두어 재정의할 수 있습니다.
 
-예를 들어, Distrobox 구성은 `/usr/etc/distrobox/distrobox.ini`에 있습니다. 당신의 커스터마이징 옵션은 `/etc/distrobox/distrobox.ini`에 배치될 것입니다. 이것은 원본 파일의 사본이 필요한 상황에 유용합니다.
+예를 들어 Distrobox 구성은 `/usr/etc/distrobox/distrobox.ini`에 있습니다. 사용자 정의 옵션은 `/etc/distrobox/distrobox.ini`에 두면 됩니다. 원본 파일을 복사해 두고 수정해야 하는 경우에 유용합니다.
 
-구성 옵션에 대한 더 많은 정보를 위해 [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir/latest/)를 확인하세요, 특히 `~/.local`과 `~/.config`입니다.
+구성 옵션에 대한 자세한 내용은 [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir/latest/)을 확인하세요. 특히 `~/.local`과 `~/.config`를 참고하세요.
 
-## Community Aliases and Workarounds
+## 커뮤니티 별칭 및 우회 방법 {#community-aliases-and-workarounds}
 
-[just](https://just.systems)는 Bluefin에서 task runner로 사용됩니다. 이것들은 일반적으로 커뮤니티 편의 alias이거나, 일부 작업이나 초기 설정을 자동화하는 데 도움이 되는 더 복잡한 스크립트입니다. 이것은 `ujust`로 alias되어, 당신의 다른 프로젝트에서 `just` 자체를 사용할 수 있습니다.
+Bluefin에서는 [just](https://just.systems)를 작업 실행기(task runner)로 사용합니다. 여기에 포함된 명령은 대부분 커뮤니티에서 만든 편의용 별칭이거나, 일부 작업이나 초기 설정을 자동화하는 좀 더 복잡한 스크립트입니다. 시스템 명령은 `ujust`라는 별칭으로 제공되므로 다른 프로젝트에서는 `just` 자체를 그대로 사용할 수 있습니다.
 
-### Getting Started with ujust
+### ujust 시작하기 {#getting-started-with-ujust}
 
-- `ujust --choose` - 모든 명령과 그 명령이 선택될 때 실행되는 스크립트를 표시합니다. 사용 가능한 명령을 탐색하는 데 유용합니다
-- `ujust -n $command` - `-n`은 dry-run 모드에서 명령을 실행합니다, 이것은 실행되는 명령을 검사하는 데 유용합니다
+- `ujust --choose` - 모든 명령과, 선택했을 때 실행되는 스크립트를 보여줍니다. 사용 가능한 명령을 둘러보는 데 유용합니다
+- `ujust -n $command` - `-n`은 명령을 드라이런(dry-run) 모드로 실행하므로, 실제로 어떤 명령이 실행되는지 확인하는 데 유용합니다
 
 :::tip
 
-Pro tip, 당신의 자신의 작업과 alias를 `~/.Justfile`에 유지하고, 프로젝트 파일의 루트에 두는 것도 일반적인 작업을 자동화하는 데 편리합니다, [Fedora Kinoite](https://gitlab.com/fedora/ostree/ci-test/-/blob/main/justfile?ref_type=heads)에서 이 예시를 확인하세요.
+팁: 자신만의 작업과 별칭을 `~/.Justfile`에 보관하고, 프로젝트 루트에도 Justfile을 두면 자주 하는 작업을 자동화하기 편리합니다. [Fedora Kinoite](https://gitlab.com/fedora/ostree/ci-test/-/blob/main/justfile?ref_type=heads)의 예시를 확인하세요.
 
 :::
 
-### Curated Tool Bundles
+### 엄선된 도구 묶음 {#curated-tool-bundles}
 
-Bluefin은 curated CLI 도구 컬렉션을 포함합니다. 이 명령은 Homebrew를 통해 curated 도구 컬렉션을 설치합니다:
+Bluefin에는 엄선된 CLI 도구 모음이 포함되어 있습니다. 다음 명령은 Homebrew로 이 도구 모음을 설치합니다:
 
-| Command             | Description                                                                                                                 |
-| ------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| `ujust bluefin-cli` | Modern CLI tools: atuin, bat, chezmoi, direnv, eza, fd, gh, glab, ripgrep, starship, tealdeer, television, zoxide, and more |
+| 명령                | 설명                                                                                                              |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `ujust bluefin-cli` | 최신 CLI 도구: atuin, bat, chezmoi, direnv, eza, fd, gh, glab, ripgrep, starship, tealdeer, television, zoxide 등 |
 
-### System Commands
+### 시스템 명령 {#system-commands}
 
-| Command                        | Description                                                                                                                                                                                                       |
-| ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ujust update`                 | Manually update the system, flatpaks, and brew formulas                                                                                                                                                           |
-| `ujust toggle-updates`         | Enable or disable automatic system updates                                                                                                                                                                        |
-| `ujust changelogs`             | Show the changelogs for each package since the last update                                                                                                                                                        |
-| `ujust bios`                   | Reboot the PC and enter the BIOS/UEFI. Useful for running dual boot systems from independent disks                                                                                                                |
-| `ujust bios-info`              | Display BIOS/UEFI information (manufacturer, product name, version, release date)                                                                                                                                 |
-| `ujust device-info`            | Sends the status, flatpak list, and system info to the CentOS pastebin, and returns the URL to the terminal. This allows the end user to conveniently paste the URL with their info so others can help them debug |
-| `ujust rebase-helper`          | Interactive assistant to switch between streams, rebase to different images, or roll back to a previous version                                                                                                   |
-| `ujust clean-system`           | Clean up unused containers, volumes, and flatpak runtimes                                                                                                                                                         |
-| `ujust check-idle-power-draw`  | Measure your system's idle power consumption using powerstat                                                                                                                                                      |
-| `ujust check-local-overrides`  | Show files that differ between `/usr/etc` and `/etc` to identify local customizations                                                                                                                             |
-| `ujust logs-this-boot`         | Show all system log messages from the current boot                                                                                                                                                                |
-| `ujust logs-last-boot`         | Show all system log messages from the previous boot                                                                                                                                                               |
-| `ujust enroll-secure-boot-key` | Enroll the Nvidia driver & KMOD signing key for secure boot (password: "universalblue")                                                                                                                           |
-| `ujust toggle-user-motd`       | Toggle display of the message of the day in terminal                                                                                                                                                              |
-| `ujust toggle-tpm2`            | Toggle automatic LUKS disk unlock via TPM (enable/disable with optional PIN)                                                                                                                                      |
-| `ujust toggle-iwd`             | Switch between iwd and wpa_supplicant for Wi-Fi networking (iwd can improve throughput and reduce latency)                                                                                                        |
-| `ujust benchmark`              | Run a one-minute system benchmark using stress-ng                                                                                                                                                                 |
-| `ujust powerwash`              | Factory reset this device to its initial state (experimental feature)                                                                                                                                             |
+| 명령                           | 설명                                                                                                                                               |
+| ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ujust update`                 | 시스템, Flatpak, brew 포뮬러를 수동으로 업데이트합니다                                                                                             |
+| `ujust toggle-updates`         | 자동 시스템 업데이트를 켜거나 끕니다                                                                                                               |
+| `ujust changelogs`             | 마지막 업데이트 이후 각 패키지의 변경 내역을 보여줍니다                                                                                            |
+| `ujust bios`                   | PC를 재부팅하고 BIOS/UEFI로 진입합니다. 서로 다른 디스크로 듀얼 부팅하는 경우에 유용합니다                                                         |
+| `ujust bios-info`              | BIOS/UEFI 정보(제조사, 제품명, 버전, 출시일)를 표시합니다                                                                                          |
+| `ujust device-info`            | 상태, Flatpak 목록, 시스템 정보를 CentOS pastebin에 올리고 URL을 터미널에 출력합니다. 이 URL을 공유하면 다른 사람들이 디버깅을 도와주기 쉬워집니다 |
+| `ujust rebase-helper`          | stream 전환, 다른 이미지로 rebase, 이전 버전으로 롤백을 도와주는 대화형 도우미입니다                                                               |
+| `ujust clean-system`           | 사용하지 않는 컨테이너, 볼륨, Flatpak 런타임을 정리합니다                                                                                          |
+| `ujust check-idle-power-draw`  | powerstat으로 시스템의 유휴 전력 소비를 측정합니다                                                                                                 |
+| `ujust check-local-overrides`  | `/usr/etc`와 `/etc` 사이에 차이가 나는 파일을 보여주어 로컬 사용자 정의를 확인할 수 있게 합니다                                                    |
+| `ujust logs-this-boot`         | 현재 부팅의 모든 시스템 로그 메시지를 보여줍니다                                                                                                   |
+| `ujust logs-last-boot`         | 이전 부팅의 모든 시스템 로그 메시지를 보여줍니다                                                                                                   |
+| `ujust enroll-secure-boot-key` | 보안 부팅(Secure Boot)용 Nvidia 드라이버 및 KMOD 서명 키를 등록합니다(비밀번호: "universalblue")                                                   |
+| `ujust toggle-user-motd`       | 터미널의 오늘의 메시지(MOTD) 표시를 켜거나 끕니다                                                                                                  |
+| `ujust toggle-tpm2`            | TPM을 이용한 LUKS 디스크 자동 잠금 해제를 켜거나 끕니다(선택적으로 PIN 사용 가능)                                                                  |
+| `ujust toggle-iwd`             | Wi-Fi 네트워킹에 iwd와 wpa_supplicant 중 무엇을 쓸지 전환합니다(iwd는 처리량을 높이고 지연 시간을 줄일 수 있습니다)                                |
+| `ujust benchmark`              | stress-ng로 1분간 시스템 벤치마크를 실행합니다                                                                                                     |
+| `ujust powerwash`              | 이 기기를 초기 상태로 공장 초기화합니다(실험적 기능)                                                                                               |
 
-### Developer Experience Commands
+### 개발자 경험 명령 {#developer-experience-commands}
 
-| Command                | Description                                                                                                                    |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| `ujust devmode`        | Toggle between Bluefin and the Developer Experience (bluefin-dx)                                                               |
-| `ujust dx-group`       | Add your user to docker, incus-admin, libvirt, and dialout groups for full developer access                                    |
-| `ujust bluefin-cli`    | Install Bluefin's curated command line experience with modern tools (atuin, bat, eza, fd, ripgrep, starship, zoxide, and more) |
-| `ujust toggle-devmode` | Alias for `ujust devmode`                                                                                                      |
+| 명령                   | 설명                                                                                                            |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `ujust devmode`        | Bluefin과 개발자 경험(bluefin-dx) 사이를 전환합니다                                                             |
+| `ujust dx-group`       | 개발에 필요한 모든 권한을 위해 사용자를 docker, incus-admin, libvirt, dialout 그룹에 추가합니다                 |
+| `ujust bluefin-cli`    | 최신 도구(atuin, bat, eza, fd, ripgrep, starship, zoxide 등)로 구성된 Bluefin의 엄선된 명령줄 환경을 설치합니다 |
+| `ujust toggle-devmode` | `ujust devmode`의 별칭입니다                                                                                    |
 
-### Application Installation Commands
+### 애플리케이션 설치 명령 {#application-installation-commands}
 
-| Command                               | Description                                                                                          |
-| ------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| `ujust jetbrains-toolbox`             | Install [JetBrains Toolbox](https://www.jetbrains.com/toolbox-app/) for managing JetBrains IDEs      |
-| `ujust install-opentabletdriver`      | Install or uninstall [OpenTabletDriver](https://opentabletdriver.net/), an open source tablet driver |
-| `ujust install-system-flatpaks`       | Install the default system flatpaks (useful after rebasing)                                          |
-| `ujust install-system-flatpaks-extra` | Install extra recommended flatpak applications                                                       |
+| 명령                                  | 설명                                                                                                  |
+| ------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `ujust jetbrains-toolbox`             | JetBrains IDE 관리를 위한 [JetBrains Toolbox](https://www.jetbrains.com/toolbox-app/)를 설치합니다    |
+| `ujust install-opentabletdriver`      | 오픈 소스 태블릿 드라이버인 [OpenTabletDriver](https://opentabletdriver.net/)를 설치하거나 제거합니다 |
+| `ujust install-system-flatpaks`       | 기본 시스템 Flatpak을 설치합니다(rebase 후에 유용합니다)                                              |
+| `ujust install-system-flatpaks-extra` | 추가로 권장하는 Flatpak 애플리케이션을 설치합니다                                                     |
 
-Note that generally speaking Bluefin tries to keep the system Justfiles finely scoped, most of these are workarounds and not full-fledged commands. They may get removed or changed depending on the problem they were initially meant to solve.
+일반적으로 Bluefin은 시스템 Justfile의 범위를 좁게 유지하려고 합니다. 이 명령들은 대부분 우회 방법이며 완전한 기능을 갖춘 명령이 아닙니다. 원래 해결하려던 문제의 상황에 따라 제거되거나 변경될 수 있습니다.
 
-## Managing Extensions
+## 확장 기능 관리 {#managing-extensions}
 
-Bluefin은 Matthew Jakeman의 [Extension Manager](https://flathub.org/apps/com.mattjakeman.ExtensionManager)를 사용하여 desktop extensions을 관리합니다. 애플리케이션은 기본적으로 포함되어 있습니다. 당신은 [Logo Menu](https://github.com/Aryan20/Logomenu)를 통해 접근할 수 있습니다 (thanks Aryan Kaushik!)
+Bluefin은 Matthew Jakeman의 [Extension Manager](https://flathub.org/apps/com.mattjakeman.ExtensionManager)로 데스크톱 확장 기능을 관리합니다. 이 애플리케이션은 기본으로 포함되어 있으며, [Logo Menu](https://github.com/Aryan20/Logomenu)에서 열 수 있습니다(Aryan Kaushik에게 감사드립니다!).
 
 ![GNOME Extension Menu Option (opens Extension Manager)](/img/user-attachments/c5ad1637-95c9-4692-8b25-e8ca6248e575.png)
 
-이것은 Bluefin과 함께 번들로 제공되는 것들의 일부 사용을 원하지 않게 되면 유용합니다.
+Bluefin에 기본으로 포함된 확장 기능 중 일부를 쓰고 싶지 않을 때 유용합니다.
 
 ![Extension Manager - System Extensions Highlight](/img/user-attachments/31255d26-580e-4179-a748-635bfa540e9a.png)
 
 :::note
 
-In the unlikely event that your session crashes, then all of your extensions will be disabled. In the rare case when this happens you may need to turn them all back on in the extensions manager.
+드물게 세션이 비정상 종료되면 모든 확장 기능이 비활성화됩니다. 이런 경우 Extension Manager에서 확장 기능을 다시 모두 켜야 할 수 있습니다.
 
 :::
 
-## Remote Management
+## 원격 관리 {#remote-management}
 
-:::note[Help Wanted]
+:::note[도움이 필요합니다]
 
-This feature is incomplete and needs contributors to make it a reality
+이 기능은 아직 완성되지 않았으며, 실현하려면 기여자가 필요합니다.
 
 :::
 
-Bluefin과 Aurora는 기기 관리를 위해 Cockpit을 포함합니다. 우리는 더 많은 out-of-the-box 관리 템플릿을 포함하기를 희망합니다, 자원봉사하고자 한다면 [check this issue](https://github.com/projectbluefin/bluefin/issues)를 확인하세요.
+Bluefin과 Aurora에는 기기 관리를 위한 Cockpit이 포함되어 있습니다. 앞으로 바로 쓸 수 있는 관리 템플릿을 더 포함하고 싶습니다. 도움을 주실 수 있다면 [이 이슈](https://github.com/projectbluefin/bluefin/issues)를 확인하세요.
 
-## Verification
+## 검증 {#verification}
 
-이 이미지는 sigstore의 [cosign](https://docs.sigstore.dev/cosign/)으로 서명됩니다. Bluefin Classic은 key-based signing을 사용하므로, [ublue-os/bluefin](https://github.com/ublue-os/bluefin)에서 lấy온 `cosign.pub` 키로 검증하세요:
+이 이미지는 sigstore의 [cosign](https://docs.sigstore.dev/cosign/)으로 서명됩니다. Bluefin Classic은 키 기반 서명을 사용하므로 [ublue-os/bluefin](https://github.com/ublue-os/bluefin)의 `cosign.pub` 키로 검증하세요:
 
 ```sh
 cosign verify --key https://raw.githubusercontent.com/ublue-os/bluefin/main/cosign.pub \
   ghcr.io/ublue-os/bluefin:stable
 ```
 
-Dakota와 Utah는 keylessly 대신 서명됩니다 — 검증 명령은 [Supply Chain Security](/supply-chain)를 확인하세요.
+반면 Dakota와 Utah는 키 없이(keyless) 서명됩니다. 검증 명령은 [공급망 보안](/supply-chain)을 확인하세요.

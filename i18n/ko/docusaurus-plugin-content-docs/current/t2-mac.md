@@ -10,14 +10,14 @@ slug: /t2-mac
 
 ## Day 0 - 계획
 
-T2 Mac의 전문화된 하드웨어 요구사항과 그들의 하드웨어에서 MacOS 외의 모든 것을 대부분 지원하지 않는 Apple 때문에, Bluefin 사용에 대한 몇 가지 주요 주의사항이 있습니다. 당신의 개인적 사용 사례를 고려하세요, 이것들은 Mac Mini나 Docked 노트북에서는 문제가 아닐 수 있지만, 매우 모바일인 시나리오에서 frustrate할 수 있습니다.
+T2 Mac의 전문화된 하드웨어 요구사항과 그들의 하드웨어에서 MacOS 외의 모든 것을 대부분 지원하지 않는 Apple 때문에, Bluefin 사용에 대한 몇 가지 주요 주의사항이 있습니다. 개인적 사용 사례를 고려하세요, 이것들은 Mac Mini나 Docked 노트북에서는 문제가 아닐 수 있지만, 매우 모바일인 시나리오에서 frustrate할 수 있습니다.
 
 ### 모든 사용자
 
-- 당신의 하드웨어가 Linux 친화적인가요?
+- 하드웨어가 Linux 친화적인가요?
   - 아닙니다! MacBook Pro의 키보드와 trackpad조차도 mainline linux 커널에서 동작하지 않습니다. 가장 비친화적인 것 중 하나이며, 가장 소유한 x86 노트북입니다. 그러나 동작합니다. Bluefin이 fsync 커널로 전환한 이후로, 필요한 patches는 이미 존재합니다.
   - sleep/suspend는 최근 Apple firmware 업데이트(2023년 후반)에서 깨졌고 여전히 깨져 있습니다.
-- 당신의 무선 카드가 Linux에 지원되나요?
+- 무선 카드가 Linux에 지원되나요?
   - 물론 아닙니다, Apple은 Broadcom를 사용했습니다. 펌웨어는 최종 사용자가 직접 설치할 수 없으므로, 펌웨어 파일을 이미지에 포함하는 Bluefin의 개인 또는 커뮤니티 이미지로 rebasing이 필요합니다. 미래에는, 이것은 Surface/Asus와 같은 맞춤 이미지로 패키징될 수 있습니다.
 
 ## Day 1 - 배포 및 구성
@@ -49,7 +49,7 @@ T2에서 Bluefin을 설치하고 부팅할 때 외부 키보드와 마우스가 
 3. boot 메뉴에서 "EFI Boot"를 선택하세요 (USB 아이콘이 있을 것입니다). Continue를 클릭하세요.
 4. Fedora installer boot 화면에서, 설치 전에 미디어를 테스트할지 선택하세요.
 5. installer가 시작되면, main 메뉴로 가기 위해 사용할 언어를 선택하세요.
-6. main installer 메뉴에서, Installation Destination을 선택하여 설치 디스크를 선택하세요. 자동 파티셔닝을 사용하세요. 외장 드라이브를 사용하면, 내부 드라이브도 선택되지 않았는지 확인하세요 (체크박스로), 이것이 당신의 내부 드라이브의 MacOS EFI bootloader를 수정하게 할 수 있습니다.
+6. main installer 메뉴에서, Installation Destination을 선택하여 설치 디스크를 선택하세요. 자동 파티셔닝을 사용하세요. 외장 드라이브를 사용하면, 내부 드라이브도 선택되지 않았는지 확인하세요 (체크박스로), 이것이 내부 드라이브의 MacOS EFI bootloader를 수정하게 할 수 있습니다.
    > 암호화를 사용하면, post-install 명령을 실행할 때까지 부팅할 때마다 외부 키보드가 필요합니다.
 7. 모든 prerequisite가 설정되면, 설치로 진행하세요. 여기에 많은 상세한 progress가 표시되지 않지만, 다른 TTY로 전환하고 tmux([Donate](https://github.com/sponsors/tmux))를 사용한다면, 많은 logging이 일어나고 있습니다. 설치는 그리 오래 걸리지 않습니다 (빈 Mac을 internet recovery 모드로 얻는 것보다 빠릅니다).
 8. Finish Installation을 클릭한 후 새로운 Bluefin 설치를 재부팅하세요!
@@ -97,13 +97,13 @@ Mac을 위한 필요한 broadcom wifi/bluetooth 펌웨어를 포함하는 Bluefi
 
 이 이미지로 rebasing하려면, Silverblue에서 Bluefin으로 rebasing과 유사하게, 먼저 unsigned 이미지로 rebasing한 후 다시 signed 이미지로 rebasing이 필요합니다.
 
-1. unsigned 이미지로 rebasing하고, "[repo/bluefin-package:tag]"를 당신의 선택 또는 생성의 repo와 이미지 variant로 대체하세요:
+1. unsigned 이미지로 rebasing하고, "[repo/bluefin-package:tag]"를 선택 또는 생성의 repo와 이미지 variant로 대체하세요:
 
 `sudo bootc switch ghcr.io/[repo/bluefin-package:tag]`
 
 2. 재부팅 `systemctl reboot`
 
-3. signed 이미지로 rebasing하고, 다시 "[repo/bluefin-package:tag]"를 당신의 선택의 repo와 이미지 variant로 대체하세요:
+3. signed 이미지로 rebasing하고, 다시 "[repo/bluefin-package:tag]"를 선택의 repo와 이미지 variant로 대체하세요:
 
 `sudo bootc switch ghcr.io/[repo/bluefin-package:tag] --enforce-container-sigpolicy`
 
@@ -132,7 +132,7 @@ initramfs 재생성을 활성화하세요. 이것은 upgrade 동안 dracut이 �
 
 - T2-Atomic을 사용하면, /etc/dracut.conf.d/t2-bce.conf가 이미 존재해야 합니다.
 
-#### Hybrid Graphics
+#### 하이브리드 그래픽 {#hybrid-graphics}
 
 [Hybrid Graphics at T2Linux Wiki](https://wiki.t2linux.org/guides/hybrid-graphics/)를 확인하세요. iGPU를 활성화하는 것에 대한 섹션 (apple-gmux.conf 만들기)만 필요합니다. radeon는 iGPU가 사용될 때 일반적으로 "low" 전력 모드에서 동작하는데, 대부분 사용되지 않기 때문입니다. 2024년 기준으로, dGPU 전력을 토글할 수 없지만 (radeon는 항상 켜져 있지만), 전력/열은 대부분의 작업에 iGPU를 사용하여 줄어듭니다.
 
@@ -147,9 +147,9 @@ T2-Atomic 이미지를 사용하면, `/etc/modprobe.d/apple-gmux.conf`를 편집
 
 #### Sleep/suspend, Lid switch 등 비활성화
 
-시스템이휴면하지 않도록, systemd가 lid switch를 무시하고 power button을 suspend 대신 shutdown하도록 구성할 것입니다:
+시스템이 휴면하지 않도록, systemd가 lid switch를 무시하고 power button을 suspend 대신 shutdown하도록 구성할 것입니다:
 
-##### Manual Install:
+##### 수동 설치: {#manual-install}
 
 1. 터미널에서, 실행하세요:
 
@@ -180,9 +180,9 @@ HandleLidSwitchDocked=ignore
 
 #### T2 USB Ethernet 알림 스팸 비활성화
 
-T2 Chip은 연결하고 끊내는 내부 USB ethernet 인터페이스를 제시합니다. 이 ethernet 인터페이스는 이 시간에 Linux에서 사용되지 않으므로, 모듈이 로드되는 것을 차단하여 이러한 알림이 당신의 데스크톱과 로그를 막는 것을 막을 수 있습니다.
+T2 Chip은 연결하고 끊는 내부 USB ethernet 인터페이스를 제시합니다. 이 ethernet 인터페이스는 이 시간에 Linux에서 사용되지 않으므로, 모듈 로드를 차단하면 이러한 알림이 데스크톱과 로그를 어지럽히지 않게 할 수 있습니다.
 
-##### Manual Install:
+##### 수동 설치: {#manual-install-1}
 
 파일 `/etc/modprobe.d/t2-eth-blocklist.conf`를 편집하고 다음 내용을 포함하세요:
 
@@ -193,4 +193,4 @@ blacklist cdc_mbim
 
 ##### T2-Atomic:
 
-이 파일은 이미 존재해야 합니다. 여전히 알림을 받으면, 다른 방법으로 당신의 컴퓨터에서 인터페이스를 비활성화해야 할 수 있습니다.
+이 파일은 이미 존재해야 합니다. 여전히 알림을 받으면, 다른 방법으로 컴퓨터에서 인터페이스를 비활성화해야 할 수 있습니다.

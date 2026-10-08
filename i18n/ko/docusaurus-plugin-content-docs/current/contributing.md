@@ -11,7 +11,7 @@ slug: /contributing
 
 :::tip
 
-당신은 당신의 운명에 기여하기 위해허락가 필요 없습니다.
+운명에 기여하는 데 허락은 필요 없습니다.
 
 -- Amber Graner
 
@@ -43,7 +43,7 @@ Bluefin의 커스터마이징은 OCI 컨테이너에 보관되고, 이후 다른
 
 ### 시작하기 전에 알 것들
 
-> 당신이 이것을 읽고 있다면, 당신은 Kubernetes nerd일 수도 있습니다. 당신은 Bluefin의 타겟 청중입니다. 환영합니다!
+> 이 글을 읽고 있다면 Kubernetes 덕후일지도 모릅니다. 바로 Bluefin이 대상으로 하는 독자입니다. 환영합니다!
 
 ### Lazy Consensus 모델
 
@@ -54,12 +54,12 @@ Bluefin은 느슨한 [Apache Lazy Consensus](https://community.apache.org/commit
 - 의견 있는 결정 장려
 - 피드백이 필요한 주요 변경에 대한 이슈를 게시하고 `enhancement`으로 태그하세요
 
-Bluefin은 포식자이며 가끔 당신에게 물 수 있고, 이유 있는 의견 소유자입니다:
+Bluefin은 포식자이며 가끔 물 수도 있고, 이유 있는 의견 소유자입니다:
 
 - userspace는 대부분 안정적입니다, 우리는 레이아웃에 대한 주요 변경을 계획하지 않습니다 — 그냥 Ubuntu 데스크톱입니다.
 - 우리의 **인프라 속도**는 인프라 작업에서 나옵니다
   - 이것이 프로젝트의 주요 초점입니다 — 최고의 인프라 없이는 제품을 전달할 수 없기 때문입니다. [bootc](https://github.com/bootc-dev/bootc)는 클라우드 네이티브 기술이며, 이유 때문에 우리가 그것 위에 구축하기를 선택합니다.
-  - 당신이 "Kubernetes 플랫폼 팀의 Linux 사람"이라면 이것이 당신의 장소입니다
+  - "Kubernetes 플랫폼 팀의 Linux 담당자"라면 바로 이곳입니다
 - 우리의 **제품 속도**는 workload에서 나옵니다
   - kickass GNOME 경험과 모든 최고의 upstream 기술을 ship하세요
   - premiere 클라우드 네이티브 개발자 경험을 전달하세요
@@ -67,7 +67,7 @@ Bluefin은 포식자이며 가끔 당신에게 물 수 있고, 이유 있는 의
 - 지속가능성은 프로젝트에 중요합니다
   - 때때로 무언가를 _하지_ 않는 것이 유지보수 부담보다 낫습니다
 - 우리는 [no라고 말하기](https://mikemcquaid.com/saying-no/)를 선호합니다
-  - 하지만 개인적으로 받아들이지 마세요, 우리는 매일 치즈버거를 먹을 수 없습니다, 어쩌면 장래에는. 그것이 당신을 여기로 가져왔습니다!
+  - 하지만 개인적으로 받아들이지 마세요, 우리는 매일 치즈버거를 먹을 수 없습니다, 어쩌면 장래에는. 그래서 여기까지 오셨군요!
 
 ## 개요
 
@@ -136,7 +136,7 @@ flowchart TB
     style images fill:#8a97f7
 ```
 
-### Image-Based Development
+### 이미지 기반 개발 {#image-based-development}
 
 Bluefin은 OCI 컨테이너 이미지를 배포 메커니즘으로 사용합니다. repo에 대한 모든 커밋은 부팅 가능한 OS 이미지를 생성하는 빌드를 트리거합니다. 이 아키텍처는 다음과 같은 의미를 가집니다:
 
@@ -182,17 +182,17 @@ Bluefin 이미지는 다음을 사용하여 빌드됩니다:
 ### Fork 및 Clone
 
 :::info[공장 및 애그젼틱 기여]
-만약 당신이 `projectbluefin` repo의 핵심 애그젼틱 공장 팀의 일부로 기여한다면, 순수한 upstream 개발이 적용됩니다: 모든 기능 브랜치는 `origin`에 직접 생성되고 [Agentic Contributing](/agentic-contributing)의 게이트를 따릅니다. 직접 repo push 접근이 없는 외부 커뮤니티 기여자는 아래의 GitHub의 표준 fork-and-pull-request 워크플로우를 계속 사용해야 합니다.
+`projectbluefin` repo의 핵심 애그젼틱 공장 팀의 일부로 기여한다면, 순수한 upstream 개발이 적용됩니다: 모든 기능 브랜치는 `origin`에 직접 생성되고 [Agentic Contributing](/agentic-contributing)의 게이트를 따릅니다. 직접 repo push 접근이 없는 외부 커뮤니티 기여자는 아래의 GitHub의 표준 fork-and-pull-request 워크플로우를 계속 사용해야 합니다.
 :::
 
-1. **repo를 포크하세요** GitHub에서 당신의 계정으로:
+1. **repo를 포크하세요** GitHub에서 계정으로:
 
    ```bash
    # Navigate to https://github.com/projectbluefin/bluefin
    # Click "Fork" in the upper right
    ```
 
-2. **당신의 포크를 clone하세요**:
+2. **포크를 clone하세요**:
 
    ```bash
    git clone https://github.com/YOUR_USERNAME/bluefin.git
@@ -416,7 +416,7 @@ and are no longer needed with the updated kernel modules."
 
 ### AI 에이전트 귀속
 
-AI 에이전트는 커밋 footer에 "Assisted-by" trailer로 사용한 도구와 모델을 공개해야 합니다. Bluefin repo에서 사용되는 `AGENTS.md`는 당신의 에이전트에 이 정책을 강제하도록 지시할 것입니다:
+AI 에이전트는 커밋 footer에 "Assisted-by" trailer로 사용한 도구와 모델을 공개해야 합니다. Bluefin repo에서 사용되는 `AGENTS.md`는 에이전트에 이 정책을 강제하도록 지시할 것입니다:
 
 ```
 Assisted-by: [Model Name] via [Tool Name]
@@ -477,21 +477,21 @@ podman build -t bluefin-test:latest .
 
 **옵션 2: GitHub Actions 빌드** (PR 빌드를 사용하세요)
 
-PR을 열면 GitHub Actions는 자동으로 당신의 변경을 빌드합니다. 다음을 위해 Actions 탭을 확인하세요:
+PR을 열면 GitHub Actions는 자동으로 변경을 빌드합니다. 다음을 위해 Actions 탭을 확인하세요:
 
 - 빌드 로그
 - 성공/실패 상태
 - 빌드 아티팩트
 
-### 당신의 시스템에서 테스트
+### 시스템에서 테스트
 
-:::warning 당신의 시스템에서 테스트
+:::warning 시스템에서 테스트
 Rebase는 강력하지만 위험을 수반합니다. 항상 stable로 되돌릴 백업 계획을 가지세요!
 :::
 
 **PR 이미지를 사용하세요:**
 
-모든 PR은 테스트 이미지를 생성합니다. 당신은 그에게 rebase할 수 있습니다:
+모든 PR은 테스트 이미지를 생성합니다. 그 이미지로 rebase할 수 있습니다:
 
 ```bash
 # Find the PR number (e.g., #3322)
@@ -568,7 +568,7 @@ jq empty packages.json && echo "Valid JSON" || echo "Invalid JSON"
    - [https://github.com/projectbluefin/bluefin](https://github.com/projectbluefin/bluefin)으로 이동하세요
    - "Pull requests" → "New pull request"을 클릭하세요
    - "compare across forks"을 클릭하세요
-   - 당신의 포크와 브랜치를 선택하세요
+   - 포크와 브랜치를 선택하세요
    - "Create pull request"을 클릭하세요
 
 3. **PR 설명을 작성하세요**:
@@ -601,7 +601,7 @@ Fixes #123
 
 **다음에는 무엇이 일어나나요:**
 
-1. **자동화된 검사가 실행됩니다**: CI가 당신의 변경을 빌드합니다
+1. **자동화된 검사가 실행됩니다**: CI가 변경을 빌드합니다
 2. **크기 라벨이 적용됩니다**: PR 크기가 자동으로 라벨이 붙습니다 (XS, S, M, L, XL)
 3. **메인테이너 검토**: 보통 24-48시간 이내
 4. **피드백 처리**: 요청되면 변경하세요
@@ -664,7 +664,7 @@ chore(deps): update ghcr.io/projectbluefin/common digest to abc123
 chore(deps): update softprops/action-gh-release digest to def456
 ```
 
-**Renovate가 당신의 PR과 충돌할 때:**
+**Renovate가 PR과 충돌할 때:**
 
 ```bash
 # Rebase on latest main
@@ -750,8 +750,8 @@ git merge main
 
 ## 전문성에 따른 기여 영역
 
-:::info 당신의 적합도를 찾으세요
-기여자들은 다양한 배경에서 옵니다. 당신이 DevOps 엔지니어나 아티스트, 취미생활자, homelabber, 또는 문서 작가든, Bluefin에서 당신의 기술을 사용할 장소가 있습니다!
+:::info 적합도를 찾으세요
+기여자들은 다양한 배경에서 옵니다. DevOps 엔지니어나 아티스트, 취미생활자, homelabber, 또는 문서 작가든, Bluefin에서 기술을 사용할 장소가 있습니다!
 :::
 
 ### 클라우드 네이티브/DevOps 엔지니어를 위해
@@ -1308,6 +1308,6 @@ Bazaar의 소개 섹션은 YAML 설정 파일에 정의됩니다:
 4. **인내하세요**: 검토에는 시간이 걸립니다. 메인테이너는 여러 우선순위를 균형 있게 처리합니다
 5. **다른 사람으로부터 배우세요**: 병합된 PR을 읽어 패턴을 이해하세요
 6. **규칙을 따르세요**: 코드베이스의 확립된 패턴을 유지하세요
-7. **당신의 작업을 문서화하세요**: 명확한 설명으로 미래의 기여자를 도와하세요
+7. **작업을 문서화하세요**: 명확한 설명으로 미래의 기여자를 도와하세요
 
 기억하세요: 모든 메인테이너는 첫 기여자로서 시작했습니다. Bluefin 커뮤니티에 오신 것을 환영합니다!

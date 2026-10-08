@@ -9,13 +9,13 @@ Bluefin은 엔지니어들에 의해 만들어졌지만, [Jacob Schnurr](https:/
 
 :::tip[AI는 클라우드 네이티브의 확장입니다]
 
-Bluefin의 AI에서의 초점은 사용자가 제어하는 운영체제에 일반적인 API 엔포인트를 제공하는 것입니다. 마치 Bluefin의 운영체제가 `bootc`와 `podman`과 같은 [CNCF](https://cncf.io) 기술로 만들어지듯, 이 경험은 `goose`와 같은 [Agentic AI Foundation](https://aaif.io/) 기술에 의해 구동되며, [RHEL Lightspeed](https://www.redhat.com/en/lightspeed)를 구동하는 오픈 소스 구성 요소의 강한 한 방울이 더해집니다.
+Bluefin의 AI에서의 초점은 사용자가 제어하는 운영체제에 일반적인 API 엔드포인트를 제공하는 것입니다. 마치 Bluefin의 운영체제가 `bootc`와 `podman`과 같은 [CNCF](https://cncf.io) 기술로 만들어지듯, 이 경험은 `goose`와 같은 [Agentic AI Foundation](https://aaif.io/) 기술에 의해 구동되며, [RHEL Lightspeed](https://www.redhat.com/en/lightspeed)를 구동하는 오픈 소스 구성 요소의 강한 한 방울이 더해집니다.
 
 :::
 
 ## AI 아키텍처와 도구
 
-Bluefin은 AI 워크플로우를 위해 운영체제로 개방적이고 사용자가 제어하는 API 엔포인트를 제공합니다. 우리는 이를 커뮤니티가 관리하는 도구 추천과 구성의 집합을 통해 수행합니다:
+Bluefin은 AI 워크플로우를 위해 운영체제로 개방적이고 사용자가 제어하는 API 엔드포인트를 제공합니다. 우리는 이를 커뮤니티가 관리하는 도구 추천과 구성의 집합을 통해 수행합니다:
 
 - "가져다 쓴다(Bring your own LLM)" 접근법으로, 로컬 모델과 호스팅된 모델 간에 전환하기 쉬워야 합니다
   - [Goose](https://block.github.io/goose/) — 호스팅된 로컬 모델에 대한 주요 인터페이스
@@ -82,7 +82,7 @@ llmman serve
 
 ### 기존 도구와의 통합
 
-`llmman serve`는 `http://127.0.0.1:17434`에서 OpenAI 호환 엔포인트를 제공하며, 이를 통해 llmman을 직접 지원하지 않는 도구를 구성할 수 있습니다:
+`llmman serve`는 `http://127.0.0.1:17434`에서 OpenAI 호환 엔드포인트를 제공하며, 이를 통해 llmman을 직접 지원하지 않는 도구를 구성할 수 있습니다:
 
 ![Newelle](/img/user-attachments/ff079ed5-43af-48fb-8e7b-e5b9446b3bfe.png)
 
@@ -92,7 +92,7 @@ llmman serve
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/w3kI6XlZXZQ?si=5pygGs5E_Qedf-S8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
-## Docker Model Runner
+## Docker Model Runner(Docker 모델 러너) {#docker-model-runner}
 
 [Docker Model Runner](https://docs.docker.com/model-runner/)는 Docker의 내장 로컬 LLM 서비스로, llmman과 함께 Bluefin에 포함되어 있습니다. [Docker Hub의 AI 카탈로그](https://hub.docker.com/u/ai)에서 모델을 실행하고 OpenAI 호환 API를 노출합니다 — 별도의 서버 설정이 필요 없습니다.
 
@@ -112,13 +112,13 @@ docker model ls
 docker model rm ai/llama3.2
 ```
 
-### API 엔포인트
+### API 엔드포인트
 
-Docker Model Runner는 OpenAI 호환 엔포인트 `http://localhost:12434`를 제공하며, 이를 통해 OpenAI API 형식을 지원하는 모든 도구(Goose, aichat, VSCode 확장 등)와 함께 사용할 수 있습니다.
+Docker Model Runner는 OpenAI 호환 엔드포인트 `http://localhost:12434`를 제공하며, 이를 통해 OpenAI API 형식을 지원하는 모든 도구(Goose, aichat, VSCode 확장 등)와 함께 사용할 수 있습니다.
 
-### llmman vs Docker Model Runner
+### llmman과 Docker Model Runner 비교 {#llmman-vs-docker-model-runner}
 
-두 도구 모두 로컬 OpenAI 호환 API를 제공합니다. 당신의 워크플로우에 따라 선택하세요:
+두 도구 모두 로컬 OpenAI 호환 API를 제공합니다. 작업 방식에 따라 선택하세요:
 
 |               | llmman                              | Docker Model Runner   |
 | ------------- | ----------------------------------- | --------------------- |
