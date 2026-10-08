@@ -110,7 +110,7 @@ Dev Containers 확장은 기본적으로 Docker를 사용합니다. Podman으로
 
 - `bcc`, `bpftrace`, `iproute2`, `nicstat`, `numactl`, `sysprof`, `sysstat`, `tiptop`, `trace-cmd`, 그리고 `util-linux`
 
-Ubuntu와 Canonical의 [세부 규격](https://discourse.ubuntu.com/t/spec-include-performance-tooling-in-ubuntu/43134)과 근거에 감사합니다. 이 프로젝트는 성능 도구의 포함이 [더 나은 업스트림 소프트웨어로 이어질 것](https://blogs.gnome.org/chergert/2024/09/25/messaging-needs)이라고 바랍니다.
+Ubuntu와 Canonical의 [세부 규격](https://discourse.ubuntu.com/t/spec-include-performance-tooling-in-ubuntu/43134)과 근거에 감사합니다. 이 프로젝트는 성능 도구의 포함이 [더 나은 업스트림 소프트웨어로 이어질 것](https://blogs.gnome.org/chergert/2024/09/25/messaging-needs/)이라고 바랍니다.
 
 ### 삶의 질 개선
 

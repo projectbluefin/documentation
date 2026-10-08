@@ -73,4 +73,4 @@ Illustration by Delphic Melody (M. Gopal)
 - 역할: [ Redacted ]
 - 종류: [Utahraptor ostrommaysi](https://en.wikipedia.org/wiki/Utahraptor)
 
-![Utahraptor](/img/user-attachments/1a7aad73-9a9b-470d-b9e7-53969fbc7b80.png)
+![Utahraptor](/img/user-attachments/1a9aad73-9a9b-470d-b9e7-53969fbc7b80.png)

@@ -198,6 +198,7 @@ Hive에서의 크로스 에이전트 메모리 연속성은 **Beads**라는 시�
 
 의심이 든다면, 당신의 구현과 함께 초안 PR을 열고 명시적으로 물으세요. 이 시스템은 침묵하는 자율적 행동보다 가드에서 과도한 커뮤니케이션을 선호합니다.
 
+---
 ## 자기개선 루프
 
 모든 에이전트 세션은 두 가지 산출물을 생산해야 합니다:
@@ -266,6 +267,7 @@ flowchart LR
 
 CI, 빌드, 또는 패키징을 건든 스킬 파일 업데이트가 없는 PR은 노란 깃발입니다. 아무것도 자동으로 경보하지 않습니다 — skill-drift 체크는 은퇴했습니다 — 그래서 이것은 검토자가 내려야 하는 판단입니다.
 
+---
 ## 레포지토리 맵
 
 ### 핵심 이미지 레포지토리
@@ -330,6 +332,7 @@ flowchart TB
 
 Aurora와 Bazzite는 `projectbluefin/common`을 소비하지만 `ublue-os` org에서 유지보수합니다. org 전체의 강한 규칙을 잊지 마세요: 에이전트는 **절대** 어떤 `ublue-os/*` 레포지토리도 겨냥한 이슈, PR, 코멘트, 또는 작성하는 action을 만들면 안 됩니다 (읽기 전용 `gh api` 검사는 허용됨).
 
+---
 ## 빌드와 촉진 파이프라인
 
 `git push`와 `:stable` 사이의 변경이 어떻게 되는지:
@@ -585,6 +588,7 @@ Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>
 - WIP PR이 없습니다 — 작업이 검토 준비가 되면 엽니다
 - 모든 PR은 메인테이너가 squash 병합합니다 — 당신의 브랜치 역사는 살아남지 않습니다
 
+---
 ## 에이전트 PR 검토
 
 이것은 에이전트 프로젝트에 대한 인간의 가장 중요한 기여입니다. 에이전트는 빠르게 구현합니다; 당신의 검토는 기기 가드가 실행되기 전의 품질 가드입니다.
@@ -624,6 +628,7 @@ PR diff에서 `.github/skills/`를 확인하세요. 물으세요:
 - 특정 사람의 특정 행동에 요청할 때만 `@mentions`
 - 의심이 든다면, 아무것도 게시하지 마세요
 
+---
 ## 변경 테스트
 
 ### 빌드에 영향을 주는 PR의 자동화 스모크 테스트
@@ -693,6 +698,7 @@ sudo just build-ghcr bluefin testing main
 
 `@quarantine`로 태그된 시나리오는 레포지토리에 있지만 촉진 가드에서 제외됩니다. 시나리오가 촉진 차단에 적합한 측정된 통과율을 갖기 전까지는 `@quarantine` 태그를 제거하지 마세요.
 
+---
 ## Renovate와 작업하기
 
 Renovate는 [`projectbluefin/renovate-config`](https://github.com/projectbluefin/renovate-config)의 자체 호스트 설정으로 실행됩니다 — GitHub App 인증, PAT 없음.
@@ -720,6 +726,7 @@ git rebase --continue
 git push origin your-branch --force-with-lease
 ```
 
+---
 ## 메인테이너 되기
 
 ### 자동화된 팩토리에서의 인간 결정 가드
@@ -745,6 +752,7 @@ git push origin your-branch --force-with-lease
 
 현재 팀을 위해 [github.com/orgs/projectbluefin/people](https://github.com/orgs/projectbluefin/people)를 확인하세요.
 
+---
 ## 커뮤니티
 
 ### 참여할 곳

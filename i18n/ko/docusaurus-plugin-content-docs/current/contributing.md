@@ -275,7 +275,7 @@ bluefin/
 │       ├── reusable-build.yml     # 공유 빌드 로직
 │       └── clean.yml              # 정리 워크플로우
 ├── build_files/
-│   ├── base/               #base 이미지 빌드 스크립트
+│   ├── base/               # base 이미지 빌드 스크립트
 │   ├── shared/             # 공유 유틸리티와 스크립트
 │   └── dx/                 # 개발자 에디션 스크립트
 ├── system_files/
