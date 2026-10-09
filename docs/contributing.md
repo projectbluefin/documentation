@@ -223,6 +223,51 @@ If you are contributing as part of the core agentic factory team on `projectblue
 - **[pullrequests.projectbluefin.io](https://pullrequests.projectbluefin.io)** - Pull Request reviews are always appreciated, even if you don't have permissions to merge you can help out by validating that the PR works and is tested.
 - **[issues.projectbluefin.io](https://issues.projectbluefin.io)** - Participation and triage of issues is always appreciated!
 
+### Triage & Prow Commands
+
+Project Bluefin uses [Prow](https://github.com/cncf/prow-github-actions) automation on enabled repositories (such as `common`, `chairlift`, and the printer-app repositories; see [`.project`](https://github.com/projectbluefin/.project)) to manage issue triage and PR lifecycles. On repositories without Prow installed (including `bluefin` and `dakota`), triage and labeling are handled manually via GitHub's standard interface.
+#### How to Run Commands
+
+- Put each command at the beginning of its own line in a new comment (e.g., `/area desktop`).
+- Do not mix commands with explanatory prose on the same line.
+- Edited comments are not processed; post a fresh comment if you need to correct a command.
+
+#### Public Commands (Issues & PRs)
+
+Any contributor or issue reporter can use these commands:
+
+| Command | Scope | Action |
+|---|---|---|
+| `/kind <name>` | Issues | Set issue kind (`bug`, `feature`, `regression`, `security`, `documentation`, `cleanup`) |
+| `/remove-kind <name>` | Issues | Remove an assigned kind |
+| `/area <name>` | Issues | Assign component area (`desktop`, `flatpak`, `gaming`, `hardware`, `installer`, `dx`) |
+| `/remove-area <name>` | Issues | Remove an assigned area |
+| `/hold` / `/hold cancel` | Issues & PRs | Pause or resume issue activity, or block/unblock automatic PR merging |
+| `/retest` | PRs | Re-run failed CI checks on a PR |
+
+#### Triager & Maintainer Commands (Issues)
+
+Commands that alter triage readiness or urgency require authorization (membership in `triage` or `project-maintainers` in `.project/maintainers.yaml`):
+
+| Command | Action |
+|---|---|
+| `/triage accepted` | Accept issue scope and mark it ready for work |
+| `/remove-triage accepted` | Remove accepted status if requirements need re-evaluation |
+| `/priority <name>` | Set urgency (`critical-urgent`, `important-soon`) |
+| `/remove-priority <name>` | Remove an assigned priority |
+| `/label blocked` | Mark an issue as waiting on an external dependency (Hive skips it) |
+| `/remove-label blocked` | Clear blocked status |
+
+Issues marked with `/triage accepted` without blocking holds feed directly into contributor and agent implementation queues.
+
+#### Reviewer & Maintainer Commands (Pull Requests)
+
+Reviewers and approvers guide code reviews with:
+
+| Command | Role | Action |
+|---|---|---|
+| `/lgtm` / `/lgtm cancel` | Reviewers | "Looks Good To Me" code review endorsement (removed automatically on new commits) |
+| `/approve` / `/approve cancel` | Approvers (`OWNERS`) | Final maintainer approval |
 #### Common Contribution Areas
 
 - 🐛 **Bug fixes**: Issues labeled `bug`
