@@ -225,7 +225,8 @@ If you are contributing as part of the core agentic factory team on `projectblue
 
 ### Triage & Prow Commands
 
-Project Bluefin uses [Prow](https://github.com/cncf/prow-github-actions) automation on enabled repositories (such as `common`, `chairlift`, and the printer-app repositories; see [`.project`](https://github.com/projectbluefin/.project)) to manage issue triage and PR lifecycles. On repositories without Prow installed (including `bluefin` and `dakota`), triage and labeling are handled manually via GitHub's standard interface.
+Project Bluefin uses [Prow](https://github.com/cncf/prow-github-actions) automation on enabled repositories (such as `common`, `chairlift`, and the printer-app repositories; see [`.project`](https://github.com/projectbluefin/.project)) to manage issue triage and PR lifecycles. O
+
 #### How to Run Commands
 
 - Put each command at the beginning of its own line in a new comment (e.g., `/area desktop`).
@@ -268,13 +269,6 @@ Reviewers and approvers guide code reviews with:
 |---|---|---|
 | `/lgtm` / `/lgtm cancel` | Reviewers | "Looks Good To Me" code review endorsement (removed automatically on new commits) |
 | `/approve` / `/approve cancel` | Approvers (`OWNERS`) | Final maintainer approval |
-#### Common Contribution Areas
-
-- 🐛 **Bug fixes**: Issues labeled `bug`
-- 📦 **Package additions**: Issues labeled `enhancement`
-- 📝 **Documentation**: Issues labeled `documentation`
-- 🔧 **Build improvements**: Issues labeled `just` or `github_actions`
-- 🎨 **Developer features**: Issues labeled `dx`
 
 ### Branching Strategy
 
