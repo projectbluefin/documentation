@@ -52,7 +52,13 @@ jobs:
       - name: Build PDF
         run: |
           mkdir -p pdf
-          npx docusaurus-prince-pdf --toc -u https://docs.projectbluefin.io -o pdf/bluefin.pdf
+          # docusaurus-prince-pdf 1.2.1 (last release 2023) uses the removed
+          # `assert { type: 'json' }` import syntax that Node >= 22 rejects.
+          npm install --no-save --no-audit --no-fund --prefix "$RUNNER_TEMP/pdf-tool" docusaurus-prince-pdf@1.2.1
+          tool="$RUNNER_TEMP/pdf-tool/node_modules/docusaurus-prince-pdf/index.js"
+          sed -i "s/ assert { type: 'json' }/ with { type: 'json' }/" "$tool"
+          grep -q "with { type: 'json' }" "$tool"
+          node "$tool" --toc -u https://docs.projectbluefin.io -o pdf/bluefin.pdf
 
       - name: Upload results
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
