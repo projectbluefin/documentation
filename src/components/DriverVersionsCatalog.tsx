@@ -441,7 +441,9 @@ export default function DriverVersionsCatalog({
   }
 
   const older = validHistory.filter(
-    (row) => row !== latest && (!latest.tag || row.tag !== latest.tag),
+    (row) =>
+      row !== latest &&
+      !(row.tag === latest.tag && row.publishedAt === latest.publishedAt),
   );
 
   const currentUserspace = extractUserspace(latest);

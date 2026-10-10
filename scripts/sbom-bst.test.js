@@ -104,6 +104,16 @@ test("extractBstPackageVersions matches suffixes across junction prefixes", () =
   assert.equal(got.gnome, "50.0");
   assert.equal(got.mesa, "26.0.5");
 });
+test("extractBstPackageVersions matches mesa-extra.bst suffix for mesa", () => {
+  const got = extractBstPackageVersions({
+    packages: [
+      bstPkg("mesa", "26.2.2", [
+        "freedesktop-sdk.bst:extensions/mesa/mesa-extra.bst",
+      ]),
+    ],
+  });
+  assert.equal(got.mesa, "26.2.2");
+});
 
 test("extractBstPackageVersions does not mistake a same-named crate for the kernel", () => {
   const got = extractBstPackageVersions({

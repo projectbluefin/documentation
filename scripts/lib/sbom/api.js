@@ -484,6 +484,19 @@ async function getImageCreatedDate(imageRef) {
     return null;
   }
 }
+async function getImageDigest(imageRef) {
+  try {
+    const result = await execFileAsync(
+      "oras",
+      ["manifest", "fetch", "--descriptor", imageRef],
+      { env: { ...process.env }, maxBuffer: 256 * 1024, timeout: 30000 },
+    );
+    const parsed = JSON.parse(result.stdout);
+    return parsed?.digest || null;
+  } catch {
+    return null;
+  }
+}
 
 module.exports = {
   SLSA_TYPE,
@@ -495,4 +508,5 @@ module.exports = {
   selectAmd64DigestFromManifest,
   downloadSbom,
   getImageCreatedDate,
+  getImageDigest,
 };

@@ -61,6 +61,24 @@ test("rowFromSbomRelease builds kernel/mesa/gnome from SBOM only", () => {
   );
 });
 
+test("rowFromSbomRelease preserves releaseUrl when provided on releaseEntry", () => {
+  const row = rowFromSbomRelease(
+    "dakota-stable",
+    "stable-20260921",
+    {
+      tag: "stable",
+      releaseUrl:
+        "https://github.com/projectbluefin/dakota/releases/tag/stable-20260921",
+      packageVersions: { kernel: "7.2.6" },
+    },
+    null,
+  );
+  assert.equal(
+    row.releaseUrl,
+    "https://github.com/projectbluefin/dakota/releases/tag/stable-20260921",
+  );
+});
+
 test("rowFromSbomRelease includes systemd, bootc, and pipewire when present", () => {
   const row = rowFromSbomRelease(
     "dakota-latest",

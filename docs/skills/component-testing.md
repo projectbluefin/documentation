@@ -130,6 +130,11 @@ assert.ok(
 
 // Output must be deterministic, or SSG diffs churn between builds.
 assert.equal(render(props), render(props));
+
+// Floating image streams share a channel tag ("stable") across daily builds;
+// older-row partitioning must partition by publication timestamp, not tag string,
+// or same-tag historical snapshots are discarded as duplicate current releases.
+assert.ok(render(timelineWithSameTagRows).includes(olderDateMarker));
 ```
 
 ## Effectful visual components

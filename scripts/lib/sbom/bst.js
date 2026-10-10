@@ -37,14 +37,26 @@ function isSemverLike(version) {
  * Order matters: the first matching entry wins.
  */
 const BST_PACKAGE_MAP = [
-  { name: "gnome-shell", bstSuffixes: ["core/gnome-shell.bst"], field: "gnome" },
+  {
+    name: "gnome-shell",
+    bstSuffixes: ["core/gnome-shell.bst"],
+    field: "gnome",
+  },
   // core/linux-fdsdk.bst and core/linux-ogc.bst are Dakota's running kernels; components/linux.bst is upstream.
   {
     name: "linux",
-    bstSuffixes: ["core/linux-fdsdk.bst", "core/linux-ogc.bst", "components/linux.bst"],
+    bstSuffixes: [
+      "core/linux-fdsdk.bst",
+      "core/linux-ogc.bst",
+      "components/linux.bst",
+    ],
     field: "kernel",
   },
-  { name: "mesa", bstSuffixes: ["extensions/mesa/mesa.bst"], field: "mesa" },
+  {
+    name: "mesa",
+    bstSuffixes: ["extensions/mesa/mesa.bst", "extensions/mesa/mesa-extra.bst"],
+    field: "mesa",
+  },
   {
     name: "pipewire",
     bstSuffixes: [
@@ -54,7 +66,11 @@ const BST_PACKAGE_MAP = [
     field: "pipewire",
   },
   { name: "podman", bstSuffixes: ["components/podman.bst"], field: "podman" },
-  { name: "flatpak", bstSuffixes: ["components/flatpak.bst"], field: "flatpak" },
+  {
+    name: "flatpak",
+    bstSuffixes: ["components/flatpak.bst"],
+    field: "flatpak",
+  },
   { name: "bootc", bstSuffixes: ["gnomeos-deps/bootc.bst"], field: "bootc" },
   {
     name: "systemd",

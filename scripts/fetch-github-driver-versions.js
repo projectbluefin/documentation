@@ -152,6 +152,7 @@ function rowFromSbomRelease(streamId, cacheKey, releaseEntry, nvidiaVersion) {
     tag: releaseEntry?.tag || cacheKey,
     title: releaseEntry?.tag || cacheKey,
     releaseUrl: (() => {
+      if (releaseEntry?.releaseUrl) return releaseEntry.releaseUrl;
       const tag = releaseEntry?.tag;
       const repo = RELEASE_REPO_BY_STREAM[streamId];
       return repo && typeof tag === "string" && /[.-]\d{8}$/.test(tag)

@@ -51,6 +51,7 @@ const {
   fetchGhcrTags,
   selectAmd64DigestFromManifest,
   getImageCreatedDate,
+  getImageDigest,
 } = require("./lib/sbom/api");
 
 const {
@@ -64,6 +65,7 @@ const { extractBstPackageVersions, isSemverLike } = require("./lib/sbom/bst");
 const { buildSlimFrontendStreams } = require("./lib/sbom/slim");
 const { atomicWriteJson } = require("./lib/sbom/writer");
 const { requireTrustForRepo } = require("./lib/signing-trust");
+const { mapWithConcurrency } = require("./lib/request-queue");
 
 // ---------------------------------------------------------------------------
 // Configuration
@@ -178,6 +180,8 @@ const RAW_STREAM_SPECS = [
     package: "dakota",
     keyRepo: "projectbluefin/dakota",
     floatingTag: "stable",
+    releasesRepo: "projectbluefin/dakota",
+    releaseSbomAsset: "dakota.spdx.json",
   },
   {
     id: "dakota-testing",
@@ -252,6 +256,81 @@ function refreshRegression(previousEntry, attestation, packageVersions) {
   return reasons.length > 0 ? reasons.join(", ") : null;
 }
 
+// Release SBOMs recover history even when the registry only retains :stable.
+async function backfillReleaseSboms(spec, releases) {
+  if (!spec.releaseSbomAsset) return;
+  const { ghPaginate } = await import("./lib/gh.js");
+  const published = await ghPaginate(`/repos/${spec.releasesRepo}/releases`, {
+    signal: AbortSignal.timeout(30000),
+  });
+  const candidates = findRecentTagsForStream(
+    published
+      .filter((release) => !release.draft && !release.prerelease)
+      .map((release) => release.tag_name),
+    { ...spec, streamPrefix: spec.floatingTag },
+  );
+  const entries = await mapWithConcurrency(
+    candidates,
+    async ({ tag, cacheKey }) => {
+      if (releases[cacheKey]?.packageVersions) return null;
+      const release = published.find((entry) => entry.tag_name === tag);
+      const asset = release?.assets?.find(
+        (entry) => entry.name === spec.releaseSbomAsset,
+      );
+      if (!asset) return null;
+      try {
+        const response = await fetch(asset.browser_download_url, {
+          signal: AbortSignal.timeout(30000),
+        });
+        if (!response.ok) throw new Error(`SBOM asset HTTP ${response.status}`);
+        const packageVersions = extractBstPackageVersions(
+          await response.json(),
+        );
+        if (
+          !packageVersions ||
+          (!packageVersions.kernel &&
+            !packageVersions.gnome &&
+            !packageVersions.mesa &&
+            !packageVersions.nvidia)
+        ) {
+          return null;
+        }
+        const digestMatch = release.body?.match(
+          new RegExp(
+            `\\|\\s*\`?${spec.package}\`?\\s*\\|\\s*\`?:${spec.floatingTag}\`?\\s*\\|\\s*\`?(sha256:[a-f0-9]+)\`?\\s*\\|`,
+            "i",
+          ),
+        );
+        const releaseDigest = digestMatch ? digestMatch[1] : null;
+        return [
+          cacheKey,
+          {
+            tag: spec.floatingTag,
+            imageRef: null,
+            releaseUrl: release.html_url,
+            digest: releaseDigest,
+            attestation: {
+              present: false,
+              verified: false,
+              error: "Release SBOM asset; image attestation unavailable.",
+            },
+            packageVersions,
+            checkedAt: new Date().toISOString(),
+          },
+        ];
+      } catch (err) {
+        console.warn(
+          `    ${cacheKey}: release SBOM unavailable — ${err.message}`,
+        );
+        return null;
+      }
+    },
+  );
+  for (const entry of entries) {
+    if (entry) releases[entry[0]] = entry[1];
+  }
+}
+
 // Floating tags are sampled by channel; historical entries are keyed by their
 // creation date because the registry tag itself moves between builds.
 async function processFloatingTagStream(spec, existing) {
@@ -260,6 +339,13 @@ async function processFloatingTagStream(spec, existing) {
     : {};
   const releases = { ...previous };
   const imageRef = `ghcr.io/${spec.org}/${spec.package}:${spec.floatingTag}`;
+  try {
+    await backfillReleaseSboms(spec, releases);
+  } catch (err) {
+    console.warn(
+      `    ${spec.id}: release history unavailable — ${err.message}`,
+    );
+  }
   const dateStr = await getImageCreatedDate(imageRef);
   if (dateStr) {
     const cacheKey = `${spec.floatingTag}-${dateStr}`;
@@ -306,10 +392,27 @@ async function processFloatingTagStream(spec, existing) {
         `    ${cacheKey}: refresh degraded (${regression}) — keeping previous entry`,
       );
     } else {
+      const currentDigest = await getImageDigest(imageRef);
+      // If the backfilled release history already recorded this exact build digest,
+      // transfer releaseUrl/tag and drop the duplicate dated release key.
+      let matchedReleaseUrl = null;
+      if (currentDigest) {
+        for (const [k, entry] of Object.entries(releases)) {
+          if (
+            k !== cacheKey &&
+            entry?.digest &&
+            currentDigest.startsWith(entry.digest)
+          ) {
+            matchedReleaseUrl = entry.releaseUrl || matchedReleaseUrl;
+            delete releases[k];
+          }
+        }
+      }
       releases[cacheKey] = {
         tag: spec.floatingTag,
         imageRef,
-        digest: null,
+        releaseUrl: matchedReleaseUrl || releases[cacheKey]?.releaseUrl || null,
+        digest: currentDigest,
         attestation,
         packageVersions,
         checkedAt: new Date().toISOString(),
@@ -766,5 +869,6 @@ module.exports = {
   selectAmd64DigestFromManifest,
   findRecentTagsForStream,
   refreshRegression,
+  backfillReleaseSboms,
   fetchGhcrTags, // exported for integration testing
 };
