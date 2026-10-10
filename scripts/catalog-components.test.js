@@ -546,3 +546,58 @@ test("DriverVersionsCatalog renders older historical snapshots even when tag is 
     "older historical date must be rendered",
   );
 });
+
+test("DriverVersionsCatalog renders bluefin-server with systemd, sysexts, and sysupdate message", () => {
+  const catalog = {
+    streams: [
+      {
+        id: "bluefin-server",
+        name: "Bluefin Server",
+        source: "sbom",
+        rowCount: 1,
+        latest: {
+          stream: "bluefin-server",
+          tag: "v26.10.1081",
+          imageRef: null,
+          publishedAt: "2026-10-10T02:49:23.000Z",
+          versions: {
+            kernel: "7.2.2",
+            systemd: "261.2",
+            nvidia: "595.104.02",
+            zfs: "2.4.4",
+            k0s: "1.36.4",
+          },
+        },
+        history: [
+          {
+            stream: "bluefin-server",
+            tag: "v26.10.1081",
+            imageRef: null,
+            publishedAt: "2026-10-10T02:49:23.000Z",
+            versions: {
+              kernel: "7.2.2",
+              systemd: "261.2",
+              nvidia: "595.104.02",
+              zfs: "2.4.4",
+              k0s: "1.36.4",
+            },
+          },
+        ],
+      },
+    ],
+  };
+  const html = render(DriverVersionsCatalog, {
+    streamId: "bluefin-server",
+    catalogOverride: catalog,
+  });
+  assert.ok(html.includes("Bluefin Server"), "stream label rendered");
+  assert.ok(html.includes("7.2.2"), "kernel rendered");
+  assert.ok(html.includes("261.2"), "systemd rendered");
+  assert.ok(html.includes("595.104.02"), "nvidia rendered");
+  assert.ok(html.includes("2.4.4"), "zfs rendered");
+  assert.ok(html.includes("1.36.4"), "k0s rendered");
+  assert.ok(
+    html.includes("systemd-sysupdate"),
+    "sysupdate deployment note rendered instead of bootc switch",
+  );
+});

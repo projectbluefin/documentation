@@ -11,6 +11,9 @@ interface VersionSet {
   mesa: string | null;
   nvidia: string | null;
   gnome: string | null;
+  systemd?: string | null;
+  zfs?: string | null;
+  k0s?: string | null;
 }
 
 interface DriverRow {
@@ -336,6 +339,24 @@ function ReleaseNode({
               <span className={styles.gnomeMinorTag}>Minor bump</span>
             )}
           </div>
+          {row.versions.systemd && (
+            <div className={styles.majorVersionCard}>
+              <span className={styles.majorVersionLabel}>systemd</span>
+              <VersionValue value={row.versions.systemd} />
+            </div>
+          )}
+          {row.versions.zfs && (
+            <div className={styles.majorVersionCard}>
+              <span className={styles.majorVersionLabel}>ZFS</span>
+              <VersionValue value={row.versions.zfs} />
+            </div>
+          )}
+          {row.versions.k0s && (
+            <div className={styles.majorVersionCard}>
+              <span className={styles.majorVersionLabel}>k0s</span>
+              <VersionValue value={row.versions.k0s} />
+            </div>
+          )}
         </div>
 
         {row.imageRef ||
@@ -352,6 +373,11 @@ function ReleaseNode({
               </CodeBlock>
             </div>
           </div>
+        ) : stream.id === "bluefin-server" ? (
+          <p className={styles.rebaseInline}>
+            Bluefin Server deploys and updates as an OS DDI via{" "}
+            <code>systemd-sysupdate</code>.
+          </p>
         ) : (
           <p className={styles.rebaseInline}>
             No published image for this historical SBOM snapshot.
@@ -373,7 +399,8 @@ function hasValidVersions(row: DriverRow | null | undefined): boolean {
 }
 
 interface DriverVersionsCatalogProps {
-  streamId: "bluefin-stable" | "dakota-stable" | "utah-testing";
+  streamId:
+    "bluefin-stable" | "dakota-stable" | "utah-testing" | "bluefin-server";
   catalogOverride?: DriverCatalog;
   showRebootStep?: boolean;
 }
@@ -410,7 +437,9 @@ export default function DriverVersionsCatalog({
       ? "Bluefin"
       : streamId === "utah-testing"
         ? "Utah"
-        : "Bluefin Classic";
+        : streamId === "bluefin-server"
+          ? "Bluefin Server"
+          : "Bluefin Classic";
 
   if (!stream) {
     return (

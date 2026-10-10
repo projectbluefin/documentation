@@ -85,6 +85,38 @@ const BST_PACKAGE_MAP = [
   },
 ];
 
+/**
+ * Maps SPDXID regex patterns to a PackageVersions field.
+ * Used for BuildStream collect_manifest SBOMs (like Bluefin Server) that lack
+ * externalRefs[referenceType="bst-element"] and encode element paths into SPDXIDs.
+ */
+const SERVER_SPDXID_MAP = [
+  {
+    field: "kernel",
+    pattern: /^SPDXRef-freedesktop-sdk-components-linux-0$/,
+  },
+  {
+    field: "systemd",
+    pattern: /^SPDXRef-freedesktop-sdk-components-.*systemd-base-0$/,
+  },
+  {
+    field: "nvidia",
+    pattern: /^SPDXRef-bluefin-server-nvidia-nvidia-open-\d+-0$/,
+  },
+  {
+    field: "zfs",
+    pattern: /^SPDXRef-bluefin-server-zfs-openzfs-0$/,
+  },
+  {
+    field: "k0s",
+    pattern: /^SPDXRef-bluefin-server-k0s-k0s-bin-0$/,
+  },
+  {
+    field: "containerToolkit",
+    pattern: /^SPDXRef-bluefin-server-nvidia-nvidia-container-toolkit-0$/,
+  },
+];
+
 // ---------------------------------------------------------------------------
 // Extraction
 // ---------------------------------------------------------------------------
@@ -113,10 +145,13 @@ function extractBstPackageVersions(sbom) {
     podman: null,
     systemd: null,
     bootc: null,
-    fedora: null, // always null — Dakota is GNOME OS based, not Fedora
+    fedora: null, // always null — Dakota/Server are non-Fedora bases
     pipewire: null,
     flatpak: null,
     nvidia: null,
+    zfs: null,
+    k0s: null,
+    containerToolkit: null,
     /** Flat name→version map for all BST components with semver versions. */
     allPackages: /** @type {Record<string, string>} */ ({}),
   };
@@ -129,7 +164,10 @@ function extractBstPackageVersions(sbom) {
     const bstRefs = (pkg?.externalRefs || []).filter(
       (r) => r?.referenceType === "bst-element",
     );
-    if (bstRefs.length === 0) continue;
+    const spdxId = pkg?.SPDXID || "";
+    const isServerSpdx = spdxId.startsWith("SPDXRef-");
+
+    if (bstRefs.length === 0 && !isServerSpdx) continue;
 
     // Populate allPackages for every BST component with a semver version.
     // Use the first semver version found per name (later entries may be aliases).
@@ -137,19 +175,30 @@ function extractBstPackageVersions(sbom) {
       result.allPackages[name] = ver;
     }
 
-    // Map to named version fields using BST element path suffix.
-    for (const { name: mapName, bstSuffixes, field } of BST_PACKAGE_MAP) {
-      if (name !== mapName) continue;
-      if (result[field]) continue; // already populated
-      const matchingRef = bstRefs.find((r) =>
-        bstSuffixes.some((suffix) => r?.referenceLocator?.endsWith(suffix)),
-      );
-      if (matchingRef) {
-        result[field] = ver;
+    // Map to named version fields using BST element path suffix when externalRefs present.
+    if (bstRefs.length > 0) {
+      for (const { name: mapName, bstSuffixes, field } of BST_PACKAGE_MAP) {
+        if (name !== mapName) continue;
+        if (result[field]) continue; // already populated
+        const matchingRef = bstRefs.find((r) =>
+          bstSuffixes.some((suffix) => r?.referenceLocator?.endsWith(suffix)),
+        );
+        if (matchingRef) {
+          result[field] = ver;
+        }
+      }
+    }
+
+    // Map to named version fields using SPDXID pattern when externalRefs absent.
+    if (isServerSpdx) {
+      for (const { pattern, field } of SERVER_SPDXID_MAP) {
+        if (result[field]) continue;
+        if (pattern.test(spdxId)) {
+          result[field] = ver;
+        }
       }
     }
   }
-
   const populated = Object.keys(result.allPackages).length;
   console.log(
     `    extractPackageVersions: BST SPDX format (${sbom.spdxVersion}), ` +
@@ -163,5 +212,6 @@ function extractBstPackageVersions(sbom) {
 module.exports = {
   isSemverLike,
   BST_PACKAGE_MAP,
+  SERVER_SPDXID_MAP,
   extractBstPackageVersions,
 };
