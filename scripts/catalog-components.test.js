@@ -597,6 +597,14 @@ test("DriverVersionsCatalog renders bluefin-server with systemd, sysexts, and sy
   assert.ok(html.includes("2.4.4"), "zfs rendered");
   assert.ok(html.includes("1.36.4"), "k0s rendered");
   assert.ok(
+    !html.includes(">Mesa<"),
+    "mesa card should not be rendered for server",
+  );
+  assert.ok(
+    !html.includes(">GNOME<"),
+    "gnome card should not be rendered for server",
+  );
+  assert.ok(
     html.includes("systemd-sysupdate"),
     "sysupdate deployment note rendered instead of bootc switch",
   );
