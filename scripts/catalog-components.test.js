@@ -499,3 +499,50 @@ test("DriverVersionsCatalog uses published image refs and never invents archival
   });
   assert.ok(!stale.includes("ghcr.io/projectbluefin/dakota:stable"));
 });
+
+test("DriverVersionsCatalog renders older historical snapshots even when tag is identical", () => {
+  const catalog = {
+    streams: [
+      {
+        id: "dakota-stable",
+        name: "Dakota",
+        source: "sbom",
+        rowCount: 2,
+        imageRef: "ghcr.io/projectbluefin/dakota:stable",
+        latest: {
+          stream: "dakota-stable",
+          tag: "stable",
+          imageRef: null,
+          publishedAt: "2026-10-08T00:00:00.000Z",
+          versions: { kernel: "7.2.9", mesa: "26.2.2" },
+        },
+        history: [
+          {
+            stream: "dakota-stable",
+            tag: "stable",
+            imageRef: null,
+            publishedAt: "2026-10-08T00:00:00.000Z",
+            versions: { kernel: "7.2.9", mesa: "26.2.2" },
+          },
+          {
+            stream: "dakota-stable",
+            tag: "stable",
+            imageRef: null,
+            publishedAt: "2026-09-21T00:00:00.000Z",
+            versions: { kernel: "7.2.6", mesa: "26.2.2" },
+          },
+        ],
+      },
+    ],
+  };
+  const html = render(DriverVersionsCatalog, {
+    streamId: "dakota-stable",
+    catalogOverride: catalog,
+  });
+  assert.ok(html.includes("7.2.9"), "latest kernel must be rendered");
+  assert.ok(html.includes("7.2.6"), "older historical kernel must be rendered");
+  assert.ok(
+    html.includes("Sep 21, 2026"),
+    "older historical date must be rendered",
+  );
+});

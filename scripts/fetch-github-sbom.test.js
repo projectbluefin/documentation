@@ -24,6 +24,7 @@ const {
   refreshRegression,
   extractBstPackageVersions,
   isSemverLike,
+  backfillReleaseSboms,
 } = require("./fetch-github-sbom.js");
 
 function makeOutputPaths() {
@@ -460,6 +461,19 @@ test("findRecentTagsForStream: recognizes version-qualified live tags", () => {
   assert.equal(dailyResult.length, 1);
   assert.equal(dailyResult[0].tag, `stable-daily-44.${FIXED_RECENT_DATE}`);
   assert.equal(dailyResult[0].cacheKey, `stable-daily-${FIXED_RECENT_DATE}`);
+});
+
+test("backfillReleaseSboms: skips spec without releaseSbomAsset", async () => {
+  const releases = {};
+  await backfillReleaseSboms({ id: "utah-testing" }, releases);
+  assert.deepEqual(releases, {});
+});
+
+test("STREAM_SPECS declares dakota-stable release backfill metadata", () => {
+  const dakotaSpec = STREAM_SPECS.find((s) => s.id === "dakota-stable");
+  assert.ok(dakotaSpec);
+  assert.equal(dakotaSpec.releasesRepo, "projectbluefin/dakota");
+  assert.equal(dakotaSpec.releaseSbomAsset, "dakota.spdx.json");
 });
 
 test("findRecentTagsForStream: deduplicates same date", () => {
