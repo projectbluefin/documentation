@@ -255,13 +255,11 @@ jobs:
         if: matrix.part == 'en'
         run: npm run generate-card-images
 
-      # The social preview card is rebuilt on every deploy so the monthly night
-      # wallpaper rotates on its own (the daily schedule below picks up the new
-      # month). Satori cannot decode WebP, so dwebp/cwebp must be present or the
-      # generator would silently ship the previous month's card.
-      - name: Install WebP tools
+      # Fetch the current upstream night wallpaper; JXL needs djxl, November
+      # SVG is rasterized by Resvg, and cwebp writes the companion preview.
+      - name: Install social image tools
         if: matrix.part == 'en'
-        run: sudo apt-get install -y --no-install-recommends webp || (sudo apt-get update && sudo apt-get install -y --no-install-recommends webp)
+        run: sudo apt-get install -y --no-install-recommends libjxl-tools webp || (sudo apt-get update && sudo apt-get install -y --no-install-recommends libjxl-tools webp)
 
       - name: Generate social preview card
         if: matrix.part == 'en'

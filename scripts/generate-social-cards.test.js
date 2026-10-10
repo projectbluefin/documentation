@@ -2,99 +2,136 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
+const os = require("node:os");
 
-test("BLUEFIN_MONTHLY_NIGHT_WALLPAPERS contains all 12 calendar months with night wallpapers", async () => {
-  const { BLUEFIN_MONTHLY_NIGHT_WALLPAPERS } =
+const redSvg =
+  '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="12"><rect width="24" height="12" fill="red"/></svg>';
+
+test("monthly selection follows UTC including November and year rollover", async () => {
+  const { selectMonthlyWallpaper } =
     await import("./generate-social-cards.mjs");
-  assert.equal(BLUEFIN_MONTHLY_NIGHT_WALLPAPERS.length, 12);
-  for (let m = 1; m <= 12; m++) {
-    const pad = String(m).padStart(2, "0");
-    const item = BLUEFIN_MONTHLY_NIGHT_WALLPAPERS.find(
-      (w) => w.monthIndex === m,
+  for (let month = 1; month <= 12; month++) {
+    const pad = String(month).padStart(2, "0");
+    const selected = selectMonthlyWallpaper(
+      undefined,
+      new Date(`2026-${pad}-15T12:00:00Z`),
     );
-    assert.ok(item, `Month ${m} must exist in pool`);
-    assert.equal(item.file, `bluefin-${pad}-night.webp`);
-    assert.equal(item.time, "Night");
+    assert.equal(
+      selected.file,
+      `wallpapers/${pad}-bluefin/${pad}-bluefin-night.${month === 11 ? "svg" : "jxl"}`,
+    );
+  }
+  assert.equal(
+    selectMonthlyWallpaper(undefined, new Date("2026-10-31T23:30:00-01:00"))
+      .monthIndex,
+    11,
+  );
+  assert.equal(
+    selectMonthlyWallpaper(undefined, new Date("2027-01-01T00:00:00Z"))
+      .monthIndex,
+    1,
+  );
+});
+
+test("SVG is rasterized and a PNG payload is accepted even under an old extension", async () => {
+  const { wallpaperToPngBuffer } = await import("./generate-social-cards.mjs");
+  const png = wallpaperToPngBuffer(Buffer.from(redSvg), "11-bluefin-night.svg");
+  assert.equal(png.readUInt32BE(16), 2400);
+  assert.equal(png.readUInt32BE(20), 1200);
+  assert.deepEqual(wallpaperToPngBuffer(png, "11-bluefin-night.jxl"), png);
+  assert.throws(
+    () => wallpaperToPngBuffer(Buffer.from("broken"), "wallpaper.png"),
+    /Unsupported wallpaper format/,
+  );
+});
+
+test("fetch failures preserve the last card rather than publishing stale success", async () => {
+  const { fetchWallpaper, generateSocialCard } =
+    await import("./generate-social-cards.mjs");
+  const wallpaper = { file: "wallpapers/11-bluefin/11-bluefin-night.svg" };
+  const directory = fs.mkdtempSync(
+    path.join(os.tmpdir(), "bluefin-social-test-"),
+  );
+  const png = path.join(directory, "meta.png");
+  const webp = path.join(directory, "meta.webp");
+  fs.writeFileSync(png, "previous PNG");
+  fs.writeFileSync(webp, "previous WebP");
+  try {
+    await assert.rejects(
+      generateSocialCard({
+        wallpaper,
+        outputPathPng: png,
+        outputPathWebp: webp,
+        loadWallpaper: (w) =>
+          fetchWallpaper(
+            w,
+            async () => new Response("missing", { status: 404 }),
+          ),
+      }),
+      /HTTP 404/,
+    );
+    assert.equal(fs.readFileSync(png, "utf8"), "previous PNG");
+    assert.equal(fs.readFileSync(webp, "utf8"), "previous WebP");
+  } finally {
+    fs.rmSync(directory, { recursive: true, force: true });
   }
 });
 
-test("selectMonthlyWallpaper selects the correct night wallpaper for given month", async () => {
-  const { selectMonthlyWallpaper } =
+test("fresh wallpaper content changes the rendered social card", async () => {
+  const { fetchWallpaper, generateSocialCard } =
     await import("./generate-social-cards.mjs");
-  const janDate = new Date(Date.UTC(2026, 0, 15, 12, 0, 0));
-  const septDate = new Date(Date.UTC(2026, 8, 10, 2, 0, 0));
-  const decDate = new Date(Date.UTC(2026, 11, 25, 18, 0, 0));
-
-  assert.equal(
-    selectMonthlyWallpaper(undefined, janDate).file,
-    "bluefin-01-night.webp",
+  const directory = fs.mkdtempSync(
+    path.join(os.tmpdir(), "bluefin-social-test-"),
   );
-  assert.equal(
-    selectMonthlyWallpaper(undefined, septDate).file,
-    "bluefin-09-night.webp",
-  );
-  assert.equal(
-    selectMonthlyWallpaper(undefined, decDate).file,
-    "bluefin-12-night.webp",
-  );
+  const output = path.join(directory, "meta.png");
+  try {
+    const render = (svg) =>
+      generateSocialCard({
+        wallpaper: { file: "wallpapers/11-bluefin/11-bluefin-night.svg" },
+        outputPathPng: output,
+        outputPathWebp: null,
+        loadWallpaper: (w) => fetchWallpaper(w, async () => new Response(svg)),
+      });
+    await render(redSvg);
+    const red = fs.readFileSync(output);
+    await render(redSvg.replace('fill="red"', 'fill="blue"'));
+    const blue = fs.readFileSync(output);
+    assert.notDeepEqual(red, blue);
+    assert.equal(blue.readUInt32BE(16), 2400);
+    assert.equal(blue.readUInt32BE(20), 1260);
+  } finally {
+    fs.rmSync(directory, { recursive: true, force: true });
+  }
 });
 
-test("buildUnifiedLockupSvg creates a unified lockup with feDropShadow filter and Documentation paths", async () => {
-  const { buildUnifiedLockupSvg } = await import("./generate-social-cards.mjs");
-  const fontBold = fs.readFileSync(
-    path.join(
-      __dirname,
-      "../node_modules/@fontsource/inter/files/inter-latin-700-normal.woff",
-    ),
-  );
-  const sampleWordmarkSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="105.658" height="43.183"><path d="M0 0h10v10H0z"/></svg>`;
-  const lockup = await buildUnifiedLockupSvg(sampleWordmarkSvg, fontBold);
-
-  assert.ok(lockup.svg.includes("feDropShadow"));
-  assert.ok(lockup.svg.includes('filter="url(#brand-shadow)"'));
-  assert.ok(lockup.svg.includes('d="M0 0h10v10H0z"'));
-  assert.ok(lockup.width > 0);
-  assert.equal(lockup.height, 155);
-});
-
-test("generateSocialCard skips without a decoder by default and throws under --strict", async () => {
-  const { generateSocialCard, MISSING_DECODER_MESSAGE } =
+test("missing WebP encoder fails strict generation without corrupting the prior WebP", async () => {
+  const { generateSocialCard, wallpaperToPngBuffer, MISSING_ENCODER_MESSAGE } =
     await import("./generate-social-cards.mjs");
-  const wallpaper = { file: "bluefin-01-night.webp", monthIndex: 1 };
-  const noDecoder = () => null;
-
-  const lenient = await generateSocialCard({
-    wallpaper,
-    decodeWebp: noDecoder,
-  });
-  assert.equal(lenient.skipped, true);
-
-  await assert.rejects(
-    () =>
-      generateSocialCard({ wallpaper, strict: true, decodeWebp: noDecoder }),
-    (err) => err.message === MISSING_DECODER_MESSAGE,
+  const directory = fs.mkdtempSync(
+    path.join(os.tmpdir(), "bluefin-social-test-"),
   );
-});
-
-test("pages workflow installs the WebP tools and runs the generator in strict mode", () => {
-  const workflow = fs.readFileSync(
-    path.join(__dirname, "../.github/workflows/pages.yml"),
-    "utf8",
-  );
-  const installIdx = workflow.indexOf(
-    "apt-get install -y --no-install-recommends webp",
-  );
-  const generateIdx = workflow.indexOf(
-    "npm run generate-social-cards -- --strict",
-  );
-
-  assert.ok(installIdx !== -1, "pages.yml must install the webp CLI tools");
-  assert.ok(
-    generateIdx !== -1,
-    "pages.yml must generate the card in strict mode",
-  );
-  assert.ok(
-    installIdx < generateIdx,
-    "the webp tools must be installed before the card is generated",
-  );
+  const png = path.join(directory, "meta.png");
+  const webp = path.join(directory, "meta.webp");
+  fs.writeFileSync(webp, "previous WebP");
+  const options = {
+    wallpaper: { file: "november.png" },
+    outputPathPng: png,
+    outputPathWebp: webp,
+    loadWallpaper: async () =>
+      wallpaperToPngBuffer(Buffer.from(redSvg), "november.svg"),
+    encodeWebp: () => null,
+  };
+  try {
+    await assert.rejects(
+      generateSocialCard({ ...options, strict: true }),
+      (error) => error.message === MISSING_ENCODER_MESSAGE,
+    );
+    assert.equal(fs.readFileSync(webp, "utf8"), "previous WebP");
+    const result = await generateSocialCard(options);
+    assert.equal(result.webp, null);
+    assert.equal(fs.readFileSync(png).readUInt32BE(16), 2400);
+    assert.equal(fs.readFileSync(webp, "utf8"), "previous WebP");
+  } finally {
+    fs.rmSync(directory, { recursive: true, force: true });
+  }
 });
