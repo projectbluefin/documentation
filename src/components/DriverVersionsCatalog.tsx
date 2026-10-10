@@ -303,42 +303,46 @@ function ReleaseNode({
               <span className={styles.nvidiaMinorTag}>Minor bump</span>
             )}
           </div>
-          <div
-            className={
-              mesaMajorBump
-                ? `${styles.majorVersionCard} ${styles.mesaCard} ${styles.mesaMajorBump}`
-                : mesaMinorBump
-                  ? `${styles.majorVersionCard} ${styles.mesaCard} ${styles.mesaMinorBump}`
-                  : `${styles.majorVersionCard} ${styles.mesaCard}`
-            }
-          >
-            <span className={styles.majorVersionLabel}>Mesa</span>
-            <VersionValue value={mesa} />
-            {mesaMajorBump && (
-              <span className={styles.mesaBumpTag}>Major bump</span>
-            )}
-            {mesaMinorBump && (
-              <span className={styles.mesaMinorTag}>Minor bump</span>
-            )}
-          </div>
-          <div
-            className={
-              gnomeMajorBump
-                ? `${styles.majorVersionCard} ${styles.gnomeCard} ${styles.gnomeMajorBump}`
-                : gnomeMinorBump
-                  ? `${styles.majorVersionCard} ${styles.gnomeCard} ${styles.gnomeMinorBump}`
-                  : `${styles.majorVersionCard} ${styles.gnomeCard}`
-            }
-          >
-            <span className={styles.majorVersionLabel}>GNOME</span>
-            <VersionValue value={gnome} />
-            {gnomeMajorBump && (
-              <span className={styles.gnomeBumpTag}>Major bump</span>
-            )}
-            {gnomeMinorBump && (
-              <span className={styles.gnomeMinorTag}>Minor bump</span>
-            )}
-          </div>
+          {stream.id !== "bluefin-server" && (
+            <>
+              <div
+                className={
+                  mesaMajorBump
+                    ? `${styles.majorVersionCard} ${styles.mesaCard} ${styles.mesaMajorBump}`
+                    : mesaMinorBump
+                      ? `${styles.majorVersionCard} ${styles.mesaCard} ${styles.mesaMinorBump}`
+                      : `${styles.majorVersionCard} ${styles.mesaCard}`
+                }
+              >
+                <span className={styles.majorVersionLabel}>Mesa</span>
+                <VersionValue value={mesa} />
+                {mesaMajorBump && (
+                  <span className={styles.mesaBumpTag}>Major bump</span>
+                )}
+                {mesaMinorBump && (
+                  <span className={styles.mesaMinorTag}>Minor bump</span>
+                )}
+              </div>
+              <div
+                className={
+                  gnomeMajorBump
+                    ? `${styles.majorVersionCard} ${styles.gnomeCard} ${styles.gnomeMajorBump}`
+                    : gnomeMinorBump
+                      ? `${styles.majorVersionCard} ${styles.gnomeCard} ${styles.gnomeMinorBump}`
+                      : `${styles.majorVersionCard} ${styles.gnomeCard}`
+                }
+              >
+                <span className={styles.majorVersionLabel}>GNOME</span>
+                <VersionValue value={gnome} />
+                {gnomeMajorBump && (
+                  <span className={styles.gnomeBumpTag}>Major bump</span>
+                )}
+                {gnomeMinorBump && (
+                  <span className={styles.gnomeMinorTag}>Minor bump</span>
+                )}
+              </div>
+            </>
+          )}
           {row.versions.systemd && (
             <div className={styles.majorVersionCard}>
               <span className={styles.majorVersionLabel}>systemd</span>
