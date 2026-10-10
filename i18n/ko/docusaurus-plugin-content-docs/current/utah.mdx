@@ -1,0 +1,52 @@
+---
+title: Utah
+slug: /utah
+---
+
+import DriverVersionsCatalog from "@site/src/components/DriverVersionsCatalog";
+
+# Utah
+
+**Utah** (_Utahraptor ostrommaysi_)는 [Fedora Hummingbird](https://fedoramagazine.org/fedora-hummingbird-linux-taking-the-hummingbird-model-to-the-full-os/) 위에 구축된 Bluefin으로, 데스크톱 없이 강화되고 빠르게 움직이는 부팅 가능한 기반을 제공합니다. Utah는 데스크톱 레이어를 추가합니다 — Bluefin의 GNOME 데스크톱과 사용자 경험입니다. 스택은 `projectbluefin/utah-packages`에서 검증된 업스트림 소스에서 조립됩니다.
+
+:::info[Pre-alpha]
+Utah는 개발 중인 알파 빌드입니다. `:testing` 컨테이너 이미지는 GHCR에 게시됩니다. 진행 상황은 [projectbluefin/utah](https://github.com/projectbluefin/utah/issues)에서 추적하고 이슈를 제보하세요.
+:::
+
+## 설치
+
+- [Latest ISO](https://projectbluefin.dev/utah-live-latest.iso)
+
+## 아키텍터
+
+Utah는 두 개의 조정된 저장소에서 조립됩니다:
+
+| 저장소                                                                            | 역할                                                                                |
+| --------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| [`projectbluefin/utah`](https://github.com/projectbluefin/utah)                   | Bluefin의 패키지 계약과 데스크톱 서비스로 bootc OS 이미지를 조립합니다.             |
+| [`projectbluefin/utah-packages`](https://github.com/projectbluefin/utah-packages) | 검증된 업스트림 소스에서 GNOME 51과 데스크톱 스택을 빌드하고 OCI 레어로 게시합니다. |
+
+## 이미지 스트림
+
+Utah는 Bluefin의 표준 타깃에 매칭되는 네 가지 플래버를 정의합니다: `utah`, `utah-nvidia`, `utah-gaming`, `utah-nvidia-gaming`.
+
+| 태그       | 스트림  | 배포 위치                             |
+| ---------- | ------- | ------------------------------------- |
+| `:stable`  | Stable  | `ghcr.io/projectbluefin/utah:stable`  |
+| `:testing` | Testing | `ghcr.io/projectbluefin/utah:testing` |
+
+## 기능과 스택
+
+- **Kernel**: Bluefin과 동일한 옵션의 커널, Gaming 모드와 함께 Open Gaming Collective (OGC) Linux 커널 사용 가능
+- **Desktop**: `utah-packages`를 통해 업스트림 소스에서 조립된 GNOME 51 스택.
+- **NVIDIA와 게이밍**: 특수 플래버에는 NVIDIA 드라이버와 게이밍 스택 구성 요소가 포함됩니다.
+
+## 현재 버전
+
+<DriverVersionsCatalog streamId="utah-testing" />
+
+## 더 읽을 것
+
+- [projectbluefin/utah 레포지토리](https://github.com/projectbluefin/utah)
+- [projectbluefin/utah-packages 레포지토리](https://github.com/projectbluefin/utah-packages)
+- [Fedora Hummingbird 발표](https://fedoramagazine.org/fedora-hummingbird-linux-taking-the-hummingbird-model-to-the-full-os/)
