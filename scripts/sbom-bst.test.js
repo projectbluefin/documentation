@@ -188,10 +188,50 @@ test("extractBstPackageVersions returns the full chip shape with fedora null", (
     pipewire: null,
     flatpak: null,
     nvidia: null,
+    zfs: null,
+    k0s: null,
+    containerToolkit: null,
     allPackages: {},
   });
 });
 
+test("extractBstPackageVersions maps Server components by SPDXID", () => {
+  const got = extractBstPackageVersions({
+    spdxVersion: "SPDX-2.3",
+    packages: [
+      {
+        SPDXID: "SPDXRef-freedesktop-sdk-components-linux-0",
+        name: "linux",
+        versionInfo: "7.2.2",
+      },
+      {
+        SPDXID: "SPDXRef-freedesktop-sdk-components-_private-systemd-base-0",
+        name: "systemd",
+        versionInfo: "261.2",
+      },
+      {
+        SPDXID: "SPDXRef-bluefin-server-nvidia-nvidia-open-595-0",
+        name: "NVIDIA-Linux-x86",
+        versionInfo: "595.104.02",
+      },
+      {
+        SPDXID: "SPDXRef-bluefin-server-zfs-openzfs-0",
+        name: "zfs",
+        versionInfo: "2.4.4",
+      },
+      {
+        SPDXID: "SPDXRef-bluefin-server-k0s-k0s-bin-0",
+        name: "k0s-v1.36.4%2Bk0s.0-amd64",
+        versionInfo: "1.36.4",
+      },
+    ],
+  });
+  assert.equal(got.kernel, "7.2.2");
+  assert.equal(got.systemd, "261.2");
+  assert.equal(got.nvidia, "595.104.02");
+  assert.equal(got.zfs, "2.4.4");
+  assert.equal(got.k0s, "1.36.4");
+});
 test("extractBstPackageVersions tolerates an SBOM with no packages key", () => {
   assert.equal(extractBstPackageVersions({}).gnome, null);
 });

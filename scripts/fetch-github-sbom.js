@@ -207,6 +207,16 @@ const RAW_STREAM_SPECS = [
     keyRepo: "projectbluefin/dakota",
     floatingTag: "testing",
   },
+  {
+    id: "bluefin-server",
+    label: "Bluefin Server",
+    org: "projectbluefin",
+    package: "bluefin-server",
+    keyRepo: "projectbluefin/server",
+    floatingTag: "latest",
+    releasesRepo: "projectbluefin/server",
+    releaseSbomAsset: /^bluefin-server_.*\.spdx\.json$/,
+  },
 ];
 
 // Trust policy is not restated per stream: it is derived from keyRepo via the
@@ -263,20 +273,43 @@ async function backfillReleaseSboms(spec, releases) {
   const published = await ghPaginate(`/repos/${spec.releasesRepo}/releases`, {
     signal: AbortSignal.timeout(30000),
   });
-  const candidates = findRecentTagsForStream(
-    published
-      .filter((release) => !release.draft && !release.prerelease)
-      .map((release) => release.tag_name),
-    { ...spec, streamPrefix: spec.floatingTag },
+  const rawReleases = published.filter(
+    (release) => !release.draft && !release.prerelease,
   );
+  let candidates;
+  if (spec.id === "bluefin-server") {
+    const lookbackDays = Number(process.env.SBOM_LOOKBACK_DAYS || 90);
+    const maxReleases = Number(process.env.SBOM_MAX_RELEASES || 10);
+    const cutoff = Date.now() - lookbackDays * 24 * 60 * 60 * 1000;
+    candidates = rawReleases
+      .filter((r) => {
+        const pub = Date.parse(r.published_at || r.created_at || "");
+        return !isNaN(pub) && pub >= cutoff;
+      })
+      .slice(0, maxReleases)
+      .map((r) => ({
+        tag: r.tag_name,
+        cacheKey: r.tag_name.replace(/^v/, ""),
+        imageRef: null,
+        publishedAt: r.published_at || r.created_at,
+      }));
+  } else {
+    candidates = findRecentTagsForStream(
+      rawReleases.map((release) => release.tag_name),
+      { ...spec, streamPrefix: spec.floatingTag },
+    );
+  }
   const entries = await mapWithConcurrency(
     candidates,
     async ({ tag, cacheKey }) => {
       if (releases[cacheKey]?.packageVersions) return null;
       const release = published.find((entry) => entry.tag_name === tag);
-      const asset = release?.assets?.find(
-        (entry) => entry.name === spec.releaseSbomAsset,
-      );
+      const asset = release?.assets?.find((entry) => {
+        if (spec.releaseSbomAsset instanceof RegExp) {
+          return spec.releaseSbomAsset.test(entry.name);
+        }
+        return entry.name === spec.releaseSbomAsset;
+      });
       if (!asset) return null;
       try {
         const response = await fetch(asset.browser_download_url, {
@@ -305,7 +338,7 @@ async function backfillReleaseSboms(spec, releases) {
         return [
           cacheKey,
           {
-            tag: spec.floatingTag,
+            tag: spec.id === "bluefin-server" ? tag : spec.floatingTag,
             imageRef: null,
             releaseUrl: release.html_url,
             digest: releaseDigest,
@@ -315,7 +348,7 @@ async function backfillReleaseSboms(spec, releases) {
               error: "Release SBOM asset; image attestation unavailable.",
             },
             packageVersions,
-            checkedAt: new Date().toISOString(),
+            checkedAt: release.published_at || new Date().toISOString(),
           },
         ];
       } catch (err) {

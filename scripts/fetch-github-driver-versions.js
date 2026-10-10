@@ -21,12 +21,14 @@ const RELEASE_URL_BY_STREAM = {
   "bluefin-stable": "https://github.com/ublue-os/bluefin/releases",
   "dakota-stable": "https://github.com/projectbluefin/dakota/releases",
   "utah-testing": "https://github.com/projectbluefin/utah/releases",
+  "bluefin-server": "https://github.com/projectbluefin/server/releases",
 };
 
 const RELEASE_REPO_BY_STREAM = {
   "bluefin-stable": "ublue-os/bluefin",
   "dakota-stable": "projectbluefin/dakota",
   "utah-testing": "projectbluefin/utah",
+  "bluefin-server": "projectbluefin/server",
 };
 
 /**
@@ -99,6 +101,13 @@ function isValidCachedOutput(output, sbomCache) {
   const cachedStreamIds = new Set(output.streams.map((stream) => stream?.id));
   return (
     output.streams.every((stream) => {
+      if (stream.id === "bluefin-server") {
+        return (
+          RELEASE_URL_BY_STREAM[stream.id] &&
+          stream.command === null &&
+          stream.imageRef === null
+        );
+      }
       const expectedRef = `ghcr.io/${RELEASE_REPO_BY_STREAM[stream.id]}:${stream.id === "utah-testing" ? "testing" : "stable"}`;
       const unavailableUtah =
         stream.id === "utah-testing" &&
@@ -145,6 +154,8 @@ function rowFromSbomRelease(streamId, cacheKey, releaseEntry, nvidiaVersion) {
       /(\d{4})(\d{2})(\d{2})/,
       "$1-$2-$3T00:00:00.000Z",
     );
+  } else if (releaseEntry?.checkedAt) {
+    publishedAt = releaseEntry.checkedAt;
   }
 
   return {
@@ -171,6 +182,9 @@ function rowFromSbomRelease(streamId, cacheKey, releaseEntry, nvidiaVersion) {
       systemd: pkg.systemd || null,
       bootc: pkg.bootc || null,
       pipewire: pkg.pipewire || null,
+      zfs: pkg.zfs || null,
+      k0s: pkg.k0s || null,
+      containerToolkit: pkg.containerToolkit || null,
     },
   };
 }
@@ -213,7 +227,9 @@ function buildStreamFromSbom(
 
   const validRows = allRows.filter((row) => {
     const v = row.versions || {};
-    return Boolean(v.kernel || v.mesa || v.nvidia || v.gnome);
+    return Boolean(
+      v.kernel || v.mesa || v.nvidia || v.gnome || v.systemd || v.zfs || v.k0s,
+    );
   });
 
   validRows.sort(
@@ -366,18 +382,31 @@ async function main() {
     sbomCache,
     utahNvidiaByTag,
   );
+  const hasSbomServer =
+    Object.keys(sbomCache.streams?.["bluefin-server"]?.releases || {}).length >
+    0;
+  const serverStream = hasSbomServer
+    ? buildStreamFromSbom(
+        "bluefin-server",
+        "Bluefin Server",
+        "FSDK-based DDI server image from projectbluefin/server.",
+        null,
+        sbomCache,
+        {},
+      )
+    : null;
 
   const output = {
     generatedAt: new Date().toISOString(),
     cacheHours: CACHE_MAX_AGE_HOURS,
     historyDays: HISTORY_DAYS,
     streams: [
-      stableStream,
       ...(dakotaStream ? [dakotaStream] : []),
+      ...(serverStream ? [serverStream] : []),
+      stableStream,
       utahStream,
     ],
   };
-
   writeOutput(output);
   console.log(`Driver versions data saved to ${OUTPUT_FILE} (SBOM-only)`);
 }

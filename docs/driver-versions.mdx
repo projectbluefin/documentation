@@ -15,19 +15,13 @@ Sometimes the raptor just gets you. This page tracks major driver versions acros
 Versions shown below come from image SBOMs for the selected stream. A missing SBOM is shown as unavailable; an archival SBOM snapshot without a published image tag cannot be rebased to.
 
 <Tabs groupId="driver-stream" queryString>
-  <TabItem value="dakota" label="Bluefin" default>
+  <TabItem value="bluefin" label="Bluefin" default>
     <DriverVersionsCatalog streamId="dakota-stable" showRebootStep={false} />
   </TabItem>
   <TabItem value="server" label="Bluefin Server">
-
-:::info
-
-Bluefin Server ships as a DDI updated through `systemd-sysupdate`, not as a container image, so it has no image SBOM to track driver versions from. See [Bluefin Server](/server).
-
-:::
-
+    <DriverVersionsCatalog streamId="bluefin-server" showRebootStep={false} />
   </TabItem>
-  <TabItem value="bluefin" label="Bluefin Classic">
+  <TabItem value="classic" label="Bluefin Classic">
     <DriverVersionsCatalog streamId="bluefin-stable" showRebootStep={false} />
   </TabItem>
   <TabItem value="utah" label="Utah">

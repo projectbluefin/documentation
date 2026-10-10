@@ -241,9 +241,15 @@ function extractPackageVersions(sbomPath) {
     Array.isArray(sbom?.packages) && typeof sbom?.spdxVersion === "string";
   const isBstSpdx =
     isSpdx &&
-    (sbom.packages || []).some((pkg) =>
-      (pkg?.externalRefs || []).some((r) => r?.referenceType === "bst-element"),
-    );
+    (sbom.packages || []).some((pkg) => {
+      const hasBstRef = (pkg?.externalRefs || []).some(
+        (r) => r?.referenceType === "bst-element",
+      );
+      const hasServerSpdxId = (pkg?.SPDXID || "").startsWith(
+        "SPDXRef-bluefin-server-",
+      );
+      return hasBstRef || hasServerSpdxId;
+    });
 
   if (isBstSpdx) {
     return extractBstPackageVersions(sbom);

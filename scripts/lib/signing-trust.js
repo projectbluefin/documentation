@@ -43,6 +43,12 @@ const SIGNING_TRUST = {
     cosignKeyUrl: null,
     attestationLive: true,
   },
+  // Bluefin Server: keyless signing + live OCI-published SLSA provenance.
+  "projectbluefin/server": {
+    keyless: true,
+    cosignKeyUrl: null,
+    attestationLive: true,
+  },
 };
 
 /**

@@ -572,3 +572,47 @@ test("buildStreamFromSbom handles utah-testing where all releases have null vers
   assert.equal(stream.latest, null);
   assert.deepEqual(stream.history, []);
 });
+
+test("buildStreamFromSbom builds bluefin-server stream with systemd and sysexts", () => {
+  const cache = {
+    streams: {
+      "bluefin-server": {
+        releases: {
+          "26.10.1081": {
+            tag: "v26.10.1081",
+            checkedAt: "2026-10-10T02:49:23.000Z",
+            releaseUrl:
+              "https://github.com/projectbluefin/server/releases/tag/v26.10.1081",
+            packageVersions: {
+              kernel: "7.2.2",
+              systemd: "261.2",
+              nvidia: "595.104.02",
+              zfs: "2.4.4",
+              k0s: "1.36.4",
+            },
+          },
+        },
+      },
+    },
+  };
+
+  const stream = buildStreamFromSbom(
+    "bluefin-server",
+    "Bluefin Server",
+    "FSDK-based DDI server image from projectbluefin/server.",
+    null,
+    cache,
+    {},
+  );
+
+  assert.equal(stream.id, "bluefin-server");
+  assert.equal(stream.command, null);
+  assert.equal(stream.imageRef, null);
+  assert.equal(stream.rowCount, 1);
+  assert.equal(stream.latest?.versions?.kernel, "7.2.2");
+  assert.equal(stream.latest?.versions?.systemd, "261.2");
+  assert.equal(stream.latest?.versions?.zfs, "2.4.4");
+  assert.equal(stream.latest?.versions?.k0s, "1.36.4");
+  assert.equal(stream.latest?.versions?.nvidia, "595.104.02");
+  assert.equal(stream.latest?.publishedAt, "2026-10-10T02:49:23.000Z");
+});
