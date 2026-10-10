@@ -45,9 +45,10 @@ primary branding.
 ### Social Preview Cards
 
 - **Tooling**: `scripts/generate-social-cards.mjs` generates Open Graph / Twitter cards (`static/img/meta.png` and `static/img/meta.webp`).
-- **Rotation & Pairings**: Bluefin website uses the Day versions of the official monthly wallpapers; the documentation uses the Night versions of the same wallpaper for the month (`static/img/wallpapers/bluefin-NN-night.webp`).
-- **The rotation happens in CI, not in git.** `.github/workflows/pages.yml` regenerates the card before `npm run build:ci`, and the daily `schedule` trigger is what rolls the card over on the 1st. The committed `static/img/meta.*` is only a seed; do not expect it to track the current month.
-- **Satori cannot decode WebP.** The generator shells out to `dwebp` (or `ffmpeg`) to read the wallpaper and to `cwebp` to write the WebP copy. `ubuntu-latest` ships none of them, so pages.yml installs the `webp` package first. Without it the generator prints `MISSING_DECODER_MESSAGE` and exits 0 — the build stays green while silently shipping the previous month's card, which is how the rotation quietly stopped before. CI therefore runs it as `npm run generate-social-cards -- --strict`, which turns that skip into a failure.
+- **Rotation & source**: Fetch the current Night wallpaper from `projectbluefin/artwork/main` on every build. Monthly paths are `wallpapers/NN-bluefin/NN-bluefin-night.jxl`, except November's `.svg`. Do not substitute the old `ublue-os/artwork` PNGs or vendored WebP copies.
+- **The rotation happens in CI, not in git.** `.github/workflows/pages.yml` regenerates the card before `npm run build:ci`; its six-hour schedule picks up both month changes and upstream edits without releases or tags. The committed `static/img/meta.*` is only a seed.
+- **Decode before Satori.** JPEG XL requires `djxl` from `libjxl-tools`; November's SVG is rasterized with the installed Resvg library. PNG payloads are recognized by their signature, including incorrectly named inputs. `cwebp` from `webp` writes the companion image. Fetch/decode errors fail the build rather than silently preserving an old card.
+- **Verify downstream caching separately.** Pages origin advertises `max-age=600`, while the public Cloudflare response advertises `max-age=31536000`. The site default image uses a UTC `YYYY-MM` query key so downstream caches fetch the new month. Blog front-matter `image:` overrides remain independent.
 - **Never write PNG bytes to a `.webp` path.** When `cwebp` is missing, leave the existing `static/img/meta.webp` alone rather than producing a mislabelled file.
 - **Documentation Signature**: Displays the official Bluefin wordmark accompanied by `"Documentation"` text aligned to the letter baseline with multi-layered drop shadows (`drop-shadow(0 2px 4px rgba(0, 0, 0, 0.95)) drop-shadow(0 4px 16px rgba(0, 0, 0, 0.85)) drop-shadow(0 8px 32px rgba(0, 0, 0, 0.75))`).
 
@@ -55,7 +56,7 @@ primary branding.
 
 - _"We can keep the ublue 'u' icon next to the wordmark."_ Wrong: Bluefin uses the raptor emblem and wordmark; the `u` is dropped.
 - _"One SVG is fine for both themes."_ Wrong: Dark lettering is invisible on dark themes; always provide dark and light variants.
-- _"The social card step is green, so the card is rotating."_ Wrong: the generator exits 0 when `dwebp`/`ffmpeg` are absent. Read the step log for `preserving existing social preview card`, or rely on `--strict`.
+- _"A green build proves the current wallpaper shipped."_ Check the generator log and the actual image; cached previews can outlive a deployment.
 
 ## Red Flags
 
@@ -67,7 +68,7 @@ primary branding.
 ## Verification
 
 - `node --test scripts/brand-assets.test.js scripts/generate-social-cards.test.js` passes.
-- `npm run generate-social-cards -- --strict` renders a 2400x1260 card locally (needs the `webp` package installed).
+- `npm run generate-social-cards -- --strict --month 10` and `--month 11` render 2400x1260 cards from the actual upstream JXL and SVG (needs `libjxl-tools` and `webp`).
 - `npm test` passes.
 - Light and dark theme toggle displays correct contrast wordmark.
 

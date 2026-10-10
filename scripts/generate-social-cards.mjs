@@ -1,6 +1,13 @@
-import { readFileSync, mkdirSync, writeFileSync, existsSync } from "node:fs";
+import {
+  readFileSync,
+  mkdirSync,
+  writeFileSync,
+  mkdtempSync,
+  rmSync,
+} from "node:fs";
 import { execFileSync } from "node:child_process";
-import { join, dirname } from "node:path";
+import { join, dirname, extname } from "node:path";
+import { tmpdir } from "node:os";
 import { fileURLToPath } from "node:url";
 import satori from "satori";
 import { Resvg } from "@resvg/resvg-js";
@@ -8,7 +15,6 @@ import { Resvg } from "@resvg/resvg-js";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = join(__dirname, "..");
 const STATIC_DIR = join(ROOT_DIR, "static");
-const WALLPAPERS_DIR = join(STATIC_DIR, "img/wallpapers");
 const WORDMARK_PATH = join(STATIC_DIR, "img/bluefin-wordmark.svg");
 const FONTSOURCE_DIR = join(ROOT_DIR, "node_modules/@fontsource/inter/files");
 
@@ -17,79 +23,28 @@ const FONTSOURCE_DIR = join(ROOT_DIR, "node_modules/@fontsource/inter/files");
  * Project Bluefin Docs uses the official Night wallpaper variants for monthly rotation.
  */
 export const BLUEFIN_MONTHLY_NIGHT_WALLPAPERS = [
-  {
-    file: "bluefin-01-night.webp",
-    monthIndex: 1,
-    monthName: "January",
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+].map((monthName, index) => {
+  const month = String(index + 1).padStart(2, "0");
+  const format = index === 10 ? "svg" : "jxl";
+  return {
+    file: `wallpapers/${month}-bluefin/${month}-bluefin-night.${format}`,
+    monthIndex: index + 1,
+    monthName,
     time: "Night",
-  },
-  {
-    file: "bluefin-02-night.webp",
-    monthIndex: 2,
-    monthName: "February",
-    time: "Night",
-  },
-  {
-    file: "bluefin-03-night.webp",
-    monthIndex: 3,
-    monthName: "March",
-    time: "Night",
-  },
-  {
-    file: "bluefin-04-night.webp",
-    monthIndex: 4,
-    monthName: "April",
-    time: "Night",
-  },
-  {
-    file: "bluefin-05-night.webp",
-    monthIndex: 5,
-    monthName: "May",
-    time: "Night",
-  },
-  {
-    file: "bluefin-06-night.webp",
-    monthIndex: 6,
-    monthName: "June",
-    time: "Night",
-  },
-  {
-    file: "bluefin-07-night.webp",
-    monthIndex: 7,
-    monthName: "July",
-    time: "Night",
-  },
-  {
-    file: "bluefin-08-night.webp",
-    monthIndex: 8,
-    monthName: "August",
-    time: "Night",
-  },
-  {
-    file: "bluefin-09-night.webp",
-    monthIndex: 9,
-    monthName: "September",
-    time: "Night",
-  },
-  {
-    file: "bluefin-10-night.webp",
-    monthIndex: 10,
-    monthName: "October",
-    time: "Night",
-  },
-  {
-    file: "bluefin-11-night.webp",
-    monthIndex: 11,
-    monthName: "November",
-    time: "Night",
-  },
-  {
-    file: "bluefin-12-night.webp",
-    monthIndex: 12,
-    monthName: "December",
-    time: "Night",
-  },
-];
+  };
+});
 
 /**
  * Select the night wallpaper matching the calendar month (1-12 UTC).
@@ -103,51 +58,53 @@ export function selectMonthlyWallpaper(
   return match || pool[0];
 }
 
-/**
- * Shown whenever the monthly wallpaper cannot be decoded. Exported so the CI
- * step and the tests assert on the same wording.
- */
-export const MISSING_DECODER_MESSAGE =
-  "Neither dwebp nor ffmpeg is installed, so the monthly wallpaper cannot be decoded";
+/** Decode upstream PNG, SVG (November), or JPEG XL to PNG for Satori. */
+export function wallpaperToPngBuffer(bytes, file) {
+  if (
+    bytes.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]))
+  ) {
+    return bytes;
+  }
+  if (extname(file) === ".svg") {
+    return new Resvg(bytes, { fitTo: { mode: "width", value: 2400 } })
+      .render()
+      .asPng();
+  }
+  if (extname(file) !== ".jxl") {
+    throw new Error(`Unsupported wallpaper format: ${file}`);
+  }
+  const directory = mkdtempSync(join(tmpdir(), "bluefin-wallpaper-"));
+  try {
+    const input = join(directory, "wallpaper.jxl");
+    const output = join(directory, "wallpaper.png");
+    writeFileSync(input, bytes);
+    execFileSync("djxl", [input, output], { stdio: "pipe" });
+    return readFileSync(output);
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
+}
+
+/** Always fetch main; the six-hour Pages schedule picks up upstream edits. */
+export async function fetchWallpaper(wallpaper, fetchImpl = fetch) {
+  const url = `https://raw.githubusercontent.com/projectbluefin/artwork/main/${wallpaper.file}`;
+  const response = await fetchImpl(url, { cache: "no-store" });
+  if (!response.ok) {
+    throw new Error(
+      `Failed to fetch wallpaper ${url}: HTTP ${response.status}`,
+    );
+  }
+  return wallpaperToPngBuffer(
+    Buffer.from(await response.arrayBuffer()),
+    wallpaper.file,
+  );
+}
 
 /**
  * Shown when the rendered card cannot be re-encoded to WebP.
  */
 export const MISSING_ENCODER_MESSAGE =
   "cwebp is not installed, so the WebP copy of the social preview card cannot be written";
-
-/**
- * Convert a WebP file to PNG buffer for Satori decoding.
- * Returns null if no external image conversion utility is installed.
- */
-export function webpToPngBuffer(webpPath) {
-  try {
-    return execFileSync("dwebp", [webpPath, "-o", "-"], {
-      maxBuffer: 50 * 1024 * 1024,
-      stdio: ["pipe", "pipe", "ignore"],
-    });
-  } catch {
-    try {
-      return execFileSync(
-        "ffmpeg",
-        [
-          "-v",
-          "error",
-          "-i",
-          webpPath,
-          "-f",
-          "image2pipe",
-          "-vcodec",
-          "png",
-          "-",
-        ],
-        { maxBuffer: 50 * 1024 * 1024, stdio: ["pipe", "pipe", "ignore"] },
-      );
-    } catch {
-      return null;
-    }
-  }
-}
 
 /**
  * Encode a rendered PNG buffer as WebP.
@@ -247,24 +204,10 @@ export async function generateSocialCard({
   outputPathPng = join(STATIC_DIR, "img/meta.png"),
   outputPathWebp = join(STATIC_DIR, "img/meta.webp"),
   strict = false,
-  decodeWebp = webpToPngBuffer,
+  loadWallpaper = fetchWallpaper,
   encodeWebp = pngToWebpBuffer,
 } = {}) {
-  const wallpaperPath = join(WALLPAPERS_DIR, wallpaper.file);
-  if (!existsSync(wallpaperPath)) {
-    throw new Error(`Wallpaper file not found: ${wallpaperPath}`);
-  }
-
-  const pngBuf = decodeWebp(wallpaperPath);
-  if (!pngBuf) {
-    if (strict) {
-      throw new Error(MISSING_DECODER_MESSAGE);
-    }
-    console.warn(
-      `${MISSING_DECODER_MESSAGE} — preserving existing social preview card.`,
-    );
-    return { png: outputPathPng, webp: outputPathWebp, skipped: true };
-  }
+  const pngBuf = await loadWallpaper(wallpaper);
   const dataUrl = `data:image/png;base64,${pngBuf.toString("base64")}`;
   const rawWordmark = readFileSync(WORDMARK_PATH, "utf8");
   const fontBoldBuffer = readFileSync(
@@ -381,13 +324,9 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   } catch (err) {
     console.error(`✗ ${err.message}`);
     console.error(
-      "Install the WebP tools (`sudo apt-get install -y webp`) and re-run.",
+      "Install JPEG XL and WebP tools (`sudo apt-get install -y libjxl-tools webp`) and re-run.",
     );
     process.exit(1);
-  }
-
-  if (result.skipped) {
-    process.exit(0);
   }
 
   console.log(`✓ Generated ${result.png}`);

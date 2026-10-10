@@ -128,6 +128,7 @@ by hand or invent transitions that do not exist in the checkout.
 - Verify a route exists in `docusaurus.config.ts` or `sidebars.ts` before
   documenting it.
 - Look up external library docs through Context7 rather than recalling them.
+- For social wallpaper changes, load `docs/skills/brand-assets.md`, verify the current `projectbluefin/artwork` formats, render October JXL and November SVG/PNG, and check the cache-versioned image URL. Vendored images are not evidence of current upstream artwork.
 
 ## Never write in a maintainer's voice
 

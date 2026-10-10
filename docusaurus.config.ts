@@ -243,8 +243,10 @@ const config: Config = {
       { name: "twitter:card", content: "summary_large_image" },
     ],
 
-    // Social card that shows up on discord when you share it
-    image: staticAsset("img/meta.png"),
+    // Monthly cache key: the CDN gives static images a one-year browser TTL.
+    image: staticAsset(
+      `img/meta.png?v=${new Date().toISOString().slice(0, 7)}`,
+    ),
     navbar: {
       title: "",
       logo: {
