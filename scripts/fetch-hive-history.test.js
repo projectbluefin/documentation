@@ -581,6 +581,7 @@ test("extractHiveContributorTiers filters out agents and preserves registration 
       trust_tier: "trusted",
       tasks_completed: 42,
       registered_at: "2026-08-01T00:00:00Z",
+      achievement_2: { local: 1, tiers: { solo: 3 } },
     },
     {
       github_username: "scanner",
@@ -600,6 +601,8 @@ test("extractHiveContributorTiers filters out agents and preserves registration 
   assert.deepEqual(tiers.veteran, {
     tier: "trusted",
     tasks: 42,
+    local: 1,
+    primaryModel: "local",
     registeredAt: "2026-08-01T00:00:00Z",
   });
 });

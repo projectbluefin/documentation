@@ -205,7 +205,7 @@ test("missing Hive task data is visible instead of zero", () => {
   assert.doesNotMatch(html, /0 Hive tasks/);
 });
 
-test("the standalone page renders the Recent Milestones leaderboard as a ledger of teamwork", () => {
+test("the standalone page renders the Moments of Triumph leaderboard as a ledger of teamwork", () => {
   const { LeaderboardsSection } = loadDashboard({
     hiveHistory: {
       entries: [],
@@ -261,7 +261,7 @@ test("the standalone page renders the Recent Milestones leaderboard as a ledger 
     registry: {},
   });
   const html = renderToStaticMarkup(React.createElement(LeaderboardsSection));
-  assert.match(html, /Recent Milestones/);
+  assert.match(html, /Moments of Triumph/);
   assert.match(html, /Ledger of teamwork/);
   assert.match(html, /Reached Trusted Tier/);
   assert.match(html, /Reached Builder Tier/);
@@ -276,7 +276,7 @@ test("the standalone page renders the Recent Milestones leaderboard as a ledger 
   );
 });
 
-test("Recent Milestones shows accumulating status when ledger has no events yet", () => {
+test("Moments of Triumph shows accumulating status when ledger has no events yet", () => {
   const { LeaderboardsSection } = loadDashboard({
     hiveHistory: {
       entries: [],
@@ -287,7 +287,7 @@ test("Recent Milestones shows accumulating status when ledger has no events yet"
     registry: {},
   });
   const html = renderToStaticMarkup(React.createElement(LeaderboardsSection));
-  assert.match(html, /Recent Milestones/);
+  assert.match(html, /Moments of Triumph/);
   assert.match(html, /Milestone ledger accumulating/);
 });
 
@@ -300,7 +300,7 @@ test("missing milestone data is visible instead of disappearing", () => {
   assert.match(html, /Milestone data unavailable/);
 });
 
-test("Recent Milestones renders an explicit error reason when refresh fails", () => {
+test("Moments of Triumph renders an explicit error reason when refresh fails", () => {
   const { LeaderboardsSection } = loadDashboard({
     hiveHistory: {
       entries: [],
@@ -312,6 +312,6 @@ test("Recent Milestones renders an explicit error reason when refresh fails", ()
     registry: {},
   });
   const html = renderToStaticMarkup(React.createElement(LeaderboardsSection));
-  assert.match(html, /Recent Milestones/);
+  assert.match(html, /Moments of Triumph/);
   assert.match(html, /Milestones unavailable: Hive leaderboard HTTP 503/);
 });

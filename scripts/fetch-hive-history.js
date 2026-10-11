@@ -210,9 +210,12 @@ function extractHiveContributorTiers(rows = []) {
   if (!Array.isArray(rows)) return nextTiers;
   for (const row of rows) {
     if (row && row.github_username && row.trust_tier !== "agent") {
+      const a2 = row.achievement_2 || {};
+      const localCount = Number(a2.local) || 0;
       nextTiers[row.github_username] = {
         tier: row.trust_tier || "newcomer",
         tasks: Number(row.tasks_completed) || 0,
+        ...(localCount > 0 ? { local: localCount, primaryModel: "local" } : {}),
         ...(row.registered_at ? { registeredAt: row.registered_at } : {}),
       };
     }
