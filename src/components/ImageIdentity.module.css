@@ -59,6 +59,56 @@
 .character img {
   filter: drop-shadow(0 1px 1px rgba(255, 255, 255, 0.75));
 }
+.screenshotFigure img {
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: var(--ifm-global-radius);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  object-fit: cover;
+  background: #000;
+}
+
+.headlessFigure {
+  display: flex;
+  align-items: stretch;
+}
+
+.headlessCard {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  height: 250px;
+  padding: 1.5rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: var(--ifm-global-radius);
+  background: var(--ifm-card-background-color, var(--ifm-color-emphasis-100));
+  box-sizing: border-box;
+}
+
+.headlessBadge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--ifm-global-radius);
+  background: var(--ifm-color-primary-lightest);
+  color: var(--ifm-color-primary-darkest);
+  margin-bottom: 0.75rem;
+}
+
+.headlessCard p {
+  font-size: 0.95rem;
+  color: var(--ifm-color-emphasis-800);
+  margin-bottom: 1rem;
+}
+
+.headlessLink {
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
 
 .artwork figcaption,
 .sources {
