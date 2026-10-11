@@ -195,10 +195,15 @@ smallest complete test stack for this class of component.
   the harness.
 - `renderToStaticMarkup` returns non-interactive HTML by design. It is the right
   tool here precisely because it has no hydration, no effects, and no DOM.
-- Dashboard and emblem components must not embed raw hex values in CSS or TSX.
-  `scripts/factory-theming.test.js` scans themed files and fails if raw hex
-  literals are introduced; use `--ifm-*` and `--fx-*` semantic tokens or
-  `color-mix()` so custom heraldry adapts cleanly between light and dark modes.
+- When stubbing CSS modules for components that assert class names in markup,
+  a bare object returns `undefined` for class lookups. Use a Proxy that
+  reflects the requested key name:
+  `const cssStub = new Proxy({}, { get: (_target, key) => key === "__esModule" ? true : typeof key === "string" ? key : undefined });`
+  and return `{ __esModule: true, default: cssStub }`.
+- Dashboard components under `src/components/` must not embed raw 6-digit hex
+  colors in CSS or TSX. `scripts/factory-theming.test.js` enforces this; new
+  accent colors belong in `src/components/factory/tokens.css` as `hsl()` tokens
+  and should be consumed via `var(--fx-*)` and `color-mix()`.
 
 ## Sources
 
