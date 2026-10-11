@@ -2112,8 +2112,7 @@
 }
 
 .leaderboards .lbNewcomer,
-.leaderboards .hiveTaskCard,
-.leaderboards .milestoneCard {
+.leaderboards .hiveTaskCard {
   background: var(--ifm-card-background-color);
   border-color: var(--ifm-color-emphasis-200);
   border-radius: var(--ifm-global-radius);
@@ -2125,8 +2124,7 @@
 }
 
 .leaderboards .lbNewcomer:hover,
-.leaderboards .hiveTaskCard:hover,
-.leaderboards .milestoneCard:hover {
+.leaderboards .hiveTaskCard:hover {
   background-color: var(--ifm-color-emphasis-100);
   border-color: var(--ifm-color-primary);
   color: var(--ifm-font-color-base);
@@ -2562,104 +2560,445 @@
   font-size: 0.7rem;
 }
 
-.milestonesGrid {
-  display: flex;
-  gap: 0.85rem;
-  margin-top: 1rem;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  padding-bottom: 0.5rem;
-  scrollbar-width: thin;
+.triumphTimelinePage {
+  position: relative;
+  margin-top: 1.25rem;
+  padding-left: 2.35rem;
 }
 
-.milestoneCard {
-  flex: 0 0 280px;
-  scroll-snap-align: start;
-  display: flex;
-  align-items: flex-start;
+.triumphRail {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 1.9rem;
+  pointer-events: none;
+}
+
+.triumphRail::before {
+  content: "";
+  position: absolute;
+  left: 0.8rem;
+  top: 1.05rem;
+  bottom: 1.05rem;
+  width: 6px;
+  border-radius: 999px;
+  background: linear-gradient(
+    to bottom,
+    var(--fx-cat-1, var(--ifm-color-primary)) 0%,
+    var(--ifm-color-primary-dark) 20%,
+    var(--ifm-color-primary) 40%,
+    color-mix(in srgb, var(--fx-accent) 70%, var(--ifm-color-primary)) 65%,
+    color-mix(in srgb, var(--fx-accent) 30%, transparent) 85%,
+    transparent 100%
+  );
+  box-shadow: 0 0 12px 2px
+    color-mix(in srgb, var(--ifm-color-primary) 40%, transparent);
+}
+
+.triumphNow,
+.triumphPast {
+  position: absolute;
+  left: 0;
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.triumphNow {
+  top: 0;
+}
+
+.triumphPast {
+  bottom: 0;
+}
+
+.triumphColumns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-flow: dense;
   gap: 0.85rem;
-  padding: 0.9rem 1rem;
-  background: var(--fx-surface);
-  border: 1px solid var(--fx-border);
+  outline: none;
+}
+
+.triumphEmblem {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  min-height: 84px;
+  aspect-ratio: 4.8 / 1;
+  background: linear-gradient(
+    90deg,
+    color-mix(
+        in srgb,
+        var(--emblem-accent, var(--fx-accent)) 22%,
+        var(--ifm-card-background-color)
+      )
+      0%,
+    color-mix(
+        in srgb,
+        var(--emblem-accent, var(--fx-accent)) 10%,
+        var(--ifm-card-background-color)
+      )
+      24%,
+    var(--ifm-card-background-color) 58%,
+    color-mix(
+        in srgb,
+        var(--emblem-accent, var(--fx-accent)) 4%,
+        var(--ifm-card-background-color)
+      )
+      100%
+  );
+  border: 1px solid
+    color-mix(
+      in srgb,
+      var(--emblem-accent, var(--fx-accent)) 45%,
+      var(--ifm-color-emphasis-200)
+    );
+  border-left: 5px solid var(--emblem-accent, var(--fx-accent));
   border-radius: 8px;
-  color: var(--fx-text);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  color: var(--ifm-font-color-base);
   text-decoration: none;
+  overflow: hidden;
   transition:
-    border-color 0.15s ease,
-    background 0.15s ease;
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    border-color 0.18s ease;
 }
 
-.milestoneCard:hover {
-  border-color: var(--fx-accent);
-  background: var(--fx-surface-2);
+.triumphEmblem::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.02) 0px,
+    rgba(255, 255, 255, 0.02) 2px,
+    transparent 2px,
+    transparent 8px
+  );
+  opacity: 0.6;
+}
+
+.triumphEmblem:hover {
+  transform: translateY(-2px);
+  border-color: var(--emblem-accent, var(--ifm-color-primary));
+  box-shadow:
+    0 6px 18px
+      color-mix(
+        in srgb,
+        var(--emblem-accent, var(--ifm-color-primary)) 28%,
+        transparent
+      ),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  color: var(--ifm-font-color-base);
   text-decoration: none;
-  color: var(--fx-text);
 }
 
-.milestoneAvatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+:global([data-theme="dark"]) .triumphEmblem {
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--emblem-accent, var(--fx-accent)) 30%, var(--fx-surface)) 0%,
+    color-mix(in srgb, var(--emblem-accent, var(--fx-accent)) 14%, var(--fx-surface)) 28%,
+    var(--fx-surface) 60%,
+    var(--fx-bg) 100%
+  );
+  border-color: color-mix(
+    in srgb,
+    var(--emblem-accent, var(--fx-accent)) 50%,
+    rgba(255, 255, 255, 0.1)
+  );
+  border-left: 5px solid var(--emblem-accent, var(--fx-accent));
+  box-shadow:
+    0 3px 12px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+:global([data-theme="dark"]) .triumphEmblem:hover {
+  box-shadow:
+    0 8px 24px
+      color-mix(
+        in srgb,
+        var(--emblem-accent, var(--fx-accent)) 35%,
+        transparent
+      ),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.emblemIconSlot {
+  position: relative;
+  width: 78px;
   flex-shrink: 0;
-  border: 1px solid var(--fx-surface-3);
-}
-
-.milestoneContent {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-  min-width: 0;
-  flex: 1;
-}
-
-.milestoneTop {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
+  justify-content: center;
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--emblem-accent, var(--fx-accent)) 35%, transparent)
+      0%,
+    rgba(0, 0, 0, 0.3) 100%
+  );
+  border-right: 1px solid
+    color-mix(
+      in srgb,
+      var(--emblem-accent, var(--fx-accent)) 35%,
+      var(--ifm-color-emphasis-200)
+    );
 }
 
-.milestoneUser {
-  font-weight: 700;
-  color: var(--fx-accent);
-  font-size: 0.95rem;
+.emblemAvatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 6px;
+  object-fit: cover;
+  border: 2px solid var(--emblem-accent, var(--ifm-color-primary));
+  box-shadow: 0 0 10px
+    color-mix(
+      in srgb,
+      var(--emblem-accent, var(--ifm-color-primary)) 45%,
+      transparent
+    );
+}
+
+.emblemCrestGlyph {
+  position: absolute;
+  bottom: 6px;
+  right: 8px;
+  font-size: 0.72rem;
+  color: var(--emblem-accent, var(--ifm-color-primary));
+  text-shadow: 0 0 6px var(--emblem-accent, var(--ifm-color-primary));
+}
+
+.emblemBody {
+  flex: 1;
+  min-width: 0;
+  padding: 0.65rem 0.9rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.25rem;
+  z-index: 1;
+}
+
+.emblemHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.6rem;
+}
+
+.emblemLogin {
+  font-size: 0.98rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ifm-heading-color);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.milestoneBadge {
-  font-size: 0.65rem;
-  padding: 0.1rem 0.45rem;
-  border: 1px solid;
-  border-radius: 20px;
-  font-family: var(--ifm-font-family-monospace);
-  font-weight: 700;
-  letter-spacing: 0.04em;
+.emblemBadge {
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
+  padding: 0.15rem 0.5rem;
+  border: 1px solid;
+  border-radius: 999px;
+  background: color-mix(
+    in srgb,
+    var(--emblem-accent, currentColor) 12%,
+    transparent
+  );
   white-space: nowrap;
 }
 
-.milestoneTitle {
-  font-size: 0.88rem;
-  font-weight: 600;
-  color: var(--fx-text);
+.emblemBadgePlatinum {
+  border-color: var(--ifm-color-emphasis-500);
+  color: var(--ifm-font-color-base);
+  background: color-mix(in srgb, var(--ifm-color-emphasis-500) 12%, transparent);
+}
+
+:global([data-theme="dark"]) .emblemBadgePlatinum {
+  border-color: var(--ifm-color-emphasis-400);
+  color: var(--ifm-color-emphasis-900);
+  background: color-mix(in srgb, var(--ifm-color-emphasis-400) 16%, transparent);
+}
+
+.emblemTags {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.emblemModelTag {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.12rem 0.45rem;
+  border-radius: 4px;
+  background: var(--ifm-color-emphasis-200);
+  color: var(--ifm-color-emphasis-800);
+  border: 1px solid var(--ifm-color-emphasis-300);
+  white-space: nowrap;
+}
+
+.emblemModelLocal {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--fx-accent) 15%, transparent),
+    color-mix(in srgb, var(--fx-surface-2) 30%, transparent)
+  );
+  color: var(--ifm-font-color-base);
+  border-color: var(--ifm-color-emphasis-400);
+  box-shadow: 0 0 6px color-mix(in srgb, var(--fx-accent) 25%, transparent);
+}
+
+:global([data-theme="dark"]) .emblemModelLocal {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--fx-accent) 20%, transparent),
+    color-mix(in srgb, var(--fx-surface-3) 25%, transparent)
+  );
+  color: var(--ifm-heading-color);
+  border-color: var(--ifm-color-emphasis-500);
+}
+
+.triumphPlatinum {
+  border-color: var(--ifm-color-emphasis-400) !important;
+  border-left: 6px solid var(--ifm-color-emphasis-200) !important;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--ifm-color-emphasis-200) 40%, var(--ifm-card-background-color)) 0%,
+    color-mix(in srgb, var(--ifm-color-emphasis-100) 25%, var(--ifm-card-background-color)) 28%,
+    var(--ifm-card-background-color) 62%,
+    color-mix(in srgb, var(--ifm-color-emphasis-100) 15%, var(--ifm-card-background-color)) 100%
+  ) !important;
+  box-shadow:
+    0 4px 14px color-mix(in srgb, var(--ifm-color-emphasis-400) 30%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
+}
+
+.triumphPlatinum .emblemIconSlot {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--ifm-color-emphasis-200) 50%, transparent) 0%,
+    color-mix(in srgb, var(--ifm-color-emphasis-400) 40%, transparent) 100%
+  ) !important;
+  border-right-color: var(--ifm-color-emphasis-400) !important;
+}
+
+.triumphPlatinum .emblemAvatar {
+  border-color: var(--ifm-color-emphasis-200) !important;
+  box-shadow: 0 0 12px color-mix(in srgb, var(--ifm-color-emphasis-300) 70%, transparent) !important;
+}
+
+.triumphPlatinum .emblemCrestGlyph {
+  color: var(--ifm-heading-color) !important;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.9) !important;
+}
+
+:global([data-theme="dark"]) .triumphPlatinum {
+  border-color: var(--ifm-color-emphasis-400) !important;
+  border-left: 6px solid var(--ifm-color-emphasis-100) !important;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--ifm-color-emphasis-300) 22%, var(--fx-surface)) 0%,
+    color-mix(in srgb, var(--ifm-color-emphasis-200) 12%, var(--fx-surface)) 28%,
+    var(--fx-surface) 62%,
+    var(--fx-bg) 100%
+  ) !important;
+  box-shadow:
+    0 4px 18px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
+}
+
+:global([data-theme="dark"]) .triumphPlatinum .emblemIconSlot {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--ifm-color-emphasis-400) 30%, transparent) 0%,
+    rgba(0, 0, 0, 0.75) 100%
+  ) !important;
+  border-right-color: var(--ifm-color-emphasis-400) !important;
+}
+.emblemAchievement {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.emblemTitle {
+  font-size: 0.84rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--emblem-accent, var(--ifm-color-primary));
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.emblemDetail {
+  font-size: 0.74rem;
+  color: var(--ifm-color-emphasis-700);
   line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.milestoneDetail {
-  font-size: 0.78rem;
-  color: var(--fx-text-muted);
-  line-height: 1.35;
+.emblemInsignia {
+  position: absolute;
+  right: 0.75rem;
+  bottom: -0.3rem;
+  pointer-events: none;
+  user-select: none;
 }
 
-.milestoneDate {
-  font-size: 0.72rem;
-  color: var(--fx-text-faint);
-  font-family: var(--ifm-font-family-monospace);
-  margin-top: 0.2rem;
+.emblemWatermarkGlyph {
+  font-size: 3.2rem;
+  line-height: 1;
+  color: var(--emblem-accent, var(--ifm-color-primary));
+  opacity: 0.08;
 }
 
+@media (max-width: 996px) {
+  .triumphColumns {
+    grid-template-columns: 1fr;
+  }
+  .triumphEmblem {
+    aspect-ratio: auto;
+    min-height: 76px;
+  }
+}
+
+@media (max-width: 600px) {
+  .triumphTimelinePage {
+    padding-left: 1.75rem;
+  }
+  .triumphRail {
+    width: 1.4rem;
+  }
+  .triumphRail::before {
+    left: 0.55rem;
+    width: 5px;
+  }
+  .emblemIconSlot {
+    width: 66px;
+  }
+  .emblemAvatar {
+    width: 44px;
+    height: 44px;
+  }
+}
 .lbNewcomers {
   margin: 1rem 0;
   padding: 0.9rem;
