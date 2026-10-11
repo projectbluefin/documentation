@@ -5,7 +5,7 @@ import CodeBlock from "@theme/CodeBlock";
 import DownloadCard, { type DownloadEntry } from "./DownloadCard";
 import imageReleasesData from "@site/static/data/image-releases.json";
 import sbomData from "@site/static/data/sbom-attestations.json";
-import driverVersionsData from "@site/static/data/driver-versions.json";
+import identities from "./image-identities.json";
 import styles from "./ImageProductSection.module.css";
 import catalogStyles from "./DriverVersionsCatalog.module.css";
 
@@ -240,9 +240,10 @@ export function ProductDownloadsAndVersions({
 }): React.JSX.Element {
   const data = releasesFile.products[product] as ProductReleaseData | undefined;
   const downloads = data?.downloads ?? [];
-  const releases = data?.releases ?? [];
-  const latestRelease = releases[0] ?? null;
-  const prevRelease = releases[1] ?? null;
+  // ISO rows carry no component versions; compare image releases only.
+  const imageReleases = (data?.releases ?? []).filter((r) => r.versions);
+  const latestRelease = imageReleases[0] ?? null;
+  const prevRelease = imageReleases[1] ?? null;
 
   // Separate stable and testing downloads
   const stableDownloads = downloads.filter((d) => d.stream === "stable");
@@ -366,8 +367,8 @@ export function ProductReleaseAssets({
       ) : (
         <div className={styles.releasesTimeline}>
           {releases.map((release) => {
-            const isBootc =
-              release.source.kind === "image" && product !== "server";
+            const isIso = release.source.kind === "iso";
+            const isBootc = !isIso && Boolean(identities[product].image);
             const isDdi = product === "server";
 
             // Find matching SBOM entry if present
@@ -392,7 +393,11 @@ export function ProductReleaseAssets({
                       </strong>
                     </Link>
                     <span className={styles.releaseKindBadge}>
-                      {isDdi ? "DDI + UKI" : "bootc OCI"}
+                      {isDdi
+                        ? "DDI + UKI"
+                        : isIso
+                          ? "ISO installer"
+                          : "bootc OCI"}
                     </span>
                     {release.stream && (
                       <span className={styles.streamBadge}>
@@ -406,28 +411,30 @@ export function ProductReleaseAssets({
                 </header>
 
                 {/* Supply Chain / Attestation Verification */}
-                <div className={styles.supplyChainBox}>
-                  <strong>Supply chain &amp; attestation:</strong>
-                  {isDdi ? (
-                    <span>
-                      GPG-signed SHA256SUMS manifest &amp; in-toto SLSA / SPDX
-                      SBOM published with release.
-                    </span>
-                  ) : sbomEntry?.attestation?.verified ? (
-                    <span className={styles.verifiedText}>
-                      ✓ Provenance attestation verified (
-                      {sbomEntry.attestation.predicateType || "SLSA v1"}).
-                    </span>
-                  ) : sbomEntry?.attestation?.present ? (
-                    <span>
-                      Provenance attestation present in GHCR referrer.
-                    </span>
-                  ) : (
-                    <span>
-                      Container signed with cosign via GitHub Actions OIDC.
-                    </span>
-                  )}
-                </div>
+                {!isIso && (
+                  <div className={styles.supplyChainBox}>
+                    <strong>Supply chain &amp; attestation:</strong>
+                    {isDdi ? (
+                      <span>
+                        GPG-signed SHA256SUMS manifest &amp; in-toto SLSA / SPDX
+                        SBOM published with release.
+                      </span>
+                    ) : sbomEntry?.attestation?.verified ? (
+                      <span className={styles.verifiedText}>
+                        ✓ Provenance attestation verified (
+                        {sbomEntry.attestation.predicateType || "SLSA v1"}).
+                      </span>
+                    ) : sbomEntry?.attestation?.present ? (
+                      <span>
+                        Provenance attestation present in GHCR referrer.
+                      </span>
+                    ) : (
+                      <span>
+                        No attestation for this tag in the SBOM cache.
+                      </span>
+                    )}
+                  </div>
+                )}
 
                 {/* Switch or deployment instructions */}
                 {isBootc && (
@@ -436,7 +443,7 @@ export function ProductReleaseAssets({
                       Bootc container switch:
                     </span>
                     <CodeBlock language="bash">
-                      {`sudo bootc switch --enforce-container-sigpolicy ghcr.io/projectbluefin/${product === "classic" ? "bluefin" : product}:${release.stream ?? "stable"}`}
+                      {`sudo bootc switch --enforce-container-sigpolicy ${identities[product].image}:${release.stream ?? "stable"}`}
                     </CodeBlock>
                   </div>
                 )}

@@ -7,8 +7,10 @@
     "wikipedia": "https://en.wikipedia.org/wiki/Amargasaurus",
     "logoLight": "https://raw.githubusercontent.com/projectbluefin/artwork/main/assets/vector/logos/bluefin-server/bluefin-server-logo-light.svg",
     "logoDark": "https://raw.githubusercontent.com/projectbluefin/artwork/main/assets/vector/logos/bluefin-server/bluefin-server-logo-dark.svg",
+    "image": "",
+    "headless": true,
     "testsuiteScreenshot": "",
-    "testsuiteRun": "https://github.com/projectbluefin/server/actions/workflows/build.yml",
+    "testsuiteRun": "https://github.com/projectbluefin/server/actions/workflows/lima-e2e.yml",
     "images": [
       {
         "src": "/img/user-attachments/79ceae5e-f48b-4d87-aadd-c7f46294378e.png",
@@ -34,6 +36,8 @@
     "wikipedia": "https://en.wikipedia.org/wiki/Deinonychus",
     "logoLight": "https://raw.githubusercontent.com/projectbluefin/artwork/main/assets/vector/logos/bluefin-classic/main/bluefin-classic-logo-light.svg",
     "logoDark": "https://raw.githubusercontent.com/projectbluefin/artwork/main/assets/vector/logos/bluefin-classic/main/bluefin-classic-logo-dark.svg",
+    "image": "ghcr.io/ublue-os/bluefin",
+    "headless": false,
     "testsuiteScreenshot": "https://projectbluefin.github.io/testsuite/screenshots/bluefin-testing-smoke-latest.png",
     "testsuiteRun": "https://projectbluefin.github.io/testsuite/",
     "images": [
@@ -61,6 +65,8 @@
     "wikipedia": "https://en.wikipedia.org/wiki/Dakotaraptor",
     "logoLight": "",
     "logoDark": "",
+    "image": "ghcr.io/projectbluefin/dakota",
+    "headless": false,
     "testsuiteScreenshot": "https://projectbluefin.github.io/testsuite/screenshots/dakota-testing-smoke-latest.png",
     "testsuiteRun": "https://projectbluefin.github.io/testsuite/",
     "images": [
@@ -88,8 +94,10 @@
     "wikipedia": "https://en.wikipedia.org/wiki/Utahraptor",
     "logoLight": "",
     "logoDark": "",
-    "testsuiteRun": "https://github.com/projectbluefin/utah/actions",
+    "image": "ghcr.io/projectbluefin/utah",
+    "headless": false,
     "testsuiteScreenshot": "",
+    "testsuiteRun": "https://github.com/projectbluefin/utah/actions/workflows/post-testing-e2e.yml",
     "images": [
       {
         "src": "https://github.com/user-attachments/assets/962af585-6e2a-4038-ac14-8e54a3189420",
@@ -122,6 +130,8 @@
     "wikipedia": "https://en.wikipedia.org/wiki/Achillobator",
     "logoLight": "https://raw.githubusercontent.com/projectbluefin/artwork/main/assets/vector/logos/bluefin-lts/bluefin-lts-logo-light.svg",
     "logoDark": "https://raw.githubusercontent.com/projectbluefin/artwork/main/assets/vector/logos/bluefin-lts/bluefin-lts-logo-dark.svg",
+    "image": "ghcr.io/projectbluefin/bluefin-lts",
+    "headless": false,
     "testsuiteScreenshot": "https://projectbluefin.github.io/testsuite/screenshots/bluefin-lts-testing-smoke-latest.png",
     "testsuiteRun": "https://projectbluefin.github.io/testsuite/",
     "images": [

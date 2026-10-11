@@ -69,10 +69,18 @@ Do not set `hide_title: true`; `scripts/fetch-readmes.mjs` strips any leading
 Docusaurus emits exactly one page title.
 
 `scripts/fetch-readmes.mjs` rewrites parsed links/images, not code examples.
-Add another source to its `readmes` list to reuse it for another image.
-The `prestart`, `prebuild`, and `prebuild:ci` npm hooks refresh each build
-checkout, including CI shards; the separate data job cannot transfer files
-outside its static JSON artifact. A failed fetch preserves the committed seed.
+It reads its source list from `src/components/image-identities.json`.
+The `prestart`, `prebuild`, and `prebuild:ci` npm hooks refresh README seeds in
+each build checkout, including CI shards; a failed fetch preserves the
+committed seed. Set `custom_edit_url` to the upstream README on pages whose
+prose is that README; otherwise the global `editUrl` opens an imports-only MDX
+file.
+
+`static/data/image-releases.json` is different: it is gitignored with no seed.
+`fetch-image-releases` runs once in `fetch-data:independent` (authenticated)
+and reaches build shards through the `site-data` artifact, before `Typecheck`.
+Never generate it from a `pre*` hook: `Typecheck` runs before `build:ci`, and
+shards lack `GITHUB_TOKEN`, so each would hit the anonymous API rate limit.
 
 ### Composite Image Pages (5-Section Template)
 
@@ -80,7 +88,12 @@ Product image pages (`/server`, `/classic`, `/dakota`, `/utah`, `/lts`) follow
 a unified 5-part composition:
 
 1. `<ImageIdentity product="..." />`: Template owns species identity, Wikipedia
-   silhouettes, and theme-adaptive artwork.
+   silhouettes, theme-adaptive artwork, and QA evidence. Per product,
+   `image-identities.json` holds `image` (bootc ref, `""` when none),
+   `headless`, `testsuiteScreenshot` (`""` when testsuite publishes no
+   `-latest` capture), and `testsuiteRun`. Keep every key on every product:
+   `ImageProduct` is a union of the entries, so a missing key fails typecheck.
+   Caption captures as what they are; no pass/fail claim without status data.
 2. Upstream README import (`src/content/*-readme.md`): Stripped of duplicate
    identity headers and leading `# Title` by `scripts/fetch-readmes.mjs`.
 3. `## Downloads & Image Versions`: `<ProductDownloadsAndVersions />` displays

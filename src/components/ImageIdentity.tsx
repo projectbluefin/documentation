@@ -58,27 +58,22 @@ export default function ImageIdentity({ product }: { product: ImageProduct }) {
             <a href={identity.testsuiteScreenshot}>
               <img
                 src={identity.testsuiteScreenshot}
-                alt={`${identity.name} testsuite verification capture`}
+                alt={`${identity.name} desktop captured by the latest testsuite smoke run`}
                 loading="lazy"
                 decoding="async"
               />
             </a>
             <figcaption>
-              <a href={identity.testsuiteRun ?? "https://projectbluefin.github.io/testsuite/"}>
-                QA Verified · Testsuite boot capture
-              </a>
+              <a href={identity.testsuiteRun}>Latest testsuite smoke capture</a>
             </figcaption>
           </figure>
-        ) : identity.testsuiteRun ? (
+        ) : identity.headless ? (
           <figure className={styles.headlessFigure}>
             <div className={styles.headlessCard}>
-              <span className={styles.headlessBadge}>Headless Server OS</span>
-              <p>Continuous validation via containerized boot &amp; system tests</p>
-              <a
-                href={identity.testsuiteRun}
-                className={styles.headlessLink}
-              >
-                View automated build tests ↗
+              <span className={styles.headlessBadge}>Headless image</span>
+              <p>No desktop to capture. Install and boot run in Lima e2e.</p>
+              <a href={identity.testsuiteRun} className={styles.headlessLink}>
+                Lima e2e installer and boot verification ↗
               </a>
             </div>
           </figure>
