@@ -352,8 +352,8 @@ test("Moments of Triumph highlights local contributors in gold with local label"
   assert.match(html, /Local/, "local contributor must display Local model tag");
   assert.match(
     html,
-    /triumphGold/,
-    "local contributor card must be distinguished in gold",
+    /triumphPlatinum/,
+    "local contributor card must be distinguished in platinum",
   );
 });
 test("Moments of Triumph shows accumulating status when ledger has no events yet", () => {
