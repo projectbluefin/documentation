@@ -34,9 +34,16 @@ function loadDashboard(datasets = {}) {
     },
   );
   const mod = { exports: {} };
+  const cssStub = new Proxy(
+    {},
+    {
+      get: (_target, key) =>
+        key === "__esModule" ? true : typeof key === "string" ? key : undefined,
+    },
+  );
   new Function("require", "module", "exports", outputText)(
     (id) => {
-      if (id.endsWith(".css")) return {};
+      if (id.endsWith(".css")) return { __esModule: true, default: cssStub };
       if (id.includes("FactoryDataContext")) {
         return {
           useDataset: (key) => ({
@@ -274,8 +281,81 @@ test("the standalone page renders the Moments of Triumph leaderboard as a ledger
     html,
     /href="https:\/\/hosted-projectbluefin-common-nmq5\.hive\.hivecommons\.dev\/contribute\/dossier\/champion"/,
   );
+  assert.match(
+    html,
+    /Season of A Coruña · Week 1/,
+    "events must be grouped under horizontal timeline week separators",
+  );
+  assert.match(
+    html,
+    /id="community-builders"/,
+    "Community Builders section must have an anchor id",
+  );
+  assert.match(
+    html,
+    /id="moments-of-triumph"/,
+    "Moments of Triumph section must have an anchor id",
+  );
+  assert.match(
+    html,
+    /id="factory-community"/,
+    "Factory Community section must have an anchor id",
+  );
 });
 
+test("Moments of Triumph highlights local contributors in gold with local label", () => {
+  const { LeaderboardsSection } = loadDashboard({
+    hiveHistory: {
+      entries: [],
+      contributors: { localhero: 50 },
+      contributorsByRepo: { common: { localhero: 50 } },
+      hiveContributorTiers: {
+        localhero: {
+          tier: "trusted",
+          tasks: 20,
+          local: 1,
+          primaryModel: "local",
+        },
+      },
+      milestones: [
+        {
+          id: "task-localhero-10-2026-09-20",
+          login: "localhero",
+          type: "task_landmark",
+          value: 10,
+          title: "10 tasks shipped",
+          detail: "Completed 10 tasks via Hive registry",
+          detectedAt: "2026-09-20T12:00:00Z",
+          badge: {
+            label: "10 TASKS",
+            color: "var(--fx-cat-2)",
+          },
+        },
+      ],
+      season: {
+        version: 51,
+        name: "A Coruña",
+        start: "2026-09-16T00:00:00.000Z",
+        source: "https://release.gnome.org/51/",
+        updatedAt: "2026-09-22T00:00:00Z",
+        repos: ["common"],
+        byLogin: {},
+        weekStarts: [],
+        weeklyCommits: [],
+        totalCommits: 1,
+        breadthUnlocks: [],
+      },
+    },
+    registry: {},
+  });
+  const html = renderToStaticMarkup(React.createElement(LeaderboardsSection));
+  assert.match(html, /Local/, "local contributor must display Local model tag");
+  assert.match(
+    html,
+    /triumphGold/,
+    "local contributor card must be distinguished in gold",
+  );
+});
 test("Moments of Triumph shows accumulating status when ledger has no events yet", () => {
   const { LeaderboardsSection } = loadDashboard({
     hiveHistory: {

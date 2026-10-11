@@ -2525,13 +2525,32 @@
   color: var(--fx-text);
   text-decoration: none;
 }
-
 .hiveTaskCard:hover {
   border-color: var(--fx-accent);
   color: var(--fx-text);
   text-decoration: none;
 }
+.lbCardGold {
+  border-color: color-mix(in srgb, var(--fx-gold) 60%, transparent) !important;
+  border-left: 4px solid var(--fx-gold) !important;
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--fx-gold) 12%, transparent) 0%,
+    var(--ifm-card-background-color) 100%
+  ) !important;
+  box-shadow: 0 2px 10px color-mix(in srgb, var(--fx-gold) 18%, transparent) !important;
+}
 
+:global([data-theme="dark"]) .lbCardGold {
+  border-color: color-mix(in srgb, var(--fx-gold) 55%, transparent) !important;
+  border-left: 4px solid var(--fx-gold) !important;
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--fx-gold) 16%, transparent) 0%,
+    var(--fx-surface) 100%
+  ) !important;
+  box-shadow: 0 2px 12px color-mix(in srgb, var(--fx-gold) 22%, transparent) !important;
+}
 .hiveTaskCard:focus-visible {
   outline: 2px solid var(--fx-accent);
   outline-offset: 2px;
@@ -2615,12 +2634,63 @@
   bottom: 0;
 }
 
+.triumphFeed {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  outline: none;
+}
+
+.triumphWeekBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
 .triumphColumns {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  grid-auto-flow: dense;
   gap: 0.85rem;
   outline: none;
+}
+
+.triumphWeekSeparator {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin: 0.25rem 0 0.15rem;
+}
+
+.triumphWeekLine {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--fx-accent) 40%, var(--ifm-color-emphasis-300)) 0%,
+    var(--ifm-color-emphasis-200) 100%
+  );
+}
+
+.triumphWeekLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ifm-color-emphasis-700);
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  background: var(--ifm-card-background-color);
+  border: 1px solid var(--ifm-color-emphasis-300);
+  white-space: nowrap;
+}
+
+:global([data-theme="dark"]) .triumphWeekLabel {
+  background: var(--fx-surface);
+  color: var(--ifm-color-emphasis-400);
+  border-color: var(--ifm-color-emphasis-400);
 }
 
 .triumphEmblem {
@@ -2704,8 +2774,18 @@
 :global([data-theme="dark"]) .triumphEmblem {
   background: linear-gradient(
     90deg,
-    color-mix(in srgb, var(--emblem-accent, var(--fx-accent)) 30%, var(--fx-surface)) 0%,
-    color-mix(in srgb, var(--emblem-accent, var(--fx-accent)) 14%, var(--fx-surface)) 28%,
+    color-mix(
+        in srgb,
+        var(--emblem-accent, var(--fx-accent)) 30%,
+        var(--fx-surface)
+      )
+      0%,
+    color-mix(
+        in srgb,
+        var(--emblem-accent, var(--fx-accent)) 14%,
+        var(--fx-surface)
+      )
+      28%,
     var(--fx-surface) 60%,
     var(--fx-bg) 100%
   );
@@ -2819,19 +2899,17 @@
   );
   white-space: nowrap;
 }
-
-.emblemBadgePlatinum {
-  border-color: var(--ifm-color-emphasis-500);
-  color: var(--ifm-font-color-base);
-  background: color-mix(in srgb, var(--ifm-color-emphasis-500) 12%, transparent);
+.emblemBadgeGold {
+  border-color: color-mix(in srgb, var(--fx-gold) 70%, transparent);
+  color: var(--fx-gold-text);
+  background: color-mix(in srgb, var(--fx-gold) 15%, transparent);
 }
 
-:global([data-theme="dark"]) .emblemBadgePlatinum {
-  border-color: var(--ifm-color-emphasis-400);
-  color: var(--ifm-color-emphasis-900);
-  background: color-mix(in srgb, var(--ifm-color-emphasis-400) 16%, transparent);
+:global([data-theme="dark"]) .emblemBadgeGold {
+  border-color: color-mix(in srgb, var(--fx-gold) 70%, transparent);
+  color: var(--fx-gold-text);
+  background: color-mix(in srgb, var(--fx-gold) 20%, transparent);
 }
-
 .emblemTags {
   display: flex;
   align-items: center;
@@ -2854,81 +2932,97 @@
 .emblemModelLocal {
   background: linear-gradient(
     135deg,
-    color-mix(in srgb, var(--fx-accent) 15%, transparent),
-    color-mix(in srgb, var(--fx-surface-2) 30%, transparent)
+    color-mix(in srgb, var(--fx-gold) 22%, transparent) 0%,
+    color-mix(in srgb, var(--fx-gold) 12%, transparent) 100%
   );
-  color: var(--ifm-font-color-base);
-  border-color: var(--ifm-color-emphasis-400);
-  box-shadow: 0 0 6px color-mix(in srgb, var(--fx-accent) 25%, transparent);
+  color: var(--fx-gold-text);
+  border-color: color-mix(in srgb, var(--fx-gold) 55%, transparent);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--fx-gold) 30%, transparent);
 }
 
 :global([data-theme="dark"]) .emblemModelLocal {
   background: linear-gradient(
     135deg,
-    color-mix(in srgb, var(--fx-accent) 20%, transparent),
-    color-mix(in srgb, var(--fx-surface-3) 25%, transparent)
+    color-mix(in srgb, var(--fx-gold) 30%, transparent) 0%,
+    color-mix(in srgb, var(--fx-gold) 20%, transparent) 100%
   );
-  color: var(--ifm-heading-color);
-  border-color: var(--ifm-color-emphasis-500);
+  color: var(--fx-gold-text);
+  border-color: color-mix(in srgb, var(--fx-gold) 65%, transparent);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--fx-gold) 35%, transparent);
 }
 
-.triumphPlatinum {
-  border-color: var(--ifm-color-emphasis-400) !important;
-  border-left: 6px solid var(--ifm-color-emphasis-200) !important;
+.triumphGold {
+  border-color: color-mix(in srgb, var(--fx-gold) 60%, transparent) !important;
+  border-left: 6px solid var(--fx-gold) !important;
   background: linear-gradient(
     90deg,
-    color-mix(in srgb, var(--ifm-color-emphasis-200) 40%, var(--ifm-card-background-color)) 0%,
-    color-mix(in srgb, var(--ifm-color-emphasis-100) 25%, var(--ifm-card-background-color)) 28%,
+    color-mix(in srgb, var(--fx-gold) 22%, transparent) 0%,
+    color-mix(in srgb, var(--fx-gold) 10%, transparent) 28%,
     var(--ifm-card-background-color) 62%,
-    color-mix(in srgb, var(--ifm-color-emphasis-100) 15%, var(--ifm-card-background-color)) 100%
+    color-mix(in srgb, var(--fx-gold) 5%, transparent) 100%
   ) !important;
   box-shadow:
-    0 4px 14px color-mix(in srgb, var(--ifm-color-emphasis-400) 30%, transparent),
+    0 4px 16px color-mix(in srgb, var(--fx-gold) 20%, transparent),
     inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
 }
 
-.triumphPlatinum .emblemIconSlot {
+.triumphGold .emblemIconSlot {
   background: linear-gradient(
     135deg,
-    color-mix(in srgb, var(--ifm-color-emphasis-200) 50%, transparent) 0%,
-    color-mix(in srgb, var(--ifm-color-emphasis-400) 40%, transparent) 100%
+    color-mix(in srgb, var(--fx-gold) 35%, transparent) 0%,
+    color-mix(in srgb, var(--fx-gold) 20%, transparent) 100%
   ) !important;
-  border-right-color: var(--ifm-color-emphasis-400) !important;
+  border-right-color: color-mix(
+    in srgb,
+    var(--fx-gold) 40%,
+    transparent
+  ) !important;
 }
 
-.triumphPlatinum .emblemAvatar {
-  border-color: var(--ifm-color-emphasis-200) !important;
-  box-shadow: 0 0 12px color-mix(in srgb, var(--ifm-color-emphasis-300) 70%, transparent) !important;
+.triumphGold .emblemAvatar {
+  border-color: var(--fx-gold) !important;
+  box-shadow: 0 0 12px color-mix(in srgb, var(--fx-gold) 45%, transparent) !important;
 }
 
-.triumphPlatinum .emblemCrestGlyph {
-  color: var(--ifm-heading-color) !important;
-  text-shadow: 0 0 8px rgba(255, 255, 255, 0.9) !important;
+.triumphGold .emblemCrestGlyph {
+  color: var(--fx-gold-text) !important;
+  text-shadow: 0 0 8px color-mix(in srgb, var(--fx-gold) 60%, transparent) !important;
 }
 
-:global([data-theme="dark"]) .triumphPlatinum {
-  border-color: var(--ifm-color-emphasis-400) !important;
-  border-left: 6px solid var(--ifm-color-emphasis-100) !important;
+:global([data-theme="dark"]) .triumphGold {
+  border-color: color-mix(in srgb, var(--fx-gold) 55%, transparent) !important;
+  border-left: 6px solid var(--fx-gold) !important;
   background: linear-gradient(
     90deg,
-    color-mix(in srgb, var(--ifm-color-emphasis-300) 22%, var(--fx-surface)) 0%,
-    color-mix(in srgb, var(--ifm-color-emphasis-200) 12%, var(--fx-surface)) 28%,
+    color-mix(in srgb, var(--fx-gold) 20%, transparent) 0%,
+    color-mix(in srgb, var(--fx-gold) 8%, transparent) 28%,
     var(--fx-surface) 62%,
     var(--fx-bg) 100%
   ) !important;
   box-shadow:
-    0 4px 18px rgba(0, 0, 0, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
+    0 4px 18px rgba(0, 0, 0, 0.4),
+    0 0 16px color-mix(in srgb, var(--fx-gold) 15%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
 }
 
-:global([data-theme="dark"]) .triumphPlatinum .emblemIconSlot {
+:global([data-theme="dark"]) .triumphGold .emblemIconSlot {
   background: linear-gradient(
     135deg,
-    color-mix(in srgb, var(--ifm-color-emphasis-400) 30%, transparent) 0%,
+    color-mix(in srgb, var(--fx-gold) 25%, transparent) 0%,
     rgba(0, 0, 0, 0.75) 100%
   ) !important;
-  border-right-color: var(--ifm-color-emphasis-400) !important;
+  border-right-color: color-mix(
+    in srgb,
+    var(--fx-gold) 40%,
+    transparent
+  ) !important;
 }
+
+:global([data-theme="dark"]) .triumphGold .emblemCrestGlyph {
+  color: var(--fx-gold-text) !important;
+  text-shadow: 0 0 10px color-mix(in srgb, var(--fx-gold) 80%, transparent) !important;
+}
+
 .emblemAchievement {
   display: flex;
   flex-direction: column;
