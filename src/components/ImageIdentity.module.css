@@ -1,0 +1,123 @@
+.identity {
+  margin-bottom: 2rem;
+}
+
+.wordmark {
+  display: inline-block;
+  max-width: 100%;
+}
+
+.wordmark img {
+  width: 400px;
+  max-width: 100%;
+  height: auto;
+}
+
+.logoDark {
+  display: none;
+}
+
+:global([data-theme="dark"]) .logoLight {
+  display: none;
+}
+
+:global([data-theme="dark"]) .logoDark {
+  display: block;
+}
+
+.species {
+  margin-top: 0.75rem;
+}
+
+.artwork {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: start;
+  gap: 1.5rem;
+}
+
+.artwork figure {
+  flex: 1 1 260px;
+  min-width: 0;
+  margin: 0;
+}
+
+.artwork img {
+  display: block;
+  width: 100%;
+  height: 250px;
+  object-fit: contain;
+}
+
+.diagram img {
+  background: #fff;
+  padding: 0.5rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: var(--ifm-global-radius);
+}
+
+.character img {
+  filter: drop-shadow(0 1px 1px rgba(255, 255, 255, 0.75));
+}
+
+/* Captures are wide (up to 3.2:1); a 260px tile would shrink them to a sliver. */
+.artwork .screenshotFigure {
+  flex-basis: 100%;
+}
+
+.artwork .screenshotFigure img {
+  height: auto;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: var(--ifm-global-radius);
+}
+
+.headlessFigure {
+  display: flex;
+  align-items: stretch;
+}
+
+.headlessCard {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  padding: 1.5rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: var(--ifm-global-radius);
+  background: var(--ifm-card-background-color, var(--ifm-color-emphasis-100));
+  box-sizing: border-box;
+}
+
+.headlessBadge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--ifm-global-radius);
+  background: var(--ifm-color-primary-lightest);
+  color: var(--ifm-color-primary-darkest);
+  margin-bottom: 0.75rem;
+}
+
+.headlessCard p {
+  font-size: 0.95rem;
+  color: var(--ifm-color-emphasis-800);
+  margin-bottom: 1rem;
+}
+
+.headlessLink {
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.artwork figcaption,
+.sources {
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+}
+
+.sources {
+  margin-bottom: 0;
+}

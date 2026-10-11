@@ -18,7 +18,7 @@ const sidebars: SidebarsConfig = {
         type: "doc",
         id: "images",
       },
-      items: ["dakota", "server", "classic", "utah"],
+      items: ["dakota", "server", "classic", "utah", "lts"],
     },
     {
       type: "category",

@@ -1,12 +1,18 @@
 ---
 title: Bluefin Classic
 slug: /classic
+custom_edit_url: https://github.com/ublue-os/bluefin/edit/main/README.md
 ---
 
-import DownloadSection from "@site/src/components/DownloadSection";
+import ImageIdentity from "@site/src/components/ImageIdentity";
+import ClassicReadme from "@site/src/content/classic-readme.md";
+import {
+  ProductDownloadsAndVersions,
+  ProductReleaseAssets,
+} from "@site/src/components/ImageProductSection";
+import { PerImageUsage } from "@site/src/components/analytics/CountmeAnalyticsCharts";
 
-Bluefin Classic is the old traditional "Bluefin" built on Fedora Silverblue. It is maintained but is not receiving major feature updates. 
-
+<ImageIdentity product="classic" />
 
 :::warning
 
@@ -14,4 +20,16 @@ The ISOs are out of date and will be updated end-of-October
 
 :::
 
-<DownloadSection />
+<ClassicReadme />
+
+## Downloads & Image Versions
+
+<ProductDownloadsAndVersions product="classic" hideHeading />
+
+## Usage
+
+<PerImageUsage family="classic" hideHeading />
+
+## Release Assets & Attestations
+
+<ProductReleaseAssets product="classic" hideHeading />

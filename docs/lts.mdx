@@ -1,0 +1,29 @@
+---
+title: Bluefin LTS
+description: Long-term support Bluefin workstation image built on CentOS Stream 10.
+slug: /lts
+custom_edit_url: https://github.com/projectbluefin/bluefin-lts/edit/main/README.md
+---
+
+import ImageIdentity from "@site/src/components/ImageIdentity";
+import LtsReadme from "@site/src/content/lts-readme.md";
+import {
+  ProductDownloadsAndVersions,
+  ProductReleaseAssets,
+} from "@site/src/components/ImageProductSection";
+import { PerImageUsage } from "@site/src/components/analytics/CountmeAnalyticsCharts";
+
+<ImageIdentity product="lts" />
+<LtsReadme />
+
+## Downloads & Image Versions
+
+<ProductDownloadsAndVersions product="lts" hideHeading />
+
+## Usage
+
+<PerImageUsage family="lts" hideHeading />
+
+## Release Assets & Attestations
+
+<ProductReleaseAssets product="lts" hideHeading />
