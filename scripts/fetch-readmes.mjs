@@ -110,7 +110,12 @@ export async function prepareReadme(
     stripIdentity(tree);
     // When preparing a product's embedded README, strip the leading h1 so Docusaurus's
     // page title owns the single top-level h1 on the page.
-    if (product && tree.children.length > 0 && tree.children[0].type === "heading" && tree.children[0].depth === 1) {
+    if (
+      product &&
+      tree.children.length > 0 &&
+      tree.children[0].type === "heading" &&
+      tree.children[0].depth === 1
+    ) {
       tree.children.shift();
     }
   }

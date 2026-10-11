@@ -63,8 +63,10 @@ motivation prose — see _Never write in a maintainer's voice_ in `AGENTS.md`.
 no second route and needs no sidebar or global Markdown configuration changes.
 Its `mdx.format: md` frontmatter preserves ordinary Markdown and raw HTML;
 the wrapper retains native headings, TOC, search, and the upstream edit link.
-Keep `title` metadata for navigation; set `hide_title: true` when the README's
-wordmark already supplies the visible page title.
+Keep `title` in frontmatter for navigation and the single top-level `h1`.
+Do not set `hide_title: true`; `scripts/fetch-readmes.mjs` strips any leading
+`# Title` heading from the imported README when `product` is specified so
+Docusaurus emits exactly one page title.
 
 `scripts/fetch-readmes.mjs` rewrites parsed links/images, not code examples.
 Add another source to its `readmes` list to reuse it for another image.
@@ -82,7 +84,8 @@ a unified 5-part composition:
 2. Upstream README import (`src/content/*-readme.md`): Stripped of duplicate
    identity headers and leading `# Title` by `scripts/fetch-readmes.mjs`.
 3. `## Downloads & Image Versions`: `<ProductDownloadsAndVersions />` displays
-   major component cards with bump badges, plus dual Stable & Testing ISO cards.
+   major component cards with bump badges, plus available ISO cards (Stable
+   and/or Testing depending on image type, or a DDI notice for server).
    Installer publication channel differs from embedded payload channel (e.g.
    Dakota stable payload served from the testing CDN).
 4. `## Usage`: `<PerImageUsage />` embeds first-party daily active systems with
