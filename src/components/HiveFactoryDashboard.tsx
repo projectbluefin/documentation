@@ -2188,7 +2188,7 @@ export function RecentMilestonesLeaderboard({
                     const modelName =
                       contributorMeta?.model || (isLocal ? "Local" : undefined);
                     const accentColor = isLocal
-                      ? "var(--fx-gold)"
+                      ? "var(--ifm-color-primary)"
                       : m.badge?.color || "var(--fx-accent)";
                     return (
                       <Link
@@ -2196,7 +2196,7 @@ export function RecentMilestonesLeaderboard({
                         href={contributorDossierUrl(m.login)}
                         target="_blank"
                         rel="noreferrer"
-                        className={`${styles.triumphEmblem} ${isLocal ? styles.triumphGold : ""}`}
+                        className={`${styles.triumphEmblem} ${isLocal ? styles.triumphPlatinum : ""}`}
                         style={
                           {
                             "--emblem-accent": accentColor,
@@ -2232,7 +2232,7 @@ export function RecentMilestonesLeaderboard({
                               )}
                               {m.badge && (
                                 <span
-                                  className={`${styles.emblemBadge} ${isLocal ? styles.emblemBadgeGold : ""}`}
+                                  className={`${styles.emblemBadge} ${isLocal ? styles.emblemBadgePlatinum : ""}`}
                                   style={{
                                     borderColor: isLocal
                                       ? undefined
