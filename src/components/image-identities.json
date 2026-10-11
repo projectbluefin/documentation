@@ -1,0 +1,134 @@
+{
+  "server": {
+    "name": "Bluefin Server",
+    "repo": "projectbluefin/server",
+    "ref": "main",
+    "species": "Amargasaurus cazaui",
+    "wikipedia": "https://en.wikipedia.org/wiki/Amargasaurus",
+    "logoLight": "https://raw.githubusercontent.com/projectbluefin/artwork/main/assets/vector/logos/bluefin-server/bluefin-server-logo-light.svg",
+    "logoDark": "https://raw.githubusercontent.com/projectbluefin/artwork/main/assets/vector/logos/bluefin-server/bluefin-server-logo-dark.svg",
+    "images": [
+      {
+        "src": "/img/user-attachments/79ceae5e-f48b-4d87-aadd-c7f46294378e.png",
+        "alt": "Bluefin Server Amargasaurus artwork, with a long neck and paired neck spines",
+        "source": "/dinosaurs#kubernetes",
+        "attribution": "Jacob Schnurr · Project Bluefin artwork",
+        "diagram": false
+      },
+      {
+        "src": "https://upload.wikimedia.org/wikipedia/commons/d/d8/Dicraeosauridae_Scale.svg",
+        "alt": "Dicraeosauridae silhouette size comparison, including Amargasaurus and a human figure",
+        "source": "https://commons.wikimedia.org/wiki/File:Dicraeosauridae_Scale.svg",
+        "attribution": "Slate Weasel · Public domain",
+        "diagram": true
+      }
+    ]
+  },
+  "classic": {
+    "name": "Bluefin Classic",
+    "repo": "ublue-os/bluefin",
+    "ref": "main",
+    "species": "Deinonychus antirrhopus",
+    "wikipedia": "https://en.wikipedia.org/wiki/Deinonychus",
+    "logoLight": "https://raw.githubusercontent.com/projectbluefin/artwork/main/assets/vector/logos/bluefin-classic/main/bluefin-classic-logo-light.svg",
+    "logoDark": "https://raw.githubusercontent.com/projectbluefin/artwork/main/assets/vector/logos/bluefin-classic/main/bluefin-classic-logo-dark.svg",
+    "images": [
+      {
+        "src": "https://raw.githubusercontent.com/projectbluefin/artwork/main/assets/vector/dinos/jacob-schnurr/bluefin-look/bluefin-look-original/optimized/bluefin-look-optimized.svg",
+        "alt": "Bluefin Deinonychus character artwork",
+        "source": "https://github.com/projectbluefin/artwork/tree/main/assets/vector/dinos/jacob-schnurr/bluefin-look/bluefin-look-original",
+        "attribution": "Jacob Schnurr · Project Bluefin artwork",
+        "diagram": false
+      },
+      {
+        "src": "https://upload.wikimedia.org/wikipedia/commons/7/77/Deinonychus_Scale.svg",
+        "alt": "Deinonychus silhouette compared with a human figure for scale",
+        "source": "https://commons.wikimedia.org/wiki/File:Deinonychus_Scale.svg",
+        "attribution": "Matt Martyniuk and Serenthia · CC BY-SA 2.5",
+        "diagram": true
+      }
+    ]
+  },
+  "dakota": {
+    "name": "Bluefin Dakota",
+    "repo": "projectbluefin/dakota",
+    "ref": "testing",
+    "species": "Dakotaraptor steini",
+    "wikipedia": "https://en.wikipedia.org/wiki/Dakotaraptor",
+    "logoLight": "",
+    "logoDark": "",
+    "images": [
+      {
+        "src": "https://raw.githubusercontent.com/projectbluefin/artwork/main/assets/vector/dinos/jacob-schnurr/bluefin-look/bluefin-look-dakota/optimized/bluefin-look-dakota-optimized.svg",
+        "alt": "Bluefin Dakota feathered raptor character artwork",
+        "source": "https://github.com/projectbluefin/artwork/tree/main/assets/vector/dinos/jacob-schnurr/bluefin-look/bluefin-look-dakota",
+        "attribution": "Jacob Schnurr · Project Bluefin artwork",
+        "diagram": false
+      },
+      {
+        "src": "https://github.com/user-attachments/assets/ee92291d-a617-496e-abb6-9045a4c665ce",
+        "alt": "Brown Dakotaraptor silhouette beside a human figure on a scale grid, as used in the upstream README",
+        "source": "https://github.com/projectbluefin/dakota/blob/testing/README.md",
+        "attribution": "Dakota README · Original silhouette",
+        "diagram": true
+      }
+    ]
+  },
+  "utah": {
+    "name": "Bluefin Utah",
+    "repo": "projectbluefin/utah",
+    "ref": "main",
+    "species": "†Utahraptor ostrommaysi",
+    "wikipedia": "https://en.wikipedia.org/wiki/Utahraptor",
+    "logoLight": "",
+    "logoDark": "",
+    "images": [
+      {
+        "src": "https://github.com/user-attachments/assets/962af585-6e2a-4038-ac14-8e54a3189420",
+        "alt": "Blue feathered Utahraptor character with an open mouth and prominent curved claws, from the upstream README",
+        "source": "https://github.com/projectbluefin/utah/blob/main/README.md",
+        "attribution": "Utah README · Project Bluefin artwork",
+        "diagram": false
+      },
+      {
+        "src": "https://github.com/user-attachments/assets/56428338-54a0-4376-a53b-5f02f8b101a1",
+        "alt": "Three Utahraptor specimen silhouettes compared with a human, labeled BYU 15465, CEU 184v.260, and BYU 7510 14281",
+        "source": "https://github.com/projectbluefin/utah/blob/main/README.md",
+        "attribution": "Utah README · Original specimen size comparison",
+        "diagram": true
+      },
+      {
+        "src": "https://upload.wikimedia.org/wikipedia/commons/7/72/Utahraptor_size_estimate_chart.svg",
+        "alt": "Utahraptor silhouette size-estimate chart with a human figure for comparison",
+        "source": "https://commons.wikimedia.org/wiki/File:Utahraptor_size_estimate_chart.svg",
+        "attribution": "FanCollector and ArthurWeasley · CC BY-SA 3.0",
+        "diagram": true
+      }
+    ]
+  },
+  "lts": {
+    "name": "Bluefin LTS",
+    "repo": "projectbluefin/bluefin-lts",
+    "ref": "main",
+    "species": "Achillobator giganticus",
+    "wikipedia": "https://en.wikipedia.org/wiki/Achillobator",
+    "logoLight": "https://raw.githubusercontent.com/projectbluefin/artwork/main/assets/vector/logos/bluefin-lts/bluefin-lts-logo-light.svg",
+    "logoDark": "https://raw.githubusercontent.com/projectbluefin/artwork/main/assets/vector/logos/bluefin-lts/bluefin-lts-logo-dark.svg",
+    "images": [
+      {
+        "src": "https://raw.githubusercontent.com/projectbluefin/artwork/main/assets/raster/dinos/jacob-schnurr/achillobator/achillobator-look/black-outline/achillobator-look-black-outline.png",
+        "alt": "Bluefin LTS Achillobator character artwork",
+        "source": "https://github.com/projectbluefin/artwork/tree/main/assets/raster/dinos/jacob-schnurr/achillobator/achillobator-look",
+        "attribution": "Jacob Schnurr · Project Bluefin artwork",
+        "diagram": false
+      },
+      {
+        "src": "https://github.com/user-attachments/assets/2e160934-44e6-4aee-b2b8-accb3bcf0a41",
+        "alt": "Gold Achillobator silhouette beside a human figure on a scale grid, as used in the upstream README",
+        "source": "https://github.com/projectbluefin/bluefin-lts/blob/main/README.md",
+        "attribution": "Bluefin LTS README · Original silhouette",
+        "diagram": true
+      }
+    ]
+  }
+}

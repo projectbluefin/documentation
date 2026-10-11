@@ -1,0 +1,26 @@
+---
+title: Bluefin LTS
+slug: /lts
+---
+import ImageIdentity from "@site/src/components/ImageIdentity";
+import LtsReadme from "@site/src/content/lts-readme.md";
+import {
+  ProductDownloadsAndVersions,
+  ProductReleaseAssets,
+} from "@site/src/components/ImageProductSection";
+import { PerImageUsage } from "@site/src/components/analytics/CountmeAnalyticsCharts";
+
+<ImageIdentity product="lts" />
+
+<LtsReadme />
+## Downloads & Image Versions
+
+<ProductDownloadsAndVersions product="lts" hideHeading />
+
+## Usage
+
+<PerImageUsage family="lts" hideHeading />
+
+## Release Assets & Attestations
+
+<ProductReleaseAssets product="lts" hideHeading />

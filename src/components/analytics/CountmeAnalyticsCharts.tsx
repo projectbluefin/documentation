@@ -415,6 +415,171 @@ function DailyPanel({
   );
 }
 
+function useDailyDataset(daily?: DailyDataset, enabled = true) {
+  const [fetchedDaily, setFetchedDaily] = useState<DailyDataset | null>(null);
+  const [dailyReason, setDailyReason] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (daily || !enabled) return;
+    void (async () => {
+      try {
+        const res = await fetch(DAILY_URL);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        setFetchedDaily((await res.json()) as DailyDataset);
+      } catch {
+        // A panel reason is published copy: generic, no service posture.
+        setDailyReason(FIRST_PARTY_PENDING_REASON);
+      }
+    })();
+  }, [daily, enabled]);
+
+  const dailyData = daily ?? fetchedDaily;
+  return {
+    dailyData,
+    emptyReason: dailyData?.stateReason ?? dailyReason ?? NO_RAPTORS,
+  };
+}
+
+function useLegacyActive(enabled = true) {
+  const [legacyActive, setLegacyActive] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!enabled) return;
+    void (async () => {
+      try {
+        const res = await fetch(LEGACY_BADGE_URL);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const badge = (await res.json()) as { message?: string };
+        setLegacyActive(badge?.message ?? null);
+      } catch {
+        setLegacyActive(null);
+      }
+    })();
+  }, [enabled]);
+
+  return legacyActive;
+}
+
+function LegacyChart({
+  active,
+  onError,
+}: {
+  active: string;
+  onError?: () => void;
+}): React.JSX.Element {
+  return (
+    <figure className={styles.legacyFigure}>
+      <img
+        className={styles.legacyChart}
+        src={LEGACY_CHART_URL}
+        alt={`Bluefin Classic (ublue-os/bluefin) growth chart. Current upstream active users: ${active}.`}
+        loading="lazy"
+        width={1200}
+        height={700}
+        onError={onError}
+      />
+      <figcaption className={styles.chartNote}>
+        Published by <code>ublue-os/countme</code>, recoloured only.
+        Upstream&rsquo;s scale.
+      </figcaption>
+    </figure>
+  );
+}
+
+export function PerImageUsage({
+  family,
+  daily,
+  hideHeading = false,
+}: {
+  family: "server" | "classic" | "dakota" | "utah" | "lts";
+  /** Production reads the first-party service; callers can inject its dataset. */
+  daily?: DailyDataset;
+  hideHeading?: boolean;
+}): React.JSX.Element {
+  const [themeRef, fxTheme] = useFactoryTheme();
+  const firstParty = family !== "classic" && family !== "lts";
+  const { dailyData, emptyReason } = useDailyDataset(daily, firstParty);
+  const legacyActive = useLegacyActive(family === "classic");
+  const [legacyChartFailed, setLegacyChartFailed] = useState(false);
+  const usage = useMemo(
+    () => familyDaily(firstParty ? (dailyData?.days ?? []) : [], family),
+    [dailyData, family, firstParty],
+  );
+  const label = {
+    server: "Bluefin Server",
+    classic: "Bluefin Classic",
+    dakota: "Bluefin Dakota",
+    utah: "Bluefin Utah",
+    lts: "Bluefin LTS",
+  }[family];
+
+  return (
+    <div ref={themeRef} className={`fxRoot ${styles.container}`}>
+      <section className={styles.panelCard}>
+        <header className={styles.sectionHeader}>
+          {!hideHeading && (
+            <Heading as="h2" className={styles.sectionTitle}>
+              {label} usage
+            </Heading>
+          )}
+          <p className={styles.sectionSubtext}>
+            {family === "classic" ? (
+              <>
+                <code>ublue-os/bluefin:stable</code>, counted by{" "}
+                <Link to="https://github.com/ublue-os/countme">
+                  ublue-os/countme
+                </Link>
+                . Metalink hits, not image check-ins.
+              </>
+            ) : (
+              "Systems active per day."
+            )}
+          </p>
+        </header>
+        {family === "lts" ? (
+          <Unavailable
+            what={`${label} usage`}
+            reason="No supported usage dataset is available for Bluefin LTS."
+          />
+        ) : family === "classic" ? (
+          <>
+            <p className={styles.legendRow}>
+              <span className={styles.legendChip}>
+                <span className={styles.legendGlyph} aria-hidden="true">
+                  ◇
+                </span>
+                Bluefin Classic: {legacyActive ?? "unavailable"}
+              </span>
+            </p>
+            {legacyActive === null || legacyChartFailed ? (
+              <Unavailable
+                what={`${label} usage`}
+                reason={
+                  legacyChartFailed
+                    ? "The upstream chart could not be read."
+                    : "The upstream badge could not be read."
+                }
+              />
+            ) : (
+              <LegacyChart
+                active={legacyActive}
+                onError={() => setLegacyChartFailed(true)}
+              />
+            )}
+          </>
+        ) : (
+          <DailyPanel
+            daily={usage}
+            label={label}
+            reason={emptyReason}
+            cat={fxTheme.categorical}
+          />
+        )}
+      </section>
+    </div>
+  );
+}
+
 export interface CountmeAnalyticsChartsProps {
   registry?: GhcrDataset;
   /** Injected by tests; production fetches the daily ping counts. */
@@ -455,41 +620,10 @@ export default function CountmeAnalyticsCharts({
   // ublue-os/bluefin:stable, counted by ublue-os/countme. Both the badge and
   // the chart are proxied by our worker, so this stays on one origin and needs
   // no second CSP entry.
-  const [legacyActive, setLegacyActive] = useState<string | null>(null);
-
-  useEffect(() => {
-    void (async () => {
-      try {
-        const res = await fetch(LEGACY_BADGE_URL);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const badge = (await res.json()) as { message?: string };
-        setLegacyActive(badge?.message ?? null);
-      } catch {
-        setLegacyActive(null);
-      }
-    })();
-  }, []);
+  const legacyActive = useLegacyActive();
 
   // ── Bluefin and Bluefin Utah: daily pings from projectbluefin-countme ─
-  const [fetchedDaily, setFetchedDaily] = useState<DailyDataset | null>(null);
-  const [dailyReason, setDailyReason] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (daily) return;
-    void (async () => {
-      try {
-        const res = await fetch(DAILY_URL);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        setFetchedDaily((await res.json()) as DailyDataset);
-      } catch {
-        // A panel reason is published copy: generic, no service posture.
-        setDailyReason(FIRST_PARTY_PENDING_REASON);
-      }
-    })();
-  }, [daily]);
-
-  const dailyData = daily ?? fetchedDaily;
-  const emptyReason = dailyData?.stateReason ?? dailyReason ?? NO_RAPTORS;
+  const { dailyData, emptyReason } = useDailyDataset(daily);
   const bluefin = useMemo(
     () => familyDaily(dailyData?.days ?? [], "dakota"),
     [dailyData],
@@ -664,20 +798,7 @@ export default function CountmeAnalyticsCharts({
             reason="The upstream badge could not be read."
           />
         ) : (
-          <figure className={styles.legacyFigure}>
-            <img
-              className={styles.legacyChart}
-              src={LEGACY_CHART_URL}
-              alt={`Bluefin Classic (ublue-os/bluefin) growth chart. Current upstream active users: ${legacyActive}.`}
-              loading="lazy"
-              width={1200}
-              height={700}
-            />
-            <figcaption className={styles.chartNote}>
-              Published by <code>ublue-os/countme</code>, recoloured only.
-              Upstream&rsquo;s scale.
-            </figcaption>
-          </figure>
+          <LegacyChart active={legacyActive} />
         )}
       </section>
 

@@ -72,6 +72,27 @@ The `prestart`, `prebuild`, and `prebuild:ci` npm hooks refresh each build
 checkout, including CI shards; the separate data job cannot transfer files
 outside its static JSON artifact. A failed fetch preserves the committed seed.
 
+### Composite Image Pages (5-Section Template)
+
+Product image pages (`/server`, `/classic`, `/dakota`, `/utah`, `/lts`) follow
+a unified 5-part composition:
+
+1. `<ImageIdentity product="..." />`: Template owns species identity, Wikipedia
+   silhouettes, and theme-adaptive artwork.
+2. Upstream README import (`src/content/*-readme.md`): Stripped of duplicate
+   identity headers and leading `# Title` by `scripts/fetch-readmes.mjs`.
+3. `## Downloads & Image Versions`: `<ProductDownloadsAndVersions />` displays
+   major component cards with bump badges, plus dual Stable & Testing ISO cards.
+   Installer publication channel differs from embedded payload channel (e.g.
+   Dakota stable payload served from the testing CDN).
+4. `## Usage`: `<PerImageUsage />` embeds first-party daily active systems with
+   per-family filtering and explicit unavailable fallbacks.
+5. `## Release Assets & Attestations`: `<ProductReleaseAssets />` renders
+   downloadable release artifacts, bootc/DDI switches, and provenance verification.
+
+Keep headings as Markdown `##` in the `.mdx` file so Docusaurus's build-time AST
+populates the right-hand Table of Contents.
+
 ## Image Streams Policy
 
 Images pages and catalog pipelines track only **`stable`** and **`testing`**

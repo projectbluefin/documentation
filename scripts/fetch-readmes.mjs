@@ -5,20 +5,23 @@ import { unified } from "unified";
 import remarkParse from "remark-parse";
 import remarkGfm from "remark-gfm";
 import remarkStringify from "remark-stringify";
+import identities from "../src/components/image-identities.json" with { type: "json" };
 
-const readmes = [
-  {
-    repo: "projectbluefin/server",
-    ref: "main",
-    readmePath: "README.md",
-    output: fileURLToPath(
-      new URL("../src/content/server-readme.md", import.meta.url),
-    ),
-  },
-];
+const readmes = Object.entries(identities).map(([product, identity]) => ({
+  product,
+  repo: identity.repo,
+  ref: identity.ref,
+  readmePath: "README.md",
+  output: fileURLToPath(
+    new URL(`../src/content/${product}-readme.md`, import.meta.url),
+  ),
+}));
 
 // Parse Markdown so links inside code examples are never rewritten.
-export async function prepareReadme(markdown, { repo, ref, readmePath }) {
+export async function prepareReadme(
+  markdown,
+  { repo, ref, readmePath, product },
+) {
   const processor = unified()
     .use(remarkParse)
     .use(remarkGfm)
@@ -32,6 +35,10 @@ export async function prepareReadme(markdown, { repo, ref, readmePath }) {
   walk(tree, (node) => {
     if (node.type === "imageReference") imageReferences.add(node.identifier);
   });
+  const definitions = new Map();
+  walk(tree, (node) => {
+    if (node.type === "definition") definitions.set(node.identifier, node.url);
+  });
   const resolve = (value, image) => {
     if (/^(?:[a-z][a-z\d+.-]*:|\/\/|#)/i.test(value)) return value;
     const base = image
@@ -42,6 +49,71 @@ export async function prepareReadme(markdown, { repo, ref, readmePath }) {
       value.startsWith("/") ? base : base + readmePath,
     ).href;
   };
+  const identity = product
+    ? identities[product]
+    : Object.values(identities).find((entry) => entry.repo === repo);
+  if (identity) {
+    const artwork = new Set(
+      [
+        identity.logoLight,
+        identity.logoDark,
+        ...identity.images.map((image) => image.src),
+      ].filter(Boolean),
+    );
+    const matchesArtwork = (url) => artwork.has(resolve(url, true));
+    const plainText = (node) => {
+      if (node.type === "text") return node.value;
+      if (
+        ["paragraph", "emphasis", "strong", "blockquote"].includes(node.type)
+      ) {
+        const parts = node.children.map(plainText);
+        return parts.every((part) => part !== null) ? parts.join("") : null;
+      }
+      return null;
+    };
+    const stripHtmlArtwork = (value) =>
+      value.replace(
+        /<picture\b[^>]*>[\s\S]*?<\/picture>|<img\b[^>]*>/gi,
+        (image) => {
+          const sources = [
+            ...image.matchAll(/\s(?:src|srcset)=(['"])(.*?)\1/g),
+          ];
+          const text = image.replace(/<[^>]*>/g, "").trim();
+          return sources.length &&
+            !text &&
+            sources.every((match) => matchesArtwork(match[2]))
+            ? ""
+            : image;
+        },
+      );
+    const stripIdentity = (node) => {
+      if (!node.children) return;
+      node.children = node.children.filter((child) => {
+        if (
+          ["paragraph", "blockquote"].includes(child.type) &&
+          plainText(child) === identity.species
+        )
+          return false;
+        if (child.type === "image" && matchesArtwork(child.url)) return false;
+        if (child.type === "imageReference") {
+          const url = definitions.get(child.identifier);
+          if (url && matchesArtwork(url)) return false;
+        }
+        if (child.type === "html") {
+          child.value = stripHtmlArtwork(child.value);
+          return Boolean(child.value.trim());
+        }
+        stripIdentity(child);
+        return !child.children || child.children.length > 0;
+      });
+    };
+    stripIdentity(tree);
+    // When preparing a product's embedded README, strip the leading h1 so Docusaurus's
+    // page title owns the single top-level h1 on the page.
+    if (product && tree.children.length > 0 && tree.children[0].type === "heading" && tree.children[0].depth === 1) {
+      tree.children.shift();
+    }
+  }
   walk(tree, (node) => {
     if (node.url) {
       node.url = resolve(
@@ -51,9 +123,9 @@ export async function prepareReadme(markdown, { repo, ref, readmePath }) {
     }
     if (node.type === "html") {
       node.value = node.value.replace(
-        /\s(href|src)=(['"])(.*?)\2/g,
+        /\s(href|src|srcset)=(['"])(.*?)\2/g,
         (_match, name, quote, value) =>
-          ` ${name}=${quote}${resolve(value, name === "src")}${quote}`,
+          ` ${name}=${quote}${resolve(value, name !== "href")}${quote}`,
       );
     }
   });

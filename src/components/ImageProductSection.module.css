@@ -1,0 +1,148 @@
+.section {
+  margin-top: 2.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.downloadGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 1.25rem;
+}
+
+.versionBoxesWrapper {
+  margin-bottom: 1.5rem;
+}
+
+.versionBoxesTitle {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--ifm-color-emphasis-800);
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.releasesTimeline {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 1.25rem;
+}
+
+.releaseCard {
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+  padding: 1.25rem;
+  background-color: var(
+    --ifm-card-background-color,
+    var(--ifm-background-surface-color)
+  );
+}
+
+.releaseHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.releaseTitleGroup {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.releaseTag {
+  font-size: 1.2rem;
+  color: var(--ifm-color-primary);
+}
+
+.releaseTagLink {
+  text-decoration: none;
+}
+
+.releaseTagLink:hover .releaseTag {
+  text-decoration: underline;
+}
+
+.releaseKindBadge {
+  font-size: 0.75rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  background-color: var(--ifm-color-emphasis-200);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.streamBadge {
+  font-size: 0.75rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  background-color: #ffd700;
+  color: #5a3e00;
+  font-weight: 700;
+}
+
+.releaseDate {
+  font-size: 0.85rem;
+  color: var(--ifm-color-emphasis-600);
+}
+
+.supplyChainBox {
+  font-size: 0.9rem;
+  padding: 0.6rem 0.8rem;
+  background-color: var(--ifm-color-emphasis-100);
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.verifiedText {
+  color: var(--ifm-color-success);
+  font-weight: 600;
+}
+
+.commandBlock {
+  margin-bottom: 1rem;
+}
+
+.commandLabel {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.assetsWrapper {
+  overflow-x: auto;
+}
+
+.assetsTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.assetsTable th,
+.assetsTable td {
+  padding: 0.4rem 0.6rem;
+  text-align: left;
+  border-bottom: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.assetDownloadLink {
+  font-weight: 600;
+  color: var(--ifm-color-primary);
+}
+
+.mutedText {
+  color: var(--ifm-color-emphasis-600);
+  font-style: italic;
+}
