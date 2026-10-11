@@ -48,6 +48,8 @@
   --fx-sev-ok: hsl(217, 50%, 52%);
   --fx-sev-watch: hsl(217, 62%, 38%);
   --fx-sev-alert: hsl(217, 78%, 26%);
+  --fx-gold: hsl(38, 92%, 50%);
+  --fx-gold-text: hsl(32, 81%, 29%);
 
   /* Categorical series: one ramp through the documented Bluefin blues, anchored
      on the brand accent the wordmark ligature uses (docs/press-kit.md, and
@@ -119,6 +121,8 @@
   --fx-sev-ok: hsl(217, 89%, 61%); /* the brand accent itself */
   --fx-sev-watch: hsl(217, 94%, 74%);
   --fx-sev-alert: hsl(217, 100%, 86%);
+  --fx-gold: hsl(43, 96%, 56%);
+  --fx-gold-text: hsl(48, 96%, 89%);
 
   /* All six are restated, not just the ones that move: chartTheme.ts keeps a
      copy of this block for charts mounted outside .fxRoot, and

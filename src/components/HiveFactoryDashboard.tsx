@@ -372,6 +372,7 @@ interface HiveHistory {
       tasks: number;
       local?: number;
       primaryModel?: string;
+      model?: string;
       registeredAt?: string;
     }
   >;
@@ -1407,7 +1408,6 @@ const MODE_COLORS: Record<string, string> = {
 // ── Token budget panel ─────────────────────────────────────────────────────
 
 // ── Nous / Strategy Lab panel ──────────────────────────────────────────────
-
 function ContributorWall({ history }: { history: HiveHistory | null }) {
   const [showAll, setShowAll] = React.useState(false);
 
@@ -1436,6 +1436,9 @@ function ContributorWall({ history }: { history: HiveHistory | null }) {
           isNewcomer: boolean;
           registeredAt?: string;
           seasonCommits?: number;
+          primaryModel?: string;
+          model?: string;
+          isLocal?: boolean;
         }
       > = {};
 
@@ -1448,6 +1451,8 @@ function ContributorWall({ history }: { history: HiveHistory | null }) {
           .sort((a, b) => (b[1][login] ?? 0) - (a[1][login] ?? 0))
           .map(([repo]) => repo);
         const isNewcomer = data?.tier === "newcomer";
+        const isLocal =
+          data?.primaryModel === "local" || (Number(data?.local) || 0) > 0;
         pool[login] = {
           login,
           tier: data?.tier || "newcomer",
@@ -1455,6 +1460,9 @@ function ContributorWall({ history }: { history: HiveHistory | null }) {
           repos,
           isNewcomer,
           registeredAt: data?.registeredAt,
+          primaryModel: data?.primaryModel,
+          model: data?.model || (isLocal ? "Local" : undefined),
+          isLocal,
         };
       }
 
@@ -1463,11 +1471,15 @@ function ContributorWall({ history }: { history: HiveHistory | null }) {
       for (const [login, sData] of Object.entries(seasonLogins)) {
         if (isBotLogin(login)) continue;
         const seasonCommits = sData?.commits || 0;
-        // Season newcomer: first-time code contributor whose all-time commits originated in this season
         const isSeasonNewcomer =
           seasonCommits > 0 &&
           (allTimeContributors[login] == null ||
             allTimeContributors[login] <= seasonCommits);
+
+        const tierMeta = tiers[login];
+        const isLocal =
+          tierMeta?.primaryModel === "local" ||
+          (Number(tierMeta?.local) || 0) > 0;
 
         if (pool[login]) {
           pool[login].seasonCommits = seasonCommits;
@@ -1483,6 +1495,9 @@ function ContributorWall({ history }: { history: HiveHistory | null }) {
             repos,
             isNewcomer: isSeasonNewcomer,
             seasonCommits,
+            primaryModel: tierMeta?.primaryModel,
+            model: tierMeta?.model || (isLocal ? "Local" : undefined),
+            isLocal,
           };
         }
       }
@@ -1526,8 +1541,12 @@ function ContributorWall({ history }: { history: HiveHistory | null }) {
 
   if (!tiers || Object.keys(tiers).length === 0) {
     return (
-      <section className={styles.panel}>
-        <Heading as="h2" className={styles.panelTitle}>
+      <section id="factory-community" className={styles.panel}>
+        <Heading
+          as="h2"
+          id="factory-community-heading"
+          className={styles.panelTitle}
+        >
           Factory Community
         </Heading>
         <p className={styles.unavailableNote}>
@@ -1541,8 +1560,12 @@ function ContributorWall({ history }: { history: HiveHistory | null }) {
   const visibleNewcomers = showAll ? newcomers : newcomers.slice(0, 12);
 
   return (
-    <section className={styles.panel}>
-      <Heading as="h2" className={styles.panelTitle}>
+    <section id="factory-community" className={styles.panel}>
+      <Heading
+        as="h2"
+        id="factory-community-heading"
+        className={styles.panelTitle}
+      >
         Factory Community
       </Heading>
       <p className={styles.panelMeta}>
@@ -1585,7 +1608,7 @@ function ContributorWall({ history }: { history: HiveHistory | null }) {
               href={contributorDossierUrl(c.login)}
               target="_blank"
               rel="noreferrer"
-              className={styles.lbNewcomer}
+              className={`${styles.lbNewcomer} ${c.isLocal ? styles.lbCardGold : ""}`}
               title={
                 c.repos.length > 0
                   ? `${c.login} · ${c.repos.slice(0, 3).join(", ")}`
@@ -1607,6 +1630,14 @@ function ContributorWall({ history }: { history: HiveHistory | null }) {
                       ? `${c.seasonCommits} season commits`
                       : "Joined Hive registry"}
                 </span>
+                {c.model && (
+                  <span
+                    className={`${styles.emblemModelTag} ${c.isLocal ? styles.emblemModelLocal : ""}`}
+                    style={{ marginTop: "0.25rem", display: "inline-block" }}
+                  >
+                    {c.model}
+                  </span>
+                )}
               </div>
             </Link>
           ))}
@@ -1642,7 +1673,7 @@ function ContributorWall({ history }: { history: HiveHistory | null }) {
                 href={contributorDossierUrl(entry.login)}
                 target="_blank"
                 rel="noreferrer"
-                className={styles.hiveTaskCard}
+                className={`${styles.hiveTaskCard} ${entry.isLocal ? styles.lbCardGold : ""}`}
               >
                 <img
                   src={`https://github.com/${entry.login}.png?size=40`}
@@ -1654,6 +1685,18 @@ function ContributorWall({ history }: { history: HiveHistory | null }) {
                 <span className={styles.hiveTaskCount}>
                   {entry.seasonCommits} commits · {entry.tasks}t
                 </span>
+                {entry.model && (
+                  <span
+                    className={`${styles.emblemModelTag} ${entry.isLocal ? styles.emblemModelLocal : ""}`}
+                    style={{
+                      gridColumn: "1 / -1",
+                      justifySelf: "start",
+                      marginTop: "0.15rem",
+                    }}
+                  >
+                    {entry.model}
+                  </span>
+                )}
               </Link>
             ))}
           </div>
@@ -1662,7 +1705,6 @@ function ContributorWall({ history }: { history: HiveHistory | null }) {
     </section>
   );
 }
-
 function HistoryTrends({ history }: { history: HiveHistory | null }) {
   if (!history || history.entries.length < 2) return null;
 
@@ -1860,8 +1902,12 @@ export function ContributorLeaderboard({
 
   if (!tiers || Object.keys(tiers).length === 0) {
     return (
-      <section className={styles.panel}>
-        <Heading as="h2" className={styles.panelTitle}>
+      <section id="community-builders" className={styles.panel}>
+        <Heading
+          as="h2"
+          id="community-builders-heading"
+          className={styles.panelTitle}
+        >
           Community Builders
         </Heading>
         <p className={styles.unavailableNote}>
@@ -1875,8 +1921,12 @@ export function ContributorLeaderboard({
   const barMax = Math.max(1, chartRows[0]?.tasks ?? 1);
 
   return (
-    <section className={styles.panel}>
-      <Heading as="h2" className={styles.panelTitle}>
+    <section id="community-builders" className={styles.panel}>
+      <Heading
+        as="h2"
+        id="community-builders-heading"
+        className={styles.panelTitle}
+      >
         Community Builders
       </Heading>
       <p className={styles.panelMeta}>
@@ -2006,6 +2056,7 @@ export function RecentMilestonesLeaderboard({
   milestones,
   breadthUnlocks,
   contributorTiers,
+  season,
   error,
 }: {
   milestones?: HiveMilestoneEvent[];
@@ -2020,6 +2071,7 @@ export function RecentMilestonesLeaderboard({
       model?: string;
     }
   >;
+  season?: GNOMESeason | null;
   error?: string | null;
 }): React.JSX.Element {
   const allEvents = [
@@ -2031,9 +2083,62 @@ export function RecentMilestonesLeaderboard({
   );
   const items = allEvents.slice(0, 50);
 
+  // Group events by season-week when season information is available.
+  const seasonStartMs = season?.start ? Date.parse(season.start) : NaN;
+  const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+
+  const weekGroups = React.useMemo(() => {
+    if (items.length === 0) return [];
+
+    type WeekGroup = {
+      weekIndex: number | null; // 1-based index from season start, or null if pre-season
+      label: string;
+      events: HiveMilestoneEvent[];
+    };
+
+    const groups: WeekGroup[] = [];
+    let currentKey: string | null = null;
+    let currentGroup: WeekGroup | null = null;
+
+    for (const event of items) {
+      const eventMs = Date.parse(event.detectedAt || "");
+      let weekNum: number | null = null;
+      let label = "Season Timeline";
+
+      if (Number.isFinite(seasonStartMs) && Number.isFinite(eventMs)) {
+        if (eventMs >= seasonStartMs) {
+          weekNum = Math.floor((eventMs - seasonStartMs) / ONE_WEEK_MS) + 1;
+          label = season?.name
+            ? `Season of ${season.name} · Week ${weekNum}`
+            : `Season Week ${weekNum}`;
+        } else {
+          weekNum = 0;
+          label = "Pre-Season";
+        }
+      }
+
+      const key = weekNum !== null ? String(weekNum) : "all";
+      if (!currentGroup || currentKey !== key) {
+        currentKey = key;
+        currentGroup = {
+          weekIndex: weekNum,
+          label,
+          events: [],
+        };
+        groups.push(currentGroup);
+      }
+      currentGroup.events.push(event);
+    }
+
+    return groups;
+  }, [items, season?.name, seasonStartMs]);
   return (
-    <section className={styles.panel}>
-      <Heading as="h2" className={styles.panelTitle}>
+    <section id="moments-of-triumph" className={styles.panel}>
+      <Heading
+        as="h2"
+        id="moments-of-triumph-heading"
+        className={styles.panelTitle}
+      >
         Moments of Triumph
       </Heading>
       <p className={styles.panelMeta}>
@@ -2056,84 +2161,111 @@ export function RecentMilestonesLeaderboard({
             <span className={styles.triumphPast}>Past</span>
           </aside>
           <div
-            className={styles.triumphColumns}
+            className={styles.triumphFeed}
             role="region"
             aria-label="Moments of Triumph"
             tabIndex={0}
           >
-            {items.map((m) => {
-              const contributorMeta = contributorTiers?.[m.login];
-              const isLocal =
-                contributorMeta?.primaryModel === "local" ||
-                (typeof contributorMeta?.local === "number" &&
-                  contributorMeta.local > 0);
-              const modelName =
-                contributorMeta?.model || (isLocal ? "local" : undefined);
-              const accentColor = isLocal
-                ? "var(--ifm-color-primary)"
-                : m.badge?.color || "var(--fx-accent)";
-              return (
-                <Link
-                  key={m.id}
-                  href={contributorDossierUrl(m.login)}
-                  target="_blank"
-                  rel="noreferrer"
-                  className={`${styles.triumphEmblem} ${isLocal ? styles.triumphPlatinum : ""}`}
-                  style={
-                    {
-                      "--emblem-accent": accentColor,
-                    } as React.CSSProperties
-                  }
-                >
-                  <div className={styles.emblemIconSlot}>
-                    <img
-                      src={`https://github.com/${m.login}.png?size=72`}
-                      alt={m.login}
-                      className={styles.emblemAvatar}
-                      loading="lazy"
-                    />
-                    <span
-                      className={styles.emblemCrestGlyph}
-                      aria-hidden="true"
-                    >
-                      ✦
-                    </span>
-                  </div>
-                  <div className={styles.emblemBody}>
-                    <div className={styles.emblemHeader}>
-                      <span className={styles.emblemLogin}>{m.login}</span>
-                      <div className={styles.emblemTags}>
-                        {modelName && (
+            {weekGroups.map((group, gIdx) => (
+              <div
+                key={`group-${group.weekIndex ?? gIdx}`}
+                className={styles.triumphWeekBlock}
+              >
+                <div className={styles.triumphWeekSeparator}>
+                  <span className={styles.triumphWeekLine} />
+                  <span className={styles.triumphWeekLabel}>
+                    ✦ {group.label}
+                  </span>
+                  <span className={styles.triumphWeekLine} />
+                </div>
+                <div className={styles.triumphColumns}>
+                  {group.events.map((m) => {
+                    const contributorMeta = contributorTiers?.[m.login];
+                    const isLocal =
+                      contributorMeta?.primaryModel === "local" ||
+                      (typeof contributorMeta?.local === "number" &&
+                        contributorMeta.local > 0);
+                    const modelName =
+                      contributorMeta?.model || (isLocal ? "Local" : undefined);
+                    const accentColor = isLocal
+                      ? "var(--ifm-color-primary)"
+                      : m.badge?.color || "var(--fx-accent)";
+                    return (
+                      <Link
+                        key={m.id}
+                        href={contributorDossierUrl(m.login)}
+                        target="_blank"
+                        rel="noreferrer"
+                        className={`${styles.triumphEmblem} ${isLocal ? styles.triumphPlatinum : ""}`}
+                        style={
+                          {
+                            "--emblem-accent": accentColor,
+                          } as React.CSSProperties
+                        }
+                      >
+                        <div className={styles.emblemIconSlot}>
+                          <img
+                            src={`https://github.com/${m.login}.png?size=72`}
+                            alt={m.login}
+                            className={styles.emblemAvatar}
+                            loading="lazy"
+                          />
                           <span
-                            className={`${styles.emblemModelTag} ${isLocal ? styles.emblemModelLocal : ""}`}
+                            className={styles.emblemCrestGlyph}
+                            aria-hidden="true"
                           >
-                            {modelName}
+                            ✦
                           </span>
-                        )}
-                        {m.badge && (
-                          <span
-                            className={`${styles.emblemBadge} ${isLocal ? styles.emblemBadgePlatinum : ""}`}
-                            style={{
-                              borderColor: isLocal ? undefined : m.badge.color,
-                              color: isLocal ? undefined : m.badge.color,
-                            }}
-                          >
-                            {m.badge.label}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                    <div className={styles.emblemAchievement}>
-                      <span className={styles.emblemTitle}>{m.title}</span>
-                      <span className={styles.emblemDetail}>{m.detail}</span>
-                    </div>
-                  </div>
-                  <div className={styles.emblemInsignia} aria-hidden="true">
-                    <span className={styles.emblemWatermarkGlyph}>❖</span>
-                  </div>
-                </Link>
-              );
-            })}
+                        </div>
+                        <div className={styles.emblemBody}>
+                          <div className={styles.emblemHeader}>
+                            <span className={styles.emblemLogin}>
+                              {m.login}
+                            </span>
+                            <div className={styles.emblemTags}>
+                              {modelName && (
+                                <span
+                                  className={`${styles.emblemModelTag} ${isLocal ? styles.emblemModelLocal : ""}`}
+                                >
+                                  {modelName}
+                                </span>
+                              )}
+                              {m.badge && (
+                                <span
+                                  className={`${styles.emblemBadge} ${isLocal ? styles.emblemBadgePlatinum : ""}`}
+                                  style={{
+                                    borderColor: isLocal
+                                      ? undefined
+                                      : m.badge.color,
+                                    color: isLocal ? undefined : m.badge.color,
+                                  }}
+                                >
+                                  {m.badge.label}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                          <div className={styles.emblemAchievement}>
+                            <span className={styles.emblemTitle}>
+                              {m.title}
+                            </span>
+                            <span className={styles.emblemDetail}>
+                              {m.detail}
+                            </span>
+                          </div>
+                        </div>
+                        <div
+                          className={styles.emblemInsignia}
+                          aria-hidden="true"
+                        >
+                          <span className={styles.emblemWatermarkGlyph}>❖</span>
+                        </div>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       )}
@@ -4356,7 +4488,14 @@ export function LeaderboardsSection(): React.JSX.Element {
           registryAvailable={registryEntries != null}
         />
       ) : (
-        <section className={styles.panel}>
+        <section id="community-builders" className={styles.panel}>
+          <Heading
+            as="h2"
+            id="community-builders-heading"
+            className={styles.panelTitle}
+          >
+            Community Builders
+          </Heading>
           <p className={styles.unavailableNote}>
             GitHub contribution data{" "}
             {history.loading ? "loading." : "unavailable"}
@@ -4369,10 +4508,18 @@ export function LeaderboardsSection(): React.JSX.Element {
           milestones={hiveHistory.milestones}
           breadthUnlocks={hiveHistory.season?.breadthUnlocks}
           contributorTiers={hiveHistory.hiveContributorTiers}
+          season={hiveHistory.season}
           error={hiveHistory.milestonesError}
         />
       ) : (
-        <section className={styles.panel}>
+        <section id="moments-of-triumph" className={styles.panel}>
+          <Heading
+            as="h2"
+            id="moments-of-triumph-heading"
+            className={styles.panelTitle}
+          >
+            Moments of Triumph
+          </Heading>
           <p className={styles.unavailableNote}>
             Milestone data {history.loading ? "loading." : "unavailable"}
             {!history.loading && history.reason ? `: ${history.reason}` : ""}
@@ -4382,7 +4529,14 @@ export function LeaderboardsSection(): React.JSX.Element {
       {hiveHistory ? (
         <ContributorWall history={hiveHistory} />
       ) : (
-        <section className={styles.panel}>
+        <section id="factory-community" className={styles.panel}>
+          <Heading
+            as="h2"
+            id="factory-community-heading"
+            className={styles.panelTitle}
+          >
+            Factory Community
+          </Heading>
           <p className={styles.unavailableNote}>
             GitHub contribution data{" "}
             {history.loading ? "loading." : "unavailable"}
