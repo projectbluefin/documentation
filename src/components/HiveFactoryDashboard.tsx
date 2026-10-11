@@ -367,7 +367,13 @@ interface HiveHistory {
   seasonError?: string | null;
   hiveContributorTiers?: Record<
     string,
-    { tier: string; tasks: number; registeredAt?: string }
+    {
+      tier: string;
+      tasks: number;
+      local?: number;
+      primaryModel?: string;
+      registeredAt?: string;
+    }
   >;
   milestones?: HiveMilestoneEvent[];
   milestonesError?: string | null;
@@ -1999,10 +2005,21 @@ export function ContributorLeaderboard({
 export function RecentMilestonesLeaderboard({
   milestones,
   breadthUnlocks,
+  contributorTiers,
   error,
 }: {
   milestones?: HiveMilestoneEvent[];
   breadthUnlocks?: HiveMilestoneEvent[];
+  contributorTiers?: Record<
+    string,
+    {
+      tier: string;
+      tasks: number;
+      local?: number;
+      primaryModel?: string;
+      model?: string;
+    }
+  >;
   error?: string | null;
 }): React.JSX.Element {
   const allEvents = [
@@ -2017,7 +2034,7 @@ export function RecentMilestonesLeaderboard({
   return (
     <section className={styles.panel}>
       <Heading as="h2" className={styles.panelTitle}>
-        Recent Milestones
+        Moments of Triumph
       </Heading>
       <p className={styles.panelMeta}>
         Ledger of teamwork &mdash; contributors levelling up trust tiers,
@@ -2033,50 +2050,91 @@ export function RecentMilestonesLeaderboard({
           </span>
         </p>
       ) : (
-        <div
-          className={styles.milestonesGrid}
-          role="region"
-          aria-label="Recent milestones"
-          tabIndex={0}
-        >
-          {items.map((m) => (
-            <Link
-              key={m.id}
-              href={contributorDossierUrl(m.login)}
-              target="_blank"
-              rel="noreferrer"
-              className={styles.milestoneCard}
-            >
-              <img
-                src={`https://github.com/${m.login}.png?size=40`}
-                alt={m.login}
-                className={styles.milestoneAvatar}
-                loading="lazy"
-              />
-              <div className={styles.milestoneContent}>
-                <div className={styles.milestoneTop}>
-                  <span className={styles.milestoneUser}>{m.login}</span>
-                  {m.badge && (
+        <div className={styles.triumphTimelinePage}>
+          <aside className={styles.triumphRail} aria-hidden="true">
+            <span className={styles.triumphNow}>Now</span>
+            <span className={styles.triumphPast}>Past</span>
+          </aside>
+          <div
+            className={styles.triumphColumns}
+            role="region"
+            aria-label="Moments of Triumph"
+            tabIndex={0}
+          >
+            {items.map((m) => {
+              const contributorMeta = contributorTiers?.[m.login];
+              const isLocal =
+                contributorMeta?.primaryModel === "local" ||
+                (typeof contributorMeta?.local === "number" &&
+                  contributorMeta.local > 0);
+              const modelName =
+                contributorMeta?.model || (isLocal ? "local" : undefined);
+              const accentColor = isLocal
+                ? "var(--ifm-color-primary)"
+                : m.badge?.color || "var(--fx-accent)";
+              return (
+                <Link
+                  key={m.id}
+                  href={contributorDossierUrl(m.login)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className={`${styles.triumphEmblem} ${isLocal ? styles.triumphPlatinum : ""}`}
+                  style={
+                    {
+                      "--emblem-accent": accentColor,
+                    } as React.CSSProperties
+                  }
+                >
+                  <div className={styles.emblemIconSlot}>
+                    <img
+                      src={`https://github.com/${m.login}.png?size=72`}
+                      alt={m.login}
+                      className={styles.emblemAvatar}
+                      loading="lazy"
+                    />
                     <span
-                      className={styles.milestoneBadge}
-                      style={{
-                        borderColor: m.badge.color,
-                        color: m.badge.color,
-                      }}
+                      className={styles.emblemCrestGlyph}
+                      aria-hidden="true"
                     >
-                      {m.badge.label}
+                      ✦
                     </span>
-                  )}
-                </div>
-                <span className={styles.milestoneTitle}>{m.title}</span>
-                <span className={styles.milestoneDetail}>{m.detail}</span>
-                <span className={styles.milestoneDate}>
-                  detected{" "}
-                  {m.detectedAt ? m.detectedAt.slice(0, 10) : "recently"}
-                </span>
-              </div>
-            </Link>
-          ))}
+                  </div>
+                  <div className={styles.emblemBody}>
+                    <div className={styles.emblemHeader}>
+                      <span className={styles.emblemLogin}>{m.login}</span>
+                      <div className={styles.emblemTags}>
+                        {modelName && (
+                          <span
+                            className={`${styles.emblemModelTag} ${isLocal ? styles.emblemModelLocal : ""}`}
+                          >
+                            {modelName}
+                          </span>
+                        )}
+                        {m.badge && (
+                          <span
+                            className={`${styles.emblemBadge} ${isLocal ? styles.emblemBadgePlatinum : ""}`}
+                            style={{
+                              borderColor: isLocal ? undefined : m.badge.color,
+                              color: isLocal ? undefined : m.badge.color,
+                            }}
+                          >
+                            {m.badge.label}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div className={styles.emblemAchievement}>
+                      <span className={styles.emblemTitle}>{m.title}</span>
+                      <span className={styles.emblemDetail}>{m.detail}</span>
+                    </div>
+                  </div>
+                  <div className={styles.emblemInsignia} aria-hidden="true">
+                    <span className={styles.emblemWatermarkGlyph}>❖</span>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
         </div>
       )}
     </section>
@@ -4310,6 +4368,7 @@ export function LeaderboardsSection(): React.JSX.Element {
         <RecentMilestonesLeaderboard
           milestones={hiveHistory.milestones}
           breadthUnlocks={hiveHistory.season?.breadthUnlocks}
+          contributorTiers={hiveHistory.hiveContributorTiers}
           error={hiveHistory.milestonesError}
         />
       ) : (
