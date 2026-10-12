@@ -140,6 +140,11 @@ Two supporting habits:
   positive anchor to locate the chunk at all.
 - The CDN serves the previous copy briefly, so add `?cb=$RANDOM` to page
   requests. Hashed asset paths change per build and need no cache-buster.
+- For a dark-mode screenshot, load the page with `?docusaurus-theme=dark`.
+  Setting `data-theme` by hand leaves the Prism code theme light, so code
+  blocks look broken when they aren't. Probe the DOM by matching CSS-module
+  classes with a substring (`[class*="pill_"]`), because build-time names
+  are hashed.
 
 ### Do not mistake a passing build for a deploy
 
