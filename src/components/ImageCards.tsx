@@ -121,14 +121,6 @@ const IMAGES: Record<"preferred" | "other", Card[]> = {
       subheader: "Bluefin built on Fedora Hummingbird",
       body: "Latest generation Bluefin built on Fedora Hummingbird.",
     },
-    {
-      title: "Bluefin LTS",
-      href: "/lts",
-      art: "/img/portal/characters/achillobator.webp",
-      alt: "Achillobator",
-      subheader: "Enterprise Grade Cadence",
-      body: "Bluefin LTS provides long-term support for low churn environments.",
-    },
   ],
 };
 

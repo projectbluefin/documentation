@@ -122,6 +122,13 @@ is the filename without extension. Unlisting a variant from navigation removes
 only its sidebar ID entry; its page file under `docs/` and root slug route
 remain accessible.
 
+## Image Cards Catalog
+
+The `/images` catalog displays active image families via `<ImageCards />`
+(`src/components/ImageCards.tsx`) grouped into `preferred` and `other`.
+When retiring or unlisting a variant from the images page catalog, remove its
+card entry from `IMAGES` in `ImageCards.tsx`.
+
 ## Gotchas
 
 - **`.md` vs `.mdx`**: any JSX component import requires `.mdx`; the sidebar
