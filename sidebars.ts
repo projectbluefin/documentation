@@ -12,7 +12,6 @@ const sidebars: SidebarsConfig = {
         "index",
         "downloads",
         "installation",
-        "t2-mac",
         "driver-versions",
       ],
     },
